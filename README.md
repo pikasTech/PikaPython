@@ -1,5 +1,5 @@
 # 简介
-mimiscript可以为mcu裸机c开发提供对象容器和脚本绑定。
+mimiscript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
 支持裸机运行，可运行于内存40Kb以上的mcu中，如stm32f103，esp32。
 
