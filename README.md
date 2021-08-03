@@ -10,7 +10,31 @@ mimiscript可以为mcu裸机c开发提供面向对象的脚本绑定。
 ## 架构示意图
 ![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
 
-## 运行demo：
+## linux下运行demo：
+
+step1: 拉取项目
+``` shell
+git clone https://github.com/mimilib/mimiscript
+cd mimiscript
+git submodule init && git submodule update
+```
+step2: 安装编译链
+``` shell
+sudo apt update
+sudo apt install -y clang llvm cmake zlib1g-dev
+```
+
+step3: 编译项目
+```
+cd mimiproject
+sh init.sh # 第一次编译前运行，之后就不用运行了 
+sh make.sh # 编译项目
+```
+
+step4: 运行demo
+``` shell	
+bin/demo01-led.bin
+```
 
 测试例：
 ``` c
