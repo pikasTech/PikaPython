@@ -10,7 +10,7 @@ mimiscript可以为mcu裸机c开发提供面向对象的脚本绑定。
 ## 架构示意图
 ![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
 
-## 使用方法：
+## 运行demo：
 
 测试例：
 ``` c
