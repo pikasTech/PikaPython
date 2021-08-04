@@ -37,11 +37,9 @@ bin/demo01-led.bin
 ```
 ## windows下运行demo：
 
-step1: 拉取项目
-``` shell
-git clone https://github.com/mimilib/mimiscript
-cd mimiscript
-git submodule init && git submodule update
+step1: 下载源码
+``` 
+https://github.com/mimilib/mimiscript/releases/download/v1.0/mimiscript-v1.0.zip
 ```
 step2: 下载安装codeblocks
 ```
