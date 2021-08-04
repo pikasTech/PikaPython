@@ -35,6 +35,20 @@ step4: 运行demo
 ``` shell	
 bin/demo01-led.bin
 ```
+## windows下运行demo：
+
+step1: 拉取项目
+``` shell
+git clone https://github.com/mimilib/mimiscript
+cd mimiscript
+git submodule init && git submodule update
+```
+step2: 下载安装codeblocks
+```
+https://download.fosshub.com/Protected/expiretime=1628119786;badurl=aHR0cHM6Ly93d3cuZm9zc2h1Yi5jb20vQ29kZS1CbG9ja3MuaHRtbA==/9bc1258414546cedb7b0774846ec773613a89ed715964c9a3239fab0465f014d/5b85805cf9ee5a5c3e979f1b/5e80624f7d74bb810359a46c/codeblocks-20.03-setup.exe
+```
+
+step3: 打开winproject文件夹下的demoXX/demoXX.cbs编译运行
 
 ## 测试例：
 ``` c
