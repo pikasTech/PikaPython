@@ -13,7 +13,7 @@ void offFun(MimiObj *self, Args *args)
 	printf("the led is off! \r\n");
 }
 
-MimiObj * New_LED(Args *args)
+MimiObj *New_LED(Args *args)
 {
 	/* derive from the base mimiObj class */
 	MimiObj *self = New_MimiObj_sys(args);
@@ -26,7 +26,7 @@ MimiObj * New_LED(Args *args)
 	return self;
 }
 
-MimiObj * New_MYROOT(Args *args)
+MimiObj *New_MYROOT(Args *args)
 {
 	/* derive from the base mimiObj class */
 	MimiObj *self = New_MimiObj_sys(args);
@@ -49,7 +49,7 @@ int main()
 	char inputBuff[256] = {0};
 	/* run the script with check*/
 	obj_run(root, "led.on()");
-	while(1)
+	while (1)
 	{
 		/* get user input */
 		fgets(inputBuff, sizeof(inputBuff), stdin);
@@ -59,8 +59,8 @@ int main()
 
 		/* get system output of mimiScript*/
 		char *sysOut = args_getStr(res, "sysOut");
-	
-		if(NULL != sysOut)
+
+		if (NULL != sysOut)
 		{
 			/* print out the system output */
 			printf("%s\r\n", sysOut);
