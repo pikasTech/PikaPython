@@ -1,21 +1,17 @@
-/* this demo shows the usage of method */
+/* this demo shows the usage of input and return of method */
 
 #include "baseObj.h"
 #include <stdio.h>
 
-void onMethod(MimiObj *self, Args *args)
+void addMethod(MimiObj *self, Args* args)
 {
-	/* turn on the led */
-	printf("the led is on! \r\n");
+	int val1 = args_getInt(args, "val1");
+	int val2 = args_getInt(args, "val2");
+	int res = val1 + val2;
+	method_returnInt(args, res);
 }
 
-void offMethod(MimiObj *self, Args *args)
-{
-	/* turn off the led */
-	printf("the led is off! \r\n");
-}
-
-MimiObj *New_LED(Args *args)
+MimiObj *New_TEST(Args *args)
 {
 	/*	Derive from the tiny object class.
 		Tiny object can not import sub object.	
@@ -23,8 +19,7 @@ MimiObj *New_LED(Args *args)
 	MimiObj *self = New_TinyObj(args);
 
 	/* bind the method */
-	class_defineMethod(self, "on()", onMethod);
-	class_defineMethod(self, "off()", offMethod);
+	class_defineMethod(self, "add(val1:int, val2:int)->int", addMethod);
 
 	/* return the object */
 	return self;
@@ -38,10 +33,10 @@ MimiObj *New_MYROOT(Args *args)
 	MimiObj *self = New_baseObj(args);
 
 	/* import LED class */
-	obj_import(self, "LED", New_LED);
+	obj_import(self, "TEST", New_TEST);
 
 	/* new led object bellow root object */
-	obj_newObj(self, "led", "LED");
+	obj_newObj(self, "test", "TEST");
 
 	/* return the object */
 	return self;
@@ -54,8 +49,10 @@ int main()
 	MimiObj *root = newRootObj("root", New_MYROOT);
 	/* user input buff */
 	char inputBuff[256] = {0};
-	/* run the script with check*/
-	obj_run(root, "led.on()");
+	/* run the script with check*/	
+	obj_run(root, "res = test.add(1, 2)");
+	int res = obj_getInt(root, "res");
+	printf("the res of 'test.add(1, 2)' is %d \r\n", res);
 	printf("memory used max = %0.2f kB\r\n", DMEMS.maxNum*DMEM_BLOCK_SIZE/1024.0);
 	printf("memory used now = %0.2f kB\r\n", DMEMS.blk_num*DMEM_BLOCK_SIZE/1024.0);
 	while (1)

@@ -1,21 +1,16 @@
-/* this demo shows the usage of method */
+/* this demo shows the usage of string arg in method */
 
 #include "baseObj.h"
 #include <stdio.h>
 
-void onMethod(MimiObj *self, Args *args)
+void sendMethod(MimiObj *self, Args *args)
 {
-	/* turn on the led */
-	printf("the led is on! \r\n");
+	char *data = args_getStr(args, "data");
+	/* send to com1 */
+	printf("[com1]: %s\r\n", data);
 }
 
-void offMethod(MimiObj *self, Args *args)
-{
-	/* turn off the led */
-	printf("the led is off! \r\n");
-}
-
-MimiObj *New_LED(Args *args)
+MimiObj *New_USART(Args *args)
 {
 	/*	Derive from the tiny object class.
 		Tiny object can not import sub object.	
@@ -23,8 +18,7 @@ MimiObj *New_LED(Args *args)
 	MimiObj *self = New_TinyObj(args);
 
 	/* bind the method */
-	class_defineMethod(self, "on()", onMethod);
-	class_defineMethod(self, "off()", offMethod);
+	class_defineMethod(self, "send(data:string)", sendMethod);
 
 	/* return the object */
 	return self;
@@ -38,10 +32,10 @@ MimiObj *New_MYROOT(Args *args)
 	MimiObj *self = New_baseObj(args);
 
 	/* import LED class */
-	obj_import(self, "LED", New_LED);
+	obj_import(self, "USART", New_USART);
 
 	/* new led object bellow root object */
-	obj_newObj(self, "led", "LED");
+	obj_newObj(self, "usart", "USART");
 
 	/* return the object */
 	return self;
@@ -55,9 +49,10 @@ int main()
 	/* user input buff */
 	char inputBuff[256] = {0};
 	/* run the script with check*/
-	obj_run(root, "led.on()");
-	printf("memory used max = %0.2f kB\r\n", DMEMS.maxNum*DMEM_BLOCK_SIZE/1024.0);
-	printf("memory used now = %0.2f kB\r\n", DMEMS.blk_num*DMEM_BLOCK_SIZE/1024.0);
+	obj_run(root, "res = usart.send('hello world')");
+
+	printf("memory used max = %0.2f kB\r\n", DMEMS.maxNum * DMEM_BLOCK_SIZE / 1024.0);
+	printf("memory used now = %0.2f kB\r\n", DMEMS.blk_num * DMEM_BLOCK_SIZE / 1024.0);
 	while (1)
 	{
 		/* get user input */
