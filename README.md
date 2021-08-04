@@ -50,7 +50,7 @@ step4: 运行demo
 bin/demo01-led.bin
 ```
 
-## 测试例：
+## 用法示例：
 ``` c
 #include "sysObj.h"
 
