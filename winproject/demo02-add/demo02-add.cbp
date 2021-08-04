@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="demo02-add" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/demo02-add" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../../src/package/mimilib/mimiData" />
+					<Add directory="../../src/package/mimilib/mimiObject" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/demo02-add" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../../src/boot/demo02-add/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiData/dataArg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiData/dataArgs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiData/dataLink.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiData/dataLinkNode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiData/dataLog.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiData/dataMemory.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiData/dataString.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiData/dataStrs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiObject/MimiClass.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiObject/MimiObj.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiObject/baseObj.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiObject/method.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../src/package/mimilib/mimiObject/sysObj.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
