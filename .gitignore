@@ -1,1 +1,6 @@
 *CMakeLists.txt
+*.depend
+*.layout
+*bin/
+*obj/
+
