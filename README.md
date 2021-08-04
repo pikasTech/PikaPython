@@ -10,6 +10,17 @@ mimiscript可以为mcu裸机c开发提供面向对象的脚本绑定。
 ## 架构示意图
 ![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
 
+## windows下运行demo：
+
+step1: 下载源码
+``` 
+https://github.com/mimilib/mimiscript/releases/download/v1.0/mimiscript-v1.0.zip
+```
+step2: 下载安装codeblocks
+```
+https://download.fosshub.com/Protected/expiretime=1628119786;badurl=aHR0cHM6Ly93d3cuZm9zc2h1Yi5jb20vQ29kZS1CbG9ja3MuaHRtbA==/9bc1258414546cedb7b0774846ec773613a89ed715964c9a3239fab0465f014d/5b85805cf9ee5a5c3e979f1b/5e80624f7d74bb810359a46c/codeblocks-20.03-setup.exe
+```
+
 ## linux下运行demo(推荐ubuntu20.04)：
 
 step1: 拉取项目
@@ -34,16 +45,6 @@ sh make.sh # 编译项目
 step4: 运行demo
 ``` shell	
 bin/demo01-led.bin
-```
-## windows下运行demo：
-
-step1: 下载源码
-``` 
-https://github.com/mimilib/mimiscript/releases/download/v1.0/mimiscript-v1.0.zip
-```
-step2: 下载安装codeblocks
-```
-https://download.fosshub.com/Protected/expiretime=1628119786;badurl=aHR0cHM6Ly93d3cuZm9zc2h1Yi5jb20vQ29kZS1CbG9ja3MuaHRtbA==/9bc1258414546cedb7b0774846ec773613a89ed715964c9a3239fab0465f014d/5b85805cf9ee5a5c3e979f1b/5e80624f7d74bb810359a46c/codeblocks-20.03-setup.exe
 ```
 
 step3: 打开winproject文件夹下的demoXX/demoXX.cbs编译运行
