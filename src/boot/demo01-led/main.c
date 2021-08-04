@@ -1,4 +1,4 @@
-#include "sysObj.h"
+#include "baseObj.h"
 #include <stdio.h>
 
 void onFun(MimiObj *self, Args *args)
@@ -15,8 +15,12 @@ void offFun(MimiObj *self, Args *args)
 
 MimiObj *New_LED(Args *args)
 {
-	/* derive from the base mimiObj class */
-	MimiObj *self = New_MimiObj_sys(args);
+	/* 
+		derive from the tiny object class.
+		tiny object can not import sub object.	
+		tiny object is the smallest object.
+	*/
+	MimiObj *self = New_TinyObj(args);
 
 	/* bind the method */
 	class_defineMethod(self, "on()", onFun);
@@ -28,8 +32,12 @@ MimiObj *New_LED(Args *args)
 
 MimiObj *New_MYROOT(Args *args)
 {
-	/* derive from the base mimiObj class */
-	MimiObj *self = New_MimiObj_sys(args);
+	/* 
+		derive from the base object class 
+		baseObj is the smallest object that can 
+		import sub object.		
+	*/
+	MimiObj *self = New_baseObj(args);
 
 	/* import LED class */
 	obj_import(self, "LED", New_LED);
@@ -41,6 +49,7 @@ MimiObj *New_MYROOT(Args *args)
 	return self;
 }
 
+extern DMEM_STATE DMEMS;
 int main()
 {
 	/* new root object */
@@ -49,6 +58,8 @@ int main()
 	char inputBuff[256] = {0};
 	/* run the script with check*/
 	obj_run(root, "led.on()");
+	printf("memory used max = %0.2f kB\r\n", DMEMS.maxNum*DMEM_BLOCK_SIZE/1024.0);
+	printf("memory used now = %0.2f kB\r\n", DMEMS.blk_num*DMEM_BLOCK_SIZE/1024.0);
 	while (1)
 	{
 		/* get user input */
