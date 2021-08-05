@@ -16,8 +16,14 @@ mimiscript可以为mcu裸机c开发提供面向对象的脚本绑定。
 # STM32 例程仓库:
 https://github.com/mimilib/mimiscript-demo-stm32
 
-## 架构示意图
+# 原理解析：
+
+## 1.架构示意图
 ![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
+
+## 2.解析文章
+单片机运行python脚本，不移植micropython也行吗？
+https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd
 
 ## windows下测试mimiscript内核：
 
