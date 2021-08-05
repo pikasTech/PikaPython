@@ -21,6 +21,11 @@ https://github.com/mimilib/mimiscript-demo-stm32
 ## 架构示意图
 ![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
 
+## 内核源码
+
+对象支持: https://github.com/mimilib/mimilib/tree/master/mimiObject
+数据结构: https://github.com/mimilib/mimilib/tree/master/mimiData
+
 ## 解析文章
 单片机运行python脚本，不移植micropython也行吗？
 
