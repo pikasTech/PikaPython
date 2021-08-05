@@ -23,6 +23,7 @@ https://github.com/mimilib/mimiscript-demo-stm32
 
 ## 2.解析文章
 单片机运行python脚本，不移植micropython也行吗？
+
 https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd
 
 ## windows下测试mimiscript内核：
