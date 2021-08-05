@@ -13,6 +13,9 @@ mimiscript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
 尽可能的结构清晰（尽我所能）。
 
+# STM32F103C8T6 例程仓库:
+https://github.com/mimilib/mimiscript-demo-stm32
+
 ## 架构示意图
 ![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
 
