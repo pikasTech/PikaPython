@@ -18,18 +18,18 @@ https://github.com/mimilib/mimiscript-demo-stm32
 
 # 3.原理解析：
 
-## (1).架构示意图
+## 架构示意图
 ![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
 
-## (2).解析文章
+## 解析文章
 单片机运行python脚本，不移植micropython也行吗？
 
 https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd
 
-## (3).微信交流群
+## 微信交流群
 ![image](https://user-images.githubusercontent.com/88232613/128301298-1bfbbecf-8199-416b-819b-0cdbb41d5b3a.png)
 
-## (4). 官方公众号
+## 官方公众号
 ![image](https://user-images.githubusercontent.com/88232613/128301451-f0cdecea-6457-4925-b084-42e7796a856e.png)
 
 # 4.内核测试与开发
