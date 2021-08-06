@@ -175,3 +175,5 @@ void main()
     printf("%d\r\n", res);    
 }
 ```
+# 5. mimiscript-compiler
+将pyton编译为mimiscript的C源码
