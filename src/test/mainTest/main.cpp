@@ -2,11 +2,12 @@
 extern "C"
 {
 	#include "dataMemory.h"
+	#include <stdlib.h>
 }
 
 extern DMEM_STATE DMEMS;
-extern int error_num;
-extern int memory_warnning_num;
+extern int32_t error_num;
+extern int32_t memory_warnning_num;
 
 int main()
 {
