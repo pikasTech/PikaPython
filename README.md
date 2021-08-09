@@ -1,3 +1,6 @@
+# 获取mimiscript
+https://github.com/mimilib/mimiscript/releases/download/v0.1.0/mimiscript-v0.1.0.zip
+
 # 1.简介
 mimiscript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
