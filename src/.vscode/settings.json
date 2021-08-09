@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "baseobj.h": "c"
+        "baseobj.h": "c",
+        "stdint.h": "c",
+        "datamemory.h": "c",
+        "datastring.h": "c"
     }
 }
