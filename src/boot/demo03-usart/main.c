@@ -42,7 +42,7 @@ MimiObj *New_MYROOT(Args *args)
 }
 
 extern DMEM_STATE DMEMS;
-int main()
+int32_t main()
 {
 	/* new root object */
 	MimiObj *root = newRootObj("root", New_MYROOT);
@@ -66,7 +66,7 @@ int main()
 
 		if (NULL != sysOut)
 		{
-			/* print out the system output */
+			/* print32_t out the system output */
 			printf("%s\r\n", sysOut);
 		}
 
