@@ -3,6 +3,8 @@
         "baseobj.h": "c",
         "stdint.h": "c",
         "datamemory.h": "c",
-        "datastring.h": "c"
+        "datastring.h": "c",
+        "atomic": "c",
+        "cstdint": "c"
     }
 }
