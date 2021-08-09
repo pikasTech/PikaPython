@@ -1,3 +1,5 @@
+![image](https://user-images.githubusercontent.com/88232613/128657021-a159afe7-77d6-4578-82ad-412acf5245d4.png)
+
 # 获取mimiscript
 https://github.com/mimilib/mimiscript/releases/download/v0.1.0/mimiscript-v0.1.0.zip
 
