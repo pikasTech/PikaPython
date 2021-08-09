@@ -1,6 +1,6 @@
 /* this demo shows the usage of method */
 
-#include "baseObj.h"
+#include "BaseObj.h"
 #include <stdio.h>
 
 void onMethod(MimiObj *self, Args *args)
@@ -35,7 +35,7 @@ MimiObj *New_MYROOT(Args *args)
 	/*	Derive from the base object class .
 		BaseObj is the smallest object that can 
 		import sub object.		*/
-	MimiObj *self = New_baseObj(args);
+	MimiObj *self = New_BaseObj(args);
 
 	/* import LED class */
 	obj_import(self, "LED", New_LED);
