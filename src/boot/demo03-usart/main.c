@@ -18,7 +18,7 @@ MimiObj *New_USART(Args *args)
 	MimiObj *self = New_TinyObj(args);
 
 	/* bind the method */
-	class_defineMethod(self, "send(data:string)", sendMethod);
+	class_defineMethod(self, "send(data:str)", sendMethod);
 
 	/* return the object */
 	return self;
