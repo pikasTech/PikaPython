@@ -33,7 +33,7 @@ MimiObj *New_USART(Args *args)
 	obj_setInt(self, "speed", 9600);
 
 	/* bind the method */
-	class_defineMethod(self, "send(data:string)", sendMethod);
+	class_defineMethod(self, "send(data:str)", sendMethod);
 	class_defineMethod(self, "setSpeed(speed:int)", setSpeedMethod);
 	class_defineMethod(self, "printSpeed()", printSpeedMethod);
 
@@ -54,7 +54,7 @@ MimiObj *New_USART2(Args *args)
 	MimiObj *self = New_USART(args);
 
 	/* override the method */
-	class_defineMethod(self, "send(data:string)", sendFun2);
+	class_defineMethod(self, "send(data:str)", sendFun2);
 
 	/* return the object */
 	return self;
