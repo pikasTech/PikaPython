@@ -12,13 +12,13 @@ void sendMethod(MimiObj *self, Args *args)
 
 void setSpeedMethod(MimiObj *self , Args *args)
 {
-	int speed = args_getInt(args, "speed");
+	int32_t speed = args_getInt(args, "speed");
 	obj_setInt(self, "speed", speed);
 }
 
 void printSpeedMethod(MimiObj *self , Args *args)
 {
-	int speed = obj_getInt(self, "speed");
+	int32_t speed = obj_getInt(self, "speed");
 	printf("%d\r\n", speed);
 }
 
@@ -80,7 +80,7 @@ MimiObj *New_MYROOT(Args *args)
 }
 
 extern DMEM_STATE DMEMS;
-int main()
+int32_t main()
 {
 	/* new root object */
 	MimiObj *root = newRootObj("root", New_MYROOT);
@@ -122,7 +122,7 @@ int main()
 
 		if (NULL != sysOut)
 		{
-			/* print out the system output */
+			/* print32_t out the system output */
 			printf("%s\r\n", sysOut);
 		}
 

@@ -5,9 +5,9 @@
 
 void addMethod(MimiObj *self, Args* args)
 {
-	int val1 = args_getInt(args, "val1");
-	int val2 = args_getInt(args, "val2");
-	int res = val1 + val2;
+	int32_t val1 = args_getInt(args, "val1");
+	int32_t val2 = args_getInt(args, "val2");
+	int32_t res = val1 + val2;
 	method_returnInt(args, res);
 }
 
@@ -43,7 +43,7 @@ MimiObj *New_MYROOT(Args *args)
 }
 
 extern DMEM_STATE DMEMS;
-int main()
+int32_t main()
 {
 	/* new root object */
 	MimiObj *root = newRootObj("root", New_MYROOT);
@@ -51,7 +51,7 @@ int main()
 	char inputBuff[256] = {0};
 	/* run the script with check*/	
 	obj_run(root, "res = test.add(1, 2)");
-	int res = obj_getInt(root, "res");
+	int32_t res = obj_getInt(root, "res");
 	printf("the res of 'test.add(1, 2)' is %d \r\n", res);
 	printf("memory used max = %0.2f kB\r\n", DMEMS.maxNum*DMEM_BLOCK_SIZE/1024.0);
 	printf("memory used now = %0.2f kB\r\n", DMEMS.blk_num*DMEM_BLOCK_SIZE/1024.0);
@@ -68,7 +68,7 @@ int main()
 
 		if (NULL != sysOut)
 		{
-			/* print out the system output */
+			/* print32_t out the system output */
 			printf("%s\r\n", sysOut);
 		}
 
