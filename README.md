@@ -12,7 +12,7 @@ mimiscript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
 https://github.com/mimilib/mimiscript-compiler
 
-支持跨平台，可在linux环境测试开发内核。
+支持跨平台，可在linux环境开发、测试内核。
 
 开箱即用，零配置，仅使用C标准库，几乎不使用宏，几乎不使用全局变量。
 
