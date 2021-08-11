@@ -25,6 +25,8 @@ https://github.com/mimilib/mimiscript-compiler
 # 2.STM32 例程仓库:
 https://github.com/mimilib/mimiscript-demo-stm32
 
+stm32教程视频：https://www.bilibili.com/video/BV1mg411L72e
+
 # 3.原理解析：
 
 ## 架构示意图
