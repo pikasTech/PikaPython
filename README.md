@@ -2,7 +2,7 @@
 # 获取PikaScript
 https://github.com/mimilib/pikascript/releases/download/v0.1.1/mimiscript_v0.1.1.zip
 # 1.简介
-mimiscript可以为mcu裸机c开发提供面向对象的脚本绑定。
+pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
 支持裸机运行，可运行于内存20Kb以上的mcu中，如stm32f103c8t6，esp32。
 
