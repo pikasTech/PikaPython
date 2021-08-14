@@ -8,7 +8,7 @@ pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
 官方支持api源码生成器
 
-https://github.com/mimilib/mimiscript-compiler
+https://github.com/mimilib/pikascript-compiler
 
 支持跨平台，可在linux环境开发、测试内核。
 
@@ -21,7 +21,7 @@ https://github.com/mimilib/mimiscript-compiler
 尽可能的结构清晰（尽我所能）。
 
 # 2.STM32 例程仓库:
-https://github.com/mimilib/mimiscript-demo-stm32
+https://github.com/mimilib/pikascript-demo-stm32
 
 stm32教程视频：https://www.bilibili.com/video/BV1mg411L72e
 
