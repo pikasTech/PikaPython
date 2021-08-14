@@ -1,7 +1,6 @@
-![image](https://user-images.githubusercontent.com/88232613/128657021-a159afe7-77d6-4578-82ad-412acf5245d4.png)
 
-# 获取mimiscript
-https://github.com/mimilib/mimiscript/releases/download/v0.1.1/mimiscript_v0.1.1.zip
+# 获取PikaScript
+https://github.com/mimilib/pikascript/releases/download/v0.1.1/mimiscript_v0.1.1.zip
 # 1.简介
 mimiscript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
