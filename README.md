@@ -8,7 +8,7 @@ pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
 官方支持api源码生成器
 
-https://github.com/mimilib/pikascript-compiler
+https://github.com/mimilib/pikascript-compiler-rust
 
 支持跨平台，可在linux环境开发、测试内核。
 
