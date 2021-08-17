@@ -1,6 +1,6 @@
 
 # 获取PikaScript
-https://github.com/mimilib/pikascript/releases/download/v0.1.1/mimiscript_v0.1.1.zip
+https://github.com/mimilib/pikascript/releases/download/v0.2.0/pikascript_v0.2.0.zip
 # 1.简介
 pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
