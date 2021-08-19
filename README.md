@@ -1,6 +1,9 @@
 
 # 获取PikaScript
 https://github.com/mimilib/pikascript/releases/download/v0.2.0/pikascript_v0.2.0.zip
+# stm32例程
+https://github.com/mimilib/pikascript-demo-stm32
+
 # 1.简介
 pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
@@ -20,10 +23,9 @@ https://github.com/mimilib/pikascript-compiler-rust
 
 尽可能的结构清晰（尽我所能）。
 
-# 2.STM32 例程仓库:
-https://github.com/mimilib/pikascript-demo-stm32
+# 2.stm32教程视频
 
-stm32教程视频：https://www.bilibili.com/video/BV1mg411L72e
+https://www.bilibili.com/video/BV1mg411L72e
 
 # 3.原理解析：
 
