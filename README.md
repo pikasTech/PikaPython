@@ -75,7 +75,7 @@ step3: 打开winproject文件夹下的demoXX/demoXX.cbs编译运行
 
 step1: 拉取项目
 ``` shell
-git clone https://github.com/mimilib/mimiscript
+git clone https://github.com/mimilib/pikascript
 cd mimiscript
 git submodule init && git submodule update
 ```
