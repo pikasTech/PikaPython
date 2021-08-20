@@ -1,5 +1,5 @@
 
-# 获取PikaScript
+# 获取PikaScript内核与预编译器
 https://github.com/mimilib/pikascript/releases/download/v0.2.0/pikascript_v0.2.0.zip
 
 # 使用说明文档：
