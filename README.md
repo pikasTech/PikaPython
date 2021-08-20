@@ -71,7 +71,7 @@ https://download.fosshub.com/Protected/expiretime=1628119786;badurl=aHR0cHM6Ly93
 step3: 打开winproject文件夹下的demoXX/demoXX.cbs编译运行
 
 
-## linux下测试mimiscript内核(推荐ubuntu20.04)：
+## linux下测试pikascript内核(推荐ubuntu20.04)：
 
 step1: 拉取项目
 ``` shell
