@@ -2,7 +2,7 @@
 # 获取PikaScript
 https://github.com/mimilib/pikascript/releases/download/v0.2.0/pikascript_v0.2.0.zip
 
-# 使用文档：
+# 使用说明文档：
 https://github.com/mimilib/pikascript/blob/master/pikascript%20v0.2.0%E8%BD%AF%E4%BB%B6%E8%AF%B4%E6%98%8E%E4%B9%A6.pdf
 
 # stm32例程
