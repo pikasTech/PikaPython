@@ -1,61 +1,127 @@
-/* this demo shows the usage of method */
-
+/* banchmark for memory */
 #include "BaseObj.h"
+#include "SysObj.h"
 #include <stdio.h>
-
-void onMethod(MimiObj *self, Args *args)
-{
-	/* turn on the led */
-	printf("the led is on! \r\n");
-}
-
-void offMethod(MimiObj *self, Args *args)
-{
-	/* turn off the led */
-	printf("the led is off! \r\n");
-}
-
-MimiObj *New_LED(Args *args)
-{
-	/*	Derive from the tiny object class.
-		Tiny object can not import sub object.	
-		Tiny object is the smallest object. */
-	MimiObj *self = New_TinyObj(args);
-
-	/* bind the method */
-	class_defineMethod(self, "on()", onMethod);
-	class_defineMethod(self, "off()", offMethod);
-
-	/* return the object */
-	return self;
-}
-
-MimiObj *New_MYROOT(Args *args)
-{
-	/*	Derive from the base object class .
-		BaseObj is the smallest object that can 
-		import sub object.		*/
-	MimiObj *self = New_BaseObj(args);
-
-	/* import LED class */
-	obj_import(self, "LED", New_LED);
-
-	/* new led object bellow root object */
-	obj_newObj(self, "led", "LED");
-
-	/* return the object */
-	return self;
-}
-
 extern DMEM_STATE DMEMS;
+static uint8_t DMEMORY[DMEM_TOTAL_SIZE];
+void checker_printMemUsage(char *testName)
+{
+	printf("---------------------------\r\n");
+	printf("Testing :%s\r\n", testName);
+	printf("	max = %d byte\r\n", DMEMS.maxNum * DMEM_BLOCK_SIZE);
+	printf("	now = %d byte\r\n", DMEMS.blk_num * DMEM_BLOCK_SIZE);
+	printf("---------------------------\r\n");
+}
+void checker_memInfo(void)
+{
+	printf("---------------------------\r\n");
+	printf("	mem block size = %d byte\r\n", DMEM_BLOCK_SIZE);
+	printf("	mem pool size = %0.2f kB\r\n", sizeof(DMEMORY) / 1024.0);
+	printf("	mem state size = %0.2f kB\r\n", sizeof(DMEM_STATE) / 1024.0);
+	printf("	mem state size = %0.2f kB\r\n", (sizeof(DMEMORY) + sizeof(DMEM_STATE)) / 1024.0);
+	printf("---------------------------\r\n");
+}
+void checker_assertMemFree()
+{
+	if (0 == DMEMS.blk_num)
+	{
+		DMEMS.maxNum = 0;
+		return;
+	}
+	printf("[Error]: Memory free error.\r\n");
+	while (1)
+		;
+}
+
+void checker_objMemChecker(void *NewFun, char *objName)
+{
+	{
+		/* new root object */
+		MimiObj *obj = newRootObj("obj", NewFun);
+		char testName[256] = {0};
+		sprintf(testName, "Root %s object", objName);
+		checker_printMemUsage(testName);
+		obj_deinit(obj);
+		checker_assertMemFree();
+	}
+
+	{
+		MimiObj *obj = New_TinyObj(NULL);
+		char testName[256] = {0};
+		sprintf(testName, "%s object", objName);
+		checker_printMemUsage(testName);
+		obj_deinit(obj);
+		checker_assertMemFree();
+	}
+}
+
 int32_t main()
 {
-	/* new root object */
-	MimiObj *root = newRootObj("root", New_MYROOT);
-	/* user input buff */
-	char inputBuff[256] = {0};
-	/* run the script with check*/
-	obj_run(root, "led.on()");
-	printf("memory used max = %0.2f kB\r\n", DMEMS.maxNum*DMEM_BLOCK_SIZE/1024.0);
-	printf("memory used now = %0.2f kB\r\n", DMEMS.blk_num*DMEM_BLOCK_SIZE/1024.0);
+	checker_objMemChecker(New_TinyObj, "tiny");
+	checker_objMemChecker(New_BaseObj, "base");
+	checker_objMemChecker(New_SysObj, "sys");
+	{
+		Arg *arg = New_arg(NULL);
+		checker_printMemUsage("void arg");
+		arg_deinit(arg);
+		checker_assertMemFree();
+	}
+	{
+		Arg *arg = New_arg(NULL);
+		arg_setInt(arg, 0);
+		checker_printMemUsage("int arg");
+		arg_deinit(arg);
+		checker_assertMemFree();
+	}
+	{
+		Arg *arg = New_arg(NULL);
+		arg_setFloat(arg, 0);
+		checker_printMemUsage("float arg");
+		arg_deinit(arg);
+		checker_assertMemFree();
+	}
+	{
+		Arg *arg = New_arg(NULL);
+		arg_setStr(arg, "test string");
+		checker_printMemUsage("str arg");
+		arg_deinit(arg);
+		checker_assertMemFree();
+	}
+	{
+		Args *args = New_args(NULL);
+		checker_printMemUsage("void args");
+		args_deinit(args);
+		checker_assertMemFree();
+	}
+	{
+		Args *args = New_args(NULL);
+		args_setInt(args, "testInt", 0);
+		checker_printMemUsage("one int args");
+		args_deinit(args);
+		checker_assertMemFree();
+	}
+	{
+		Args *args = New_args(NULL);
+		args_setInt(args, "testInt1", 0);
+		args_setInt(args, "testInt2", 0);
+		checker_printMemUsage("two int args");
+		args_deinit(args);
+		checker_assertMemFree();
+	}
+	{
+		Args *args = New_args(NULL);
+		args_setFloat(args, "testFloat", 0);
+		checker_printMemUsage("one float args");
+		args_deinit(args);
+		checker_assertMemFree();
+	}
+	{
+		Args *args = New_args(NULL);
+		args_setFloat(args, "testFloat", 0);
+		args_setFloat(args, "testFLoat", 0);
+		checker_printMemUsage("two float args");
+		args_deinit(args);
+		checker_assertMemFree();
+	}
+	checker_memInfo();
 }
