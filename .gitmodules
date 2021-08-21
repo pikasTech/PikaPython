@@ -1,6 +1,3 @@
 [submodule "mimiproject"]
 	path = mimiproject
 	url = https://github.com/mimilib/mimiproject
-[submodule "src/package/mimilib"]
-	path = src/package/mimilib
-	url = https://github.com/mimilib/mimilib
