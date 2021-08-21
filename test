@@ -1,0 +1,2 @@
+sh make.sh
+build/src/boot/banchmark/pikascript_banchmark
