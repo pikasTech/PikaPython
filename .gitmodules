@@ -1,6 +1,3 @@
-[submodule "mimiproject"]
-	path = mimiproject
-	url = https://github.com/mimilib/mimiproject
 [submodule "src/package/pikascript-core"]
 	path = src/package/pikascript-core
 	url = https://github.com/mimilib/pikascript-core
