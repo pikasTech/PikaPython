@@ -1,6 +1,6 @@
-sh clean.sh
 git submodule init
 git submodule update
+rm build -rf
 mkdir build
 cd build
 cmake ..
