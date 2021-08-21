@@ -14,6 +14,7 @@ TEST(args_test, test1)
     int a = args_getInt(args, (char *)"a");
     EXPECT_EQ(a, 1);
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 TEST(args_test, test2)
 {
@@ -40,6 +41,7 @@ TEST(args_test, test2)
     EXPECT_EQ(0, strcmp("pointer", args_getType(args, (char *)"pointerTest")));
     EXPECT_EQ(0, strcmp("str", args_getType(args, (char *)"strTest")));
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 TEST(args_test, test3)
 {
@@ -54,6 +56,7 @@ TEST(args_test, test3)
     EXPECT_EQ(2.8830f, args_getFloat(args1, (char *)"argtest1"));
     args_deinit(args1);
     args_deinit(args2);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 TEST(args_test, test4)
 {
@@ -62,6 +65,7 @@ TEST(args_test, test4)
     args_setInt(args, (char *)"testint", testint);
     EXPECT_EQ(12333, args_getInt(args, (char *)"testint"));
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 TEST(args_test, test5)
 {
@@ -72,6 +76,7 @@ TEST(args_test, test5)
     args_print(args, (char *)"testInt");
     EXPECT_EQ(1, strEqu((char *)"124", args_print(args, (char *)"testInt")));
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 TEST(args_test, test6)
 {
@@ -79,6 +84,7 @@ TEST(args_test, test6)
     args_setFloat(args, (char *)"testfloat", 1.42);
     EXPECT_TRUE(strEqu((char *)"1.420000", args_print(args, (char *)"testfloat")));
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 TEST(args_test, test7)
 {
@@ -87,14 +93,18 @@ TEST(args_test, test7)
     args_bind(args, (char *)"float", (char *)"floatBind", &floatBindTest);
     EXPECT_TRUE(strEqu((char *)"2.314000", args_print(args, (char *)"floatBind")));
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
+
 TEST(args_test, test8)
 {
     Args *args = New_args(NULL);
     args_setStr(args, (char *)"testString", (char *)"test string print");
     EXPECT_TRUE(strEqu((char *)"test string print", args_print(args, (char *)"testString")));
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
+
 TEST(args_test, test9)
 {
     Args *args = New_args(NULL);
@@ -102,7 +112,9 @@ TEST(args_test, test9)
     args_bindStr(args, (char *)"testStringBind", (char **)&strBindTest);
     EXPECT_TRUE(strEqu((char *)"test string bind", args_print(args, (char *)"testStringBind")));
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
+
 TEST(args_test, test10)
 {
     Args *args = New_args(NULL);
@@ -113,7 +125,9 @@ TEST(args_test, test10)
     char *printOutAfter = args_print(args, (char *)"testInt");
     EXPECT_TRUE(strEqu(printOutAfter, (char *)"4"));
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
+
 TEST(args_test, test11)
 {
     Args *args = New_args(NULL);
@@ -125,7 +139,9 @@ TEST(args_test, test11)
     char *printOutAfter = args_print(args, (char *)"testStr");
     EXPECT_TRUE(strEqu(printOutAfter, (char *)"ttww"));
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
+
 TEST(args_test, test12)
 {
     Args *args = New_args(NULL);
@@ -137,10 +153,12 @@ TEST(args_test, test12)
     EXPECT_EQ(1, args_getSize(args));
     EXPECT_EQ(-999999999, (int)args_getInt(args, (char *)"test"));
     args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 extern DMEM_STATE DMEMS;
 TEST(args_test, mem)
 {
     EXPECT_EQ(DMEMS.blk_num, mem);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
