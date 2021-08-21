@@ -4,21 +4,36 @@
 #include <stdio.h>
 extern DMEM_STATE DMEMS;
 static uint8_t DMEMORY[DMEM_TOTAL_SIZE];
+
+void checker_printMem(char *info, uint32_t size)
+{
+	printf("%s", info);
+	if (size <= 1024)
+	{
+		printf("%d byte\r\n", size);
+		return;
+	}
+	printf("%0.2f Kb\r\n", size / 1024.0);
+	return;
+}
+
 void checker_printMemUsage(char *testName)
 {
 	printf("---------------------------\r\n");
 	printf("Testing :%s\r\n", testName);
-	printf("	max = %d byte\r\n", DMEMS.maxNum * DMEM_BLOCK_SIZE);
-	printf("	now = %d byte\r\n", DMEMS.blk_num * DMEM_BLOCK_SIZE);
+	checker_printMem("    max = ", DMEMS.maxNum * DMEM_BLOCK_SIZE);
+	checker_printMem("    now = ", DMEMS.blk_num * DMEM_BLOCK_SIZE);
 	printf("---------------------------\r\n");
 }
 void checker_memInfo(void)
 {
 	printf("---------------------------\r\n");
-	printf("	mem block size = %d byte\r\n", DMEM_BLOCK_SIZE);
-	printf("	mem pool size = %0.2f kB\r\n", sizeof(DMEMORY) / 1024.0);
-	printf("	mem state size = %0.2f kB\r\n", sizeof(DMEM_STATE) / 1024.0);
-	printf("	mem state size = %0.2f kB\r\n", (sizeof(DMEMORY) + sizeof(DMEM_STATE)) / 1024.0);
+	printf("Memory pool info:\r\n");
+	checker_printMem("	mem block size = ", DMEM_BLOCK_SIZE);
+	checker_printMem("	mem block num = ", DMEM_BLOCK_NUM);
+	checker_printMem("	mem pool size = ", sizeof(DMEMORY));
+	checker_printMem("	mem state size = ", sizeof(DMEM_STATE));
+	checker_printMem("	mem state size = ", (sizeof(DMEMORY) + sizeof(DMEM_STATE)));
 	printf("---------------------------\r\n");
 }
 void checker_assertMemFree()
