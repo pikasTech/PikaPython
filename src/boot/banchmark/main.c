@@ -23,6 +23,8 @@ void checker_printMemUsage(char *testName)
 	printf("Testing :%s\r\n", testName);
 	checker_printMem("    max = ", DMEMS.maxNum * DMEM_BLOCK_SIZE);
 	checker_printMem("    now = ", DMEMS.blk_num * DMEM_BLOCK_SIZE);
+	checker_printMem("    heap = ", DMEMS.heapUsed);
+	checker_printMem("    heap max = ", DMEMS.heapUsedMax);	
 	printf("---------------------------\r\n");
 }
 void checker_memInfo(void)
@@ -38,9 +40,10 @@ void checker_memInfo(void)
 }
 void checker_assertMemFree()
 {
-	if (0 == DMEMS.blk_num)
+	if (0 == DMEMS.blk_num && 0 == DMEMS.heapUsed)
 	{
 		DMEMS.maxNum = 0;
+		DMEMS.heapUsedMax = 0;
 		return;
 	}
 	printf("[Error]: Memory free error.\r\n");
