@@ -7,7 +7,6 @@ void obj_runWithInfo(MimiObj *self, char *cmd)
 {
 		printf(">>> %s\r\n", cmd);
 		obj_run(self, cmd);
-		printf("\r\n");
 }
 
 extern DMEM_STATE DMEMS;
