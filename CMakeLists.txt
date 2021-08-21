@@ -6,4 +6,8 @@ include_directories(src/boot/demo01-led)
 
 add_subdirectory(src/package/pikascript-core)
 add_subdirectory(src/boot/demo01-led)
+add_subdirectory(src/boot/demo02-add)
+add_subdirectory(src/boot/demo03-usart)
+add_subdirectory(src/boot/demo04-usarts)
+add_subdirectory(src/boot/demo05-sysobject)
 
