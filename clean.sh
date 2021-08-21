@@ -1,3 +1,0 @@
-clear
-rm build -rf
-
