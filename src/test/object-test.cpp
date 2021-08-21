@@ -182,15 +182,15 @@ TEST(object_test, test8)
     EXPECT_EQ(DMEMS.heapUsed, 0);    
 }
 
-TEST(object_test, test9)
-{
-    MimiObj *sys = newRootObj((char *)"sys", New_SysObj);
-    obj_run(sys, (char *)"ls()");
-    obj_setPtr(sys, (char *)"baseClass", (void *)New_TinyObj);
-    obj_run(sys, (char *)"ls()");
-    obj_deinit(sys);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
-}
+// TEST(object_test, test9)
+// {
+//     MimiObj *sys = newRootObj((char *)"sys", New_SysObj);
+//     obj_run(sys, (char *)"ls()");
+//     obj_setPtr(sys, (char *)"baseClass", (void *)New_TinyObj);
+//     obj_run(sys, (char *)"ls()");
+//     obj_deinit(sys);
+//     EXPECT_EQ(DMEMS.heapUsed, 0);    
+// }
 
 TEST(object_test, test10)
 {
