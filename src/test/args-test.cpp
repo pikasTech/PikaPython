@@ -67,6 +67,19 @@ TEST(args_test, test4)
     args_deinit(args);
     EXPECT_EQ(DMEMS.heapUsed, 0);
 }
+
+TEST(args_test, print_int)
+{
+    Args *args = New_args(NULL);
+    args_setInt(args, (char *)"testInt", 124);
+    args_print(args, (char *)"testInt");
+    char *str = args_print(args, (char *)"testInt");
+    printf("str: %s\r\n", str);
+    EXPECT_EQ(1, strEqu((char *)"124", args_print(args, (char *)"testInt")));
+    args_deinit(args);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
+}
+
 TEST(args_test, test5)
 {
     int32_t testInt = 124;
@@ -78,6 +91,7 @@ TEST(args_test, test5)
     args_deinit(args);
     EXPECT_EQ(DMEMS.heapUsed, 0);
 }
+
 TEST(args_test, test6)
 {
     Args *args = New_args(NULL);
