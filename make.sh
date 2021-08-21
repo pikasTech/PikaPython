@@ -1,2 +1,2 @@
 cd build
-make -j8
+make -j16
