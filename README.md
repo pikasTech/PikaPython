@@ -40,7 +40,7 @@ https://www.bilibili.com/video/BV1mg411L72e
 
 ## 内核源码
 
-对象支持: https://github.com/mimilib/mimilib/tree/master/mimiObject
+对象支持: https://github.com/mimilib/mimilib/tree/master/PikaObject
 
 数据结构: https://github.com/mimilib/mimilib/tree/master/mimiData
 
@@ -107,7 +107,7 @@ bin/demo01-led.bin
     args 是参数列表，用于传入传出参数
     （所有被绑定的方法均使用此形参）
 */
-void add(MimiObj *self, Args *args) 
+void add(PikaObj *self, Args *args) 
 {
     /* 
         参数传递 
@@ -127,16 +127,16 @@ void add(MimiObj *self, Args *args)
     定义测试类的构造器，一个构造器对应一个类
     通过构造器即可新建对象
     args是构造器的初始化参数列表
-    MimiObj*是新建对象的指针
+    PikaObj*是新建对象的指针
     （所有构造器均使用此形参）
 */
-MimiObj *New_MimiObj_test(Args *args)
+PikaObj *New_PikaObj_test(Args *args)
 {
     /* 
         继承sys类
         只需要直接调用父类的构造器即可
     */
-    MimiObj *self = New_MimiObj_sys(args);
+    PikaObj *self = New_PikaObj_sys(args);
     
     /* 
         为test类绑定一个方法（支持重载）
@@ -158,13 +158,13 @@ void main()
         新建根对象，对象名为“sys”
         传入对象名和构造器的函数指针
     */
-    MimiObj *sys = newRootObj("sys", New_MimiObj_sys);
+    PikaObj *sys = newRootObj("sys", New_PikaObj_sys);
 
     /* 
         新建test对象
         test对象作为子对象挂载在sys对象下（对象树）
     */
-    obj_newObj(sys, "test", New_MimiObj_test);
+    obj_newObj(sys, "test", New_PikaObj_test);
     
     /*  
         运行单行脚本。

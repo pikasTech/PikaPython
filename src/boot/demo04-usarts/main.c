@@ -3,31 +3,31 @@
 #include "BaseObj.h"
 #include <stdio.h>
 
-void sendMethod(MimiObj *self, Args *args)
+void sendMethod(PikaObj *self, Args *args)
 {
 	char *data = args_getStr(args, "data");
 	/* send to com1 */
 	printf("[com1]: %s\r\n", data);
 }
 
-void setSpeedMethod(MimiObj *self, Args *args)
+void setSpeedMethod(PikaObj *self, Args *args)
 {
 	int32_t speed = args_getInt(args, "speed");
 	obj_setInt(self, "speed", speed);
 }
 
-void printSpeedMethod(MimiObj *self, Args *args)
+void printSpeedMethod(PikaObj *self, Args *args)
 {
 	int32_t speed = obj_getInt(self, "speed");
 	printf("%d\r\n", speed);
 }
 
-MimiObj *New_USART(Args *args)
+PikaObj *New_USART(Args *args)
 {
 	/*	Derive from the tiny object class.
 		Tiny object can not import sub object.	
 		Tiny object is the smallest object. */
-	MimiObj *self = New_TinyObj(args);
+	PikaObj *self = New_TinyObj(args);
 
 	/* setArgs */
 	obj_setInt(self, "speed", 9600);
@@ -41,17 +41,17 @@ MimiObj *New_USART(Args *args)
 	return self;
 }
 
-void sendFun2(MimiObj *self, Args *args)
+void sendFun2(PikaObj *self, Args *args)
 {
 	char *data = args_getStr(args, "data");
 	/* send to com1 */
 	printf("[com2]: %s\r\n", data);
 }
 
-MimiObj *New_USART2(Args *args)
+PikaObj *New_USART2(Args *args)
 {
 	/*	Derive from the usart class.*/
-	MimiObj *self = New_USART(args);
+	PikaObj *self = New_USART(args);
 
 	/* override the method */
 	class_defineMethod(self, "send(data:str)", sendFun2);
@@ -60,12 +60,12 @@ MimiObj *New_USART2(Args *args)
 	return self;
 }
 
-MimiObj *New_MYROOT(Args *args)
+PikaObj *New_MYROOT(Args *args)
 {
 	/*	Derive from the base object class .
 		BaseObj is the smallest object that can 
 		import sub object.		*/
-	MimiObj *self = New_BaseObj(args);
+	PikaObj *self = New_BaseObj(args);
 
 	/* import LED class */
 	obj_import(self, "USART", New_USART);
@@ -83,7 +83,7 @@ extern DMEM_STATE DMEMS;
 int32_t main()
 {
 	/* new root object */
-	MimiObj *root = newRootObj("root", New_MYROOT);
+	PikaObj *root = newRootObj("root", New_MYROOT);
 	/* user input buff */
 	char inputBuff[256] = {0};
 

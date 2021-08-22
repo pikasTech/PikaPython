@@ -3,7 +3,7 @@
 #include "SysObj.h"
 #include <stdio.h>
 
-void obj_runWithInfo(MimiObj *self, char *cmd)
+void obj_runWithInfo(PikaObj *self, char *cmd)
 {
 	printf(">>> %s\r\n", cmd);
 	obj_run(self, cmd);
@@ -14,7 +14,7 @@ extern DMEM_STATE DMEMS;
 int main()
 {
 	/* new root object */
-	MimiObj *root = newRootObj("root", New_SysObj);
+	PikaObj *root = newRootObj("root", New_SysObj);
 
 	obj_runWithInfo(root, "set('a',1)");
 	obj_runWithInfo(root, "print(a)");

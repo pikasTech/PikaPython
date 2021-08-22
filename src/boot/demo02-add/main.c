@@ -3,7 +3,7 @@
 #include "BaseObj.h"
 #include <stdio.h>
 
-void addMethod(MimiObj *self, Args* args)
+void addMethod(PikaObj *self, Args* args)
 {
 	int32_t val1 = args_getInt(args, "val1");
 	int32_t val2 = args_getInt(args, "val2");
@@ -11,12 +11,12 @@ void addMethod(MimiObj *self, Args* args)
 	method_returnInt(args, res);
 }
 
-MimiObj *New_TEST(Args *args)
+PikaObj *New_TEST(Args *args)
 {
 	/*	Derive from the tiny object class.
 		Tiny object can not import sub object.	
 		Tiny object is the smallest object. */
-	MimiObj *self = New_TinyObj(args);
+	PikaObj *self = New_TinyObj(args);
 
 	/* bind the method */
 	class_defineMethod(self, "add(val1:int, val2:int)->int", addMethod);
@@ -25,12 +25,12 @@ MimiObj *New_TEST(Args *args)
 	return self;
 }
 
-MimiObj *New_MYROOT(Args *args)
+PikaObj *New_MYROOT(Args *args)
 {
 	/*	Derive from the base object class .
 		BaseObj is the smallest object that can 
 		import sub object.		*/
-	MimiObj *self = New_BaseObj(args);
+	PikaObj *self = New_BaseObj(args);
 
 	/* import LED class */
 	obj_import(self, "TEST", New_TEST);
@@ -46,7 +46,7 @@ extern DMEM_STATE DMEMS;
 int32_t main()
 {
 	/* new root object */
-	MimiObj *root = newRootObj("root", New_MYROOT);
+	PikaObj *root = newRootObj("root", New_MYROOT);
 	/* user input buff */
 	char inputBuff[256] = {0};
 	/* run the script with check*/	
