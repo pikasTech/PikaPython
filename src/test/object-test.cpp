@@ -116,7 +116,7 @@ TEST(object_test, test2)
     obj_setInt(obj, (char *)"isShow", isShow);
     obj_run(obj, (char *)"hello(name = 'world', isShow = isShow)");
     obj_deinit(obj);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 TEST(object_test, test3)
@@ -126,7 +126,7 @@ TEST(object_test, test3)
     obj_setInt(obj, (char *)"isShow", isShow);
     obj_run(obj, (char *)"hello2(name2='tom', name1='john', name3='cat', isShow=isShow) ");
     obj_deinit(obj);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 TEST(object_test, test4)
@@ -139,7 +139,7 @@ TEST(object_test, test4)
     float res = obj_getFloat(obj, (char *)"res");
     EXPECT_TRUE((res - 6.33) * (res - 6.33) < 0.00001);
     obj_deinit(obj);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 TEST(object_test, test5)
@@ -149,7 +149,7 @@ TEST(object_test, test5)
     int32_t res = obj_getInt(obj, (char *)"res");
     EXPECT_EQ(3, res);
     obj_deinit(obj);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 TEST(object_test, test6)
@@ -159,7 +159,7 @@ TEST(object_test, test6)
     int32_t res = obj_getInt(obj, (char *)"res");
     EXPECT_EQ(3, res);
     obj_deinit(obj);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 TEST(object_test, test7)
@@ -170,7 +170,7 @@ TEST(object_test, test7)
     obj_run(sys, (char *)"set('a', 1)");
     obj_deinit(sys);
     EXPECT_EQ(1, a);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 TEST(object_test, test8)
@@ -179,7 +179,7 @@ TEST(object_test, test8)
     obj_run(sys, (char *)"set('a', 1)");
     obj_run(sys, (char *)"del('a')");
     obj_deinit(sys);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 TEST(object_test, test9)
@@ -189,7 +189,7 @@ TEST(object_test, test9)
     obj_setPtr(sys, (char *)"baseClass", (void *)New_TinyObj);
     obj_run(sys, (char *)"ls()");
     obj_deinit(sys);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 TEST(object_test, test10)
@@ -197,7 +197,7 @@ TEST(object_test, test10)
     MimiObj *root = newRootObj((char *)"root", New_MYROOT1);
     obj_run(root, (char *)"res = usart.send('hello world')");
     obj_deinit(root);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 TEST(object_test, newObject)
@@ -205,7 +205,7 @@ TEST(object_test, newObject)
     MimiObj *root = newRootObj((char *)"root", New_MYROOT1);
     obj_newObj(root, (char *)"newUart", (char *)"USART");
     obj_deinit(root);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 TEST(object_test, newObjectAndSetStr)
@@ -217,7 +217,15 @@ TEST(object_test, newObjectAndSetStr)
     printf("the name is %s\r\n", name);
     EXPECT_TRUE(strEqu((char *)"testName", name));
     obj_deinit(root);
-    EXPECT_EQ(DMEMS.heapUsed, 0);    
+    EXPECT_EQ(DMEMS.heapUsed, 0);
+}
+
+TEST(object_test, noMethod)
+{
+    MimiObj *root = newRootObj((char *)"root", New_MYROOT1);
+    obj_runNoRes(root, (char *)"noDefindMethod()");
+    obj_deinit(root);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
 }
 
 extern DMEM_STATE DMEMS;
