@@ -7,6 +7,6 @@ cd $ROOT
 rm build -rf
 mkdir build
 cd build
-cmake ..
+cmake -DCMAKE_BUILD_TYPE=Debug ..
 cd $ROOT
 sh make.sh
