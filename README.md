@@ -37,9 +37,7 @@ https://www.bilibili.com/video/BV1mg411L72e
 
 ## 内核源码
 
-对象支持: https://github.com/mimilib/mimilib/tree/master/PikaObject
-
-数据结构: https://github.com/mimilib/mimilib/tree/master/mimiData
+https://github.com/mimilib/pikascript-core
 
 ## 解析文章
 单片机运行python脚本，不移植micropython也行吗？
