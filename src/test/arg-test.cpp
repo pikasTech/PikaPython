@@ -57,3 +57,13 @@ TEST(arg_test, name)
     arg_deinit(arg);
     EXPECT_EQ(DMEMS.heapUsed, 0);
 }
+
+TEST(arg_test, type)
+{
+    Arg *arg = New_arg(NULL);
+    arg_setType(arg, (char *)"test");
+    char *type = arg_getType(arg);
+    EXPECT_EQ(1, strEqu((char *)"test", type));
+    arg_deinit(arg);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
+}
