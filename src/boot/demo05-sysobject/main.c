@@ -46,7 +46,7 @@ int main()
 		Args *resArgs = obj_runDirect(root, inputBuff);
 
 		/* get system output of PikaScript*/
-		char *sysOut = args_getStr(resArgs, "sysOut");
+		char *sysOut = args_getSysOut(resArgs);;
 
 		if (NULL != sysOut)
 		{
