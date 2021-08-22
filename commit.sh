@@ -4,5 +4,6 @@ git add *
 git commit
 cd $ROOT
 git add *
+git add .vscode/launch.json
 git commit
 
