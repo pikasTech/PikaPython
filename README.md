@@ -10,7 +10,7 @@ gitee 镜像：https://gitee.com/Lyon1998/pikascript-demo-stm32
 # 1.简介
 pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
-支持裸机运行，可运行于内存20Kb以上的mcu中，如stm32f103c8t6，esp32。
+支持裸机运行，可运行于内存8Kb以上的mcu中，如stm32f103c8t6，esp32。
 
 官方支持api源码生成器
 
