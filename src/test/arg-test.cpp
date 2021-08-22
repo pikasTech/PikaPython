@@ -5,7 +5,6 @@ extern "C"
 #include "dataString.h"
 }
 static int mem;
-extern DMEM_STATE DMEMS;
 
 TEST(arg_test, int_)
 {
@@ -14,7 +13,7 @@ TEST(arg_test, int_)
     int a = arg_getInt(arg);
     EXPECT_EQ(a, 1);
     arg_deinit(arg);
-    EXPECT_EQ(DMEMS.heapUsed, 0);
+    EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(arg_test, float_)
@@ -24,7 +23,7 @@ TEST(arg_test, float_)
     float a = arg_getFloat(arg);
     EXPECT_EQ(a, (float)1.01);
     arg_deinit(arg);
-    EXPECT_EQ(DMEMS.heapUsed, 0);
+    EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(arg_test, str_)
@@ -34,7 +33,7 @@ TEST(arg_test, str_)
     char *a = arg_getStr(arg);
     EXPECT_EQ(strEqu(a, (char *)"test str"), 1);
     arg_deinit(arg);
-    EXPECT_EQ(DMEMS.heapUsed, 0);
+    EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(arg_test, ptr)
@@ -45,7 +44,7 @@ TEST(arg_test, ptr)
     int *pa = (int *)arg_getPtr(arg);
     EXPECT_EQ(*pa, 1);
     arg_deinit(arg);
-    EXPECT_EQ(DMEMS.heapUsed, 0);
+    EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(arg_test, name)
@@ -55,7 +54,7 @@ TEST(arg_test, name)
     char *name = arg_getName(arg);
     EXPECT_EQ(1, strEqu((char *)"test", name));
     arg_deinit(arg);
-    EXPECT_EQ(DMEMS.heapUsed, 0);
+    EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(arg_test, type)
@@ -65,5 +64,5 @@ TEST(arg_test, type)
     char *type = arg_getType(arg);
     EXPECT_EQ(1, strEqu((char *)"test", type));
     arg_deinit(arg);
-    EXPECT_EQ(DMEMS.heapUsed, 0);
+    EXPECT_EQ(pikaMemNow(), 0);
 }

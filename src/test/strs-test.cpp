@@ -11,11 +11,10 @@ static void printInfo(const char *argName, char *argVal)
 {
     printf("\t\t[info] %s: \"%s\"\r\n", argName, argVal);
 }
-extern DMEM_STATE DMEMS;
 static int mem;
 TEST(strs, analizeDef)
 {
-    mem = DMEMS.heapUsed;
+    mem = pikaMemNow();
     Args *buffs = New_args(NULL);
     char currentClassName[] = "Compiler";
     char line[] = "    def analizeFile(pythonApiPath: str):";
@@ -52,5 +51,5 @@ TEST(strs, analizeDef)
 
 TEST(strs, mem)
 {
-    EXPECT_EQ(DMEMS.heapUsed, mem);
+    EXPECT_EQ(pikaMemNow(), mem);
 }
