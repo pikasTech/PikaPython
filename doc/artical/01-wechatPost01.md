@@ -61,23 +61,23 @@ LED1.on()
     
     在mimiscript中，所有被绑定为方法的函数都使用这两个入口参数。
 ``` c
-void on(MimiObj *self, Args *args)
+void on(PikaObj *self, Args *args)
 {
     HAL_GPIO_WritePin(GPIOA,GPIO_PIN_8,SET);
 }
 ```
 2. 然后编写LED1对象的构造器。
  
-   构造器的入口参数是args，用于传入初始化对象所需的参数，返回的是一个脚本对象，所有的脚本对象都使用MimiObj结构体。
+   构造器的入口参数是args，用于传入初始化对象所需的参数，返回的是一个脚本对象，所有的脚本对象都使用PikaObj结构体。
 
    class_defineMethod用于将编写的c语言函数绑定为脚本对象的方法。
 
    class_defineMethod的第一个入口参数是对象指针，第二个参数是绑定的接口定义，第三个入口参数是被绑定函数的函数指针。
 ``` c
-MimiObj * New_LED1(Args *args)
+PikaObj * New_LED1(Args *args)
 {
-    // 继承自MimiObj基本类
-    MimiObj *self = New_MimiObj(args);
+    // 继承自PikaObj基本类
+    PikaObj *self = New_PikaObj(args);
     // 为LED1对象绑定on()方法
     class_defineMethod(self, "on()", on);
     return self;
@@ -92,7 +92,7 @@ int main()
     // 硬件的初始化代码略
 
     // 创建根对象
-    MimiObj *root = newRootObj("root",New_MimiObj_sys);
+    PikaObj *root = newRootObj("root",New_PikaObj_sys);
     // 新建LED1对象，LED1对象会挂载在root对象下
     obj_newObj(root, "LED1", New_LED1);
     while(1)
@@ -125,7 +125,7 @@ int main()
     args 是参数列表，用于传入传出参数
     （所有被绑定的方法均使用此形参）
 */
-void add(MimiObj *self, Args *args) 
+void add(PikaObj *self, Args *args) 
 {
     /* 
         参数传递 
@@ -145,16 +145,16 @@ void add(MimiObj *self, Args *args)
     定义测试类的构造器，一个构造器对应一个类
     通过构造器即可新建对象
     args是构造器的初始化参数列表
-    MimiObj*是新建对象的指针
+    PikaObj*是新建对象的指针
     （所有构造器均使用此形参）
 */
-MimiObj *New_MimiObj_test(Args *args)
+PikaObj *New_PikaObj_test(Args *args)
 {
     /* 
         继承sys类
         只需要直接调用父类的构造器即可
     */
-    MimiObj *self = New_MimiObj_sys(args);
+    PikaObj *self = New_PikaObj_sys(args);
     
     /* 
         为test类绑定一个方法（支持重载）
@@ -176,13 +176,13 @@ void main()
         新建根对象，对象名为“sys”
         传入对象名和构造器的函数指针
     */
-    MimiObj *sys = newRootObj("sys", New_MimiObj_sys);
+    PikaObj *sys = newRootObj("sys", New_PikaObj_sys);
 
     /* 
         新建test对象
         test对象作为子对象挂载在sys对象下（对象树）
     */
-    obj_newObj(sys, "test", New_MimiObj_test);
+    obj_newObj(sys, "test", New_PikaObj_test);
     
     /*  
         运行单行脚本。
@@ -224,7 +224,7 @@ dataArgs：基于双向链表的数据列表，常用作动态参数列表，并
 
 dataSting，字符串处理
 
-## 2.对象支持 (mimiObject) 
+## 2.对象支持 (PikaObject) 
 dataObject：对象构造、对象析构、对象树、创建属性、绑定属性、绑定方法、python接口绑定、python接口解析
 
 ## 3.命令行交互层 (mimishell) 

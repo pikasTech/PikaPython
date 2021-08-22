@@ -48,7 +48,7 @@ void checker_objMemChecker(void *NewFun, char *objName)
 {
 	{
 		/* new root object */
-		MimiObj *obj = newRootObj("obj", NewFun);
+		PikaObj *obj = newRootObj("obj", NewFun);
 		char testName[256] = {0};
 		sprintf(testName, "Root %s object", objName);
 		checker_printMemUsage(testName);
@@ -57,7 +57,7 @@ void checker_objMemChecker(void *NewFun, char *objName)
 	}
 
 	{
-		MimiObj *obj = New_TinyObj(NULL);
+		PikaObj *obj = New_TinyObj(NULL);
 		char testName[256] = {0};
 		sprintf(testName, "%s object", objName);
 		checker_printMemUsage(testName);

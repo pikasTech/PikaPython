@@ -3,19 +3,19 @@
 #include "BaseObj.h"
 #include <stdio.h>
 
-void sendMethod(MimiObj *self, Args *args)
+void sendMethod(PikaObj *self, Args *args)
 {
 	char *data = args_getStr(args, "data");
 	/* send to com1 */
 	printf("[com1]: %s\r\n", data);
 }
 
-MimiObj *New_USART(Args *args)
+PikaObj *New_USART(Args *args)
 {
 	/*	Derive from the tiny object class.
 		Tiny object can not import sub object.	
 		Tiny object is the smallest object. */
-	MimiObj *self = New_TinyObj(args);
+	PikaObj *self = New_TinyObj(args);
 
 	/* bind the method */
 	class_defineMethod(self, "send(data:str)", sendMethod);
@@ -24,12 +24,12 @@ MimiObj *New_USART(Args *args)
 	return self;
 }
 
-MimiObj *New_MYROOT(Args *args)
+PikaObj *New_MYROOT(Args *args)
 {
 	/*	Derive from the base object class .
 		BaseObj is the smallest object that can 
 		import sub object.		*/
-	MimiObj *self = New_BaseObj(args);
+	PikaObj *self = New_BaseObj(args);
 
 	/* import LED class */
 	obj_import(self, "USART", New_USART);
@@ -45,7 +45,7 @@ extern DMEM_STATE DMEMS;
 int32_t main()
 {
 	/* new root object */
-	MimiObj *root = newRootObj("root", New_MYROOT);
+	PikaObj *root = newRootObj("root", New_MYROOT);
 	/* user input buff */
 	char inputBuff[256] = {0};
 	/* run the script with check*/
