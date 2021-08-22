@@ -57,11 +57,11 @@ https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff
 
 # 4.内核测试与开发
 
-## windows下测试mimiscript内核：
+## windows下测试PikaScript内核：
 
 step1: 下载源码
 ``` 
-https://github.com/mimilib/mimiscript/releases/download/v1.0/mimiscript-v1.0.zip
+https://github.com/mimilib/PikaScript/releases/download/v1.0/PikaScript-v1.0.zip
 ```
 step2: 下载安装codeblocks
 ```
@@ -76,7 +76,7 @@ step3: 打开winproject文件夹下的demoXX/demoXX.cbs编译运行
 step1: 拉取项目
 ``` shell
 git clone https://github.com/mimilib/pikascript
-cd mimiscript
+cd PikaScript
 git submodule init && git submodule update
 ```
 step2: 安装编译链
@@ -192,5 +192,5 @@ void main()
     printf("%d\r\n", res);    
 }
 ```
-# 5. mimiscript-compiler
-将pyton编译为mimiscript的C源码
+# 5. PikaScript-compiler
+将pyton编译为PikaScript的C源码

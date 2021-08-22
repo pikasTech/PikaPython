@@ -60,10 +60,10 @@ int32_t main()
 		/* get user input */
 		fgets(inputBuff, sizeof(inputBuff), stdin);
 
-		/* run mimiScript and get res */
+		/* run PikaScript and get res */
 		Args *resArgs = obj_runDirect(root, inputBuff);
 
-		/* get system output of mimiScript*/
+		/* get system output of PikaScript*/
 		char *sysOut = args_getStr(resArgs, "sysOut");
 
 		if (NULL != sysOut)
