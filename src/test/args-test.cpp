@@ -8,7 +8,7 @@ static int mem;
 extern DMEM_STATE DMEMS;
 TEST(args_test, test1)
 {
-    mem = DMEMS.blk_num;
+    mem = DMEMS.heapUsed;
     Args *args = New_args(NULL);
     args_setInt(args, (char *)"a", 1);
     int a = args_getInt(args, (char *)"a");
@@ -173,6 +173,6 @@ TEST(args_test, test12)
 extern DMEM_STATE DMEMS;
 TEST(args_test, mem)
 {
-    EXPECT_EQ(DMEMS.blk_num, mem);
+    EXPECT_EQ(DMEMS.heapUsed, mem);
     EXPECT_EQ(DMEMS.heapUsed, 0);
 }

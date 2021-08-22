@@ -5,8 +5,8 @@
 
 void obj_runWithInfo(MimiObj *self, char *cmd)
 {
-		printf(">>> %s\r\n", cmd);
-		obj_run(self, cmd);
+	printf(">>> %s\r\n", cmd);
+	obj_run(self, cmd);
 }
 
 extern DMEM_STATE DMEMS;
@@ -15,7 +15,7 @@ int main()
 {
 	/* new root object */
 	MimiObj *root = newRootObj("root", New_SysObj);
-	
+
 	obj_runWithInfo(root, "set('a',1)");
 	obj_runWithInfo(root, "print(a)");
 	obj_runWithInfo(root, "type('a')");
@@ -25,15 +25,15 @@ int main()
 	obj_runWithInfo(root, "print(a)");
 	obj_runWithInfo(root, "type('a')");
 	obj_runWithInfo(root, "del('a')");
-	
+
 	obj_runWithInfo(root, "set('a',1)");
 	obj_runWithInfo(root, "set('b',a)");
 	obj_runWithInfo(root, "print(b)");
 	obj_runWithInfo(root, "del('a')");
 	obj_runWithInfo(root, "del('b')");
 
-	printf("memory used max = %0.2f kB\r\n", DMEMS.maxNum*DMEM_BLOCK_SIZE/1024.0);
-	printf("memory used now = %0.2f kB\r\n", DMEMS.blk_num*DMEM_BLOCK_SIZE/1024.0);
+	printf("memory used max = %0.2f kB\r\n", DMEMS.heapUsedMax / 1024.0);
+	printf("memory used now = %0.2f kB\r\n", DMEMS.heapUsed / 1024.0);
 
 	/* user input buff */
 	char inputBuff[256] = {0};

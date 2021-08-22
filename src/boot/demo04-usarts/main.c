@@ -10,13 +10,13 @@ void sendMethod(MimiObj *self, Args *args)
 	printf("[com1]: %s\r\n", data);
 }
 
-void setSpeedMethod(MimiObj *self , Args *args)
+void setSpeedMethod(MimiObj *self, Args *args)
 {
 	int32_t speed = args_getInt(args, "speed");
 	obj_setInt(self, "speed", speed);
 }
 
-void printSpeedMethod(MimiObj *self , Args *args)
+void printSpeedMethod(MimiObj *self, Args *args)
 {
 	int32_t speed = obj_getInt(self, "speed");
 	printf("%d\r\n", speed);
@@ -107,8 +107,8 @@ int32_t main()
 	obj_run(root, "usart1.send('hello world')");
 	obj_run(root, "usart2.send('hello world')");
 
-	printf("memory used max = %0.2f kB\r\n", DMEMS.maxNum * DMEM_BLOCK_SIZE / 1024.0);
-	printf("memory used now = %0.2f kB\r\n", DMEMS.blk_num * DMEM_BLOCK_SIZE / 1024.0);
+	printf("memory used max = %0.2f kB\r\n", DMEMS.heapUsedMax / 1024.0);
+	printf("memory used now = %0.2f kB\r\n", DMEMS.heapUsed / 1024.0);
 	while (1)
 	{
 		/* get user input */
