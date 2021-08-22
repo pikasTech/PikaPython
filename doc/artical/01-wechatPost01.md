@@ -1,12 +1,12 @@
-# 使用mimiscript为你的mcu轻松添加面向对象脚本支持
+# 使用PikaScript为你的mcu轻松添加面向对象脚本支持
 
 ## abstrict
 
-mimiscript是一个使用c语言写成的脚本支持库，可以非侵入地为mcu提供对象化的脚本支持。
+PikaScript是一个使用c语言写成的脚本支持库，可以非侵入地为mcu提供对象化的脚本支持。
 
-mimiscript能够在完全不修改原本工程代码的情况下（非侵入性），将c语言的函数以及变量绑定到脚本对象上，可以直接使用脚本调用。
+PikaScript能够在完全不修改原本工程代码的情况下（非侵入性），将c语言的函数以及变量绑定到脚本对象上，可以直接使用脚本调用。
 
-mimiscript默认支持python语法绑定，也可以支持typescript语法绑定。
+PikaScript默认支持python语法绑定，也可以支持typescript语法绑定。
 
 ## 1.introduction
 
@@ -26,9 +26,9 @@ python的运行效率较低，在资源紧缺的mcu中显得尤为明显，而�
 
 也就是说，使用c语言进行mcu嵌入式开发，又向上位机或者服务器提供面向对象的脚本语言调用接口，不就可以兼顾mcu运行效率和开发效率了吗？
 
-本文介绍的mimisciprt库正是可以起到这样的作用。
+本文介绍的PikaScript库正是可以起到这样的作用。
 
-mimiscrpit库可以为c语言开发的mcu工程提供面向对象的脚本语言调用接口。mimiscript有以下几个特点：
+PikaScript库可以为c语言开发的mcu工程提供面向对象的脚本语言调用接口。PikaScript有以下几个特点：
 
 1. 支持裸机运行，可运行于内存40Kb以上的mcu中，如stm32f103，esp32。
 
@@ -36,11 +36,11 @@ mimiscrpit库可以为c语言开发的mcu工程提供面向对象的脚本语言
 
 3. 仅使用C标准库，尽可能的结构清晰（尽我所能），几乎不使用宏。
 
-## 2. 用mimiscript点一个灯
+## 2. 用PikaScript点一个灯
 
 鲁迅曾说过：“点灯是嵌入式领域的hellow world”。
 
-那我们就以点灯为例，看一看mimiscript如何为mcu提供对象化的脚本支持。
+那我们就以点灯为例，看一看PikaScript如何为mcu提供对象化的脚本支持。
 
 我们以STM32的HAL库为例，假设在管脚PA8上连接了一个LED灯，我们称之为LED1，PA8拉高时灯亮，拉低时灯灭。
 
@@ -53,13 +53,13 @@ HAL_GPIO_WritePin(GPIOA,GPIO_PIN_8,SET);
 LED1.on()
 ```
 
-下面我们看看如何使用mimiscript实现这个需求。
+下面我们看看如何使用PikaScript实现这个需求。
 
 1. 编写一个on()函数。这个函数将会被作为一个方法注册到脚本对象里面，注册之后就不会再由开发者在c语言开发中调用了，只会在脚本运行时被脚本解释器调用。
 
     on()函数的入口参数有self和args，其中self是对象的指针，args是参数列表，args内部基于链表，可以传入任意个数、任意类型的参数。
     
-    在mimiscript中，所有被绑定为方法的函数都使用这两个入口参数。
+    在PikaScript中，所有被绑定为方法的函数都使用这两个入口参数。
 ``` c
 void on(PikaObj *self, Args *args)
 {
@@ -112,7 +112,7 @@ int main()
 
 4. 这时只要向mcu的串口发送``` led.on()```，灯就亮了~
 
-## 3. 用mimiscript实现一个加法函数。
+## 3. 用PikaScript实现一个加法函数。
 
 上面的例子中的方法没有输入输出，下面的例子中，我们会定义一个test类，并为test类添加一个add函数，实现加法功能。
 
