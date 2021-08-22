@@ -3,7 +3,6 @@
 #include "SysObj.h"
 #include <stdio.h>
 extern DMEM_STATE DMEMS;
-static uint8_t DMEMORY[DMEM_TOTAL_SIZE];
 
 void checker_printMem(char *info, uint32_t size)
 {
@@ -21,28 +20,24 @@ void checker_printMemUsage(char *testName)
 {
 	printf("---------------------------\r\n");
 	printf("Testing :%s\r\n", testName);
-	checker_printMem("    max = ", DMEMS.maxNum * DMEM_BLOCK_SIZE);
-	checker_printMem("    now = ", DMEMS.blk_num * DMEM_BLOCK_SIZE);
+	checker_printMem("    max = ", DMEMS.heapUsedMax);
+	checker_printMem("    now = ", DMEMS.heapUsed);
 	checker_printMem("    heap = ", DMEMS.heapUsed);
-	checker_printMem("    heap max = ", DMEMS.heapUsedMax);	
+	checker_printMem("    heap max = ", DMEMS.heapUsedMax);
 	printf("---------------------------\r\n");
 }
 void checker_memInfo(void)
 {
 	printf("---------------------------\r\n");
 	printf("Memory pool info:\r\n");
-	checker_printMem("	mem block size = ", DMEM_BLOCK_SIZE);
-	checker_printMem("	mem block num = ", DMEM_BLOCK_NUM);
-	checker_printMem("	mem pool size = ", sizeof(DMEMORY));
 	checker_printMem("	mem state size = ", sizeof(DMEM_STATE));
-	checker_printMem("	mem state size = ", (sizeof(DMEMORY) + sizeof(DMEM_STATE)));
 	printf("---------------------------\r\n");
 }
 void checker_assertMemFree()
 {
-	if (0 == DMEMS.blk_num && 0 == DMEMS.heapUsed)
+	if (0 == DMEMS.heapUsed && 0 == DMEMS.heapUsed)
 	{
-		DMEMS.maxNum = 0;
+		DMEMS.heapUsedMax = 0;
 		DMEMS.heapUsedMax = 0;
 		return;
 	}

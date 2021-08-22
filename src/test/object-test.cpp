@@ -223,6 +223,6 @@ TEST(object_test, newObjectAndSetStr)
 extern DMEM_STATE DMEMS;
 TEST(object_test, mem)
 {
-    EXPECT_EQ(DMEMS.blk_num, 0);
+    EXPECT_EQ(DMEMS.heapUsed, 0);
     EXPECT_EQ(DMEMS.heapUsed, 0);
 }

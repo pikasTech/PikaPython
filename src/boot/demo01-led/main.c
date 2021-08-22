@@ -56,8 +56,8 @@ int32_t main()
 	char inputBuff[256] = {0};
 	/* run the script with check*/
 	obj_run(root, "led.on()");
-	printf("memory used max = %0.2f kB\r\n", DMEMS.maxNum*DMEM_BLOCK_SIZE/1024.0);
-	printf("memory used now = %0.2f kB\r\n", DMEMS.blk_num*DMEM_BLOCK_SIZE/1024.0);
+	printf("memory used max = %0.2f kB\r\n", DMEMS.heapUsedMax / 1024.0);
+	printf("memory used now = %0.2f kB\r\n", DMEMS.heapUsed / 1024.0);
 	while (1)
 	{
 		/* get user input */

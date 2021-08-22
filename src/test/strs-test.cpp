@@ -15,7 +15,7 @@ extern DMEM_STATE DMEMS;
 static int mem;
 TEST(strs, analizeDef)
 {
-    mem = DMEMS.blk_num;
+    mem = DMEMS.heapUsed;
     Args *buffs = New_args(NULL);
     char currentClassName[] = "Compiler";
     char line[] = "    def analizeFile(pythonApiPath: str):";
@@ -52,5 +52,5 @@ TEST(strs, analizeDef)
 
 TEST(strs, mem)
 {
-    EXPECT_EQ(DMEMS.blk_num, mem);
+    EXPECT_EQ(DMEMS.heapUsed, mem);
 }
