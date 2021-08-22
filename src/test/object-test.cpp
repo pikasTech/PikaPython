@@ -161,25 +161,25 @@ TEST(object_test, test6)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(object_test, test7)
-{
-    PikaObj *sys = newRootObj((char *)"sys", New_SysObj);
-    int32_t a = 0;
-    obj_bind(sys, (char *)"int", (char *)"a", &a);
-    obj_run(sys, (char *)"set('a', 1)");
-    obj_deinit(sys);
-    EXPECT_EQ(1, a);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(object_test, test7)
+// {
+//     PikaObj *sys = newRootObj((char *)"sys", New_SysObj);
+//     int32_t a = 0;
+//     obj_bind(sys, (char *)"int", (char *)"a", &a);
+//     obj_run(sys, (char *)"set('a', 1)");
+//     obj_deinit(sys);
+//     EXPECT_EQ(1, a);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
-TEST(object_test, test8)
-{
-    PikaObj *sys = newRootObj((char *)"sys", New_SysObj);
-    obj_run(sys, (char *)"set('a', 1)");
-    obj_run(sys, (char *)"del('a')");
-    obj_deinit(sys);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(object_test, test8)
+// {
+//     PikaObj *sys = newRootObj((char *)"sys", New_SysObj);
+//     obj_run(sys, (char *)"set('a', 1)");
+//     obj_run(sys, (char *)"del('a')");
+//     obj_deinit(sys);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 TEST(object_test, test9)
 {
