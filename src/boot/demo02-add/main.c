@@ -42,7 +42,6 @@ PikaObj *New_MYROOT(Args *args)
 	return self;
 }
 
-extern DMEM_STATE DMEMS;
 int32_t main()
 {
 	/* new root object */
@@ -53,8 +52,8 @@ int32_t main()
 	obj_run(root, "res = test.add(1, 2)");
 	int32_t res = obj_getInt(root, "res");
 	printf("the res of 'test.add(1, 2)' is %d \r\n", res);
-	printf("memory used max = %0.2f kB\r\n", DMEMS.heapUsedMax / 1024.0);
-	printf("memory used now = %0.2f kB\r\n", DMEMS.heapUsed / 1024.0);
+	printf("memory used max = %0.2f kB\r\n", pikaMemMax() / 1024.0);
+	printf("memory used now = %0.2f kB\r\n", pikaMemNow() / 1024.0);
 	while (1)
 	{
 		/* get user input */

@@ -9,7 +9,6 @@ void obj_runWithInfo(PikaObj *self, char *cmd)
 	obj_run(self, cmd);
 }
 
-extern DMEM_STATE DMEMS;
 
 int main()
 {
@@ -32,8 +31,8 @@ int main()
 	obj_runWithInfo(root, "del('a')");
 	obj_runWithInfo(root, "del('b')");
 
-	printf("memory used max = %0.2f kB\r\n", DMEMS.heapUsedMax / 1024.0);
-	printf("memory used now = %0.2f kB\r\n", DMEMS.heapUsed / 1024.0);
+	printf("memory used max = %0.2f kB\r\n", pikaMemMax() / 1024.0);
+	printf("memory used now = %0.2f kB\r\n", pikaMemNow() / 1024.0);
 
 	/* user input buff */
 	char inputBuff[256] = {0};

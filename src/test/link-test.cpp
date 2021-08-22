@@ -29,8 +29,7 @@ TEST(link_test, test1)
     link_removeNode(link, data1InLink);
     link_deinit(link);
 }
-extern DMEM_STATE DMEMS;
 TEST(link_test, mem)
 {
-    EXPECT_EQ(DMEMS.heapUsed, 0);
+    EXPECT_EQ(pikaMemNow(), 0);
 }

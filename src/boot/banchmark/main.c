@@ -2,7 +2,6 @@
 #include "BaseObj.h"
 #include "SysObj.h"
 #include <stdio.h>
-extern DMEM_STATE DMEMS;
 
 void checker_printMem(char *info, uint32_t size)
 {
@@ -20,8 +19,8 @@ void checker_printMemUsage(char *testName)
 {
 	printf("---------------------------\r\n");
 	printf("Testing :%s\r\n", testName);
-	checker_printMem("    max = ", DMEMS.heapUsedMax);
-	checker_printMem("    now = ", DMEMS.heapUsed);
+	checker_printMem("    max = ", pikaMemMax());
+	checker_printMem("    now = ", pikaMemNow());
 	printf("---------------------------\r\n");
 }
 void checker_memInfo(void)
@@ -33,10 +32,9 @@ void checker_memInfo(void)
 }
 void checker_assertMemFree()
 {
-	if (0 == DMEMS.heapUsed && 0 == DMEMS.heapUsed)
+	if (0 == pikaMemNow())
 	{
-		DMEMS.heapUsedMax = 0;
-		DMEMS.heapUsedMax = 0;
+		pikaMemMaxReset();
 		return;
 	}
 	printf("[Error]: Memory free error.\r\n");
