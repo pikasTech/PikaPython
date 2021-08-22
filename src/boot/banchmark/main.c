@@ -22,8 +22,6 @@ void checker_printMemUsage(char *testName)
 	printf("Testing :%s\r\n", testName);
 	checker_printMem("    max = ", DMEMS.heapUsedMax);
 	checker_printMem("    now = ", DMEMS.heapUsed);
-	checker_printMem("    heap = ", DMEMS.heapUsed);
-	checker_printMem("    heap max = ", DMEMS.heapUsedMax);
 	printf("---------------------------\r\n");
 }
 void checker_memInfo(void)
@@ -77,6 +75,12 @@ int32_t main()
 		Arg *arg = New_arg(NULL);
 		checker_printMemUsage("void arg");
 		arg_deinit(arg);
+		checker_assertMemFree();
+	}
+	{
+		Link *link = New_link(NULL);
+		checker_printMemUsage("void link");
+		link_deinit(link);
 		checker_assertMemFree();
 	}
 	{
