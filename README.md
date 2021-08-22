@@ -1,6 +1,6 @@
 
 # 获取PikaScript内核与预编译器
-https://github.com/mimilib/pikascript/releases/download/v0.3.0/pikascript-v0.3.0.zip
+https://github.com/mimilib/pikascript/releases/download/v0.3.1/pikascript.v0.3.1.zip
 
 # stm32例程
 https://github.com/mimilib/pikascript-demo-stm32
