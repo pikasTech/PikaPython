@@ -3,6 +3,7 @@ git submodule init
 git submodule update
 rm src/package/pikascript/pikascript-api -rf
 mkdir src/package/pikascript/pikascript-api
+touch src/package/pikascript/pikascript-api/path
 cd src/package/pikascript/pikascript-core
 git checkout master
 cd $ROOT
