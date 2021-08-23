@@ -1,4 +1,4 @@
-#include "../pikascript-core/PikaObj.h"
+#include "PikaObj.h"
 
 void PikaStdLib_SysObj_ls(PikaObj *self, char *objPath)
 {
