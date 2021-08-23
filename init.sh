@@ -1,7 +1,7 @@
 ROOT=$PWD
 git submodule init
 git submodule update
-cd src/package/pikascript-core
+cd src/package/pikascript/pikascript-core
 git checkout master
 cd $ROOT
 rm build -rf

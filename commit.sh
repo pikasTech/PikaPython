@@ -1,5 +1,5 @@
 ROOT=$PWD
-cd src/package/pikascript-core
+cd src/package/pikascript/pikascript-core
 git add *
 git commit
 cd $ROOT
