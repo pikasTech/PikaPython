@@ -1,3 +1,3 @@
 class SysObj(BaseObj):
-    type(argPath: str):
-    pass
+    def type(argPath: str):
+        pass

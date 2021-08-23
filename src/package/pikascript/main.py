@@ -1,5 +1,5 @@
 import PikaStdLib
 
 
-class Main(PikaStdLib.SysObj):
+class Main(BaseObj):
     pass
