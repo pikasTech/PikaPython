@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 extern "C"
 {
-#include "SysObj.h"
+#include "PikaStdLib_SysObj.h"
 #include "TinyObj.h"
 #include "BaseObj.h"
 }
@@ -52,7 +52,7 @@ void add(PikaObj *obj, Args *args)
 
 PikaObj *New_PikaObj_test(Args *args)
 {
-    PikaObj *self = New_SysObj(args);
+    PikaObj *self = New_PikaStdLib_SysObj(args);
     class_defineMethod(self, (char *)"hello(name:str, isShow:int)", hello);
     class_defineMethod(self, (char *)"hello2(name1:str, name2:str, name3:str, isShow:int)", hello2);
     class_defineMethod(self, (char *)"testFloat(val1:float, val2:float, isShow:int)->float", testFloat);
@@ -100,7 +100,7 @@ PikaObj *New_MYROOT1(Args *args)
 
 TEST(object_test, test1)
 {
-    PikaObj *process = newRootObj((char *)"sys", New_SysObj);
+    PikaObj *process = newRootObj((char *)"sys", New_PikaStdLib_SysObj);
     float floatTest = 12.231;
     obj_bindFloat(process, (char *)"testFloatBind", &floatTest);
     EXPECT_TRUE(strEqu((char *)"12.231000", obj_print(process, (char *)"testFloatBind")));
@@ -163,7 +163,7 @@ TEST(object_test, test6)
 
 TEST(object_test, test7)
 {
-    PikaObj *sys = newRootObj((char *)"sys", New_SysObj);
+    PikaObj *sys = newRootObj((char *)"sys", New_PikaStdLib_SysObj);
     int32_t a = 0;
     obj_bind(sys, (char *)"int", (char *)"a", &a);
     obj_run(sys, (char *)"set('a', 1)");
@@ -174,16 +174,16 @@ TEST(object_test, test7)
 
 TEST(object_test, test8)
 {
-    PikaObj *sys = newRootObj((char *)"sys", New_SysObj);
+    PikaObj *sys = newRootObj((char *)"sys", New_PikaStdLib_SysObj);
     obj_run(sys, (char *)"set('a', 1)");
-    obj_run(sys, (char *)"del('a')");
+    obj_run(sys, (char *)"remove('a')");
     obj_deinit(sys);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(object_test, test9)
 {
-    PikaObj *sys = newRootObj((char *)"sys", New_SysObj);
+    PikaObj *sys = newRootObj((char *)"sys", New_PikaStdLib_SysObj);
     obj_run(sys, (char *)"ls()");
     obj_setPtr(sys, (char *)"baseClass", (void *)New_TinyObj);
     obj_run(sys, (char *)"ls()");

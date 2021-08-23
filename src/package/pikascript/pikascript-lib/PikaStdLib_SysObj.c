@@ -41,7 +41,7 @@ void PikaStdLib_SysObj_ls(PikaObj *self, char *objPath)
         /* no input obj path, use current obj */
         args_foreach(self->attributeList, __foreach_listEachArg, args);
         obj_setSysOut(self, args_getStr(args, "stringOut"));
-        return;
+        goto exit;
     }
     PikaObj *obj = obj_getObj(self, objPath, 0);
     if (NULL == obj)
@@ -49,12 +49,13 @@ void PikaStdLib_SysObj_ls(PikaObj *self, char *objPath)
         /* do not find obj */
         obj_setSysOut(self, "[error] list: object no found.");
         obj_setErrorCode(self, 1);
-        return;
+        goto exit;
     }
     /* list args */
     args_foreach(obj->attributeList, __foreach_listEachArg, args);
     obj_setSysOut(self, args_getStr(args, "stringOut"));
-    return;
+exit:
+    args_deinit(args);
 }
 
 void PikaStdLib_SysObj_new(PikaObj *self, char *classPath, char *objPath)

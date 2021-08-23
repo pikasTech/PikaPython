@@ -8,6 +8,7 @@ git checkout master
 cd $ROOT
 rm build -rf
 mkdir build
+sh api-make.sh
 cd build
 cmake -DCMAKE_BUILD_TYPE=Debug ..
 cd $ROOT

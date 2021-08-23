@@ -1,13 +1,13 @@
 #include "gtest/gtest.h"
 extern "C"
 {
-#include "SysObj.h"
+#include "PikaStdLib_SysObj.h"
 #include "TinyObj.h"
 #include "BaseObj.h"
 }
 TEST(sysObj, print)
 {
-    PikaObj *obj = newRootObj((char *)"test", New_SysObj);
+    PikaObj *obj = newRootObj((char *)"test", New_PikaStdLib_SysObj);
     Args *res = obj_runDirect(obj, (char *)"print('hello world')");
     char *sysOut = args_getSysOut(res);
     int errCode = args_getErrorCode(res);
@@ -21,7 +21,7 @@ TEST(sysObj, print)
 
 TEST(sysObj, set)
 {
-    PikaObj *obj = newRootObj((char *)"test", New_SysObj);
+    PikaObj *obj = newRootObj((char *)"test", New_PikaStdLib_SysObj);
     Args *res = obj_runDirect(obj, (char *)"set('a', 1)");
     int a = obj_getInt(obj, (char *)"a");
     char *sysOut = args_getSysOut(res);
@@ -37,7 +37,7 @@ TEST(sysObj, set)
 
 TEST(sysObj, noMethod)
 {
-    PikaObj *obj = newRootObj((char *)"test", New_SysObj);
+    PikaObj *obj = newRootObj((char *)"test", New_PikaStdLib_SysObj);
     Args *res = obj_runDirect(obj, (char *)"printttt('hello world')");
     char *sysOut = args_getSysOut(res);
     int errCode = args_getErrorCode(res);
