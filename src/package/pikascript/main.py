@@ -2,5 +2,5 @@ from PikaObj import *
 import PikaStdLib
 
 
-class Main(BaseObj):
+class Main(PikaStdLib.SysObj):
     pass
