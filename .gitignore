@@ -1,6 +1,7 @@
 *.depend
 *.layout
 /build
+/src/package/pikascript/pikascript-api
 *bin/
 *obj/
 
