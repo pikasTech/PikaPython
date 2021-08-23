@@ -1,6 +1,6 @@
 /* banchmark for memory */
 #include "BaseObj.h"
-#include "SysObj.h"
+#include "PikaStdLib_SysObj.h"
 #include <stdio.h>
 
 void checker_printMem(char *info, uint32_t size)
@@ -68,7 +68,7 @@ int32_t main()
 {
 	checker_objMemChecker(New_TinyObj, "tiny");
 	checker_objMemChecker(New_BaseObj, "base");
-	checker_objMemChecker(New_SysObj, "sys");
+	checker_objMemChecker(New_PikaStdLib_SysObj, "sys");
 	{
 		Arg *arg = New_arg(NULL);
 		checker_printMemUsage("void arg");
