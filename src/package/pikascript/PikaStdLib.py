@@ -8,6 +8,9 @@ class MemChecker(BaseObj):
     def now():
         pass
 
+    def resetMax():
+        pass
+
 
 class SysObj(BaseObj):
     mem = MemChecker()
