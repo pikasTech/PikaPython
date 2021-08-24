@@ -9,7 +9,6 @@ void obj_runWithInfo(PikaObj *self, char *cmd)
 	obj_run(self, cmd);
 }
 
-
 int main()
 {
 	/* new root object */
@@ -34,6 +33,7 @@ int main()
 	printf("memory used max = %0.2f kB\r\n", pikaMemMax() / 1024.0);
 	printf("memory used now = %0.2f kB\r\n", pikaMemNow() / 1024.0);
 
+	printf(">>> ");
 	/* user input buff */
 	char inputBuff[256] = {0};
 	/* run the script with check*/
@@ -46,13 +46,15 @@ int main()
 		Args *resArgs = obj_runDirect(root, inputBuff);
 
 		/* get system output of PikaScript*/
-		char *sysOut = args_getSysOut(resArgs);;
+		char *sysOut = args_getSysOut(resArgs);
+		;
 
-		if (NULL != sysOut)
+		if (!strEqu("", sysOut))
 		{
 			/* print out the system output */
 			printf("%s\r\n", sysOut);
 		}
+		printf(">>> ");
 
 		/* deinit the res */
 		args_deinit(resArgs);
