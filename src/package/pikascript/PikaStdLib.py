@@ -13,7 +13,6 @@ class MemChecker(BaseObj):
 
 
 class SysObj(BaseObj):
-    mem = MemChecker()
 
     def type(argPath: str):
         pass
