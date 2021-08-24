@@ -5,6 +5,7 @@ extern "C"
 #include "TinyObj.h"
 #include "BaseObj.h"
 }
+
 TEST(sysObj, print)
 {
     PikaObj *obj = newRootObj((char *)"test", New_PikaStdLib_SysObj);
