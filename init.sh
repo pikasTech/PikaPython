@@ -1,6 +1,7 @@
 ROOT=$PWD
 git submodule init
 git submodule update
+sh update-compiler.sh
 rm src/package/pikascript/pikascript-api -rf
 mkdir src/package/pikascript/pikascript-api
 touch src/package/pikascript/pikascript-api/path
