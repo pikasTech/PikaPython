@@ -2,5 +2,5 @@ from PikaObj import *
 import PikaStdLib
 
 
-class Main(PikaStdLib.SysObj):
+class PikaMain(PikaStdLib.SysObj):
     mem = PikaStdLib.MemChecker()
