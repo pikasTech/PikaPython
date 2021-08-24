@@ -1,7 +1,17 @@
 from PikaObj import *
 
 
+class MemChecker(BaseObj):
+    def max():
+        pass
+
+    def now():
+        pass
+
+
 class SysObj(BaseObj):
+    mem = MemChecker()
+
     def type(argPath: str):
         pass
 
