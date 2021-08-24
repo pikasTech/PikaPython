@@ -12,6 +12,7 @@ static void printInfo(const char *argName, char *argVal)
     printf("\t\t[info] %s: \"%s\"\r\n", argName, argVal);
 }
 static int mem;
+
 TEST(strs, analizeDef)
 {
     mem = pikaMemNow();
@@ -47,6 +48,14 @@ TEST(strs, analizeDef)
     }
     args_deinit(buffs);
     return;
+}
+
+TEST(strs, format)
+{
+    Args *buffs = New_args(NULL);
+    char *fmt = strsFormat(buffs, "test int: %d, float %f", 1, 34.2);
+    EXPECT_TRUE(strEqu((char *)"test int: 1, float 34.200000", fmt));
+    args_deinit(buffs);
 }
 
 TEST(strs, mem)
