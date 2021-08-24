@@ -1,6 +1,7 @@
 /* banchmark for memory */
 #include "BaseObj.h"
 #include "PikaStdLib_SysObj.h"
+#include "dataStrs.h"
 #include <stdio.h>
 
 void checker_printMem(char *info, uint32_t size)
@@ -47,19 +48,20 @@ void checker_objMemChecker(void *NewFun, char *objName)
 	{
 		/* new root object */
 		PikaObj *obj = newRootObj("obj", NewFun);
-		char testName[256] = {0};
-		sprintf(testName, "Root %s object", objName);
+		Args *buffs = New_args(NULL);
+		char *testName = strsFormat(buffs, "Root %s object", objName);
 		checker_printMemUsage(testName);
 		obj_deinit(obj);
+		args_deinit(buffs);
 		checker_assertMemFree();
 	}
 
 	{
 		PikaObj *obj = New_TinyObj(NULL);
-		char testName[256] = {0};
-		sprintf(testName, "%s object", objName);
-		checker_printMemUsage(testName);
+		Args *buffs = New_args(NULL);
+		checker_printMemUsage(strsFormat(buffs, "%s object", objName));
 		obj_deinit(obj);
+		args_deinit(buffs);
 		checker_assertMemFree();
 	}
 }
