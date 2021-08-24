@@ -13,5 +13,6 @@ add_subdirectory(src/boot/demo02-add)
 add_subdirectory(src/boot/demo03-usart)
 add_subdirectory(src/boot/demo04-usarts)
 add_subdirectory(src/boot/demo05-sysobject)
+add_subdirectory(src/boot/demo06-pikamain)
 add_subdirectory(src/boot/banchmark)
 
