@@ -1,6 +1,5 @@
-from PikaObj import *
 import PikaStdLib
 
 
-class PikaMain(PikaStdLib.SysObj):
-    mem = PikaStdLib.MemChecker()
+print('hello world')
+mem = PikaStdLib.MemChecker()

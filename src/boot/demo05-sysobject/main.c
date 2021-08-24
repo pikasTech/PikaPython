@@ -1,6 +1,5 @@
 /* this demo shows the usage of method */
 #include "PikaStdLib_SysObj.h"
-#include "PikaMain.h"
 #include <stdio.h>
 
 void obj_runWithInfo(PikaObj *self, char *cmd)
@@ -12,7 +11,7 @@ void obj_runWithInfo(PikaObj *self, char *cmd)
 int main()
 {
 	/* new root object */
-	PikaObj *root = newRootObj("root", New_PikaMain);
+	PikaObj *root = newRootObj("root", New_PikaStdLib_SysObj);
 
 	obj_runWithInfo(root, "set('a',1)");
 	obj_runWithInfo(root, "print(a)");
