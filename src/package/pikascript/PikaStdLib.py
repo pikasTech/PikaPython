@@ -23,8 +23,5 @@ class SysObj(BaseObj):
     def remove(argPath: str):
         pass
 
-    def type(argPath: str):
-        pass
-
     def new(objPath: str, classPath: str):
         pass
