@@ -5,8 +5,6 @@
 # stm32例程
 [pikascript-stm32-demo](../../../pikascript-demo-stm32)
 
-gitee 镜像：[pikascript(gitee)](https://gitee.com/Lyon1998/pikascript-demo-stm32)
-
 # 1.简介
 pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
