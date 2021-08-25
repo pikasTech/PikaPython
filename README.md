@@ -40,7 +40,7 @@ https://github.com/mimilib/pikascript-core
 [单片机运行python脚本，不移植micropython也行吗？](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
 
 ## 微信交流群
-![image](https://user-images.githubusercontent.com/88232613/128301298-1bfbbecf-8199-416b-819b-0cdbb41d5b3a.png)
+![微信图片_20210825171046](https://user-images.githubusercontent.com/88232613/130763024-c57106f5-0d46-43d8-99e3-c331ae2594b5.jpg)
 
 ## 官方公众号
 ![image](https://user-images.githubusercontent.com/88232613/128301451-f0cdecea-6457-4925-b084-42e7796a856e.png)
@@ -87,100 +87,3 @@ step4: 运行demo
 bin/demo01-led.bin
 ```
 
-## 用法示例：
-``` c
-#include "sysObj.h"
-
-/* 
-    被绑定的方法 
-    self 是对象指针，指向执行方法的对象
-    args 是参数列表，用于传入传出参数
-    （所有被绑定的方法均使用此形参）
-*/
-void add(PikaObj *self, Args *args) 
-{
-    /* 
-        参数传递 
-        从参数列表中取出输入参数val1和val2
-    */
-    int val1 = args_getInt(args, "val1");
-    int val2 = args_getInt(args, "val2");
-    
-    /* 实现方法的功能 */
-    int res = val1 + val2;
-    
-    /* 将返回值传回参数列表 */
-    method_returnInt(args, res);
-}
-
-/* 
-    定义测试类的构造器，一个构造器对应一个类
-    通过构造器即可新建对象
-    args是构造器的初始化参数列表
-    PikaObj*是新建对象的指针
-    （所有构造器均使用此形参）
-*/
-PikaObj *New_PikaObj_test(Args *args)
-{
-    /* 
-        继承sys类
-        只需要直接调用父类的构造器即可
-    */
-    PikaObj *self = New_PikaObj_sys(args);
-    
-    /* 
-        为test类绑定一个方法（支持重载）
-        1.入口参数self：对象指针，指向当前对象
-        2.传入的第二参数是被绑定方法的接口定义
-        （此处使用typescript语法，简单的修改即可支持python格式）
-        3.传入的第三个参数是被绑定方法的函数指针
-    */
-    class_defineMethod(self, "add(val1:int, val2:int):int", add); 
-
-
-    /* 返回对象 */
-    return self;
-}
-
-void main()
-{
-    /* 
-        新建根对象，对象名为“sys”
-        传入对象名和构造器的函数指针
-    */
-    PikaObj *sys = newRootObj("sys", New_PikaObj_sys);
-
-    /* 
-        新建test对象
-        test对象作为子对象挂载在sys对象下（对象树）
-    */
-    obj_newObj(sys, "test", New_PikaObj_test);
-    
-    /*  
-        运行单行脚本。
-        因为test对象挂在在sys对象下，
-        因此可以通过test.add调用test对象的方法
-        运行后会动态新建res属性，该属性属于sys对象
-    */
-    obj_run(sys, "res = test.add(val1 = 1, val2 = 2)");
-    /*
-        (也支持 "res = test.add(1, 2)"的调用方式)
-    */
-    
-    /* 从sys对象中取出属性值res */
-    int res = obj_getInt(sys, "res");
-    
-    /* 
-        析构对象
-        所有挂载在sys对象下的子对象都会被自动析构
-        本例中挂载了test对象，因此在析构sys对象前，
-        test对象会被自动析构
-    */
-    obj_deinit(sys);
-    
-    /* 打印返回值 res = 3*/
-    printf("%d\r\n", res);    
-}
-```
-# 5. PikaScript-compiler
-将pyton编译为PikaScript的C源码
