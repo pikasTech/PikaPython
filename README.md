@@ -1,5 +1,5 @@
 ## 开发手册
-[PikaScript-开发手册](doc/1.%E4%B8%89%E5%88%86%E9%92%9F%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B.md)
+[PikaScript-三分钟快速上手](doc/1.%E4%B8%89%E5%88%86%E9%92%9F%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B.md)
 
 ## stm32例程
 [pikascript-stm32-demo](../../../pikascript-demo-stm32)
