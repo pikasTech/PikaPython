@@ -3,7 +3,7 @@
 [PikaScript v0.5.0](../../download/v0.5.0/pikascript.v0.5.0.zip)
 
 # 开发手册
-[PikaScript Handbook](../../wiki)
+[PikaScript-开发手册](../../wiki/Pikascript-开发手册)
 
 # stm32例程
 [pikascript-stm32-demo](../../../pikascript-demo-stm32)
