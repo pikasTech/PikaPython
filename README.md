@@ -1,6 +1,6 @@
 
 # 下载PikaScript
-[PikaScript v0.5.0](https://github.com/mimilib/pikascript/releases/download/v0.5.0/pikascript.v0.5.0.zip)
+[PikaScript v0.5.0](../../releases/download/v0.5.0/pikascript.v0.5.0.zip)
 
 # stm32例程
 [pikascript-stm32-demo](https://github.com/mimilib/pikascript-demo-stm32)
