@@ -1,11 +1,11 @@
 
 # 下载PikaScript
-[PikaScript v0.5.0](../releases/download/v0.5.0/pikascript.v0.5.0.zip)
+[PikaScript v0.5.0](https://github.com/mimilib/pikascript/releases/download/v0.5.0/pikascript.v0.5.0.zip)
 
 # stm32例程
-https://github.com/mimilib/pikascript-demo-stm32
+[pikascript-stm32-demo](https://github.com/mimilib/pikascript-demo-stm32)
 
-gitee 镜像：https://gitee.com/Lyon1998/pikascript-demo-stm32
+gitee 镜像：[pikascript(gitee)](https://gitee.com/Lyon1998/pikascript-demo-stm32)
 
 # 1.简介
 pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
@@ -14,7 +14,7 @@ pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
 官方支持api源码生成器
 
-https://github.com/mimilib/pikascript-compiler-rust
+[pikascript-compiler-Rust](https://github.com/mimilib/pikascript-compiler-rust)
 
 支持跨平台，可在linux环境开发、测试内核。
 
