@@ -1,7 +1,3 @@
-
-# 下载PikaScript
-[PikaScript v0.5.0](../../download/v0.5.0/pikascript.v0.5.0.zip)
-
 ## 开发手册
 [PikaScript-开发手册](../../wikis)
 
