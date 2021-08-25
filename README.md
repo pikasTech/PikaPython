@@ -1,9 +1,9 @@
 
 # 下载PikaScript
-[PikaScript v0.5.0](../../releases/tag/v0.5.0)
+[PikaScript v0.5.0](../../download/v0.5.0/pikascript.v0.5.0.zip)
 
 # stm32例程
-[pikascript-stm32-demo](https://github.com/mimilib/pikascript-demo-stm32)
+[pikascript-stm32-demo](../../../pikascript-demo-stm32)
 
 gitee 镜像：[pikascript(gitee)](https://gitee.com/Lyon1998/pikascript-demo-stm32)
 
