@@ -20,7 +20,8 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 源码命名规范，可读性强。
 
 ## 开发手册
-[1. PikaScript-三分钟快速上手](doc/1.%E4%B8%89%E5%88%86%E9%92%9F%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B.md)
+[1. PikaScript-三分钟快速上手](doc/1.三分钟快速上手.md)
+
 [2. PikaScript-十分钟快速部署](doc/2.十分钟快速部署.md)
 ## stm32例程
 [pikascript-stm32-demo](../../../pikascript-demo-stm32)
