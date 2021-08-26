@@ -9,9 +9,6 @@ pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
 支持裸机运行，可运行于内存8Kb以上的mcu中，如stm32f103c8t6，esp32。
 
-Pika预编译器
-
-[pikascript-compiler-Rust](https://github.com/mimilib/pikascript-compiler-rust)
 
 支持跨平台，可在linux环境开发、测试内核。
 
@@ -32,9 +29,14 @@ Pika预编译器
 ## 架构示意图
 ![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
 
-## 内核源码
+## 内核
 
 [PiKaScript 运行时内核](https://github.com/mimilib/pikascript-core)
+
+
+## 预编译器
+
+[pikascript-compiler-Rust](https://github.com/mimilib/pikascript-compiler-rust)
 
 ## 解析文章
 [单片机运行python脚本，不移植micropython也行吗？](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
