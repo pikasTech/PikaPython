@@ -77,3 +77,7 @@ step5: 运行demo
 ``` shell
 ./build/src/boot/demo06-pikamain/pikascript_demo06-pikamain
 
+step6: 提交修改
+``` shell
+sh commit.sh
+```
