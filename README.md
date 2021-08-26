@@ -54,7 +54,7 @@ pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 step1: 拉取项目
 ``` shell
 git clone https://github.com/mimilib/pikascript
-cd PikaScript
+cd pikascript
 ```
 
 step2: 编译项目
