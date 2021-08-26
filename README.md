@@ -25,7 +25,7 @@ Pika预编译器
 
 # 2.stm32教程视频
 
-https://www.bilibili.com/video/BV1mg411L72e
+[手把手PikaScript教程合集](https://www.bilibili.com/video/BV1mg411L72e)
 
 # 3.原理解析：
 
@@ -34,7 +34,7 @@ https://www.bilibili.com/video/BV1mg411L72e
 
 ## 内核源码
 
-https://github.com/mimilib/pikascript-core
+[PiKaScript 运行时内核](https://github.com/mimilib/pikascript-core)
 
 ## 解析文章
 [单片机运行python脚本，不移植micropython也行吗？](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
