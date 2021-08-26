@@ -5,20 +5,23 @@
 [pikascript-stm32-demo](../../../pikascript-demo-stm32)
 
 # 1.简介
-pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
+PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本绑定。
 
-支持裸机运行，可运行于内存8Kb以上的mcu中，如stm32f103c8t6，esp32。
+使用python3标准语法的子集。
 
+支持裸机运行，可运行于RAM > 8kB的mcu中，如stm32f103c8t6，esp32。
+
+官方支持api源码生成器
 
 支持跨平台，可在linux环境开发、测试内核。
 
 开箱即用，零配置，仅使用C标准库，几乎不使用宏，几乎不使用全局变量。
 
-完整的单元测试。
+完整的googletest单元测试。
 
 栈空间少量占用，内存信息可观测。
 
-尽可能的结构清晰（尽我所能）。
+源码命名规范，可读性强。
 
 # 2.stm32教程视频
 
