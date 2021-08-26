@@ -9,7 +9,7 @@ pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
 支持裸机运行，可运行于内存8Kb以上的mcu中，如stm32f103c8t6，esp32。
 
-官方支持api源码生成器
+Pika预编译器
 
 [pikascript-compiler-Rust](https://github.com/mimilib/pikascript-compiler-rust)
 
