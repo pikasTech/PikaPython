@@ -49,43 +49,31 @@ pikascript可以为mcu裸机c开发提供面向对象的脚本绑定。
 
 # 4.内核测试与开发
 
-## windows下测试PikaScript内核：
-
-step1: 下载源码
-``` 
-https://github.com/mimilib/PikaScript/releases/download/v1.0/PikaScript-v1.0.zip
-```
-step2: 下载安装codeblocks
-```
-https://download.fosshub.com/Protected/expiretime=1628119786;badurl=aHR0cHM6Ly93d3cuZm9zc2h1Yi5jb20vQ29kZS1CbG9ja3MuaHRtbA==/9bc1258414546cedb7b0774846ec773613a89ed715964c9a3239fab0465f014d/5b85805cf9ee5a5c3e979f1b/5e80624f7d74bb810359a46c/codeblocks-20.03-setup.exe
-```
-
-step3: 打开winproject文件夹下的demoXX/demoXX.cbs编译运行
-
-
 ## linux下测试pikascript内核(推荐ubuntu20.04)：
 
 step1: 拉取项目
 ``` shell
 git clone https://github.com/mimilib/pikascript
 cd PikaScript
-git submodule init && git submodule update
-```
-step2: 安装编译链
-``` shell
-sudo apt update
-sudo apt install -y clang llvm cmake zlib1g-dev
 ```
 
-step3: 编译项目
+step2: 编译项目
 ```
-cd mimiproject
 sh init.sh # 第一次编译前运行，之后就不用运行了 
 sh make.sh # 编译项目
 ```
 
-step4: 运行demo
+step3: 运行单元测试
 ``` shell	
-bin/demo01-led.bin
+sh test
 ```
+
+step4: 运行基准测试
+``` shell
+sh test-banchmark
+```
+
+step5: 运行demo
+``` shell
+./build/src/boot/demo06-pikamain/pikascript_demo06-pikamain
 
