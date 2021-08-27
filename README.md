@@ -7,9 +7,9 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 支持裸机运行，可运行于RAM > 8kB的mcu中，如stm32f103c8t6，esp32。
 
-在编译时基于支持python类和方法声明{基于[Pika预编译器](https://github.com/mimilib/pikascript-compiler-rust))。
+在编译时基于支持python类和方法声明(基于[Pika预编译器](https://github.com/mimilib/pikascript-compiler-rust))。
 
-在运行时支持python方法调用、变量定义、对象构造、对象释放。
+在运行时支持python方法调用、变量定义、对象构造、对象释放(基于[Pika运行时内核](https://github.com/mimilib/pikascript-core))。
 
 支持跨平台，可在linux环境开发、测试内核。
 
@@ -36,15 +36,6 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 ## 架构示意图
 ![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
-
-## 内核
-
-[PiKaScript 运行时内核](https://github.com/mimilib/pikascript-core)
-
-
-## 预编译器
-
-[PikaScript 预编译器](https://github.com/mimilib/pikascript-compiler-rust)
 
 ## 解析文章
 [单片机运行python脚本，不移植micropython也行吗？](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
