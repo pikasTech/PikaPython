@@ -25,6 +25,8 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 [1. PikaScript-三分钟快速上手](doc/1.三分钟快速上手.md)
 
 [2. PikaScript-十分钟快速部署](doc/2.十分钟快速部署.md)
+
+[3. PikaScript-标准开发流程](doc/3.PikaScript标准开发流程.md)
 ## stm32例程
 [pikascript-stm32-demo](../../../pikascript-demo-stm32)
 
