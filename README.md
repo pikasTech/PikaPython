@@ -7,7 +7,7 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 支持裸机运行，可运行于RAM > 8kB的mcu中，如stm32f103c8t6，esp32。
 
-在编译时基于支持python类和方法声明(基于[Pika预编译器](https://github.com/mimilib/pikascript-compiler-rust))。
+在编译时支持python类和方法声明(基于[Pika预编译器](https://github.com/mimilib/pikascript-compiler-rust))。
 
 在运行时支持python方法调用、变量定义、对象构造、对象释放(基于[Pika运行时内核](https://github.com/mimilib/pikascript-core))。
 
