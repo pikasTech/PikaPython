@@ -42,7 +42,7 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 ## 预编译器
 
-[pikascript-compiler-Rust](https://github.com/mimilib/pikascript-compiler-rust)
+[pikascript 预编译器](https://github.com/mimilib/pikascript-compiler-rust)
 
 ## 解析文章
 [单片机运行python脚本，不移植micropython也行吗？](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
