@@ -3,9 +3,9 @@
 # 1.简介
 PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本绑定。
 
-使用python3标准语法的子集。
-
 支持裸机运行，可运行于RAM > 8kB的mcu中，如stm32f103c8t6，esp32。
+
+使用python3标准语法的子集。
 
 在编译时支持python类和方法声明(基于[Pika预编译器](https://github.com/mimilib/pikascript-compiler-rust))。
 
