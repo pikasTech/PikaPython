@@ -2,6 +2,7 @@
 *.layout
 /build
 /src/package/pikascript/pikascript-api
+*__pycache__
 *bin/
 *obj/
 
