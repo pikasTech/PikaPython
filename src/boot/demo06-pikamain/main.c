@@ -4,36 +4,36 @@
 
 void obj_runWithInfo(PikaObj *self, char *cmd)
 {
-	printf(">>> %s\r\n", cmd);
-	obj_run(self, cmd);
+    printf(">>> %s\r\n", cmd);
+    obj_run(self, cmd);
 }
 
 int main()
 {
-	PikaObj *pikaMain = pikaScriptInit();
-	/* user input buff */
-	char inputBuff[256] = {0};
-	/* run the script with check*/
-	printf(">>> ");
-	while (1)
-	{
-		/* get user input */
-		fgets(inputBuff, sizeof(inputBuff), stdin);
+    PikaObj *pikaMain = pikaScriptInit();
+    /* user input buff */
+    char inputBuff[256] = {0};
+    /* run the script with check*/
+    printf(">>> ");
+    while (1)
+    {
+        /* get user input */
+        fgets(inputBuff, sizeof(inputBuff), stdin);
 
-		/* run PikaScript and get res */
-		Args *resArgs = obj_runDirect(pikaMain, inputBuff);
+        /* run PikaScript and get res */
+        Args *resArgs = obj_runDirect(pikaMain, inputBuff);
 
-		/* get system output of PikaScript*/
-		char *sysOut = args_getSysOut(resArgs);
+        /* get system output of PikaScript*/
+        char *sysOut = args_getSysOut(resArgs);
 
-		if (!strEqu("", sysOut))
-		{
-			/* print out the system output */
-			printf("%s\r\n", sysOut);
-		}
-		printf(">>> ");
+        if (!strEqu("", sysOut))
+        {
+            /* print out the system output */
+            printf("%s\r\n", sysOut);
+        }
+        printf(">>> ");
 
-		/* deinit the res */
-		args_deinit(resArgs);
-	}
+        /* deinit the res */
+        args_deinit(resArgs);
+    }
 }
