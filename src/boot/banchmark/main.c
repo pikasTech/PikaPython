@@ -112,7 +112,7 @@ int32_t main()
     }
     {
         Args *args = New_args(NULL);
-        args_setInt(args, "testInt", 0);
+        args_setInt(args, "testInt1", 0);
         checker_printMemUsage("one int args");
         args_deinit(args);
         checker_assertMemFree();
