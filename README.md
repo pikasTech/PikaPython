@@ -21,12 +21,17 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 源码命名规范，可读性强。
 
+## 架构示意图
+![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
+
 ## 开发手册
 [1. PikaScript-三分钟快速上手](doc/1.三分钟快速上手.md)
 
 [2. PikaScript-十分钟快速部署](doc/2.十分钟快速部署.md)
 
-[3. PikaScript-标准开发流程](doc/3.PikaScript标准开发流程.md)
+[3. PikaScript-架构与原理](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
+
+[4. PikaScript-标准开发流程](doc/3.PikaScript标准开发流程.md)
 ## stm32例程
 [pikascript-stm32-demo](../../../pikascript-demo-stm32)
 
@@ -34,19 +39,17 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 [手把手PikaScript教程合集](https://www.bilibili.com/video/BV1mg411L72e)
 
-# 3.原理解析：
-
-## 架构示意图
-![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
-
-## 解析文章
-[单片机运行python脚本，不移植micropython也行吗？](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
+# 3.交流与技术支持：
 
 ## 微信交流群
 ![微信图片_20210825171046](https://user-images.githubusercontent.com/88232613/130763024-c57106f5-0d46-43d8-99e3-c331ae2594b5.jpg)
 
 ## 官方公众号
 ![image](https://user-images.githubusercontent.com/88232613/128301451-f0cdecea-6457-4925-b084-42e7796a856e.png)
+
+## Tencent QQ： 645275593
+
+## E-mail: 645275593@qq.com
 
 # 4.内核测试与开发
 
