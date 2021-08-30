@@ -69,9 +69,9 @@ void sendMethod(PikaObj *self, Args *args)
 
 PikaObj *New_USART(Args *args)
 {
-    /*	Derive from the tiny object class.
-		Tiny object can not import sub object.
-		Tiny object is the smallest object. */
+    /*  Derive from the tiny object class.
+        Tiny object can not import sub object.
+        Tiny object is the smallest object. */
     PikaObj *self = New_TinyObj(args);
 
     /* bind the method */
@@ -83,9 +83,9 @@ PikaObj *New_USART(Args *args)
 
 PikaObj *New_MYROOT1(Args *args)
 {
-    /*	Derive from the base object class .
-		BaseObj is the smallest object that can
-		import sub object.		*/
+    /*  Derive from the base object class .
+        BaseObj is the smallest object that can
+        import sub object.      */
     PikaObj *self = New_BaseObj(args);
 
     /* import LED class */
