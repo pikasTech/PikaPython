@@ -1,4 +1,5 @@
 import PikaStdLib
+from PikaObj import *
 
 print('hello world')
 mem = PikaStdLib.MemChecker()
