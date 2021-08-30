@@ -6,7 +6,6 @@ typedef struct Class_dataTest dataTest_t;
 struct Class_dataTest
 {
     /* attribute */
-    void *context;
     int32_t a;
     int32_t b;
 
