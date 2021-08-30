@@ -9,7 +9,6 @@ struct Class_dataTest
     void *context;
     int32_t a;
     int32_t b;
-    uint16_t memSize;
 
     /* operation */
     void (*deinit)(dataTest_t *self);

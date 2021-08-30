@@ -4,7 +4,7 @@
 
 static void deinit(dataTest_t *self)
 {
-    pikaFree(self, self->memSize);
+    pikaFree(self, sizeof(dataTest_t));
 }
 
 static void init(dataTest_t *self, Args *args)
@@ -25,7 +25,6 @@ static void init(dataTest_t *self, Args *args)
 dataTest_t *New_dataTest(Args *args)
 {
     dataTest_t *self = pikaMalloc(sizeof(dataTest_t));
-    self->memSize = sizeof(dataTest_t);
     self->init = init;
     self->init(self, args);
     return self;
