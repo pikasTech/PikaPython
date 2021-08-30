@@ -15,6 +15,17 @@ TEST(args_test, test1)
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(args_test, test4)
+{
+    int32_t testint = 12333;
+    Args *args = New_args(NULL);
+    args_setInt(args, (char *)"testint", testint);
+    EXPECT_EQ(12333, args_getInt(args, (char *)"testint"));
+    args_deinit(args);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(args_test, test2)
 {
     Args *args = New_args(NULL);
@@ -39,6 +50,7 @@ TEST(args_test, test2)
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
 TEST(args_test, test3)
 {
     Args *args1 = New_args(NULL);
@@ -54,15 +66,7 @@ TEST(args_test, test3)
     args_deinit(args2);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-TEST(args_test, test4)
-{
-    int32_t testint = 12333;
-    Args *args = New_args(NULL);
-    args_setInt(args, (char *)"testint", testint);
-    EXPECT_EQ(12333, args_getInt(args, (char *)"testint"));
-    args_deinit(args);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+
 
 TEST(args_test, print_int)
 {
