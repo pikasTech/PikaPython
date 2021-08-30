@@ -22,17 +22,14 @@ TEST(args_test, test2)
     int64_t int64Out = 0;
     void *pointer = NULL;
     char *strOut = NULL;
-    args_setFloatWithDefaultName(args, 24.5);
     args_setInt(args, (char *)"int64Test", (int64_t)22221);
     args_setPtr(args, (char *)"pointerTest", (void *)2222322);
     args_setStr(args, (char *)"strTest", (char *)"teeeds");
 
-    floatOut = args_getFloatByIndex(args, 0);
     int64Out = args_getInt(args, (char *)"int64Test");
     pointer = args_getPtr(args, (char *)"pointerTest");
     strOut = args_getStr(args, (char *)"strTest");
 
-    EXPECT_EQ(floatOut, 24.5);
     EXPECT_EQ(int64Out, 22221);
     EXPECT_EQ((uint64_t)pointer, 2222322);
     EXPECT_EQ(1, strEqu((char *)"teeeds", strOut));
