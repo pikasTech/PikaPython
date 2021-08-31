@@ -52,7 +52,7 @@ TEST(arg_test, name)
     Arg *arg = New_arg(NULL);
     arg_setName(arg, (char *)"test");
     char *name = arg_getName(arg);
-    EXPECT_EQ(1, strEqu((char *)"test", name));
+    EXPECT_STREQ((char *)"test", name);
     arg_deinit(arg);
     EXPECT_EQ(pikaMemNow(), 0);
 }
