@@ -1,4 +1,4 @@
-
+# [点击获取PikaScript](https://github.com/mimilib/pikascript/releases/download/v0.6.0/pikascript-v0.6.0.zip)
 
 # 1.简介
 PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本绑定。
