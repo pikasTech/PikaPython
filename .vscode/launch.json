@@ -9,8 +9,9 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/src/test/pikascript_test",
-            // "args": ["--gtest_filter=args_test.test1"],
-            "args": ["--gtest_filter=content*"],
+            "args": [
+                "--gtest_filter=arg_test.int_"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
