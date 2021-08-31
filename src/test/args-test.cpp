@@ -5,7 +5,7 @@ extern "C"
 #include "dataString.h"
 }
 static int mem;
-TEST(args_test, test1)
+TEST(args, test1)
 {
     mem = pikaMemNow();
     Args *args = New_args(NULL);
@@ -16,7 +16,7 @@ TEST(args_test, test1)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, test4)
+TEST(args, test4)
 {
     int32_t testint = 12333;
     Args *args = New_args(NULL);
@@ -26,7 +26,7 @@ TEST(args_test, test4)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, test2)
+TEST(args, test2)
 {
     Args *args = New_args(NULL);
     float floatOut = 0;
@@ -51,7 +51,7 @@ TEST(args_test, test2)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, test3)
+TEST(args, test3)
 {
     Args *args1 = New_args(NULL);
     Args *args2 = New_args(NULL);
@@ -67,7 +67,7 @@ TEST(args_test, test3)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, buff)
+TEST(args, buff)
 {
     Args *buffs = New_args(NULL);
     char *buff = args_getBuff(buffs, 256);
@@ -75,7 +75,7 @@ TEST(args_test, buff)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, print_int)
+TEST(args, print_int)
 {
     Args *args = New_args(NULL);
     args_setInt(args, (char *)"testInt", 124);
@@ -84,7 +84,7 @@ TEST(args_test, print_int)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, test5)
+TEST(args, test5)
 {
     int32_t testInt = 124;
     Args *args = New_args(NULL);
@@ -96,7 +96,7 @@ TEST(args_test, test5)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, test6)
+TEST(args, test6)
 {
     Args *args = New_args(NULL);
     args_setFloat(args, (char *)"testfloat", 1.42);
@@ -104,7 +104,7 @@ TEST(args_test, test6)
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-TEST(args_test, test7)
+TEST(args, test7)
 {
     Args *args = New_args(NULL);
     float floatBindTest = 2.314;
@@ -114,7 +114,7 @@ TEST(args_test, test7)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, test8)
+TEST(args, test8)
 {
     Args *args = New_args(NULL);
     args_setStr(args, (char *)"testString", (char *)"test string print");
@@ -123,7 +123,7 @@ TEST(args_test, test8)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, test9)
+TEST(args, test9)
 {
     Args *args = New_args(NULL);
     char strBindTest[] = "test string bind";
@@ -133,7 +133,7 @@ TEST(args_test, test9)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, test10)
+TEST(args, test10)
 {
     Args *args = New_args(NULL);
     args_setInt(args, (char *)"testInt", 1);
@@ -146,7 +146,7 @@ TEST(args_test, test10)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, test11)
+TEST(args, test11)
 {
     Args *args = New_args(NULL);
     char testStrBind[256] = "testtest";
@@ -160,7 +160,7 @@ TEST(args_test, test11)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, test12)
+TEST(args, test12)
 {
     Args *args = New_args(NULL);
     args_setInt(args, (char *)"test", 13);
@@ -174,7 +174,7 @@ TEST(args_test, test12)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args_test, mem)
+TEST(args, mem)
 {
     EXPECT_EQ(pikaMemNow(), mem);
     EXPECT_EQ(pikaMemNow(), 0);
