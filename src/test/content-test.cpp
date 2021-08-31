@@ -35,6 +35,7 @@ TEST(content, get)
     char *type = content_getType(self);
     uint16_t size = content_getSize(self);
     uint8_t *content = content_getContent(self);
+    uint16_t totleSize = content_totleSize(self);
 
     ASSERT_EQ(contentOffset, 12);
     ASSERT_EQ(typeOffset, 5);
@@ -44,11 +45,12 @@ TEST(content, get)
     ASSERT_EQ(content[1], 2);
     ASSERT_EQ(content[2], 3);
     ASSERT_EQ(content[3], 4);
+    ASSERT_EQ(totleSize, 16);
 
     ASSERT_STREQ("name", name);
     ASSERT_STREQ("type", type);
 
-    pikaFree(self, 16);
+    pikaFree(self, totleSize);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -65,6 +67,7 @@ TEST(content, init)
     uint16_t typeOffset = content_typeOffset(self);
     uint16_t sizeOffset = content_sizeOffset(self);
     uint16_t contentOffset = content_contentOffset(self);
+    uint16_t totleSize = content_totleSize(self);
 
     char *name = content_getName(self);
     char *type = content_getType(self);
@@ -79,10 +82,11 @@ TEST(content, init)
     ASSERT_EQ(content[1], 2);
     ASSERT_EQ(content[2], 3);
     ASSERT_EQ(content[3], 4);
+    ASSERT_EQ(totleSize, 16);
 
     ASSERT_STREQ("name", name);
     ASSERT_STREQ("type", type);
 
-    pikaFree(self, 16);
+    pikaFree(self, totleSize);
     EXPECT_EQ(pikaMemNow(), 0);
 }
