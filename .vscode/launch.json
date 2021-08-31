@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/src/test/pikascript_test",
             "args": [
-                "--gtest_filter=arg_test.name"
+                "--gtest_filter=strs*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
