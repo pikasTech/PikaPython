@@ -47,8 +47,8 @@ TEST(content, get)
     ASSERT_EQ(content[3], 4);
     ASSERT_EQ(totleSize, 16);
 
-    ASSERT_STREQ("name", name);
-    ASSERT_STREQ("type", type);
+    ASSERT_STREQ((char *)"name", name);
+    ASSERT_STREQ((char *)"type", type);
 
     content_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -62,7 +62,7 @@ TEST(content, init)
     contentIn[2] = 3;
     contentIn[3] = 4;
     uint16_t sizeIn = 4;
-    uint8_t *self = content_init("name", "type", contentIn, 4);
+    uint8_t *self = content_init((char *)"name", (char *)"type", contentIn, 4);
 
     uint16_t typeOffset = content_typeOffset(self);
     uint16_t sizeOffset = content_sizeOffset(self);
@@ -84,8 +84,8 @@ TEST(content, init)
     ASSERT_EQ(content[3], 4);
     ASSERT_EQ(totleSize, 16);
 
-    ASSERT_STREQ("name", name);
-    ASSERT_STREQ("type", type);
+    ASSERT_STREQ((char *)"name", name);
+    ASSERT_STREQ((char *)"type", type);
 
     content_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -98,9 +98,9 @@ TEST(content, set)
     contentIn[1] = 2;
     contentIn[2] = 3;
     contentIn[3] = 4;
-    uint8_t *self = content_init("", "", NULL, 0);
-    self = content_setName(self, "name");
-    self = content_setType(self, "type");
+    uint8_t *self = content_init((char *)"", (char *)"", NULL, 0);
+    self = content_setName(self, (char *)"name");
+    self = content_setType(self, (char *)"type");
     self = content_setContent(self, contentIn, 4);
 
     uint16_t typeOffset = content_typeOffset(self);
