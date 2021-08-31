@@ -85,21 +85,21 @@ int32_t main()
     }
     {
         Arg *arg = New_arg(NULL);
-        arg_setInt(arg, 0);
+        arg = arg_setInt(arg, 0);
         checker_printMemUsage("int arg");
         arg_deinit(arg);
         checker_assertMemFree();
     }
     {
         Arg *arg = New_arg(NULL);
-        arg_setFloat(arg, 0);
+        arg = arg_setFloat(arg, 0);
         checker_printMemUsage("float arg");
         arg_deinit(arg);
         checker_assertMemFree();
     }
     {
         Arg *arg = New_arg(NULL);
-        arg_setStr(arg, "test string");
+        arg = arg_setStr(arg, "test string");
         checker_printMemUsage("str arg");
         arg_deinit(arg);
         checker_assertMemFree();
