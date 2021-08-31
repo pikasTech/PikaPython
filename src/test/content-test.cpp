@@ -50,7 +50,7 @@ TEST(content, get)
     ASSERT_STREQ("name", name);
     ASSERT_STREQ("type", type);
 
-    pikaFree(self, totleSize);
+    content_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -87,6 +87,6 @@ TEST(content, init)
     ASSERT_STREQ("name", name);
     ASSERT_STREQ("type", type);
 
-    pikaFree(self, totleSize);
+    content_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
