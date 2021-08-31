@@ -67,6 +67,13 @@ TEST(args_test, test3)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(args_test, buff)
+{
+    Args *buffs = New_args(NULL);
+    char *buff = args_getBuff(buffs, 256);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(args_test, print_int)
 {
