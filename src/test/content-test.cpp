@@ -7,7 +7,6 @@ extern "C"
 }
 static int mem;
 
-
 TEST(content, init)
 {
     uint8_t contentIn[4] = {0};
@@ -81,5 +80,29 @@ TEST(content, set)
     ASSERT_STREQ("type", type);
 
     content_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(content, next)
+{
+    uint8_t *c1 = content_init((char *)"c1", (char *)"type", NULL, 0, NULL);
+    uint8_t *c2 = content_init((char *)"c2", (char *)"type", NULL, 0, c1);
+    uint8_t *c3 = content_getNext(c2);
+
+    ASSERT_EQ(c3, c1);
+    content_deinit(c1);
+    content_deinit(c2);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(content, setNext)
+{
+    uint8_t *c1 = content_init((char *)"c1", (char *)"type", NULL, 0, NULL);
+    c1 = content_setNext(c1, content_init((char *)"c2", (char *)"type", NULL, 0, NULL));
+    uint8_t *c2 = content_getNext(c1);
+    char *c2Name = content_getName(c2);
+    EXPECT_STREQ(c2Name, (char *)"c2");
+    content_deinit(c1);
+    content_deinit(c2);
     EXPECT_EQ(pikaMemNow(), 0);
 }
