@@ -9,7 +9,7 @@ static int mem;
 TEST(arg_test, int_)
 {
     Arg *arg = New_arg(NULL);
-    arg = arg_setInt(arg, 1);
+    arg = arg_setInt(arg, "test", 1);
     int a = arg_getInt(arg);
     EXPECT_EQ(a, 1);
     arg_deinit(arg);
@@ -19,7 +19,7 @@ TEST(arg_test, int_)
 TEST(arg_test, float_)
 {
     Arg *arg = New_arg(NULL);
-    arg = arg_setFloat(arg, 1.01);
+    arg = arg_setFloat(arg, "test", 1.01);
     float a = arg_getFloat(arg);
     EXPECT_EQ(a, (float)1.01);
     arg_deinit(arg);
@@ -29,7 +29,7 @@ TEST(arg_test, float_)
 TEST(arg_test, str_)
 {
     Arg *arg = New_arg(NULL);
-    arg = arg_setStr(arg, (char *)"test str");
+    arg = arg_setStr(arg, "test", (char *)"test str");
     char *a = arg_getStr(arg);
     EXPECT_EQ(strEqu(a, (char *)"test str"), 1);
     arg_deinit(arg);
@@ -40,7 +40,7 @@ TEST(arg_test, ptr)
 {
     Arg *arg = New_arg(NULL);
     int a = 1;
-    arg = arg_setPtr(arg, &a);
+    arg = arg_setPtr(arg, "test", "pointer", &a);
     int *pa = (int *)arg_getPtr(arg);
     EXPECT_EQ(*pa, 1);
     arg_deinit(arg);
