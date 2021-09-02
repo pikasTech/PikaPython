@@ -84,6 +84,16 @@ TEST(args, print_int)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(args, update)
+{
+    Args *args = New_args(NULL);
+    args_setInt(args, (char *)"testInt", 124);
+    args_setInt(args, (char *)"testInt", 125);
+    EXPECT_EQ(125, args_getInt(args, (char *)"testInt"));
+    args_deinit(args);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(args, test5)
 {
     int32_t testInt = 124;

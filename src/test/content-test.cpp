@@ -98,7 +98,7 @@ TEST(content, next)
 TEST(content, setNext)
 {
     uint8_t *c1 = content_init((char *)"c1", (char *)"type", NULL, 0, NULL);
-    c1 = content_setNext(c1, content_init((char *)"c2", (char *)"type", NULL, 0, NULL));
+    content_setNext(c1, content_init((char *)"c2", (char *)"type", NULL, 0, NULL));
     uint8_t *c2 = content_getNext(c1);
     char *c2Name = content_getName(c2);
     EXPECT_STREQ(c2Name, (char *)"c2");
