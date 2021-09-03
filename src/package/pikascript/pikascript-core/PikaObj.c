@@ -6,6 +6,17 @@
 #include "invoke.h"
 #include <stdarg.h>
 
+void *getNewObjFunByClass(PikaObj *obj, char *classPath)
+{
+    PikaObj *classLoader = args_getPtr(obj->attributeList, "__classLoader");
+    if (NULL == classLoader)
+    {
+        return NULL;
+    }
+    void *(*newObjFun)(Args * initArgs) = args_getPtr(classLoader->attributeList, classPath);
+    return newObjFun;
+}
+
 int32_t deinitEachSubObj(Arg *argEach, Args *handleArgs)
 {
     if (NULL != handleArgs)
