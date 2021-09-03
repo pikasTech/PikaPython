@@ -109,20 +109,7 @@ int32_t strGetTokenNum(char *strIn, char sign)
 
 uint32_t strGetSize(char *pData)
 {
-	if (NULL == pData)
-	{
-		return 0;
-	}
-	uint32_t Size = 0;
-	if (NULL == pData)
-	{
-		return 0;
-	}
-	for (int32_t i = 0; pData[i] != 0; i++)
-	{
-		Size++;
-	}
-	return Size;
+	return strlen(pData);
 }
 
 char *strAppend_unlimited(char *strOut, char *pData)
@@ -265,24 +252,7 @@ int32_t strIsStartWith(char *str, char *strStart)
 
 int32_t strEqu(char *str1, char *str2)
 {
-	if (str1 == NULL || str2 == NULL)
-	{
-		return 0;
-	}
-	int32_t size1 = strGetSize(str1);
-	int32_t size2 = strGetSize(str2);
-	if (size1 != size2)
-	{
-		return 0; // not equal
-	}
-	for (int32_t i = 0; i < size1; i++)
-	{
-		if (str1[i] != str2[i])
-		{
-			return 0; // not equal
-		}
-	}
-	return 1;
+	return ! strcmp(str1, str2);
 }
 
 char *strRemovePrefix(char *inputStr, char *prefix, char *outputStr)
