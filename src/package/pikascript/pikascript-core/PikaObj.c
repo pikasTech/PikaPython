@@ -802,7 +802,7 @@ static char *getCleanCmd(Args *buffs, char *cmd)
     return strOut;
 }
 
-Args *obj_runDirect(PikaObj *self, char *cmd)
+Args *obj_invoke(PikaObj *self, char *cmd)
 {
     /* the Args returned need to be deinit */
     Args *res = New_args(NULL);
@@ -914,6 +914,11 @@ exit:
         args_deinit(args);
     }
     return res;
+}
+
+Args *obj_runDirect(PikaObj *self, char *cmd)
+{
+    return obj_invoke(self, cmd);
 }
 
 int32_t obj_removeArg(PikaObj *self, char *argPath)
