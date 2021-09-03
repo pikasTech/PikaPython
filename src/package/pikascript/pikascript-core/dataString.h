@@ -1,5 +1,5 @@
-#ifndef __MY_TEST_TOOLS_H 
-#define __MY_TEST_TOOLS_H 
+#ifndef __MY_TEST_TOOLS_H
+#define __MY_TEST_TOOLS_H
 #include <stdint.h>
 
 /* size */
