@@ -44,7 +44,7 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 # 3.交流与技术支持：
 
 ## 微信交流群
-![微信图片_20210825171046](https://user-images.githubusercontent.com/88232613/130763024-c57106f5-0d46-43d8-99e3-c331ae2594b5.jpg)
+![image](https://user-images.githubusercontent.com/88232613/131966892-59d89b0c-8068-488a-9015-f1002fa18505.png)
 
 ## 官方公众号
 ![image](https://user-images.githubusercontent.com/88232613/128301451-f0cdecea-6457-4925-b084-42e7796a856e.png)
