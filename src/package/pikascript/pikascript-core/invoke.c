@@ -5,16 +5,7 @@
 #include "dataStrs.h"
 #include <stdarg.h>
 
-void *getNewObjFunByClass(PikaObj *obj, char *classPath)
-{
-    PikaObj *classLoader = args_getPtr(obj->attributeList, "__classLoader");
-    if (NULL == classLoader)
-    {
-        return NULL;
-    }
-    void *(*newObjFun)(Args * initArgs) = args_getPtr(classLoader->attributeList, classPath);
-    return newObjFun;
-}
+
 
 char *getDirectStr(Args *buffs, char *argPath)
 {
