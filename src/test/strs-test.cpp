@@ -16,7 +16,7 @@ static int mem;
 TEST(strs, append)
 {
     Args *buffs = New_strBuff();
-    char *res = strsAppend(buffs, "a", "b");
+    char *res = strsAppend(buffs, (char *)"a", (char *)"b");
     EXPECT_STREQ((char *)"ab", res);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
