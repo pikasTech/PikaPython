@@ -25,7 +25,7 @@ TEST(strs, append)
 TEST(strs, formatInt)
 {
     Args *buffs = New_strBuff();
-    char *res = strsFormat(buffs, "test: %d", 3);
+    char *res = strsFormat(buffs, 32, "test: %d", 3);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -70,7 +70,7 @@ TEST(strs, analizeDef)
 TEST(strs, format)
 {
     Args *buffs = New_args(NULL);
-    char *fmt = strsFormat(buffs, "test int: %d, float %f", 1, 34.2);
+    char *fmt = strsFormat(buffs, 128, "test int: %d, float %f", 1, 34.2);
     EXPECT_TRUE(strEqu((char *)"test int: 1, float 34.200000", fmt));
     args_deinit(buffs);
 }
