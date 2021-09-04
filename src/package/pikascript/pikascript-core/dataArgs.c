@@ -267,7 +267,7 @@ void args_bindStr(Args *self, char *name, char **stringPtr)
 char *getPrintSring(Args *self, char *name, char *valString)
 {
     Args *buffs = New_strBuff();
-    char *printName = strsFormat(buffs, "[printBuff]%s", name);
+    char *printName = strsFormat(buffs, 128, "[printBuff]%s", name);
     char *printString = strsCopy(buffs, valString);
     args_setStr(self, printName, printString);
     char *res = args_getStr(self, printName);
@@ -279,7 +279,7 @@ char *getPrintStringFromInt(Args *self, char *name, int32_t val)
 {
     Args *buffs = New_strBuff();
     char *res = NULL;
-    char *valString = strsFormat(buffs, "%d", val);
+    char *valString = strsFormat(buffs, 32, "%d", val);
     res = getPrintSring(self, name, valString);
     args_deinit(buffs);
     return res;
@@ -289,7 +289,7 @@ char *getPrintStringFromFloat(Args *self, char *name, float val)
 {
     Args *buffs = New_strBuff();
     char *res = NULL;
-    char *valString = strsFormat(buffs, "%f", val);
+    char *valString = strsFormat(buffs, 32, "%f", val);
     res = getPrintSring(self, name, valString);
     args_deinit(buffs);
     return res;
@@ -300,7 +300,7 @@ char *getPrintStringFromPtr(Args *self, char *name, void *val)
     Args *buffs = New_strBuff();
     char *res = NULL;
     uint64_t intVal = (uint64_t)val;
-    char *valString = strsFormat(buffs, "0x%llx", intVal);
+    char *valString = strsFormat(buffs, 32, "0x%llx", intVal);
     res = getPrintSring(self, name, valString);
     args_deinit(buffs);
     return res;

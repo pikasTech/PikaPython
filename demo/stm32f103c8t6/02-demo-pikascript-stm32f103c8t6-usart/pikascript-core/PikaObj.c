@@ -319,7 +319,7 @@ PikaObj *obj_getClassObjByNewFun(PikaObj *context, char *name, NewFun newClassFu
     args_setPtr(initArgs, "_ctx", context);
     args_setStr(initArgs, "_n", name);
     PikaObj *thisClass = newClassFun(initArgs);
-    obj_setPtr(thisClass, "__classPtr", newClassFun);
+    obj_setPtr(thisClass, "_clsptr", newClassFun);
     args_deinit(initArgs);
     return thisClass;
 }
@@ -824,7 +824,7 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
     }
     char *methodName = strsGetLastToken(buffs, methodPath, '.');
 
-    void *classPtr = obj_getPtr(methodHostObj, "__classPtr");
+    void *classPtr = obj_getPtr(methodHostObj, "_clsptr");
     char *methodHostClassName = strsAppend(buffs, "classObj-", methodHostObj->name);
     methodHostClass = obj_getClassObjByNewFun(methodHostObj, methodHostClassName, classPtr);
     /* get method Ptr */
