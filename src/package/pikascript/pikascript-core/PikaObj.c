@@ -636,6 +636,14 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
     res = obj_runScript(self, cmd);
     goto exit;
 exit:
+    /* check res */
+    if (NULL == res)
+    {
+        res = New_args(NULL);
+        args_setErrorCode(res, 0);
+        args_setSysOut(res, "");
+        goto exit;
+    }
     args_deinit(buffs);
     return res;
 }
