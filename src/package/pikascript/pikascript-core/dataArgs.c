@@ -390,6 +390,7 @@ uint8_t args_setLiteral(Args *self, char *name, char *literal)
     literal = strsGetCleanCmd(buffs, literal);
     uint8_t err = 0;
     char *directStr = strsGetDirectStr(self, literal);
+    /* get direct Str ok */
     if (NULL != directStr)
     {
         /* direct string value */
@@ -398,9 +399,10 @@ uint8_t args_setLiteral(Args *self, char *name, char *literal)
         err = 0;
         goto exit;
     }
+    /* match num */
     if ((literal[0] >= '0') && (literal[0] <= '9'))
     {
-        /* direct number value */
+        /* match float num */
         if (strIsContain(literal, '.'))
         {
             args_setFloat(self, name, 0);
@@ -409,6 +411,7 @@ uint8_t args_setLiteral(Args *self, char *name, char *literal)
             err = 0;
             goto exit;
         }
+        /* match int num */
         args_setInt(self, name, 0);
         args_set(self, name, literal);
         /* succeed */
