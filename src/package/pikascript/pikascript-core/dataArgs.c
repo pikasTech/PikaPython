@@ -386,13 +386,17 @@ exit:
 
 uint8_t args_setLiteral(Args *self, char *name, char *literal)
 {
+    Args *buffs = New_strBuff();
+    literal = strsGetCleanCmd(buffs, literal);
+    uint8_t err = 0;
     char *directStr = strsGetDirectStr(self, literal);
     if (NULL != directStr)
     {
         /* direct string value */
         args_setStr(self, name, directStr);
         /* ok */
-        return 0;
+        err = 0;
+        goto exit;
     }
     if ((literal[0] >= '0') && (literal[0] <= '9'))
     {
@@ -402,14 +406,20 @@ uint8_t args_setLiteral(Args *self, char *name, char *literal)
             args_setFloat(self, name, 0);
             args_set(self, name, literal);
             /* succeed */
-            return 0;
+            err = 0;
+            goto exit;
         }
         args_setInt(self, name, 0);
         args_set(self, name, literal);
         /* succeed */
-        return 0;
+        err = 0;
+        goto exit;
     }
-    return 1;
+    err = 1;
+    goto exit;
+exit:
+    args_deinit(buffs);
+    return err;
 }
 
 int32_t args_set(Args *self, char *name, char *valStr)

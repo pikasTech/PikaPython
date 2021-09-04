@@ -234,31 +234,7 @@ static void *getMethodPtr(PikaObj *methodHost, char *methodName)
     return res;
 }
 
-static char *getCleanCmd(Args *buffs, char *cmd)
-{
-    int32_t size = strGetSize(cmd);
-    char *strOut = args_getBuff(buffs, size);
-    int32_t iOut = 0;
-    char delChar = ' ';
-    int32_t isInStr = 0;
-    for (int32_t i = 0; i < strGetSize(cmd); i++)
-    {
-        if ('\'' == cmd[i] || '\"' == cmd[i])
-        {
-            isInStr = !isInStr;
-        }
-        if ((delChar == cmd[i]) && (!isInStr))
-        {
-            /* do not load char */
-            continue;
-        }
-        strOut[iOut] = cmd[i];
-        iOut++;
-    }
-    /* add \0 */
-    strOut[iOut] = 0;
-    return strOut;
-}
+
 
 Args *obj_invoke(PikaObj *self, char *cmd)
 {
@@ -266,7 +242,7 @@ Args *obj_invoke(PikaObj *self, char *cmd)
     Args *res = New_args(NULL);
     args_setErrorCode(res, 0);
     Args *buffs = New_strBuff();
-    char *cleanCmd = getCleanCmd(buffs, cmd);
+    char *cleanCmd = strsGetCleanCmd(buffs, cmd);
     char *methodToken = strsGetFirstToken(buffs, cleanCmd, '(');
     char *methodPath = methodToken;
     Args *args = NULL;
