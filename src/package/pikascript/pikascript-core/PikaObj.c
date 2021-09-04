@@ -513,10 +513,8 @@ Args *getRightRes(PikaObj *self, char *cmd)
     }
 }
 
-Args *obj_runDirect(PikaObj *self, char *cmd)
+char *getRightCmd(Args *buffs, char *cmd)
 {
-    Args *buffs = New_strBuff();
-    Args *res = NULL;
     char *right = NULL;
     char *cmdBuff = strsCopy(buffs, cmd);
     if (strIsContain(cmd, '('))
@@ -533,6 +531,14 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
     {
         right = cmd;
     }
+    return right;
+}
+
+Args *obj_runDirect(PikaObj *self, char *cmd)
+{
+    Args *buffs = New_strBuff();
+    Args *res = NULL;
+    char *right = getRightCmd(buffs, cmd);
     res = getRightRes(self, right);
 
     /* transfer return */
