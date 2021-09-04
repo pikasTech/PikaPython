@@ -537,7 +537,13 @@ Args *getRightRes(PikaObj *self, char *cmd)
     }
     res = New_args(NULL);
     args_setSysOut(res, "");
-    args_setLiteral(res, "return", cmd);
+    int err = args_setLiteral(res, "return", cmd);
+    if (err != 0)
+    {
+        args_setSysOut(res, "[error] get value faild.");
+        args_setErrorCode(res, 1);
+        goto exit;
+    }
     char *returnType = strsAppend(buffs, "->", args_getType(res, "return"));
     args_setStr(res, "returnType", returnType);
     goto exit;
@@ -557,7 +563,13 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
 
     /* get res from right cmd */
     res = getRightRes(self, right);
-
+    if (NULL != res)
+    {
+        if (0 != args_getErrorCode(res))
+        {
+            goto exit;
+        }
+    }
     /* check res */
     if (NULL == res)
     {

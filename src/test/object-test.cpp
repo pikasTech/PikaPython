@@ -227,6 +227,14 @@ TEST(object_test, noMethod)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(object_test, a_b)
+{
+    PikaObj *root = newRootObj((char *)"root", New_MYROOT1);
+    obj_runNoRes(root, (char *)"a=b");
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(object_test, mem)
 {
     EXPECT_EQ(pikaMemNow(), 0);
