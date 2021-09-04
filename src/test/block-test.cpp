@@ -36,13 +36,13 @@ TEST(block, pop)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(block, assert1)
-{
-    PikaObj *block = block_init();
-    block_setAssert(block, (char *)"1");
-    int res = block_checkAssert(block);
-    ASSERT_EQ(1, res);
-    block_deinit(block);
-}
+// TEST(block, assert1)
+// {
+//     PikaObj *block = block_init();
+//     block_setAssert(block, (char *)"1");
+//     int res = block_checkAssert(block);
+//     ASSERT_EQ(1, res);
+//     block_deinit(block);
+// }
 
 void block_pushLine(PikaObj *self, char *line);
