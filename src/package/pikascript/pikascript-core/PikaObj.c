@@ -632,6 +632,9 @@ void obj_runNoRes(PikaObj *slef, char *cmd)
     args_deinit(obj_runDirect(slef, cmd));
 }
 
+
+
+
 void obj_run(PikaObj *self, char *cmd)
 {
     /* safe, stop when error occord and error info would be print32_t */
