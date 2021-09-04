@@ -27,7 +27,7 @@ uint8_t block_checkAssert(PikaObj *self)
 {
     Args *buffs = New_strBuff();
     char *assert = block_getAssert(self);
-    obj_invoke(self, strsFormat(buffs, 32, "_res = %s", assert));
+    obj_run(self, strsFormat(buffs, 32, "_res = %s", assert));
     int res = obj_getInt(self, "_res");
     args_deinit(buffs);
     return res;
