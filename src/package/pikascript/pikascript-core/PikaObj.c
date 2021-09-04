@@ -5,6 +5,8 @@
 #include "dataStrs.h"
 #include "PikaInvoke.h"
 #include <stdarg.h>
+#include "PikaBlock.h"
+#include "PikaIf.h"
 
 void *getNewObjFunByClass(PikaObj *obj, char *classPath)
 {
@@ -553,7 +555,7 @@ exit:
     return res;
 }
 
-Args *obj_runDirect(PikaObj *self, char *cmd)
+Args *obj_runScript(PikaObj *self, char *cmd)
 {
     Args *buffs = New_strBuff();
     Args *res = NULL;
@@ -588,6 +590,51 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
         transferReturnVal(self, returnType, returnName, res);
     }
 
+exit:
+    args_deinit(buffs);
+    return res;
+}
+
+Args *obj_runDirect(PikaObj *self, char *cmd)
+{
+    Args *buffs = New_strBuff();
+    Args *res = NULL;
+    if (strIsStartWith(cmd, "if "))
+    {
+        obj_setInt(self, "_isInBlock", 1);
+        obj_setObjWithoutClass(self, "_block", block_init());
+        PikaObj *block = obj_getObj(self, "_block", 0);
+        if_setAssert(block, cmd);
+        /* this line processed ok */
+        goto exit;
+    }
+
+    if (NULL != obj_getArg(self, "_isInBlock"))
+    {
+        PikaObj *block = obj_getObj(self, "_block", 0);
+        if (strIsStartWith(cmd, "    "))
+        {
+            if (strEqu(block_getMode(block), "if"))
+            {
+                if_pushLine(block, cmd);
+                goto exit;
+            }
+            goto exit;
+        }
+        /* the block is end */
+        else
+        {
+            obj_removeArg(self, "_isInBlock");
+            if (strEqu(block_getMode(block), "if"))
+            {
+                if_run(block);
+            }
+            /* not finished */
+        }
+    }
+
+    res = obj_runScript(self, cmd);
+    goto exit;
 exit:
     args_deinit(buffs);
     return res;

@@ -3,6 +3,7 @@ extern "C"
 {
 #include "PikaBlock.h"
 #include "dataStrs.h"
+#include "PikaIf.h"
 }
 
 TEST(block, init)
@@ -27,10 +28,10 @@ TEST(block, pop)
     block_pushLine(block, (char *)"line1");
     block_pushLine(block, (char *)"line2");
     char *line1 = block_popLine(block);
-    char *line2 = block_popLine(block);
-    char *line3 = block_popLine(block);
     ASSERT_STREQ(line1, (char *)"line1");
+    char *line2 = block_popLine(block);
     ASSERT_STREQ(line2, (char *)"line2");
+    char *line3 = block_popLine(block);
     ASSERT_STREQ(line3, (char *)"");
     block_deinit(block);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -50,6 +51,21 @@ TEST(block, assert1)
         int res = block_checkAssert(block);
         ASSERT_EQ(0, res);
     }
+    block_deinit(block);
+}
+
+TEST(block, if1)
+{
+    PikaObj *block = block_init();
+    if_setAssert(block, (char *)"if 1 :");
+    if_pushLine(block, (char *)"    print('hello')");
+    if_pushLine(block, (char *)"    print('hello2')");
+    int res = block_checkAssert(block);
+    char *line1 = block_popLine(block);
+    ASSERT_STREQ((char *)"print('hello')", line1);
+    char *line2 = block_popLine(block);
+    ASSERT_STREQ((char *)"print('hello2')", line2);
+    ASSERT_EQ(1, res);
     block_deinit(block);
 }
 

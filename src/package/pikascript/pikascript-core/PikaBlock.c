@@ -18,6 +18,7 @@ PikaObj *block_init()
     obj_setStr(self, "mode", "");
     obj_setStr(self, "assert", "");
     obj_setStr(self, "body", "");
+    obj_setInt(self, "lineSize", 0);
     obj_setStr(self, "lineNow", "");
     return self;
 }
@@ -30,6 +31,11 @@ uint8_t block_checkAssert(PikaObj *self)
     int res = obj_getInt(self, "_res");
     args_deinit(buffs);
     return res;
+}
+
+uint16_t block_getLineSize(PikaObj *self)
+{
+    return obj_getInt(self, "lineSize");
 }
 
 void block_setAssert(PikaObj *self, char *assert)
@@ -59,6 +65,7 @@ void block_pushLine(PikaObj *self, char *line)
     body = strsAppend(buffs, body, line);
     body = strsAppend(buffs, body, "\n");
     obj_setStr(self, "body", body);
+    obj_setInt(self, "lineSize", obj_getInt(self, "lineSize") + 1);
     args_deinit(buffs);
 }
 
@@ -70,6 +77,7 @@ char *block_popLine(PikaObj *self)
 
     obj_setStr(self, "body", body);
     obj_setStr(self, "lineNow", line);
+    obj_setInt(self, "lineSize", obj_getInt(self, "lineSize") - 1);
     args_deinit(buffs);
     return obj_getStr(self, "lineNow");
 }
