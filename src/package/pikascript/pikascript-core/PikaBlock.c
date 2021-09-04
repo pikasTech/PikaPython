@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include "PikaBlock.h"
 #include "TinyObj.h"
+#include "PikaInvoke.h"
 
 void block_deinit(PikaObj *self)
 {
@@ -20,6 +21,26 @@ PikaObj *block_init()
     obj_setStr(self, "body", "");
     obj_setStr(self, "lineNow", "");
     return self;
+}
+
+uint8_t block_checkAssert(PikaObj *self)
+{
+    Args *buffs = New_strBuff();
+    char *assert = block_getAssert(self);
+    obj_invoke(self, strsFormat(buffs, 32, "_res = %s", assert));
+    int res = obj_getInt(self, "_res");
+    args_deinit(buffs);
+    return res;
+}
+
+void block_setAssert(PikaObj *self, char *assert)
+{
+    obj_setStr(self, "assert", assert);
+}
+
+char *block_getAssert(PikaObj *self)
+{
+    return obj_getStr(self, "assert");
 }
 
 void block_setMode(PikaObj *self, char *mode)
