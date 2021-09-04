@@ -384,6 +384,34 @@ exit:
     return res;
 }
 
+uint8_t args_setLiteral(Args *self, char *argPath, char *literal)
+{
+    char *directStr = strsGetDirectStr(self, literal);
+    if (NULL != directStr)
+    {
+        /* direct string value */
+        args_setStr(self, argPath, directStr);
+        /* ok */
+        return 0;
+    }
+    if ((literal[0] >= '0') && (literal[0] <= '9'))
+    {
+        /* direct number value */
+        if (strIsContain(literal, '.'))
+        {
+            args_setFloat(self, argPath, 0);
+            args_set(self, argPath, literal);
+            /* succeed */
+            return 0;
+        }
+        args_setInt(self, argPath, 0);
+        args_set(self, argPath, literal);
+        /* succeed */
+        return 0;
+    }
+    return 1;
+}
+
 int32_t args_set(Args *self, char *name, char *valStr)
 {
     char *type = args_getType(self, name);
