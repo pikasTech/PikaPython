@@ -156,7 +156,6 @@ char *getTypeVal(Args *buffs, char *typeToken)
     return strsGetLastToken(buffs, typeToken, ':');
 }
 
-
 static Args *getArgsByNameMatch(PikaObj *self, char *typeList, char *argList)
 {
     Args *buffs = New_strBuff();
@@ -297,18 +296,6 @@ static char *getCleanCmd(Args *buffs, char *cmd)
     return strOut;
 }
 
-char *getMethodPath(Args *buffs, char *methodToken)
-{
-    if (strIsContain(methodToken, '='))
-    {
-        return strsGetLastToken(buffs, methodToken, '=');
-    }
-    else
-    {
-        return methodToken;
-    }
-}
-
 Args *obj_invoke(PikaObj *self, char *cmd)
 {
     /* the Args returned need to be deinit */
@@ -317,7 +304,7 @@ Args *obj_invoke(PikaObj *self, char *cmd)
     Args *buffs = New_strBuff();
     char *cleanCmd = getCleanCmd(buffs, cmd);
     char *methodToken = strsGetFirstToken(buffs, cleanCmd, '(');
-    char *methodPath = getMethodPath(buffs, methodToken);
+    char *methodPath = methodToken;
     Args *args = NULL;
 
     PikaObj *methodHostObj = obj_getObj(self, methodPath, 1);
@@ -393,13 +380,6 @@ Args *obj_invoke(PikaObj *self, char *cmd)
     args_setStr(res, "returnType", returnType);
     /* transfer return */
     args_copyArgByName(args, "return", res);
-    /* transfer return name */
-    if (strIsContain(methodToken, '='))
-    {
-        char *returnName = strsGetFirstToken(buffs, methodToken, '=');
-        args_setStr(res, "returnName", returnName);
-    }
-
     /* transfer sysOut */
     char *sysOut = obj_getSysOut(methodHostObj);
     if (NULL != sysOut)
