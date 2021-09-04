@@ -13,7 +13,7 @@ TEST(sysObj, print)
     char *sysOut = args_getSysOut(res);
     int errCode = args_getErrorCode(res);
     printf("sysout = %s\r\n", sysOut);
-    ASSERT_EQ(1, strEqu((char *)"hello world", sysOut));
+    ASSERT_STREQ((char *)"hello world", sysOut);
     ASSERT_EQ(0, errCode);
     args_deinit(res);
     obj_deinit(obj);

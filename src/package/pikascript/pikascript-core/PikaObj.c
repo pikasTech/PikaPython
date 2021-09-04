@@ -505,14 +505,6 @@ static void transferReturnVal(PikaObj *self, char *returnType, char *returnName,
     }
 }
 
-Args *getRightRes(PikaObj *self, char *cmd)
-{
-    if (strIsContain(cmd, '(') && strIsContain(cmd, ')'))
-    {
-        return obj_invoke(self, cmd);
-    }
-}
-
 char *getRightCmd(Args *buffs, char *cmd)
 {
     char *right = NULL;
@@ -532,6 +524,26 @@ char *getRightCmd(Args *buffs, char *cmd)
         right = cmd;
     }
     return right;
+}
+
+Args *getRightRes(PikaObj *self, char *cmd)
+{
+    Args *buffs = New_strBuff();
+    Args *res = NULL;
+    if (strIsContain(cmd, '(') && strIsContain(cmd, ')'))
+    {
+        res = obj_invoke(self, cmd);
+        goto exit;
+    }
+    res = New_args(NULL);
+    args_setLiteral(res, "return", cmd);
+    char *returnType = strsAppend(buffs, "->", args_getType(res, "return"));
+    args_setStr(res, "returnType", returnType);
+    goto exit;
+
+exit:
+    args_deinit(buffs);
+    return res;
 }
 
 Args *obj_runDirect(PikaObj *self, char *cmd)
@@ -632,17 +644,17 @@ void obj_runNoRes(PikaObj *slef, char *cmd)
     args_deinit(obj_runDirect(slef, cmd));
 }
 
-
-
-
 void obj_run(PikaObj *self, char *cmd)
 {
     /* safe, stop when error occord and error info would be print32_t */
     Args *res = obj_runDirect(self, cmd);
     char *sysOut = args_getSysOut(res);
-    if (!strEqu("", sysOut))
+    if (NULL != sysOut)
     {
-        printf("%s\r\n", sysOut);
+        if (!strEqu("", sysOut))
+        {
+            printf("%s\r\n", sysOut);
+        }
     }
     if (0 != args_getErrorCode(res))
     {

@@ -10,8 +10,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/../build/src/test/pikascript_test",
             "args": [
-                "--gtest_filter=object_test.test2"
-                // "--gtest_filter=block.assert1"
+                // "--gtest_filter=object_test.test2"
+                "--gtest_filter=block.assert1"
                 // "--gtest_filter=sysObj.print"
             ],
             "stopAtEntry": false,
