@@ -43,25 +43,24 @@ void checker_assertMemFree()
         ;
 }
 
-void checker_objMemChecker(void *NewFun, char *objName)
+void checker_objMemChecker(PikaObj *(*NewFun)(Args *), char *objName)
 {
     {
         /* new root object */
         PikaObj *obj = newRootObj("obj", NewFun);
-        Args *buffs = New_args(NULL);
-        char *testName = strsFormat(buffs, "Root %s object", objName);
+        char testName[256] = {0};
+        sprintf(testName, "Root %s object", objName);
         checker_printMemUsage(testName);
         obj_deinit(obj);
-        args_deinit(buffs);
         checker_assertMemFree();
     }
 
     {
-        PikaObj *obj = New_TinyObj(NULL);
-        Args *buffs = New_args(NULL);
-        checker_printMemUsage(strsFormat(buffs, "%s object", objName));
+        PikaObj *obj = NewFun(NULL);
+        char testName[256] = {0};
+        sprintf(testName, "%s object", objName);
+        checker_printMemUsage(testName);
         obj_deinit(obj);
-        args_deinit(buffs);
         checker_assertMemFree();
     }
 }
