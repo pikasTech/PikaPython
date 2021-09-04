@@ -538,8 +538,21 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
 {
     Args *buffs = New_strBuff();
     Args *res = NULL;
+
+    /* get right cmd */
     char *right = getRightCmd(buffs, cmd);
+
+    /* get res from right cmd */
     res = getRightRes(self, right);
+
+    /* check res */
+    if (NULL == res)
+    {
+        res = New_args(NULL);
+        args_setErrorCode(res, 1);
+        args_setSysOut(res, "[error] solve script format faild!");
+        goto exit;
+    }
 
     /* transfer return */
     if (strIsContain(cmd, '='))
@@ -550,12 +563,6 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
         transferReturnVal(self, returnType, returnName, res);
     }
 
-    if (NULL == res)
-    {
-        res = New_args(NULL);
-        args_setErrorCode(res, 1);
-        args_setSysOut(res, "[error] solve script format faild!");
-    }
 exit:
     args_deinit(buffs);
     return res;

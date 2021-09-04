@@ -67,6 +67,10 @@ char *args_getBuff(Args *self, int32_t size)
 
 char *args_getStr(Args *self, char *name)
 {
+    if (NULL == self)
+    {
+        return NULL;
+    }
     Arg *arg = args_getArg(self, name);
     if (NULL == arg)
     {
