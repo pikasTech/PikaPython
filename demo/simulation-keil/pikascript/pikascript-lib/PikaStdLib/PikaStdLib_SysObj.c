@@ -92,7 +92,7 @@ void PikaStdLib_SysObj_type(PikaObj *self, char *argPath)
     if (NULL == argPath)
     {
         /* no input obj path, use current obj */
-        PikaObj *objHost = obj_getPtr(self, "__context");
+        PikaObj *objHost = obj_getPtr(self, "_ctx");
         Arg *objArg = obj_getArg(objHost, self->name);
         if (NULL == objArg)
         {

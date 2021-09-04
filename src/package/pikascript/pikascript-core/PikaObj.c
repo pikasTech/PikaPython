@@ -3,12 +3,12 @@
 #include "dataMemory.h"
 #include "dataString.h"
 #include "dataStrs.h"
-#include "invoke.h"
+#include "PikaInvoke.h"
 #include <stdarg.h>
 
 void *getNewObjFunByClass(PikaObj *obj, char *classPath)
 {
-    PikaObj *classLoader = args_getPtr(obj->attributeList, "__classLoader");
+    PikaObj *classLoader = args_getPtr(obj->attributeList, "_clsld");
     if (NULL == classLoader)
     {
         return NULL;
@@ -230,7 +230,7 @@ int32_t obj_setObjWithoutClass(PikaObj *self, char *objName, void *newFun)
 int32_t obj_addOther(PikaObj *self, char *subObjectName, void *new_ObjectFun)
 {
     Args *initArgs = New_args(NULL);
-    args_setPtr(initArgs, "__context", self);
+    args_setPtr(initArgs, "_ctx", self);
     void *(*new_Object)(Args * initArgs) = (void *(*)(Args *))new_ObjectFun;
     void *subObject = new_Object(initArgs);
     obj_setPtr(self, subObjectName, subObject);
@@ -307,8 +307,8 @@ int32_t obj_set(PikaObj *self, char *argPath, char *valStr)
 PikaObj *obj_getClassObjByNewFun(PikaObj *context, char *name, NewFun newClassFun)
 {
     Args *initArgs = New_args(NULL);
-    args_setPtr(initArgs, "__context", context);
-    args_setStr(initArgs, "__name", name);
+    args_setPtr(initArgs, "_ctx", context);
+    args_setStr(initArgs, "_n", name);
     PikaObj *thisClass = newClassFun(initArgs);
     obj_setPtr(thisClass, "__classPtr", newClassFun);
     args_deinit(initArgs);
@@ -335,12 +335,12 @@ void *getNewClassObjFunByName(PikaObj *obj, char *name)
 
 int32_t removeEachMethodInfo(Arg *argNow, Args *argList)
 {
-    if (strIsStartWith(arg_getName(argNow), "[methodDec]"))
+    if (strIsStartWith(arg_getName(argNow), "[md]"))
     {
         args_removeArg(argList, arg_getName(argNow));
         return 0;
     }
-    if (strIsStartWith(arg_getName(argNow), "[methodPtr]"))
+    if (strIsStartWith(arg_getName(argNow), "[mp]"))
     {
         args_removeArg(argList, arg_getName(argNow));
         return 0;
@@ -356,11 +356,11 @@ PikaObj *removeMethodInfo(PikaObj *thisClass)
 
 static void removeClassLoader(PikaObj *obj)
 {
-    PikaObj *classLoader = args_getPtr(obj->attributeList, "__classLoader");
+    PikaObj *classLoader = args_getPtr(obj->attributeList, "_clsld");
     if (NULL != classLoader)
     {
         obj_deinit(classLoader);
-        args_removeArg(obj->attributeList, "__classLoader");
+        args_removeArg(obj->attributeList, "_clsld");
     }
 }
 
@@ -386,7 +386,7 @@ PikaObj *initObj(PikaObj *obj, char *name)
     PikaObj *newObj = removeMethodInfo(thisClass);
     /* delete [mate]<objName> */
     obj_removeArg(obj, strsAppend(buffs, "[mate]", name));
-    /* delete "__classLoader" object */
+    /* delete "_clsld" object */
     removeClassLoader(newObj);
 
     char *type = args_getType(obj->attributeList, name);
@@ -447,8 +447,8 @@ exit:
 void loadMethodInfo(PikaObj *methodHost, char *methodName, char *methodDeclearation, void *methodPtr)
 {
     Args *buffs = New_strBuff();
-    char *methodPtrPath = strsAppend(buffs, "[methodPtr]", methodName);
-    char *methodDeclearationPath = strsAppend(buffs, "[methodDec]", methodName);
+    char *methodPtrPath = strsAppend(buffs, "[mp]", methodName);
+    char *methodDeclearationPath = strsAppend(buffs, "[md]", methodName);
     obj_setPtr(methodHost, methodPtrPath, methodPtr);
     obj_setStr(methodHost, methodDeclearationPath, methodDeclearation);
     args_deinit(buffs);

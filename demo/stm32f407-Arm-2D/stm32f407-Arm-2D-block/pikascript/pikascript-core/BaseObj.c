@@ -30,7 +30,7 @@ int32_t sysObj_setObjbyClass(MimiObj *self, char *objName, char *classPath)
 {
     /* class means subprocess init */
     Args *buffs = New_strBuff();
-    MimiObj *classHost = obj_getObj(self, "__classLoader", 0);
+    MimiObj *classHost = obj_getObj(self, "_clsld", 0);
     void *newFunPtr = getClassPtr(classHost, classPath);
 
     /* class means subprocess init */
@@ -63,7 +63,7 @@ exit:
 
 int32_t obj_import(MimiObj *self, char *className, void *classPtr)
 {
-    MimiObj *classLoader = obj_getObj(self, "__classLoader", 0);
+    MimiObj *classLoader = obj_getObj(self, "_clsld", 0);
     Args *buffs = New_args(NULL);
     int32_t res = storeClassInfo(classLoader, buffs, className, classPtr);
     args_deinit(buffs);
@@ -72,7 +72,7 @@ int32_t obj_import(MimiObj *self, char *className, void *classPtr)
 
 int32_t obj_newObj(MimiObj *self, char *objPath, char *classPath)
 {
-    MimiObj *classLoader = obj_getObj(self, "__classLoader", 0);
+    MimiObj *classLoader = obj_getObj(self, "_clsld", 0);
     Args *buffs = New_args(NULL);
     void *NewObjPtr = getClassPtr(classLoader, classPath);
     if (NULL == NewObjPtr)
@@ -91,12 +91,12 @@ static void init_baseObj(MimiObj *self, Args *args)
 {
     /* attribute */
     /* object */
-    obj_setObjWithoutClass(self, "__classLoader", New_TinyObj);
+    obj_setObjWithoutClass(self, "_clsld", New_TinyObj);
     /* 
         init classLoader now, in order to the 
         find it after inited the self object.
     */
-    obj_getObj(self, "__classLoader", 0);
+    obj_getObj(self, "_clsld", 0);
 
     /* operation */
 

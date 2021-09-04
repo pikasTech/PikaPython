@@ -28,7 +28,7 @@ static void type(MimiObj *obj, Args *args)
     if (NULL == argPath)
     {
         /* no input obj path, use current obj */
-        MimiObj *objHost = obj_getPtr(obj, "__context");
+        MimiObj *objHost = obj_getPtr(obj, "_ctx");
         Arg *objArg = obj_getArg(objHost, obj->name);
         if (NULL == objArg)
         {
@@ -186,12 +186,12 @@ static void print(MimiObj *obj, Args *args)
 int32_t loadExceptMethod(Arg *argEach, Args *handleArgs)
 {
     char *argName = arg_getName(argEach);
-    if (strIsStartWith(argName, "[methodDec]"))
+    if (strIsStartWith(argName, "[md]"))
     {
         /* skip method declearation */
         // return 0;
     }
-    if (strIsStartWith(argName, "[methodPtr]"))
+    if (strIsStartWith(argName, "[mp]"))
     {
         /* skip method pointer */
         // return 0;

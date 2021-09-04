@@ -314,12 +314,12 @@ int obj_set(MimiObj *self, char *argPath, char *valStr)
 
 int removeEachMethodInfo(Arg *argNow, Args *argList)
 {
-    if (strIsStartWith(arg_getName(argNow), "[methodDec]"))
+    if (strIsStartWith(arg_getName(argNow), "[md]"))
     {
         args_removeArg(argList, arg_getName(argNow));
         return 0;
     }
-    if (strIsStartWith(arg_getName(argNow), "[methodPtr]"))
+    if (strIsStartWith(arg_getName(argNow), "[mp]"))
     {
         args_removeArg(argList, arg_getName(argNow));
         return 0;
@@ -466,8 +466,8 @@ exit:
 void loadMethodInfo(MimiObj *methodHost, char *methodName, char *methodDeclearation, void *methodPtr)
 {
     Args *buffs = New_strBuff();
-    char *methodPtrPath = strsAppend(buffs, "[methodPtr]", methodName);
-    char *methodDeclearationPath = strsAppend(buffs, "[methodDec]", methodName);
+    char *methodPtrPath = strsAppend(buffs, "[mp]", methodName);
+    char *methodDeclearationPath = strsAppend(buffs, "[md]", methodName);
     obj_setPtr(methodHost, methodPtrPath, methodPtr);
     obj_setStr(methodHost, methodDeclearationPath, methodDeclearation);
     args_deinit(buffs);
@@ -476,7 +476,7 @@ void loadMethodInfo(MimiObj *methodHost, char *methodName, char *methodDeclearat
 static char *getMethodDeclearation(MimiObj *obj, char *methodName)
 {
     Args *buffs = New_strBuff();
-    char *methodDeclearationPath = strsAppend(buffs, "[methodDec]", methodName);
+    char *methodDeclearationPath = strsAppend(buffs, "[md]", methodName);
     char *res = obj_getStr(obj, methodDeclearationPath);
     args_deinit(buffs);
     return res;
@@ -485,7 +485,7 @@ static char *getMethodDeclearation(MimiObj *obj, char *methodName)
 static void *getMethodPtr(MimiObj *methodHost, char *methodName)
 {
     Args *buffs = New_strBuff();
-    char *methodPtrPath = strsAppend(buffs, "[methodPtr]", methodName);
+    char *methodPtrPath = strsAppend(buffs, "[mp]", methodName);
     void *res = obj_getPtr(methodHost, methodPtrPath);
     args_deinit(buffs);
     return res;

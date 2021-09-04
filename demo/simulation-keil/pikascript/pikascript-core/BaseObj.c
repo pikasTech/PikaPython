@@ -30,7 +30,7 @@ int32_t sysObj_setObjbyClass(PikaObj *self, char *objName, char *classPath)
 {
     /* class means subprocess init */
     Args *buffs = New_strBuff();
-    PikaObj *classLoader = obj_getObj(self, "__classLoader", 0);
+    PikaObj *classLoader = obj_getObj(self, "_clsld", 0);
     void *newFunPtr = getClassPtr(classLoader, classPath);
 
     /* class means subprocess init */
@@ -63,7 +63,7 @@ exit:
 
 int32_t obj_import(PikaObj *self, char *className, NewFun classPtr)
 {
-    PikaObj *classLoader = obj_getObj(self, "__classLoader", 0);
+    PikaObj *classLoader = obj_getObj(self, "_clsld", 0);
     Args *buffs = New_args(NULL);
     int32_t res = storeClassInfo(classLoader, buffs, className, classPtr);
     args_deinit(buffs);
@@ -72,7 +72,7 @@ int32_t obj_import(PikaObj *self, char *className, NewFun classPtr)
 
 int32_t obj_newObj(PikaObj *self, char *objPath, char *classPath)
 {
-    PikaObj *classLoader = obj_getObj(self, "__classLoader", 0);
+    PikaObj *classLoader = obj_getObj(self, "_clsld", 0);
     Args *buffs = New_args(NULL);
     int res = 0;
     void *NewObjPtr = getClassPtr(classLoader, classPath);
@@ -160,8 +160,8 @@ static void set(PikaObj *self, Args *args)
 PikaObj *New_BaseObj(Args *args)
 {
     PikaObj *self = New_TinyObj(args);
-    obj_setObjWithoutClass(self, "__classLoader", New_TinyObj);
-    obj_getObj(self, "__classLoader", 0);
+    obj_setObjWithoutClass(self, "_clsld", New_TinyObj);
+    obj_getObj(self, "_clsld", 0);
     class_defineMethod(self, "print(val:any)", print);
     class_defineMethod(self, "set(argPath:str, val:any)", set);
     return self;
