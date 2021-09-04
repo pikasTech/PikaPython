@@ -349,8 +349,8 @@ Args *obj_invoke(PikaObj *self, char *cmd)
     }
     char *methodName = strsGetLastToken(buffs, methodPath, '.');
 
-    void *classPtr = obj_getPtr(methodHostObj, "__classPtr");
-    char *methodHostClassName = strsAppend(buffs, "classObj-", obj_getStr(methodHostObj, "_n"));
+    void *classPtr = obj_getPtr(methodHostObj, "_clsptr");
+    char *methodHostClassName = strsAppend(buffs, "classObj-", obj_getName(methodHostObj));
     methodHostClass = obj_getClassObjByNewFun(methodHostObj, methodHostClassName, classPtr);
     /* get method Ptr */
     void (*methodPtr)(PikaObj * self, Args * args) = getMethodPtr(methodHostClass, methodName);

@@ -64,11 +64,11 @@ char *strsCopy(Args *buffs, char *source)
     return strCopy(buff, source);
 }
 
-char *strsFormat(Args *buffs, const char *fmt, ...)
+char *strsFormat(Args *buffs, uint16_t buffSize, const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    char *res = args_getBuff(buffs, 256);
+    char *res = args_getBuff(buffs, buffSize);
     vsprintf(res, fmt, args);
     va_end(args);
     return res;
