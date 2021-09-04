@@ -488,7 +488,14 @@ exit:
 
 Args *obj_runDirect(PikaObj *self, char *cmd)
 {
-    return obj_invoke(self, cmd);
+    if (strIsContain(cmd, '(') && strIsContain(cmd, ')'))
+    {
+        return obj_invoke(self, cmd);
+    }
+    Args *res = New_args(NULL);
+    args_setErrorCode(res, 1);
+    args_setSysOut(res, "[error] solve script format faild!");
+    return res;
 }
 
 int32_t obj_removeArg(PikaObj *self, char *argPath)

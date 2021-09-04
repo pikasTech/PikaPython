@@ -6,7 +6,6 @@
 #include <stdarg.h>
 #include "PikaBlock.h"
 #include "TinyObj.h"
-#include "PikaInvoke.h"
 
 void block_deinit(PikaObj *self)
 {
