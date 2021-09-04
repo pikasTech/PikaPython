@@ -136,7 +136,7 @@ TEST(object_test, test4)
     obj_setFloat(obj, (char *)"val2", 3.11);
     obj_run(obj, (char *)"res = testFloat(val1 = 3.22,val2 = val2,isShow = isShow)");
     float res = obj_getFloat(obj, (char *)"res");
-    EXPECT_TRUE((res - 6.33) * (res - 6.33) < 0.00001);
+    EXPECT_FLOAT_EQ(res, 6.33);
     obj_deinit(obj);
     EXPECT_EQ(pikaMemNow(), 0);
 }

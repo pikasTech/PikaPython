@@ -521,7 +521,7 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
     char *cmdBuff = strsCopy(buffs, cmd);
     if (strIsContain(cmd, '('))
     {
-        cmdBuff = strsGetFirstToken(buffs, cmdBuff, "(");
+        cmdBuff = strsGetFirstToken(buffs, cmdBuff, '(');
     }
     if (strIsContain(cmdBuff, '='))
     {
@@ -539,6 +539,7 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
     if (strIsContain(cmd, '='))
     {
         char *returnName = strsGetFirstToken(buffs, cmd, '=');
+        returnName = strsDeleteChar(buffs, returnName, ' ');
         char *returnType = args_getStr(res, "returnType");
         transferReturnVal(self, returnType, returnName, res);
     }
