@@ -92,8 +92,8 @@ void PikaStdLib_SysObj_type(PikaObj *self, char *argPath)
     if (NULL == argPath)
     {
         /* no input obj path, use current obj */
-        PikaObj *objHost = obj_getPtr(self, "__context");
-        Arg *objArg = obj_getArg(objHost, self->name);
+        PikaObj *objHost = obj_getPtr(self, "_ctx");
+        Arg *objArg = obj_getArg(objHost, obj_getStr(self, "_n"));
         if (NULL == objArg)
         {
             obj_setSysOut(self, "[error] type: arg no found.");
@@ -112,4 +112,3 @@ void PikaStdLib_SysObj_type(PikaObj *self, char *argPath)
     }
     obj_setSysOut(self, arg_getType(arg));
 }
-
