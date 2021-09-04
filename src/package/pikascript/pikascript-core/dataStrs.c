@@ -15,6 +15,23 @@ char *strsRemovePrefix(Args *buffs, char *inputStr, char *prefix)
     return strRemovePrefix(inputStr, prefix, buff);
 }
 
+char *strsGetDirectStr(Args *buffs, char *argPath)
+{
+    char *directStr = NULL;
+    directStr = strsCut(buffs, argPath, '"', '"');
+    if (NULL != directStr)
+    {
+        return directStr;
+    }
+    directStr = strsCut(buffs, argPath, '\'', '\'');
+    if (NULL != directStr)
+    {
+        return directStr;
+    }
+    return NULL;
+}
+
+
 char *strsAppend(Args *buffs, char *strOrigin, char *strToAppend)
 {
     int32_t size = strGetSize(strOrigin) + strGetSize(strToAppend);

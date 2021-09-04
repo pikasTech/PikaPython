@@ -5,22 +5,6 @@
 #include "dataStrs.h"
 #include <stdarg.h>
 
-char *getDirectStr(Args *buffs, char *argPath)
-{
-    char *directStr = NULL;
-    directStr = strsCut(buffs, argPath, '"', '"');
-    if (NULL != directStr)
-    {
-        return directStr;
-    }
-    directStr = strsCut(buffs, argPath, '\'', '\'');
-    if (NULL != directStr)
-    {
-        return directStr;
-    }
-    return NULL;
-}
-
 static int32_t loadArgByType(PikaObj *self,
                              char *definedName,
                              char *definedType,
@@ -29,28 +13,8 @@ static int32_t loadArgByType(PikaObj *self,
 {
     if (strEqu(definedType, "any"))
     {
-        char *directStr = getDirectStr(args, argPath);
-        if (NULL != directStr)
+        if (0 == args_setLiteral(args, definedName, argPath))
         {
-            /* direct string value */
-            args_setStr(args, definedName, directStr);
-            /* ok */
-            return 0;
-        }
-        if ((argPath[0] >= '0') && (argPath[0] <= '9'))
-        {
-            /* direct number value */
-            char *argName = argPath;
-            if (strIsContain(argName, '.'))
-            {
-                args_setFloat(args, definedName, 0);
-                args_set(args, definedName, argPath);
-                /* succeed */
-                return 0;
-            }
-            args_setInt(args, definedName, 0);
-            args_set(args, definedName, argPath);
-            /* succeed */
             return 0;
         }
         /* get reference arg */
@@ -61,14 +25,14 @@ static int32_t loadArgByType(PikaObj *self,
             return 3;
         }
         Arg *argCopied = arg_copy(arg);
-        argCopied = arg_setName(argCopied, definedName);
+        argCopied = arg_setName(argCopied, argPath);
         args_setArg(args, argCopied);
         return 0;
     }
     if (strEqu(definedType, "str"))
     {
         /* solve the string type */
-        char *directStr = getDirectStr(args, argPath);
+        char *directStr = strsGetDirectStr(args, argPath);
         if (NULL != directStr)
         {
             /* direct value */
