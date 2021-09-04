@@ -486,15 +486,56 @@ exit:
     return res;
 }
 
-Args *obj_runDirect(PikaObj *self, char *cmd)
+static void transferReturnVal(PikaObj *self, char *returnType, char *returnName, Args *args)
+{
+    if (strEqu("->int", returnType))
+    {
+        int returnVal = args_getInt(args, "return");
+        obj_setInt(self, returnName, returnVal);
+    }
+    if (strEqu("->float", returnType))
+    {
+        float returnVal = args_getFloat(args, "return");
+        obj_setFloat(self, returnName, returnVal);
+    }
+    if (strEqu("->str", returnType))
+    {
+        char *returnVal = args_getStr(args, "return");
+        obj_setStr(self, returnName, returnVal);
+    }
+}
+
+Args *getRes(PikaObj *self, char *cmd)
 {
     if (strIsContain(cmd, '(') && strIsContain(cmd, ')'))
     {
         return obj_invoke(self, cmd);
     }
-    Args *res = New_args(NULL);
-    args_setErrorCode(res, 1);
-    args_setSysOut(res, "[error] solve script format faild!");
+}
+
+Args *obj_runDirect(PikaObj *self, char *cmd)
+{
+    Args *buffs = New_strBuff();
+    Args *res = NULL;
+
+    res = getRes(self, cmd);
+
+    /* transfer return */
+    if (strIsContain(cmd, '='))
+    {
+        char *returnType = args_getStr(res, "returnType");
+        char *returnName = args_getStr(res, "returnName");
+        transferReturnVal(self, returnType, returnName, res);
+    }
+
+    if (NULL == res)
+    {
+        res = New_args(NULL);
+        args_setErrorCode(res, 1);
+        args_setSysOut(res, "[error] solve script format faild!");
+    }
+exit:
+    args_deinit(buffs);
     return res;
 }
 

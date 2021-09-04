@@ -156,24 +156,6 @@ char *getTypeVal(Args *buffs, char *typeToken)
     return strsGetLastToken(buffs, typeToken, ':');
 }
 
-static void transferReturnVal(PikaObj *self, char *returnType, char *returnName, Args *args)
-{
-    if (strEqu("->int", returnType))
-    {
-        int returnVal = args_getInt(args, "return");
-        obj_setInt(self, returnName, returnVal);
-    }
-    if (strEqu("->float", returnType))
-    {
-        float returnVal = args_getFloat(args, "return");
-        obj_setFloat(self, returnName, returnVal);
-    }
-    if (strEqu("->str", returnType))
-    {
-        char *returnVal = args_getStr(args, "return");
-        obj_setStr(self, returnName, returnVal);
-    }
-}
 
 static Args *getArgsByNameMatch(PikaObj *self, char *typeList, char *argList)
 {
@@ -392,6 +374,7 @@ Args *obj_invoke(PikaObj *self, char *cmd)
 
     /* get return type */
     char *returnType = strsGetLastToken(buffs, methodDec, ')');
+
     /* get args */
     args = getArgsBySentence(self, typeList, argList);
     if (NULL == args)
@@ -406,12 +389,17 @@ Args *obj_invoke(PikaObj *self, char *cmd)
     /* run method */
     methodPtr(methodHostObj, args);
 
+    /* transfer return type */
+    args_setStr(res, "returnType", returnType);
     /* transfer return */
+    args_copyArgByName(args, "return", res);
+    /* transfer return name */
     if (strIsContain(methodToken, '='))
     {
         char *returnName = strsGetFirstToken(buffs, methodToken, '=');
-        transferReturnVal(self, returnType, returnName, args);
+        args_setStr(res, "returnName", returnName);
     }
+
     /* transfer sysOut */
     char *sysOut = obj_getSysOut(methodHostObj);
     if (NULL != sysOut)
