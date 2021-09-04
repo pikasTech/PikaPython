@@ -505,7 +505,7 @@ static void transferReturnVal(PikaObj *self, char *returnType, char *returnName,
     }
 }
 
-Args *getRes(PikaObj *self, char *cmd)
+Args *getRightRes(PikaObj *self, char *cmd)
 {
     if (strIsContain(cmd, '(') && strIsContain(cmd, ')'))
     {
@@ -517,14 +517,29 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
 {
     Args *buffs = New_strBuff();
     Args *res = NULL;
-
-    res = getRes(self, cmd);
+    char *right = NULL;
+    char *cmdBuff = strsCopy(buffs, cmd);
+    if (strIsContain(cmd, '('))
+    {
+        cmdBuff = strsGetFirstToken(buffs, cmdBuff, "(");
+    }
+    if (strIsContain(cmdBuff, '='))
+    {
+        cmdBuff = strsCopy(buffs, cmd);
+        strsPopToken(buffs, cmdBuff, '=');
+        right = cmdBuff;
+    }
+    else
+    {
+        right = cmd;
+    }
+    res = getRightRes(self, right);
 
     /* transfer return */
     if (strIsContain(cmd, '='))
     {
+        char *returnName = strsGetFirstToken(buffs, cmd, '=');
         char *returnType = args_getStr(res, "returnType");
-        char *returnName = args_getStr(res, "returnName");
         transferReturnVal(self, returnType, returnName, res);
     }
 
