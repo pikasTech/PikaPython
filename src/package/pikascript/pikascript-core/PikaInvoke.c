@@ -5,8 +5,6 @@
 #include "dataStrs.h"
 #include <stdarg.h>
 
-
-
 char *getDirectStr(Args *buffs, char *argPath)
 {
     char *directStr = NULL;
@@ -158,9 +156,6 @@ char *getTypeVal(Args *buffs, char *typeToken)
     return strsGetLastToken(buffs, typeToken, ':');
 }
 
-
-
-
 static void transferReturnVal(PikaObj *self, char *returnType, char *returnName, Args *args)
 {
     if (strEqu("->int", returnType))
@@ -179,7 +174,6 @@ static void transferReturnVal(PikaObj *self, char *returnType, char *returnName,
         obj_setStr(self, returnName, returnVal);
     }
 }
-
 
 static Args *getArgsByNameMatch(PikaObj *self, char *typeList, char *argList)
 {
@@ -268,8 +262,6 @@ static Args *getArgsBySort(PikaObj *self, char *typeList, char *argList)
     return args;
 }
 
-
-
 static Args *getArgsBySentence(PikaObj *self, char *typeList, char *argList)
 {
     if (strIsContain(argList, '='))
@@ -282,7 +274,7 @@ static Args *getArgsBySentence(PikaObj *self, char *typeList, char *argList)
 static char *getMethodDeclearation(PikaObj *obj, char *methodName)
 {
     Args *buffs = New_strBuff();
-    char *methodDeclearationPath = strsAppend(buffs, "[methodDec]", methodName);
+    char *methodDeclearationPath = strsAppend(buffs, "[md]", methodName);
     char *res = obj_getStr(obj, methodDeclearationPath);
     args_deinit(buffs);
     return res;
@@ -291,7 +283,7 @@ static char *getMethodDeclearation(PikaObj *obj, char *methodName)
 static void *getMethodPtr(PikaObj *methodHost, char *methodName)
 {
     Args *buffs = New_strBuff();
-    char *methodPtrPath = strsAppend(buffs, "[methodPtr]", methodName);
+    char *methodPtrPath = strsAppend(buffs, "[mp]", methodName);
     void *res = obj_getPtr(methodHost, methodPtrPath);
     args_deinit(buffs);
     return res;
@@ -322,7 +314,6 @@ static char *getCleanCmd(Args *buffs, char *cmd)
     strOut[iOut] = 0;
     return strOut;
 }
-
 
 char *getMethodPath(Args *buffs, char *methodToken)
 {
@@ -359,7 +350,7 @@ Args *obj_invoke(PikaObj *self, char *cmd)
     char *methodName = strsGetLastToken(buffs, methodPath, '.');
 
     void *classPtr = obj_getPtr(methodHostObj, "__classPtr");
-    char *methodHostClassName = strsAppend(buffs, "classObj-", methodHostObj->name);
+    char *methodHostClassName = strsAppend(buffs, "classObj-", obj_getStr(methodHostObj, "_n"));
     methodHostClass = obj_getClassObjByNewFun(methodHostObj, methodHostClassName, classPtr);
     /* get method Ptr */
     void (*methodPtr)(PikaObj * self, Args * args) = getMethodPtr(methodHostClass, methodName);

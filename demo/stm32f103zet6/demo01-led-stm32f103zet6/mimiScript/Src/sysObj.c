@@ -185,12 +185,12 @@ static void print(MimiObj *obj, Args *args)
 int loadExceptMethod(Arg *argEach, Args *handleArgs)
 {
     char *argName = arg_getName(argEach);
-    if (strIsStartWith(argName, "[methodDec]"))
+    if (strIsStartWith(argName, "[md]"))
     {
         /* skip method declearation */
         // return 0;
     }
-    if (strIsStartWith(argName, "[methodPtr]"))
+    if (strIsStartWith(argName, "[mp]"))
     {
         /* skip method pointer */
         // return 0;

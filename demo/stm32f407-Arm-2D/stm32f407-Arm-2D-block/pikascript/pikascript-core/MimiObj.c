@@ -230,7 +230,7 @@ int32_t obj_setObjWithoutClass(MimiObj *self, char *objName, void *newFun)
 int32_t obj_addOther(MimiObj *self, char *subObjectName, void *new_ObjectFun)
 {
     Args *initArgs = New_args(NULL);
-    args_setPtr(initArgs, "__context", self);
+    args_setPtr(initArgs, "_ctx", self);
     void *(*new_Object)(Args * initArgs) = (void *(*)(Args *))new_ObjectFun;
     void *subObject = new_Object(initArgs);
     obj_setPtr(self, subObjectName, subObject);
@@ -306,12 +306,12 @@ int32_t obj_set(MimiObj *self, char *argPath, char *valStr)
 
 int32_t removeEachMethodInfo(Arg *argNow, Args *argList)
 {
-    if (strIsStartWith(arg_getName(argNow), "[methodDec]"))
+    if (strIsStartWith(arg_getName(argNow), "[md]"))
     {
         args_removeArg(argList, arg_getName(argNow));
         return 0;
     }
-    if (strIsStartWith(arg_getName(argNow), "[methodPtr]"))
+    if (strIsStartWith(arg_getName(argNow), "[mp]"))
     {
         args_removeArg(argList, arg_getName(argNow));
         return 0;
@@ -328,8 +328,8 @@ MimiObj *removeMethodInfo(MimiObj *thisClass)
 MimiObj *obj_getClassObjByNewFun(MimiObj *context, char *name, void *(*newClassFun)(Args *initArgs))
 {
     Args *initArgs = New_args(NULL);
-    args_setPtr(initArgs, "__context", context);
-    args_setStr(initArgs, "__name", name);
+    args_setPtr(initArgs, "_ctx", context);
+    args_setStr(initArgs, "_n", name);
     MimiObj *thisClass = newClassFun(initArgs);
     obj_setPtr(thisClass, "__classPtr", newClassFun);
     args_deinit(initArgs);
@@ -346,7 +346,7 @@ char *obj_getClassPath(MimiObj *objHost, Args *buffs, char *objName)
 
 void *getNewObjFunByClass(MimiObj *obj, char *classPath)
 {
-    MimiObj *classHost = args_getPtr(obj->attributeList, "__classLoader");
+    MimiObj *classHost = args_getPtr(obj->attributeList, "_clsld");
     if (NULL == classHost)
     {
         return NULL;
@@ -374,11 +374,11 @@ MimiObj *newRootObj(char *name, void *newObjFun)
 
 static void removeClassLoader(MimiObj *obj)
 {
-    MimiObj *classObj = args_getPtr(obj->attributeList, "__classLoader");
+    MimiObj *classObj = args_getPtr(obj->attributeList, "_clsld");
     if (NULL != classObj)
     {
         obj_deinit(classObj);
-        args_removeArg(obj->attributeList, "__classLoader");
+        args_removeArg(obj->attributeList, "_clsld");
     }
 }
 
@@ -397,7 +397,7 @@ MimiObj *initObj(MimiObj *obj, char *name)
     MimiObj *newObj = removeMethodInfo(thisClass);
     /* delete [mate]<objName> */
     obj_removeArg(obj, strsAppend(buffs, "[mate]", name));
-    /* delete "__classLoader" object */
+    /* delete "_clsld" object */
     removeClassLoader(newObj);
 
     char *type = args_getType(obj->attributeList, name);
@@ -458,8 +458,8 @@ exit:
 void loadMethodInfo(MimiObj *methodHost, char *methodName, char *methodDeclearation, void *methodPtr)
 {
     Args *buffs = New_strBuff();
-    char *methodPtrPath = strsAppend(buffs, "[methodPtr]", methodName);
-    char *methodDeclearationPath = strsAppend(buffs, "[methodDec]", methodName);
+    char *methodPtrPath = strsAppend(buffs, "[mp]", methodName);
+    char *methodDeclearationPath = strsAppend(buffs, "[md]", methodName);
     obj_setPtr(methodHost, methodPtrPath, methodPtr);
     obj_setStr(methodHost, methodDeclearationPath, methodDeclearation);
     args_deinit(buffs);
@@ -468,7 +468,7 @@ void loadMethodInfo(MimiObj *methodHost, char *methodName, char *methodDeclearat
 static char *getMethodDeclearation(MimiObj *obj, char *methodName)
 {
     Args *buffs = New_strBuff();
-    char *methodDeclearationPath = strsAppend(buffs, "[methodDec]", methodName);
+    char *methodDeclearationPath = strsAppend(buffs, "[md]", methodName);
     char *res = obj_getStr(obj, methodDeclearationPath);
     args_deinit(buffs);
     return res;
@@ -477,7 +477,7 @@ static char *getMethodDeclearation(MimiObj *obj, char *methodName)
 static void *getMethodPtr(MimiObj *methodHost, char *methodName)
 {
     Args *buffs = New_strBuff();
-    char *methodPtrPath = strsAppend(buffs, "[methodPtr]", methodName);
+    char *methodPtrPath = strsAppend(buffs, "[mp]", methodName);
     void *res = obj_getPtr(methodHost, methodPtrPath);
     args_deinit(buffs);
     return res;

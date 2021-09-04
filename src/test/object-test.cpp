@@ -24,7 +24,7 @@ void hello2(PikaObj *obj, Args *args)
     char *name1 = args_getStr(args, (char *)"name1");
     char *name2 = args_getStr(args, (char *)"name2");
     char *name3 = args_getStr(args, (char *)"name3");
-    char *myName = obj->name;
+    char *myName = obj_getStr(obj, (char *)"_n");
     int32_t isShow = args_getInt(args, (char *)"isShow");
     if (isShow)
     {
