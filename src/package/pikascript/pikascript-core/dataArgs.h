@@ -52,6 +52,7 @@ int32_t args_setPtrWithType(Args *self, char *objName, char *type, void *objPtr)
 int32_t args_foreach (Args *self,int32_t (*eachHandle)(Arg *argEach, Args *handleArgs), Args * handleArgs);
 
 char *args_getBuff(Args *self,int32_t size);
+uint8_t args_setLiteral(Args *self, char *argPath, char *literal);
 
 Args *New_args(Args *args);
 #endif

@@ -11,4 +11,5 @@ char *strsCut(Args *buffs, char *strIn, char startSign, char endSign);
 char *strsRemovePrefix(Args *buffs, char *inputStr, char *prefix);
 char *strsAppend(Args *buffs, char *strOrigin, char *strAppend);
 char *strsFormat(Args *buffs, uint16_t buffSize, const char *fmt, ...);
+char *strsGetDirectStr(Args *buffs, char *argPath);
 #endif
