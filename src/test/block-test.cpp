@@ -39,9 +39,17 @@ TEST(block, pop)
 TEST(block, assert1)
 {
     PikaObj *block = block_init();
-    block_setAssert(block, (char *)"1");
-    int res = block_checkAssert(block);
-    ASSERT_EQ(1, res);
+    {
+        block_setAssert(block, (char *)"1");
+        int res = block_checkAssert(block);
+        ASSERT_EQ(1, res);
+    }
+
+    {
+        block_setAssert(block, (char *)"0");
+        int res = block_checkAssert(block);
+        ASSERT_EQ(0, res);
+    }
     block_deinit(block);
 }
 
