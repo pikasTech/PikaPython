@@ -103,7 +103,7 @@ static void print(PikaObj *self, Args *args)
     char *res = args_print(args, "val");
     if (NULL == res)
     {
-        obj_setSysOut(self, "[error] print: can not print32_t val");
+        obj_setSysOut(self, "[error] print: can not print val");
         obj_setErrorCode(self, 1);
         return;
     }
