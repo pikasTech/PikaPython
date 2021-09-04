@@ -536,6 +536,7 @@ Args *getRightRes(PikaObj *self, char *cmd)
         goto exit;
     }
     res = New_args(NULL);
+    args_setSysOut(res, "");
     args_setLiteral(res, "return", cmd);
     char *returnType = strsAppend(buffs, "->", args_getType(res, "return"));
     args_setStr(res, "returnType", returnType);
@@ -649,12 +650,9 @@ void obj_run(PikaObj *self, char *cmd)
     /* safe, stop when error occord and error info would be print32_t */
     Args *res = obj_runDirect(self, cmd);
     char *sysOut = args_getSysOut(res);
-    if (NULL != sysOut)
+    if (!strEqu("", sysOut))
     {
-        if (!strEqu("", sysOut))
-        {
-            printf("%s\r\n", sysOut);
-        }
+        printf("%s\r\n", sysOut);
     }
     if (0 != args_getErrorCode(res))
     {
