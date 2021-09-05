@@ -13,4 +13,5 @@ uint8_t block_checkAssert(PikaObj *self);
 uint16_t block_getLineSize(PikaObj *self);
 void block_setMode(PikaObj *self, char *mode);
 char *block_getMode(PikaObj *self);
+char *block_setBody(PikaObj *self, char *body);
 #endif

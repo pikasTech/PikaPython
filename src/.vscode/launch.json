@@ -8,12 +8,12 @@
             "name": "test",
             "type": "cppdbg",
             "request": "launch",
-            // "program": "${workspaceFolder}/../build/src/test/pikascript_test",
-            "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
+            "program": "${workspaceFolder}/../build/src/test/pikascript_test",
+            // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=object_test.test2"
                 // "--gtest_filter=block.init"
-                // "--gtest_filter=block.ifrun1"
+                "--gtest_filter=block.ifrun1"
                 // "--gtest_filter=sysObj.print"
                 // "--gtest_filter=object_test.a_b"
                 // "--gtest_filter=object_test.voidRun"

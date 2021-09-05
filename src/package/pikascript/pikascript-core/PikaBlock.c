@@ -28,6 +28,11 @@ char *block_getBody(PikaObj *self)
     return obj_getStr(self, "body");
 }
 
+char *block_setBody(PikaObj *self, char *body)
+{
+    return obj_setStr(self, "body", body);
+}
+
 uint8_t block_checkAssert(PikaObj *self)
 {
     Args *buffs = New_strBuff();
