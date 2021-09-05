@@ -243,6 +243,17 @@ TEST(object_test, voidRun)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(object_test, printa)
+{
+    PikaObj *root = newRootObj((char *)"root", New_BaseObj);
+    obj_run(root, (char *)"a = 2");
+    obj_run(root, (char *)"print(a)");
+    char *sysOut = obj_getSysOut(root);
+    ASSERT_STREQ(sysOut, "2");
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(object_test, mem)
 {
     EXPECT_EQ(pikaMemNow(), 0);
