@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include "PikaBlock.h"
 #include "PikaIf.h"
+#include "PikaWhile.h"
 
 PikaObj *obj_getContext(PikaObj *self)
 {
@@ -616,6 +617,11 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
                 if_pushLine(block, cmd);
                 goto exit;
             }
+            if (strEqu(block_getMode(block), "while"))
+            {
+                while_pushLine(block, cmd);
+                goto exit;
+            }
             goto exit;
         }
         /* the block is end */
@@ -625,8 +631,12 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
             if (strEqu(block_getMode(block), "if"))
             {
                 if_run(block);
-                obj_removeArg(self, "_block");
             }
+            if (strEqu(block_getMode(block), "while"))
+            {
+                while_run(block);
+            }
+            obj_removeArg(self, "_block");
             /* not finished */
         }
     }
@@ -638,6 +648,17 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
         obj_setObjWithoutClass(self, "_block", block_init);
         PikaObj *block = obj_getObj(self, "_block", 0);
         if_setAssert(block, cmd);
+        /* this line processed ok */
+        goto exit;
+    }
+
+    /* while block */
+    if (strIsStartWith(cmd, "while "))
+    {
+        obj_setInt(self, "_isInBlock", 1);
+        obj_setObjWithoutClass(self, "_block", block_init);
+        PikaObj *block = obj_getObj(self, "_block", 0);
+        while_setAssert(block, cmd);
         /* this line processed ok */
         goto exit;
     }
