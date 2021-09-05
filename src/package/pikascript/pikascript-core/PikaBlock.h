@@ -3,7 +3,7 @@
 #include "PikaObj.h"
 
 void block_deinit(PikaObj *self);
-PikaObj *block_init();
+PikaObj *block_init(Args *args);
 char *block_popLine(PikaObj *self);
 void block_pushLine(PikaObj *self, char *line);
 char *block_getAssert(PikaObj *self);

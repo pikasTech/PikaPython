@@ -8,6 +8,7 @@ void if_setAssert(PikaObj *self, char *line)
 {
     Args *buffs = New_strBuff();
     char *assert = strsRemovePrefix(buffs, line, "if ");
+    assert = strsGetFirstToken(buffs, assert, ':');
     block_setAssert(self, assert);
     block_setMode(self, "if");
     args_deinit(buffs);

@@ -602,7 +602,7 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
     if (strIsStartWith(cmd, "if "))
     {
         obj_setInt(self, "_isInBlock", 1);
-        obj_setObjWithoutClass(self, "_block", block_init());
+        obj_setObjWithoutClass(self, "_block", block_init);
         PikaObj *block = obj_getObj(self, "_block", 0);
         if_setAssert(block, cmd);
         /* this line processed ok */
