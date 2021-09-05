@@ -17,17 +17,12 @@ static int32_t loadArgByType(PikaObj *self,
         {
             return 0;
         }
-        /* get reference arg */
-        Arg *arg = obj_getArg(self, argPath);
-        if (arg == NULL)
+        if (0 == obj_getRefArg(self, argPath, args))
         {
-            /* can not get arg */
-            return 3;
+            return 0;
         }
-        Arg *argCopied = arg_copy(arg);
-        argCopied = arg_setName(argCopied, argPath);
-        args_setArg(args, argCopied);
-        return 0;
+        /* solve arg faild */
+        return 3;
     }
     if (strEqu(definedType, "str"))
     {
@@ -233,8 +228,6 @@ static void *getMethodPtr(PikaObj *methodHost, char *methodName)
     args_deinit(buffs);
     return res;
 }
-
-
 
 Args *obj_invoke(PikaObj *self, char *cmd)
 {
