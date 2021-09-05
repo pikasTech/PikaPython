@@ -400,13 +400,13 @@ uint8_t args_setLiteral(Args *self, char *targetArgName, char *literal)
         goto exit;
     }
     /* match bool */
-    if (strEque(literal, "True"))
+    if (strEqu(literal, "True"))
     {
         args_setInt(self, targetArgName, 1);
         err = 0;
         goto exit;
     }
-    if (strEque(literal, "False"))
+    if (strEqu(literal, "False"))
     {
         args_setInt(self, targetArgName, 0);
         err = 0;
