@@ -12,9 +12,9 @@ void block_deinit(PikaObj *self)
     obj_deinit(self);
 }
 
-PikaObj *block_init()
+PikaObj *block_init(Args *args)
 {
-    PikaObj *self = New_TinyObj(NULL);
+    PikaObj *self = New_TinyObj(args);
     obj_setStr(self, "mode", "");
     obj_setStr(self, "assert", "");
     obj_setStr(self, "body", "");
