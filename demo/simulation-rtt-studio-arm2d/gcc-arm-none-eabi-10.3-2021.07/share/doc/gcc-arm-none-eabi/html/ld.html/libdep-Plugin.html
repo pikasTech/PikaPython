@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This file documents the GNU linker LD
+(GNU Arm Embedded Toolchain 10.3-2021.07)
+version 2.36.1.
+
+Copyright (C) 1991-2021 Free Software Foundation, Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, with no Front-Cover Texts, and with no
+Back-Cover Texts.  A copy of the license is included in the
+section entitled "GNU Free Documentation License". -->
+<!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>libdep Plugin (LD)</title>
+
+<meta name="description" content="libdep Plugin (LD)">
+<meta name="keywords" content="libdep Plugin (LD)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="LD-Index.html#LD-Index" rel="index" title="LD Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Plugins.html#Plugins" rel="up" title="Plugins">
+<link href="Machine-Dependent.html#Machine-Dependent" rel="next" title="Machine Dependent">
+<link href="Plugins.html#Plugins" rel="prev" title="Plugins">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style: oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+<a name="libdep-Plugin"></a>
+<div class="header">
+<p>
+Up: <a href="Plugins.html#Plugins" accesskey="u" rel="up">Plugins</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="LD-Index.html#LD-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<a name="Static-Library-Dependencies-Plugin"></a>
+<h3 class="section">4.1 Static Library Dependencies Plugin</h3>
+<a name="index-static-library-dependencies"></a>
+<p>Originally, static libraries were contained in an archive file consisting
+just of a collection of relocatable object files.  Later they evolved to
+optionally include a symbol table, to assist in finding the needed objects
+within a library.  There their evolution ended, and dynamic libraries
+rose to ascendance.
+</p>
+<p>One useful feature of dynamic libraries was that, more than just collecting
+multiple objects into a single file, they also included a list of their
+dependencies, such that one could specify just the name of a single dynamic
+library at link time, and all of its dependencies would be implicitly
+referenced as well.  But static libraries lacked this feature, so if a
+link invocation was switched from using dynamic libraries to static
+libraries, the link command would usually fail unless it was rewritten to
+explicitly list the dependencies of the static library.
+</p>
+<p>The GNU <code>ar</code> utility now supports a <samp>--record-libdeps</samp> option
+to embed dependency lists into static libraries as well, and the <samp>libdep</samp>
+plugin may be used to read this dependency information at link time.  The
+dependency information is stored as a single string, carrying <samp>-l</samp>
+and <samp>-L</samp> arguments as they would normally appear in a linker
+command line.  As such, the information can be written with any text
+utility and stored into any archive, even if GNU <code>ar</code> is not
+being used to create the archive.  The information is stored in an
+archive member named &lsquo;<samp>__.LIBDEP</samp>&rsquo;.
+</p>
+<p>For example, given a library <samp>libssl.a</samp> that depends on another
+library <samp>libcrypto.a</samp> which may be found in <samp>/usr/local/lib</samp>,
+the &lsquo;<samp>__.LIBDEP</samp>&rsquo; member of <samp>libssl.a</samp> would contain
+</p>
+<div class="smallexample">
+<pre class="smallexample">-L/usr/local/lib -lcrypto
+</pre></div>
+
+<hr>
+<div class="header">
+<p>
+Up: <a href="Plugins.html#Plugins" accesskey="u" rel="up">Plugins</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="LD-Index.html#LD-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>
