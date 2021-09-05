@@ -1,6 +1,3 @@
 [submodule "src/package/googletest"]
 	path = src/package/googletest
 	url = https://github.com/google/googletest
-[submodule "src/package/pikascript/pikascript-core"]
-	path = src/package/pikascript/pikascript-core
-	url = https://github.com/mimilib/pikascript-core
