@@ -231,8 +231,7 @@ Args *obj_invoke(PikaObj *self, char *cmd)
     Args *res = New_args(NULL);
     args_setErrorCode(res, 0);
     Args *buffs = New_strBuff();
-    char *cleanCmd = strsGetCleanCmd(buffs, cmd);
-    char *methodToken = strsGetFirstToken(buffs, cleanCmd, '(');
+    char *methodToken = strsGetFirstToken(buffs, cmd, '(');
     char *methodPath = methodToken;
     Args *args = NULL;
 
@@ -277,7 +276,7 @@ Args *obj_invoke(PikaObj *self, char *cmd)
     }
 
     /* get arg list */
-    char *argList = strsCut(buffs, cleanCmd, '(', ')');
+    char *argList = strsCut(buffs, cmd, '(', ')');
     {
         if (argList == NULL)
         {
