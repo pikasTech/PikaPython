@@ -27,9 +27,9 @@ TEST(content, init)
     uint16_t size = content_getSize(self);
     uint8_t *content = content_getContent(self);
 
-    ASSERT_EQ(contentOffset, 12);
-    ASSERT_EQ(typeOffset, 5);
-    ASSERT_EQ(sizeOffset, 10);
+    ASSERT_EQ(contentOffset, 15);
+    ASSERT_EQ(typeOffset, 19);
+    ASSERT_EQ(sizeOffset, 8);
     ASSERT_EQ(size, 4);
     ASSERT_EQ(content[0], 1);
     ASSERT_EQ(content[1], 2);
@@ -66,9 +66,9 @@ TEST(content, set)
     uint16_t size = content_getSize(self);
     uint8_t *content = content_getContent(self);
 
-    ASSERT_EQ(contentOffset, 12);
-    ASSERT_EQ(typeOffset, 5);
-    ASSERT_EQ(sizeOffset, 10);
+    ASSERT_EQ(contentOffset, 15);
+    ASSERT_EQ(typeOffset, 19);
+    ASSERT_EQ(sizeOffset, 8);
     ASSERT_EQ(size, 4);
     ASSERT_EQ(content[0], 1);
     ASSERT_EQ(content[1], 2);
