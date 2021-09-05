@@ -23,6 +23,11 @@ PikaObj *block_init(Args *args)
     return self;
 }
 
+char *block_getBody(PikaObj *self)
+{
+    return obj_getStr(self, "body");
+}
+
 uint8_t block_checkAssert(PikaObj *self)
 {
     Args *buffs = New_strBuff();
