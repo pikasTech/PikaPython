@@ -31,10 +31,11 @@ void while_run(PikaObj *self)
 {
     Args *buffs = New_strBuff();
     char *body = strsCopy(buffs, block_getBody(self));
+    uint16_t lineSize = block_getLineSize(self);
     while (block_checkAssert(self))
     {
         PikaObj *host = obj_getContext(self);
-        while (0 != block_getLineSize(self))
+        for (int i = 0; i < lineSize; i++)
         {
             char *line = block_popLine(self);
             obj_run(host, line);
