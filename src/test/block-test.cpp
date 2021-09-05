@@ -112,3 +112,14 @@ TEST(block, ifrun1)
     ASSERT_EQ(b, 2);
     obj_deinit(obj);
 }
+
+TEST(block, ifrun2)
+{
+    PikaObj *obj = newRootObj((char *)"root", New_BaseObj);
+    obj_run(obj, (char *)"if 0 :");
+    PikaObj *block = obj_getObj(obj, (char *)"_block", 0);
+    char *assert = block_getAssert(block);
+    uint8_t res = block_checkAssert(block);
+    ASSERT_EQ(res, 0);
+    obj_deinit(obj);
+}

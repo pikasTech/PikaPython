@@ -39,7 +39,8 @@ uint8_t block_checkAssert(PikaObj *self)
     PikaObj *host = obj_getContext(self);
     char *assert = block_getAssert(self);
     obj_run(host, strsFormat(buffs, 32, "_res = %s", assert));
-    int res = obj_getInt(self, "_res");
+    int res = obj_getInt(host, "_res");
+    obj_removeArg(host, "_res");
     args_deinit(buffs);
     return res;
 }

@@ -500,16 +500,19 @@ static void transferReturnVal(PikaObj *self, char *returnType, char *returnName,
     {
         int returnVal = args_getInt(args, "return");
         obj_setInt(self, returnName, returnVal);
+        return;
     }
     if (strEqu("->float", returnType))
     {
         float returnVal = args_getFloat(args, "return");
         obj_setFloat(self, returnName, returnVal);
+        return;
     }
     if (strEqu("->str", returnType))
     {
         char *returnVal = args_getStr(args, "return");
         obj_setStr(self, returnName, returnVal);
+        return;
     }
 }
 
@@ -540,7 +543,7 @@ uint8_t obj_getAnyArg(PikaObj *self, char *targetArgName, char *sourceArgPath, A
     {
         return 0;
     }
-    if (0 == obj_getRefArg(self, sourceArgPath, sourceArgPath, targetArgs))
+    if (0 == obj_getRefArg(self, targetArgName, sourceArgPath, targetArgs))
     {
         return 0;
     }
@@ -790,11 +793,14 @@ void obj_run(PikaObj *self, char *cmd)
     /* safe, stop when error occord and error info would be print32_t */
     Args *res = obj_runDirect(self, cmd);
     char *sysOut = args_getSysOut(res);
+    uint8_t errcode = args_getErrorCode(res);
+    obj_setSysOut(self, sysOut);
+    obj_setErrorCode(self, errcode);
     if (!strEqu("", sysOut))
     {
         printf("%s\r\n", sysOut);
     }
-    if (0 != args_getErrorCode(res))
+    if (0 != errcode)
     {
         printf("[info] input commond: %s\r\n", cmd);
         while (1)
