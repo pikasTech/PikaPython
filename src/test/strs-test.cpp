@@ -13,6 +13,23 @@ static void printInfo(const char *argName, char *argVal)
 }
 static int mem;
 
+TEST(strs, append)
+{
+    Args *buffs = New_strBuff();
+    char *res = strsAppend(buffs, "a", "b");
+    EXPECT_STREQ((char *)"ab", res);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(strs, formatInt)
+{
+    Args *buffs = New_strBuff();
+    char *res = strsFormat(buffs, "test: %d", 3);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(strs, analizeDef)
 {
     mem = pikaMemNow();
