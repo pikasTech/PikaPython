@@ -8,16 +8,12 @@
 static int32_t loadArgByType(PikaObj *self,
                              char *definedName,
                              char *definedType,
-                             char *argPath,
+                             char *sourceArgPath,
                              Args *args)
 {
     if (strEqu(definedType, "any"))
     {
-        if (0 == args_setLiteral(args, definedName, argPath))
-        {
-            return 0;
-        }
-        if (0 == obj_getRefArg(self, argPath, args))
+        if (0 == obj_getAnyArg(self, definedName, sourceArgPath, args))
         {
             return 0;
         }
@@ -27,7 +23,7 @@ static int32_t loadArgByType(PikaObj *self,
     if (strEqu(definedType, "str"))
     {
         /* solve the string type */
-        char *directStr = strsGetDirectStr(args, argPath);
+        char *directStr = strsGetDirectStr(args, sourceArgPath);
         if (NULL != directStr)
         {
             /* direct value */
@@ -36,7 +32,7 @@ static int32_t loadArgByType(PikaObj *self,
             return 0;
         }
         /* reference value */
-        char *refStr = obj_getStr(self, argPath);
+        char *refStr = obj_getStr(self, sourceArgPath);
         if (NULL == refStr)
         {
             /* faild */
@@ -50,20 +46,20 @@ static int32_t loadArgByType(PikaObj *self,
     {
         /* solve the int32_t type */
         args_setInt(args, definedName, 0);
-        if ((argPath[0] >= '0') && (argPath[0] <= '9'))
+        if ((sourceArgPath[0] >= '0') && (sourceArgPath[0] <= '9'))
         {
             /* direct value */
-            args_set(args, definedName, argPath);
+            args_set(args, definedName, sourceArgPath);
             /* succeed */
             return 0;
         }
         /* reference value */
-        if (!obj_isArgExist(self, argPath))
+        if (!obj_isArgExist(self, sourceArgPath))
         {
             /* can not get reference */
             return 3;
         }
-        int32_t referenceVal = obj_getInt(self, argPath);
+        int32_t referenceVal = obj_getInt(self, sourceArgPath);
         args_setInt(args, definedName, referenceVal);
         /* succeed */
         return 0;
@@ -72,20 +68,20 @@ static int32_t loadArgByType(PikaObj *self,
     {
         /* solve the float type */
         args_setFloat(args, definedName, 0);
-        if ((argPath[0] >= '0') && (argPath[0] <= '9'))
+        if ((sourceArgPath[0] >= '0') && (sourceArgPath[0] <= '9'))
         {
             /* direct value */
-            args_set(args, definedName, argPath);
+            args_set(args, definedName, sourceArgPath);
             /* succeed */
             return 0;
         }
         /* reference value */
-        if (!obj_isArgExist(self, argPath))
+        if (!obj_isArgExist(self, sourceArgPath))
         {
             /* can not get reference */
             return 3;
         }
-        float referenceVal = obj_getFloat(self, argPath);
+        float referenceVal = obj_getFloat(self, sourceArgPath);
         args_setFloat(args, definedName, referenceVal);
         /* succeed */
         return 0;
@@ -93,12 +89,12 @@ static int32_t loadArgByType(PikaObj *self,
     if (strEqu(definedType, "pointer"))
     {
         /* only support reference value */
-        if (!obj_isArgExist(self, argPath))
+        if (!obj_isArgExist(self, sourceArgPath))
         {
             /* can not get reference */
             return 3;
         }
-        void *ptr = obj_getPtr(self, argPath);
+        void *ptr = obj_getPtr(self, sourceArgPath);
         args_setPtr(args, definedName, ptr);
         return 0;
     }

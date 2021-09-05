@@ -534,17 +534,31 @@ char *getRightCmd(Args *buffs, char *cmd)
     return right;
 }
 
-uint8_t obj_getRefArg(PikaObj *self, char *argPath, Args *targetArgs)
+uint8_t obj_getAnyArg(PikaObj *self, char *targetArgName, char *sourceArgPath, Args *targetArgs)
+{
+    if (0 == args_setLiteral(targetArgs, targetArgName, sourceArgPath))
+    {
+        return 0;
+    }
+    if (0 == obj_getRefArg(self, sourceArgPath, sourceArgPath, targetArgs))
+    {
+        return 0;
+    }
+    /* solve arg faild */
+    return 3;
+}
+
+uint8_t obj_getRefArg(PikaObj *self, char *targetArgName, char *sourceArgPath, Args *targetArgs)
 {
     /* get reference arg */
-    Arg *arg = obj_getArg(self, argPath);
+    Arg *arg = obj_getArg(self, sourceArgPath);
     if (arg == NULL)
     {
         /* can not get arg */
         return 3;
     }
     Arg *argCopied = arg_copy(arg);
-    argCopied = arg_setName(argCopied, argPath);
+    argCopied = arg_setName(argCopied, targetArgName);
     args_setArg(targetArgs, argCopied);
     return 0;
 }
