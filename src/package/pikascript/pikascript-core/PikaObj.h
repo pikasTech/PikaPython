@@ -81,6 +81,7 @@ void args_setSysOut(Args *args, char *str);
 char *obj_getSysOut(PikaObj *self);
 void obj_sysPrintf(PikaObj *self, char *fmt, ...);
 PikaObj *obj_getContext(PikaObj *self);
-uint8_t obj_getRefArg(PikaObj *self, char *argPath, Args *targetArgs);
+uint8_t obj_getRefArg(PikaObj *self, char *targetArgName, char *sourceArgPath, Args *targetArgs);
+uint8_t obj_getAnyArg(PikaObj *self, char *targetArgName, char *sourceArgPath, Args *targetArgs);
 
 #endif

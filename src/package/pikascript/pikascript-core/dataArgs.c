@@ -384,7 +384,7 @@ exit:
     return res;
 }
 
-uint8_t args_setLiteral(Args *self, char *name, char *literal)
+uint8_t args_setLiteral(Args *self, char *targetArgName, char *literal)
 {
     Args *buffs = New_strBuff();
     literal = strsGetCleanCmd(buffs, literal);
@@ -394,7 +394,7 @@ uint8_t args_setLiteral(Args *self, char *name, char *literal)
     if (NULL != directStr)
     {
         /* direct string value */
-        args_setStr(self, name, directStr);
+        args_setStr(self, targetArgName, directStr);
         /* ok */
         err = 0;
         goto exit;
@@ -405,15 +405,15 @@ uint8_t args_setLiteral(Args *self, char *name, char *literal)
         /* match float num */
         if (strIsContain(literal, '.'))
         {
-            args_setFloat(self, name, 0);
-            args_set(self, name, literal);
+            args_setFloat(self, targetArgName, 0);
+            args_set(self, targetArgName, literal);
             /* succeed */
             err = 0;
             goto exit;
         }
         /* match int num */
-        args_setInt(self, name, 0);
-        args_set(self, name, literal);
+        args_setInt(self, targetArgName, 0);
+        args_set(self, targetArgName, literal);
         /* succeed */
         err = 0;
         goto exit;
