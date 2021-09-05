@@ -399,6 +399,19 @@ uint8_t args_setLiteral(Args *self, char *targetArgName, char *literal)
         err = 0;
         goto exit;
     }
+    /* match bool */
+    if (strEque(literal, "True"))
+    {
+        args_setInt(self, targetArgName, 1);
+        err = 0;
+        goto exit;
+    }
+    if (strEque(literal, "False"))
+    {
+        args_setInt(self, targetArgName, 0);
+        err = 0;
+        goto exit;
+    }
     /* match num */
     if ((literal[0] >= '0') && (literal[0] <= '9'))
     {
