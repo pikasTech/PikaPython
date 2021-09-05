@@ -8,6 +8,11 @@
 #include "PikaBlock.h"
 #include "PikaIf.h"
 
+PikaObj *obj_getContext(PikaObj *self)
+{
+    return obj_getPtr(self, "_ctx");
+}
+
 void *getNewObjFunByClass(PikaObj *obj, char *classPath)
 {
     PikaObj *classLoader = args_getPtr(obj->attributeList, "_clsld");
@@ -599,16 +604,7 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
 {
     Args *buffs = New_strBuff();
     Args *res = NULL;
-    if (strIsStartWith(cmd, "if "))
-    {
-        obj_setInt(self, "_isInBlock", 1);
-        obj_setObjWithoutClass(self, "_block", block_init);
-        PikaObj *block = obj_getObj(self, "_block", 0);
-        if_setAssert(block, cmd);
-        /* this line processed ok */
-        goto exit;
-    }
-
+    /* in block */
     if (NULL != obj_getArg(self, "_isInBlock"))
     {
         PikaObj *block = obj_getObj(self, "_block", 0);
@@ -633,8 +629,31 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
         }
     }
 
-    res = obj_runScript(self, cmd);
-    goto exit;
+    /* if block */
+    if (strIsStartWith(cmd, "if "))
+    {
+        obj_setInt(self, "_isInBlock", 1);
+        obj_setObjWithoutClass(self, "_block", block_init);
+        PikaObj *block = obj_getObj(self, "_block", 0);
+        if_setAssert(block, cmd);
+        /* this line processed ok */
+        goto exit;
+    }
+
+    /* run script */
+    if (strIsContain(cmd, '(') && strIsContain(cmd, ')'))
+    {
+        res = obj_runScript(self, cmd);
+        goto exit;
+    }
+
+    /* run script */
+    if (strIsContain(cmd, '='))
+    {
+        res = obj_runScript(self, cmd);
+        goto exit;
+    }
+
 exit:
     /* check res */
     if (NULL == res)

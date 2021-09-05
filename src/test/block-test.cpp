@@ -5,6 +5,7 @@ extern "C"
 #include "dataStrs.h"
 #include "PikaIf.h"
 #include "TinyObj.h"
+#include "BaseObj.h"
 #include "PikaObj.h"
 }
 
@@ -98,4 +99,16 @@ TEST(block, if3)
     obj_deinit(obj);
 }
 
-void block_pushLine(PikaObj *self, char *line);
+TEST(block, ifrun1)
+{
+    PikaObj *obj = newRootObj((char *)"root", New_BaseObj);
+    obj_run(obj, (char *)"if 1 :");
+    obj_run(obj, (char *)"    a = 1");
+    obj_run(obj, (char *)"    b = 2");
+    obj_run(obj, (char *)"");
+    int a = obj_getInt(obj, (char *)"a");
+    int b = obj_getInt(obj, (char *)"b");
+    ASSERT_EQ(a, 1);
+    ASSERT_EQ(b, 2);
+    obj_deinit(obj);
+}
