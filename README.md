@@ -7,9 +7,9 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 使用python3标准语法的子集。
 
-在编译时支持python类和方法定义(基于[Pika预编译器](https://github.com/mimilib/pikascript-compiler-rust))。
+在编译时支持python类和方法定义(基于[Pika预编译器](../../tree/master/pikascript-compiler-rust))。
 
-在运行时支持python方法调用、变量定义、对象构造、对象释放(基于[Pika运行时内核](https://github.com/mimilib/pikascript-core))。
+在运行时支持python方法调用、变量定义、对象构造、对象释放(基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core))。
 
 支持跨平台，可在linux环境开发、测试内核。
 
@@ -21,8 +21,9 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 源码命名规范，可读性强。
 
-## 架构示意图
-![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
+
+## stm32例程
+[pikascript-stm32-demo](../../tree/master/demo)
 
 ## 开发手册
 [1. PikaScript-三分钟快速上手](doc/1.三分钟快速上手.md)
@@ -32,8 +33,9 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 [3. PikaScript-十分钟快速部署](doc/2.十分钟快速部署.md)
 
 [4. PikaScript-标准开发流程](doc/3.PikaScript标准开发流程.md)
-## stm32例程
-[pikascript-stm32-demo](../../../pikascript-demo-stm32)
+
+## 架构示意图
+![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
 
 # 2.stm32教程视频
 
