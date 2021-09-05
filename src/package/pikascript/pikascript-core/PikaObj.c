@@ -604,6 +604,7 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
 {
     Args *buffs = New_strBuff();
     Args *res = NULL;
+    cmd = strsDeleteChar(buffs, cmd, '\n');
     /* in block */
     if (NULL != obj_getArg(self, "_isInBlock"))
     {
@@ -624,6 +625,7 @@ Args *obj_runDirect(PikaObj *self, char *cmd)
             if (strEqu(block_getMode(block), "if"))
             {
                 if_run(block);
+                obj_removeArg(self, "_block");
             }
             /* not finished */
         }
