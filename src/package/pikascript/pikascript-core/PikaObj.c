@@ -534,6 +534,21 @@ char *getRightCmd(Args *buffs, char *cmd)
     return right;
 }
 
+uint8_t obj_getRefArg(PikaObj *self, char *argPath, Args *targetArgs)
+{
+    /* get reference arg */
+    Arg *arg = obj_getArg(self, argPath);
+    if (arg == NULL)
+    {
+        /* can not get arg */
+        return 3;
+    }
+    Arg *argCopied = arg_copy(arg);
+    argCopied = arg_setName(argCopied, argPath);
+    args_setArg(targetArgs, argCopied);
+    return 0;
+}
+
 Args *getRightRes(PikaObj *self, char *cmd)
 {
     Args *buffs = New_strBuff();
