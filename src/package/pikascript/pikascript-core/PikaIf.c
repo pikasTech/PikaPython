@@ -29,10 +29,11 @@ void if_run(PikaObj *self)
 {
     if (block_checkAssert(self))
     {
+        PikaObj *host = obj_getContext(self);
         while (0 != block_getLineSize(self))
         {
             char *line = block_popLine(self);
-            obj_run(self, line);
+            obj_run(host, line);
         }
     }
 }

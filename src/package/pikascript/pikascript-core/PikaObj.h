@@ -80,5 +80,6 @@ int32_t args_getErrorCode(Args *args);
 void args_setSysOut(Args *args, char *str);
 char *obj_getSysOut(PikaObj *self);
 void obj_sysPrintf(PikaObj *self, char *fmt, ...);
+PikaObj *obj_getContext(PikaObj *self);
 
 #endif
