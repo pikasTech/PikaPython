@@ -75,15 +75,6 @@ TEST(args, buff)
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args, print_int)
-{
-    Args *args = New_args(NULL);
-    args_setInt(args, (char *)"testInt", 124);
-    EXPECT_STREQ((char *)"124", args_print(args, (char *)"testInt"));
-    args_deinit(args);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-
 TEST(args, update)
 {
     Args *args = New_args(NULL);
@@ -93,6 +84,16 @@ TEST(args, update)
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(args, print_int)
+{
+    Args *args = New_args(NULL);
+    args_setInt(args, (char *)"testInt", 124);
+    EXPECT_STREQ((char *)"124", args_print(args, (char *)"testInt"));
+    args_deinit(args);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 
 TEST(args, test5)
 {
