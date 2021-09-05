@@ -12,8 +12,10 @@
             "args": [
                 // "--gtest_filter=object_test.test2"
                 // "--gtest_filter=block.init"
+                "--gtest_filter=block.ifrun1"
                 // "--gtest_filter=sysObj.print"
                 // "--gtest_filter=object_test.a_b"
+                // "--gtest_filter=object_test.voidRun"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
