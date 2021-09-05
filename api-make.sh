@@ -1,2 +1,2 @@
-cd src/package/pikascript
-./rust-msc-latest-win10.exe
+sh api-make-linux.sh
+sh api-make-win10.sh
