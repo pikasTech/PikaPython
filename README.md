@@ -18,7 +18,7 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 在编译时支持python类和方法定义(基于[Pika预编译器](../../tree/master/pikascript-compiler-rust))。
 
-在运行时支持python方法调用、变量定义、对象构造、对象释放(基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core))。
+在运行时支持python方法调用、变量定义、对象构造、对象释放、控制流(if\while) (基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core))。
 
 支持跨平台，可在linux环境开发内核。
 
