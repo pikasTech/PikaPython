@@ -6,7 +6,7 @@
 
 PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本绑定。
 
-支持裸机运行，可运行于 ***RAM > 4kB*** 的mcu中，如stm32g030, stm32f103c8t6，esp32。
+支持裸机运行，可运行于 ***RAM > 4kB*** ，***FLASH > 32kB*** 的mcu中，如stm32g030, stm32f103c8t6，esp32。
 
 支持keil\iar\rt-thread studio\segger embedded studio等IDE开发。
 
