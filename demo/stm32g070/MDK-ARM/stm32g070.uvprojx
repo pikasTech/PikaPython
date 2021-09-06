@@ -628,6 +628,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdDeivce_GPIO-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdDeivce_GPIO-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -642,6 +647,11 @@
               <FileName>PikaStdLib_SysObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDeivce_GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.c</FilePath>
             </File>
           </Files>
         </Group>

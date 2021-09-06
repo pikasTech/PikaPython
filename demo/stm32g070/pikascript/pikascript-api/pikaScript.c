@@ -12,6 +12,11 @@ PikaObj * pikaScriptInit(){
     obj_run(pikaMain, "mem.max()");
     obj_run(pikaMain, "print('mem.now :')");
     obj_run(pikaMain, "mem.now()");
+    obj_run(pikaMain, "io1.init()");
+    obj_run(pikaMain, "io1.setPin('PB4')");
+    obj_run(pikaMain, "io1.setMode('out')");
+    obj_run(pikaMain, "io1.enable()");
+    obj_run(pikaMain, "io1.on()");
     return pikaMain;
 }
 
