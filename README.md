@@ -20,7 +20,7 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 在运行时支持python方法调用、变量定义、对象构造、对象释放(基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core))。
 
-支持跨平台，可在linux环境开发、测试内核。
+支持跨平台，可在linux环境开发内核。
 
 完全不使用宏，几乎不使用全局变量。
 
