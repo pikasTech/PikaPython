@@ -10,7 +10,7 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 支持keil\iar\rt-thread studio\segger embedded studio等IDE开发。
 
-零依赖，零配置，开箱即用。
+零依赖，零配置，开箱即用，极易集成进已有的C工程。
 
 极易拓展自定义的C原生函数。
 
