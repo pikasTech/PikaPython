@@ -10,6 +10,8 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 支持keil\iar\rtt-studio等IDE开发。
 
+极易拓展自定义的C原生函数。
+
 使用python3标准语法的子集。
 
 在编译时支持python类和方法定义(基于[Pika预编译器](../../tree/master/pikascript-compiler-rust))。
