@@ -67,7 +67,7 @@ void block_setMode(PikaObj *self, char *mode)
 
 char *block_getMode(PikaObj *self)
 {
-    obj_getStr(self, "mode");
+    return obj_getStr(self, "mode");
 }
 
 void block_pushLine(PikaObj *self, char *line)
