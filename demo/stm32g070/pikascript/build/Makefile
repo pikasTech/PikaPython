@@ -159,6 +159,21 @@ pikascript-api/PikaMain-api.s:
 .PHONY : pikascript-api/PikaMain-api.s
 
 # target to build an object file
+pikascript-api/PikaStdDeivce_GPIO-api.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.obj
+.PHONY : pikascript-api/PikaStdDeivce_GPIO-api.obj
+
+# target to preprocess a source file
+pikascript-api/PikaStdDeivce_GPIO-api.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.i
+.PHONY : pikascript-api/PikaStdDeivce_GPIO-api.i
+
+# target to generate assembly for a file
+pikascript-api/PikaStdDeivce_GPIO-api.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.s
+.PHONY : pikascript-api/PikaStdDeivce_GPIO-api.s
+
+# target to build an object file
 pikascript-api/PikaStdLib_MemChecker-api.obj:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj
 .PHONY : pikascript-api/PikaStdLib_MemChecker-api.obj
@@ -429,6 +444,21 @@ pikascript-core/method.s:
 .PHONY : pikascript-core/method.s
 
 # target to build an object file
+pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj
+.PHONY : pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj
+
+# target to preprocess a source file
+pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.i
+.PHONY : pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.i
+
+# target to generate assembly for a file
+pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.s
+.PHONY : pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.s
+
+# target to build an object file
 pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj
 .PHONY : pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj
@@ -473,6 +503,9 @@ help:
 	@echo ... pikascript-api/PikaMain-api.obj
 	@echo ... pikascript-api/PikaMain-api.i
 	@echo ... pikascript-api/PikaMain-api.s
+	@echo ... pikascript-api/PikaStdDeivce_GPIO-api.obj
+	@echo ... pikascript-api/PikaStdDeivce_GPIO-api.i
+	@echo ... pikascript-api/PikaStdDeivce_GPIO-api.s
 	@echo ... pikascript-api/PikaStdLib_MemChecker-api.obj
 	@echo ... pikascript-api/PikaStdLib_MemChecker-api.i
 	@echo ... pikascript-api/PikaStdLib_MemChecker-api.s
@@ -527,6 +560,9 @@ help:
 	@echo ... pikascript-core/method.obj
 	@echo ... pikascript-core/method.i
 	@echo ... pikascript-core/method.s
+	@echo ... pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj
+	@echo ... pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.i
+	@echo ... pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.s
 	@echo ... pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj
 	@echo ... pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.i
 	@echo ... pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.s

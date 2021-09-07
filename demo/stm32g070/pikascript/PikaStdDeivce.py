@@ -23,18 +23,18 @@ class GPIO(TinyObj):
     def disable():
         pass
 
-    def on():
+    def high():
         pass
 
-    def off():
+    def low():
         pass
 
     # need be overrid
-    def platformOn():
+    def platformHigh():
         pass
 
     # need override
-    def platformOff():
+    def platformLow():
         pass
 
     # need override

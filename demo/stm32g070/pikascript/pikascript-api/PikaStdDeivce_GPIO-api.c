@@ -25,16 +25,16 @@ void PikaStdDeivce_GPIO_getPinMethod(PikaObj *self, Args *args){
     method_returnStr(args, res);
 }
 
+void PikaStdDeivce_GPIO_highMethod(PikaObj *self, Args *args){
+    PikaStdDeivce_GPIO_high(self);
+}
+
 void PikaStdDeivce_GPIO_initMethod(PikaObj *self, Args *args){
     PikaStdDeivce_GPIO_init(self);
 }
 
-void PikaStdDeivce_GPIO_offMethod(PikaObj *self, Args *args){
-    PikaStdDeivce_GPIO_off(self);
-}
-
-void PikaStdDeivce_GPIO_onMethod(PikaObj *self, Args *args){
-    PikaStdDeivce_GPIO_on(self);
+void PikaStdDeivce_GPIO_lowMethod(PikaObj *self, Args *args){
+    PikaStdDeivce_GPIO_low(self);
 }
 
 void PikaStdDeivce_GPIO_platformDisableMethod(PikaObj *self, Args *args){
@@ -45,12 +45,12 @@ void PikaStdDeivce_GPIO_platformEnableMethod(PikaObj *self, Args *args){
     PikaStdDeivce_GPIO_platformEnable(self);
 }
 
-void PikaStdDeivce_GPIO_platformOffMethod(PikaObj *self, Args *args){
-    PikaStdDeivce_GPIO_platformOff(self);
+void PikaStdDeivce_GPIO_platformHighMethod(PikaObj *self, Args *args){
+    PikaStdDeivce_GPIO_platformHigh(self);
 }
 
-void PikaStdDeivce_GPIO_platformOnMethod(PikaObj *self, Args *args){
-    PikaStdDeivce_GPIO_platformOn(self);
+void PikaStdDeivce_GPIO_platformLowMethod(PikaObj *self, Args *args){
+    PikaStdDeivce_GPIO_platformLow(self);
 }
 
 void PikaStdDeivce_GPIO_platformSetModeMethod(PikaObj *self, Args *args){
@@ -74,13 +74,13 @@ PikaObj *New_PikaStdDeivce_GPIO(Args *args){
     class_defineMethod(self, "enable()", PikaStdDeivce_GPIO_enableMethod);
     class_defineMethod(self, "getMode()->str", PikaStdDeivce_GPIO_getModeMethod);
     class_defineMethod(self, "getPin()->str", PikaStdDeivce_GPIO_getPinMethod);
+    class_defineMethod(self, "high()", PikaStdDeivce_GPIO_highMethod);
     class_defineMethod(self, "init()", PikaStdDeivce_GPIO_initMethod);
-    class_defineMethod(self, "off()", PikaStdDeivce_GPIO_offMethod);
-    class_defineMethod(self, "on()", PikaStdDeivce_GPIO_onMethod);
+    class_defineMethod(self, "low()", PikaStdDeivce_GPIO_lowMethod);
     class_defineMethod(self, "platformDisable()", PikaStdDeivce_GPIO_platformDisableMethod);
     class_defineMethod(self, "platformEnable()", PikaStdDeivce_GPIO_platformEnableMethod);
-    class_defineMethod(self, "platformOff()", PikaStdDeivce_GPIO_platformOffMethod);
-    class_defineMethod(self, "platformOn()", PikaStdDeivce_GPIO_platformOnMethod);
+    class_defineMethod(self, "platformHigh()", PikaStdDeivce_GPIO_platformHighMethod);
+    class_defineMethod(self, "platformLow()", PikaStdDeivce_GPIO_platformLowMethod);
     class_defineMethod(self, "platformSetMode(mode:str)", PikaStdDeivce_GPIO_platformSetModeMethod);
     class_defineMethod(self, "setMode(mode:str)", PikaStdDeivce_GPIO_setModeMethod);
     class_defineMethod(self, "setPin(pinName:str)", PikaStdDeivce_GPIO_setPinMethod);

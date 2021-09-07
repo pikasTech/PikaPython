@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "D:/git/pikascript/demo/stm32g070/pikascript/build/CMakeFiles/3.21.1/CompilerIdC/CMakeCCompilerId.c" "CMakeFiles/Project-core.dir/CMakeFiles/3.21.1/CompilerIdC/CMakeCCompilerId.obj" "gcc" "CMakeFiles/Project-core.dir/CMakeFiles/3.21.1/CompilerIdC/CMakeCCompilerId.obj.d"
   "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-api/PikaMain-api.c" "CMakeFiles/Project-core.dir/pikascript-api/PikaMain-api.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-api/PikaMain-api.obj.d"
+  "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-api/PikaStdDeivce_GPIO-api.c" "CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.obj.d"
   "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-api/PikaStdLib_MemChecker-api.c" "CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj.d"
   "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-api/PikaStdLib_SysObj-api.c" "CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj.d"
   "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-api/pikaScript.c" "CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj.d"
@@ -28,6 +29,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-core/dataString.c" "CMakeFiles/Project-core.dir/pikascript-core/dataString.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-core/dataString.obj.d"
   "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-core/dataStrs.c" "CMakeFiles/Project-core.dir/pikascript-core/dataStrs.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-core/dataStrs.obj.d"
   "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-core/method.c" "CMakeFiles/Project-core.dir/pikascript-core/method.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-core/method.obj.d"
+  "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.c" "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj.d"
   "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c" "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj.d"
   "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c" "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj" "gcc" "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj.d"
   )
