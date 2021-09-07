@@ -6,7 +6,13 @@
 
 PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本绑定。
 
+### 运行环境
+
 支持裸机运行，可运行于 ***RAM > 4kB*** ，***FLASH > 32kB*** 的mcu中，如stm32g030, stm32f103c8t6，esp32。
+
+栈空间少量占用，内存信息可观测。
+
+### 开发环境
 
 支持Keil、IAR、rt-thread studio、segger embedded studio等IDE开发。
 
@@ -16,19 +22,21 @@ PikaScript可以为资源受限的mcu提供极易部署和拓展的Python脚本�
 
 极易拓展自定义的C原生函数。
 
+支持跨平台，可在linux环境开发内核。
+
+### 语法特性
+
 使用python3标准语法的子集。
 
 在编译时支持python类和方法定义(基于[Pika预编译器](../../tree/master/pikascript-compiler-rust))。
 
 在运行时支持python方法调用、变量定义、对象构造、对象释放、控制流(if\while) (基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core))。
 
-支持跨平台，可在linux环境开发内核。
+### 源码规范
 
 注重源码可读性，命名规范，标准统一，完全不使用宏，几乎不使用全局变量。
 
 完整的googletest单元测试。
-
-栈空间少量占用，内存信息可观测。
 
 ## stm32例程
 [pikascript-stm32-demo](../../tree/master/demo)
