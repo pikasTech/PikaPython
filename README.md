@@ -10,8 +10,6 @@ PikaScript可以为***资源受限***的mcu提供极易***部署***和***拓展*
 
 支持裸机运行，可运行于 ***RAM ≥ 4kB*** ，***FLASH ≥ 32kB*** 的mcu中，如stm32g030, stm32f103c8t6，esp8266。
 
-栈空间少量占用，内存信息可观测。
-
 ### (2)开发环境
 
 支持Keil、IAR、rt-thread studio、segger embedded studio等IDE开发。
