@@ -96,10 +96,24 @@ CMakeFiles/Project-core.dir/pikascript-api/PikaMain-api.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Project-core.dir/pikascript-api/PikaMain-api.s"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S D:\git\pikascript\demo\stm32g070\pikascript\pikascript-api\PikaMain-api.c -o CMakeFiles\Project-core.dir\pikascript-api\PikaMain-api.s
 
+CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.obj: CMakeFiles/Project-core.dir/flags.make
+CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.obj: ../pikascript-api/PikaStdDeivce_GPIO-api.c
+CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.obj"
+	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.obj -MF CMakeFiles\Project-core.dir\pikascript-api\PikaStdDeivce_GPIO-api.obj.d -o CMakeFiles\Project-core.dir\pikascript-api\PikaStdDeivce_GPIO-api.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-api\PikaStdDeivce_GPIO-api.c
+
+CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.i"
+	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E D:\git\pikascript\demo\stm32g070\pikascript\pikascript-api\PikaStdDeivce_GPIO-api.c > CMakeFiles\Project-core.dir\pikascript-api\PikaStdDeivce_GPIO-api.i
+
+CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.s"
+	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S D:\git\pikascript\demo\stm32g070\pikascript\pikascript-api\PikaStdDeivce_GPIO-api.c -o CMakeFiles\Project-core.dir\pikascript-api\PikaStdDeivce_GPIO-api.s
+
 CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj: ../pikascript-api/PikaStdLib_MemChecker-api.c
 CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj -MF CMakeFiles\Project-core.dir\pikascript-api\PikaStdLib_MemChecker-api.obj.d -o CMakeFiles\Project-core.dir\pikascript-api\PikaStdLib_MemChecker-api.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-api\PikaStdLib_MemChecker-api.c
 
 CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.i: cmake_force
@@ -113,7 +127,7 @@ CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.s: cmake_fo
 CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj: ../pikascript-api/PikaStdLib_SysObj-api.c
 CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj -MF CMakeFiles\Project-core.dir\pikascript-api\PikaStdLib_SysObj-api.obj.d -o CMakeFiles\Project-core.dir\pikascript-api\PikaStdLib_SysObj-api.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-api\PikaStdLib_SysObj-api.c
 
 CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.i: cmake_force
@@ -127,7 +141,7 @@ CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj: ../pikascript-api/pikaScript.c
 CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj -MF CMakeFiles\Project-core.dir\pikascript-api\pikaScript.obj.d -o CMakeFiles\Project-core.dir\pikascript-api\pikaScript.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-api\pikaScript.c
 
 CMakeFiles/Project-core.dir/pikascript-api/pikaScript.i: cmake_force
@@ -141,7 +155,7 @@ CMakeFiles/Project-core.dir/pikascript-api/pikaScript.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/BaseObj.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/BaseObj.obj: ../pikascript-core/BaseObj.c
 CMakeFiles/Project-core.dir/pikascript-core/BaseObj.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/Project-core.dir/pikascript-core/BaseObj.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/Project-core.dir/pikascript-core/BaseObj.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/BaseObj.obj -MF CMakeFiles\Project-core.dir\pikascript-core\BaseObj.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\BaseObj.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\BaseObj.c
 
 CMakeFiles/Project-core.dir/pikascript-core/BaseObj.i: cmake_force
@@ -155,7 +169,7 @@ CMakeFiles/Project-core.dir/pikascript-core/BaseObj.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/PikaBlock.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/PikaBlock.obj: ../pikascript-core/PikaBlock.c
 CMakeFiles/Project-core.dir/pikascript-core/PikaBlock.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/Project-core.dir/pikascript-core/PikaBlock.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/Project-core.dir/pikascript-core/PikaBlock.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/PikaBlock.obj -MF CMakeFiles\Project-core.dir\pikascript-core\PikaBlock.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\PikaBlock.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\PikaBlock.c
 
 CMakeFiles/Project-core.dir/pikascript-core/PikaBlock.i: cmake_force
@@ -169,7 +183,7 @@ CMakeFiles/Project-core.dir/pikascript-core/PikaBlock.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/PikaIf.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/PikaIf.obj: ../pikascript-core/PikaIf.c
 CMakeFiles/Project-core.dir/pikascript-core/PikaIf.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/Project-core.dir/pikascript-core/PikaIf.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/Project-core.dir/pikascript-core/PikaIf.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/PikaIf.obj -MF CMakeFiles\Project-core.dir\pikascript-core\PikaIf.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\PikaIf.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\PikaIf.c
 
 CMakeFiles/Project-core.dir/pikascript-core/PikaIf.i: cmake_force
@@ -183,7 +197,7 @@ CMakeFiles/Project-core.dir/pikascript-core/PikaIf.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/PikaInvoke.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/PikaInvoke.obj: ../pikascript-core/PikaInvoke.c
 CMakeFiles/Project-core.dir/pikascript-core/PikaInvoke.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/Project-core.dir/pikascript-core/PikaInvoke.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/Project-core.dir/pikascript-core/PikaInvoke.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/PikaInvoke.obj -MF CMakeFiles\Project-core.dir\pikascript-core\PikaInvoke.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\PikaInvoke.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\PikaInvoke.c
 
 CMakeFiles/Project-core.dir/pikascript-core/PikaInvoke.i: cmake_force
@@ -197,7 +211,7 @@ CMakeFiles/Project-core.dir/pikascript-core/PikaInvoke.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/PikaObj.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/PikaObj.obj: ../pikascript-core/PikaObj.c
 CMakeFiles/Project-core.dir/pikascript-core/PikaObj.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/Project-core.dir/pikascript-core/PikaObj.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/Project-core.dir/pikascript-core/PikaObj.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/PikaObj.obj -MF CMakeFiles\Project-core.dir\pikascript-core\PikaObj.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\PikaObj.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\PikaObj.c
 
 CMakeFiles/Project-core.dir/pikascript-core/PikaObj.i: cmake_force
@@ -211,7 +225,7 @@ CMakeFiles/Project-core.dir/pikascript-core/PikaObj.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/PikaWhile.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/PikaWhile.obj: ../pikascript-core/PikaWhile.c
 CMakeFiles/Project-core.dir/pikascript-core/PikaWhile.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/Project-core.dir/pikascript-core/PikaWhile.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/Project-core.dir/pikascript-core/PikaWhile.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/PikaWhile.obj -MF CMakeFiles\Project-core.dir\pikascript-core\PikaWhile.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\PikaWhile.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\PikaWhile.c
 
 CMakeFiles/Project-core.dir/pikascript-core/PikaWhile.i: cmake_force
@@ -225,7 +239,7 @@ CMakeFiles/Project-core.dir/pikascript-core/PikaWhile.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/TinyObj.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/TinyObj.obj: ../pikascript-core/TinyObj.c
 CMakeFiles/Project-core.dir/pikascript-core/TinyObj.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/Project-core.dir/pikascript-core/TinyObj.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object CMakeFiles/Project-core.dir/pikascript-core/TinyObj.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/TinyObj.obj -MF CMakeFiles\Project-core.dir\pikascript-core\TinyObj.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\TinyObj.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\TinyObj.c
 
 CMakeFiles/Project-core.dir/pikascript-core/TinyObj.i: cmake_force
@@ -239,7 +253,7 @@ CMakeFiles/Project-core.dir/pikascript-core/TinyObj.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/dataArg.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/dataArg.obj: ../pikascript-core/dataArg.c
 CMakeFiles/Project-core.dir/pikascript-core/dataArg.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataArg.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataArg.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/dataArg.obj -MF CMakeFiles\Project-core.dir\pikascript-core\dataArg.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\dataArg.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\dataArg.c
 
 CMakeFiles/Project-core.dir/pikascript-core/dataArg.i: cmake_force
@@ -253,7 +267,7 @@ CMakeFiles/Project-core.dir/pikascript-core/dataArg.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/dataArgs.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/dataArgs.obj: ../pikascript-core/dataArgs.c
 CMakeFiles/Project-core.dir/pikascript-core/dataArgs.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataArgs.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataArgs.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/dataArgs.obj -MF CMakeFiles\Project-core.dir\pikascript-core\dataArgs.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\dataArgs.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\dataArgs.c
 
 CMakeFiles/Project-core.dir/pikascript-core/dataArgs.i: cmake_force
@@ -267,7 +281,7 @@ CMakeFiles/Project-core.dir/pikascript-core/dataArgs.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/dataLink.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/dataLink.obj: ../pikascript-core/dataLink.c
 CMakeFiles/Project-core.dir/pikascript-core/dataLink.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataLink.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataLink.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/dataLink.obj -MF CMakeFiles\Project-core.dir\pikascript-core\dataLink.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\dataLink.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\dataLink.c
 
 CMakeFiles/Project-core.dir/pikascript-core/dataLink.i: cmake_force
@@ -281,7 +295,7 @@ CMakeFiles/Project-core.dir/pikascript-core/dataLink.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/dataLinkNode.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/dataLinkNode.obj: ../pikascript-core/dataLinkNode.c
 CMakeFiles/Project-core.dir/pikascript-core/dataLinkNode.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataLinkNode.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataLinkNode.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/dataLinkNode.obj -MF CMakeFiles\Project-core.dir\pikascript-core\dataLinkNode.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\dataLinkNode.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\dataLinkNode.c
 
 CMakeFiles/Project-core.dir/pikascript-core/dataLinkNode.i: cmake_force
@@ -295,7 +309,7 @@ CMakeFiles/Project-core.dir/pikascript-core/dataLinkNode.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/dataMemory.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/dataMemory.obj: ../pikascript-core/dataMemory.c
 CMakeFiles/Project-core.dir/pikascript-core/dataMemory.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataMemory.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataMemory.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/dataMemory.obj -MF CMakeFiles\Project-core.dir\pikascript-core\dataMemory.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\dataMemory.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\dataMemory.c
 
 CMakeFiles/Project-core.dir/pikascript-core/dataMemory.i: cmake_force
@@ -309,7 +323,7 @@ CMakeFiles/Project-core.dir/pikascript-core/dataMemory.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/dataString.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/dataString.obj: ../pikascript-core/dataString.c
 CMakeFiles/Project-core.dir/pikascript-core/dataString.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataString.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataString.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/dataString.obj -MF CMakeFiles\Project-core.dir\pikascript-core\dataString.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\dataString.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\dataString.c
 
 CMakeFiles/Project-core.dir/pikascript-core/dataString.i: cmake_force
@@ -323,7 +337,7 @@ CMakeFiles/Project-core.dir/pikascript-core/dataString.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/dataStrs.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/dataStrs.obj: ../pikascript-core/dataStrs.c
 CMakeFiles/Project-core.dir/pikascript-core/dataStrs.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataStrs.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object CMakeFiles/Project-core.dir/pikascript-core/dataStrs.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/dataStrs.obj -MF CMakeFiles\Project-core.dir\pikascript-core\dataStrs.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\dataStrs.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\dataStrs.c
 
 CMakeFiles/Project-core.dir/pikascript-core/dataStrs.i: cmake_force
@@ -337,7 +351,7 @@ CMakeFiles/Project-core.dir/pikascript-core/dataStrs.s: cmake_force
 CMakeFiles/Project-core.dir/pikascript-core/method.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-core/method.obj: ../pikascript-core/method.c
 CMakeFiles/Project-core.dir/pikascript-core/method.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object CMakeFiles/Project-core.dir/pikascript-core/method.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object CMakeFiles/Project-core.dir/pikascript-core/method.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-core/method.obj -MF CMakeFiles\Project-core.dir\pikascript-core\method.obj.d -o CMakeFiles\Project-core.dir\pikascript-core\method.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\method.c
 
 CMakeFiles/Project-core.dir/pikascript-core/method.i: cmake_force
@@ -348,10 +362,24 @@ CMakeFiles/Project-core.dir/pikascript-core/method.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Project-core.dir/pikascript-core/method.s"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S D:\git\pikascript\demo\stm32g070\pikascript\pikascript-core\method.c -o CMakeFiles\Project-core.dir\pikascript-core\method.s
 
+CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj: CMakeFiles/Project-core.dir/flags.make
+CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj: ../pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.c
+CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj"
+	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj -MF CMakeFiles\Project-core.dir\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.obj.d -o CMakeFiles\Project-core.dir\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.c
+
+CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.i"
+	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E D:\git\pikascript\demo\stm32g070\pikascript\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.c > CMakeFiles\Project-core.dir\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.i
+
+CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.s"
+	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S D:\git\pikascript\demo\stm32g070\pikascript\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.c -o CMakeFiles\Project-core.dir\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.s
+
 CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj: ../pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c
 CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj -MF CMakeFiles\Project-core.dir\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.obj.d -o CMakeFiles\Project-core.dir\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c
 
 CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.i: cmake_force
@@ -365,7 +393,7 @@ CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.s: c
 CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj: CMakeFiles/Project-core.dir/flags.make
 CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj: ../pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c
 CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj: CMakeFiles/Project-core.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj"
 	D:\mingw64\bin\x86_64-w64-mingw32-gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj -MF CMakeFiles\Project-core.dir\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.obj.d -o CMakeFiles\Project-core.dir\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.obj -c D:\git\pikascript\demo\stm32g070\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c
 
 CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.i: cmake_force
@@ -380,6 +408,7 @@ CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.s: cmake
 Project__core_OBJECTS = \
 "CMakeFiles/Project-core.dir/CMakeFiles/3.21.1/CompilerIdC/CMakeCCompilerId.obj" \
 "CMakeFiles/Project-core.dir/pikascript-api/PikaMain-api.obj" \
+"CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.obj" \
 "CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj" \
 "CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj" \
 "CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj" \
@@ -398,6 +427,7 @@ Project__core_OBJECTS = \
 "CMakeFiles/Project-core.dir/pikascript-core/dataString.obj" \
 "CMakeFiles/Project-core.dir/pikascript-core/dataStrs.obj" \
 "CMakeFiles/Project-core.dir/pikascript-core/method.obj" \
+"CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj" \
 "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj" \
 "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj"
 
@@ -406,6 +436,7 @@ Project__core_EXTERNAL_OBJECTS =
 
 libProject-core.a: CMakeFiles/Project-core.dir/CMakeFiles/3.21.1/CompilerIdC/CMakeCCompilerId.obj
 libProject-core.a: CMakeFiles/Project-core.dir/pikascript-api/PikaMain-api.obj
+libProject-core.a: CMakeFiles/Project-core.dir/pikascript-api/PikaStdDeivce_GPIO-api.obj
 libProject-core.a: CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj
 libProject-core.a: CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj
 libProject-core.a: CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj
@@ -424,11 +455,12 @@ libProject-core.a: CMakeFiles/Project-core.dir/pikascript-core/dataMemory.obj
 libProject-core.a: CMakeFiles/Project-core.dir/pikascript-core/dataString.obj
 libProject-core.a: CMakeFiles/Project-core.dir/pikascript-core/dataStrs.obj
 libProject-core.a: CMakeFiles/Project-core.dir/pikascript-core/method.obj
+libProject-core.a: CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.obj
 libProject-core.a: CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj
 libProject-core.a: CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj
 libProject-core.a: CMakeFiles/Project-core.dir/build.make
 libProject-core.a: CMakeFiles/Project-core.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Linking C static library libProject-core.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=D:\git\pikascript\demo\stm32g070\pikascript\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Linking C static library libProject-core.a"
 	$(CMAKE_COMMAND) -P CMakeFiles\Project-core.dir\cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\Project-core.dir\link.txt --verbose=$(VERBOSE)
 

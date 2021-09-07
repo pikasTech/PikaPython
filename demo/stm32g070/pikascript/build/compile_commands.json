@@ -11,6 +11,11 @@
 },
 {
   "directory": "D:/git/pikascript/demo/stm32g070/pikascript/build",
+  "command": "D:\\mingw64\\bin\\x86_64-w64-mingw32-gcc.exe   -g -o CMakeFiles\\Project-core.dir\\pikascript-api\\PikaStdDeivce_GPIO-api.obj -c D:\\git\\pikascript\\demo\\stm32g070\\pikascript\\pikascript-api\\PikaStdDeivce_GPIO-api.c",
+  "file": "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-api/PikaStdDeivce_GPIO-api.c"
+},
+{
+  "directory": "D:/git/pikascript/demo/stm32g070/pikascript/build",
   "command": "D:\\mingw64\\bin\\x86_64-w64-mingw32-gcc.exe   -g -o CMakeFiles\\Project-core.dir\\pikascript-api\\PikaStdLib_MemChecker-api.obj -c D:\\git\\pikascript\\demo\\stm32g070\\pikascript\\pikascript-api\\PikaStdLib_MemChecker-api.c",
   "file": "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-api/PikaStdLib_MemChecker-api.c"
 },
@@ -98,6 +103,11 @@
   "directory": "D:/git/pikascript/demo/stm32g070/pikascript/build",
   "command": "D:\\mingw64\\bin\\x86_64-w64-mingw32-gcc.exe   -g -o CMakeFiles\\Project-core.dir\\pikascript-core\\method.obj -c D:\\git\\pikascript\\demo\\stm32g070\\pikascript\\pikascript-core\\method.c",
   "file": "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-core/method.c"
+},
+{
+  "directory": "D:/git/pikascript/demo/stm32g070/pikascript/build",
+  "command": "D:\\mingw64\\bin\\x86_64-w64-mingw32-gcc.exe   -g -o CMakeFiles\\Project-core.dir\\pikascript-lib\\PikaStdDevice\\PikaStdDeivce_GPIO.obj -c D:\\git\\pikascript\\demo\\stm32g070\\pikascript\\pikascript-lib\\PikaStdDevice\\PikaStdDeivce_GPIO.c",
+  "file": "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-lib/PikaStdDevice/PikaStdDeivce_GPIO.c"
 },
 {
   "directory": "D:/git/pikascript/demo/stm32g070/pikascript/build",
