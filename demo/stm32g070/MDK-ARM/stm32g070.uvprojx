@@ -399,11 +399,6 @@
               <FilePath>../Core/Src/main.c</FilePath>
             </File>
             <File>
-              <FileName>gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/gpio.c</FilePath>
-            </File>
-            <File>
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/usart.c</FilePath>
@@ -633,6 +628,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaStdDeivce_GPIO-api.c</FilePath>
             </File>
+            <File>
+              <FileName>STM32_GPIO-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32_GPIO-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -652,6 +652,11 @@
               <FileName>PikaStdDeivce_GPIO.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32_GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_GPIO.c</FilePath>
             </File>
           </Files>
         </Group>
