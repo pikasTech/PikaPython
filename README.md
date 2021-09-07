@@ -26,9 +26,9 @@ PikaScript可以为***资源受限***的mcu提供极易***部署***和***拓展*
 
 使用python3标准语法的子集。
 
-在编译时支持python类和方法定义，完整支持封装、继承、多态、模块功能(基于[Pika预编译器](../../tree/master/pikascript-compiler-rust))。
+在编译时支持python类和方法定义，完整支持封装、继承、多态、模块功能 - 基于[Pika预编译器](../../tree/master/pikascript-compiler-rust)。
 
-在运行时支持python方法调用、变量定义、对象构造、对象释放、控制流(if\while) (基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core))。
+在运行时支持python方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core)。
 
 ### (4)源码规范
 
