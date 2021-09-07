@@ -111,6 +111,7 @@ impl ClassInfo {
         script_fn.push_str("PikaObj * pikaScriptInit(){\r\n");
         script_fn.push_str("    PikaObj * pikaMain = newRootObj(\"pikaMain\", New_PikaMain);\r\n");
         script_fn.push_str(&self.script_list.content);
+        script_fn.push_str("    obj_run(pikaMain, \"\");\r\n");
         script_fn.push_str("    return pikaMain;\r\n");
         script_fn.push_str("}\r\n\r\n");
         return script_fn;
