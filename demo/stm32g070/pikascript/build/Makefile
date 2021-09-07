@@ -204,6 +204,21 @@ pikascript-api/PikaStdLib_SysObj-api.s:
 .PHONY : pikascript-api/PikaStdLib_SysObj-api.s
 
 # target to build an object file
+pikascript-api/STM32_GPIO-api.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-api/STM32_GPIO-api.obj
+.PHONY : pikascript-api/STM32_GPIO-api.obj
+
+# target to preprocess a source file
+pikascript-api/STM32_GPIO-api.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-api/STM32_GPIO-api.i
+.PHONY : pikascript-api/STM32_GPIO-api.i
+
+# target to generate assembly for a file
+pikascript-api/STM32_GPIO-api.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-api/STM32_GPIO-api.s
+.PHONY : pikascript-api/STM32_GPIO-api.s
+
+# target to build an object file
 pikascript-api/pikaScript.obj:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj
 .PHONY : pikascript-api/pikaScript.obj
@@ -488,6 +503,21 @@ pikascript-lib/PikaStdLib/PikaStdLib_SysObj.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.s
 .PHONY : pikascript-lib/PikaStdLib/PikaStdLib_SysObj.s
 
+# target to build an object file
+pikascript-lib/STM32/STM32_GPIO.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-lib/STM32/STM32_GPIO.obj
+.PHONY : pikascript-lib/STM32/STM32_GPIO.obj
+
+# target to preprocess a source file
+pikascript-lib/STM32/STM32_GPIO.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-lib/STM32/STM32_GPIO.i
+.PHONY : pikascript-lib/STM32/STM32_GPIO.i
+
+# target to generate assembly for a file
+pikascript-lib/STM32/STM32_GPIO.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Project-core.dir\build.make CMakeFiles/Project-core.dir/pikascript-lib/STM32/STM32_GPIO.s
+.PHONY : pikascript-lib/STM32/STM32_GPIO.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -512,6 +542,9 @@ help:
 	@echo ... pikascript-api/PikaStdLib_SysObj-api.obj
 	@echo ... pikascript-api/PikaStdLib_SysObj-api.i
 	@echo ... pikascript-api/PikaStdLib_SysObj-api.s
+	@echo ... pikascript-api/STM32_GPIO-api.obj
+	@echo ... pikascript-api/STM32_GPIO-api.i
+	@echo ... pikascript-api/STM32_GPIO-api.s
 	@echo ... pikascript-api/pikaScript.obj
 	@echo ... pikascript-api/pikaScript.i
 	@echo ... pikascript-api/pikaScript.s
@@ -569,6 +602,9 @@ help:
 	@echo ... pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj
 	@echo ... pikascript-lib/PikaStdLib/PikaStdLib_SysObj.i
 	@echo ... pikascript-lib/PikaStdLib/PikaStdLib_SysObj.s
+	@echo ... pikascript-lib/STM32/STM32_GPIO.obj
+	@echo ... pikascript-lib/STM32/STM32_GPIO.i
+	@echo ... pikascript-lib/STM32/STM32_GPIO.s
 .PHONY : help
 
 

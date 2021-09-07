@@ -48,3 +48,13 @@ class GPIO(TinyObj):
     # need override
     def platformSetMode(mode: str):
         pass
+
+
+class Time(TinyObj):
+    # need override
+    def sleep_s(s: int):
+        pass
+
+    # need override
+    def sleep_ms(ms: int):
+        pass
