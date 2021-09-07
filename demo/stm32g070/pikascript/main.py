@@ -1,10 +1,7 @@
 import PikaStdLib
 import STM32
-from PikaObj import *
 
-print('hello pikascript')
 mem = PikaStdLib.MemChecker()
-
 io1 = STM32.GPIO()
 time = STM32.Time()
 
@@ -14,6 +11,7 @@ io1.setMode('out')
 io1.enable()
 io1.low()
 
+print('hello pikascript')
 print('mem.max :')
 mem.max()
 print('mem.now :')
