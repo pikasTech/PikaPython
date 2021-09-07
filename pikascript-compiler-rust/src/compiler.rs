@@ -50,6 +50,17 @@ impl Compiler {
         }
         if line.contains("(") && line.contains(")") {
             class_now.script_list.add(&line);
+            return compiler;
+        }
+
+        if line.starts_with("if ") {
+            class_now.script_list.add(&line);
+            return compiler;
+        }
+
+        if line.starts_with("while ") {
+            class_now.script_list.add(&line);
+            return compiler;
         }
         return compiler;
     }
@@ -101,6 +112,11 @@ impl Compiler {
             class_now.push_method(line);
             return compiler;
         }
+
+        if file_name == "main" {
+            return Compiler::analyze_main_line(compiler, line);
+        }
+
         if line.starts_with("    ")
             && line.contains("(")
             && line.contains(")")
@@ -122,10 +138,6 @@ impl Compiler {
                 .unwrap();
             class_now.push_import(line, &file_name);
             return compiler;
-        }
-
-        if file_name == "main" {
-            return Compiler::analyze_main_line(compiler, line);
         }
 
         return compiler;
