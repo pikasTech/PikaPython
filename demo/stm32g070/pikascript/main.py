@@ -19,4 +19,4 @@ mem.now()
 
 while True:
     io1.low()
-    io1.off()
+    io1.high()
