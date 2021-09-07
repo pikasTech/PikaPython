@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_MemChecker-api.obj.d"
   "CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj"
   "CMakeFiles/Project-core.dir/pikascript-api/PikaStdLib_SysObj-api.obj.d"
+  "CMakeFiles/Project-core.dir/pikascript-api/STM32_GPIO-api.obj"
+  "CMakeFiles/Project-core.dir/pikascript-api/STM32_GPIO-api.obj.d"
   "CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj"
   "CMakeFiles/Project-core.dir/pikascript-api/pikaScript.obj.d"
   "CMakeFiles/Project-core.dir/pikascript-core/BaseObj.obj"
@@ -47,6 +49,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.obj.d"
   "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj"
   "CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.obj.d"
+  "CMakeFiles/Project-core.dir/pikascript-lib/STM32/STM32_GPIO.obj"
+  "CMakeFiles/Project-core.dir/pikascript-lib/STM32/STM32_GPIO.obj.d"
   "libProject-core.a"
   "libProject-core.pdb"
 )

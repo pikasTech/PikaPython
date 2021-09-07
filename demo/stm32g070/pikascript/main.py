@@ -6,6 +6,8 @@ print('hello pikascript')
 mem = PikaStdLib.MemChecker()
 
 io1 = STM32.GPIO()
+time = STM32.Time()
+
 io1.init()
 io1.setPin('PB4')
 io1.setMode('out')
@@ -19,4 +21,6 @@ mem.now()
 
 while True:
     io1.low()
+    time.sleep_ms(500)
     io1.high()
+    time.sleep_ms(500)

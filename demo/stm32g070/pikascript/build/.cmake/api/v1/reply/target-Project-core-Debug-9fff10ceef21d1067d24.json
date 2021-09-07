@@ -43,29 +43,31 @@
 			"sourceIndexes" : 
 			[
 				10,
-				24,
-				26,
-				28,
-				30,
-				32,
+				25,
+				27,
+				29,
+				31,
+				33,
 				35,
-				37,
-				39,
-				41,
-				43,
-				45,
-				47,
-				49,
-				51,
-				53,
-				55,
-				57,
-				59,
-				61,
-				63,
-				67,
-				69,
-				70
+				38,
+				40,
+				42,
+				44,
+				46,
+				48,
+				50,
+				52,
+				54,
+				56,
+				58,
+				60,
+				62,
+				64,
+				66,
+				70,
+				72,
+				73,
+				75
 			]
 		}
 	],
@@ -106,10 +108,12 @@
 				21,
 				22,
 				23,
-				34,
-				65,
-				66,
-				68
+				24,
+				37,
+				68,
+				69,
+				71,
+				74
 			]
 		},
 		{
@@ -117,41 +121,12 @@
 			"sourceIndexes" : 
 			[
 				10,
-				24,
-				26,
-				28,
-				30,
-				32,
-				35,
-				37,
-				39,
-				41,
-				43,
-				45,
-				47,
-				49,
-				51,
-				53,
-				55,
-				57,
-				59,
-				61,
-				63,
-				67,
-				69,
-				70
-			]
-		},
-		{
-			"name" : "Header Files",
-			"sourceIndexes" : 
-			[
 				25,
 				27,
 				29,
 				31,
 				33,
-				36,
+				35,
 				38,
 				40,
 				42,
@@ -165,7 +140,39 @@
 				58,
 				60,
 				62,
-				64
+				64,
+				66,
+				70,
+				72,
+				73,
+				75
+			]
+		},
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				26,
+				28,
+				30,
+				32,
+				34,
+				36,
+				39,
+				41,
+				43,
+				45,
+				47,
+				49,
+				51,
+				53,
+				55,
+				57,
+				59,
+				61,
+				63,
+				65,
+				67
 			]
 		}
 	],
@@ -284,6 +291,11 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "build/CMakeFiles/Project-core.dir/pikascript-lib/PikaStdDevice",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "build/CMakeFiles/Project-core.dir/pikascript-lib/PikaStdLib",
 			"sourceGroupIndex" : 0
 		},
@@ -334,6 +346,17 @@
 		{
 			"backtrace" : 1,
 			"path" : "pikascript-api/PikaStdLib_SysObj.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "pikascript-api/STM32_GPIO-api.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pikascript-api/STM32_GPIO.h",
 			"sourceGroupIndex" : 2
 		},
 		{
@@ -548,6 +571,17 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pikascript-lib/STM32",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "pikascript-lib/STM32/STM32_GPIO.c",
 			"sourceGroupIndex" : 1
 		}
 	],
