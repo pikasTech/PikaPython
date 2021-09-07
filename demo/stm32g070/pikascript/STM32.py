@@ -21,3 +21,13 @@ class GPIO(PikaStdDeivce.GPIO):
     # override
     def platformSetMode(mode: str):
         pass
+
+
+class Time(PikaStdDeivce.Time):
+    # override
+    def sleep_s(s: int):
+        pass
+
+    # override
+    def sleep_ms(ms: int):
+        pass

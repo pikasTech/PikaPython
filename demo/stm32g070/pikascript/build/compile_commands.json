@@ -26,6 +26,11 @@
 },
 {
   "directory": "D:/git/pikascript/demo/stm32g070/pikascript/build",
+  "command": "D:\\mingw64\\bin\\x86_64-w64-mingw32-gcc.exe   -g -o CMakeFiles\\Project-core.dir\\pikascript-api\\STM32_GPIO-api.obj -c D:\\git\\pikascript\\demo\\stm32g070\\pikascript\\pikascript-api\\STM32_GPIO-api.c",
+  "file": "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-api/STM32_GPIO-api.c"
+},
+{
+  "directory": "D:/git/pikascript/demo/stm32g070/pikascript/build",
   "command": "D:\\mingw64\\bin\\x86_64-w64-mingw32-gcc.exe   -g -o CMakeFiles\\Project-core.dir\\pikascript-api\\pikaScript.obj -c D:\\git\\pikascript\\demo\\stm32g070\\pikascript\\pikascript-api\\pikaScript.c",
   "file": "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-api/pikaScript.c"
 },
@@ -118,5 +123,10 @@
   "directory": "D:/git/pikascript/demo/stm32g070/pikascript/build",
   "command": "D:\\mingw64\\bin\\x86_64-w64-mingw32-gcc.exe   -g -o CMakeFiles\\Project-core.dir\\pikascript-lib\\PikaStdLib\\PikaStdLib_SysObj.obj -c D:\\git\\pikascript\\demo\\stm32g070\\pikascript\\pikascript-lib\\PikaStdLib\\PikaStdLib_SysObj.c",
   "file": "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c"
+},
+{
+  "directory": "D:/git/pikascript/demo/stm32g070/pikascript/build",
+  "command": "D:\\mingw64\\bin\\x86_64-w64-mingw32-gcc.exe   -g -o CMakeFiles\\Project-core.dir\\pikascript-lib\\STM32\\STM32_GPIO.obj -c D:\\git\\pikascript\\demo\\stm32g070\\pikascript\\pikascript-lib\\STM32\\STM32_GPIO.c",
+  "file": "D:/git/pikascript/demo/stm32g070/pikascript/pikascript-lib/STM32/STM32_GPIO.c"
 }
 ]

@@ -19,7 +19,9 @@ PikaObj * pikaScriptInit(){
     obj_run(pikaMain, "mem.now()");
     obj_run(pikaMain, "while True:");
     obj_run(pikaMain, "    io1.low()");
+    obj_run(pikaMain, "    time.sleep_ms(500)");
     obj_run(pikaMain, "    io1.high()");
+    obj_run(pikaMain, "    time.sleep_ms(500)");
     obj_run(pikaMain, "");
     return pikaMain;
 }
