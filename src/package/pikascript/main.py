@@ -1,4 +1,5 @@
 import PikaStdLib
+import PikaStdDevice
 from PikaObj import *
 
 print('hello world')
