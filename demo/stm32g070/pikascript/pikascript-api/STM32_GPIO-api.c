@@ -2,7 +2,7 @@
 /* Warning! Don't modify this file! */
 /* ******************************** */
 #include "STM32_GPIO.h"
-#include "PikaStdDeivce_GPIO.h"
+#include "PikaStdDevice_GPIO.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "BaseObj.h"
@@ -29,7 +29,7 @@ void STM32_GPIO_platformSetModeMethod(PikaObj *self, Args *args){
 }
 
 PikaObj *New_STM32_GPIO(Args *args){
-    PikaObj *self = New_PikaStdDeivce_GPIO(args);
+    PikaObj *self = New_PikaStdDevice_GPIO(args);
     class_defineMethod(self, "platformDisable()", STM32_GPIO_platformDisableMethod);
     class_defineMethod(self, "platformEnable()", STM32_GPIO_platformEnableMethod);
     class_defineMethod(self, "platformHigh()", STM32_GPIO_platformHighMethod);
