@@ -1,5 +1,5 @@
 #include "BaseObj.h"
-#include "PikaStdDeivce_Time.h"
+#include "PikaStdDevice_Time.h"
 
 void PikaStdDeivce_Time_sleep_ms(PikaObj *self, int ms)
 {
