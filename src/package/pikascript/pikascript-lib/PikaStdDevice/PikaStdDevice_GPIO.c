@@ -1,5 +1,5 @@
 #include "BaseObj.h"
-#include "PikaStdDeivce_GPIO.h"
+#include "PikaStdDevice_GPIO.h"
 
 void PikaStdDeivce_GPIO_init(PikaObj *self)
 {
