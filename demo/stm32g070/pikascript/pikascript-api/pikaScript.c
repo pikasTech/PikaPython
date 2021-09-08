@@ -7,12 +7,12 @@
 
 PikaObj * pikaScriptInit(){
     PikaObj * pikaMain = newRootObj("pikaMain", New_PikaMain);
-    obj_run(pikaMain, "print('hello pikascript')");
     obj_run(pikaMain, "io1.init()");
     obj_run(pikaMain, "io1.setPin('PB4')");
     obj_run(pikaMain, "io1.setMode('out')");
     obj_run(pikaMain, "io1.enable()");
     obj_run(pikaMain, "io1.low()");
+    obj_run(pikaMain, "print('hello pikascript')");
     obj_run(pikaMain, "print('mem.max :')");
     obj_run(pikaMain, "mem.max()");
     obj_run(pikaMain, "print('mem.now :')");

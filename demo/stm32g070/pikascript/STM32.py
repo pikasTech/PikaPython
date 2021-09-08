@@ -1,7 +1,7 @@
-import PikaStdDeivce
+import PikaStdDevice
 
 
-class GPIO(PikaStdDeivce.GPIO):
+class GPIO(PikaStdDevice.GPIO):
     # override
     def platformHigh():
         pass
@@ -23,7 +23,7 @@ class GPIO(PikaStdDeivce.GPIO):
         pass
 
 
-class Time(PikaStdDeivce.Time):
+class Time(PikaStdDevice.Time):
     # override
     def sleep_s(s: int):
         pass
