@@ -1,3 +1,0 @@
-D:/git/pikascript/demo/stm32g070/pikascript/build/CMakeFiles/Project-core.dir
-D:/git/pikascript/demo/stm32g070/pikascript/build/CMakeFiles/edit_cache.dir
-D:/git/pikascript/demo/stm32g070/pikascript/build/CMakeFiles/rebuild_cache.dir
