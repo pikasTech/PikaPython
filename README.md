@@ -71,7 +71,11 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 
 # 4.贡献者
 
-demo01-led-stm32f103zet6: 柚子(微信名) 2021年8月5日
+demo/stm32f103zet6/demo01-led-stm32f103zet6: [甜航](https://github.com/easyzoom) 2021年8月5日
+
+demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot: [甜航](https://github.com/easyzoom) 2021年8月5日
+
+stm32f407zgt/demo01-led-stm32f407vgt: [甜航](https://github.com/easyzoom) 2021年8月5日
 
 simulation-keil: 千帆(微信名) 2021年8月21日
 
