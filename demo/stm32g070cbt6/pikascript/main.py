@@ -2,16 +2,16 @@ import PikaStdLib
 import STM32
 
 mem = PikaStdLib.MemChecker()
-io1 = STM32.GPIO()
 time = STM32.Time()
-adc1 = STM32.ADC()
 
+io1 = STM32.GPIO()
 io1.init()
 io1.setPin('PB4')
 io1.setMode('out')
 io1.enable()
 io1.low()
 
+adc1 = STM32.ADC()
 adc1.init()
 adc1.setPin('PA1')
 adc1.enable()
@@ -30,3 +30,5 @@ while True:
     val = adc1.read()
     print('adc1 value:')
     print(val)
+    print('mem.max :')
+    mem.max()

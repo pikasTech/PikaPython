@@ -28,6 +28,8 @@ PikaObj * pikaScriptInit(){
     obj_run(pikaMain, "    val = adc1.read()");
     obj_run(pikaMain, "    print('adc1 value:')");
     obj_run(pikaMain, "    print(val)");
+    obj_run(pikaMain, "    print('mem.max :')");
+    obj_run(pikaMain, "    mem.max()");
     obj_run(pikaMain, "");
     return pikaMain;
 }
