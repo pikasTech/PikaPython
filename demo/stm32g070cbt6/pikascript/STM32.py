@@ -31,3 +31,13 @@ class Time(PikaStdDevice.Time):
     # override
     def sleep_ms(ms: int):
         pass
+
+
+class ADC(PikaStdDevice.ADC):
+    # override
+    def platformEnable(pin: str):
+        pass
+
+    # override
+    def platformRead(pin: str) -> float:
+        pass
