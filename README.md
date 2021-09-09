@@ -60,7 +60,7 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 # 3.交流与技术支持：
 
 ## 微信交流群
-![423213057991990941](https://user-images.githubusercontent.com/88232613/132690778-fa79fe38-0a9a-428f-8f4b-eb46952932e4.jpg){:height="100px" width="400px"}
+![423213057991990941](https://user-images.githubusercontent.com/88232613/132690778-fa79fe38-0a9a-428f-8f4b-eb46952932e4.jpg){:height="50%" width="50%"}
 
 ## Tencent QQ： 645275593
 
