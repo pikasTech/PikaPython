@@ -58,3 +58,25 @@ class Time(TinyObj):
     # need override
     def sleep_ms(ms: int):
         pass
+
+
+class ADC(TinyObj):
+    def init():
+        pass
+
+    def setPin(pin: str):
+        pass
+
+    def enable():
+        pass
+
+    def read() -> float:
+        pass
+
+    # need override
+    def platformEnable(pin: str):
+        pass
+
+    # need override
+    def platformRead(pin: str) -> float:
+        pass
