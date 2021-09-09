@@ -76,7 +76,7 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
 | demo/simulation-keil | 千帆(微信名) |
-
+| 源码格式化 | [Meco Jianting Man](https://github.com/mysterywolf) |
 # 5.内核测试与开发
 
 ## linux下测试pikascript内核(推荐ubuntu20.04)：
