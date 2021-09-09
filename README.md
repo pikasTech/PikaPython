@@ -69,7 +69,13 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 
 ## E-mail: 645275593@qq.com
 
-# 4.内核测试与开发
+# 4.贡献者
+
+demo01-led-stm32f103zet6: 柚子(微信名) 2021年8月5日
+
+simulation-keil: 千帆(微信名) 2021年8月21日
+
+# 5.内核测试与开发
 
 ## linux下测试pikascript内核(推荐ubuntu20.04)：
 
