@@ -52,7 +52,7 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 
 ### (7)架构示意图
 
-<img src="https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png" width="200" alt="微信交流群"/><br/>
+<img src="https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png" width="800" alt="微信交流群"/><br/>
 
 # 2.stm32教程视频
 
@@ -62,7 +62,7 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 
 ## 微信交流群
 
-<img src="https://user-images.githubusercontent.com/88232613/132690778-fa79fe38-0a9a-428f-8f4b-eb46952932e4.jpg" width="200" height="250" alt="微信交流群"/><br/>
+<img src="https://user-images.githubusercontent.com/88232613/132690778-fa79fe38-0a9a-428f-8f4b-eb46952932e4.jpg" width="200" alt="微信交流群"/><br/>
 
 ## Tencent QQ： 645275593
 
