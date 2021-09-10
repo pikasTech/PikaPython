@@ -98,7 +98,7 @@ class UART(TinyObj):
     def write(data: str):
         pass
 
-    def read(length: int):
+    def read(length: int) -> str:
         pass
 
     # need override
@@ -106,9 +106,9 @@ class UART(TinyObj):
         pass
 
     # need override
-    def platformWrite(data: str):
+    def platformWrite(id: int, data: str):
         pass
 
     # need override
-    def platformRead(length: int):
+    def platformRead(id: int, length: int) -> str:
         pass

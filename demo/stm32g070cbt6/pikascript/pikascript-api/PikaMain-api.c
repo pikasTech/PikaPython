@@ -7,6 +7,7 @@
 #include "STM32_GPIO.h"
 #include "PikaStdLib_MemChecker.h"
 #include "STM32_Time.h"
+#include "STM32_UART.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "BaseObj.h"
@@ -21,5 +22,7 @@ PikaObj *New_PikaMain(Args *args){
     obj_newObj(self, "mem", "PikaStdLib_MemChecker");
     obj_import(self, "STM32_Time", New_STM32_Time);
     obj_newObj(self, "time", "STM32_Time");
+    obj_import(self, "STM32_UART", New_STM32_UART);
+    obj_newObj(self, "uart1", "STM32_UART");
     return self;
 }

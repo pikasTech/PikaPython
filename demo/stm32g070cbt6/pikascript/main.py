@@ -16,6 +16,12 @@ adc1.init()
 adc1.setPin('PA1')
 adc1.enable()
 
+uart1 = STM32.UART()
+uart1.init()
+uart1.setBaudRate(115200)
+uart1.setId(2)
+uart1.enable()
+
 print('hello pikascript')
 print('mem.max :')
 mem.max()
