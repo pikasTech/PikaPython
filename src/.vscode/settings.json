@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "pikaobj.h": "c"
+        "pikaobj.h": "c",
+        "stdbool.h": "c"
     }
 }
