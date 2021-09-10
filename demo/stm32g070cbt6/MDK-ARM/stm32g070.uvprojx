@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G070xx,HAL_ADC_MODULE_ENABLED</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;          ../Drivers/STM32G0xx_HAL_Driver/Inc;          ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;          ../Drivers/CMSIS/Device/ST/STM32G0xx/Include;          ../Drivers/CMSIS/Include;          ..\pikascript\pikascript-api;          ..\pikascript\pikascript-core;          ..\pikascript\pikascript-lib\STM32</IncludePath>
+              <IncludePath>../Core/Inc;           ../Drivers/STM32G0xx_HAL_Driver/Inc;           ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;           ../Drivers/CMSIS/Device/ST/STM32G0xx/Include;           ../Drivers/CMSIS/Include;           ..\pikascript\pikascript-api;           ..\pikascript\pikascript-core;           ..\pikascript\pikascript-lib\STM32</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
