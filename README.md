@@ -1,4 +1,4 @@
-![775355418493305033](https://user-images.githubusercontent.com/88232613/132158500-f0818be9-29b2-48a1-b1e8-3216c3b686b0.jpg)
+<img src="https://user-images.githubusercontent.com/88232613/132158500-f0818be9-29b2-48a1-b1e8-3216c3b686b0.jpg" width="400" alt="微信交流群"/><br/>
 
 # [点击获取PikaScript v0.7.0](https://github.com/mimilib/pikascript/releases/download/v0.7.0/pikascript.v0.7.0.zip)
 
@@ -51,7 +51,8 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 [4. PikaScript-标准开发流程](doc/3.PikaScript标准开发流程.md)
 
 ### (7)架构示意图
-![K9C)%CZO)X`8VFBKCE8(9@W](https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png)
+
+<img src="https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png" width="800" alt="微信交流群"/><br/>
 
 # 2.stm32教程视频
 
@@ -60,16 +61,22 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 # 3.交流与技术支持：
 
 ## 微信交流群
-![image](https://user-images.githubusercontent.com/88232613/131966892-59d89b0c-8068-488a-9015-f1002fa18505.png)
 
-## 官方公众号
-![image](https://user-images.githubusercontent.com/88232613/128301451-f0cdecea-6457-4925-b084-42e7796a856e.png)
+<img src="https://user-images.githubusercontent.com/88232613/132690778-fa79fe38-0a9a-428f-8f4b-eb46952932e4.jpg" width="200" alt="微信交流群"/><br/>
 
 ## Tencent QQ： 645275593
 
 ## E-mail: 645275593@qq.com
 
-# 4.内核测试与开发
+# 4.贡献者
+| 内容 | 贡献者 |
+| --- | --- |
+| demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
+| demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
+| demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
+| demo/simulation-keil | 千帆(微信名) |
+| 源码格式化 | [Meco Jianting Man](https://github.com/mysterywolf) |
+# 5.内核测试与开发
 
 ## linux下测试pikascript内核(推荐ubuntu20.04)：
 
