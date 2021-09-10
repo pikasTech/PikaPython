@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "pikastddevice_adc.h": "c",
-        "stm32_adc.h": "c"
+        "stm32_adc.h": "c",
+        "pikastddevice_uart.h": "c"
     }
 }
