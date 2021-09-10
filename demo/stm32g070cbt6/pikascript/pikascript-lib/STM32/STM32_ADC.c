@@ -4,16 +4,17 @@
 #include "STM32_common.h"
 #include "dataStrs.h"
 
-ADC_HandleTypeDef hadc1 = {0};
+ADC_HandleTypeDef pika_hadc1 = {0};
+
 uint16_t Get_Adc(ADC_HandleTypeDef* hadc, uint32_t ch) {
   ADC_ChannelConfTypeDef ADC_ChanConf;
-  ADC_ChanConf.Channel = ch;  //ͨ��
+  ADC_ChanConf.Channel = ch; 
   ADC_ChanConf.Rank = ADC_REGULAR_RANK_1;
-  ADC_ChanConf.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;  //����ʱ��
-  HAL_ADC_ConfigChannel(hadc, &ADC_ChanConf);             //ͨ������
-  HAL_ADC_Start(hadc);                                    //���� AD
-  HAL_ADC_PollForConversion(hadc, 10);                    //��ѯת��
-  return (uint16_t)HAL_ADC_GetValue(hadc);  //�������ת�����
+  ADC_ChanConf.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;  
+  HAL_ADC_ConfigChannel(hadc, &ADC_ChanConf);             
+  HAL_ADC_Start(hadc);                                    
+  HAL_ADC_PollForConversion(hadc, 10);                    
+  return (uint16_t)HAL_ADC_GetValue(hadc);  
 }
 
 void STM32_ADC_platformEnable(PikaObj* self, char* pin) {
@@ -39,27 +40,27 @@ void STM32_ADC_platformEnable(PikaObj* self, char* pin) {
   HAL_GPIO_Init(getGpioPort(pin), &GPIO_InitStruct);
 
   /* init ADC */
-  hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
-  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-  hadc1.Init.LowPowerAutoWait = DISABLE;
-  hadc1.Init.LowPowerAutoPowerOff = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
-  hadc1.Init.NbrOfConversion = 1;
-  hadc1.Init.DiscontinuousConvMode = DISABLE;
-  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
-  hadc1.Init.SamplingTimeCommon1 = ADC_SAMPLETIME_1CYCLE_5;
-  hadc1.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_1CYCLE_5;
-  hadc1.Init.OversamplingMode = DISABLE;
-  hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
+  pika_hadc1.Instance = ADC1;
+  pika_hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+  pika_hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  pika_hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  pika_hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  pika_hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  pika_hadc1.Init.LowPowerAutoWait = DISABLE;
+  pika_hadc1.Init.LowPowerAutoPowerOff = DISABLE;
+  pika_hadc1.Init.ContinuousConvMode = DISABLE;
+  pika_hadc1.Init.NbrOfConversion = 1;
+  pika_hadc1.Init.DiscontinuousConvMode = DISABLE;
+  pika_hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  pika_hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  pika_hadc1.Init.DMAContinuousRequests = DISABLE;
+  pika_hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  pika_hadc1.Init.SamplingTimeCommon1 = ADC_SAMPLETIME_1CYCLE_5;
+  pika_hadc1.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_1CYCLE_5;
+  pika_hadc1.Init.OversamplingMode = DISABLE;
+  pika_hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
 
-  HAL_StatusTypeDef state = HAL_ADC_Init(&hadc1);
+  HAL_StatusTypeDef state = HAL_ADC_Init(&pika_hadc1);
   if (state != HAL_OK) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] adc init faild.");
@@ -67,7 +68,7 @@ void STM32_ADC_platformEnable(PikaObj* self, char* pin) {
   }
 
   /* Run the ADC calibration */
-  if (HAL_ADCEx_Calibration_Start(&hadc1) != HAL_OK) {
+  if (HAL_ADCEx_Calibration_Start(&pika_hadc1) != HAL_OK) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] adc calibratie faild.");
     return;
@@ -150,5 +151,5 @@ exit:
 }
 
 float STM32_ADC_platformRead(PikaObj* self, char* pin) {
-  return 3.3f * Get_Adc(&hadc1, getChannel(pin)) / 4096.0f;
+  return 3.3f * Get_Adc(&pika_hadc1, getChannel(pin)) / 4096.0f;
 }

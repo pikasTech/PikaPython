@@ -44,14 +44,14 @@ class ADC(PikaStdDevice.ADC):
 
 
 class UART(PikaStdDevice.UART):
-    # need override
+    # override
     def platformEnable(id: int, baudRate: int):
         pass
 
-    # need override
-    def platformWrite(data: str):
+    # override
+    def platformWrite(id: int, data: str):
         pass
 
-    # need override
-    def platformRead(length: int):
+    # override
+    def platformRead(id: int, length: int) -> str:
         pass
