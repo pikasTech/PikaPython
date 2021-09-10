@@ -80,3 +80,35 @@ class ADC(TinyObj):
     # need override
     def platformRead(pin: str) -> float:
         pass
+
+
+class UART(TinyObj):
+    def init():
+        pass
+
+    def setBaudRate(baudRate: int):
+        pass
+
+    def setId(id: int):
+        pass
+
+    def enable():
+        pass
+
+    def write(data: str):
+        pass
+
+    def read(length: int):
+        pass
+
+    # need override
+    def platformEnable(id: int, baudRate: int):
+        pass
+
+    # need override
+    def platformWrite(data: str):
+        pass
+
+    # need override
+    def platformRead(length: int):
+        pass

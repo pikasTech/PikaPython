@@ -41,3 +41,17 @@ class ADC(PikaStdDevice.ADC):
     # override
     def platformRead(pin: str) -> float:
         pass
+
+
+class UART(PikaStdDevice.UART):
+    # need override
+    def platformEnable(id: int, baudRate: int):
+        pass
+
+    # need override
+    def platformWrite(data: str):
+        pass
+
+    # need override
+    def platformRead(length: int):
+        pass
