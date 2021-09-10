@@ -1,157 +1,154 @@
-#include "BaseObj.h"
 #include "STM32_ADC.h"
 #include <stdint.h>
+#include "BaseObj.h"
 #include "STM32_common.h"
 #include "dataStrs.h"
 
 ADC_HandleTypeDef hadc1 = {0};
-uint16_t Get_Adc(ADC_HandleTypeDef *hadc, uint32_t ch)  {
-    ADC_ChannelConfTypeDef ADC_ChanConf;
-    ADC_ChanConf.Channel = ch;                                //Í¨µÀ 
-    ADC_ChanConf.Rank = ADC_REGULAR_RANK_1;                    
-    ADC_ChanConf.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;    //²ÉÑùÊ±¼ä
-    HAL_ADC_ConfigChannel(hadc,&ADC_ChanConf);              //Í¨µÀÅäÖÃ 
-    HAL_ADC_Start(hadc);                                    //¿ªÆô AD
-    HAL_ADC_PollForConversion(hadc,10);                     //ÂÖÑ¯×ª»» 
-    return (uint16_t)HAL_ADC_GetValue(hadc);                //·µ»Ø×î½ü×ª»»½á¹û 
-} 
-
-void STM32_ADC_platformEnable(PikaObj *self, char *pin) {
-
-    if (!strIsStartWith(pin, "PA")){
-        obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[error] not match adc pin.");
-        return;
-    }
-
-    
-    /* MSP Init */
-    __HAL_RCC_ADC_CLK_ENABLE();
-
-    if (0 != enableClk(pin)){
-        obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[error] not match gpio port.");
-        return;
-    }    
-    
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
-    GPIO_InitStruct.Pin = getGpioPin(pin);
-    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(getGpioPort(pin), &GPIO_InitStruct);   
-    
-    /* init ADC */
-    hadc1.Instance = ADC1;
-    hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
-    hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-    hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-    hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-    hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-    hadc1.Init.LowPowerAutoWait = DISABLE;
-    hadc1.Init.LowPowerAutoPowerOff = DISABLE;
-    hadc1.Init.ContinuousConvMode = DISABLE;
-    hadc1.Init.NbrOfConversion = 1;
-    hadc1.Init.DiscontinuousConvMode = DISABLE;
-    hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-    hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-    hadc1.Init.DMAContinuousRequests = DISABLE;
-    hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
-    hadc1.Init.SamplingTimeCommon1 = ADC_SAMPLETIME_1CYCLE_5;
-    hadc1.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_1CYCLE_5;
-    hadc1.Init.OversamplingMode = DISABLE;
-    hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
-
-    HAL_StatusTypeDef state = HAL_ADC_Init(&hadc1);
-    if (state != HAL_OK){
-      obj_setErrorCode(self, 1);
-      obj_setSysOut(self, "[error] adc init faild.");
-      return;
-    }
-    
-    /* Run the ADC calibration */
-    if (HAL_ADCEx_Calibration_Start(&hadc1) != HAL_OK){
-      obj_setErrorCode(self, 1);
-      obj_setSysOut(self, "[error] adc calibratie faild.");
-      return;
-    }    
+uint16_t Get_Adc(ADC_HandleTypeDef* hadc, uint32_t ch) {
+  ADC_ChannelConfTypeDef ADC_ChanConf;
+  ADC_ChanConf.Channel = ch;  //Í¨ï¿½ï¿½
+  ADC_ChanConf.Rank = ADC_REGULAR_RANK_1;
+  ADC_ChanConf.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;  //ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+  HAL_ADC_ConfigChannel(hadc, &ADC_ChanConf);             //Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  HAL_ADC_Start(hadc);                                    //ï¿½ï¿½ï¿½ï¿½ AD
+  HAL_ADC_PollForConversion(hadc, 10);                    //ï¿½ï¿½Ñ¯×ªï¿½ï¿½
+  return (uint16_t)HAL_ADC_GetValue(hadc);  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½
 }
 
-uint32_t getChannel(char *pin){
-    Args *buffs = New_strBuff();
-    uint32_t channel = 0;
+void STM32_ADC_platformEnable(PikaObj* self, char* pin) {
+  if (!strIsStartWith(pin, "PA")) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] not match adc pin.");
+    return;
+  }
 
-    pin = strsCopy(buffs, pin + 2);
-    if (strEqu(pin, "0")){
-        channel = ADC_CHANNEL_0;
-        goto exit;
-    }
-    if (strEqu(pin, "1")){
-        channel = ADC_CHANNEL_1;
-        goto exit;
-    }
-    if (strEqu(pin, "2")){
-        channel = ADC_CHANNEL_2;
-        goto exit;
-    }
-    if (strEqu(pin, "3")){
-        channel = ADC_CHANNEL_3;
-        goto exit;
-    }
-    if (strEqu(pin, "4")){
-        channel = ADC_CHANNEL_4;
-        goto exit;
-    }
-    if (strEqu(pin, "5")){
-        channel = ADC_CHANNEL_5;
-        goto exit;
-    }
-    if (strEqu(pin, "6")){
-        channel = ADC_CHANNEL_6;
-        goto exit;
-    }
-    if (strEqu(pin, "7")){
-        channel = ADC_CHANNEL_7;
-        goto exit;
-    }
-    if (strEqu(pin, "8")){
-        channel = ADC_CHANNEL_8;
-        goto exit;
-    }
-    if (strEqu(pin, "9")){
-        channel = ADC_CHANNEL_9;
-        goto exit;
-    }
-    if (strEqu(pin, "10")){
-        channel = ADC_CHANNEL_10;
-        goto exit;
-    }
-    if (strEqu(pin, "11")){
-        channel = ADC_CHANNEL_11;
-        goto exit;
-    }
-    if (strEqu(pin, "12")){
-        channel = ADC_CHANNEL_12;
-        goto exit;
-    }
-    if (strEqu(pin, "13")){
-        channel = ADC_CHANNEL_13;
-        goto exit;
-    }
-    if (strEqu(pin, "14")){
-        channel = ADC_CHANNEL_14;
-        goto exit;
-    }
-    if (strEqu(pin, "15")){
-        channel = ADC_CHANNEL_15;
-        goto exit;
-    }
+  /* MSP Init */
+  __HAL_RCC_ADC_CLK_ENABLE();
+
+  if (0 != enableClk(pin)) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] not match gpio port.");
+    return;
+  }
+
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  GPIO_InitStruct.Pin = getGpioPin(pin);
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(getGpioPort(pin), &GPIO_InitStruct);
+
+  /* init ADC */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.LowPowerAutoWait = DISABLE;
+  hadc1.Init.LowPowerAutoPowerOff = DISABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  hadc1.Init.SamplingTimeCommon1 = ADC_SAMPLETIME_1CYCLE_5;
+  hadc1.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_1CYCLE_5;
+  hadc1.Init.OversamplingMode = DISABLE;
+  hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
+
+  HAL_StatusTypeDef state = HAL_ADC_Init(&hadc1);
+  if (state != HAL_OK) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] adc init faild.");
+    return;
+  }
+
+  /* Run the ADC calibration */
+  if (HAL_ADCEx_Calibration_Start(&hadc1) != HAL_OK) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] adc calibratie faild.");
+    return;
+  }
+}
+
+uint32_t getChannel(char* pin) {
+  Args* buffs = New_strBuff();
+  uint32_t channel = 0;
+
+  pin = strsCopy(buffs, pin + 2);
+  if (strEqu(pin, "0")) {
+    channel = ADC_CHANNEL_0;
+    goto exit;
+  }
+  if (strEqu(pin, "1")) {
+    channel = ADC_CHANNEL_1;
+    goto exit;
+  }
+  if (strEqu(pin, "2")) {
+    channel = ADC_CHANNEL_2;
+    goto exit;
+  }
+  if (strEqu(pin, "3")) {
+    channel = ADC_CHANNEL_3;
+    goto exit;
+  }
+  if (strEqu(pin, "4")) {
+    channel = ADC_CHANNEL_4;
+    goto exit;
+  }
+  if (strEqu(pin, "5")) {
+    channel = ADC_CHANNEL_5;
+    goto exit;
+  }
+  if (strEqu(pin, "6")) {
+    channel = ADC_CHANNEL_6;
+    goto exit;
+  }
+  if (strEqu(pin, "7")) {
+    channel = ADC_CHANNEL_7;
+    goto exit;
+  }
+  if (strEqu(pin, "8")) {
+    channel = ADC_CHANNEL_8;
+    goto exit;
+  }
+  if (strEqu(pin, "9")) {
+    channel = ADC_CHANNEL_9;
+    goto exit;
+  }
+  if (strEqu(pin, "10")) {
+    channel = ADC_CHANNEL_10;
+    goto exit;
+  }
+  if (strEqu(pin, "11")) {
+    channel = ADC_CHANNEL_11;
+    goto exit;
+  }
+  if (strEqu(pin, "12")) {
+    channel = ADC_CHANNEL_12;
+    goto exit;
+  }
+  if (strEqu(pin, "13")) {
+    channel = ADC_CHANNEL_13;
+    goto exit;
+  }
+  if (strEqu(pin, "14")) {
+    channel = ADC_CHANNEL_14;
+    goto exit;
+  }
+  if (strEqu(pin, "15")) {
+    channel = ADC_CHANNEL_15;
+    goto exit;
+  }
 
 exit:
-    args_deinit(buffs);
-    return channel;
+  args_deinit(buffs);
+  return channel;
 }
 
-
-float STM32_ADC_platformRead(PikaObj *self, char *pin) {
-    return 3.3f * Get_Adc(&hadc1, getChannel(pin)) / 4096.0f;
+float STM32_ADC_platformRead(PikaObj* self, char* pin) {
+  return 3.3f * Get_Adc(&hadc1, getChannel(pin)) / 4096.0f;
 }
