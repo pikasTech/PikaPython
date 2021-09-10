@@ -15,6 +15,10 @@ PikaObj * pikaScriptInit(){
     obj_run(pikaMain, "adc1.init()");
     obj_run(pikaMain, "adc1.setPin('PA1')");
     obj_run(pikaMain, "adc1.enable()");
+    obj_run(pikaMain, "uart1.init()");
+    obj_run(pikaMain, "uart1.setBaudRate(115200)");
+    obj_run(pikaMain, "uart1.setId(1)");
+    obj_run(pikaMain, "uart1.enable()");
     obj_run(pikaMain, "print('hello pikascript')");
     obj_run(pikaMain, "print('mem.max :')");
     obj_run(pikaMain, "mem.max()");

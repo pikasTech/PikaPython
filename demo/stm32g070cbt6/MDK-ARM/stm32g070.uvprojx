@@ -337,9 +337,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32G070xx,HAL_ADC_MODULE_ENABLED</Define>
+              <Define>USE_HAL_DRIVER,STM32G070xx,HAL_ADC_MODULE_ENABLED,HAL_UART_MODULE_ENABLED</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;           ../Drivers/STM32G0xx_HAL_Driver/Inc;           ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;           ../Drivers/CMSIS/Device/ST/STM32G0xx/Include;           ../Drivers/CMSIS/Include;           ..\pikascript\pikascript-api;           ..\pikascript\pikascript-core;           ..\pikascript\pikascript-lib\STM32</IncludePath>
+              <IncludePath>../Core/Inc;                   ../Drivers/STM32G0xx_HAL_Driver/Inc;                   ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;                   ../Drivers/CMSIS/Device/ST/STM32G0xx/Include;                   ../Drivers/CMSIS/Include;                   ..\pikascript\pikascript-api;                   ..\pikascript\pikascript-core;                   ..\pikascript\pikascript-lib\STM32</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -455,11 +455,6 @@
               </FileOption>
             </File>
             <File>
-              <FileName>usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/usart.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32g0xx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32g0xx_it.c</FilePath>
@@ -485,6 +480,16 @@
               <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_adc_ex.c</FilePath>
             </File>
             <File>
+              <FileName>stm32g0xx_hal_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_usart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_usart_ex.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32g0xx_hal_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim.c</FilePath>
@@ -495,16 +500,6 @@
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g0xx_hal_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_hal_uart_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_uart_ex.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32g0xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rcc.c</FilePath>
@@ -513,11 +508,6 @@
               <FileName>stm32g0xx_hal_rcc_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rcc_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_ll_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_rcc.c</FilePath>
             </File>
             <File>
               <FileName>stm32g0xx_hal_flash.c</FileName>
@@ -545,11 +535,6 @@
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_dma_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g0xx_ll_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_dma.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32g0xx_hal_pwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr.c</FilePath>
@@ -573,6 +558,16 @@
               <FileName>stm32g0xx_hal_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart_ex.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -719,6 +714,16 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\STM32_ADC-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdDevice_UART-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdDevice_UART-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32_UART-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32_UART-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -768,6 +773,16 @@
               <FileName>STM32_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\STM32\STM32_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32_UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_UART.c</FilePath>
             </File>
           </Files>
         </Group>
