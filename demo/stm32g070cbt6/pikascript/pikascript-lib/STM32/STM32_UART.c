@@ -6,8 +6,7 @@
 
 #define RX_BUFF_LENGTH 256
 
-struct _pika_uart_t
-{
+struct _pika_uart_t {
   UART_HandleTypeDef huart;
   uint8_t id;
   char rxBuff[RX_BUFF_LENGTH];
@@ -22,17 +21,17 @@ pika_uart_t pika_uart2;
 pika_uart_t pika_uart3;
 pika_uart_t pika_uart4;
 
-static pika_uart_t* getPikaUart(uint8_t id){
-  if (1 == id){
+static pika_uart_t *getPikaUart(uint8_t id) {
+  if (1 == id) {
     return &pika_uart1;
   }
-  if (2 == id){
+  if (2 == id) {
     return &pika_uart2;
   }
-  if (3 == id){
+  if (3 == id) {
     return &pika_uart3;
   }
-  if (4 == id){
+  if (4 == id) {
     return &pika_uart4;
   }
   return NULL;
@@ -45,7 +44,7 @@ static void setUartObj(uint8_t id, PikaObj *obj) {
 
 static PikaObj *getUartObj(uint8_t id) {
   pika_uart_t *pika_uart = getPikaUart(id);
-  if(NULL == pika_uart){
+  if (NULL == pika_uart) {
     return NULL;
   }
   return pika_uart->obj;
@@ -85,7 +84,7 @@ static uint8_t getUartId(UART_HandleTypeDef *huart) {
 
 static UART_HandleTypeDef *getUartHandle(uint8_t id) {
   pika_uart_t *pika_uart = getPikaUart(id);
-  if(NULL == pika_uart){
+  if (NULL == pika_uart) {
     return NULL;
   }
   return &(pika_uart->huart);
@@ -93,7 +92,7 @@ static UART_HandleTypeDef *getUartHandle(uint8_t id) {
 
 static char *getUartRxBuff(uint8_t id) {
   pika_uart_t *pika_uart = getPikaUart(id);
-  if(NULL == pika_uart){
+  if (NULL == pika_uart) {
     return NULL;
   }
   return pika_uart->rxBuff;
@@ -235,7 +234,7 @@ void USART3_4_IRQHandler(void) {
 
 void STM32_UART_platformEnable(PikaObj *self, int baudRate, int id) {
   setUartObj(id, self);
-  UART_HandleTypeDef * huart = getUartHandle(id);
+  UART_HandleTypeDef *huart = getUartHandle(id);
   huart->Instance = getUartInstance(id);
   UART_MspInit(huart);
   int errCode = USART_UART_Init(baudRate, id);
@@ -248,10 +247,10 @@ void STM32_UART_platformEnable(PikaObj *self, int baudRate, int id) {
 }
 
 char *STM32_UART_platformRead(PikaObj *self, int id, int length) {
-  Args *buffs= New_strBuff();
+  Args *buffs = New_strBuff();
   char *readBuff = NULL;
-  pika_uart_t * pika_uart = getPikaUart(id);
-  if(length >= pika_uart->rxBuffOffset){
+  pika_uart_t *pika_uart = getPikaUart(id);
+  if (length >= pika_uart->rxBuffOffset) {
     /* not enough str */
     length = pika_uart->rxBuffOffset;
   }
@@ -261,9 +260,12 @@ char *STM32_UART_platformRead(PikaObj *self, int id, int length) {
   readBuff = obj_getStr(self, "readBuff");
 
   /* update rxBuff */
-  memcpy(pika_uart->rxBuff, pika_uart->rxBuff + length, pika_uart->rxBuffOffset - length);  
+  memcpy(pika_uart->rxBuff, pika_uart->rxBuff + length,
+         pika_uart->rxBuffOffset - length);
   pika_uart->rxBuffOffset -= length;
-  UART_Start_Receive_IT(&pika_uart->huart, (uint8_t *)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);    
+  UART_Start_Receive_IT(
+      &pika_uart->huart,
+      (uint8_t *)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
 exit:
   args_deinit(buffs);
   return readBuff;
@@ -276,38 +278,27 @@ void STM32_UART_platformWrite(PikaObj *self, char *data, int id) {
 /* Recive Interrupt Handler */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   uint8_t id = getUartId(huart);
-  pika_uart_t * pika_uart = getPikaUart(id);
-  
+  pika_uart_t *pika_uart = getPikaUart(id);
+
   /* avoid recive buff overflow */
-  if( pika_uart->rxBuffOffset +1 < RX_BUFF_LENGTH){
-      pika_uart->rxBuffOffset ++;
+  if (pika_uart->rxBuffOffset + 1 < RX_BUFF_LENGTH) {
+    pika_uart->rxBuffOffset++;
   }
-  UART_Start_Receive_IT(huart, (uint8_t *)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);  
+  UART_Start_Receive_IT(
+      huart, (uint8_t *)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
   goto exit;
 exit:
   return;
 }
 
-/**
-  * 函数功能: 重定向c库函数printf到DEBUG_USARTx
-  * 输入参数: 无
-  * 返 回 值: 无
-  * 说    明：无
-  */
-int fputc(int ch, FILE *f)
-{
+/* support prinf */
+int fputc(int ch, FILE *f) {
   HAL_UART_Transmit(&pika_uart1.huart, (uint8_t *)&ch, 1, 0xffff);
   return ch;
 }
- 
-/**
-  * 函数功能: 重定向c库函数getchar,scanf到DEBUG_USARTx
-  * 输入参数: 无
-  * 返 回 值: 无
-  * 说    明：无
-  */
-int fgetc(FILE *f)
-{
+
+/* support scanf */
+int fgetc(FILE *f) {
   uint8_t ch = 0;
   HAL_UART_Receive(&pika_uart1.huart, &ch, 1, 0xffff);
   return ch;
