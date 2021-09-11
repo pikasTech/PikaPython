@@ -7,7 +7,6 @@
 PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的**Python**脚本支持。
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
-
 ### (1)运行环境
 
 支持裸机运行，可运行于 **RAM ≥ 4kB** ，**FLASH ≥ 32kB** 的mcu中，如stm32g030, stm32f103c8t6，esp8266。
