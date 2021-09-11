@@ -4,52 +4,51 @@
 #include "dataStrs.h"
 #include <stdint.h>
 
-UART_HandleTypeDef pika_huart1;
-UART_HandleTypeDef pika_huart2;
-UART_HandleTypeDef pika_huart3;
-UART_HandleTypeDef pika_huart4;
-
 #define RX_BUFF_LENGTH 256
 
-char pika_huart1_rxBuff[RX_BUFF_LENGTH] = {0};
-char pika_huart2_rxBuff[RX_BUFF_LENGTH] = {0};
-char pika_huart3_rxBuff[RX_BUFF_LENGTH] = {0};
-char pika_huart4_rxBuff[RX_BUFF_LENGTH] = {0};
+struct _pika_uart_t
+{
+  UART_HandleTypeDef huart;
+  uint8_t id;
+  char rxBuff[RX_BUFF_LENGTH];
+  uint16_t rxBuffOffset;
+  PikaObj *obj;
+};
 
-PikaObj *pika_huart1_obj = NULL;
-PikaObj *pika_huart2_obj = NULL;
-PikaObj *pika_huart3_obj = NULL;
-PikaObj *pika_huart4_obj = NULL;
+typedef struct _pika_uart_t pika_uart_t;
+
+pika_uart_t pika_uart1;
+pika_uart_t pika_uart2;
+pika_uart_t pika_uart3;
+pika_uart_t pika_uart4;
+
+static pika_uart_t* getPikaUart(uint8_t id){
+  if (1 == id){
+    return &pika_uart1;
+  }
+  if (2 == id){
+    return &pika_uart2;
+  }
+  if (3 == id){
+    return &pika_uart3;
+  }
+  if (4 == id){
+    return &pika_uart4;
+  }
+  return NULL;
+}
 
 static void setUartObj(uint8_t id, PikaObj *obj) {
-  if (1 == id) {
-    pika_huart1_obj = obj;
-  }
-  if (2 == id) {
-    pika_huart2_obj = obj;
-  }
-  if (3 == id) {
-    pika_huart3_obj = obj;
-  }
-  if (4 == id) {
-    pika_huart4_obj = obj;
-  }
+  pika_uart_t *pika_uart = getPikaUart(id);
+  pika_uart->obj = obj;
 }
 
 static PikaObj *getUartObj(uint8_t id) {
-  if (1 == id) {
-    return pika_huart1_obj;
+  pika_uart_t *pika_uart = getPikaUart(id);
+  if(NULL == pika_uart){
+    return NULL;
   }
-  if (2 == id) {
-    return pika_huart2_obj;
-  }
-  if (3 == id) {
-    return pika_huart3_obj;
-  }
-  if (4 == id) {
-    return pika_huart4_obj;
-  }
-  return NULL;
+  return pika_uart->obj;
 }
 
 static USART_TypeDef *getUartInstance(uint8_t id) {
@@ -69,51 +68,35 @@ static USART_TypeDef *getUartInstance(uint8_t id) {
 }
 
 static uint8_t getUartId(UART_HandleTypeDef *huart) {
-  if (huart == &pika_huart1) {
+  if (huart == &pika_uart1.huart) {
     return 1;
   }
-  if (huart == &pika_huart2) {
+  if (huart == &pika_uart2.huart) {
     return 2;
   }
-  if (huart == &pika_huart3) {
+  if (huart == &pika_uart3.huart) {
     return 3;
   }
-  if (huart == &pika_huart4) {
+  if (huart == &pika_uart4.huart) {
     return 4;
   }
   return 0;
 }
 
 static UART_HandleTypeDef *getUartHandle(uint8_t id) {
-  if (1 == id) {
-    return &pika_huart1;
+  pika_uart_t *pika_uart = getPikaUart(id);
+  if(NULL == pika_uart){
+    return NULL;
   }
-  if (2 == id) {
-    return &pika_huart2;
-  }
-  if (3 == id) {
-    return &pika_huart3;
-  }
-  if (4 == id) {
-    return &pika_huart4;
-  }
-  return NULL;
+  return &(pika_uart->huart);
 }
 
 static char *getUartRxBuff(uint8_t id) {
-  if (1 == id) {
-    return pika_huart1_rxBuff;
+  pika_uart_t *pika_uart = getPikaUart(id);
+  if(NULL == pika_uart){
+    return NULL;
   }
-  if (2 == id) {
-    return pika_huart2_rxBuff;
-  }
-  if (3 == id) {
-    return pika_huart3_rxBuff;
-  }
-  if (4 == id) {
-    return pika_huart4_rxBuff;
-  }
-  return NULL;
+  return pika_uart->rxBuff;
 }
 
 static uint8_t USART_UART_Init(uint32_t baudRate, uint8_t id) {
@@ -243,11 +226,11 @@ static void UART_MspInit(UART_HandleTypeDef *uartHandle) {
 }
 
 /* Msp handle interrupt */
-void USART1_IRQHandler(void) { HAL_UART_IRQHandler(&pika_huart1); }
-void USART2_IRQHandler(void) { HAL_UART_IRQHandler(&pika_huart2); }
+void USART1_IRQHandler(void) { HAL_UART_IRQHandler(&pika_uart1.huart); }
+void USART2_IRQHandler(void) { HAL_UART_IRQHandler(&pika_uart2.huart); }
 void USART3_4_IRQHandler(void) {
-  HAL_UART_IRQHandler(&pika_huart3);
-  HAL_UART_IRQHandler(&pika_huart4);
+  HAL_UART_IRQHandler(&pika_uart3.huart);
+  HAL_UART_IRQHandler(&pika_uart4.huart);
 }
 
 void STM32_UART_platformEnable(PikaObj *self, int baudRate, int id) {
@@ -264,7 +247,27 @@ void STM32_UART_platformEnable(PikaObj *self, int baudRate, int id) {
   HAL_UART_Receive_IT(getUartHandle(id), (uint8_t *)getUartRxBuff(id), 1);
 }
 
-char *STM32_UART_platformRead(PikaObj *self, int id, int length) {}
+char *STM32_UART_platformRead(PikaObj *self, int id, int length) {
+  Args *buffs= New_strBuff();
+  char *readBuff = NULL;
+  pika_uart_t * pika_uart = getPikaUart(id);
+  if(length >= pika_uart->rxBuffOffset){
+    /* not enough str */
+    length = pika_uart->rxBuffOffset;
+  }
+  readBuff = args_getBuff(buffs, length);
+  memcpy(readBuff, pika_uart->rxBuff, length);
+  obj_setStr(self, "readBuff", readBuff);
+  readBuff = obj_getStr(self, "readBuff");
+
+  /* update rxBuff */
+  memcpy(pika_uart->rxBuff, pika_uart->rxBuff + length, pika_uart->rxBuffOffset - length);  
+  pika_uart->rxBuffOffset -= length;
+  UART_Start_Receive_IT(&pika_uart->huart, (uint8_t *)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);    
+exit:
+  args_deinit(buffs);
+  return readBuff;
+}
 
 void STM32_UART_platformWrite(PikaObj *self, char *data, int id) {
   HAL_UART_Transmit(getUartHandle(id), (uint8_t *)data, strGetSize(data), 100);
@@ -273,9 +276,13 @@ void STM32_UART_platformWrite(PikaObj *self, char *data, int id) {
 /* Recive Interrupt Handler */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   uint8_t id = getUartId(huart);
-  char *RxBuff = getUartRxBuff(id);
-  uint16_t offSet = strGetSize(RxBuff);
-  HAL_UART_Receive_IT(getUartHandle(id), (uint8_t *)(RxBuff + offSet), 1);  
+  pika_uart_t * pika_uart = getPikaUart(id);
+  
+  /* avoid recive buff overflow */
+  if( pika_uart->rxBuffOffset +1 < RX_BUFF_LENGTH){
+      pika_uart->rxBuffOffset ++;
+  }
+  UART_Start_Receive_IT(huart, (uint8_t *)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);  
   goto exit;
 exit:
   return;
@@ -289,7 +296,7 @@ exit:
   */
 int fputc(int ch, FILE *f)
 {
-  HAL_UART_Transmit(&pika_huart1, (uint8_t *)&ch, 1, 0xffff);
+  HAL_UART_Transmit(&pika_uart1.huart, (uint8_t *)&ch, 1, 0xffff);
   return ch;
 }
  
@@ -302,6 +309,6 @@ int fputc(int ch, FILE *f)
 int fgetc(FILE *f)
 {
   uint8_t ch = 0;
-  HAL_UART_Receive(&pika_huart1, &ch, 1, 0xffff);
+  HAL_UART_Receive(&pika_uart1.huart, &ch, 1, 0xffff);
   return ch;
 }
