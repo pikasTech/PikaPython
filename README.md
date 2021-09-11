@@ -51,6 +51,7 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 
 [4. PikaScript-标准开发流程](doc/3.PikaScript标准开发流程.md)
 
+[5. PikaScript-Demo展示](doc/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
 ### (7)架构示意图
 
 <img src="https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png" width="800" alt="微信交流群"/><br/>
