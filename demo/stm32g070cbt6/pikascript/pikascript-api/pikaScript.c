@@ -12,10 +12,13 @@ PikaObj * pikaScriptInit(){
     obj_run(pikaMain, "uart.setId(1)");
     obj_run(pikaMain, "uart.enable()");
     obj_run(pikaMain, "while True:");
-    obj_run(pikaMain, "    time.sleep_ms(500)");
+    obj_run(pikaMain, "    time.sleep_s(1)");
     obj_run(pikaMain, "    readBuff = uart.read(2);");
+    obj_run(pikaMain, "    print('mem used max:')");
+    obj_run(pikaMain, "    mem.max()");
     obj_run(pikaMain, "    print('read 2 char:')");
     obj_run(pikaMain, "    print(readBuff)");
+    obj_run(pikaMain, "    print('')");
     obj_run(pikaMain, "");
     return pikaMain;
 }
