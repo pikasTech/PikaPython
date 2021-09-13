@@ -79,7 +79,7 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 | demo/simulation-keil | 千帆(微信名) |
 | 源码格式化 | [Meco Jianting Man](https://github.com/mysterywolf) |
 
-# 5.推广稿
+# 5.推广稿：我就要用最便宜的单片机来跑python，还要用MDK开发，怎么地吧！
 
 我就想用单片机跑个Python，得用linux虚拟机+交叉编译工具链+命令行编译micropython固件，还得用DfuSe工具烧录固件，烧录完还不能用C的调试器来调试。
 
