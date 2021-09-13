@@ -75,7 +75,7 @@ PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的*
 | --- | --- |
 | 捐赠：APM32F030R8 开发板 | 极海半导体 陈成 |
 | 捐赠：APM32E103VB 开发板 | 极海半导体 陈成 |
-| 捐赠：APM-Link仿真器 | 极海半导体 陈成 |
+| 捐赠：APEX-Link仿真器 | 极海半导体 陈成 |
 | 源码格式化 | [Meco Jianting Man](https://github.com/mysterywolf) |
 | demo/simulation-keil | 千帆(微信名) |
 | demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
