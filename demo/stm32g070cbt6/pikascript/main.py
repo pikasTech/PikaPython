@@ -16,4 +16,4 @@ while True:
     mem.max()
     print('read 2 char:')
     print(readBuff)
-    print('')
+    print(' ')

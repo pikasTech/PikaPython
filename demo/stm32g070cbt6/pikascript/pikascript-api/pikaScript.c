@@ -18,7 +18,7 @@ PikaObj * pikaScriptInit(){
     obj_run(pikaMain, "    mem.max()");
     obj_run(pikaMain, "    print('read 2 char:')");
     obj_run(pikaMain, "    print(readBuff)");
-    obj_run(pikaMain, "    print('')");
+    obj_run(pikaMain, "    print(' ')");
     obj_run(pikaMain, "");
     return pikaMain;
 }
