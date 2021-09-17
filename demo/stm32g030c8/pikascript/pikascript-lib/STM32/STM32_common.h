@@ -11,6 +11,9 @@
 
 #ifdef STM32F103xB
 #include "stm32f1xx_hal.h"
+  #define UART1_EXIST
+  #define UART2_EXIST
+  #define UART3_EXIST
 #endif
 
 #ifdef STM32G030xx

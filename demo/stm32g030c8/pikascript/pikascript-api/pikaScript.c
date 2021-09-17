@@ -19,7 +19,7 @@ PikaObj * pikaScriptInit(){
     obj_run(pikaMain, "adc.setPin('PA0')");
     obj_run(pikaMain, "adc.enable()");
     obj_run(pikaMain, "while True:");
-    obj_run(pikaMain, "    time.sleep_ms(500)");
+    obj_run(pikaMain, "    time.sleep_ms(50)");
     obj_run(pikaMain, "    io1.low()");
     obj_run(pikaMain, "    readBuff = uart.read(2)");
     obj_run(pikaMain, "    print('mem used max:')");
@@ -27,7 +27,7 @@ PikaObj * pikaScriptInit(){
     obj_run(pikaMain, "    print('read 2 char:')");
     obj_run(pikaMain, "    print(readBuff)");
     obj_run(pikaMain, "    print(' ')");
-    obj_run(pikaMain, "    time.sleep_ms(500)");
+    obj_run(pikaMain, "    time.sleep_ms(50)");
     obj_run(pikaMain, "    io1.high()");
     obj_run(pikaMain, "    adcVal = adc.read()");
     obj_run(pikaMain, "    print('adc value:')");
