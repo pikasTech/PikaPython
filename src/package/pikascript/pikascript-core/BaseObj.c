@@ -1,3 +1,8 @@
+/*
+  Author: lyon 
+  Tencent QQ: 645275593 
+*/
+
 #include "BaseObj.h"
 #include "PikaObj.h"
 #include "TinyObj.h"
