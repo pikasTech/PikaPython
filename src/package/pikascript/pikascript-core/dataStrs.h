@@ -1,3 +1,8 @@
+/*
+  Author: lyon 
+  Tencent QQ: 645275593 
+*/
+
 #ifndef __STR_ARGS__H
 #define __STR_ARGS__H
 #include "dataArgs.h"
