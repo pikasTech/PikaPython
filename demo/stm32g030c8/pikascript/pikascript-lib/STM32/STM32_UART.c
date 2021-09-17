@@ -17,16 +17,16 @@ struct _pika_uart_t {
 typedef struct _pika_uart_t pika_uart_t;
 
 #ifdef UART1_EXIST
-pika_uart_t pika_uart1;
+    pika_uart_t pika_uart1;
 #endif
 #ifdef UART2_EXIST
-pika_uart_t pika_uart2;
+    pika_uart_t pika_uart2;
 #endif
 #ifdef UART3_EXIST
-pika_uart_t pika_uart3;
+    pika_uart_t pika_uart3;
 #endif
 #ifdef UART4_EXIST
-pika_uart_t pika_uart4;
+    pika_uart_t pika_uart4;
 #endif
 
 static pika_uart_t *getPikaUart(uint8_t id) {
@@ -144,29 +144,29 @@ static uint8_t USART_UART_Init(uint32_t baudRate, uint8_t id) {
   huart->Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart->Init.OverSampling = UART_OVERSAMPLING_16;
 #if (defined STM32G070xx) || (defined STM32G030xx)  
-  huart->Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart->Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+      huart->Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+      huart->Init.ClockPrescaler = UART_PRESCALER_DIV1;
+      huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
 #endif  
   if (HAL_UART_Init(huart) != HAL_OK) {
     errCode = 1;
     goto exit;
   }
 #if (defined STM32G070xx) || (defined STM32G030xx)  
-  if (HAL_UARTEx_SetTxFifoThreshold(huart, UART_TXFIFO_THRESHOLD_1_8) !=
+    if (HAL_UARTEx_SetTxFifoThreshold(huart, UART_TXFIFO_THRESHOLD_1_8) !=
       HAL_OK) {
     errCode = 2;
     goto exit;
-  }
-  if (HAL_UARTEx_SetRxFifoThreshold(huart, UART_RXFIFO_THRESHOLD_1_8) !=
+    }
+    if (HAL_UARTEx_SetRxFifoThreshold(huart, UART_RXFIFO_THRESHOLD_1_8) !=
       HAL_OK) {
     errCode = 3;
     goto exit;
-  }
-  if (HAL_UARTEx_DisableFifoMode(huart) != HAL_OK) {
+    }
+    if (HAL_UARTEx_DisableFifoMode(huart) != HAL_OK) {
     errCode = 4;
     goto exit;
-  }
+    }
 #endif
 exit:
   return errCode;
@@ -174,72 +174,76 @@ exit:
 
 static void UART_MspInit(UART_HandleTypeDef *uartHandle) {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if (uartHandle->Instance == USART1) {
-    /* USART1 clock enable */
-    __HAL_RCC_USART1_CLK_ENABLE();
+#ifdef UART1_EXIST	
+    if (uartHandle->Instance == USART1) {
+        /* USART1 clock enable */
+        __HAL_RCC_USART1_CLK_ENABLE();
 
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**USART1 GPIO Configuration
-    PA9     ------> USART1_TX
-    PA10     ------> USART1_RX
-    */
-#if (defined STM32G070xx) || (defined STM32G030xx)
-    GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_10;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF1_USART1;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);    
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        /**USART1 GPIO Configuration
+        PA9     ------> USART1_TX
+        PA10     ------> USART1_RX
+        */
+        #if (defined STM32G070xx) || (defined STM32G030xx)
+            GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_10;
+            GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+            GPIO_InitStruct.Pull = GPIO_NOPULL;
+            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+            GPIO_InitStruct.Alternate = GPIO_AF1_USART1;
+            HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);    
+        #endif
+        #ifdef STM32F103xB
+            GPIO_InitStruct.Pin = GPIO_PIN_9;
+            GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+            HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+            GPIO_InitStruct.Pin = GPIO_PIN_10;
+            GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+            GPIO_InitStruct.Pull = GPIO_NOPULL;
+            HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        #endif
+            /* USART1 interrupt Init */
+            HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+            HAL_NVIC_EnableIRQ(USART1_IRQn);
+        } 
+#endif	
+#ifdef UART2_EXIST
+    if (uartHandle->Instance == USART2) {
+        /* USART2 clock enable */
+        __HAL_RCC_USART2_CLK_ENABLE();
+
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        /**USART2 GPIO Configuration
+        PA2     ------> USART2_TX
+        PA3     ------> USART2_RX
+        */
+        #if (defined STM32G070xx) || (defined STM32G030xx)        
+            GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
+            GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+            GPIO_InitStruct.Pull = GPIO_NOPULL;
+            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+            GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
+            HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        #endif
+        #ifdef STM32F103xB
+            GPIO_InitStruct.Pin = GPIO_PIN_2;
+            GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+            HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+            GPIO_InitStruct.Pin = GPIO_PIN_3;
+            GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+            GPIO_InitStruct.Pull = GPIO_NOPULL;
+            HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        #endif    
+        /* USART2 interrupt Init */
+        HAL_NVIC_SetPriority(USART2_IRQn, 0, 0);
+        HAL_NVIC_EnableIRQ(USART2_IRQn);
+    }
 #endif
-#ifdef STM32F103xB
-    GPIO_InitStruct.Pin = GPIO_PIN_9;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = GPIO_PIN_10;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-#endif
-
-    /* USART1 interrupt Init */
-    HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(USART1_IRQn);
-  } else if (uartHandle->Instance == USART2) {
-    /* USART2 clock enable */
-    __HAL_RCC_USART2_CLK_ENABLE();
-
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**USART2 GPIO Configuration
-    PA2     ------> USART2_TX
-    PA3     ------> USART2_RX
-    */
-#if (defined STM32G070xx) || (defined STM32G030xx)        
-    GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-#endif
-#ifdef STM32F103xB
-    GPIO_InitStruct.Pin = GPIO_PIN_2;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = GPIO_PIN_3;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-#endif    
-    /* USART2 interrupt Init */
-    HAL_NVIC_SetPriority(USART2_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(USART2_IRQn);
-  }
 #ifdef UART3_EXIST
-    else if (uartHandle->Instance == USART3) {
+    if (uartHandle->Instance == USART3) {
     /* USART3 clock enable */
     __HAL_RCC_USART3_CLK_ENABLE();
 
@@ -290,11 +294,11 @@ static void UART_MspInit(UART_HandleTypeDef *uartHandle) {
         HAL_NVIC_SetPriority(USART3_IRQn, 0, 0);
         HAL_NVIC_EnableIRQ(USART3_IRQn);
     #endif
-      } 
+    } 
 #endif
 #ifdef UART4_EXIST
     #if (defined STM32G070xx)            
-        else if (uartHandle->Instance == USART4) {
+        if (uartHandle->Instance == USART4) {
         /* USART4 clock enable */
         __HAL_RCC_USART4_CLK_ENABLE();
 
@@ -319,90 +323,95 @@ static void UART_MspInit(UART_HandleTypeDef *uartHandle) {
 }
 
 /* Msp handle interrupt */
+#ifdef UART1_EXIST
 void USART1_IRQHandler(void) { HAL_UART_IRQHandler(&pika_uart1.huart); }
-void USART2_IRQHandler(void) { HAL_UART_IRQHandler(&pika_uart2.huart); }
-#if (defined STM32G070xx) || (defined STM32G030xx)              
-  void USART3_4_IRQHandler(void) {
-  #ifdef UART3_EXIST
-    HAL_UART_IRQHandler(&pika_uart3.huart);
-  #endif
-  #ifdef UART4_EXIST
-    HAL_UART_IRQHandler(&pika_uart4.huart);
-  #endif
-  }
 #endif
-#ifdef STM32F103xB
-  void USART3_IRQHandler(void) { HAL_UART_IRQHandler(&pika_uart3.huart); }
+#ifdef UART2_EXIST
+void USART2_IRQHandler(void) { HAL_UART_IRQHandler(&pika_uart2.huart); }
+#endif
+#ifdef UART3_EXIST
+	#ifdef STM32F103xB
+		void USART3_IRQHandler(void) { HAL_UART_IRQHandler(&pika_uart3.huart); }
+	#endif
+#endif
+
+#if (defined UART3_EXIST) && (defined UART4_EXIST)
+    #if defined STM32G070xx           
+      void USART3_4_IRQHandler(void) {
+        HAL_UART_IRQHandler(&pika_uart3.huart);
+        HAL_UART_IRQHandler(&pika_uart4.huart);
+      }
+    #endif
 #endif
 
 void STM32_UART_platformEnable(PikaObj *self, int baudRate, int id) {
-  setUartObj(id, self);
-  UART_HandleTypeDef *huart = getUartHandle(id);
-  huart->Instance = getUartInstance(id);
-  UART_MspInit(huart);
-  int errCode = USART_UART_Init(baudRate, id);
-  if (0 != errCode) {
+    setUartObj(id, self);
+    UART_HandleTypeDef *huart = getUartHandle(id);
+    huart->Instance = getUartInstance(id);
+    UART_MspInit(huart);
+    int errCode = USART_UART_Init(baudRate, id);
+    if (0 != errCode) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] uart init faild.");
     return;
-  }
-  HAL_UART_Receive_IT(getUartHandle(id), (uint8_t *)getUartRxBuff(id), 1);
+    }
+    HAL_UART_Receive_IT(getUartHandle(id), (uint8_t *)getUartRxBuff(id), 1);
 }
 
 char *STM32_UART_platformRead(PikaObj *self, int id, int length) {
-  Args *buffs = New_strBuff();
-  char *readBuff = NULL;
-  pika_uart_t *pika_uart = getPikaUart(id);
-  if (length >= pika_uart->rxBuffOffset) {
+    Args *buffs = New_strBuff();
+    char *readBuff = NULL;
+    pika_uart_t *pika_uart = getPikaUart(id);
+    if (length >= pika_uart->rxBuffOffset) {
     /* not enough str */
     length = pika_uart->rxBuffOffset;
-  }
-  readBuff = args_getBuff(buffs, length);
-  memcpy(readBuff, pika_uart->rxBuff, length);
-  obj_setStr(self, "readBuff", readBuff);
-  readBuff = obj_getStr(self, "readBuff");
+    }
+    readBuff = args_getBuff(buffs, length);
+    memcpy(readBuff, pika_uart->rxBuff, length);
+    obj_setStr(self, "readBuff", readBuff);
+    readBuff = obj_getStr(self, "readBuff");
 
-  /* update rxBuff */
-  memcpy(pika_uart->rxBuff, pika_uart->rxBuff + length,
+    /* update rxBuff */
+    memcpy(pika_uart->rxBuff, pika_uart->rxBuff + length,
          pika_uart->rxBuffOffset - length);
-  pika_uart->rxBuffOffset -= length;
-  UART_Start_Receive_IT(
+    pika_uart->rxBuffOffset -= length;
+    UART_Start_Receive_IT(
       &pika_uart->huart,
       (uint8_t *)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
 exit:
-  args_deinit(buffs);
-  return readBuff;
+    args_deinit(buffs);
+    return readBuff;
 }
 
 void STM32_UART_platformWrite(PikaObj *self, char *data, int id) {
-  HAL_UART_Transmit(getUartHandle(id), (uint8_t *)data, strGetSize(data), 100);
+    HAL_UART_Transmit(getUartHandle(id), (uint8_t *)data, strGetSize(data), 100);
 }
 
 /* Recive Interrupt Handler */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-  uint8_t id = getUartId(huart);
-  pika_uart_t *pika_uart = getPikaUart(id);
+    uint8_t id = getUartId(huart);
+    pika_uart_t *pika_uart = getPikaUart(id);
 
-  /* avoid recive buff overflow */
-  if (pika_uart->rxBuffOffset + 1 < RX_BUFF_LENGTH) {
+    /* avoid recive buff overflow */
+    if (pika_uart->rxBuffOffset + 1 < RX_BUFF_LENGTH) {
     pika_uart->rxBuffOffset++;
-  }
-  UART_Start_Receive_IT(
+    }
+    UART_Start_Receive_IT(
       huart, (uint8_t *)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-  goto exit;
+    goto exit;
 exit:
   return;
 }
 
 /* support prinf */
 int fputc(int ch, FILE *f) {
-  HAL_UART_Transmit(&pika_uart1.huart, (uint8_t *)&ch, 1, 0xffff);
-  return ch;
+    HAL_UART_Transmit(&pika_uart1.huart, (uint8_t *)&ch, 1, 0xffff);
+    return ch;
 }
 
 /* support scanf */
 int fgetc(FILE *f) {
-  uint8_t ch = 0;
-  HAL_UART_Receive(&pika_uart1.huart, &ch, 1, 0xffff);
-  return ch;
+    uint8_t ch = 0;
+    HAL_UART_Receive(&pika_uart1.huart, &ch, 1, 0xffff);
+    return ch;
 }
