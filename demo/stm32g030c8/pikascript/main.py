@@ -23,7 +23,7 @@ adc.setPin('PA0')
 adc.enable()
 
 while True:
-    time.sleep_ms(500)
+    time.sleep_ms(50)
     io1.low()
     readBuff = uart.read(2)
     print('mem used max:')
@@ -31,7 +31,7 @@ while True:
     print('read 2 char:')
     print(readBuff)
     print(' ')
-    time.sleep_ms(500)
+    time.sleep_ms(50)
     io1.high()
     adcVal = adc.read()
     print('adc value:')
