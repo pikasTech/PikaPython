@@ -1,3 +1,8 @@
+/*
+  Author: lyon 
+  Tencent QQ: 645275593 
+*/
+
 #include "dataLink.h"
 #include "dataArg.h"
 #include "dataLinkNode.h"
