@@ -1,3 +1,8 @@
+/*
+  Author: lyon 
+  Tencent QQ: 645275593 
+*/
+
 #ifndef _Process__H
 #define _Process__H
 #include "dataArgs.h"
