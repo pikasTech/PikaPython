@@ -9,6 +9,21 @@ PikaScript是一个超轻量级python引擎，零依赖，零配置，可以在�
 PikaScript is an ultra lightweight Python engine with zero dependencies and zero configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and very easy to deploy and expand.
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
+
+# 2.驱动适配进度
+| Device | PikaStdDevice | STM32G030C8 | STM32G070CB | STM32F103C8 |
+| --- | --- | --- | --- | --- |
+| Time | **OK** |  **OK** | **OK** | **OK** | 
+| GPIO | **OK** | **OK** | **OK** | **OK** |
+| PWM | **OK** | **OK** | Not Started | Not Started |
+| ADC | **OK** | **OK** | **OK** | **OK** |
+| DAC |  Doing by [pikasTech](https://github.com/pikasTech) | No Device | Not Started | Not Started |
+| Flash | Doing by [pikasTech](https://github.com/pikasTech) | Doing by [pikasTech](https://github.com/pikasTech) | Not Started | Not Started |
+| IIC | Doing by [pikasTech](https://github.com/pikasTech) | Not Started | Not Started | Not Started | 
+| SPI | Doing by [pikasTech](https://github.com/pikasTech) | Not Started | Not Started | Not Started |  
+
+
+# 3.特性
 ### (1)运行环境
 
 支持裸机运行，可运行于 **RAM ≥ 4kB** ，**FLASH ≥ 32kB** 的mcu中，如stm32g030, stm32f103c8t6，esp8266。
@@ -62,7 +77,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 [手把手PikaScript教程合集](https://www.bilibili.com/video/BV1mg411L72e)
 
-# 3.交流与技术支持：
+# 4.交流与技术支持：
 
 ## 微信交流群
 
@@ -74,7 +89,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 ## E-mail: 645275593@qq.com
 
-# 4.贡献者
+# 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
 | 捐赠：APM32F030R8 开发板 | 极海半导体 陈成 |
@@ -88,7 +103,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 
 
-# 5.推广稿：我就要用最便宜的单片机来跑python，还要用MDK开发，怎么地吧！
+# 6.推广稿：我就要用最便宜的单片机来跑python，还要用MDK开发，怎么地吧！
 
 我就想用单片机跑个Python，得用linux虚拟机+交叉编译工具链+命令行编译micropython固件，还得用DfuSe工具烧录固件，烧录完还不能用C的调试器来调试。
 
