@@ -20,6 +20,12 @@
   #include "stm32g0xx_hal.h"
   #define UART1_EXIST
   #define UART2_EXIST
+  
+  #define TIM1_EXIST
+  #define TIM3_EXIST
+  #define TIM14_EXIST
+  #define TIM16_EXIST
+  #define TIM17_EXIST
 #endif
 
 GPIO_TypeDef* getGpioPort(char* pin);
