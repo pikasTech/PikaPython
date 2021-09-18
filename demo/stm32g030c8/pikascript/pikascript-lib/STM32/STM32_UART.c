@@ -128,7 +128,6 @@ static char *getUartRxBuff(uint8_t id) {
 
 static uint8_t USART_UART_Init(uint32_t baudRate, uint8_t id) {
   uint8_t errCode = 0;
-
   UART_HandleTypeDef *huart = getUartHandle(id);
   huart->Instance = getUartInstance(id);
   if(NULL == huart->Instance)
