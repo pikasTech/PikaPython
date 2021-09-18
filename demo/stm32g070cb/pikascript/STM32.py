@@ -1,6 +1,5 @@
 import PikaStdDevice
 
-
 class GPIO(PikaStdDevice.GPIO):
     # override
     def platformHigh():
