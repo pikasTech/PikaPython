@@ -15,6 +15,7 @@ PikaObj * pikaScriptInit(){
     obj_run(pikaMain, "mem.max()");
     obj_run(pikaMain, "print('mem used now:')");
     obj_run(pikaMain, "mem.now()");
+    obj_run(pikaMain, "");
     return pikaMain;
 }
 
