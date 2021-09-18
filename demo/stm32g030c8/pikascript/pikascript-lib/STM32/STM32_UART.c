@@ -4,7 +4,7 @@
 #include "dataStrs.h"
 #include <stdint.h>
 
-#define RX_BUFF_LENGTH 256
+#define RX_BUFF_LENGTH 64
 
 struct _pika_uart_t {
   UART_HandleTypeDef huart;
