@@ -13,10 +13,10 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 # 2.驱动适配进度
 | Device | PikaStdDevice | STM32G030C8 | STM32G070CB | STM32F103C8 |
 | --- | --- | --- | --- | --- |
-| Time | Finished |  Finished | Finished | Finished | 
-| GPIO | Finished | Finished | Finished | Finished |
-| PWM | Finished | Not Started | Not Started | Not Started |
-| ADC | Finished | Finished | Finished | Finished |
+| Time | **OK** |  **OK** | **OK** | **OK** | 
+| GPIO | **OK** | **OK** | **OK** | **OK** |
+| PWM | **OK** | Not Started | Not Started | Not Started |
+| ADC | **OK** | **OK** | **OK** | **OK** |
 | DAC |  Doing by [pikasTech](https://github.com/pikasTech) | No Device | Not Started | Not Started |
 | Flash | Doing by [pikasTech](https://github.com/pikasTech) | Not Started | Not Started | Not Started |
 | IIC | Doing by [pikasTech](https://github.com/pikasTech) | Not Started | Not Started | Not Started | 
