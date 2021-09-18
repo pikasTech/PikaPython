@@ -22,8 +22,14 @@ adc.init()
 adc.setPin('PA0')
 adc.enable()
 
+pwm = STM32.PWM()
+pwm.setPin('PA8')
+pwm.setFrequency(2000)
+pwm.setDuty(0.5)
+pwm.enable()
+
 while True:
-    time.sleep_ms(50)
+    time.sleep_ms(500)
     io1.low()
     readBuff = uart.read(2)
     print('mem used max:')
@@ -31,8 +37,11 @@ while True:
     print('read 2 char:')
     print(readBuff)
     print(' ')
-    time.sleep_ms(50)
+    pwm.setDuty(0.5)
+
+    time.sleep_ms(500)
     io1.high()
     adcVal = adc.read()
     print('adc value:')
     print(adcVal)
+    pwm.setDuty(0.3)
