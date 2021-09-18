@@ -1,3 +1,8 @@
+/*
+  Author: lyon 
+  Tencent QQ: 645275593 
+*/
+
 #ifndef _link2__H
 #define _link2__H
 #include "dataLinkNode.h"

@@ -1,3 +1,8 @@
+/*
+  Author: lyon 
+  Tencent QQ: 645275593 
+*/
+
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 
