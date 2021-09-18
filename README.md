@@ -4,7 +4,9 @@
 
 # 1.简介
 
-PikaScript可以为**资源受限**的mcu提供极易**部署**和**拓展**的**Python**脚本支持。
+PikaScript是一个超轻量级python引擎，零依赖，零配置，可以在少于4KB的RAM下运行(如stm32g030c8和stm32f103c8)，极易部署和扩展。
+
+PikaScript is a very lightweight Python engine that can run on less than 4KB of RAM (such as STM32G030C8 and STM32F103C8), with zero dependencies, zero configuration, and easy to deploy and expand.
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 ### (1)运行环境
