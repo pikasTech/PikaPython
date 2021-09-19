@@ -2,6 +2,7 @@ import STM32
 time = STM32.Time()
 
 pwm = STM32.PWM()
+pwm.init()
 pwm.setPin('PA8')
 pwm.setFrequency(2000)
 pwm.setDuty(0.5)
