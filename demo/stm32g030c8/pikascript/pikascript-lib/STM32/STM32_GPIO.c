@@ -137,6 +137,6 @@ void STM32_GPIO_platformSetMode(PikaObj* self, char* mode) {
   GPIO_InitStruct.Pin = gpioPin;
   GPIO_InitStruct.Mode = pinMode;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(gpioPort, &GPIO_InitStruct);
 }
