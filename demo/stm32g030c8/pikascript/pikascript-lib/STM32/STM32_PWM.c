@@ -7,8 +7,14 @@
 #ifdef TIM1_EXIST
     TIM_HandleTypeDef pika_tim1;
 #endif
+#ifdef TIM2_EXIST
+    TIM_HandleTypeDef pika_tim2;
+#endif
 #ifdef TIM3_EXIST
     TIM_HandleTypeDef pika_tim3;
+#endif
+#ifdef TIM4_EXIST
+    TIM_HandleTypeDef pika_tim4;
 #endif
 #ifdef TIM14_EXIST
     TIM_HandleTypeDef pika_tim14;
@@ -27,11 +33,21 @@ static TIM_HandleTypeDef* getTimHandle(char *pin)
             return &pika_tim1;
         }
     #endif
+    #ifdef TIM2_EXIST
+        if( strEqu("PA0", pin) || strEqu("PA1", pin) || strEqu("PA2", pin) || strEqu("PA3", pin) ){
+            return &pika_tim2;
+        }
+    #endif
     #ifdef TIM3_EXIST
         if( strEqu("PA6", pin) || strEqu("PA7", pin) || strEqu("PB0", pin) || strEqu("PB1", pin) ){
             return &pika_tim3;
         }
     #endif
+    #ifdef TIM4_EXIST
+        if( strEqu("PB6", pin) || strEqu("PB7", pin) || strEqu("PB8", pin) || strEqu("PB9", pin) ){
+            return &pika_tim3;
+        }
+    #endif        
     #ifdef TIM14_EXIST
         if( strEqu("PA4", pin) ){
             return &pika_tim14;
@@ -57,11 +73,21 @@ static TIM_TypeDef* getTimInstance(char *pin)
             return TIM1;
         }
     #endif
+    #ifdef TIM2_EXIST
+        if( strEqu("PA0", pin) || strEqu("PA1", pin) || strEqu("PA2", pin) || strEqu("PA3", pin) ){
+            return TIM2;
+        }
+    #endif        
     #ifdef TIM3_EXIST
         if( strEqu("PA6", pin) || strEqu("PA7", pin) || strEqu("PB0", pin) || strEqu("PB1", pin) ){
             return TIM3;
         }
     #endif
+    #ifdef TIM4_EXIST
+        if( strEqu("PB6", pin) || strEqu("PB7", pin) || strEqu("PB8", pin) || strEqu("PB9", pin) ){
+            return TIM4;
+        }
+    #endif         
     #ifdef TIM14_EXIST
         if( strEqu("PA4", pin) ){
             return TIM14;
@@ -72,7 +98,7 @@ static TIM_TypeDef* getTimInstance(char *pin)
             return TIM16;
         }
     #endif
-    #ifdef TIM17_EXIST
+    #ifdef TIM17_EXIST_EXIST
         if( strEqu("PD1", pin) ){
             return TIM17;
         }
@@ -80,6 +106,7 @@ static TIM_TypeDef* getTimInstance(char *pin)
     return NULL;
 }
 
+#if (defined STM32G030xx) || (defined STM32G070xx)
 static uint32_t getGPIO_AlternateForTim(TIM_TypeDef *timInstance){
     #ifdef TIM1_EXIST
         if( TIM1 == timInstance ){
@@ -108,6 +135,7 @@ static uint32_t getGPIO_AlternateForTim(TIM_TypeDef *timInstance){
     #endif           
     return 0;
 }
+#endif
 
 static void PWM_TimClockEnable(TIM_TypeDef *timInstance){
     #ifdef TIM1_EXIST
@@ -116,12 +144,24 @@ static void PWM_TimClockEnable(TIM_TypeDef *timInstance){
             return;
         }
     #endif
+    #ifdef TIM2_EXIST
+        if( TIM2 == timInstance ){
+            __HAL_RCC_TIM2_CLK_ENABLE();
+            return;
+        }
+    #endif        
     #ifdef TIM3_EXIST
         if( TIM3 == timInstance ){
             __HAL_RCC_TIM3_CLK_ENABLE();
             return;
         }
     #endif
+    #ifdef TIM4_EXIST
+        if( TIM4 == timInstance ){
+            __HAL_RCC_TIM4_CLK_ENABLE();
+            return;
+        }
+    #endif          
     #ifdef TIM14_EXIST
         if( TIM14 == timInstance ){
             __HAL_RCC_TIM14_CLK_ENABLE();
@@ -154,7 +194,9 @@ uint8_t PWM_MspInit(char* pin){
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = getGPIO_AlternateForTim(timInstance);
+    #if (defined STM32G030xx) || (defined STM32G070xx)
+        GPIO_InitStruct.Alternate = getGPIO_AlternateForTim(timInstance);
+    #endif
     HAL_GPIO_Init(getGpioPort(pin), &GPIO_InitStruct);
     PWM_TimClockEnable(timInstance);
     return 0;
@@ -162,21 +204,29 @@ uint8_t PWM_MspInit(char* pin){
 
 uint32_t getTimChennel(char *pin){
     if (strEqu("PA8", pin)   || 
+        strEqu("PA0", pin)   ||         
         strEqu("PA6", pin)   || 
+        strEqu("PB6", pin)   ||     
         strEqu("PA4", pin)   || 
         strEqu("PD0", pin)   ||
         strEqu("PD1", pin) ){
         return TIM_CHANNEL_1;
     }
     if (strEqu("PA9", pin)   || 
+        strEqu("PA1", pin)   ||      
+        strEqu("PB7", pin)   ||
         strEqu("PA7", pin) ){
         return TIM_CHANNEL_2;
     }
     if (strEqu("PA10", pin)   || 
+        strEqu("PA2", pin)    ||      
+        strEqu("PB8", pin)    ||          
         strEqu("PB0", pin) ){
         return TIM_CHANNEL_3;
     }
-    if (strEqu("PA11", pin)   || 
+    if (strEqu("PA11", pin)   ||
+        strEqu("PA3", pin)    ||
+        strEqu("PB9", pin)    ||                  
         strEqu("PB1", pin) ){
         return TIM_CHANNEL_4;
     }
@@ -204,7 +254,12 @@ void STM32_PWM_platformEnable(PikaObj *self, float duty, int freq, char * pin){
     }
 
     pika_tim->Instance = getTimInstance(pin);
-    pika_tim->Init.Prescaler = 64-1;
+    #if (defined STM32G030xx) || (defined STM32G070xx)
+        pika_tim->Init.Prescaler = 64-1;
+    #endif
+    #if (defined STM32F103xB)
+        pika_tim->Init.Prescaler = 72-1;
+    #endif
     pika_tim->Init.CounterMode = TIM_COUNTERMODE_UP;
     /* calculate period */    
     pika_tim->Init.Period = (uint32_t)( (float)(1000 * 1000)/(float)freq ) - 1;
@@ -234,7 +289,9 @@ void STM32_PWM_platformEnable(PikaObj *self, float duty, int freq, char * pin){
         return;
     }
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-    sMasterConfig.MasterOutputTrigger2 = TIM_TRGO2_RESET;
+    #if (defined STM32G030xx) || (defined STM32G070xx)    
+        sMasterConfig.MasterOutputTrigger2 = TIM_TRGO2_RESET;
+    #endif
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
     if (HAL_TIMEx_MasterConfigSynchronization(pika_tim, &sMasterConfig) != HAL_OK){
         obj_setSysOut(self, "[error]: init PWM faild.");
@@ -261,13 +318,15 @@ void STM32_PWM_platformEnable(PikaObj *self, float duty, int freq, char * pin){
     sBreakDeadTimeConfig.DeadTime = 0;
     sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
     sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
-    sBreakDeadTimeConfig.BreakFilter = 0;
-    sBreakDeadTimeConfig.BreakAFMode = TIM_BREAK_AFMODE_INPUT;
-    sBreakDeadTimeConfig.Break2State = TIM_BREAK2_DISABLE;
-    sBreakDeadTimeConfig.Break2Polarity = TIM_BREAK2POLARITY_HIGH;
-    sBreakDeadTimeConfig.Break2Filter = 0;
-    sBreakDeadTimeConfig.Break2AFMode = TIM_BREAK_AFMODE_INPUT;
-    sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+    #if (defined STM32G030xx) || (defined STM32G070xx)        
+        sBreakDeadTimeConfig.BreakFilter = 0;
+        sBreakDeadTimeConfig.BreakAFMode = TIM_BREAK_AFMODE_INPUT;
+        sBreakDeadTimeConfig.Break2State = TIM_BREAK2_DISABLE;
+        sBreakDeadTimeConfig.Break2Polarity = TIM_BREAK2POLARITY_HIGH;
+        sBreakDeadTimeConfig.Break2Filter = 0;
+        sBreakDeadTimeConfig.Break2AFMode = TIM_BREAK_AFMODE_INPUT;
+        sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+    #endif
     if (HAL_TIMEx_ConfigBreakDeadTime(pika_tim, &sBreakDeadTimeConfig) != HAL_OK){
         obj_setSysOut(self, "[error]: init PWM faild.");
         obj_setErrorCode(self, 1);
@@ -283,7 +342,10 @@ void STM32_PWM_platformSetDuty(PikaObj *self, float duty, char * pin){
         obj_setErrorCode(self, 1);
         return;
     }
-    __HAL_TIM_SET_COMPARE( pika_tim, getTimChennel(pin), (uint32_t)(pika_tim->Init.Period * duty) );
+    /* update duty in run time */    
+    if (NULL != pika_tim->Instance){
+        __HAL_TIM_SET_COMPARE( pika_tim, getTimChennel(pin), (uint32_t)(pika_tim->Init.Period * duty) );
+    }
 }
 
 void STM32_PWM_platformSetFrequency(PikaObj *self, int freq, char * pin){
@@ -293,7 +355,10 @@ void STM32_PWM_platformSetFrequency(PikaObj *self, int freq, char * pin){
         obj_setErrorCode(self, 1);
         return;
     }
-    __HAL_TIM_SET_AUTORELOAD( pika_tim, (uint32_t)( (float)(1000 * 1000)/(float)freq ) - 1);
-    float duty = obj_getFloat(self, "duty");
-    __HAL_TIM_SET_COMPARE( pika_tim, getTimChennel(pin), (uint32_t)(pika_tim->Init.Period * duty) );
+    /* update frequency in run time */
+    if (NULL != pika_tim->Instance){
+        __HAL_TIM_SET_AUTORELOAD( pika_tim, (uint32_t)( (float)(1000 * 1000)/(float)freq ) - 1);
+        float duty = obj_getFloat(self, "duty");
+        __HAL_TIM_SET_COMPARE( pika_tim, getTimChennel(pin), (uint32_t)(pika_tim->Init.Period * duty) );
+    }
 }
