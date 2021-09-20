@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>7</Optim>
+            <Optim>5</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F103xB,HAL_ADC_MODULE_ENABLED,HAL_UART_MODULE_ENABLED</Define>
+              <Define>USE_HAL_DRIVER,STM32F103xB,HAL_ADC_MODULE_ENABLED,HAL_UART_MODULE_ENABLED,HAL_TIM_MODULE_ENABLED</Define>
               <Undefine></Undefine>
               <IncludePath>../Core/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;  ../Drivers/CMSIS/Include;  ..\pikascript\pikascript-core;  ..\pikascript\pikascript-lib\STM32;  ..\pikascript\pikascript-api</IncludePath>
             </VariousControls>
@@ -710,6 +710,16 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\STM32_UART-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdDevice_PWM-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdDevice_PWM-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32_PWM-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32_PWM-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -769,6 +779,16 @@
               <FileName>PikaStdDevice_UART.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32_PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_PWM.c</FilePath>
             </File>
           </Files>
         </Group>

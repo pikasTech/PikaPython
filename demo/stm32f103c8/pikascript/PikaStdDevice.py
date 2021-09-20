@@ -112,3 +112,38 @@ class UART(TinyObj):
     # need override
     def platformRead(id: int, length: int) -> str:
         pass
+
+
+class PWM(TinyObj):
+    def init():
+        pass
+
+    def setPin(pin: str):
+        pass
+
+    def setFrequency(freq: int):
+        pass
+
+    def setDuty(duty: float):
+        pass
+
+    def enable():
+        pass
+
+    def getFrequency() -> int:
+        pass
+
+    def getDuty() -> float:
+        pass
+
+    # need override
+    def platformEnable(pin: str, freq: int, duty: float):
+        pass
+
+    # need override
+    def platformSetFrequency(pin: str, freq: int):
+        pass
+
+    # need override
+    def platformSetDuty(pin: str, duty: float):
+        pass
