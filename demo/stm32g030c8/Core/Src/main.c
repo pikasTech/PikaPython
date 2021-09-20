@@ -20,9 +20,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "gpio.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stdbool.h"
 #include "pikaScript.h"
 /* USER CODE END Includes */
 
@@ -54,7 +54,29 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void Flash_OB_Handle(void) {
+	FLASH_OBProgramInitTypeDef optionsbytesstruct;
+	bool UPDATE = false;
 
+	HAL_FLASHEx_OBGetConfig(&optionsbytesstruct);
+	uint32_t userconfig = optionsbytesstruct.USERConfig;
+
+	if((userconfig & FLASH_OPTR_nBOOT_SEL_Msk) != OB_BOOT0_FROM_PIN) {
+		userconfig &= ~FLASH_OPTR_nBOOT_SEL_Msk;
+		userconfig |= OB_BOOT0_FROM_PIN;
+		UPDATE = true;
+	}
+
+	if(UPDATE) {
+		optionsbytesstruct.USERConfig = userconfig;
+		HAL_FLASH_Unlock();
+		HAL_FLASH_OB_Unlock();
+		HAL_FLASHEx_OBProgram(&optionsbytesstruct);
+		HAL_FLASH_OB_Launch();
+		HAL_FLASH_OB_Lock();
+		HAL_FLASH_Lock();
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -64,7 +86,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  Flash_OB_Handle();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -122,7 +144,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
   RCC_OscInitStruct.PLL.PLLN = 16;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
+  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV3;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
