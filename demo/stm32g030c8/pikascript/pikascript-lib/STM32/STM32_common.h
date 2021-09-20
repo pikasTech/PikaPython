@@ -14,6 +14,11 @@
   #define UART1_EXIST
   #define UART2_EXIST
   #define UART3_EXIST
+
+  #define TIM1_EXIST
+  #define TIM2_EXIST
+  #define TIM3_EXIST
+  #define TIM4_EXIST
 #endif
 
 #ifdef STM32G030xx
