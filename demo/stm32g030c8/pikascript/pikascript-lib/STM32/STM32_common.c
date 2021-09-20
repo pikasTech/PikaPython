@@ -1,6 +1,42 @@
 #include "STM32_common.h"
 #include "dataStrs.h"
 
+void delay_unit(uint32_t delays)
+{
+    /* one unit is 1/64 us */
+    uint32_t startval,tickn,wait;
+
+    startval = SysTick->VAL;
+    tickn = HAL_GetTick();
+    if(delays > startval){
+        while(HAL_GetTick() == tickn){}
+        wait = 64000 + startval - delays;
+        while(wait < SysTick->VAL){}
+    }
+    else{
+        wait = startval - delays;
+        while(wait < SysTick->VAL && HAL_GetTick() == tickn){}
+    }
+}
+
+void delay_us(uint32_t udelay)
+{
+    uint32_t startval,tickn,delays,wait;
+
+    startval = SysTick->VAL;
+    tickn = HAL_GetTick();
+    delays = udelay * 64; // delay 1us when delays = 64
+    if(delays > startval){
+        while(HAL_GetTick() == tickn){}
+        wait = 64000 + startval - delays;
+        while(wait < SysTick->VAL){}
+    }
+    else{
+        wait = startval - delays;
+        while(wait < SysTick->VAL && HAL_GetTick() == tickn){}
+    }
+}
+
 GPIO_TypeDef* getGpioPort(char* pin) {
   if (strIsStartWith(pin, "PA")) {
     return GPIOA;
