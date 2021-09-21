@@ -1,16 +1,2 @@
---create stm32g030c8\stm32g030c8.lib
-stm32g030c8\baseobj.o
-stm32g030c8\dataarg.o
-stm32g030c8\dataargs.o
-stm32g030c8\datalink.o
-stm32g030c8\datalinknode.o
-stm32g030c8\datamemory.o
-stm32g030c8\datastring.o
-stm32g030c8\datastrs.o
-stm32g030c8\method.o
-stm32g030c8\pikablock.o
-stm32g030c8\pikaif.o
-stm32g030c8\pikainvoke.o
-stm32g030c8\pikaobj.o
-stm32g030c8\pikawhile.o
-stm32g030c8\tinyobj.o
+--create stm32g030c8\RGB_ASM.lib
+stm32g030c8\rgb_asm.o
