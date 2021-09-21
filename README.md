@@ -11,14 +11,15 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
 # 2.驱动适配进度
-| Device | PikaStdDevice | STM32G030C8 | STM32G070CB | STM32F103C8 |
-| --- | --- | --- | --- | --- |
-| Time | **OK** |  **OK** | **OK** | **OK** | 
-| GPIO | **OK** | **OK** | **OK** | **OK** |
-| UART | **OK** | **OK** | **OK** | **OK** |
-| PWM | **OK** | **OK** | Not Started | **OK** |
-| ADC | **OK** | **OK** | **OK** | **OK** |
-| Flash | Doing by [pikasTech](https://github.com/pikasTech) | Doing by [pikasTech](https://github.com/pikasTech) | Not Started | Not Started |
+| Device | PikaPi-Zero | PikaStdDevice | STM32G030C8 | STM32G070CB | STM32F103C8 |
+| --- | --- | --- | --- | --- | --- |
+| Time | **OK** | **OK** |  **OK** | **OK** | **OK** | 
+| GPIO | **OK** | **OK** | **OK** | **OK** | **OK** |
+| UART | **OK** | **OK** | **OK** | **OK** | **OK** |
+| PWM | **OK** | **OK** | **OK** | Not yet | **OK** |
+| ADC | **OK** | **OK** | **OK** | **OK** | **OK** |
+| I2C | Not yet | Not yet | Not yet | Not yet |
+| RGB | **OK** | None | None | None | None |
 
 # 3.特性
 ### (1)运行环境
