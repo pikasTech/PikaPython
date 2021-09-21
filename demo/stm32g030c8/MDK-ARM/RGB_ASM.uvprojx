@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>stm32g030c8\</OutputDirectory>
-          <OutputName>stm32g030c8</OutputName>
+          <OutputName>RGB_ASM</OutputName>
           <CreateExecutable>0</CreateExecutable>
           <CreateLib>1</CreateLib>
           <CreateHexFile>1</CreateHexFile>
