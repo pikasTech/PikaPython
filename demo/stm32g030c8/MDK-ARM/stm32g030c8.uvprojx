@@ -313,7 +313,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>7</Optim>
+            <Optim>5</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -806,9 +806,79 @@
           <GroupName>pikascript-core</GroupName>
           <Files>
             <File>
-              <FileName>pikascript-core.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\pikascript\pikascript-core\pikascript-core.lib</FilePath>
+              <FileName>TinyObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\TinyObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaWhile.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaWhile.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaInvoke.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaInvoke.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaIf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaIf.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaBlock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaBlock.c</FilePath>
+            </File>
+            <File>
+              <FileName>method.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\method.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataStrs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataStrs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataString.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataString.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataMemory.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataMemory.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataLinkNode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataLinkNode.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataLink.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataLink.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataArgs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataArgs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataArg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataArg.c</FilePath>
+            </File>
+            <File>
+              <FileName>BaseObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\BaseObj.c</FilePath>
             </File>
           </Files>
         </Group>
