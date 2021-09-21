@@ -10,4 +10,10 @@ class RGB(PikaStdLib.SysObj):
         pass
     def red():
         pass
+    def green():
+        pass
+    def blue():
+        pass
+    def white():
+        pass
 
