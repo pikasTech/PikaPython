@@ -17,14 +17,8 @@ PikaObj * pikaScriptInit(){
     obj_run(pikaMain, "print('mem max:')");
     obj_run(pikaMain, "mem.max()");
     obj_run(pikaMain, "while True:");
-    obj_run(pikaMain, "    time.sleep_ms(250)");
-    obj_run(pikaMain, "    rgb.red()");
-    obj_run(pikaMain, "    time.sleep_ms(250)");
-    obj_run(pikaMain, "    rgb.green()");
-    obj_run(pikaMain, "    time.sleep_ms(250)");
-    obj_run(pikaMain, "    rgb.white()");
-    obj_run(pikaMain, "    time.sleep_ms(250)");
-    obj_run(pikaMain, "    rgb.blue()");
+    obj_run(pikaMain, "    time.sleep_ms(50)");
+    obj_run(pikaMain, "    rgb.flow()");
     obj_run(pikaMain, "");
     return pikaMain;
 }

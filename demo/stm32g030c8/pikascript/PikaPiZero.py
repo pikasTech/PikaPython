@@ -16,4 +16,6 @@ class RGB(PikaStdLib.SysObj):
         pass
     def white():
         pass
+    def flow():
+        pass
 
