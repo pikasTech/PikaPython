@@ -1,3 +1,8 @@
+/*
+  Author: lyon
+  Tencent QQ: 645275593
+*/
+
 #ifndef _linkNode__H
 #define _linkNode__H
 #include "dataMemory.h"
