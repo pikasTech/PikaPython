@@ -9,12 +9,11 @@ PikaScript是一个超轻量级python引擎，零依赖，零配置，可以在�
 
 PikaScript is an ultra lightweight Python engine with zero dependencies and zero configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and very easy to deploy and expand.
 
+![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
+
 <img align="left" src="https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif" width="60" height="60"/>
 
 ### 来颗Star求求了
-
-
-![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
 # 2.驱动适配进度
 | Device  | PikaPi-Zero | STM32G030C8 | STM32G070CB | STM32F103C8 |
