@@ -2,6 +2,10 @@
 
 # [点击获取PikaScript v0.7.0](https://github.com/mimilib/pikascript/releases/download/v0.7.0/pikascript.v0.7.0.zip)
 
+<img align="left" src="https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif" width="60" height="60"/>
+
+### 来颗Star求求了 ~
+### Star please ~
 
 # 1.简介
 
@@ -11,10 +15,6 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
-<img align="left" src="https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif" width="60" height="60"/>
-
-### 来颗Star求求了 ~
-### Star please ~
 
 # 2.驱动适配进度
 | Device  | PikaPi-Zero | STM32G030C8 | STM32G070CB | STM32F103C8 |
