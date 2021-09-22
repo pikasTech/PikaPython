@@ -1,34 +1,34 @@
 /*
-  Author: lyon 
-  Tencent QQ: 645275593 
+  Author: lyon
+  Tencent QQ: 645275593
 */
 
 #include "PikaObj.h"
 
 void _UpdateHandle(PikaObj* self) {
-  // override the handle function here
+    // override the handle function here
 }
 
 void _beforDinit(PikaObj* self) {
-  /* override in user code */
+    /* override in user code */
 }
 
 PikaObj* New_TinyObj(Args* args) {
-  PikaObj* self = pikaMalloc(sizeof(PikaObj));
+    PikaObj* self = pikaMalloc(sizeof(PikaObj));
 
-  /* List */
-  self->attributeList = New_args(NULL);
+    /* List */
+    self->attributeList = New_args(NULL);
 
-  /* attribute */
-  obj_setPtr(self, "_ctx", self);
-  obj_setStr(self, "_n", "root");
+    /* attribute */
+    obj_setPtr(self, "_ctx", self);
+    obj_setStr(self, "_n", "root");
 
-  /* load */
-  if (NULL != args) {
-    obj_load(self, args, "_n");
-    obj_load(self, args, "_ctx");
-  }
+    /* load */
+    if (NULL != args) {
+        obj_load(self, args, "_n");
+        obj_load(self, args, "_ctx");
+    }
 
-  /* hard attribute */
-  return self;
+    /* hard attribute */
+    return self;
 }

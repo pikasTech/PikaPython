@@ -1,6 +1,6 @@
 /*
-  Author: lyon 
-  Tencent QQ: 645275593 
+  Author: lyon
+  Tencent QQ: 645275593
 */
 
 #ifndef __MEMORY_H__
@@ -11,8 +11,8 @@
 #include <string.h>
 
 typedef struct {
-  uint32_t heapUsed;
-  uint32_t heapUsedMax;
+    uint32_t heapUsed;
+    uint32_t heapUsedMax;
 } PikaMemInfo;
 
 void pikaFree(void* mem, uint32_t size);
