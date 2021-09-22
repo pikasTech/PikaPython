@@ -1,3 +1,8 @@
+/*
+  Author: lyon
+  Tencent QQ: 645275593
+*/
+
 #ifndef _pikaWhile__H
 #define _pikaWhile__H
 #include "PikaObj.h"
