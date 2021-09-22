@@ -71,11 +71,11 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 <img src="https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png" width="800" alt="微信交流群"/><br/>
 
-# 2.stm32教程视频
+# 4.stm32教程视频
 
 [手把手PikaScript教程合集](https://www.bilibili.com/video/BV1mg411L72e)
 
-# 4.交流与技术支持：
+# 5.交流与技术支持：
 
 ## 微信交流群
 
@@ -87,7 +87,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 ## E-mail: 645275593@qq.com
 
-# 5.贡献者
+# 6.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
 | 捐赠：中国移动CM32M101A 开发板| 孟巍(微信名) |
@@ -101,7 +101,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
 
 
-# 6.推广稿：我就要用最便宜的单片机来跑python，还要用MDK开发，怎么地吧！
+# 7.Demo展示：我就要用最便宜的单片机来跑python，还要用MDK开发，怎么地吧！
 
 我就想用单片机跑个Python，得用linux虚拟机+交叉编译工具链+命令行编译micropython固件，还得用DfuSe工具烧录固件，烧录完还不能用C的调试器来调试。
 
