@@ -1,6 +1,6 @@
 /*
-  Author: lyon 
-  Tencent QQ: 645275593 
+  Author: lyon
+  Tencent QQ: 645275593
 */
 
 #ifndef _Process__H
@@ -14,8 +14,8 @@ typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
 
 struct PikaObj_t {
-  /* list */
-  Args* attributeList;
+    /* list */
+    Args* attributeList;
 };
 
 /* operation */

@@ -1,6 +1,6 @@
 /*
-  Author: lyon 
-  Tencent QQ: 645275593 
+  Author: lyon
+  Tencent QQ: 645275593
 */
 
 #ifndef _link2__H
@@ -10,7 +10,7 @@
 
 typedef struct Class_link Link;
 struct Class_link {
-  LinkNode* firstNode;
+    LinkNode* firstNode;
 };
 
 void link_deinit(Link* self);
