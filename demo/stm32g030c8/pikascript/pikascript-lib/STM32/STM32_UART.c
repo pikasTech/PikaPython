@@ -6,15 +6,13 @@
 
 #define RX_BUFF_LENGTH 64
 
-struct _pika_uart_t {
+typedef struct {
     UART_HandleTypeDef huart;
     uint8_t id;
     char rxBuff[RX_BUFF_LENGTH];
     uint16_t rxBuffOffset;
     PikaObj* obj;
-};
-
-typedef struct _pika_uart_t pika_uart_t;
+} pika_uart_t;
 
 #ifdef UART1_EXIST
 pika_uart_t pika_uart1;
