@@ -1,6 +1,6 @@
 /*
-  Author: lyon 
-  Tencent QQ: 645275593 
+  Author: lyon
+  Tencent QQ: 645275593
 */
 
 #ifndef _pikaIf__H
