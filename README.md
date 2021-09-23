@@ -183,6 +183,8 @@ PikaScript支持裸机运行，最低可运行于 RAM ≥ 4kB ，FLASH ≥ 32kB 
 
 ## Demo 05 RGB流水灯
 
+![image](https://user-images.githubusercontent.com/88232613/134461950-2153c738-0661-452f-956a-65a88fb71592.png)
+
 
 
 这几个Demo占用的RAM最大值只有3.56K，把1K的堆栈也算上就是4.56K，Flash最大占用是30.4K，以STM32F103C8T6的20K RAM和64K Flash为标准，RAM才用掉不到25%，Flash才用掉不到50%，简直是资源多到不知道咋霍霍。
