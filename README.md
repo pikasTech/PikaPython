@@ -100,7 +100,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 | 捐赠：APM32F030R8 开发板 | 极海半导体 陈成 |
 | 捐赠：APM32E103VB 开发板 | 极海半导体 陈成 |
 | 捐赠：APEX-Link仿真器 | 极海半导体 陈成 |
-| 源码格式化 | [Meco Jianting Man](https://github.com/mysterywolf) |
+| 源码格式化，增加git属性文件 | [Meco Jianting Man](https://github.com/mysterywolf) |
 | demo/simulation-keil | 千帆(微信名) |
 | demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
