@@ -6,6 +6,11 @@
 
 #define RX_BUFF_LENGTH 64
 
+struct RxHeap{
+    char *content;
+    uint32_t size;
+}rxHeap;
+
 typedef struct {
     UART_HandleTypeDef huart;
     uint8_t id;
@@ -347,6 +352,9 @@ void USART3_4_IRQHandler(void) {
 #endif
 
 void STM32_UART_platformEnable(PikaObj* self, int baudRate, int id) {
+    rxHeap.size = 0;
+    rxHeap.content = pikaMalloc(rxHeap.size + 1);
+    
     setUartObj(id, self);
     UART_HandleTypeDef* huart = getUartHandle(id);
     huart->Instance = getUartInstance(id);
@@ -391,8 +399,29 @@ void STM32_UART_platformWrite(PikaObj* self, char* data, int id) {
 
 /* Recive Interrupt Handler */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
+    char *oldContent;  
+    uint32_t oldSize;    
     uint8_t id = getUartId(huart);
     pika_uart_t* pika_uart = getPikaUart(id);
+    char inputChar = pika_uart->rxBuff[pika_uart->rxBuffOffset];
+    
+    if(id == 1){
+        if( '\n' == inputChar){
+            oldContent = rxHeap.content;
+            oldSize = rxHeap.size;
+            rxHeap.size += pika_uart->rxBuffOffset + 1;
+            rxHeap.content = pikaMalloc(rxHeap.size + 1);
+            memcpy(rxHeap.content, oldContent, oldSize);
+            memcpy(rxHeap.content + oldSize, pika_uart->rxBuff, pika_uart->rxBuffOffset + 1);
+            pikaFree(oldContent, oldSize + 1);
+            rxHeap.content[rxHeap.size] = 0;
+            pika_uart->rxBuffOffset = 0;
+            UART_Start_Receive_IT(
+                &pika_uart->huart,
+                (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+            goto exit;
+        }
+    }
 
     /* avoid recive buff overflow */
     if (pika_uart->rxBuffOffset + 1 < RX_BUFF_LENGTH) {
@@ -400,6 +429,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
     }
     UART_Start_Receive_IT(
         huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+
+    
     goto exit;
 exit:
     return;
