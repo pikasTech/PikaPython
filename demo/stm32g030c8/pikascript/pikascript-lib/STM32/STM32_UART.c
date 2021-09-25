@@ -6,10 +6,12 @@
 
 #define RX_BUFF_LENGTH 64
 
-struct RxHeap{
+struct CodeHeap{
     char *content;
     uint32_t size;
-}rxHeap;
+    uint8_t ena;
+    uint32_t reciveTime;
+}codeHeap;
 
 typedef struct {
     UART_HandleTypeDef huart;
@@ -352,8 +354,9 @@ void USART3_4_IRQHandler(void) {
 #endif
 
 void STM32_UART_platformEnable(PikaObj* self, int baudRate, int id) {
-    rxHeap.size = 0;
-    rxHeap.content = pikaMalloc(rxHeap.size + 1);
+    codeHeap.size = 0;
+    codeHeap.content = pikaMalloc(codeHeap.size + 1);
+    codeHeap.ena = 0;
     
     setUartObj(id, self);
     UART_HandleTypeDef* huart = getUartHandle(id);
@@ -385,6 +388,8 @@ char* STM32_UART_platformRead(PikaObj* self, int id, int length) {
     memcpy(pika_uart->rxBuff, pika_uart->rxBuff + length,
            pika_uart->rxBuffOffset - length);
     pika_uart->rxBuffOffset -= length;
+    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0; 
+    
     UART_Start_Receive_IT(
         &pika_uart->huart,
         (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
@@ -406,26 +411,43 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
     char inputChar = pika_uart->rxBuff[pika_uart->rxBuffOffset];
     
     if(id == 1){
+        
         if( '\n' == inputChar){
-            oldContent = rxHeap.content;
-            oldSize = rxHeap.size;
-            rxHeap.size += pika_uart->rxBuffOffset + 1;
-            rxHeap.content = pikaMalloc(rxHeap.size + 1);
-            memcpy(rxHeap.content, oldContent, oldSize);
-            memcpy(rxHeap.content + oldSize, pika_uart->rxBuff, pika_uart->rxBuffOffset + 1);
-            pikaFree(oldContent, oldSize + 1);
-            rxHeap.content[rxHeap.size] = 0;
-            pika_uart->rxBuffOffset = 0;
-            UART_Start_Receive_IT(
-                &pika_uart->huart,
-                (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-            goto exit;
+            if( 1 == codeHeap.ena){
+                codeHeap.reciveTime = uwTick;
+                oldContent = codeHeap.content;
+                oldSize = codeHeap.size;
+                uint16_t rxSize = pika_uart->rxBuffOffset + 1;
+                codeHeap.size += rxSize;
+                codeHeap.content = pikaMalloc(codeHeap.size + 1);
+                memcpy(codeHeap.content, oldContent, oldSize);
+                memcpy(codeHeap.content + oldSize, pika_uart->rxBuff, rxSize);
+                pikaFree(oldContent, oldSize + 1);
+                codeHeap.content[codeHeap.size] = 0;
+                pika_uart->rxBuffOffset = 0;
+                pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0; 
+                
+                UART_Start_Receive_IT(
+                    &pika_uart->huart,
+                    (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+                goto exit;   
+            }
+            if( 0 == codeHeap.ena ){
+                char buff[RX_BUFF_LENGTH] = {0};
+                char *strLine = strGetLastLine(buff, pika_uart->rxBuff);
+                if( strIsStartWith(strLine, "import ") ){
+                    codeHeap.reciveTime = uwTick;                    
+                    codeHeap.ena = 1;
+                }      
+            }            
         }
+         
     }
 
     /* avoid recive buff overflow */
-    if (pika_uart->rxBuffOffset + 1 < RX_BUFF_LENGTH) {
+    if (pika_uart->rxBuffOffset + 2 < RX_BUFF_LENGTH) {
         pika_uart->rxBuffOffset++;
+        pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
     }
     UART_Start_Receive_IT(
         huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
