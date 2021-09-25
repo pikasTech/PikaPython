@@ -23,6 +23,7 @@
 #include "stm32g0xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "STM32_UART.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,7 +59,12 @@
 /* External variables --------------------------------------------------------*/
 
 /* USER CODE BEGIN EV */
-
+extern struct CodeHeap{
+    char *content;
+    uint32_t size;
+    uint8_t ena;
+    uint32_t reciveTime;
+}codeHeap;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -130,7 +136,17 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-
+  if (codeHeap.ena){
+      /* transmite is finished */
+      if (uwTick - codeHeap.reciveTime > 200){
+          printf("==============[Programer]==============\r\n");
+          printf("[info]: Recived byte: %d\r\n", codeHeap.size);
+          printf("[info]: Updating Flash... \r\n");
+          printf("[info]: Programing ok! \r\n");
+          while (1){
+          }
+      }
+  }
   /* USER CODE END SysTick_IRQn 1 */
 }
 
