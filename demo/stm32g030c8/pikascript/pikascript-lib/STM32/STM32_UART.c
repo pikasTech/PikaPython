@@ -424,6 +424,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
                 memcpy(codeHeap.content + oldSize, pika_uart->rxBuff, rxSize);
                 pikaFree(oldContent, oldSize + 1);
                 codeHeap.content[codeHeap.size] = 0;
+                
                 pika_uart->rxBuffOffset = 0;
                 pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0; 
                 
@@ -438,8 +439,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
                 if( strIsStartWith(strLine, "import ") ){
                     codeHeap.reciveTime = uwTick;                    
                     codeHeap.ena = 1;
-                }      
-            }            
+                    
+                    pika_uart->rxBuffOffset = 0;
+                    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0; 
+                    UART_Start_Receive_IT(
+                        &pika_uart->huart,
+                        (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+                    goto exit;
+                }
+            }
         }
          
     }
