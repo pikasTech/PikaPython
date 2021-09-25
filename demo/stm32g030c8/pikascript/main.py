@@ -6,6 +6,7 @@ uart = STM32.UART()
 
 uart.init()
 uart.setId(1)
+uart.setBaudRate(9600)
 uart.enable()
 
 print('initing rgb...')
