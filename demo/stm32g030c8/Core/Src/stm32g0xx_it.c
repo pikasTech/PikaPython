@@ -23,7 +23,7 @@
 #include "main.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "STM32_UART.h"
+#include "STM32_common.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,24 +59,7 @@
 /* External variables --------------------------------------------------------*/
 
 /* USER CODE BEGIN EV */
-extern struct CodeHeap {
-    char* content;
-    uint32_t size;
-    uint8_t ena;
-    uint32_t reciveTime;
-} codeHeap;
 
-#define FLASH_USER_START_ADDR \
-    (FLASH_BASE +             \
-     ((FLASH_PAGE_NB - 1) * FLASH_PAGE_SIZE)) /* Start @ of user Flash area */
-#define FLASH_USER_END_ADDR \
-    (FLASH_BASE + FLASH_SIZE - 1) /* End @ of user Flash area */
-static uint32_t GetPage(uint32_t Addr) {
-    return (Addr - FLASH_BASE) / FLASH_PAGE_SIZE;
-    ;
-}
-#define DATA_64 ((uint64_t)0x1234567812345678)
-#define DATA_32 ((uint32_t)0x12345678)
 
 /* USER CODE END EV */
 
@@ -142,78 +125,7 @@ void SysTick_Handler(void) {
     /* USER CODE END SysTick_IRQn 0 */
     HAL_IncTick();
     /* USER CODE BEGIN SysTick_IRQn 1 */
-    if (codeHeap.ena) {
-        /* transmite is finished */
-        if (uwTick - codeHeap.reciveTime > 200) {
-            uint32_t FirstPage = 0, NbOfPages = 0;
-            uint32_t Address = 0, PageError = 0;
-            __IO uint32_t data32 = 0, MemoryProgramStatus = 0;
-            static FLASH_EraseInitTypeDef EraseInitStruct = {0};
-
-            printf("==============[Programer]==============\r\n");
-            printf("[info]: Recived byte: %d\r\n", codeHeap.size);
-            printf("[info]: Updating flash... \r\n");
-            HAL_FLASH_Unlock();
-            /* Get the 1st page to erase */
-            FirstPage = GetPage(FLASH_USER_START_ADDR);
-
-            /* Get the number of pages to erase from 1st page */
-            NbOfPages = GetPage(FLASH_USER_END_ADDR) - FirstPage + 1;
-
-            /* Fill EraseInit structure*/
-            EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
-            EraseInitStruct.Page = FirstPage;
-            EraseInitStruct.NbPages = NbOfPages;
-            printf("[info]: Erasing flash... \r\n");
-
-            if (HAL_FLASHEx_Erase(&EraseInitStruct, &PageError) != HAL_OK) {
-                printf("[error]: Erase faild! \r\n");
-                while (1) {
-                }
-            }
-            Address = FLASH_USER_START_ADDR;
-
-            while (Address < FLASH_USER_END_ADDR) {
-                if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, Address,
-                                      DATA_64) == HAL_OK) {
-                    Address = Address + 8;
-                } else {
-                    printf("[error]: Write flash faild. \r\n");
-                    while (1) {
-                    }
-                }
-            }
-            HAL_FLASH_Lock();
-            printf("[info]: Write flash ok! \r\n");
-
-            Address = FLASH_USER_START_ADDR;
-            MemoryProgramStatus = 0x0;
-
-            printf("[info]: Checking flash... \r\n");
-
-            while (Address < FLASH_USER_END_ADDR) {
-                data32 = *(__IO uint32_t*)Address;
-                if (data32 != DATA_32) {
-                    MemoryProgramStatus++;
-                }
-                Address = Address + 4;
-            }
-
-            /*Check if there is an issue to program data*/
-            if (MemoryProgramStatus != 0) {
-                printf("memory state: %d\r\n", MemoryProgramStatus);
-                printf("[error]: Check flash faild.\r\n");
-                while (1) {
-                }
-            }
-
-            printf("[OK]: Programing ok! \r\n");
-            printf("[info]: Restarting... \r\n");
-            printf("==============[Programer]==============\r\n");
-            printf("\r\n");
-            HAL_NVIC_SystemReset();
-        }
-    }
+    STM32_Code_flashHandler();
     /* USER CODE END SysTick_IRQn 1 */
 }
 
