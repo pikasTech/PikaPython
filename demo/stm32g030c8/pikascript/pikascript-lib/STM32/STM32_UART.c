@@ -405,13 +405,17 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
             return;
         }
     }
-
-    /* recive next char, avoid recive buff overflow */
-    if (pika_uart->rxBuffOffset + 2 < RX_BUFF_LENGTH) {
-        pika_uart->rxBuffOffset++;
-        pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
+    /* avoid recive buff overflow */ 
+    if (pika_uart->rxBuffOffset + 2 > RX_BUFF_LENGTH) {
+        memmove(pika_uart->rxBuff, pika_uart->rxBuff + 1, RX_BUFF_LENGTH);
+        UART_Start_Receive_IT(
+            huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);        
+        return;
     }
-
+    
+    /* recive next char */
+    pika_uart->rxBuffOffset++;
+    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
     UART_Start_Receive_IT(
         huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
 }
