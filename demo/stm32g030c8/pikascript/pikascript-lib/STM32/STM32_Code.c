@@ -71,16 +71,16 @@ void STM32_Code_flashHandler() {
     EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
     EraseInitStruct.Page = FirstPage;
     EraseInitStruct.NbPages = NbOfPages;
-    printf("    [info]: Erasing flash... \r\n");
+    printf("[info]: Erasing flash... \r\n");
 
     if (HAL_FLASHEx_Erase(&EraseInitStruct, &PageError) != HAL_OK) {
-        printf("    [error]: Erase faild! \r\n");
+        printf("[error]: Erase faild! \r\n");
         while (1) {
         }
     }
-    printf("    [ OK ]: Erase flash ok! \r\n");
+    printf("[ OK ]: Erase flash ok! \r\n");
 
-    printf("    [info]: Writing flash... \r\n");
+    printf("[info]: Writing flash... \r\n");
     uint32_t baseAddress = FLASH_CODE_START_ADDR;
     uint32_t writeAddress = 0;
     while (writeAddress < codeHeap.size) {
@@ -93,27 +93,27 @@ void STM32_Code_flashHandler() {
                               writeData64) == HAL_OK) {
             writeAddress = writeAddress + 8;
         } else {
-            printf("    [error]: Write flash faild. \r\n");
+            printf("[error]: Write flash faild. \r\n");
             while (1) {
             }
         }
     }
     HAL_FLASH_Lock();
-    printf("    [ OK ]: Write flash ok! \r\n");
+    printf("[ OK ]: Write flash ok! \r\n");
 
     baseAddress = FLASH_CODE_START_ADDR;
     MemoryProgramStatus = 0x0;
 
-    printf("    [info]: Checking flash... \r\n");
+    printf("[info]: Checking flash... \r\n");
     char* codeInFlash = (char*)baseAddress;
-    printf("---------[code in flash]----------\r\n");
     printf("\r\n");
+    printf("----[code in flash]-----\r\n");
     printf("%s", codeInFlash);
-    printf("\r\n\r\n");
-    printf("---------[code in flash]----------\r\n");
+    printf("----[code in flash]-----\r\n");
+    printf("\r\n");
     
     if (!strEqu(codeInFlash, codeHeap.content)) {
-        printf("    [error]: Check flash faild.\r\n");
+        printf("[error]: Check flash faild.\r\n");
         printf("\r\n");
 
         printf("\r\n\r\n");
@@ -125,11 +125,11 @@ void STM32_Code_flashHandler() {
         while (1) {
         }
     }
-    printf("    [ OK ]: Checking flash ok! \r\n");
+    printf("[ OK ]: Checking flash ok! \r\n");
     printf("[ OK ]: Programing ok! \r\n");
+    printf("[info]: Restarting... \r\n");
     printf("==============[Programer]==============\r\n");
 
-    printf("[info]: Restarting... \r\n");
     printf("\r\n");
     HAL_NVIC_SystemReset();
 }
