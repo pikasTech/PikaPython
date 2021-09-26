@@ -84,7 +84,7 @@ void NMI_Handler(void) {
  */
 void HardFault_Handler(void) {
     /* USER CODE BEGIN HardFault_IRQn 0 */
-
+    printf("[error]: Hard fault. Please reset the device.");
     /* USER CODE END HardFault_IRQn 0 */
     while (1) {
         /* USER CODE BEGIN W1_HardFault_IRQn 0 */
