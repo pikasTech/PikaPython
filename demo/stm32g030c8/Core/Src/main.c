@@ -77,6 +77,13 @@ void Flash_OB_Handle(void) {
         HAL_FLASH_Lock();
     }
 }
+
+void __pikaDisableIrqHandle(){
+    __disable_irq();
+}
+void __pikaEnableIrqHandle(){
+    __enable_irq();
+}
 /* USER CODE END 0 */
 
 /**

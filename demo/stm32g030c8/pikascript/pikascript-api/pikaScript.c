@@ -9,7 +9,7 @@ PikaObj * pikaScriptInit(){
     PikaObj * pikaMain = newRootObj("pikaMain", New_PikaMain);
     obj_run(pikaMain, "uart.init()");
     obj_run(pikaMain, "uart.setId(1)");
-    obj_run(pikaMain, "uart.setBaudRate(9600)");
+    obj_run(pikaMain, "uart.setBaudRate(115200)");
     obj_run(pikaMain, "uart.enable()");
     obj_run(pikaMain, "print('initing rgb...')");
     obj_run(pikaMain, "rgb.init()");
