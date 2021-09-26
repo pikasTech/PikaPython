@@ -4,16 +4,14 @@ import PikaStdLib
 
 uart.init()
 uart.setId(1)
-uart.setBaudRate(9600)
+uart.setBaudRate(115200)
 uart.enable()
 
-print('initing rgb...')
 rgb.init()
 rgb.enable()
-print('init rgb ok!')
 
-print('mem max:')
-mem.max()
+print('hello 2')
+
 while True:
     time.sleep_ms(50)
     rgb.flow()
