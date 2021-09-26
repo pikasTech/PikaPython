@@ -19,7 +19,7 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
             codeHeap.reciveTime = uwTick;
             codeHeap.ena = 1;
             data = strLine;
-            rxSize = strGetSize(data);
+            rxSize = strGetSize(strLine);
         }
     }
     if (1 == codeHeap.ena) {
@@ -54,7 +54,6 @@ void STM32_Code_flashHandler() {
     uint32_t FirstPage = 0, NbOfPages = 0;
     uint32_t PageError = 0;
     __IO uint32_t data32 = 0, MemoryProgramStatus = 0;
-    uint64_t writeData64 = 0;
     static FLASH_EraseInitTypeDef EraseInitStruct = {0};
 
     printf("==============[Programer]==============\r\n");
@@ -83,10 +82,13 @@ void STM32_Code_flashHandler() {
     printf("[info]: Writing flash... \r\n");
     uint32_t baseAddress = FLASH_CODE_START_ADDR;
     uint32_t writeAddress = 0;
-    while (writeAddress < codeHeap.size) {
+    uint64_t writeData64 = 0;
+    while (writeAddress < codeHeap.size + 1) {
+        writeData64 = 0;
         for (int i = 7; i >= 0; i--) {
+            char ch = codeHeap.content[writeAddress + i];
             writeData64 = writeData64 << 8;
-            writeData64 += codeHeap.content[writeAddress + i];
+            writeData64 += ch;
         }
         if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,
                               baseAddress + writeAddress,
