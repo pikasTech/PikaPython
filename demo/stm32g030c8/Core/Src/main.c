@@ -120,7 +120,7 @@ int main(void) {
     char *code = (char *)FLASH_CODE_START_ADDR;
     PikaObj* pikaMain;
     uint16_t codeOffset = 0;
-    if( code[0] != NULL ){
+    if( code[0] == 'i'){
         /* boot from flash */
         pikaMain = newRootObj("pikaMain", New_PikaMain);
         obj_run(pikaMain, "uart.init()");
