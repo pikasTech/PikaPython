@@ -2,6 +2,7 @@
 *.C linguist-language=C
 *.h linguist-language=C
 *.H linguist-language=C
+*.cpp linguist-language=C
 
 * text=auto
 
