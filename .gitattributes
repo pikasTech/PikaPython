@@ -3,6 +3,7 @@
 *.h linguist-language=C
 *.H linguist-language=C
 *.cpp linguist-language=C
+*.cc linguist-language=C
 
 * text=auto
 
