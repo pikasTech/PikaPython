@@ -16,7 +16,7 @@ void* pikaMalloc(uint32_t size) {
     }
     void* mem = malloc(size);
     if (NULL == mem) {
-        printf("[error]: No heap space!\r\n");
+        printf("[error]: No heap space! Please reset the device.\r\n");
         while (1) {
         }
     }
