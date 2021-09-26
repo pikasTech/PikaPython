@@ -4,16 +4,6 @@
 #include "STM32_common.h"
 #include "dataStrs.h"
 
-#define RX_BUFF_LENGTH 64
-
-typedef struct {
-    UART_HandleTypeDef huart;
-    uint8_t id;
-    char rxBuff[RX_BUFF_LENGTH];
-    uint16_t rxBuffOffset;
-    PikaObj* obj;
-} pika_uart_t;
-
 #ifdef UART1_EXIST
 pika_uart_t pika_uart1;
 #endif
@@ -347,6 +337,7 @@ void USART3_4_IRQHandler(void) {
 #endif
 
 void STM32_UART_platformEnable(PikaObj* self, int baudRate, int id) {
+    STM32_Code_Init();
     setUartObj(id, self);
     UART_HandleTypeDef* huart = getUartHandle(id);
     huart->Instance = getUartInstance(id);
@@ -377,6 +368,8 @@ char* STM32_UART_platformRead(PikaObj* self, int id, int length) {
     memcpy(pika_uart->rxBuff, pika_uart->rxBuff + length,
            pika_uart->rxBuffOffset - length);
     pika_uart->rxBuffOffset -= length;
+    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
+
     UART_Start_Receive_IT(
         &pika_uart->huart,
         (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
@@ -389,20 +382,42 @@ void STM32_UART_platformWrite(PikaObj* self, char* data, int id) {
     HAL_UART_Transmit(getUartHandle(id), (uint8_t*)data, strGetSize(data), 100);
 }
 
+void STM32_UART_clearRxBuff(pika_uart_t* pika_uart) {
+    pika_uart->rxBuffOffset = 0;
+    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
+    UART_Start_Receive_IT(
+        &pika_uart->huart,
+        (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+}
+
 /* Recive Interrupt Handler */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
     uint8_t id = getUartId(huart);
     pika_uart_t* pika_uart = getPikaUart(id);
+    char inputChar = pika_uart->rxBuff[pika_uart->rxBuffOffset];
 
-    /* avoid recive buff overflow */
-    if (pika_uart->rxBuffOffset + 1 < RX_BUFF_LENGTH) {
-        pika_uart->rxBuffOffset++;
+    if ((id == 1) && ('\n' == inputChar)) {
+        uint8_t res = STM32_Code_reciveHandler(pika_uart->rxBuff,
+                                               pika_uart->rxBuffOffset + 1);
+        /* handler is working */
+        if (0 != res) {
+            STM32_UART_clearRxBuff(pika_uart);
+            return;
+        }
     }
+    /* avoid recive buff overflow */ 
+    if (pika_uart->rxBuffOffset + 2 > RX_BUFF_LENGTH) {
+        memmove(pika_uart->rxBuff, pika_uart->rxBuff + 1, RX_BUFF_LENGTH);
+        UART_Start_Receive_IT(
+            huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);        
+        return;
+    }
+    
+    /* recive next char */
+    pika_uart->rxBuffOffset++;
+    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
     UART_Start_Receive_IT(
         huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-    goto exit;
-exit:
-    return;
 }
 
 /* support prinf */
