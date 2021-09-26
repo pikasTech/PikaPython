@@ -26,6 +26,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 | I2C     | Not yet     |  Not yet    | Not yet     | Not yet     |
 | SPI     | Not yet     |  Not yet    | Not yet     | Not yet     |
 | RGB     | **OK**      | -           | -           | -           |
+|Programer| **OK**      | **OK**      | Not yet     | Not yet     |
 
 # 3.特性
 ### (1)运行环境
