@@ -36,15 +36,12 @@
 
 #define RX_BUFF_LENGTH 64
 
-#define FLASH_USER_START_ADDR \
+#define FLASH_CODE_START_ADDR \
     (FLASH_BASE +             \
      ((FLASH_PAGE_NB - 1) * FLASH_PAGE_SIZE)) /* Start @ of user Flash area */
 #define FLASH_USER_END_ADDR \
     (FLASH_BASE + FLASH_SIZE - 1) /* End @ of user Flash area */
-static uint32_t GetPage(uint32_t Addr) {
-    return (Addr - FLASH_BASE) / FLASH_PAGE_SIZE;
-    ;
-}
+uint32_t GetPage(uint32_t Addr);
 #define DATA_64 ((uint64_t)0x1234567812345678)
 #define DATA_32 ((uint32_t)0x12345678)
 
@@ -62,7 +59,6 @@ typedef struct _CodeHeap{
     uint8_t ena;
     uint32_t reciveTime;
     
-    char *oldContent;  
     uint32_t oldSize;        
 }CodeHeap;
 
