@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "pikaScript.h"
 #include "stdbool.h"
+#include "STM32_common.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -77,6 +78,13 @@ void Flash_OB_Handle(void) {
         HAL_FLASH_Lock();
     }
 }
+
+void __pikaDisableIrqHandle(){
+    __disable_irq();
+}
+void __pikaEnableIrqHandle(){
+    __enable_irq();
+}
 /* USER CODE END 0 */
 
 /**
@@ -109,7 +117,35 @@ int main(void) {
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
     /* USER CODE BEGIN 2 */
-    PikaObj* PikaMain = pikaScriptInit();
+    char *code = (char *)FLASH_CODE_START_ADDR;
+    PikaObj* pikaMain;
+    uint16_t codeOffset = 0;
+    if( code[0] != NULL ){
+        /* boot from flash */
+        pikaMain = newRootObj("pikaMain", New_PikaMain);
+        obj_run(pikaMain, "uart.init()");
+        obj_run(pikaMain, "uart.setId(1)");
+        obj_run(pikaMain, "uart.setBaudRate(115200)");
+        obj_run(pikaMain, "uart.enable()");
+        obj_run(pikaMain, "print('[info]: boot from flash.')");
+        while(1){
+            char lineBuff[64] = {0};
+            char *codePointer = code + codeOffset;
+            char *line = strGetFirstToken(lineBuff, codePointer, '\n');
+            codeOffset += strGetSize(line) + 1;
+            
+            obj_run(pikaMain, line);
+            /* not any line in code */
+            if( !strIsContain(codePointer, '\n') ){
+                break;
+            }
+        }
+        obj_run(pikaMain, "");
+    }
+    else{
+        /* boot from function */
+        pikaMain = pikaScriptInit();
+    }
     /* USER CODE END 2 */
 
     /* Infinite loop */
