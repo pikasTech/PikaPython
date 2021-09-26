@@ -4,23 +4,6 @@
 #include "STM32_common.h"
 #include "dataStrs.h"
 
-#define RX_BUFF_LENGTH 64
-
-struct CodeHeap{
-    char *content;
-    uint32_t size;
-    uint8_t ena;
-    uint32_t reciveTime;
-}codeHeap;
-
-typedef struct {
-    UART_HandleTypeDef huart;
-    uint8_t id;
-    char rxBuff[RX_BUFF_LENGTH];
-    uint16_t rxBuffOffset;
-    PikaObj* obj;
-} pika_uart_t;
-
 #ifdef UART1_EXIST
 pika_uart_t pika_uart1;
 #endif
@@ -354,10 +337,7 @@ void USART3_4_IRQHandler(void) {
 #endif
 
 void STM32_UART_platformEnable(PikaObj* self, int baudRate, int id) {
-    codeHeap.size = 0;
-    codeHeap.content = pikaMalloc(codeHeap.size + 1);
-    codeHeap.ena = 0;
-    
+    STM32_Code_Init();
     setUartObj(id, self);
     UART_HandleTypeDef* huart = getUartHandle(id);
     huart->Instance = getUartInstance(id);
@@ -388,8 +368,8 @@ char* STM32_UART_platformRead(PikaObj* self, int id, int length) {
     memcpy(pika_uart->rxBuff, pika_uart->rxBuff + length,
            pika_uart->rxBuffOffset - length);
     pika_uart->rxBuffOffset -= length;
-    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0; 
-    
+    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
+
     UART_Start_Receive_IT(
         &pika_uart->huart,
         (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
@@ -402,68 +382,38 @@ void STM32_UART_platformWrite(PikaObj* self, char* data, int id) {
     HAL_UART_Transmit(getUartHandle(id), (uint8_t*)data, strGetSize(data), 100);
 }
 
+void STM32_UART_clearRxBuff(pika_uart_t* pika_uart) {
+    pika_uart->rxBuffOffset = 0;
+    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
+    UART_Start_Receive_IT(
+        &pika_uart->huart,
+        (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+}
+
 /* Recive Interrupt Handler */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
-    char *oldContent;  
-    uint32_t oldSize;    
     uint8_t id = getUartId(huart);
     pika_uart_t* pika_uart = getPikaUart(id);
     char inputChar = pika_uart->rxBuff[pika_uart->rxBuffOffset];
-    
-    if(id == 1){
-        
-        if( '\n' == inputChar){
-            if( 1 == codeHeap.ena){
-                codeHeap.reciveTime = uwTick;
-                oldContent = codeHeap.content;
-                oldSize = codeHeap.size;
-                uint16_t rxSize = pika_uart->rxBuffOffset + 1;
-                codeHeap.size += rxSize;
-                codeHeap.content = pikaMalloc(codeHeap.size + 1);
-                memcpy(codeHeap.content, oldContent, oldSize);
-                memcpy(codeHeap.content + oldSize, pika_uart->rxBuff, rxSize);
-                pikaFree(oldContent, oldSize + 1);
-                codeHeap.content[codeHeap.size] = 0;
-                
-                pika_uart->rxBuffOffset = 0;
-                pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0; 
-                
-                UART_Start_Receive_IT(
-                    &pika_uart->huart,
-                    (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-                goto exit;   
-            }
-            if( 0 == codeHeap.ena ){
-                char buff[RX_BUFF_LENGTH] = {0};
-                char *strLine = strGetLastLine(buff, pika_uart->rxBuff);
-                if( strIsStartWith(strLine, "import ") ){
-                    codeHeap.reciveTime = uwTick;                    
-                    codeHeap.ena = 1;
-                    
-                    pika_uart->rxBuffOffset = 0;
-                    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0; 
-                    UART_Start_Receive_IT(
-                        &pika_uart->huart,
-                        (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-                    goto exit;
-                }
-            }
+
+    if ((id == 1) && ('\n' == inputChar)) {
+        uint8_t res = STM32_Code_reciveHandler(pika_uart->rxBuff,
+                                               pika_uart->rxBuffOffset + 1);
+        /* handler is working */
+        if (0 != res) {
+            STM32_UART_clearRxBuff(pika_uart);
+            return;
         }
-         
     }
 
-    /* avoid recive buff overflow */
+    /* recive next char, avoid recive buff overflow */
     if (pika_uart->rxBuffOffset + 2 < RX_BUFF_LENGTH) {
         pika_uart->rxBuffOffset++;
         pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
     }
+
     UART_Start_Receive_IT(
         huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-
-    
-    goto exit;
-exit:
-    return;
 }
 
 /* support prinf */
