@@ -36,7 +36,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 ### (2)开发环境
 支持串口下载Python脚本。
 
-![Hnet-image](https://user-images.githubusercontent.com/88232613/134841230-85de6734-8467-4245-93a5-d452b5022b42.gif)
+<img src="https://user-images.githubusercontent.com/88232613/134841230-85de6734-8467-4245-93a5-d452b5022b42.gif" width="400" alt="微信交流群"/><br/>
 
 支持Keil、IAR、rt-thread studio、segger embedded studio等IDE开发。
 
