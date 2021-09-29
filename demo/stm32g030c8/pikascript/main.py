@@ -7,15 +7,14 @@ uart = STM32.UART()
 adc = STM32.ADC()
 pin = STM32.GPIO()
 pwm = STM32.PWM()
-
 uart = STM32.UART()
+rgb = PikaPiZero.RGB()
+mem = PikaStdLib.MemChecker()
+
 uart.init()
 uart.setId(1)
 uart.setBaudRate(115200)
 uart.enable()
-
-rgb = PikaPiZero.RGB()
-mem = PikaStdLib.MemChecker()
 
 rgb.init()
 rgb.enable()
