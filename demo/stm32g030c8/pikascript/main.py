@@ -13,7 +13,6 @@ uart.init()
 uart.setId(1)
 uart.setBaudRate(115200)
 uart.enable()
-print('[info]: boot from firmware.')
 
 rgb = PikaPiZero.RGB()
 mem = PikaStdLib.MemChecker()
