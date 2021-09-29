@@ -5,6 +5,7 @@
 
 #include "PikaObj.h"
 #include <stdarg.h>
+#include "BaseObj.h"
 #include "PikaBlock.h"
 #include "PikaIf.h"
 #include "PikaInvoke.h"
@@ -511,7 +512,8 @@ Args* getRightRes(PikaObj* self, char* cmd) {
     }
     res = New_args(NULL);
     args_setSysOut(res, "");
-    int err = obj_getAnyArg(self, "return", cmd, res);
+    char* value = cmd;
+    int err = obj_getAnyArg(self, "return", value, res);
     if (err != 0) {
         args_setSysOut(res, "[error] get value faild.");
         args_setErrorCode(res, 1);
@@ -614,15 +616,29 @@ Args* obj_runDirect(PikaObj* self, char* cmd) {
         /* this line processed ok */
         goto exit;
     }
+    /* check class */
+    if (strIsContain(cmd, '(') && strIsContain(cmd, ')') &&
+        strIsContain(cmd, '=')) {
+        /* check class */
+        char* classCmd = strsGetCleanCmd(buffs, cmd);
+        char* newObj = strsGetFirstToken(buffs, classCmd, '=');
+        char* classPath = strsGetLastToken(buffs, classCmd, '=');
+        classPath = strsGetFirstToken(buffs, classPath, '(');
+        /* replace . with _ */
+        for (int i = 0; i < strGetSize(classPath); i++) {
+            if ('.' == classPath[i]) {
+                classPath[i] = '_';
+            }
+        }
+        if (0 == obj_newObj(self, newObj, classPath)) {
+            goto exit;
+        }
+    }
 
     /* run script */
     if (strIsContain(cmd, '(') && strIsContain(cmd, ')')) {
-        char * objectPath = strsGetFirstToken(buffs, cmd, '(');
-        char * firstObj = strsGetFirstToken(buffs, objectPath, '.');
-        if( obj_isArgExist(self, firstObj) ){
-            res = obj_runScript(self, cmd);
-            goto exit;
-        }
+        res = obj_runScript(self, cmd);
+        goto exit;
     }
 
     /* run script */
