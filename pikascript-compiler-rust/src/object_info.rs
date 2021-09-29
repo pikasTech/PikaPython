@@ -32,13 +32,17 @@ impl ObjectInfo {
             import_class_name: import_class_name,
         });
     }
-    pub fn new_object_fn(&self) -> String {
+    pub fn new_object_fn(&self, is_only_import: bool) -> String {
         let mut new_object_fn = String::new();
         let import_fn = format!(
             "    obj_import(self, \"{}\", New_{});\n",
             self.import_class_name, self.import_class_name
         );
         new_object_fn.push_str(&import_fn);
+        /* do not generate new object for pikaMain class */
+        if is_only_import {
+            return new_object_fn;
+        }
         let new_fn = format!(
             "    obj_newObj(self, \"{}\", \"{}\");\n",
             self.name, self.import_class_name
