@@ -8,6 +8,13 @@ adc = STM32.ADC()
 pin = STM32.GPIO()
 pwm = STM32.PWM()
 
+uart = STM32.UART()
+uart.init()
+uart.setId(1)
+uart.setBaudRate(115200)
+uart.enable()
+print('[info]: boot from firmware.')
+
 rgb = PikaPiZero.RGB()
 mem = PikaStdLib.MemChecker()
 
