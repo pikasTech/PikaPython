@@ -617,8 +617,12 @@ Args* obj_runDirect(PikaObj* self, char* cmd) {
 
     /* run script */
     if (strIsContain(cmd, '(') && strIsContain(cmd, ')')) {
-        res = obj_runScript(self, cmd);
-        goto exit;
+        char * objectPath = strsGetFirstToken(buffs, cmd, '(');
+        char * firstObj = strsGetFirstToken(buffs, objectPath, '.');
+        if( obj_isArgExist(self, firstObj) ){
+            res = obj_runScript(self, cmd);
+            goto exit;
+        }
     }
 
     /* run script */
