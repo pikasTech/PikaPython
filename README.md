@@ -1,7 +1,5 @@
 <img src="https://user-images.githubusercontent.com/88232613/132158500-f0818be9-29b2-48a1-b1e8-3216c3b686b0.jpg" width="400" alt="微信交流群"/><br/>
 
-# [点击获取PikaScript v0.7.0](https://github.com/mimilib/pikascript/releases/download/v0.7.0/pikascript.v0.7.0.zip)
-
 <img align="left" src="https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif" width="60" height="60"/>
 
 # 来颗Star求求了~ Star please~
