@@ -123,6 +123,7 @@ int main(void) {
     if( code[0] == 'i'){
         /* boot from flash */
         pikaMain = newRootObj("pikaMain", New_PikaMain);
+        obj_run(pikaMain, "uart = STM32.UART()");
         obj_run(pikaMain, "uart.init()");
         obj_run(pikaMain, "uart.setId(1)");
         obj_run(pikaMain, "uart.setBaudRate(115200)");
