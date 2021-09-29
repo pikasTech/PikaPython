@@ -126,7 +126,7 @@ int main(void) {
         obj_run(pikaMain, "uart = STM32.UART()");
         obj_run(pikaMain, "uart.init()");
         obj_run(pikaMain, "uart.setId(1)");
-        obj_run(pikaMain, "uart.setBaudRate(115200)");
+        obj_run(pikaMain, "uart.setBaudRat e(115200)");
         obj_run(pikaMain, "uart.enable()");
         obj_run(pikaMain, "print('[info]: boot from flash.')");
         while(1){
@@ -144,7 +144,7 @@ int main(void) {
         obj_run(pikaMain, "");
     }
     else{
-        /* boot from function */
+        /* boot from firmware */
         pikaMain = pikaScriptInit();
     }
     /* USER CODE END 2 */
