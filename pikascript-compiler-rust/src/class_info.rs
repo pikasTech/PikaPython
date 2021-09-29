@@ -127,8 +127,11 @@ impl ClassInfo {
             new_class_fn.push_str(&import_info.import_fn());
         }
 
-        for (_, object_info) in self.object_list.iter() {
-            new_class_fn.push_str(&object_info.new_object_fn());
+        /* do not generate new object for pikaMain class */
+        if self.this_class_name != "PikaMain" {
+            for (_, object_info) in self.object_list.iter() {
+                new_class_fn.push_str(&object_info.new_object_fn());
+            }
         }
 
         for (_, method_info) in self.method_list.iter() {
