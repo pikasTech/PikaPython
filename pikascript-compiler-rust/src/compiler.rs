@@ -41,10 +41,13 @@ impl Compiler {
             return compiler;
         }
         if line.contains("(") && line.contains(")") && line.contains("=") {
+            /* assert if is script */
             if Script::assert(class_now, &line) {
                 class_now.script_list.add(&line);
                 return compiler;
             }
+            /* is not a script, push as new object*/
+            class_now.script_list.add(&line); /* new object also push as script */
             class_now.push_object(line, &file_name);
             return compiler;
         }

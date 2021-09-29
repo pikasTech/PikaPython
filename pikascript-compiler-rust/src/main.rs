@@ -20,7 +20,7 @@ fn main() {
         File::create(format!("{}compiler-info.txt", compiler.dist_path)).unwrap();
     let compiler_info = format!("{:?}", compiler);
     compiler_info_file.write(compiler_info.as_bytes()).unwrap();
-    /* make the api.c file for each python class */
+    /* make the -api.c file for each python class */
     for (_, class_info) in compiler.class_list.iter() {
         let api_file_path = format!("{}{}-api.c", compiler.dist_path, class_info.this_class_name);
         let mut f = File::create(api_file_path).unwrap();
