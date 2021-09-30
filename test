@@ -1,4 +1,4 @@
-rm build/src/test/pikascript_test
+rm build/coreDevelopment/test/pikascript_test
 sh make.sh
-build/src/test/pikascript_test 
-#build/src/test/pikascript_test --gtest_filter=args_*
+build/coreDevelopment/test/pikascript_test 
+#build/coreDevelopment/test/pikascript_test --gtest_filter=args_*
