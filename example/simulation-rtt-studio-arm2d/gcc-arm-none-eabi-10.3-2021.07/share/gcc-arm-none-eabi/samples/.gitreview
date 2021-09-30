@@ -1,0 +1,4 @@
+[gerrit]
+host=eu-gerrit-1.euhpc.arm.com
+port=29418
+project=dsg-gnu/infrastructure/samples
