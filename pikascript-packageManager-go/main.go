@@ -28,9 +28,9 @@ func main() {
 
 	if !pathExist {
 		/* clone the pikascript repo */
-		fmt.Printf("downloading pikascript to %s ...\n", path)
+		fmt.Printf("downloading pikascript to %s...\n", path)
 		fmt.Printf("need about 10 mins\n")
-		fmt.Printf("pleas wait...\n")
+		fmt.Printf("please wait...\n")
 		_, err = git.PlainClone(path, false, &git.CloneOptions{
 			URL:      "https://github.com.cnpmjs.org/pikastech/pikascript",
 			Progress: os.Stdout,
@@ -50,7 +50,7 @@ func main() {
 	fmt.Println(commit)
 
 	fmt.Println("update OK !")
-	for i := 3; i > 0; i-- {
+	for i := 3; i >= 0; i-- {
 		time.Sleep(1 * time.Second)
 		fmt.Println("this window will auto close after", i, "s...")
 	}
