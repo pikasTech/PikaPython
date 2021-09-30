@@ -2,72 +2,14 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
-	"sync"
 	"time"
 
 	"github.com/go-git/go-git/v5"
 )
 
-var waitGroup sync.WaitGroup
-var ch = make(chan struct{}, 255)
 var isShowSize = false
-
-func dirents(path string) ([]os.FileInfo, bool) {
-	entries, err := ioutil.ReadDir(path)
-	if err != nil {
-		return nil, false
-	}
-	return entries, true
-}
-
-//递归计算目录下所有文件
-func walkDir(path string, fileSize chan<- int64) {
-	defer waitGroup.Done()
-	ch <- struct{}{} //限制并发量
-	entries, ok := dirents(path)
-	<-ch
-	if !ok {
-		return
-	}
-	for _, e := range entries {
-		if e.IsDir() {
-			waitGroup.Add(1)
-			go walkDir(filepath.Join(path, e.Name()), fileSize)
-		} else {
-			fileSize <- e.Size()
-		}
-	}
-}
-
-func all_file(dir_path string) {
-
-	//文件大小chennel
-	fileSize := make(chan int64)
-	//文件总大小
-	var sizeCount int64
-	//文件数目
-	var fileCount int
-
-	//计算目录下所有文件占的大小总和
-	waitGroup.Add(1)
-	go walkDir(dir_path, fileSize)
-
-	go func() {
-		defer close(fileSize)
-		waitGroup.Wait()
-	}()
-
-	for size := range fileSize {
-		fileCount++
-		sizeCount += size
-	}
-
-	fmt.Printf("recived:\n")
-	fmt.Printf("%fM, %d\n", float64(sizeCount)/1024/1024, fileCount)
-}
 
 func PathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
@@ -80,20 +22,29 @@ func PathExists(path string) (bool, error) {
 	return false, err
 }
 
-func readFolderSize(path string) {
-	// t := time.Now()
-	dir_path := path
-	//all_file(dir_path)
-
+func readPathSize(path string) {
 	for {
 		if !isShowSize {
 			continue
 		}
-		all_file(dir_path)
+		size, _ := pathSize(path)
+		fmt.Printf("recived : %2f MB \n", float64(size)/1024/1024)
 		time.Sleep(time.Second)
 	}
+}
 
-	// fmt.Println("花费的时间为 " + time.Since(t).String())
+func pathSize(path string) (int64, error) {
+	var size int64
+	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			size += info.Size()
+		}
+		return err
+	})
+	return size, err
 }
 
 func updatePikascript(path string) {
@@ -138,7 +89,8 @@ func main() {
 	superPath := "/tmp"
 	path := "/pikascript"
 
-	go readFolderSize(superPath + path)
+	// go readFolderSize(superPath + path)
+	go readPathSize(superPath + path)
 
 	updatePikascript(superPath + path)
 }
