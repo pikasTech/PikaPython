@@ -8,8 +8,8 @@
             "name": "test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/../build/src/test/pikascript_test",
-            // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
+            "program": "${workspaceFolder}/../build/coreDevelopment/test/pikascript_test",
+            // "program": "${workspaceFolder}/../build/coreDevelopment/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=object_test.test2"
                 // "--gtest_filter=block.init"
@@ -36,7 +36,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/src/test/pikascript_test",
+            "program": "${workspaceFolder}/build/coreDevelopment/test/pikascript_test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
