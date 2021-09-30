@@ -1,0 +1,2 @@
+--create stm32g030c8\RGB_ASM.lib
+stm32g030c8\rgb_asm.o
