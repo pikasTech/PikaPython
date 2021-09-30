@@ -1,2 +1,0 @@
-# pikascript-compiler-rust
-
