@@ -29,7 +29,7 @@ func main() {
 	if !pathExist {
 		/* clone the pikascript repo */
 		fmt.Printf("downloading pikascript to %s...\n", path)
-		fmt.Printf("need about 10 mins\n")
+		fmt.Printf("need about 10 min(s)\n")
 		fmt.Printf("please wait...\n")
 		_, err = git.PlainClone(path, false, &git.CloneOptions{
 			URL:      "https://github.com.cnpmjs.org/pikastech/pikascript",
