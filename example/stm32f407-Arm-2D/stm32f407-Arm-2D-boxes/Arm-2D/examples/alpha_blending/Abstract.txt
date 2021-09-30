@@ -1,0 +1,33 @@
+The 'Blinky' project is a simple demo program for
+ARM 'Cortex-M4' microcontroller using ARM 'V2M-MPS2' Evaluation Board.
+Compliant to Cortex Microcontroller Software Interface Standard (CMSIS).
+
+Example functionality:
+ - Clock Settings:
+   - XTAL  =  50 MHz
+   - CCLK  =  25 MHz
+
+ - Timer0 is used in interrupt mode
+ - LEDs are blinking with speed depending on Timer0 interrupt period
+ - colour GLCD display shows
+   - init message
+   - Button status
+   - LED status
+   - Touch status
+ - 'Hello World' is output onto serial port USART0
+   - USART0 settings: 115200 baud, 8 data bits, no parity, 1 stop bit
+
+
+The Blinky program is available in different targets:
+
+  Simulator:      configured for software Simulator
+
+  FastModels:     configured for FastModels MPS2 Simulator
+  
+  V2M-MPS2:       configured for MPS2 (uses ULINK2 as debugger)
+
+  V2M-MPS2 SWO:   configured for MPS2 (uses ULINK2 as debugger)
+                  shows use of ITM output, Exception Trace
+
+  V2M-MPS2 Trace: configured for MPS2 (uses ULINKpro as debugger)
+                  shows use of 4bit Trace (use CoreSight 20 connector)

@@ -1,0 +1,55 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "test",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/../build/src/test/pikascript_test",
+            // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
+            "args": [
+                // "--gtest_filter=object_test.test2"
+                // "--gtest_filter=block.init"
+                "--gtest_filter=block.ifrun2"
+                // "--gtest_filter=sysObj.print"
+                // "--gtest_filter=object_test.a_b"
+                // "--gtest_filter=object_test.voidRun"
+                // "--gtest_filter=object_test.printa"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+        },
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/src/test/pikascript_test",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
