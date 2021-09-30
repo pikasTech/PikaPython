@@ -67,15 +67,15 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 ### (6)开发手册
 
-[1. PikaScript-三分钟快速上手](doc/1.三分钟快速上手.md)
+[1. PikaScript-三分钟快速上手](document/1.三分钟快速上手.md)
 
 [2. PikaScript-架构与原理](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
 
-[3. PikaScript-十分钟快速部署](doc/2.十分钟快速部署.md)
+[3. PikaScript-十分钟快速部署](document/2.十分钟快速部署.md)
 
-[4. PikaScript-标准开发流程](doc/3.PikaScript标准开发流程.md)
+[4. PikaScript-标准开发流程](document/3.PikaScript标准开发流程.md)
 
-[5. PikaScript-Demo展示](doc/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
+[5. PikaScript-Demo展示](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
 ### (7)架构示意图
 
 <img src="https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png" width="800" alt="微信交流群"/><br/>
