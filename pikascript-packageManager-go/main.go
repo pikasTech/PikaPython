@@ -52,7 +52,6 @@ func updatePikascript(path string) {
 	if err != nil {
 		fmt.Printf("PathExists(%s),err(%v)\n", path, err)
 	}
-
 	if !pathExist {
 		/* clone the pikascript repo */
 		fmt.Printf("downloading pikascript to %s...\n", path)
