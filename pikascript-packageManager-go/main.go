@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/go-git/go-git/v5"
 )
@@ -42,9 +43,15 @@ func main() {
 	/* pull the pikascript repo */
 	r, _ := git.PlainOpen(path)
 	w, _ := r.Worktree()
-	fmt.Println("updateing pikascript...")
+	fmt.Println("updating pikascript...")
 	w.Pull(&git.PullOptions{RemoteName: "origin"})
 	ref, _ := r.Head()
 	commit, _ := r.CommitObject(ref.Hash())
 	fmt.Println(commit)
+
+	fmt.Println("update OK !")
+	for i := 3; i > 0; i-- {
+		time.Sleep(1 * time.Second)
+		fmt.Println("this window will auto close after", i, "s...")
+	}
 }
