@@ -1,2 +1,2 @@
-# pikascript-compiler-rust
+# pikaCompiler
 
