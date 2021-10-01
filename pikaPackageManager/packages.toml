@@ -1,26 +1,22 @@
 [[packages]]
 name = "STM32"
 releases = [
-  "latest c4f0d45aec94e155998c110fbfb64f17c54f7766",
 ]
 
 [[packages]]
 name = "pikaStdLib"
 releases = [
-  "latest c4f0d45aec94e155998c110fbfb64f17c54f7766",
   "v1.0.1 c4f0d45aec94e155998c110fbfb64f17c54f7766",
 ]
 
 [[packages]]
 name = "pikaStdDevice"
 releases = [
-  "latest c4f0d45aec94e155998c110fbfb64f17c54f7766",
   "v1.3.0 c4f0d45aec94e155998c110fbfb64f17c54f7766",
 ]
 
 [[packages]]
 name = "pikascript-core"
 releases = [
-  "latest c4f0d45aec94e155998c110fbfb64f17c54f7766",
   "v0.8.1 c4f0d45aec94e155998c110fbfb64f17c54f7766",
 ]
