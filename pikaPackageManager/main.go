@@ -12,25 +12,6 @@ import (
 	"github.com/go-git/go-git/v5"
 )
 
-func main() {
-	superPath := "/tmp"
-	path := "/pikascript"
-
-	go readPathSize(superPath + path)
-	updatePikascript(superPath + path)
-
-	_, _ = getPackages(superPath + path)
-	fmt.Printf("\n")
-	_, _ = getRequestment("requestment.txt")
-	fmt.Printf("\n")
-
-	fmt.Println("update OK !")
-	for i := 3; i >= 0; i-- {
-		time.Sleep(1 * time.Second)
-		fmt.Println("this window will auto close after", i, "s...")
-	}
-}
-
 var isShowSize = false
 
 type Requerment_t struct {
@@ -47,6 +28,79 @@ type Package_t struct {
 
 type Config_t struct {
 	Packages []Package_t
+}
+
+func getMatchedPackage(requerment Requerment_t, packages []Package_t) (Package_t, bool) {
+	var pkg Package_t
+	for _, pkg = range packages {
+		if requerment.Name == pkg.Name {
+			return pkg, true
+		}
+	}
+	return pkg, false
+}
+
+func getMatchedCommit(requestVersion string, pkg Package_t) (string, bool) {
+	for i, packageVersion := range pkg.ReleasesName {
+		if packageVersion == requestVersion {
+			return pkg.ReleasesCommit[i], true
+		}
+		if "latest" == requestVersion {
+			return "master", true
+		}
+	}
+	return "", false
+}
+
+func matchRequestments(packages []Package_t, requerments []Requerment_t) bool {
+	for _, requerment := range requerments {
+		pkg, res := getMatchedPackage(requerment, packages)
+		if !res {
+			fmt.Printf("[error]: match package for %s faild.\n", requerment.Name)
+			return false
+		}
+		commit, res := getMatchedCommit(requerment.Version, pkg)
+		if !res {
+			fmt.Printf("[error]: match commit for %s faild.\n", requerment.Name)
+			return false
+		}
+		fmt.Printf("matched: %s %s\n", pkg.Name, commit)
+	}
+	return true
+}
+
+func main() {
+	superPath := "/tmp"
+	path := "/pikascript"
+
+	go readPathSize(superPath + path)
+	updatePikascript(superPath + path)
+
+	packages, res := getPackages(superPath + path)
+	if !res {
+		fmt.Printf("[error]: get package info faild.\n")
+		return
+	}
+	fmt.Printf("\n")
+
+	requerments, res := getRequestment("requestment.txt")
+	if !res {
+		fmt.Printf("[error]: get requerment info faild.\n")
+		return
+	}
+	fmt.Printf("\n")
+
+	res = matchRequestments(packages, requerments)
+	if !res {
+		fmt.Printf("[error]: match requestment faild.\n")
+		return
+	}
+
+	fmt.Println("update OK !")
+	for i := 3; i >= 0; i-- {
+		time.Sleep(1 * time.Second)
+		fmt.Println("this window will auto close after", i, "s...")
+	}
 }
 
 func getRequestment(path string) ([]Requerment_t, bool) {
@@ -74,7 +128,7 @@ func getPackages(path string) ([]Package_t, bool) {
 		fmt.Println(err)
 		return config.Packages, false
 	}
-	for _, pkg := range config.Packages {
+	for i_package, pkg := range config.Packages {
 		fmt.Printf("found package: %s\n", pkg.Name)
 		i := 0
 		for _, release := range pkg.Releases {
@@ -83,6 +137,7 @@ func getPackages(path string) ([]Package_t, bool) {
 			fmt.Printf("    release: %s %s\n", pkg.ReleasesName[i], pkg.ReleasesCommit[i])
 			i++
 		}
+		config.Packages[i_package] = pkg
 	}
 	return config.Packages, true
 }
