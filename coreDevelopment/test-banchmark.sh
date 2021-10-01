@@ -1,4 +1,4 @@
-rm build/coreDevelopment/boot/banchmark/pikascript_banchmark
+rm build/boot/banchmark/pikascript_banchmark
 
 sh make.sh
-build/coreDevelopment/boot/banchmark/pikascript_banchmark
+build/boot/banchmark/pikascript_banchmark

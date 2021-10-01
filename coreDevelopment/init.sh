@@ -1,12 +1,12 @@
 ROOT=$PWD
-git submodule init
-git submodule update
+# git submodule init
+# git submodule update
 sh update-compiler.sh
-rm coreDevelopment/package/pikascript/pikascript-api -rf
-mkdir coreDevelopment/package/pikascript/pikascript-api
-touch coreDevelopment/package/pikascript/pikascript-api/path
-cd coreDevelopment/package/pikascript/pikascript-core
-git checkout master
+rm package/pikascript/pikascript-api -rf
+mkdir package/pikascript/pikascript-api
+touch package/pikascript/pikascript-api/path
+cd package/pikascript/pikascript-core
+# git checkout master
 cd $ROOT
 rm build -rf
 mkdir build
