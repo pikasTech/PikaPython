@@ -1,1 +1,0 @@
-/usr/bin/cc -g  -rdynamic CMakeFiles/pikascript_demo01-led.dir/main.c.o  -o pikascript_demo01-led  ../../package/pikascript/libpikascript-core.a 
