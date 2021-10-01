@@ -1,9 +1,18 @@
 Package = "STM32"
 
-[dependencies]
-    [dependencies.pikascript-core]
-        version = "latest"
-    [dependencies.pikaStdLib]
-        version = "latest"
-    [dependencies.pikaStdDevices]
-        version = "latest"
+[[release]]
+version = "v1.0.0"
+commit = "7c8b314a10a8e59931145945e2664e8c95fae301"
+[[release]]
+version = "latest"
+commit = "7c8b314a10a8e59931145945e2664e8c95fae301"
+
+[[dependence]]
+name = "pikascript-core"
+version = "v0.8.1"
+[[dependence]]
+name = "pikaStdLib"
+version = "v1.0.1"
+[[dependence]]
+name = "pikaStdDevices"
+version = "v1.3.0"
