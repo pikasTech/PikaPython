@@ -1,7 +1,7 @@
 *.depend
 *.layout
 /build
-/src/package/pikascript/pikascript-api
+/coreDevelopment/package/pikascript/pikascript-api
 *__pycache__
 *bin/
 *obj/
