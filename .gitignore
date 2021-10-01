@@ -2,6 +2,7 @@
 *.layout
 /coreDevelopment/build
 /coreDevelopment/package/pikascript/pikascript-api
+/pikaPackageManager/*.exe
 *__pycache__
 *bin/
 *obj/
