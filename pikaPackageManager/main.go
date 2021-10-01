@@ -11,15 +11,14 @@ import (
 
 var isShowSize = false
 
-func PathExists(path string) (bool, error) {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return false, err
+func main() {
+	superPath := "/tmp"
+	path := "/pikascript"
+
+	// go readFolderSize(superPath + path)
+	go readPathSize(superPath + path)
+
+	updatePikascript(superPath + path)
 }
 
 func readPathSize(path string) {
@@ -31,20 +30,6 @@ func readPathSize(path string) {
 		fmt.Printf("recived : %2f MB \n", float64(size)/1024/1024)
 		time.Sleep(time.Second)
 	}
-}
-
-func pathSize(path string) (int64, error) {
-	var size int64
-	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() {
-			size += info.Size()
-		}
-		return err
-	})
-	return size, err
 }
 
 func updatePikascript(path string) {
@@ -84,12 +69,27 @@ func updatePikascript(path string) {
 	}
 }
 
-func main() {
-	superPath := "/tmp"
-	path := "/pikascript"
+func PathExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
 
-	// go readFolderSize(superPath + path)
-	go readPathSize(superPath + path)
-
-	updatePikascript(superPath + path)
+func pathSize(path string) (int64, error) {
+	var size int64
+	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			size += info.Size()
+		}
+		return err
+	})
+	return size, err
 }
