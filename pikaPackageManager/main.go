@@ -12,29 +12,27 @@ import (
 
 var isShowSize = false
 
-type Config struct {
-	Package      string
-	Dependencies map[string]Dependence
+type Dependence_t struct {
+	Name    string
+	Version string
 }
 
-type Dependence struct {
-	Version string
+type Config_t struct {
+	Dependences []string
 }
 
 func main() {
 	superPath := "/tmp"
 	path := "/pikascript"
 
-	var config Config
+	var config Config_t
 	if _, err := toml.DecodeFile("pikaScript.toml", &config); err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Printf("package: %s\n", config.Package)
-
-	for dependenceName, dependence := range config.Dependencies {
-		fmt.Printf("dependencies: %s %s\n", dependenceName, dependence.Version)
+	for _, dependence := range config.Dependences {
+		fmt.Printf("dependence: %s\n", dependence)
 	}
 
 	go readPathSize(superPath + path)
