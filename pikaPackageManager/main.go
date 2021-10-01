@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/BurntSushi/toml"
@@ -13,7 +14,7 @@ import (
 
 var isShowSize = false
 
-type Dependence_t struct {
+type Requerment_t struct {
 	Name    string
 	Version string
 }
@@ -46,16 +47,22 @@ func main() {
 	}
 }
 
-func getRequestment(path string) {
+func getRequestment(path string) ([]Requerment_t, bool) {
+	var requestments []Requerment_t
 	requestment_file, _ := os.Open(path)
 	defer requestment_file.Close()
 	scanner := bufio.NewScanner(requestment_file)
 	var count int
 	for scanner.Scan() {
+		var requerment Requerment_t
 		count++
 		line := scanner.Text()
-		fmt.Printf("request: %s\n", line)
+		requerment.Name = strings.Split(line, "==")[0]
+		requerment.Version = strings.Split(line, "==")[1]
+		fmt.Printf("request: %s %s\n", requerment.Name, requerment.Version)
+		requestments = append(requestments, requerment)
 	}
+	return requestments, true
 }
 
 func getPackages(path string) (Config_t, bool) {
