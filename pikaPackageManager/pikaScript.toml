@@ -1,0 +1,9 @@
+Package = "STM32"
+
+[dependencies]
+    [dependencies.pikascript-core]
+        version = "latest"
+    [dependencies.pikaStdLib]
+        version = "latest"
+    [dependencies.pikaStdDevices]
+        version = "latest"

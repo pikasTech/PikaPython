@@ -22,6 +22,7 @@ require (
 )
 
 require (
+	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/Microsoft/go-winio v0.4.16 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 // indirect
 	github.com/acomagu/bufpipe v1.0.3 // indirect

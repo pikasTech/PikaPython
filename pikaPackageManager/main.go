@@ -6,19 +6,40 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"github.com/go-git/go-git/v5"
 )
 
 var isShowSize = false
 
+type Config struct {
+	Package      string
+	Dependencies map[string]Dependence
+}
+
+type Dependence struct {
+	Version string
+}
+
 func main() {
 	superPath := "/tmp"
 	path := "/pikascript"
 
-	// go readFolderSize(superPath + path)
-	go readPathSize(superPath + path)
+	var config Config
+	if _, err := toml.DecodeFile("pikaScript.toml", &config); err != nil {
+		fmt.Println(err)
+		return
+	}
 
+	fmt.Printf("package: %s\n", config.Package)
+
+	for dependenceName, dependence := range config.Dependencies {
+		fmt.Printf("dependencies: %s %s\n", dependenceName, dependence.Version)
+	}
+
+	go readPathSize(superPath + path)
 	updatePikascript(superPath + path)
+
 }
 
 func readPathSize(path string) {
