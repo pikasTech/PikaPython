@@ -243,12 +243,12 @@ sh make.sh # 编译项目
 
 step3: 运行单元测试
 ``` shell	
-sh test
+sh test.sh
 ```
 
 step4: 运行基准测试
 ``` shell
-sh test-banchmark
+sh test-banchmark.sh
 ```
 
 step5: 运行demo
