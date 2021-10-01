@@ -39,7 +39,7 @@ func main() {
 	for _, pkg := range config.Packages {
 		fmt.Printf("package: %s\n", pkg.Name)
 		for _, release := range pkg.Releases {
-			fmt.Printf("\trelease: %s\n", release)
+			fmt.Printf("    release: %s\n", release)
 		}
 	}
 
