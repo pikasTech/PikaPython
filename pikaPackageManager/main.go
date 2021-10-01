@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -30,22 +31,46 @@ func main() {
 	superPath := "/tmp"
 	path := "/pikascript"
 
-	var config Config_t
-	if _, err := toml.DecodeFile("packages.toml", &config); err != nil {
-		fmt.Println(err)
-		return
-	}
+	go readPathSize(superPath + path)
+	updatePikascript(superPath + path)
 
+	getPackages(superPath + path)
+	fmt.Printf("\n")
+	getRequestment("requestment.txt")
+	fmt.Printf("\n")
+
+	fmt.Println("update OK !")
+	for i := 3; i >= 0; i-- {
+		time.Sleep(1 * time.Second)
+		fmt.Println("this window will auto close after", i, "s...")
+	}
+}
+
+func getRequestment(path string) {
+	requestment_file, _ := os.Open(path)
+	defer requestment_file.Close()
+	scanner := bufio.NewScanner(requestment_file)
+	var count int
+	for scanner.Scan() {
+		count++
+		line := scanner.Text()
+		fmt.Printf("request: %s\n", line)
+	}
+}
+
+func getPackages(path string) (Config_t, bool) {
+	var config Config_t
+	if _, err := toml.DecodeFile(path+"/pikaPackageManager/packages.toml", &config); err != nil {
+		fmt.Println(err)
+		return config, false
+	}
 	for _, pkg := range config.Packages {
 		fmt.Printf("found package: %s\n", pkg.Name)
 		for _, release := range pkg.Releases {
 			fmt.Printf("    release: %s\n", release)
 		}
 	}
-
-	go readPathSize(superPath + path)
-	updatePikascript(superPath + path)
-
+	return config, true
 }
 
 func readPathSize(path string) {
@@ -89,11 +114,7 @@ func updatePikascript(path string) {
 	fmt.Println(commit)
 
 	isShowSize = false
-	fmt.Println("update OK !")
-	for i := 3; i >= 0; i-- {
-		time.Sleep(1 * time.Second)
-		fmt.Println("this window will auto close after", i, "s...")
-	}
+
 }
 
 func PathExists(path string) (bool, error) {
