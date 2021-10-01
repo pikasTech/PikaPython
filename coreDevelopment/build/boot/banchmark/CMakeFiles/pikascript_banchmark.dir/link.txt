@@ -1,0 +1,1 @@
+/usr/bin/cc -g  -rdynamic CMakeFiles/pikascript_banchmark.dir/main.c.o  -o pikascript_banchmark  ../../package/pikascript/libpikascript-core.a 

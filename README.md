@@ -232,7 +232,7 @@ PikaScript为开发者准备了丰富的Demo和由浅入深的开发指南，指
 step1: 拉取项目
 ``` shell
 git clone https://github.com/mimilib/pikascript
-cd pikascript
+cd pikascript/coreDevelopment
 ```
 
 step2: 编译项目

@@ -1,0 +1,1 @@
+/usr/bin/cc -g  -rdynamic CMakeFiles/pikascript_demo02-add.dir/main.c.o  -o pikascript_demo02-add  ../../package/pikascript/libpikascript-core.a 
