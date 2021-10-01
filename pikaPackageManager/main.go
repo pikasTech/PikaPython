@@ -37,7 +37,7 @@ func main() {
 	}
 
 	for _, pkg := range config.Packages {
-		fmt.Printf("package: %s\n", pkg.Name)
+		fmt.Printf("found package: %s\n", pkg.Name)
 		for _, release := range pkg.Releases {
 			fmt.Printf("    release: %s\n", release)
 		}
