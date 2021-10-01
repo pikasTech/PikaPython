@@ -59,6 +59,7 @@ func getRequestment(path string) ([]Requerment_t, bool) {
 		var requerment Requerment_t
 		count++
 		line := scanner.Text()
+		line = strings.ReplaceAll(line, " ", "")
 		requerment.Name = strings.Split(line, "==")[0]
 		requerment.Version = strings.Split(line, "==")[1]
 		fmt.Printf("request: %s %s\n", requerment.Name, requerment.Version)
