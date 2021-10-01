@@ -13,6 +13,16 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
+## 文件目录
+coreDevelopment - 内核开发
+
+document - 开发文档
+
+example - 示例工程
+
+pikaCompiler - 使用rust编写的预编译器
+
+pikaPacakgeManager - 使用go编写的模块管理器
 
 # 2.驱动适配进度
 | Device  | PikaPi Zero | STM32 G030C8 | STM32 G070CB | STM32 F103C8 |
@@ -110,8 +120,38 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
 
+# 7.内核测试与开发
 
-# 7.Demo展示：我就要用最便宜的单片机来跑python，还要用MDK开发，怎么地吧！
+## linux下测试pikascript内核(推荐ubuntu20.04)：
+
+step1: 拉取项目
+``` shell
+git clone https://github.com/pikastech/pikascript
+cd pikascript/coreDevelopment
+```
+
+step2: 编译项目
+```
+sh init.sh # 第一次编译前运行，之后就不用运行了 
+sh make.sh # 编译项目
+```
+
+step3: 运行单元测试
+``` shell	
+sh test.sh
+```
+
+step4: 运行基准测试
+``` shell
+sh test-banchmark.sh
+```
+
+step5: 运行demo
+``` shell
+./build/coreDevelopment/boot/demo06-pikamain/pikascript_demo06-pikamain
+```
+
+# 8.Demo展示：我就要用最便宜的单片机来跑python，还要用MDK开发，怎么地吧！
 
 我就想用单片机跑个Python，得用linux虚拟机+交叉编译工具链+命令行编译micropython固件，还得用DfuSe工具烧录固件，烧录完还不能用C的调试器来调试。
 
@@ -225,34 +265,4 @@ PikaScript为开发者准备了丰富的Demo和由浅入深的开发指南，指
 ## 可以商用吗？
 当然！PikaScript采用MIT协议，允许修改和商用，但是要注意保留原作者的署名。
 
-# 6.内核测试与开发
-
-## linux下测试pikascript内核(推荐ubuntu20.04)：
-
-step1: 拉取项目
-``` shell
-git clone https://github.com/mimilib/pikascript
-cd pikascript/coreDevelopment
-```
-
-step2: 编译项目
-```
-sh init.sh # 第一次编译前运行，之后就不用运行了 
-sh make.sh # 编译项目
-```
-
-step3: 运行单元测试
-``` shell	
-sh test
-```
-
-step4: 运行基准测试
-``` shell
-sh test-banchmark
-```
-
-step5: 运行demo
-``` shell
-./build/coreDevelopment/boot/demo06-pikamain/pikascript_demo06-pikamain
-```
 
