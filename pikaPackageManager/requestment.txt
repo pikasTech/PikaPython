@@ -1,0 +1,4 @@
+pikascript-core == v0.8.1
+pikaStdLib == v1.0.1
+pikaStdDevice == v1.3.0
+STM32 == latest
