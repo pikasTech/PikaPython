@@ -15,9 +15,13 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 ## 文件目录
 coreDevelopment - 内核开发
+
 document - 开发文档
+
 example - 示例工程
+
 pikaCompiler - 使用rust编写的预编译器
+
 pikaPacakgeManager - 使用go编写的模块管理器
 
 # 2.驱动适配进度
