@@ -3,6 +3,9 @@
 /coreDevelopment/build
 /coreDevelopment/package/pikascript/pikascript-api
 /pikaPackageManager/pikaPackage.exe
+/pikaPackageManager/pikascript-core
+/pikaPackageManager/pikascript-api
+/pikaPackageManager/pikascript-lib
 *__pycache__
 *bin/
 *obj/
