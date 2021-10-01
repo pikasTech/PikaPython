@@ -1,7 +1,7 @@
 [[packages]]
-name = "STM32"
+name = "pikascript-core"
 releases = [
-  "v1.0.0 c4f0d45aec94e155998c110fbfb64f17c54f7766",
+  "v0.8.1 c4f0d45aec94e155998c110fbfb64f17c54f7766",
 ]
 
 [[packages]]
@@ -17,7 +17,13 @@ releases = [
 ]
 
 [[packages]]
-name = "pikascript-core"
+name = "STM32"
 releases = [
-  "v0.8.1 c4f0d45aec94e155998c110fbfb64f17c54f7766",
+  "v1.0.0 c4f0d45aec94e155998c110fbfb64f17c54f7766",
+]
+
+[[packages]]
+name = "PikaPiZero"
+releases = [
+  "v1.0.0 c4f0d45aec94e155998c110fbfb64f17c54f7766",
 ]
