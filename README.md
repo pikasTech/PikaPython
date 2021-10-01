@@ -116,7 +116,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 step1: 拉取项目
 ``` shell
-git clone https://github.com/mimilib/pikascript
+git clone https://github.com/pikastech/pikascript
 cd pikascript/coreDevelopment
 ```
 
