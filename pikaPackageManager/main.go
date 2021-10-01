@@ -95,6 +95,7 @@ func main() {
 		fmt.Printf("[error]: match requestment faild.\n")
 		return
 	}
+	fmt.Printf("\n")
 
 	fmt.Println("update OK !")
 	for i := 3; i >= 0; i-- {
