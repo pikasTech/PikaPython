@@ -17,8 +17,13 @@ type Dependence_t struct {
 	Version string
 }
 
+type Package_t struct {
+	Name     string
+	Releases []string
+}
+
 type Config_t struct {
-	Dependences []string
+	Packages []Package_t
 }
 
 func main() {
@@ -26,13 +31,16 @@ func main() {
 	path := "/pikascript"
 
 	var config Config_t
-	if _, err := toml.DecodeFile("pikaScript.toml", &config); err != nil {
+	if _, err := toml.DecodeFile("packages.toml", &config); err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	for _, dependence := range config.Dependences {
-		fmt.Printf("dependence: %s\n", dependence)
+	for _, pkg := range config.Packages {
+		fmt.Printf("package: %s\n", pkg.Name)
+		for _, release := range pkg.Releases {
+			fmt.Printf("\trelease: %s\n", release)
+		}
 	}
 
 	go readPathSize(superPath + path)
