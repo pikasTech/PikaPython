@@ -10,10 +10,10 @@ void RGB_reset() {
     delay_us(50);
 }
 
-#define RED 0x000100
-#define GREEN 0x010000
-#define BLUE 0x000001
-#define WHITE 0x010101
+#define RED 0x000800
+#define GREEN 0x080000
+#define BLUE 0x000008
+#define WHITE 0x080808
 #define CUTDOWN 0x000000
 
 void RGB_setVoid() {
