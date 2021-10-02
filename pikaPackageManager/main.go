@@ -10,6 +10,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 )
 
 var isShowSize = false
@@ -70,9 +71,11 @@ func main() {
 
 func checkOutRequsetments(repo *git.Repository, requerments []Requerment_t) {
 	for _, requerment := range requerments {
-		w, _ := repo.Worktree()
+		workTree, _ := repo.Worktree()
 		fmt.Printf("checking out: %s\n", requerment.Commit)
-		err := w.Checkout(&git.CheckoutOptions{})
+		err := workTree.Checkout(&git.CheckoutOptions{
+			Hash: plumbing.NewHash(requerment.Commit),
+		})
 		CheckIfError(err)
 		fmt.Printf("updating : %s\n", requerment.Name)
 	}
