@@ -1,30 +1,30 @@
 [[packages]]
 name = "pikascript-core"
 releases = [
-  "v0.8.1 c4f0d45aec94e155998c110fbfb64f17c54f7766",
+  "v0.8.1 b9b1cab85731d44e8e3ce74619bde091a50b1d4f",
 ]
 
 [[packages]]
 name = "PikaStdLib"
 releases = [
-  "v1.0.1 c4f0d45aec94e155998c110fbfb64f17c54f7766",
+  "v1.0.1 b9b1cab85731d44e8e3ce74619bde091a50b1d4f",
 ]
 
 [[packages]]
 name = "PikaStdDevice"
 releases = [
-  "v1.3.0 c4f0d45aec94e155998c110fbfb64f17c54f7766",
+  "v1.3.0 b9b1cab85731d44e8e3ce74619bde091a50b1d4f",
 ]
 
 [[packages]]
 name = "STM32"
 releases = [
-  "v1.0.0 c4f0d45aec94e155998c110fbfb64f17c54f7766",
+  "v1.0.0 b9b1cab85731d44e8e3ce74619bde091a50b1d4f",
 ]
 
 [[packages]]
 name = "PikaPiZero"
 releases = [
-  "v1.0.0 c4f0d45aec94e155998c110fbfb64f17c54f7766",
-  "v1.0.1 08a61b00faa9a6caf6ba81532fa1530407a1406c",
+  "v1.0.0 b9b1cab85731d44e8e3ce74619bde091a50b1d4f",
+  "v1.0.1 b9b1cab85731d44e8e3ce74619bde091a50b1d4f,
 ]
