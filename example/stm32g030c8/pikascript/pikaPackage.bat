@@ -1,1 +1,0 @@
-\tmp\pikascript\pikaPackageManager\pikaPackage.exe
