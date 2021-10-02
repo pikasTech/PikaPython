@@ -73,6 +73,7 @@ func main() {
 func checkOutRequsetments(path string, repo *git.Repository, requerments []Requerment_t) {
 	exec.Command("cmd", "/C", "mkdir", "pikascript-lib").Run()
 	exec.Command("cmd", "/C", "mkdir", "pikascript-core").Run()
+	exec.Command("cmd", "/C", "mkdir", "pikascript-api").Run()
 	for _, requerment := range requerments {
 		/* checkout commit */
 		workTree, _ := repo.Worktree()
@@ -95,6 +96,8 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 		exec.Command("cmd", "/C", "mkdir", dirPath).Run()
 		fmt.Printf("cmd: %s", "copy"+" "+packagePath+" "+dirPath+"\n")
 		err = exec.Command("cmd", "/C", "copy", packagePath, dirPath).Run()
+		CheckIfError(err)
+		err = exec.Command("cmd", "/C", "copy", dirPath+"\\*.py").Run()
 		CheckIfError(err)
 	}
 }
