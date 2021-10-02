@@ -36,7 +36,7 @@ func main() {
 	path := "/pikascript"
 
 	go readPathSize(superPath + path)
-	updatePikascript(superPath + path)
+	repo := updatePikascript(superPath + path)
 
 	packages, res := getPackages(superPath + path)
 	if !res {
@@ -59,7 +59,7 @@ func main() {
 	}
 	fmt.Printf("\n")
 
-	checkOutRequsetments(superPath+path, requerments)
+	checkOutRequsetments(repo, requerments)
 
 	fmt.Println("update OK !")
 	for i := 3; i >= 0; i-- {
@@ -68,12 +68,23 @@ func main() {
 	}
 }
 
-func checkOutRequsetments(path string, requerments []Requerment_t) {
+func checkOutRequsetments(repo *git.Repository, requerments []Requerment_t) {
 	for _, requerment := range requerments {
-		fmt.Printf("checking out: %s %s\n", requerment.Name, requerment.Commit)
+		w, _ := repo.Worktree()
+		fmt.Printf("checking out: %s\n", requerment.Commit)
+		err := w.Checkout(&git.CheckoutOptions{})
+		CheckIfError(err)
+		fmt.Printf("updating : %s\n", requerment.Name)
 	}
 }
+func CheckIfError(err error) {
+	if err == nil {
+		return
+	}
 
+	fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
+	os.Exit(1)
+}
 func getMatchedPackage(requerment Requerment_t, packages []Package_t) (Package_t, bool) {
 	var pkg Package_t
 	for _, pkg = range packages {
