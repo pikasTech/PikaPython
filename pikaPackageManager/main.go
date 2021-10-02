@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -60,7 +61,7 @@ func main() {
 	}
 	fmt.Printf("\n")
 
-	checkOutRequsetments(repo, requerments)
+	checkOutRequsetments(superPath+path, repo, requerments)
 
 	fmt.Println("update OK !")
 	for i := 3; i >= 0; i-- {
@@ -69,7 +70,8 @@ func main() {
 	}
 }
 
-func checkOutRequsetments(repo *git.Repository, requerments []Requerment_t) {
+func checkOutRequsetments(path string, repo *git.Repository, requerments []Requerment_t) {
+	exec.Command("cmd", "/C", "mkdir", "pikascript-lib").Run()
 	for _, requerment := range requerments {
 		workTree, _ := repo.Worktree()
 		fmt.Printf("checking out: %s\n", requerment.Commit)
@@ -77,7 +79,15 @@ func checkOutRequsetments(repo *git.Repository, requerments []Requerment_t) {
 			Hash: plumbing.NewHash(requerment.Commit),
 		})
 		CheckIfError(err)
-		fmt.Printf("updating : %s\n", requerment.Name)
+		fmt.Printf("updating: %s\n", requerment.Name)
+		var packagePath string = path + "/package/" + requerment.Name
+		packagePath = strings.ReplaceAll(packagePath, "/", "\\")
+
+		var dirPath string = "pikascript-lib\\" + requerment.Name + "\\"
+		exec.Command("cmd", "/C", "mkdir", dirPath).Run()
+		fmt.Printf("cmd: %s", "copy"+" "+packagePath+" "+dirPath+"\n")
+		err = exec.Command("cmd", "/C", "copy", packagePath, dirPath).Run()
+		CheckIfError(err)
 	}
 }
 func CheckIfError(err error) {
@@ -86,7 +96,6 @@ func CheckIfError(err error) {
 	}
 
 	fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
-	os.Exit(1)
 }
 func getMatchedPackage(requerment Requerment_t, packages []Package_t) (Package_t, bool) {
 	var pkg Package_t
