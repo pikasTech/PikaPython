@@ -337,7 +337,9 @@ void USART3_4_IRQHandler(void) {
 #endif
 
 void STM32_UART_platformEnable(PikaObj* self, int baudRate, int id) {
+#ifdef Code_ENABLE    
     STM32_Code_Init();
+#endif
     setUartObj(id, self);
     UART_HandleTypeDef* huart = getUartHandle(id);
     huart->Instance = getUartInstance(id);
@@ -397,6 +399,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
     char inputChar = pika_uart->rxBuff[pika_uart->rxBuffOffset];
 
     if ((id == 1) && ('\n' == inputChar)) {
+#ifdef Code_ENABLE
         uint8_t res = STM32_Code_reciveHandler(pika_uart->rxBuff,
                                                pika_uart->rxBuffOffset + 1);
         /* handler is working */
@@ -404,6 +407,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
             STM32_UART_clearRxBuff(pika_uart);
             return;
         }
+#endif
     }
     /* avoid recive buff overflow */ 
     if (pika_uart->rxBuffOffset + 2 > RX_BUFF_LENGTH) {
