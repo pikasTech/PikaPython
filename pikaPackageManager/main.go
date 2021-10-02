@@ -72,18 +72,26 @@ func main() {
 
 func checkOutRequsetments(path string, repo *git.Repository, requerments []Requerment_t) {
 	exec.Command("cmd", "/C", "mkdir", "pikascript-lib").Run()
+	exec.Command("cmd", "/C", "mkdir", "pikascript-core").Run()
 	for _, requerment := range requerments {
+		/* checkout commit */
 		workTree, _ := repo.Worktree()
 		fmt.Printf("checking out: %s\n", requerment.Commit)
 		err := workTree.Checkout(&git.CheckoutOptions{
 			Hash: plumbing.NewHash(requerment.Commit),
 		})
 		CheckIfError(err)
-		fmt.Printf("updating: %s\n", requerment.Name)
+		/* update file */
 		var packagePath string = path + "/package/" + requerment.Name
+		var dirPath string = "pikascript-lib\\" + requerment.Name + "\\"
+		if requerment.Name == "pikascript-core" {
+			packagePath = path + "/coreDevelopment/package/pikascript/pikascript-core"
+			dirPath = "pikascript-core\\"
+		}
 		packagePath = strings.ReplaceAll(packagePath, "/", "\\")
 
-		var dirPath string = "pikascript-lib\\" + requerment.Name + "\\"
+		fmt.Printf("updating: %s\n", requerment.Name)
+
 		exec.Command("cmd", "/C", "mkdir", dirPath).Run()
 		fmt.Printf("cmd: %s", "copy"+" "+packagePath+" "+dirPath+"\n")
 		err = exec.Command("cmd", "/C", "copy", packagePath, dirPath).Run()
@@ -215,6 +223,11 @@ func updatePikascript(path string) *git.Repository {
 	fmt.Println(commit)
 
 	isShowSize = false
+
+	err = w.Checkout(&git.CheckoutOptions{
+		Hash: plumbing.NewHash("master"),
+	})
+	CheckIfError(err)
 
 	return repo
 }
