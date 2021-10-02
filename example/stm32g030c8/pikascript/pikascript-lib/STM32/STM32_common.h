@@ -32,6 +32,7 @@
 #define TIM14_EXIST
 #define TIM16_EXIST
 #define TIM17_EXIST
+#define Code_ENABLE
 #endif
 
 #define RX_BUFF_LENGTH 64
