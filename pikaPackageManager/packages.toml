@@ -26,4 +26,5 @@ releases = [
 name = "PikaPiZero"
 releases = [
   "v1.0.0 c4f0d45aec94e155998c110fbfb64f17c54f7766",
+  "v1.0.1 08a61b00faa9a6caf6ba81532fa1530407a1406c",
 ]
