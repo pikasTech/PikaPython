@@ -6,6 +6,7 @@
 /pikaPackageManager/pikascript-core
 /pikaPackageManager/pikascript-api
 /pikaPackageManager/pikascript-lib
+/pikaPackageManager/*.py
 *__pycache__
 *bin/
 *obj/
