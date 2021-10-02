@@ -13,6 +13,12 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
+## 微信交流群
+
+![微信截图_20210917133247](https://user-images.githubusercontent.com/88232613/133729804-e1d0406b-a859-4ebc-b335-477e9c03810e.png)
+
+### 群已经满啦，加我QQ拉你进群~ qq: 645275593
+
 ## 文件目录
 coreDevelopment - 内核开发
 
@@ -96,11 +102,7 @@ pikaPacakgeManager - 使用go编写的模块管理器
 
 # 5.交流与技术支持：
 
-## 微信交流群
 
-![微信截图_20210917133247](https://user-images.githubusercontent.com/88232613/133729804-e1d0406b-a859-4ebc-b335-477e9c03810e.png)
-
-### 群已经满啦，加我QQ拉你进群~ qq: 645275593
 
 ## Tencent QQ： 645275593
 
