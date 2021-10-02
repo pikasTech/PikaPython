@@ -1,4 +1,6 @@
+from typing import overload
 import PikaStdDevice
+
 
 class GPIO(PikaStdDevice.GPIO):
     # override
@@ -53,4 +55,17 @@ class UART(PikaStdDevice.UART):
 
     # override
     def platformRead(id: int, length: int) -> str:
+        pass
+
+class PWM(PikaStdDevice.PWM):
+    # override
+    def platformEnable(pin: str, freq: int, duty: float):
+        pass
+
+    # override
+    def platformSetFrequency(pin: str, freq: int):
+        pass
+
+    # override
+    def platformSetDuty(pin: str, duty: float):
         pass

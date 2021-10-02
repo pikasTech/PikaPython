@@ -7,6 +7,9 @@
 
 PikaObj * pikaScriptInit(){
     PikaObj * pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_run(pikaMain, "mem = PikaStdLib.MemChecker()");
+    obj_run(pikaMain, "time = STM32.Time()");
+    obj_run(pikaMain, "uart = STM32.UART()");
     obj_run(pikaMain, "uart.init()");
     obj_run(pikaMain, "uart.setBaudRate(115200)");
     obj_run(pikaMain, "uart.setId(1)");

@@ -1,3 +1,8 @@
+/*
+  Author: lyon
+  Tencent QQ: 645275593
+*/
+
 #ifndef _arg__H
 #define _arg__H
 #include "dataMemory.h"
