@@ -17,6 +17,7 @@ var isShowSize = false
 type Requerment_t struct {
 	Name    string
 	Version string
+	Commit  string
 }
 
 type Package_t struct {
@@ -28,6 +29,49 @@ type Package_t struct {
 
 type Config_t struct {
 	Packages []Package_t
+}
+
+func main() {
+	superPath := "/tmp"
+	path := "/pikascript"
+
+	go readPathSize(superPath + path)
+	updatePikascript(superPath + path)
+
+	packages, res := getPackages(superPath + path)
+	if !res {
+		fmt.Printf("[error]: get package info faild.\n")
+		return
+	}
+	fmt.Printf("\n")
+
+	requerments, res := getRequestment("requestment.txt")
+	if !res {
+		fmt.Printf("[error]: get requerment info faild.\n")
+		return
+	}
+	fmt.Printf("\n")
+
+	requerments, res = matchRequestments(packages, requerments)
+	if !res {
+		fmt.Printf("[error]: match requestment faild.\n")
+		return
+	}
+	fmt.Printf("\n")
+
+	checkOutRequsetments(superPath+path, requerments)
+
+	fmt.Println("update OK !")
+	for i := 3; i >= 0; i-- {
+		time.Sleep(1 * time.Second)
+		fmt.Println("this window will auto close after", i, "s...")
+	}
+}
+
+func checkOutRequsetments(path string, requerments []Requerment_t) {
+	for _, requerment := range requerments {
+		fmt.Printf("checking out: %s %s\n", requerment.Name, requerment.Commit)
+	}
 }
 
 func getMatchedPackage(requerment Requerment_t, packages []Package_t) (Package_t, bool) {
@@ -52,56 +96,22 @@ func getMatchedCommit(requestVersion string, pkg Package_t) (string, bool) {
 	return "", false
 }
 
-func matchRequestments(packages []Package_t, requerments []Requerment_t) bool {
-	for _, requerment := range requerments {
+func matchRequestments(packages []Package_t, requerments []Requerment_t) ([]Requerment_t, bool) {
+	for i, requerment := range requerments {
 		pkg, res := getMatchedPackage(requerment, packages)
 		if !res {
 			fmt.Printf("[error]: match package for %s faild.\n", requerment.Name)
-			return false
+			return requerments, false
 		}
 		commit, res := getMatchedCommit(requerment.Version, pkg)
 		if !res {
 			fmt.Printf("[error]: match commit for %s faild.\n", requerment.Name)
-			return false
+			return requerments, false
 		}
 		fmt.Printf("matched: %s %s\n", pkg.Name, commit)
+		requerments[i].Commit = commit
 	}
-	return true
-}
-
-func main() {
-	superPath := "/tmp"
-	path := "/pikascript"
-
-	go readPathSize(superPath + path)
-	updatePikascript(superPath + path)
-
-	packages, res := getPackages(superPath + path)
-	if !res {
-		fmt.Printf("[error]: get package info faild.\n")
-		return
-	}
-	fmt.Printf("\n")
-
-	requerments, res := getRequestment("requestment.txt")
-	if !res {
-		fmt.Printf("[error]: get requerment info faild.\n")
-		return
-	}
-	fmt.Printf("\n")
-
-	res = matchRequestments(packages, requerments)
-	if !res {
-		fmt.Printf("[error]: match requestment faild.\n")
-		return
-	}
-	fmt.Printf("\n")
-
-	fmt.Println("update OK !")
-	for i := 3; i >= 0; i-- {
-		time.Sleep(1 * time.Second)
-		fmt.Println("this window will auto close after", i, "s...")
-	}
+	return requerments, true
 }
 
 func getRequestment(path string) ([]Requerment_t, bool) {
@@ -130,12 +140,10 @@ func getPackages(path string) ([]Package_t, bool) {
 		return config.Packages, false
 	}
 	for i_package, pkg := range config.Packages {
-		fmt.Printf("found package: %s\n", pkg.Name)
 		i := 0
 		for _, release := range pkg.Releases {
 			pkg.ReleasesName = append(pkg.ReleasesName, strings.Split(release, " ")[0])
 			pkg.ReleasesCommit = append(pkg.ReleasesCommit, strings.Split(release, " ")[1])
-			fmt.Printf("    release: %s %s\n", pkg.ReleasesName[i], pkg.ReleasesCommit[i])
 			i++
 		}
 		config.Packages[i_package] = pkg
@@ -154,7 +162,7 @@ func readPathSize(path string) {
 	}
 }
 
-func updatePikascript(path string) {
+func updatePikascript(path string) *git.Repository {
 	pathExist, err := PathExists(path)
 	if err != nil {
 		fmt.Printf("PathExists(%s),err(%v)\n", path, err)
@@ -175,16 +183,17 @@ func updatePikascript(path string) {
 	}
 
 	/* pull the pikascript repo */
-	r, _ := git.PlainOpen(path)
-	w, _ := r.Worktree()
+	repo, _ := git.PlainOpen(path)
+	w, _ := repo.Worktree()
 	fmt.Println("updating pikascript...")
 	w.Pull(&git.PullOptions{RemoteName: "origin"})
-	ref, _ := r.Head()
-	commit, _ := r.CommitObject(ref.Hash())
+	ref, _ := repo.Head()
+	commit, _ := repo.CommitObject(ref.Hash())
 	fmt.Println(commit)
 
 	isShowSize = false
 
+	return repo
 }
 
 func PathExists(path string) (bool, error) {
