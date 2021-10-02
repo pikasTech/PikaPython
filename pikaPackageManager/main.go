@@ -91,10 +91,8 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 		}
 		packagePath = strings.ReplaceAll(packagePath, "/", "\\")
 
-		fmt.Printf("updating: %s\n", requerment.Name)
-
 		exec.Command("cmd", "/C", "mkdir", dirPath).Run()
-		fmt.Printf("cmd: %s", "copy"+" "+packagePath+" "+dirPath+"\n")
+		fmt.Printf("copy" + " " + packagePath + " " + dirPath + "\n")
 		err = exec.Command("cmd", "/C", "copy", packagePath, dirPath).Run()
 		CheckIfError(err)
 		err = exec.Command("cmd", "/C", "copy", dirPath+"\\*.py").Run()
