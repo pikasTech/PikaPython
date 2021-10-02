@@ -1,3 +1,8 @@
+/*
+  Author: lyon
+  Tencent QQ: 645275593
+*/
+
 #ifndef _Process__H
 #define _Process__H
 #include "dataArgs.h"
@@ -9,8 +14,8 @@ typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
 
 struct PikaObj_t {
-  /* list */
-  Args* attributeList;
+    /* list */
+    Args* attributeList;
 };
 
 /* operation */
