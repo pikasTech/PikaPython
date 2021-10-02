@@ -1,3 +1,8 @@
+/*
+  Author: lyon
+  Tencent QQ: 645275593
+*/
+
 #ifndef __MY_TEST_TOOLS_H
 #define __MY_TEST_TOOLS_H
 #include <stdint.h>
@@ -28,5 +33,6 @@ char* strGetLastToken(char* strOut, char* strIn, char sign);
 char* strClear(char* str);
 int32_t strIsContain(char* str, char ch);
 char* strCopy(char* strBuff, char* strIn);
+char* strGetLastLine(char *strOut, char *strIn);
 
 #endif
