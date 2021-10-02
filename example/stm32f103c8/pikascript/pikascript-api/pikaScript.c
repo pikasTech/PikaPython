@@ -7,13 +7,18 @@
 
 PikaObj * pikaScriptInit(){
     PikaObj * pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_run(pikaMain, "mem = PikaStdLib.MemChecker()");
+    obj_run(pikaMain, "time = STM32.Time()");
+    obj_run(pikaMain, "uart = STM32.UART()");
     obj_run(pikaMain, "uart.init()");
     obj_run(pikaMain, "uart.setBaudRate(115200)");
     obj_run(pikaMain, "uart.setId(1)");
     obj_run(pikaMain, "uart.enable()");
+    obj_run(pikaMain, "adc = STM32.ADC()");
     obj_run(pikaMain, "adc.init()");
     obj_run(pikaMain, "adc.setPin('PA0')");
     obj_run(pikaMain, "adc.enable()");
+    obj_run(pikaMain, "pwm = STM32.PWM()");
     obj_run(pikaMain, "pwm.init()");
     obj_run(pikaMain, "pwm.setPin('PA8')");
     obj_run(pikaMain, "pwm.setFrequency(2000)");
