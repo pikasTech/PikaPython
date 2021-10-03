@@ -86,10 +86,10 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 		var packagePath string = path + "/package/" + requerment.Name
 		var dirPath string = "pikascript-lib\\" + requerment.Name + "\\"
 		if requerment.Name == "pikascript-core" {
-			packagePath = path + "/coreDevelopment/package/pikascript/pikascript-core"
+			packagePath = path + "/src"
 			dirPath = "pikascript-core\\"
 			packagePath = strings.ReplaceAll(packagePath, "/", "\\")
-			err = exec.Command("cmd", "/C", "copy", packagePath+"\\..\\rust-msc-latest-win10.exe").Run()
+			err = exec.Command("cmd", "/C", "copy", packagePath+"\\..\\pikaCompiler\\rust-msc-latest-win10.exe").Run()
 			CheckIfError(err)
 		}
 		packagePath = strings.ReplaceAll(packagePath, "/", "\\")
