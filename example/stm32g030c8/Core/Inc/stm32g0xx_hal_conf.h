@@ -64,6 +64,10 @@ extern "C" {
 #define HAL_FLASH_MODULE_ENABLED
 #define HAL_PWR_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
+#define HAL_ADC_MODULE_ENABLED
+#define HAL_UART_MODULE_ENABLED
+#define HAL_USART_MODULE_ENABLED
+#define HAL_TIM_MODULE_ENABLED
 
 /* ########################## Register Callbacks selection ############################## */
 /**
