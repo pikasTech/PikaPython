@@ -22,11 +22,15 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
 ## 文件目录
-coreDevelopment - 内核开发
+src - 内核源码
+
+bsp - 裸机芯片/板卡支持
+
+port - 操作系统支持
 
 document - 开发文档
 
-example - 示例工程
+examples - 示例脚本
 
 pikaCompiler - 使用rust编写的预编译器
 
