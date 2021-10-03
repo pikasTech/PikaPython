@@ -11,7 +11,7 @@
 
 用法1. 直接运行[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
 
-用法2. 将[requestment.txt](/example/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/coreDevelopment/package/pikascript/pikascript-core)、[预编译器](../../tree/master/pikaCompiler)与[模块](../../tree/master/package)。
+用法2. 将[requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/pikaCompiler)与[模块](../../tree/master/package)。
 
 # 1.简介
 
@@ -22,15 +22,21 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
 ## 文件目录
-coreDevelopment - 内核开发
+[src](../../tree/master/src) - 内核源码
 
-document - 开发文档
+[bsp](../../tree/master/bsp) - 裸机芯片/板卡支持
 
-example - 示例工程
+[port](../../tree/master/port) - 操作系统支持
 
-pikaCompiler - 使用rust编写的预编译器
+[document](../../tree/master/document) - 开发文档
 
-pikaPacakgeManager - 使用go编写的模块管理器
+[examples](../../tree/master/examples) - 示例脚本
+
+[package](../../tree/master/package) - 模块目录
+
+[pikaCompiler](../../tree/master/pikaCompiler) - 使用rust编写的预编译器
+
+[pikaPackageManager](../../tree/master/pikaPackageManager) - 使用go编写的模块管理器
 
 # 2.驱动适配进度
 | Device  | PikaPi Zero | STM32 G030C8 | STM32 G070CB | STM32 F103C8 |
@@ -81,7 +87,7 @@ pikaPacakgeManager - 使用go编写的模块管理器
 
 ### (5)stm32例程
 
-[pikascript-stm32-demo](../../tree/master/example)
+[pikascript-stm32-demo](../../tree/master/bsp)
 
 ### (6)开发手册
 
