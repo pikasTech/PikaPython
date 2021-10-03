@@ -9,9 +9,9 @@
 
 ## 包管理器用法
 
-1.直接运行[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
+1.直接运行[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
 
-2.将[requestment.txt](/example/stm32g030c8/pikascript/requestment.txt)放在[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/coreDevelopment/package/pikascript/pikascript-core)、[预编译器](../../tree/master/pikaCompiler)与[模块](../../tree/master/package)。
+2.将[requestment.txt](/example/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/coreDevelopment/package/pikascript/pikascript-core)、[预编译器](../../tree/master/pikaCompiler)与[模块](../../tree/master/package)。
 
 # 1.简介
 
