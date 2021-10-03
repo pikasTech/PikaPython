@@ -3,15 +3,15 @@
 <img align="left" src="https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif" width="60" height="60"/>
 
 # 来颗Star求求了~ Star please~
-# 主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
+## issue, pr请往主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
 
-# 下载[PikaScript包管理器 pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)
+# 获取PikaScript:
 
-## 包管理器用法
+## 使用Pika包管理器[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)
 
-1.直接运行[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动下载并更新pikaScript主仓库(文件在[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)所在磁盘的/tmp/pikaScript文件夹)
+用法1. 直接运行[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
 
-2.将[requestment.txt](/example/stm32g030c8/pikascript/requestment.txt)放在[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)同级目录，运行[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe),会在当前目录下自动安装内核、预编译器与模块。
+用法2. 将[requestment.txt](/example/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/coreDevelopment/package/pikascript/pikascript-core)、[预编译器](../../tree/master/pikaCompiler)与[模块](../../tree/master/package)。
 
 # 1.简介
 
@@ -81,7 +81,7 @@ pikaPacakgeManager - 使用go编写的模块管理器
 
 ### (5)stm32例程
 
-[pikascript-stm32-demo](../../tree/master/demo)
+[pikascript-stm32-demo](../../tree/master/example)
 
 ### (6)开发手册
 
