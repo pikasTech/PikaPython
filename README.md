@@ -32,6 +32,8 @@ document - 开发文档
 
 examples - 示例脚本
 
+package - 模块目录
+
 pikaCompiler - 使用rust编写的预编译器
 
 pikaPacakgeManager - 使用go编写的模块管理器
