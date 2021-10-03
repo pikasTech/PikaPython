@@ -81,7 +81,7 @@ pikaPacakgeManager - 使用go编写的模块管理器
 
 ### (5)stm32例程
 
-[pikascript-stm32-demo](../../tree/master/demo)
+[pikascript-stm32-demo](../../tree/master/example)
 
 ### (6)开发手册
 
