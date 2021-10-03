@@ -5,7 +5,12 @@
 # 来颗Star求求了~ Star please~
 # 主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
 
-# 下载[PikaScript包管理器](../../raw/master/pikaPackageManager/pikaPackage.exe)
+# 下载[PikaScript包管理器 pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)
+
+包管理器用法
+1.运行pikaPackage.exe自动下载并更新pikaScript主仓库(文件在pikaPackage.exe所在磁盘的/tmp/pikaScript文件夹)
+
+2.将[requstment.txt](/master/example/stm32g030c8/pikascript/requestment.txt)放在pikaPackage.exe同级目录，在当前目录下自动安装内核、预编译器与模块。
 
 # 1.简介
 
