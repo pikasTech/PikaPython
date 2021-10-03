@@ -5,7 +5,7 @@
 # 来颗Star求求了~ Star please~
 # 主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
 
-# 下载[PikaScript包管理器 pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)
+# 下载PikaScript包管理器[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)
 
 ## 包管理器用法
 
