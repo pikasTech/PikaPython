@@ -1,11 +1,11 @@
 *.depend
 *.layout
-/coreDevelopment/build
-/coreDevelopment/package/pikascript/pikascript-api
-/pikaPackageManager/pikascript-core
-/pikaPackageManager/pikascript-api
-/pikaPackageManager/pikascript-lib
-/pikaPackageManager/*.py
+/src/build
+/src/package/pikascript/pikascript-api
+/tools/pikaPackageManager/pikascript-core
+/tools/pikaPackageManager/pikascript-api
+/tools/pikaPackageManager/pikascript-lib
+/tools/pikaPackageManager/*.py
 *__pycache__
 *bin/
 *obj/

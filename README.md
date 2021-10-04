@@ -7,11 +7,11 @@
 
 # 获取PikaScript:
 
-## 使用Pika包管理器[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)
+## 使用Pika包管理器[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)
 
-用法1. 直接运行[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
+用法1. 直接运行[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
 
-用法2. 将[requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/pikaCompiler)与[模块](../../tree/master/package)。
+用法2. 将[requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/tools/pikaCompiler)与[模块](../../tree/master/package)。
 
 # 1.简介
 
@@ -34,9 +34,9 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 [package](../../tree/master/package) - 模块目录
 
-[pikaCompiler](../../tree/master/pikaCompiler) - 使用rust编写的预编译器
+[pikaCompiler](../../tree/master/tools/pikaCompiler) - 使用rust编写的预编译器
 
-[pikaPackageManager](../../tree/master/pikaPackageManager) - 使用go编写的模块管理器
+[pikaPackageManager](../../tree/master/tools/pikaPackageManager) - 使用go编写的模块管理器
 
 # 2.驱动适配进度
 | Device  | PikaPi Zero | STM32 G030C8 | STM32 G070CB | STM32 F103C8 |
@@ -75,9 +75,9 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 使用python3标准语法的子集。
 
-在编译时支持python类和方法定义，完整支持封装、继承、多态、模块功能 - 基于[Pika预编译器](../../tree/master/pikaCompiler)。
+在编译时支持python类和方法定义，完整支持封装、继承、多态、模块功能 - 基于[Pika预编译器](../../tree/master/tools/pikaCompiler)。
 
-在运行时支持python方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于[Pika运行时内核](../../tree/master/coreDevelopment/package/pikascript/pikascript-core)。
+在运行时支持python方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core)。
 
 ### (4)源码规范
 
@@ -141,7 +141,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 step1: 拉取项目
 ``` shell
 git clone https://github.com/pikastech/pikascript
-cd pikascript/coreDevelopment
+cd pikascript/src
 ```
 
 step2: 编译项目
@@ -162,7 +162,7 @@ sh test-banchmark.sh
 
 step5: 运行demo
 ``` shell
-./build/coreDevelopment/boot/demo06-pikamain/pikascript_demo06-pikamain
+./build/src/boot/demo06-pikamain/pikascript_demo06-pikamain
 ```
 
 # 8.Demo展示：我就要用最便宜的单片机来跑python，还要用MDK开发，怎么地吧！
