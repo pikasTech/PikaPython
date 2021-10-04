@@ -12,5 +12,5 @@ while True:
     time.sleep_ms(500)
     pwm.setDuty(0.5)
     time.sleep_ms(500)
-    pwm.setDuty(0.3)
+    pwm.setDuty(0.001)
     
