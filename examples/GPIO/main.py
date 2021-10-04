@@ -6,7 +6,7 @@ io1 = STM32.GPIO()
 time = STM32.Time()
 
 io1.init()
-io1.setPin('PB8')
+io1.setPin('PA8')
 io1.setMode('out')
 io1.enable()
 io1.low()
