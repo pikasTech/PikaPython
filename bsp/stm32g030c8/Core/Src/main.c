@@ -55,30 +55,6 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void Flash_OB_Handle(void) {
-    FLASH_OBProgramInitTypeDef optionsbytesstruct;
-    bool UPDATE = false;
-
-    HAL_FLASHEx_OBGetConfig(&optionsbytesstruct);
-    uint32_t userconfig = optionsbytesstruct.USERConfig;
-
-    if ((userconfig & FLASH_OPTR_nBOOT_SEL_Msk) != OB_BOOT0_FROM_PIN) {
-        userconfig &= ~FLASH_OPTR_nBOOT_SEL_Msk;
-        userconfig |= OB_BOOT0_FROM_PIN;
-        UPDATE = true;
-    }
-
-    if (UPDATE) {
-        optionsbytesstruct.USERConfig = userconfig;
-        HAL_FLASH_Unlock();
-        HAL_FLASH_OB_Unlock();
-        HAL_FLASHEx_OBProgram(&optionsbytesstruct);
-        HAL_FLASH_OB_Launch();
-        HAL_FLASH_OB_Lock();
-        HAL_FLASH_Lock();
-    }
-}
-
 void __pikaDisableIrqHandle(){
     __disable_irq();
 }
@@ -93,7 +69,6 @@ void __pikaEnableIrqHandle(){
  */
 int main(void) {
     /* USER CODE BEGIN 1 */
-    Flash_OB_Handle();
     /* USER CODE END 1 */
 
     /* MCU
