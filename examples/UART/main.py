@@ -13,3 +13,4 @@ while True:
     readBuff = uart.read(2)
     print('read 2 char:')
     print(readBuff)
+    
