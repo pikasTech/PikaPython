@@ -13,3 +13,4 @@ while True:
     print('adc1 value:')
     print(val)
     time.sleep_ms(500)
+    
