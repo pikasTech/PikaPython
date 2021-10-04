@@ -170,7 +170,7 @@ func getRequestment(path string) ([]Requerment_t, bool) {
 
 func getPackages(path string) ([]Package_t, bool) {
 	var config Config_t
-	if _, err := toml.DecodeFile(path+"/tools/pikaPackageManager/packages.toml", &config); err != nil {
+	if _, err := toml.DecodeFile(path+"/packages.toml", &config); err != nil {
 		fmt.Println(err)
 		return config.Packages, false
 	}
