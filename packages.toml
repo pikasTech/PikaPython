@@ -23,6 +23,7 @@ name = "STM32"
 releases = [
   "v1.0.0 2f93bb30a1114f80fc6755df0b8d2b308d1a3216",
   "v1.0.1 2f93bb30a1114f80fc6755df0b8d2b308d1a3216",
+  "v1.0.2 646100555a3cfe45e3ba49d57962a45c18f7a086",
 ]
 
 [[packages]]
