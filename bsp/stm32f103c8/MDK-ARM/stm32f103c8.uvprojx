@@ -645,6 +645,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\TinyObj.c</FilePath>
             </File>
+            <File>
+              <FileName>pikaPlatform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\pikaPlatform.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
