@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include "pikaPlatform.h"
 
 typedef struct {
     uint32_t heapUsed;

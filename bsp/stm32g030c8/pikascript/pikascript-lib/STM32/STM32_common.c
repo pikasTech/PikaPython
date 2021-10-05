@@ -1,6 +1,13 @@
 #include "STM32_common.h"
 #include "dataStrs.h"
 
+void __platformDisableIrqHandle(){
+    __disable_irq();
+}
+void __platformEnableIrqHandle(){
+    __enable_irq();
+}
+
 void delay_unit(uint32_t delays) {
     /* one unit is 1/64 us */
     uint32_t startval, tickn, wait;

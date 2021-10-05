@@ -1,4 +1,4 @@
-pikascript-core==0.8.1
+pikascript-core==v0.8.3
 PikaStdLib==latest
 PikaStdDevice==latest
 STM32==latest

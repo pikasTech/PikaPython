@@ -55,12 +55,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void __pikaDisableIrqHandle(){
-    __disable_irq();
-}
-void __pikaEnableIrqHandle(){
-    __enable_irq();
-}
+
 /* USER CODE END 0 */
 
 /**
