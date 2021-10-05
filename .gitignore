@@ -1,6 +1,7 @@
 *.depend
 *.layout
 /src/build
+/port/linux/build
 /src/package/pikascript/pikascript-api
 /tools/pikaPackageManager/pikascript-core
 /tools/pikaPackageManager/pikascript-api
