@@ -1,5 +1,5 @@
 pikascript-core==v0.8.3
 PikaStdLib==latest
 PikaStdDevice==latest
-STM32==latest
+STM32==v1.0.2
 PikaPiZero==latest
