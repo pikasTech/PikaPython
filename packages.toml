@@ -3,6 +3,7 @@ name = "pikascript-core"
 releases = [
   "v0.8.1 2f93bb30a1114f80fc6755df0b8d2b308d1a3216",
   "v0.8.2 4c474f9c2a60160c51bdd942ba8e9aa69b4885c2",
+  "v0.8.3 af56f21c7ede1f1cdb2a7e92557c02ac2845ff7b",
 ]
 
 [[packages]]
