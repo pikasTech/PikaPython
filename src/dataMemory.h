@@ -9,16 +9,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-
-#if defined(__CC_ARM) || defined(__CLANG_ARM) /* ARM Compiler */
-#define PIKA_WEAK __attribute__((weak))
-#elif defined(__IAR_SYSTEMS_ICC__) /* for IAR Compiler */
-#define PIKA_WEAK __weak
-#elif defined(__GNUC__) /* GNU GCC Compiler */
-#define PIKA_WEAK __attribute__((weak))
-#endif
-
-#define platformPrintf(...) printf(__VA_ARGS__)
+#include "pikaPlatform.h"
 
 typedef struct {
     uint32_t heapUsed;

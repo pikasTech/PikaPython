@@ -723,10 +723,10 @@ void obj_run(PikaObj* self, char* cmd) {
     obj_setSysOut(self, sysOut);
     obj_setErrorCode(self, errcode);
     if (!strEqu("", sysOut)) {
-        platformPrintf("%s\r\n", sysOut);
+        __platformPrintf("%s\r\n", sysOut);
     }
     if (0 != errcode) {
-        platformPrintf("[info] input commond: %s\r\n", cmd);
+        __platformPrintf("[info] input commond: %s\r\n", cmd);
         while (1)
             ;
     }

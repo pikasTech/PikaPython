@@ -8,33 +8,16 @@
 #include <stdlib.h>
 
 PikaMemInfo pikaMemInfo = {0};
-
-PIKA_WEAK void __pikaDisableIrqHandle() {
-    /* disable irq to support thread */
-}
-
-PIKA_WEAK void __pikaEnableIrqHandle() {
-    /* disable irq to support thread */
-}
-
-PIKA_WEAK void* platFormMalloc(size_t size) {
-    return malloc(size);
-}
-
-PIKA_WEAK void platFormFree(void* ptr) {
-    return free(ptr);
-}
-
 void* pikaMalloc(uint32_t size) {
     pikaMemInfo.heapUsed += size;
     if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
         pikaMemInfo.heapUsedMax = pikaMemInfo.heapUsed;
     }
-    __pikaDisableIrqHandle();
-    void* mem = platFormMalloc(size);
-    __pikaEnableIrqHandle();
+    __platformDisableIrqHandle();
+    void* mem = __platformMalloc(size);
+    __platformEnableIrqHandle();
     if (NULL == mem) {
-        platformPrintf("[error]: No heap space! Please reset the device.\r\n");
+        __platformPrintf("[error]: No heap space! Please reset the device.\r\n");
         while (1) {
         }
     }
@@ -42,9 +25,9 @@ void* pikaMalloc(uint32_t size) {
 }
 
 void pikaFree(void* mem, uint32_t size) {
-    __pikaDisableIrqHandle();
-    platFormFree(mem);
-    __pikaEnableIrqHandle();
+    __platformDisableIrqHandle();
+    __platformFree(mem);
+    __platformEnableIrqHandle();
     pikaMemInfo.heapUsed -= size;
 }
 
