@@ -5,7 +5,7 @@
 # 来颗Star求求了~ Star please~
 ## issue, pr请往主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
 
-# [手把手PikaScript视频教程](https://www.bilibili.com/video/BV1mg411L72e)
+# [【视频】手把手PikaScript视频教程](https://www.bilibili.com/video/BV1mg411L72e)
 
 # 获取PikaScript:
 
