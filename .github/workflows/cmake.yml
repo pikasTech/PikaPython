@@ -21,6 +21,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: PULL_CORE
+      run: cd ${{github.workspace}}/port/linux && bash pull-core.sh
+
     - name: INIT
 
       run: cd ${{github.workspace}}/port/linux && bash init.sh
