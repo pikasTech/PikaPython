@@ -56,6 +56,9 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+/* supply the main object */
+PikaObj* pikaMain;
+
 /* USER CODE END 0 */
 
 /**
@@ -88,7 +91,6 @@ int main(void) {
     MX_GPIO_Init();
     /* USER CODE BEGIN 2 */
     char *code = (char *)FLASH_CODE_START_ADDR;
-    PikaObj* pikaMain;
     uint16_t codeOffset = 0;
     if( code[0] == 'i'){
         /* boot from flash */
