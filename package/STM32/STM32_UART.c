@@ -4,6 +4,8 @@
 #include "STM32_common.h"
 #include "dataStrs.h"
 
+extern PikaObj* pikaMain;
+
 #ifdef UART1_EXIST
 pika_uart_t pika_uart1;
 #endif
@@ -407,6 +409,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
             STM32_UART_clearRxBuff(pika_uart);
             return;
         }
+        /* run as shell */
+        char buff[RX_BUFF_LENGTH] = {0};    
+        char* strLine = strGetLastLine(buff, pika_uart->rxBuff);
+        Args * runRes = obj_runDirect(pikaMain, strLine);
+        char* sysOut = args_getSysOut(runRes);
+        uint8_t errcode = args_getErrorCode(runRes);
+        __platformPrintf(">>> %s", strLine);
+        if (!strEqu("", sysOut)) {
+            __platformPrintf("%s\r\n", sysOut);
+        }
+        if (NULL != runRes) {
+            args_deinit(runRes);
+        }        
 #endif
     }
     /* avoid recive buff overflow */ 
