@@ -15,6 +15,8 @@
 
 3. 已发布的模块列表：[packages.toml](/packages.toml)
 
+[手把手PikaScript教程合集](https://www.bilibili.com/video/BV1mg411L72e)
+
 # 1.简介
 
 PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配置，可以在少于4KB的RAM下运行(如stm32g030c8和stm32f103c8)，极易部署和扩展。
@@ -106,11 +108,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 <img src="https://user-images.githubusercontent.com/88232613/127806449-b476b2fd-9f40-4c53-94a0-e1e965c046c3.png" width="800" alt="微信交流群"/><br/>
 
-# 4.stm32教程视频
-
-[手把手PikaScript教程合集](https://www.bilibili.com/video/BV1mg411L72e)
-
-# 5.交流与技术支持：
+# 4.交流与技术支持：
 
 ## 微信交流群
 
@@ -122,7 +120,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 ## E-mail: 645275593@qq.com
 
-# 6.贡献者
+# 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
 | 捐赠：移远EC600S-CN 4G模块 | 移远模块 |
@@ -137,7 +135,7 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
 
-# 7.内核测试与开发
+# 6.内核测试与开发
 
 ## linux下测试pikascript内核(推荐ubuntu20.04)：
 
@@ -168,7 +166,7 @@ step5: 运行demo
 ./build/src/boot/demo06-pikamain/pikascript_demo06-pikamain
 ```
 
-# 8.Demo展示：我就要用最便宜的单片机来跑python，还要用MDK开发，怎么地吧！
+# 7.Demo展示：我就要用最便宜的单片机来跑python，还要用MDK开发，怎么地吧！
 
 我就想用单片机跑个Python，得用linux虚拟机+交叉编译工具链+命令行编译micropython固件，还得用DfuSe工具烧录固件，烧录完还不能用C的调试器来调试。
 
