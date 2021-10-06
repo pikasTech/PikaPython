@@ -32,4 +32,5 @@ jobs:
       # Build your program with the given configuration
       run: cd ${{github.workspace}}/port/linux && bash test.sh
 
-      
+    - name: PACKAGE_MANAGER
+      run: cd ${{github.workspace}}/tools/pikaPackageManager && go build
