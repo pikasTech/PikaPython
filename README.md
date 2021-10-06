@@ -5,6 +5,8 @@
 # 来颗Star求求了~ Star please~
 ## issue, pr请往主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
 
+# [手把手PikaScript视频教程](https://www.bilibili.com/video/BV1mg411L72e)
+
 # 获取PikaScript:
 
 ## 使用Pika包管理器[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)
@@ -14,8 +16,6 @@
 2. 将[requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/tools/pikaCompiler)与[模块](../../tree/master/package)。
 
 3. 已发布的模块列表：[packages.toml](/packages.toml)
-
-[手把手PikaScript教程合集](https://www.bilibili.com/video/BV1mg411L72e)
 
 # 1.简介
 
