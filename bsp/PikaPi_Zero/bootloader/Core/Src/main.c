@@ -24,16 +24,31 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#define RX_BUFF_LENGTH 256
+typedef struct {
+    UART_HandleTypeDef huart;
+    uint8_t id;
+    char rxBuff[RX_BUFF_LENGTH];
+    uint16_t rxBuffOffset;
+} pika_uart_t;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+#define uart_put(str) HAL_UART_Transmit(&huart1, (uint8_t *)str, sizeof(str), 100);
+#define FLASH_CODE_START_ADDR 0x08002000
+#define FLASH_USER_END_ADDR \
+    (FLASH_BASE + FLASH_SIZE - 1) /* End @ of user Flash area */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,7 +59,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+pika_uart_t pika_uart1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -55,6 +70,98 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+    
+uint32_t writeAddress = 0;
+uint8_t isRecived = 0;
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
+    isRecived = 1;
+    uint8_t id = 1;
+    pika_uart_t* pika_uart = &pika_uart1;
+    char inputChar = pika_uart->rxBuff[pika_uart->rxBuffOffset];
+
+    uint32_t baseAddress = FLASH_CODE_START_ADDR;
+    uint64_t writeData64 = 0;
+
+    writeData64 = 0;
+    if( pika_uart->rxBuffOffset + 1 < 8){
+        goto next;
+    }
+    
+    for (int i = 7; i >= 0; i--) {
+        char ch = pika_uart->rxBuff[i];
+        writeData64 = writeData64 << 8;
+        writeData64 += ch;
+    }
+
+    __disable_irq();
+    if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,
+                          baseAddress + writeAddress,
+                          writeData64) == HAL_OK) {
+        writeAddress = writeAddress + 8;
+    } else {
+        printf("[error]: Write flash faild. \r\n");
+        while (1) {
+        }
+    }
+    __enable_irq();    
+    /* clear recive buff */
+    pika_uart->rxBuffOffset = 0;
+    pika_uart->rxBuff[0] = 0;
+    UART_Start_Receive_IT(
+            huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);   
+    return;
+    
+next:
+    /* avoid recive buff overflow */ 
+    if (pika_uart->rxBuffOffset + 2 > RX_BUFF_LENGTH) {
+        memmove(pika_uart->rxBuff, pika_uart->rxBuff + 1, RX_BUFF_LENGTH);
+        UART_Start_Receive_IT(
+            huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);        
+        return;
+    }
+    
+    /* recive next char */
+    pika_uart->rxBuffOffset++;
+    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
+    UART_Start_Receive_IT(
+        huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+}
+uint32_t GetPage(uint32_t Addr) {
+    return (Addr - FLASH_BASE) / FLASH_PAGE_SIZE;
+}
+/* support prinf */
+int fputc(int ch, FILE* f) {
+    HAL_UART_Transmit(&huart1, (uint8_t*)&ch, 1, 0xffff);
+    return ch;
+}
+
+typedef void (*iapfun)(void);          //定义一个函数类型的参数.
+iapfun jump2app;
+void MSR_MSP(unsigned int addr); //设置堆栈地址
+
+//设置栈顶地址
+// addr:栈顶地址
+void MSR_MSP(unsigned int addr)
+{
+    __asm("MSR MSP, r0"); // set Main Stack value
+    __asm("BX r14");
+}
+
+//跳转到应用程序段
+// appxaddr:用户代码起始地址.
+void iap_load_app(uint32_t appxaddr)
+{
+    uint32_t Byte = *(__IO uint32_t *)appxaddr;
+    uint32_t Top = (Byte & 0x2FFE0000);
+    if (Top == 0x20000000) //检查栈顶地址是否合法.
+    {
+        jump2app = (iapfun) * (__IO uint32_t *)(appxaddr + 4); //用户代码区第二个字为程序开始地址(复位地址)
+        MSR_MSP(*(__IO uint32_t *)appxaddr);                   //初始化APP堆栈指针(用户代码区的第一个字用于存放栈顶地址)
+        jump2app();                                            //跳转到APP.
+    }
+}
+char *code = (char *)FLASH_CODE_START_ADDR;
 
 /* USER CODE END 0 */
 
@@ -85,10 +192,55 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART1_UART_Init();
-  /* USER CODE BEGIN 2 */
+    MX_GPIO_Init();
+    MX_USART1_UART_Init();
+    /* USER CODE BEGIN 2 */
+    HAL_UART_Receive_IT(&huart1, (uint8_t*)(pika_uart1.rxBuff + pika_uart1.rxBuffOffset), 1);  
+    printf("[info]: In bootloader.\r\n");
 
+    iap_load_app(FLASH_CODE_START_ADDR);
+
+    uint32_t FirstPage = 0, NbOfPages = 0;
+    uint32_t PageError = 0;
+    __IO uint32_t data32 = 0, MemoryProgramStatus = 0;
+    static FLASH_EraseInitTypeDef EraseInitStruct = {0};
+
+    HAL_FLASH_Unlock();
+    /* Get the 1st page to erase */
+    FirstPage = GetPage(FLASH_CODE_START_ADDR);
+
+    /* Get the number of pages to erase from 1st page */
+    NbOfPages = GetPage(FLASH_USER_END_ADDR) - FirstPage + 1;
+
+    /* Fill EraseInit structure*/
+    EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+    EraseInitStruct.Page = FirstPage;
+    EraseInitStruct.NbPages = NbOfPages;
+    printf("[info]: Erasing flash... \r\n");
+    printf("[info]: Erase from 0x%x, size: %ldkB\r\n", FLASH_CODE_START_ADDR, (FLASH_USER_END_ADDR - FLASH_CODE_START_ADDR + 1) / 1024);
+    __disable_irq();
+    if (HAL_FLASHEx_Erase(&EraseInitStruct, &PageError) != HAL_OK) {
+        printf("[error]: Erase faild! \r\n");
+        while (1) {
+        }
+    }
+    __enable_irq();    
+    printf("[ OK ]: Erase flash ok! \r\n");
+
+    while(1){
+        HAL_Delay(1000);
+        printf("[info]: Waiting for '*.bin' file...\r\n");
+        if (isRecived) {
+            break;
+        }
+    }
+
+    while(1){
+        HAL_Delay(100);
+        printf("[info]: Reciving...\r\n");
+    }    
+
+    HAL_FLASH_Lock();  
   /* USER CODE END 2 */
 
   /* Infinite loop */
