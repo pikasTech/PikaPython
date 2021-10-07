@@ -1,7 +1,0 @@
-f030c8 ok
-f030f4 ok
-f103rc/re ok
-f303cc/rc ok
-f401rc ok
-gd32f130 ok
-f103c8 ok (用f100 option, 用f103rc/re不行)
