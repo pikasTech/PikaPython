@@ -41,4 +41,4 @@ jobs:
       run: cd ${{github.workspace}}/tools/pikaPackageManager && go build
 
     - name: PIKAPI_BOOTLOADER
-      run cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
+      run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
