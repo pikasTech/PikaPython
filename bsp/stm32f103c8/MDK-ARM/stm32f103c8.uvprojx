@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F103xB,HAL_ADC_MODULE_ENABLED,HAL_UART_MODULE_ENABLED,HAL_TIM_MODULE_ENABLED</Define>
+              <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
               <IncludePath>../Core/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;  ../Drivers/CMSIS/Include;  ..\pikascript\pikascript-core;  ..\pikascript\pikascript-lib\STM32;  ..\pikascript\pikascript-api</IncludePath>
             </VariousControls>
