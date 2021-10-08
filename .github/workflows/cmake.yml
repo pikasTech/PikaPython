@@ -38,7 +38,7 @@ jobs:
       run: cd ${{github.workspace}}/port/linux && bash test.sh
 
     - name: PACKAGE_MANAGER
-      run: cd ${{github.workspace}}/tools/pikaPackageManager && go build
+      run: cd ${{github.workspace}}/tools/pikaPackageManager && go run main.go
 
     - name: PIKAPI_BOOTLOADER
       run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
