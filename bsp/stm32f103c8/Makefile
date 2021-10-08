@@ -36,8 +36,16 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
-$(shell find  ./pikascript -name *.c) \
+$(shell find  ./pikascript/pikascript-core -name *.c) \
+$(shell find  ./pikascript/pikascript-api -name *.c) \
+$(shell find  ./pikascript/pikascript-lib/PikaStdDevice -name *.c) \
+$(shell find  ./pikascript/pikascript-lib/PikaStdLib -name *.c) \
 $(shell find  ./Drivers/STM32F1xx_HAL_Driver/Src -name *.c) \
+pikascript/pikascript-lib/STM32/STM32_ADC.c \
+pikascript/pikascript-lib/STM32/STM32_GPIO.c \
+pikascript/pikascript-lib/STM32/STM32_Time.c \
+pikascript/pikascript-lib/STM32/STM32_UART.c \
+pikascript/pikascript-lib/STM32/STM32_PWM.c \
 Core/Src/main.c \
 Core/Src/gpio.c \
 Core/Src/stm32f1xx_it.c \
