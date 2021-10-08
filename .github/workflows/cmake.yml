@@ -11,7 +11,7 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  linux-core:
+  core:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
@@ -32,7 +32,24 @@ jobs:
       # Build your program with the given configuration
       run: cd ${{github.workspace}}/port/linux && bash test.sh
 
-  windows-bsp:
+  bsp-stm32f103:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: ryanwinter/arm-none-eabi-gcc@v2.0.1
+      with:
+        # GNU Embedded Toolchain for Arm release name, in the V-YYYY-qZ format (e.g. "9-2019-q4")
+        release: '9-2019-q4'
+
+    - name: stm32f103-beforeMake
+      run: cd ${{github.workspace}}/bsp/stm32f103c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
+ 
+    - name: stm32f103-make
+      run: cd ${{github.workspace}}/bsp/stm32f103c8 && make
+
+  bsp-stm32g030-bootloader:
     runs-on: windows-latest
 
     steps:
@@ -45,14 +62,8 @@ jobs:
 
     - name: stm32g030-bootloader
       run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
-      
-    - name: stm32f103-beforeMake
-      run: cd ${{github.workspace}}/bsp/stm32f103c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
- 
-    - name: stm32f103-make
-      run: cd ${{github.workspace}}/bsp/stm32f103c8 && make
 
-  windows-packageManager:
+  packageManager-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
