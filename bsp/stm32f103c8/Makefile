@@ -40,7 +40,28 @@ $(shell find  ./pikascript/pikascript-core -name *.c) \
 $(shell find  ./pikascript/pikascript-api -name *.c) \
 $(shell find  ./pikascript/pikascript-lib/PikaStdDevice -name *.c) \
 $(shell find  ./pikascript/pikascript-lib/PikaStdLib -name *.c) \
-$(shell find  ./Drivers/STM32F1xx_HAL_Driver/Src -name *.c) \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim_ex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc_ex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_uart.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_usart.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_uart_ex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rcc.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rcc_ex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_rcc.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_flash.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_flash_ex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_gpio.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_gpio_ex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_dma.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_dma_ex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_dma.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr_ex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_cortex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_exti.c \
 pikascript/pikascript-lib/STM32/STM32_ADC.c \
 pikascript/pikascript-lib/STM32/STM32_GPIO.c \
 pikascript/pikascript-lib/STM32/STM32_Time.c \
