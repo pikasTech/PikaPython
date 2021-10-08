@@ -116,9 +116,9 @@ C_INCLUDES =  \
 -IDrivers/STM32F1xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32F1xx/Include \
 -IDrivers/CMSIS/Include \
--Ipikascript/pikascript-core \
--Ipikascript/pikascript-lib/STM32 \
--Ipikascript/pikascript-api
+-I pikascript/pikascript-core \
+-I pikascript/pikascript-lib/STM32 \
+-I pikascript/pikascript-api
 
 
 # compile gcc flags
