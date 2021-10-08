@@ -32,9 +32,6 @@ jobs:
       # Build your program with the given configuration
       run: cd ${{github.workspace}}/port/linux && bash test.sh
 
-    - name: PIKAPI_BOOTLOADER
-      run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
-
   windows-bsp:
     runs-on: windows-latest
 
@@ -50,12 +47,12 @@ jobs:
       run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
       
     - name: stm32f103-beforeMake
-      run: cd ${{github.workspace}}/bsp/stm32f103c8/pikascript && pikaPackage.exe && rust-msc-latest-win10.exe
+      run: cd ${{github.workspace}}/bsp/stm32f103c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
  
     - name: stm32f103-make
       run: cd ${{github.workspace}}/bsp/stm32f103c8 && make
 
-  windows:
+  windows-packageManager:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
