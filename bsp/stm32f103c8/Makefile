@@ -36,6 +36,7 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
+$(shell find  ./pikascript -name *.c) \
 Core/Src/main.c \
 Core/Src/gpio.c \
 Core/Src/stm32f1xx_it.c \
@@ -53,8 +54,7 @@ Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c \
-Core/Src/system_stm32f1xx.c \
-$(shell find  ./pikascript -name *.c)
+Core/Src/system_stm32f1xx.c
 
 # ASM sources
 ASM_SOURCES =  \
