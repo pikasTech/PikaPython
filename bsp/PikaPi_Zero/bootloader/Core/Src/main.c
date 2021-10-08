@@ -136,7 +136,7 @@ int fputc(int ch, FILE* f) {
     return ch;
 }
 
-typedef void (*iapfun)(void);          //定义一个函数类型的参数.
+typedef void (*iapfun)(void);          //定义�?个函数类型的参数.
 iapfun jump2app;
 void MSR_MSP(unsigned int addr); //设置堆栈地址
 
@@ -154,9 +154,9 @@ void iap_load_app(uint32_t appxaddr)
 {
     uint32_t Byte = *(__IO uint32_t *)appxaddr;
     uint32_t Top = (Byte & 0x2FFE0000);
-    if (Top == 0x20000000) //检查栈顶地址是否合法.
+    if (Top == 0x20000000) //�?查栈顶地�?是否合法.
     {
-        jump2app = (iapfun) * (__IO uint32_t *)(appxaddr + 4); //用户代码区第二个字为程序开始地址(复位地址)
+        jump2app = (iapfun) * (__IO uint32_t *)(appxaddr + 4); //用户代码区第二个字为程序�?始地�?(复位地址)
         /* deinit rcc */
         HAL_RCC_DeInit();
         SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;
@@ -194,9 +194,9 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-    MX_GPIO_Init();
-    MX_USART1_UART_Init();
-    /* USER CODE BEGIN 2 */
+  MX_GPIO_Init();
+  MX_USART1_UART_Init();
+  /* USER CODE BEGIN 2 */
     HAL_UART_Receive_IT(&huart1, (uint8_t*)(pika_uart1.rxBuff + pika_uart1.rxBuffOffset), 1);  
     printf("[info]: In bootloader.\r\n");
 
