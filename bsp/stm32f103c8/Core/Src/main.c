@@ -41,7 +41,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-
+PikaObj *PikaMain;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -86,7 +86,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  PikaObj *PikaMain = pikaScriptInit();
+  PikaMain = pikaScriptInit();
   /* USER CODE END 2 */
 
   /* Infinite loop */
