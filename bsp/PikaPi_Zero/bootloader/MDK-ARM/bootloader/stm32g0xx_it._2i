@@ -1,0 +1,6 @@
+--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32G0xx/Include -I ../Drivers/CMSIS/Include
+-I.\RTE\_bootloader
+-ID:\Users\liang\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
+-ID:\Users\liang\AppData\Local\Arm\Packs\Keil\STM32G0xx_DFP\1.3.0\Drivers\CMSIS\Device\ST\STM32G0xx\Include
+-D__UVISION_VERSION="536" -D_RTE_ -DSTM32G030xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32G030xx
+-o bootloader\stm32g0xx_it.o --omf_browse bootloader\stm32g0xx_it.crf --depend bootloader\stm32g0xx_it.d --feedback "bootloader\bootloader.fed" "../Core/Src/stm32g0xx_it.c"

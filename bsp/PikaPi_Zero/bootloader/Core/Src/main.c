@@ -145,7 +145,7 @@ void MSR_MSP(unsigned int addr); //设置堆栈地址
 void MSR_MSP(unsigned int addr)
 {
     __asm("MSR MSP, r0"); // set Main Stack value
-    __asm("BX r14");
+//    __asm("BX r14");
 }
 
 //跳转到应用程序段
@@ -157,7 +157,9 @@ void iap_load_app(uint32_t appxaddr)
     if (Top == 0x20000000) //检查栈顶地址是否合法.
     {
         jump2app = (iapfun) * (__IO uint32_t *)(appxaddr + 4); //用户代码区第二个字为程序开始地址(复位地址)
-        MSR_MSP(*(__IO uint32_t *)appxaddr);                   //初始化APP堆栈指针(用户代码区的第一个字用于存放栈顶地址)
+        /* deinit rcc */
+        HAL_RCC_DeInit();
+        SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;
         jump2app();                                            //跳转到APP.
     }
 }
