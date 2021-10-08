@@ -20,7 +20,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
+
+    - uses: ryanwinter/arm-none-eabi-gcc@v2.0.1
+      with:
+        # GNU Embedded Toolchain for Arm release name, in the V-YYYY-qZ format (e.g. "9-2019-q4")
+        release: '9-2019-q4'
+
     - name: PULL_CORE
       run: cd ${{github.workspace}}/port/linux && bash pull-core.sh
 
@@ -32,17 +37,15 @@ jobs:
       # Build your program with the given configuration
       run: cd ${{github.workspace}}/port/linux && bash test.sh
 
+    - name: PIKAPI_BOOTLOADER
+      run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
+
   windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
 
-      - uses: ryanwinter/arm-none-eabi-gcc@v2.0.1
-        with:
-          # GNU Embedded Toolchain for Arm release name, in the V-YYYY-qZ format (e.g. "9-2019-q4")
-          release: '9-2019-q4'
       - name: PACKAGE_MANAGER
         run: cd ${{github.workspace}}/tools/pikaPackageManager && go run main.go
         
-      - name: PIKAPI_BOOTLOADER
-        run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
+
