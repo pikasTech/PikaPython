@@ -22,7 +22,9 @@ jobs:
     - uses: actions/checkout@v2
 
     - uses: fiam/arm-none-eabi-gcc@v1.0.2
-
+      with:
+        # GNU Embedded Toolchain for Arm release name, in the V-YYYY-qZ format (e.g. "9-2019-q4")
+        release: '9-2019-q4'
 
     - name: PULL_CORE
       run: cd ${{github.workspace}}/port/linux && bash pull-core.sh
