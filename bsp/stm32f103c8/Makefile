@@ -45,6 +45,7 @@ pikascript/pikascript-lib/STM32/STM32_GPIO.c \
 pikascript/pikascript-lib/STM32/STM32_Time.c \
 pikascript/pikascript-lib/STM32/STM32_UART.c \
 pikascript/pikascript-lib/STM32/STM32_PWM.c \
+pikascript/pikascript-lib/STM32/STM32_common.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c \
