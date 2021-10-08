@@ -46,9 +46,9 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 # 2.驱动适配进度
 | MCU/Board   |Time|GPIO|UART|PWM|ADC|RGB|I2C|SPI|PyLoader|
 | ---         |---   | ---   | ---   | ---   | ---   | ---   | ---   | ---   | ---      |
-| [PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)  |**OK** |**OK** |**OK** |**OK** |**OK** |**OK** |Not yet|Not yet| **OK**   |
+| [PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)  |**OK** |**OK** |**OK** |**OK** |**OK** |**OK** ||| **OK**   |
 | STM32G030C8 |**OK**|**OK**|**OK**|**OK**|**OK**|-      | ||**OK**|
-| STM32G070CB |**OK**|**OK**|**OK**|Not yet|**OK**|-     | |||
+| STM32G070CB |**OK**|**OK**|**OK**||**OK**|-     | |||
 | STM32F103C8 |**OK**|**OK**|**OK**|**OK**|**OK**|-      | |||
 # 3.特性
 ### (1)运行环境
