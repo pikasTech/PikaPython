@@ -44,18 +44,12 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 [pikaPackageManager](../../tree/master/tools/pikaPackageManager) - 使用go编写的模块管理器
 
 # 2.驱动适配进度
-| Device  | [PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail) | STM32 G030C8 | STM32 G070CB | STM32 F103C8 |
-| ---     | ---         | ---         | ---         | ---         |
-| Time    | **OK**      |  **OK**     | **OK**      | **OK**      | 
-| GPIO    | **OK**      | **OK**      | **OK**      | **OK**      |
-| UART    | **OK**      |  **OK**     | **OK**      | **OK**      |
-| PWM     | **OK**      | **OK**      | Not yet     | **OK**      |
-| ADC     | **OK**      | **OK**      | **OK**      | **OK**      |
-| RGB     | **OK**      | -           | -           | -           |
-|Flash python programmer| **OK**      | **OK**      | Not yet     | Not yet     |
-| I2C     | Not yet     |  Not yet    | Not yet     | Not yet     |
-| SPI     | Not yet     |  Not yet    | Not yet     | Not yet     |
-
+| MCU/Board   | Time  | GPIO  | UART  | PWM   | ADC   | RGB   | I2C   | SPI   | PyLoader |
+| ---         | ---   | ---   | ---   | ---   | ---   | ---   | ---   | ---   | ---      |
+| [PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)  |**OK** |**OK** |**OK** |**OK** |**OK** |**OK** |Not yet|Not yet| **OK**   |
+| STM32G030C8 |**OK** |**OK** |**OK** |**OK** |**OK** |-      |Not yet|Not yet| **OK**   |
+| STM32G070CB |**OK** |**OK** |**OK** |Not yet|**OK** |-      |Not yet|Not yet| Not yet  |
+| STM32F103C8 |**OK** |**OK** |**OK** |**OK** |**OK** |-      |Not yet|Not yet| Not yet  |
 # 3.特性
 ### (1)运行环境
 
