@@ -54,48 +54,7 @@ Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c \
 Core/Src/system_stm32f1xx.c \
-pikascript/pikascript-core/BaseObj.c \
-pikascript/pikascript-core/PikaBlock.c \
-pikascript/pikascript-core/PikaIf.c \
-pikascript/pikascript-core/PikaInvoke.c \
-pikascript/pikascript-core/PikaObj.c \
-pikascript/pikascript-core/PikaWhile.c \
-pikascript/pikascript-core/TinyObj.c \
-pikascript/pikascript-core/dataArg.c \
-pikascript/pikascript-core/dataArgs.c \
-pikascript/pikascript-core/dataLink.c \
-pikascript/pikascript-core/dataLinkNode.c \
-pikascript/pikascript-core/dataMemory.c \
-pikascript/pikascript-core/dataString.c \
-pikascript/pikascript-core/dataStrs.c \
-pikascript/pikascript-core/method.c \
-pikascript/pikascript-core/pikaPlatform.c \
-pikascript/pikascript-api/PikaMain-api.c \
-pikascript/pikascript-api/pikaScript.c \
-pikascript/pikascript-api/PikaStdDevice_ADC-api.c \
-pikascript/pikascript-api/PikaStdDevice_GPIO-api.c \
-pikascript/pikascript-api/PikaStdDevice_Time-api.c \
-pikascript/pikascript-api/PikaStdDevice_UART-api.c \
-pikascript/pikascript-api/PikaStdDevice_PWM-api.c \
-pikascript/pikascript-api/PikaStdLib_MemChecker-api.c \
-pikascript/pikascript-api/PikaStdLib_SysObj-api.c \
-pikascript/pikascript-api/STM32_ADC-api.c \
-pikascript/pikascript-api/STM32_GPIO-api.c \
-pikascript/pikascript-api/STM32_Time-api.c \
-pikascript/pikascript-api/STM32_UART-api.c \
-pikascript/pikascript-lib/STM32/STM32_ADC.c \
-pikascript/pikascript-lib/STM32/STM32_common.c \
-pikascript/pikascript-lib/STM32/STM32_GPIO.c \
-pikascript/pikascript-lib/STM32/STM32_Time.c \
-pikascript/pikascript-lib/STM32/STM32_UART.c \
-pikascript/pikascript-lib/STM32/STM32_PWM.c \
-pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_GPIO.c \
-pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_ADC.c \
-pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_Time.c \
-pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_UART.c \
-pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_PWM.c \
-pikascript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c \
-pikascript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c 
+$(shell find  ./pikascript -name '*.c')
 
 # ASM sources
 ASM_SOURCES =  \
