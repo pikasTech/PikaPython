@@ -21,6 +21,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - uses: fiam/arm-none-eabi-gcc@v1.0.2
+
+
     - name: PULL_CORE
       run: cd ${{github.workspace}}/port/linux && bash pull-core.sh
 
