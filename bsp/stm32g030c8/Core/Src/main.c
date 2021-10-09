@@ -89,7 +89,12 @@ int main(void) {
 
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
-    /* USER CODE BEGIN 2 */
+    /* USER CODE BEGIN 2 */   
+	__disable_irq();
+	/* set vector table*/
+	SCB->VTOR = FLASH_BASE | 0x2000;
+	__enable_irq(); 
+    
     char *code = (char *)FLASH_CODE_START_ADDR;
     uint16_t codeOffset = 0;
     if( code[0] == 'i'){
