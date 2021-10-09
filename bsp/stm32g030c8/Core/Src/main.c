@@ -22,9 +22,9 @@
 #include "gpio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "STM32_common.h"
 #include "pikaScript.h"
 #include "stdbool.h"
-#include "STM32_common.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -89,15 +89,15 @@ int main(void) {
 
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
-    /* USER CODE BEGIN 2 */   
-	__disable_irq();
-	/* set vector table*/
-	SCB->VTOR = FLASH_BASE | 0x2000;
-	__enable_irq(); 
-    
-    char *code = (char *)FLASH_CODE_START_ADDR;
+    /* USER CODE BEGIN 2 */
+    __disable_irq();
+    /* set vector table*/
+    SCB->VTOR = FLASH_BASE | 0x2000;
+    __enable_irq();
+
+    char* code = (char*)FLASH_CODE_START_ADDR;
     uint16_t codeOffset = 0;
-    if( code[0] == 'i'){
+    if (code[0] == 'i') {
         /* boot from flash */
         pikaMain = newRootObj("pikaMain", New_PikaMain);
         obj_run(pikaMain, "uart = STM32.UART()");
@@ -106,21 +106,20 @@ int main(void) {
         obj_run(pikaMain, "uart.setBaudRat e(115200)");
         obj_run(pikaMain, "uart.enable()");
         obj_run(pikaMain, "print('[info]: boot from flash.')");
-        while(1){
+        while (1) {
             char lineBuff[64] = {0};
-            char *codePointer = code + codeOffset;
-            char *line = strGetFirstToken(lineBuff, codePointer, '\n');
+            char* codePointer = code + codeOffset;
+            char* line = strGetFirstToken(lineBuff, codePointer, '\n');
             codeOffset += strGetSize(line) + 1;
-            
+
             obj_run(pikaMain, line);
             /* not any line in code */
-            if( !strIsContain(codePointer, '\n') ){
+            if (!strIsContain(codePointer, '\n')) {
                 break;
             }
         }
         obj_run(pikaMain, "");
-    }
-    else{
+    } else {
         /* boot from firmware */
         pikaMain = pikaScriptInit();
     }
