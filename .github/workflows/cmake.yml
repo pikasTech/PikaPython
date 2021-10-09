@@ -49,6 +49,7 @@ jobs:
     - name: make
       run: cd ${{github.workspace}}/bsp/stm32f103c8 && make
 
+
   bsp-stm32g030:
     runs-on: windows-latest
 
@@ -65,6 +66,23 @@ jobs:
  
     - name: make
       run: cd ${{github.workspace}}/bsp/stm32g030c8 && make
+
+  bsp-stm32g070:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: ryanwinter/arm-none-eabi-gcc@v2.0.1
+      with:
+        # GNU Embedded Toolchain for Arm release name, in the V-YYYY-qZ format (e.g. "9-2019-q4")
+        release: '9-2019-q4'
+
+    - name: beforeMake
+      run: cd ${{github.workspace}}/bsp/stm32g070cb/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
+ 
+    - name: make
+      run: cd ${{github.workspace}}/bsp/stm32g070cb && make
 
   bsp-stm32g030-bootloader:
     runs-on: windows-latest
