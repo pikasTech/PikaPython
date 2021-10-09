@@ -55,10 +55,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-   # - uses: ryanwinter/arm-none-eabi-gcc@v2.0.1
-   #   with:
+    - uses: ryanwinter/arm-none-eabi-gcc@v2.0.1
+      with:
         # GNU Embedded Toolchain for Arm release name, in the V-YYYY-qZ format (e.g. "9-2019-q4")
-   #     release: '9-2019-q4'
+        release: '9-2019-q4'
 
     - name: stm32g030-bootloader
       run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
