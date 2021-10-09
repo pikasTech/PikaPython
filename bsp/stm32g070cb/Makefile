@@ -36,10 +36,19 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
+$(shell find  ./pikascript/pikascript-core -name *.c) \
+$(shell find  ./pikascript/pikascript-api -name *.c) \
+$(shell find  ./pikascript/pikascript-lib -name *.c) \
 Core/Src/main.c \
 Core/Src/gpio.c \
 Core/Src/stm32g0xx_it.c \
 Core/Src/stm32g0xx_hal_msp.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc_ex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_usart.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_usart_ex.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_uart.c \
+Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_uart_ex.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim_ex.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rcc.c \
@@ -117,7 +126,10 @@ C_INCLUDES =  \
 -IDrivers/STM32G0xx_HAL_Driver/Inc \
 -IDrivers/STM32G0xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32G0xx/Include \
--IDrivers/CMSIS/Include
+-IDrivers/CMSIS/Include \
+-I pikascript/pikascript-core \
+-I pikascript/pikascript-lib/STM32 \
+-I pikascript/pikascript-api
 
 
 # compile gcc flags
