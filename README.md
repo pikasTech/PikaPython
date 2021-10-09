@@ -3,6 +3,8 @@
 
 <img align="left" src="https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif" width="60" height="60"/>
 
+[![CMake](https://github.com/pikasTech/pikascript/actions/workflows/cmake.yml/badge.svg?branch=master)](https://github.com/pikasTech/pikascript/actions/workflows/cmake.yml)
+
 # 来颗Star求求了~ Star please~
 ## issue, pr请往主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
 
