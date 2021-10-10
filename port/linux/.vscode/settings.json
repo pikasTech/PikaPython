@@ -3,5 +3,6 @@
         "pikaobj.h": "c",
         "stdbool.h": "c",
         "datamemory.h": "c"
-    }
+    },
+    "python.formatting.provider": "yapf"
 }
