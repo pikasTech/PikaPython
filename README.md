@@ -120,7 +120,8 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
-| 捐赠: GD32E103TB芯片2片 | 信息牛 |
+| 捐赠：GD32E103TB芯片2片 | 信息牛 |
+| Rt-thread 支持包模板| [Meco Jianting Man](https://github.com/mysterywolf) |
 | 捐赠：移远EC600S-CN 4G模块 | 移远模块 |
 | 捐赠：博流BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
 | 捐赠：中国移动CM32M101A 开发板| 孟巍(微信名) |
