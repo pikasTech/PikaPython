@@ -23,3 +23,8 @@ print('hello 2')
 print('mem used max:')
 mem.max()
 
+while True:
+    rgb.flow()
+    print('flowing...')
+
+
