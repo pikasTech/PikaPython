@@ -40,6 +40,7 @@ uint32_t GetPage(uint32_t Addr) {
     return (Addr - FLASH_BASE) / FLASH_PAGE_SIZE;
 }
 
+#if (defined Code_ENABLE) 
 void STM32_Code_flashHandler() {
     if (!codeHeap.ena){
         /* recive not activate */
@@ -135,3 +136,4 @@ void STM32_Code_flashHandler() {
     printf("\r\n");
     HAL_NVIC_SystemReset();
 }
+#endif

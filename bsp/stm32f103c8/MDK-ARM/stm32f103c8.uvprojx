@@ -725,6 +725,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\STM32_PWM-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaMath_Operator-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaMath_Operator-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -794,6 +799,16 @@
               <FileName>PikaStdDevice_PWM.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaMath_Operator.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaMath\PikaMath_Operator.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32_Code.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_Code.c</FilePath>
             </File>
           </Files>
         </Group>
