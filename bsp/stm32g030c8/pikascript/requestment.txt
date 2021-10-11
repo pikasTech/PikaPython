@@ -3,3 +3,4 @@ PikaStdLib==latest
 PikaStdDevice==latest
 STM32==v1.1.0
 PikaPiZero==latest
+PikaMath==v1.0.0

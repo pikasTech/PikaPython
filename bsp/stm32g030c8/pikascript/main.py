@@ -1,6 +1,7 @@
 import STM32
 import PikaPiZero
 import PikaStdLib
+import PikaMath
 
 time = STM32.Time()
 uart = STM32.UART()
@@ -10,6 +11,7 @@ pwm = STM32.PWM()
 uart = STM32.UART()
 rgb = PikaPiZero.RGB()
 mem = PikaStdLib.MemChecker()
+op = PikaMath.Operator()
 
 uart.init()
 uart.setId(1)

@@ -40,6 +40,7 @@ $(shell find  ./pikascript/pikascript-core -name *.c) \
 $(shell find  ./pikascript/pikascript-api -name *.c) \
 $(shell find  ./pikascript/pikascript-lib/PikaStdDevice -name *.c) \
 $(shell find  ./pikascript/pikascript-lib/PikaStdLib -name *.c) \
+$(shell find  ./pikascript/pikascript-lib/PikaMath -name *.c) \
 pikascript/pikascript-lib/STM32/STM32_ADC.c \
 pikascript/pikascript-lib/STM32/STM32_GPIO.c \
 pikascript/pikascript-lib/STM32/STM32_Time.c \

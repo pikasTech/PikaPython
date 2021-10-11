@@ -2,3 +2,4 @@ pikascript-core==v0.8.3
 PikaStdLib==latest
 PikaStdDevice==latest
 STM32==v1.1.0
+PikaMath==v1.0.0
