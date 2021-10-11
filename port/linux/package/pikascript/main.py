@@ -1,8 +1,9 @@
 import PikaStdLib
 import PikaStdDevice
+import PikaMath
 from PikaObj import *
 
-meth = PikaStdLib.Math()
+operator = PikaMath.Operator()
 
 print('hello world')
 mem = PikaStdLib.MemChecker()
