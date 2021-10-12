@@ -4,6 +4,7 @@ releases = [
   "v0.8.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
   "v0.8.2 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
   "v0.8.3 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
+  "v0.9.0 ac7665194cb54aa3ea137290a75a8151ee4b8e53",
 ]
 
 [[packages]]
