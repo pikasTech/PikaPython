@@ -2,7 +2,8 @@
     "files.associations": {
         "pikaobj.h": "c",
         "stdbool.h": "c",
-        "datamemory.h": "c"
+        "datamemory.h": "c",
+        "pikamath_operator.h": "c"
     },
     "python.formatting.provider": "yapf"
 }
