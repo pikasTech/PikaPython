@@ -74,12 +74,13 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 	exec.Command("cmd", "/C", "mkdir", "pikascript-lib").Run()
 	exec.Command("cmd", "/C", "mkdir", "pikascript-core").Run()
 	exec.Command("cmd", "/C", "mkdir", "pikascript-api").Run()
+	workTree, _ := repo.Worktree()
 	for _, requerment := range requerments {
 		/* checkout commit */
-		workTree, _ := repo.Worktree()
 		fmt.Printf("checking out: %s\n", requerment.Commit)
 		err := workTree.Checkout(&git.CheckoutOptions{
-			Hash: plumbing.NewHash(requerment.Commit),
+			Hash:  plumbing.NewHash(requerment.Commit),
+			Force: true,
 		})
 		CheckIfError(err)
 		/* update file */
@@ -101,6 +102,11 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 		err = exec.Command("cmd", "/C", "copy", dirPath+"\\*.py").Run()
 		CheckIfError(err)
 	}
+	err := workTree.Checkout(&git.CheckoutOptions{
+		Hash:  plumbing.NewHash("master"),
+		Force: true,
+	})
+	CheckIfError(err)
 }
 func CheckIfError(err error) {
 	if err == nil {
@@ -229,7 +235,8 @@ func updatePikascript(path string) *git.Repository {
 	isShowSize = false
 
 	err = w.Checkout(&git.CheckoutOptions{
-		Hash: plumbing.NewHash("master"),
+		Hash:  plumbing.NewHash("master"),
+		Force: true,
 	})
 	CheckIfError(err)
 
