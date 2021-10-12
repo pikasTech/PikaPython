@@ -1,1 +1,1 @@
-cp ../../src/* package/pikascript/pikascript-core
+cp ../../src package/pikascript/pikascript-core -r
