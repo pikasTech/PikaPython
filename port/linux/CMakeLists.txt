@@ -3,7 +3,7 @@ project(pikascript VERSION 0.1.0)
 
 include_directories(package/pikascript/pikascript-core)
 include_directories(package/pikascript/pikascript-api)
-include_directories(package/pikascript/pikascript-lib/PikaRunExternContral)
+include_directories(package/pikascript/pikascript-lib/PikaRunExternControl)
 include_directories(boot/demo01-led)
 
 add_subdirectory(package/googletest)

@@ -3,4 +3,4 @@ PikaStdLib==latest
 PikaStdDevice==latest
 STM32==v1.1.1
 PikaMath==v1.0.0
-PikaRunExternContral==v1.0.0
+PikaRunExternControl==v1.0.0
