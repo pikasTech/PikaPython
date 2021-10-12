@@ -565,57 +565,21 @@ exit:
     return res;
 }
 
+PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {
+    return 0;
+}
+
 Args* obj_runDirect(PikaObj* self, char* cmd) {
     Args* buffs = New_strBuff();
     Args* res = NULL;
     cmd = strsDeleteChar(buffs, cmd, '\n');
-    /* in block */
-    if (NULL != obj_getArg(self, "_isInBlock")) {
-        PikaObj* block = obj_getObj(self, "_block", 0);
-        if (strIsStartWith(cmd, "    ")) {
-            if (strEqu(block_getMode(block), "if")) {
-                if_pushLine(block, cmd);
-                goto exit;
-            }
-            if (strEqu(block_getMode(block), "while")) {
-                while_pushLine(block, cmd);
-                goto exit;
-            }
-            goto exit;
-        }
-        /* the block is end */
-        else {
-            obj_removeArg(self, "_isInBlock");
-            if (strEqu(block_getMode(block), "if")) {
-                if_run(block);
-            }
-            if (strEqu(block_getMode(block), "while")) {
-                while_run(block);
-            }
-            obj_removeArg(self, "_block");
-            /* not finished */
-        }
-    }
 
-    /* if block */
-    if (strIsStartWith(cmd, "if ")) {
-        obj_setInt(self, "_isInBlock", 1);
-        obj_setObjWithoutClass(self, "_block", block_init);
-        PikaObj* block = obj_getObj(self, "_block", 0);
-        if_setAssert(block, cmd);
-        /* this line processed ok */
+    /* contral extern */
+    int isExit = __runExtern_contral(self, cmd);
+    if (isExit) {
         goto exit;
     }
 
-    /* while block */
-    if (strIsStartWith(cmd, "while ")) {
-        obj_setInt(self, "_isInBlock", 1);
-        obj_setObjWithoutClass(self, "_block", block_init);
-        PikaObj* block = obj_getObj(self, "_block", 0);
-        while_setAssert(block, cmd);
-        /* this line processed ok */
-        goto exit;
-    }
     /* check class */
     if (strIsContain(cmd, '(') && strIsContain(cmd, ')') &&
         strIsContain(cmd, '=')) {
