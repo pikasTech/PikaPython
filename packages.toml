@@ -8,7 +8,7 @@ releases = [
 ]
 
 [[packages]]
-name = "PikaRunExtern"
+name = "PikaRunExternContral"
 releases = [
   "v1.0.0 332ef8afb0692cddd194782a07e30f2688d0f813",
 ]
