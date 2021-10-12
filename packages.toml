@@ -10,7 +10,7 @@ releases = [
 [[packages]]
 name = "PikaRunExternControl"
 releases = [
-  "v1.0.0 23a62ba029f0f621bf31204811f92a89c4f2e3c2",
+  "v1.0.0 aef94d25720f76e6d9239e9b82fa0e5fac4fcb6d",
 ]
 
 
