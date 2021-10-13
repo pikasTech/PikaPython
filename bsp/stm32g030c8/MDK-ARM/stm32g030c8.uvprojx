@@ -815,6 +815,26 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaMath\PikaMath_Operator.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaBlock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaRunExternControl\PikaBlock.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaIf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaRunExternControl\PikaIf.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaRunExternContral.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaRunExternControl\PikaRunExternContral.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaWhile.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaRunExternControl\PikaWhile.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -826,11 +846,6 @@
               <FilePath>..\pikascript\pikascript-core\TinyObj.c</FilePath>
             </File>
             <File>
-              <FileName>PikaWhile.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaWhile.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\PikaObj.c</FilePath>
@@ -839,16 +854,6 @@
               <FileName>PikaInvoke.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\PikaInvoke.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaIf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaIf.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaBlock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaBlock.c</FilePath>
             </File>
             <File>
               <FileName>method.c</FileName>
