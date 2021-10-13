@@ -6,15 +6,13 @@ typedef PikaObj QueueObj;
 int32_t queueObj_init(QueueObj* self);
 
 int32_t queueObj_pushInt(QueueObj* self, int val);
+int32_t queueObj_pushFloat(QueueObj* self, float val);
+int32_t queueObj_pushStr(QueueObj* self, char* str);
+int32_t queueObj_pushObj(QueueObj* self, char* className);
 
 int64_t queueObj_popInt(QueueObj* self);
-
-int32_t queueObj_pushFloat(QueueObj* self, float val);
-
 float queueObj_popFloat(QueueObj* self);
-
-int32_t queueObj_pushStr(QueueObj* self, char* str);
-
 char* queueObj_popStr(QueueObj* self);
+PikaObj* queueObj_popObj(QueueObj* self);
 
 #endif

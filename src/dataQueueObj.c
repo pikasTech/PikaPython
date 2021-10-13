@@ -7,6 +7,25 @@ int32_t queueObj_init(QueueObj* self) {
     return 0;
 }
 
+int32_t queueObj_pushObj(QueueObj* self, char* className) {
+    uint64_t top = obj_getInt(self, "top");
+    char topStr[32] = {0};
+    sprintf(topStr, "%ld", top);
+    /* add top */
+    obj_setInt(self, "top", top + 1);
+    return obj_newObjByFun(self, topStr, className, New_TinyObj);
+}
+
+PikaObj* queueObj_popObj(QueueObj* self) {
+    uint64_t bottom = obj_getInt(self, "bottom");
+    char bottomStr[32] = {0};
+    sprintf(bottomStr, "%ld", bottom);
+    /* add bottom */
+    obj_setInt(self, "bottom", bottom + 1);
+    PikaObj* res = obj_getObj(self, bottomStr, 0);
+    return res;
+}
+
 int32_t queueObj_pushInt(QueueObj* self, int val) {
     uint64_t top = obj_getInt(self, "top");
     char topStr[32] = {0};
