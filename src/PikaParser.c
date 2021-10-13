@@ -100,7 +100,7 @@ exit:
     return ast;
 }
 
-char* AST_appandShell(AST* ast, AST* subAst, Args* buffs, char* sh) {
+char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     uint32_t deepth = obj_getInt(ast, "deepth");
     while (1) {
         QueueObj* subStmt = queueObj_popObj(subAst);
@@ -108,7 +108,7 @@ char* AST_appandShell(AST* ast, AST* subAst, Args* buffs, char* sh) {
             break;
         }
         obj_setInt(ast, "deepth", deepth + 1);
-        sh = AST_appandShell(ast, subStmt, buffs, sh);
+        pikaAsm = AST_appandPikaAsm(ast, subStmt, buffs, pikaAsm);
     }
     char* method = obj_getStr(subAst, "method");
     char* ref = obj_getStr(subAst, "ref");
@@ -116,26 +116,26 @@ char* AST_appandShell(AST* ast, AST* subAst, Args* buffs, char* sh) {
     if (NULL != ref) {
         char buff[32] = {0};
         sprintf(buff, "%d REF %s\n", deepth, ref);
-        sh = strsAppend(buffs, sh, buff);
+        pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != method) {
         char buff[32] = {0};
         sprintf(buff, "%d RUN %s\n", deepth, method);
-        sh = strsAppend(buffs, sh, buff);
+        pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != direct) {
         char buff[32] = {0};
         sprintf(buff, "%d OUT %s\n", deepth, direct);
-        sh = strsAppend(buffs, sh, buff);
+        pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     obj_setInt(ast, "deepth", deepth - 1);
-    return sh;
+    return pikaAsm;
 }
 
-char* AST_toShell(AST* ast, Args* buffs) {
-    char* sh = strsCopy(buffs, "");
+char* AST_toPikaAsm(AST* ast, Args* buffs) {
+    char* pikaAsm = strsCopy(buffs, "");
     obj_setInt(ast, "deepth", 0);
-    return AST_appandShell(ast, ast, buffs, sh);
+    return AST_appandPikaAsm(ast, ast, buffs, pikaAsm);
 }
 
 int32_t AST_deinit(AST* ast) {

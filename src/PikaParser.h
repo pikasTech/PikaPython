@@ -5,6 +5,6 @@
 typedef QueueObj AST;
 AST* pikaParse(char* line);
 int32_t AST_deinit(AST* ast);
-char* AST_toShell(AST* ast, Args* buffs);
+char* AST_toPikaAsm(AST* ast, Args* buffs);
 
 #endif
