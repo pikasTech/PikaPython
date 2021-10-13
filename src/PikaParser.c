@@ -12,7 +12,7 @@ AST* pikaParse(char* line) {
     char* method = NULL;
     if (strIsContain(assignment, '=')) {
         direct = strsGetFirstToken(buffs, assignment, '=');
-        method = strGetLastToken(buffs, assignment, '=');
+        method = strsGetLastToken(buffs, assignment, '=');
     }
     method = assignment;
     char* subStmts = strsCut(buffs, stmt, '(', ')');
