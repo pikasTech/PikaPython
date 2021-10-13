@@ -6,12 +6,16 @@
 AST* pikaParse(char* line) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
-    char* cmd = strsGetCleanCmd(buffs, line);
-    char* assignment = strsGetFirstToken(buffs, cmd, '(');
+    char* stmt = strsGetCleanCmd(buffs, line);
+    char* assignment = strsGetFirstToken(buffs, stmt, '(');
     char* direct = NULL;
+    char* method = NULL;
     if (strIsContain(assignment, '=')) {
         direct = strsGetFirstToken(buffs, assignment, '=');
+        method = strGetLastToken(buffs, assignment, '=');
     }
+    method = assignment;
+    char* subStmts = strsCut(buffs, stmt, '(', ')');
 
     goto exit;
 exit:

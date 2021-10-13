@@ -23,25 +23,31 @@ char* strAppendWithSize_unlimited(char* strOut, char* pData, int32_t Size) {
 
 char* strCut(char* strOut, char* strIn, char startSign, char endSign) {
     int32_t Size = strGetSize(strIn);
-    int32_t isStart = 0;
-    int32_t isEnd = 0;
-    int32_t iOut = 0;
+    int32_t iStart = 0;
+    int32_t iEnd = Size;
+    uint8_t isStart = 0;
+    uint8_t isEnd = 0;
     for (int32_t i = 0; i < Size; i++) {
-        if (!isStart && (strIn[i] == startSign)) {
+        if (strIn[i] == startSign) {
+            iStart = i;
             isStart = 1;
-            continue;
+            break;
         }
-        if (isStart && (strIn[i] == endSign)) {
+    }
+    for (int32_t i = Size - 1; i >= 0; i--) {
+        if (strIn[i] == endSign) {
+            iEnd = i;
             isEnd = 1;
             break;
         }
-        if (isStart) {
-            strOut[iOut] = strIn[i];
-            iOut++;
-        }
+    }
+    int outi = 0;
+    for (int32_t i = iStart + 1; i < iEnd; i++) {
+        strOut[outi] = strIn[i];
+        outi++;
     }
     /* add \0 */
-    strOut[iOut] = 0;
+    strOut[outi] = 0;
     if (isStart && isEnd) {
         /* succeed */
         return strOut;
@@ -104,7 +110,7 @@ char* strAppend_unlimited(char* strOut, char* pData) {
     return strAppendWithSize_unlimited(strOut, pData, Size);
 }
 
-char* strGetLastLine(char *strOut, char *strIn){
+char* strGetLastLine(char* strOut, char* strIn) {
     int32_t size = strGetSize(strIn);
     char sign = '\n';
     uint32_t beginIndex = 0;
@@ -116,7 +122,7 @@ char* strGetLastLine(char *strOut, char *strIn){
             break;
         }
     }
-    
+
     memcpy(strOut, strIn + beginIndex, size - beginIndex);
     strOut[size - beginIndex + 1] = 0;
     return strOut;
