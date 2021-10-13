@@ -1,6 +1,12 @@
 #include "dataQueueObj.h"
 #include "BaseObj.h"
 
+QueueObj* New_queueObj() {
+    PikaObj* self = New_BaseObj(NULL);
+    queueObj_init(self);
+    return self;
+}
+
 int32_t queueObj_init(QueueObj* self) {
     obj_setInt(self, "top", 0);
     obj_setInt(self, "bottom", 0);
