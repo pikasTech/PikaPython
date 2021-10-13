@@ -27,7 +27,7 @@ int32_t queue_pushInt(Queue* queue, int val) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
     char topStr[32] = {0};
-    sprintf(topStr, "%d", top);
+    sprintf(topStr, "%ld", top);
     /* add top */
     args_setInt(args, "top", top + 1);
     return args_setInt(args, topStr, val);
@@ -37,17 +37,19 @@ int64_t queue_popInt(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
     char bottomStr[32] = {0};
-    sprintf(bottomStr, "%d", bottom);
+    sprintf(bottomStr, "%ld", bottom);
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
-    return args_getInt(args, bottomStr);
+    int64_t res = args_getInt(args, bottomStr);
+    args_removeArg(args, bottomStr);
+    return res;
 }
 
 int32_t queue_pushFloat(Queue* queue, float val) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
     char topStr[32] = {0};
-    sprintf(topStr, "%d", top);
+    sprintf(topStr, "%ld", top);
     /* add top */
     args_setInt(args, "top", top + 1);
     return args_setFloat(args, topStr, val);
@@ -57,17 +59,19 @@ float queue_popFloat(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
     char bottomStr[32] = {0};
-    sprintf(bottomStr, "%d", bottom);
+    sprintf(bottomStr, "%ld", bottom);
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
-    return args_getFloat(args, bottomStr);
+    float res = args_getFloat(args, bottomStr);
+    args_removeArg(args, bottomStr);
+    return res;
 }
 
 int32_t queue_pushStr(Queue* queue, char* str) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
     char topStr[32] = {0};
-    sprintf(topStr, "%d", top);
+    sprintf(topStr, "%ld", top);
     /* add top */
     args_setInt(args, "top", top + 1);
     return args_setStr(args, topStr, str);
@@ -77,7 +81,7 @@ char* queue_popStr(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
     char bottomStr[32] = {0};
-    sprintf(bottomStr, "%d", bottom);
+    sprintf(bottomStr, "%ld", bottom);
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
     return args_getStr(args, bottomStr);
