@@ -112,3 +112,31 @@ TEST(queueObj, obj) {
     obj_deinit(q);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(queueObj, currentObj) {
+    QueueObj* q = New_TinyObj(NULL);
+    queueObj_init(q);
+
+    queueObj_pushObj(q, (char*)"type1");
+    obj_setInt(queueObj_getCurrentObj(q), (char*)"test", 1);
+
+    queueObj_pushObj(q, (char*)"type2");
+    obj_setInt(queueObj_getCurrentObj(q), (char*)"test", 2);
+
+    queueObj_pushObj(q, (char*)"type3");
+    obj_setInt(queueObj_getCurrentObj(q), (char*)"test", 3);
+
+    PikaObj* obj1 = queueObj_popObj(q);
+    PikaObj* obj2 = queueObj_popObj(q);
+    PikaObj* obj3 = queueObj_popObj(q);
+    PikaObj* obj4 = queueObj_popObj(q);
+    EXPECT_NE((int64_t)obj1, 0);
+    EXPECT_NE((int64_t)obj2, 0);
+    EXPECT_NE((int64_t)obj3, 0);
+    EXPECT_EQ((int64_t)obj4, 0);
+    EXPECT_EQ(obj_getInt(obj1, (char*)"test"), 1);
+    EXPECT_EQ(obj_getInt(obj2, (char*)"test"), 2);
+    EXPECT_EQ(obj_getInt(obj3, (char*)"test"), 3);
+    obj_deinit(q);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

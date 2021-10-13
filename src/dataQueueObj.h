@@ -15,4 +15,6 @@ float queueObj_popFloat(QueueObj* self);
 char* queueObj_popStr(QueueObj* self);
 PikaObj* queueObj_popObj(QueueObj* self);
 
+PikaObj* queueObj_getCurrentObj(QueueObj* self);
+
 #endif

@@ -16,6 +16,13 @@ int32_t queueObj_pushObj(QueueObj* self, char* className) {
     return obj_newObjByFun(self, topStr, className, New_TinyObj);
 }
 
+PikaObj* queueObj_getCurrentObj(QueueObj* self) {
+    uint64_t current = obj_getInt(self, "top") - 1;
+    char currentStr[32] = {0};
+    sprintf(currentStr, "%ld", current);
+    return obj_getObj(self, currentStr, 0);
+}
+
 PikaObj* queueObj_popObj(QueueObj* self) {
     uint64_t bottom = obj_getInt(self, "bottom");
     char bottomStr[32] = {0};
