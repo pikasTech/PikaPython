@@ -3,7 +3,8 @@
         "pikaobj.h": "c",
         "stdbool.h": "c",
         "datamemory.h": "c",
-        "pikamath_operator.h": "c"
+        "pikamath_operator.h": "c",
+        "dataargs.h": "c"
     },
     "python.formatting.provider": "yapf"
 }
