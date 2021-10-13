@@ -52,16 +52,18 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     method = assignment;
     obj_setStr(ast, (char*)"method", method);
-    char* subStmts = strsCut(buffs, stmt, '(', ')');
-    while (1) {
-        char* subStmt = strsPopStmts(buffs, subStmts);
-        if (NULL == subStmt) {
-            break;
+    char* subStmts = NULL;
+    if (strIsContain(stmt, '(') || strIsContain(stmt, ')')) {
+        subStmts = strsCut(buffs, stmt, '(', ')');
+        while (1) {
+            char* subStmt = strsPopStmts(buffs, subStmts);
+            if (NULL == subStmt) {
+                break;
+            }
+            queueObj_pushObj(ast, (char*)"stmt");
+            AST_parseStmt(queueObj_getCurrentObj(ast), subStmt);
         }
-        queueObj_pushObj(ast, (char*)"stmt");
-        obj_setStr(queueObj_getCurrentObj(ast), (char*)"nonTerminal", subStmt);
     }
-
     goto exit;
 exit:
     args_deinit(buffs);
