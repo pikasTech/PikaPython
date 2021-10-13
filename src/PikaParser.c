@@ -99,19 +99,20 @@ exit:
     args_deinit(buffs);
     return ast;
 }
-uint32_t deepth;
-char* AST_appandShell(AST* ast, Args* buffs, char* sh) {
+
+char* AST_appandShell(AST* ast, AST* subAst, Args* buffs, char* sh) {
+    uint32_t deepth = obj_getInt(ast, "deepth");
     while (1) {
-        QueueObj* subStmt = queueObj_popObj(ast);
+        QueueObj* subStmt = queueObj_popObj(subAst);
         if (NULL == subStmt) {
             break;
         }
-        deepth++;
-        sh = AST_appandShell(subStmt, buffs, sh);
+        obj_setInt(ast, "deepth", deepth + 1);
+        sh = AST_appandShell(ast, subStmt, buffs, sh);
     }
-    char* method = obj_getStr(ast, "method");
-    char* ref = obj_getStr(ast, "ref");
-    char* direct = obj_getStr(ast, "direct");
+    char* method = obj_getStr(subAst, "method");
+    char* ref = obj_getStr(subAst, "ref");
+    char* direct = obj_getStr(subAst, "direct");
     if (NULL != ref) {
         char buff[32] = {0};
         sprintf(buff, "%d REF %s\n", deepth, ref);
@@ -127,14 +128,14 @@ char* AST_appandShell(AST* ast, Args* buffs, char* sh) {
         sprintf(buff, "%d OUT %s\n", deepth, direct);
         sh = strsAppend(buffs, sh, buff);
     }
-    deepth--;
+    obj_setInt(ast, "deepth", deepth - 1);
     return sh;
 }
 
 char* AST_toShell(AST* ast, Args* buffs) {
     char* sh = strsCopy(buffs, "");
-    deepth = 0;
-    return AST_appandShell(ast, buffs, sh);
+    obj_setInt(ast, "deepth", 0);
+    return AST_appandShell(ast, ast, buffs, sh);
 }
 
 int32_t AST_deinit(AST* ast) {
