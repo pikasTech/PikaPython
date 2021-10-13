@@ -2,7 +2,7 @@
 #include "BaseObj.h"
 
 QueueObj* New_queueObj() {
-    PikaObj* self = New_BaseObj(NULL);
+    PikaObj* self = New_TinyObj(NULL);
     queueObj_init(self);
     return self;
 }

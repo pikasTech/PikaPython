@@ -45,15 +45,27 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* assignment = strsGetFirstToken(buffs, stmt, '(');
     char* direct = NULL;
     char* method = NULL;
+    char* ref = NULL;
+    uint8_t directExist = 0;
+    uint8_t isMethod = 0;
     if (strIsContain(assignment, '=')) {
+        directExist = 1;
+    }
+    if (strIsContain(stmt, '(') || strIsContain(stmt, ')')) {
+        isMethod = 1;
+    }
+    if (directExist) {
         direct = strsGetFirstToken(buffs, assignment, '=');
         obj_setStr(ast, (char*)"direct", direct);
-        method = strsGetLastToken(buffs, assignment, '=');
     }
-    method = assignment;
-    obj_setStr(ast, (char*)"method", method);
     char* subStmts = NULL;
-    if (strIsContain(stmt, '(') || strIsContain(stmt, ')')) {
+    if (isMethod) {
+        if (directExist) {
+            method = strsGetLastToken(buffs, assignment, '=');
+        } else {
+            method = assignment;
+        }
+        obj_setStr(ast, (char*)"method", method);
         subStmts = strsCut(buffs, stmt, '(', ')');
         while (1) {
             char* subStmt = strsPopStmts(buffs, subStmts);
@@ -63,6 +75,13 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
             queueObj_pushObj(ast, (char*)"stmt");
             AST_parseStmt(queueObj_getCurrentObj(ast), subStmt);
         }
+    } else {
+        if (directExist) {
+            ref = strsGetLastToken(buffs, assignment, '=');
+        } else {
+            ref = assignment;
+        }
+        obj_setStr(ast, (char*)"ref", ref);
     }
     goto exit;
 exit:
@@ -81,8 +100,38 @@ exit:
     return ast;
 }
 
+char* AST_appandShell(AST* ast, Args* buffs, char* sh) {
+    while (1) {
+        QueueObj* subStmt = queueObj_popObj(ast);
+        if (NULL == subStmt) {
+            break;
+        }
+        sh = AST_appandShell(subStmt, buffs, sh);
+    }
+    char* method = obj_getStr(ast, "method");
+    char* ref = obj_getStr(ast, "ref");
+    char* direct = obj_getStr(ast, "direct");
+    if (NULL != ref) {
+        char buff[32] = {0};
+        sprintf(buff, "REF %s\n", ref);
+        sh = strsAppend(buffs, sh, buff);
+    }
+    if (NULL != method) {
+        char buff[32] = {0};
+        sprintf(buff, "RUN %s\n", method);
+        sh = strsAppend(buffs, sh, buff);
+    }
+    if (NULL != direct) {
+        char buff[32] = {0};
+        sprintf(buff, "OUT %s\n", direct);
+        sh = strsAppend(buffs, sh, buff);
+    }
+    return sh;
+}
+
 char* AST_toShell(AST* ast, Args* buffs) {
-    return NULL;
+    char* sh = strsCopy(buffs, "");
+    return AST_appandShell(ast, buffs, sh);
 }
 
 int32_t AST_deinit(AST* ast) {
