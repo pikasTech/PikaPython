@@ -14,6 +14,7 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
+enum Instruct { NON, REF, RUN, STR, OUT, NUM };
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
@@ -23,17 +24,36 @@ static char* strs_getLine(Args* buffs, char* code) {
     return line;
 }
 
+static enum Instruct getInstruct(char* line) {
+    if (0 == strncmp(line + 2, "REF", 3)) {
+        return REF;
+    }
+    if (0 == strncmp(line + 2, "NUM", 3)) {
+        return NUM;
+    }
+    if (0 == strncmp(line + 2, "RUN", 3)) {
+        return RUN;
+    }
+    if (0 == strncmp(line + 2, "STR", 3)) {
+        return STR;
+    }
+    if (0 == strncmp(line + 2, "OUT", 3)) {
+        return OUT;
+    }
+    return NON;
+}
+
 int32_t pikaVM_run(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
     Args* buffs = New_strBuff();
-    int32_t nextAddr = lineAddr;
     char* code = pikaAsm + lineAddr;
     char* line = strs_getLine(buffs, code);
+    int32_t nextAddr = lineAddr + strGetSize(line) + 1;
 
     char deepth = line[0];
-    enum { NON, REF, RUN, STR, OUT, NUM } instruct = NON;
+    enum Instruct instruct = getInstruct(line);
 
     goto nextLine;
 nextLine:
     args_deinit(buffs);
-    return lineAddr + strGetSize(line) + 1;
+    return nextAddr;
 }
