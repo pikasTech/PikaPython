@@ -45,13 +45,25 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
-Arg* pikaVM_getArg(PikaObj* self, enum Instruct instruct, char* data) {
+Arg* pikaVM_runInstruct(PikaObj* self,
+                        enum Instruct instruct,
+                        char* data,
+                        Queue* q0,
+                        Queue* q1) {
     Arg* res = New_arg(NULL);
     if (instruct == NUM) {
         if (strIsContain(data, '.')) {
             return arg_setFloat(res, "", atof(data));
         }
         return arg_setInt(res, "", atoi(data));
+    }
+    if (instruct == OUT) {
+        Arg* outArg = arg_copy(queue_popArg(q0));
+        int outInt = arg_getInt(outArg);
+        outArg = arg_setName(outArg, data);
+        obj_setArg(self, data, outArg);
+        arg_deinit(outArg);
+        return NULL;
     }
     return NULL;
 }
@@ -68,7 +80,6 @@ int32_t pikaVM_run(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
     enum Instruct instruct = getInstruct(line);
     char* data = line + 6;
 
-    Arg* resArg = pikaVM_getArg(self, instruct, data);
     Queue* q0 = obj_getPtr(self, d0);
     Queue* q1 = obj_getPtr(self, d1);
     if (NULL == q0) {
@@ -79,6 +90,8 @@ int32_t pikaVM_run(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
         q1 = New_queue();
         obj_setPtr(self, d1, q1);
     }
+
+    Arg* resArg = pikaVM_runInstruct(self, instruct, data, q0, q1);
     if (NULL != resArg) {
         queue_pushArg(q0, resArg);
     }
