@@ -19,5 +19,9 @@ int32_t pikaVM_run(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
     Args* buffs = New_strBuff();
     int32_t size = getLineSize(pikaAsm + lineAddr);
     char* line = pikaAsm + lineAddr;
-    return lineAddr;
+
+    goto exit;
+exit:
+    args_deinit(buffs);
+    return -1;
 }
