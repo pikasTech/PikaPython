@@ -125,6 +125,13 @@ exit:
     return ast;
 }
 
+char* pikaParseToAsm(Args* buffs, char* line) {
+    AST* ast = pikaParse(line);
+    char* pikaAsm = AST_toPikaAsm(ast, buffs);
+    AST_deinit(ast);
+    return pikaAsm;
+}
+
 char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     uint32_t deepth = obj_getInt(ast, "deepth");
     while (1) {
@@ -169,7 +176,6 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     obj_setInt(ast, "deepth", 0);
     pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
     pikaAsm = strsCopy(buffs, pikaAsm);
-    AST_deinit(ast);
     args_deinit(runBuffs);
     return pikaAsm;
 }
