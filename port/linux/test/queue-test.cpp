@@ -25,6 +25,21 @@ TEST(queue, INT) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(queue, arg) {
+    Queue* q = New_queue();
+    Arg* arg1 = arg_setInt(NULL, (char*)"", 1);
+    Arg* arg2 = arg_setFloat(NULL, (char*)"", 1.2);
+    Arg* arg3 = arg_setStr(NULL, (char*)"", (char*)"ij");
+    queue_pushArg(q, arg1);
+    queue_pushArg(q, arg2);
+    queue_pushArg(q, arg3);
+    EXPECT_EQ(arg_getInt(queue_popArg(q)), 1);
+    EXPECT_FLOAT_EQ(arg_getFloat(queue_popArg(q)), 1.2);
+    EXPECT_STREQ(arg_getStr(queue_popArg(q)), (char*)"ij");
+    queue_deinit(q);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(queue, FLOAT) {
     Queue* q = New_queue();
     queue_pushFloat(q, 1.1f);

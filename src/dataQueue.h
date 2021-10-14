@@ -14,8 +14,10 @@ Queue* queue_deinit(Queue* queue);
 int32_t queue_pushInt(Queue* queue, int val);
 int32_t queue_pushFloat(Queue* queue, float val);
 int32_t queue_pushStr(Queue* queue, char* str);
+int32_t queue_pushArg(Queue* queue, Arg* arg);
 
 int64_t queue_popInt(Queue* queue);
 float queue_popFloat(Queue* queue);
 char* queue_popStr(Queue* queue);
+Arg* queue_popArg(Queue* queue);
 #endif

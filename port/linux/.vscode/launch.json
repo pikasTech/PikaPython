@@ -13,7 +13,7 @@
             "args": [
                 // "--gtest_filter=object_test.test2"
                 // "--gtest_filter=parser*"
-                "--gtest_filter=VM*"
+                // "--gtest_filter=VM*"
                 // "--gtest_filter=block.ifrun2"
                 // "--gtest_filter=sysObj.print"
                 // "--gtest_filter=object_test.a_b"
