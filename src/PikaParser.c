@@ -46,13 +46,25 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* direct = NULL;
     char* method = NULL;
     char* ref = NULL;
-    uint8_t directExist = 0;
-    uint8_t isMethod = 0;
+    char* str = NULL;
+    uint8_t directExist = 0, isMethod = 0, isRef = 0, isStr = 0;
     if (strIsContain(assignment, '=')) {
         directExist = 1;
     }
     if (strIsContain(stmt, '(') || strIsContain(stmt, ')')) {
         isMethod = 1;
+        isRef = 0;
+        isStr = 0;
+    }
+    if (!isMethod && (strIsContain(stmt, '\'') || strIsContain(stmt, '\"'))) {
+        isMethod = 0;
+        isRef = 0;
+        isStr = 1;
+    }
+    if (!isMethod && !isStr) {
+        isMethod = 0;
+        isRef = 1;
+        isStr = 0;
     }
     if (directExist) {
         direct = strsGetFirstToken(buffs, assignment, '=');
@@ -75,15 +87,28 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
             queueObj_pushObj(ast, (char*)"stmt");
             AST_parseStmt(queueObj_getCurrentObj(ast), subStmt);
         }
-    } else {
+        goto exit;
+    }
+    if (isRef) {
         if (directExist) {
             ref = strsGetLastToken(buffs, assignment, '=');
         } else {
             ref = assignment;
         }
         obj_setStr(ast, (char*)"ref", ref);
+        goto exit;
     }
-    goto exit;
+    if (isStr) {
+        if (directExist) {
+            str = strsGetLastToken(buffs, assignment, '=');
+        } else {
+            str = assignment;
+        }
+        str = strsDeleteChar(buffs, str, '\'');
+        str = strsDeleteChar(buffs, str, '\"');
+        obj_setStr(ast, (char*)"str", str);
+        goto exit;
+    }
 exit:
     args_deinit(buffs);
     return ast;
@@ -113,6 +138,7 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     char* method = obj_getStr(subAst, "method");
     char* ref = obj_getStr(subAst, "ref");
     char* direct = obj_getStr(subAst, "direct");
+    char* str = obj_getStr(subAst, "str");
     if (NULL != ref) {
         char buff[32] = {0};
         sprintf(buff, "%d REF %s\n", deepth, ref);
@@ -121,6 +147,11 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     if (NULL != method) {
         char buff[32] = {0};
         sprintf(buff, "%d RUN %s\n", deepth, method);
+        pikaAsm = strsAppend(buffs, pikaAsm, buff);
+    }
+    if (NULL != str) {
+        char buff[32] = {0};
+        sprintf(buff, "%d STR %s\n", deepth, str);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != direct) {

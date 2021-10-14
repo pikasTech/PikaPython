@@ -62,3 +62,16 @@ TEST(parser, method2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, str1) {
+    AST* ast =
+        pikaParse((char*)"literal('2.322')");
+    Args* buffs = New_strBuff();
+    char* pikaAsm = AST_toPikaAsm(ast, buffs);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "1 STR 2.322\n0 RUN literal\n");
+    AST_deinit(ast);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
