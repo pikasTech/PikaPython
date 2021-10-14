@@ -1,13 +1,13 @@
 #include "gtest/gtest.h"
 extern "C" {
 #include "BaseObj.h"
+#include "PikaMath_Operator.h"
 #include "PikaParser.h"
 #include "PikaStdLib_SysObj.h"
 #include "PikaVM.h"
 #include "dataMemory.h"
 #include "dataQueue.h"
 #include "dataStrs.h"
-#include "PikaMath_Operator.h"
 }
 
 TEST(VM, num1) {
@@ -95,15 +95,43 @@ TEST(VM, ref_a_b) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(VM, Run_add) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
 
-    pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"plusInt(1,2)"));
+    pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"a = plusInt(1,2)"));
 
     args_deinit(buffs);
-    // ASSERT_STREQ(obj_getStr(self, (char*)"a"), (char*)"3");
+    int a = obj_getInt(self, (char*)"a");
+    ASSERT_EQ(a, 3);
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, Run_add_multy) {
+    PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
+    Args* buffs = New_strBuff();
+
+    pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"b = 2"));
+    pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"a = plusInt(1,b)"));
+
+    args_deinit(buffs);
+    int a = obj_getInt(self, (char*)"a");
+    ASSERT_EQ(a, 3);
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, Run_add_1_2_3) {
+    PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
+    Args* buffs = New_strBuff();
+
+    pikaVM_runAsm(
+        self, pikaParseToAsm(buffs, (char*)"a = plusInt(1, plusInt(2,3) )"));
+
+    args_deinit(buffs);
+    int a = obj_getInt(self, (char*)"a");
+    ASSERT_EQ(a, 6);
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }

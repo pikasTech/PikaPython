@@ -109,14 +109,23 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         methodHostClass = NULL;
         /* get type list */
         char* typeList = strsCut(buffs, methodDec, '(', ')');
+        Args* methodArgs = New_args(NULL);
         while (1) {
             Arg* methodArg = arg_copy(queue_popArg(q1));
-            arg_deinit(methodArg);
             if (NULL == methodArg) {
                 break;
             }
+            char* argDef = strsPopToken(buffs, typeList, ',');
+            char* argName = strsGetFirstToken(buffs, argDef, ':');
+            methodArg = arg_setName(methodArg, argName);
+            args_setArg(methodArgs, methodArg);
         }
+        /* run method */
+        methodPtr(methodHostObj, methodArgs);
+        Arg* returnArg = arg_copy(args_getArg(methodArgs, (char*)"return"));
+        args_deinit(methodArgs);
         args_deinit(buffs);
+        return returnArg;
     }
     return NULL;
 }
