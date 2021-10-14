@@ -90,8 +90,7 @@ TEST(parser, num1) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseToAsm(buffs, line);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,
-                 "1 REF a\n1 NUM 1\n0 RUN add\n0 OUT b\n");
+    EXPECT_STREQ(pikaAsm, "1 REF a\n1 NUM 1\n0 RUN add\n0 OUT b\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -101,8 +100,17 @@ TEST(parser, add_str) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseToAsm(buffs, line);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,
-                 "1 REF a\n1 STR 1\n0 RUN add\n0 OUT b\n");
+    EXPECT_STREQ(pikaAsm, "1 REF a\n1 STR 1\n0 RUN add\n0 OUT b\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, deep4) {
+    char* line = (char*)"b = add(add(add(add(1, 2), 3), 4), 5)";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm, "4 NUM 1\n4 NUM 2\n3 RUN add\n3 NUM 3\n2 RUN add\n2 NUM 4\n1 RUN add\n1 NUM 5\n0 RUN add\n0 OUT b\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
