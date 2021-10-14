@@ -17,11 +17,16 @@ static int32_t getLineSize(char* str) {
 
 int32_t pikaVM_run(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
     Args* buffs = New_strBuff();
-    int32_t size = getLineSize(pikaAsm + lineAddr);
-    char* line = pikaAsm + lineAddr;
+    int32_t nextAddr = lineAddr;
+    char* code = pikaAsm + lineAddr;
+    int32_t lineSize = getLineSize(code);
+    nextAddr = lineAddr + lineSize + 1;
+    char* line = args_getBuff(buffs, lineSize + 1);
+    memcpy(line, code, lineSize);
+    line[lineSize + 1] = 0;
 
     goto exit;
 exit:
     args_deinit(buffs);
-    return -1;
+    return nextAddr;
 }

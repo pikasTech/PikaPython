@@ -16,11 +16,9 @@ TEST(VM, a_1) {
     PikaObj* root = newRootObj((char*)"root", New_PikaStdLib_SysObj);
 
     int lineAddr = 0;
-    while (1) {
+    int size = strGetSize(pikaAsm);
+    while (lineAddr < size) {
         lineAddr = pikaVM_run(root, pikaAsm, lineAddr);
-        if (lineAddr < 0) {
-            break;
-        }
     }
 
     obj_deinit(root);
