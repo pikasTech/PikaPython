@@ -62,18 +62,27 @@ int32_t pikaVM_run(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
     char* line = strs_getLine(buffs, code);
     int32_t nextAddr = lineAddr + strGetSize(line) + 1;
 
-    char deepth[2] = {0};
-    deepth[0] = line[0];
+    char d0[2] = {0}, d1[2] = {0};
+    d0[0] = line[0];
+    d1[0] = line[0] + 1;
     enum Instruct instruct = getInstruct(line);
     char* data = line + 6;
 
-    Arg* res = pikaVM_getArg(self, instruct, data);
-    Queue* queue = obj_getPtr(self, deepth);
-    if (NULL == queue) {
-        queue = New_queue();
-        obj_setPtr(self, deepth, queue);
+    Arg* resArg = pikaVM_getArg(self, instruct, data);
+    Queue* q0 = obj_getPtr(self, d0);
+    Queue* q1 = obj_getPtr(self, d1);
+    if (NULL == q0) {
+        q0 = New_queue();
+        obj_setPtr(self, d0, q0);
     }
-    queue_pushArg(queue, res);
+    if (NULL == q1) {
+        q1 = New_queue();
+        obj_setPtr(self, d1, q1);
+    }
+    if (NULL != resArg) {
+        queue_pushArg(q0, resArg);
+    }
+
     goto nextLine;
 nextLine:
     args_deinit(buffs);
