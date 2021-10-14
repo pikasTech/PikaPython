@@ -9,7 +9,7 @@ extern "C" {
 #include "dataStrs.h"
 }
 
-TEST(VM, a_1) {
+TEST(VM, num1) {
     char* line = (char*)"1";
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseToAsm(buffs, line);
@@ -20,3 +20,16 @@ TEST(VM, a_1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+
+// TEST(VM, a_1) {
+//     char* line = (char*)"a = 1";
+//     Args* buffs = New_strBuff();
+//     char* pikaAsm = pikaParseToAsm(buffs, line);
+//     printf("%s", pikaAsm);
+//     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+//     pikaVM_runAsm(self, pikaAsm);
+//     obj_deinit(self);
+//     args_deinit(buffs);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
