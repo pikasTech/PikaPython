@@ -11,7 +11,6 @@ TEST(parser, NEW) {
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
-    AST_deinit(ast);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -22,7 +21,6 @@ TEST(parser, add_a_b) {
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm, "1 REF a\n1 REF b\n0 RUN add\n");
-    AST_deinit(ast);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -33,7 +31,6 @@ TEST(parser, add_a_b_c) {
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm, "2 REF a\n2 REF b\n1 RUN add\n1 REF c\n0 RUN add\n0 OUT d\n");
-    AST_deinit(ast);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -45,7 +42,6 @@ TEST(parser, method1) {
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "2 REF a\n2 REF se.b\n1 RUN b.add\n1 REF pmw.c\n0 RUN a.add\n0 OUT d.p\n");
-    AST_deinit(ast);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -58,7 +54,6 @@ TEST(parser, method2) {
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "2 REF a\n2 REF se.b\n3 REF pp\n2 RUN diek\n1 RUN b.add\n1 RUN pmw.c\n0 RUN a.add\n0 OUT d.p\n");
-    AST_deinit(ast);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -71,7 +66,6 @@ TEST(parser, str1) {
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "1 STR 2.322\n0 RUN literal\n");
-    AST_deinit(ast);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -84,7 +78,6 @@ TEST(parser, str2) {
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "1 REF a\n2 STR 1\n1 RUN literal\n0 RUN add\n0 OUT b\n");
-    AST_deinit(ast);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

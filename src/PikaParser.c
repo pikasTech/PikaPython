@@ -164,9 +164,14 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
 }
 
 char* AST_toPikaAsm(AST* ast, Args* buffs) {
-    char* pikaAsm = strsCopy(buffs, "");
+    Args* runBuffs = New_strBuff();
+    char* pikaAsm = strsCopy(runBuffs, "");
     obj_setInt(ast, "deepth", 0);
-    return AST_appandPikaAsm(ast, ast, buffs, pikaAsm);
+    pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
+    pikaAsm = strsCopy(buffs, pikaAsm);
+    AST_deinit(ast);
+    args_deinit(runBuffs);
+    return pikaAsm;
 }
 
 int32_t AST_deinit(AST* ast) {
