@@ -114,3 +114,13 @@ TEST(parser, deep4) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, a_1) {
+    char* line = (char*)"a = 1";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm, "0 NUM 1\n0 OUT a\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

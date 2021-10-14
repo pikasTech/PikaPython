@@ -48,9 +48,15 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* ref = NULL;
     char* str = NULL;
     char* num = NULL;
+    char* right = NULL;
     uint8_t directExist = 0, isMethod = 0, isRef = 0, isStr = 0, isNum = 0;
     if (strIsContain(assignment, '=')) {
         directExist = 1;
+    }
+    if (directExist) {
+        right = strsGetLastToken(buffs, assignment, '=');
+    } else {
+        right = assignment;
     }
     if (strIsContain(stmt, '(') || strIsContain(stmt, ')')) {
         isMethod = 1;
@@ -58,13 +64,13 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         isNum = 0;
         isRef = 0;
     }
-    if (!isMethod && (strIsContain(stmt, '\'') || strIsContain(stmt, '\"'))) {
+    if (!isMethod && (strIsContain(right, '\'') || strIsContain(right, '\"'))) {
         isMethod = 0;
         isStr = 1;
         isNum = 0;
         isRef = 0;
     }
-    if (!isMethod && !isStr && (stmt[0] >= '0' && stmt[0] <= '9')) {
+    if (!isMethod && !isStr && (right[0] >= '0' && right[0] <= '9')) {
         isMethod = 0;
         isStr = 0;
         isNum = 1;
@@ -82,11 +88,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     char* subStmts = NULL;
     if (isMethod) {
-        if (directExist) {
-            method = strsGetLastToken(buffs, assignment, '=');
-        } else {
-            method = assignment;
-        }
+        method = right;
         obj_setStr(ast, (char*)"method", method);
         subStmts = strsCut(buffs, stmt, '(', ')');
         while (1) {
@@ -100,31 +102,19 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         goto exit;
     }
     if (isRef) {
-        if (directExist) {
-            ref = strsGetLastToken(buffs, assignment, '=');
-        } else {
-            ref = assignment;
-        }
+        ref = right;
         obj_setStr(ast, (char*)"ref", ref);
         goto exit;
     }
     if (isStr) {
-        if (directExist) {
-            str = strsGetLastToken(buffs, assignment, '=');
-        } else {
-            str = assignment;
-        }
+        str = right;
         str = strsDeleteChar(buffs, str, '\'');
         str = strsDeleteChar(buffs, str, '\"');
         obj_setStr(ast, (char*)"str", str);
         goto exit;
     }
     if (isNum) {
-        if (directExist) {
-            num = strsGetLastToken(buffs, assignment, '=');
-        } else {
-            num = assignment;
-        }
+        num = right;
         obj_setStr(ast, (char*)"num", num);
         goto exit;
     }
@@ -181,14 +171,15 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
         sprintf(buff, "%d STR %s\n", deepth, str);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
-    if (NULL != direct) {
-        char buff[32] = {0};
-        sprintf(buff, "%d OUT %s\n", deepth, direct);
-        pikaAsm = strsAppend(buffs, pikaAsm, buff);
-    }
     if (NULL != num) {
         char buff[32] = {0};
         sprintf(buff, "%d NUM %s\n", deepth, num);
+        pikaAsm = strsAppend(buffs, pikaAsm, buff);
+    }
+
+    if (NULL != direct) {
+        char buff[32] = {0};
+        sprintf(buff, "%d OUT %s\n", deepth, direct);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     obj_setInt(ast, "deepth", deepth - 1);
