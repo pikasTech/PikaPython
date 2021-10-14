@@ -47,24 +47,34 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* method = NULL;
     char* ref = NULL;
     char* str = NULL;
-    uint8_t directExist = 0, isMethod = 0, isRef = 0, isStr = 0;
+    char* num = NULL;
+    uint8_t directExist = 0, isMethod = 0, isRef = 0, isStr = 0, isNum = 0;
     if (strIsContain(assignment, '=')) {
         directExist = 1;
     }
     if (strIsContain(stmt, '(') || strIsContain(stmt, ')')) {
         isMethod = 1;
-        isRef = 0;
         isStr = 0;
+        isNum = 0;
+        isRef = 0;
     }
     if (!isMethod && (strIsContain(stmt, '\'') || strIsContain(stmt, '\"'))) {
         isMethod = 0;
-        isRef = 0;
         isStr = 1;
+        isNum = 0;
+        isRef = 0;
     }
-    if (!isMethod && !isStr) {
+    if (!isMethod && !isStr && (stmt[0] >= '0' && stmt[0] <= '9')) {
         isMethod = 0;
-        isRef = 1;
         isStr = 0;
+        isNum = 1;
+        isRef = 0;
+    }
+    if (!isMethod && !isStr && !isNum) {
+        isMethod = 0;
+        isStr = 0;
+        isNum = 0;
+        isRef = 1;
     }
     if (directExist) {
         direct = strsGetFirstToken(buffs, assignment, '=');
@@ -109,6 +119,15 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         obj_setStr(ast, (char*)"str", str);
         goto exit;
     }
+    if (isNum) {
+        if (directExist) {
+            num = strsGetLastToken(buffs, assignment, '=');
+        } else {
+            num = assignment;
+        }
+        obj_setStr(ast, (char*)"num", num);
+        goto exit;
+    }
 exit:
     args_deinit(buffs);
     return ast;
@@ -146,6 +165,7 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     char* ref = obj_getStr(subAst, "ref");
     char* direct = obj_getStr(subAst, "direct");
     char* str = obj_getStr(subAst, "str");
+    char* num = obj_getStr(subAst, "num");
     if (NULL != ref) {
         char buff[32] = {0};
         sprintf(buff, "%d REF %s\n", deepth, ref);
@@ -164,6 +184,11 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     if (NULL != direct) {
         char buff[32] = {0};
         sprintf(buff, "%d OUT %s\n", deepth, direct);
+        pikaAsm = strsAppend(buffs, pikaAsm, buff);
+    }
+    if (NULL != num) {
+        char buff[32] = {0};
+        sprintf(buff, "%d NUM %s\n", deepth, num);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     obj_setInt(ast, "deepth", deepth - 1);

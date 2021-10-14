@@ -84,3 +84,25 @@ TEST(parser, str2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, num1) {
+    char* line = (char*)"b=add(a,1)";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "1 REF a\n1 NUM 1\n0 RUN add\n0 OUT b\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, add_str) {
+    char* line = (char*)"b=add(a,'1')";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "1 REF a\n1 STR 1\n0 RUN add\n0 OUT b\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
