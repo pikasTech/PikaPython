@@ -75,3 +75,16 @@ TEST(parser, str1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, str2) {
+    AST* ast =
+        pikaParse((char*)"b=add(a,literal('1'))");
+    Args* buffs = New_strBuff();
+    char* pikaAsm = AST_toPikaAsm(ast, buffs);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "1 REF a\n2 STR 1\n1 RUN literal\n0 RUN add\n0 OUT b\n");
+    AST_deinit(ast);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
