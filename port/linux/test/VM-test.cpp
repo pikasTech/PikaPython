@@ -7,6 +7,7 @@ extern "C" {
 #include "dataMemory.h"
 #include "dataQueue.h"
 #include "dataStrs.h"
+#include "PikaMath_Operator.h"
 }
 
 TEST(VM, num1) {
@@ -90,6 +91,19 @@ TEST(VM, ref_a_b) {
 
     args_deinit(buffs);
     ASSERT_STREQ(obj_getStr(self, (char*)"b"), (char*)"xy ");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+
+TEST(VM, Run_add) {
+    PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
+    Args* buffs = New_strBuff();
+
+    pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"plusInt(1,2)"));
+
+    args_deinit(buffs);
+    // ASSERT_STREQ(obj_getStr(self, (char*)"a"), (char*)"3");
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }

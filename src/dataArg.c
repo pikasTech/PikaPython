@@ -318,6 +318,9 @@ Arg* New_arg(void* voidPointer) {
 }
 
 Arg* arg_copy(Arg* argToBeCopy) {
+    if (NULL == argToBeCopy) {
+        return NULL;
+    }
     Arg* argCopied = New_arg(NULL);
     argCopied = arg_setContent(argCopied, arg_getContent(argToBeCopy),
                                arg_getContentSize(argToBeCopy));

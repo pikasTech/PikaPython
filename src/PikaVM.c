@@ -45,6 +45,22 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
+static void* getMethodPtr(PikaObj* methodHost, char* methodName) {
+    Args* buffs = New_strBuff();
+    char* methodPtrPath = strsAppend(buffs, "[mp]", methodName);
+    void* res = obj_getPtr(methodHost, methodPtrPath);
+    args_deinit(buffs);
+    return res;
+}
+
+static char* getMethodDeclearation(PikaObj* obj, char* methodName) {
+    Args* buffs = New_strBuff();
+    char* methodDeclearationPath = strsAppend(buffs, "[md]", methodName);
+    char* res = obj_getStr(obj, methodDeclearationPath);
+    args_deinit(buffs);
+    return res;
+}
+
 Arg* pikaVM_runAsmInstruct(PikaObj* self,
                            enum Instruct instruct,
                            char* data,
@@ -71,6 +87,36 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     }
     if (instruct == REF) {
         return arg_copy(obj_getArg(self, data));
+    }
+    if (instruct == RUN) {
+        Args* buffs = New_strBuff();
+        char* methodPath = data;
+        PikaObj* methodHostObj = obj_getObj(self, methodPath, 1);
+        char* methodName = strsGetLastToken(buffs, methodPath, '.');
+        void* classPtr = obj_getPtr(methodHostObj, "_clsptr");
+        char* methodHostClassName =
+            strsAppend(buffs, "classObj-", obj_getName(methodHostObj));
+        PikaObj* methodHostClass = obj_getClassObjByNewFun(
+            methodHostObj, methodHostClassName, classPtr);
+        /* get method Ptr */
+        void (*methodPtr)(PikaObj * self, Args * args) =
+            getMethodPtr(methodHostClass, methodName);
+        char* methodDecInClass =
+            getMethodDeclearation(methodHostClass, methodName);
+        char* methodDec = strsCopy(buffs, methodDecInClass);
+        /* free method host class to save memory */
+        obj_deinit(methodHostClass);
+        methodHostClass = NULL;
+        /* get type list */
+        char* typeList = strsCut(buffs, methodDec, '(', ')');
+        while (1) {
+            Arg* methodArg = arg_copy(queue_popArg(q1));
+            arg_deinit(methodArg);
+            if (NULL == methodArg) {
+                break;
+            }
+        }
+        args_deinit(buffs);
     }
     return NULL;
 }
