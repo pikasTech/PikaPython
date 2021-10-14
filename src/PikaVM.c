@@ -15,18 +15,25 @@ static int32_t getLineSize(char* str) {
     }
 }
 
+static char* strs_getLine(Args* buffs, char* code) {
+    int32_t lineSize = getLineSize(code);
+    char* line = args_getBuff(buffs, lineSize + 1);
+    memcpy(line, code, lineSize);
+    line[lineSize + 1] = 0;
+    return line;
+}
+
 int32_t pikaVM_run(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
     Args* buffs = New_strBuff();
     int32_t nextAddr = lineAddr;
     char* code = pikaAsm + lineAddr;
-    int32_t lineSize = getLineSize(code);
-    nextAddr = lineAddr + lineSize + 1;
-    char* line = args_getBuff(buffs, lineSize + 1);
-    memcpy(line, code, lineSize);
-    line[lineSize + 1] = 0;
+    char* line = strs_getLine(buffs, code);
 
-    goto exit;
-exit:
+    char deepth = line[0];
+    enum { NON, REF, RUN, STR, OUT, NUM } instruct = NON;
+
+    goto nextLine;
+nextLine:
     args_deinit(buffs);
-    return nextAddr;
+    return lineAddr + strGetSize(line) + 1;
 }
