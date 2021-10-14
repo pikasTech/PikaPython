@@ -164,6 +164,13 @@ nextLine:
     return nextAddr;
 }
 
+int32_t pikaVM_run(PikaObj* self, char* pyLine) {
+    Args* buffs = New_strBuff();
+    pikaVM_runAsm(self, pikaParseToAsm(buffs, pyLine));
+    args_deinit(buffs);
+    return 0;
+}
+
 int32_t pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
