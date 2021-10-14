@@ -50,3 +50,33 @@ TEST(VM, a_1d1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, str_xy) {
+    char* line = (char*)"a = 'xy'";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    pikaVM_runAsm(self, pikaAsm);
+
+    ASSERT_STREQ(obj_getStr(self, (char*)"a"), (char*)"xy");
+
+    obj_deinit(self);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, str_xy_space) {
+    char* line = (char*)"a = 'xy '";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    pikaVM_runAsm(self, pikaAsm);
+
+    ASSERT_STREQ(obj_getStr(self, (char*)"a"), (char*)"xy ");
+
+    obj_deinit(self);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

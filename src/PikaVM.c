@@ -45,17 +45,21 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
-Arg* pikaVM_runInstruct(PikaObj* self,
-                        enum Instruct instruct,
-                        char* data,
-                        Queue* q0,
-                        Queue* q1) {
-    Arg* res = New_arg(NULL);
+Arg* pikaVM_runAsmInstruct(PikaObj* self,
+                           enum Instruct instruct,
+                           char* data,
+                           Queue* q0,
+                           Queue* q1) {
     if (instruct == NUM) {
+        Arg* res = New_arg(NULL);
         if (strIsContain(data, '.')) {
             return arg_setFloat(res, "", atof(data));
         }
         return arg_setInt(res, "", atoi(data));
+    }
+    if (instruct == STR) {
+        Arg* res = New_arg(NULL);
+        return arg_setStr(res, "", data);
     }
     if (instruct == OUT) {
         Arg* outArg = arg_copy(queue_popArg(q0));
@@ -68,7 +72,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
     return NULL;
 }
 
-int32_t pikaVM_run(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
+int32_t pikaVM_runAsmLine(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
     Args* buffs = New_strBuff();
     char* code = pikaAsm + lineAddr;
     char* line = strs_getLine(buffs, code);
@@ -91,7 +95,7 @@ int32_t pikaVM_run(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
         obj_setPtr(self, d1, q1);
     }
 
-    Arg* resArg = pikaVM_runInstruct(self, instruct, data, q0, q1);
+    Arg* resArg = pikaVM_runAsmInstruct(self, instruct, data, q0, q1);
     if (NULL != resArg) {
         queue_pushArg(q0, resArg);
     }
@@ -106,7 +110,7 @@ int32_t pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
     while (lineAddr < size) {
-        lineAddr = pikaVM_run(self, pikaAsm, lineAddr);
+        lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr);
     }
 
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
