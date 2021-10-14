@@ -69,6 +69,9 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         arg_deinit(outArg);
         return NULL;
     }
+    if (instruct == REF) {
+        return arg_copy(obj_getArg(self, data));
+    }
     return NULL;
 }
 

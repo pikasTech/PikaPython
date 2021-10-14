@@ -80,3 +80,16 @@ TEST(VM, str_xy_space) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, ref_a_b) {
+    Args* buffs = New_strBuff();
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+
+    pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"a = 'xy '"));
+    pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"b = a"));
+
+    ASSERT_STREQ(obj_getStr(self, (char*)"b"), (char*)"xy ");
+    obj_deinit(self);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
