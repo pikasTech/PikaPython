@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include "BaseObj.h"
 #include "PikaInvoke.h"
+#include "PikaVM.h"
 #include "dataArgs.h"
 #include "dataMemory.h"
 #include "dataString.h"
@@ -596,17 +597,8 @@ Args* obj_runDirect(PikaObj* self, char* cmd) {
         }
     }
 
-    /* run script */
-    if (strIsContain(cmd, '(') && strIsContain(cmd, ')')) {
-        res = obj_runScript(self, cmd);
-        goto exit;
-    }
-
-    /* run script */
-    if (strIsContain(cmd, '=')) {
-        res = obj_runScript(self, cmd);
-        goto exit;
-    }
+    pikaVM_run(self, cmd);
+    goto exit;
 
 exit:
     /* check res */
