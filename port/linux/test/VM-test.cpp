@@ -21,7 +21,6 @@ TEST(VM, num1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(VM, a_1) {
     char* line = (char*)"a = 1";
     Args* buffs = New_strBuff();
@@ -29,6 +28,24 @@ TEST(VM, a_1) {
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     pikaVM_runAsm(self, pikaAsm);
+
+    ASSERT_EQ(obj_getInt(self, (char*)"a"), 1);
+
+    obj_deinit(self);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, a_1d1) {
+    char* line = (char*)"a = 1.1";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    pikaVM_runAsm(self, pikaAsm);
+
+    ASSERT_FLOAT_EQ(obj_getFloat(self, (char*)"a"), 1.1);
+
     obj_deinit(self);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
