@@ -203,12 +203,12 @@ TEST(object_test, newObjectAndSetStr) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(object_test, noMethod) {
-//     PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
-//     obj_runNoRes(root, (char*)"noDefindMethod()");
-//     obj_deinit(root);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, noMethod) {
+    PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
+    obj_runNoRes(root, (char*)"noDefindMethod()");
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(object_test, a_b) {
     PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
@@ -225,15 +225,15 @@ TEST(object_test, voidRun) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(object_test, printa) {
-//     PikaObj* root = newRootObj((char*)"root", New_BaseObj);
-//     obj_run(root, (char*)"a = 2");
-//     obj_run(root, (char*)"print(a)");
-//     char* sysOut = obj_getSysOut(root);
-//     ASSERT_STREQ(sysOut, "2");
-//     obj_deinit(root);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, printa) {
+    PikaObj* root = newRootObj((char*)"root", New_BaseObj);
+    obj_run(root, (char*)"a = 2");
+    obj_run(root, (char*)"print(a)");
+    char* sysOut = obj_getSysOut(root);
+    ASSERT_STREQ(sysOut, "2");
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(object_test, copyArg) {
     PikaObj* root = newRootObj((char*)"root", New_BaseObj);
