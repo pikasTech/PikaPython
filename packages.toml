@@ -12,6 +12,7 @@ releases = [
 name = "PikaRunExternControl"
 releases = [
   "v1.0.0 aef94d25720f76e6d9239e9b82fa0e5fac4fcb6d",
+  "v1.1.0 ccee06343617dfb9acd8a14a7e700ff6a00b48d2",
 ]
 
 
