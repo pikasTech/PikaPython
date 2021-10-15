@@ -137,14 +137,6 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         Args* methodArgs = New_args(NULL);
         while (1) {
             Arg* methodArg = arg_copy(queue_popArg(q1));
-
-            if (methodArg == NULL) {
-                /* argL List no found */
-                args_setErrorCode(sysRes, 4);
-                args_setSysOut(sysRes, "[error] runner: arg no found.");
-                goto RUN_exit;
-            }
-
             if (NULL == methodArg) {
                 break;
             }
