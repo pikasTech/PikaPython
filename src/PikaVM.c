@@ -87,6 +87,12 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         return NULL;
     }
     if (instruct == REF) {
+        if( strEqu(data, (char *)"True") ){
+            return arg_setInt(NULL, "", 1);
+        }
+        if( strEqu(data, (char *)"False") ){
+            return arg_setInt(NULL, "", 0);
+        }
         return arg_copy(obj_getArg(self, data));
     }
     if (instruct == RUN) {
