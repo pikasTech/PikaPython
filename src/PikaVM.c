@@ -65,17 +65,18 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
                            enum Instruct instruct,
                            char* data,
                            Queue* q0,
-                           Queue* q1) {
+                           Queue* q1,
+                           Args* sysRes) {
     if (instruct == NUM) {
-        Arg* res = New_arg(NULL);
+        Arg* numArg = New_arg(NULL);
         if (strIsContain(data, '.')) {
-            return arg_setFloat(res, "", atof(data));
+            return arg_setFloat(numArg, "", atof(data));
         }
-        return arg_setInt(res, "", atoi(data));
+        return arg_setInt(numArg, "", atoi(data));
     }
     if (instruct == STR) {
-        Arg* res = New_arg(NULL);
-        return arg_setStr(res, "", data);
+        Arg* strArg = New_arg(NULL);
+        return arg_setStr(strArg, "", data);
     }
     if (instruct == OUT) {
         Arg* outArg = arg_copy(queue_popArg(q0));
@@ -90,8 +91,15 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     }
     if (instruct == RUN) {
         Args* buffs = New_strBuff();
+        Arg* returnArg = NULL;
         char* methodPath = data;
         PikaObj* methodHostObj = obj_getObj(self, methodPath, 1);
+        if (NULL == methodHostObj) {
+            /* error, not found object */
+            args_setErrorCode(sysRes, 1);
+            args_setSysOut(sysRes, "[error] runner: object no found.");
+            goto RUN_exit;
+        }
         char* methodName = strsGetLastToken(buffs, methodPath, '.');
         void* classPtr = obj_getPtr(methodHostObj, "_clsptr");
         char* methodHostClassName =
@@ -103,15 +111,40 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             getMethodPtr(methodHostClass, methodName);
         char* methodDecInClass =
             getMethodDeclearation(methodHostClass, methodName);
+
+        /* assert method*/
+        if ((NULL == methodDecInClass) || (NULL == methodPtr)) {
+            /* error, method no found */
+            args_setErrorCode(sysRes, 2);
+            args_setSysOut(sysRes, "[error] runner: method no found.");
+            goto RUN_exit;
+        }
+
         char* methodDec = strsCopy(buffs, methodDecInClass);
         /* free method host class to save memory */
         obj_deinit(methodHostClass);
         methodHostClass = NULL;
         /* get type list */
         char* typeList = strsCut(buffs, methodDec, '(', ')');
+
+        if (typeList == NULL) {
+            /* typeList no found */
+            args_setErrorCode(sysRes, 3);
+            args_setSysOut(sysRes, "[error] runner: type list no found.");
+            goto RUN_exit;
+        }
+
         Args* methodArgs = New_args(NULL);
         while (1) {
             Arg* methodArg = arg_copy(queue_popArg(q1));
+
+            if (methodArg == NULL) {
+                /* argL List no found */
+                args_setErrorCode(sysRes, 4);
+                args_setSysOut(sysRes, "[error] runner: arg no found.");
+                goto RUN_exit;
+            }
+
             if (NULL == methodArg) {
                 break;
             }
@@ -120,9 +153,27 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             methodArg = arg_setName(methodArg, argName);
             args_setArg(methodArgs, methodArg);
         }
+
+        obj_setErrorCode(methodHostObj, 0);
+        obj_setSysOut(methodHostObj, "");
+
         /* run method */
         methodPtr(methodHostObj, methodArgs);
-        Arg* returnArg = arg_copy(args_getArg(methodArgs, (char*)"return"));
+
+        /* transfer sysOut */
+        char* sysOut = obj_getSysOut(methodHostObj);
+        if (NULL != sysOut) {
+            args_setSysOut(sysRes, sysOut);
+        }
+        /* transfer errCode */
+        if (0 != obj_getErrorCode(methodHostObj)) {
+            /* method error */
+            args_setErrorCode(sysRes, 6);
+        }
+
+        returnArg = arg_copy(args_getArg(methodArgs, (char*)"return"));
+        goto RUN_exit;
+    RUN_exit:
         args_deinit(methodArgs);
         args_deinit(buffs);
         return returnArg;
@@ -130,7 +181,10 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     return NULL;
 }
 
-int32_t pikaVM_runAsmLine(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
+int32_t pikaVM_runAsmLine(PikaObj* self,
+                          char* pikaAsm,
+                          int32_t lineAddr,
+                          Args* sysRes) {
     Args* buffs = New_strBuff();
     char* code = pikaAsm + lineAddr;
     char* line = strs_getLine(buffs, code);
@@ -153,7 +207,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self, char* pikaAsm, int32_t lineAddr) {
         obj_setPtr(self, d1, q1);
     }
 
-    Arg* resArg = pikaVM_runAsmInstruct(self, instruct, data, q0, q1);
+    Arg* resArg = pikaVM_runAsmInstruct(self, instruct, data, q0, q1, sysRes);
     if (NULL != resArg) {
         queue_pushArg(q0, resArg);
     }
@@ -164,18 +218,20 @@ nextLine:
     return nextAddr;
 }
 
-int32_t pikaVM_run(PikaObj* self, char* pyLine) {
+Args* pikaVM_run(PikaObj* self, char* pyLine) {
     Args* buffs = New_strBuff();
-    pikaVM_runAsm(self, pikaParseToAsm(buffs, pyLine));
+    Args* sysRes = pikaVM_runAsm(self, pikaParseToAsm(buffs, pyLine));
     args_deinit(buffs);
-    return 0;
+    return sysRes;
 }
 
-int32_t pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
+Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
+    Args* sysRes = New_args(NULL);
+    args_setErrorCode(sysRes, 0);
     while (lineAddr < size) {
-        lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr);
+        lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
     }
 
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
@@ -187,5 +243,5 @@ int32_t pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
             obj_removeArg(self, deepth);
         }
     }
-    return 0;
+    return sysRes;
 }

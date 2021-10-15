@@ -193,8 +193,8 @@ static void* getMethodPtr(PikaObj* methodHost, char* methodName) {
 
 Args* obj_invoke(PikaObj* self, char* cmd) {
     /* the Args returned need to be deinit */
-    Args* res = New_args(NULL);
-    args_setErrorCode(res, 0);
+    Args* sysRes = New_args(NULL);
+    args_setErrorCode(sysRes, 0);
     Args* buffs = New_strBuff();
     char* methodToken = strsGetFirstToken(buffs, cmd, '(');
     char* methodPath = methodToken;
@@ -204,8 +204,8 @@ Args* obj_invoke(PikaObj* self, char* cmd) {
     PikaObj* methodHostClass = NULL;
     if (NULL == methodHostObj) {
         /* error, not found object */
-        args_setErrorCode(res, 1);
-        args_setSysOut(res, "[error] runner: object no found.");
+        args_setErrorCode(sysRes, 1);
+        args_setSysOut(sysRes, "[error] runner: object no found.");
         goto exit;
     }
     char* methodName = strsGetLastToken(buffs, methodPath, '.');
@@ -222,8 +222,8 @@ Args* obj_invoke(PikaObj* self, char* cmd) {
     /* assert method*/
     if ((NULL == methodDecInClass) || (NULL == methodPtr)) {
         /* error, method no found */
-        args_setErrorCode(res, 2);
-        args_setSysOut(res, "[error] runner: method no found.");
+        args_setErrorCode(sysRes, 2);
+        args_setSysOut(sysRes, "[error] runner: method no found.");
         goto exit;
     }
     char* methodDec = strsCopy(buffs, methodDecInClass);
@@ -235,8 +235,8 @@ Args* obj_invoke(PikaObj* self, char* cmd) {
     char* typeList = strsCut(buffs, methodDec, '(', ')');
     if (typeList == NULL) {
         /* typeList no found */
-        args_setErrorCode(res, 3);
-        args_setSysOut(res, "[error] runner: type list no found.");
+        args_setErrorCode(sysRes, 3);
+        args_setSysOut(sysRes, "[error] runner: type list no found.");
         goto exit;
     }
 
@@ -245,8 +245,8 @@ Args* obj_invoke(PikaObj* self, char* cmd) {
     {
         if (argList == NULL) {
             /* argL List no found */
-            args_setErrorCode(res, 4);
-            args_setSysOut(res, "[error] runner: arg list no found.");
+            args_setErrorCode(sysRes, 4);
+            args_setSysOut(sysRes, "[error] runner: arg list no found.");
             goto exit;
         }
     }
@@ -258,8 +258,8 @@ Args* obj_invoke(PikaObj* self, char* cmd) {
     args = getArgsBySentence(self, typeList, argList);
     if (NULL == args) {
         /* get args faild */
-        args_setErrorCode(res, 5);
-        args_setSysOut(res, "[error] runner: solve arg faild.");
+        args_setErrorCode(sysRes, 5);
+        args_setSysOut(sysRes, "[error] runner: solve arg faild.");
         goto exit;
     }
     obj_setErrorCode(methodHostObj, 0);
@@ -268,18 +268,18 @@ Args* obj_invoke(PikaObj* self, char* cmd) {
     methodPtr(methodHostObj, args);
 
     /* transfer return type */
-    args_setStr(res, "returnType", returnType);
+    args_setStr(sysRes, "returnType", returnType);
     /* transfer return */
-    args_copyArgByName(args, "return", res);
+    args_copyArgByName(args, "return", sysRes);
     /* transfer sysOut */
     char* sysOut = obj_getSysOut(methodHostObj);
     if (NULL != sysOut) {
-        args_setSysOut(res, sysOut);
+        args_setSysOut(sysRes, sysOut);
     }
     /* transfer errCode */
     if (0 != obj_getErrorCode(methodHostObj)) {
         /* method error */
-        args_setErrorCode(res, 6);
+        args_setErrorCode(sysRes, 6);
     }
     goto exit;
 exit:
@@ -292,5 +292,5 @@ exit:
     if (NULL != args) {
         args_deinit(args);
     }
-    return res;
+    return sysRes;
 }

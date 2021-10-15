@@ -569,7 +569,7 @@ PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {
 
 Args* obj_runDirect(PikaObj* self, char* cmd) {
     Args* buffs = New_strBuff();
-    Args* res = NULL;
+    Args* sysRes = NULL;
     cmd = strsDeleteChar(buffs, cmd, '\n');
 
     /* contral extern */
@@ -597,19 +597,19 @@ Args* obj_runDirect(PikaObj* self, char* cmd) {
         }
     }
 
-    pikaVM_run(self, cmd);
+    sysRes = pikaVM_run(self, cmd);
     goto exit;
 
 exit:
     /* check res */
-    if (NULL == res) {
-        res = New_args(NULL);
-        args_setErrorCode(res, 0);
-        args_setSysOut(res, "");
+    if (NULL == sysRes) {
+        sysRes = New_args(NULL);
+        args_setErrorCode(sysRes, 0);
+        args_setSysOut(sysRes, "");
         goto exit;
     }
     args_deinit(buffs);
-    return res;
+    return sysRes;
 }
 
 int32_t obj_removeArg(PikaObj* self, char* argPath) {
@@ -670,9 +670,9 @@ void obj_runNoRes(PikaObj* slef, char* cmd) {
 
 void obj_run(PikaObj* self, char* cmd) {
     /* safe, stop when error occord and error info would be print32_t */
-    Args* res = obj_runDirect(self, cmd);
-    char* sysOut = args_getSysOut(res);
-    uint8_t errcode = args_getErrorCode(res);
+    Args* sysRes = obj_runDirect(self, cmd);
+    char* sysOut = args_getSysOut(sysRes);
+    uint8_t errcode = args_getErrorCode(sysRes);
     obj_setSysOut(self, sysOut);
     obj_setErrorCode(self, errcode);
     if (!strEqu("", sysOut)) {
@@ -683,8 +683,8 @@ void obj_run(PikaObj* self, char* cmd) {
         while (1)
             ;
     }
-    if (NULL != res) {
-        args_deinit(res);
+    if (NULL != sysRes) {
+        args_deinit(sysRes);
     }
 }
 
