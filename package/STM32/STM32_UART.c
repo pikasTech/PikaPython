@@ -394,6 +394,9 @@ void STM32_UART_clearRxBuff(pika_uart_t* pika_uart) {
         (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
 }
 
+char pikaShell[RX_BUFF_LENGTH] = {0};
+uint8_t pikaShellRxOk = 0;
+
 /* Recive Interrupt Handler */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
     uint8_t id = getUartId(huart);
@@ -410,18 +413,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
             return;
         }
         /* run as shell */
-        char buff[RX_BUFF_LENGTH] = {0};    
-        char* strLine = strGetLastLine(buff, pika_uart->rxBuff);
-        Args * runRes = obj_runDirect(pikaMain, strLine);
-        char* sysOut = args_getSysOut(runRes);
-        uint8_t errcode = args_getErrorCode(runRes);
-        __platformPrintf(">>> %s", strLine);
-        if (!strEqu("", sysOut)) {
-            __platformPrintf("%s\r\n", sysOut);
-        }
-        if (NULL != runRes) {
-            args_deinit(runRes);
-        }        
+        memset(pikaShell, 0, RX_BUFF_LENGTH);
+        strGetLastLine(pikaShell, pika_uart->rxBuff);
+        pikaShellRxOk = 1;
 #endif
     }
     /* avoid recive buff overflow */ 

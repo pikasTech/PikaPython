@@ -58,7 +58,8 @@ void SystemClock_Config(void);
 
 /* supply the main object */
 PikaObj* pikaMain;
-
+extern char pikaShell[RX_BUFF_LENGTH];
+extern uint8_t pikaShellRxOk;
 /* USER CODE END 0 */
 
 /**
@@ -128,6 +129,19 @@ int main(void) {
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     while (1) {
+        if(pikaShellRxOk){
+            Args * runRes = obj_runDirect(pikaMain, pikaShell);
+            char* sysOut = args_getSysOut(runRes);
+            uint8_t errcode = args_getErrorCode(runRes);
+            __platformPrintf(">>> %s", pikaShell);
+            if (!strEqu("", sysOut)) {
+                __platformPrintf("%s\r\n", sysOut);
+            }
+            if (NULL != runRes) {
+                args_deinit(runRes);
+            }     
+            pikaShellRxOk = 0;
+        }
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
