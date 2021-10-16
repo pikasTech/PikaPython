@@ -10,6 +10,39 @@
 #include <string.h>
 #include "dataArgs.h"
 
+static uint16_t const str100p[100] = {
+    0x3030, 0x3130, 0x3230, 0x3330, 0x3430, 0x3530, 0x3630, 0x3730, 0x3830, 0x3930,
+    0x3031, 0x3131, 0x3231, 0x3331, 0x3431, 0x3531, 0x3631, 0x3731, 0x3831, 0x3931,
+    0x3032, 0x3132, 0x3232, 0x3332, 0x3432, 0x3532, 0x3632, 0x3732, 0x3832, 0x3932,
+    0x3033, 0x3133, 0x3233, 0x3333, 0x3433, 0x3533, 0x3633, 0x3733, 0x3833, 0x3933,
+    0x3034, 0x3134, 0x3234, 0x3334, 0x3434, 0x3534, 0x3634, 0x3734, 0x3834, 0x3934,
+    0x3035, 0x3135, 0x3235, 0x3335, 0x3435, 0x3535, 0x3635, 0x3735, 0x3835, 0x3935,
+    0x3036, 0x3136, 0x3236, 0x3336, 0x3436, 0x3536, 0x3636, 0x3736, 0x3836, 0x3936,
+    0x3037, 0x3137, 0x3237, 0x3337, 0x3437, 0x3537, 0x3637, 0x3737, 0x3837, 0x3937,
+    0x3038, 0x3138, 0x3238, 0x3338, 0x3438, 0x3538, 0x3638, 0x3738, 0x3838, 0x3938,
+    0x3039, 0x3139, 0x3239, 0x3339, 0x3439, 0x3539, 0x3639, 0x3739, 0x3839, 0x3939, };
+
+char *fast_itoa(char *buf, uint32_t val)
+{
+    char *p = &buf[10];
+
+    *p = '\0';
+
+    while(val >= 100)
+    {
+        uint32_t const old = val;
+
+        p -= 2;
+        val /= 100;
+        memcpy(p, &str100p[old - (val * 100)], sizeof(uint16_t));
+    }
+
+    p -= 2;
+    memcpy(p, &str100p[val], sizeof(uint16_t));
+
+    return &p[val < 10];
+}
+
 Queue* New_queue() {
     Args* args = New_args(NULL);
     args_setInt(args, "top", 0);
@@ -27,8 +60,8 @@ int32_t queue_deinit(Queue* queue) {
 int32_t queue_pushInt(Queue* queue, int val) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
-    char topStr[32] = {0};
-    sprintf(topStr, "%llu", top);
+    char buff[11];
+    char *topStr = fast_itoa(buff,  top);
     /* add top */
     args_setInt(args, "top", top + 1);
     return args_setInt(args, topStr, val);
@@ -37,8 +70,8 @@ int32_t queue_pushInt(Queue* queue, int val) {
 int64_t queue_popInt(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
-    char bottomStr[32] = {0};
-    sprintf(bottomStr, "%llu", bottom);
+    char buff[11];
+    char *bottomStr = fast_itoa(buff, bottom);
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
     int64_t res = args_getInt(args, bottomStr);
@@ -49,8 +82,8 @@ int64_t queue_popInt(Queue* queue) {
 int32_t queue_pushFloat(Queue* queue, float val) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
-    char topStr[32] = {0};
-    sprintf(topStr, "%llu", top);
+    char buff[11];
+    char *topStr = fast_itoa(buff,  top);
     /* add top */
     args_setInt(args, "top", top + 1);
     return args_setFloat(args, topStr, val);
@@ -59,8 +92,8 @@ int32_t queue_pushFloat(Queue* queue, float val) {
 float queue_popFloat(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
-    char bottomStr[32] = {0};
-    sprintf(bottomStr, "%llu", bottom);
+    char buff[11];
+    char *bottomStr = fast_itoa(buff, bottom);
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
     float res = args_getFloat(args, bottomStr);
@@ -71,9 +104,9 @@ float queue_popFloat(Queue* queue) {
 int32_t queue_pushStr(Queue* queue, char* str) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
-    char topStr[32] = {0};
-    sprintf(topStr, "%llu", top);
+    char buff[11];
     /* add top */
+    char *topStr = fast_itoa(buff,  top);
     args_setInt(args, "top", top + 1);
     return args_setStr(args, topStr, str);
 }
@@ -81,31 +114,28 @@ int32_t queue_pushStr(Queue* queue, char* str) {
 char* queue_popStr(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
-    char bottomStr[32] = {0};
-    sprintf(bottomStr, "%llu", bottom);
+    char buff[11];
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
-    return args_getStr(args, bottomStr);
+    return args_getStr(args, fast_itoa(buff,  bottom));
 }
 
 int32_t queue_pushArg(Queue* queue, Arg* arg) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
-    char topStr[32] = {0};
-    sprintf(topStr, "%llu", top);
     /* add top */
     args_setInt(args, "top", top + 1);
-    arg = arg_setName(arg, topStr);
+    char buff[11];    
+    arg = arg_setName(arg, fast_itoa(buff, top));
     return args_setArg(args, arg);
 }
 
 Arg* queue_popArg(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
-    char bottomStr[32] = {0};
-    sprintf(bottomStr, "%llu", bottom);
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
-    Arg* res = args_getArg(args, bottomStr);
+    char buff[11];        
+    Arg* res = args_getArg(args, fast_itoa(buff,  bottom));
     return res;
 }

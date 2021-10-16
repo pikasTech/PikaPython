@@ -1,6 +1,6 @@
 #include "dataQueueObj.h"
 #include "BaseObj.h"
-
+#include "dataQueue.h"
 QueueObj* New_queueObj() {
     PikaObj* self = New_TinyObj(NULL);
     queueObj_init(self);
@@ -15,8 +15,8 @@ int32_t queueObj_init(QueueObj* self) {
 
 int32_t queueObj_pushObj(QueueObj* self, char* className) {
     uint64_t top = obj_getInt(self, "top");
-    char topStr[32] = {0};
-    sprintf(topStr, "%llu", top);
+    char buff[11];    
+    char *topStr = fast_itoa(buff,  top);
     /* add top */
     obj_setInt(self, "top", top + 1);
     return obj_newObjByFun(self, topStr, className, New_TinyObj);
@@ -24,15 +24,15 @@ int32_t queueObj_pushObj(QueueObj* self, char* className) {
 
 PikaObj* queueObj_getCurrentObj(QueueObj* self) {
     uint64_t current = obj_getInt(self, "top") - 1;
-    char currentStr[32] = {0};
-    sprintf(currentStr, "%llu", current);
+    char buff[11];    
+    char *currentStr = fast_itoa(buff,  current);
     return obj_getObj(self, currentStr, 0);
 }
 
 PikaObj* queueObj_popObj(QueueObj* self) {
     uint64_t bottom = obj_getInt(self, "bottom");
-    char bottomStr[32] = {0};
-    sprintf(bottomStr, "%llu", bottom);
+    char buff[11];    
+    char *bottomStr = fast_itoa(buff, bottom);
     /* add bottom */
     obj_setInt(self, "bottom", bottom + 1);
     PikaObj* res = obj_getObj(self, bottomStr, 0);
@@ -41,8 +41,8 @@ PikaObj* queueObj_popObj(QueueObj* self) {
 
 int32_t queueObj_pushInt(QueueObj* self, int val) {
     uint64_t top = obj_getInt(self, "top");
-    char topStr[32] = {0};
-    sprintf(topStr, "%llu", top);
+    char buff[11];    
+    char *topStr = fast_itoa(buff,  top);
     /* add top */
     obj_setInt(self, "top", top + 1);
     return obj_setInt(self, topStr, val);
@@ -50,8 +50,8 @@ int32_t queueObj_pushInt(QueueObj* self, int val) {
 
 int64_t queueObj_popInt(QueueObj* self) {
     uint64_t bottom = obj_getInt(self, "bottom");
-    char bottomStr[32] = {0};
-    sprintf(bottomStr, "%llu", bottom);
+    char buff[11];    
+    char *bottomStr = fast_itoa(buff, bottom);
     /* add bottom */
     obj_setInt(self, "bottom", bottom + 1);
     int64_t res = obj_getInt(self, bottomStr);
@@ -61,8 +61,8 @@ int64_t queueObj_popInt(QueueObj* self) {
 
 int32_t queueObj_pushFloat(QueueObj* self, float val) {
     uint64_t top = obj_getInt(self, "top");
-    char topStr[32] = {0};
-    sprintf(topStr, "%llu", top);
+    char buff[11];    
+    char *topStr = fast_itoa(buff,  top);
     /* add top */
     obj_setInt(self, "top", top + 1);
     return obj_setFloat(self, topStr, val);
@@ -70,8 +70,8 @@ int32_t queueObj_pushFloat(QueueObj* self, float val) {
 
 float queueObj_popFloat(QueueObj* self) {
     uint64_t bottom = obj_getInt(self, "bottom");
-    char bottomStr[32] = {0};
-    sprintf(bottomStr, "%llu", bottom);
+    char buff[11];    
+    char *bottomStr = fast_itoa(buff, bottom);
     /* add bottom */
     obj_setInt(self, "bottom", bottom + 1);
     float res = obj_getFloat(self, bottomStr);
@@ -81,8 +81,8 @@ float queueObj_popFloat(QueueObj* self) {
 
 int32_t queueObj_pushStr(QueueObj* self, char* str) {
     uint64_t top = obj_getInt(self, "top");
-    char topStr[32] = {0};
-    sprintf(topStr, "%llu", top);
+    char buff[11];    
+    char *topStr = fast_itoa(buff,  top);
     /* add top */
     obj_setInt(self, "top", top + 1);
     return obj_setStr(self, topStr, str);
@@ -90,8 +90,8 @@ int32_t queueObj_pushStr(QueueObj* self, char* str) {
 
 char* queueObj_popStr(QueueObj* self) {
     uint64_t bottom = obj_getInt(self, "bottom");
-    char bottomStr[32] = {0};
-    sprintf(bottomStr, "%llu", bottom);
+    char buff[11];    
+    char *bottomStr = fast_itoa(buff, bottom);
     /* add bottom */
     obj_setInt(self, "bottom", bottom + 1);
     return obj_getStr(self, bottomStr);
