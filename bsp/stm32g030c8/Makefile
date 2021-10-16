@@ -39,10 +39,6 @@ C_SOURCES =  \
 $(shell find  ./pikascript/pikascript-core -name *.c) \
 $(shell find  ./pikascript/pikascript-api -name *.c) \
 $(shell find  ./pikascript/pikascript-lib -name *.c) \
-Core/Src/main.c \
-Core/Src/gpio.c \
-Core/Src/stm32g0xx_it.c \
-Core/Src/stm32g0xx_hal_msp.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_adc_ex.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_usart.c \
@@ -65,7 +61,6 @@ Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr_ex.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_cortex.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal.c \
 Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_exti.c \
-Core/Src/system_stm32g0xx.c  
 
 # ASM sources
 ASM_SOURCES =  \
@@ -129,6 +124,7 @@ C_INCLUDES =  \
 -IDrivers/CMSIS/Include \
 -I pikascript/pikascript-core \
 -I pikascript/pikascript-lib/STM32 \
+-I pikascript/pikascript-lib/STM32G030Booter\
 -I pikascript/pikascript-api
 
 
