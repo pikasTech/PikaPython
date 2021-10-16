@@ -1,4 +1,5 @@
 #include "PikaParser.h"
+#include "BaseObj.h"
 #include "PikaObj.h"
 #include "dataQueue.h"
 #include "dataQueueObj.h"
@@ -78,7 +79,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         isNum = 1;
         isRef = 0;
     }
-    if (!isMethod && !isStr && !isNum) {
+    if (!isMethod && !isStr && !isNum && !strEqu(stmt, "")) {
         isMethod = 0;
         isStr = 0;
         isNum = 0;
@@ -127,7 +128,7 @@ exit:
 
 static int32_t getPyLineBlockDeepth(char* line) {
     uint32_t size = strGetSize(line);
-    for (int i = 0; i < line; i++) {
+    for (int i = 0; i < size; i++) {
         if (line[i] != ' ') {
             uint32_t spaceNum = i;
             if (0 == spaceNum % 4) {
@@ -143,6 +144,21 @@ AST* pikaParseLine(char* line, Stack* blockStack) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
     uint8_t blockDeepth = getPyLineBlockDeepth(line);
+    uint8_t blockDeepthLast = blockDeepth;
+    if (NULL != blockStack) {
+        blockDeepthLast = args_getInt(blockStack, "top");
+        for (int i = 0; i < blockDeepthLast - blockDeepth; i++) {
+            QueueObj* exitBlock = obj_getObj(ast, "exitBlock", 0);
+            if (NULL == exitBlock) {
+                obj_newObjByFun(ast, "exitBlock", "", New_TinyObj);
+                exitBlock = obj_getObj(ast, "exitBlock", 0);
+                queueObj_init(exitBlock);
+            }
+            char buff[10] = {0};
+            char* blockType = stack_popStr(blockStack, buff);
+            queueObj_pushStr(exitBlock, blockType);
+        }
+    }
     obj_setInt(ast, "blockDeepth", blockDeepth);
     char* lineStart = line + blockDeepth * 4;
     char* stmt = lineStart;
@@ -220,15 +236,31 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     return pikaAsm;
 }
 
-char* AST_toPikaAsm(AST* ast, Args* buffs) {
-    Args* runBuffs = New_strBuff();
-    char* pikaAsm = strsCopy(runBuffs, "");
-    pikaAsm = strsCopy(runBuffs, "");
+static char* addBlockDeepth(AST* ast, Args* buffs, char* pikaAsm) {
     pikaAsm = strsAppend(buffs, pikaAsm, (char*)"B");
     char buff[11];
     pikaAsm = strsAppend(buffs, pikaAsm,
                          fast_itoa(buff, obj_getInt(ast, "blockDeepth")));
     pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
+}
+
+char* AST_toPikaAsm(AST* ast, Args* buffs) {
+    Args* runBuffs = New_strBuff();
+    char* pikaAsm = strsCopy(runBuffs, "");
+    QueueObj* exitBlock = obj_getObj(ast, "exitBlock", 0);
+    if (NULL != exitBlock) {
+        while (1) {
+            char* blockType = queueObj_popStr(exitBlock);
+            if (NULL == blockType) {
+                break;
+            }
+            pikaAsm = addBlockDeepth(ast, buffs, pikaAsm);
+            if (strEqu(blockType, "while")) {
+                pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
+            }
+        }
+    }
+    pikaAsm = addBlockDeepth(ast, buffs, pikaAsm);
     obj_setInt(ast, "deepth", 0);
     pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
     if (strEqu(obj_getStr(ast, "contralFlow"), "while")) {

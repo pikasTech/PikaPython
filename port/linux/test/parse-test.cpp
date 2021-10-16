@@ -193,3 +193,27 @@ TEST(parser, while_true) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, while_true_block) {
+    Args* buffs = New_strBuff();
+    Stack* blockStack = New_Stack();
+    char* pikaAsm = pikaParseLineToAsm(buffs, (char*)"while true:", blockStack);
+    pikaAsm = strsAppend(
+        buffs, pikaAsm,
+        pikaParseLineToAsm(buffs, (char*)"    rgb.flow()", blockStack));
+    pikaAsm = strsAppend(buffs, pikaAsm,
+                         pikaParseLineToAsm(buffs, (char*)"", blockStack));
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 REF true\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "0 RUN rgb.flow\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n");
+    stack_deinit(blockStack);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
