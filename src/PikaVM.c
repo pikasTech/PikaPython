@@ -272,7 +272,7 @@ nextLine:
 
 Args* pikaVM_run(PikaObj* self, char* pyLine) {
     Args* buffs = New_strBuff();
-    Args* sysRes = pikaVM_runAsm(self, pikaParseToAsm(buffs, pyLine));
+    Args* sysRes = pikaVM_runAsm(self, pikaParseLineToAsm(buffs, pyLine, NULL));
     args_deinit(buffs);
     return sysRes;
 }

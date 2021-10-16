@@ -72,7 +72,7 @@ TEST(parser, method1) {
 TEST(parser, method2) {
     char* line = (char*)"d.p = a.add(b.add(a,se.b,diek(pp))  , pmw.c())";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -91,7 +91,7 @@ TEST(parser, method2) {
 TEST(parser, str1) {
     char* line = (char*)"literal('2.322')";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -104,7 +104,7 @@ TEST(parser, str1) {
 TEST(parser, str2) {
     char* line = (char*)"b=add(a,literal('1'))";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -120,7 +120,7 @@ TEST(parser, str2) {
 TEST(parser, num1) {
     char* line = (char*)"b=add(a,1)";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -135,7 +135,7 @@ TEST(parser, num1) {
 TEST(parser, add_str) {
     char* line = (char*)"b=add(a,'1')";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -150,7 +150,7 @@ TEST(parser, add_str) {
 TEST(parser, deep4) {
     char* line = (char*)"b = add(add(add(add(1, 2), 3), 4), 5)";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -171,7 +171,7 @@ TEST(parser, deep4) {
 TEST(parser, a_1) {
     char* line = (char*)"a = 1";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -184,7 +184,7 @@ TEST(parser, a_1) {
 TEST(parser, while_true) {
     char* line = (char*)"while true:";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"

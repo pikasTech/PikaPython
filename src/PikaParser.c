@@ -149,10 +149,16 @@ AST* pikaParseLine(char* line, Stack* blockStack) {
     if (0 == strncmp(lineStart, (char*)"while ", 6)) {
         stmt = strsCut(buffs, lineStart, ' ', ':');
         obj_setStr(ast, "contralFlow", "while");
+        if (NULL != blockStack) {
+            stack_pushStr(blockStack, "while");
+        }
     }
     if (0 == strncmp(lineStart, (char*)"if ", 3)) {
         stmt = strsCut(buffs, lineStart, ' ', ':');
         obj_setStr(ast, "contralFlow", "if");
+        if (NULL != blockStack) {
+            stack_pushStr(blockStack, "if");
+        }
     }
     stmt = strsGetCleanCmd(buffs, stmt);
     ast = AST_parseStmt(ast, stmt);
@@ -162,8 +168,8 @@ exit:
     return ast;
 }
 
-char* pikaParseToAsm(Args* buffs, char* line) {
-    AST* ast = pikaParseLine(line, NULL);
+char* pikaParseLineToAsm(Args* buffs, char* line, Stack* blockStack) {
+    AST* ast = pikaParseLine(line, blockStack);
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     AST_deinit(ast);
     return pikaAsm;

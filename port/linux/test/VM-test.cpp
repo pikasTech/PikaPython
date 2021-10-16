@@ -13,7 +13,7 @@ extern "C" {
 TEST(VM, num1) {
     char* line = (char*)"1";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
@@ -25,7 +25,7 @@ TEST(VM, num1) {
 TEST(VM, a_1) {
     char* line = (char*)"a = 1";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
@@ -40,7 +40,7 @@ TEST(VM, a_1) {
 TEST(VM, a_1d1) {
     char* line = (char*)"a = 1.1";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
@@ -55,7 +55,7 @@ TEST(VM, a_1d1) {
 TEST(VM, str_xy) {
     char* line = (char*)"a = 'xy'";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
@@ -70,7 +70,7 @@ TEST(VM, str_xy) {
 TEST(VM, str_xy_space) {
     char* line = (char*)"a = 'xy '";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseToAsm(buffs, line);
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
@@ -86,8 +86,10 @@ TEST(VM, ref_a_b) {
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     Args* buffs = New_strBuff();
 
-    args_deinit(pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"a = 'xy '")));
-    args_deinit(pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"b = a")));
+    args_deinit(pikaVM_runAsm(
+        self, pikaParseLineToAsm(buffs, (char*)"a = 'xy '", NULL)));
+    args_deinit(
+        pikaVM_runAsm(self, pikaParseLineToAsm(buffs, (char*)"b = a", NULL)));
 
     args_deinit(buffs);
     ASSERT_STREQ(obj_getStr(self, (char*)"b"), (char*)"xy ");
@@ -99,8 +101,8 @@ TEST(VM, Run_add) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
 
-    args_deinit(
-        pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"a = plusInt(1,2)")));
+    args_deinit(pikaVM_runAsm(
+        self, pikaParseLineToAsm(buffs, (char*)"a = plusInt(1,2)", NULL)));
 
     args_deinit(buffs);
     int a = obj_getInt(self, (char*)"a");
@@ -113,9 +115,10 @@ TEST(VM, Run_add_multy) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
 
-    args_deinit(pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"b = 2")));
     args_deinit(
-        pikaVM_runAsm(self, pikaParseToAsm(buffs, (char*)"a = plusInt(1,b)")));
+        pikaVM_runAsm(self, pikaParseLineToAsm(buffs, (char*)"b = 2", NULL)));
+    args_deinit(pikaVM_runAsm(
+        self, pikaParseLineToAsm(buffs, (char*)"a = plusInt(1,b)", NULL)));
 
     args_deinit(buffs);
     int a = obj_getInt(self, (char*)"a");
@@ -129,7 +132,8 @@ TEST(VM, Run_add_1_2_3) {
     Args* buffs = New_strBuff();
 
     args_deinit(pikaVM_runAsm(
-        self, pikaParseToAsm(buffs, (char*)"a = plusInt(1, plusInt(2,3) )")));
+        self, pikaParseLineToAsm(buffs, (char*)"a = plusInt(1, plusInt(2,3) )",
+                                 NULL)));
 
     args_deinit(buffs);
     int a = obj_getInt(self, (char*)"a");
