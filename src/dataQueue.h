@@ -9,8 +9,8 @@
 
 typedef Args Queue;
 Queue* New_queue();
-Queue* queue_deinit(Queue* queue);
 
+int32_t queue_deinit(Queue* queue);
 int32_t queue_pushInt(Queue* queue, int val);
 int32_t queue_pushFloat(Queue* queue, float val);
 int32_t queue_pushStr(Queue* queue, char* str);

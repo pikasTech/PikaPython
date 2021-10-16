@@ -18,16 +18,17 @@ Queue* New_queue() {
     return queue;
 }
 
-Queue* queue_deinit(Queue* queue) {
+int32_t queue_deinit(Queue* queue) {
     Args* args = queue;
     args_deinit(args);
+    return 0;
 }
 
 int32_t queue_pushInt(Queue* queue, int val) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
     char topStr[32] = {0};
-    sprintf(topStr, "%ld", top);
+    sprintf(topStr, "%llu", top);
     /* add top */
     args_setInt(args, "top", top + 1);
     return args_setInt(args, topStr, val);
@@ -37,7 +38,7 @@ int64_t queue_popInt(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
     char bottomStr[32] = {0};
-    sprintf(bottomStr, "%ld", bottom);
+    sprintf(bottomStr, "%llu", bottom);
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
     int64_t res = args_getInt(args, bottomStr);
@@ -49,7 +50,7 @@ int32_t queue_pushFloat(Queue* queue, float val) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
     char topStr[32] = {0};
-    sprintf(topStr, "%ld", top);
+    sprintf(topStr, "%llu", top);
     /* add top */
     args_setInt(args, "top", top + 1);
     return args_setFloat(args, topStr, val);
@@ -59,7 +60,7 @@ float queue_popFloat(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
     char bottomStr[32] = {0};
-    sprintf(bottomStr, "%ld", bottom);
+    sprintf(bottomStr, "%llu", bottom);
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
     float res = args_getFloat(args, bottomStr);
@@ -71,7 +72,7 @@ int32_t queue_pushStr(Queue* queue, char* str) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
     char topStr[32] = {0};
-    sprintf(topStr, "%ld", top);
+    sprintf(topStr, "%llu", top);
     /* add top */
     args_setInt(args, "top", top + 1);
     return args_setStr(args, topStr, str);
@@ -81,7 +82,7 @@ char* queue_popStr(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
     char bottomStr[32] = {0};
-    sprintf(bottomStr, "%ld", bottom);
+    sprintf(bottomStr, "%llu", bottom);
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
     return args_getStr(args, bottomStr);
@@ -91,7 +92,7 @@ int32_t queue_pushArg(Queue* queue, Arg* arg) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
     char topStr[32] = {0};
-    sprintf(topStr, "%ld", top);
+    sprintf(topStr, "%llu", top);
     /* add top */
     args_setInt(args, "top", top + 1);
     arg = arg_setName(arg, topStr);
@@ -102,7 +103,7 @@ Arg* queue_popArg(Queue* queue) {
     Args* args = queue;
     uint64_t bottom = args_getInt(args, "bottom");
     char bottomStr[32] = {0};
-    sprintf(bottomStr, "%ld", bottom);
+    sprintf(bottomStr, "%llu", bottom);
     /* add bottom */
     args_setInt(args, "bottom", bottom + 1);
     Arg* res = args_getArg(args, bottomStr);
