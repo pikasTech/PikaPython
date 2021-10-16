@@ -1,5 +1,6 @@
 #include "PikaParser.h"
 #include "PikaObj.h"
+#include "dataQueue.h"
 #include "dataQueueObj.h"
 #include "dataStrs.h"
 
@@ -123,9 +124,24 @@ exit:
     return ast;
 }
 
-AST* pikaParse(char* line) {
+static int32_t getPyLineBlockDeepth(char* line) {
+    uint32_t size = strGetSize(line);
+    for (int i = 0; i < line; i++) {
+        if (line[i] != ' ') {
+            uint32_t spaceNum = i;
+            if (0 == spaceNum % 4) {
+                return spaceNum / 4;
+            }
+            /* space Num is not 4N, error*/
+            return -1;
+        }
+    }
+}
+
+AST* pikaParseLine(char* line) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
+    obj_setInt(ast, "blockDeepth", getPyLineBlockDeepth(line));
     char* stmt = strsGetCleanCmd(buffs, line);
     ast = AST_parseStmt(ast, stmt);
     goto exit;
@@ -135,7 +151,7 @@ exit:
 }
 
 char* pikaParseToAsm(Args* buffs, char* line) {
-    AST* ast = pikaParse(line);
+    AST* ast = pikaParseLine(line);
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     AST_deinit(ast);
     return pikaAsm;
@@ -189,6 +205,11 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
 char* AST_toPikaAsm(AST* ast, Args* buffs) {
     Args* runBuffs = New_strBuff();
     char* pikaAsm = strsCopy(runBuffs, "");
+    pikaAsm = strsAppend(buffs, pikaAsm, (char*)"B");
+    char buff[11];
+    pikaAsm = strsAppend(buffs, pikaAsm,
+                         fast_itoa(buff, obj_getInt(ast, "blockDeepth")));
+    pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
     obj_setInt(ast, "deepth", 0);
     pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
     pikaAsm = strsCopy(buffs, pikaAsm);

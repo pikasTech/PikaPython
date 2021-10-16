@@ -61,38 +61,34 @@ static char* getMethodDeclearation(PikaObj* obj, char* methodName) {
     return res;
 }
 
-int fast_atoi(char *src)
-{
-	const char *p = src;
-	static const uint64_t a[][10] = 
-	{
-		0, 1e0, 2e0, 3e0, 4e0, 5e0, 6e0, 7e0, 8e0, 9e0, 
-		0, 1e1, 2e1, 3e1, 4e1, 5e1, 6e1, 7e1, 8e1, 9e1, 
-		0, 1e2, 2e2, 3e2, 4e2, 5e2, 6e2, 7e2, 8e2, 9e2, 
-		0, 1e3, 2e3, 3e3, 4e3, 5e3, 6e3, 7e3, 8e3, 9e3, 
-		0, 1e4, 2e4, 3e4, 4e4, 5e4, 6e4, 7e4, 8e4, 9e4, 
-		0, 1e5, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, 8e5, 9e5, 
-		0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6, 9e6, 
-		0, 1e7, 2e7, 3e7, 4e7, 5e7, 6e7, 7e7, 8e7, 9e7, 
-		0, 1e8, 2e8, 3e8, 4e8, 5e8, 6e8, 7e8, 8e8, 9e8, 
-		0, 1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9, 
-	};
+int fast_atoi(char* src) {
+    const char* p = src;
+    static const uint64_t a[][10] = {
+        0,   1e0, 2e0, 3e0, 4e0, 5e0, 6e0, 7e0, 8e0, 9e0, 0,   1e1, 2e1,
+        3e1, 4e1, 5e1, 6e1, 7e1, 8e1, 9e1, 0,   1e2, 2e2, 3e2, 4e2, 5e2,
+        6e2, 7e2, 8e2, 9e2, 0,   1e3, 2e3, 3e3, 4e3, 5e3, 6e3, 7e3, 8e3,
+        9e3, 0,   1e4, 2e4, 3e4, 4e4, 5e4, 6e4, 7e4, 8e4, 9e4, 0,   1e5,
+        2e5, 3e5, 4e5, 5e5, 6e5, 7e5, 8e5, 9e5, 0,   1e6, 2e6, 3e6, 4e6,
+        5e6, 6e6, 7e6, 8e6, 9e6, 0,   1e7, 2e7, 3e7, 4e7, 5e7, 6e7, 7e7,
+        8e7, 9e7, 0,   1e8, 2e8, 3e8, 4e8, 5e8, 6e8, 7e8, 8e8, 9e8, 0,
+        1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9,
+    };
     uint16_t size = strGetSize(src);
     p = p + size - 1;
-	if (*p){
-		int s = 0;
-		const uint64_t *n = a[0];
-		while (p != src) {
+    if (*p) {
+        int s = 0;
+        const uint64_t* n = a[0];
+        while (p != src) {
             s += n[(*p - '0')];
             n += 10;
             p--;
         }
-        if(*p == '-'){
-            return  -s;
+        if (*p == '-') {
+            return -s;
         }
-        return  s + n[(*p - '0')];        
-	}
-	return 0;
+        return s + n[(*p - '0')];
+    }
+    return 0;
 }
 
 Arg* pikaVM_runAsmInstruct(PikaObj* self,
@@ -121,10 +117,10 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         return NULL;
     }
     if (instruct == REF) {
-        if( strEqu(data, (char *)"True") ){
+        if (strEqu(data, (char*)"True")) {
             return arg_setInt(NULL, "", 1);
         }
-        if( strEqu(data, (char *)"False") ){
+        if (strEqu(data, (char*)"False")) {
             return arg_setInt(NULL, "", 0);
         }
         return arg_copy(obj_getArg(self, data));
@@ -219,6 +215,18 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     return NULL;
 }
 
+static int32_t clearQueues(PikaObj* self) {
+    for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
+        char deepth[2] = {0};
+        deepth[0] = deepthChar;
+        Queue* queue = (Queue*)obj_getPtr(self, deepth);
+        if (NULL != queue) {
+            args_deinit(queue);
+            obj_removeArg(self, deepth);
+        }
+    }
+}
+
 int32_t pikaVM_runAsmLine(PikaObj* self,
                           char* pikaAsm,
                           int32_t lineAddr,
@@ -227,6 +235,11 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     char* code = pikaAsm + lineAddr;
     char* line = strs_getLine(buffs, code);
     int32_t nextAddr = lineAddr + strGetSize(line) + 1;
+    /* Found new script Line, clear the queues*/
+    if ('B' == line[0]) {
+        clearQueues(self);
+        goto nextLine;
+    }
 
     char d0[2] = {0}, d1[2] = {0};
     d0[0] = line[0];
@@ -272,15 +285,7 @@ Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     while (lineAddr < size) {
         lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
     }
+    clearQueues(self);
 
-    for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
-        char deepth[2] = {0};
-        deepth[0] = deepthChar;
-        Queue* queue = (Queue*)obj_getPtr(self, deepth);
-        if (NULL != queue) {
-            args_deinit(queue);
-            obj_removeArg(self, deepth);
-        }
-    }
     return sysRes;
 }
