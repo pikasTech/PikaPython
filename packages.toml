@@ -57,3 +57,9 @@ name = "Arm2D"
 releases = [
   "v0.0.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
 ]
+
+[[packages]]
+name = "STM32G030Booter"
+releases = [
+  "v1.0.0 655b27d0cb160fed5f791453d19e18a138206006",
+]
