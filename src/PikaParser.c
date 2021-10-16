@@ -138,7 +138,7 @@ static int32_t getPyLineBlockDeepth(char* line) {
     }
 }
 
-AST* pikaParseLine(char* line) {
+AST* pikaParseLine(char* line, Args* blockStack) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
     uint8_t blockDeepth = getPyLineBlockDeepth(line);
@@ -162,7 +162,7 @@ exit:
 }
 
 char* pikaParseToAsm(Args* buffs, char* line) {
-    AST* ast = pikaParseLine(line);
+    AST* ast = pikaParseLine(line, NULL);
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     AST_deinit(ast);
     return pikaAsm;
@@ -225,7 +225,7 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     obj_setInt(ast, "deepth", 0);
     pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
     if (strEqu(obj_getStr(ast, "contralFlow"), "while")) {
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "JEZ 2\n");
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 2\n");
     }
     pikaAsm = strsCopy(buffs, pikaAsm);
     args_deinit(runBuffs);
