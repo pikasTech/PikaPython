@@ -381,16 +381,6 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Application/MDK-ARM</GroupName>
-          <Files>
-            <File>
-              <FileName>startup_stm32g030xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>startup_stm32g030xx.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Booter</GroupName>
           <Files>
             <File>
@@ -417,6 +407,11 @@
               <FileName>system_stm32g0xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\system_stm32g0xx.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_stm32g030xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\startup_stm32g030xx.s</FilePath>
             </File>
           </Files>
         </Group>
