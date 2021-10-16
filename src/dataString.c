@@ -237,6 +237,9 @@ int32_t strIsStartWith(char* str, char* strStart) {
 }
 
 int32_t strEqu(char* str1, char* str2) {
+    if (NULL == str1 || NULL == str2) {
+        return 0;
+    }
     return !strcmp(str1, str2);
 }
 

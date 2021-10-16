@@ -147,9 +147,11 @@ AST* pikaParseLine(char* line) {
     char* stmt = lineStart;
     if (0 == strncmp(lineStart, (char*)"while ", 6)) {
         stmt = strsCut(buffs, lineStart, ' ', ':');
+        obj_setStr(ast, "contralFlow", "while");
     }
     if (0 == strncmp(lineStart, (char*)"if ", 3)) {
         stmt = strsCut(buffs, lineStart, ' ', ':');
+        obj_setStr(ast, "contralFlow", "if");
     }
     stmt = strsGetCleanCmd(buffs, stmt);
     ast = AST_parseStmt(ast, stmt);
@@ -214,6 +216,7 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
 char* AST_toPikaAsm(AST* ast, Args* buffs) {
     Args* runBuffs = New_strBuff();
     char* pikaAsm = strsCopy(runBuffs, "");
+    pikaAsm = strsCopy(runBuffs, "");
     pikaAsm = strsAppend(buffs, pikaAsm, (char*)"B");
     char buff[11];
     pikaAsm = strsAppend(buffs, pikaAsm,
@@ -221,6 +224,9 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
     obj_setInt(ast, "deepth", 0);
     pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
+    if (strEqu(obj_getStr(ast, "contralFlow"), "while")) {
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "JEZ 2\n");
+    }
     pikaAsm = strsCopy(buffs, pikaAsm);
     args_deinit(runBuffs);
     return pikaAsm;
