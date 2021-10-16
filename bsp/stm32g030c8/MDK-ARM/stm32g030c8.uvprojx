@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G030xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;          ../Drivers/STM32G0xx_HAL_Driver/Inc;          ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;          ../Drivers/CMSIS/Device/ST/STM32G0xx/Include;          ../Drivers/CMSIS/Include;          ..\pikascript\pikascript-core;          ..\pikascript\pikascript-api;          ..\pikascript\pikascript-lib\STM32</IncludePath>
+              <IncludePath>../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-core;..\pikascript\pikascript-api;..\pikascript\pikascript-lib\STM32;..\pikascript\pikascript-lib\STM32G030Booter</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -391,27 +391,32 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Application/User/Core</GroupName>
+          <GroupName>Booter</GroupName>
           <Files>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/main.c</FilePath>
-            </File>
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/gpio.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\gpio.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g0xx_it.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32g0xx_it.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\main.c</FilePath>
             </File>
             <File>
               <FileName>stm32g0xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32g0xx_hal_msp.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\stm32g0xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\stm32g0xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_stm32g0xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\system_stm32g0xx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -629,16 +634,6 @@
               <FileName>stm32g0xx_hal_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_exti.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers/CMSIS</GroupName>
-          <Files>
-            <File>
-              <FileName>system_stm32g0xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/system_stm32g0xx.c</FilePath>
             </File>
           </Files>
         </Group>
