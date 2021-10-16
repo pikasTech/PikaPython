@@ -141,8 +141,17 @@ static int32_t getPyLineBlockDeepth(char* line) {
 AST* pikaParseLine(char* line) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
-    obj_setInt(ast, "blockDeepth", getPyLineBlockDeepth(line));
-    char* stmt = strsGetCleanCmd(buffs, line);
+    uint8_t blockDeepth = getPyLineBlockDeepth(line);
+    obj_setInt(ast, "blockDeepth", blockDeepth);
+    char* lineStart = line + blockDeepth * 4;
+    char* stmt = lineStart;
+    if (0 == strncmp(lineStart, (char*)"while ", 6)) {
+        stmt = strsCut(buffs, lineStart, ' ', ':');
+    }
+    if (0 == strncmp(lineStart, (char*)"if ", 3)) {
+        stmt = strsCut(buffs, lineStart, ' ', ':');
+    }
+    stmt = strsGetCleanCmd(buffs, stmt);
     ast = AST_parseStmt(ast, stmt);
     goto exit;
 exit:

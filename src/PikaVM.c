@@ -238,6 +238,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     /* Found new script Line, clear the queues*/
     if ('B' == line[0]) {
         clearQueues(self);
+        uint8_t blockDeepth = line[1] - '0';
         goto nextLine;
     }
 
