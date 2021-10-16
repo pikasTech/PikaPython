@@ -2,6 +2,7 @@
 #include "PikaObj.h"
 #include "dataQueue.h"
 #include "dataQueueObj.h"
+#include "dataStack.h"
 #include "dataStrs.h"
 
 char* strsPopStmts(Args* buffs, char* stmts) {
@@ -138,7 +139,7 @@ static int32_t getPyLineBlockDeepth(char* line) {
     }
 }
 
-AST* pikaParseLine(char* line, Args* blockStack) {
+AST* pikaParseLine(char* line, Stack* blockStack) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
     uint8_t blockDeepth = getPyLineBlockDeepth(line);
