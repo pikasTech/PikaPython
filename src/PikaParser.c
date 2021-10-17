@@ -260,8 +260,9 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
             if (NULL == blockType) {
                 break;
             }
-            pikaAsm = addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
+            /* goto the while start when exit while block */
             if (strEqu(blockType, "while")) {
+                pikaAsm = addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
             }
         }
@@ -271,6 +272,9 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
     if (strEqu(obj_getStr(ast, "contralFlow"), "while")) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 2\n");
+    }
+    if (strEqu(obj_getStr(ast, "contralFlow"), "if")) {
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
     }
     pikaAsm = strsCopy(buffs, pikaAsm);
     args_deinit(runBuffs);

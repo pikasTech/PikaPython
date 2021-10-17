@@ -310,3 +310,59 @@ TEST(parser, while_true_false_both_exit) {
     args_deinit(bf);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, if_) {
+    Args* bf = New_strBuff();
+    Stack* bs = New_Stack();
+    char* s = strsCopy(bf, (char*)"");
+    s = parse("if true:", bf, s, bs);
+    s = parse("    rgb.flow()", bf, s, bs);
+    s = parse("", bf, s, bs);
+    printf("%s", s);
+    EXPECT_STREQ(s,
+                 "B0\n"
+                 "0 REF true\n"
+                 "0 JEZ 1\n"
+                 "B1\n"
+                 "0 RUN rgb.flow\n"
+                 "B0\n");
+    stack_deinit(bs);
+    args_deinit(bf);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, while_true_if_false_both_exit) {
+    Args* bf = New_strBuff();
+    Stack* bs = New_Stack();
+    char* s = strsCopy(bf, (char*)"");
+    s = parse("while true:", bf, s, bs);
+    s = parse("    rgb.flow()", bf, s, bs);
+    s = parse("    if false:", bf, s, bs);
+    s = parse("        a=3", bf, s, bs);
+    s = parse("        test.on(add(2,3))", bf, s, bs);
+    s = parse("", bf, s, bs);
+    printf("%s", s);
+    EXPECT_STREQ(s,
+                 "B0\n"
+                 "0 REF true\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "0 RUN rgb.flow\n"
+                 "B1\n"
+                 "0 REF false\n"
+                 "0 JEZ 1\n"
+                 "B2\n"
+                 "0 NUM 3\n"
+                 "0 OUT a\n"
+                 "B2\n"
+                 "2 NUM 2\n"
+                 "2 NUM 3\n"
+                 "1 RUN add\n"
+                 "0 RUN test.on\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n");
+    stack_deinit(bs);
+    args_deinit(bf);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
