@@ -194,17 +194,27 @@ TEST(parser, while_true) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+static char* parse(const char* line,
+                   Args* outBuffs,
+                   char* pikaAsm,
+                   Stack* blockStack) {
+    Args* runBuffs = New_strBuff();
+    pikaAsm = strsAppend(runBuffs, pikaAsm,
+                         pikaParseLineToAsm(runBuffs, (char*)line, blockStack));
+    pikaAsm = strsCopy(outBuffs, pikaAsm);
+    args_deinit(runBuffs);
+    return pikaAsm;
+}
+
 TEST(parser, while_true_block) {
-    Args* buffs = New_strBuff();
-    Stack* blockStack = New_Stack();
-    char* pikaAsm = pikaParseLineToAsm(buffs, (char*)"while true:", blockStack);
-    pikaAsm = strsAppend(
-        buffs, pikaAsm,
-        pikaParseLineToAsm(buffs, (char*)"    rgb.flow()", blockStack));
-    pikaAsm = strsAppend(buffs, pikaAsm,
-                         pikaParseLineToAsm(buffs, (char*)"", blockStack));
-    printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,
+    Args* bf = New_strBuff();
+    Stack* bs = New_Stack();
+    char* s = strsCopy(bf, (char*)"");
+    s = parse("while true:", bf, s, bs);
+    s = parse("    rgb.flow()", bf, s, bs);
+    s = parse("", bf, s, bs);
+    printf("%s", s);
+    EXPECT_STREQ(s,
                  "B0\n"
                  "0 REF true\n"
                  "0 JEZ 2\n"
@@ -213,7 +223,87 @@ TEST(parser, while_true_block) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n");
-    stack_deinit(blockStack);
-    args_deinit(buffs);
+    stack_deinit(bs);
+    args_deinit(bf);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, while_true_false) {
+    Args* bf = New_strBuff();
+    Stack* bs = New_Stack();
+    char* s = strsCopy(bf, (char*)"");
+    s = parse("while true:", bf, s, bs);
+    s = parse("    rgb.flow()", bf, s, bs);
+    s = parse("    while false:", bf, s, bs);
+    s = parse("        a=3", bf, s, bs);
+    s = parse("        test.on(add(2,3))", bf, s, bs);
+    s = parse("    print('flowing')", bf, s, bs);
+    s = parse("", bf, s, bs);
+    printf("%s", s);
+    EXPECT_STREQ(s,
+                 "B0\n"
+                 "0 REF true\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "0 RUN rgb.flow\n"
+                 "B1\n"
+                 "0 REF false\n"
+                 "0 JEZ 2\n"
+                 "B2\n"
+                 "0 NUM 3\n"
+                 "0 OUT a\n"
+                 "B2\n"
+                 "2 NUM 2\n"
+                 "2 NUM 3\n"
+                 "1 RUN add\n"
+                 "0 RUN test.on\n"
+                 "B1\n"
+                 "0 JMP -1\n"
+                 "B1\n"
+                 "1 STR flowing\n"
+                 "0 RUN print\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n");
+    stack_deinit(bs);
+    args_deinit(bf);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, while_true_false_both_exit) {
+    Args* bf = New_strBuff();
+    Stack* bs = New_Stack();
+    char* s = strsCopy(bf, (char*)"");
+    s = parse("while true:", bf, s, bs);
+    s = parse("    rgb.flow()", bf, s, bs);
+    s = parse("    while false:", bf, s, bs);
+    s = parse("        a=3", bf, s, bs);
+    s = parse("        test.on(add(2,3))", bf, s, bs);
+    s = parse("", bf, s, bs);
+    printf("%s", s);
+    EXPECT_STREQ(s,
+                 "B0\n"
+                 "0 REF true\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "0 RUN rgb.flow\n"
+                 "B1\n"
+                 "0 REF false\n"
+                 "0 JEZ 2\n"
+                 "B2\n"
+                 "0 NUM 3\n"
+                 "0 OUT a\n"
+                 "B2\n"
+                 "2 NUM 2\n"
+                 "2 NUM 3\n"
+                 "1 RUN add\n"
+                 "0 RUN test.on\n"
+                 "B1\n"
+                 "0 JMP -1\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n");
+    stack_deinit(bs);
+    args_deinit(bf);
     EXPECT_EQ(pikaMemNow(), 0);
 }
