@@ -236,11 +236,15 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     return pikaAsm;
 }
 
-static char* addBlockDeepth(AST* ast, Args* buffs, char* pikaAsm) {
+static char* addBlockDeepth(AST* ast,
+                            Args* buffs,
+                            char* pikaAsm,
+                            uint8_t deepthOffset) {
     pikaAsm = strsAppend(buffs, pikaAsm, (char*)"B");
     char buff[11];
-    pikaAsm = strsAppend(buffs, pikaAsm,
-                         fast_itoa(buff, obj_getInt(ast, "blockDeepth")));
+    pikaAsm = strsAppend(
+        buffs, pikaAsm,
+        fast_itoa(buff, obj_getInt(ast, "blockDeepth") + deepthOffset));
     pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
 }
 
@@ -250,17 +254,19 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     QueueObj* exitBlock = obj_getObj(ast, "exitBlock", 0);
     if (NULL != exitBlock) {
         while (1) {
+            uint8_t blockTypeNum = obj_getInt(exitBlock, "top") -
+                                   obj_getInt(exitBlock, "bottom") - 1;
             char* blockType = queueObj_popStr(exitBlock);
             if (NULL == blockType) {
                 break;
             }
-            pikaAsm = addBlockDeepth(ast, buffs, pikaAsm);
+            pikaAsm = addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
             if (strEqu(blockType, "while")) {
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
             }
         }
     }
-    pikaAsm = addBlockDeepth(ast, buffs, pikaAsm);
+    pikaAsm = addBlockDeepth(ast, buffs, pikaAsm, 0);
     obj_setInt(ast, "deepth", 0);
     pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
     if (strEqu(obj_getStr(ast, "contralFlow"), "while")) {
