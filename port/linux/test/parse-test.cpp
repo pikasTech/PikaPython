@@ -239,6 +239,10 @@ TEST(parser, while_true_false) {
     s = parse("        test.on(add(2,3))", bf, s, bs);
     s = parse("    print('flowing')", bf, s, bs);
     s = parse("", bf, s, bs);
+    Arg* buffArg = arg_setStr(NULL, (char*)"", s);
+    stack_deinit(bs);
+    args_deinit(bf);
+    s = arg_getStr(buffArg);
     printf("%s", s);
     EXPECT_STREQ(s,
                  "B0\n"
@@ -265,8 +269,7 @@ TEST(parser, while_true_false) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n");
-    stack_deinit(bs);
-    args_deinit(bf);
+    arg_deinit(buffArg);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
