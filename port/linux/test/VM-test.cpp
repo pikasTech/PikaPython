@@ -185,3 +185,26 @@ TEST(VM, JMP) {
     EXPECT_EQ(lineAddr, 14);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, JMP_back1) {
+    char* pikaAsm = (char*)
+    "B0\n"
+    "B0\n"
+    "0 JMP -1\n"
+    "B0\n"
+    "B0\n";
+    PikaObj* self = New_TinyObj(NULL);
+    int lineAddr = 0;
+    int size = strGetSize(pikaAsm);
+    Args* sysRes = New_args(NULL);
+    args_setErrorCode(sysRes, 0);
+    args_setSysOut(sysRes, (char*)"");
+    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
+    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
+    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
+    __clearInvokeQueues(self);
+    obj_deinit(self);
+    args_deinit(sysRes);
+    EXPECT_EQ(lineAddr, 0);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

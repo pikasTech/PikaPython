@@ -283,10 +283,10 @@ int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
             break;
         }
     }
-    offset = 0;
-    codeNow = code + offset;
-    uint8_t blockNum = 0;
+    int8_t blockNum = 0;
     if (jmp > 0) {
+        offset = 0;
+        codeNow = code + offset;
         while (1) {
             offset += gotoNextLine(codeNow);
             codeNow = code + offset;
@@ -297,6 +297,21 @@ int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
                 }
             }
             if (blockNum >= jmp) {
+                break;
+            }
+        }
+    }
+    if (jmp < 0) {
+        while (1) {
+            offset += gotoLastLine(start, codeNow);
+            codeNow = code + offset;
+            if (codeNow[0] == 'B') {
+                uint8_t blockDeepth = codeNow[1] - '0';
+                if (blockDeepth == thisBlockDeepth) {
+                    blockNum--;
+                }
+            }
+            if (blockNum <= jmp) {
                 break;
             }
         }
