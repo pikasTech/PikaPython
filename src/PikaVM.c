@@ -16,7 +16,7 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
-enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ};
+enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ };
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
@@ -102,6 +102,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
                            char* data,
                            Queue* q0,
                            Queue* q1,
+                           int32_t* jmp,
                            Args* sysRes) {
     if (instruct == NUM) {
         Arg* numArg = New_arg(NULL);
@@ -116,7 +117,6 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     }
     if (instruct == OUT) {
         Arg* outArg = arg_copy(queue_popArg(q0));
-        int outInt = arg_getInt(outArg);
         outArg = arg_setName(outArg, data);
         obj_setArg(self, data, outArg);
         arg_deinit(outArg);
@@ -130,6 +130,17 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             return arg_setInt(NULL, "", 0);
         }
         return arg_copy(obj_getArg(self, data));
+    }
+    if (instruct == JMP) {
+        *jmp = fast_atoi(data);
+    }
+    if (instruct == JEZ) {
+        Arg* assertArg = arg_copy(queue_popArg(q0));
+        int assert = arg_getInt(assertArg);
+        arg_deinit(assertArg);
+        if (0 == assert) {
+            *jmp = fast_atoi(data);
+        }
     }
     if (instruct == RUN) {
         Args* buffs = New_strBuff();
@@ -265,7 +276,9 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         obj_setPtr(self, d1, q1);
     }
 
-    Arg* resArg = pikaVM_runAsmInstruct(self, instruct, data, q0, q1, sysRes);
+    int32_t jmp = 0;
+    Arg* resArg =
+        pikaVM_runAsmInstruct(self, instruct, data, q0, q1, &jmp, sysRes);
     if (NULL != resArg) {
         queue_pushArg(q0, resArg);
     }

@@ -332,7 +332,9 @@ TEST(parser, if_) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+extern PikaMemInfo pikaMemInfo;
 TEST(parser, while_true_if_false_both_exit) {
+    pikaMemInfo.heapUsedMax = 0;
     Args* bf = New_strBuff();
     Stack* bs = New_Stack();
     char* s = strsCopy(bf, (char*)"");
@@ -368,7 +370,6 @@ TEST(parser, while_true_if_false_both_exit) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-extern PikaMemInfo pikaMemInfo;
 TEST(parser, multiLine) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
