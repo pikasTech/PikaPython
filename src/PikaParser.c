@@ -191,6 +191,27 @@ char* pikaParseLineToAsm(Args* buffs, char* line, Stack* blockStack) {
     return pikaAsm;
 }
 
+char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
+    Args* multiRunBuffs = New_strBuff();
+    Stack* blockStack = New_Stack();
+    char* pikaAsm = strsCopy(multiRunBuffs, "");
+    multiLine = strsCopy(multiRunBuffs, multiLine);
+    while (1) {
+        char* line = strsPopToken(multiRunBuffs, multiLine, '\n');
+        Args* singleRunBuffs = New_strBuff();
+        char* singleAsm = pikaParseLineToAsm(singleRunBuffs, line, blockStack);
+        pikaAsm = strsAppend(multiRunBuffs, pikaAsm, singleAsm);
+        args_deinit(singleRunBuffs);
+        if (strGetSize(multiLine) == 0) {
+            break;
+        }
+    }
+    char* multiAsm = strsCopy(outBuffs, pikaAsm);
+    args_deinit(multiRunBuffs);
+    stack_deinit(blockStack);
+    return multiAsm;
+}
+
 char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     uint32_t deepth = obj_getInt(ast, "deepth");
     while (1) {

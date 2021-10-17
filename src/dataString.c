@@ -160,7 +160,8 @@ char* strPopToken(char* strOut, char* strIn, char sign) {
     int32_t i = 0;
     for (i = 0; i < size; i++) {
         if (getSign) {
-            strIn[iPoped++] = strIn[i];
+            strIn[iPoped] = strIn[i];
+            iPoped++;
             continue;
         }
         if (strIn[i] != sign) {

@@ -16,7 +16,7 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
-enum Instruct { NON, REF, RUN, STR, OUT, NUM };
+enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ};
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
@@ -41,6 +41,12 @@ static enum Instruct getInstruct(char* line) {
     }
     if (0 == strncmp(line + 2, "OUT", 3)) {
         return OUT;
+    }
+    if (0 == strncmp(line + 2, "JMP", 3)) {
+        return JMP;
+    }
+    if (0 == strncmp(line + 2, "JEZ", 3)) {
+        return JEZ;
     }
     return NON;
 }
