@@ -368,7 +368,9 @@ TEST(parser, while_true_if_false_both_exit) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+extern PikaMemInfo pikaMemInfo;
 TEST(parser, multiLine) {
+    pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =(char *)
         "while true:\n"
