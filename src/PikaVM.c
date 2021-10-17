@@ -100,8 +100,8 @@ int fast_atoi(char* src) {
 Arg* pikaVM_runAsmInstruct(PikaObj* self,
                            enum Instruct instruct,
                            char* data,
-                           Queue* q0,
-                           Queue* q1,
+                           Queue* invokeQuene0,
+                           Queue* invokeQuene1,
                            int32_t* jmp,
                            Args* sysRes) {
     if (instruct == NUM) {
@@ -116,7 +116,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         return arg_setStr(strArg, "", data);
     }
     if (instruct == OUT) {
-        Arg* outArg = arg_copy(queue_popArg(q0));
+        Arg* outArg = arg_copy(queue_popArg(invokeQuene0));
         outArg = arg_setName(outArg, data);
         obj_setArg(self, data, outArg);
         arg_deinit(outArg);
@@ -135,7 +135,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         *jmp = fast_atoi(data);
     }
     if (instruct == JEZ) {
-        Arg* assertArg = arg_copy(queue_popArg(q0));
+        Arg* assertArg = arg_copy(queue_popArg(invokeQuene0));
         int assert = arg_getInt(assertArg);
         arg_deinit(assertArg);
         if (0 == assert) {
@@ -190,7 +190,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
 
         methodArgs = New_args(NULL);
         while (1) {
-            Arg* methodArg = arg_copy(queue_popArg(q1));
+            Arg* methodArg = arg_copy(queue_popArg(invokeQuene1));
             if (NULL == methodArg) {
                 break;
             }
@@ -232,7 +232,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     return NULL;
 }
 
-static int32_t clearQueues(PikaObj* self) {
+int32_t __clearInvokeQueues(PikaObj* self) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
         char deepth[2] = {0};
         deepth[0] = deepthChar;
@@ -252,40 +252,43 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     char* code = pikaAsm + lineAddr;
     char* line = strs_getLine(buffs, code);
     int32_t nextAddr = lineAddr + strGetSize(line) + 1;
+    int32_t jmp = 0;
     /* Found new script Line, clear the queues*/
     if ('B' == line[0]) {
-        clearQueues(self);
+        __clearInvokeQueues(self);
         uint8_t blockDeepth = line[1] - '0';
         goto nextLine;
     }
 
-    char d0[2] = {0}, d1[2] = {0};
-    d0[0] = line[0];
-    d1[0] = line[0] + 1;
+    char invokeDeepth0[2] = {0}, invokeDeepth1[2] = {0};
+    invokeDeepth0[0] = line[0];
+    invokeDeepth1[0] = line[0] + 1;
     enum Instruct instruct = getInstruct(line);
     char* data = line + 6;
 
-    Queue* q0 = obj_getPtr(self, d0);
-    Queue* q1 = obj_getPtr(self, d1);
-    if (NULL == q0) {
-        q0 = New_queue();
-        obj_setPtr(self, d0, q0);
+    Queue* invokeQuene0 = obj_getPtr(self, invokeDeepth0);
+    Queue* invokeQuene1 = obj_getPtr(self, invokeDeepth1);
+    if (NULL == invokeQuene0) {
+        invokeQuene0 = New_queue();
+        obj_setPtr(self, invokeDeepth0, invokeQuene0);
     }
-    if (NULL == q1) {
-        q1 = New_queue();
-        obj_setPtr(self, d1, q1);
+    if (NULL == invokeQuene1) {
+        invokeQuene1 = New_queue();
+        obj_setPtr(self, invokeDeepth1, invokeQuene1);
     }
 
-    int32_t jmp = 0;
-    Arg* resArg =
-        pikaVM_runAsmInstruct(self, instruct, data, q0, q1, &jmp, sysRes);
+    Arg* resArg = pikaVM_runAsmInstruct(self, instruct, data, invokeQuene0,
+                                        invokeQuene1, &jmp, sysRes);
     if (NULL != resArg) {
-        queue_pushArg(q0, resArg);
+        queue_pushArg(invokeQuene0, resArg);
     }
 
     goto nextLine;
 nextLine:
     args_deinit(buffs);
+    if (jmp != 0) {
+        return jmp;
+    }
     return nextAddr;
 }
 
@@ -305,7 +308,7 @@ Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     while (lineAddr < size) {
         lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
     }
-    clearQueues(self);
+    __clearInvokeQueues(self);
 
     return sysRes;
 }
