@@ -244,8 +244,64 @@ int32_t __clearInvokeQueues(PikaObj* self) {
     }
 }
 
-int32_t getAddrOffsetFromJmp(char* code, int32_t jmp) {
-    return jmp;
+int32_t gotoNextLine(char* code) {
+    int offset = 0;
+    while (1) {
+        if (code[offset] == '\n') {
+            break;
+        }
+        offset++;
+    }
+    return offset + 1;
+}
+
+int32_t gotoLastLine(char* start, char* code) {
+    int offset = -2;
+    while (1) {
+        char* codeNow = code + offset;
+        if (codeNow == start) {
+            offset--;
+            break;
+        }
+        if (codeNow[0] == '\n') {
+            break;
+        }
+        offset--;
+    }
+    return offset + 1;
+}
+
+int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
+    int offset = 0;
+    int thisBlockDeepth = -1;
+    char* codeNow = code + offset;
+    while (1) {
+        offset += gotoLastLine(start, codeNow);
+        codeNow = code + offset;
+        if (codeNow[0] == 'B') {
+            thisBlockDeepth = codeNow[1] - '0';
+            break;
+        }
+    }
+    offset = 0;
+    codeNow = code + offset;
+    uint8_t blockNum = 0;
+    if (jmp > 0) {
+        while (1) {
+            offset += gotoNextLine(codeNow);
+            codeNow = code + offset;
+            if (codeNow[0] == 'B') {
+                uint8_t blockDeepth = codeNow[1] - '0';
+                if (blockDeepth >= thisBlockDeepth) {
+                    blockNum++;
+                }
+            }
+            if (blockNum >= jmp) {
+                break;
+            }
+        }
+    }
+    return offset;
 }
 
 int32_t pikaVM_runAsmLine(PikaObj* self,
@@ -291,7 +347,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
 nextLine:
     args_deinit(buffs);
     if (jmp != 0) {
-        return lineAddr + getAddrOffsetFromJmp(code, jmp);
+        return lineAddr + getAddrOffsetFromJmp(pikaAsm, code, jmp);
     }
     return nextAddr;
 }

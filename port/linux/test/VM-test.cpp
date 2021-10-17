@@ -142,33 +142,12 @@ TEST(VM, Run_add_1_2_3) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(VM, JMP) {
-    char* pikaAsm = (char*)
-    "B0\n"
-    "0 JMP 2\n";
-    "B0\n";
-    "B0\n";
-    PikaObj* self = New_TinyObj(NULL);
-    int lineAddr = 0;
-    int size = strGetSize(pikaAsm);
-    Args* sysRes = New_args(NULL);
-    args_setErrorCode(sysRes, 0);
-    args_setSysOut(sysRes, (char*)"");
-    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
-    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
-    __clearInvokeQueues(self);
-    obj_deinit(self);
-    args_deinit(sysRes);
-    EXPECT_EQ(lineAddr, 2);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-
 TEST(VM, JEZ) {
     char* pikaAsm = (char*)
     "B0\n"
     "0 REF False\n"
-    "0 JEZ 2\n";
-    "B0\n";
+    "0 JEZ 2\n"
+    "B0\n"
     "B0\n";
     PikaObj* self = New_TinyObj(NULL);
     int lineAddr = 0;
@@ -182,6 +161,27 @@ TEST(VM, JEZ) {
     __clearInvokeQueues(self);
     obj_deinit(self);
     args_deinit(sysRes);
-    EXPECT_EQ(lineAddr, 2);
+    EXPECT_EQ(lineAddr, 26);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, JMP) {
+    char* pikaAsm = (char*)
+    "B0\n"
+    "0 JMP 2\n"
+    "B0\n"
+    "B0\n";
+    PikaObj* self = New_TinyObj(NULL);
+    int lineAddr = 0;
+    int size = strGetSize(pikaAsm);
+    Args* sysRes = New_args(NULL);
+    args_setErrorCode(sysRes, 0);
+    args_setSysOut(sysRes, (char*)"");
+    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
+    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
+    __clearInvokeQueues(self);
+    obj_deinit(self);
+    args_deinit(sysRes);
+    EXPECT_EQ(lineAddr, 14);
     EXPECT_EQ(pikaMemNow(), 0);
 }
