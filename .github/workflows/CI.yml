@@ -30,7 +30,7 @@ jobs:
 
     - name: TEST
       # Build your program with the given configuration
-      run: cd ${{github.workspace}}/port/linux && bash test.sh
+      run: cd ${{github.workspace}}/port/linux && bash gtest.sh
 
   bsp:
     runs-on: windows-latest
