@@ -244,6 +244,10 @@ int32_t __clearInvokeQueues(PikaObj* self) {
     }
 }
 
+int32_t getAddrOffsetFromJmp(char* code, int32_t jmp) {
+    return jmp;
+}
+
 int32_t pikaVM_runAsmLine(PikaObj* self,
                           char* pikaAsm,
                           int32_t lineAddr,
@@ -287,7 +291,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
 nextLine:
     args_deinit(buffs);
     if (jmp != 0) {
-        return jmp;
+        return lineAddr + getAddrOffsetFromJmp(code, jmp);
     }
     return nextAddr;
 }
