@@ -198,6 +198,7 @@ static char* parse(const char* line,
                    Args* outBuffs,
                    char* pikaAsm,
                    Stack* blockStack) {
+    printf("%s\n", line);
     Args* runBuffs = New_strBuff();
     pikaAsm = strsAppend(runBuffs, pikaAsm,
                          pikaParseLineToAsm(runBuffs, (char*)line, blockStack));
