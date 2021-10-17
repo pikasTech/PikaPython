@@ -292,7 +292,7 @@ int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
             codeNow = code + offset;
             if (codeNow[0] == 'B') {
                 uint8_t blockDeepth = codeNow[1] - '0';
-                if (blockDeepth >= thisBlockDeepth) {
+                if (blockDeepth <= thisBlockDeepth) {
                     blockNum++;
                 }
             }
@@ -381,6 +381,7 @@ Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
     while (lineAddr < size) {
+        char* thisLine = pikaAsm + lineAddr;
         lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
     }
     __clearInvokeQueues(self);

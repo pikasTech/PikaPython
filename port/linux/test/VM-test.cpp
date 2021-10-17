@@ -208,3 +208,28 @@ TEST(VM, JMP_back1) {
     EXPECT_EQ(lineAddr, 0);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+extern PikaMemInfo pikaMemInfo;
+TEST(VM, WHILE) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =(char *)
+        "a = 1\n"
+        "b = 0\n"
+        "while a:\n"
+        "    b = 1\n"
+        "    a = 0\n"
+        "\n";
+    printf("%s", lines);
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* self = New_TinyObj(NULL);
+    Args* runRes = pikaVM_runAsm(self, pikaAsm);
+    EXPECT_EQ(obj_getInt(self, (char*)"a"), 0);
+    EXPECT_EQ(obj_getInt(self, (char*)"b"), 1);
+    args_deinit(runRes);
+    args_deinit(buffs);
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
