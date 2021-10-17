@@ -194,7 +194,6 @@ char* pikaParseLineToAsm(Args* buffs, char* line, Stack* blockStack) {
 char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
     Stack* blockStack = New_Stack();
     Arg* pikaAsmBuff = arg_setStr(NULL, "", "");
-    char* pikaAsm;
     Arg* multiLineBuff = arg_setStr(NULL, "", multiLine);
     while (1) {
         Args* singleRunBuffs = New_strBuff();
@@ -203,7 +202,7 @@ char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
         char* line = strsPopToken(singleRunBuffs, multiLine, '\n');
         multiLineBuff = arg_setStr(NULL, "", multiLine);
         char* singleAsm = pikaParseLineToAsm(singleRunBuffs, line, blockStack);
-        pikaAsm = arg_getStr(pikaAsmBuff);
+        char* pikaAsm = arg_getStr(pikaAsmBuff);
         pikaAsm = strsAppend(singleRunBuffs, pikaAsm, singleAsm);
         arg_deinit(pikaAsmBuff);
         pikaAsmBuff = arg_setStr(NULL, "", pikaAsm);
