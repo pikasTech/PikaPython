@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                "--gtest_filter=queueObj.currentObj"
+                // "--gtest_filter=queueObj.currentObj"
                 // "--gtest_filter=parser*"
                 // "--gtest_filter=VM.Run_add_1_2_3"
                 // "--gtest_filter=block.ifrun2"

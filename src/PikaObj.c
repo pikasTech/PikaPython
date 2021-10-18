@@ -34,7 +34,8 @@ int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
     char* type = arg_getType(argEach);
     if (strIsStartWith(type, "_class")) {
         PikaObj* subObj = arg_getPtr(argEach);
-        if (NULL != subObj) {
+        /* is not a mate object */
+        if (!strIsStartWith(type, "_class-[mate]")) {
             obj_deinit(subObj);
         }
     }
