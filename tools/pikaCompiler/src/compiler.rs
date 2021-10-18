@@ -21,7 +21,7 @@ impl Compiler {
         };
         return compiler;
     }
-    pub fn analyze_main_line(mut compiler: Compiler, line: String) -> Compiler {
+    pub fn analyze_main_line(mut compiler: Compiler, line: &String) -> Compiler {
         let file_name = "main".to_string();
         let class_name = "PikaMain".to_string();
         let class_now = match compiler.class_list.get_mut(&"PikaMain".to_string()) {
@@ -37,6 +37,9 @@ impl Compiler {
         compiler.class_now_name = Some(class_name.clone());
 
         if line.starts_with("from ") {
+            return compiler;
+        }
+        if line.starts_with("import ") {
             return compiler;
         }
         class_now.script_list.add(&line);
@@ -58,6 +61,10 @@ impl Compiler {
 
     pub fn analyze_line(mut compiler: Compiler, line: String, file_name: &String) -> Compiler {
         let line = line.replace("\r", "");
+        if file_name == "main" {
+            compiler = Compiler::analyze_main_line(compiler, &line);
+        }
+
         if line.starts_with("import ") {
             let tokens: Vec<&str> = line.split(" ").collect();
             let file = tokens[1];
@@ -89,10 +96,6 @@ impl Compiler {
                 .unwrap();
             class_now.push_method(line);
             return compiler;
-        }
-
-        if file_name == "main" {
-            return Compiler::analyze_main_line(compiler, line);
         }
 
         if line.starts_with("    ")
