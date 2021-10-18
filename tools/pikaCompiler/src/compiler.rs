@@ -60,6 +60,11 @@ impl Compiler {
                 Some(s) => s,
                 None => return compiler,
             };
+            let package_name = pacakge_now.this_class_name.clone();
+            compiler
+                .package_list
+                .entry(package_name.clone())
+                .or_insert(pacakge_now);
         }
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
