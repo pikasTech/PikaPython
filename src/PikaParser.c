@@ -150,7 +150,7 @@ AST* pikaParseLine(char* line, Stack* blockStack) {
         for (int i = 0; i < blockDeepthLast - blockDeepth; i++) {
             QueueObj* exitBlock = obj_getObj(ast, "exitBlock", 0);
             if (NULL == exitBlock) {
-                obj_newObj(ast, "exitBlock", "", New_TinyObj);
+                obj_newObj(ast, "exitBlock", "", TinyObj);
                 exitBlock = obj_getObj(ast, "exitBlock", 0);
                 queueObj_init(exitBlock);
             }

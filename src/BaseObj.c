@@ -152,8 +152,8 @@ static void set(PikaObj* self, Args* args) {
     return;
 }
 
-PikaObj* New_BaseObj(Args* args) {
-    PikaObj* self = New_TinyObj(args);
+PikaObj* BaseObj(Args* args) {
+    PikaObj* self = TinyObj(args);
     class_defineMethod(self, "print(val:any)", print);
     class_defineMethod(self, "set(argPath:str, val:any)", set);
     return self;

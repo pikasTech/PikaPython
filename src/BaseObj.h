@@ -9,7 +9,7 @@
 #include "TinyObj.h"
 #include "dataMemory.h"
 
-PikaObj* New_BaseObj(Args* args);
+PikaObj* BaseObj(Args* args);
 int32_t obj_newObjFromClassLoader(PikaObj* self,
                                   char* objPath,
                                   char* classPath);

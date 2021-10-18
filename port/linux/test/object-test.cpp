@@ -43,7 +43,7 @@ void add(PikaObj* obj, Args* args) {
 }
 
 PikaObj* New_PikaObj_test(Args* args) {
-    PikaObj* self = New_PikaStdLib_SysObj(args);
+    PikaObj* self = PikaStdLib_SysObj(args);
     class_defineMethod(self, (char*)"hello(name:str, isShow:int)", hello);
     class_defineMethod(
         self, (char*)"hello2(name1:str, name2:str, name3:str, isShow:int)",
@@ -65,7 +65,7 @@ PikaObj* New_USART(Args* args) {
     /*  Derive from the tiny object class.
         Tiny object can not import sub object.
         Tiny object is the smallest object. */
-    PikaObj* self = New_TinyObj(args);
+    PikaObj* self = TinyObj(args);
 
     /* bind the method */
     class_defineMethod(self, (char*)"send(data:str)", sendMethod);
@@ -78,7 +78,7 @@ PikaObj* New_MYROOT1(Args* args) {
     /*  Derive from the base object class .
         BaseObj is the smallest object that can
         import sub object.      */
-    PikaObj* self = New_BaseObj(args);
+    PikaObj* self = BaseObj(args);
 
     /* new led object bellow root object */
     obj_newObj(self, (char*)"usart", (char*)"USART", (NewFun)New_USART);
@@ -88,7 +88,7 @@ PikaObj* New_MYROOT1(Args* args) {
 }
 
 TEST(object_test, test1) {
-    PikaObj* process = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
+    PikaObj* process = newRootObj((char*)"sys", PikaStdLib_SysObj);
     float floatTest = 12.231;
     obj_bindFloat(process, (char*)"testFloatBind", &floatTest);
     EXPECT_TRUE(
@@ -150,7 +150,7 @@ TEST(object_test, test6) {
 }
 
 TEST(object_test, test7) {
-    PikaObj* sys = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
+    PikaObj* sys = newRootObj((char*)"sys", PikaStdLib_SysObj);
     int32_t a = 0;
     obj_bind(sys, (char*)"int", (char*)"a", &a);
     obj_run(sys, (char*)"set('a', 1)");
@@ -160,7 +160,7 @@ TEST(object_test, test7) {
 }
 
 TEST(object_test, test8) {
-    PikaObj* sys = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
+    PikaObj* sys = newRootObj((char*)"sys", PikaStdLib_SysObj);
     obj_run(sys, (char*)"set('a', 1)");
     obj_run(sys, (char*)"remove('a')");
     obj_deinit(sys);
@@ -168,9 +168,9 @@ TEST(object_test, test8) {
 }
 
 TEST(object_test, test9) {
-    PikaObj* sys = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
+    PikaObj* sys = newRootObj((char*)"sys", PikaStdLib_SysObj);
     obj_run(sys, (char*)"ls()");
-    obj_setPtr(sys, (char*)"baseClass", (void*)New_TinyObj);
+    obj_setPtr(sys, (char*)"baseClass", (void*)TinyObj);
     obj_run(sys, (char*)"ls()");
     obj_deinit(sys);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -213,7 +213,7 @@ TEST(object_test, voidRun) {
 }
 
 TEST(object_test, printa) {
-    PikaObj* root = newRootObj((char*)"root", New_BaseObj);
+    PikaObj* root = newRootObj((char*)"root", BaseObj);
     obj_run(root, (char*)"a = 2");
     obj_run(root, (char*)"print(a)");
     char* sysOut = obj_getSysOut(root);
@@ -223,7 +223,7 @@ TEST(object_test, printa) {
 }
 
 TEST(object_test, copyArg) {
-    PikaObj* root = newRootObj((char*)"root", New_BaseObj);
+    PikaObj* root = newRootObj((char*)"root", BaseObj);
     Arg* arg = New_arg(NULL);
     arg = arg_setInt(arg, (char*)"a", 1);
     obj_setArg(root, (char*)"a", arg);

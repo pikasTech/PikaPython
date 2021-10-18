@@ -13,7 +13,7 @@ void _beforDinit(PikaObj* self) {
     /* override in user code */
 }
 
-PikaObj* New_TinyObj(Args* args) {
+PikaObj* TinyObj(Args* args) {
     PikaObj* self = pikaMalloc(sizeof(PikaObj));
 
     /* List */

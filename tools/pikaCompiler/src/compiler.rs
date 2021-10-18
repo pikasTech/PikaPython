@@ -10,7 +10,6 @@ pub struct Compiler {
     pub source_path: String,
     pub class_list: BTreeMap<String, ClassInfo>,
     pub class_now_name: Option<String>,
-    pub package_list: BTreeMap<String, ClassInfo>,
     pub package_now_name: Option<String>,
 }
 
@@ -21,7 +20,6 @@ impl Compiler {
             source_path: source_path.clone(),
             class_now_name: None,
             class_list: BTreeMap::new(),
-            package_list: BTreeMap::new(),
             package_now_name: None,
         };
         return compiler;
@@ -64,7 +62,7 @@ impl Compiler {
             };
             let package_name = pacakge_now.this_class_name.clone();
             compiler
-                .package_list
+                .class_list
                 .entry(package_name.clone())
                 .or_insert(pacakge_now);
             compiler.package_now_name = Some(package_name.clone());
@@ -113,7 +111,7 @@ impl Compiler {
                 Some(s) => s,
                 None => return compiler,
             };
-            let package_now = compiler.package_list.get_mut(&package_now_name).unwrap();
+            let package_now = compiler.class_list.get_mut(&package_now_name).unwrap();
             let class_name_without_file = match my_string::get_last_token(&class_name, '_') {
                 Some(s) => s,
                 None => return compiler,

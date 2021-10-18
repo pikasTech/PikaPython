@@ -15,7 +15,7 @@ TEST(VM, num1) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
-    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    PikaObj* self = newRootObj((char*)"root", PikaStdLib_SysObj);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
     obj_deinit(self);
     args_deinit(buffs);
@@ -27,7 +27,7 @@ TEST(VM, a_1) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
-    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    PikaObj* self = newRootObj((char*)"root", PikaStdLib_SysObj);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
 
     ASSERT_EQ(obj_getInt(self, (char*)"a"), 1);
@@ -42,7 +42,7 @@ TEST(VM, a_1d1) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
-    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    PikaObj* self = newRootObj((char*)"root", PikaStdLib_SysObj);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
 
     ASSERT_FLOAT_EQ(obj_getFloat(self, (char*)"a"), 1.1);
@@ -57,7 +57,7 @@ TEST(VM, str_xy) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
-    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    PikaObj* self = newRootObj((char*)"root", PikaStdLib_SysObj);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
 
     ASSERT_STREQ(obj_getStr(self, (char*)"a"), (char*)"xy");
@@ -72,7 +72,7 @@ TEST(VM, str_xy_space) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
-    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    PikaObj* self = newRootObj((char*)"root", PikaStdLib_SysObj);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
 
     ASSERT_STREQ(obj_getStr(self, (char*)"a"), (char*)"xy ");
@@ -83,7 +83,7 @@ TEST(VM, str_xy_space) {
 }
 
 TEST(VM, ref_a_b) {
-    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    PikaObj* self = newRootObj((char*)"root", PikaStdLib_SysObj);
     Args* buffs = New_strBuff();
 
     args_deinit(pikaVM_runAsm(
@@ -98,7 +98,7 @@ TEST(VM, ref_a_b) {
 }
 
 TEST(VM, Run_add) {
-    PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
+    PikaObj* self = newRootObj((char*)"root", PikaMath_Operator);
     Args* buffs = New_strBuff();
 
     args_deinit(pikaVM_runAsm(
@@ -112,7 +112,7 @@ TEST(VM, Run_add) {
 }
 
 TEST(VM, Run_add_multy) {
-    PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
+    PikaObj* self = newRootObj((char*)"root", PikaMath_Operator);
     Args* buffs = New_strBuff();
 
     args_deinit(
@@ -128,7 +128,7 @@ TEST(VM, Run_add_multy) {
 }
 
 TEST(VM, Run_add_1_2_3) {
-    PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
+    PikaObj* self = newRootObj((char*)"root", PikaMath_Operator);
     Args* buffs = New_strBuff();
 
     args_deinit(pikaVM_runAsm(
@@ -149,7 +149,7 @@ TEST(VM, JEZ) {
     "0 JEZ 2\n"
     "B0\n"
     "B0\n";
-    PikaObj* self = New_TinyObj(NULL);
+    PikaObj* self = TinyObj(NULL);
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
     Args* sysRes = New_args(NULL);
@@ -171,7 +171,7 @@ TEST(VM, JMP) {
     "0 JMP 2\n"
     "B0\n"
     "B0\n";
-    PikaObj* self = New_TinyObj(NULL);
+    PikaObj* self = TinyObj(NULL);
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
     Args* sysRes = New_args(NULL);
@@ -193,7 +193,7 @@ TEST(VM, JMP_back1) {
     "0 JMP -1\n"
     "B0\n"
     "B0\n";
-    PikaObj* self = New_TinyObj(NULL);
+    PikaObj* self = TinyObj(NULL);
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
     Args* sysRes = New_args(NULL);
@@ -224,7 +224,7 @@ TEST(VM, WHILE) {
     char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     pikaMemInfo.heapUsedMax = 0;
-    PikaObj* self = New_TinyObj(NULL);
+    PikaObj* self = TinyObj(NULL);
     Args* runRes = pikaVM_runAsm(self, pikaAsm);
     EXPECT_EQ(obj_getInt(self, (char*)"a"), 0);
     EXPECT_EQ(obj_getInt(self, (char*)"b"), 1);

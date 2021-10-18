@@ -29,7 +29,7 @@ impl ImportInfo {
     }
     pub fn import_fn(&self) -> String {
         return format!(
-            "    obj_import(self, \"{}\", New_{});\n",
+            "    obj_import(self, \"{}\", {});\n",
             self.import_class_name, self.import_class_name
         );
     }

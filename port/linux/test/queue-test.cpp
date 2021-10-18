@@ -65,14 +65,14 @@ TEST(queue, str) {
 }
 
 TEST(queueObj, init) {
-    QueueObj* q = New_TinyObj(NULL);
+    QueueObj* q = TinyObj(NULL);
     queueObj_init(q);
     obj_deinit(q);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(queueObj, INT) {
-    QueueObj* q = New_TinyObj(NULL);
+    QueueObj* q = TinyObj(NULL);
     queueObj_init(q);
     queueObj_pushInt(q, 1);
     queueObj_pushInt(q, 2);
@@ -85,7 +85,7 @@ TEST(queueObj, INT) {
 }
 
 TEST(queueObj, FLOAT) {
-    QueueObj* q = New_TinyObj(NULL);
+    QueueObj* q = TinyObj(NULL);
     queueObj_init(q);
     queueObj_pushFloat(q, 1.1f);
     queueObj_pushFloat(q, 2.2f);
@@ -98,7 +98,7 @@ TEST(queueObj, FLOAT) {
 }
 
 TEST(queueObj, str) {
-    QueueObj* q = New_TinyObj(NULL);
+    QueueObj* q = TinyObj(NULL);
     queueObj_init(q);
     queueObj_pushStr(q, (char*)"abc");
     queueObj_pushStr(q, (char*)"123");
@@ -111,7 +111,7 @@ TEST(queueObj, str) {
 }
 
 TEST(queueObj, obj) {
-    QueueObj* q = New_TinyObj(NULL);
+    QueueObj* q = TinyObj(NULL);
     queueObj_init(q);
     queueObj_pushObj(q, (char*)"type1");
     queueObj_pushObj(q, (char*)"type2");
@@ -129,7 +129,7 @@ TEST(queueObj, obj) {
 }
 
 TEST(queueObj, currentObj) {
-    QueueObj* q = New_TinyObj(NULL);
+    QueueObj* q = TinyObj(NULL);
     queueObj_init(q);
 
     queueObj_pushObj(q, (char*)"type1");

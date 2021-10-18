@@ -112,7 +112,7 @@ impl ClassInfo {
     pub fn script_fn(&self) -> String {
         let mut script_fn = String::new();
         script_fn.push_str("PikaObj * pikaScriptInit(){\r\n");
-        script_fn.push_str("    PikaObj * pikaMain = newRootObj(\"pikaMain\", New_PikaMain);\r\n");
+        script_fn.push_str("    PikaObj * pikaMain = newRootObj(\"pikaMain\", PikaMain);\r\n");
         script_fn.push_str(&self.script_list.content);
         script_fn.push_str("    obj_run(pikaMain, \"\");\r\n");
         script_fn.push_str("    return pikaMain;\r\n");
@@ -124,7 +124,7 @@ impl ClassInfo {
         let mut new_class_fn = String::new();
         let new_class_fn_head = format!("{}{{\n", self.new_class_fn_name());
         new_class_fn.push_str(&new_class_fn_head);
-        let derive = format!("    PikaObj *self = New_{}(args);\n", self.super_class_name);
+        let derive = format!("    PikaObj *self = {}(args);\n", self.super_class_name);
         new_class_fn.push_str(&derive);
         for (_, import_info) in self.import_list.iter() {
             new_class_fn.push_str(&import_info.import_fn());
@@ -143,7 +143,7 @@ impl ClassInfo {
     }
 
     pub fn new_class_fn_name(&self) -> String {
-        return format!("PikaObj *New_{}(Args *args)", self.this_class_name);
+        return format!("PikaObj *{}(Args *args)", self.this_class_name);
     }
 
     pub fn method_impl_declear(&self) -> String {
