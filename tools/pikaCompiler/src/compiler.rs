@@ -27,6 +27,7 @@ impl Compiler {
     pub fn analyze_main_line(mut compiler: Compiler, line: &String) -> Compiler {
         let file_name = "main".to_string();
         let class_name = "PikaMain".to_string();
+        /* get class now or create one */
         let class_now = match compiler.class_list.get_mut(&"PikaMain".to_string()) {
             Some(class_now) => class_now,
             None => compiler.class_list.entry(class_name.clone()).or_insert(
@@ -44,6 +45,9 @@ impl Compiler {
             return compiler;
         }
         if line.starts_with("import ") {
+            let package_name = my_string::get_last_token(&line, ' ').unwrap();
+            let package_obj_define = format!("{} = {}()", package_name, package_name);
+            class_now.push_object(package_obj_define, &file_name);
             return compiler;
         }
         class_now.script_list.add(&line);
@@ -107,7 +111,7 @@ impl Compiler {
             compiler.class_now_name = Some(class_name.clone());
 
             /* solve the class as method of package*/
-            let package_now_name = match compiler.package_now_name.clone(){
+            let package_now_name = match compiler.package_now_name.clone() {
                 Some(s) => s,
                 None => return compiler,
             };
