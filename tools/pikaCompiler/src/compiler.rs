@@ -109,7 +109,10 @@ impl Compiler {
             compiler.class_now_name = Some(class_name.clone());
 
             /* solve the class as method of package*/
-            let package_now_name = compiler.package_now_name.clone().unwrap();
+            let package_now_name = match compiler.package_now_name.clone(){
+                Some(s) => s,
+                None => return compiler,
+            };
             let package_now = compiler.package_list.get_mut(&package_now_name).unwrap();
             let class_name_without_file = match my_string::get_last_token(&class_name, '_') {
                 Some(s) => s,
