@@ -20,6 +20,9 @@ impl PyType {
         if self.type_name == "" {
             return "void".to_string();
         }
+        if self.type_name == "any" {
+            return "Arg *".to_string();
+        }
         return "void *".to_string();
     }
     pub fn to_string(&self) -> String {
@@ -43,6 +46,9 @@ impl PyType {
         if self.type_name == "str" {
             return "method_returnStr".to_string();
         }
+        if self.type_name == "any" {
+            return "method_returnArg".to_string();
+        }
         return "method_returnPtr".to_string();
     }
     pub fn set_fn(&self) -> String {
@@ -58,6 +64,9 @@ impl PyType {
         if self.type_name == "str" {
             return "args_setStr".to_string();
         }
+        if self.type_name == "any" {
+            return "args_setArg".to_string();
+        }
         return "args_setPtr".to_string();
     }
     pub fn get_fn(&self) -> String {
@@ -72,6 +81,9 @@ impl PyType {
         }
         if self.type_name == "str" {
             return "args_getStr".to_string();
+        }
+        if self.type_name == "any" {
+            return "args_getArg".to_string();
         }
         return "args_getPtr".to_string();
     }

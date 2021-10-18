@@ -12,6 +12,7 @@ pub struct ClassInfo {
     pub object_list: BTreeMap<String, ObjectInfo>,
     pub import_list: BTreeMap<String, ImportInfo>,
     pub script_list: Script,
+    pub is_package: bool,
 }
 
 impl ClassInfo {
@@ -51,6 +52,7 @@ impl ClassInfo {
             object_list: BTreeMap::new(),
             import_list: BTreeMap::new(),
             script_list: Script::new(),
+            is_package: is_package,
         };
         return Some(new_class_info);
     }

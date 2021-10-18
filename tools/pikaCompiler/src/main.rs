@@ -37,6 +37,11 @@ fn main() {
         f.write("\n".as_bytes()).unwrap();
         f.write(class_info.method_api_fn().as_bytes()).unwrap();
         f.write(class_info.new_class_fn().as_bytes()).unwrap();
+        if !class_info.is_package {
+            f.write(format!("Arg *{}(PikaObj *self){{\n", class_info.this_class_name).as_bytes())
+                .unwrap();
+            f.write("}\n".as_bytes()).unwrap();
+        }
     }
     /* make the .h file for each python class */
     for (_, class_info) in compiler.class_list.iter() {

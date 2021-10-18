@@ -116,7 +116,7 @@ impl Compiler {
                 Some(s) => s,
                 None => return compiler,
             };
-            let package_new_object_method = format!("def {}()->pointer:", class_name_without_file);
+            let package_new_object_method = format!("def {}()->any:", class_name_without_file);
             package_now.push_method(package_new_object_method);
             return compiler;
         }
