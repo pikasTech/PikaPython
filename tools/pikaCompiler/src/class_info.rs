@@ -126,12 +126,8 @@ impl ClassInfo {
         for (_, import_info) in self.import_list.iter() {
             new_class_fn.push_str(&import_info.import_fn());
         }
-        let mut if_only_import: bool = false;
-        if self.this_class_name == "PikaMain" {
-            if_only_import= true;
-        }
         for (_, object_info) in self.object_list.iter() {
-            new_class_fn.push_str(&object_info.new_object_fn(if_only_import));
+            new_class_fn.push_str(&object_info.new_object_fn());
         }
 
         for (_, method_info) in self.method_list.iter() {

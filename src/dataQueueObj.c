@@ -19,7 +19,7 @@ int32_t queueObj_pushObj(QueueObj* self, char* className) {
     char *topStr = fast_itoa(buff,  top);
     /* add top */
     obj_setInt(self, "top", top + 1);
-    return obj_newObjByFun(self, topStr, className, New_TinyObj);
+    return obj_newObj(self, topStr, className, New_TinyObj);
 }
 
 PikaObj* queueObj_getCurrentObj(QueueObj* self) {

@@ -4,7 +4,8 @@
         "stdbool.h": "c",
         "datamemory.h": "c",
         "pikamath_operator.h": "c",
-        "dataargs.h": "c"
+        "dataargs.h": "c",
+        "pikastdlib_sysobj.h": "c"
     },
     "python.formatting.provider": "yapf"
 }

@@ -52,7 +52,7 @@ exit:
 }
 
 void PikaStdLib_SysObj_new(PikaObj* self, char* classPath, char* objPath) {
-    int32_t res = obj_newObj(self, objPath, classPath);
+    int32_t res = obj_newObjFromClassLoader(self, objPath, classPath);
     if (1 == res) {
         obj_setSysOut(self, "[error] new: class not found .");
         obj_setErrorCode(self, 1);

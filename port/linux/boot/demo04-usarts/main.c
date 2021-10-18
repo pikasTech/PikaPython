@@ -72,8 +72,8 @@ PikaObj *New_MYROOT(Args *args)
     obj_import(self, "USART2", New_USART2);
 
     /* new object bellow root object */
-    obj_newObj(self, "usart1", "USART");
-    obj_newObj(self, "usart2", "USART2");
+    obj_newObjFromClassLoader(self, "usart1", "USART");
+    obj_newObjFromClassLoader(self, "usart2", "USART2");
 
     /* return the object */
     return self;

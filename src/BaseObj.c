@@ -15,10 +15,10 @@ static void* getClassPtr(PikaObj* classObj, char* classPath) {
     return obj_getPtr(classObj, ptrPath);
 }
 
-int32_t obj_newObjByFun(PikaObj* self,
-                        char* objName,
-                        char* className,
-                        void* newFunPtr) {
+int32_t obj_newObj(PikaObj* self,
+                   char* objName,
+                   char* className,
+                   NewFun newFunPtr) {
     /* class means subprocess init */
     Args* buffs = New_strBuff();
 
@@ -75,7 +75,9 @@ int32_t obj_import(PikaObj* self, char* className, NewFun classPtr) {
     return res;
 }
 
-int32_t obj_newObj(PikaObj* self, char* objPath, char* classPath) {
+int32_t obj_newObjFromClassLoader(PikaObj* self,
+                                  char* objPath,
+                                  char* classPath) {
     PikaObj* classLoader = obj_getObj(self, "_clsld", 0);
     Args* buffs = New_args(NULL);
     int res = 0;
@@ -90,7 +92,7 @@ int32_t obj_newObj(PikaObj* self, char* objPath, char* classPath) {
         goto exit;
     }
     char* objName = strsGetLastToken(buffs, objPath, '.');
-    obj_newObjByFun(objHost, objName, classPath, NewObjPtr);
+    obj_newObj(objHost, objName, classPath, NewObjPtr);
     res = 0;
     goto exit;
 
@@ -152,8 +154,6 @@ static void set(PikaObj* self, Args* args) {
 
 PikaObj* New_BaseObj(Args* args) {
     PikaObj* self = New_TinyObj(args);
-    obj_setObjWithoutClass(self, "_clsld", New_TinyObj);
-    obj_getObj(self, "_clsld", 0);
     class_defineMethod(self, "print(val:any)", print);
     class_defineMethod(self, "set(argPath:str, val:any)", set);
     return self;

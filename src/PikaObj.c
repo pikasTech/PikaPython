@@ -462,7 +462,7 @@ Args* obj_runDirect(PikaObj* self, char* cmd) {
                 classPath[i] = '_';
             }
         }
-        if (0 == obj_newObj(self, newObj, classPath)) {
+        if (0 == obj_newObjFromClassLoader(self, newObj, classPath)) {
             goto exit;
         }
     }

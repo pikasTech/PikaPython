@@ -80,11 +80,8 @@ PikaObj* New_MYROOT1(Args* args) {
         import sub object.      */
     PikaObj* self = New_BaseObj(args);
 
-    /* import LED class */
-    obj_import(self, (char*)"USART", New_USART);
-
     /* new led object bellow root object */
-    obj_newObj(self, (char*)"usart", (char*)"USART");
+    obj_newObj(self, (char*)"usart", (char*)"USART", (NewFun)New_USART);
 
     /* return the object */
     return self;
@@ -126,7 +123,8 @@ TEST(object_test, test3) {
 //     obj_setInt(obj, (char*)"isShow", isShow);
 //     obj_setFloat(obj, (char*)"val2", 3.11);
 //     obj_run(obj,
-//             (char*)"res = testFloat(val1 = 3.22,val2 = val2,isShow = isShow)");
+//             (char*)"res = testFloat(val1 = 3.22,val2 = val2,isShow =
+//             isShow)");
 //     float res = obj_getFloat(obj, (char*)"res");
 //     EXPECT_FLOAT_EQ(res, 6.33);
 //     obj_deinit(obj);
@@ -187,18 +185,7 @@ TEST(object_test, test10) {
 
 TEST(object_test, newObject) {
     PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
-    obj_newObj(root, (char*)"newUart", (char*)"USART");
-    obj_deinit(root);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-
-TEST(object_test, newObjectAndSetStr) {
-    PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
-    obj_newObj(root, (char*)"newUart", (char*)"USART");
-    obj_setStr(root, (char*)"newUart.name", (char*)"testName");
-    char* name = obj_getStr(root, (char*)"newUart.name");
-    printf("the name is %s\r\n", name);
-    EXPECT_TRUE(strEqu((char*)"testName", name));
+    obj_newObjFromClassLoader(root, (char*)"newUart", (char*)"USART");
     obj_deinit(root);
     EXPECT_EQ(pikaMemNow(), 0);
 }
