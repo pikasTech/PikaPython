@@ -190,17 +190,6 @@ int32_t obj_load(PikaObj* self, Args* args, char* name) {
     return 0;
 }
 
-int32_t obj_setObjWithoutClass(PikaObj* self, char* objName, void* newFun) {
-    /* class means subprocess init */
-    Args* buffs = New_strBuff();
-    char* mataObjName = strsAppend(buffs, "[mate]", objName);
-    obj_setPtr(self, mataObjName, newFun);
-    /* add void object Ptr, no inited */
-    args_setObjectWithClass(self->attributeList, objName, "none", NULL);
-    args_deinit(buffs);
-    return 0;
-}
-
 int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_ObjectFun) {
     Args* initArgs = New_args(NULL);
     args_setPtr(initArgs, "_ctx", self);
@@ -264,12 +253,10 @@ char* obj_getClassPath(PikaObj* objHost, Args* buffs, char* objName) {
 }
 
 void* getNewClassObjFunByName(PikaObj* obj, char* name) {
-    Args* buffs = New_strBuff();
-    char* classPath = strsAppend(buffs, "[mate]", name);
+    char* classPath = name;
     /* init the subprocess */
     void* (*newClassObjFun)(Args * initArgs) =
         args_getPtr(obj->attributeList, classPath);
-    args_deinit(buffs);
     return newClassObjFun;
 }
 
@@ -291,14 +278,6 @@ PikaObj* removeMethodInfo(PikaObj* thisClass) {
     return thisClass;
 }
 
-static void removeClassLoader(PikaObj* obj) {
-    PikaObj* classLoader = args_getPtr(obj->attributeList, "_clsld");
-    if (NULL != classLoader) {
-        obj_deinit(classLoader);
-        args_removeArg(obj->attributeList, "_clsld");
-    }
-}
-
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
     PikaObj* thisClass = obj_getClassObjByNewFun(NULL, name, newObjFun);
     PikaObj* newObj = removeMethodInfo(thisClass);
@@ -316,13 +295,11 @@ PikaObj* initObj(PikaObj* obj, char* name) {
     }
     PikaObj* thisClass = obj_getClassObjByNewFun(obj, name, newObjFun);
     PikaObj* newObj = removeMethodInfo(thisClass);
-    /* delete [mate]<objName> */
-    obj_removeArg(obj, strsAppend(buffs, "[mate]", name));
-    /* delete "_clsld" object */
-    removeClassLoader(newObj);
 
-    char* type = args_getType(obj->attributeList, name);
-    args_setPtrWithType(obj->attributeList, name, type, newObj);
+    char* mateObjType = args_getType(obj->attributeList, name);
+    char* pureType = strsGetLastToken(buffs, mateObjType, ']');
+    char* objType = strsAppend(buffs, "_class-", pureType);
+    args_setPtrWithType(obj->attributeList, name, objType, newObj);
     res = obj_getPtr(obj, name);
     goto exit;
 exit:
@@ -334,18 +311,15 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
     if (NULL == self) {
         return NULL;
     }
-
-    /* check subprocess */
-    if (NULL == args_getPtr(self->attributeList, name)) {
-        /* no inited subprocess, check subprocess init fun*/
-        return initObj(self, name);
-    }
-
-    /* finded subscribe, check type*/
+    /* finded object, check type*/
     char* type = args_getType(self->attributeList, name);
     if (!strIsStartWith(type, "_class")) {
         /* type error, could not found subprocess */
         return NULL;
+    }
+    /* found mate Object */
+    if (strIsStartWith(type, "_class-[mate]")) {
+        return initObj(self, name);
     }
     return obj_getPtr(self, name);
 }

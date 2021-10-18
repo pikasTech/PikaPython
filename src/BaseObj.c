@@ -15,24 +15,7 @@ static void* getClassPtr(PikaObj* classObj, char* classPath) {
     return obj_getPtr(classObj, ptrPath);
 }
 
-int32_t obj_newObj(PikaObj* self,
-                   char* objName,
-                   char* className,
-                   NewFun newFunPtr) {
-    /* class means subprocess init */
-    Args* buffs = New_strBuff();
-
-    /* class means subprocess init */
-    char* mataObjName = strsAppend(buffs, "[mate]", objName);
-    obj_setPtr(self, mataObjName, newFunPtr);
-    /* add void process Ptr, no inited */
-    args_setObjectWithClass(self->attributeList, objName, className, NULL);
-
-    args_deinit(buffs);
-    return 0;
-}
-
-Arg* arg_setMetaObj(char* objName, char* className, void* objPtr) {
+Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr) {
     Args* buffs = New_strBuff();
     char* typeWithClass = strsAppend(buffs, "_class-[mate]", className);
     Arg* argNew = New_arg(NULL);
@@ -40,6 +23,20 @@ Arg* arg_setMetaObj(char* objName, char* className, void* objPtr) {
     args_deinit(buffs);
     return argNew;
 }
+
+int32_t obj_newObj(PikaObj* self,
+                   char* objName,
+                   char* className,
+                   NewFun newFunPtr) {
+    /* class means subprocess init */
+
+    /* add mate Obj, no inited */
+    Arg* mateObj = arg_setMetaObj(objName, className, newFunPtr);
+    NewFun newFunInMate = arg_getPtr(mateObj);
+    args_setArg(self->attributeList, mateObj);
+    return 0;
+}
+
 
 static void print(PikaObj* self, Args* args) {
     obj_setErrorCode(self, 0);
@@ -52,7 +49,6 @@ static void print(PikaObj* self, Args* args) {
     /* not empty */
     obj_setSysOut(self, res);
 }
-
 
 PikaObj* BaseObj(Args* args) {
     PikaObj* self = TinyObj(args);

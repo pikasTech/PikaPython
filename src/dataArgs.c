@@ -159,6 +159,7 @@ int32_t updateArg(Args* self, Arg* argNew) {
     nodeToUpdate = arg_setContent(nodeToUpdate, arg_getContent(argNew),
                                   arg_getContentSize(argNew));
 
+    nodeToUpdate = arg_setType(nodeToUpdate, arg_getType(argNew));
     // update privior link, because arg_getContent would free origin pointer
     if (NULL == priorNode) {
         self->firstNode = nodeToUpdate;
@@ -336,17 +337,6 @@ int32_t args_setPtrWithType(Args* self, char* name, char* type, void* objPtr) {
     Arg* argNew = New_arg(NULL);
     argNew = arg_setPtr(argNew, name, type, objPtr);
     args_setArg(self, argNew);
-    return 0;
-}
-
-int32_t args_setObjectWithClass(Args* self,
-                                char* objName,
-                                char* className,
-                                void* objPtr) {
-    Args* buffs = New_strBuff();
-    char* typeWithClass = strsAppend(buffs, "_class-", className);
-    args_setPtrWithType(self, objName, typeWithClass, objPtr);
-    args_deinit(buffs);
     return 0;
 }
 

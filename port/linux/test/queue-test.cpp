@@ -133,6 +133,8 @@ TEST(queueObj, currentObj) {
     queueObj_init(q);
 
     queueObj_pushObj(q, (char*)"type1");
+    PikaObj* currentObj = queueObj_getCurrentObj(q);
+    char* type = args_getType(q->attributeList, (char*)"0");
     obj_setInt(queueObj_getCurrentObj(q), (char*)"test", 1);
 
     queueObj_pushObj(q, (char*)"type2");
