@@ -1,6 +1,5 @@
 from PikaObj import *
 
-
 class MemChecker(BaseObj):
     def max():
         pass
@@ -13,7 +12,6 @@ class MemChecker(BaseObj):
 
 
 class SysObj(BaseObj):
-
     def type(argPath: str):
         pass
 
@@ -21,7 +19,4 @@ class SysObj(BaseObj):
         pass
 
     def remove(argPath: str):
-        pass
-
-    def new(objPath: str, classPath: str):
         pass
