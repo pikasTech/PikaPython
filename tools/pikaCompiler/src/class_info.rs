@@ -43,7 +43,7 @@ impl ClassInfo {
             Some(s) => s,
             None => return None,
         };
-        this_calss_name = ClassInfo::add_file_profix(&file_name, &this_calss_name, false);
+        this_calss_name = ClassInfo::add_file_profix(&file_name, &this_calss_name, is_package);
         let new_class_info = ClassInfo {
             this_class_name: this_calss_name,
             super_class_name: super_class_name,

@@ -1,4 +1,5 @@
 use crate::class_info::ClassInfo;
+use crate::my_string;
 use crate::script::Script;
 use std::collections::BTreeMap;
 use std::fs::File;
@@ -54,6 +55,7 @@ impl Compiler {
     pub fn analyze_file(mut compiler: Compiler, file_name: String) -> Compiler {
         println!("analyzing file: {}{}.py", compiler.source_path, file_name);
         let mut file = File::open(format!("{}{}.py", compiler.source_path, file_name)).unwrap();
+        /* solve package as top class */
         if file_name != "main" {
             let pkg_define = format!("class {}(TinyObj):", &file_name);
             let pacakge_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
@@ -65,7 +67,9 @@ impl Compiler {
                 .package_list
                 .entry(package_name.clone())
                 .or_insert(pacakge_now);
+            compiler.package_now_name = Some(package_name.clone());
         }
+        /* solve lines in file */
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
         let lines: Vec<&str> = file_str.split('\n').collect();
@@ -103,6 +107,16 @@ impl Compiler {
                 .entry(class_name.clone())
                 .or_insert(class_now);
             compiler.class_now_name = Some(class_name.clone());
+
+            /* solve the class as method of package*/
+            let package_now_name = compiler.package_now_name.clone().unwrap();
+            let package_now = compiler.package_list.get_mut(&package_now_name).unwrap();
+            let class_name_without_file = match my_string::get_last_token(&class_name, '_') {
+                Some(s) => s,
+                None => return compiler,
+            };
+            let package_new_object_method = format!("def {}()->pointer:", class_name_without_file);
+            package_now.push_method(package_new_object_method);
             return compiler;
         }
         if line.starts_with("    def ") {
