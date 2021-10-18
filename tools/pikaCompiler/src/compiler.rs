@@ -36,35 +36,10 @@ impl Compiler {
         };
         compiler.class_now_name = Some(class_name.clone());
 
-        if line.starts_with("def ") {
-            class_now.push_method(line);
+        if line.starts_with("from ") {
             return compiler;
         }
-        if line.contains("(") && line.contains(")") && line.contains("=") {
-            /* assert if is script */
-            if Script::assert(class_now, &line) {
-                class_now.script_list.add(&line);
-                return compiler;
-            }
-            /* is not a script, push as new object*/
-            class_now.script_list.add(&line); /* new object also push as script */
-            class_now.push_object(line, &file_name);
-            return compiler;
-        }
-        if line.contains("(") && line.contains(")") {
-            class_now.script_list.add(&line);
-            return compiler;
-        }
-
-        if line.starts_with("if ") {
-            class_now.script_list.add(&line);
-            return compiler;
-        }
-
-        if line.starts_with("while ") {
-            class_now.script_list.add(&line);
-            return compiler;
-        }
+        class_now.script_list.add(&line);
         return compiler;
     }
 
