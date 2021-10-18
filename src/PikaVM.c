@@ -369,7 +369,8 @@ nextLine:
 
 Args* pikaVM_run(PikaObj* self, char* pyLine) {
     Args* buffs = New_strBuff();
-    Args* sysRes = pikaVM_runAsm(self, pikaParseLineToAsm(buffs, pyLine, NULL));
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, pyLine);
+    Args* sysRes = pikaVM_runAsm(self, pikaAsm);
     args_deinit(buffs);
     return sysRes;
 }
