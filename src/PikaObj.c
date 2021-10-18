@@ -385,12 +385,6 @@ Args* obj_runDirect(PikaObj* self, char* cmd) {
     Args* sysRes = NULL;
     cmd = strsDeleteChar(buffs, cmd, '\n');
 
-    /* contral extern */
-    int isExit = __runExtern_contral(self, cmd);
-    if (isExit) {
-        goto exit;
-    }
-
     sysRes = pikaVM_run(self, cmd);
     goto exit;
 
