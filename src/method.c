@@ -18,6 +18,10 @@ void method_returnFloat(Args* args, float val) {
 void method_returnPtr(Args* args, void* val) {
     args_setPtr(args, "return", val);
 }
+void method_returnArg(Args* args, Arg* arg) {
+    arg = arg_setName(arg, "return");
+    args_setArg(args, arg);
+}
 
 int32_t method_getInt(Args* args, char* argName) {
     return args_getInt(args, argName);

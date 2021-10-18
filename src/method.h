@@ -13,4 +13,5 @@ void method_returnPtr(Args* args, void* val);
 int32_t method_getInt(Args* args, char* argName);
 float method_getFloat(Args* args, char* argName);
 char* method_getStr(Args* args, char* argName);
+void method_returnArg(Args* args, Arg* arg);
 #endif

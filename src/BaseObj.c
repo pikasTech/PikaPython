@@ -32,7 +32,6 @@ int32_t obj_newObj(PikaObj* self,
 
     /* add mate Obj, no inited */
     Arg* mateObj = arg_setMetaObj(objName, className, newFunPtr);
-    NewFun newFunInMate = arg_getPtr(mateObj);
     args_setArg(self->attributeList, mateObj);
     return 0;
 }

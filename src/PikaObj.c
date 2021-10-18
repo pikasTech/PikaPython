@@ -16,16 +16,6 @@ PikaObj* obj_getContext(PikaObj* self) {
     return obj_getPtr(self, "_ctx");
 }
 
-void* getNewObjFunByClass(PikaObj* obj, char* classPath) {
-    PikaObj* classLoader = args_getPtr(obj->attributeList, "_clsld");
-    if (NULL == classLoader) {
-        return NULL;
-    }
-    void* (*newObjFun)(Args * initArgs) =
-        args_getPtr(classLoader->attributeList, classPath);
-    return newObjFun;
-}
-
 int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
     if (NULL != handleArgs) {
         /* error: tOhis handle not need handle args */
