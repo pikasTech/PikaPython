@@ -21,6 +21,7 @@ releases = [
 name = "PikaStdLib"
 releases = [
   "v1.0.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
+  "v1.1.0 0b3b866dbacc363c7b6b3899faa0cbcaccd59d5e",
 ]
 
 [[packages]]
