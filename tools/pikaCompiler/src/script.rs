@@ -30,6 +30,6 @@ impl Script {
         return false;
     }
     pub fn obj_run(cmd: &String) -> String {
-        return format!("    obj_run(pikaMain, \"{}\");\r\n", cmd);
+        return format!("            \"{}\\n\"\n", cmd);
     }
 }

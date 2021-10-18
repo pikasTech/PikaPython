@@ -381,9 +381,7 @@ PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {
 }
 
 Args* obj_runDirect(PikaObj* self, char* cmd) {
-    Args* buffs = New_strBuff();
     Args* sysRes = NULL;
-    cmd = strsDeleteChar(buffs, cmd, '\n');
 
     sysRes = pikaVM_run(self, cmd);
     goto exit;
@@ -396,7 +394,6 @@ exit:
         args_setSysOut(sysRes, "");
         goto exit;
     }
-    args_deinit(buffs);
     return sysRes;
 }
 
@@ -459,21 +456,7 @@ void obj_runNoRes(PikaObj* slef, char* cmd) {
 void obj_run(PikaObj* self, char* cmd) {
     /* safe, stop when error occord and error info would be print32_t */
     Args* sysRes = obj_runDirect(self, cmd);
-    char* sysOut = args_getSysOut(sysRes);
-    uint8_t errcode = args_getErrorCode(sysRes);
-    obj_setSysOut(self, sysOut);
-    obj_setErrorCode(self, errcode);
-    if (!strEqu("", sysOut)) {
-        __platformPrintf("%s\r\n", sysOut);
-    }
-    if (0 != errcode) {
-        __platformPrintf("[info] input commond: %s\r\n", cmd);
-        while (1)
-            ;
-    }
-    if (NULL != sysRes) {
-        args_deinit(sysRes);
-    }
+    args_deinit(sysRes);
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {

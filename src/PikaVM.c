@@ -330,6 +330,8 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     int32_t jmp = 0;
     /* Found new script Line, clear the queues*/
     if ('B' == line[0]) {
+        args_setErrorCode(sysRes, 0);
+        args_setSysOut(sysRes, (char*)"");
         __clearInvokeQueues(self);
         uint8_t blockDeepth = line[1] - '0';
         goto nextLine;
@@ -367,9 +369,9 @@ nextLine:
     return nextAddr;
 }
 
-Args* pikaVM_run(PikaObj* self, char* pyLine) {
+Args* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, pyLine);
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, multiLine);
     Args* sysRes = pikaVM_runAsm(self, pikaAsm);
     args_deinit(buffs);
     return sysRes;
@@ -384,6 +386,14 @@ Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     while (lineAddr < size) {
         char* thisLine = pikaAsm + lineAddr;
         lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
+        char* sysOut = args_getSysOut(sysRes);
+        uint8_t errcode = args_getErrorCode(sysRes);
+        if (!strEqu("", sysOut)) {
+            __platformPrintf("%s\r\n", sysOut);
+        }
+        if (0 != errcode) {
+            __platformPrintf("[info] input commond: %s\r\n", thisLine);
+        }
     }
     __clearInvokeQueues(self);
 
