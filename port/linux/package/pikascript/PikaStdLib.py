@@ -20,4 +20,3 @@ class SysObj(BaseObj):
 
     def remove(argPath: str):
         pass
-s
