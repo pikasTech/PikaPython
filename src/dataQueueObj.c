@@ -2,7 +2,7 @@
 #include "BaseObj.h"
 #include "dataQueue.h"
 QueueObj* New_queueObj() {
-    PikaObj* self = TinyObj(NULL);
+    PikaObj* self = New_TinyObj(NULL);
     queueObj_init(self);
     return self;
 }
@@ -19,7 +19,7 @@ int32_t queueObj_pushObj(QueueObj* self, char* className) {
     char *topStr = fast_itoa(buff,  top);
     /* add top */
     obj_setInt(self, "top", top + 1);
-    return obj_newObj(self, topStr, className, TinyObj);
+    return obj_newObj(self, topStr, className, New_TinyObj);
 }
 
 PikaObj* queueObj_getCurrentObj(QueueObj* self) {

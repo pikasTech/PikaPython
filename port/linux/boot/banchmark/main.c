@@ -67,9 +67,9 @@ void checker_objMemChecker(PikaObj *(*NewFun)(Args *), char *objName)
 
 int32_t main()
 {
-    checker_objMemChecker(TinyObj, "tiny");
-    checker_objMemChecker(BaseObj, "base");
-    checker_objMemChecker(PikaStdLib_SysObj, "sys");
+    checker_objMemChecker(New_TinyObj, "tiny");
+    checker_objMemChecker(New_BaseObj, "base");
+    checker_objMemChecker(New_PikaStdLib_SysObj, "sys");
     {
         Arg *arg = New_arg(NULL);
         checker_printMemUsage("void arg");

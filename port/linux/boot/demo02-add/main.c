@@ -16,7 +16,7 @@ PikaObj *New_TEST(Args *args)
     /*  Derive from the tiny object class.
         Tiny object can not import sub object.
         Tiny object is the smallest object. */
-    PikaObj *self = TinyObj(args);
+    PikaObj *self = New_TinyObj(args);
 
     /* bind the method */
     class_defineMethod(self, "add(val1:int, val2:int)->int", addMethod);
@@ -30,7 +30,7 @@ PikaObj *New_MYROOT(Args *args)
     /*  Derive from the base object class .
         BaseObj is the smallest object that can
         import sub object.      */
-    PikaObj *self = BaseObj(args);
+    PikaObj *self = New_BaseObj(args);
 
     /* new led object bellow root object */
     obj_newObj(self, "test", "TEST", New_TEST);

@@ -27,7 +27,7 @@ PikaObj *New_USART(Args *args)
     /*  Derive from the tiny object class.
         Tiny object can not import sub object.
         Tiny object is the smallest object. */
-    PikaObj *self = TinyObj(args);
+    PikaObj *self = New_TinyObj(args);
 
     /* setArgs */
     obj_setInt(self, "speed", 9600);
@@ -65,7 +65,7 @@ PikaObj *New_MYROOT(Args *args)
     /*  Derive from the base object class .
         BaseObj is the smallest object that can
         import sub object.      */
-    PikaObj *self = BaseObj(args);
+    PikaObj *self = New_BaseObj(args);
 
     /* new object bellow root object */
     obj_newObj(self, "usart1", "USART", New_USART);

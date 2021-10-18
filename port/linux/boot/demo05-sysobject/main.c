@@ -11,7 +11,7 @@ void obj_runWithInfo(PikaObj *self, char *cmd)
 int main()
 {
     /* new root object */
-    PikaObj *root = newRootObj("root", PikaStdLib_SysObj);
+    PikaObj *root = newRootObj("root", New_PikaStdLib_SysObj);
 
     obj_runWithInfo(root, "set('a',1)");
     obj_runWithInfo(root, "print(a)");

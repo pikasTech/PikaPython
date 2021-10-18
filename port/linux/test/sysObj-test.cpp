@@ -6,7 +6,7 @@ extern "C" {
 }
 
 TEST(sysObj, print) {
-  PikaObj* obj = newRootObj((char*)"test", PikaStdLib_SysObj);
+  PikaObj* obj = newRootObj((char*)"test", New_PikaStdLib_SysObj);
   Args* res = obj_runDirect(obj, (char*)"print('hello world')");
   char* sysOut = args_getSysOut(res);
   int errCode = args_getErrorCode(res);
@@ -19,7 +19,7 @@ TEST(sysObj, print) {
 }
 
 TEST(sysObj, noMethod) {
-  PikaObj* obj = newRootObj((char*)"test", PikaStdLib_SysObj);
+  PikaObj* obj = newRootObj((char*)"test", New_PikaStdLib_SysObj);
   Args* res = obj_runDirect(obj, (char*)"printttt('hello world')");
   char* sysOut = args_getSysOut(res);
   int errCode = args_getErrorCode(res);

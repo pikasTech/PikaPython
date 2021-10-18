@@ -36,7 +36,7 @@ impl ObjectInfo {
         let mut new_object_fn = String::new();
         /* do not generate new object for pikaMain class */
         let new_fn = format!(
-            "    obj_newObj(self, \"{}\", \"{}\", {});\n",
+            "    obj_newObj(self, \"{}\", \"{}\", New_{});\n",
             self.name, self.import_class_name, self.import_class_name
         );
         new_object_fn.push_str(&new_fn);

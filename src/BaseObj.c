@@ -28,14 +28,11 @@ int32_t obj_newObj(PikaObj* self,
                    char* objName,
                    char* className,
                    NewFun newFunPtr) {
-    /* class means subprocess init */
-
     /* add mate Obj, no inited */
     Arg* mateObj = arg_setMetaObj(objName, className, newFunPtr);
     args_setArg(self->attributeList, mateObj);
     return 0;
 }
-
 
 static void print(PikaObj* self, Args* args) {
     obj_setErrorCode(self, 0);
@@ -49,8 +46,8 @@ static void print(PikaObj* self, Args* args) {
     obj_setSysOut(self, res);
 }
 
-PikaObj* BaseObj(Args* args) {
-    PikaObj* self = TinyObj(args);
+PikaObj* New_BaseObj(Args* args) {
+    PikaObj* self = New_TinyObj(args);
     class_defineMethod(self, "print(val:any)", print);
     return self;
 }
