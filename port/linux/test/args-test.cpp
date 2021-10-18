@@ -132,31 +132,6 @@ TEST(args, test9) {
   EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args, test10) {
-  Args* args = New_args(NULL);
-  args_setInt(args, (char*)"testInt", 1);
-  char* printOutBefore = args_print(args, (char*)"testInt");
-  EXPECT_TRUE(strEqu(printOutBefore, (char*)"1"));
-  args_set(args, (char*)"testInt", (char*)"4");
-  char* printOutAfter = args_print(args, (char*)"testInt");
-  EXPECT_TRUE(strEqu(printOutAfter, (char*)"4"));
-  args_deinit(args);
-  EXPECT_EQ(pikaMemNow(), 0);
-}
-
-TEST(args, test11) {
-  Args* args = New_args(NULL);
-  char testStrBind[256] = "testtest";
-  args_bindStr(args, (char*)"testStr", (char**)&testStrBind);
-  char* printOutBefore = args_print(args, (char*)"testStr");
-  EXPECT_TRUE(strEqu(printOutBefore, (char*)"testtest"));
-  args_set(args, (char*)"testStr", (char*)"ttww");
-  char* printOutAfter = args_print(args, (char*)"testStr");
-  EXPECT_TRUE(strEqu(printOutAfter, (char*)"ttww"));
-  args_deinit(args);
-  EXPECT_EQ(pikaMemNow(), 0);
-}
-
 TEST(args, test12) {
   Args* args = New_args(NULL);
   args_setInt(args, (char*)"test", 13);

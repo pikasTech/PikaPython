@@ -67,13 +67,9 @@ PikaObj *New_MYROOT(Args *args)
         import sub object.      */
     PikaObj *self = BaseObj(args);
 
-    /* import LED class */
-    obj_import(self, "USART", New_USART);
-    obj_import(self, "USART2", New_USART2);
-
     /* new object bellow root object */
-    obj_newObjFromClassLoader(self, "usart1", "USART");
-    obj_newObjFromClassLoader(self, "usart2", "USART2");
+    obj_newObj(self, "usart1", "USART", New_USART);
+    obj_newObj(self, "usart2", "USART2", New_USART2);
 
     /* return the object */
     return self;

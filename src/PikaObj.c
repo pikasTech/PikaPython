@@ -244,28 +244,6 @@ int32_t obj_bindString(PikaObj* self, char* name, char** valPtr) {
     return 0;
 }
 
-int32_t obj_set(PikaObj* self, char* argPath, char* valStr) {
-    PikaObj* obj = obj_getObj(self, argPath, 1);
-    if (NULL == obj) {
-        /* cant get object */
-        return 3;
-    }
-    Args* buffs = New_strBuff();
-    char* argName = strsGetLastToken(buffs, argPath, '.');
-    int32_t res = args_set(obj->attributeList, argName, valStr);
-    args_deinit(buffs);
-    if (res == 1) {
-        /* do not get arg */
-        return 1;
-    }
-    if (res == 2) {
-        /* type not match */
-        return 2;
-    }
-    /* succeed */
-    return 0;
-}
-
 PikaObj* obj_getClassObjByNewFun(PikaObj* context,
                                  char* name,
                                  NewFun newClassFun) {
@@ -446,25 +424,6 @@ Args* obj_runDirect(PikaObj* self, char* cmd) {
     int isExit = __runExtern_contral(self, cmd);
     if (isExit) {
         goto exit;
-    }
-
-    /* check class */
-    if (strIsContain(cmd, '(') && strIsContain(cmd, ')') &&
-        strIsContain(cmd, '=')) {
-        /* check class */
-        char* classCmd = strsGetCleanCmd(buffs, cmd);
-        char* newObj = strsGetFirstToken(buffs, classCmd, '=');
-        char* classPath = strsGetLastToken(buffs, classCmd, '=');
-        classPath = strsGetFirstToken(buffs, classPath, '(');
-        /* replace . with _ */
-        for (int i = 0; i < strGetSize(classPath); i++) {
-            if ('.' == classPath[i]) {
-                classPath[i] = '_';
-            }
-        }
-        if (0 == obj_newObjFromClassLoader(self, newObj, classPath)) {
-            goto exit;
-        }
     }
 
     sysRes = pikaVM_run(self, cmd);

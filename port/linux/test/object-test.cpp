@@ -149,19 +149,9 @@ TEST(object_test, test6) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(object_test, test7) {
-    PikaObj* sys = newRootObj((char*)"sys", PikaStdLib_SysObj);
-    int32_t a = 0;
-    obj_bind(sys, (char*)"int", (char*)"a", &a);
-    obj_run(sys, (char*)"set('a', 1)");
-    obj_deinit(sys);
-    EXPECT_EQ(1, a);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-
 TEST(object_test, test8) {
     PikaObj* sys = newRootObj((char*)"sys", PikaStdLib_SysObj);
-    obj_run(sys, (char*)"set('a', 1)");
+    obj_run(sys, (char*)"a=1");
     obj_run(sys, (char*)"remove('a')");
     obj_deinit(sys);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -179,13 +169,6 @@ TEST(object_test, test9) {
 TEST(object_test, test10) {
     PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
     obj_run(root, (char*)"usart.send('hello world')");
-    obj_deinit(root);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-
-TEST(object_test, newObject) {
-    PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
-    obj_newObjFromClassLoader(root, (char*)"newUart", (char*)"USART");
     obj_deinit(root);
     EXPECT_EQ(pikaMemNow(), 0);
 }
