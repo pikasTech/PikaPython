@@ -9,6 +9,8 @@ pub struct Compiler {
     pub source_path: String,
     pub class_list: BTreeMap<String, ClassInfo>,
     pub class_now_name: Option<String>,
+    pub package_list: BTreeMap<String, ClassInfo>,
+    pub package_now_name: Option<String>,
 }
 
 impl Compiler {
@@ -18,6 +20,8 @@ impl Compiler {
             source_path: source_path.clone(),
             class_now_name: None,
             class_list: BTreeMap::new(),
+            package_list: BTreeMap::new(),
+            package_now_name: None,
         };
         return compiler;
     }
@@ -30,6 +34,7 @@ impl Compiler {
                 ClassInfo::new(
                     &file_name,
                     &"class PikaMain(PikaStdLib.SysObj):".to_string(),
+                    false,
                 )
                 .unwrap(),
             ),
@@ -49,6 +54,13 @@ impl Compiler {
     pub fn analyze_file(mut compiler: Compiler, file_name: String) -> Compiler {
         println!("analyzing file: {}{}.py", compiler.source_path, file_name);
         let mut file = File::open(format!("{}{}.py", compiler.source_path, file_name)).unwrap();
+        if file_name != "main" {
+            let pkg_define = format!("class {}(TinyObj):", &file_name);
+            let pacakge_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
+                Some(s) => s,
+                None => return compiler,
+            };
+        }
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
         let lines: Vec<&str> = file_str.split('\n').collect();
@@ -76,7 +88,7 @@ impl Compiler {
         }
 
         if line.starts_with("class") {
-            let class_now = match ClassInfo::new(&file_name, &line) {
+            let class_now = match ClassInfo::new(&file_name, &line, false) {
                 Some(s) => s,
                 None => return compiler,
             };

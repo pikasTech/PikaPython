@@ -23,7 +23,7 @@ impl ObjectInfo {
             None => return None,
         };
         import_class_name = match import_class_name.find(".") {
-            None => class_info::ClassInfo::add_file_profix(&file_name, &import_class_name),
+            None => class_info::ClassInfo::add_file_profix(&file_name, &import_class_name, false),
             Some(x) => import_class_name.replace(".", "_"),
         };
         return Some(ObjectInfo {

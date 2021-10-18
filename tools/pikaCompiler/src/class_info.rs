@@ -15,7 +15,10 @@ pub struct ClassInfo {
 }
 
 impl ClassInfo {
-    pub fn add_file_profix(file_name: &String, class_name: &String) -> String {
+    pub fn add_file_profix(file_name: &String, class_name: &String, isPackage: bool) -> String {
+        if isPackage {
+            return class_name.clone();
+        }
         if file_name == "main" {
             return class_name.clone();
         } else if class_name == "BaseObj" || class_name == "TinyObj" {
@@ -25,7 +28,7 @@ impl ClassInfo {
         }
     }
 
-    pub fn new(file_name: &String, define: &String) -> Option<ClassInfo> {
+    pub fn new(file_name: &String, define: &String, is_package: bool) -> Option<ClassInfo> {
         let define = define.strip_prefix("class ").unwrap().to_string();
         let define = define.replace(" ", "");
         let super_class_name = match my_string::cut(&define, '(', ')') {
@@ -33,14 +36,14 @@ impl ClassInfo {
             None => return None,
         };
         let super_class_name = match super_class_name.find(".") {
-            None => ClassInfo::add_file_profix(&file_name, &super_class_name),
+            None => ClassInfo::add_file_profix(&file_name, &super_class_name, is_package),
             Some(x) => super_class_name.replace(".", "_"),
         };
         let mut this_calss_name = match my_string::get_first_token(&define, '(') {
             Some(s) => s,
             None => return None,
         };
-        this_calss_name = ClassInfo::add_file_profix(&file_name, &this_calss_name);
+        this_calss_name = ClassInfo::add_file_profix(&file_name, &this_calss_name, false);
         let new_class_info = ClassInfo {
             this_class_name: this_calss_name,
             super_class_name: super_class_name,
@@ -161,7 +164,8 @@ mod tests {
         assert_eq!(
             ClassInfo::new(
                 &String::from("Pkg"),
-                &String::from("class Test(SuperTest):")
+                &String::from("class Test(SuperTest):"),
+                false
             )
             .unwrap()
             .this_class_name,
@@ -170,7 +174,8 @@ mod tests {
         assert_eq!(
             ClassInfo::new(
                 &String::from("Pkg"),
-                &String::from("class Test(SuperTest):")
+                &String::from("class Test(SuperTest):"),
+                false
             )
             .unwrap()
             .super_class_name,
@@ -182,6 +187,7 @@ mod tests {
         let mut class_info = ClassInfo::new(
             &String::from("Pkg"),
             &String::from("class Test(SuperTest):"),
+            false,
         )
         .unwrap();
         class_info.push_method(String::from("def test(data: str)-> str:"));
@@ -220,6 +226,7 @@ mod tests {
         let mut class_info = ClassInfo::new(
             &String::from("Pkg"),
             &String::from("class Test(SuperTest):"),
+            false,
         )
         .unwrap();
         class_info.push_object(String::from("testObj = TestObj()"), &"Pkg".to_string());
@@ -249,6 +256,7 @@ mod tests {
         let mut class_info = ClassInfo::new(
             &String::from("Pkg"),
             &String::from("class Test(SuperTest):"),
+            false,
         )
         .unwrap();
         class_info.push_import(String::from("TestObj()"), &"Pkg".to_string());
