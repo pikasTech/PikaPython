@@ -25,7 +25,7 @@
 
 # 1. Abstract
 
-PikaScript is an ultra lightweight Python engine with zero dependencies and zero configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and very easy to deploy and expand.
+PikaScript is an ultra-lightweight Python engine with zero dependencies and zero-configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and is very easy to deploy and expand.
 
 <img src="https://user-images.githubusercontent.com/88232613/137909397-a9ebebd2-4df9-44fc-bac0-bb073b8c9abf.png" width="500"/>
 
