@@ -5,7 +5,7 @@
 
 # Star please~
 
-# [【Vedio】PikaScript hand by hand](https://www.bilibili.com/video/BV1mg411L72e)
+# [【Video】PikaScript hand by hand](https://www.bilibili.com/video/BV1mg411L72e)
 
 # Get PikaScript:
 
