@@ -11,12 +11,6 @@
 
 ## Use Pika package manager [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)
 
-1. Run the [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe) directly, then the pikascript repo would be downloaded autoly in the /tmp/pikaSCript folder of your current disc.
-
-2. Add [requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt) to the same folder of [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe) then run [pikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), the [core](../../tree/master/src), [pre-compiler](../../tree/master/tools/pikaCompiler) and [moudles](../../tree/master/package) would be installed autoly in the current folder.
-
-3. Released moudles：[packages.toml](/packages.toml)
-
 1. Run the [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe) directly, then the pikascript repo would be downloaded auto in the /tmp/pikaSCript folder of your current disc partition.
 
 2. Add [requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt) to the same folder of PikaPackage.exe then run [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), [core](../../tree/master/src), [pre-compiler](../../tree/master/tools/pikaCompiler) and [moudles](../../tree/master/package) would be installed actually in the current folder.
