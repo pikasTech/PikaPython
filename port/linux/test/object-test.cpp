@@ -198,6 +198,22 @@ TEST(object_test, copyArg) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(object_test, obj_run_while) {
+    PikaObj* root = newRootObj((char*)"root", New_BaseObj);
+    char lines[] =
+        "a = 1\n"
+        "b = 0\n"
+        "while a:\n"
+        "    b = 1\n"
+        "    a = 0\n"
+        "\n";
+    obj_run(root, lines);
+    EXPECT_EQ(obj_getInt(root, (char*)"a"), 0);
+    EXPECT_EQ(obj_getInt(root, (char*)"b"), 1);
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(object_test, mem) {
     EXPECT_EQ(pikaMemNow(), 0);
     EXPECT_EQ(pikaMemNow(), 0);
