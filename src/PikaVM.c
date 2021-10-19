@@ -370,11 +370,33 @@ nextLine:
     return nextAddr;
 }
 
+static char *useFlashAsBuff(char *pikaAsm, Args*buffs){
+    /* not write flash when asm is old */
+    if (strEqu(pikaAsm, __platformLoadPikaAsm())){
+        args_deinit(buffs);
+        buffs = NULL;
+        return __platformLoadPikaAsm();
+    }
+    /* write flash */
+    if (0 == __platformSavePikaAsm(pikaAsm))
+    {
+        args_deinit(buffs);
+        buffs = NULL;
+        return __platformLoadPikaAsm();
+    }
+    return pikaAsm;
+}
+
 Args* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseMultiLineToAsm(buffs, multiLine);
+    if (strCountSign(multiLine,'\n') > 1){
+        pikaAsm = useFlashAsBuff(pikaAsm, buffs);
+    }
     Args* sysRes = pikaVM_runAsm(self, pikaAsm);
-    args_deinit(buffs);
+    if (NULL != buffs){
+        args_deinit(buffs);
+    }
     return sysRes;
 }
 

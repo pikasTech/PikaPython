@@ -27,3 +27,13 @@ PIKA_WEAK void __platformPrintf(char* fmt, ...) {
     vprintf(fmt, args);
     va_end(args);
 }
+
+PIKA_WEAK char* __platformLoadPikaAsm(){
+    /* faild */
+    return NULL;
+}
+
+PIKA_WEAK int32_t __platformSavePikaAsm(char *PikaAsm){
+    /* faild */
+    return 1;
+}

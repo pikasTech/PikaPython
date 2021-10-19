@@ -62,10 +62,10 @@ void STM32_Code_flashHandler() {
     printf("[info]: Programing... \r\n");
     HAL_FLASH_Unlock();
     /* Get the 1st page to erase */
-    FirstPage = GetPage(FLASH_CODE_START_ADDR);
+    FirstPage = GetPage(FLASH_SCRIPT_START_ADDR);
 
     /* Get the number of pages to erase from 1st page */
-    NbOfPages = GetPage(FLASH_USER_END_ADDR) - FirstPage + 1;
+    NbOfPages = GetPage(FLASH_SCRIPT_END_ADDR) - FirstPage + 1;
 
     /* Fill EraseInit structure*/
     EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
@@ -81,7 +81,7 @@ void STM32_Code_flashHandler() {
     printf("[ OK ]: Erase flash ok! \r\n");
 
     printf("[info]: Writing flash... \r\n");
-    uint32_t baseAddress = FLASH_CODE_START_ADDR;
+    uint32_t baseAddress = FLASH_SCRIPT_START_ADDR;
     uint32_t writeAddress = 0;
     uint64_t writeData64 = 0;
     while (writeAddress < codeHeap.size + 1) {
@@ -104,7 +104,7 @@ void STM32_Code_flashHandler() {
     HAL_FLASH_Lock();
     printf("[ OK ]: Write flash ok! \r\n");
 
-    baseAddress = FLASH_CODE_START_ADDR;
+    baseAddress = FLASH_SCRIPT_START_ADDR;
     MemoryProgramStatus = 0x0;
 
     printf("[info]: Checking flash... \r\n");
@@ -136,4 +136,68 @@ void STM32_Code_flashHandler() {
     printf("\r\n");
     HAL_NVIC_SystemReset();
 }
+
+
+int32_t __saveStrToFlash(char *str, uint32_t flashStart, uint32_t flashEnd){
+    uint32_t FirstPage = 0, NbOfPages = 0;
+    uint32_t PageError = 0;
+    __IO uint32_t data32 = 0, MemoryProgramStatus = 0;
+    static FLASH_EraseInitTypeDef EraseInitStruct = {0};
+
+    HAL_FLASH_Unlock();
+    /* Get the 1st page to erase */
+    FirstPage = GetPage(flashStart);
+
+    /* Get the number of pages to erase from 1st page */
+    NbOfPages = GetPage(flashEnd) - FirstPage + 1;
+
+    /* Fill EraseInit structure*/
+    EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+    EraseInitStruct.Page = FirstPage;
+    EraseInitStruct.NbPages = NbOfPages;
+
+    if (HAL_FLASHEx_Erase(&EraseInitStruct, &PageError) != HAL_OK) {
+        return 1;
+    }
+
+    uint32_t baseAddress = flashStart;
+    uint32_t writeAddress = 0;
+    uint64_t writeData64 = 0;
+    uint32_t size = strGetSize(str);
+    while (writeAddress < size + 1) {
+        writeData64 = 0;
+        for (int i = 7; i >= 0; i--) {
+            char ch = str[writeAddress + i];
+            writeData64 = writeData64 << 8;
+            writeData64 += ch;
+        }
+        if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,
+                              baseAddress + writeAddress,
+                              writeData64) == HAL_OK) {
+            writeAddress = writeAddress + 8;
+        } else {
+            return 1;
+        }
+    }
+    HAL_FLASH_Lock();
+
+    baseAddress = flashStart;
+    MemoryProgramStatus = 0x0;
+
+    char* codeInFlash = (char*)baseAddress;
+    
+    if (!strEqu(codeInFlash, str)) {
+        return 1;
+    }
+    return 0;
+}
+
+char* __platformLoadPikaAsm(){
+    return (char *)FLASH_PIKA_ASM_START_ADDR;
+}
+
+int32_t __platformSavePikaAsm(char *PikaAsm){
+    return __saveStrToFlash(PikaAsm, FLASH_PIKA_ASM_START_ADDR, FLASH_PIKA_ASM_END_ADDR);
+}
+
 #endif

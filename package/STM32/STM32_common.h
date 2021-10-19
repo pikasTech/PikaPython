@@ -44,11 +44,12 @@
 
 #define RX_BUFF_LENGTH 64
 
-#define FLASH_CODE_START_ADDR \
-    (FLASH_BASE +             \
-     ((FLASH_PAGE_NB - 1) * FLASH_PAGE_SIZE)) /* Start @ of user Flash area */
-#define FLASH_USER_END_ADDR \
-    (FLASH_BASE + FLASH_SIZE - 1) /* End @ of user Flash area */
+#define FLASH_SCRIPT_START_ADDR (FLASH_BASE + ((FLASH_PAGE_NB - 1) * FLASH_PAGE_SIZE))
+#define FLASH_SCRIPT_END_ADDR (FLASH_BASE + FLASH_SIZE - 1)
+
+#define FLASH_PIKA_ASM_START_ADDR (FLASH_BASE + ((FLASH_PAGE_NB - 2) * FLASH_PAGE_SIZE))
+#define FLASH_PIKA_ASM_END_ADDR (FLASH_BASE + ((FLASH_PAGE_NB - 1) * FLASH_PAGE_SIZE))
+
 uint32_t GetPage(uint32_t Addr);
 #define DATA_64 ((uint64_t)0x1234567812345678)
 #define DATA_32 ((uint32_t)0x12345678)

@@ -96,7 +96,7 @@ int main(void) {
     SCB->VTOR = FLASH_BASE | 0x2000;
     __enable_irq();
 
-    char* code = (char*)FLASH_CODE_START_ADDR;
+    char* code = (char*)FLASH_SCRIPT_START_ADDR;
     uint16_t codeOffset = 0;
     if (code[0] == 'i') {
         /* boot from flash */
@@ -104,22 +104,10 @@ int main(void) {
         obj_run(pikaMain, "uart = STM32.UART()");
         obj_run(pikaMain, "uart.init()");
         obj_run(pikaMain, "uart.setId(1)");
-        obj_run(pikaMain, "uart.setBaudRat e(115200)");
+        obj_run(pikaMain, "uart.setBaudRate(115200)");
         obj_run(pikaMain, "uart.enable()");
         obj_run(pikaMain, "print('[info]: boot from flash.')");
-        while (1) {
-            char lineBuff[64] = {0};
-            char* codePointer = code + codeOffset;
-            char* line = strGetFirstToken(lineBuff, codePointer, '\n');
-            codeOffset += strGetSize(line) + 1;
-
-            obj_run(pikaMain, line);
-            /* not any line in code */
-            if (!strIsContain(codePointer, '\n')) {
-                break;
-            }
-        }
-        obj_run(pikaMain, "");
+        obj_run(pikaMain, code);
     } else {
         /* boot from firmware */
         pikaMain = pikaScriptInit();
