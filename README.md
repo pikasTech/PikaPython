@@ -108,8 +108,8 @@ Complete unit testes based on google test.
 
 ## E-mail: 645275593@qq.com
 
-# 5.contribute
-| 内容 | 贡献者 |
+# 5.Contribute
+| Content | Contributer |
 | --- | --- |
 | Donate：GD32E103TB muc 2 pic | 信息牛(WeChat) |
 | Rt-thread bsp template| [Meco Jianting Man](https://github.com/mysterywolf) |
