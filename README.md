@@ -23,7 +23,7 @@
 
 PikaScript is an ultra lightweight Python engine with zero dependencies and zero configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and very easy to deploy and expand.
 
-<img src="https://user-images.githubusercontent.com/88232613/137866679-642e4e74-c373-4880-9d97-20dfefeafc18.png" width="500"/>
+<img src="https://user-images.githubusercontent.com/88232613/137909397-a9ebebd2-4df9-44fc-bac0-bb073b8c9abf.png" width="500"/>
 
 ## Folders
 [src](../../tree/master/src) - core code
