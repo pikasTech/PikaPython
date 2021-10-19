@@ -5,50 +5,44 @@
 
 [![CI](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg)](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml)
 
-# 来颗Star求求了~ Star please~
-## issue, pr请往主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
+# Star please~
 
-# [【视频】手把手PikaScript视频教程](https://www.bilibili.com/video/BV1mg411L72e)
+# [【Vedio】PikaScript hand by hand](https://www.bilibili.com/video/BV1mg411L72e)
 
-# 获取PikaScript:
+# Get PikaScript:
 
-## 使用Pika包管理器[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)
+## Use Pika package manager [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)
 
-1. 直接运行[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
+1. Run the [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)directly, then the pikascript repo would be downloaded autoly in the /tmp/pikaSCript folder of your current disc.
 
-2. 将[requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/tools/pikaCompiler)与[模块](../../tree/master/package)。
+2. Add [requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt)to the same folder of [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe) then run [pikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), the [core](../../tree/master/src), [pre-compiler](../../tree/master/tools/pikaCompiler) and [moudles](../../tree/master/package) would be installed autoly in the current folder.
 
-3. 已发布的模块列表：[packages.toml](/packages.toml)
+3. Released moudles：[packages.toml](/packages.toml)
 
-# 1.简介
-
-PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配置，可以在少于4KB的RAM下运行(如stm32g030c8和stm32f103c8)，极易部署和扩展。
+# 1. Abstruct
 
 PikaScript is an ultra lightweight Python engine with zero dependencies and zero configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and very easy to deploy and expand.
 
-![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
-
-
 <img src="https://user-images.githubusercontent.com/88232613/137866679-642e4e74-c373-4880-9d97-20dfefeafc18.png" width="500"/>
 
-## 文件目录
-[src](../../tree/master/src) - 内核源码
+## Folders
+[src](../../tree/master/src) - core code
 
-[bsp](../../tree/master/bsp) - 裸机芯片/板卡支持
+[bsp](../../tree/master/bsp) - mcu/board support
 
-[port](../../tree/master/port) - 操作系统支持
+[port](../../tree/master/port) - OS support
 
-[document](../../tree/master/document) - 开发文档
+[document](../../tree/master/document) - developt document
 
-[examples](../../tree/master/examples) - 示例脚本
+[examples](../../tree/master/examples) - example scripts
 
-[package](../../tree/master/package) - 模块目录
+[package](../../tree/master/package) - packages and moudles
 
-[pikaCompiler](../../tree/master/tools/pikaCompiler) - 使用rust编写的预编译器
+[pikaCompiler](../../tree/master/tools/pikaCompiler) - pre-compiler write by Rust, used to bind C function to python moudle.
 
-[pikaPackageManager](../../tree/master/tools/pikaPackageManager) - 使用go编写的模块管理器
+[pikaPackageManager](../../tree/master/tools/pikaPackageManager) - pacakge manager
 
-# 2.驱动适配进度
+# 2.Device driver
 |MCU/Board|gpio|uart|pwm|adc|rgb|i2c|spi|
 |---|---|---|---|---|---|---|---|
 |[PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√| | |
@@ -56,21 +50,21 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 |stm32g070cB|√|√|√|√|-| | |
 |stm32f103c8|√|√|√|√|-| | |
 
-# 3.特性
-### (1)运行环境
+# 3.Characteristic
+### (1)Run environment
 
-支持裸机运行，可运行于 **RAM ≥ 4kB** ，**FLASH ≥ 32kB** 的mcu中，如stm32g030, stm32f103c8t6，esp8266。
+Support run in mcu without OS or file system. Can run in everywhere with **RAM ≥ 4kB** and **FLASH ≥ 32kB**，such as stm32g030, stm32f103c8t6，esp8266.
 
-### (2)开发环境
-支持串口下载Python脚本。
+### (2)Develop enviroment
+Support run and program python scripts by serial.
 
 <img src="https://user-images.githubusercontent.com/88232613/134841230-85de6734-8467-4245-93a5-d452b5022b42.gif" width="400" alt="微信交流群"/><br/>
 
-支持Keil、IAR、rt-thread studio、segger embedded studio等IDE开发。
+Support IDEs like Keil, IAR, rt-thread studio and segger embedded studio to develop C moudle.
 
-支持CMake、makeFile、Scons等构建工具
+Support build tools like CMake, makeFile and Scons.
 
-零依赖，零配置，开箱即用，极易集成进已有的C工程。
+Zero dependencies, zero configuration,  out-of-the-box, 极易集成进已有的C工程。
 
 极易拓展自定义的C原生函数。
 
