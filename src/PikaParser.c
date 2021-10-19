@@ -138,6 +138,7 @@ static int32_t getPyLineBlockDeepth(char* line) {
             return -1;
         }
     }
+    return 0;
 }
 
 AST* pikaParseLine(char* line, Stack* blockStack) {
@@ -273,6 +274,7 @@ static char* addBlockDeepth(AST* ast,
         buffs, pikaAsm,
         fast_itoa(buff, obj_getInt(ast, "blockDeepth") + deepthOffset));
     pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
+    return pikaAsm;
 }
 
 char* AST_toPikaAsm(AST* ast, Args* buffs) {

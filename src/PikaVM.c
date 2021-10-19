@@ -242,6 +242,7 @@ int32_t __clearInvokeQueues(PikaObj* self) {
             obj_removeArg(self, deepth);
         }
     }
+    return 0;
 }
 
 int32_t gotoNextLine(char* code) {
