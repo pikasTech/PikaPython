@@ -8,7 +8,6 @@
 #include "dataArgs.h"
 #include "dataLink.h"
 #include "dataMemory.h"
-#include "method.h"
 typedef struct PikaObj_t PikaObj;
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
@@ -95,5 +94,14 @@ uint8_t obj_getAnyArg(PikaObj* self,
                       char* targetArgName,
                       char* sourceArgPath,
                       Args* targetArgs);
+
+void method_returnStr(Args* args, char* val);
+void method_returnInt(Args* args, int32_t val);
+void method_returnFloat(Args* args, float val);
+void method_returnPtr(Args* args, void* val);
+int32_t method_getInt(Args* args, char* argName);
+float method_getFloat(Args* args, char* argName);
+char* method_getStr(Args* args, char* argName);
+void method_returnArg(Args* args, Arg* arg);
 
 #endif
