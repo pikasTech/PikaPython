@@ -17,6 +17,12 @@
 
 3. Released moudles：[packages.toml](/packages.toml)
 
+1. Run the [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe) directly, then the pikascript repo would be downloaded auto in the /tmp/pikaSCript folder of your current disc partition.
+
+2. Add [requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt) to the same folder of PikaPackage.exe then run [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), [core](../../tree/master/src), [pre-compiler](../../tree/master/tools/pikaCompiler) and [moudles](../../tree/master/package) would be installed actually in the current folder.
+
+3. Released modules：packages.toml
+
 # 1. Abstract
 
 PikaScript is an ultra lightweight Python engine with zero dependencies and zero configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and very easy to deploy and expand.
