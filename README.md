@@ -17,7 +17,7 @@
 
 3. Released moudles：[packages.toml](/packages.toml)
 
-# 1. Abstruct
+# 1. Abstract
 
 PikaScript is an ultra lightweight Python engine with zero dependencies and zero configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and very easy to deploy and expand.
 
