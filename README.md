@@ -28,7 +28,8 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
-![f4e9dee13473e411a6ce8e082db5bde](https://user-images.githubusercontent.com/88232613/137866679-642e4e74-c373-4880-9d97-20dfefeafc18.png)
+
+<img src="https://user-images.githubusercontent.com/88232613/137866679-642e4e74-c373-4880-9d97-20dfefeafc18.png" width="500"/>
 
 ## 文件目录
 [src](../../tree/master/src) - 内核源码
