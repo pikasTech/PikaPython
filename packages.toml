@@ -6,7 +6,7 @@ releases = [
   "v0.8.3 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
   "v0.9.0 332ef8afb0692cddd194782a07e30f2688d0f813",
   "v0.10.0 c86eaefa4516dd82b1050fa74a7d85399459d5ed",
-  "v1.0.0 a90bac476e96e2f968e887e52630abb54bb284f4",
+  "v1.0.0 30110a8d5814f89938e39c2fc90c7e34552fb2d5",
 ]
 
 [[packages]]
@@ -45,6 +45,7 @@ releases = [
   "v1.1.0 a18910b5dc349c64297bba3a13b7044f41d48e5f",
   "v1.1.1 91818aab0fa87b007e84866d479af5ac507339fe",
   "v1.2.0 6bd4aac6e9aba2a603da602be8583021da1272c0",
+  "v1.3.0 30110a8d5814f89938e39c2fc90c7e34552fb2d5",
 ]
 
 [[packages]]
@@ -64,4 +65,5 @@ releases = [
 name = "STM32G030Booter"
 releases = [
   "v1.0.0 bbf178182e5780ef8a02a9b09b8a5f250bb7e767",
+  "v1.1.0 30110a8d5814f89938e39c2fc90c7e34552fb2d5",
 ]
