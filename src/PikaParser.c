@@ -144,6 +144,7 @@ static int32_t getPyLineBlockDeepth(char* line) {
 AST* pikaParseLine(char* line, Stack* blockStack) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
+    line = strsDeleteChar(buffs, line, '\r');
     uint8_t blockDeepth = getPyLineBlockDeepth(line);
     uint8_t blockDeepthLast = blockDeepth;
     if (NULL != blockStack) {
