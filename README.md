@@ -64,111 +64,107 @@ Support IDEs like Keil, IAR, rt-thread studio and segger embedded studio to deve
 
 Support build tools like CMake, makeFile and Scons.
 
-Zero dependencies, zero configuration,  out-of-the-box, 极易集成进已有的C工程。
+Zero dependencies, zero configuration,  out-of-the-box, easy to integrated into privious C projcet.
 
-极易拓展自定义的C原生函数。
+Eazy to extern customized C moudles.
 
-支持跨平台，可在linux环境开发内核。
+Support linux.
 
-### (3)语法特性
+### (3)Syntax 
 
-使用python3标准语法的子集。
+Support subaggregate of python 3 standard syntax.
 
-在编译时支持python类和方法定义，完整支持封装、继承、多态、模块功能 - 基于[Pika预编译器](../../tree/master/tools/pikaCompiler)。
+Support class and method define, encapsulation-inheritance-polymorphism and moudles in compile time - Based on [Pika Pre-compiler](../../tree/master/tools/pikaCompiler).
 
-在运行时支持python方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core)。
+Support method invoke, argument define, new object, free object and control flow(if\while). - Based on [Pika Runtime Core](../../tree/master/src/package/pikascript/pikascript-core).
 
-### (4)源码规范
+### (4)Develop standard.
 
-注重源码可读性，命名规范，标准统一，完全不使用宏，几乎不使用全局变量。
+Readability first，nearly never use macro function and global argument.
 
-完整的googletest单元测试。
+Complete unit testes based on google test.
 
-### (5)stm32例程
+### (5)Document
 
-[pikascript-stm32-demo](../../tree/master/bsp)
+[1. PikaScript-Quick start within 3 minutes](document/1.三分钟快速上手.md)
 
-### (6)开发手册
+[2. PikaScript-Architecture and principle](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
 
-[1. PikaScript-三分钟快速上手](document/1.三分钟快速上手.md)
+[3. PikaScript-Deploy within 10 minutes](document/2.十分钟快速部署.md)
 
-[2. PikaScript-架构与原理](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
+[4. PikaScript-Standard develop workflow](document/3.PikaScript标准开发流程.md)
 
-[3. PikaScript-十分钟快速部署](document/2.十分钟快速部署.md)
+[5. PikaScript-Demo show](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
 
-[4. PikaScript-标准开发流程](document/3.PikaScript标准开发流程.md)
+# 4.Both talk and show the code：
 
-[5. PikaScript-Demo展示](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
-
-# 4.交流与技术支持：
-
-## 微信交流群
+## WEChat
 
 ![微信截图_20210917133247](https://user-images.githubusercontent.com/88232613/133729804-e1d0406b-a859-4ebc-b335-477e9c03810e.png)
 
-### 群已经满啦，加我QQ拉你进群~ qq: 645275593
+### Group is full. Add my qq （645275593） to invite you.
 
 ## Tencent QQ： 645275593
 
 ## E-mail: 645275593@qq.com
 
-# 5.贡献者
+# 5.contribute
 | 内容 | 贡献者 |
 | --- | --- |
-| 捐赠：GD32E103TB芯片2片 | 信息牛(微信名) |
-| Rt-thread 支持包模板| [Meco Jianting Man](https://github.com/mysterywolf) |
-| 捐赠：移远EC600S-CN 4G模块 | 移远模块 |
-| 捐赠：博流BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
-| 捐赠：中国移动CM32M101A 开发板| 孟巍(微信名) |
-| 捐赠：APM32F030R8 开发板 | 极海半导体 陈成 |
-| 捐赠：APM32E103VB 开发板 | 极海半导体 陈成 |
-| 捐赠：APEX-Link仿真器 | 极海半导体 陈成 |
-| 源码格式化，增加git属性文件 | [Meco Jianting Man](https://github.com/mysterywolf) |
-| demo/simulation-keil | 千帆(微信名) |
+| Donate：GD32E103TB muc 2 pic | 信息牛(WeChat) |
+| Rt-thread bsp template| [Meco Jianting Man](https://github.com/mysterywolf) |
+| Donate：EC600S-CN 4G module | 移远模块 |
+| Donate：BL706 board|博流智能 [bouffalolab](https://github.com/bouffalolab)|
+| Donate：CM32M101A board| 孟巍(WeChat) |
+| Donate：APM32F030R8 board | 极海半导体 陈成 |
+| Donate：APM32E103VB board | 极海半导体 陈成 |
+| Donate：APEX-Link debugger | 极海半导体 陈成 |
+| format code，add gitattribute | [Meco Jianting Man](https://github.com/mysterywolf) |
+| demo/simulation-keil | 千帆(WeChat) |
 | demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
 
-# 6.内核测试与开发
+# 6.Test and develop Core
 
-## linux下测试pikascript内核(推荐ubuntu20.04)：
+## Test core in linux(ubuntu20.04 is recommend)：
 
-step1: 拉取项目
+step1: Clone the repo
 ``` shell
 git clone https://github.com/pikastech/pikascript
-cd pikascript/src
+cd pikascript/port/linux
 ```
 
-step2: 编译项目
+step2: Compile the project
 ```
-sh init.sh # 第一次编译前运行，之后就不用运行了 
-sh make.sh # 编译项目
+sh init.sh # Only nedded in the first time.
+sh make.sh # Compile the project.
 ```
 
-step3: 运行单元测试
+step3: Run the unit tests.
 ``` shell	
 sh test.sh
 ```
 
-step4: 运行基准测试
+step4: Run the banchmark
 ``` shell
 sh test-banchmark.sh
 ```
 
-step5: 运行demo
+step5: Run the demo
 ``` shell
 ./build/src/boot/demo06-pikamain/pikascript_demo06-pikamain
 ```
 
-# 7.Demo展示
+# 7.Demo
 
-## Demo 01 万物起源点个灯
+## Demo 01 GPIO
 
 ![mmexport1631351506111](https://user-images.githubusercontent.com/88232613/132943903-b3558929-a107-4a99-bdc4-1b3fd3f7172b.png)
 
 ![Hnet-image (2)](https://user-images.githubusercontent.com/88232613/132943428-f2b365ca-140e-42f4-936c-db6a7d9f8dee.gif)
 
-## Demo 02 串口测试
+## Demo 02 USART
 
 ![mmexport1631351902469](https://user-images.githubusercontent.com/88232613/132944132-90898355-de94-4d81-990b-7b85d4a4d08a.png)
 
@@ -176,7 +172,7 @@ step5: 运行demo
 ![Hnet-image (3)](https://user-images.githubusercontent.com/88232613/132943365-0f7059b3-4f9d-4989-a5ec-2cce72b0cc96.gif)
 
 
-## Demo 03 读个ADC试试
+## Demo 03 ADC
 
 ![mmexport1631351527609](https://user-images.githubusercontent.com/88232613/132944180-a805c8f8-40d5-45ff-ae2a-a0fe8f9db1ab.png)
 
@@ -184,34 +180,33 @@ step5: 运行demo
 ![mmexport1631351523907](https://user-images.githubusercontent.com/88232613/132944185-0a01b1ba-8cf7-4f9f-9d73-fe9cbcd52f0b.png)
 
 
-## Demo 04 PWM输出
+## Demo 04 OWM output
 
 ![image](https://user-images.githubusercontent.com/88232613/134461673-975498f4-09de-4f3a-866d-53e6fa1307b1.png)
 
-## Demo 05 RGB流水灯
+## Demo 05 RGB
 
 ![image](https://user-images.githubusercontent.com/88232613/134461950-2153c738-0661-452f-956a-65a88fb71592.png)
 
-这几个Demo占用的RAM最大值只有3.56K，把1K的堆栈也算上就是4.56K，Flash最大占用是30.4K，以STM32F103C8T6的20K RAM和64K Flash为标准，RAM才用掉不到25%，Flash才用掉不到50%。
+The maximum RAM usage of these demos is only 3.56K, which is 4.56K if the 1K stack is included, and the maximum Flash usage is 30.4K. Based on the 20K RAM and 64K Flash of STM32F103C8T6, less than 25% RAM and less than 50% Flash are used.
+A quick comparison can be made between the microPython chip STM32F405RG and the PikaScript chip STM32G070CB
 
-我们可以简单对比一下micropython的常用芯片STM32F405RG和这次跑PikaScript的芯片STM32G070CB
-
-## RAM资源对比
+## RAM resource comparison
 ![image](https://user-images.githubusercontent.com/88232613/132944731-a55ece1d-061f-4b91-ba87-bd6547be96a7.png)
 
-## Flash资源对比
+## Flash Resource Comparison
 ![image](https://user-images.githubusercontent.com/88232613/132944745-e9cf598d-e75f-40bb-873e-911819d535b7.png)
 
-## 参考价对比(以2021年9月11日立创商城10片售价为参考）
+## Reference price comparison (take the selling price of 10 pieces in Lichuang Mall on September 11, 2021 as reference)
 ![image](https://user-images.githubusercontent.com/88232613/132944757-2b5cfda8-f93f-4456-8d7f-4e4767954056.png)
 
-## 拓展能力如何呢？
+## About the extern moudle ？
 
-除了设备驱动之外，为mcu开发自定义的python脚本绑定在pikascript的开发框架下非常轻松，下面两个Demo就是自定义的C模块拓展，这个Demo基于ARM-2D图像驱动库开发了一些python脚本接口。
+In addition to device drivers, developing custom Python scripts for MCU is very easy to bind to the PIkascript development framework. The following two demos are extensions of the custom C module, which develop python scripting interfaces based on the ARM-2D image driver library.
 
-## 几个小方块~
+## Boxes~
 ![Hnet-image (7)](https://user-images.githubusercontent.com/88232613/132945282-bfd310df-8063-456d-b90c-6b798a2c8ed5.gif)
 
-## 几个旋转太阳~
+## Rotating suns~
 ![Hnet-image (6)](https://user-images.githubusercontent.com/88232613/132945107-e473a2cc-9fbc-47f9-aaed-a28d3ad1048c.gif)
 
