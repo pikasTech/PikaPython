@@ -1,7 +1,7 @@
-import STM32
-import PikaPiZero
 import PikaStdLib
 import PikaMath
+import STM32
+import PikaPiZero
 
 time = STM32.Time()
 uart = STM32.UART()

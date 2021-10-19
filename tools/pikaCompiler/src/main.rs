@@ -14,7 +14,7 @@ use std::io::prelude::*;
 
 fn main() {
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
-    compiler = Compiler::analyze_file(compiler, String::from("main"));
+    compiler = Compiler::analyze_file(compiler, String::from("main"), false);
     /* write to compiler-info about the info */
     let mut compiler_info_file =
         File::create(format!("{}compiler-info.txt", compiler.dist_path)).unwrap();
