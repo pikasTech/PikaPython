@@ -406,3 +406,48 @@ TEST(parser, multiLine) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, pikaPi) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    const char lines[] =
+        "\n"
+        "time = STM32.Time()\n"
+        "uart = STM32.UART()\n"
+        "adc = STM32.ADC()\n"
+        "pin = STM32.GPIO()\n"
+        "pwm = STM32.PWM()\n"
+        "uart = STM32.UART()\n"
+        "rgb = PikaPiZero.RGB()\n"
+        "mem = PikaStdLib.MemChecker()\n"
+        "op = PikaMath.Operator()\n"
+        "\n"
+        "uart.init()\n"
+        "uart.setId(1)\n"
+        "uart.setBaudRate(115200)\n"
+        "uart.enable()\n"
+        "\n"
+        "rgb.init()\n"
+        "rgb.enable()\n"
+        "\n"
+        "print('hello 2')\n"
+        "print('mem used max:')\n"
+        "mem.max() \n"
+        "\n"
+        "while True:\n"
+        "    time.sleep_ms(10)\n"
+        "    rgb.flow()\n"
+        "    print('flowing')\n"
+        "\n"
+        "\n"
+        "\n"
+        "\n";
+
+    printf("%s", lines);
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    printf("mem max in parse: %0.2f Kb\n", pikaMemMax() / 1024.0);
+    printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
