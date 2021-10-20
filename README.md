@@ -104,19 +104,13 @@ Complete unit testes based on google test.
 
 # 4.Both talk and show the code：
 
-## WEChat
-
-![微信截图_20210917133247](https://user-images.githubusercontent.com/88232613/133729804-e1d0406b-a859-4ebc-b335-477e9c03810e.png)
-
-### Group is full. Add my qq （645275593） to invite you.
+## E-mail: liang6516@outlook.com
 
 ## Tencent QQ： 645275593
 
 ## QQ group:
 
 <img src="https://user-images.githubusercontent.com/88232613/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
-
-## E-mail: 645275593@qq.com
 
 # 5.Contribute
 | Content | Contributer |
