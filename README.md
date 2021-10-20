@@ -162,7 +162,7 @@ step5: Run the demo
 
 # 7.Demo 
 
-The scripts in demo is in [example](example) folder.
+The scripts in demos are in the [examples](examples) folder.
 
 ## Demo 01 GPIO
 
