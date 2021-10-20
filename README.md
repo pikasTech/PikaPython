@@ -209,7 +209,7 @@ A quick comparison can be made between the microPython chip STM32F405RG and the 
 
 ## About the custom extern module ？
 
-In addition to device drivers, developing custom Python scripts for MCU is very easy. The following two demos are extensions of the custom C module, which develops python scripting interfaces for the ARM-2D image driver library.
+In addition to device drivers, developing custom Python modules for MCU is very easy. The following two demos are extensions of the custom module, which developed python interfaces for the ARM-2D image driver library.
 
 ## Boxes~
 ![Hnet-image (7)](https://user-images.githubusercontent.com/88232613/132945282-bfd310df-8063-456d-b90c-6b798a2c8ed5.gif)
