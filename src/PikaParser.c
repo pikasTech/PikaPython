@@ -55,17 +55,18 @@ enum StmtType {
 char* strs_deleteBetween(Args* buffs, char* strIn, char begin, char end) {
     int32_t size = strGetSize(strIn);
     char* strOut = args_getBuff(buffs, size);
-    uint8_t isInBetween;
+    uint8_t deepth = 0;
     uint32_t iOut = 0;
     for (int i = 0; i < size; i++) {
-        if (isInBetween) {
+        if (end == strIn[i]) {
+            deepth--;
+        }
+        if (0 == deepth) {
             strOut[iOut] = strIn[i];
+            iOut++;
         }
         if (begin == strIn[i]) {
-            isInBetween = 1;
-        }
-        if (end == strIn[i]) {
-            isInBetween = 0;
+            deepth++;
         }
     }
     strOut[iOut] = 0;
@@ -76,24 +77,28 @@ static enum StmtType matchStmtType(char* right) {
     Args* buffs = New_strBuff();
     enum StmtType stmtType = NONE;
     char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
-    if (strIsContain(right, '+') || strIsContain(right, '-') ||
-        strIsContain(right, '*') || strIsContain(right, '/')) {
+    if (strIsContain(rightWithoutSubStmt, '+') ||
+        strIsContain(rightWithoutSubStmt, '-') ||
+        strIsContain(rightWithoutSubStmt, '*') ||
+        strIsContain(rightWithoutSubStmt, '/')) {
         stmtType = OPERATOR;
         goto exit;
     }
-    if (strIsContain(right, '(') || strIsContain(right, ')')) {
+    if (strIsContain(rightWithoutSubStmt, '(') ||
+        strIsContain(rightWithoutSubStmt, ')')) {
         stmtType = METHOD;
         goto exit;
     }
-    if (strIsContain(right, '\'') || strIsContain(right, '\"')) {
+    if (strIsContain(rightWithoutSubStmt, '\'') ||
+        strIsContain(rightWithoutSubStmt, '\"')) {
         stmtType = STR;
         goto exit;
     }
-    if (right[0] >= '0' && right[0] <= '9') {
+    if (rightWithoutSubStmt[0] >= '0' && rightWithoutSubStmt[0] <= '9') {
         stmtType = NUM;
         goto exit;
     }
-    if (!strEqu(right, "")) {
+    if (!strEqu(rightWithoutSubStmt, "")) {
         stmtType = REF;
         goto exit;
     }
