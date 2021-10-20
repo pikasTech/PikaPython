@@ -133,6 +133,30 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     enum StmtType stmtType = matchStmtType(right);
     /* solve method stmt */
+    if (OPERATOR == stmtType) {
+        char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
+        char operator[2] = {0};
+        if (strIsContain(rightWithoutSubStmt, '+')) {
+            operator[0] = '+';
+        }
+        if (strIsContain(rightWithoutSubStmt, '-')) {
+            operator[0] = '-';
+        }
+        if (strIsContain(rightWithoutSubStmt, '*')) {
+            operator[0] = '*';
+        }
+        if (strIsContain(rightWithoutSubStmt, '/')) {
+            operator[0] = '/';
+        }
+        obj_setStr(ast, (char*)"operator", operator);
+        char* subStmt1 = strsGetFirstToken(buffs, right, operator[0]);
+        char* subStmt2 = strsGetLastToken(buffs, right, operator[0]);
+        queueObj_pushObj(ast, (char*)"stmt");
+        AST_parseStmt(queueObj_getCurrentObj(ast), subStmt1);
+        queueObj_pushObj(ast, (char*)"stmt");
+        AST_parseStmt(queueObj_getCurrentObj(ast), subStmt2);
+        goto exit;
+    }
     if (METHOD == stmtType) {
         method = strsGetFirstToken(buffs, right, '(');
         obj_setStr(ast, (char*)"method", method);
