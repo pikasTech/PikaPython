@@ -149,8 +149,9 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
             operator[0] = '/';
         }
         obj_setStr(ast, (char*)"operator", operator);
-        char* subStmt1 = strsGetFirstToken(buffs, right, operator[0]);
-        char* subStmt2 = strsGetLastToken(buffs, right, operator[0]);
+        char* rightBuff = strsCopy(buffs, right);
+        char* subStmt1 = strsPopToken(buffs, rightBuff, operator[0]);
+        char* subStmt2 = rightBuff;
         queueObj_pushObj(ast, (char*)"stmt");
         AST_parseStmt(queueObj_getCurrentObj(ast), subStmt1);
         queueObj_pushObj(ast, (char*)"stmt");

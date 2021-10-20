@@ -542,3 +542,20 @@ TEST(parser, add) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, add_a_pp) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"a = a + 1\n";
+    printf("%s", lines);
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF a\n"
+                 "1 NUM 1\n"
+                 "0 OPT +\n"
+                 "0 OUT a\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
