@@ -147,7 +147,7 @@ sh make.sh # Compile the project.
 
 step3: Run the unit tests.
 ``` shell	
-sh test.sh
+sh gtest.sh
 ```
 
 step4: Run the banchmark
