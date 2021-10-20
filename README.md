@@ -9,13 +9,13 @@
 
 PikaScript is an ultra-lightweight Python engine with zero dependencies and zero-configuration, that can run with 4KB of RAM and 32KB of flash (such as STM32G030C8 and STM32F103C8).
 
-It's very easy to bind C function to python module with the help of Pika pre-compiler.
-
-# [【Video】PikaScript hand by hand](https://www.bilibili.com/video/BV1mg411L72e)
-
 <img src="https://user-images.githubusercontent.com/88232613/138018674-93a7991a-5367-4fbd-92ee-95c7f0f157fc.png" width="500"/>
 
+It's very easy to bind C function to python module with the help of Pika pre-compiler.
+
 ![image](https://user-images.githubusercontent.com/88232613/138021445-13643518-b0a3-4872-a290-5dec27697837.png)
+
+# [【Video】PikaScript hand by hand](https://www.bilibili.com/video/BV1mg411L72e)
 
 # Get PikaScript:
 
