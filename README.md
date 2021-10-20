@@ -7,6 +7,12 @@
 
 # [【Video】PikaScript hand by hand](https://www.bilibili.com/video/BV1mg411L72e)
 
+# 1. Abstract
+
+PikaScript is an ultra-lightweight Python engine with zero dependencies and zero-configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and is very easy to deploy and expand.
+
+<img src="https://user-images.githubusercontent.com/88232613/137909397-a9ebebd2-4df9-44fc-bac0-bb073b8c9abf.png" width="500"/>
+
 # Get PikaScript:
 
 ## Use Pika package manager [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)
@@ -16,12 +22,6 @@
 2. Add [requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt) to the same folder of PikaPackage.exe then run [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), [core](../../tree/master/src), [pre-compiler](../../tree/master/tools/pikaCompiler) and [moudles](../../tree/master/package) would be installed actually in the current folder.
 
 3. Released modules：packages.toml
-
-# 1. Abstract
-
-PikaScript is an ultra-lightweight Python engine with zero dependencies and zero-configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and is very easy to deploy and expand.
-
-<img src="https://user-images.githubusercontent.com/88232613/137909397-a9ebebd2-4df9-44fc-bac0-bb073b8c9abf.png" width="500"/>
 
 ## Folders
 [src](../../tree/master/src) - core code
