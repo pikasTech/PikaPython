@@ -160,7 +160,9 @@ step5: Run the demo
 ./build/src/boot/demo06-pikamain/pikascript_demo06-pikamain
 ```
 
-# 7.Demo
+# 7.Demo 
+
+The scripts in demo is in [example](example) folder.
 
 ## Demo 01 GPIO
 
