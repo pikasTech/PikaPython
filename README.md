@@ -3,6 +3,8 @@
 
 [![CI](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg)](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml)
 
+# PikaScript
+[中文页](README_zh.md)|
 # Star please~
 
 # 1. Abstract
