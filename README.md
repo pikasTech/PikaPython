@@ -13,7 +13,7 @@ PikaScript is an ultra-lightweight Python engine with zero dependencies and zero
 
 It's very easy to bind C function to python module with the help of Pika re-compiler.
 
-![image](https://user-images.githubusercontent.com/88232613/138021445-13643518-b0a3-4872-a290-5dec27697837.png)
+<img src="https://user-images.githubusercontent.com/88232613/138021445-13643518-b0a3-4872-a290-5dec27697837.png" width="700"/>
 
 # [【Video】PikaScript hand by hand](https://www.bilibili.com/video/BV1mg411L72e)
 
