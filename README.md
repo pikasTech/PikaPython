@@ -13,7 +13,7 @@ It's very easy to bind C function to python module with the help of Pika pre-com
 
 # [【Video】PikaScript hand by hand](https://www.bilibili.com/video/BV1mg411L72e)
 
-<img src="https://user-images.githubusercontent.com/88232613/137909397-a9ebebd2-4df9-44fc-bac0-bb073b8c9abf.png" width="500"/>
+<img src="https://user-images.githubusercontent.com/88232613/138018674-93a7991a-5367-4fbd-92ee-95c7f0f157fc.png" width="500"/>
 
 # Get PikaScript:
 
