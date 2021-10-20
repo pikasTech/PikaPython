@@ -29,7 +29,7 @@ It's very easy to bind C function to python module with the help of Pika Pre-com
 
 2. Add [requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt) to the same folder of PikaPackage.exe then run [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe). The [run-time core](../../tree/master/src), [pre-compiler](../../tree/master/tools/pikaCompiler) and [moudles](../../tree/master/package) would be installed in the current folder.
 
-3. Released modules：packages.toml
+3. Released modules：[packages.toml](packages.toml)
 
 ## Folders
 [src](../../tree/master/src) - core code
