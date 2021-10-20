@@ -207,7 +207,7 @@ A quick comparison can be made between the microPython chip STM32F405RG and the 
 ## Reference price comparison (take the selling price of 10 pieces in Lichuang Mall on September 11, 2021 as reference)
 ![image](https://user-images.githubusercontent.com/88232613/132944757-2b5cfda8-f93f-4456-8d7f-4e4767954056.png)
 
-## About the extern moudle ？
+## About the custom extern moudle ？
 
 In addition to device drivers, developing custom Python scripts for MCU is very easy. The following two demos are extensions of the custom C module, which develops python scripting interfaces for the ARM-2D image driver library.
 
