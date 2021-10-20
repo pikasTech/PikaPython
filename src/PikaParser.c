@@ -301,6 +301,7 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
         pikaAsm = AST_appandPikaAsm(ast, subStmt, buffs, pikaAsm);
     }
     char* method = obj_getStr(subAst, "method");
+    char* operator= obj_getStr(subAst, "operator");
     char* ref = obj_getStr(subAst, "ref");
     char* direct = obj_getStr(subAst, "direct");
     char* str = obj_getStr(subAst, "str");
@@ -308,6 +309,11 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     if (NULL != ref) {
         char buff[32] = {0};
         sprintf(buff, "%d REF %s\n", deepth, ref);
+        pikaAsm = strsAppend(buffs, pikaAsm, buff);
+    }
+    if (NULL != operator) {
+        char buff[32] = {0};
+        sprintf(buff, "%d OPT %s\n", deepth, operator);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != method) {
@@ -369,7 +375,10 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     }
     pikaAsm = addBlockDeepth(ast, buffs, pikaAsm, 0);
     obj_setInt(ast, "deepth", 0);
+
+    /* parse ast to asm main process */
     pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
+
     if (strEqu(obj_getStr(ast, "contralFlow"), "while")) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 2\n");
     }
