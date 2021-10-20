@@ -15,6 +15,8 @@ It's very easy to bind C function to python module with the help of Pika pre-com
 
 <img src="https://user-images.githubusercontent.com/88232613/138018674-93a7991a-5367-4fbd-92ee-95c7f0f157fc.png" width="500"/>
 
+![image](https://user-images.githubusercontent.com/88232613/138021445-13643518-b0a3-4872-a290-5dec27697837.png)
+
 # Get PikaScript:
 
 ## Use Pika package manager [PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)
