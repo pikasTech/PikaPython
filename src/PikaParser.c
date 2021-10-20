@@ -48,23 +48,58 @@ enum StmtType {
     STR,
     NUM,
     METHOD,
+    OPERATOR,
     NONE,
 };
 
+char* strs_deleteBetween(Args* buffs, char* strIn, char begin, char end) {
+    int32_t size = strGetSize(strIn);
+    char* strOut = args_getBuff(buffs, size);
+    uint8_t isInBetween;
+    uint32_t iOut = 0;
+    for (int i = 0; i < size; i++) {
+        if (isInBetween) {
+            strOut[iOut] = strIn[i];
+        }
+        if (begin == strIn[i]) {
+            isInBetween = 1;
+        }
+        if (end == strIn[i]) {
+            isInBetween = 0;
+        }
+    }
+    strOut[iOut] = 0;
+    return strOut;
+}
+
 static enum StmtType matchStmtType(char* right) {
+    Args* buffs = New_strBuff();
+    enum StmtType stmtType = NONE;
+    char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
+    if (strIsContain(right, '+') || strIsContain(right, '-') ||
+        strIsContain(right, '*') || strIsContain(right, '/')) {
+        stmtType = OPERATOR;
+        goto exit;
+    }
     if (strIsContain(right, '(') || strIsContain(right, ')')) {
-        return METHOD;
+        stmtType = METHOD;
+        goto exit;
     }
     if (strIsContain(right, '\'') || strIsContain(right, '\"')) {
-        return STR;
+        stmtType = STR;
+        goto exit;
     }
     if (right[0] >= '0' && right[0] <= '9') {
-        return NUM;
+        stmtType = NUM;
+        goto exit;
     }
     if (!strEqu(right, "")) {
-        return REF;
+        stmtType = REF;
+        goto exit;
     }
-    return NONE;
+exit:
+    args_deinit(buffs);
+    return stmtType;
 }
 
 AST* AST_parseStmt(AST* ast, char* stmt) {

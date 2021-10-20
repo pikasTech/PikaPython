@@ -5,7 +5,9 @@
         "datamemory.h": "c",
         "pikamath_operator.h": "c",
         "dataargs.h": "c",
-        "pikastdlib_sysobj.h": "c"
+        "pikastdlib_sysobj.h": "c",
+        "*.tcc": "c",
+        "istream": "c"
     },
     "python.formatting.provider": "yapf"
 }
