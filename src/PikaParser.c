@@ -80,6 +80,9 @@ static enum StmtType matchStmtType(char* right) {
     if (strIsContain(rightWithoutSubStmt, '+') ||
         strIsContain(rightWithoutSubStmt, '-') ||
         strIsContain(rightWithoutSubStmt, '*') ||
+        strIsContain(rightWithoutSubStmt, '<') ||
+        strIsContain(rightWithoutSubStmt, '>') ||
+        strIsContain(rightWithoutSubStmt, '=') ||
         strIsContain(rightWithoutSubStmt, '/')) {
         stmtType = OPERATOR;
         goto exit;
@@ -147,6 +150,15 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         }
         if (strIsContain(rightWithoutSubStmt, '/')) {
             operator[0] = '/';
+        }
+        if (strIsContain(rightWithoutSubStmt, '<')) {
+            operator[0] = '<';
+        }
+        if (strIsContain(rightWithoutSubStmt, '>')) {
+            operator[0] = '>';
+        }
+        if (strIsContain(rightWithoutSubStmt, '=')) {
+            operator[0] = '==';
         }
         obj_setStr(ast, (char*)"operator", operator);
         char* rightBuff = strsCopy(buffs, right);
