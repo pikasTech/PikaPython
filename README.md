@@ -194,8 +194,9 @@ The scripts in demos are in the [examples](examples) folder.
 
 ![image](https://user-images.githubusercontent.com/88232613/134461950-2153c738-0661-452f-956a-65a88fb71592.png)
 
-The maximum RAM usage of these demos is only 3.56K, which is 4.56K if the 1K stack is included, and the maximum Flash usage is 30.4K. Based on the 20K RAM and 64K Flash of STM32F103C8T6, less than 25% RAM and less than 50% Flash are used.
-A quick comparison can be made between the microPython chip STM32F405RG and the PikaScript chip STM32G070CB
+The maximum RAM usage of these demos is only 3.56K, which is 4.56K if the 1K stack is included, and the maximum Flash usage is 30.4K. Refer to the 20K RAM and 64K Flash of STM32F103C8T6, less than 25% RAM and less than 50% Flash are used.
+
+A quick comparison can be made between the microPython chip STM32F405RG and the PikaScript chip STM32G070CB.
 
 ## RAM resource comparison
 ![image](https://user-images.githubusercontent.com/88232613/132944731-a55ece1d-061f-4b91-ba87-bd6547be96a7.png)
@@ -208,7 +209,7 @@ A quick comparison can be made between the microPython chip STM32F405RG and the 
 
 ## About the extern moudle ？
 
-In addition to device drivers, developing custom Python scripts for MCU is very easy to bind to the PIkascript development framework. The following two demos are extensions of the custom C module, which develop python scripting interfaces based on the ARM-2D image driver library.
+In addition to device drivers, developing custom Python scripts for MCU is very easy. The following two demos are extensions of the custom C module, which develops python scripting interfaces for the ARM-2D image driver library.
 
 ## Boxes~
 ![Hnet-image (7)](https://user-images.githubusercontent.com/88232613/132945282-bfd310df-8063-456d-b90c-6b798a2c8ed5.gif)
