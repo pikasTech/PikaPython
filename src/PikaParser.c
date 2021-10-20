@@ -43,6 +43,30 @@ char* strsPopStmts(Args* buffs, char* stmts) {
     return strOut;
 }
 
+enum StmtType {
+    REF,
+    STR,
+    NUM,
+    METHOD,
+    NONE,
+};
+
+static enum StmtType matchStmtType(char* right) {
+    if (strIsContain(right, '(') || strIsContain(right, ')')) {
+        return METHOD;
+    }
+    if (strIsContain(right, '\'') || strIsContain(right, '\"')) {
+        return STR;
+    }
+    if (right[0] >= '0' && right[0] <= '9') {
+        return NUM;
+    }
+    if (!strEqu(right, "")) {
+        return REF;
+    }
+    return NONE;
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args* buffs = New_strBuff();
     char* assignment = strsGetFirstToken(buffs, stmt, '(');
@@ -52,48 +76,27 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* str = NULL;
     char* num = NULL;
     char* right = NULL;
-    uint8_t directExist = 0, isMethod = 0, isRef = 0, isStr = 0, isNum = 0;
+    /* solve direct */
+    uint8_t directExist = 0;
     if (strIsContain(assignment, '=')) {
         directExist = 1;
-    }
-    if (directExist) {
-        right = strsGetLastToken(buffs, assignment, '=');
-    } else {
-        right = assignment;
-    }
-    if (strIsContain(stmt, '(') || strIsContain(stmt, ')')) {
-        isMethod = 1;
-        isStr = 0;
-        isNum = 0;
-        isRef = 0;
-    }
-    if (!isMethod && (strIsContain(right, '\'') || strIsContain(right, '\"'))) {
-        isMethod = 0;
-        isStr = 1;
-        isNum = 0;
-        isRef = 0;
-    }
-    if (!isMethod && !isStr && (right[0] >= '0' && right[0] <= '9')) {
-        isMethod = 0;
-        isStr = 0;
-        isNum = 1;
-        isRef = 0;
-    }
-    if (!isMethod && !isStr && !isNum && !strEqu(stmt, "")) {
-        isMethod = 0;
-        isStr = 0;
-        isNum = 0;
-        isRef = 1;
     }
     if (directExist) {
         direct = strsGetFirstToken(buffs, assignment, '=');
         obj_setStr(ast, (char*)"direct", direct);
     }
-    char* subStmts = NULL;
-    if (isMethod) {
-        method = right;
+    /* solve right stmt */
+    if (directExist) {
+        right = strsGetLastToken(buffs, stmt, '=');
+    } else {
+        right = stmt;
+    }
+    enum StmtType stmtType = matchStmtType(right);
+    /* solve method stmt */
+    if (METHOD == stmtType) {
+        method = strsGetFirstToken(buffs, right, '(');
         obj_setStr(ast, (char*)"method", method);
-        subStmts = strsCut(buffs, stmt, '(', ')');
+        char* subStmts = strsCut(buffs, stmt, '(', ')');
         while (1) {
             char* subStmt = strsPopStmts(buffs, subStmts);
             if (NULL == subStmt) {
@@ -104,19 +107,22 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         }
         goto exit;
     }
-    if (isRef) {
+    /* solve reference stmt */
+    if (REF == stmtType) {
         ref = right;
         obj_setStr(ast, (char*)"ref", ref);
         goto exit;
     }
-    if (isStr) {
+    /* solve str stmt */
+    if (STR == stmtType) {
         str = right;
         str = strsDeleteChar(buffs, str, '\'');
         str = strsDeleteChar(buffs, str, '\"');
         obj_setStr(ast, (char*)"str", str);
         goto exit;
     }
-    if (isNum) {
+    /* solve number stmt */
+    if (NUM == stmtType) {
         num = right;
         obj_setStr(ast, (char*)"num", num);
         goto exit;
