@@ -186,7 +186,7 @@ The scripts in demos are in the [examples](examples) folder.
 ![mmexport1631351523907](https://user-images.githubusercontent.com/88232613/132944185-0a01b1ba-8cf7-4f9f-9d73-fe9cbcd52f0b.png)
 
 
-## Demo 04 OWM output
+## Demo 04 PWM output
 
 ![image](https://user-images.githubusercontent.com/88232613/134461673-975498f4-09de-4f3a-866d-53e6fa1307b1.png)
 
