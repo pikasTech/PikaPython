@@ -157,6 +157,24 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
                     arg_setInt(outArg, "", arg_getInt(arg1) + arg_getInt(arg2));
                 goto OPT_exit;
             }
+            if (strEqu(arg_getType(arg1), "float") &&
+                strEqu(arg_getType(arg2), "int")) {
+                outArg = arg_setFloat(outArg, "",
+                                      arg_getFloat(arg1) + arg_getInt(arg2));
+                goto OPT_exit;
+            }
+            if (strEqu(arg_getType(arg1), "int") &&
+                strEqu(arg_getType(arg2), "float")) {
+                outArg = arg_setFloat(outArg, "",
+                                      arg_getInt(arg1) + arg_getFloat(arg2));
+                goto OPT_exit;
+            }
+            if (strEqu(arg_getType(arg1), "float") &&
+                strEqu(arg_getType(arg2), "float")) {
+                outArg = arg_setFloat(outArg, "",
+                                      arg_getFloat(arg1) + arg_getFloat(arg2));
+                goto OPT_exit;
+            }
         }
     OPT_exit:
         arg_deinit(arg1);
