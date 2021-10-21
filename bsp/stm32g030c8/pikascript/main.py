@@ -25,9 +25,10 @@ print('hello 2')
 print('mem used max:')
 mem.max() 
 
-while True:
-    time.sleep_ms(10)
+i = 0
+while i < 100:
+    i = i + 1
     rgb.flow()
-    print('flowing')
+    print(i)
 
-
+print('Hello PikaScript!')
