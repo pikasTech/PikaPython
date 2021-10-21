@@ -82,7 +82,7 @@ Support subaggregate of python 3 standard syntax.
 
 Support class and method define, encapsulation-inheritance-polymorphism and moudles in compile time - Based on [Pika Pre-compiler](../../tree/master/tools/pikaCompiler).
 
-Support method invoke, argument define, new object, free object and control flow(if\while). - Based on [Pika Runtime Core](../../tree/master/src/package/pikascript/pikascript-core).
+Support method invoke, argument define, new object, free object, control flow(if\while) and operator(+ - * / < == >). - Based on [Pika Runtime Core](../../tree/master/src/package/pikascript/pikascript-core).
 
 ### (4)Develop standard.
 
