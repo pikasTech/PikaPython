@@ -263,3 +263,18 @@ TEST(VM, a_1_1d1) {
     ASSERT_FLOAT_EQ(res, 2.1);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, a_jjcc) {
+    char* line = (char*)"a = (1 + 1.1) * 3 - 2 /4.0";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    args_deinit(pikaVM_runAsm(self, pikaAsm));
+
+    float res = obj_getFloat(self, (char*)"a");
+    obj_deinit(self);
+    args_deinit(buffs);
+    ASSERT_FLOAT_EQ(res, 5.8);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

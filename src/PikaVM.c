@@ -246,6 +246,11 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         Arg* returnArg = NULL;
         Args* methodArgs = NULL;
         char* methodPath = data;
+        PikaObj* methodHostClass = NULL;
+        if (strEqu(data, "")) {
+            returnArg = arg_copy(queue_popArg(invokeQuene1));
+            goto RUN_exit;
+        }
         PikaObj* methodHostObj = obj_getObj(self, methodPath, 1);
         if (NULL == methodHostObj) {
             /* error, not found object */
@@ -257,7 +262,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         void* classPtr = obj_getPtr(methodHostObj, "_clsptr");
         char* methodHostClassName =
             strsAppend(buffs, "classObj-", obj_getName(methodHostObj));
-        PikaObj* methodHostClass = obj_getClassObjByNewFun(
+        methodHostClass = obj_getClassObjByNewFun(
             methodHostObj, methodHostClassName, classPtr);
         /* get method Ptr */
         void (*methodPtr)(PikaObj * self, Args * args) =
