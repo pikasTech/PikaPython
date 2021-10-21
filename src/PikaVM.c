@@ -170,6 +170,18 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
                 outArg = arg_setInt(outArg, "", num1 / num2);
                 goto OPT_exit;
             }
+            if (strEqu("<", data)) {
+                outArg = arg_setInt(outArg, "", num1 < num2);
+                goto OPT_exit;
+            }
+            if (strEqu(">", data)) {
+                outArg = arg_setInt(outArg, "", num1 > num2);
+                goto OPT_exit;
+            }
+            if (strEqu("==", data)) {
+                outArg = arg_setInt(outArg, "", num1 == num2);
+                goto OPT_exit;
+            }
         }
         if (strEqu(arg_getType(arg1), "float") &&
             strEqu(arg_getType(arg2), "int")) {
@@ -189,6 +201,18 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             }
             if (strEqu("/", data)) {
                 outArg = arg_setFloat(outArg, "", num1 / num2);
+                goto OPT_exit;
+            }
+            if (strEqu("<", data)) {
+                outArg = arg_setInt(outArg, "", num1 < num2);
+                goto OPT_exit;
+            }
+            if (strEqu(">", data)) {
+                outArg = arg_setInt(outArg, "", num1 > num2);
+                goto OPT_exit;
+            }
+            if (strEqu("==", data)) {
+                outArg = arg_setInt(outArg, "", num1 == num2);
                 goto OPT_exit;
             }
         }
@@ -212,6 +236,18 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
                 outArg = arg_setFloat(outArg, "", num1 / num2);
                 goto OPT_exit;
             }
+            if (strEqu("<", data)) {
+                outArg = arg_setInt(outArg, "", num1 < num2);
+                goto OPT_exit;
+            }
+            if (strEqu(">", data)) {
+                outArg = arg_setInt(outArg, "", num1 > num2);
+                goto OPT_exit;
+            }
+            if (strEqu("==", data)) {
+                outArg = arg_setInt(outArg, "", num1 == num2);
+                goto OPT_exit;
+            }
         }
         if (strEqu(arg_getType(arg1), "float") &&
             strEqu(arg_getType(arg2), "float")) {
@@ -231,6 +267,18 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             }
             if (strEqu("/", data)) {
                 outArg = arg_setFloat(outArg, "", num1 / num2);
+                goto OPT_exit;
+            }
+            if (strEqu("<", data)) {
+                outArg = arg_setInt(outArg, "", num1 < num2);
+                goto OPT_exit;
+            }
+            if (strEqu(">", data)) {
+                outArg = arg_setInt(outArg, "", num1 > num2);
+                goto OPT_exit;
+            }
+            if (strEqu("==", data)) {
+                outArg = arg_setInt(outArg, "", num1 == num2);
                 goto OPT_exit;
             }
         }

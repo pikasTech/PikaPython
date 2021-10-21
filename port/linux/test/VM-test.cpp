@@ -278,3 +278,23 @@ TEST(VM, a_jjcc) {
     ASSERT_FLOAT_EQ(res, 5.8);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, while_a_1to10) {
+    char* line = (char*)
+    "a = 0\n"
+    "while a < 10:\n"
+    "    a = a + 1\n"
+    "    print(a)\n"
+    "\n";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    args_deinit(pikaVM_runAsm(self, pikaAsm));
+
+    int res = obj_getInt(self, (char*)"a");
+    obj_deinit(self);
+    args_deinit(buffs);
+    ASSERT_FLOAT_EQ(res, 10);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
