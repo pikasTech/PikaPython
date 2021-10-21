@@ -86,7 +86,7 @@ Support method invoke, argument define, new object, free object and control flow
 
 ### (4)Develop standard.
 
-Readability first，nearly never use macro function and global argument.
+Readability first, nearly never use macro function and global argument.
 
 Complete unit testes based on google test.
 
