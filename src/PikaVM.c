@@ -147,10 +147,23 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     }
     if (instruct == OPT) {
         char* operator= data;
+        Arg* outArg = NULL;
         Arg* arg1 = arg_copy(queue_popArg(invokeQuene1));
         Arg* arg2 = arg_copy(queue_popArg(invokeQuene1));
+        if (strEqu(operator, "+")) {
+            if (strEqu(arg_getType(arg1), "int") &&
+                strEqu(arg_getType(arg2), "int")) {
+                outArg =
+                    arg_setInt(outArg, "", arg_getInt(arg1) + arg_getInt(arg2));
+                goto OPT_exit;
+            }
+        }
+    OPT_exit:
         arg_deinit(arg1);
         arg_deinit(arg2);
+        if (NULL != outArg) {
+            return outArg;
+        }
     }
     if (instruct == RUN) {
         Args* buffs = New_strBuff();
