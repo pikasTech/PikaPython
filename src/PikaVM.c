@@ -16,7 +16,7 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
-enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ };
+enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ, OPT };
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
@@ -27,6 +27,9 @@ static char* strs_getLine(Args* buffs, char* code) {
 }
 
 static enum Instruct getInstruct(char* line) {
+    if (0 == strncmp(line + 2, "OPT", 3)) {
+        return OPT;
+    }
     if (0 == strncmp(line + 2, "REF", 3)) {
         return REF;
     }
@@ -141,6 +144,13 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         if (0 == assert) {
             *jmp = fast_atoi(data);
         }
+    }
+    if (instruct == OPT) {
+        char* operator= data;
+        Arg* arg1 = arg_copy(queue_popArg(invokeQuene1));
+        Arg* arg2 = arg_copy(queue_popArg(invokeQuene1));
+        arg_deinit(arg1);
+        arg_deinit(arg2);
     }
     if (instruct == RUN) {
         Args* buffs = New_strBuff();
@@ -370,16 +380,15 @@ nextLine:
     return nextAddr;
 }
 
-static char *useFlashAsBuff(char *pikaAsm, Args*buffs){
+static char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
     /* not write flash when asm is old */
-    if (strEqu(pikaAsm, __platformLoadPikaAsm())){
+    if (strEqu(pikaAsm, __platformLoadPikaAsm())) {
         args_deinit(buffs);
         buffs = NULL;
         return __platformLoadPikaAsm();
     }
     /* write flash */
-    if (0 == __platformSavePikaAsm(pikaAsm))
-    {
+    if (0 == __platformSavePikaAsm(pikaAsm)) {
         args_deinit(buffs);
         buffs = NULL;
         return __platformLoadPikaAsm();
@@ -390,11 +399,11 @@ static char *useFlashAsBuff(char *pikaAsm, Args*buffs){
 Args* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseMultiLineToAsm(buffs, multiLine);
-    if (strCountSign(multiLine,'\n') > 1){
+    if (strCountSign(multiLine, '\n') > 1) {
         pikaAsm = useFlashAsBuff(pikaAsm, buffs);
     }
     Args* sysRes = pikaVM_runAsm(self, pikaAsm);
-    if (NULL != buffs){
+    if (NULL != buffs) {
         args_deinit(buffs);
     }
     return sysRes;
