@@ -6,26 +6,29 @@
 #include "dataStack.h"
 #include "dataStrs.h"
 
-char* strsPopStmts(Args* buffs, char* stmts) {
+char* strsPopTokenWithSkip(Args* buffs,
+                           char* stmts,
+                           char sign,
+                           char skipStart,
+                           char skipEnd) {
     int32_t size = strGetSize(stmts);
     if (0 == size) {
         return NULL;
     }
     char* strOut = args_getBuff(buffs, size);
     int32_t iOut = 0;
-    char delChar = ' ';
     int32_t stmtEnd = 0;
     uint8_t isGetSign = 0;
     int32_t parentheseDeepth = 0;
     for (int32_t i = 0; i < size; i++) {
-        if ('(' == stmts[i]) {
+        if (skipStart == stmts[i]) {
             parentheseDeepth++;
         }
-        if (')' == stmts[i]) {
+        if (skipEnd == stmts[i]) {
             parentheseDeepth--;
         }
         if (parentheseDeepth == 0) {
-            if (',' == stmts[i]) {
+            if (sign == stmts[i]) {
                 stmtEnd = i;
                 isGetSign = 1;
                 break;
@@ -139,17 +142,17 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     if (OPERATOR == stmtType) {
         char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
         char operator[2] = {0};
-        if (strIsContain(rightWithoutSubStmt, '+')) {
-            operator[0] = '+';
-        }
-        if (strIsContain(rightWithoutSubStmt, '-')) {
-            operator[0] = '-';
-        }
         if (strIsContain(rightWithoutSubStmt, '*')) {
             operator[0] = '*';
         }
         if (strIsContain(rightWithoutSubStmt, '/')) {
             operator[0] = '/';
+        }
+        if (strIsContain(rightWithoutSubStmt, '+')) {
+            operator[0] = '+';
+        }
+        if (strIsContain(rightWithoutSubStmt, '-')) {
+            operator[0] = '-';
         }
         if (strIsContain(rightWithoutSubStmt, '<')) {
             operator[0] = '<';
@@ -158,11 +161,13 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
             operator[0] = '>';
         }
         if (strIsContain(rightWithoutSubStmt, '=')) {
-            operator[0] = '==';
+            operator[0] = '=';
+            operator[1] = '=';
         }
         obj_setStr(ast, (char*)"operator", operator);
         char* rightBuff = strsCopy(buffs, right);
-        char* subStmt1 = strsPopToken(buffs, rightBuff, operator[0]);
+        char* subStmt1 =
+            strsPopTokenWithSkip(buffs, rightBuff, operator[0], '(', ')');
         char* subStmt2 = rightBuff;
         queueObj_pushObj(ast, (char*)"stmt");
         AST_parseStmt(queueObj_getCurrentObj(ast), subStmt1);
@@ -175,7 +180,8 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         obj_setStr(ast, (char*)"method", method);
         char* subStmts = strsCut(buffs, stmt, '(', ')');
         while (1) {
-            char* subStmt = strsPopStmts(buffs, subStmts);
+            char* subStmt =
+                strsPopTokenWithSkip(buffs, subStmts, ',', '(', ')');
             if (NULL == subStmt) {
                 break;
             }
