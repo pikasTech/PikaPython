@@ -150,29 +150,87 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         Arg* outArg = NULL;
         Arg* arg1 = arg_copy(queue_popArg(invokeQuene1));
         Arg* arg2 = arg_copy(queue_popArg(invokeQuene1));
-        if (strEqu(operator, "+")) {
-            if (strEqu(arg_getType(arg1), "int") &&
-                strEqu(arg_getType(arg2), "int")) {
-                outArg =
-                    arg_setInt(outArg, "", arg_getInt(arg1) + arg_getInt(arg2));
+        if (strEqu(arg_getType(arg1), "int") &&
+            strEqu(arg_getType(arg2), "int")) {
+            int num1 = arg_getInt(arg1);
+            int num2 = arg_getInt(arg2);
+            if (strEqu("+", data)) {
+                outArg = arg_setInt(outArg, "", num1 + num2);
                 goto OPT_exit;
             }
-            if (strEqu(arg_getType(arg1), "float") &&
-                strEqu(arg_getType(arg2), "int")) {
-                outArg = arg_setFloat(outArg, "",
-                                      arg_getFloat(arg1) + arg_getInt(arg2));
+            if (strEqu("-", data)) {
+                outArg = arg_setInt(outArg, "", num1 - num2);
                 goto OPT_exit;
             }
-            if (strEqu(arg_getType(arg1), "int") &&
-                strEqu(arg_getType(arg2), "float")) {
-                outArg = arg_setFloat(outArg, "",
-                                      arg_getInt(arg1) + arg_getFloat(arg2));
+            if (strEqu("*", data)) {
+                outArg = arg_setInt(outArg, "", num1 * num2);
                 goto OPT_exit;
             }
-            if (strEqu(arg_getType(arg1), "float") &&
-                strEqu(arg_getType(arg2), "float")) {
-                outArg = arg_setFloat(outArg, "",
-                                      arg_getFloat(arg1) + arg_getFloat(arg2));
+            if (strEqu("/", data)) {
+                outArg = arg_setInt(outArg, "", num1 / num2);
+                goto OPT_exit;
+            }
+        }
+        if (strEqu(arg_getType(arg1), "float") &&
+            strEqu(arg_getType(arg2), "int")) {
+            float num1 = arg_getFloat(arg1);
+            int num2 = arg_getInt(arg2);
+            if (strEqu("+", data)) {
+                outArg = arg_setFloat(outArg, "", num1 + num2);
+                goto OPT_exit;
+            }
+            if (strEqu("-", data)) {
+                outArg = arg_setFloat(outArg, "", num1 - num2);
+                goto OPT_exit;
+            }
+            if (strEqu("*", data)) {
+                outArg = arg_setFloat(outArg, "", num1 * num2);
+                goto OPT_exit;
+            }
+            if (strEqu("/", data)) {
+                outArg = arg_setFloat(outArg, "", num1 / num2);
+                goto OPT_exit;
+            }
+        }
+        if (strEqu(arg_getType(arg1), "int") &&
+            strEqu(arg_getType(arg2), "float")) {
+            int num1 = arg_getInt(arg1);
+            float num2 = arg_getFloat(arg2);
+            if (strEqu("+", data)) {
+                outArg = arg_setFloat(outArg, "", num1 + num2);
+                goto OPT_exit;
+            }
+            if (strEqu("-", data)) {
+                outArg = arg_setFloat(outArg, "", num1 - num2);
+                goto OPT_exit;
+            }
+            if (strEqu("*", data)) {
+                outArg = arg_setFloat(outArg, "", num1 * num2);
+                goto OPT_exit;
+            }
+            if (strEqu("/", data)) {
+                outArg = arg_setFloat(outArg, "", num1 / num2);
+                goto OPT_exit;
+            }
+        }
+        if (strEqu(arg_getType(arg1), "float") &&
+            strEqu(arg_getType(arg2), "float")) {
+            float num1 = arg_getFloat(arg1);
+            float num2 = arg_getFloat(arg2);
+            if (strEqu("+", data)) {
+                outArg = arg_setFloat(outArg, "", num1 + num2);
+                goto OPT_exit;
+            }
+            if (strEqu("-", data)) {
+                outArg = arg_setFloat(outArg, "", num1 - num2);
+                goto OPT_exit;
+            }
+            if (strEqu("*", data)) {
+                outArg = arg_setFloat(outArg, "", num1 * num2);
+                goto OPT_exit;
+            }
+            if (strEqu("/", data)) {
+                outArg = arg_setFloat(outArg, "", num1 / num2);
                 goto OPT_exit;
             }
         }
