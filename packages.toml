@@ -30,7 +30,7 @@ releases = [
 name = "PikaStdDevice"
 releases = [
   "v1.3.0 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
-  "v1.4.0 d2c55c1be4db9d48713d9b391dd10d22b3daa928",
+  "v1.4.0 29c3c5b3b0cb4d3e41e6a2a0aef9e2826bc6f7ba",
 ]
 
 [[packages]]
@@ -49,7 +49,7 @@ releases = [
   "v1.1.1 91818aab0fa87b007e84866d479af5ac507339fe",
   "v1.2.0 6bd4aac6e9aba2a603da602be8583021da1272c0",
   "v1.3.0 7b816b1546ef91a03f77760d4b10806ab956d452",
-  "v1.4.0 d2c55c1be4db9d48713d9b391dd10d22b3daa928",
+  "v1.4.0 29c3c5b3b0cb4d3e41e6a2a0aef9e2826bc6f7ba",
 ]
 
 [[packages]]
