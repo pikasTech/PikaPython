@@ -57,6 +57,7 @@ class UART(PikaStdDevice.UART):
     def platformRead(id: int, length: int) -> str:
         pass
 
+
 class PWM(PikaStdDevice.PWM):
     # override
     def platformEnable(pin: str, freq: int, duty: float):
@@ -68,4 +69,21 @@ class PWM(PikaStdDevice.PWM):
 
     # override
     def platformSetDuty(pin: str, duty: float):
+        pass
+
+
+class IIC(PikaStdDevice.IIC):
+    SCL = GPIO()
+    SDA = GPIO()
+    # override
+
+    def platformEnable():
+        pass
+
+    # override
+    def platformWrite(addr: int, data: str):
+        pass
+
+    # override
+    def platformRead(addr: int, length: int) -> str:
         pass

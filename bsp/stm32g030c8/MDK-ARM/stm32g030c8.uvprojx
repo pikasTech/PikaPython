@@ -735,6 +735,16 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\STM32-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdDevice_IIC-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdDevice_IIC-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32_IIC-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32_IIC-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -824,6 +834,16 @@
               <FileName>STM32_UART.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\STM32\STM32_UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32_IIC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_IIC.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_IIC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_IIC.c</FilePath>
             </File>
           </Files>
         </Group>
