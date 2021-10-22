@@ -55,19 +55,14 @@ static enum Instruct getInstruct(char* line) {
 }
 
 static void* getMethodPtr(PikaObj* methodHost, char* methodName) {
-    Args* buffs = New_strBuff();
-    char* methodPtrPath = strsAppend(buffs, "[mp]", methodName);
-    void* res = obj_getPtr(methodHost, methodPtrPath);
-    args_deinit(buffs);
+    void* res = obj_getPtr(methodHost, methodName);
     return res;
 }
 
 static char* getMethodDeclearation(PikaObj* obj, char* methodName) {
-    Args* buffs = New_strBuff();
-    char* methodDeclearationPath = strsAppend(buffs, "[md]", methodName);
-    char* res = obj_getStr(obj, methodDeclearationPath);
-    args_deinit(buffs);
-    return res;
+    Arg* methodArg = obj_getArg(obj, methodName);
+    char* declearation = arg_getType(methodArg);
+    return declearation;
 }
 
 int fast_atoi(char* src) {

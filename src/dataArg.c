@@ -302,10 +302,16 @@ uint16_t content_typeOffset(uint8_t* self) {
 }
 
 char* arg_getName(Arg* self) {
+    if (NULL == self) {
+        return NULL;
+    }
     return content_getName(self);
 }
 
 char* arg_getType(Arg* self) {
+    if (NULL == self) {
+        return NULL;
+    }
     return content_getType(self);
 }
 

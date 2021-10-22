@@ -252,11 +252,7 @@ void* getNewClassObjFunByName(PikaObj* obj, char* name) {
 }
 
 int32_t removeEachMethodInfo(Arg* argNow, Args* argList) {
-    if (strIsStartWith(arg_getName(argNow), "[md]")) {
-        args_removeArg(argList, arg_getName(argNow));
-        return 0;
-    }
-    if (strIsStartWith(arg_getName(argNow), "[mp]")) {
+    if (strIsStartWith(arg_getType(argNow), "_mtd-")) {
         args_removeArg(argList, arg_getName(argNow));
         return 0;
     }
@@ -337,15 +333,16 @@ char* obj_getName(PikaObj* self) {
     return obj_getStr(self, "_n");
 }
 
-void loadMethodInfo(PikaObj* methodHost,
+void saveMethodInfo(PikaObj* methodHost,
                     char* methodName,
                     char* methodDeclearation,
                     void* methodPtr) {
     Args* buffs = New_strBuff();
-    char* methodPtrPath = strsAppend(buffs, "[mp]", methodName);
-    char* methodDeclearationPath = strsAppend(buffs, "[md]", methodName);
-    obj_setPtr(methodHost, methodPtrPath, methodPtr);
-    obj_setStr(methodHost, methodDeclearationPath, methodDeclearation);
+    char* methodArgList =
+        strsRemovePrefix(buffs, methodDeclearation, methodName);
+    char* methodType = strsAppend(buffs, "_mtd-", methodArgList);
+    args_setPtrWithType(methodHost->attributeList, methodName, methodType,
+                        methodPtr);
     args_deinit(buffs);
 }
 
@@ -368,7 +365,7 @@ int32_t class_defineMethod(PikaObj* self,
     }
     char* methodName = strsGetLastToken(buffs, methodPath, '.');
 
-    loadMethodInfo(methodHost, methodName, cleanDeclearation, methodPtr);
+    saveMethodInfo(methodHost, methodName, cleanDeclearation, methodPtr);
     res = 0;
     goto exit;
 exit:
