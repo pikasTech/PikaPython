@@ -18,11 +18,11 @@ iic.setPinSDA('PB0')
 iic.setPinSCL('PB1')
 iic.setDeviceAddr(88)
 iic.enable()
-print(iic.read(4))
+print(iic.read(0, 4))
 
 print('hello 2')
 print('mem used max:')
-mem.max() 
+mem.max()
 
 i = 0
 while i < 100:
