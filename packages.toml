@@ -8,6 +8,7 @@ releases = [
   "v0.10.0 c86eaefa4516dd82b1050fa74a7d85399459d5ed",
   "v1.0.0 7b816b1546ef91a03f77760d4b10806ab956d452",
   "v1.1.0 845d1fc6520237e2238087800f72608dcb81afa6",
+  "v1.1.1 c77e42450ed0eb09fcd7bb2b7d7c2b7eeeb55a2e",
 ]
 
 [[packages]]
