@@ -1,6 +1,4 @@
 
-<img align="right" src="https://user-images.githubusercontent.com/88232613/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
-
 <img align="left" src="https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif" width="60" height="60"/>
 
 [![CI](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg)](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml)
@@ -135,6 +133,10 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 ### 群已经满啦，加我QQ拉你进群~ qq: 645275593
 
 ## Tencent QQ： 645275593
+
+## Tencent QQ Group:
+
+<img src="https://user-images.githubusercontent.com/88232613/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
 
 ## E-mail: 645275593@qq.com
 
