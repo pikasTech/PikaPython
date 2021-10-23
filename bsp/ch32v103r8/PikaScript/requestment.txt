@@ -1,2 +1,3 @@
 pikascript-core==v1.1.1
 PikaStdLib==v1.1.0
+CH32V103R8Booter==v1.0.0
