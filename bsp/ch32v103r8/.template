@@ -1,0 +1,15 @@
+Mcu Type=CH32V10x
+Address=0x08000000
+Target Path=obj/CH32V103R8T6.hex
+Erase All=true
+Program=true
+Verify=true
+Reset=true
+
+Vendor=WCH
+Link=WCH-Link
+Toolchain=RISC-V
+Series=CH32V103
+Description=ROM(byte): 64K, SRAM(byte): 20K, CHIP PINS: 64, GPIO PORTS: 51.\nWCH CH32V1 series of mainstream MCUs covers the needs of a large variety of applications in the industrial,medical and consumer markets. High performance with first-class peripherals and low-power,low-voltage operation is paired with a high level of integration at accessible prices with a simple architecture and easy-to-use tools.
+
+PeripheralVersion=1.5
