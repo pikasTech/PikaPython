@@ -71,3 +71,9 @@ releases = [
   "v1.0.0 bbf178182e5780ef8a02a9b09b8a5f250bb7e767",
   "v1.1.0 7b816b1546ef91a03f77760d4b10806ab956d452",
 ]
+
+[[packages]]
+name = "CH32V103R8Booter"
+releases = [
+  "v1.0.0 b92ef8c347860077d259e8f4504b3ed8e55da85d",
+]
