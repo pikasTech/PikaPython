@@ -8,7 +8,25 @@
 # 来颗Star求求了~ Star please~
 ## issue, pr请往主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
 
-# [【视频】手把手PikaScript视频教程](https://www.bilibili.com/video/BV1mg411L72e)
+# 视频教程
+
+## 入门篇 - 面向单片机Python编程用户
+
+[PikaScript入门-单片机python编程和环境配置](https://www.bilibili.com/video/BV1mg411L72e)
+
+## 中级篇 - 面向驱动开发者
+
+[PikaScript中级 RISC-V部署PikaScript CH32V103R8](https://www.bilibili.com/video/BV1Cq4y1G7Tj)
+
+## 进阶篇 - 面向编译器爱好者和开源项目维护者
+
+[PikaScript进阶-字节码与虚拟机](https://www.bilibili.com/video/BV1J3411y7tX/)
+
+[PikaScript进阶-Github自动测试-Github Actions CI](https://www.bilibili.com/video/BV1o3411C76q/)
+
+[PikaScript进阶-Googletest测试框架](https://www.bilibili.com/video/BV1UF411Y7Z6/)
+
+[PikaScript进阶-数据结构源码精讲](https://www.bilibili.com/video/BV1Ky4y157nW/)
 
 # 获取PikaScript:
 
