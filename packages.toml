@@ -81,6 +81,6 @@ releases = [
 [[packages]]
 name = "CM32M101ABooter"
 releases = [
-  "v1.0.0 8f70c805b6427148a6d9d3508be7e6edcafe25d9",
+  "v1.0.0 7f5d244ceb4506404295bd2a91fedc1e4d3193e6",
 ]
 
