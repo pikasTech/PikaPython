@@ -1,6 +1,7 @@
 #include "BaseObj.h"
 #include "PikaStdDevice_GPIO.h"
 
+
 void PikaStdDevice_GPIO_init(PikaObj* self) {
     obj_setInt(self, "isEnable", 0);
     obj_setStr(self, "pin", "PA0");
@@ -37,8 +38,13 @@ void PikaStdDevice_GPIO_high(PikaObj* self) {
 }
 
 void PikaStdDevice_GPIO_setMode(PikaObj* self, char* mode) {
-    obj_setStr(self, "mode", mode);
-    obj_run(self, "platformSetMode(mode)");
+    if(strEqu(mode, "out")||strEqu(mode, "in")){
+        obj_setStr(self, "mode", mode);
+        obj_run(self, "platformSetMode(mode)");
+    }else{
+        obj_setErrorCode(self, 1);
+        obj_setSysOut(self, "[error] GPIO mode should be 'out' or 'in'.");
+    }
 }
 
 void PikaStdDevice_GPIO_setPin(PikaObj* self, char* pinName) {
