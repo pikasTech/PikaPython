@@ -1,5 +1,4 @@
 #include "PikaStdDevice_IIC.h"
-#include "STM32_GPIO.h"
 #include "BaseObj.h"
 #include "PikaObj.h"
 void PikaStdDevice_IIC_init(PikaObj *self){
