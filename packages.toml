@@ -84,3 +84,8 @@ releases = [
   "v1.0.0 dbc2612257f70426daaf613fa197bdf87626a016",
 ]
 
+[[packages]]
+name = "CH32V103"
+releases = [
+  "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
+]
