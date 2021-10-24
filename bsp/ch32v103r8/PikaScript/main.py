@@ -1,8 +1,9 @@
 import PikaStdLib
 
+mem = PikaStdLib.MemChecker()
 print('hello PikaScript !')
 
-i = 0
-while i < 100:
-    i = i + 1
-    print(i)
+
+print(1.4)
+print('mem used max:')
+mem.max()
