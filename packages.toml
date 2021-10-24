@@ -77,3 +77,10 @@ name = "CH32V103R8Booter"
 releases = [
   "v1.0.0 b92ef8c347860077d259e8f4504b3ed8e55da85d",
 ]
+
+[[packages]]
+name = "CM32M101ABooter"
+releases = [
+  "v1.0.0 8f70c805b6427148a6d9d3508be7e6edcafe25d9",
+]
+
