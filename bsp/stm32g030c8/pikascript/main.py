@@ -2,31 +2,40 @@ import PikaStdLib
 import STM32
 import PikaPiZero
 
-uart = STM32.UART()
-uart = STM32.UART()
-rgb = PikaPiZero.RGB()
+right = STM32.GPIO()
+right.init()
+right.setPin('PA0')
+right.setMode('in')
+right.setPull('down')
+right.enable()
+
+left= STM32.GPIO()
+left.init()
+left.setPin('PC13')
+left.setMode('in')
+left.setPull('up')
+left.enable()
+
+down= STM32.GPIO()
+down.init()
+down.setPin('PB6')
+down.setMode('in')
+down.setPull('up')
+down.enable()
+
+up= STM32.GPIO()
+up.init()
+up.setPin('PA15')
+up.setMode('in')
+up.setPull('up')
+up.enable()
+
+print('Hello PikaScript!')
 mem = PikaStdLib.MemChecker()
-
-uart.init()
-uart.setId(1)
-uart.setBaudRate(115200)
-uart.enable()
-
-iic = STM32.IIC()
-iic.init()
-iic.setPinSDA('PB0')
-iic.setPinSCL('PB1')
-iic.setDeviceAddr(88)
-iic.enable()
-print(iic.read(0, 4))
-
-print('hello 2')
 print('mem used max:')
 mem.max()
 
-i = 0
-while i < 100:
-    i = i + 1
-    print(i)
+while True:
+    if right.read() :
+        print('up')
 
-print('Hello PikaScript!')

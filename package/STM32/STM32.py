@@ -23,6 +23,10 @@ class GPIO(PikaStdDevice.GPIO):
     def platformSetMode(mode: str):
         pass
 
+    # override
+    def platformRead()->int:
+        pass
+
 
 class Time(PikaStdDevice.Time):
     # override

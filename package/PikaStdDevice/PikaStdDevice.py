@@ -17,6 +17,9 @@ class GPIO(TinyObj):
     def getMode() -> str:
         pass
 
+    def setPull(pull:str):
+        pass
+
     def enable():
         pass
 
@@ -27,6 +30,9 @@ class GPIO(TinyObj):
         pass
 
     def low():
+        pass
+
+    def read()->int:
         pass
 
     # need be overrid
@@ -47,6 +53,10 @@ class GPIO(TinyObj):
 
     # need override
     def platformSetMode(mode: str):
+        pass
+
+    # need override
+    def platformRead()->int:
         pass
 
 

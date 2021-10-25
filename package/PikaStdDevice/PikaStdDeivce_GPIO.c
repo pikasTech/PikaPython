@@ -7,6 +7,7 @@ void PikaStdDevice_GPIO_init(PikaObj* self) {
     obj_setStr(self, "pin", "PA0");
     obj_setStr(self, "mode", "out");
     obj_setInt(self, "isOn", 0);
+    obj_setStr(self, "pull", "none");
 }
 
 void PikaStdDevice_GPIO_disable(PikaObj* self) {
@@ -37,6 +38,11 @@ void PikaStdDevice_GPIO_high(PikaObj* self) {
     obj_run(self, "platformHigh()");
 }
 
+int PikaStdDevice_GPIO_read(PikaObj *self){
+    obj_run(self, "readBuff = platformRead()");
+    return obj_getInt(self, "readBuff");
+}
+
 void PikaStdDevice_GPIO_setMode(PikaObj* self, char* mode) {
     if(strEqu(mode, "out")||strEqu(mode, "in")){
         obj_setStr(self, "mode", mode);
@@ -44,6 +50,15 @@ void PikaStdDevice_GPIO_setMode(PikaObj* self, char* mode) {
     }else{
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] GPIO mode should be 'out' or 'in'.");
+    }
+}
+
+void PikaStdDevice_GPIO_setPull(PikaObj *self, char * pull){
+    if(strEqu(pull, "up")||strEqu(pull, "down")||strEqu(pull, "none")){
+        obj_setStr(self, "pull", pull);
+    }else{
+        obj_setErrorCode(self, 1);
+        obj_setSysOut(self, "[error] GPIO pull should be 'up', 'down' or 'none'.");
     }
 }
 
@@ -83,4 +98,10 @@ void PikaStdDevice_GPIO_platformOff(PikaObj* self) {
 void PikaStdDevice_GPIO_platformOn(PikaObj* self) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
+int PikaStdDevice_GPIO_platformRead(PikaObj *self){
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+    return -1;
 }

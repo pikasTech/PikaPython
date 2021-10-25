@@ -97,25 +97,27 @@ int main(void) {
     SCB->VTOR = FLASH_BASE | 0x2000;
     __enable_irq();
 
+    pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_run(pikaMain, "uart = STM32.UART()");
+    obj_run(pikaMain, "uart.init()");
+    obj_run(pikaMain, "uart.setId(1)");
+    obj_run(pikaMain, "uart.setBaudRate(115200)");
+    obj_run(pikaMain, "uart.enable()");
+    obj_run(pikaMain, "print('[info]: boot from flash.')");
+    obj_deinit(pikaMain);
+
     char* code = (char*)FLASH_SCRIPT_START_ADDR;
     uint16_t codeOffset = 0;
     if (code[0] != 0xFF) {
         /* boot from flash */
-        pikaMain = newRootObj("pikaMain", New_PikaMain);
-        obj_run(pikaMain, "uart = STM32.UART()");
-        obj_run(pikaMain, "uart.init()");
-        obj_run(pikaMain, "uart.setId(1)");
-        obj_run(pikaMain, "uart.setBaudRat e(115200)");
-        obj_run(pikaMain, "uart.enable()");
-        obj_run(pikaMain, "print('[info]: boot from flash.')");
-        obj_deinit(pikaMain);
         pikaMain = newRootObj("pikaMain", New_PikaMain);
         if(code[0] == 'i'){
             printf("[info]: boot from Script.\r\n");
             obj_run(pikaMain, code);
         }
         if(code[0] == 'B'){
-            printf("[info]: boot from Pika Asm.\r\n");            
+            printf("[info]: boot from Pika Asm.\r\n");    
+            printf("%s",code);
             pikaVM_runAsm(pikaMain, code);
         }
     } else {
