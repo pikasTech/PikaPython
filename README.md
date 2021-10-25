@@ -106,9 +106,9 @@ Support method invoke, argument define, new object, free object, control flow(if
 
 #### Control flow
 
-| if | while | for | else | break | continue |
-| --- | --- | --- | --- | --- | --- |
-|√|√| | | | |
+| if | while | for |
+| --- | --- | --- |
+|√|√| |
 ### (4)Develop standard.
 
 Readability first, nearly never use macro function and global argument.
