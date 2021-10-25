@@ -1,4 +1,4 @@
-pikascript-core==v1.1.1
+pikascript-core==v1.1.2
 PikaStdLib==v1.1.0
 PikaStdDevice==latest
 STM32==latest
