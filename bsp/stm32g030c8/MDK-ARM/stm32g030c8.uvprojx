@@ -313,7 +313,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>7</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -332,7 +332,7 @@
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
-            <v6Lto>0</v6Lto>
+            <v6Lto>1</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
@@ -730,6 +730,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaPiZero-api.c</FilePath>
             </File>
+            <File>
+              <FileName>STM32_IIC-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32_IIC-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -824,6 +829,11 @@
               <FileName>oled.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaPiZero\oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32_IIC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_IIC.c</FilePath>
             </File>
           </Files>
         </Group>
