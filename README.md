@@ -84,6 +84,10 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 
 Support method invoke, argument define, new object, free object, control flow(if\while) and operator ( + - * / < == > ). - Based on [Pika Runtime Core](../../tree/master/src/package/pikascript/pikascript-core).
 
+| Operator | + | - | * | / | == | >= | <= | and | or | not |
+| --- | --- | --- | --- | --- | --- | --- | ---| ---| ---| ---|
+| |√|√|√|√|√| | | | |
+
 ### (4)Develop standard.
 
 Readability first, nearly never use macro function and global argument.
