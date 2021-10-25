@@ -27,6 +27,8 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [PikaScript中级 RISC-V部署PikaScript CH32V103R8](https://www.bilibili.com/video/BV1Cq4y1G7Tj)
 
+[PikaScrip中级 国产MCU CM32M101A部署Python引擎PikaScript](https://www.bilibili.com/video/BV1jv411u7EJ)
+
 ## 进阶篇 - 面向编译器爱好者和开源项目维护者
 
 [PikaScript进阶-字节码与虚拟机](https://www.bilibili.com/video/BV1J3411y7tX/)
