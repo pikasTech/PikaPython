@@ -76,6 +76,16 @@ char* strs_deleteBetween(Args* buffs, char* strIn, char begin, char end) {
     return strOut;
 }
 
+uint8_t checkIsEqu(char* str) {
+    uint32_t size = strGetSize(str) + 1;
+    for (int i = 0; i + 1 < size; i++) {
+        if (str[i] == '=' && str[i + 1] == '=') {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 static enum StmtType matchStmtType(char* right) {
     Args* buffs = New_strBuff();
     enum StmtType stmtType = NONE;
@@ -85,7 +95,7 @@ static enum StmtType matchStmtType(char* right) {
         strIsContain(rightWithoutSubStmt, '*') ||
         strIsContain(rightWithoutSubStmt, '<') ||
         strIsContain(rightWithoutSubStmt, '>') ||
-        strIsContain(rightWithoutSubStmt, '=') ||
+        checkIsEqu(rightWithoutSubStmt) ||
         strIsContain(rightWithoutSubStmt, '/')) {
         stmtType = OPERATOR;
         goto exit;
@@ -113,6 +123,17 @@ exit:
     return stmtType;
 }
 
+uint8_t checkIsDirect(char* str) {
+    /* include '0' */
+    uint32_t size = strGetSize(str) + 1;
+    for (int i = 1; i + 1 < size; i++) {
+        if ((str[i - 1] != '=') && (str[i] == '=') && (str[i + 1] != '=')) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args* buffs = New_strBuff();
     char* assignment = strsGetFirstToken(buffs, stmt, '(');
@@ -124,7 +145,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* right = NULL;
     /* solve direct */
     uint8_t directExist = 0;
-    if (strIsContain(assignment, '=')) {
+    if (checkIsDirect(assignment)) {
         directExist = 1;
     }
     if (directExist) {
@@ -160,7 +181,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         if (strIsContain(rightWithoutSubStmt, '>')) {
             operator[0] = '>';
         }
-        if (strIsContain(rightWithoutSubStmt, '=')) {
+        if (checkIsEqu(rightWithoutSubStmt)) {
             operator[0] = '=';
             operator[1] = '=';
         }
@@ -169,6 +190,9 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         char* subStmt1 =
             strsPopTokenWithSkip(buffs, rightBuff, operator[0], '(', ')');
         char* subStmt2 = rightBuff;
+        if (operator[1] == '=') {
+            subStmt2 = rightBuff + 1;
+        }
         queueObj_pushObj(ast, (char*)"stmt");
         AST_parseStmt(queueObj_getCurrentObj(ast), subStmt1);
         queueObj_pushObj(ast, (char*)"stmt");
