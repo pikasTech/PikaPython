@@ -30,6 +30,7 @@ releases = [
 name = "PikaStdDevice"
 releases = [
   "v1.3.0 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
+  "v1.4.0 29c3c5b3b0cb4d3e41e6a2a0aef9e2826bc6f7ba",
 ]
 
 [[packages]]
@@ -48,6 +49,7 @@ releases = [
   "v1.1.1 91818aab0fa87b007e84866d479af5ac507339fe",
   "v1.2.0 6bd4aac6e9aba2a603da602be8583021da1272c0",
   "v1.3.0 7b816b1546ef91a03f77760d4b10806ab956d452",
+  "v1.4.0 29c3c5b3b0cb4d3e41e6a2a0aef9e2826bc6f7ba",
 ]
 
 [[packages]]
@@ -68,4 +70,22 @@ name = "STM32G030Booter"
 releases = [
   "v1.0.0 bbf178182e5780ef8a02a9b09b8a5f250bb7e767",
   "v1.1.0 7b816b1546ef91a03f77760d4b10806ab956d452",
+]
+
+[[packages]]
+name = "CH32V103R8Booter"
+releases = [
+  "v1.0.0 b92ef8c347860077d259e8f4504b3ed8e55da85d",
+]
+
+[[packages]]
+name = "CM32M101ABooter"
+releases = [
+  "v1.0.0 dbc2612257f70426daaf613fa197bdf87626a016",
+]
+
+[[packages]]
+name = "CH32V103"
+releases = [
+  "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
 ]

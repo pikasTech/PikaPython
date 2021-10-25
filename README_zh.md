@@ -1,6 +1,4 @@
 
-<img align="right" src="https://user-images.githubusercontent.com/88232613/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
-
 <img align="left" src="https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif" width="60" height="60"/>
 
 [![CI](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg)](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml)
@@ -8,7 +6,38 @@
 # 来颗Star求求了~ Star please~
 ## issue, pr请往主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
 
-# [【视频】手把手PikaScript视频教程](https://www.bilibili.com/video/BV1mg411L72e)
+# 1.简介
+
+PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配置，可以在少于4KB的RAM下运行(如stm32g030c8和stm32f103c8)，极易部署和扩展。
+
+![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
+
+
+<img src="https://user-images.githubusercontent.com/88232613/137866679-642e4e74-c373-4880-9d97-20dfefeafc18.png" width="500"/>
+
+![image](https://user-images.githubusercontent.com/88232613/138021445-13643518-b0a3-4872-a290-5dec27697837.png)
+
+# 视频教程
+
+## 入门篇 - 面向单片机Python编程用户
+
+[PikaScript入门-单片机python编程和环境配置](https://www.bilibili.com/video/BV1mg411L72e)
+
+## 中级篇 - 面向驱动开发者
+
+[PikaScript中级 RISC-V部署PikaScript CH32V103R8](https://www.bilibili.com/video/BV1Cq4y1G7Tj)
+
+[PikaScrip中级 国产MCU CM32M101A部署Python引擎PikaScript](https://www.bilibili.com/video/BV1jv411u7EJ)
+
+## 进阶篇 - 面向编译器爱好者和开源项目维护者
+
+[PikaScript进阶-字节码与虚拟机](https://www.bilibili.com/video/BV1J3411y7tX/)
+
+[PikaScript进阶-Github自动测试-Github Actions CI](https://www.bilibili.com/video/BV1o3411C76q/)
+
+[PikaScript进阶-Googletest测试框架](https://www.bilibili.com/video/BV1UF411Y7Z6/)
+
+[PikaScript进阶-数据结构源码精讲](https://www.bilibili.com/video/BV1Ky4y157nW/)
 
 # 获取PikaScript:
 
@@ -19,19 +48,6 @@
 2. 将[requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/tools/pikaCompiler)与[模块](../../tree/master/package)。
 
 3. 已发布的模块列表：[packages.toml](/packages.toml)
-
-# 1.简介
-
-PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配置，可以在少于4KB的RAM下运行(如stm32g030c8和stm32f103c8)，极易部署和扩展。
-
-PikaScript is an ultra lightweight Python engine with zero dependencies and zero configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8), and very easy to deploy and expand.
-
-![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
-
-
-<img src="https://user-images.githubusercontent.com/88232613/137866679-642e4e74-c373-4880-9d97-20dfefeafc18.png" width="500"/>
-
-![image](https://user-images.githubusercontent.com/88232613/138021445-13643518-b0a3-4872-a290-5dec27697837.png)
 
 ## 文件目录
 [src](../../tree/master/src) - 内核源码
@@ -86,6 +102,32 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 
 在运行时支持python方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core)。
 
+|语法|编译时|运行时|
+|---|---|---|
+|类定义|√| |
+|类继承|√| |
+|方法定义|√| |
+|方法重载|√| |
+|方法调用|√|√|
+|模块导入|√|√|
+|参数定义|√|√|
+|参数赋值|√|√|
+|对象新建|√|√|
+|对象销毁|√|√|
+|对象嵌套|√|√|
+
+#### 操作符
+
+|+ |- |* |/ |== |>= |<= |
+ --- |--- |--- |--- |--- |--- |---|
+|√|√|√|√|√| | | | |
+
+#### 控制流
+
+|if|while|for|
+|--- |--- |--- |
+|√|√| |
+
 ### (4)源码规范
 
 注重源码可读性，命名规范，标准统一，完全不使用宏，几乎不使用全局变量。
@@ -117,6 +159,10 @@ PikaScript is an ultra lightweight Python engine with zero dependencies and zero
 ### 群已经满啦，加我QQ拉你进群~ qq: 645275593
 
 ## Tencent QQ： 645275593
+
+## Tencent QQ Group:
+
+<img src="https://user-images.githubusercontent.com/88232613/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
 
 ## E-mail: 645275593@qq.com
 

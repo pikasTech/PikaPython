@@ -51,8 +51,8 @@ It's very easy to bind C function to python module with the help of Pika Pre-com
 # 2.Device driver
 |MCU/Board|gpio|uart|pwm|adc|rgb|i2c|spi|
 |---|---|---|---|---|---|---|---|
-|[PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√| | |
-|stm32g030c8|√|√|√|√|-| | |
+|[PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√| |
+|stm32g030c8|√|√|√|√|-|√| |
 |stm32g070cB|√|√|√|√|-| | |
 |stm32f103c8|√|√|√|√|-| | |
 
@@ -84,6 +84,31 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 
 Support method invoke, argument define, new object, free object, control flow(if\while) and operator ( + - * / < == > ). - Based on [Pika Runtime Core](../../tree/master/src/package/pikascript/pikascript-core).
 
+|Syntax|Compile-Time|Run-Time|
+|---|---|---|
+|Class Define     |√| |
+|Class Inherit    |√| |
+|Method Define    |√| |
+|Method Override  |√| |
+|Method Invoke    |√|√|
+|Module Import    |√|√|
+|Argument Define  |√|√|
+|Argument Assignment  |√|√|
+|Object New       |√|√|
+|Object Free      |√|√|
+|Object Nest      |√|√|
+
+#### Operator
+
+| + | - | * | / | == | >= | <= |
+ --- | --- | --- | --- | --- | --- | ---|
+|√|√|√|√|√| | | | |
+
+#### Control flow
+
+| if | while | for |
+| --- | --- | --- |
+|√|√| |
 ### (4)Develop standard.
 
 Readability first, nearly never use macro function and global argument.

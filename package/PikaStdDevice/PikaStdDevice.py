@@ -114,6 +114,41 @@ class UART(TinyObj):
         pass
 
 
+class IIC(TinyObj):
+    def init():
+        pass
+
+    def setPinSCL(pin: str):
+        pass
+
+    def setPinSDA(pin: str):
+        pass
+
+    def setDeviceAddr(addr: int):
+        pass
+
+    def enable():
+        pass
+
+    def write(addr: int, data: str):
+        pass
+
+    def read(addr: int, length: int) -> str:
+        pass
+
+    # need override
+    def platformEnable():
+        pass
+
+    # need override
+    def platformWrite(addr: int, data: str):
+        pass
+
+    # need override
+    def platformRead(addr: int, length: int) -> str:
+        pass
+
+
 class PWM(TinyObj):
     def init():
         pass
