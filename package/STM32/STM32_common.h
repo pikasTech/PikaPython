@@ -1,6 +1,12 @@
 #ifndef __STM32__COMMON__H
 #define __STM32__COMMON__H
 #include "PikaObj.h"
+#include <stdint.h>
+
+#define delay_ms HAL_Delay
+typedef uint16_t u16;
+typedef uint8_t u8;
+typedef uint32_t u32;
 
 #ifdef STM32G070xx
 #include "stm32g0xx_hal.h"
