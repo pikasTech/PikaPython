@@ -740,6 +740,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaPiZero_OLED-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaPiZero_Point-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaPiZero_Point-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

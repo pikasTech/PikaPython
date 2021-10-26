@@ -2,27 +2,31 @@ import PikaStdLib
 import STM32
 import PikaPiZero
 
-x = 0
-y = 0
+p0 = PikaPiZero.Point()
+p0.x = 0
+p0.y = 0
+print(p0.x)
 mem = PikaStdLib.MemChecker()
 print('mem used max:')
 mem.max()
-oled.drawPoint(x, y)
+oled.drawPoint(p0.x, p0.y)
 while True:
     if right.read() == 1:
-        if x < 15:
-            x = x + 1
-        oled.drawPoint(x, y)
+        print('right')
+        if p0.x < 15:
+            p0.x = p0.x + 1
+            print(p0.x)
+        oled.drawPoint(p0.x, p0.y)
     if left.read() == 0:
-        if x > 0:
-            x = x - 1
-        oled.drawPoint(x, y)
+        if p0.x > 0:
+            p0.x = p0.x - 1
+        oled.drawPoint(p0.x, p0.y)
     if up.read() == 0:
-        if y > 0:
-            y = y - 1
-        oled.drawPoint(x, y)
+        if p0.y > 0:
+            p0.y = p0.y - 1
+        oled.drawPoint(p0.x, p0.y)
     if down.read() == 0:
-        if y < 7:
-            y = y + 1
-        oled.drawPoint(x, y)
+        if p0.y < 7:
+            p0.y = p0.y + 1
+        oled.drawPoint(p0.x, p0.y)
 

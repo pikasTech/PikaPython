@@ -9,5 +9,6 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
                           int32_t lineAddr,
                           Args* sysRes);
 int32_t __clearInvokeQueues(PikaObj* self);
-
+char* useFlashAsBuff(char* pikaAsm, Args* buffs);
+                          
 #endif

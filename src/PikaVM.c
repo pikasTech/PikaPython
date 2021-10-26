@@ -517,7 +517,7 @@ nextLine:
     return nextAddr;
 }
 
-static char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
+char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
     /* not write flash when asm is old */
     if (strEqu(pikaAsm, __platformLoadPikaAsm())) {
         args_deinit(buffs);
@@ -561,7 +561,10 @@ Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
             __platformPrintf("%s\r\n", sysOut);
         }
         if (0 != errcode) {
-            __platformPrintf("[info] input commond: %s\r\n", thisLine);
+            Args *buffs = New_strBuff();
+            char *onlyThisLine = strsGetFirstToken(buffs, thisLine, '\n');
+            __platformPrintf("[info] input commond: %s\r\n", onlyThisLine);
+            args_deinit(buffs);
         }
     }
     __clearInvokeQueues(self);
