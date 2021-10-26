@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 extern "C" {
 #include "BaseObj.h"
+#include "PikaMain.h"
 #include "PikaMath_Operator.h"
 #include "PikaParser.h"
 #include "PikaStdLib_SysObj.h"
@@ -296,5 +297,26 @@ TEST(VM, while_a_1to10) {
     obj_deinit(self);
     args_deinit(buffs);
     ASSERT_FLOAT_EQ(res, 10);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, while_a_d_x) {
+    char* line = (char*)
+    "mem = PikaStdLib.MemChecker()\n"
+    "mem.x = 1\n"
+    "print(mem.x)\n"
+    "mem.x = 2\n"
+    "print(mem.x)\n"
+    "\n";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"", New_PikaMain);
+    args_deinit(pikaVM_runAsm(self, pikaAsm));
+
+    int res = obj_getInt(self, (char*)"mem.x");
+    obj_deinit(self);
+    args_deinit(buffs);
+    ASSERT_FLOAT_EQ(res, 2);
     EXPECT_EQ(pikaMemNow(), 0);
 }

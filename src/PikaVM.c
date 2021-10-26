@@ -115,7 +115,10 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     }
     if (instruct == OUT) {
         Arg* outArg = arg_copy(queue_popArg(invokeQuene0));
-        outArg = arg_setName(outArg, data);
+        Args* buffs = New_strBuff();
+        char* argName = strsGetLastToken(buffs, data, '.');
+        outArg = arg_setName(outArg, argName);
+        args_deinit(buffs);
         obj_setArg(self, data, outArg);
         arg_deinit(outArg);
         return NULL;
@@ -127,7 +130,8 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         if (strEqu(data, (char*)"False")) {
             return arg_setInt(NULL, "", 0);
         }
-        return arg_copy(obj_getArg(self, data));
+        Arg* arg = arg_copy(obj_getArg(self, data));
+        return arg;
     }
     if (instruct == JMP) {
         *jmp = fast_atoi(data);
@@ -561,8 +565,8 @@ Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
             __platformPrintf("%s\r\n", sysOut);
         }
         if (0 != errcode) {
-            Args *buffs = New_strBuff();
-            char *onlyThisLine = strsGetFirstToken(buffs, thisLine, '\n');
+            Args* buffs = New_strBuff();
+            char* onlyThisLine = strsGetFirstToken(buffs, thisLine, '\n');
             __platformPrintf("[info] input commond: %s\r\n", onlyThisLine);
             args_deinit(buffs);
         }
