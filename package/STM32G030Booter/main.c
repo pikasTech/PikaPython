@@ -126,18 +126,18 @@ int main(void) {
             obj_run(pikaMain, "right.setMode('in')");
             obj_run(pikaMain, "right.setPull('down')");
             obj_run(pikaMain, "right.enable()");
-            obj_run(pikaMain, "left = STM32.GPIO()");
-            obj_run(pikaMain, "left.init()");
-            obj_run(pikaMain, "left.setPin('PC13')");
-            obj_run(pikaMain, "left.setMode('in')");
-            obj_run(pikaMain, "left.setPull('up')");
-            obj_run(pikaMain, "left.enable()");
-            obj_run(pikaMain, "down = STM32.GPIO()");
-            obj_run(pikaMain, "down.init()");
-            obj_run(pikaMain, "down.setPin('PB6')");
-            obj_run(pikaMain, "down.setMode('in')");
-            obj_run(pikaMain, "down.setPull('up')");
-            obj_run(pikaMain, "down.enable()");
+//            obj_run(pikaMain, "left = STM32.GPIO()");
+//            obj_run(pikaMain, "left.init()");
+//            obj_run(pikaMain, "left.setPin('PC13')");
+//            obj_run(pikaMain, "left.setMode('in')");
+//            obj_run(pikaMain, "left.setPull('up')");
+//            obj_run(pikaMain, "left.enable()");
+//            obj_run(pikaMain, "down = STM32.GPIO()");
+//            obj_run(pikaMain, "down.init()");
+//            obj_run(pikaMain, "down.setPin('PB6')");
+//            obj_run(pikaMain, "down.setMode('in')");
+//            obj_run(pikaMain, "down.setPull('up')");
+//            obj_run(pikaMain, "down.enable()");
             obj_run(pikaMain, "up = STM32.GPIO()");
             obj_run(pikaMain, "up.init()");
             obj_run(pikaMain, "up.setPin('PA15')");
@@ -146,6 +146,12 @@ int main(void) {
             obj_run(pikaMain, "up.enable()");
             obj_run(pikaMain, "oled = PikaPiZero.OLED()");
             obj_run(pikaMain, "oled.init()");
+            obj_run(pikaMain, "p0 = PikaPiZero.Point()");
+            obj_run(pikaMain, "p0.x = 0");
+            obj_run(pikaMain, "p0.y = 0");
+            obj_run(pikaMain, "pos = 0");
+            obj_run(pikaMain, "isUpdate = 1");
+            
             pikaVM_runAsm(pikaMain, code);
         }
     } else {

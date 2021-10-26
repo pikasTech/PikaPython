@@ -34,3 +34,9 @@ class OLED(TinyObj):
 
     def drawPoint(x: int, y: int):
         pass
+
+    def clear():
+        pass
+
+class Point(TinyObj):
+    pass

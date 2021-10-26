@@ -1,32 +1,45 @@
 import PikaStdLib
-import STM32
 import PikaPiZero
-
+import STM32
+oled = PikaPiZero.OLED()
+up = STM32.GPIO()
+right = STM32.GPIO()
 p0 = PikaPiZero.Point()
-p0.x = 0
-p0.y = 0
-print(p0.x)
-mem = PikaStdLib.MemChecker()
-print('mem used max:')
-mem.max()
-oled.drawPoint(p0.x, p0.y)
+p1 = PikaPiZero.Point()
+p2 = PikaPiZero.Point()
+p1.x = 0
+p1.y = 0
 while True:
-    if right.read() == 1:
-        print('right')
-        if p0.x < 15:
+    if isUpdate:
+        isUpdate = 0
+        p2.x = p1.x
+        p2.y = p1.y
+        p1.x = p0.x
+        p1.y = p0.y
+        if pos == 0:
             p0.x = p0.x + 1
-            print(p0.x)
-        oled.drawPoint(p0.x, p0.y)
-    if left.read() == 0:
-        if p0.x > 0:
+            if p0.x > 15:
+                p0.x = 0
+        if pos == 1:
             p0.x = p0.x - 1
-        oled.drawPoint(p0.x, p0.y)
-    if up.read() == 0:
-        if p0.y > 0:
+            if p0.x < 0:
+                p0.x = 15
+        if pos == 2:
             p0.y = p0.y - 1
-        oled.drawPoint(p0.x, p0.y)
-    if down.read() == 0:
-        if p0.y < 7:
+            if p0.y < 0:
+                p0.y = 7
+        if pos == 3:
             p0.y = p0.y + 1
+            if p0.y > 7:
+                p0.y = 0
+        oled.clear()
         oled.drawPoint(p0.x, p0.y)
+        oled.drawPoint(p1.x, p1.y)
+        oled.drawPoint(p2.x, p2.y)
+    if right.read() == 1:
+        pos = 0
+        isUpdate = 1
+    if up.read() == 0:
+        pos = 2
+        isUpdate = 1
 
