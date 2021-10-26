@@ -7,5 +7,11 @@ line.off()
 line.moveTo(20)
 
 while True:
-    line.off()
-    line.on()
+    if right.read() == 1:
+        print('right')
+    if left.read() == 0:
+        print('left')
+    if up.read() == 0:
+        print('up')
+    if down.read() == 0:
+        print('down')
