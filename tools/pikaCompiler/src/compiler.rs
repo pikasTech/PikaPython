@@ -90,7 +90,7 @@ impl Compiler {
     ) -> Compiler {
         let line = line.replace("\r", "");
         if file_name == "main" {
-            compiler = Compiler::analyze_main_line(compiler, &line);
+            return Compiler::analyze_main_line(compiler, &line);
         }
 
         if line.starts_with("import ") {
