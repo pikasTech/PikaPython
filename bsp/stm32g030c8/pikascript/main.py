@@ -2,46 +2,27 @@ import PikaStdLib
 import STM32
 import PikaPiZero
 
-right = STM32.GPIO()
-right.init()
-right.setPin('PA0')
-right.setMode('in')
-right.setPull('down')
-right.enable()
-
-left = STM32.GPIO()
-left.init()
-left.setPin('PC13')
-left.setMode('in')
-left.setPull('up')
-left.enable()
-
-down = STM32.GPIO()
-down.init()
-down.setPin('PB6')
-down.setMode('in')
-down.setPull('up')
-down.enable()
-
-up = STM32.GPIO()
-up.init()
-up.setPin('PA15')
-up.setMode('in')
-up.setPull('up')
-up.enable()
-
-print('Hello PikaScript!')
+x = 0
+y = 0
 mem = PikaStdLib.MemChecker()
 print('mem used max:')
 mem.max()
-
+oled.drawPoint(x, y)
 while True:
     if right.read() == 1:
-        print('right')
+        if x < 15:
+            x = x + 1
+        oled.drawPoint(x, y)
     if left.read() == 0:
-        print('left')
+        if x > 0:
+            x = x - 1
+        oled.drawPoint(x, y)
     if up.read() == 0:
-        print('up')
+        if y > 0:
+            y = y - 1
+        oled.drawPoint(x, y)
     if down.read() == 0:
-        print('down')
+        if y < 7:
+            y = y + 1
+        oled.drawPoint(x, y)
 

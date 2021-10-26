@@ -98,12 +98,13 @@ int main(void) {
     __enable_irq();
 
     pikaMain = newRootObj("pikaMain", New_PikaMain);
-    obj_run(pikaMain, "uart = STM32.UART()");
-    obj_run(pikaMain, "uart.init()");
-    obj_run(pikaMain, "uart.setId(1)");
-    obj_run(pikaMain, "uart.setBaudRate(115200)");
-    obj_run(pikaMain, "uart.enable()");
-    obj_run(pikaMain, "print('[info]: boot from flash.')");
+    obj_run(pikaMain, "uart = STM32.UART()");    
+    obj_run(pikaMain, "uart.init()");   
+    obj_run(pikaMain, "uart.setId(1)");    
+    obj_run(pikaMain, "uart.setBaudRate(115200)");    
+    obj_run(pikaMain, "uart.enable()");   
+    obj_run(pikaMain, "print('uart init ok')");
+    obj_run(pikaMain, "remove('uart')");
     obj_deinit(pikaMain);
 
     char* code = (char*)FLASH_SCRIPT_START_ADDR;
@@ -117,7 +118,34 @@ int main(void) {
         }
         if(code[0] == 'B'){
             printf("[info]: boot from Pika Asm.\r\n");    
-            printf("%s",code);
+            printf("%s\n",code);
+            printf("asm size: %d\n", strGetSize(code));
+            obj_run(pikaMain, "right = STM32.GPIO()");
+            obj_run(pikaMain, "right.init()");
+            obj_run(pikaMain, "right.setPin('PA0')");
+            obj_run(pikaMain, "right.setMode('in')");
+            obj_run(pikaMain, "right.setPull('down')");
+            obj_run(pikaMain, "right.enable()");
+            obj_run(pikaMain, "left = STM32.GPIO()");
+            obj_run(pikaMain, "left.init()");
+            obj_run(pikaMain, "left.setPin('PC13')");
+            obj_run(pikaMain, "left.setMode('in')");
+            obj_run(pikaMain, "left.setPull('up')");
+            obj_run(pikaMain, "left.enable()");
+            obj_run(pikaMain, "down = STM32.GPIO()");
+            obj_run(pikaMain, "down.init()");
+            obj_run(pikaMain, "down.setPin('PB6')");
+            obj_run(pikaMain, "down.setMode('in')");
+            obj_run(pikaMain, "down.setPull('up')");
+            obj_run(pikaMain, "down.enable()");
+            obj_run(pikaMain, "up = STM32.GPIO()");
+            obj_run(pikaMain, "up.init()");
+            obj_run(pikaMain, "up.setPin('PA15')");
+            obj_run(pikaMain, "up.setMode('in')");
+            obj_run(pikaMain, "up.setPull('up')");
+            obj_run(pikaMain, "up.enable()");
+            obj_run(pikaMain, "oled = PikaPiZero.OLED()");
+            obj_run(pikaMain, "oled.init()");
             pikaVM_runAsm(pikaMain, code);
         }
     } else {
