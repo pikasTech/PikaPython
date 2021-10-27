@@ -326,7 +326,7 @@ char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
         arg_deinit(pikaAsmBuff);
         pikaAsmBuff = arg_setStr(NULL, "", pikaAsm);
         args_deinit(singleRunBuffs);
-        if (lineOffset > multiLineSize) {
+        if (lineOffset >= multiLineSize) {
             break;
         }
     }
