@@ -37,6 +37,10 @@ p1.x = 0
 p1.y = 0
 p2 = PikaPiZero.Point()
 
+mem = PikaStdLib.MemChecker()
+print('mem used max:')
+mem.max()
+
 pos = 0
 isUpdate = 1
 while True:
@@ -66,9 +70,16 @@ while True:
         oled.drawPoint(p0.x, p0.y)
         oled.drawPoint(p1.x, p1.y)
         oled.drawPoint(p2.x, p2.y)
+        oled.refresh()
     if right.read() == 1:
         pos = 0
         isUpdate = 1
+    if left.read() == 0:
+        pos = 1
+        isUpdate = 1
     if up.read() == 0:
         pos = 2
+        isUpdate = 1
+    if down.read() == 0:
+        pos = 3
         isUpdate = 1

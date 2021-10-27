@@ -38,5 +38,8 @@ class OLED(TinyObj):
     def clear():
         pass
 
+    def refresh():
+        pass
+
 class Point(TinyObj):
     pass
