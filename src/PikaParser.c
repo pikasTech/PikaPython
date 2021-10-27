@@ -306,34 +306,44 @@ char* pikaParseLineToAsm(Args* buffs, char* line, Stack* blockStack) {
     return pikaAsm;
 }
 
+static Arg* savePikaAsm(Args* buffs, Arg* pikaAsmBuff, char* singleAsm) {
+    char* pikaAsm = arg_getStr(pikaAsmBuff);
+    pikaAsm = strsAppend(buffs, pikaAsm, singleAsm);
+    arg_deinit(pikaAsmBuff);
+    pikaAsmBuff = arg_setStr(NULL, "", pikaAsm);
+    return pikaAsmBuff;
+}
+
+static char* getOutAsm(Args* outBuffs, Arg* pikaAsmBuff) {
+    return strsCopy(outBuffs, arg_getStr(pikaAsmBuff));
+}
+
 char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
     Stack* blockStack = New_Stack();
     Arg* pikaAsmBuff = arg_setStr(NULL, "", "");
     uint32_t lineOffset = 0;
     uint32_t multiLineSize = strGetSize(multiLine);
     uint8_t isSave = 0;
-    if( strCountSign(multiLine, '\n') > 1){
+    if (strCountSign(multiLine, '\n') > 1) {
         isSave = 1;
     }
     while (1) {
         Args* singleRunBuffs = New_strBuff();
-        char* line = strsGetFirstToken(singleRunBuffs, multiLine + lineOffset, '\n');
+        char* line =
+            strsGetFirstToken(singleRunBuffs, multiLine + lineOffset, '\n');
         uint32_t lineSize = strGetSize(line);
         lineOffset = lineOffset + lineSize + 1;
         char* singleAsm = pikaParseLineToAsm(singleRunBuffs, line, blockStack);
-        char* pikaAsm = arg_getStr(pikaAsmBuff);
-        pikaAsm = strsAppend(singleRunBuffs, pikaAsm, singleAsm);
-        arg_deinit(pikaAsmBuff);
-        pikaAsmBuff = arg_setStr(NULL, "", pikaAsm);
+        pikaAsmBuff = savePikaAsm(singleRunBuffs, pikaAsmBuff, singleAsm);
         args_deinit(singleRunBuffs);
         if (lineOffset >= multiLineSize) {
             break;
         }
     }
-    char* multiAsm = strsCopy(outBuffs, arg_getStr(pikaAsmBuff));
+    char* outAsm = getOutAsm(outBuffs, pikaAsmBuff);
     arg_deinit(pikaAsmBuff);
     stack_deinit(blockStack);
-    return multiAsm;
+    return outAsm;
 }
 
 char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
