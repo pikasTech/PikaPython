@@ -315,8 +315,9 @@ static Arg* saveSingleAsm(Args* buffs,
         saveErr = __platformSavePikaAsm(singleAsm);
     }
     if (0 == saveErr) {
-        if (NULL != pikaAsmBuff)
+        if (NULL != pikaAsmBuff) {
             arg_deinit(pikaAsmBuff);
+        }
         return NULL;
     }
     char* pikaAsm = arg_getStr(pikaAsmBuff);
