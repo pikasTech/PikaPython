@@ -114,7 +114,9 @@ int main(void) {
         pikaMain = newRootObj("pikaMain", New_PikaMain);
         if(code[0] == 'i'){
             printf("[info]: boot from Script.\r\n");
-            obj_run(pikaMain, code);
+            Arg *codeBuff = arg_setStr(NULL, "", code);
+            obj_run(pikaMain, arg_getStr(codeBuff));
+            arg_deinit(codeBuff);
         }
         if(code[0] == 'B'){
             printf("[info]: boot from Pika Asm.\r\n");    
