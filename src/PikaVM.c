@@ -543,7 +543,7 @@ Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    while (lineAddr < size) {
+    while (lineAddr < size - 1) {
         char* thisLine = pikaAsm + lineAddr;
         lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
         char* sysOut = args_getSysOut(sysRes);
