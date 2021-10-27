@@ -52,6 +52,8 @@ void STM32_Code_flashHandler() {
     }
     
     /* transmite is finished */
+    STM32_Code_reciveHandler("\n\n", 2);
+
     uint32_t FirstPage = 0, NbOfPages = 0;
     uint32_t PageError = 0;
     __IO uint32_t data32 = 0, MemoryProgramStatus = 0;
