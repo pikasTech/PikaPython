@@ -310,6 +310,15 @@ static Arg* saveSingleAsm(Args* buffs,
                           Arg* pikaAsmBuff,
                           char* singleAsm,
                           uint8_t isToFlash) {
+    uint8_t saveErr = 1;
+    if (isToFlash) {
+        saveErr = __platformSavePikaAsm(singleAsm);
+    }
+    if (0 == saveErr) {
+        if (NULL != pikaAsmBuff)
+            arg_deinit(pikaAsmBuff);
+        return NULL;
+    }
     char* pikaAsm = arg_getStr(pikaAsmBuff);
     pikaAsm = strsAppend(buffs, pikaAsm, singleAsm);
     arg_deinit(pikaAsmBuff);
