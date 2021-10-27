@@ -310,16 +310,16 @@ static Arg* saveSingleAsm(Args* buffs,
                           Arg* pikaAsmBuff,
                           char* singleAsm,
                           uint8_t isToFlash) {
-    uint8_t saveErr = 1;
     if (isToFlash) {
-        saveErr = __platformSavePikaAsm(singleAsm);
-    }
-    if (0 == saveErr) {
-        if (NULL != pikaAsmBuff) {
-            arg_deinit(pikaAsmBuff);
+        uint8_t saveErr = __platformSavePikaAsm(singleAsm);
+        if (0 == saveErr) {
+            if (NULL != pikaAsmBuff) {
+                arg_deinit(pikaAsmBuff);
+            }
+            return NULL;
         }
-        return NULL;
     }
+
     char* pikaAsm = arg_getStr(pikaAsmBuff);
     pikaAsm = strsAppend(buffs, pikaAsm, singleAsm);
     arg_deinit(pikaAsmBuff);
@@ -327,8 +327,8 @@ static Arg* saveSingleAsm(Args* buffs,
     return pikaAsmBuff;
 }
 
-static char* getOutAsm(Args* outBuffs, Arg* pikaAsmBuff) {
-    if (NULL == pikaAsmBuff) {
+static char* getOutAsm(Args* outBuffs, Arg* pikaAsmBuff, uint8_t isToFlash) {
+    if (isToFlash) {
         return __platformLoadPikaAsm();
     }
     return strsCopy(outBuffs, arg_getStr(pikaAsmBuff));
@@ -339,10 +339,7 @@ char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
     Arg* pikaAsmBuff = arg_setStr(NULL, "", "");
     uint32_t lineOffset = 0;
     uint32_t multiLineSize = strGetSize(multiLine);
-    uint8_t isToFlash = 0;
-    if (strCountSign(multiLine, '\n') > 1) {
-        isToFlash = 1;
-    }
+    uint8_t isToFlash = __platformAsmIsToFlash(multiLine);
     while (1) {
         Args* singleRunBuffs = New_strBuff();
         char* line =
@@ -357,7 +354,10 @@ char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
             break;
         }
     }
-    char* outAsm = getOutAsm(outBuffs, pikaAsmBuff);
+    if (isToFlash){
+        __platformSavePikaAsmEOF();
+    }
+    char* outAsm = getOutAsm(outBuffs, pikaAsmBuff, isToFlash);
     if (NULL != pikaAsmBuff) {
         arg_deinit(pikaAsmBuff);
     }

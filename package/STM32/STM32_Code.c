@@ -137,8 +137,7 @@ void STM32_Code_flashHandler() {
     HAL_NVIC_SystemReset();
 }
 
-
-int32_t __saveStrToFlash(char *str, uint32_t flashStart, uint32_t flashEnd){
+int32_t __eriseSelecttedFlash(uint32_t flashStart, uint32_t flashEnd){
     uint32_t FirstPage = 0, NbOfPages = 0;
     uint32_t PageError = 0;
     __IO uint32_t data32 = 0, MemoryProgramStatus = 0;
@@ -159,35 +158,49 @@ int32_t __saveStrToFlash(char *str, uint32_t flashStart, uint32_t flashEnd){
     if (HAL_FLASHEx_Erase(&EraseInitStruct, &PageError) != HAL_OK) {
         return 1;
     }
+    return 0;
+}
 
-    uint32_t baseAddress = flashStart;
-    uint32_t writeAddress = 0;
-    uint64_t writeData64 = 0;
-    uint32_t size = strGetSize(str);
-    while (writeAddress < size + 1) {
-        writeData64 = 0;
+uint32_t globalWriteAddress = 0;
+
+uint32_t flash_write_char(uint32_t bassAddr, uint32_t flash_addr, char ch_input){
+    static uint8_t writeBuff[8] = {0};
+    static uint8_t offset = 0; 
+    if(offset > 7){
+        offset = 0;
+        uint64_t writeData64 = 0;
         for (int i = 7; i >= 0; i--) {
-            char ch = str[writeAddress + i];
+            char ch = writeBuff[i];
             writeData64 = writeData64 << 8;
             writeData64 += ch;
         }
+        __platformDisableIrqHandle();
         if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,
-                              baseAddress + writeAddress,
-                              writeData64) == HAL_OK) {
-            writeAddress = writeAddress + 8;
-        } else {
-            return 1;
+                              bassAddr + flash_addr,
+                              writeData64) != HAL_OK) {
+            while(1){
+                offset = 0;
+            }
         }
+        __platformDisableIrqHandle();
+        flash_addr = flash_addr + 8;
     }
-    HAL_FLASH_Lock();
+    writeBuff[offset] = ch_input;
+    offset ++;
+    return flash_addr;
+}
 
-    baseAddress = flashStart;
-    MemoryProgramStatus = 0x0;
-
-    char* codeInFlash = (char*)baseAddress;
-    
-    if (!strEqu(codeInFlash, str)) {
+uint8_t __platformAsmIsToFlash(char *pyMultiLine){
+    if (strCountSign(pyMultiLine, '\n') > 1){
         return 1;
+    }
+    return 0;
+}
+
+int32_t __saveStrToFlash(char *str, uint32_t flashStart, uint32_t flashEnd, uint32_t *writeAddress_p){
+    uint32_t size = strGetSize(str);
+    for(int i = 0; i < size; i++) {
+        (*writeAddress_p) = flash_write_char(flashStart, (*writeAddress_p), str[i]);
     }
     return 0;
 }
@@ -197,7 +210,17 @@ char* __platformLoadPikaAsm(){
 }
 
 int32_t __platformSavePikaAsm(char *PikaAsm){
-    return __saveStrToFlash(PikaAsm, FLASH_PIKA_ASM_START_ADDR, FLASH_PIKA_ASM_END_ADDR);
+    if (0 == globalWriteAddress){
+        __eriseSelecttedFlash(FLASH_PIKA_ASM_START_ADDR, FLASH_PIKA_ASM_END_ADDR);
+    }
+    return __saveStrToFlash(PikaAsm, FLASH_PIKA_ASM_START_ADDR, FLASH_PIKA_ASM_END_ADDR, &globalWriteAddress);
+}
+
+int32_t __platformSavePikaAsmEOF(){
+    for(int i = 0; i < 16; i++) {
+        globalWriteAddress = flash_write_char(FLASH_PIKA_ASM_START_ADDR, globalWriteAddress, '\0');
+    }
+    return 0;
 }
 
 #endif

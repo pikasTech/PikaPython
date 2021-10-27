@@ -567,6 +567,7 @@ Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
 Args* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseMultiLineToAsm(buffs, multiLine);
+    uint32_t asm_size = strGetSize(pikaAsm);
     Args* sysRes = pikaVM_runAsm(self, pikaAsm);
     if (NULL != buffs) {
         args_deinit(buffs);

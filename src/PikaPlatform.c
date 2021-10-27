@@ -37,3 +37,12 @@ PIKA_WEAK int32_t __platformSavePikaAsm(char *PikaAsm){
     /* faild */
     return 1;
 }
+
+PIKA_WEAK uint8_t __platformAsmIsToFlash(char *pyMultiLine){
+    /* not to flash */
+    return 0;
+}
+
+PIKA_WEAK int32_t __platformSavePikaAsmEOF(){
+    return 1;
+}

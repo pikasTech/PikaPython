@@ -72,4 +72,3 @@ while True:
     if up.read() == 0:
         pos = 2
         isUpdate = 1
-
