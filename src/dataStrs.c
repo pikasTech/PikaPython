@@ -56,8 +56,18 @@ char* strsDeleteChar(Args* buffs, char* strIn, char ch) {
     return strDeleteChar(args_getBuff(buffs, size), strIn, ch);
 }
 
+static uint32_t getSizeOfFirstToken(char *str, char sign){
+    uint32_t size = strGetSize(str);
+    for( uint32_t i = 0; i < size ;i ++){
+        if (str[i] == sign){
+            return i;
+        }
+    }
+    return size;
+}
+
 char* strsGetFirstToken(Args* buffs, char* strIn, char sign) {
-    int32_t size = strGetSize(strIn);
+    int32_t size = getSizeOfFirstToken(strIn, sign);
     return strGetFirstToken(args_getBuff(buffs, size), strIn, sign);
 }
 

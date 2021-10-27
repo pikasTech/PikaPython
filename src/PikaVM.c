@@ -537,19 +537,6 @@ char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
     return pikaAsm;
 }
 
-Args* pikaVM_run(PikaObj* self, char* multiLine) {
-    Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, multiLine);
-    if (strCountSign(multiLine, '\n') > 1) {
-        pikaAsm = useFlashAsBuff(pikaAsm, buffs);
-    }
-    Args* sysRes = pikaVM_runAsm(self, pikaAsm);
-    if (NULL != buffs) {
-        args_deinit(buffs);
-    }
-    return sysRes;
-}
-
 Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
@@ -573,5 +560,16 @@ Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     }
     __clearInvokeQueues(self);
 
+    return sysRes;
+}
+
+
+Args* pikaVM_run(PikaObj* self, char* multiLine) {
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, multiLine);
+    Args* sysRes = pikaVM_runAsm(self, pikaAsm);
+    if (NULL != buffs) {
+        args_deinit(buffs);
+    }
     return sysRes;
 }
