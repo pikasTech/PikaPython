@@ -328,6 +328,9 @@ static Arg* saveSingleAsm(Args* buffs,
 }
 
 static char* getOutAsm(Args* outBuffs, Arg* pikaAsmBuff) {
+    if (NULL == pikaAsmBuff) {
+        return __platformLoadPikaAsm();
+    }
     return strsCopy(outBuffs, arg_getStr(pikaAsmBuff));
 }
 
