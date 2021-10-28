@@ -4,6 +4,7 @@
 #include "STM32_common.h"
 #include "dataStrs.h"
 
+
 void STM32_GPIO_platformDisable(PikaObj* self) {
     char* pin = obj_getStr(self, "pin");
     char* mode = obj_getStr(self, "mode");
@@ -143,6 +144,20 @@ void STM32_GPIO_platformSetMode(PikaObj* self, char* mode) {
 
 int STM32_GPIO_platformRead(PikaObj *self){
     char* pin = obj_getStr(self, "pin");
+    GPIO_TypeDef* gpioPort = getGpioPort(pin);
+    if (NULL == gpioPort) {
+        obj_setErrorCode(self, 1);
+        obj_setSysOut(self, "[error] not match gpio port.");
+    }
+    uint16_t gpioPin = getGpioPin(pin);
+    if (0 == gpioPin) {
+        obj_setErrorCode(self, 1);
+        obj_setSysOut(self, "[error] not match gpio pin.");
+    }
+    return HAL_GPIO_ReadPin(gpioPort,gpioPin);
+}
+
+int STM32_lowLevel_readPin(PikaObj *self, char * pin){
     GPIO_TypeDef* gpioPort = getGpioPort(pin);
     if (NULL == gpioPort) {
         obj_setErrorCode(self, 1);

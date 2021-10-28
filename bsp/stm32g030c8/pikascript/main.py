@@ -1,19 +1,24 @@
+from PikaObj import *
 import PikaStdLib
 import PikaPiZero
 import STM32
 
-right = STM32.GPIO()
-right.init()
-right.setPin('PA0')
-right.setMode('in')
-right.setPull('down')
-right.enable()
-up = STM32.GPIO()
-up.init()
-up.setPin('PA15')
-up.setMode('in')
-up.setPull('up')
-up.enable()
+pin = STM32.GPIO()
+pin.init()
+pin.setPin('PA0')
+pin.setMode('in')
+pin.setPull('down')
+pin.enable()
+pin.setPin('PA15')
+pin.setMode('in')
+pin.setPull('up')
+pin.enable()
+pin.setPin('PC13')
+pin.enable()
+pin.setPin('PB6')
+pin.enable()
+remove('pin')
+ll = STM32.lowLevel()
 oled = PikaPiZero.OLED()
 oled.init()
 
@@ -23,13 +28,15 @@ p0.y = 4
 p_next_num = 0
 
 k = 0
-while k < 6:
+while k < 3:
     p = p0
     i = 0
     while i < p_next_num:
         p = p.next
         i = i + 1
     p.next = PikaPiZero.Point()
+    p.next.x = p.x - 1
+    p.next.y = p.y
     p.next.prev = p
     p_next_num = p_next_num + 1
     k = k + 1
@@ -79,9 +86,15 @@ while True:
             p = p.next
             i = i + 1
         oled.refresh()
-    if right.read() == 1:
+    if ll.readPin('PA0') == 1:
         pos = 0
         isUpdate = 1
-    if up.read() == 0:
+    if ll.readPin('PC13') == 0:
+        pos = 1
+        isUpdate = 1
+    if ll.readPin('PA15') == 0:
         pos = 2
+        isUpdate = 1
+    if ll.readPin('PB6') == 0:
+        pos = 3
         isUpdate = 1

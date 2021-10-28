@@ -1,4 +1,4 @@
-from typing import overload
+from PikaObj import *
 import PikaStdDevice
 
 
@@ -24,7 +24,7 @@ class GPIO(PikaStdDevice.GPIO):
         pass
 
     # override
-    def platformRead()->int:
+    def platformRead() -> int:
         pass
 
 
@@ -90,4 +90,9 @@ class IIC(PikaStdDevice.IIC):
 
     # override
     def platformRead(addr: int, length: int) -> str:
+        pass
+
+
+class lowLevel(TinyObj):
+    def readPin(pin: str) -> int:
         pass
