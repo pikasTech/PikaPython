@@ -8,18 +8,6 @@ right.setPin('PA0')
 right.setMode('in')
 right.setPull('down')
 right.enable()
-left = STM32.GPIO()
-left.init()
-left.setPin('PC13')
-left.setMode('in')
-left.setPull('up')
-left.enable()
-down = STM32.GPIO()
-down.init()
-down.setPin('PB6')
-down.setMode('in')
-down.setPull('up')
-down.enable()
 up = STM32.GPIO()
 up.init()
 up.setPin('PA15')
@@ -30,12 +18,22 @@ oled = PikaPiZero.OLED()
 oled.init()
 
 p0 = PikaPiZero.Point()
-p0.x = 0
-p0.y = 0
-p1 = PikaPiZero.Point()
-p1.x = 0
-p1.y = 0
-p2 = PikaPiZero.Point()
+p0.x = 7
+p0.y = 4
+p_next_num = 0
+
+k = 0
+while k < 6:
+    p = p0
+    i = 0
+    while i < p_next_num:
+        p = p.next
+        i = i + 1
+    p.next = PikaPiZero.Point()
+    p.next.prev = p
+    p_next_num = p_next_num + 1
+    k = k + 1
+
 
 mem = PikaStdLib.MemChecker()
 print('mem used max:')
@@ -46,10 +44,17 @@ isUpdate = 1
 while True:
     if isUpdate:
         isUpdate = 0
-        p2.x = p1.x
-        p2.y = p1.y
-        p1.x = p0.x
-        p1.y = p0.y
+        p = p0
+        i = 0
+        while i < p_next_num:
+            p = p.next
+            i = i + 1
+        i = 0
+        while i < p_next_num:
+            p = p.prev
+            p.next.x = p.x
+            p.next.y = p.y
+            i = i + 1
         if pos == 0:
             p0.x = p0.x + 1
             if p0.x > 15:
@@ -66,21 +71,17 @@ while True:
             p0.y = p0.y + 1
             if p0.y > 7:
                 p0.y = 0
+        p = p0
+        i = 0
         oled.clear()
-        oled.drawPoint(p0.x, p0.y)
-        oled.drawPoint(p1.x, p1.y)
-        oled.drawPoint(p2.x, p2.y)
+        while i < p_next_num:
+            oled.drawPoint(p.x, p.y)
+            p = p.next
+            i = i + 1
         oled.refresh()
     if right.read() == 1:
         pos = 0
         isUpdate = 1
-    if left.read() == 0:
-        pos = 1
-        isUpdate = 1
     if up.read() == 0:
         pos = 2
         isUpdate = 1
-    if down.read() == 0:
-        pos = 3
-        isUpdate = 1
-

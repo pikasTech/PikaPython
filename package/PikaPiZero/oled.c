@@ -89,7 +89,23 @@ void OLED_Clear(void) {
             OLED_GRAM[n][i] = 0;
         }
     }
-    OLED_Refresh();
+}
+
+void OLED_ClearScreen(void) {
+    u8 i, n;
+    for (i = 0; i < y_size_byte; i++) {
+        for (int k = 0; k < oled_y_size / y_size; k ++){
+            OLED_WR_Byte(0xb0 + i + k, OLED_CMD);
+            OLED_WR_Byte(0x00, OLED_CMD);
+            OLED_WR_Byte(0x10, OLED_CMD);
+            for (n = 0; n < x_size; n++){
+                for(int j = 0; j < oled_x_size / x_size; j ++){
+                    uint8_t byte = 0;
+                    OLED_WR_Byte(byte, OLED_DATA);
+                }
+            }
+        }
+    }
 }
 
 // x:0~127
