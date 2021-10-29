@@ -329,12 +329,9 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             args_setSysOut(sysRes, "[error] runner: object no found.");
             goto RUN_exit;
         }
+        methodHostClass = obj_getClassObj(methodHostObj);
+
         char* methodName = strsGetLastToken(buffs, methodPath, '.');
-        void* classPtr = obj_getPtr(methodHostObj, "_clsptr");
-        char* methodHostClassName =
-            strsAppend(buffs, "classObj-", obj_getName(methodHostObj));
-        methodHostClass = obj_getClassObjByNewFun(
-            methodHostObj, methodHostClassName, classPtr);
         /* get method Ptr */
         void (*methodPtr)(PikaObj * self, Args * args) =
             getMethodPtr(methodHostClass, methodName);

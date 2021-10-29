@@ -236,6 +236,17 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
     return thisClass;
 }
 
+PikaObj* obj_getClassObj(PikaObj* obj) {
+    Args* buffs = New_strBuff();
+    void* classPtr = obj_getPtr(obj, "_clsptr");
+    char* methodHostClassName =
+        strsAppend(buffs, "classObj-", obj_getName(obj));
+    PikaObj* classObj =
+        obj_getClassObjByNewFun(obj, methodHostClassName, classPtr);
+    args_deinit(buffs);
+    return classObj;
+}
+
 char* obj_getClassPath(PikaObj* objHost, Args* buffs, char* objName) {
     Arg* objArg = obj_getArg(objHost, objName);
     char* objType = arg_getType(objArg);
