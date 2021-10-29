@@ -239,10 +239,10 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
 PikaObj* obj_getClassObj(PikaObj* obj) {
     Args* buffs = New_strBuff();
     void* classPtr = obj_getPtr(obj, "_clsptr");
-    char* methodHostClassName =
-        strsAppend(buffs, "classObj-", obj_getName(obj));
+    char* classObjName =
+        strsAppend(buffs, "_cls-", obj_getName(obj));
     PikaObj* classObj =
-        obj_getClassObjByNewFun(obj, methodHostClassName, classPtr);
+        obj_getClassObjByNewFun(obj, classObjName, classPtr);
     args_deinit(buffs);
     return classObj;
 }

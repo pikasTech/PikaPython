@@ -332,19 +332,17 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         methodHostClass = obj_getClassObj(methodHostObj);
 
         char* methodName = strsGetLastToken(buffs, methodPath, '.');
-        /* get method Ptr */
-        void (*methodPtr)(PikaObj * self, Args * args) =
-            getMethodPtr(methodHostClass, methodName);
-        char* methodDecInClass =
-            getMethodDeclearation(methodHostClass, methodName);
-
+        Arg* method = obj_getArg(methodHostClass, methodName);
         /* assert method*/
-        if ((NULL == methodDecInClass) || (NULL == methodPtr)) {
+        if (NULL == method) {
             /* error, method no found */
             args_setErrorCode(sysRes, 2);
             args_setSysOut(sysRes, "[error] runner: method no found.");
             goto RUN_exit;
         }
+        /* get method Ptr */
+        void (*methodPtr)(PikaObj * self, Args * args) = arg_getPtr(method);
+        char* methodDecInClass = arg_getType(method);
 
         char* methodDec = strsCopy(buffs, methodDecInClass);
         /* free method host class to save memory */
