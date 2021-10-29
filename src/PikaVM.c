@@ -16,7 +16,7 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
-enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ, OPT };
+enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ, OPT, ARG, DEF, RET };
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
@@ -50,6 +50,15 @@ static enum Instruct getInstruct(char* line) {
     }
     if (0 == strncmp(line + 2, "JEZ", 3)) {
         return JEZ;
+    }
+    if (0 == strncmp(line + 2, "ARG", 3)) {
+        return ARG;
+    }
+    if (0 == strncmp(line + 2, "DEF", 3)) {
+        return DEF;
+    }
+    if (0 == strncmp(line + 2, "RET", 3)) {
+        return RET;
     }
     return NON;
 }
@@ -132,6 +141,10 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             return arg_setInt(NULL, "", 0);
         }
         Arg* arg = arg_copy(obj_getArg(self, data));
+        return arg;
+    }
+    if (instruct == ARG) {
+        Arg* arg = arg_copy(args_getArg(localArgs, data));
         return arg;
     }
     if (instruct == JMP) {
