@@ -236,13 +236,21 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
     return thisClass;
 }
 
+Arg* obj_getMethod(PikaObj* obj, char* methodPath) {
+    PikaObj* methodHostClass = obj_getClassObj(obj);
+    Args* buffs = New_strBuff();
+    char* methodName = strsGetLastToken(buffs, methodPath, '.');
+    Arg* method = arg_copy(obj_getArg(methodHostClass, methodName));
+    args_deinit(buffs);
+    obj_deinit(methodHostClass);
+    return method;
+}
+
 PikaObj* obj_getClassObj(PikaObj* obj) {
     Args* buffs = New_strBuff();
     void* classPtr = obj_getPtr(obj, "_clsptr");
-    char* classObjName =
-        strsAppend(buffs, "_cls-", obj_getName(obj));
-    PikaObj* classObj =
-        obj_getClassObjByNewFun(obj, classObjName, classPtr);
+    char* classObjName = strsAppend(buffs, "_cls-", obj_getName(obj));
+    PikaObj* classObj = obj_getClassObjByNewFun(obj, classObjName, classPtr);
     args_deinit(buffs);
     return classObj;
 }

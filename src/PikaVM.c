@@ -306,7 +306,6 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         Arg* returnArg = NULL;
         Args* methodArgs = NULL;
         char* methodPath = data;
-        PikaObj* methodHostClass = NULL;
         /* return arg directly */
         if (strEqu(data, "")) {
             returnArg = arg_copy(queue_popArg(invokeQuene1));
@@ -320,9 +319,8 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             args_setSysOut(sysRes, "[error] runner: object no found.");
             goto RUN_exit;
         }
-        methodHostClass = obj_getClassObj(methodHostObj);
-        char* methodName = strsGetLastToken(buffs, methodPath, '.');
-        Arg* method = obj_getArg(methodHostClass, methodName);
+        /* get method */
+        Arg* method = obj_getMethod(methodHostObj, methodPath);
         /* assert method*/
         if (NULL == method) {
             /* error, method no found */
@@ -332,12 +330,11 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         }
         /* get method Ptr */
         void (*methodPtr)(PikaObj * self, Args * args) = arg_getPtr(method);
+        /* get method Decleartion */
         char* methodDecInClass = arg_getType(method);
+        arg_deinit(method);
 
         char* methodDec = strsCopy(buffs, methodDecInClass);
-        /* free method host class to save memory */
-        obj_deinit(methodHostClass);
-        methodHostClass = NULL;
         /* get type list */
         char* typeList = strsCut(buffs, methodDec, '(', ')');
 
@@ -382,9 +379,6 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     RUN_exit:
         if (NULL != methodArgs) {
             args_deinit(methodArgs);
-        }
-        if (NULL != methodHostClass) {
-            obj_deinit(methodHostClass);
         }
         args_deinit(buffs);
         return returnArg;
