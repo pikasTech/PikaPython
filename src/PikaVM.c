@@ -150,8 +150,11 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     if (instruct == DEF) {
         char* methodPtr = programConter;
         int offset = 0;
+        int thisBlockDeepth =
+            getThisBlockDeepth(programConter - 3, programConter, &offset);
         while (1) {
-            if ((methodPtr[0] == 'B') && (methodPtr[1] == '1')) {
+            if ((methodPtr[0] == 'B') &&
+                (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
                 class_defineMethod(self, data, (void*)methodPtr);
                 break;
             }
@@ -437,18 +440,24 @@ int32_t gotoLastLine(char* start, char* code) {
     return offset + 1;
 }
 
-int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
-    int offset = 0;
+int getThisBlockDeepth(char* start, char* code, int* offset) {
     int thisBlockDeepth = -1;
-    char* codeNow = code + offset;
+    char* codeNow = code + *offset;
     while (1) {
-        offset += gotoLastLine(start, codeNow);
-        codeNow = code + offset;
+        *offset += gotoLastLine(start, codeNow);
+        codeNow = code + *offset;
         if (codeNow[0] == 'B') {
             thisBlockDeepth = codeNow[1] - '0';
             break;
         }
     }
+    return thisBlockDeepth;
+}
+
+int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
+    int offset = 0;
+    int thisBlockDeepth = getThisBlockDeepth(start, code, &offset);
+    char* codeNow = code + offset;
     int8_t blockNum = 0;
     if (jmp > 0) {
         offset = 0;

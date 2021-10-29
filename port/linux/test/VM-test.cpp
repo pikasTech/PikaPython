@@ -332,10 +332,18 @@ TEST(VM, DEF_instruct) {
     "0 OUT a\n"
     "0 RET\n"
     "B0\n";
+    char* methodCode = (char*)
+    "B1\n"
+    "0 NUM 1\n"
+    "0 OUT a\n"
+    "0 RET\n"
+    "B0\n";
     PikaObj* self = New_TinyObj(NULL);
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
     args_deinit(pikaVM_runAsm(self, pikaAsm));
+    char* methodPtr = (char*)obj_getPtr(self, (char*)"test");
+    EXPECT_STREQ(methodCode, methodPtr);
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }

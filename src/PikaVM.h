@@ -10,5 +10,8 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
                           Args* sysRes);
 int32_t __clearInvokeQueues(PikaObj* self);
 char* useFlashAsBuff(char* pikaAsm, Args* buffs);
+int32_t gotoNextLine(char* code);
+int32_t gotoLastLine(char* start, char* code);
+int getThisBlockDeepth(char* start, char* code, int* offset);
                           
 #endif
