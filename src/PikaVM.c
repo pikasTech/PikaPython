@@ -143,7 +143,8 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     if (instruct == RET) {
         *jmp = -999;
         Arg* returnArg = arg_copy(queue_popArg(invokeQuene0));
-        return returnArg;
+        method_returnArg(sysRes, returnArg);
+        return NULL;
     }
     if (instruct == DEF) {
         class_defineMethod(self, data, NULL);
@@ -331,10 +332,9 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         /* get method Ptr */
         void (*methodPtr)(PikaObj * self, Args * args) = arg_getPtr(method);
         /* get method Decleartion */
-        char* methodDecInClass = arg_getType(method);
+        char* methodDec = strsCopy(buffs, arg_getType(method));
         arg_deinit(method);
 
-        char* methodDec = strsCopy(buffs, methodDecInClass);
         /* get type list */
         char* typeList = strsCut(buffs, methodDec, '(', ')');
 
