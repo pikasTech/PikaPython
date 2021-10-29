@@ -63,17 +63,6 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
-static void* getMethodPtr(PikaObj* methodHost, char* methodName) {
-    void* res = obj_getPtr(methodHost, methodName);
-    return res;
-}
-
-static char* getMethodDeclearation(PikaObj* obj, char* methodName) {
-    Arg* methodArg = obj_getArg(obj, methodName);
-    char* declearation = arg_getType(methodArg);
-    return declearation;
-}
-
 int fast_atoi(char* src) {
     const char* p = src;
     static const uint64_t a[][10] = {
@@ -318,10 +307,12 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         Args* methodArgs = NULL;
         char* methodPath = data;
         PikaObj* methodHostClass = NULL;
+        /* return arg directly */
         if (strEqu(data, "")) {
             returnArg = arg_copy(queue_popArg(invokeQuene1));
             goto RUN_exit;
         }
+        /* get method host obj */
         PikaObj* methodHostObj = obj_getObj(self, methodPath, 1);
         if (NULL == methodHostObj) {
             /* error, not found object */
@@ -330,7 +321,6 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             goto RUN_exit;
         }
         methodHostClass = obj_getClassObj(methodHostObj);
-
         char* methodName = strsGetLastToken(buffs, methodPath, '.');
         Arg* method = obj_getArg(methodHostClass, methodName);
         /* assert method*/
