@@ -100,6 +100,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
                            Queue* invokeQuene0,
                            Queue* invokeQuene1,
                            int32_t* jmp,
+                           char* programConter,
                            Args* sysRes) {
     if (instruct == NUM) {
         Arg* numArg = New_arg(NULL);
@@ -147,7 +148,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         return NULL;
     }
     if (instruct == DEF) {
-        class_defineMethod(self, data, NULL);
+        class_defineMethod(self, data, programConter);
         return NULL;
     }
     if (instruct == JEZ) {
@@ -481,8 +482,8 @@ int32_t pikaVM_runAsmLineWithArgs(PikaObj* self,
                                   int32_t lineAddr,
                                   Args* sysRes) {
     Args* buffs = New_strBuff();
-    char* code = pikaAsm + lineAddr;
-    char* line = strs_getLine(buffs, code);
+    char* programCounter = pikaAsm + lineAddr;
+    char* line = strs_getLine(buffs, programCounter);
     int32_t nextAddr = lineAddr + strGetSize(line) + 1;
     int32_t jmp = 0;
     /* Found new script Line, clear the queues*/
@@ -513,7 +514,7 @@ int32_t pikaVM_runAsmLineWithArgs(PikaObj* self,
 
     Arg* resArg =
         pikaVM_runAsmInstruct(self, localArgs, instruct, data, invokeQuene0,
-                              invokeQuene1, &jmp, sysRes);
+                              invokeQuene1, &jmp, programCounter, sysRes);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
     }
@@ -525,7 +526,7 @@ nextLine:
         return -99999;
     }
     if (jmp != 0) {
-        return lineAddr + getAddrOffsetFromJmp(pikaAsm, code, jmp);
+        return lineAddr + getAddrOffsetFromJmp(pikaAsm, programCounter, jmp);
     }
     return nextAddr;
 }
