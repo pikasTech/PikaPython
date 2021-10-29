@@ -149,6 +149,12 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     }
     if (instruct == JMP) {
         *jmp = fast_atoi(data);
+        return NULL;
+    }
+    if (instruct == RET) {
+        *jmp = -999;
+        Arg* returnArg = arg_copy(queue_popArg(invokeQuene0));
+        return returnArg;
     }
     if (instruct == JEZ) {
         Arg* assertArg = arg_copy(queue_popArg(invokeQuene0));
