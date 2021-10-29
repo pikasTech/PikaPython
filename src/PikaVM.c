@@ -156,6 +156,10 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         Arg* returnArg = arg_copy(queue_popArg(invokeQuene0));
         return returnArg;
     }
+    if (instruct == DEF) {
+        class_defineMethod(self, data, NULL);
+        return NULL;
+    }
     if (instruct == JEZ) {
         Arg* assertArg = arg_copy(queue_popArg(invokeQuene0));
         int assert = arg_getInt(assertArg);
