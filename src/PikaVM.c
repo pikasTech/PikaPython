@@ -148,7 +148,16 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         return NULL;
     }
     if (instruct == DEF) {
-        class_defineMethod(self, data, programConter);
+        char* methodPtr = programConter;
+        int offset = 0;
+        while (1) {
+            if ((methodPtr[0] == 'B') && (methodPtr[1] == '1')) {
+                class_defineMethod(self, data, (void*)methodPtr);
+                break;
+            }
+            offset += gotoNextLine(methodPtr);
+            methodPtr = programConter + offset;
+        }
         return NULL;
     }
     if (instruct == JEZ) {

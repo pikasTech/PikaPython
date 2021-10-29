@@ -320,3 +320,22 @@ TEST(VM, while_a_d_x) {
     ASSERT_FLOAT_EQ(res, 2);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, DEF_instruct) {
+    char* pikaAsm = (char*)
+    "B0\n"
+    "0 DEF test()\n"
+    "B0\n"
+    "0 JMP 1\n"
+    "B1\n"
+    "0 NUM 1\n"
+    "0 OUT a\n"
+    "0 RET\n"
+    "B0\n";
+    PikaObj* self = New_TinyObj(NULL);
+    int lineAddr = 0;
+    int size = strGetSize(pikaAsm);
+    args_deinit(pikaVM_runAsm(self, pikaAsm));
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

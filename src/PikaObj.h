@@ -76,7 +76,7 @@ int32_t obj_isArgExist(PikaObj* self, char* argPath);
 PikaObj* obj_getClassObjByNewFun(PikaObj* self, char* name, NewFun newClassFun);
 PikaObj* newRootObj(char* name, NewFun newObjFun);
 PikaObj* obj_getClassObj(PikaObj* obj);
-Arg *obj_getMethod(PikaObj *obj, char *methodPath);
+Arg* obj_getMethod(PikaObj* obj, char* methodPath);
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode);
 int32_t obj_getErrorCode(PikaObj* self);
