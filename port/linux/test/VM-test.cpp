@@ -17,10 +17,10 @@ TEST(VM, num1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
     obj_deinit(self);
     args_deinit(buffs);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -30,11 +30,11 @@ TEST(VM, a_1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
-    ASSERT_EQ(args_getInt(localArgs, (char*)"a"), 1);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
+    ASSERT_EQ(args_getInt(localArgs->attributeList, (char*)"a"), 1);
 
     obj_deinit(self);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -45,11 +45,11 @@ TEST(VM, a_1d1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
-    ASSERT_FLOAT_EQ(args_getFloat(localArgs, (char*)"a"), 1.1);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
+    ASSERT_FLOAT_EQ(args_getFloat(localArgs->attributeList, (char*)"a"), 1.1);
 
     obj_deinit(self);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -60,12 +60,12 @@ TEST(VM, str_xy) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
 
-    ASSERT_STREQ(args_getStr(localArgs, (char*)"a"), (char*)"xy");
+    ASSERT_STREQ(args_getStr(localArgs->attributeList, (char*)"a"), (char*)"xy");
 
     obj_deinit(self);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -76,13 +76,13 @@ TEST(VM, str_xy_space) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
 
-    ASSERT_STREQ(args_getStr(localArgs, (char*)"a"), (char*)"xy ");
+    ASSERT_STREQ(args_getStr(localArgs->attributeList, (char*)"a"), (char*)"xy ");
 
     obj_deinit(self);
     args_deinit(buffs);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -90,15 +90,15 @@ TEST(VM, ref_a_b) {
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     Args* buffs = New_strBuff();
 
-    Args* localArgs = pikaVM_runAsm(
+    PikaObj* localArgs = pikaVM_runAsm(
         self, pikaParseLineToAsm(buffs, (char*)"a = 'xy '", NULL));
     localArgs = pikaVM_runAsmWithLocalArgs(
         self, localArgs, pikaParseLineToAsm(buffs, (char*)"b = a", NULL));
 
     args_deinit(buffs);
-    ASSERT_STREQ(args_getStr(localArgs, (char*)"b"), (char*)"xy ");
+    ASSERT_STREQ(args_getStr(localArgs->attributeList, (char*)"b"), (char*)"xy ");
     obj_deinit(self);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -106,14 +106,14 @@ TEST(VM, Run_add) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
 
-    Args* localArgs = pikaVM_runAsm(
+    PikaObj* localArgs = pikaVM_runAsm(
         self, pikaParseLineToAsm(buffs, (char*)"a = plusInt(1,2)", NULL));
 
     args_deinit(buffs);
-    int a = args_getInt(localArgs, (char*)"a");
+    int a = args_getInt(localArgs->attributeList, (char*)"a");
     ASSERT_EQ(a, 3);
     obj_deinit(self);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -121,17 +121,17 @@ TEST(VM, Run_add_multy) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
 
-    Args* localArgs =
+    PikaObj* localArgs =
         pikaVM_runAsm(self, pikaParseLineToAsm(buffs, (char*)"b = 2", NULL));
     localArgs = pikaVM_runAsmWithLocalArgs(
         self, localArgs,
         pikaParseLineToAsm(buffs, (char*)"a = plusInt(1,b)", NULL));
 
     args_deinit(buffs);
-    int a = args_getInt(localArgs, (char*)"a");
+    int a = args_getInt(localArgs->attributeList, (char*)"a");
     ASSERT_EQ(a, 3);
     obj_deinit(self);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -139,15 +139,15 @@ TEST(VM, Run_add_1_2_3) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
 
-    Args* localArgs = pikaVM_runAsm(
+    PikaObj* localArgs = pikaVM_runAsm(
         self, pikaParseLineToAsm(buffs, (char*)"a = plusInt(1, plusInt(2,3) )",
                                  NULL));
 
     args_deinit(buffs);
-    int a = args_getInt(localArgs, (char*)"a");
+    int a = args_getInt(localArgs->attributeList, (char*)"a");
     ASSERT_EQ(a, 6);
     obj_deinit(self);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -164,14 +164,14 @@ TEST(VM, JEZ) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    Args* localArgs = New_args(NULL);
+    PikaObj* localArgs = New_TinyObj(NULL);
     lineAddr = pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr);
     __clearInvokeQueues(localArgs);
     obj_deinit(self);
     args_deinit(sysRes);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     EXPECT_EQ(lineAddr, 26);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -188,13 +188,13 @@ TEST(VM, JMP) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    Args* localArgs = New_args(NULL);
+    PikaObj* localArgs = New_TinyObj(NULL);
     lineAddr = pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr);
     __clearInvokeQueues(localArgs);
     obj_deinit(self);
     args_deinit(sysRes);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     EXPECT_EQ(lineAddr, 14);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -212,14 +212,14 @@ TEST(VM, JMP_back1) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    Args* localArgs = New_args(NULL);
+    PikaObj* localArgs = New_TinyObj(NULL);
     lineAddr = pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr);
     __clearInvokeQueues(localArgs);
     obj_deinit(self);
     args_deinit(sysRes);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     EXPECT_EQ(lineAddr, 0);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -240,10 +240,10 @@ TEST(VM, WHILE) {
     printf("%s", pikaAsm);
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* self = New_TinyObj(NULL);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
-    EXPECT_EQ(args_getInt(localArgs, (char*)"a"), 0);
-    EXPECT_EQ(args_getInt(localArgs, (char*)"b"), 1);
-    args_deinit(localArgs);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
+    EXPECT_EQ(args_getInt(localArgs->attributeList, (char*)"a"), 0);
+    EXPECT_EQ(args_getInt(localArgs->attributeList, (char*)"b"), 1);
+    obj_deinit(localArgs);
     args_deinit(buffs);
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -255,11 +255,11 @@ TEST(VM, a_1_1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
 
-    int res = args_getInt(localArgs, (char*)"a");
+    int res = args_getInt(localArgs->attributeList, (char*)"a");
     obj_deinit(self);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     args_deinit(buffs);
     ASSERT_EQ(res, 2);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -271,11 +271,11 @@ TEST(VM, a_1_1d1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
 
-    float res = args_getFloat(localArgs, (char*)"a");
+    float res = args_getFloat(localArgs->attributeList, (char*)"a");
     obj_deinit(self);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     args_deinit(buffs);
     ASSERT_FLOAT_EQ(res, 2.1);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -287,12 +287,12 @@ TEST(VM, a_jjcc) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
 
-    float res = args_getFloat(localArgs, (char*)"a");
+    float res = args_getFloat(localArgs->attributeList, (char*)"a");
     obj_deinit(self);
     args_deinit(buffs);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     ASSERT_FLOAT_EQ(res, 5.8);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -308,12 +308,12 @@ TEST(VM, while_a_1to10) {
     char* pikaAsm = pikaParseMultiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
 
-    int res = args_getInt(localArgs, (char*)"a");
+    int res = args_getInt(localArgs->attributeList, (char*)"a");
     obj_deinit(self);
     args_deinit(buffs);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     ASSERT_FLOAT_EQ(res, 10);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -330,11 +330,11 @@ TEST(VM, while_a_d_x) {
     char* pikaAsm = pikaParseMultiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"", New_PikaMain);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
 
-    int res = args_getInt(localArgs, (char*)"mem.x");
+    int res = args_getInt(localArgs->attributeList, (char*)"mem.x");
     obj_deinit(self);
-    args_deinit(localArgs);
+    obj_deinit(localArgs);
     args_deinit(buffs);
     ASSERT_FLOAT_EQ(res, 2);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -358,7 +358,7 @@ TEST(VM, DEF_instruct) {
     PikaObj* self = New_TinyObj(NULL);
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
     char* methodPtr = (char*)obj_getPtr(self, (char*)"test");
     EXPECT_STREQ(methodCode, methodPtr);
     obj_deinit(self);
@@ -376,12 +376,12 @@ TEST(VM, RET_instruct) {
     PikaObj* self = New_TinyObj(NULL);
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
-    Args* runRes = pikaVM_runAsm(self, pikaAsm);
-    Arg* returnArg = args_getArg(runRes, (char*)"return");
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
+    Arg* returnArg = args_getArg(localArgs->attributeList, (char*)"return");
     int num = arg_getInt(returnArg);
     EXPECT_EQ(num, 13);
     obj_deinit(self);
-    args_deinit(runRes);
+    obj_deinit(localArgs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -398,7 +398,7 @@ TEST(VM, RUN_DEF) {
     "0 RUN test\n"
     "0 OUT a\n";
     PikaObj* self = New_TinyObj(NULL);
-    Args* localArgs = pikaVM_runAsm(self, pikaAsm);
+    PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
     int num = obj_getInt(self, (char*)"a");
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
