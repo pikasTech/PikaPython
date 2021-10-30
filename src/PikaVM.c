@@ -125,8 +125,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         char* argName = strsGetLastToken(buffs, data, '.');
         outArg = arg_setName(outArg, argName);
         args_deinit(buffs);
-        obj_setArg(self, data, outArg);
-        arg_deinit(outArg);
+        args_setArg(localArgs, outArg);
         return NULL;
     }
     if (instruct == REF) {
@@ -136,7 +135,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         if (strEqu(data, (char*)"False")) {
             return arg_setInt(NULL, "", 0);
         }
-        Arg* arg = arg_copy(obj_getArg(self, data));
+        Arg* arg = arg_copy(args_getArg(localArgs, data));
         return arg;
     }
     if (instruct == JMP) {
