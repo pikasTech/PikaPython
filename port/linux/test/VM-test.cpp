@@ -156,12 +156,17 @@ TEST(VM, JEZ) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
-    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
-    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
-    __clearInvokeQueues(self);
+    Args* localArgs = New_args(NULL);
+    lineAddr = pikaVM_runAsmLineWithLocalArgs(self, localArgs, pikaAsm,
+                                              lineAddr, sysRes);
+    lineAddr = pikaVM_runAsmLineWithLocalArgs(self, localArgs, pikaAsm,
+                                              lineAddr, sysRes);
+    lineAddr = pikaVM_runAsmLineWithLocalArgs(self, localArgs, pikaAsm,
+                                              lineAddr, sysRes);
+    __clearInvokeQueues(localArgs);
     obj_deinit(self);
     args_deinit(sysRes);
+    args_deinit(localArgs);
     EXPECT_EQ(lineAddr, 26);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -178,11 +183,15 @@ TEST(VM, JMP) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
-    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
-    __clearInvokeQueues(self);
+    Args* localArgs = New_args(NULL);
+    lineAddr = pikaVM_runAsmLineWithLocalArgs(self, localArgs, pikaAsm,
+                                              lineAddr, sysRes);
+    lineAddr = pikaVM_runAsmLineWithLocalArgs(self, localArgs, pikaAsm,
+                                              lineAddr, sysRes);
+    __clearInvokeQueues(localArgs);
     obj_deinit(self);
     args_deinit(sysRes);
+    args_deinit(localArgs);
     EXPECT_EQ(lineAddr, 14);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -200,12 +209,17 @@ TEST(VM, JMP_back1) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
-    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
-    lineAddr = pikaVM_runAsmLine(self, pikaAsm, lineAddr, sysRes);
-    __clearInvokeQueues(self);
+    Args* localArgs = New_args(NULL);
+    lineAddr = pikaVM_runAsmLineWithLocalArgs(self, localArgs, pikaAsm,
+                                              lineAddr, sysRes);
+    lineAddr = pikaVM_runAsmLineWithLocalArgs(self, localArgs, pikaAsm,
+                                              lineAddr, sysRes);
+    lineAddr = pikaVM_runAsmLineWithLocalArgs(self, localArgs, pikaAsm,
+                                              lineAddr, sysRes);
+    __clearInvokeQueues(localArgs);
     obj_deinit(self);
     args_deinit(sysRes);
+    args_deinit(localArgs);
     EXPECT_EQ(lineAddr, 0);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -360,7 +374,27 @@ TEST(VM, RET_instruct) {
     Args* runRes = pikaVM_runAsm(self, pikaAsm);
     Arg* returnArg = args_getArg(runRes, (char*)"return");
     int num = arg_getInt(returnArg);
+    EXPECT_EQ(num, 13);
     obj_deinit(self);
     args_deinit(runRes);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+// TEST(VM, RUN_DEF) {
+//     char* pikaAsm = (char*)
+//     "B0\n"
+//     "0 DEF test()\n"
+//     "B0\n"
+//     "0 JMP 1\n"
+//     "B1\n"
+//     "0 NUM 1\n"
+//     "0 RET\n"
+//     "B0\n"
+//     "0 RUN test\n"
+//     "0 OUT a\n";
+//     PikaObj* self = New_TinyObj(NULL);
+//     args_deinit(pikaVM_runAsm(self, pikaAsm));
+//     int num = obj_getInt(self, (char*)"a");
+//     obj_deinit(self);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }

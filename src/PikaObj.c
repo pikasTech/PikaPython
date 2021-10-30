@@ -237,12 +237,19 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
 }
 
 Arg* obj_getMethod(PikaObj* obj, char* methodPath) {
-    PikaObj* methodHostClass = obj_getClassObj(obj);
+    Arg* method = NULL;
     Args* buffs = New_strBuff();
     char* methodName = strsGetLastToken(buffs, methodPath, '.');
-    Arg* method = arg_copy(obj_getArg(methodHostClass, methodName));
-    args_deinit(buffs);
+    method = obj_getArg(obj, methodName);
+    if (NULL != method) {
+        method = arg_copy(method);
+        goto exit;
+    }
+    PikaObj* methodHostClass = obj_getClassObj(obj);
+    method = arg_copy(obj_getArg(methodHostClass, methodName));
     obj_deinit(methodHostClass);
+exit:
+    args_deinit(buffs);
     return method;
 }
 

@@ -367,9 +367,20 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         obj_setSysOut(methodHostObj, "");
 
         /* run method */
-        methodPtr(methodHostObj, methodArgs);
-        /* get method return */
-        returnArg = arg_copy(args_getArg(methodArgs, (char*)"return"));
+        char* methodCode = (char*)methodPtr;
+        if (methodCode[0] == 'B' && methodCode[2] == '\n') {
+            /* VM method */
+            Args* resArgs =
+                pikaVM_runAsmWithArgs(methodHostObj, methodArgs, methodCode);
+            /* get method return */
+            returnArg = arg_copy(args_getArg(resArgs, (char*)"return"));
+            args_deinit(resArgs);
+        } else {
+            /* native method */
+            methodPtr(methodHostObj, methodArgs);
+            /* get method return */
+            returnArg = arg_copy(args_getArg(methodArgs, (char*)"return"));
+        }
 
         /* transfer sysOut */
         char* sysOut = obj_getSysOut(methodHostObj);
@@ -393,14 +404,14 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     return NULL;
 }
 
-int32_t __clearInvokeQueues(PikaObj* self) {
+int32_t __clearInvokeQueues(Args* localArgs) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
         char deepth[2] = {0};
         deepth[0] = deepthChar;
-        Queue* queue = (Queue*)obj_getPtr(self, deepth);
+        Queue* queue = (Queue*)args_getPtr(localArgs, deepth);
         if (NULL != queue) {
             args_deinit(queue);
-            obj_removeArg(self, deepth);
+            args_removeArg(localArgs, deepth);
         }
     }
     return 0;
@@ -487,11 +498,11 @@ int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
     return offset;
 }
 
-int32_t pikaVM_runAsmLineWithArgs(PikaObj* self,
-                                  Args* localArgs,
-                                  char* pikaAsm,
-                                  int32_t lineAddr,
-                                  Args* sysRes) {
+int32_t pikaVM_runAsmLineWithLocalArgs(PikaObj* self,
+                                       Args* localArgs,
+                                       char* pikaAsm,
+                                       int32_t lineAddr,
+                                       Args* sysRes) {
     Args* buffs = New_strBuff();
     char* programCounter = pikaAsm + lineAddr;
     char* line = strs_getLine(buffs, programCounter);
@@ -501,7 +512,7 @@ int32_t pikaVM_runAsmLineWithArgs(PikaObj* self,
     if ('B' == line[0]) {
         args_setErrorCode(sysRes, 0);
         args_setSysOut(sysRes, (char*)"");
-        __clearInvokeQueues(self);
+        __clearInvokeQueues(localArgs);
         uint8_t blockDeepth = line[1] - '0';
         goto nextLine;
     }
@@ -512,15 +523,15 @@ int32_t pikaVM_runAsmLineWithArgs(PikaObj* self,
     enum Instruct instruct = getInstruct(line);
     char* data = line + 6;
 
-    Queue* invokeQuene0 = obj_getPtr(self, invokeDeepth0);
-    Queue* invokeQuene1 = obj_getPtr(self, invokeDeepth1);
+    Queue* invokeQuene0 = args_getPtr(localArgs, invokeDeepth0);
+    Queue* invokeQuene1 = args_getPtr(localArgs, invokeDeepth1);
     if (NULL == invokeQuene0) {
         invokeQuene0 = New_queue();
-        obj_setPtr(self, invokeDeepth0, invokeQuene0);
+        args_setPtr(localArgs, invokeDeepth0, invokeQuene0);
     }
     if (NULL == invokeQuene1) {
         invokeQuene1 = New_queue();
-        obj_setPtr(self, invokeDeepth1, invokeQuene1);
+        args_setPtr(localArgs, invokeDeepth1, invokeQuene1);
     }
 
     Arg* resArg =
@@ -540,13 +551,6 @@ nextLine:
         return lineAddr + getAddrOffsetFromJmp(pikaAsm, programCounter, jmp);
     }
     return nextAddr;
-}
-
-int32_t pikaVM_runAsmLine(PikaObj* self,
-                          char* pikaAsm,
-                          int32_t lineAddr,
-                          Args* sysRes) {
-    return pikaVM_runAsmLineWithArgs(self, NULL, pikaAsm, lineAddr, sysRes);
 }
 
 char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
@@ -576,8 +580,8 @@ Args* pikaVM_runAsmWithArgs(PikaObj* self, Args* localArgs, char* pikaAsm) {
             break;
         }
         char* thisLine = pikaAsm + lineAddr;
-        lineAddr = pikaVM_runAsmLineWithArgs(self, localArgs, pikaAsm, lineAddr,
-                                             sysRes);
+        lineAddr = pikaVM_runAsmLineWithLocalArgs(self, localArgs, pikaAsm,
+                                                  lineAddr, sysRes);
         char* sysOut = args_getSysOut(sysRes);
         uint8_t errcode = args_getErrorCode(sysRes);
         if (!strEqu("", sysOut)) {
@@ -590,13 +594,16 @@ Args* pikaVM_runAsmWithArgs(PikaObj* self, Args* localArgs, char* pikaAsm) {
             args_deinit(buffs);
         }
     }
-    __clearInvokeQueues(self);
+    __clearInvokeQueues(localArgs);
 
     return sysRes;
 }
 
 Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
-    return pikaVM_runAsmWithArgs(self, NULL, pikaAsm);
+    Args* localArgs = New_args(NULL);
+    Args* runRes = pikaVM_runAsmWithArgs(self, localArgs, pikaAsm);
+    args_deinit(localArgs);
+    return runRes;
 }
 
 Args* pikaVM_run(PikaObj* self, char* multiLine) {
