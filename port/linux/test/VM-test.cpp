@@ -380,21 +380,21 @@ TEST(VM, RET_instruct) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(VM, RUN_DEF) {
-//     char* pikaAsm = (char*)
-//     "B0\n"
-//     "0 DEF test()\n"
-//     "B0\n"
-//     "0 JMP 1\n"
-//     "B1\n"
-//     "0 NUM 1\n"
-//     "0 RET\n"
-//     "B0\n"
-//     "0 RUN test\n"
-//     "0 OUT a\n";
-//     PikaObj* self = New_TinyObj(NULL);
-//     args_deinit(pikaVM_runAsm(self, pikaAsm));
-//     int num = obj_getInt(self, (char*)"a");
-//     obj_deinit(self);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(VM, RUN_DEF) {
+    char* pikaAsm = (char*)
+    "B0\n"
+    "0 DEF test()\n"
+    "B0\n"
+    "0 JMP 1\n"
+    "B1\n"
+    "0 NUM 1\n"
+    "0 RET\n"
+    "B0\n"
+    "0 RUN test\n"
+    "0 OUT a\n";
+    PikaObj* self = New_TinyObj(NULL);
+    args_deinit(pikaVM_runAsm(self, pikaAsm));
+    int num = obj_getInt(self, (char*)"a");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
