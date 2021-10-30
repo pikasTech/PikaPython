@@ -611,7 +611,7 @@ PikaObj* pikaVM_runAsmWithLocalArgs(PikaObj* self,
 }
 
 PikaObj* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
-    PikaObj* localArgs = New_args(NULL);
+    PikaObj* localArgs = New_TinyObj(NULL);
     localArgs = pikaVM_runAsmWithLocalArgs(self, localArgs, pikaAsm);
     return localArgs;
 }
