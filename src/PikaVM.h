@@ -13,7 +13,6 @@ Args* pikaVM_runAsmWithLocalArgs(PikaObj* self, Args* localArgs, char* pikaAsm);
 int32_t pikaVM_runAsmLine(PikaObj* self,
                           Args* localArgs,
                           char* pikaAsm,
-                          int32_t lineAddr,
-                          Args* runRes);
+                          int32_t lineAddr);
 
 #endif
