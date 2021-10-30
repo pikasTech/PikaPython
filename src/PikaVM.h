@@ -4,14 +4,14 @@
 
 PikaObj* pikaVM_run(PikaObj* self, char* pyLine);
 PikaObj* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
-int32_t __clearInvokeQueues(PikaObj* globalArgs);
+int32_t __clearInvokeQueues(PikaObj* globals);
 char* useFlashAsBuff(char* pikaAsm, Args* buffs);
 int32_t gotoNextLine(char* code);
 int32_t gotoLastLine(char* start, char* code);
 int getThisBlockDeepth(char* start, char* code, int* offset);
-PikaObj* pikaVM_runAsmWithArgs(PikaObj* self, PikaObj* globalArgs, char* pikaAsm);
+PikaObj* pikaVM_runAsmWithArgs(PikaObj* self, PikaObj* globals, char* pikaAsm);
 int32_t pikaVM_runAsmLine(PikaObj* self,
-                          PikaObj* globalArgs,
+                          PikaObj* globals,
                           char* pikaAsm,
                           int32_t lineAddr);
 
