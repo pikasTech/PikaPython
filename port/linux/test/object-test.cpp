@@ -107,114 +107,116 @@ TEST(object_test, test1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(object_test, test2) {
-//     int isShow = 1;
-//     PikaObj* obj = newRootObj((char*)"test", New_PikaObj_test);
-//     obj_setInt(obj, (char*)"isShow", isShow);
-//     obj_run(obj, (char*)"hello(name = 'world', isShow = isShow)");
-//     obj_deinit(obj);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, test2) {
+    int isShow = 1;
+    PikaObj* obj = newRootObj((char*)"test", New_PikaObj_test);
+    obj_setInt(obj, (char*)"isShow", isShow);
+    obj_run(obj, (char*)"hello(name = 'world', isShow = isShow)");
+    obj_deinit(obj);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, test3) {
-//     int isShow = 1;
-//     PikaObj* obj = newRootObj((char*)"test", New_PikaObj_test);
-//     obj_setInt(obj, (char*)"isShow", isShow);
-//     obj_run(
-//       obj,
-//       (char*)"hello2(name2='tom', name1='john', name3='cat', isShow=isShow) ");
-//     obj_deinit(obj);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, test3) {
+    int isShow = 1;
+    PikaObj* obj = newRootObj((char*)"test", New_PikaObj_test);
+    obj_setInt(obj, (char*)"isShow", isShow);
+    obj_run(
+      obj,
+      (char*)"hello2(name2='tom', name1='john', name3='cat', isShow=isShow) ");
+    obj_deinit(obj);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, test6) {
-//     PikaObj* obj = newRootObj((char*)"test", New_PikaObj_test);
-//     obj_run(obj, (char*)"res = add(1, 2)");
-//     int32_t res = obj_getInt(obj, (char*)"res");
-//     EXPECT_EQ(3, res);
-//     obj_deinit(obj);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, test6) {
+    PikaObj* obj = newRootObj((char*)"test", New_PikaObj_test);
+    PikaObj* globals = obj_runDirect(obj, (char*)"res = add(1, 2)");
+    int32_t res = obj_getInt(globals, (char*)"res");
+    EXPECT_EQ(3, res);
+    obj_deinit(obj);
+    obj_deinit(globals);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, test8) {
-//     PikaObj* sys = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
-//     obj_run(sys, (char*)"a=1");
-//     obj_run(sys, (char*)"remove('a')");
-//     obj_deinit(sys);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, test8) {
+    PikaObj* sys = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
+    obj_run(sys, (char*)"a=1");
+    obj_run(sys, (char*)"remove('a')");
+    obj_deinit(sys);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, test9) {
-//     PikaObj* sys = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
-//     obj_run(sys, (char*)"ls()");
-//     obj_setPtr(sys, (char*)"baseClass", (void*)New_TinyObj);
-//     obj_run(sys, (char*)"ls()");
-//     obj_deinit(sys);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, test9) {
+    PikaObj* sys = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
+    obj_run(sys, (char*)"ls()");
+    obj_setPtr(sys, (char*)"baseClass", (void*)New_TinyObj);
+    obj_run(sys, (char*)"ls()");
+    obj_deinit(sys);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, noMethod) {
-//     PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
-//     obj_runNoRes(root, (char*)"noDefindMethod()");
-//     obj_deinit(root);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, noMethod) {
+    PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
+    obj_runNoRes(root, (char*)"noDefindMethod()");
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, a_b) {
-//     PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
-//     obj_runNoRes(root, (char*)"b=1");
-//     obj_runNoRes(root, (char*)"a=b");
-//     obj_deinit(root);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, a_b) {
+    PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
+    obj_runNoRes(root, (char*)"b=1");
+    obj_runNoRes(root, (char*)"a=b");
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, voidRun) {
-//     PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
-//     obj_run(root, (char*)"");
-//     obj_deinit(root);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, voidRun) {
+    PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
+    obj_run(root, (char*)"");
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, printa) {
-//     PikaObj* root = newRootObj((char*)"root", New_BaseObj);
-//     obj_run(root, (char*)"a = 2");
-//     obj_run(root, (char*)"print(a)");
-//     char* sysOut = obj_getSysOut(root);
-//     ASSERT_STREQ(sysOut, "2");
-//     obj_deinit(root);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, printa) {
+    PikaObj* root = newRootObj((char*)"root", New_BaseObj);
+    PikaObj* globals = obj_runDirect(root, (char*)"print(2)");
+    char* sysOut = obj_getSysOut(globals);
+    ASSERT_STREQ(sysOut, "2");
+    obj_deinit(globals);
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, copyArg) {
-//     PikaObj* root = newRootObj((char*)"root", New_BaseObj);
-//     Arg* arg = New_arg(NULL);
-//     arg = arg_setInt(arg, (char*)"a", 1);
-//     obj_setArg(root, (char*)"a", arg);
-//     arg_deinit(arg);
-//     Arg* argOut = obj_getArg(root, (char*)"a");
-//     int argOutInt = arg_getInt(argOut);
-//     ASSERT_EQ(argOutInt, 1);
-//     obj_deinit(root);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, copyArg) {
+    PikaObj* root = newRootObj((char*)"root", New_BaseObj);
+    Arg* arg = New_arg(NULL);
+    arg = arg_setInt(arg, (char*)"a", 1);
+    obj_setArg(root, (char*)"a", arg);
+    arg_deinit(arg);
+    Arg* argOut = obj_getArg(root, (char*)"a");
+    int argOutInt = arg_getInt(argOut);
+    ASSERT_EQ(argOutInt, 1);
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, obj_run_while) {
-//     PikaObj* root = newRootObj((char*)"root", New_BaseObj);
-//     char lines[] =
-//         "a = 1\n"
-//         "b = 0\n"
-//         "while a:\n"
-//         "    b = 1\n"
-//         "    a = 0\n"
-//         "\n";
-//     obj_run(root, lines);
-//     EXPECT_EQ(obj_getInt(root, (char*)"a"), 0);
-//     EXPECT_EQ(obj_getInt(root, (char*)"b"), 1);
-//     obj_deinit(root);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, obj_run_while) {
+    PikaObj* root = newRootObj((char*)"root", New_BaseObj);
+    char lines[] =
+        "a = 1\n"
+        "b = 0\n"
+        "while a:\n"
+        "    b = 1\n"
+        "    a = 0\n"
+        "\n";
+    PikaObj* globals = obj_runDirect(root, lines);
+    EXPECT_EQ(obj_getInt(globals, (char*)"a"), 0);
+    EXPECT_EQ(obj_getInt(globals, (char*)"b"), 1);
+    obj_deinit(root);
+    obj_deinit(globals);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, mem) {
-//     EXPECT_EQ(pikaMemNow(), 0);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, mem) {
+    EXPECT_EQ(pikaMemNow(), 0);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

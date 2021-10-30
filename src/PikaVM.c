@@ -382,17 +382,16 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         char* methodCode = (char*)methodPtr;
         if (methodCode[0] == 'B' && methodCode[2] == '\n') {
             /* VM method */
-            locals = pikaVM_runAsmWithArgs(methodHostObj,
-                                                      locals, methodCode);
+            locals = pikaVM_runAsmWithArgs(methodHostObj, locals, methodCode);
             /* get method return */
-            returnArg = arg_copy(
-                args_getArg(locals->attributeList, (char*)"return"));
+            returnArg =
+                arg_copy(args_getArg(locals->attributeList, (char*)"return"));
         } else {
             /* native method */
             methodPtr(methodHostObj, locals->attributeList);
             /* get method return */
-            returnArg = arg_copy(
-                args_getArg(locals->attributeList, (char*)"return"));
+            returnArg =
+                arg_copy(args_getArg(locals->attributeList, (char*)"return"));
         }
 
         /* transfer sysOut */
@@ -581,9 +580,7 @@ char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
     return pikaAsm;
 }
 
-PikaObj* pikaVM_runAsmWithArgs(PikaObj* self,
-                                    PikaObj* globals,
-                                    char* pikaAsm) {
+PikaObj* pikaVM_runAsmWithArgs(PikaObj* self, PikaObj* globals, char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
     args_setErrorCode(globals->attributeList, 0);
