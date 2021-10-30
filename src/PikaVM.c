@@ -320,7 +320,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     if (instruct == RUN) {
         Args* buffs = New_strBuff();
         Arg* returnArg = NULL;
-        Args* methodArgs = NULL;
+        Args* subLocalArgs = NULL;
         char* methodPath = data;
         /* return arg directly */
         if (strEqu(data, "")) {
@@ -360,7 +360,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             goto RUN_exit;
         }
 
-        methodArgs = New_args(NULL);
+        subLocalArgs = New_args(NULL);
         while (1) {
             Arg* methodArg = arg_copy(queue_popArg(invokeQuene1));
             if (NULL == methodArg) {
@@ -369,7 +369,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             char* argDef = strsPopToken(buffs, typeList, ',');
             char* argName = strsGetFirstToken(buffs, argDef, ':');
             methodArg = arg_setName(methodArg, argName);
-            args_setArg(methodArgs, methodArg);
+            args_setArg(subLocalArgs, methodArg);
         }
 
         obj_setErrorCode(methodHostObj, 0);
@@ -379,16 +379,15 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         char* methodCode = (char*)methodPtr;
         if (methodCode[0] == 'B' && methodCode[2] == '\n') {
             /* VM method */
-            Args* resArgs = pikaVM_runAsmWithLocalArgs(methodHostObj,
-                                                       methodArgs, methodCode);
+            subLocalArgs = pikaVM_runAsmWithLocalArgs(methodHostObj,
+                                                      subLocalArgs, methodCode);
             /* get method return */
-            returnArg = arg_copy(args_getArg(resArgs, (char*)"return"));
-            args_deinit(resArgs);
+            returnArg = arg_copy(args_getArg(subLocalArgs, (char*)"return"));
         } else {
             /* native method */
-            methodPtr(methodHostObj, methodArgs);
+            methodPtr(methodHostObj, subLocalArgs);
             /* get method return */
-            returnArg = arg_copy(args_getArg(methodArgs, (char*)"return"));
+            returnArg = arg_copy(args_getArg(subLocalArgs, (char*)"return"));
         }
 
         /* transfer sysOut */
@@ -404,8 +403,8 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
 
         goto RUN_exit;
     RUN_exit:
-        if (NULL != methodArgs) {
-            args_deinit(methodArgs);
+        if (NULL != subLocalArgs) {
+            args_deinit(subLocalArgs);
         }
         args_deinit(buffs);
         return returnArg;
@@ -589,8 +588,7 @@ Args* pikaVM_runAsmWithLocalArgs(PikaObj* self,
             break;
         }
         char* thisLine = pikaAsm + lineAddr;
-        lineAddr =
-            pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr);
+        lineAddr = pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr);
         char* sysOut = args_getSysOut(localArgs);
         uint8_t errcode = args_getErrorCode(localArgs);
         if (!strEqu("", sysOut)) {
