@@ -62,7 +62,8 @@ TEST(VM, str_xy) {
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
 
-    ASSERT_STREQ(args_getStr(localArgs->attributeList, (char*)"a"), (char*)"xy");
+    ASSERT_STREQ(args_getStr(localArgs->attributeList, (char*)"a"),
+                 (char*)"xy");
 
     obj_deinit(self);
     obj_deinit(localArgs);
@@ -78,7 +79,8 @@ TEST(VM, str_xy_space) {
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
 
-    ASSERT_STREQ(args_getStr(localArgs->attributeList, (char*)"a"), (char*)"xy ");
+    ASSERT_STREQ(args_getStr(localArgs->attributeList, (char*)"a"),
+                 (char*)"xy ");
 
     obj_deinit(self);
     args_deinit(buffs);
@@ -96,7 +98,8 @@ TEST(VM, ref_a_b) {
         self, localArgs, pikaParseLineToAsm(buffs, (char*)"b = a", NULL));
 
     args_deinit(buffs);
-    ASSERT_STREQ(args_getStr(localArgs->attributeList, (char*)"b"), (char*)"xy ");
+    ASSERT_STREQ(args_getStr(localArgs->attributeList, (char*)"b"),
+                 (char*)"xy ");
     obj_deinit(self);
     obj_deinit(localArgs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -318,7 +321,7 @@ TEST(VM, while_a_1to10) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(VM, while_a_d_x) {
+TEST(VM, mem_x) {
     char* line = (char*)
     "mem = PikaStdLib.MemChecker()\n"
     "mem.x = 1\n"
@@ -332,7 +335,7 @@ TEST(VM, while_a_d_x) {
     PikaObj* self = newRootObj((char*)"", New_PikaMain);
     PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
 
-    int res = args_getInt(localArgs->attributeList, (char*)"mem.x");
+    int res = obj_getInt(localArgs, (char*)"mem.x");
     obj_deinit(self);
     obj_deinit(localArgs);
     args_deinit(buffs);
@@ -362,6 +365,7 @@ TEST(VM, DEF_instruct) {
     char* methodPtr = (char*)obj_getPtr(self, (char*)"test");
     EXPECT_STREQ(methodCode, methodPtr);
     obj_deinit(self);
+    obj_deinit(localArgs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -401,5 +405,6 @@ TEST(VM, RUN_DEF) {
     PikaObj* localArgs = pikaVM_runAsm(self, pikaAsm);
     int num = obj_getInt(self, (char*)"a");
     obj_deinit(self);
+    obj_deinit(localArgs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
