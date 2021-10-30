@@ -403,21 +403,14 @@ PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {
     return 0;
 }
 
-Args* obj_runDirect(PikaObj* self, char* cmd) {
-    Args* sysRes = NULL;
+PikaObj* obj_runDirect(PikaObj* self, char* cmd) {
+    PikaObj* globals = NULL;
 
-    sysRes = pikaVM_run(self, cmd)->attributeList;
+    globals = pikaVM_run(self, cmd);
     goto exit;
 
 exit:
-    /* check res */
-    if (NULL == sysRes) {
-        sysRes = New_args(NULL);
-        args_setErrorCode(sysRes, 0);
-        args_setSysOut(sysRes, "");
-        goto exit;
-    }
-    return sysRes;
+    return globals;
 }
 
 int32_t obj_removeArg(PikaObj* self, char* argPath) {
@@ -473,13 +466,13 @@ exit:
 
 void obj_runNoRes(PikaObj* slef, char* cmd) {
     /* unsafe, nothing would happend when error occord */
-    args_deinit(obj_runDirect(slef, cmd));
+    obj_deinit(obj_runDirect(slef, cmd));
 }
 
 void obj_run(PikaObj* self, char* cmd) {
     /* safe, stop when error occord and error info would be print32_t */
-    Args* sysRes = obj_runDirect(self, cmd);
-    args_deinit(sysRes);
+    PikaObj* globals = obj_runDirect(self, cmd);
+    obj_deinit(globals);
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {

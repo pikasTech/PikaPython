@@ -70,7 +70,7 @@ int32_t class_defineMethod(PikaObj* self,
 
 void obj_runNoRes(PikaObj* slef, char* cmd);
 void obj_run(PikaObj* self, char* cmd);
-Args* obj_runDirect(PikaObj* self, char* cmd);
+PikaObj* obj_runDirect(PikaObj* self, char* cmd);
 int32_t obj_removeArg(PikaObj* self, char* argPath);
 int32_t obj_isArgExist(PikaObj* self, char* argPath);
 PikaObj* obj_getClassObjByNewFun(PikaObj* self, char* name, NewFun newClassFun);

@@ -1,111 +1,111 @@
-// #include "gtest/gtest.h"
-// extern "C" {
-// #include "BaseObj.h"
-// #include "PikaStdLib_SysObj.h"
-// #include "TinyObj.h"
-// }
+#include "gtest/gtest.h"
+extern "C" {
+#include "BaseObj.h"
+#include "PikaStdLib_SysObj.h"
+#include "TinyObj.h"
+}
 
-// void testFloat(PikaObj* obj, Args* args) {
-//     float val1 = args_getFloat(args, (char*)"val1");
-//     float val2 = args_getFloat(args, (char*)"val2");
-//     int32_t isShow = args_getInt(args, (char*)"isShow");
-//     if (isShow) {
-//         printf("the float val1 is: %f\r\n", val1);
-//         printf("the float val2 is: %f\r\n", val2);
-//     }
-//     method_returnFloat(args, val1 + val2);
-// }
+void testFloat(PikaObj* obj, Args* args) {
+    float val1 = args_getFloat(args, (char*)"val1");
+    float val2 = args_getFloat(args, (char*)"val2");
+    int32_t isShow = args_getInt(args, (char*)"isShow");
+    if (isShow) {
+        printf("the float val1 is: %f\r\n", val1);
+        printf("the float val2 is: %f\r\n", val2);
+    }
+    method_returnFloat(args, val1 + val2);
+}
 
-// void hello2(PikaObj* obj, Args* args) {
-//     char* name1 = args_getStr(args, (char*)"name1");
-//     char* name2 = args_getStr(args, (char*)"name2");
-//     char* name3 = args_getStr(args, (char*)"name3");
-//     char* myName = obj_getStr(obj, (char*)"_n");
-//     int32_t isShow = args_getInt(args, (char*)"isShow");
-//     if (isShow) {
-//         printf("hello, %s, %s and %s!\r\n", name1, name2, name3);
-//         printf("my name is %s.\r\n", myName);
-//     }
-// }
+void hello2(PikaObj* obj, Args* args) {
+    char* name1 = args_getStr(args, (char*)"name1");
+    char* name2 = args_getStr(args, (char*)"name2");
+    char* name3 = args_getStr(args, (char*)"name3");
+    char* myName = obj_getStr(obj, (char*)"_n");
+    int32_t isShow = args_getInt(args, (char*)"isShow");
+    if (isShow) {
+        printf("hello, %s, %s and %s!\r\n", name1, name2, name3);
+        printf("my name is %s.\r\n", myName);
+    }
+}
 
-// void hello(PikaObj* obj, Args* args) {
-//     char* name = args_getStr(args, (char*)"name");
-//     int32_t isShow = args_getInt(args, (char*)"isShow");
-//     if (isShow) {
-//         printf("hello, %s!\r\n", name);
-//     }
-// }
+void hello(PikaObj* obj, Args* args) {
+    char* name = args_getStr(args, (char*)"name");
+    int32_t isShow = args_getInt(args, (char*)"isShow");
+    if (isShow) {
+        printf("hello, %s!\r\n", name);
+    }
+}
 
-// void add(PikaObj* obj, Args* args) {
-//     int32_t val1 = args_getInt(args, (char*)"val1");
-//     int32_t val2 = args_getInt(args, (char*)"val2");
-//     method_returnInt(args, val1 + val2);
-// }
+void add(PikaObj* obj, Args* args) {
+    int32_t val1 = args_getInt(args, (char*)"val1");
+    int32_t val2 = args_getInt(args, (char*)"val2");
+    method_returnInt(args, val1 + val2);
+}
 
-// PikaObj* New_PikaObj_test(Args* args) {
-//     PikaObj* self = New_PikaStdLib_SysObj(args);
-//     class_defineMethod(self, (char*)"hello(name:str, isShow:int)", hello);
-//     class_defineMethod(
-//         self, (char*)"hello2(name1:str, name2:str, name3:str, isShow:int)",
-//         hello2);
-//     class_defineMethod(
-//         self, (char*)"testFloat(val1:float, val2:float, isShow:int)->float",
-//         testFloat);
-//     class_defineMethod(self, (char*)"add(val1:int, val2:int)->int", add);
-//     return self;
-// }
+PikaObj* New_PikaObj_test(Args* args) {
+    PikaObj* self = New_PikaStdLib_SysObj(args);
+    class_defineMethod(self, (char*)"hello(name:str, isShow:int)", hello);
+    class_defineMethod(
+        self, (char*)"hello2(name1:str, name2:str, name3:str, isShow:int)",
+        hello2);
+    class_defineMethod(
+        self, (char*)"testFloat(val1:float, val2:float, isShow:int)->float",
+        testFloat);
+    class_defineMethod(self, (char*)"add(val1:int, val2:int)->int", add);
+    return self;
+}
 
-// void sendMethod(PikaObj* self, Args* args) {
-//     char* data = args_getStr(args, (char*)"data");
-//     /* send to com1 */
-//     printf("[com1]: %s\r\n", data);
-// }
+void sendMethod(PikaObj* self, Args* args) {
+    char* data = args_getStr(args, (char*)"data");
+    /* send to com1 */
+    printf("[com1]: %s\r\n", data);
+}
 
-// PikaObj* New_USART(Args* args) {
-//     /*  Derive from the tiny object class.
-//         Tiny object can not import sub object.
-//         Tiny object is the smallest object. */
-//     PikaObj* self = New_TinyObj(args);
+PikaObj* New_USART(Args* args) {
+    /*  Derive from the tiny object class.
+        Tiny object can not import sub object.
+        Tiny object is the smallest object. */
+    PikaObj* self = New_TinyObj(args);
 
-//     /* bind the method */
-//     class_defineMethod(self, (char*)"send(data:str)", sendMethod);
+    /* bind the method */
+    class_defineMethod(self, (char*)"send(data:str)", sendMethod);
 
-//     /* return the object */
-//     return self;
-// }
+    /* return the object */
+    return self;
+}
 
-// PikaObj* New_MYROOT1(Args* args) {
-//     /*  Derive from the base object class .
-//         BaseObj is the smallest object that can
-//         import sub object.      */
-//     PikaObj* self = New_BaseObj(args);
+PikaObj* New_MYROOT1(Args* args) {
+    /*  Derive from the base object class .
+        BaseObj is the smallest object that can
+        import sub object.      */
+    PikaObj* self = New_BaseObj(args);
 
-//     /* new led object bellow root object */
-//     obj_newObj(self, (char*)"usart", (char*)"USART", (NewFun)New_USART);
+    /* new led object bellow root object */
+    obj_newObj(self, (char*)"usart", (char*)"USART", (NewFun)New_USART);
 
-//     /* return the object */
-//     return self;
-// }
+    /* return the object */
+    return self;
+}
 
-// TEST(object_test, test10) {
-//     PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
-//     PikaObj* usart = obj_getObj(root, (char*)"usart", 0);
-//     PikaObj* context = obj_getContext(usart);
-//     EXPECT_EQ(context, root);
-//     obj_run(root, (char*)"usart.send('hello world')");
-//     obj_deinit(root);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, test10) {
+    PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
+    PikaObj* usart = obj_getObj(root, (char*)"usart", 0);
+    PikaObj* context = obj_getContext(usart);
+    EXPECT_EQ(context, root);
+    obj_run(root, (char*)"usart.send('hello world')");
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(object_test, test1) {
-//     PikaObj* process = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
-//     float floatTest = 12.231;
-//     obj_bindFloat(process, (char*)"testFloatBind", &floatTest);
-//     EXPECT_TRUE(
-//         strEqu((char*)"12.231000", obj_print(process, (char*)"testFloatBind")));
-//     obj_deinit(process);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(object_test, test1) {
+    PikaObj* process = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
+    float floatTest = 12.231;
+    obj_bindFloat(process, (char*)"testFloatBind", &floatTest);
+    EXPECT_TRUE(
+        strEqu((char*)"12.231000", obj_print(process, (char*)"testFloatBind")));
+    obj_deinit(process);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 // TEST(object_test, test2) {
 //     int isShow = 1;

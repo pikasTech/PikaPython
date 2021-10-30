@@ -60,10 +60,10 @@ int32_t main()
         fgets(inputBuff, sizeof(inputBuff), stdin);
 
         /* run PikaScript and get res */
-        Args *resArgs = obj_runDirect(root, inputBuff);
+        PikaObj *globals = obj_runDirect(root, inputBuff);
 
         /* get system output of PikaScript*/
-        char *sysOut = args_getSysOut(resArgs);;
+        char *sysOut = args_getSysOut(globals->attributeList);
 
         if (NULL != sysOut)
         {
@@ -72,6 +72,6 @@ int32_t main()
         }
 
         /* deinit the res */
-        args_deinit(resArgs);
+        obj_deinit(globals);
     }
 }
