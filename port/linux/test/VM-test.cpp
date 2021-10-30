@@ -329,13 +329,11 @@ TEST(VM, DEF_instruct) {
     "0 JMP 1\n"
     "B1\n"
     "0 NUM 1\n"
-    "0 OUT a\n"
     "0 RET\n"
     "B0\n";
     char* methodCode = (char*)
     "B1\n"
     "0 NUM 1\n"
-    "0 OUT a\n"
     "0 RET\n"
     "B0\n";
     PikaObj* self = New_TinyObj(NULL);
@@ -345,5 +343,24 @@ TEST(VM, DEF_instruct) {
     char* methodPtr = (char*)obj_getPtr(self, (char*)"test");
     EXPECT_STREQ(methodCode, methodPtr);
     obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, RET_instruct) {
+    char* pikaAsm = (char*)
+    "B1\n"
+    "0 NUM 13\n"
+    "0 RET\n"
+    "0 NUM 2\n"
+    "0 RET\n"
+    "B0\n";
+    PikaObj* self = New_TinyObj(NULL);
+    int lineAddr = 0;
+    int size = strGetSize(pikaAsm);
+    Args* runRes = pikaVM_runAsm(self, pikaAsm);
+    Arg* returnArg = args_getArg(runRes, (char*)"return");
+    int num = arg_getInt(returnArg);
+    obj_deinit(self);
+    args_deinit(runRes);
     EXPECT_EQ(pikaMemNow(), 0);
 }
