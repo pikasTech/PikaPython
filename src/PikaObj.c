@@ -406,7 +406,7 @@ PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {
 Args* obj_runDirect(PikaObj* self, char* cmd) {
     Args* sysRes = NULL;
 
-    sysRes = pikaVM_run(self, cmd);
+    sysRes = pikaVM_run(self, cmd)->attributeList;
     goto exit;
 
 exit:

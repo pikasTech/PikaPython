@@ -388,7 +388,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
                 args_getArg(subLocalArgs->attributeList, (char*)"return"));
         } else {
             /* native method */
-            methodPtr(methodHostObj, subLocalArgs);
+            methodPtr(methodHostObj, subLocalArgs->attributeList);
             /* get method return */
             returnArg = arg_copy(
                 args_getArg(subLocalArgs->attributeList, (char*)"return"));
@@ -523,7 +523,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     if ('B' == line[0]) {
         args_setErrorCode(localArgs->attributeList, 0);
         args_setSysOut(localArgs->attributeList, (char*)"");
-        __clearInvokeQueues(localArgs->attributeList);
+        __clearInvokeQueues(localArgs);
         uint8_t blockDeepth = line[1] - '0';
         goto nextLine;
     }
@@ -605,7 +605,7 @@ PikaObj* pikaVM_runAsmWithLocalArgs(PikaObj* self,
             args_deinit(buffs);
         }
     }
-    __clearInvokeQueues(localArgs->attributeList);
+    __clearInvokeQueues(localArgs);
 
     return localArgs;
 }
