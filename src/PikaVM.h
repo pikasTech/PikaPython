@@ -9,11 +9,11 @@ char* useFlashAsBuff(char* pikaAsm, Args* buffs);
 int32_t gotoNextLine(char* code);
 int32_t gotoLastLine(char* start, char* code);
 int getThisBlockDeepth(char* start, char* code, int* offset);
-Args* pikaVM_runAsmWithArgs(PikaObj* self, Args* localArgs, char* pikaAsm);
-int32_t pikaVM_runAsmLineWithLocalArgs(PikaObj* self,
-                                       Args* localArgs,
-                                       char* pikaAsm,
-                                       int32_t lineAddr,
-                                       Args* sysRes);
+Args* pikaVM_runAsmWithLocalArgs(PikaObj* self, Args* localArgs, char* pikaAsm);
+int32_t pikaVM_runAsmLine(PikaObj* self,
+                          Args* localArgs,
+                          char* pikaAsm,
+                          int32_t lineAddr,
+                          Args* runRes);
 
 #endif

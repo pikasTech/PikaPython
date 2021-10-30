@@ -28,33 +28,43 @@ static char* strs_getLine(Args* buffs, char* code) {
 
 static enum Instruct getInstruct(char* line) {
     if (0 == strncmp(line + 2, "OPT", 3)) {
+        /* operator */
         return OPT;
     }
     if (0 == strncmp(line + 2, "REF", 3)) {
+        /* reference */
         return REF;
     }
     if (0 == strncmp(line + 2, "NUM", 3)) {
+        /* number */
         return NUM;
     }
     if (0 == strncmp(line + 2, "RUN", 3)) {
+        /* run */
         return RUN;
     }
     if (0 == strncmp(line + 2, "STR", 3)) {
+        /* string */
         return STR;
     }
     if (0 == strncmp(line + 2, "OUT", 3)) {
+        /* out */
         return OUT;
     }
     if (0 == strncmp(line + 2, "JMP", 3)) {
+        /* jump */
         return JMP;
     }
     if (0 == strncmp(line + 2, "JEZ", 3)) {
+        /* jump equal zero */
         return JEZ;
     }
     if (0 == strncmp(line + 2, "DEF", 3)) {
+        /* define */
         return DEF;
     }
     if (0 == strncmp(line + 2, "RET", 3)) {
+        /* return */
         return RET;
     }
     return NON;
@@ -370,8 +380,8 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         char* methodCode = (char*)methodPtr;
         if (methodCode[0] == 'B' && methodCode[2] == '\n') {
             /* VM method */
-            Args* resArgs =
-                pikaVM_runAsmWithArgs(methodHostObj, methodArgs, methodCode);
+            Args* resArgs = pikaVM_runAsmWithLocalArgs(methodHostObj,
+                                                       methodArgs, methodCode);
             /* get method return */
             returnArg = arg_copy(args_getArg(resArgs, (char*)"return"));
             args_deinit(resArgs);
@@ -498,11 +508,11 @@ int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
     return offset;
 }
 
-int32_t pikaVM_runAsmLineWithLocalArgs(PikaObj* self,
-                                       Args* localArgs,
-                                       char* pikaAsm,
-                                       int32_t lineAddr,
-                                       Args* sysRes) {
+int32_t pikaVM_runAsmLine(PikaObj* self,
+                          Args* localArgs,
+                          char* pikaAsm,
+                          int32_t lineAddr,
+                          Args* runRes) {
     Args* buffs = New_strBuff();
     char* programCounter = pikaAsm + lineAddr;
     char* line = strs_getLine(buffs, programCounter);
@@ -510,8 +520,8 @@ int32_t pikaVM_runAsmLineWithLocalArgs(PikaObj* self,
     int32_t jmp = 0;
     /* Found new script Line, clear the queues*/
     if ('B' == line[0]) {
-        args_setErrorCode(sysRes, 0);
-        args_setSysOut(sysRes, (char*)"");
+        args_setErrorCode(runRes, 0);
+        args_setSysOut(runRes, (char*)"");
         __clearInvokeQueues(localArgs);
         uint8_t blockDeepth = line[1] - '0';
         goto nextLine;
@@ -536,7 +546,7 @@ int32_t pikaVM_runAsmLineWithLocalArgs(PikaObj* self,
 
     Arg* resArg =
         pikaVM_runAsmInstruct(self, localArgs, instruct, data, invokeQuene0,
-                              invokeQuene1, &jmp, programCounter, sysRes);
+                              invokeQuene1, &jmp, programCounter, runRes);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
     }
@@ -569,7 +579,9 @@ char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
     return pikaAsm;
 }
 
-Args* pikaVM_runAsmWithArgs(PikaObj* self, Args* localArgs, char* pikaAsm) {
+Args* pikaVM_runAsmWithLocalArgs(PikaObj* self,
+                                 Args* localArgs,
+                                 char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
     Args* sysRes = New_args(NULL);
@@ -580,8 +592,8 @@ Args* pikaVM_runAsmWithArgs(PikaObj* self, Args* localArgs, char* pikaAsm) {
             break;
         }
         char* thisLine = pikaAsm + lineAddr;
-        lineAddr = pikaVM_runAsmLineWithLocalArgs(self, localArgs, pikaAsm,
-                                                  lineAddr, sysRes);
+        lineAddr =
+            pikaVM_runAsmLine(self, localArgs, pikaAsm, lineAddr, sysRes);
         char* sysOut = args_getSysOut(sysRes);
         uint8_t errcode = args_getErrorCode(sysRes);
         if (!strEqu("", sysOut)) {
@@ -601,7 +613,7 @@ Args* pikaVM_runAsmWithArgs(PikaObj* self, Args* localArgs, char* pikaAsm) {
 
 Args* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     Args* localArgs = New_args(NULL);
-    Args* runRes = pikaVM_runAsmWithArgs(self, localArgs, pikaAsm);
+    Args* runRes = pikaVM_runAsmWithLocalArgs(self, localArgs, pikaAsm);
     args_deinit(localArgs);
     return runRes;
 }
