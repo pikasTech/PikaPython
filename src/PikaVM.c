@@ -101,8 +101,8 @@ int fast_atoi(char* src) {
 }
 
 Arg* pikaVM_runInstruct(PikaObj* self,
-                        Parameters* globals,
                         Parameters* locals,
+                        Parameters* globals,
                         enum Instruct instruct,
                         char* data,
                         Queue* invokeQuene0,
@@ -126,7 +126,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         char* argName = strsGetLastToken(buffs, data, '.');
         outArg = arg_setName(outArg, argName);
         args_deinit(buffs);
-        obj_setArg(globals, data, outArg);
+        obj_setArg(locals, data, outArg);
         arg_deinit(outArg);
         return NULL;
     }
@@ -137,7 +137,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         if (strEqu(data, (char*)"False")) {
             return arg_setInt(NULL, "", 0);
         }
-        Arg* arg = arg_copy(obj_getArg(globals, data));
+        Arg* arg = arg_copy(obj_getArg(locals, data));
         return arg;
     }
     if (instruct == JMP) {
@@ -147,7 +147,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
     if (instruct == RET) {
         *jmp = -999;
         Arg* returnArg = arg_copy(queue_popArg(invokeQuene0));
-        method_returnArg(globals->attributeList, returnArg);
+        method_returnArg(locals->attributeList, returnArg);
         return NULL;
     }
     if (instruct == DEF) {
@@ -332,8 +332,8 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         PikaObj* methodHostObj = obj_getObj(self, methodPath, 1);
         if (NULL == methodHostObj) {
             /* error, not found object */
-            args_setErrorCode(globals->attributeList, 1);
-            args_setSysOut(globals->attributeList,
+            args_setErrorCode(locals->attributeList, 1);
+            args_setSysOut(locals->attributeList,
                            "[error] runner: object no found.");
             goto RUN_exit;
         }
@@ -342,8 +342,8 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         /* assert method*/
         if (NULL == method) {
             /* error, method no found */
-            args_setErrorCode(globals->attributeList, 2);
-            args_setSysOut(globals->attributeList,
+            args_setErrorCode(locals->attributeList, 2);
+            args_setSysOut(locals->attributeList,
                            "[error] runner: method no found.");
             goto RUN_exit;
         }
@@ -358,8 +358,8 @@ Arg* pikaVM_runInstruct(PikaObj* self,
 
         if (typeList == NULL) {
             /* typeList no found */
-            args_setErrorCode(globals->attributeList, 3);
-            args_setSysOut(globals->attributeList,
+            args_setErrorCode(locals->attributeList, 3);
+            args_setSysOut(locals->attributeList,
                            "[error] runner: type list no found.");
             goto RUN_exit;
         }
@@ -399,12 +399,12 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         /* transfer sysOut */
         char* sysOut = obj_getSysOut(methodHostObj);
         if (NULL != sysOut) {
-            args_setSysOut(globals->attributeList, sysOut);
+            args_setSysOut(locals->attributeList, sysOut);
         }
         /* transfer errCode */
         if (0 != obj_getErrorCode(methodHostObj)) {
             /* method error */
-            args_setErrorCode(globals->attributeList, 6);
+            args_setErrorCode(locals->attributeList, 6);
         }
 
         goto RUN_exit;
@@ -513,8 +513,8 @@ int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
 }
 
 int32_t pikaVM_runAsmLine(PikaObj* self,
-                          Parameters* globals,
                           Parameters* locals,
+                          Parameters* globals,
                           char* pikaAsm,
                           int32_t lineAddr) {
     Args* buffs = New_strBuff();
@@ -524,9 +524,9 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     int32_t jmp = 0;
     /* Found new script Line, clear the queues*/
     if ('B' == line[0]) {
-        args_setErrorCode(globals->attributeList, 0);
-        args_setSysOut(globals->attributeList, (char*)"");
-        __clearInvokeQueues(globals);
+        args_setErrorCode(locals->attributeList, 0);
+        args_setSysOut(locals->attributeList, (char*)"");
+        __clearInvokeQueues(locals);
         uint8_t blockDeepth = line[1] - '0';
         goto nextLine;
     }
@@ -537,19 +537,19 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     enum Instruct instruct = getInstruct(line);
     char* data = line + 6;
 
-    Queue* invokeQuene0 = args_getPtr(globals->attributeList, invokeDeepth0);
-    Queue* invokeQuene1 = args_getPtr(globals->attributeList, invokeDeepth1);
+    Queue* invokeQuene0 = args_getPtr(locals->attributeList, invokeDeepth0);
+    Queue* invokeQuene1 = args_getPtr(locals->attributeList, invokeDeepth1);
     if (NULL == invokeQuene0) {
         invokeQuene0 = New_queue();
-        args_setPtr(globals->attributeList, invokeDeepth0, invokeQuene0);
+        args_setPtr(locals->attributeList, invokeDeepth0, invokeQuene0);
     }
     if (NULL == invokeQuene1) {
         invokeQuene1 = New_queue();
-        args_setPtr(globals->attributeList, invokeDeepth1, invokeQuene1);
+        args_setPtr(locals->attributeList, invokeDeepth1, invokeQuene1);
     }
 
     Arg* resArg =
-        pikaVM_runInstruct(self, globals, locals, instruct, data, invokeQuene0,
+        pikaVM_runInstruct(self, locals, globals, instruct, data, invokeQuene0,
                            invokeQuene1, &jmp, programCounter);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
@@ -584,21 +584,21 @@ char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
 }
 
 Parameters* pikaVM_runAsmWithPars(PikaObj* self,
-                                  Parameters* globals,
                                   Parameters* locals,
+                                  Parameters* globals,
                                   char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
-    args_setErrorCode(globals->attributeList, 0);
-    args_setSysOut(globals->attributeList, (char*)"");
+    args_setErrorCode(locals->attributeList, 0);
+    args_setSysOut(locals->attributeList, (char*)"");
     while (lineAddr < size) {
         if (lineAddr == -99999) {
             break;
         }
         char* thisLine = pikaAsm + lineAddr;
-        lineAddr = pikaVM_runAsmLine(self, globals, locals, pikaAsm, lineAddr);
-        char* sysOut = args_getSysOut(globals->attributeList);
-        uint8_t errcode = args_getErrorCode(globals->attributeList);
+        lineAddr = pikaVM_runAsmLine(self, locals, globals, pikaAsm, lineAddr);
+        char* sysOut = args_getSysOut(locals->attributeList);
+        uint8_t errcode = args_getErrorCode(locals->attributeList);
         if (!strEqu("", sysOut)) {
             __platformPrintf("%s\r\n", sysOut);
         }
@@ -609,9 +609,9 @@ Parameters* pikaVM_runAsmWithPars(PikaObj* self,
             args_deinit(buffs);
         }
     }
-    __clearInvokeQueues(globals);
+    __clearInvokeQueues(locals);
 
-    return globals;
+    return locals;
 }
 
 Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
