@@ -710,6 +710,7 @@ TEST(parser, def_add) {
     char* lines = (char*)
     "def add(a, b):\n"
     "    a + b\n"
+    "\n"
     ;
     printf("%s", lines);
     char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
