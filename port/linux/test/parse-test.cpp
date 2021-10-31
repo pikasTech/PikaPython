@@ -723,6 +723,8 @@ TEST(parser, def_add) {
     "1 REF a\n"
     "1 REF b\n"
     "0 OPT +\n"
+    "0 RET\n"
+    "B0\n"
     );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
