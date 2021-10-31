@@ -100,8 +100,9 @@ int fast_atoi(char* src) {
     return 0;
 }
 
-Arg* pikaVM_runAsmInstruct(PikaObj* self,
+Arg* pikaVM_runInstruct(PikaObj* self,
                            Parameters* globals,
+                           Parameters* locals,
                            enum Instruct instruct,
                            char* data,
                            Queue* invokeQuene0,
@@ -320,7 +321,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     if (instruct == RUN) {
         Args* buffs = New_strBuff();
         Arg* returnArg = NULL;
-        PikaObj* locals = NULL;
+        Parameters* subLocals = NULL;
         char* methodPath = data;
         /* return arg directly */
         if (strEqu(data, "")) {
@@ -363,7 +364,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             goto RUN_exit;
         }
 
-        locals = New_TinyObj(NULL);
+        subLocals = New_TinyObj(NULL);
         while (1) {
             Arg* methodArg = arg_copy(queue_popArg(invokeQuene1));
             if (NULL == methodArg) {
@@ -372,7 +373,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
             char* argDef = strsPopToken(buffs, typeList, ',');
             char* argName = strsGetFirstToken(buffs, argDef, ':');
             methodArg = arg_setName(methodArg, argName);
-            args_setArg(locals->attributeList, methodArg);
+            args_setArg(subLocals->attributeList, methodArg);
         }
 
         obj_setErrorCode(methodHostObj, 0);
@@ -382,16 +383,17 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
         char* methodCode = (char*)methodPtr;
         if (methodCode[0] == 'B' && methodCode[2] == '\n') {
             /* VM method */
-            locals = pikaVM_runAsmWithArgs(methodHostObj, locals, methodCode);
+            subLocals =
+                pikaVM_runAsmWithArgs(methodHostObj, subLocals, methodCode);
             /* get method return */
-            returnArg =
-                arg_copy(args_getArg(locals->attributeList, (char*)"return"));
+            returnArg = arg_copy(
+                args_getArg(subLocals->attributeList, (char*)"return"));
         } else {
             /* native method */
-            methodPtr(methodHostObj, locals->attributeList);
+            methodPtr(methodHostObj, subLocals->attributeList);
             /* get method return */
-            returnArg =
-                arg_copy(args_getArg(locals->attributeList, (char*)"return"));
+            returnArg = arg_copy(
+                args_getArg(subLocals->attributeList, (char*)"return"));
         }
 
         /* transfer sysOut */
@@ -407,8 +409,8 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
 
         goto RUN_exit;
     RUN_exit:
-        if (NULL != locals) {
-            obj_deinit(locals);
+        if (NULL != subLocals) {
+            obj_deinit(subLocals);
         }
         args_deinit(buffs);
         return returnArg;
@@ -546,8 +548,8 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     }
 
     Arg* resArg =
-        pikaVM_runAsmInstruct(self, globals, instruct, data, invokeQuene0,
-                              invokeQuene1, &jmp, programCounter);
+        pikaVM_runInstruct(self, globals, globals, instruct, data,
+                              invokeQuene0, invokeQuene1, &jmp, programCounter);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
     }

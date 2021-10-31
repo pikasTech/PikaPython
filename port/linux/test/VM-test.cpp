@@ -62,8 +62,7 @@ TEST(VM, str_xy) {
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     Parameters* globals = pikaVM_runAsm(self, pikaAsm);
 
-    ASSERT_STREQ(args_getStr(globals->attributeList, (char*)"a"),
-                 (char*)"xy");
+    ASSERT_STREQ(args_getStr(globals->attributeList, (char*)"a"), (char*)"xy");
 
     obj_deinit(self);
     obj_deinit(globals);
@@ -79,8 +78,7 @@ TEST(VM, str_xy_space) {
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     Parameters* globals = pikaVM_runAsm(self, pikaAsm);
 
-    ASSERT_STREQ(args_getStr(globals->attributeList, (char*)"a"),
-                 (char*)"xy ");
+    ASSERT_STREQ(args_getStr(globals->attributeList, (char*)"a"), (char*)"xy ");
 
     obj_deinit(self);
     args_deinit(buffs);
@@ -98,8 +96,7 @@ TEST(VM, ref_a_b) {
         self, globals, pikaParseLineToAsm(buffs, (char*)"b = a", NULL));
 
     args_deinit(buffs);
-    ASSERT_STREQ(args_getStr(globals->attributeList, (char*)"b"),
-                 (char*)"xy ");
+    ASSERT_STREQ(args_getStr(globals->attributeList, (char*)"b"), (char*)"xy ");
     obj_deinit(self);
     obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
