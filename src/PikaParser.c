@@ -291,6 +291,16 @@ AST* pikaParseLine(char* line, Stack* blockStack) {
             stack_pushStr(blockStack, "if");
         }
     }
+    if (0 == strncmp(lineStart, (char*)"def ", 4)) {
+        stmt = "";
+        char* declear = strsCut(buffs, lineStart, ' ', ':');
+        declear = strsGetCleanCmd(buffs, declear);
+        obj_setStr(ast, "block", "def");
+        obj_setStr(ast, "declear", declear);
+        if (NULL != blockStack) {
+            stack_pushStr(blockStack, "def");
+        }
+    }
     stmt = strsGetCleanCmd(buffs, stmt);
     ast = AST_parseStmt(ast, stmt);
     goto exit;
@@ -459,6 +469,12 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     }
     if (strEqu(obj_getStr(ast, "block"), "if")) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
+    }
+    if (strEqu(obj_getStr(ast, "block"), "def")) {
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 DEF ");
+        pikaAsm = strsAppend(runBuffs, pikaAsm, obj_getStr(ast, "declear"));
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JMP 1\n");
     }
     pikaAsm = strsCopy(buffs, pikaAsm);
     args_deinit(runBuffs);

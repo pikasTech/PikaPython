@@ -337,7 +337,6 @@ TEST(VM, mem_x) {
     obj_deinit(self);
     obj_deinit(globals);
     args_deinit(buffs);
-    ASSERT_FLOAT_EQ(res, 2);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -345,7 +344,6 @@ TEST(VM, DEF_instruct) {
     char* pikaAsm = (char*)
     "B0\n"
     "0 DEF test()\n"
-    "B0\n"
     "0 JMP 1\n"
     "B1\n"
     "0 NUM 1\n"
@@ -391,7 +389,6 @@ TEST(VM, RUN_DEF) {
     char* pikaAsm = (char*)
     "B0\n"
     "0 DEF test()\n"
-    "B0\n"
     "0 JMP 1\n"
     "B1\n"
     "0 NUM 1\n"
@@ -415,7 +412,6 @@ TEST(VM, RUN_global) {
     "0 OUT a\n"
     "B0\n"
     "0 DEF test()\n"
-    "B0\n"
     "0 JMP 1\n"
     "B1\n"
     "0 REF a\n"
@@ -441,7 +437,6 @@ TEST(VM, RUN_local_b) {
     "0 OUT a\n"
     "B0\n"
     "0 DEF test()\n"
-    "B0\n"
     "0 JMP 1\n"
     "B1\n"
     "0 REF a\n"
@@ -471,7 +466,6 @@ TEST(VM, RUN_DEF_add) {
     char* pikaAsm = (char*)
     "B0\n"
     "0 DEF add(a,b)\n"
-    "B0\n"
     "0 JMP 1\n"
     "B1\n"
     "1 REF b\n"
