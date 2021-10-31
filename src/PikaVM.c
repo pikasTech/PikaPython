@@ -137,7 +137,12 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         if (strEqu(data, (char*)"False")) {
             return arg_setInt(NULL, "", 0);
         }
+        /* find in local list first */
         Arg* arg = arg_copy(obj_getArg(locals, data));
+        if (NULL == arg) {
+            /* find in global list second */
+            arg = arg_copy(obj_getArg(globals, data));
+        }
         return arg;
     }
     if (instruct == JMP) {
@@ -418,14 +423,14 @@ Arg* pikaVM_runInstruct(PikaObj* self,
     return NULL;
 }
 
-int32_t __clearInvokeQueues(Parameters* globals) {
+int32_t __clearInvokeQueues(Parameters* locals) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
         char deepth[2] = {0};
         deepth[0] = deepthChar;
-        Queue* queue = (Queue*)args_getPtr(globals->attributeList, deepth);
+        Queue* queue = (Queue*)args_getPtr(locals->attributeList, deepth);
         if (NULL != queue) {
             args_deinit(queue);
-            args_removeArg(globals->attributeList, deepth);
+            args_removeArg(locals->attributeList, deepth);
         }
     }
     return 0;
