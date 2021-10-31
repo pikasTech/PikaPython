@@ -166,9 +166,9 @@ TEST(VM, JEZ) {
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
     Parameters* globals = New_TinyObj(NULL);
-    lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
-    lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
-    lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
+    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
+    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
+    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     __clearInvokeQueues(globals);
     obj_deinit(self);
     args_deinit(sysRes);
@@ -190,8 +190,8 @@ TEST(VM, JMP) {
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
     Parameters* globals = New_TinyObj(NULL);
-    lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
-    lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
+    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
+    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     __clearInvokeQueues(globals);
     obj_deinit(self);
     args_deinit(sysRes);
@@ -214,9 +214,9 @@ TEST(VM, JMP_back1) {
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
     Parameters* globals = New_TinyObj(NULL);
-    lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
-    lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
-    lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
+    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
+    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
+    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     __clearInvokeQueues(globals);
     obj_deinit(self);
     args_deinit(sysRes);

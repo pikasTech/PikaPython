@@ -514,6 +514,7 @@ int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
 
 int32_t pikaVM_runAsmLine(PikaObj* self,
                           Parameters* globals,
+                          Parameters* locals,
                           char* pikaAsm,
                           int32_t lineAddr) {
     Args* buffs = New_strBuff();
@@ -595,7 +596,7 @@ Parameters* pikaVM_runAsmWithPars(PikaObj* self,
             break;
         }
         char* thisLine = pikaAsm + lineAddr;
-        lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
+        lineAddr = pikaVM_runAsmLine(self, globals, locals, pikaAsm, lineAddr);
         char* sysOut = args_getSysOut(globals->attributeList);
         uint8_t errcode = args_getErrorCode(globals->attributeList);
         if (!strEqu("", sysOut)) {

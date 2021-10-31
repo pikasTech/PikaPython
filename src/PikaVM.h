@@ -16,6 +16,7 @@ int32_t gotoLastLine(char* start, char* code);
 int getThisBlockDeepth(char* start, char* code, int* offset);
 int32_t pikaVM_runAsmLine(PikaObj* self,
                           Parameters* globals,
+                          Parameters* locals,
                           char* pikaAsm,
                           int32_t lineAddr);
 
