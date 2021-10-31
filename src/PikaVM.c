@@ -615,7 +615,7 @@ Parameters* pikaVM_runAsmWithPars(PikaObj* self,
 }
 
 Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
-    Parameters* globals = New_TinyObj(NULL);
+    Parameters* globals = New_PikaObj();
     globals = pikaVM_runAsmWithPars(self, globals, globals, pikaAsm);
     return globals;
 }
