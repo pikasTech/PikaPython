@@ -343,6 +343,9 @@ int32_t args_setPtrWithType(Args* self, char* name, char* type, void* objPtr) {
 int32_t args_foreach(Args* self,
                      int32_t (*eachHandle)(Arg* argEach, Args* handleArgs),
                      Args* handleArgs) {
+    if (NULL == self->firstNode) {
+        return 0;
+    }
     LinkNode* nodeNow = self->firstNode;
     while (1) {
         Arg* argNow = nodeNow;

@@ -364,7 +364,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
             goto RUN_exit;
         }
 
-        subLocals = New_TinyObj(NULL);
+        subLocals = New_PikaObj();
         while (1) {
             Arg* methodArg = arg_copy(queue_popArg(invokeQuene1));
             if (NULL == methodArg) {
