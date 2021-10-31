@@ -293,6 +293,7 @@ AST* pikaParseLine(char* line, Stack* blockStack) {
     }
     if (strEqu(lineStart, (char*)"return")) {
         obj_setStr(ast, "return", "");
+        stmt = "";
     }
     if (0 == strncmp(lineStart, (char*)"return ", 7)) {
         char* lineBuff = strsCopy(buffs, lineStart);
