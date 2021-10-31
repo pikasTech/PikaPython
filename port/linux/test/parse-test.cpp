@@ -756,3 +756,36 @@ TEST(parser, def_add_return) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, def_while_return) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+    "def add(a, b):\n"
+    "    while True:\n"
+    "        return a + b\n"
+    "\n"
+    ;
+    printf("%s", lines);
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,(char *)
+    "B0\n"
+    "0 DEF add(a,b)\n"
+    "0 JMP 1\n"
+    "B1\n"
+    "0 REF True\n"
+    "0 JEZ 2\n"
+    "B2\n"
+    "1 REF a\n"
+    "1 REF b\n"
+    "0 OPT +\n"
+    "0 RET\n"
+    "B1\n"
+    "0 JMP -1\n"
+    "0 RET\n"
+    "B0\n"
+    );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
