@@ -4,7 +4,7 @@
 
 Parameters* pikaVM_run(PikaObj* self, char* pyLine);
 Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
-Parameters* pikaVM_runAsmWithArgs(PikaObj* self,
+Parameters* pikaVM_runAsmWithPars(PikaObj* self,
                                   Parameters* globals,
                                   Parameters* locals,
                                   char* pikaAsm);
