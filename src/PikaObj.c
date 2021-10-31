@@ -548,3 +548,10 @@ float method_getFloat(Args* args, char* argName) {
 char* method_getStr(Args* args, char* argName) {
     return args_getStr(args, argName);
 }
+
+PikaObj* New_PikaObj(void) {
+    PikaObj* self = pikaMalloc(sizeof(PikaObj));
+    /* List */
+    self->attributeList = New_args(NULL);
+    return self;
+}

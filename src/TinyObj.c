@@ -14,11 +14,7 @@ void _beforDinit(PikaObj* self) {
 }
 
 PikaObj* New_TinyObj(Args* args) {
-    PikaObj* self = pikaMalloc(sizeof(PikaObj));
-
-    /* List */
-    self->attributeList = New_args(NULL);
-
+    PikaObj* self = New_PikaObj();
     /* attribute */
     obj_setPtr(self, "_ctx", self);
     obj_setStr(self, "_n", "root");

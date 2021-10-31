@@ -107,5 +107,6 @@ void method_returnArg(Args* args, Arg* arg);
 void obj_runNoRes(PikaObj* slef, char* cmd);
 void obj_run(PikaObj* self, char* cmd);
 Parameters* obj_runDirect(PikaObj* self, char* cmd);
+PikaObj* New_PikaObj(void);
 
 #endif
