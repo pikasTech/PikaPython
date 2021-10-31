@@ -279,14 +279,14 @@ AST* pikaParseLine(char* line, Stack* blockStack) {
     char* stmt = lineStart;
     if (0 == strncmp(lineStart, (char*)"while ", 6)) {
         stmt = strsCut(buffs, lineStart, ' ', ':');
-        obj_setStr(ast, "contralFlow", "while");
+        obj_setStr(ast, "block", "while");
         if (NULL != blockStack) {
             stack_pushStr(blockStack, "while");
         }
     }
     if (0 == strncmp(lineStart, (char*)"if ", 3)) {
         stmt = strsCut(buffs, lineStart, ' ', ':');
-        obj_setStr(ast, "contralFlow", "if");
+        obj_setStr(ast, "block", "if");
         if (NULL != blockStack) {
             stack_pushStr(blockStack, "if");
         }
@@ -354,7 +354,7 @@ char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
             break;
         }
     }
-    if (isToFlash){
+    if (isToFlash) {
         __platformSavePikaAsmEOF();
     }
     char* outAsm = getOutAsm(outBuffs, pikaAsmBuff, isToFlash);
@@ -454,10 +454,10 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     /* parse ast to asm main process */
     pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
 
-    if (strEqu(obj_getStr(ast, "contralFlow"), "while")) {
+    if (strEqu(obj_getStr(ast, "block"), "while")) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 2\n");
     }
-    if (strEqu(obj_getStr(ast, "contralFlow"), "if")) {
+    if (strEqu(obj_getStr(ast, "block"), "if")) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
     }
     pikaAsm = strsCopy(buffs, pikaAsm);
