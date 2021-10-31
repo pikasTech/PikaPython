@@ -178,7 +178,11 @@ TEST(object_test, voidRun) {
 
 TEST(object_test, printa) {
     PikaObj* root = newRootObj((char*)"root", New_BaseObj);
-    PikaObj* globals = obj_runDirect(root, (char*)"print(2)");
+    PikaObj* globals = obj_runDirect(root,
+     (char*) 
+     "a = 2\n"
+     "print(a)\n"
+     );
     char* sysOut = obj_getSysOut(globals);
     ASSERT_STREQ(sysOut, "2");
     obj_deinit(globals);
