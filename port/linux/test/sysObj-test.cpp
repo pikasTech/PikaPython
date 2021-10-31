@@ -7,7 +7,7 @@ extern "C" {
 
 TEST(sysObj, print) {
     PikaObj* obj = newRootObj((char*)"test", New_PikaStdLib_SysObj);
-    PikaObj* globals = obj_runDirect(obj, (char*)"print('hello world')");
+    Parameters* globals = obj_runDirect(obj, (char*)"print('hello world')");
     char* sysOut = args_getSysOut(globals->attributeList);
     int errCode = args_getErrorCode(globals->attributeList);
     printf("sysout = %s\r\n", sysOut);
@@ -20,7 +20,7 @@ TEST(sysObj, print) {
 
 TEST(sysObj, noMethod) {
     PikaObj* obj = newRootObj((char*)"test", New_PikaStdLib_SysObj);
-    PikaObj* globals = obj_runDirect(obj, (char*)"printttt('hello world')");
+    Parameters* globals = obj_runDirect(obj, (char*)"printttt('hello world')");
     char* sysOut = args_getSysOut(globals->attributeList);
     int errCode = args_getErrorCode(globals->attributeList);
     printf("sysout = %s\r\n", sysOut);

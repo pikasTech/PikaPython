@@ -17,7 +17,7 @@ TEST(VM, num1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     obj_deinit(self);
     args_deinit(buffs);
     obj_deinit(globals);
@@ -30,7 +30,7 @@ TEST(VM, a_1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     ASSERT_EQ(args_getInt(globals->attributeList, (char*)"a"), 1);
 
     obj_deinit(self);
@@ -45,7 +45,7 @@ TEST(VM, a_1d1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     ASSERT_FLOAT_EQ(args_getFloat(globals->attributeList, (char*)"a"), 1.1);
 
     obj_deinit(self);
@@ -60,7 +60,7 @@ TEST(VM, str_xy) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
 
     ASSERT_STREQ(args_getStr(globals->attributeList, (char*)"a"),
                  (char*)"xy");
@@ -77,7 +77,7 @@ TEST(VM, str_xy_space) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
 
     ASSERT_STREQ(args_getStr(globals->attributeList, (char*)"a"),
                  (char*)"xy ");
@@ -92,7 +92,7 @@ TEST(VM, ref_a_b) {
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     Args* buffs = New_strBuff();
 
-    PikaObj* globals = pikaVM_runAsm(
+    Parameters* globals = pikaVM_runAsm(
         self, pikaParseLineToAsm(buffs, (char*)"a = 'xy '", NULL));
     globals = pikaVM_runAsmWithArgs(
         self, globals, pikaParseLineToAsm(buffs, (char*)"b = a", NULL));
@@ -109,7 +109,7 @@ TEST(VM, Run_add) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
 
-    PikaObj* globals = pikaVM_runAsm(
+    Parameters* globals = pikaVM_runAsm(
         self, pikaParseLineToAsm(buffs, (char*)"a = plusInt(1,2)", NULL));
 
     args_deinit(buffs);
@@ -124,7 +124,7 @@ TEST(VM, Run_add_multy) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
 
-    PikaObj* globals =
+    Parameters* globals =
         pikaVM_runAsm(self, pikaParseLineToAsm(buffs, (char*)"b = 2", NULL));
     globals = pikaVM_runAsmWithArgs(
         self, globals,
@@ -142,7 +142,7 @@ TEST(VM, Run_add_1_2_3) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
 
-    PikaObj* globals = pikaVM_runAsm(
+    Parameters* globals = pikaVM_runAsm(
         self, pikaParseLineToAsm(buffs, (char*)"a = plusInt(1, plusInt(2,3) )",
                                  NULL));
 
@@ -167,7 +167,7 @@ TEST(VM, JEZ) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    PikaObj* globals = New_TinyObj(NULL);
+    Parameters* globals = New_TinyObj(NULL);
     lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
@@ -191,7 +191,7 @@ TEST(VM, JMP) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    PikaObj* globals = New_TinyObj(NULL);
+    Parameters* globals = New_TinyObj(NULL);
     lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
     __clearInvokeQueues(globals);
@@ -215,7 +215,7 @@ TEST(VM, JMP_back1) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    PikaObj* globals = New_TinyObj(NULL);
+    Parameters* globals = New_TinyObj(NULL);
     lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, globals, pikaAsm, lineAddr);
@@ -243,7 +243,7 @@ TEST(VM, WHILE) {
     printf("%s", pikaAsm);
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* self = New_TinyObj(NULL);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     EXPECT_EQ(args_getInt(globals->attributeList, (char*)"a"), 0);
     EXPECT_EQ(args_getInt(globals->attributeList, (char*)"b"), 1);
     obj_deinit(globals);
@@ -258,7 +258,7 @@ TEST(VM, a_1_1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
 
     int res = args_getInt(globals->attributeList, (char*)"a");
     obj_deinit(self);
@@ -274,7 +274,7 @@ TEST(VM, a_1_1d1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
 
     float res = args_getFloat(globals->attributeList, (char*)"a");
     obj_deinit(self);
@@ -290,7 +290,7 @@ TEST(VM, a_jjcc) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
 
     float res = args_getFloat(globals->attributeList, (char*)"a");
     obj_deinit(self);
@@ -311,7 +311,7 @@ TEST(VM, while_a_1to10) {
     char* pikaAsm = pikaParseMultiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
 
     int res = args_getInt(globals->attributeList, (char*)"a");
     obj_deinit(self);
@@ -333,7 +333,7 @@ TEST(VM, mem_x) {
     char* pikaAsm = pikaParseMultiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"", New_PikaMain);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
 
     int res = obj_getInt(globals, (char*)"mem.x");
     obj_deinit(self);
@@ -361,7 +361,7 @@ TEST(VM, DEF_instruct) {
     PikaObj* self = New_TinyObj(NULL);
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     char* methodPtr = (char*)obj_getPtr(self, (char*)"test");
     EXPECT_STREQ(methodCode, methodPtr);
     obj_deinit(self);
@@ -380,7 +380,7 @@ TEST(VM, RET_instruct) {
     PikaObj* self = New_TinyObj(NULL);
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     Arg* returnArg = args_getArg(globals->attributeList, (char*)"return");
     int num = arg_getInt(returnArg);
     EXPECT_EQ(num, 13);
@@ -402,7 +402,7 @@ TEST(VM, RUN_DEF) {
     "0 RUN test\n"
     "0 OUT a\n";
     PikaObj* self = New_TinyObj(NULL);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     int num = obj_getInt(self, (char*)"a");
     obj_deinit(self);
     obj_deinit(globals);

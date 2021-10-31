@@ -11,6 +11,7 @@
 typedef struct PikaObj_t PikaObj;
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
+typedef PikaObj Parameters;
 
 struct PikaObj_t {
     /* list */
@@ -68,9 +69,6 @@ int32_t class_defineMethod(PikaObj* self,
                            char* declearation,
                            void (*methodPtr)(PikaObj* self, Args* args));
 
-void obj_runNoRes(PikaObj* slef, char* cmd);
-void obj_run(PikaObj* self, char* cmd);
-PikaObj* obj_runDirect(PikaObj* self, char* cmd);
 int32_t obj_removeArg(PikaObj* self, char* argPath);
 int32_t obj_isArgExist(PikaObj* self, char* argPath);
 PikaObj* obj_getClassObjByNewFun(PikaObj* self, char* name, NewFun newClassFun);
@@ -105,5 +103,9 @@ int32_t method_getInt(Args* args, char* argName);
 float method_getFloat(Args* args, char* argName);
 char* method_getStr(Args* args, char* argName);
 void method_returnArg(Args* args, Arg* arg);
+
+void obj_runNoRes(PikaObj* slef, char* cmd);
+void obj_run(PikaObj* self, char* cmd);
+Parameters* obj_runDirect(PikaObj* self, char* cmd);
 
 #endif

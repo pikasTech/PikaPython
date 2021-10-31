@@ -101,7 +101,7 @@ int fast_atoi(char* src) {
 }
 
 Arg* pikaVM_runAsmInstruct(PikaObj* self,
-                           PikaObj* globals,
+                           Parameters* globals,
                            enum Instruct instruct,
                            char* data,
                            Queue* invokeQuene0,
@@ -416,7 +416,7 @@ Arg* pikaVM_runAsmInstruct(PikaObj* self,
     return NULL;
 }
 
-int32_t __clearInvokeQueues(PikaObj* globals) {
+int32_t __clearInvokeQueues(Parameters* globals) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
         char deepth[2] = {0};
         deepth[0] = deepthChar;
@@ -511,7 +511,7 @@ int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
 }
 
 int32_t pikaVM_runAsmLine(PikaObj* self,
-                          PikaObj* globals,
+                          Parameters* globals,
                           char* pikaAsm,
                           int32_t lineAddr) {
     Args* buffs = New_strBuff();
@@ -580,7 +580,9 @@ char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
     return pikaAsm;
 }
 
-PikaObj* pikaVM_runAsmWithArgs(PikaObj* self, PikaObj* globals, char* pikaAsm) {
+Parameters* pikaVM_runAsmWithArgs(PikaObj* self,
+                                  Parameters* globals,
+                                  char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
     args_setErrorCode(globals->attributeList, 0);
@@ -608,17 +610,17 @@ PikaObj* pikaVM_runAsmWithArgs(PikaObj* self, PikaObj* globals, char* pikaAsm) {
     return globals;
 }
 
-PikaObj* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
-    PikaObj* globals = New_TinyObj(NULL);
+Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
+    Parameters* globals = New_TinyObj(NULL);
     globals = pikaVM_runAsmWithArgs(self, globals, pikaAsm);
     return globals;
 }
 
-PikaObj* pikaVM_run(PikaObj* self, char* multiLine) {
+Parameters* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
     char* pikaAsm = pikaParseMultiLineToAsm(buffs, multiLine);
     uint32_t asm_size = strGetSize(pikaAsm);
-    PikaObj* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     if (NULL != buffs) {
         args_deinit(buffs);
     }
