@@ -491,3 +491,23 @@ TEST(VM, RUN_DEF_add) {
     obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, run_def_add) {
+    char* line = (char*)
+    "def add(a, b):\n"
+    "    return a + b\n"
+    "c = add(1,3)\n"
+    "\n";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+
+    int c = args_getInt(globals->attributeList, (char*)"c");
+    obj_deinit(self);
+    args_deinit(buffs);
+    obj_deinit(globals);
+    ASSERT_FLOAT_EQ(c, 4);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
