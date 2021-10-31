@@ -549,7 +549,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     }
 
     Arg* resArg =
-        pikaVM_runInstruct(self, globals, globals, instruct, data, invokeQuene0,
+        pikaVM_runInstruct(self, globals, locals, instruct, data, invokeQuene0,
                            invokeQuene1, &jmp, programCounter);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
