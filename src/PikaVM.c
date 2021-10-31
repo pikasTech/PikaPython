@@ -101,14 +101,14 @@ int fast_atoi(char* src) {
 }
 
 Arg* pikaVM_runInstruct(PikaObj* self,
-                           Parameters* globals,
-                           Parameters* locals,
-                           enum Instruct instruct,
-                           char* data,
-                           Queue* invokeQuene0,
-                           Queue* invokeQuene1,
-                           int32_t* jmp,
-                           char* programConter) {
+                        Parameters* globals,
+                        Parameters* locals,
+                        enum Instruct instruct,
+                        char* data,
+                        Queue* invokeQuene0,
+                        Queue* invokeQuene1,
+                        int32_t* jmp,
+                        char* programConter) {
     if (instruct == NUM) {
         Arg* numArg = New_arg(NULL);
         if (strIsContain(data, '.')) {
@@ -383,8 +383,8 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         char* methodCode = (char*)methodPtr;
         if (methodCode[0] == 'B' && methodCode[2] == '\n') {
             /* VM method */
-            subLocals =
-                pikaVM_runAsmWithArgs(methodHostObj, subLocals, methodCode);
+            subLocals = pikaVM_runAsmWithArgs(methodHostObj, subLocals, globals,
+                                              methodCode);
             /* get method return */
             returnArg = arg_copy(
                 args_getArg(subLocals->attributeList, (char*)"return"));
@@ -548,8 +548,8 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     }
 
     Arg* resArg =
-        pikaVM_runInstruct(self, globals, globals, instruct, data,
-                              invokeQuene0, invokeQuene1, &jmp, programCounter);
+        pikaVM_runInstruct(self, globals, globals, instruct, data, invokeQuene0,
+                           invokeQuene1, &jmp, programCounter);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
     }
@@ -584,6 +584,7 @@ char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
 
 Parameters* pikaVM_runAsmWithArgs(PikaObj* self,
                                   Parameters* globals,
+                                  Parameters* locals,
                                   char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
@@ -614,7 +615,7 @@ Parameters* pikaVM_runAsmWithArgs(PikaObj* self,
 
 Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     Parameters* globals = New_TinyObj(NULL);
-    globals = pikaVM_runAsmWithArgs(self, globals, pikaAsm);
+    globals = pikaVM_runAsmWithArgs(self, globals, globals, pikaAsm);
     return globals;
 }
 

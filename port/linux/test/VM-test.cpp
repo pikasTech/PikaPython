@@ -92,8 +92,9 @@ TEST(VM, ref_a_b) {
 
     Parameters* globals = pikaVM_runAsm(
         self, pikaParseLineToAsm(buffs, (char*)"a = 'xy '", NULL));
-    globals = pikaVM_runAsmWithArgs(
-        self, globals, pikaParseLineToAsm(buffs, (char*)"b = a", NULL));
+    globals =
+        pikaVM_runAsmWithArgs(self, globals, globals,
+                              pikaParseLineToAsm(buffs, (char*)"b = a", NULL));
 
     args_deinit(buffs);
     ASSERT_STREQ(args_getStr(globals->attributeList, (char*)"b"), (char*)"xy ");
@@ -124,7 +125,7 @@ TEST(VM, Run_add_multy) {
     Parameters* globals =
         pikaVM_runAsm(self, pikaParseLineToAsm(buffs, (char*)"b = 2", NULL));
     globals = pikaVM_runAsmWithArgs(
-        self, globals,
+        self, globals, globals,
         pikaParseLineToAsm(buffs, (char*)"a = plusInt(1,b)", NULL));
 
     args_deinit(buffs);
