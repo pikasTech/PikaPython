@@ -401,7 +401,98 @@ TEST(VM, RUN_DEF) {
     "0 OUT a\n";
     PikaObj* self = New_TinyObj(NULL);
     Parameters* globals = pikaVM_runAsm(self, pikaAsm);
-    int num = obj_getInt(self, (char*)"a");
+    int num = obj_getInt(globals, (char*)"a");
+    EXPECT_EQ(num, 1);
+    obj_deinit(self);
+    obj_deinit(globals);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, RUN_global) {
+    char* pikaAsm = (char*)
+    "B0\n"
+    "0 NUM 1\n"
+    "0 OUT a\n"
+    "B0\n"
+    "0 DEF test()\n"
+    "B0\n"
+    "0 JMP 1\n"
+    "B1\n"
+    "0 REF a\n"
+    "0 RET\n"
+    "B0\n"
+    "0 RUN test\n"
+    "0 OUT b\n";
+    PikaObj* self = New_TinyObj(NULL);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+    int a = obj_getInt(globals, (char*)"a");
+    int b = obj_getInt(globals, (char*)"b");
+    EXPECT_EQ(a, 1);
+    EXPECT_EQ(b, 1);
+    obj_deinit(self);
+    obj_deinit(globals);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, RUN_local_b) {
+    char* pikaAsm = (char*)
+    "B0\n"
+    "0 NUM 1\n"
+    "0 OUT a\n"
+    "B0\n"
+    "0 DEF test()\n"
+    "B0\n"
+    "0 JMP 1\n"
+    "B1\n"
+    "0 REF a\n"
+    "0 OUT b\n"
+    "1 REF b\n"
+    "1 REF a\n"
+    "0 OPT +\n"
+    "0 RET\n"
+    "B0\n"
+    "0 RUN test\n"
+    "0 OUT c\n";
+    PikaObj* self = newRootObj((char*)"", New_BaseObj);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+    int a = obj_getInt(globals, (char*)"a");
+    int b = obj_getInt(globals, (char*)"b");
+    int c = obj_getInt(globals, (char*)"c");
+    EXPECT_EQ(a, 1);
+    /* b is local, should not be exist in globals */
+    EXPECT_EQ(b, -999999999);
+    EXPECT_EQ(c, 2);
+    obj_deinit(self);
+    obj_deinit(globals);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, RUN_DEF_add) {
+    char* pikaAsm = (char*)
+    "B0\n"
+    "0 DEF add(a,b)\n"
+    "B0\n"
+    "0 JMP 1\n"
+    "B1\n"
+    "1 REF b\n"
+    "1 REF a\n"
+    "0 OPT +\n"
+    "0 RET\n"
+    "B0\n"
+    "1 NUM 1\n"
+    "1 NUM 2\n"
+    "0 RUN add\n"
+    "0 OUT c\n";
+    PikaObj* self = newRootObj((char*)"", New_BaseObj);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+    int a = obj_getInt(globals, (char*)"a");
+    int b = obj_getInt(globals, (char*)"b");
+    int c = obj_getInt(globals, (char*)"c");
+    /* a is local, should not be exist in globals */
+    EXPECT_EQ(a, -999999999);
+    /* b is local, should not be exist in globals */
+    EXPECT_EQ(b, -999999999);
+    EXPECT_EQ(c, 3);
     obj_deinit(self);
     obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);

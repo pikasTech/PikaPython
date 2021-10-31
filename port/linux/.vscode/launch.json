@@ -13,7 +13,7 @@
             "args": [
                 // "--gtest_filter=queueObj.currentObj"
                 // "--gtest_filter=parser*"
-                // "--gtest_filter=VM.while_a_d_x"
+                // "--gtest_filter=VM.RUN_local_b"
                 // "--gtest_filter=block.ifrun2"
                 // "--gtest_filter=sysObj.print"
                 // "--gtest_filter=object_test.a_b"
