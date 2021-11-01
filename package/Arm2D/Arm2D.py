@@ -77,12 +77,6 @@ class Screen(BaseObj):
     background = BackGround()
     elems = ElementList()
 
-    def newBox(name: str):
-        pass
-
-    def newStar(name: str):
-        pass
-
     def init():
         pass
 
