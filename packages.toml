@@ -71,6 +71,12 @@ releases = [
 ]
 
 [[packages]]
+name = "Arm2DqemuBooter"
+releases = [
+  "v0.0.1 a927bebdfa8dfb5f83caac79b775262e9da7deab",
+]
+
+[[packages]]
 name = "STM32G030Booter"
 releases = [
   "v1.0.0 bbf178182e5780ef8a02a9b09b8a5f250bb7e767",
