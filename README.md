@@ -90,8 +90,8 @@ Support method invoke, argument define, new object, free object, control flow(if
 |---|---|---|
 |Class Define     |√| |
 |Class Inherit    |√| |
-|Method Define    |√| |
-|Method Override  |√| |
+|Method Define    |√|√|
+|Method Override  |√|√|
 |Method Invoke    |√|√|
 |Module Import    |√|√|
 |Argument Define  |√|√|
