@@ -102,9 +102,9 @@ Support method invoke, argument define, new object, free object, control flow(if
 
 #### Operator
 
-| + | - | * | / | == | >= | <= |
- --- | --- | --- | --- | --- | --- | ---|
-|√|√|√|√|√| | | | |
+| + | - | * | / | == | > | < | >= | <= |
+|---|---|---|---|---|---|---|---|---|
+|√|√|√|√|√|√|√| | |
 
 #### Control flow
 
