@@ -55,7 +55,7 @@ It's very easy to bind C function to python module with the help of Pika Pre-com
 |stm32g030c8|√|√|√|√|√|√| | | |
 |stm32g070cB|√|√|√|√|√| | | | |
 |stm32f103c8|√|√|√|√|√| | | | |
-|ch32v103r8t6|√| | | | | | | | |
+|ch32v103r8t6|√|√| | | | | | | |
 |cm32m101a|√| | | | | | | | |
 
 # 3.Characteristic
