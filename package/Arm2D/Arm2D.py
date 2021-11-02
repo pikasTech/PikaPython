@@ -11,12 +11,12 @@ class BackGround(TinyObj):
     def getColor() -> str:
         pass
 
-    def update(ptTile: pointer, bIsNewFrame: int):
+    def update():
         pass
 
 
 class ElementList(BaseObj):
-    def update(ptTile: pointer, bIsNewFrame: int):
+    def update():
         pass
 
 
@@ -39,13 +39,13 @@ class Element(TinyObj):
     def down(y: int):
         pass
 
-    def update(ptTile: pointer, bIsNewFrame: int):
+    def update():
         pass
 
 
 class Box(Element):
     # override
-    def update(ptTile: pointer, bIsNewFrame: int):
+    def update():
         pass
 
     def init():
@@ -60,7 +60,7 @@ class Box(Element):
 
 class Star(Element):
     # override
-    def update(ptTile: pointer, bIsNewFrame: int):
+    def update():
         pass
 
     def init():
@@ -73,12 +73,12 @@ class Star(Element):
         pass
 
 
-class Screen(BaseObj):
+class Window(BaseObj):
     background = BackGround()
     elems = ElementList()
 
     def init():
         pass
 
-    def update(ptTile: pointer, bIsNewFrame: int):
+    def update():
         pass

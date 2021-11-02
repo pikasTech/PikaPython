@@ -1,6 +1,6 @@
 #include "Arm2D_common.h"
 
-void Arm2D_Element_update(PikaObj *self, int bIsNewFrame, void * ptTile)
+void Arm2D_Element_update(PikaObj *self)
 {
     /* need to be override */
     obj_setErrorCode(self, 1);
