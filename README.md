@@ -127,6 +127,8 @@ Complete unit testes based on google test.
 
 [5. PikaScript-Demo show](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
 
+[6. Arm-2D simulation](document/6.用Python玩ARM%202D，认真的嘛.md)
+
 # 4.Both talk and show the code：
 
 ## E-mail: liang6516@outlook.com
@@ -140,6 +142,7 @@ Complete unit testes based on google test.
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
+| QEMU simulation with ARM-2D | [liuduanfei](https://github.com/liuduanfei) |
 | Donate：GD32E103TB muc 2 pic | 信息牛(WeChat) |
 | Rt-thread bsp template| [Meco Jianting Man](https://github.com/mysterywolf) |
 | Donate：EC600S-CN 4G module | 移远模块 |
