@@ -49,12 +49,14 @@ It's very easy to bind C function to python module with the help of Pika Pre-com
 [pikaPackageManager](../../tree/master/tools/pikaPackageManager) - pacakge manager
 
 # 2.Device driver
-|MCU/Board|gpio|uart|pwm|adc|rgb|i2c|spi|
-|---|---|---|---|---|---|---|---|
-|[PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√| |
-|stm32g030c8|√|√|√|√|-|√| |
-|stm32g070cB|√|√|√|√|-| | |
-|stm32f103c8|√|√|√|√|-| | |
+|MCU/Board|bsp|gpio|uart|pwm|adc|i2c|spi|rgb|oled|
+|---|---|---|---|---|---|---|---|---|---|
+|[PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√| |√|√|
+|stm32g030c8|√|√|√|√|√|√| | | |
+|stm32g070cB|√|√|√|√|√| | | | |
+|stm32f103c8|√|√|√|√|√| | | | |
+|ch32v103r8t6|√| | | | | | | | |
+|cm32m101a|√| | | | | | | | |
 
 # 3.Characteristic
 ### (1)Run environment
