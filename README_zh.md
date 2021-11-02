@@ -154,6 +154,8 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [5. PikaScript-Demo展示](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
 
+[6. Arm-2D GUI引擎和pikascript联合仿真](document/6.用Python玩ARM%202D，认真的嘛.md)
+
 # 4.交流与技术支持：
 
 ## 微信交流群
@@ -173,6 +175,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| 基于QEMU的ARM-2D仿真工程 | [liuduanfei](https://github.com/liuduanfei) |
 | 捐赠：GD32E103TB芯片2片 | 信息牛(微信名) |
 | Rt-thread 支持包模板| [Meco Jianting Man](https://github.com/mysterywolf) |
 | 捐赠：移远EC600S-CN 4G模块 | 移远模块 |
