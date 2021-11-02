@@ -71,13 +71,14 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 [pikaPackageManager](../../tree/master/tools/pikaPackageManager) - 使用go编写的模块管理器
 
 # 2.驱动适配进度
-|MCU/Board|gpio|uart|pwm|adc|rgb|i2c|spi|
-|---|---|---|---|---|---|---|---|
-|[PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√| | |
-|stm32g030c8|√|√|√|√|-| | |
-|stm32g070cB|√|√|√|√|-| | |
-|stm32f103c8|√|√|√|√|-| | |
-
+|MCU/Board|bsp|gpio|uart|pwm|adc|i2c|spi|rgb|oled|
+|---|---|---|---|---|---|---|---|---|---|
+|[PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√| |√|√|
+|stm32g030c8|√|√|√|√|√|√| | | |
+|stm32g070cB|√|√|√|√|√| | | | |
+|stm32f103c8|√|√|√|√|√| | | | |
+|ch32v103r8t6|√| | | | | | | | |
+|cm32m101a|√| | | | | | | | |
 # 3.特性
 ### (1)运行环境
 
