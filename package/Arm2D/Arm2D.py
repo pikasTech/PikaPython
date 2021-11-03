@@ -42,6 +42,9 @@ class Element(TinyObj):
     def update():
         pass
 
+    def setAlpha(alpha: int):
+        pass
+
 
 class Box(Element):
     # override
