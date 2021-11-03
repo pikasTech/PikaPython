@@ -336,6 +336,9 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         /* get method host obj */
         PikaObj* methodHostObj = obj_getObj(self, methodPath, 1);
         if (NULL == methodHostObj) {
+            methodHostObj = obj_getObj(locals, methodPath, 1);
+        }
+        if (NULL == methodHostObj) {
             /* error, not found object */
             args_setErrorCode(locals->attributeList, 1);
             args_setSysOut(locals->attributeList,
