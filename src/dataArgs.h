@@ -51,6 +51,9 @@ void args_bindStr(Args* self, char* name, char** stringPtr);
 void args_bind(Args* self, char* type, char* name, void* pointer);
 char* args_print(Args* self, char* name);
 
+int32_t args_setStruct(Args* self, char *name, void * struct_ptr, uint32_t struct_size);
+void* args_getStruct(Args* self, char *name);
+
 int32_t args_set(Args* self, char* name, char* valueStr);
 int32_t args_setObjectWithClass(Args* self,
                                 char* objectName,
