@@ -7,32 +7,53 @@ void Arm2D_Element_update(PikaObj* self) {
 }
 
 void Arm2D_Element_init(PikaObj* self) {
-    args_setInt(self, "posX", 0);
-    args_setInt(self, "posY", 0);
-    args_setInt(self, "alpha", 255);
+    pika_arm2d_element_info_t elemInfo = {0};
+    elemInfo.alpha = 255;
+    elemInfo.x = 0;
+    elemInfo.y = 0;
+    args_setStruct(self, "elemInfo", &elemInfo, sizeof(pika_arm2d_element_info_t));
 }
 
 void Arm2D_Element_setAlpha(PikaObj* self, int alpha) {
-    args_setInt(self, "alpha", alpha);
+    pika_arm2d_element_info_t* elemInfo = args_getStruct(self, "elemInfo");
+    elemInfo->alpha_last = elemInfo->alpha;
+
+    elemInfo->alpha = alpha;
 }
 
 void Arm2D_Element_up(PikaObj* self, int y) {
-    args_setInt(self, "posY", obj_getInt(self, "posY") - y);
+    pika_arm2d_element_info_t* elemInfo = args_getStruct(self, "elemInfo");
+    elemInfo->y_last = elemInfo->y;
+
+    elemInfo->y = elemInfo->y - y;
 }
 
 void Arm2D_Element_down(PikaObj* self, int y) {
-    args_setInt(self, "posY", obj_getInt(self, "posY") + y);
+    pika_arm2d_element_info_t* elemInfo = args_getStruct(self, "elemInfo");
+    elemInfo->y_last = elemInfo->y;
+
+    elemInfo->y = elemInfo->y + y;
 }
 
 void Arm2D_Element_lift(PikaObj* self, int x) {
-    args_setInt(self, "posX", obj_getInt(self, "posX") - x);
-}
+    pika_arm2d_element_info_t* elemInfo = args_getStruct(self, "elemInfo");
+    elemInfo->x_last = elemInfo->x;
 
-void Arm2D_Element_move(PikaObj* self, int x, int y) {
-    args_setInt(self, "posX", x);
-    args_setInt(self, "posY", y);
+    elemInfo->x = elemInfo->x - x;
 }
 
 void Arm2D_Element_right(PikaObj* self, int x) {
-    args_setInt(self, "posX", obj_getInt(self, "posX") + x);
+    pika_arm2d_element_info_t* elemInfo = args_getStruct(self, "elemInfo");
+    elemInfo->x_last = elemInfo->x;
+
+    elemInfo->x = elemInfo->x + x;
+}
+
+void Arm2D_Element_move(PikaObj* self, int x, int y) {
+    pika_arm2d_element_info_t* elemInfo = args_getStruct(self, "elemInfo");
+    elemInfo->y_last = elemInfo->y;
+    elemInfo->x_last = elemInfo->x;
+
+    elemInfo->x = x;
+    elemInfo->y = y;
 }

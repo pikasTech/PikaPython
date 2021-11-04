@@ -5,7 +5,7 @@ int32_t __foreach_ElementList_update(Arg* elem, Args* buffs) {
     char* type = arg_getType(elem);
     if (strIsStartWith(type, "_class")) {
         PikaObj* elemObj = arg_getPtr(elem);
-        args_deinit(pikaVM_runAsm(elemObj, "0 RUN update\n"));
+        obj_deinit(pikaVM_runAsm(elemObj, "0 RUN update\n"));
     }
     return 0;
 }

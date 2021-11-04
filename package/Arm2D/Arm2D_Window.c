@@ -55,7 +55,7 @@ void pika_arm2d_init(void) {
             LCD_WIDTH,      //!< screen width
             LCD_HEIGHT,     //!< screen height
             uint16_t,       //!< colour date type
-            160,      //!< PFB block width
+			160,      //!< PFB block width
 			LCD_HEIGHT,             //!< PFB block height
             1,              //!< number of PFB in the PFB pool
             {
@@ -82,9 +82,10 @@ void Arm2D_Window_init(PikaObj* self) {
     pika_arm2d_window.pika_windows_object = self;
     pika_arm2d_window.pika_elems_object = obj_getObj(self, "elems", 0);
     pika_arm2d_window.pika_background_object = obj_getObj(self, "background", 0);
+    pika_arm2d_window.dirty_region_list = NULL;
 }
 
 void Arm2D_Window_update(PikaObj* self) {
-    while (arm_fsm_rt_cpl != arm_2d_helper_pfb_task(&s_tPFBHelper, NULL))
+    while (arm_fsm_rt_cpl != arm_2d_helper_pfb_task(&s_tPFBHelper, pika_arm2d_window.dirty_region_list))
         ;
 }

@@ -13,9 +13,24 @@
 #ifndef ARM2DQEMUBOOTER_APP_ARM2D_H_
 #define APPLICATIONS_APP_ARM2D_H_
 
-typedef struct pika_arm2d_window_t_ {
+typedef struct __pika_arm2d_element_info_t {
+    int x, x_last;
+    int y, y_last;
+    int alpha, alpha_last;
+} pika_arm2d_element_info_t;
+
+typedef struct __pika_arm2d_box_info_t {
+	pika_arm2d_element_info_t elem_info;
+	arm_2d_region_t arg2d_regin;
+    int wight, wight_last;
+    int hight, hight_last;
+    uint16_t color_code, color_code_last;
+} pika_arm2d_box_info_t;
+
+typedef struct __pika_arm2d_window_t {
     arm_2d_tile_t* pfb_tile_now;
     bool pfb_is_new_frame;
+    arm_2d_region_list_item_t* dirty_region_list;
     PikaObj* pika_windows_object;
     PikaObj* pika_background_object;
     PikaObj* pika_elems_object;
