@@ -24,8 +24,8 @@
 /* USER CODE BEGIN Includes */
 #include "STM32_common.h"
 #include "pikaScript.h"
-#include "stdbool.h"
 #include "pikaVM.h"
+#include "stdbool.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,6 +61,7 @@ void SystemClock_Config(void);
 PikaObj* pikaMain;
 extern char pikaShell[RX_BUFF_LENGTH];
 extern uint8_t pikaShellRxOk;
+
 /* USER CODE END 0 */
 
 /**
@@ -96,61 +97,49 @@ int main(void) {
     /* set vector table*/
     SCB->VTOR = FLASH_BASE | 0x2000;
     __enable_irq();
+    
+    HARDWARE_PRINTF_Init();
+    STM32_Code_Init();
 
-    pikaMain = newRootObj("pikaMain", New_PikaMain);
-    obj_run(pikaMain, "uart = STM32.UART()");    
-    obj_run(pikaMain, "uart.init()");   
-    obj_run(pikaMain, "uart.setId(1)");    
-    obj_run(pikaMain, "uart.setBaudRate(115200)");    
-    obj_run(pikaMain, "uart.enable()");   
-    obj_run(pikaMain, "print('uart init ok')");
-    obj_run(pikaMain, "remove('uart')");
-    obj_deinit(pikaMain);
+    printf("stm32 hardware init ok\r\n");
 
     char* code = (char*)FLASH_SCRIPT_START_ADDR;
     uint16_t codeOffset = 0;
     if (code[0] != 0xFF) {
         /* boot from flash */
         pikaMain = newRootObj("pikaMain", New_PikaMain);
-        if(code[0] == 'i'){
+        if (code[0] == 'i') {
             printf("[info]: boot from Script.\r\n");
-            Arg *codeBuff = arg_setStr(NULL, "", code);
+            Arg* codeBuff = arg_setStr(NULL, "", code);
             obj_run(pikaMain, arg_getStr(codeBuff));
             arg_deinit(codeBuff);
         }
-        if(code[0] == 'B'){
-            printf("[info]: boot from Pika Asm.\r\n");    
-            printf("%s\n",code);
-            printf("asm size: %d\n", strGetSize(code));
+        if (code[0] == 'B') {
+            printf("[info]: boot from Pika Asm.\r\n");
+            printf("%s\n", code);
+            printf("asm size: %d\r\n", strGetSize(code));
             pikaVM_runAsm(pikaMain, code);
         }
     } else {
         /* boot from firmware */
         pikaMain = pikaScriptInit();
     }
-    /* USER CODE END 2 */
 
-    /* Infinite loop */
-    /* USER CODE BEGIN WHILE */
     while (1) {
-        if(pikaShellRxOk){
-            Args * runRes = obj_runDirect(pikaMain, pikaShell);
-            char* sysOut = args_getSysOut(runRes);
-            uint8_t errcode = args_getErrorCode(runRes);
+        if (pikaShellRxOk) {
+            Parameters* runRes = obj_runDirect(pikaMain, pikaShell);
+            char* sysOut = args_getSysOut(runRes->attributeList);
+            uint8_t errcode = args_getErrorCode(runRes->attributeList);
             __platformPrintf(">>> %s", pikaShell);
             if (!strEqu("", sysOut)) {
                 __platformPrintf("%s\r\n", sysOut);
             }
             if (NULL != runRes) {
-                args_deinit(runRes);
-            }     
+                obj_deinit(runRes);
+            }
             pikaShellRxOk = 0;
         }
-        /* USER CODE END WHILE */
-
-        /* USER CODE BEGIN 3 */
     }
-    /* USER CODE END 3 */
 }
 
 /**

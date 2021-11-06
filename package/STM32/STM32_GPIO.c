@@ -105,9 +105,9 @@ void STM32_GPIO_platformHigh(PikaObj* self) {
     }
     HAL_GPIO_WritePin(gpioPort, gpioPin, GPIO_PIN_SET);
 }
-void STM32_GPIO_platformSetMode(PikaObj* self, char* mode) {
+void STM32_GPIO_platformSetMode(PikaObj* self) {
     char* pin = obj_getStr(self, "pin");
-
+    char *mode = obj_getStr(self, "mode");
     if (0 != enableClk(pin)) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
@@ -142,7 +142,7 @@ void STM32_GPIO_platformSetMode(PikaObj* self, char* mode) {
     HAL_GPIO_Init(gpioPort, &GPIO_InitStruct);
 }
 
-int STM32_GPIO_platformRead(PikaObj *self){
+void STM32_GPIO_platformRead(PikaObj *self){
     char* pin = obj_getStr(self, "pin");
     GPIO_TypeDef* gpioPort = getGpioPort(pin);
     if (NULL == gpioPort) {
@@ -154,7 +154,7 @@ int STM32_GPIO_platformRead(PikaObj *self){
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio pin.");
     }
-    return HAL_GPIO_ReadPin(gpioPort,gpioPin);
+    obj_setInt(self, "readBuff", HAL_GPIO_ReadPin(gpioPort,gpioPin));
 }
 
 int STM32_lowLevel_readPin(PikaObj *self, char * pin){

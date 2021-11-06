@@ -2,13 +2,6 @@ from PikaObj import *
 import PikaStdLib
 import PikaPiZero
 import STM32
-
-uart = STM32.UART()
-uart.init()
-uart.setId(1)
-uart.setBaudRate(115200)
-uart.enable()
-
 pin = STM32.GPIO()
 pin.init()
 pin.setPin('PA0')

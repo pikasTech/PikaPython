@@ -22,7 +22,8 @@ uint16_t Get_Adc(ADC_HandleTypeDef* hadc, uint32_t ch) {
     return (uint16_t)HAL_ADC_GetValue(hadc);
 }
 
-void STM32_ADC_platformEnable(PikaObj* self, char* pin) {
+void STM32_ADC_platformEnable(PikaObj* self) {
+    char *pin = obj_getStr(self, "pin");
     if (!strIsStartWith(pin, "PA")) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match adc pin.");
@@ -162,6 +163,7 @@ exit:
     return channel;
 }
 
-float STM32_ADC_platformRead(PikaObj* self, char* pin) {
-    return 3.3f * Get_Adc(&pika_hadc1, getChannel(pin)) / 4096.0f;
+void STM32_ADC_platformRead(PikaObj* self) {
+    char *pin = obj_getStr(self, "pin");
+    obj_setFloat(self, "val", 3.3f * Get_Adc(&pika_hadc1, getChannel(pin)) / 4096.0f);
 }

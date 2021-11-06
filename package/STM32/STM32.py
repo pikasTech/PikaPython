@@ -20,11 +20,11 @@ class GPIO(PikaStdDevice.GPIO):
         pass
 
     # override
-    def platformSetMode(mode: str):
+    def platformSetMode():
         pass
 
     # override
-    def platformRead() -> int:
+    def platformRead():
         pass
 
 
@@ -40,39 +40,39 @@ class Time(PikaStdDevice.Time):
 
 class ADC(PikaStdDevice.ADC):
     # override
-    def platformEnable(pin: str):
+    def platformEnable():
         pass
 
     # override
-    def platformRead(pin: str) -> float:
+    def platformRead():
         pass
 
 
 class UART(PikaStdDevice.UART):
     # override
-    def platformEnable(id: int, baudRate: int):
+    def platformEnable():
         pass
 
     # override
-    def platformWrite(id: int, data: str):
+    def platformWrite():
         pass
 
     # override
-    def platformRead(id: int, length: int) -> str:
+    def platformRead():
         pass
 
 
 class PWM(PikaStdDevice.PWM):
     # override
-    def platformEnable(pin: str, freq: int, duty: float):
+    def platformEnable():
         pass
 
     # override
-    def platformSetFrequency(pin: str, freq: int):
+    def platformSetFrequency():
         pass
 
     # override
-    def platformSetDuty(pin: str, duty: float):
+    def platformSetDuty():
         pass
 
 
@@ -85,11 +85,11 @@ class IIC(PikaStdDevice.IIC):
         pass
 
     # override
-    def platformWrite(addr: int, data: str):
+    def platformWrite():
         pass
 
     # override
-    def platformRead(addr: int, length: int) -> str:
+    def platformRead():
         pass
 
 

@@ -19,6 +19,21 @@ pika_uart_t pika_uart3;
 pika_uart_t pika_uart4;
 #endif
 
+UART_HandleTypeDef huart1;
+
+/* support prinf */
+int fputc(int ch, FILE* f) {
+    HAL_UART_Transmit(&huart1, (uint8_t*)&ch, 1, 0xffff);
+    return ch;
+}
+
+/* support scanf */
+int fgetc(FILE* f) {
+    uint8_t ch = 0;
+    HAL_UART_Receive(&huart1, &ch, 1, 0xffff);
+    return ch;
+}
+
 static pika_uart_t* getPikaUart(uint8_t id) {
     if (1 == id) {
         return &pika_uart1;
@@ -338,11 +353,14 @@ void USART3_4_IRQHandler(void) {
 #endif
 #endif
 
-void STM32_UART_platformEnable(PikaObj* self, int baudRate, int id) {
-#ifdef Code_ENABLE    
-    STM32_Code_Init();
-#endif
+void STM32_UART_platformEnable(PikaObj* self) {
+    int id = obj_getInt(self, "id");
+    int baudRate = obj_getInt(self, "baudRate");
     setUartObj(id, self);
+    /* uart 1 is inited by hardward */
+    if (1 == id) {
+        return;
+    }
     UART_HandleTypeDef* huart = getUartHandle(id);
     huart->Instance = getUartInstance(id);
     UART_MspInit(huart);
@@ -355,7 +373,9 @@ void STM32_UART_platformEnable(PikaObj* self, int baudRate, int id) {
     HAL_UART_Receive_IT(getUartHandle(id), (uint8_t*)getUartRxBuff(id), 1);
 }
 
-char* STM32_UART_platformRead(PikaObj* self, int id, int length) {
+void STM32_UART_platformRead(PikaObj* self) {
+    int id = obj_getInt(self, "id");
+    int length = obj_getInt(self, "length");
     Args* buffs = New_strBuff();
     char* readBuff = NULL;
     pika_uart_t* pika_uart = getPikaUart(id);
@@ -379,10 +399,12 @@ char* STM32_UART_platformRead(PikaObj* self, int id, int length) {
         (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
 exit:
     args_deinit(buffs);
-    return readBuff;
+    obj_setStr(self,"readData", readBuff);
 }
 
-void STM32_UART_platformWrite(PikaObj* self, char* data, int id) {
+void STM32_UART_platformWrite(PikaObj* self) {
+    char *data = obj_getStr(self, "data");
+    int id = obj_getInt(self, "id");
     HAL_UART_Transmit(getUartHandle(id), (uint8_t*)data, strGetSize(data), 100);
 }
 
@@ -418,14 +440,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
         pikaShellRxOk = 1;
 #endif
     }
-    /* avoid recive buff overflow */ 
+    /* avoid recive buff overflow */
     if (pika_uart->rxBuffOffset + 2 > RX_BUFF_LENGTH) {
         memmove(pika_uart->rxBuff, pika_uart->rxBuff + 1, RX_BUFF_LENGTH);
         UART_Start_Receive_IT(
-            huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);        
+            huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
         return;
     }
-    
+
     /* recive next char */
     pika_uart->rxBuffOffset++;
     pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
@@ -433,15 +455,36 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
         huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
 }
 
-/* support prinf */
-int fputc(int ch, FILE* f) {
-    HAL_UART_Transmit(&pika_uart1.huart, (uint8_t*)&ch, 1, 0xffff);
-    return ch;
-}
+void HARDWARE_PRINTF_Init(void) {
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    __HAL_RCC_USART1_CLK_ENABLE();
 
-/* support scanf */
-int fgetc(FILE* f) {
-    uint8_t ch = 0;
-    HAL_UART_Receive(&pika_uart1.huart, &ch, 1, 0xffff);
-    return ch;
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_10;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF1_USART1;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(USART1_IRQn);
+    huart1.Instance = USART1;
+    huart1.Init.BaudRate = 115200;
+    huart1.Init.WordLength = UART_WORDLENGTH_8B;
+    huart1.Init.StopBits = UART_STOPBITS_1;
+    huart1.Init.Parity = UART_PARITY_NONE;
+    huart1.Init.Mode = UART_MODE_TX_RX;
+    huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+    huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+    huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+    huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+    HAL_UART_Init(&huart1);
+    HAL_UARTEx_SetTxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8);
+    HAL_UARTEx_SetRxFifoThreshold(&huart1, UART_RXFIFO_THRESHOLD_1_8);
+    HAL_UARTEx_DisableFifoMode(&huart1);
+    pika_uart1.huart = huart1;
+    pika_uart1.id = 1;
+    pika_uart1.obj = NULL;
+    HAL_UART_Receive_IT(getUartHandle(1), (uint8_t*)getUartRxBuff(1), 1);
 }

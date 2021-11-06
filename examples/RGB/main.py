@@ -2,12 +2,6 @@ import STM32
 import PikaPiZero
 import PikaStdLib
 
-uart = STM32.UART()
-uart.init()
-uart.setId(1)
-uart.setBaudRate(115200)
-uart.enable()
-
 time = STM32.Time()
 adc = STM32.ADC()
 pin = STM32.GPIO()

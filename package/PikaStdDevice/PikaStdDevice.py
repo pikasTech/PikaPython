@@ -52,11 +52,11 @@ class GPIO(TinyObj):
         pass
 
     # need override
-    def platformSetMode(mode: str):
+    def platformSetMode():
         pass
 
     # need override
-    def platformRead()->int:
+    def platformRead():
         pass
 
 
@@ -84,11 +84,11 @@ class ADC(TinyObj):
         pass
 
     # need override
-    def platformEnable(pin: str):
+    def platformEnable():
         pass
 
     # need override
-    def platformRead(pin: str) -> float:
+    def platformRead():
         pass
 
 
@@ -112,15 +112,15 @@ class UART(TinyObj):
         pass
 
     # need override
-    def platformEnable(id: int, baudRate: int):
+    def platformEnable():
         pass
 
     # need override
-    def platformWrite(id: int, data: str):
+    def platformWrite():
         pass
 
     # need override
-    def platformRead(id: int, length: int) -> str:
+    def platformRead():
         pass
 
 
@@ -151,11 +151,11 @@ class IIC(TinyObj):
         pass
 
     # need override
-    def platformWrite(addr: int, data: str):
+    def platformWrite():
         pass
 
     # need override
-    def platformRead(addr: int, length: int) -> str:
+    def platformRead():
         pass
 
 
@@ -182,13 +182,13 @@ class PWM(TinyObj):
         pass
 
     # need override
-    def platformEnable(pin: str, freq: int, duty: float):
+    def platformEnable():
         pass
 
     # need override
-    def platformSetFrequency(pin: str, freq: int):
+    def platformSetFrequency():
         pass
 
     # need override
-    def platformSetDuty(pin: str, duty: float):
+    def platformSetDuty():
         pass

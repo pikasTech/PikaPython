@@ -87,4 +87,5 @@ void STM32_UART_clearRxBuff(pika_uart_t* pika_uart);
 uint8_t STM32_Code_reciveHandler(char *data, uint32_t rxSize);
 void STM32_Code_Init();
 void STM32_Code_flashHandler();
+void HARDWARE_PRINTF_Init();
 #endif

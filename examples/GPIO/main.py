@@ -1,12 +1,6 @@
 import PikaStdLib
 import STM32
 
-uart = STM32.UART()
-uart.init()
-uart.setId(1)
-uart.setBaudRate(115200)
-uart.enable()
-
 mem = PikaStdLib.MemChecker()
 io1 = STM32.GPIO()
 time = STM32.Time()

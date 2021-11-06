@@ -2,7 +2,7 @@
 #include "BaseObj.h"
 
 void PikaStdDevice_ADC_enable(PikaObj* self) {
-    obj_run(self, "platformEnable(pin)");
+    obj_run(self, "platformEnable()");
 }
 
 void PikaStdDevice_ADC_init(PikaObj* self) {
@@ -10,21 +10,20 @@ void PikaStdDevice_ADC_init(PikaObj* self) {
 }
 
 float PikaStdDevice_ADC_read(PikaObj* self) {
-    obj_run(self, "val = platformRead(pin)");
+    obj_run(self, "platformRead()");
     return obj_getFloat(self, "val");
 }
 
-void PikaStdDevice_ADC_setPin(PikaObj* self, char* pin) {
+void PikaStdDevice_ADC_setPin(PikaObj* self, char *pin) {
     obj_setStr(self, "pin", pin);
 }
 
-void PikaStdDevice_ADC_platformEnable(PikaObj* self, char* pin) {
+void PikaStdDevice_ADC_platformEnable(PikaObj* self) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
 }
 
-float PikaStdDevice_ADC_platformRead(PikaObj* self, char* pin) {
+void PikaStdDevice_ADC_platformRead(PikaObj* self) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
-    return -1;
 }
