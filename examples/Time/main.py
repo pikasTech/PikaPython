@@ -1,6 +1,12 @@
 import PikaStdLib
 import STM32
 
+uart = STM32.UART()
+uart.init()
+uart.setId(1)
+uart.setBaudRate(115200)
+uart.enable()
+
 time = STM32.Time()
 
 while True:
