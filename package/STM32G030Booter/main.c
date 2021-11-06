@@ -97,7 +97,7 @@ int main(void) {
     /* set vector table*/
     SCB->VTOR = FLASH_BASE | 0x2000;
     __enable_irq();
-    
+
     HARDWARE_PRINTF_Init();
     STM32_Code_Init();
 
@@ -113,18 +113,29 @@ int main(void) {
             Arg* codeBuff = arg_setStr(NULL, "", code);
             obj_run(pikaMain, arg_getStr(codeBuff));
             arg_deinit(codeBuff);
+            goto main_loop;
         }
         if (code[0] == 'B') {
-            printf("[info]: boot from Pika Asm.\r\n");
-            printf("%s\n", code);
+            printf("==============[Pika ASM]==============\r\n");
+            for(int i = 0; i < strGetSize(code); i ++){
+                if('\n' == code[i]){
+                    fputc('\r', (FILE*)!NULL);
+                }
+                fputc(code[i], (FILE*)!NULL);
+            }
+            printf("==============[Pika ASM]==============\r\n");
             printf("asm size: %d\r\n", strGetSize(code));
+            printf("[info]: boot from Pika Asm.\r\n");
             pikaVM_runAsm(pikaMain, code);
+            goto main_loop;
         }
     } else {
         /* boot from firmware */
         pikaMain = pikaScriptInit();
+        goto main_loop;
     }
 
+    main_loop:
     while (1) {
         if (pikaShellRxOk) {
             Parameters* runRes = obj_runDirect(pikaMain, pikaShell);
