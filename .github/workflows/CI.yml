@@ -24,8 +24,10 @@ jobs:
     - name: PULL_CORE
       run: cd ${{github.workspace}}/port/linux && bash pull-core.sh
 
-    - name: INIT
+    - name: CHMOD
+      run: cd ${{github.workspace}}/port/linux/package/pikascript && chmod +x ./rust-msc-latest-linux
 
+    - name: INIT
       run: cd ${{github.workspace}}/port/linux && bash init.sh
 
     - name: TEST

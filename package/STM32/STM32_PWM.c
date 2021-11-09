@@ -230,7 +230,10 @@ uint32_t getTimChennel(char* pin) {
     return 99999;
 }
 
-void STM32_PWM_platformEnable(PikaObj* self, float duty, int freq, char* pin) {
+void STM32_PWM_platformEnable(PikaObj* self) {
+    float duty = obj_getFloat(self, "duty");
+    int freq = obj_getInt(self, "freq");
+    char *pin = obj_getStr(self, "pin");
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
     TIM_MasterConfigTypeDef sMasterConfig = {0};
     TIM_OC_InitTypeDef sConfigOC = {0};
@@ -334,7 +337,9 @@ void STM32_PWM_platformEnable(PikaObj* self, float duty, int freq, char* pin) {
     HAL_TIM_PWM_Start(pika_tim, getTimChennel(pin));
 }
 
-void STM32_PWM_platformSetDuty(PikaObj* self, float duty, char* pin) {
+void STM32_PWM_platformSetDuty(PikaObj* self) {
+    float duty = obj_getFloat(self, "duty");
+    char *pin = obj_getStr(self, "pin");
     TIM_HandleTypeDef* pika_tim = getTimHandle(pin);
     if (NULL == pika_tim) {
         obj_setSysOut(self, "[error]: can not found PWM hardware.");
@@ -348,7 +353,9 @@ void STM32_PWM_platformSetDuty(PikaObj* self, float duty, char* pin) {
     }
 }
 
-void STM32_PWM_platformSetFrequency(PikaObj* self, int freq, char* pin) {
+void STM32_PWM_platformSetFrequency(PikaObj* self) {
+    int freq = obj_getInt(self, "freq");
+    char *pin = obj_getStr(self, "pin");
     TIM_HandleTypeDef* pika_tim = getTimHandle(pin);
     if (NULL == pika_tim) {
         obj_setSysOut(self, "[error]: can not found PWM hardware.");

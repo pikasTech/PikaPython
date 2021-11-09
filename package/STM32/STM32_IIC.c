@@ -1,35 +1,34 @@
 #include "STM32_IIC.h"
 #include <stdint.h>
 #include "BaseObj.h"
-#include "STM32_common.h"
 #include "STM32_GPIO.h"
+#include "STM32_common.h"
 #include "dataStrs.h"
 
-typedef struct pika_IIC_info_t{
-    GPIO_TypeDef  *SCL_GPIO;
-    GPIO_TypeDef  *SDA_GPIO;
+typedef struct pika_IIC_info_t {
+    GPIO_TypeDef* SCL_GPIO;
+    GPIO_TypeDef* SDA_GPIO;
 
     uint32_t SCL_GPIO_Pin;
     uint32_t SDA_GPIO_Pin;
     uint8_t deviceAddr;
-    
-    uint8_t readBuff[32];
-}pika_IIC_info;
 
+    uint8_t readBuff[32];
+} pika_IIC_info;
 
 #define delay_rate 1
 
-void SDA_OUT(pika_IIC_info *iic){
+void SDA_OUT(pika_IIC_info* iic) {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
     /*Configure GPIO*/
     GPIO_InitStruct.Pin = iic->SDA_GPIO_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP ;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(iic->SDA_GPIO, &GPIO_InitStruct);
 }
 
-void SDA_IN(pika_IIC_info *iic){
+void SDA_IN(pika_IIC_info* iic) {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
     /*Configure GPIO*/
     GPIO_InitStruct.Pin = iic->SDA_GPIO_Pin;
@@ -39,31 +38,31 @@ void SDA_IN(pika_IIC_info *iic){
     HAL_GPIO_Init(iic->SDA_GPIO, &GPIO_InitStruct);
 }
 
-void IIC_SDA_high(pika_IIC_info *iic){
+void IIC_SDA_high(pika_IIC_info* iic) {
     HAL_GPIO_WritePin(iic->SDA_GPIO, iic->SDA_GPIO_Pin, GPIO_PIN_SET);
 }
 
-void IIC_SDA_low(pika_IIC_info *iic){
+void IIC_SDA_low(pika_IIC_info* iic) {
     HAL_GPIO_WritePin(iic->SDA_GPIO, iic->SDA_GPIO_Pin, GPIO_PIN_RESET);
 }
 
-void IIC_SCL_high(pika_IIC_info *iic){
+void IIC_SCL_high(pika_IIC_info* iic) {
     HAL_GPIO_WritePin(iic->SCL_GPIO, iic->SCL_GPIO_Pin, GPIO_PIN_SET);
 }
 
-void IIC_SCL_low(pika_IIC_info *iic){
+void IIC_SCL_low(pika_IIC_info* iic) {
     HAL_GPIO_WritePin(iic->SCL_GPIO, iic->SCL_GPIO_Pin, GPIO_PIN_RESET);
 }
 
-uint8_t READ_SDA(pika_IIC_info *iic){
+uint8_t READ_SDA(pika_IIC_info* iic) {
     return HAL_GPIO_ReadPin(iic->SDA_GPIO, iic->SDA_GPIO_Pin);
 }
 
-void WRITE_SDA(pika_IIC_info *iic, uint8_t data){
+void WRITE_SDA(pika_IIC_info* iic, uint8_t data) {
     HAL_GPIO_WritePin(iic->SDA_GPIO, iic->SDA_GPIO_Pin, data);
 }
 
-void IIC_Start(pika_IIC_info *iic) {
+void IIC_Start(pika_IIC_info* iic) {
     SDA_OUT(iic);
     IIC_SDA_high(iic);
     IIC_SCL_high(iic);
@@ -73,7 +72,7 @@ void IIC_Start(pika_IIC_info *iic) {
     IIC_SCL_low(iic);
 }
 
-void IIC_Stop(pika_IIC_info *iic) {
+void IIC_Stop(pika_IIC_info* iic) {
     SDA_OUT(iic);
     IIC_SCL_low(iic);
     IIC_SDA_low(iic);
@@ -83,7 +82,7 @@ void IIC_Stop(pika_IIC_info *iic) {
     delay_us(delay_rate * 4);
 }
 
-uint8_t IIC_Wait_Ack(pika_IIC_info *iic) {
+uint8_t IIC_Wait_Ack(pika_IIC_info* iic) {
     uint8_t ucErrTime = 0;
     SDA_IN(iic);
 
@@ -102,7 +101,7 @@ uint8_t IIC_Wait_Ack(pika_IIC_info *iic) {
     return 0;
 }
 
-void IIC_Ack(pika_IIC_info *iic) {
+void IIC_Ack(pika_IIC_info* iic) {
     IIC_SCL_low(iic);
     SDA_OUT(iic);
 
@@ -113,7 +112,7 @@ void IIC_Ack(pika_IIC_info *iic) {
     IIC_SCL_low(iic);
 }
 
-void IIC_NAck(pika_IIC_info *iic) {
+void IIC_NAck(pika_IIC_info* iic) {
     IIC_SCL_low(iic);
     SDA_OUT(iic);
 
@@ -124,7 +123,7 @@ void IIC_NAck(pika_IIC_info *iic) {
     IIC_SCL_low(iic);
 }
 
-void IIC_Send_Byte(pika_IIC_info *iic, uint8_t txd) {
+void IIC_Send_Byte(pika_IIC_info* iic, uint8_t txd) {
     uint8_t t;
     SDA_OUT(iic);
 
@@ -140,7 +139,7 @@ void IIC_Send_Byte(pika_IIC_info *iic, uint8_t txd) {
     }
 }
 
-uint8_t IIC_Read_Byte(pika_IIC_info *iic, unsigned char ack) {
+uint8_t IIC_Read_Byte(pika_IIC_info* iic, unsigned char ack) {
     unsigned char i, receive = 0;
     SDA_IN(iic);
 
@@ -160,7 +159,11 @@ uint8_t IIC_Read_Byte(pika_IIC_info *iic, unsigned char ack) {
     return receive;
 }
 
-uint8_t MPU_Write_Len(pika_IIC_info *iic, uint8_t addr, uint8_t reg, uint8_t len, uint8_t* buf) {
+uint8_t MPU_Write_Len(pika_IIC_info* iic,
+                      uint8_t addr,
+                      uint8_t reg,
+                      uint8_t len,
+                      uint8_t* buf) {
     uint8_t i;
     IIC_Start(iic);
     IIC_Send_Byte(iic, (addr << 1) | 0);
@@ -181,7 +184,11 @@ uint8_t MPU_Write_Len(pika_IIC_info *iic, uint8_t addr, uint8_t reg, uint8_t len
     return 0;
 }
 
-uint8_t MPU_Read_Len(pika_IIC_info *iic, uint8_t addr, uint8_t reg, uint8_t len, uint8_t* buf) {
+uint8_t MPU_Read_Len(pika_IIC_info* iic,
+                     uint8_t addr,
+                     uint8_t reg,
+                     uint8_t len,
+                     uint8_t* buf) {
     IIC_Start(iic);
     IIC_Send_Byte(iic, (addr << 1) | 0);
     if (IIC_Wait_Ack(iic)) {
@@ -205,7 +212,7 @@ uint8_t MPU_Read_Len(pika_IIC_info *iic, uint8_t addr, uint8_t reg, uint8_t len,
     return 0;
 }
 
-void STM32_IIC_platformEnable(PikaObj *self){
+void STM32_IIC_platformEnable(PikaObj* self) {
     obj_run(self, "SCL.init()");
     obj_run(self, "SDA.init()");
     obj_run(self, "SCL.setPin(SCLpin)");
@@ -216,13 +223,13 @@ void STM32_IIC_platformEnable(PikaObj *self){
     obj_run(self, "SDA.enable()");
     obj_run(self, "SCL.low()");
     obj_run(self, "SDA.low()");
-    char *SCLpin = obj_getStr(self, "SCLpin");
-    char *SDApin = obj_getStr(self, "SDApin");
+    char* SCLpin = obj_getStr(self, "SCLpin");
+    char* SDApin = obj_getStr(self, "SDApin");
     uint8_t deviceAddr = obj_getInt(self, "deviceAddr");
-    
-    pika_IIC_info *iic = obj_getPtr(self, "iic");
-    if(NULL == iic){
-        iic = pikaMalloc(sizeof(pika_IIC_info));    
+
+    pika_IIC_info* iic = obj_getPtr(self, "iic");
+    if (NULL == iic) {
+        iic = pikaMalloc(sizeof(pika_IIC_info));
         obj_setPtr(self, "iic", iic);
     }
     iic->SDA_GPIO = getGpioPort(SDApin);
@@ -233,15 +240,19 @@ void STM32_IIC_platformEnable(PikaObj *self){
     SDA_OUT(iic);
 }
 
-char * STM32_IIC_platformRead(PikaObj *self, int addr, int length){
-    pika_IIC_info *iic = obj_getPtr(self, "iic");
-    
-    MPU_Read_Len(iic, iic->deviceAddr, addr, length,(uint8_t *) iic->readBuff);
-    return (char *)iic->readBuff;
+void STM32_IIC_platformRead(PikaObj* self) {
+    int addr = obj_getInt(self, "addr");
+    int length = obj_getInt(self, "length");
+    pika_IIC_info* iic = obj_getPtr(self, "iic");
+
+    MPU_Read_Len(iic, iic->deviceAddr, addr, length, (uint8_t*)iic->readBuff);
+    obj_setStr(self, "readData", (char*)iic->readBuff);
 }
 
-void STM32_IIC_platformWrite(PikaObj *self, int addr, char * data){
-    pika_IIC_info *iic = obj_getPtr(self, "iic");
+void STM32_IIC_platformWrite(PikaObj* self) {
+    int addr = obj_getInt(self, "addr");
+    char* data = obj_getStr(self, "data");
+    pika_IIC_info* iic = obj_getPtr(self, "iic");
 
-    MPU_Write_Len(iic, iic->deviceAddr, addr, strGetSize(data), (uint8_t *)data);
+    MPU_Write_Len(iic, iic->deviceAddr, addr, strGetSize(data), (uint8_t*)data);
 }

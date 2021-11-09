@@ -31,6 +31,20 @@ It's very easy to bind C function to python module with the help of Pika Pre-com
 
 3. Released modules：[packages.toml](packages.toml)
 
+# Document
+
+[1. PikaScript-Quick start within 3 minutes](document/1.三分钟快速上手.md)
+
+[2. PikaScript-Architecture and principle](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
+
+[3. PikaScript-Deploy within 10 minutes](document/2.十分钟快速部署.md)
+
+[4. PikaScript-Standard develop workflow](document/3.PikaScript标准开发流程.md)
+
+[5. PikaScript-Demo show](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
+
+[6. Arm-2D simulation](document/6.用Python玩ARM%202D，认真的嘛.md)
+
 ## Folders
 [src](../../tree/master/src) - core code
 
@@ -116,20 +130,6 @@ Support method invoke, argument define, new object, free object, control flow(if
 Readability first, nearly never use macro function and global argument.
 
 Complete unit testes based on google test.
-
-### (5)Document
-
-[1. PikaScript-Quick start within 3 minutes](document/1.三分钟快速上手.md)
-
-[2. PikaScript-Architecture and principle](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
-
-[3. PikaScript-Deploy within 10 minutes](document/2.十分钟快速部署.md)
-
-[4. PikaScript-Standard develop workflow](document/3.PikaScript标准开发流程.md)
-
-[5. PikaScript-Demo show](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
-
-[6. Arm-2D simulation](document/6.用Python玩ARM%202D，认真的嘛.md)
 
 # 4.Both talk and show the code：
 
