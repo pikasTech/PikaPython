@@ -1,4 +1,4 @@
 pikascript-core==v1.1.3
 PikaStdLib==v1.1.0
-Arm2D==latest
+Arm2D==v0.1.0
 Arm2DqemuBooter==latest

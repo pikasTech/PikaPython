@@ -68,6 +68,7 @@ releases = [
 name = "Arm2D"
 releases = [
   "v0.0.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
+  "v0.1.0 1b0384c5b20e336645b24df808f98548912405b8",
 ]
 
 [[packages]]
