@@ -12,7 +12,6 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
-
 <img src="https://user-images.githubusercontent.com/88232613/137866679-642e4e74-c373-4880-9d97-20dfefeafc18.png" width="500"/>
 
 ![image](https://user-images.githubusercontent.com/88232613/138021445-13643518-b0a3-4872-a290-5dec27697837.png)
@@ -27,16 +26,13 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 3. 已发布的模块列表：[packages.toml](/packages.toml)
 
-# 开发板
+# 快速上手
 
-官方支持的开发板Pika派——Zero现已发布，基于STM32G030C8T6小资源MCU，仅64kB Flash，8kB RAM即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、RGB、KEY、LCD）。
+可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Zero](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4023-23991764790.10.16f97c58fsLjVk&id=654947372034)，上手即玩。
 
-![QQ截图20211111144402](https://user-images.githubusercontent.com/88232613/141250667-dae4e7c0-c9ed-4d24-8702-cfc49f1f5eab.png)
+![image](https://user-images.githubusercontent.com/88232613/141252834-93011ca7-f84b-4192-8e61-0e242796f62c.png)
 
-开发板配套1.8寸 128x160分辨率SPI彩屏：
-
-![image](https://user-images.githubusercontent.com/88232613/141250437-10401f7d-3609-40f6-8911-7de38b976069.png)
-
+开发板基于STM32G030C8T6小资源MCU，仅64kB Flash，8kB RAM即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、RGB、KEY、LCD、RGB）。板载CH340 USB转串口芯片，Type-C接口，支持串口下载python脚本，板载4颗RGB灯，可选配[LCD屏幕](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102)。
 
 # 视频教程
 
