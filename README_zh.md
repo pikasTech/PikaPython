@@ -31,7 +31,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 官方支持的开发板Pika派——Zero现已发布，基于STM32G030C8T6小资源MCU，仅64kB Flash，8kB RAM即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、RGB、KEY、LCD）。
 
-![image](https://user-images.githubusercontent.com/88232613/141250135-17059a4e-3ebc-4c19-ba32-66ca358e99a0.png)
+![QQ截图20211111144402](https://user-images.githubusercontent.com/88232613/141250667-dae4e7c0-c9ed-4d24-8702-cfc49f1f5eab.png)
 
 开发板配套1.8寸 128x160分辨率SPI彩屏：
 
