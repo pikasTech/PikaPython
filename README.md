@@ -31,6 +31,15 @@ It's very easy to bind C function to python module with the help of Pika Pre-com
 
 3. Released modules：[packages.toml](packages.toml)
 
+# Quick Start
+
+You can use [simulation project](document/1.三分钟快速上手.md) to quick start without hardware，or use the out-of-the-box develop board [Pika-Pi—Zero](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4023-23991764790.10.16f97c58fsLjVk&id=654947372034).
+
+![image](https://user-images.githubusercontent.com/88232613/141252834-93011ca7-f84b-4192-8e61-0e242796f62c.png)
+
+The board based on STM32G030C8T6 MCU, only 64kB Flash, 8kB RAM can run PikaScript with total peripheral device (GPIO、TIME、IIC、RGB、KEY、LCD、RGB). 
+CH340 is deployed to support USB to serial with Type-C USB, support download python script py serial, there are 4 RGB on the board and support the [LCD](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102).
+
 # Document
 
 [1. PikaScript-Quick start within 3 minutes](document/1.三分钟快速上手.md)
