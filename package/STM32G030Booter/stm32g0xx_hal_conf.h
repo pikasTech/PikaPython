@@ -1,21 +1,21 @@
 /**
-  ******************************************************************************
-  * @file    stm32g0xx_hal_conf.h
-  * @author  MCD Application Team
-  * @brief   HAL configuration file.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file    stm32g0xx_hal_conf.h
+ * @author  MCD Application Team
+ * @brief   HAL configuration file.
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under BSD 3-Clause license,
+ * the "License"; You may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at:
+ *                        opensource.org/licenses/BSD-3-Clause
+ *
+ ******************************************************************************
+ */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32G0xx_HAL_CONF_H
@@ -30,8 +30,8 @@ extern "C" {
 
 /* ########################## Module Selection ############################## */
 /**
-  * @brief This is the list of modules to be used in the HAL driver
-  */
+ * @brief This is the list of modules to be used in the HAL driver
+ */
 #define HAL_MODULE_ENABLED
 /* #define HAL_ADC_MODULE_ENABLED   */
 /* #define HAL_CEC_MODULE_ENABLED   */
@@ -68,107 +68,117 @@ extern "C" {
 #define HAL_UART_MODULE_ENABLED
 #define HAL_USART_MODULE_ENABLED
 #define HAL_TIM_MODULE_ENABLED
+#define HAL_SPI_MODULE_ENABLED
 
-/* ########################## Register Callbacks selection ############################## */
+/* ########################## Register Callbacks selection
+ * ############################## */
 /**
-  * @brief This is the list of modules where register callback can be used
-  */
-#define USE_HAL_ADC_REGISTER_CALLBACKS    0u
-#define USE_HAL_CEC_REGISTER_CALLBACKS    0u
-#define USE_HAL_COMP_REGISTER_CALLBACKS   0u
-#define USE_HAL_CRYP_REGISTER_CALLBACKS   0u
-#define USE_HAL_DAC_REGISTER_CALLBACKS    0u
-#define USE_HAL_FDCAN_REGISTER_CALLBACKS  0u
-#define USE_HAL_HCD_REGISTER_CALLBACKS    0u
-#define USE_HAL_I2C_REGISTER_CALLBACKS    0u
-#define USE_HAL_I2S_REGISTER_CALLBACKS    0u
-#define USE_HAL_IRDA_REGISTER_CALLBACKS   0u
-#define USE_HAL_LPTIM_REGISTER_CALLBACKS  0u
-#define USE_HAL_PCD_REGISTER_CALLBACKS    0u
-#define USE_HAL_RNG_REGISTER_CALLBACKS    0u
-#define USE_HAL_RTC_REGISTER_CALLBACKS    0u
-#define USE_HAL_SMBUS_REGISTER_CALLBACKS  0u
-#define USE_HAL_SPI_REGISTER_CALLBACKS    0u
-#define USE_HAL_TIM_REGISTER_CALLBACKS    0u
-#define USE_HAL_UART_REGISTER_CALLBACKS   0u
-#define USE_HAL_USART_REGISTER_CALLBACKS  0u
-#define USE_HAL_WWDG_REGISTER_CALLBACKS   0u
+ * @brief This is the list of modules where register callback can be used
+ */
+#define USE_HAL_ADC_REGISTER_CALLBACKS 0u
+#define USE_HAL_CEC_REGISTER_CALLBACKS 0u
+#define USE_HAL_COMP_REGISTER_CALLBACKS 0u
+#define USE_HAL_CRYP_REGISTER_CALLBACKS 0u
+#define USE_HAL_DAC_REGISTER_CALLBACKS 0u
+#define USE_HAL_FDCAN_REGISTER_CALLBACKS 0u
+#define USE_HAL_HCD_REGISTER_CALLBACKS 0u
+#define USE_HAL_I2C_REGISTER_CALLBACKS 0u
+#define USE_HAL_I2S_REGISTER_CALLBACKS 0u
+#define USE_HAL_IRDA_REGISTER_CALLBACKS 0u
+#define USE_HAL_LPTIM_REGISTER_CALLBACKS 0u
+#define USE_HAL_PCD_REGISTER_CALLBACKS 0u
+#define USE_HAL_RNG_REGISTER_CALLBACKS 0u
+#define USE_HAL_RTC_REGISTER_CALLBACKS 0u
+#define USE_HAL_SMBUS_REGISTER_CALLBACKS 0u
+#define USE_HAL_SPI_REGISTER_CALLBACKS 0u
+#define USE_HAL_TIM_REGISTER_CALLBACKS 0u
+#define USE_HAL_UART_REGISTER_CALLBACKS 0u
+#define USE_HAL_USART_REGISTER_CALLBACKS 0u
+#define USE_HAL_WWDG_REGISTER_CALLBACKS 0u
 
-/* ########################## Oscillator Values adaptation ####################*/
+/* ########################## Oscillator Values adaptation
+ * ####################*/
 /**
-  * @brief Adjust the value of External High Speed oscillator (HSE) used in your application.
-  *        This value is used by the RCC HAL module to compute the system frequency
-  *        (when HSE is used as system clock source, directly or through the PLL).
-  */
-#if !defined  (HSE_VALUE)
-#define HSE_VALUE    (12000000UL)         /*!< Value of the External oscillator in Hz */
-#endif /* HSE_VALUE */
+ * @brief Adjust the value of External High Speed oscillator (HSE) used in your
+ * application. This value is used by the RCC HAL module to compute the system
+ * frequency (when HSE is used as system clock source, directly or through the
+ * PLL).
+ */
+#if !defined(HSE_VALUE)
+#define HSE_VALUE (12000000UL) /*!< Value of the External oscillator in Hz */
+#endif                         /* HSE_VALUE */
 
-#if !defined  (HSE_STARTUP_TIMEOUT)
-#define HSE_STARTUP_TIMEOUT    (100UL)         /*!< Time out for HSE start up, in ms */
-#endif /* HSE_STARTUP_TIMEOUT */
+#if !defined(HSE_STARTUP_TIMEOUT)
+#define HSE_STARTUP_TIMEOUT (100UL) /*!< Time out for HSE start up, in ms */
+#endif                              /* HSE_STARTUP_TIMEOUT */
 
 /**
-  * @brief Internal High Speed oscillator (HSI) value.
-  *        This value is used by the RCC HAL module to compute the system frequency
-  *        (when HSI is used as system clock source, directly or through the PLL).
-  */
-#if !defined  (HSI_VALUE)
-#define HSI_VALUE    (16000000UL)            /*!< Value of the Internal oscillator in Hz*/
-#endif /* HSI_VALUE */
+ * @brief Internal High Speed oscillator (HSI) value.
+ *        This value is used by the RCC HAL module to compute the system
+ * frequency (when HSI is used as system clock source, directly or through the
+ * PLL).
+ */
+#if !defined(HSI_VALUE)
+#define HSI_VALUE (16000000UL) /*!< Value of the Internal oscillator in Hz*/
+#endif                         /* HSI_VALUE */
 
 #if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
 /**
-  * @brief Internal High Speed oscillator (HSI48) value for USB FS, SDMMC and RNG.
-  *        This internal oscillator is mainly dedicated to provide a high precision clock to
-  *        the USB peripheral by means of a special Clock Recovery System (CRS) circuitry.
-  *        When the CRS is not used, the HSI48 RC oscillator runs on it default frequency
-  *        which is subject to manufacturing process variations.
-  */
-#if !defined  (HSI48_VALUE)
-  #define HSI48_VALUE   48000000U             /*!< Value of the Internal High Speed oscillator for USB FS/SDMMC/RNG in Hz.
-                                               The real value my vary depending on manufacturing process variations.*/
-#endif /* HSI48_VALUE */
+ * @brief Internal High Speed oscillator (HSI48) value for USB FS, SDMMC and
+ * RNG. This internal oscillator is mainly dedicated to provide a high precision
+ * clock to the USB peripheral by means of a special Clock Recovery System (CRS)
+ * circuitry. When the CRS is not used, the HSI48 RC oscillator runs on it
+ * default frequency which is subject to manufacturing process variations.
+ */
+#if !defined(HSI48_VALUE)
+#define HSI48_VALUE                                                    \
+    48000000U /*!< Value of the Internal High Speed oscillator for USB \
+               FS/SDMMC/RNG in Hz. The real value my vary depending on                                   \
+               manufacturing process variations.*/
+#endif        /* HSI48_VALUE */
 #endif
 
 /**
-  * @brief Internal Low Speed oscillator (LSI) value.
-  */
-#if !defined  (LSI_VALUE)
-#define LSI_VALUE  (32000UL)                /*!< LSI Typical Value in Hz*/
-#endif /* LSI_VALUE */                      /*!< Value of the Internal Low Speed oscillator in Hz
-The real value may vary depending on the variations
+ * @brief Internal Low Speed oscillator (LSI) value.
+ */
+#if !defined(LSI_VALUE)
+#define LSI_VALUE (32000UL) /*!< LSI Typical Value in Hz*/
+#endif /* LSI_VALUE */ /*!< Value of the Internal Low Speed oscillator in Hz \
+The real value may vary depending on the variations                          \
 in voltage and temperature.*/
 /**
-  * @brief External Low Speed oscillator (LSE) value.
-  *        This value is used by the UART, RTC HAL module to compute the system frequency
-  */
-#if !defined  (LSE_VALUE)
-#define LSE_VALUE    (32768UL)               /*!< Value of the External oscillator in Hz*/
-#endif /* LSE_VALUE */
+ * @brief External Low Speed oscillator (LSE) value.
+ *        This value is used by the UART, RTC HAL module to compute the system
+ * frequency
+ */
+#if !defined(LSE_VALUE)
+#define LSE_VALUE (32768UL) /*!< Value of the External oscillator in Hz*/
+#endif                      /* LSE_VALUE */
 
-#if !defined  (LSE_STARTUP_TIMEOUT)
-#define LSE_STARTUP_TIMEOUT    (5000UL)      /*!< Time out for LSE start up, in ms */
-#endif /* LSE_STARTUP_TIMEOUT */
+#if !defined(LSE_STARTUP_TIMEOUT)
+#define LSE_STARTUP_TIMEOUT (5000UL) /*!< Time out for LSE start up, in ms */
+#endif                               /* LSE_STARTUP_TIMEOUT */
 
 /**
-  * @brief External clock source for I2S1 peripheral
-  *        This value is used by the RCC HAL module to compute the I2S1 clock source
-  *        frequency.
-  */
-#if !defined  (EXTERNAL_I2S1_CLOCK_VALUE)
-#define EXTERNAL_I2S1_CLOCK_VALUE    (12288000UL) /*!< Value of the I2S1 External clock source in Hz*/
-#endif /* EXTERNAL_I2S1_CLOCK_VALUE */
+ * @brief External clock source for I2S1 peripheral
+ *        This value is used by the RCC HAL module to compute the I2S1 clock
+ * source frequency.
+ */
+#if !defined(EXTERNAL_I2S1_CLOCK_VALUE)
+#define EXTERNAL_I2S1_CLOCK_VALUE \
+    (12288000UL) /*!< Value of the I2S1 External clock source in Hz*/
+#endif           /* EXTERNAL_I2S1_CLOCK_VALUE */
 
 #if defined(STM32G0C1xx) || defined(STM32G0B1xx) || defined(STM32G0B0xx)
 /**
-  * @brief External clock source for I2S2 peripheral
-  *        This value is used by the RCC HAL module to compute the I2S2 clock source
-  *        frequency.
-  */
-#if !defined  (EXTERNAL_I2S2_CLOCK_VALUE)
-  #define EXTERNAL_I2S2_CLOCK_VALUE    48000U /*!< Value of the I2S2 External clock source in Hz*/
-#endif /* EXTERNAL_I2S2_CLOCK_VALUE */
+ * @brief External clock source for I2S2 peripheral
+ *        This value is used by the RCC HAL module to compute the I2S2 clock
+ * source frequency.
+ */
+#if !defined(EXTERNAL_I2S2_CLOCK_VALUE)
+#define EXTERNAL_I2S2_CLOCK_VALUE \
+    48000U /*!< Value of the I2S2 External clock source in Hz*/
+#endif     /* EXTERNAL_I2S2_CLOCK_VALUE */
 #endif
 
 /* Tip: To avoid modifying this file each time you need to use different HSE,
@@ -176,38 +186,39 @@ in voltage and temperature.*/
 
 /* ########################### System Configuration ######################### */
 /**
-  * @brief This is the HAL system configuration section
-  */
-#define  VDD_VALUE                    (3300UL)                                        /*!< Value of VDD in mv */
-#define  TICK_INT_PRIORITY            0U /*!< tick interrupt priority */
-#define  USE_RTOS                     0U
-#define  PREFETCH_ENABLE              1U
-#define  INSTRUCTION_CACHE_ENABLE     1U
+ * @brief This is the HAL system configuration section
+ */
+#define VDD_VALUE (3300UL)   /*!< Value of VDD in mv */
+#define TICK_INT_PRIORITY 0U /*!< tick interrupt priority */
+#define USE_RTOS 0U
+#define PREFETCH_ENABLE 1U
+#define INSTRUCTION_CACHE_ENABLE 1U
 
 /* ################## SPI peripheral configuration ########################## */
 
 /* CRC FEATURE: Use to activate CRC feature inside HAL SPI Driver
-* Activated: CRC code is present inside driver
-* Deactivated: CRC code cleaned from driver
-*/
+ * Activated: CRC code is present inside driver
+ * Deactivated: CRC code cleaned from driver
+ */
 
-#define USE_SPI_CRC                     0U
+#define USE_SPI_CRC 0U
 
-/* ################## CRYP peripheral configuration ########################## */
+/* ################## CRYP peripheral configuration ##########################
+ */
 
-#define USE_HAL_CRYP_SUSPEND_RESUME     1U
+#define USE_HAL_CRYP_SUSPEND_RESUME 1U
 
 /* ########################## Assert Selection ############################## */
 /**
-  * @brief Uncomment the line below to expanse the "assert_param" macro in the
-  *        HAL drivers code
-  */
+ * @brief Uncomment the line below to expanse the "assert_param" macro in the
+ *        HAL drivers code
+ */
 /* #define USE_FULL_ASSERT    1U */
 
 /* Includes ------------------------------------------------------------------*/
 /**
-  * @brief Include modules header file
-  */
+ * @brief Include modules header file
+ */
 
 #ifdef HAL_RCC_MODULE_ENABLED
 #include "stm32g0xx_hal_rcc.h"
@@ -331,18 +342,19 @@ in voltage and temperature.*/
 #endif /* HAL_WWDG_MODULE_ENABLED */
 
 /* Exported macro ------------------------------------------------------------*/
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
-  * @brief  The assert_param macro is used for functions parameters check.
-  * @param  expr If expr is false, it calls assert_failed function
-  *         which reports the name of the source file and the source
-  *         line number of the call that failed.
-  *         If expr is true, it returns no value.
-  * @retval None
-  */
-#define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
+ * @brief  The assert_param macro is used for functions parameters check.
+ * @param  expr If expr is false, it calls assert_failed function
+ *         which reports the name of the source file and the source
+ *         line number of the call that failed.
+ *         If expr is true, it returns no value.
+ * @retval None
+ */
+#define assert_param(expr) \
+    ((expr) ? (void)0U : assert_failed((uint8_t*)__FILE__, __LINE__))
 /* Exported functions ------------------------------------------------------- */
-void assert_failed(uint8_t *file, uint32_t line);
+void assert_failed(uint8_t* file, uint32_t line);
 #else
 #define assert_param(expr) ((void)0U)
 #endif /* USE_FULL_ASSERT */

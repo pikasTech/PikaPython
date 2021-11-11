@@ -126,7 +126,7 @@ int32_t args_setStruct(Args* self, char *name, void * struct_ptr, uint32_t struc
     if (NULL == struct_ptr) {
         return 1;
     }
-    Arg* structArg = arg_setContent(NULL, (uint8_t*)&struct_ptr, struct_size);
+    Arg* structArg = arg_setContent(NULL, (uint8_t*)struct_ptr, struct_size);
     structArg = arg_setName(structArg, name);
     args_setArg(self, structArg);
 	return 0;

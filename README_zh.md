@@ -12,10 +12,27 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
-
 <img src="https://user-images.githubusercontent.com/88232613/137866679-642e4e74-c373-4880-9d97-20dfefeafc18.png" width="500"/>
 
 ![image](https://user-images.githubusercontent.com/88232613/138021445-13643518-b0a3-4872-a290-5dec27697837.png)
+
+# 获取PikaScript:
+
+## 使用Pika包管理器[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)
+
+1. 直接运行[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
+
+2. 将[requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/tools/pikaCompiler)与[模块](../../tree/master/package)。
+
+3. 已发布的模块列表：[packages.toml](/packages.toml)
+
+# 快速上手
+
+可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Zero](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4023-23991764790.10.16f97c58fsLjVk&id=654947372034)，上手即玩。
+
+![image](https://user-images.githubusercontent.com/88232613/141252834-93011ca7-f84b-4192-8e61-0e242796f62c.png)
+
+开发板基于STM32G030C8T6小资源MCU，仅64kB Flash，8kB RAM即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、RGB、KEY、LCD、RGB）。板载CH340 USB转串口芯片，Type-C接口，支持串口下载python脚本，板载4颗RGB灯，可选配[LCD屏幕](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102)。
 
 # 视频教程
 
@@ -45,15 +62,19 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [PikaScript进阶-数据结构源码精讲](https://www.bilibili.com/video/BV1Ky4y157nW/)
 
-# 获取PikaScript:
+# 开发手册
 
-## 使用Pika包管理器[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)
+[1. PikaScript-三分钟快速上手](document/1.三分钟快速上手.md)
 
-1. 直接运行[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
+[2. PikaScript-架构与原理](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
 
-2. 将[requestment.txt](/bsp/stm32g030c8/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/tools/pikaCompiler)与[模块](../../tree/master/package)。
+[3. PikaScript-十分钟快速部署](document/2.十分钟快速部署.md)
 
-3. 已发布的模块列表：[packages.toml](/packages.toml)
+[4. PikaScript-标准开发流程](document/3.PikaScript标准开发流程.md)
+
+[5. PikaScript-Demo展示](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
+
+[6. Arm-2D GUI引擎和pikascript联合仿真](document/6.用Python玩ARM%202D，认真的嘛.md)
 
 ## 文件目录
 [src](../../tree/master/src) - 内核源码
@@ -140,24 +161,6 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 注重源码可读性，命名规范，标准统一，完全不使用宏，几乎不使用全局变量。
 
 完整的googletest单元测试。
-
-### (5)stm32例程
-
-[pikascript-stm32-demo](../../tree/master/bsp)
-
-### (6)开发手册
-
-[1. PikaScript-三分钟快速上手](document/1.三分钟快速上手.md)
-
-[2. PikaScript-架构与原理](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
-
-[3. PikaScript-十分钟快速部署](document/2.十分钟快速部署.md)
-
-[4. PikaScript-标准开发流程](document/3.PikaScript标准开发流程.md)
-
-[5. PikaScript-Demo展示](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
-
-[6. Arm-2D GUI引擎和pikascript联合仿真](document/6.用Python玩ARM%202D，认真的嘛.md)
 
 # 4.交流与技术支持：
 
