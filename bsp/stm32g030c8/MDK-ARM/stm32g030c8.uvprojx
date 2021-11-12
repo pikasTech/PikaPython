@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32G030xx</Define>
+              <Define>USE_FULL_LL_DRIVER,STM32G030xx,USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
               <IncludePath>../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-core;..\pikascript\pikascript-api;..\pikascript\pikascript-lib\STM32;..\pikascript\pikascript-lib\STM32G030Booter;..\pikascript\pikascript-lib\PikaPiZero</IncludePath>
             </VariousControls>
@@ -414,51 +414,16 @@
               <FileType>2</FileType>
               <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\startup_stm32g030xx.s</FilePath>
             </File>
+            <File>
+              <FileName>stm32g030_pika_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\stm32g030_pika_msp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Drivers/STM32G0xx_HAL_Driver</GroupName>
           <Files>
-            <File>
-              <FileName>stm32g0xx_hal_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_hal_adc_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_adc_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_hal_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_hal_usart_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_usart_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_hal_uart_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_hal_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_hal_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_hal_tim_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_tim_ex.c</FilePath>
-            </File>
             <File>
               <FileName>stm32g0xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
@@ -536,21 +501,6 @@
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_flash_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g0xx_hal_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_hal_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g0xx_hal_dma_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_dma_ex.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32g0xx_ll_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_dma.c</FilePath>
@@ -617,19 +567,109 @@
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g0xx_hal_cortex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_cortex.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32g0xx_hal.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g0xx_hal_exti.c</FileName>
+              <FileName>stm32g0xx_ll_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Drivers/STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_exti.c</FilePath>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_comp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_comp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_crs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_crs.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_dac.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_lptim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_lptim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_lpuart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_lpuart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_rng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_rng.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_ucpd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_ucpd.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_ll_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\bsp\stm32g030c8\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_cortex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\bsp\stm32g030c8\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_cortex.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -737,11 +777,6 @@
               <FilePath>..\pikascript\pikascript-api\STM32_IIC-api.c</FilePath>
             </File>
             <File>
-              <FileName>PikaPiZero_OLED-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\PikaPiZero_OLED-api.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaPiZero_Point-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaPiZero_Point-api.c</FilePath>
@@ -780,11 +815,6 @@
               <FileName>STM32_ADC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\STM32\STM32_ADC.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_Code.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_Code.c</FilePath>
             </File>
             <File>
               <FileName>STM32_common.c</FileName>
@@ -842,19 +872,9 @@
               <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_UART.c</FilePath>
             </File>
             <File>
-              <FileName>oled.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\oled.c</FilePath>
-            </File>
-            <File>
               <FileName>STM32_IIC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\STM32\STM32_IIC.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaPiZero_OLED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\PikaPiZero_OLED.c</FilePath>
             </File>
           </Files>
         </Group>
