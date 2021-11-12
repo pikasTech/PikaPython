@@ -30,11 +30,11 @@ void STM32_ADC_platformEnable(PikaObj* self) {
         return;
     }
 
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
     GPIO_InitStruct.Pin = GPIO_get_pin(pin);
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIO_get_Group(pin), &GPIO_InitStruct);
+    LL_GPIO_Init(GPIO_get_Group(pin), &GPIO_InitStruct);
 
     /* init ADC */
     LL_ADC_InitTypeDef ADC_InitStruct = {0};
@@ -75,9 +75,9 @@ void STM32_ADC_platformEnable(PikaObj* self) {
     LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_0);
     LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_0,
                                   LL_ADC_SAMPLINGTIME_COMMON_1);
-//    LL_ADC_StartCalibration(ADC1);
-//    while (LL_ADC_IsCalibrationOnGoing(ADC1) != 0) {
-//    };
+    //    LL_ADC_StartCalibration(ADC1);
+    //    while (LL_ADC_IsCalibrationOnGoing(ADC1) != 0) {
+    //    };
     LL_ADC_Enable(ADC1);
     while (LL_ADC_IsActiveFlag_ADRDY(ADC1) == 0) {
     };

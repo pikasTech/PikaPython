@@ -72,14 +72,6 @@
 #define Code_ENABLE
 #endif
 
-typedef struct {
-    UART_HandleTypeDef huart;
-    uint8_t id;
-    char rxBuff[RX_BUFF_LENGTH];
-    uint16_t rxBuffOffset;
-    PikaObj* obj;
-} pika_uart_t;
-
 typedef struct pika_IIC_info_t {
     GPIO_TypeDef* SCL_GPIO;
     GPIO_TypeDef* SDA_GPIO;
@@ -97,6 +89,5 @@ uint32_t getPinMode(char* mode);
 uint8_t GPIO_enable_clock(char* pin);
 void delay_us(uint32_t delay);
 void delay_unit(uint32_t delay);
-void STM32_UART_clearRxBuff(pika_uart_t* pika_uart);
 
 #endif

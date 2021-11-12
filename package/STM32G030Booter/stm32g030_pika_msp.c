@@ -59,7 +59,6 @@ void HARDWARE_PRINTF_Init(void) {
 }
 
 int fputc(int ch, FILE* f) {
-    char ch_ = ch;
     LL_USART_TransmitData8(USART1, ch);
     while (LL_USART_IsActiveFlag_TC(USART1) != 1)
         ;

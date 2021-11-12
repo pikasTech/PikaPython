@@ -96,13 +96,13 @@ uint8_t PWM_GPIO_init(char* pin) {
         return 1;
     }
     GPIO_enable_clock(pin);
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
     GPIO_InitStruct.Pin = GPIO_get_pin(pin);
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = TIM_get_GPIO_alternate(TIMx);
-    HAL_GPIO_Init(GPIO_get_Group(pin), &GPIO_InitStruct);
+    LL_GPIO_Init(GPIO_get_Group(pin), &GPIO_InitStruct);
     return 0;
 }
 

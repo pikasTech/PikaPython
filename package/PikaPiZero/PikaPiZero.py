@@ -28,18 +28,5 @@ class RGB(PikaStdLib.SysObj):
         pass
 
 
-class OLED(TinyObj):
-    def init():
-        pass
-
-    def drawPoint(x: int, y: int):
-        pass
-
-    def clear():
-        pass
-
-    def refresh():
-        pass
-
 class Point(TinyObj):
     pass

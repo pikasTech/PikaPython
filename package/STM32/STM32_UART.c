@@ -4,26 +4,40 @@
 #include "STM32_common.h"
 #include "dataStrs.h"
 
-extern PikaObj* pikaMain;
+char* usart1_rx_buff = NULL;
+char* usart2_rx_buff = NULL;
+uint8_t usart1_rx_offset = 0;
+uint8_t usart2_rx_offset = 0;
 
-static pika_uart_t* getPikaUart(uint8_t id) {
+static char* UART_get_rx_buff(USART_TypeDef* USARTx) {
+    if (USARTx == USART1) {
+        /* new buff if rx_buff is NULL */
+        if (NULL == usart1_rx_buff) {
+            usart1_rx_buff = pikaMalloc(RX_BUFF_LENGTH);
+        }
+        return usart1_rx_buff;
+    }
+    if (USARTx == USART2) {
+        /* new buff if rx_buff is NULL */
+        if (NULL == usart2_rx_buff) {
+            usart2_rx_buff = pikaMalloc(RX_BUFF_LENGTH);
+        }
+        return usart2_rx_buff;
+    }
     return NULL;
 }
 
-static void setUartObj(uint8_t id, PikaObj* obj) {
-    pika_uart_t* pika_uart = getPikaUart(id);
-    pika_uart->obj = obj;
-}
-
-static PikaObj* getUartObj(uint8_t id) {
-    pika_uart_t* pika_uart = getPikaUart(id);
-    if (NULL == pika_uart) {
-        return NULL;
+static uint8_t* UART_get_rx_offset(USART_TypeDef* USARTx) {
+    if (USARTx == USART1) {
+        return &usart1_rx_offset;
     }
-    return pika_uart->obj;
+    if (USARTx == USART2) {
+        return &usart2_rx_offset;
+    }
+    return NULL;
 }
 
-static USART_TypeDef* getUartInstance(uint8_t id) {
+static USART_TypeDef* UART_get_instance(uint8_t id) {
     if (1 == id) {
         return USART1;
     }
@@ -33,130 +47,125 @@ static USART_TypeDef* getUartInstance(uint8_t id) {
     return NULL;
 }
 
-static uint8_t getUartId(UART_HandleTypeDef* huart) {
-    return 0;
-}
-
-static UART_HandleTypeDef* getUartHandle(uint8_t id) {
-    pika_uart_t* pika_uart = getPikaUart(id);
-    if (NULL == pika_uart) {
-        return NULL;
-    }
-    return &(pika_uart->huart);
-}
-
-static char* getUartRxBuff(uint8_t id) {
-    pika_uart_t* pika_uart = getPikaUart(id);
-    if (NULL == pika_uart) {
-        return NULL;
-    }
-    return pika_uart->rxBuff;
-}
-
-static uint8_t USART_UART_Init(uint32_t baudRate, uint8_t id) {
+static uint8_t UART_hardware_init(uint32_t baudRate, uint8_t id) {
     uint8_t errCode = 0;
-    USART_TypeDef* USARTx = getUartInstance(id);
+    USART_TypeDef* USARTx = UART_get_instance(id);
     if (NULL == USARTx) {
         errCode = 5;
         goto exit;
     }
-
+    if (USART1 == USARTx) {
+        /* USART1 is inited by pika mcu sopport package in
+         * stm32g030_pika_msp.c*/
+        errCode = 0;
+        goto exit;
+    }
+    /* init USART2 */
+    if (USART2 == USARTx) {
+        LL_USART_InitTypeDef USART_InitStruct = {0};
+        LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+        /* Peripheral clock enable */
+        LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
+        LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA);
+        /**USART2 GPIO Configuration
+        PA2   ------> USART2_TX
+        PA3   ------> USART2_RX
+        */
+        GPIO_InitStruct.Pin = LL_GPIO_PIN_2;
+        GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+        GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+        GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+        GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+        GPIO_InitStruct.Alternate = LL_GPIO_AF_1;
+        LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        GPIO_InitStruct.Pin = LL_GPIO_PIN_3;
+        GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+        GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+        GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+        GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+        GPIO_InitStruct.Alternate = LL_GPIO_AF_1;
+        LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        /* USART2 interrupt Init */
+        NVIC_SetPriority(USART2_IRQn, 0);
+        NVIC_EnableIRQ(USART2_IRQn);
+        USART_InitStruct.PrescalerValue = LL_USART_PRESCALER_DIV1;
+        USART_InitStruct.BaudRate = baudRate;
+        USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_8B;
+        USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
+        USART_InitStruct.Parity = LL_USART_PARITY_NONE;
+        USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
+        USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
+        USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
+        LL_USART_Init(USART2, &USART_InitStruct);
+        LL_USART_ConfigAsyncMode(USART2);
+        LL_USART_Enable(USART2);
+        while ((!(LL_USART_IsActiveFlag_TEACK(USART2))) ||
+               (!(LL_USART_IsActiveFlag_REACK(USART2)))) {
+        }
+        /* open interrupt */
+        LL_USART_EnableIT_RXNE(USART2);
+        LL_USART_EnableIT_PE(USART2);
+    }
 exit:
     return errCode;
 }
 
-static void UART_GPIO_init(USART_TypeDef* UARTx) {
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
-    if (UARTx == USART1) {
-        /* USART1 clock enable */
-        __HAL_RCC_USART1_CLK_ENABLE();
-
-        __HAL_RCC_GPIOA_CLK_ENABLE();
-        /**USART1 GPIO Configuration
-        PA9     ------> USART1_TX
-        PA10     ------> USART1_RX
-        */
-        GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_10;
-        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
-        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-        GPIO_InitStruct.Alternate = GPIO_AF1_USART1;
-        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-        /* USART1 interrupt Init */
-        HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
-        HAL_NVIC_EnableIRQ(USART1_IRQn);
+void __callback_UART_recive(USART_TypeDef* USARTx, char rx_char) {
+    uint8_t* rx_offset = UART_get_rx_offset(USARTx);
+    char* rx_buff = UART_get_rx_buff(USARTx);
+    rx_buff[*rx_offset] = rx_char;
+    /* avoid recive buff overflow */
+    if (*rx_offset + 2 > RX_BUFF_LENGTH) {
+        memmove(rx_buff, rx_buff + 1, RX_BUFF_LENGTH);
+        return;
     }
-    if (UARTx == USART2) {
-        /* USART2 clock enable */
-        __HAL_RCC_USART2_CLK_ENABLE();
 
-        __HAL_RCC_GPIOA_CLK_ENABLE();
-        /**USART2 GPIO Configuration
-        PA2     ------> USART2_TX
-        PA3     ------> USART2_RX
-        */
-        GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
-        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
-        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-        GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
-        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-    }
+    /* recive next char */
+    (*rx_offset)++;
+    rx_buff[*rx_offset] = 0;
 }
 
 /* Msp handle interrupt */
-#ifdef UART1_EXIST
-void __PIKA_USART1_IRQHandler(void) {}
-#endif
-#ifdef UART2_EXIST
-void USART2_IRQHandler(void) {
-//    HAL_UART_IRQHandler(&pika_uart2.huart);
+void __PIKA_USART1_IRQHandler(char rx_char) {
+    __callback_UART_recive(USART1, rx_char);
 }
-#endif
+void USART2_IRQHandler() {
+    uint8_t rx_char = LL_USART_ReceiveData8(USART2);
+    __callback_UART_recive(USART2, rx_char);
+}
 
 void STM32_UART_platformEnable(PikaObj* self) {
     int id = obj_getInt(self, "id");
     int baudRate = obj_getInt(self, "baudRate");
-    setUartObj(id, self);
-    /* uart 1 is inited by hardward */
-    if (1 == id) {
-        return;
-    }
-    USART_TypeDef* UARTx = getUartInstance(id);
-    UART_GPIO_init(UARTx);
-    int errCode = USART_UART_Init(baudRate, id);
+    USART_TypeDef* USARTx = UART_get_instance(id);
+    int errCode = UART_hardware_init(baudRate, id);
     if (0 != errCode) {
         obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[error] uart init faild.");
+        obj_setSysOut(self, "[error] USART init faild.");
         return;
     }
-    HAL_UART_Receive_IT(getUartHandle(id), (uint8_t*)getUartRxBuff(id), 1);
 }
 
 void STM32_UART_platformRead(PikaObj* self) {
     int id = obj_getInt(self, "id");
+    USART_TypeDef* USARTx = UART_get_instance(id);
     int length = obj_getInt(self, "length");
     Args* buffs = New_strBuff();
-    char* readBuff = NULL;
-    pika_uart_t* pika_uart = getPikaUart(id);
-    if (length >= pika_uart->rxBuffOffset) {
+    uint8_t* rx_offset = UART_get_rx_offset(USARTx);
+    char* rx_buff = UART_get_rx_buff(USARTx);
+    if (length >= *rx_offset) {
         /* not enough str */
-        length = pika_uart->rxBuffOffset;
+        length = *rx_offset;
     }
-    readBuff = args_getBuff(buffs, length);
-    memcpy(readBuff, pika_uart->rxBuff, length);
+    char* readBuff = args_getBuff(buffs, length);
+    memcpy(readBuff, rx_buff, length);
     obj_setStr(self, "readBuff", readBuff);
     readBuff = obj_getStr(self, "readBuff");
 
     /* update rxBuff */
-    memcpy(pika_uart->rxBuff, pika_uart->rxBuff + length,
-           pika_uart->rxBuffOffset - length);
-    pika_uart->rxBuffOffset -= length;
-    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
-
-    UART_Start_Receive_IT(
-        &pika_uart->huart,
-        (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+    memcpy(rx_buff, rx_buff + length, *rx_offset - length);
+    *rx_offset -= length;
+    rx_buff[*rx_offset] = 0;
 exit:
     args_deinit(buffs);
     obj_setStr(self, "readData", readBuff);
@@ -165,52 +174,13 @@ exit:
 void STM32_UART_platformWrite(PikaObj* self) {
     char* data = obj_getStr(self, "data");
     int id = obj_getInt(self, "id");
-    HAL_UART_Transmit(getUartHandle(id), (uint8_t*)data, strGetSize(data), 100);
-}
-
-void STM32_UART_clearRxBuff(pika_uart_t* pika_uart) {
-    pika_uart->rxBuffOffset = 0;
-    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
-    UART_Start_Receive_IT(
-        &pika_uart->huart,
-        (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+    USART_TypeDef* USARTx = UART_get_instance(id);
+    for (int i = 0; i < strGetSize(data); i++) {
+        LL_USART_TransmitData8(USARTx, data[i]);
+        while (LL_USART_IsActiveFlag_TC(USARTx) != 1)
+            ;
+    }
 }
 
 char pikaShell[RX_BUFF_LENGTH] = {0};
 uint8_t pikaShellRxOk = 0;
-
-/* Recive Interrupt Handler */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
-    uint8_t id = getUartId(huart);
-    pika_uart_t* pika_uart = getPikaUart(id);
-    char inputChar = pika_uart->rxBuff[pika_uart->rxBuffOffset];
-
-    if ((id == 1) && ('\n' == inputChar)) {
-#ifdef Code_ENABLE
-        uint8_t res = STM32_Code_reciveHandler(pika_uart->rxBuff,
-                                               pika_uart->rxBuffOffset + 1);
-        /* handler is working */
-        if (0 != res) {
-            STM32_UART_clearRxBuff(pika_uart);
-            return;
-        }
-        /* run as shell */
-        memset(pikaShell, 0, RX_BUFF_LENGTH);
-        strGetLastLine(pikaShell, pika_uart->rxBuff);
-        pikaShellRxOk = 1;
-#endif
-    }
-    /* avoid recive buff overflow */
-    if (pika_uart->rxBuffOffset + 2 > RX_BUFF_LENGTH) {
-        memmove(pika_uart->rxBuff, pika_uart->rxBuff + 1, RX_BUFF_LENGTH);
-        UART_Start_Receive_IT(
-            huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-        return;
-    }
-
-    /* recive next char */
-    pika_uart->rxBuffOffset++;
-    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
-    UART_Start_Receive_IT(
-        huart, (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-}

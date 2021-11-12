@@ -4,9 +4,10 @@
 
 #define oled_x_size 128
 #define oled_y_size 64
-#define x_size 16
+#define x_size 8
 #define y_size 8
 #define y_size_byte y_size/8
+
 u8 OLED_GRAM[x_size][y_size_byte];
 
 void OLED_ColorTurn(u8 i) {

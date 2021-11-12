@@ -26,21 +26,21 @@ void SysTick_Handler(void) {
     STM32_Code_flashHandler();
 }
 
-__attribute__((weak)) void __PIKA_USART1_IRQHandler(void){
-}
+__attribute__((weak)) void __PIKA_USART1_IRQHandler(char rx_char) {}
 
 void USART1_IRQHandler(void) {
     if (LL_USART_IsActiveFlag_RXNE(USART1)) {
-        uint8_t inputChar = LL_USART_ReceiveData8(USART1);
+        uint8_t rx_char = LL_USART_ReceiveData8(USART1);
+        __PIKA_USART1_IRQHandler(rx_char);
         /* clear buff when overflow */
         if (UART1_RXBuff_offset >= RX_BUFF_LENGTH) {
             UART1_RXBuff_offset = 0;
             memset(UART1_RxBuff, 0, sizeof(UART1_RxBuff));
         }
         /* recive char */
-        UART1_RxBuff[UART1_RXBuff_offset] = inputChar;
+        UART1_RxBuff[UART1_RXBuff_offset] = rx_char;
         UART1_RXBuff_offset++;
-        if ('\n' == inputChar) {
+        if ('\n' == rx_char) {
             /* handle python script download */
             if (STM32_Code_reciveHandler(UART1_RxBuff, UART1_RXBuff_offset)) {
                 goto line_exit;

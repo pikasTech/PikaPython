@@ -8,47 +8,51 @@
 #define IIC_DELAY_RATE 1
 
 void SDA_OUT(pika_IIC_info* iic) {
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
     /*Configure GPIO*/
     GPIO_InitStruct.Pin = iic->SDA_GPIO_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(iic->SDA_GPIO, &GPIO_InitStruct);
+    LL_GPIO_Init(iic->SDA_GPIO, &GPIO_InitStruct);
 }
 
 void SDA_IN(pika_IIC_info* iic) {
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
     /*Configure GPIO*/
     GPIO_InitStruct.Pin = iic->SDA_GPIO_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    HAL_GPIO_Init(iic->SDA_GPIO, &GPIO_InitStruct);
+    LL_GPIO_Init(iic->SDA_GPIO, &GPIO_InitStruct);
 }
 
 void IIC_SDA_high(pika_IIC_info* iic) {
-    HAL_GPIO_WritePin(iic->SDA_GPIO, iic->SDA_GPIO_Pin, GPIO_PIN_SET);
+    LL_GPIO_SetOutputPin(iic->SDA_GPIO, iic->SDA_GPIO_Pin);
 }
 
 void IIC_SDA_low(pika_IIC_info* iic) {
-    HAL_GPIO_WritePin(iic->SDA_GPIO, iic->SDA_GPIO_Pin, GPIO_PIN_RESET);
+    LL_GPIO_ResetOutputPin(iic->SDA_GPIO, iic->SDA_GPIO_Pin);
 }
 
 void IIC_SCL_high(pika_IIC_info* iic) {
-    HAL_GPIO_WritePin(iic->SCL_GPIO, iic->SCL_GPIO_Pin, GPIO_PIN_SET);
+    LL_GPIO_SetOutputPin(iic->SCL_GPIO, iic->SCL_GPIO_Pin);
 }
 
 void IIC_SCL_low(pika_IIC_info* iic) {
-    HAL_GPIO_WritePin(iic->SCL_GPIO, iic->SCL_GPIO_Pin, GPIO_PIN_RESET);
+    LL_GPIO_ResetOutputPin(iic->SCL_GPIO, iic->SCL_GPIO_Pin);
 }
 
 uint8_t READ_SDA(pika_IIC_info* iic) {
-    return HAL_GPIO_ReadPin(iic->SDA_GPIO, iic->SDA_GPIO_Pin);
+    return LL_GPIO_IsInputPinSet(iic->SDA_GPIO, iic->SDA_GPIO_Pin);
 }
 
 void WRITE_SDA(pika_IIC_info* iic, uint8_t data) {
-    HAL_GPIO_WritePin(iic->SDA_GPIO, iic->SDA_GPIO_Pin, data);
+    if (0 == data) {
+        IIC_SDA_low(iic);
+        return;
+    }
+    IIC_SDA_high(iic);
 }
 
 void IIC_Start(pika_IIC_info* iic) {
