@@ -55,6 +55,7 @@ releases = [
   "v1.3.0 7b816b1546ef91a03f77760d4b10806ab956d452",
   "v1.4.0 29c3c5b3b0cb4d3e41e6a2a0aef9e2826bc6f7ba",
   "v1.4.1 6539072bf7bebb242ea40f8595bfb5c9aae3de7f",
+  "v1.4.2 8866710f653ad005f5c3edc5e6417ad31075b7d5",
 ]
 
 [[packages]]
@@ -62,6 +63,7 @@ name = "PikaPiZero"
 releases = [
   "v1.0.0 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
   "v1.0.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
+  "v1.0.2 8866710f653ad005f5c3edc5e6417ad31075b7d5",
 ]
 
 [[packages]]
@@ -82,6 +84,7 @@ name = "STM32G030Booter"
 releases = [
   "v1.0.0 bbf178182e5780ef8a02a9b09b8a5f250bb7e767",
   "v1.1.0 7b816b1546ef91a03f77760d4b10806ab956d452",
+  "v1.1.1 8866710f653ad005f5c3edc5e6417ad31075b7d5",
 ]
 
 [[packages]]
