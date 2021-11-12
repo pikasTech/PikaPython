@@ -1,55 +1,141 @@
+/* USER CODE BEGIN Header */
+/**
+ ******************************************************************************
+ * @file    stm32g0xx_it.c
+ * @brief   Interrupt Service Routines.
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under BSD 3-Clause license,
+ * the "License"; You may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at:
+ *                        opensource.org/licenses/BSD-3-Clause
+ *
+ ******************************************************************************
+ */
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_it.h"
 #include "main.h"
-#include "stm32g030_pika_msp.h"
-char UART1_RxBuff[RX_BUFF_LENGTH] = {0};
-uint16_t UART1_RXBuff_offset = 0;
-extern char Shell_Buff[RX_BUFF_LENGTH];
-extern uint8_t Shell_Ready;
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+#include "STM32_common.h"
+/* USER CODE END Includes */
 
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN TD */
+
+/* USER CODE END TD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+/* USER CODE BEGIN PFP */
+
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
+
+/* External variables --------------------------------------------------------*/
+
+/* USER CODE BEGIN EV */
+
+/* USER CODE END EV */
+
+/******************************************************************************/
+/*           Cortex-M0+ Processor Interruption and Exception Handlers */
+/******************************************************************************/
+/**
+ * @brief This function handles Non maskable interrupt.
+ */
 void NMI_Handler(void) {
+    /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
+
+    /* USER CODE END NonMaskableInt_IRQn 0 */
+    /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
     while (1) {
     }
+    /* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
+/**
+ * @brief This function handles Hard fault interrupt.
+ */
 void HardFault_Handler(void) {
+    /* USER CODE BEGIN HardFault_IRQn 0 */
+    printf("[error]: Hard fault. Please reset the device.\r\n");
+    /* USER CODE END HardFault_IRQn 0 */
     while (1) {
+        /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+        /* USER CODE END W1_HardFault_IRQn 0 */
     }
 }
 
-void SVC_Handler(void) {}
+/**
+ * @brief This function handles System service call via SWI instruction.
+ */
+void SVC_Handler(void) {
+    /* USER CODE BEGIN SVC_IRQn 0 */
 
-void PendSV_Handler(void) {}
+    /* USER CODE END SVC_IRQn 0 */
+    /* USER CODE BEGIN SVC_IRQn 1 */
 
+    /* USER CODE END SVC_IRQn 1 */
+}
+
+/**
+ * @brief This function handles Pendable request for system service.
+ */
+void PendSV_Handler(void) {
+    /* USER CODE BEGIN PendSV_IRQn 0 */
+
+    /* USER CODE END PendSV_IRQn 0 */
+    /* USER CODE BEGIN PendSV_IRQn 1 */
+
+    /* USER CODE END PendSV_IRQn 1 */
+}
+
+/**
+ * @brief This function handles System tick timer.
+ */
 void SysTick_Handler(void) {
+    /* USER CODE BEGIN SysTick_IRQn 0 */
+
+    /* USER CODE END SysTick_IRQn 0 */
     HAL_IncTick();
+    /* USER CODE BEGIN SysTick_IRQn 1 */
     STM32_Code_flashHandler();
+    /* USER CODE END SysTick_IRQn 1 */
 }
 
-void USART1_IRQHandler(void) {
-    if (LL_USART_IsActiveFlag_RXNE(USART1)) {
-        uint8_t inputChar = LL_USART_ReceiveData8(USART1);
-        /* clear buff when overflow */
-        if (UART1_RXBuff_offset >= RX_BUFF_LENGTH) {
-            UART1_RXBuff_offset = 0;
-            memset(UART1_RxBuff, 0, sizeof(UART1_RxBuff));
-        }
-        /* recive char */
-        UART1_RxBuff[UART1_RXBuff_offset] = inputChar;
-        UART1_RXBuff_offset++;
-        if ('\n' == inputChar) {
-            /* handle python script download */
-            if (STM32_Code_reciveHandler(UART1_RxBuff, UART1_RXBuff_offset)) {
-                goto line_exit;
-            }
-            /* handle python shell invoke */
-            memcpy(Shell_Buff, UART1_RxBuff, sizeof(Shell_Buff));
-            Shell_Ready = 1;
-            goto line_exit;
-        line_exit:
-            UART1_RXBuff_offset = 0;
-            memset(UART1_RxBuff, 0, sizeof(UART1_RxBuff));
-            return;
-        }
-    }
-}
+/******************************************************************************/
+/* STM32G0xx Peripheral Interrupt Handlers                                    */
+/* Add here the Interrupt Handlers for the used peripherals.                  */
+/* For the available peripheral interrupt handler names,                      */
+/* please refer to the startup file (startup_stm32g0xx.s).                    */
+/******************************************************************************/
+
+/* USER CODE BEGIN 1 */
+
+/* USER CODE END 1 */
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
