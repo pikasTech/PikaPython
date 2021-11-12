@@ -22,10 +22,10 @@
 #include "gpio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "STM32_common.h"
 #include "pikaScript.h"
 #include "pikaVM.h"
 #include "stdbool.h"
+#include "stm32g030_pika_msp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,9 +59,8 @@ void SystemClock_Config(void);
 
 /* supply the main object */
 PikaObj* pikaMain;
-extern char pikaShell[RX_BUFF_LENGTH];
-extern uint8_t pikaShellRxOk;
-
+char Shell_Buff[RX_BUFF_LENGTH] = {0};
+uint8_t Shell_Ready = 0;
 /* USER CODE END 0 */
 
 /**
@@ -69,40 +68,20 @@ extern uint8_t pikaShellRxOk;
  * @retval int
  */
 int main(void) {
-    /* USER CODE BEGIN 1 */
-    /* USER CODE END 1 */
-
-    /* MCU
-     * Configuration--------------------------------------------------------*/
-
-    /* Reset of all peripherals, Initializes the Flash interface and the
-     * Systick. */
-    HAL_Init();
-
-    /* USER CODE BEGIN Init */
-
-    /* USER CODE END Init */
-
-    /* Configure the system clock */
-    SystemClock_Config();
-
-    /* USER CODE BEGIN SysInit */
-
-    /* USER CODE END SysInit */
-
-    /* Initialize all configured peripherals */
-    MX_GPIO_Init();
-    /* USER CODE BEGIN 2 */
+    /* support bootLoader */
     __disable_irq();
-    /* set vector table*/
     SCB->VTOR = FLASH_BASE | 0x2000;
     __enable_irq();
-
+    
+    /* system init */
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
     HARDWARE_PRINTF_Init();
-    STM32_Code_Init();
 
     printf("stm32 hardware init ok\r\n");
 
+    /* boot pikaScript */
     char* code = (char*)FLASH_SCRIPT_START_ADDR;
     uint16_t codeOffset = 0;
     if (code[0] != 0xFF) {
@@ -117,8 +96,8 @@ int main(void) {
         }
         if (code[0] == 'B') {
             printf("==============[Pika ASM]==============\r\n");
-            for(int i = 0; i < strGetSize(code); i ++){
-                if('\n' == code[i]){
+            for (int i = 0; i < strGetSize(code); i++) {
+                if ('\n' == code[i]) {
                     fputc('\r', (FILE*)!NULL);
                 }
                 fputc(code[i], (FILE*)!NULL);
@@ -135,20 +114,14 @@ int main(void) {
         goto main_loop;
     }
 
-    main_loop:
+    pikaMain = pikaScriptInit();
+    goto main_loop;
+
+main_loop:
     while (1) {
-        if (pikaShellRxOk) {
-            Parameters* runRes = obj_runDirect(pikaMain, pikaShell);
-            char* sysOut = args_getSysOut(runRes->attributeList);
-            uint8_t errcode = args_getErrorCode(runRes->attributeList);
-            __platformPrintf(">>> %s", pikaShell);
-            if (!strEqu("", sysOut)) {
-                __platformPrintf("%s\r\n", sysOut);
-            }
-            if (NULL != runRes) {
-                obj_deinit(runRes);
-            }
-            pikaShellRxOk = 0;
+        if(Shell_Ready){
+            Shell_Ready = 0;
+            obj_run(pikaMain, Shell_Buff);
         }
     }
 }
@@ -160,6 +133,7 @@ int main(void) {
 void SystemClock_Config(void) {
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+    RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
     /** Configure the main internal regulator output voltage
      */
@@ -187,6 +161,13 @@ void SystemClock_Config(void) {
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
+        Error_Handler();
+    }
+    /** Initializes the peripherals clocks
+     */
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1;
+    PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
         Error_Handler();
     }
 }
