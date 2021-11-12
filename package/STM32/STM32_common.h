@@ -80,6 +80,17 @@ typedef struct {
     PikaObj* obj;
 } pika_uart_t;
 
+typedef struct pika_IIC_info_t {
+    GPIO_TypeDef* SCL_GPIO;
+    GPIO_TypeDef* SDA_GPIO;
+
+    uint32_t SCL_GPIO_Pin;
+    uint32_t SDA_GPIO_Pin;
+    uint8_t deviceAddr;
+
+    uint8_t readBuff[32];
+} pika_IIC_info;
+
 GPIO_TypeDef* GPIO_get_Group(char* pin);
 uint16_t GPIO_get_pin(char* pin);
 uint32_t getPinMode(char* mode);

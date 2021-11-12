@@ -5,18 +5,7 @@
 #include "STM32_common.h"
 #include "dataStrs.h"
 
-typedef struct pika_IIC_info_t {
-    GPIO_TypeDef* SCL_GPIO;
-    GPIO_TypeDef* SDA_GPIO;
-
-    uint32_t SCL_GPIO_Pin;
-    uint32_t SDA_GPIO_Pin;
-    uint8_t deviceAddr;
-
-    uint8_t readBuff[32];
-} pika_IIC_info;
-
-#define delay_rate 1
+#define IIC_DELAY_RATE 1
 
 void SDA_OUT(pika_IIC_info* iic) {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -66,9 +55,9 @@ void IIC_Start(pika_IIC_info* iic) {
     SDA_OUT(iic);
     IIC_SDA_high(iic);
     IIC_SCL_high(iic);
-    delay_us(delay_rate * 4);
+    delay_us(IIC_DELAY_RATE * 4);
     IIC_SDA_low(iic);
-    delay_us(delay_rate * 4);
+    delay_us(IIC_DELAY_RATE * 4);
     IIC_SCL_low(iic);
 }
 
@@ -76,10 +65,10 @@ void IIC_Stop(pika_IIC_info* iic) {
     SDA_OUT(iic);
     IIC_SCL_low(iic);
     IIC_SDA_low(iic);
-    delay_us(delay_rate * 4);
+    delay_us(IIC_DELAY_RATE * 4);
     IIC_SCL_high(iic);
     IIC_SDA_high(iic);
-    delay_us(delay_rate * 4);
+    delay_us(IIC_DELAY_RATE * 4);
 }
 
 uint8_t IIC_Wait_Ack(pika_IIC_info* iic) {
@@ -87,9 +76,9 @@ uint8_t IIC_Wait_Ack(pika_IIC_info* iic) {
     SDA_IN(iic);
 
     IIC_SDA_high(iic);
-    delay_us(delay_rate * 1);
+    delay_us(IIC_DELAY_RATE * 1);
     IIC_SCL_high(iic);
-    delay_us(delay_rate * 1);
+    delay_us(IIC_DELAY_RATE * 1);
     while (READ_SDA(iic)) {
         ucErrTime++;
         if (ucErrTime > 250) {
@@ -106,9 +95,9 @@ void IIC_Ack(pika_IIC_info* iic) {
     SDA_OUT(iic);
 
     IIC_SDA_low(iic);
-    delay_us(delay_rate * 2);
+    delay_us(IIC_DELAY_RATE * 2);
     IIC_SCL_high(iic);
-    delay_us(delay_rate * 2);
+    delay_us(IIC_DELAY_RATE * 2);
     IIC_SCL_low(iic);
 }
 
@@ -117,9 +106,9 @@ void IIC_NAck(pika_IIC_info* iic) {
     SDA_OUT(iic);
 
     IIC_SDA_high(iic);
-    delay_us(delay_rate * 2);
+    delay_us(IIC_DELAY_RATE * 2);
     IIC_SCL_high(iic);
-    delay_us(delay_rate * 2);
+    delay_us(IIC_DELAY_RATE * 2);
     IIC_SCL_low(iic);
 }
 
@@ -131,11 +120,11 @@ void IIC_Send_Byte(pika_IIC_info* iic, uint8_t txd) {
     for (t = 0; t < 8; t++) {
         WRITE_SDA(iic, (txd & 0x80) >> 7);
         txd <<= 1;
-        delay_us(delay_rate * 2);
+        delay_us(IIC_DELAY_RATE * 2);
         IIC_SCL_high(iic);
-        delay_us(delay_rate * 2);
+        delay_us(IIC_DELAY_RATE * 2);
         IIC_SCL_low(iic);
-        delay_us(delay_rate * 2);
+        delay_us(IIC_DELAY_RATE * 2);
     }
 }
 
@@ -145,12 +134,12 @@ uint8_t IIC_Read_Byte(pika_IIC_info* iic, unsigned char ack) {
 
     for (i = 0; i < 8; i++) {
         IIC_SCL_low(iic);
-        delay_us(delay_rate * 2);
+        delay_us(IIC_DELAY_RATE * 2);
         IIC_SCL_high(iic);
         receive <<= 1;
         if (READ_SDA(iic))
             receive++;
-        delay_us(delay_rate * 1);
+        delay_us(IIC_DELAY_RATE * 1);
     }
     if (!ack)
         IIC_NAck(iic);

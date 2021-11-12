@@ -268,7 +268,12 @@ void STM32_Code_flashHandler() {
     char* codeInFlash = (char*)baseAddress;
     printf("\r\n");
     printf("----[code in flash]-----\r\n");
-    printf("%s", codeInFlash);
+    for (int i = 0; i < strGetSize(codeHeap.content); i++) {
+        if ('\n' == codeHeap.content[i]) {
+            fputc('\r', (FILE*)!NULL);
+        }
+        fputc(codeHeap.content[i], (FILE*)!NULL);
+    }
     printf("----[code in flash]-----\r\n");
     printf("\r\n");
 
@@ -279,7 +284,12 @@ void STM32_Code_flashHandler() {
         printf("\r\n\r\n");
         printf("---------[code in heap]----------\r\n");
         printf("\r\n");
-        printf("%s", codeHeap.content);
+        for (int i = 0; i < strGetSize(codeHeap.content); i++) {
+            if ('\n' == codeHeap.content[i]) {
+                fputc('\r', (FILE*)!NULL);
+            }
+            fputc(codeHeap.content[i], (FILE*)!NULL);
+        }
         printf("\r\n\r\n");
         printf("---------[code in heap]----------\r\n");
         while (1) {
@@ -293,3 +303,4 @@ void STM32_Code_flashHandler() {
     printf("\r\n");
     HAL_NVIC_SystemReset();
 }
+

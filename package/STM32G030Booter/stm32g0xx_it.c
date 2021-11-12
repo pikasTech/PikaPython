@@ -26,6 +26,9 @@ void SysTick_Handler(void) {
     STM32_Code_flashHandler();
 }
 
+__attribute__((weak)) void __PIKA_USART1_IRQHandler(void){
+}
+
 void USART1_IRQHandler(void) {
     if (LL_USART_IsActiveFlag_RXNE(USART1)) {
         uint8_t inputChar = LL_USART_ReceiveData8(USART1);

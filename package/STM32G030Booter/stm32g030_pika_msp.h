@@ -13,9 +13,12 @@ typedef struct _CodeHeap{
 
 /* support std lib for stm32 */
 #define delay_ms HAL_Delay
-typedef uint16_t u16;
-typedef uint8_t u8;
-typedef uint32_t u32;
+#undef u16
+#undef u8
+#undef u32
+#define u16 uint16_t
+#define u8 uint8_t
+#define u32 uint32_t
 
 #define GPIO_Pin_0 GPIO_PIN_0 
 #define GPIO_Pin_1 GPIO_PIN_1
@@ -50,4 +53,6 @@ uint8_t STM32_Code_reciveHandler(char *data, uint32_t rxSize);
 void STM32_Code_Init();
 void STM32_Code_flashHandler();
 
+/* handler for usart1 */
+__attribute__((weak)) void __PIKA_USART1_IRQHandler(void);
 #endif
