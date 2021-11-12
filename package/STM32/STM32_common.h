@@ -1,6 +1,7 @@
 #ifndef __STM32__COMMON__H
 #define __STM32__COMMON__H
 #include "PikaObj.h"
+#include "main.h"
 #include <stdint.h>
 
 /* support std lib for stm32 */
@@ -79,10 +80,10 @@ typedef struct {
     PikaObj* obj;
 } pika_uart_t;
 
-GPIO_TypeDef* getGpioPort(char* pin);
-uint16_t getGpioPin(char* pin);
+GPIO_TypeDef* GPIO_get_Group(char* pin);
+uint16_t GPIO_get_pin(char* pin);
 uint32_t getPinMode(char* mode);
-uint8_t enableClk(char* pin);
+uint8_t GPIO_enable_clock(char* pin);
 void delay_us(uint32_t delay);
 void delay_unit(uint32_t delay);
 void STM32_UART_clearRxBuff(pika_uart_t* pika_uart);

@@ -24,17 +24,17 @@ void STM32_ADC_platformEnable(PikaObj* self) {
         return;
     }
 
-    if (0 != enableClk(pin)) {
+    if (0 != GPIO_enable_clock(pin)) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
         return;
     }
 
     GPIO_InitTypeDef GPIO_InitStruct = {0};
-    GPIO_InitStruct.Pin = getGpioPin(pin);
+    GPIO_InitStruct.Pin = GPIO_get_pin(pin);
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(getGpioPort(pin), &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIO_get_Group(pin), &GPIO_InitStruct);
 
     /* init ADC */
     LL_ADC_InitTypeDef ADC_InitStruct = {0};

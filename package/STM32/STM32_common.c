@@ -46,7 +46,7 @@ void delay_us(uint32_t udelay) {
     }
 }
 
-GPIO_TypeDef* getGpioPort(char* pin) {
+GPIO_TypeDef* GPIO_get_Group(char* pin) {
     if (strIsStartWith(pin, "PA")) {
         return GPIOA;
     }
@@ -62,7 +62,7 @@ GPIO_TypeDef* getGpioPort(char* pin) {
     return NULL;
 }
 
-uint16_t getGpioPin(char* pin) {
+uint16_t GPIO_get_pin(char* pin) {
     Args* buffs = New_strBuff();
     uint16_t gpioPin = 0;
 
@@ -147,7 +147,7 @@ uint32_t getPinMode(char* mode) {
     return NULL;
 }
 
-uint8_t enableClk(char* pin) {
+uint8_t GPIO_enable_clock(char* pin) {
     if (strIsStartWith(pin, "PA")) {
         __HAL_RCC_GPIOA_CLK_ENABLE();
         return 0;

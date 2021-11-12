@@ -232,10 +232,10 @@ void STM32_IIC_platformEnable(PikaObj* self) {
         iic = pikaMalloc(sizeof(pika_IIC_info));
         obj_setPtr(self, "iic", iic);
     }
-    iic->SDA_GPIO = getGpioPort(SDApin);
-    iic->SDA_GPIO_Pin = getGpioPin(SDApin);
-    iic->SCL_GPIO = getGpioPort(SCLpin);
-    iic->SCL_GPIO_Pin = getGpioPin(SCLpin);
+    iic->SDA_GPIO = GPIO_get_Group(SDApin);
+    iic->SDA_GPIO_Pin = GPIO_get_pin(SDApin);
+    iic->SCL_GPIO = GPIO_get_Group(SCLpin);
+    iic->SCL_GPIO_Pin = GPIO_get_pin(SCLpin);
     iic->deviceAddr = deviceAddr;
     SDA_OUT(iic);
 }

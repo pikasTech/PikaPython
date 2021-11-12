@@ -9,14 +9,14 @@ void STM32_GPIO_platformDisable(PikaObj* self) {
     char* pin = obj_getStr(self, "pin");
     char* mode = obj_getStr(self, "mode");
 
-    GPIO_TypeDef* gpioPort = getGpioPort(pin);
+    GPIO_TypeDef* gpioPort = GPIO_get_Group(pin);
 
     if (NULL == gpioPort) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
     }
 
-    uint16_t gpioPin = getGpioPin(pin);
+    uint16_t gpioPin = GPIO_get_pin(pin);
 
     if (0 == gpioPin) {
         obj_setErrorCode(self, 1);
@@ -30,20 +30,20 @@ void STM32_GPIO_platformEnable(PikaObj* self) {
     char* pin = obj_getStr(self, "pin");
     char* mode = obj_getStr(self, "mode");
 
-    if (0 != enableClk(pin)) {
+    if (0 != GPIO_enable_clock(pin)) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
         return;
     }
 
-    GPIO_TypeDef* gpioPort = getGpioPort(pin);
+    GPIO_TypeDef* gpioPort = GPIO_get_Group(pin);
 
     if (NULL == gpioPort) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
     }
 
-    uint16_t gpioPin = getGpioPin(pin);
+    uint16_t gpioPin = GPIO_get_pin(pin);
 
     if (0 == gpioPin) {
         obj_setErrorCode(self, 1);
@@ -73,14 +73,14 @@ void STM32_GPIO_platformEnable(PikaObj* self) {
 }
 void STM32_GPIO_platformLow(PikaObj* self) {
     char* pin = obj_getStr(self, "pin");
-    GPIO_TypeDef* gpioPort = getGpioPort(pin);
+    GPIO_TypeDef* gpioPort = GPIO_get_Group(pin);
 
     if (NULL == gpioPort) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
     }
 
-    uint16_t gpioPin = getGpioPin(pin);
+    uint16_t gpioPin = GPIO_get_pin(pin);
 
     if (0 == gpioPin) {
         obj_setErrorCode(self, 1);
@@ -90,14 +90,14 @@ void STM32_GPIO_platformLow(PikaObj* self) {
 }
 void STM32_GPIO_platformHigh(PikaObj* self) {
     char* pin = obj_getStr(self, "pin");
-    GPIO_TypeDef* gpioPort = getGpioPort(pin);
+    GPIO_TypeDef* gpioPort = GPIO_get_Group(pin);
 
     if (NULL == gpioPort) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
     }
 
-    uint16_t gpioPin = getGpioPin(pin);
+    uint16_t gpioPin = GPIO_get_pin(pin);
 
     if (0 == gpioPin) {
         obj_setErrorCode(self, 1);
@@ -108,20 +108,20 @@ void STM32_GPIO_platformHigh(PikaObj* self) {
 void STM32_GPIO_platformSetMode(PikaObj* self) {
     char* pin = obj_getStr(self, "pin");
     char *mode = obj_getStr(self, "mode");
-    if (0 != enableClk(pin)) {
+    if (0 != GPIO_enable_clock(pin)) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
         return;
     }
 
-    GPIO_TypeDef* gpioPort = getGpioPort(pin);
+    GPIO_TypeDef* gpioPort = GPIO_get_Group(pin);
 
     if (NULL == gpioPort) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
     }
 
-    uint16_t gpioPin = getGpioPin(pin);
+    uint16_t gpioPin = GPIO_get_pin(pin);
 
     if (0 == gpioPin) {
         obj_setErrorCode(self, 1);
@@ -144,12 +144,12 @@ void STM32_GPIO_platformSetMode(PikaObj* self) {
 
 void STM32_GPIO_platformRead(PikaObj *self){
     char* pin = obj_getStr(self, "pin");
-    GPIO_TypeDef* gpioPort = getGpioPort(pin);
+    GPIO_TypeDef* gpioPort = GPIO_get_Group(pin);
     if (NULL == gpioPort) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
     }
-    uint16_t gpioPin = getGpioPin(pin);
+    uint16_t gpioPin = GPIO_get_pin(pin);
     if (0 == gpioPin) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio pin.");
@@ -158,12 +158,12 @@ void STM32_GPIO_platformRead(PikaObj *self){
 }
 
 int STM32_lowLevel_readPin(PikaObj *self, char * pin){
-    GPIO_TypeDef* gpioPort = getGpioPort(pin);
+    GPIO_TypeDef* gpioPort = GPIO_get_Group(pin);
     if (NULL == gpioPort) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio port.");
     }
-    uint16_t gpioPin = getGpioPin(pin);
+    uint16_t gpioPin = GPIO_get_pin(pin);
     if (0 == gpioPin) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] not match gpio pin.");
