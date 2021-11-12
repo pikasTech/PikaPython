@@ -664,12 +664,12 @@
             <File>
               <FileName>stm32g0xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\bsp\stm32g030c8\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_gpio.c</FilePath>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_gpio.c</FilePath>
             </File>
             <File>
               <FileName>stm32g0xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\bsp\stm32g030c8\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_cortex.c</FilePath>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_cortex.c</FilePath>
             </File>
           </Files>
         </Group>
