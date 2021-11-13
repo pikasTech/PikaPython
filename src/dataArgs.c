@@ -122,17 +122,20 @@ int32_t args_copyArg(Args* self, Arg* argToBeCopy) {
     return 0;
 }
 
-int32_t args_setStruct(Args* self, char *name, void * struct_ptr, uint32_t struct_size){
+int32_t args_setStruct(Args* self,
+                       char* name,
+                       void* struct_ptr,
+                       uint32_t struct_size) {
     if (NULL == struct_ptr) {
         return 1;
     }
     Arg* structArg = arg_setContent(NULL, (uint8_t*)struct_ptr, struct_size);
     structArg = arg_setName(structArg, name);
     args_setArg(self, structArg);
-	return 0;
+    return 0;
 }
 
-void* args_getStruct(Args* self, char *name){
+void* args_getStruct(Args* self, char* name) {
     return arg_getContent(args_getArg(self, name));
 }
 
@@ -142,10 +145,14 @@ int32_t args_copyArgByName(Args* self, char* name, Args* directArgs) {
     return 0;
 }
 
-int32_t args_isArgExist(Args* self, char* name) {
-    if (NULL == name) {
-        return 0;
+int32_t args_isArgExist_hash(Args* self, Hash nameHash) {
+    if (NULL != args_getArg_hash(self, nameHash)) {
+        return 1;
     }
+    return 0;
+}
+
+int32_t args_isArgExist(Args* self, char* name) {
     if (NULL != args_getArg(self, name)) {
         return 1;
     }
@@ -156,9 +163,9 @@ int32_t updateArg(Args* self, Arg* argNew) {
     LinkNode* nodeToUpdate = NULL;
     LinkNode* nodeNow = self->firstNode;
     LinkNode* priorNode = NULL;
-    char* name = arg_getName(argNew);
+    Hash nameHash = arg_getNameHash(argNew);
     while (1) {
-        if (strEqu(content_getName(nodeNow), name)) {
+        if (content_getNameHash(nodeNow) == nameHash) {
             nodeToUpdate = nodeNow;
             break;
         }
@@ -188,8 +195,8 @@ exit:
 }
 
 int32_t args_setArg(Args* self, Arg* arg) {
-    char* name = arg_getName(arg);
-    if (!args_isArgExist(self, name)) {
+    Hash nameHash = arg_getNameHash(arg);
+    if (!args_isArgExist_hash(self, nameHash)) {
         setArgDirect(self, arg);
         return 0;
     }
@@ -197,15 +204,15 @@ int32_t args_setArg(Args* self, Arg* arg) {
     return 0;
 }
 
-LinkNode* args_getNode(Args* self, char* name) {
+LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
     LinkNode* nodeNow = self->firstNode;
     if (NULL == nodeNow) {
         return NULL;
     }
     while (1) {
         Arg* arg = nodeNow;
-        char* thisName = arg_getName(arg);
-        if (strEqu(name, thisName)) {
+        Hash thisNameHash = arg_getNameHash(arg);
+        if (thisNameHash == nameHash) {
             return nodeNow;
         }
         if (NULL == content_getNext(nodeNow)) {
@@ -213,6 +220,18 @@ LinkNode* args_getNode(Args* self, char* name) {
         }
         nodeNow = content_getNext(nodeNow);
     }
+}
+
+LinkNode* args_getNode(Args* self, char* name) {
+    return args_getNode_hash(self, hash_time33(name));
+}
+
+Arg* args_getArg_hash(Args* self, Hash nameHash) {
+    LinkNode* node = args_getNode_hash(self, nameHash);
+    if (NULL == node) {
+        return NULL;
+    }
+    return node;
 }
 
 Arg* args_getArg(Args* self, char* name) {
@@ -377,8 +396,7 @@ int32_t args_foreach(Args* self,
     return 0;
 }
 
-int32_t args_removeArg(Args* self, char* name) {
-    Arg* argNow = args_getArg(self, name);
+int32_t args_removeArg(Args* self, Arg* argNow) {
     if (NULL == argNow) {
         /* can not found arg */
         return 1;

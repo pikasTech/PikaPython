@@ -272,7 +272,7 @@ void* getNewClassObjFunByName(PikaObj* obj, char* name) {
 
 int32_t removeEachMethodInfo(Arg* argNow, Args* argList) {
     if (strIsStartWith(arg_getType(argNow), "_mtd-")) {
-        args_removeArg(argList, arg_getName(argNow));
+        args_removeArg(argList, argNow);
         return 0;
     }
     return 0;

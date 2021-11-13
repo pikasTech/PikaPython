@@ -20,7 +20,8 @@ LinkNode* args_getNode(Args* self, char* name);
 
 Arg* args_getArgByIndex(Args* self, int32_t index);
 Arg* args_getArg(Args* self, char* name);
-int32_t args_removeArg(Args* self, char* name);
+int32_t args_removeArg(Args* self, Arg* argNow);
+Arg* args_getArg_hash(Args* self, Hash nameHash);
 
 int32_t args_setArg(Args* self, Arg* arg);
 
@@ -28,6 +29,7 @@ int32_t args_copyArgByName(Args* self, char* name, Args* directList);
 int32_t args_copyArg(Args* self, Arg* argToBeCopy);
 
 char* args_getType(Args* self, char* name);
+int32_t args_isArgExist_hash(Args* self, Hash nameHash);
 int32_t args_isArgExist(Args* self, char* name);
 
 int32_t args_setStr(Args* self, char* name, char* strIn);
@@ -51,8 +53,11 @@ void args_bindStr(Args* self, char* name, char** stringPtr);
 void args_bind(Args* self, char* type, char* name, void* pointer);
 char* args_print(Args* self, char* name);
 
-int32_t args_setStruct(Args* self, char *name, void * struct_ptr, uint32_t struct_size);
-void* args_getStruct(Args* self, char *name);
+int32_t args_setStruct(Args* self,
+                       char* name,
+                       void* struct_ptr,
+                       uint32_t struct_size);
+void* args_getStruct(Args* self, char* name);
 
 int32_t args_set(Args* self, char* name, char* valueStr);
 int32_t args_setObjectWithClass(Args* self,

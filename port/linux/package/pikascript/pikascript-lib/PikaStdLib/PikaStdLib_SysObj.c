@@ -8,7 +8,7 @@ static int32_t __foreach_listEachArg(Arg* argEach, Args* handleArgs) {
         return 1;
     }
 
-    char* argName = strsCopy(buffs, arg_getName(argEach));
+    char* argName = strsCopy(buffs, arg_getNameHash(argEach));
     if (strIsStartWith(argName, "[")) {
         /* skip */
         return 0;

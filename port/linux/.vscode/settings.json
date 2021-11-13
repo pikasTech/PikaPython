@@ -7,7 +7,9 @@
         "dataargs.h": "c",
         "pikastdlib_sysobj.h": "c",
         "*.tcc": "c",
-        "istream": "c"
+        "istream": "c",
+        "cstring": "cpp",
+        "variant": "cpp"
     },
     "python.formatting.provider": "yapf"
 }

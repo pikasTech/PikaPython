@@ -44,14 +44,25 @@ void content_setNext(uint8_t* self, uint8_t* next) {
     }
 }
 
-uint8_t* content_init(char* name,
-                      char* type,
-                      uint8_t* content,
-                      uint16_t size,
-                      uint8_t* next) {
+/**
+ * time33 hash
+ */
+Hash hash_time33(char* str) {
+    Hash hash = 5381;
+    while (*str) {
+        hash += (hash << 5) + (*str++);
+    }
+    return (hash & 0x7FFFFFFF);
+}
+
+uint8_t* content_init_hash(Hash nameHash,
+                           char* type,
+                           uint8_t* content,
+                           uint16_t size,
+                           uint8_t* next) {
     const uint8_t nextLength = sizeof(uint8_t*);
     const uint8_t sizeLength = 2;
-    uint16_t nameSize = strGetSize(name);
+    uint16_t nameSize = sizeof(Hash);  // use hash
     uint16_t typeSize = strGetSize(type);
     uint8_t* self = (uint8_t*)pikaMalloc(nextLength + sizeLength + nameSize +
                                          1 + size + typeSize + 1);
@@ -62,7 +73,9 @@ uint8_t* content_init(char* name,
     uint8_t* contentDir = nameDir + nameSize + 1;
     uint8_t* typeDir = contentDir + size;
 
-    memcpy(nameDir, name, nameSize + 1);
+    // memcpy(nameDir, name, nameSize + 1);
+    memcpy(nameDir, &nameHash, nameSize);  // use hash
+    nameDir[nameSize] = '\0';              // add \0 by hand
     memcpy(typeDir, type, typeSize + 1);
     sizeDir[0] = size;
     sizeDir[1] = size >> 8;
@@ -82,13 +95,22 @@ uint8_t* content_init(char* name,
     return self;
 }
 
+uint8_t* content_init(char* name,
+                      char* type,
+                      uint8_t* content,
+                      uint16_t size,
+                      uint8_t* next) {
+    Hash nameHash = hash_time33(name);
+    return content_init_hash(nameHash, type, content, size, next);
+}
+
 uint16_t content_totleSize(uint8_t* self) {
-    char* name = content_getName(self);
+    Hash nameHash = content_getNameHash(self);
     char* type = content_getType(self);
     const uint8_t sizeLenth = 2;
     const uint8_t nextLength = sizeof(uint8_t*);
     uint16_t size = content_getSize(self);
-    return size + strGetSize(name) + 1 + strGetSize(type) + 1 + sizeLenth +
+    return size + sizeof(Hash) + 1 + strGetSize(type) + 1 + sizeLenth +
            nextLength;
 }
 
@@ -104,8 +126,11 @@ uint8_t content_nameOffset(uint8_t* self) {
     return nextLength + sizeLength;
 }
 
-char* content_getName(uint8_t* self) {
-    return (char*)self + content_nameOffset(self);
+Hash content_getNameHash(uint8_t* self) {
+    uint8_t* nameHashDir = (char*)self + content_nameOffset(self);
+    Hash nameHash = 0;
+    memcpy(&nameHash, nameHashDir, sizeof(Hash));
+    return nameHash;
 }
 
 uint8_t* content_deinit(uint8_t* self) {
@@ -118,10 +143,25 @@ uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
     if (NULL == self) {
         return content_init("", "", content, size, NULL);
     }
-    char* name = content_getName(self);
+    Hash nameHash = content_getNameHash(self);
     char* type = content_getType(self);
     uint8_t* next = content_getNext(self);
-    uint8_t* newContent = content_init(name, type, content, size, next);
+    uint8_t* newContent =
+        content_init_hash(nameHash, type, content, size, next);
+    content_deinit(self);
+    return newContent;
+}
+
+uint8_t* content_setNameHash(uint8_t* self, Hash nameHash) {
+    if (NULL == self) {
+        return content_init_hash(nameHash, "", NULL, 0, NULL);
+    }
+    char* type = content_getType(self);
+    uint8_t* content = content_getContent(self);
+    uint16_t size = content_getSize(self);
+    uint8_t* next = content_getNext(self);
+    uint8_t* newContent =
+        content_init_hash(nameHash, type, content, size, next);
     content_deinit(self);
     return newContent;
 }
@@ -143,11 +183,12 @@ uint8_t* content_setType(uint8_t* self, char* type) {
     if (NULL == self) {
         return content_init("", type, NULL, 0, NULL);
     }
-    char* name = content_getName(self);
+    Hash nameHash = content_getNameHash(self);
     uint8_t* content = content_getContent(self);
     uint16_t size = content_getSize(self);
     uint8_t* next = content_getNext(self);
-    uint8_t* newContent = content_init(name, type, content, size, next);
+    uint8_t* newContent =
+        content_init_hash(nameHash, type, content, size, next);
     content_deinit(self);
     return newContent;
 }
@@ -166,6 +207,10 @@ Arg* arg_setName(Arg* self, char* name) {
     return content_setName(self, name);
 }
 
+Arg* arg_setNameHash(Arg* self, Hash nameHash) {
+    return content_setNameHash(self, nameHash);
+}
+
 Arg* arg_setType(Arg* self, char* type) {
     return content_setType(self, type);
 }
@@ -177,8 +222,8 @@ char* content_getType(uint8_t* self) {
 uint16_t content_contentOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
     const uint8_t sizeLength = 2;
-    char* name = content_getName(self);
-    return nextLength + sizeLength + strGetSize(name) + 1;
+    Hash nameHash = content_getNameHash(self);
+    return nextLength + sizeLength + sizeof(Hash) + 1;
 }
 
 uint16_t content_nextOffset(uint8_t* self) {
@@ -296,16 +341,16 @@ uint16_t content_typeOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
     const uint8_t sizeLength = 2;
     uint16_t size = content_getSize(self);
-    char* name = content_getName(self);
-    uint16_t nameSize = strGetSize(name);
+    Hash nameHash = content_getNameHash(self);
+    uint16_t nameSize = sizeof(Hash);
     return nextLength + sizeLength + nameSize + 1 + size;
 }
 
-char* arg_getName(Arg* self) {
+Hash arg_getNameHash(Arg* self) {
     if (NULL == self) {
-        return NULL;
+        return 999999;
     }
-    return content_getName(self);
+    return content_getNameHash(self);
 }
 
 char* arg_getType(Arg* self) {
@@ -330,7 +375,7 @@ Arg* arg_copy(Arg* argToBeCopy) {
     Arg* argCopied = New_arg(NULL);
     argCopied = arg_setContent(argCopied, arg_getContent(argToBeCopy),
                                arg_getContentSize(argToBeCopy));
-    argCopied = arg_setName(argCopied, arg_getName(argToBeCopy));
+    argCopied = arg_setNameHash(argCopied, arg_getNameHash(argToBeCopy));
     argCopied = arg_setType(argCopied, arg_getType(argToBeCopy));
     return argCopied;
 }

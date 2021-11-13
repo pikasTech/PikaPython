@@ -8,6 +8,7 @@
 #include "dataMemory.h"
 
 typedef uint8_t Arg;
+typedef uint32_t Hash;
 
 uint16_t content_typeOffset(uint8_t* content);
 uint16_t content_contentOffset(uint8_t* content);
@@ -16,7 +17,7 @@ uint16_t content_contentOffset(uint8_t* self);
 uint16_t content_nextOffset(uint8_t* self);
 uint8_t content_nameOffset(uint8_t* self);
 
-char* content_getName(uint8_t* content);
+uint32_t content_getNameHash(uint8_t* content);
 char* content_getType(uint8_t* content);
 uint8_t* content_getNext(uint8_t* self);
 uint16_t content_getSize(uint8_t* self);
@@ -42,10 +43,11 @@ Arg* arg_setName(Arg* self, char* name);
 Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size);
 Arg* arg_newContent(Arg* self, uint32_t size);
 Arg* arg_setType(Arg* self, char* type);
-char* arg_getName(Arg* self);
+Hash arg_getNameHash(Arg* self);
 char* arg_getType(Arg* self);
 uint8_t* arg_getContent(Arg* self);
 uint16_t arg_getContentSize(Arg* self);
+Hash hash_time33(char* str);
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val);
 Arg* arg_setFloat(Arg* self, char* name, float val);
