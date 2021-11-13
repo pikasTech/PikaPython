@@ -433,7 +433,8 @@ int32_t __clearInvokeQueues(Parameters* locals) {
         Queue* queue = (Queue*)args_getPtr(locals->attributeList, deepth);
         if (NULL != queue) {
             args_deinit(queue);
-            args_removeArg(locals->attributeList, deepth);
+            args_removeArg(locals->attributeList,
+                           args_getArg(locals->attributeList, deepth));
         }
     }
     return 0;

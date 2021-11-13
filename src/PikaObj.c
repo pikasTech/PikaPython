@@ -416,7 +416,8 @@ int32_t obj_removeArg(PikaObj* self, char* argPath) {
         goto exit;
     }
     char* argName = strsGetLastToken(buffs, argPath, '.');
-    int32_t res = args_removeArg(objHost->attributeList, argName);
+    int32_t res = args_removeArg(objHost->attributeList,
+                                 args_getArg(objHost->attributeList, argName));
     if (1 == res) {
         /*[error] not found arg*/
         err = 2;

@@ -29,6 +29,6 @@ char* stack_popStr(Stack* queue, char* outBuff) {
     args_setInt(args, "top", top);
     char* topStr = fast_itoa(buff, top);
     strcpy(outBuff, args_getStr(args, topStr));
-    args_removeArg(args, topStr);
+    args_removeArg(args, args_getArg(args, topStr));
     return outBuff;
 }

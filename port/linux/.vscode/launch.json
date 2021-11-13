@@ -11,9 +11,14 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=queueObj.currentObj"
+                // "--gtest_filter=queue*"
                 // "--gtest_filter=parser*"
-                // "--gtest_filter=VM.RUN_local_b"
+                // "--gtest_filter=args*",
+                // "--gtest_filter=content*",
+                // "--gtest_filter=object_test.printa",
+                "--gtest_filter=object_test*",
+                // "--gtest_filter=stack*",
+                // "--gtest_filter=strs*",
                 // "--gtest_filter=block.ifrun2"
                 // "--gtest_filter=sysObj.print"
                 // "--gtest_filter=object_test.a_b"

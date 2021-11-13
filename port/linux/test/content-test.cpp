@@ -73,7 +73,7 @@ TEST(content, set) {
     ASSERT_EQ(content[3], 4);
     ASSERT_EQ(totleSize, 24);
 
-    ASSERT_EQ(hash_time33("name"), nameHash);
+    ASSERT_EQ(hash_time33((char *)"name"), nameHash);
     ASSERT_STREQ("type", type);
 
     content_deinit(self);

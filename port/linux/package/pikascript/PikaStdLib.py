@@ -15,8 +15,5 @@ class SysObj(BaseObj):
     def type(argPath: str):
         pass
 
-    def ls(objPath: str):
-        pass
-
     def remove(argPath: str):
         pass
