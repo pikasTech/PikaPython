@@ -67,18 +67,6 @@ void PikaStdLib_SysObj_remove(PikaObj* self, char* argPath) {
 }
 
 void PikaStdLib_SysObj_type(PikaObj* self, char* argPath) {
-    if (NULL == argPath) {
-        /* no input obj path, use current obj */
-        PikaObj* objHost = obj_getContext(self);
-        Arg* objArg = obj_getArg(objHost, obj_getStr(self, "_n"));
-        if (NULL == objArg) {
-            obj_setSysOut(self, "[error] type: arg no found.");
-            obj_setErrorCode(self, 1);
-            return;
-        }
-        obj_setSysOut(self, arg_getType(objArg));
-        return;
-    }
     Arg* arg = obj_getArg(self, argPath);
     if (NULL == arg) {
         obj_setSysOut(self, "[error] type: arg no found.");
