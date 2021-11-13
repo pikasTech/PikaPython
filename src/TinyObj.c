@@ -15,16 +15,5 @@ void _beforDinit(PikaObj* self) {
 
 PikaObj* New_TinyObj(Args* args) {
     PikaObj* self = New_PikaObj();
-    /* attribute */
-    obj_setPtr(self, "_ctx", self);
-    obj_setStr(self, "_n", "root");
-
-    /* load */
-    if (NULL != args) {
-        obj_load(self, args, "_n");
-        obj_load(self, args, "_ctx");
-    }
-
-    /* hard attribute */
     return self;
 }

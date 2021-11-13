@@ -12,10 +12,6 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
-PikaObj* obj_getContext(PikaObj* self) {
-    return obj_getPtr(self, "_ctx");
-}
-
 int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
     if (NULL != handleArgs) {
         /* error: tOhis handle not need handle args */
@@ -183,7 +179,6 @@ int32_t obj_load(PikaObj* self, Args* args, char* name) {
 
 int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_ObjectFun) {
     Args* initArgs = New_args(NULL);
-    args_setPtr(initArgs, "_ctx", self);
     void* (*new_Object)(Args * initArgs) = (void* (*)(Args*))new_ObjectFun;
     void* subObject = new_Object(initArgs);
     obj_setPtr(self, subObjectName, subObject);
@@ -228,8 +223,6 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
                                  char* name,
                                  NewFun newClassFun) {
     Args* initArgs = New_args(NULL);
-    args_setPtr(initArgs, "_ctx", context);
-    args_setStr(initArgs, "_n", name);
     PikaObj* thisClass = newClassFun(initArgs);
     obj_setPtr(thisClass, "_clsptr", newClassFun);
     args_deinit(initArgs);
@@ -256,7 +249,7 @@ exit:
 PikaObj* obj_getClassObj(PikaObj* obj) {
     Args* buffs = New_strBuff();
     void* classPtr = obj_getPtr(obj, "_clsptr");
-    char* classObjName = strsAppend(buffs, "_cls-", obj_getName(obj));
+    char* classObjName = strsAppend(buffs, "_cls-", "");
     PikaObj* classObj = obj_getClassObjByNewFun(obj, classObjName, classPtr);
     args_deinit(buffs);
     return classObj;
@@ -353,10 +346,6 @@ PikaObj* obj_getObj(PikaObj* self, char* objPath, int32_t keepDeepth) {
 exit:
     args_deinit(buffs);
     return obj;
-}
-
-char* obj_getName(PikaObj* self) {
-    return obj_getStr(self, "_n");
 }
 
 void saveMethodInfo(PikaObj* methodHost,

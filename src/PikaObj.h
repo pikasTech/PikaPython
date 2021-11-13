@@ -38,8 +38,6 @@ char* obj_getStr(PikaObj* self, char* argPath);
 int64_t obj_getInt(PikaObj* self, char* argPath);
 Arg* obj_getArg(PikaObj* self, char* argPath);
 
-char* obj_getName(PikaObj* self);
-
 // arg general operations
 int32_t obj_bind(PikaObj* self, char* type, char* name, void* pointer);
 int32_t obj_set(PikaObj* self, char* name, char* valStr);
@@ -85,7 +83,6 @@ int32_t args_getErrorCode(Args* args);
 void args_setSysOut(Args* args, char* str);
 char* obj_getSysOut(PikaObj* self);
 void obj_sysPrintf(PikaObj* self, char* fmt, ...);
-PikaObj* obj_getContext(PikaObj* self);
 uint8_t obj_getRefArg(PikaObj* self,
                       char* targetArgName,
                       char* sourceArgPath,
