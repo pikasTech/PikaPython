@@ -1,7 +1,7 @@
 #include "dataQueueObj.h"
 #include "BaseObj.h"
 #include "dataQueue.h"
-QueueObj* New_queueObj() {
+QueueObj* New_queueObj(void) {
     PikaObj* self = New_PikaObj();
     queueObj_init(self);
     return self;

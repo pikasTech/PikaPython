@@ -8,7 +8,7 @@
 #include "dataArgs.h"
 
 typedef Args Stack;
-Stack* New_Stack();
+Stack* New_Stack(void);
 int32_t stack_deinit(Stack* stack);
 
 int32_t stack_pushStr(Stack* stack, char* str);

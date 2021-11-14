@@ -44,7 +44,7 @@ char* fast_itoa(char* buf, uint32_t val) {
     return &p[val < 10];
 }
 
-Queue* New_queue() {
+Queue* New_queue(void) {
     Args* args = New_args(NULL);
     args_setInt(args, "top", 0);
     args_setInt(args, "bottom", 0);

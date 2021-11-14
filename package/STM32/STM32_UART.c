@@ -166,7 +166,6 @@ void STM32_UART_platformRead(PikaObj* self) {
     memcpy(rx_buff, rx_buff + length, *rx_offset - length);
     *rx_offset -= length;
     rx_buff[*rx_offset] = 0;
-exit:
     args_deinit(buffs);
     obj_setStr(self, "readData", readBuff);
 }

@@ -12,7 +12,7 @@ typedef struct PikaObj_t PikaObj;
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
 typedef PikaObj Parameters;
-
+typedef void (*Method)(PikaObj* self, Args* args);
 struct PikaObj_t {
     /* list */
     Args* list;
@@ -65,7 +65,7 @@ int32_t obj_freeObj(PikaObj* self, char* subObjectName);
 /* method */
 int32_t class_defineMethod(PikaObj* self,
                            char* declearation,
-                           void (*methodPtr)(PikaObj* self, Args* args));
+                           Method methodPtr);
 
 int32_t obj_removeArg(PikaObj* self, char* argPath);
 int32_t obj_isArgExist(PikaObj* self, char* argPath);

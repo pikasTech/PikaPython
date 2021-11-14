@@ -33,6 +33,7 @@ void link_removeNode(Link* self, void* content) {
     LinkNode* nodeToDelete = NULL;
     LinkNode* nodeNow = self->firstNode;
     LinkNode* priorNode = NULL;
+    LinkNode* nextNode;
     while (1) {
         if (nodeNow == content) {
             nodeToDelete = nodeNow;
@@ -46,7 +47,7 @@ void link_removeNode(Link* self, void* content) {
         nodeNow = content_getNext(nodeNow);
     }
 
-    LinkNode* nextNode = content_getNext(nodeToDelete);
+    nextNode = content_getNext(nodeToDelete);
     if (nodeToDelete == self->firstNode) {
         self->firstNode = content_getNext(nodeToDelete);
     }

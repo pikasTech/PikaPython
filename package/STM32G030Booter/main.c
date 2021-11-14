@@ -83,7 +83,6 @@ int main(void) {
 
     /* boot pikaScript */
     char* code = (char*)FLASH_SCRIPT_START_ADDR;
-    uint16_t codeOffset = 0;
     if (code[0] != 0xFF) {
         /* boot from flash */
         pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -208,3 +207,4 @@ void assert_failed(uint8_t* file, uint32_t line) {
 #endif /* USE_FULL_ASSERT */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

@@ -3,7 +3,7 @@
 #include "PikaObj.h"
 typedef PikaObj QueueObj;
 
-QueueObj* New_queueObj();
+QueueObj* New_queueObj(void);
 int32_t queueObj_init(QueueObj* self);
 
 int32_t queueObj_pushInt(QueueObj* self, int val);

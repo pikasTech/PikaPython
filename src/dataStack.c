@@ -1,7 +1,7 @@
 #include "dataStack.h"
 #include "dataQueue.h"
 
-Stack* New_Stack() {
+Stack* New_Stack(void) {
     Args* args = New_args(NULL);
     args_setInt(args, "top", 0);
     Stack* stack = args;

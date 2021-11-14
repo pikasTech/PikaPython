@@ -8,7 +8,7 @@
 #include "dataArgs.h"
 
 typedef Args Queue;
-Queue* New_queue();
+Queue* New_queue(void);
 
 int32_t queue_deinit(Queue* queue);
 int32_t queue_pushInt(Queue* queue, int val);
