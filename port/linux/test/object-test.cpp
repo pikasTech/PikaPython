@@ -95,15 +95,15 @@ TEST(object_test, test10) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(object_test, test1) {
-    PikaObj* process = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
-    float floatTest = 12.231;
-    obj_bindFloat(process, (char*)"testFloatBind", &floatTest);
-    EXPECT_TRUE(
-        strEqu((char*)"12.231000", obj_print(process, (char*)"testFloatBind")));
-    obj_deinit(process);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(object_test, test1) {
+    // PikaObj* process = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
+    // float floatTest = 12.231;
+    // obj_bindFloat(process, (char*)"testFloatBind", &floatTest);
+    // EXPECT_TRUE(
+        // strEqu((char*)"12.231000", obj_print(process, (char*)"testFloatBind")));
+    // obj_deinit(process);
+    // EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 TEST(object_test, test2) {
     int isShow = 1;

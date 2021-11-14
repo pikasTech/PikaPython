@@ -337,28 +337,6 @@ char* args_print(Args* self, char* name) {
         goto exit;
     }
 
-    char* bindTypePrefix = strsCopy(self, "_bind-");
-    if (strIsStartWith(type, bindTypePrefix)) {
-        char* typeWithoutBind = strsRemovePrefix(buffs, type, bindTypePrefix);
-        if (strEqu(typeWithoutBind, "int")) {
-            int32_t* valPtr = args_getPtr(self, name);
-            int32_t val = *valPtr;
-            res = getPrintStringFromInt(self, name, val);
-            goto exit;
-        }
-        if (strEqu(typeWithoutBind, "float")) {
-            float* valPtr = args_getPtr(self, name);
-            float val = *valPtr;
-            res = getPrintStringFromFloat(self, name, val);
-            goto exit;
-        }
-        if (strEqu(typeWithoutBind, "str")) {
-            // the value of &string is equal to string it self
-            char* string = args_getPtr(self, name);
-            res = string;
-            goto exit;
-        }
-    }
     /* can not match type */
     res = NULL;
     goto exit;

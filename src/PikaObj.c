@@ -18,12 +18,10 @@ int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
         return 1;
     }
     char* type = arg_getType(argEach);
-    if (strIsStartWith(type, "_class")) {
+    /* deinit sub object */
+    if (strEqu(type, "_class-")) {
         PikaObj* subObj = arg_getPtr(argEach);
-        /* is not a mate object */
-        if (!strIsStartWith(type, "_class-[mate]")) {
-            obj_deinit(subObj);
-        }
+        obj_deinit(subObj);
     }
     return 0;
 }
@@ -255,13 +253,6 @@ PikaObj* obj_getClassObj(PikaObj* obj) {
     return classObj;
 }
 
-char* obj_getClassPath(PikaObj* objHost, Args* buffs, char* objName) {
-    Arg* objArg = obj_getArg(objHost, objName);
-    char* objType = arg_getType(objArg);
-    char* classPath = strsRemovePrefix(buffs, objType, "_class-");
-    return classPath;
-}
-
 void* getNewClassObjFunByName(PikaObj* obj, char* name) {
     char* classPath = name;
     /* init the subprocess */
@@ -271,7 +262,7 @@ void* getNewClassObjFunByName(PikaObj* obj, char* name) {
 }
 
 int32_t removeEachMethodInfo(Arg* argNow, Args* argList) {
-    if (strIsStartWith(arg_getType(argNow), "_mtd-")) {
+    if (strEqu(arg_getType(argNow), "_mtd-")) {
         args_removeArg(argList, argNow);
         return 0;
     }
@@ -304,7 +295,7 @@ PikaObj* initObj(PikaObj* obj, char* name) {
     char* mateObjType = args_getType(obj->list, name);
     char* pureType = strsGetLastToken(buffs, mateObjType, ']');
     char* objType = strsAppend(buffs, "_class-", pureType);
-    args_setPtrWithType(obj->list, name, objType, newObj);
+    args_setPtrWithType(obj->list, name, "_class-", newObj);
     res = obj_getPtr(obj, name);
     goto exit;
 exit:
@@ -318,15 +309,15 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
     }
     /* finded object, check type*/
     char* type = args_getType(self->list, name);
-    if (!strIsStartWith(type, "_class")) {
-        /* type error, could not found subprocess */
-        return NULL;
-    }
     /* found mate Object */
-    if (strIsStartWith(type, "_class-[mate]")) {
+    if (strEqu(type, "_class-[mate]")) {
         return initObj(self, name);
     }
-    return obj_getPtr(self, name);
+    /* found Objcet */
+    if (strEqu(type, "_class-")) {
+        return obj_getPtr(self, name);
+    }
+    return NULL;
 }
 
 PikaObj* obj_getObj(PikaObj* self, char* objPath, int32_t keepDeepth) {

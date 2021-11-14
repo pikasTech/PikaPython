@@ -16,7 +16,7 @@
                 // "--gtest_filter=args*",
                 // "--gtest_filter=content*",
                 // "--gtest_filter=object_test.printa",
-                "--gtest_filter=object_test*",
+                // "--gtest_filter=object_test*",
                 // "--gtest_filter=stack*",
                 // "--gtest_filter=strs*",
                 // "--gtest_filter=block.ifrun2"

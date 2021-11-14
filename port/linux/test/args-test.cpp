@@ -86,16 +86,16 @@ TEST(args, print_int) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args, test5) {
-    int32_t testInt = 124;
-    Args* args = New_args(NULL);
-    args_bind(args, (char*)"int", (char*)"testInt", &testInt);
-    char* type = args_getType(args, (char*)"testInt");
-    args_print(args, (char*)"testInt");
-    EXPECT_STREQ((char*)"124", args_print(args, (char*)"testInt"));
-    args_deinit(args);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(args, test5) {
+    // int32_t testInt = 124;
+    // Args* args = New_args(NULL);
+    // args_bind(args, (char*)"int", (char*)"testInt", &testInt);
+    // char* type = args_getType(args, (char*)"testInt");
+    // args_print(args, (char*)"testInt");
+    // EXPECT_STREQ((char*)"124", args_print(args, (char*)"testInt"));
+    // args_deinit(args);
+    // EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 TEST(args, test6) {
     Args* args = New_args(NULL);
@@ -104,14 +104,15 @@ TEST(args, test6) {
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-TEST(args, test7) {
-    Args* args = New_args(NULL);
-    float floatBindTest = 2.314;
-    args_bind(args, (char*)"float", (char*)"floatBind", &floatBindTest);
-    EXPECT_STREQ((char*)"2.314000", args_print(args, (char*)"floatBind"));
-    args_deinit(args);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+
+// TEST(args, test7) {
+    // Args* args = New_args(NULL);
+    // float floatBindTest = 2.314;
+    // args_bind(args, (char*)"float", (char*)"floatBind", &floatBindTest);
+    // EXPECT_STREQ((char*)"2.314000", args_print(args, (char*)"floatBind"));
+    // args_deinit(args);
+    // EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 TEST(args, test8) {
     Args* args = New_args(NULL);
@@ -122,15 +123,15 @@ TEST(args, test8) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args, test9) {
-    Args* args = New_args(NULL);
-    char strBindTest[] = "test string bind";
-    args_bindStr(args, (char*)"testStringBind", (char**)&strBindTest);
-    EXPECT_STREQ((char*)"test string bind",
-                 args_print(args, (char*)"testStringBind"));
-    args_deinit(args);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(args, test9) {
+    // Args* args = New_args(NULL);
+    // char strBindTest[] = "test string bind";
+    // args_bindStr(args, (char*)"testStringBind", (char**)&strBindTest);
+    // EXPECT_STREQ((char*)"test string bind",
+                //  args_print(args, (char*)"testStringBind"));
+    // args_deinit(args);
+    // EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 TEST(args, test12) {
     Args* args = New_args(NULL);
