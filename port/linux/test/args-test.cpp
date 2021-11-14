@@ -40,9 +40,9 @@ TEST(args, test2) {
     EXPECT_EQ(int64Out, 22221);
     EXPECT_EQ((uint64_t)pointer, 2222322);
     EXPECT_EQ(1, strEqu((char*)"teeeds", strOut));
-    EXPECT_EQ(0, strcmp("int", args_getType(args, (char*)"int64Test")));
-    EXPECT_EQ(0, strcmp("pointer", args_getType(args, (char*)"pointerTest")));
-    EXPECT_EQ(0, strcmp("str", args_getType(args, (char*)"strTest")));
+    EXPECT_EQ(0, strcmp("i", args_getType(args, (char*)"int64Test")));
+    EXPECT_EQ(0, strcmp("p", args_getType(args, (char*)"pointerTest")));
+    EXPECT_EQ(0, strcmp("s", args_getType(args, (char*)"strTest")));
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -89,7 +89,7 @@ TEST(args, print_int) {
 // TEST(args, test5) {
     // int32_t testInt = 124;
     // Args* args = New_args(NULL);
-    // args_bind(args, (char*)"int", (char*)"testInt", &testInt);
+    // args_bind(args, (char*)"i", (char*)"testInt", &testInt);
     // char* type = args_getType(args, (char*)"testInt");
     // args_print(args, (char*)"testInt");
     // EXPECT_STREQ((char*)"124", args_print(args, (char*)"testInt"));
@@ -108,7 +108,7 @@ TEST(args, test6) {
 // TEST(args, test7) {
     // Args* args = New_args(NULL);
     // float floatBindTest = 2.314;
-    // args_bind(args, (char*)"float", (char*)"floatBind", &floatBindTest);
+    // args_bind(args, (char*)"f", (char*)"floatBind", &floatBindTest);
     // EXPECT_STREQ((char*)"2.314000", args_print(args, (char*)"floatBind"));
     // args_deinit(args);
     // EXPECT_EQ(pikaMemNow(), 0);

@@ -19,7 +19,7 @@ int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
     }
     char* type = arg_getType(argEach);
     /* deinit sub object */
-    if (strEqu(type, "_class-")) {
+    if (strEqu(type, "c")) {
         PikaObj* subObj = arg_getPtr(argEach);
         obj_deinit(subObj);
     }
@@ -294,8 +294,8 @@ PikaObj* initObj(PikaObj* obj, char* name) {
 
     char* mateObjType = args_getType(obj->list, name);
     char* pureType = strsGetLastToken(buffs, mateObjType, ']');
-    char* objType = strsAppend(buffs, "_class-", pureType);
-    args_setPtrWithType(obj->list, name, "_class-", newObj);
+    char* objType = strsAppend(buffs, "c", pureType);
+    args_setPtrWithType(obj->list, name, "c", newObj);
     res = obj_getPtr(obj, name);
     goto exit;
 exit:
@@ -310,11 +310,11 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
     /* finded object, check type*/
     char* type = args_getType(self->list, name);
     /* found mate Object */
-    if (strEqu(type, "_class-[mate]")) {
+    if (strEqu(type, "m")) {
         return initObj(self, name);
     }
     /* found Objcet */
-    if (strEqu(type, "_class-")) {
+    if (strEqu(type, "c")) {
         return obj_getPtr(self, name);
     }
     return NULL;

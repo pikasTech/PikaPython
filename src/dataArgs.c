@@ -38,7 +38,7 @@ void* args_getPtr(Args* self, char* name) {
 int32_t args_setPtr(Args* self, char* name, void* argPointer) {
     int32_t errCode = 0;
     Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, name, "pointer", argPointer);
+    argNew = arg_setPtr(argNew, name, "p", argPointer);
     args_setArg(self, argNew);
     return errCode;
 }
@@ -255,15 +255,15 @@ void args_bind(Args* self, char* type, char* name, void* pointer) {
 }
 
 void args_bindInt(Args* self, char* name, int32_t* intPtr) {
-    args_bind(self, "int", name, intPtr);
+    args_bind(self, "i", name, intPtr);
 }
 
 void args_bindFloat(Args* self, char* name, float* floatPtr) {
-    args_bind(self, "float", name, floatPtr);
+    args_bind(self, "f", name, floatPtr);
 }
 
 void args_bindStr(Args* self, char* name, char** stringPtr) {
-    args_bind(self, "str", name, stringPtr);
+    args_bind(self, "s", name, stringPtr);
 }
 
 char* getPrintSring(Args* self, char* name, char* valString) {
@@ -314,24 +314,24 @@ char* args_print(Args* self, char* name) {
         goto exit;
     }
 
-    if (strEqu(type, "int")) {
+    if (strEqu(type, "i")) {
         int32_t val = args_getInt(self, name);
         res = getPrintStringFromInt(self, name, val);
         goto exit;
     }
 
-    if (strEqu(type, "float")) {
+    if (strEqu(type, "f")) {
         float val = args_getFloat(self, name);
         res = getPrintStringFromFloat(self, name, val);
         goto exit;
     }
 
-    if (strEqu(type, "str")) {
+    if (strEqu(type, "s")) {
         res = args_getStr(self, name);
         goto exit;
     }
 
-    if (strEqu(type, "pointer")) {
+    if (strEqu(type, "p")) {
         void* val = args_getPtr(self, name);
         res = getPrintStringFromPtr(self, name, val);
         goto exit;

@@ -261,7 +261,7 @@ Arg* arg_setInt(Arg* self, char* name, int64_t val) {
         contentBuff[i] = int64Temp;
         int64Temp = int64Temp >> 8;
     }
-    return content_init(name, "int", contentBuff, 4, NULL);
+    return content_init(name, "i", contentBuff, 4, NULL);
 }
 
 Arg* arg_setFloat(Arg* self, char* name, float val) {
@@ -271,7 +271,7 @@ Arg* arg_setFloat(Arg* self, char* name, float val) {
         // add 0x30 to void \0
         contentBuff[i] = valPtr[i];
     }
-    return content_init(name, "float", contentBuff, 4, NULL);
+    return content_init(name, "f", contentBuff, 4, NULL);
 }
 
 float arg_getFloat(Arg* self) {
@@ -300,7 +300,7 @@ Arg* arg_setPtr(Arg* self, char* name, char* type, void* pointer) {
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {
-    return content_init(name, "str", (uint8_t*)string, strGetSize(string) + 1,
+    return content_init(name, "s", (uint8_t*)string, strGetSize(string) + 1,
                         NULL);
 }
 

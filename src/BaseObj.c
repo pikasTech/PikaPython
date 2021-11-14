@@ -18,7 +18,8 @@ static void* getClassPtr(PikaObj* classObj, char* classPath) {
 Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr) {
     Args* buffs = New_strBuff();
     Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, objName, "_class-[mate]", objPtr);
+    /* m means mate-object */
+    argNew = arg_setPtr(argNew, objName, "m", objPtr);
     args_deinit(buffs);
     return argNew;
 }

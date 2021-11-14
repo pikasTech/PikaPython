@@ -184,8 +184,8 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         Arg* outArg = NULL;
         Arg* arg1 = arg_copy(queue_popArg(invokeQuene1));
         Arg* arg2 = arg_copy(queue_popArg(invokeQuene1));
-        if (strEqu(arg_getType(arg1), "int") &&
-            strEqu(arg_getType(arg2), "int")) {
+        if (strEqu(arg_getType(arg1), "i") &&
+            strEqu(arg_getType(arg2), "i")) {
             int num1 = arg_getInt(arg1);
             int num2 = arg_getInt(arg2);
             if (strEqu("+", data)) {
@@ -217,8 +217,8 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                 goto OPT_exit;
             }
         }
-        if (strEqu(arg_getType(arg1), "float") &&
-            strEqu(arg_getType(arg2), "int")) {
+        if (strEqu(arg_getType(arg1), "f") &&
+            strEqu(arg_getType(arg2), "i")) {
             float num1 = arg_getFloat(arg1);
             int num2 = arg_getInt(arg2);
             if (strEqu("+", data)) {
@@ -250,8 +250,8 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                 goto OPT_exit;
             }
         }
-        if (strEqu(arg_getType(arg1), "int") &&
-            strEqu(arg_getType(arg2), "float")) {
+        if (strEqu(arg_getType(arg1), "i") &&
+            strEqu(arg_getType(arg2), "f")) {
             int num1 = arg_getInt(arg1);
             float num2 = arg_getFloat(arg2);
             if (strEqu("+", data)) {
@@ -283,8 +283,8 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                 goto OPT_exit;
             }
         }
-        if (strEqu(arg_getType(arg1), "float") &&
-            strEqu(arg_getType(arg2), "float")) {
+        if (strEqu(arg_getType(arg1), "f") &&
+            strEqu(arg_getType(arg2), "f")) {
             float num1 = arg_getFloat(arg1);
             float num2 = arg_getFloat(arg2);
             if (strEqu("+", data)) {

@@ -35,7 +35,7 @@ TEST(arg_test, str_) {
 TEST(arg_test, ptr) {
     Arg* arg = New_arg(NULL);
     int a = 1;
-    arg = arg_setPtr(arg, (char*)"test", (char*)"pointer", &a);
+    arg = arg_setPtr(arg, (char*)"test", (char*)"p", &a);
     int* pa = (int*)arg_getPtr(arg);
     EXPECT_EQ(*pa, 1);
     arg_deinit(arg);
