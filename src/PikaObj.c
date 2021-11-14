@@ -261,8 +261,8 @@ void* getNewClassObjFunByName(PikaObj* obj, char* name) {
     return newClassObjFun;
 }
 
-int32_t removeEachMethodInfo(Arg* argNow, Args* argList) {
-    if (strEqu(arg_getType(argNow), "_mtd-")) {
+int32_t __foreach_removeMethodInfo(Arg* argNow, Args* argList) {
+    if (strEqu(arg_getType(argNow), "M")) {
         args_removeArg(argList, argNow);
         return 0;
     }
@@ -270,7 +270,7 @@ int32_t removeEachMethodInfo(Arg* argNow, Args* argList) {
 }
 
 PikaObj* removeMethodInfo(PikaObj* thisClass) {
-    args_foreach(thisClass->list, removeEachMethodInfo, thisClass->list);
+    args_foreach(thisClass->list, __foreach_removeMethodInfo, thisClass->list);
     return thisClass;
 }
 
@@ -367,7 +367,7 @@ void obj_saveMethodInfo(PikaObj* self,
     /* +1 to add \0 */
     memcpy(info + size_ptr, pars, size_pars + 1);
     arg = arg_setName(arg, method_name);
-    arg = arg_setType(arg, "_mtd-");
+    arg = arg_setType(arg, "M");
     arg = arg_setContent(arg, info, size_info);
 
     args_setArg(self->list, arg);

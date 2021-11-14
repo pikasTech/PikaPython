@@ -65,17 +65,15 @@ uint8_t* content_init_hash(Hash nameHash,
     uint16_t nameSize = sizeof(Hash);  // use hash
     uint16_t typeSize = strGetSize(type);
     uint8_t* self = (uint8_t*)pikaMalloc(nextLength + sizeLength + nameSize +
-                                         1 + size + typeSize + 1);
+                                         size + typeSize + 1);
 
     uint8_t* nextDir = self;
     uint8_t* sizeDir = nextDir + nextLength;
     uint8_t* nameDir = sizeDir + sizeLength;
-    uint8_t* contentDir = nameDir + nameSize + 1;
+    uint8_t* contentDir = nameDir + nameSize;
     uint8_t* typeDir = contentDir + size;
 
-    // memcpy(nameDir, name, nameSize + 1);
     memcpy(nameDir, &nameHash, nameSize);  // use hash
-    nameDir[nameSize] = '\0';              // add \0 by hand
     memcpy(typeDir, type, typeSize + 1);
     sizeDir[0] = size;
     sizeDir[1] = size >> 8;
@@ -110,8 +108,7 @@ uint16_t content_totleSize(uint8_t* self) {
     const uint8_t sizeLenth = 2;
     const uint8_t nextLength = sizeof(uint8_t*);
     uint16_t size = content_getSize(self);
-    return size + sizeof(Hash) + 1 + strGetSize(type) + 1 + sizeLenth +
-           nextLength;
+    return size + sizeof(Hash) + strGetSize(type) + 1 + sizeLenth + nextLength;
 }
 
 void arg_freeContent(Arg* self) {
@@ -223,7 +220,7 @@ uint16_t content_contentOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
     const uint8_t sizeLength = 2;
     Hash nameHash = content_getNameHash(self);
-    return nextLength + sizeLength + sizeof(Hash) + 1;
+    return nextLength + sizeLength + sizeof(Hash);
 }
 
 uint16_t content_nextOffset(uint8_t* self) {
@@ -341,9 +338,8 @@ uint16_t content_typeOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
     const uint8_t sizeLength = 2;
     uint16_t size = content_getSize(self);
-    Hash nameHash = content_getNameHash(self);
     uint16_t nameSize = sizeof(Hash);
-    return nextLength + sizeLength + nameSize + 1 + size;
+    return nextLength + sizeLength + nameSize + size;
 }
 
 Hash arg_getNameHash(Arg* self) {
