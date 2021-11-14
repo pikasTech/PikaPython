@@ -58,10 +58,12 @@ void bitmap_set(uint8_t* bitmap, uint32_t index, uint8_t bit) {
     uint32_t index_byte = index / 8;
     uint8_t index_bit = index % 8;
     uint8_t x = (0x1 << index_bit);
+    /* set 1 */
     if (bit) {
         bitmap[index_byte] |= x;
         return;
     }
+    /* set 0 */
     bitmap[index_byte] &= ~x;
     return;
 }
