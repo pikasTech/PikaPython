@@ -22,7 +22,7 @@ TEST(pikaMain, new_mem) {
         "mem = PikaStdLib.MemChecker()\n"
         "mem.max()\n"
         );
-    PikaObj* mem = (PikaObj*)args_getPtr(globals->attributeList, (char*)"mem");
+    PikaObj* mem = (PikaObj*)args_getPtr(globals->list, (char*)"mem");
     PikaObj* memClassPtr = (PikaObj*)obj_getPtr(mem, (char*)"_clsptr");
     EXPECT_EQ((void*)memClassPtr, (void*)New_PikaStdLib_MemChecker);
     obj_deinit(pikaMain);

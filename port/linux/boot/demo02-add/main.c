@@ -60,7 +60,7 @@ int32_t main()
         PikaObj *globals = obj_runDirect(root, inputBuff);
 
         /* get system output of PikaScript*/
-        char *sysOut = args_getSysOut(globals->attributeList);;
+        char *sysOut = args_getSysOut(globals->list);;
 
         if (NULL != sysOut)
         {

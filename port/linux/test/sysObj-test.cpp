@@ -8,8 +8,8 @@ extern "C" {
 TEST(sysObj, print) {
     PikaObj* obj = newRootObj((char*)"test", New_PikaStdLib_SysObj);
     Parameters* globals = obj_runDirect(obj, (char*)"print('hello world')");
-    char* sysOut = args_getSysOut(globals->attributeList);
-    int errCode = args_getErrorCode(globals->attributeList);
+    char* sysOut = args_getSysOut(globals->list);
+    int errCode = args_getErrorCode(globals->list);
     printf("sysout = %s\r\n", sysOut);
     ASSERT_STREQ((char*)"hello world", sysOut);
     ASSERT_EQ(0, errCode);
@@ -21,8 +21,8 @@ TEST(sysObj, print) {
 TEST(sysObj, noMethod) {
     PikaObj* obj = newRootObj((char*)"test", New_PikaStdLib_SysObj);
     Parameters* globals = obj_runDirect(obj, (char*)"printttt('hello world')");
-    char* sysOut = args_getSysOut(globals->attributeList);
-    int errCode = args_getErrorCode(globals->attributeList);
+    char* sysOut = args_getSysOut(globals->list);
+    int errCode = args_getErrorCode(globals->list);
     printf("sysout = %s\r\n", sysOut);
     ASSERT_EQ(1, strEqu((char*)"[error] runner: method no found.", sysOut));
     ASSERT_EQ(2, errCode);
