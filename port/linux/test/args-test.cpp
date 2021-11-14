@@ -145,6 +145,22 @@ TEST(args, test12) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+struct test {
+    int a;
+    float b;
+};
+TEST(args, struct_) {
+    Args* args = New_args(NULL);
+    struct test test_struct = {1, 2.2};
+    args_setStruct(args, (char*)"test", &test_struct, sizeof(struct test));
+    struct test test_struct_out;
+    args_getStruct(args, (char*)"test", &test_struct_out);
+    EXPECT_EQ(test_struct_out.a, 1);
+    EXPECT_FLOAT_EQ(test_struct_out.b, 2.2);
+    args_deinit(args);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(args, mem) {
     EXPECT_EQ(pikaMemNow(), mem);
     EXPECT_EQ(pikaMemNow(), 0);

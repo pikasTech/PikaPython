@@ -1,8 +1,8 @@
 #include "PikaPlatform.h"
-#include <stdint.h>
-#include <stdlib.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 PIKA_WEAK void __platformDisableIrqHandle() {
     /* disable irq to support thread */
@@ -17,7 +17,7 @@ PIKA_WEAK void* __platformMalloc(size_t size) {
 }
 
 PIKA_WEAK void __platformFree(void* ptr) {
-    return free(ptr);
+    free(ptr);
 }
 
 PIKA_WEAK void __platformPrintf(char* fmt, ...) {
@@ -28,21 +28,21 @@ PIKA_WEAK void __platformPrintf(char* fmt, ...) {
     va_end(args);
 }
 
-PIKA_WEAK char* __platformLoadPikaAsm(){
+PIKA_WEAK char* __platformLoadPikaAsm() {
     /* faild */
     return NULL;
 }
 
-PIKA_WEAK int32_t __platformSavePikaAsm(char *PikaAsm){
+PIKA_WEAK int32_t __platformSavePikaAsm(char* PikaAsm) {
     /* faild */
     return 1;
 }
 
-PIKA_WEAK uint8_t __platformAsmIsToFlash(char *pyMultiLine){
+PIKA_WEAK uint8_t __platformAsmIsToFlash(char* pyMultiLine) {
     /* not to flash */
     return 0;
 }
 
-PIKA_WEAK int32_t __platformSavePikaAsmEOF(){
+PIKA_WEAK int32_t __platformSavePikaAsmEOF() {
     return 1;
 }

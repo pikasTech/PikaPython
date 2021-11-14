@@ -57,7 +57,7 @@ int32_t args_setStruct(Args* self,
                        char* name,
                        void* struct_ptr,
                        uint32_t struct_size);
-void* args_getStruct(Args* self, char* name);
+void* args_getStruct(Args* self, char* name, void* struct_out);
 
 int32_t args_set(Args* self, char* name, char* valueStr);
 int32_t args_setObjectWithClass(Args* self,

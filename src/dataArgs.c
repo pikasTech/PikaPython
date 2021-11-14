@@ -129,14 +129,16 @@ int32_t args_setStruct(Args* self,
     if (NULL == struct_ptr) {
         return 1;
     }
-    Arg* structArg = arg_setContent(NULL, (uint8_t*)struct_ptr, struct_size);
-    structArg = arg_setName(structArg, name);
-    args_setArg(self, structArg);
+    Arg* struct_arg = arg_setContent(NULL, (uint8_t*)struct_ptr, struct_size);
+    struct_arg = arg_setName(struct_arg, name);
+    args_setArg(self, struct_arg);
     return 0;
 }
 
-void* args_getStruct(Args* self, char* name) {
-    return arg_getContent(args_getArg(self, name));
+void* args_getStruct(Args* self, char* name, void* struct_out) {
+    Arg* struct_arg = args_getArg(self, name);
+    uint32_t struct_size = arg_getContentSize(struct_arg);
+    return memcpy(struct_out, arg_getContent(struct_arg), struct_size);
 }
 
 int32_t args_copyArgByName(Args* self, char* name, Args* directArgs) {
