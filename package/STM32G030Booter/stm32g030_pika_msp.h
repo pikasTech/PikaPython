@@ -51,8 +51,8 @@ void HARDWARE_PRINTF_Init(void);
 
 /* support download python script by uart1 */
 uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize);
-void STM32_Code_Init();
-void STM32_Code_flashHandler();
+void STM32_Code_Init(void);
+void STM32_Code_flashHandler(void);
 
 /* handler for usart1 */
 void __PIKA_USART1_IRQHandler(char rx_char);

@@ -232,11 +232,12 @@ Arg* obj_getMethod(PikaObj* obj, char* methodPath) {
     Args* buffs = New_strBuff();
     char* methodName = strsGetLastToken(buffs, methodPath, '.');
     method = obj_getArg(obj, methodName);
+    PikaObj* methodHostClass;
     if (NULL != method) {
         method = arg_copy(method);
         goto exit;
     }
-    PikaObj* methodHostClass = obj_getClassObj(obj);
+    methodHostClass = obj_getClassObj(obj);
     method = arg_copy(obj_getArg(methodHostClass, methodName));
     obj_deinit(methodHostClass);
 exit:
@@ -246,7 +247,7 @@ exit:
 
 PikaObj* obj_getClassObj(PikaObj* obj) {
     Args* buffs = New_strBuff();
-    void* classPtr = obj_getPtr(obj, "_clsptr");
+    NewFun classPtr = (NewFun)obj_getPtr(obj, "_clsptr");
     char* classObjName = strsAppend(buffs, "_cls-", "");
     PikaObj* classObj = obj_getClassObjByNewFun(obj, classObjName, classPtr);
     args_deinit(buffs);
@@ -256,7 +257,7 @@ PikaObj* obj_getClassObj(PikaObj* obj) {
 void* getNewClassObjFunByName(PikaObj* obj, char* name) {
     char* classPath = name;
     /* init the subprocess */
-    void* (*newClassObjFun)(Args * initArgs) =
+    void * newClassObjFun=
         args_getPtr(obj->list, classPath);
     return newClassObjFun;
 }
@@ -282,15 +283,17 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
 
 PikaObj* initObj(PikaObj* obj, char* name) {
     PikaObj* res = NULL;
-    NewFun newObjFun = getNewClassObjFunByName(obj, name);
+    NewFun newObjFun = (NewFun) getNewClassObjFunByName(obj, name);
     Args* buffs = New_args(NULL);
+    PikaObj* thisClass;
+    PikaObj* newObj;
     if (NULL == newObjFun) {
         /* no such object */
         res = NULL;
         goto exit;
     }
-    PikaObj* thisClass = obj_getClassObjByNewFun(obj, name, newObjFun);
-    PikaObj* newObj = removeMethodInfo(thisClass);
+    thisClass = obj_getClassObjByNewFun(obj, name, newObjFun);
+    newObj = removeMethodInfo(thisClass);
 
     args_setPtrWithType(obj->list, name, "c", newObj);
     res = obj_getPtr(obj, name);
@@ -346,7 +349,7 @@ void* methodArg_getPtr(Arg* method_arg) {
 char* methodArg_getDec(Arg* method_arg) {
     uint32_t size_ptr = sizeof(void*);
     void* info = arg_getContent(method_arg);
-    return info + size_ptr;
+    return (char *)((uint64_t)info + size_ptr);
 }
 
 void obj_saveMethodInfo(PikaObj* self,
@@ -362,7 +365,7 @@ void obj_saveMethodInfo(PikaObj* self,
     void* info = args_getBuff(buffs, size_info);
     memcpy(info, &method_ptr, size_ptr);
     /* +1 to add \0 */
-    memcpy(info + size_ptr, pars, size_pars + 1);
+    memcpy((void *)((uint64_t)info + size_ptr), pars, size_pars + 1);
     arg = arg_setName(arg, method_name);
     arg = arg_setType(arg, "M");
     arg = arg_setContent(arg, info, size_info);
@@ -373,7 +376,7 @@ void obj_saveMethodInfo(PikaObj* self,
 
 int32_t class_defineMethod(PikaObj* self,
                            char* declearation,
-                           void (*methodPtr)(PikaObj* self, Args* args)) {
+                           Method methodPtr) {
     int32_t size = strGetSize(declearation);
     int32_t res = 0;
     Args* buffs = New_strBuff();
@@ -383,12 +386,13 @@ int32_t class_defineMethod(PikaObj* self,
         strGetFirstToken(args_getBuff(buffs, size), cleanDeclearation, '(');
 
     PikaObj* methodHost = obj_getObj(self, methodPath, 1);
+    char* methodName;
     if (NULL == methodHost) {
         /* no found method object */
         res = 1;
         goto exit;
     }
-    char* methodName = strsGetLastToken(buffs, methodPath, '.');
+    methodName = strsGetLastToken(buffs, methodPath, '.');
 
     obj_saveMethodInfo(methodHost, methodName, cleanDeclearation, methodPtr);
     res = 0;
@@ -416,6 +420,8 @@ int32_t obj_removeArg(PikaObj* self, char* argPath) {
     PikaObj* objHost = obj_getObj(self, argPath, 1);
     PikaObj* obj = obj_getObj(self, argPath, 0);
     Args* buffs = New_strBuff();
+    char* argName;
+    int32_t res;
     if (NULL != obj) {
         obj_deinit(obj);
     }
@@ -425,8 +431,8 @@ int32_t obj_removeArg(PikaObj* self, char* argPath) {
         err = 1;
         goto exit;
     }
-    char* argName = strsGetLastToken(buffs, argPath, '.');
-    int32_t res =
+    argName = strsGetLastToken(buffs, argPath, '.');
+    res =
         args_removeArg(objHost->list, args_getArg(objHost->list, argName));
     if (1 == res) {
         /*[error] not found arg*/
@@ -443,13 +449,15 @@ int32_t obj_isArgExist(PikaObj* self, char* argPath) {
     PikaObj* obj = obj_getObj(self, argPath, 1);
     Args* buffs = New_strBuff();
     int32_t res = 0;
+    char* argName;
+    Arg* arg;
     if (NULL == obj) {
         /* [error] object no found */
         res = 1;
         goto exit;
     }
-    char* argName = strsGetLastToken(buffs, argPath, '.');
-    Arg* arg = args_getArg(obj->list, argName);
+    argName = strsGetLastToken(buffs, argPath, '.');
+    arg = args_getArg(obj->list, argName);
     if (NULL == arg) {
         /* no found arg */
         res = 0;

@@ -165,7 +165,7 @@ int32_t __platformSavePikaAsmEOF() {
 
 /* support download python script by uart1 */
 CodeHeap codeHeap;
-void STM32_Code_Init() {
+void STM32_Code_Init(void) {
     codeHeap.size = 0;
     codeHeap.content = pikaMalloc(codeHeap.size + 1);
     codeHeap.ena = 0;
@@ -195,7 +195,7 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
     return 0;
 }
 
-void STM32_Code_flashHandler() {
+void STM32_Code_flashHandler(void) {
     if (!codeHeap.ena) {
         /* recive not activate */
         return;
