@@ -39,7 +39,7 @@ void PikaStdDevice_GPIO_high(PikaObj* self) {
 }
 
 int PikaStdDevice_GPIO_read(PikaObj *self){
-    obj_run(self, "readBuff = platformRead()");
+    obj_run(self, "platformRead()");
     return obj_getInt(self, "readBuff");
 }
 
@@ -62,7 +62,7 @@ void PikaStdDevice_GPIO_setPull(PikaObj *self, char * pull){
     }
 }
 
-void PikaStdDevice_GPIO_setPin(PikaObj* self, char* pinName) {
+void PikaStdDevice_GPIO_setPin(PikaObj* self, char *pinName) {
     obj_setStr(self, "pin", pinName);
 }
 
@@ -85,7 +85,7 @@ void PikaStdDevice_GPIO_platformHigh(PikaObj* self) {
     obj_setSysOut(self, "[error] platform method need to be override.");
 }
 
-void PikaStdDevice_GPIO_platformSetMode(PikaObj* self, char* mode) {
+void PikaStdDevice_GPIO_platformSetMode(PikaObj* self) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
 }
@@ -100,8 +100,7 @@ void PikaStdDevice_GPIO_platformOn(PikaObj* self) {
     obj_setSysOut(self, "[error] platform method need to be override.");
 }
 
-int PikaStdDevice_GPIO_platformRead(PikaObj *self){
+void PikaStdDevice_GPIO_platformRead(PikaObj *self){
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
-    return -1;
 }
