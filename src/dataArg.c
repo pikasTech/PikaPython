@@ -103,7 +103,6 @@ uint8_t* content_init(char* name,
 }
 
 uint16_t content_totleSize(uint8_t* self) {
-    Hash nameHash = content_getNameHash(self);
     char* type = content_getType(self);
     const uint8_t sizeLenth = 2;
     const uint8_t nextLength = sizeof(uint8_t*);
@@ -219,7 +218,6 @@ char* content_getType(uint8_t* self) {
 uint16_t content_contentOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
     const uint8_t sizeLength = 2;
-    Hash nameHash = content_getNameHash(self);
     return nextLength + sizeLength + sizeof(Hash);
 }
 

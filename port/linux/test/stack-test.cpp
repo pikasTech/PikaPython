@@ -4,7 +4,6 @@ extern "C" {
 #include "dataMemory.h"
 #include "dataStack.h"
 }
-static int mem;
 
 TEST(stack, NEW) {
     Stack* s = New_Stack();

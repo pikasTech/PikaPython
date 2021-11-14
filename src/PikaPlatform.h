@@ -14,12 +14,12 @@
 void __platformPrintf(char* fmt, ...);
 void* __platformMalloc(size_t size);
 void __platformFree(void* ptr);
-void __platformEnableIrqHandle();
-void __platformDisableIrqHandle();
+void __platformEnableIrqHandle(void);
+void __platformDisableIrqHandle(void);
 
-char* __platformLoadPikaAsm();
+char* __platformLoadPikaAsm(void);
 int32_t __platformSavePikaAsm(char *PikaAsm);
 uint8_t __platformAsmIsToFlash(char *pyMultiLine);
-int32_t __platformSavePikaAsmEOF();
+int32_t __platformSavePikaAsmEOF(void);
 
 #endif

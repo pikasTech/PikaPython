@@ -10,11 +10,6 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
-static void* getClassPtr(PikaObj* classObj, char* classPath) {
-    char* ptrPath = classPath;
-    return obj_getPtr(classObj, ptrPath);
-}
-
 Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr) {
     Args* buffs = New_strBuff();
     Arg* argNew = New_arg(NULL);

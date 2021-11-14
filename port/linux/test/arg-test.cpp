@@ -3,7 +3,6 @@ extern "C" {
 #include "dataArg.h"
 #include "dataString.h"
 }
-static int mem;
 
 TEST(arg_test, int_) {
     Arg* arg = New_arg(NULL);

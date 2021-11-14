@@ -130,7 +130,6 @@ char* strGetLastLine(char* strOut, char* strIn) {
 
 char* strGetLastToken(char* strOut, char* strIn, char sign) {
     int32_t size = strGetSize(strIn);
-    int32_t isGetSign = 0;
     int32_t buffSize = 0;
     for (int32_t i = size - 1; i > -1; i--) {
         if (strIn[i] != sign) {
@@ -138,7 +137,6 @@ char* strGetLastToken(char* strOut, char* strIn, char sign) {
             buffSize++;
         }
         if (strIn[i] == sign) {
-            isGetSign = 1;
             break;
         }
     }

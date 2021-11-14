@@ -292,9 +292,6 @@ PikaObj* initObj(PikaObj* obj, char* name) {
     PikaObj* thisClass = obj_getClassObjByNewFun(obj, name, newObjFun);
     PikaObj* newObj = removeMethodInfo(thisClass);
 
-    char* mateObjType = args_getType(obj->list, name);
-    char* pureType = strsGetLastToken(buffs, mateObjType, ']');
-    char* objType = strsAppend(buffs, "c", pureType);
     args_setPtrWithType(obj->list, name, "c", newObj);
     res = obj_getPtr(obj, name);
     goto exit;

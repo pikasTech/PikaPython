@@ -5,7 +5,6 @@ extern "C" {
 #include "dataQueue.h"
 #include "dataQueueObj.h"
 }
-static int mem;
 
 TEST(queue, NEW) {
     Queue* q = New_queue();
@@ -134,7 +133,9 @@ TEST(queueObj, currentObj) {
 
     queueObj_pushObj(q, (char*)"type1");
     PikaObj* currentObj = queueObj_getCurrentObj(q);
+    EXPECT_TRUE(currentObj != NULL);
     char* type = args_getType(q->list, (char*)"0");
+    EXPECT_STREQ((char*)"c", type);
     obj_setInt(queueObj_getCurrentObj(q), (char*)"test", 1);
 
     queueObj_pushObj(q, (char*)"type2");

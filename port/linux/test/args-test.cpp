@@ -25,7 +25,6 @@ TEST(args, test4) {
 
 TEST(args, test2) {
     Args* args = New_args(NULL);
-    float floatOut = 0;
     int64_t int64Out = 0;
     void* pointer = NULL;
     char* strOut = NULL;
@@ -64,7 +63,7 @@ TEST(args, test3) {
 
 TEST(args, buff) {
     Args* buffs = New_args(NULL);
-    char* buff = args_getBuff(buffs, 256);
+    args_getBuff(buffs, 256);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

@@ -161,7 +161,6 @@ TEST(VM, JEZ) {
     "B0\n";
     PikaObj* self = New_TinyObj(NULL);
     int lineAddr = 0;
-    int size = strGetSize(pikaAsm);
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
@@ -185,7 +184,6 @@ TEST(VM, JMP) {
     "B0\n";
     PikaObj* self = New_TinyObj(NULL);
     int lineAddr = 0;
-    int size = strGetSize(pikaAsm);
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
@@ -209,7 +207,6 @@ TEST(VM, JMP_back1) {
     "B0\n";
     PikaObj* self = New_TinyObj(NULL);
     int lineAddr = 0;
-    int size = strGetSize(pikaAsm);
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
@@ -334,6 +331,7 @@ TEST(VM, mem_x) {
     Parameters* globals = pikaVM_runAsm(self, pikaAsm);
 
     int res = obj_getInt(globals, (char*)"mem.x");
+    EXPECT_EQ(2, res);
     obj_deinit(self);
     obj_deinit(globals);
     args_deinit(buffs);
@@ -355,8 +353,6 @@ TEST(VM, DEF_instruct) {
     "0 RET\n"
     "B0\n";
     PikaObj* self = New_TinyObj(NULL);
-    int lineAddr = 0;
-    int size = strGetSize(pikaAsm);
     Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     char* methodPtr = (char*)obj_getPtr(self, (char*)"test");
     EXPECT_STREQ(methodCode, methodPtr);
@@ -374,8 +370,6 @@ TEST(VM, RET_instruct) {
     "0 RET\n"
     "B0\n";
     PikaObj* self = New_TinyObj(NULL);
-    int lineAddr = 0;
-    int size = strGetSize(pikaAsm);
     Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     Arg* returnArg = args_getArg(globals->list, (char*)"return");
     int num = arg_getInt(returnArg);

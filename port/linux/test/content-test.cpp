@@ -3,7 +3,6 @@ extern "C" {
 #include "dataArg.h"
 #include "dataString.h"
 }
-static int mem;
 
 TEST(content, init) {
     uint8_t contentIn[4] = {0};
@@ -11,7 +10,6 @@ TEST(content, init) {
     contentIn[1] = 2;
     contentIn[2] = 3;
     contentIn[3] = 4;
-    uint16_t sizeIn = 4;
     uint8_t* self =
         content_init((char*)"name", (char*)"type", contentIn, 4, NULL);
 

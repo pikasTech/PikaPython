@@ -9,7 +9,8 @@
         "*.tcc": "c",
         "istream": "c",
         "cstring": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "pikaplatform.h": "c"
     },
     "python.formatting.provider": "yapf"
 }

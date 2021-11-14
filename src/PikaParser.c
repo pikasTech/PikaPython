@@ -16,7 +16,6 @@ char* strsPopTokenWithSkip(Args* buffs,
         return NULL;
     }
     char* strOut = args_getBuff(buffs, size);
-    int32_t iOut = 0;
     int32_t stmtEnd = 0;
     uint8_t isGetSign = 0;
     int32_t parentheseDeepth = 0;

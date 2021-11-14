@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-PIKA_WEAK void __platformDisableIrqHandle() {
+PIKA_WEAK void __platformDisableIrqHandle(void) {
     /* disable irq to support thread */
 }
 
-PIKA_WEAK void __platformEnableIrqHandle() {
+PIKA_WEAK void __platformEnableIrqHandle(void) {
     /* disable irq to support thread */
 }
 
@@ -23,12 +23,11 @@ PIKA_WEAK void __platformFree(void* ptr) {
 PIKA_WEAK void __platformPrintf(char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    char sysOut[128] = {0};
     vprintf(fmt, args);
     va_end(args);
 }
 
-PIKA_WEAK char* __platformLoadPikaAsm() {
+PIKA_WEAK char* __platformLoadPikaAsm(void) {
     /* faild */
     return NULL;
 }
@@ -43,6 +42,6 @@ PIKA_WEAK uint8_t __platformAsmIsToFlash(char* pyMultiLine) {
     return 0;
 }
 
-PIKA_WEAK int32_t __platformSavePikaAsmEOF() {
+PIKA_WEAK int32_t __platformSavePikaAsmEOF(void) {
     return 1;
 }

@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
+add_compile_options(-Wall)
+
 project(pikascript VERSION 0.1.0)
 
 include_directories(package/pikascript/pikascript-core)

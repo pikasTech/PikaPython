@@ -87,9 +87,6 @@ PikaObj* New_MYROOT1(Args* args) {
 
 TEST(object_test, test10) {
     PikaObj* root = newRootObj((char*)"root", New_MYROOT1);
-    PikaObj* usart = obj_getObj(root, (char*)"usart", 0);
-    // PikaObj* context = obj_getContext(usart);
-    // EXPECT_EQ(context, root);
     obj_run(root, (char*)"usart.send('hello world')");
     obj_deinit(root);
     EXPECT_EQ(pikaMemNow(), 0);
