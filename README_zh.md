@@ -4,7 +4,9 @@
 [![CI](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg)](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml)
 
 # 来颗Star求求了~ Star please~
-## issue, pr请往主仓库：[Github/pikastech/pikascript](https://github.com/pikastech/pikascript)
+# 代码仓库：
+## 中文： GITEE https://gitee.com/Lyon1998/pikascript/
+## 英文： GITHUB https://github.com/pikasTech/pikascript/
 
 # 1.简介
 
@@ -44,11 +46,15 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [Pika派开发板手把手单片机python编程01——模块安装和GPIO类](https://www.bilibili.com/video/BV1kg411K7W2)
 
+[Pika派开发板手把手单片机python编程02——固件升级](https://www.bilibili.com/video/BV1c44y1v7Jd)
+
+[Pika派开发板手把手单片机python编程03——固件启动方式](https://www.bilibili.com/video/BV1xY411x7Uf)
+
 ## 中级篇 - 面向驱动开发者
 
-[PikaScript中级 RISC-V部署PikaScript CH32V103R8](https://www.bilibili.com/video/BV1Cq4y1G7Tj)
+[PikaScript中级 部署PikaScript RISC-V CH32V103R8](https://www.bilibili.com/video/BV1Cq4y1G7Tj)
 
-[PikaScript中级 国产MCU CM32M101A部署Python引擎PikaScript](https://www.bilibili.com/video/BV1jv411u7EJ)
+[PikaScript中级 部署PikaScript 国产MCU CM32M101A](https://www.bilibili.com/video/BV1jv411u7EJ)
 
 [PikaScript中级 驱动模块开发01 最简单的模块](https://www.bilibili.com/video/BV1aP4y1L7pi)
 
@@ -70,7 +76,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [2. PikaScript-架构与原理](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
 
-[3. PikaScript-十分钟快速部署](document/2.十分钟快速部署.md)
+[3. PikaScript-十分钟快速部署(更新不及时，请以视频部署教程为准)](document/2.十分钟快速部署.md)
 
 [4. PikaScript-标准开发流程](document/3.PikaScript标准开发流程.md)
 

@@ -6,6 +6,10 @@
 
 ## Star please~
 
+# GIT REPO
+## Chinese GITEE https://gitee.com/Lyon1998/pikascript/
+## English GITHUB https://github.com/pikasTech/pikascript/
+
 # PikaScript
 [中文页](README_zh.md)|
 
