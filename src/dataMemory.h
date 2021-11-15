@@ -23,6 +23,7 @@ typedef struct {
     uint8_t* mem;
     uint8_t aline;
     uint32_t size;
+    uint32_t block_index_min_free;
 } Pool;
 
 void pikaFree(void* mem, uint32_t size);

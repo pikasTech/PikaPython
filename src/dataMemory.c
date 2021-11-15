@@ -7,23 +7,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define pika_aline 8
-#define pika_pool_size 8192
-uint8_t pika_bitmap[pika_pool_size / pika_aline / 8] = {0};
-uint8_t pika_pool_mem[pika_pool_size] = {0};
 PikaMemInfo pikaMemInfo = {0};
-Pool pikaPool = {.aline = pika_aline,
-                 .bitmap = pika_bitmap,
-                 .mem = pika_pool_mem,
-                 .size = pika_pool_size};
-
-void* __impl_pikaMalloc(size_t size) {
-    void* mem = pool_malloc(&pikaPool, size);
-    return mem;
-}
-void __impl_pikaFree(void* ptrm, size_t size) {
-    pool_free(&pikaPool, ptrm, size);
-}
 
 void* pikaMalloc(uint32_t size) {
     pikaMemInfo.heapUsed += size;
@@ -79,6 +63,7 @@ Pool pool_init(uint32_t size, uint8_t aline) {
     pool.size = pool_aline(&pool, size);
     pool.bitmap = bitmap_init(block_size);
     pool.mem = __platformMalloc(pool_aline(&pool, pool.size));
+    pool.block_index_min_free = 0;
     return pool;
 }
 
@@ -129,10 +114,16 @@ void* pool_malloc(Pool* pool, uint32_t size) {
     uint32_t block_index_max = pool_getBlockIndex_byMemSize(pool, pool->size);
     uint32_t block_num_need = pool_getBlockIndex_byMemSize(pool, size);
     uint32_t block_num_found = 0;
-    for (uint32_t block_index = 0; block_index < block_index_max;
-         block_index++) {
+    uint8_t found_first_free = 0;
+    for (uint32_t block_index = pool->block_index_min_free;
+         block_index < block_index_max; block_index++) {
         /* found a free block */
         if (0 == bitmap_get(pool->bitmap, block_index)) {
+            /* save the first free */
+            if (!found_first_free) {
+                pool->block_index_min_free = block_index;
+                found_first_free = 1;
+            }
             block_num_found++;
         } else {
             /* a used block appeared, find again */
@@ -157,6 +148,10 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
     uint32_t block_index = pool_getBlockIndex_byMem(pool, mem);
     for (uint32_t i = 0; i < block_num; i++) {
         bitmap_set(pool->bitmap, block_index + i, 0);
+    }
+    /* save min free block index to add speed */
+    if (block_index < pool->block_index_min_free) {
+        pool->block_index_min_free = block_index;
     }
     return;
 }
