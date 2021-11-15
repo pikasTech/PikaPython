@@ -16,10 +16,14 @@ typedef struct {
     uint32_t heapUsedMax;
 } PikaMemInfo;
 
+typedef uint8_t* BitMap;
+
 typedef struct {
-    uint8_t* bitmap;
+    BitMap bitmap;
     uint8_t* mem;
-} PikaMemPool;
+    uint8_t aline;
+    uint32_t size;
+} Pool;
 
 void pikaFree(void* mem, uint32_t size);
 void* pikaMalloc(uint32_t size);
@@ -27,13 +31,13 @@ uint16_t pikaMemNow(void);
 uint16_t pikaMemMax(void);
 void pikaMemMaxReset(void);
 
-uint8_t* bitmap_init(uint32_t size);
-void bitmap_set(uint8_t* bitmap, uint32_t index, uint8_t bit);
-uint8_t bitmap_get(uint8_t* bitmap, uint32_t index);
-void bitmap_deinit(uint8_t* bitmap);
+BitMap bitmap_init(uint32_t size);
+void bitmap_set(BitMap bitmap, uint32_t index, uint8_t bit);
+uint8_t bitmap_get(BitMap bitmap, uint32_t index);
+void bitmap_deinit(BitMap bitmap);
 
-PikaMemPool pool_init(uint32_t size);
-uint8_t* pool_malloc(PikaMemPool* pool, uint32_t size);
-void pool_free(PikaMemPool* pool, uint8_t* mem, uint32_t size);
-
+Pool pool_init(uint32_t size, uint8_t aline);
+uint8_t* pool_malloc(Pool* pool, uint32_t size);
+void pool_free(Pool* pool, uint8_t* mem, uint32_t size);
+void pool_deinit(Pool* pool);
 #endif
