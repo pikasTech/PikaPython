@@ -44,15 +44,23 @@ void pikaMemMaxReset(void) {
     pikaMemInfo.heapUsedMax = 0;
 }
 
+uint32_t pool_getBlockIndex_byMemSize(Pool* pool, uint32_t size) {
+    if (0 == size) {
+        return 0;
+    }
+    return (size - 1) / pool->aline + 1;
+}
+
 uint32_t pool_aline(Pool* pool, uint32_t size) {
-    return ((size - 1) / pool->aline + 1) * pool->aline;
+    return pool_getBlockIndex_byMemSize(pool, size) * pool->aline;
 }
 
 Pool pool_init(uint32_t size, uint8_t aline) {
     Pool pool;
-    pool.bitmap = bitmap_init(size);
     pool.aline = aline;
+    uint32_t block_size = pool_getBlockIndex_byMemSize(&pool, size);
     pool.size = pool_aline(&pool, size);
+    pool.bitmap = bitmap_init(block_size);
     pool.mem = __platformMalloc(pool_aline(&pool, pool.size));
     return pool;
 }
@@ -63,11 +71,64 @@ void pool_deinit(Pool* pool) {
     bitmap_deinit(pool->bitmap);
 }
 
-uint8_t* pool_malloc(Pool* pool, uint32_t size) {
-    return NULL;
+void* pool_getMem_byBlockIndex(Pool* pool, uint32_t block_index) {
+    return pool->mem + block_index * pool->aline;
 }
 
-void pool_free(Pool* pool, uint8_t* mem, uint32_t size) {
+uint32_t pool_getBlockIndex_byMem(Pool* pool, void* mem) {
+    uint32_t mem_size = (uint64_t)mem - (uint64_t)pool->mem;
+    return pool_getBlockIndex_byMemSize(pool, mem_size);
+}
+
+void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
+    uint32_t block_index_min = pool_getBlockIndex_byMemSize(pool, size_min);
+    uint32_t block_index_max = pool_getBlockIndex_byMemSize(pool, size_max);
+    __platformPrintf("[bitmap]\r\n");
+    for (uint32_t i = block_index_min; i < block_index_max; i += 16) {
+        __platformPrintf("0x%x\t: ", i * pool->aline, (i + 15) * pool->aline);
+        for (uint32_t j = i; j < i + 16; j += 4) {
+            for (uint32_t k = j; k < j + 4; k++) {
+                __platformPrintf("%d", bitmap_get(pool->bitmap, k));
+            }
+            __platformPrintf(" ");
+        }
+        __platformPrintf("\r\n");
+    }
+}
+
+void* pool_malloc(Pool* pool, uint32_t size) {
+    void* mem = NULL;
+    uint32_t block_index_max = pool_getBlockIndex_byMemSize(pool, pool->size);
+    uint32_t block_num_need = pool_getBlockIndex_byMemSize(pool, size);
+    uint32_t block_num_found = 0;
+    for (uint32_t block_index = 0; block_index < block_index_max;
+         block_index++) {
+        /* found a free block */
+        if (0 == bitmap_get(pool->bitmap, block_index)) {
+            block_num_found++;
+        } else {
+            /* a used block appeared, find again */
+            block_num_found = 0;
+        }
+        /* found all request blocks */
+        if (block_num_found >= block_num_need) {
+            /* set 1 for found blocks */
+            for (uint32_t i = 0; i < block_num_need; i++) {
+                bitmap_set(pool->bitmap, block_index - i, 1);
+            }
+            /* return mem by block index */
+            return pool_getMem_byBlockIndex(pool, block_index);
+        }
+    }
+    return mem;
+}
+
+void pool_free(Pool* pool, void* mem, uint32_t size) {
+    uint32_t block_num = pool_getBlockIndex_byMemSize(pool, size);
+    uint32_t block_index = pool_getBlockIndex_byMem(pool, mem);
+    for (uint32_t i = 0; i < block_num; i++) {
+        bitmap_set(pool->bitmap, block_index + i, 0);
+    }
     return;
 }
 
