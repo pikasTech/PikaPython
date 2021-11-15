@@ -84,16 +84,29 @@ void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
     uint32_t block_index_min = pool_getBlockIndex_byMemSize(pool, size_min);
     uint32_t block_index_max = pool_getBlockIndex_byMemSize(pool, size_max);
     __platformPrintf("[bitmap]\r\n");
+    uint8_t is_end = 0;
     for (uint32_t i = block_index_min; i < block_index_max; i += 16) {
+        if (is_end) {
+            break;
+        }
         __platformPrintf("0x%x\t: ", i * pool->aline, (i + 15) * pool->aline);
         for (uint32_t j = i; j < i + 16; j += 4) {
+            if (is_end) {
+                break;
+            }
             for (uint32_t k = j; k < j + 4; k++) {
+                if (k >= block_index_max) {
+                    is_end = 1;
+                    break;
+                }
                 __platformPrintf("%d", bitmap_get(pool->bitmap, k));
             }
             __platformPrintf(" ");
         }
         __platformPrintf("\r\n");
     }
+exit:
+    __platformPrintf("\r\n");
 }
 
 void* pool_malloc(Pool* pool, uint32_t size) {
