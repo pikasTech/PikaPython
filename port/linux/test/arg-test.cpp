@@ -34,7 +34,7 @@ TEST(arg_test, str_) {
 TEST(arg_test, ptr) {
     Arg* arg = New_arg(NULL);
     int a = 1;
-    arg = arg_setPtr(arg, (char*)"test", (char*)"p", &a);
+    arg = arg_setPtr(arg, (char*)"test", TYPE_POINTER, &a);
     int* pa = (int*)arg_getPtr(arg);
     EXPECT_EQ(*pa, 1);
     arg_deinit(arg);
@@ -52,9 +52,9 @@ TEST(arg_test, name) {
 
 TEST(arg_test, type) {
     Arg* arg = New_arg(NULL);
-    arg = arg_setType(arg, (char*)"test");
-    char* type = arg_getType(arg);
-    EXPECT_EQ(1, strEqu((char*)"test", type));
+    arg = arg_setType(arg, TYPE_NONE);
+    ArgType type = arg_getType(arg);
+    EXPECT_EQ(TYPE_NONE, type);
     arg_deinit(arg);
     EXPECT_EQ(pikaMemNow(), 0);
 }
