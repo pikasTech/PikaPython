@@ -7,7 +7,16 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define pika_aline 4
+#define pika_pool_size 8192
+uint8_t pika_bitmap[pika_pool_size / pika_aline / 8] = {0};
+uint8_t pika_pool_mem[pika_pool_size] = {0};
 PikaMemInfo pikaMemInfo = {0};
+Pool pikaPool = {.aline = pika_aline,
+                 .bitmap = &pika_bitmap,
+                 .mem = &pika_pool_mem,
+                 .size = pika_pool_size};
+
 void* pikaMalloc(uint32_t size) {
     pikaMemInfo.heapUsed += size;
     if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
