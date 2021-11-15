@@ -17,9 +17,9 @@ int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
         /* error: tOhis handle not need handle args */
         return 1;
     }
-    char* type = arg_getType(argEach);
+    ArgType type = arg_getType(argEach);
     /* deinit sub object */
-    if (strEqu(type, "c")) {
+    if (type == TYPE_OBJECT) {
         PikaObj* subObj = arg_getPtr(argEach);
         obj_deinit(subObj);
     }
@@ -190,31 +190,11 @@ int32_t obj_freeObj(PikaObj* self, char* objPath) {
     return 0;
 }
 
-int32_t obj_bind(PikaObj* self, char* type, char* name, void* pointer) {
-    args_bind(self->list, type, name, pointer);
-    return 0;
-}
-
 char* obj_print(PikaObj* self, char* name) {
     if (NULL == self) {
         return NULL;
     }
     return args_print(self->list, name);
-}
-
-int32_t obj_bindInt(PikaObj* self, char* name, int32_t* valPtr) {
-    args_bindInt(self->list, name, valPtr);
-    return 0;
-}
-
-int32_t obj_bindFloat(PikaObj* self, char* name, float* valPtr) {
-    args_bindFloat(self->list, name, valPtr);
-    return 0;
-}
-
-int32_t obj_bindString(PikaObj* self, char* name, char** valPtr) {
-    args_bindStr(self->list, name, valPtr);
-    return 0;
 }
 
 PikaObj* obj_getClassObjByNewFun(PikaObj* context,
@@ -257,13 +237,12 @@ PikaObj* obj_getClassObj(PikaObj* obj) {
 void* getNewClassObjFunByName(PikaObj* obj, char* name) {
     char* classPath = name;
     /* init the subprocess */
-    void * newClassObjFun=
-        args_getPtr(obj->list, classPath);
+    void* newClassObjFun = args_getPtr(obj->list, classPath);
     return newClassObjFun;
 }
 
 int32_t __foreach_removeMethodInfo(Arg* argNow, Args* argList) {
-    if (strEqu(arg_getType(argNow), "M")) {
+    if (arg_getType(argNow) == TYPE_METHOD) {
         args_removeArg(argList, argNow);
         return 0;
     }
@@ -283,7 +262,7 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
 
 PikaObj* initObj(PikaObj* obj, char* name) {
     PikaObj* res = NULL;
-    NewFun newObjFun = (NewFun) getNewClassObjFunByName(obj, name);
+    NewFun newObjFun = (NewFun)getNewClassObjFunByName(obj, name);
     Args* buffs = New_args(NULL);
     PikaObj* thisClass;
     PikaObj* newObj;
@@ -295,7 +274,7 @@ PikaObj* initObj(PikaObj* obj, char* name) {
     thisClass = obj_getClassObjByNewFun(obj, name, newObjFun);
     newObj = removeMethodInfo(thisClass);
 
-    args_setPtrWithType(obj->list, name, "c", newObj);
+    args_setPtrWithType(obj->list, name, TYPE_OBJECT, newObj);
     res = obj_getPtr(obj, name);
     goto exit;
 exit:
@@ -308,13 +287,13 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
         return NULL;
     }
     /* finded object, check type*/
-    char* type = args_getType(self->list, name);
+    ArgType type = args_getType(self->list, name);
     /* found mate Object */
-    if (strEqu(type, "m")) {
+    if (type == TYPE_MATE_OBJECT) {
         return initObj(self, name);
     }
     /* found Objcet */
-    if (strEqu(type, "c")) {
+    if (type == TYPE_OBJECT) {
         return obj_getPtr(self, name);
     }
     return NULL;
@@ -349,7 +328,7 @@ void* methodArg_getPtr(Arg* method_arg) {
 char* methodArg_getDec(Arg* method_arg) {
     uint32_t size_ptr = sizeof(void*);
     void* info = arg_getContent(method_arg);
-    return (char *)((uint64_t)info + size_ptr);
+    return (char*)((uint64_t)info + size_ptr);
 }
 
 void obj_saveMethodInfo(PikaObj* self,
@@ -365,9 +344,9 @@ void obj_saveMethodInfo(PikaObj* self,
     void* info = args_getBuff(buffs, size_info);
     memcpy(info, &method_ptr, size_ptr);
     /* +1 to add \0 */
-    memcpy((void *)((uint64_t)info + size_ptr), pars, size_pars + 1);
+    memcpy((void*)((uint64_t)info + size_ptr), pars, size_pars + 1);
     arg = arg_setName(arg, method_name);
-    arg = arg_setType(arg, "M");
+    arg = arg_setType(arg, TYPE_METHOD);
     arg = arg_setContent(arg, info, size_info);
 
     args_setArg(self->list, arg);
@@ -432,8 +411,7 @@ int32_t obj_removeArg(PikaObj* self, char* argPath) {
         goto exit;
     }
     argName = strsGetLastToken(buffs, argPath, '.');
-    res =
-        args_removeArg(objHost->list, args_getArg(objHost->list, argName));
+    res = args_removeArg(objHost->list, args_getArg(objHost->list, argName));
     if (1 == res) {
         /*[error] not found arg*/
         err = 2;

@@ -38,7 +38,7 @@ void* args_getPtr(Args* self, char* name) {
 int32_t args_setPtr(Args* self, char* name, void* argPointer) {
     int32_t errCode = 0;
     Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, name, "p", argPointer);
+    argNew = arg_setPtr(argNew, name, TYPE_POINTER, argPointer);
     args_setArg(self, argNew);
     return errCode;
 }
@@ -95,11 +95,11 @@ int32_t args_getSize(Args* self) {
     return link_getSize(self);
 }
 
-char* args_getType(Args* self, char* name) {
+ArgType args_getType(Args* self, char* name) {
     Arg* arg = NULL;
     arg = args_getArg(self, name);
     if (NULL == arg) {
-        return NULL;
+        return TYPE_NONE;
     }
     return arg_getType(arg);
 }
@@ -244,28 +244,6 @@ Arg* args_getArg(Args* self, char* name) {
     return node;
 }
 
-void args_bind(Args* self, char* type, char* name, void* pointer) {
-    Args* buffs = New_strBuff();
-    char* typeWithBind = strsAppend(buffs, "_bind-", type);
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, name, typeWithBind, pointer);
-    args_setArg(self, argNew);
-    args_deinit(buffs);
-    return;
-}
-
-void args_bindInt(Args* self, char* name, int32_t* intPtr) {
-    args_bind(self, "i", name, intPtr);
-}
-
-void args_bindFloat(Args* self, char* name, float* floatPtr) {
-    args_bind(self, "f", name, floatPtr);
-}
-
-void args_bindStr(Args* self, char* name, char** stringPtr) {
-    args_bind(self, "s", name, stringPtr);
-}
-
 char* getPrintSring(Args* self, char* name, char* valString) {
     Args* buffs = New_strBuff();
     char* printName = strsFormat(buffs, 128, "[printBuff]%s", name);
@@ -306,32 +284,32 @@ char* getPrintStringFromPtr(Args* self, char* name, void* val) {
 
 char* args_print(Args* self, char* name) {
     char* res = NULL;
-    char* type = args_getType(self, name);
+    ArgType type = args_getType(self, name);
     Args* buffs = New_strBuff();
-    if (NULL == type) {
+    if (TYPE_NONE == type) {
         /* can not get arg */
         res = NULL;
         goto exit;
     }
 
-    if (strEqu(type, "i")) {
+    if (type == TYPE_INT) {
         int32_t val = args_getInt(self, name);
         res = getPrintStringFromInt(self, name, val);
         goto exit;
     }
 
-    if (strEqu(type, "f")) {
+    if (type == TYPE_FLOAT) {
         float val = args_getFloat(self, name);
         res = getPrintStringFromFloat(self, name, val);
         goto exit;
     }
 
-    if (strEqu(type, "s")) {
+    if (type == TYPE_STRING) {
         res = args_getStr(self, name);
         goto exit;
     }
 
-    if (strEqu(type, "p")) {
+    if (type == TYPE_POINTER) {
         void* val = args_getPtr(self, name);
         res = getPrintStringFromPtr(self, name, val);
         goto exit;
@@ -346,7 +324,10 @@ exit:
     return res;
 }
 
-int32_t args_setPtrWithType(Args* self, char* name, char* type, void* objPtr) {
+int32_t args_setPtrWithType(Args* self,
+                            char* name,
+                            ArgType type,
+                            void* objPtr) {
     Arg* argNew = New_arg(NULL);
     argNew = arg_setPtr(argNew, name, type, objPtr);
     args_setArg(self, argNew);
