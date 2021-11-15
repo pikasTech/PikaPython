@@ -90,8 +90,7 @@ TEST(content, next) {
 
 TEST(content, setNext) {
     uint8_t* c1 = content_init((char*)"c1", TYPE_NONE, NULL, 0, NULL);
-    content_setNext(c1,
-                    content_init((char*)"c2", TYPE_NONE, NULL, 0, NULL));
+    content_setNext(c1, content_init((char*)"c2", TYPE_NONE, NULL, 0, NULL));
     uint8_t* c2 = content_getNext(c1);
     Hash c2NameHash = content_getNameHash(c2);
     EXPECT_EQ(c2NameHash, hash_time33((char*)"c2"));
