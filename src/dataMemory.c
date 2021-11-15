@@ -7,7 +7,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-
 PikaMemInfo pikaMemInfo = {0};
 
 void* pikaMalloc(uint32_t size) {
@@ -64,6 +63,7 @@ Pool pool_init(uint32_t size, uint8_t aline) {
     pool.size = pool_aline(&pool, size);
     pool.bitmap = bitmap_init(block_size);
     pool.mem = __platformMalloc(pool_aline(&pool, pool.size));
+    pool.block_index_min_free = 0;
     return pool;
 }
 
@@ -114,10 +114,16 @@ void* pool_malloc(Pool* pool, uint32_t size) {
     uint32_t block_index_max = pool_getBlockIndex_byMemSize(pool, pool->size);
     uint32_t block_num_need = pool_getBlockIndex_byMemSize(pool, size);
     uint32_t block_num_found = 0;
-    for (uint32_t block_index = 0; block_index < block_index_max;
-         block_index++) {
+    uint8_t found_first_free = 0;
+    for (uint32_t block_index = pool->block_index_min_free;
+         block_index < block_index_max; block_index++) {
         /* found a free block */
         if (0 == bitmap_get(pool->bitmap, block_index)) {
+            /* save the first free */
+            if (!found_first_free) {
+                pool->block_index_min_free = block_index;
+                found_first_free = 1;
+            }
             block_num_found++;
         } else {
             /* a used block appeared, find again */
@@ -142,6 +148,10 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
     uint32_t block_index = pool_getBlockIndex_byMem(pool, mem);
     for (uint32_t i = 0; i < block_num; i++) {
         bitmap_set(pool->bitmap, block_index + i, 0);
+    }
+    /* save min free block index to add speed */
+    if (block_index < pool->block_index_min_free) {
+        pool->block_index_min_free = block_index;
     }
     return;
 }
