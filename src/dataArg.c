@@ -60,7 +60,7 @@ uint8_t* content_init_hash(Hash nameHash,
                            uint16_t size,
                            uint8_t* next) {
     const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = 2;
+    const uint8_t sizeLength = sizeof(uint16_t);
     uint16_t nameSize = sizeof(Hash);     // use hash
     uint16_t typeSize = sizeof(ArgType);  // use enum
     uint8_t* self = (uint8_t*)pikaMalloc(nextLength + sizeLength + nameSize +
@@ -102,7 +102,7 @@ uint8_t* content_init(char* name,
 }
 
 uint16_t content_totleSize(uint8_t* self) {
-    const uint8_t size_size = 2;
+    const uint8_t size_size = sizeof(uint16_t);
     const uint8_t size_next = sizeof(uint8_t*);
     const uint8_t size_type = sizeof(ArgType);
     const uint8_t size_hash = sizeof(Hash);
@@ -118,7 +118,7 @@ void arg_freeContent(Arg* self) {
 
 uint8_t content_nameOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = 2;
+    const uint8_t sizeLength = sizeof(uint16_t);
     return nextLength + sizeLength;
 }
 
@@ -220,7 +220,7 @@ ArgType content_getType(uint8_t* self) {
 
 uint16_t content_contentOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = 2;
+    const uint8_t sizeLength = sizeof(uint16_t);
     return nextLength + sizeLength + sizeof(Hash);
 }
 

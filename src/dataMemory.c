@@ -44,6 +44,21 @@ void pikaMemMaxReset(void) {
     pikaMemInfo.heapUsedMax = 0;
 }
 
+PikaMemPool pool_init(uint32_t size) {
+    PikaMemPool pool;
+    pool.mem = __platformMalloc(size);
+    pool.bitmap = bitmap_init(size);
+    return pool;
+}
+
+uint8_t* pool_malloc(PikaMemPool* pool, uint32_t size) {
+    return NULL;
+}
+
+void pool_free(PikaMemPool* pool, uint8_t* mem, uint32_t size) {
+    return;
+}
+
 uint8_t* bitmap_init(uint32_t size) {
     uint8_t* mem_bit_map =
         (uint8_t*)__platformMalloc(((size - 1) / 8 + 1) * sizeof(char));
