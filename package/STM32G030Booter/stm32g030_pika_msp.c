@@ -185,7 +185,13 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
         codeHeap.reciveTime = uwTick;
         codeHeap.oldSize = codeHeap.size;
         codeHeap.size += rxSize;
-        codeHeap.content = realloc(codeHeap.content, codeHeap.size + 1);
+        /* copy old to new content */
+        char* new_content = pikaMalloc(codeHeap.size + 1);
+        memcpy(new_content, codeHeap.content, codeHeap.oldSize + 1);
+        pikaFree(codeHeap.content, codeHeap.oldSize + 1);
+        /* update new content */
+        codeHeap.content = new_content;
+        /* copy append content to new content */
         memcpy(codeHeap.content + codeHeap.oldSize, data, rxSize);
         codeHeap.content[codeHeap.size] = 0;
         /* reciving code */
