@@ -27,7 +27,6 @@ uint16_t content_sizeOffset(uint8_t* self) {
 
 uint16_t content_getSize(uint8_t* self) {
     uint16_t size = 0;
-    // add 0x30 to avoid 0
     size += self[content_sizeOffset(self) + 1];
     size = (size << 8);
     size += self[content_sizeOffset(self)];
@@ -56,16 +55,16 @@ Hash hash_time33(char* str) {
 }
 
 uint8_t* content_init_hash(Hash nameHash,
-                           char* type,
+                           ArgType type,
                            uint8_t* content,
                            uint16_t size,
                            uint8_t* next) {
     const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = 2;
-    uint16_t nameSize = sizeof(Hash);  // use hash
-    uint16_t typeSize = strGetSize(type);
+    const uint8_t sizeLength = sizeof(uint16_t);
+    uint16_t nameSize = sizeof(Hash);     // use hash
+    uint16_t typeSize = sizeof(ArgType);  // use enum
     uint8_t* self = (uint8_t*)pikaMalloc(nextLength + sizeLength + nameSize +
-                                         size + typeSize + 1);
+                                         size + typeSize);
 
     uint8_t* nextDir = self;
     uint8_t* sizeDir = nextDir + nextLength;
@@ -74,7 +73,7 @@ uint8_t* content_init_hash(Hash nameHash,
     uint8_t* typeDir = contentDir + size;
 
     memcpy(nameDir, &nameHash, nameSize);  // use hash
-    memcpy(typeDir, type, typeSize + 1);
+    memcpy(typeDir, &type, typeSize);
     sizeDir[0] = size;
     sizeDir[1] = size >> 8;
     if (NULL != content) {
@@ -94,7 +93,7 @@ uint8_t* content_init_hash(Hash nameHash,
 }
 
 uint8_t* content_init(char* name,
-                      char* type,
+                      ArgType type,
                       uint8_t* content,
                       uint16_t size,
                       uint8_t* next) {
@@ -103,11 +102,12 @@ uint8_t* content_init(char* name,
 }
 
 uint16_t content_totleSize(uint8_t* self) {
-    char* type = content_getType(self);
-    const uint8_t sizeLenth = 2;
-    const uint8_t nextLength = sizeof(uint8_t*);
-    uint16_t size = content_getSize(self);
-    return size + sizeof(Hash) + strGetSize(type) + 1 + sizeLenth + nextLength;
+    const uint8_t size_size = sizeof(uint16_t);
+    const uint8_t size_next = sizeof(uint8_t*);
+    const uint8_t size_type = sizeof(ArgType);
+    const uint8_t size_hash = sizeof(Hash);
+    uint16_t size_content = content_getSize(self);
+    return size_content + size_hash + size_type + size_size + size_next;
 }
 
 void arg_freeContent(Arg* self) {
@@ -118,7 +118,7 @@ void arg_freeContent(Arg* self) {
 
 uint8_t content_nameOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = 2;
+    const uint8_t sizeLength = sizeof(uint16_t);
     return nextLength + sizeLength;
 }
 
@@ -137,10 +137,10 @@ uint8_t* content_deinit(uint8_t* self) {
 
 uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
     if (NULL == self) {
-        return content_init("", "", content, size, NULL);
+        return content_init("", TYPE_NONE, content, size, NULL);
     }
     Hash nameHash = content_getNameHash(self);
-    char* type = content_getType(self);
+    ArgType type = content_getType(self);
     uint8_t* next = content_getNext(self);
     uint8_t* newContent =
         content_init_hash(nameHash, type, content, size, next);
@@ -150,9 +150,9 @@ uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
 
 uint8_t* content_setNameHash(uint8_t* self, Hash nameHash) {
     if (NULL == self) {
-        return content_init_hash(nameHash, "", NULL, 0, NULL);
+        return content_init_hash(nameHash, TYPE_NONE, NULL, 0, NULL);
     }
-    char* type = content_getType(self);
+    ArgType type = content_getType(self);
     uint8_t* content = content_getContent(self);
     uint16_t size = content_getSize(self);
     uint8_t* next = content_getNext(self);
@@ -164,9 +164,9 @@ uint8_t* content_setNameHash(uint8_t* self, Hash nameHash) {
 
 uint8_t* content_setName(uint8_t* self, char* name) {
     if (NULL == self) {
-        return content_init(name, "", NULL, 0, NULL);
+        return content_init(name, TYPE_NONE, NULL, 0, NULL);
     }
-    char* type = content_getType(self);
+    ArgType type = content_getType(self);
     uint8_t* content = content_getContent(self);
     uint16_t size = content_getSize(self);
     uint8_t* next = content_getNext(self);
@@ -175,7 +175,7 @@ uint8_t* content_setName(uint8_t* self, char* name) {
     return newContent;
 }
 
-uint8_t* content_setType(uint8_t* self, char* type) {
+uint8_t* content_setType(uint8_t* self, ArgType type) {
     if (NULL == self) {
         return content_init("", type, NULL, 0, NULL);
     }
@@ -190,7 +190,7 @@ uint8_t* content_setType(uint8_t* self, char* type) {
 }
 
 Arg* arg_newContent(Arg* self, uint32_t size) {
-    uint8_t* newContent = content_init("", "", NULL, size, NULL);
+    uint8_t* newContent = content_init("", TYPE_NONE, NULL, size, NULL);
     arg_freeContent(self);
     return newContent;
 }
@@ -207,17 +207,20 @@ Arg* arg_setNameHash(Arg* self, Hash nameHash) {
     return content_setNameHash(self, nameHash);
 }
 
-Arg* arg_setType(Arg* self, char* type) {
+Arg* arg_setType(Arg* self, ArgType type) {
     return content_setType(self, type);
 }
 
-char* content_getType(uint8_t* self) {
-    return (char*)self + content_typeOffset(self);
+ArgType content_getType(uint8_t* self) {
+    void* type_ptr = (uint8_t*)self + content_typeOffset(self);
+    ArgType type;
+    memcpy(&type, type_ptr, sizeof(ArgType));
+    return type;
 }
 
 uint16_t content_contentOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = 2;
+    const uint8_t sizeLength = sizeof(uint16_t);
     return nextLength + sizeLength + sizeof(Hash);
 }
 
@@ -256,7 +259,7 @@ Arg* arg_setInt(Arg* self, char* name, int64_t val) {
         contentBuff[i] = int64Temp;
         int64Temp = int64Temp >> 8;
     }
-    return content_init(name, "i", contentBuff, 4, NULL);
+    return content_init(name, TYPE_INT, contentBuff, 4, NULL);
 }
 
 Arg* arg_setFloat(Arg* self, char* name, float val) {
@@ -266,7 +269,7 @@ Arg* arg_setFloat(Arg* self, char* name, float val) {
         // add 0x30 to void \0
         contentBuff[i] = valPtr[i];
     }
-    return content_init(name, "f", contentBuff, 4, NULL);
+    return content_init(name, TYPE_FLOAT, contentBuff, 4, NULL);
 }
 
 float arg_getFloat(Arg* self) {
@@ -283,7 +286,7 @@ float arg_getFloat(Arg* self) {
     return valOut;
 }
 
-Arg* arg_setPtr(Arg* self, char* name, char* type, void* pointer) {
+Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
     uint64_t pointerTemp = (uint64_t)pointer;
     uint8_t contentBuff[8];
     for (uint32_t i = 0; i < sizeof(uint8_t*); i++) {
@@ -295,8 +298,8 @@ Arg* arg_setPtr(Arg* self, char* name, char* type, void* pointer) {
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {
-    return content_init(name, "s", (uint8_t*)string, strGetSize(string) + 1,
-                        NULL);
+    return content_init(name, TYPE_STRING, (uint8_t*)string,
+                        strGetSize(string) + 1, NULL);
 }
 
 int64_t arg_getInt(Arg* self) {
@@ -347,9 +350,9 @@ Hash arg_getNameHash(Arg* self) {
     return content_getNameHash(self);
 }
 
-char* arg_getType(Arg* self) {
+ArgType arg_getType(Arg* self) {
     if (NULL == self) {
-        return NULL;
+        return TYPE_NONE;
     }
     return content_getType(self);
 }

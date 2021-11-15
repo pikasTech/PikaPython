@@ -10,7 +10,8 @@
         "istream": "c",
         "cstring": "cpp",
         "variant": "cpp",
-        "pikaplatform.h": "c"
+        "pikaplatform.h": "c",
+        "dataarg.h": "c"
     },
     "python.formatting.provider": "yapf"
 }

@@ -23,5 +23,29 @@ void PikaStdLib_SysObj_type(PikaObj* self, char* argPath) {
         obj_setErrorCode(self, 1);
         return;
     }
-    obj_setSysOut(self, arg_getType(arg));
+    ArgType type = arg_getType(arg);
+    if (TYPE_INT == type) {
+        obj_setSysOut(self, "int");
+        return;
+    }
+    if (TYPE_FLOAT == type) {
+        obj_setSysOut(self, "float");
+        return;
+    }
+    if (TYPE_STRING == type) {
+        obj_setSysOut(self, "string");
+        return;
+    }
+    if (TYPE_POINTER == type) {
+        obj_setSysOut(self, "pointer");
+        return;
+    }
+    if (TYPE_MATE_OBJECT == type) {
+        obj_setSysOut(self, "mate_object");
+        return;
+    }
+    if (TYPE_METHOD == type) {
+        obj_setSysOut(self, "method");
+        return;
+    }
 }

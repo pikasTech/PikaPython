@@ -28,7 +28,7 @@ int32_t args_setArg(Args* self, Arg* arg);
 int32_t args_copyArgByName(Args* self, char* name, Args* directList);
 int32_t args_copyArg(Args* self, Arg* argToBeCopy);
 
-char* args_getType(Args* self, char* name);
+ArgType args_getType(Args* self, char* name);
 int32_t args_isArgExist_hash(Args* self, Hash nameHash);
 int32_t args_isArgExist(Args* self, char* name);
 
@@ -65,8 +65,8 @@ int32_t args_setObjectWithClass(Args* self,
                                 char* className,
                                 void* objectPtr);
 int32_t args_setPtrWithType(Args* self,
-                            char* objName,
-                            char* type,
+                            char* name,
+                            ArgType type,
                             void* objPtr);
 int32_t args_foreach(Args* self,
                      int32_t (*eachHandle)(Arg* argEach, Args* handleArgs),
