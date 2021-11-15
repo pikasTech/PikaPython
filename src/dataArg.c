@@ -104,9 +104,10 @@ uint8_t* content_init(char* name,
 uint16_t content_totleSize(uint8_t* self) {
     const uint8_t size_size = 2;
     const uint8_t size_next = sizeof(uint8_t*);
+    const uint8_t size_type = sizeof(ArgType);
+    const uint8_t size_hash = sizeof(Hash);
     uint16_t size_content = content_getSize(self);
-    return size_content + sizeof(Hash) + sizeof(ArgType) + size_size +
-           size_next;
+    return size_content + size_hash + size_type + size_size + size_next;
 }
 
 void arg_freeContent(Arg* self) {
@@ -297,8 +298,8 @@ Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {
-    return content_init(name, TYPE_STRING, (uint8_t*)string, strGetSize(string) + 1,
-                        NULL);
+    return content_init(name, TYPE_STRING, (uint8_t*)string,
+                        strGetSize(string) + 1, NULL);
 }
 
 int64_t arg_getInt(Arg* self) {
