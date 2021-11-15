@@ -13,8 +13,8 @@ uint8_t pika_bitmap[pika_pool_size / pika_aline / 8] = {0};
 uint8_t pika_pool_mem[pika_pool_size] = {0};
 PikaMemInfo pikaMemInfo = {0};
 Pool pikaPool = {.aline = pika_aline,
-                 .bitmap = &pika_bitmap,
-                 .mem = &pika_pool_mem,
+                 .bitmap = pika_bitmap,
+                 .mem = pika_pool_mem,
                  .size = pika_pool_size};
 
 void* pikaMalloc(uint32_t size) {
@@ -23,7 +23,7 @@ void* pikaMalloc(uint32_t size) {
         pikaMemInfo.heapUsedMax = pikaMemInfo.heapUsed;
     }
     __platformDisableIrqHandle();
-    void* mem = __platformMalloc(size);
+    void* mem = __impl_pikaMalloc(size);
     __platformEnableIrqHandle();
     if (NULL == mem) {
         __platformPrintf(
@@ -36,7 +36,7 @@ void* pikaMalloc(uint32_t size) {
 
 void pikaFree(void* mem, uint32_t size) {
     __platformDisableIrqHandle();
-    __platformFree(mem);
+    __impl_pikaFree(mem, size);
     __platformEnableIrqHandle();
     pikaMemInfo.heapUsed -= size;
 }
@@ -114,8 +114,6 @@ void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
         }
         __platformPrintf("\r\n");
     }
-exit:
-    __platformPrintf("\r\n");
 }
 
 void* pool_malloc(Pool* pool, uint32_t size) {
