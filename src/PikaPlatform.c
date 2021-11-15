@@ -20,6 +20,13 @@ PIKA_WEAK void __platformFree(void* ptr) {
     free(ptr);
 }
 
+PIKA_WEAK void* __impl_pikaMalloc(size_t size) {
+    return __platformMalloc(size);
+}
+PIKA_WEAK void __impl_pikaFree(void* ptrm, size_t size) {
+    __platformFree(ptrm);
+}
+
 PIKA_WEAK void __platformPrintf(char* fmt, ...) {
     va_list args;
     va_start(args, fmt);

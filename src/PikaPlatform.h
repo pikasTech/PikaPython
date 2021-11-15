@@ -1,7 +1,7 @@
 #ifndef __PIKA_PALTFORM__H
 #define __PIKA_PALTFORM__H
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM) /* ARM Compiler */
 #define PIKA_WEAK __attribute__((weak))
@@ -17,9 +17,12 @@ void __platformFree(void* ptr);
 void __platformEnableIrqHandle(void);
 void __platformDisableIrqHandle(void);
 
+void* __impl_pikaMalloc(size_t size);
+void __impl_pikaFree(void* ptrm, size_t size);
+
 char* __platformLoadPikaAsm(void);
-int32_t __platformSavePikaAsm(char *PikaAsm);
-uint8_t __platformAsmIsToFlash(char *pyMultiLine);
+int32_t __platformSavePikaAsm(char* PikaAsm);
+uint8_t __platformAsmIsToFlash(char* pyMultiLine);
 int32_t __platformSavePikaAsmEOF(void);
 
 #endif

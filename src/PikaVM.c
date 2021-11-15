@@ -185,7 +185,9 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         Arg* outArg = NULL;
         Arg* arg1 = arg_copy(queue_popArg(invokeQuene1));
         Arg* arg2 = arg_copy(queue_popArg(invokeQuene1));
-        if (strEqu(arg_getType(arg1), "i") && strEqu(arg_getType(arg2), "i")) {
+        ArgType type_arg1 = arg_getType(arg1);
+        ArgType type_arg2 = arg_getType(arg2);
+        if ((type_arg1 == TYPE_INT) && (type_arg2 == TYPE_INT)) {
             int num1 = arg_getInt(arg1);
             int num2 = arg_getInt(arg2);
             if (strEqu("+", data)) {
@@ -217,7 +219,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                 goto OPT_exit;
             }
         }
-        if (strEqu(arg_getType(arg1), "f") && strEqu(arg_getType(arg2), "i")) {
+        if ((type_arg1 == TYPE_FLOAT) && (type_arg2 == TYPE_INT)) {
             float num1 = arg_getFloat(arg1);
             int num2 = arg_getInt(arg2);
             if (strEqu("+", data)) {
@@ -249,7 +251,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                 goto OPT_exit;
             }
         }
-        if (strEqu(arg_getType(arg1), "i") && strEqu(arg_getType(arg2), "f")) {
+        if ((type_arg1 == TYPE_INT) && (type_arg2 == TYPE_FLOAT)) {
             int num1 = arg_getInt(arg1);
             float num2 = arg_getFloat(arg2);
             if (strEqu("+", data)) {
@@ -281,7 +283,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                 goto OPT_exit;
             }
         }
-        if (strEqu(arg_getType(arg1), "f") && strEqu(arg_getType(arg2), "f")) {
+        if ((type_arg1 == TYPE_FLOAT) && (type_arg2 == TYPE_FLOAT)) {
             float num1 = arg_getFloat(arg1);
             float num2 = arg_getFloat(arg2);
             if (strEqu("+", data)) {
@@ -358,7 +360,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
             goto RUN_exit;
         }
         /* get method Ptr */
-        methodPtr = (Method) methodArg_getPtr(method_arg);
+        methodPtr = (Method)methodArg_getPtr(method_arg);
         /* get method Decleartion */
         methodDec = strsCopy(buffs, methodArg_getDec(method_arg));
         arg_deinit(method_arg);
