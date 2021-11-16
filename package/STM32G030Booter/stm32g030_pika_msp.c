@@ -163,7 +163,25 @@ int32_t __platformSavePikaAsmEOF() {
     return 0;
 }
 
+/* support mem pool */
+#if use_mem_pool
+/* use mem pool */
+Pool pikaPool;
+void* __impl_pikaMalloc(size_t size) {
+    void* mem = pool_malloc(&pikaPool, size);
+    return mem;
+}
+void __impl_pikaFree(void* ptrm, size_t size) {
+    pool_free(&pikaPool, ptrm, size);
+}
+#endif
+
 /* support download python script by uart1 */
+uint8_t pika_memory_lock = 0;
+uint8_t __isLocked_pikaMemory(void){
+    return pika_memory_lock;
+}
+
 CodeHeap codeHeap;
 void STM32_Code_Init(void) {
     codeHeap.size = 0;
@@ -182,16 +200,16 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
         }
     }
     if (1 == codeHeap.ena) {
+        if(!pika_memory_lock){
+            pika_memory_lock = 1;
+            #if use_mem_pool
+            pool_deinit(&pikaPool);
+            #endif
+        }
         codeHeap.reciveTime = uwTick;
         codeHeap.oldSize = codeHeap.size;
         codeHeap.size += rxSize;
-        /* copy old to new content */
-        char* new_content = pikaMalloc(codeHeap.size + 1);
-        memcpy(new_content, codeHeap.content, codeHeap.oldSize + 1);
-        pikaFree(codeHeap.content, codeHeap.oldSize + 1);
-        /* update new content */
-        codeHeap.content = new_content;
-        /* copy append content to new content */
+        codeHeap.content = realloc(codeHeap.content, codeHeap.size + 1);
         memcpy(codeHeap.content + codeHeap.oldSize, data, rxSize);
         codeHeap.content[codeHeap.size] = 0;
         /* reciving code */

@@ -1,6 +1,8 @@
 #ifndef __STM32G030_PIKA_PORT__H
 #define __STM32G030_PIKA_PORT__H
 
+#define use_mem_pool 1
+
 #include <stdint.h>
 #include "pikaObj.h"
 typedef struct _CodeHeap {

@@ -46,10 +46,10 @@ void __platformDisableIrqHandle(void);
 
 void* __impl_pikaMalloc(size_t size);
 void __impl_pikaFree(void* ptrm, size_t size);
+uint8_t __isLocked_pikaMemory(void);
 
 char* __platformLoadPikaAsm(void);
 int32_t __platformSavePikaAsm(char* PikaAsm);
 uint8_t __platformAsmIsToFlash(char* pyMultiLine);
 int32_t __platformSavePikaAsmEOF(void);
-
 #endif

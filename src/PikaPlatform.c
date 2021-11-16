@@ -54,6 +54,10 @@ PIKA_WEAK void __impl_pikaFree(void* ptrm, size_t size) {
     __platformFree(ptrm);
 }
 
+PIKA_WEAK uint8_t __isLocked_pikaMemory(void){
+    return 0;
+}
+
 PIKA_WEAK void __platformPrintf(char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
