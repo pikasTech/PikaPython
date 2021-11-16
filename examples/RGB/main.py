@@ -18,7 +18,6 @@ print('mem used max:')
 mem.max()
 
 while True:
-    time.sleep_ms(10)
+    print('flowing')
     rgb.flow()
-    print('flowing...')
 

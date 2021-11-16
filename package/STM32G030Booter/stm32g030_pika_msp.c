@@ -203,7 +203,9 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
         if(!pika_memory_lock){
             pika_memory_lock = 1;
             #if use_mem_pool
+            __platformDisableIrqHandle();
             pool_deinit(&pikaPool);
+            __platformEnableIrqHandle();
             #endif
         }
         codeHeap.reciveTime = uwTick;

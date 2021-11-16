@@ -112,7 +112,7 @@ int main(void) {
                 fputc(code[i], (FILE*)!NULL);
             }
             printf("==============[Pika ASM]==============\r\n");
-            printf("asm size: %d\r\n", strGetSize(code));
+            printf("[info]: asm size: %d\r\n", strGetSize(code));
             printf("[info]: boot from Pika Asm.\r\n");
             pikaVM_runAsm(pikaMain, code);
             goto main_loop;
