@@ -586,14 +586,12 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         invokeQuene1 = New_queue();
         args_setPtr(locals->list, invokeDeepth1, invokeQuene1);
     }
-
     resArg =
         pikaVM_runInstruct(self, locals, globals, instruct, data, invokeQuene0,
                            invokeQuene1, &jmp, programCounter);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
     }
-
     goto nextLine;
 nextLine:
     args_deinit(buffs);

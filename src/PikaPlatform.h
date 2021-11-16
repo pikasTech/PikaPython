@@ -47,7 +47,9 @@ void __platformDisableIrqHandle(void);
 void* __impl_pikaMalloc(size_t size);
 void __impl_pikaFree(void* ptrm, size_t size);
 uint8_t __isLocked_pikaMemory(void);
-
+uint8_t __is_quick_malloc(void);
+void __quick_malloc_enable(void);
+void __quick_malloc_disable(void);
 char* __platformLoadPikaAsm(void);
 int32_t __platformSavePikaAsm(char* PikaAsm);
 uint8_t __platformAsmIsToFlash(char* pyMultiLine);

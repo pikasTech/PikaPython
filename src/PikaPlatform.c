@@ -54,6 +54,16 @@ PIKA_WEAK void __impl_pikaFree(void* ptrm, size_t size) {
     __platformFree(ptrm);
 }
 
+PIKA_WEAK uint8_t __is_quick_malloc(void){
+    return 0;
+}
+
+PIKA_WEAK void __quick_malloc_enable(void){
+}
+
+PIKA_WEAK void __quick_malloc_disable(void){
+}
+
 PIKA_WEAK uint8_t __isLocked_pikaMemory(void){
     return 0;
 }

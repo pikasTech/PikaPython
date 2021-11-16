@@ -144,10 +144,12 @@ void* pool_malloc(Pool* pool, uint32_t size) {
     uint32_t block_num_found = 0;
     uint8_t found_first_free = 0;
     uint32_t block_index;
-    /* high speed malloc */
-    block_index = pool->purl_free_block_start + block_num_need - 1;
-    if (block_index < block_index_max) {
-        goto found;
+    if(__is_quick_malloc()){
+        /* high speed malloc */
+        block_index = pool->purl_free_block_start + block_num_need - 1;
+        if (block_index < block_index_max) {
+            goto found;
+        }
     }
 
     /* low speed malloc */
@@ -214,7 +216,7 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
                     break;
                 }
             }
-        }
+        }        
         pool->purl_free_block_start = first_pure_free_block;
     }
     return;
