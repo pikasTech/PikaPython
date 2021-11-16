@@ -33,7 +33,7 @@ PikaMemInfo pikaMemInfo = {0};
 
 void* pikaMalloc(uint32_t size) {
     /* pika memory lock */
-    while(__isLocked_pikaMemory()){
+    while (__isLocked_pikaMemory()) {
     }
     pikaMemInfo.heapUsed += size;
     if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
@@ -53,8 +53,8 @@ void* pikaMalloc(uint32_t size) {
 
 void pikaFree(void* mem, uint32_t size) {
     /* pika memory lock */
-    while(__isLocked_pikaMemory()){
-    }    
+    while (__isLocked_pikaMemory()) {
+    }
     __platformDisableIrqHandle();
     __impl_pikaFree(mem, size);
     __platformEnableIrqHandle();
@@ -146,9 +146,11 @@ void* pool_malloc(Pool* pool, uint32_t size) {
     for (uint32_t block_index = pool->block_index_min_free;
          block_index < block_index_max; block_index++) {
         /* 8 bit is not free */
-        if(0xFF == bitmap_getByte(pool->bitmap, block_index)){
-//            block_index = aline_by(block_index, 8) - 1;
-//            continue;
+        uint8_t bitmap_byte = bitmap_getByte(pool->bitmap, block_index);
+        if (0xFF == bitmap_byte) {
+            block_index = 8 * (block_index / 8) + 7;
+            block_num_found = 0;
+            continue;
         }
         /* found a free block */
         if (0 == bitmap_get(pool->bitmap, block_index)) {
@@ -189,11 +191,11 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
     return;
 }
 
-uint32_t aline_by(uint32_t size, uint32_t aline){
-    if(size == 0){
+uint32_t aline_by(uint32_t size, uint32_t aline) {
+    if (size == 0) {
         return 0;
     }
-    return ((size - 1)/aline + 1) * aline;
+    return ((size - 1) / aline + 1) * aline;
 }
 
 BitMap bitmap_init(uint32_t size) {
