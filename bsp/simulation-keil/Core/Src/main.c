@@ -112,10 +112,10 @@ int main(void)
     fgets(inputBuff, sizeof(inputBuff), stdin);
     printf(">>> %s", inputBuff);
     /* run mimiScript and get res */
-    Args *resArgs = obj_runDirect(pikaMain, inputBuff);
+    PikaObj *resArgs = obj_runDirect(pikaMain, inputBuff);
 
     /* get system output of mimiScript*/
-    char *sysOut = args_getSysOut(resArgs);
+    char *sysOut = args_getSysOut(resArgs->list);
 
     if (!strEqu(sysOut, ""))
     {
@@ -124,7 +124,7 @@ int main(void)
     }
 
     /* deinit the res */
-    args_deinit(resArgs);
+    obj_deinit(resArgs);
 
     /* USER CODE END WHILE */
 

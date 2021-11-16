@@ -21,3 +21,7 @@ PikaObj *New_Device_LED(Args *args){
     class_defineMethod(self, "on()", Device_LED_onMethod);
     return self;
 }
+
+Arg *Device_LED(PikaObj *self){
+    return arg_setMetaObj("", "Device_LED", New_Device_LED);
+}

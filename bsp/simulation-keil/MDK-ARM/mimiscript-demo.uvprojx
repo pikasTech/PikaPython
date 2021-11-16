@@ -133,7 +133,7 @@
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
-            <Capability>0</Capability>
+            <Capability>1</Capability>
             <DriverSelection>4101</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
@@ -313,7 +313,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>5</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -506,6 +506,31 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>pikascript-lib</GroupName>
+          <Files>
+            <File>
+              <FileName>PikaStdLib_SysObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_MemChecker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c</FilePath>
+            </File>
+            <File>
+              <FileName>Device_Led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\Device\Device_Led.c</FilePath>
+            </File>
+            <File>
+              <FileName>Device_Uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\Device\Device_Uart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>pikascript-core</GroupName>
           <Files>
             <File>
@@ -539,6 +564,21 @@
               <FilePath>..\pikascript\pikascript-core\dataMemory.c</FilePath>
             </File>
             <File>
+              <FileName>dataQueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataQueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataQueueObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataQueueObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataStack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataStack.c</FilePath>
+            </File>
+            <File>
               <FileName>dataString.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\dataString.c</FilePath>
@@ -549,50 +589,35 @@
               <FilePath>..\pikascript\pikascript-core\dataStrs.c</FilePath>
             </File>
             <File>
-              <FileName>method.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\method.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\PikaObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPlatform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaPlatform.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaVM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaVM.c</FilePath>
             </File>
             <File>
               <FileName>TinyObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\TinyObj.c</FilePath>
             </File>
-            <File>
-              <FileName>PikaBlock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaBlock.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaIf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaIf.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaInvoke.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaInvoke.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaWhile.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaWhile.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>pikascript-api</GroupName>
           <Files>
-            <File>
-              <FileName>PikaMain-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\PikaMain-api.c</FilePath>
-            </File>
             <File>
               <FileName>Device_LED-api.c</FileName>
               <FileType>1</FileType>
@@ -602,6 +627,16 @@
               <FileName>Device_Uart-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\Device_Uart-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>Device-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\Device-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaMain-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaMain-api.c</FilePath>
             </File>
             <File>
               <FileName>pikaScript.c</FileName>
@@ -618,30 +653,10 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>pikascript-lib</GroupName>
-          <Files>
             <File>
-              <FileName>PikaStdLib_SysObj.c</FileName>
+              <FileName>PikaStdLib-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_MemChecker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c</FilePath>
-            </File>
-            <File>
-              <FileName>Device_Led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Device\Device_Led.c</FilePath>
-            </File>
-            <File>
-              <FileName>Device_Uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Device\Device_Uart.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -655,8 +670,8 @@
   <RTE>
     <apis/>
     <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.4.0" condition="ARMv6_7_8-M Device">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.7.0"/>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.5.0" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.8.0"/>
         <targetInfos>
           <targetInfo name="pikascriptt-demo"/>
         </targetInfos>
