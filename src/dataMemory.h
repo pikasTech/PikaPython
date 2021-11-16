@@ -54,9 +54,12 @@ uint16_t pikaMemNow(void);
 uint16_t pikaMemMax(void);
 void pikaMemMaxReset(void);
 
+uint32_t aline_by(uint32_t size, uint32_t aline);
+
 BitMap bitmap_init(uint32_t size);
 void bitmap_set(BitMap bitmap, uint32_t index, uint8_t bit);
 uint8_t bitmap_get(BitMap bitmap, uint32_t index);
+uint8_t bitmap_getByte(BitMap bitmap, uint32_t index);
 void bitmap_deinit(BitMap bitmap);
 
 Pool pool_init(uint32_t size, uint8_t aline);

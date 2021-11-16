@@ -145,6 +145,11 @@ void* pool_malloc(Pool* pool, uint32_t size) {
     uint8_t found_first_free = 0;
     for (uint32_t block_index = pool->block_index_min_free;
          block_index < block_index_max; block_index++) {
+        /* 8 bit is not free */
+        if(0xFF == bitmap_getByte(pool->bitmap, block_index)){
+//            block_index = aline_by(block_index, 8) - 1;
+//            continue;
+        }
         /* found a free block */
         if (0 == bitmap_get(pool->bitmap, block_index)) {
             /* save the first free */
@@ -184,6 +189,13 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
     return;
 }
 
+uint32_t aline_by(uint32_t size, uint32_t aline){
+    if(size == 0){
+        return 0;
+    }
+    return ((size - 1)/aline + 1) * aline;
+}
+
 BitMap bitmap_init(uint32_t size) {
     BitMap mem_bit_map =
         (BitMap)__platformMalloc(((size - 1) / 8 + 1) * sizeof(char));
@@ -206,6 +218,13 @@ void bitmap_set(BitMap bitmap, uint32_t index, uint8_t bit) {
     /* set 0 */
     bitmap[index_byte] &= ~x;
     return;
+}
+
+uint8_t bitmap_getByte(BitMap bitmap, uint32_t index) {
+    uint32_t index_byte = (index) / 8;
+    uint8_t byte;
+    byte = bitmap[index_byte];
+    return byte;
 }
 
 uint8_t bitmap_get(BitMap bitmap, uint32_t index) {
