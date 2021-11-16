@@ -1,10 +1,16 @@
-import PikaStdLib
+from PikaObj import  *
+import Device
+import PikaStdLib 
 
+led = Device.LED()
+uart = Device.Uart()
 mem = PikaStdLib.MemChecker()
-print('hello pikascript!')
+
+print('hello wrold')
+uart.setName('com1')
+uart.send('My name is:')
+uart.printName()
 print('mem used max:')
 mem.max()
-i = 0
-while i < 100:
-    i = i + 1
-    print(i)
+print('mem used now:')
+mem.now()

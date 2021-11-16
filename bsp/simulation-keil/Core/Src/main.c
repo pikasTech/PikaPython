@@ -25,7 +25,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "pikaScript.h"
-#include "PikaMain.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,19 +56,9 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-#define use_mem_pool 1
-/* support mem pool */
-#if use_mem_pool
-/* use mem pool */
-Pool pikaPool;
-void* __impl_pikaMalloc(size_t size) {
-    void* mem = pool_malloc(&pikaPool, size);
-    return mem;
-}
-void __impl_pikaFree(void* ptrm, size_t size) {
-    pool_free(&pikaPool, ptrm, size);
-}
-#endif
+
+
+
 
 /* USER CODE END 0 */
 
@@ -78,7 +67,7 @@ void __impl_pikaFree(void* ptrm, size_t size) {
   * @retval int
   */
 int main(void)
- {
+{
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -102,13 +91,9 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
-
-    /* init mem pool */
-    #if use_mem_pool
-    pikaPool = pool_init(0x4000, 8);
-    printf("[info]: pika memory poool init ok \r\n");
-    #endif
-
+  /* USER CODE BEGIN 2 */
+	
+	
   PikaObj *pikaMain = pikaScriptInit();
 	
 	
@@ -118,7 +103,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   /* user input buff */
 	
-  char inputBuff[256] = {0};
+	char inputBuff[256] = {0};
   while (1)
   {
     static uint32_t r_mainloop_ncnt;
@@ -127,10 +112,10 @@ int main(void)
     fgets(inputBuff, sizeof(inputBuff), stdin);
     printf(">>> %s", inputBuff);
     /* run mimiScript and get res */
-    PikaObj *globals = obj_runDirect(pikaMain, inputBuff);
+    Args *resArgs = obj_runDirect(pikaMain, inputBuff);
 
     /* get system output of mimiScript*/
-    char *sysOut = args_getSysOut(globals->list);
+    char *sysOut = args_getSysOut(resArgs);
 
     if (!strEqu(sysOut, ""))
     {
@@ -139,7 +124,7 @@ int main(void)
     }
 
     /* deinit the res */
-    obj_deinit(globals);
+    args_deinit(resArgs);
 
     /* USER CODE END WHILE */
 
