@@ -205,7 +205,17 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
     /* save last free block index to add speed */
     uint32_t block_end = block_index + block_num - 1;
     if (block_end == pool->purl_free_block_start - 1) {
-        pool->purl_free_block_start = block_index;
+        uint32_t first_pure_free_block = block_index;
+        /* back to first used block */
+        if (0 != first_pure_free_block) {
+            while (0 == bitmap_get(pool->bitmap, first_pure_free_block - 1)) {
+                first_pure_free_block--;
+                if (0 == first_pure_free_block) {
+                    break;
+                }
+            }
+        }
+        pool->purl_free_block_start = first_pure_free_block;
     }
     return;
 }
