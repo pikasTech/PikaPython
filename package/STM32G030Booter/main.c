@@ -67,6 +67,21 @@ uint8_t Shell_Ready = 0;
  * @brief  The application entry point.
  * @retval int
  */
+
+#define use_mem_pool
+
+#ifdef use_mem_pool
+/* use mem pool */
+Pool pikaPool;
+void* __impl_pikaMalloc(size_t size) {
+    void* mem = pool_malloc(&pikaPool, size);
+    return mem;
+}
+void __impl_pikaFree(void* ptrm, size_t size) {
+    pool_free(&pikaPool, ptrm, size);
+}
+#endif
+
 int main(void) {
     /* support bootLoader */
     __disable_irq();
@@ -79,8 +94,12 @@ int main(void) {
     MX_GPIO_Init();
     HARDWARE_PRINTF_Init();
 
+    /* init mem pool */
+    #ifdef use_mem_pool
+    pikaPool = pool_init(0x1B00, 4);
+    #endif
     printf("stm32 hardware init ok\r\n");
-
+    
     /* boot pikaScript */
     char* code = (char*)FLASH_SCRIPT_START_ADDR;
     if (code[0] != 0xFF) {
