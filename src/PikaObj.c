@@ -34,6 +34,72 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
+int fast_atoi(char* src) {
+    const char* p = src;
+    static const uint64_t a[][10] = {
+        {0, 1e0, 2e0, 3e0, 4e0, 5e0, 6e0, 7e0, 8e0, 9e0},
+        {0, 1e1, 2e1, 3e1, 4e1, 5e1, 6e1, 7e1, 8e1, 9e1},
+        {0, 1e2, 2e2, 3e2, 4e2, 5e2, 6e2, 7e2, 8e2, 9e2},
+        {0, 1e3, 2e3, 3e3, 4e3, 5e3, 6e3, 7e3, 8e3, 9e3},
+        {0, 1e4, 2e4, 3e4, 4e4, 5e4, 6e4, 7e4, 8e4, 9e4},
+        {0, 1e5, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, 8e5, 9e5},
+        {0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6, 9e6},
+        {0, 1e7, 2e7, 3e7, 4e7, 5e7, 6e7, 7e7, 8e7, 9e7},
+        {0, 1e8, 2e8, 3e8, 4e8, 5e8, 6e8, 7e8, 8e8, 9e8},
+        {0, 1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9},
+    };
+    uint16_t size = strGetSize(src);
+    p = p + size - 1;
+    if (*p) {
+        int s = 0;
+        const uint64_t* n = a[0];
+        while (p != src) {
+            s += n[(*p - '0')];
+            n += 10;
+            p--;
+        }
+        if (*p == '-') {
+            return -s;
+        }
+        return s + n[(*p - '0')];
+    }
+    return 0;
+}
+
+static uint16_t const str100p[100] = {
+    0x3030, 0x3130, 0x3230, 0x3330, 0x3430, 0x3530, 0x3630, 0x3730, 0x3830,
+    0x3930, 0x3031, 0x3131, 0x3231, 0x3331, 0x3431, 0x3531, 0x3631, 0x3731,
+    0x3831, 0x3931, 0x3032, 0x3132, 0x3232, 0x3332, 0x3432, 0x3532, 0x3632,
+    0x3732, 0x3832, 0x3932, 0x3033, 0x3133, 0x3233, 0x3333, 0x3433, 0x3533,
+    0x3633, 0x3733, 0x3833, 0x3933, 0x3034, 0x3134, 0x3234, 0x3334, 0x3434,
+    0x3534, 0x3634, 0x3734, 0x3834, 0x3934, 0x3035, 0x3135, 0x3235, 0x3335,
+    0x3435, 0x3535, 0x3635, 0x3735, 0x3835, 0x3935, 0x3036, 0x3136, 0x3236,
+    0x3336, 0x3436, 0x3536, 0x3636, 0x3736, 0x3836, 0x3936, 0x3037, 0x3137,
+    0x3237, 0x3337, 0x3437, 0x3537, 0x3637, 0x3737, 0x3837, 0x3937, 0x3038,
+    0x3138, 0x3238, 0x3338, 0x3438, 0x3538, 0x3638, 0x3738, 0x3838, 0x3938,
+    0x3039, 0x3139, 0x3239, 0x3339, 0x3439, 0x3539, 0x3639, 0x3739, 0x3839,
+    0x3939,
+};
+
+char* fast_itoa(char* buf, uint32_t val) {
+    char* p = &buf[10];
+
+    *p = '\0';
+
+    while (val >= 100) {
+        uint32_t const old = val;
+
+        p -= 2;
+        val /= 100;
+        memcpy(p, &str100p[old - (val * 100)], sizeof(uint16_t));
+    }
+
+    p -= 2;
+    memcpy(p, &str100p[val], sizeof(uint16_t));
+
+    return &p[val < 10];
+}
+
 int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
     if (NULL != handleArgs) {
         /* error: tOhis handle not need handle args */
@@ -253,11 +319,8 @@ exit:
 }
 
 PikaObj* obj_getClassObj(PikaObj* obj) {
-    Args* buffs = New_strBuff();
     NewFun classPtr = (NewFun)obj_getPtr(obj, "_clsptr");
-    char* classObjName = strsAppend(buffs, "_cls-", "");
-    PikaObj* classObj = obj_getClassObjByNewFun(obj, classObjName, classPtr);
-    args_deinit(buffs);
+    PikaObj* classObj = obj_getClassObjByNewFun(obj, "", classPtr);
     return classObj;
 }
 

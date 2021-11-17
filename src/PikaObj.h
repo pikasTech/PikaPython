@@ -85,9 +85,7 @@ PikaObj* obj_getObj(PikaObj* self, char* processPathectory, int32_t deepth);
 int32_t obj_freeObj(PikaObj* self, char* subObjectName);
 
 /* method */
-int32_t class_defineMethod(PikaObj* self,
-                           char* declearation,
-                           Method methodPtr);
+int32_t class_defineMethod(PikaObj* self, char* declearation, Method methodPtr);
 
 int32_t obj_removeArg(PikaObj* self, char* argPath);
 int32_t obj_isArgExist(PikaObj* self, char* argPath);
@@ -129,5 +127,9 @@ void obj_runNoRes(PikaObj* slef, char* cmd);
 void obj_run(PikaObj* self, char* cmd);
 Parameters* obj_runDirect(PikaObj* self, char* cmd);
 PikaObj* New_PikaObj(void);
+
+/* tools */
+int fast_atoi(char* src);
+char* fast_itoa(char* buf, uint32_t val);
 
 #endif
