@@ -1,4 +1,8 @@
 
+# PikaScript
+[中文页](README_zh.md)|
+
+
 <img align="left" src="https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif" width="60" height="60"/>
 
 [![CI](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg)](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml)
@@ -9,9 +13,6 @@
 # GIT REPO
 ## Chinese GITEE https://gitee.com/Lyon1998/pikascript/
 ## English GITHUB https://github.com/pikasTech/pikascript/
-
-# PikaScript
-[中文页](README_zh.md)|
 
 # 1. Abstract
 
