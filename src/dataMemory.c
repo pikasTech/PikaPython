@@ -144,7 +144,7 @@ void* pool_malloc(Pool* pool, uint32_t size) {
     uint32_t block_num_found = 0;
     uint8_t found_first_free = 0;
     uint32_t block_index;
-    if(__is_quick_malloc()){
+    if (__is_quick_malloc()) {
         /* high speed malloc */
         block_index = pool->purl_free_block_start + block_num_need - 1;
         if (block_index < block_index_max) {
@@ -153,8 +153,8 @@ void* pool_malloc(Pool* pool, uint32_t size) {
     }
 
     /* low speed malloc */
-    for (block_index = pool->first_free_block; block_index < block_index_max;
-         block_index++) {
+    for (block_index = pool->first_free_block;
+         block_index < pool->purl_free_block_start; block_index++) {
         /* 8 bit is not free */
         uint8_t bitmap_byte = bitmap_getByte(pool->bitmap, block_index);
         if (0xFF == bitmap_byte) {
@@ -179,6 +179,12 @@ void* pool_malloc(Pool* pool, uint32_t size) {
             goto found;
         }
     }
+    /* malloc for purl free blocks */
+    block_index = pool->purl_free_block_start + block_num_need - 1;
+    if (block_index < block_index_max) {
+        goto found;
+    }
+
     /* no found */
     return NULL;
 found:
@@ -216,7 +222,7 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
                     break;
                 }
             }
-        }        
+        }
         pool->purl_free_block_start = first_pure_free_block;
     }
     return;

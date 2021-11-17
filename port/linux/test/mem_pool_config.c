@@ -2,6 +2,12 @@
 
 #define use_const_pool 0
 
+/* quick_malloc is always open */
+uint8_t __is_quick_malloc(void) {
+    // return 1;
+    return 0;
+}
+
 #if use_const_pool
 #define pika_aline 4
 #define pika_pool_size 0x1B00
