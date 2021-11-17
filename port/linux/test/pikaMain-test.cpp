@@ -31,8 +31,8 @@ TEST(pikaMain, new_mem) {
 }
 
 TEST(pikaMain, list_new) {
-    pikaMemInfo.heapUsedMax = 0;
     /* init */
+    pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
     Parameters* globals =
