@@ -151,10 +151,6 @@ Arg* pikaVM_runInstruct(PikaObj* self,
     }
     if (instruct == OUT) {
         Arg* outArg = arg_copy(queue_popArg(invokeQuene0));
-        Args* buffs = New_strBuff();
-        char* argName = strsGetLastToken(buffs, data, '.');
-        outArg = arg_setName(outArg, argName);
-        args_deinit(buffs);
         obj_setArg(locals, data, outArg);
         arg_deinit(outArg);
         return NULL;

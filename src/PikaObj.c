@@ -152,7 +152,12 @@ int32_t obj_setArg(PikaObj* self, char* argPath, Arg* arg) {
         /* object no found */
         return 1;
     }
-    args_copyArg(obj->list, arg);
+    Args* buffs = New_strBuff();
+    char* argName = strsGetLastToken(buffs, argPath, '.');
+    Arg* newArg = arg_copy(arg);
+    newArg = arg_setName(newArg, argName);
+    args_deinit(buffs);
+    args_setArg(obj->list, newArg);
     return 0;
 }
 
