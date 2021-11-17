@@ -11,7 +11,8 @@
         "cstring": "cpp",
         "variant": "cpp",
         "pikaplatform.h": "c",
-        "dataarg.h": "c"
+        "dataarg.h": "c",
+        "pikastdlib_list.h": "c"
     },
     "python.formatting.provider": "yapf"
 }
