@@ -30,8 +30,8 @@ class List(TinyObj):
     def get(i: int) -> any:
         pass
 
-    def len() -> int:
+    def set(i: int, arg: any):
         pass
 
-    def remove(arg: any):
+    def len() -> int:
         pass
