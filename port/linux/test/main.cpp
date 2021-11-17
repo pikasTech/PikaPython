@@ -19,7 +19,7 @@ void __impl_pikaFree(void* ptrm, size_t size) {
 
 int main(int argc, char** argv) {
 #if use_dynamic_pool
-    pikaPool = pool_init(0x1B00, 4);
+    pikaPool = pool_init(0x2000, 8);
 #endif
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
