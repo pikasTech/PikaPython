@@ -29,3 +29,34 @@ TEST(pikaMain, new_mem) {
     obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, list_new) {
+    pikaMemInfo.heapUsedMax = 0;
+    /* init */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    Parameters* globals =
+        obj_runDirect(pikaMain, (char*)
+        "list = PikaStdLib.List()\n"
+        "list.init()\n"
+        "list.append(7)\n"
+        "list.append('eee')\n"
+        "len = list.len()\n"
+        "a1 = list.get(0)\n"
+        "a2 = list.get(1)\n"
+        );
+    /* collect */
+    int len = obj_getInt(globals, (char*)"len");
+    int a1 = obj_getInt(globals, (char*)"a1");
+    char* a2 = obj_getStr(globals, (char*)"a2");
+
+    /* assert */
+    EXPECT_EQ(len, 2);
+    EXPECT_EQ(a1, 7);
+    EXPECT_STREQ(a2, "eee");
+
+    /* deinit */
+    obj_deinit(globals);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

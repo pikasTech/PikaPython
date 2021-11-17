@@ -16,7 +16,7 @@ int PikaStdLib_List_len(PikaObj* self) {
 Arg* PikaStdLib_List_get(PikaObj* self, int i) {
     char buff[11];
     char* index = fast_itoa(buff, i);
-    return obj_getArg(self, index);
+    return arg_copy(obj_getArg(self, index));
 }
 void PikaStdLib_List_init(PikaObj* self) {
     /* set top index for append */
