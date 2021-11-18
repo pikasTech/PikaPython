@@ -7,12 +7,7 @@
 
 [![CI](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg)](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml)
 
-
 ## Star please~
-
-# GIT REPO
-## Chinese GITEE https://gitee.com/Lyon1998/pikascript/
-## English GITHUB https://github.com/pikasTech/pikascript/
 
 # 1. Abstract
 
