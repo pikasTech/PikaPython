@@ -4,9 +4,8 @@
 [![CI](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg)](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml)
 
 # 来颗Star求求了~ Star please~
-# 代码仓库：
-## 中文： GITEE https://gitee.com/Lyon1998/pikascript/
-## 英文： GITHUB https://github.com/pikasTech/pikascript/
+
+![QQ截图20211118133254](https://user-images.githubusercontent.com/88232613/142357922-faf6b13a-8dd7-4076-b88d-e1ac335dc79e.png)
 
 # 1.简介
 
