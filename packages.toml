@@ -76,6 +76,7 @@ releases = [
   "v1.0.2 8866710f653ad005f5c3edc5e6417ad31075b7d5",
   "v1.0.3 6c6e1b37c6c9f38fc4c7d567a30e212572a68a60",
   "v1.0.4 5ae86929851ff6a62342a7072b77e9cf5be85f1c",
+  "v1.0.5 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
 ]
 
 [[packages]]
@@ -83,6 +84,7 @@ name = "Arm2D"
 releases = [
   "v0.0.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
   "v0.1.0 1b0384c5b20e336645b24df808f98548912405b8",
+  "v0.2.0 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
 ]
 
 [[packages]]
@@ -99,6 +101,7 @@ releases = [
   "v1.1.1 8866710f653ad005f5c3edc5e6417ad31075b7d5",
   "v1.2.0 e29a77527fd753c4eb811b047899534472bfc8ec",
   "v1.2.1 5ae86929851ff6a62342a7072b77e9cf5be85f1c",
+  "v1.2.2 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
 ]
 
 [[packages]]
