@@ -34,62 +34,48 @@
 PIKA_WEAK void __platformDisableIrqHandle(void) {
     /* disable irq to support thread */
 }
-
 PIKA_WEAK void __platformEnableIrqHandle(void) {
     /* disable irq to support thread */
 }
-
 PIKA_WEAK void* __platformMalloc(size_t size) {
     return malloc(size);
 }
-
 PIKA_WEAK void __platformFree(void* ptr) {
     free(ptr);
 }
-
 PIKA_WEAK void* __impl_pikaMalloc(size_t size) {
     return __platformMalloc(size);
 }
 PIKA_WEAK void __impl_pikaFree(void* ptrm, size_t size) {
     __platformFree(ptrm);
 }
-
-PIKA_WEAK uint8_t __is_quick_malloc(void){
+PIKA_WEAK void __platformPoolInit(void) {}
+PIKA_WEAK uint8_t __is_quick_malloc(void) {
     return 0;
 }
-
-PIKA_WEAK void __quick_malloc_enable(void){
-}
-
-PIKA_WEAK void __quick_malloc_disable(void){
-}
-
-PIKA_WEAK uint8_t __isLocked_pikaMemory(void){
+PIKA_WEAK void __quick_malloc_enable(void) {}
+PIKA_WEAK void __quick_malloc_disable(void) {}
+PIKA_WEAK uint8_t __isLocked_pikaMemory(void) {
     return 0;
 }
-
 PIKA_WEAK void __platformPrintf(char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vprintf(fmt, args);
     va_end(args);
 }
-
 PIKA_WEAK char* __platformLoadPikaAsm(void) {
     /* faild */
     return NULL;
 }
-
 PIKA_WEAK int32_t __platformSavePikaAsm(char* PikaAsm) {
     /* faild */
     return 1;
 }
-
 PIKA_WEAK uint8_t __platformAsmIsToFlash(char* pyMultiLine) {
     /* not to flash */
     return 0;
 }
-
 PIKA_WEAK int32_t __platformSavePikaAsmEOF(void) {
     return 1;
 }

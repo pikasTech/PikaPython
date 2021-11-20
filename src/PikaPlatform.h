@@ -54,4 +54,5 @@ char* __platformLoadPikaAsm(void);
 int32_t __platformSavePikaAsm(char* PikaAsm);
 uint8_t __platformAsmIsToFlash(char* pyMultiLine);
 int32_t __platformSavePikaAsmEOF(void);
+PIKA_WEAK void __platformPoolInit(void);
 #endif
