@@ -8,6 +8,12 @@ class MemChecker(TinyObj):
     def now():
         pass
 
+    def getMax()->float:
+        pass
+
+    def getNow()->float:
+        pass
+
     def resetMax():
         pass
 
