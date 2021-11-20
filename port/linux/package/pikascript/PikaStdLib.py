@@ -19,6 +19,12 @@ class SysObj(BaseObj):
     def remove(argPath: str):
         pass
 
+    def int(arg: any) -> int:
+        pass
+
+    def float(arg: any) -> float:
+        pass
+
 
 class List(TinyObj):
     def init():

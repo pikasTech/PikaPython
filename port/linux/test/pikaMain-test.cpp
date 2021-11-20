@@ -60,3 +60,33 @@ TEST(pikaMain, list_new) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, int_float_convert) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    Parameters* globals =
+        obj_runDirect(pikaMain, (char*)
+        "a = 1\n"
+        "a_f = float(a)\n"
+        "b = 1.3\n"
+        "b_i = int(b)\n"
+        );
+    /* collect */
+    int a = obj_getInt(globals, (char*)"a");
+    float a_f = obj_getFloat(globals, (char*)"a_f");
+    float b = obj_getFloat(globals, (char*)"b");
+    int b_i = obj_getInt(globals, (char*)"b_i");
+
+    /* assert */
+    EXPECT_EQ(a, 1);
+    EXPECT_FLOAT_EQ(a_f, 1);
+    EXPECT_FLOAT_EQ(b, 1.3);
+    EXPECT_FLOAT_EQ(b_i, 1);
+
+    /* deinit */
+    obj_deinit(globals);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
