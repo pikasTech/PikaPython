@@ -90,3 +90,24 @@ TEST(pikaMain, int_float_convert) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, type_) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    Parameters* globals =
+        obj_runDirect(pikaMain, (char*)
+        "type(1)\n"
+        "b = 1.4\n"
+        "type(b)\n"
+        );
+    /* collect */
+
+    /* assert */
+
+    /* deinit */
+    obj_deinit(globals);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

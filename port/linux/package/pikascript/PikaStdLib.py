@@ -13,7 +13,7 @@ class MemChecker(BaseObj):
 
 
 class SysObj(BaseObj):
-    def type(argPath: str):
+    def type(arg: any):
         pass
 
     def remove(argPath: str):
