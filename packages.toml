@@ -121,3 +121,9 @@ name = "CH32V103"
 releases = [
   "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
 ]
+
+[[packages]]
+name = "Key_PikaPiZero"
+releases = [
+  "v1.0.0 e940d05657b9fc792405a2bc29d97b69ac9ed352",
+]
