@@ -1,7 +1,6 @@
-pikascript-core==v1.2.4
-PikaStdLib==v1.2.2
-PikaStdDevice==latest
-STM32==latest
-PikaPiZero==latest
-STM32G030Booter==latest
-Arm2D==latest
+pikascript-core==v1.2.3
+PikaStdLib==v1.2.1
+PikaStdDevice==v1.4.2
+STM32==v2.0.1
+PikaPiZero==v1.0.4
+STM32G030Booter==v1.2.1
