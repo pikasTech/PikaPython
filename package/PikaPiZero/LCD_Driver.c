@@ -3,9 +3,9 @@
 #include "STM32_common.h"
 
 /* config SPI mode, chocie one from three */
-// #define SPI_SOFT
+ #define SPI_SOFT
 // #define SPI_HARD
-#define SPI_DMA
+// #define SPI_DMA
 
 SPI_HandleTypeDef hspi1;
 DMA_HandleTypeDef hdma_spi1_tx;
@@ -108,8 +108,8 @@ void SPI_WriteData_u8(u8* pData, uint32_t size) {
 void SPI_WriteData_u16(u16* pData, uint32_t size) {
 #ifdef SPI_SOFT
     for (int i = 0; i < size / 2; i++) {
-        SPI_Write_u8(pData[i]);       //写入高8位数据
         SPI_Write_u8(pData[i] >> 8);  //写入低8位数据
+        SPI_Write_u8(pData[i]);       //写入高8位数据
     }
 #else
     u8* pData_u8 = (u8*)pData;
@@ -354,4 +354,18 @@ void LCD_Clear(u16 Color) {
     for (m = 0; m < m_max; m++) {
         LCD_DrawRegin(0, m, X_MAX_PIXEL, m + 1, data);
     }
+}
+
+int32_t __Arm2D_platform_drawRegin(uint32_t x,
+                                   uint32_t y,
+                                   uint32_t width,
+                                   uint32_t height,
+                                   const uint8_t* bitmap) {
+    LCD_DrawRegin(x, y, x + width, y + height, (uint16_t *)bitmap);
+    return 0;
+}
+
+int32_t __Arm2D_platform_Init() {
+    LCD_Init();
+    return 0;
 }

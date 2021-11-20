@@ -60,22 +60,6 @@ class Box(Element):
     def setSize(x: int, y: int):
         pass
 
-
-class Star(Element):
-    # override
-    def update():
-        pass
-
-    def init():
-        pass
-
-    def centra(x: int, y: int):
-        pass
-
-    def speed(speed: float):
-        pass
-
-
 class Window(BaseObj):
     background = BackGround()
     elems = ElementList()
