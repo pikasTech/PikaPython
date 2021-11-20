@@ -30,8 +30,7 @@ void __impl_pikaFree(void* ptrm, size_t size) {
 #if use_dynamic_pool
 Pool pikaPool;
 void* __impl_pikaMalloc(size_t size) {
-    void* mem = pool_malloc(&pikaPool, size);
-    return mem;
+    return pool_malloc(&pikaPool, size);
 }
 void __impl_pikaFree(void* ptrm, size_t size) {
     pool_free(&pikaPool, ptrm, size);
