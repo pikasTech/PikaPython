@@ -1,7 +1,7 @@
 #include "dataMemory.h"
 
-#define use_const_pool 0
-#define use_dynamic_pool 1
+#define use_const_pool 1
+#define use_dynamic_pool 0
 
 #define pika_aline 8
 #define pika_pool_size 0x1B00
@@ -19,8 +19,7 @@ Pool pikaPool = {.aline = pika_aline,
                  .mem = pika_pool_mem,
                  .size = pika_pool_size};
 void* __impl_pikaMalloc(size_t size) {
-    void* mem = pool_malloc(&pikaPool, size);
-    return mem;
+    return pool_malloc(&pikaPool, size);
 }
 void __impl_pikaFree(void* ptrm, size_t size) {
     pool_free(&pikaPool, ptrm, size);
