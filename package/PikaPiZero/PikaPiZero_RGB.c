@@ -21,10 +21,14 @@ void RGB_setVoid() {
 }
 
 void PikaPiZero_RGB_enable(PikaObj* self) {
-    obj_run(self, "pin.init()");
-    obj_run(self, "pin.setPin('PB12')");
-    obj_run(self, "pin.setMode('out')");
-    obj_run(self, "pin.enable()");
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+    /*Configure GPIO*/
+    /* PB12 */
+    GPIO_InitStruct.Pin = LL_GPIO_PIN_12;
+    GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    LL_GPIO_Init(GPIOB, &GPIO_InitStruct);    
 }
 void PikaPiZero_RGB_init(PikaObj* self) {}
 

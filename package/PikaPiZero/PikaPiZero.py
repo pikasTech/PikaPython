@@ -1,11 +1,8 @@
 from PikaObj import *
 import PikaStdLib
-import STM32
 
 
-class RGB(PikaStdLib.SysObj):
-    pin = STM32.GPIO()
-
+class RGB(TinyObj):
     def init():
         pass
 
@@ -25,6 +22,14 @@ class RGB(PikaStdLib.SysObj):
         pass
 
     def flow():
+        pass
+
+
+class KEY(TinyObj):
+    def init():
+        pass
+
+    def get() -> int:
         pass
 
 
