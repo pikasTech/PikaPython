@@ -59,3 +59,6 @@ void STM32_Code_flashHandler(void);
 /* handler for usart1 */
 void __PIKA_USART1_IRQHandler(char rx_char);
 #endif
+
+/* delay_us */
+void delay_us(uint32_t udelay);

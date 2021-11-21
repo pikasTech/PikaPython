@@ -74,6 +74,28 @@ int fputc(int ch, FILE* f) {
     return ch;
 }
 
+/* support delay_us */
+
+void delay_us(uint32_t udelay) {
+    uint32_t startval, tickn, delays, wait;
+
+    startval = SysTick->VAL;
+    tickn = HAL_GetTick();
+    delays = udelay * 64;  // delay 1us when delays = 64
+    if (delays > startval) {
+        while (HAL_GetTick() == tickn) {
+        }
+        wait = 64000 + startval - delays;
+        while (wait < SysTick->VAL) {
+        }
+    } else {
+        wait = startval - delays;
+        while (wait < SysTick->VAL && HAL_GetTick() == tickn) {
+        }
+    }
+}
+
+
 /* support pika Asm to flash */
 uint32_t globalWriteAddress = 0;
 uint32_t GetPage(uint32_t Addr) {
