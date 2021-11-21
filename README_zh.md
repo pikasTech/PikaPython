@@ -51,6 +51,8 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [Pika派开发板手把手单片机python编程03——固件启动方式](https://www.bilibili.com/video/BV1xY411x7Uf)
 
+[Pika派开发板手把手单片机python编程04——固件架构](https://www.bilibili.com/video/BV1wq4y1g7WB)
+
 ## 中级篇 - 面向驱动开发者
 
 [PikaScript中级 部署PikaScript RISC-V CH32V103R8](https://www.bilibili.com/video/BV1Cq4y1G7Tj)
