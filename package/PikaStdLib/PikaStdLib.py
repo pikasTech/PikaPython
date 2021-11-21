@@ -1,6 +1,6 @@
 from PikaObj import *
 
-class MemChecker(BaseObj):
+class MemChecker(TinyObj):
     def max():
         pass
 

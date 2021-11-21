@@ -7,15 +7,22 @@
 
 PikaObj * pikaScriptInit(){
     PikaObj * pikaMain = newRootObj("pikaMain", New_PikaMain);
-    obj_run(pikaMain, "print('hello wrold')");
-    obj_run(pikaMain, "uart.setName('com1')");
-    obj_run(pikaMain, "uart.send('My name is:')");
-    obj_run(pikaMain, "uart.printName()");
-    obj_run(pikaMain, "print('mem used max:')");
-    obj_run(pikaMain, "mem.max()");
-    obj_run(pikaMain, "print('mem used now:')");
-    obj_run(pikaMain, "mem.now()");
-    obj_run(pikaMain, "");
+    obj_run(pikaMain,
+            "\n"
+            "led = Device.LED()\n"
+            "uart = Device.Uart()\n"
+            "mem = PikaStdLib.MemChecker()\n"
+            "\n"
+            "print('hello wrold')\n"
+            "uart.setName('com1')\n"
+            "uart.send('My name is:')\n"
+            "uart.printName()\n"
+            "print('mem used max:')\n"
+            "mem.max()\n"
+            "print('mem used now:')\n"
+            "mem.now()\n"
+            "\n"
+            "\n");
     return pikaMain;
 }
 

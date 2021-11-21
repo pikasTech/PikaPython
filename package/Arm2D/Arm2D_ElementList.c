@@ -2,8 +2,8 @@
 #include "PikaVM.h"
 
 int32_t __foreach_ElementList_update(Arg* elem, Args* buffs) {
-    char* type = arg_getType(elem);
-    if (strIsStartWith(type, "_class")) {
+    ArgType type = arg_getType(elem);
+    if (TYPE_OBJECT == type) {
         PikaObj* elemObj = arg_getPtr(elem);
         obj_deinit(pikaVM_runAsm(elemObj, "0 RUN update\n"));
     }
@@ -11,5 +11,5 @@ int32_t __foreach_ElementList_update(Arg* elem, Args* buffs) {
 }
 
 void Arm2D_ElementList_update(PikaObj* self) {
-    args_foreach(self->attributeList, __foreach_ElementList_update, NULL);
+    args_foreach(self->list, __foreach_ElementList_update, NULL);
 }

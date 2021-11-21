@@ -26,3 +26,7 @@ PikaObj *New_PikaStdLib_MemChecker(Args *args){
     class_defineMethod(self, "resetMax()", PikaStdLib_MemChecker_resetMaxMethod);
     return self;
 }
+
+Arg *PikaStdLib_MemChecker(PikaObj *self){
+    return arg_setMetaObj("", "PikaStdLib_MemChecker", New_PikaStdLib_MemChecker);
+}

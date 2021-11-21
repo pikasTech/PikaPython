@@ -1,6 +1,6 @@
-from PikaObj import  *
+from PikaObj import *
 import Device
-import PikaStdLib 
+import PikaStdLib
 
 led = Device.LED()
 uart = Device.Uart()

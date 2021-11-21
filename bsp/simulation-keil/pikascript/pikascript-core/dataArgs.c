@@ -1,7 +1,29 @@
 /*
-  Author: lyon 
-  Tencent QQ: 645275593 
-*/
+ * This file is part of the PikaScript project.
+ * http://github.com/pikastech/pikascript
+ *
+ * MIT License
+ *
+ * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #include "dataArgs.h"
 #include <stdarg.h>
@@ -14,489 +36,359 @@
 #include "dataStrs.h"
 
 void args_deinit(Args* self) {
-  link_deinit(self);
+    link_deinit(self);
 }
 
 int32_t args_setFloat(Args* self, char* name, float argFloat) {
-  Arg* argNew = New_arg(NULL);
-  argNew = arg_setFloat(argNew, name, argFloat);
-  args_setArg(self, argNew);
-  return 0;
+    Arg* argNew = New_arg(NULL);
+    argNew = arg_setFloat(argNew, name, argFloat);
+    args_setArg(self, argNew);
+    return 0;
 }
 
 void* args_getPtr(Args* self, char* name) {
-  void* pointer = NULL;
-  Arg* arg = args_getArg(self, name);
-  if (NULL == arg) {
-    return NULL;
-  }
+    void* pointer = NULL;
+    Arg* arg = args_getArg(self, name);
+    if (NULL == arg) {
+        return NULL;
+    }
 
-  pointer = arg_getPtr(arg);
-  return pointer;
+    pointer = arg_getPtr(arg);
+    return pointer;
 }
 
 int32_t args_setPtr(Args* self, char* name, void* argPointer) {
-  int32_t errCode = 0;
-  Arg* argNew = New_arg(NULL);
-  argNew = arg_setPtr(argNew, name, "pointer", argPointer);
-  args_setArg(self, argNew);
-  return errCode;
+    int32_t errCode = 0;
+    Arg* argNew = New_arg(NULL);
+    argNew = arg_setPtr(argNew, name, TYPE_POINTER, argPointer);
+    args_setArg(self, argNew);
+    return errCode;
 }
 
 int32_t args_setStr(Args* self, char* name, char* strIn) {
-  int32_t errCode = 0;
-  Arg* argNew = New_arg(NULL);
-  argNew = arg_setStr(argNew, name, strIn);
-  args_setArg(self, argNew);
-  return errCode;
+    int32_t errCode = 0;
+    Arg* argNew = New_arg(NULL);
+    argNew = arg_setStr(argNew, name, strIn);
+    args_setArg(self, argNew);
+    return errCode;
 }
 
 void setArgDirect(Args* self, Arg* arg) {
-  link_addNode(self, arg);
+    link_addNode(self, arg);
 }
 
 char* args_getBuff(Args* self, int32_t size) {
-  Arg* argNew = New_arg(NULL);
-  argNew = arg_newContent(argNew, size + 1);
-  setArgDirect(self, argNew);
-  return (char*)arg_getContent(argNew);
+    Arg* argNew = New_arg(NULL);
+    argNew = arg_newContent(argNew, size + 1);
+    setArgDirect(self, argNew);
+    return (char*)arg_getContent(argNew);
 }
 
 char* args_getStr(Args* self, char* name) {
-  if (NULL == self) {
-    return NULL;
-  }
-  Arg* arg = args_getArg(self, name);
-  if (NULL == arg) {
-    return NULL;
-  }
-  if (NULL == arg_getContent(arg)) {
-    return NULL;
-  }
-  return (char*)arg_getContent(arg);
+    if (NULL == self) {
+        return NULL;
+    }
+    Arg* arg = args_getArg(self, name);
+    if (NULL == arg) {
+        return NULL;
+    }
+    if (NULL == arg_getContent(arg)) {
+        return NULL;
+    }
+    return (char*)arg_getContent(arg);
 }
 
 int32_t args_setInt(Args* self, char* name, int64_t int64In) {
-  Arg* argNew = New_arg(NULL);
-  argNew = arg_setInt(argNew, name, int64In);
-  args_setArg(self, argNew);
-  return 0;
+    Arg* argNew = New_arg(NULL);
+    argNew = arg_setInt(argNew, name, int64In);
+    args_setArg(self, argNew);
+    return 0;
 }
 
 int64_t args_getInt(Args* self, char* name) {
-  Arg* arg = args_getArg(self, name);
-  if (NULL == arg) {
-    return -999999999;
-  }
-  return arg_getInt(arg);
+    Arg* arg = args_getArg(self, name);
+    if (NULL == arg) {
+        return -999999999;
+    }
+    return arg_getInt(arg);
 }
 
 int32_t args_getSize(Args* self) {
-  return link_getSize(self);
+    return link_getSize(self);
 }
 
-char* args_getType(Args* self, char* name) {
-  Arg* arg = NULL;
-  arg = args_getArg(self, name);
-  if (NULL == arg) {
-    return NULL;
-  }
-  return arg_getType(arg);
+ArgType args_getType(Args* self, char* name) {
+    Arg* arg = NULL;
+    arg = args_getArg(self, name);
+    if (NULL == arg) {
+        return TYPE_NONE;
+    }
+    return arg_getType(arg);
 }
 
 float args_getFloat(Args* self, char* name) {
-  Arg* arg = args_getArg(self, name);
-  if (NULL == arg) {
-    return -999999999.0;
-  }
-  return arg_getFloat(arg);
+    Arg* arg = args_getArg(self, name);
+    if (NULL == arg) {
+        return -999999999.0;
+    }
+    return arg_getFloat(arg);
 }
 
 int32_t args_copyArg(Args* self, Arg* argToBeCopy) {
-  if (NULL == argToBeCopy) {
-    return 1;
-  }
-  Arg* argCopied = arg_copy(argToBeCopy);
-  args_setArg(self, argCopied);
+    if (NULL == argToBeCopy) {
+        return 1;
+    }
+    Arg* argCopied = arg_copy(argToBeCopy);
+    args_setArg(self, argCopied);
 
-  return 0;
+    return 0;
+}
+
+int32_t args_setStruct(Args* self,
+                       char* name,
+                       void* struct_ptr,
+                       uint32_t struct_size) {
+    if (NULL == struct_ptr) {
+        return 1;
+    }
+    Arg* struct_arg = arg_setContent(NULL, (uint8_t*)struct_ptr, struct_size);
+    struct_arg = arg_setName(struct_arg, name);
+    args_setArg(self, struct_arg);
+    return 0;
+}
+
+void* args_getStruct(Args* self, char* name, void* struct_out) {
+    Arg* struct_arg = args_getArg(self, name);
+    uint32_t struct_size = arg_getContentSize(struct_arg);
+    return memcpy(struct_out, arg_getContent(struct_arg), struct_size);
 }
 
 int32_t args_copyArgByName(Args* self, char* name, Args* directArgs) {
-  Arg* argToBeCopy = args_getArg(self, name);
-  args_copyArg(directArgs, argToBeCopy);
-  return 0;
+    Arg* argToBeCopy = args_getArg(self, name);
+    args_copyArg(directArgs, argToBeCopy);
+    return 0;
+}
+
+int32_t args_isArgExist_hash(Args* self, Hash nameHash) {
+    if (NULL != args_getArg_hash(self, nameHash)) {
+        return 1;
+    }
+    return 0;
 }
 
 int32_t args_isArgExist(Args* self, char* name) {
-  if (NULL == name) {
+    if (NULL != args_getArg(self, name)) {
+        return 1;
+    }
     return 0;
-  }
-  if (NULL != args_getArg(self, name)) {
-    return 1;
-  }
-  return 0;
 }
 
 int32_t updateArg(Args* self, Arg* argNew) {
-  LinkNode* nodeToUpdate = NULL;
-  LinkNode* nodeNow = self->firstNode;
-  LinkNode* priorNode = NULL;
-  char* name = arg_getName(argNew);
-  while (1) {
-    if (strEqu(content_getName(nodeNow), name)) {
-      nodeToUpdate = nodeNow;
-      break;
+    LinkNode* nodeToUpdate = NULL;
+    LinkNode* nodeNow = self->firstNode;
+    LinkNode* priorNode = NULL;
+    Hash nameHash = arg_getNameHash(argNew);
+    while (1) {
+        if (content_getNameHash(nodeNow) == nameHash) {
+            nodeToUpdate = nodeNow;
+            break;
+        }
+        if (content_getNext(nodeNow) == NULL) {
+            // error, node no found
+            goto exit;
+        }
+        priorNode = nodeNow;
+        nodeNow = content_getNext(nodeNow);
     }
-    if (content_getNext(nodeNow) == NULL) {
-      // error, node no found
-      goto exit;
+
+    nodeToUpdate = arg_setContent(nodeToUpdate, arg_getContent(argNew),
+                                  arg_getContentSize(argNew));
+
+    nodeToUpdate = arg_setType(nodeToUpdate, arg_getType(argNew));
+    // update privior link, because arg_getContent would free origin pointer
+    if (NULL == priorNode) {
+        self->firstNode = nodeToUpdate;
+        goto exit;
     }
-    priorNode = nodeNow;
-    nodeNow = content_getNext(nodeNow);
-  }
 
-  nodeToUpdate = arg_setContent(nodeToUpdate, arg_getContent(argNew),
-                                arg_getContentSize(argNew));
-
-  // update privior link, because arg_getContent would free origin pointer
-  if (NULL == priorNode) {
-    self->firstNode = nodeToUpdate;
+    content_setNext(priorNode, nodeToUpdate);
     goto exit;
-  }
-
-  content_setNext(priorNode, nodeToUpdate);
-  goto exit;
 exit:
-  arg_deinit(argNew);
-  return 0;
+    arg_deinit(argNew);
+    return 0;
 }
 
 int32_t args_setArg(Args* self, Arg* arg) {
-  char* name = arg_getName(arg);
-  if (!args_isArgExist(self, name)) {
-    setArgDirect(self, arg);
+    Hash nameHash = arg_getNameHash(arg);
+    if (!args_isArgExist_hash(self, nameHash)) {
+        setArgDirect(self, arg);
+        return 0;
+    }
+    updateArg(self, arg);
     return 0;
-  }
-  updateArg(self, arg);
-  return 0;
+}
+
+LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
+    LinkNode* nodeNow = self->firstNode;
+    if (NULL == nodeNow) {
+        return NULL;
+    }
+    while (1) {
+        Arg* arg = nodeNow;
+        Hash thisNameHash = arg_getNameHash(arg);
+        if (thisNameHash == nameHash) {
+            return nodeNow;
+        }
+        if (NULL == content_getNext(nodeNow)) {
+            return NULL;
+        }
+        nodeNow = content_getNext(nodeNow);
+    }
 }
 
 LinkNode* args_getNode(Args* self, char* name) {
-  LinkNode* nodeNow = self->firstNode;
-  if (NULL == nodeNow) {
-    return NULL;
-  }
-  while (1) {
-    Arg* arg = nodeNow;
-    char* thisName = arg_getName(arg);
-    if (strEqu(name, thisName)) {
-      return nodeNow;
+    return args_getNode_hash(self, hash_time33(name));
+}
+
+Arg* args_getArg_hash(Args* self, Hash nameHash) {
+    LinkNode* node = args_getNode_hash(self, nameHash);
+    if (NULL == node) {
+        return NULL;
     }
-    if (NULL == content_getNext(nodeNow)) {
-      return NULL;
-    }
-    nodeNow = content_getNext(nodeNow);
-  }
+    return node;
 }
 
 Arg* args_getArg(Args* self, char* name) {
-  LinkNode* node = args_getNode(self, name);
-  if (NULL == node) {
-    return NULL;
-  }
-  return node;
-}
-
-void args_bind(Args* self, char* type, char* name, void* pointer) {
-  Args* buffs = New_strBuff();
-  char* typeWithBind = strsAppend(buffs, "_bind-", type);
-  Arg* argNew = New_arg(NULL);
-  argNew = arg_setPtr(argNew, name, typeWithBind, pointer);
-  args_setArg(self, argNew);
-  args_deinit(buffs);
-  return;
-}
-
-void args_bindInt(Args* self, char* name, int32_t* intPtr) {
-  args_bind(self, "int", name, intPtr);
-}
-
-void args_bindFloat(Args* self, char* name, float* floatPtr) {
-  args_bind(self, "float", name, floatPtr);
-}
-
-void args_bindStr(Args* self, char* name, char** stringPtr) {
-  args_bind(self, "str", name, stringPtr);
+    LinkNode* node = args_getNode(self, name);
+    if (NULL == node) {
+        return NULL;
+    }
+    return node;
 }
 
 char* getPrintSring(Args* self, char* name, char* valString) {
-  Args* buffs = New_strBuff();
-  char* printName = strsFormat(buffs, 128, "[printBuff]%s", name);
-  char* printString = strsCopy(buffs, valString);
-  args_setStr(self, printName, printString);
-  char* res = args_getStr(self, printName);
-  args_deinit(buffs);
-  return res;
+    Args* buffs = New_strBuff();
+    char* printName = strsFormat(buffs, 128, "[printBuff]%s", name);
+    char* printString = strsCopy(buffs, valString);
+    args_setStr(self, printName, printString);
+    char* res = args_getStr(self, printName);
+    args_deinit(buffs);
+    return res;
 }
 
 char* getPrintStringFromInt(Args* self, char* name, int32_t val) {
-  Args* buffs = New_strBuff();
-  char* res = NULL;
-  char* valString = strsFormat(buffs, 32, "%d", val);
-  res = getPrintSring(self, name, valString);
-  args_deinit(buffs);
-  return res;
+    Args* buffs = New_strBuff();
+    char* res = NULL;
+    char* valString = strsFormat(buffs, 32, "%d", val);
+    res = getPrintSring(self, name, valString);
+    args_deinit(buffs);
+    return res;
 }
 
 char* getPrintStringFromFloat(Args* self, char* name, float val) {
-  Args* buffs = New_strBuff();
-  char* res = NULL;
-  char* valString = strsFormat(buffs, 32, "%f", val);
-  res = getPrintSring(self, name, valString);
-  args_deinit(buffs);
-  return res;
+    Args* buffs = New_strBuff();
+    char* res = NULL;
+    char* valString = strsFormat(buffs, 32, "%f", val);
+    res = getPrintSring(self, name, valString);
+    args_deinit(buffs);
+    return res;
 }
 
 char* getPrintStringFromPtr(Args* self, char* name, void* val) {
-  Args* buffs = New_strBuff();
-  char* res = NULL;
-  uint64_t intVal = (uint64_t)val;
-  char* valString = strsFormat(buffs, 32, "0x%llx", intVal);
-  res = getPrintSring(self, name, valString);
-  args_deinit(buffs);
-  return res;
+    Args* buffs = New_strBuff();
+    char* res = NULL;
+    uint64_t intVal = (uint64_t)val;
+    char* valString = strsFormat(buffs, 32, "0x%llx", intVal);
+    res = getPrintSring(self, name, valString);
+    args_deinit(buffs);
+    return res;
 }
 
 char* args_print(Args* self, char* name) {
-  char* res = NULL;
-  char* type = args_getType(self, name);
-  Args* buffs = New_strBuff();
-  if (NULL == type) {
-    /* can not get arg */
+    char* res = NULL;
+    ArgType type = args_getType(self, name);
+    Args* buffs = New_strBuff();
+    if (TYPE_NONE == type) {
+        /* can not get arg */
+        res = NULL;
+        goto exit;
+    }
+
+    if (type == TYPE_INT) {
+        int32_t val = args_getInt(self, name);
+        res = getPrintStringFromInt(self, name, val);
+        goto exit;
+    }
+
+    if (type == TYPE_FLOAT) {
+        float val = args_getFloat(self, name);
+        res = getPrintStringFromFloat(self, name, val);
+        goto exit;
+    }
+
+    if (type == TYPE_STRING) {
+        res = args_getStr(self, name);
+        goto exit;
+    }
+
+    if (type == TYPE_POINTER) {
+        void* val = args_getPtr(self, name);
+        res = getPrintStringFromPtr(self, name, val);
+        goto exit;
+    }
+
+    /* can not match type */
     res = NULL;
     goto exit;
-  }
-
-  if (strEqu(type, "int")) {
-    int32_t val = args_getInt(self, name);
-    res = getPrintStringFromInt(self, name, val);
-    goto exit;
-  }
-
-  if (strEqu(type, "float")) {
-    float val = args_getFloat(self, name);
-    res = getPrintStringFromFloat(self, name, val);
-    goto exit;
-  }
-
-  if (strEqu(type, "str")) {
-    res = args_getStr(self, name);
-    goto exit;
-  }
-
-  if (strEqu(type, "pointer")) {
-    void* val = args_getPtr(self, name);
-    res = getPrintStringFromPtr(self, name, val);
-    goto exit;
-  }
-
-  char* bindTypePrefix = strsCopy(self, "_bind-");
-  if (strIsStartWith(type, bindTypePrefix)) {
-    char* typeWithoutBind = strsRemovePrefix(buffs, type, bindTypePrefix);
-    if (strEqu(typeWithoutBind, "int")) {
-      int32_t* valPtr = args_getPtr(self, name);
-      int32_t val = *valPtr;
-      res = getPrintStringFromInt(self, name, val);
-      goto exit;
-    }
-    if (strEqu(typeWithoutBind, "float")) {
-      float* valPtr = args_getPtr(self, name);
-      float val = *valPtr;
-      res = getPrintStringFromFloat(self, name, val);
-      goto exit;
-    }
-    if (strEqu(typeWithoutBind, "str")) {
-      // the value of &string is equal to string it self
-      char* string = args_getPtr(self, name);
-      res = string;
-      goto exit;
-    }
-  }
-  /* can not match type */
-  res = NULL;
-  goto exit;
 
 exit:
-  args_deinit(buffs);
-  return res;
+    args_deinit(buffs);
+    return res;
 }
 
-uint8_t args_setLiteral(Args* self, char* targetArgName, char* literal) {
-  Args* buffs = New_strBuff();
-  literal = strsGetCleanCmd(buffs, literal);
-  uint8_t err = 0;
-  char* directStr = strsGetDirectStr(self, literal);
-  /* get direct Str ok */
-  if (NULL != directStr) {
-    /* direct string value */
-    args_setStr(self, targetArgName, directStr);
-    /* ok */
-    err = 0;
-    goto exit;
-  }
-  /* match bool */
-  if (strEqu(literal, "True")) {
-    args_setInt(self, targetArgName, 1);
-    err = 0;
-    goto exit;
-  }
-  if (strEqu(literal, "False")) {
-    args_setInt(self, targetArgName, 0);
-    err = 0;
-    goto exit;
-  }
-  /* match num */
-  if ((literal[0] >= '0') && (literal[0] <= '9')) {
-    /* match float num */
-    if (strIsContain(literal, '.')) {
-      args_setFloat(self, targetArgName, 0);
-      args_set(self, targetArgName, literal);
-      /* succeed */
-      err = 0;
-      goto exit;
-    }
-    /* match int num */
-    args_setInt(self, targetArgName, 0);
-    args_set(self, targetArgName, literal);
-    /* succeed */
-    err = 0;
-    goto exit;
-  }
-  err = 1;
-  goto exit;
-exit:
-  args_deinit(buffs);
-  return err;
-}
-
-int32_t args_set(Args* self, char* name, char* valStr) {
-  char* type = args_getType(self, name);
-  Args* buffs = New_strBuff();
-  int32_t err = 0;
-
-  if (NULL == type) {
-    /* do not get arg */
-    err = 1;
-    goto exit;
-  }
-
-  if (strEqu("int", type)) {
-    int32_t val = atoi(valStr);
-    args_setInt(self, name, val);
-    // operation succeed
-    err = 0;
-    goto exit;
-  }
-  if (strEqu("float", type)) {
-    float val = atof(valStr);
-    args_setFloat(self, name, val);
-    // operation succeed
-    err = 0;
-    goto exit;
-  }
-  if (strEqu("str", type)) {
-    args_setStr(self, name, valStr);
-    // operation succeed
-    err = 0;
-    goto exit;
-  }
-
-  char* bindTypePrefix = strsCopy(self, "_bind-");
-  if (strIsStartWith(type, bindTypePrefix)) {
-    char* typeWithoutBind = strsRemovePrefix(buffs, type, bindTypePrefix);
-    if (strEqu(typeWithoutBind, "int")) {
-      int32_t* valPtr = args_getPtr(self, name);
-      int32_t val = atoi(valStr);
-      *valPtr = val;
-      // operation succeed
-      err = 0;
-      goto exit;
-    }
-    if (strEqu(typeWithoutBind, "float")) {
-      float* valPtr = args_getPtr(self, name);
-      float val = atof(valStr);
-      *valPtr = val;
-      // operation succeed
-      err = 0;
-      goto exit;
-    }
-    if (strEqu(typeWithoutBind, "str")) {
-      char* stringBinded = args_getPtr(self, name);
-      /* size add 1 to copy the '\0' */
-      memcpy(stringBinded, valStr, strGetSize(valStr) + 1);
-      // operation succeed
-      err = 0;
-      goto exit;
-    }
-  }
-  /* type not match */
-  err = 2;
-  goto exit;
-exit:
-  args_deinit(buffs);
-  return err;
-}
-
-int32_t args_setPtrWithType(Args* self, char* name, char* type, void* objPtr) {
-  Arg* argNew = New_arg(NULL);
-  argNew = arg_setPtr(argNew, name, type, objPtr);
-  args_setArg(self, argNew);
-  return 0;
-}
-
-int32_t args_setObjectWithClass(Args* self,
-                                char* objName,
-                                char* className,
-                                void* objPtr) {
-  Args* buffs = New_strBuff();
-  char* typeWithClass = strsAppend(buffs, "_class-", className);
-  args_setPtrWithType(self, objName, typeWithClass, objPtr);
-  args_deinit(buffs);
-  return 0;
+int32_t args_setPtrWithType(Args* self,
+                            char* name,
+                            ArgType type,
+                            void* objPtr) {
+    Arg* argNew = New_arg(NULL);
+    argNew = arg_setPtr(argNew, name, type, objPtr);
+    args_setArg(self, argNew);
+    return 0;
 }
 
 int32_t args_foreach(Args* self,
                      int32_t (*eachHandle)(Arg* argEach, Args* handleArgs),
                      Args* handleArgs) {
-  LinkNode* nodeNow = self->firstNode;
-  while (1) {
-    Arg* argNow = nodeNow;
-    if (NULL == argNow) {
-      continue;
+    if (NULL == self->firstNode) {
+        return 0;
     }
-    LinkNode* nextNode = content_getNext(nodeNow);
-    eachHandle(argNow, handleArgs);
+    LinkNode* nodeNow = self->firstNode;
+    while (1) {
+        Arg* argNow = nodeNow;
+        if (NULL == argNow) {
+            continue;
+        }
+        LinkNode* nextNode = content_getNext(nodeNow);
+        eachHandle(argNow, handleArgs);
 
-    if (NULL == nextNode) {
-      break;
+        if (NULL == nextNode) {
+            break;
+        }
+        nodeNow = nextNode;
     }
-    nodeNow = nextNode;
-  }
-  return 0;
+    return 0;
 }
 
-int32_t args_removeArg(Args* self, char* name) {
-  Arg* argNow = args_getArg(self, name);
-  if (NULL == argNow) {
-    /* can not found arg */
-    return 1;
-  }
-  link_removeNode(self, argNow);
-  return 0;
+int32_t args_removeArg(Args* self, Arg* argNow) {
+    if (NULL == argNow) {
+        /* can not found arg */
+        return 1;
+    }
+    link_removeNode(self, argNow);
+    return 0;
 }
 
 Args* New_args(Args* args) {
-  Args* self = New_link(NULL);
-  return self;
+    Args* self = New_link(NULL);
+    return self;
 }

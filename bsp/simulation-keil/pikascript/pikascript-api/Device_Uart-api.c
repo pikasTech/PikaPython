@@ -28,3 +28,7 @@ PikaObj *New_Device_Uart(Args *args){
     class_defineMethod(self, "setName(name:str)", Device_Uart_setNameMethod);
     return self;
 }
+
+Arg *Device_Uart(PikaObj *self){
+    return arg_setMetaObj("", "Device_Uart", New_Device_Uart);
+}

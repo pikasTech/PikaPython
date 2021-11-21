@@ -91,7 +91,8 @@ Pool pool_init(uint32_t size, uint8_t aline) {
     pool.size = pool_aline(&pool, size);
     pool.bitmap = bitmap_init(block_size);
     pool.mem = __platformMalloc(pool_aline(&pool, pool.size));
-    pool.block_index_min_free = 0;
+    pool.first_free_block = 0;
+    pool.purl_free_block_start = 0;
     return pool;
 }
 
@@ -138,13 +139,22 @@ void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
 }
 
 void* pool_malloc(Pool* pool, uint32_t size) {
-    void* mem = NULL;
     uint32_t block_index_max = pool_getBlockIndex_byMemSize(pool, pool->size);
     uint32_t block_num_need = pool_getBlockIndex_byMemSize(pool, size);
     uint32_t block_num_found = 0;
     uint8_t found_first_free = 0;
-    for (uint32_t block_index = pool->block_index_min_free;
-         block_index < block_index_max; block_index++) {
+    uint32_t block_index;
+    if (__is_quick_malloc()) {
+        /* high speed malloc */
+        block_index = pool->purl_free_block_start + block_num_need - 1;
+        if (block_index < block_index_max) {
+            goto found;
+        }
+    }
+
+    /* low speed malloc */
+    for (block_index = pool->first_free_block;
+         block_index < pool->purl_free_block_start; block_index++) {
         /* 8 bit is not free */
         uint8_t bitmap_byte = bitmap_getByte(pool->bitmap, block_index);
         if (0xFF == bitmap_byte) {
@@ -156,7 +166,7 @@ void* pool_malloc(Pool* pool, uint32_t size) {
         if (0 == bitmap_get(pool->bitmap, block_index)) {
             /* save the first free */
             if (!found_first_free) {
-                pool->block_index_min_free = block_index;
+                pool->first_free_block = block_index;
                 found_first_free = 1;
             }
             block_num_found++;
@@ -166,16 +176,28 @@ void* pool_malloc(Pool* pool, uint32_t size) {
         }
         /* found all request blocks */
         if (block_num_found >= block_num_need) {
-            /* set 1 for found blocks */
-            for (uint32_t i = 0; i < block_num_need; i++) {
-                bitmap_set(pool->bitmap, block_index - i, 1);
-            }
-            /* return mem by block index */
-            return pool_getMem_byBlockIndex(pool,
-                                            block_index - block_num_need + 1);
+            goto found;
         }
     }
-    return mem;
+    /* malloc for purl free blocks */
+    block_index = pool->purl_free_block_start + block_num_need - 1;
+    if (block_index < block_index_max) {
+        goto found;
+    }
+
+    /* no found */
+    return NULL;
+found:
+    /* set 1 for found blocks */
+    for (uint32_t i = 0; i < block_num_need; i++) {
+        bitmap_set(pool->bitmap, block_index - i, 1);
+    }
+    /* save last used block */
+    if (block_index >= pool->purl_free_block_start) {
+        pool->purl_free_block_start = block_index + 1;
+    }
+    /* return mem by block index */
+    return pool_getMem_byBlockIndex(pool, block_index - block_num_need + 1);
 }
 
 void pool_free(Pool* pool, void* mem, uint32_t size) {
@@ -185,8 +207,23 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
         bitmap_set(pool->bitmap, block_index + i, 0);
     }
     /* save min free block index to add speed */
-    if (block_index < pool->block_index_min_free) {
-        pool->block_index_min_free = block_index;
+    if (block_index < pool->first_free_block) {
+        pool->first_free_block = block_index;
+    }
+    /* save last free block index to add speed */
+    uint32_t block_end = block_index + block_num - 1;
+    if (block_end == pool->purl_free_block_start - 1) {
+        uint32_t first_pure_free_block = block_index;
+        /* back to first used block */
+        if (0 != first_pure_free_block) {
+            while (0 == bitmap_get(pool->bitmap, first_pure_free_block - 1)) {
+                first_pure_free_block--;
+                if (0 == first_pure_free_block) {
+                    break;
+                }
+            }
+        }
+        pool->purl_free_block_start = first_pure_free_block;
     }
     return;
 }

@@ -4,9 +4,8 @@
 [![CI](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg)](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml)
 
 # 来颗Star求求了~ Star please~
-# 代码仓库：
-## 中文： GITEE https://gitee.com/Lyon1998/pikascript/
-## 英文： GITHUB https://github.com/pikasTech/pikascript/
+
+![QQ截图20211118133254](https://user-images.githubusercontent.com/88232613/142357922-faf6b13a-8dd7-4076-b88d-e1ac335dc79e.png)
 
 # 1.简介
 
@@ -39,6 +38,8 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 开发板基于STM32G030C8T6小资源MCU，仅64kB Flash，8kB RAM即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、RGB、KEY、LCD、RGB）。板载CH340 USB转串口芯片，Type-C接口，支持串口下载python脚本，板载4颗RGB灯，可选配[LCD屏幕](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102)。
 
 # 视频教程
+
+![image](https://user-images.githubusercontent.com/88232613/142173892-35e33f36-413c-4422-8470-b873b7c3bd71.png)
 
 ## 入门篇 - 面向单片机Python编程用户
 
@@ -76,7 +77,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [2. PikaScript-架构与原理](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
 
-[3. PikaScript-十分钟快速部署(更新不及时，请以视频部署教程为准)](document/2.十分钟快速部署.md)
+[3. PikaScript-十分钟快速部署](document/2.十分钟快速部署.md)
 
 [4. PikaScript-标准开发流程](document/3.PikaScript标准开发流程.md)
 

@@ -45,7 +45,8 @@ typedef struct {
     uint8_t* mem;
     uint8_t aline;
     uint32_t size;
-    uint32_t block_index_min_free;
+    uint32_t first_free_block;
+    uint32_t purl_free_block_start;
 } Pool;
 
 void pikaFree(void* mem, uint32_t size);

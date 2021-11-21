@@ -15,6 +15,7 @@ releases = [
   "v1.2.1 e29a77527fd753c4eb811b047899534472bfc8ec",
   "v1.2.2 5316ede928b01a20571103616a64666abbc40e0a",
   "v1.2.3 5ae86929851ff6a62342a7072b77e9cf5be85f1c",
+  "v1.2.4 b7ac057d75e88736cc844de0bafb447a48f2fb6d",
 ]
 
 [[packages]]
@@ -32,6 +33,7 @@ releases = [
   "v1.1.0 0b3b866dbacc363c7b6b3899faa0cbcaccd59d5e",
   "v1.2.0 ca29e112687525ee7511bd30418d368754627a00",
   "v1.2.1 5ae86929851ff6a62342a7072b77e9cf5be85f1c",
+  "v1.2.2 b7ac057d75e88736cc844de0bafb447a48f2fb6d",
 ]
 
 [[packages]]
@@ -74,6 +76,7 @@ releases = [
   "v1.0.2 8866710f653ad005f5c3edc5e6417ad31075b7d5",
   "v1.0.3 6c6e1b37c6c9f38fc4c7d567a30e212572a68a60",
   "v1.0.4 5ae86929851ff6a62342a7072b77e9cf5be85f1c",
+  "v1.0.5 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
 ]
 
 [[packages]]
@@ -81,6 +84,7 @@ name = "Arm2D"
 releases = [
   "v0.0.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
   "v0.1.0 1b0384c5b20e336645b24df808f98548912405b8",
+  "v0.2.0 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
 ]
 
 [[packages]]
@@ -97,6 +101,7 @@ releases = [
   "v1.1.1 8866710f653ad005f5c3edc5e6417ad31075b7d5",
   "v1.2.0 e29a77527fd753c4eb811b047899534472bfc8ec",
   "v1.2.1 5ae86929851ff6a62342a7072b77e9cf5be85f1c",
+  "v1.2.2 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
 ]
 
 [[packages]]
@@ -115,4 +120,10 @@ releases = [
 name = "CH32V103"
 releases = [
   "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
+]
+
+[[packages]]
+name = "Key_PikaPiZero"
+releases = [
+  "v1.0.0 e940d05657b9fc792405a2bc29d97b69ac9ed352",
 ]
