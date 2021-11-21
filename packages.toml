@@ -126,4 +126,5 @@ releases = [
 name = "Key_PikaPiZero"
 releases = [
   "v1.0.0 e940d05657b9fc792405a2bc29d97b69ac9ed352",
+  "v1.1.0 b5d3209cc2b90cb080d0dbb15f901b9cbee9397d",
 ]
