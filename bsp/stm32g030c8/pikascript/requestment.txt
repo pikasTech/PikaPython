@@ -1,6 +1,6 @@
 pikascript-core==v1.2.3
 PikaStdLib==v1.2.1
 PikaStdDevice==v1.4.2
-STM32==v2.0.1
-PikaPiZero==v1.0.4
-STM32G030Booter==v1.2.1
+PikaPiZero==v1.1.1
+STM32G030Booter==v1.2.3
+STM32G0==v1.0.2

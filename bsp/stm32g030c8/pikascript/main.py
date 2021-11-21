@@ -1,4 +1,4 @@
 from PikaObj import *
 import PikaStdLib
 import PikaPiZero
-import STM32
+import STM32G0
