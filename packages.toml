@@ -77,6 +77,7 @@ releases = [
   "v1.0.3 6c6e1b37c6c9f38fc4c7d567a30e212572a68a60",
   "v1.0.4 5ae86929851ff6a62342a7072b77e9cf5be85f1c",
   "v1.0.5 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
+  "v1.1.0 b5d3209cc2b90cb080d0dbb15f901b9cbee9397d",
 ]
 
 [[packages]]
@@ -120,11 +121,4 @@ releases = [
 name = "CH32V103"
 releases = [
   "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
-]
-
-[[packages]]
-name = "Key_PikaPiZero"
-releases = [
-  "v1.0.0 e940d05657b9fc792405a2bc29d97b69ac9ed352",
-  "v1.1.0 b5d3209cc2b90cb080d0dbb15f901b9cbee9397d",
 ]
