@@ -2,8 +2,9 @@
 #include <stdint.h>
 #include "BaseObj.h"
 #include "RGB_ASM.h"
-#include "STM32_common.h"
 #include "dataStrs.h"
+#include "stm32g030_pika_msp.h"
+#include "main.h"
 
 void RGB_reset() {
     GPIOB->BRR = GPIO_PIN_12;  // reset

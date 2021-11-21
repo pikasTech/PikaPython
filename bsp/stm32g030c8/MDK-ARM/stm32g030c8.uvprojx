@@ -190,7 +190,7 @@
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>1</useUlib>
+            <useUlib>0</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -329,7 +329,7 @@
             <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>3</v6Lang>
+            <v6Lang>6</v6Lang>
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
@@ -337,7 +337,7 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>-Wno-error=armcc-pragma-import -Wno-error=armcc-pragma-arm</MiscControls>
               <Define>USE_FULL_LL_DRIVER,STM32G030xx,USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
               <IncludePath>../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-core;..\pikascript\pikascript-api;..\pikascript\pikascript-lib\STM32;..\pikascript\pikascript-lib\STM32G030Booter;..\pikascript\pikascript-lib\PikaPiZero</IncludePath>
@@ -671,6 +671,26 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_cortex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32g0xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_spi_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_spi_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_dma_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -732,36 +752,6 @@
               <FilePath>..\pikascript\pikascript-api\PikaStdDevice_UART-api.c</FilePath>
             </File>
             <File>
-              <FileName>STM32_ADC-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_ADC-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_GPIO-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_GPIO-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_PWM-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_PWM-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_Time-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_Time-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_UART-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_UART-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32-api.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaPiZero_RGB-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaPiZero_RGB-api.c</FilePath>
@@ -772,19 +762,54 @@
               <FilePath>..\pikascript\pikascript-api\PikaPiZero-api.c</FilePath>
             </File>
             <File>
-              <FileName>STM32_IIC-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_IIC-api.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaPiZero_Point-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaPiZero_Point-api.c</FilePath>
             </File>
             <File>
-              <FileName>STM32_lowLevel-api.c</FileName>
+              <FileName>PikaPiZero_KEY-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_lowLevel-api.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api\PikaPiZero_KEY-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_ADC-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32G0_ADC-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_GPIO-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32G0_GPIO-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_IIC-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32G0_IIC-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_lowLevel-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32G0_lowLevel-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_PWM-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32G0_PWM-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_Time-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32G0_Time-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_UART-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32G0_UART-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32G0-api.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -810,36 +835,6 @@
               <FileName>RGB_ASM.lib</FileName>
               <FileType>4</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaPiZero\RGB_ASM.lib</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_ADC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_ADC.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_common.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_GPIO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_GPIO.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_PWM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_PWM.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_Time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_Time.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_UART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_UART.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdDeivce_GPIO.c</FileName>
@@ -872,9 +867,49 @@
               <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_UART.c</FilePath>
             </File>
             <File>
-              <FileName>STM32_IIC.c</FileName>
+              <FileName>STM32G0_ADC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_IIC.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\STM32G0_ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\STM32G0_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\STM32G0_GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_IIC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\STM32G0_IIC.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\STM32G0_PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_Time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\STM32G0_Time.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\STM32G0_UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCD_Driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\LCD_Driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPiZero_KEY.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\PikaPiZero_KEY.c</FilePath>
             </File>
           </Files>
         </Group>

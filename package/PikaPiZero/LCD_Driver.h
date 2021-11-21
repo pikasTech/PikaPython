@@ -1,7 +1,7 @@
 #ifndef __LCD_DRIVER__H
 #define __LCD_DRIVER__H
 
-#include "STM32_common.h"
+#include "stm32g030_pika_msp.h"
 
 #define ST7735_NOP 0x00
 #define ST7735_SWRESET 0x01

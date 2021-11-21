@@ -1,7 +1,7 @@
 #include "LCD_Driver.h"
 #include "LCD_Config.h"
-#include "STM32_common.h"
-
+#include "stm32g030_pika_msp.h"
+#include "main.h"
 /* config SPI mode, chocie one from three */
  #define SPI_SOFT
 // #define SPI_HARD
