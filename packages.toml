@@ -69,6 +69,12 @@ releases = [
 ]
 
 [[packages]]
+name = "STM32G0"
+releases = [
+  "v1.0.2 e51087c67c81434c35fe9baf806a76041653841a",
+]
+
+[[packages]]
 name = "PikaPiZero"
 releases = [
   "v1.0.0 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
