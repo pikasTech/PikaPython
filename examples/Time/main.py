@@ -1,7 +1,7 @@
 import PikaStdLib
-import STM32
+import STM32G0
 
-time = STM32.Time()
+time = STM32G0.Time()
 
 while True:
     time.sleep_ms(500)

@@ -1,8 +1,8 @@
 from PikaObj import *
 import PikaStdLib
 import PikaPiZero
-import STM32
-pin = STM32.GPIO()
+import STM32G0
+pin = STM32G0.GPIO()
 pin.init()
 pin.setPin('PA0')
 pin.setMode('in')
@@ -17,7 +17,7 @@ pin.enable()
 pin.setPin('PB6')
 pin.enable()
 remove('pin')
-ll = STM32.lowLevel()
+ll = STM32G0.lowLevel()
 oled = PikaPiZero.OLED()
 oled.init()
 snake = PikaPiZero.Point()
