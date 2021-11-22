@@ -819,3 +819,37 @@ TEST(parser, def_while_return_void) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, signed_num) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"a = -1\n";
+    printf("%s", lines);
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,(char *)
+    "B0\n"
+    "0 NUM -1\n"
+    "0 OUT a\n"
+    );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, comp_signed_num) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"if a > -1:\n";
+    printf("%s", lines);
+    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,(char *)
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM -1\n"
+        "0 OPT >\n"
+        "0 JEZ 1\n"
+    );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
