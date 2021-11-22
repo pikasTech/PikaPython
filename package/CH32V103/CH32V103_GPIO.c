@@ -127,7 +127,8 @@ void CH32V103_GPIO_platformLow(PikaObj *self){
 
     GPIO_WriteBit(GPIO_group, GPIO_pin, Bit_RESET);
 }
-void CH32V103_GPIO_platformSetMode(PikaObj *self, char * mode){
+void CH32V103_GPIO_platformSetMode(PikaObj *self){
+    char *mode = obj_getStr(self, "mode");
     char *pin = obj_getStr(self, "pin");
     GPIO_TypeDef *GPIO_group = get_GPIO_group(pin);
     uint16_t GPIO_pin = get_GPIO_pin(pin);

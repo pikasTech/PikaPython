@@ -46,7 +46,7 @@ int PikaStdDevice_GPIO_read(PikaObj *self){
 void PikaStdDevice_GPIO_setMode(PikaObj* self, char* mode) {
     if(strEqu(mode, "out")||strEqu(mode, "in")){
         obj_setStr(self, "mode", mode);
-        obj_run(self, "platformSetMode(mode)");
+        obj_run(self, "platformSetMode()");
     }else{
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] GPIO mode should be 'out' or 'in'.");
