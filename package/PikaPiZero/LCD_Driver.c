@@ -3,9 +3,9 @@
 #include "stm32g030_pika_msp.h"
 #include "main.h"
 /* config SPI mode, chocie one from three */
- #define SPI_SOFT
+// #define SPI_SOFT
 // #define SPI_HARD
-// #define SPI_DMA
+#define SPI_DMA
 
 SPI_HandleTypeDef hspi1;
 DMA_HandleTypeDef hdma_spi1_tx;
@@ -343,6 +343,7 @@ void LCD_DrawRegin(u16 x_start, u16 y_start, u16 x_end, u16 y_end, u16* pData) {
     LCD_CS_SET;
 }
 
+
 #define BUFF_SIZE (X_MAX_PIXEL)
 void LCD_Clear(u16 Color) {
     unsigned int i, m;
@@ -353,6 +354,18 @@ void LCD_Clear(u16 Color) {
     int m_max = Y_MAX_PIXEL;
     for (m = 0; m < m_max; m++) {
         LCD_DrawRegin(0, m, X_MAX_PIXEL, m + 1, data);
+    }
+}
+
+void LCD_Fill(u16 x0,u16 y0,u16 hight,u16 wight,u16 color){
+    unsigned int i, y;
+    u16 data[BUFF_SIZE];
+    for (i = 0; i < BUFF_SIZE; i++) {
+        data[i] = color;
+    }
+    int y_end = y0 + hight;
+    for (y = y0; y < y_end; y++) {
+        LCD_DrawRegin(x0, y, x0 + wight, y + 1, data);
     }
 }
 

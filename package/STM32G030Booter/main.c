@@ -87,7 +87,7 @@ int main(void) {
     
     /* init mem pool */
     #if use_mem_pool
-    pikaPool = pool_init(0x1400, 4);
+    pikaPool = pool_init(0x1800, 4);
     printf("[info]: pika memory poool init ok \r\n");
     #endif
 

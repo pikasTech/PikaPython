@@ -33,5 +33,16 @@ class KEY(TinyObj):
         pass
 
 
+class LCD(TinyObj):
+    def init():
+        pass
+
+    def clear(color: str):
+        pass
+
+    def fill(x0: int, y0: int, hight: int, wight: int, color: str):
+        pass
+
+
 class Point(TinyObj):
     pass

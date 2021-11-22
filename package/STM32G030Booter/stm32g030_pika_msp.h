@@ -1,7 +1,7 @@
 #ifndef __STM32G030_PIKA_PORT__H
 #define __STM32G030_PIKA_PORT__H
 
-#define use_mem_pool 1
+#define use_mem_pool 0
 
 #include <stdint.h>
 #include "pikaObj.h"
@@ -49,7 +49,7 @@ void HARDWARE_PRINTF_Init(void);
 #define FLASH_PIKA_ASM_START_ADDR FLASH_SCRIPT_START_ADDR
 #define FLASH_PIKA_ASM_END_ADDR FLASH_SCRIPT_END_ADDR
 
-#define RX_BUFF_LENGTH 32
+#define RX_BUFF_LENGTH 64
 
 /* support download python script by uart1 */
 uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize);
