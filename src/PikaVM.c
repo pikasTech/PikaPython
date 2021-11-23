@@ -97,7 +97,6 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
-
 Arg* pikaVM_runInstruct(PikaObj* self,
                         Parameters* locals,
                         Parameters* globals,
@@ -617,9 +616,7 @@ Parameters* pikaVM_runAsmWithPars(PikaObj* self,
 }
 
 Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
-    Parameters* globals = New_PikaObj();
-    globals = pikaVM_runAsmWithPars(self, globals, globals, pikaAsm);
-    return globals;
+    return pikaVM_runAsmWithPars(self, self, self, pikaAsm);
 }
 
 Parameters* pikaVM_run(PikaObj* self, char* multiLine) {

@@ -67,6 +67,6 @@ int32_t main()
         }
 
         /* deinit the res */
-        obj_deinit(globals);
+        // obj_deinit(globals);
     }
 }

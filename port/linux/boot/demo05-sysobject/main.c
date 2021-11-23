@@ -56,6 +56,6 @@ int main()
         printf(">>> ");
 
         /* deinit the res */
-        obj_deinit(globals);
+        // obj_deinit(globals);
     }
 }

@@ -26,7 +26,7 @@ TEST(pikaMain, new_mem) {
     PikaObj* memClassPtr = (PikaObj*)obj_getPtr(mem, (char*)"_clsptr");
     EXPECT_EQ((void*)memClassPtr, (void*)New_PikaStdLib_MemChecker);
     obj_deinit(pikaMain);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -56,7 +56,7 @@ TEST(pikaMain, list_new) {
     EXPECT_STREQ(a2, "eee");
 
     /* deinit */
-    obj_deinit(globals);
+    // obj_deinit(globals);
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -86,7 +86,7 @@ TEST(pikaMain, int_float_convert) {
     EXPECT_FLOAT_EQ(b_i, 1);
 
     /* deinit */
-    obj_deinit(globals);
+    // obj_deinit(globals);
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -96,7 +96,6 @@ TEST(pikaMain, type_) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
-    Parameters* globals =
         obj_runDirect(pikaMain, (char*)
         "type(1)\n"
         "b = 1.4\n"
@@ -107,7 +106,7 @@ TEST(pikaMain, type_) {
     /* assert */
 
     /* deinit */
-    obj_deinit(globals);
+    // obj_deinit(globals);
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }

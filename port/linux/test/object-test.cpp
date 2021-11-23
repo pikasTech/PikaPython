@@ -128,7 +128,7 @@ TEST(object_test, test6) {
     int32_t res = obj_getInt(globals, (char*)"res");
     EXPECT_EQ(3, res);
     obj_deinit(obj);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -180,7 +180,7 @@ TEST(object_test, printa) {
      );
     char* sysOut = obj_getSysOut(globals);
     ASSERT_STREQ(sysOut, "2");
-    obj_deinit(globals);
+    // obj_deinit(globals);
     obj_deinit(root);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -211,7 +211,7 @@ TEST(object_test, obj_run_while) {
     EXPECT_EQ(obj_getInt(globals, (char*)"a"), 0);
     EXPECT_EQ(obj_getInt(globals, (char*)"b"), 1);
     obj_deinit(root);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 

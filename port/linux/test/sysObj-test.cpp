@@ -13,7 +13,7 @@ TEST(sysObj, print) {
     printf("sysout = %s\r\n", sysOut);
     ASSERT_STREQ((char*)"hello world", sysOut);
     ASSERT_EQ(0, errCode);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     obj_deinit(obj);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -26,7 +26,7 @@ TEST(sysObj, noMethod) {
     printf("sysout = %s\r\n", sysOut);
     ASSERT_EQ(1, strEqu((char*)"[error] runner: method no found.", sysOut));
     ASSERT_EQ(2, errCode);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     obj_deinit(obj);
     EXPECT_EQ(pikaMemNow(), 0);
 }
