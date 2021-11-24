@@ -17,10 +17,9 @@ TEST(VM, num1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+    pikaVM_runAsm(self, pikaAsm);
     obj_deinit(self);
     args_deinit(buffs);
-    obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -30,11 +29,10 @@ TEST(VM, a_1) {
     char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
-    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
-    ASSERT_EQ(args_getInt(globals->list, (char*)"a"), 1);
+    pikaVM_runAsm(self, pikaAsm);
+    ASSERT_EQ(args_getInt(self->list, (char*)"a"), 1);
 
     obj_deinit(self);
-    obj_deinit(globals);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -49,7 +47,7 @@ TEST(VM, a_1d1) {
     ASSERT_FLOAT_EQ(args_getFloat(globals->list, (char*)"a"), 1.1);
 
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -65,7 +63,7 @@ TEST(VM, str_xy) {
     ASSERT_STREQ(args_getStr(globals->list, (char*)"a"), (char*)"xy");
 
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -82,7 +80,7 @@ TEST(VM, str_xy_space) {
 
     obj_deinit(self);
     args_deinit(buffs);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -99,7 +97,7 @@ TEST(VM, ref_a_b) {
     args_deinit(buffs);
     ASSERT_STREQ(args_getStr(globals->list, (char*)"b"), (char*)"xy ");
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -114,7 +112,7 @@ TEST(VM, Run_add) {
     int a = args_getInt(globals->list, (char*)"a");
     ASSERT_EQ(a, 3);
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -132,7 +130,7 @@ TEST(VM, Run_add_multy) {
     int a = args_getInt(globals->list, (char*)"a");
     ASSERT_EQ(a, 3);
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -148,7 +146,7 @@ TEST(VM, Run_add_1_2_3) {
     int a = args_getInt(globals->list, (char*)"a");
     ASSERT_EQ(a, 6);
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -164,14 +162,14 @@ TEST(VM, JEZ) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    Parameters* globals = New_TinyObj(NULL);
+    Parameters* globals = self;
     lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     __clearInvokeQueues(globals);
     obj_deinit(self);
     args_deinit(sysRes);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(lineAddr, 26);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -187,13 +185,13 @@ TEST(VM, JMP) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    Parameters* globals = New_TinyObj(NULL);
+    Parameters* globals = self;
     lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     __clearInvokeQueues(globals);
     obj_deinit(self);
     args_deinit(sysRes);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(lineAddr, 14);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -210,14 +208,14 @@ TEST(VM, JMP_back1) {
     Args* sysRes = New_args(NULL);
     args_setErrorCode(sysRes, 0);
     args_setSysOut(sysRes, (char*)"");
-    Parameters* globals = New_TinyObj(NULL);
+    Parameters* globals = self;
     lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
     __clearInvokeQueues(globals);
     obj_deinit(self);
     args_deinit(sysRes);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(lineAddr, 0);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -241,7 +239,7 @@ TEST(VM, WHILE) {
     Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     EXPECT_EQ(args_getInt(globals->list, (char*)"a"), 0);
     EXPECT_EQ(args_getInt(globals->list, (char*)"b"), 1);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     args_deinit(buffs);
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -257,7 +255,7 @@ TEST(VM, a_1_1) {
 
     int res = args_getInt(globals->list, (char*)"a");
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     args_deinit(buffs);
     ASSERT_EQ(res, 2);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -273,7 +271,7 @@ TEST(VM, a_1_1d1) {
 
     float res = args_getFloat(globals->list, (char*)"a");
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     args_deinit(buffs);
     ASSERT_FLOAT_EQ(res, 2.1);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -290,7 +288,7 @@ TEST(VM, a_jjcc) {
     float res = args_getFloat(globals->list, (char*)"a");
     obj_deinit(self);
     args_deinit(buffs);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     ASSERT_FLOAT_EQ(res, 5.8);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -311,7 +309,7 @@ TEST(VM, while_a_1to10) {
     int res = args_getInt(globals->list, (char*)"a");
     obj_deinit(self);
     args_deinit(buffs);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     ASSERT_FLOAT_EQ(res, 10);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -333,7 +331,7 @@ TEST(VM, mem_x) {
     int res = obj_getInt(globals, (char*)"mem.x");
     EXPECT_EQ(2, res);
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -353,11 +351,11 @@ TEST(VM, DEF_instruct) {
     "0 RET\n"
     "B0\n";
     PikaObj* self = New_TinyObj(NULL);
-    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+    pikaVM_runAsm(self, pikaAsm);
     char* methodPtr = (char*)obj_getPtr(self, (char*)"test");
     EXPECT_STREQ(methodCode, methodPtr);
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -375,7 +373,7 @@ TEST(VM, RET_instruct) {
     int num = arg_getInt(returnArg);
     EXPECT_EQ(num, 13);
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -395,7 +393,7 @@ TEST(VM, RUN_DEF) {
     int num = obj_getInt(globals, (char*)"a");
     EXPECT_EQ(num, 1);
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -414,13 +412,13 @@ TEST(VM, RUN_global) {
     "0 RUN test\n"
     "0 OUT b\n";
     PikaObj* self = New_TinyObj(NULL);
-    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
-    int a = obj_getInt(globals, (char*)"a");
-    int b = obj_getInt(globals, (char*)"b");
+    pikaVM_runAsm(self, pikaAsm);
+    int a = obj_getInt(self, (char*)"a");
+    int b = obj_getInt(self, (char*)"b");
     EXPECT_EQ(a, 1);
     EXPECT_EQ(b, 1);
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -452,7 +450,7 @@ TEST(VM, RUN_local_b) {
     EXPECT_EQ(b, -999999999);
     EXPECT_EQ(c, 2);
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -482,7 +480,7 @@ TEST(VM, RUN_DEF_add) {
     EXPECT_EQ(b, -999999999);
     EXPECT_EQ(c, 3);
     obj_deinit(self);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -501,7 +499,7 @@ TEST(VM, run_def_add) {
     int c = args_getInt(globals->list, (char*)"c");
     obj_deinit(self);
     args_deinit(buffs);
-    obj_deinit(globals);
+    // obj_deinit(globals);
     ASSERT_FLOAT_EQ(c, 4);
     EXPECT_EQ(pikaMemNow(), 0);
 }

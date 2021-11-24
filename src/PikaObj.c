@@ -542,13 +542,13 @@ exit:
 
 void obj_runNoRes(PikaObj* slef, char* cmd) {
     /* unsafe, nothing would happend when error occord */
-    obj_deinit(obj_runDirect(slef, cmd));
+    obj_runDirect(slef, cmd);
 }
 
 void obj_run(PikaObj* self, char* cmd) {
     /* safe, stop when error occord and error info would be print32_t */
-    Parameters* globals = obj_runDirect(self, cmd);
-    obj_deinit(globals);
+    obj_runDirect(self, cmd);
+    // obj_deinit(globals);
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {
