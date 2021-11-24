@@ -1,3 +1,4 @@
+#include "PikaStdLib_MemChecker.h"
 #include "BaseObj.h"
 #include "dataStrs.h"
 
@@ -11,4 +12,12 @@ void PikaStdLib_MemChecker_now(PikaObj* self) {
 
 void PikaStdLib_MemChecker_resetMax(PikaObj* self) {
     pikaMemMaxReset();
+}
+
+float PikaStdLib_MemChecker_getMax(PikaObj* self) {
+    return pikaMemMax() / 1024.0;
+}
+
+float PikaStdLib_MemChecker_getNow(PikaObj* self) {
+    return pikaMemNow() / 1024.0;
 }

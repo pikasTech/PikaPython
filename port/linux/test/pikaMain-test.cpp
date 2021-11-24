@@ -124,7 +124,6 @@ TEST(pikaMain, a_signed) {
     EXPECT_EQ(-1, a);
 
     /* deinit */
-    // obj_deinit(globals);
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
