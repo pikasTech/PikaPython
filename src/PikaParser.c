@@ -116,13 +116,13 @@ static enum StmtType matchStmtType(char* right) {
     Args* buffs = New_strBuff();
     enum StmtType stmtType = NONE;
     char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
-    if (strIsContain(rightWithoutSubStmt, '+') ||
-        strIsContain(rightWithoutSubStmt, '-') ||
-        strIsContain(rightWithoutSubStmt, '*') ||
-        strIsContain(rightWithoutSubStmt, '<') ||
-        strIsContain(rightWithoutSubStmt, '>') ||
-        checkIsEqu(rightWithoutSubStmt) ||
-        strIsContain(rightWithoutSubStmt, '/')) {
+    if (strIsContain(rightWithoutSubStmt + 1, '+') ||
+        strIsContain(rightWithoutSubStmt + 1, '-') ||
+        strIsContain(rightWithoutSubStmt + 1, '*') ||
+        strIsContain(rightWithoutSubStmt + 1, '<') ||
+        strIsContain(rightWithoutSubStmt + 1, '>') ||
+        checkIsEqu(rightWithoutSubStmt + 1) ||
+        strIsContain(rightWithoutSubStmt + 1, '/')) {
         stmtType = OPERATOR;
         goto exit;
     }
@@ -136,7 +136,8 @@ static enum StmtType matchStmtType(char* right) {
         stmtType = STR;
         goto exit;
     }
-    if (rightWithoutSubStmt[0] >= '0' && rightWithoutSubStmt[0] <= '9') {
+    if ((rightWithoutSubStmt[0] >= '0' && rightWithoutSubStmt[0] <= '9') ||
+        (rightWithoutSubStmt[0] == '-')) {
         stmtType = NUM;
         goto exit;
     }

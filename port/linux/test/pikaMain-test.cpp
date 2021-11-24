@@ -96,7 +96,7 @@ TEST(pikaMain, type_) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
-        obj_runDirect(pikaMain, (char*)
+    obj_runDirect(pikaMain, (char*)
         "type(1)\n"
         "b = 1.4\n"
         "type(b)\n"
@@ -104,6 +104,24 @@ TEST(pikaMain, type_) {
     /* collect */
 
     /* assert */
+
+    /* deinit */
+    // obj_deinit(globals);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, a_signed) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_runDirect(pikaMain, (char*)"a = -1\n");
+    /* collect */
+    int a = obj_getInt(pikaMain, (char*)"a");
+
+    /* assert */
+    EXPECT_EQ(-1, a);
 
     /* deinit */
     // obj_deinit(globals);
