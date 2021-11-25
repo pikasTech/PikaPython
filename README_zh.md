@@ -89,6 +89,8 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [6. Arm-2D GUI引擎和pikascript联合仿真](document/6.用Python玩ARM%202D，认真的嘛.md)
 
+[7. Pika派开发板Python编程游玩指南](document/7.Pika派开发板游玩指南，到手的开发板玩起来！.md)
+
 ## 文件目录
 [src](../../tree/master/src) - 内核源码
 
