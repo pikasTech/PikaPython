@@ -91,6 +91,8 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [7. Pika派开发板Python编程游玩指南](document/7.Pika派开发板游玩指南，到手的开发板玩起来！.md)
 
+[8. 沁恒RISC-V MCU CH32V103 PikaScript驱动开发实战](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484488&idx=1&sn=e810b86226353ab661656e2a274f21a2&chksm=fdebd321ca9c5a3755527fdf8e9563330b0781b01023fac467943f5fc347734ece51fd65dcfd&token=1711715181&lang=zh_CN#rd)
+
 ## 文件目录
 [src](../../tree/master/src) - 内核源码
 
