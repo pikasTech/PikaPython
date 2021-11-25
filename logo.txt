@@ -6,7 +6,7 @@
  |  / ____// / / ,<  / /_/ /  ___/ // /__ / /   / / / /_/ // /_   |
  | /_/    /_/ /_/|_| \__,_/  /____/ \___//_/   /_/ / .___/ \__/   |
  |                                                /_/             |
- |	 | PikaScript - An Ultra Lightweight Python Engine |      |
+ |	   PikaScript - An Ultra Lightweight Python Engine        |
  |                                                                |
  |           [ https://github.com/pikastech/pikascript ]          |
  |           [  https://gitee.com/lyon1998/pikascript  ]          |
