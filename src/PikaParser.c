@@ -170,6 +170,55 @@ uint8_t checkIsDirect(char* str) {
     return 0;
 }
 
+char* Lexer_setOperator(Args* outBuffs, char* tokens, char* operator) {
+    Args* buffs = New_strBuff();
+    char token_type_buff[3] = {0};
+    token_type_buff[0] = ' ';
+    token_type_buff[1] = TOKEN_operator;
+    tokens = strsAppend(buffs, tokens, token_type_buff);
+    tokens = strsAppend(buffs, tokens, operator);
+    tokens = strsCopy(outBuffs, tokens);
+    args_deinit(buffs);
+    return tokens;
+}
+
+/* tokens is devided by space */
+/* a token is [TOKENTYPE|(CONTENT)] */
+char* Lexer_getTokens(Args* outBuffs, char* stmt) {
+    Args* buffs = New_strBuff();
+    char* tokens = strsCopy(buffs, "");
+    uint32_t size = strGetSize(stmt);
+    uint8_t c0 = 0;
+    uint8_t c1 = 0;
+    uint8_t c2 = 0;
+    uint8_t c3 = 0;
+    for (int i = 0; i < size; i++) {
+        /* update char */
+        c0 = stmt[i];
+        if (i + 1 < size) {
+            c1 = stmt[i + 1];
+        }
+        if (i + 2 < size) {
+            c2 = stmt[i + 2];
+        }
+        if (i + 3 < size) {
+            c3 = stmt[i + 3];
+        }
+
+        /* not */
+        if ('n' == c0) {
+            if (('o' == c1) && ('t' == c2) && (' ' == c3)) {
+                tokens = Lexer_setOperator(buffs, tokens, "not");
+                i = i + 3;
+                continue;
+            }
+        }
+    }
+    tokens = strsCopy(outBuffs, tokens);
+    args_deinit(buffs);
+    return tokens;
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args* buffs = New_strBuff();
     char* assignment = strsGetFirstToken(buffs, stmt, '(');
