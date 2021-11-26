@@ -326,9 +326,6 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "<");
             continue;
         }
-
-        
-
         // /
         if ('/' == c0) {
             // //=
@@ -372,6 +369,26 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
                 i = i + 1;
                 continue;
             }
+        }
+        // &
+        if ('&' == c0){
+            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "&");
+            continue;
+        }
+        // |
+        if ('|' == c0){
+            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "|");
+            continue;
+        }
+        // ^
+        if ('^' == c0){
+            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "^");
+            continue;
+        }
+        // ~
+        if ('~' == c0){
+            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "~");
+            continue;
         }
         /* not */
         if ('n' == c0) {

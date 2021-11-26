@@ -885,12 +885,13 @@ TEST(lexser, operator_all) {
                    "% %= = == !="
                    "> >= >>"
                    "< <= <<"
+                   "&|^~"
                     );
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(printTokens, "[opt]not[opt]or[opt]and[opt]+[opt]+=[opt]-[opt]-=[opt]*[opt]**[opt]*=[opt]**=[opt]/[opt]//[opt]/=[opt]//=[opt]%[opt]%=[opt]=[opt]==[opt]!=[opt]>[opt]>=[opt]>>[opt]<[opt]<=[opt]<<");
+    EXPECT_STREQ(printTokens, "[opt]not[opt]or[opt]and[opt]+[opt]+=[opt]-[opt]-=[opt]*[opt]**[opt]*=[opt]**=[opt]/[opt]//[opt]/=[opt]//=[opt]%[opt]%=[opt]=[opt]==[opt]!=[opt]>[opt]>=[opt]>>[opt]<[opt]<=[opt]<<[opt]&[opt]|[opt]^[opt]~");
 
     /* deinit */
     args_deinit(buffs);
