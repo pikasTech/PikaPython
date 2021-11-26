@@ -861,6 +861,7 @@ TEST(lexser, operator_not) {
 
     /* run */
     char* tokens = Lexer_getTokens(buffs, (char*)"not not not ");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
 
     /* deinit */
     args_deinit(buffs);

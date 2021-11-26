@@ -37,5 +37,6 @@ int32_t AST_deinit(AST* ast);
 char* AST_toPikaAsm(AST* ast, Args* buffs);
 char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine);
 char* Lexer_getTokens(Args* outBuffs, char* stmt);
+char* Lexer_printTokens(Args* outBuffs, char* tokens);
 
 #endif

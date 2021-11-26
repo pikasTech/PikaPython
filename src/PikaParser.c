@@ -170,6 +170,27 @@ uint8_t checkIsDirect(char* str) {
     return 0;
 }
 
+char* Lexer_printTokens(Args* outBuffs, char* tokens) {
+    /* init */
+    Args* buffs = New_strBuff();
+    char* printOut = strsCopy(buffs, "");
+
+    /* process */
+    uint16_t tokenSize = strCountSign(tokens, ' ') + 1;
+    char* tokensBuff = strsCopy(buffs, tokens);
+    for (int i = 0; i < tokenSize; i++) {
+        char* token = strsPopToken(buffs, tokens, ' ');
+        if (token[0] == TOKEN_operator) {
+            printOut = strsAppend(buffs, printOut, "<opt>");
+            printOut = strsAppend(buffs, printOut, token + 1);
+        }
+    }
+    /* out put */
+    printOut = strsCopy(outBuffs, printOut);
+    args_deinit(buffs);
+    return printOut;
+}
+
 char* Lexer_setOperator(Args* outBuffs, char* tokens, char* operator) {
     Args* buffs = New_strBuff();
     char token_type_buff[3] = {0};
