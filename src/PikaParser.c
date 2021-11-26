@@ -72,13 +72,22 @@ char* strsPopTokenWithSkip(Args* buffs,
     return strOut;
 }
 
+enum TokenType {
+    TOKEN_strEnd = 0,
+    TOKEN_symbol,
+    TOKEN_keyWorld,
+    TOKEN_operator,
+    TOKEN_brancket,
+    TOKEN_literal,
+};
+
 enum StmtType {
-    REF,
-    STR,
-    NUM,
-    METHOD,
-    OPERATOR,
-    NONE,
+    STMT_reference,
+    STMT_string,
+    STMT_number,
+    STMT_method,
+    STMT_operator,
+    STMT_none,
 };
 
 char* strs_deleteBetween(Args* buffs, char* strIn, char begin, char end) {
@@ -114,7 +123,7 @@ uint8_t checkIsEqu(char* str) {
 
 static enum StmtType matchStmtType(char* right) {
     Args* buffs = New_strBuff();
-    enum StmtType stmtType = NONE;
+    enum StmtType stmtType = STMT_none;
     char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
     if (strIsContain(rightWithoutSubStmt + 1, '+') ||
         strIsContain(rightWithoutSubStmt + 1, '-') ||
@@ -123,26 +132,26 @@ static enum StmtType matchStmtType(char* right) {
         strIsContain(rightWithoutSubStmt + 1, '>') ||
         checkIsEqu(rightWithoutSubStmt + 1) ||
         strIsContain(rightWithoutSubStmt + 1, '/')) {
-        stmtType = OPERATOR;
+        stmtType = STMT_operator;
         goto exit;
     }
     if (strIsContain(rightWithoutSubStmt, '(') ||
         strIsContain(rightWithoutSubStmt, ')')) {
-        stmtType = METHOD;
+        stmtType = STMT_method;
         goto exit;
     }
     if (strIsContain(rightWithoutSubStmt, '\'') ||
         strIsContain(rightWithoutSubStmt, '\"')) {
-        stmtType = STR;
+        stmtType = STMT_string;
         goto exit;
     }
     if ((rightWithoutSubStmt[0] >= '0' && rightWithoutSubStmt[0] <= '9') ||
         (rightWithoutSubStmt[0] == '-')) {
-        stmtType = NUM;
+        stmtType = STMT_number;
         goto exit;
     }
     if (!strEqu(rightWithoutSubStmt, "")) {
-        stmtType = REF;
+        stmtType = STMT_reference;
         goto exit;
     }
 exit:
@@ -187,7 +196,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     enum StmtType stmtType = matchStmtType(right);
     /* solve method stmt */
-    if (OPERATOR == stmtType) {
+    if (STMT_operator == stmtType) {
         char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
         char operator[2] = {0};
         if (strIsContain(rightWithoutSubStmt, '*')) {
@@ -226,7 +235,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         AST_parseStmt(queueObj_getCurrentObj(ast), subStmt2);
         goto exit;
     }
-    if (METHOD == stmtType) {
+    if (STMT_method == stmtType) {
         method = strsGetFirstToken(buffs, right, '(');
         obj_setStr(ast, (char*)"method", method);
         char* subStmts = strsCut(buffs, stmt, '(', ')');
@@ -242,13 +251,13 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         goto exit;
     }
     /* solve reference stmt */
-    if (REF == stmtType) {
+    if (STMT_reference == stmtType) {
         ref = right;
         obj_setStr(ast, (char*)"ref", ref);
         goto exit;
     }
     /* solve str stmt */
-    if (STR == stmtType) {
+    if (STMT_string == stmtType) {
         str = right;
         str = strsDeleteChar(buffs, str, '\'');
         str = strsDeleteChar(buffs, str, '\"');
@@ -256,7 +265,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         goto exit;
     }
     /* solve number stmt */
-    if (NUM == stmtType) {
+    if (STMT_number == stmtType) {
         num = right;
         obj_setStr(ast, (char*)"num", num);
         goto exit;

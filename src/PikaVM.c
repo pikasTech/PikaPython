@@ -43,7 +43,7 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
-enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ, OPT, DEF, RET };
+enum Instruct { NON, STMT_reference, RUN, STMT_string, OUT, STMT_number, JMP, JEZ, OPT, DEF, RET };
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
@@ -60,11 +60,11 @@ static enum Instruct getInstruct(char* line) {
     }
     if (0 == strncmp(line + 2, "REF", 3)) {
         /* reference */
-        return REF;
+        return STMT_reference;
     }
     if (0 == strncmp(line + 2, "NUM", 3)) {
         /* number */
-        return NUM;
+        return STMT_number;
     }
     if (0 == strncmp(line + 2, "RUN", 3)) {
         /* run */
@@ -72,7 +72,7 @@ static enum Instruct getInstruct(char* line) {
     }
     if (0 == strncmp(line + 2, "STR", 3)) {
         /* string */
-        return STR;
+        return STMT_string;
     }
     if (0 == strncmp(line + 2, "OUT", 3)) {
         /* out */
@@ -106,14 +106,14 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                         Queue* invokeQuene1,
                         int32_t* jmp,
                         char* programConter) {
-    if (instruct == NUM) {
+    if (instruct == STMT_number) {
         Arg* numArg = New_arg(NULL);
         if (strIsContain(data, '.')) {
             return arg_setFloat(numArg, "", atof(data));
         }
         return arg_setInt(numArg, "", fast_atoi(data));
     }
-    if (instruct == STR) {
+    if (instruct == STMT_string) {
         Arg* strArg = New_arg(NULL);
         return arg_setStr(strArg, "", data);
     }
@@ -123,7 +123,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         arg_deinit(outArg);
         return NULL;
     }
-    if (instruct == REF) {
+    if (instruct == STMT_reference) {
         if (strEqu(data, (char*)"True")) {
             return arg_setInt(NULL, "", 1);
         }
