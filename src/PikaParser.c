@@ -75,7 +75,7 @@ char* strsPopTokenWithSkip(Args* buffs,
 enum TokenType {
     TOKEN_strEnd = 0,
     TOKEN_symbol,
-    TOKEN_keyWorld,
+    TOKEN_keyword,
     TOKEN_operator,
     TOKEN_brancket,
     TOKEN_literal,
