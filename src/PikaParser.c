@@ -297,6 +297,28 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "*");
             continue;
         }
+        if ('/' == c0) {
+            // //=
+            if (('/' == c1) && ('=' == c2)) {
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "//=");
+                i = i + 3;
+                continue;
+            }
+            // /=
+            if ('=' == c1) {
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "/=");
+                i = i + 2;
+                continue;
+            }
+            if ('/' == c1) {
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "//");
+                i = i + 2;
+                continue;
+            }
+            // /
+            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "/");
+            continue;
+        }
     }
     tokens = strsCopy(outBuffs, tokens);
     args_deinit(buffs);
