@@ -181,7 +181,15 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
     for (int i = 0; i < tokenSize; i++) {
         char* token = strsPopToken(buffs, tokens, ' ');
         if (token[0] == TOKEN_operator) {
-            printOut = strsAppend(buffs, printOut, "[opt]");
+            printOut = strsAppend(buffs, printOut, "{opt}");
+            printOut = strsAppend(buffs, printOut, token + 1);
+        }
+        if (token[0] == TOKEN_brancket) {
+            printOut = strsAppend(buffs, printOut, "{bkt}");
+            printOut = strsAppend(buffs, printOut, token + 1);
+        }
+        if (token[0] == TOKEN_symbol) {
+            printOut = strsAppend(buffs, printOut, "{sym}");
             printOut = strsAppend(buffs, printOut, token + 1);
         }
     }
@@ -207,6 +215,22 @@ char* Lexer_setToken(Args* outBuffs,
     return tokens;
 }
 
+char* Lexer_setSymbel(Args* outBuffs,
+                      char* tokens,
+                      char* stmt,
+                      uint32_t i,
+                      int* symbol_start_index) {
+    if (i == *symbol_start_index) {
+        *symbol_start_index = -1;
+        return tokens;
+    }
+    char* symbol_buff = args_getBuff(outBuffs, i - *symbol_start_index);
+    memcpy(symbol_buff, stmt + *symbol_start_index, i - *symbol_start_index);
+    tokens = Lexer_setToken(outBuffs, tokens, TOKEN_symbol, symbol_buff);
+    *symbol_start_index = -1;
+    return tokens;
+}
+
 /* tokens is devided by space */
 /* a token is [TOKENTYPE|(CONTENT)] */
 char* Lexer_getTokens(Args* outBuffs, char* stmt) {
@@ -217,6 +241,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     uint8_t c1 = 0;
     uint8_t c2 = 0;
     uint8_t c3 = 0;
+    int symbol_start_index = -1;
     for (int i = 0; i < size; i++) {
         /* update char */
         c0 = stmt[i];
@@ -229,8 +254,13 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         if (i + 3 < size) {
             c3 = stmt[i + 3];
         }
+        if (-1 == symbol_start_index) {
+            symbol_start_index = i;
+        }
         /* match brancket*/
-        if (('(' == c0) || (')' == c0) || ('{' == c0) || ('}' == c0)) {
+        if (('(' == c0) || (')' == c0)) {
+            tokens =
+                Lexer_setSymbel(buffs, tokens, stmt, i, &symbol_start_index);
             char content[2] = {0};
             content[0] = c0;
             tokens = Lexer_setToken(buffs, tokens, TOKEN_brancket, content);
@@ -241,6 +271,8 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             ('+' == c0) || ('-' == c0) || ('!' == c0) || ('=' == c0) ||
             ('%' == c0) || ('&' == c0) || ('|' == c0) || ('^' == c0) ||
             ('~' == c0)) {
+            tokens =
+                Lexer_setSymbel(buffs, tokens, stmt, i, &symbol_start_index);
             if (('*' == c0) || ('/' == c0)) {
                 /*
                      //=, **=
@@ -294,6 +326,8 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         }
         /* not */
         if ('n' == c0) {
+            tokens =
+                Lexer_setSymbel(buffs, tokens, stmt, i, &symbol_start_index);
             if (('o' == c1) && ('t' == c2) && (' ' == c3)) {
                 tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "not");
                 i = i + 3;
@@ -302,6 +336,8 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         }
         /* and */
         if ('a' == c0) {
+            tokens =
+                Lexer_setSymbel(buffs, tokens, stmt, i, &symbol_start_index);
             if (('n' == c1) && ('d' == c2) && (' ' == c3)) {
                 tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "and");
                 i = i + 3;
@@ -310,11 +346,17 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         }
         /* or */
         if ('o' == c0) {
+            tokens =
+                Lexer_setSymbel(buffs, tokens, stmt, i, &symbol_start_index);
             if (('r' == c1) && (' ' == c2)) {
                 tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "or");
                 i = i + 2;
                 continue;
             }
+        }
+        /* skip spaces */
+        if (' ' == c0) {
+            symbol_start_index++;
         }
     }
     tokens = strsCopy(outBuffs, tokens);
