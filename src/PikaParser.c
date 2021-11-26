@@ -371,22 +371,22 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             }
         }
         // &
-        if ('&' == c0){
+        if ('&' == c0) {
             tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "&");
             continue;
         }
         // |
-        if ('|' == c0){
+        if ('|' == c0) {
             tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "|");
             continue;
         }
         // ^
-        if ('^' == c0){
+        if ('^' == c0) {
             tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "^");
             continue;
         }
         // ~
-        if ('~' == c0){
+        if ('~' == c0) {
             tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "~");
             continue;
         }
