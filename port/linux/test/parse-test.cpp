@@ -862,9 +862,35 @@ TEST(lexser, operator_not) {
     /* run */
     char* tokens = Lexer_getTokens(buffs, (char*)"not not not ");
     char* printTokens = Lexer_printTokens(buffs, tokens);
-    
+
     /* assert */
-    EXPECT_STREQ(printTokens, "<opt>not<opt>not<opt>not");
+    EXPECT_STREQ(printTokens, "[opt]not[opt]not[opt]not");
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lexser, operator_all) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_getTokens(buffs, (char*)
+                   "not or and "
+                   "+ += - -="
+                   "* ** *= **="
+                   "/ // /= //="
+                   "% %= = == !="
+                   "> >= >>"
+                   "< <= <<"
+                    );
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf((char*)"%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(printTokens, "[opt]not[opt]or[opt]and[opt]+[opt]+=[opt]-[opt]-=[opt]*[opt]**[opt]*=[opt]**=[opt]/[opt]//[opt]/=[opt]//=[opt]%[opt]%=[opt]=[opt]==[opt]!=[opt]>[opt]>=[opt]>>[opt]<[opt]<=[opt]<<");
 
     /* deinit */
     args_deinit(buffs);
