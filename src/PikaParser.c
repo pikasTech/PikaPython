@@ -229,165 +229,67 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         if (i + 3 < size) {
             c3 = stmt[i + 3];
         }
-        // +
-        if ('+' == c0) {
-            /* += */
-            if ('=' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "+=");
-                i = i + 1;
-                continue;
-            }
-            /* + */
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "+");
+        /* match brancket*/
+        if (('(' == c0) || (')' == c0) || ('{' == c0) || ('}' == c0)) {
+            char content[2] = {0};
+            content[0] = c0;
+            tokens = Lexer_setToken(buffs, tokens, TOKEN_brancket, content);
             continue;
         }
-        // -
-        if ('-' == c0) {
-            /* -= */
-            if ('=' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "-=");
-                i = i + 1;
-                continue;
+        /* match operator */
+        if (('>' == c0) || ('<' == c0) || ('*' == c0) || ('/' == c0) ||
+            ('+' == c0) || ('-' == c0) || ('!' == c0) || ('=' == c0) ||
+            ('%' == c0) || ('&' == c0) || ('|' == c0) || ('^' == c0) ||
+            ('~' == c0)) {
+            if (('*' == c0) || ('/' == c0)) {
+                /*
+                     //=, **=
+                */
+                if ((c0 == c1) && ('=' == c2)) {
+                    char content[4] = {0};
+                    content[0] = c0;
+                    content[1] = c1;
+                    content[2] = '=';
+                    tokens =
+                        Lexer_setToken(buffs, tokens, TOKEN_operator, content);
+                    i = i + 2;
+                    continue;
+                }
             }
-            /* - */
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "-");
-            continue;
-        }
-        // *
-        if ('*' == c0) {
-            // **=
-            if (('*' == c1) && ('=' == c2)) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "**=");
-                i = i + 2;
-                continue;
+            /*
+                >>, <<, **, //
+            */
+            if (('>' == c0) || ('<' == c0) || ('*' == c0) || ('/' == c0)) {
+                if (c0 == c1) {
+                    char content[3] = {0};
+                    content[0] = c0;
+                    content[1] = c1;
+                    tokens =
+                        Lexer_setToken(buffs, tokens, TOKEN_operator, content);
+                    i = i + 1;
+                    continue;
+                }
             }
-            // *=
-            if ('=' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "*=");
-                i = i + 1;
-                continue;
+            /*
+                >=, <=, *=, /=, +=, -=, !=, ==, %=
+            */
+            if (('>' == c0) || ('<' == c0) || ('*' == c0) || ('/' == c0) ||
+                ('+' == c0) || ('-' == c0) || ('!' == c0) || ('=' == c0) ||
+                ('%' == c0)) {
+                if ('=' == c1) {
+                    char content[3] = {0};
+                    content[0] = c0;
+                    content[1] = c1;
+                    tokens =
+                        Lexer_setToken(buffs, tokens, TOKEN_operator, content);
+                    i = i + 1;
+                    continue;
+                }
             }
-            if ('*' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "**");
-                i = i + 1;
-                continue;
-            }
-            // *
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "*");
-            continue;
-        }
-        // =
-        if ('=' == c0) {
-            /* == */
-            if ('=' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "==");
-                i = i + 1;
-                continue;
-            }
-            /* = */
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "=");
-            continue;
-        }
-
-        // >
-        if ('>' == c0) {
-            // >=
-            if ('=' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, ">=");
-                i = i + 1;
-                continue;
-            }
-            // >>
-            if ('>' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, ">>");
-                i = i + 1;
-                continue;
-            }
-            // >
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, ">");
-            continue;
-        }
-
-        // <
-        if ('<' == c0) {
-            // <=
-            if ('=' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "<=");
-                i = i + 1;
-                continue;
-            }
-            // <<
-            if ('<' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "<<");
-                i = i + 1;
-                continue;
-            }
-            // <
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "<");
-            continue;
-        }
-        // /
-        if ('/' == c0) {
-            // //=
-            if (('/' == c1) && ('=' == c2)) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "//=");
-                i = i + 2;
-                continue;
-            }
-            // /=
-            if ('=' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "/=");
-                i = i + 1;
-                continue;
-            }
-            if ('/' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "//");
-                i = i + 1;
-                continue;
-            }
-            // /
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "/");
-            continue;
-        }
-        // %
-        if ('%' == c0) {
-            /* %= */
-            if ('=' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "%=");
-                i = i + 1;
-                continue;
-            }
-            /* % */
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "%");
-            continue;
-        }
-        // !=
-        if ('!' == c0) {
-            /* != */
-            if ('=' == c1) {
-                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "!=");
-                i = i + 1;
-                continue;
-            }
-        }
-        // &
-        if ('&' == c0) {
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "&");
-            continue;
-        }
-        // |
-        if ('|' == c0) {
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "|");
-            continue;
-        }
-        // ^
-        if ('^' == c0) {
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "^");
-            continue;
-        }
-        // ~
-        if ('~' == c0) {
-            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "~");
+            /* single */
+            char content[2] = {0};
+            content[0] = c0;
+            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, content);
             continue;
         }
         /* not */
