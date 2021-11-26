@@ -191,11 +191,15 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
     return printOut;
 }
 
-char* Lexer_setOperator(Args* outBuffs, char* tokens, char* operator) {
+char* Lexer_setToken(Args* outBuffs,
+                     char* tokens,
+                     enum TokenType token_type,
+                     char*
+                     operator) {
     Args* buffs = New_strBuff();
     char token_type_buff[3] = {0};
     token_type_buff[0] = ' ';
-    token_type_buff[1] = TOKEN_operator;
+    token_type_buff[1] = token_type;
     tokens = strsAppend(buffs, tokens, token_type_buff);
     tokens = strsAppend(buffs, tokens, operator);
     tokens = strsCopy(outBuffs, tokens);
@@ -225,14 +229,73 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         if (i + 3 < size) {
             c3 = stmt[i + 3];
         }
-
         /* not */
         if ('n' == c0) {
             if (('o' == c1) && ('t' == c2) && (' ' == c3)) {
-                tokens = Lexer_setOperator(buffs, tokens, "not");
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "not");
                 i = i + 3;
                 continue;
             }
+        }
+        /* and */
+        if ('a' == c0) {
+            if (('n' == c1) && ('d' == c2) && (' ' == c3)) {
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "and");
+                i = i + 3;
+                continue;
+            }
+        }
+        /* or */
+        if ('o' == c0) {
+            if (('r' == c1) && (' ' == c2)) {
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "or");
+                i = i + 2;
+                continue;
+            }
+        }
+        if ('+' == c0) {
+            /* += */
+            if ('=' == c1) {
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "+=");
+                i = i + 2;
+                continue;
+            }
+            /* + */
+            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "+");
+            continue;
+        }
+        if ('-' == c0) {
+            /* -= */
+            if ('=' == c1) {
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "-=");
+                i = i + 2;
+                continue;
+            }
+            /* - */
+            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "-");
+            continue;
+        }
+        if ('*' == c0) {
+            // **=
+            if (('*' == c1) && ('=' == c2)) {
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "**=");
+                i = i + 3;
+                continue;
+            }
+            // *=
+            if ('=' == c1) {
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "*=");
+                i = i + 2;
+                continue;
+            }
+            if ('*' == c1) {
+                tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "**");
+                i = i + 2;
+                continue;
+            }
+            // *
+            tokens = Lexer_setToken(buffs, tokens, TOKEN_operator, "*");
+            continue;
         }
     }
     tokens = strsCopy(outBuffs, tokens);
