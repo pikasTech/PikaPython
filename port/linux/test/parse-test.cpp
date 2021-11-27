@@ -1033,3 +1033,23 @@ TEST(lexser, num_1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(lexser, jjcc) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_getTokens(buffs, (char*)"a = (1 + 1.1) * 3 - 2 /4.0");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf((char*)"%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(printTokens,
+                 "{sym}a{opt}={dvd}({lit}1{opt}+{lit}1.1{dvd}){opt}*{lit}3{opt}"
+                 "-{lit}2{opt}/{lit}4.0");
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

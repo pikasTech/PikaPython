@@ -480,6 +480,58 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     return tokens;
 }
 
+uint8_t Lexer_isContain(char* tokens, char* operator) {
+    Args* buffs = New_strBuff();
+    char* tokens_buff = strsCopy(buffs, tokens);
+    uint8_t res = 0;
+    uint16_t token_size = strCountSign(tokens, 0x1F) + 1;
+    for (int i = 0; i < token_size; i++) {
+        char* token = strsPopToken(buffs, tokens_buff, 0x1F);
+        if (TOKEN_operator == token[0]) {
+            if (strEqu(token + 1, operator)) {
+                res = 1;
+                goto exit;
+            }
+        }
+    }
+exit:
+    args_deinit(buffs);
+    return res;
+}
+
+char* Lexer_getOperator(Args* outBuffs, char* stmt) {
+    Args* buffs = New_strBuff();
+    char* tokens = Lexer_getTokens(buffs, stmt);
+    uint16_t token_size = strCountSign(tokens, 0x1F) + 1;
+    char* operator= NULL;
+    if (Lexer_isContain(tokens, "*")) {
+        operator= strsCopy(buffs, "*");
+    }
+    if (Lexer_isContain(tokens, "/")) {
+        operator= strsCopy(buffs, "/");
+    }
+    if (Lexer_isContain(tokens, "+")) {
+        operator= strsCopy(buffs, "+");
+    }
+    if (Lexer_isContain(tokens, "-")) {
+        operator= strsCopy(buffs, "-");
+    }
+    if (Lexer_isContain(tokens, "<")) {
+        operator= strsCopy(buffs, "<");
+    }
+    if (Lexer_isContain(tokens, ">")) {
+        operator= strsCopy(buffs, ">");
+    }
+    if (Lexer_isContain(tokens, "==")) {
+        operator= strsCopy(buffs, "==");
+    }
+exit:
+    /* out put */
+    operator= strsCopy(outBuffs, operator);
+    args_deinit(buffs);
+    return operator;
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args* buffs = New_strBuff();
     char* assignment = strsGetFirstToken(buffs, stmt, '(');
@@ -508,29 +560,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     /* solve method stmt */
     if (STMT_operator == stmtType) {
         char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
-        char operator[2] = {0};
-        if (strIsContain(rightWithoutSubStmt, '*')) {
-            operator[0] = '*';
-        }
-        if (strIsContain(rightWithoutSubStmt, '/')) {
-            operator[0] = '/';
-        }
-        if (strIsContain(rightWithoutSubStmt, '+')) {
-            operator[0] = '+';
-        }
-        if (strIsContain(rightWithoutSubStmt, '-')) {
-            operator[0] = '-';
-        }
-        if (strIsContain(rightWithoutSubStmt, '<')) {
-            operator[0] = '<';
-        }
-        if (strIsContain(rightWithoutSubStmt, '>')) {
-            operator[0] = '>';
-        }
-        if (checkIsEqu(rightWithoutSubStmt)) {
-            operator[0] = '=';
-            operator[1] = '=';
-        }
+        char* operator= Lexer_getOperator(buffs, rightWithoutSubStmt);
         obj_setStr(ast, (char*)"operator", operator);
         char* rightBuff = strsCopy(buffs, right);
         char* subStmt1 =

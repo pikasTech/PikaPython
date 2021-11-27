@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=VM*"
+                // "--gtest_filter=VM.a_jjcc"
                 // "--gtest_filter=queue*"
                 // "--gtest_filter=parser*"
                 // "--gtest_filter=args*",
