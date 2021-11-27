@@ -33,11 +33,12 @@
 #include "dataStack.h"
 #include "dataStrs.h"
 
-char* strsPopTokenWithSkip(Args* buffs,
-                           char* stmts,
-                           char sign,
-                           char skipStart,
-                           char skipEnd) {
+char* strsPopTokenWithSkip_byStr(Args* buffs,
+                                 char* stmts,
+                                 char* str,
+                                 char skipStart,
+                                 char skipEnd) {
+    int32_t str_size = strGetSize(str);
     int32_t size = strGetSize(stmts);
     if (0 == size) {
         return NULL;
@@ -54,7 +55,7 @@ char* strsPopTokenWithSkip(Args* buffs,
             parentheseDeepth--;
         }
         if (parentheseDeepth == 0) {
-            if (sign == stmts[i]) {
+            if (0 == strncmp(stmts + i, str, str_size)) {
                 stmtEnd = i;
                 isGetSign = 1;
                 break;
@@ -67,9 +68,20 @@ char* strsPopTokenWithSkip(Args* buffs,
     for (int32_t i = 0; i < stmtEnd; i++) {
         strOut[i] = stmts[i];
     }
-    memmove(stmts, stmts + stmtEnd + 1, size);
+    memmove(stmts, stmts + stmtEnd + str_size, size);
     strOut[stmtEnd] = 0;
     return strOut;
+}
+
+char* strsPopTokenWithSkip(Args* buffs,
+                           char* stmts,
+                           char sign,
+                           char skipStart,
+                           char skipEnd) {
+    char str_buff[2] = {0};
+    str_buff[0] = sign;
+    return strsPopTokenWithSkip_byStr(buffs, stmts, str_buff, skipStart,
+                                      skipEnd);
 }
 
 enum TokenType {
@@ -90,7 +102,7 @@ enum StmtType {
     STMT_none,
 };
 
-char* strs_deleteBetween(Args* buffs, char* strIn, char begin, char end) {
+char* strsDeleteBetween(Args* buffs, char* strIn, char begin, char end) {
     int32_t size = strGetSize(strIn);
     char* strOut = args_getBuff(buffs, size);
     uint8_t deepth = 0;
@@ -111,20 +123,10 @@ char* strs_deleteBetween(Args* buffs, char* strIn, char begin, char end) {
     return strOut;
 }
 
-uint8_t checkIsEqu(char* str) {
-    uint32_t size = strGetSize(str) + 1;
-    for (int i = 0; i + 1 < size; i++) {
-        if (str[i] == '=' && str[i + 1] == '=') {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-static enum StmtType matchStmtType(char* right) {
+static enum StmtType Parser_matchStmtType(char* right) {
     Args* buffs = New_strBuff();
     enum StmtType stmtType = STMT_none;
-    char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
+    char* rightWithoutSubStmt = strsDeleteBetween(buffs, right, '(', ')');
     char* tokens = Lexer_getTokens(buffs, rightWithoutSubStmt);
     uint16_t token_size = strCountSign(tokens, 0x1F);
     uint8_t is_get_operator = 0;
@@ -182,7 +184,7 @@ exit:
     return stmtType;
 }
 
-uint8_t checkIsDirect(char* str) {
+uint8_t Parser_checkIsDirect(char* str) {
     /* include '0' */
     uint32_t size = strGetSize(str) + 1;
     for (int i = 1; i + 1 < size; i++) {
@@ -502,7 +504,6 @@ exit:
 char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args* buffs = New_strBuff();
     char* tokens = Lexer_getTokens(buffs, stmt);
-    uint16_t token_size = strCountSign(tokens, 0x1F) + 1;
     char* operator= NULL;
     if (Lexer_isContain(tokens, "*")) {
         operator= strsCopy(buffs, "*");
@@ -525,7 +526,6 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     if (Lexer_isContain(tokens, "==")) {
         operator= strsCopy(buffs, "==");
     }
-exit:
     /* out put */
     operator= strsCopy(outBuffs, operator);
     args_deinit(buffs);
@@ -543,7 +543,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* right = NULL;
     /* solve direct */
     uint8_t directExist = 0;
-    if (checkIsDirect(assignment)) {
+    if (Parser_checkIsDirect(assignment)) {
         directExist = 1;
     }
     if (directExist) {
@@ -556,19 +556,16 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     } else {
         right = stmt;
     }
-    enum StmtType stmtType = matchStmtType(right);
+    enum StmtType stmtType = Parser_matchStmtType(right);
     /* solve method stmt */
     if (STMT_operator == stmtType) {
-        char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
+        char* rightWithoutSubStmt = strsDeleteBetween(buffs, right, '(', ')');
         char* operator= Lexer_getOperator(buffs, rightWithoutSubStmt);
         obj_setStr(ast, (char*)"operator", operator);
         char* rightBuff = strsCopy(buffs, right);
         char* subStmt1 =
-            strsPopTokenWithSkip(buffs, rightBuff, operator[0], '(', ')');
+            strsPopTokenWithSkip_byStr(buffs, rightBuff, operator, '(', ')');
         char* subStmt2 = rightBuff;
-        if (operator[1] == '=') {
-            subStmt2 = rightBuff + 1;
-        }
         queueObj_pushObj(ast, (char*)"stmt");
         AST_parseStmt(queueObj_getCurrentObj(ast), subStmt1);
         queueObj_pushObj(ast, (char*)"stmt");
@@ -615,7 +612,7 @@ exit:
     return ast;
 }
 
-static int32_t getPyLineBlockDeepth(char* line) {
+static int32_t Parser_getPyLineBlockDeepth(char* line) {
     uint32_t size = strGetSize(line);
     for (int i = 0; i < size; i++) {
         if (line[i] != ' ') {
@@ -630,11 +627,11 @@ static int32_t getPyLineBlockDeepth(char* line) {
     return 0;
 }
 
-AST* pikaParseLine(char* line, Stack* blockStack) {
+AST* AST_parseLine(char* line, Stack* blockStack) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
     line = strsDeleteChar(buffs, line, '\r');
-    uint8_t blockDeepth = getPyLineBlockDeepth(line);
+    uint8_t blockDeepth = Parser_getPyLineBlockDeepth(line);
     uint8_t blockDeepthLast = blockDeepth;
     if (NULL != blockStack) {
         blockDeepthLast = args_getInt(blockStack, "top");
@@ -695,17 +692,17 @@ exit:
     return ast;
 }
 
-char* pikaParseLineToAsm(Args* buffs, char* line, Stack* blockStack) {
-    AST* ast = pikaParseLine(line, blockStack);
+char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack) {
+    AST* ast = AST_parseLine(line, blockStack);
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     AST_deinit(ast);
     return pikaAsm;
 }
 
-static Arg* saveSingleAsm(Args* buffs,
-                          Arg* pikaAsmBuff,
-                          char* singleAsm,
-                          uint8_t isToFlash) {
+static Arg* ASM_saveSingleAsm(Args* buffs,
+                              Arg* pikaAsmBuff,
+                              char* singleAsm,
+                              uint8_t isToFlash) {
     if (isToFlash) {
         uint8_t saveErr = __platformSavePikaAsm(singleAsm);
         if (0 == saveErr) {
@@ -723,14 +720,16 @@ static Arg* saveSingleAsm(Args* buffs,
     return pikaAsmBuff;
 }
 
-static char* getOutAsm(Args* outBuffs, Arg* pikaAsmBuff, uint8_t isToFlash) {
+static char* ASM_getOutAsm(Args* outBuffs,
+                           Arg* pikaAsmBuff,
+                           uint8_t isToFlash) {
     if (isToFlash) {
         return __platformLoadPikaAsm();
     }
     return strsCopy(outBuffs, arg_getStr(pikaAsmBuff));
 }
 
-char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
+char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
     Stack* blockStack = New_Stack();
     Arg* pikaAsmBuff = arg_setStr(NULL, "", "");
     uint32_t lineOffset = 0;
@@ -742,9 +741,9 @@ char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
             strsGetFirstToken(singleRunBuffs, multiLine + lineOffset, '\n');
         uint32_t lineSize = strGetSize(line);
         lineOffset = lineOffset + lineSize + 1;
-        char* singleAsm = pikaParseLineToAsm(singleRunBuffs, line, blockStack);
-        pikaAsmBuff =
-            saveSingleAsm(singleRunBuffs, pikaAsmBuff, singleAsm, isToFlash);
+        char* singleAsm = Parser_LineToAsm(singleRunBuffs, line, blockStack);
+        pikaAsmBuff = ASM_saveSingleAsm(singleRunBuffs, pikaAsmBuff, singleAsm,
+                                        isToFlash);
         args_deinit(singleRunBuffs);
         if (lineOffset >= multiLineSize) {
             break;
@@ -753,7 +752,7 @@ char* pikaParseMultiLineToAsm(Args* outBuffs, char* multiLine) {
     if (isToFlash) {
         __platformSavePikaAsmEOF();
     }
-    char* outAsm = getOutAsm(outBuffs, pikaAsmBuff, isToFlash);
+    char* outAsm = ASM_getOutAsm(outBuffs, pikaAsmBuff, isToFlash);
     if (NULL != pikaAsmBuff) {
         arg_deinit(pikaAsmBuff);
     }
@@ -812,10 +811,10 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     return pikaAsm;
 }
 
-static char* addBlockDeepth(AST* ast,
-                            Args* buffs,
-                            char* pikaAsm,
-                            uint8_t deepthOffset) {
+static char* ASM_addBlockDeepth(AST* ast,
+                                Args* buffs,
+                                char* pikaAsm,
+                                uint8_t deepthOffset) {
     pikaAsm = strsAppend(buffs, pikaAsm, (char*)"B");
     char buff[11];
     pikaAsm = strsAppend(
@@ -839,7 +838,7 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
             }
             /* goto the while start when exit while block */
             if (strEqu(blockType, "while")) {
-                pikaAsm = addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
+                pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
             }
             /* return when exit method */
@@ -848,7 +847,7 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
             }
         }
     }
-    pikaAsm = addBlockDeepth(ast, buffs, pikaAsm, 0);
+    pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 0);
     obj_setInt(ast, "deepth", 0);
 
     /* parse ast to asm main process */

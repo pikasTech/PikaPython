@@ -1053,3 +1053,12 @@ TEST(lexser, jjcc) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, pop_by_str) {
+    Args* buffs = New_strBuff();
+    char* tokens = strsCopy(buffs, (char*)"3(>=)2>=29");
+    char* token1 =
+        strsPopTokenWithSkip_byStr(buffs, tokens, (char*)">=", '(', ')');
+    char* token2 = tokens;
+    args_deinit(buffs);
+}

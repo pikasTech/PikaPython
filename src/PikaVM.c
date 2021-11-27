@@ -621,7 +621,7 @@ Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
 
 Parameters* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, multiLine);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, multiLine);
     Parameters* globals = pikaVM_runAsm(self, pikaAsm);
     if (NULL != buffs) {
         args_deinit(buffs);
