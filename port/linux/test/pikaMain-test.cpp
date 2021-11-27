@@ -127,3 +127,21 @@ TEST(pikaMain, a_signed) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+
+TEST(pikaMain, a_mm) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_runDirect(pikaMain, (char*)"a = -1.1 ** 3\n");
+    /* collect */
+    float a = obj_getFloat(pikaMain, (char*)"a");
+
+    /* assert */
+    EXPECT_FLOAT_EQ(-1.331, a);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

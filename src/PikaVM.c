@@ -256,6 +256,18 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                 outArg, "", (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
             goto OPT_exit;
         }
+        if (strEqu("%", data)) {
+            outArg = arg_setInt(outArg, "", num1_i % num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("**", data)) {
+            float res = 1;
+            for (int i = 0; i < num2_i; i++) {
+                res = res * num1_f;
+            }
+            outArg = arg_setFloat(outArg, "", res);
+            goto OPT_exit;
+        }
     OPT_exit:
         arg_deinit(arg1);
         arg_deinit(arg2);
