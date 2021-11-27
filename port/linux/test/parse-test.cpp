@@ -7,7 +7,7 @@ extern "C" {
 }
 
 TEST(parser, NEW) {
-    AST* ast = pikaParseLine((char*)"add(a,b)", NULL);
+    AST* ast = AST_parseLine((char*)"add(a,b)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -17,7 +17,7 @@ TEST(parser, NEW) {
 }
 
 TEST(parser, add_a_b) {
-    AST* ast = pikaParseLine((char*)"add( a , b)", NULL);
+    AST* ast = AST_parseLine((char*)"add( a , b)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -32,7 +32,7 @@ TEST(parser, add_a_b) {
 }
 
 TEST(parser, add_a_b_c) {
-    AST* ast = pikaParseLine((char*)"d = add(add(a,b)  , c)", NULL);
+    AST* ast = AST_parseLine((char*)"d = add(add(a,b)  , c)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -51,7 +51,7 @@ TEST(parser, add_a_b_c) {
 
 TEST(parser, method1) {
     AST* ast =
-        pikaParseLine((char*)"d.p = a.add(b.add(a,se.b)  , pmw.c)", NULL);
+        AST_parseLine((char*)"d.p = a.add(b.add(a,se.b)  , pmw.c)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -72,7 +72,7 @@ TEST(parser, method1) {
 TEST(parser, method2) {
     char* line = (char*)"d.p = a.add(b.add(a,se.b,diek(pp))  , pmw.c())";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -91,7 +91,7 @@ TEST(parser, method2) {
 TEST(parser, str1) {
     char* line = (char*)"literal('2.322')";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -104,7 +104,7 @@ TEST(parser, str1) {
 TEST(parser, str2) {
     char* line = (char*)"b=add(a,literal('1'))";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -120,7 +120,7 @@ TEST(parser, str2) {
 TEST(parser, num1) {
     char* line = (char*)"b=add(a,1)";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -135,7 +135,7 @@ TEST(parser, num1) {
 TEST(parser, add_str) {
     char* line = (char*)"b=add(a,'1')";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -150,7 +150,7 @@ TEST(parser, add_str) {
 TEST(parser, deep4) {
     char* line = (char*)"b = add(add(add(add(1, 2), 3), 4), 5)";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -171,7 +171,7 @@ TEST(parser, deep4) {
 TEST(parser, a_1) {
     char* line = (char*)"a = 1";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -184,7 +184,7 @@ TEST(parser, a_1) {
 TEST(parser, while_true) {
     char* line = (char*)"while true:";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseLineToAsm(buffs, line, NULL);
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -201,7 +201,7 @@ static char* parse(const char* line,
     printf("%s\n", line);
     Args* runBuffs = New_strBuff();
     pikaAsm = strsAppend(runBuffs, pikaAsm,
-                         pikaParseLineToAsm(runBuffs, (char*)line, blockStack));
+                         Parser_LineToAsm(runBuffs, (char*)line, blockStack));
     pikaAsm = strsCopy(outBuffs, pikaAsm);
     args_deinit(runBuffs);
     return pikaAsm;
@@ -381,7 +381,7 @@ TEST(parser, multiLine) {
         "        test.on(add(2,3))\n"
         "\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -445,7 +445,7 @@ TEST(parser, pikaPi) {
         "\n";
 
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("mem max in parse: %0.2f Kb\n", pikaMemMax() / 1024.0);
     printf("%s", pikaAsm);
 
@@ -531,7 +531,7 @@ TEST(parser, add) {
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = 1 + 1\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -548,7 +548,7 @@ TEST(parser, add_3) {
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = 1 + 2 + 3\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -567,7 +567,7 @@ TEST(parser, add_a_pp) {
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = a + 1\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -588,7 +588,7 @@ TEST(parser, while_a_pp) {
     "    a = a + 1\n"
     "\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -616,7 +616,7 @@ TEST(parser, add_m2p3) {
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = 1 * 2 + 3\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -635,7 +635,7 @@ TEST(parser, add_m2p3_) {
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = 1 * (2 + 3)\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -655,7 +655,7 @@ TEST(parser, add_m12p3_) {
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = (1 + 2) * 3\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -675,7 +675,7 @@ TEST(parser, method_equ) {
     Args* buffs = New_strBuff();
     char* lines = (char*)"if right.read() == 1:\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -692,7 +692,7 @@ TEST(parser, equ_method) {
     Args* buffs = New_strBuff();
     char* lines = (char*)"if 1 == right.read() :\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -713,7 +713,7 @@ TEST(parser, def_add) {
     "\n"
     ;
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,(char *)
     "B0\n"
@@ -739,7 +739,7 @@ TEST(parser, def_add_return) {
     "\n"
     ;
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,(char *)
     "B0\n"
@@ -767,7 +767,7 @@ TEST(parser, def_while_return) {
     "\n"
     ;
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,(char *)
     "B0\n"
@@ -800,7 +800,7 @@ TEST(parser, def_while_return_void) {
     "\n"
     ;
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,(char *)
     "B0\n"
@@ -825,7 +825,7 @@ TEST(parser, signed_num) {
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = -1\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,(char *)
     "B0\n"
@@ -841,7 +841,7 @@ TEST(parser, comp_signed_num) {
     Args* buffs = New_strBuff();
     char* lines = (char*)"if a > -1:\n";
     printf("%s", lines);
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,(char *)
         "B0\n"
