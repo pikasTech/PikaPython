@@ -854,20 +854,37 @@ TEST(parser, comp_signed_num) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(lexser, symbol_add) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_getTokens(buffs, (char*)" res = add(1,2)");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf((char*)"%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(printTokens,
+                 "{sym}res{opt}={sym}add{dvd}({lit}1{dvd},{lit}2{dvd})");
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(lexser, symbol_1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, (char*)
-                   "a("
-                    );
+    char* tokens = Lexer_getTokens(buffs, (char*)"a(");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(printTokens, "{sym}a{bkt}(");
+    EXPECT_STREQ(printTokens, "{sym}a{dvd}(");
 
     /* deinit */
     args_deinit(buffs);
@@ -898,9 +915,7 @@ TEST(lexser, symbol_Nag) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, (char*)
-                   "-10-20"
-                    );
+    char* tokens = Lexer_getTokens(buffs, (char*)"-10-20");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf((char*)"%s\n", printTokens);
 
@@ -932,7 +947,11 @@ TEST(lexser, operator_all) {
     printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(printTokens, "{opt}not{opt}or{opt}and{opt}+{opt}+={opt}-{opt}-={opt}*{opt}**{opt}*={opt}**={opt}/{opt}//{opt}/={opt}//={opt}%{opt}%={opt}={opt}=={opt}!={opt}>{opt}>={opt}>>{opt}<{opt}<={opt}<<{opt}&{opt}|{opt}^{opt}~");
+    EXPECT_STREQ(printTokens,
+                 "{opt}not{opt}or{opt}and{opt}+{opt}+={opt}-{opt}-={opt}*{opt}*"
+                 "*{opt}*={opt}**={opt}/{opt}//{opt}/={opt}//"
+                 "={opt}%{opt}%={opt}={opt}=={opt}!={opt}>{opt}>={opt}>>{opt}<{"
+                 "opt}<={opt}<<{opt}&{opt}|{opt}^{opt}~");
 
     /* deinit */
     args_deinit(buffs);
@@ -945,14 +964,14 @@ TEST(lexser, symbol_2) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, (char*)
-                   "a+b-c(25**=ek)!=-28"
-                    );
+    char* tokens = Lexer_getTokens(buffs, (char*)"a+b-c(25**=ek)!=-28");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(printTokens, "{sym}a{opt}+{sym}b{opt}-{sym}c{bkt}({lit}25{opt}**={sym}ek{bkt}){opt}!={lit}-28");
+    EXPECT_STREQ(printTokens,
+                 "{sym}a{opt}+{sym}b{opt}-{sym}c{dvd}({lit}25{opt}**={sym}ek{"
+                 "dvd}){opt}!={lit}-28");
 
     /* deinit */
     args_deinit(buffs);

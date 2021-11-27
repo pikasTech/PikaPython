@@ -77,7 +77,7 @@ enum TokenType {
     TOKEN_symbol,
     TOKEN_keyword,
     TOKEN_operator,
-    TOKEN_brancket,
+    TOKEN_devider,
     TOKEN_literal,
 };
 
@@ -183,8 +183,8 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
             printOut = strsAppend(buffs, printOut, "{opt}");
             printOut = strsAppend(buffs, printOut, token + 1);
         }
-        if (token[0] == TOKEN_brancket) {
-            printOut = strsAppend(buffs, printOut, "{bkt}");
+        if (token[0] == TOKEN_devider) {
+            printOut = strsAppend(buffs, printOut, "{dvd}");
             printOut = strsAppend(buffs, printOut, token + 1);
         }
         if (token[0] == TOKEN_symbol) {
@@ -274,13 +274,13 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         if (-1 == symbol_start_index) {
             symbol_start_index = i;
         }
-        /* match brancket*/
-        if (('(' == c0) || (')' == c0)) {
+        /* match devider*/
+        if (('(' == c0) || (')' == c0) || (',' == c0)) {
             tokens_arg =
                 Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
             char content[2] = {0};
             content[0] = c0;
-            tokens_arg = Lexer_setToken(tokens_arg, TOKEN_brancket, content);
+            tokens_arg = Lexer_setToken(tokens_arg, TOKEN_devider, content);
             continue;
         }
         /* match operator */
@@ -400,7 +400,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             }
         }
         /* skip spaces */
-        if (' ' == c0) {
+        if ((' ' == c0) && (i == symbol_start_index)) {
             symbol_start_index++;
         }
         if (i == size - 1) {
