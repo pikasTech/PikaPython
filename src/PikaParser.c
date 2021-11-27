@@ -176,9 +176,9 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
     char* printOut = strsCopy(buffs, "");
 
     /* process */
-    uint16_t tokenSize = strCountSign(tokens, ' ') + 1;
+    uint16_t tokenSize = strCountSign(tokens, 0x1F) + 1;
     for (int i = 0; i < tokenSize; i++) {
-        char* token = strsPopToken(buffs, tokens, ' ');
+        char* token = strsPopToken(buffs, tokens, 0x1F);
         if (token[0] == TOKEN_operator) {
             printOut = strsAppend(buffs, printOut, "{opt}");
             printOut = strsAppend(buffs, printOut, token + 1);
@@ -208,7 +208,7 @@ Arg* Lexer_setToken(Arg* tokens_arg,
                     operator) {
     Args* buffs = New_strBuff();
     char token_type_buff[3] = {0};
-    token_type_buff[0] = ' ';
+    token_type_buff[0] = 0x1F;
     token_type_buff[1] = token_type;
     char* tokens = arg_getStr(tokens_arg);
     tokens = strsAppend(buffs, tokens, token_type_buff);
@@ -231,11 +231,13 @@ Arg* Lexer_setSymbel(Arg* tokens_arg,
     }
     char* symbol_buff = args_getBuff(buffs, i - *symbol_start_index);
     memcpy(symbol_buff, stmt + *symbol_start_index, i - *symbol_start_index);
-    if ((symbol_buff[0] == '-') ||
-        /* literal */
+    /* literal */
+    if ((symbol_buff[0] == '-') || (symbol_buff[0] == '\'') ||
+        (symbol_buff[0] == '"') ||
         ((symbol_buff[0] >= '0') && (symbol_buff[0] <= '9'))) {
         tokens_arg = Lexer_setToken(tokens_arg, TOKEN_literal, symbol_buff);
-    } else {
+    }
+    else {
         /* symbol */
         tokens_arg = Lexer_setToken(tokens_arg, TOKEN_symbol, symbol_buff);
     }
@@ -257,6 +259,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     uint8_t c2 = 0;
     uint8_t c3 = 0;
     int symbol_start_index = -1;
+    int is_in_string = 0;
 
     /* process */
     for (int i = 0; i < size; i++) {
@@ -274,6 +277,38 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         if (-1 == symbol_start_index) {
             symbol_start_index = i;
         }
+
+        /* solve string */
+        if (0 == is_in_string) {
+            if ('\'' == c0) {
+                /* in ' */
+                is_in_string = 1;
+                continue;
+            }
+            if ('"' == c0) {
+                /* in "" */
+                is_in_string = 2;
+                continue;
+            }
+        }
+
+        if (1 == is_in_string) {
+            if ('\'' == c0) {
+                is_in_string = 0;
+                tokens_arg = Lexer_setSymbel(tokens_arg, stmt, i + 1,
+                                             &symbol_start_index);
+            }
+            continue;
+        }
+        if (2 == is_in_string) {
+            if ('"' == c0) {
+                is_in_string = 0;
+                tokens_arg = Lexer_setSymbel(tokens_arg, stmt, i + 1,
+                                             &symbol_start_index);
+            }
+            continue;
+        }
+
         /* match devider*/
         if (('(' == c0) || (')' == c0) || (',' == c0)) {
             tokens_arg =
@@ -400,8 +435,15 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             }
         }
         /* skip spaces */
-        if ((' ' == c0) && (i == symbol_start_index)) {
-            symbol_start_index++;
+        if (' ' == c0) {
+            /* not get symbal */
+            if (i == symbol_start_index) {
+                symbol_start_index++;
+            } else {
+                /* already get symbal */
+                tokens_arg =
+                    Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
+            }
         }
         if (i == size - 1) {
             /* last check symbel */

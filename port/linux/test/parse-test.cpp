@@ -989,8 +989,27 @@ TEST(lexser, symbol_and) {
     printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(printTokens,
-                 "{sym}res{opt}={sym}add{dvd}({lit}1{opt}and{sym}lkj{dvd},{lit}2{dvd})");
+    EXPECT_STREQ(
+        printTokens,
+        "{sym}res{opt}={sym}add{dvd}({lit}1{opt}and{sym}lkj{dvd},{lit}2{dvd})");
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lexser, sting) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_getTokens(buffs, (char*)" a= 'elk 2'");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf((char*)"%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(printTokens, "{sym}a{opt}={lit}'elk 2'");
 
     /* deinit */
     args_deinit(buffs);
