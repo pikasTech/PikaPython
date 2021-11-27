@@ -88,11 +88,10 @@ TEST(VM, ref_a_b) {
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     Args* buffs = New_strBuff();
 
-    Parameters* globals = pikaVM_runAsm(
-        self, Parser_LineToAsm(buffs, (char*)"a = 'xy '", NULL));
-    globals =
-        pikaVM_runAsmWithPars(self, globals, globals,
-                              Parser_LineToAsm(buffs, (char*)"b = a", NULL));
+    Parameters* globals =
+        pikaVM_runAsm(self, Parser_LineToAsm(buffs, (char*)"a = 'xy '", NULL));
+    globals = pikaVM_runAsmWithPars(
+        self, globals, globals, Parser_LineToAsm(buffs, (char*)"b = a", NULL));
 
     args_deinit(buffs);
     ASSERT_STREQ(args_getStr(globals->list, (char*)"b"), (char*)"xy ");
@@ -139,8 +138,8 @@ TEST(VM, Run_add_1_2_3) {
     Args* buffs = New_strBuff();
 
     Parameters* globals = pikaVM_runAsm(
-        self, Parser_LineToAsm(buffs, (char*)"a = plusInt(1, plusInt(2,3) )",
-                                 NULL));
+        self,
+        Parser_LineToAsm(buffs, (char*)"a = plusInt(1, plusInt(2,3) )", NULL));
 
     args_deinit(buffs);
     int a = args_getInt(globals->list, (char*)"a");
@@ -501,5 +500,25 @@ TEST(VM, run_def_add) {
     args_deinit(buffs);
     // obj_deinit(globals);
     ASSERT_FLOAT_EQ(c, 4);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, equ) {
+    char* line = (char*)
+    "if -1 == -1:\n"
+    "    a = 1\n"
+    "\n"
+    ;
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_multiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+
+    int c = args_getInt(globals->list, (char*)"a");
+    obj_deinit(self);
+    args_deinit(buffs);
+    // obj_deinit(globals);
+    ASSERT_FLOAT_EQ(c, 1);
     EXPECT_EQ(pikaMemNow(), 0);
 }

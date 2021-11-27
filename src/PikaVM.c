@@ -190,93 +190,71 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         Arg* arg2 = arg_copy(queue_popArg(invokeQuene1));
         ArgType type_arg1 = arg_getType(arg1);
         ArgType type_arg2 = arg_getType(arg2);
-        if ((type_arg1 == TYPE_INT) && (type_arg2 == TYPE_INT)) {
-            int num1 = arg_getInt(arg1);
-            int num2 = arg_getInt(arg2);
-            if (strEqu("+", data)) {
-                outArg = arg_setInt(outArg, "", num1 + num2);
-                goto OPT_exit;
-            }
-            if (strEqu("-", data)) {
-                outArg = arg_setInt(outArg, "", num1 - num2);
-                goto OPT_exit;
-            }
-            if (strEqu("*", data)) {
-                outArg = arg_setInt(outArg, "", num1 * num2);
-                goto OPT_exit;
-            }
-            if (strEqu("/", data)) {
-                outArg = arg_setInt(outArg, "", num1 / num2);
-                goto OPT_exit;
-            }
-            if (strEqu("%", data)) {
-                outArg = arg_setInt(outArg, "", num1 % num2);
-                goto OPT_exit;
-            }
-            if (strEqu("**", data)) {
-                int res = 1;
-                for (int i = 0; i < num2; i++) {
-                    res *= num1;
-                }
-                outArg = arg_setInt(outArg, "", res);
-                goto OPT_exit;
-            }
-            if (strEqu("<", data)) {
-                outArg = arg_setInt(outArg, "", num1 < num2);
-                goto OPT_exit;
-            }
-            if (strEqu(">", data)) {
-                outArg = arg_setInt(outArg, "", num1 > num2);
-                goto OPT_exit;
-            }
-            if (strEqu("==", data)) {
-                outArg = arg_setInt(outArg, "", num1 == num2);
-                goto OPT_exit;
-            }
+        int num1_i;
+        int num2_i;
+        float num1_f;
+        float num2_f;
+        /* get int and float num */
+        if (type_arg1 == TYPE_INT) {
+            num1_i = arg_getInt(arg1);
+            num1_f = (float)num1_i;
         }
-        if ((type_arg1 == TYPE_FLOAT) || (type_arg2 == TYPE_FLOAT)) {
-            float num1;
-            float num2;
-            if (type_arg1 == TYPE_INT) {
-                num1 = arg_getInt(arg1);
-            }
-            if (type_arg1 == TYPE_FLOAT) {
-                num1 = arg_getFloat(arg1);
-            }
-            if (type_arg2 == TYPE_INT) {
-                num2 = arg_getInt(arg2);
-            }
-            if (type_arg2 == TYPE_FLOAT) {
-                num2 = arg_getFloat(arg2);
-            }
-            if (strEqu("+", data)) {
-                outArg = arg_setFloat(outArg, "", num1 + num2);
+        if (type_arg1 == TYPE_FLOAT) {
+            num1_f = arg_getFloat(arg1);
+            num1_i = (int)num1_f;
+        }
+        if (type_arg2 == TYPE_INT) {
+            num2_i = arg_getInt(arg2);
+            num2_f = (float)num2_i;
+        }
+        if (type_arg2 == TYPE_FLOAT) {
+            num2_f = arg_getFloat(arg2);
+            num2_i = (int)num2_f;
+        }
+        if (strEqu("+", data)) {
+            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+                outArg = arg_setFloat(outArg, "", num1_f + num2_f);
                 goto OPT_exit;
             }
-            if (strEqu("-", data)) {
-                outArg = arg_setFloat(outArg, "", num1 - num2);
+            outArg = arg_setInt(outArg, "", num1_i + num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("-", data)) {
+            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+                outArg = arg_setFloat(outArg, "", num1_f - num2_f);
                 goto OPT_exit;
             }
-            if (strEqu("*", data)) {
-                outArg = arg_setFloat(outArg, "", num1 * num2);
+            outArg = arg_setInt(outArg, "", num1_i - num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("*", data)) {
+            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+                outArg = arg_setFloat(outArg, "", num1_f * num2_f);
                 goto OPT_exit;
             }
-            if (strEqu("/", data)) {
-                outArg = arg_setFloat(outArg, "", num1 / num2);
+            outArg = arg_setInt(outArg, "", num1_i * num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("/", data)) {
+            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+                outArg = arg_setFloat(outArg, "", num1_f / num2_f);
                 goto OPT_exit;
             }
-            if (strEqu("<", data)) {
-                outArg = arg_setInt(outArg, "", num1 < num2);
-                goto OPT_exit;
-            }
-            if (strEqu(">", data)) {
-                outArg = arg_setInt(outArg, "", num1 > num2);
-                goto OPT_exit;
-            }
-            if (strEqu("==", data)) {
-                outArg = arg_setInt(outArg, "", num1 == num2);
-                goto OPT_exit;
-            }
+            outArg = arg_setInt(outArg, "", num1_i / num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("<", data)) {
+            outArg = arg_setInt(outArg, "", num1_f < num2_f);
+            goto OPT_exit;
+        }
+        if (strEqu(">", data)) {
+            outArg = arg_setInt(outArg, "", num1_f > num2_f);
+            goto OPT_exit;
+        }
+        if (strEqu("==", data)) {
+            outArg = arg_setInt(
+                outArg, "", (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
+            goto OPT_exit;
         }
     OPT_exit:
         arg_deinit(arg1);
