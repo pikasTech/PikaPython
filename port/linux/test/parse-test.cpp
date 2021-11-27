@@ -1015,3 +1015,21 @@ TEST(lexser, sting) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(lexser, num_1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_getTokens(buffs, (char*)"1");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf((char*)"%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(printTokens, "{lit}1");
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

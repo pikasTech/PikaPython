@@ -125,15 +125,15 @@ static enum StmtType matchStmtType(char* right) {
     Args* buffs = New_strBuff();
     enum StmtType stmtType = STMT_none;
     char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
-    if (strIsContain(rightWithoutSubStmt + 1, '+') ||
-        strIsContain(rightWithoutSubStmt + 1, '-') ||
-        strIsContain(rightWithoutSubStmt + 1, '*') ||
-        strIsContain(rightWithoutSubStmt + 1, '<') ||
-        strIsContain(rightWithoutSubStmt + 1, '>') ||
-        checkIsEqu(rightWithoutSubStmt + 1) ||
-        strIsContain(rightWithoutSubStmt + 1, '/')) {
-        stmtType = STMT_operator;
-        goto exit;
+    char* tokens = Lexer_getTokens(buffs, rightWithoutSubStmt);
+    uint16_t token_size = strCountSign(tokens, 0x1F);
+    for (int i = 0; i < token_size + 1; i++) {
+        char* token = strsPopToken(buffs, tokens, 0x1F);
+        enum TokenType token_type = token[0];
+        if (token_type == TOKEN_operator) {
+            stmtType = STMT_operator;
+            goto exit;
+        }
     }
     if (strIsContain(rightWithoutSubStmt, '(') ||
         strIsContain(rightWithoutSubStmt, ')')) {
@@ -236,8 +236,7 @@ Arg* Lexer_setSymbel(Arg* tokens_arg,
         (symbol_buff[0] == '"') ||
         ((symbol_buff[0] >= '0') && (symbol_buff[0] <= '9'))) {
         tokens_arg = Lexer_setToken(tokens_arg, TOKEN_literal, symbol_buff);
-    }
-    else {
+    } else {
         /* symbol */
         tokens_arg = Lexer_setToken(tokens_arg, TOKEN_symbol, symbol_buff);
     }
