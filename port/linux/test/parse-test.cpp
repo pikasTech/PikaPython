@@ -882,6 +882,7 @@ TEST(lexser, operator_not) {
     /* run */
     char* tokens = Lexer_getTokens(buffs, (char*)"not not not ");
     char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf((char*)"%s\n", printTokens);
 
     /* assert */
     EXPECT_STREQ(printTokens, "{opt}not{opt}not{opt}not");
