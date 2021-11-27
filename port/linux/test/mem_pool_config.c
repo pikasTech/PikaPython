@@ -1,10 +1,10 @@
 #include "dataMemory.h"
 
 #define use_const_pool 0
-#define use_dynamic_pool 0
+#define use_dynamic_pool 1
 
 #define pika_aline 8
-#define pika_pool_size 0x1B00
+#define pika_pool_size 0x4000
 
 /* quick_malloc is always open */
 uint8_t __is_quick_malloc(void) {

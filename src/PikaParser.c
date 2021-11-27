@@ -127,30 +127,53 @@ static enum StmtType matchStmtType(char* right) {
     char* rightWithoutSubStmt = strs_deleteBetween(buffs, right, '(', ')');
     char* tokens = Lexer_getTokens(buffs, rightWithoutSubStmt);
     uint16_t token_size = strCountSign(tokens, 0x1F);
+    uint8_t is_get_operator = 0;
+    uint8_t is_get_method = 0;
+    uint8_t is_get_string = 0;
+    uint8_t is_get_number = 0;
+    uint8_t is_get_symbol = 0;
     for (int i = 0; i < token_size + 1; i++) {
         char* token = strsPopToken(buffs, tokens, 0x1F);
         enum TokenType token_type = token[0];
+        /* collect type */
         if (token_type == TOKEN_operator) {
-            stmtType = STMT_operator;
-            goto exit;
+            is_get_operator = 1;
+            continue;
+        }
+        if (token_type == TOKEN_devider) {
+            is_get_method = 1;
+            continue;
+        }
+        if (token_type == TOKEN_literal) {
+            if (token[1] == '\'' || token[1] == '"') {
+                is_get_string = 1;
+                continue;
+            }
+            is_get_number = 1;
+            continue;
+        }
+        if (token_type == TOKEN_symbol) {
+            is_get_symbol = 1;
+            continue;
         }
     }
-    if (strIsContain(rightWithoutSubStmt, '(') ||
-        strIsContain(rightWithoutSubStmt, ')')) {
+    if (is_get_operator) {
+        stmtType = STMT_operator;
+        goto exit;
+    }
+    if (is_get_method) {
         stmtType = STMT_method;
         goto exit;
     }
-    if (strIsContain(rightWithoutSubStmt, '\'') ||
-        strIsContain(rightWithoutSubStmt, '\"')) {
+    if (is_get_string) {
         stmtType = STMT_string;
         goto exit;
     }
-    if ((rightWithoutSubStmt[0] >= '0' && rightWithoutSubStmt[0] <= '9') ||
-        (rightWithoutSubStmt[0] == '-')) {
+    if (is_get_number) {
         stmtType = STMT_number;
         goto exit;
     }
-    if (!strEqu(rightWithoutSubStmt, "")) {
+    if (is_get_symbol) {
         stmtType = STMT_reference;
         goto exit;
     }
