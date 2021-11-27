@@ -1060,5 +1060,8 @@ TEST(parser, pop_by_str) {
     char* token1 =
         strsPopTokenWithSkip_byStr(buffs, tokens, (char*)">=", '(', ')');
     char* token2 = tokens;
+    /* assert */
+    EXPECT_STREQ((char*)"3(>=)2", token1);
+    EXPECT_STREQ((char*)"29", token2);
     args_deinit(buffs);
 }
