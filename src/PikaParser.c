@@ -188,7 +188,9 @@ uint8_t Parser_checkIsDirect(char* str) {
     /* include '0' */
     uint32_t size = strGetSize(str) + 1;
     for (int i = 1; i + 1 < size; i++) {
-        if ((str[i - 1] != '=') && (str[i] == '=') && (str[i + 1] != '=')) {
+        if ((str[i - 1] != '=') && (str[i - 1] != '+') && (str[i - 1] != '-') &&
+            (str[i - 1] != '*') && (str[i - 1] != '/') && (str[i + 1] != '=') &&
+            (str[i] == '=')) {
             return 1;
         }
     }
@@ -510,8 +512,8 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
                                  "<=",  ">",  ">=", "!=", "==", "%=", "/=",
                                  "//=", "-=", "+=", "*=", "**="};
     for (int i = 0; i < sizeof(operators) / 4; i++) {
-        if (Lexer_isContain(tokens, operators[i])) {
-            operator= strsCopy(buffs, operators[i]);
+        if (Lexer_isContain(tokens, (char*)operators[i])) {
+            operator= strsCopy(buffs, (char*)operators[i]);
         }
     }
     /* out put */
