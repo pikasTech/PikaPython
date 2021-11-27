@@ -236,11 +236,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
             goto OPT_exit;
         }
         if (strEqu("/", data)) {
-            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
-                outArg = arg_setFloat(outArg, "", num1_f / num2_f);
-                goto OPT_exit;
-            }
-            outArg = arg_setInt(outArg, "", num1_i / num2_i);
+            outArg = arg_setFloat(outArg, "", num1_f / num2_f);
             goto OPT_exit;
         }
         if (strEqu("<", data)) {
@@ -249,11 +245,6 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         }
         if (strEqu(">", data)) {
             outArg = arg_setInt(outArg, "", num1_f > num2_f);
-            goto OPT_exit;
-        }
-        if (strEqu("==", data)) {
-            outArg = arg_setInt(
-                outArg, "", (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
             goto OPT_exit;
         }
         if (strEqu("%", data)) {
@@ -267,6 +258,44 @@ Arg* pikaVM_runInstruct(PikaObj* self,
             }
             outArg = arg_setFloat(outArg, "", res);
             goto OPT_exit;
+        }
+        if (strEqu("//", data)) {
+            outArg = arg_setInt(outArg, "", num1_i / num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("==", data)) {
+            outArg = arg_setInt(
+                outArg, "", (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
+            goto OPT_exit;
+        }
+        if (strEqu("!=", data)) {
+            outArg =
+                arg_setInt(outArg, "",
+                           !((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+            goto OPT_exit;
+        }
+        if (strEqu(">=", data)) {
+            outArg = arg_setInt(
+                outArg, "",
+                (num1_f > num2_f) ||
+                    ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+            goto OPT_exit;
+        }
+        if (strEqu("<=", data)) {
+            outArg = arg_setInt(
+                outArg, "",
+                (num1_f < num2_f) ||
+                    ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+            goto OPT_exit;
+        }
+        if (strEqu("&", data)) {
+            outArg = arg_setInt(outArg, "", num1_i & num2_i);
+        }
+        if (strEqu("|", data)) {
+            outArg = arg_setInt(outArg, "", num1_i | num2_i);
+        }
+        if (strEqu("~", data)) {
+            outArg = arg_setInt(outArg, "", ~num2_i);
         }
     OPT_exit:
         arg_deinit(arg1);
