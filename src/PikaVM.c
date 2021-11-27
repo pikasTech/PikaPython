@@ -295,7 +295,13 @@ Arg* pikaVM_runInstruct(PikaObj* self,
             outArg = arg_setInt(outArg, "", num1_i | num2_i);
         }
         if (strEqu("~", data)) {
-            outArg = arg_setInt(outArg, "", ~num2_i);
+            outArg = arg_setInt(outArg, "", ~num1_i);
+        }
+        if (strEqu(">>", data)) {
+            outArg = arg_setInt(outArg, "", num1_i >> num2_i);
+        }
+        if (strEqu("<<", data)) {
+            outArg = arg_setInt(outArg, "", num1_i << num2_i);
         }
     OPT_exit:
         arg_deinit(arg1);

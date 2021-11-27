@@ -162,3 +162,20 @@ TEST(pikaMain, a_n1) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, a_l4) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_runDirect(pikaMain, (char*)"a = 1<<4\n");
+    /* collect */
+    int a = obj_getInt(pikaMain, (char*)"a");
+
+    /* assert */
+    EXPECT_EQ(16, a);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
