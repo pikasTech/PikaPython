@@ -188,9 +188,10 @@ uint8_t Parser_checkIsDirect(char* str) {
     /* include '0' */
     uint32_t size = strGetSize(str) + 1;
     for (int i = 1; i + 1 < size; i++) {
-        if ((str[i - 1] != '=') && (str[i - 1] != '+') && (str[i - 1] != '-') &&
-            (str[i - 1] != '*') && (str[i - 1] != '/') && (str[i + 1] != '=') &&
-            (str[i] == '=')) {
+        if ((str[i - 1] != '%') && (str[i - 1] != '!') && (str[i - 1] != '<') &&
+            (str[i - 1] != '>') && (str[i - 1] != '=') && (str[i - 1] != '+') &&
+            (str[i - 1] != '-') && (str[i - 1] != '*') && (str[i - 1] != '/') &&
+            (str[i + 1] != '=') && (str[i] == '=')) {
             return 1;
         }
     }
