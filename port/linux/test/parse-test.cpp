@@ -1087,7 +1087,18 @@ TEST(parser, mm) {
 TEST(parser, self_inc) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines = (char*)"a += -1\n";
+    char* lines = (char*)
+    "a += -1\n"
+    "a -= -1\n"
+    "a *= -1\n"
+    "a /= -1\n"
+    "a **= -1\n"
+    "a //= -1\n"
+    "a >= -1\n"
+    "a <= -1\n"
+    "a != -1\n"
+    "a %= -1\n"
+    ;
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
@@ -1096,6 +1107,42 @@ TEST(parser, self_inc) {
         "1 REF a\n"
         "1 NUM -1\n"
         "0 OPT +=\n"
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM -1\n"
+        "0 OPT -=\n"
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM -1\n"
+        "0 OPT *=\n"
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM -1\n"
+        "0 OPT /=\n"
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM -1\n"
+        "0 OPT **=\n"
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM -1\n"
+        "0 OPT //=\n"
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM -1\n"
+        "0 OPT >=\n"
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM -1\n"
+        "0 OPT <=\n"
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM -1\n"
+        "0 OPT !=\n"
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM -1\n"
+        "0 OPT %=\n"
     );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
