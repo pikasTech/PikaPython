@@ -977,3 +977,22 @@ TEST(lexser, symbol_2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(lexser, symbol_and) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_getTokens(buffs, (char*)" res = add(1 and lkj,2)");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf((char*)"%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(printTokens,
+                 "{sym}res{opt}={sym}add{dvd}({lit}1{dvd},{lit}2{dvd})");
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
