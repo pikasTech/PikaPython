@@ -571,7 +571,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         str = right;
         str = strsDeleteChar(buffs, str, '\'');
         str = strsDeleteChar(buffs, str, '\"');
-        obj_setStr(ast, (char*)"s", str);
+        obj_setStr(ast, (char*)"string", str);
         goto exit;
     }
     /* solve number stmt */
@@ -745,7 +745,7 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     char* operator= obj_getStr(subAst, "operator");
     char* ref = obj_getStr(subAst, "ref");
     char* direct = obj_getStr(subAst, "direct");
-    char* str = obj_getStr(subAst, "s");
+    char* str = obj_getStr(subAst, "string");
     char* num = obj_getStr(subAst, "num");
     if (NULL != ref) {
         char buff[32] = {0};
