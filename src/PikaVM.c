@@ -209,6 +209,18 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                 outArg = arg_setInt(outArg, "", num1 / num2);
                 goto OPT_exit;
             }
+            if (strEqu("%", data)) {
+                outArg = arg_setInt(outArg, "", num1 % num2);
+                goto OPT_exit;
+            }
+            if (strEqu("**", data)) {
+                int res = 1;
+                for (int i = 0; i < num2; i++) {
+                    res *= num1;
+                }
+                outArg = arg_setInt(outArg, "", res);
+                goto OPT_exit;
+            }
             if (strEqu("<", data)) {
                 outArg = arg_setInt(outArg, "", num1 < num2);
                 goto OPT_exit;
