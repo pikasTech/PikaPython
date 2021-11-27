@@ -123,7 +123,7 @@ char* strsDeleteBetween(Args* buffs, char* strIn, char begin, char end) {
     return strOut;
 }
 
-static enum StmtType Parser_matchStmtType(char* right) {
+static enum StmtType Lexer_matchStmtType(char* right) {
     Args* buffs = New_strBuff();
     enum StmtType stmtType = STMT_none;
     char* rightWithoutSubStmt = strsDeleteBetween(buffs, right, '(', ')');
@@ -505,26 +505,14 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args* buffs = New_strBuff();
     char* tokens = Lexer_getTokens(buffs, stmt);
     char* operator= NULL;
-    if (Lexer_isContain(tokens, "*")) {
-        operator= strsCopy(buffs, "*");
-    }
-    if (Lexer_isContain(tokens, "/")) {
-        operator= strsCopy(buffs, "/");
-    }
-    if (Lexer_isContain(tokens, "+")) {
-        operator= strsCopy(buffs, "+");
-    }
-    if (Lexer_isContain(tokens, "-")) {
-        operator= strsCopy(buffs, "-");
-    }
-    if (Lexer_isContain(tokens, "<")) {
-        operator= strsCopy(buffs, "<");
-    }
-    if (Lexer_isContain(tokens, ">")) {
-        operator= strsCopy(buffs, ">");
-    }
-    if (Lexer_isContain(tokens, "==")) {
-        operator= strsCopy(buffs, "==");
+    const char operators[][4] = {"**",  "~",  "*",  "/",  "%",  "//", "+",
+                                 "-",   ">>", "<<", "&",  "^",  "|",  "<",
+                                 "<=",  ">",  ">=", "!=", "==", "%=", "/=",
+                                 "//=", "-=", "+=", "*=", "**="};
+    for (int i = 0; i < sizeof(operators) / 4; i++) {
+        if (Lexer_isContain(tokens, operators[i])) {
+            operator= strsCopy(buffs, operators[i]);
+        }
     }
     /* out put */
     operator= strsCopy(outBuffs, operator);
@@ -556,8 +544,8 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     } else {
         right = stmt;
     }
-    enum StmtType stmtType = Parser_matchStmtType(right);
-    /* solve method stmt */
+    enum StmtType stmtType = Lexer_matchStmtType(right);
+    /* solve operator stmt */
     if (STMT_operator == stmtType) {
         char* rightWithoutSubStmt = strsDeleteBetween(buffs, right, '(', ')');
         char* operator= Lexer_getOperator(buffs, rightWithoutSubStmt);
@@ -572,6 +560,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         AST_parseStmt(queueObj_getCurrentObj(ast), subStmt2);
         goto exit;
     }
+    /* solve method stmt */
     if (STMT_method == stmtType) {
         method = strsGetFirstToken(buffs, right, '(');
         obj_setStr(ast, (char*)"method", method);
