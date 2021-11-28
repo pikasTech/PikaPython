@@ -69,11 +69,11 @@ void main() {
     pyText[fsize] = 0;
 
     Args* buffs = New_strBuff();
-    char* pikaBitCode = Parser_multiLineToAsm(buffs, pyText);
+    char* pika_byte_code = Parser_multiLineToAsm(buffs, pyText);
 
-    FILE* file_bitCode = fopen("pikaBitCode.txt", "w");
-    fputs(pikaBitCode, file_bitCode);
-    printf("[ OK ]: write file to 'pikaBitCode.txt'. \r\n");
+    FILE* file_byte_code = fopen("pikaByteCode.txt", "w");
+    fputs(pika_byte_code, file_byte_code);
+    printf("[ OK ]: write file to 'pikaByteCode.txt'. \r\n");
 
     return;
 }
