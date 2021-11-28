@@ -530,11 +530,11 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args* buffs = New_strBuff();
     char* tokens = Lexer_getTokens(buffs, stmt);
     char* operator= NULL;
-    const char operators[][5] = {
+    const char operators[][6] = {
         "**", "~",   "*",  "/",  "%",  "//",  "+",     "-",     ">>",  "<<",
         "&",  "^",   "|",  "<",  "<=", ">",   ">=",    "!=",    "==",  "%=",
         "/=", "//=", "-=", "+=", "*=", "**=", " not ", " and ", " or "};
-    for (int i = 0; i < sizeof(operators) / 4; i++) {
+    for (int i = 0; i < sizeof(operators) / 6; i++) {
         if (Lexer_isContain(tokens, (char*)operators[i])) {
             operator= strsCopy(buffs, (char*)operators[i]);
         }
@@ -886,7 +886,6 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     args_deinit(runBuffs);
     return pikaAsm;
 }
-
 int32_t AST_deinit(AST* ast) {
     return obj_deinit(ast);
 }

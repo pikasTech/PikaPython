@@ -15,7 +15,7 @@
                 // "--gtest_filter=VM.a_1_1d1"
                 // "--gtest_filter=queue*"
                 // "--gtest_filter=parser*"
-                "--gtest_filter=parser.or_"
+                "--gtest_filter=parser._or_"
                 // "--gtest_filter=args*",
                 // "--gtest_filter=content*",
                 // "--gtest_filter=object_test.printa",

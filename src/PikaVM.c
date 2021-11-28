@@ -303,6 +303,15 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         if (strEqu("<<", data)) {
             outArg = arg_setInt(outArg, "", num1_i << num2_i);
         }
+        if (strEqu(" and ", data)) {
+            outArg = arg_setInt(outArg, "", num1_i && num2_i);
+        }
+        if (strEqu(" or ", data)) {
+            outArg = arg_setInt(outArg, "", num1_i || num2_i);
+        }
+        if (strEqu(" not ", data)) {
+            outArg = arg_setInt(outArg, "", !num1_i);
+        }
     OPT_exit:
         arg_deinit(arg1);
         arg_deinit(arg2);
