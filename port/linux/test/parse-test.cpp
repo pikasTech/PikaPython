@@ -902,7 +902,7 @@ TEST(lexser, operator_not) {
     printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(printTokens, "{opt}not{opt}not{opt}not");
+    EXPECT_STREQ(printTokens, "{opt} not {opt} not {opt} not ");
 
     /* deinit */
     args_deinit(buffs);
@@ -947,11 +947,12 @@ TEST(lexser, operator_all) {
     printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(printTokens,
-                 "{opt}not{opt}or{opt}and{opt}+{opt}+={opt}-{opt}-={opt}*{opt}*"
-                 "*{opt}*={opt}**={opt}/{opt}//{opt}/={opt}//"
-                 "={opt}%{opt}%={opt}={opt}=={opt}!={opt}>{opt}>={opt}>>{opt}<{"
-                 "opt}<={opt}<<{opt}&{opt}|{opt}^{opt}~");
+    EXPECT_STREQ(
+        printTokens,
+        "{opt} not {opt} or {opt} and {opt}+{opt}+={opt}-{opt}-={opt}*{opt}*"
+        "*{opt}*={opt}**={opt}/{opt}//{opt}/={opt}//"
+        "={opt}%{opt}%={opt}={opt}=={opt}!={opt}>{opt}>={opt}>>{opt}<{"
+        "opt}<={opt}<<{opt}&{opt}|{opt}^{opt}~");
 
     /* deinit */
     args_deinit(buffs);
@@ -991,7 +992,7 @@ TEST(lexser, symbol_and) {
     /* assert */
     EXPECT_STREQ(
         printTokens,
-        "{sym}res{opt}={sym}add{dvd}({lit}1{opt}and{sym}lkj{dvd},{lit}2{dvd})");
+        "{sym}res{opt}={sym}add{dvd}({lit}1{opt} and {sym}lkj{dvd},{lit}2{dvd})");
 
     /* deinit */
     args_deinit(buffs);
@@ -1152,6 +1153,23 @@ TEST(parser, n_n1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = ~-1\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,(char *)
+        "B0\n"
+        "1 NUM -1\n"
+        "0 OPT ~\n"
+        "0 OUT a\n"
+    );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, or_) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"(a>1) or (b<=3)\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);

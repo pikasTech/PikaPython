@@ -84,6 +84,26 @@ char* strsPopTokenWithSkip(Args* buffs,
                                       skipEnd);
 }
 
+char* strsGetCleanCmd(Args* outBuffs, char* cmd) {
+    int32_t size = strGetSize(cmd);
+    Args* buffs = New_strBuff();
+    char* tokens = Lexer_getTokens(buffs, cmd);
+    uint16_t token_size = strCountSign(tokens, 0x1F) + 1;
+    char* strOut = args_getBuff(outBuffs, size);
+    int32_t iOut = 0;
+    for (uint16_t i = 0; i < token_size; i++) {
+        char* token = strsPopToken(buffs, tokens, 0x1F);
+        for (uint16_t k = 0; k < strGetSize(token + 1); k++) {
+            strOut[iOut] = token[k + 1];
+            iOut++;
+        }
+    }
+    /* add \0 */
+    strOut[iOut] = 0;
+    args_deinit(buffs);
+    return strOut;
+}
+
 enum TokenType {
     TOKEN_strEnd = 0,
     TOKEN_symbol,
@@ -128,13 +148,13 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     enum StmtType stmtType = STMT_none;
     char* rightWithoutSubStmt = strsDeleteBetween(buffs, right, '(', ')');
     char* tokens = Lexer_getTokens(buffs, rightWithoutSubStmt);
-    uint16_t token_size = strCountSign(tokens, 0x1F);
+    uint16_t token_size = strCountSign(tokens, 0x1F) + 1;
     uint8_t is_get_operator = 0;
     uint8_t is_get_method = 0;
     uint8_t is_get_string = 0;
     uint8_t is_get_number = 0;
     uint8_t is_get_symbol = 0;
-    for (int i = 0; i < token_size + 1; i++) {
+    for (int i = 0; i < token_size; i++) {
         char* token = strsPopToken(buffs, tokens, 0x1F);
         enum TokenType token_type = token[0];
         /* collect type */
@@ -436,7 +456,8 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             if (('o' == c1) && ('t' == c2) && (' ' == c3)) {
                 tokens_arg =
                     Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
-                tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, "not");
+                tokens_arg =
+                    Lexer_setToken(tokens_arg, TOKEN_operator, " not ");
                 i = i + 3;
                 continue;
             }
@@ -446,7 +467,8 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             if (('n' == c1) && ('d' == c2) && (' ' == c3)) {
                 tokens_arg =
                     Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
-                tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, "and");
+                tokens_arg =
+                    Lexer_setToken(tokens_arg, TOKEN_operator, " and ");
                 i = i + 3;
                 continue;
             }
@@ -456,7 +478,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             if (('r' == c1) && (' ' == c2)) {
                 tokens_arg =
                     Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
-                tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, "or");
+                tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, " or ");
                 i = i + 2;
                 continue;
             }
@@ -508,10 +530,10 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args* buffs = New_strBuff();
     char* tokens = Lexer_getTokens(buffs, stmt);
     char* operator= NULL;
-    const char operators[][4] = {"**",  "~",  "*",  "/",  "%",  "//", "+",
-                                 "-",   ">>", "<<", "&",  "^",  "|",  "<",
-                                 "<=",  ">",  ">=", "!=", "==", "%=", "/=",
-                                 "//=", "-=", "+=", "*=", "**="};
+    const char operators[][5] = {
+        "**", "~",   "*",  "/",  "%",  "//",  "+",     "-",     ">>",  "<<",
+        "&",  "^",   "|",  "<",  "<=", ">",   ">=",    "!=",    "==",  "%=",
+        "/=", "//=", "-=", "+=", "*=", "**=", " not ", " and ", " or "};
     for (int i = 0; i < sizeof(operators) / 4; i++) {
         if (Lexer_isContain(tokens, (char*)operators[i])) {
             operator= strsCopy(buffs, (char*)operators[i]);
