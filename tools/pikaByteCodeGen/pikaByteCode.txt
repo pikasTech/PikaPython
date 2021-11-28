@@ -1,0 +1,68 @@
+B0
+0 RUN STM32.Time
+0 OUT time
+B0
+0 RUN STM32.UART
+0 OUT uart
+B0
+0 RUN STM32.ADC
+0 OUT adc
+B0
+0 RUN STM32.GPIO
+0 OUT pin
+B0
+0 RUN STM32.PWM
+0 OUT pwm
+B0
+0 RUN STM32.UART
+0 OUT uart
+B0
+0 RUN PikaPiZero.RGB
+0 OUT rgb
+B0
+0 RUN PikaStdLib.MemChecker
+0 OUT mem
+B0
+0 RUN PikaMath.Operator
+0 OUT op
+B0
+B0
+0 RUN uart.init
+B0
+1 NUM 1
+0 RUN uart.setId
+B0
+1 NUM 115200
+0 RUN uart.setBaudRate
+B0
+0 RUN uart.enable
+B0
+B0
+0 RUN rgb.init
+B0
+0 RUN rgb.enable
+B0
+B0
+1 STR hello 2
+0 RUN print
+B0
+1 STR mem used max:
+0 RUN print
+B0
+0 RUN mem.max
+B0
+B0
+0 REF True
+0 JEZ 2
+B1
+1 NUM 10
+0 RUN time.sleep_ms
+B1
+0 RUN rgb.flow
+B1
+1 STR flowing
+0 RUN print
+B0
+0 JMP -1
+B0
+B0

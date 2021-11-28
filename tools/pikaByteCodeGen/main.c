@@ -5,6 +5,33 @@
 #include "PikaParser.h"
 #include "dataStrs.h"
 
+void main() {
+    FILE* file_mian_py = fopen("main.py", "rb");
+    if (NULL == file_mian_py) {
+        printf("[error]: main.py no found. \r\n");
+        return;
+    }
+    fseek(file_mian_py, 0, SEEK_END);
+    long fsize = ftell(file_mian_py);
+    fseek(file_mian_py, 0, SEEK_SET); /* same as rewind(f); */
+    char* pyText = malloc(fsize + 1);
+    fread(pyText, 1, fsize, file_mian_py);
+    fclose(file_mian_py);
+    pyText[fsize] = 0;
+
+    Args* buffs = New_strBuff();
+    char* pika_byte_code = Parser_multiLineToAsm(buffs, pyText);
+
+    FILE* file_byte_code = fopen("pikaByteCode.txt", "w");
+    fputs(pika_byte_code, file_byte_code);
+    args_deinit(buffs);
+    printf("[ OK ]: write file to 'pikaByteCode.txt'. \r\n");
+
+    return;
+}
+
+
+/* portable */
 void __platformDisableIrqHandle(void) {
     /* disable irq to support thread */
 }
@@ -54,26 +81,3 @@ int32_t __platformSavePikaAsmEOF(void) {
     return 1;
 }
 
-void main() {
-    FILE* file_mian_py = fopen("main.py", "rb");
-    if (NULL == file_mian_py) {
-        printf("[error]: main.py no found. \r\n");
-        return;
-    }
-    fseek(file_mian_py, 0, SEEK_END);
-    long fsize = ftell(file_mian_py);
-    fseek(file_mian_py, 0, SEEK_SET); /* same as rewind(f); */
-    char* pyText = malloc(fsize + 1);
-    fread(pyText, 1, fsize, file_mian_py);
-    fclose(file_mian_py);
-    pyText[fsize] = 0;
-
-    Args* buffs = New_strBuff();
-    char* pika_byte_code = Parser_multiLineToAsm(buffs, pyText);
-
-    FILE* file_byte_code = fopen("pikaByteCode.txt", "w");
-    fputs(pika_byte_code, file_byte_code);
-    printf("[ OK ]: write file to 'pikaByteCode.txt'. \r\n");
-
-    return;
-}
