@@ -990,9 +990,9 @@ TEST(lexser, symbol_and) {
     printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(
-        printTokens,
-        "{sym}res{opt}={sym}add{dvd}({lit}1{opt} and {sym}lkj{dvd},{lit}2{dvd})");
+    EXPECT_STREQ(printTokens,
+                 "{sym}res{opt}={sym}add{dvd}({lit}1{opt} and "
+                 "{sym}lkj{dvd},{lit}2{dvd})");
 
     /* deinit */
     args_deinit(buffs);
@@ -1169,15 +1169,21 @@ TEST(parser, n_n1) {
 TEST(parser, or_) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines = (char*)"(a>1) or (b<=3)\n";
+    char* lines = (char*)"( a>1) or (b<= 3)\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,(char *)
         "B0\n"
-        "1 NUM -1\n"
-        "0 OPT ~\n"
-        "0 OUT a\n"
+        "3 REF a\n"
+        "3 NUM 1\n"
+        "2 OPT >\n"
+        "1 RUN \n"
+        "3 REF b\n"
+        "3 NUM 3\n"
+        "2 OPT <=\n"
+        "1 RUN \n"
+        "0 OPT  or \n"
     );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
