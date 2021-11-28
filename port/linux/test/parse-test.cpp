@@ -1147,3 +1147,20 @@ TEST(parser, self_inc) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, n_n1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"a = ~-1\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,(char *)
+        "B0\n"
+        "1 NUM -1\n"
+        "0 OPT ~\n"
+        "0 OUT a\n"
+    );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
