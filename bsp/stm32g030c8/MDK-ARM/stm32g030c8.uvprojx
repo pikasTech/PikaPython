@@ -811,6 +811,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\STM32G0-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaPiZero_LCD-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaPiZero_LCD-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -910,6 +915,11 @@
               <FileName>PikaPiZero_KEY.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaPiZero\PikaPiZero_KEY.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPiZero_LCD.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\PikaPiZero_LCD.c</FilePath>
             </File>
           </Files>
         </Group>

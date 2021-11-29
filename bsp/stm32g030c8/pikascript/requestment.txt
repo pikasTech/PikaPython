@@ -1,4 +1,4 @@
-pikascript-core==v1.2.3
+pikascript-core==v1.2.6
 PikaStdLib==v1.2.1
 PikaStdDevice==v1.4.2
 PikaPiZero==v1.1.2
