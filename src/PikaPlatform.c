@@ -79,3 +79,6 @@ PIKA_WEAK uint8_t __platformAsmIsToFlash(char* pyMultiLine) {
 PIKA_WEAK int32_t __platformSavePikaAsmEOF(void) {
     return 1;
 }
+PIKA_WEAK void __platformWait(void){
+    while(1){};
+}

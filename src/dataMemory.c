@@ -33,7 +33,8 @@ PikaMemInfo pikaMemInfo = {0};
 
 void* pikaMalloc(uint32_t size) {
     /* pika memory lock */
-    while (__isLocked_pikaMemory()) {
+    if (0 != __isLocked_pikaMemory()) {
+        __platformWait();
     }
     pikaMemInfo.heapUsed += size;
     if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
@@ -52,8 +53,8 @@ void* pikaMalloc(uint32_t size) {
 }
 
 void pikaFree(void* mem, uint32_t size) {
-    /* pika memory lock */
-    while (__isLocked_pikaMemory()) {
+    if (0 != __isLocked_pikaMemory()) {
+        __platformWait();
     }
     __platformDisableIrqHandle();
     __impl_pikaFree(mem, size);

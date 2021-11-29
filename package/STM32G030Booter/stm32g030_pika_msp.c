@@ -360,3 +360,8 @@ void STM32_Code_flashHandler(void) {
     HAL_NVIC_SystemReset();
 }
 
+void __platformWait(void){
+    while(1){
+        pika_memory_lock ++;
+    }
+}
