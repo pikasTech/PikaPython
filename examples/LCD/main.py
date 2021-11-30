@@ -21,25 +21,18 @@ print('mem used max:')
 mem.max()
 lcd.fill(x, y, w, h, 'blue')
 while True:
-    if key.get() == 0:
-        is_update = 1
+    key_val = key.get()
+    if key_val != -1:
         x_last = x
         y_last = y
+        is_update = 1
+    if key_val == 0:
         x = x + 5
-    if key.get() == 1:
-        is_update = 1
-        x_last = x
-        y_last = y
+    if key_val == 1:
         y = y - 5
-    if key.get() == 2:
-        is_update = 1
-        x_last = x
-        y_last = y
+    if key_val == 2:
         y = y + 5
-    if key.get() == 3:
-        is_update = 1
-        x_last = x
-        y_last = y
+    if key_val == 3:
         x = x - 5
     if is_update:
         is_update = 0
