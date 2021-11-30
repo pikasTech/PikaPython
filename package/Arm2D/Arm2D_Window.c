@@ -43,11 +43,11 @@ void pika_arm2d_init(void) {
     //! initialise FPB helper
     if (ARM_2D_HELPER_PFB_INIT(
             &s_tPFBHelper,    //!< FPB Helper object
-            LCD_WIDTH,        //!< screen width
-            LCD_HEIGHT,       //!< screen height
+            ARM2D_LCD_WIDTH,        //!< screen width
+            ARM2D_LCD_HEIGHT,       //!< screen height
             uint16_t,         //!< colour date type
-            16,    //!< PFB block width
-            16,  //!< PFB block height
+            ARM2D_PFB_BLOCK_WIDTH,    //!< PFB block width
+            ARM2D_PFB_BLOCK_HEIGHT,  //!< PFB block height
             1,                //!< number of PFB in the PFB pool
             {
                 .evtOnLowLevelRendering =

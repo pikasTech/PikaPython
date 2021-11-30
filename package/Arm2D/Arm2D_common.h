@@ -8,12 +8,10 @@
 #include "arm_2d_helper.h"
 #include "dataStrs.h"
 #include "pikaScript.h"
+#include "arm2d_config.h"
 
 #ifndef ARM2DQEMUBOOTER_APP_ARM2D_H_
 #define APPLICATIONS_APP_ARM2D_H_
-
-#define LCD_WIDTH 128
-#define LCD_HEIGHT 160
 
 typedef struct __pika_arm2d_element_info_t {
     int x, x_last;
@@ -22,8 +20,8 @@ typedef struct __pika_arm2d_element_info_t {
 } pika_arm2d_element_info_t;
 
 typedef struct __pika_arm2d_box_info_t {
-    pika_arm2d_element_info_t elem_info;
-    arm_2d_region_t arg2d_regin;
+	pika_arm2d_element_info_t elem_info;
+	arm_2d_region_t arg2d_regin;
     int wight, wight_last;
     int hight, hight_last;
     uint16_t color_code, color_code_last;
@@ -72,15 +70,5 @@ typedef struct {
     arm_2d_location_t tCentre;
     arm_2d_region_t tRegion;
 } rotate_tile_t;
-
-/* need implement in platform */
-int32_t __Arm2D_platform_drawRegin(uint32_t x,
-                                   uint32_t y,
-                                   uint32_t width,
-                                   uint32_t height,
-                                   const uint8_t* bitmap);
-
-/* need implement in platform */
-int32_t __Arm2D_platform_Init();
 
 #endif

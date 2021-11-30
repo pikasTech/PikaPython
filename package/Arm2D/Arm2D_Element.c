@@ -7,59 +7,46 @@ void Arm2D_Element_update(PikaObj* self) {
 }
 
 void Arm2D_Element_init(PikaObj* self) {
-    pika_arm2d_element_info_t elemInfo = {0};
-    elemInfo.alpha = 255;
-    elemInfo.x = 0;
-    elemInfo.y = 0;
-    args_setStruct(self->list, "elemInfo", &elemInfo, sizeof(pika_arm2d_element_info_t));
+    /* init element info */
+    obj_setInt(self, "alpha", 255);
+    obj_setInt(self, "x", 0);
+    obj_setInt(self, "y", 0);
 }
 
 void Arm2D_Element_setAlpha(PikaObj* self, int alpha) {
-    pika_arm2d_element_info_t elemInfo;
-    args_getStruct(self->list, "elemInfo", &elemInfo);
-    elemInfo.alpha_last = elemInfo.alpha;
-    elemInfo.alpha = alpha;
-    args_setStruct(self->list, "elemInfo", &elemInfo, sizeof(pika_arm2d_element_info_t));
+    obj_setInt(self, "alpha_last", obj_getInt(self, "alpha"));
+    obj_setInt(self, "alpha", alpha);
 }
 
 void Arm2D_Element_up(PikaObj* self, int y) {
-    pika_arm2d_element_info_t elemInfo;
-    args_getStruct(self->list, "elemInfo", &elemInfo);
-    elemInfo.y_last = elemInfo.y;
-    elemInfo.y = elemInfo.y - y;
-    args_setStruct(self->list, "elemInfo", &elemInfo, sizeof(pika_arm2d_element_info_t));
+    int y_now = obj_getInt(self, "y");
+    obj_setInt(self, "y_last", y_now);
+    obj_setInt(self, "y", y_now - y);
 }
 
 void Arm2D_Element_down(PikaObj* self, int y) {
-    pika_arm2d_element_info_t elemInfo;
-    args_getStruct(self->list, "elemInfo", &elemInfo);
-    elemInfo.y_last = elemInfo.y;
-    elemInfo.y = elemInfo.y + y;
-    args_setStruct(self->list, "elemInfo", &elemInfo, sizeof(pika_arm2d_element_info_t));    
+    int y_now = obj_getInt(self, "y");
+    obj_setInt(self, "y_last", y_now);
+    obj_setInt(self, "y", y_now + y);
 }
 
 void Arm2D_Element_lift(PikaObj* self, int x) {
-    pika_arm2d_element_info_t elemInfo;
-    args_getStruct(self->list, "elemInfo", &elemInfo);
-    elemInfo.x_last = elemInfo.x;
-    elemInfo.x = elemInfo.x - x;
-    args_setStruct(self->list, "elemInfo", &elemInfo, sizeof(pika_arm2d_element_info_t));        
+    int x_now = obj_getInt(self, "x");
+    obj_setInt(self, "x_last", x_now);
+    obj_setInt(self, "x", x_now - x);
 }
 
 void Arm2D_Element_right(PikaObj* self, int x) {
-    pika_arm2d_element_info_t elemInfo;
-    args_getStruct(self->list, "elemInfo", &elemInfo);
-    elemInfo.x_last = elemInfo.x;
-    elemInfo.x = elemInfo.x + x;
-    args_setStruct(self->list, "elemInfo", &elemInfo, sizeof(pika_arm2d_element_info_t));        
+    int x_now = obj_getInt(self, "x");
+    obj_setInt(self, "x_last", x_now);
+    obj_setInt(self, "x", x_now + x);
 }
 
 void Arm2D_Element_move(PikaObj* self, int x, int y) {
-    pika_arm2d_element_info_t elemInfo;
-    args_getStruct(self->list, "elemInfo", &elemInfo);
-    elemInfo.y_last = elemInfo.y;
-    elemInfo.x_last = elemInfo.x;
-    elemInfo.x = x;
-    elemInfo.y = y;
-    args_setStruct(self->list, "elemInfo", &elemInfo, sizeof(pika_arm2d_element_info_t));
+    int x_now = obj_getInt(self, "x");
+    int y_now = obj_getInt(self, "y");
+    obj_setInt(self, "x_last", x_now);
+    obj_setInt(self, "y_last", y_now);
+    obj_setInt(self, "x", x);
+    obj_setInt(self, "y", y);
 }

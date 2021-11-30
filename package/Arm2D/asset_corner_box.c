@@ -48,7 +48,6 @@ const arm_2d_tile_t c_tileWhiteDotAlphaQuarter;
 
 /*============================ PROTOTYPES ====================================*/
 __attribute__((nothrow)) 
-extern int64_t clock(void);
 
 /*============================ LOCAL VARIABLES ===============================*/
 

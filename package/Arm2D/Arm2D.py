@@ -60,6 +60,7 @@ class Box(Element):
     def setSize(x: int, y: int):
         pass
 
+
 class Window(BaseObj):
     background = BackGround()
     elems = ElementList()
