@@ -415,9 +415,9 @@
               <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\startup_stm32g030xx.s</FilePath>
             </File>
             <File>
-              <FileName>stm32g030_pika_msp.c</FileName>
+              <FileName>pika_config.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\stm32g030_pika_msp.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\pika_config.c</FilePath>
             </File>
           </Files>
         </Group>
