@@ -73,7 +73,7 @@ releases = [
 [[packages]]
 name = "STM32G0"
 releases = [
-  "v1.0.2 fe967a3a4476cfb54e49bb9fd312392ea3621cb1",
+  "v1.0.2 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
 ]
 
 [[packages]]
@@ -87,7 +87,7 @@ releases = [
   "v1.0.5 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
   "v1.1.0 b5d3209cc2b90cb080d0dbb15f901b9cbee9397d",
   "v1.1.1 8dd93fb30169848e77ccc39e003ea4086cdda1b7",
-  "v1.1.2 245be71a1b584199f2c08a8612430455d6a0725f",
+  "v1.1.2 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
 ]
 
 [[packages]]
@@ -117,7 +117,7 @@ releases = [
   "v1.2.2 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
   "v1.2.3 e6dfd433da57356d11ef90e23208d1c4e7a70cc9",
   "v1.2.4 245be71a1b584199f2c08a8612430455d6a0725f",
-  "v1.2.5 044a2a8f0905c6ca90c633759f397323ce57eefd",
+  "v1.2.5 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
 ]
 
 [[packages]]
