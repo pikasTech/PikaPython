@@ -25,7 +25,7 @@
 #include "pikaScript.h"
 #include "pikaVM.h"
 #include "stdbool.h"
-#include "stm32g030_pika_msp.h"
+#include "pika_config.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

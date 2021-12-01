@@ -1,7 +1,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_it.h"
 #include "main.h"
-#include "stm32g030_pika_msp.h"
+#include "pika_config.h"
 char UART1_RxBuff[RX_BUFF_LENGTH] = {0};
 uint16_t UART1_RXBuff_offset = 0;
 extern char Shell_Buff[RX_BUFF_LENGTH];
