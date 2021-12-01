@@ -1,6 +1,5 @@
-
 <p align="center">
-	<img alt="logo" src="https://user-images.githubusercontent.com/88232613/144216274-b5014967-2be7-43bf-b1a3-ec721e2da2eb.png" width="300">
+	<img alt="logo" src="https://user-images.githubusercontent.com/88232613/144221063-a85b2cb0-0416-493f-9afb-56cff31e977d.jpg" width="300">
 </p>
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">PikaScript</h1>
 <h4 align="center">跨平台的超轻量级嵌入式Python引擎</h4>
