@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-    <a href="https://whycan.com/f_55.html"> | 论坛 |</a>
+    <a href="https://whycan.com/f_55.html">  论坛 </a>
 </p>
 
 # 1.简介
