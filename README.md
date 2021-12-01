@@ -1,13 +1,23 @@
 
-# PikaScript
-[中文页](README_zh.md)|
+<p align="center">
+	<img alt="logo" src="https://user-images.githubusercontent.com/88232613/144216274-b5014967-2be7-43bf-b1a3-ec721e2da2eb.png" width="300">
+</p>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">PikaScript</h1>
+<h4 align="center">Cross platform ultra lightweight embedded Python engine</h4>
+<p align="center">
+	<a href="https://gitee.com/lyon1998/pikascript/stargazers"><img src="https://gitee.com/lyon1998/pikascript/badge/star.svg?theme=gvp"></a>
+	<a href="https://gitee.com/lyon1998/pikascript/members"><img src="https://gitee.com/lyon1998/pikascript/badge/fork.svg?theme=gvp"></a>
+	<a href="https://github.com/pikastech/pikascript/stargazers"><img src="https://img.shields.io/github/stars/pikastech/pikascript?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/pikastech/pikascript/network/members"><img src="https://img.shields.io/github/forks/pikastech/pikascript?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/pikastech/pikascript/watchers"><img src="https://img.shields.io/github/watchers/pikastech/pikascript?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/pikastech/pikascript/issues"><img src="https://img.shields.io/github/issues/pikastech/pikascript.svg?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/pikastech/pikascript/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pikastech/pikascript.svg?style=flat-square"></a>
+  <a href="https://github.com/pikasTech/pikascript/actions/workflows/CI.yml"><img src="https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg"> </a>
+</p>
 
-
-<img align="left" src="https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif" width="60" height="60"/>
-
-[![CI](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg)](https://github.com/pikasTech/pikascript/actions/workflows/CI.yml)
-
-## Star please~
+<p align="center">
+ <a href="README_zh.md" >中文页</a> | <a href="https://whycan.com/f_55.html" >Forum</a> 
+</p>
 
 # 1. Abstract
 
