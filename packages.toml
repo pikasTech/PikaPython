@@ -144,3 +144,9 @@ name = "APM32F030Booter"
 releases = [
   "v1.0.0 f341393a24e077b312ae35e1b1142a7509df7fb7",
 ]
+
+[[packages]]
+name = "APM32E103VBBooter"
+releases = [
+  "v1.0.0 257a365c9d41f6b4124af095983c52d628322d2c",
+]
