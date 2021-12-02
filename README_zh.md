@@ -180,9 +180,9 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 #### 控制流
 
-|if|while|for|
-|--- |--- |--- |
-|√|√| |
+| if | while | for | else | elif | break | continue |
+| --- | --- | --- | --- | --- | --- | --- |
+|√|√| | | | | |
 
 ### (4)源码规范
 
