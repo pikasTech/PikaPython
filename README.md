@@ -93,6 +93,7 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 |w801|√| | | | | | | | | |
 |apm32f030r8|√| | | | | | | | | |
 |apm32e103vb|√| | | | | | | | | |
+|bl-706|√| | | | | | | | | |
 
 # 3.Characteristic
 ### (1)Run environment
