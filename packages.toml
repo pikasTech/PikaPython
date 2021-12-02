@@ -137,3 +137,10 @@ name = "CH32V103"
 releases = [
   "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
 ]
+
+
+[[packages]]
+name = "APM32F030Booter"
+releases = [
+  "v1.0.0 f341393a24e077b312ae35e1b1142a7509df7fb7",
+]
