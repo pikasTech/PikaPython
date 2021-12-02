@@ -80,7 +80,7 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 
 [pikaPackageManager](../../tree/master/tools/pikaPackageManager) - pacakge manager
 
-# 2.Platform suport
+# 2.Platform support
 |MCU/Board|bsp|gpio|uart|pwm|adc|i2c|spi|rgb|lcd|arm-2d|
 |---|---|---|---|---|---|---|---|---|---|---|
 |[PikaPi Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√| |√|√|√|
