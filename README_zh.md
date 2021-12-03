@@ -15,7 +15,9 @@
 </p>
 
 <p align="center">
-    <a href="https://whycan.com/f_55.html"> 论坛 </a> | <a href="https://gitee.com/Lyon1998/pikascript/raw/master/tools/pikaPackageManager/pikaPackage.exe"> 包管理器 </a> 
+	<a href="https://whycan.com/f_55.html" >论坛</a> |
+	<a href="https://www.yuque.com/liang-mltek/pikascript/nz7dgl" >文档中心</a> |
+	<a href="https://gitee.com/Lyon1998/pikascript/raw/master/tools/pikaPackageManager/pikaPackage.exe">包管理器</a> 
 </p>
 
 # 1.简介
