@@ -20,6 +20,6 @@ https://occ.t-head.cn/community/download?id=575997419775328256
 
 3. Run the app/pikascript/pikaPackage.exe to get source code of pikascript core and packages.
 
-4. Run the app/xxx/pikascript/rust-msc-latest-win10.exe to pre-compile the packages of pikascript.
+4. Run the app/pikascript/rust-msc-latest-win10.exe to pre-compile the packages of pikascript.
 
 5. Enjoy.
