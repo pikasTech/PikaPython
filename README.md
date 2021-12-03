@@ -15,7 +15,10 @@
 </p>
 
 <p align="center">
- <a href="README_zh.md" >中文页</a> | <a href="https://whycan.com/f_55.html" >Forum</a> |  <a href="https://gitee.com/Lyon1998/pikascript/raw/master/tools/pikaPackageManager/pikaPackage.exe"> Package Manager </a> 
+	<a href="README_zh.md" >中文页</a> |
+	<a href="https://whycan.com/f_55.html" >Forum</a> |
+	<a href="https://www.yuque.com/liang-mltek/pikascript/nz7dgl" >Documents</a> |
+	<a href="https://gitee.com/Lyon1998/pikascript/raw/master/tools/pikaPackageManager/pikaPackage.exe"> Package Manager </a> 
 </p>
 
 # 1. Abstract
