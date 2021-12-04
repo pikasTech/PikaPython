@@ -51,17 +51,23 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [Pika派python编程游玩指南](document/7.Pika%E6%B4%BE%E5%BC%80%E5%8F%91%E6%9D%BF%E6%B8%B8%E7%8E%A9%E6%8C%87%E5%8D%97%EF%BC%8C%E5%88%B0%E6%89%8B%E7%9A%84%E5%BC%80%E5%8F%91%E6%9D%BF%E7%8E%A9%E8%B5%B7%E6%9D%A5%EF%BC%81.md)
 
+# 开发手册
+
+### [点此进入文档中心](https://www.yuque.com/liang-mltek/pikascript)
+
+![image](https://user-images.githubusercontent.com/88232613/144693400-99f9c038-76fd-4d95-b3d2-137bd972d580.png)
+
 # 视频教程
 
 ### [点此进入视频中心](https://space.bilibili.com/5365336/channel/detail?cid=202329)
 
 ![image](https://user-images.githubusercontent.com/88232613/142173892-35e33f36-413c-4422-8470-b873b7c3bd71.png)
 
-# 开发手册
+# 交流论坛
 
-### [点此进入文档中心](https://www.yuque.com/liang-mltek/pikascript)
+### [点此进入论坛](https://whycan.com/f_55.html)
 
-![image](https://user-images.githubusercontent.com/88232613/144693400-99f9c038-76fd-4d95-b3d2-137bd972d580.png)
+![image](https://user-images.githubusercontent.com/88232613/144693543-4aee46c8-b6c8-4282-99c4-e07271a4ba5f.png)
 
 ## 文件目录
 [src](../../tree/master/src) - 内核源码
