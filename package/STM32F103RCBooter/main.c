@@ -1,6 +1,6 @@
 #include "main.h"
 #include <stdio.h>
-
+#include "pikaScript.h"
 UART_HandleTypeDef huart1;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -13,6 +13,7 @@ int main(void){
   MX_USART1_UART_Init();
 
   printf("[info]: stm32f103rct6 init ok. \r\n");
+  PikaObj* pikaMain = pikaScriptInit();
   while (1){
 
   }
