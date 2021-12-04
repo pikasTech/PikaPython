@@ -53,6 +53,8 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 # 视频教程
 
+## [点此进入视频中心](https://space.bilibili.com/5365336/channel/detail?cid=202329)
+
 ![image](https://user-images.githubusercontent.com/88232613/142173892-35e33f36-413c-4422-8470-b873b7c3bd71.png)
 
 ## 入门篇 - 面向单片机Python编程用户
@@ -89,21 +91,9 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 # 开发手册
 
-[1. PikaScript-三分钟快速上手](document/1.三分钟快速上手.md)
+### [点此进入文档中心](https://www.yuque.com/liang-mltek/pikascript)
 
-[2. PikaScript-架构与原理](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
-
-[3. PikaScript-十分钟快速部署](document/2.十分钟快速部署.md)
-
-[4. PikaScript-标准开发流程](document/3.PikaScript标准开发流程.md)
-
-[5. PikaScript-Demo展示](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
-
-[6. Arm-2D GUI引擎和pikascript联合仿真](document/6.用Python玩ARM%202D，认真的嘛.md)
-
-[7. Pika派开发板Python编程游玩指南](document/7.Pika派开发板游玩指南，到手的开发板玩起来！.md)
-
-[8. 沁恒RISC-V MCU CH32V103 PikaScript驱动开发实战](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484488&idx=1&sn=e810b86226353ab661656e2a274f21a2&chksm=fdebd321ca9c5a3755527fdf8e9563330b0781b01023fac467943f5fc347734ece51fd65dcfd&token=1711715181&lang=zh_CN#rd)
+![image](https://user-images.githubusercontent.com/88232613/144693400-99f9c038-76fd-4d95-b3d2-137bd972d580.png)
 
 ## 文件目录
 [src](../../tree/master/src) - 内核源码
