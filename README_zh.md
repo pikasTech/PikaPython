@@ -51,59 +51,23 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [Pika派python编程游玩指南](document/7.Pika%E6%B4%BE%E5%BC%80%E5%8F%91%E6%9D%BF%E6%B8%B8%E7%8E%A9%E6%8C%87%E5%8D%97%EF%BC%8C%E5%88%B0%E6%89%8B%E7%9A%84%E5%BC%80%E5%8F%91%E6%9D%BF%E7%8E%A9%E8%B5%B7%E6%9D%A5%EF%BC%81.md)
 
+# 开发手册
+
+### [点此进入文档中心](https://www.yuque.com/liang-mltek/pikascript)
+
+![image](https://user-images.githubusercontent.com/88232613/144693400-99f9c038-76fd-4d95-b3d2-137bd972d580.png)
+
 # 视频教程
+
+### [点此进入视频中心](https://space.bilibili.com/5365336/channel/detail?cid=202329)
 
 ![image](https://user-images.githubusercontent.com/88232613/142173892-35e33f36-413c-4422-8470-b873b7c3bd71.png)
 
-## 入门篇 - 面向单片机Python编程用户
+# 交流论坛
 
-[PikaScript入门-单片机python编程和环境配置](https://www.bilibili.com/video/BV1mg411L72e)
+### [点此进入论坛](https://whycan.com/f_55.html)
 
-[Pika派开发板手把手单片机python编程01——模块安装和GPIO类](https://www.bilibili.com/video/BV1kg411K7W2)
-
-[Pika派开发板手把手单片机python编程02——固件升级](https://www.bilibili.com/video/BV1c44y1v7Jd)
-
-[Pika派开发板手把手单片机python编程03——固件启动方式](https://www.bilibili.com/video/BV1xY411x7Uf)
-
-[Pika派开发板手把手单片机python编程04——固件架构](https://www.bilibili.com/video/BV1wq4y1g7WB)
-
-## 中级篇 - 面向驱动开发者
-
-[PikaScript中级 部署PikaScript RISC-V CH32V103R8](https://www.bilibili.com/video/BV1Cq4y1G7Tj)
-
-[PikaScript中级 部署PikaScript 国产MCU CM32M101A](https://www.bilibili.com/video/BV1jv411u7EJ)
-
-[PikaScript中级 驱动模块开发01 最简单的模块](https://www.bilibili.com/video/BV1aP4y1L7pi)
-
-[PikaScript中级 驱动模块开发02 CH32V103 LED](https://www.bilibili.com/video/BV1Jr4y117Z8)
-
-## 进阶篇 - 面向编译器爱好者和开源项目维护者
-
-[PikaScript进阶-字节码与虚拟机](https://www.bilibili.com/video/BV1J3411y7tX/)
-
-[PikaScript进阶-Github自动测试-Github Actions CI](https://www.bilibili.com/video/BV1o3411C76q/)
-
-[PikaScript进阶-Googletest测试框架](https://www.bilibili.com/video/BV1UF411Y7Z6/)
-
-[PikaScript进阶-数据结构源码精讲](https://www.bilibili.com/video/BV1Ky4y157nW/)
-
-# 开发手册
-
-[1. PikaScript-三分钟快速上手](document/1.三分钟快速上手.md)
-
-[2. PikaScript-架构与原理](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484127&idx=1&sn=f66cff49c488e48c52570c7bb570328f&chksm=fdebd5b6ca9c5ca0707fd221c32f3ad63e94aeb6f917a92774b89ea042381ea261990f5cca3c&token=2045971639&lang=zh_CN#rd)
-
-[3. PikaScript-十分钟快速部署](document/2.十分钟快速部署.md)
-
-[4. PikaScript-标准开发流程](document/3.PikaScript标准开发流程.md)
-
-[5. PikaScript-Demo展示](document/5.我就要用最便宜的单片机来跑python，还要用Keil开发，怎么地吧.md)
-
-[6. Arm-2D GUI引擎和pikascript联合仿真](document/6.用Python玩ARM%202D，认真的嘛.md)
-
-[7. Pika派开发板Python编程游玩指南](document/7.Pika派开发板游玩指南，到手的开发板玩起来！.md)
-
-[8. 沁恒RISC-V MCU CH32V103 PikaScript驱动开发实战](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484488&idx=1&sn=e810b86226353ab661656e2a274f21a2&chksm=fdebd321ca9c5a3755527fdf8e9563330b0781b01023fac467943f5fc347734ece51fd65dcfd&token=1711715181&lang=zh_CN#rd)
+![image](https://user-images.githubusercontent.com/88232613/144693543-4aee46c8-b6c8-4282-99c4-e07271a4ba5f.png)
 
 ## 文件目录
 [src](../../tree/master/src) - 内核源码
