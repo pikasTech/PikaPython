@@ -137,7 +137,7 @@
             <DriverSelection>4101</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
-          <Flash2>BIN\UL2V8M.DLL</Flash2>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
@@ -339,7 +339,7 @@
               <MiscControls>-Wno-error=armcc-pragma-import -Wno-error=armcc-pragma-arm</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-lib\STM32F103RCBooter;..\pikascript\pikascript-core;..\pikascript\pikascript-api</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,24 +384,29 @@
           <GroupName>Booter</GroupName>
           <Files>
             <File>
-              <FileName>startup_stm32f103xe.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>startup_stm32f103xe.s</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/main.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f1xx_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32f1xx_it.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32F103RCBooter\main.c</FilePath>
             </File>
             <File>
               <FileName>stm32f1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32f1xx_hal_msp.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32F103RCBooter\stm32f1xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32F103RCBooter\stm32f1xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_stm32f1xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32F103RCBooter\system_stm32f1xx.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_stm32f103xe.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32F103RCBooter\startup_stm32f103xe.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -481,12 +486,132 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers/CMSIS</GroupName>
+          <GroupName>pikascript-core</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32f1xx.c</FileName>
+              <FileName>BaseObj.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/system_stm32f1xx.c</FilePath>
+              <FilePath>..\pikascript\pikascript-core\BaseObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataArg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataArg.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataArgs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataArgs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataLink.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataLink.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataLinkNode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataLinkNode.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataMemory.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataMemory.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataQueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataQueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataQueueObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataQueueObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataStack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataStack.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataString.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataString.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataStrs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataStrs.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPlatform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaPlatform.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaVM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaVM.c</FilePath>
+            </File>
+            <File>
+              <FileName>TinyObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\TinyObj.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>pikascript-lib</GroupName>
+          <Files>
+            <File>
+              <FileName>PikaStdLib_MemChecker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_SysObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>pikascript-api</GroupName>
+          <Files>
+            <File>
+              <FileName>PikaMain-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaMain-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>pikaScript.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\pikaScript.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_MemChecker-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib_MemChecker-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_SysObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
             </File>
           </Files>
         </Group>
