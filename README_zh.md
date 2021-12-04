@@ -57,38 +57,6 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 ![image](https://user-images.githubusercontent.com/88232613/142173892-35e33f36-413c-4422-8470-b873b7c3bd71.png)
 
-## 入门篇 - 面向单片机Python编程用户
-
-[PikaScript入门-单片机python编程和环境配置](https://www.bilibili.com/video/BV1mg411L72e)
-
-[Pika派开发板手把手单片机python编程01——模块安装和GPIO类](https://www.bilibili.com/video/BV1kg411K7W2)
-
-[Pika派开发板手把手单片机python编程02——固件升级](https://www.bilibili.com/video/BV1c44y1v7Jd)
-
-[Pika派开发板手把手单片机python编程03——固件启动方式](https://www.bilibili.com/video/BV1xY411x7Uf)
-
-[Pika派开发板手把手单片机python编程04——固件架构](https://www.bilibili.com/video/BV1wq4y1g7WB)
-
-## 中级篇 - 面向驱动开发者
-
-[PikaScript中级 部署PikaScript RISC-V CH32V103R8](https://www.bilibili.com/video/BV1Cq4y1G7Tj)
-
-[PikaScript中级 部署PikaScript 国产MCU CM32M101A](https://www.bilibili.com/video/BV1jv411u7EJ)
-
-[PikaScript中级 驱动模块开发01 最简单的模块](https://www.bilibili.com/video/BV1aP4y1L7pi)
-
-[PikaScript中级 驱动模块开发02 CH32V103 LED](https://www.bilibili.com/video/BV1Jr4y117Z8)
-
-## 进阶篇 - 面向编译器爱好者和开源项目维护者
-
-[PikaScript进阶-字节码与虚拟机](https://www.bilibili.com/video/BV1J3411y7tX/)
-
-[PikaScript进阶-Github自动测试-Github Actions CI](https://www.bilibili.com/video/BV1o3411C76q/)
-
-[PikaScript进阶-Googletest测试框架](https://www.bilibili.com/video/BV1UF411Y7Z6/)
-
-[PikaScript进阶-数据结构源码精讲](https://www.bilibili.com/video/BV1Ky4y157nW/)
-
 # 开发手册
 
 ### [点此进入文档中心](https://www.yuque.com/liang-mltek/pikascript)
