@@ -164,10 +164,6 @@ Complete unit testes based on google test.
 
 ## Tencent QQ： 645275593
 
-## QQ group:
-
-<img src="https://user-images.githubusercontent.com/88232613/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
-
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
