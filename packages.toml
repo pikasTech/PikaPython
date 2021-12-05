@@ -156,3 +156,15 @@ name = "STM32F103RCBooter"
 releases = [
   "v1.0.0 9d7cb2d1acd7c0ac580c26f989cfe1dda269aa8c",
 ]
+
+[[packages]]
+name = "STM32F103RBBooter"
+releases = [
+  "v1.0.0 9ac0a50dded627fc14c49f29467327931cf12048",
+]
+
+[[packages]]
+name = "STM32F1"
+releases = [
+  "v1.0.0 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
+]
