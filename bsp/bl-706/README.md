@@ -1,3 +1,3 @@
 # see also:
 
-# https://github.com/bouffalolab/bl_mcu_sdk/pull/19
+https://github.com/bouffalolab/bl_mcu_sdk/tree/master/examples/pikascript
