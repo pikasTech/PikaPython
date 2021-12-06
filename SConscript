@@ -5,7 +5,7 @@ from building import *
 
 
 def pikascript_init():
-    cwd = os.getcwd()
+    cwd = GetCurrentDir()
     def mycopyfile(srcfile,dstfile):
         if not os.path.isfile(srcfile):
             pass
@@ -55,7 +55,6 @@ pikascript_init()
 # init argument
 cwd = GetCurrentDir()
 group = []
-list = os.listdir(cwd)
 src = []
 inc = []
 LOCAL_CCFLAGS = ''
