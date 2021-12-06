@@ -1,6 +1,7 @@
 # RT-Thread building script for bridge
 
 import os, shutil
+import subprocess
 from building import *
 
 
@@ -21,9 +22,8 @@ def pikascript_init():
 
     def myremove(path):
         all_path = cwd + '\\' + path
-        print ( 'remove ' + all_path)
-        os.system('del ' + all_path + ' /F /Q /S')
-        os.system('rd ' + all_path + ' /Q /S')
+        os.popen('del ' + all_path + ' /F /Q /S')
+        os.popen('rd ' + all_path + ' /Q /S')
 
     myremove('bsp')
     myremove('document')
