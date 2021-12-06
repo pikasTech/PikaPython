@@ -20,14 +20,10 @@ def pikascript_init():
     mycopyfile(cwd + '/port/rt-thread/requestment.txt', cwd + '/requestment.txt')
 
     def myremove(path):
-        try:
-            shutil.rmtree(cwd + '/' + path)
-        except OSError:
-            pass
-        try:
-            os.remove(cwd + '/' + path)
-        except OSError:
-            pass
+        all_path = cwd + '\\' + path
+        print ( 'remove ' + all_path)
+        os.system('del ' + all_path + ' /F /Q /S')
+        os.system('rd ' + all_path + ' /Q /S')
 
     myremove('bsp')
     myremove('document')
