@@ -5,7 +5,7 @@ extern "C" {
 }
 
 int main(int argc, char** argv) {
-    __platformPoolInit();
+    __platform_pool_init();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

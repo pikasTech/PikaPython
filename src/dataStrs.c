@@ -108,7 +108,7 @@ char* strsFormat(Args* buffs, uint16_t buffSize, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     char* res = args_getBuff(buffs, buffSize);
-    vsnprintf(res, buffSize, fmt, args);
+    __platform_vsnprintf(res, buffSize, fmt, args);
     va_end(args);
     return res;
 }

@@ -593,7 +593,7 @@ void obj_sysPrintf(PikaObj* self, char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     char sysOut[128] = {0};
-    vsprintf(sysOut, fmt, args);
+    __platform_vsprintf(sysOut, fmt, args);
     obj_setSysOut(self, sysOut);
     va_end(args);
 }

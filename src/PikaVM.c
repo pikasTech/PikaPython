@@ -576,16 +576,16 @@ nextLine:
 
 char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
     /* not write flash when asm is old */
-    if (strEqu(pikaAsm, __platformLoadPikaAsm())) {
+    if (strEqu(pikaAsm, __platform_load_pikaAsm())) {
         args_deinit(buffs);
         buffs = NULL;
-        return __platformLoadPikaAsm();
+        return __platform_load_pikaAsm();
     }
     /* write flash */
-    if (0 == __platformSavePikaAsm(pikaAsm)) {
+    if (0 == __platform_save_pikaAsm(pikaAsm)) {
         args_deinit(buffs);
         buffs = NULL;
-        return __platformLoadPikaAsm();
+        return __platform_load_pikaAsm();
     }
     return pikaAsm;
 }
@@ -607,12 +607,12 @@ Parameters* pikaVM_runAsmWithPars(PikaObj* self,
         char* sysOut = args_getSysOut(locals->list);
         uint8_t errcode = args_getErrorCode(locals->list);
         if (!strEqu("", sysOut)) {
-            __platformPrintf("%s\r\n", sysOut);
+            __platform_printf("%s\r\n", sysOut);
         }
         if (0 != errcode) {
             Args* buffs = New_strBuff();
             char* onlyThisLine = strsGetFirstToken(buffs, thisLine, '\n');
-            __platformPrintf("[info] input commond: %s\r\n", onlyThisLine);
+            __platform_printf("[info] input commond: %s\r\n", onlyThisLine);
             args_deinit(buffs);
         }
     }

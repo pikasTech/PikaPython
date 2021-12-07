@@ -718,7 +718,7 @@ static Arg* ASM_saveSingleAsm(Args* buffs,
                               char* singleAsm,
                               uint8_t isToFlash) {
     if (isToFlash) {
-        uint8_t saveErr = __platformSavePikaAsm(singleAsm);
+        uint8_t saveErr = __platform_save_pikaAsm(singleAsm);
         if (0 == saveErr) {
             if (NULL != pikaAsmBuff) {
                 arg_deinit(pikaAsmBuff);
@@ -738,7 +738,7 @@ static char* ASM_getOutAsm(Args* outBuffs,
                            Arg* pikaAsmBuff,
                            uint8_t isToFlash) {
     if (isToFlash) {
-        return __platformLoadPikaAsm();
+        return __platform_load_pikaAsm();
     }
     return strsCopy(outBuffs, arg_getStr(pikaAsmBuff));
 }
@@ -748,7 +748,7 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
     Arg* pikaAsmBuff = arg_setStr(NULL, "", "");
     uint32_t lineOffset = 0;
     uint32_t multiLineSize = strGetSize(multiLine);
-    uint8_t isToFlash = __platformAsmIsToFlash(multiLine);
+    uint8_t isToFlash = __platform_Asm_is_to_flash(multiLine);
     while (1) {
         Args* singleRunBuffs = New_strBuff();
         char* line =
@@ -764,7 +764,7 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
         }
     }
     if (isToFlash) {
-        __platformSavePikaAsmEOF();
+        __platform_save_pikaAsm_EOF();
     }
     char* outAsm = ASM_getOutAsm(outBuffs, pikaAsmBuff, isToFlash);
     if (NULL != pikaAsmBuff) {
@@ -792,33 +792,33 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     char* num = obj_getStr(subAst, "num");
     if (NULL != ref) {
         char buff[32] = {0};
-        sprintf(buff, "%d REF %s\n", deepth, ref);
+        __platform_sprintf(buff, "%d REF %s\n", deepth, ref);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != operator) {
         char buff[32] = {0};
-        sprintf(buff, "%d OPT %s\n", deepth, operator);
+        __platform_sprintf(buff, "%d OPT %s\n", deepth, operator);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != method) {
         char buff[32] = {0};
-        sprintf(buff, "%d RUN %s\n", deepth, method);
+        __platform_sprintf(buff, "%d RUN %s\n", deepth, method);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != str) {
         char buff[32] = {0};
-        sprintf(buff, "%d STR %s\n", deepth, str);
+        __platform_sprintf(buff, "%d STR %s\n", deepth, str);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != num) {
         char buff[32] = {0};
-        sprintf(buff, "%d NUM %s\n", deepth, num);
+        __platform_sprintf(buff, "%d NUM %s\n", deepth, num);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
 
     if (NULL != direct) {
         char buff[32] = {0};
-        sprintf(buff, "%d OUT %s\n", deepth, direct);
+        __platform_sprintf(buff, "%d OUT %s\n", deepth, direct);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     obj_setInt(ast, "deepth", deepth - 1);

@@ -34,7 +34,7 @@ void* __impl_pikaMalloc(size_t size) {
 void __impl_pikaFree(void* ptrm, size_t size) {
     pool_free(&pikaPool, ptrm, size);
 }
-void __platformPoolInit(void) {
+void __platform_pool_init(void) {
     pikaPool = pool_init(pika_pool_size, pika_aline);
 }
 #endif

@@ -32,18 +32,18 @@ PikaMemInfo pikaMemInfo = {0};
 
 void* pikaMalloc(uint32_t size) {
     /* pika memory lock */
-    if (0 != __isLocked_pikaMemory()) {
-        __platformWait();
+    if (0 != __is_locked_pikaMemory()) {
+        __platform_wait();
     }
     pikaMemInfo.heapUsed += size;
     if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
         pikaMemInfo.heapUsedMax = pikaMemInfo.heapUsed;
     }
-    __platformDisableIrqHandle();
+    __platform_disable_irq_handle();
     void* mem = __impl_pikaMalloc(size);
-    __platformEnableIrqHandle();
+    __platform_enable_irq_handle();
     if (NULL == mem) {
-        __platformPrintf(
+        __platform_printf(
             "[error]: No heap space! Please reset the device.\r\n");
         while (1) {
         }
@@ -52,12 +52,12 @@ void* pikaMalloc(uint32_t size) {
 }
 
 void pikaFree(void* mem, uint32_t size) {
-    if (0 != __isLocked_pikaMemory()) {
-        __platformWait();
+    if (0 != __is_locked_pikaMemory()) {
+        __platform_wait();
     }
-    __platformDisableIrqHandle();
+    __platform_disable_irq_handle();
     __impl_pikaFree(mem, size);
-    __platformEnableIrqHandle();
+    __platform_enable_irq_handle();
     pikaMemInfo.heapUsed -= size;
 }
 
@@ -90,14 +90,14 @@ Pool pool_init(uint32_t size, uint8_t aline) {
     uint32_t block_size = pool_getBlockIndex_byMemSize(&pool, size);
     pool.size = pool_aline(&pool, size);
     pool.bitmap = bitmap_init(block_size);
-    pool.mem = __platformMalloc(pool_aline(&pool, pool.size));
+    pool.mem = __platform_malloc(pool_aline(&pool, pool.size));
     pool.first_free_block = 0;
     pool.purl_free_block_start = 0;
     return pool;
 }
 
 void pool_deinit(Pool* pool) {
-    __platformFree(pool->mem);
+    __platform_free(pool->mem);
     pool->mem = NULL;
     bitmap_deinit(pool->bitmap);
 }
@@ -114,13 +114,13 @@ uint32_t pool_getBlockIndex_byMem(Pool* pool, void* mem) {
 void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
     uint32_t block_index_min = pool_getBlockIndex_byMemSize(pool, size_min);
     uint32_t block_index_max = pool_getBlockIndex_byMemSize(pool, size_max);
-    __platformPrintf("[bitmap]\r\n");
+    __platform_printf("[bitmap]\r\n");
     uint8_t is_end = 0;
     for (uint32_t i = block_index_min; i < block_index_max; i += 16) {
         if (is_end) {
             break;
         }
-        __platformPrintf("0x%x\t: ", i * pool->aline, (i + 15) * pool->aline);
+        __platform_printf("0x%x\t: ", i * pool->aline, (i + 15) * pool->aline);
         for (uint32_t j = i; j < i + 16; j += 4) {
             if (is_end) {
                 break;
@@ -130,11 +130,11 @@ void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
                     is_end = 1;
                     break;
                 }
-                __platformPrintf("%d", bitmap_get(pool->bitmap, k));
+                __platform_printf("%d", bitmap_get(pool->bitmap, k));
             }
-            __platformPrintf(" ");
+            __platform_printf(" ");
         }
-        __platformPrintf("\r\n");
+        __platform_printf("\r\n");
     }
 }
 
@@ -237,7 +237,7 @@ uint32_t aline_by(uint32_t size, uint32_t aline) {
 
 BitMap bitmap_init(uint32_t size) {
     BitMap mem_bit_map =
-        (BitMap)__platformMalloc(((size - 1) / 8 + 1) * sizeof(char));
+        (BitMap)__platform_malloc(((size - 1) / 8 + 1) * sizeof(char));
     if (mem_bit_map == NULL)
         NULL;
     uint32_t size_mem_bit_map = (size - 1) / 8 + 1;
@@ -276,5 +276,5 @@ uint8_t bitmap_get(BitMap bitmap, uint32_t index) {
 }
 
 void bitmap_deinit(BitMap bitmap) {
-    __platformFree(bitmap);
+    __platform_free(bitmap);
 }

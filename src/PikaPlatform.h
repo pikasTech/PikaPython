@@ -27,11 +27,10 @@
 
 #ifndef __PIKA_PALTFORM__H
 #define __PIKA_PALTFORM__H
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#include <stdarg.h>
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM) /* ARM Compiler */
 #define PIKA_WEAK __attribute__((weak))
@@ -41,22 +40,27 @@
 #define PIKA_WEAK __attribute__((weak))
 #endif
 
-void __platformPrintf(char* fmt, ...);
-void* __platformMalloc(size_t size);
-void __platformFree(void* ptr);
-void __platformEnableIrqHandle(void);
-void __platformDisableIrqHandle(void);
-
+void __platform_printf(char* fmt, ...);
+void* __platform_malloc(size_t size);
+void __platform_free(void* ptr);
+void __platform_enable_irq_handle(void);
+void __platform_disable_irq_handle(void);
 void* __impl_pikaMalloc(size_t size);
 void __impl_pikaFree(void* ptrm, size_t size);
-uint8_t __isLocked_pikaMemory(void);
+uint8_t __is_locked_pikaMemory(void);
 uint8_t __is_quick_malloc(void);
 void __quick_malloc_enable(void);
 void __quick_malloc_disable(void);
-char* __platformLoadPikaAsm(void);
-int32_t __platformSavePikaAsm(char* PikaAsm);
-uint8_t __platformAsmIsToFlash(char* pyMultiLine);
-int32_t __platformSavePikaAsmEOF(void);
-PIKA_WEAK void __platformPoolInit(void);
-void __platformWait(void);
+char* __platform_load_pikaAsm(void);
+int32_t __platform_save_pikaAsm(char* PikaAsm);
+uint8_t __platform_Asm_is_to_flash(char* pyMultiLine);
+int32_t __platform_save_pikaAsm_EOF(void);
+int __platform_sprintf(char* buff, char* fmt, ...);
+void __platform_pool_init(void);
+void __platform_wait(void);
+int __platform_vsprintf(char* buff, char* fmt, va_list args);
+int __platform_vsnprintf(char* buff,
+                         size_t size,
+                         const char* fmt,
+                         va_list args);
 #endif
