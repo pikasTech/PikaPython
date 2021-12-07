@@ -169,3 +169,9 @@ name = "STM32F1"
 releases = [
   "v1.0.0 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
 ]
+
+[[packages]]
+name = "RTthreadBooter"
+releases = [
+  "v1.0.0 0d4afb2f31f4eb0cdb534139dab10142f816de03",
+]
