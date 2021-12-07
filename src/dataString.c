@@ -26,10 +26,7 @@
  */
 
 #include "dataString.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "PikaPlatform.h"
 
 char* strAppendWithSize_unlimited(char* strOut, char* pData, int32_t Size) {
     int32_t strOut_i = strGetSize(strOut);

@@ -25,9 +25,8 @@
  * SOFTWARE.
  */
 
+#include "PikaPlatform.h"
 #include "dataStrs.h"
-#include <stdarg.h>
-#include <stdio.h>
 #include "dataString.h"
 
 Args* New_strBuff(void) {

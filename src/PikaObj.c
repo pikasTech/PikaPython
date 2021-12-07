@@ -25,8 +25,8 @@
  * SOFTWARE.
  */
 
+#include "PikaPlatform.h"
 #include "PikaObj.h"
-#include <stdarg.h>
 #include "BaseObj.h"
 #include "PikaVM.h"
 #include "dataArgs.h"

@@ -28,9 +28,6 @@
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 #include "PikaPlatform.h"
 
 typedef struct {

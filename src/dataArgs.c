@@ -25,11 +25,8 @@
  * SOFTWARE.
  */
 
+#include "PikaPlatform.h"
 #include "dataArgs.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "dataLink.h"
 #include "dataMemory.h"
 #include "dataString.h"

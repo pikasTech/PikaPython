@@ -26,8 +26,7 @@
  */
 
 #include "dataMemory.h"
-#include <stdint.h>
-#include <stdlib.h>
+#include "PikaPlatform.h"
 
 PikaMemInfo pikaMemInfo = {0};
 

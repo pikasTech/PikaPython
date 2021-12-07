@@ -26,9 +26,6 @@
  */
 
 #include "dataArg.h"
-
-#include <stdint.h>
-
 #include "dataArgs.h"
 #include "dataMemory.h"
 #include "dataString.h"
