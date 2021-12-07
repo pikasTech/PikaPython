@@ -25,22 +25,22 @@ def pikascript_init():
         os.popen('del ' + all_path + ' /F /Q /S')
         os.popen('rd ' + all_path + ' /Q /S')
 
-    myremove('bsp')
-    myremove('document')
-    myremove('examples')
-    myremove('package')
-    myremove('port')
-    myremove('src')
-    myremove('tools')
-    myremove('.github')
-    myremove('.git')
-    myremove('.vscode')
-    myremove('.gitattributes')
-    myremove('.gitignore')
-    myremove('logo.txt')
-    myremove('packages.toml')
-    myremove('README.md')
-    myremove('README_zh.md')
+    # myremove('bsp')
+    # myremove('document')
+    # myremove('examples')
+    # myremove('package')
+    # myremove('port')
+    # myremove('src')
+    # myremove('tools')
+    # myremove('.github')
+    # myremove('.git')
+    # myremove('.vscode')
+    # myremove('.gitattributes')
+    # myremove('.gitignore')
+    # myremove('logo.txt')
+    # myremove('packages.toml')
+    # myremove('README.md')
+    # myremove('README_zh.md')
 
     os.system(cwd + '/' + 'pikaPackage.exe')
     os.system(cwd + '/' + 'rust-msc-latest-win10.exe')
@@ -53,7 +53,6 @@ cwd = GetCurrentDir()
 group = []
 src = []
 inc = []
-LOCAL_CCFLAGS = ''
 
 # add file and path
 for root, dirs, files in os.walk(cwd):
@@ -61,7 +60,7 @@ for root, dirs, files in os.walk(cwd):
         src = src + Glob(os.path.join(root,dir,'*.c'))
         inc = inc + [os.path.join(root,dir)]
 
-group = DefineGroup('pikascript', src, depend = ['PKG_USING_PIKASCRIPT'], CPPPATH = inc, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
+group = DefineGroup('pikascript', src, depend = ['PKG_USING_PIKASCRIPT'], CPPPATH = inc)
 
 Return('group')
 
