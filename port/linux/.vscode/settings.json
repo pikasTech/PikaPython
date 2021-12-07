@@ -16,7 +16,8 @@
         "pikastdlib_memchecker.h": "c",
         "pikaparser.h": "c",
         "stdint.h": "c",
-        "cstdio": "c"
+        "cstdio": "c",
+        "cstdlib": "c"
     },
     "python.formatting.provider": "yapf"
 }

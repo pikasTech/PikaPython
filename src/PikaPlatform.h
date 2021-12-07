@@ -29,8 +29,8 @@
 #define __PIKA_PALTFORM__H
 #include <stdarg.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM) /* ARM Compiler */
 #define PIKA_WEAK __attribute__((weak))
