@@ -1,3 +1,3 @@
 pikascript-core==v1.2.7
-PikaStdLib==v1.2.1
+PikaStdLib==v1.2.3
 RTthreadBooter==v1.0.0
