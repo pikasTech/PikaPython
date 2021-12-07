@@ -297,7 +297,7 @@ char* getPrintStringFromFloat(Args* self, char* name, float val) {
 char* getPrintStringFromPtr(Args* self, char* name, void* val) {
     Args* buffs = New_strBuff();
     char* res = NULL;
-    uint64_t intVal = (uint64_t)val;
+    uint64_t intVal = (long)val;
     char* valString = strsFormat(buffs, 32, "0x%llx", intVal);
     res = getPrintSring(self, name, valString);
     args_deinit(buffs);

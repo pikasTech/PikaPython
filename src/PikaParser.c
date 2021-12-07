@@ -775,7 +775,7 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
 }
 
 char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
-    uint32_t deepth = obj_getInt(ast, "deepth");
+    int deepth = obj_getInt(ast, "deepth");
     while (1) {
         QueueObj* subStmt = queueObj_popObj(subAst);
         if (NULL == subStmt) {
