@@ -5,11 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-12-07     lyon         the first version
- * 2021-12-08     Meco Man     reimplement init
+ * 2021-12-07     lyon       the first version
  */
 #include <rtthread.h>
 #include <pikaScript.h>
+
 
 #define PIKASCRIPT_STACK_SIZE   4096
 #define PIKASCRIPT_STACK_PRIO   20
@@ -38,4 +38,5 @@ static int rt_pika_init(void)
 
     return 0;
 }
+
 INIT_APP_EXPORT(rt_pika_init);
