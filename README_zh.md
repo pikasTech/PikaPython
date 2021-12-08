@@ -11,7 +11,6 @@
 	<a href="https://github.com/pikastech/pikascript/watchers"><img src="https://img.shields.io/github/watchers/pikastech/pikascript?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/pikastech/pikascript/issues"><img src="https://img.shields.io/github/issues/pikastech/pikascript.svg?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/pikastech/pikascript/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pikastech/pikascript.svg?style=flat-square"></a>
-  <a href="https://github.com/pikasTech/pikascript/actions/workflows/CI.yml"><img src="https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg"> </a>
 </p>
 
 <p align="center">
