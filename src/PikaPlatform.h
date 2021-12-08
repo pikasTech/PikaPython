@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Compiler */
 #if defined(__CC_ARM) || defined(__CLANG_ARM) /* ARM Compiler */
 #define PIKA_WEAK __attribute__((weak))
 #elif defined(__IAR_SYSTEMS_ICC__) /* for IAR Compiler */
@@ -40,7 +41,9 @@
 #define PIKA_WEAK __attribute__((weak))
 #endif
 
+/* OS */
 #ifdef __RTTHREAD__
+#include <rtthread.h>
 #define __platform_printf(...)  rt_kprintf(__VA_ARGS__)
 #endif
 
