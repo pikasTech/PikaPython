@@ -40,6 +40,10 @@
 #define PIKA_WEAK __attribute__((weak))
 #endif
 
+#ifdef __RTTHREAD__
+#define __platform_printf(...)  rt_kprintf(__VA_ARGS__)
+#endif
+
 /* The following functions are can be 
  overrided to config pikaScript. */
 
@@ -53,8 +57,10 @@ uint8_t __platform_Asm_is_to_flash(char* pyMultiLine);
 int32_t __platform_save_pikaAsm_EOF(void);
 char*   __platform_load_pikaAsm(void);
 
-/* printf */
+/* printf family */
+#ifndef __platform_printf
 void    __platform_printf(char* fmt, ...);
+#endif
 int     __platform_sprintf(char* buff, char* fmt, ...);
 int     __platform_vsprintf(char* buff, char* fmt, va_list args);
 int     __platform_vsnprintf(char* buff,
