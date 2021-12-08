@@ -1,13 +1,8 @@
 import PikaStdLib
+import pikaRTThread
 
-print('hello PikaScript!')
+thread = pikaRTThread.Thread()
 
-mem = PikaStdLib.MemChecker()
-
-print('mem used max:')
-mem.max()
-
-i = 0
-while i < 100:
-    i = i + 1
-    print(i)
+while True:
+    print('hello PikaScript!')
+    thread.mdelay(500)
