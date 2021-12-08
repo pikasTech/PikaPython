@@ -172,7 +172,7 @@ releases = [
 ]
 
 [[packages]]
-name = "RTthreadBooter"
+name = "rtthread"
 releases = [
-  "v1.0.0 132e970dc8e67245f1a6271f5ca97813050b2812",
+  "v1.0.0 294328067257b0be99ecb116cf0be8390a7226ed",
 ]
