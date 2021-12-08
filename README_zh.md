@@ -20,6 +20,8 @@
 	<a href="https://gitee.com/Lyon1998/pikascript/raw/master/tools/pikaPackageManager/pikaPackage.exe">包管理器</a> 
 </p>
 
+### 【声明】： PikaScript未与任何第三方机构达成合作，本开源项目遵守MIT开源协议。
+
 # 1.简介
 
 PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配置，可以在少于4KB的RAM下运行(如stm32g030c8和stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
