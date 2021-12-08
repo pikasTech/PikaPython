@@ -11,5 +11,6 @@
 #define PACKAGES_PIKASCRIPT_LATEST_PIKASCRIPT_LIB_RTBOOTER_PIKA_CONFIG_H_
 #include <rtthread.h>
 
+#define __platform_printf(...)  rt_kprintf(__VA_ARGS__)
 
 #endif /* PACKAGES_PIKASCRIPT_LATEST_PIKASCRIPT_LIB_RTBOOTER_PIKA_CONFIG_H_ */

@@ -56,12 +56,15 @@ PIKA_WEAK void __quick_malloc_disable(void) {}
 PIKA_WEAK uint8_t __is_locked_pikaMemory(void) {
     return 0;
 }
+
+#ifndef __platform_printf
 PIKA_WEAK void __platform_printf(char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vprintf(fmt, args);
     va_end(args);
 }
+#endif
 
 PIKA_WEAK int __platform_sprintf(char* buff, char* fmt, ...) {
     va_list args;

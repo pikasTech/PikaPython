@@ -11,11 +11,11 @@
 #include <rtthread.h>
 #include "pikaPlatform.h"
 
-/* sprintf support */
 int __platform_sprintf(char* buff, char* fmt, ...) {
     va_list args;
+    int res;
     va_start(args, fmt);
-    int res = rt_vsprintf(buff, fmt, args);
+    res = rt_vsprintf(buff, fmt, args);
     va_end(args);
     return res;
 }
