@@ -172,7 +172,7 @@ releases = [
 ]
 
 [[packages]]
-name = "rtthread"
+name = "pikaRTThread"
 releases = [
-  "v1.0.0 294328067257b0be99ecb116cf0be8390a7226ed",
+  "v1.0.0 3509764a2ed63c565e63f61814e9b656fc573841",
 ]
