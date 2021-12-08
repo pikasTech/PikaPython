@@ -10,7 +10,7 @@
 #include <rtthread.h>
 #include <pikaScript.h>
 
-#define SAMPLE_UART_NAME       "uart1"    /* 串口设备名称 */
+#define SAMPLE_UART_NAME       RT_CONSOLE_DEVICE_NAME    /* 串口设备名称 */
 static rt_device_t serial; /* 串口设备句柄 */
 static struct rt_semaphore rx_sem; /* 用于接收消息的信号量 */
 
