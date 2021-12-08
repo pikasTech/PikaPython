@@ -20,7 +20,7 @@
 	<a href="https://gitee.com/Lyon1998/pikascript/raw/master/tools/pikaPackageManager/pikaPackage.exe">包管理器</a> 
 </p>
 
-## 【重要声明！】： PikaScript未与任何第三方机构达成合作，本开源项目遵守MIT开源协议。
+## 【重要声明！ PikaScript未与任何第三方机构达成合作，本开源项目遵守MIT开源协议。】
 
 # 1.简介
 
