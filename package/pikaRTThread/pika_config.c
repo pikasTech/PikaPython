@@ -35,3 +35,9 @@ void* __platform_malloc(size_t size) {
 void __platform_free(void* ptr) {
     rt_free(ptr);
 }
+void* __platform_memset(void* mem, int ch, size_t size) {
+    return rt_memset(mem, ch, size);
+}
+void* __platform_memcpy(void* dir, const void* src, size_t size) {
+    return rt_memcpy(dir, src, size);
+}
