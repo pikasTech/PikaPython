@@ -91,14 +91,14 @@ uint8_t* content_init_hash(Hash nameHash,
     uint8_t* contentDir = nameDir + nameSize;
     uint8_t* typeDir = contentDir + size;
 
-    memcpy(nameDir, &nameHash, nameSize);  // use hash
-    memcpy(typeDir, &type, typeSize);
+    __platform_memcpy(nameDir, &nameHash, nameSize);  // use hash
+    __platform_memcpy(typeDir, &type, typeSize);
     sizeDir[0] = size;
     sizeDir[1] = size >> 8;
     if (NULL != content) {
-        memcpy(contentDir, content, size);
+        __platform_memcpy(contentDir, content, size);
     } else {
-        memset(contentDir, 0, size);
+        __platform_memset(contentDir, 0, size);
     }
 
     uint64_t pointerTemp = (long)next;
@@ -144,7 +144,7 @@ uint8_t content_nameOffset(uint8_t* self) {
 Hash content_getNameHash(uint8_t* self) {
     uint8_t* nameHashDir = (uint8_t*)self + content_nameOffset(self);
     Hash nameHash = 0;
-    memcpy(&nameHash, nameHashDir, sizeof(Hash));
+    __platform_memcpy(&nameHash, nameHashDir, sizeof(Hash));
     return nameHash;
 }
 
@@ -233,7 +233,7 @@ Arg* arg_setType(Arg* self, ArgType type) {
 ArgType content_getType(uint8_t* self) {
     void* type_ptr = (uint8_t*)self + content_typeOffset(self);
     ArgType type;
-    memcpy(&type, type_ptr, sizeof(ArgType));
+    __platform_memcpy(&type, type_ptr, sizeof(ArgType));
     return type;
 }
 

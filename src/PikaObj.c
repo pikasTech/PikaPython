@@ -91,11 +91,11 @@ char* fast_itoa(char* buf, uint32_t val) {
 
         p -= 2;
         val /= 100;
-        memcpy(p, &str100p[old - (val * 100)], sizeof(uint16_t));
+        __platform_memcpy(p, &str100p[old - (val * 100)], sizeof(uint16_t));
     }
 
     p -= 2;
-    memcpy(p, &str100p[val], sizeof(uint16_t));
+    __platform_memcpy(p, &str100p[val], sizeof(uint16_t));
 
     return &p[val < 10];
 }
@@ -411,7 +411,7 @@ void* methodArg_getPtr(Arg* method_arg) {
     uint32_t size_ptr = sizeof(void*);
     void* info = arg_getContent(method_arg);
     void* ptr = NULL;
-    memcpy(&ptr, info, size_ptr);
+    __platform_memcpy(&ptr, info, size_ptr);
     return ptr;
 }
 
@@ -432,9 +432,9 @@ void obj_saveMethodInfo(PikaObj* self,
     uint32_t size_pars = strGetSize(pars);
     uint32_t size_info = size_ptr + size_pars + 1;
     void* info = args_getBuff(buffs, size_info);
-    memcpy(info, &method_ptr, size_ptr);
+    __platform_memcpy(info, &method_ptr, size_ptr);
     /* +1 to add \0 */
-    memcpy((void*)((long)info + size_ptr), pars, size_pars + 1);
+    __platform_memcpy((void*)((long)info + size_ptr), pars, size_pars + 1);
     arg = arg_setName(arg, method_name);
     arg = arg_setType(arg, TYPE_METHOD);
     arg = arg_setContent(arg, info, size_info);

@@ -241,7 +241,7 @@ BitMap bitmap_init(uint32_t size) {
     if (mem_bit_map == NULL)
         NULL;
     uint32_t size_mem_bit_map = (size - 1) / 8 + 1;
-    memset(mem_bit_map, 0x0, size_mem_bit_map);
+    __platform_memset(mem_bit_map, 0x0, size_mem_bit_map);
     return mem_bit_map;
 }
 

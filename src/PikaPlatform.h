@@ -75,6 +75,8 @@ int     __platform_vsnprintf(char* buff,
 void*   __platform_malloc(size_t size);
 void    __platform_free(void* ptr);
 void    __platform_pool_init(void);
+void*   __platform_memset(void *mem, int ch, size_t size);
+void*   __platform_memcpy(void* dir, const void* src, size_t size);
 void    __platform_wait(void);
 void*   __impl_pikaMalloc(size_t size);
 void    __impl_pikaFree(void* ptrm, size_t size);

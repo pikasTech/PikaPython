@@ -278,7 +278,7 @@ Arg* Lexer_setSymbel(Arg* tokens_arg,
         goto exit;
     }
     char* symbol_buff = args_getBuff(buffs, i - *symbol_start_index);
-    memcpy(symbol_buff, stmt + *symbol_start_index, i - *symbol_start_index);
+    __platform_memcpy(symbol_buff, stmt + *symbol_start_index, i - *symbol_start_index);
     /* literal */
     if ((symbol_buff[0] == '-') || (symbol_buff[0] == '\'') ||
         (symbol_buff[0] == '"') ||

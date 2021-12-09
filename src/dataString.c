@@ -142,7 +142,7 @@ char* strGetLastLine(char* strOut, char* strIn) {
         }
     }
 
-    memcpy(strOut, strIn + beginIndex, size - beginIndex);
+    __platform_memcpy(strOut, strIn + beginIndex, size - beginIndex);
     strOut[size - beginIndex + 1] = 0;
     return strOut;
 }
@@ -289,6 +289,6 @@ int32_t strIsContain(char* str, char ch) {
 }
 
 char* strCopy(char* strBuff, char* strIn) {
-    memcpy(strBuff, strIn, strGetSize(strIn));
+    __platform_memcpy(strBuff, strIn, strGetSize(strIn));
     return strBuff;
 }

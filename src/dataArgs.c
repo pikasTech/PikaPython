@@ -157,7 +157,7 @@ int32_t args_setStruct(Args* self,
 void* args_getStruct(Args* self, char* name, void* struct_out) {
     Arg* struct_arg = args_getArg(self, name);
     uint32_t struct_size = arg_getContentSize(struct_arg);
-    return memcpy(struct_out, arg_getContent(struct_arg), struct_size);
+    return __platform_memcpy(struct_out, arg_getContent(struct_arg), struct_size);
 }
 
 int32_t args_copyArgByName(Args* self, char* name, Args* directArgs) {

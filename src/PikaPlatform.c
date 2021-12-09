@@ -79,9 +79,9 @@ PIKA_WEAK int __platform_vsprintf(char* buff, char* fmt, va_list args) {
 }
 
 PIKA_WEAK int __platform_vsnprintf(char* buff,
-                                  size_t size,
-                                  const char* fmt,
-                                  va_list args) {
+                                   size_t size,
+                                   const char* fmt,
+                                   va_list args) {
     return vsnprintf(buff, size, fmt, args);
 }
 
@@ -103,4 +103,11 @@ PIKA_WEAK int32_t __platform_save_pikaAsm_EOF(void) {
 PIKA_WEAK void __platform_wait(void) {
     while (1) {
     };
+}
+PIKA_WEAK void* __platform_memset(void* mem, int ch, size_t size) {
+    return memset(mem, ch, size);
+}
+
+PIKA_WEAK void* __platform_memcpy(void* dir, const void* src, size_t size) {
+    return memcpy(dir, src, size);
 }

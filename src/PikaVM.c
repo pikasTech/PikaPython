@@ -60,7 +60,7 @@ enum Instruct {
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
     char* line = args_getBuff(buffs, lineSize + 1);
-    memcpy(line, code, lineSize);
+    __platform_memcpy(line, code, lineSize);
     line[lineSize + 1] = 0;
     return line;
 }
