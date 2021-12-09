@@ -9,6 +9,76 @@
  */
 #include <rtthread.h>
 #include <pikaScript.h>
+#include <shell.h>
+#include <stdint.h>
+
+#define RX_Buff_SIZE 256
+char rxBuff[RX_Buff_SIZE] = { 0 };
+PikaObj *pikaMain;
+uint8_t pika_is_inited = 0;
+
+void clearBuff(char *buff, uint32_t size);
+int finsh_getchar(void);
+
+static void pikascript_entry(void *parameter)
+{
+    if(!pika_is_inited){
+        rt_kprintf("------------------------------------------------------------------\r\n");
+        rt_kprintf("|                                                                |\r\n");
+        rt_kprintf("|     ____   _   __            _____              _          __  |\r\n");
+        rt_kprintf("|    / __ \\ (_) / /__ ____ _  / ___/ _____ _____ (_) ____   / /_ |\r\n");
+        rt_kprintf("|   / /_/ // / / //_// __ `/  \\__ \\ / ___// ___// / / __ \\ / __/ |\r\n");
+        rt_kprintf("|  / ____// / / ,<  / /_/ /  ___/ // /__ / /   / / / /_/ // /_   |\r\n");
+        rt_kprintf("| /_/    /_/ /_/|_| \\__,_/  /____/ \\___//_/   /_/ / .___/ \\__/   |\r\n");
+        rt_kprintf("|                                                /_/             |\r\n");
+        rt_kprintf("|          PikaScript - An Ultra Lightweight Python Engine       |\r\n");
+        rt_kprintf("|                                                                |\r\n");
+        rt_kprintf("|           [ https://github.com/pikastech/pikascript ]          |\r\n");
+        rt_kprintf("|           [  https://gitee.com/lyon1998/pikascript  ]          |\r\n");
+        rt_kprintf("|                                                                |\r\n");
+        rt_kprintf("------------------------------------------------------------------\r\n");
+        pikaMain = pikaScriptInit();
+        pika_is_inited = 1;
+    }
+    clearBuff(rxBuff, RX_Buff_SIZE);
+    rt_kprintf(">>> ");
+    char inputChar;
+    while(1){
+        inputChar = finsh_getchar();
+        rt_kprintf("%c", inputChar);
+        if (inputChar == '\b'){
+            uint32_t size = strGetSize(rxBuff);
+            if(size == 0){
+                rt_kprintf(" ");
+                continue;
+            }
+            rt_kprintf(" \b");
+            rxBuff[size - 1] = 0;
+            continue;
+        }
+        if (inputChar != '\r' && inputChar != '\n') {
+            strAppendWithSize(rxBuff, &inputChar, 1);
+            continue;
+        }
+        if (inputChar == '\r') {
+            rt_kprintf("\r\n");
+            if(strEqu("exit()", rxBuff)){
+                /* exit pika shell */
+                return;
+            }
+            obj_run(pikaMain, rxBuff);
+            rt_kprintf(">>> ");
+            clearBuff(rxBuff, RX_Buff_SIZE);
+            continue;
+        }
+    }
+}
+
+void clearBuff(char *buff, uint32_t size) {
+    for (int i = 0; i < size; i++) {
+        buff[i] = 0;
+    }
+}
 
 #ifdef PKG_PIKASCRIPT_USING_AUTORUNNING
 
@@ -24,10 +94,6 @@
 #define PIKASCRIPT_STACK_PRIO   20
 #endif
 
-static void pikascript_entry(void *parameter)
-{
-    pikaScriptInit();
-}
 
 static int rt_pika_init(void)
 {
@@ -53,7 +119,7 @@ INIT_APP_EXPORT(rt_pika_init);
 #else
 static int pika_main(int argc, char *argv[])
 {
-    pikaScriptInit();
+    pikascript_entry(NULL);
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(pika_main, pika, run PikaScript);
