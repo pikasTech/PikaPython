@@ -10,7 +10,7 @@
 #include <rtthread.h>
 #include <pikaScript.h>
 
-
+#if 0
 #define PIKASCRIPT_STACK_SIZE   4096
 #define PIKASCRIPT_STACK_PRIO   20
 
@@ -40,3 +40,12 @@ static int rt_pika_init(void)
 }
 
 INIT_APP_EXPORT(rt_pika_init);
+
+#else
+static int pika(int argc, char *argv[])
+{
+    pikaScriptInit();
+    return 0;
+}
+MSH_CMD_EXPORT(pika, run pikascript);
+#endif
