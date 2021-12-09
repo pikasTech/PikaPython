@@ -176,3 +176,10 @@ name = "pikaRTThread"
 releases = [
   "v1.0.0 3509764a2ed63c565e63f61814e9b656fc573841",
 ]
+
+
+[[packages]]
+name = "pikaRTDevice"
+releases = [
+  "v0.0.1 fe900b79d8d1075bb7e4e3dd9d4e1e187e0c9195",
+]
