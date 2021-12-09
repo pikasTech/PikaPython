@@ -18,6 +18,8 @@
 	<a href="https://www.yuque.com/liang-mltek/pikascript/nz7dgl" >文档中心</a> |
 	<a href="https://space.bilibili.com/5365336/channel/detail?cid=202329">视频中心</a> |
 	<a href="https://gitee.com/Lyon1998/pikascript/raw/master/tools/pikaPackageManager/pikaPackage.exe">包管理器</a> |
+	<a href="https://www.yuque.com/liang-mltek/pikascript/wcc36r" >rtthread软件包</a> |
+	<a href="https://www.yuque.com/liang-mltek/pikascript/il3an0" >参与贡献</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/cp1k24">商业合作</a> 
 </p>
 
