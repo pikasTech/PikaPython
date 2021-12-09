@@ -42,10 +42,10 @@ static int rt_pika_init(void)
 INIT_APP_EXPORT(rt_pika_init);
 
 #else
-static int pika(int argc, char *argv[])
+static int pika_main(int argc, char *argv[])
 {
     pikaScriptInit();
     return 0;
 }
-MSH_CMD_EXPORT(pika, run pikascript);
+MSH_CMD_EXPORT_ALIAS(pika_main, pika, run PikaScript);
 #endif
