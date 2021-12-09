@@ -8,8 +8,6 @@
 	<a href="https://gitee.com/lyon1998/pikascript/members"><img src="https://gitee.com/lyon1998/pikascript/badge/fork.svg?theme=gvp"></a>
 	<a href="https://github.com/pikastech/pikascript/stargazers"><img src="https://img.shields.io/github/stars/pikastech/pikascript?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/pikastech/pikascript/network/members"><img src="https://img.shields.io/github/forks/pikastech/pikascript?style=flat-square&logo=GitHub"></a>
-	<a href="https://github.com/pikastech/pikascript/watchers"><img src="https://img.shields.io/github/watchers/pikastech/pikascript?style=flat-square&logo=GitHub"></a>
-	<a href="https://github.com/pikastech/pikascript/issues"><img src="https://img.shields.io/github/issues/pikastech/pikascript.svg?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/pikastech/pikascript/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pikastech/pikascript.svg?style=flat-square"></a>
 </p>
 
