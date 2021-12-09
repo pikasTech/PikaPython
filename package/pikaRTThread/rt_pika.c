@@ -10,9 +10,19 @@
 #include <rtthread.h>
 #include <pikaScript.h>
 
-#if 0
+#ifdef PKG_PIKASCRIPT_USING_AUTORUNNING
+
+#ifdef PKG_PIKASCRIPT_STACK_SIZE
+#define PIKASCRIPT_STACK_SIZE   PKG_PIKASCRIPT_STACK_SIZE
+#else
 #define PIKASCRIPT_STACK_SIZE   4096
+#endif
+
+#ifdef PKG_PIKASCRIPT_STACK_PRIO
+#define PIKASCRIPT_STACK_PRIO   PKG_PIKASCRIPT_STACK_PRIO
+#else
 #define PIKASCRIPT_STACK_PRIO   20
+#endif
 
 static void pikascript_entry(void *parameter)
 {
@@ -38,7 +48,6 @@ static int rt_pika_init(void)
 
     return 0;
 }
-
 INIT_APP_EXPORT(rt_pika_init);
 
 #else
@@ -48,4 +57,5 @@ static int pika_main(int argc, char *argv[])
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(pika_main, pika, run PikaScript);
-#endif
+
+#endif /* PKG_PIKASCRIPT_USING_AUTORUNNING */
