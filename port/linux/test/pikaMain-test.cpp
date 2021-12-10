@@ -252,3 +252,22 @@ TEST(pikaMain, err_scop) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+
+TEST(pikaMain, __init__) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)
+    "pin = PikaStdDevice.GPIO()\n"
+    );
+    /* collect */
+    char* a = obj_getStr(pikaMain, (char *)"pin.pin");
+    /* assert */
+    EXPECT_STREQ(a, "PA0");
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

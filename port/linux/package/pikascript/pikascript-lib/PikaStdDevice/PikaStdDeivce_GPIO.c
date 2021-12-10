@@ -10,6 +10,10 @@ void PikaStdDevice_GPIO_init(PikaObj* self) {
     obj_setStr(self, "pull", "none");
 }
 
+void PikaStdDevice_GPIO___init__(PikaObj *self){
+    PikaStdDevice_GPIO_init(self);
+}
+
 void PikaStdDevice_GPIO_disable(PikaObj* self) {
     obj_setInt(self, "isEnable", 0);
     obj_run(self, "platformDisable()");

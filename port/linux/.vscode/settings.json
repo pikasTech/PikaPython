@@ -17,7 +17,8 @@
         "pikaparser.h": "c",
         "stdint.h": "c",
         "cstdio": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "pikastddevice_gpio.h": "c"
     },
-    "python.formatting.provider": "yapf"
+    "python.formatting.provider": "autopep8"
 }

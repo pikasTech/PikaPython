@@ -350,7 +350,7 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     return newObj;
 }
 
-PikaObj* initObj(PikaObj* obj, char* name) {
+static PikaObj* __initObj(PikaObj* obj, char* name) {
     PikaObj* res = NULL;
     NewFun newObjFun = (NewFun)getNewClassObjFunByName(obj, name);
     Args* buffs = New_args(NULL);
@@ -366,6 +366,12 @@ PikaObj* initObj(PikaObj* obj, char* name) {
 
     args_setPtrWithType(obj->list, name, TYPE_OBJECT, newObj);
     res = obj_getPtr(obj, name);
+    /* run __init__() when init obj */
+    Arg* methodArg = obj_getMethod(res, "__init__");
+    if (NULL != methodArg) {
+        arg_deinit(methodArg);
+        obj_run(res, "__init__()");
+    }
     goto exit;
 exit:
     args_deinit(buffs);
@@ -380,7 +386,7 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
     ArgType type = args_getType(self->list, name);
     /* found mate Object */
     if (type == TYPE_MATE_OBJECT) {
-        return initObj(self, name);
+        return __initObj(self, name);
     }
     /* found Objcet */
     if (type == TYPE_OBJECT) {

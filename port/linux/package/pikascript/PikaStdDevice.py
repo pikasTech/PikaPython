@@ -2,6 +2,9 @@ from PikaObj import *
 
 
 class GPIO(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
@@ -17,7 +20,7 @@ class GPIO(TinyObj):
     def getMode() -> str:
         pass
 
-    def setPull(pull:str):
+    def setPull(pull: str):
         pass
 
     def enable():
@@ -32,7 +35,7 @@ class GPIO(TinyObj):
     def low():
         pass
 
-    def read()->int:
+    def read() -> int:
         pass
 
     # need be overrid
