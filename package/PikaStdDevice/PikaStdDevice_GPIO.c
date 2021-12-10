@@ -1,13 +1,16 @@
 #include "BaseObj.h"
 #include "PikaStdDevice_GPIO.h"
 
-
 void PikaStdDevice_GPIO_init(PikaObj* self) {
     obj_setInt(self, "isEnable", 0);
     obj_setStr(self, "pin", "PA0");
     obj_setStr(self, "mode", "out");
     obj_setInt(self, "isOn", 0);
     obj_setStr(self, "pull", "none");
+}
+
+void PikaStdDevice_GPIO___init__(PikaObj* self) {
+    PikaStdDevice_GPIO_init(self);
 }
 
 void PikaStdDevice_GPIO_disable(PikaObj* self) {

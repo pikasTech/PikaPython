@@ -2,6 +2,9 @@ from PikaObj import *
 
 
 class GPIO(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
@@ -17,7 +20,7 @@ class GPIO(TinyObj):
     def getMode() -> str:
         pass
 
-    def setPull(pull:str):
+    def setPull(pull: str):
         pass
 
     def enable():
@@ -32,7 +35,7 @@ class GPIO(TinyObj):
     def low():
         pass
 
-    def read()->int:
+    def read() -> int:
         pass
 
     # need be overrid
@@ -71,6 +74,9 @@ class Time(TinyObj):
 
 
 class ADC(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
@@ -93,6 +99,9 @@ class ADC(TinyObj):
 
 
 class UART(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
@@ -125,6 +134,9 @@ class UART(TinyObj):
 
 
 class IIC(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
@@ -160,6 +172,9 @@ class IIC(TinyObj):
 
 
 class PWM(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
