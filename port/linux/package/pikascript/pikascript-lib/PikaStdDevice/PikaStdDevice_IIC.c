@@ -7,6 +7,10 @@ void PikaStdDevice_IIC_init(PikaObj *self){
     obj_run(self, "SDApin = 'PA1'");
 }
 
+void PikaStdDevice_IIC___init__(PikaObj* self) {
+    PikaStdDevice_IIC_init(self);
+}
+
 void PikaStdDevice_IIC_enable(PikaObj *self){
     obj_run(self, "platformEnable()");
 }

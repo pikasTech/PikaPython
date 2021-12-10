@@ -7,6 +7,10 @@ void PikaStdDevice_PWM_init(PikaObj* self) {
     obj_setFloat(self, "duty", 0.5f);
 }
 
+void PikaStdDevice_PWM___init__(PikaObj* self) {
+    PikaStdDevice_PWM_init(self);
+}
+
 void PikaStdDevice_PWM_setPin(PikaObj* self, char* pin) {
     obj_setStr(self, "pin", pin);
 }

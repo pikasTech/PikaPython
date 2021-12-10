@@ -9,6 +9,11 @@ void PikaStdDevice_UART_init(PikaObj* self) {
     obj_setInt(self, "id", 1);
     obj_setStr(self, "readBuff", "");
 }
+
+void PikaStdDevice_UART___init__(PikaObj* self) {
+    PikaStdDevice_UART_init(self);
+}
+
 char* PikaStdDevice_UART_read(PikaObj* self, int length) {
     obj_setInt(self, "length", length);
     obj_run(self, "platformRead()");
