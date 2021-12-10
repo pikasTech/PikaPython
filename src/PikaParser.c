@@ -671,12 +671,44 @@ static int32_t Parser_getPyLineBlockDeepth(char* line) {
     return 0;
 }
 
+char* Parser_removeAnnotation(char* line) {
+    uint8_t is_annotation_exit = 0;
+    for (int i = 0; i < strGetSize(line); i++) {
+        if ('#' == line[i]) {
+            /* end the line */
+            line[i] = 0;
+            is_annotation_exit = 1;
+            break;
+        }
+    }
+    /* no annotation, exit */
+    if (!is_annotation_exit) {
+        return line;
+    }
+    /* check empty line */
+    for (int i = 0; i < strGetSize(line); i++) {
+        if (' ' != line[i]) {
+            return line;
+        }
+    }
+    /* is an emply line */
+    line[0] = '#';
+    line[1] = 0;
+    return line;
+}
+
 AST* AST_parseLine(char* line, Stack* blockStack) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
     line = strsDeleteChar(buffs, line, '\r');
+    line = Parser_removeAnnotation(line);
+    if (strEqu("#", line)) {
+        obj_setStr(ast, "annotation", "annotation");
+        goto exit;
+    }
     uint8_t blockDeepth = Parser_getPyLineBlockDeepth(line);
     uint8_t blockDeepthLast = blockDeepth;
+    /* in block */
     if (NULL != blockStack) {
         blockDeepthLast = args_getInt(blockStack, "top");
         for (int i = 0; i < blockDeepthLast - blockDeepth; i++) {
@@ -744,6 +776,10 @@ char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack) {
         goto exit;
     }
     ast = AST_parseLine(line, blockStack);
+    if (obj_isArgExist(ast, "annotation")) {
+        pikaAsm = strsCopy(buffs, "");
+        goto exit;
+    }
     pikaAsm = AST_toPikaAsm(ast, buffs);
 exit:
     if (NULL != ast) {
