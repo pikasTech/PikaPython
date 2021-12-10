@@ -170,7 +170,7 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     uint8_t is_get_symbol = 0;
     for (int i = 0; i < token_size; i++) {
         char* token = strsPopToken(buffs, tokens, 0x1F);
-        enum TokenType token_type = token[0];
+        enum TokenType token_type = (enum TokenType)token[0];
         /* collect type */
         if (token_type == TOKEN_operator) {
             is_get_operator = 1;
@@ -286,12 +286,13 @@ Arg* Lexer_setSymbel(Arg* tokens_arg,
                      uint32_t i,
                      int* symbol_start_index) {
     Args* buffs = New_strBuff();
+    char* symbol_buff = NULL;
     /* nothing to add symbel */
     if (i == *symbol_start_index) {
         *symbol_start_index = -1;
         goto exit;
     }
-    char* symbol_buff = args_getBuff(buffs, i - *symbol_start_index);
+    symbol_buff = args_getBuff(buffs, i - *symbol_start_index);
     __platform_memcpy(symbol_buff, stmt + *symbol_start_index,
                       i - *symbol_start_index);
     /* literal */

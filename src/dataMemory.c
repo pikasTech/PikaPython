@@ -238,8 +238,9 @@ uint32_t aline_by(uint32_t size, uint32_t aline) {
 BitMap bitmap_init(uint32_t size) {
     BitMap mem_bit_map =
         (BitMap)__platform_malloc(((size - 1) / 8 + 1) * sizeof(char));
-    if (mem_bit_map == NULL)
-        NULL;
+    if (mem_bit_map == NULL){
+        return NULL;
+    }
     uint32_t size_mem_bit_map = (size - 1) / 8 + 1;
     __platform_memset(mem_bit_map, 0x0, size_mem_bit_map);
     return mem_bit_map;
