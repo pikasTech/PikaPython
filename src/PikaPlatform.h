@@ -47,8 +47,14 @@
 #define __platform_printf(...)  rt_kprintf(__VA_ARGS__)
 #endif
 
-/* The following functions are can be 
- overrided to config pikaScript. */
+
+/* 
+    [Note]:
+    Create a pika_config.c to override the following weak functions to config PikaScript.
+    [Example]:
+    1. https://gitee.com/Lyon1998/pikascript/blob/master/package/STM32G030Booter/pika_config.c
+    2. https://gitee.com/Lyon1998/pikascript/blob/master/package/pikaRTThread/pika_config.c
+*/
 
 /* interrupt config */
 void    __platform_enable_irq_handle(void);
@@ -60,16 +66,16 @@ uint8_t __platform_Asm_is_to_flash(char* pyMultiLine);
 int32_t __platform_save_pikaAsm_EOF(void);
 char*   __platform_load_pikaAsm(void);
 
-/* printf family */
+/* printf family config */
 #ifndef __platform_printf
 void    __platform_printf(char* fmt, ...);
 #endif
 int     __platform_sprintf(char* buff, char* fmt, ...);
 int     __platform_vsprintf(char* buff, char* fmt, va_list args);
 int     __platform_vsnprintf(char* buff,
-                         size_t size,
-                         const char* fmt,
-                         va_list args);
+                        size_t size,
+                        const char* fmt,
+                        va_list args);
 
 /* memory config */
 void*   __platform_malloc(size_t size);
