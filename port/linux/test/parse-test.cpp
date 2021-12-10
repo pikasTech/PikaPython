@@ -880,11 +880,9 @@ TEST(lexser, symbol_1) {
 
     /* run */
     char* tokens = Lexer_getTokens(buffs, (char*)"a(");
-    char* printTokens = Lexer_printTokens(buffs, tokens);
-    printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(printTokens, "{sym}a{dvd}(");
+    EXPECT_EQ(tokens, (char*)NULL);
 
     /* deinit */
     args_deinit(buffs);
@@ -990,9 +988,9 @@ TEST(lexser, symbol_and) {
     printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(
-        printTokens,
-        "{sym}res{opt}={sym}add{dvd}({lit}1{opt} and {sym}lkj{dvd},{lit}2{dvd})");
+    EXPECT_STREQ(printTokens,
+                 "{sym}res{opt}={sym}add{dvd}({lit}1{opt} and "
+                 "{sym}lkj{dvd},{lit}2{dvd})");
 
     /* deinit */
     args_deinit(buffs);

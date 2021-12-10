@@ -25,11 +25,11 @@
  * SOFTWARE.
  */
 
-#include "PikaPlatform.h"
 #include "PikaVM.h"
 #include "BaseObj.h"
 #include "PikaObj.h"
 #include "PikaParser.h"
+#include "PikaPlatform.h"
 #include "dataQueue.h"
 #include "dataQueueObj.h"
 #include "dataStrs.h"
@@ -627,8 +627,16 @@ Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
 
 Parameters* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
+    Parameters* globals = NULL;
     char* pikaAsm = Parser_multiLineToAsm(buffs, multiLine);
-    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+    if(NULL == pikaAsm){
+        __platform_printf("[error]: Syntax error.\r\n");
+        globals = NULL;
+        goto exit;
+    }
+    globals = pikaVM_runAsm(self, pikaAsm);
+    goto exit;
+exit:
     if (NULL != buffs) {
         args_deinit(buffs);
     }

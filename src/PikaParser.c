@@ -143,6 +143,20 @@ char* strsDeleteBetween(Args* buffs, char* strIn, char begin, char end) {
     return strOut;
 }
 
+static uint8_t Lexer_isError(char* line) {
+    Args* buffs = New_strBuff();
+    uint8_t res = 0; /* not error */
+    char* tokens = Lexer_getTokens(buffs, line);
+    if (NULL == tokens) {
+        res = 1; /* lex error */
+        goto exit;
+    }
+    goto exit;
+exit:
+    args_deinit(buffs);
+    return res;
+}
+
 static enum StmtType Lexer_matchStmtType(char* right) {
     Args* buffs = New_strBuff();
     enum StmtType stmtType = STMT_none;
@@ -278,7 +292,8 @@ Arg* Lexer_setSymbel(Arg* tokens_arg,
         goto exit;
     }
     char* symbol_buff = args_getBuff(buffs, i - *symbol_start_index);
-    __platform_memcpy(symbol_buff, stmt + *symbol_start_index, i - *symbol_start_index);
+    __platform_memcpy(symbol_buff, stmt + *symbol_start_index,
+                      i - *symbol_start_index);
     /* literal */
     if ((symbol_buff[0] == '-') || (symbol_buff[0] == '\'') ||
         (symbol_buff[0] == '"') ||
@@ -301,12 +316,14 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     Arg* tokens_arg = New_arg(NULL);
     tokens_arg = arg_setStr(tokens_arg, "", "");
     uint32_t size = strGetSize(stmt);
+    uint8_t bracket_deepth = 0;
     uint8_t c0 = 0;
     uint8_t c1 = 0;
     uint8_t c2 = 0;
     uint8_t c3 = 0;
     int symbol_start_index = -1;
     int is_in_string = 0;
+    char* tokens;
 
     /* process */
     for (int i = 0; i < size; i++) {
@@ -363,6 +380,12 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             char content[2] = {0};
             content[0] = c0;
             tokens_arg = Lexer_setToken(tokens_arg, TOKEN_devider, content);
+            if (c0 == '(') {
+                bracket_deepth++;
+            }
+            if (c0 == ')') {
+                bracket_deepth--;
+            }
             continue;
         }
         /* match operator */
@@ -500,9 +523,15 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
                 Lexer_setSymbel(tokens_arg, stmt, size, &symbol_start_index);
         }
     }
+    if (0 != bracket_deepth) {
+        /* bracket match error */
+        tokens = NULL;
+        goto exit;
+    }
     /* output */
-    char* tokens = arg_getStr(tokens_arg);
+    tokens = arg_getStr(tokens_arg);
     tokens = strsCopy(outBuffs, tokens);
+exit:
     arg_deinit(tokens_arg);
     return tokens;
 }
@@ -707,9 +736,18 @@ exit:
 }
 
 char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack) {
-    AST* ast = AST_parseLine(line, blockStack);
-    char* pikaAsm = AST_toPikaAsm(ast, buffs);
-    AST_deinit(ast);
+    char* pikaAsm = NULL;
+    AST* ast = NULL;
+    if (Lexer_isError(line)) {
+        pikaAsm = NULL;
+        goto exit;
+    }
+    ast = AST_parseLine(line, blockStack);
+    pikaAsm = AST_toPikaAsm(ast, buffs);
+exit:
+    if (NULL != ast) {
+        AST_deinit(ast);
+    }
     return pikaAsm;
 }
 
@@ -749,6 +787,7 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
     uint32_t lineOffset = 0;
     uint32_t multiLineSize = strGetSize(multiLine);
     uint8_t isToFlash = __platform_Asm_is_to_flash(multiLine);
+    char* outAsm = NULL;
     while (1) {
         Args* singleRunBuffs = New_strBuff();
         char* line =
@@ -756,6 +795,11 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
         uint32_t lineSize = strGetSize(line);
         lineOffset = lineOffset + lineSize + 1;
         char* singleAsm = Parser_LineToAsm(singleRunBuffs, line, blockStack);
+        if (NULL == singleAsm) {
+            outAsm = NULL;
+            args_deinit(singleRunBuffs);
+            goto exit;
+        }
         pikaAsmBuff = ASM_saveSingleAsm(singleRunBuffs, pikaAsmBuff, singleAsm,
                                         isToFlash);
         args_deinit(singleRunBuffs);
@@ -766,7 +810,9 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
     if (isToFlash) {
         __platform_save_pikaAsm_EOF();
     }
-    char* outAsm = ASM_getOutAsm(outBuffs, pikaAsmBuff, isToFlash);
+    outAsm = ASM_getOutAsm(outBuffs, pikaAsmBuff, isToFlash);
+    goto exit;
+exit:
     if (NULL != pikaAsmBuff) {
         arg_deinit(pikaAsmBuff);
     }
