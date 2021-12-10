@@ -2,6 +2,9 @@ from PikaObj import *
 
 
 class GPIO(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
@@ -71,6 +74,9 @@ class Time(TinyObj):
 
 
 class ADC(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
@@ -93,6 +99,9 @@ class ADC(TinyObj):
 
 
 class UART(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
@@ -125,6 +134,9 @@ class UART(TinyObj):
 
 
 class IIC(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
@@ -160,6 +172,9 @@ class IIC(TinyObj):
 
 
 class PWM(TinyObj):
+    def __init__():
+        pass
+
     def init():
         pass
 
