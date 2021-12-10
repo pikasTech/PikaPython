@@ -1,5 +1,6 @@
 import PikaStdLib
 import pikaRTThread
+import pikaRTDevice
 
 thread = pikaRTThread.Thread()
 mem = PikaStdLib.MemChecker()
