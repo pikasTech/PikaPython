@@ -60,7 +60,7 @@ static void pikascript_entry(void *parameter)
             strAppendWithSize(rxBuff, &inputChar, 1);
             continue;
         }
-        if (inputChar == '\r') {
+        if ( (inputChar == '\r') || (inputChar == '\n') ) {
             rt_kprintf("\r\n");
             if(strEqu("exit()", rxBuff)){
                 /* exit pika shell */
