@@ -702,12 +702,16 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
     Args* buffs = New_strBuff();
     line = strsDeleteChar(buffs, line, '\r');
     line = Parser_removeAnnotation(line);
+    uint8_t blockDeepth;
+    uint8_t blockDeepthLast;
+    char* lineStart;
+    char* stmt;
     if (strEqu("#", line)) {
         obj_setStr(ast, "annotation", "annotation");
         goto exit;
     }
-    uint8_t blockDeepth = Parser_getPyLineBlockDeepth(line);
-    uint8_t blockDeepthLast = blockDeepth;
+    blockDeepth = Parser_getPyLineBlockDeepth(line);
+    blockDeepthLast = blockDeepth;
     /* in block */
     if (NULL != blockStack) {
         blockDeepthLast = args_getInt(blockStack, "top");
@@ -724,8 +728,8 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         }
     }
     obj_setInt(ast, "blockDeepth", blockDeepth);
-    char* lineStart = line + blockDeepth * 4;
-    char* stmt = lineStart;
+    lineStart = line + blockDeepth * 4;
+    stmt = lineStart;
     if (0 == strncmp(lineStart, (char*)"while ", 6)) {
         stmt = strsCut(buffs, lineStart, ' ', ':');
         obj_setStr(ast, "block", "while");
