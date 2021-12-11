@@ -173,7 +173,7 @@ releases = [
 [[packages]]
 name = "STM32F103C8Booter"
 releases = [
-  "v1.0.0 6b21a0c3c61010529848cd730bb2dc9093a9b49b",
+  "v1.0.0 4debae784c64ff969b49dad937dc1dafd0c67199",
 ]
 
 [[packages]]
