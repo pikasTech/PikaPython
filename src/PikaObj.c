@@ -356,6 +356,7 @@ static PikaObj* __initObj(PikaObj* obj, char* name) {
     Args* buffs = New_args(NULL);
     PikaObj* thisClass;
     PikaObj* newObj;
+    Arg* methodArg;
     if (NULL == newObjFun) {
         /* no such object */
         res = NULL;
@@ -367,7 +368,7 @@ static PikaObj* __initObj(PikaObj* obj, char* name) {
     args_setPtrWithType(obj->list, name, TYPE_OBJECT, newObj);
     res = obj_getPtr(obj, name);
     /* run __init__() when init obj */
-    Arg* methodArg = obj_getMethod(res, "__init__");
+    methodArg = obj_getMethod(res, "__init__");
     if (NULL != methodArg) {
         arg_deinit(methodArg);
         obj_run(res, "__init__()");
