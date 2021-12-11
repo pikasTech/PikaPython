@@ -81,7 +81,7 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>D:\Code\Keil_v5\ARM\ARMCC\bin\fromelf.exe  --text -a -c --output=@L_asm.txt "!L"</UserProg1Name>
             <UserProg2Name></UserProg2Name>
@@ -668,11 +668,6 @@
               <FileName>PikaStdDevice_Time-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\PikaScript\pikascript-api\PikaStdDevice_Time-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-api\PikaStdDevice-api.c</FilePath>
             </File>
             <File>
               <FileName>STM32F1_GPIO-api.c</FileName>

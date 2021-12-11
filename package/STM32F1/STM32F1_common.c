@@ -1,13 +1,6 @@
 #include "STM32F1_common.h"
 #include "dataStrs.h"
 
-void __platformDisableIrqHandle(){
-    __disable_irq();
-}
-void __platformEnableIrqHandle(){
-    __enable_irq();
-}
-
 GPIO_TypeDef* GPIO_get_Group(char* pin) {
     if (strIsStartWith(pin, "PA")) {
         return GPIOA;
