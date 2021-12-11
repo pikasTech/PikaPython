@@ -86,7 +86,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [pikaPackageManager](../../tree/master/tools/pikaPackageManager) - 使用go编写的模块管理器
 
-# 2.[平台支持列表](https://gitee.com/Lyon1998/pikascript/blob/master/bsp/README.md)
+# 2.[平台支持列表](../../blob/master/bsp/README.md)
 
 # 3.特性
 ### (1)运行环境
