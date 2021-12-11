@@ -50,14 +50,6 @@ static void setUartObj(uint8_t id, PikaObj* obj) {
     pika_uart->obj = obj;
 }
 
-static PikaObj* getUartObj(uint8_t id) {
-    pika_uart_t* pika_uart = getPikaUart(id);
-    if (NULL == pika_uart) {
-        return NULL;
-    }
-    return pika_uart->obj;
-}
-
 static USART_TypeDef* getUartInstance(uint8_t id) {
 #ifdef UART1_EXIST
     if (1 == id) {
@@ -310,7 +302,6 @@ void STM32F1_UART_platformRead(PikaObj* self) {
     UART_Start_Receive_IT(
         &pika_uart->huart,
         (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-exit:
     args_deinit(buffs);
     obj_setStr(self,"readData", readBuff);
 }

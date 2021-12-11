@@ -57,7 +57,7 @@ uint8_t READ_SDA(pika_IIC_info* iic) {
 }
 
 void WRITE_SDA(pika_IIC_info* iic, uint8_t data) {
-    HAL_GPIO_WritePin(iic->SDA_GPIO, iic->SDA_GPIO_Pin, data);
+    HAL_GPIO_WritePin(iic->SDA_GPIO, iic->SDA_GPIO_Pin, (GPIO_PinState) data);
 }
 
 void IIC_Start(pika_IIC_info* iic) {
