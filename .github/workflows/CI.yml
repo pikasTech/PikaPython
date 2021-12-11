@@ -48,8 +48,8 @@ jobs:
     - name: stm32f103c8-beforeMake
       run: cd ${{github.workspace}}/bsp/stm32f103c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
  
-    - name: stm32f103c8-make
-      run: cd ${{github.workspace}}/bsp/stm32f103c8 && make
+   # - name: stm32f103c8-make
+   #   run: cd ${{github.workspace}}/bsp/stm32f103c8 && make
 
     - name: stm32g030c8-beforeMake
       run: cd ${{github.workspace}}/bsp/stm32g030c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
@@ -60,8 +60,8 @@ jobs:
     - name: stm32g070cb-beforeMake
       run: cd ${{github.workspace}}/bsp/stm32g070cb/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
  
-    - name: stm32g070cb-make
-      run: cd ${{github.workspace}}/bsp/stm32g070cb && make
+   # - name: stm32g070cb-make
+   #   run: cd ${{github.workspace}}/bsp/stm32g070cb && make
 
     - name: stm32g030-bootloader
       run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
