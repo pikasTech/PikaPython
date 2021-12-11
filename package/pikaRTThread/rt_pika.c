@@ -12,6 +12,10 @@
 #include <shell.h>
 #include <stdint.h>
 
+#define DBG_TAG    "PikaScript"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #define RX_Buff_SIZE 256
 char rxBuff[RX_Buff_SIZE] = { 0 };
 PikaObj *pikaMain;
@@ -104,12 +108,13 @@ static int rt_pika_init(void){
     tid = rt_thread_create("PikaScript",
                             pikascript_rt_init, RT_NULL,
                             PIKASCRIPT_STACK_SIZE,
-                            PIKASCRIPT_STACK_PRIO, 0);
+                            PIKASCRIPT_STACK_PRIO, 10);
 
     if (tid != RT_NULL){
         rt_thread_startup(tid);
     }
     else{
+        LOG_E("PikaScript thread initialization failed!");
     }
     return 0;
 }
