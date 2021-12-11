@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>5</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -333,7 +333,7 @@
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
-            <v6Lto>1</v6Lto>
+            <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
@@ -669,6 +669,26 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\STM32F1-api.c</FilePath>
             </File>
+            <File>
+              <FileName>STM32F1_ADC-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32F1_ADC-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F1_IIC-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32F1_IIC-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F1_PWM-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32F1_PWM-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F1_UART-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32F1_UART-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -683,6 +703,26 @@
               <FileName>STM32F1_GPIO.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\STM32F1\STM32F1_GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F1_IIC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32F1\STM32F1_IIC.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F1_PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32F1\STM32F1_PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F1_UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32F1\STM32F1_UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F1_ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32F1\STM32F1_ADC.c</FilePath>
             </File>
             <File>
               <FileName>STM32F1_Time.c</FileName>
@@ -741,8 +781,8 @@
   <RTE>
     <apis/>
     <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.3.0" condition="ARMv6_7_8-M Device">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.6.0"/>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.5.0" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.8.0"/>
         <targetInfos>
           <targetInfo name="stm32f103c8"/>
         </targetInfos>

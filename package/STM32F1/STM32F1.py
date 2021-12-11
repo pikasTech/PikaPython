@@ -38,62 +38,61 @@ class Time(PikaStdDevice.Time):
         pass
 
 
-# class ADC(PikaStdDevice.ADC):
-#     # override
-#     def platformEnable():
-#         pass
+class ADC(PikaStdDevice.ADC):
+    # override
+    def platformEnable():
+        pass
 
-#     # override
-#     def platformRead():
-#         pass
-
-
-# class UART(PikaStdDevice.UART):
-#     # override
-#     def platformEnable():
-#         pass
-
-#     # override
-#     def platformWrite():
-#         pass
-
-#     # override
-#     def platformRead():
-#         pass
+    # override
+    def platformRead():
+        pass
 
 
-# class PWM(PikaStdDevice.PWM):
-#     # override
-#     def platformEnable():
-#         pass
+class UART(PikaStdDevice.UART):
+    # override
+    def platformEnable():
+        pass
 
-#     # override
-#     def platformSetFrequency():
-#         pass
+    # override
+    def platformWrite():
+        pass
 
-#     # override
-#     def platformSetDuty():
-#         pass
+    # override
+    def platformRead():
+        pass
 
 
-# class IIC(PikaStdDevice.IIC):
-#     SCL = GPIO()
-#     SDA = GPIO()
-#     # override
+class PWM(PikaStdDevice.PWM):
+    # override
+    def platformEnable():
+        pass
 
-#     def platformEnable():
-#         pass
+    # override
+    def platformSetFrequency():
+        pass
 
-#     # override
-#     def platformWrite():
-#         pass
+    # override
+    def platformSetDuty():
+        pass
 
-#     # override
-#     def platformRead():
-#         pass
+
+class IIC(PikaStdDevice.IIC):
+    SCL = GPIO()
+    SDA = GPIO()
+    # override
+
+    def platformEnable():
+        pass
+
+    # override
+    def platformWrite():
+        pass
+
+    # override
+    def platformRead():
+        pass
 
 
 class lowLevel(TinyObj):
     def readPin(pin: str) -> int:
         pass
-
