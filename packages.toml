@@ -173,7 +173,7 @@ releases = [
 [[packages]]
 name = "STM32F1"
 releases = [
-  "v1.0.0 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
+  "v1.0.0 6b51b4de0c3c47df06dbba4869fa84348fcd2f5c",
 ]
 
 [[packages]]
