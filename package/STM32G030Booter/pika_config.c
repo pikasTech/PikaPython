@@ -1,6 +1,16 @@
 #include "pika_config.h"
 #include "main.h"
 
+/* support interrupt */
+
+void __platform_disable_irq_handle(){
+    __disable_irq();
+}
+void __platform_enable_irq_handle(){
+    __enable_irq();
+}
+
+
 /* support printf */
 void HARDWARE_PRINTF_Init(void) {
     LL_USART_InitTypeDef USART_InitStruct = {0};
@@ -139,14 +149,14 @@ uint32_t flash_write_char(uint32_t bassAddr,
             writeData64 = writeData64 << 8;
             writeData64 += ch;
         }
-        __platformDisableIrqHandle();
+        __platform_disable_irq_handle();
         if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,
                               bassAddr + flash_addr, writeData64) != HAL_OK) {
             while (1) {
                 offset = 0;
             }
         }
-        __platformDisableIrqHandle();
+        __platform_disable_irq_handle();
         flash_addr = flash_addr + 8;
     }
     writeBuff[offset] = ch_input;
@@ -154,7 +164,7 @@ uint32_t flash_write_char(uint32_t bassAddr,
     return flash_addr;
 }
 
-uint8_t __platformAsmIsToFlash(char* pyMultiLine) {
+uint8_t __platform_Asm_is_to_flash(char* pyMultiLine) {
     if (strCountSign(pyMultiLine, '\n') > 1) {
         return 1;
     }
@@ -173,11 +183,11 @@ int32_t __saveStrToFlash(char* str,
     return 0;
 }
 
-char* __platformLoadPikaAsm() {
+char* __platform_load_pikaAsm() {
     return (char*)FLASH_PIKA_ASM_START_ADDR;
 }
 
-int32_t __platformSavePikaAsm(char* PikaAsm) {
+int32_t __platform_save_pikaAsm(char* PikaAsm) {
     if (0 == globalWriteAddress) {
         __eriseSelecttedFlash(FLASH_PIKA_ASM_START_ADDR,
                               FLASH_PIKA_ASM_END_ADDR);
@@ -186,7 +196,7 @@ int32_t __platformSavePikaAsm(char* PikaAsm) {
                             FLASH_PIKA_ASM_END_ADDR, &globalWriteAddress);
 }
 
-int32_t __platformSavePikaAsmEOF() {
+int32_t __platform_save_pikaAsm_EOF() {
     for (int i = 0; i < 16; i++) {
         globalWriteAddress = flash_write_char(FLASH_PIKA_ASM_START_ADDR,
                                               globalWriteAddress, '\0');
@@ -234,9 +244,9 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
         if(!pika_memory_lock){
             pika_memory_lock = 1;
             #if use_mem_pool
-            __platformDisableIrqHandle();
+            __platform_disable_irq_handle();
             pool_deinit(&pikaPool);
-            __platformEnableIrqHandle();
+            __platform_enable_irq_handle();
             #endif
         }
         codeHeap.reciveTime = uwTick;
@@ -360,7 +370,7 @@ void STM32_Code_flashHandler(void) {
     HAL_NVIC_SystemReset();
 }
 
-void __platformWait(void){
+void __platform_wait(void){
     while(1){
         pika_memory_lock ++;
     }
