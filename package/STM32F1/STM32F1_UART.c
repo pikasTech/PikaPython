@@ -18,13 +18,8 @@ pika_uart_t pika_uart3;
 pika_uart_t pika_uart4;
 #endif
 
-UART_HandleTypeDef huart1;
-
-/* support prinf */
-int fputc(int ch, FILE* f) {
-    HAL_UART_Transmit(&huart1, (uint8_t*)&ch, 1, 0xffff);
-    return ch;
-}
+/* support by booter */
+extern UART_HandleTypeDef huart1;
 
 /* support scanf */
 int fgetc(FILE* f) {
@@ -34,12 +29,16 @@ int fgetc(FILE* f) {
 }
 
 static pika_uart_t* getPikaUart(uint8_t id) {
+#ifdef UART1_EXIST
     if (1 == id) {
         return &pika_uart1;
     }
+#endif
+#ifdef UART2_EXIST
     if (2 == id) {
         return &pika_uart2;
     }
+#endif
 #ifdef UART3_EXIST
     if (3 == id) {
         return &pika_uart3;

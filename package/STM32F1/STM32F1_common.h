@@ -26,9 +26,20 @@ typedef uint32_t u32;
 #define GPIO_Pin_14 GPIO_PIN_14
 #define GPIO_Pin_15 GPIO_PIN_15
 
-#ifdef STM32F103xB
 #include "stm32f1xx_hal.h"
+#ifdef STM32F103xB
 #define UART1_EXIST
+#define UART2_EXIST
+#define UART3_EXIST
+
+#define TIM1_EXIST
+#define TIM2_EXIST
+#define TIM3_EXIST
+#define TIM4_EXIST
+#endif
+
+#ifdef STM32F103xE
+// #define UART1_EXIST
 #define UART2_EXIST
 #define UART3_EXIST
 
