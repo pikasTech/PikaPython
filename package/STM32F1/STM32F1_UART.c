@@ -21,13 +21,6 @@ pika_uart_t pika_uart4;
 /* support by booter */
 extern UART_HandleTypeDef huart1;
 
-/* support scanf */
-int fgetc(FILE* f) {
-    uint8_t ch = 0;
-    HAL_UART_Receive(&huart1, &ch, 1, 0xffff);
-    return ch;
-}
-
 static pika_uart_t* getPikaUart(uint8_t id) {
 #ifdef UART1_EXIST
     if (1 == id) {
