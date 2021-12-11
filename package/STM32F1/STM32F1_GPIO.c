@@ -3,7 +3,6 @@
 #include "STM32F1_common.h"
 #include "dataStrs.h"
 #include "stm32f1xx_ll_gpio.h"
-#include "sys.h"
 
 void STM32F1_GPIO_platformDisable(PikaObj* self) {
     char* pin = obj_getStr(self, "pin");
