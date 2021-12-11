@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32G070xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;                   ../Drivers/STM32G0xx_HAL_Driver/Inc;                   ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;                   ../Drivers/CMSIS/Device/ST/STM32G0xx/Include;                   ../Drivers/CMSIS/Include;                   ..\pikascript\pikascript-api;                   ..\pikascript\pikascript-core;                   ..\pikascript\pikascript-lib\STM32</IncludePath>
+              <IncludePath>..\pikascript\pikascript-lib\STM32G070CBBooter;../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-api;..\pikascript\pikascript-core;..\pikascript\pikascript-lib\STM32</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -382,88 +382,37 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Application/MDK-ARM</GroupName>
+          <GroupName>Booter</GroupName>
           <Files>
-            <File>
-              <FileName>startup_stm32g070xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>startup_stm32g070xx.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Application/User/Core</GroupName>
-          <Files>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/main.c</FilePath>
-            </File>
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/gpio.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
+              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\gpio.c</FilePath>
             </File>
             <File>
-              <FileName>stm32g0xx_it.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32g0xx_it.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\main.c</FilePath>
             </File>
             <File>
               <FileName>stm32g0xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32g0xx_hal_msp.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\stm32g0xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\stm32g0xx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_stm32g0xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\system_stm32g0xx.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_stm32g070xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\startup_stm32g070xx.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -573,16 +522,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers/CMSIS</GroupName>
-          <Files>
-            <File>
-              <FileName>system_stm32g0xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/system_stm32g0xx.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>pikascript-core</GroupName>
           <Files>
             <File>
@@ -616,6 +555,21 @@
               <FilePath>..\pikascript\pikascript-core\dataMemory.c</FilePath>
             </File>
             <File>
+              <FileName>dataQueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataQueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataQueueObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataQueueObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataStack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataStack.c</FilePath>
+            </File>
+            <File>
               <FileName>dataString.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\dataString.c</FilePath>
@@ -626,29 +580,29 @@
               <FilePath>..\pikascript\pikascript-core\dataStrs.c</FilePath>
             </File>
             <File>
-              <FileName>method.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\method.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaInvoke.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaInvoke.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\PikaObj.c</FilePath>
             </File>
             <File>
+              <FileName>PikaParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPlatform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaPlatform.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaVM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaVM.c</FilePath>
+            </File>
+            <File>
               <FileName>TinyObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\TinyObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>pikaPlatform.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\pikaPlatform.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -666,6 +620,11 @@
               <FilePath>..\pikascript\pikascript-api\pikaScript.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdLib_List-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib_List-api.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdLib_MemChecker-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaStdLib_MemChecker-api.c</FilePath>
@@ -676,15 +635,20 @@
               <FilePath>..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</FilePath>
             </File>
             <File>
-              <FileName>PikaMath_Operator-api.c</FileName>
+              <FileName>PikaStdLib-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\PikaMath_Operator-api.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>pikascript-lib</GroupName>
           <Files>
+            <File>
+              <FileName>PikaStdLib_List.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_List.c</FilePath>
+            </File>
             <File>
               <FileName>PikaStdLib_MemChecker.c</FileName>
               <FileType>1</FileType>
@@ -694,31 +658,6 @@
               <FileName>PikaStdLib_SysObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaBlock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaRunExternControl\PikaBlock.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaIf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaRunExternControl\PikaIf.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaRunExternContral.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaRunExternControl\PikaRunExternContral.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaWhile.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaRunExternControl\PikaWhile.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaMath_Operator.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaMath\PikaMath_Operator.c</FilePath>
             </File>
           </Files>
         </Group>
