@@ -816,6 +816,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaPiZero_LCD-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdLib_List-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib_List-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -840,11 +845,6 @@
               <FileName>RGB_ASM.lib</FileName>
               <FileType>4</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaPiZero\RGB_ASM.lib</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDeivce_GPIO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdDevice_ADC.c</FileName>
@@ -920,6 +920,16 @@
               <FileName>PikaPiZero_LCD.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaPiZero\PikaPiZero_LCD.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_List.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_List.c</FilePath>
             </File>
           </Files>
         </Group>
