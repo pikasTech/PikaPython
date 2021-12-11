@@ -1,5 +1,5 @@
-pikascript-core==v1.2.8
+pikascript-core==latest
 PikaStdLib==v1.2.4
 PikaStdDevice==v1.4.3
-STM32F1==v1.0.3
 STM32F103RBBooter==v1.0.0
+STM32F1==v1.0.3
