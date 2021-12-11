@@ -170,6 +170,7 @@ name = "STM32F1"
 releases = [
   "v1.0.0 04e2988d22c995ed0321eb4361e46867e4347e0a",
   "v1.0.1 355f2253b16fa416ffae59fb35f7c71c75480b12",
+  "v1.0.2 bce5c1fb982805178bc78e1a5557fa8064474479",
 ]
 
 [[packages]]
