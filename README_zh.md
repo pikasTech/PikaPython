@@ -15,6 +15,7 @@
 	<a href="https://whycan.com/f_55.html" >论坛</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/nz7dgl" >文档中心</a> |
 	<a href="https://space.bilibili.com/5365336/channel/detail?cid=202329">视频中心</a> |
+        <a href="../../tree/master/bsp#platform-support">BSP</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/of8izq">包管理器</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/wcc36r" >rtthread软件包</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/il3an0" >参与贡献</a> |
@@ -86,7 +87,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [pikaPackageManager](../../tree/master/tools/pikaPackageManager) - 使用go编写的模块管理器
 
-# 2.[平台支持列表](../../blob/master/bsp/README.md)
+# 2.[平台支持列表](../../tree/master/bsp#platform-support)
 
 # 3.特性
 ### (1)运行环境
