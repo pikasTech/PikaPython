@@ -219,7 +219,7 @@ void __impl_pikaFree(void* ptrm, size_t size) {
 
 /* support download python script by uart1 */
 uint8_t pika_memory_lock = 0;
-uint8_t __isLocked_pikaMemory(void){
+uint8_t __is_locked_pikaMemory(void){
     return pika_memory_lock;
 }
 

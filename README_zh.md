@@ -180,9 +180,13 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| 捐赠：智龙开发板 | 龙芯俱乐部 石南 |
+| package：STM32F1 | [sjy](https://gitee.com/shanjiayang) |
+| package: STM32F103RBBooter | [sjy](https://gitee.com/shanjiayang) |
+| bsp: stm32f103rb | [sjy](https://gitee.com/shanjiayang) |
 | 基于QEMU的ARM-2D仿真工程 | [liuduanfei](https://github.com/liuduanfei) |
 | 捐赠：GD32E103TB芯片2片 | 信息牛(微信名) |
-| Rt-thread 支持包模板| [Meco Jianting Man](https://github.com/mysterywolf) |
+| Rt-thread 支持包、适配层、模块| [Meco Jianting Man](https://github.com/mysterywolf) |
 | 捐赠：移远EC600S-CN 4G模块 | 移远模块 |
 | 捐赠：博流BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
 | 捐赠：中国移动CM32M101A 开发板| 孟巍(微信名) |
