@@ -20,29 +20,33 @@ uint8_t pika_is_inited = 0;
 void clearBuff(char *buff, uint32_t size);
 int finsh_getchar(void);
 
-static void pikascript_entry(void *parameter)
-{
+static void pikascript_rt_init(void *parameter){
+    rt_kprintf("------------------------------------------------------------------\r\n");
+    rt_kprintf("|                                                                |\r\n");
+    rt_kprintf("|     ____   _   __            _____              _          __  |\r\n");
+    rt_kprintf("|    / __ \\ (_) / /__ ____ _  / ___/ _____ _____ (_) ____   / /_ |\r\n");
+    rt_kprintf("|   / /_/ // / / //_// __ `/  \\__ \\ / ___// ___// / / __ \\ / __/ |\r\n");
+    rt_kprintf("|  / ____// / / ,<  / /_/ /  ___/ // /__ / /   / / / /_/ // /_   |\r\n");
+    rt_kprintf("| /_/    /_/ /_/|_| \\__,_/  /____/ \\___//_/   /_/ / .___/ \\__/   |\r\n");
+    rt_kprintf("|                                                /_/             |\r\n");
+    rt_kprintf("|          PikaScript - An Ultra Lightweight Python Engine       |\r\n");
+    rt_kprintf("|                                                                |\r\n");
+    rt_kprintf("|           [ https://github.com/pikastech/pikascript ]          |\r\n");
+    rt_kprintf("|           [  https://gitee.com/lyon1998/pikascript  ]          |\r\n");
+    rt_kprintf("|                                                                |\r\n");
+    rt_kprintf("------------------------------------------------------------------\r\n");
+    pikaMain = pikaScriptInit();
+    pika_is_inited = 1;
+}
+
+static void pikascript_entry(void *parameter){
     if(!pika_is_inited){
-        rt_kprintf("------------------------------------------------------------------\r\n");
-        rt_kprintf("|                                                                |\r\n");
-        rt_kprintf("|     ____   _   __            _____              _          __  |\r\n");
-        rt_kprintf("|    / __ \\ (_) / /__ ____ _  / ___/ _____ _____ (_) ____   / /_ |\r\n");
-        rt_kprintf("|   / /_/ // / / //_// __ `/  \\__ \\ / ___// ___// / / __ \\ / __/ |\r\n");
-        rt_kprintf("|  / ____// / / ,<  / /_/ /  ___/ // /__ / /   / / / /_/ // /_   |\r\n");
-        rt_kprintf("| /_/    /_/ /_/|_| \\__,_/  /____/ \\___//_/   /_/ / .___/ \\__/   |\r\n");
-        rt_kprintf("|                                                /_/             |\r\n");
-        rt_kprintf("|          PikaScript - An Ultra Lightweight Python Engine       |\r\n");
-        rt_kprintf("|                                                                |\r\n");
-        rt_kprintf("|           [ https://github.com/pikastech/pikascript ]          |\r\n");
-        rt_kprintf("|           [  https://gitee.com/lyon1998/pikascript  ]          |\r\n");
-        rt_kprintf("|                                                                |\r\n");
-        rt_kprintf("------------------------------------------------------------------\r\n");
-        pikaMain = pikaScriptInit();
-        pika_is_inited = 1;
+        pikascript_rt_init(NULL);
     }
     clearBuff(rxBuff, RX_Buff_SIZE);
     rt_kprintf(">>> ");
     char inputChar;
+
     while(1){
         inputChar = finsh_getchar();
         rt_kprintf("%c", inputChar);
@@ -95,33 +99,25 @@ void clearBuff(char *buff, uint32_t size) {
 #endif
 
 
-static int rt_pika_init(void)
-{
+static int rt_pika_init(void){
     rt_thread_t tid;
     tid = rt_thread_create("PikaScript",
-                            pikascript_entry, RT_NULL,
+                            pikascript_rt_init, RT_NULL,
                             PIKASCRIPT_STACK_SIZE,
                             PIKASCRIPT_STACK_PRIO, 0);
 
-    if (tid != RT_NULL)
-    {
+    if (tid != RT_NULL){
         rt_thread_startup(tid);
     }
-    else
-    {
-
+    else{
     }
-
     return 0;
 }
 INIT_APP_EXPORT(rt_pika_init);
+#endif /* PKG_PIKASCRIPT_USING_AUTORUNNING */
 
-#else
-static int pika_main(int argc, char *argv[])
-{
+static int pika_main(int argc, char *argv[]){
     pikascript_entry(NULL);
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(pika_main, pika, run PikaScript);
-
-#endif /* PKG_PIKASCRIPT_USING_AUTORUNNING */
