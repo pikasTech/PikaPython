@@ -59,23 +59,6 @@ releases = [
 ]
 
 [[packages]]
-name = "STM32"
-releases = [
-  "v1.0.0 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
-  "v1.0.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
-  "v1.0.2 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
-  "v1.1.0 a18910b5dc349c64297bba3a13b7044f41d48e5f",
-  "v1.1.1 91818aab0fa87b007e84866d479af5ac507339fe",
-  "v1.2.0 6bd4aac6e9aba2a603da602be8583021da1272c0",
-  "v1.3.0 7b816b1546ef91a03f77760d4b10806ab956d452",
-  "v1.4.0 29c3c5b3b0cb4d3e41e6a2a0aef9e2826bc6f7ba",
-  "v1.4.1 6539072bf7bebb242ea40f8595bfb5c9aae3de7f",
-  "v1.4.2 8866710f653ad005f5c3edc5e6417ad31075b7d5",
-  "v2.0.0 e29a77527fd753c4eb811b047899534472bfc8ec",
-  "v2.0.1 5ae86929851ff6a62342a7072b77e9cf5be85f1c",
-]
-
-[[packages]]
 name = "STM32G0"
 releases = [
   "v1.0.2 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
