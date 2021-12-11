@@ -160,6 +160,12 @@ releases = [
 ]
 
 [[packages]]
+name = "STM32G070CBBooter"
+releases = [
+  "v1.0.0 621ee0023cdb3bdefe897ffdab1ed94f977504ff",
+]
+
+[[packages]]
 name = "STM32F1"
 releases = [
   "v1.0.0 04e2988d22c995ed0321eb4361e46867e4347e0a",
