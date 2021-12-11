@@ -2,10 +2,8 @@
   ******************************************************************************
   * @file    stm32f1xx_hal_gpio.c
   * @author  MCD Application Team
-  * @version V1.1.1
-  * @date    12-May-2017
   * @brief   GPIO HAL module driver.
-  *          This file provides firmware functions to manage the following 
+  *          This file provides firmware functions to manage the following
   *          functionalities of the General Purpose Input/Output (GPIO) peripheral:
   *           + Initialization and de-initialization functions
   *           + IO operation functions
@@ -14,110 +12,94 @@
   ==============================================================================
                     ##### GPIO Peripheral features #####
   ==============================================================================
-  [..] 
+  [..]
   Subject to the specific hardware characteristics of each I/O port listed in the datasheet, each
   port bit of the General Purpose IO (GPIO) Ports, can be individually configured by software
   in several modes:
-  (+) Input mode 
+  (+) Input mode
   (+) Analog mode
   (+) Output mode
   (+) Alternate function mode
   (+) External interrupt/event lines
 
-  [..]  
-  During and just after reset, the alternate functions and external interrupt  
+  [..]
+  During and just after reset, the alternate functions and external interrupt
   lines are not active and the I/O ports are configured in input floating mode.
-  
-  [..]   
-  All GPIO pins have weak internal pull-up and pull-down resistors, which can be 
+
+  [..]
+  All GPIO pins have weak internal pull-up and pull-down resistors, which can be
   activated or not.
 
   [..]
   In Output or Alternate mode, each IO can be configured on open-drain or push-pull
   type and the IO speed can be selected depending on the VDD value.
 
-  [..]  
-  All ports have external interrupt/event capability. To use external interrupt 
-  lines, the port must be configured in input mode. All available GPIO pins are 
+  [..]
+  All ports have external interrupt/event capability. To use external interrupt
+  lines, the port must be configured in input mode. All available GPIO pins are
   connected to the 16 external interrupt/event lines from EXTI0 to EXTI15.
-  
-  [..]  
+
+  [..]
   The external interrupt/event controller consists of up to 20 edge detectors in connectivity
   line devices, or 19 edge detectors in other devices for generating event/interrupt requests.
   Each input line can be independently configured to select the type (event or interrupt) and
   the corresponding trigger event (rising or falling or both). Each line can also masked
   independently. A pending register maintains the status line of the interrupt requests
- 
+
                      ##### How to use this driver #####
-  ==============================================================================  
+  ==============================================================================
  [..]
-   (#) Enable the GPIO APB2 clock using the following function : __HAL_RCC_GPIOx_CLK_ENABLE(). 
-   
+   (#) Enable the GPIO APB2 clock using the following function : __HAL_RCC_GPIOx_CLK_ENABLE().
+
    (#) Configure the GPIO pin(s) using HAL_GPIO_Init().
        (++) Configure the IO mode using "Mode" member from GPIO_InitTypeDef structure
-       (++) Activate Pull-up, Pull-down resistor using "Pull" member from GPIO_InitTypeDef 
+       (++) Activate Pull-up, Pull-down resistor using "Pull" member from GPIO_InitTypeDef
             structure.
-       (++) In case of Output or alternate function mode selection: the speed is 
+       (++) In case of Output or alternate function mode selection: the speed is
             configured through "Speed" member from GPIO_InitTypeDef structure
-       (++) Analog mode is required when a pin is to be used as ADC channel 
+       (++) Analog mode is required when a pin is to be used as ADC channel
             or DAC output.
-       (++) In case of external interrupt/event selection the "Mode" member from 
-            GPIO_InitTypeDef structure select the type (interrupt or event) and 
+       (++) In case of external interrupt/event selection the "Mode" member from
+            GPIO_InitTypeDef structure select the type (interrupt or event) and
             the corresponding trigger event (rising or falling or both).
-   
-   (#) In case of external interrupt/event mode selection, configure NVIC IRQ priority 
+
+   (#) In case of external interrupt/event mode selection, configure NVIC IRQ priority
        mapped to the EXTI line using HAL_NVIC_SetPriority() and enable it using
        HAL_NVIC_EnableIRQ().
-         
+
    (#) To get the level of a pin configured in input mode use HAL_GPIO_ReadPin().
-            
-   (#) To set/reset the level of a pin configured in output mode use 
+
+   (#) To set/reset the level of a pin configured in output mode use
        HAL_GPIO_WritePin()/HAL_GPIO_TogglePin().
-  
+
    (#) To lock pin configuration until next reset use HAL_GPIO_LockPin().
-                 
-   (#) During and just after reset, the alternate functions are not 
+
+   (#) During and just after reset, the alternate functions are not
        active and the GPIO pins are configured in input floating mode (except JTAG
        pins).
-  
-   (#) The LSE oscillator pins OSC32_IN and OSC32_OUT can be used as general purpose 
-       (PC14 and PC15, respectively) when the LSE oscillator is off. The LSE has 
+
+   (#) The LSE oscillator pins OSC32_IN and OSC32_OUT can be used as general purpose
+       (PC14 and PC15, respectively) when the LSE oscillator is off. The LSE has
        priority over the GPIO function.
-  
-   (#) The HSE oscillator pins OSC_IN/OSC_OUT can be used as 
-       general purpose PD0 and PD1, respectively, when the HSE oscillator is off. 
+
+   (#) The HSE oscillator pins OSC_IN/OSC_OUT can be used as
+       general purpose PD0 and PD1, respectively, when the HSE oscillator is off.
        The HSE has priority over the GPIO function.
-  
+
   @endverbatim
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************  
-  */ 
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
@@ -138,26 +120,26 @@
 /** @addtogroup GPIO_Private_Constants GPIO Private Constants
   * @{
   */
-#define GPIO_MODE             0x00000003U
-#define EXTI_MODE             0x10000000U
-#define GPIO_MODE_IT          0x00010000U
-#define GPIO_MODE_EVT         0x00020000U
-#define RISING_EDGE           0x00100000U
-#define FALLING_EDGE          0x00200000U
-#define GPIO_OUTPUT_TYPE      0x00000010U
+#define GPIO_MODE             0x00000003u
+#define EXTI_MODE             0x10000000u
+#define GPIO_MODE_IT          0x00010000u
+#define GPIO_MODE_EVT         0x00020000u
+#define RISING_EDGE           0x00100000u
+#define FALLING_EDGE          0x00200000u
+#define GPIO_OUTPUT_TYPE      0x00000010u
 
-#define GPIO_NUMBER           16U
+#define GPIO_NUMBER           16u
 
 /* Definitions for bit manipulation of CRL and CRH register */
-#define  GPIO_CR_MODE_INPUT         0x00000000U /*!< 00: Input mode (reset state)  */
-#define  GPIO_CR_CNF_ANALOG         0x00000000U /*!< 00: Analog mode  */
-#define  GPIO_CR_CNF_INPUT_FLOATING 0x00000004U /*!< 01: Floating input (reset state)  */
-#define  GPIO_CR_CNF_INPUT_PU_PD    0x00000008U /*!< 10: Input with pull-up / pull-down  */
-#define  GPIO_CR_CNF_GP_OUTPUT_PP   0x00000000U /*!< 00: General purpose output push-pull  */
-#define  GPIO_CR_CNF_GP_OUTPUT_OD   0x00000004U /*!< 01: General purpose output Open-drain  */
-#define  GPIO_CR_CNF_AF_OUTPUT_PP   0x00000008U /*!< 10: Alternate function output Push-pull  */
-#define  GPIO_CR_CNF_AF_OUTPUT_OD   0x0000000CU /*!< 11: Alternate function output Open-drain  */
- 
+#define  GPIO_CR_MODE_INPUT         0x00000000u /*!< 00: Input mode (reset state)  */
+#define  GPIO_CR_CNF_ANALOG         0x00000000u /*!< 00: Analog mode  */
+#define  GPIO_CR_CNF_INPUT_FLOATING 0x00000004u /*!< 01: Floating input (reset state)  */
+#define  GPIO_CR_CNF_INPUT_PU_PD    0x00000008u /*!< 10: Input with pull-up / pull-down  */
+#define  GPIO_CR_CNF_GP_OUTPUT_PP   0x00000000u /*!< 00: General purpose output push-pull  */
+#define  GPIO_CR_CNF_GP_OUTPUT_OD   0x00000004u /*!< 01: General purpose output Open-drain  */
+#define  GPIO_CR_CNF_AF_OUTPUT_PP   0x00000008u /*!< 10: Alternate function output Push-pull  */
+#define  GPIO_CR_CNF_AF_OUTPUT_OD   0x0000000Cu /*!< 11: Alternate function output Open-drain  */
+
 /**
   * @}
   */
@@ -173,14 +155,14 @@
 /** @defgroup GPIO_Exported_Functions_Group1 Initialization and de-initialization functions
  *  @brief    Initialization and Configuration functions
  *
-@verbatim    
+@verbatim
  ===============================================================================
               ##### Initialization and de-initialization functions #####
  ===============================================================================
   [..]
     This section provides functions allowing to initialize and de-initialize the GPIOs
     to be ready for use.
- 
+
 @endverbatim
   * @{
   */
@@ -195,25 +177,25 @@
   */
 void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 {
-  uint32_t position;
-  uint32_t ioposition = 0x00U;
-  uint32_t iocurrent = 0x00U;
-  uint32_t temp = 0x00U;
-  uint32_t config = 0x00U;
+  uint32_t position = 0x00u;
+  uint32_t ioposition;
+  uint32_t iocurrent;
+  uint32_t temp;
+  uint32_t config = 0x00u;
   __IO uint32_t *configregister; /* Store the address of CRL or CRH register based on pin number */
-  uint32_t registeroffset = 0U; /* offset used during computation of CNF and MODE bits placement inside CRL or CRH register */
-  
+  uint32_t registeroffset;       /* offset used during computation of CNF and MODE bits placement inside CRL or CRH register */
+
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Init->Pin));
   assert_param(IS_GPIO_MODE(GPIO_Init->Mode));
 
   /* Configure the port pins */
-  for (position = 0U; position < GPIO_NUMBER; position++)
+  while (((GPIO_Init->Pin) >> position) != 0x00u)
   {
     /* Get the IO position */
-    ioposition = (0x01U << position);
-    
+    ioposition = (0x01uL << position);
+
     /* Get the current IO position */
     iocurrent = (uint32_t)(GPIO_Init->Pin) & ioposition;
 
@@ -231,28 +213,28 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
           assert_param(IS_GPIO_SPEED(GPIO_Init->Speed));
           config = GPIO_Init->Speed + GPIO_CR_CNF_GP_OUTPUT_PP;
           break;
-          
+
         /* If we are configuring the pin in OUTPUT open-drain mode */
         case GPIO_MODE_OUTPUT_OD:
           /* Check the GPIO speed parameter */
           assert_param(IS_GPIO_SPEED(GPIO_Init->Speed));
           config = GPIO_Init->Speed + GPIO_CR_CNF_GP_OUTPUT_OD;
           break;
-          
+
         /* If we are configuring the pin in ALTERNATE FUNCTION push-pull mode */
         case GPIO_MODE_AF_PP:
           /* Check the GPIO speed parameter */
           assert_param(IS_GPIO_SPEED(GPIO_Init->Speed));
           config = GPIO_Init->Speed + GPIO_CR_CNF_AF_OUTPUT_PP;
           break;
-          
+
         /* If we are configuring the pin in ALTERNATE FUNCTION open-drain mode */
         case GPIO_MODE_AF_OD:
           /* Check the GPIO speed parameter */
           assert_param(IS_GPIO_SPEED(GPIO_Init->Speed));
           config = GPIO_Init->Speed + GPIO_CR_CNF_AF_OUTPUT_OD;
           break;
-          
+
         /* If we are configuring the pin in INPUT (also applicable to EVENT and IT mode) */
         case GPIO_MODE_INPUT:
         case GPIO_MODE_IT_RISING:
@@ -263,97 +245,99 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
         case GPIO_MODE_EVT_RISING_FALLING:
           /* Check the GPIO pull parameter */
           assert_param(IS_GPIO_PULL(GPIO_Init->Pull));
-          if(GPIO_Init->Pull == GPIO_NOPULL)
-          {  
+          if (GPIO_Init->Pull == GPIO_NOPULL)
+          {
             config = GPIO_CR_MODE_INPUT + GPIO_CR_CNF_INPUT_FLOATING;
           }
-          else if(GPIO_Init->Pull == GPIO_PULLUP)
+          else if (GPIO_Init->Pull == GPIO_PULLUP)
           {
             config = GPIO_CR_MODE_INPUT + GPIO_CR_CNF_INPUT_PU_PD;
-            
+
             /* Set the corresponding ODR bit */
             GPIOx->BSRR = ioposition;
           }
           else /* GPIO_PULLDOWN */
           {
             config = GPIO_CR_MODE_INPUT + GPIO_CR_CNF_INPUT_PU_PD;
-            
+
             /* Reset the corresponding ODR bit */
             GPIOx->BRR = ioposition;
           }
-          break; 
-          
+          break;
+
         /* If we are configuring the pin in INPUT analog mode */
         case GPIO_MODE_ANALOG:
-            config = GPIO_CR_MODE_INPUT + GPIO_CR_CNF_ANALOG;
+          config = GPIO_CR_MODE_INPUT + GPIO_CR_CNF_ANALOG;
           break;
-        
+
         /* Parameters are checked with assert_param */
         default:
           break;
       }
-      
+
       /* Check if the current bit belongs to first half or last half of the pin count number
        in order to address CRH or CRL register*/
       configregister = (iocurrent < GPIO_PIN_8) ? &GPIOx->CRL     : &GPIOx->CRH;
-      registeroffset = (iocurrent < GPIO_PIN_8) ? (position << 2U) : ((position - 8U) << 2U);
-      
+      registeroffset = (iocurrent < GPIO_PIN_8) ? (position << 2u) : ((position - 8u) << 2u);
+
       /* Apply the new configuration of the pin to the register */
-      MODIFY_REG((*configregister), ((GPIO_CRL_MODE0 | GPIO_CRL_CNF0) << registeroffset ), (config << registeroffset));
-      
+      MODIFY_REG((*configregister), ((GPIO_CRL_MODE0 | GPIO_CRL_CNF0) << registeroffset), (config << registeroffset));
+
       /*--------------------- EXTI Mode Configuration ------------------------*/
       /* Configure the External Interrupt or event for the current IO */
-      if((GPIO_Init->Mode & EXTI_MODE) == EXTI_MODE) 
+      if ((GPIO_Init->Mode & EXTI_MODE) == EXTI_MODE)
       {
         /* Enable AFIO Clock */
         __HAL_RCC_AFIO_CLK_ENABLE();
-        temp = AFIO->EXTICR[position >> 2U];
-        CLEAR_BIT(temp, (0x0FU) << (4U * (position & 0x03U)));
-        SET_BIT(temp, (GPIO_GET_INDEX(GPIOx)) << (4U * (position & 0x03U)));
-        AFIO->EXTICR[position >> 2U] = temp;
-        
+        temp = AFIO->EXTICR[position >> 2u];
+        CLEAR_BIT(temp, (0x0Fu) << (4u * (position & 0x03u)));
+        SET_BIT(temp, (GPIO_GET_INDEX(GPIOx)) << (4u * (position & 0x03u)));
+        AFIO->EXTICR[position >> 2u] = temp;
+
 
         /* Configure the interrupt mask */
-        if((GPIO_Init->Mode & GPIO_MODE_IT) == GPIO_MODE_IT)
+        if ((GPIO_Init->Mode & GPIO_MODE_IT) == GPIO_MODE_IT)
         {
-          SET_BIT(EXTI->IMR, iocurrent); 
-        } 
+          SET_BIT(EXTI->IMR, iocurrent);
+        }
         else
         {
-          CLEAR_BIT(EXTI->IMR, iocurrent); 
-        } 
-        
+          CLEAR_BIT(EXTI->IMR, iocurrent);
+        }
+
         /* Configure the event mask */
-        if((GPIO_Init->Mode & GPIO_MODE_EVT) == GPIO_MODE_EVT)
+        if ((GPIO_Init->Mode & GPIO_MODE_EVT) == GPIO_MODE_EVT)
         {
-          SET_BIT(EXTI->EMR, iocurrent); 
-        } 
+          SET_BIT(EXTI->EMR, iocurrent);
+        }
         else
         {
-          CLEAR_BIT(EXTI->EMR, iocurrent); 
+          CLEAR_BIT(EXTI->EMR, iocurrent);
         }
-        
+
         /* Enable or disable the rising trigger */
-        if((GPIO_Init->Mode & RISING_EDGE) == RISING_EDGE)
+        if ((GPIO_Init->Mode & RISING_EDGE) == RISING_EDGE)
         {
-          SET_BIT(EXTI->RTSR, iocurrent); 
-        } 
-        else
-        {
-          CLEAR_BIT(EXTI->RTSR, iocurrent); 
+          SET_BIT(EXTI->RTSR, iocurrent);
         }
-        
-        /* Enable or disable the falling trigger */
-        if((GPIO_Init->Mode & FALLING_EDGE) == FALLING_EDGE)
-        {
-          SET_BIT(EXTI->FTSR, iocurrent); 
-        } 
         else
         {
-          CLEAR_BIT(EXTI->FTSR, iocurrent); 
+          CLEAR_BIT(EXTI->RTSR, iocurrent);
+        }
+
+        /* Enable or disable the falling trigger */
+        if ((GPIO_Init->Mode & FALLING_EDGE) == FALLING_EDGE)
+        {
+          SET_BIT(EXTI->FTSR, iocurrent);
+        }
+        else
+        {
+          CLEAR_BIT(EXTI->FTSR, iocurrent);
         }
       }
     }
+
+	position++;
   }
 }
 
@@ -365,57 +349,56 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
   * @retval None
   */
 void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
-{ 
-  uint32_t position = 0x00U;
-  uint32_t iocurrent = 0x00U;
-  uint32_t tmp = 0x00U;
+{
+  uint32_t position = 0x00u;
+  uint32_t iocurrent;
+  uint32_t tmp;
   __IO uint32_t *configregister; /* Store the address of CRL or CRH register based on pin number */
-  uint32_t registeroffset = 0U;
- 
+  uint32_t registeroffset;
+
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Pin));
 
   /* Configure the port pins */
-  while ((GPIO_Pin >> position) != 0U)
+  while ((GPIO_Pin >> position) != 0u)
   {
     /* Get current io position */
-    iocurrent = (GPIO_Pin) & (1U << position);
+    iocurrent = (GPIO_Pin) & (1uL << position);
 
     if (iocurrent)
     {
-      /*------------------------- GPIO Mode Configuration --------------------*/
-      /* Check if the current bit belongs to first half or last half of the pin count number
-       in order to address CRH or CRL register */
-      configregister = (iocurrent < GPIO_PIN_8) ? &GPIOx->CRL     : &GPIOx->CRH;
-      registeroffset = (iocurrent < GPIO_PIN_8) ? (position << 2U) : ((position - 8U) << 2U);
-      
-      /* CRL/CRH default value is floating input(0x04) shifted to correct position */
-      MODIFY_REG(*configregister, ((GPIO_CRL_MODE0 | GPIO_CRL_CNF0) << registeroffset ), GPIO_CRL_CNF0_0 << registeroffset);
-      
-      /* ODR default value is 0 */
-      CLEAR_BIT(GPIOx->ODR, iocurrent);
-      
       /*------------------------- EXTI Mode Configuration --------------------*/
       /* Clear the External Interrupt or Event for the current IO */
-      
-      tmp = AFIO->EXTICR[position >> 2U];
-      tmp &= 0x0FU << (4U * (position & 0x03U));
-      if(tmp == (GPIO_GET_INDEX(GPIOx) << (4U * (position & 0x03U))))
+
+      tmp = AFIO->EXTICR[position >> 2u];
+      tmp &= 0x0FuL << (4u * (position & 0x03u));
+      if (tmp == (GPIO_GET_INDEX(GPIOx) << (4u * (position & 0x03u))))
       {
-        tmp = 0x0FU << (4U * (position & 0x03U));
-        CLEAR_BIT(AFIO->EXTICR[position >> 2U], tmp);
-          
+        tmp = 0x0FuL << (4u * (position & 0x03u));
+        CLEAR_BIT(AFIO->EXTICR[position >> 2u], tmp);
+
         /* Clear EXTI line configuration */
         CLEAR_BIT(EXTI->IMR, (uint32_t)iocurrent);
         CLEAR_BIT(EXTI->EMR, (uint32_t)iocurrent);
-        
+
         /* Clear Rising Falling edge configuration */
         CLEAR_BIT(EXTI->RTSR, (uint32_t)iocurrent);
         CLEAR_BIT(EXTI->FTSR, (uint32_t)iocurrent);
       }
+      /*------------------------- GPIO Mode Configuration --------------------*/
+      /* Check if the current bit belongs to first half or last half of the pin count number
+       in order to address CRH or CRL register */
+      configregister = (iocurrent < GPIO_PIN_8) ? &GPIOx->CRL     : &GPIOx->CRH;
+      registeroffset = (iocurrent < GPIO_PIN_8) ? (position << 2u) : ((position - 8u) << 2u);
+
+      /* CRL/CRH default value is floating input(0x04) shifted to correct position */
+      MODIFY_REG(*configregister, ((GPIO_CRL_MODE0 | GPIO_CRL_CNF0) << registeroffset), GPIO_CRL_CNF0_0 << registeroffset);
+
+      /* ODR default value is 0 */
+      CLEAR_BIT(GPIOx->ODR, iocurrent);
     }
-    
+
     position++;
   }
 }
@@ -424,7 +407,7 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
   * @}
   */
 
-/** @defgroup GPIO_Exported_Functions_Group2 IO operation functions 
+/** @defgroup GPIO_Exported_Functions_Group2 IO operation functions
  *  @brief   GPIO Read and Write
  *
 @verbatim
@@ -445,7 +428,7 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
   *         This parameter can be GPIO_PIN_x where x can be (0..15).
   * @retval The input port pin value.
   */
-GPIO_PinState HAL_GPIO_ReadPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+GPIO_PinState HAL_GPIO_ReadPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
   GPIO_PinState bitstatus;
 
@@ -465,48 +448,54 @@ GPIO_PinState HAL_GPIO_ReadPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 
 /**
   * @brief  Sets or clears the selected data port bit.
-  * 
-  * @note   This function uses GPIOx_BSRR register to allow atomic read/modify 
+  *
+  * @note   This function uses GPIOx_BSRR register to allow atomic read/modify
   *         accesses. In this way, there is no risk of an IRQ occurring between
   *         the read and the modify access.
-  *               
+  *
   * @param  GPIOx: where x can be (A..G depending on device used) to select the GPIO peripheral
   * @param  GPIO_Pin: specifies the port bit to be written.
   *          This parameter can be one of GPIO_PIN_x where x can be (0..15).
   * @param  PinState: specifies the value to be written to the selected bit.
   *          This parameter can be one of the GPIO_PinState enum values:
-  *            @arg GPIO_BIT_RESET: to clear the port pin
-  *            @arg GPIO_BIT_SET: to set the port pin
+  *            @arg GPIO_PIN_RESET: to clear the port pin
+  *            @arg GPIO_PIN_SET: to set the port pin
   * @retval None
   */
-void HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
+void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
 {
   /* Check the parameters */
   assert_param(IS_GPIO_PIN(GPIO_Pin));
   assert_param(IS_GPIO_PIN_ACTION(PinState));
 
-  if(PinState != GPIO_PIN_RESET)
+  if (PinState != GPIO_PIN_RESET)
   {
     GPIOx->BSRR = GPIO_Pin;
   }
   else
   {
-    GPIOx->BSRR = (uint32_t)GPIO_Pin << 16U;
+    GPIOx->BSRR = (uint32_t)GPIO_Pin << 16u;
   }
 }
 
 /**
   * @brief  Toggles the specified GPIO pin
-  * @param  GPIOx: where x can be (A..G depending on device used) to select the GPIO peripheral 
+  * @param  GPIOx: where x can be (A..G depending on device used) to select the GPIO peripheral
   * @param  GPIO_Pin: Specifies the pins to be toggled.
   * @retval None
   */
-void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+void HAL_GPIO_TogglePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
+  uint32_t odr;
+
   /* Check the parameters */
   assert_param(IS_GPIO_PIN(GPIO_Pin));
 
-  GPIOx->ODR ^= GPIO_Pin;
+  /* get current Ouput Data Register value */
+  odr = GPIOx->ODR;
+
+  /* Set selected pins that were at low level, and reset ones that were high */
+  GPIOx->BSRR = ((odr & GPIO_Pin) << GPIO_NUMBER) | (~odr & GPIO_Pin);
 }
 
 /**
@@ -519,7 +508,7 @@ void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 *         This parameter can be any combination of GPIO_Pin_x where x can be (0..15).
 * @retval None
 */
-HAL_StatusTypeDef HAL_GPIO_LockPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+HAL_StatusTypeDef HAL_GPIO_LockPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
   __IO uint32_t tmp = GPIO_LCKR_LCKK;
 
@@ -535,10 +524,11 @@ HAL_StatusTypeDef HAL_GPIO_LockPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
   GPIOx->LCKR = GPIO_Pin;
   /* Set LCKx bit(s): LCKK='1' + LCK[15-0] */
   GPIOx->LCKR = tmp;
-  /* Read LCKK bit*/
+  /* Read LCKK register. This read is mandatory to complete key lock sequence */
   tmp = GPIOx->LCKR;
 
-  if((uint32_t)(GPIOx->LCKR & GPIO_LCKR_LCKK))
+  /* read again in order to confirm lock is active */
+  if ((uint32_t)(GPIOx->LCKR & GPIO_LCKR_LCKK))
   {
     return HAL_OK;
   }
@@ -556,7 +546,7 @@ HAL_StatusTypeDef HAL_GPIO_LockPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 void HAL_GPIO_EXTI_IRQHandler(uint16_t GPIO_Pin)
 {
   /* EXTI line interrupt detected */
-  if(__HAL_GPIO_EXTI_GET_IT(GPIO_Pin) != RESET)
+  if (__HAL_GPIO_EXTI_GET_IT(GPIO_Pin) != 0x00u)
   {
     __HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
     HAL_GPIO_EXTI_Callback(GPIO_Pin);
