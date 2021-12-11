@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;  ../Drivers/CMSIS/Include;  ..\pikascript\pikascript-core;  ..\pikascript\pikascript-lib\STM32;  ..\pikascript\pikascript-api</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-core;..\pikascript\pikascript-lib\STM32F1;..\pikascript\pikascript-api</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -601,6 +601,21 @@
               <FilePath>..\pikascript\pikascript-core\dataMemory.c</FilePath>
             </File>
             <File>
+              <FileName>dataQueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataQueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataQueueObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataQueueObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataStack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\dataStack.c</FilePath>
+            </File>
+            <File>
               <FileName>dataString.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\dataString.c</FilePath>
@@ -611,44 +626,29 @@
               <FilePath>..\pikascript\pikascript-core\dataStrs.c</FilePath>
             </File>
             <File>
-              <FileName>method.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\method.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaBlock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaBlock.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaIf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaIf.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaInvoke.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaInvoke.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\PikaObj.c</FilePath>
             </File>
             <File>
-              <FileName>PikaWhile.c</FileName>
+              <FileName>PikaParser.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaWhile.c</FilePath>
+              <FilePath>..\pikascript\pikascript-core\PikaParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPlatform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaPlatform.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaVM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaVM.c</FilePath>
             </File>
             <File>
               <FileName>TinyObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\TinyObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>pikaPlatform.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\pikaPlatform.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -676,6 +676,16 @@
               <FilePath>..\pikascript\pikascript-api\PikaStdDevice_GPIO-api.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdDevice_IIC-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdDevice_IIC-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_PWM-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdDevice_PWM-api.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdDevice_Time-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaStdDevice_Time-api.c</FilePath>
@@ -696,39 +706,29 @@
               <FilePath>..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</FilePath>
             </File>
             <File>
-              <FileName>STM32_ADC-api.c</FileName>
+              <FileName>PikaStdLib-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_ADC-api.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
             </File>
             <File>
-              <FileName>STM32_GPIO-api.c</FileName>
+              <FileName>STM32F1_GPIO-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_GPIO-api.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api\STM32F1_GPIO-api.c</FilePath>
             </File>
             <File>
-              <FileName>STM32_Time-api.c</FileName>
+              <FileName>STM32F1_lowLevel-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_Time-api.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api\STM32F1_lowLevel-api.c</FilePath>
             </File>
             <File>
-              <FileName>STM32_UART-api.c</FileName>
+              <FileName>STM32F1_Time-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_UART-api.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api\STM32F1_Time-api.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdDevice_PWM-api.c</FileName>
+              <FileName>STM32F1-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\PikaStdDevice_PWM-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_PWM-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\STM32_PWM-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaMath_Operator-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\PikaMath_Operator-api.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api\STM32F1-api.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -736,29 +736,19 @@
           <GroupName>pikascript-lib</GroupName>
           <Files>
             <File>
-              <FileName>STM32_ADC.c</FileName>
+              <FileName>STM32F1_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_ADC.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32F1\STM32F1_common.c</FilePath>
             </File>
             <File>
-              <FileName>STM32_common.c</FileName>
+              <FileName>STM32F1_GPIO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_common.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32F1\STM32F1_GPIO.c</FilePath>
             </File>
             <File>
-              <FileName>STM32_GPIO.c</FileName>
+              <FileName>STM32F1_Time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_GPIO.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_Time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_Time.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_UART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_UART.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32F1\STM32F1_Time.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdLib_MemChecker.c</FileName>
@@ -771,14 +761,24 @@
               <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdDeivce_GPIO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDeivce_GPIO.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaStdDevice_ADC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_IIC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_IIC.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_PWM.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdDevice_Time.c</FileName>
@@ -789,26 +789,6 @@
               <FileName>PikaStdDevice_UART.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_UART.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_PWM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_PWM.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice_PWM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_PWM.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaMath_Operator.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaMath\PikaMath_Operator.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32_Code.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32\STM32_Code.c</FilePath>
             </File>
           </Files>
         </Group>
