@@ -34,44 +34,44 @@ jobs:
       # Build your program with the given configuration
       run: cd ${{github.workspace}}/port/linux && bash gtest.sh
 
-  bsp:
-    runs-on: windows-latest
+#   bsp:
+#     runs-on: windows-latest
 
-    steps:
-    - uses: actions/checkout@v2
+#     steps:
+#     - uses: actions/checkout@v2
 
-    - uses: ryanwinter/arm-none-eabi-gcc@v2.0.1
-      with:
-        # GNU Embedded Toolchain for Arm release name, in the V-YYYY-qZ format (e.g. "9-2019-q4")
-        release: '9-2019-q4'
+#     - uses: ryanwinter/arm-none-eabi-gcc@v2.0.1
+#       with:
+#         # GNU Embedded Toolchain for Arm release name, in the V-YYYY-qZ format (e.g. "9-2019-q4")
+#         release: '9-2019-q4'
 
-    - name: stm32f103c8-beforeMake
-      run: cd ${{github.workspace}}/bsp/stm32f103c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
+#     - name: stm32f103c8-beforeMake
+#       run: cd ${{github.workspace}}/bsp/stm32f103c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
  
-   # - name: stm32f103c8-make
-   #   run: cd ${{github.workspace}}/bsp/stm32f103c8 && make
+#    # - name: stm32f103c8-make
+#    #   run: cd ${{github.workspace}}/bsp/stm32f103c8 && make
 
-    - name: stm32g030c8-beforeMake
-      run: cd ${{github.workspace}}/bsp/stm32g030c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
+#     - name: stm32g030c8-beforeMake
+#       run: cd ${{github.workspace}}/bsp/stm32g030c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
  
-    # - name: stm32g030c8-make
-    #   run: cd ${{github.workspace}}/bsp/stm32g030c8 && make
+#     # - name: stm32g030c8-make
+#     #   run: cd ${{github.workspace}}/bsp/stm32g030c8 && make
 
-    - name: stm32g070cb-beforeMake
-      run: cd ${{github.workspace}}/bsp/stm32g070cb/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
+#     - name: stm32g070cb-beforeMake
+#       run: cd ${{github.workspace}}/bsp/stm32g070cb/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
  
-   # - name: stm32g070cb-make
-   #   run: cd ${{github.workspace}}/bsp/stm32g070cb && make
+#    # - name: stm32g070cb-make
+#    #   run: cd ${{github.workspace}}/bsp/stm32g070cb && make
 
-    - name: stm32g030-bootloader
-      run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
+#     - name: stm32g030-bootloader
+#       run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
 
-  packageManager-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
+#   packageManager-windows:
+#     runs-on: windows-latest
+#     steps:
+#       - uses: actions/checkout@v2
 
-      - name: PACKAGE_MANAGER
-        run: cd ${{github.workspace}}/tools/pikaPackageManager && go run main.go
+#       - name: PACKAGE_MANAGER
+#         run: cd ${{github.workspace}}/tools/pikaPackageManager && go run main.go
         
 
