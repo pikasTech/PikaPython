@@ -43,6 +43,7 @@
 /* default PIKA_WEAK */
 #ifndef PIKA_WEAK
 #define PIKA_WEAK __attribute__((weak))
+#endif
 
 /* OS */
 #ifdef __RTTHREAD__
