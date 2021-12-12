@@ -40,6 +40,9 @@
 #elif defined(__GNUC__) /* GNU GCC Compiler */
 #define PIKA_WEAK __attribute__((weak))
 #endif
+/* default PIKA_WEAK */
+#ifndef PIKA_WEAK
+#define PIKA_WEAK __attribute__((weak))
 
 /* OS */
 #ifdef __RTTHREAD__
