@@ -186,3 +186,9 @@ name = "pikaRTDevice"
 releases = [
   "v0.0.1 fe900b79d8d1075bb7e4e3dd9d4e1e187e0c9195",
 ]
+
+[[packages]]
+name = "pikaRTBooter"
+releases = [
+  "v0.0.1 2059f1f97f68f6f863660a839a1d38c69c0e5523",
+]
