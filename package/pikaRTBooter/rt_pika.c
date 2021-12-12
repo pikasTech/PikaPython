@@ -18,7 +18,7 @@
 
 #define RX_Buff_SIZE 256
 char rxBuff[RX_Buff_SIZE] = { 0 };
-PikaObj *pikaMain;
+PikaObj *pikaMain = 0;
 uint8_t pika_is_inited = 0;
 
 void clearBuff(char *buff, uint32_t size);
