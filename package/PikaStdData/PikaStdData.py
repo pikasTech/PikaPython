@@ -1,7 +1,7 @@
 from PikaObj import *
 
 class List(TinyObj):
-    def init():
+    def __init__():
         pass
 
     def append(arg: any):
