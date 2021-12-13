@@ -38,7 +38,6 @@ TEST(pikaMain, list_new) {
     Parameters* globals =
         obj_runDirect(pikaMain, (char*)
         "list = PikaStdData.List()\n"
-        "list.init()\n"
         "list.append(7)\n"
         "list.append('eee')\n"
         "len = list.len()\n"

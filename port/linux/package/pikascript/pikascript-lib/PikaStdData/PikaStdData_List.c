@@ -18,7 +18,7 @@ Arg* PikaStdData_List_get(PikaObj* self, int i) {
     char* index = fast_itoa(buff, i);
     return arg_copy(obj_getArg(self, index));
 }
-void PikaStdData_List_init(PikaObj* self) {
+void PikaStdData_List___init__(PikaObj* self) {
     /* set top index for append */
     obj_setInt(self, "top", 0);
 }
