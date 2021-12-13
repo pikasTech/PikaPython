@@ -270,3 +270,23 @@ TEST(pikaMain, __init__) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, PikaStdData){
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)
+    "dict = PikaStdData.Dict()\n"
+    "dict.set('a', 1)\n"
+    "a = dict.get('a')\n"
+    );
+    /* collect */
+    int a = obj_getInt(pikaMain, (char *)"a");
+    /* assert */
+    EXPECT_EQ(a, 1);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -18,7 +18,8 @@
         "stdint.h": "c",
         "cstdio": "c",
         "cstdlib": "c",
-        "pikastddevice_gpio.h": "c"
+        "pikastddevice_gpio.h": "c",
+        "pikastddata_dict.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }
