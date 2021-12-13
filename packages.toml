@@ -53,6 +53,12 @@ releases = [
 ]
 
 [[packages]]
+name = "PikaStdData"
+releases = [
+  "v0.0.1 74426e4bd3e97060f06b2cb451a38042b5634abc",
+]
+
+[[packages]]
 name = "PikaMath"
 releases = [
   "v1.0.0 6acd63e2466f9721f07feee61d5d96b83633961f",
