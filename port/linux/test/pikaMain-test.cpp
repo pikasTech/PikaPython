@@ -279,12 +279,17 @@ TEST(pikaMain, PikaStdData){
     obj_run(pikaMain, (char*)
     "dict = PikaStdData.Dict()\n"
     "dict.set('a', 1)\n"
+    "dict.set('b', 2)\n"
+    "dict.remove('b')\n"
     "a = dict.get('a')\n"
+    "b = dict.get('b')\n"
     );
     /* collect */
     int a = obj_getInt(pikaMain, (char *)"a");
+    int b = obj_getInt(pikaMain, (char *)"b");
     /* assert */
     EXPECT_EQ(a, 1);
+    EXPECT_EQ(b, 0);
 
     /* deinit */
     obj_deinit(pikaMain);
