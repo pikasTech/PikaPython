@@ -169,6 +169,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| 捐赠：ESP32开发板、墨水屏*4 | name(微信名) |
 | 捐赠：智龙开发板 | 龙芯俱乐部 石南 |
 | package：STM32F1 | [sjy](https://gitee.com/shanjiayang) |
 | package: STM32F103RBBooter | [sjy](https://gitee.com/shanjiayang) |
