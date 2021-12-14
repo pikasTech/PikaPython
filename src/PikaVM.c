@@ -176,11 +176,11 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         __else[6] = '0' + thisBlockDeepth;
         if (0 == assert) {
             /* set __else flag */
-            obj_setInt(self, __else, 1);
+            args_setInt(self->list, __else, 1);
             *jmp = fast_atoi(data);
         }
         /* set __else flag to ezro */
-        obj_setInt(self, __else, 0);
+        args_setInt(self->list, __else, 0);
     }
     if (instruct == OPT) {
         Arg* outArg = NULL;

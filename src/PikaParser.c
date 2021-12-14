@@ -980,6 +980,8 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     /* add block deepth */
     /* example: B0 */
     pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 0);
+
+    /* "deepth" is invoke deepth, not the blockDeepth */
     obj_setInt(ast, "deepth", 0);
 
     /* parse ast to asm main process */
@@ -995,16 +997,22 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
         goto block_matched;
     }
     if (strEqu(obj_getStr(ast, "block"), "else")) {
+        uint8_t blockDeepth = obj_getInt(ast, "blockDeepth");
+        char __REF_else[] = "0 REF __else0\n";
+        __REF_else[12] = blockDeepth + '0';
         /* skip if __else is 0 */
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 REF __else\n");
+        pikaAsm = strsAppend(runBuffs, pikaAsm, __REF_else);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
         goto block_matched;
     }
-    if (strEqu(obj_getStr(ast, "block"), "else")) {
+    if (strEqu(obj_getStr(ast, "block"), "elif")) {
+        uint8_t blockDeepth = obj_getInt(ast, "blockDeepth");
+        char __REF_else[] = "0 REF __else0\n";
+        __REF_else[12] = blockDeepth + '0';
         /* skip if stmt is 0 */
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
         /* skip if __else is 0 */
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 REF __else\n");
+        pikaAsm = strsAppend(runBuffs, pikaAsm, __REF_else);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
         goto block_matched;
     }
