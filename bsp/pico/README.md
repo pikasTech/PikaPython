@@ -2,6 +2,8 @@
 
 This bsp is based on https://github.com/GorgonMeducer/Pico_Template.
 
+And this bsp is an MDK-keil project.
+
 ## Usage
 
 1. Boot the Pico with the BOOTSEL button pressed.
