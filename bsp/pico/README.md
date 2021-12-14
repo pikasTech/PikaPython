@@ -13,3 +13,5 @@ This bsp is based on https://github.com/GorgonMeducer/Pico_Template.
 4. Compile and Debug
 
 5. The  **printf** is connected to  **UART0** , and  **TX is GP0** ,  **RX is GP1** .
+
+![image](https://user-images.githubusercontent.com/88232613/145928146-2954bd9e-5465-4bac-94fa-f8fe13c1b1d9.png)
