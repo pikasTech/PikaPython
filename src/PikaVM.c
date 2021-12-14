@@ -43,19 +43,7 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
-enum Instruct {
-    NON,
-    REF,
-    RUN,
-    STR,
-    OUT,
-    NUM,
-    JMP,
-    JEZ,
-    OPT,
-    DEF,
-    RET
-};
+enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ, OPT, DEF, RET };
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
@@ -117,7 +105,8 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                         Queue* invokeQuene0,
                         Queue* invokeQuene1,
                         int32_t* jmp,
-                        char* programConter) {
+                        char* programConter,
+                        char* asmStart) {
     if (instruct == NUM) {
         Arg* numArg = New_arg(NULL);
         if (strIsContain(data, '.')) {
@@ -164,7 +153,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         char* methodPtr = programConter;
         int offset = 0;
         int thisBlockDeepth =
-            getThisBlockDeepth(programConter - 3, programConter, &offset);
+            getThisBlockDeepth(asmStart, programConter, &offset);
         while (1) {
             if ((methodPtr[0] == 'B') &&
                 (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
@@ -177,12 +166,21 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         return NULL;
     }
     if (instruct == JEZ) {
+        int offset = 0;
+        int thisBlockDeepth =
+            getThisBlockDeepth(asmStart, programConter, &offset);
         Arg* assertArg = arg_copy(queue_popArg(invokeQuene0));
         int assert = arg_getInt(assertArg);
         arg_deinit(assertArg);
+        char __else[] = "__else0";
+        __else[6] = '0' + thisBlockDeepth;
         if (0 == assert) {
+            /* set __else flag */
+            obj_setInt(self, __else, 1);
             *jmp = fast_atoi(data);
         }
+        /* set __else flag to ezro */
+        obj_setInt(self, __else, 0);
     }
     if (instruct == OPT) {
         Arg* outArg = NULL;
@@ -558,7 +556,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     }
     resArg =
         pikaVM_runInstruct(self, locals, globals, instruct, data, invokeQuene0,
-                           invokeQuene1, &jmp, programCounter);
+                           invokeQuene1, &jmp, programCounter, pikaAsm);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
     }
@@ -629,7 +627,7 @@ Parameters* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
     Parameters* globals = NULL;
     char* pikaAsm = Parser_multiLineToAsm(buffs, multiLine);
-    if(NULL == pikaAsm){
+    if (NULL == pikaAsm) {
         __platform_printf("[error]: Syntax error.\r\n");
         globals = NULL;
         goto exit;

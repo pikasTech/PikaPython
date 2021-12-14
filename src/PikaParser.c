@@ -761,9 +761,9 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
     if (0 == strncmp(lineStart, (char*)"else", 4)) {
         if ((lineStart[4] == ' ') || (lineStart[4] == ':')) {
             stmt = "";
-            obj_setStr(ast, "block", "elif");
+            obj_setStr(ast, "block", "else");
             if (NULL != blockStack) {
-                stack_pushStr(blockStack, "elif");
+                stack_pushStr(blockStack, "else");
             }
         }
         goto block_matched;
@@ -985,22 +985,41 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     /* parse ast to asm main process */
     pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
 
+    /* match block */
     if (strEqu(obj_getStr(ast, "block"), "while")) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 2\n");
+        goto block_matched;
     }
     if (strEqu(obj_getStr(ast, "block"), "if")) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
+        goto block_matched;
+    }
+    if (strEqu(obj_getStr(ast, "block"), "else")) {
+        /* skip if __else is 0 */
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 REF __else\n");
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
+        goto block_matched;
+    }
+    if (strEqu(obj_getStr(ast, "block"), "else")) {
+        /* skip if stmt is 0 */
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
+        /* skip if __else is 0 */
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 REF __else\n");
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
+        goto block_matched;
     }
     if (strEqu(obj_getStr(ast, "block"), "def")) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 DEF ");
         pikaAsm = strsAppend(runBuffs, pikaAsm, obj_getStr(ast, "declear"));
         pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JMP 1\n");
+        goto block_matched;
     }
     if (obj_isArgExist(ast, "return")) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 RET\n");
+        goto block_matched;
     }
-
+block_matched:
     /* output pikaAsm */
     pikaAsm = strsCopy(buffs, pikaAsm);
     args_deinit(runBuffs);

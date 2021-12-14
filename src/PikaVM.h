@@ -46,5 +46,4 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
                           Parameters* globals,
                           char* pikaAsm,
                           int32_t lineAddr);
-
 #endif
