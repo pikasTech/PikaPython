@@ -88,7 +88,29 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 [pikaPackageManager](../../tree/master/tools/pikaPackageManager) - 使用go编写的模块管理器
 
-# 2.[平台支持列表](../../tree/master/bsp#platform-support)
+# 2.平台支持列表
+
+## MCU support
+|MCU|bsp|gpio|uart|pwm|adc|i2c|
+|---|---|---|---|---|---|---|
+|stm32g030c8|√|√|√|√|√|√|
+|stm32g070cB|√|√|√|√|√|√|
+|stm32f103c8|√|√|√|√|√|√|
+|stm32f103rb|√|√|√|√|√|√|
+|stm32f103rc|√|√|√|√|√|√|
+|ch32v103r8t6|√|√| | | | |
+|cm32m101a|√| | | | | |
+|w801|√| | | | | | | | |
+|apm32f030r8|√| | | | | |
+|apm32e103vb|√| | | | | |
+|bl-706|√| | | | | |
+
+## Board support
+|Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
+|---|---|---|---|---|---|---|---|---|---|
+|[Pika-Pi-Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√|√|√|√|
+|QEMU-arm2d|√| | | | | | | |√|
+|Raspberry Pico|√| | | | | | | | |
 
 # 3.特性
 ### (1)运行环境
