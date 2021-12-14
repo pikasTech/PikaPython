@@ -522,3 +522,52 @@ TEST(VM, equ) {
     ASSERT_FLOAT_EQ(c, 1);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, if_elif) {
+    char* line = (char*)
+    "a = 2\n"
+    "b = 0\n"
+    "if a > 1:\n"
+    "    b = 1\n"
+    "elif a > 0:\n"
+    "    b = 2\n"
+    "\n"
+    ;
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_multiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+
+    int b = args_getInt(globals->list, (char*)"b");
+    obj_deinit(self);
+    args_deinit(buffs);
+    // obj_deinit(globals);
+    ASSERT_FLOAT_EQ(b, 1);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, if_else) {
+    char* line = (char*)
+    "a = 0\n"
+    "b = 0\n"
+    "if a > 1:\n"
+    "    b = 1\n"
+    "else:\n"
+    "    b = 2\n"
+    "\n"
+    ;
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_multiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+
+    int b = args_getInt(globals->list, (char*)"b");
+    obj_deinit(self);
+    args_deinit(buffs);
+    // obj_deinit(globals);
+    ASSERT_FLOAT_EQ(b, 2);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+

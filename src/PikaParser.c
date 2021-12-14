@@ -984,50 +984,57 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     /* "deepth" is invoke deepth, not the blockDeepth */
     obj_setInt(ast, "deepth", 0);
 
-    /* parse ast to asm main process */
-    pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
-
     /* match block */
+    uint8_t is_block_matched = 0;
     if (strEqu(obj_getStr(ast, "block"), "while")) {
+        /* parse stmt ast */
+        pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 2\n");
-        goto block_matched;
+        is_block_matched = 1;
+        goto exit;
     }
     if (strEqu(obj_getStr(ast, "block"), "if")) {
+        /* parse stmt ast */
+        pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
-        goto block_matched;
+        is_block_matched = 1;
+        goto exit;
     }
     if (strEqu(obj_getStr(ast, "block"), "else")) {
-        uint8_t blockDeepth = obj_getInt(ast, "blockDeepth");
-        char __REF_else[] = "0 REF __else0\n";
-        __REF_else[12] = blockDeepth + '0';
-        /* skip if __else is 0 */
-        pikaAsm = strsAppend(runBuffs, pikaAsm, __REF_else);
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
-        goto block_matched;
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 NEL 1\n");
+        goto exit;
     }
     if (strEqu(obj_getStr(ast, "block"), "elif")) {
-        uint8_t blockDeepth = obj_getInt(ast, "blockDeepth");
-        char __REF_else[] = "0 REF __else0\n";
-        __REF_else[12] = blockDeepth + '0';
+        /* skip if __else is 0 */
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 NEL 1\n");
+        /* parse stmt ast */
+        pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
         /* skip if stmt is 0 */
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
-        /* skip if __else is 0 */
-        pikaAsm = strsAppend(runBuffs, pikaAsm, __REF_else);
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 1\n");
-        goto block_matched;
+        is_block_matched = 1;
+        goto exit;
     }
     if (strEqu(obj_getStr(ast, "block"), "def")) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 DEF ");
         pikaAsm = strsAppend(runBuffs, pikaAsm, obj_getStr(ast, "declear"));
         pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JMP 1\n");
-        goto block_matched;
+        is_block_matched = 1;
+        goto exit;
     }
     if (obj_isArgExist(ast, "return")) {
+        /* parse stmt ast */
+        pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 RET\n");
-        goto block_matched;
+        is_block_matched = 1;
+        goto exit;
     }
-block_matched:
+exit:
+    if (!is_block_matched) {
+        /* parse stmt ast */
+        pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
+    }
+
     /* output pikaAsm */
     pikaAsm = strsCopy(buffs, pikaAsm);
     args_deinit(runBuffs);

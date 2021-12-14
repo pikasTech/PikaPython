@@ -43,7 +43,7 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
-enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ, OPT, DEF, RET };
+enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ, OPT, DEF, RET, NEL };
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
@@ -93,6 +93,10 @@ static enum Instruct getInstruct(char* line) {
     if (0 == strncmp(line + 2, "RET", 3)) {
         /* return */
         return RET;
+    }
+    if (0 == strncmp(line + 2, "NEL", 3)) {
+        /* not else */
+        return NEL;
     }
     return NON;
 }
@@ -174,13 +178,24 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         arg_deinit(assertArg);
         char __else[] = "__else0";
         __else[6] = '0' + thisBlockDeepth;
+        args_setInt(self->list, __else, !assert);
         if (0 == assert) {
             /* set __else flag */
-            args_setInt(self->list, __else, 1);
             *jmp = fast_atoi(data);
         }
-        /* set __else flag to ezro */
-        args_setInt(self->list, __else, 0);
+        return NULL;
+    }
+    if (instruct == NEL) {
+        int offset = 0;
+        int thisBlockDeepth =
+            getThisBlockDeepth(asmStart, programConter, &offset);
+        char __else[] = "__else0";
+        __else[6] = '0' + thisBlockDeepth;
+        if (0 == args_getInt(self->list, __else)) {
+            /* set __else flag */
+            *jmp = fast_atoi(data);
+        }
+        return NULL;
     }
     if (instruct == OPT) {
         Arg* outArg = NULL;

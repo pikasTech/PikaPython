@@ -1300,3 +1300,77 @@ TEST(parser, annotation_block) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, if_elif_else) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+    "if a > 1:\n"
+    "    b = 1\n"
+    "elif a > 2:\n"
+    "    b = 2\n"
+    "    if a > 1:\n"
+    "        b = 1\n"
+    "    elif a > 2:\n"
+    "        b = 2\n"
+    "    else:\n"
+    "        b = 3\n"
+    "\n"
+    "else:\n"
+    "    b = 3\n"
+    "\n"
+    ;
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,(char *)
+        "B0\n"
+        "1 REF a\n"
+        "1 NUM 1\n"
+        "0 OPT >\n"
+        "0 JEZ 1\n"
+        "B1\n"
+        "0 NUM 1\n"
+        "0 OUT b\n"
+        "B0\n"
+        "0 NEL 1\n"
+        "1 REF a\n"
+        "1 NUM 2\n"
+        "0 OPT >\n"
+        "0 JEZ 1\n"
+        "B1\n"
+        "0 NUM 2\n"
+        "0 OUT b\n"
+        "B1\n"
+        "1 REF a\n"
+        "1 NUM 1\n"
+        "0 OPT >\n"
+        "0 JEZ 1\n"
+        "B2\n"
+        "0 NUM 1\n"
+        "0 OUT b\n"
+        "B1\n"
+        "0 NEL 1\n"
+        "1 REF a\n"
+        "1 NUM 2\n"
+        "0 OPT >\n"
+        "0 JEZ 1\n"
+        "B2\n"
+        "0 NUM 2\n"
+        "0 OUT b\n"
+        "B1\n"
+        "0 NEL 1\n"
+        "B2\n"
+        "0 NUM 3\n"
+        "0 OUT b\n"
+        "B0\n"
+        "B0\n"
+        "0 NEL 1\n"
+        "B1\n"
+        "0 NUM 3\n"
+        "0 OUT b\n"
+        "B0\n"
+    );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
