@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<package schemaVersion="1.4" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="PACK.xsd">
+  <vendor>GorgonMeducer</vendor>
+  <name>perf_counter</name>
+  <description>A dedicated performance counter for Cortex-M systick. It shares the SysTick with users' original SysTick function without interfere it. This library will bring new functionalities, such as performance counter, delay_us and clock() service defined in time.h</description>
+  <url>https://raw.githubusercontent.com/GorgonMeducer/perf_counter/CMSIS-Pack/cmsis-pack/</url>
+  <supportContact>https://github.com/GorgonMeducer/perf_counter/issues</supportContact>
+  <license>lib/LICENSE</license>
+  <!-- optional license file -->
+  <!-- 
+  <license>
+  </license>
+  -->
+  
+  <repository type="git">https://github.com/GorgonMeducer/perf_counter.git</repository>
+  
+  <releases>
+    <release date="2021-12-05" version="1.6.5" url="https://raw.githubusercontent.com/GorgonMeducer/perf_counter/CMSIS-Pack/cmsis-pack/GorgonMeducer.perf_counter.1.6.5.pack">
+      - Include stddef.h in perf_counter.h to solve missing NULL definition issue.
+    </release>
+    <release date="2021-11-13" version="1.6.4" url="https://raw.githubusercontent.com/GorgonMeducer/perf_counter/CMSIS-Pack/cmsis-pack/GorgonMeducer.perf_counter.1.6.4.pack">
+      - Improve support for IAR
+      - Fix issues found in foreach
+      - Other minor update
+    </release>
+    <release date="2021-11-05" version="1.6.3" url="https://raw.githubusercontent.com/GorgonMeducer/perf_counter/CMSIS-Pack/cmsis-pack/GorgonMeducer.perf_counter.1.6.3.pack">
+      - Add CMSIS Dependency Check
+    </release>
+    <release date="2021-11-05" version="1.6.2" url="https://raw.githubusercontent.com/GorgonMeducer/perf_counter/CMSIS-Pack/cmsis-pack/GorgonMeducer.perf_counter.1.6.2.pack">
+      - Add options for selecting between source code and library.
+    </release>
+    <release date="2021-11-04" version="1.6.1" url="https://raw.githubusercontent.com/GorgonMeducer/perf_counter/CMSIS-Pack/cmsis-pack/GorgonMeducer.perf_counter.1.6.1.pack">
+      - Add GCC support to CMSIS-Pack
+    </release>
+    
+  </releases>
+
+  <keywords>
+    <!-- keywords for indexing -->
+    <keyword>Cortex-M</keyword>
+    <keyword>SysTick</keyword>
+    <keyword>Performance Analaysis</keyword>
+  </keywords>
+  
+    <conditions> 
+        <condition id="Arm Compiler">
+            <description>Arm Compiler 5 (armcc) or Arm Compiler 6 (armclang).</description>
+            <accept Tcompiler="ARMCC" Toptions="AC6"/>
+            <accept Tcompiler="ARMCC" Toptions="AC6LTO"/>
+            <accept Tcompiler="ARMCC" Toptions="AC5"/>
+        </condition>
+        <condition id="Arm GCC">
+            <description>GNU Tools for Arm Embedded Processors.</description>
+            <accept Tcompiler="GCC"/>
+        </condition>
+        <condition id="Cortex-M Processors">
+            <description>Support All Cortex-M based processors</description>
+            <accept  Dcore="Cortex-M0"/>
+            <accept  Dcore="Cortex-M0+"/>
+            <accept  Dcore="Cortex-M1"/>
+            <accept  Dcore="Cortex-M3"/>
+            <accept  Dcore="Cortex-M4"/>
+            <accept  Dcore="Cortex-M7"/>
+            <accept  Dcore="Cortex-M23"/>
+            <accept  Dcore="Cortex-M33"/>
+            <accept  Dcore="Cortex-M35P"/>
+            <accept  Dcore="Cortex-M55"/>
+            <accept  Dcore="SC000"/>
+            <accept  Dcore="SC300"/>
+            <accept  Dcore="ARMV8MBL"/>
+            <accept  Dcore="ARMV8MML"/>
+        </condition>
+        
+        <condition id="CMSIS-CORE">
+            <description>Require CMSIS-CORE Support</description>
+            <require Cclass="CMSIS" Cgroup="CORE"/>
+        </condition>
+        
+        <condition id="Cortex-M Arm GCC">
+            <description>Compile Cortex-M Processors with GNU Tools for Arm Embedded Processors.</description>
+            <require condition="Arm GCC"/>
+            <require condition="Cortex-M Processors"/>
+        </condition>
+        <condition id="Cortex-M Arm Compiler">
+            <description>Compile Cortex-M Processors with GNU Tools for Arm Embedded Processors.</description>
+            <require condition="Arm Compiler"/>
+            <require condition="Cortex-M Processors"/>
+        </condition>
+        
+        <condition id="Cortex-M Arm GCC CMSIS-CORE">
+            <description>Compile Cortex-M Processors with GNU Tools for Arm Embedded Processors.</description>
+            <require condition="Arm GCC"/>
+            <require condition="Cortex-M Processors"/>
+            <require condition="CMSIS-CORE"/>
+        </condition>
+        <condition id="Cortex-M Arm Compiler CMSIS-CORE">
+            <description>Compile Cortex-M Processors with GNU Tools for Arm Embedded Processors.</description>
+            <require condition="Arm Compiler"/>
+            <require condition="Cortex-M Processors"/>
+            <require condition="CMSIS-CORE"/>
+        </condition>
+        
+    </conditions>
+  <!-- apis section (optional - for Application Programming Interface descriptions) -->
+  <!-- 
+  <apis>
+  </apis>
+  -->
+
+  <!-- boards section (mandatory for Board Support Packs) -->
+  <!-- 
+  <boards>
+  </boards>
+  -->
+
+  <!-- devices section (mandatory for Device Family Packs) -->
+  <!--
+  <devices>
+  </devices>
+  -->
+
+  <!-- examples section (optional for all Software Packs)-->
+  <!--
+  <examples>
+  </examples>
+  -->
+  
+  <!-- conditions section (optional for all Software Packs)-->
+  <!--
+  <conditions>
+  </conditions>
+  -->
+
+    <components>
+        <component Cclass="Utilities" Cgroup="Performance" Csub="perf_counter" Cvariant="Library" Cversion="1.6.5" isDefaultVariant="true">
+          <description>A dedicated performance counter for Cortex-M systick.</description>
+          <files>
+            <file category="header"     name="lib/perf_counter.h"/>
+            <file category="library"    name="lib/perf_counter.lib"         condition="Cortex-M Arm Compiler"/>
+            <file category="library"    name="lib/libperf_counter_gcc.a"    condition="Cortex-M Arm GCC"/>
+          </files>
+        </component>
+        <component Cclass="Utilities" Cgroup="Performance" Csub="perf_counter" Cvariant="Source" Cversion="1.6.5" condition="CMSIS-CORE">
+          <description>A dedicated performance counter for Cortex-M systick.</description>
+          <files>
+            <file category="header"     name="lib/perf_counter.h"/>
+            <file category="source"     name="perf_counter.c" />
+            <file category="source"     name="systick_wrapper_ual.s"        condition="Cortex-M Arm Compiler CMSIS-CORE"/>
+            <file category="source"     name="systick_wrapper_gcc.s"        condition="Cortex-M Arm GCC CMSIS-CORE"/>
+          </files>
+        </component>
+    </components>
+  
+  <!-- optional taxonomy section for defining new component Class and Group names -->
+  <!--
+  <taxonomy>
+  </taxonomy>
+  -->
+  
+</package>
