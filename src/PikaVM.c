@@ -109,6 +109,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                         Queue* invokeQuene0,
                         Queue* invokeQuene1,
                         int32_t* jmp,
+                        int32_t* jmp_block,
                         char* programConter,
                         char* asmStart) {
     if (instruct == NUM) {
@@ -491,9 +492,11 @@ int getThisBlockDeepth(char* start, char* code, int* offset) {
     return thisBlockDeepth;
 }
 
-int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
-    int offset = 0;
-    int thisBlockDeepth = getThisBlockDeepth(start, code, &offset);
+int32_t VM_getAddrOffsetFromJmp(char* start,
+                                char* code,
+                                int32_t jmp,
+                                int32_t offset,
+                                int thisBlockDeepth) {
     char* codeNow = code + offset;
     int8_t blockNum = 0;
     if (jmp > 0) {
@@ -531,6 +534,14 @@ int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
     return offset;
 }
 
+int32_t VM_getAddrOffsetFromJmpByThisBlockDeepth(char* start,
+                                                 char* code,
+                                                 int32_t jmp) {
+    int offset = 0;
+    int thisBlockDeepth = getThisBlockDeepth(start, code, &offset);
+    return VM_getAddrOffsetFromJmp(start, code, jmp, offset, thisBlockDeepth);
+}
+
 int32_t pikaVM_runAsmLine(PikaObj* self,
                           Parameters* locals,
                           Parameters* globals,
@@ -541,6 +552,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     char* line = strs_getLine(buffs, programCounter);
     int32_t nextAddr = lineAddr + strGetSize(line) + 1;
     int32_t jmp = 0;
+    int32_t jmp_block = -1;
     enum Instruct instruct;
     char invokeDeepth0[2] = {0}, invokeDeepth1[2] = {0};
     char* data;
@@ -569,9 +581,9 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         invokeQuene1 = New_queue();
         args_setPtr(locals->list, invokeDeepth1, invokeQuene1);
     }
-    resArg =
-        pikaVM_runInstruct(self, locals, globals, instruct, data, invokeQuene0,
-                           invokeQuene1, &jmp, programCounter, pikaAsm);
+    resArg = pikaVM_runInstruct(self, locals, globals, instruct, data,
+                                invokeQuene0, invokeQuene1, &jmp, &jmp_block,
+                                programCounter, pikaAsm);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
     }
@@ -582,7 +594,10 @@ nextLine:
         return -99999;
     }
     if (jmp != 0) {
-        return lineAddr + getAddrOffsetFromJmp(pikaAsm, programCounter, jmp);
+        if (-1 == jmp_block) {
+            return lineAddr + VM_getAddrOffsetFromJmpByThisBlockDeepth(
+                                  pikaAsm, programCounter, jmp);
+        }
     }
     return nextAddr;
 }
