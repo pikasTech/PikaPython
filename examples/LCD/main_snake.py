@@ -15,8 +15,8 @@ y_max = 150
 
 # snake init
 s = PikaPiZero.Point()
-w = 10
-h = 10
+w = 9
+h = 9
 s.x = 50
 s.y = 10
 len = 0
@@ -32,10 +32,21 @@ while len < 3:
     b.next.prev = b
     len = len + 1
 
+i = 0
+b = s
+while i < len:
+    lcd.fill(b.x, b.y, w, h, 'blue')
+    b = b.next
+    i = i + 1
+
+print('snake lengh')
+print(len)
+
 # fruit init
 f = PikaPiZero.Point()
 f.x = 30
 f.y = 20
+lcd.fill(f.x, f.y, w, h, 'green')
 
 # memory check
 mem = PikaStdLib.MemChecker()
@@ -44,14 +55,14 @@ mem.max()
 
 # main loop
 d = 0
-isUpdate = 1
+isUpdate = 0
 while True:
     if isUpdate:
-        print('is update')
         isUpdate = 0
         # check eat fruit
         if f.x == s.x:
             if f.y == s.y:
+                # have eat fruit
                 b = s
                 i = 0
                 while i < len:
@@ -60,25 +71,31 @@ while True:
                 b.next = PikaPiZero.Point()
                 b.next.prev = b
                 len = len + 1
+                print('snake lengh')
+                print(len)
+                print('mem used max:')
+                mem.max()
                 f.x = f.x + 30
                 if f.x > x_max:
                     f.x = f.x - x_max
                 f.y = f.y + 30
                 if f.y > y_max:
                     f.y = f.y - y_max
+                lcd.fill(f.x, f.y, w, h, 'green')
         # update snake body
-        print('update snake body')
         b = s
         i = 0
         while i < len:
             b = b.next
             i = i + 1
         i = 0
+        s.prev = b
         while i < len:
             b = b.prev
             b.next.x = b.x
             b.next.y = b.y
             i = i + 1
+        # move snake by the direction
         if d == 0:
             s.x = s.x + 10
             if s.x > x_max:
@@ -95,20 +112,11 @@ while True:
             s.x = s.x - 10
             if s.x < 0:
                 s.x = x_max
+        # drow the snake and fruit
         b = s
         i = 0
-        lcd.clear('white')
-        print('fruit.x')
-        print(f.x)
-        print('fruit.y')
-        print(f.y)
-        lcd.fill(f.x, f.y, w, h, 'green')
-        print('snake lengh')
-        print(len)
-        while i < len:
-            lcd.fill(b.x, b.y, w, h, 'blue')
-            b = b.next
-            i = i + 1
+        lcd.fill(b.x, b.y, w, h, 'blue')
+        lcd.fill(s.prev.x, s.prev.y, w, h, 'white')
     key_val = key.get()
     if key_val == 0:
         d = 0
