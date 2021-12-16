@@ -59,25 +59,15 @@ mem.max()
 # main loop
 d = 0
 isUpdate = 1
+isEat = 0
 while True:
     if isUpdate:
-        isUpdate = 0
+        # isUpdate = 0
         # check eat fruit
         if f.x == s.x:
             if f.y == s.y:
                 # have eat fruit
-                b = s
-                i = 0
-                while i < len:
-                    b = b.next
-                    i = i + 1
-                b.next = PikaPiZero.Point()
-                b.next.prev = b
-                len = len + 1
-                print('snake lengh')
-                print(len)
-                print('mem used max:')
-                mem.max()
+                isEat = 1
                 f.x = f.x + 30
                 if f.x > x_max:
                     f.x = f.x - x_max
@@ -106,17 +96,34 @@ while True:
             y_new = s.y
             if x_new < 0:
                 x_new = x_max
-        # drow the snake and fruit
-        # clear last body
-        lcd.fill(s.prev.x, s.prev.y, w, h, 'white')
-        # new body
-        s.prev.x = x_new
-        s.prev.y = y_new
-        # head is last body
-        s = s.prev
-        lcd.fill(s.x, s.y, w, h, 'blue')
-        b = s
-        i = 0
+        if isEat:
+            isEat = 0
+            b_new = PikaPiZero.Point()
+            b_new.x = x_new
+            b_new.y = y_new
+            b_new.prev = s.prev
+            b_new.next = s
+            s.prev.next = b_new
+            s.prev = b_new
+            s = b_new
+            len = len + 1
+            print('snake lengh')
+            print(len)
+            print('mem used max:')
+            mem.max()
+        if not isEat:
+            # drow the snake and fruit
+            # clear last body
+            lcd.fill(s.prev.x, s.prev.y, w, h, 'white')
+            # new body
+            s.prev.x = x_new
+            s.prev.y = y_new
+            # head is last body
+            s = s.prev
+            lcd.fill(s.x, s.y, w, h, 'blue')
+            b = s
+            i = 0
+    # scan key
     key_val = key.get()
     if key_val == 0:
         d = 0
