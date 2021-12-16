@@ -31,6 +31,9 @@ while len < 3:
     b.next.y = b.y
     b.next.prev = b
     len = len + 1
+# ring link
+b.next = s
+s.prev = b
 
 i = 0
 b = s
@@ -55,7 +58,7 @@ mem.max()
 
 # main loop
 d = 0
-isUpdate = 0
+isUpdate = 1
 while True:
     if isUpdate:
         isUpdate = 0
@@ -82,41 +85,38 @@ while True:
                 if f.y > y_max:
                     f.y = f.y - y_max
                 lcd.fill(f.x, f.y, w, h, 'green')
-        # update snake body
-        b = s
-        i = 0
-        while i < len:
-            b = b.next
-            i = i + 1
-        i = 0
-        s.prev = b
-        while i < len:
-            b = b.prev
-            b.next.x = b.x
-            b.next.y = b.y
-            i = i + 1
         # move snake by the direction
         if d == 0:
-            s.x = s.x + 10
-            if s.x > x_max:
-                s.x = 0
+            x_new = s.x + 10
+            y_new = s.y
+            if x_new > x_max:
+                x_new = 0
         if d == 1:
-            s.y = s.y - 10
-            if s.y < 0:
-                s.y = y_max
+            x_new = s.x
+            y_new = s.y - 10
+            if y_new < 0:
+                y_new = y_max
         if d == 2:
-            s.y = s.y + 10
-            if s.y > y_max:
-                s.y = 0
+            x_new = s.x
+            y_new = s.y + 10
+            if y_new > y_max:
+                y_new = 0
         if d == 3:
-            s.x = s.x - 10
-            if s.x < 0:
-                s.x = x_max
+            x_new = s.x - 10
+            y_new = s.y
+            if x_new < 0:
+                x_new = x_max
         # drow the snake and fruit
+        # clear last body
+        lcd.fill(s.prev.x, s.prev.y, w, h, 'white')
+        # new body
+        s.prev.x = x_new
+        s.prev.y = y_new
+        # head is last body
+        s = s.prev
+        lcd.fill(s.x, s.y, w, h, 'blue')
         b = s
         i = 0
-        lcd.fill(b.x, b.y, w, h, 'blue')
-        lcd.fill(s.prev.x, s.prev.y, w, h, 'white')
     key_val = key.get()
     if key_val == 0:
         d = 0
