@@ -221,7 +221,7 @@ exit:
 uint8_t Parser_checkIsDirect(char* str) {
     /* include '0' */
     uint32_t size = strGetSize(str) + 1;
-    for (int i = 1; i + 1 < size; i++) {
+    for (uint32_t i = 1; i + 1 < size; i++) {
         if ((str[i - 1] != '%') && (str[i - 1] != '!') && (str[i - 1] != '<') &&
             (str[i - 1] != '>') && (str[i - 1] != '=') && (str[i - 1] != '+') &&
             (str[i - 1] != '-') && (str[i - 1] != '*') && (str[i - 1] != '/') &&
@@ -239,7 +239,7 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
 
     /* process */
     uint16_t tokenSize = strCountSign(tokens, 0x1F) + 1;
-    for (int i = 0; i < tokenSize; i++) {
+    for (uint16_t i = 0; i < tokenSize; i++) {
         char* token = strsPopToken(buffs, tokens, 0x1F);
         if (token[0] == TOKEN_operator) {
             printOut = strsAppend(buffs, printOut, "{opt}");
@@ -283,8 +283,8 @@ Arg* Lexer_setToken(Arg* tokens_arg,
 
 Arg* Lexer_setSymbel(Arg* tokens_arg,
                      char* stmt,
-                     uint32_t i,
-                     int* symbol_start_index) {
+                     int32_t i,
+                     int32_t* symbol_start_index) {
     Args* buffs = New_strBuff();
     char* symbol_buff = NULL;
     /* nothing to add symbel */
@@ -316,18 +316,18 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     /* init */
     Arg* tokens_arg = New_arg(NULL);
     tokens_arg = arg_setStr(tokens_arg, "", "");
-    uint32_t size = strGetSize(stmt);
+    int32_t size = strGetSize(stmt);
     uint8_t bracket_deepth = 0;
     uint8_t c0 = 0;
     uint8_t c1 = 0;
     uint8_t c2 = 0;
     uint8_t c3 = 0;
-    int symbol_start_index = -1;
+    int32_t symbol_start_index = -1;
     int is_in_string = 0;
     char* tokens;
 
     /* process */
-    for (int i = 0; i < size; i++) {
+    for (int32_t i = 0; i < size; i++) {
         /* update char */
         c0 = stmt[i];
         if (i + 1 < size) {
@@ -564,7 +564,7 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
         "**", "~",   "*",  "/",  "%",  "//",  "+",     "-",     ">>",  "<<",
         "&",  "^",   "|",  "<",  "<=", ">",   ">=",    "!=",    "==",  "%=",
         "/=", "//=", "-=", "+=", "*=", "**=", " not ", " and ", " or "};
-    for (int i = 0; i < sizeof(operators) / 6; i++) {
+    for (uint32_t i = 0; i < sizeof(operators) / 6; i++) {
         if (Lexer_isContain(tokens, (char*)operators[i])) {
             operator= strsCopy(buffs, (char*)operators[i]);
         }
@@ -658,7 +658,7 @@ exit:
 
 static int32_t Parser_getPyLineBlockDeepth(char* line) {
     uint32_t size = strGetSize(line);
-    for (int i = 0; i < size; i++) {
+    for (uint32_t i = 0; i < size; i++) {
         if (line[i] != ' ') {
             uint32_t spaceNum = i;
             if (0 == spaceNum % 4) {
@@ -673,7 +673,7 @@ static int32_t Parser_getPyLineBlockDeepth(char* line) {
 
 char* Parser_removeAnnotation(char* line) {
     uint8_t is_annotation_exit = 0;
-    for (int i = 0; i < strGetSize(line); i++) {
+    for (uint32_t i = 0; i < strGetSize(line); i++) {
         if ('#' == line[i]) {
             /* end the line */
             line[i] = 0;
@@ -686,7 +686,7 @@ char* Parser_removeAnnotation(char* line) {
         return line;
     }
     /* check empty line */
-    for (int i = 0; i < strGetSize(line); i++) {
+    for (uint32_t i = 0; i < strGetSize(line); i++) {
         if (' ' != line[i]) {
             return line;
         }

@@ -109,7 +109,6 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                         Queue* invokeQuene0,
                         Queue* invokeQuene1,
                         int32_t* jmp,
-                        int32_t* jmp_block,
                         char* programConter,
                         char* asmStart) {
     if (instruct == NUM) {
@@ -204,10 +203,10 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         Arg* arg2 = arg_copy(queue_popArg(invokeQuene1));
         ArgType type_arg1 = arg_getType(arg1);
         ArgType type_arg2 = arg_getType(arg2);
-        int num1_i;
-        int num2_i;
-        float num1_f;
-        float num2_f;
+        int num1_i = 0;
+        int num2_i = 0;
+        float num1_f = 0.0;
+        float num2_f = 0.0;
         /* get int and float num */
         if (type_arg1 == TYPE_INT) {
             num1_i = arg_getInt(arg1);
@@ -492,11 +491,9 @@ int getThisBlockDeepth(char* start, char* code, int* offset) {
     return thisBlockDeepth;
 }
 
-int32_t VM_getAddrOffsetFromJmp(char* start,
-                                char* code,
-                                int32_t jmp,
-                                int32_t offset,
-                                int thisBlockDeepth) {
+int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
+    int offset = 0;
+    int thisBlockDeepth = getThisBlockDeepth(start, code, &offset);
     char* codeNow = code + offset;
     int8_t blockNum = 0;
     if (jmp > 0) {
@@ -534,14 +531,6 @@ int32_t VM_getAddrOffsetFromJmp(char* start,
     return offset;
 }
 
-int32_t VM_getAddrOffsetFromJmpByThisBlockDeepth(char* start,
-                                                 char* code,
-                                                 int32_t jmp) {
-    int offset = 0;
-    int thisBlockDeepth = getThisBlockDeepth(start, code, &offset);
-    return VM_getAddrOffsetFromJmp(start, code, jmp, offset, thisBlockDeepth);
-}
-
 int32_t pikaVM_runAsmLine(PikaObj* self,
                           Parameters* locals,
                           Parameters* globals,
@@ -552,7 +541,6 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     char* line = strs_getLine(buffs, programCounter);
     int32_t nextAddr = lineAddr + strGetSize(line) + 1;
     int32_t jmp = 0;
-    int32_t jmp_block = -1;
     enum Instruct instruct;
     char invokeDeepth0[2] = {0}, invokeDeepth1[2] = {0};
     char* data;
@@ -581,9 +569,9 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         invokeQuene1 = New_queue();
         args_setPtr(locals->list, invokeDeepth1, invokeQuene1);
     }
-    resArg = pikaVM_runInstruct(self, locals, globals, instruct, data,
-                                invokeQuene0, invokeQuene1, &jmp, &jmp_block,
-                                programCounter, pikaAsm);
+    resArg =
+        pikaVM_runInstruct(self, locals, globals, instruct, data, invokeQuene0,
+                           invokeQuene1, &jmp, programCounter, pikaAsm);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
     }
@@ -594,10 +582,7 @@ nextLine:
         return -99999;
     }
     if (jmp != 0) {
-        if (-1 == jmp_block) {
-            return lineAddr + VM_getAddrOffsetFromJmpByThisBlockDeepth(
-                                  pikaAsm, programCounter, jmp);
-        }
+        return lineAddr + getAddrOffsetFromJmp(pikaAsm, programCounter, jmp);
     }
     return nextAddr;
 }
