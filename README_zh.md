@@ -111,6 +111,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 |[Pika-Pi-Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√|√|√|√|
 |QEMU-arm2d|√| | | | | | | |√|
 |Raspberry Pico|√| | | | | | | | |
+|ESP32(preview}|√| | | | | | | | |
 
 # 3.特性
 ### (1)运行环境
