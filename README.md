@@ -181,6 +181,7 @@ Complete unit testes based on google test.
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
+| ESP32 BSP |kirto|
 | QEMU simulation with ARM-2D | [liuduanfei](https://github.com/liuduanfei) |
 | Donate：GD32E103TB muc 2 pic | 信息牛(WeChat) |
 | Rt-thread bsp template| [Meco Jianting Man](https://github.com/mysterywolf) |
