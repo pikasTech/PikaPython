@@ -816,11 +816,6 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaPiZero_LCD-api.c</FilePath>
             </File>
-            <File>
-              <FileName>PikaStdLib_List-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\PikaStdLib_List-api.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -925,11 +920,6 @@
               <FileName>PikaStdDevice_GPIO.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_GPIO.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_List.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_List.c</FilePath>
             </File>
           </Files>
         </Group>

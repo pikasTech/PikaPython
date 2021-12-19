@@ -128,12 +128,12 @@ while True:
     if key_val == 0:
         d = 0
         isUpdate = 1
-    if key_val == 1:
+    elif key_val == 1:
         d = 1
         isUpdate = 1
-    if key_val == 2:
+    elif key_val == 2:
         d = 2
         isUpdate = 1
-    if key_val == 3:
+    elif key_val == 3:
         d = 3
         isUpdate = 1
