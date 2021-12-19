@@ -64,34 +64,33 @@ while True:
     if isUpdate:
         # isUpdate = 0
         # check eat fruit
-        if f.x == s.x:
-            if f.y == s.y:
-                # have eat fruit
-                isEat = 1
-                f.x = f.x + 30
-                if f.x > x_max:
-                    f.x = f.x - x_max
-                f.y = f.y + 30
-                if f.y > y_max:
-                    f.y = f.y - y_max
-                lcd.fill(f.x, f.y, w, h, 'green')
+        if f.x == s.x and f.y == s.y:
+            # have eat fruit
+            isEat = 1
+            f.x = f.x + 30
+            if f.x > x_max:
+                f.x = f.x - x_max
+            f.y = f.y + 30
+            if f.y > y_max:
+                f.y = f.y - y_max
+            lcd.fill(f.x, f.y, w, h, 'green')
         # move snake by the direction
         if d == 0:
             x_new = s.x + 10
             y_new = s.y
             if x_new > x_max:
                 x_new = 0
-        if d == 1:
+        elif d == 1:
             x_new = s.x
             y_new = s.y - 10
             if y_new < 0:
                 y_new = y_max
-        if d == 2:
+        elif d == 2:
             x_new = s.x
             y_new = s.y + 10
             if y_new > y_max:
                 y_new = 0
-        if d == 3:
+        elif d == 3:
             x_new = s.x - 10
             y_new = s.y
             if x_new < 0:
@@ -111,18 +110,17 @@ while True:
             print(len)
             print('mem used max:')
             mem.max()
-        if not isEat:
-            # drow the snake and fruit
-            # clear last body
-            lcd.fill(s.prev.x, s.prev.y, w, h, 'white')
-            # new body
-            s.prev.x = x_new
-            s.prev.y = y_new
-            # head is last body
-            s = s.prev
-            lcd.fill(s.x, s.y, w, h, 'blue')
-            b = s
-            i = 0
+        # drow the snake and fruit
+        # clear last body
+        lcd.fill(s.prev.x, s.prev.y, w, h, 'white')
+        # new body
+        s.prev.x = x_new
+        s.prev.y = y_new
+        # head is last body
+        s = s.prev
+        lcd.fill(s.x, s.y, w, h, 'blue')
+        b = s
+        i = 0
     # scan key
     key_val = key.get()
     if key_val == 0:
