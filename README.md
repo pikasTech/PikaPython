@@ -111,7 +111,7 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 |[Pika-Pi-Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√|√|√|√|
 |QEMU-arm2d|√| | | | | | | |√|
 |Raspberry Pico|√| | | | | | | | |
-|ESP32(preview}|√| | | | | | | | |
+|ESP32(preview)|√| | | | | | | | |
 
 # 3.Characteristic
 ### (1)Run environment
