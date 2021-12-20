@@ -376,7 +376,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
 
         /* match devider*/
         if (('(' == c0) || (')' == c0) || (',' == c0) || ('[' == c0) ||
-            (']' == c0)) {
+            (']' == c0) || (':' == c0)) {
             tokens_arg =
                 Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
             char content[2] = {0};
@@ -538,7 +538,7 @@ exit:
     return tokens;
 }
 
-char* Lexer_popToken(Args* buffs, char* tokens_buff){
+char* Lexer_popToken(Args* buffs, char* tokens_buff) {
     return strsPopToken(buffs, tokens_buff, 0x1F);
 }
 
@@ -702,6 +702,11 @@ char* Parser_removeAnnotation(char* line) {
     return line;
 }
 
+/* a hock for pacakges to enhance the parse */
+PIKA_WEAK char* __pikaExtern_beforeParseLine(Args* outBuffs, char* line) {
+    return line;
+}
+
 AST* AST_parseLine(char* line, Stack* blockStack) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
@@ -737,6 +742,7 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
     /* set block deepth */
     obj_setInt(ast, "blockDeepth", blockDeepth);
     lineStart = line + blockDeepth * 4;
+    lineStart = __pikaExtern_beforeParseLine(buffs, lineStart);
     stmt = lineStart;
     /* match block start */
     if (0 == strncmp(lineStart, (char*)"while ", 6)) {
@@ -855,11 +861,6 @@ static char* ASM_getOutAsm(Args* outBuffs,
     return strsCopy(outBuffs, arg_getStr(pikaAsmBuff));
 }
 
-/* a hock for pacakges to enhance the parse */
-PIKA_WEAK char* __pikaExtern_beforeParseLine(Args* outBuffs, char* line) {
-    return line;
-}
-
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
     Stack* blockStack = New_Stack();
     Arg* pikaAsmBuff = arg_setStr(NULL, "", "");
@@ -873,7 +874,6 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
             strsGetFirstToken(singleRunBuffs, multiLine + lineOffset, '\n');
         uint32_t lineSize = strGetSize(line);
         lineOffset = lineOffset + lineSize + 1;
-        line = __pikaExtern_beforeParseLine(singleRunBuffs, line);
         char* singleAsm = Parser_LineToAsm(singleRunBuffs, line, blockStack);
         if (NULL == singleAsm) {
             outAsm = NULL;
