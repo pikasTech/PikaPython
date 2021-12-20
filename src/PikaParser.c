@@ -851,7 +851,7 @@ static char* ASM_getOutAsm(Args* outBuffs,
 }
 
 /* a hock for pacakges to enhance the parse */
-PIKA_WEAK char* __extern_pika_before_parse(Args* singleRunBuffs, char* line) {
+PIKA_WEAK char* __pikaExtern_beforeParseLine(Args* singleRunBuffs, char* line) {
     return line;
 }
 
@@ -868,7 +868,7 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
             strsGetFirstToken(singleRunBuffs, multiLine + lineOffset, '\n');
         uint32_t lineSize = strGetSize(line);
         lineOffset = lineOffset + lineSize + 1;
-        line = __extern_pika_before_parse(singleRunBuffs, line);
+        line = __pikaExtern_beforeParseLine(singleRunBuffs, line);
         char* singleAsm = Parser_LineToAsm(singleRunBuffs, line, blockStack);
         if (NULL == singleAsm) {
             outAsm = NULL;
