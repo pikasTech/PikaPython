@@ -538,13 +538,17 @@ exit:
     return tokens;
 }
 
+char* Lexer_popToken(Args* buffs, char* tokens_buff){
+    return strsPopToken(buffs, tokens_buff, 0x1F);
+}
+
 uint8_t Lexer_isContain(char* tokens, char* operator) {
     Args* buffs = New_strBuff();
     char* tokens_buff = strsCopy(buffs, tokens);
     uint8_t res = 0;
     uint16_t token_size = strCountSign(tokens, 0x1F) + 1;
     for (int i = 0; i < token_size; i++) {
-        char* token = strsPopToken(buffs, tokens_buff, 0x1F);
+        char* token = Lexer_popToken(buffs, tokens_buff);
         if (TOKEN_operator == token[0]) {
             if (strEqu(token + 1, operator)) {
                 res = 1;
