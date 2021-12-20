@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-add_compile_options(-Wall -Wextra -Wno-unused-parameter -Werror)
+add_compile_options(-Wall -Wextra -Wno-unused-parameter -Werror=all)
 
 project(pikascript VERSION 0.1.0)
 
