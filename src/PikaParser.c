@@ -375,7 +375,8 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         }
 
         /* match devider*/
-        if (('(' == c0) || (')' == c0) || (',' == c0)) {
+        if (('(' == c0) || (')' == c0) || (',' == c0) || ('[' == c0) ||
+            (']' == c0)) {
             tokens_arg =
                 Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
             char content[2] = {0};
