@@ -851,7 +851,7 @@ static char* ASM_getOutAsm(Args* outBuffs,
 }
 
 /* a hock for pacakges to enhance the parse */
-PIKA_WEAK char* __pikaExtern_beforeParseLine(Args* singleRunBuffs, char* line) {
+PIKA_WEAK char* __pikaExtern_beforeParseLine(Args* outBuffs, char* line) {
     return line;
 }
 
