@@ -128,7 +128,7 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 |OS|port|GPIO|TIME|
 |---|---|---|---|
 |rt-thread|√|√|√|
-|vsfOS| |√|√|
+|vsf|√|√| |
 
 |OS|port|Google Test|Banch Mark|
 |---|---|---|---|
