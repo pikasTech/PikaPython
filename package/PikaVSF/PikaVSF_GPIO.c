@@ -7,7 +7,32 @@
 
 #if __PIKA_VSF_GPIO == ENABLED
 static int __vsf_gpio_pin_get(char *pin) {
+    char ch_port, ch_pin;
     int hw_port = 0, hw_pin = 0;
+
+    ch_port = *pin++;
+    VSF_ASSERT(ch_port == 'P');
+
+    ch_port = *pin++;
+    if ((ch_port >= 'A') && (ch_port <= 'Z')) {
+        hw_port = ch_port - 'A';
+    } else if ((ch_port >= '0') && (ch_port <= '9')) {
+        hw_port = ch_port - '0';
+    } else {
+        VSF_ASSERT(false);
+    }
+
+    if (*pin == '.') {
+        pin++;
+    }
+
+    while ((ch_pin = *pin++) != NULL) {
+        if (!((ch_pin >= '0') && (ch_pin <= '9'))) {
+            break;
+        }
+        hw_pin *= 10;
+        hw_pin += ch_pin - '0';
+    }
     return vsf_hw_io_mapper_pin(hw_port, hw_pin);
 }
 #endif
