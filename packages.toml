@@ -201,3 +201,9 @@ name = "pikaRTBooter"
 releases = [
   "v0.0.1 2059f1f97f68f6f863660a839a1d38c69c0e5523",
 ]
+
+[[packages]]
+name = "SmartLoong"
+release = [
+  "v0.0.1 a5437de66e8cff600be247eae63ac9114b6b153f",
+]
