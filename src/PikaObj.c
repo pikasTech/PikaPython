@@ -295,7 +295,7 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
                                  NewFun newClassFun) {
     Args* initArgs = New_args(NULL);
     PikaObj* thisClass = newClassFun(initArgs);
-    obj_setPtr(thisClass, "_clsptr", newClassFun);
+    obj_setPtr(thisClass, "_clsptr", (void*)newClassFun);
     args_deinit(initArgs);
     return thisClass;
 }
@@ -470,7 +470,8 @@ int32_t class_defineMethod(PikaObj* self,
     }
     methodName = strsGetLastToken(buffs, methodPath, '.');
 
-    obj_saveMethodInfo(methodHost, methodName, cleanDeclearation, methodPtr);
+    obj_saveMethodInfo(methodHost, methodName, cleanDeclearation,
+                       (void*)methodPtr);
     res = 0;
     goto exit;
 exit:
