@@ -375,7 +375,8 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         }
 
         /* match devider*/
-        if (('(' == c0) || (')' == c0) || (',' == c0)) {
+        if (('(' == c0) || (')' == c0) || (',' == c0) || ('[' == c0) ||
+            (']' == c0) || (':' == c0)) {
             tokens_arg =
                 Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
             char content[2] = {0};
@@ -537,13 +538,17 @@ exit:
     return tokens;
 }
 
+char* Lexer_popToken(Args* buffs, char* tokens_buff) {
+    return strsPopToken(buffs, tokens_buff, 0x1F);
+}
+
 uint8_t Lexer_isContain(char* tokens, char* operator) {
     Args* buffs = New_strBuff();
     char* tokens_buff = strsCopy(buffs, tokens);
     uint8_t res = 0;
     uint16_t token_size = strCountSign(tokens, 0x1F) + 1;
     for (int i = 0; i < token_size; i++) {
-        char* token = strsPopToken(buffs, tokens_buff, 0x1F);
+        char* token = Lexer_popToken(buffs, tokens_buff);
         if (TOKEN_operator == token[0]) {
             if (strEqu(token + 1, operator)) {
                 res = 1;
@@ -697,6 +702,11 @@ char* Parser_removeAnnotation(char* line) {
     return line;
 }
 
+/* a hock for pacakges to enhance the parse */
+PIKA_WEAK char* __pikaExtern_beforeParseLine(Args* outBuffs, char* line) {
+    return line;
+}
+
 AST* AST_parseLine(char* line, Stack* blockStack) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
@@ -732,6 +742,7 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
     /* set block deepth */
     obj_setInt(ast, "blockDeepth", blockDeepth);
     lineStart = line + blockDeepth * 4;
+    lineStart = __pikaExtern_beforeParseLine(buffs, lineStart);
     stmt = lineStart;
     /* match block start */
     if (0 == strncmp(lineStart, (char*)"while ", 6)) {
