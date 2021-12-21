@@ -64,12 +64,6 @@
 void    __platform_enable_irq_handle(void);
 void    __platform_disable_irq_handle(void);
 
-/* pika asm config */
-int32_t __platform_save_pikaAsm(char* PikaAsm);
-uint8_t __platform_Asm_is_to_flash(char* pyMultiLine);
-int32_t __platform_save_pikaAsm_EOF(void);
-char*   __platform_load_pikaAsm(void);
-
 /* printf family config */
 #ifndef __platform_printf
 void    __platform_printf(char* fmt, ...);
@@ -81,12 +75,14 @@ int     __platform_vsnprintf(char* buff,
                         const char* fmt,
                         va_list args);
 
-/* memory config */
+/* libc config */
 void*   __platform_malloc(size_t size);
 void    __platform_free(void* ptr);
-void    __platform_pool_init(void);
 void*   __platform_memset(void *mem, int ch, size_t size);
 void*   __platform_memcpy(void* dir, const void* src, size_t size);
+
+/* pika memory pool config */
+void    __platform_pool_init(void);
 void    __platform_wait(void);
 void*   __impl_pikaMalloc(size_t size);
 void    __impl_pikaFree(void* ptrm, size_t size);
@@ -95,3 +91,9 @@ uint8_t __is_quick_malloc(void);
 void    __quick_malloc_enable(void);
 void    __quick_malloc_disable(void);
 #endif
+
+/* pika asm config */
+int32_t __platform_save_pikaAsm(char* PikaAsm);
+uint8_t __platform_Asm_is_to_flash(char* pyMultiLine);
+int32_t __platform_save_pikaAsm_EOF(void);
+char*   __platform_load_pikaAsm(void);
