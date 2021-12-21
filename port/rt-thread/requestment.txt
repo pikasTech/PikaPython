@@ -1,6 +1,4 @@
 pikascript-core==latest
 PikaStdLib==latest
-PikaStdDevice==latest
 pikaRTBooter==latest
 pikaRTThread==latest
-pikaRTDevice==latest
