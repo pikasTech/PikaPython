@@ -123,6 +123,17 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 |---|---|---|---|
 |SmartLoong|√|√|√|√|
 
+## OS support
+
+|OS|port|GPIO|TIME|
+|---|---|---|---|
+|rt-thread|√|√|√|
+|vsfOS| |√|√|
+
+|OS|port|Google Test|Banch Mark|
+|---|---|---|---|
+|linux|√|√|√|
+
 # 3.Characteristic
 ### (1)Run environment
 
@@ -191,6 +202,7 @@ Complete unit testes based on google test.
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
+| PikaVSF OS package | [versaloon](https://github.com/versaloon) |
 | ESP32 BSP |kirto|
 | QEMU simulation with ARM-2D | [liuduanfei](https://github.com/liuduanfei) |
 | Donate：GD32E103TB muc 2 pic | 信息牛(WeChat) |
