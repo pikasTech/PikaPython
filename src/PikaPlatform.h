@@ -57,7 +57,7 @@
     Create a pika_config.c to override the following weak functions to config PikaScript.
     [Example]:
     1. https://gitee.com/Lyon1998/pikascript/blob/master/package/STM32G030Booter/pika_config.c
-    2. https://gitee.com/Lyon1998/pikascript/blob/master/package/pikaRTThread/pika_config.c
+    2. https://gitee.com/Lyon1998/pikascript/blob/master/package/pikaRTBooter/pika_config.c
 */
 
 /* interrupt config */
