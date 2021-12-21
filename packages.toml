@@ -209,3 +209,9 @@ name = "SmartLoong"
 releases = [
   "v0.0.1 a5437de66e8cff600be247eae63ac9114b6b153f",
 ]
+
+[[packages]]
+name = "PikaVSF"
+releases = [
+  "v0.0.1 30c122eecd2f835d9c67e3054b8ee1c477d469b8",
+]
