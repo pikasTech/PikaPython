@@ -1373,24 +1373,24 @@ TEST(parser, if_elif_else) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(parser, for_list) {
-//     Args* bf = New_strBuff();
-//     Stack* bs = New_Stack();
-//     char* s = strsCopy(bf, (char*)"");
-//     s = parse("for arg in list:", bf, s, bs);
-//     s = parse("    print(arg)", bf, s, bs);
-//     s = parse("", bf, s, bs);
-//     printf("%s", s);
-//     EXPECT_STREQ(s,
-//                  "B0\n"
-//                  "0 REF true\n"
-//                  "0 JEZ 2\n"
-//                  "B1\n"
-//                  "0 RUN rgb.flow\n"
-//                  "B0\n"
-//                  "0 JMP -1\n"
-//                  "B0\n");
-//     stack_deinit(bs);
-//     args_deinit(bf);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(parser, for_list) {
+    Args* bf = New_strBuff();
+    Stack* bs = New_Stack();
+    char* s = strsCopy(bf, (char*)"");
+    s = parse("for arg in list:", bf, s, bs);
+    s = parse("    print(arg)", bf, s, bs);
+    s = parse("", bf, s, bs);
+    printf("%s", s);
+    EXPECT_STREQ(s,
+                 "B0\n"
+                 "0 REF true\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "0 RUN rgb.flow\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n");
+    stack_deinit(bs);
+    args_deinit(bf);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
