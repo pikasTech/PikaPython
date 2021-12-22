@@ -202,19 +202,25 @@ Complete unit testes based on google test.
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
+| LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
 | PikaVSF OS package | [versaloon](https://github.com/versaloon) |
-| ESP32 BSP |kirto|
-| QEMU simulation with ARM-2D | [liuduanfei](https://github.com/liuduanfei) |
-| Donate：GD32E103TB muc 2 pic | 信息牛(WeChat) |
-| Rt-thread bsp template| [Meco Jianting Man](https://github.com/mysterywolf) |
-| Donate：EC600S-CN 4G module | 移远模块 |
-| Donate：BL706 board|博流智能 [bouffalolab](https://github.com/bouffalolab)|
-| Donate：CM32M101A board| 孟巍(WeChat) |
-| Donate：APM32F030R8 board | 极海半导体 陈成 |
-| Donate：APM32E103VB board | 极海半导体 陈成 |
-| Donate：APEX-Link debugger | 极海半导体 陈成 |
-| format code，add gitattribute | [Meco Jianting Man](https://github.com/mysterywolf) |
-| demo/simulation-keil | 千帆(WeChat) |
+| ESP32 BSP |沧御|
+| 捐赠：ESP32开发板、墨水屏*4 | name(微信名) |
+| 捐赠：智龙开发板 | 龙芯俱乐部 石南 |
+| package/STM32F1 | [sjy](https://gitee.com/shanjiayang) |
+| package/STM32F103RBBooter | [sjy](https://gitee.com/shanjiayang) |
+| bsp/stm32f103rb | [sjy](https://gitee.com/shanjiayang) |
+| 基于QEMU的ARM-2D仿真工程 | [liuduanfei](https://github.com/liuduanfei) |
+| 捐赠：GD32E103TB芯片2片 | 信息牛(微信名) |
+| Rt-thread 支持包、适配层、模块| [Meco Jianting Man](https://github.com/mysterywolf) |
+| 捐赠：移远EC600S-CN 4G模块 | 移远模块 |
+| 捐赠：博流BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
+| 捐赠：中国移动CM32M101A 开发板| 孟巍(微信名) |
+| 捐赠：APM32F030R8 开发板 | 极海半导体 陈成 |
+| 捐赠：APM32E103VB 开发板 | 极海半导体 陈成 |
+| 捐赠：APEX-Link仿真器 | 极海半导体 陈成 |
+| 源码格式化，增加git属性文件 | [Meco Jianting Man](https://github.com/mysterywolf) |
+| demo/simulation-keil | 千帆(微信名) |
 | demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
