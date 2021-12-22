@@ -1382,14 +1382,21 @@ TEST(parser, for_list) {
     s = parse("", bf, s, bs);
     printf("%s", s);
     EXPECT_STREQ(s,
-                 "B0\n"
-                 "0 REF true\n"
-                 "0 JEZ 2\n"
-                 "B1\n"
-                 "0 RUN rgb.flow\n"
-                 "B0\n"
-                 "0 JMP -1\n"
-                 "B0\n");
+        "B0\n"
+        "0 RUN list.__iterInit__\n"
+        "B0\n"
+        "0 RUN list.__iterContinue__\n"
+        "0 JEZ 2\n"
+        "B1\n"
+        "0 RUN list.__next__\n"
+        "0 OUT arg\n"
+        "B1\n"
+        "1 REF arg\n"
+        "0 RUN print\n"
+        "B0\n"
+        "0 JMP -1\n"
+        "B0\n"
+    );
     stack_deinit(bs);
     args_deinit(bf);
     EXPECT_EQ(pikaMemNow(), 0);

@@ -43,7 +43,21 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
-enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ, OPT, DEF, RET, NEL };
+enum Instruct {
+    NON = 0,
+    REF,
+    RUN,
+    STR,
+    OUT,
+    NUM,
+    JMP,
+    JEZ,
+    OPT,
+    DEF,
+    RET,
+    NEL,
+    DEL
+};
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);

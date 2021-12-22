@@ -702,11 +702,6 @@ char* Parser_removeAnnotation(char* line) {
     return line;
 }
 
-/* a hock for pacakges to enhance the parse */
-PIKA_WEAK char* __pikaExtern_beforeParseLine(Args* outBuffs, char* line) {
-    return line;
-}
-
 AST* AST_parseLine(char* line, Stack* blockStack) {
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
@@ -742,7 +737,6 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
     /* set block deepth */
     obj_setInt(ast, "blockDeepth", blockDeepth);
     lineStart = line + blockDeepth * 4;
-    lineStart = __pikaExtern_beforeParseLine(buffs, lineStart);
     stmt = lineStart;
     /* match block start */
     if (0 == strncmp(lineStart, (char*)"while ", 6)) {
@@ -751,6 +745,22 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         if (NULL != blockStack) {
             stack_pushStr(blockStack, "while");
         }
+        goto block_matched;
+    }
+    if (0 == strncmp(line, (char*)"for ", 4)) {
+        char* tokens = Lexer_getTokens(buffs, line + 4);
+        Lexer_popToken(buffs, tokens);
+        char* arg_in = Lexer_popToken(buffs, tokens) + 1;
+        Lexer_popToken(buffs, tokens);
+        char* list_in = Lexer_popToken(buffs, tokens) + 1;
+        obj_setStr(ast, "block", "for");
+        obj_setStr(ast, "arg_in", arg_in);
+        obj_setStr(ast, "list_in", list_in);
+        if (NULL != blockStack) {
+            stack_pushStr(blockStack, "for");
+        }
+        stmt = strsCopy(buffs, list_in);
+        stmt = strsAppend(buffs, stmt, ".__iterContinue__()");
         goto block_matched;
     }
     if (0 == strncmp(lineStart, (char*)"if ", 3)) {
@@ -978,7 +988,7 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
                 break;
             }
             /* goto the while start when exit while block */
-            if (strEqu(blockType, "while")) {
+            if (strEqu(blockType, "while") || (strEqu(blockType, "for"))) {
                 pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
             }
@@ -997,10 +1007,30 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
 
     /* match block */
     uint8_t is_block_matched = 0;
-    if (strEqu(obj_getStr(ast, "block"), "while")) {
+    if (strEqu(obj_getStr(ast, "block"), "while") ||
+        strEqu(obj_getStr(ast, "block"), "for")) {
+        /* for "for" iter */
+        if (strEqu(obj_getStr(ast, "block"), "for")) {
+            char* list_in = obj_getStr(ast, "list_in");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, "0 RUN ");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, list_in);
+            pikaAsm = strsAppend(runBuffs, pikaAsm, ".__iterInit__\n");
+            pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 0);
+        }
         /* parse stmt ast */
         pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 2\n");
+        if (strEqu(obj_getStr(ast, "block"), "for")) {
+            char* list_in = obj_getStr(ast, "list_in");
+            char* arg_in = obj_getStr(ast, "arg_in");
+            pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 1);
+            pikaAsm = strsAppend(runBuffs, pikaAsm, "0 RUN ");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, list_in);
+            pikaAsm = strsAppend(runBuffs, pikaAsm, ".__next__\n");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, "0 OUT ");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, arg_in);
+            pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
+        }
         is_block_matched = 1;
         goto exit;
     }
