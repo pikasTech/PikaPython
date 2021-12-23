@@ -1383,12 +1383,11 @@ TEST(parser, for_list) {
     printf("%s", s);
     EXPECT_STREQ(s,
         "B0\n"
-        "1 NUM 0\n"
-        "1 NUM 10\n"
-        "0 RUN range\n"
-        "0 OUT __list0\n"
-        "1 REF __list0\n"
+        "2 NUM 0\n"
+        "2 NUM 10\n"
+        "1 RUN range\n"
         "0 RUN iter\n"
+        "0 OUT __list0\n"
         "B0\n"
         "1 REF __list0\n"
         "0 RUN next\n"

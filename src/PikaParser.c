@@ -753,11 +753,17 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         char* arg_in = Lexer_popToken(buffs, tokens) + 1;
         Lexer_popToken(buffs, tokens);
         char* token = "";
-        char* list_in = strsCopy(buffs, "");
+
+        Args *list_buffs = New_strBuff();
+        char* list_in = strsCopy(list_buffs, "");
         do {
-            list_in = strsAppend(buffs, list_in, token);
-            token = Lexer_popToken(buffs, tokens) + 1;
+            list_in = strsAppend(list_buffs, list_in, token);
+            token = Lexer_popToken(list_buffs, tokens) + 1;
         } while (!strEqu(token, ":"));
+        list_in = strsAppend(list_buffs, "iter(", list_in);
+        list_in = strsAppend(list_buffs, list_in, ")");
+        list_in = strsCopy(buffs, list_in);
+        args_deinit(list_buffs);
 
         obj_setStr(ast, "block", "for");
         obj_setStr(ast, "arg_in", arg_in);
@@ -1034,16 +1040,11 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
         block_deepth_str[0] += obj_getInt(ast, "blockDeepth");
         __list_x = strsAppend(runBuffs, __list_x, block_deepth_str);
         /* init iter */
-        /*     get the __list<x> */
+        /*     get the iter(__list<x>) */
         pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 OUT ");
         pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
-        /*     run iter(__list<x>) */
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "1 REF ");
-        pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 RUN iter\n");
         /* get next */
         pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 0);
         /*     run next(__list<x>) */
