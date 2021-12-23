@@ -9,7 +9,7 @@
  */
 
 #include <rtthread.h>
-#include "pikaPlatform.h"
+#include "PikaPlatform.h"
 
 #ifndef RT_USING_HEAP
 #error "Please enable heap in the RT-Thread configuration"
