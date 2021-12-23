@@ -113,7 +113,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 |Board|bsp|gpio|uart|pwm|adc|i2c|
 |---|---|---|---|---|---|---|
 |Raspberry Pico|√| | | | | |
-|ESP32C3(preview)|√| | | | | |
+|ESP32C3|√| | | | | |
 
 |Board|bsp|arm-2d|
 |---|---|---|

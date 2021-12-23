@@ -113,7 +113,7 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 |Board|bsp|gpio|uart|pwm|adc|i2c|
 |---|---|---|---|---|---|---|
 |Raspberry Pico|√| | | | | |
-|ESP32C3(preview)|√| | | | | |
+|ESP32C3|√| | | | | |
 
 |Board|bsp|arm-2d|
 |---|---|---|
