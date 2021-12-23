@@ -15,6 +15,26 @@
 #include "esp_system.h"
 #include "pikaScript.h"
 
+#define RX_Buff_SIZE 256
+char rxBuff[RX_Buff_SIZE] = { 0 };
+
+void clearBuff(char *buff, uint32_t size) {
+    for (int i = 0; i < size; i++) {
+        buff[i] = 0;
+    }
+}
+
+char pika_getchar(){
+    char chBuff[2] = {0};
+    while(1){
+        fgets(chBuff, 2, stdin);
+        if(chBuff[0]!= 0){
+            return chBuff[0];
+        }
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
 void app_main(void)
 {
     printf("------------------------------------------------------------------\r\n");
@@ -32,11 +52,35 @@ void app_main(void)
     printf("|                                                                |\r\n");
     printf("------------------------------------------------------------------\r\n");
     PikaObj *pikaMain = pikaScriptInit();
-    char inputBuff[256] = {0};
+    printf(">>> ");
     while (1)
     {
-        fgets(inputBuff, sizeof(inputBuff), stdin);
-        obj_run(pikaMain, inputBuff);
-        vTaskDelay(pdMS_TO_TICKS(10));
+        char inputChar = pika_getchar();
+        printf("%c", inputChar);
+        if (inputChar == '\b'){
+            uint32_t size = strGetSize(rxBuff);
+            if(size == 0){
+                printf(" ");
+                continue;
+            }
+            printf(" \b");
+            rxBuff[size - 1] = 0;
+            continue;
+        }
+        if (inputChar != '\r' && inputChar != '\n') {
+            strAppendWithSize(rxBuff, &inputChar, 1);
+            continue;
+        }
+        if ( (inputChar == '\r') || (inputChar == '\n') ) {
+            printf("\r\n");
+            if(strEqu("exit()", rxBuff)){
+                /* exit pika shell */
+                return;
+            }
+            obj_run(pikaMain, rxBuff);
+            printf(">>> ");
+            clearBuff(rxBuff, RX_Buff_SIZE);
+            continue;
+        }
     }
 }
