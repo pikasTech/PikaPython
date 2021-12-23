@@ -202,7 +202,7 @@ Complete unit testes based on google test.
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
-| ESP32 BSP |启明云端 沧御|
+| 捐赠：ESP32C3 10pic，调试器 |启明云端 沧御|
 | LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
 | PikaVSF OS package | [versaloon](https://github.com/versaloon) |
 | ESP32 BSP |沧御|
