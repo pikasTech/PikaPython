@@ -1401,6 +1401,8 @@ TEST(parser, for_list) {
         "B0\n"
         "0 JMP -1\n"
         "B0\n"
+        "0 PGC __list0\n"
+        "B0\n"
     );
     stack_deinit(bs);
     args_deinit(bf);

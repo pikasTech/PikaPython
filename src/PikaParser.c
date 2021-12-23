@@ -993,9 +993,22 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
                 break;
             }
             /* goto the while start when exit while block */
-            if (strEqu(blockType, "while") || (strEqu(blockType, "for"))) {
+            if (strEqu(blockType, "while")) {
                 pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
+            }
+            /* goto the while start when exit while block */
+            if (strEqu(blockType, "for")) {
+                pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
+                pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
+                pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
+                char* __list_x = strsCopy(buffs, "__list");
+                char block_deepth_str[] = "0";
+                block_deepth_str[0] += obj_getInt(ast, "blockDeepth");
+                __list_x = strsAppend(runBuffs, __list_x, block_deepth_str);
+                pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 PGC ");
+                pikaAsm = strsAppend(buffs, pikaAsm, (char*)__list_x);
+                pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
             }
             /* return when exit method */
             if (strEqu(blockType, "def")) {
@@ -1017,7 +1030,7 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
         char* list_in = obj_getStr(ast, "list_in");
         char* arg_in = obj_getStr(ast, "arg_in");
         char* __list_x = strsCopy(runBuffs, "__list");
-        char block_deepth_str[] ="0";
+        char block_deepth_str[] = "0";
         block_deepth_str[0] += obj_getInt(ast, "blockDeepth");
         __list_x = strsAppend(runBuffs, __list_x, block_deepth_str);
         /* init iter */
