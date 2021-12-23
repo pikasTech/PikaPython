@@ -130,7 +130,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 |rt-thread|√|√|√|
 |vsf|√|√| |
 
-|OS|port|Google Test|Banch Mark|
+|OS|port|Google Test|Benchmark|
 |---|---|---|---|
 |linux|√|√|√|
 
