@@ -1377,19 +1377,24 @@ TEST(parser, for_list) {
     Args* bf = New_strBuff();
     Stack* bs = New_Stack();
     char* s = strsCopy(bf, (char*)"");
-    s = parse("for arg in list:", bf, s, bs);
+    s = parse("for arg in range(0,10):", bf, s, bs);
     s = parse("    print(arg)", bf, s, bs);
     s = parse("", bf, s, bs);
     printf("%s", s);
     EXPECT_STREQ(s,
         "B0\n"
-        "0 RUN list.__iterInit__\n"
+        "1 NUM 0\n"
+        "1 NUM 10\n"
+        "0 RUN range\n"
+        "0 OUT __list0\n"
+        "1 REF __list0\n"
+        "0 RUN iter\n"
         "B0\n"
-        "0 RUN list.__iterContinue__\n"
-        "0 JEZ 2\n"
-        "B1\n"
-        "0 RUN list.__next__\n"
+        "1 REF __list0\n"
+        "0 RUN next\n"
         "0 OUT arg\n"
+        "0 EST arg\n"
+        "0 JEZ 2\n"
         "B1\n"
         "1 REF arg\n"
         "0 RUN print\n"

@@ -56,7 +56,8 @@ enum Instruct {
     DEF,
     RET,
     NEL,
-    DEL
+    DEL,
+    EST
 };
 
 static char* strs_getLine(Args* buffs, char* code) {
@@ -111,6 +112,14 @@ static enum Instruct getInstruct(char* line) {
     if (0 == strncmp(line + 2, "NEL", 3)) {
         /* not else */
         return NEL;
+    }
+    if (0 == strncmp(line + 2, "DEL", 3)) {
+        /* not else */
+        return EST;
+    }
+    if (0 == strncmp(line + 2, "EST", 3)) {
+        /* not else */
+        return EST;
     }
     return NON;
 }
