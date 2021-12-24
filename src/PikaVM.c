@@ -171,6 +171,16 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         }
         return arg;
     }
+    if (instruct == EST) {
+        Arg* arg = obj_getArg(locals, data);
+        if (arg == NULL) {
+            return arg_setInt(NULL, "", 0);
+        }
+        if (TYPE_NULL == arg_getType(arg)) {
+            return arg_setInt(NULL, "", 0);
+        }
+        return arg_setInt(NULL, "", 1);
+    }
     if (instruct == JMP) {
         *jmp = fast_atoi(data);
         return NULL;

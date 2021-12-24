@@ -594,3 +594,22 @@ TEST(VM, if_else_) {
     ASSERT_FLOAT_EQ(b, 1);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, EST) {
+    char* pikaAsm = (char*)
+    "B0\n"
+    "0 EST a\n"
+    "0 OUT b\n"
+    ;
+    PikaObj* self = newRootObj((char*)"", New_BaseObj);
+    pikaVM_runAsm(self, pikaAsm);
+    int a = obj_getInt(self, (char*)"a");
+    int b = obj_getInt(self, (char*)"b");
+    /* a is local, should not be exist in globals */
+    EXPECT_EQ(a, -999999999);
+    /* b is local, should not be exist in globals */
+    EXPECT_EQ(b, 0);
+    obj_deinit(self);
+    // obj_deinit(globals);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
