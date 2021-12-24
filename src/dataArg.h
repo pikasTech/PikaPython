@@ -39,7 +39,8 @@ typedef enum {
     TYPE_METHOD,
     TYPE_POINTER,
     TYPE_MATE_OBJECT,
-    TYPE_STRING
+    TYPE_STRING,
+    TYPE_NULL,
 } ArgType;
 
 uint16_t content_typeOffset(uint8_t* content);
