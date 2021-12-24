@@ -49,7 +49,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 
 ![image](https://user-images.githubusercontent.com/88232613/141252834-93011ca7-f84b-4192-8e61-0e242796f62c.png)
 
-开发板基于STM32G030C8T6小资源MCU，仅64kB Flash，8kB RAM即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、RGB、KEY、LCD、RGB）。板载CH340 USB转串口芯片，Type-C接口，支持串口下载python脚本，板载4颗RGB灯，可选配[LCD屏幕](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102)。
+开发板基于STM32G030C8T6小资源MCU，仅64kB Flash，8kB RAM即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、UART、ADC、PWM、RGB、KEY、LCD）。板载CH340 USB转串口芯片，Type-C接口，支持串口下载python脚本，板载4颗RGB灯，可选配[LCD屏幕](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102)。
 
 [Pika派python编程游玩指南](document/7.Pika%E6%B4%BE%E5%BC%80%E5%8F%91%E6%9D%BF%E6%B8%B8%E7%8E%A9%E6%8C%87%E5%8D%97%EF%BC%8C%E5%88%B0%E6%89%8B%E7%9A%84%E5%BC%80%E5%8F%91%E6%9D%BF%E7%8E%A9%E8%B5%B7%E6%9D%A5%EF%BC%81.md)
 
