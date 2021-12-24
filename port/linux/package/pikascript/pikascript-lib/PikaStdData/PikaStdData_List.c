@@ -51,5 +51,5 @@ Arg* PikaStdData_List___next__(PikaObj* self) {
         return arg_setNull(NULL);
     }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
-    return arg_copy(res);
+    return res;
 }
