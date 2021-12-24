@@ -21,6 +21,12 @@ class List(TinyObj):
     def len() -> int:
         pass
 
+    def __iter__() -> any:
+        pass
+
+    def __next__() -> any:
+        pass
+
 
 class Dict(TinyObj):
     def __init__():
@@ -36,4 +42,10 @@ class Dict(TinyObj):
 
     # remove an arg by the key
     def remove(key: str):
+        pass
+
+    def __iter__() -> any:
+        pass
+
+    def __next__() -> any:
         pass

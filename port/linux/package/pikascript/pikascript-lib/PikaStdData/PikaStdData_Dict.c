@@ -15,3 +15,10 @@ void PikaStdData_Dict_set(PikaObj* self, Arg* arg, char* key) {
 void PikaStdData_Dict_remove(PikaObj* self, char* key) {
     PikaStdLib_SysObj_remove(self, key);
 }
+
+Arg * PikaStdData_Dict___iter__(PikaObj *self){
+
+}
+Arg * PikaStdData_Dict___next__(PikaObj *self){
+
+}

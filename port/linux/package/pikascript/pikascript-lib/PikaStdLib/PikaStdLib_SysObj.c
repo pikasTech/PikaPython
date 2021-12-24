@@ -74,3 +74,12 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
     obj_setErrorCode(self, 1);
     return -999999999;
 }
+
+Arg * PikaStdLib_SysObj_iter(PikaObj *self, Arg * arg){
+    PikaObj* arg_obj = arg_getPtr(arg);
+    obj_run(arg_obj, "__res = __iter__()");
+    return arg_copy(args_getArg(arg_obj->list, "__res"));
+}
+Arg * PikaStdLib_SysObj_next(PikaObj *self, Arg * arg){
+
+}

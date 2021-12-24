@@ -33,3 +33,15 @@ void PikaStdData_List_set(PikaObj* self, Arg* arg, int i) {
     }
     obj_setArg(self, i_str, arg);
 }
+
+Arg* PikaStdData_List___iter__(PikaObj* self) {
+    obj_setInt(self, "__iter_i", 0);
+    return arg_setPtr(NULL, "", TYPE_POINTER, self);
+}
+
+Arg* PikaStdData_List___next__(PikaObj* self) {
+    int __iter_i = args_getInt(self->list, "__iter_i");
+    Arg* res = PikaStdData_List_get(self, __iter_i);
+    args_setInt(self->list, "__iter_i", __iter_i + 1);
+    return arg_copy(res);
+}
