@@ -86,6 +86,7 @@ Arg* arg_setInt(Arg* self, char* name, int64_t val);
 Arg* arg_setFloat(Arg* self, char* name, float val);
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer);
 Arg* arg_setStr(Arg* self, char* name, char* string);
+Arg* arg_setNull(Arg* self);
 
 int64_t arg_getInt(Arg* self);
 float arg_getFloat(Arg* self);

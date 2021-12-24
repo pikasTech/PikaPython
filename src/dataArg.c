@@ -281,6 +281,10 @@ Arg* arg_setInt(Arg* self, char* name, int64_t val) {
     return content_init(name, TYPE_INT, contentBuff, 4, NULL);
 }
 
+Arg* arg_setNull(Arg* self) {
+    return content_init("", TYPE_NULL, NULL, 0, NULL);
+}
+
 Arg* arg_setFloat(Arg* self, char* name, float val) {
     uint8_t contentBuff[4];
     uint8_t* valPtr = (uint8_t*)&val;
