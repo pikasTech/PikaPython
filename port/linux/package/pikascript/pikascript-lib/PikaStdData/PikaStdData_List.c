@@ -47,6 +47,9 @@ Arg* PikaStdData_List___iter__(PikaObj* self) {
 Arg* PikaStdData_List___next__(PikaObj* self) {
     int __iter_i = args_getInt(self->list, "__iter_i");
     Arg* res = PikaStdData_List_get(self, __iter_i);
+    if(NULL == res){
+        return arg_setNull(NULL);
+    }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return arg_copy(res);
 }
