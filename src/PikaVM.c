@@ -169,6 +169,10 @@ Arg* pikaVM_runInstruct(PikaObj* self,
             /* find in global list second */
             arg = arg_copy(obj_getArg(globals, data));
         }
+        ArgType arg_type = arg_getType(arg);
+        if(TYPE_OBJECT == arg_type){
+            arg = arg_setType(arg, TYPE_POINTER);
+        }
         return arg;
     }
     if (instruct == EST) {

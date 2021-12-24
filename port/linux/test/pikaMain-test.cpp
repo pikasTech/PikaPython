@@ -127,7 +127,6 @@ TEST(pikaMain, a_signed) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(pikaMain, a_mm) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -240,9 +239,7 @@ TEST(pikaMain, err_scop) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, (char*)
-    "print('test'"
-    );
+    obj_run(pikaMain, (char*)"print('test'");
     /* collect */
 
     /* assert */
@@ -252,17 +249,14 @@ TEST(pikaMain, err_scop) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(pikaMain, __init__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, (char*)
-    "pin = PikaStdDevice.GPIO()\n"
-    );
+    obj_run(pikaMain, (char*)"pin = PikaStdDevice.GPIO()\n");
     /* collect */
-    char* a = obj_getStr(pikaMain, (char *)"pin.pin");
+    char* a = obj_getStr(pikaMain, (char*)"pin.pin");
     /* assert */
     EXPECT_STREQ(a, "PA0");
 
@@ -271,7 +265,7 @@ TEST(pikaMain, __init__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, PikaStdData){
+TEST(pikaMain, PikaStdData) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
@@ -285,8 +279,8 @@ TEST(pikaMain, PikaStdData){
     "b = dict.get('b')\n"
     );
     /* collect */
-    int a = obj_getInt(pikaMain, (char *)"a");
-    int b = obj_getInt(pikaMain, (char *)"b");
+    int a = obj_getInt(pikaMain, (char*)"a");
+    int b = obj_getInt(pikaMain, (char*)"b");
     /* assert */
     EXPECT_EQ(a, 1);
     EXPECT_EQ(b, 0);
@@ -296,35 +290,65 @@ TEST(pikaMain, PikaStdData){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, list_for_loop) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-//     /* run */
-//     Parameters* globals =
-//         obj_runDirect(pikaMain, (char*)
-//         "list = PikaStdData.List()\n"
-//         "list.append(7)\n"
-//         "list.append('eee')\n"
-//         "len = list.len()\n"
-//         "a1 = list.get(0)\n"
-//         "a2 = list.get(1)\n"
-//         "for item in list:\n"
-//         "    print(item)\n"
-//         "\n"
-//         );
-//     /* collect */
-//     int len = obj_getInt(globals, (char*)"len");
-//     int a1 = obj_getInt(globals, (char*)"a1");
-//     char* a2 = obj_getStr(globals, (char*)"a2");
-// // 
-//     /* assert */
-//     EXPECT_EQ(len, 2);
-//     EXPECT_EQ(a1, 7);
-//     EXPECT_STREQ(a2, "eee");
-// // 
-//     /* deinit */
-//     // obj_deinit(globals);
-//     obj_deinit(pikaMain);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, iter) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    Parameters* globals =
+        obj_runDirect(pikaMain, (char*)
+        "list = PikaStdData.List()\n"
+        "list.append(7)\n"
+        "list.append('eee')\n"
+        "len = list.len()\n"
+        "a1 = list.get(0)\n"
+        "a2 = list.get(1)\n"
+        "res = iter(list)\n"
+        "\n"
+        );
+    /* collect */
+    int len = obj_getInt(globals, (char*)"len");
+    int a1 = obj_getInt(globals, (char*)"a1");
+    char* a2 = obj_getStr(globals, (char*)"a2");
+    /* assert */
+    EXPECT_EQ(len, 2);
+    EXPECT_EQ(a1, 7);
+    EXPECT_STREQ(a2, "eee");
+    /* deinit */
+    // obj_deinit(globals);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+    // TEST(pikaMain, list_for_loop) {
+    //     /* init */
+    //     pikaMemInfo.heapUsedMax = 0;
+    //     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    //     /* run */
+    //     Parameters* globals =
+    //         obj_runDirect(pikaMain, (char*)
+    //         "list = PikaStdData.List()\n"
+    //         "list.append(7)\n"
+    //         "list.append('eee')\n"
+    //         "len = list.len()\n"
+    //         "a1 = list.get(0)\n"
+    //         "a2 = list.get(1)\n"
+    //         "for item in list:\n"
+    //         "    print(item)\n"
+    //         "\n"
+    //         );
+    //     /* collect */
+    //     int len = obj_getInt(globals, (char*)"len");
+    //     int a1 = obj_getInt(globals, (char*)"a1");
+    //     char* a2 = obj_getStr(globals, (char*)"a2");
+    // //
+    //     /* assert */
+    //     EXPECT_EQ(len, 2);
+    //     EXPECT_EQ(a1, 7);
+    //     EXPECT_STREQ(a2, "eee");
+    // //
+    //     /* deinit */
+    //     // obj_deinit(globals);
+    //     obj_deinit(pikaMain);
+    //     EXPECT_EQ(pikaMemNow(), 0);
+    // }
