@@ -4,11 +4,8 @@ import PikaStdData
 import PikaMath
 from PikaObj import *
 
-operator = PikaMath.Operator()
-
-print('hello world')
-mem = PikaStdLib.MemChecker()
-print('mem.max :')
-mem.max()
-print('mem.now :')
-mem.now()
+list = PikaStdData.List()
+list.append(7)
+list.append('eee')
+for item in list:
+    print(item)
