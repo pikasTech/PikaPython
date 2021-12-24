@@ -77,13 +77,11 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
 
 Arg * PikaStdLib_SysObj_iter(PikaObj *self, Arg * arg){
     PikaObj* arg_obj = arg_getPtr(arg);
-    ArgType type = arg_getType(arg);
     obj_run(arg_obj, "__res = __iter__()");
     return arg_copy(args_getArg(arg_obj->list, "__res"));
 }
 Arg * PikaStdLib_SysObj_next(PikaObj *self, Arg * arg){
     PikaObj* arg_obj = arg_getPtr(arg);
-    ArgType type = arg_getType(arg);
     obj_run(arg_obj, "__res = __next__()");
     return arg_copy(args_getArg(arg_obj->list, "__res"));
 }

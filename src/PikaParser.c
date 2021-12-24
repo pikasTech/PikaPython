@@ -1034,7 +1034,6 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     uint8_t is_block_matched = 0;
     if (strEqu(obj_getStr(ast, "block"), "for")) {
         /* for "for" iter */
-        char* list_in = obj_getStr(ast, "list_in");
         char* arg_in = obj_getStr(ast, "arg_in");
         char* __list_x = strsCopy(runBuffs, "__list");
         char block_deepth_str[] = "0";

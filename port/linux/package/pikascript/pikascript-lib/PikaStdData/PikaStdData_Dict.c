@@ -17,8 +17,8 @@ void PikaStdData_Dict_remove(PikaObj* self, char* key) {
 }
 
 Arg * PikaStdData_Dict___iter__(PikaObj *self){
-
+    return NULL;
 }
 Arg * PikaStdData_Dict___next__(PikaObj *self){
-
+    return NULL;
 }
