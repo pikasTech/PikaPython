@@ -1007,14 +1007,15 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
             if (strEqu(blockType, "for")) {
                 pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
-                pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
-                char* __list_x = strsCopy(buffs, "__list");
-                char block_deepth_str[] = "0";
-                block_deepth_str[0] += obj_getInt(ast, "blockDeepth");
-                __list_x = strsAppend(runBuffs, __list_x, block_deepth_str);
-                pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 PGC ");
-                pikaAsm = strsAppend(buffs, pikaAsm, (char*)__list_x);
-                pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
+                /* garbage collect for the list */
+                // pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
+                // char* __list_x = strsCopy(buffs, "__list");
+                // char block_deepth_str[] = "0";
+                // block_deepth_str[0] += obj_getInt(ast, "blockDeepth");
+                // __list_x = strsAppend(runBuffs, __list_x, block_deepth_str);
+                // pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 PGC ");
+                // pikaAsm = strsAppend(buffs, pikaAsm, (char*)__list_x);
+                // pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
             }
             /* return when exit method */
             if (strEqu(blockType, "def")) {
