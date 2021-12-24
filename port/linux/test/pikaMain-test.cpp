@@ -317,12 +317,12 @@ TEST(pikaMain, PikaStdData){
 //     int len = obj_getInt(globals, (char*)"len");
 //     int a1 = obj_getInt(globals, (char*)"a1");
 //     char* a2 = obj_getStr(globals, (char*)"a2");
-
+// // 
 //     /* assert */
 //     EXPECT_EQ(len, 2);
 //     EXPECT_EQ(a1, 7);
 //     EXPECT_STREQ(a2, "eee");
-
+// // 
 //     /* deinit */
 //     // obj_deinit(globals);
 //     obj_deinit(pikaMain);
