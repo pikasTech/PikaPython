@@ -760,13 +760,23 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         list_in = strsAppend(list_buffs, list_in, token);
         token = Lexer_popToken(list_buffs, tokens) + 1;
         if (strEqu("range", token)) {
-            // isRange = 1;
-        }
-        while (!strEqu(token, ":")) {
-            list_in = strsAppend(list_buffs, list_in, token);
-            token = Lexer_popToken(list_buffs, tokens) + 1;
+            isRange = 1;
+            while (!strEqu(token, ":")) {
+                list_in = strsAppend(list_buffs, list_in, token);
+                token = Lexer_popToken(list_buffs, tokens) + 1;
+            }
+            if (NULL != blockStack) {
+                stack_pushStr(blockStack, "for");
+            }
+            stmt = "";
+            args_deinit(list_buffs);
+            goto block_matched;
         }
         if (!isRange) {
+            while (!strEqu(token, ":")) {
+                list_in = strsAppend(list_buffs, list_in, token);
+                token = Lexer_popToken(list_buffs, tokens) + 1;
+            }
             list_in = strsAppend(list_buffs, "iter(", list_in);
             list_in = strsAppend(list_buffs, list_in, ")");
             list_in = strsCopy(buffs, list_in);
