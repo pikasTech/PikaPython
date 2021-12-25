@@ -754,25 +754,33 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         Lexer_popToken(buffs, tokens);
         char* token = "";
 
-        Args *list_buffs = New_strBuff();
+        Args* list_buffs = New_strBuff();
         char* list_in = strsCopy(list_buffs, "");
-        do {
+        uint8_t isRange = 0;
+        list_in = strsAppend(list_buffs, list_in, token);
+        token = Lexer_popToken(list_buffs, tokens) + 1;
+        if (strEqu("range", token)) {
+            // isRange = 1;
+        }
+        while (!strEqu(token, ":")) {
             list_in = strsAppend(list_buffs, list_in, token);
             token = Lexer_popToken(list_buffs, tokens) + 1;
-        } while (!strEqu(token, ":"));
-        list_in = strsAppend(list_buffs, "iter(", list_in);
-        list_in = strsAppend(list_buffs, list_in, ")");
-        list_in = strsCopy(buffs, list_in);
-        args_deinit(list_buffs);
-
-        obj_setStr(ast, "block", "for");
-        obj_setStr(ast, "arg_in", arg_in);
-        obj_setStr(ast, "list_in", list_in);
-        if (NULL != blockStack) {
-            stack_pushStr(blockStack, "for");
         }
-        stmt = list_in;
-        goto block_matched;
+        if (!isRange) {
+            list_in = strsAppend(list_buffs, "iter(", list_in);
+            list_in = strsAppend(list_buffs, list_in, ")");
+            list_in = strsCopy(buffs, list_in);
+            args_deinit(list_buffs);
+
+            obj_setStr(ast, "block", "for");
+            obj_setStr(ast, "arg_in", arg_in);
+            obj_setStr(ast, "list_in", list_in);
+            if (NULL != blockStack) {
+                stack_pushStr(blockStack, "for");
+            }
+            stmt = list_in;
+            goto block_matched;
+        }
     }
     if (0 == strncmp(lineStart, (char*)"if ", 3)) {
         stmt = strsCut(buffs, lineStart, ' ', ':');
@@ -1008,8 +1016,8 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
                 pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
                 /* garbage collect for the list */
-                // pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
-                // char* __list_x = strsCopy(buffs, "__list");
+                // pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm,
+                // blockTypeNum); char* __list_x = strsCopy(buffs, "__list");
                 // char block_deepth_str[] = "0";
                 // block_deepth_str[0] += obj_getInt(ast, "blockDeepth");
                 // __list_x = strsAppend(runBuffs, __list_x, block_deepth_str);
@@ -1117,6 +1125,7 @@ exit:
     args_deinit(runBuffs);
     return pikaAsm;
 }
+
 int32_t AST_deinit(AST* ast) {
     return obj_deinit(ast);
 }

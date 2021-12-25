@@ -1373,11 +1373,27 @@ TEST(parser, if_elif_else) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, for_range) {
+    Args* bf = New_strBuff();
+    Stack* bs = New_Stack();
+    char* s = strsCopy(bf, (char*)"");
+    s = parse("for i in range(0,10):", bf, s, bs);
+    s = parse("    print(i)", bf, s, bs);
+    s = parse("", bf, s, bs);
+    printf("%s", s);
+    EXPECT_STREQ(s,
+    ""
+    );
+    stack_deinit(bs);
+    args_deinit(bf);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(parser, for_list) {
     Args* bf = New_strBuff();
     Stack* bs = New_Stack();
     char* s = strsCopy(bf, (char*)"");
-    s = parse("for arg in range(0,10):", bf, s, bs);
+    s = parse("for arg in xrange(0,10):", bf, s, bs);
     s = parse("    print(arg)", bf, s, bs);
     s = parse("", bf, s, bs);
     printf("%s", s);
@@ -1385,7 +1401,7 @@ TEST(parser, for_list) {
         "B0\n"
         "2 NUM 0\n"
         "2 NUM 10\n"
-        "1 RUN range\n"
+        "1 RUN xrange\n"
         "0 RUN iter\n"
         "0 OUT __list0\n"
         "B0\n"
