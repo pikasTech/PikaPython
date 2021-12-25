@@ -54,7 +54,7 @@ static void pikascript_entry(void *parameter){
     while(1){
         inputChar = finsh_getchar();
         rt_kprintf("%c", inputChar);
-        if (inputChar == '\b'){
+        if ((inputChar == '\b') || (inputChar == 127)) {
             uint32_t size = strGetSize(rxBuff);
             if(size == 0){
                 rt_kprintf(" ");
