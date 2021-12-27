@@ -80,6 +80,20 @@ int main(void){
     MX_GPIO_Init();
     HARDWARE_PRINTF_Init();
     printf("[info]: stm32g070 system init ok.\r\n");
+    printf("------------------------------------------------------------------\r\n");
+    printf("|                                                                |\r\n");
+    printf("|     ____   _   __            _____              _          __  |\r\n");
+    printf("|    / __ \\ (_) / /__ ____ _  / ___/ _____ _____ (_) ____   / /_ |\r\n");
+    printf("|   / /_/ // / / //_// __ `/  \\__ \\ / ___// ___// / / __ \\ / __/ |\r\n");
+    printf("|  / ____// / / ,<  / /_/ /  ___/ // /__ / /   / / / /_/ // /_   |\r\n");
+    printf("| /_/    /_/ /_/|_| \\__,_/  /____/ \\___//_/   /_/ / .___/ \\__/   |\r\n");
+    printf("|                                                /_/             |\r\n");
+    printf("|          PikaScript - An Ultra Lightweight Python Engine       |\r\n");
+    printf("|                                                                |\r\n");
+    printf("|           [ https://github.com/pikastech/pikascript ]          |\r\n");
+    printf("|           [  https://gitee.com/lyon1998/pikascript  ]          |\r\n");
+    printf("|                                                                |\r\n");
+    printf("------------------------------------------------------------------\r\n");    
     pikaMain = pikaScriptInit();
     printf(">>> ");
     while (1){
