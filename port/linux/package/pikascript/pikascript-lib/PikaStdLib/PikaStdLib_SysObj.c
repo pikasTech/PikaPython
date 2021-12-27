@@ -81,8 +81,15 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     if (TYPE_MATE_OBJECT == arg_getType(arg)) {
         /* new a splite object */
         PikaObj* arg_obj = newRootObj("", arg_getPtr(arg));
+        obj_setInt(arg_obj, "__range_a1", obj_getInt(self, "__range_a1"));
+        obj_setInt(arg_obj, "__range_a2", obj_getInt(self, "__range_a2"));
+        obj_setInt(arg_obj, "__range_a3", obj_getInt(self, "__range_a3"));
+        obj_removeArg(self, "__range_a1");
+        obj_removeArg(self, "__range_a2");
+        obj_removeArg(self, "__range_a3");
         obj_run(arg_obj, "__res = __iter__()");
         Arg* resArg = arg_copy(args_getArg(arg_obj->list, "__res"));
+        ArgType type = arg_getType(resArg);
         /* deinit splite object */
         obj_deinit(arg_obj);
         return resArg;
@@ -101,16 +108,9 @@ Arg* PikaStdLib_SysObj_next(PikaObj* self, Arg* arg) {
 }
 
 Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2, int a3) {
-    obj_removeArg(self, "__range_a1");
-    obj_removeArg(self, "__range_a2");
-    obj_removeArg(self, "__range_a3");
-    int a_list[3] = {a1, a2, a3};
-    for (int i = 0; i < 3; i++) {
-        char __range_ax[] = "__range_ax";
-        __range_ax[sizeof(__range_ax) - 2] = i + 1 + '0';
-        if (a_list[i] != -999999999) {
-            obj_setInt(self, __range_ax, a_list[i]);
-        }
-    }
+    /* set template arg to create rangeObj */
+    obj_setInt(self, "__range_a1", a1);
+    obj_setInt(self, "__range_a2", a2);
+    obj_setInt(self, "__range_a3", a3);
     return arg_setMetaObj("", "PikaStdLib_RangeObj", New_PikaStdLib_RangeObj);
 }

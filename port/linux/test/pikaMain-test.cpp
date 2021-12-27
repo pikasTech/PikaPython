@@ -352,13 +352,7 @@ TEST(pikaMain, range) {
         "\n"
         );
     /* collect */
-    int __range_a1 = obj_getInt(pikaMain, (char*)"__range_a1");
-    int __range_a2 = obj_getInt(pikaMain, (char*)"__range_a2");
-    int __range_a3 = obj_getInt(pikaMain, (char*)"__range_a3");
     /* assert */
-    EXPECT_EQ(__range_a1, 10);
-    EXPECT_EQ(__range_a2, 0);
-    EXPECT_EQ(__range_a3, -999999999);
     obj_deinit(pikaMain);
     /* mem check */
     EXPECT_EQ(pikaMemNow(), 0);
