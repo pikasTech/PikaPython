@@ -109,17 +109,13 @@ PikaScript也支持MDK、iar、rtt-studio等常见ide开发，能够轻松地调
 |apm32f030r8|√| | | | | |
 |apm32e103vb|√| | | | | |
 |bl-706|√| | | | | |
-
+|Raspberry Pico|√| | | | | |
+|ESP32C3|√| | | | | |
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
 |---|---|---|---|---|---|---|---|---|---|
 |[Pika-Pi-Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√|√|√|√|
-
-|Board|bsp|gpio|uart|pwm|adc|i2c|
-|---|---|---|---|---|---|---|
-|Raspberry Pico|√| | | | | |
-|ESP32C3|√| | | | | |
 
 |Board|bsp|arm-2d|
 |---|---|---|
