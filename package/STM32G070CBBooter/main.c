@@ -48,38 +48,70 @@ PikaObj *pikaMain;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
+#define RX_Buff_SIZE 256
+char rxBuff[RX_Buff_SIZE] = { 0 };
+char rx_char = 0;
+void clearBuff(char *buff, uint32_t size) {
+    for (int i = 0; i < size; i++) {
+        buff[i] = 0;
+    }
+}
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
+void USART1_IRQHandler(void){
+    if (LL_USART_IsActiveFlag_RXNE(USART1)) {
+        rx_char = LL_USART_ReceiveData8(USART1);
+    }
+}
 
-/* USER CODE END 0 */
+char pika_getchar(){
+    char res = 0;
+    while(rx_char != 0){
+        res = rx_char;
+        rx_char = 0;
+        return res;
+    }
+    return 0;
+}
 
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
-  HAL_Init();
-  SystemClock_Config();
-  MX_GPIO_Init();
-
-  HARDWARE_PRINTF_Init();    
-  pikaMain = pikaScriptInit();  
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+int main(void){
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    HARDWARE_PRINTF_Init();
+    printf("[info]: stm32g070 system init ok.\r\n");
+    pikaMain = pikaScriptInit();
+    printf(">>> ");
+    while (1){
+        char inputChar = pika_getchar();
+        printf("%c", inputChar);
+        if ((inputChar == '\b') || (inputChar == 127)){
+            uint32_t size = strGetSize(rxBuff);
+            if(size == 0){
+                printf(" ");
+                continue;
+            }
+            printf(" \b");
+            rxBuff[size - 1] = 0;
+            continue;
+        }
+        if (inputChar != '\r' && inputChar != '\n') {
+            strAppendWithSize(rxBuff, &inputChar, 1);
+            continue;
+        }
+        if ( (inputChar == '\r') || (inputChar == '\n') ) {
+            printf("\r\n");
+            if(strEqu("exit()", rxBuff)){
+                /* exit pika shell */
+                return 0;
+            }
+            obj_run(pikaMain, rxBuff);
+            printf(">>> ");
+            clearBuff(rxBuff, RX_Buff_SIZE);
+            continue;
+        }
+    }
+    return 0;
 }
 
 /**
