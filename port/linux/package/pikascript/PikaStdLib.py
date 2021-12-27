@@ -37,7 +37,7 @@ class SysObj(BaseObj):
     def next(arg: any) -> any:
         pass
 
-    def range(a1, a2, a3, a4) -> any:
+    def range(a1: int, a2: int, a3: int) -> any:
         pass
 
 

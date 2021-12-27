@@ -1,4 +1,5 @@
 #include "BaseObj.h"
+#include "PikaStdLib_RangeObj.h"
 #include "dataStrs.h"
 
 void PikaStdLib_SysObj_remove(PikaObj* self, char* argPath) {
@@ -75,17 +76,28 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
     return -999999999;
 }
 
-Arg * PikaStdLib_SysObj_iter(PikaObj *self, Arg * arg){
+Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     PikaObj* arg_obj = arg_getPtr(arg);
     obj_run(arg_obj, "__res = __iter__()");
     return arg_copy(args_getArg(arg_obj->list, "__res"));
 }
-Arg * PikaStdLib_SysObj_next(PikaObj *self, Arg * arg){
+Arg* PikaStdLib_SysObj_next(PikaObj* self, Arg* arg) {
     PikaObj* arg_obj = arg_getPtr(arg);
     obj_run(arg_obj, "__res = __next__()");
     return arg_copy(args_getArg(arg_obj->list, "__res"));
 }
 
-Arg * PikaStdLib_SysObj_range(PikaObj *self){
-    return NULL;
+Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2, int a3) {
+    obj_removeArg(self, "__range_a1");
+    obj_removeArg(self, "__range_a2");
+    obj_removeArg(self, "__range_a3");
+    int a_list[3] = {a1, a2, a3};
+    for (int i = 1; i < 4; i++) {
+        char __range_ax[] = "__range_ax";
+        __range_ax[sizeof(__range_ax) - 2] = i + '0';
+        if (a_list[i] != -999999999) {
+            obj_setInt(self, __range_ax, a_list[i]);
+        }
+    }
+    return arg_setMetaObj("", "PikaStdLib_RangeObj", New_PikaStdLib_RangeObj);
 }
