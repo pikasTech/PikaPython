@@ -348,6 +348,7 @@ TEST(pikaMain, range) {
     /* run */
     obj_runDirect(pikaMain, (char*)
         "r = range(10, 0)\n"
+        "ir = iter(r)\n"
         "\n"
         );
     /* collect */
