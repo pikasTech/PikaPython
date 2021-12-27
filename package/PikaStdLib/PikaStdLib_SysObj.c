@@ -1,4 +1,5 @@
 #include "BaseObj.h"
+#include "PikaStdLib_RangeObj.h"
 #include "dataStrs.h"
 
 void PikaStdLib_SysObj_remove(PikaObj* self, char* argPath) {
@@ -73,4 +74,32 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
     obj_setSysOut(self, "[error] convert to int type faild.");
     obj_setErrorCode(self, 1);
     return -999999999;
+}
+
+Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
+    /* a MATE object */
+    if (TYPE_MATE_OBJECT == arg_getType(arg)) {
+        return arg_copy(arg);
+    }
+    /* object */
+    if (TYPE_POINTER == arg_getType(arg)) {
+        PikaObj* arg_obj = arg_getPtr(arg);
+        obj_run(arg_obj, "__res = __iter__()");
+        return arg_copy(args_getArg(arg_obj->list, "__res"));
+    }
+    return arg_setNull(NULL);
+}
+
+Arg* PikaStdLib_SysObj_next(PikaObj* self, Arg* arg) {
+    PikaObj* arg_obj = arg_getPtr(arg);
+    obj_run(arg_obj, "__res = __next__()");
+    return arg_copy(args_getArg(arg_obj->list, "__res"));
+}
+
+Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2, int a3) {
+    /* set template arg to create rangeObj */
+    obj_setInt(self, "__range_a1", a1);
+    obj_setInt(self, "__range_a2", a2);
+    obj_setInt(self, "__range_a3", a3);
+    return arg_setMetaObj("", "PikaStdLib_RangeObj", New_PikaStdLib_RangeObj);
 }
