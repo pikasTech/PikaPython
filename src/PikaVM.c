@@ -156,6 +156,10 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         arg_deinit(outArg);
         return NULL;
     }
+    if (instruct == DEL) {
+        obj_removeArg(locals, data);
+        return NULL;
+    }
     if (instruct == REF) {
         if (strEqu(data, (char*)"True")) {
             return arg_setInt(NULL, "", 1);
@@ -170,7 +174,7 @@ Arg* pikaVM_runInstruct(PikaObj* self,
             arg = arg_copy(obj_getArg(globals, data));
         }
         ArgType arg_type = arg_getType(arg);
-        if(TYPE_OBJECT == arg_type){
+        if (TYPE_OBJECT == arg_type) {
             arg = arg_setType(arg, TYPE_POINTER);
         }
         return arg;
