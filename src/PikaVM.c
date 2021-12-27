@@ -116,7 +116,7 @@ static enum Instruct getInstruct(char* line) {
     }
     if (0 == strncmp(line + 2, "DEL", 3)) {
         /* delete */
-        return EST;
+        return DEL;
     }
     if (0 == strncmp(line + 2, "EST", 3)) {
         /* is exist */

@@ -495,12 +495,12 @@ exit:
 
 int32_t obj_removeArg(PikaObj* self, char* argPath) {
     PikaObj* objHost = obj_getObj(self, argPath, 1);
-    PikaObj* obj = obj_getObj(self, argPath, 0);
+    Arg* obj_arg = obj_getArg(self, argPath);
     Args* buffs = New_strBuff();
     char* argName;
     int32_t res;
-    if (NULL != obj) {
-        obj_deinit(obj);
+    if (TYPE_OBJECT == arg_getType(obj_arg)) {
+        obj_deinit(arg_getPtr(obj_arg));
     }
     int32_t err = 0;
     if (NULL == objHost) {
