@@ -89,6 +89,7 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     }
     return arg_setNull(NULL);
 }
+
 Arg* PikaStdLib_SysObj_next(PikaObj* self, Arg* arg) {
     PikaObj* arg_obj = arg_getPtr(arg);
     obj_run(arg_obj, "__res = __next__()");

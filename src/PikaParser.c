@@ -754,11 +754,13 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         obj_setStr(ast, "arg_in", arg_in);
         Lexer_popToken(buffs, tokens);
         char* token = "";
-
         Args* list_buffs = New_strBuff();
         char* list_in = strsCopy(list_buffs, "");
         uint8_t isRange = 0;
         token = Lexer_popToken(list_buffs, tokens) + 1;
+        if (strEqu("range", token)) {
+            obj_setInt(ast, "isRange", 1);
+        }
         while (!strEqu(token, ":")) {
             list_in = strsAppend(list_buffs, list_in, token);
             token = Lexer_popToken(list_buffs, tokens) + 1;
@@ -1010,8 +1012,8 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
                 pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
                 /* garbage collect for the list */
-                pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm,
-                blockTypeNum); char* __list_x = strsCopy(buffs, "__list");
+                pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
+                char* __list_x = strsCopy(buffs, "__list");
                 char block_deepth_str[] = "0";
                 block_deepth_str[0] += obj_getInt(ast, "blockDeepth");
                 __list_x = strsAppend(runBuffs, __list_x, block_deepth_str);
@@ -1052,6 +1054,20 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 OUT ");
         pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
+        if (1 == obj_getInt(ast, "isRange")) {
+            pikaAsm = strsAppend(runBuffs, pikaAsm, "0 REF __range_a1\n");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, "0 REF __range_a2\n");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, "0 REF __range_a3\n");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, "0 OUT ");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
+            pikaAsm = strsAppend(runBuffs, pikaAsm, ".a1\n");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, "0 OUT ");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
+            pikaAsm = strsAppend(runBuffs, pikaAsm, ".a2\n");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, "0 OUT ");
+            pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
+            pikaAsm = strsAppend(runBuffs, pikaAsm, ".a3\n");
+        }
         /* get next */
         pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 0);
         /*     run next(__list<x>) */
