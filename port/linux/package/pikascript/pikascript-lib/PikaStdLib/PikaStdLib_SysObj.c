@@ -85,3 +85,7 @@ Arg * PikaStdLib_SysObj_next(PikaObj *self, Arg * arg){
     obj_run(arg_obj, "__res = __next__()");
     return arg_copy(args_getArg(arg_obj->list, "__res"));
 }
+
+Arg * PikaStdLib_SysObj_range(PikaObj *self){
+    return NULL;
+}

@@ -36,3 +36,14 @@ class SysObj(BaseObj):
 
     def next(arg: any) -> any:
         pass
+
+    def range(a1, a2, a3, a4) -> any:
+        pass
+
+
+class RangeObj(TinyObj):
+    def __iter__() -> any:
+        pass
+
+    def __next__() -> any:
+        pass
