@@ -215,3 +215,9 @@ name = "PikaVSF"
 releases = [
   "v0.0.1 30c122eecd2f835d9c67e3054b8ee1c477d469b8",
 ]
+
+[[packages]]
+name = "W801Device"
+releases = [
+  "v0.0.1 88f4e507f1665ca7ceda149aabf029f4e21e22c7",
+]
