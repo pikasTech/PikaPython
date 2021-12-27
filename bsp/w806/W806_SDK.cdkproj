@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project Name="W806_SDK" Version="1" Language="C">
+  <Description/>
+  <Dependencies Name="Debug"/>
+  <VirtualDirectory Name="platform">
+    <VirtualDirectory Name="arch">
+      <VirtualDirectory Name="xt804">
+        <VirtualDirectory Name="bsp">
+          <File Name="../../../../../../../platform/arch/xt804/bsp/startup.S">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/arch/xt804/bsp/system.c">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/arch/xt804/bsp/trap_c.c">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/arch/xt804/bsp/vectors.S">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/arch/xt804/bsp/board_init.c">
+            <FileOption/>
+          </File>
+        </VirtualDirectory>
+        <VirtualDirectory Name="libc">
+          <File Name="../../../../../../../platform/arch/xt804/libc/libc_port.c">
+            <FileOption/>
+          </File>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="driver">
+      <File Name="../../../../../../../platform/drivers/wm_gpio.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_uart.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_cpu.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_hal.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_spi.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_wdg.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_tim.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_internal_flash.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_adc.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_pwm.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_pmu.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_spi_flash.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_i2c.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_touch.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_dma.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../platform/drivers/wm_i2s.c">
+        <FileOption/>
+      </File>
+    </VirtualDirectory>
+    <VirtualDirectory Name="component" ExcludeProjConfig="">
+      <VirtualDirectory Name="FreeRTOS">
+        <VirtualDirectory Name="src">
+          <File Name="../../../../../../../platform/component/FreeRTOS/croutine.c">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/event_groups.c">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/list.c">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/queue.c">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/stream_buffer.c">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/tasks.c">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/timers.c">
+            <FileOption/>
+          </File>
+        </VirtualDirectory>
+        <VirtualDirectory Name="portable">
+          <File Name="../../../../../../../platform/component/FreeRTOS/portable/xt804/cpu_task_sw.S">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/portable/xt804/port.c">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/portable/MemMang/heap_5.c">
+            <FileOption/>
+          </File>
+        </VirtualDirectory>
+        <VirtualDirectory Name="include">
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/atomic.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/croutine.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/deprecated_definitions.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/event_groups.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/FreeRTOS.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/list.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/message_buffer.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/mpu_prototypes.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/mpu_wrappers.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/portable.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/projdefs.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/queue.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/semphr.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/stack_macros.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/StackMacros.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/stdint.readme">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/stream_buffer.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/task.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/timers.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/include/FreeRTOSConfig.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../platform/component/FreeRTOS/portable/xt804/portmacro.h">
+            <FileOption/>
+          </File>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="ld">
+    <VirtualDirectory Name="W806">
+      <File Name="../../../../../../../ld/W806/gcc_csky.ld">
+        <FileOption/>
+      </File>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <VirtualDirectory Name="arch">
+      <VirtualDirectory Name="xt804">
+        <File Name="../../../../../../../include/arch/xt804/csi_config.h">
+          <FileOption/>
+        </File>
+        <VirtualDirectory Name="csi_core">
+          <File Name="../../../../../../../include/arch/xt804/csi_core/core_804.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../include/arch/xt804/csi_core/csi_core.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../include/arch/xt804/csi_core/csi_gcc.h">
+            <FileOption/>
+          </File>
+        </VirtualDirectory>
+        <VirtualDirectory Name="csi_dsp">
+          <File Name="../../../../../../../include/arch/xt804/csi_dsp/csky_common_tables.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../include/arch/xt804/csi_dsp/csky_const_structs.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../include/arch/xt804/csi_dsp/csky_math.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../include/arch/xt804/csi_dsp/csky_vdsp2_const_structs.h">
+            <FileOption/>
+          </File>
+          <File Name="../../../../../../../include/arch/xt804/csi_dsp/csky_vdsp2_math.h">
+            <FileOption/>
+          </File>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <File Name="../../../../../../../include/wm_regs.h">
+      <FileOption/>
+    </File>
+    <File Name="../../../../../../../include/wm_type_def.h">
+      <FileOption/>
+    </File>
+    <VirtualDirectory Name="driver">
+      <File Name="../../../../../../../include/driver/wm_cpu.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_gpio.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_uart.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_hal.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_gpio_ex.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_rcc.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_spi.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_wdg.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_tim.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_internal_flash.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_adc.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_pwm.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_pmu.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_spi_flash.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_i2c.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_touch.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_dma.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../include/driver/wm_i2s.h">
+        <FileOption/>
+      </File>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="app">
+    <VirtualDirectory Name="src">
+      <File Name="../../../../../../../app/src/main.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/src/wm_hal_msp.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/src/wm_it.c">
+        <FileOption/>
+      </File>
+    </VirtualDirectory>
+    <VirtualDirectory Name="inc">
+      <File Name="../../../../../../../app/inc/wm_it.h">
+        <FileOption/>
+      </File>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <MonitorProgress>
+    <FlashOperate>84</FlashOperate>
+    <DebugLaunch>41</DebugLaunch>
+  </MonitorProgress>
+  <DebugSessions>
+    <watchExpressions/>
+    <memoryExpressions>;;;</memoryExpressions>
+    <statistics>;;MHZ;</statistics>
+    <peripheralTabs/>
+    <WatchDisplayFormat>1</WatchDisplayFormat>
+    <LocalDisplayFormat>1</LocalDisplayFormat>
+    <debugLayout/>
+    <memoryTabColSizeExpressions>100:8;100:8;100:8;100:8;</memoryTabColSizeExpressions>
+  </DebugSessions>
+  <VirtualDirectory Name="pikascript">
+    <VirtualDirectory Name="pikascript-core">
+      <File Name="../../../../../../../app/pikascript/pikascript-core/BaseObj.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/BaseObj.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataArg.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataArg.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataArgs.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataArgs.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataLink.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataLink.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataLinkNode.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataLinkNode.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataMemory.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataMemory.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataQueue.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataQueue.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataQueueObj.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataQueueObj.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataStack.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataStack.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataString.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataString.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataStrs.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/dataStrs.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaObj.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaObj.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaParser.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaParser.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaPlatform.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaPlatform.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaVM.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaVM.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/TinyObj.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/TinyObj.h">
+        <FileOption/>
+      </File>
+    </VirtualDirectory>
+    <VirtualDirectory Name="pikascript-lib">
+      <VirtualDirectory Name="PikaStdLib">
+        <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c">
+          <FileOption/>
+        </File>
+        <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c">
+          <FileOption/>
+        </File>
+      </VirtualDirectory>
+      <VirtualDirectory Name="PikaStdDevice">
+        <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_ADC.c">
+          <FileOption/>
+        </File>
+        <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_GPIO.c">
+          <FileOption/>
+        </File>
+        <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_IIC.c">
+          <FileOption/>
+        </File>
+        <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_PWM.c">
+          <FileOption/>
+        </File>
+        <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_Time.c">
+          <FileOption/>
+        </File>
+        <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_UART.c">
+          <FileOption/>
+        </File>
+      </VirtualDirectory>
+      <VirtualDirectory Name="W801Device">
+        <File Name="../../../../../../../app/pikascript/pikascript-lib/W801Device/W801_GPIO.c">
+          <FileOption/>
+        </File>
+        <File Name="../../../../../../../app/pikascript/pikascript-lib/W801Device/W801_common.c"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="pikascript-api">
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaMain-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaMain.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/pikaScript.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/pikaScript.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_MemChecker-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_MemChecker.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_SysObj-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_SysObj.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdDevice_GPIO-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/W801Device_GPIO-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/W801Device-api.c">
+        <FileOption/>
+      </File>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <BuildConfigs>
+    <BuildConfig Name="BuildSet">
+      <Target>
+        <ROMBank Selected="1">
+          <ROM1>
+            <InUse>yes</InUse>
+            <Start>0x0</Start>
+            <Size>0x5000</Size>
+          </ROM1>
+          <ROM2>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+          </ROM2>
+          <ROM3>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+          </ROM3>
+          <ROM4>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+          </ROM4>
+          <ROM5>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+          </ROM5>
+        </ROMBank>
+        <RAMBank>
+          <RAM1>
+            <InUse>yes</InUse>
+            <Start>0x20000000</Start>
+            <Size>0x48000</Size>
+            <Init>yes</Init>
+          </RAM1>
+          <RAM2>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+            <Init>yes</Init>
+          </RAM2>
+          <RAM3>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+            <Init>yes</Init>
+          </RAM3>
+          <RAM4>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+            <Init>yes</Init>
+          </RAM4>
+          <RAM5>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+            <Init>yes</Init>
+          </RAM5>
+        </RAMBank>
+        <CPU>ck804ef</CPU>
+        <UseMiniLib>yes</UseMiniLib>
+        <Endian>little</Endian>
+        <UseHardFloat>yes</UseHardFloat>
+        <UseEnhancedLRW>no</UseEnhancedLRW>
+        <UseContinueBuild>no</UseContinueBuild>
+        <UseSemiHost>no</UseSemiHost>
+      </Target>
+      <Output>
+        <OutputName>W806</OutputName>
+        <Type>Executable</Type>
+        <CreateHexFile>no</CreateHexFile>
+        <CreateBinFile>yes</CreateBinFile>
+        <Preprocessor>no</Preprocessor>
+        <Disassmeble>yes</Disassmeble>
+        <CallGraph>no</CallGraph>
+        <Map>yes</Map>
+      </Output>
+      <User>
+        <BeforeCompile>
+          <RunUserProg>no</RunUserProg>
+          <UserProgName/>
+        </BeforeCompile>
+        <BeforeMake>
+          <RunUserProg>no</RunUserProg>
+          <UserProgName/>
+        </BeforeMake>
+        <AfterMake>
+          <RunUserProg>yes</RunUserProg>
+          <UserProgName>../../../../../../../tools/W806/utilities/cdk_aft_build.sh;../../../../../../../tools/W806/utilities/aft_build_project.sh</UserProgName>
+        </AfterMake>
+      </User>
+      <Compiler>
+        <Define>GCC_COMPILE=1;TLS_CONFIG_CPU_XT804=1</Define>
+        <Undefine/>
+        <Optim>Optimize more (-O2)</Optim>
+        <DebugLevel>Maximum (-g3)</DebugLevel>
+        <IncludePath>$(CDKPath)/CSKY/MinGW/csky-abiv2-elf-toolchain/csky-elfabiv2/include;$(ProjectPath);$(ProjectPath)/../../../../../../../app/inc;$(ProjectPath)/../../../../../../../app/pikascript/pikascript-api;$(ProjectPath)/../../../../../../../app/pikascript/pikascript-core;$(ProjectPath)/../../../../../../../include;$(ProjectPath)/../../../../../../../include/arch/xt804;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_core;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_dsp;$(ProjectPath)/../../../../../../../include/driver;$(ProjectPath)/../../../../../../../platform/component/FreeRTOS/include;$(ProjectPath)/../../../../../../../platform/component/FreeRTOS/portable/xt804</IncludePath>
+        <OtherFlags>-fdata-sections -c</OtherFlags>
+        <Verbose>no</Verbose>
+        <Ansi>no</Ansi>
+        <Syntax>no</Syntax>
+        <Pedantic>no</Pedantic>
+        <PedanticErr>no</PedanticErr>
+        <InhibitWarn>no</InhibitWarn>
+        <AllWarn>yes</AllWarn>
+        <WarnErr>no</WarnErr>
+        <OneElfS>yes</OneElfS>
+        <OneElfSPerData>no</OneElfSPerData>
+        <Fstrict>no</Fstrict>
+      </Compiler>
+      <Asm>
+        <Define/>
+        <Undefine/>
+        <IncludePath>$(CDKPath)/CSKY/csi/csi_core/csi_cdk/;$(CDKPath)/CSKY/csi/csi_core/include/;$(CDKPath)/CSKY/csi/csi_driver/include/;$(ProjectPath);$(ProjectPath)/../../../../../../../app/pikascript/pikascript-api;$(ProjectPath)/../../../../../../../app/pikascript/pikascript-core;$(ProjectPath)/../../../../../../../include;$(ProjectPath)/../../../../../../../include/arch/xt804;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_core;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_dsp;$(ProjectPath)/../../../../../../../platform/component/FreeRTOS/include</IncludePath>
+        <OtherFlags/>
+        <DebugLevel>gdwarf2</DebugLevel>
+      </Asm>
+      <Linker>
+        <Garbage>yes</Garbage>
+        <Garbage2>yes</Garbage2>
+        <LDFile>$(ProjectPath)..\..\..\..\..\..\..\ld\W806\gcc_csky.ld</LDFile>
+        <LibName>dsp m</LibName>
+        <LibPath>..\..\..\..\..\..\..\lib\W806</LibPath>
+        <OtherFlags>-Wl,-zmax-page-size=1024 -mhard-float</OtherFlags>
+        <AutoLDFile>no</AutoLDFile>
+        <LinkType/>
+        <IncludeAllLibs>no</IncludeAllLibs>
+      </Linker>
+      <Debug>
+        <LoadApplicationAtStartup>yes</LoadApplicationAtStartup>
+        <Connector>ICE</Connector>
+        <StopAt>yes</StopAt>
+        <StopAtText>main</StopAtText>
+        <InitFile>$(ProjectPath)..\..\..\..\..\..\..\tools\W806\utilities\gdb.init</InitFile>
+        <AfterLoadFile/>
+        <AutoRun>yes</AutoRun>
+        <ResetType>Hard Reset</ResetType>
+        <SoftResetVal>0</SoftResetVal>
+        <ResetAfterLoad>no</ResetAfterLoad>
+        <AfterResetFile/>
+        <Dumpcore>no</Dumpcore>
+        <DumpcoreText>$(ProjectPath)/$(ProjectName).cdkcore</DumpcoreText>
+        <ConfigICE>
+          <IP>localhost</IP>
+          <PORT>1025</PORT>
+          <CPUNumber>0</CPUNumber>
+          <Clock>12000</Clock>
+          <Delay>10</Delay>
+          <WaitReset>50</WaitReset>
+          <DDC>yes</DDC>
+          <TRST>no</TRST>
+          <DebugPrint>no</DebugPrint>
+          <Connect>Normal</Connect>
+          <ResetType>soft</ResetType>
+          <SoftResetVal>0</SoftResetVal>
+          <RTOSType>None</RTOSType>
+          <DownloadToFlash>no</DownloadToFlash>
+          <ResetAfterConnect>yes</ResetAfterConnect>
+          <GDBName/>
+          <GDBServerType>Local</GDBServerType>
+          <OtherFlags/>
+        </ConfigICE>
+        <ConfigSIM>
+          <SIMTarget/>
+          <OtherFlags/>
+          <NoGraphic>yes</NoGraphic>
+          <Log>no</Log>
+          <SimTrace>no</SimTrace>
+        </ConfigSIM>
+        <ConfigOpenOCD>
+          <OpenOCDExecutablePath/>
+          <OpenOCDTelnetPortEnable>no</OpenOCDTelnetPortEnable>
+          <OpenOCDTelnetPort>4444</OpenOCDTelnetPort>
+          <OpenOCDTclPortEnable>no</OpenOCDTclPortEnable>
+          <OpenOCDTclPort>6666</OpenOCDTclPort>
+          <OpenOCDConfigOptions/>
+          <OpenOCDTimeout>5000</OpenOCDTimeout>
+        </ConfigOpenOCD>
+      </Debug>
+      <Flash>
+        <InitFile>$(ProjectPath)..\..\..\..\..\..\..\tools\W806\utilities\flashinit</InitFile>
+        <Erase>Erase Sectors</Erase>
+        <Algorithms Path="">W800_Flash_Tool.elf</Algorithms>
+        <Program>yes</Program>
+        <Verify>yes</Verify>
+        <ResetAndRun>no</ResetAndRun>
+        <ResetType>Soft Reset</ResetType>
+        <SoftResetVal/>
+        <External>no</External>
+        <Command/>
+        <Arguments/>
+      </Flash>
+    </BuildConfig>
+  </BuildConfigs>
+</Project>
