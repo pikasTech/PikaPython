@@ -390,7 +390,7 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
         return __initObj(self, name);
     }
     /* found Objcet */
-    if (type == TYPE_OBJECT) {
+    if (type == TYPE_OBJECT || type == TYPE_POINTER) {
         return obj_getPtr(self, name);
     }
     return NULL;

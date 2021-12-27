@@ -1055,10 +1055,9 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
         /* get next */
         pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 0);
         /*     run next(__list<x>) */
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "1 REF ");
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 RUN ");
         pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 RUN next\n");
+        pikaAsm = strsAppend(runBuffs, pikaAsm, ".__next__\n");
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 OUT ");
         pikaAsm = strsAppend(runBuffs, pikaAsm, arg_in);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
