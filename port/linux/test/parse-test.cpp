@@ -1400,6 +1400,8 @@ TEST(parser, for_range) {
         "B0\n"
         "0 JMP -1\n"
         "B0\n"
+        "0 DEL __list0\n"
+        "B0\n"
     );
     stack_deinit(bs);
     args_deinit(bf);
@@ -1432,6 +1434,8 @@ TEST(parser, for_list) {
         "0 RUN print\n"
         "B0\n"
         "0 JMP -1\n"
+        "B0\n"
+        "0 DEL __list0\n"
         "B0\n"
     );
     stack_deinit(bs);
