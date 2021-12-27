@@ -92,9 +92,9 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2, int a3) {
     obj_removeArg(self, "__range_a2");
     obj_removeArg(self, "__range_a3");
     int a_list[3] = {a1, a2, a3};
-    for (int i = 1; i < 4; i++) {
+    for (int i = 0; i < 3; i++) {
         char __range_ax[] = "__range_ax";
-        __range_ax[sizeof(__range_ax) - 2] = i + '0';
+        __range_ax[sizeof(__range_ax) - 2] = i + 1 + '0';
         if (a_list[i] != -999999999) {
             obj_setInt(self, __range_ax, a_list[i]);
         }
