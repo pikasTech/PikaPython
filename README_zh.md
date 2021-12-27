@@ -213,6 +213,7 @@ PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配�
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| W806 bsp | 刘延(微信名) |
 | 捐赠：ESP32C3 5pic，调试器 |启明云端 沧御|
 | LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
 | PikaVSF OS package | [versaloon](https://github.com/versaloon) |
