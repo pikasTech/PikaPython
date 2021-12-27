@@ -357,3 +357,25 @@ TEST(pikaMain, range) {
     /* mem check */
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, for_in_range) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_runDirect(pikaMain, (char*)
+        "a = 0\n"
+        "for i in range(0, 10):\n"
+        "    print(i)\n"
+        "    a = a + i\n"
+        "\n"
+        );
+    /* collect */
+    int a = obj_getInt(pikaMain, (char*)"a");
+    /* assert */
+    EXPECT_EQ(a, 45);
+    /* deinit */
+    obj_deinit(pikaMain);
+    /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}
