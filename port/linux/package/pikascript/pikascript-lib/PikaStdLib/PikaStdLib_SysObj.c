@@ -77,6 +77,7 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
 }
 
 Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
+    /* a splite object */
     if (TYPE_MATE_OBJECT == arg_getType(arg)) {
         /* new a splite object */
         PikaObj* arg_obj = newRootObj("", arg_getPtr(arg));
