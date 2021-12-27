@@ -203,6 +203,7 @@ Complete unit testes based on google test.
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
+| W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
 | 捐赠：ESP32C3 5pic，调试器 |启明云端 沧御|
 | LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
