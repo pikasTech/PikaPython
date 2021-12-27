@@ -1373,21 +1373,38 @@ TEST(parser, if_elif_else) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(parser, for_range) {
-//     Args* bf = New_strBuff();
-//     Stack* bs = New_Stack();
-//     char* s = strsCopy(bf, (char*)"");
-//     s = parse("for i in range(0,10):", bf, s, bs);
-//     s = parse("    print(i)", bf, s, bs);
-//     s = parse("", bf, s, bs);
-//     printf("%s", s);
-//     EXPECT_STREQ(s,
-//     ""
-//     );
-//     stack_deinit(bs);
-//     args_deinit(bf);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(parser, for_range) {
+    Args* bf = New_strBuff();
+    Stack* bs = New_Stack();
+    char* s = strsCopy(bf, (char*)"");
+    s = parse("for i in range(0,10):", bf, s, bs);
+    s = parse("    print(i)", bf, s, bs);
+    s = parse("", bf, s, bs);
+    printf("%s", s);
+    EXPECT_STREQ(s,
+        "B0\n"
+        "2 NUM 0\n"
+        "2 NUM 10\n"
+        "1 RUN range\n"
+        "0 RUN iter\n"
+        "0 OUT __list0\n"
+        "B0\n"
+        "1 REF __list0\n"
+        "0 RUN next\n"
+        "0 OUT i\n"
+        "0 EST i\n"
+        "0 JEZ 2\n"
+        "B1\n"
+        "1 REF i\n"
+        "0 RUN print\n"
+        "B0\n"
+        "0 JMP -1\n"
+        "B0\n"
+    );
+    stack_deinit(bs);
+    args_deinit(bf);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(parser, for_list) {
     Args* bf = New_strBuff();

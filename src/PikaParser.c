@@ -759,43 +759,22 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         char* list_in = strsCopy(list_buffs, "");
         uint8_t isRange = 0;
         token = Lexer_popToken(list_buffs, tokens) + 1;
-        if (strEqu("range", token)) {
-            isRange = 1;
-            /* not push 'range' to list_int */
-            while (!strEqu(token, ":")) {
-                if (!strEqu("range", token)) {
-                    list_in = strsAppend(list_buffs, list_in, token);
-                }
-                token = Lexer_popToken(list_buffs, tokens) + 1;
-            }
-            list_in = strsCut(list_buffs, list_in, '(', ')');
-            if (NULL != blockStack) {
-                stack_pushStr(blockStack, "for_range");
-            }
-            obj_setStr(ast, "block", "for_range");
-            obj_setStr(ast, "range_args", list_in);
-            stmt = "";
-            args_deinit(list_buffs);
-            goto block_matched;
+        while (!strEqu(token, ":")) {
+            list_in = strsAppend(list_buffs, list_in, token);
+            token = Lexer_popToken(list_buffs, tokens) + 1;
         }
-        if (!isRange) {
-            while (!strEqu(token, ":")) {
-                list_in = strsAppend(list_buffs, list_in, token);
-                token = Lexer_popToken(list_buffs, tokens) + 1;
-            }
-            list_in = strsAppend(list_buffs, "iter(", list_in);
-            list_in = strsAppend(list_buffs, list_in, ")");
-            list_in = strsCopy(buffs, list_in);
-            args_deinit(list_buffs);
+        list_in = strsAppend(list_buffs, "iter(", list_in);
+        list_in = strsAppend(list_buffs, list_in, ")");
+        list_in = strsCopy(buffs, list_in);
+        args_deinit(list_buffs);
 
-            obj_setStr(ast, "block", "for");
-            obj_setStr(ast, "list_in", list_in);
-            if (NULL != blockStack) {
-                stack_pushStr(blockStack, "for");
-            }
-            stmt = list_in;
-            goto block_matched;
+        obj_setStr(ast, "block", "for");
+        obj_setStr(ast, "list_in", list_in);
+        if (NULL != blockStack) {
+            stack_pushStr(blockStack, "for");
         }
+        stmt = list_in;
+        goto block_matched;
     }
     if (0 == strncmp(lineStart, (char*)"if ", 3)) {
         stmt = strsCut(buffs, lineStart, ' ', ':');
@@ -1089,11 +1068,6 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
         pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 JEZ 2\n");
         is_block_matched = 1;
-        goto exit;
-    }
-    if (strEqu(obj_getStr(ast, "block"), "for_range")) {
-        char* arg_in = obj_getStr(ast, "arg_in");
-        char* range_args = obj_getStr(ast, "range_args");
         goto exit;
     }
     if (strEqu(obj_getStr(ast, "block"), "while")) {
