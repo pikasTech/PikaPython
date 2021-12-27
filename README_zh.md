@@ -222,7 +222,7 @@ PikaScript也支持MDK、iar、rtt-studio等常见ide开发，能够轻松地调
 | W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
 | 捐赠：ESP32C3 5pic，调试器 |启明云端 沧御|
-| LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
+| 捐赠：LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
 | PikaVSF OS package | [versaloon](https://github.com/versaloon) |
 | ESP32C3 BSP |沧御|
 | 捐赠：ESP32开发板、墨水屏*4 | name(微信名) |
