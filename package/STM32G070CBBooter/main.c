@@ -117,7 +117,7 @@ int main(void){
             printf("\r\n");
             if(strEqu("exit()", rxBuff)){
                 /* exit pika shell */
-                return 0;
+                break;
             }
             obj_run(pikaMain, rxBuff);
             printf(">>> ");
@@ -125,7 +125,8 @@ int main(void){
             continue;
         }
     }
-    return 0;
+    /* after exit() from pika shell */
+    NVIC_SystemReset();
 }
 
 /**
