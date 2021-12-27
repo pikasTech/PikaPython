@@ -77,23 +77,11 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
 }
 
 Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
-    /* a splite object */
+    /* a MATE object */
     if (TYPE_MATE_OBJECT == arg_getType(arg)) {
-        /* new a splite object */
-        PikaObj* arg_obj = newRootObj("", arg_getPtr(arg));
-        obj_setInt(arg_obj, "__range_a1", obj_getInt(self, "__range_a1"));
-        obj_setInt(arg_obj, "__range_a2", obj_getInt(self, "__range_a2"));
-        obj_setInt(arg_obj, "__range_a3", obj_getInt(self, "__range_a3"));
-        obj_removeArg(self, "__range_a1");
-        obj_removeArg(self, "__range_a2");
-        obj_removeArg(self, "__range_a3");
-        obj_run(arg_obj, "__res = __iter__()");
-        Arg* resArg = arg_copy(args_getArg(arg_obj->list, "__res"));
-        ArgType type = arg_getType(resArg);
-        /* deinit splite object */
-        obj_deinit(arg_obj);
-        return resArg;
+        return arg_copy(arg);
     }
+    /* object */
     if (TYPE_POINTER == arg_getType(arg)) {
         PikaObj* arg_obj = arg_getPtr(arg);
         obj_run(arg_obj, "__res = __iter__()");
