@@ -1048,9 +1048,9 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
         newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
         newAsm_arg = arg_strAppend(newAsm_arg, "\n");
         if (1 == obj_getInt(ast, "isRange")) {
-            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF __range_a1\n");
-            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF __range_a2\n");
-            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF __range_a3\n");
+            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF _r1\n");
+            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF _r2\n");
+            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF _r3\n");
             newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
             newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
             newAsm_arg = arg_strAppend(newAsm_arg, ".a1\n");
