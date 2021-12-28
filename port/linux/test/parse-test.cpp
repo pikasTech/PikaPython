@@ -1383,31 +1383,72 @@ TEST(parser, for_range) {
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     EXPECT_STREQ(pikaAsm,
-         "B0\n"
-         "2 NUM 0\n"
-         "2 NUM 10\n"
-         "1 RUN range\n"
-         "0 RUN iter\n"
-         "0 OUT _l0\n"
-         "0 REF _r1\n"
-         "0 REF _r2\n"
-         "0 REF _r3\n"
-         "0 OUT _l0.a1\n"
-         "0 OUT _l0.a2\n"
-         "0 OUT _l0.a3\n"
-         "B0\n"
-         "0 RUN _l0.__next__\n"
-         "0 OUT i\n"
-         "0 EST i\n"
-         "0 JEZ 2\n"
-         "B1\n"
-         "1 REF i\n"
-         "0 RUN print\n"
-         "B0\n"
-         "0 JMP -1\n"
-         "B0\n"
-         "0 DEL _l0\n"
-         "B0\n");
+                 "B0\n"
+                 "2 NUM 0\n"
+                 "2 NUM 10\n"
+                 "1 RUN range\n"
+                 "0 RUN iter\n"
+                 "0 OUT _l0\n"
+                 "0 REF _r1\n"
+                 "0 REF _r2\n"
+                 "0 REF _r3\n"
+                 "0 OUT _l0.a1\n"
+                 "0 OUT _l0.a2\n"
+                 "0 OUT _l0.a3\n"
+                 "B0\n"
+                 "0 RUN _l0.__next__\n"
+                 "0 OUT i\n"
+                 "0 EST i\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "1 REF i\n"
+                 "0 RUN print\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n"
+                 "0 DEL _l0\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, for_range_rtt) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+            "for i in range(0, 3):\n"
+            "    print('hello PikaScript!')\n"
+            "    thread.mdelay(500)\n"
+            "\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 NUM 0\n"
+                 "2 NUM 10\n"
+                 "1 RUN range\n"
+                 "0 RUN iter\n"
+                 "0 OUT _l0\n"
+                 "0 REF _r1\n"
+                 "0 REF _r2\n"
+                 "0 REF _r3\n"
+                 "0 OUT _l0.a1\n"
+                 "0 OUT _l0.a2\n"
+                 "0 OUT _l0.a3\n"
+                 "B0\n"
+                 "0 RUN _l0.__next__\n"
+                 "0 OUT i\n"
+                 "0 EST i\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "1 REF i\n"
+                 "0 RUN print\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n"
+                 "0 DEL _l0\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
