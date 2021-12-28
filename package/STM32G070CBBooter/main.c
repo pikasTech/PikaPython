@@ -59,12 +59,11 @@ void USART1_IRQHandler(void){
 /* support pikaScript Shell */
 char __platform_getchar(){
     char res = 0;
-    while(rx_char != 0){
-        res = rx_char;
-        rx_char = 0;
-        return res;
-    }
-    return 0;
+    while(rx_char == 0){
+    };
+    res = rx_char;
+    rx_char = 0;
+    return res;
 }
 
 int main(void){
