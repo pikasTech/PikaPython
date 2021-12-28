@@ -1036,43 +1036,49 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
     if (strEqu(obj_getStr(ast, "block"), "for")) {
         /* for "for" iter */
         char* arg_in = obj_getStr(ast, "arg_in");
-        char* __list_x = strsCopy(runBuffs, "__list");
-        char block_deepth_str[] = "0";
-        block_deepth_str[0] += obj_getInt(ast, "blockDeepth");
-        __list_x = strsAppend(runBuffs, __list_x, block_deepth_str);
+        Arg* newAsm_arg = arg_setStr(NULL, "", "");
+        char __list_x[] = "__listx";
+        char block_deepth_char = '0';
+        block_deepth_char += obj_getInt(ast, "blockDeepth");
+        __list_x[sizeof(__list_x) - 2] = block_deepth_char;
         /* init iter */
         /*     get the iter(__list<x>) */
         pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 OUT ");
-        pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
+        newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
+        newAsm_arg = arg_strAppend(newAsm_arg, __list_x);
+        newAsm_arg = arg_strAppend(newAsm_arg, "\n");
         if (1 == obj_getInt(ast, "isRange")) {
-            pikaAsm = strsAppend(runBuffs, pikaAsm, "0 REF __range_a1\n"
-                                                    "0 REF __range_a2\n"
-                                                    "0 REF __range_a3\n"
-                                                    "0 OUT ");
-            pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
-            pikaAsm = strsAppend(runBuffs, pikaAsm, ".a1\n"
-                                                    "0 OUT ");
-            pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
-            pikaAsm = strsAppend(runBuffs, pikaAsm, ".a2\n"
-                                                    "0 OUT ");
-            pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
-            pikaAsm = strsAppend(runBuffs, pikaAsm, ".a3\n");
+            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF __range_a1\n");
+            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF __range_a2\n");
+            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF __range_a3\n");
+            newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
+            newAsm_arg = arg_strAppend(newAsm_arg, __list_x);
+            newAsm_arg = arg_strAppend(newAsm_arg, ".a1\n");
+            newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
+            newAsm_arg = arg_strAppend(newAsm_arg, __list_x);
+            newAsm_arg = arg_strAppend(newAsm_arg, ".a2\n");
+            newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
+            newAsm_arg = arg_strAppend(newAsm_arg, __list_x);
+            newAsm_arg = arg_strAppend(newAsm_arg, ".a3\n");
         }
+        pikaAsm = strsAppend(runBuffs, pikaAsm, arg_getStr(newAsm_arg));
+        arg_deinit(newAsm_arg);
+        newAsm_arg = arg_setStr(NULL, "", "");
         /* get next */
-        pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 0);
         /*     run next(__list<x>) */
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 RUN ");
-        pikaAsm = strsAppend(runBuffs, pikaAsm, __list_x);
-        pikaAsm = strsAppend(runBuffs, pikaAsm, ".__next__\n"
-                                                "0 OUT ");
-        pikaAsm = strsAppend(runBuffs, pikaAsm, arg_in);
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "\n");
         /*     check item is exist */
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 EST ");
-        pikaAsm = strsAppend(runBuffs, pikaAsm, arg_in);
-        pikaAsm = strsAppend(runBuffs, pikaAsm, "\n0 JEZ 2\n");
+        pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 0);
+        newAsm_arg = arg_strAppend(newAsm_arg, "0 RUN ");
+        newAsm_arg = arg_strAppend(newAsm_arg, __list_x);
+        newAsm_arg = arg_strAppend(newAsm_arg, ".__next__\n");
+        newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
+        newAsm_arg = arg_strAppend(newAsm_arg, arg_in);
+        newAsm_arg = arg_strAppend(newAsm_arg, "\n");
+        newAsm_arg = arg_strAppend(newAsm_arg, "0 EST ");
+        newAsm_arg = arg_strAppend(newAsm_arg, arg_in);
+        newAsm_arg = arg_strAppend(newAsm_arg, "\n0 JEZ 2\n");
+        pikaAsm = strsAppend(runBuffs, pikaAsm, arg_getStr(newAsm_arg));
+        arg_deinit(newAsm_arg);
         is_block_matched = 1;
         goto exit;
     }
