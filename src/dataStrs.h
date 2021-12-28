@@ -39,4 +39,5 @@ char* strsRemovePrefix(Args* buffs, char* inputStr, char* prefix);
 char* strsAppend(Args* buffs, char* strOrigin, char* strAppend);
 char* strsFormat(Args* buffs, uint16_t buffSize, const char* fmt, ...);
 char* strsGetDirectStr(Args* buffs, char* argPath);
+Arg* arg_strAppend(Arg* arg_in, char* str_to_append);
 #endif

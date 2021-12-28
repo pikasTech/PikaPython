@@ -113,3 +113,11 @@ char* strsFormat(Args* buffs, uint16_t buffSize, const char* fmt, ...) {
     return res;
 }
 
+Arg* arg_strAppend(Arg* arg_in, char* str_to_append){
+    Args* buffs = New_strBuff();
+    char* str_out = strsAppend(buffs, arg_getStr(arg_in), str_to_append);
+    Arg* arg_out = arg_setStr(arg_in, "", str_out);
+    arg_deinit(arg_in);
+    args_deinit(buffs);
+    return arg_out;
+}

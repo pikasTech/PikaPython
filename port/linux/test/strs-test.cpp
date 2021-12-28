@@ -73,3 +73,11 @@ TEST(strs, format) {
 TEST(strs, mem) {
     EXPECT_EQ(pikaMemNow(), mem);
 }
+
+TEST(strs, arg_strAppend) {
+    Arg* str_arg = arg_setStr(NULL, (char*)"", (char*)"a");
+    str_arg = arg_strAppend(str_arg, (char*)"b");
+    EXPECT_STREQ(arg_getStr(str_arg), (char*)"ab");
+    arg_deinit(str_arg);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
