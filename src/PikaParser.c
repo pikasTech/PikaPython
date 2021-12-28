@@ -747,8 +747,8 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         }
         goto block_matched;
     }
-    if (0 == strncmp(line, (char*)"for ", 4)) {
-        char* tokens = Lexer_getTokens(buffs, line + 4);
+    if (0 == strncmp(lineStart, (char*)"for ", 4)) {
+        char* tokens = Lexer_getTokens(buffs, lineStart + 4);
         Lexer_popToken(buffs, tokens);
         char* arg_in = Lexer_popToken(buffs, tokens) + 1;
         obj_setStr(ast, "arg_in", arg_in);
@@ -756,7 +756,6 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         char* token = "";
         Args* list_buffs = New_strBuff();
         char* list_in = strsCopy(list_buffs, "");
-        uint8_t isRange = 0;
         token = Lexer_popToken(list_buffs, tokens) + 1;
         if (strEqu("range", token)) {
             obj_setInt(ast, "isRange", 1);
