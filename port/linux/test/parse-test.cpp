@@ -1374,14 +1374,15 @@ TEST(parser, if_elif_else) {
 }
 
 TEST(parser, for_range) {
-    Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
-    char* s = strsCopy(bf, (char*)"");
-    s = parse("for i in range(0,10):", bf, s, bs);
-    s = parse("    print(i)", bf, s, bs);
-    s = parse("", bf, s, bs);
-    printf("%s", s);
-    EXPECT_STREQ(s,
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+    "for i in range(0,10):\n"
+    "    print(i)\n"
+    "\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    EXPECT_STREQ(pikaAsm,
          "B0\n"
          "2 NUM 0\n"
          "2 NUM 10\n"
@@ -1407,8 +1408,7 @@ TEST(parser, for_range) {
          "B0\n"
          "0 DEL __list0\n"
          "B0\n");
-    stack_deinit(bs);
-    args_deinit(bf);
+    args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
