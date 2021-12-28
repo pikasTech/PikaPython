@@ -748,22 +748,15 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         goto block_matched;
     }
     if (0 == strncmp(lineStart, (char*)"for ", 4)) {
-        char* tokens = Lexer_getTokens(buffs, lineStart + 4);
-        Lexer_popToken(buffs, tokens);
-        char* arg_in = Lexer_popToken(buffs, tokens) + 1;
-        obj_setStr(ast, "arg_in", arg_in);
-        Lexer_popToken(buffs, tokens);
-        char* token = "";
         Args* list_buffs = New_strBuff();
-        char* list_in = strsCopy(list_buffs, "");
-        token = Lexer_popToken(list_buffs, tokens) + 1;
-        if (strEqu("range", token)) {
+        char* line_buff = strsCopy(list_buffs, lineStart + 4);
+        char* arg_in = strsPopToken(list_buffs, line_buff, ' ');
+        obj_setStr(ast, "arg_in", arg_in);
+        strsPopToken(list_buffs, line_buff, ' ');
+        if (strIsStartWith(line_buff, "range(")) {
             obj_setInt(ast, "isRange", 1);
         }
-        while (!strEqu(token, ":")) {
-            list_in = strsAppend(list_buffs, list_in, token);
-            token = Lexer_popToken(list_buffs, tokens) + 1;
-        }
+        char* list_in = strsPopToken(list_buffs, line_buff, ':');
         list_in = strsAppend(list_buffs, "iter(", list_in);
         list_in = strsAppend(list_buffs, list_in, ")");
         list_in = strsCopy(buffs, list_in);
