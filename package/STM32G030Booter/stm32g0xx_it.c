@@ -26,11 +26,23 @@ void SysTick_Handler(void) {
     STM32_Code_flashHandler();
 }
 
+volatile static uint8_t rx_char = 0;
+
+/* support pikaScript Shell */
+char __platform_getchar(){
+    char res = 0;
+    while(rx_char == 0){
+    };
+    res = rx_char;
+    rx_char = 0;
+    return res;
+}
+
 __attribute__((weak)) void __PIKA_USART1_IRQHandler(char rx_char) {}
 
 void USART1_IRQHandler(void) {
     if (LL_USART_IsActiveFlag_RXNE(USART1)) {
-        uint8_t rx_char = LL_USART_ReceiveData8(USART1);
+        rx_char = LL_USART_ReceiveData8(USART1);
         __PIKA_USART1_IRQHandler(rx_char);
         /* clear buff when overflow */
         if (UART1_RXBuff_offset >= RX_BUFF_LENGTH) {
