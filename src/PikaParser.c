@@ -1005,12 +1005,12 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
                 /* garbage collect for the list */
                 pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
-                char* __list_x = strsCopy(buffs, "__list");
+                char* _l_x = strsCopy(buffs, "_l");
                 char block_deepth_str[] = "0";
                 block_deepth_str[0] += obj_getInt(ast, "blockDeepth");
-                __list_x = strsAppend(runBuffs, __list_x, block_deepth_str);
+                _l_x = strsAppend(runBuffs, _l_x, block_deepth_str);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 DEL ");
-                pikaAsm = strsAppend(buffs, pikaAsm, (char*)__list_x);
+                pikaAsm = strsAppend(buffs, pikaAsm, (char*)_l_x);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
             }
             /* goto the while start when exit while block */
@@ -1037,39 +1037,39 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
         /* for "for" iter */
         char* arg_in = obj_getStr(ast, "arg_in");
         Arg* newAsm_arg = arg_setStr(NULL, "", "");
-        char __list_x[] = "__listx";
+        char _l_x[] = "_lx";
         char block_deepth_char = '0';
         block_deepth_char += obj_getInt(ast, "blockDeepth");
-        __list_x[sizeof(__list_x) - 2] = block_deepth_char;
+        _l_x[sizeof(_l_x) - 2] = block_deepth_char;
         /* init iter */
-        /*     get the iter(__list<x>) */
+        /*     get the iter(_l<x>) */
         pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
         newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
-        newAsm_arg = arg_strAppend(newAsm_arg, __list_x);
+        newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
         newAsm_arg = arg_strAppend(newAsm_arg, "\n");
         if (1 == obj_getInt(ast, "isRange")) {
             newAsm_arg = arg_strAppend(newAsm_arg, "0 REF __range_a1\n");
             newAsm_arg = arg_strAppend(newAsm_arg, "0 REF __range_a2\n");
             newAsm_arg = arg_strAppend(newAsm_arg, "0 REF __range_a3\n");
             newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
-            newAsm_arg = arg_strAppend(newAsm_arg, __list_x);
+            newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
             newAsm_arg = arg_strAppend(newAsm_arg, ".a1\n");
             newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
-            newAsm_arg = arg_strAppend(newAsm_arg, __list_x);
+            newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
             newAsm_arg = arg_strAppend(newAsm_arg, ".a2\n");
             newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
-            newAsm_arg = arg_strAppend(newAsm_arg, __list_x);
+            newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
             newAsm_arg = arg_strAppend(newAsm_arg, ".a3\n");
         }
         pikaAsm = strsAppend(runBuffs, pikaAsm, arg_getStr(newAsm_arg));
         arg_deinit(newAsm_arg);
         newAsm_arg = arg_setStr(NULL, "", "");
         /* get next */
-        /*     run next(__list<x>) */
+        /*     run next(_l<x>) */
         /*     check item is exist */
         pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 0);
         newAsm_arg = arg_strAppend(newAsm_arg, "0 RUN ");
-        newAsm_arg = arg_strAppend(newAsm_arg, __list_x);
+        newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
         newAsm_arg = arg_strAppend(newAsm_arg, ".__next__\n");
         newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
         newAsm_arg = arg_strAppend(newAsm_arg, arg_in);

@@ -1388,15 +1388,15 @@ TEST(parser, for_range) {
          "2 NUM 10\n"
          "1 RUN range\n"
          "0 RUN iter\n"
-         "0 OUT __list0\n"
+         "0 OUT _l0\n"
          "0 REF __range_a1\n"
          "0 REF __range_a2\n"
          "0 REF __range_a3\n"
-         "0 OUT __list0.a1\n"
-         "0 OUT __list0.a2\n"
-         "0 OUT __list0.a3\n"
+         "0 OUT _l0.a1\n"
+         "0 OUT _l0.a2\n"
+         "0 OUT _l0.a3\n"
          "B0\n"
-         "0 RUN __list0.__next__\n"
+         "0 RUN _l0.__next__\n"
          "0 OUT i\n"
          "0 EST i\n"
          "0 JEZ 2\n"
@@ -1406,7 +1406,7 @@ TEST(parser, for_range) {
          "B0\n"
          "0 JMP -1\n"
          "B0\n"
-         "0 DEL __list0\n"
+         "0 DEL _l0\n"
          "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1426,9 +1426,9 @@ TEST(parser, for_list) {
                  "2 NUM 10\n"
                  "1 RUN xrange\n"
                  "0 RUN iter\n"
-                 "0 OUT __list0\n"
+                 "0 OUT _l0\n"
                  "B0\n"
-                 "0 RUN __list0.__next__\n"
+                 "0 RUN _l0.__next__\n"
                  "0 OUT arg\n"
                  "0 EST arg\n"
                  "0 JEZ 2\n"
@@ -1438,7 +1438,7 @@ TEST(parser, for_list) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
-                 "0 DEL __list0\n"
+                 "0 DEL _l0\n"
                  "B0\n");
     stack_deinit(bs);
     args_deinit(bf);
