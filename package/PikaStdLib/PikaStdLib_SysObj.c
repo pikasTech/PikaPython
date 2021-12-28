@@ -98,8 +98,8 @@ Arg* PikaStdLib_SysObj_next(PikaObj* self, Arg* arg) {
 
 Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2, int a3) {
     /* set template arg to create rangeObj */
-    obj_setInt(self, "__range_a1", a1);
-    obj_setInt(self, "__range_a2", a2);
-    obj_setInt(self, "__range_a3", a3);
+    obj_setInt(self, "_r1", a1);
+    obj_setInt(self, "_r2", a2);
+    obj_setInt(self, "_r3", a3);
     return arg_setMetaObj("", "PikaStdLib_RangeObj", New_PikaStdLib_RangeObj);
 }
