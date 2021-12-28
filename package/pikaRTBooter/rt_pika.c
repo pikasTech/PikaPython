@@ -16,14 +16,10 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#define RX_Buff_SIZE 256
-char rxBuff[RX_Buff_SIZE] = { 0 };
 PikaObj *pikaMain = 0;
 uint8_t pika_is_inited = 0;
 
-void clearBuff(char *buff, uint32_t size);
 int finsh_getchar(void);
-
 static void pikascript_rt_init(void *parameter){
     rt_kprintf("------------------------------------------------------------------\r\n");
     rt_kprintf("|                                                                |\r\n");
@@ -43,49 +39,15 @@ static void pikascript_rt_init(void *parameter){
     pika_is_inited = 1;
 }
 
+char __platform_getchar(void){
+    return finsh_getchar();
+}
+
 static void pikascript_entry(void *parameter){
     if(!pika_is_inited){
         pikascript_rt_init(NULL);
     }
-    clearBuff(rxBuff, RX_Buff_SIZE);
-    rt_kprintf(">>> ");
-    char inputChar;
-
-    while(1){
-        inputChar = finsh_getchar();
-        rt_kprintf("%c", inputChar);
-        if ((inputChar == '\b') || (inputChar == 127)) {
-            uint32_t size = strGetSize(rxBuff);
-            if(size == 0){
-                rt_kprintf(" ");
-                continue;
-            }
-            rt_kprintf(" \b");
-            rxBuff[size - 1] = 0;
-            continue;
-        }
-        if (inputChar != '\r' && inputChar != '\n') {
-            strAppendWithSize(rxBuff, &inputChar, 1);
-            continue;
-        }
-        if ( (inputChar == '\r') || (inputChar == '\n') ) {
-            rt_kprintf("\r\n");
-            if(strEqu("exit()", rxBuff)){
-                /* exit pika shell */
-                return;
-            }
-            obj_run(pikaMain, rxBuff);
-            rt_kprintf(">>> ");
-            clearBuff(rxBuff, RX_Buff_SIZE);
-            continue;
-        }
-    }
-}
-
-void clearBuff(char *buff, uint32_t size) {
-    for (int i = 0; i < size; i++) {
-        buff[i] = 0;
-    }
+    pikaScriptShell(pikaMain);
 }
 
 #ifdef PKG_PIKASCRIPT_USING_AUTORUNNING
