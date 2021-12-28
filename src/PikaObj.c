@@ -559,6 +559,47 @@ void obj_run(PikaObj* self, char* cmd) {
     // obj_deinit(globals);
 }
 
+#define RX_Buff_SIZE 128
+char rxBuff[RX_Buff_SIZE] = {0};
+char rx_char = 0;
+static void clearBuff(char* buff, int size) {
+    for (int i = 0; i < size; i++) {
+        buff[i] = 0;
+    }
+}
+void pikaScriptShell(PikaObj* self) {
+    __platform_printf(">>> ");
+    while (1) {
+        char inputChar = __platform_getchar();
+        __platform_printf("%c", inputChar);
+        if ((inputChar == '\b') || (inputChar == 127)) {
+            uint32_t size = strGetSize(rxBuff);
+            if (size == 0) {
+                __platform_printf(" ");
+                continue;
+            }
+            __platform_printf(" \b");
+            rxBuff[size - 1] = 0;
+            continue;
+        }
+        if (inputChar != '\r' && inputChar != '\n') {
+            strAppendWithSize(rxBuff, &inputChar, 1);
+            continue;
+        }
+        if ((inputChar == '\r') || (inputChar == '\n')) {
+            __platform_printf("\r\n");
+            if (strEqu("exit()", rxBuff)) {
+                /* exit pika shell */
+                break;
+            }
+            obj_run(self, rxBuff);
+            __platform_printf(">>> ");
+            clearBuff(rxBuff, RX_Buff_SIZE);
+            continue;
+        }
+    }
+}
+
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {
     obj_setInt(self, "__errCode", errCode);
 }

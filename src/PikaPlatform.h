@@ -97,3 +97,6 @@ int32_t __platform_save_pikaAsm(char* PikaAsm);
 uint8_t __platform_Asm_is_to_flash(char* pyMultiLine);
 int32_t __platform_save_pikaAsm_EOF(void);
 char*   __platform_load_pikaAsm(void);
+
+/* support shell */
+char __platform_getchar(void);

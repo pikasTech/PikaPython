@@ -132,4 +132,7 @@ PikaObj* New_PikaObj(void);
 int fast_atoi(char* src);
 char* fast_itoa(char* buf, uint32_t val);
 
+/* shell */
+void pikaScriptShell(PikaObj *self);
+
 #endif
