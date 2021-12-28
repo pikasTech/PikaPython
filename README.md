@@ -162,12 +162,13 @@ Support method invoke, argument define, new object, free object, control flow(if
 
 |Syntax|Compile-Time|Run-Time|
 |---|---|---|
+|Module Define    |√|-|
+|Module Import    |√|-|
 |Class Define     |√|-|
 |Class Inherit    |√|-|
 |Method Define    |√|√|
 |Method Override  |√|√|
 |Method Invoke    |√|√|
-|Module Import    |√|√|
 |Argument Define  |√|√|
 |Argument Assignment  |√|√|
 |Object New       |√|√|
