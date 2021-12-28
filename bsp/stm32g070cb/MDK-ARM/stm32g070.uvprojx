@@ -739,6 +739,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\STM32G0-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdLib_RangeObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib_RangeObj-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -823,6 +828,11 @@
               <FileName>STM32G0_UART.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\STM32G0\STM32G0_UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_RangeObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c</FilePath>
             </File>
           </Files>
         </Group>
