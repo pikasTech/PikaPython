@@ -35,7 +35,7 @@ releases = [
   "v1.2.3 85aa32b4831ede9de2657dd4cdd22e1310b1cde8",
   "v1.2.4 3ad17a46b83eec46d2c493761a67ab0d0c492159",
   "v1.2.5 c35940141816c74e164c83c38bcdab7d6ffe1a2f",
-  "v1.3.0 5a983ad577d512301823d3588bd9ad40f1dcd4fe",
+  "v1.3.0 ada4f202be37bad208bd0942000f66aaaa39d12c",
 ]
 
 [[packages]]
