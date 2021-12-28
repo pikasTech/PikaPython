@@ -127,12 +127,9 @@ int main(void) {
     goto main_loop;
 
 main_loop:
-    while (1) {
-        if(Shell_Ready){
-            Shell_Ready = 0;
-            obj_run(pikaMain, Shell_Buff);
-        }
-    }
+    pikaScriptShell(pikaMain);
+    /* after exit() from pika shell */
+    NVIC_SystemReset();
 }
 
 /**
