@@ -1562,3 +1562,51 @@ TEST(parser, for_for_range) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, break_) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+            "for i in range(0, 3):\n"
+            "    if i = 1:\n"
+            "        break\n"
+            "        break \n"
+            "\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+        "B0\n"
+        "2 NUM 0\n"
+        "2 NUM 3\n"
+        "1 RUN range\n"
+        "0 RUN iter\n"
+        "0 OUT _l0\n"
+        "0 REF _r1\n"
+        "0 REF _r2\n"
+        "0 REF _r3\n"
+        "0 OUT _l0.a1\n"
+        "0 OUT _l0.a2\n"
+        "0 OUT _l0.a3\n"
+        "B0\n"
+        "0 RUN _l0.__next__\n"
+        "0 OUT i\n"
+        "0 EST i\n"
+        "0 JEZ 2\n"
+        "B1\n"
+        "0 NUM 1\n"
+        "0 OUT i\n"
+        "0 JEZ 1\n"
+        "B2\n"
+        "0 BRK\n"
+        "B2\n"
+        "0 BRK\n"
+        "B0\n"
+        "0 JMP -1\n"
+        "B0\n"
+        "0 DEL _l0\n"
+        "B0\n"
+);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
