@@ -1571,6 +1571,8 @@ TEST(parser, break_) {
             "    if i = 1:\n"
             "        break\n"
             "        break \n"
+            "        continue\n"
+            "        continue \n"
             "\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
@@ -1601,6 +1603,10 @@ TEST(parser, break_) {
         "0 BRK\n"
         "B2\n"
         "0 BRK\n"
+        "B2\n"
+        "0 CTN\n"
+        "B2\n"
+        "0 CTN\n"
         "B0\n"
         "0 JMP -1\n"
         "B0\n"

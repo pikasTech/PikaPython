@@ -803,6 +803,13 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
             goto block_matched;
         }
     }
+    if (0 == strncmp(lineStart, (char*)"continue", 8)) {
+        if ((lineStart[8] == ' ') || (lineStart[8] == 0)) {
+            obj_setStr(ast, "continue", "");
+            stmt = "";
+            goto block_matched;
+        }
+    }
     if (strEqu(lineStart, (char*)"return")) {
         obj_setStr(ast, "return", "");
         stmt = "";
@@ -1130,6 +1137,13 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
         /* parse stmt ast */
         pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
         pikaAsm = strsAppend(runBuffs, pikaAsm, "0 BRK\n");
+        is_block_matched = 1;
+        goto exit;
+    }
+    if (obj_isArgExist(ast, "continue")) {
+        /* parse stmt ast */
+        pikaAsm = AST_appandPikaAsm(ast, ast, runBuffs, pikaAsm);
+        pikaAsm = strsAppend(runBuffs, pikaAsm, "0 CTN\n");
         is_block_matched = 1;
         goto exit;
     }
