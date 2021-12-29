@@ -260,7 +260,7 @@ sh make.sh # 编译项目
 
 step3: 运行单元测试
 ``` shell	
-sh test.sh
+sh gtest.sh
 ```
 
 step4: 运行基准测试
