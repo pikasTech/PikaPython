@@ -58,7 +58,8 @@ enum Instruct {
     NEL,
     DEL,
     EST,
-    PGC
+    BRK,
+    CTN
 };
 
 static char* strs_getLine(Args* buffs, char* code) {
@@ -122,9 +123,13 @@ static enum Instruct getInstruct(char* line) {
         /* is exist */
         return EST;
     }
-    if (0 == strncmp(line + 2, "PGC", 3)) {
-        /* pika garbage colloection */
-        return PGC;
+    if (0 == strncmp(line + 2, "BRK", 3)) {
+        /* break */
+        return BRK;
+    }
+    if (0 == strncmp(line + 2, "CTN", 3)) {
+        /* continue */
+        return CTN;
     }
     return NON;
 }
