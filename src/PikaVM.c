@@ -199,9 +199,20 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         return NULL;
     }
     if (instruct == RET) {
+        /* exit jmp signal */
         *jmp = -999;
         Arg* returnArg = arg_copy(queue_popArg(invokeQuene0));
         method_returnArg(locals->list, returnArg);
+        return NULL;
+    }
+    if (instruct == BRK) {
+        /* break jmp signal */
+        *jmp = -998;
+        return NULL;
+    }
+    if (instruct == CTN) {
+        /* continue jmp signal */
+        *jmp = -997;
         return NULL;
     }
     if (instruct == DEF) {
@@ -542,6 +553,19 @@ int getThisBlockDeepth(char* start, char* code, int* offset) {
     return thisBlockDeepth;
 }
 
+int32_t asm_getAddrOffsetOfJUM(char* code) {
+    int offset = 0;
+    char* codeNow = code + offset;
+    while (1) {
+        offset += gotoNextLine(codeNow);
+        codeNow = code + offset;
+        if (0 == strncmp(codeNow, "0 JMP -1", 8)) {
+            return offset;
+        }
+    }
+    return 0;
+}
+
 int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
     int offset = 0;
     int thisBlockDeepth = getThisBlockDeepth(start, code, &offset);
@@ -629,8 +653,21 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     goto nextLine;
 nextLine:
     args_deinit(buffs);
+    /* exit */
     if (-999 == jmp) {
         return -99999;
+    }
+    /* break or continue */
+    if ((-998 == jmp) || (-997 == jmp)) {
+        int32_t loop_end_addr = asm_getAddrOffsetOfJUM(programCounter);
+        /* break */
+        if (-998 == jmp) {
+            return lineAddr + gotoNextLine(programCounter + loop_end_addr);
+        }
+        if (-997 == jmp) {
+            return lineAddr +
+                   gotoLastLine(pikaAsm, programCounter + loop_end_addr);
+        }
     }
     if (jmp != 0) {
         return lineAddr + getAddrOffsetFromJmp(pikaAsm, programCounter, jmp);
