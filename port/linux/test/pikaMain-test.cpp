@@ -411,15 +411,38 @@ TEST(pikaMain, for_if_break) {
     obj_runDirect(pikaMain, (char*)
          "a = 0\n"
          "for i in range(0, 10):\n"
-         "    a = a + i\n"
-         "    if i == 2:\n"
+         "    if i == 5:\n"
          "        break\n"
+         "    a = a + i\n"
          "\n"
         );
     /* collect */
     int a = obj_getInt(pikaMain, (char*)"a");
     /* assert */
-    EXPECT_EQ(a, 3);
+    EXPECT_EQ(a, 10);
+    /* deinit */
+    obj_deinit(pikaMain);
+    /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, for_if_continue) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_runDirect(pikaMain, (char*)
+         "a = 0\n"
+         "for i in range(0, 10):\n"
+         "    if i == 5:\n"
+         "        continue\n"
+         "    a = a + i\n"
+         "\n"
+        );
+    /* collect */
+    int a = obj_getInt(pikaMain, (char*)"a");
+    /* assert */
+    EXPECT_EQ(a, 40);
     /* deinit */
     obj_deinit(pikaMain);
     /* mem check */
