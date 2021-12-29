@@ -189,7 +189,7 @@ PikaScript也支持MDK、iar、rtt-studio等常见ide开发，能够轻松地调
 
 | if | while | for | else | elif | break | continue |
 | --- | --- | --- | --- | --- | --- | --- |
-|√|√|√|√|√| | |
+|√|√|√|√|√|√|√|
 
 ### (4)源码规范
 
