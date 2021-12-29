@@ -1,0 +1,3 @@
+[submodule "src/3rd-party/PLOOC"]
+	path = src/3rd-party/PLOOC
+	url = https://github.com/GorgonMeducer/PLOOC
