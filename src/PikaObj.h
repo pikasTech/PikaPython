@@ -29,6 +29,8 @@
 #define _Process__H
 
 
+#include "./__pika_cfg_valid.h"
+
 /*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition 
  */
 //#define __PLOOC_CLASS_USE_STRICT_TEMPLATE__
