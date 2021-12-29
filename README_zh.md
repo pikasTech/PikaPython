@@ -249,7 +249,7 @@ PikaScript也支持MDK、iar、rtt-studio等常见ide开发，能够轻松地调
 step1: 拉取项目
 ``` shell
 git clone https://github.com/pikastech/pikascript
-cd pikascript/src
+cd pikascript/port/linux
 ```
 
 step2: 编译项目
