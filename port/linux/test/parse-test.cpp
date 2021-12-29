@@ -1489,67 +1489,76 @@ TEST(parser, for_list) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(parser, for_for_range) {
-//     pikaMemInfo.heapUsedMax = 0;
-//     Args* buffs = New_strBuff();
-//     char* lines = (char*)
-//          "a = 0\n"
-//          "for i in range(0, 10):\n"
-//          "    for k in range(0, 3):\n"
-//          "        print(k)\n"
-//          "        a = a + k\n"
-//          "\n"
-//     ;
-//     printf("%s", lines);
-//     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
-//     printf("%s", pikaAsm);
-//     EXPECT_STREQ(pikaAsm,(char *)
-//         "B0\n"
-//         "1 REF a\n"
-//         "1 NUM 1\n"
-//         "0 OPT >\n"
-//         "0 JEZ 1\n"
-//         "B1\n"
-//         "0 NUM 1\n"
-//         "0 OUT b\n"
-//         "B0\n"
-//         "0 NEL 1\n"
-//         "1 REF a\n"
-//         "1 NUM 2\n"
-//         "0 OPT >\n"
-//         "0 JEZ 1\n"
-//         "B1\n"
-//         "0 NUM 2\n"
-//         "0 OUT b\n"
-//         "B1\n"
-//         "1 REF a\n"
-//         "1 NUM 1\n"
-//         "0 OPT >\n"
-//         "0 JEZ 1\n"
-//         "B2\n"
-//         "0 NUM 1\n"
-//         "0 OUT b\n"
-//         "B1\n"
-//         "0 NEL 1\n"
-//         "1 REF a\n"
-//         "1 NUM 2\n"
-//         "0 OPT >\n"
-//         "0 JEZ 1\n"
-//         "B2\n"
-//         "0 NUM 2\n"
-//         "0 OUT b\n"
-//         "B1\n"
-//         "0 NEL 1\n"
-//         "B2\n"
-//         "0 NUM 3\n"
-//         "0 OUT b\n"
-//         "B0\n"
-//         "0 NEL 1\n"
-//         "B1\n"
-//         "0 NUM 3\n"
-//         "0 OUT b\n"
-//         "B0\n"
-//     );
-//     args_deinit(buffs);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(parser, for_for_range) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+         "a = 0\n"
+         "for i in range(0, 10):\n"
+         "    for k in range(0, 3):\n"
+         "        print(k)\n"
+         "        a = a + k\n"
+         "\n"
+    ;
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,(char *)
+    "B0\n"
+    "0 NUM 0\n"
+    "0 OUT a\n"
+    "B0\n"
+    "2 NUM 0\n"
+    "2 NUM 10\n"
+    "1 RUN range\n"
+    "0 RUN iter\n"
+    "0 OUT _l0\n"
+    "0 REF _r1\n"
+    "0 REF _r2\n"
+    "0 REF _r3\n"
+    "0 OUT _l0.a1\n"
+    "0 OUT _l0.a2\n"
+    "0 OUT _l0.a3\n"
+    "B0\n"
+    "0 RUN _l0.__next__\n"
+    "0 OUT i\n"
+    "0 EST i\n"
+    "0 JEZ 2\n"
+    "B1\n"
+    "2 NUM 0\n"
+    "2 NUM 3\n"
+    "1 RUN range\n"
+    "0 RUN iter\n"
+    "0 OUT _l1\n"
+    "0 REF _r1\n"
+    "0 REF _r2\n"
+    "0 REF _r3\n"
+    "0 OUT _l1.a1\n"
+    "0 OUT _l1.a2\n"
+    "0 OUT _l1.a3\n"
+    "B1\n"
+    "0 RUN _l1.__next__\n"
+    "0 OUT k\n"
+    "0 EST k\n"
+    "0 JEZ 2\n"
+    "B2\n"
+    "1 REF k\n"
+    "0 RUN print\n"
+    "B2\n"
+    "1 REF a\n"
+    "1 REF k\n"
+    "0 OPT +\n"
+    "0 OUT a\n"
+    "B1\n"
+    "0 JMP -1\n"
+    "B1\n"
+    "0 DEL _l1\n"
+    "B0\n"
+    "0 JMP -1\n"
+    "B0\n"
+    "0 DEL _l0\n"
+    "B0\n"
+    );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

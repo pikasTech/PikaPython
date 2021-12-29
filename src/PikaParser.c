@@ -1005,10 +1005,9 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
                 /* garbage collect for the list */
                 pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
-                char* _l_x = strsCopy(buffs, "_l");
-                char block_deepth_str[] = "0";
-                block_deepth_str[0] += obj_getInt(ast, "blockDeepth");
-                _l_x = strsAppend(runBuffs, _l_x, block_deepth_str);
+                char _l_x[] = "_lx";
+                char block_deepth_char = blockTypeNum + '0';
+                _l_x[sizeof(_l_x) - 2] = block_deepth_char;
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 DEL ");
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)_l_x);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
