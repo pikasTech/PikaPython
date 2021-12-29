@@ -328,7 +328,7 @@
             <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>3</v6Lang>
+            <v6Lang>5</v6Lang>
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
@@ -747,6 +747,41 @@
               <FileName>TinyObj.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\src\TinyObj.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>PLOOC</GroupName>
+          <Files>
+            <File>
+              <FileName>plooc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc.h</FilePath>
+            </File>
+            <File>
+              <FileName>plooc_class.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc_class.h</FilePath>
+            </File>
+            <File>
+              <FileName>plooc_class_black_box.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc_class_black_box.h</FilePath>
+            </File>
+            <File>
+              <FileName>plooc_class_simple.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc_class_simple.h</FilePath>
+            </File>
+            <File>
+              <FileName>plooc_class_simple_c90.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc_class_simple_c90.h</FilePath>
+            </File>
+            <File>
+              <FileName>plooc_class_strict.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc_class_strict.h</FilePath>
             </File>
           </Files>
         </Group>
