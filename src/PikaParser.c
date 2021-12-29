@@ -1012,11 +1012,6 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)_l_x);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"\n");
             }
-            /* goto the while start when exit while block */
-            if (strEqu(blockType, "for_range")) {
-                pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, blockTypeNum);
-                pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 JMP -1\n");
-            }
             /* return when exit method */
             if (strEqu(blockType, "def")) {
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 RET\n");
