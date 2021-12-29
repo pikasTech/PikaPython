@@ -419,7 +419,7 @@ TEST(pikaMain, for_if_break) {
     /* collect */
     int a = obj_getInt(pikaMain, (char*)"a");
     /* assert */
-    EXPECT_EQ(a, 30);
+    EXPECT_EQ(a, 3);
     /* deinit */
     obj_deinit(pikaMain);
     /* mem check */

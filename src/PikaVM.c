@@ -662,7 +662,8 @@ nextLine:
         int32_t loop_end_addr = asm_getAddrOffsetOfJUM(programCounter);
         /* break */
         if (-998 == jmp) {
-            return lineAddr + gotoNextLine(programCounter + loop_end_addr);
+            loop_end_addr +=  gotoNextLine(programCounter + loop_end_addr);
+            return lineAddr + loop_end_addr;
         }
         if (-997 == jmp) {
             return lineAddr +
