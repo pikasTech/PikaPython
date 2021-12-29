@@ -15,7 +15,7 @@
 <p align="center">
 	<a href="https://whycan.com/f_55.html" >论坛</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/nz7dgl" >文档中心</a> |
-	<a href="https://space.bilibili.com/5365336/channel/detail?cid=202329">视频中心</a> |
+	<a href="https://space.bilibili.com/5365336/channel/seriesdetail?sid=1034902">视频中心</a> |
         <a href="../../tree/master/bsp#platform-support">BSP</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/of8izq">包管理器</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/wcc36r" >rtthread软件包</a> |
@@ -65,7 +65,7 @@ PikaScript也支持MDK、iar、rtt-studio等常见ide开发，能够轻松地调
 
 # 视频教程
 
-### [点此进入视频中心](https://space.bilibili.com/5365336/channel/detail?cid=202329)
+### [点此进入视频中心](https://space.bilibili.com/5365336/channel/seriesdetail?sid=1034902)
 
 ![image](https://user-images.githubusercontent.com/88232613/142173892-35e33f36-413c-4422-8470-b873b7c3bd71.png)
 
