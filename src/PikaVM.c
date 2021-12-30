@@ -169,15 +169,10 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
-static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
-                                             VM_State* vmState,
-                                             enum Instruct instruct,
-                                             char* data,
-                                             Queue* invokeQuene0,
-                                             Queue* invokeQuene1,
-                                             int32_t* jmp,
-                                             char* programConter,
-                                             char* asmStart) {
+static Arg* pikaVM_runInstruct(PikaObj* self,
+                               VM_State* vmState,
+                               enum Instruct instruct,
+                               char* data) {
     // PIKA_ASSERT(instruct < __INSTRCUTION_CNT);
 
     // c_vmInstructionTable[instruct].tHandler()
@@ -194,7 +189,7 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
         return arg_setStr(strArg, "", data);
     }
     if (instruct == OUT) {
-        Arg* outArg = arg_copy(queue_popArg(invokeQuene0));
+        Arg* outArg = arg_copy(queue_popArg(vmState->q0));
         obj_setArg(vmState->locals, data, outArg);
         arg_deinit(outArg);
         return NULL;
@@ -233,31 +228,31 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
         return arg_setInt(NULL, "", 1);
     }
     if (instruct == JMP) {
-        *jmp = fast_atoi(data);
+        vmState->jmp = fast_atoi(data);
         return NULL;
     }
     if (instruct == RET) {
         /* exit jmp signal */
-        *jmp = -999;
-        Arg* returnArg = arg_copy(queue_popArg(invokeQuene0));
+        vmState->jmp = -999;
+        Arg* returnArg = arg_copy(queue_popArg(vmState->q0));
         method_returnArg(vmState->locals->list, returnArg);
         return NULL;
     }
     if (instruct == BRK) {
         /* break jmp signal */
-        *jmp = -998;
+        vmState->jmp = -998;
         return NULL;
     }
     if (instruct == CTN) {
         /* continue jmp signal */
-        *jmp = -997;
+        vmState->jmp = -997;
         return NULL;
     }
     if (instruct == DEF) {
-        char* methodPtr = programConter;
+        char* methodPtr = vmState->pc;
         int offset = 0;
         int thisBlockDeepth =
-            getThisBlockDeepth(asmStart, programConter, &offset);
+            getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
         while (1) {
             if ((methodPtr[0] == 'B') &&
                 (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
@@ -265,15 +260,15 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
                 break;
             }
             offset += gotoNextLine(methodPtr);
-            methodPtr = programConter + offset;
+            methodPtr = vmState->pc + offset;
         }
         return NULL;
     }
     if (instruct == JEZ) {
         int offset = 0;
         int thisBlockDeepth =
-            getThisBlockDeepth(asmStart, programConter, &offset);
-        Arg* assertArg = arg_copy(queue_popArg(invokeQuene0));
+            getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
+        Arg* assertArg = arg_copy(queue_popArg(vmState->q0));
         int assert = arg_getInt(assertArg);
         arg_deinit(assertArg);
         char __else[] = "__else0";
@@ -281,26 +276,26 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
         args_setInt(self->list, __else, !assert);
         if (0 == assert) {
             /* set __else flag */
-            *jmp = fast_atoi(data);
+            vmState->jmp = fast_atoi(data);
         }
         return NULL;
     }
     if (instruct == NEL) {
         int offset = 0;
         int thisBlockDeepth =
-            getThisBlockDeepth(asmStart, programConter, &offset);
+            getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
         char __else[] = "__else0";
         __else[6] = '0' + thisBlockDeepth;
         if (0 == args_getInt(self->list, __else)) {
             /* set __else flag */
-            *jmp = fast_atoi(data);
+            vmState->jmp = fast_atoi(data);
         }
         return NULL;
     }
     if (instruct == OPT) {
         Arg* outArg = NULL;
-        Arg* arg1 = arg_copy(queue_popArg(invokeQuene1));
-        Arg* arg2 = arg_copy(queue_popArg(invokeQuene1));
+        Arg* arg1 = arg_copy(queue_popArg(vmState->q1));
+        Arg* arg2 = arg_copy(queue_popArg(vmState->q1));
         ArgType type_arg1 = arg_getType(arg1);
         ArgType type_arg2 = arg_getType(arg2);
         int num1_i = 0;
@@ -446,7 +441,7 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
         char* sysOut;
         /* return arg directly */
         if (strEqu(data, "")) {
-            returnArg = arg_copy(queue_popArg(invokeQuene1));
+            returnArg = arg_copy(queue_popArg(vmState->q1));
             goto RUN_exit;
         }
         /* get method host obj */
@@ -490,7 +485,7 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
 
         subLocals = New_PikaObj();
         while (1) {
-            Arg* methodArg = arg_copy(queue_popArg(invokeQuene1));
+            Arg* methodArg = arg_copy(queue_popArg(vmState->q1));
             if (NULL == methodArg) {
                 break;
             }
@@ -539,15 +534,6 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
     }
     return NULL;
 }
-
-static Arg* pikaVM_runInstruct(PikaObj* self,
-                               VM_State* vmState,
-                               enum Instruct instruct,
-                               char* data) {
-    return pikaVM_runInstruct_without_state(
-        self, vmState, instruct, data, vmState->q0, vmState->q1, &vmState->jmp,
-        vmState->pc, vmState->ASM_start);
-};
 
 int32_t __clearInvokeQueues(VM_Parameters* locals) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
