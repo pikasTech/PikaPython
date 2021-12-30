@@ -497,66 +497,8 @@ static char* strs_getLine(Args* buffs, char* code) {
 }
 
 static enum Instruct getInstruct(char* line) {
-    if (0 == strncmp(line + 2, "OPT", 3)) {
-        /* operator */
-        return OPT;
-    }
-    if (0 == strncmp(line + 2, "REF", 3)) {
-        /* reference */
-        return REF;
-    }
-    if (0 == strncmp(line + 2, "NUM", 3)) {
-        /* number */
-        return NUM;
-    }
-    if (0 == strncmp(line + 2, "RUN", 3)) {
-        /* run */
-        return RUN;
-    }
-    if (0 == strncmp(line + 2, "STR", 3)) {
-        /* string */
-        return STR;
-    }
-    if (0 == strncmp(line + 2, "OUT", 3)) {
-        /* out */
-        return OUT;
-    }
-    if (0 == strncmp(line + 2, "JMP", 3)) {
-        /* jump */
-        return JMP;
-    }
-    if (0 == strncmp(line + 2, "JEZ", 3)) {
-        /* jump equal zero */
-        return JEZ;
-    }
-    if (0 == strncmp(line + 2, "DEF", 3)) {
-        /* define */
-        return DEF;
-    }
-    if (0 == strncmp(line + 2, "RET", 3)) {
-        /* return */
-        return RET;
-    }
-    if (0 == strncmp(line + 2, "NEL", 3)) {
-        /* not else */
-        return NEL;
-    }
-    if (0 == strncmp(line + 2, "DEL", 3)) {
-        /* delete */
-        return DEL;
-    }
-    if (0 == strncmp(line + 2, "EST", 3)) {
-        /* is exist */
-        return EST;
-    }
-    if (0 == strncmp(line + 2, "BRK", 3)) {
-        /* break */
-        return BRK;
-    }
-    if (0 == strncmp(line + 2, "CTN", 3)) {
-        /* continue */
-        return CTN;
-    }
+    #define __INS_COMPIRE
+    #include "__instruction_table.cfg"
     return NON;
 }
 

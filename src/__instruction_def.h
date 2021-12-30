@@ -32,9 +32,14 @@
 #endif
 
 #if defined(__INS_TABLE)
-
 #define def_ins(__INS_NAME) [__INS_NAME] = &VM_instruction_handler_##__INS_NAME,
+#endif
 
+#if defined(__INS_COMPIRE)
+#define def_ins(__INS_NAME) \
+    if (0 == strncmp(line + 2, ""#__INS_NAME"", 3)) { \
+        return __INS_NAME; \
+    } 
 #endif
 
 #undef __INS_ENUM

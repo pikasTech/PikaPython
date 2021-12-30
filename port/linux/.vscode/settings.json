@@ -23,7 +23,8 @@
         "__instruction_table.h": "c",
         "__instruction_def.h": "c",
         "pikavm.h": "c",
-        "pikaconfigvalid.h": "c"
+        "pikaconfigvalid.h": "c",
+        "*.cfg": "c"
     },
     "python.formatting.provider": "autopep8"
 }
