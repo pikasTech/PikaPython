@@ -568,13 +568,6 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
-static Arg* pikaVM_runInstruct(PikaObj* self,
-                               VM_State* vmState,
-                               enum Instruct instruct,
-                               char* data) {
-    return VM_instruct_handler_table[instruct](self, vmState, data);
-};
-
 int32_t __clearInvokeQueues(VM_Parameters* locals) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
         char deepth[2] = {0};
@@ -727,7 +720,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         args_setPtr(locals->list, invokeDeepth1, vmState.q1);
     }
 
-    resArg = pikaVM_runInstruct(self, &vmState, instruct, data);
+    resArg = VM_instruct_handler_table[instruct](self, &vmState, data);
     if (NULL != resArg) {
         queue_pushArg(vmState.q0, resArg);
     }
