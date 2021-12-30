@@ -114,15 +114,6 @@ int main(void)
     /* run mimiScript and get res */
     PikaObj *resArgs = obj_runDirect(pikaMain, inputBuff);
 
-    /* get system output of mimiScript*/
-    char *sysOut = args_getSysOut(resArgs->list);
-
-    if (!strEqu(sysOut, ""))
-    {
-      /* print out the system output */
-      printf("%s\r\n", sysOut);
-    }
-
     /* deinit the res */
     obj_deinit(resArgs);
 

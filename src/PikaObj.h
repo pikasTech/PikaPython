@@ -27,19 +27,40 @@
 
 #ifndef _Process__H
 #define _Process__H
+
+
+#include "./__pika_cfg_valid.h"
+
+/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition 
+ */
+//#define __PLOOC_CLASS_USE_STRICT_TEMPLATE__
+   
+#if     defined(__PIKA_OBJ_CLASS_IMPLEMENT)
+#   define __PLOOC_CLASS_IMPLEMENT__
+#elif   defined(__PIKA_OBJ_CLASS_INHERIT__)
+#   define __PLOOC_CLASS_INHERIT__
+#endif   
+
+#include "__pika_ooc.h"
+
 #include "dataArgs.h"
 #include "dataLink.h"
 #include "dataMemory.h"
-typedef struct PikaObj_t PikaObj;
+
+dcl_class(PikaObj);
+
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
 typedef PikaObj Parameters;
 typedef void (*Method)(PikaObj* self, Args* args);
-struct PikaObj_t {
-    /* list */
-    Args* list;
-};
 
+def_class(PikaObj,
+    
+    private_member(
+        /* list */
+        Args* list;
+   )
+)
 /* operation */
 int32_t obj_deinit(PikaObj* self);
 int32_t obj_init(PikaObj* self, Args* args);

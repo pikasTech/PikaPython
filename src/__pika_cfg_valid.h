@@ -25,48 +25,20 @@
  * SOFTWARE.
  */
 
-#define __PIKA_OBJ_CLASS_IMPLEMENT
+#ifndef __PIKA_CFG_VALID_H__
+#define __PIKA_CFG_VALID_H__
 
-#include "BaseObj.h"
-#include "PikaObj.h"
-#include "TinyObj.h"
-#include "dataMemory.h"
-#include "dataString.h"
-#include "dataStrs.h"
+#ifdef __PIKA_USER_CONFIC_INCLUDE__
+#   include __PIKA_USER_CONFIC_INCLUDE__
+#else
 
-Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr) {
-    Args* buffs = New_strBuff();
-    Arg* argNew = New_arg(NULL);
-    /* m means mate-object */
-    argNew = arg_setPtr(argNew, objName, TYPE_MATE_OBJECT, (void*)objPtr);
-    args_deinit(buffs);
-    return argNew;
-}
+/* default configuration  */
 
-int32_t obj_newObj(PikaObj* self,
-                   char* objName,
-                   char* className,
-                   NewFun newFunPtr) {
-    /* add mate Obj, no inited */
-    Arg* mateObj = arg_setMetaObj(objName, className, newFunPtr);
-    args_setArg(self->list, mateObj);
-    return 0;
-}
 
-static void print(PikaObj* self, Args* args) {
-    obj_setErrorCode(self, 0);
-    char* res = args_print(args, "val");
-    if (NULL == res) {
-        obj_setSysOut(self, "[error] print: can not print val");
-        obj_setErrorCode(self, 1);
-        return;
-    }
-    /* not empty */
-    obj_setSysOut(self, res);
-}
+#endif
 
-PikaObj* New_BaseObj(Args* args) {
-    PikaObj* self = New_TinyObj(args);
-    class_defineMethod(self, "print(val:any)", print);
-    return self;
-}
+
+/* configuration validation */
+
+
+#endif

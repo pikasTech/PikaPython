@@ -25,6 +25,7 @@
  * SOFTWARE.
  */
 
+#define __PIKA_OBJ_CLASS_IMPLEMENT
 #include "PikaVM.h"
 #include "BaseObj.h"
 #include "PikaObj.h"
@@ -59,8 +60,40 @@ enum Instruct {
     DEL,
     EST,
     BRK,
-    CTN
+    CTN,
+    __INSTRCUTION_CNT,
 };
+
+struct __ins_param_t {
+    char* data;
+    Parameters* locals;
+    Parameters* globals;
+    Queue* invokeQuene0;
+    Queue* invokeQuene1;
+    int32_t* jmp;
+    char* programConter;
+    char* asmStart;
+};
+
+typedef Arg* __ins_handler_t(PikaObj* self, struct __ins_param_t *ptParam);
+
+struct __vm_ins_t {
+    __ins_handler_t *fnHandler;
+};
+
+static 
+Arg* __ins_non_handler(PikaObj* self, struct __ins_param_t *ptParam)
+{
+    return NULL;
+}
+
+const struct __vm_ins_t c_vmInstructionTable[__INSTRCUTION_CNT] = {
+    [NON] = {
+        .fnHandler = &__ins_non_handler,
+    },
+    
+};
+
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
@@ -134,6 +167,7 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
+static 
 Arg* pikaVM_runInstruct(PikaObj* self,
                         Parameters* locals,
                         Parameters* globals,
@@ -144,6 +178,12 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                         int32_t* jmp,
                         char* programConter,
                         char* asmStart) {
+                            
+                            
+    //PIKA_ASSERT(instruct < __INSTRCUTION_CNT);
+    
+    //c_vmInstructionTable[instruct].tHandler()
+                            
     if (instruct == NUM) {
         Arg* numArg = New_arg(NULL);
         if (strIsContain(data, '.')) {

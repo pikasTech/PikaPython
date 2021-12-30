@@ -10,7 +10,7 @@
       <TargetName>pikascriptt-demo</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
+      <pCCUsed>6170000::V6.17::.\Arm Compiler 6.17</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -313,7 +313,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>6</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -328,18 +328,18 @@
             <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>3</v6Lang>
+            <v6Lang>5</v6Lang>
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
-            <v6Lto>0</v6Lto>
+            <v6Lto>1</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F103xE</Define>
+              <Define>USE_HAL_DRIVER,STM32F103xE __PIKA_USER_CONFIC_INCLUDE__=\"pika_cfg.h\"</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-core;..\pikascript\pikascript-api</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-api;..\..\..\src</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -531,91 +531,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>pikascript-core</GroupName>
-          <Files>
-            <File>
-              <FileName>BaseObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\BaseObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataArg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\dataArg.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataArgs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\dataArgs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataLink.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\dataLink.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataLinkNode.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\dataLinkNode.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataMemory.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\dataMemory.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataQueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\dataQueue.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataQueueObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\dataQueueObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataStack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\dataStack.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataString.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\dataString.c</FilePath>
-            </File>
-            <File>
-              <FileName>dataStrs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\dataStrs.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaPlatform.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaPlatform.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaVM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\PikaVM.c</FilePath>
-            </File>
-            <File>
-              <FileName>TinyObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-core\TinyObj.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>pikascript-api</GroupName>
           <Files>
             <File>
@@ -657,6 +572,216 @@
               <FileName>PikaStdLib-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>pikascrip-core</GroupName>
+          <Files>
+            <File>
+              <FileName>BaseObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\BaseObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>BaseObj.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\BaseObj.h</FilePath>
+            </File>
+            <File>
+              <FileName>CMakeLists.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\CMakeLists.txt</FilePath>
+            </File>
+            <File>
+              <FileName>dataArg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\dataArg.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataArg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\dataArg.h</FilePath>
+            </File>
+            <File>
+              <FileName>dataArgs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\dataArgs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataArgs.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\dataArgs.h</FilePath>
+            </File>
+            <File>
+              <FileName>dataLink.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\dataLink.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataLink.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\dataLink.h</FilePath>
+            </File>
+            <File>
+              <FileName>dataLinkNode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\dataLinkNode.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataLinkNode.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\dataLinkNode.h</FilePath>
+            </File>
+            <File>
+              <FileName>dataMemory.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\dataMemory.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataMemory.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\dataMemory.h</FilePath>
+            </File>
+            <File>
+              <FileName>dataQueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\dataQueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataQueue.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\dataQueue.h</FilePath>
+            </File>
+            <File>
+              <FileName>dataQueueObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\dataQueueObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataQueueObj.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\dataQueueObj.h</FilePath>
+            </File>
+            <File>
+              <FileName>dataStack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\dataStack.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataStack.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\dataStack.h</FilePath>
+            </File>
+            <File>
+              <FileName>dataString.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\dataString.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataString.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\dataString.h</FilePath>
+            </File>
+            <File>
+              <FileName>dataStrs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\dataStrs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataStrs.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\dataStrs.h</FilePath>
+            </File>
+            <File>
+              <FileName>PikaObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\PikaObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaObj.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\PikaObj.h</FilePath>
+            </File>
+            <File>
+              <FileName>PikaParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\PikaParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaParser.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\PikaParser.h</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPlatform.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\PikaPlatform.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPlatform.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\PikaPlatform.h</FilePath>
+            </File>
+            <File>
+              <FileName>PikaVM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\PikaVM.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaVM.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\PikaVM.h</FilePath>
+            </File>
+            <File>
+              <FileName>README.md</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\README.md</FilePath>
+            </File>
+            <File>
+              <FileName>TinyObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\TinyObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>TinyObj.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\TinyObj.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>PLOOC</GroupName>
+          <Files>
+            <File>
+              <FileName>plooc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc.h</FilePath>
+            </File>
+            <File>
+              <FileName>plooc_class.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc_class.h</FilePath>
+            </File>
+            <File>
+              <FileName>plooc_class_black_box.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc_class_black_box.h</FilePath>
+            </File>
+            <File>
+              <FileName>plooc_class_simple.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc_class_simple.h</FilePath>
+            </File>
+            <File>
+              <FileName>plooc_class_simple_c90.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc_class_simple_c90.h</FilePath>
+            </File>
+            <File>
+              <FileName>plooc_class_strict.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\src\3rd-party\PLOOC\plooc_class_strict.h</FilePath>
             </File>
           </Files>
         </Group>
