@@ -24,18 +24,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
 
 #undef def_ins
 
 #if defined(__INS_ENUM)
-#   define def_ins(__INS_NAME)        __INS_NAME,
+#define def_ins(__INS_NAME) __INS_NAME,
 #endif
 
 #if defined(__INS_TABLE)
 
-#   define def_ins(__INS_NAME)                                             \
-    [__INS_NAME] = &VM_instruction_handler_##__INS_NAME,
+#define def_ins(__INS_NAME) [__INS_NAME] = &VM_instruction_handler_##__INS_NAME,
 
 #endif
 

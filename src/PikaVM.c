@@ -56,24 +56,18 @@ static int32_t getLineSize(char* str) {
     }
 }
 
-
 enum Instruct {
-    
-    #define __INS_ENUM
-    #include "__instruction_table.cfg"
-    
+
+#define __INS_ENUM
+#include "__instruction_table.cfg"
+
     __INSTRCUTION_CNT,
 };
-
-
-
-
 
 typedef Arg* (*VM_instruct_handler)(PikaObj* self,
                                     struct VM_State_t* vmState,
                                     char* data);
 
-                                    
 static Arg* VM_instruction_handler_NON(PikaObj* self,
                                        struct VM_State_t* vmState,
                                        char* data) {
@@ -490,8 +484,8 @@ static Arg* VM_instruction_handler_CTN(PikaObj* self,
 
 const VM_instruct_handler VM_instruct_handler_table[__INSTRCUTION_CNT] = {
 
-    #define __INS_TABLE
-    #include "__instruction_table.cfg"   
+#define __INS_TABLE
+#include "__instruction_table.cfg"
 };
 
 static char* strs_getLine(Args* buffs, char* code) {
