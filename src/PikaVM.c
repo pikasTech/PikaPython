@@ -374,27 +374,35 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     }
     if (strEqu("&", data)) {
         outArg = arg_setInt(outArg, "", num1_i & num2_i);
+        goto OPT_exit;
     }
     if (strEqu("|", data)) {
         outArg = arg_setInt(outArg, "", num1_i | num2_i);
+        goto OPT_exit;
     }
     if (strEqu("~", data)) {
         outArg = arg_setInt(outArg, "", ~num1_i);
+        goto OPT_exit;
     }
     if (strEqu(">>", data)) {
         outArg = arg_setInt(outArg, "", num1_i >> num2_i);
+        goto OPT_exit;
     }
     if (strEqu("<<", data)) {
         outArg = arg_setInt(outArg, "", num1_i << num2_i);
+        goto OPT_exit;
     }
     if (strEqu(" and ", data)) {
         outArg = arg_setInt(outArg, "", num1_i && num2_i);
+        goto OPT_exit;
     }
     if (strEqu(" or ", data)) {
         outArg = arg_setInt(outArg, "", num1_i || num2_i);
+        goto OPT_exit;
     }
     if (strEqu(" not ", data)) {
         outArg = arg_setInt(outArg, "", !num1_i);
+        goto OPT_exit;
     }
 OPT_exit:
     arg_deinit(arg1);
