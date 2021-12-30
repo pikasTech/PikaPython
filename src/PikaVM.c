@@ -614,7 +614,7 @@ int getThisBlockDeepth(char* start, char* code, int* offset) {
     return thisBlockDeepth;
 }
 
-int32_t asm_getAddrOffsetOfJUM(char* code) {
+int32_t getAddrOffsetOfJUM(char* code) {
     int offset = 0;
     char* codeNow = code + offset;
     while (1) {
@@ -725,7 +725,7 @@ nextLine:
     }
     /* break or continue */
     if ((-998 == vmState.jmp) || (-997 == vmState.jmp)) {
-        int32_t loop_end_addr = asm_getAddrOffsetOfJUM(vmState.pc);
+        int32_t loop_end_addr = getAddrOffsetOfJUM(vmState.pc);
         /* break */
         if (-998 == vmState.jmp) {
             loop_end_addr += gotoNextLine(vmState.pc + loop_end_addr);
