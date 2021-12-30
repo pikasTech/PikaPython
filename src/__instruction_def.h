@@ -29,21 +29,12 @@
 #undef def_ins
 
 #if defined(__INS_ENUM)
-#   define def_ins(__INS_NAME, ...)        __INS_NAME,
+#   define def_ins(__INS_NAME)        __INS_NAME,
 #endif
-
-#if defined(__INS_IMPL)
-#   define def_ins(__INS_NAME, ...)                                             \
-    static Arg* VM_instruction_handler_##__INS_NAME(PikaObj* self,              \
-                                           struct VM_State_t* vmState,          \
-                                           char* data)                          \
-        __VA_ARGS__
-#endif
-
 
 #if defined(__INS_TABLE)
 
-#   define def_ins(__INS_NAME, ...)                                             \
+#   define def_ins(__INS_NAME)                                             \
     [__INS_NAME] = &VM_instruction_handler_##__INS_NAME,
 
 #endif
