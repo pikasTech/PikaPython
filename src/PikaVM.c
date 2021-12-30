@@ -64,7 +64,7 @@ enum Instruct {
     __INSTRCUTION_CNT,
 };
 
-struct vm_state_t {
+struct VM_State_t {
     VM_Parameters* locals;
     VM_Parameters* globals;
     Queue* invokeQuene0;
@@ -74,25 +74,29 @@ struct vm_state_t {
     char* asmStart;
 };
 
-typedef Arg* __ins_handler_t(PikaObj* self, struct vm_state_t *vm_state);
+typedef struct VM_State_t VM_State;
 
-struct __vm_ins_t {
-    __ins_handler_t *fnHandler;
+typedef Arg* VM_instruct_handler_fn(PikaObj* self,
+                                    struct VM_State_t* vm_state,
+                                    char* data);
+
+struct VM_instruct_handler {
+    VM_instruct_handler_fn* fn;
 };
 
-static 
-Arg* __ins_non_handler(PikaObj* self, struct vm_state_t *vm_state)
-{
+static Arg* VM_instruction_handler_NON(PikaObj* self,
+                                       struct VM_State_t* vm_state,
+                                       char* data) {
     return NULL;
 }
 
-const struct __vm_ins_t c_vmInstructionTable[__INSTRCUTION_CNT] = {
-    [NON] = {
-        .fnHandler = &__ins_non_handler,
-    },
-    
-};
+const struct VM_instruct_handler VM_instructionTable[__INSTRCUTION_CNT] = {
+    [NON] =
+        {
+            .fn = &VM_instruction_handler_NON,
+        },
 
+};
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
@@ -166,23 +170,20 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
-static 
-Arg* pikaVM_runInstruct(PikaObj* self,
-                        VM_Parameters* locals,
-                        VM_Parameters* globals,
-                        enum Instruct instruct,
-                        char* data,
-                        Queue* invokeQuene0,
-                        Queue* invokeQuene1,
-                        int32_t* jmp,
-                        char* programConter,
-                        char* asmStart) {
-                            
-                            
-    //PIKA_ASSERT(instruct < __INSTRCUTION_CNT);
-    
-    //c_vmInstructionTable[instruct].tHandler()
-                            
+static Arg* pikaVM_runInstruct(PikaObj* self,
+                               VM_Parameters* locals,
+                               VM_Parameters* globals,
+                               enum Instruct instruct,
+                               char* data,
+                               Queue* invokeQuene0,
+                               Queue* invokeQuene1,
+                               int32_t* jmp,
+                               char* programConter,
+                               char* asmStart) {
+    // PIKA_ASSERT(instruct < __INSTRCUTION_CNT);
+
+    // c_vmInstructionTable[instruct].tHandler()
+
     if (instruct == NUM) {
         Arg* numArg = New_arg(NULL);
         if (strIsContain(data, '.')) {
@@ -683,6 +684,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         invokeQuene1 = New_queue();
         args_setPtr(locals->list, invokeDeepth1, invokeQuene1);
     }
+
     resArg =
         pikaVM_runInstruct(self, locals, globals, instruct, data, invokeQuene0,
                            invokeQuene1, &jmp, programCounter, pikaAsm);
@@ -733,9 +735,9 @@ char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
 }
 
 VM_Parameters* pikaVM_runAsmWithPars(PikaObj* self,
-                                  VM_Parameters* locals,
-                                  VM_Parameters* globals,
-                                  char* pikaAsm) {
+                                     VM_Parameters* locals,
+                                     VM_Parameters* globals,
+                                     char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
     args_setErrorCode(locals->list, 0);
