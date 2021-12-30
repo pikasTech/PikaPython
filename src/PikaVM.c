@@ -170,8 +170,7 @@ static enum Instruct getInstruct(char* line) {
 }
 
 static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
-                                             VM_Parameters* locals,
-                                             VM_Parameters* globals,
+                                             VM_State* vmState,
                                              enum Instruct instruct,
                                              char* data,
                                              Queue* invokeQuene0,
@@ -196,12 +195,12 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
     }
     if (instruct == OUT) {
         Arg* outArg = arg_copy(queue_popArg(invokeQuene0));
-        obj_setArg(locals, data, outArg);
+        obj_setArg(vmState->locals, data, outArg);
         arg_deinit(outArg);
         return NULL;
     }
     if (instruct == DEL) {
-        obj_removeArg(locals, data);
+        obj_removeArg(vmState->locals, data);
         return NULL;
     }
     if (instruct == REF) {
@@ -212,10 +211,10 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
             return arg_setInt(NULL, "", 0);
         }
         /* find in local list first */
-        Arg* arg = arg_copy(obj_getArg(locals, data));
+        Arg* arg = arg_copy(obj_getArg(vmState->locals, data));
         if (NULL == arg) {
             /* find in global list second */
-            arg = arg_copy(obj_getArg(globals, data));
+            arg = arg_copy(obj_getArg(vmState->globals, data));
         }
         ArgType arg_type = arg_getType(arg);
         if (TYPE_OBJECT == arg_type) {
@@ -224,7 +223,7 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
         return arg;
     }
     if (instruct == EST) {
-        Arg* arg = obj_getArg(locals, data);
+        Arg* arg = obj_getArg(vmState->locals, data);
         if (arg == NULL) {
             return arg_setInt(NULL, "", 0);
         }
@@ -241,7 +240,7 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
         /* exit jmp signal */
         *jmp = -999;
         Arg* returnArg = arg_copy(queue_popArg(invokeQuene0));
-        method_returnArg(locals->list, returnArg);
+        method_returnArg(vmState->locals->list, returnArg);
         return NULL;
     }
     if (instruct == BRK) {
@@ -453,12 +452,13 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
         /* get method host obj */
         methodHostObj = obj_getObj(self, methodPath, 1);
         if (NULL == methodHostObj) {
-            methodHostObj = obj_getObj(locals, methodPath, 1);
+            methodHostObj = obj_getObj(vmState->locals, methodPath, 1);
         }
         if (NULL == methodHostObj) {
             /* error, not found object */
-            args_setErrorCode(locals->list, 1);
-            args_setSysOut(locals->list, "[error] runner: object no found.");
+            args_setErrorCode(vmState->locals->list, 1);
+            args_setSysOut(vmState->locals->list,
+                           "[error] runner: object no found.");
             goto RUN_exit;
         }
         /* get method */
@@ -466,8 +466,9 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
         /* assert method*/
         if (NULL == method_arg) {
             /* error, method no found */
-            args_setErrorCode(locals->list, 2);
-            args_setSysOut(locals->list, "[error] runner: method no found.");
+            args_setErrorCode(vmState->locals->list, 2);
+            args_setSysOut(vmState->locals->list,
+                           "[error] runner: method no found.");
             goto RUN_exit;
         }
         /* get method Ptr */
@@ -481,8 +482,9 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
 
         if (typeList == NULL) {
             /* typeList no found */
-            args_setErrorCode(locals->list, 3);
-            args_setSysOut(locals->list, "[error] runner: type list no found.");
+            args_setErrorCode(vmState->locals->list, 3);
+            args_setSysOut(vmState->locals->list,
+                           "[error] runner: type list no found.");
             goto RUN_exit;
         }
 
@@ -505,8 +507,8 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
         methodCode = (char*)methodPtr;
         if (methodCode[0] == 'B' && methodCode[2] == '\n') {
             /* VM method */
-            subLocals = pikaVM_runAsmWithPars(methodHostObj, subLocals, globals,
-                                              methodCode);
+            subLocals = pikaVM_runAsmWithPars(methodHostObj, subLocals,
+                                              vmState->globals, methodCode);
             /* get method return */
             returnArg = arg_copy(args_getArg(subLocals->list, (char*)"return"));
         } else {
@@ -519,12 +521,12 @@ static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
         /* transfer sysOut */
         sysOut = obj_getSysOut(methodHostObj);
         if (NULL != sysOut) {
-            args_setSysOut(locals->list, sysOut);
+            args_setSysOut(vmState->locals->list, sysOut);
         }
         /* transfer errCode */
         if (0 != obj_getErrorCode(methodHostObj)) {
             /* method error */
-            args_setErrorCode(locals->list, 6);
+            args_setErrorCode(vmState->locals->list, 6);
         }
 
         goto RUN_exit;
@@ -543,8 +545,8 @@ static Arg* pikaVM_runInstruct(PikaObj* self,
                                enum Instruct instruct,
                                char* data) {
     return pikaVM_runInstruct_without_state(
-        self, vmState->locals, vmState->globals, instruct, data, vmState->q0,
-        vmState->q1, &vmState->jmp, vmState->pc, vmState->ASM_start);
+        self, vmState, instruct, data, vmState->q0, vmState->q1, &vmState->jmp,
+        vmState->pc, vmState->ASM_start);
 };
 
 int32_t __clearInvokeQueues(VM_Parameters* locals) {
