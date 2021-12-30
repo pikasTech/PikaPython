@@ -25,6 +25,9 @@
  * SOFTWARE.
  */
 
+/* micro pika configuration */
+#include "./pikaConfigValid.h"
+
 #ifndef __PIKA_PALTFORM__H
 #define __PIKA_PALTFORM__H
 #include <stdarg.h>

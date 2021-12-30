@@ -561,8 +561,7 @@ void obj_run(PikaObj* self, char* cmd) {
     // obj_deinit(globals);
 }
 
-#define RX_Buff_SIZE 128
-char rxBuff[RX_Buff_SIZE] = {0};
+char rxBuff[PIKA_SHELL_LINE_BUFF_SIZE] = {0};
 char rx_char = 0;
 static void clearBuff(char* buff, int size) {
     for (int i = 0; i < size; i++) {
@@ -596,7 +595,7 @@ void pikaScriptShell(PikaObj* self) {
             }
             obj_run(self, rxBuff);
             __platform_printf(">>> ");
-            clearBuff(rxBuff, RX_Buff_SIZE);
+            clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
             continue;
         }
     }
