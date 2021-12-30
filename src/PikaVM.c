@@ -35,6 +35,17 @@
 #include "dataQueueObj.h"
 #include "dataStrs.h"
 
+struct VM_State_t {
+    VM_Parameters* locals;
+    VM_Parameters* globals;
+    Queue* q0;
+    Queue* q1;
+    int32_t jmp;
+    char* pc;
+    char* ASM_start;
+};
+typedef struct VM_State_t VM_State;
+
 static int32_t getLineSize(char* str) {
     int i = 0;
     while (1) {
@@ -64,37 +75,425 @@ enum Instruct {
     __INSTRCUTION_CNT,
 };
 
-struct VM_State_t {
-    VM_Parameters* locals;
-    VM_Parameters* globals;
-    Queue* q0;
-    Queue* q1;
-    int32_t jmp;
-    char* pc;
-    char* ASM_start;
-};
-typedef struct VM_State_t VM_State;
-
-typedef Arg* VM_instruct_handler_fn(PikaObj* self,
-                                    struct VM_State_t* vm_state,
+typedef Arg* (*VM_instruct_handler)(PikaObj* self,
+                                    struct VM_State_t* vmState,
                                     char* data);
 
-struct VM_instruct_handler {
-    VM_instruct_handler_fn* fn;
-};
-
 static Arg* VM_instruction_handler_NON(PikaObj* self,
-                                       struct VM_State_t* vm_state,
+                                       struct VM_State_t* vmState,
                                        char* data) {
     return NULL;
 }
 
-const struct VM_instruct_handler VM_instructionTable[__INSTRCUTION_CNT] = {
-    [NON] =
-        {
-            .fn = &VM_instruction_handler_NON,
-        },
+static Arg* VM_instruction_handler_REF(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    if (strEqu(data, (char*)"True")) {
+        return arg_setInt(NULL, "", 1);
+    }
+    if (strEqu(data, (char*)"False")) {
+        return arg_setInt(NULL, "", 0);
+    }
+    /* find in local list first */
+    Arg* arg = arg_copy(obj_getArg(vmState->locals, data));
+    if (NULL == arg) {
+        /* find in global list second */
+        arg = arg_copy(obj_getArg(vmState->globals, data));
+    }
+    ArgType arg_type = arg_getType(arg);
+    if (TYPE_OBJECT == arg_type) {
+        arg = arg_setType(arg, TYPE_POINTER);
+    }
+    return arg;
+}
 
+static Arg* VM_instruction_handler_RUN(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    Args* buffs = New_strBuff();
+    Arg* returnArg = NULL;
+    VM_Parameters* subLocals = NULL;
+    char* methodPath = data;
+    PikaObj* methodHostObj;
+    Arg* method_arg;
+    Method methodPtr;
+    char* methodDec;
+    char* typeList;
+    char* methodCode;
+    char* sysOut;
+    /* return arg directly */
+    if (strEqu(data, "")) {
+        returnArg = arg_copy(queue_popArg(vmState->q1));
+        goto RUN_exit;
+    }
+    /* get method host obj */
+    methodHostObj = obj_getObj(self, methodPath, 1);
+    if (NULL == methodHostObj) {
+        methodHostObj = obj_getObj(vmState->locals, methodPath, 1);
+    }
+    if (NULL == methodHostObj) {
+        /* error, not found object */
+        args_setErrorCode(vmState->locals->list, 1);
+        args_setSysOut(vmState->locals->list,
+                       "[error] runner: object no found.");
+        goto RUN_exit;
+    }
+    /* get method */
+    method_arg = obj_getMethod(methodHostObj, methodPath);
+    /* assert method*/
+    if (NULL == method_arg) {
+        /* error, method no found */
+        args_setErrorCode(vmState->locals->list, 2);
+        args_setSysOut(vmState->locals->list,
+                       "[error] runner: method no found.");
+        goto RUN_exit;
+    }
+    /* get method Ptr */
+    methodPtr = (Method)methodArg_getPtr(method_arg);
+    /* get method Decleartion */
+    methodDec = strsCopy(buffs, methodArg_getDec(method_arg));
+    arg_deinit(method_arg);
+
+    /* get type list */
+    typeList = strsCut(buffs, methodDec, '(', ')');
+
+    if (typeList == NULL) {
+        /* typeList no found */
+        args_setErrorCode(vmState->locals->list, 3);
+        args_setSysOut(vmState->locals->list,
+                       "[error] runner: type list no found.");
+        goto RUN_exit;
+    }
+
+    subLocals = New_PikaObj();
+    while (1) {
+        Arg* methodArg = arg_copy(queue_popArg(vmState->q1));
+        if (NULL == methodArg) {
+            break;
+        }
+        char* argDef = strsPopToken(buffs, typeList, ',');
+        char* argName = strsGetFirstToken(buffs, argDef, ':');
+        methodArg = arg_setName(methodArg, argName);
+        args_setArg(subLocals->list, methodArg);
+    }
+
+    obj_setErrorCode(methodHostObj, 0);
+    obj_setSysOut(methodHostObj, "");
+
+    /* run method */
+    methodCode = (char*)methodPtr;
+    if (methodCode[0] == 'B' && methodCode[2] == '\n') {
+        /* VM method */
+        subLocals = pikaVM_runAsmWithPars(methodHostObj, subLocals,
+                                          vmState->globals, methodCode);
+        /* get method return */
+        returnArg = arg_copy(args_getArg(subLocals->list, (char*)"return"));
+    } else {
+        /* native method */
+        methodPtr(methodHostObj, subLocals->list);
+        /* get method return */
+        returnArg = arg_copy(args_getArg(subLocals->list, (char*)"return"));
+    }
+
+    /* transfer sysOut */
+    sysOut = obj_getSysOut(methodHostObj);
+    if (NULL != sysOut) {
+        args_setSysOut(vmState->locals->list, sysOut);
+    }
+    /* transfer errCode */
+    if (0 != obj_getErrorCode(methodHostObj)) {
+        /* method error */
+        args_setErrorCode(vmState->locals->list, 6);
+    }
+
+    goto RUN_exit;
+RUN_exit:
+    if (NULL != subLocals) {
+        obj_deinit(subLocals);
+    }
+    args_deinit(buffs);
+    return returnArg;
+}
+
+static Arg* VM_instruction_handler_STR(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    Arg* strArg = New_arg(NULL);
+    return arg_setStr(strArg, "", data);
+}
+
+static Arg* VM_instruction_handler_OUT(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    Arg* outArg = arg_copy(queue_popArg(vmState->q0));
+    obj_setArg(vmState->locals, data, outArg);
+    arg_deinit(outArg);
+    return NULL;
+}
+
+static Arg* VM_instruction_handler_NUM(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    Arg* numArg = New_arg(NULL);
+    if (strIsContain(data, '.')) {
+        return arg_setFloat(numArg, "", atof(data));
+    }
+    return arg_setInt(numArg, "", fast_atoi(data));
+}
+
+static Arg* VM_instruction_handler_JMP(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    vmState->jmp = fast_atoi(data);
+    return NULL;
+}
+
+static Arg* VM_instruction_handler_JEZ(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    int offset = 0;
+    int thisBlockDeepth =
+        getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
+    Arg* assertArg = arg_copy(queue_popArg(vmState->q0));
+    int assert = arg_getInt(assertArg);
+    arg_deinit(assertArg);
+    char __else[] = "__else0";
+    __else[6] = '0' + thisBlockDeepth;
+    args_setInt(self->list, __else, !assert);
+    if (0 == assert) {
+        /* set __else flag */
+        vmState->jmp = fast_atoi(data);
+    }
+    return NULL;
+}
+
+static Arg* VM_instruction_handler_OPT(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    Arg* outArg = NULL;
+    Arg* arg1 = arg_copy(queue_popArg(vmState->q1));
+    Arg* arg2 = arg_copy(queue_popArg(vmState->q1));
+    ArgType type_arg1 = arg_getType(arg1);
+    ArgType type_arg2 = arg_getType(arg2);
+    int num1_i = 0;
+    int num2_i = 0;
+    float num1_f = 0.0;
+    float num2_f = 0.0;
+    /* get int and float num */
+    if (type_arg1 == TYPE_INT) {
+        num1_i = arg_getInt(arg1);
+        num1_f = (float)num1_i;
+    }
+    if (type_arg1 == TYPE_FLOAT) {
+        num1_f = arg_getFloat(arg1);
+        num1_i = (int)num1_f;
+    }
+    if (type_arg2 == TYPE_INT) {
+        num2_i = arg_getInt(arg2);
+        num2_f = (float)num2_i;
+    }
+    if (type_arg2 == TYPE_FLOAT) {
+        num2_f = arg_getFloat(arg2);
+        num2_i = (int)num2_f;
+    }
+    if (strEqu("+", data)) {
+        if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+            outArg = arg_setFloat(outArg, "", num1_f + num2_f);
+            goto OPT_exit;
+        }
+        outArg = arg_setInt(outArg, "", num1_i + num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("-", data)) {
+        if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+            outArg = arg_setFloat(outArg, "", num1_f - num2_f);
+            goto OPT_exit;
+        }
+        outArg = arg_setInt(outArg, "", num1_i - num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("*", data)) {
+        if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+            outArg = arg_setFloat(outArg, "", num1_f * num2_f);
+            goto OPT_exit;
+        }
+        outArg = arg_setInt(outArg, "", num1_i * num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("/", data)) {
+        outArg = arg_setFloat(outArg, "", num1_f / num2_f);
+        goto OPT_exit;
+    }
+    if (strEqu("<", data)) {
+        outArg = arg_setInt(outArg, "", num1_f < num2_f);
+        goto OPT_exit;
+    }
+    if (strEqu(">", data)) {
+        outArg = arg_setInt(outArg, "", num1_f > num2_f);
+        goto OPT_exit;
+    }
+    if (strEqu("%", data)) {
+        outArg = arg_setInt(outArg, "", num1_i % num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("**", data)) {
+        float res = 1;
+        for (int i = 0; i < num2_i; i++) {
+            res = res * num1_f;
+        }
+        outArg = arg_setFloat(outArg, "", res);
+        goto OPT_exit;
+    }
+    if (strEqu("//", data)) {
+        outArg = arg_setInt(outArg, "", num1_i / num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("==", data)) {
+        outArg = arg_setInt(outArg, "",
+                            (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
+        goto OPT_exit;
+    }
+    if (strEqu("!=", data)) {
+        outArg = arg_setInt(
+            outArg, "", !((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+        goto OPT_exit;
+    }
+    if (strEqu(">=", data)) {
+        outArg =
+            arg_setInt(outArg, "",
+                       (num1_f > num2_f) ||
+                           ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+        goto OPT_exit;
+    }
+    if (strEqu("<=", data)) {
+        outArg =
+            arg_setInt(outArg, "",
+                       (num1_f < num2_f) ||
+                           ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+        goto OPT_exit;
+    }
+    if (strEqu("&", data)) {
+        outArg = arg_setInt(outArg, "", num1_i & num2_i);
+    }
+    if (strEqu("|", data)) {
+        outArg = arg_setInt(outArg, "", num1_i | num2_i);
+    }
+    if (strEqu("~", data)) {
+        outArg = arg_setInt(outArg, "", ~num1_i);
+    }
+    if (strEqu(">>", data)) {
+        outArg = arg_setInt(outArg, "", num1_i >> num2_i);
+    }
+    if (strEqu("<<", data)) {
+        outArg = arg_setInt(outArg, "", num1_i << num2_i);
+    }
+    if (strEqu(" and ", data)) {
+        outArg = arg_setInt(outArg, "", num1_i && num2_i);
+    }
+    if (strEqu(" or ", data)) {
+        outArg = arg_setInt(outArg, "", num1_i || num2_i);
+    }
+    if (strEqu(" not ", data)) {
+        outArg = arg_setInt(outArg, "", !num1_i);
+    }
+OPT_exit:
+    arg_deinit(arg1);
+    arg_deinit(arg2);
+    if (NULL != outArg) {
+        return outArg;
+    }
+    return NULL;
+}
+
+static Arg* VM_instruction_handler_DEF(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    char* methodPtr = vmState->pc;
+    int offset = 0;
+    int thisBlockDeepth =
+        getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
+    while (1) {
+        if ((methodPtr[0] == 'B') &&
+            (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
+            class_defineMethod(self, data, (Method)methodPtr);
+            break;
+        }
+        offset += gotoNextLine(methodPtr);
+        methodPtr = vmState->pc + offset;
+    }
+    return NULL;
+}
+
+static Arg* VM_instruction_handler_RET(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    /* exit jmp signal */
+    vmState->jmp = -999;
+    Arg* returnArg = arg_copy(queue_popArg(vmState->q0));
+    method_returnArg(vmState->locals->list, returnArg);
+    return NULL;
+}
+
+static Arg* VM_instruction_handler_NEL(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    int offset = 0;
+    int thisBlockDeepth =
+        getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
+    char __else[] = "__else0";
+    __else[6] = '0' + thisBlockDeepth;
+    if (0 == args_getInt(self->list, __else)) {
+        /* set __else flag */
+        vmState->jmp = fast_atoi(data);
+    }
+    return NULL;
+}
+
+static Arg* VM_instruction_handler_DEL(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    obj_removeArg(vmState->locals, data);
+    return NULL;
+}
+
+static Arg* VM_instruction_handler_EST(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    Arg* arg = obj_getArg(vmState->locals, data);
+    if (arg == NULL) {
+        return arg_setInt(NULL, "", 0);
+    }
+    if (TYPE_NULL == arg_getType(arg)) {
+        return arg_setInt(NULL, "", 0);
+    }
+    return arg_setInt(NULL, "", 1);
+}
+
+static Arg* VM_instruction_handler_BRK(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    /* break jmp signal */
+    vmState->jmp = -998;
+    return NULL;
+}
+
+static Arg* VM_instruction_handler_CTN(PikaObj* self,
+                                       struct VM_State_t* vmState,
+                                       char* data) {
+    /* continue jmp signal */
+    vmState->jmp = -997;
+    return NULL;
+}
+
+const VM_instruct_handler VM_instruct_handler_table[__INSTRCUTION_CNT] = {
+    [NON] = &VM_instruction_handler_NON, [REF] = &VM_instruction_handler_REF,
+    [RUN] = &VM_instruction_handler_RUN, [STR] = &VM_instruction_handler_STR,
+    [OUT] = &VM_instruction_handler_OUT, [NUM] = &VM_instruction_handler_NUM,
+    [JMP] = &VM_instruction_handler_JMP, [JEZ] = &VM_instruction_handler_JEZ,
+    [OPT] = &VM_instruction_handler_OPT, [DEF] = &VM_instruction_handler_DEF,
+    [RET] = &VM_instruction_handler_RET, [NEL] = &VM_instruction_handler_NEL,
+    [DEL] = &VM_instruction_handler_DEL, [EST] = &VM_instruction_handler_EST,
+    [BRK] = &VM_instruction_handler_BRK, [CTN] = &VM_instruction_handler_CTN,
 };
 
 static char* strs_getLine(Args* buffs, char* code) {
@@ -169,377 +568,11 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
-static Arg* pikaVM_runInstruct_each_instruct(PikaObj* self,
-                                             VM_State* vmState,
-                                             enum Instruct instruct,
-                                             char* data) {
-    // PIKA_ASSERT(instruct < __INSTRCUTION_CNT);
-
-    // c_vmInstructionTable[instruct].tHandler()
-
-    if (instruct == NUM) {
-        Arg* numArg = New_arg(NULL);
-        if (strIsContain(data, '.')) {
-            return arg_setFloat(numArg, "", atof(data));
-        }
-        return arg_setInt(numArg, "", fast_atoi(data));
-    }
-    if (instruct == STR) {
-        Arg* strArg = New_arg(NULL);
-        return arg_setStr(strArg, "", data);
-    }
-    if (instruct == OUT) {
-        Arg* outArg = arg_copy(queue_popArg(vmState->q0));
-        obj_setArg(vmState->locals, data, outArg);
-        arg_deinit(outArg);
-        return NULL;
-    }
-    if (instruct == DEL) {
-        obj_removeArg(vmState->locals, data);
-        return NULL;
-    }
-    if (instruct == REF) {
-        if (strEqu(data, (char*)"True")) {
-            return arg_setInt(NULL, "", 1);
-        }
-        if (strEqu(data, (char*)"False")) {
-            return arg_setInt(NULL, "", 0);
-        }
-        /* find in local list first */
-        Arg* arg = arg_copy(obj_getArg(vmState->locals, data));
-        if (NULL == arg) {
-            /* find in global list second */
-            arg = arg_copy(obj_getArg(vmState->globals, data));
-        }
-        ArgType arg_type = arg_getType(arg);
-        if (TYPE_OBJECT == arg_type) {
-            arg = arg_setType(arg, TYPE_POINTER);
-        }
-        return arg;
-    }
-    if (instruct == EST) {
-        Arg* arg = obj_getArg(vmState->locals, data);
-        if (arg == NULL) {
-            return arg_setInt(NULL, "", 0);
-        }
-        if (TYPE_NULL == arg_getType(arg)) {
-            return arg_setInt(NULL, "", 0);
-        }
-        return arg_setInt(NULL, "", 1);
-    }
-    if (instruct == JMP) {
-        vmState->jmp = fast_atoi(data);
-        return NULL;
-    }
-    if (instruct == RET) {
-        /* exit jmp signal */
-        vmState->jmp = -999;
-        Arg* returnArg = arg_copy(queue_popArg(vmState->q0));
-        method_returnArg(vmState->locals->list, returnArg);
-        return NULL;
-    }
-    if (instruct == BRK) {
-        /* break jmp signal */
-        vmState->jmp = -998;
-        return NULL;
-    }
-    if (instruct == CTN) {
-        /* continue jmp signal */
-        vmState->jmp = -997;
-        return NULL;
-    }
-    if (instruct == DEF) {
-        char* methodPtr = vmState->pc;
-        int offset = 0;
-        int thisBlockDeepth =
-            getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
-        while (1) {
-            if ((methodPtr[0] == 'B') &&
-                (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
-                class_defineMethod(self, data, (Method)methodPtr);
-                break;
-            }
-            offset += gotoNextLine(methodPtr);
-            methodPtr = vmState->pc + offset;
-        }
-        return NULL;
-    }
-    if (instruct == JEZ) {
-        int offset = 0;
-        int thisBlockDeepth =
-            getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
-        Arg* assertArg = arg_copy(queue_popArg(vmState->q0));
-        int assert = arg_getInt(assertArg);
-        arg_deinit(assertArg);
-        char __else[] = "__else0";
-        __else[6] = '0' + thisBlockDeepth;
-        args_setInt(self->list, __else, !assert);
-        if (0 == assert) {
-            /* set __else flag */
-            vmState->jmp = fast_atoi(data);
-        }
-        return NULL;
-    }
-    if (instruct == NEL) {
-        int offset = 0;
-        int thisBlockDeepth =
-            getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
-        char __else[] = "__else0";
-        __else[6] = '0' + thisBlockDeepth;
-        if (0 == args_getInt(self->list, __else)) {
-            /* set __else flag */
-            vmState->jmp = fast_atoi(data);
-        }
-        return NULL;
-    }
-    if (instruct == OPT) {
-        Arg* outArg = NULL;
-        Arg* arg1 = arg_copy(queue_popArg(vmState->q1));
-        Arg* arg2 = arg_copy(queue_popArg(vmState->q1));
-        ArgType type_arg1 = arg_getType(arg1);
-        ArgType type_arg2 = arg_getType(arg2);
-        int num1_i = 0;
-        int num2_i = 0;
-        float num1_f = 0.0;
-        float num2_f = 0.0;
-        /* get int and float num */
-        if (type_arg1 == TYPE_INT) {
-            num1_i = arg_getInt(arg1);
-            num1_f = (float)num1_i;
-        }
-        if (type_arg1 == TYPE_FLOAT) {
-            num1_f = arg_getFloat(arg1);
-            num1_i = (int)num1_f;
-        }
-        if (type_arg2 == TYPE_INT) {
-            num2_i = arg_getInt(arg2);
-            num2_f = (float)num2_i;
-        }
-        if (type_arg2 == TYPE_FLOAT) {
-            num2_f = arg_getFloat(arg2);
-            num2_i = (int)num2_f;
-        }
-        if (strEqu("+", data)) {
-            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
-                outArg = arg_setFloat(outArg, "", num1_f + num2_f);
-                goto OPT_exit;
-            }
-            outArg = arg_setInt(outArg, "", num1_i + num2_i);
-            goto OPT_exit;
-        }
-        if (strEqu("-", data)) {
-            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
-                outArg = arg_setFloat(outArg, "", num1_f - num2_f);
-                goto OPT_exit;
-            }
-            outArg = arg_setInt(outArg, "", num1_i - num2_i);
-            goto OPT_exit;
-        }
-        if (strEqu("*", data)) {
-            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
-                outArg = arg_setFloat(outArg, "", num1_f * num2_f);
-                goto OPT_exit;
-            }
-            outArg = arg_setInt(outArg, "", num1_i * num2_i);
-            goto OPT_exit;
-        }
-        if (strEqu("/", data)) {
-            outArg = arg_setFloat(outArg, "", num1_f / num2_f);
-            goto OPT_exit;
-        }
-        if (strEqu("<", data)) {
-            outArg = arg_setInt(outArg, "", num1_f < num2_f);
-            goto OPT_exit;
-        }
-        if (strEqu(">", data)) {
-            outArg = arg_setInt(outArg, "", num1_f > num2_f);
-            goto OPT_exit;
-        }
-        if (strEqu("%", data)) {
-            outArg = arg_setInt(outArg, "", num1_i % num2_i);
-            goto OPT_exit;
-        }
-        if (strEqu("**", data)) {
-            float res = 1;
-            for (int i = 0; i < num2_i; i++) {
-                res = res * num1_f;
-            }
-            outArg = arg_setFloat(outArg, "", res);
-            goto OPT_exit;
-        }
-        if (strEqu("//", data)) {
-            outArg = arg_setInt(outArg, "", num1_i / num2_i);
-            goto OPT_exit;
-        }
-        if (strEqu("==", data)) {
-            outArg = arg_setInt(
-                outArg, "", (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
-            goto OPT_exit;
-        }
-        if (strEqu("!=", data)) {
-            outArg =
-                arg_setInt(outArg, "",
-                           !((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
-            goto OPT_exit;
-        }
-        if (strEqu(">=", data)) {
-            outArg = arg_setInt(
-                outArg, "",
-                (num1_f > num2_f) ||
-                    ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
-            goto OPT_exit;
-        }
-        if (strEqu("<=", data)) {
-            outArg = arg_setInt(
-                outArg, "",
-                (num1_f < num2_f) ||
-                    ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
-            goto OPT_exit;
-        }
-        if (strEqu("&", data)) {
-            outArg = arg_setInt(outArg, "", num1_i & num2_i);
-        }
-        if (strEqu("|", data)) {
-            outArg = arg_setInt(outArg, "", num1_i | num2_i);
-        }
-        if (strEqu("~", data)) {
-            outArg = arg_setInt(outArg, "", ~num1_i);
-        }
-        if (strEqu(">>", data)) {
-            outArg = arg_setInt(outArg, "", num1_i >> num2_i);
-        }
-        if (strEqu("<<", data)) {
-            outArg = arg_setInt(outArg, "", num1_i << num2_i);
-        }
-        if (strEqu(" and ", data)) {
-            outArg = arg_setInt(outArg, "", num1_i && num2_i);
-        }
-        if (strEqu(" or ", data)) {
-            outArg = arg_setInt(outArg, "", num1_i || num2_i);
-        }
-        if (strEqu(" not ", data)) {
-            outArg = arg_setInt(outArg, "", !num1_i);
-        }
-    OPT_exit:
-        arg_deinit(arg1);
-        arg_deinit(arg2);
-        if (NULL != outArg) {
-            return outArg;
-        }
-    }
-    if (instruct == RUN) {
-        Args* buffs = New_strBuff();
-        Arg* returnArg = NULL;
-        VM_Parameters* subLocals = NULL;
-        char* methodPath = data;
-        PikaObj* methodHostObj;
-        Arg* method_arg;
-        Method methodPtr;
-        char* methodDec;
-        char* typeList;
-        char* methodCode;
-        char* sysOut;
-        /* return arg directly */
-        if (strEqu(data, "")) {
-            returnArg = arg_copy(queue_popArg(vmState->q1));
-            goto RUN_exit;
-        }
-        /* get method host obj */
-        methodHostObj = obj_getObj(self, methodPath, 1);
-        if (NULL == methodHostObj) {
-            methodHostObj = obj_getObj(vmState->locals, methodPath, 1);
-        }
-        if (NULL == methodHostObj) {
-            /* error, not found object */
-            args_setErrorCode(vmState->locals->list, 1);
-            args_setSysOut(vmState->locals->list,
-                           "[error] runner: object no found.");
-            goto RUN_exit;
-        }
-        /* get method */
-        method_arg = obj_getMethod(methodHostObj, methodPath);
-        /* assert method*/
-        if (NULL == method_arg) {
-            /* error, method no found */
-            args_setErrorCode(vmState->locals->list, 2);
-            args_setSysOut(vmState->locals->list,
-                           "[error] runner: method no found.");
-            goto RUN_exit;
-        }
-        /* get method Ptr */
-        methodPtr = (Method)methodArg_getPtr(method_arg);
-        /* get method Decleartion */
-        methodDec = strsCopy(buffs, methodArg_getDec(method_arg));
-        arg_deinit(method_arg);
-
-        /* get type list */
-        typeList = strsCut(buffs, methodDec, '(', ')');
-
-        if (typeList == NULL) {
-            /* typeList no found */
-            args_setErrorCode(vmState->locals->list, 3);
-            args_setSysOut(vmState->locals->list,
-                           "[error] runner: type list no found.");
-            goto RUN_exit;
-        }
-
-        subLocals = New_PikaObj();
-        while (1) {
-            Arg* methodArg = arg_copy(queue_popArg(vmState->q1));
-            if (NULL == methodArg) {
-                break;
-            }
-            char* argDef = strsPopToken(buffs, typeList, ',');
-            char* argName = strsGetFirstToken(buffs, argDef, ':');
-            methodArg = arg_setName(methodArg, argName);
-            args_setArg(subLocals->list, methodArg);
-        }
-
-        obj_setErrorCode(methodHostObj, 0);
-        obj_setSysOut(methodHostObj, "");
-
-        /* run method */
-        methodCode = (char*)methodPtr;
-        if (methodCode[0] == 'B' && methodCode[2] == '\n') {
-            /* VM method */
-            subLocals = pikaVM_runAsmWithPars(methodHostObj, subLocals,
-                                              vmState->globals, methodCode);
-            /* get method return */
-            returnArg = arg_copy(args_getArg(subLocals->list, (char*)"return"));
-        } else {
-            /* native method */
-            methodPtr(methodHostObj, subLocals->list);
-            /* get method return */
-            returnArg = arg_copy(args_getArg(subLocals->list, (char*)"return"));
-        }
-
-        /* transfer sysOut */
-        sysOut = obj_getSysOut(methodHostObj);
-        if (NULL != sysOut) {
-            args_setSysOut(vmState->locals->list, sysOut);
-        }
-        /* transfer errCode */
-        if (0 != obj_getErrorCode(methodHostObj)) {
-            /* method error */
-            args_setErrorCode(vmState->locals->list, 6);
-        }
-
-        goto RUN_exit;
-    RUN_exit:
-        if (NULL != subLocals) {
-            obj_deinit(subLocals);
-        }
-        args_deinit(buffs);
-        return returnArg;
-    }
-    return NULL;
-}
-
 static Arg* pikaVM_runInstruct(PikaObj* self,
                                VM_State* vmState,
                                enum Instruct instruct,
                                char* data) {
-    return pikaVM_runInstruct_each_instruct(self, vmState, instruct, data);
+    return VM_instruct_handler_table[instruct](self, vmState, data);
 };
 
 int32_t __clearInvokeQueues(VM_Parameters* locals) {
