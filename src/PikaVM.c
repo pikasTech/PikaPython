@@ -55,30 +55,29 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
+
+
 enum Instruct {
-    NON = 0,
-    REF,
-    RUN,
-    STR,
-    OUT,
-    NUM,
-    JMP,
-    JEZ,
-    OPT,
-    DEF,
-    RET,
-    NEL,
-    DEL,
-    EST,
-    BRK,
-    CTN,
+    
+    #define __INS_ENUM
+    #include "__instruction_table.h"
+    
     __INSTRCUTION_CNT,
 };
+
+
+
+
 
 typedef Arg* (*VM_instruct_handler)(PikaObj* self,
                                     struct VM_State_t* vmState,
                                     char* data);
 
+                                    
+#define __INS_IMPL
+#include "__instruction_table.h"                      
+                                    
+#if defined(__VM_DEBUG__)
 static Arg* VM_instruction_handler_NON(PikaObj* self,
                                        struct VM_State_t* vmState,
                                        char* data) {
@@ -492,16 +491,12 @@ static Arg* VM_instruction_handler_CTN(PikaObj* self,
     vmState->jmp = -997;
     return NULL;
 }
+#endif
 
 const VM_instruct_handler VM_instruct_handler_table[__INSTRCUTION_CNT] = {
-    [NON] = &VM_instruction_handler_NON, [REF] = &VM_instruction_handler_REF,
-    [RUN] = &VM_instruction_handler_RUN, [STR] = &VM_instruction_handler_STR,
-    [OUT] = &VM_instruction_handler_OUT, [NUM] = &VM_instruction_handler_NUM,
-    [JMP] = &VM_instruction_handler_JMP, [JEZ] = &VM_instruction_handler_JEZ,
-    [OPT] = &VM_instruction_handler_OPT, [DEF] = &VM_instruction_handler_DEF,
-    [RET] = &VM_instruction_handler_RET, [NEL] = &VM_instruction_handler_NEL,
-    [DEL] = &VM_instruction_handler_DEL, [EST] = &VM_instruction_handler_EST,
-    [BRK] = &VM_instruction_handler_BRK, [CTN] = &VM_instruction_handler_CTN,
+
+    #define __INS_TABLE
+    #include "__instruction_table.h"   
 };
 
 static char* strs_getLine(Args* buffs, char* code) {
