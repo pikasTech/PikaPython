@@ -54,7 +54,7 @@ uint16_t content_getSize(uint8_t* self) {
 
 void content_setNext(uint8_t* self, uint8_t* next) {
     uint8_t* nextDir = self + content_nextOffset(self);
-    uint64_t pointerTemp = (long)next;
+    uint64_t pointerTemp = (uintptr_t)next;
     for (uint32_t i = 0; i < sizeof(uint8_t*); i++) {
         // aboid \0
         nextDir[i] = pointerTemp;
@@ -101,7 +101,7 @@ uint8_t* content_init_hash(Hash nameHash,
         __platform_memset(contentDir, 0, size);
     }
 
-    uint64_t pointerTemp = (long)next;
+    uint64_t pointerTemp = (uintptr_t)next;
     for (uint32_t i = 0; i < sizeof(uint8_t*); i++) {
         // aboid \0
         nextDir[i] = pointerTemp;
@@ -258,7 +258,7 @@ uint8_t* content_getNext(uint8_t* self) {
         pointerTemp = (pointerTemp << 8);
         pointerTemp += val;
     }
-    next = (uint8_t*)(long)pointerTemp;
+    next = (uint8_t*)(uintptr_t)pointerTemp;
     return next;
 }
 
@@ -310,7 +310,7 @@ float arg_getFloat(Arg* self) {
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
-    uint64_t pointerTemp = (long)pointer;
+    uint64_t pointerTemp = (uintptr_t)pointer;
     uint8_t contentBuff[8];
     for (uint32_t i = 0; i < sizeof(uint8_t*); i++) {
         // aboid \0
@@ -351,7 +351,7 @@ void* arg_getPtr(Arg* self) {
         pointerTemp = (pointerTemp << 8);
         pointerTemp += val;
     }
-    pointer = (void*)(long)pointerTemp;
+    pointer = (void*)(uintptr_t)pointerTemp;
     return pointer;
 }
 char* arg_getStr(Arg* self) {

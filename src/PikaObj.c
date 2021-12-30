@@ -425,7 +425,7 @@ void* methodArg_getPtr(Arg* method_arg) {
 char* methodArg_getDec(Arg* method_arg) {
     uint32_t size_ptr = sizeof(void*);
     void* info = arg_getContent(method_arg);
-    return (char*)((long)info + size_ptr);
+    return (char*)((uintptr_t)info + size_ptr);
 }
 
 void obj_saveMethodInfo(PikaObj* self,
@@ -441,7 +441,7 @@ void obj_saveMethodInfo(PikaObj* self,
     void* info = args_getBuff(buffs, size_info);
     __platform_memcpy(info, &method_ptr, size_ptr);
     /* +1 to add \0 */
-    __platform_memcpy((void*)((long)info + size_ptr), pars, size_pars + 1);
+    __platform_memcpy((void*)((uintptr_t)info + size_ptr), pars, size_pars + 1);
     arg = arg_setName(arg, method_name);
     arg = arg_setType(arg, TYPE_METHOD);
     arg = arg_setContent(arg, info, size_info);

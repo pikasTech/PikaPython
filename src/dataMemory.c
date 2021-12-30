@@ -107,7 +107,7 @@ void* pool_getMem_byBlockIndex(Pool* pool, uint32_t block_index) {
 }
 
 uint32_t pool_getBlockIndex_byMem(Pool* pool, void* mem) {
-    uint32_t mem_size = (long)mem - (long)pool->mem;
+    uint32_t mem_size = (uintptr_t)mem - (uintptr_t)pool->mem;
     return pool_getBlockIndex_byMemSize(pool, mem_size);
 }
 
