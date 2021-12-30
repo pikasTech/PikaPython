@@ -485,8 +485,8 @@ PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {
     return 0;
 }
 
-Parameters* obj_runDirect(PikaObj* self, char* cmd) {
-    Parameters* globals = NULL;
+VM_Parameters* obj_runDirect(PikaObj* self, char* cmd) {
+    VM_Parameters* globals = NULL;
 
     globals = pikaVM_run(self, cmd);
     goto exit;

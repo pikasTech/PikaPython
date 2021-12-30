@@ -17,7 +17,7 @@ TEST(pikaMain, init) {
 TEST(pikaMain, new_mem) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-    Parameters* globals =
+    VM_Parameters* globals =
         obj_runDirect(pikaMain, (char*)
         "mem = PikaStdLib.MemChecker()\n"
         "mem.max()\n"
@@ -35,7 +35,7 @@ TEST(pikaMain, list_new) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
-    Parameters* globals =
+    VM_Parameters* globals =
         obj_runDirect(pikaMain, (char*)
         "list = PikaStdData.List()\n"
         "list.append(7)\n"
@@ -65,7 +65,7 @@ TEST(pikaMain, int_float_convert) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
-    Parameters* globals =
+    VM_Parameters* globals =
         obj_runDirect(pikaMain, (char*)
         "a = 1\n"
         "a_f = float(a)\n"

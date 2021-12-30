@@ -51,7 +51,7 @@ typedef struct PikaObj_t PikaObj;
 
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
-typedef PikaObj Parameters;
+typedef PikaObj VM_Parameters;
 typedef void (*Method)(PikaObj* self, Args* args);
 
 struct PikaObj_t {
@@ -152,7 +152,7 @@ void* methodArg_getPtr(Arg* method_arg);
 
 void obj_runNoRes(PikaObj* slef, char* cmd);
 void obj_run(PikaObj* self, char* cmd);
-Parameters* obj_runDirect(PikaObj* self, char* cmd);
+VM_Parameters* obj_runDirect(PikaObj* self, char* cmd);
 PikaObj* New_PikaObj(void);
 
 /* tools */
