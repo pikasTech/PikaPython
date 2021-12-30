@@ -727,7 +727,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         vmState.q1 = New_queue();
         args_setPtr(locals->list, invokeDeepth1, vmState.q1);
     }
-
+    /* run instruct */
     resArg = VM_instruct_handler_table[instruct](self, &vmState, data);
     if (NULL != resArg) {
         queue_pushArg(vmState.q0, resArg);
