@@ -26,13 +26,79 @@
  */
 
 #include "PikaObj.h"
-#include <stdarg.h>
 #include "BaseObj.h"
+#include "PikaPlatform.h"
 #include "PikaVM.h"
 #include "dataArgs.h"
 #include "dataMemory.h"
 #include "dataString.h"
 #include "dataStrs.h"
+
+int fast_atoi(char* src) {
+    const char* p = src;
+    static const uint64_t a[][10] = {
+        {0, 1e0, 2e0, 3e0, 4e0, 5e0, 6e0, 7e0, 8e0, 9e0},
+        {0, 1e1, 2e1, 3e1, 4e1, 5e1, 6e1, 7e1, 8e1, 9e1},
+        {0, 1e2, 2e2, 3e2, 4e2, 5e2, 6e2, 7e2, 8e2, 9e2},
+        {0, 1e3, 2e3, 3e3, 4e3, 5e3, 6e3, 7e3, 8e3, 9e3},
+        {0, 1e4, 2e4, 3e4, 4e4, 5e4, 6e4, 7e4, 8e4, 9e4},
+        {0, 1e5, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, 8e5, 9e5},
+        {0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6, 9e6},
+        {0, 1e7, 2e7, 3e7, 4e7, 5e7, 6e7, 7e7, 8e7, 9e7},
+        {0, 1e8, 2e8, 3e8, 4e8, 5e8, 6e8, 7e8, 8e8, 9e8},
+        {0, 1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9},
+    };
+    uint16_t size = strGetSize(src);
+    p = p + size - 1;
+    if (*p) {
+        int s = 0;
+        const uint64_t* n = a[0];
+        while (p != src) {
+            s += n[(*p - '0')];
+            n += 10;
+            p--;
+        }
+        if (*p == '-') {
+            return -s;
+        }
+        return s + n[(*p - '0')];
+    }
+    return 0;
+}
+
+static uint16_t const str100p[100] = {
+    0x3030, 0x3130, 0x3230, 0x3330, 0x3430, 0x3530, 0x3630, 0x3730, 0x3830,
+    0x3930, 0x3031, 0x3131, 0x3231, 0x3331, 0x3431, 0x3531, 0x3631, 0x3731,
+    0x3831, 0x3931, 0x3032, 0x3132, 0x3232, 0x3332, 0x3432, 0x3532, 0x3632,
+    0x3732, 0x3832, 0x3932, 0x3033, 0x3133, 0x3233, 0x3333, 0x3433, 0x3533,
+    0x3633, 0x3733, 0x3833, 0x3933, 0x3034, 0x3134, 0x3234, 0x3334, 0x3434,
+    0x3534, 0x3634, 0x3734, 0x3834, 0x3934, 0x3035, 0x3135, 0x3235, 0x3335,
+    0x3435, 0x3535, 0x3635, 0x3735, 0x3835, 0x3935, 0x3036, 0x3136, 0x3236,
+    0x3336, 0x3436, 0x3536, 0x3636, 0x3736, 0x3836, 0x3936, 0x3037, 0x3137,
+    0x3237, 0x3337, 0x3437, 0x3537, 0x3637, 0x3737, 0x3837, 0x3937, 0x3038,
+    0x3138, 0x3238, 0x3338, 0x3438, 0x3538, 0x3638, 0x3738, 0x3838, 0x3938,
+    0x3039, 0x3139, 0x3239, 0x3339, 0x3439, 0x3539, 0x3639, 0x3739, 0x3839,
+    0x3939,
+};
+
+char* fast_itoa(char* buf, uint32_t val) {
+    char* p = &buf[10];
+
+    *p = '\0';
+
+    while (val >= 100) {
+        uint32_t const old = val;
+
+        p -= 2;
+        val /= 100;
+        __platform_memcpy(p, &str100p[old - (val * 100)], sizeof(uint16_t));
+    }
+
+    p -= 2;
+    __platform_memcpy(p, &str100p[val], sizeof(uint16_t));
+
+    return &p[val < 10];
+}
 
 int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
     if (NULL != handleArgs) {
@@ -152,7 +218,12 @@ int32_t obj_setArg(PikaObj* self, char* argPath, Arg* arg) {
         /* object no found */
         return 1;
     }
-    args_copyArg(obj->list, arg);
+    Args* buffs = New_strBuff();
+    char* argName = strsGetLastToken(buffs, argPath, '.');
+    Arg* newArg = arg_copy(arg);
+    newArg = arg_setName(newArg, argName);
+    args_deinit(buffs);
+    args_setArg(obj->list, newArg);
     return 0;
 }
 
@@ -224,7 +295,7 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
                                  NewFun newClassFun) {
     Args* initArgs = New_args(NULL);
     PikaObj* thisClass = newClassFun(initArgs);
-    obj_setPtr(thisClass, "_clsptr", newClassFun);
+    obj_setPtr(thisClass, "_clsptr", (void*)newClassFun);
     args_deinit(initArgs);
     return thisClass;
 }
@@ -248,11 +319,8 @@ exit:
 }
 
 PikaObj* obj_getClassObj(PikaObj* obj) {
-    Args* buffs = New_strBuff();
     NewFun classPtr = (NewFun)obj_getPtr(obj, "_clsptr");
-    char* classObjName = strsAppend(buffs, "_cls-", "");
-    PikaObj* classObj = obj_getClassObjByNewFun(obj, classObjName, classPtr);
-    args_deinit(buffs);
+    PikaObj* classObj = obj_getClassObjByNewFun(obj, "", classPtr);
     return classObj;
 }
 
@@ -282,12 +350,13 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     return newObj;
 }
 
-PikaObj* initObj(PikaObj* obj, char* name) {
+static PikaObj* __initObj(PikaObj* obj, char* name) {
     PikaObj* res = NULL;
     NewFun newObjFun = (NewFun)getNewClassObjFunByName(obj, name);
     Args* buffs = New_args(NULL);
     PikaObj* thisClass;
     PikaObj* newObj;
+    Arg* methodArg;
     if (NULL == newObjFun) {
         /* no such object */
         res = NULL;
@@ -298,6 +367,12 @@ PikaObj* initObj(PikaObj* obj, char* name) {
 
     args_setPtrWithType(obj->list, name, TYPE_OBJECT, newObj);
     res = obj_getPtr(obj, name);
+    /* run __init__() when init obj */
+    methodArg = obj_getMethod(res, "__init__");
+    if (NULL != methodArg) {
+        arg_deinit(methodArg);
+        obj_run(res, "__init__()");
+    }
     goto exit;
 exit:
     args_deinit(buffs);
@@ -312,10 +387,10 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
     ArgType type = args_getType(self->list, name);
     /* found mate Object */
     if (type == TYPE_MATE_OBJECT) {
-        return initObj(self, name);
+        return __initObj(self, name);
     }
     /* found Objcet */
-    if (type == TYPE_OBJECT) {
+    if (type == TYPE_OBJECT || type == TYPE_POINTER) {
         return obj_getPtr(self, name);
     }
     return NULL;
@@ -343,14 +418,14 @@ void* methodArg_getPtr(Arg* method_arg) {
     uint32_t size_ptr = sizeof(void*);
     void* info = arg_getContent(method_arg);
     void* ptr = NULL;
-    memcpy(&ptr, info, size_ptr);
+    __platform_memcpy(&ptr, info, size_ptr);
     return ptr;
 }
 
 char* methodArg_getDec(Arg* method_arg) {
     uint32_t size_ptr = sizeof(void*);
     void* info = arg_getContent(method_arg);
-    return (char*)((uint64_t)info + size_ptr);
+    return (char*)((long)info + size_ptr);
 }
 
 void obj_saveMethodInfo(PikaObj* self,
@@ -364,9 +439,9 @@ void obj_saveMethodInfo(PikaObj* self,
     uint32_t size_pars = strGetSize(pars);
     uint32_t size_info = size_ptr + size_pars + 1;
     void* info = args_getBuff(buffs, size_info);
-    memcpy(info, &method_ptr, size_ptr);
+    __platform_memcpy(info, &method_ptr, size_ptr);
     /* +1 to add \0 */
-    memcpy((void*)((uint64_t)info + size_ptr), pars, size_pars + 1);
+    __platform_memcpy((void*)((long)info + size_ptr), pars, size_pars + 1);
     arg = arg_setName(arg, method_name);
     arg = arg_setType(arg, TYPE_METHOD);
     arg = arg_setContent(arg, info, size_info);
@@ -395,7 +470,8 @@ int32_t class_defineMethod(PikaObj* self,
     }
     methodName = strsGetLastToken(buffs, methodPath, '.');
 
-    obj_saveMethodInfo(methodHost, methodName, cleanDeclearation, methodPtr);
+    obj_saveMethodInfo(methodHost, methodName, cleanDeclearation,
+                       (void*)methodPtr);
     res = 0;
     goto exit;
 exit:
@@ -419,12 +495,12 @@ exit:
 
 int32_t obj_removeArg(PikaObj* self, char* argPath) {
     PikaObj* objHost = obj_getObj(self, argPath, 1);
-    PikaObj* obj = obj_getObj(self, argPath, 0);
+    Arg* obj_arg = obj_getArg(self, argPath);
     Args* buffs = New_strBuff();
     char* argName;
     int32_t res;
-    if (NULL != obj) {
-        obj_deinit(obj);
+    if (TYPE_OBJECT == arg_getType(obj_arg)) {
+        obj_deinit(arg_getPtr(obj_arg));
     }
     int32_t err = 0;
     if (NULL == objHost) {
@@ -474,13 +550,54 @@ exit:
 
 void obj_runNoRes(PikaObj* slef, char* cmd) {
     /* unsafe, nothing would happend when error occord */
-    obj_deinit(obj_runDirect(slef, cmd));
+    obj_runDirect(slef, cmd);
 }
 
 void obj_run(PikaObj* self, char* cmd) {
     /* safe, stop when error occord and error info would be print32_t */
-    Parameters* globals = obj_runDirect(self, cmd);
-    obj_deinit(globals);
+    obj_runDirect(self, cmd);
+    // obj_deinit(globals);
+}
+
+#define RX_Buff_SIZE 128
+char rxBuff[RX_Buff_SIZE] = {0};
+char rx_char = 0;
+static void clearBuff(char* buff, int size) {
+    for (int i = 0; i < size; i++) {
+        buff[i] = 0;
+    }
+}
+void pikaScriptShell(PikaObj* self) {
+    __platform_printf(">>> ");
+    while (1) {
+        char inputChar = __platform_getchar();
+        __platform_printf("%c", inputChar);
+        if ((inputChar == '\b') || (inputChar == 127)) {
+            uint32_t size = strGetSize(rxBuff);
+            if (size == 0) {
+                __platform_printf(" ");
+                continue;
+            }
+            __platform_printf(" \b");
+            rxBuff[size - 1] = 0;
+            continue;
+        }
+        if (inputChar != '\r' && inputChar != '\n') {
+            strAppendWithSize(rxBuff, &inputChar, 1);
+            continue;
+        }
+        if ((inputChar == '\r') || (inputChar == '\n')) {
+            __platform_printf("\r\n");
+            if (strEqu("exit()", rxBuff)) {
+                /* exit pika shell */
+                break;
+            }
+            obj_run(self, rxBuff);
+            __platform_printf(">>> ");
+            clearBuff(rxBuff, RX_Buff_SIZE);
+            continue;
+        }
+    }
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {
@@ -525,7 +642,7 @@ void obj_sysPrintf(PikaObj* self, char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     char sysOut[128] = {0};
-    vsprintf(sysOut, fmt, args);
+    __platform_vsprintf(sysOut, fmt, args);
     obj_setSysOut(self, sysOut);
     va_end(args);
 }

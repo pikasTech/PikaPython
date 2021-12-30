@@ -25,9 +25,8 @@
  * SOFTWARE.
  */
 
+#include "PikaPlatform.h"
 #include "dataStrs.h"
-#include <stdarg.h>
-#include <stdio.h>
 #include "dataString.h"
 
 Args* New_strBuff(void) {
@@ -109,29 +108,16 @@ char* strsFormat(Args* buffs, uint16_t buffSize, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     char* res = args_getBuff(buffs, buffSize);
-    vsnprintf(res, buffSize, fmt, args);
+    __platform_vsnprintf(res, buffSize, fmt, args);
     va_end(args);
     return res;
 }
 
-char* strsGetCleanCmd(Args* buffs, char* cmd) {
-    int32_t size = strGetSize(cmd);
-    char* strOut = args_getBuff(buffs, size);
-    int32_t iOut = 0;
-    char delChar = ' ';
-    int32_t isInStr = 0;
-    for (int32_t i = 0; i < strGetSize(cmd); i++) {
-        if ('\'' == cmd[i] || '\"' == cmd[i]) {
-            isInStr = !isInStr;
-        }
-        if ((delChar == cmd[i]) && (!isInStr)) {
-            /* do not load char */
-            continue;
-        }
-        strOut[iOut] = cmd[i];
-        iOut++;
-    }
-    /* add \0 */
-    strOut[iOut] = 0;
-    return strOut;
+Arg* arg_strAppend(Arg* arg_in, char* str_to_append){
+    Args* buffs = New_strBuff();
+    char* str_out = strsAppend(buffs, arg_getStr(arg_in), str_to_append);
+    Arg* arg_out = arg_setStr(arg_in, "", str_out);
+    arg_deinit(arg_in);
+    args_deinit(buffs);
+    return arg_out;
 }

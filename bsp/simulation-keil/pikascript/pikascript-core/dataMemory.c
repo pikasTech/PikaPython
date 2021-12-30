@@ -26,24 +26,24 @@
  */
 
 #include "dataMemory.h"
-#include <stdint.h>
-#include <stdlib.h>
+#include "PikaPlatform.h"
 
 PikaMemInfo pikaMemInfo = {0};
 
 void* pikaMalloc(uint32_t size) {
     /* pika memory lock */
-    while (__isLocked_pikaMemory()) {
+    if (0 != __is_locked_pikaMemory()) {
+        __platform_wait();
     }
     pikaMemInfo.heapUsed += size;
     if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
         pikaMemInfo.heapUsedMax = pikaMemInfo.heapUsed;
     }
-    __platformDisableIrqHandle();
+    __platform_disable_irq_handle();
     void* mem = __impl_pikaMalloc(size);
-    __platformEnableIrqHandle();
+    __platform_enable_irq_handle();
     if (NULL == mem) {
-        __platformPrintf(
+        __platform_printf(
             "[error]: No heap space! Please reset the device.\r\n");
         while (1) {
         }
@@ -52,12 +52,12 @@ void* pikaMalloc(uint32_t size) {
 }
 
 void pikaFree(void* mem, uint32_t size) {
-    /* pika memory lock */
-    while (__isLocked_pikaMemory()) {
+    if (0 != __is_locked_pikaMemory()) {
+        __platform_wait();
     }
-    __platformDisableIrqHandle();
+    __platform_disable_irq_handle();
     __impl_pikaFree(mem, size);
-    __platformEnableIrqHandle();
+    __platform_enable_irq_handle();
     pikaMemInfo.heapUsed -= size;
 }
 
@@ -90,13 +90,14 @@ Pool pool_init(uint32_t size, uint8_t aline) {
     uint32_t block_size = pool_getBlockIndex_byMemSize(&pool, size);
     pool.size = pool_aline(&pool, size);
     pool.bitmap = bitmap_init(block_size);
-    pool.mem = __platformMalloc(pool_aline(&pool, pool.size));
-    pool.block_index_min_free = 0;
+    pool.mem = __platform_malloc(pool_aline(&pool, pool.size));
+    pool.first_free_block = 0;
+    pool.purl_free_block_start = 0;
     return pool;
 }
 
 void pool_deinit(Pool* pool) {
-    __platformFree(pool->mem);
+    __platform_free(pool->mem);
     pool->mem = NULL;
     bitmap_deinit(pool->bitmap);
 }
@@ -106,20 +107,20 @@ void* pool_getMem_byBlockIndex(Pool* pool, uint32_t block_index) {
 }
 
 uint32_t pool_getBlockIndex_byMem(Pool* pool, void* mem) {
-    uint32_t mem_size = (uint64_t)mem - (uint64_t)pool->mem;
+    uint32_t mem_size = (long)mem - (long)pool->mem;
     return pool_getBlockIndex_byMemSize(pool, mem_size);
 }
 
 void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
     uint32_t block_index_min = pool_getBlockIndex_byMemSize(pool, size_min);
     uint32_t block_index_max = pool_getBlockIndex_byMemSize(pool, size_max);
-    __platformPrintf("[bitmap]\r\n");
+    __platform_printf("[bitmap]\r\n");
     uint8_t is_end = 0;
     for (uint32_t i = block_index_min; i < block_index_max; i += 16) {
         if (is_end) {
             break;
         }
-        __platformPrintf("0x%x\t: ", i * pool->aline, (i + 15) * pool->aline);
+        __platform_printf("0x%x\t: ", i * pool->aline, (i + 15) * pool->aline);
         for (uint32_t j = i; j < i + 16; j += 4) {
             if (is_end) {
                 break;
@@ -129,22 +130,31 @@ void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
                     is_end = 1;
                     break;
                 }
-                __platformPrintf("%d", bitmap_get(pool->bitmap, k));
+                __platform_printf("%d", bitmap_get(pool->bitmap, k));
             }
-            __platformPrintf(" ");
+            __platform_printf(" ");
         }
-        __platformPrintf("\r\n");
+        __platform_printf("\r\n");
     }
 }
 
 void* pool_malloc(Pool* pool, uint32_t size) {
-    void* mem = NULL;
     uint32_t block_index_max = pool_getBlockIndex_byMemSize(pool, pool->size);
     uint32_t block_num_need = pool_getBlockIndex_byMemSize(pool, size);
     uint32_t block_num_found = 0;
     uint8_t found_first_free = 0;
-    for (uint32_t block_index = pool->block_index_min_free;
-         block_index < block_index_max; block_index++) {
+    uint32_t block_index;
+    if (__is_quick_malloc()) {
+        /* high speed malloc */
+        block_index = pool->purl_free_block_start + block_num_need - 1;
+        if (block_index < block_index_max) {
+            goto found;
+        }
+    }
+
+    /* low speed malloc */
+    for (block_index = pool->first_free_block;
+         block_index < pool->purl_free_block_start; block_index++) {
         /* 8 bit is not free */
         uint8_t bitmap_byte = bitmap_getByte(pool->bitmap, block_index);
         if (0xFF == bitmap_byte) {
@@ -156,7 +166,7 @@ void* pool_malloc(Pool* pool, uint32_t size) {
         if (0 == bitmap_get(pool->bitmap, block_index)) {
             /* save the first free */
             if (!found_first_free) {
-                pool->block_index_min_free = block_index;
+                pool->first_free_block = block_index;
                 found_first_free = 1;
             }
             block_num_found++;
@@ -166,16 +176,28 @@ void* pool_malloc(Pool* pool, uint32_t size) {
         }
         /* found all request blocks */
         if (block_num_found >= block_num_need) {
-            /* set 1 for found blocks */
-            for (uint32_t i = 0; i < block_num_need; i++) {
-                bitmap_set(pool->bitmap, block_index - i, 1);
-            }
-            /* return mem by block index */
-            return pool_getMem_byBlockIndex(pool,
-                                            block_index - block_num_need + 1);
+            goto found;
         }
     }
-    return mem;
+    /* malloc for purl free blocks */
+    block_index = pool->purl_free_block_start + block_num_need - 1;
+    if (block_index < block_index_max) {
+        goto found;
+    }
+
+    /* no found */
+    return NULL;
+found:
+    /* set 1 for found blocks */
+    for (uint32_t i = 0; i < block_num_need; i++) {
+        bitmap_set(pool->bitmap, block_index - i, 1);
+    }
+    /* save last used block */
+    if (block_index >= pool->purl_free_block_start) {
+        pool->purl_free_block_start = block_index + 1;
+    }
+    /* return mem by block index */
+    return pool_getMem_byBlockIndex(pool, block_index - block_num_need + 1);
 }
 
 void pool_free(Pool* pool, void* mem, uint32_t size) {
@@ -185,8 +207,23 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
         bitmap_set(pool->bitmap, block_index + i, 0);
     }
     /* save min free block index to add speed */
-    if (block_index < pool->block_index_min_free) {
-        pool->block_index_min_free = block_index;
+    if (block_index < pool->first_free_block) {
+        pool->first_free_block = block_index;
+    }
+    /* save last free block index to add speed */
+    uint32_t block_end = block_index + block_num - 1;
+    if (block_end == pool->purl_free_block_start - 1) {
+        uint32_t first_pure_free_block = block_index;
+        /* back to first used block */
+        if (0 != first_pure_free_block) {
+            while (0 == bitmap_get(pool->bitmap, first_pure_free_block - 1)) {
+                first_pure_free_block--;
+                if (0 == first_pure_free_block) {
+                    break;
+                }
+            }
+        }
+        pool->purl_free_block_start = first_pure_free_block;
     }
     return;
 }
@@ -200,11 +237,12 @@ uint32_t aline_by(uint32_t size, uint32_t aline) {
 
 BitMap bitmap_init(uint32_t size) {
     BitMap mem_bit_map =
-        (BitMap)__platformMalloc(((size - 1) / 8 + 1) * sizeof(char));
-    if (mem_bit_map == NULL)
-        NULL;
+        (BitMap)__platform_malloc(((size - 1) / 8 + 1) * sizeof(char));
+    if (mem_bit_map == NULL){
+        return NULL;
+    }
     uint32_t size_mem_bit_map = (size - 1) / 8 + 1;
-    memset(mem_bit_map, 0x0, size_mem_bit_map);
+    __platform_memset(mem_bit_map, 0x0, size_mem_bit_map);
     return mem_bit_map;
 }
 
@@ -239,5 +277,5 @@ uint8_t bitmap_get(BitMap bitmap, uint32_t index) {
 }
 
 void bitmap_deinit(BitMap bitmap) {
-    __platformFree(bitmap);
+    __platform_free(bitmap);
 }

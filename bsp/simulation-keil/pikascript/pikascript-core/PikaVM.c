@@ -26,10 +26,10 @@
  */
 
 #include "PikaVM.h"
-#include <string.h>
 #include "BaseObj.h"
 #include "PikaObj.h"
 #include "PikaParser.h"
+#include "PikaPlatform.h"
 #include "dataQueue.h"
 #include "dataQueueObj.h"
 #include "dataStrs.h"
@@ -43,12 +43,29 @@ static int32_t getLineSize(char* str) {
         i++;
     }
 }
-enum Instruct { NON, REF, RUN, STR, OUT, NUM, JMP, JEZ, OPT, DEF, RET };
+enum Instruct {
+    NON = 0,
+    REF,
+    RUN,
+    STR,
+    OUT,
+    NUM,
+    JMP,
+    JEZ,
+    OPT,
+    DEF,
+    RET,
+    NEL,
+    DEL,
+    EST,
+    BRK,
+    CTN
+};
 
 static char* strs_getLine(Args* buffs, char* code) {
     int32_t lineSize = getLineSize(code);
     char* line = args_getBuff(buffs, lineSize + 1);
-    memcpy(line, code, lineSize);
+    __platform_memcpy(line, code, lineSize);
     line[lineSize + 1] = 0;
     return line;
 }
@@ -94,39 +111,27 @@ static enum Instruct getInstruct(char* line) {
         /* return */
         return RET;
     }
-    return NON;
-}
-
-int fast_atoi(char* src) {
-    const char* p = src;
-    static const uint64_t a[][10] = {
-        {0, 1e0, 2e0, 3e0, 4e0, 5e0, 6e0, 7e0, 8e0, 9e0},
-        {0, 1e1, 2e1, 3e1, 4e1, 5e1, 6e1, 7e1, 8e1, 9e1},
-        {0, 1e2, 2e2, 3e2, 4e2, 5e2, 6e2, 7e2, 8e2, 9e2},
-        {0, 1e3, 2e3, 3e3, 4e3, 5e3, 6e3, 7e3, 8e3, 9e3},
-        {0, 1e4, 2e4, 3e4, 4e4, 5e4, 6e4, 7e4, 8e4, 9e4},
-        {0, 1e5, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, 8e5, 9e5},
-        {0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6, 9e6},
-        {0, 1e7, 2e7, 3e7, 4e7, 5e7, 6e7, 7e7, 8e7, 9e7},
-        {0, 1e8, 2e8, 3e8, 4e8, 5e8, 6e8, 7e8, 8e8, 9e8},
-        {0, 1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9},
-    };
-    uint16_t size = strGetSize(src);
-    p = p + size - 1;
-    if (*p) {
-        int s = 0;
-        const uint64_t* n = a[0];
-        while (p != src) {
-            s += n[(*p - '0')];
-            n += 10;
-            p--;
-        }
-        if (*p == '-') {
-            return -s;
-        }
-        return s + n[(*p - '0')];
+    if (0 == strncmp(line + 2, "NEL", 3)) {
+        /* not else */
+        return NEL;
     }
-    return 0;
+    if (0 == strncmp(line + 2, "DEL", 3)) {
+        /* delete */
+        return DEL;
+    }
+    if (0 == strncmp(line + 2, "EST", 3)) {
+        /* is exist */
+        return EST;
+    }
+    if (0 == strncmp(line + 2, "BRK", 3)) {
+        /* break */
+        return BRK;
+    }
+    if (0 == strncmp(line + 2, "CTN", 3)) {
+        /* continue */
+        return CTN;
+    }
+    return NON;
 }
 
 Arg* pikaVM_runInstruct(PikaObj* self,
@@ -137,7 +142,8 @@ Arg* pikaVM_runInstruct(PikaObj* self,
                         Queue* invokeQuene0,
                         Queue* invokeQuene1,
                         int32_t* jmp,
-                        char* programConter) {
+                        char* programConter,
+                        char* asmStart) {
     if (instruct == NUM) {
         Arg* numArg = New_arg(NULL);
         if (strIsContain(data, '.')) {
@@ -151,12 +157,12 @@ Arg* pikaVM_runInstruct(PikaObj* self,
     }
     if (instruct == OUT) {
         Arg* outArg = arg_copy(queue_popArg(invokeQuene0));
-        Args* buffs = New_strBuff();
-        char* argName = strsGetLastToken(buffs, data, '.');
-        outArg = arg_setName(outArg, argName);
-        args_deinit(buffs);
         obj_setArg(locals, data, outArg);
         arg_deinit(outArg);
+        return NULL;
+    }
+    if (instruct == DEL) {
+        obj_removeArg(locals, data);
         return NULL;
     }
     if (instruct == REF) {
@@ -172,23 +178,48 @@ Arg* pikaVM_runInstruct(PikaObj* self,
             /* find in global list second */
             arg = arg_copy(obj_getArg(globals, data));
         }
+        ArgType arg_type = arg_getType(arg);
+        if (TYPE_OBJECT == arg_type) {
+            arg = arg_setType(arg, TYPE_POINTER);
+        }
         return arg;
+    }
+    if (instruct == EST) {
+        Arg* arg = obj_getArg(locals, data);
+        if (arg == NULL) {
+            return arg_setInt(NULL, "", 0);
+        }
+        if (TYPE_NULL == arg_getType(arg)) {
+            return arg_setInt(NULL, "", 0);
+        }
+        return arg_setInt(NULL, "", 1);
     }
     if (instruct == JMP) {
         *jmp = fast_atoi(data);
         return NULL;
     }
     if (instruct == RET) {
+        /* exit jmp signal */
         *jmp = -999;
         Arg* returnArg = arg_copy(queue_popArg(invokeQuene0));
         method_returnArg(locals->list, returnArg);
+        return NULL;
+    }
+    if (instruct == BRK) {
+        /* break jmp signal */
+        *jmp = -998;
+        return NULL;
+    }
+    if (instruct == CTN) {
+        /* continue jmp signal */
+        *jmp = -997;
         return NULL;
     }
     if (instruct == DEF) {
         char* methodPtr = programConter;
         int offset = 0;
         int thisBlockDeepth =
-            getThisBlockDeepth(programConter - 3, programConter, &offset);
+            getThisBlockDeepth(asmStart, programConter, &offset);
         while (1) {
             if ((methodPtr[0] == 'B') &&
                 (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
@@ -201,12 +232,32 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         return NULL;
     }
     if (instruct == JEZ) {
+        int offset = 0;
+        int thisBlockDeepth =
+            getThisBlockDeepth(asmStart, programConter, &offset);
         Arg* assertArg = arg_copy(queue_popArg(invokeQuene0));
         int assert = arg_getInt(assertArg);
         arg_deinit(assertArg);
+        char __else[] = "__else0";
+        __else[6] = '0' + thisBlockDeepth;
+        args_setInt(self->list, __else, !assert);
         if (0 == assert) {
+            /* set __else flag */
             *jmp = fast_atoi(data);
         }
+        return NULL;
+    }
+    if (instruct == NEL) {
+        int offset = 0;
+        int thisBlockDeepth =
+            getThisBlockDeepth(asmStart, programConter, &offset);
+        char __else[] = "__else0";
+        __else[6] = '0' + thisBlockDeepth;
+        if (0 == args_getInt(self->list, __else)) {
+            /* set __else flag */
+            *jmp = fast_atoi(data);
+        }
+        return NULL;
     }
     if (instruct == OPT) {
         Arg* outArg = NULL;
@@ -214,133 +265,127 @@ Arg* pikaVM_runInstruct(PikaObj* self,
         Arg* arg2 = arg_copy(queue_popArg(invokeQuene1));
         ArgType type_arg1 = arg_getType(arg1);
         ArgType type_arg2 = arg_getType(arg2);
-        if ((type_arg1 == TYPE_INT) && (type_arg2 == TYPE_INT)) {
-            int num1 = arg_getInt(arg1);
-            int num2 = arg_getInt(arg2);
-            if (strEqu("+", data)) {
-                outArg = arg_setInt(outArg, "", num1 + num2);
-                goto OPT_exit;
-            }
-            if (strEqu("-", data)) {
-                outArg = arg_setInt(outArg, "", num1 - num2);
-                goto OPT_exit;
-            }
-            if (strEqu("*", data)) {
-                outArg = arg_setInt(outArg, "", num1 * num2);
-                goto OPT_exit;
-            }
-            if (strEqu("/", data)) {
-                outArg = arg_setInt(outArg, "", num1 / num2);
-                goto OPT_exit;
-            }
-            if (strEqu("<", data)) {
-                outArg = arg_setInt(outArg, "", num1 < num2);
-                goto OPT_exit;
-            }
-            if (strEqu(">", data)) {
-                outArg = arg_setInt(outArg, "", num1 > num2);
-                goto OPT_exit;
-            }
-            if (strEqu("==", data)) {
-                outArg = arg_setInt(outArg, "", num1 == num2);
-                goto OPT_exit;
-            }
+        int num1_i = 0;
+        int num2_i = 0;
+        float num1_f = 0.0;
+        float num2_f = 0.0;
+        /* get int and float num */
+        if (type_arg1 == TYPE_INT) {
+            num1_i = arg_getInt(arg1);
+            num1_f = (float)num1_i;
         }
-        if ((type_arg1 == TYPE_FLOAT) && (type_arg2 == TYPE_INT)) {
-            float num1 = arg_getFloat(arg1);
-            int num2 = arg_getInt(arg2);
-            if (strEqu("+", data)) {
-                outArg = arg_setFloat(outArg, "", num1 + num2);
-                goto OPT_exit;
-            }
-            if (strEqu("-", data)) {
-                outArg = arg_setFloat(outArg, "", num1 - num2);
-                goto OPT_exit;
-            }
-            if (strEqu("*", data)) {
-                outArg = arg_setFloat(outArg, "", num1 * num2);
-                goto OPT_exit;
-            }
-            if (strEqu("/", data)) {
-                outArg = arg_setFloat(outArg, "", num1 / num2);
-                goto OPT_exit;
-            }
-            if (strEqu("<", data)) {
-                outArg = arg_setInt(outArg, "", num1 < num2);
-                goto OPT_exit;
-            }
-            if (strEqu(">", data)) {
-                outArg = arg_setInt(outArg, "", num1 > num2);
-                goto OPT_exit;
-            }
-            if (strEqu("==", data)) {
-                outArg = arg_setInt(outArg, "", num1 == num2);
-                goto OPT_exit;
-            }
+        if (type_arg1 == TYPE_FLOAT) {
+            num1_f = arg_getFloat(arg1);
+            num1_i = (int)num1_f;
         }
-        if ((type_arg1 == TYPE_INT) && (type_arg2 == TYPE_FLOAT)) {
-            int num1 = arg_getInt(arg1);
-            float num2 = arg_getFloat(arg2);
-            if (strEqu("+", data)) {
-                outArg = arg_setFloat(outArg, "", num1 + num2);
-                goto OPT_exit;
-            }
-            if (strEqu("-", data)) {
-                outArg = arg_setFloat(outArg, "", num1 - num2);
-                goto OPT_exit;
-            }
-            if (strEqu("*", data)) {
-                outArg = arg_setFloat(outArg, "", num1 * num2);
-                goto OPT_exit;
-            }
-            if (strEqu("/", data)) {
-                outArg = arg_setFloat(outArg, "", num1 / num2);
-                goto OPT_exit;
-            }
-            if (strEqu("<", data)) {
-                outArg = arg_setInt(outArg, "", num1 < num2);
-                goto OPT_exit;
-            }
-            if (strEqu(">", data)) {
-                outArg = arg_setInt(outArg, "", num1 > num2);
-                goto OPT_exit;
-            }
-            if (strEqu("==", data)) {
-                outArg = arg_setInt(outArg, "", num1 == num2);
-                goto OPT_exit;
-            }
+        if (type_arg2 == TYPE_INT) {
+            num2_i = arg_getInt(arg2);
+            num2_f = (float)num2_i;
         }
-        if ((type_arg1 == TYPE_FLOAT) && (type_arg2 == TYPE_FLOAT)) {
-            float num1 = arg_getFloat(arg1);
-            float num2 = arg_getFloat(arg2);
-            if (strEqu("+", data)) {
-                outArg = arg_setFloat(outArg, "", num1 + num2);
+        if (type_arg2 == TYPE_FLOAT) {
+            num2_f = arg_getFloat(arg2);
+            num2_i = (int)num2_f;
+        }
+        if (strEqu("+", data)) {
+            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+                outArg = arg_setFloat(outArg, "", num1_f + num2_f);
                 goto OPT_exit;
             }
-            if (strEqu("-", data)) {
-                outArg = arg_setFloat(outArg, "", num1 - num2);
+            outArg = arg_setInt(outArg, "", num1_i + num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("-", data)) {
+            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+                outArg = arg_setFloat(outArg, "", num1_f - num2_f);
                 goto OPT_exit;
             }
-            if (strEqu("*", data)) {
-                outArg = arg_setFloat(outArg, "", num1 * num2);
+            outArg = arg_setInt(outArg, "", num1_i - num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("*", data)) {
+            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+                outArg = arg_setFloat(outArg, "", num1_f * num2_f);
                 goto OPT_exit;
             }
-            if (strEqu("/", data)) {
-                outArg = arg_setFloat(outArg, "", num1 / num2);
-                goto OPT_exit;
+            outArg = arg_setInt(outArg, "", num1_i * num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("/", data)) {
+            outArg = arg_setFloat(outArg, "", num1_f / num2_f);
+            goto OPT_exit;
+        }
+        if (strEqu("<", data)) {
+            outArg = arg_setInt(outArg, "", num1_f < num2_f);
+            goto OPT_exit;
+        }
+        if (strEqu(">", data)) {
+            outArg = arg_setInt(outArg, "", num1_f > num2_f);
+            goto OPT_exit;
+        }
+        if (strEqu("%", data)) {
+            outArg = arg_setInt(outArg, "", num1_i % num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("**", data)) {
+            float res = 1;
+            for (int i = 0; i < num2_i; i++) {
+                res = res * num1_f;
             }
-            if (strEqu("<", data)) {
-                outArg = arg_setInt(outArg, "", num1 < num2);
-                goto OPT_exit;
-            }
-            if (strEqu(">", data)) {
-                outArg = arg_setInt(outArg, "", num1 > num2);
-                goto OPT_exit;
-            }
-            if (strEqu("==", data)) {
-                outArg = arg_setInt(outArg, "", num1 == num2);
-                goto OPT_exit;
-            }
+            outArg = arg_setFloat(outArg, "", res);
+            goto OPT_exit;
+        }
+        if (strEqu("//", data)) {
+            outArg = arg_setInt(outArg, "", num1_i / num2_i);
+            goto OPT_exit;
+        }
+        if (strEqu("==", data)) {
+            outArg = arg_setInt(
+                outArg, "", (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
+            goto OPT_exit;
+        }
+        if (strEqu("!=", data)) {
+            outArg =
+                arg_setInt(outArg, "",
+                           !((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+            goto OPT_exit;
+        }
+        if (strEqu(">=", data)) {
+            outArg = arg_setInt(
+                outArg, "",
+                (num1_f > num2_f) ||
+                    ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+            goto OPT_exit;
+        }
+        if (strEqu("<=", data)) {
+            outArg = arg_setInt(
+                outArg, "",
+                (num1_f < num2_f) ||
+                    ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+            goto OPT_exit;
+        }
+        if (strEqu("&", data)) {
+            outArg = arg_setInt(outArg, "", num1_i & num2_i);
+        }
+        if (strEqu("|", data)) {
+            outArg = arg_setInt(outArg, "", num1_i | num2_i);
+        }
+        if (strEqu("~", data)) {
+            outArg = arg_setInt(outArg, "", ~num1_i);
+        }
+        if (strEqu(">>", data)) {
+            outArg = arg_setInt(outArg, "", num1_i >> num2_i);
+        }
+        if (strEqu("<<", data)) {
+            outArg = arg_setInt(outArg, "", num1_i << num2_i);
+        }
+        if (strEqu(" and ", data)) {
+            outArg = arg_setInt(outArg, "", num1_i && num2_i);
+        }
+        if (strEqu(" or ", data)) {
+            outArg = arg_setInt(outArg, "", num1_i || num2_i);
+        }
+        if (strEqu(" not ", data)) {
+            outArg = arg_setInt(outArg, "", !num1_i);
         }
     OPT_exit:
         arg_deinit(arg1);
@@ -508,6 +553,19 @@ int getThisBlockDeepth(char* start, char* code, int* offset) {
     return thisBlockDeepth;
 }
 
+int32_t asm_getAddrOffsetOfJUM(char* code) {
+    int offset = 0;
+    char* codeNow = code + offset;
+    while (1) {
+        offset += gotoNextLine(codeNow);
+        codeNow = code + offset;
+        if (0 == strncmp(codeNow, "0 JMP -1", 8)) {
+            return offset;
+        }
+    }
+    return 0;
+}
+
 int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
     int offset = 0;
     int thisBlockDeepth = getThisBlockDeepth(start, code, &offset);
@@ -586,19 +644,32 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         invokeQuene1 = New_queue();
         args_setPtr(locals->list, invokeDeepth1, invokeQuene1);
     }
-
     resArg =
         pikaVM_runInstruct(self, locals, globals, instruct, data, invokeQuene0,
-                           invokeQuene1, &jmp, programCounter);
+                           invokeQuene1, &jmp, programCounter, pikaAsm);
     if (NULL != resArg) {
         queue_pushArg(invokeQuene0, resArg);
     }
-
     goto nextLine;
 nextLine:
     args_deinit(buffs);
+    /* exit */
     if (-999 == jmp) {
         return -99999;
+    }
+    /* break or continue */
+    if ((-998 == jmp) || (-997 == jmp)) {
+        int32_t loop_end_addr = asm_getAddrOffsetOfJUM(programCounter);
+        /* break */
+        if (-998 == jmp) {
+            loop_end_addr += gotoNextLine(programCounter + loop_end_addr);
+            return lineAddr + loop_end_addr;
+        }
+        if (-997 == jmp) {
+            loop_end_addr +=
+                gotoLastLine(pikaAsm, programCounter + loop_end_addr);
+            return lineAddr + loop_end_addr;
+        }
     }
     if (jmp != 0) {
         return lineAddr + getAddrOffsetFromJmp(pikaAsm, programCounter, jmp);
@@ -608,16 +679,16 @@ nextLine:
 
 char* useFlashAsBuff(char* pikaAsm, Args* buffs) {
     /* not write flash when asm is old */
-    if (strEqu(pikaAsm, __platformLoadPikaAsm())) {
+    if (strEqu(pikaAsm, __platform_load_pikaAsm())) {
         args_deinit(buffs);
         buffs = NULL;
-        return __platformLoadPikaAsm();
+        return __platform_load_pikaAsm();
     }
     /* write flash */
-    if (0 == __platformSavePikaAsm(pikaAsm)) {
+    if (0 == __platform_save_pikaAsm(pikaAsm)) {
         args_deinit(buffs);
         buffs = NULL;
-        return __platformLoadPikaAsm();
+        return __platform_load_pikaAsm();
     }
     return pikaAsm;
 }
@@ -639,12 +710,12 @@ Parameters* pikaVM_runAsmWithPars(PikaObj* self,
         char* sysOut = args_getSysOut(locals->list);
         uint8_t errcode = args_getErrorCode(locals->list);
         if (!strEqu("", sysOut)) {
-            __platformPrintf("%s\r\n", sysOut);
+            __platform_printf("%s\r\n", sysOut);
         }
         if (0 != errcode) {
             Args* buffs = New_strBuff();
             char* onlyThisLine = strsGetFirstToken(buffs, thisLine, '\n');
-            __platformPrintf("[info] input commond: %s\r\n", onlyThisLine);
+            __platform_printf("[info] input commond: %s\r\n", onlyThisLine);
             args_deinit(buffs);
         }
     }
@@ -654,15 +725,21 @@ Parameters* pikaVM_runAsmWithPars(PikaObj* self,
 }
 
 Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
-    Parameters* globals = New_PikaObj();
-    globals = pikaVM_runAsmWithPars(self, globals, globals, pikaAsm);
-    return globals;
+    return pikaVM_runAsmWithPars(self, self, self, pikaAsm);
 }
 
 Parameters* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
-    char* pikaAsm = pikaParseMultiLineToAsm(buffs, multiLine);
-    Parameters* globals = pikaVM_runAsm(self, pikaAsm);
+    Parameters* globals = NULL;
+    char* pikaAsm = Parser_multiLineToAsm(buffs, multiLine);
+    if (NULL == pikaAsm) {
+        __platform_printf("[error]: Syntax error.\r\n");
+        globals = NULL;
+        goto exit;
+    }
+    globals = pikaVM_runAsm(self, pikaAsm);
+    goto exit;
+exit:
     if (NULL != buffs) {
         args_deinit(buffs);
     }

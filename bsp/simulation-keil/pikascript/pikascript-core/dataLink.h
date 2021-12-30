@@ -41,6 +41,5 @@ void link_addNode(Link* self, void* content);
 void link_removeNode(Link* self, void* content);
 LinkNode* link_getNode(Link* self, int64_t id);
 int32_t link_getSize(Link* self);
-
 Link* New_link(void* args);
 #endif

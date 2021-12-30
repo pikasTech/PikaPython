@@ -27,7 +27,7 @@
 
 #ifndef __MY_TEST_TOOLS_H
 #define __MY_TEST_TOOLS_H
-#include <stdint.h>
+#include "PikaPlatform.h"
 
 /* size */
 uint32_t strGetSize(char* pData);

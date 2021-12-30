@@ -26,10 +26,7 @@
  */
 
 #include "dataString.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "PikaPlatform.h"
 
 char* strAppendWithSize_unlimited(char* strOut, char* pData, int32_t Size) {
     int32_t strOut_i = strGetSize(strOut);
@@ -80,7 +77,7 @@ char* strCut(char* strOut, char* strIn, char startSign, char endSign) {
 
 char* strDeleteChar(char* strOut, char* strIn, char ch) {
     int32_t iOut = 0;
-    for (int32_t i = 0; i < strGetSize(strIn); i++) {
+    for (uint32_t i = 0; i < strGetSize(strIn); i++) {
         if (ch == strIn[i]) {
             continue;
         }
@@ -110,7 +107,7 @@ char* strAppendWithSize(char* strOut, char* pData, int32_t Size) {
 
 int32_t strCountSign(char* strIn, char sign) {
     int32_t count = 0;
-    for (int32_t i = 0; i < strGetSize(strIn); i++) {
+    for (uint32_t i = 0; i < strGetSize(strIn); i++) {
         if (sign == strIn[i]) {
             count++;
         }
@@ -145,7 +142,7 @@ char* strGetLastLine(char* strOut, char* strIn) {
         }
     }
 
-    memcpy(strOut, strIn + beginIndex, size - beginIndex);
+    __platform_memcpy(strOut, strIn + beginIndex, size - beginIndex);
     strOut[size - beginIndex + 1] = 0;
     return strOut;
 }
@@ -213,12 +210,12 @@ char* strGetFirstToken(char* strOut, char* strIn, char sign) {
 
 int32_t strGetToken(char* string, char** argv, char sign) {
     int32_t argc = 0;
-    int32_t i = 0;
+    uint32_t i = 0;
     // arg_i point32_t to the arg operated now
     int32_t arg_i = 0;
     // if not found ' ', then put chars from CMD to argv_tem
     int32_t char_i = 0;
-    for (i = 0; (i < strGetSize(string)); i++) {
+    for (i = 0; i < strGetSize(string); i++) {
         if (string[i] != sign) {
             argv[arg_i][char_i] = string[i];
             char_i++;
@@ -249,7 +246,7 @@ int32_t strIsStartWith(char* str, char* strStart) {
     }
     uint32_t size = strGetSize(strStart);
     uint32_t CMDName_get = 1;
-    for (int32_t i = 0; i < size; i++) {
+    for (uint32_t i = 0; i < size; i++) {
         if (str[i] != strStart[i]) {
             CMDName_get = 0;
         }
@@ -269,21 +266,21 @@ char* strRemovePrefix(char* inputStr, char* prefix, char* outputStr) {
         return NULL;
     }
 
-    for (int32_t i = strGetSize(prefix); i < strGetSize(inputStr); i++) {
+    for (uint32_t i = strGetSize(prefix); i < strGetSize(inputStr); i++) {
         outputStr[i - strGetSize(prefix)] = inputStr[i];
     }
     return outputStr;
 }
 
 char* strClear(char* str) {
-    for (int32_t i = 0; i < sizeof(str); i++) {
+    for (uint32_t i = 0; i < sizeof(str); i++) {
         str[i] = 0;
     }
     return str;
 }
 
 int32_t strIsContain(char* str, char ch) {
-    for (int32_t i = 0; i < strGetSize(str); i++) {
+    for (uint32_t i = 0; i < strGetSize(str); i++) {
         if (str[i] == ch) {
             return 1;
         }
@@ -292,6 +289,6 @@ int32_t strIsContain(char* str, char ch) {
 }
 
 char* strCopy(char* strBuff, char* strIn) {
-    memcpy(strBuff, strIn, strGetSize(strIn));
+    __platform_memcpy(strBuff, strIn, strGetSize(strIn));
     return strBuff;
 }

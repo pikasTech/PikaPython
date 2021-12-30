@@ -528,6 +528,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\Device\Device_Uart.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdLib_RangeObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -657,6 +662,11 @@
               <FileName>PikaStdLib-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_RangeObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib_RangeObj-api.c</FilePath>
             </File>
           </Files>
         </Group>

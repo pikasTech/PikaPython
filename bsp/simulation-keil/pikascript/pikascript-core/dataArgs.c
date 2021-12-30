@@ -25,11 +25,8 @@
  * SOFTWARE.
  */
 
+#include "PikaPlatform.h"
 #include "dataArgs.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "dataLink.h"
 #include "dataMemory.h"
 #include "dataString.h"
@@ -160,7 +157,7 @@ int32_t args_setStruct(Args* self,
 void* args_getStruct(Args* self, char* name, void* struct_out) {
     Arg* struct_arg = args_getArg(self, name);
     uint32_t struct_size = arg_getContentSize(struct_arg);
-    return memcpy(struct_out, arg_getContent(struct_arg), struct_size);
+    return __platform_memcpy(struct_out, arg_getContent(struct_arg), struct_size);
 }
 
 int32_t args_copyArgByName(Args* self, char* name, Args* directArgs) {
@@ -297,7 +294,7 @@ char* getPrintStringFromFloat(Args* self, char* name, float val) {
 char* getPrintStringFromPtr(Args* self, char* name, void* val) {
     Args* buffs = New_strBuff();
     char* res = NULL;
-    uint64_t intVal = (uint64_t)val;
+    uint64_t intVal = (long)val;
     char* valString = strsFormat(buffs, 32, "0x%llx", intVal);
     res = getPrintSring(self, name, valString);
     args_deinit(buffs);
