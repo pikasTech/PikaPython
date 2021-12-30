@@ -22,7 +22,8 @@
         "pikastddata_dict.h": "c",
         "__instruction_table.h": "c",
         "__instruction_def.h": "c",
-        "pikavm.h": "c"
+        "pikavm.h": "c",
+        "pikaconfigvalid.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }

@@ -28,7 +28,6 @@
 /* micro pika configuration */
 #include "./pikaConfigValid.h"
 
-#define __VM_DEBUG__
 #ifndef __PIKA_PALTFORM__H
 #define __PIKA_PALTFORM__H
 #include <stdarg.h>
