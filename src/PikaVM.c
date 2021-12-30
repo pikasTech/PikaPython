@@ -74,9 +74,6 @@ typedef Arg* (*VM_instruct_handler)(PikaObj* self,
                                     char* data);
 
                                     
-                   
-                                    
-#if defined(__VM_DEBUG__)
 static Arg* VM_instruction_handler_NON(PikaObj* self,
                                        struct VM_State_t* vmState,
                                        char* data) {
@@ -490,10 +487,6 @@ static Arg* VM_instruction_handler_CTN(PikaObj* self,
     vmState->jmp = -997;
     return NULL;
 }
-#else
-#   define __INS_IMPL
-#   include "__instruction_table.cfg"   
-#endif
 
 const VM_instruct_handler VM_instruct_handler_table[__INSTRCUTION_CNT] = {
 
