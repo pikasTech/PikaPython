@@ -60,7 +60,7 @@ static int32_t getLineSize(char* str) {
 enum Instruct {
     
     #define __INS_ENUM
-    #include "__instruction_table.h"
+    #include "__instruction_table.cfg"
     
     __INSTRCUTION_CNT,
 };
@@ -492,13 +492,13 @@ static Arg* VM_instruction_handler_CTN(PikaObj* self,
 }
 #else
 #   define __INS_IMPL
-#   include "__instruction_table.h"   
+#   include "__instruction_table.cfg"   
 #endif
 
 const VM_instruct_handler VM_instruct_handler_table[__INSTRCUTION_CNT] = {
 
     #define __INS_TABLE
-    #include "__instruction_table.h"   
+    #include "__instruction_table.cfg"   
 };
 
 static char* strs_getLine(Args* buffs, char* code) {
