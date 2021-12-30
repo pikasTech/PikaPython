@@ -19,7 +19,10 @@
         "cstdio": "c",
         "cstdlib": "c",
         "pikastddevice_gpio.h": "c",
-        "pikastddata_dict.h": "c"
+        "pikastddata_dict.h": "c",
+        "__instruction_table.h": "c",
+        "__instruction_def.h": "c",
+        "pikavm.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }

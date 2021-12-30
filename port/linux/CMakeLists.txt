@@ -7,7 +7,6 @@ include_directories(package/pikascript/pikascript-core)
 include_directories(package/pikascript/pikascript-api)
 include_directories(package/pikascript/pikascript-lib/PikaRunExternControl)
 # include_directories(boot/demo01-led)
-
 add_subdirectory(package/googletest)
 add_subdirectory(package/pikascript)
 add_subdirectory(test)
