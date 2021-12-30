@@ -47,20 +47,27 @@
 #include "dataLink.h"
 #include "dataMemory.h"
 
-dcl_class(PikaObj);
+// dcl_class(PikaObj);
+typedef struct PikaObj_t PikaObj;
 
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
 typedef PikaObj Parameters;
 typedef void (*Method)(PikaObj* self, Args* args);
 
-def_class(PikaObj,
+struct PikaObj_t {
+    /* list */
+    Args* list;
+};
+
+
+// def_class(PikaObj,
     
-    private_member(
-        /* list */
-        Args* list;
-   )
-)
+//     private_member(
+//         /* list */
+//         Args* list;
+//    )
+// )
 /* operation */
 int32_t obj_deinit(PikaObj* self);
 int32_t obj_init(PikaObj* self, Args* args);

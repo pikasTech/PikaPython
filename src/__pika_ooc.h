@@ -29,6 +29,6 @@
 #ifndef __PIKA_OOC_H__
 #define __PIKA_OOC_H__
 
-#include "./3rd-party/PLOOC/plooc_class.h"
+// #include "./3rd-party/PLOOC/plooc_class.h"
 
 #endif
