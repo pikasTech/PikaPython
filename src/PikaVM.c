@@ -169,10 +169,10 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
-static Arg* pikaVM_runInstruct(PikaObj* self,
-                               VM_State* vmState,
-                               enum Instruct instruct,
-                               char* data) {
+static Arg* pikaVM_runInstruct_each_instruct(PikaObj* self,
+                                             VM_State* vmState,
+                                             enum Instruct instruct,
+                                             char* data) {
     // PIKA_ASSERT(instruct < __INSTRCUTION_CNT);
 
     // c_vmInstructionTable[instruct].tHandler()
@@ -534,6 +534,13 @@ static Arg* pikaVM_runInstruct(PikaObj* self,
     }
     return NULL;
 }
+
+static Arg* pikaVM_runInstruct(PikaObj* self,
+                               VM_State* vmState,
+                               enum Instruct instruct,
+                               char* data) {
+    return pikaVM_runInstruct_each_instruct(self, vmState, instruct, data);
+};
 
 int32_t __clearInvokeQueues(VM_Parameters* locals) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
