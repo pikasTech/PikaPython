@@ -67,13 +67,12 @@ enum Instruct {
 struct VM_State_t {
     VM_Parameters* locals;
     VM_Parameters* globals;
-    Queue* invokeQuene0;
-    Queue* invokeQuene1;
-    int32_t* jmp;
-    char* programConter;
-    char* asmStart;
+    Queue* q0;
+    Queue* q1;
+    int32_t jmp;
+    char* pc;
+    char* ASM_start;
 };
-
 typedef struct VM_State_t VM_State;
 
 typedef Arg* VM_instruct_handler_fn(PikaObj* self,
@@ -170,16 +169,16 @@ static enum Instruct getInstruct(char* line) {
     return NON;
 }
 
-static Arg* pikaVM_runInstruct(PikaObj* self,
-                               VM_Parameters* locals,
-                               VM_Parameters* globals,
-                               enum Instruct instruct,
-                               char* data,
-                               Queue* invokeQuene0,
-                               Queue* invokeQuene1,
-                               int32_t* jmp,
-                               char* programConter,
-                               char* asmStart) {
+static Arg* pikaVM_runInstruct_without_state(PikaObj* self,
+                                             VM_Parameters* locals,
+                                             VM_Parameters* globals,
+                                             enum Instruct instruct,
+                                             char* data,
+                                             Queue* invokeQuene0,
+                                             Queue* invokeQuene1,
+                                             int32_t* jmp,
+                                             char* programConter,
+                                             char* asmStart) {
     // PIKA_ASSERT(instruct < __INSTRCUTION_CNT);
 
     // c_vmInstructionTable[instruct].tHandler()
@@ -539,6 +538,15 @@ static Arg* pikaVM_runInstruct(PikaObj* self,
     return NULL;
 }
 
+static Arg* pikaVM_runInstruct(PikaObj* self,
+                               VM_State* vmState,
+                               enum Instruct instruct,
+                               char* data) {
+    return pikaVM_runInstruct_without_state(
+        self, vmState->locals, vmState->globals, instruct, data, vmState->q0,
+        vmState->q1, &vmState->jmp, vmState->pc, vmState->ASM_start);
+};
+
 int32_t __clearInvokeQueues(VM_Parameters* locals) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
         char deepth[2] = {0};
@@ -652,16 +660,22 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
                           char* pikaAsm,
                           int32_t lineAddr) {
     Args* buffs = New_strBuff();
-    char* programCounter = pikaAsm + lineAddr;
-    char* line = strs_getLine(buffs, programCounter);
+    VM_State vmState = {
+        .locals = locals,
+        .globals = globals,
+        .q0 = NULL,
+        .q1 = NULL,
+        .jmp = 0,
+        .pc = pikaAsm + lineAddr,
+        .ASM_start = pikaAsm,
+    };
+    char* line = strs_getLine(buffs, vmState.pc);
     int32_t nextAddr = lineAddr + strGetSize(line) + 1;
-    int32_t jmp = 0;
     enum Instruct instruct;
     char invokeDeepth0[2] = {0}, invokeDeepth1[2] = {0};
     char* data;
-    Queue* invokeQuene0;
-    Queue* invokeQuene1;
     Arg* resArg;
+
     /* Found new script Line, clear the queues*/
     if ('B' == line[0]) {
         args_setErrorCode(locals->list, 0);
@@ -674,46 +688,44 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     instruct = getInstruct(line);
     data = line + 6;
 
-    invokeQuene0 = args_getPtr(locals->list, invokeDeepth0);
-    invokeQuene1 = args_getPtr(locals->list, invokeDeepth1);
-    if (NULL == invokeQuene0) {
-        invokeQuene0 = New_queue();
-        args_setPtr(locals->list, invokeDeepth0, invokeQuene0);
+    vmState.q0 = args_getPtr(locals->list, invokeDeepth0);
+    vmState.q1 = args_getPtr(locals->list, invokeDeepth1);
+    if (NULL == vmState.q0) {
+        vmState.q0 = New_queue();
+        args_setPtr(locals->list, invokeDeepth0, vmState.q0);
     }
-    if (NULL == invokeQuene1) {
-        invokeQuene1 = New_queue();
-        args_setPtr(locals->list, invokeDeepth1, invokeQuene1);
+    if (NULL == vmState.q1) {
+        vmState.q1 = New_queue();
+        args_setPtr(locals->list, invokeDeepth1, vmState.q1);
     }
 
-    resArg =
-        pikaVM_runInstruct(self, locals, globals, instruct, data, invokeQuene0,
-                           invokeQuene1, &jmp, programCounter, pikaAsm);
+    resArg = pikaVM_runInstruct(self, &vmState, instruct, data);
     if (NULL != resArg) {
-        queue_pushArg(invokeQuene0, resArg);
+        queue_pushArg(vmState.q0, resArg);
     }
     goto nextLine;
 nextLine:
     args_deinit(buffs);
     /* exit */
-    if (-999 == jmp) {
+    if (-999 == vmState.jmp) {
         return -99999;
     }
     /* break or continue */
-    if ((-998 == jmp) || (-997 == jmp)) {
-        int32_t loop_end_addr = asm_getAddrOffsetOfJUM(programCounter);
+    if ((-998 == vmState.jmp) || (-997 == vmState.jmp)) {
+        int32_t loop_end_addr = asm_getAddrOffsetOfJUM(vmState.pc);
         /* break */
-        if (-998 == jmp) {
-            loop_end_addr += gotoNextLine(programCounter + loop_end_addr);
+        if (-998 == vmState.jmp) {
+            loop_end_addr += gotoNextLine(vmState.pc + loop_end_addr);
             return lineAddr + loop_end_addr;
         }
-        if (-997 == jmp) {
-            loop_end_addr +=
-                gotoLastLine(pikaAsm, programCounter + loop_end_addr);
+        if (-997 == vmState.jmp) {
+            loop_end_addr += gotoLastLine(pikaAsm, vmState.pc + loop_end_addr);
             return lineAddr + loop_end_addr;
         }
     }
-    if (jmp != 0) {
-        return lineAddr + getAddrOffsetFromJmp(pikaAsm, programCounter, jmp);
+    if (vmState.jmp != 0) {
+        return lineAddr +
+               getAddrOffsetFromJmp(pikaAsm, vmState.pc, vmState.jmp);
     }
     return nextAddr;
 }
