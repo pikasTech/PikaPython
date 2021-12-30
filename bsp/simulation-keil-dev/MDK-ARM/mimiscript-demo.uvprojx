@@ -70,9 +70,9 @@
             <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
+            <UserProg1Name>..\pikascript\pikaBeforBuild-keil.bat</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -313,7 +313,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>5</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -332,7 +332,7 @@
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
-            <v6Lto>0</v6Lto>
+            <v6Lto>1</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
@@ -667,6 +667,31 @@
               <FileName>TinyObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\TinyObj.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>python</GroupName>
+          <Files>
+            <File>
+              <FileName>main.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\main.py</FilePath>
+            </File>
+            <File>
+              <FileName>Device.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\Device.py</FilePath>
+            </File>
+            <File>
+              <FileName>PikaObj.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\PikaObj.py</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\PikaStdLib.py</FilePath>
             </File>
           </Files>
         </Group>

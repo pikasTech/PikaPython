@@ -12,7 +12,7 @@ PikaObj * pikaScriptInit(){
             "mem = PikaStdLib.MemChecker()\n"
             "\n"
             "\n"
-            "for i in range(1, 10):\n"
+            "for i in range(1, 100):\n"
             "    print(i)\n"
             "\n"
             "print('mem used max:')\n"
