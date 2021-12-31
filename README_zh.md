@@ -33,7 +33,7 @@ PikaScript也支持MDK、iar、rtt-studio等常见ide开发，能够轻松地调
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
-<img src="https://user-images.githubusercontent.com/88232613/137866679-642e4e74-c373-4880-9d97-20dfefeafc18.png" width="500"/>
+<img src="https://user-images.githubusercontent.com/88232613/147799764-5db2cb30-ee74-4cde-a2bd-b91c358ae3d9.png" width="500"/>
 
 ![image](https://user-images.githubusercontent.com/88232613/138021445-13643518-b0a3-4872-a290-5dec27697837.png)
 
