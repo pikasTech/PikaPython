@@ -216,6 +216,7 @@ PikaScript也支持MDK、iar、rtt-studio等常见ide开发，能够轻松地调
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| PikaVM优化 | GorgonMeducer |
 | W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
 | 捐赠：ESP32C3 5pic，调试器 |启明云端 沧御|
