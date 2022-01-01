@@ -49,7 +49,7 @@ PikaScript也支持MDK、iar、rtt-studio等常见ide开发，能够轻松地调
 
 # 快速上手
 
-可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Zero](https://item.taobao.com/item.htm?spm=a230r.7195193.1997079397.7.560344bfPTyX01&id=665463892570&abbucket=9)，上手即玩。
+可使用[仿真工程](document/1.三分钟快速上手.md)快速上手，无需硬件，也可以使用官方支持的开发板[Pika派—Zero](https://item.taobao.com/item.htm?spm=a2126o.success.result.1.76224831Y0X1gO&id=654947372034)，上手即玩。
 
 ![image](https://user-images.githubusercontent.com/88232613/141252834-93011ca7-f84b-4192-8e61-0e242796f62c.png)
 
