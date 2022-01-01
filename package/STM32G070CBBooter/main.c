@@ -49,7 +49,7 @@ PikaObj *pikaMain;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
-static char rx_char = 0;
+volatile static char rx_char = 0;
 void USART1_IRQHandler(void){
     if (LL_USART_IsActiveFlag_RXNE(USART1)) {
         rx_char = LL_USART_ReceiveData8(USART1);
