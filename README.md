@@ -201,6 +201,7 @@ Complete unit testes based on google test.
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
+| PikaVM improvement | GorgonMeducer |
 | W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
 | 捐赠：ESP32C3 5pic，调试器 |启明云端 沧御|
