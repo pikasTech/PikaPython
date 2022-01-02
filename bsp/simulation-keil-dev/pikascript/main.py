@@ -79,3 +79,7 @@ a = dict.get('a')
 b = dict.get('b')
 EXPECT_EQ('PikaStdData', a, 1)
 EXPECT_EQ('PikaStdData_2', b, 0)
+
+print('-----------------')
+print('[Tests Succeed]')
+# print('[Succeed] All Test Apssed.')

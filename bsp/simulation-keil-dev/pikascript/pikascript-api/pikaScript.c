@@ -85,6 +85,11 @@ PikaObj * pikaScriptInit(){
             "b = dict.get('b')\n"
             "EXPECT_EQ('PikaStdData', a, 1)\n"
             "EXPECT_EQ('PikaStdData_2', b, 0)\n"
+            "\n"
+            "print('-----------------')\n"
+            "print('[Tests Succeed]')\n"
+            "# print('[Succeed] All Test Apssed.')\n"
+            "\n"
             "\n");
     return pikaMain;
 }
