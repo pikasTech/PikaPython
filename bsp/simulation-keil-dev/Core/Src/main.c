@@ -93,7 +93,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   PikaObj *pikaMain = pikaScriptInit();
-	
+  printf("[SYS]: System Time Used: %d\r\n", uwTick);
   /* USER CODE END 2 */
 
   /* Infinite loop */
