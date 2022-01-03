@@ -42,7 +42,8 @@ jobs:
       with:
         tool: 'googlecpp'
         output-file-path: ${{github.workspace}}/port/linux/benchmark_result.json
-
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        auto-push: true
 #   bsp:
 #     runs-on: windows-latest
 
