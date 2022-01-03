@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641233784799,
+  "lastUpdate": 1641234319254,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -30,6 +30,36 @@ window.BENCHMARK_DATA = {
             "value": 908508186.9999954,
             "unit": "ns/iter",
             "extra": "iterations: 1\ncpu: 906412200.0000001 ns\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "caaaddedae9569fc00a1457b90d1e37203b24bc4",
+          "message": "Merge branch 'master' of https://github.com/pikastech/pikascript",
+          "timestamp": "2022-01-04T02:22:27+08:00",
+          "tree_id": "3e99a0c44d5afb64a5571659614ccbff4c52be10",
+          "url": "https://github.com/pikasTech/pikascript/commit/caaaddedae9569fc00a1457b90d1e37203b24bc4"
+        },
+        "date": 1641234317172,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "BM_for_app",
+            "value": 906079338.999973,
+            "unit": "ns/iter",
+            "extra": "iterations: 1\ncpu: 905934900 ns\nthreads: 1"
           }
         ]
       }
