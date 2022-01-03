@@ -5,6 +5,7 @@ extern "C" {
 #include "dataArgs.h"
 #include "dataMemory.h"
 #include "pikaScript.h"
+#include "mem_pool_config.h"
 }
 extern PikaMemInfo pikaMemInfo;
 TEST(pikaMain, init) {
@@ -443,6 +444,31 @@ TEST(pikaMain, for_if_continue) {
     int a = obj_getInt(pikaMain, (char*)"a");
     /* assert */
     EXPECT_EQ(a, 40);
+    /* deinit */
+    obj_deinit(pikaMain);
+    /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+/* the log_buff of printf */
+extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
+TEST(pikaMain, print_in_def) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    /* the test is used to fix too many print in def */
+    /* clear the log_buff */
+    memset(log_buff, 0, LOG_BUFF_MAX * LOG_SIZE);
+    obj_runDirect(pikaMain, (char*)
+        "def test_print():\n"
+        "    print('test')\n"
+        "test_print()\n"
+        );
+    /* collect */
+    /* assert */
+    /* should only print once, so the second log (log_buff[1]) shuold be '\0' */
+    EXPECT_EQ(log_buff[1][0], 0);
     /* deinit */
     obj_deinit(pikaMain);
     /* mem check */

@@ -28,8 +28,6 @@
 #include "dataString.h"
 #include "PikaPlatform.h"
 
-#include <string.h>
-
 char* strAppendWithSize_unlimited(char* strOut, char* pData, int32_t Size) {
     int32_t strOut_i = strGetSize(strOut);
     for (int32_t i = 0; i < Size; i++) {
@@ -48,13 +46,13 @@ char* strCut(char* strOut, char* strIn, char startSign, char endSign) {
     int32_t iEnd = Size;
     uint8_t isStart = 0;
     uint8_t isEnd = 0;
-    
-    intptr_t tLocation = (intptr_t)strchr(strIn, startSign);
-    if (tLocation != (intptr_t)NULL) {
-        iStart = tLocation - (intptr_t)strIn;
-        isStart = 1;
+    for (int32_t i = 0; i < Size; i++) {
+        if (strIn[i] == startSign) {
+            iStart = i;
+            isStart = 1;
+            break;
+        }
     }
-    
     for (int32_t i = Size - 1; i >= 0; i--) {
         if (strIn[i] == endSign) {
             iEnd = i;
@@ -62,13 +60,11 @@ char* strCut(char* strOut, char* strIn, char startSign, char endSign) {
             break;
         }
     }
-    
-    
-    int outi = iEnd - iStart - 1;
-    
-    //! use memcpy to increase performance
-    __platform_memcpy(strOut, &strIn[iStart + 1], outi);
-
+    int outi = 0;
+    for (int32_t i = iStart + 1; i < iEnd; i++) {
+        strOut[outi] = strIn[i];
+        outi++;
+    }
     /* add \0 */
     strOut[outi] = 0;
     if (isStart && isEnd) {

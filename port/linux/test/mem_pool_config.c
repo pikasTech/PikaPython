@@ -1,10 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "dataMemory.h"
+#include "mem_pool_config.h"
 
 #define use_const_pool 0
 #define use_dynamic_pool 1
 
 #define pika_aline 8
 #define pika_pool_size 0x4000
+
+char log_buff[LOG_BUFF_MAX][LOG_SIZE] = {0};
+uint32_t log_index = 0;
+
+/* save printf content to log_buff */
+void __platform_printf(char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vprintf(fmt, args);
+    va_end(args);
+    for (int i = LOG_BUFF_MAX - 2; i >= 0; i--) {
+        memcpy(log_buff[i + 1], log_buff[i], LOG_SIZE);
+    }
+    memcpy(log_buff[0], fmt, LOG_SIZE);
+}
 
 /* quick_malloc is always open */
 uint8_t __is_quick_malloc(void) {

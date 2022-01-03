@@ -305,34 +305,40 @@ char* args_print(Args* self, char* name) {
     char* res = NULL;
     ArgType type = args_getType(self, name);
     Args* buffs = New_strBuff();
-    
-    do {
-        if (TYPE_NONE == type) {
-            /* can not get arg */
-            res = NULL;
-            break;
-        } else if (type == TYPE_INT) {
-            int32_t val = args_getInt(self, name);
-            res = getPrintStringFromInt(self, name, val);
-            break;
-        } else if (type == TYPE_FLOAT) {
-            float val = args_getFloat(self, name);
-            res = getPrintStringFromFloat(self, name, val);
-            break;
-        } else if (type == TYPE_STRING) {
-            res = args_getStr(self, name);
-            break;
-        } else if (type == TYPE_POINTER) {
-            void* val = args_getPtr(self, name);
-            res = getPrintStringFromPtr(self, name, val);
-            break;
-        }
+    if (TYPE_NONE == type) {
+        /* can not get arg */
+        res = NULL;
+        goto exit;
+    }
 
-        /* can not match type */
-        //res = NULL;
-        
-    } while (0);
+    if (type == TYPE_INT) {
+        int32_t val = args_getInt(self, name);
+        res = getPrintStringFromInt(self, name, val);
+        goto exit;
+    }
 
+    if (type == TYPE_FLOAT) {
+        float val = args_getFloat(self, name);
+        res = getPrintStringFromFloat(self, name, val);
+        goto exit;
+    }
+
+    if (type == TYPE_STRING) {
+        res = args_getStr(self, name);
+        goto exit;
+    }
+
+    if (type == TYPE_POINTER) {
+        void* val = args_getPtr(self, name);
+        res = getPrintStringFromPtr(self, name, val);
+        goto exit;
+    }
+
+    /* can not match type */
+    res = NULL;
+    goto exit;
+
+exit:
     args_deinit(buffs);
     return res;
 }

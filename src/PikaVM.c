@@ -272,109 +272,128 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     if (type_arg1 == TYPE_INT) {
         num1_i = arg_getInt(arg1);
         num1_f = (float)num1_i;
-    } else if (type_arg1 == TYPE_FLOAT) {
+    }
+    if (type_arg1 == TYPE_FLOAT) {
         num1_f = arg_getFloat(arg1);
         num1_i = (int)num1_f;
     }
     if (type_arg2 == TYPE_INT) {
         num2_i = arg_getInt(arg2);
         num2_f = (float)num2_i;
-    } else if (type_arg2 == TYPE_FLOAT) {
+    }
+    if (type_arg2 == TYPE_FLOAT) {
         num2_f = arg_getFloat(arg2);
         num2_i = (int)num2_f;
     }
-    
-    //do {
-        if (strEqu("+", data)) {
-            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
-                outArg = arg_setFloat(outArg, "", num1_f + num2_f);
-            } else {
-                outArg = arg_setInt(outArg, "", num1_i + num2_i);
-            }
-            //break;
-        } else if (strEqu("-", data)) {
-            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
-                outArg = arg_setFloat(outArg, "", num1_f - num2_f);
-            } else {
-                outArg = arg_setInt(outArg, "", num1_i - num2_i);
-            }
-            //break;
-        } else if (strEqu("*", data)) {
-            if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
-                outArg = arg_setFloat(outArg, "", num1_f * num2_f);
-            } else {
-                outArg = arg_setInt(outArg, "", num1_i * num2_i);
-            }
-            //break;
-        } else if (strEqu("/", data)) {
-            outArg = arg_setFloat(outArg, "", num1_f / num2_f);
-            //break;
-        } else if (strEqu("<", data)) {
-            outArg = arg_setInt(outArg, "", num1_f < num2_f);
-            //break;
-        } else if (strEqu(">", data)) {
-            outArg = arg_setInt(outArg, "", num1_f > num2_f);
-            //break;
-        } else if (strEqu("%", data)) {
-            outArg = arg_setInt(outArg, "", num1_i % num2_i);
-            //break;
-        } else if (strEqu("**", data)) {
-            float res = 1;
-            for (int i = 0; i < num2_i; i++) {
-                res = res * num1_f;
-            }
-            outArg = arg_setFloat(outArg, "", res);
-            //break;
-        } else if (strEqu("//", data)) {
-            outArg = arg_setInt(outArg, "", num1_i / num2_i);
-            //break;
-        } else if (strEqu("==", data)) {
-            outArg = arg_setInt(outArg, "",
-                                (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
-            //break;
-        } else if (strEqu("!=", data)) {
-            outArg = arg_setInt(
-                outArg, "", !((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
-            //break;
-        } else if (strEqu(">=", data)) {
-            outArg =
-                arg_setInt(outArg, "",
-                           (num1_f > num2_f) ||
-                               ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
-            //break;
-        } else if (strEqu("<=", data)) {
-            outArg =
-                arg_setInt(outArg, "",
-                           (num1_f < num2_f) ||
-                               ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
-            //break;
-        } else if (strEqu("&", data)) {
-            outArg = arg_setInt(outArg, "", num1_i & num2_i);
-            //break;
-        } else if (strEqu("|", data)) {
-            outArg = arg_setInt(outArg, "", num1_i | num2_i);
-            //break;
-        } else if (strEqu("~", data)) {
-            outArg = arg_setInt(outArg, "", ~num1_i);
-            //break;
-        } else if (strEqu(">>", data)) {
-            outArg = arg_setInt(outArg, "", num1_i >> num2_i);
-            //break;
-        } else if (strEqu("<<", data)) {
-            outArg = arg_setInt(outArg, "", num1_i << num2_i);
-            //break;
-        } else if (strEqu(" and ", data)) {
-            outArg = arg_setInt(outArg, "", num1_i && num2_i);
-            //break;
-        } else if (strEqu(" or ", data)) {
-            outArg = arg_setInt(outArg, "", num1_i || num2_i);
-            //break;
-        } else if (strEqu(" not ", data)) {
-            outArg = arg_setInt(outArg, "", !num1_i);
-            //break;
+    if (strEqu("+", data)) {
+        if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+            outArg = arg_setFloat(outArg, "", num1_f + num2_f);
+            goto OPT_exit;
         }
-    //} while(0);
-    
+        outArg = arg_setInt(outArg, "", num1_i + num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("-", data)) {
+        if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+            outArg = arg_setFloat(outArg, "", num1_f - num2_f);
+            goto OPT_exit;
+        }
+        outArg = arg_setInt(outArg, "", num1_i - num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("*", data)) {
+        if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+            outArg = arg_setFloat(outArg, "", num1_f * num2_f);
+            goto OPT_exit;
+        }
+        outArg = arg_setInt(outArg, "", num1_i * num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("/", data)) {
+        outArg = arg_setFloat(outArg, "", num1_f / num2_f);
+        goto OPT_exit;
+    }
+    if (strEqu("<", data)) {
+        outArg = arg_setInt(outArg, "", num1_f < num2_f);
+        goto OPT_exit;
+    }
+    if (strEqu(">", data)) {
+        outArg = arg_setInt(outArg, "", num1_f > num2_f);
+        goto OPT_exit;
+    }
+    if (strEqu("%", data)) {
+        outArg = arg_setInt(outArg, "", num1_i % num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("**", data)) {
+        float res = 1;
+        for (int i = 0; i < num2_i; i++) {
+            res = res * num1_f;
+        }
+        outArg = arg_setFloat(outArg, "", res);
+        goto OPT_exit;
+    }
+    if (strEqu("//", data)) {
+        outArg = arg_setInt(outArg, "", num1_i / num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("==", data)) {
+        outArg = arg_setInt(outArg, "",
+                            (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
+        goto OPT_exit;
+    }
+    if (strEqu("!=", data)) {
+        outArg = arg_setInt(
+            outArg, "", !((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+        goto OPT_exit;
+    }
+    if (strEqu(">=", data)) {
+        outArg =
+            arg_setInt(outArg, "",
+                       (num1_f > num2_f) ||
+                           ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+        goto OPT_exit;
+    }
+    if (strEqu("<=", data)) {
+        outArg =
+            arg_setInt(outArg, "",
+                       (num1_f < num2_f) ||
+                           ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+        goto OPT_exit;
+    }
+    if (strEqu("&", data)) {
+        outArg = arg_setInt(outArg, "", num1_i & num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("|", data)) {
+        outArg = arg_setInt(outArg, "", num1_i | num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("~", data)) {
+        outArg = arg_setInt(outArg, "", ~num1_i);
+        goto OPT_exit;
+    }
+    if (strEqu(">>", data)) {
+        outArg = arg_setInt(outArg, "", num1_i >> num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu("<<", data)) {
+        outArg = arg_setInt(outArg, "", num1_i << num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu(" and ", data)) {
+        outArg = arg_setInt(outArg, "", num1_i && num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu(" or ", data)) {
+        outArg = arg_setInt(outArg, "", num1_i || num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu(" not ", data)) {
+        outArg = arg_setInt(outArg, "", !num1_i);
+        goto OPT_exit;
+    }
+OPT_exit:
     arg_deinit(arg1);
     arg_deinit(arg2);
     if (NULL != outArg) {
@@ -612,36 +631,35 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     char* data;
     Arg* resArg;
 
-    do {
-        /* Found new script Line, clear the queues*/
-        if ('B' == line[0]) {
-            args_setErrorCode(locals->list, 0);
-            args_setSysOut(locals->list, (char*)"");
-            __clearInvokeQueues(locals);
-            break;
-        }
-        invokeDeepth0[0] = line[0];
-        invokeDeepth1[0] = line[0] + 1;
-        instruct = getInstruct(line);
-        data = line + 6;
+    /* Found new script Line, clear the queues*/
+    if ('B' == line[0]) {
+        args_setErrorCode(locals->list, 0);
+        args_setSysOut(locals->list, (char*)"");
+        __clearInvokeQueues(locals);
+        goto nextLine;
+    }
+    invokeDeepth0[0] = line[0];
+    invokeDeepth1[0] = line[0] + 1;
+    instruct = getInstruct(line);
+    data = line + 6;
 
-        vmState.q0 = args_getPtr(locals->list, invokeDeepth0);
-        vmState.q1 = args_getPtr(locals->list, invokeDeepth1);
-        if (NULL == vmState.q0) {
-            vmState.q0 = New_queue();
-            args_setPtr(locals->list, invokeDeepth0, vmState.q0);
-        }
-        if (NULL == vmState.q1) {
-            vmState.q1 = New_queue();
-            args_setPtr(locals->list, invokeDeepth1, vmState.q1);
-        }
-        /* run instruct */
-        resArg = VM_instruct_handler_table[instruct](self, &vmState, data);
-        if (NULL != resArg) {
-            queue_pushArg(vmState.q0, resArg);
-        }
-    } while(0);
-
+    vmState.q0 = args_getPtr(locals->list, invokeDeepth0);
+    vmState.q1 = args_getPtr(locals->list, invokeDeepth1);
+    if (NULL == vmState.q0) {
+        vmState.q0 = New_queue();
+        args_setPtr(locals->list, invokeDeepth0, vmState.q0);
+    }
+    if (NULL == vmState.q1) {
+        vmState.q1 = New_queue();
+        args_setPtr(locals->list, invokeDeepth1, vmState.q1);
+    }
+    /* run instruct */
+    resArg = VM_instruct_handler_table[instruct](self, &vmState, data);
+    if (NULL != resArg) {
+        queue_pushArg(vmState.q0, resArg);
+    }
+    goto nextLine;
+nextLine:
     args_deinit(buffs);
     /* exit */
     if (-999 == vmState.jmp) {
@@ -722,16 +740,14 @@ VM_Parameters* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
     VM_Parameters* globals = NULL;
     char* pikaAsm = Parser_multiLineToAsm(buffs, multiLine);
-    
-    do {
-        if (NULL == pikaAsm) {
-            __platform_printf("[error]: Syntax error.\r\n");
-            globals = NULL;
-            break;
-        }
-        globals = pikaVM_runAsm(self, pikaAsm);
-    } while (0);
-
+    if (NULL == pikaAsm) {
+        __platform_printf("[error]: Syntax error.\r\n");
+        globals = NULL;
+        goto exit;
+    }
+    globals = pikaVM_runAsm(self, pikaAsm);
+    goto exit;
+exit:
     if (NULL != buffs) {
         args_deinit(buffs);
     }
