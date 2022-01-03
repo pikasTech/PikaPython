@@ -468,6 +468,7 @@ TEST(pikaMain, print_in_def) {
     /* collect */
     /* assert */
     /* should only print once, so the second log (log_buff[1]) shuold be '\0' */
+    EXPECT_EQ(log_buff[0][0], '%');
     EXPECT_EQ(log_buff[1][0], 0);
     /* deinit */
     obj_deinit(pikaMain);

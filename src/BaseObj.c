@@ -62,7 +62,8 @@ static void print(PikaObj* self, Args* args) {
         return;
     }
     /* not empty */
-    obj_setSysOut(self, res);
+    __platform_printf("%s\r\n", res);
+    // obj_setSysOut(self, res);
 }
 
 PikaObj* New_BaseObj(Args* args) {
