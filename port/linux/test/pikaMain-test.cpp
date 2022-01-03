@@ -432,7 +432,7 @@ TEST(pikaMain, for_if_continue) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, (char*)
+    obj_run(pikaMain, (char*)
          "a = 0\n"
          "for i in range(0, 10):\n"
          "    if i == 5:\n"
