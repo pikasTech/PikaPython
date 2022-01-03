@@ -41,7 +41,7 @@ jobs:
       uses: benchmark-action/github-action-benchmark@v1
       with:
         tool: 'googlecpp'
-        output-file-path: ${{github.workspace}}/port/linux/benchmark_result.json
+        output-file-path: benchmark_result.json
 
 #   bsp:
 #     runs-on: windows-latest
