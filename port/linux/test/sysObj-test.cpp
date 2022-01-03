@@ -3,14 +3,18 @@ extern "C" {
 #include "BaseObj.h"
 #include "PikaStdLib_SysObj.h"
 #include "TinyObj.h"
+#include "mem_pool_config.h"
 }
 
+/* the log_buff of printf */
+extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 TEST(sysObj, print) {
     PikaObj* obj = newRootObj((char*)"test", New_PikaStdLib_SysObj);
     VM_Parameters* globals = obj_runDirect(obj, (char*)"print('hello world')");
     char* sysOut = args_getSysOut(globals->list);
     int errCode = args_getErrorCode(globals->list);
     printf("sysout = %s\r\n", sysOut);
+    EXPECT_STREQ(log_buff[0], "hello world\r\n");
     // ASSERT_STREQ((char*)"hello world", sysOut);
     ASSERT_EQ(0, errCode);
     // obj_deinit(globals);

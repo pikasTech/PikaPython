@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                "--gtest_filter=pikaMain.print_in_def",
+                // "--gtest_filter=pikaMain.print_in_def",
                 // "--gtest_filter=pikaMain.list_for_loop"
                 // "--gtest_filter=pikaMain.err_scop"
                 // "--gtest_filter=VM.a_jjcc"

@@ -1,7 +1,7 @@
+#include "mem_pool_config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "dataMemory.h"
-#include "mem_pool_config.h"
 
 #define use_const_pool 0
 #define use_dynamic_pool 1
@@ -21,7 +21,9 @@ void __platform_printf(char* fmt, ...) {
     for (int i = LOG_BUFF_MAX - 2; i >= 0; i--) {
         memcpy(log_buff[i + 1], log_buff[i], LOG_SIZE);
     }
-    memcpy(log_buff[0], fmt, LOG_SIZE);
+    va_start(args, fmt);
+    vsnprintf(log_buff[0], LOG_SIZE - 1, fmt, args);
+    va_end(args);
 }
 
 /* quick_malloc is always open */

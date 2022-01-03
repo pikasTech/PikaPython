@@ -2,6 +2,7 @@
 extern "C" {
 #include "BaseObj.h"
 #include "PikaStdLib_SysObj.h"
+#include "mem_pool_config.h"
 #include "TinyObj.h"
 }
 
@@ -171,6 +172,8 @@ TEST(object_test, voidRun) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+/* the log_buff of printf */
+extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 TEST(object_test, printa) {
     PikaObj* root = newRootObj((char*)"root", New_BaseObj);
     obj_runDirect(root,
@@ -179,6 +182,7 @@ TEST(object_test, printa) {
      "print(a)\n"
      );
     // char* sysOut = obj_getSysOut(globals);
+    EXPECT_STREQ(log_buff[0], "2\r\n");
     // ASSERT_STREQ(sysOut, "2");
     // obj_deinit(globals);
     obj_deinit(root);
