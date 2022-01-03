@@ -1,7 +1,9 @@
+
+
 const char py[] =
-    "i = 0\n"
-    "while i < 10000:\n"
-    "    i = i + 1\n"
+    "a = 0\n"
+    "for i in range(0, 10000):\n"
+    "    a = a + 1\n"
     "\n";
 
 char* get_py(void){

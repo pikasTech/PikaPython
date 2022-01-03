@@ -1,9 +1,9 @@
 ROOT=$PWD
 # git submodule init
 # git submodule update
-chmod +x package/pikascript/rust-msc-latest-linux
 chmod +x *.sh 
 sh update-compiler.sh
+chmod +x package/pikascript/rust-msc-latest-linux
 rm package/pikascript/pikascript-api -rf
 mkdir package/pikascript/pikascript-api
 touch package/pikascript/pikascript-api/path
