@@ -17,4 +17,5 @@ add_subdirectory(test)
 # add_subdirectory(boot/demo05-sysobject)
 # add_subdirectory(boot/demo06-pikamain)
 add_subdirectory(boot/banchmark)
+add_subdirectory(benchmark)
 
