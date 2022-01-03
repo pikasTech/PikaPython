@@ -23,7 +23,6 @@ def EXPECT_EQ(test_name, input, expected):
             is_error = 1
     else:
         print('[ OK  ]')
-        print('')
 
 a = 0
 for i in range(0, 10):

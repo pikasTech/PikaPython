@@ -29,7 +29,6 @@ PikaObj * pikaScriptInit(){
             "            is_error = 1\n"
             "    else:\n"
             "        print('[ OK  ]')\n"
-            "        print('')\n"
             "\n"
             "a = 0\n"
             "for i in range(0, 10):\n"
