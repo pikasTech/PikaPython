@@ -36,6 +36,12 @@ jobs:
     - name: TEST
       # Build your program with the given configuration
       run: cd ${{github.workspace}}/port/linux && bash gtest.sh
+      
+    - name: Store benchmark result
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        tool: 'googlecpp'
+        output-file-path: ${{github.workspace}}/port/linux/benchmark_result.json
 
 #   bsp:
 #     runs-on: windows-latest
