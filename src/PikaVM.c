@@ -115,6 +115,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         returnArg = arg_copy(queue_popArg(vmState->q1));
         goto RUN_exit;
     }
+
     /* get method host obj */
     methodHostObj = obj_getObj(self, methodPath, 1);
     if (NULL == methodHostObj) {
