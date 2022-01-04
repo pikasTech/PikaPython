@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641282380745,
+  "lastUpdate": 1641283130523,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -144,6 +144,54 @@ window.BENCHMARK_DATA = {
             "value": 0.005000382119382227,
             "unit": "ms/iter",
             "extra": "iterations: 156583\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "aebfbc848d29beb66a47f5382dccc40575440f07",
+          "message": "use pikaVM_runAsm instead of obj_run in next() and iter()",
+          "timestamp": "2022-01-04T15:55:46+08:00",
+          "tree_id": "4d7a2bbdcfd7f7c77196d5e2eb008fe5794df49e",
+          "url": "https://github.com/pikasTech/pikascript/commit/aebfbc848d29beb66a47f5382dccc40575440f07"
+        },
+        "date": 1641283129424,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 1596.1137778181806,
+            "unit": "ms/iter",
+            "extra": "iterations: 1\ncpu: 1595.49905135436 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 1004.125975257682,
+            "unit": "ms/iter",
+            "extra": "iterations: 1\ncpu: 1004.0566400118521 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 313.86384777912446,
+            "unit": "ms/iter",
+            "extra": "iterations: 3\ncpu: 313.8293094052495 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000436135904464,
+            "unit": "ms/iter",
+            "extra": "iterations: 176940\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
