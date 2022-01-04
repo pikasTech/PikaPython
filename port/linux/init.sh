@@ -15,5 +15,13 @@ mkdir build
 sh api-make.sh
 cd build
 cmake -DCMAKE_BUILD_TYPE=Debug ..
+
+cd $ROOT
+rm Release -rf
+mkdir Release
+cd Release 
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j
+
 cd $ROOT
 sh make.sh
