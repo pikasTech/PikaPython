@@ -37,6 +37,9 @@ jobs:
       # Build your program with the given configuration
       run: cd ${{github.workspace}}/port/linux && bash gtest.sh
       
+    - name: BENCHMARK
+      run: cd ${{github.workspace}}/port/linux && bash ci_benchmark.sh
+      
     - name: Store benchmark result
       uses: benchmark-action/github-action-benchmark@v1
       with:
