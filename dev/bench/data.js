@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641235581429,
+  "lastUpdate": 1641258603065,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -60,6 +60,36 @@ window.BENCHMARK_DATA = {
             "value": 1656518266.999967,
             "unit": "ns/iter",
             "extra": "iterations: 1\ncpu: 1653722500 ns\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "d5e44ce277a211448dacd4e65111d623dcc68ec8",
+          "message": "add install_goglebenchmark",
+          "timestamp": "2022-01-04T09:06:13+08:00",
+          "tree_id": "1dca4d1229caed7a6b4f8e482394712d41360b0e",
+          "url": "https://github.com/pikasTech/pikascript/commit/d5e44ce277a211448dacd4e65111d623dcc68ec8"
+        },
+        "date": 1641258601665,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "BM_for_app",
+            "value": 1474450971.9999995,
+            "unit": "ns/iter",
+            "extra": "iterations: 1\ncpu: 1474345200 ns\nthreads: 1"
           }
         ]
       }
