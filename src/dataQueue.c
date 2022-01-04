@@ -45,69 +45,6 @@ int32_t queue_deinit(Queue* queue) {
     return 0;
 }
 
-int32_t queue_pushInt(Queue* queue, int val) {
-    Args* args = queue;
-    uint64_t top = args_getInt(args, "top");
-    char buff[11];
-    char* topStr = fast_itoa(buff, top);
-    /* add top */
-    args_setInt(args, "top", top + 1);
-    return args_setInt(args, topStr, val);
-}
-
-int64_t queue_popInt(Queue* queue) {
-    Args* args = queue;
-    uint64_t bottom = args_getInt(args, "bottom");
-    char buff[11];
-    char* bottomStr = fast_itoa(buff, bottom);
-    /* add bottom */
-    args_setInt(args, "bottom", bottom + 1);
-    int64_t res = args_getInt(args, bottomStr);
-    args_removeArg(args, args_getArg(args, bottomStr));
-    return res;
-}
-
-int32_t queue_pushFloat(Queue* queue, float val) {
-    Args* args = queue;
-    uint64_t top = args_getInt(args, "top");
-    char buff[11];
-    char* topStr = fast_itoa(buff, top);
-    /* add top */
-    args_setInt(args, "top", top + 1);
-    return args_setFloat(args, topStr, val);
-}
-
-float queue_popFloat(Queue* queue) {
-    Args* args = queue;
-    uint64_t bottom = args_getInt(args, "bottom");
-    char buff[11];
-    char* bottomStr = fast_itoa(buff, bottom);
-    /* add bottom */
-    args_setInt(args, "bottom", bottom + 1);
-    float res = args_getFloat(args, bottomStr);
-    args_removeArg(args, args_getArg(args, bottomStr));
-    return res;
-}
-
-int32_t queue_pushStr(Queue* queue, char* str) {
-    Args* args = queue;
-    uint64_t top = args_getInt(args, "top");
-    char buff[11];
-    /* add top */
-    char* topStr = fast_itoa(buff, top);
-    args_setInt(args, "top", top + 1);
-    return args_setStr(args, topStr, str);
-}
-
-char* queue_popStr(Queue* queue) {
-    Args* args = queue;
-    uint64_t bottom = args_getInt(args, "bottom");
-    char buff[11];
-    /* add bottom */
-    args_setInt(args, "bottom", bottom + 1);
-    return args_getStr(args, fast_itoa(buff, bottom));
-}
-
 int32_t queue_pushArg(Queue* queue, Arg* arg) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "top");
@@ -126,4 +63,28 @@ Arg* queue_popArg(Queue* queue) {
     char buff[11];
     Arg* res = args_getArg(args, fast_itoa(buff, bottom));
     return res;
+}
+
+int32_t queue_pushInt(Queue* queue, int val) {
+    return queue_pushArg(queue, arg_setInt(NULL, "", val));
+}
+
+int64_t queue_popInt(Queue* queue) {
+    return arg_getInt(queue_popArg(queue));
+}
+
+int32_t queue_pushFloat(Queue* queue, float val) {
+    return queue_pushArg(queue, arg_setFloat(NULL, "", val));
+}
+
+float queue_popFloat(Queue* queue) {
+    return arg_getFloat(queue_popArg(queue));
+}
+
+int32_t queue_pushStr(Queue* queue, char* str) {
+    return queue_pushArg(queue, arg_setStr(NULL, "", str));
+}
+
+char* queue_popStr(Queue* queue) {
+    return arg_getStr(queue_popArg(queue));
 }
