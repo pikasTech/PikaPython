@@ -84,7 +84,10 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     /* object */
     if (TYPE_POINTER == arg_getType(arg)) {
         PikaObj* arg_obj = arg_getPtr(arg);
-        obj_run(arg_obj, "__res = __iter__()");
+        pikaVM_runAsm(arg_obj,
+                      "B0\n"
+                      "0 RUN __iter__\n"
+                      "0 OUT __res\n");
         return arg_copy(args_getArg(arg_obj->list, "__res"));
     }
     return arg_setNull(NULL);
@@ -92,7 +95,10 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
 
 Arg* PikaStdLib_SysObj_next(PikaObj* self, Arg* arg) {
     PikaObj* arg_obj = arg_getPtr(arg);
-    obj_run(arg_obj, "__res = __next__()");
+    pikaVM_runAsm(arg_obj,
+                  "B0\n"
+                  "0 RUN __next__\n"
+                  "0 OUT __res\n");
     return arg_copy(args_getArg(arg_obj->list, "__res"));
 }
 

@@ -2,12 +2,11 @@
 
 Arg* PikaStdLib_RangeObj___iter__(PikaObj* self) {
     return arg_setPtr(NULL, "", TYPE_OBJECT, self);
-    ;
 }
 Arg* PikaStdLib_RangeObj___next__(PikaObj* self) {
-    int a1 = obj_getInt(self, "a1");
-    int a2 = obj_getInt(self, "a2");
-    int a3 = obj_getInt(self, "a3");
+    int a1 = args_getInt(self->list, "a1");
+    int a2 = args_getInt(self->list, "a2");
+    int a3 = args_getInt(self->list, "a3");
     int start = 0;
     int end = 0;
     int foot = 1;
@@ -17,7 +16,7 @@ Arg* PikaStdLib_RangeObj___next__(PikaObj* self) {
         end = a2;
     }
     /* start */
-    int iter_i = obj_getInt(self, "iter_i");
+    int iter_i = args_getInt(self->list, "iter_i");
     /* iter_i is not inited */
     if (-999999999 == iter_i) {
         iter_i = start;
@@ -26,6 +25,6 @@ Arg* PikaStdLib_RangeObj___next__(PikaObj* self) {
     if (iter_i >= end) {
         return arg_setNull(NULL);
     }
-    obj_setInt(self, "iter_i", iter_i + foot);
+    args_setInt(self->list, "iter_i", iter_i + foot);
     return arg_setInt(NULL, "", iter_i);
 }
