@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641259277412,
+  "lastUpdate": 1641259494934,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -120,6 +120,36 @@ window.BENCHMARK_DATA = {
             "value": 1491391174.9999897,
             "unit": "ns/iter",
             "extra": "iterations: 1\ncpu: 1485594900 ns\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5173231116b5ebe218018665bea844c5bed98ca6",
+          "message": "Update README.md",
+          "timestamp": "2022-01-04T09:22:21+08:00",
+          "tree_id": "c959a5f780a033e74d791eb0e6080831dd600715",
+          "url": "https://github.com/pikasTech/pikascript/commit/5173231116b5ebe218018665bea844c5bed98ca6"
+        },
+        "date": 1641259492581,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 1609500657.0000124,
+            "unit": "ns/iter",
+            "extra": "iterations: 1\ncpu: 1608660400.0000002 ns\nthreads: 1"
           }
         ]
       }
