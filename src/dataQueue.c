@@ -29,12 +29,10 @@
 #include "dataArgs.h"
 #include "PikaPlatform.h"
 
-
-
 Queue* New_queue(void) {
     Args* args = New_args(NULL);
-    args_setInt(args, "top", 0);
-    args_setInt(args, "bottom", 0);
+    args_setInt(args, "t", 0);
+    args_setInt(args, "b", 0);
     Queue* queue = args;
     return queue;
 }
@@ -47,9 +45,9 @@ int32_t queue_deinit(Queue* queue) {
 
 int32_t queue_pushArg(Queue* queue, Arg* arg) {
     Args* args = queue;
-    uint64_t top = args_getInt(args, "top");
+    uint64_t top = args_getInt(args, "t");
     /* add top */
-    args_setInt(args, "top", top + 1);
+    args_setInt(args, "t", top + 1);
     char buff[11];
     arg = arg_setName(arg, fast_itoa(buff, top));
     return args_setArg(args, arg);
@@ -57,9 +55,9 @@ int32_t queue_pushArg(Queue* queue, Arg* arg) {
 
 Arg* queue_popArg(Queue* queue) {
     Args* args = queue;
-    uint64_t bottom = args_getInt(args, "bottom");
+    uint64_t bottom = args_getInt(args, "b");
     /* add bottom */
-    args_setInt(args, "bottom", bottom + 1);
+    args_setInt(args, "b", bottom + 1);
     char buff[11];
     Arg* res = args_getArg(args, fast_itoa(buff, bottom));
     return res;
