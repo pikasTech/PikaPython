@@ -96,6 +96,7 @@ int32_t args_foreach(Args* self,
 
 char* args_getBuff(Args* self, int32_t size);
 uint8_t args_setLiteral(Args* self, char* targetArgName, char* literal);
+void args_pushArg(Args* self, Arg* arg);
 
 Args* New_args(Args* args);
 #endif

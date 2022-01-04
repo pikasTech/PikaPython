@@ -25,8 +25,8 @@
  * SOFTWARE.
  */
 
-#include "PikaPlatform.h"
 #include "dataArgs.h"
+#include "PikaPlatform.h"
 #include "dataLink.h"
 #include "dataMemory.h"
 #include "dataString.h"
@@ -70,14 +70,14 @@ int32_t args_setStr(Args* self, char* name, char* strIn) {
     return errCode;
 }
 
-void setArgDirect(Args* self, Arg* arg) {
+void args_pushArg(Args* self, Arg* arg) {
     link_addNode(self, arg);
 }
 
 char* args_getBuff(Args* self, int32_t size) {
     Arg* argNew = New_arg(NULL);
     argNew = arg_newContent(argNew, size + 1);
-    setArgDirect(self, argNew);
+    args_pushArg(self, argNew);
     return (char*)arg_getContent(argNew);
 }
 
@@ -157,7 +157,8 @@ int32_t args_setStruct(Args* self,
 void* args_getStruct(Args* self, char* name, void* struct_out) {
     Arg* struct_arg = args_getArg(self, name);
     uint32_t struct_size = arg_getContentSize(struct_arg);
-    return __platform_memcpy(struct_out, arg_getContent(struct_arg), struct_size);
+    return __platform_memcpy(struct_out, arg_getContent(struct_arg),
+                             struct_size);
 }
 
 int32_t args_copyArgByName(Args* self, char* name, Args* directArgs) {
@@ -218,7 +219,7 @@ exit:
 int32_t args_setArg(Args* self, Arg* arg) {
     Hash nameHash = arg_getNameHash(arg);
     if (!args_isArgExist_hash(self, nameHash)) {
-        setArgDirect(self, arg);
+        args_pushArg(self, arg);
         return 0;
     }
     updateArg(self, arg);
@@ -261,6 +262,17 @@ Arg* args_getArg(Args* self, char* name) {
         return NULL;
     }
     return node;
+}
+
+Arg* args_getArg_index(Args* self, int index) {
+    LinkNode* nodeNow = self->firstNode;
+    if (NULL == nodeNow) {
+        return NULL;
+    }
+    for (int i = 0; i < index; i++) {
+        nodeNow = content_getNext(nodeNow);
+    }
+    return nodeNow;
 }
 
 char* getPrintSring(Args* self, char* name, char* valString) {
