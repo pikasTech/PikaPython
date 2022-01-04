@@ -393,18 +393,19 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
     }
     /* found Objcet */
     if (type == TYPE_OBJECT || type == TYPE_POINTER) {
-        return obj_getPtr(self, name);
+        return args_getPtr(self->list, name);
     }
     return NULL;
 }
 
 PikaObj* obj_getObj(PikaObj* self, char* objPath, int32_t keepDeepth) {
-    Args* buffs = New_strBuff();
-    char* objPathBuff = strsCopy(buffs, objPath);
-    int32_t tokenNum = strGetTokenNum(objPath, '.');
+    char objPath_buff[64];
+    __platform_memcpy(objPath_buff, objPath, sizeof(objPath_buff));
+    char token_buff[32] = {0};
+    int32_t token_num = strGetTokenNum(objPath, '.');
     PikaObj* obj = self;
-    for (int32_t i = 0; i < tokenNum - keepDeepth; i++) {
-        char* token = strsPopToken(buffs, objPathBuff, '.');
+    for (int32_t i = 0; i < token_num - keepDeepth; i++) {
+        char* token = strPopToken(token_buff, objPath_buff, '.');
         obj = obj_getObjDirect(obj, token);
         if (obj == NULL) {
             goto exit;
@@ -412,7 +413,6 @@ PikaObj* obj_getObj(PikaObj* self, char* objPath, int32_t keepDeepth) {
     }
     goto exit;
 exit:
-    args_deinit(buffs);
     return obj;
 }
 
