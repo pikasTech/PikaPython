@@ -46,7 +46,7 @@ static void prime_number_100(benchmark::State& state) {
             "    j=2\n"
             "    is_prime = 1\n"
             "    for j in range(2,i):\n"
-            "        if(i%j==0):\n"
+            "        if i%j==0 :\n"
             "            is_prime = 0\n"
             "            break\n"
             "    if is_prime:\n"
