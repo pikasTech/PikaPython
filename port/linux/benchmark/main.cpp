@@ -1,5 +1,6 @@
 #include <benchmark/benchmark.h>
 #include "gtest/gtest.h"
+
 extern "C" {
 #include "PikaMain.h"
 #include "PikaStdLib_MemChecker.h"
