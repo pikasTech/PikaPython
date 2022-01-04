@@ -8,12 +8,15 @@ extern "C" {
 #include "pikaScript.h"
 }
 
-char* get_py(void);
 static void for_loop_10000(benchmark::State& state) {
     for (auto _ : state) {
         PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
         /* run */
-        obj_run(pikaMain, get_py());
+        obj_run(pikaMain, (char *)
+            "a = 0\n"
+            "for i in range(0, 10000):\n"
+            "    a = a + 1\n"
+            "\n");
     }
 }
 BENCHMARK(for_loop_10000);
