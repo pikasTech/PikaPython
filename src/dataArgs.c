@@ -70,8 +70,9 @@ int32_t args_setStr(Args* self, char* name, char* strIn) {
     return errCode;
 }
 
-void args_pushArg(Args* self, Arg* arg) {
+int args_pushArg(Args* self, Arg* arg) {
     link_addNode(self, arg);
+    return 0;
 }
 
 char* args_getBuff(Args* self, int32_t size) {

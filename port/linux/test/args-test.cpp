@@ -165,3 +165,18 @@ TEST(args, mem) {
     EXPECT_EQ(pikaMemNow(), mem);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(args, index) {
+    Args* args = New_args(NULL);
+    args_pushArg(args, arg_setInt(NULL, (char*)"", 1));
+    args_pushArg(args, arg_setFloat(NULL, (char*)"", 2.4));
+
+    int a = arg_getInt(args_getArg_index(args, 1));
+    float b = arg_getFloat(args_getArg_index(args, 0));
+    /* assert */
+    EXPECT_EQ(a, 1);
+    EXPECT_FLOAT_EQ(b, 2.4);
+    /* check memory */
+    args_deinit(args);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

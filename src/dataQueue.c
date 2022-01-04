@@ -26,13 +26,12 @@
  */
 
 #include "dataQueue.h"
-#include "dataArgs.h"
 #include "PikaPlatform.h"
+#include "dataArgs.h"
 
 Queue* New_queue(void) {
     Args* args = New_args(NULL);
-    args_setInt(args, "t", 0);
-    args_setInt(args, "b", 0);
+    args_setInt(args, "offset", 0);
     Queue* queue = args;
     return queue;
 }
@@ -45,21 +44,23 @@ int32_t queue_deinit(Queue* queue) {
 
 int32_t queue_pushArg(Queue* queue, Arg* arg) {
     Args* args = queue;
-    uint64_t top = args_getInt(args, "t");
+    int offset = args_getInt(args, "offset");
     /* add top */
-    args_setInt(args, "t", top + 1);
+    args_setInt(args, "offset", offset + 1);
     char buff[11];
-    arg = arg_setName(arg, fast_itoa(buff, top));
-    return args_setArg(args, arg);
+    return args_pushArg(args, arg);
 }
 
 Arg* queue_popArg(Queue* queue) {
     Args* args = queue;
-    uint64_t bottom = args_getInt(args, "b");
+    int offset = args_getInt(args, "offset");
+    if (offset - 1 < 0) {
+        return NULL;
+    }
     /* add bottom */
-    args_setInt(args, "b", bottom + 1);
+    args_setInt(args, "offset", offset - 1);
     char buff[11];
-    Arg* res = args_getArg(args, fast_itoa(buff, bottom));
+    Arg* res = args_getArg_index(args, offset - 1);
     return res;
 }
 
