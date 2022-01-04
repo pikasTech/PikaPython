@@ -31,7 +31,7 @@
 
 Queue* New_queue(void) {
     Args* args = New_args(NULL);
-    args_setInt(args, "offset", 0);
+    args_setInt(args, "_", 0);
     Queue* queue = args;
     return queue;
 }
@@ -44,21 +44,21 @@ int32_t queue_deinit(Queue* queue) {
 
 int32_t queue_pushArg(Queue* queue, Arg* arg) {
     Args* args = queue;
-    int offset = args_getInt(args, "offset");
+    int offset = args_getInt(args, "_");
     /* add top */
-    args_setInt(args, "offset", offset + 1);
+    args_setInt(args, "_", offset + 1);
     char buff[11];
     return args_pushArg(args, arg);
 }
 
 Arg* queue_popArg(Queue* queue) {
     Args* args = queue;
-    int offset = args_getInt(args, "offset");
+    int offset = args_getInt(args, "_");
     if (offset - 1 < 0) {
         return NULL;
     }
     /* add bottom */
-    args_setInt(args, "offset", offset - 1);
+    args_setInt(args, "_", offset - 1);
     char buff[11];
     Arg* res = args_getArg_index(args, offset - 1);
     return res;
