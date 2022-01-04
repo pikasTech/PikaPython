@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641283516452,
+  "lastUpdate": 1641284245425,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -240,6 +240,54 @@ window.BENCHMARK_DATA = {
             "value": 0.005000215322121449,
             "unit": "ms/iter",
             "extra": "iterations: 136194\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "79c9f820546e294b36ae3c4bb5d601c45424ff48",
+          "message": "not use buffs in obj_getObj",
+          "timestamp": "2022-01-04T16:14:08+08:00",
+          "tree_id": "0b711f2decb82f04a09439264466a0ef9f7a2fd3",
+          "url": "https://github.com/pikasTech/pikascript/commit/79c9f820546e294b36ae3c4bb5d601c45424ff48"
+        },
+        "date": 1641284244124,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 1537.633192860747,
+            "unit": "ms/iter",
+            "extra": "iterations: 1\ncpu: 1537.3310321504998 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 998.0564619129802,
+            "unit": "ms/iter",
+            "extra": "iterations: 1\ncpu: 997.7076435192838 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 305.57863627308205,
+            "unit": "ms/iter",
+            "extra": "iterations: 2\ncpu: 305.53803512986286 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000564019173677,
+            "unit": "ms/iter",
+            "extra": "iterations: 133537\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
