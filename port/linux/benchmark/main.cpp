@@ -21,4 +21,20 @@ static void for_loop_10000(benchmark::State& state) {
 }
 BENCHMARK(for_loop_10000);
 
+
+static void while_loop_10000(benchmark::State& state) {
+    for (auto _ : state) {
+        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+        /* run */
+        obj_run(pikaMain, (char *)
+            "i = 0\n"
+            "while i < 10000:\n"
+            "    i = i + 1\n"
+            "\n");
+    }
+}
+BENCHMARK(while_loop_10000);
+
+
+
 BENCHMARK_MAIN();
