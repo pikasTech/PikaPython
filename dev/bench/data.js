@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641272763384,
+  "lastUpdate": 1641273240794,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -216,6 +216,54 @@ window.BENCHMARK_DATA = {
             "value": 0.004476232458945134,
             "unit": "ms/iter",
             "extra": "iterations: 156376\ncpu: 0.004475873535580908 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "b44baf3cc20eb5f5bba12a835e99e5dc047162d2",
+          "message": "add c_primer_100",
+          "timestamp": "2022-01-04T13:03:01+08:00",
+          "tree_id": "feca97c201298f6e7e02234ade995f9ca18e3dc4",
+          "url": "https://github.com/pikasTech/pikascript/commit/b44baf3cc20eb5f5bba12a835e99e5dc047162d2"
+        },
+        "date": 1641273238842,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 1469.2506400000127,
+            "unit": "ms/iter",
+            "extra": "iterations: 1\ncpu: 1461.5519000000002 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 895.0900979999972,
+            "unit": "ms/iter",
+            "extra": "iterations: 1\ncpu: 895.0602999999999 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 286.01256500000716,
+            "unit": "ms/iter",
+            "extra": "iterations: 2\ncpu: 285.99405 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.004482203535007483,
+            "unit": "ms/iter",
+            "extra": "iterations: 156209\ncpu: 0.004481659187370766 ms\nthreads: 1"
           }
         ]
       }
