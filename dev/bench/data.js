@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641286054994,
+  "lastUpdate": 1641286773745,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -96,6 +96,54 @@ window.BENCHMARK_DATA = {
             "value": 0.005001609061681486,
             "unit": "ms/iter",
             "extra": "iterations: 233672\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "645275593@qq.com",
+            "name": "李昂",
+            "username": "liang6516"
+          },
+          "committer": {
+            "email": "noreply@gitee.com",
+            "name": "Gitee",
+            "username": "gitee-org"
+          },
+          "distinct": true,
+          "id": "76f9b3ee257b4a46e05f9d32a7cd9fc591ce10ee",
+          "message": "update  README_zh.md.",
+          "timestamp": "2022-01-04T08:55:17Z",
+          "tree_id": "299ae69094aa94117bd7c778e589edf0d1f4e744",
+          "url": "https://github.com/pikasTech/pikascript/commit/76f9b3ee257b4a46e05f9d32a7cd9fc591ce10ee"
+        },
+        "date": 1641286771364,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 489.0779572708506,
+            "unit": "ms/iter",
+            "extra": "iterations: 2\ncpu: 487.8764234453894 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 329.93001384488974,
+            "unit": "ms/iter",
+            "extra": "iterations: 3\ncpu: 329.8862022988125 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 92.84779319527496,
+            "unit": "ms/iter",
+            "extra": "iterations: 10\ncpu: 92.69686376942451 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005001281517888364,
+            "unit": "ms/iter",
+            "extra": "iterations: 193951\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
