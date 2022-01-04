@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641267036550,
+  "lastUpdate": 1641267685825,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -168,6 +168,48 @@ window.BENCHMARK_DATA = {
             "value": 352488483.50001085,
             "unit": "ns/iter",
             "extra": "iterations: 2\ncpu: 352368150 ns\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "6fefc999bae2c0301c96bd5b6312aff64f469352",
+          "message": "test benchmark",
+          "timestamp": "2022-01-04T11:38:35+08:00",
+          "tree_id": "c299ceaec7f49447ee8a2b9c8be328435bad1f7f",
+          "url": "https://github.com/pikasTech/pikascript/commit/6fefc999bae2c0301c96bd5b6312aff64f469352"
+        },
+        "date": 1641267683084,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 1465723257.9999971,
+            "unit": "ns/iter",
+            "extra": "iterations: 1\ncpu: 1464380400 ns\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 897349714.9999901,
+            "unit": "ns/iter",
+            "extra": "iterations: 1\ncpu: 897282100 ns\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 285286179.99999994,
+            "unit": "ns/iter",
+            "extra": "iterations: 2\ncpu: 285271649.9999999 ns\nthreads: 1"
           }
         ]
       }
