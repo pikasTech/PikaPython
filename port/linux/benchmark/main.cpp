@@ -9,13 +9,13 @@ extern "C" {
 }
 
 char* get_py(void);
-static void BM_for_app(benchmark::State& state) {
+static void for_loop_10000(benchmark::State& state) {
     for (auto _ : state) {
         PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
         /* run */
         obj_run(pikaMain, get_py());
     }
 }
-BENCHMARK(BM_for_app);
+BENCHMARK(for_loop_10000);
 
 BENCHMARK_MAIN();
