@@ -62,3 +62,27 @@ static void prime_number_100(benchmark::State& state) {
 BENCHMARK(prime_number_100)->Unit(benchmark::kMillisecond);
 
 BENCHMARK_MAIN();
+
+static void prime_number_100_c(benchmark::State& state) {
+    int num = 0;
+    for (auto _ : state) {
+        num = 0;
+        /* run */
+        for (int i = 2; i < 100; i++) {
+            int is_prime = 1;
+            for (int j = 2; j < i; j++) {
+                if (i % j == 0) {
+                    is_prime = 0;
+                    break;
+                }
+            }
+            if (is_prime) {
+                num = num + i;
+            }
+        }
+        if (1060 != num) {
+            printf("[error]: prime_number_100\r\n");
+        }
+    }
+}
+BENCHMARK(prime_number_100_c)->Unit(benchmark::kMillisecond);
