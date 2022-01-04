@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641271682431,
+  "lastUpdate": 1641272763384,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -168,6 +168,54 @@ window.BENCHMARK_DATA = {
             "value": 312.0176673222223,
             "unit": "ms/iter",
             "extra": "iterations: 90\ncpu: 312.00337555555546 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "b44baf3cc20eb5f5bba12a835e99e5dc047162d2",
+          "message": "add c_primer_100",
+          "timestamp": "2022-01-04T13:03:01+08:00",
+          "tree_id": "feca97c201298f6e7e02234ade995f9ca18e3dc4",
+          "url": "https://github.com/pikasTech/pikascript/commit/b44baf3cc20eb5f5bba12a835e99e5dc047162d2"
+        },
+        "date": 1641272761045,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 1462.5687400000231,
+            "unit": "ms/iter",
+            "extra": "iterations: 1\ncpu: 1459.6842000000001 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 895.3716470000188,
+            "unit": "ms/iter",
+            "extra": "iterations: 1\ncpu: 894.8280999999998 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 285.55412850001005,
+            "unit": "ms/iter",
+            "extra": "iterations: 2\ncpu: 285.5283500000001 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.004476232458945134,
+            "unit": "ms/iter",
+            "extra": "iterations: 156376\ncpu: 0.004475873535580908 ms\nthreads: 1"
           }
         ]
       }
