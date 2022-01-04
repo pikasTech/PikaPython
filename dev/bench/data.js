@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641284245425,
+  "lastUpdate": 1641285278384,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -288,6 +288,54 @@ window.BENCHMARK_DATA = {
             "value": 0.005000564019173677,
             "unit": "ms/iter",
             "extra": "iterations: 133537\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "aac306dc56138b4364dd0dd0cac799ba5f15042e",
+          "message": "use Release to run benchmark",
+          "timestamp": "2022-01-04T16:31:01+08:00",
+          "tree_id": "f41153af2897b30998a649ca09111717571ed90f",
+          "url": "https://github.com/pikasTech/pikascript/commit/aac306dc56138b4364dd0dd0cac799ba5f15042e"
+        },
+        "date": 1641285276944,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 469.8217076357954,
+            "unit": "ms/iter",
+            "extra": "iterations: 2\ncpu: 468.64080641097104 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 311.239217141026,
+            "unit": "ms/iter",
+            "extra": "iterations: 4\ncpu: 311.18411703895606 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 90.21224552190348,
+            "unit": "ms/iter",
+            "extra": "iterations: 13\ncpu: 90.18142183433035 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000618300762881,
+            "unit": "ms/iter",
+            "extra": "iterations: 232121\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
