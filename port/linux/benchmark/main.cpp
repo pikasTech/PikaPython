@@ -19,7 +19,7 @@ static void for_loop_10000(benchmark::State& state) {
             "\n");
     }
 }
-BENCHMARK(for_loop_10000);
+BENCHMARK(for_loop_10000)->Unit(benchmark::kMillisecond);
 
 static void while_loop_10000(benchmark::State& state) {
     for (auto _ : state) {
@@ -32,7 +32,7 @@ static void while_loop_10000(benchmark::State& state) {
             "\n");
     }
 }
-BENCHMARK(while_loop_10000);
+BENCHMARK(while_loop_10000)->Unit(benchmark::kMillisecond);
 
 static void prime_number_100(benchmark::State& state) {
     int num = 0;
@@ -58,6 +58,6 @@ static void prime_number_100(benchmark::State& state) {
         }
     }
 }
-BENCHMARK(prime_number_100);
+BENCHMARK(prime_number_100)->Unit(benchmark::kMillisecond);
 
 BENCHMARK_MAIN();
