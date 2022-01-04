@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641294910192,
+  "lastUpdate": 1641295534867,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -240,6 +240,54 @@ window.BENCHMARK_DATA = {
             "value": 0.005000311421834225,
             "unit": "ms/iter",
             "extra": "iterations: 233237\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "8b59034300d101498eff28445b0cba415e2e4630",
+          "message": "simplyfy dataQueue.c",
+          "timestamp": "2022-01-04T19:21:57+08:00",
+          "tree_id": "101fa55089b8e520e579b1ff77b19b15f39cec3b",
+          "url": "https://github.com/pikasTech/pikascript/commit/8b59034300d101498eff28445b0cba415e2e4630"
+        },
+        "date": 1641295533431,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 456.43012903970583,
+            "unit": "ms/iter",
+            "extra": "iterations: 2\ncpu: 450.19088732341635 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 311.4501915293309,
+            "unit": "ms/iter",
+            "extra": "iterations: 4\ncpu: 311.4115116606473 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 90.48949313811134,
+            "unit": "ms/iter",
+            "extra": "iterations: 13\ncpu: 90.48265708489188 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000953053467569,
+            "unit": "ms/iter",
+            "extra": "iterations: 233944\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
