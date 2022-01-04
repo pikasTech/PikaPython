@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641295534867,
+  "lastUpdate": 1641297098625,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -288,6 +288,54 @@ window.BENCHMARK_DATA = {
             "value": 0.005000953053467569,
             "unit": "ms/iter",
             "extra": "iterations: 233944\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "e5629a53f4d4ee0ed1a97788340e3be46c51f33a",
+          "message": "use shorter top and bottom in dataQueue",
+          "timestamp": "2022-01-04T19:47:40+08:00",
+          "tree_id": "09dc5040168ec550f9f594087fe0363384ab6e80",
+          "url": "https://github.com/pikasTech/pikascript/commit/e5629a53f4d4ee0ed1a97788340e3be46c51f33a"
+        },
+        "date": 1641297096901,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 464.8542319887921,
+            "unit": "ms/iter",
+            "extra": "iterations: 2\ncpu: 464.77698276733 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 307.7121532764965,
+            "unit": "ms/iter",
+            "extra": "iterations: 3\ncpu: 307.68387478591427 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 89.59285262818325,
+            "unit": "ms/iter",
+            "extra": "iterations: 11\ncpu: 89.58825595498995 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.00500033234383971,
+            "unit": "ms/iter",
+            "extra": "iterations: 194219\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
