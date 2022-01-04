@@ -24,6 +24,8 @@
 	<a href="https://www.yuque.com/liang-mltek/pikascript/cp1k24">商业合作</a> 
 </p>
 
+[![image](https://user-images.githubusercontent.com/88232613/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/pikascript/dev/bench/)
+
 # 1.简介
 
 PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配置，可以在少于4KB的RAM下运行(如stm32g030c8和stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
