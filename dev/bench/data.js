@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641297098625,
+  "lastUpdate": 1641298906401,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -336,6 +336,54 @@ window.BENCHMARK_DATA = {
             "value": 0.00500033234383971,
             "unit": "ms/iter",
             "extra": "iterations: 194219\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "1afc45604d9cec1f9703871787ac28857316649e",
+          "message": "use index inf queue",
+          "timestamp": "2022-01-04T20:18:23+08:00",
+          "tree_id": "f17cb93aedb34ba6f472a110b903c7391ee8dda3",
+          "url": "https://github.com/pikasTech/pikascript/commit/1afc45604d9cec1f9703871787ac28857316649e"
+        },
+        "date": 1641298904711,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 531.7869640579613,
+            "unit": "ms/iter",
+            "extra": "iterations: 3\ncpu: 531.7859889519583 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 330.4209615884745,
+            "unit": "ms/iter",
+            "extra": "iterations: 4\ncpu: 330.42439367422435 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 108.35693641208529,
+            "unit": "ms/iter",
+            "extra": "iterations: 13\ncpu: 108.35506233926579 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000139209525988,
+            "unit": "ms/iter",
+            "extra": "iterations: 280683\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
