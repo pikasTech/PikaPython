@@ -476,30 +476,30 @@ TEST(pikaMain, print_in_def) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, prime_100) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-//     /* run */
-//     obj_run(pikaMain, (char*)
-//             "num = 0\n"
-//             "i = 2\n"
-//             "for i in range(2 , 100):\n"
-//             "    j=2\n"
-//             "    is_prime = 1\n"
-//             "    for j in range(2 , i):\n"
-//             "        if i%j==0 :\n"
-//             "            is_prime = 0\n"
-//             "            break\n"
-//             "    if is_prime:\n"
-//             "        num = num + i\n"
-//             "\n");
-//     /* collect */
-//     int num = obj_getInt(pikaMain, (char*)"num");
-//     /* assert */
-//     EXPECT_EQ(num, 40);
-//     /* deinit */
-//     obj_deinit(pikaMain);
-//     /* mem check */
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, prime_100) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)
+            "num = 0\n"
+            "i = 2\n"
+            "for i in range(2 , 100):\n"
+            "    j=2\n"
+            "    is_prime = 1\n"
+            "    for j in range(2 , i):\n"
+            "        if i%j==0 :\n"
+            "            is_prime = 0\n"
+            "            break\n"
+            "    if is_prime:\n"
+            "        num = num + i\n"
+            "\n");
+    /* collect */
+    int num = obj_getInt(pikaMain, (char*)"num");
+    /* assert */
+    EXPECT_EQ(num, 1060);
+    /* deinit */
+    obj_deinit(pikaMain);
+    /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}
