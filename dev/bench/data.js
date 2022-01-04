@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641300418285,
+  "lastUpdate": 1641300770711,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -528,6 +528,54 @@ window.BENCHMARK_DATA = {
             "value": 0.005000119914350649,
             "unit": "ms/iter",
             "extra": "iterations: 2610683\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "b3918c6f38b91a4777575b028d48499fbc4f9642",
+          "message": "not set time_min",
+          "timestamp": "2022-01-04T20:48:59+08:00",
+          "tree_id": "c729a0bbdfa325e5a67858cc4f230d37b32786db",
+          "url": "https://github.com/pikasTech/pikascript/commit/b3918c6f38b91a4777575b028d48499fbc4f9642"
+        },
+        "date": 1641300768583,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 449.1995559025737,
+            "unit": "ms/iter",
+            "extra": "iterations: 3\ncpu: 446.63083162906736 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 288.7422541861532,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 288.69935983004916 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 85.90681873371746,
+            "unit": "ms/iter",
+            "extra": "iterations: 15\ncpu: 85.89990730905612 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000419121659741,
+            "unit": "ms/iter",
+            "extra": "iterations: 265290\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
