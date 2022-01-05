@@ -237,18 +237,9 @@ uint16_t content_nextOffset(uint8_t* self) {
 }
 
 uint8_t* content_getNext(uint8_t* self) {
-    uint8_t* nextDir = self + content_nextOffset(self);
-    uint8_t* next = NULL;
-    uint64_t pointerTemp = 0;
-
-    for (int32_t i = sizeof(uint8_t*); i > -1; i--) {
-        // avoid \0
-        uint8_t val = nextDir[i];
-        pointerTemp = (pointerTemp << 8);
-        pointerTemp += val;
-    }
-    next = (uint8_t*)(uintptr_t)pointerTemp;
-    return next;
+    uintptr_t* nextDir =
+        (uintptr_t*)((uintptr_t)self + (uintptr_t)content_nextOffset(self));
+    return (uint8_t*)*nextDir;
 }
 
 uint8_t* content_getContent(uint8_t* self) {
