@@ -131,10 +131,7 @@ uint8_t content_nameOffset(uint8_t* self) {
 }
 
 Hash content_getNameHash(uint8_t* self) {
-    uint8_t* nameHashDir = (uint8_t*)self + content_nameOffset(self);
-    Hash nameHash = 0;
-    __platform_memcpy(&nameHash, nameHashDir, sizeof(Hash));
-    return nameHash;
+    return *(Hash*)((uintptr_t)self + (uintptr_t)content_nameOffset(self));
 }
 
 uint8_t* content_deinit(uint8_t* self) {
