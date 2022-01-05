@@ -3,7 +3,7 @@ import PikaStdLib
 import PikaStdData
 
 mem = PikaStdLib.MemChecker()
-
+mem.resetMax()
 def EXPECT_EQ(test_name, input, expected):
     print('-----TEST-----')
     print(test_name)
