@@ -20,6 +20,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include "cmsis_compiler.h"
+
+#define __IMPLEMENT_PERF_COUNTER
 #include "perf_counter.h"
 
 #if defined(__IS_COMPILER_GCC__)
@@ -152,6 +154,11 @@ typedef struct
         uint32_t RESERVED0[5U];
   __IOM uint32_t CPACR;                  /*!< Offset: 0x088 (R/W)  Coprocessor Access Control Register */
 } SCB_Type;
+
+struct __task_cycle_info_t {
+    uint64_t            dwLastTimeStamp;
+    task_cycle_info_t   tInfo;
+} ;
 
 /*============================ GLOBAL VARIABLES ==============================*/
 extern uint32_t SystemCoreClock;
@@ -379,3 +386,54 @@ int64_t get_system_ticks(void)
 
     return lTemp;
 }
+
+
+__WEAK 
+task_cycle_info_t * get_rtos_task_cycle_info(void)
+{
+    return NULL;
+}
+
+void __on_context_switch_in(uint32_t *pwStack)
+{
+
+    struct __task_cycle_info_t *ptFrame = (struct __task_cycle_info_t *)pwStack;
+    uint64_t dwTimeStamp = get_system_ticks();
+    
+    if (0 == ptFrame->tInfo.dwStart) {
+        ptFrame->tInfo.dwStart = dwTimeStamp;
+    }
+    ptFrame->dwLastTimeStamp = dwTimeStamp;
+    ptFrame->tInfo.wActiveCount++;
+
+}
+
+void __on_context_switch_out(uint32_t *pwStack)
+{
+    
+    uint64_t dwTimeStamp = get_system_ticks();
+    struct __task_cycle_info_t *ptFrame = (struct __task_cycle_info_t *)pwStack;
+        
+    ptFrame->tInfo.dwUsedRecent = dwTimeStamp - ptFrame->dwLastTimeStamp;
+    ptFrame->tInfo.dwUsedTotal += ptFrame->tInfo.dwUsedRecent;
+    
+}
+
+void start_task_cycle_counter(void)
+{
+    task_cycle_info_t * ptInfo = get_rtos_task_cycle_info();
+    if (NULL != ptInfo) {
+        ptInfo->dwUsedTotal = 0;
+    }
+}
+
+int32_t stop_task_cycle_counter(void)
+{
+    task_cycle_info_t * ptInfo = get_rtos_task_cycle_info();
+    if (NULL != ptInfo) {
+        return (int32_t)ptInfo->dwUsedTotal;
+    }
+    
+    return 0;
+}
+

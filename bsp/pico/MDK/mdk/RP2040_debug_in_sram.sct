@@ -77,6 +77,7 @@ LR_IROM1 0x20000000 SRAM_SIZE  {    ; load region size_region
     
     RW_IRAM_UNINIT +0 UNINIT {
         *(.uninitialized_data*)
+        *(.bss.noinit)
     }
     
     

@@ -20,6 +20,12 @@
 #include "RTE_Components.h"
 #include <stdio.h>
 
+#include "perf_counter.h"
+
+#ifdef RTE_Compiler_EventRecorder
+#   include <EventRecorder.h>
+#endif
+
 /*============================ MACROS ========================================*/
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*============================ TYPES =========================================*/
@@ -59,6 +65,21 @@ int stdin_getchar(void)
     return byte;
 }
 
+#if defined(RTE_Compiler_EventRecorder) && defined(USE_EVR_FOR_STDOUR)
+static int stdout_putchar (int ch) {
+  static uint32_t index = 0U;
+  static uint8_t  buffer[8];
+ 
+  assert(index < sizeof(buffer));
+
+  buffer[index++] = (uint8_t)ch;
+  if ((index == sizeof(buffer)) || (ch == '\n')) {
+    EventRecordData(EventID(EventLevelOp, 0xFE, 0x00), buffer, index);
+    index = 0U;
+  }
+  return (ch);
+}
+#else
 __attribute__((weak))
 int stdout_putchar(int ch)
 {
@@ -71,6 +92,21 @@ int stdout_putchar(int ch)
     
     return _write(1, (char *)&ch, 1);
 }
+
+#endif
+
+
+int fputc (int c, FILE * stream) 
+{
+#if (!defined(RTE_Compiler_IO_STDOUT) && !defined(RTE_Compiler_IO_STDERR))
+  (void)c;
+  (void)stream;
+#endif
+ 
+ 
+  return stdout_putchar(c);
+}
+
 #else
 /*! \note If you want to use semihosting (currently only Arm-DS supports it), 
  *!       pleae open the RTE configuration and unselect the Compiler->I/O->STDIN
@@ -125,6 +161,27 @@ void _sys_exit(int ret)
 {
     UNUSED_PARAM(ret);
     while(1) {}
+}
+
+#endif
+
+
+#if defined(RTE_Compiler_EventRecorder)
+
+uint32_t EventRecorderTimerSetup(void)
+{
+    return 1;
+}
+
+uint32_t EventRecorderTimerGetCount(void)
+{
+    return get_system_ticks();
+}
+
+uint32_t EventRecorderTimerGetFreq (void)
+{
+    extern uint32_t SystemCoreClock;
+    return SystemCoreClock;
 }
 
 #endif

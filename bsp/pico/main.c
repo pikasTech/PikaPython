@@ -17,9 +17,14 @@
 /*============================ INCLUDES ======================================*/
 #include "pico/stdlib.h"
 #include "perf_counter.h"
-#include "pico/stdio_usb.h"
-#include <stdio.h>
 #include "pikaScript.h"
+#include <stdio.h>
+
+#include "RTE_Components.h"
+#if defined(RTE_Compiler_EventRecorder) && defined(USE_EVR_FOR_STDOUR)
+#   include <EventRecorder.h>
+#endif
+
 /*============================ MACROS ========================================*/
 #define TOP         (0x1FFF)
 
@@ -76,40 +81,39 @@ static void breath_led(void)
 
 static void system_init(void)
 {
+    extern void SystemCoreClockUpdate();
+
+    SystemCoreClockUpdate();
     /*! \note if you do want to use SysTick in your application, please use 
      *!       init_cycle_counter(true); 
      *!       instead of 
      *!       init_cycle_counter(false); 
      */
-    // init_cycle_counter(false);
-    stdio_init_all();
+    init_cycle_counter(false);
+
+#if defined(RTE_Compiler_EventRecorder) && defined(USE_EVR_FOR_STDOUR)
+    EventRecorderInitialize(0, 1);
+#endif
+
     gpio_init(PICO_DEFAULT_LED_PIN);
     gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    
 }
+
 
 int main(void) 
 {
     system_init();
-    printf("pico system init ok.\r\n");
-    
-    printf("------------------------------------------------------------------\r\n");
-    printf("|                                                                |\r\n");
-    printf("|     ____   _   __            _____              _          __  |\r\n");
-    printf("|    / __ \\ (_) / /__ ____ _  / ___/ _____ _____ (_) ____   / /_ |\r\n");
-    printf("|   / /_/ // / / //_// __ `/  \\__ \\ / ___// ___// / / __ \\ / __/ |\r\n");
-    printf("|  / ____// / / ,<  / /_/ /  ___/ // /__ / /   / / / /_/ // /_   |\r\n");
-    printf("| /_/    /_/ /_/|_| \\__,_/  /____/ \\___//_/   /_/ / .___/ \\__/   |\r\n");
-    printf("|                                                /_/             |\r\n");
-    printf("|          PikaScript - An Ultra Lightweight Python Engine       |\r\n");
-    printf("|                                                                |\r\n");
-    printf("|           [ https://github.com/pikastech/pikascript ]          |\r\n");
-    printf("|           [  https://gitee.com/lyon1998/pikascript  ]          |\r\n");
-    printf("|                                                                |\r\n");
-    printf("------------------------------------------------------------------\r\n");
 
-    PikaObj * pikaMain = pikaScriptInit();
+    printf("Hello Pico-Template\r\n");
+    uint32_t n = 0;
+    pikaScriptInit();
     while (true) {
-        sleep_ms(500);
+        breath_led();
+        //gpio_put(PICO_DEFAULT_LED_PIN, 1);
+        //sleep_ms(500);
+        //gpio_put(PICO_DEFAULT_LED_PIN, 0);
+        //sleep_ms(500);
     }
     //return 0;
 }
