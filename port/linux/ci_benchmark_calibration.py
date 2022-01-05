@@ -14,9 +14,24 @@ print('cali_ratio:', cali_ratio)
 for i in range(len(benchmarks_data)):
     benchmarks_data[i]['cpu_time'] *= cali_ratio
     benchmarks_data[i]['real_time'] *= cali_ratio
+    benchmarks_data[i]['family_index'] += 1
 
-for benchmark_item in benchmarks_data:
-    benchmark_item = dict(benchmark_item)
+# new a banchmark
+benchmarks_data.insert(0, benchmarks_data[0].copy())
+performance_point_name = 'Performance Points'
+benchmarks_data[0]['name'] = performance_point_name
+benchmarks_data[0]['run_name'] = performance_point_name
+benchmarks_data[0]['family_index'] = 0
+benchmarks_data[0]['repetitions'] = 1
+benchmarks_data[0]['iterations'] = 1
+benchmarks_data[0]['real_time'] = benchmarks_data[-1]['cpu_time'] / \
+    benchmarks_data[-2]['cpu_time'] * 100 * 10000
+benchmarks_data[0]['cpu_time'] = benchmarks_data[0]['real_time']
+benchmarks_data[0]['time_unit'] = 'Point'
 
+# update json_data
+json_data['benchmarks'] = benchmarks_data
+
+# save json
 with open('benchmark_result.json', 'w') as json_out:
     json.dump(json_data, json_out)
