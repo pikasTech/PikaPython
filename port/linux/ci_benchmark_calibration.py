@@ -19,15 +19,19 @@ for i in range(len(benchmarks_data)):
 # new a banchmark
 benchmarks_data.insert(0, benchmarks_data[0].copy())
 performance_point_name = 'Performance Points'
+performance_point_res = benchmarks_data[-1]['cpu_time'] / \
+    benchmarks_data[-2]['cpu_time'] * 100 * 100000
 benchmarks_data[0]['name'] = performance_point_name
 benchmarks_data[0]['run_name'] = performance_point_name
 benchmarks_data[0]['family_index'] = 0
 benchmarks_data[0]['repetitions'] = 1
 benchmarks_data[0]['iterations'] = 1
-benchmarks_data[0]['real_time'] = benchmarks_data[-1]['cpu_time'] / \
-    benchmarks_data[-2]['cpu_time'] * 100 * 100000
-benchmarks_data[0]['cpu_time'] = benchmarks_data[0]['real_time']
+benchmarks_data[0]['real_time'] = performance_point_res
+benchmarks_data[0]['cpu_time'] = performance_point_res
 benchmarks_data[0]['time_unit'] = 'Point'
+
+print('---------------------------------------------')
+print('Perfomance point:', int(performance_point_res))
 
 # update json_data
 json_data['benchmarks'] = benchmarks_data
