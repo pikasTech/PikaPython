@@ -86,7 +86,7 @@ for i in range(2,30):
             break
     if is_prime:
         num = num + i
-EXPECT_EQ('prime_number_100', num, 129)
+EXPECT_EQ('prime_number_30', num, 129)
 
 
 print('====================')
