@@ -25,7 +25,7 @@ benchmarks_data[0]['family_index'] = 0
 benchmarks_data[0]['repetitions'] = 1
 benchmarks_data[0]['iterations'] = 1
 benchmarks_data[0]['real_time'] = benchmarks_data[-1]['cpu_time'] / \
-    benchmarks_data[-2]['cpu_time'] * 100 * 10000
+    benchmarks_data[-2]['cpu_time'] * 100 * 100000
 benchmarks_data[0]['cpu_time'] = benchmarks_data[0]['real_time']
 benchmarks_data[0]['time_unit'] = 'Point'
 
