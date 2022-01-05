@@ -40,6 +40,9 @@ jobs:
     - name: BENCHMARK
       run: cd ${{github.workspace}}/port/linux && bash ci_benchmark.sh
       
+    - name: CLEAR
+      run: cd ${{github.workspace}}/port/linux && rm *.sh
+      
     - name: Store benchmark result
       uses: benchmark-action/github-action-benchmark@v1
       with:
