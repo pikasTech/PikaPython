@@ -52,12 +52,8 @@ uint16_t content_getSize(uint8_t* self) {
 
 void content_setNext(uint8_t* self, uint8_t* next) {
     uint8_t* nextDir = self + content_nextOffset(self);
-    uint64_t pointerTemp = (uintptr_t)next;
-    for (uint32_t i = 0; i < sizeof(uint8_t*); i++) {
-        // aboid \0
-        nextDir[i] = pointerTemp;
-        pointerTemp = pointerTemp >> 8;
-    }
+    uintptr_t* p_next = (uintptr_t*)nextDir;
+    *p_next = (uintptr_t)next;
 }
 
 /**
