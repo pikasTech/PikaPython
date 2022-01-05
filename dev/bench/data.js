@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641300770711,
+  "lastUpdate": 1641349985471,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -576,6 +576,54 @@ window.BENCHMARK_DATA = {
             "value": 0.005000419121659741,
             "unit": "ms/iter",
             "extra": "iterations: 265290\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ec67894bab2a6024c2cb507dbd1789038d8cacfa",
+          "message": "Update CI.yml",
+          "timestamp": "2022-01-05T10:30:01+08:00",
+          "tree_id": "362fb06b8247f3ab132f517701ef730bf26ba6f4",
+          "url": "https://github.com/pikasTech/pikascript/commit/ec67894bab2a6024c2cb507dbd1789038d8cacfa"
+        },
+        "date": 1641349984267,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 445.28503287096476,
+            "unit": "ms/iter",
+            "extra": "iterations: 3\ncpu: 445.2012237740621 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 290.4416694762554,
+            "unit": "ms/iter",
+            "extra": "iterations: 4\ncpu: 289.3705872771617 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 85.94445233013231,
+            "unit": "ms/iter",
+            "extra": "iterations: 14\ncpu: 85.93529102297622 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000760999872725,
+            "unit": "ms/iter",
+            "extra": "iterations: 233446\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
