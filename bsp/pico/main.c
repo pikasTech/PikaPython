@@ -107,7 +107,8 @@ int main(void)
 
     printf("Hello Pico-Template\r\n");
     uint32_t n = 0;
-    pikaScriptInit();
+    /* run unit test */
+    obj_deinit(pikaScriptInit());
     while (true) {
         breath_led();
         //gpio_put(PICO_DEFAULT_LED_PIN, 1);

@@ -4,9 +4,6 @@ import PikaStdData
 
 mem = PikaStdLib.MemChecker()
 
-print('mem used max:')
-mem.max()
-
 def EXPECT_EQ(test_name, input, expected):
     print('-----TEST-----')
     print(test_name)
@@ -78,6 +75,22 @@ b = dict.get('b')
 EXPECT_EQ('PikaStdData', a, 1)
 EXPECT_EQ('PikaStdData_2', b, 0)
 
-print('-----------------')
-print('[Tests Succeed]')
-# print('[Succeed] All Test Apssed.')
+num = 0
+i = 2
+for i in range(2,30):
+    j=2
+    is_prime = 1
+    for j in range(2,i):
+        if i%j==0 :
+            is_prime = 0
+            break
+    if is_prime:
+        num = num + i
+EXPECT_EQ('prime_number_100', num, 129)
+
+
+print('====================')
+print('[Unit Tests Succeed]')
+print('====================')
+print('mem used max:')
+mem.max()
