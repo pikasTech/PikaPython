@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1641349985471,
+  "lastUpdate": 1641350807223,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -624,6 +624,54 @@ window.BENCHMARK_DATA = {
             "value": 0.005000760999872725,
             "unit": "ms/iter",
             "extra": "iterations: 233446\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "a8f7de05f690563b0e605eda079df2c7f61ba076",
+          "message": "Merge branch 'master' of https://gitee.com/lyon1998/pikascript",
+          "timestamp": "2022-01-05T10:41:03+08:00",
+          "tree_id": "638b2088e43ffc7e2427c8235a351b7f1e237a36",
+          "url": "https://github.com/pikasTech/pikascript/commit/a8f7de05f690563b0e605eda079df2c7f61ba076"
+        },
+        "date": 1641350804748,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "for_loop_10000",
+            "value": 441.56938312300423,
+            "unit": "ms/iter",
+            "extra": "iterations: 3\ncpu: 441.52933595380125 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 276.03634893829724,
+            "unit": "ms/iter",
+            "extra": "iterations: 3\ncpu: 276.0264653585021 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 85.08579094350009,
+            "unit": "ms/iter",
+            "extra": "iterations: 13\ncpu: 85.07485096678663 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000421729529868,
+            "unit": "ms/iter",
+            "extra": "iterations: 244710\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
