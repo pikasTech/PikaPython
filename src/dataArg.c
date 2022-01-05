@@ -95,13 +95,8 @@ uint8_t* content_init_hash(Hash nameHash,
         __platform_memset(contentDir, 0, size);
     }
 
-    uint64_t pointerTemp = (uintptr_t)next;
-    for (uint32_t i = 0; i < sizeof(uint8_t*); i++) {
-        // aboid \0
-        nextDir[i] = pointerTemp;
-        pointerTemp = pointerTemp >> 8;
-    }
-
+    uintptr_t* p_next = (uintptr_t*)nextDir;
+    *p_next = (uintptr_t)next;
     return self;
 }
 
