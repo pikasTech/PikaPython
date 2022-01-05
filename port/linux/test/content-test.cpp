@@ -22,15 +22,15 @@ TEST(content, init) {
     uint16_t size = content_getSize(self);
     uint8_t* content = content_getContent(self);
 
-    ASSERT_EQ(contentOffset, 14);
-    ASSERT_EQ(typeOffset, 18);
+    ASSERT_EQ(contentOffset, 16);
+    ASSERT_EQ(typeOffset, 20);
     ASSERT_EQ(sizeOffset, 8);
     ASSERT_EQ(size, 4);
     ASSERT_EQ(content[0], 1);
     ASSERT_EQ(content[1], 2);
     ASSERT_EQ(content[2], 3);
     ASSERT_EQ(content[3], 4);
-    ASSERT_EQ(totleSize, 22);
+    ASSERT_EQ(totleSize, 24);
 
     ASSERT_EQ(hash_time33((char*)"name"), nameHash);
     ASSERT_EQ(TYPE_NONE, type);
@@ -60,15 +60,15 @@ TEST(content, set) {
     uint16_t size = content_getSize(self);
     uint8_t* content = content_getContent(self);
 
-    ASSERT_EQ(contentOffset, 14);
-    ASSERT_EQ(typeOffset, 18);
+    ASSERT_EQ(contentOffset, 16);
+    ASSERT_EQ(typeOffset, 20);
     ASSERT_EQ(sizeOffset, 8);
     ASSERT_EQ(size, 4);
     ASSERT_EQ(content[0], 1);
     ASSERT_EQ(content[1], 2);
     ASSERT_EQ(content[2], 3);
     ASSERT_EQ(content[3], 4);
-    ASSERT_EQ(totleSize, 22);
+    ASSERT_EQ(totleSize, 24);
 
     ASSERT_EQ(hash_time33((char*)"name"), nameHash);
     ASSERT_EQ(TYPE_NONE, type);
