@@ -45,11 +45,9 @@ uint16_t content_sizeOffset(uint8_t* self) {
 }
 
 uint16_t content_getSize(uint8_t* self) {
-    uint16_t size = 0;
-    size += self[content_sizeOffset(self) + 1];
-    size = (size << 8);
-    size += self[content_sizeOffset(self)];
-    return size;
+    uint32_t* p_size =
+        (uint32_t*)((uintptr_t)self + (uintptr_t)content_sizeOffset(self));
+    return (uint16_t)*p_size;
 }
 
 void content_setNext(uint8_t* self, uint8_t* next) {
@@ -93,8 +91,8 @@ uint8_t* content_init_hash(Hash nameHash,
 
     __platform_memcpy(nameDir, &nameHash, nameSize);  // use hash
     __platform_memcpy(typeDir, &type, typeSize);
-    sizeDir[0] = size;
-    sizeDir[1] = size >> 8;
+    uint32_t* p_size = (uint32_t*)sizeDir;
+    *p_size = size;
     if (NULL != content) {
         __platform_memcpy(contentDir, content, size);
     } else {
