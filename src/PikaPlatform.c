@@ -113,7 +113,5 @@ PIKA_WEAK void* __platform_memcpy(void* dir, const void* src, size_t size) {
 }
 
 PIKA_WEAK char __platform_getchar(void) {
-    __platform_printf("[error]: __platform_getchar need impaltment!\r\n");
-    while(1){
-    }
+    return getchar();
 }

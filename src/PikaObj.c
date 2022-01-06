@@ -25,7 +25,6 @@
  * SOFTWARE.
  */
 
-
 #define __PIKA_OBJ_CLASS_IMPLEMENT
 #include "PikaObj.h"
 #include "BaseObj.h"
@@ -568,6 +567,8 @@ static void clearBuff(char* buff, int size) {
         buff[i] = 0;
     }
 }
+
+uint8_t is_in_block = 0;
 void pikaScriptShell(PikaObj* self) {
     __platform_printf(">>> ");
     while (1) {
@@ -588,7 +589,22 @@ void pikaScriptShell(PikaObj* self) {
             continue;
         }
         if ((inputChar == '\r') || (inputChar == '\n')) {
-            __platform_printf("\r\n");
+            __platform_printf("\n");
+            /* still in block */
+            if (is_in_block) {
+                char _n = '\n';
+                strAppendWithSize(rxBuff, &_n, 1);
+                __platform_printf("... ");
+                continue;
+            }
+            /* go in block */
+            if (rxBuff[strGetSize(rxBuff) - 1] == ':') {
+                is_in_block = 1;
+                char _n = '\n';
+                strAppendWithSize(rxBuff, &_n, 1);
+                __platform_printf("... ");
+                continue;
+            }
             if (strEqu("exit()", rxBuff)) {
                 /* exit pika shell */
                 break;
