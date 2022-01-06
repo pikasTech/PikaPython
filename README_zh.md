@@ -19,7 +19,7 @@
         <a href="https://m.tb.cn/h.fjS6hpu?tk=LIpQ2b3G2Sf">开发板</a> |
         <a href="../../tree/master/bsp#platform-support">BSP</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/of8izq">包管理器</a> |
-	<a href="https://www.yuque.com/liang-mltek/pikascript/wcc36r" >rtthread软件包</a> |
+	<a href="https://www.yuque.com/liang-mltek/pikascript/wcc36r" >RT-Thread软件包</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/il3an0" >参与贡献</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/cp1k24">商业合作</a> 
 </p>
