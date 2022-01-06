@@ -568,7 +568,7 @@ static void clearBuff(char* buff, int size) {
     }
 }
 
-uint8_t is_in_block = 0;
+volatile uint8_t is_in_block = 0;
 void pikaScriptShell(PikaObj* self) {
     __platform_printf(">>> ");
     while (1) {
@@ -589,12 +589,25 @@ void pikaScriptShell(PikaObj* self) {
             continue;
         }
         if ((inputChar == '\r') || (inputChar == '\n')) {
-            __platform_printf("\n");
+            __platform_printf("\r\n");
             /* still in block */
             if (is_in_block) {
+                /* load new line into buff */
+                Args* buffs = New_strBuff();
                 char _n = '\n';
                 strAppendWithSize(rxBuff, &_n, 1);
-                __platform_printf("... ");
+                char* shell_buff_new = strsAppend(buffs, obj_getStr(self, "shell_buff"), rxBuff);
+                obj_setStr(self, "shell_buff", shell_buff_new);
+                args_deinit(buffs);
+                /* go out from block */
+                if(rxBuff[0] != ' '){
+                    is_in_block = 0;
+                    obj_run(self, obj_getStr(self, "shell_buff"));
+                    __platform_printf(">>> ");
+                }else{
+                    __platform_printf("... ");
+                }
+                clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
                 continue;
             }
             /* go in block */
@@ -602,13 +615,17 @@ void pikaScriptShell(PikaObj* self) {
                 is_in_block = 1;
                 char _n = '\n';
                 strAppendWithSize(rxBuff, &_n, 1);
+                obj_setStr(self, "shell_buff", rxBuff);
+                clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
                 __platform_printf("... ");
                 continue;
             }
+            /* exit */
             if (strEqu("exit()", rxBuff)) {
                 /* exit pika shell */
                 break;
             }
+            /* run single line */
             obj_run(self, rxBuff);
             __platform_printf(">>> ");
             clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
