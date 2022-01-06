@@ -1,9 +1,7 @@
-name: CI
+name: CI——Benchmark
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
 env:
