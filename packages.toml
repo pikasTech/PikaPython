@@ -45,7 +45,7 @@ name = "PikaStdData"
 releases = [
   "v0.0.1 74426e4bd3e97060f06b2cb451a38042b5634abc",
   "v0.0.9 2d22ed170a7766c3ce6716ca123bdf5a83e344ed",
-  "v1.0.0 343a1d56c53bba78fce9a0cd0cc8dfcd580632be",
+  "v1.3.1 343a1d56c53bba78fce9a0cd0cc8dfcd580632be",
 ]
 
 [[packages]]
