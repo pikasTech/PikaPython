@@ -14,6 +14,6 @@ And this bsp is an  **MDK-keil**  project.
 
 4. Compile and Debug
 
-5. The  **printf** is connected to  **UART0** , and  **TX is GP0** ,  **RX is GP1** .
+5. The  **printf** is connected to usart debug viewer.
 
-![image](https://user-images.githubusercontent.com/88232613/145928146-2954bd9e-5465-4bac-94fa-f8fe13c1b1d9.png)
+![image](https://user-images.githubusercontent.com/88232613/148212737-4f4938fa-e895-4549-8901-01d3b594bb4e.png)

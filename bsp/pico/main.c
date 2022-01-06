@@ -18,6 +18,9 @@
 #include "pico/stdlib.h"
 #include "perf_counter.h"
 #include "pikaScript.h"
+#include "PikaParser.h"
+#include "PikaVM.h"
+#include "dataStrs.h"
 #include <stdio.h>
 
 #include "RTE_Components.h"
@@ -100,6 +103,25 @@ static void system_init(void)
     
 }
 
+static void prime_number_100_c(void) {
+    volatile int num = 0;
+    /* run */
+    for (volatile int i = 2; i < 100; i++) {
+        volatile int is_prime = 1;
+        for (volatile int j = 2; j < i; j++) {
+            if (i % j == 0) {
+                is_prime = 0;
+                break;
+            }
+        }
+        if (is_prime) {
+            num = num + i;
+        }
+    }
+    if ( num != 1060){
+        printf("[error] in benchmark prime_number_100_c \r\n");
+    }
+}
 
 int main(void) 
 {
@@ -109,6 +131,57 @@ int main(void)
     uint32_t n = 0;
     /* run unit test */
     obj_deinit(pikaScriptInit());
+    
+    
+    
+    /* benchmark */
+    uint64_t nCycleUsed_c,nCycleUsed_pika = 0;
+    printf("[----------benchmark----------]\r\n");
+    __cycleof__("", {
+            nCycleUsed_c = _;
+            printf("[prime_number_100_c] Cycle Used %lld\r\n", _);
+
+        }) {
+        prime_number_100_c();
+    }
+        
+    /* create pikaMain root obj */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* parse python to pikaAsm */
+    Args* buffs = New_strBuff();
+    
+    char *pikaAsm = Parser_multiLineToAsm(buffs, (char *)
+            "num = 0\n"
+            "i = 2\n"
+            "for i in range(2,100):\n"
+            "    j=2\n"
+            "    is_prime = 1\n"
+            "    for j in range(2,i):\n"
+            "        if i%j==0 :\n"
+            "            is_prime = 0\n"
+            "            break\n"
+            "    if is_prime:\n"
+            "        num = num + i\n"
+            "\n");
+     __cycleof__("", {
+            nCycleUsed_pika = _;
+            printf("[prime_number_100_pika] Cycle Used %lld\r\n", _);
+        }) {
+        /* run pika Asm */
+        pikaVM_runAsm(pikaMain, pikaAsm);
+    }
+    int num = obj_getInt(pikaMain, "num");
+    if ( num != 1060){
+        printf("[error] in benchmark prime_number_100_pika \r\n");
+    }
+    /* free the pikaMain obj */
+    obj_deinit(pikaMain);
+    
+    uint64_t benchmark_result = ((double) nCycleUsed_c / (double)nCycleUsed_pika) * 100 * 100000;
+    
+    printf("\r\n[------benchmark finished ---------]\r\n");
+    printf("benchmakr result :%lld\r\n", benchmark_result);
+
     while (true) {
         breath_led();
         //gpio_put(PICO_DEFAULT_LED_PIN, 1);

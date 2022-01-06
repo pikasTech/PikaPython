@@ -242,6 +242,7 @@ cd pikascript/port/linux
 
 step2: Compile the project
 ```
+sh install_dependency.sh # install dependency 
 sh init.sh # Only nedded in the first time.
 sh make.sh # Compile the project.
 ```
@@ -253,12 +254,7 @@ sh gtest.sh
 
 step4: Run the banchmark
 ``` shell
-sh test-banchmark.sh
-```
-
-step5: Run the demo
-``` shell
-./build/src/boot/demo06-pikamain/pikascript_demo06-pikamain
+sh ci_benchmark.sh
 ```
 
 # 7.Demo 

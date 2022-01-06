@@ -45,21 +45,15 @@ uint16_t content_sizeOffset(uint8_t* self) {
 }
 
 uint16_t content_getSize(uint8_t* self) {
-    uint16_t size = 0;
-    size += self[content_sizeOffset(self) + 1];
-    size = (size << 8);
-    size += self[content_sizeOffset(self)];
-    return size;
+    uint32_t* p_size =
+        (uint32_t*)((uintptr_t)self + (uintptr_t)content_sizeOffset(self));
+    return (uint16_t)*p_size;
 }
 
 void content_setNext(uint8_t* self, uint8_t* next) {
     uint8_t* nextDir = self + content_nextOffset(self);
-    uint64_t pointerTemp = (uintptr_t)next;
-    for (uint32_t i = 0; i < sizeof(uint8_t*); i++) {
-        // aboid \0
-        nextDir[i] = pointerTemp;
-        pointerTemp = pointerTemp >> 8;
-    }
+    uintptr_t* p_next = (uintptr_t*)nextDir;
+    *p_next = (uintptr_t)next;
 }
 
 /**
@@ -76,10 +70,10 @@ Hash hash_time33(char* str) {
 uint8_t* content_init_hash(Hash nameHash,
                            ArgType type,
                            uint8_t* content,
-                           uint16_t size,
+                           uint32_t size,
                            uint8_t* next) {
     const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = sizeof(uint16_t);
+    const uint8_t sizeLength = sizeof(uint32_t);
     uint16_t nameSize = sizeof(Hash);     // use hash
     uint16_t typeSize = sizeof(ArgType);  // use enum
     uint8_t* self = (uint8_t*)pikaMalloc(nextLength + sizeLength + nameSize +
@@ -93,21 +87,16 @@ uint8_t* content_init_hash(Hash nameHash,
 
     __platform_memcpy(nameDir, &nameHash, nameSize);  // use hash
     __platform_memcpy(typeDir, &type, typeSize);
-    sizeDir[0] = size;
-    sizeDir[1] = size >> 8;
+    uint32_t* p_size = (uint32_t*)sizeDir;
+    *p_size = size;
     if (NULL != content) {
         __platform_memcpy(contentDir, content, size);
     } else {
         __platform_memset(contentDir, 0, size);
     }
 
-    uint64_t pointerTemp = (uintptr_t)next;
-    for (uint32_t i = 0; i < sizeof(uint8_t*); i++) {
-        // aboid \0
-        nextDir[i] = pointerTemp;
-        pointerTemp = pointerTemp >> 8;
-    }
-
+    uintptr_t* p_next = (uintptr_t*)nextDir;
+    *p_next = (uintptr_t)next;
     return self;
 }
 
@@ -121,7 +110,7 @@ uint8_t* content_init(char* name,
 }
 
 uint16_t content_totleSize(uint8_t* self) {
-    const uint8_t size_size = sizeof(uint16_t);
+    const uint8_t size_size = sizeof(uint32_t);
     const uint8_t size_next = sizeof(uint8_t*);
     const uint8_t size_type = sizeof(ArgType);
     const uint8_t size_hash = sizeof(Hash);
@@ -137,15 +126,12 @@ void arg_freeContent(Arg* self) {
 
 uint8_t content_nameOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = sizeof(uint16_t);
+    const uint8_t sizeLength = sizeof(uint32_t);
     return nextLength + sizeLength;
 }
 
 Hash content_getNameHash(uint8_t* self) {
-    uint8_t* nameHashDir = (uint8_t*)self + content_nameOffset(self);
-    Hash nameHash = 0;
-    __platform_memcpy(&nameHash, nameHashDir, sizeof(Hash));
-    return nameHash;
+    return *(Hash*)((uintptr_t)self + (uintptr_t)content_nameOffset(self));
 }
 
 uint8_t* content_deinit(uint8_t* self) {
@@ -239,7 +225,7 @@ ArgType content_getType(uint8_t* self) {
 
 uint16_t content_contentOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = sizeof(uint16_t);
+    const uint8_t sizeLength = sizeof(uint32_t);
     return nextLength + sizeLength + sizeof(Hash);
 }
 
@@ -248,18 +234,9 @@ uint16_t content_nextOffset(uint8_t* self) {
 }
 
 uint8_t* content_getNext(uint8_t* self) {
-    uint8_t* nextDir = self + content_nextOffset(self);
-    uint8_t* next = NULL;
-    uint64_t pointerTemp = 0;
-
-    for (int32_t i = sizeof(uint8_t*); i > -1; i--) {
-        // avoid \0
-        uint8_t val = nextDir[i];
-        pointerTemp = (pointerTemp << 8);
-        pointerTemp += val;
-    }
-    next = (uint8_t*)(uintptr_t)pointerTemp;
-    return next;
+    uintptr_t* nextDir =
+        (uintptr_t*)((uintptr_t)self + (uintptr_t)content_nextOffset(self));
+    return (uint8_t*)*nextDir;
 }
 
 uint8_t* content_getContent(uint8_t* self) {
@@ -360,7 +337,7 @@ char* arg_getStr(Arg* self) {
 
 uint16_t content_typeOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = 2;
+    const uint8_t sizeLength = sizeof(uint32_t);
     uint16_t size = content_getSize(self);
     uint16_t nameSize = sizeof(Hash);
     return nextLength + sizeLength + nameSize + size;
