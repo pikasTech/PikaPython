@@ -2,6 +2,10 @@
 
 This bsp is based on https://github.com/GorgonMeducer/Pico_Template.
 
+and https://github.com/raspberrypi/pico-sdk
+
+To see the [LICENSE](../../blob/master/bsp/pico/LECENSE)
+
 And this bsp is an  **MDK-keil**  project.
 
 ## Usage
