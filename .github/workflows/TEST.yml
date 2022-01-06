@@ -1,0 +1,90 @@
+name: CI——Benchmark
+
+on:
+  pull_request:
+    branches: [ master ]
+    
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  core:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+  
+    - name: install_google_benchmark
+      run: git clone https://github.com/google/benchmark.git && cd benchmark && cmake -E make_directory "build" && cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../ && cmake --build "build" --config Release && sudo cmake --build "build" --config Release --target install
+      
+    - name: PULL_CORE
+      run: cd ${{github.workspace}}/port/linux && bash pull-core.sh
+
+#     - name: CHMOD
+#       run: cd ${{github.workspace}}/port/linux/package/pikascript && chmod +x ./rust-msc-latest-linux
+
+    - name: INIT
+      run: cd ${{github.workspace}}/port/linux && bash init.sh
+
+    - name: TEST
+      # Build your program with the given configuration
+      run: cd ${{github.workspace}}/port/linux && bash gtest.sh
+      
+    - name: BENCHMARK
+      run: cd ${{github.workspace}}/port/linux && bash ci_benchmark.sh
+      
+    - name: CLEAR
+      run: cd ${{github.workspace}}/port/linux && rm *.sh
+      
+#     - name: Store benchmark result
+#       uses: benchmark-action/github-action-benchmark@v1
+#       with:
+#         tool: 'googlecpp'
+#         output-file-path: ${{github.workspace}}/port/linux/benchmark_result.json
+#         github-token: ${{ secrets.GITHUB_TOKEN }}
+#         auto-push: true
+#   bsp:
+#     runs-on: windows-latest
+
+#     steps:
+#     - uses: actions/checkout@v2
+
+#     - uses: ryanwinter/arm-none-eabi-gcc@v2.0.1
+#       with:
+#         # GNU Embedded Toolchain for Arm release name, in the V-YYYY-qZ format (e.g. "9-2019-q4")
+#         release: '9-2019-q4'
+
+#     - name: stm32f103c8-beforeMake
+#       run: cd ${{github.workspace}}/bsp/stm32f103c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
+ 
+#    # - name: stm32f103c8-make
+#    #   run: cd ${{github.workspace}}/bsp/stm32f103c8 && make
+
+#     - name: stm32g030c8-beforeMake
+#       run: cd ${{github.workspace}}/bsp/stm32g030c8/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
+ 
+#     # - name: stm32g030c8-make
+#     #   run: cd ${{github.workspace}}/bsp/stm32g030c8 && make
+
+#     - name: stm32g070cb-beforeMake
+#       run: cd ${{github.workspace}}/bsp/stm32g070cb/pikascript && ./pikaPackage.exe && ./rust-msc-latest-win10.exe
+ 
+#    # - name: stm32g070cb-make
+#    #   run: cd ${{github.workspace}}/bsp/stm32g070cb && make
+
+#     - name: stm32g030-bootloader
+#       run: cd ${{github.workspace}}/bsp/PikaPi_Zero/bootloader && make
+
+#   packageManager-windows:
+#     runs-on: windows-latest
+#     steps:
+#       - uses: actions/checkout@v2
+
+#       - name: PACKAGE_MANAGER
+#         run: cd ${{github.workspace}}/tools/pikaPackageManager && go run main.go
+        
