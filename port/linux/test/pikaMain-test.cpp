@@ -503,3 +503,29 @@ TEST(pikaMain, prime_100) {
     /* mem check */
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+/* the log_buff of printf */
+extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
+TEST(pikaMain, for_in_dict) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)
+    "print('__start__')\n"
+    "dict = PikaStdData.Dict()\n"
+    "dict.set('a', 1)\n"
+    "dict.set('b', 2)\n"
+    "dict.remove('b')\n"
+    "for item in dict:\n"
+    "    print(item)\n"
+    "\n"
+    );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1\r\n");
+    EXPECT_STREQ(log_buff[1], "__start__\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

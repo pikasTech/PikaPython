@@ -19,7 +19,7 @@
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=arg_test*",
-                "--gtest_filter=content*",
+                // "--gtest_filter=content*",
                 // "--gtest_filter=pikaMain.print_in_def",
                 // "--gtest_filter=pikaMain.list_for_loop"
                 // "--gtest_filter=pikaMain.err_scop"
