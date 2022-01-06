@@ -21,7 +21,7 @@
 	<a href="https://space.bilibili.com/5365336/channel/detail?cid=202329">Videos</a> |
         <a href="../../tree/master/bsp#platform-support">BSP</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/of8izq?translate=en">Package Manager</a> |
-	<a href="https://www.yuque.com/liang-mltek/pikascript/wcc36r?translate=en" >RT-thread package</a> |
+	<a href="https://www.yuque.com/liang-mltek/pikascript/wcc36r?translate=en" >RT-Thread package</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/il3an0?translate=en" >Contribute</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/cp1k24?translate=en">Business</a> 
 </p>
