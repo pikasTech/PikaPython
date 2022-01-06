@@ -4,7 +4,7 @@ This bsp is based on https://github.com/GorgonMeducer/Pico_Template.
 
 and https://github.com/majbthrd/pico-debug
 
-To see the [LICENSE](../../../../blob/master/bsp/pico/LECENSE)
+To see the [LICENSE](../../../../blob/master/bsp/pico/LECENSE.md)
 
 And this bsp is an  **MDK-keil**  project.
 
