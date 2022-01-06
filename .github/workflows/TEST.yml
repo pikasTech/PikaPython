@@ -1,4 +1,4 @@
-name: CI——Benchmark
+name: CI——PR
 
 on:
   pull_request:
