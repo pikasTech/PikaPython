@@ -127,7 +127,7 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 
 |OS|port|GPIO|TIME|
 |---|---|---|---|
-|rt-thread|√|√|√|
+|RT-Thread|√|√|√|
 |vsf|√|√| |
 
 |OS|port|Google Test|Benchmark|
@@ -144,7 +144,7 @@ Support run and program python scripts by serial.
 
 <img src="https://user-images.githubusercontent.com/88232613/134841230-85de6734-8467-4245-93a5-d452b5022b42.gif" width="400" alt="微信交流群"/><br/>
 
-Support IDEs like Keil, IAR, rt-thread studio and segger embedded studio to develop C moudle.
+Support IDEs like Keil, IAR, RT-Thread studio and segger embedded studio to develop C moudle.
 
 Support build tools like CMake, makeFile and Scons.
 
