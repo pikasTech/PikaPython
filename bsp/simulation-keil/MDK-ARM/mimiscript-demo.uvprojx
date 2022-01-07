@@ -671,6 +671,36 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Python</GroupName>
+          <Files>
+            <File>
+              <FileName>main.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\main.py</FilePath>
+            </File>
+            <File>
+              <FileName>Device.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\Device.py</FilePath>
+            </File>
+            <File>
+              <FileName>PikaObj.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\PikaObj.py</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\PikaStdLib.py</FilePath>
+            </File>
+            <File>
+              <FileName>requestment.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\requestment.txt</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
