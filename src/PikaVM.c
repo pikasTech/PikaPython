@@ -273,16 +273,14 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     if (type_arg1 == TYPE_INT) {
         num1_i = arg_getInt(arg1);
         num1_f = (float)num1_i;
-    }
-    if (type_arg1 == TYPE_FLOAT) {
+    } else if (type_arg1 == TYPE_FLOAT) {
         num1_f = arg_getFloat(arg1);
         num1_i = (int)num1_f;
     }
     if (type_arg2 == TYPE_INT) {
         num2_i = arg_getInt(arg2);
         num2_f = (float)num2_i;
-    }
-    if (type_arg2 == TYPE_FLOAT) {
+    } else if (type_arg2 == TYPE_FLOAT) {
         num2_f = arg_getFloat(arg2);
         num2_i = (int)num2_f;
     }
@@ -290,6 +288,26 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
             outArg = arg_setFloat(outArg, "", num1_f + num2_f);
             goto OPT_exit;
+        }
+        if ((type_arg1 == TYPE_STRING) || (type_arg2 == TYPE_STRING)) {
+            char* num1_s = NULL;
+            char* num2_s = NULL;
+            char num1_s_num[11] = {0};
+            char num2_s_num[11] = {0};
+            if (type_arg1 == TYPE_STRING) {
+                num1_s = arg_getStr(arg1);
+            } else if (type_arg1 == TYPE_INT) {
+                num1_s = fast_itoa(num1_s_num, arg_getInt(arg1));
+            } else if (type_arg1 == TYPE_FLOAT) {
+                num1_s = fast_itoa(num1_s_num, arg_getFloat(arg1));
+            }
+            if (type_arg2 == TYPE_STRING) {
+                num2_s = arg_getStr(arg2);
+            } else if (type_arg2 == TYPE_INT) {
+                num2_s = fast_itoa(num2_s_num, arg_getInt(arg1));
+            } else if (type_arg2 == TYPE_FLOAT) {
+                num2_s = fast_itoa(num2_s_num, arg_getFloat(arg2));
+            }
         }
         outArg = arg_setInt(outArg, "", num1_i + num2_i);
         goto OPT_exit;
@@ -498,8 +516,8 @@ static char* strs_getLine(Args* buffs, char* code) {
 }
 
 static enum Instruct getInstruct(char* line) {
-    #define __INS_COMPIRE
-    #include "__instruction_table.cfg"
+#define __INS_COMPIRE
+#include "__instruction_table.cfg"
     return NON;
 }
 
