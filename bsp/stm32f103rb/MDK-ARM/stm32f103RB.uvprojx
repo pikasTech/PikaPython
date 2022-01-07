@@ -777,6 +777,41 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Python</GroupName>
+          <Files>
+            <File>
+              <FileName>requestment.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\PikaScript\requestment.txt</FilePath>
+            </File>
+            <File>
+              <FileName>main.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\PikaScript\main.py</FilePath>
+            </File>
+            <File>
+              <FileName>PikaObj.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\PikaScript\PikaObj.py</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\PikaScript\PikaStdDevice.py</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\PikaScript\PikaStdLib.py</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F1.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\PikaScript\STM32F1.py</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>

@@ -567,7 +567,6 @@ int32_t getAddrOffsetOfJUM(char* code) {
             return offset;
         }
     }
-    return 0;
 }
 
 int32_t getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
