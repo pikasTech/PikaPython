@@ -541,8 +541,8 @@ TEST(pikaMain, str_add) {
     "c = a + b\n"
     "d = 1\n"
     "e = 1.2\n"
-    "g = c + d\n"
-    "h = (c + d) + e\n"
+    "g = c + str(d)\n"
+    "h = c + str(d) + str(e)\n"
     "\n"
     );
     /* collect */
@@ -564,7 +564,7 @@ TEST(pikaMain, str_add_print) {
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain, (char*)
-    "print('test: ' + 2233)\n"
+    "print('test: ' + str(2233))\n"
     "\n"
     );
     /* collect */
