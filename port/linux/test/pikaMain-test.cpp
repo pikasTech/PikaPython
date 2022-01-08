@@ -574,3 +574,24 @@ TEST(pikaMain, str_add_print) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, int_float_to_str) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)
+    "a = str(1)\n"
+    "b = str(1.2)\n"
+    "\n"
+    );
+    /* collect */
+    char* a = obj_getStr(pikaMain, (char*)"a");
+    char* b = obj_getStr(pikaMain, (char*)"b");
+    /* assert */
+    EXPECT_STREQ(a, "1");
+    EXPECT_STREQ(b, "1.200000");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

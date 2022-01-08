@@ -31,6 +31,9 @@ class SysObj(BaseObj):
     def float(arg: any) -> float:
         pass
 
+    def str(arg: any) -> str:
+        pass
+
     def iter(arg: any) -> any:
         pass
 
