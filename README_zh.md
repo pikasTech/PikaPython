@@ -2,7 +2,7 @@
 	<img alt="logo" src="https://user-images.githubusercontent.com/88232613/144221063-a85b2cb0-0416-493f-9afb-56cff31e977d.jpg" width="300">
 </p>
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">PikaScript</h1>
-<h4 align="center">跨平台的超轻量级嵌入式Python引擎</h4>
+<h4 align="center">跨平台的超轻量级嵌入式 Python 引擎</h4>
 <p align="center">
 	<a href="https://gitee.com/lyon1998/pikascript/stargazers"><img src="https://gitee.com/lyon1998/pikascript/badge/star.svg?theme=gvp"></a>
 	<a href="https://gitee.com/lyon1998/pikascript/members"><img src="https://gitee.com/lyon1998/pikascript/badge/fork.svg?theme=gvp"></a>
@@ -19,7 +19,7 @@
         <a href="https://m.tb.cn/h.fjS6hpu?tk=LIpQ2b3G2Sf">开发板</a> |
         <a href="../../tree/master/bsp#platform-support">BSP</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/of8izq">包管理器</a> |
-	<a href="https://www.yuque.com/liang-mltek/pikascript/wcc36r" >RT-Thread软件包</a> |
+	<a href="https://www.yuque.com/liang-mltek/pikascript/wcc36r" >RT-Thread 软件包</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/il3an0" >参与贡献</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/cp1k24">商业合作</a> 
 </p>
@@ -28,11 +28,11 @@
 
 # 1.简介
 
-PikaScript是一个完全重写的超轻量级python引擎，零依赖，零配置，可以在少于4KB的RAM下运行(如stm32g030c8和stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
+PikaScript 是一个完全重写的超轻量级 python 引擎，零依赖，零配置，可以在少于 4KB 的 RAM 下运行(如 stm32g030c8 和 stm32f103c8 )，极易部署和扩展，具有大量的中文文档和视频资料。
 
-PikaScript具有框架式C模块开发工具，只要用Python写好调用API，就能够自动连接到C模块，非常方便快捷。不用手动处理任何全局表、宏定义、等等。
+PikaScript 具有框架式C模块开发工具，只要用 Python 写好调用 API ，就能够自动连接到C模块，非常方便快捷。不用手动处理任何全局表、宏定义、等等。
 
-PikaScript也支持MDK、iar、RT-studio等常见ide开发，能够轻松地调试C模块。
+PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松地调试C模块。
 
 ![output_Kgj52R](https://user-images.githubusercontent.com/88232613/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
@@ -40,9 +40,9 @@ PikaScript也支持MDK、iar、RT-studio等常见ide开发，能够轻松地调�
 
 ![image](https://user-images.githubusercontent.com/88232613/138021445-13643518-b0a3-4872-a290-5dec27697837.png)
 
-# 获取PikaScript:
+# 获取 PikaScript:
 
-## 使用Pika包管理器[PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download)
+## 使用 Pika 包管理器[PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download)
 
 1. 直接运行[PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
 
@@ -58,7 +58,7 @@ PikaScript也支持MDK、iar、RT-studio等常见ide开发，能够轻松地调�
 
 [![PikaPi-Zero](https://user-images.githubusercontent.com/88232613/147940229-a6b8ebf5-41db-4614-a525-448f47de0a67.png)](https://item.taobao.com/item.htm?spm=a2126o.success.result.1.76224831Y0X1gO&id=654947372034)
 
-开发板基于STM32G030C8T6小资源MCU，仅64kB Flash，8kB RAM即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、UART、ADC、PWM、RGB、KEY、LCD）。板载CH340 USB转串口芯片，Type-C接口，支持串口下载python脚本，板载4颗RGB灯，可选配[LCD屏幕](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102)。
+开发板基于 STM32G030C8T6 小资源 MCU，仅 64kB Flash，8kB RAM 即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、UART、ADC、PWM、RGB、KEY、LCD）。板载 CH340 USB 转串口芯片，Type-C 接口，支持串口下载 python 脚本，板载4颗 RGB 灯，可选配[LCD屏幕](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102)。
 
 # 开发手册
 
@@ -91,9 +91,9 @@ PikaScript也支持MDK、iar、RT-studio等常见ide开发，能够轻松地调�
 
 [package](../../tree/master/package) - 模块目录
 
-[pikaCompiler](../../tree/master/tools/pikaCompiler) - 使用rust编写的预编译器
+[pikaCompiler](../../tree/master/tools/pikaCompiler) - 使用 rust 编写的预编译器
 
-[pikaPackageManager](../../tree/master/tools/pikaPackageManager) - 使用go编写的模块管理器
+[pikaPackageManager](../../tree/master/tools/pikaPackageManager) - 使用 go 编写的模块管理器
 
 # 2.平台支持列表
 
@@ -145,27 +145,27 @@ PikaScript也支持MDK、iar、RT-studio等常见ide开发，能够轻松地调�
 支持裸机运行，可运行于 **RAM ≥ 4kB** ，**FLASH ≥ 32kB** 的mcu中，如stm32g030, stm32f103c8t6，esp8266。
 
 ### (2)开发环境
-支持串口下载Python脚本。
+支持串口下载 Python 脚本。
 
 <img src="https://user-images.githubusercontent.com/88232613/134841230-85de6734-8467-4245-93a5-d452b5022b42.gif" width="400" alt="微信交流群"/><br/>
 
-支持Keil、IAR、rt-thread studio、segger embedded studio等IDE开发。
+支持 Keil、IAR、rt-thread studio、segger embedded studio 等IDE开发。
 
-支持CMake、makeFile、Scons等构建工具
+支持 CMake、makeFile、Scons 等构建工具
 
 零依赖，零配置，开箱即用，极易集成进已有的C工程。
 
 极易拓展自定义的C原生函数。
 
-支持跨平台，可在linux环境开发内核。
+支持跨平台，可在 linux 环境开发内核。
 
 ### (3)语法特性
 
-使用python3标准语法的子集。
+使用 python3 标准语法的子集。
 
-在编译时支持python类和方法定义，完整支持封装、继承、多态、模块功能 - 基于[Pika预编译器](../../tree/master/tools/pikaCompiler)。
+在编译时支持 python 类和方法定义，完整支持封装、继承、多态、模块功能 - 基于 [Pika 预编译器](../../tree/master/tools/pikaCompiler)。
 
-在运行时支持python方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于[Pika运行时内核](../../tree/master/src/package/pikascript/pikascript-core)。
+在运行时支持 python 方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于 [Pika 运行时内核](../../tree/master/src/package/pikascript/pikascript-core)。
 
 |语法|编译时|运行时|
 |---|---|---|
@@ -204,7 +204,7 @@ PikaScript也支持MDK、iar、RT-studio等常见ide开发，能够轻松地调�
 
 注重源码可读性，命名规范，标准统一，完全不使用宏，几乎不使用全局变量。
 
-完整的googletest单元测试。
+完整的 googletest 单元测试。
 
 # 4.交流与技术支持：
 
@@ -214,18 +214,20 @@ PikaScript也支持MDK、iar、RT-studio等常见ide开发，能够轻松地调�
 
 ### 群已经满啦，加我QQ拉你进群~ qq: 645275593
 
-## Tencent QQ： 645275593
+## Tencent QQ： 
+645275593
 
 ## Tencent QQ Group:
 
 <img src="https://user-images.githubusercontent.com/88232613/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
 
-## E-mail: 645275593@qq.com
+## E-mail: 
+645275593@qq.com
 
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
-| PikaVM优化 | GorgonMeducer |
+| PikaVM 优化 | GorgonMeducer |
 | W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
 | 捐赠：ESP32C3 5pic，调试器 |启明云端 沧御|
@@ -237,16 +239,16 @@ PikaScript也支持MDK、iar、RT-studio等常见ide开发，能够轻松地调�
 | package/STM32F1 | [sjy](https://gitee.com/shanjiayang) |
 | package/STM32F103RBBooter | [sjy](https://gitee.com/shanjiayang) |
 | bsp/stm32f103rb | [sjy](https://gitee.com/shanjiayang) |
-| 基于QEMU的ARM-2D仿真工程 | [liuduanfei](https://github.com/liuduanfei) |
-| 捐赠：GD32E103TB芯片2片 | 信息牛(微信名) |
+| 基于 QEMU 的 ARM-2D 仿真工程 | [liuduanfei](https://github.com/liuduanfei) |
+| 捐赠：GD32E103TB 芯片2片 | 信息牛(微信名) |
 | Rt-thread 支持包、适配层、模块| [Meco Jianting Man](https://github.com/mysterywolf) |
-| 捐赠：移远EC600S-CN 4G模块 | 移远模块 |
-| 捐赠：博流BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
-| 捐赠：中国移动CM32M101A 开发板| 孟巍(微信名) |
+| 捐赠：移远 EC600S-CN 4G模块 | 移远模块 |
+| 捐赠：博流 BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
+| 捐赠：中国移动 CM32M101A 开发板| 孟巍(微信名) |
 | 捐赠：APM32F030R8 开发板 | 极海半导体 陈成 |
 | 捐赠：APM32E103VB 开发板 | 极海半导体 陈成 |
-| 捐赠：APEX-Link仿真器 | 极海半导体 陈成 |
-| 源码格式化，增加git属性文件 | [Meco Jianting Man](https://github.com/mysterywolf) |
+| 捐赠：APEX-Link 仿真器 | 极海半导体 陈成 |
+| 源码格式化，增加 git 属性文件 | [Meco Jianting Man](https://github.com/mysterywolf) |
 | demo/simulation-keil | 千帆(微信名) |
 | demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
@@ -254,7 +256,7 @@ PikaScript也支持MDK、iar、RT-studio等常见ide开发，能够轻松地调�
 
 # 6.内核测试与开发
 
-## linux下测试pikascript内核(推荐ubuntu20.04)：
+## linux 下测试 pikascript 内核(推荐ubuntu20.04)：
 
 step1: 拉取项目
 ``` shell
@@ -311,9 +313,9 @@ sh ci_benchmark.sh
 
 ![image](https://user-images.githubusercontent.com/88232613/134461950-2153c738-0661-452f-956a-65a88fb71592.png)
 
-这几个Demo占用的RAM最大值只有3.56K，把1K的堆栈也算上就是4.56K，Flash最大占用是30.4K，以STM32F103C8T6的20K RAM和64K Flash为标准，RAM才用掉不到25%，Flash才用掉不到50%。
+这几个 Demo 占用的 RAM 最大值只有3.56K，把1K的堆栈也算上就是4.56K，Flash 最大占用是30.4K，以 STM32F103C8T6 的 20K RAM 和 64K Flash 为标准，RAM 才用掉不到25%，Flash 才用掉不到50%。
 
-我们可以简单对比一下micropython的常用芯片STM32F405RG和这次跑PikaScript的芯片STM32G070CB
+我们可以简单对比一下 micropython 的常用芯片 STM32F405RG 和这次跑 PikaScript 的芯片STM32G070CB
 
 ## RAM资源对比
 ![image](https://user-images.githubusercontent.com/88232613/132944731-a55ece1d-061f-4b91-ba87-bd6547be96a7.png)
@@ -326,7 +328,7 @@ sh ci_benchmark.sh
 
 ## 拓展能力如何呢？
 
-除了设备驱动之外，为mcu开发自定义的python脚本绑定在pikascript的开发框架下非常轻松，下面两个Demo就是自定义的C模块拓展，这个Demo基于ARM-2D图像驱动库开发了一些python脚本接口。
+除了设备驱动之外，为 mcu 开发自定义的 python 脚本绑定在 pikascript 的开发框架下非常轻松，下面两个 Demo 就是自定义的C模块拓展，这个 Demo 基于 ARM-2D 图像驱动库开发了一些 python 脚本接口。
 
 ## 几个小方块~
 ![Hnet-image (7)](https://user-images.githubusercontent.com/88232613/132945282-bfd310df-8063-456d-b90c-6b798a2c8ed5.gif)
