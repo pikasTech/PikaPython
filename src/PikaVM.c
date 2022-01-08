@@ -285,28 +285,12 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         num2_i = (int)num2_f;
     }
     if (strEqu("+", data)) {
-        if ((type_arg1 == TYPE_STRING) || (type_arg2 == TYPE_STRING)) {
+        if ((type_arg1 == TYPE_STRING) && (type_arg2 == TYPE_STRING)) {
             char* num1_s = NULL;
             char* num2_s = NULL;
-            char num1_s_num[11] = {0};
-            char num2_s_num[11] = {0};
             Args* str_opt_buffs = New_strBuff();
-            if (type_arg1 == TYPE_STRING) {
-                num1_s = arg_getStr(arg1);
-            } else if (type_arg1 == TYPE_INT) {
-                num1_s = fast_itoa(num1_s_num, arg_getInt(arg1));
-            } else if (type_arg1 == TYPE_FLOAT) {
-                num1_s =
-                    strsFormat(str_opt_buffs, 12, "%f", arg_getFloat(arg1));
-            }
-            if (type_arg2 == TYPE_STRING) {
-                num2_s = arg_getStr(arg2);
-            } else if (type_arg2 == TYPE_INT) {
-                num2_s = fast_itoa(num2_s_num, arg_getInt(arg2));
-            } else if (type_arg2 == TYPE_FLOAT) {
-                num2_s =
-                    strsFormat(str_opt_buffs, 12, "%f", arg_getFloat(arg2));
-            }
+            num1_s = arg_getStr(arg1);
+            num2_s = arg_getStr(arg2);
             char* opt_str_out = strsAppend(str_opt_buffs, num1_s, num2_s);
             outArg = arg_setStr(outArg, "", opt_str_out);
             args_deinit(str_opt_buffs);
