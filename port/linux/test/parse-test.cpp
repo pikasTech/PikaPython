@@ -1729,3 +1729,23 @@ TEST(parser, __iter__) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+/* not solve yet */
+
+// TEST(parser, strEqu) {
+//     pikaMemInfo.heapUsedMax = 0;
+//     Args* buffs = New_strBuff();
+//     char* lines = (char*)
+//                  "a = '1ee' == '1ee'\n"
+//                  "b = '1e' == '1ee'\n"
+//                  "\n";
+//     printf("%s", lines);
+//     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+//     printf("%s", pikaAsm);
+//     EXPECT_STREQ(pikaAsm,
+//                  "a = ('1ee' == '1ee')\n"
+//                  "b = ('1e' == '1ee')\n"
+//                  "\n");
+//     args_deinit(buffs);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }

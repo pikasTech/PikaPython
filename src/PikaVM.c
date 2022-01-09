@@ -350,6 +350,13 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         goto OPT_exit;
     }
     if (strEqu("==", data)) {
+        /* string compire */
+        if ((type_arg1 == TYPE_STRING) && (type_arg2 == TYPE_STRING)) {
+            outArg = arg_setInt(outArg, "",
+                                strEqu(arg_getStr(arg1), arg_getStr(arg2)));
+            goto OPT_exit;
+        }
+        /* default: int and float */
         outArg = arg_setInt(outArg, "",
                             (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
         goto OPT_exit;

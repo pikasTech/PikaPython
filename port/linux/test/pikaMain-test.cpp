@@ -595,3 +595,33 @@ TEST(pikaMain, int_float_to_str) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, str_eq) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)
+    "a = '1ee'\n"
+    "b = '1ee'\n"
+    "c = '1e'\n"
+    "if a==b:\n"
+    "    res1 = 1\n"
+    "else:\n"
+    "    res1 = 0\n"
+    "if a==c:\n"
+    "    res2 = 1\n"
+    "else:\n"
+    "    res2 = 0\n"
+    "\n"
+    );
+    /* collect */
+    int res1 = obj_getInt(pikaMain, (char*)"res1");
+    int res2 = obj_getInt(pikaMain, (char*)"res2");
+    /* assert */
+    EXPECT_EQ(res1, 1);
+    EXPECT_EQ(res2, 0);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
