@@ -1,5 +1,6 @@
 #include "BaseObj.h"
 #include "PikaStdLib_RangeObj.h"
+#include "PikaStdLib_StringObj.h"
 #include "dataStrs.h"
 
 void PikaStdLib_SysObj_remove(PikaObj* self, char* argPath) {
@@ -98,7 +99,13 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
 }
 
 Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
-    /* a MATE object */
+    /* a String, return a StringObj */
+    if (TYPE_STRING == arg_getType(arg)) {
+        obj_setStr(self, "_sobj", arg_getStr(arg));
+        return arg_setMetaObj("", "PikaStdLib_StringObj",
+                              New_PikaStdLib_StringObj);
+    }
+    /* a MATE object, return itself */
     if (TYPE_MATE_OBJECT == arg_getType(arg)) {
         return arg_copy(arg);
     }

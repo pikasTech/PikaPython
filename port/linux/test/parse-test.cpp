@@ -1749,3 +1749,35 @@ TEST(parser, __iter__) {
 //     args_deinit(buffs);
 //     EXPECT_EQ(pikaMemNow(), 0);
 // }
+
+TEST(parser, for_in_string) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+                 "for b in 'test':\n"
+                 "    a = 1\n"
+                 "\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+        "B0\n"
+        "1 STR test\n"
+        "0 RUN iter\n"
+        "0 OUT _l0\n"
+        "B0\n"
+        "0 RUN _l0.__next__\n"
+        "0 OUT b\n"
+        "0 EST b\n"
+        "0 JEZ 2\n"
+        "B1\n"
+        "0 NUM 1\n"
+        "0 OUT a\n"
+        "B0\n"
+        "0 JMP -1\n"
+        "B0\n"
+        "0 DEL _l0\n"
+        "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
