@@ -364,7 +364,7 @@ while True:
 
 ## Demo 04 PWM output
 
-```
+``` python
 import PikaStdLib
 import STM32G0
 
