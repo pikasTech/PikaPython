@@ -263,33 +263,246 @@ The scripts in demos are in the [examples](examples) folder.
 
 ## Demo 01 GPIO
 
-![mmexport1631351506111](https://user-images.githubusercontent.com/88232613/132943903-b3558929-a107-4a99-bdc4-1b3fd3f7172b.png)
+``` python
+import PikaStdLib
+import STM32G0
+
+mem = PikaStdLib.MemChecker()
+io1 = STM32G0.GPIO()
+time = STM32G0.Time()
+
+io1.init()
+io1.setPin('PA8')
+io1.setMode('out')
+io1.enable()
+io1.low()
+
+print('hello pikascript')
+print('mem.max :')
+mem.max()
+print('mem.now :')
+mem.now()
+
+while True:
+    io1.low()
+    time.sleep_ms(500)
+    io1.high()
+    time.sleep_ms(500)
+
+```
 
 ![Hnet-image (2)](https://user-images.githubusercontent.com/88232613/132943428-f2b365ca-140e-42f4-936c-db6a7d9f8dee.gif)
 
 ## Demo 02 USART
 
-![mmexport1631351902469](https://user-images.githubusercontent.com/88232613/132944132-90898355-de94-4d81-990b-7b85d4a4d08a.png)
+``` python
+import PikaStdLib
+import STM32G0
 
+time = STM32G0.Time()
+uart = STM32G0.UART()
+uart.init()
+uart.setId(1)
+uart.setBaudRate(115200)
+uart.enable()
 
+while True:
+    time.sleep_ms(500)
+    readBuff = uart.read(2)
+    print('read 2 char:')
+    print(readBuff)
+
+```
 ![Hnet-image (3)](https://user-images.githubusercontent.com/88232613/132943365-0f7059b3-4f9d-4989-a5ec-2cce72b0cc96.gif)
 
 
 ## Demo 03 ADC
 
-![mmexport1631351527609](https://user-images.githubusercontent.com/88232613/132944180-a805c8f8-40d5-45ff-ae2a-a0fe8f9db1ab.png)
+``` python
+import PikaStdLib
+import STM32G0
 
+time = STM32G0.Time()
+adc1 = STM32G0.ADC()
+
+adc1.init()
+adc1.setPin('PA1')
+adc1.enable()
+
+while True:
+    val = adc1.read()
+    print('adc1 value:')
+    print(val)
+    time.sleep_ms(500)
+
+ ```
 
 ![mmexport1631351523907](https://user-images.githubusercontent.com/88232613/132944185-0a01b1ba-8cf7-4f9f-9d73-fe9cbcd52f0b.png)
 
 
 ## Demo 04 PWM output
 
-![image](https://user-images.githubusercontent.com/88232613/134461673-975498f4-09de-4f3a-866d-53e6fa1307b1.png)
+```
+import PikaStdLib
+import STM32G0
+
+time = STM32G0.Time()
+pwm = STM32G0.PWM()
+pwm.setPin('PA8')
+pwm.setFrequency(2000)
+pwm.setDuty(0.5)
+pwm.enable()
+
+while True:
+    time.sleep_ms(500)
+    pwm.setDuty(0.5)
+    time.sleep_ms(500)
+    pwm.setDuty(0.001)
+    
+```
 
 ## Demo 05 RGB
 
-![image](https://user-images.githubusercontent.com/88232613/134461950-2153c738-0661-452f-956a-65a88fb71592.png)
+``` python
+import STM32G0
+import PikaPiZero
+import PikaStdLib
+
+rgb = PikaPiZero.RGB()
+mem = PikaStdLib.MemChecker()
+
+rgb.init()
+rgb.enable()
+
+print('hello 2')
+print('mem used max:')
+mem.max()
+
+while True:
+    print('flowing')
+    rgb.flow()
+
+```
+
+## Demo 06 Snake(Need LCD)
+
+``` python
+from PikaObj import *
+import PikaStdLib
+import PikaPiZero
+import STM32G0
+pin = STM32G0.GPIO()
+pin.init()
+pin.setPin('PA0')
+pin.setMode('in')
+pin.setPull('down')
+pin.enable()
+pin.setPin('PA15')
+pin.setMode('in')
+pin.setPull('up')
+pin.enable()
+pin.setPin('PC13')
+pin.enable()
+pin.setPin('PB6')
+pin.enable()
+remove('pin')
+ll = STM32G0.lowLevel()
+oled = PikaPiZero.OLED()
+oled.init()
+snake = PikaPiZero.Point()
+snake.x = 7
+snake.y = 4
+snake_lengh = 0
+while snake_lengh < 3:
+    body = snake
+    i = 0
+    while i < snake_lengh:
+        body = body.next
+        i = i + 1
+    body.next = PikaPiZero.Point()
+    body.next.x = body.x - 1
+    body.next.y = body.y
+    body.next.prev = body
+    snake_lengh = snake_lengh + 1
+fruit = PikaPiZero.Point()
+fruit.x = 13
+fruit.y = 2
+mem = PikaStdLib.MemChecker()
+print('mem used max:')
+mem.max()
+direction = 0
+isUpdate = 1
+while True:
+    if isUpdate:
+        isUpdate = 0
+        if fruit.x == snake.x:
+            if fruit.y == snake.y:
+                body = snake
+                i = 0
+                while i < snake_lengh:
+                    body = body.next
+                    i = i + 1
+                body.next = PikaPiZero.Point()
+                body.next.prev = body
+                snake_lengh = snake_lengh + 1
+                fruit.x = fruit.x + 3
+                if fruit.x > 15:
+                    fruit.x = fruit.x - 15
+                fruit.y = fruit.y + 3
+                if fruit.y > 7:
+                    fruit.y = fruit.y - 7
+        body = snake
+        i = 0
+        while i < snake_lengh:
+            body = body.next
+            i = i + 1
+        i = 0
+        while i < snake_lengh:
+            body = body.prev
+            body.next.x = body.x
+            body.next.y = body.y
+            i = i + 1
+        if direction == 0:
+            snake.x = snake.x + 1
+            if snake.x > 15:
+                snake.x = 0
+        if direction == 1:
+            snake.x = snake.x - 1
+            if snake.x < 0:
+                snake.x = 15
+        if direction == 2:
+            snake.y = snake.y - 1
+            if snake.y < 0:
+                snake.y = 7
+        if direction == 3:
+            snake.y = snake.y + 1
+            if snake.y > 7:
+                snake.y = 0
+        body = snake
+        i = 0
+        oled.clear()
+        oled.drawPoint(fruit.x, fruit.y)
+        while i < snake_lengh:
+            oled.drawPoint(body.x, body.y)
+            body = body.next
+            i = i + 1
+        oled.refresh()
+    if ll.readPin('PA0') == 1:
+        direction = 0
+        isUpdate = 1
+    if ll.readPin('PC13') == 0:
+        direction = 1
+        isUpdate = 1
+    if ll.readPin('PA15') == 0:
+        direction = 2
+        isUpdate = 1
+    if ll.readPin('PB6') == 0:
+        direction = 3
+        isUpdate = 1
+
+```
+
+![输入图片说明](document/image/imagefwef.png)
 
 The maximum RAM usage of these demos is only 3.56K, which is 4.56K if the 1K stack is included, and the maximum Flash usage is 30.4K. Refer to the 20K RAM and 64K Flash of STM32F103C8T6, less than 25% RAM and less than 50% Flash are used.
 
