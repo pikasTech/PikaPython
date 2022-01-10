@@ -81,3 +81,11 @@ TEST(strs, arg_strAppend) {
     arg_deinit(str_arg);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(strs, strsReplace) {
+    Args* buffs = New_strBuff();
+    char* res = strsReplace(buffs, (char*)"abcdefg", (char*)"cd", (char*)"47");
+    EXPECT_STREQ(res, (char*)"ab47efg");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

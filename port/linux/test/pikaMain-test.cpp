@@ -548,11 +548,11 @@ TEST(pikaMain, str_add) {
     /* collect */
     char* c = obj_getStr(pikaMain, (char*)"c");
     char* g = obj_getStr(pikaMain, (char*)"g");
-    char *h = obj_getStr(pikaMain, (char*)"h");
+    char* h = obj_getStr(pikaMain, (char*)"h");
     /* assert */
-    EXPECT_STREQ(c, (char *)"ab");
-    EXPECT_STREQ(g, (char *)"ab1");
-    EXPECT_STREQ(h, (char *)"ab11.200000");
+    EXPECT_STREQ(c, (char*)"ab");
+    EXPECT_STREQ(g, (char*)"ab1");
+    EXPECT_STREQ(h, (char*)"ab11.200000");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -621,6 +621,22 @@ TEST(pikaMain, str_eq) {
     /* assert */
     EXPECT_EQ(res1, 1);
     EXPECT_EQ(res2, 0);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, print_with_enter) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\n");
+    obj_run(pikaMain, (char*)"print('test\\n')\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"test\n\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"BEGIN\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

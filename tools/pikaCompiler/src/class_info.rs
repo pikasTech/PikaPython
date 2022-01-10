@@ -125,6 +125,7 @@ impl ClassInfo {
         /*      remove void line */
         let script_content = String::from(&script_content_origin).replace("@BEGIN@@END@", "");
         /*      use \" instead of " */
+        let script_content = script_content.replace("\\", "\\\\");
         let script_content = script_content.replace("\"", "\\\"");
         /* add begin and end */
         let script_content = script_content.replace("@BEGIN@", "            \"");

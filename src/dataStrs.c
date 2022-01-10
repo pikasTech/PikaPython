@@ -25,8 +25,8 @@
  * SOFTWARE.
  */
 
-#include "PikaPlatform.h"
 #include "dataStrs.h"
+#include "PikaPlatform.h"
 #include "dataString.h"
 
 Args* New_strBuff(void) {
@@ -77,10 +77,10 @@ char* strsDeleteChar(Args* buffs, char* strIn, char ch) {
     return strDeleteChar(args_getBuff(buffs, size), strIn, ch);
 }
 
-static uint32_t getSizeOfFirstToken(char *str, char sign){
+static uint32_t getSizeOfFirstToken(char* str, char sign) {
     uint32_t size = strGetSize(str);
-    for( uint32_t i = 0; i < size ;i ++){
-        if (str[i] == sign){
+    for (uint32_t i = 0; i < size; i++) {
+        if (str[i] == sign) {
             return i;
         }
     }
@@ -113,11 +113,56 @@ char* strsFormat(Args* buffs, uint16_t buffSize, const char* fmt, ...) {
     return res;
 }
 
-Arg* arg_strAppend(Arg* arg_in, char* str_to_append){
+Arg* arg_strAppend(Arg* arg_in, char* str_to_append) {
     Args* buffs = New_strBuff();
     char* str_out = strsAppend(buffs, arg_getStr(arg_in), str_to_append);
     Arg* arg_out = arg_setStr(arg_in, "", str_out);
     arg_deinit(arg_in);
     args_deinit(buffs);
     return arg_out;
+}
+
+char* strsReplace(Args* buffs, char* orig, char* rep, char* with) {
+    char* result;   // the return string
+    char* ins;      // the next insert point
+    char* tmp;      // varies
+    int len_rep;    // length of rep (the string to remove)
+    int len_with;   // length of with (the string to replace rep with)
+    int len_front;  // distance between rep and end of last rep
+    int count;      // number of replacements
+
+    // sanity checks and initialization
+    if (!orig || !rep)
+        return NULL;
+    len_rep = strlen(rep);
+    if (len_rep == 0)
+        return NULL;  // empty rep causes infinite loop during count
+    if (!with)
+        with = "";
+    len_with = strlen(with);
+
+    // count the number of replacements needed
+    ins = orig;
+    for (count = 0; tmp = strstr(ins, rep); ++count) {
+        ins = tmp + len_rep;
+    }
+    tmp = result =
+        args_getBuff(buffs, strlen(orig) + (len_with - len_rep) * count + 1);
+    if (NULL == result) {
+        return NULL;
+    }
+    // first time through the loop, all the variable are set correctly
+    // from here on,
+    //    tmp points to the end of the result string
+    //    ins points to the next occurrence of rep in orig
+    //    orig points to the remainder of orig after "end of rep"
+    while (count--) {
+        ins = strstr(orig, rep);
+        len_front = ins - orig;
+        tmp = strncpy(tmp, orig, len_front) + len_front;
+        tmp = strcpy(tmp, with) + len_with;
+        orig += len_front + len_rep;  // move to next "end of rep"
+    }
+    strcpy(tmp, orig);
+    return result;
 }

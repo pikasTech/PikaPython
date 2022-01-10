@@ -62,6 +62,11 @@ static void print(PikaObj* self, Args* args) {
         return;
     }
     /* not empty */
+    if (strIsContain(res, '\\')) {
+        res = strsReplace(args, res, "\\n", "\n");
+        res = strsReplace(args, res, "\\r", "\r");
+        res = strsReplace(args, res, "\\t", "\t");
+    }
     __platform_printf("%s\r\n", res);
     // obj_setSysOut(self, res);
 }
