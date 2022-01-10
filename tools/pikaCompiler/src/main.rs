@@ -13,9 +13,11 @@ use std::fs::File;
 use std::io::prelude::*;
 
 fn main() {
+    /* new a compiler, sellect to path */
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
+    /* analyze file begin with main.py */
     compiler = Compiler::analyze_file(compiler, String::from("main"), false);
-    /* write to compiler-info about the info */
+    /* write the infomatrion to compiler-info */
     let mut compiler_info_file =
         File::create(format!("{}compiler-info.txt", compiler.dist_path)).unwrap();
     let compiler_info = format!("{:?}", compiler);
@@ -82,21 +84,26 @@ fn main() {
     /* make the pikascript.c */
     let api_file_path = format!("{}pikaScript.c", compiler.dist_path);
     let mut f = File::create(api_file_path).unwrap();
+    /* add head */
     f.write("/* ******************************** */\n".as_bytes())
         .unwrap();
     f.write("/* Warning! Don't modify this file! */\n".as_bytes())
         .unwrap();
     f.write("/* ******************************** */\n".as_bytes())
         .unwrap();
+    /* add include */
     f.write("#include \"PikaMain.h\"\n".as_bytes()).unwrap();
     f.write("#include <stdio.h>\n".as_bytes()).unwrap();
     f.write("#include <stdlib.h>\n".as_bytes()).unwrap();
     f.write("\n".as_bytes()).unwrap();
+    /* get script from main.py */
     let pika_main = compiler
         .class_list
         .get_mut(&"PikaMain".to_string())
         .unwrap();
+    /* add script function */
     f.write(pika_main.script_fn().as_bytes()).unwrap();
+
     /* make the pikascript.h */
     let api_file_path = format!("{}pikaScript.h", compiler.dist_path);
     let mut f = File::create(api_file_path).unwrap();
@@ -115,7 +122,7 @@ fn main() {
     f.write("#include \"PikaObj.h\"\n".as_bytes()).unwrap();
     f.write("#include \"PikaMain.h\"\n".as_bytes()).unwrap();
     f.write("\n".as_bytes()).unwrap();
-    f.write("PikaObj * pikaScriptInit();\n".as_bytes()).unwrap();
+    f.write("PikaObj * pikaScriptInit(void);\n".as_bytes()).unwrap();
     f.write("\n".as_bytes()).unwrap();
     f.write("#endif\n".as_bytes()).unwrap();
 }

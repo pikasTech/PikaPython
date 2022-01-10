@@ -30,6 +30,6 @@ impl Script {
         return false;
     }
     pub fn obj_run(cmd: &String) -> String {
-        return format!("            \"{}\\n\"\n", cmd);
+        return format!("@BEGIN@{}@END@", cmd);
     }
 }
