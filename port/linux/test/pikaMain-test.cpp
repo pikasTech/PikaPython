@@ -641,3 +641,19 @@ TEST(pikaMain, print_with_enter) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, print_with_2enter) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\n");
+    obj_run(pikaMain, (char*)"print('test\\r\\n\\n')\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"test\r\n\n\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"BEGIN\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
