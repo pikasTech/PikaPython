@@ -9,6 +9,8 @@ class BaseObj(TinyObj):
 def print(val: any):
     pass
 
+def printNoEnd(val: any):
+    pass
 
 def set(argPath: str, val: any):
     pass
