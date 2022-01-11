@@ -140,14 +140,13 @@ char* strsReplace(Args* buffs, char* orig, char* rep, char* with) {
     if (!with)
         with = "";
     len_with = strlen(with);
-
     // count the number of replacements needed
     ins = orig;
-    for (count = 0; tmp = strstr(ins, rep); ++count) {
+    for (count = 0; (tmp = strstr(ins, rep)); ++count) {
         ins = tmp + len_rep;
     }
-    tmp = result =
-        args_getBuff(buffs, strlen(orig) + (len_with - len_rep) * count + 1);
+    tmp = args_getBuff(buffs, strlen(orig) + (len_with - len_rep) * count + 1);
+    result = tmp;
     if (NULL == result) {
         return NULL;
     }
