@@ -53,6 +53,24 @@ int32_t obj_newObj(PikaObj* self,
     return 0;
 }
 
+static void print_no_end(PikaObj* self, Args* args){
+    obj_setErrorCode(self, 0);
+    char* res = args_print(args, "val");
+    if (NULL == res) {
+        obj_setSysOut(self, "[error] print: can not print val");
+        obj_setErrorCode(self, 1);
+        return;
+    }
+    /* not empty */
+    if (strIsContain(res, '\\')) {
+        res = strsReplace(args, res, "\\n", "\n");
+        res = strsReplace(args, res, "\\r", "\r");
+        res = strsReplace(args, res, "\\t", "\t");
+    }
+    __platform_printf("%s", res);
+    // obj_setSysOut(self, res);
+}
+
 static void print(PikaObj* self, Args* args) {
     obj_setErrorCode(self, 0);
     char* res = args_print(args, "val");
@@ -74,5 +92,6 @@ static void print(PikaObj* self, Args* args) {
 PikaObj* New_BaseObj(Args* args) {
     PikaObj* self = New_TinyObj(args);
     class_defineMethod(self, "print(val:any)", print);
+    class_defineMethod(self, "printNoEnd(val:any)", print_no_end);
     return self;
 }
