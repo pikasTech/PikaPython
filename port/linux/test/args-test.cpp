@@ -180,3 +180,18 @@ TEST(args, index) {
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(args, int_float_convert) {
+    Args* args = New_args(NULL);
+    args_setInt(args, (char*)"a", 10);
+    args_setFloat(args, (char*)"b", 2.333);
+
+    float a = args_getFloat(args, (char*)"a");
+    int b = args_getInt(args, (char*)"b");
+    /* assert */
+    EXPECT_EQ(a, 10);
+    EXPECT_FLOAT_EQ(b, 2);
+    /* check memory */
+    args_deinit(args);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

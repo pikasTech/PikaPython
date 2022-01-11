@@ -108,7 +108,13 @@ int64_t args_getInt(Args* self, char* name) {
     if (NULL == arg) {
         return -999999999;
     }
-    return arg_getInt(arg);
+    ArgType arg_type = arg_getType(arg);
+    if (arg_type == TYPE_INT) {
+        return arg_getInt(arg);
+    } else if (arg_type == TYPE_FLOAT) {
+        return (int)arg_getFloat(arg);
+    }
+    return -999999999;
 }
 
 int32_t args_getSize(Args* self) {
@@ -129,7 +135,13 @@ float args_getFloat(Args* self, char* name) {
     if (NULL == arg) {
         return -999999999.0;
     }
-    return arg_getFloat(arg);
+    ArgType arg_type = arg_getType(arg);
+    if (arg_type == TYPE_FLOAT) {
+        return arg_getFloat(arg);
+    } else if (arg_type == TYPE_INT) {
+        return (float)arg_getInt(arg);
+    }
+    return -999999999.0;
 }
 
 int32_t args_copyArg(Args* self, Arg* argToBeCopy) {

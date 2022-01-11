@@ -284,7 +284,7 @@ TEST(pikaMain, PikaStdData) {
     int b = obj_getInt(pikaMain, (char*)"b");
     /* assert */
     EXPECT_EQ(a, 1);
-    EXPECT_EQ(b, 0);
+    EXPECT_EQ(b, -999999999);
 
     /* deinit */
     obj_deinit(pikaMain);
