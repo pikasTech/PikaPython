@@ -94,3 +94,7 @@ print('[Unit Tests Succeed]')
 print('====================')
 print('mem used max:')
 mem.max()
+
+
+print("test\r\n\r\n")
+print("end\r\n")
