@@ -5,7 +5,7 @@ import PikaStdLib
 mem = PikaStdLib.MemChecker()
 
 
-for i in range(1, 10):
+for i in range(1, 1000):
     print(i)
 
 print('mem used max:')

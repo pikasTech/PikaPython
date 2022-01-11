@@ -665,9 +665,14 @@
               <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_UART.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdLib_List.c</FileName>
+              <FileName>PikaStdLib_RangeObj.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\PikaStdLib\PikaStdLib_List.c</FilePath>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -750,11 +755,6 @@
               <FilePath>..\PikaScript\pikascript-api\PikaStdDevice_UART-api.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdLib_List-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-api\PikaStdLib_List-api.c</FilePath>
-            </File>
-            <File>
               <FileName>STM32F1_ADC-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\PikaScript\pikascript-api\STM32F1_ADC-api.c</FilePath>
@@ -773,6 +773,16 @@
               <FileName>STM32F1_UART-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\PikaScript\pikascript-api\STM32F1_UART-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_RangeObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdLib_RangeObj-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_StringObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
             </File>
           </Files>
         </Group>

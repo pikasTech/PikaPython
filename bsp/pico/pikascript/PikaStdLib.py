@@ -31,6 +31,9 @@ class SysObj(BaseObj):
     def float(arg: any) -> float:
         pass
 
+    def str(arg: any) -> str:
+        pass
+
     def iter(arg: any) -> any:
         pass
 
@@ -42,6 +45,14 @@ class SysObj(BaseObj):
 
 
 class RangeObj(TinyObj):
+    def __iter__() -> any:
+        pass
+
+    def __next__() -> any:
+        pass
+
+
+class StringObj(TinyObj):
     def __iter__() -> any:
         pass
 
