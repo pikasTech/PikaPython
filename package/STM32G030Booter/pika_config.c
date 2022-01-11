@@ -165,7 +165,7 @@ uint32_t flash_write_char(uint32_t bassAddr,
 }
 
 uint8_t __platform_Asm_is_to_flash(char* pyMultiLine) {
-    if (strCountSign(pyMultiLine, '\n') > 1) {
+    if (strCountSign(pyMultiLine, '\n') > 10) {
         return 1;
     }
     return 0;
