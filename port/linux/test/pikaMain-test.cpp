@@ -664,10 +664,10 @@ TEST(pikaMain, print_ddd) {
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
     __platform_printf((char*)"BEGIN\n");
-    obj_run(pikaMain, (char*)"print(\"xxx  x...\")\n");
+    obj_run(pikaMain, (char*)"print(\"[Info]: in Python config ...\")\n");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], (char*)"xxx  x...\r\n");
+    EXPECT_STREQ(log_buff[0], (char*)"[Info]: in Python config ...\r\n");
     EXPECT_STREQ(log_buff[1], (char*)"BEGIN\n");
     /* deinit */
     obj_deinit(pikaMain);

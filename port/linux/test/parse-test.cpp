@@ -1786,13 +1786,13 @@ TEST(parser, print_ddd) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
-                 "print('xxx  x...')\n";
+                 "print(\"[Info]: in Python config...\")\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
             "B0\n"
-            "1 STR xxx  x...\n"
+            "1 STR [Info]: in Python config...\n"
             "0 RUN print\n"
         );
     args_deinit(buffs);
