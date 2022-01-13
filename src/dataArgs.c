@@ -26,6 +26,7 @@
  */
 
 #include "dataArgs.h"
+#include "PikaObj.h"
 #include "PikaPlatform.h"
 #include "dataLink.h"
 #include "dataMemory.h"
@@ -194,7 +195,7 @@ int32_t args_isArgExist(Args* self, char* name) {
     return 0;
 }
 
-int32_t updateArg(Args* self, Arg* argNew) {
+int32_t __updateArg(Args* self, Arg* argNew) {
     LinkNode* nodeToUpdate = NULL;
     LinkNode* nodeNow = self->firstNode;
     LinkNode* priorNode = NULL;
@@ -211,7 +212,11 @@ int32_t updateArg(Args* self, Arg* argNew) {
         priorNode = nodeNow;
         nodeNow = content_getNext(nodeNow);
     }
-
+    /* free the object */
+    if (TYPE_OBJECT == arg_getType(nodeToUpdate)) {
+        PikaObj* obj = arg_getPtr(nodeToUpdate);
+        obj_deinit(obj);
+    }
     nodeToUpdate = arg_setContent(nodeToUpdate, arg_getContent(argNew),
                                   arg_getContentSize(argNew));
 
@@ -235,7 +240,7 @@ int32_t args_setArg(Args* self, Arg* arg) {
         args_pushArg(self, arg);
         return 0;
     }
-    updateArg(self, arg);
+    __updateArg(self, arg);
     return 0;
 }
 
