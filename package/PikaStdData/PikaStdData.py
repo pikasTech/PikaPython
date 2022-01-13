@@ -49,3 +49,10 @@ class Dict(TinyObj):
 
     def __next__() -> any:
         pass
+
+class String(TinyObj):
+    def __iter__() -> any:
+        pass
+
+    def __next__() -> any:
+        pass
