@@ -51,6 +51,12 @@ class Dict(TinyObj):
         pass
 
 class String(TinyObj):
+    def set(s:str):
+        pass
+
+    def get()->str:
+        pass
+
     def __iter__() -> any:
         pass
 

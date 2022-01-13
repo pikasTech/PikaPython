@@ -673,3 +673,28 @@ TEST(pikaMain, print_ddd) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, for_in_string) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\n");
+    obj_run(pikaMain, (char*)
+    "s = PikaStdData.String()\n"
+    "s.set('test')\n"
+    "for c in s:\n"
+    "    print(c)\n"
+    "\n"
+    );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[4], (char*)"BEGIN\n");
+    EXPECT_STREQ(log_buff[3], (char*)"t\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"e\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"s\r\n");
+    EXPECT_STREQ(log_buff[0], (char*)"t\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
