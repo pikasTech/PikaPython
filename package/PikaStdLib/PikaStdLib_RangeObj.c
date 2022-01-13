@@ -1,9 +1,5 @@
 #include "PikaObj.h"
 
-Arg* PikaStdLib_RangeObj___iter__(PikaObj* self) {
-    return arg_setPtr(NULL, "", TYPE_OBJECT, self);
-}
-
 Arg* PikaStdLib_RangeObj___next__(PikaObj* self) {
     int a1 = args_getInt(self->list, "a1");
     int a2 = args_getInt(self->list, "a2");
