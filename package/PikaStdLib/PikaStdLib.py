@@ -43,6 +43,12 @@ class SysObj(BaseObj):
     def range(a1: int, a2: int, a3: int) -> any:
         pass
 
+    def __set__(obj: any, key: any, val: any):
+        pass
+
+    def __get__(obj: any, key: any) -> any:
+        pass
+
 
 class RangeObj(TinyObj):
     def __next__() -> any:
