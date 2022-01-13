@@ -20,13 +20,21 @@ class List(TinyObj):
     # get the length of list
     def len() -> int:
         pass
-
+    # support for loop
     def __iter__() -> any:
         pass
 
+    # support for loop
     def __next__() -> any:
         pass
 
+    # support list[]  = val
+    def __set__():
+        pass
+
+    # support val = list[] 
+    def __get__() -> any:
+        pass
 
 class Dict(TinyObj):
     def __init__():
@@ -50,6 +58,15 @@ class Dict(TinyObj):
     def __next__() -> any:
         pass
 
+    # support dict[]  = val
+    def __set__():
+        pass
+
+    # support val = dict[] 
+    def __get__() -> any:
+        pass
+
+
 class String(TinyObj):
     def set(s:str):
         pass
@@ -61,4 +78,12 @@ class String(TinyObj):
         pass
 
     def __next__() -> any:
+        pass
+
+    # support string[]  = val
+    def __set__():
+        pass
+
+    # support val = string[] 
+    def __get__() -> any:
         pass

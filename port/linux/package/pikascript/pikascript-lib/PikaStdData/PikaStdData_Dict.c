@@ -41,3 +41,11 @@ Arg* PikaStdData_Dict___next__(PikaObj* self) {
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return res;
 }
+
+void PikaStdData_Dict___set__(PikaObj* self) {
+    PikaStdData_Dict_set(self, obj_getArg(self, "__val"),
+                         obj_getStr(self, "__key"));
+}
+Arg* PikaStdData_Dict___get__(PikaObj* self) {
+    return PikaStdData_Dict_get(self, obj_getStr(self, "__key"));
+}

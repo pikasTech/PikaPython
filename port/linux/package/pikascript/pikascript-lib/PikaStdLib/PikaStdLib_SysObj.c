@@ -137,3 +137,31 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2, int a3) {
     obj_setInt(self, "_r3", a3);
     return arg_setMetaObj("", "PikaStdLib_RangeObj", New_PikaStdLib_RangeObj);
 }
+
+Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
+    ArgType obj_type = arg_getType(obj);
+    if ((TYPE_OBJECT == obj_type) || (TYPE_POINTER == obj_type)) {
+        PikaObj* arg_obj = arg_getPtr(obj);
+        obj_setArg(arg_obj, "__key", key);
+        pikaVM_runAsm(arg_obj,
+                      "B0\n"
+                      "1 REF __key\n"
+                      "0 RUN __get__\n"
+                      "0 OUT __res\n");
+        return arg_copy(args_getArg(arg_obj->list, "__res"));
+    }
+    return arg_setNull(NULL);
+}
+void PikaStdLib_SysObj___set__(PikaObj* self, Arg* key, Arg* obj, Arg* val) {
+    ArgType obj_type = arg_getType(obj);
+    if ((TYPE_OBJECT == obj_type) || (TYPE_POINTER == obj_type)) {
+        PikaObj* arg_obj = arg_getPtr(obj);
+        obj_setArg(arg_obj, "__key", key);
+        obj_setArg(arg_obj, "__val", val);
+        pikaVM_runAsm(arg_obj,
+                      "B0\n"
+                      "1 REF __key\n"
+                      "1 REF __val\n"
+                      "0 RUN __set__\n");
+    }
+}
