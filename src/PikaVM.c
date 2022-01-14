@@ -217,6 +217,10 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
                                        char* data) {
     Arg* outArg = arg_copy(queue_popArg(vmState->q0));
     obj_setArg(vmState->locals, data, outArg);
+    if (TYPE_MATE_OBJECT == arg_getType(outArg)) {
+        /* init all object */
+        obj_getObj(self, data, 0);
+    }
     arg_deinit(outArg);
     return NULL;
 }

@@ -727,7 +727,6 @@ TEST(pikaMain, list__set__) {
     __platform_printf((char*)"BEGIN\n");
     obj_run(pikaMain, (char*)
     "list = PikaStdData.List()\n"
-    "list.append(1)\n"
     "__set__(list, 0, 2)\n"
     "res = __get__(list, 0)\n"
     "\n"
@@ -770,7 +769,6 @@ TEST(pikaMain, dict__set__get) {
     __platform_printf((char*)"BEGIN\n");
     obj_run(pikaMain, (char*)
     "list = PikaStdData.Dict()\n"
-    "list.set('a', 1)\n"
     "__set__(list, 'a', 2)\n"
     "res = __get__(list, 'a')\n"
     "\n"
