@@ -583,23 +583,23 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args* buffs = New_strBuff();
     char* assignment = strsGetFirstToken(buffs, stmt, '(');
-    char* direct = NULL;
     char* method = NULL;
     char* ref = NULL;
     char* str = NULL;
     char* num = NULL;
+    char* left = NULL;
     char* right = NULL;
-    /* solve direct */
-    uint8_t directExist = 0;
+    /* solve left */
+    uint8_t isLeftExist = 0;
     if (Parser_checkIsDirect(assignment)) {
-        directExist = 1;
+        isLeftExist = 1;
     }
-    if (directExist) {
-        direct = strsGetFirstToken(buffs, assignment, '=');
-        obj_setStr(ast, (char*)"direct", direct);
+    if (isLeftExist) {
+        left = strsGetFirstToken(buffs, assignment, '=');
+        obj_setStr(ast, (char*)"left", left);
     }
     /* solve right stmt */
-    if (directExist) {
+    if (isLeftExist) {
         right = strsGetLastToken(buffs, stmt, '=');
     } else {
         right = stmt;
@@ -761,7 +761,6 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         list_in = strsAppend(list_buffs, list_in, ")");
         list_in = strsCopy(buffs, list_in);
         args_deinit(list_buffs);
-
         obj_setStr(ast, "block", "for");
         obj_setStr(ast, "list_in", list_in);
         if (NULL != blockStack) {
@@ -944,7 +943,7 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     char* method = obj_getStr(subAst, "method");
     char* operator= obj_getStr(subAst, "operator");
     char* ref = obj_getStr(subAst, "ref");
-    char* direct = obj_getStr(subAst, "direct");
+    char* left = obj_getStr(subAst, "left");
     char* str = obj_getStr(subAst, "string");
     char* num = obj_getStr(subAst, "num");
     if (NULL != ref) {
@@ -973,9 +972,9 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
 
-    if (NULL != direct) {
+    if (NULL != left) {
         char buff[32] = {0};
-        __platform_sprintf(buff, "%d OUT %s\n", deepth, direct);
+        __platform_sprintf(buff, "%d OUT %s\n", deepth, left);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     obj_setInt(ast, "deepth", deepth - 1);
