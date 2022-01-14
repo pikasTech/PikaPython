@@ -219,7 +219,16 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     obj_setArg(vmState->locals, data, outArg);
     if (TYPE_MATE_OBJECT == arg_getType(outArg)) {
         /* init all object */
-        obj_getObj(self, data, 0);
+        PikaObj* new_obj = obj_getObj(self, data, 0);
+        /* run __init__() when init obj */
+        Arg* methodArg = NULL;
+        methodArg = obj_getMethod(new_obj, "__init__");
+        if (NULL != methodArg) {
+            arg_deinit(methodArg);
+            pikaVM_runAsm(new_obj,
+                          "B0\n"
+                          "0 RUN __init__\n");
+        }
     }
     arg_deinit(outArg);
     return NULL;
