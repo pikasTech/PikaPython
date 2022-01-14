@@ -85,7 +85,8 @@ uint8_t* content_init_hash(Hash nameHash,
     uint8_t* contentDir = nameDir + nameSize;
     uint8_t* typeDir = contentDir + size;
 
-    __platform_memcpy(nameDir, &nameHash, nameSize);  // use hash
+    // __platform_memcpy(nameDir, &nameHash, nameSize);  // use hash
+    *(Hash*)nameDir = nameHash;
     __platform_memcpy(typeDir, &type, typeSize);
     uint32_t* p_size = (uint32_t*)sizeDir;
     *p_size = size;
