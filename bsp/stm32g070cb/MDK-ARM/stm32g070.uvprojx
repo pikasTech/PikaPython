@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>6</Optim>
+            <Optim>5</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -549,6 +549,16 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_tim.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32g0xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g0xx_hal_spi_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_spi_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -744,6 +754,31 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaPiZero_KEY-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaPiZero_KEY-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPiZero_LCD-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaPiZero_LCD-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPiZero_Point-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaPiZero_Point-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPiZero_RGB-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaPiZero_RGB-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPiZero-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaPiZero-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -833,6 +868,61 @@
               <FileName>PikaStdLib_StringObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCD_Driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\LCD_Driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPiZero_KEY.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\PikaPiZero_KEY.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPiZero_LCD.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\PikaPiZero_LCD.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaPiZero_RGB.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\PikaPiZero_RGB.c</FilePath>
+            </File>
+            <File>
+              <FileName>RGB_ASM.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\RGB_ASM.lib</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Python</GroupName>
+          <Files>
+            <File>
+              <FileName>requestment.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\requestment.txt</FilePath>
+            </File>
+            <File>
+              <FileName>main.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\main.py</FilePath>
+            </File>
+            <File>
+              <FileName>PikaObj.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\PikaObj.py</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\PikaStdLib.py</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\STM32G0.py</FilePath>
             </File>
           </Files>
         </Group>

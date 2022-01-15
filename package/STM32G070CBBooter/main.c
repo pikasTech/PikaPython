@@ -50,9 +50,31 @@ PikaObj *pikaMain;
 void SystemClock_Config(void);
 
 volatile static char rx_char = 0;
+char UART1_RxBuff[RX_BUFF_LENGTH] = {0};
+uint16_t UART1_RXBuff_offset = 0;
+__attribute__((weak)) void __PIKA_USART1_IRQHandler(char rx_char) {}
 void USART1_IRQHandler(void){
     if (LL_USART_IsActiveFlag_RXNE(USART1)) {
         rx_char = LL_USART_ReceiveData8(USART1);
+        __PIKA_USART1_IRQHandler(rx_char);
+        /* clear buff when overflow */
+        if (UART1_RXBuff_offset >= RX_BUFF_LENGTH) {
+            UART1_RXBuff_offset = 0;
+            memset(UART1_RxBuff, 0, sizeof(UART1_RxBuff));
+        }
+        /* recive char */
+        UART1_RxBuff[UART1_RXBuff_offset] = rx_char;
+        UART1_RXBuff_offset++;
+        if ('\n' == rx_char) {
+            /* handle python script download */
+            if (STM32_Code_reciveHandler(UART1_RxBuff, UART1_RXBuff_offset)) {
+                goto line_exit;
+            }
+        line_exit:
+            UART1_RXBuff_offset = 0;
+            memset(UART1_RxBuff, 0, sizeof(UART1_RxBuff));
+            return;
+        }
     }
 }
 
@@ -86,7 +108,29 @@ int main(void){
     printf("|           [  https://gitee.com/lyon1998/pikascript  ]          |\r\n");
     printf("|                                                                |\r\n");
     printf("------------------------------------------------------------------\r\n");  
-    pikaScriptShell(pikaScriptInit());
+    /* boot pikaScript */
+    char* code = (char*)FLASH_SCRIPT_START_ADDR;
+    if (code[0] != 0xFF) {
+        /* boot from flash */
+        pikaMain = newRootObj("pikaMain", New_PikaMain);
+        if (code[0] == 'i') {
+            printf("[info]: boot from Script.\r\n");
+            Arg* codeBuff = arg_setStr(NULL, "", code);
+            obj_run(pikaMain, arg_getStr(codeBuff));
+            arg_deinit(codeBuff);
+            goto main_loop;
+        }
+    } else {
+        /* boot from firmware */
+        pikaMain = pikaScriptInit();
+        goto main_loop;
+    }
+
+    pikaMain = pikaScriptInit();
+    goto main_loop;
+
+main_loop:
+    pikaScriptShell(pikaMain);
     /* after exit() from pika shell */
     NVIC_SystemReset();
 }
