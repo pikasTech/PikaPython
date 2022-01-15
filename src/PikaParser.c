@@ -595,11 +595,22 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
 char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
     Args* buffs = New_args(NULL);
     char* tokens = NULL;
-    char* token = NULL;
+    char *token1, *token2 = NULL;
+    char *pyload1, *pyload2 = NULL;
+    enum TokenType token_type1, token_type2;
     do {
         tokens = Lexer_getTokens(buffs, right);
-        /* pop the first token */
-        Lexer_popToken(buffs, tokens);
+        uint16_t len = Lexer_getTokenSize(tokens);
+        for (int i = 0; i < len; i ++) {
+            char* token_buffs = New_strBuff();
+            token1 = Lexer_popToken(token_buffs, tokens);
+            token2 = Lexer_popToken(token_buffs, tokens);
+            token_type1 = Lexer_getTokenType(token1);
+            token_type2 = Lexer_getTokenType(token2);
+            pyload2 = Lexer_getTokenPyload(token1);
+            pyload2 = Lexer_getTokenPyload(token2);
+            args_deinit(token_buffs);
+        }
     } while (0);
 
     right = strsCopy(outBuffs, right);
@@ -632,7 +643,9 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         right = stmt;
     }
     /* solve the [] stmt */
-    right = Parser_solveRightBranckets(buffs, right);
+    if ((strCountSign(right, '[')) && (strCountSign(right, ']'))) {
+        right = Parser_solveRightBranckets(buffs, right);
+    }
 
     /* match statment type */
     enum StmtType stmtType = Lexer_matchStmtType(right);
