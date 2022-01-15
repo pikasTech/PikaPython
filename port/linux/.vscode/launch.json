@@ -18,6 +18,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
+                "--gtest_filter=parser.__get__",
                 // "--gtest_filter=pikaMain.print_with_enter",
                 // "--gtest_filter=pikaMain.str_add",
                 // "--gtest_filter=content*",

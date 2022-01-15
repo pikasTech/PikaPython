@@ -60,7 +60,6 @@ enum Instruct {
 
 #define __INS_ENUM
 #include "__instruction_table.cfg"
-
     __INSTRCUTION_CNT,
 };
 

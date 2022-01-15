@@ -542,15 +542,27 @@ char* Lexer_popToken(Args* buffs, char* tokens_buff) {
     return strsPopToken(buffs, tokens_buff, 0x1F);
 }
 
+uint16_t Lexer_getTokenSize(char* tokens) {
+    return strCountSign(tokens, 0x1F) + 1;
+}
+
+enum TokenType Lexer_getTokenType(char* token) {
+    return token[0];
+}
+
+char* Lexer_getTokenPyload(char* token) {
+    return (char*)((uintptr_t)token + 1);
+}
+
 uint8_t Lexer_isContain(char* tokens, char* operator) {
     Args* buffs = New_strBuff();
     char* tokens_buff = strsCopy(buffs, tokens);
     uint8_t res = 0;
-    uint16_t token_size = strCountSign(tokens, 0x1F) + 1;
+    uint16_t token_size = Lexer_getTokenSize(tokens);
     for (int i = 0; i < token_size; i++) {
         char* token = Lexer_popToken(buffs, tokens_buff);
-        if (TOKEN_operator == token[0]) {
-            if (strEqu(token + 1, operator)) {
+        if (TOKEN_operator == Lexer_getTokenType(token)) {
+            if (strEqu(Lexer_getTokenPyload(token), operator)) {
                 res = 1;
                 goto exit;
             }
@@ -580,6 +592,21 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     return operator;
 }
 
+char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
+    Args* buffs = New_args(NULL);
+    char* tokens = NULL;
+    char* token = NULL;
+    do {
+        tokens = Lexer_getTokens(buffs, right);
+        /* pop the first token */
+        Lexer_popToken(buffs, tokens);
+    } while (0);
+
+    right = strsCopy(outBuffs, right);
+    args_deinit(buffs);
+    return right;
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args* buffs = New_strBuff();
     char* assignment = strsGetFirstToken(buffs, stmt, '(');
@@ -604,6 +631,10 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     } else {
         right = stmt;
     }
+    /* solve the [] stmt */
+    right = Parser_solveRightBranckets(buffs, right);
+
+    /* match statment type */
     enum StmtType stmtType = Lexer_matchStmtType(right);
     /* solve operator stmt */
     if (STMT_operator == stmtType) {
