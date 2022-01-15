@@ -45,16 +45,10 @@ class SysObj(BaseObj):
 
 
 class RangeObj(TinyObj):
-    def __iter__() -> any:
-        pass
-
     def __next__() -> any:
         pass
 
 
 class StringObj(TinyObj):
-    def __iter__() -> any:
-        pass
-
     def __next__() -> any:
         pass
