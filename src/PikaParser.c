@@ -554,15 +554,15 @@ char* Lexer_getTokenPyload(char* token) {
     return (char*)((uintptr_t)token + 1);
 }
 
-uint8_t Lexer_isContain(char* tokens, char* operator) {
+uint8_t Lexer_isContain(char* tokens, enum TokenType token_type, char* pyload) {
     Args* buffs = New_strBuff();
     char* tokens_buff = strsCopy(buffs, tokens);
     uint8_t res = 0;
     uint16_t token_size = Lexer_getTokenSize(tokens);
     for (int i = 0; i < token_size; i++) {
         char* token = Lexer_popToken(buffs, tokens_buff);
-        if (TOKEN_operator == Lexer_getTokenType(token)) {
-            if (strEqu(Lexer_getTokenPyload(token), operator)) {
+        if (token_type == Lexer_getTokenType(token)) {
+            if (strEqu(Lexer_getTokenPyload(token), pyload)) {
                 res = 1;
                 goto exit;
             }
@@ -582,7 +582,7 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
         "&",  "^",   "|",  "<",  "<=", ">",   ">=",    "!=",    "==",  "%=",
         "/=", "//=", "-=", "+=", "*=", "**=", " not ", " and ", " or "};
     for (uint32_t i = 0; i < sizeof(operators) / 6; i++) {
-        if (Lexer_isContain(tokens, (char*)operators[i])) {
+        if (Lexer_isContain(tokens, TOKEN_operator, (char*)operators[i])) {
             operator= strsCopy(buffs, (char*)operators[i]);
         }
     }
@@ -597,23 +597,46 @@ char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
     char* tokens = NULL;
     char *token1, *token2 = NULL;
     char *pyload1, *pyload2 = NULL;
+    Arg* right_arg = arg_setStr(NULL, "", "");
+    Arg* token1_arg = NULL;
     enum TokenType token_type1, token_type2;
     do {
         tokens = Lexer_getTokens(buffs, right);
+        if (!Lexer_isContain(tokens, TOKEN_devider, "[")) {
+            /* not contain '[', return origin */
+            arg_deinit(right_arg);
+            right_arg = arg_setStr(right_arg, "", right);
+            break;
+        }
         uint16_t len = Lexer_getTokenSize(tokens);
-        for (int i = 0; i < len; i ++) {
+        Lexer_popToken(buffs, tokens);
+        token1_arg = arg_setStr(NULL, "", Lexer_popToken(buffs, tokens));
+        for (int i = 0; i < len; i++) {
             char* token_buffs = New_strBuff();
-            token1 = Lexer_popToken(token_buffs, tokens);
+            token1 = strsCopy(token_buffs, arg_getStr(token1_arg));
+            arg_deinit(token1_arg);
             token2 = Lexer_popToken(token_buffs, tokens);
+            token1_arg = arg_setStr(NULL, "", token2);
             token_type1 = Lexer_getTokenType(token1);
             token_type2 = Lexer_getTokenType(token2);
-            pyload2 = Lexer_getTokenPyload(token1);
+            pyload1 = Lexer_getTokenPyload(token1);
             pyload2 = Lexer_getTokenPyload(token2);
+
+            /* matched [] */
+            if ((TOKEN_devider == token_type1) && (strEqu(pyload1, "["))) {
+            } else if ((TOKEN_devider == token_type1) &&
+                       (strEqu(pyload1, "]"))) {
+            } else {
+                right_arg = arg_strAppend(right_arg, pyload1);
+            }
             args_deinit(token_buffs);
         }
+        arg_deinit(token1_arg);
     } while (0);
 
-    right = strsCopy(outBuffs, right);
+    /* clean and retur */
+    right = strsCopy(outBuffs, arg_getStr(right_arg));
+    arg_deinit(right_arg);
     args_deinit(buffs);
     return right;
 }
@@ -643,9 +666,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         right = stmt;
     }
     /* solve the [] stmt */
-    if ((strCountSign(right, '[')) && (strCountSign(right, ']'))) {
-        right = Parser_solveRightBranckets(buffs, right);
-    }
+    right = Parser_solveRightBranckets(buffs, right);
 
     /* match statment type */
     enum StmtType stmtType = Lexer_matchStmtType(right);
