@@ -1,4 +1,4 @@
-pikascript-core==v1.2.6
-PikaStdLib==v1.2.2
+pikascript-core==v1.3.2
+PikaStdLib==v1.3.2
 Arm2D==v0.3.0
 Arm2DqemuBooter==v0.1.0
