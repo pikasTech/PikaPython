@@ -1798,3 +1798,20 @@ TEST(parser, print_ddd) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, __get__) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+                 "a = b[c]\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    // EXPECT_STREQ(pikaAsm,
+    //         "B0\n"
+    //         "1 STR [Info]: in Python config...\n"
+    //         "0 RUN print\n"
+    //     );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

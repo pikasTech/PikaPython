@@ -60,7 +60,6 @@ enum Instruct {
 
 #define __INS_ENUM
 #include "__instruction_table.cfg"
-
     __INSTRCUTION_CNT,
 };
 
@@ -370,27 +369,29 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             goto OPT_exit;
         }
         /* default: int and float */
-        outArg = arg_setInt(outArg, "",
-                            (num1_f - num2_f) * (num1_f - num2_f) < 0.000001);
+        outArg =
+            arg_setInt(outArg, "",
+                       (num1_f - num2_f) * (num1_f - num2_f) < (float)0.000001);
         goto OPT_exit;
     }
     if (strEqu("!=", data)) {
         outArg = arg_setInt(
-            outArg, "", !((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+            outArg, "",
+            !((num1_f - num2_f) * (num1_f - num2_f) < (float)0.000001));
         goto OPT_exit;
     }
     if (strEqu(">=", data)) {
-        outArg =
-            arg_setInt(outArg, "",
-                       (num1_f > num2_f) ||
-                           ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+        outArg = arg_setInt(
+            outArg, "",
+            (num1_f > num2_f) ||
+                ((num1_f - num2_f) * (num1_f - num2_f) < (float)0.000001));
         goto OPT_exit;
     }
     if (strEqu("<=", data)) {
-        outArg =
-            arg_setInt(outArg, "",
-                       (num1_f < num2_f) ||
-                           ((num1_f - num2_f) * (num1_f - num2_f) < 0.000001));
+        outArg = arg_setInt(
+            outArg, "",
+            (num1_f < num2_f) ||
+                ((num1_f - num2_f) * (num1_f - num2_f) < (float)0.000001));
         goto OPT_exit;
     }
     if (strEqu("&", data)) {
