@@ -20,3 +20,4 @@ while True:
     win.elems.box.setColor('red')
     win.update()
     mem.max()
+    

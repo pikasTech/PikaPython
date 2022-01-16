@@ -17,7 +17,7 @@
         <TargetCommonOption>
           <Device>STM32G030C8Tx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32G0xx_DFP.1.3.0</PackID>
+          <PackID>Keil.STM32G0xx_DFP.1.4.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x20001FFF) IROM(0x8000000-0x800FFFF) CLOCK(8000000) CPUTYPE("Cortex-M0+") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -71,9 +71,9 @@
             <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
+            <UserProg1Name>..\pikascript\pikaBeforBuild-keil.bat</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -190,7 +190,7 @@
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -405,6 +405,11 @@
               <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\stm32g0xx_it.c</FilePath>
             </File>
             <File>
+              <FileName>pika_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\pika_config.c</FilePath>
+            </File>
+            <File>
               <FileName>system_stm32g0xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\system_stm32g0xx.c</FilePath>
@@ -413,11 +418,6 @@
               <FileName>startup_stm32g030xx.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\startup_stm32g030xx.s</FilePath>
-            </File>
-            <File>
-              <FileName>stm32g030_pika_msp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\stm32g030_pika_msp.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -651,6 +651,11 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\STM32G0xx_HAL_Driver\Src\stm32g0xx_ll_usart.c</FilePath>
             </File>
+            <File>
+              <FileName>arm_cortexM0l_math.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP\Lib\ARM\arm_cortexM0l_math.lib</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -710,6 +715,61 @@
               <FileName>asset_dot.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\Arm2D\asset_dot.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_2d.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_2d_alpha_blending.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_alpha_blending.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_2d_async.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_async.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_2d_conversion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_conversion.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_2d_draw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_draw.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_2d_helium.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_helium.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_2d_helper_pfb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_helper_pfb.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_2d_rotation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_rotation.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_RangeObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm2d_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaPiZero\arm2d_config.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -856,85 +916,30 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\Arm2D-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdLib_RangeObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib_RangeObj-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_StringObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers/Arm2D</GroupName>
+          <GroupName>Python</GroupName>
           <Files>
             <File>
-              <FileName>__arm_2d_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Arm2D\__arm_2d_core.c</FilePath>
+              <FileName>main.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\main.py</FilePath>
             </File>
             <File>
-              <FileName>__arm_2d_tile.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Arm2D\__arm_2d_tile.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_alpha_blending.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_alpha_blending.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_async.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_async.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_conversion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_conversion.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_draw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_draw.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_helium.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_helium.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_helper_pfb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_helper_pfb.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_rotation.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\Arm2D\arm_2d_rotation.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_cos_f32.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\CMSIS\DSP\Source\FastMathFunctions\arm_cos_f32.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_sin_f32.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\CMSIS\DSP\Source\FastMathFunctions\arm_sin_f32.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_cos_q31.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\CMSIS\DSP\Source\FastMathFunctions\arm_cos_q31.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_sin_q31.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\CMSIS\DSP\Source\FastMathFunctions\arm_sin_q31.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_common_tables.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\CMSIS\DSP\Source\CommonTables\arm_common_tables.c</FilePath>
+              <FileName>requestment.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\requestment.txt</FilePath>
             </File>
           </Files>
         </Group>
