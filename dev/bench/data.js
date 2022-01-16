@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642309147343,
+  "lastUpdate": 1642334669329,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -5884,6 +5884,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000191593707195,
             "unit": "ms/iter",
             "extra": "iterations: 235999\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "72f8726f55332ba280d357d5b506a7e5b281cb31",
+          "message": "fix qume-arm2d project",
+          "timestamp": "2022-01-16T20:00:46+08:00",
+          "tree_id": "55f388788d04a12917d218b8ed41c1201771337f",
+          "url": "https://github.com/pikasTech/pikascript/commit/72f8726f55332ba280d357d5b506a7e5b281cb31"
+        },
+        "date": 1642334667678,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 763.2083191042921,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 763.2083191042921 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 333.02615638706743,
+            "unit": "ms/iter",
+            "extra": "iterations: 4\ncpu: 332.98357681471253 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 228.56223429541296,
+            "unit": "ms/iter",
+            "extra": "iterations: 6\ncpu: 228.55061515173344 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 65.51504109679095,
+            "unit": "ms/iter",
+            "extra": "iterations: 22\ncpu: 65.51291272437967 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.00500022076573562,
+            "unit": "ms/iter",
+            "extra": "iterations: 280785\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
