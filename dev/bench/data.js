@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642334669329,
+  "lastUpdate": 1642335431293,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -5938,6 +5938,60 @@ window.BENCHMARK_DATA = {
             "value": 0.00500022076573562,
             "unit": "ms/iter",
             "extra": "iterations: 280785\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "40108b39d677502aad7e6eff94af3f4b90948ad1",
+          "message": "update core to v1.3.2 for qemu-arm2d",
+          "timestamp": "2022-01-16T20:13:26+08:00",
+          "tree_id": "538182a561d62a87fba06e067fcd8f9f8631a270",
+          "url": "https://github.com/pikasTech/pikascript/commit/40108b39d677502aad7e6eff94af3f4b90948ad1"
+        },
+        "date": 1642335428978,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 917.5090431086726,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 917.5090431086726 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 274.6799719652252,
+            "unit": "ms/iter",
+            "extra": "iterations: 4\ncpu: 274.6490639822868 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 188.90821926359303,
+            "unit": "ms/iter",
+            "extra": "iterations: 6\ncpu: 188.90363035323364 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 54.49768763559802,
+            "unit": "ms/iter",
+            "extra": "iterations: 22\ncpu: 54.49537568653462 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000210592681142,
+            "unit": "ms/iter",
+            "extra": "iterations: 235788\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
