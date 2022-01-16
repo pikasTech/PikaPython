@@ -368,17 +368,3 @@ void LCD_Fill(u16 x0,u16 y0,u16 hight,u16 wight,u16 color){
         LCD_DrawRegin(x0, y, x0 + wight, y + 1, data);
     }
 }
-
-int32_t __Arm2D_platform_drawRegin(uint32_t x,
-                                   uint32_t y,
-                                   uint32_t width,
-                                   uint32_t height,
-                                   const uint8_t* bitmap) {
-    LCD_DrawRegin(x, y, x + width, y + height, (uint16_t *)bitmap);
-    return 0;
-}
-
-int32_t __Arm2D_platform_Init() {
-    LCD_Init();
-    return 0;
-}
