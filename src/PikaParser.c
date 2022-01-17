@@ -612,7 +612,7 @@ char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
         Lexer_popToken(buffs, tokens);
         token1_arg = arg_setStr(NULL, "", Lexer_popToken(buffs, tokens));
         for (int i = 0; i < len; i++) {
-            char* token_buffs = New_strBuff();
+            Args* token_buffs = New_strBuff();
             token1 = strsCopy(token_buffs, arg_getStr(token1_arg));
             arg_deinit(token1_arg);
             token2 = Lexer_popToken(token_buffs, tokens);
