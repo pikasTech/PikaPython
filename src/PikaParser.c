@@ -599,6 +599,8 @@ char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
     char *pyload1, *pyload2 = NULL;
     Arg* right_arg = arg_setStr(NULL, "", "");
     Arg* token1_arg = NULL;
+    uint8_t is_in_brancket = 0;
+    args_setStr(buffs, "index", "");
     enum TokenType token_type1, token_type2;
     do {
         tokens = Lexer_getTokens(buffs, right);
@@ -625,16 +627,22 @@ char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
             /* matched [] */
             if ((TOKEN_devider == token_type2) && (strEqu(pyload2, "["))) {
                 args_setStr(buffs, "obj", pyload1);
+                is_in_brancket = 1;
             } else if ((TOKEN_devider == token_type2) &&
                        (strEqu(pyload2, "]"))) {
-                args_setStr(buffs, "index", pyload1);
+                is_in_brancket = 0;
                 right_arg = arg_strAppend(right_arg, "__get__(");
                 right_arg = arg_strAppend(right_arg, args_getStr(buffs, "obj"));
                 right_arg = arg_strAppend(right_arg, ",");
                 right_arg =
                     arg_strAppend(right_arg, args_getStr(buffs, "index"));
                 right_arg = arg_strAppend(right_arg, ")");
-            } else {
+            } else if (is_in_brancket) {
+                char* index = args_getStr(buffs, "index");
+                Arg* index_arg = arg_setStr(NULL, "", index);
+                index_arg = arg_strAppend(index_arg, pyload2);
+                args_setStr(buffs, "index", arg_getStr(index_arg));
+                arg_deinit(index_arg);
             }
             args_deinit(token_buffs);
         }
