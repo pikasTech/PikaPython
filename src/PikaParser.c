@@ -592,7 +592,10 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     return operator;
 }
 
-char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
+char* Parser_solveBranckets(Args* outBuffs,
+                            char* content,
+                            char* stmt,
+                            char* mode) {
     Args* buffs = New_args(NULL);
     char* tokens = NULL;
     char *token1, *token2 = NULL;
@@ -603,11 +606,20 @@ char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
     args_setStr(buffs, "index", "");
     enum TokenType token_type1, token_type2;
     do {
-        tokens = Lexer_getTokens(buffs, right);
+        if (NULL == content) {
+            arg_deinit(right_arg);
+            right_arg = arg_setStr(right_arg, "", stmt);
+            break;
+        }
+        tokens = Lexer_getTokens(buffs, content);
         if (!Lexer_isContain(tokens, TOKEN_devider, "[")) {
             /* not contain '[', return origin */
             arg_deinit(right_arg);
-            right_arg = arg_setStr(right_arg, "", right);
+            if (strEqu(mode, "right")) {
+                right_arg = arg_setStr(right_arg, "", content);
+            } else if (strEqu(mode, "left")) {
+                right_arg = arg_setStr(right_arg, "", stmt);
+            }
             break;
         }
         uint16_t len = Lexer_getTokenSize(tokens);
@@ -631,18 +643,25 @@ char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
             } else if ((TOKEN_devider == token_type2) &&
                        (strEqu(pyload2, "]"))) {
                 is_in_brancket = 0;
-
                 char* index = args_getStr(buffs, "index");
                 Arg* index_arg = arg_setStr(NULL, "", index);
                 index_arg = arg_strAppend(index_arg, pyload1);
                 args_setStr(buffs, "index", arg_getStr(index_arg));
                 arg_deinit(index_arg);
 
-                right_arg = arg_strAppend(right_arg, "__get__(");
+                if (strEqu(mode, "right")) {
+                    right_arg = arg_strAppend(right_arg, "__get__(");
+                } else if (strEqu(mode, "left")) {
+                    right_arg = arg_strAppend(right_arg, "__set__(");
+                }
                 right_arg = arg_strAppend(right_arg, args_getStr(buffs, "obj"));
                 right_arg = arg_strAppend(right_arg, ",");
                 right_arg =
                     arg_strAppend(right_arg, args_getStr(buffs, "index"));
+                if (strEqu(mode, "left")) {
+                    right_arg = arg_strAppend(right_arg, ",");
+                    right_arg = arg_strAppend(right_arg, stmt);
+                }
                 right_arg = arg_strAppend(right_arg, ")");
                 args_setStr(buffs, "index", "");
             } else if (is_in_brancket && (!strEqu(pyload1, "["))) {
@@ -660,10 +679,18 @@ char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
     } while (0);
 
     /* clean and retur */
-    right = strsCopy(outBuffs, arg_getStr(right_arg));
+    content = strsCopy(outBuffs, arg_getStr(right_arg));
     arg_deinit(right_arg);
     args_deinit(buffs);
-    return right;
+    return content;
+}
+
+char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
+    return Parser_solveBranckets(outBuffs, right, NULL, "right");
+}
+
+char* Parser_solveLeftBranckets(Args* outBuffs, char* right, char* left) {
+    return Parser_solveBranckets(outBuffs, left, right, "left");
 }
 
 AST* AST_parseStmt(AST* ast, char* stmt) {
@@ -682,7 +709,6 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     if (isLeftExist) {
         left = strsGetFirstToken(buffs, assignment, '=');
-        obj_setStr(ast, (char*)"left", left);
     }
     /* solve right stmt */
     if (isLeftExist) {
@@ -692,7 +718,17 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     /* solve the [] stmt */
     right = Parser_solveRightBranckets(buffs, right);
-
+    char* right_new = Parser_solveLeftBranckets(buffs, right, left);
+    /* left is contain the '[]' */
+    if (!strEqu(right_new, right)) {
+        /* update new right */
+        right = right_new;
+        /* cancel left */
+        isLeftExist = 0;
+    }
+    if (isLeftExist) {
+        obj_setStr(ast, (char*)"left", left);
+    }
     /* match statment type */
     enum StmtType stmtType = Lexer_matchStmtType(right);
     /* solve operator stmt */
