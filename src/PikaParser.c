@@ -623,11 +623,18 @@ char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
             pyload2 = Lexer_getTokenPyload(token2);
 
             /* matched [] */
-            if ((TOKEN_devider == token_type1) && (strEqu(pyload1, "["))) {
-            } else if ((TOKEN_devider == token_type1) &&
-                       (strEqu(pyload1, "]"))) {
+            if ((TOKEN_devider == token_type2) && (strEqu(pyload2, "["))) {
+                args_setStr(buffs, "obj", pyload1);
+            } else if ((TOKEN_devider == token_type2) &&
+                       (strEqu(pyload2, "]"))) {
+                args_setStr(buffs, "index", pyload1);
+                right_arg = arg_strAppend(right_arg, "__get__(");
+                right_arg = arg_strAppend(right_arg, args_getStr(buffs, "obj"));
+                right_arg = arg_strAppend(right_arg, ",");
+                right_arg =
+                    arg_strAppend(right_arg, args_getStr(buffs, "index"));
+                right_arg = arg_strAppend(right_arg, ")");
             } else {
-                right_arg = arg_strAppend(right_arg, pyload1);
             }
             args_deinit(token_buffs);
         }
@@ -689,7 +696,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     if (STMT_method == stmtType) {
         method = strsGetFirstToken(buffs, right, '(');
         obj_setStr(ast, (char*)"method", method);
-        char* subStmts = strsCut(buffs, stmt, '(', ')');
+        char* subStmts = strsCut(buffs, right, '(', ')');
         while (1) {
             char* subStmt =
                 strsPopTokenWithSkip(buffs, subStmts, ',', '(', ')');

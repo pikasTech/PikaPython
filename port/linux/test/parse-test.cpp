@@ -1807,11 +1807,13 @@ TEST(parser, __get__) {
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
-    // EXPECT_STREQ(pikaAsm,
-    //         "B0\n"
-    //         "1 STR [Info]: in Python config...\n"
-    //         "0 RUN print\n"
-    //     );
+    EXPECT_STREQ(pikaAsm,
+        "B0\n"
+        "1 REF b\n"
+        "1 REF c\n"
+        "0 RUN __get__\n"
+        "0 OUT a\n"
+    );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
