@@ -1799,6 +1799,33 @@ TEST(parser, print_ddd) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, __get__3) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+                 "a = b[c+d] + e[f*j]\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+        "B0\n"
+        "2 REF b\n"
+        "3 REF c\n"
+        "3 REF d\n"
+        "2 OPT +\n"
+        "1 RUN __get__\n"
+        "2 REF e\n"
+        "3 REF f\n"
+        "3 REF j\n"
+        "2 OPT *\n"
+        "1 RUN __get__\n"
+        "0 OPT +\n"
+        "0 OUT a\n"
+    );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(parser, __get__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();

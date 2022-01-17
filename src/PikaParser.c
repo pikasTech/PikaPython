@@ -631,18 +631,28 @@ char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
             } else if ((TOKEN_devider == token_type2) &&
                        (strEqu(pyload2, "]"))) {
                 is_in_brancket = 0;
+
+                char* index = args_getStr(buffs, "index");
+                Arg* index_arg = arg_setStr(NULL, "", index);
+                index_arg = arg_strAppend(index_arg, pyload1);
+                args_setStr(buffs, "index", arg_getStr(index_arg));
+                arg_deinit(index_arg);
+
                 right_arg = arg_strAppend(right_arg, "__get__(");
                 right_arg = arg_strAppend(right_arg, args_getStr(buffs, "obj"));
                 right_arg = arg_strAppend(right_arg, ",");
                 right_arg =
                     arg_strAppend(right_arg, args_getStr(buffs, "index"));
                 right_arg = arg_strAppend(right_arg, ")");
-            } else if (is_in_brancket) {
+                args_setStr(buffs, "index", "");
+            } else if (is_in_brancket && (!strEqu(pyload1, "["))) {
                 char* index = args_getStr(buffs, "index");
                 Arg* index_arg = arg_setStr(NULL, "", index);
-                index_arg = arg_strAppend(index_arg, pyload2);
+                index_arg = arg_strAppend(index_arg, pyload1);
                 args_setStr(buffs, "index", arg_getStr(index_arg));
                 arg_deinit(index_arg);
+            } else if (!is_in_brancket && (!strEqu(pyload1, "]"))) {
+                right_arg = arg_strAppend(right_arg, pyload1);
             }
             args_deinit(token_buffs);
         }
