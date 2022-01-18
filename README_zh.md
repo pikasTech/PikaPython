@@ -233,7 +233,7 @@ PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 | stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
 | devc BSP |[unsigned](https://gitee.com/unsigned0)|
 | TC264D BSP |[unsigned](https://gitee.com/unsigned0)|
-| PikaVM 优化 | GorgonMeducer |
+| PikaVM 优化 | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
 | 捐赠：ESP32C3 5pic，调试器 |启明云端 沧御|
