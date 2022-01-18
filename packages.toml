@@ -24,6 +24,7 @@ releases = [
   "v1.3.0 3032d3d05423b5f3dd2a4efe1f8eadd1d835f58f",
   "v1.3.1 343a1d56c53bba78fce9a0cd0cc8dfcd580632be",
   "v1.3.2 b54cd1ed5ae45c4f5789e266ea1f4f2e420ec306",
+  "v1.3.3 520a1cfb49e7c9e6bfca84a140fd80b0c2b0e000",
 ]
 
 [[packages]]
@@ -40,6 +41,7 @@ releases = [
   "v1.3.0 5eedf8be911f4c389c5496a79b600004077039f5",
   "v1.3.1 343a1d56c53bba78fce9a0cd0cc8dfcd580632be",
   "v1.3.2 b54cd1ed5ae45c4f5789e266ea1f4f2e420ec306",
+  "v1.3.3 520a1cfb49e7c9e6bfca84a140fd80b0c2b0e000",
 ]
 
 [[packages]]
@@ -49,6 +51,7 @@ releases = [
   "v0.0.9 2d22ed170a7766c3ce6716ca123bdf5a83e344ed",
   "v1.3.1 343a1d56c53bba78fce9a0cd0cc8dfcd580632be",
   "v1.3.2 b54cd1ed5ae45c4f5789e266ea1f4f2e420ec306",
+  "v1.3.3 520a1cfb49e7c9e6bfca84a140fd80b0c2b0e000",
 ]
 
 [[packages]]
