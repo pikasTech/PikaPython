@@ -114,6 +114,8 @@ PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 |bl-706|√| | | | | |
 |Raspberry Pico|√| | | | | |
 |ESP32C3|√| | | | | |
+|TC264D|√| | | | | |
+|devc|√| | | | | |
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
@@ -227,6 +229,8 @@ PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| devc BSP |[unsigned](https://gitee.com/unsigned0)|
+| TC264D BSP |[unsigned](https://gitee.com/unsigned0)|
 | PikaVM 优化 | GorgonMeducer |
 | W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
