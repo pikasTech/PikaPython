@@ -140,6 +140,13 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2, int a3) {
 
 Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
     ArgType obj_type = arg_getType(obj);
+    if (TYPE_STRING == obj_type) {
+        int index = arg_getInt(key);
+        char* str_pyload = arg_getStr(obj);
+        char char_buff[] = " ";
+        char_buff[0] = str_pyload[index];
+        return arg_setStr(NULL, "", char_buff);
+    }
     if ((TYPE_OBJECT == obj_type) || (TYPE_POINTER == obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
@@ -155,6 +162,12 @@ Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
 
 void PikaStdLib_SysObj___set__(PikaObj* self, Arg* key, Arg* obj, Arg* val) {
     ArgType obj_type = arg_getType(obj);
+    if (TYPE_STRING == obj_type) {
+        int index = arg_getInt(key);
+        char* str_val = arg_getStr(val);
+        char* str_pyload = arg_getStr(obj);
+        str_pyload[index] = str_val[0];
+    }
     if ((TYPE_OBJECT == obj_type) || (TYPE_POINTER == obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);

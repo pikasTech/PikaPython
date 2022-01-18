@@ -781,3 +781,26 @@ TEST(pikaMain, dict__set__get) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, str___get__) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\n");
+    obj_run(pikaMain, (char*)
+    "s = 'test'\n"
+    "res = __get__(s, 2)\n"
+    "__set__(s, 2, 'q')\n"
+    "\n"
+    );
+    /* collect */
+    char* res = obj_getStr(pikaMain, (char*)"res");
+    char* s= obj_getStr(pikaMain, (char*)"s");
+    /* assert */
+    EXPECT_STREQ(res, (char*)"s");
+    // EXPECT_STREQ(s, (char*)"teqt");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
