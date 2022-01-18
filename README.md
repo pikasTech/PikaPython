@@ -109,6 +109,8 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 |bl-706|√| | | | | |
 |Raspberry Pico|√| | | | | |
 |ESP32C3|√| | | | | |
+|TC264D|√| | | | | |
+|devc|√| | | | | |
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
@@ -203,6 +205,8 @@ Complete unit testes based on google test.
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
+| devc BSP |[unsigned](https://gitee.com/unsigned0)|
+| TC264D BSP |[unsigned](https://gitee.com/unsigned0)|
 | PikaVM improvement | GorgonMeducer |
 | W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
