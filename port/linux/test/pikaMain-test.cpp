@@ -831,3 +831,45 @@ TEST(pikaMain, str__index__) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, list_index) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\n");
+    obj_run(pikaMain, (char*)
+    "list = PikaStdData.List()\n"
+    "list[0] = 2\n"
+    "res = list[0]\n"
+    "\n"
+    );
+    /* collect */
+    int res = obj_getInt(pikaMain, (char*)"res");
+    /* assert */
+    EXPECT_EQ(res, 2);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, dict_index) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\n");
+    obj_run(pikaMain, (char*)
+    "dict = PikaStdData.Dict()\n"
+    "dict['a'] = 2\n"
+    "res = dict['a']\n"
+    "\n"
+    );
+    /* collect */
+    int res = obj_getInt(pikaMain, (char*)"res");
+    /* assert */
+    EXPECT_EQ(res, 2);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
