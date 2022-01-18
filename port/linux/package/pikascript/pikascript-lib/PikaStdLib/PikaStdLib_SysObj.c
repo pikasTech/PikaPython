@@ -160,13 +160,18 @@ Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
     return arg_setNull(NULL);
 }
 
-void PikaStdLib_SysObj___set__(PikaObj* self, Arg* key, Arg* obj, Arg* val) {
+void PikaStdLib_SysObj___set__(PikaObj* self,
+                               Arg* key,
+                               Arg* obj,
+                               char* obj_str,
+                               Arg* val) {
     ArgType obj_type = arg_getType(obj);
     if (TYPE_STRING == obj_type) {
         int index = arg_getInt(key);
         char* str_val = arg_getStr(val);
         char* str_pyload = arg_getStr(obj);
         str_pyload[index] = str_val[0];
+        obj_setStr(self, obj_str, str_pyload);
     }
     if ((TYPE_OBJECT == obj_type) || (TYPE_POINTER == obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);

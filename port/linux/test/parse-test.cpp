@@ -1881,6 +1881,7 @@ TEST(parser, __set__) {
         "1 REF a\n"
         "1 REF b\n"
         "1 REF c\n"
+        "1 STR a\n"
         "0 RUN __set__\n"
     );
     args_deinit(buffs);

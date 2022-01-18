@@ -661,6 +661,11 @@ char* Parser_solveBranckets(Args* outBuffs,
                 if (strEqu(mode, "left")) {
                     right_arg = arg_strAppend(right_arg, ",");
                     right_arg = arg_strAppend(right_arg, stmt);
+                    right_arg = arg_strAppend(right_arg, ",");
+                    right_arg = arg_strAppend(right_arg, "'");
+                    right_arg =
+                        arg_strAppend(right_arg, args_getStr(buffs, "obj"));
+                    right_arg = arg_strAppend(right_arg, "'");
                 }
                 right_arg = arg_strAppend(right_arg, ")");
                 args_setStr(buffs, "index", "");
