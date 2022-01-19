@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642562631181,
+  "lastUpdate": 1642562824248,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -7066,6 +7066,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000225267031882,
             "unit": "ms/iter",
             "extra": "iterations: 236168\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "e450821776f8ab444fe304fee1eaa2b082264e5d",
+          "message": "add asm_define_heap in ARM-2D projcet",
+          "timestamp": "2022-01-19T11:22:50+08:00",
+          "tree_id": "01b4753f5a1ecaab2efff9c3d7605a712859eb4f",
+          "url": "https://github.com/pikasTech/pikascript/commit/e450821776f8ab444fe304fee1eaa2b082264e5d"
+        },
+        "date": 1642562822888,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 929.9335215991492,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 929.9335215991492 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 272.2536178622315,
+            "unit": "ms/iter",
+            "extra": "iterations: 4\ncpu: 272.19715415493323 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 185.95317851498288,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 185.93844626715835 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 53.77083006463215,
+            "unit": "ms/iter",
+            "extra": "iterations: 18\ncpu: 53.76728426137181 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000323480502776,
+            "unit": "ms/iter",
+            "extra": "iterations: 198984\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
