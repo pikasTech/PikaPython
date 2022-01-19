@@ -356,7 +356,7 @@
             <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>ASM_DEFINE_USER_EAP_SIZE=0x01B00</Define>
+              <Define>ASM_DEFINE_USER_HEAP_SIZE=0x01B00</Define>
               <Undefine></Undefine>
               <IncludePath></IncludePath>
             </VariousControls>
