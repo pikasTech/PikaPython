@@ -2,8 +2,9 @@ from PikaObj import *
 import PikaStdData
 
 class Task(TinyObj):
-    task_list_always = PikaStdData.List()
-    task_list_when = PikaStdData.List()
+    calls_always = PikaStdData.List()
+    calls_when = PikaStdData.List()
+    assert_when = PikaStdData.List()
     def __init__():
         pass
 
