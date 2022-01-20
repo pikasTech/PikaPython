@@ -10,6 +10,9 @@ def todo1():
 def todo2():
     print('task 2 running...')
 
+def todo3():
+    print('task 3 running...')
+
 task = PikaStdTask.Task()
 task.call_always(todo1)
 task.call_always(todo2)
