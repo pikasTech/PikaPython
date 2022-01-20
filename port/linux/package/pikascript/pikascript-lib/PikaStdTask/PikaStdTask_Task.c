@@ -8,6 +8,8 @@ void PikaStdTask_Task___init__(PikaObj* self) {
                   "B0\n"
                   "0 RUN task_list_always.__init__\n"
                   "0 RUN task_list_when.__init__\n");
+    obj_setPtr(__pikaMain, "__task_list_always",
+               obj_getPtr(self, "task_list_always"));
 }
 
 void PikaStdTask_Task_call_always(PikaObj* self, Arg* fun_todo) {
@@ -22,8 +24,6 @@ void PikaStdTask_Task_call_when(PikaObj* self, Arg* fun_todo, Arg* fun_when) {}
 
 void PikaStdTask_Task_run_once(PikaObj* self) {
     /* reference the task_list_always in __pikaMain */
-    obj_setPtr(__pikaMain, "__task_list_always",
-               obj_getPtr(self, "task_list_always"));
     pikaVM_runAsm(__pikaMain,
                   "B0\n"
                   "1 REF __task_list_always\n"
