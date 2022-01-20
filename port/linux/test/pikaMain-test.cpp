@@ -886,8 +886,8 @@ TEST(pikaMain, task_run_once) {
             "def todo2():\n"
             "    print('task 2 running...')\n"
             "task = PikaStdTask.Task()\n"
-            "task.do_always(todo1)\n"
-            "task.do_always(todo2)\n"
+            "task.call_always(todo1)\n"
+            "task.call_always(todo2)\n"
             "task.run_once()\n"
             "\n");
     /* collect */
