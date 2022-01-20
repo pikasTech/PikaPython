@@ -1,3 +1,4 @@
+from PikaObj import *
 import PikaStdDevice
 
 
@@ -19,5 +20,11 @@ class GPIO(PikaStdDevice.GPIO):
         pass
 
     # need override
-    def platformSetMode(mode: str):
+    def platformSetMode():
         pass
+
+
+class Sys(TinyObj):
+    def delay(ms: int):
+        pass
+
