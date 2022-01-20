@@ -4,13 +4,18 @@
 
 extern PikaObj* __pikaMain;
 void PikaStdTask_Task___init__(PikaObj* self) {
-    obj_run(self, "task_list_always.__init__()");
-    obj_run(self, "task_list_when.__init__()");
+    pikaVM_runAsm(self,
+                  "B0\n"
+                  "0 RUN task_list_always.__init__\n"
+                  "0 RUN task_list_when.__init__\n");
 }
 
 void PikaStdTask_Task_call_always(PikaObj* self, Arg* fun_todo) {
     obj_setArg(self, "fun_todo", fun_todo);
-    obj_run(self, "task_list_always.append(fun_todo)");
+    pikaVM_runAsm(self,
+                  "B0\n"
+                  "1 REF fun_todo\n"
+                  "0 RUN task_list_always.append\n");
 }
 
 void PikaStdTask_Task_call_when(PikaObj* self, Arg* fun_todo, Arg* fun_when) {}
