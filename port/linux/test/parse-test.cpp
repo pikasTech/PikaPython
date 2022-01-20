@@ -1893,7 +1893,7 @@ TEST(parser, test__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
-        "task_list_always.append(fun_todo)";
+        "calls_always.append(fun_todo)";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
