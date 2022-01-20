@@ -24,7 +24,8 @@
         "__instruction_def.h": "c",
         "pikavm.h": "c",
         "pikaconfigvalid.h": "c",
-        "*.cfg": "c"
+        "*.cfg": "c",
+        "pikastdtask_task.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }

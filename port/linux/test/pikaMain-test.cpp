@@ -796,7 +796,7 @@ TEST(pikaMain, str___get____set__) {
     );
     /* collect */
     char* res = obj_getStr(pikaMain, (char*)"res");
-    char* s= obj_getStr(pikaMain, (char*)"s");
+    char* s = obj_getStr(pikaMain, (char*)"s");
     /* assert */
     EXPECT_STREQ(res, (char*)"s");
     EXPECT_STREQ(s, (char*)"teqt");
@@ -869,6 +869,32 @@ TEST(pikaMain, dict_index) {
     int res = obj_getInt(pikaMain, (char*)"res");
     /* assert */
     EXPECT_EQ(res, 2);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+extern PikaObj* __pikaMain;
+TEST(pikaMain, task_run_once) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    __pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    obj_run(__pikaMain,(char*)
+            "def todo1():\n"
+            "    print('task 1 running...')\n"
+            "def todo2():\n"
+            "    print('task 2 running...')\n"
+            "task = PikaStdTask.Task()\n"
+            "task.do_always(todo1)\n"
+            "task.do_always(todo2)\n"
+            "task.run_once()\n"
+            "\n");
+    /* collect */
+    PikaObj* pikaMain = __pikaMain;
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"task 2 running...\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"task 1 running...\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

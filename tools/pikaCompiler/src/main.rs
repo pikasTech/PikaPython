@@ -101,7 +101,7 @@ fn main() {
         .class_list
         .get_mut(&"PikaMain".to_string())
         .unwrap();
-    /* add script function */
+    /* make the pikascript.c */
     f.write(pika_main.script_fn().as_bytes()).unwrap();
 
     /* make the pikascript.h */

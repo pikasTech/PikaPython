@@ -114,11 +114,12 @@ impl ClassInfo {
     pub fn script_fn(&self) -> String {
         let mut script_fn = String::new();
         /* add pikaScriptInit function define */
-        script_fn.push_str("PikaObj * pikaScriptInit(void){\r\n");
+        script_fn.push_str("PikaObj *__pikaMain;\r\n");
+        script_fn.push_str("PikaObj *pikaScriptInit(void){\r\n");
         /* create the root object */
-        script_fn.push_str("    PikaObj * pikaMain = newRootObj(\"pikaMain\", New_PikaMain);\r\n");
+        script_fn.push_str("    __pikaMain = newRootObj(\"pikaMain\", New_PikaMain);\r\n");
         /* use obj_run to run the script in main.py */
-        script_fn.push_str("    obj_run(pikaMain,\n");
+        script_fn.push_str("    obj_run(__pikaMain,\n");
         /* get the origin script content */
         let script_content_origin = String::from(&self.script_list.content);
         /* filters for the script content */
@@ -134,7 +135,7 @@ impl ClassInfo {
         script_fn.push_str(&script_content);
         /* add the END of script string */
         script_fn.push_str("            \"\\n\");\n");
-        script_fn.push_str("    return pikaMain;\r\n");
+        script_fn.push_str("    return __pikaMain;\r\n");
         script_fn.push_str("}\r\n\r\n");
         return script_fn;
     }

@@ -12,3 +12,5 @@ def print(val: any):
 def printNoEnd(val: any):
     pass
 
+def taskLoop(task: any):
+    pass

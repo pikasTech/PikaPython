@@ -1,13 +1,17 @@
 import PikaStdLib
 import PikaStdDevice
 import PikaStdData
+import PikaStdTask
 import PikaMath
 from PikaObj import *
+def todo1():
+    print('task 1 running...')
 
-print("hello pikascript!\n")
-for i in range(0, 100):
+def todo2():
+    print('task 2 running...')
 
-    print(i)
+task = PikaStdTask.Task()
+task.do_always(todo1)
+task.do_always(todo2)
 
-printNoEnd('tett')
-printNoEnd('tett\n')
+task.run_once()
