@@ -54,9 +54,14 @@ void PikaStdTask_Task_run_once(PikaObj* self) {
                   "0 DEL _l0\n"
                   "B0\n");
     obj_run(__pikaMain,
-            "for i in range(0, __calls_when.len()):\n"
-            "    if __assert_when[i]():\n"
-            "        __calls_when()\n");
+            "len = __calls_when.len()\n"
+            "for i in range(0, len):\n"
+            "    if len == 0:\n"
+            "        break\n"
+            "    when = __assert_when[i]\n"
+            "    if when():\n"
+            "        todo = __calls_when[i]\n"
+            "        todo()\n");
 }
 
 void PikaStdTask_Task_run_always(PikaObj* self) {

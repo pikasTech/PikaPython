@@ -874,13 +874,12 @@ TEST(pikaMain, dict_index) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-extern PikaObj* __pikaMain;
 TEST(pikaMain, task_run_once) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     /* run */
-    __pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-    obj_run(__pikaMain,(char*)
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    obj_run(pikaMain,(char*)
             "def todo1():\n"
             "    print('task 1 running...')\n"
             "def todo2():\n"
@@ -891,10 +890,39 @@ TEST(pikaMain, task_run_once) {
             "task.run_once()\n"
             "\n");
     /* collect */
-    PikaObj* pikaMain = __pikaMain;
     /* assert */
     EXPECT_STREQ(log_buff[0], (char*)"task 2 running...\r\n");
     EXPECT_STREQ(log_buff[1], (char*)"task 1 running...\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, task_run_when) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    obj_run(pikaMain,(char*)
+            "def todo1():\n"
+            "    print('task 1 running...')\n"
+            "def todo2():\n"
+            "    print('task 2 running...')\n"
+            "def todo3():\n"
+            "    print('task 3 running...')\n"
+            "def when3():\n"
+            "    return True\n"
+            "task = PikaStdTask.Task()\n"
+            "task.call_always(todo1)\n"
+            "task.call_always(todo2)\n"
+            "task.call_when(todo3, when3)\n"
+            "task.run_once()\n"
+            "\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"task 3 running...\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"task 2 running...\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"task 1 running...\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

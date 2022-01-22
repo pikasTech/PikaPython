@@ -1893,7 +1893,11 @@ TEST(parser, test__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
-        "calls_always.append(fun_todo)";
+            "for i in range(0, __calls_when.len()):\n"
+            "    when = __assert_when[i]\n"
+            "    if when():\n"
+            "        todo = __calls_when[i]\n"
+            "        todo()\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
