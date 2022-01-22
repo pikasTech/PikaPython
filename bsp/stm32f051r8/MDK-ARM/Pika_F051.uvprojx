@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>Pika_F051</TargetName>
+      <TargetName>stm32f051r8</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
@@ -48,8 +48,8 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>Pika_F051\</OutputDirectory>
-          <OutputName>Pika_F051</OutputName>
+          <OutputDirectory>stm32f051r8\</OutputDirectory>
+          <OutputName>stm32f051r8</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -667,7 +667,7 @@
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.5.0" condition="ARMv6_7_8-M Device">
         <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.8.0"/>
         <targetInfos>
-          <targetInfo name="Pika_F051"/>
+          <targetInfo name="stm32f051r8"/>
         </targetInfos>
       </component>
     </components>
