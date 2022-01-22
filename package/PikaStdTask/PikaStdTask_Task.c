@@ -16,22 +16,15 @@ void PikaStdTask_Task___init__(PikaObj* self) {
 
 void PikaStdTask_Task_call_always(PikaObj* self, Arg* fun_todo) {
     obj_setArg(self, "fun_todo", fun_todo);
-    pikaVM_runAsm(self,
-                  "B0\n"
-                  "1 REF fun_todo\n"
-                  "0 RUN calls_always.append\n");
+    pikaVM_runAsm(self, "B0\n1 REF fun_todo\n0 RUN calls_always.append\n");
 }
 
 void PikaStdTask_Task_call_when(PikaObj* self, Arg* fun_todo, Arg* fun_when) {
     obj_setArg(self, "fun_todo", fun_todo);
     obj_setArg(self, "fun_when", fun_when);
     pikaVM_runAsm(self,
-                  "B0\n"
-                  "1 REF fun_todo\n"
-                  "0 RUN calls_when.append\n"
-                  "B0\n"
-                  "1 REF fun_when\n"
-                  "0 RUN assert_when.append\n");
+                  "B0\n1 REF fun_todo\n0 RUN calls_when.append\nB0\n1 REF "
+                  "fun_when\n0 RUN assert_when.append\n");
 }
 
 void PikaStdTask_Task_run_once(PikaObj* self) {
