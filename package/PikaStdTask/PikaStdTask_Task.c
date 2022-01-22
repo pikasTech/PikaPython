@@ -5,10 +5,8 @@
 extern PikaObj* __pikaMain;
 void PikaStdTask_Task___init__(PikaObj* self) {
     pikaVM_runAsm(self,
-                  "B0\n"
-                  "0 RUN calls_always.__init__\n"
-                  "0 RUN calls_when.__init__\n"
-                  "0 RUN assert_when.__init__\n");
+                  "B0\n0 RUN calls_always.__init__\n0 RUN "
+                  "calls_when.__init__\n0 RUN assert_when.__init__\n");
     obj_setPtr(__pikaMain, "__calls_always", obj_getPtr(self, "calls_always"));
     obj_setPtr(__pikaMain, "__calls_when", obj_getPtr(self, "calls_when"));
     obj_setPtr(__pikaMain, "__assert_when", obj_getPtr(self, "assert_when"));
