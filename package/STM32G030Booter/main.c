@@ -72,6 +72,7 @@ uint8_t Shell_Ready = 0;
 extern Pool pikaPool;
 #endif
 
+extern PikaObj * __pikaMain;
 int main(void) {
     /* support bootLoader */
     __disable_irq();
@@ -96,6 +97,7 @@ int main(void) {
     if (code[0] != 0xFF) {
         /* boot from flash */
         pikaMain = newRootObj("pikaMain", New_PikaMain);
+        __pikaMain = pikaMain;
         if (code[0] == 'i') {
             printf("[info]: boot from Script.\r\n");
             Arg* codeBuff = arg_setStr(NULL, "", code);
