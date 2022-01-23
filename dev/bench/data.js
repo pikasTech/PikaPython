@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1642868332215,
+  "lastUpdate": 1642944955337,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -7875,6 +7875,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000261378980091,
             "unit": "ms/iter",
             "extra": "iterations: 234396\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "f33093ee0d4fa4faa8e6dc5873cd5c3f9ac87b68",
+          "message": "add task support for STM32G0, add period Task in StdTask",
+          "timestamp": "2022-01-23T21:31:07+08:00",
+          "tree_id": "9776bc9f9a3bd3fc61ed1c1174fffbe9887492e1",
+          "url": "https://github.com/pikasTech/pikascript/commit/f33093ee0d4fa4faa8e6dc5873cd5c3f9ac87b68"
+        },
+        "date": 1642944952726,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 961.0158970651464,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 961.0158970651464 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 251.53092733193412,
+            "unit": "ms/iter",
+            "extra": "iterations: 4\ncpu: 251.45262658811365 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 180.8128454350758,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 179.8597546173486 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 52.06871218719749,
+            "unit": "ms/iter",
+            "extra": "iterations: 18\ncpu: 52.028275653602996 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000704372241656,
+            "unit": "ms/iter",
+            "extra": "iterations: 190021\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
