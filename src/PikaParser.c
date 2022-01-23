@@ -1159,6 +1159,7 @@ char* AST_toPikaAsm(AST* ast, Args* buffs) {
             }
             /* return when exit method */
             if (strEqu(blockType, "def")) {
+                pikaAsm = ASM_addBlockDeepth(ast, buffs, pikaAsm, 1);
                 pikaAsm = strsAppend(buffs, pikaAsm, (char*)"0 RET\n");
             }
         }

@@ -723,6 +723,7 @@ TEST(parser, def_add) {
     "1 REF a\n"
     "1 REF b\n"
     "0 OPT +\n"
+    "B1\n"
     "0 RET\n"
     "B0\n"
     );
@@ -750,6 +751,7 @@ TEST(parser, def_add_return) {
     "1 REF b\n"
     "0 OPT +\n"
     "0 RET\n"
+    "B1\n"
     "0 RET\n"
     "B0\n"
     );
@@ -783,6 +785,7 @@ TEST(parser, def_while_return) {
     "0 RET\n"
     "B1\n"
     "0 JMP -1\n"
+    "B1\n"
     "0 RET\n"
     "B0\n"
     );
@@ -813,6 +816,7 @@ TEST(parser, def_while_return_void) {
     "0 RET\n"
     "B1\n"
     "0 JMP -1\n"
+    "B1\n"
     "0 RET\n"
     "B0\n"
     );
