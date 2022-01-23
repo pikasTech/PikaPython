@@ -56,9 +56,128 @@ void PikaStdTask_Task_call_period_ms(PikaObj* self,
 }
 
 void PikaStdTask_Task_run_once(PikaObj* self) {
-    obj_run(self, "platformGetTick()");
+    /* Python
+    if calls_period.len() > 0:
+        platformGetTick()
+    */
+    pikaVM_runAsm(self,
+                  "B0\n"
+                  "1 RUN calls_period.len\n"
+                  "1 NUM 0\n"
+                  "0 OPT >\n"
+                  "0 JEZ 1\n"
+                  "B1\n"
+                  "0 RUN platformGetTick\n"
+                  "B0\n");
     /* transfer the tick to pikaMain */
     obj_setInt(__pikaMain, "__tick", obj_getInt(self, "tick"));
+    /* Python
+    len = __calls_always.len()
+    for i in range(0, len):
+        if len == 0:
+            break
+        todo = __calls_always[i]
+        todo()
+    */
+    pikaVM_runAsm(__pikaMain,
+                  "B0\n"
+                  "0 RUN __calls_always.len\n"
+                  "0 OUT len\n"
+                  "B0\n"
+                  "2 NUM 0\n"
+                  "2 REF len\n"
+                  "1 RUN range\n"
+                  "0 RUN iter\n"
+                  "0 OUT _l0\n"
+                  "0 REF _r1\n"
+                  "0 REF _r2\n"
+                  "0 REF _r3\n"
+                  "0 OUT _l0.a1\n"
+                  "0 OUT _l0.a2\n"
+                  "0 OUT _l0.a3\n"
+                  "B0\n"
+                  "0 RUN _l0.__next__\n"
+                  "0 OUT i\n"
+                  "0 EST i\n"
+                  "0 JEZ 2\n"
+                  "B1\n"
+                  "1 REF len\n"
+                  "1 NUM 0\n"
+                  "0 OPT ==\n"
+                  "0 JEZ 1\n"
+                  "B2\n"
+                  "0 BRK\n"
+                  "B1\n"
+                  "1 REF __calls_always\n"
+                  "1 REF i\n"
+                  "0 RUN __get__\n"
+                  "0 OUT todo\n"
+                  "B1\n"
+                  "0 RUN todo\n"
+                  "B0\n"
+                  "0 JMP -1\n"
+                  "B0\n"
+                  "0 DEL _l0\n"
+                  "B0\n");
+
+    /* Python
+    __len = __calls_when.len()
+    for i in range(0, __len):
+        if __len == 0:
+            break
+        when = __assert_when[i]
+        if when():
+            todo = __calls_when[i]
+            todo()
+    */
+    pikaVM_runAsm(__pikaMain,
+                  "B0\n"
+                  "0 RUN __calls_when.len\n"
+                  "0 OUT __len\n"
+                  "B0\n"
+                  "2 NUM 0\n"
+                  "2 REF __len\n"
+                  "1 RUN range\n"
+                  "0 RUN iter\n"
+                  "0 OUT _l0\n"
+                  "0 REF _r1\n"
+                  "0 REF _r2\n"
+                  "0 REF _r3\n"
+                  "0 OUT _l0.a1\n"
+                  "0 OUT _l0.a2\n"
+                  "0 OUT _l0.a3\n"
+                  "B0\n"
+                  "0 RUN _l0.__next__\n"
+                  "0 OUT i\n"
+                  "0 EST i\n"
+                  "0 JEZ 2\n"
+                  "B1\n"
+                  "1 REF __len\n"
+                  "1 NUM 0\n"
+                  "0 OPT ==\n"
+                  "0 JEZ 1\n"
+                  "B2\n"
+                  "0 BRK\n"
+                  "B1\n"
+                  "1 REF __assert_when\n"
+                  "1 REF i\n"
+                  "0 RUN __get__\n"
+                  "0 OUT when\n"
+                  "B1\n"
+                  "0 RUN when\n"
+                  "0 JEZ 1\n"
+                  "B2\n"
+                  "1 REF __calls_when\n"
+                  "1 REF i\n"
+                  "0 RUN __get__\n"
+                  "0 OUT todo\n"
+                  "B2\n"
+                  "0 RUN todo\n"
+                  "B0\n"
+                  "0 JMP -1\n"
+                  "B0\n"
+                  "0 DEL _l0\n"
+                  "B0\n");
     /* Python
     __len = __calls_period.len()
     for i in range(0, __len):
@@ -132,65 +251,6 @@ void PikaStdTask_Task_run_once(PikaObj* self) {
                   "B0\n"
                   "0 DEL _l0\n"
                   "B0 \n");
-
-    /* Python
-    __len = __calls_when.len()
-    for i in range(0, __len):
-        if __len == 0:
-            break
-        when = __assert_when[i]
-        if when():
-            todo = __calls_when[i]
-            todo()
-    */
-    pikaVM_runAsm(__pikaMain,
-                  "B0\n"
-                  "0 RUN __calls_when.len\n"
-                  "0 OUT __len\n"
-                  "B0\n"
-                  "2 NUM 0\n"
-                  "2 REF __len\n"
-                  "1 RUN range\n"
-                  "0 RUN iter\n"
-                  "0 OUT _l0\n"
-                  "0 REF _r1\n"
-                  "0 REF _r2\n"
-                  "0 REF _r3\n"
-                  "0 OUT _l0.a1\n"
-                  "0 OUT _l0.a2\n"
-                  "0 OUT _l0.a3\n"
-                  "B0\n"
-                  "0 RUN _l0.__next__\n"
-                  "0 OUT i\n"
-                  "0 EST i\n"
-                  "0 JEZ 2\n"
-                  "B1\n"
-                  "1 REF __len\n"
-                  "1 NUM 0\n"
-                  "0 OPT ==\n"
-                  "0 JEZ 1\n"
-                  "B2\n"
-                  "0 BRK\n"
-                  "B1\n"
-                  "1 REF __assert_when\n"
-                  "1 REF i\n"
-                  "0 RUN __get__\n"
-                  "0 OUT when\n"
-                  "B1\n"
-                  "0 RUN when\n"
-                  "0 JEZ 1\n"
-                  "B2\n"
-                  "1 REF __calls_when\n"
-                  "1 REF i\n"
-                  "0 RUN __get__\n"
-                  "0 OUT todo\n"
-                  "B2\n"
-                  "0 RUN todo\n"
-                  "B0\n"
-                  "0 JMP -1\n"
-                  "B0\n"
-                  "0 DEL _l0\n"
-                  "B0\n");
 }
 
 void PikaStdTask_Task_run_always(PikaObj* self) {

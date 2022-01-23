@@ -1723,9 +1723,9 @@ TEST(parser, __iter__) {
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
-        "B0\n"
-        "0 RUN __iter__\n"
-        "0 OUT __res\n");
+                 "B0\n"
+                 "0 RUN __iter__\n"
+                 "0 OUT __res\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1761,23 +1761,23 @@ TEST(parser, for_in_string) {
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
-        "B0\n"
-        "1 STR test\n"
-        "0 RUN iter\n"
-        "0 OUT _l0\n"
-        "B0\n"
-        "0 RUN _l0.__next__\n"
-        "0 OUT b\n"
-        "0 EST b\n"
-        "0 JEZ 2\n"
-        "B1\n"
-        "0 NUM 1\n"
-        "0 OUT a\n"
-        "B0\n"
-        "0 JMP -1\n"
-        "B0\n"
-        "0 DEL _l0\n"
-        "B0\n");
+                 "B0\n"
+                 "1 STR test\n"
+                 "0 RUN iter\n"
+                 "0 OUT _l0\n"
+                 "B0\n"
+                 "0 RUN _l0.__next__\n"
+                 "0 OUT b\n"
+                 "0 EST b\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "0 NUM 1\n"
+                 "0 OUT a\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n"
+                 "0 DEL _l0\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1785,16 +1785,14 @@ TEST(parser, for_in_string) {
 TEST(parser, print_ddd) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines = (char*)
-                 "print(\"[Info]: in Python config...\")\n";
+    char* lines = (char*)"print(\"[Info]: in Python config...\")\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
-            "B0\n"
-            "1 STR [Info]: in Python config...\n"
-            "0 RUN print\n"
-        );
+                 "B0\n"
+                 "1 STR [Info]: in Python config...\n"
+                 "0 RUN print\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1802,26 +1800,24 @@ TEST(parser, print_ddd) {
 TEST(parser, __get__3) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines = (char*)
-                 "a = b[c+d] + e[f*j]\n";
+    char* lines = (char*)"a = b[c+d] + e[f*j]\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
-        "B0\n"
-        "2 REF b\n"
-        "3 REF c\n"
-        "3 REF d\n"
-        "2 OPT +\n"
-        "1 RUN __get__\n"
-        "2 REF e\n"
-        "3 REF f\n"
-        "3 REF j\n"
-        "2 OPT *\n"
-        "1 RUN __get__\n"
-        "0 OPT +\n"
-        "0 OUT a\n"
-    );
+                 "B0\n"
+                 "2 REF b\n"
+                 "3 REF c\n"
+                 "3 REF d\n"
+                 "2 OPT +\n"
+                 "1 RUN __get__\n"
+                 "2 REF e\n"
+                 "3 REF f\n"
+                 "3 REF j\n"
+                 "2 OPT *\n"
+                 "1 RUN __get__\n"
+                 "0 OPT +\n"
+                 "0 OUT a\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1829,79 +1825,64 @@ TEST(parser, __get__3) {
 TEST(parser, __get__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines = (char*)
-                 "a = b[c]\n";
+    char* lines = (char*)"a = b[c]\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
-        "B0\n"
-        "1 REF b\n"
-        "1 REF c\n"
-        "0 RUN __get__\n"
-        "0 OUT a\n"
-    );
+                 "B0\n"
+                 "1 REF b\n"
+                 "1 REF c\n"
+                 "0 RUN __get__\n"
+                 "0 OUT a\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
 
 TEST(parser, __get__2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines = (char*)
-                 "a = b[c+d]\n";
+    char* lines = (char*)"a = b[c+d]\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
-        "B0\n"
-        "1 REF b\n"
-        "2 REF c\n"
-        "2 REF d\n"
-        "1 OPT +\n"
-        "0 RUN __get__\n"
-        "0 OUT a\n"
-    );
+                 "B0\n"
+                 "1 REF b\n"
+                 "2 REF c\n"
+                 "2 REF d\n"
+                 "1 OPT +\n"
+                 "0 RUN __get__\n"
+                 "0 OUT a\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
 
 TEST(parser, __set__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines = (char*)
-                 "a[b] = c\n";
+    char* lines = (char*)"a[b] = c\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
-        "B0\n"
-        "1 REF a\n"
-        "1 REF b\n"
-        "1 REF c\n"
-        "1 STR a\n"
-        "0 RUN __set__\n"
-    );
+                 "B0\n"
+                 "1 REF a\n"
+                 "1 REF b\n"
+                 "1 REF c\n"
+                 "1 STR a\n"
+                 "0 RUN __set__\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
 
 TEST(parser, test__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
-            "len = __calls_when.len()\n"
-            "for i in range(0, len):\n"
-            "    if len == 0:\n"
-            "        break\n"
-            "    when = __assert_when[i]\n"
-            "    if when():\n"
-            "        todo = __calls_when[i]\n"
-            "        todo()\n"
-            "\n";
+        "if calls_period.len() > 0:\n"
+        "    platformGetTick()\n"
+        "\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
