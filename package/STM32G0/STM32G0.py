@@ -1,5 +1,6 @@
 from PikaObj import *
 import PikaStdDevice
+import PikaStdTask
 
 
 class GPIO(PikaStdDevice.GPIO):
@@ -95,4 +96,10 @@ class IIC(PikaStdDevice.IIC):
 
 class lowLevel(TinyObj):
     def readPin(pin: str) -> int:
+        pass
+
+
+class Task(PikaStdTask.Task):
+    # override
+    def platformGetTick():
         pass
