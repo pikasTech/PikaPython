@@ -1,6 +1,8 @@
-pikascript-core==v1.3.3
-PikaStdLib==v1.3.3
-STM32G0==v1.0.3
+pikascript-core==v1.3.4
+PikaStdLib==v1.3.4
+PikaStdData==v1.3.4
+PikaStdTask==v1.3.4
 PikaStdDevice==v1.4.3
+STM32G0==v1.1.0
 PikaPiZero==v1.1.2
 STM32G070CBBooter==latest

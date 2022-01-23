@@ -356,7 +356,7 @@
             <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>ASM_DEFINE_USER_HEAP_SIZE=0x01B00</Define>
+              <Define>ASM_DEFINE_USER_HEAP_SIZE=0x01A00</Define>
               <Undefine></Undefine>
               <IncludePath></IncludePath>
             </VariousControls>
@@ -826,6 +826,31 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdData_Dict-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdData_Dict-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_List-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdData_List-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_String-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdData_String-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\PikaStdTask_Task-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_Task-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\STM32G0_Task-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -940,6 +965,31 @@
               <FileName>PikaStdLib_StringObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32G0_Task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\STM32G0_Task.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdTask\PikaStdTask_Task.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Dict.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdData\PikaStdData_Dict.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_List.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdData\PikaStdData_List.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_String.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdData\PikaStdData_String.c</FilePath>
             </File>
           </Files>
         </Group>
