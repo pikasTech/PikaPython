@@ -25,6 +25,7 @@ releases = [
   "v1.3.1 343a1d56c53bba78fce9a0cd0cc8dfcd580632be",
   "v1.3.2 b54cd1ed5ae45c4f5789e266ea1f4f2e420ec306",
   "v1.3.3 520a1cfb49e7c9e6bfca84a140fd80b0c2b0e000",
+  "v1.3.4 59cdf753071da17dcac91f583f4d69ad4587dd93",
 ]
 
 [[packages]]
@@ -42,6 +43,7 @@ releases = [
   "v1.3.1 343a1d56c53bba78fce9a0cd0cc8dfcd580632be",
   "v1.3.2 b54cd1ed5ae45c4f5789e266ea1f4f2e420ec306",
   "v1.3.3 520a1cfb49e7c9e6bfca84a140fd80b0c2b0e000",
+  "v1.3.4 59cdf753071da17dcac91f583f4d69ad4587dd93",
 ]
 
 [[packages]]
@@ -52,12 +54,14 @@ releases = [
   "v1.3.1 343a1d56c53bba78fce9a0cd0cc8dfcd580632be",
   "v1.3.2 b54cd1ed5ae45c4f5789e266ea1f4f2e420ec306",
   "v1.3.3 520a1cfb49e7c9e6bfca84a140fd80b0c2b0e000",
+  "v1.3.4 59cdf753071da17dcac91f583f4d69ad4587dd93",
 ]
 
 [[packages]]
 name = "PikaStdTask"
 releases = [
   "v0.0.1 18d924efc18a875b17eb40a85efe6973787964e1",
+  "v1.3.4 59cdf753071da17dcac91f583f4d69ad4587dd93",
 ]
 
 [[packages]]
@@ -75,6 +79,7 @@ name = "STM32G0"
 releases = [
   "v1.0.2 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
   "v1.0.3 a150ebe43377852fc91d12be0163950435f71bd5",
+  "v1.1.0 59cdf753071da17dcac91f583f4d69ad4587dd93",
 ]
 
 [[packages]]
