@@ -13,7 +13,7 @@ pin.enalbe()
 rgb.init()
 rgb.enable()
 
-print('hello 2')
+print('task demo')
 print('mem used max:')
 mem.max()
 
