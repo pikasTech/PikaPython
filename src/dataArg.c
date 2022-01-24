@@ -31,6 +31,9 @@
 #include "dataString.h"
 #include "stdlib.h"
 
+
+
+
 void arg_deinit(Arg* self) {
     arg_freeContent(self);
 }
@@ -39,10 +42,12 @@ uint16_t arg_getTotleSize(Arg* self) {
     return content_totleSize(self);
 }
 
+#if 0
 uint16_t content_sizeOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
     return nextLength;
 }
+#endif
 
 uint16_t content_getSize(uint8_t* self) {
     uint32_t* p_size =
@@ -125,11 +130,13 @@ void arg_freeContent(Arg* self) {
     }
 }
 
+#if 0
 uint8_t content_nameOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
     const uint8_t sizeLength = sizeof(uint32_t);
     return nextLength + sizeLength;
 }
+#endif
 
 Hash content_getNameHash(uint8_t* self) {
     return *(Hash*)((uintptr_t)self + (uintptr_t)content_nameOffset(self));
@@ -224,16 +231,18 @@ ArgType content_getType(uint8_t* self) {
     return type;
 }
 
+#if 0
 uint16_t content_contentOffset(uint8_t* self) {
     const uint8_t nextLength = sizeof(uint8_t*);
     const uint8_t sizeLength = sizeof(uint32_t);
     return nextLength + sizeLength + sizeof(Hash);
 }
 
+
 uint16_t content_nextOffset(uint8_t* self) {
     return 0;
 }
-
+#endif
 uint8_t* content_getNext(uint8_t* self) {
     uintptr_t* nextDir =
         (uintptr_t*)((uintptr_t)self + (uintptr_t)content_nextOffset(self));
