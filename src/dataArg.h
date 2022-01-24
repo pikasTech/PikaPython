@@ -43,12 +43,26 @@ typedef enum {
     TYPE_NULL,
 } ArgType;
 
+typedef struct __arg __arg;
+
+struct __arg {
+    __arg       *next;
+    uint32_t    size;
+    Hash        name_hash;
+    uint8_t     content[];
+};
+
+
 uint16_t content_typeOffset(uint8_t* content);
-uint16_t content_contentOffset(uint8_t* content);
-uint16_t content_sizeOffset(uint8_t* self);
-uint16_t content_contentOffset(uint8_t* self);
-uint16_t content_nextOffset(uint8_t* self);
-uint8_t content_nameOffset(uint8_t* self);
+//uint16_t content_contentOffset(uint8_t* content);
+//uint16_t content_sizeOffset(uint8_t* self);
+//uint16_t content_nextOffset(uint8_t* self);
+//uint8_t content_nameOffset(uint8_t* self);
+
+#define content_contentOffset(...)      offsetof(__arg, content)
+#define content_sizeOffset(...)         offsetof(__arg, size)
+#define content_nextOffset(...)         offsetof(__arg, next)
+#define content_nameOffset(...)         offsetof(__arg, name_hash)
 
 uint32_t content_getNameHash(uint8_t* content);
 ArgType content_getType(uint8_t* self);

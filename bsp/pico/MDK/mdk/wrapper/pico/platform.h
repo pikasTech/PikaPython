@@ -71,6 +71,10 @@ extern "C" {
 #define MIN(a, b) ((b)>(a)?(a):(b))
 #endif
 
+#ifndef offsetof
+#define offsetof(__type, __member)  (uintptr_t)(&(((__type *)0)->__member))
+#endif
+
 #if !defined(__IS_COMPILER_ARM_COMPILER_6__)
 /**
  * Execute a breakpoint instruction
