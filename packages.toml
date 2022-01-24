@@ -61,7 +61,7 @@ releases = [
 name = "PikaStdTask"
 releases = [
   "v0.0.1 18d924efc18a875b17eb40a85efe6973787964e1",
-  "v1.3.4 a5896fc40b043d894f5a020dec236cef04be5e08",
+  "v1.3.4 da7a32d00e0736b5ff3632819d051117a3fa5f7b",
 ]
 
 [[packages]]
