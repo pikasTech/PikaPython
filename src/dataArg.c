@@ -67,16 +67,14 @@ uint8_t* content_init_hash(Hash nameHash,
                            uint8_t* content,
                            uint32_t size,
                            uint8_t* next) {
-    const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = sizeof(uint32_t);
-    uint16_t nameSize = sizeof(Hash);     // use hash
+
     uint16_t typeSize = sizeof(ArgType);  // use enum
-    __arg * self = (__arg *)pikaMalloc(nextLength + sizeLength + nameSize +
-                                         size + typeSize);
+    __arg * self = (__arg *)pikaMalloc(sizeof(__arg) + size + typeSize);
 
     self->next = (__arg *)next;
     self->size = size;
     self->name_hash = nameHash;
+    self->type = type;
     
     if (NULL != content) {
         __platform_memcpy(self->content, content, size);
@@ -84,6 +82,9 @@ uint8_t* content_init_hash(Hash nameHash,
         __platform_memset(self->content, 0, size);
     }
     
+    /*! Todo: Why remove this cause problem? no API read value from this location
+     *!       please refer to content_setType and content_getType
+     */
     (*(ArgType *)((uintptr_t)(self->content) + size)) = type;
     
     return (uint8_t *)self;
@@ -150,9 +151,14 @@ uint8_t* content_setType(uint8_t* self, ArgType type) {
     }
 
     __arg * arg = (__arg *)self;
-    (*(ArgType *)((uintptr_t)(arg->content) + arg->size)) = type;
+    arg->type = type;
     
     return self;
+}
+
+ArgType content_getType(uint8_t* self) {
+    __arg * arg = (__arg *)self;
+    return arg->type;
 }
 
 Arg* arg_newContent(Arg* self, uint32_t size) {
@@ -177,10 +183,7 @@ Arg* arg_setType(Arg* self, ArgType type) {
     return content_setType(self, type);
 }
 
-ArgType content_getType(uint8_t* self) {
-    __arg * arg = (__arg *)self;
-    return (*(ArgType *)((uintptr_t)(arg->content) + arg->size));
-}
+
 
 
 
@@ -236,13 +239,6 @@ char* arg_getStr(Arg* self) {
     return (char*)arg_getContent(self);
 }
 
-uint16_t content_typeOffset(uint8_t* self) {
-    const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = sizeof(uint32_t);
-    uint16_t size = content_getSize(self);
-    uint16_t nameSize = sizeof(Hash);
-    return nextLength + sizeLength + nameSize + size;
-}
 
 Hash arg_getNameHash(Arg* self) {
     if (NULL == self) {

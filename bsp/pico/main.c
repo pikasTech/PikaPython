@@ -131,9 +131,7 @@ int main(void)
     uint32_t n = 0;
     /* run unit test */
     obj_deinit(pikaScriptInit());
-    
-    
-    
+
     /* benchmark */
     uint64_t nCycleUsed_c,nCycleUsed_pika = 0;
     printf("[----------benchmark----------]\r\n");

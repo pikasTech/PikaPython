@@ -47,18 +47,13 @@ typedef struct __arg __arg;
 
 struct __arg {
     __arg       *next;
-    uint32_t    size;
+    uint16_t    size;
+    uint8_t     type;
+    uint8_t             : 8;
     Hash        name_hash;
     uint8_t     content[];
 };
 
-
-uint16_t content_typeOffset(uint8_t* content);
-
-#define content_contentOffset(...)      offsetof(__arg, content)
-#define content_sizeOffset(...)         offsetof(__arg, size)
-#define content_nextOffset(...)         offsetof(__arg, next)
-#define content_nameOffset(...)         offsetof(__arg, name_hash)
 
 //uint32_t content_getNameHash(uint8_t* content);
 #define content_getNameHash(__addr)     (((__arg *)(__addr))->name_hash)
