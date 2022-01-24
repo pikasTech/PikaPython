@@ -245,21 +245,20 @@ int32_t args_setArg(Args* self, Arg* arg) {
 }
 
 LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
+
     LinkNode* nodeNow = self->firstNode;
-    if (NULL == nodeNow) {
-        return NULL;
-    }
-    while (1) {
+
+    while (NULL != nodeNow) {
         Arg* arg = nodeNow;
         Hash thisNameHash = arg_getNameHash(arg);
         if (thisNameHash == nameHash) {
             return nodeNow;
         }
-        if (NULL == content_getNext(nodeNow)) {
-            return NULL;
-        }
+        
         nodeNow = content_getNext(nodeNow);
     }
+    
+    return NULL;
 }
 
 LinkNode* args_getNode(Args* self, char* name) {
