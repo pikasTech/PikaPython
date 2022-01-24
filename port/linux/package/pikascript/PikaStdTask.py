@@ -3,12 +3,7 @@ import PikaStdData
 
 
 class Task(TinyObj):
-    calls_always = PikaStdData.List()
-    calls_when = PikaStdData.List()
-    assert_when = PikaStdData.List()
-    calls_period = PikaStdData.List()
-    assert_period = PikaStdData.List()
-    time_period = PikaStdData.List()
+    calls = PikaStdData.List()
 
     def __init__():
         pass
