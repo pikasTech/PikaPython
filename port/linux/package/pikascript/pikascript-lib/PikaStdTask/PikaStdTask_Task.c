@@ -254,9 +254,9 @@ void PikaStdTask_Task_run_once(PikaObj* self) {
 }
 
 void __Task_update_tick(PikaObj* self) {
-    obj_run(self,
-            "if is_period:\n"
-            "    platformGetTick()\n");
+    if (obj_getInt(self, "is_perod")) {
+        pikaVM_runAsm(self, "B0\n0 RUN platformGetTick\n");
+    }
 }
 
 void PikaStdTask_Task_run_always(PikaObj* self) {
