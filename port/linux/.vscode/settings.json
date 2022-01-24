@@ -25,7 +25,8 @@
         "pikavm.h": "c",
         "pikaconfigvalid.h": "c",
         "*.cfg": "c",
-        "pikastdtask_task.h": "c"
+        "pikastdtask_task.h": "c",
+        "gtesttask_task.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }

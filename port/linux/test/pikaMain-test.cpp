@@ -4,9 +4,10 @@ extern "C" {
 #include "PikaStdLib_MemChecker.h"
 #include "dataArgs.h"
 #include "dataMemory.h"
-#include "mem_pool_config.h"
+#include "pika_config_gtest.h"
 #include "pikaScript.h"
 }
+
 extern PikaMemInfo pikaMemInfo;
 TEST(pikaMain, init) {
     pikaMemInfo.heapUsedMax = 0;
@@ -884,7 +885,7 @@ TEST(pikaMain, task_run_once) {
             "    print('task 1 running...')\n"
             "def todo2():\n"
             "    print('task 2 running...')\n"
-            "task = PikaStdTask.Task()\n"
+            "task = GTestTask.Task()\n"
             "task.call_always(todo1)\n"
             "task.call_always(todo2)\n"
             "task.run_once()\n"
@@ -912,7 +913,7 @@ TEST(pikaMain, task_run_when) {
             "    print('task 3 running...')\n"
             "def when3():\n"
             "    return True\n"
-            "task = PikaStdTask.Task()\n"
+            "task = GTestTask.Task()\n"
             "task.call_always(todo1)\n"
             "task.call_always(todo2)\n"
             "task.call_when(todo3, when3)\n"

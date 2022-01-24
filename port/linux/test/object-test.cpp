@@ -2,7 +2,7 @@
 extern "C" {
 #include "BaseObj.h"
 #include "PikaStdLib_SysObj.h"
-#include "mem_pool_config.h"
+#include "pika_config_gtest.h"
 #include "TinyObj.h"
 }
 

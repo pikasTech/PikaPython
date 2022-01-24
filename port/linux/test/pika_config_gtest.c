@@ -1,4 +1,4 @@
-#include "mem_pool_config.h"
+#include "pika_config_gtest.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "dataMemory.h"

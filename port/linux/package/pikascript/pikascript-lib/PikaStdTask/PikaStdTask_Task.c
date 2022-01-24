@@ -34,8 +34,8 @@ void PikaStdTask_Task_call_period_ms(PikaObj* self,
     obj_run(self,
             "calls.append('period_ms')\n"
             "calls.append(period_ms)\n"
-            "calls.append(0)\n"
             "calls.append(fun_todo)\n"
+            "calls.append(0)\n"
             "is_period = 1\n");
 }
 
@@ -63,12 +63,24 @@ void PikaStdTask_Task_run_once(PikaObj* self) {
             "        elif mode == 'when':\n"
             "            when = __calls[i]\n"
             "            info_index = 2\n"
+            "        elif mode == 'period_ms':\n"
+            "            period_ms = __calls[i]\n"
+            "            info_index = 2\n"
             "    elif info_index == 2:\n"
             "        if mode == 'when':\n"
             "            if when():\n"
             "                todo = __calls[i]\n"
             "                todo()\n"
-            "                info_index = 0\n"
+            "            info_index = 0\n"
+            "        elif mode == 'period_ms':\n"
+            "            todo = __calls[i]\n"
+            "            info_index = 3\n"
+            "    elif info_index == 3:\n"
+            "        if mode == 'period_ms':\n"
+            "            if __tick > __calls[i]:\n"
+            "                todo()\n"
+            "                __calls[i] = __tick + period_ms\n"
+            "            info_index = 0\n"
             "\n");
     /* Python
     __len = __calls_period.len()
