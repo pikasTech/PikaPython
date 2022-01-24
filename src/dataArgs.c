@@ -244,8 +244,17 @@ int32_t args_setArg(Args* self, Arg* arg) {
     return 0;
 }
 
+
+#ifndef __PIKA_CFG_HASH_LIST_CACHE_SIZE
+#define __PIKA_CFG_HASH_LIST_CACHE_SIZE     4
+#endif
+
 LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
 
+    
+#if 0
+
+    /* normal list search without cache */
     LinkNode* nodeNow = self->firstNode;
 
     while (NULL != nodeNow) {
@@ -257,6 +266,38 @@ LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
         
         nodeNow = content_getNext(nodeNow);
     }
+#else
+    
+    LinkNode ** ppnode = (LinkNode **)&(self->firstNode);
+    int_fast8_t n = 0;
+    
+    while (NULL != (*ppnode)) {
+        Arg* arg = (*ppnode);
+        Hash thisNameHash = arg_getNameHash(arg);
+        if (thisNameHash == nameHash) {
+        
+            __arg *tmp = (__arg *)(*ppnode);
+            if (n > __PIKA_CFG_HASH_LIST_CACHE_SIZE) {
+
+                /* the first __PIKA_CFG_HASH_LIST_CACHE_SIZE items in the list 
+                 * is considered as a cache. 
+                 * Don't make __PIKA_CFG_HASH_LIST_CACHE_SIZE too big, otherwise
+                 * this optimisation is useless.
+                 */
+             
+                /*! remove current node from the list */
+                (*ppnode) = (LinkNode *)(tmp->next);
+                
+                /*! move the node to the cache */
+                tmp->next = (__arg *)(self->firstNode);
+                self->firstNode = (LinkNode *)tmp;
+            }
+            return (LinkNode *)tmp;
+        }
+        n++;
+        ppnode = (LinkNode **)&(((__arg *)(*ppnode))->next);
+    }
+#endif
     
     return NULL;
 }
