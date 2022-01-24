@@ -953,12 +953,13 @@ TEST(pikaMain, task_run_period_until) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], (char*)"task 1 running...\r\n");
-    EXPECT_STREQ(log_buff[1], (char*)"task 2 running...\r\n");
-    EXPECT_STREQ(log_buff[2], (char*)"task 1 running...\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"task 1 running...\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"task 2 running...\r\n");
     EXPECT_STREQ(log_buff[3], (char*)"task 1 running...\r\n");
-    EXPECT_STREQ(log_buff[4], (char*)"task 2 running...\r\n");
-    EXPECT_STREQ(log_buff[5], (char*)"task 1 running...\r\n");
-    EXPECT_STREQ(log_buff[6], (char*)"BEGIN\r\n");
+    EXPECT_STREQ(log_buff[4], (char*)"task 1 running...\r\n");
+    EXPECT_STREQ(log_buff[5], (char*)"task 2 running...\r\n");
+    EXPECT_STREQ(log_buff[6], (char*)"task 1 running...\r\n");
+    EXPECT_STREQ(log_buff[7], (char*)"BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
