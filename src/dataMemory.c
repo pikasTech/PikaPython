@@ -35,6 +35,15 @@ void* pikaMalloc(uint32_t size) {
     if (0 != __is_locked_pikaMemory()) {
         __platform_wait();
     }
+    
+//! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
+#if 0
+    /* force alignment to avoid unaligned access */
+    if (sizeof(int_fast8_t) > 1) {
+        size = (size + sizeof(int_fast8_t) - 1) & ~(sizeof(int_fast8_t) - 1);
+    }
+#endif
+    
     pikaMemInfo.heapUsed += size;
     if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
         pikaMemInfo.heapUsedMax = pikaMemInfo.heapUsed;
