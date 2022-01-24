@@ -21,10 +21,3 @@ def todo3():
 def when3():
     return True
 
-
-task = GTestTask.Task()
-task.call_always(todo1)
-task.call_always(todo2)
-# task.call_when(todo3, when3)
-
-task.run_once()

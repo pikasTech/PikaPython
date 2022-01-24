@@ -23,5 +23,8 @@ class Task(TinyObj):
     def run_always():
         pass
 
+    def run_until_ms(until_ms: int):
+        pass
+
     def platformGetTick():
         pass

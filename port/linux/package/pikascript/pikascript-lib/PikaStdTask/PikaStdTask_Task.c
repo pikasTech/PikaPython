@@ -40,9 +40,6 @@ void PikaStdTask_Task_call_period_ms(PikaObj* self,
 }
 
 void PikaStdTask_Task_run_once(PikaObj* self) {
-    obj_run(self,
-            "if is_period:\n"
-            "    platformGetTick()\n");
     /* transfer the tick to pikaMain */
     obj_setInt(__pikaMain, "__tick", obj_getInt(self, "tick"));
     obj_run(__pikaMain,
@@ -95,9 +92,26 @@ void PikaStdTask_Task_run_once(PikaObj* self) {
     */
 }
 
+void __Task_update_tick(PikaObj* self) {
+    obj_run(self,
+            "if is_period:\n"
+            "    platformGetTick()\n");
+}
+
 void PikaStdTask_Task_run_always(PikaObj* self) {
     while (1) {
+        __Task_update_tick(self);
         PikaStdTask_Task_run_once(self);
+    }
+}
+
+void PikaStdTask_Task_run_until_ms(PikaObj* self, int until_ms) {
+    while (1) {
+        __Task_update_tick(self);
+        PikaStdTask_Task_run_once(self);
+        if (obj_getInt(self, "tick") > until_ms) {
+            return;
+        }
     }
 }
 
