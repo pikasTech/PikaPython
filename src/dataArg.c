@@ -43,23 +43,12 @@ uint16_t arg_getTotleSize(Arg* self) {
 }
 
 #if 0
-uint16_t content_sizeOffset(uint8_t* self) {
-    const uint8_t nextLength = sizeof(uint8_t*);
-    return nextLength;
-}
-#endif
-
-uint16_t content_getSize(uint8_t* self) {
-    uint32_t* p_size =
-        (uint32_t*)((uintptr_t)self + (uintptr_t)content_sizeOffset(self));
-    return (uint16_t)*p_size;
-}
-
 void content_setNext(uint8_t* self, uint8_t* next) {
     uint8_t* nextDir = self + content_nextOffset(self);
     uintptr_t* p_next = (uintptr_t*)nextDir;
     *p_next = (uintptr_t)next;
 }
+#endif
 
 /**
  * time33 hash
@@ -72,6 +61,7 @@ Hash hash_time33(char* str) {
     return (hash & 0x7FFFFFFF);
 }
 
+static 
 uint8_t* content_init_hash(Hash nameHash,
                            ArgType type,
                            uint8_t* content,
@@ -81,31 +71,25 @@ uint8_t* content_init_hash(Hash nameHash,
     const uint8_t sizeLength = sizeof(uint32_t);
     uint16_t nameSize = sizeof(Hash);     // use hash
     uint16_t typeSize = sizeof(ArgType);  // use enum
-    uint8_t* self = (uint8_t*)pikaMalloc(nextLength + sizeLength + nameSize +
+    __arg * self = (__arg *)pikaMalloc(nextLength + sizeLength + nameSize +
                                          size + typeSize);
 
-    uint8_t* nextDir = self;
-    uint8_t* sizeDir = nextDir + nextLength;
-    uint8_t* nameDir = sizeDir + sizeLength;
-    uint8_t* contentDir = nameDir + nameSize;
-    uint8_t* typeDir = contentDir + size;
-
-    // __platform_memcpy(nameDir, &nameHash, nameSize);  // use hash
-    *(Hash*)nameDir = nameHash;
-    __platform_memcpy(typeDir, &type, typeSize);
-    uint32_t* p_size = (uint32_t*)sizeDir;
-    *p_size = size;
+    self->next = (__arg *)next;
+    self->size = size;
+    self->name_hash = nameHash;
+    
     if (NULL != content) {
-        __platform_memcpy(contentDir, content, size);
+        __platform_memcpy(self->content, content, size);
     } else {
-        __platform_memset(contentDir, 0, size);
+        __platform_memset(self->content, 0, size);
     }
-
-    uintptr_t* p_next = (uintptr_t*)nextDir;
-    *p_next = (uintptr_t)next;
-    return self;
+    
+    (*(ArgType *)((uintptr_t)(self->content) + size)) = type;
+    
+    return (uint8_t *)self;
 }
 
+static
 uint8_t* content_init(char* name,
                       ArgType type,
                       uint8_t* content,
@@ -116,30 +100,14 @@ uint8_t* content_init(char* name,
 }
 
 uint16_t content_totleSize(uint8_t* self) {
-    const uint8_t size_size = sizeof(uint32_t);
-    const uint8_t size_next = sizeof(uint8_t*);
-    const uint8_t size_type = sizeof(ArgType);
-    const uint8_t size_hash = sizeof(Hash);
-    uint16_t size_content = content_getSize(self);
-    return size_content + size_hash + size_type + size_size + size_next;
+    
+    return ((__arg *)self)->size + sizeof(ArgType) + sizeof(__arg);
 }
 
 void arg_freeContent(Arg* self) {
     if (NULL != self) {
         content_deinit(self);
     }
-}
-
-#if 0
-uint8_t content_nameOffset(uint8_t* self) {
-    const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = sizeof(uint32_t);
-    return nextLength + sizeLength;
-}
-#endif
-
-Hash content_getNameHash(uint8_t* self) {
-    return *(Hash*)((uintptr_t)self + (uintptr_t)content_nameOffset(self));
 }
 
 uint8_t* content_deinit(uint8_t* self) {
@@ -152,6 +120,7 @@ uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
     if (NULL == self) {
         return content_init("", TYPE_NONE, content, size, NULL);
     }
+    
     Hash nameHash = content_getNameHash(self);
     ArgType type = content_getType(self);
     uint8_t* next = content_getNext(self);
@@ -165,41 +134,25 @@ uint8_t* content_setNameHash(uint8_t* self, Hash nameHash) {
     if (NULL == self) {
         return content_init_hash(nameHash, TYPE_NONE, NULL, 0, NULL);
     }
-    ArgType type = content_getType(self);
-    uint8_t* content = content_getContent(self);
-    uint16_t size = content_getSize(self);
-    uint8_t* next = content_getNext(self);
-    uint8_t* newContent =
-        content_init_hash(nameHash, type, content, size, next);
-    content_deinit(self);
-    return newContent;
+    __arg * arg = (__arg *)self;
+    arg->name_hash = nameHash;
+    return self;
 }
 
 uint8_t* content_setName(uint8_t* self, char* name) {
-    if (NULL == self) {
-        return content_init(name, TYPE_NONE, NULL, 0, NULL);
-    }
-    ArgType type = content_getType(self);
-    uint8_t* content = content_getContent(self);
-    uint16_t size = content_getSize(self);
-    uint8_t* next = content_getNext(self);
-    uint8_t* newContent = content_init(name, type, content, size, next);
-    content_deinit(self);
-    return newContent;
+
+    return content_setNameHash(self, hash_time33(name));
 }
 
 uint8_t* content_setType(uint8_t* self, ArgType type) {
     if (NULL == self) {
         return content_init("", type, NULL, 0, NULL);
     }
-    Hash nameHash = content_getNameHash(self);
-    uint8_t* content = content_getContent(self);
-    uint16_t size = content_getSize(self);
-    uint8_t* next = content_getNext(self);
-    uint8_t* newContent =
-        content_init_hash(nameHash, type, content, size, next);
-    content_deinit(self);
-    return newContent;
+
+    __arg * arg = (__arg *)self;
+    (*(ArgType *)((uintptr_t)(arg->content) + arg->size)) = type;
+    
+    return self;
 }
 
 Arg* arg_newContent(Arg* self, uint32_t size) {
@@ -225,47 +178,18 @@ Arg* arg_setType(Arg* self, ArgType type) {
 }
 
 ArgType content_getType(uint8_t* self) {
-    void* type_ptr = (uint8_t*)self + content_typeOffset(self);
-    ArgType type;
-    __platform_memcpy(&type, type_ptr, sizeof(ArgType));
-    return type;
-}
-
-#if 0
-uint16_t content_contentOffset(uint8_t* self) {
-    const uint8_t nextLength = sizeof(uint8_t*);
-    const uint8_t sizeLength = sizeof(uint32_t);
-    return nextLength + sizeLength + sizeof(Hash);
+    __arg * arg = (__arg *)self;
+    return (*(ArgType *)((uintptr_t)(arg->content) + arg->size));
 }
 
 
-uint16_t content_nextOffset(uint8_t* self) {
-    return 0;
-}
-#endif
-uint8_t* content_getNext(uint8_t* self) {
-    uintptr_t* nextDir =
-        (uintptr_t*)((uintptr_t)self + (uintptr_t)content_nextOffset(self));
-    return (uint8_t*)*nextDir;
-}
-
-uint8_t* content_getContent(uint8_t* self) {
-    return self + content_contentOffset(self);
-}
 
 uint8_t* arg_getContent(Arg* self) {
     return content_getContent(self);
 }
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val) {
-    int64_t int64Temp = val;
-    uint8_t contentBuff[8];
-    for (uint32_t i = 0; i < 4; i++) {
-        // add 0x30 to void \0
-        contentBuff[i] = int64Temp;
-        int64Temp = int64Temp >> 8;
-    }
-    return content_init(name, TYPE_INT, contentBuff, 4, NULL);
+    return content_init(name, TYPE_INT, (uint8_t *)&val, sizeof(val), NULL);
 }
 
 Arg* arg_setNull(Arg* self) {
@@ -273,13 +197,7 @@ Arg* arg_setNull(Arg* self) {
 }
 
 Arg* arg_setFloat(Arg* self, char* name, float val) {
-    uint8_t contentBuff[4];
-    uint8_t* valPtr = (uint8_t*)&val;
-    for (uint32_t i = 0; i < 4; i++) {
-        // add 0x30 to void \0
-        contentBuff[i] = valPtr[i];
-    }
-    return content_init(name, TYPE_FLOAT, contentBuff, 4, NULL);
+    return content_init(name, TYPE_FLOAT, (uint8_t *)&val, sizeof(val), NULL);
 }
 
 float arg_getFloat(Arg* self) {
@@ -287,27 +205,11 @@ float arg_getFloat(Arg* self) {
         return -999.999;
     }
 
-    float valOut = 0;
-    uint8_t* valOutPtr = (uint8_t*)(&valOut);
-    uint8_t* valPtr = arg_getContent(self);
-    for (uint32_t i = 0; i < 4; i++) {
-        valOutPtr[i] = valPtr[i];
-    }
-    return valOut;
+    return *(float *)(((__arg *)self)->content);
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
-    /*
-    uintptr_t pointerTemp = (uintptr_t)pointer;
-    uint8_t contentBuff[8];
-    
-    for (uint32_t i = 0; i < sizeof(uint8_t*); i++) {
-        // aboid \0
-        contentBuff[i] = pointerTemp;
-        pointerTemp = pointerTemp >> 8;
-    }
-    */
-    
+
     return content_init(name, type, (uint8_t *)&pointer, sizeof(uintptr_t), NULL);
 }
 
@@ -320,30 +222,15 @@ int64_t arg_getInt(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return -999999;
     }
-    int64_t int64Temp = 0;
-    for (int32_t i = 3; i > -1; i--) {
-        // add 0x30 to avoid 0
-        int64Temp = (int64Temp << 8);
-        int64Temp += arg_getContent(self)[i];
-    }
-    return int64Temp;
+
+    return *(int64_t *)(((__arg *)self)->content);
 }
 
 void* arg_getPtr(Arg* self) {
-    void* pointer = NULL;
-    uint64_t pointerTemp = 0;
     if (NULL == arg_getContent(self)) {
         return NULL;
     }
-    uint8_t* content = arg_getContent(self);
-    for (int32_t i = sizeof(uint8_t*) - 1; i > -1; i--) {
-        // avoid \0
-        uint8_t val = content[i];
-        pointerTemp = (pointerTemp << 8);
-        pointerTemp += val;
-    }
-    pointer = (void*)(uintptr_t)pointerTemp;
-    return pointer;
+    return *(void **)(((__arg *)self)->content);
 }
 char* arg_getStr(Arg* self) {
     return (char*)arg_getContent(self);
