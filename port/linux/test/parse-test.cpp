@@ -1884,9 +1884,42 @@ TEST(parser, test__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
-        "if calls_period.len() > 0:\n"
-        "    platformGetTick()\n"
-        "\n";
+            "len = __calls.len()\n"
+            "mode = 'none'\n"
+            "info_index = 0\n"
+            "for i in range(0, len):\n"
+            "    if len == 0:\n"
+            "        break\n"
+            "    if info_index == 0:\n"
+            "        mode = __calls[i]\n"
+            "        info_index = 1\n"
+            "    elif info_index == 1:\n"
+            "        if mode == 'always':\n"
+            "            todo = __calls[i]\n"
+            "            todo()\n"
+            "            info_index = 0\n"
+            "        elif mode == 'when':\n"
+            "            when = __calls[i]\n"
+            "            info_index = 2\n"
+            "        elif mode == 'period_ms':\n"
+            "            period_ms = __calls[i]\n"
+            "            info_index = 2\n"
+            "    elif info_index == 2:\n"
+            "        if mode == 'when':\n"
+            "            if when():\n"
+            "                todo = __calls[i]\n"
+            "                todo()\n"
+            "            info_index = 0\n"
+            "        elif mode == 'period_ms':\n"
+            "            todo = __calls[i]\n"
+            "            info_index = 3\n"
+            "    elif info_index == 3:\n"
+            "        if mode == 'period_ms':\n"
+            "            if __tick > __calls[i]:\n"
+            "                todo()\n"
+            "                __calls[i] = __tick + period_ms\n"
+            "            info_index = 0\n"
+            "\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
