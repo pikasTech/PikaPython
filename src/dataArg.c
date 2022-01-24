@@ -89,7 +89,7 @@ uint8_t* content_init_hash(Hash nameHash,
     return (uint8_t *)self;
 }
 
-static
+//! todo: should be static
 uint8_t* content_init(char* name,
                       ArgType type,
                       uint8_t* content,
