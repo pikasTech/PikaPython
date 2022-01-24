@@ -28,6 +28,7 @@
 #ifndef _arg__H
 #define _arg__H
 #include "dataMemory.h"
+#include "dataLink.h"
 
 typedef uint8_t Arg;
 typedef uint32_t Hash;
@@ -46,7 +47,10 @@ typedef enum {
 typedef struct __arg __arg;
 
 struct __arg {
-    __arg       *next;
+    union {
+        __arg       *next;
+        Link        link;
+    };
     uint16_t    size;
     uint8_t     type;
     uint8_t             : 8;
