@@ -288,14 +288,18 @@ float arg_getFloat(Arg* self) {
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
-    uint64_t pointerTemp = (uintptr_t)pointer;
+    /*
+    uintptr_t pointerTemp = (uintptr_t)pointer;
     uint8_t contentBuff[8];
+    
     for (uint32_t i = 0; i < sizeof(uint8_t*); i++) {
         // aboid \0
         contentBuff[i] = pointerTemp;
         pointerTemp = pointerTemp >> 8;
     }
-    return content_init(name, type, contentBuff, sizeof(uint8_t*), NULL);
+    */
+    
+    return content_init(name, type, (uint8_t *)&pointer, sizeof(uintptr_t), NULL);
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {
