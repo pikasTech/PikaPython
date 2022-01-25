@@ -39,14 +39,6 @@ uint16_t arg_getTotleSize(Arg* self) {
     return content_totleSize(self);
 }
 
-#if 0
-void content_setNext(uint8_t* self, uint8_t* next) {
-    uint8_t* nextDir = self + content_nextOffset(self);
-    uintptr_t* p_next = (uintptr_t*)nextDir;
-    *p_next = (uintptr_t)next;
-}
-#endif
-
 /**
  * time33 hash
  */
