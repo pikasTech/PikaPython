@@ -31,9 +31,6 @@
 #include "dataString.h"
 #include "stdlib.h"
 
-
-
-
 void arg_deinit(Arg* self) {
     arg_freeContent(self);
 }
@@ -61,48 +58,38 @@ Hash hash_time33(char* str) {
     return (hash & 0x7FFFFFFF);
 }
 
-static 
-uint8_t* content_init_hash(Hash nameHash,
-                           ArgType type,
-                           uint8_t* content,
-                           uint32_t size,
-                           uint8_t* next) {
+static uint8_t* content_init_hash(Hash nameHash,
+                                  ArgType type,
+                                  uint8_t* content,
+                                  uint32_t size,
+                                  uint8_t* next) {
+    __arg* self = (__arg*)pikaMalloc(sizeof(__arg) + size);
 
-    uint16_t typeSize = sizeof(ArgType);  // use enum
-    __arg * self = (__arg *)pikaMalloc(sizeof(__arg) + size + typeSize);
-
-    self->next = (__arg *)next;
+    self->next = (__arg*)next;
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
-    
+
     if (NULL != content) {
         __platform_memcpy(self->content, content, size);
     } else {
         __platform_memset(self->content, 0, size);
     }
-    
-    /*! Todo: Why remove this cause problem? no API read value from this location
-     *!       please refer to content_setType and content_getType
-     */
-    (*(ArgType *)((uintptr_t)(self->content) + size)) = type;
-    
-    return (uint8_t *)self;
+
+    return (uint8_t*)self;
 }
 
-static
-uint8_t* content_init(char* name,
-                      ArgType type,
-                      uint8_t* content,
-                      uint16_t size,
-                      uint8_t* next) {
+static uint8_t* content_init(char* name,
+                             ArgType type,
+                             uint8_t* content,
+                             uint16_t size,
+                             uint8_t* next) {
     Hash nameHash = hash_time33(name);
     return content_init_hash(nameHash, type, content, size, next);
 }
 
 uint16_t content_totleSize(uint8_t* self) {
-    
-    return ((__arg *)self)->size + sizeof(ArgType) + sizeof(__arg);
+    return ((__arg*)self)->size + sizeof(__arg);
 }
 
 void arg_freeContent(Arg* self) {
@@ -121,7 +108,7 @@ uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
     if (NULL == self) {
         return content_init("", TYPE_NONE, content, size, NULL);
     }
-    
+
     Hash nameHash = content_getNameHash(self);
     ArgType type = content_getType(self);
     uint8_t* next = content_getNext(self);
@@ -135,13 +122,12 @@ uint8_t* content_setNameHash(uint8_t* self, Hash nameHash) {
     if (NULL == self) {
         return content_init_hash(nameHash, TYPE_NONE, NULL, 0, NULL);
     }
-    __arg * arg = (__arg *)self;
+    __arg* arg = (__arg*)self;
     arg->name_hash = nameHash;
     return self;
 }
 
 uint8_t* content_setName(uint8_t* self, char* name) {
-
     return content_setNameHash(self, hash_time33(name));
 }
 
@@ -150,14 +136,14 @@ uint8_t* content_setType(uint8_t* self, ArgType type) {
         return content_init("", type, NULL, 0, NULL);
     }
 
-    __arg * arg = (__arg *)self;
+    __arg* arg = (__arg*)self;
     arg->type = type;
-    
+
     return self;
 }
 
 ArgType content_getType(uint8_t* self) {
-    __arg * arg = (__arg *)self;
+    __arg* arg = (__arg*)self;
     return arg->type;
 }
 
@@ -183,16 +169,12 @@ Arg* arg_setType(Arg* self, ArgType type) {
     return content_setType(self, type);
 }
 
-
-
-
-
 uint8_t* arg_getContent(Arg* self) {
     return content_getContent(self);
 }
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val) {
-    return content_init(name, TYPE_INT, (uint8_t *)&val, sizeof(val), NULL);
+    return content_init(name, TYPE_INT, (uint8_t*)&val, sizeof(val), NULL);
 }
 
 Arg* arg_setNull(Arg* self) {
@@ -200,7 +182,7 @@ Arg* arg_setNull(Arg* self) {
 }
 
 Arg* arg_setFloat(Arg* self, char* name, float val) {
-    return content_init(name, TYPE_FLOAT, (uint8_t *)&val, sizeof(val), NULL);
+    return content_init(name, TYPE_FLOAT, (uint8_t*)&val, sizeof(val), NULL);
 }
 
 float arg_getFloat(Arg* self) {
@@ -208,12 +190,12 @@ float arg_getFloat(Arg* self) {
         return -999.999;
     }
 
-    return *(float *)(((__arg *)self)->content);
+    return *(float*)(((__arg*)self)->content);
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
-
-    return content_init(name, type, (uint8_t *)&pointer, sizeof(uintptr_t), NULL);
+    return content_init(name, type, (uint8_t*)&pointer, sizeof(uintptr_t),
+                        NULL);
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {
@@ -226,19 +208,18 @@ int64_t arg_getInt(Arg* self) {
         return -999999;
     }
 
-    return *(int64_t *)(((__arg *)self)->content);
+    return *(int64_t*)(((__arg*)self)->content);
 }
 
 void* arg_getPtr(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return NULL;
     }
-    return *(void **)(((__arg *)self)->content);
+    return *(void**)(((__arg*)self)->content);
 }
 char* arg_getStr(Arg* self) {
     return (char*)arg_getContent(self);
 }
-
 
 Hash arg_getNameHash(Arg* self) {
     if (NULL == self) {

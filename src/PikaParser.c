@@ -33,6 +33,13 @@
 #include "dataStack.h"
 #include "dataStrs.h"
 
+uint16_t Lexer_getTokenSize(char* tokens) {
+    if (strEqu("", tokens)) {
+        return 0;
+    }
+    return strCountSign(tokens, 0x1F) + 1;
+}
+
 char* strsPopTokenWithSkip_byStr(Args* buffs,
                                  char* stmts,
                                  char* str,
@@ -88,7 +95,7 @@ char* strsGetCleanCmd(Args* outBuffs, char* cmd) {
     int32_t size = strGetSize(cmd);
     Args* buffs = New_strBuff();
     char* tokens = Lexer_getTokens(buffs, cmd);
-    uint16_t token_size = strCountSign(tokens, 0x1F) + 1;
+    uint16_t token_size = Lexer_getTokenSize(tokens);
     char* strOut = args_getBuff(outBuffs, size);
     int32_t iOut = 0;
     for (uint16_t i = 0; i < token_size; i++) {
@@ -540,10 +547,6 @@ exit:
 
 char* Lexer_popToken(Args* buffs, char* tokens_buff) {
     return strsPopToken(buffs, tokens_buff, 0x1F);
-}
-
-uint16_t Lexer_getTokenSize(char* tokens) {
-    return strCountSign(tokens, 0x1F) + 1;
 }
 
 enum TokenType Lexer_getTokenType(char* token) {
