@@ -29,7 +29,7 @@
 #define __PIKA_CFG_VALID_H__
 
 #ifdef __PIKA_USER_CONFIC_INCLUDE__
-#   include __PIKA_USER_CONFIC_INCLUDE__
+#include __PIKA_USER_CONFIC_INCLUDE__
 #else
 
 /* default configuration  */
@@ -38,8 +38,6 @@
 
 #endif
 
-
 /* configuration validation */
-
 
 #endif
