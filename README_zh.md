@@ -106,6 +106,7 @@ PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 |stm32f103rb|√|√|√|√|√|√|
 |stm32f103rc|√|√|√|√|√|√|
 |stm32f407ze|√| | | | | |
+|stm32f051r8|√| | | | | |
 |ch32v103r8t6|√|√| | | | |
 |cm32m101a|√| | | | | |
 |w801|√|√| | | | | | | |
@@ -230,6 +231,7 @@ PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| stm32f051r8 BSP |[unsigned](https://gitee.com/unsigned0)|
 | stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
 | devc BSP |[unsigned](https://gitee.com/unsigned0)|
 | TC264D BSP |[unsigned](https://gitee.com/unsigned0)|

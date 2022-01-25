@@ -101,6 +101,7 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 |stm32f103rb|√|√|√|√|√|√|
 |stm32f103rc|√|√|√|√|√|√|
 |stm32f407ze|√| | | | | |
+|stm32f051r8|√| | | | | |
 |ch32v103r8t6|√|√| | | | |
 |cm32m101a|√| | | | | |
 |w801|√|√| | | | | | | |
@@ -206,6 +207,7 @@ Complete unit testes based on google test.
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
+| stm32f051r8 BSP |[unsigned](https://gitee.com/unsigned0)|
 | stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
 | devc BSP |[unsigned](https://gitee.com/unsigned0)|
 | TC264D BSP |[unsigned](https://gitee.com/unsigned0)|
