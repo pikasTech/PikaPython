@@ -73,11 +73,6 @@ ArgType content_getType(uint8_t* self);
 
 uint16_t content_totleSize(uint8_t* self);
 
-uint8_t* content_init(char* name,
-                      ArgType type,
-                      uint8_t* content,
-                      uint16_t size,
-                      uint8_t* next);
 uint8_t* content_deinit(uint8_t* self);
 
 uint8_t* content_setName(uint8_t* self, char* name);
