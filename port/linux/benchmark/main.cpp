@@ -18,6 +18,7 @@ static void for_loop_10000(benchmark::State& state) {
             "for i in range(0, 10000):\n"
             "    a = a + 1\n"
             "\n");
+        obj_deinit(pikaMain);
     }
 }
 BENCHMARK(for_loop_10000)->Unit(benchmark::kMillisecond);
@@ -31,6 +32,7 @@ static void while_loop_10000(benchmark::State& state) {
             "while i < 10000:\n"
             "    i = i + 1\n"
             "\n");
+        obj_deinit(pikaMain);
     }
 }
 BENCHMARK(while_loop_10000)->Unit(benchmark::kMillisecond);
@@ -57,11 +59,11 @@ static void prime_number_100(benchmark::State& state) {
         if (1060 != num) {
             printf("[error]: prime_number_100\r\n");
         }
+        obj_deinit(pikaMain);
     }
 }
 BENCHMARK(prime_number_100)->Unit(benchmark::kMillisecond);
 
-BENCHMARK_MAIN();
 
 static void prime_number_100_c(benchmark::State& state) {
     int num = 0;
@@ -86,3 +88,5 @@ static void prime_number_100_c(benchmark::State& state) {
     }
 }
 BENCHMARK(prime_number_100_c)->Unit(benchmark::kMillisecond);
+
+BENCHMARK_MAIN();
