@@ -231,6 +231,7 @@ PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| Perfomence Point: 900->1400 | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | stm32f051r8 BSP |[unsigned](https://gitee.com/unsigned0)|
 | stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
 | devc BSP |[unsigned](https://gitee.com/unsigned0)|
