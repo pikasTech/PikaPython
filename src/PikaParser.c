@@ -1081,33 +1081,33 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     char* str = obj_getStr(subAst, "string");
     char* num = obj_getStr(subAst, "num");
     if (NULL != ref) {
-        char buff[32] = {0};
+        char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
         __platform_sprintf(buff, "%d REF %s\n", deepth, ref);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != operator) {
-        char buff[32] = {0};
+        char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
         __platform_sprintf(buff, "%d OPT %s\n", deepth, operator);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != method) {
-        char buff[32] = {0};
+        char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
         __platform_sprintf(buff, "%d RUN %s\n", deepth, method);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != str) {
-        char buff[32] = {0};
+        char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
         __platform_sprintf(buff, "%d STR %s\n", deepth, str);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     if (NULL != num) {
-        char buff[32] = {0};
+        char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
         __platform_sprintf(buff, "%d NUM %s\n", deepth, num);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
 
     if (NULL != left) {
-        char buff[32] = {0};
+        char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
         __platform_sprintf(buff, "%d OUT %s\n", deepth, left);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }

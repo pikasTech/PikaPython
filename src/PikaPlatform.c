@@ -66,14 +66,6 @@ PIKA_WEAK void __platform_printf(char* fmt, ...) {
 }
 #endif
 
-PIKA_WEAK int __platform_sprintf(char* buff, char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    int res = vsprintf(buff, fmt, args);
-    va_end(args);
-    return res;
-}
-
 PIKA_WEAK int __platform_vsprintf(char* buff, char* fmt, va_list args) {
     return vsprintf(buff, fmt, args);
 }
@@ -83,6 +75,14 @@ PIKA_WEAK int __platform_vsnprintf(char* buff,
                                    const char* fmt,
                                    va_list args) {
     return vsnprintf(buff, size, fmt, args);
+}
+
+PIKA_WEAK int __platform_sprintf(char* buff, char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    int res = vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+    va_end(args);
+    return res;
 }
 
 PIKA_WEAK char* __platform_load_pikaAsm(void) {
