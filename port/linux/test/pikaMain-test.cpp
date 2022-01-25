@@ -964,3 +964,29 @@ TEST(pikaMain, task_run_period_until) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, fun_call) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(pikaMain,(char*)
+            "def fun(a,b,c,d,e):\n"
+            "    print(a)\n"
+            "    print(b)\n"
+            "    print(c)\n"
+            "    print(d)\n"
+            "    print(e)\n"
+            "fun(10,20,30,40, 'xxx')\n"
+            "\n");
+    EXPECT_STREQ(log_buff[0], (char*)"xxx\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"40\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"30\r\n");
+    EXPECT_STREQ(log_buff[3], (char*)"20\r\n");
+    EXPECT_STREQ(log_buff[4], (char*)"10\r\n");
+    EXPECT_STREQ(log_buff[5], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

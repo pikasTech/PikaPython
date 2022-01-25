@@ -252,7 +252,7 @@ int32_t args_setArg(Args* self, Arg* arg) {
 LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
 
     
-#if 0
+#if 1
 
     /* normal list search without cache */
     LinkNode* nodeNow = self->firstNode;

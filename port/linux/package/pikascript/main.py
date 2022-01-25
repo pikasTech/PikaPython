@@ -6,18 +6,13 @@ import PikaMath
 from PikaObj import *
 
 
-def todo1():
-    print('task 1 running...')
+def fun(a,b,c,d,e):
+    print(a)
+    print(b)
+    print(c)
+    print(d)
+    print(e)
 
-
-def todo2():
-    print('task 2 running...')
-
-
-def todo3():
-    print('task 3 running...')
-
-
-def when3():
-    return True
-
+fun(10,20,30,40, 'xxx')
+# while True:
+    # pass
