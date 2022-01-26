@@ -26,8 +26,8 @@
  */
 
 #include "dataQueue.h"
-#include "dataArgs.h"
 #include "PikaPlatform.h"
+#include "dataArgs.h"
 
 Queue* New_queue(void) {
     Args* args = New_args(NULL);
@@ -55,7 +55,11 @@ int32_t queue_pushArg(Queue* queue, Arg* arg) {
 
 Arg* queue_popArg(Queue* queue) {
     Args* args = queue;
+    uint64_t top = args_getInt(args, "__t");
     uint64_t bottom = args_getInt(args, "__b");
+    if (top - bottom < 1) {
+        return NULL;
+    }
     /* add bottom */
     args_setInt(args, "__b", bottom + 1);
     char buff[11];

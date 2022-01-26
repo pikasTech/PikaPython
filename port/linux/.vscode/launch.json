@@ -21,7 +21,7 @@
                 // "--gtest_filter=parser.__set__",
                 // "--gtest_filter=parser.__get__",
                 // "--gtest_filter=pikaMain.print_with_enter",
-                "--gtest_filter=pikaMain.str_fun",
+                // "--gtest_filter=pikaMain.str_fun",
                 // "--gtest_filter=pikaMain.str_add",
                 // "--gtest_filter=content*",
                 // "--gtest_filter=pikaMain.print_in_def",

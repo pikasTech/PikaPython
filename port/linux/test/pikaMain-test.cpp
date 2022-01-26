@@ -532,33 +532,33 @@ TEST(pikaMain, for_in_dict) {
 }
 
 
-// TEST(pikaMain, str_add) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-//     /* run */
-//     obj_run(pikaMain, (char*)
-//     "a = 'a'\n"
-//     "b = 'b'\n"
-//     "c = a + b\n"
-//     "d = 1\n"
-//     "e = 1.2\n"
-//     "g = c + str(d)\n"
-//     "h = c + str(d) + str(e)\n"
-//     "\n"
-//     );
-//     /* collect */
-//     char* c = obj_getStr(pikaMain, (char*)"c");
-//     char* g = obj_getStr(pikaMain, (char*)"g");
-//     char* h = obj_getStr(pikaMain, (char*)"h");
-//     /* assert */
-//     EXPECT_STREQ(c, (char*)"ab");
-//     EXPECT_STREQ(g, (char*)"ab1");
-//     EXPECT_STREQ(h, (char*)"ab11.200000");
-//     /* deinit */
-//     obj_deinit(pikaMain);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, str_add) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)
+    "a = 'a'\n"
+    "b = 'b'\n"
+    "c = a + b\n"
+    "d = 1\n"
+    "e = 1.2\n"
+    "g = c + str(d)\n"
+    "h = c + str(d) + str(e)\n"
+    "\n"
+    );
+    /* collect */
+    char* c = obj_getStr(pikaMain, (char*)"c");
+    char* g = obj_getStr(pikaMain, (char*)"g");
+    char* h = obj_getStr(pikaMain, (char*)"h");
+    /* assert */
+    EXPECT_STREQ(c, (char*)"ab");
+    EXPECT_STREQ(g, (char*)"ab1");
+    EXPECT_STREQ(h, (char*)"ab11.200000");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(pikaMain, str_add_print) {
     /* init */
