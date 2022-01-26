@@ -34,5 +34,5 @@ task = STM32G0.Task()
 task.call_period_ms(rgb_task, 50)
 task.call_period_ms(led_task, 500)
 
-task.run_always()
+task.run_forever()
 

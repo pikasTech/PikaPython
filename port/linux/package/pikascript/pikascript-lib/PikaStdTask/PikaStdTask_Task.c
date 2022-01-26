@@ -259,7 +259,7 @@ void __Task_update_tick(PikaObj* self) {
     }
 }
 
-void PikaStdTask_Task_run_always(PikaObj* self) {
+void PikaStdTask_Task_run_forever(PikaObj* self) {
     while (1) {
         __Task_update_tick(self);
         PikaStdTask_Task_run_once(self);
