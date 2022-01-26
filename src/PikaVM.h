@@ -37,10 +37,6 @@ VM_Parameters* pikaVM_runAsmWithPars(PikaObj* self,
                                   char* pikaAsm);
 
 int32_t __clearInvokeQueues(VM_Parameters* locals);
-char* useFlashAsBuff(char* pikaAsm, Args* buffs);
-int32_t gotoNextLine(char* code);
-int32_t gotoLastLine(char* start, char* code);
-int getThisBlockDeepth(char* start, char* code, int* offset);
 int32_t pikaVM_runAsmLine(PikaObj* self,
                           VM_Parameters* locals,
                           VM_Parameters* globals,

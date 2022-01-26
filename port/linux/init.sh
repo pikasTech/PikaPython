@@ -1,6 +1,7 @@
 ROOT=$PWD
 # git submodule init
 # git submodule update
+git config --unset-all core.filemode
 git config --add core.filemode false
 chmod +x *.sh 
 sh update-compiler.sh

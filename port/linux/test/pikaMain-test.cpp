@@ -531,7 +531,6 @@ TEST(pikaMain, for_in_dict) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(pikaMain, str_add) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -981,12 +980,45 @@ TEST(pikaMain, fun_call) {
             "    print(e)\n"
             "fun(10,20,30,40, 'xxx')\n"
             "\n");
+    /* assert */
     EXPECT_STREQ(log_buff[0], (char*)"xxx\r\n");
     EXPECT_STREQ(log_buff[1], (char*)"40\r\n");
     EXPECT_STREQ(log_buff[2], (char*)"30\r\n");
     EXPECT_STREQ(log_buff[3], (char*)"20\r\n");
     EXPECT_STREQ(log_buff[4], (char*)"10\r\n");
     EXPECT_STREQ(log_buff[5], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, global) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(pikaMain,(char*)
+        "x = 0\n"
+        "a = 0\n"
+        "z = 0\n"
+        "def test_global():\n"
+        "    global x\n"
+        "    global y, z\n"
+        "    x = 1\n"
+        "    a = 1\n"
+        "    z = 1\n"
+        "    print('test global')\n"
+        "test_global()\n"
+        "\n"
+    );
+    /* assert */
+    int x = obj_getInt(pikaMain, (char*)"x");
+    int a = obj_getInt(pikaMain, (char*)"a");
+    int z = obj_getInt(pikaMain, (char*)"z");
+    EXPECT_EQ(x, 1);
+    EXPECT_EQ(a, 0);
+    EXPECT_EQ(z, 1);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

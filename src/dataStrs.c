@@ -169,3 +169,21 @@ char* strsReplace(Args* buffs, char* orig, char* rep, char* with) {
     strcpy(tmp, orig);
     return result;
 }
+
+static int32_t __getLineSize(char* str) {
+    int i = 0;
+    while (1) {
+        if (str[i] == '\n') {
+            return i;
+        }
+        i++;
+    }
+}
+
+char* strsGetLine(Args* buffs, char* code) {
+    int32_t lineSize = __getLineSize(code);
+    char* line = args_getBuff(buffs, lineSize + 1);
+    __platform_memcpy(line, code, lineSize);
+    line[lineSize + 1] = 0;
+    return line;
+}

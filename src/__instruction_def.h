@@ -43,5 +43,5 @@
 #endif
 
 #undef __INS_ENUM
-#undef __INS_IMPL
 #undef __INS_TABLE
+#undef __INS_COMPIRE
