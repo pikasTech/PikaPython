@@ -1,6 +1,7 @@
 ROOT=$PWD
 # git submodule init
 # git submodule update
+git config --add core.filemode false
 chmod +x *.sh 
 sh update-compiler.sh
 chmod +x package/pikascript/rust-msc-latest-linux
