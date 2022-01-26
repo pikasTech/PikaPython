@@ -1064,8 +1064,9 @@ exit:
     return outAsm;
 }
 
-char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
+char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     int deepth = obj_getInt(ast, "deepth");
+    Args* buffs = New_strBuff();
     while (1) {
         QueueObj* subStmt = queueObj_popObj(subAst);
         if (NULL == subStmt) {
@@ -1080,7 +1081,7 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
     char* left = obj_getStr(subAst, "left");
     char* str = obj_getStr(subAst, "string");
     char* num = obj_getStr(subAst, "num");
-    char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
+    char* buff = args_getBuff(buffs, PIKA_SPRINTF_BUFF_SIZE);
     if (NULL != ref) {
         __platform_sprintf(buff, "%d REF %s\n", deepth, ref);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
@@ -1106,6 +1107,9 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* buffs, char* pikaAsm) {
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     obj_setInt(ast, "deepth", deepth - 1);
+exit:
+    pikaAsm = strsCopy(outBuffs, pikaAsm);
+    args_deinit(buffs);
     return pikaAsm;
 }
 
