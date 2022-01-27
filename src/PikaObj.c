@@ -547,8 +547,6 @@ void obj_run(PikaObj* self, char* cmd) {
     // obj_deinit(globals);
 }
 
-char rxBuff[PIKA_SHELL_LINE_BUFF_SIZE] = {0};
-char rx_char = 0;
 static void __clearBuff(char* buff, int size) {
     for (int i = 0; i < size; i++) {
         buff[i] = 0;
@@ -557,7 +555,7 @@ static void __clearBuff(char* buff, int size) {
 
 volatile uint8_t is_in_block = 0;
 void pikaScriptShell(PikaObj* self) {
-    __clearBuff(rxBuff, sizeof(rxBuff));
+    char rxBuff[PIKA_SHELL_LINE_BUFF_SIZE] = {0};
     __platform_printf(">>> ");
     while (1) {
         char inputChar = __platform_getchar();
