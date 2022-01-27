@@ -553,9 +553,10 @@ static void __clearBuff(char* buff, int size) {
     }
 }
 
-volatile uint8_t is_in_block = 0;
-void pikaScriptShell(PikaObj* self) {
+void obj_shellLineProcess(PikaObj* self, __obj_shellLineHandler_t __lineHandler_fun) {
     char rxBuff[PIKA_SHELL_LINE_BUFF_SIZE] = {0};
+    char *input_line = NULL;
+    uint8_t is_in_block = 0;
     __platform_printf(">>> ");
     while (1) {
         char inputChar = __platform_getchar();
@@ -589,7 +590,10 @@ void pikaScriptShell(PikaObj* self) {
                 /* go out from block */
                 if (rxBuff[0] != ' ') {
                     is_in_block = 0;
-                    obj_run(self, obj_getStr(self, "shell_buff"));
+                    input_line = obj_getStr(self, "shell_buff");
+                    if(SHELL_STATE_EXIT == __lineHandler_fun(self, input_line)){
+                        break;
+                    }
                     __platform_printf(">>> ");
                 } else {
                     __platform_printf("... ");
@@ -607,18 +611,31 @@ void pikaScriptShell(PikaObj* self) {
                 __platform_printf("... ");
                 continue;
             }
-            /* exit */
-            if (strEqu("exit()", rxBuff)) {
-                /* exit pika shell */
+            input_line = rxBuff;
+            if(SHELL_STATE_EXIT == __lineHandler_fun(self, input_line)){
                 break;
             }
-            /* run single line */
-            obj_run(self, rxBuff);
             __platform_printf(">>> ");
+
             __clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
             continue;
         }
     }
+}
+
+static enum shell_state __obj_shellLineHandler_obj_run(PikaObj *self, char *input_line){
+    /* exit */
+    if (strEqu("exit()", input_line)) {
+        /* exit pika shell */
+        return SHELL_STATE_EXIT;
+    }
+    /* run single line */
+    obj_run(self, input_line);
+    return SHELL_STATE_CONTINUE;
+}
+
+void pikaScriptShell(PikaObj *self){
+    obj_shellLineProcess(self, __obj_shellLineHandler_obj_run);
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {

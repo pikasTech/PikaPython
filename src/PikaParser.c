@@ -1114,6 +1114,7 @@ char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
     }
     obj_setInt(ast, "deepth", deepth - 1);
+    goto exit;
 exit:
     pikaAsm = strsCopy(outBuffs, pikaAsm);
     args_deinit(buffs);

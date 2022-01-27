@@ -161,5 +161,11 @@ char* fast_itoa(char* buf, uint32_t val);
 
 /* shell */
 void pikaScriptShell(PikaObj *self);
+enum shell_state{
+    SHELL_STATE_CONTINUE,
+    SHELL_STATE_EXIT
+};
+typedef enum shell_state (*__obj_shellLineHandler_t)(PikaObj* , char*);
+void obj_shellLineProcess(PikaObj* self, __obj_shellLineHandler_t __lineHandler_fun);
 
 #endif
