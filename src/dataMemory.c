@@ -30,19 +30,25 @@
 
 PikaMemInfo pikaMemInfo = {0};
 
+#define ENABLE_ALIGNMENT 1
+
+static uint32_t __get_alignment_size(uint32_t size){
+#if ENABLE_ALIGNMENT
+    /* force alignment to avoid unaligned access */
+    if (sizeof(int_fast8_t) > 1) {
+        return (size + sizeof(int_fast8_t) - 1) & ~(sizeof(int_fast8_t) - 1);
+    }
+#endif
+    return size;
+}
+
 void* pikaMalloc(uint32_t size) {
+    size = __get_alignment_size(size);
     /* pika memory lock */
     if (0 != __is_locked_pikaMemory()) {
         __platform_wait();
     }
     
-//! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
-#if 0
-    /* force alignment to avoid unaligned access */
-    if (sizeof(int_fast8_t) > 1) {
-        size = (size + sizeof(int_fast8_t) - 1) & ~(sizeof(int_fast8_t) - 1);
-    }
-#endif
     
     pikaMemInfo.heapUsed += size;
     if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
@@ -61,6 +67,7 @@ void* pikaMalloc(uint32_t size) {
 }
 
 void pikaFree(void* mem, uint32_t size) {
+    size = __get_alignment_size(size);
     if (0 != __is_locked_pikaMemory()) {
         __platform_wait();
     }
