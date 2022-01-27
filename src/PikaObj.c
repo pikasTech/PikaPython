@@ -83,9 +83,7 @@ static uint16_t const str100p[100] = {
 
 char* fast_itoa(char* buf, uint32_t val) {
     char* p = &buf[10];
-
     *p = '\0';
-
     while (val >= 100) {
         uint32_t const old = val;
 
@@ -93,10 +91,8 @@ char* fast_itoa(char* buf, uint32_t val) {
         val /= 100;
         __platform_memcpy(p, &str100p[old - (val * 100)], sizeof(uint16_t));
     }
-
     p -= 2;
     __platform_memcpy(p, &str100p[val], sizeof(uint16_t));
-
     return &p[val < 10];
 }
 
@@ -122,7 +118,6 @@ void deinitAllSubObj(PikaObj* self) {
 int32_t obj_deinit(PikaObj* self) {
     deinitAllSubObj(self);
     args_deinit(self->list);
-    // DynMemPut(self->mem);
     pikaFree(self, sizeof(PikaObj));
     self = NULL;
     return 0;
@@ -554,7 +549,7 @@ void obj_run(PikaObj* self, char* cmd) {
 
 char rxBuff[PIKA_SHELL_LINE_BUFF_SIZE] = {0};
 char rx_char = 0;
-static void clearBuff(char* buff, int size) {
+static void __clearBuff(char* buff, int size) {
     for (int i = 0; i < size; i++) {
         buff[i] = 0;
     }
@@ -562,6 +557,7 @@ static void clearBuff(char* buff, int size) {
 
 volatile uint8_t is_in_block = 0;
 void pikaScriptShell(PikaObj* self) {
+    __clearBuff(rxBuff, sizeof(rxBuff));
     __platform_printf(">>> ");
     while (1) {
         char inputChar = __platform_getchar();
@@ -588,18 +584,19 @@ void pikaScriptShell(PikaObj* self) {
                 Args* buffs = New_strBuff();
                 char _n = '\n';
                 strAppendWithSize(rxBuff, &_n, 1);
-                char* shell_buff_new = strsAppend(buffs, obj_getStr(self, "shell_buff"), rxBuff);
+                char* shell_buff_new =
+                    strsAppend(buffs, obj_getStr(self, "shell_buff"), rxBuff);
                 obj_setStr(self, "shell_buff", shell_buff_new);
                 args_deinit(buffs);
                 /* go out from block */
-                if(rxBuff[0] != ' '){
+                if (rxBuff[0] != ' ') {
                     is_in_block = 0;
                     obj_run(self, obj_getStr(self, "shell_buff"));
                     __platform_printf(">>> ");
-                }else{
+                } else {
                     __platform_printf("... ");
                 }
-                clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
+                __clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
                 continue;
             }
             /* go in block */
@@ -608,7 +605,7 @@ void pikaScriptShell(PikaObj* self) {
                 char _n = '\n';
                 strAppendWithSize(rxBuff, &_n, 1);
                 obj_setStr(self, "shell_buff", rxBuff);
-                clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
+                __clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
                 __platform_printf("... ");
                 continue;
             }
@@ -620,7 +617,7 @@ void pikaScriptShell(PikaObj* self) {
             /* run single line */
             obj_run(self, rxBuff);
             __platform_printf(">>> ");
-            clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
+            __clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
             continue;
         }
     }
