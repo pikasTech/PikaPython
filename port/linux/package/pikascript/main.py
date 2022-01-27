@@ -3,16 +3,14 @@ import PikaStdDevice
 import PikaStdData
 import GTestTask
 import PikaMath
+import PikaDebug
 from PikaObj import *
 
+pkdb = PikaDebug.Debuger()
 
-def fun(a,b,c,d,e):
-    print(a)
-    print(b)
-    print(c)
-    print(d)
-    print(e)
+# i = 0
+# while i < 10:
+#     i = i + 1
+#     print('i :' + str(i))
+#     pkdb.set_trace()
 
-fun(10,20,30,40, 'xxx')
-# while True:
-    # pass
