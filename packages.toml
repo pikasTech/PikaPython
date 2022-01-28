@@ -65,6 +65,12 @@ releases = [
 ]
 
 [[packages]]
+name = "PikaDebug"
+releases = [
+  "v0.0.1 1563b94d009956a2ed1baec959a954554022fa7f",
+]
+
+[[packages]]
 name = "PikaStdDevice"
 releases = [
   "v1.3.0 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
