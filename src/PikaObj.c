@@ -628,7 +628,7 @@ void obj_shellLineProcess(PikaObj* self,
     }
 }
 
-static enum shell_state __obj_shellLineHandler_obj_run(PikaObj* self,
+static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,
                                                        char* input_line) {
     /* exit */
     if (strEqu("exit()", input_line)) {
@@ -644,7 +644,7 @@ void pikaScriptShell(PikaObj* self) {
     struct shell_config cfg = {
         .prefix = ">>> ",
     };
-    obj_shellLineProcess(self, __obj_shellLineHandler_obj_run, &cfg);
+    obj_shellLineProcess(self, __obj_shellLineHandler_debuger, &cfg);
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {

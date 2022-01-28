@@ -1,7 +1,7 @@
 #include "PikaDebug_Debuger.h"
 
 extern PikaObj* __pikaMain;
-static enum shell_state __obj_shellLineHandler_obj_run(PikaObj* self,
+static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,
                                                        char* input_line) {
     /* continue */
     if (strEqu("c", input_line)) {
@@ -19,5 +19,5 @@ void PikaDebug_Debuger_set_trace(PikaObj* self) {
     struct shell_config cfg = {
         .prefix = "(pika-debug) ",
     };
-    obj_shellLineProcess(__pikaMain, __obj_shellLineHandler_obj_run, &cfg);
+    obj_shellLineProcess(__pikaMain, __obj_shellLineHandler_debuger, &cfg);
 }
