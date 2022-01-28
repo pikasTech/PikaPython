@@ -13,6 +13,7 @@ static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,
         pikaScriptShell(__pikaMain);
         return SHELL_STATE_CONTINUE;
     }
+    return SHELL_STATE_CONTINUE;
 }
 
 void PikaDebug_Debuger_set_trace(PikaObj* self) {

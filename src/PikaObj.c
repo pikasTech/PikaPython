@@ -562,7 +562,9 @@ void obj_shellLineProcess(PikaObj* self,
     __platform_printf(cfg->prefix);
     while (1) {
         char inputChar = __platform_getchar();
+#ifndef __linux
         __platform_printf("%c", inputChar);
+#endif
         if ((inputChar == '\b') || (inputChar == 127)) {
             uint32_t size = strGetSize(rxBuff);
             if (size == 0) {
@@ -578,7 +580,9 @@ void obj_shellLineProcess(PikaObj* self,
             continue;
         }
         if ((inputChar == '\r') || (inputChar == '\n')) {
+#ifndef __linux
             __platform_printf("\r\n");
+#endif
             /* still in block */
             if (is_in_block) {
                 /* load new line into buff */
