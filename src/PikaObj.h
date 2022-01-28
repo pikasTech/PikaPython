@@ -28,17 +28,15 @@
 #ifndef _Process__H
 #define _Process__H
 
-
-
-/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition 
+/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
  */
 //#define __PLOOC_CLASS_USE_STRICT_TEMPLATE__
-   
-#if     defined(__PIKA_OBJ_CLASS_IMPLEMENT)
-#   define __PLOOC_CLASS_IMPLEMENT__
-#elif   defined(__PIKA_OBJ_CLASS_INHERIT__)
-#   define __PLOOC_CLASS_INHERIT__
-#endif   
+
+#if defined(__PIKA_OBJ_CLASS_IMPLEMENT)
+#define __PLOOC_CLASS_IMPLEMENT__
+#elif defined(__PIKA_OBJ_CLASS_INHERIT__)
+#define __PLOOC_CLASS_INHERIT__
+#endif
 
 #include "__pika_ooc.h"
 
@@ -59,9 +57,8 @@ struct PikaObj_t {
     Args* list;
 };
 
-
 // def_class(PikaObj,
-    
+
 //     private_member(
 //         /* list */
 //         Args* list;
@@ -160,12 +157,16 @@ int fast_atoi(char* src);
 char* fast_itoa(char* buf, uint32_t val);
 
 /* shell */
-void pikaScriptShell(PikaObj *self);
-enum shell_state{
-    SHELL_STATE_CONTINUE,
-    SHELL_STATE_EXIT
+void pikaScriptShell(PikaObj* self);
+enum shell_state { SHELL_STATE_CONTINUE, SHELL_STATE_EXIT };
+typedef enum shell_state (*__obj_shellLineHandler_t)(PikaObj*, char*);
+
+struct shell_config {
+    char* prefix;
 };
-typedef enum shell_state (*__obj_shellLineHandler_t)(PikaObj* , char*);
-void obj_shellLineProcess(PikaObj* self, __obj_shellLineHandler_t __lineHandler_fun);
+
+void obj_shellLineProcess(PikaObj* self,
+                          __obj_shellLineHandler_t __lineHandler_fun,
+                          struct shell_config* cfg);
 
 #endif
