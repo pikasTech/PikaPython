@@ -556,7 +556,8 @@ static void __clearBuff(char* buff, int size) {
 void obj_shellLineProcess(PikaObj* self,
                           __obj_shellLineHandler_t __lineHandler_fun,
                           struct shell_config* cfg) {
-    char rxBuff[PIKA_SHELL_LINE_BUFF_SIZE] = {0};
+    Args* buffs = New_strBuff();
+    char* rxBuff = args_getBuff(buffs, PIKA_SHELL_LINE_BUFF_SIZE);
     char* input_line = NULL;
     uint8_t is_in_block = 0;
     __platform_printf(cfg->prefix);
@@ -630,6 +631,7 @@ void obj_shellLineProcess(PikaObj* self,
             continue;
         }
     }
+    args_deinit(buffs);
 }
 
 static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,
