@@ -24,7 +24,9 @@ static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,
         asm_buff = arg_strAppend(asm_buff, "\n0 RUN print\n");
         pikaVM_runAsm(__pikaMain, arg_getStr(asm_buff));
         arg_deinit(asm_buff);
+        return SHELL_STATE_CONTINUE;
     }
+    __platform_printf("[error]: commond no found.\r\n");
     return SHELL_STATE_CONTINUE;
 }
 
