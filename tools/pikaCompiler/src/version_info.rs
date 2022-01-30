@@ -19,7 +19,17 @@ impl VersionInfo {
     }
 
     fn analyze_line(mut self, line: String) -> VersionInfo {
+        /* skip void line */
+        if (line.as_str() == "") {
+            return self;
+        }
+        /* print the package info */
         println!("    {}", line.as_str());
+        let package_name = my_string::get_first_token(&line, '=').unwrap();
+        let package_version = my_string::get_last_token(&line, '=').unwrap();
+        self.package_list
+            .entry(package_name)
+            .or_insert(package_version);
         return self;
     }
 
