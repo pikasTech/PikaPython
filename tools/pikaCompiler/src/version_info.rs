@@ -20,6 +20,14 @@ impl VersionInfo {
 
     pub fn analyze_file(mut self, source_path: String) -> VersionInfo {
         self.source_path = source_path;
+        let file = File::open(&self.source_path);
+        let mut file = match file {
+            Ok(file) => file,
+            Err(_) => {
+                println!("(PikaScript) requestment.txt no found.");
+                return self;
+            }
+        };
         return self;
     }
 }

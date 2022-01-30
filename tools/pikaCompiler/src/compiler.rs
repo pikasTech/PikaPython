@@ -56,7 +56,7 @@ impl Compiler {
 
     pub fn analyze_file(mut compiler: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
         println!(
-            "(pikascript) compiling {}{}.py...",
+            "(PikaScript) compiling {}{}.py...",
             compiler.source_path, file_name
         );
         let file = File::open(format!("{}{}.py", compiler.source_path, file_name));
