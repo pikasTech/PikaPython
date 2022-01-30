@@ -1,4 +1,3 @@
-#include "PikaStdTask_Task.h"
 #include "BaseObj.h"
 #include "PikaVM.h"
 
