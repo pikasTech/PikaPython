@@ -1,4 +1,4 @@
-pikascript-core==latest
-PikaStdLib==latest
+pikascript-core==v1.3.4
+PikaStdLib==v1.3.4
 pikaRTBooter==latest
 pikaRTThread==latest
