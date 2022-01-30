@@ -26,9 +26,11 @@ class PyMethod (SysObj):
     def makeMethodDefine(fp: str):
         pass
 
+
 class PyClass(SysObj):
     obj = PyObj()
-    PyMethod() 
+    PyMethod()
+
     def setSuper(superClassName: str):
         pass
 

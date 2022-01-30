@@ -55,8 +55,15 @@ impl Compiler {
     }
 
     pub fn analyze_file(mut compiler: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
-        println!("analyzing file: {}{}.py", compiler.source_path, file_name);
-        let mut file = File::open(format!("{}{}.py", compiler.source_path, file_name)).unwrap();
+        println!(
+            "(pikascript) compiling {}{}.py...",
+            compiler.source_path, file_name
+        );
+        let file = File::open(format!("{}{}.py", compiler.source_path, file_name));
+        let mut file = match file {
+            Ok(file) => file,
+            Err(_) => panic!("[error]: file: '{}{}.py' no found", compiler.source_path, file_name),
+        };
         /* solve package as top class */
         if file_name != "main" && is_top_pkg {
             let pkg_define = format!("class {}(TinyObj):", &file_name);

@@ -8,15 +8,20 @@ mod object_info;
 mod py_arg;
 mod py_type;
 mod script;
+mod version_info;
 use compiler::*;
 use std::fs::File;
 use std::io::prelude::*;
+use version_info::*;
 
 fn main() {
     /* new a compiler, sellect to path */
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
     /* analyze file begin with main.py */
     compiler = Compiler::analyze_file(compiler, String::from("main"), false);
+    /* new a version_info object */
+    let mut version_info = VersionInfo::new();
+    version_info = VersionInfo::analyze_file(version_info, String::from("requestment.txt"));
     /* write the infomatrion to compiler-info */
     let mut compiler_info_file =
         File::create(format!("{}compiler-info.txt", compiler.dist_path)).unwrap();
@@ -122,7 +127,8 @@ fn main() {
     f.write("#include \"PikaObj.h\"\n".as_bytes()).unwrap();
     f.write("#include \"PikaMain.h\"\n".as_bytes()).unwrap();
     f.write("\n".as_bytes()).unwrap();
-    f.write("PikaObj * pikaScriptInit(void);\n".as_bytes()).unwrap();
+    f.write("PikaObj * pikaScriptInit(void);\n".as_bytes())
+        .unwrap();
     f.write("\n".as_bytes()).unwrap();
     f.write("#endif\n".as_bytes()).unwrap();
 }
