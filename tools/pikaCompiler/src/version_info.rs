@@ -29,7 +29,7 @@ impl VersionInfo {
         let mut file = match file {
             Ok(file) => file,
             Err(_) => {
-                println!("(PikaScript) 'requestment.txt' no found.");
+                println!("    'requestment.txt' no found.");
                 return self;
             }
         };
