@@ -15,13 +15,16 @@ use std::io::prelude::*;
 use version_info::*;
 
 fn main() {
+    /* new a version_info object */
+    println!("(PikaScript) packages installed:");
+    let mut version_info = VersionInfo::new();
+    version_info = VersionInfo::analyze_file(version_info, String::from("requestment.txt"));
+
+    println!("(PikaScript) pika compiler:");
     /* new a compiler, sellect to path */
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
     /* analyze file begin with main.py */
     compiler = Compiler::analyze_file(compiler, String::from("main"), false);
-    /* new a version_info object */
-    let mut version_info = VersionInfo::new();
-    version_info = VersionInfo::analyze_file(version_info, String::from("requestment.txt"));
     /* write the infomatrion to compiler-info */
     let mut compiler_info_file =
         File::create(format!("{}compiler-info.txt", compiler.dist_path)).unwrap();

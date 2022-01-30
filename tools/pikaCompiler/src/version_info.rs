@@ -18,16 +18,29 @@ impl VersionInfo {
         return version_info;
     }
 
+    fn analyze_line(mut self, line: String) -> VersionInfo {
+        println!("    {}", line.as_str());
+        return self;
+    }
+
     pub fn analyze_file(mut self, source_path: String) -> VersionInfo {
         self.source_path = source_path;
         let file = File::open(&self.source_path);
         let mut file = match file {
             Ok(file) => file,
             Err(_) => {
-                println!("(PikaScript) requestment.txt no found.");
+                println!("(PikaScript) 'requestment.txt' no found.");
                 return self;
             }
         };
+        /* solve lines in file */
+        let mut file_str = String::new();
+        file.read_to_string(&mut file_str).unwrap();
+        let lines: Vec<&str> = file_str.split('\n').collect();
+        /* analyze each line of pikascript-api.py */
+        for line in lines.iter() {
+            self = VersionInfo::analyze_line(self, line.to_string());
+        }
         return self;
     }
 }
