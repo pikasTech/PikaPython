@@ -6,7 +6,10 @@ static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,
                                                        char* input_line) {
     /* continue */
     if (strEqu("c", input_line)) {
-        /* exit pika shell */
+        return SHELL_STATE_EXIT;
+    }
+    /* next */
+    if (strEqu("n", input_line)) {
         return SHELL_STATE_EXIT;
     }
     /* launch shell */
@@ -14,6 +17,11 @@ static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,
         /* exit pika shell */
         pikaScriptShell(__pikaMain);
         return SHELL_STATE_CONTINUE;
+    }
+    /* quit */
+    if (strEqu("q", input_line)) {
+        obj_setInt(self, "enable", 0);
+        return SHELL_STATE_EXIT;
     }
     /* print */
     if (strIsStartWith(input_line, "p ")) {
@@ -25,13 +33,21 @@ static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,
         arg_deinit(asm_buff);
         return SHELL_STATE_CONTINUE;
     }
-    __platform_printf("[error]: commond no found.\r\n");
+    obj_run(__pikaMain, input_line);
     return SHELL_STATE_CONTINUE;
 }
 
+void PikaDebug_Debuger___init__(PikaObj* self) {
+    /* global enable contral */
+    obj_setInt(self, "enable", 1);
+}
+
 void PikaDebug_Debuger_set_trace(PikaObj* self) {
+    if (!obj_getInt(self, "enable")) {
+        return;
+    }
     struct shell_config cfg = {
         .prefix = "(pika-debug) ",
     };
-    obj_shellLineProcess(__pikaMain, __obj_shellLineHandler_debuger, &cfg);
+    obj_shellLineProcess(self, __obj_shellLineHandler_debuger, &cfg);
 }
