@@ -19,6 +19,8 @@ impl VersionInfo {
     }
 
     fn analyze_line(mut self, line: String) -> VersionInfo {
+        /* delete '\r' */
+        let line = line.replace("\r", "");
         /* skip void line */
         if line.as_str() == "" {
             return self;
