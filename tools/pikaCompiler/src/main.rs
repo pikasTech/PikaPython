@@ -113,7 +113,8 @@ fn main() {
         .get_mut(&"PikaMain".to_string())
         .unwrap();
     /* make the pikascript.c */
-    f.write(pika_main.script_fn().as_bytes()).unwrap();
+    f.write(pika_main.script_fn(version_info).as_bytes())
+        .unwrap();
 
     /* make the pikascript.h */
     let api_file_path = format!("{}pikaScript.h", compiler.dist_path);

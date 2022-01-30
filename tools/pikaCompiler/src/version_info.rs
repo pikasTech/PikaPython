@@ -20,7 +20,7 @@ impl VersionInfo {
 
     fn analyze_line(mut self, line: String) -> VersionInfo {
         /* skip void line */
-        if (line.as_str() == "") {
+        if line.as_str() == "" {
             return self;
         }
         /* print the package info */

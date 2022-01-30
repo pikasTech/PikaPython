@@ -3,6 +3,7 @@ use crate::method_info::MethodInfo;
 use crate::my_string;
 use crate::object_info::ObjectInfo;
 use crate::script::Script;
+use crate::version_info::VersionInfo;
 use std::collections::BTreeMap;
 #[derive(Debug)]
 pub struct ClassInfo {
@@ -111,11 +112,27 @@ impl ClassInfo {
         return method_impl;
     }
 
-    pub fn script_fn(&self) -> String {
+    pub fn script_fn(&self, version_info: VersionInfo) -> String {
         let mut script_fn = String::new();
         /* add pikaScriptInit function define */
         script_fn.push_str("PikaObj *__pikaMain;\r\n");
         script_fn.push_str("PikaObj *pikaScriptInit(void){\r\n");
+        /* print version info */
+        script_fn.push_str(
+            "    __platform_printf(\"======[pikascript packages installed]======\\r\\n\");\r\n",
+        );
+        for (package_name, package_version) in version_info.package_list {
+            script_fn.push_str(
+                format!(
+                    "    __platform_printf(\"{}=={}\\r\\n\");\r\n",
+                    package_name, package_version
+                )
+                .as_str(),
+            );
+        }
+        script_fn.push_str(
+            "    __platform_printf(\"===========================================\\r\\n\");\r\n",
+        );
         /* create the root object */
         script_fn.push_str("    __pikaMain = newRootObj(\"pikaMain\", New_PikaMain);\r\n");
         /* use obj_run to run the script in main.py */
