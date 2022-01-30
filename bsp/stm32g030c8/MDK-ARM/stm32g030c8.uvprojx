@@ -972,24 +972,29 @@
               <FilePath>..\pikascript\pikascript-lib\STM32G0\STM32G0_Task.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdTask_Task.c</FileName>
+              <FileName>PikaDebuger_Debuger.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdTask\PikaStdTask_Task.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaDebuger_Debuger.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_Dict.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdData\PikaStdData_Dict.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_Dict.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_List.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdData\PikaStdData_List.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_List.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_String.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdData\PikaStdData_String.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_String.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdTask_Task.c</FilePath>
             </File>
           </Files>
         </Group>
