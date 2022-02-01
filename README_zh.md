@@ -17,7 +17,7 @@
 	<a href="https://www.yuque.com/liang-mltek/pikascript/nz7dgl" >文档中心</a> |
 	<a href="https://space.bilibili.com/5365336/channel/seriesdetail?sid=1034902">视频</a> |
         <a href="https://item.taobao.com/item.htm?spm=a21dvs.23580594.0.0.52de3d0dt7rqAx&ft=t&id=654947372034">开发板</a> |
-        <a href="../../tree/master/bsp#platform-support">BSP</a> |
+        <a href="https://www.yuque.com/liang-mltek/pikascript/yogs8m">BSP</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/of8izq">包管理器</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/wcc36r" >RT-Thread 软件包</a> |
 	<a href="https://www.yuque.com/liang-mltek/pikascript/il3an0" >参与贡献</a> |
