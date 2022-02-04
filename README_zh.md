@@ -14,7 +14,7 @@
 
 <p align="center">
 	<a href="https://whycan.com/f_55.html" >论坛</a> |
-	<a href="https://www.yuque.com/liang-mltek/pikascript/nz7dgl" >文档中心</a> |
+	<a href="https://www.yuque.com/liang-mltek/pikascript" >文档中心</a> |
 	<a href="https://space.bilibili.com/5365336/channel/seriesdetail?sid=1034902">视频</a> |
         <a href="https://item.taobao.com/item.htm?spm=a21dvs.23580594.0.0.52de3d0dt7rqAx&ft=t&id=654947372034">开发板</a> |
         <a href="https://www.yuque.com/liang-mltek/pikascript/yogs8m">BSP</a> |
