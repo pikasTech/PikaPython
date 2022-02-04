@@ -55,14 +55,17 @@ impl Compiler {
     }
 
     pub fn analyze_file(mut compiler: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
-        println!(
-            "    compiling {}{}.py...",
-            compiler.source_path, file_name
-        );
+        println!("    compiling {}{}.py...", compiler.source_path, file_name);
         let file = File::open(format!("{}{}.py", compiler.source_path, file_name));
         let mut file = match file {
             Ok(file) => file,
-            Err(_) => panic!("[error]: file: '{}{}.py' no found", compiler.source_path, file_name),
+            Err(_) => {
+                println!(
+                    "    [warning]: file: '{}{}.py' no found",
+                    compiler.source_path, file_name
+                );
+                return compiler;
+            }
         };
         /* solve package as top class */
         if file_name != "main" && is_top_pkg {

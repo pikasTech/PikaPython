@@ -1,3 +1,2 @@
-pikascript-core==v1.3.4
-PikaStdLib==v1.3.4
-PikaStdDevice==v1.4.3
+PyInfo==latest
+PikaStdDevice==latest
