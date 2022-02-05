@@ -1,5 +1,5 @@
-pikascript-core==latest
-PikaStdLib==latest
-PikaStdDevice==latest
+pikascript-core==lts2021
+PikaStdLib==lts2021
+PikaStdDevice==v1.4.3
 STM32F103RBBooter==v1.0.0
 STM32F1==v1.0.3
