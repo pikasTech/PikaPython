@@ -45,7 +45,7 @@ PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 ## 使用在线图形化工程生成器
 生成器地址:
 http://pikascript.com
-![输入图片说明](document/image/afwefdd.png)
+![image](https://user-images.githubusercontent.com/88232613/152632673-019a7f92-7b7f-4fb5-92b7-4ae4c26ec865.png)
 
 ## 使用 Pika 包管理器[PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download)
 
