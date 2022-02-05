@@ -42,6 +42,12 @@ It's very easy to bind C function to python module with the help of Pika Pre-com
 
 # Get PikaScript:
 
+## Use Online Project Generator
+Generator url:
+http://pikascript.com
+![image](https://user-images.githubusercontent.com/88232613/152632673-019a7f92-7b7f-4fb5-92b7-4ae4c26ec865.png)
+
+
 ## Use Pika package manager [PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download)
 
 1. Run the [PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download) directly, then the pikascript repo would be downloaded auto in the /tmp/pikascript folder of your current disc partition.
