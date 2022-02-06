@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644130337075,
+  "lastUpdate": 1644135594777,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -13595,6 +13595,58 @@ window.BENCHMARK_DATA = {
             "value": 0.005000304300718459,
             "unit": "ms/iter",
             "extra": "iterations: 235054\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "Ann@LAPTOP-7H37MSNU",
+            "name": "unsigned"
+          },
+          "committer": {
+            "email": "Ann@LAPTOP-7H37MSNU",
+            "name": "unsigned"
+          },
+          "distinct": true,
+          "id": "72fdd44f8ebd07094bd4903fcf3ee7dec571a16f",
+          "message": "Standardized the projects of TC264D and devc, renamed pika_devc to DEV-c, added the \"README.md\" file, and locked the version to \"lts2021\"",
+          "timestamp": "2022-02-06T15:50:26+08:00",
+          "tree_id": "a9499c0f098a51840d15438fa8debbaadf5eaa24",
+          "url": "https://github.com/pikasTech/pikascript/commit/72fdd44f8ebd07094bd4903fcf3ee7dec571a16f"
+        },
+        "date": 1644135592176,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 1404.1802972044245,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 1404.1802972044245 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 183.87863901198403,
+            "unit": "ms/iter",
+            "extra": "iterations: 6\ncpu: 183.85938825930668 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 134.60901252235874,
+            "unit": "ms/iter",
+            "extra": "iterations: 9\ncpu: 134.60132734417766 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 35.60994150995967,
+            "unit": "ms/iter",
+            "extra": "iterations: 33\ncpu: 35.607962951442026 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.0050002606689081705,
+            "unit": "ms/iter",
+            "extra": "iterations: 235047\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
