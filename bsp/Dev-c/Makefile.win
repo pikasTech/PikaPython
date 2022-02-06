@@ -1,0 +1,125 @@
+# Project: devc2
+# Makefile created by Dev-C++ 6.7.2
+
+CPP      = g++.exe -D__DEBUG__
+CC       = gcc.exe -D__DEBUG__
+WINDRES  = windres.exe
+OBJ      = main.o PikaScript/pikascript-api/PikaMain-api.o PikaScript/pikascript-api/pikaScript.o PikaScript/pikascript-api/PikaStdLib_MemChecker-api.o PikaScript/pikascript-api/PikaStdLib_RangeObj-api.o PikaScript/pikascript-api/PikaStdLib_StringObj-api.o PikaScript/pikascript-api/PikaStdLib_SysObj-api.o PikaScript/pikascript-api/PikaStdLib-api.o PikaScript/pikascript-core/BaseObj.o PikaScript/pikascript-core/dataArg.o PikaScript/pikascript-core/dataArgs.o PikaScript/pikascript-core/dataLink.o PikaScript/pikascript-core/dataLinkNode.o PikaScript/pikascript-core/dataMemory.o PikaScript/pikascript-core/dataQueue.o PikaScript/pikascript-core/dataQueueObj.o PikaScript/pikascript-core/dataStack.o PikaScript/pikascript-core/dataString.o PikaScript/pikascript-core/dataStrs.o PikaScript/pikascript-core/PikaObj.o PikaScript/pikascript-core/PikaParser.o PikaScript/pikascript-core/PikaPlatform.o PikaScript/pikascript-core/PikaVM.o PikaScript/pikascript-core/TinyObj.o PikaScript/pikascript-lib/PikaStdLib/PikaDebuger_Debuger.o PikaScript/pikascript-lib/PikaStdLib/PikaStdData_Dict.o PikaScript/pikascript-lib/PikaStdLib/PikaStdData_List.o PikaScript/pikascript-lib/PikaStdLib/PikaStdData_String.o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_StringObj.o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.o PikaScript/pikascript-lib/PikaStdLib/PikaStdTask_Task.o
+LINKOBJ  = main.o PikaScript/pikascript-api/PikaMain-api.o PikaScript/pikascript-api/pikaScript.o PikaScript/pikascript-api/PikaStdLib_MemChecker-api.o PikaScript/pikascript-api/PikaStdLib_RangeObj-api.o PikaScript/pikascript-api/PikaStdLib_StringObj-api.o PikaScript/pikascript-api/PikaStdLib_SysObj-api.o PikaScript/pikascript-api/PikaStdLib-api.o PikaScript/pikascript-core/BaseObj.o PikaScript/pikascript-core/dataArg.o PikaScript/pikascript-core/dataArgs.o PikaScript/pikascript-core/dataLink.o PikaScript/pikascript-core/dataLinkNode.o PikaScript/pikascript-core/dataMemory.o PikaScript/pikascript-core/dataQueue.o PikaScript/pikascript-core/dataQueueObj.o PikaScript/pikascript-core/dataStack.o PikaScript/pikascript-core/dataString.o PikaScript/pikascript-core/dataStrs.o PikaScript/pikascript-core/PikaObj.o PikaScript/pikascript-core/PikaParser.o PikaScript/pikascript-core/PikaPlatform.o PikaScript/pikascript-core/PikaVM.o PikaScript/pikascript-core/TinyObj.o PikaScript/pikascript-lib/PikaStdLib/PikaDebuger_Debuger.o PikaScript/pikascript-lib/PikaStdLib/PikaStdData_Dict.o PikaScript/pikascript-lib/PikaStdLib/PikaStdData_List.o PikaScript/pikascript-lib/PikaStdLib/PikaStdData_String.o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_StringObj.o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.o PikaScript/pikascript-lib/PikaStdLib/PikaStdTask_Task.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/i686-w64-mingw32/lib" -g3 -static
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/i686-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/i686-w64-mingw32/10.3.0/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/i686-w64-mingw32/10.3.0/include-fixed" -I"./PikaScript/pikascript-core" -I"./PikaScript/pikascript-api"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/i686-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/i686-w64-mingw32/10.3.0/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/i686-w64-mingw32/10.3.0/include-fixed" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include/c++/10.3.0" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include/c++/10.3.0/i686-w64-mingw32" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include/c++/10.3.0/backward" -I"./PikaScript/pikascript-core" -I"./PikaScript/pikascript-api"
+BIN      = Devc.exe
+CXXFLAGS = $(CXXINCS) -Wall -Wextra -g3
+ENCODINGS = -finput-charset=utf-8 -fexec-charset=gbk
+CFLAGS   = $(INCS) -Wall -Wextra -g3
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "$(BIN)" $(LIBS)
+
+main.o: main.c PikaScript/pikascript-api/PikaMain.h PikaScript/pikascript-api/pikascript.h PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c main.c -o main.o $(CFLAGS) 
+
+PikaScript/pikascript-api/PikaMain-api.o: PikaScript/pikascript-api/PikaMain-api.c PikaScript/pikascript-api/PikaMain.h PikaScript/pikascript-api/PikaStdLib.h PikaScript/pikascript-api/PikaStdLib_SysObj.h PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-api/PikaMain-api.c -o PikaScript/pikascript-api/PikaMain-api.o $(CFLAGS) 
+
+PikaScript/pikascript-api/pikaScript.o: PikaScript/pikascript-api/pikaScript.c PikaScript/pikascript-api/PikaMain.h
+	$(CC) -c PikaScript/pikascript-api/pikaScript.c -o PikaScript/pikascript-api/pikaScript.o $(CFLAGS) 
+
+PikaScript/pikascript-api/PikaStdLib_MemChecker-api.o: PikaScript/pikascript-api/PikaStdLib_MemChecker-api.c PikaScript/pikascript-api/PikaStdLib_MemChecker.h PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-api/PikaStdLib_MemChecker-api.c -o PikaScript/pikascript-api/PikaStdLib_MemChecker-api.o $(CFLAGS) 
+
+PikaScript/pikascript-api/PikaStdLib_RangeObj-api.o: PikaScript/pikascript-api/PikaStdLib_RangeObj-api.c PikaScript/pikascript-api/PikaStdLib_RangeObj.h PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-api/PikaStdLib_RangeObj-api.c -o PikaScript/pikascript-api/PikaStdLib_RangeObj-api.o $(CFLAGS) 
+
+PikaScript/pikascript-api/PikaStdLib_StringObj-api.o: PikaScript/pikascript-api/PikaStdLib_StringObj-api.c PikaScript/pikascript-api/PikaStdLib_StringObj.h PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-api/PikaStdLib_StringObj-api.c -o PikaScript/pikascript-api/PikaStdLib_StringObj-api.o $(CFLAGS) 
+
+PikaScript/pikascript-api/PikaStdLib_SysObj-api.o: PikaScript/pikascript-api/PikaStdLib_SysObj-api.c PikaScript/pikascript-api/PikaStdLib_SysObj.h PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-api/PikaStdLib_SysObj-api.c -o PikaScript/pikascript-api/PikaStdLib_SysObj-api.o $(CFLAGS) 
+
+PikaScript/pikascript-api/PikaStdLib-api.o: PikaScript/pikascript-api/PikaStdLib-api.c PikaScript/pikascript-api/PikaStdLib.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-api/PikaStdLib-api.c -o PikaScript/pikascript-api/PikaStdLib-api.o $(CFLAGS) 
+
+PikaScript/pikascript-core/BaseObj.o: PikaScript/pikascript-core/BaseObj.c PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/dataStrs.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-core/BaseObj.c -o PikaScript/pikascript-core/BaseObj.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/dataArg.o: PikaScript/pikascript-core/dataArg.c PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/dataArg.c -o PikaScript/pikascript-core/dataArg.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/dataArgs.o: PikaScript/pikascript-core/dataArgs.c PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/dataStrs.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/dataArgs.c -o PikaScript/pikascript-core/dataArgs.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/dataLink.o: PikaScript/pikascript-core/dataLink.c PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/dataLink.c -o PikaScript/pikascript-core/dataLink.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/dataLinkNode.o: PikaScript/pikascript-core/dataLinkNode.c PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/dataLinkNode.c -o PikaScript/pikascript-core/dataLinkNode.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/dataMemory.o: PikaScript/pikascript-core/dataMemory.c PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/dataMemory.c -o PikaScript/pikascript-core/dataMemory.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/dataQueue.o: PikaScript/pikascript-core/dataQueue.c PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataQueue.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/dataQueue.c -o PikaScript/pikascript-core/dataQueue.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/dataQueueObj.o: PikaScript/pikascript-core/dataQueueObj.c PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataQueue.h PikaScript/pikascript-core/dataQueueObj.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-core/dataQueueObj.c -o PikaScript/pikascript-core/dataQueueObj.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/dataStack.o: PikaScript/pikascript-core/dataStack.c PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataQueue.h PikaScript/pikascript-core/dataStack.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/dataStack.c -o PikaScript/pikascript-core/dataStack.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/dataString.o: PikaScript/pikascript-core/dataString.c PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/dataString.c -o PikaScript/pikascript-core/dataString.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/dataStrs.o: PikaScript/pikascript-core/dataStrs.c PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/dataStrs.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/dataStrs.c -o PikaScript/pikascript-core/dataStrs.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/PikaObj.o: PikaScript/pikascript-core/PikaObj.c PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/dataStrs.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-core/PikaObj.c -o PikaScript/pikascript-core/PikaObj.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/PikaParser.o: PikaScript/pikascript-core/PikaParser.c PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataQueue.h PikaScript/pikascript-core/dataQueueObj.h PikaScript/pikascript-core/dataStack.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/dataStrs.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaParser.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-core/PikaParser.c -o PikaScript/pikascript-core/PikaParser.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/PikaPlatform.o: PikaScript/pikascript-core/PikaPlatform.c PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/PikaPlatform.c -o PikaScript/pikascript-core/PikaPlatform.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/PikaVM.o: PikaScript/pikascript-core/PikaVM.c PikaScript/pikascript-core/__instruction_def.h PikaScript/pikascript-core/__instruction_table.cfg PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataQueue.h PikaScript/pikascript-core/dataQueueObj.h PikaScript/pikascript-core/dataStack.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/dataStrs.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaParser.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-core/PikaVM.c -o PikaScript/pikascript-core/PikaVM.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-core/TinyObj.o: PikaScript/pikascript-core/TinyObj.c PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-core/TinyObj.c -o PikaScript/pikascript-core/TinyObj.o $(CFLAGS)  $(ENCODINGS) 
+
+PikaScript/pikascript-lib/PikaStdLib/PikaDebuger_Debuger.o: PikaScript/pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c PikaScript/pikascript-core/dataStrs.h PikaScript/pikascript-core/PikaVM.h
+	$(CC) -c PikaScript/pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c -o PikaScript/pikascript-lib/PikaStdLib/PikaDebuger_Debuger.o $(CFLAGS) 
+
+PikaScript/pikascript-lib/PikaStdLib/PikaStdData_Dict.o: PikaScript/pikascript-lib/PikaStdLib/PikaStdData_Dict.c PikaScript/pikascript-api/PikaStdLib_SysObj.h PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-lib/PikaStdLib/PikaStdData_Dict.c -o PikaScript/pikascript-lib/PikaStdLib/PikaStdData_Dict.o $(CFLAGS) 
+
+PikaScript/pikascript-lib/PikaStdLib/PikaStdData_List.o: PikaScript/pikascript-lib/PikaStdLib/PikaStdData_List.c PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-lib/PikaStdLib/PikaStdData_List.c -o PikaScript/pikascript-lib/PikaStdLib/PikaStdData_List.o $(CFLAGS) 
+
+PikaScript/pikascript-lib/PikaStdLib/PikaStdData_String.o: PikaScript/pikascript-lib/PikaStdLib/PikaStdData_String.c PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-lib/PikaStdLib/PikaStdData_String.c -o PikaScript/pikascript-lib/PikaStdLib/PikaStdData_String.o $(CFLAGS) 
+
+PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.o: PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c PikaScript/pikascript-api/PikaStdLib_MemChecker.h PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/dataStrs.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c -o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.o $(CFLAGS) 
+
+PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.o: PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c -o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.o $(CFLAGS) 
+
+PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_StringObj.o: PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h
+	$(CC) -c PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c -o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_StringObj.o $(CFLAGS) 
+
+PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.o: PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c PikaScript/pikascript-api/PikaStdLib_RangeObj.h PikaScript/pikascript-api/PikaStdLib_StringObj.h PikaScript/pikascript-core/__pika_ooc.h PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/dataArg.h PikaScript/pikascript-core/dataArgs.h PikaScript/pikascript-core/dataLink.h PikaScript/pikascript-core/dataLinkNode.h PikaScript/pikascript-core/dataMemory.h PikaScript/pikascript-core/dataString.h PikaScript/pikascript-core/dataStrs.h PikaScript/pikascript-core/pikaConfigValid.h PikaScript/pikascript-core/PikaObj.h PikaScript/pikascript-core/PikaPlatform.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c -o PikaScript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.o $(CFLAGS) 
+
+PikaScript/pikascript-lib/PikaStdLib/PikaStdTask_Task.o: PikaScript/pikascript-lib/PikaStdLib/PikaStdTask_Task.c PikaScript/pikascript-core/BaseObj.h PikaScript/pikascript-core/PikaVM.h PikaScript/pikascript-core/TinyObj.h
+	$(CC) -c PikaScript/pikascript-lib/PikaStdLib/PikaStdTask_Task.c -o PikaScript/pikascript-lib/PikaStdLib/PikaStdTask_Task.o $(CFLAGS) 

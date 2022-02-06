@@ -1,11 +1,11 @@
 [Project]
-FileName=Pika_devc.dev
-Name=Pika_devc
-UnitCount=27
+FileName=devc2.dev
+Name=devc2
+UnitCount=33
 Type=1
 Ver=2
 ObjFiles=
-Includes=D:\Users\Ann\Desktop\pika_devc\PikaScript\pikascript-core;D:\Users\Ann\Desktop\pika_devc\PikaScript\pikascript-api
+Includes=.\PikaScript\pikascript-core;.\PikaScript\pikascript-api
 Libs=
 PrivateResource=
 ResourceIncludes=
@@ -20,7 +20,7 @@ ObjectOutput=
 LogOutput=
 LogOutputEnabled=0
 OverrideOutput=0
-OverrideOutputName=Pika_devc.exe
+OverrideOutputName=devc2.exe
 HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
@@ -116,7 +116,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit6]
-FileName=PikaScript\pikascript-api\PikaStdLib_SysObj-api.c
+FileName=PikaScript\pikascript-api\PikaStdLib_StringObj-api.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -128,7 +128,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit7]
-FileName=PikaScript\pikascript-api\PikaStdLib-api.c
+FileName=PikaScript\pikascript-api\PikaStdLib_SysObj-api.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -140,7 +140,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit8]
-FileName=PikaScript\pikascript-core\BaseObj.c
+FileName=PikaScript\pikascript-api\PikaStdLib-api.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -152,7 +152,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit9]
-FileName=PikaScript\pikascript-core\dataArg.c
+FileName=PikaScript\pikascript-core\BaseObj.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -164,7 +164,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit10]
-FileName=PikaScript\pikascript-core\dataArgs.c
+FileName=PikaScript\pikascript-core\dataArg.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -176,7 +176,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit11]
-FileName=PikaScript\pikascript-core\dataLink.c
+FileName=PikaScript\pikascript-core\dataArgs.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -188,7 +188,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit12]
-FileName=PikaScript\pikascript-core\dataLinkNode.c
+FileName=PikaScript\pikascript-core\dataLink.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -200,7 +200,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit13]
-FileName=PikaScript\pikascript-core\dataMemory.c
+FileName=PikaScript\pikascript-core\dataLinkNode.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -212,7 +212,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit14]
-FileName=PikaScript\pikascript-core\dataQueue.c
+FileName=PikaScript\pikascript-core\dataMemory.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -224,7 +224,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit15]
-FileName=PikaScript\pikascript-core\dataQueueObj.c
+FileName=PikaScript\pikascript-core\dataQueue.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -236,7 +236,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit16]
-FileName=PikaScript\pikascript-core\dataStack.c
+FileName=PikaScript\pikascript-core\dataQueueObj.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -248,7 +248,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit17]
-FileName=PikaScript\pikascript-core\dataString.c
+FileName=PikaScript\pikascript-core\dataStack.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -260,7 +260,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit18]
-FileName=PikaScript\pikascript-core\dataStrs.c
+FileName=PikaScript\pikascript-core\dataString.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -272,7 +272,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit19]
-FileName=PikaScript\pikascript-core\PikaObj.c
+FileName=PikaScript\pikascript-core\dataStrs.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -284,7 +284,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit20]
-FileName=PikaScript\pikascript-core\PikaParser.c
+FileName=PikaScript\pikascript-core\PikaObj.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -296,7 +296,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit21]
-FileName=PikaScript\pikascript-core\PikaPlatform.c
+FileName=PikaScript\pikascript-core\PikaParser.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -308,6 +308,18 @@ DetectEncoding=0
 Encoding=0
 
 [Unit22]
+FileName=PikaScript\pikascript-core\PikaPlatform.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=$(CC) -c PikaPlatform.c -o "PikaPlatform.o" $(CFLAGS)
+DetectEncoding=0
+Encoding=0
+
+[Unit23]
 FileName=PikaScript\pikascript-core\PikaVM.c
 CompileCpp=0
 Folder=
@@ -319,7 +331,7 @@ BuildCmd=
 DetectEncoding=0
 Encoding=0
 
-[Unit23]
+[Unit24]
 FileName=PikaScript\pikascript-core\TinyObj.c
 CompileCpp=0
 Folder=
@@ -331,19 +343,8 @@ BuildCmd=
 DetectEncoding=0
 Encoding=0
 
-[Unit24]
-FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdLib.py
-Folder=
-Compile=0
-Link=0
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-DetectEncoding=0
-Encoding=0
-
 [Unit25]
-FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c
+FileName=PikaScript\pikascript-lib\PikaStdLib\PikaDebuger_Debuger.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -355,7 +356,7 @@ DetectEncoding=0
 Encoding=0
 
 [Unit26]
-FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c
+FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdData_Dict.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -367,7 +368,79 @@ DetectEncoding=0
 Encoding=0
 
 [Unit27]
+FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdData_List.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+DetectEncoding=0
+Encoding=0
+
+[Unit28]
+FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdData_String.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+DetectEncoding=0
+Encoding=0
+
+[Unit29]
+FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+DetectEncoding=0
+Encoding=0
+
+[Unit30]
+FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+DetectEncoding=0
+Encoding=0
+
+[Unit31]
+FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+DetectEncoding=0
+Encoding=0
+
+[Unit32]
 FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+DetectEncoding=0
+Encoding=0
+
+[Unit33]
+FileName=PikaScript\pikascript-lib\PikaStdLib\PikaStdTask_Task.c
 CompileCpp=0
 Folder=
 Compile=1
