@@ -53,7 +53,7 @@ struct __arg {
     };
     uint16_t    size;
     uint8_t     type;
-    uint8_t             : 8;
+    // uint8_t             : 8;
     Hash        name_hash;
     uint8_t     content[];
 };
