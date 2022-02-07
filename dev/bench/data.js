@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1644217400687,
+  "lastUpdate": 1644246627916,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -13971,6 +13971,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005001430474982027,
             "unit": "ms/iter",
             "extra": "iterations: 233080\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "42114354468c4cd50303363cc25e9e79a0ebc621",
+          "message": "fix path of Booter fo simulation-rtt-qemu-arm2d",
+          "timestamp": "2022-02-07T23:06:32+08:00",
+          "tree_id": "4eb0933039ffec9886665b6785006b7cd2063e66",
+          "url": "https://github.com/pikasTech/pikascript/commit/42114354468c4cd50303363cc25e9e79a0ebc621"
+        },
+        "date": 1644246624679,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 1407.5897196984895,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 1407.5897196984895 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 183.03122403614202,
+            "unit": "ms/iter",
+            "extra": "iterations: 6\ncpu: 182.94806545817374 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 135.05141296302634,
+            "unit": "ms/iter",
+            "extra": "iterations: 9\ncpu: 135.0410369493177 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 35.52607561183593,
+            "unit": "ms/iter",
+            "extra": "iterations: 33\ncpu: 35.52171438898415 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000357064595861,
+            "unit": "ms/iter",
+            "extra": "iterations: 233345\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
