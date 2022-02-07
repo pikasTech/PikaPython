@@ -94,81 +94,9 @@ releases = [
 ]
 
 [[packages]]
-name = "Arm2DqemuBooter"
-releases = [
-  "v0.0.1 a927bebdfa8dfb5f83caac79b775262e9da7deab",
-  "v0.1.0 f188b2cb2ee4948ce189eeca9fd7c6d095c8bda9",
-]
-
-[[packages]]
-name = "STM32G030Booter"
-releases = [
-  "v1.0.0 bbf178182e5780ef8a02a9b09b8a5f250bb7e767",
-  "v1.1.0 7b816b1546ef91a03f77760d4b10806ab956d452",
-  "v1.1.1 8866710f653ad005f5c3edc5e6417ad31075b7d5",
-  "v1.2.0 e29a77527fd753c4eb811b047899534472bfc8ec",
-  "v1.2.1 5ae86929851ff6a62342a7072b77e9cf5be85f1c",
-  "v1.2.2 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
-  "v1.2.3 e6dfd433da57356d11ef90e23208d1c4e7a70cc9",
-  "v1.2.4 245be71a1b584199f2c08a8612430455d6a0725f",
-  "v1.2.5 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
-  "v1.2.6 f6ddf4d7e3067591f56e3ce7f107c8e4d6e62e47",
-  "v1.2.7 0d166456075abd9a4ef91f278f7cc38027e267d4",
-]
-
-[[packages]]
-name = "CH32V103R8Booter"
-releases = [
-  "v1.0.0 b92ef8c347860077d259e8f4504b3ed8e55da85d",
-]
-
-[[packages]]
-name = "CM32M101ABooter"
-releases = [
-  "v1.0.0 dbc2612257f70426daaf613fa197bdf87626a016",
-]
-
-[[packages]]
 name = "CH32V103"
 releases = [
   "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
-]
-
-
-[[packages]]
-name = "APM32F030Booter"
-releases = [
-  "v1.0.0 f341393a24e077b312ae35e1b1142a7509df7fb7",
-]
-
-[[packages]]
-name = "APM32E103VBBooter"
-releases = [
-  "v1.0.0 257a365c9d41f6b4124af095983c52d628322d2c",
-]
-
-[[packages]]
-name = "STM32F103RCBooter"
-releases = [
-  "v1.0.0 c418dff4035c518e1f6fc37a2a0bf2cef8c0ab24",
-]
-
-[[packages]]
-name = "STM32F103RBBooter"
-releases = [
-  "v1.0.0 f104ebc4f0be794cb15f004b13f94eaffca5e1d7",
-]
-
-[[packages]]
-name = "STM32F103C8Booter"
-releases = [
-  "v1.0.0 42983e85d3c4368135ea55a0a06d326495f9c8e7",
-]
-
-[[packages]]
-name = "STM32G070CBBooter"
-releases = [
-  "v1.0.0 94cafe9dcc0b1767baed403f985d761047f1d086",
 ]
 
 [[packages]]
@@ -192,13 +120,6 @@ releases = [
 name = "pikaRTDevice"
 releases = [
   "v0.0.1 fe900b79d8d1075bb7e4e3dd9d4e1e187e0c9195",
-]
-
-[[packages]]
-name = "pikaRTBooter"
-releases = [
-  "v0.0.1 2059f1f97f68f6f863660a839a1d38c69c0e5523",
-  "v1.0.0 e8bb5a8d18516f79da7115f73024cae70fa51590",
 ]
 
 [[packages]]
