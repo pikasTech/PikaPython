@@ -109,12 +109,18 @@ releases = [
 ]
 
 [[packages]]
+name = "pikaRTBooter"
+releases = [
+  "v0.0.1 2059f1f97f68f6f863660a839a1d38c69c0e5523",
+  "v1.0.0 e8bb5a8d18516f79da7115f73024cae70fa51590",
+]
+
+[[packages]]
 name = "pikaRTThread"
 releases = [
   "v1.0.0 3509764a2ed63c565e63f61814e9b656fc573841",
   "v1.0.1 e8bb5a8d18516f79da7115f73024cae70fa51590",
 ]
-
 
 [[packages]]
 name = "pikaRTDevice"
