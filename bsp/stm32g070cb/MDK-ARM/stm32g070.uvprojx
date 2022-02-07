@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_FULL_LL_DRIVER, USE_HAL_DRIVER,STM32G070xx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\pikascript\pikascript-lib\STM32G070CBBooter;../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-api;..\pikascript\pikascript-core;..\pikascript\pikascript-lib\STM32</IncludePath>
+              <IncludePath>..\Booter;../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-api;..\pikascript\pikascript-core;..\pikascript\pikascript-lib\STM32</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -387,37 +387,37 @@
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\gpio.c</FilePath>
+              <FilePath>..\Booter\gpio.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\main.c</FilePath>
+              <FilePath>..\Booter\main.c</FilePath>
             </File>
             <File>
               <FileName>stm32g0xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\stm32g0xx_hal_msp.c</FilePath>
+              <FilePath>..\Booter\stm32g0xx_hal_msp.c</FilePath>
             </File>
             <File>
               <FileName>stm32g0xx_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\stm32g0xx_it.c</FilePath>
+              <FilePath>..\Booter\stm32g0xx_it.c</FilePath>
             </File>
             <File>
               <FileName>system_stm32g0xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\system_stm32g0xx.c</FilePath>
+              <FilePath>..\Booter\system_stm32g0xx.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32g070xx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\startup_stm32g070xx.s</FilePath>
+              <FilePath>..\Booter\startup_stm32g070xx.s</FilePath>
             </File>
             <File>
               <FileName>pika_config.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G070CBBooter\pika_config.c</FilePath>
+              <FilePath>..\Booter\pika_config.c</FilePath>
             </File>
           </Files>
         </Group>

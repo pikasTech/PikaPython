@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>..\SYSTEM\sys;..\SYSTEM\usart;..\SYSTEM\delay;..\PikaScript\pikascript-lib\STM32F103RBBooter;..\Drivers\CORE;..\Drivers\HALLIB\STM32F1xx_HAL_Driver\Inc;..\PikaScript\pikascript-api;..\PikaScript\pikascript-core;..\PikaScript\pikascript-lib\PikaStdLib;..\PikaScript\pikascript-lib\PikaStdDevice;..\PikaScript\pikascript-lib\STM32F1</IncludePath>
+              <IncludePath>..\SYSTEM\sys;..\SYSTEM\usart;..\SYSTEM\delay;..\Booter;..\Drivers\CORE;..\Drivers\HALLIB\STM32F1xx_HAL_Driver\Inc;..\PikaScript\pikascript-api;..\PikaScript\pikascript-core;..\PikaScript\pikascript-lib\PikaStdLib;..\PikaScript\pikascript-lib\PikaStdDevice;..\PikaScript\pikascript-lib\STM32F1</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -387,22 +387,22 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\STM32F103RBBooter\main.c</FilePath>
+              <FilePath>..\Booter\main.c</FilePath>
             </File>
             <File>
               <FileName>stm32f1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\STM32F103RBBooter\stm32f1xx_hal_msp.c</FilePath>
+              <FilePath>..\Booter\stm32f1xx_hal_msp.c</FilePath>
             </File>
             <File>
               <FileName>stm32f1xx_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\STM32F103RBBooter\stm32f1xx_it.c</FilePath>
+              <FilePath>..\Booter\stm32f1xx_it.c</FilePath>
             </File>
             <File>
               <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\STM32F103RBBooter\system_stm32f1xx.c</FilePath>
+              <FilePath>..\Booter\system_stm32f1xx.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32f103xb.s</FileName>

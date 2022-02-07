@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>..\pikascript\pikascript-lib\STM32F103C8Booter;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-core;..\pikascript\pikascript-lib\STM32F1;..\pikascript\pikascript-api</IncludePath>
+              <IncludePath>..\Booter;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-core;..\pikascript\pikascript-lib\STM32F1;..\pikascript\pikascript-api</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -387,32 +387,32 @@
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103C8Booter\gpio.c</FilePath>
+              <FilePath>..\Booter\gpio.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103C8Booter\main.c</FilePath>
+              <FilePath>..\Booter\main.c</FilePath>
             </File>
             <File>
               <FileName>stm32f1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103C8Booter\stm32f1xx_hal_msp.c</FilePath>
+              <FilePath>..\Booter\stm32f1xx_hal_msp.c</FilePath>
             </File>
             <File>
               <FileName>stm32f1xx_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103C8Booter\stm32f1xx_it.c</FilePath>
+              <FilePath>..\Booter\stm32f1xx_it.c</FilePath>
             </File>
             <File>
               <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103C8Booter\system_stm32f1xx.c</FilePath>
+              <FilePath>..\Booter\system_stm32f1xx.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32f103xb.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103C8Booter\startup_stm32f103xb.s</FilePath>
+              <FilePath>..\Booter\startup_stm32f103xb.s</FilePath>
             </File>
           </Files>
         </Group>

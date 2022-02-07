@@ -526,17 +526,17 @@
             <File>
               <FileName>apm32e10x_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\APM32E103VBBooter\apm32e10x_it.c</FilePath>
+              <FilePath>..\Booter\apm32e10x_it.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\APM32E103VBBooter\main.c</FilePath>
+              <FilePath>..\Booter\main.c</FilePath>
             </File>
             <File>
               <FileName>startup_apm32e10x_hd.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\pikascript\pikascript-lib\APM32E103VBBooter\startup_apm32e10x_hd.s</FilePath>
+              <FilePath>..\Booter\startup_apm32e10x_hd.s</FilePath>
             </File>
           </Files>
         </Group>

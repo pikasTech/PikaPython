@@ -340,7 +340,7 @@
               <MiscControls>-Wno-error=armcc-pragma-import -Wno-error=armcc-pragma-arm</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE</Define>
               <Undefine></Undefine>
-              <IncludePath>../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-lib\STM32F103RCBooter;..\pikascript\pikascript-core;..\pikascript\pikascript-api;..\pikascript\pikascript-lib\STM32F1</IncludePath>
+              <IncludePath>../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\Booter;..\pikascript\pikascript-core;..\pikascript\pikascript-api;..\pikascript\pikascript-lib\STM32F1</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -387,27 +387,27 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103RCBooter\main.c</FilePath>
+              <FilePath>..\Booter\main.c</FilePath>
             </File>
             <File>
               <FileName>stm32f1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103RCBooter\stm32f1xx_hal_msp.c</FilePath>
+              <FilePath>..\Booter\stm32f1xx_hal_msp.c</FilePath>
             </File>
             <File>
               <FileName>stm32f1xx_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103RCBooter\stm32f1xx_it.c</FilePath>
+              <FilePath>..\Booter\stm32f1xx_it.c</FilePath>
             </File>
             <File>
               <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103RCBooter\system_stm32f1xx.c</FilePath>
+              <FilePath>..\Booter\system_stm32f1xx.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32f103xe.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32F103RCBooter\startup_stm32f103xe.s</FilePath>
+              <FilePath>..\Booter\startup_stm32f103xe.s</FilePath>
             </File>
           </Files>
         </Group>

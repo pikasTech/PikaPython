@@ -340,7 +340,7 @@
               <MiscControls>-Wno-error=armcc-pragma-import -Wno-error=armcc-pragma-arm</MiscControls>
               <Define>USE_FULL_LL_DRIVER,STM32G030xx,USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-core;..\pikascript\pikascript-api;..\pikascript\pikascript-lib\STM32;..\pikascript\pikascript-lib\STM32G030Booter;..\pikascript\pikascript-lib\PikaPiZero;..\pikascript\pikascript-lib\Arm2D;..\Drivers\CMSIS\DSP\Include</IncludePath>
+              <IncludePath>../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\pikascript\pikascript-core;..\pikascript\pikascript-api;..\pikascript\pikascript-lib\STM32;..\Booter;..\pikascript\pikascript-lib\PikaPiZero;..\pikascript\pikascript-lib\Arm2D;..\Drivers\CMSIS\DSP\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -387,37 +387,37 @@
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\gpio.c</FilePath>
+              <FilePath>..\Booter\gpio.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\main.c</FilePath>
+              <FilePath>..\Booter\main.c</FilePath>
             </File>
             <File>
               <FileName>stm32g0xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\stm32g0xx_hal_msp.c</FilePath>
+              <FilePath>..\Booter\stm32g0xx_hal_msp.c</FilePath>
             </File>
             <File>
               <FileName>stm32g0xx_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\stm32g0xx_it.c</FilePath>
+              <FilePath>..\Booter\stm32g0xx_it.c</FilePath>
             </File>
             <File>
               <FileName>pika_config.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\pika_config.c</FilePath>
+              <FilePath>..\Booter\pika_config.c</FilePath>
             </File>
             <File>
               <FileName>system_stm32g0xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\system_stm32g0xx.c</FilePath>
+              <FilePath>..\Booter\system_stm32g0xx.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32g030xx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\pikascript\pikascript-lib\STM32G030Booter\startup_stm32g030xx.s</FilePath>
+              <FilePath>..\Booter\startup_stm32g030xx.s</FilePath>
             </File>
           </Files>
         </Group>

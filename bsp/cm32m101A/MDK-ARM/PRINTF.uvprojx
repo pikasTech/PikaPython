@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\BSP\inc;..\CMSIS\core;..\CMSIS\device;..\Firmware\cm32m101a_algo_lib\inc;..\Firmware\cm32m101a_std_periph_driver\inc;..\Firmware\cm32m101a_usbfs_driver\inc;..\App\inc;..\PikaScript\pikascript-core;..\PikaScript\pikascript-api;..\PikaScript\pikascript-lib\CM32M101ABooter</IncludePath>
+              <IncludePath>..\BSP\inc;..\CMSIS\core;..\CMSIS\device;..\Firmware\cm32m101a_algo_lib\inc;..\Firmware\cm32m101a_std_periph_driver\inc;..\Firmware\cm32m101a_usbfs_driver\inc;..\App\inc;..\PikaScript\pikascript-core;..\PikaScript\pikascript-api;..\Booter</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -387,12 +387,12 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\CM32M101ABooter\main.c</FilePath>
+              <FilePath>..\Booter\main.c</FilePath>
             </File>
             <File>
               <FileName>cm32m101a_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\CM32M101ABooter\cm32m101a_it.c</FilePath>
+              <FilePath>..\Booter\cm32m101a_it.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -402,12 +402,12 @@
             <File>
               <FileName>share.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\CM32M101ABooter\share.c</FilePath>
+              <FilePath>..\Booter\share.c</FilePath>
             </File>
             <File>
               <FileName>key_poll.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\CM32M101ABooter\key_poll.c</FilePath>
+              <FilePath>..\Booter\key_poll.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -463,22 +463,22 @@
             <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\CM32M101ABooter\led.c</FilePath>
+              <FilePath>..\Booter\led.c</FilePath>
             </File>
             <File>
               <FileName>key_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\CM32M101ABooter\key_exti.c</FilePath>
+              <FilePath>..\Booter\key_exti.c</FilePath>
             </File>
             <File>
               <FileName>relay.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\CM32M101ABooter\relay.c</FilePath>
+              <FilePath>..\Booter\relay.c</FilePath>
             </File>
             <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\CM32M101ABooter\uart.c</FilePath>
+              <FilePath>..\Booter\uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -674,12 +674,12 @@
             <File>
               <FileName>system_cm32m101a.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\CM32M101ABooter\system_cm32m101a.c</FilePath>
+              <FilePath>..\Booter\system_cm32m101a.c</FilePath>
             </File>
             <File>
               <FileName>startup_cm32m101a.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\PikaScript\pikascript-lib\CM32M101ABooter\startup_cm32m101a.s</FilePath>
+              <FilePath>..\Booter\startup_cm32m101a.s</FilePath>
             </File>
           </Files>
         </Group>

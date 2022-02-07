@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>BOARD_APM32F030_MINI,APM32F030x8</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Library\APM32F0xx_StdPeriphDriver\inc;..\Library\CMSIS\Include;..\Library\Device\Geehy\APM32F0xx\Include;..\Board;..\pikascript\pikascript-lib\APM32F030Booter;..\pikascript\pikascript-core;..\pikascript\pikascript-api</IncludePath>
+              <IncludePath>..\Library\APM32F0xx_StdPeriphDriver\inc;..\Library\CMSIS\Include;..\Library\Device\Geehy\APM32F0xx\Include;..\Board;..\Booter;..\pikascript\pikascript-core;..\pikascript\pikascript-api</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -426,17 +426,17 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\APM32F030Booter\main.c</FilePath>
+              <FilePath>..\Booter\main.c</FilePath>
             </File>
             <File>
               <FileName>apm32f0xx_int.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\APM32F030Booter\apm32f0xx_int.c</FilePath>
+              <FilePath>..\Booter\apm32f0xx_int.c</FilePath>
             </File>
             <File>
               <FileName>startup_apm32f030.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\pikascript\pikascript-lib\APM32F030Booter\startup_apm32f030.s</FilePath>
+              <FilePath>..\Booter\startup_apm32f030.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -992,17 +992,17 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\APM32F030Booter\main.c</FilePath>
+              <FilePath>..\Booter\main.c</FilePath>
             </File>
             <File>
               <FileName>apm32f0xx_int.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\APM32F030Booter\apm32f0xx_int.c</FilePath>
+              <FilePath>..\Booter\apm32f0xx_int.c</FilePath>
             </File>
             <File>
               <FileName>startup_apm32f030.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\pikascript\pikascript-lib\APM32F030Booter\startup_apm32f030.s</FilePath>
+              <FilePath>..\Booter\startup_apm32f030.s</FilePath>
             </File>
           </Files>
         </Group>
