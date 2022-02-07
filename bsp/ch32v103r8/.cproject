@@ -64,7 +64,7 @@
 									<listOptionValue builtIn="false" value="&quot;../Core&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CH32V103R8T6/PikaScript/pikascript-core}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CH32V103R8T6/PikaScript/pikascript-api}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CH32V103R8T6/PikaScript/pikascript-lib/CH32V103R8Booter}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CH32V103R8T6/Booter}&quot;"/>
 								</option>
 								<option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.std.2020844713" name="Language standard" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.std" useByScannerDiscovery="true" value="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.std.gnu99" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="true" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.defs.177116515" name="Defined symbols (-D)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.defs" useByScannerDiscovery="true" valueType="definedSymbols"/>
