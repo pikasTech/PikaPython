@@ -1,0 +1,2 @@
+pikascript-core==lts2021
+PikaStdLib==lts2021
