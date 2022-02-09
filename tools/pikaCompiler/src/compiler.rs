@@ -2,7 +2,9 @@ use crate::class_info::ClassInfo;
 use crate::my_string;
 use crate::script::Script;
 use std::collections::BTreeMap;
+use std::fs;
 use std::fs::File;
+use std::io;
 use std::io::prelude::*;
 #[derive(Debug)]
 pub struct Compiler {
@@ -54,9 +56,22 @@ impl Compiler {
         return compiler;
     }
 
+    fn open_file(path: String) -> io::Result<File> {
+        for entry in fs::read_dir("./").expect("读取目录失败") {
+            if let Ok(entry) = entry {
+                let file = entry.path();
+                let filename = file.to_str().unwrap().replace("./", "");
+                if filename.to_string() == path {
+                    return File::open(path);
+                }
+            }
+        }
+        return Err(std::io::Error::from(std::io::ErrorKind::NotFound));
+    }
+
     pub fn analyze_file(mut compiler: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
         println!("    compiling {}{}.py...", compiler.source_path, file_name);
-        let file = File::open(format!("{}{}.py", compiler.source_path, file_name));
+        let file = Compiler::open_file(format!("{}{}.py", compiler.source_path, file_name));
         let mut file = match file {
             Ok(file) => file,
             Err(_) => {
