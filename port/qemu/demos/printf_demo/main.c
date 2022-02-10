@@ -11,7 +11,7 @@ void sleep() {
 /* redirect printf to myprintf */
 #define printf myprintf
 
-static void prime_number_100_c() {
+static void prime_number_100_c(void) {
     int num = 0;
     num = 0;
     /* run */
@@ -32,6 +32,22 @@ static void prime_number_100_c() {
     }
 }
 
+void systick_init(void) {
+    uint32_t hclk_ticks_per_sec, ext_clock_ticks_per_sec;
+    hclk_ticks_per_sec = SystemCoreClock;
+    ext_clock_ticks_per_sec = hclk_ticks_per_sec / 8;
+    if (SysTick_Config(ext_clock_ticks_per_sec)) {
+        /* If SysTick_Config returns 1, that means the number ticks exceeds the
+         * limit. */
+        while (1)
+            ;
+    }
+}
+
+void SysTick_Handler(void) {
+    GPIOC->ODR ^= 0x00001000;
+}
+
 int main(void) {
     uint8_t b;
     int32_t num1 = 0x1234;
@@ -40,9 +56,8 @@ int main(void) {
 
     // first init myprintf device(usart2)
     myprintf_init();
+    systick_init();
+    uint32_t tic = SysTick->VAL;
     prime_number_100_c();
-    while (1) {
-        myprintf("test num %d=0x%x str %s ch %c\n", num1, num1, str1, ch1);
-        sleep();
-    }
+    myprintf("SysTick spend: %d\n", tic - (uint32_t)SysTick->VAL);
 }

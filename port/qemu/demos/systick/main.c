@@ -36,5 +36,6 @@ int main(void) {
     last_button_state = GPIOA->IDR & 0x00000001;
     while (1) {
         SysTick->CTRL ^= SysTick_CTRL_CLKSOURCE_Msk;
+        SysTick->VAL;
     }
 }
