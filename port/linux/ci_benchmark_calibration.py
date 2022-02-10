@@ -17,7 +17,7 @@ for i in range(len(benchmarks_data)):
     benchmarks_data[i]['family_index'] += 1
 
 # manel cali rate
-manul_cali_rate = (2100/3300)
+manul_cali_rate = 1/1.6
 
 # new a banchmark
 benchmarks_data.insert(0, benchmarks_data[0].copy())
