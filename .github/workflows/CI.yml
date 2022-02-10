@@ -19,32 +19,32 @@ jobs:
     steps:
     - uses: actions/checkout@v2
   
-#     - name: install_google_benchmark
-#       run: git clone https://github.com/google/benchmark.git && cd benchmark && cmake -E make_directory "build" && cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../ && cmake --build "build" --config Release && sudo cmake --build "build" --config Release --target install
+    - name: install_google_benchmark
+      run: git clone https://github.com/google/benchmark.git && cd benchmark && cmake -E make_directory "build" && cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../ && cmake --build "build" --config Release && sudo cmake --build "build" --config Release --target install
       
-#     - name: PULL_CORE
-#       run: cd ${{github.workspace}}/port/linux && bash pull-core.sh
+    - name: PULL_CORE
+      run: cd ${{github.workspace}}/port/linux && bash pull-core.sh
 
-#     - name: INIT
-#       run: cd ${{github.workspace}}/port/linux && bash init.sh
+    - name: INIT
+      run: cd ${{github.workspace}}/port/linux && bash init.sh
 
-#     - name: TEST
-#       # Build your program with the given configuration
-#       run: cd ${{github.workspace}}/port/linux && bash gtest.sh
+    - name: TEST
+      # Build your program with the given configuration
+      run: cd ${{github.workspace}}/port/linux && bash gtest.sh
       
-#     - name: BENCHMARK
-#       run: cd ${{github.workspace}}/port/linux && bash ci_benchmark.sh
+    - name: BENCHMARK
+      run: cd ${{github.workspace}}/port/linux && bash ci_benchmark.sh
       
-#     - name: CLEAR
-#       run: cd ${{github.workspace}}/port/linux && rm *.sh
+    - name: CLEAR
+      run: cd ${{github.workspace}}/port/linux && rm *.sh
       
-#     - name: Store benchmark result
-#       uses: benchmark-action/github-action-benchmark@v1
-#       with:
-#         tool: 'googlecpp'
-#         output-file-path: ${{github.workspace}}/port/linux/benchmark_result.json
-#         github-token: ${{ secrets.GITHUB_TOKEN }}
-#         auto-push: true
+    - name: Store benchmark result
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        tool: 'googlecpp'
+        output-file-path: ${{github.workspace}}/port/linux/benchmark_result.json
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        auto-push: true
         
     - name: Filter for perfoment point
       run: |
