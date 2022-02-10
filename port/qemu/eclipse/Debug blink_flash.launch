@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.cdt.launch.applicationLaunchType">
+<booleanAttribute key="org.eclipse.cdt.debug.mi.core.AUTO_SOLIB" value="true"/>
+<listAttribute key="org.eclipse.cdt.debug.mi.core.AUTO_SOLIB_LIST"/>
+<stringAttribute key="org.eclipse.cdt.debug.mi.core.DEBUG_NAME" value="arm-none-eabi-gdb"/>
+<stringAttribute key="org.eclipse.cdt.debug.mi.core.DEV" value="/dev/ttyS0"/>
+<stringAttribute key="org.eclipse.cdt.debug.mi.core.DEV_SPEED" value="115200"/>
+<stringAttribute key="org.eclipse.cdt.debug.mi.core.GDB_INIT" value=".gdbinit"/>
+<stringAttribute key="org.eclipse.cdt.debug.mi.core.HOST" value="localhost"/>
+<stringAttribute key="org.eclipse.cdt.debug.mi.core.PORT" value="3333"/>
+<booleanAttribute key="org.eclipse.cdt.debug.mi.core.REMOTE_TCP" value="true"/>
+<listAttribute key="org.eclipse.cdt.debug.mi.core.SOLIB_PATH"/>
+<booleanAttribute key="org.eclipse.cdt.debug.mi.core.STOP_ON_SOLIB_EVENTS" value="false"/>
+<booleanAttribute key="org.eclipse.cdt.debug.mi.core.breakpointsFullPath" value="false"/>
+<stringAttribute key="org.eclipse.cdt.debug.mi.core.commandFactory" value="org.eclipse.cdt.debug.mi.core.standardCommandFactory"/>
+<stringAttribute key="org.eclipse.cdt.debug.mi.core.protocol" value="mi"/>
+<booleanAttribute key="org.eclipse.cdt.debug.mi.core.verboseMode" value="false"/>
+<booleanAttribute key="org.eclipse.cdt.dsf.gdb.AUTO_SOLIB" value="true"/>
+<listAttribute key="org.eclipse.cdt.dsf.gdb.AUTO_SOLIB_LIST"/>
+<stringAttribute key="org.eclipse.cdt.dsf.gdb.DEBUG_NAME" value="gdb"/>
+<stringAttribute key="org.eclipse.cdt.dsf.gdb.DEV" value="/dev/ttyS0"/>
+<stringAttribute key="org.eclipse.cdt.dsf.gdb.DEV_SPEED" value="115200"/>
+<stringAttribute key="org.eclipse.cdt.dsf.gdb.GDB_INIT" value=".gdbinit"/>
+<stringAttribute key="org.eclipse.cdt.dsf.gdb.HOST" value="localhost"/>
+<booleanAttribute key="org.eclipse.cdt.dsf.gdb.NON_STOP" value="false"/>
+<stringAttribute key="org.eclipse.cdt.dsf.gdb.PORT" value="10000"/>
+<booleanAttribute key="org.eclipse.cdt.dsf.gdb.REMOTE_TCP" value="false"/>
+<booleanAttribute key="org.eclipse.cdt.dsf.gdb.REVERSE" value="false"/>
+<listAttribute key="org.eclipse.cdt.dsf.gdb.SOLIB_PATH"/>
+<booleanAttribute key="org.eclipse.cdt.dsf.gdb.USE_SOLIB_SYMBOLS_FOR_APP" value="false"/>
+<intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="2"/>
+<stringAttribute key="org.eclipse.cdt.launch.COREFILE_PATH" value=""/>
+<stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_ID" value="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"/>
+<stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_REGISTER_GROUPS" value=""/>
+<stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_START_MODE" value="run"/>
+<booleanAttribute key="org.eclipse.cdt.launch.DEBUGGER_STOP_AT_MAIN" value="true"/>
+<stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_STOP_AT_MAIN_SYMBOL" value="Reset_Handler"/>
+<booleanAttribute key="org.eclipse.cdt.launch.ENABLE_REGISTER_BOOKKEEPING" value="false"/>
+<booleanAttribute key="org.eclipse.cdt.launch.ENABLE_VARIABLE_BOOKKEEPING" value="false"/>
+<stringAttribute key="org.eclipse.cdt.launch.FORMAT" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&lt;contentList/&gt;"/>
+<stringAttribute key="org.eclipse.cdt.launch.GLOBAL_VARIABLES" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;globalVariableList&gt;&#10;&lt;globalVariable name=&quot;g_pfnVectors&quot; path=&quot;&quot;/&gt;&#10;&lt;globalVariable name=&quot;SystemCoreClock&quot; path=&quot;&quot;/&gt;&#10;&lt;globalVariable name=&quot;AHBPrescTable&quot; path=&quot;&quot;/&gt;&#10;&lt;globalVariable name=&quot;APBAHBPrescTable&quot; path=&quot;&quot;/&gt;&#10;&lt;globalVariable name=&quot;ADCPrescTable&quot; path=&quot;&quot;/&gt;&#10;&lt;globalVariable name=&quot;GPIO_InitStructure&quot; path=&quot;&quot;/&gt;&#10;&lt;/globalVariableList&gt;&#10;"/>
+<stringAttribute key="org.eclipse.cdt.launch.MEMORY_BLOCKS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;memoryBlockExpressionList/&gt;&#10;"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="demos/blink_flash/main.elf"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="stm32_p103_demos"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value=""/>
+<booleanAttribute key="org.eclipse.cdt.launch.ui.ApplicationCDebuggerTab.DEFAULTS_SET" value="true"/>
+<booleanAttribute key="org.eclipse.cdt.launch.use_terminal" value="true"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/stm32_p103_demos"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="4"/>
+</listAttribute>
+<mapAttribute key="org.eclipse.debug.core.preferred_launchers">
+<mapEntry key="[debug]" value="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+</mapAttribute>
+</launchConfiguration>

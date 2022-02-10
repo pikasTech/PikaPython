@@ -1,0 +1,66 @@
+SETTING UP OPENOCD AND THE JTAG PROGRAMMER
+This depends heavily on what operating system you are using.  If you do an
+Internet search, you should be able to find many examples.
+
+
+CONNECTING TO BOARD:
+Notes:
+- If you want to view the OpenOCD configuration scripts, they are installed in
+  /usr/local/share/openocd/scripts
+- When I first tried programming the board, I had problems.  I got it working
+  through some trial-and-error, but I am not sure exactly what was wrong.  I
+  think it was mostly issues with write protectiong and locking.
+- When debugging, it is normal to get this error from OpenOCD:
+  Error: address + size wrapped(0xffffffff, 0x00000004)
+
+To connect to the device (assumes the JTAG programmer is plugged connected to
+your PC and board, and that the board is powered up).  You will need to choose
+the appropriate interface cfg script for your programmer:
+openocd -f interface/olimex-arm-usb-tiny-h.cfg -f target/stm32f1x.cfg
+
+Then in another command prompt, connect to the OpenOCD daemon:
+telnet localhost 4444
+
+As a general rule, you must halt before running commands:
+reset halt
+
+To view the flash banks (the STM32-P103 microcontroller should only have a
+bank #0):
+flash banks
+
+To view the bank info:
+flash probe 0
+
+To view the sectors in the bank (particular usefuly to check write protect
+status):
+flash info 0
+
+To check the option bytes:
+stm32f1x options_read 0
+
+To unlock:
+stm32f1x unlock 0
+
+To disable write protect (afterwards, "flash info 0" still shows the memory as
+protected - you need to do a "reset halt" before it shows the new status):
+flash protect 0 0 last off
+
+To check erase state of the sectors:
+flash erase_check 0
+
+To program:
+flash erase_sector 0 0 last
+flash write_bank 0 main.bin 0
+reset run
+
+
+
+debug:
+Start daemon:
+openocd -f openocd_stm32_p103_dbg.cfg
+
+arm-none-eabi-gdb
+file stm32_p103_blink_flash_asm.elf
+target remote localhost:3333
+monitor reset halt
+break main.c:46
