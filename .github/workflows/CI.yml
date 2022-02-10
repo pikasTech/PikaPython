@@ -54,6 +54,8 @@ jobs:
         git config --global user.name "pikastech"
         git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
         git pull --rebase
+        pip3 install matplotlib
+        pip3 install numpy
         python3 filter.py
         git commit -a -m "update data_after.js"
         git push
