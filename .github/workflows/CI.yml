@@ -57,6 +57,6 @@ jobs:
         pip3 install matplotlib
         pip3 install numpy
         python3 filter.py
-        git commit -a -m "update data_after.js"
+        git commit --allow-empty -a -m "update data_after.js"
         git push
 
