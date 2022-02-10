@@ -65,7 +65,7 @@ set_data_json_after(p_list_after)
 
 plt.plot(get_perferance_point_list('data.js'))
 plt.plot(get_perferance_point_list('data_after.js'))
-plt.show()
+# plt.show()
 # for each benchmark
 
 pass
