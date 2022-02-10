@@ -37,12 +37,11 @@ static void while_loop_10000(benchmark::State& state) {
 }
 BENCHMARK(while_loop_10000)->Unit(benchmark::kMillisecond);
 
-static void prime_number_100(benchmark::State& state) {
+static void __prime_number_100_handler(void) {
     int num = 0;
-    for (auto _ : state) {
-        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-        /* run */
-        obj_run(pikaMain, (char *)
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char *)
             "num = 0\n"
             "i = 2\n"
             "for i in range(2,100):\n"
@@ -55,38 +54,51 @@ static void prime_number_100(benchmark::State& state) {
             "    if is_prime:\n"
             "        num = num + i\n"
             "\n");
-        num = obj_getInt(pikaMain, (char*)"num");
-        if (1060 != num) {
-            printf("[error]: prime_number_100\r\n");
+    num = obj_getInt(pikaMain, (char*)"num");
+    if (1060 != num) {
+        printf("[error]: prime_number_100\r\n");
+    }
+    obj_deinit(pikaMain);
+}
+
+static void __prime_number_100_c_handler(void) {
+    int num = 0;
+    /* run */
+    for (int i = 2; i < 100; i++) {
+        int is_prime = 1;
+        for (int j = 2; j < i; j++) {
+            if (i % j == 0) {
+                is_prime = 0;
+                break;
+            }
         }
-        obj_deinit(pikaMain);
+        if (is_prime) {
+            num = num + i;
+        }
+    }
+    if (1060 != num) {
+        printf("[error]: prime_number_100\r\n");
     }
 }
-BENCHMARK(prime_number_100)->Unit(benchmark::kMillisecond);
 
+static void prime_number_100(benchmark::State& state) {
+    for (auto _ : state) {
+        __prime_number_100_handler();
+        state.PauseTiming();
+        __prime_number_100_c_handler();
+        state.ResumeTiming();
+    }
+}
+BENCHMARK(prime_number_100)->Unit(benchmark::kMillisecond)->Iterations(200);
 
 static void prime_number_100_c(benchmark::State& state) {
-    int num = 0;
     for (auto _ : state) {
-        num = 0;
-        /* run */
-        for (int i = 2; i < 100; i++) {
-            int is_prime = 1;
-            for (int j = 2; j < i; j++) {
-                if (i % j == 0) {
-                    is_prime = 0;
-                    break;
-                }
-            }
-            if (is_prime) {
-                num = num + i;
-            }
-        }
-        if (1060 != num) {
-            printf("[error]: prime_number_100\r\n");
-        }
+        state.PauseTiming();
+        __prime_number_100_handler();
+        state.ResumeTiming();
+        __prime_number_100_c_handler();
     }
 }
-BENCHMARK(prime_number_100_c)->Unit(benchmark::kMillisecond);
+BENCHMARK(prime_number_100_c)->Unit(benchmark::kMillisecond)->Iterations(200);
 
 BENCHMARK_MAIN();
