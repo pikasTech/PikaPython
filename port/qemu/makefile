@@ -49,6 +49,7 @@ COMMON_FILES += $(STD_PERIPH_SRC)/misc.c
 
 # List all demos
 DEMOS = printf_demo
+DEMOS += systick
 
 # List all demo folders
 DEMO_FOLDERS = $(addprefix demos/,$(DEMOS))

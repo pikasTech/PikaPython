@@ -1,14 +1,11 @@
 #define USE_STDPERIPH_DRIVER
 #include "stm32_p103.h"
-#include "stm32_p103.h"
 
-void SysTick_Handler(void)
-{
+void SysTick_Handler(void) {
     GPIOC->ODR ^= 0x00001000;
 }
 
-int main(void)
-{
+int main(void) {
     int last_button_state, new_button_state;
     uint32_t hclk_ticks_per_sec, ext_clock_ticks_per_sec;
 
@@ -26,24 +23,18 @@ int main(void)
      */
     hclk_ticks_per_sec = SystemCoreClock;
     ext_clock_ticks_per_sec = hclk_ticks_per_sec / 8;
-    if (SysTick_Config(ext_clock_ticks_per_sec))
-    {
+    if (SysTick_Config(ext_clock_ticks_per_sec)) {
         /* If SysTick_Config returns 1, that means the number ticks exceeds the
          * limit. */
-        while (1);
+        while (1)
+            ;
     }
 
     /* Infinite loop - when the button changes state, toggle the SysTick clock
      * source.
      */
     last_button_state = GPIOA->IDR & 0x00000001;
-    while(1) {
-        new_button_state = GPIOA->IDR & 0x00000001;
-        if(new_button_state ^ last_button_state) {
-            if(new_button_state) {
-                SysTick->CTRL ^= SysTick_CTRL_CLKSOURCE_Msk;
-            }
-        }
-        last_button_state = new_button_state;
+    while (1) {
+        SysTick->CTRL ^= SysTick_CTRL_CLKSOURCE_Msk;
     }
 }
