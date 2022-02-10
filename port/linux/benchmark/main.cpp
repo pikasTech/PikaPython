@@ -89,7 +89,7 @@ static void prime_number_100(benchmark::State& state) {
         state.ResumeTiming();
     }
 }
-BENCHMARK(prime_number_100)->Unit(benchmark::kMillisecond)->Iterations(200);
+BENCHMARK(prime_number_100)->Unit(benchmark::kMillisecond)->Iterations(20);
 
 static void prime_number_100_c(benchmark::State& state) {
     for (auto _ : state) {
@@ -99,6 +99,6 @@ static void prime_number_100_c(benchmark::State& state) {
         __prime_number_100_c_handler();
     }
 }
-BENCHMARK(prime_number_100_c)->Unit(benchmark::kMillisecond)->Iterations(200);
+BENCHMARK(prime_number_100_c)->Unit(benchmark::kMillisecond)->Iterations(20);
 
 BENCHMARK_MAIN();

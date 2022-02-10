@@ -16,11 +16,14 @@ for i in range(len(benchmarks_data)):
     benchmarks_data[i]['real_time'] *= cali_ratio
     benchmarks_data[i]['family_index'] += 1
 
+# manel cali rate
+manul_cali_rate = (2100/3300)
+
 # new a banchmark
 benchmarks_data.insert(0, benchmarks_data[0].copy())
 performance_point_name = 'Performance Points'
 performance_point_res = benchmarks_data[-1]['cpu_time'] / \
-    benchmarks_data[-2]['cpu_time'] * 100 * 100000
+    benchmarks_data[-2]['cpu_time'] * 100 * 100000 * manul_cali_rate
 benchmarks_data[0]['name'] = performance_point_name
 benchmarks_data[0]['run_name'] = performance_point_name
 benchmarks_data[0]['family_index'] = 0
