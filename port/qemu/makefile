@@ -2,7 +2,7 @@
 
 # Directory where QEMU_STM32 ARM executable is located - used for running
 # program in emulator.
-QEMU_ARM_DIR ?= ../qemu_stm32/arm-softmmu/
+QEMU_ARM_DIR ?= 
 
 # OpenOCD interface file used for programming/debugging the micronctroller
 OPENOCD_INTERFACE ?= interface/olimex-arm-usb-tiny-h.cfg
