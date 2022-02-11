@@ -1,6 +1,12 @@
 #!/usr/bin/python3
 import json
-with open('benchmark_result.json', 'r', encoding='utf8') as json_in:
+import sys
+import os
+import fcntl
+
+benchmark_result_file_path = sys.argv[1]
+
+with open(benchmark_result_file_path, 'r', encoding='utf8') as json_in:
     json_data = dict(json.load(json_in))
     benchmarks_data = list(json_data['benchmarks'])
 
@@ -31,11 +37,22 @@ benchmarks_data[0]['cpu_time'] = performance_point_res
 benchmarks_data[0]['time_unit'] = 'Point'
 
 print('---------------------------------------------')
-print('Perfomance point:', int(performance_point_res))
+print('Perfomance point:', int(performance_point_res), '\n')
 
 # update json_data
 json_data['benchmarks'] = benchmarks_data
 
 # save json
-with open('benchmark_result.json', 'w') as json_out:
-    json.dump(json_data, json_out)
+with open(benchmark_result_file_path, 'w') as benchmark_reqult_file:
+    json.dump(json_data, benchmark_reqult_file)
+
+lock_file_path = 'performance_data.lock'
+
+# save performance_data
+with open('performance_data.json', 'r') as perf_json_file:
+    # lock
+    fcntl.flock(perf_json_file.fileno(), fcntl.LOCK_EX)
+    perf_json_data: list = json.load(perf_json_file)
+    with open('performance_data.json', 'w') as perf_json_file:
+        perf_json_data.append(performance_point_res)
+        json.dump(perf_json_data, perf_json_file)
