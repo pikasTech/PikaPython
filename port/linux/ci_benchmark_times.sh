@@ -2,9 +2,6 @@ cd Release && make -j
 cd ..
 
 RUN_TIMES=$1
-# init
-rm performance_data*
-rm benchmark*.json
 touch performance_data.json
 echo [] > performance_data.json
 
