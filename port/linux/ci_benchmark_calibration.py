@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import json
+from platform import platform
 import sys
 import os
 import fcntl
@@ -13,7 +14,12 @@ with open(benchmark_result_file_path, 'r', encoding='utf8') as json_in:
 c_base_real_time = benchmarks_data[-1]['cpu_time']
 c_base_cali_time = 0.005
 cali_ratio = c_base_cali_time/c_base_real_time
-cali_ratio_base = 1.6496628287207586
+
+platform_cali_ratio = 1
+
+if abs(cali_ratio - 2.005326432941315) < 0.01:
+    platform_cali_ratio = 1.1549
+
 print('c_base_real_time:', c_base_real_time)
 print('c_base_cali_time:', c_base_cali_time)
 print('cali_ratio:', cali_ratio)
@@ -26,10 +32,8 @@ for i in range(len(benchmarks_data)):
 # new a banchmark
 benchmarks_data.insert(0, benchmarks_data[0].copy())
 performance_point_name = 'Performance Points'
-# performance_point_res = benchmarks_data[-1]['cpu_time'] / \
-# benchmarks_data[-2]['cpu_time'] * 100 * 100000
 performance_point_res = benchmarks_data[-1]['cpu_time'] / \
-    benchmarks_data[-2]['cpu_time'] * 100 * 100000 * cali_ratio/cali_ratio_base
+    benchmarks_data[-2]['cpu_time'] * 100 * 100000 * platform_cali_ratio
 benchmarks_data[0]['name'] = performance_point_name
 benchmarks_data[0]['run_name'] = performance_point_name
 benchmarks_data[0]['family_index'] = 0
