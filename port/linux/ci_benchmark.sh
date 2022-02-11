@@ -1,4 +1,4 @@
-sh ci_benchmark_times.sh 2
+sh ci_benchmark_times.sh 20
 python3 ci_benchmark_select.py
 
 #clear
