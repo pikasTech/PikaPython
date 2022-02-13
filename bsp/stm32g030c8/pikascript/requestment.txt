@@ -1,5 +1,5 @@
 pikascript-core==lts2021
 PikaStdLib==lts2021
 PikaStdDevice==v1.4.3
-STM32G0==v1.1.0
+STM32G0==v1.1.1
 PikaPiZero==v1.1.2
