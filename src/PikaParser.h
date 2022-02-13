@@ -44,4 +44,5 @@ char* strsPopTokenWithSkip_byStr(Args* buffs,
                                  char skipStart,
                                  char skipEnd);
 char* Lexer_popToken(Args* buffs, char* tokens_buff);
+char* strsGetCleanCmd(Args* outBuffs, char* cmd);
 #endif

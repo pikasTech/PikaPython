@@ -1961,3 +1961,28 @@ TEST(parser, global) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, mpy_demo_1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"chars = ' .,-:;i+hHM$*#@ '\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 STR  .,-:;i+hHM$*#@ \n"
+                 "0 OUT chars\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, clean_compled_str) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* res = strsGetCleanCmd(buffs, (char*)"chars = ' .,-:;i+hHM$*#@ '\n");
+    EXPECT_STREQ(res, "chars=' .,-:;i+hHM$*#@ '\n");
+    printf("%s", res);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -812,7 +812,20 @@ static int32_t Parser_getPyLineBlockDeepth(char* line) {
 
 char* Parser_removeAnnotation(char* line) {
     uint8_t is_annotation_exit = 0;
+    uint8_t is_in_single_quotes = 0;
+    uint8_t is_in_double_quotes_deepth = 0;
     for (uint32_t i = 0; i < strGetSize(line); i++) {
+        if ('\'' == line[i]) {
+            is_in_single_quotes = !is_in_single_quotes;
+            continue;
+        }
+        if ('"' == line[i]) {
+            is_in_double_quotes_deepth = !is_in_double_quotes_deepth;
+            continue;
+        }
+        if (!(is_in_single_quotes == 0 && is_in_double_quotes_deepth == 0)) {
+            continue;
+        }
         if ('#' == line[i]) {
             /* end the line */
             line[i] = 0;
