@@ -212,11 +212,13 @@ int32_t __updateArg(Args* self, Arg* argNew) {
         priorNode = nodeNow;
         nodeNow = content_getNext(nodeNow);
     }
+    #if 0
     /* free the object */
     if (TYPE_OBJECT == arg_getType(nodeToUpdate)) {
         PikaObj* obj = arg_getPtr(nodeToUpdate);
         obj_deinit(obj);
     }
+    #endif
     nodeToUpdate = arg_setContent(nodeToUpdate, arg_getContent(argNew),
                                   arg_getContentSize(argNew));
 
