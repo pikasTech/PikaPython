@@ -39,7 +39,7 @@ static TIM_TypeDef* PWM_get_TIM_instance(char* pin) {
         return TIM16;
     }
 #endif
-#ifdef TIM17_EXIST_EXIST
+#ifdef TIM17_EXIST
     if (strEqu("PD1", pin)) {
         return TIM17;
     }
