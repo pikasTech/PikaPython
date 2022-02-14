@@ -21,7 +21,7 @@ jobs:
   
     - name: install_google_benchmark
       run: |
-        git clone -branch v1.6.1 https://github.com/google/benchmark.git 
+        git clone --branch v1.6.1 https://github.com/google/benchmark.git 
         cd benchmark 
         cmake -E make_directory "build" 
         cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../ 
