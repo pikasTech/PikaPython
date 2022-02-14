@@ -31,15 +31,5 @@
 
 VM_Parameters* pikaVM_run(PikaObj* self, char* pyLine);
 VM_Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
-VM_Parameters* pikaVM_runAsmWithPars(PikaObj* self,
-                                  VM_Parameters* locals,
-                                  VM_Parameters* globals,
-                                  char* pikaAsm);
 
-int32_t __clearInvokeQueues(VM_Parameters* locals);
-int32_t pikaVM_runAsmLine(PikaObj* self,
-                          VM_Parameters* locals,
-                          VM_Parameters* globals,
-                          char* pikaAsm,
-                          int32_t lineAddr);
 #endif

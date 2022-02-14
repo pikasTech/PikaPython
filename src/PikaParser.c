@@ -33,9 +33,12 @@
 #include "dataStack.h"
 #include "dataStrs.h"
 
+typedef QueueObj AST;
 /* local declear */
 char* AST_toPikaASM(AST* ast, Args* outBuffs);
 char* Lexer_getTokens(Args* outBuffs, char* stmt);
+int32_t AST_deinit(AST* ast);
+char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 
 uint16_t Lexer_getTokenSize(char* tokens) {
     if (strEqu("", tokens)) {
@@ -611,7 +614,7 @@ char* Parser_solveBranckets(Args* outBuffs,
     Arg* token1_arg = NULL;
     uint8_t is_in_brancket = 0;
     args_setStr(buffs, "index", "");
-    enum TokenType token_type1, token_type2;
+    enum TokenType /* token_type1, */ token_type2;
     do {
         if (NULL == content) {
             arg_deinit(right_arg);
@@ -638,7 +641,7 @@ char* Parser_solveBranckets(Args* outBuffs,
             arg_deinit(token1_arg);
             token2 = Lexer_popToken(token_buffs, tokens);
             token1_arg = arg_setStr(NULL, "", token2);
-            token_type1 = Lexer_getTokenType(token1);
+            // token_type1 = Lexer_getTokenType(token1);
             token_type2 = Lexer_getTokenType(token2);
             pyload1 = Lexer_getTokenPyload(token1);
             pyload2 = Lexer_getTokenPyload(token2);

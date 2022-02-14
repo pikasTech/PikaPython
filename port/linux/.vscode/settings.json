@@ -27,7 +27,9 @@
         "*.cfg": "c",
         "pikastdtask_task.h": "c",
         "gtesttask_task.h": "c",
-        "pikadebug_debuger.h": "c"
+        "pikadebug_debuger.h": "c",
+        "datastack.h": "c",
+        "dataqueueobj.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }

@@ -35,6 +35,15 @@
 #include "dataQueueObj.h"
 #include "dataStrs.h"
 
+/* private head */
+char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
+
+/* local head */
+VM_Parameters* pikaVM_runAsmWithPars(PikaObj* self,
+                                  VM_Parameters* locals,
+                                  VM_Parameters* globals,
+                                  char* pikaAsm);
+
 struct VM_State_t {
     VM_Parameters* locals;
     VM_Parameters* globals;

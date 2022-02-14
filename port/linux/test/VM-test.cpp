@@ -10,9 +10,20 @@ extern "C" {
 #include "dataQueue.h"
 #include "dataStrs.h"
 
-/* head infomations */
+
+/* test head */
+VM_Parameters* pikaVM_runAsmWithPars(PikaObj* self,
+                                  VM_Parameters* locals,
+                                  VM_Parameters* globals,
+                                  char* pikaAsm);
 char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack);
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
+int32_t __clearInvokeQueues(VM_Parameters* locals);
+int32_t pikaVM_runAsmLine(PikaObj* self,
+                          VM_Parameters* locals,
+                          VM_Parameters* globals,
+                          char* pikaAsm,
+                          int32_t lineAddr);
 }
 
 TEST(VM, num1) {
