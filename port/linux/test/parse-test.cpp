@@ -4,12 +4,25 @@ extern "C" {
 #include "PikaParser.h"
 #include "dataMemory.h"
 #include "dataStrs.h"
+
+char* AST_toPikaASM(AST* ast, Args* outBuffs);
+AST* AST_parseLine(char* line, Stack* blockStack);
+char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack);
+int32_t AST_deinit(AST* ast);
+char* Lexer_getTokens(Args* outBuffs, char* stmt);
+char* Lexer_printTokens(Args* outBuffs, char* tokens);
+char* strsPopTokenWithSkip_byStr(Args* buffs,
+                                 char* stmts,
+                                 char* str,
+                                 char skipStart,
+                                 char skipEnd);
+char* strsGetCleanCmd(Args* outBuffs, char* cmd);
 }
 
 TEST(parser, NEW) {
     AST* ast = AST_parseLine((char*)"add(a,b)", NULL);
     Args* buffs = New_strBuff();
-    char* pikaAsm = AST_toPikaAsm(ast, buffs);
+    char* pikaAsm = AST_toPikaASM(ast, buffs);
     printf("%s", pikaAsm);
     args_deinit(buffs);
     AST_deinit(ast);
@@ -19,7 +32,7 @@ TEST(parser, NEW) {
 TEST(parser, add_a_b) {
     AST* ast = AST_parseLine((char*)"add( a , b)", NULL);
     Args* buffs = New_strBuff();
-    char* pikaAsm = AST_toPikaAsm(ast, buffs);
+    char* pikaAsm = AST_toPikaASM(ast, buffs);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -34,7 +47,7 @@ TEST(parser, add_a_b) {
 TEST(parser, add_a_b_c) {
     AST* ast = AST_parseLine((char*)"d = add(add(a,b)  , c)", NULL);
     Args* buffs = New_strBuff();
-    char* pikaAsm = AST_toPikaAsm(ast, buffs);
+    char* pikaAsm = AST_toPikaASM(ast, buffs);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -53,7 +66,7 @@ TEST(parser, method1) {
     AST* ast =
         AST_parseLine((char*)"d.p = a.add(b.add(a,se.b)  , pmw.c)", NULL);
     Args* buffs = New_strBuff();
-    char* pikaAsm = AST_toPikaAsm(ast, buffs);
+    char* pikaAsm = AST_toPikaASM(ast, buffs);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"

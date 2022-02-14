@@ -115,3 +115,4 @@ PIKA_WEAK void* __platform_memcpy(void* dir, const void* src, size_t size) {
 PIKA_WEAK char __platform_getchar(void) {
     return getchar();
 }
+
