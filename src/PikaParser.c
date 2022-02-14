@@ -33,8 +33,8 @@
 #include "dataStack.h"
 #include "dataStrs.h"
 
+/* local head */
 typedef QueueObj AST;
-/* local declear */
 char* AST_toPikaASM(AST* ast, Args* outBuffs);
 char* Lexer_getTokens(Args* outBuffs, char* stmt);
 int32_t AST_deinit(AST* ast);
