@@ -844,24 +844,21 @@ char* Parser_removeAnnotation(char* line) {
         }
     }
     /* is an emply line */
-    line[0] = '#';
-    line[1] = 0;
+    line = "@annontation";
     return line;
 }
 
 AST* AST_parseLine(char* line, Stack* blockStack) {
+    /* line is not exist */
+    if (line == NULL) {
+        return NULL;
+    }
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
-    line = strsDeleteChar(buffs, line, '\r');
-    line = Parser_removeAnnotation(line);
     uint8_t blockDeepth;
     uint8_t blockDeepthLast;
     char* lineStart;
     char* stmt;
-    if (strEqu("#", line)) {
-        obj_setStr(ast, "annotation", "annotation");
-        goto exit;
-    }
     /* get block deepth */
     blockDeepth = Parser_getPyLineBlockDeepth(line);
     blockDeepthLast = blockDeepth;
@@ -995,27 +992,45 @@ exit:
     return ast;
 }
 
-char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack) {
-    char* pikaAsm = NULL;
-    AST* ast = NULL;
+static char* Parser_linePreProcess(Args* buffs, char* line) {
+    /* check syntex error */
     if (Lexer_isError(line)) {
-        pikaAsm = NULL;
+        line = NULL;
         goto exit;
     }
+    /* process EOL */
+    line = strsDeleteChar(buffs, line, '\r');
+    line = Parser_removeAnnotation(line);
+
+exit:
+    return line;
+}
+
+char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack) {
+    char* ASM = NULL;
+    AST* ast = NULL;
+    /* pre process */
+    line = Parser_linePreProcess(buffs, line);
+    if (strEqu("@annontation", line)) {
+        ASM = "";
+        goto exit;
+    }
+
+    /* parse line to tokens */
+    /* parse tokens to AST */
+
+    /* parse line to AST */
     ast = AST_parseLine(line, blockStack);
-    if (obj_isArgExist(ast, "annotation")) {
-        pikaAsm = strsCopy(buffs, "");
-        goto exit;
-    }
-    pikaAsm = AST_toPikaAsm(ast, buffs);
+    /* gen ASM from AST */
+    ASM = AST_toPikaAsm(ast, buffs);
 exit:
     if (NULL != ast) {
         AST_deinit(ast);
     }
-    return pikaAsm;
+    return ASM;
 }
 
-static Arg* ASM_saveSingleAsm(Args* buffs,
+static Arg* ASM_saveSingleASM(Args* buffs,
                               Arg* pikaAsmBuff,
                               char* singleAsm,
                               uint8_t isToFlash) {
@@ -1036,52 +1051,56 @@ static Arg* ASM_saveSingleAsm(Args* buffs,
     return pikaAsmBuff;
 }
 
-static char* ASM_getOutAsm(Args* outBuffs,
-                           Arg* pikaAsmBuff,
-                           uint8_t isToFlash) {
+static char* ASM_loadASM(Args* outBuffs, Arg* pikaAsmBuff, uint8_t isToFlash) {
     if (isToFlash) {
         return __platform_load_pikaAsm();
     }
     return strsCopy(outBuffs, arg_getStr(pikaAsmBuff));
 }
 
-char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine) {
-    Stack* blockStack = New_Stack();
-    Arg* pikaAsmBuff = arg_setStr(NULL, "", "");
-    uint32_t lineOffset = 0;
-    uint32_t multiLineSize = strGetSize(multiLine);
-    uint8_t isToFlash = __platform_Asm_is_to_flash(multiLine);
-    char* outAsm = NULL;
+char* Parser_multiLineToAsm(Args* outBuffs, char* multi_line) {
+    Stack* block_stack = New_Stack();
+    Arg* asm_buff = arg_setStr(NULL, "", "");
+    uint32_t line_offset = 0;
+    uint32_t multi_line_size = strGetSize(multi_line);
+    /* check if store the Asm to flash */
+    uint8_t is_to_flash = __platform_Asm_is_to_flash(multi_line);
+    char* out_ASM = NULL;
+    /* parse each line */
     while (1) {
-        Args* singleRunBuffs = New_strBuff();
-        char* line =
-            strsGetFirstToken(singleRunBuffs, multiLine + lineOffset, '\n');
-        uint32_t lineSize = strGetSize(line);
-        lineOffset = lineOffset + lineSize + 1;
-        char* singleAsm = Parser_LineToAsm(singleRunBuffs, line, blockStack);
-        if (NULL == singleAsm) {
-            outAsm = NULL;
-            args_deinit(singleRunBuffs);
+        Args* buffs = New_strBuff();
+        /* get single line by pop multiline */
+        char* line = strsGetFirstToken(buffs, multi_line + line_offset, '\n');
+        uint32_t line_size = strGetSize(line);
+        line_offset = line_offset + line_size + 1;
+        /* parse single Line to Asm */
+        char* single_ASM = Parser_LineToAsm(buffs, line, block_stack);
+        if (NULL == single_ASM) {
+            out_ASM = NULL;
+            args_deinit(buffs);
             goto exit;
         }
-        pikaAsmBuff = ASM_saveSingleAsm(singleRunBuffs, pikaAsmBuff, singleAsm,
-                                        isToFlash);
-        args_deinit(singleRunBuffs);
-        if (lineOffset >= multiLineSize) {
+        /* save ASM */
+        asm_buff = ASM_saveSingleASM(buffs, asm_buff, single_ASM, is_to_flash);
+        args_deinit(buffs);
+        /* exit when finished */
+        if (line_offset >= multi_line_size) {
             break;
         }
     }
-    if (isToFlash) {
+    /* add EOF for flash storage */
+    if (is_to_flash) {
         __platform_save_pikaAsm_EOF();
     }
-    outAsm = ASM_getOutAsm(outBuffs, pikaAsmBuff, isToFlash);
+    /* load stored ASM */
+    out_ASM = ASM_loadASM(outBuffs, asm_buff, is_to_flash);
     goto exit;
 exit:
-    if (NULL != pikaAsmBuff) {
-        arg_deinit(pikaAsmBuff);
+    if (NULL != asm_buff) {
+        arg_deinit(asm_buff);
     }
-    stack_deinit(blockStack);
-    return outAsm;
+    stack_deinit(block_stack);
+    return out_ASM;
 }
 
 char* AST_appandPikaAsm(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
