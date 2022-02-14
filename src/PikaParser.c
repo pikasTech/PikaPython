@@ -848,52 +848,56 @@ char* Parser_removeAnnotation(char* line) {
     return line;
 }
 
-AST* AST_parseLine(char* line, Stack* blockStack) {
+AST* AST_parseLine(char* line, Stack* block_stack) {
     /* line is not exist */
     if (line == NULL) {
         return NULL;
     }
+    /* init data */
     AST* ast = New_queueObj();
     Args* buffs = New_strBuff();
-    uint8_t blockDeepth;
-    uint8_t blockDeepthLast;
-    char* lineStart;
-    char* stmt;
+    uint8_t block_deepth, block_deepth_last;
+    char *line_start, *stmt;
     /* get block deepth */
-    blockDeepth = Parser_getPyLineBlockDeepth(line);
-    blockDeepthLast = blockDeepth;
-    /* in block */
-    if (NULL != blockStack) {
-        blockDeepthLast = args_getInt(blockStack, "top");
-        /* check if exit block */
-        for (int i = 0; i < blockDeepthLast - blockDeepth; i++) {
-            QueueObj* exitBlock = obj_getObj(ast, "exitBlock", 0);
-            if (NULL == exitBlock) {
+    block_deepth = Parser_getPyLineBlockDeepth(line);
+    block_deepth_last = block_deepth;
+    /* set block deepth */
+    obj_setInt(ast, "blockDeepth", block_deepth);
+
+    /* check if exit block */
+    if (NULL != block_stack) {
+        block_deepth_last = args_getInt(block_stack, "top");
+        /* exit each block */
+        for (int i = 0; i < block_deepth_last - block_deepth; i++) {
+            QueueObj* exit_block_queue = obj_getObj(ast, "exitBlock", 0);
+            /* create an exit_block queue */
+            if (NULL == exit_block_queue) {
                 obj_newObj(ast, "exitBlock", "", New_TinyObj);
-                exitBlock = obj_getObj(ast, "exitBlock", 0);
-                queueObj_init(exitBlock);
+                exit_block_queue = obj_getObj(ast, "exitBlock", 0);
+                queueObj_init(exit_block_queue);
             }
             char buff[10] = {0};
-            char* blockType = stack_popStr(blockStack, buff);
-            queueObj_pushStr(exitBlock, blockType);
+            char* block_type = stack_popStr(block_stack, buff);
+            /* push exit block type to exit_block queue */
+            queueObj_pushStr(exit_block_queue, block_type);
         }
     }
-    /* set block deepth */
-    obj_setInt(ast, "blockDeepth", blockDeepth);
-    lineStart = line + blockDeepth * 4;
-    stmt = lineStart;
-    /* match block start */
-    if (0 == strncmp(lineStart, (char*)"while ", 6)) {
-        stmt = strsCut(buffs, lineStart, ' ', ':');
+
+    line_start = line + block_deepth * 4;
+    stmt = line_start;
+
+    /* match block start keywords */
+    if (strIsStartWith(line_start, "while ")) {
+        stmt = strsCut(buffs, line_start, ' ', ':');
         obj_setStr(ast, "block", "while");
-        if (NULL != blockStack) {
-            stack_pushStr(blockStack, "while");
+        if (NULL != block_stack) {
+            stack_pushStr(block_stack, "while");
         }
         goto block_matched;
     }
-    if (0 == strncmp(lineStart, (char*)"for ", 4)) {
+    if (strIsStartWith(line_start, "for ")) {
         Args* list_buffs = New_strBuff();
-        char* line_buff = strsCopy(list_buffs, lineStart + 4);
+        char* line_buff = strsCopy(list_buffs, line_start + 4);
         char* arg_in = strsPopToken(list_buffs, line_buff, ' ');
         obj_setStr(ast, "arg_in", arg_in);
         strsPopToken(list_buffs, line_buff, ' ');
@@ -907,82 +911,83 @@ AST* AST_parseLine(char* line, Stack* blockStack) {
         args_deinit(list_buffs);
         obj_setStr(ast, "block", "for");
         obj_setStr(ast, "list_in", list_in);
-        if (NULL != blockStack) {
-            stack_pushStr(blockStack, "for");
+        if (NULL != block_stack) {
+            stack_pushStr(block_stack, "for");
         }
         stmt = list_in;
         goto block_matched;
     }
-    if (0 == strncmp(lineStart, (char*)"if ", 3)) {
-        stmt = strsCut(buffs, lineStart, ' ', ':');
+    if (strIsStartWith(line_start, "if ")) {
+        stmt = strsCut(buffs, line_start, ' ', ':');
         obj_setStr(ast, "block", "if");
-        if (NULL != blockStack) {
-            stack_pushStr(blockStack, "if");
+        if (NULL != block_stack) {
+            stack_pushStr(block_stack, "if");
         }
         goto block_matched;
     }
-    if (0 == strncmp(lineStart, (char*)"elif ", 5)) {
-        stmt = strsCut(buffs, lineStart, ' ', ':');
+    if (strIsStartWith(line_start, "elif ")) {
+        stmt = strsCut(buffs, line_start, ' ', ':');
         obj_setStr(ast, "block", "elif");
-        if (NULL != blockStack) {
-            stack_pushStr(blockStack, "elif");
+        if (NULL != block_stack) {
+            stack_pushStr(block_stack, "elif");
         }
         goto block_matched;
     }
-    if (0 == strncmp(lineStart, (char*)"else", 4)) {
-        if ((lineStart[4] == ' ') || (lineStart[4] == ':')) {
+    if (strIsStartWith(line_start, "else")) {
+        if ((line_start[4] == ' ') || (line_start[4] == ':')) {
             stmt = "";
             obj_setStr(ast, "block", "else");
-            if (NULL != blockStack) {
-                stack_pushStr(blockStack, "else");
+            if (NULL != block_stack) {
+                stack_pushStr(block_stack, "else");
             }
         }
         goto block_matched;
     }
-    if (0 == strncmp(lineStart, (char*)"break", 5)) {
-        if ((lineStart[5] == ' ') || (lineStart[5] == 0)) {
+    if (strIsStartWith(line_start, "break")) {
+        if ((line_start[5] == ' ') || (line_start[5] == 0)) {
             obj_setStr(ast, "break", "");
             stmt = "";
             goto block_matched;
         }
     }
-    if (0 == strncmp(lineStart, (char*)"continue", 8)) {
-        if ((lineStart[8] == ' ') || (lineStart[8] == 0)) {
+    if (strIsStartWith(line_start, "continue")) {
+        if ((line_start[8] == ' ') || (line_start[8] == 0)) {
             obj_setStr(ast, "continue", "");
             stmt = "";
             goto block_matched;
         }
     }
-    if (strEqu(lineStart, (char*)"return")) {
+    if (strEqu(line_start, "return")) {
         obj_setStr(ast, "return", "");
         stmt = "";
         goto block_matched;
     }
-    if (0 == strncmp(lineStart, (char*)"return ", 7)) {
-        char* lineBuff = strsCopy(buffs, lineStart);
+    if (strIsStartWith(line_start, "return ")) {
+        char* lineBuff = strsCopy(buffs, line_start);
         strsPopToken(buffs, lineBuff, ' ');
         stmt = lineBuff;
         obj_setStr(ast, "return", "");
         goto block_matched;
     }
-    if (0 == strncmp(lineStart, (char*)"global ", 7)) {
+    if (strIsStartWith(line_start, "global ")) {
         stmt = "";
-        char* global_list = lineStart + 7;
+        char* global_list = line_start + 7;
         global_list = strsGetCleanCmd(buffs, global_list);
         obj_setStr(ast, "global", global_list);
         goto block_matched;
     }
-    if (0 == strncmp(lineStart, (char*)"def ", 4)) {
+    if (strIsStartWith(line_start, (char*)"def ")) {
         stmt = "";
-        char* declear = strsCut(buffs, lineStart, ' ', ':');
+        char* declear = strsCut(buffs, line_start, ' ', ':');
         declear = strsGetCleanCmd(buffs, declear);
         obj_setStr(ast, "block", "def");
         obj_setStr(ast, "declear", declear);
-        if (NULL != blockStack) {
-            stack_pushStr(blockStack, "def");
+        if (NULL != block_stack) {
+            stack_pushStr(block_stack, "def");
         }
         goto block_matched;
     }
+
 block_matched:
     stmt = strsGetCleanCmd(buffs, stmt);
     ast = AST_parseStmt(ast, stmt);
