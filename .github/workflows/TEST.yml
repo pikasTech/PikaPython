@@ -20,7 +20,7 @@ jobs:
     - uses: actions/checkout@v2
   
     - name: install_google_benchmark
-      run: git clone -branch v1.6.1 https://github.com/google/benchmark.git && cd benchmark && cmake -E make_directory "build" && cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../ && cmake --build "build" --config Release && sudo cmake --build "build" --config Release --target install
+      run: git clone --branch v1.6.1 https://github.com/google/benchmark.git && cd benchmark && cmake -E make_directory "build" && cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../ && cmake --build "build" --config Release && sudo cmake --build "build" --config Release --target install
       
     - name: PULL_CORE
       run: cd ${{github.workspace}}/port/linux && bash pull-core.sh
