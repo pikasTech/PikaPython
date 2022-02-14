@@ -10,8 +10,9 @@ extern "C" {
 #include "dataQueue.h"
 #include "dataStrs.h"
 
+/* head infomations */
 char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack);
-
+char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 }
 
 TEST(VM, num1) {

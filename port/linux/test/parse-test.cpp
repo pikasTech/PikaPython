@@ -5,6 +5,9 @@ extern "C" {
 #include "dataMemory.h"
 #include "dataStrs.h"
 
+/* head infomation */
+typedef QueueObj AST;
+char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 char* AST_toPikaASM(AST* ast, Args* outBuffs);
 AST* AST_parseLine(char* line, Stack* blockStack);
 char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack);
