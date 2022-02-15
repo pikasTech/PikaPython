@@ -894,14 +894,23 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     stmt = line_start;
 
     /* match block start keywords */
-    if (strIsStartWith(line_start, "while ")) {
-        stmt = strsCut(buffs, line_start, ' ', ':');
-        obj_setStr(ast, "block", "while");
-        if (NULL != block_stack) {
-            stack_pushStr(block_stack, "while");
+
+    /* normal keyward */
+    const char normal_keywords[][7] = {"while", "if", "elif"};
+    for (int i = 0; i < sizeof(normal_keywords) / 7; i++) {
+        char* keyword = normal_keywords[i];
+        uint8_t keyword_len = strGetSize(keyword);
+        if (strIsStartWith(line_start, keyword) &&
+            (line_start[keyword_len] == ' ')) {
+            stmt = strsCut(buffs, line_start, ' ', ':');
+            obj_setStr(ast, "block", keyword);
+            if (NULL != block_stack) {
+                stack_pushStr(block_stack, keyword);
+            }
+            goto block_matched;
         }
-        goto block_matched;
     }
+
     if (strIsStartWith(line_start, "for ")) {
         Args* list_buffs = New_strBuff();
         char* line_buff = strsCopy(list_buffs, line_start + 4);
@@ -924,22 +933,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         stmt = list_in;
         goto block_matched;
     }
-    if (strIsStartWith(line_start, "if ")) {
-        stmt = strsCut(buffs, line_start, ' ', ':');
-        obj_setStr(ast, "block", "if");
-        if (NULL != block_stack) {
-            stack_pushStr(block_stack, "if");
-        }
-        goto block_matched;
-    }
-    if (strIsStartWith(line_start, "elif ")) {
-        stmt = strsCut(buffs, line_start, ' ', ':');
-        obj_setStr(ast, "block", "elif");
-        if (NULL != block_stack) {
-            stack_pushStr(block_stack, "elif");
-        }
-        goto block_matched;
-    }
+
     if (strIsStartWith(line_start, "else")) {
         if ((line_start[4] == ' ') || (line_start[4] == ':')) {
             stmt = "";
@@ -1030,8 +1024,6 @@ char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack) {
 
     /* parse line to tokens */
     /* parse tokens to AST */
-
-    /* parse line to AST */
     ast = AST_parseLine(line, blockStack);
     /* gen ASM from AST */
     ASM = AST_toPikaASM(ast, buffs);
