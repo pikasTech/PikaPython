@@ -631,10 +631,10 @@ char* Parser_solveBranckets(Args* outBuffs,
         }
         goto exit;
     }
-    uint16_t len = Lexer_getTokenSize(tokens);
+    uint16_t tokens_num = Lexer_getTokenSize(tokens);
     Lexer_popToken(buffs, tokens);
     token1_arg = arg_setStr(NULL, "", Lexer_popToken(buffs, tokens));
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < tokens_num; i++) {
         Args* token_buffs = New_strBuff();
         token1 = strsCopy(token_buffs, arg_getStr(token1_arg));
         arg_deinit(token1_arg);
@@ -893,8 +893,8 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
 
     /* normal keyward */
     const char normal_keywords[][7] = {"while", "if", "elif"};
-    for (int i = 0; i < sizeof(normal_keywords) / 7; i++) {
-        char* keyword = normal_keywords[i];
+    for (uint32_t i = 0; i < sizeof(normal_keywords) / 7; i++) {
+        char* keyword = (char*)normal_keywords[i];
         uint8_t keyword_len = strGetSize(keyword);
         if (strIsStartWith(line_start, keyword) &&
             (line_start[keyword_len] == ' ')) {
@@ -909,8 +909,8 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
 
     /* contral keyward */
     const char control_keywords[][9] = {"break", "continue"};
-    for (int i = 0; i < sizeof(control_keywords) / 8; i++) {
-        char* keyward = control_keywords[i];
+    for (uint32_t i = 0; i < sizeof(control_keywords) / 8; i++) {
+        char* keyward = (char*)control_keywords[i];
         uint8_t keyward_size = strGetSize(keyward);
         if ((strIsStartWith(line_start, keyward)) &&
             ((line_start[keyward_size] == ' ') ||
