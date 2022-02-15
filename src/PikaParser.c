@@ -615,85 +615,81 @@ char* Parser_solveBranckets(Args* outBuffs,
     uint8_t is_in_brancket = 0;
     args_setStr(buffs, "index", "");
     enum TokenType /* token_type1, */ token_type2;
-    do {
-        if (NULL == content) {
-            arg_deinit(right_arg);
+    if (NULL == content) {
+        arg_deinit(right_arg);
+        right_arg = arg_setStr(right_arg, "", stmt);
+        goto exit;
+    }
+    tokens = Lexer_getTokens(buffs, content);
+    if (!Lexer_isContain(tokens, TOKEN_devider, "[")) {
+        /* not contain '[', return origin */
+        arg_deinit(right_arg);
+        if (strEqu(mode, "right")) {
+            right_arg = arg_setStr(right_arg, "", content);
+        } else if (strEqu(mode, "left")) {
             right_arg = arg_setStr(right_arg, "", stmt);
-            break;
         }
-        tokens = Lexer_getTokens(buffs, content);
-        if (!Lexer_isContain(tokens, TOKEN_devider, "[")) {
-            /* not contain '[', return origin */
-            arg_deinit(right_arg);
-            if (strEqu(mode, "right")) {
-                right_arg = arg_setStr(right_arg, "", content);
-            } else if (strEqu(mode, "left")) {
-                right_arg = arg_setStr(right_arg, "", stmt);
-            }
-            break;
-        }
-        uint16_t len = Lexer_getTokenSize(tokens);
-        Lexer_popToken(buffs, tokens);
-        token1_arg = arg_setStr(NULL, "", Lexer_popToken(buffs, tokens));
-        for (int i = 0; i < len; i++) {
-            Args* token_buffs = New_strBuff();
-            token1 = strsCopy(token_buffs, arg_getStr(token1_arg));
-            arg_deinit(token1_arg);
-            token2 = Lexer_popToken(token_buffs, tokens);
-            token1_arg = arg_setStr(NULL, "", token2);
-            // token_type1 = Lexer_getTokenType(token1);
-            token_type2 = Lexer_getTokenType(token2);
-            pyload1 = Lexer_getTokenPyload(token1);
-            pyload2 = Lexer_getTokenPyload(token2);
-
-            /* matched [] */
-            if ((TOKEN_devider == token_type2) && (strEqu(pyload2, "["))) {
-                args_setStr(buffs, "obj", pyload1);
-                is_in_brancket = 1;
-            } else if ((TOKEN_devider == token_type2) &&
-                       (strEqu(pyload2, "]"))) {
-                is_in_brancket = 0;
-                char* index = args_getStr(buffs, "index");
-                Arg* index_arg = arg_setStr(NULL, "", index);
-                index_arg = arg_strAppend(index_arg, pyload1);
-                args_setStr(buffs, "index", arg_getStr(index_arg));
-                arg_deinit(index_arg);
-
-                if (strEqu(mode, "right")) {
-                    right_arg = arg_strAppend(right_arg, "__get__(");
-                } else if (strEqu(mode, "left")) {
-                    right_arg = arg_strAppend(right_arg, "__set__(");
-                }
-                right_arg = arg_strAppend(right_arg, args_getStr(buffs, "obj"));
-                right_arg = arg_strAppend(right_arg, ",");
-                right_arg =
-                    arg_strAppend(right_arg, args_getStr(buffs, "index"));
-                if (strEqu(mode, "left")) {
-                    right_arg = arg_strAppend(right_arg, ",");
-                    right_arg = arg_strAppend(right_arg, stmt);
-                    right_arg = arg_strAppend(right_arg, ",");
-                    right_arg = arg_strAppend(right_arg, "'");
-                    right_arg =
-                        arg_strAppend(right_arg, args_getStr(buffs, "obj"));
-                    right_arg = arg_strAppend(right_arg, "'");
-                }
-                right_arg = arg_strAppend(right_arg, ")");
-                args_setStr(buffs, "index", "");
-            } else if (is_in_brancket && (!strEqu(pyload1, "["))) {
-                char* index = args_getStr(buffs, "index");
-                Arg* index_arg = arg_setStr(NULL, "", index);
-                index_arg = arg_strAppend(index_arg, pyload1);
-                args_setStr(buffs, "index", arg_getStr(index_arg));
-                arg_deinit(index_arg);
-            } else if (!is_in_brancket && (!strEqu(pyload1, "]"))) {
-                right_arg = arg_strAppend(right_arg, pyload1);
-            }
-            args_deinit(token_buffs);
-        }
+        goto exit;
+    }
+    uint16_t len = Lexer_getTokenSize(tokens);
+    Lexer_popToken(buffs, tokens);
+    token1_arg = arg_setStr(NULL, "", Lexer_popToken(buffs, tokens));
+    for (int i = 0; i < len; i++) {
+        Args* token_buffs = New_strBuff();
+        token1 = strsCopy(token_buffs, arg_getStr(token1_arg));
         arg_deinit(token1_arg);
-    } while (0);
+        token2 = Lexer_popToken(token_buffs, tokens);
+        token1_arg = arg_setStr(NULL, "", token2);
+        // token_type1 = Lexer_getTokenType(token1);
+        token_type2 = Lexer_getTokenType(token2);
+        pyload1 = Lexer_getTokenPyload(token1);
+        pyload2 = Lexer_getTokenPyload(token2);
 
-    /* clean and retur */
+        /* matched [] */
+        if ((TOKEN_devider == token_type2) && (strEqu(pyload2, "["))) {
+            args_setStr(buffs, "obj", pyload1);
+            is_in_brancket = 1;
+        } else if ((TOKEN_devider == token_type2) && (strEqu(pyload2, "]"))) {
+            is_in_brancket = 0;
+            char* index = args_getStr(buffs, "index");
+            Arg* index_arg = arg_setStr(NULL, "", index);
+            index_arg = arg_strAppend(index_arg, pyload1);
+            args_setStr(buffs, "index", arg_getStr(index_arg));
+            arg_deinit(index_arg);
+
+            if (strEqu(mode, "right")) {
+                right_arg = arg_strAppend(right_arg, "__get__(");
+            } else if (strEqu(mode, "left")) {
+                right_arg = arg_strAppend(right_arg, "__set__(");
+            }
+            right_arg = arg_strAppend(right_arg, args_getStr(buffs, "obj"));
+            right_arg = arg_strAppend(right_arg, ",");
+            right_arg = arg_strAppend(right_arg, args_getStr(buffs, "index"));
+            if (strEqu(mode, "left")) {
+                right_arg = arg_strAppend(right_arg, ",");
+                right_arg = arg_strAppend(right_arg, stmt);
+                right_arg = arg_strAppend(right_arg, ",");
+                right_arg = arg_strAppend(right_arg, "'");
+                right_arg = arg_strAppend(right_arg, args_getStr(buffs, "obj"));
+                right_arg = arg_strAppend(right_arg, "'");
+            }
+            right_arg = arg_strAppend(right_arg, ")");
+            args_setStr(buffs, "index", "");
+        } else if (is_in_brancket && (!strEqu(pyload1, "["))) {
+            char* index = args_getStr(buffs, "index");
+            Arg* index_arg = arg_setStr(NULL, "", index);
+            index_arg = arg_strAppend(index_arg, pyload1);
+            args_setStr(buffs, "index", arg_getStr(index_arg));
+            arg_deinit(index_arg);
+        } else if (!is_in_brancket && (!strEqu(pyload1, "]"))) {
+            right_arg = arg_strAppend(right_arg, pyload1);
+        }
+        args_deinit(token_buffs);
+    }
+    arg_deinit(token1_arg);
+
+exit:
+    /* clean and return */
     content = strsCopy(outBuffs, arg_getStr(right_arg));
     arg_deinit(right_arg);
     args_deinit(buffs);
@@ -916,13 +912,12 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     for (int i = 0; i < sizeof(control_keywords) / 8; i++) {
         char* keyward = control_keywords[i];
         uint8_t keyward_size = strGetSize(keyward);
-        if (strIsStartWith(line_start, keyward)) {
-            if ((line_start[keyward_size] == ' ') ||
-                (line_start[keyward_size] == 0)) {
-                obj_setStr(ast, keyward, "");
-                stmt = "";
-                goto block_matched;
-            }
+        if ((strIsStartWith(line_start, keyward)) &&
+            ((line_start[keyward_size] == ' ') ||
+             (line_start[keyward_size] == 0))) {
+            obj_setStr(ast, keyward, "");
+            stmt = "";
+            goto block_matched;
         }
     }
 
