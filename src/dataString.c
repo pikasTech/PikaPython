@@ -245,13 +245,10 @@ int32_t strIsStartWith(char* str, char* strStart) {
         return 0;
     }
     uint32_t size = strGetSize(strStart);
-    uint32_t CMDName_get = 1;
-    for (uint32_t i = 0; i < size; i++) {
-        if (str[i] != strStart[i]) {
-            CMDName_get = 0;
-        }
+    if (0 == strncmp(str, strStart, size)) {
+        return 1;
     }
-    return CMDName_get;
+    return 0;
 }
 
 int32_t strEqu(char* str1, char* str2) {
