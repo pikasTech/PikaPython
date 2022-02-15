@@ -911,6 +911,21 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         }
     }
 
+    /* contral keyward */
+    const char control_keywords[][9] = {"break", "continue"};
+    for (int i = 0; i < sizeof(control_keywords) / 8; i++) {
+        char* keyward = control_keywords[i];
+        uint8_t keyward_size = strGetSize(keyward);
+        if (strIsStartWith(line_start, keyward)) {
+            if ((line_start[keyward_size] == ' ') ||
+                (line_start[keyward_size] == 0)) {
+                obj_setStr(ast, keyward, "");
+                stmt = "";
+                goto block_matched;
+            }
+        }
+    }
+
     if (strIsStartWith(line_start, "for ")) {
         Args* list_buffs = New_strBuff();
         char* line_buff = strsCopy(list_buffs, line_start + 4);
@@ -943,20 +958,6 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
             }
         }
         goto block_matched;
-    }
-    if (strIsStartWith(line_start, "break")) {
-        if ((line_start[5] == ' ') || (line_start[5] == 0)) {
-            obj_setStr(ast, "break", "");
-            stmt = "";
-            goto block_matched;
-        }
-    }
-    if (strIsStartWith(line_start, "continue")) {
-        if ((line_start[8] == ' ') || (line_start[8] == 0)) {
-            obj_setStr(ast, "continue", "");
-            stmt = "";
-            goto block_matched;
-        }
     }
     if (strEqu(line_start, "return")) {
         obj_setStr(ast, "return", "");
