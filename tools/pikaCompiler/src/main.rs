@@ -26,9 +26,12 @@ fn main() {
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
     /* analyze file begin with main.py */
     compiler = Compiler::analyze_file(compiler, String::from("main"), false);
-    /* compile packages in requestment.txt */
+    /*
+        Compile packages in requestment.txt, solve the packages
+        as the top packages.
+     */
     for package in &version_info.package_list {
-        compiler = Compiler::analyze_file(compiler, String::from(package.0), false);
+        compiler = Compiler::analyze_file(compiler, String::from(package.0), true);
     }
     println!();
 

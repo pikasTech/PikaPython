@@ -82,7 +82,16 @@ impl Compiler {
                 return compiler;
             }
         };
-        /* solve package as top class */
+        /* solve top package.
+            About what is top package:
+                Top package is the package imported by main.py,
+                and can be used to new objcet in runtime.
+                So the each classes of top package are loaded to flash.
+            The top package is solved as an static object, and each calsses
+                of the top package is solved as a function of the static
+                object. To implament this, a [package]-api.c file is created
+                to supply the class of static object.
+        */
         if file_name != "main" && is_top_pkg {
             let pkg_define = format!("class {}(TinyObj):", &file_name);
             let pacakge_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
