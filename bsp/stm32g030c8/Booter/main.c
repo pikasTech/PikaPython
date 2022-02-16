@@ -72,6 +72,10 @@ uint8_t Shell_Ready = 0;
 extern Pool pikaPool;
 #endif
 
+Arg* main_codeBuff  = NULL;
+/* private head */
+char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
+
 extern PikaObj * __pikaMain;
 int main(void) {
     /* support bootLoader */
@@ -99,21 +103,23 @@ int main(void) {
         pikaMain = newRootObj("pikaMain", New_PikaMain);
         __pikaMain = pikaMain;
         if (code[0] == 'i') {
-            printf("[info]: boot from Script.\r\n");
-            Arg* codeBuff = arg_setStr(NULL, "", code);
-            obj_run(pikaMain, arg_getStr(codeBuff));
-            arg_deinit(codeBuff);
+            printf("[info]: compiling the python...\r\n");
+            main_codeBuff = arg_setStr(NULL, "", code);
+            // obj_run(pikaMain, arg_getStr(main_codeBuff));
+            Args* buffs = New_args(NULL);
+            Parser_multiLineToAsm(buffs, arg_getStr(main_codeBuff));
+            NVIC_SystemReset();
             goto main_loop;
         }
         if (code[0] == 'B') {
-            printf("==============[Pika ASM]==============\r\n");
-            for (int i = 0; i < strGetSize(code); i++) {
-                if ('\n' == code[i]) {
-                    fputc('\r', (FILE*)!NULL);
-                }
-                fputc(code[i], (FILE*)!NULL);
-            }
-            printf("==============[Pika ASM]==============\r\n");
+//            printf("==============[Pika ASM]==============\r\n");
+//            for (int i = 0; i < strGetSize(code); i++) {
+//                if ('\n' == code[i]) {
+//                    fputc('\r', (FILE*)!NULL);
+//                }
+//                fputc(code[i], (FILE*)!NULL);
+//            }
+//            printf("==============[Pika ASM]==============\r\n");
             printf("[info]: asm size: %d\r\n", strGetSize(code));
             printf("[info]: boot from Pika Asm.\r\n");
             pikaVM_runAsm(pikaMain, code);
@@ -121,10 +127,12 @@ int main(void) {
         }
     } else {
         /* boot from firmware */
+        printf("[info]: boot from firmware.\r\n");
         pikaMain = pikaScriptInit();
         goto main_loop;
     }
 
+    printf("[info]: boot from firmware.\r\n");
     pikaMain = pikaScriptInit();
     goto main_loop;
 

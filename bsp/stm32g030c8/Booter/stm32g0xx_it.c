@@ -13,6 +13,7 @@ void NMI_Handler(void) {
 }
 
 void HardFault_Handler(void) {
+    printf("[error]: hard fault, please reset the device.\r\n");
     while (1) {
     }
 }

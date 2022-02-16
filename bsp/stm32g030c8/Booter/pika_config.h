@@ -11,6 +11,8 @@ typedef struct _CodeHeap {
     uint8_t ena;
     uint32_t reciveTime;
     uint32_t oldSize;
+    uint8_t auto_erase;
+    uint8_t wait;
 } CodeHeap;
 
 /* support std lib for stm32 */

@@ -136,16 +136,16 @@ int32_t __eriseSelecttedFlash(uint32_t flashStart, uint32_t flashEnd) {
     return 0;
 }
 
+static uint8_t flash_writeBuff[8] = {0};
+static uint8_t flash_offset = 0;
 uint32_t flash_write_char(uint32_t bassAddr,
                           uint32_t flash_addr,
                           char ch_input) {
-    static uint8_t writeBuff[8] = {0};
-    static uint8_t offset = 0;
-    if (offset > 7) {
-        offset = 0;
+    if (flash_offset > 7) {
+        flash_offset = 0;
         uint64_t writeData64 = 0;
         for (int i = 7; i >= 0; i--) {
-            char ch = writeBuff[i];
+            char ch = flash_writeBuff[i];
             writeData64 = writeData64 << 8;
             writeData64 += ch;
         }
@@ -153,14 +153,14 @@ uint32_t flash_write_char(uint32_t bassAddr,
         if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,
                               bassAddr + flash_addr, writeData64) != HAL_OK) {
             while (1) {
-                offset = 0;
+                flash_offset = 0;
             }
         }
         __platform_disable_irq_handle();
         flash_addr = flash_addr + 8;
     }
-    writeBuff[offset] = ch_input;
-    offset++;
+    flash_writeBuff[flash_offset] = ch_input;
+    flash_offset++;
     return flash_addr;
 }
 
@@ -226,15 +226,55 @@ uint8_t __is_locked_pikaMemory(void){
 CodeHeap codeHeap;
 void STM32_Code_Init(void) {
     codeHeap.size = 0;
-    codeHeap.content = pikaMalloc(codeHeap.size + 1);
     codeHeap.ena = 0;
+    codeHeap.auto_erase = 1;
+    codeHeap.wait = 0;
 }
 
+void __erise_all(void){
+    printf("[info]: erising flash... \r\n");
+    /* init erise state */
+    globalWriteAddress = 0;
+
+    /* erise flash */
+    __eriseSelecttedFlash(FLASH_PIKA_ASM_START_ADDR,
+                              FLASH_PIKA_ASM_END_ADDR);
+    printf("[ OK ]: erising flash ok! \r\n");
+}
+
+extern PikaObj* __pikaMain;
+extern Arg* main_codeBuff;
 uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
     char buff[RX_BUFF_LENGTH] = {0};
     if (0 == codeHeap.ena) {
+        uint8_t is_launch_code_recive = 0;
         char* strLine = strGetLastLine(buff, data);
+        /* auto erase mode, send python file directly */
         if (strIsStartWith(strLine, "import ")) {
+            is_launch_code_recive = 1;
+            codeHeap.auto_erase = 1;
+            codeHeap.content = pikaMalloc(codeHeap.size + 1);
+        }
+        /* manual erase mode, send "import" to erase first,
+           then send the python file.
+        */
+        if (strEqu(strLine, "import\r\n")){
+            is_launch_code_recive = 1;
+            codeHeap.auto_erase = 0;
+            codeHeap.wait = 2;
+            __disable_irq();
+            obj_deinit(__pikaMain);
+            codeHeap.content = malloc(FLASH_PIKA_ASM_END_ADDR - FLASH_PIKA_ASM_START_ADDR);
+            if(codeHeap.content == NULL){
+                printf("[error] no enough code buff, please reset the device.\r\n");
+                while(1){
+                }
+            }
+            __enable_irq();
+            printf("[info] in download mode, send python please.\r\n");
+        }
+        /* launch the code reciver */
+        if (is_launch_code_recive){
             codeHeap.reciveTime = uwTick;
             codeHeap.ena = 1;
             data = strLine;
@@ -249,13 +289,18 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
             __platform_enable_irq_handle();
             #endif
         }
+        if(codeHeap.wait > 0){
+            codeHeap.wait--;
+        }
         codeHeap.reciveTime = uwTick;
         codeHeap.oldSize = codeHeap.size;
         codeHeap.size += rxSize;
-        codeHeap.content = realloc(codeHeap.content, codeHeap.size + 1);
+        /* write to heap buff */
+        if(codeHeap.auto_erase){
+            codeHeap.content = realloc(codeHeap.content, codeHeap.size + 1);
+        }
         memcpy(codeHeap.content + codeHeap.oldSize, data, rxSize);
         codeHeap.content[codeHeap.size] = 0;
-        /* reciving code */
         return 1;
     }
     /* not work */
@@ -267,101 +312,49 @@ void STM32_Code_flashHandler(void) {
         /* recive not activate */
         return;
     }
+    if (codeHeap.wait){
+        /* still waiting */
+        return;
+    }
     if (uwTick - codeHeap.reciveTime < 200) {
         /* still reciving */
         return;
     }
-
-    /* transmite is finished */
-    STM32_Code_reciveHandler("\n\n", 2);
-
-    uint32_t FirstPage = 0, NbOfPages = 0;
-    uint32_t PageError = 0;
-    __IO uint32_t data32 = 0, MemoryProgramStatus = 0;
-    static FLASH_EraseInitTypeDef EraseInitStruct = {0};
-
     printf("==============[Programer]==============\r\n");
-    printf("[info]: Recived byte: %d\r\n", codeHeap.size);
-    printf("[info]: Programing... \r\n");
-    HAL_FLASH_Unlock();
-    /* Get the 1st page to erase */
-    FirstPage = GetPage(FLASH_SCRIPT_START_ADDR);
-
-    /* Get the number of pages to erase from 1st page */
-    NbOfPages = GetPage(FLASH_SCRIPT_END_ADDR) - FirstPage + 1;
-
-    /* Fill EraseInit structure*/
-    EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
-    EraseInitStruct.Page = FirstPage;
-    EraseInitStruct.NbPages = NbOfPages;
-    printf("[info]: Erasing flash... \r\n");
-
-    if (HAL_FLASHEx_Erase(&EraseInitStruct, &PageError) != HAL_OK) {
-        printf("[error]: Erase faild! \r\n");
-        while (1) {
-        }
-    }
-    printf("[ OK ]: Erase flash ok! \r\n");
-
+    
+    /* transmite is finished */
+    printf("[info]: recieved size: %d\r\n", codeHeap.size);
+    /* write to flash from buff (heap.content) */
+    __erise_all();
     printf("[info]: Writing flash... \r\n");
-    uint32_t baseAddress = FLASH_SCRIPT_START_ADDR;
-    uint32_t writeAddress = 0;
-    uint64_t writeData64 = 0;
-    while (writeAddress < codeHeap.size + 1) {
-        writeData64 = 0;
-        for (int i = 7; i >= 0; i--) {
-            char ch = codeHeap.content[writeAddress + i];
-            writeData64 = writeData64 << 8;
-            writeData64 += ch;
-        }
-        if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,
-                              baseAddress + writeAddress,
-                              writeData64) == HAL_OK) {
-            writeAddress = writeAddress + 8;
-        } else {
-            printf("[error]: Write flash faild. \r\n");
-            while (1) {
-            }
-        }
-    }
+    /* init write state */
+    __platform_memset(flash_writeBuff, 0, sizeof(flash_writeBuff));
+    flash_offset = 0;
+    /* write to flash */
+    __saveStrToFlash(codeHeap.content, FLASH_PIKA_ASM_START_ADDR,
+    FLASH_PIKA_ASM_END_ADDR, &globalWriteAddress);
+    /* write EOF */
+    __saveStrToFlash("\n\n", FLASH_PIKA_ASM_START_ADDR,
+    FLASH_PIKA_ASM_END_ADDR, &globalWriteAddress);
+    __platform_save_pikaAsm_EOF();
     HAL_FLASH_Lock();
+    
     printf("[ OK ]: Write flash ok! \r\n");
 
-    baseAddress = FLASH_SCRIPT_START_ADDR;
-    MemoryProgramStatus = 0x0;
-
-    printf("[info]: Checking flash... \r\n");
-    char* codeInFlash = (char*)baseAddress;
+    char* codeInFlash = (char*)FLASH_SCRIPT_START_ADDR;
     printf("\r\n");
     printf("----[code in flash]-----\r\n");
-    for (int i = 0; i < strGetSize(codeHeap.content); i++) {
-        if ('\n' == codeHeap.content[i]) {
-            fputc('\r', (FILE*)!NULL);
-        }
-        fputc(codeHeap.content[i], (FILE*)!NULL);
-    }
-    printf("----[code in flash]-----\r\n");
-    printf("\r\n");
-
-    if (!strEqu(codeInFlash, codeHeap.content)) {
-        printf("[error]: Check flash faild.\r\n");
-        printf("\r\n");
-
-        printf("\r\n\r\n");
-        printf("---------[code in heap]----------\r\n");
-        printf("\r\n");
-        for (int i = 0; i < strGetSize(codeHeap.content); i++) {
-            if ('\n' == codeHeap.content[i]) {
+    for (int i = 0; i < strGetSize(codeInFlash); i++) {
+        if ('\n' == codeInFlash[i]) {
+            if(codeInFlash[i - 1] != '\r'){
                 fputc('\r', (FILE*)!NULL);
             }
-            fputc(codeHeap.content[i], (FILE*)!NULL);
         }
-        printf("\r\n\r\n");
-        printf("---------[code in heap]----------\r\n");
-        while (1) {
-        }
+        fputc(codeInFlash[i], (FILE*)!NULL);
     }
-    printf("[ OK ]: Checking flash ok! \r\n");
+    printf("----[code in flash]-----\r\n");
+    printf("\r\n");
+
     printf("[ OK ]: Programing ok! \r\n");
     printf("[info]: Restarting... \r\n");
     printf("==============[Programer]==============\r\n");
