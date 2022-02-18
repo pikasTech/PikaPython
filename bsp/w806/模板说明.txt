@@ -1,0 +1,14 @@
+参照Keil用户使用习惯，将项目模板路径结构重构了一下，避免过深的目录
+
+1、CDK不要安装在中文目录路径，项目模板也不要部署在中文目录路径。
+
+2、用户代码放置在Project文件夹的src和inc中
+
+3、编译好的固件存放在Output文件夹中，文件后缀为*.fls
+
+4、启动项目有两种方式：
+   a、双击根目录下W806_SDK.cdkws文件（推荐）
+   b、CDK中菜单Project -> Open Multi-Project Workspace -> W806_SDK.cdkws
+
+5、使用demo代码示例：
+   将Demo文件夹中的示例替换Project文件夹的src和inc中源码文件即可。
