@@ -1,2 +1,2 @@
-pikascript-core==lts2021
-PikaStdLib==lts2021
+pikascript-core==v1.3.5
+PikaStdLib==v1.3.5
