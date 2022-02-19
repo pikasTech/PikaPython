@@ -30,4 +30,7 @@
 #include "dataQueueObj.h"
 #include "dataStack.h"
 
+char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
+
+
 #endif
