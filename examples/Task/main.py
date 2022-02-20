@@ -8,7 +8,7 @@ mem = PikaStdLib.MemChecker()
 
 pin.setPin('PA8')
 pin.setMode('out')
-pin.enalbe()
+pin.enable()
 
 rgb.init()
 rgb.enable()
