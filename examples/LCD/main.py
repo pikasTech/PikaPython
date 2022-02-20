@@ -1,15 +1,15 @@
 from PikaObj import *
 import PikaStdLib
-import PikaPiZero
-import STM32G0
 
-lcd = PikaPiZero.LCD()
+import machine
+
+lcd = machine.LCD()
 lcd.init()
 lcd.clear('white')
 mem = PikaStdLib.MemChecker()
-key = PikaPiZero.KEY()
+key = machine.KEY()
 key.init()
-time = STM32G0.Time()
+time = machine.Time()
 h = 10
 w = 10
 x = 10

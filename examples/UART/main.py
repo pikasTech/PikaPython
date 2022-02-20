@@ -1,8 +1,8 @@
 import PikaStdLib
-import STM32G0
+import machine
 
-time = STM32G0.Time()
-uart = STM32G0.UART()
+time = machine.Time()
+uart = machine.UART()
 uart.init()
 uart.setId(1)
 uart.setBaudRate(115200)

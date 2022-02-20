@@ -1,20 +1,19 @@
 from PikaObj import *
 import PikaStdLib
-import PikaPiZero
-import STM32G0
+import machine 
 
 # hardware init
-lcd = PikaPiZero.LCD()
+lcd = machine.LCD()
 lcd.init()
 lcd.clear('white')
-key = PikaPiZero.KEY()
+key = machine.KEY()
 key.init()
-time = STM32G0.Time()
+time = machine.Time()
 x_max = 120
 y_max = 150
 
 # snake init
-s = PikaPiZero.Point()
+s = machine.Point()
 w = 9
 h = 9
 s.x = 50
@@ -26,7 +25,7 @@ while len < 3:
     while i < len:
         b = b.next
         i = i + 1
-    b.next = PikaPiZero.Point()
+    b.next = machine.Point()
     b.next.x = b.x - 10
     b.next.y = b.y
     b.next.prev = b
@@ -46,7 +45,7 @@ print('snake lengh')
 print(len)
 
 # fruit init
-f = PikaPiZero.Point()
+f = machine.Point()
 f.x = 30
 f.y = 20
 lcd.fill(f.x, f.y, w, h, 'green')
@@ -97,7 +96,7 @@ while True:
                 x_new = x_max
         if isEat:
             isEat = 0
-            b_new = PikaPiZero.Point()
+            b_new = machine.Point()
             b_new.x = x_new
             b_new.y = y_new
             b_new.prev = s.prev

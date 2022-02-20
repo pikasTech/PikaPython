@@ -1,8 +1,7 @@
 from PikaObj import *
 import PikaStdLib
-import PikaPiZero
-import STM32G0
-pin = STM32G0.GPIO()
+import machine 
+pin = machine.GPIO()
 pin.init()
 pin.setPin('PA0')
 pin.setMode('in')
@@ -17,10 +16,10 @@ pin.enable()
 pin.setPin('PB6')
 pin.enable()
 remove('pin')
-ll = STM32G0.lowLevel()
-oled = PikaPiZero.OLED()
+ll = machine.lowLevel()
+oled = machine.OLED()
 oled.init()
-snake = PikaPiZero.Point()
+snake = machine.Point()
 snake.x = 7
 snake.y = 4
 snake_lengh = 0
@@ -30,12 +29,12 @@ while snake_lengh < 3:
     while i < snake_lengh:
         body = body.next
         i = i + 1
-    body.next = PikaPiZero.Point()
+    body.next = machine.Point()
     body.next.x = body.x - 1
     body.next.y = body.y
     body.next.prev = body
     snake_lengh = snake_lengh + 1
-fruit = PikaPiZero.Point()
+fruit = machine.Point()
 fruit.x = 13
 fruit.y = 2
 mem = PikaStdLib.MemChecker()
@@ -53,7 +52,7 @@ while True:
                 while i < snake_lengh:
                     body = body.next
                     i = i + 1
-                body.next = PikaPiZero.Point()
+                body.next = machine.Point()
                 body.next.prev = body
                 snake_lengh = snake_lengh + 1
                 fruit.x = fruit.x + 3

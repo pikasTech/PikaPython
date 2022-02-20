@@ -1,9 +1,9 @@
-import STM32G0
-import PikaPiZero
+import machine
+
 import PikaStdLib
 
-pin = STM32G0.GPIO()
-rgb = PikaPiZero.RGB()
+pin = machine.GPIO()
+rgb = machine.RGB()
 mem = PikaStdLib.MemChecker()
 
 pin.setPin('PA8')
@@ -29,7 +29,7 @@ def led_task():
         pin.high()
 
 
-task = STM32G0.Task()
+task = machine.Task()
 
 task.call_period_ms(rgb_task, 50)
 task.call_period_ms(led_task, 500)

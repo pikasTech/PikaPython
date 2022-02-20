@@ -1,8 +1,8 @@
 import PikaStdLib
-import STM32G0
+import machine
 
-time = STM32G0.Time()
-adc1 = STM32G0.ADC()
+time = machine.Time()
+adc1 = machine.ADC()
 
 adc1.init()
 adc1.setPin('PA1')

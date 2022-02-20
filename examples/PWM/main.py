@@ -1,8 +1,8 @@
 import PikaStdLib
-import STM32G0
+import machine
 
-time = STM32G0.Time()
-pwm = STM32G0.PWM()
+time = machine.Time()
+pwm = machine.PWM()
 pwm.setPin('PA8')
 pwm.setFrequency(2000)
 pwm.setDuty(0.5)
