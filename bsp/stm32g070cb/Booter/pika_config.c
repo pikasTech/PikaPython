@@ -123,6 +123,7 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
             codeHeap.reciveTime = uwTick;
             codeHeap.ena = 1;
             data = strLine;
+            codeHeap.content = malloc(FLASH_SCRIPT_END_ADDR - FLASH_SCRIPT_START_ADDR);
         }
     }
     if (1 == codeHeap.ena) {
@@ -132,7 +133,7 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
         codeHeap.reciveTime = uwTick;
         codeHeap.oldSize = codeHeap.size;
         codeHeap.size += rxSize;
-        codeHeap.content = realloc(codeHeap.content, codeHeap.size + 1);
+//        codeHeap.content = realloc(codeHeap.content, codeHeap.size + 1);
         memcpy(codeHeap.content + codeHeap.oldSize, data, rxSize);
         codeHeap.content[codeHeap.size] = 0;
         /* reciving code */
