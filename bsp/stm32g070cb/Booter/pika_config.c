@@ -216,7 +216,7 @@ void STM32_Code_flashHandler(void) {
     printf("\r\n");
     printf("----[code in flash]-----\r\n");
     for (int i = 0; i < strGetSize(codeHeap.content); i++) {
-        if ('\n' == codeHeap.content[i]) {
+        if ('\n' == codeHeap.content[i] && '\r' != codeHeap.content[i -1]) {
             fputc('\r', (FILE*)!NULL);
         }
         fputc(codeHeap.content[i], (FILE*)!NULL);
