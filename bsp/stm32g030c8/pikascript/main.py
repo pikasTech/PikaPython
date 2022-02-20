@@ -1,13 +1,12 @@
-import STM32G0
-import PikaPiZero
 import PikaStdLib
+import machine
 
-time = STM32G0.Time()
-adc = STM32G0.ADC()
-pin = STM32G0.GPIO()
-pwm = STM32G0.PWM()
-uart = STM32G0.UART()
-rgb = PikaPiZero.RGB()
+time = machine.Time()
+adc = machine.ADC()
+pin = machine.GPIO()
+pwm = machine.PWM()
+uart = machine.UART()
+rgb = machine.RGB()
 mem = PikaStdLib.MemChecker()
 
 rgb.init()
