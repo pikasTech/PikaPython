@@ -921,19 +921,34 @@
               <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebuger_Debuger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaDebuger_Debuger.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdData_Dict.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdData\PikaStdData_Dict.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Dict.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_List.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdData\PikaStdData_List.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_List.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileName>PikaStdData_String.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_String.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdTask_Task.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1928,19 +1943,34 @@
               <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebuger_Debuger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaDebuger_Debuger.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdData_Dict.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdData\PikaStdData_Dict.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Dict.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_List.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdData\PikaStdData_List.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_List.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileName>PikaStdData_String.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_String.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdTask_Task.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2934,19 +2964,34 @@
               <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebuger_Debuger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaDebuger_Debuger.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdData_Dict.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdData\PikaStdData_Dict.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Dict.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_List.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdData\PikaStdData_List.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_List.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileName>PikaStdData_String.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_String.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdTask_Task.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3940,19 +3985,34 @@
               <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebuger_Debuger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaDebuger_Debuger.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdData_Dict.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdData\PikaStdData_Dict.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Dict.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_List.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdData\PikaStdData_List.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_List.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileName>PikaStdData_String.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_String.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdTask_Task.c</FilePath>
             </File>
           </Files>
         </Group>
