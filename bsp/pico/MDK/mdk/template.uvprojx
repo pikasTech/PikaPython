@@ -70,7 +70,7 @@
             <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>..\..\\pikascript\pikaBeforBuild-keil.bat</UserProg1Name>
             <UserProg2Name></UserProg2Name>
@@ -339,7 +339,7 @@
               <MiscControls>-include env_wrapper.h</MiscControls>
               <Define>PICO, NDEBUG, PICO_NO_FLASH, USE_EVR_FOR_STDOUR</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\pico-sdk\src\rp2040\hardware_structs\include;..\..\pico-sdk\src\rp2_common\cmsis\include\cmsis;..\..\pico-sdk\src\rp2_common\cmsis\stub\CMSIS\Device\RaspberryPi\RP2040\Include;..\..\pico-sdk\src\boards\include\boards;..\..\pico-sdk\src\rp2040\hardware_regs\include;.\wrapper;..\..\pico-sdk\src\rp2_common\hardware_base\include;..\..\pico-sdk\src\rp2_common\hardware_watchdog\include;..\..\pico-sdk\src\rp2_common\hardware_pll\include;..\..\pico-sdk\src\rp2_common\hardware_xosc\include;..\..\pico-sdk\src\rp2_common\hardware_irq\include;..\..\pico-sdk\src\rp2_common\hardware_gpio\include;..\..\pico-sdk\src\rp2_common\hardware_resets\include;..\..\pico-sdk\src\rp2_common\hardware_clocks\include;..\..\pico-sdk\src\rp2_common\hardware_timer\include;..\..\pico-sdk\src\rp2_common\hardware_sync\include;..\..\pico-sdk\src\rp2_common\hardware_claim\include;..\..\pico-sdk\src\rp2_common\hardware_spi\include;..\..\pico-sdk\src\rp2_common\hardware_pwm\include;..\..\pico-sdk\src\rp2_common\hardware_i2c\include;..\..\pico-sdk\src\rp2_common\hardware_uart\include;..\..\pico-sdk\src\rp2_common\hardware_adc\include;..\..\pico-sdk\src\common\pico_base\include;..\..\pico-sdk\src\rp2_common\pico_multicore\include;..\..\pico-sdk\src\common\pico_sync\include;..\..\pico-sdk\src\common\pico_time\include;..\..\pico-sdk\src\common\pico_util\include;..\..\pico-sdk\src\common\pico_stdlib\include;..\..\pico-sdk\src\rp2_common\pico_stdio\include;..\..\pico-sdk\src;..\..\pico-sdk\src\rp2_common\pico_runtime\include;..\..\pico-sdk\src\rp2_common\pico_printf\include;..\..\pico-sdk\src\rp2_common\pico_bootrom\include;..\..\pico-sdk\src\rp2_common\pico_stdio\include;..\..\pico-sdk\src\rp2_common\pico_stdio_uart\include;..\..\pico-sdk\src\rp2_common\pico_stdio_usb\include;..\..\pico-sdk\src\common\pico_binary_info\include;..\..\pico-sdk\src\rp2_common\pico_stdio_semihosting\include;..\..\pico-sdk\src\rp2_common\boot_stage2\include;.\wrapper\pico_base;..\..\pikascript\pikascript-api;..\..\pikascript\pikascript-core;..\..\pikascript\pikascript-lib\PikaStdLib</IncludePath>
+              <IncludePath>..\..\pico-sdk\src\rp2040\hardware_structs\include;..\..\pico-sdk\src\rp2_common\cmsis\include\cmsis;..\..\pico-sdk\src\rp2_common\cmsis\stub\CMSIS\Device\RaspberryPi\RP2040\Include;..\..\pico-sdk\src\boards\include\boards;..\..\pico-sdk\src\rp2040\hardware_regs\include;.\wrapper;..\..\pico-sdk\src\rp2_common\hardware_base\include;..\..\pico-sdk\src\rp2_common\hardware_watchdog\include;..\..\pico-sdk\src\rp2_common\hardware_pll\include;..\..\pico-sdk\src\rp2_common\hardware_xosc\include;..\..\pico-sdk\src\rp2_common\hardware_irq\include;..\..\pico-sdk\src\rp2_common\hardware_gpio\include;..\..\pico-sdk\src\rp2_common\hardware_resets\include;..\..\pico-sdk\src\rp2_common\hardware_clocks\include;..\..\pico-sdk\src\rp2_common\hardware_timer\include;..\..\pico-sdk\src\rp2_common\hardware_sync\include;..\..\pico-sdk\src\rp2_common\hardware_claim\include;..\..\pico-sdk\src\rp2_common\hardware_spi\include;..\..\pico-sdk\src\rp2_common\hardware_pwm\include;..\..\pico-sdk\src\rp2_common\hardware_i2c\include;..\..\pico-sdk\src\rp2_common\hardware_uart\include;..\..\pico-sdk\src\rp2_common\hardware_adc\include;..\..\pico-sdk\src\common\pico_base\include;..\..\pico-sdk\src\rp2_common\pico_multicore\include;..\..\pico-sdk\src\common\pico_sync\include;..\..\pico-sdk\src\common\pico_time\include;..\..\pico-sdk\src\common\pico_util\include;..\..\pico-sdk\src\common\pico_stdlib\include;..\..\pico-sdk\src\rp2_common\pico_stdio\include;..\..\pico-sdk\src;..\..\pico-sdk\src\rp2_common\pico_runtime\include;..\..\pico-sdk\src\rp2_common\pico_printf\include;..\..\pico-sdk\src\rp2_common\pico_bootrom\include;..\..\pico-sdk\src\rp2_common\pico_stdio\include;..\..\pico-sdk\src\rp2_common\pico_stdio_uart\include;..\..\pico-sdk\src\rp2_common\pico_stdio_usb\include;..\..\pico-sdk\src\common\pico_binary_info\include;..\..\pico-sdk\src\rp2_common\pico_stdio_semihosting\include;..\..\pico-sdk\src\rp2_common\boot_stage2\include;.\wrapper\pico_base;..\..\pikascript\pikascript-lib/PikaStdLib;..\..\pikascript\pikascript-api;..\..\pikascript\pikascript-core</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -905,49 +905,49 @@
           <GroupName>pikascript-lib</GroupName>
           <Files>
             <File>
-              <FileName>PikaDebuger_Debuger.c</FileName>
+              <FileName>PikaStdLib_RangeObj.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib\PikaStdLib\PikaDebuger_Debuger.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_Dict.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_Dict.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_List.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_List.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_String.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_String.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_MemChecker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_RangeObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_StringObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_SysObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_Dict.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdTask_Task.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib\PikaStdLib\PikaStdTask_Task.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdTask_Task.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_StringObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_MemChecker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebuger_Debuger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_String.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_String.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_List.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_List.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_SysObj.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -955,59 +955,59 @@
           <GroupName>pikascript-api</GroupName>
           <Files>
             <File>
-              <FileName>PikaMain-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaMain-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>pikaScript.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\pikaScript.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_MemChecker-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_MemChecker-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_RangeObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_RangeObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_SysObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaStdLib-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-api/PikaStdLib-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_Dict-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_Dict-api.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-api/PikaStdData_Dict-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>pikaScript.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api/pikaScript.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_List-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_List-api.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-api/PikaStdData_List-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_RangeObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api/PikaStdLib_RangeObj-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaMain-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api/PikaMain-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData-api.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-api/PikaStdData-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdLib_StringObj-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-api/PikaStdLib_StringObj-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_String-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_String-api.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-api/PikaStdData_String-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_MemChecker-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api/PikaStdLib_MemChecker-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_SysObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api/PikaStdLib_SysObj-api.c</FilePath>
             </File>
           </Files>
         </Group>
