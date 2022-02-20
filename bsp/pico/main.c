@@ -132,54 +132,6 @@ int main(void)
     /* run unit test */
     obj_deinit(pikaScriptInit());
 
-    /* benchmark */
-    uint64_t nCycleUsed_c,nCycleUsed_pika = 0;
-    printf("[----------benchmark----------]\r\n");
-    __cycleof__("", {
-            nCycleUsed_c = _;
-            printf("[prime_number_100_c] Cycle Used %lld\r\n", _);
-
-        }) {
-        prime_number_100_c();
-    }
-        
-    /* create pikaMain root obj */
-    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-    /* parse python to pikaAsm */
-    Args* buffs = New_strBuff();
-    
-    char *pikaAsm = Parser_multiLineToAsm(buffs, (char *)
-            "num = 0\n"
-            "i = 2\n"
-            "for i in range(2,100):\n"
-            "    j=2\n"
-            "    is_prime = 1\n"
-            "    for j in range(2,i):\n"
-            "        if i%j==0 :\n"
-            "            is_prime = 0\n"
-            "            break\n"
-            "    if is_prime:\n"
-            "        num = num + i\n"
-            "\n");
-     __cycleof__("", {
-            nCycleUsed_pika = _;
-            printf("[prime_number_100_pika] Cycle Used %lld\r\n", _);
-        }) {
-        /* run pika Asm */
-        pikaVM_runAsm(pikaMain, pikaAsm);
-    }
-    int num = obj_getInt(pikaMain, "num");
-    if ( num != 1060){
-        printf("[error] in benchmark prime_number_100_pika \r\n");
-    }
-    /* free the pikaMain obj */
-    obj_deinit(pikaMain);
-    
-    uint64_t benchmark_result = ((double) nCycleUsed_c / (double)nCycleUsed_pika) * 100 * 100000;
-    
-    printf("\r\n[------benchmark finished ---------]\r\n");
-    printf("benchmakr result :%lld\r\n", benchmark_result);
-
     while (true) {
         breath_led();
         //gpio_put(PICO_DEFAULT_LED_PIN, 1);
