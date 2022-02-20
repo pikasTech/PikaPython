@@ -1,15 +1,22 @@
 import PikaStdLib
-import STM32G0
-import PikaPiZero
+import machine
 
+time = machine.Time()
+adc = machine.ADC()
+pin = machine.GPIO()
+pwm = machine.PWM()
+uart = machine.UART()
+rgb = machine.RGB()
 mem = PikaStdLib.MemChecker()
-print('hello pikascript')
+
+rgb.init()
+rgb.enable()
+
+print('hello 2')
 print('mem used max:')
 mem.max()
 
-rgb = PikaPiZero.RGB()
-rgb.enable()
 while True:
+    print('flowing')
     rgb.flow()
-    print('flowing...')
-  
+
