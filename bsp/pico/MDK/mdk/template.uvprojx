@@ -18,29 +18,29 @@
           <Vendor>ARM</Vendor>
           <PackID>ARM.CMSIS.5.8.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
-          <Cpu>IRAM(0x20000000,0x00020000) IROM(0x00000000,0x00040000) CPUTYPE("Cortex-M0+") CLOCK(12000000) ESEL ELITTLE</Cpu>
-          <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile></StartupFile>
+          <Cpu>IRAM(0x20000000,0x00020000) IROM(0x00000000,0x00040000) CPUTYPE(&quot;Cortex-M0+&quot;) CLOCK(12000000) ESEL ELITTLE</Cpu>
+          <FlashUtilSpec/>
+          <StartupFile/>
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000)</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:ARMCM0P_MPU$Device\ARM\ARMCM0plus\Include\ARMCM0plus_MPU.h</RegisterFile>
-          <MemoryEnv></MemoryEnv>
-          <Cmp></Cmp>
-          <Asm></Asm>
-          <Linker></Linker>
-          <OHString></OHString>
-          <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
-          <SLE66AMisc></SLE66AMisc>
-          <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile></SFDFile>
+          <MemoryEnv/>
+          <Cmp/>
+          <Asm/>
+          <Linker/>
+          <OHString/>
+          <InfinionOptionDll/>
+          <SLE66CMisc/>
+          <SLE66AMisc/>
+          <SLE66LinkerMisc/>
+          <SFDFile/>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
-          <IncludePath></IncludePath>
-          <LibPath></LibPath>
-          <RegisterFilePath></RegisterFilePath>
-          <DBRegisterFilePath></DBRegisterFilePath>
+          <BinPath/>
+          <IncludePath/>
+          <LibPath/>
+          <RegisterFilePath/>
+          <DBRegisterFilePath/>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -62,8 +62,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name/>
+            <UserProg2Name/>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -73,7 +73,7 @@
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>..\..\\pikascript\pikaBeforBuild-keil.bat</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg2Name/>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -83,14 +83,14 @@
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>.\axf2uf2.bat</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg2Name/>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString></SVCSIdString>
+          <SVCSIdString/>
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -104,8 +104,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument></CustomArgument>
-          <IncludeLibraryModules></IncludeLibraryModules>
+          <CustomArgument/>
+          <IncludeLibraryModules/>
           <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
@@ -138,11 +138,11 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
-          <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
+          <Flash3>&quot;&quot; ()</Flash3>
+          <Flash4/>
+          <pFcarmOut/>
+          <pFcarmGrp/>
+          <pFcArmRoot/>
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -174,8 +174,8 @@
             <AdsLsxf>1</AdsLsxf>
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
-            <AdsCpuType>"Cortex-M0+"</AdsCpuType>
-            <RvctDeviceName></RvctDeviceName>
+            <AdsCpuType>&quot;Cortex-M0+&quot;</AdsCpuType>
+            <RvctDeviceName/>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -309,7 +309,7 @@
                 <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector></RvctStartVector>
+            <RvctStartVector/>
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -338,8 +338,8 @@
             <VariousControls>
               <MiscControls>-include env_wrapper.h</MiscControls>
               <Define>PICO, NDEBUG, PICO_NO_FLASH, USE_EVR_FOR_STDOUR</Define>
-              <Undefine></Undefine>
-              <IncludePath>..\..\pico-sdk\src\rp2040\hardware_structs\include;..\..\pico-sdk\src\rp2_common\cmsis\include\cmsis;..\..\pico-sdk\src\rp2_common\cmsis\stub\CMSIS\Device\RaspberryPi\RP2040\Include;..\..\pico-sdk\src\boards\include\boards;..\..\pico-sdk\src\rp2040\hardware_regs\include;.\wrapper;..\..\pico-sdk\src\rp2_common\hardware_base\include;..\..\pico-sdk\src\rp2_common\hardware_watchdog\include;..\..\pico-sdk\src\rp2_common\hardware_pll\include;..\..\pico-sdk\src\rp2_common\hardware_xosc\include;..\..\pico-sdk\src\rp2_common\hardware_irq\include;..\..\pico-sdk\src\rp2_common\hardware_gpio\include;..\..\pico-sdk\src\rp2_common\hardware_resets\include;..\..\pico-sdk\src\rp2_common\hardware_clocks\include;..\..\pico-sdk\src\rp2_common\hardware_timer\include;..\..\pico-sdk\src\rp2_common\hardware_sync\include;..\..\pico-sdk\src\rp2_common\hardware_claim\include;..\..\pico-sdk\src\rp2_common\hardware_spi\include;..\..\pico-sdk\src\rp2_common\hardware_pwm\include;..\..\pico-sdk\src\rp2_common\hardware_i2c\include;..\..\pico-sdk\src\rp2_common\hardware_uart\include;..\..\pico-sdk\src\rp2_common\hardware_adc\include;..\..\pico-sdk\src\common\pico_base\include;..\..\pico-sdk\src\rp2_common\pico_multicore\include;..\..\pico-sdk\src\common\pico_sync\include;..\..\pico-sdk\src\common\pico_time\include;..\..\pico-sdk\src\common\pico_util\include;..\..\pico-sdk\src\common\pico_stdlib\include;..\..\pico-sdk\src\rp2_common\pico_stdio\include;..\..\pico-sdk\src;..\..\pico-sdk\src\rp2_common\pico_runtime\include;..\..\pico-sdk\src\rp2_common\pico_printf\include;..\..\pico-sdk\src\rp2_common\pico_bootrom\include;..\..\pico-sdk\src\rp2_common\pico_stdio\include;..\..\pico-sdk\src\rp2_common\pico_stdio_uart\include;..\..\pico-sdk\src\rp2_common\pico_stdio_usb\include;..\..\pico-sdk\src\common\pico_binary_info\include;..\..\pico-sdk\src\rp2_common\pico_stdio_semihosting\include;..\..\pico-sdk\src\rp2_common\boot_stage2\include;.\wrapper\pico_base;..\..\pikascript\pikascript-lib/PikaStdLib;..\..\pikascript\pikascript-api;..\..\pikascript\pikascript-core</IncludePath>
+              <Undefine/>
+              <IncludePath>..\..\pico-sdk\src\rp2040\hardware_structs\include;..\..\pico-sdk\src\rp2_common\cmsis\include\cmsis;..\..\pico-sdk\src\rp2_common\cmsis\stub\CMSIS\Device\RaspberryPi\RP2040\Include;..\..\pico-sdk\src\boards\include\boards;..\..\pico-sdk\src\rp2040\hardware_regs\include;.\wrapper;..\..\pico-sdk\src\rp2_common\hardware_base\include;..\..\pico-sdk\src\rp2_common\hardware_watchdog\include;..\..\pico-sdk\src\rp2_common\hardware_pll\include;..\..\pico-sdk\src\rp2_common\hardware_xosc\include;..\..\pico-sdk\src\rp2_common\hardware_irq\include;..\..\pico-sdk\src\rp2_common\hardware_gpio\include;..\..\pico-sdk\src\rp2_common\hardware_resets\include;..\..\pico-sdk\src\rp2_common\hardware_clocks\include;..\..\pico-sdk\src\rp2_common\hardware_timer\include;..\..\pico-sdk\src\rp2_common\hardware_sync\include;..\..\pico-sdk\src\rp2_common\hardware_claim\include;..\..\pico-sdk\src\rp2_common\hardware_spi\include;..\..\pico-sdk\src\rp2_common\hardware_pwm\include;..\..\pico-sdk\src\rp2_common\hardware_i2c\include;..\..\pico-sdk\src\rp2_common\hardware_uart\include;..\..\pico-sdk\src\rp2_common\hardware_adc\include;..\..\pico-sdk\src\common\pico_base\include;..\..\pico-sdk\src\rp2_common\pico_multicore\include;..\..\pico-sdk\src\common\pico_sync\include;..\..\pico-sdk\src\common\pico_time\include;..\..\pico-sdk\src\common\pico_util\include;..\..\pico-sdk\src\common\pico_stdlib\include;..\..\pico-sdk\src\rp2_common\pico_stdio\include;..\..\pico-sdk\src;..\..\pico-sdk\src\rp2_common\pico_runtime\include;..\..\pico-sdk\src\rp2_common\pico_printf\include;..\..\pico-sdk\src\rp2_common\pico_bootrom\include;..\..\pico-sdk\src\rp2_common\pico_stdio\include;..\..\pico-sdk\src\rp2_common\pico_stdio_uart\include;..\..\pico-sdk\src\rp2_common\pico_stdio_usb\include;..\..\pico-sdk\src\common\pico_binary_info\include;..\..\pico-sdk\src\rp2_common\pico_stdio_semihosting\include;..\..\pico-sdk\src\rp2_common\boot_stage2\include;.\wrapper\pico_base;..\..\pikascript\pikascript-lib/PikaStdLib;..\..\pikascript\pikascript-api;..\..\pikascript\pikascript-core;</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -354,9 +354,9 @@
             <useXO>0</useXO>
             <ClangAsOpt>2</ClangAsOpt>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls/>
               <Define>PICO_MAX_SHARED_IRQ_HANDLERS=4,LIB_CMSIS_CORE=1,PICO_CMSIS_RENAME_EXCEPTIONS=1</Define>
-              <Undefine></Undefine>
+              <Undefine/>
               <IncludePath>..\..\pico-sdk\src\rp2040\hardware_regs\include;..\..\pico-sdk\src\rp2_common\hardware_irq\include;..\..\pico-sdk\src\rp2_common\pico_platform\include;..\..\pico-sdk\src\common\pico_base\include;.\wrapper\pico_base;..\..\pico-sdk\src\rp2_common\boot_stage2\asminclude;..\..\pico-sdk\src\rp2_common\boot_stage2\include</IncludePath>
             </VariousControls>
           </Aads>
@@ -369,13 +369,13 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <pXoBase></pXoBase>
+            <pXoBase/>
             <ScatterFile>.\RP2040_debug_in_sram.sct</ScatterFile>
-            <IncludeLibs></IncludeLibs>
-            <IncludeLibsPath></IncludeLibsPath>
+            <IncludeLibs/>
+            <IncludeLibsPath/>
             <Misc>--diag_suppress=L6170,L6314,L6306,L6329 --entry=Reset_Handler</Misc>
-            <LinkerInputFile></LinkerInputFile>
-            <DisabledWarnings></DisabledWarnings>
+            <LinkerInputFile/>
+            <DisabledWarnings/>
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -400,8 +400,8 @@
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
                   <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <CustomArgument/>
+                  <IncludeLibraryModules/>
                   <ComprImg>1</ComprImg>
                 </CommonProperty>
                 <FileArmAds>
@@ -430,10 +430,10 @@
                     <v6WtE>2</v6WtE>
                     <v6Rtti>2</v6Rtti>
                     <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
+                      <MiscControls/>
+                      <Define/>
+                      <Undefine/>
+                      <IncludePath/>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -576,8 +576,8 @@
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
                   <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <CustomArgument/>
+                  <IncludeLibraryModules/>
                   <ComprImg>1</ComprImg>
                 </CommonProperty>
                 <FileArmAds>
@@ -593,10 +593,10 @@
                     <useXO>2</useXO>
                     <ClangAsOpt>0</ClangAsOpt>
                     <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
+                      <MiscControls/>
+                      <Define/>
+                      <Undefine/>
+                      <IncludePath/>
                     </VariousControls>
                   </Aads>
                 </FileArmAds>
@@ -619,8 +619,8 @@
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
                   <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <CustomArgument/>
+                  <IncludeLibraryModules/>
                   <ComprImg>1</ComprImg>
                 </CommonProperty>
                 <FileArmAds>
@@ -636,10 +636,10 @@
                     <useXO>2</useXO>
                     <ClangAsOpt>0</ClangAsOpt>
                     <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
+                      <MiscControls/>
+                      <Define/>
+                      <Undefine/>
+                      <IncludePath/>
                     </VariousControls>
                   </Aads>
                 </FileArmAds>
@@ -667,8 +667,8 @@
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
                   <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <CustomArgument/>
+                  <IncludeLibraryModules/>
                   <ComprImg>1</ComprImg>
                 </CommonProperty>
                 <FileArmAds>
@@ -684,10 +684,10 @@
                     <useXO>2</useXO>
                     <ClangAsOpt>0</ClangAsOpt>
                     <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
+                      <MiscControls/>
+                      <Define/>
+                      <Undefine/>
+                      <IncludePath/>
                     </VariousControls>
                   </Aads>
                 </FileArmAds>
@@ -735,8 +735,8 @@
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
                   <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <CustomArgument/>
+                  <IncludeLibraryModules/>
                   <ComprImg>1</ComprImg>
                 </CommonProperty>
                 <FileArmAds>
@@ -765,10 +765,10 @@
                     <v6WtE>2</v6WtE>
                     <v6Rtti>2</v6Rtti>
                     <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
+                      <MiscControls/>
+                      <Define/>
+                      <Undefine/>
+                      <IncludePath/>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -903,114 +903,12 @@
         </Group>
         <Group>
           <GroupName>pikascript-lib</GroupName>
-          <Files>
-            <File>
-              <FileName>PikaStdLib_RangeObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Dict.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_Dict.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdTask_Task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdTask_Task.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_StringObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_MemChecker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaDebuger_Debuger.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_String.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_String.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_List.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_List.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_SysObj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c</FilePath>
-            </File>
-          </Files>
-        </Group>
+          
+        <Files><File><FileName>PikaStdLib_RangeObj.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c</FilePath></File><File><FileName>PikaStdData_Dict.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_Dict.c</FilePath></File><File><FileName>PikaStdTask_Task.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdTask_Task.c</FilePath></File><File><FileName>PikaStdLib_StringObj.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c</FilePath></File><File><FileName>PikaStdLib_MemChecker.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c</FilePath></File><File><FileName>PikaDebuger_Debuger.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c</FilePath></File><File><FileName>PikaStdData_String.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_String.c</FilePath></File><File><FileName>PikaStdData_List.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_List.c</FilePath></File><File><FileName>PikaStdLib_SysObj.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c</FilePath></File></Files></Group>
         <Group>
           <GroupName>pikascript-api</GroupName>
-          <Files>
-            <File>
-              <FileName>PikaStdLib-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/PikaStdLib-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Dict-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/PikaStdData_Dict-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>pikaScript.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/pikaScript.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_List-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/PikaStdData_List-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_RangeObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/PikaStdLib_RangeObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaMain-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/PikaMain-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/PikaStdData-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_StringObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/PikaStdLib_StringObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_String-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/PikaStdData_String-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_MemChecker-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/PikaStdLib_MemChecker-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_SysObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api/PikaStdLib_SysObj-api.c</FilePath>
-            </File>
-          </Files>
-        </Group>
+          
+        <Files><File><FileName>PikaStdLib-api.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/PikaStdLib-api.c</FilePath></File><File><FileName>PikaStdData_Dict-api.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/PikaStdData_Dict-api.c</FilePath></File><File><FileName>pikaScript.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/pikaScript.c</FilePath></File><File><FileName>PikaStdData_List-api.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/PikaStdData_List-api.c</FilePath></File><File><FileName>PikaStdLib_RangeObj-api.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/PikaStdLib_RangeObj-api.c</FilePath></File><File><FileName>PikaMain-api.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/PikaMain-api.c</FilePath></File><File><FileName>PikaStdData-api.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/PikaStdData-api.c</FilePath></File><File><FileName>PikaStdLib_StringObj-api.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/PikaStdLib_StringObj-api.c</FilePath></File><File><FileName>PikaStdData_String-api.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/PikaStdData_String-api.c</FilePath></File><File><FileName>PikaStdLib_MemChecker-api.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/PikaStdLib_MemChecker-api.c</FilePath></File><File><FileName>PikaStdLib_SysObj-api.c</FileName><FileType>1</FileType><FilePath>..\..\pikascript\pikascript-api/PikaStdLib_SysObj-api.c</FilePath></File></Files></Group>
         <Group>
           <GroupName>Python</GroupName>
           <Files>
