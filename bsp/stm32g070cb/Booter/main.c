@@ -88,6 +88,8 @@ char __platform_getchar(){
     return res;
 }
 
+extern PikaObj *__pikaMain;
+
 int main(void){
     HAL_Init();
     SystemClock_Config();
@@ -113,6 +115,7 @@ int main(void){
     if (code[0] != 0xFF) {
         /* boot from flash */
         pikaMain = newRootObj("pikaMain", New_PikaMain);
+        __pikaMain = pikaMain;
         if (code[0] == 'i') {
             printf("[info]: boot from Script.\r\n");
             Arg* codeBuff = arg_setStr(NULL, "", code);
