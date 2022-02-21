@@ -3,9 +3,12 @@
 
 extern "C" {
 #include "PikaMain.h"
+#include "PikaParser.h"
 #include "PikaStdLib_MemChecker.h"
+#include "PikaVM.h"
 #include "dataArgs.h"
 #include "dataMemory.h"
+#include "dataStrs.h"
 #include "pikaScript.h"
 }
 
@@ -39,10 +42,8 @@ BENCHMARK(while_loop_10000)->Unit(benchmark::kMillisecond);
 
 static void prime_number_100(benchmark::State& state) {
     int num = 0;
-    for (auto _ : state) {
-        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-        /* run */
-        obj_run(pikaMain, (char *)
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)
             "num = 0\n"
             "i = 2\n"
             "for i in range(2,100):\n"
@@ -55,15 +56,19 @@ static void prime_number_100(benchmark::State& state) {
             "    if is_prime:\n"
             "        num = num + i\n"
             "\n");
+    for (auto _ : state) {
+        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+        /* run */
+        pikaVM_runAsm(pikaMain, pikaAsm);
         num = obj_getInt(pikaMain, (char*)"num");
         if (1060 != num) {
             printf("[error]: prime_number_100\r\n");
         }
         obj_deinit(pikaMain);
     }
+    args_deinit(buffs);
 }
 BENCHMARK(prime_number_100)->Unit(benchmark::kMillisecond);
-
 
 static void prime_number_100_c(benchmark::State& state) {
     int num = 0;
