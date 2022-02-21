@@ -637,7 +637,7 @@ void ParserState_iterStart(struct ParserState* ps) {
 void LexToken_init(struct LexToken* lt) {
     lt->pyload = NULL;
     lt->token = NULL;
-    lt->type= TYPE_NONE;
+    lt->type= TOKEN_strEnd;
 }
 
 void ParserState_init(struct ParserState* ps) {
