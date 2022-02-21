@@ -637,7 +637,7 @@ void ParserState_iterStart(struct ParserState* ps) {
 void LexToken_init(struct LexToken* lt) {
     lt->pyload = NULL;
     lt->token = NULL;
-    lt->type= TOKEN_strEnd;
+    lt->type = TOKEN_strEnd;
 }
 
 void ParserState_init(struct ParserState* ps) {
@@ -1338,16 +1338,19 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
         newAsm_arg = arg_strAppend(newAsm_arg, "\n");
         if (1 == obj_getInt(ast, "isRange")) {
-            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF _r1\n");
-            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF _r2\n");
-            newAsm_arg = arg_strAppend(newAsm_arg, "0 REF _r3\n");
-            newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
+            newAsm_arg = arg_strAppend(newAsm_arg,
+                                       "0 REF _r1\n"
+                                       "0 REF _r2\n"
+                                       "0 REF _r3\n"
+                                       "0 OUT ");
             newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
-            newAsm_arg = arg_strAppend(newAsm_arg, ".a1\n");
-            newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
+            newAsm_arg = arg_strAppend(newAsm_arg,
+                                       ".a1\n"
+                                       "0 OUT ");
             newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
-            newAsm_arg = arg_strAppend(newAsm_arg, ".a2\n");
-            newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
+            newAsm_arg = arg_strAppend(newAsm_arg,
+                                       ".a2\n"
+                                       "0 OUT ");
             newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
             newAsm_arg = arg_strAppend(newAsm_arg, ".a3\n");
         }
@@ -1360,11 +1363,13 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 0);
         newAsm_arg = arg_strAppend(newAsm_arg, "0 RUN ");
         newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
-        newAsm_arg = arg_strAppend(newAsm_arg, ".__next__\n");
-        newAsm_arg = arg_strAppend(newAsm_arg, "0 OUT ");
+        newAsm_arg = arg_strAppend(newAsm_arg,
+                                   ".__next__\n"
+                                   "0 OUT ");
         newAsm_arg = arg_strAppend(newAsm_arg, arg_in);
-        newAsm_arg = arg_strAppend(newAsm_arg, "\n");
-        newAsm_arg = arg_strAppend(newAsm_arg, "0 EST ");
+        newAsm_arg = arg_strAppend(newAsm_arg,
+                                   "\n"
+                                   "0 EST ");
         newAsm_arg = arg_strAppend(newAsm_arg, arg_in);
         newAsm_arg = arg_strAppend(newAsm_arg, "\n0 JEZ 2\n");
         pikaAsm = strsAppend(buffs, pikaAsm, arg_getStr(newAsm_arg));
@@ -1403,8 +1408,9 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     if (strEqu(obj_getStr(ast, "block"), "def")) {
         pikaAsm = strsAppend(buffs, pikaAsm, "0 DEF ");
         pikaAsm = strsAppend(buffs, pikaAsm, obj_getStr(ast, "declear"));
-        pikaAsm = strsAppend(buffs, pikaAsm, "\n");
-        pikaAsm = strsAppend(buffs, pikaAsm, "0 JMP 1\n");
+        pikaAsm = strsAppend(buffs, pikaAsm,
+                             "\n"
+                             "0 JMP 1\n");
         is_block_matched = 1;
         goto exit;
     }
