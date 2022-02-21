@@ -41,7 +41,7 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
                                     VMParameters* globals,
                                     char* pikaAsm);
 
-struct VMState {
+struct VMState_t {
     VMParameters* locals;
     VMParameters* globals;
     Queue* q0;
@@ -50,7 +50,7 @@ struct VMState {
     char* pc;
     char* ASM_start;
 };
-typedef struct VMState VM_State;
+typedef struct VMState_t VMState;
 
 static int32_t __gotoNextLine(char* code) {
     int offset = 0;
@@ -165,19 +165,13 @@ enum Instruct {
     __INSTRCUTION_CNT,
 };
 
-typedef Arg* (*VM_instruct_handler)(PikaObj* self,
-                                    struct VMState* vs,
-                                    char* data);
+typedef Arg* (*VM_instruct_handler)(PikaObj* self, VMState* vs, char* data);
 
-static Arg* VM_instruction_handler_NON(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_NON(PikaObj* self, VMState* vs, char* data) {
     return NULL;
 }
 
-static Arg* VM_instruction_handler_REF(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
     if (strEqu(data, (char*)"True")) {
         return arg_setInt(NULL, "", 1);
     }
@@ -197,9 +191,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     return arg;
 }
 
-static Arg* VM_instruction_handler_RUN(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     Args* buffs = New_strBuff();
     Arg* returnArg = NULL;
     VMParameters* subLocals = NULL;
@@ -303,16 +295,12 @@ RUN_exit:
     return returnArg;
 }
 
-static Arg* VM_instruction_handler_STR(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_STR(PikaObj* self, VMState* vs, char* data) {
     Arg* strArg = New_arg(NULL);
     return arg_setStr(strArg, "", data);
 }
 
-static Arg* VM_instruction_handler_OUT(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
     Arg* outArg = arg_copy(queue_popArg(vs->q0));
     PikaObj* hostObj = vs->locals;
     /* match global_list */
@@ -352,9 +340,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     return NULL;
 }
 
-static Arg* VM_instruction_handler_NUM(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_NUM(PikaObj* self, VMState* vs, char* data) {
     Arg* numArg = New_arg(NULL);
     if (strIsContain(data, '.')) {
         return arg_setFloat(numArg, "", atof(data));
@@ -362,16 +348,12 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
     return arg_setInt(numArg, "", fast_atoi(data));
 }
 
-static Arg* VM_instruction_handler_JMP(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_JMP(PikaObj* self, VMState* vs, char* data) {
     vs->jmp = fast_atoi(data);
     return NULL;
 }
 
-static Arg* VM_instruction_handler_JEZ(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
     int offset = 0;
     int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
     Arg* assertArg = arg_copy(queue_popArg(vs->q0));
@@ -387,9 +369,7 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
     return NULL;
 }
 
-static Arg* VM_instruction_handler_OPT(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     Arg* outArg = NULL;
     Arg* arg1 = arg_copy(queue_popArg(vs->q1));
     Arg* arg2 = arg_copy(queue_popArg(vs->q1));
@@ -553,9 +533,7 @@ OPT_exit:
     return NULL;
 }
 
-static Arg* VM_instruction_handler_DEF(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
     char* methodPtr = vs->pc;
     int offset = 0;
     int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
@@ -571,9 +549,7 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self,
     return NULL;
 }
 
-static Arg* VM_instruction_handler_RET(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_RET(PikaObj* self, VMState* vs, char* data) {
     /* exit jmp signal */
     vs->jmp = -999;
     Arg* returnArg = arg_copy(queue_popArg(vs->q0));
@@ -581,9 +557,7 @@ static Arg* VM_instruction_handler_RET(PikaObj* self,
     return NULL;
 }
 
-static Arg* VM_instruction_handler_NEL(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_NEL(PikaObj* self, VMState* vs, char* data) {
     int offset = 0;
     int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
     char __else[] = "__else0";
@@ -595,16 +569,12 @@ static Arg* VM_instruction_handler_NEL(PikaObj* self,
     return NULL;
 }
 
-static Arg* VM_instruction_handler_DEL(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_DEL(PikaObj* self, VMState* vs, char* data) {
     obj_removeArg(vs->locals, data);
     return NULL;
 }
 
-static Arg* VM_instruction_handler_EST(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_EST(PikaObj* self, VMState* vs, char* data) {
     Arg* arg = obj_getArg(vs->locals, data);
     if (arg == NULL) {
         return arg_setInt(NULL, "", 0);
@@ -615,25 +585,19 @@ static Arg* VM_instruction_handler_EST(PikaObj* self,
     return arg_setInt(NULL, "", 1);
 }
 
-static Arg* VM_instruction_handler_BRK(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_BRK(PikaObj* self, VMState* vs, char* data) {
     /* break jmp signal */
     vs->jmp = -998;
     return NULL;
 }
 
-static Arg* VM_instruction_handler_CTN(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_CTN(PikaObj* self, VMState* vs, char* data) {
     /* continue jmp signal */
     vs->jmp = -997;
     return NULL;
 }
 
-static Arg* VM_instruction_handler_GLB(PikaObj* self,
-                                       struct VMState* vs,
-                                       char* data) {
+static Arg* VM_instruction_handler_GLB(PikaObj* self, VMState* vs, char* data) {
     Arg* global_list_buff = NULL;
     char* global_list = args_getStr(vs->locals->list, "__gl");
     /* create new global_list */
@@ -671,7 +635,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
                           char* pikaAsm,
                           int32_t lineAddr) {
     Args* buffs = New_strBuff();
-    VM_State vs = {
+    VMState vs = {
         .locals = locals,
         .globals = globals,
         .q0 = NULL,
