@@ -37,11 +37,11 @@
 
 /* local head */
 VM_Parameters* pikaVM_runAsmWithPars(PikaObj* self,
-                                  VM_Parameters* locals,
-                                  VM_Parameters* globals,
-                                  char* pikaAsm);
+                                     VM_Parameters* locals,
+                                     VM_Parameters* globals,
+                                     char* pikaAsm);
 
-struct VM_State_t {
+struct VMState {
     VM_Parameters* locals;
     VM_Parameters* globals;
     Queue* q0;
@@ -50,7 +50,7 @@ struct VM_State_t {
     char* pc;
     char* ASM_start;
 };
-typedef struct VM_State_t VM_State;
+typedef struct VMState VM_State;
 
 static int32_t __gotoNextLine(char* code) {
     int offset = 0;
@@ -166,17 +166,17 @@ enum Instruct {
 };
 
 typedef Arg* (*VM_instruct_handler)(PikaObj* self,
-                                    struct VM_State_t* vmState,
+                                    struct VMState* vs,
                                     char* data);
 
 static Arg* VM_instruction_handler_NON(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     return NULL;
 }
 
 static Arg* VM_instruction_handler_REF(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     if (strEqu(data, (char*)"True")) {
         return arg_setInt(NULL, "", 1);
@@ -185,10 +185,10 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
         return arg_setInt(NULL, "", 0);
     }
     /* find in local list first */
-    Arg* arg = arg_copy(obj_getArg(vmState->locals, data));
+    Arg* arg = arg_copy(obj_getArg(vs->locals, data));
     if (NULL == arg) {
         /* find in global list second */
-        arg = arg_copy(obj_getArg(vmState->globals, data));
+        arg = arg_copy(obj_getArg(vs->globals, data));
     }
     ArgType arg_type = arg_getType(arg);
     if (TYPE_OBJECT == arg_type) {
@@ -198,7 +198,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
 }
 
 static Arg* VM_instruction_handler_RUN(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     Args* buffs = New_strBuff();
     Arg* returnArg = NULL;
@@ -213,20 +213,19 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     char* sysOut;
     /* return arg directly */
     if (strEqu(data, "")) {
-        returnArg = arg_copy(queue_popArg(vmState->q1));
+        returnArg = arg_copy(queue_popArg(vs->q1));
         goto RUN_exit;
     }
 
     /* get method host obj */
     methodHostObj = obj_getObj(self, methodPath, 1);
     if (NULL == methodHostObj) {
-        methodHostObj = obj_getObj(vmState->locals, methodPath, 1);
+        methodHostObj = obj_getObj(vs->locals, methodPath, 1);
     }
     if (NULL == methodHostObj) {
         /* error, not found object */
-        args_setErrorCode(vmState->locals->list, 1);
-        args_setSysOut(vmState->locals->list,
-                       "[error] runner: object no found.");
+        args_setErrorCode(vs->locals->list, 1);
+        args_setSysOut(vs->locals->list, "[error] runner: object no found.");
         goto RUN_exit;
     }
     /* get method */
@@ -234,9 +233,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     /* assert method*/
     if (NULL == method_arg) {
         /* error, method no found */
-        args_setErrorCode(vmState->locals->list, 2);
-        args_setSysOut(vmState->locals->list,
-                       "[error] runner: method no found.");
+        args_setErrorCode(vs->locals->list, 2);
+        args_setSysOut(vs->locals->list, "[error] runner: method no found.");
         goto RUN_exit;
     }
     /* get method Ptr */
@@ -250,15 +248,14 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 
     if (typeList == NULL) {
         /* typeList no found */
-        args_setErrorCode(vmState->locals->list, 3);
-        args_setSysOut(vmState->locals->list,
-                       "[error] runner: type list no found.");
+        args_setErrorCode(vs->locals->list, 3);
+        args_setSysOut(vs->locals->list, "[error] runner: type list no found.");
         goto RUN_exit;
     }
 
     subLocals = New_PikaObj();
     while (1) {
-        Arg* methodArg = arg_copy(queue_popArg(vmState->q1));
+        Arg* methodArg = arg_copy(queue_popArg(vs->q1));
         if (NULL == methodArg) {
             break;
         }
@@ -275,8 +272,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     methodCode = (char*)methodPtr;
     if (methodCode[0] == 'B' && methodCode[2] == '\n') {
         /* VM method */
-        subLocals = pikaVM_runAsmWithPars(methodHostObj, subLocals,
-                                          vmState->globals, methodCode);
+        subLocals = pikaVM_runAsmWithPars(methodHostObj, subLocals, vs->globals,
+                                          methodCode);
         /* get method return */
         returnArg = arg_copy(args_getArg(subLocals->list, (char*)"return"));
     } else {
@@ -289,12 +286,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     /* transfer sysOut */
     sysOut = obj_getSysOut(methodHostObj);
     if (NULL != sysOut) {
-        args_setSysOut(vmState->locals->list, sysOut);
+        args_setSysOut(vs->locals->list, sysOut);
     }
     /* transfer errCode */
     if (0 != obj_getErrorCode(methodHostObj)) {
         /* method error */
-        args_setErrorCode(vmState->locals->list, 6);
+        args_setErrorCode(vs->locals->list, 6);
     }
 
     goto RUN_exit;
@@ -307,20 +304,20 @@ RUN_exit:
 }
 
 static Arg* VM_instruction_handler_STR(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     Arg* strArg = New_arg(NULL);
     return arg_setStr(strArg, "", data);
 }
 
 static Arg* VM_instruction_handler_OUT(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
-    Arg* outArg = arg_copy(queue_popArg(vmState->q0));
-    PikaObj* hostObj = vmState->locals;
+    Arg* outArg = arg_copy(queue_popArg(vs->q0));
+    PikaObj* hostObj = vs->locals;
     /* match global_list */
-    if (args_isArgExist(vmState->locals->list, "__gl")) {
-        char* global_list = args_getStr(vmState->locals->list, "__gl");
+    if (args_isArgExist(vs->locals->list, "__gl")) {
+        char* global_list = args_getStr(vs->locals->list, "__gl");
         /* use a arg as buff */
         Arg* global_list_arg = arg_setStr(NULL, "", global_list);
         char* global_list_buff = arg_getStr(global_list_arg);
@@ -330,7 +327,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
             char* global_arg = strPopToken(token_buff, global_list_buff, ',');
             /* matched global arg, hostObj set to global */
             if (strEqu(global_arg, data)) {
-                hostObj = vmState->globals;
+                hostObj = vs->globals;
             }
         }
         arg_deinit(global_list_arg);
@@ -356,7 +353,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
 }
 
 static Arg* VM_instruction_handler_NUM(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     Arg* numArg = New_arg(NULL);
     if (strIsContain(data, '.')) {
@@ -366,19 +363,18 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
 }
 
 static Arg* VM_instruction_handler_JMP(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
-    vmState->jmp = fast_atoi(data);
+    vs->jmp = fast_atoi(data);
     return NULL;
 }
 
 static Arg* VM_instruction_handler_JEZ(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     int offset = 0;
-    int thisBlockDeepth =
-        __getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
-    Arg* assertArg = arg_copy(queue_popArg(vmState->q0));
+    int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
+    Arg* assertArg = arg_copy(queue_popArg(vs->q0));
     int assert = arg_getInt(assertArg);
     arg_deinit(assertArg);
     char __else[] = "__else0";
@@ -386,17 +382,17 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
     args_setInt(self->list, __else, !assert);
     if (0 == assert) {
         /* set __else flag */
-        vmState->jmp = fast_atoi(data);
+        vs->jmp = fast_atoi(data);
     }
     return NULL;
 }
 
 static Arg* VM_instruction_handler_OPT(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     Arg* outArg = NULL;
-    Arg* arg1 = arg_copy(queue_popArg(vmState->q1));
-    Arg* arg2 = arg_copy(queue_popArg(vmState->q1));
+    Arg* arg1 = arg_copy(queue_popArg(vs->q1));
+    Arg* arg2 = arg_copy(queue_popArg(vs->q1));
     ArgType type_arg1 = arg_getType(arg1);
     ArgType type_arg2 = arg_getType(arg2);
     int num1_i = 0;
@@ -558,12 +554,11 @@ OPT_exit:
 }
 
 static Arg* VM_instruction_handler_DEF(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
-    char* methodPtr = vmState->pc;
+    char* methodPtr = vs->pc;
     int offset = 0;
-    int thisBlockDeepth =
-        __getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
+    int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
     while (1) {
         if ((methodPtr[0] == 'B') &&
             (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
@@ -571,47 +566,46 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self,
             break;
         }
         offset += __gotoNextLine(methodPtr);
-        methodPtr = vmState->pc + offset;
+        methodPtr = vs->pc + offset;
     }
     return NULL;
 }
 
 static Arg* VM_instruction_handler_RET(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     /* exit jmp signal */
-    vmState->jmp = -999;
-    Arg* returnArg = arg_copy(queue_popArg(vmState->q0));
-    method_returnArg(vmState->locals->list, returnArg);
+    vs->jmp = -999;
+    Arg* returnArg = arg_copy(queue_popArg(vs->q0));
+    method_returnArg(vs->locals->list, returnArg);
     return NULL;
 }
 
 static Arg* VM_instruction_handler_NEL(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     int offset = 0;
-    int thisBlockDeepth =
-        __getThisBlockDeepth(vmState->ASM_start, vmState->pc, &offset);
+    int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
     char __else[] = "__else0";
     __else[6] = '0' + thisBlockDeepth;
     if (0 == args_getInt(self->list, __else)) {
         /* set __else flag */
-        vmState->jmp = fast_atoi(data);
+        vs->jmp = fast_atoi(data);
     }
     return NULL;
 }
 
 static Arg* VM_instruction_handler_DEL(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
-    obj_removeArg(vmState->locals, data);
+    obj_removeArg(vs->locals, data);
     return NULL;
 }
 
 static Arg* VM_instruction_handler_EST(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
-    Arg* arg = obj_getArg(vmState->locals, data);
+    Arg* arg = obj_getArg(vs->locals, data);
     if (arg == NULL) {
         return arg_setInt(NULL, "", 0);
     }
@@ -622,36 +616,36 @@ static Arg* VM_instruction_handler_EST(PikaObj* self,
 }
 
 static Arg* VM_instruction_handler_BRK(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     /* break jmp signal */
-    vmState->jmp = -998;
+    vs->jmp = -998;
     return NULL;
 }
 
 static Arg* VM_instruction_handler_CTN(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     /* continue jmp signal */
-    vmState->jmp = -997;
+    vs->jmp = -997;
     return NULL;
 }
 
 static Arg* VM_instruction_handler_GLB(PikaObj* self,
-                                       struct VM_State_t* vmState,
+                                       struct VMState* vs,
                                        char* data) {
     Arg* global_list_buff = NULL;
-    char* global_list = args_getStr(vmState->locals->list, "__gl");
+    char* global_list = args_getStr(vs->locals->list, "__gl");
     /* create new global_list */
     if (NULL == global_list) {
-        args_setStr(vmState->locals->list, "__gl", data);
+        args_setStr(vs->locals->list, "__gl", data);
         goto exit;
     }
     /* append to exist global_list */
     global_list_buff = arg_setStr(NULL, "", global_list);
     global_list_buff = arg_strAppend(global_list_buff, ",");
     global_list_buff = arg_strAppend(global_list_buff, data);
-    args_setStr(vmState->locals->list, "__gl", arg_getStr(global_list_buff));
+    args_setStr(vs->locals->list, "__gl", arg_getStr(global_list_buff));
     goto exit;
 exit:
     if (NULL != global_list_buff) {
@@ -677,7 +671,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
                           char* pikaAsm,
                           int32_t lineAddr) {
     Args* buffs = New_strBuff();
-    VM_State vmState = {
+    VM_State vs = {
         .locals = locals,
         .globals = globals,
         .q0 = NULL,
@@ -686,7 +680,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         .pc = pikaAsm + lineAddr,
         .ASM_start = pikaAsm,
     };
-    char* line = strsGetLine(buffs, vmState.pc);
+    char* line = strsGetLine(buffs, vs.pc);
     int32_t nextAddr = lineAddr + strGetSize(line) + 1;
     enum Instruct instruct;
     char invokeDeepth0[2] = {0}, invokeDeepth1[2] = {0};
@@ -705,45 +699,43 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     instruct = __getInstruct(line);
     data = line + 6;
 
-    vmState.q0 = args_getPtr(locals->list, invokeDeepth0);
-    vmState.q1 = args_getPtr(locals->list, invokeDeepth1);
-    if (NULL == vmState.q0) {
-        vmState.q0 = New_queue();
-        args_setPtr(locals->list, invokeDeepth0, vmState.q0);
+    vs.q0 = args_getPtr(locals->list, invokeDeepth0);
+    vs.q1 = args_getPtr(locals->list, invokeDeepth1);
+    if (NULL == vs.q0) {
+        vs.q0 = New_queue();
+        args_setPtr(locals->list, invokeDeepth0, vs.q0);
     }
-    if (NULL == vmState.q1) {
-        vmState.q1 = New_queue();
-        args_setPtr(locals->list, invokeDeepth1, vmState.q1);
+    if (NULL == vs.q1) {
+        vs.q1 = New_queue();
+        args_setPtr(locals->list, invokeDeepth1, vs.q1);
     }
     /* run instruct */
-    resArg = VM_instruct_handler_table[instruct](self, &vmState, data);
+    resArg = VM_instruct_handler_table[instruct](self, &vs, data);
     if (NULL != resArg) {
-        queue_pushArg(vmState.q0, resArg);
+        queue_pushArg(vs.q0, resArg);
     }
     goto nextLine;
 nextLine:
     args_deinit(buffs);
     /* exit */
-    if (-999 == vmState.jmp) {
+    if (-999 == vs.jmp) {
         return -99999;
     }
     /* break or continue */
-    if ((-998 == vmState.jmp) || (-997 == vmState.jmp)) {
-        int32_t loop_end_addr = __getAddrOffsetOfJUM(vmState.pc);
+    if ((-998 == vs.jmp) || (-997 == vs.jmp)) {
+        int32_t loop_end_addr = __getAddrOffsetOfJUM(vs.pc);
         /* break */
-        if (-998 == vmState.jmp) {
-            loop_end_addr += __gotoNextLine(vmState.pc + loop_end_addr);
+        if (-998 == vs.jmp) {
+            loop_end_addr += __gotoNextLine(vs.pc + loop_end_addr);
             return lineAddr + loop_end_addr;
         }
-        if (-997 == vmState.jmp) {
-            loop_end_addr +=
-                __gotoLastLine(pikaAsm, vmState.pc + loop_end_addr);
+        if (-997 == vs.jmp) {
+            loop_end_addr += __gotoLastLine(pikaAsm, vs.pc + loop_end_addr);
             return lineAddr + loop_end_addr;
         }
     }
-    if (vmState.jmp != 0) {
-        return lineAddr +
-               __getAddrOffsetFromJmp(pikaAsm, vmState.pc, vmState.jmp);
+    if (vs.jmp != 0) {
+        return lineAddr + __getAddrOffsetFromJmp(pikaAsm, vs.pc, vs.jmp);
     }
     return nextAddr;
 }
