@@ -610,9 +610,11 @@ struct LexToken {
 
 struct ParserState {
     char* tokens;
+    uint16_t length;
     struct LexToken token1;
     struct LexToken token2;
     Arg* last_token;
+    Args* iter_buffs;
     Args* buffs;
 };
 
@@ -621,10 +623,10 @@ void LexToken_update(struct LexToken* lex_token) {
     lex_token->pyload = Lexer_getTokenPyload(lex_token->token);
 }
 
-void ParserState_update(struct ParserState* ps) {
-    ps->buffs = New_strBuff();
-    ps->token1.token = strsCopy(ps->buffs, arg_getStr(ps->last_token));
-    ps->token2.token = Lexer_popToken(ps->buffs, ps->tokens);
+void ParserState_iterStart(struct ParserState* ps) {
+    ps->iter_buffs = New_strBuff();
+    ps->token1.token = strsCopy(ps->iter_buffs, arg_getStr(ps->last_token));
+    ps->token2.token = Lexer_popToken(ps->iter_buffs, ps->tokens);
     arg_deinit(ps->last_token);
     ps->last_token = arg_setStr(NULL, "", ps->token2.token);
 
@@ -640,10 +642,35 @@ void LexToken_init(struct LexToken* lt) {
 
 void ParserState_init(struct ParserState* ps) {
     ps->tokens = NULL;
+    ps->length = 0;
     ps->last_token = NULL;
-    ps->buffs = NULL;
+    ps->iter_buffs = NULL;
+    ps->buffs = New_strBuff();
     LexToken_init(&ps->token1);
     LexToken_init(&ps->token2);
+}
+
+void ParserState_iterEnd(struct ParserState* ps) {
+    args_deinit(ps->iter_buffs);
+}
+
+void ParserState_deinit(struct ParserState* ps) {
+    if (NULL != ps->last_token) {
+        arg_deinit(ps->last_token);
+    }
+    args_deinit(ps->buffs);
+}
+
+void ParserState_parse(struct ParserState* ps, char* stmt) {
+    ps->tokens = Lexer_getTokens(ps->buffs, stmt);
+    ps->length = Lexer_getTokenSize(ps->tokens);
+}
+
+void ParserState_beforeIter(struct ParserState* ps) {
+    /* clear first token */
+    Lexer_popToken(ps->buffs, ps->tokens);
+    ps->last_token =
+        arg_setStr(NULL, "", Lexer_popToken(ps->buffs, ps->tokens));
 }
 
 char* Parser_solveBranckets(Args* outBuffs,
@@ -652,18 +679,19 @@ char* Parser_solveBranckets(Args* outBuffs,
                             char* mode) {
     /* init objects */
     Args* buffs = New_args(NULL);
-    struct ParserState ps;
-    ParserState_init(&ps);
     Arg* right_arg = arg_setStr(NULL, "", "");
     uint8_t is_in_brancket = 0;
     args_setStr(buffs, "index", "");
+    /* init parserState */
+    struct ParserState ps;
+    ParserState_init(&ps);
     /* exit when NULL */
     if (NULL == content) {
         arg_deinit(right_arg);
         right_arg = arg_setStr(right_arg, "", stmt);
         goto exit;
     }
-    ps.tokens = Lexer_getTokens(buffs, content);
+    ParserState_parse(&ps, content);
     /* exit when no '[' ']' */
     if (!Lexer_isContain(ps.tokens, TOKEN_devider, "[")) {
         /* not contain '[', return origin */
@@ -675,13 +703,9 @@ char* Parser_solveBranckets(Args* outBuffs,
         }
         goto exit;
     }
-    uint16_t tokens_num = Lexer_getTokenSize(ps.tokens);
-    /* clear first token */
-    Lexer_popToken(buffs, ps.tokens);
-    ps.last_token = arg_setStr(NULL, "", Lexer_popToken(buffs, ps.tokens));
-    for (int i = 0; i < tokens_num; i++) {
-        ParserState_update(&ps);
-
+    ParserState_beforeIter(&ps);
+    for (int i = 0; i < ps.length; i++) {
+        ParserState_iterStart(&ps);
         /* matched [] */
         if ((TOKEN_devider == ps.token2.type) &&
             (strEqu(ps.token2.pyload, "["))) {
@@ -723,13 +747,13 @@ char* Parser_solveBranckets(Args* outBuffs,
         } else if (!is_in_brancket && (!strEqu(ps.token1.pyload, "]"))) {
             right_arg = arg_strAppend(right_arg, ps.token1.pyload);
         }
-        args_deinit(ps.buffs);
+        ParserState_iterEnd(&ps);
     }
-    arg_deinit(ps.last_token);
 
 exit:
     /* clean and return */
     content = strsCopy(outBuffs, arg_getStr(right_arg));
+    ParserState_deinit(&ps);
     arg_deinit(right_arg);
     args_deinit(buffs);
     return content;
