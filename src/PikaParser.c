@@ -552,8 +552,8 @@ exit:
     return tokens;
 }
 
-char* Lexer_popToken(Args* buffs, char* tokens_buff) {
-    return strsPopToken(buffs, tokens_buff, 0x1F);
+char* Lexer_popToken(Args* buffs, char* tokens) {
+    return strsPopToken(buffs, tokens, 0x1F);
 }
 
 enum TokenType Lexer_getTokenType(char* token) {
@@ -602,26 +602,67 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     return operator;
 }
 
+struct LexToken {
+    char* token;
+    enum TokenType type;
+    char* pyload;
+};
+
+struct ParserState {
+    char* tokens;
+    struct LexToken token1;
+    struct LexToken token2;
+    Arg* token2_last_arg;
+    Args* buffs;
+};
+
+char* Parser_updateParseState(struct ParserState* parse_state) {
+    parse_state->buffs = New_strBuff();
+    parse_state->token1.token =
+        strsCopy(parse_state->buffs, arg_getStr(parse_state->token2_last_arg));
+    arg_deinit(parse_state->token2_last_arg);
+    parse_state->token2.token =
+        Lexer_popToken(parse_state->buffs, parse_state->tokens);
+    parse_state->token2_last_arg =
+        arg_setStr(NULL, "", parse_state->token2.token);
+    parse_state->token1.type = Lexer_getTokenType(parse_state->token1.token);
+    parse_state->token2.type = Lexer_getTokenType(parse_state->token2.token);
+    parse_state->token1.pyload =
+        Lexer_getTokenPyload(parse_state->token1.token);
+    parse_state->token2.pyload =
+        Lexer_getTokenPyload(parse_state->token2.token);
+}
+
 char* Parser_solveBranckets(Args* outBuffs,
                             char* content,
                             char* stmt,
                             char* mode) {
     Args* buffs = New_args(NULL);
-    char* tokens = NULL;
-    char *token1, *token2 = NULL;
-    char *pyload1, *pyload2 = NULL;
+    struct ParserState parse_state = {.tokens = NULL,
+                                      .token1 =
+                                          {
+                                              .pyload = NULL,
+                                              .token = NULL,
+                                              .type = TYPE_NONE,
+                                          },
+                                      .token2 =
+                                          {
+                                              .pyload = NULL,
+                                              .token = NULL,
+                                              .type = TYPE_NONE,
+                                          },
+                                      .token2_last_arg = NULL,
+                                      .buffs = NULL};
     Arg* right_arg = arg_setStr(NULL, "", "");
-    Arg* token1_arg = NULL;
     uint8_t is_in_brancket = 0;
     args_setStr(buffs, "index", "");
-    enum TokenType /* token_type1, */ token_type2;
     if (NULL == content) {
         arg_deinit(right_arg);
         right_arg = arg_setStr(right_arg, "", stmt);
         goto exit;
     }
-    tokens = Lexer_getTokens(buffs, content);
-    if (!Lexer_isContain(tokens, TOKEN_devider, "[")) {
+    parse_state.tokens = Lexer_getTokens(buffs, content);
+    if (!Lexer_isContain(parse_state.tokens, TOKEN_devider, "[")) {
         /* not contain '[', return origin */
         arg_deinit(right_arg);
         if (strEqu(mode, "right")) {
@@ -631,29 +672,24 @@ char* Parser_solveBranckets(Args* outBuffs,
         }
         goto exit;
     }
-    uint16_t tokens_num = Lexer_getTokenSize(tokens);
-    Lexer_popToken(buffs, tokens);
-    token1_arg = arg_setStr(NULL, "", Lexer_popToken(buffs, tokens));
+    uint16_t tokens_num = Lexer_getTokenSize(parse_state.tokens);
+    Lexer_popToken(buffs, parse_state.tokens);
+    parse_state.token2_last_arg =
+        arg_setStr(NULL, "", Lexer_popToken(buffs, parse_state.tokens));
     for (int i = 0; i < tokens_num; i++) {
-        Args* token_buffs = New_strBuff();
-        token1 = strsCopy(token_buffs, arg_getStr(token1_arg));
-        arg_deinit(token1_arg);
-        token2 = Lexer_popToken(token_buffs, tokens);
-        token1_arg = arg_setStr(NULL, "", token2);
-        // token_type1 = Lexer_getTokenType(token1);
-        token_type2 = Lexer_getTokenType(token2);
-        pyload1 = Lexer_getTokenPyload(token1);
-        pyload2 = Lexer_getTokenPyload(token2);
+        Parser_updateParseState(&parse_state);
 
         /* matched [] */
-        if ((TOKEN_devider == token_type2) && (strEqu(pyload2, "["))) {
-            args_setStr(buffs, "obj", pyload1);
+        if ((TOKEN_devider == parse_state.token2.type) &&
+            (strEqu(parse_state.token2.pyload, "["))) {
+            args_setStr(buffs, "obj", parse_state.token1.pyload);
             is_in_brancket = 1;
-        } else if ((TOKEN_devider == token_type2) && (strEqu(pyload2, "]"))) {
+        } else if ((TOKEN_devider == parse_state.token2.type) &&
+                   (strEqu(parse_state.token2.pyload, "]"))) {
             is_in_brancket = 0;
             char* index = args_getStr(buffs, "index");
             Arg* index_arg = arg_setStr(NULL, "", index);
-            index_arg = arg_strAppend(index_arg, pyload1);
+            index_arg = arg_strAppend(index_arg, parse_state.token1.pyload);
             args_setStr(buffs, "index", arg_getStr(index_arg));
             arg_deinit(index_arg);
 
@@ -675,18 +711,20 @@ char* Parser_solveBranckets(Args* outBuffs,
             }
             right_arg = arg_strAppend(right_arg, ")");
             args_setStr(buffs, "index", "");
-        } else if (is_in_brancket && (!strEqu(pyload1, "["))) {
+        } else if (is_in_brancket &&
+                   (!strEqu(parse_state.token1.pyload, "["))) {
             char* index = args_getStr(buffs, "index");
             Arg* index_arg = arg_setStr(NULL, "", index);
-            index_arg = arg_strAppend(index_arg, pyload1);
+            index_arg = arg_strAppend(index_arg, parse_state.token1.pyload);
             args_setStr(buffs, "index", arg_getStr(index_arg));
             arg_deinit(index_arg);
-        } else if (!is_in_brancket && (!strEqu(pyload1, "]"))) {
-            right_arg = arg_strAppend(right_arg, pyload1);
+        } else if (!is_in_brancket &&
+                   (!strEqu(parse_state.token1.pyload, "]"))) {
+            right_arg = arg_strAppend(right_arg, parse_state.token1.pyload);
         }
-        args_deinit(token_buffs);
+        args_deinit(parse_state.buffs);
     }
-    arg_deinit(token1_arg);
+    arg_deinit(parse_state.token2_last_arg);
 
 exit:
     /* clean and return */
@@ -762,6 +800,41 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         method = strsGetFirstToken(buffs, right, '(');
         obj_setStr(ast, (char*)"method", method);
         char* subStmts = strsCut(buffs, right, '(', ')');
+        // char* tokens = Lexer_getTokens(buffs, subStmts);
+        // uint16_t tokens_size = Lexer_getTokenSize(tokens);
+        // Arg* subStmt = arg_setStr(NULL, "", "");
+        // char* subStmt_str = NULL;
+        // uint8_t is_in_brankets;
+        // for (int i = 0; i < tokens_size; i++) {
+        //     char* token = Lexer_popToken(buffs, tokens);
+        //     enum TokenType token_type = Lexer_getTokenType(token);
+        //     char* pyload = Lexer_getTokenPyload(token);
+        //     subStmt_str = pyload;
+        //     if (token_type == TOKEN_strEnd) {
+        //         continue;
+        //     }
+        //     if (strEqu(pyload, "(")) {
+        //         is_in_brankets++;
+        //     }
+        //     if (is_in_brankets > 0) {
+        //         subStmt = arg_strAppend(subStmt, pyload);
+        //     }
+        //     if (strEqu(pyload, ")")) {
+        //         is_in_brankets--;
+        //         if (is_in_brankets > 0) {
+        //             continue;
+        //         }
+        //         subStmt_str = arg_getStr(subStmt);
+        //     }
+        //     if (strEqu(pyload, ",")) {
+        //         continue;
+        //     }
+        //     queueObj_pushObj(ast, (char*)"stmt");
+        //     AST_parseStmt(queueObj_getCurrentObj(ast), subStmt_str);
+        //     arg_deinit(subStmt);
+        //     subStmt = arg_setStr(NULL, "", "");
+        // }
+        // arg_deinit(subStmt);
         while (1) {
             char* subStmt =
                 strsPopTokenWithSkip(buffs, subStmts, ',', '(', ')');
@@ -1013,6 +1086,10 @@ char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack) {
     AST* ast = NULL;
     /* pre process */
     line = Parser_linePreProcess(buffs, line);
+    if (NULL == line) {
+        /* preprocess error */
+        goto exit;
+    }
     if (strEqu("@annontation", line)) {
         ASM = "";
         goto exit;

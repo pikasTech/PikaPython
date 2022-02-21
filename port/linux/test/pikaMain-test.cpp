@@ -1023,3 +1023,31 @@ TEST(pikaMain, global) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, complex_str) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(pikaMain, (char*)"print('test,test')\n");
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, synac_err_1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(pikaMain, (char*)"print('testtest)\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"[error]: Syntax error.\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

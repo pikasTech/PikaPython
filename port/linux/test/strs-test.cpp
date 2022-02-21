@@ -89,3 +89,11 @@ TEST(strs, strsReplace) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(strs, cut_){
+    Args* buffs = New_strBuff();
+    char* res = strsCut(buffs, (char*)"print('test,test')", '(', ')');
+    EXPECT_STREQ(res, (char*)"'test,test'");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
