@@ -67,16 +67,16 @@ void HARDWARE_PRINTF_Init(void) {
     LL_USART_EnableIT_RXNE(USART1);
     LL_USART_EnableIT_PE(USART1);
 }
-#pragma import(__use_no_semihosting)
-void _sys_exit(int x) {
-    x = x;
-}
+//#pragma import(__use_no_semihosting)
+//void _sys_exit(int x) {
+//    x = x;
+//}
 
-struct __FILE{
-    int handle;
-};
+//struct __FILE{
+//    int handle;
+//};
 
-FILE __stdout;
+//FILE __stdout;
 int fputc(int ch, FILE* f) {
     LL_USART_TransmitData8(USART1, ch);
     while (LL_USART_IsActiveFlag_TC(USART1) != 1)
