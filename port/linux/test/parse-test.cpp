@@ -104,6 +104,25 @@ TEST(parser, method2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, method_void) {
+    char* line = (char*)"a(c())";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 REF a\n"
+                 "2 REF se.b\n"
+                 "3 REF pp\n"
+                 "2 RUN diek\n"
+                 "1 RUN b.add\n"
+                 "1 RUN pmw.c\n"
+                 "0 RUN a.add\n"
+                 "0 OUT d.p\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(parser, str1) {
     char* line = (char*)"literal('2.322')";
     Args* buffs = New_strBuff();
