@@ -650,19 +650,22 @@ char* Parser_solveBranckets(Args* outBuffs,
                             char* content,
                             char* stmt,
                             char* mode) {
+    /* init objects */
     Args* buffs = New_args(NULL);
-    struct ParserState parse_state;
-    ParserState_init(&parse_state);
+    struct ParserState ps;
+    ParserState_init(&ps);
     Arg* right_arg = arg_setStr(NULL, "", "");
     uint8_t is_in_brancket = 0;
     args_setStr(buffs, "index", "");
+    /* exit when NULL */
     if (NULL == content) {
         arg_deinit(right_arg);
         right_arg = arg_setStr(right_arg, "", stmt);
         goto exit;
     }
-    parse_state.tokens = Lexer_getTokens(buffs, content);
-    if (!Lexer_isContain(parse_state.tokens, TOKEN_devider, "[")) {
+    ps.tokens = Lexer_getTokens(buffs, content);
+    /* exit when no '[' ']' */
+    if (!Lexer_isContain(ps.tokens, TOKEN_devider, "[")) {
         /* not contain '[', return origin */
         arg_deinit(right_arg);
         if (strEqu(mode, "right")) {
@@ -672,24 +675,24 @@ char* Parser_solveBranckets(Args* outBuffs,
         }
         goto exit;
     }
-    uint16_t tokens_num = Lexer_getTokenSize(parse_state.tokens);
-    Lexer_popToken(buffs, parse_state.tokens);
-    parse_state.last_token =
-        arg_setStr(NULL, "", Lexer_popToken(buffs, parse_state.tokens));
+    uint16_t tokens_num = Lexer_getTokenSize(ps.tokens);
+    /* clear first token */
+    Lexer_popToken(buffs, ps.tokens);
+    ps.last_token = arg_setStr(NULL, "", Lexer_popToken(buffs, ps.tokens));
     for (int i = 0; i < tokens_num; i++) {
-        ParserState_update(&parse_state);
+        ParserState_update(&ps);
 
         /* matched [] */
-        if ((TOKEN_devider == parse_state.token2.type) &&
-            (strEqu(parse_state.token2.pyload, "["))) {
-            args_setStr(buffs, "obj", parse_state.token1.pyload);
+        if ((TOKEN_devider == ps.token2.type) &&
+            (strEqu(ps.token2.pyload, "["))) {
+            args_setStr(buffs, "obj", ps.token1.pyload);
             is_in_brancket = 1;
-        } else if ((TOKEN_devider == parse_state.token2.type) &&
-                   (strEqu(parse_state.token2.pyload, "]"))) {
+        } else if ((TOKEN_devider == ps.token2.type) &&
+                   (strEqu(ps.token2.pyload, "]"))) {
             is_in_brancket = 0;
             char* index = args_getStr(buffs, "index");
             Arg* index_arg = arg_setStr(NULL, "", index);
-            index_arg = arg_strAppend(index_arg, parse_state.token1.pyload);
+            index_arg = arg_strAppend(index_arg, ps.token1.pyload);
             args_setStr(buffs, "index", arg_getStr(index_arg));
             arg_deinit(index_arg);
 
@@ -711,20 +714,18 @@ char* Parser_solveBranckets(Args* outBuffs,
             }
             right_arg = arg_strAppend(right_arg, ")");
             args_setStr(buffs, "index", "");
-        } else if (is_in_brancket &&
-                   (!strEqu(parse_state.token1.pyload, "["))) {
+        } else if (is_in_brancket && (!strEqu(ps.token1.pyload, "["))) {
             char* index = args_getStr(buffs, "index");
             Arg* index_arg = arg_setStr(NULL, "", index);
-            index_arg = arg_strAppend(index_arg, parse_state.token1.pyload);
+            index_arg = arg_strAppend(index_arg, ps.token1.pyload);
             args_setStr(buffs, "index", arg_getStr(index_arg));
             arg_deinit(index_arg);
-        } else if (!is_in_brancket &&
-                   (!strEqu(parse_state.token1.pyload, "]"))) {
-            right_arg = arg_strAppend(right_arg, parse_state.token1.pyload);
+        } else if (!is_in_brancket && (!strEqu(ps.token1.pyload, "]"))) {
+            right_arg = arg_strAppend(right_arg, ps.token1.pyload);
         }
-        args_deinit(parse_state.buffs);
+        args_deinit(ps.buffs);
     }
-    arg_deinit(parse_state.last_token);
+    arg_deinit(ps.last_token);
 
 exit:
     /* clean and return */
