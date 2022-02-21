@@ -1032,6 +1032,8 @@ TEST(pikaMain, complex_str) {
     __platform_printf((char*)"BEGIN\r\n");
     obj_run(pikaMain, (char*)"print('test,test')\n");
     /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"test,test\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

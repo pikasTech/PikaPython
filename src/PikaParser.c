@@ -825,61 +825,54 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         method = strsGetFirstToken(buffs, right, '(');
         obj_setStr(ast, (char*)"method", method);
         char* subStmts = strsCut(buffs, right, '(', ')');
+        /* add ',' at the end */
+        subStmts = strsAppend(buffs, subStmts, ",");
         struct ParserState ps;
+        /* init parserStage */
         ParserState_init(&ps);
         ParserState_parse(&ps, subStmts);
         ParserState_beforeIter(&ps);
-        for(int i = 0;i<ps.length;i++){
+        /* init process values */
+        Arg* subStmt = arg_setStr(NULL, "", "");
+        uint8_t is_in_brankets = 0;
+        /* start iteration */
+        char* subStmt_str = NULL;
+        for (int i = 0; i < ps.length; i++) {
             ParserState_iterStart(&ps);
-
-
+            /* parse process */
+            if (strEqu(ps.token1.pyload, "(")) {
+                is_in_brankets++;
+            }
+            if (strEqu(ps.token1.pyload, ")")) {
+                is_in_brankets--;
+            }
+            if (is_in_brankets > 0) {
+                /* in brankets */
+                /* append token to subStmt */
+                subStmt = arg_strAppend(subStmt, ps.token1.pyload);
+                subStmt_str = arg_getStr(subStmt);
+            } else {
+                /* not in brankets */
+                if (strEqu(ps.token1.pyload, ",")) {
+                    /* found "," push subStmt */
+                    queueObj_pushObj(ast, (char*)"stmt");
+                    subStmt_str = arg_getStr(subStmt);
+                    AST_parseStmt(queueObj_getCurrentObj(ast), subStmt_str);
+                    /* clear subStmt */
+                    arg_deinit(subStmt);
+                    subStmt = arg_setStr(NULL, "", "");
+                } else {
+                    /* not "," append subStmt */
+                    subStmt = arg_strAppend(subStmt, ps.token1.pyload);
+                    subStmt_str = arg_getStr(subStmt);
+                }
+            }
+            /* parse preocess end */
             ParserState_iterEnd(&ps);
+            continue;
         }
         ParserState_deinit(&ps);
-        // char* tokens = Lexer_getTokens(buffs, subStmts);
-        // uint16_t tokens_size = Lexer_getTokenSize(tokens);
-        // Arg* subStmt = arg_setStr(NULL, "", "");
-        // char* subStmt_str = NULL;
-        // uint8_t is_in_brankets;
-        // for (int i = 0; i < tokens_size; i++) {
-        //     char* token = Lexer_popToken(buffs, tokens);
-        //     enum TokenType token_type = Lexer_getTokenType(token);
-        //     char* pyload = Lexer_getTokenPyload(token);
-        //     subStmt_str = pyload;
-        //     if (token_type == TOKEN_strEnd) {
-        //         continue;
-        //     }
-        //     if (strEqu(pyload, "(")) {
-        //         is_in_brankets++;
-        //     }
-        //     if (is_in_brankets > 0) {
-        //         subStmt = arg_strAppend(subStmt, pyload);
-        //     }
-        //     if (strEqu(pyload, ")")) {
-        //         is_in_brankets--;
-        //         if (is_in_brankets > 0) {
-        //             continue;
-        //         }
-        //         subStmt_str = arg_getStr(subStmt);
-        //     }
-        //     if (strEqu(pyload, ",")) {
-        //         continue;
-        //     }
-        //     queueObj_pushObj(ast, (char*)"stmt");
-        //     AST_parseStmt(queueObj_getCurrentObj(ast), subStmt_str);
-        //     arg_deinit(subStmt);
-        //     subStmt = arg_setStr(NULL, "", "");
-        // }
-        // arg_deinit(subStmt);
-        while (1) {
-            char* subStmt =
-                strsPopTokenWithSkip(buffs, subStmts, ',', '(', ')');
-            if (NULL == subStmt) {
-                break;
-            }
-            queueObj_pushObj(ast, (char*)"stmt");
-            AST_parseStmt(queueObj_getCurrentObj(ast), subStmt);
-        }
+        arg_deinit(subStmt);
         goto exit;
     }
     /* solve reference stmt */

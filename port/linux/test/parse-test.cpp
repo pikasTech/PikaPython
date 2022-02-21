@@ -109,16 +109,12 @@ TEST(parser, method_void) {
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,
-                 "B0\n"
-                 "2 REF a\n"
-                 "2 REF se.b\n"
-                 "3 REF pp\n"
-                 "2 RUN diek\n"
-                 "1 RUN b.add\n"
-                 "1 RUN pmw.c\n"
-                 "0 RUN a.add\n"
-                 "0 OUT d.p\n");
+    EXPECT_STREQ(pikaAsm,(char *)
+        "B0\n"
+        "1 RUN c\n"
+        "0 RUN a\n"
+    );
+
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
