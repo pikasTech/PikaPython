@@ -825,6 +825,17 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         method = strsGetFirstToken(buffs, right, '(');
         obj_setStr(ast, (char*)"method", method);
         char* subStmts = strsCut(buffs, right, '(', ')');
+        struct ParserState ps;
+        ParserState_init(&ps);
+        ParserState_parse(&ps, subStmts);
+        ParserState_beforeIter(&ps);
+        for(int i = 0;i<ps.length;i++){
+            ParserState_iterStart(&ps);
+
+
+            ParserState_iterEnd(&ps);
+        }
+        ParserState_deinit(&ps);
         // char* tokens = Lexer_getTokens(buffs, subStmts);
         // uint16_t tokens_size = Lexer_getTokenSize(tokens);
         // Arg* subStmt = arg_setStr(NULL, "", "");
