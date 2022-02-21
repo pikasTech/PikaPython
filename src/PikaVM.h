@@ -29,7 +29,7 @@
 #define __PIKA__VM__H
 #include "PikaObj.h"
 
-VM_Parameters* pikaVM_run(PikaObj* self, char* pyLine);
-VM_Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
+VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
+VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 
 #endif

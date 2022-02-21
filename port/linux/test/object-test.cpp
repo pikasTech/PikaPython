@@ -125,7 +125,7 @@ TEST(object_test, test3) {
 
 TEST(object_test, test6) {
     PikaObj* obj = newRootObj((char*)"test", New_PikaObj_test);
-    VM_Parameters* globals = obj_runDirect(obj, (char*)"res = add(1, 2)");
+    VMParameters* globals = obj_runDirect(obj, (char*)"res = add(1, 2)");
     int32_t res = obj_getInt(globals, (char*)"res");
     EXPECT_EQ(3, res);
     obj_deinit(obj);
@@ -211,7 +211,7 @@ TEST(object_test, obj_run_while) {
         "    b = 1\n"
         "    a = 0\n"
         "\n";
-    VM_Parameters* globals = obj_runDirect(root, lines);
+    VMParameters* globals = obj_runDirect(root, lines);
     EXPECT_EQ(obj_getInt(globals, (char*)"a"), 0);
     EXPECT_EQ(obj_getInt(globals, (char*)"b"), 1);
     obj_deinit(root);

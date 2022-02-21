@@ -10,7 +10,7 @@ extern "C" {
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 TEST(sysObj, print) {
     PikaObj* obj = newRootObj((char*)"test", New_PikaStdLib_SysObj);
-    VM_Parameters* globals = obj_runDirect(obj, (char*)"print('hello world')");
+    VMParameters* globals = obj_runDirect(obj, (char*)"print('hello world')");
     char* sysOut = args_getSysOut(globals->list);
     int errCode = args_getErrorCode(globals->list);
     printf("sysout = %s\r\n", sysOut);
@@ -24,7 +24,7 @@ TEST(sysObj, print) {
 
 TEST(sysObj, noMethod) {
     PikaObj* obj = newRootObj((char*)"test", New_PikaStdLib_SysObj);
-    VM_Parameters* globals = obj_runDirect(obj, (char*)"printttt('hello world')");
+    VMParameters* globals = obj_runDirect(obj, (char*)"printttt('hello world')");
     char* sysOut = args_getSysOut(globals->list);
     int errCode = args_getErrorCode(globals->list);
     printf("sysout = %s\r\n", sysOut);

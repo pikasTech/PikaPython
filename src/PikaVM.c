@@ -36,14 +36,14 @@
 #include "dataStrs.h"
 
 /* local head */
-VM_Parameters* pikaVM_runAsmWithPars(PikaObj* self,
-                                     VM_Parameters* locals,
-                                     VM_Parameters* globals,
-                                     char* pikaAsm);
+VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
+                                    VMParameters* locals,
+                                    VMParameters* globals,
+                                    char* pikaAsm);
 
 struct VMState {
-    VM_Parameters* locals;
-    VM_Parameters* globals;
+    VMParameters* locals;
+    VMParameters* globals;
     Queue* q0;
     Queue* q1;
     int32_t jmp;
@@ -145,7 +145,7 @@ static int32_t __getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
     return offset;
 }
 
-int32_t __clearInvokeQueues(VM_Parameters* vm_pars) {
+int32_t __clearInvokeQueues(VMParameters* vm_pars) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
         char deepth[2] = {0};
         deepth[0] = deepthChar;
@@ -202,7 +202,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
                                        char* data) {
     Args* buffs = New_strBuff();
     Arg* returnArg = NULL;
-    VM_Parameters* subLocals = NULL;
+    VMParameters* subLocals = NULL;
     char* methodPath = data;
     PikaObj* methodHostObj;
     Arg* method_arg;
@@ -666,8 +666,8 @@ static enum Instruct __getInstruct(char* line) {
 }
 
 int32_t pikaVM_runAsmLine(PikaObj* self,
-                          VM_Parameters* locals,
-                          VM_Parameters* globals,
+                          VMParameters* locals,
+                          VMParameters* globals,
                           char* pikaAsm,
                           int32_t lineAddr) {
     Args* buffs = New_strBuff();
@@ -740,10 +740,10 @@ nextLine:
     return nextAddr;
 }
 
-VM_Parameters* pikaVM_runAsmWithPars(PikaObj* self,
-                                     VM_Parameters* locals,
-                                     VM_Parameters* globals,
-                                     char* pikaAsm) {
+VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
+                                    VMParameters* locals,
+                                    VMParameters* globals,
+                                    char* pikaAsm) {
     int lineAddr = 0;
     int size = strGetSize(pikaAsm);
     args_setErrorCode(locals->list, 0);
@@ -771,13 +771,13 @@ VM_Parameters* pikaVM_runAsmWithPars(PikaObj* self,
     return locals;
 }
 
-VM_Parameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
+VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     return pikaVM_runAsmWithPars(self, self, self, pikaAsm);
 }
 
-VM_Parameters* pikaVM_run(PikaObj* self, char* multiLine) {
+VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
     Args* buffs = New_strBuff();
-    VM_Parameters* globals = NULL;
+    VMParameters* globals = NULL;
     char* pikaAsm = Parser_multiLineToAsm(buffs, multiLine);
     if (NULL == pikaAsm) {
         __platform_printf("[error]: Syntax error.\r\n");
