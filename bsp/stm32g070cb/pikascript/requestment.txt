@@ -3,4 +3,4 @@ PikaStdLib==v1.3.5
 PikaStdDevice==v1.4.3
 STM32G0==v1.1.1
 PikaPiZero==v1.1.3
-Arm2D==v0.3.1
+Arm2D==v0.3.2
