@@ -28,6 +28,7 @@ releases = [
   "v1.3.4 c205fc00f1503135bdf6890ebfb61ebaf7d23445",
   "v1.3.5 80d255e8efbf718a7bd6cac9cf8478a6e2e72a37",
   "lts2021 80d255e8efbf718a7bd6cac9cf8478a6e2e72a37",
+  "v1.3.5.1 9ebdaa5560c04f53af13743d00a5b7a8f00c0508",
 ]
 
 [[packages]]
@@ -48,6 +49,7 @@ releases = [
   "v1.3.4 c205fc00f1503135bdf6890ebfb61ebaf7d23445",
   "v1.3.5 3e87db85ca2171991f77bd3af59c4eaefed69110",
   "lts2021 3e87db85ca2171991f77bd3af59c4eaefed69110",
+  "v1.3.5.1 9ebdaa5560c04f53af13743d00a5b7a8f00c0508",
 ]
 
 [[packages]]
