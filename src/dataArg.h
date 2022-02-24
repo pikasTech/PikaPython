@@ -27,8 +27,8 @@
 
 #ifndef _arg__H
 #define _arg__H
-#include "dataMemory.h"
 #include "dataLink.h"
+#include "dataMemory.h"
 
 typedef uint8_t Arg;
 typedef uint32_t Hash;
@@ -47,29 +47,24 @@ typedef enum {
 typedef struct __arg __arg;
 
 struct __arg {
-    union {
-        __arg       *next;
-        Link        link;
-    };
-    uint16_t    size;
-    uint8_t     type;
-    uint8_t   __rsvd;
-    Hash        name_hash;
-    uint8_t     content[];
+    __arg* next;
+    uint16_t size;
+    uint8_t type;
+    uint8_t __rsvd;
+    Hash name_hash;
+    uint8_t content[];
 };
 
-
-//uint32_t content_getNameHash(uint8_t* content);
-#define content_getNameHash(__addr)     (((__arg *)(__addr))->name_hash)
+// uint32_t content_getNameHash(uint8_t* content);
+#define content_getNameHash(__addr) (((__arg*)(__addr))->name_hash)
 
 ArgType content_getType(uint8_t* self);
 
-#define content_getNext(__addr)          ((uint8_t *)(((__arg *)(__addr))->next))
+#define content_getNext(__addr) ((uint8_t*)(((__arg*)(__addr))->next))
 
-#define content_getSize(__addr)          ((uint16_t)(((__arg *)(__addr))->size))           
+#define content_getSize(__addr) ((uint16_t)(((__arg*)(__addr))->size))
 
-#define content_getContent(__addr)       (((__arg *)(__addr))->content)
-
+#define content_getContent(__addr) (((__arg*)(__addr))->content)
 
 uint16_t content_totleSize(uint8_t* self);
 
@@ -78,10 +73,12 @@ uint8_t* content_deinit(uint8_t* self);
 uint8_t* content_setName(uint8_t* self, char* name);
 uint8_t* content_setType(uint8_t* self, ArgType type);
 uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size);
-//void content_setNext(uint8_t* self, uint8_t* next);
+// void content_setNext(uint8_t* self, uint8_t* next);
 
-#define content_setNext(__addr, __next) \
-            do { (((__arg *)(__addr))->next) = (__arg *)(__next); } while(0)
+#define content_setNext(__addr, __next)                \
+    do {                                               \
+        (((__arg*)(__addr))->next) = (__arg*)(__next); \
+    } while (0)
 
 uint16_t arg_getTotleSize(Arg* self);
 void arg_freeContent(Arg* self);
