@@ -557,7 +557,7 @@ char* Lexer_popToken(Args* buffs, char* tokens) {
 }
 
 enum TokenType Lexer_getTokenType(char* token) {
-    return token[0];
+    return (enum TokenType)token[0];
 }
 
 char* Lexer_getTokenPyload(char* token) {
@@ -993,6 +993,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     stmt = line_start;
 
     /* match block start keywords */
+    const char control_keywords[][9] = {"break", "continue"};
 
     /* normal keyward */
     const char normal_keywords[][7] = {"while", "if", "elif"};
@@ -1011,7 +1012,6 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     }
 
     /* contral keyward */
-    const char control_keywords[][9] = {"break", "continue"};
     for (uint32_t i = 0; i < sizeof(control_keywords) / 8; i++) {
         char* keyward = (char*)control_keywords[i];
         uint8_t keyward_size = strGetSize(keyward);

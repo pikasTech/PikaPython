@@ -136,7 +136,7 @@ uint8_t* content_setType(uint8_t* self, ArgType type) {
 
 ArgType content_getType(uint8_t* self) {
     __arg* arg = (__arg*)self;
-    return arg->type;
+    return (ArgType)arg->type;
 }
 
 Arg* arg_newContent(Arg* self, uint32_t size) {
