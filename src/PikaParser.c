@@ -1087,6 +1087,17 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         }
         goto block_matched;
     }
+    if (strIsStartWith(line_start, (char*)"class ")) {
+        stmt = "";
+        char* declear = strsCut(buffs, line_start, ' ', ':');
+        declear = strsGetCleanCmd(buffs, declear);
+        obj_setStr(ast, "block", "class");
+        obj_setStr(ast, "declear", declear);
+        if (NULL != block_stack) {
+            stack_pushStr(block_stack, "class");
+        }
+        goto block_matched;
+    }
 
 block_matched:
     stmt = strsGetCleanCmd(buffs, stmt);
@@ -1415,6 +1426,12 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         is_block_matched = 1;
         goto exit;
     }
+
+    if (strEqu(obj_getStr(ast, "block"), "class")) {
+        is_block_matched = 1;
+        goto exit;
+    }
+
     if (obj_isArgExist(ast, "return")) {
         /* parse stmt ast */
         pikaAsm = AST_appandPikaASM(ast, ast, buffs, pikaAsm);

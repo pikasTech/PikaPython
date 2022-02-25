@@ -1989,6 +1989,18 @@ TEST(parser, global) {
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm, (char *)
+        "B0\n"
+        "0 DEF test_global()\n"
+        "0 JMP 1\n"
+        "B1\n"
+        "0 GLB x\n"
+        "B1\n"
+        "0 GLB y,z\n"
+        "B1\n"
+        "0 RET\n"
+        "B0\n"
+    );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2014,6 +2026,23 @@ TEST(parser, clean_compled_str) {
     char* res = strsGetCleanCmd(buffs, (char*)"chars = ' .,-:;i+hHM$*#@ '\n");
     EXPECT_STREQ(res, "chars=' .,-:;i+hHM$*#@ '\n");
     printf("%s", res);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, class_) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+        "class Test():\n"
+        "    x = 1\n"
+        "    def hello():\n"
+        "        print('hello')\n"
+        "\n"
+        ;
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
