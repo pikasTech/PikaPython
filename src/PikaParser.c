@@ -1428,7 +1428,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     }
 
     if (strEqu(obj_getStr(ast, "block"), "class")) {
-        char* buffs = New_strBuff();
+        Args* buffs = New_strBuff();
         char* declear = obj_getStr(ast, "declear");
         char* thisClass = strsGetFirstToken(buffs, declear, '(');
         char* superClass = strsCut(buffs, declear, '(', ')');
