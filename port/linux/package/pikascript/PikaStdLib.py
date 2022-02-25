@@ -58,3 +58,6 @@ class RangeObj(TinyObj):
 class StringObj(TinyObj):
     def __next__() -> any:
         pass
+
+class PikaObj(TinyObj):
+    pass

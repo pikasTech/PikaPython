@@ -628,3 +628,4 @@ TEST(VM, EST) {
     // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
