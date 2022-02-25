@@ -1,4 +1,3 @@
-#include "PikaStdData_Dict.h"
 #include "BaseObj.h"
 #include "PikaObj.h"
 #include "PikaStdLib_SysObj.h"
