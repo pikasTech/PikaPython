@@ -540,7 +540,7 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
     while (1) {
         if ((methodPtr[0] == 'B') &&
             (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
-            class_defineMethod(self, data, (Method)methodPtr);
+            class_defineMethod(vs->locals, data, (Method)methodPtr);
             break;
         }
         offset += __gotoNextLine(methodPtr);
