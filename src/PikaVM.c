@@ -549,6 +549,10 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
     return NULL;
 }
 
+static Arg* VM_instruction_handler_SLF(PikaObj* self, VMState* vs, char* data) {
+    return NULL;
+}
+
 static Arg* VM_instruction_handler_RET(PikaObj* self, VMState* vs, char* data) {
     /* exit jmp signal */
     vs->jmp = -999;

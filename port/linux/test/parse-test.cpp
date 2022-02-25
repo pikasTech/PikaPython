@@ -2034,15 +2034,23 @@ TEST(parser, class_) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
-        "class Test():\n"
+        "class Test( BaseObj  ):\n"
         "    x = 1\n"
-        "    def hello():\n"
-        "        print('hello')\n"
         "\n"
         ;
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm, (char* )
+        "B0\n"
+        "0 DEF Test()\n"
+        "B1\n"
+        "0 RUN BaseObj\n"
+        "0 SLF\n"
+        "B1\n"
+        "0 NUM 1\n"
+        "0 OUT x\n"
+        "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

@@ -1428,7 +1428,24 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     }
 
     if (strEqu(obj_getStr(ast, "block"), "class")) {
+        char* buffs = New_strBuff();
+        char* declear = obj_getStr(ast, "declear");
+        char* thisClass = strsGetFirstToken(buffs, declear, '(');
+        char* superClass = strsCut(buffs, declear, '(', ')');
+        pikaAsm = strsAppend(buffs, pikaAsm, "0 DEF ");
+        pikaAsm =
+            strsAppend(buffs, pikaAsm, strsAppend(buffs, thisClass, "()\n"));
+        char block_deepth_str[] = "B0\n";
+        /* goto deeper block */
+        block_deepth_str[1] += obj_getInt(ast, "blockDeepth") + 1;
+        pikaAsm = strsAppend(buffs, pikaAsm, block_deepth_str);
+        pikaAsm = strsAppend(buffs, pikaAsm, "0 RUN ");
+        pikaAsm = strsAppend(buffs, pikaAsm, superClass);
+        pikaAsm = strsAppend(buffs, pikaAsm, "\n");
+        pikaAsm = strsAppend(buffs, pikaAsm, "0 SLF\n");
+
         is_block_matched = 1;
+        args_deinit(buffs);
         goto exit;
     }
 
