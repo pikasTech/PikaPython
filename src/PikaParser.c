@@ -1324,6 +1324,11 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
                 pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET\n");
             }
+            /* return when exit class */
+            if (strEqu(blockType, "class")) {
+                pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
+                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET\n");
+            }
         }
     }
     /* add block deepth */
@@ -1433,8 +1438,10 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         char* thisClass = strsGetFirstToken(buffs, declear, '(');
         char* superClass = strsCut(buffs, declear, '(', ')');
         pikaAsm = strsAppend(buffs, pikaAsm, "0 DEF ");
-        pikaAsm =
-            strsAppend(buffs, pikaAsm, strsAppend(buffs, thisClass, "()\n"));
+        pikaAsm = strsAppend(buffs, pikaAsm,
+                             strsAppend(buffs, thisClass,
+                                        "()\n"
+                                        "0 JMP 1\n"));
         char block_deepth_str[] = "B0\n";
         /* goto deeper block */
         block_deepth_str[1] += obj_getInt(ast, "blockDeepth") + 1;

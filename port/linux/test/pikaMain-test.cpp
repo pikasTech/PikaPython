@@ -1,9 +1,12 @@
 #include "gtest/gtest.h"
 extern "C" {
 #include "PikaMain.h"
+#include "PikaParser.h"
 #include "PikaStdLib_MemChecker.h"
+#include "PikaVM.h"
 #include "dataArgs.h"
 #include "dataMemory.h"
+#include "dataStrs.h"
 #include "pikaScript.h"
 #include "pika_config_gtest.h"
 }
@@ -1053,3 +1056,25 @@ TEST(pikaMain, synac_err_1) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+// TEST(pikaMain, class_arg) {
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     /* run */
+//     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+//     __platform_printf((char*)"BEGIN\r\n");
+//     Args* buffs = New_strBuff();
+//     char * pikaAsm = Parser_multiLineToAsm(buffs, (char*)
+//         "class Test(PikaStdLib.PikaObj):\n"
+//         "    x = 1\n"
+//         "\n"
+//         "test = Test()\n"
+//         "print(test.x)\n"
+//     );
+//     printf("%s", pikaAsm);
+//     pikaVM_runAsm(pikaMain, pikaAsm);
+//     /* assert */
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
