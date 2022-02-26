@@ -212,13 +212,6 @@ int32_t __updateArg(Args* self, Arg* argNew) {
         priorNode = nodeNow;
         nodeNow = content_getNext(nodeNow);
     }
-    #if 0
-    /* free the object */
-    if (TYPE_OBJECT == arg_getType(nodeToUpdate)) {
-        PikaObj* obj = arg_getPtr(nodeToUpdate);
-        obj_deinit(obj);
-    }
-    #endif
     nodeToUpdate = arg_setContent(nodeToUpdate, arg_getContent(argNew),
                                   arg_getContentSize(argNew));
 
@@ -252,23 +245,6 @@ int32_t args_setArg(Args* self, Arg* arg) {
 #endif
 
 LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
-
-    
-#if 0
-
-    /* normal list search without cache */
-    LinkNode* nodeNow = self->firstNode;
-
-    while (NULL != nodeNow) {
-        Arg* arg = nodeNow;
-        Hash thisNameHash = arg_getNameHash(arg);
-        if (thisNameHash == nameHash) {
-            return nodeNow;
-        }
-        
-        nodeNow = content_getNext(nodeNow);
-    }
-#else
     
     LinkNode ** ppnode = (LinkNode **)&(self->firstNode);
     int_fast8_t n = 0;
@@ -299,7 +275,6 @@ LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
         n++;
         ppnode = (LinkNode **)&(((__arg *)(*ppnode))->next);
     }
-#endif
     
     return NULL;
 }
