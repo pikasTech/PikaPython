@@ -11,6 +11,12 @@ class GPIO(TinyObj):
     def setPin(pinName: str):
         pass
 
+    def setId(id: int):
+        pass
+
+    def getId() -> int:
+        pass
+
     def getPin() -> str:
         pass
 
