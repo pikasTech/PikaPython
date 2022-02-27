@@ -2,4 +2,4 @@ pikascript-core==v1.3.5.1
 PikaStdLib==v1.3.5.1
 pikaRTThread==latest
 pikaRTDevice==latest
-PikaStdDevice==v1.4.3
+PikaStdDevice==vlatest

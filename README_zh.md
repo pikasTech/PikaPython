@@ -239,6 +239,7 @@ http://pikascript.com
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| 捐赠：EC600X QuecPython 开发板 | 移远模块 武加玉 |
 | Performance Point: 900->1400 | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | stm32f051r8 BSP |[unsigned](https://gitee.com/unsigned0)|
 | stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
