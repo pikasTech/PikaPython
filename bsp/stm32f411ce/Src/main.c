@@ -104,10 +104,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  uint32_t tick_start = HAL_GetTick();
   PikaObj* pikaMain = pikaScriptInit();
-  uint32_t tick_end = HAL_GetTick();
-  printf("time speend: %d\r\n", tick_end - tick_start);
   pikaScriptShell(pikaMain);
   /* USER CODE END 2 */
 
