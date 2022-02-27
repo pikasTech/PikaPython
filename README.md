@@ -107,7 +107,7 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 |stm32f103rb|√|√|√|√|√|√|
 |stm32f103ze|√|√|√|√|√|√|
 |stm32f103rc|√|√|√|√|√|√|
-|stm32f401cc|√| | | | | |
+|stm32f401cc|√|√|√|√|√|√|
 |stm32f411ce|√|√|√|√|√|√|
 |stm32f407ze|√| | | | | |
 |stm32f407zg|√| | | | | |
