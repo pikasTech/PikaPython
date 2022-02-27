@@ -72,6 +72,21 @@ releases = [
 ]
 
 [[packages]]
+name = "STM32F1"
+releases = [
+  "v1.0.0 04e2988d22c995ed0321eb4361e46867e4347e0a",
+  "v1.0.1 355f2253b16fa416ffae59fb35f7c71c75480b12",
+  "v1.0.2 4d7209bb174b1df26d22352a757cc43faaff4012",
+  "v1.0.3 86377d1a3c19cd01b1dc109180be437373ce7c5f",
+]
+
+[[packages]]
+name = "STM32F4"
+releases = [
+  "v0.0.1 411374ef0d885cce536cca29fba70ab8d2a3852a",
+]
+
+[[packages]]
 name = "PikaPiZero"
 releases = [
   "v1.0.0 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
@@ -103,14 +118,6 @@ releases = [
   "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
 ]
 
-[[packages]]
-name = "STM32F1"
-releases = [
-  "v1.0.0 04e2988d22c995ed0321eb4361e46867e4347e0a",
-  "v1.0.1 355f2253b16fa416ffae59fb35f7c71c75480b12",
-  "v1.0.2 4d7209bb174b1df26d22352a757cc43faaff4012",
-  "v1.0.3 86377d1a3c19cd01b1dc109180be437373ce7c5f",
-]
 
 [[packages]]
 name = "pikaRTThread"
