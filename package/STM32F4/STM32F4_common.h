@@ -32,6 +32,7 @@ typedef uint32_t u32;
 #define UART1_EXIST
 #define UART2_EXIST
 #define UART3_EXIST
+#define UART4_EXIST
 
 #define TIM1_EXIST
 #define TIM2_EXIST
@@ -41,6 +42,13 @@ typedef uint32_t u32;
 /* configuration for STM32F411xE */
 #ifdef STM32F411xE
     #undef UART3_EXIST
+    #undef UART4_EXIST
+#endif
+
+/* configuration for STM32F401xC */
+#ifdef STM32F401xC
+    #undef UART3_EXIST
+    #undef UART4_EXIST
 #endif
 
 #define RX_BUFF_LENGTH 64
