@@ -184,10 +184,25 @@ class PWM(TinyObj):
     def init():
         pass
 
+    def setName(name: str):
+        pass
+
+    def getName() -> str:
+        pass
+
+    def setChannel(ch: int):
+        pass
+
+    def getChannel() -> int:
+        pass
+
     def setPin(pin: str):
         pass
 
     def setFrequency(freq: int):
+        pass
+
+    def setFreq(freq: int):
         pass
 
     def setDuty(duty: float):

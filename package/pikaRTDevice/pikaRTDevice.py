@@ -19,3 +19,17 @@ class GPIO(PikaStdDevice.GPIO):
 
     def platformRead():
         pass
+
+
+class PWM(PikaStdDevice.PWM):
+    # override
+    def platformEnable():
+        pass
+
+    # override
+    def platformSetFrequency():
+        pass
+
+    # override
+    def platformSetDuty():
+        pass
