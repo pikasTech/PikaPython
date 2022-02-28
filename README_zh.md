@@ -143,10 +143,10 @@ http://pikascript.com
 
 ## OS support
 
-|OS|port|GPIO|TIME|
-|---|---|---|---|
-|rt-thread|√|√|√|
-|vsf|√|√| |
+|OS|port|GPIO|TIME|PWM|
+|---|---|---|---|---|
+|RT-Thread|√|√|√|√|
+|vsf|√|√| | |
 
 |OS|port|Google Test|Benchmark|
 |---|---|---|---|
