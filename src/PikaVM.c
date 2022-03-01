@@ -44,7 +44,6 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
 struct VMState_t {
     VMParameters* locals;
     VMParameters* globals;
-    VMParameters* runAs;
     Queue* q0;
     Queue* q1;
     int32_t jmp;
@@ -340,8 +339,8 @@ static Arg* __VM_OUT(PikaObj* self,
         arg_deinit(global_list_arg);
     }
     /* use RunAs object */
-    if (vs->runAs != NULL) {
-        hostObj = vs->runAs;
+    if (args_isArgExist(vs->locals->list, "__runAs")) {
+        hostObj = args_getPtr(vs->locals->list, "__runAs");
     }
     /* ouput arg to locals */
     obj_setArg(hostObj, data, outArg);
@@ -373,12 +372,12 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_RAS(PikaObj* self, VMState* vs, char* data) {
     if (strEqu(data, "$origin")) {
         /* use origin object to run */
-        vs->runAs = NULL;
+        obj_removeArg(vs->locals, "__runAs");
         return NULL;
     }
     /* use "data" object to run */
     PikaObj* runAs = obj_getObj(self, data, 0);
-    vs->runAs = runAs;
+    args_setPtr(vs->locals->list, "__runAs", runAs);
     return NULL;
 }
 
@@ -580,9 +579,9 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
     int offset = 0;
     int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
     PikaObj* hostObj = vs->locals;
-    if (NULL != vs->runAs) {
-        /* use RunAs object */
-        hostObj = vs->runAs;
+    /* use RunAs object */
+    if (args_isArgExist(vs->locals->list, "__runAs")) {
+        hostObj = args_getPtr(vs->locals->list, "__runAs");
     }
     while (1) {
         if ((methodPtr[0] == 'B') &&
@@ -685,7 +684,6 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     VMState vs = {
         .locals = locals,
         .globals = globals,
-        .runAs = NULL,
         .q0 = NULL,
         .q1 = NULL,
         .jmp = 0,

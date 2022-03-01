@@ -10,12 +10,11 @@ extern "C" {
 #include "dataQueue.h"
 #include "dataStrs.h"
 
-
 /* test head */
 VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
-                                  VMParameters* locals,
-                                  VMParameters* globals,
-                                  char* pikaAsm);
+                                    VMParameters* locals,
+                                    VMParameters* globals,
+                                    char* pikaAsm);
 char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack);
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 int32_t __clearInvokeQueues(VMParameters* locals);
@@ -629,3 +628,34 @@ TEST(VM, EST) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(VM, RUN_AS) {
+    char* pikaAsm = (char*)
+        "B0\n"
+        "0 RUN PikaStdLib.PikaObj\n"
+        "0 OUT as\n"
+        "B0\n"
+        "0 RAS as\n"
+        "B0\n"
+        "0 NUM 1\n"
+        "0 OUT x\n"
+        "B0\n"
+        "0 RAS $origin\n"
+        "B0\n"
+        "0 NUM 2\n"
+        "0 OUT x\n"
+    ;
+    PikaObj* self = newRootObj((char*)"", New_PikaMain);
+    pikaVM_runAsm(self, pikaAsm);
+    PikaObj* as = obj_getObj(self, (char*)"as", 0);
+    int x_as_ = obj_getInt(as, (char*)"x");
+    int x_as = obj_getInt(self, (char*)"as.x");
+    int x_origin = obj_getInt(self, (char*)"x");
+    /* a is local, should not be exist in globals */
+    EXPECT_EQ(x_as_, 1);
+    EXPECT_EQ(x_as, 1);
+    /* b is local, should not be exist in globals */
+    EXPECT_EQ(x_origin, 2);
+    obj_deinit(self);
+    // obj_deinit(globals);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
