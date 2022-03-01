@@ -172,6 +172,16 @@ static Arg* VM_instruction_handler_NON(PikaObj* self, VMState* vs, char* data) {
     return NULL;
 }
 
+static Arg* VM_instruction_handler_NEW(PikaObj* self, VMState* vs, char* data) {
+    Arg* origin_arg = obj_getArg(vs->locals, data);
+    Arg* new_arg = arg_copy(origin_arg);
+    ArgType arg_type = arg_getType(origin_arg);
+    if (TYPE_OBJECT == arg_type) {
+        origin_arg = arg_setType(origin_arg, TYPE_POINTER);
+    }
+    return new_arg;
+}
+
 static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
     if (strEqu(data, (char*)"True")) {
         return arg_setInt(NULL, "", 1);
@@ -329,6 +339,10 @@ static Arg* __VM_OUT(PikaObj* self,
         }
         arg_deinit(global_list_arg);
     }
+    /* use RunAs object */
+    if (vs->runAs != NULL) {
+        hostObj = vs->runAs;
+    }
     /* ouput arg to locals */
     obj_setArg(hostObj, data, outArg);
     if (is_init_obj == IS_INIT_OBJ_TRUE) {
@@ -357,6 +371,15 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
 
 /* run as */
 static Arg* VM_instruction_handler_RAS(PikaObj* self, VMState* vs, char* data) {
+    if (strEqu(data, "$origin")) {
+        /* use origin object to run */
+        vs->runAs = NULL;
+        return NULL;
+    }
+    /* use "data" object to run */
+    PikaObj* runAs = obj_getObj(self, data, 0);
+    vs->runAs = runAs;
+    return NULL;
 }
 
 static Arg* VM_instruction_handler_NUM(PikaObj* self, VMState* vs, char* data) {
@@ -556,10 +579,15 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
     char* methodPtr = vs->pc;
     int offset = 0;
     int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
+    PikaObj* hostObj = vs->locals;
+    if (NULL != vs->runAs) {
+        /* use RunAs object */
+        hostObj = vs->runAs;
+    }
     while (1) {
         if ((methodPtr[0] == 'B') &&
             (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
-            class_defineMethod(vs->locals, data, (Method)methodPtr);
+            class_defineMethod(hostObj, data, (Method)methodPtr);
             break;
         }
         offset += __gotoNextLine(methodPtr);
