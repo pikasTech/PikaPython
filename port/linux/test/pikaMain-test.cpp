@@ -1057,24 +1057,27 @@ TEST(pikaMain, synac_err_1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, class_arg) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     /* run */
-//     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-//     __platform_printf((char*)"BEGIN\r\n");
-//     Args* buffs = New_strBuff();
-//     char * pikaAsm = Parser_multiLineToAsm(buffs, (char*)
-//         "class Test(PikaStdLib.PikaObj):\n"
-//         "    x = 1\n"
-//         "\n"
-//         "test = Test()\n"
-//         "print(test.x)\n"
-//     );
-//     printf("%s", pikaAsm);
-//     pikaVM_runAsm(pikaMain, pikaAsm);
-//     /* assert */
-//     /* deinit */
-//     obj_deinit(pikaMain);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, class_arg) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    Args* buffs = New_strBuff();
+    char * pikaAsm = Parser_multiLineToAsm(buffs, (char*)
+        "class Test(PikaStdLib.PikaObj):\n"
+        "    x = 1\n"
+        "\n"
+        "test = Test()\n"
+        "print(test.x)\n"
+    );
+    printf("%s", pikaAsm);
+    pikaVM_runAsm(pikaMain, pikaAsm);
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"1\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
