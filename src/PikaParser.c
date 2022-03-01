@@ -1321,12 +1321,14 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
             }
             /* return when exit method */
             if (strEqu(blockType, "def")) {
-                pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
+                pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm,
+                                             blockTypeNum + 1);
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET\n");
             }
             /* return when exit class */
             if (strEqu(blockType, "class")) {
-                pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
+                pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm,
+                                             blockTypeNum + 1);
                 pikaAsm =
                     strsAppend(outBuffs, pikaAsm, (char*)"0 RAS $origin\n");
                 pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
@@ -1441,6 +1443,10 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         char* declear = obj_getStr(ast, "declear");
         char* thisClass = strsGetFirstToken(buffs, declear, '(');
         char* superClass = strsCut(buffs, declear, '(', ')');
+        if (strEqu("", superClass)) {
+            /* default superClass */
+            superClass = "PikaStdLib.PikaObj";
+        }
         pikaAsm = strsAppend(buffs, pikaAsm, "0 DEF ");
         pikaAsm = strsAppend(buffs, pikaAsm,
                              strsAppend(buffs, thisClass,

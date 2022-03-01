@@ -2063,3 +2063,48 @@ TEST(parser, class_) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, class_def) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+            "class Test():\n"
+            "    x = 1\n"
+            "    def hello():\n"
+            "        print('hello')\n"
+            "\n"
+        ;
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+
+    EXPECT_STREQ(pikaAsm, (char*)
+    "B0\n"
+    "0 DEF Test()\n"
+    "0 JMP 1\n"
+    "B1\n"
+    "0 RUN PikaStdLib.PikaObj\n"
+    "0 OUT self\n"
+    "B1\n"
+    "0 RAS self\n"
+    "B1\n"
+    "0 NUM 1\n"
+    "0 OUT x\n"
+    "B1\n"
+    "0 DEF hello()\n"
+    "0 JMP 1\n"
+    "B2\n"
+    "1 STR hello\n"
+    "0 RUN print\n"
+    "B2\n"
+    "0 RET\n"
+    "B1\n"
+    "0 RAS $origin\n"
+    "B1\n"
+    "0 NEW self\n"
+    "0 RET\n"
+    "B0\n");
+
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

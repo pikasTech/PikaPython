@@ -1081,3 +1081,26 @@ TEST(pikaMain, class_arg) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, class_def) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(self, (char*)
+    "class Test():\n"
+    "    x = 1\n"
+    "    def hello(x):\n"
+    "        return x + 2\n"
+    "test = Test()\n"
+    "x = test.hello(test.x)\n"
+    "print(x)\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"3\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
