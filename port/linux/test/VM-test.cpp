@@ -737,7 +737,7 @@ TEST(VM, class_x_1) {
     ArgType test_arg_type = arg_getType(test_arg);
     EXPECT_EQ(test_arg_type, TYPE_OBJECT);
     int x = obj_getInt(test, (char*)"x");
-    // EXPECT_EQ(x, 1);
+    EXPECT_EQ(x, 1);
     obj_deinit(self);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);

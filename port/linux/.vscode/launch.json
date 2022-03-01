@@ -19,7 +19,7 @@
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=VM.RUN_DEF_NEW",
-                // "--gtest_filter=VM.class_x_1",
+                "--gtest_filter=VM.class_x_1",
                 // "--gtest_filter=parser.add_a_b*",
                 // "--gtest_filter=parser.method_void",
                 // "--gtest_filter=parser.add_a_b",

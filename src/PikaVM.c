@@ -174,7 +174,6 @@ static Arg* VM_instruction_handler_NON(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_NEW(PikaObj* self, VMState* vs, char* data) {
     Arg* origin_arg = obj_getArg(vs->locals, data);
     Arg* new_arg = arg_copy(origin_arg);
-    ArgType arg_type = arg_getType(origin_arg);
     origin_arg = arg_setType(origin_arg, TYPE_POINTER);
     arg_setType(new_arg, TYPE_FREE_OBJECT);
     return new_arg;
@@ -380,7 +379,7 @@ static Arg* VM_instruction_handler_RAS(PikaObj* self, VMState* vs, char* data) {
         return NULL;
     }
     /* use "data" object to run */
-    PikaObj* runAs = obj_getObj(self, data, 0);
+    PikaObj* runAs = obj_getObj(vs->locals, data, 0);
     args_setPtr(vs->locals->list, "__runAs", runAs);
     return NULL;
 }
