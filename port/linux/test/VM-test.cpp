@@ -659,3 +659,29 @@ TEST(VM, RUN_AS) {
     // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+
+TEST(VM, RUN_NEW) {
+    char* pikaAsm = (char*)
+        "B0\n"
+        "0 RUN PikaStdLib.PikaObj\n"
+        "0 OUT newObj\n"
+        "B0\n"
+        "0 NEW newObj\n"
+        "0 OUT outObj\n"
+    ;
+    PikaObj* self = newRootObj((char*)"", New_PikaMain);
+    pikaVM_runAsm(self, pikaAsm);
+    Arg* newObj = obj_getArg(self, (char*)"newObj");
+    Arg* outObj = obj_getArg(self, (char*)"outObj");
+    ArgType newObj_type = arg_getType(newObj);
+    ArgType outObj_type = arg_getType(outObj);
+    EXPECT_EQ(newObj_type, TYPE_POINTER);
+    EXPECT_EQ(outObj_type, TYPE_OBJECT);
+    /* a is local, should not be exist in globals */
+    /* b is local, should not be exist in globals */
+    obj_deinit(self);
+    // obj_deinit(globals);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
