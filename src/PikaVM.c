@@ -44,6 +44,7 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
 struct VMState_t {
     VMParameters* locals;
     VMParameters* globals;
+    VMParameters* runAs;
     Queue* q0;
     Queue* q1;
     int32_t jmp;
@@ -354,6 +355,10 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
     return __VM_OUT(self, vs, data, IS_INIT_OBJ_TRUE);
 }
 
+/* run as */
+static Arg* VM_instruction_handler_RAS(PikaObj* self, VMState* vs, char* data) {
+}
+
 static Arg* VM_instruction_handler_NUM(PikaObj* self, VMState* vs, char* data) {
     Arg* numArg = New_arg(NULL);
     if (strIsContain(data, '.')) {
@@ -652,6 +657,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     VMState vs = {
         .locals = locals,
         .globals = globals,
+        .runAs = NULL,
         .q0 = NULL,
         .q1 = NULL,
         .jmp = 0,

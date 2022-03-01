@@ -2049,12 +2049,16 @@ TEST(parser, class_) {
         "0 RUN PikaStdLib.PikaObj\n"
         "0 OUT self\n"
         "B1\n"
+        "0 RAS self\n"
+        "B1\n"
         "0 NUM 1\n"
         "0 OUT x\n"
         "B1\n"
+        "0 RAS $origin\n"
+        "B1\n"
         "0 RET self\n"
         "B0\n"
-);
+    );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
