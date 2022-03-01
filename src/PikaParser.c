@@ -1327,7 +1327,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
             /* return when exit class */
             if (strEqu(blockType, "class")) {
                 pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
-                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET\n");
+                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET self\n");
             }
         }
     }
@@ -1449,7 +1449,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         pikaAsm = strsAppend(buffs, pikaAsm, "0 RUN ");
         pikaAsm = strsAppend(buffs, pikaAsm, superClass);
         pikaAsm = strsAppend(buffs, pikaAsm, "\n");
-        pikaAsm = strsAppend(buffs, pikaAsm, "0 SLF\n");
+        pikaAsm = strsAppend(buffs, pikaAsm, "0 OUT self\n");
 
         is_block_matched = 1;
         args_deinit(buffs);

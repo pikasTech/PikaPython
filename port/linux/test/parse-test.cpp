@@ -2042,18 +2042,18 @@ TEST(parser, class_) {
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm, (char* )
-            "B0\n"
-            "0 DEF Test()\n"
-            "0 JMP 1\n"
-            "B1\n"
-            "0 RUN PikaStdLib.PikaObj\n"
-            "0 SLF\n"
-            "B1\n"
-            "0 NUM 1\n"
-            "0 OUT x\n"
-            "B1\n"
-            "0 RET\n"
-            "B0\n"
+        "B0\n"
+        "0 DEF Test()\n"
+        "0 JMP 1\n"
+        "B1\n"
+        "0 RUN PikaStdLib.PikaObj\n"
+        "0 OUT self\n"
+        "B1\n"
+        "0 NUM 1\n"
+        "0 OUT x\n"
+        "B1\n"
+        "0 RET self\n"
+        "B0\n"
 );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
