@@ -1330,7 +1330,9 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
                 pikaAsm =
                     strsAppend(outBuffs, pikaAsm, (char*)"0 RAS $origin\n");
                 pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
-                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET self\n");
+                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 NEW self\n");
+                pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
+                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET\n");
             }
         }
     }
