@@ -724,6 +724,7 @@ TEST(VM, class_x_1) {
         "class Test(PikaStdLib.PikaObj):\n"
         "    x = 1\n"
         "test = Test()\n"
+        "print('test.x: ' + str(test.x))\n"
         "\n"
         ;
     Args* buffs = New_strBuff();
