@@ -228,8 +228,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         args_setSysOut(vs->locals->list, "[error] runner: object no found.");
         goto RUN_exit;
     }
-    /* get method */
+    /* get method in local */
     method_arg = obj_getMethod(methodHostObj, methodPath);
+    if (NULL == method_arg) {
+        method_arg = obj_getMethod(vs->globals, methodPath);
+    }
     /* assert method*/
     if (NULL == method_arg) {
         /* error, method no found */
