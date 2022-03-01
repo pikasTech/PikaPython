@@ -663,6 +663,8 @@ TEST(VM, RUN_NEW) {
         "B0\n"
         "0 RUN PikaStdLib.PikaObj\n"
         "0 OUT newObj\n"
+        "0 NUM 1\n"
+        "0 OUT newObj.x\n"
         "B0\n"
         "0 NEW newObj\n"
         "0 OUT outObj\n"
@@ -671,8 +673,13 @@ TEST(VM, RUN_NEW) {
     pikaVM_runAsm(self, pikaAsm);
     Arg* newObj = obj_getArg(self, (char*)"newObj");
     Arg* outObj = obj_getArg(self, (char*)"outObj");
+    void* newObj_ptr = arg_getPtr(newObj);
+    void* outObj_ptr = arg_getPtr(outObj);
+    EXPECT_EQ(newObj_ptr, outObj_ptr);
+    int x = obj_getInt(self, (char*)"outObj.x");
     ArgType newObj_type = arg_getType(newObj);
     ArgType outObj_type = arg_getType(outObj);
+    EXPECT_EQ(x, 1);
     EXPECT_EQ(newObj_type, TYPE_POINTER);
     EXPECT_EQ(outObj_type, TYPE_OBJECT);
     obj_deinit(self);
@@ -689,7 +696,7 @@ TEST(VM, RUN_DEF_NEW) {
         "0 RUN PikaStdLib.PikaObj\n"
         "0 OUT newObj\n"
         "B1\n"
-        "1 NUM 1\n"
+        "0 NUM 1\n"
         "0 OUT newObj.x\n"
         "B1\n"
         "0 NEW newObj\n"
@@ -705,6 +712,7 @@ TEST(VM, RUN_DEF_NEW) {
     /* assert */
     PikaObj* outobj = obj_getObj(self, (char*)"outobj", 0);
     int x = obj_getInt(outobj, (char*)"x");
+    EXPECT_EQ(x, 1);
     /* deinit */
     obj_deinit(self);
     // obj_deinit(globals);
@@ -722,12 +730,14 @@ TEST(VM, class_x_1) {
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"", New_PikaMain);
-    VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
+    pikaVM_runAsm(self, pikaAsm);
 
     PikaObj* test = obj_getObj(self, (char*)"test", 0);
     Arg* test_arg = obj_getArg(self, (char*)"test");
     ArgType test_arg_type = arg_getType(test_arg);
+    EXPECT_EQ(test_arg_type, TYPE_OBJECT);
     int x = obj_getInt(test, (char*)"x");
+    // EXPECT_EQ(x, 1);
     obj_deinit(self);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
