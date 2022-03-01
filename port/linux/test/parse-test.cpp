@@ -2057,7 +2057,6 @@ TEST(parser, class_) {
         "0 RAS $origin\n"
         "B1\n"
         "0 NEW self\n"
-        "B1\n"
         "0 RET\n"
         "B0\n"
     );

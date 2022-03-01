@@ -40,6 +40,7 @@ typedef enum {
     TYPE_METHOD,
     TYPE_POINTER,
     TYPE_MATE_OBJECT,
+    TYPE_FREE_OBJECT,
     TYPE_STRING,
     TYPE_NULL,
 } ArgType;

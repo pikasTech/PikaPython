@@ -650,16 +650,13 @@ TEST(VM, RUN_AS) {
     int x_as_ = obj_getInt(as, (char*)"x");
     int x_as = obj_getInt(self, (char*)"as.x");
     int x_origin = obj_getInt(self, (char*)"x");
-    /* a is local, should not be exist in globals */
     EXPECT_EQ(x_as_, 1);
     EXPECT_EQ(x_as, 1);
-    /* b is local, should not be exist in globals */
     EXPECT_EQ(x_origin, 2);
     obj_deinit(self);
     // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
 
 TEST(VM, RUN_NEW) {
     char* pikaAsm = (char*)
@@ -678,10 +675,60 @@ TEST(VM, RUN_NEW) {
     ArgType outObj_type = arg_getType(outObj);
     EXPECT_EQ(newObj_type, TYPE_POINTER);
     EXPECT_EQ(outObj_type, TYPE_OBJECT);
-    /* a is local, should not be exist in globals */
-    /* b is local, should not be exist in globals */
     obj_deinit(self);
     // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(VM, RUN_DEF_NEW) {
+    char* pikaAsm = (char*)
+        "B0\n"
+        "0 DEF testnew()\n"
+        "0 JMP 1\n"
+        "B1\n"
+        "0 RUN PikaStdLib.PikaObj\n"
+        "0 OUT newObj\n"
+        "B1\n"
+        "1 NUM 1\n"
+        "0 OUT newObj.x\n"
+        "B1\n"
+        "0 NEW newObj\n"
+        "0 RET\n"
+        "B1\n"
+        "0 RET\n"
+        "B0\n"
+        "0 RUN testnew\n"
+        "0 OUT outobj\n"
+    ;
+    PikaObj* self = newRootObj((char*)"", New_PikaMain);
+    pikaVM_runAsm(self, pikaAsm);
+    /* assert */
+    PikaObj* outobj = obj_getObj(self, (char*)"outobj", 0);
+    int x = obj_getInt(outobj, (char*)"x");
+    /* deinit */
+    obj_deinit(self);
+    // obj_deinit(globals);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, class_x_1) {
+    char* line = (char*)
+        "class Test(PikaStdLib.PikaObj):\n"
+        "    x = 1\n"
+        "test = Test()\n"
+        "\n"
+        ;
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_multiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"", New_PikaMain);
+    VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
+
+    PikaObj* test = obj_getObj(self, (char*)"test", 0);
+    Arg* test_arg = obj_getArg(self, (char*)"test");
+    ArgType test_arg_type = arg_getType(test_arg);
+    int x = obj_getInt(test, (char*)"x");
+    obj_deinit(self);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

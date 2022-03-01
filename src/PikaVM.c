@@ -175,9 +175,8 @@ static Arg* VM_instruction_handler_NEW(PikaObj* self, VMState* vs, char* data) {
     Arg* origin_arg = obj_getArg(vs->locals, data);
     Arg* new_arg = arg_copy(origin_arg);
     ArgType arg_type = arg_getType(origin_arg);
-    if (TYPE_OBJECT == arg_type) {
-        origin_arg = arg_setType(origin_arg, TYPE_POINTER);
-    }
+    origin_arg = arg_setType(origin_arg, TYPE_POINTER);
+    arg_setType(new_arg, TYPE_FREE_OBJECT);
     return new_arg;
 }
 
@@ -320,6 +319,7 @@ static Arg* __VM_OUT(PikaObj* self,
                      char* data,
                      is_init_obj_t is_init_obj) {
     Arg* outArg = arg_copy(queue_popArg(vs->q0));
+    ArgType outArg_type = arg_getType(outArg);
     PikaObj* hostObj = vs->locals;
     /* match global_list */
     if (args_isArgExist(vs->locals->list, "__gl")) {
@@ -342,11 +342,15 @@ static Arg* __VM_OUT(PikaObj* self,
     if (args_isArgExist(vs->locals->list, "__runAs")) {
         hostObj = args_getPtr(vs->locals->list, "__runAs");
     }
+    /* set free object to nomal object */
+    if (TYPE_FREE_OBJECT == outArg_type) {
+        arg_setType(outArg, TYPE_OBJECT);
+    }
     /* ouput arg to locals */
     obj_setArg(hostObj, data, outArg);
-    if (is_init_obj == IS_INIT_OBJ_TRUE) {
-        /* found a mate_object */
-        if (TYPE_MATE_OBJECT == arg_getType(outArg)) {
+    if (TYPE_MATE_OBJECT == outArg_type) {
+        if (is_init_obj == IS_INIT_OBJ_TRUE) {
+            /* found a mate_object */
             /* init object */
             PikaObj* new_obj = obj_getObj(hostObj, data, 0);
             /* run __init__() when init obj */
