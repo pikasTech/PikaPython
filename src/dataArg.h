@@ -34,15 +34,15 @@ typedef uint8_t Arg;
 typedef uint32_t Hash;
 typedef enum {
     TYPE_NONE,
-    TYPE_OBJECT,
+    TYPE_NULL,
     TYPE_INT,
     TYPE_FLOAT,
-    TYPE_METHOD,
     TYPE_POINTER,
+    TYPE_STRING,
+    TYPE_OBJECT,
     TYPE_MATE_OBJECT,
     TYPE_FREE_OBJECT,
-    TYPE_STRING,
-    TYPE_NULL,
+    TYPE_METHOD,
 } ArgType;
 
 typedef struct __arg __arg;
