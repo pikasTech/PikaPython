@@ -300,7 +300,15 @@ static Arg* VM_instruction_handler_STR(PikaObj* self, VMState* vs, char* data) {
     return arg_setStr(strArg, "", data);
 }
 
-static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
+typedef enum {
+    IS_INIT_OBJ_TRUE,
+    IS_INIT_OBJ_FALSE,
+} is_init_obj_t;
+
+static Arg* __VM_OUT(PikaObj* self,
+                     VMState* vs,
+                     char* data,
+                     is_init_obj_t is_init_obj) {
     Arg* outArg = arg_copy(queue_popArg(vs->q0));
     PikaObj* hostObj = vs->locals;
     /* match global_list */
@@ -322,22 +330,28 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
     }
     /* ouput arg to locals */
     obj_setArg(hostObj, data, outArg);
-    /* found a mate_object */
-    if (TYPE_MATE_OBJECT == arg_getType(outArg)) {
-        /* init object */
-        PikaObj* new_obj = obj_getObj(hostObj, data, 0);
-        /* run __init__() when init obj */
-        Arg* methodArg = NULL;
-        methodArg = obj_getMethod(new_obj, "__init__");
-        if (NULL != methodArg) {
-            arg_deinit(methodArg);
-            pikaVM_runAsm(new_obj,
-                          "B0\n"
-                          "0 RUN __init__\n");
+    if (is_init_obj == IS_INIT_OBJ_TRUE) {
+        /* found a mate_object */
+        if (TYPE_MATE_OBJECT == arg_getType(outArg)) {
+            /* init object */
+            PikaObj* new_obj = obj_getObj(hostObj, data, 0);
+            /* run __init__() when init obj */
+            Arg* methodArg = NULL;
+            methodArg = obj_getMethod(new_obj, "__init__");
+            if (NULL != methodArg) {
+                arg_deinit(methodArg);
+                pikaVM_runAsm(new_obj,
+                              "B0\n"
+                              "0 RUN __init__\n");
+            }
         }
     }
     arg_deinit(outArg);
     return NULL;
+}
+
+static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
+    return __VM_OUT(self, vs, data, IS_INIT_OBJ_TRUE);
 }
 
 static Arg* VM_instruction_handler_NUM(PikaObj* self, VMState* vs, char* data) {
@@ -546,10 +560,6 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
         offset += __gotoNextLine(methodPtr);
         methodPtr = vs->pc + offset;
     }
-    return NULL;
-}
-
-static Arg* VM_instruction_handler_SLF(PikaObj* self, VMState* vs, char* data) {
     return NULL;
 }
 
