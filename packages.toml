@@ -113,6 +113,7 @@ releases = [
   "v0.3.0 f188b2cb2ee4948ce189eeca9fd7c6d095c8bda9",
   "v0.3.1 3dd996b973cca2d7eecf990f08ce2c4974e22872",
   "v0.3.2 88ad9d8a757cc79a4cdc554e543c565decb4861a",
+  "v0.3.3 bcee87c3d7d09db093f92ba825019dd3ec8726a7",
 ]
 
 [[packages]]
