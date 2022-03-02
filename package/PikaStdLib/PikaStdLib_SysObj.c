@@ -25,27 +25,27 @@ void PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         return;
     }
     ArgType type = arg_getType(arg);
-    if (TYPE_INT == type) {
+    if (ARG_TYPE_INT == type) {
         obj_setSysOut(self, "int");
         return;
     }
-    if (TYPE_FLOAT == type) {
+    if (ARG_TYPE_FLOAT == type) {
         obj_setSysOut(self, "float");
         return;
     }
-    if (TYPE_STRING == type) {
+    if (ARG_TYPE_STRING == type) {
         obj_setSysOut(self, "string");
         return;
     }
-    if (TYPE_POINTER == type) {
+    if (ARG_TYPE_POINTER == type) {
         obj_setSysOut(self, "pointer");
         return;
     }
-    if (TYPE_MATE_OBJECT == type) {
+    if (ARG_TYPE_MATE_OBJECT == type) {
         obj_setSysOut(self, "mate_object");
         return;
     }
-    if (TYPE_METHOD == type) {
+    if (ARG_TYPE_STATIC_METHOD == type) {
         obj_setSysOut(self, "method");
         return;
     }
@@ -53,10 +53,10 @@ void PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
 
 float PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {
     ArgType type = arg_getType(arg);
-    if (TYPE_INT == type) {
+    if (ARG_TYPE_INT == type) {
         return (float)arg_getInt(arg);
     }
-    if (TYPE_FLOAT == type) {
+    if (ARG_TYPE_FLOAT == type) {
         return (float)arg_getFloat(arg);
     }
     obj_setSysOut(self, "[error] convert to float type faild.");
@@ -66,10 +66,10 @@ float PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {
 
 int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
     ArgType type = arg_getType(arg);
-    if (TYPE_INT == type) {
+    if (ARG_TYPE_INT == type) {
         return (int)arg_getInt(arg);
     }
-    if (TYPE_FLOAT == type) {
+    if (ARG_TYPE_FLOAT == type) {
         return (int)arg_getFloat(arg);
     }
     obj_setSysOut(self, "[error] convert to int type faild.");
@@ -82,12 +82,12 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
     Args* buffs = New_strBuff();
     char* res = NULL;
     do {
-        if (TYPE_INT == type) {
+        if (ARG_TYPE_INT == type) {
             int val = arg_getInt(arg);
             res = strsFormat(buffs, 11, "%d", val);
             break;
         }
-        if (TYPE_FLOAT == type) {
+        if (ARG_TYPE_FLOAT == type) {
             float val = arg_getFloat(arg);
             res = strsFormat(buffs, 11, "%f", val);
             break;
@@ -100,17 +100,17 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
 
 Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     /* a String, return a StringObj */
-    if (TYPE_STRING == arg_getType(arg)) {
+    if (ARG_TYPE_STRING == arg_getType(arg)) {
         obj_setStr(self, "_sobj", arg_getStr(arg));
         return arg_setMetaObj("", "PikaStdLib_StringObj",
                               New_PikaStdLib_StringObj);
     }
     /* a MATE object, return itself */
-    if (TYPE_MATE_OBJECT == arg_getType(arg)) {
+    if (ARG_TYPE_MATE_OBJECT == arg_getType(arg)) {
         return arg_copy(arg);
     }
     /* object */
-    if (TYPE_POINTER == arg_getType(arg)) {
+    if (ARG_TYPE_POINTER == arg_getType(arg)) {
         PikaObj* arg_obj = arg_getPtr(arg);
         pikaVM_runAsm(arg_obj,
                       "B0\n"
@@ -140,14 +140,14 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2, int a3) {
 
 Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
     ArgType obj_type = arg_getType(obj);
-    if (TYPE_STRING == obj_type) {
+    if (ARG_TYPE_STRING == obj_type) {
         int index = arg_getInt(key);
         char* str_pyload = arg_getStr(obj);
         char char_buff[] = " ";
         char_buff[0] = str_pyload[index];
         return arg_setStr(NULL, "", char_buff);
     }
-    if ((TYPE_OBJECT == obj_type) || (TYPE_POINTER == obj_type)) {
+    if ((ARG_TYPE_OBJECT == obj_type) || (ARG_TYPE_POINTER == obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
         pikaVM_runAsm(arg_obj,
@@ -166,14 +166,14 @@ void PikaStdLib_SysObj___set__(PikaObj* self,
                                char* obj_str,
                                Arg* val) {
     ArgType obj_type = arg_getType(obj);
-    if (TYPE_STRING == obj_type) {
+    if (ARG_TYPE_STRING == obj_type) {
         int index = arg_getInt(key);
         char* str_val = arg_getStr(val);
         char* str_pyload = arg_getStr(obj);
         str_pyload[index] = str_val[0];
         obj_setStr(self, obj_str, str_pyload);
     }
-    if ((TYPE_OBJECT == obj_type) || (TYPE_POINTER == obj_type)) {
+    if ((ARG_TYPE_OBJECT == obj_type) || (ARG_TYPE_POINTER == obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
         obj_setArg(arg_obj, "__val", val);
