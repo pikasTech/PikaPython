@@ -361,16 +361,17 @@ static Arg* __VM_OUT(PikaObj* self,
     }
     /* ouput arg to locals */
     obj_setArg(hostObj, data, outArg);
-    if (ARG_TYPE_MATE_OBJECT == outArg_type) {
+    if ((ARG_TYPE_MATE_OBJECT == outArg_type) ||
+        (ARG_TYPE_FREE_OBJECT == outArg_type)) {
         if (is_init_obj == IS_INIT_OBJ_TRUE) {
             /* found a mate_object */
             /* init object */
             PikaObj* new_obj = obj_getObj(hostObj, data, 0);
             /* run __init__() when init obj */
-            Arg* methodArg = NULL;
-            methodArg = obj_getMethod(new_obj, "__init__");
-            if (NULL != methodArg) {
-                arg_deinit(methodArg);
+            Arg* init_method_arg = NULL;
+            init_method_arg = obj_getMethod(new_obj, "__init__");
+            if (NULL != init_method_arg) {
+                arg_deinit(init_method_arg);
                 pikaVM_runAsm(new_obj,
                               "B0\n"
                               "0 RUN __init__\n");
