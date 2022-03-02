@@ -264,7 +264,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     while (1) {
         /* load 'self' as the first arg when call object method */
         if ((method_type == ARG_TYPE_OBJECT_METHOD) && (call_arg_index == 0)) {
-            call_arg = arg_setPtr(self, "", ARG_TYPE_POINTER, method_host_obj);
+            call_arg = arg_setPtr(NULL, "", ARG_TYPE_POINTER, method_host_obj);
         } else {
             call_arg = arg_copy(queue_popArg(vs->q1));
         }
