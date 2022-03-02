@@ -1,4 +1,4 @@
-# need core > v1.4.0
+# need core >= v1.4.0
 import PikaStdLib
 
 class people:
