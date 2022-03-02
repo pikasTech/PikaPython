@@ -8,10 +8,11 @@ from PikaObj import *
 
 pkdb = PikaDebug.Debuger()
 
-i = 0
-while i < 10:
-    i = i + 1
-    print('i :' + str(i))
-    # pkdb.set_trace()
+class Test():
+    x = 1
+    def hi(self):
+        print('hi' + str(self.x))
+test = Test()
+test.hi()
 
-
+print('hello')
