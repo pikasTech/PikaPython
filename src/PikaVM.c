@@ -201,35 +201,36 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
 
 static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     Args* buffs = New_strBuff();
-    Arg* returnArg = NULL;
-    VMParameters* subLocals = NULL;
+    Arg* return_arg = NULL;
+    VMParameters* sub_locals = NULL;
     char* methodPath = data;
-    PikaObj* methodHostObj;
+    PikaObj* method_host_obj;
     Arg* method_arg;
-    Method methodPtr;
-    char* methodDec;
-    char* typeList;
-    char* methodCode;
-    char* sysOut;
+    Method method_ptr;
+    ArgType method_type;
+    char* method_dec;
+    char* type_list;
+    char* method_code;
+    char* sys_out;
     /* return arg directly */
     if (strEqu(data, "")) {
-        returnArg = arg_copy(queue_popArg(vs->q1));
+        return_arg = arg_copy(queue_popArg(vs->q1));
         goto RUN_exit;
     }
 
     /* get method host obj */
-    methodHostObj = obj_getObj(self, methodPath, 1);
-    if (NULL == methodHostObj) {
-        methodHostObj = obj_getObj(vs->locals, methodPath, 1);
+    method_host_obj = obj_getObj(self, methodPath, 1);
+    if (NULL == method_host_obj) {
+        method_host_obj = obj_getObj(vs->locals, methodPath, 1);
     }
-    if (NULL == methodHostObj) {
+    if (NULL == method_host_obj) {
         /* error, not found object */
         args_setErrorCode(vs->locals->list, 1);
         args_setSysOut(vs->locals->list, "[error] runner: object no found.");
         goto RUN_exit;
     }
     /* get method in local */
-    method_arg = obj_getMethod(methodHostObj, methodPath);
+    method_arg = obj_getMethod(method_host_obj, methodPath);
     if (NULL == method_arg) {
         method_arg = obj_getMethod(vs->globals, methodPath);
     }
@@ -241,69 +242,79 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         goto RUN_exit;
     }
     /* get method Ptr */
-    methodPtr = (Method)methodArg_getPtr(method_arg);
+    method_ptr = (Method)methodArg_getPtr(method_arg);
     /* get method Decleartion */
-    methodDec = strsCopy(buffs, methodArg_getDec(method_arg));
+    method_dec = strsCopy(buffs, methodArg_getDec(method_arg));
     arg_deinit(method_arg);
+    method_type = arg_getType(method_arg);
 
     /* get type list */
-    typeList = strsCut(buffs, methodDec, '(', ')');
+    type_list = strsCut(buffs, method_dec, '(', ')');
 
-    if (typeList == NULL) {
+    if (type_list == NULL) {
         /* typeList no found */
         args_setErrorCode(vs->locals->list, 3);
         args_setSysOut(vs->locals->list, "[error] runner: type list no found.");
         goto RUN_exit;
     }
 
-    subLocals = New_PikaObj();
+    sub_locals = New_PikaObj();
+    Arg* call_arg = NULL;
+    uint8_t call_arg_index = 0;
     while (1) {
-        Arg* methodArg = arg_copy(queue_popArg(vs->q1));
-        if (NULL == methodArg) {
+        /* load 'self' as the first arg when call object method */
+        if ((method_type == ARG_TYPE_OBJECT_METHOD) && (call_arg_index == 0)) {
+            call_arg = arg_setPtr(self, "", ARG_TYPE_POINTER, method_host_obj);
+        } else {
+            call_arg = arg_copy(queue_popArg(vs->q1));
+        }
+        /* exit when there is no arg in queue */
+        if (NULL == call_arg) {
             break;
         }
-        char* argDef = strsPopToken(buffs, typeList, ',');
+        char* argDef = strsPopToken(buffs, type_list, ',');
         char* argName = strsGetFirstToken(buffs, argDef, ':');
-        methodArg = arg_setName(methodArg, argName);
-        args_setArg(subLocals->list, methodArg);
+        call_arg = arg_setName(call_arg, argName);
+        args_setArg(sub_locals->list, call_arg);
+        call_arg_index++;
     }
 
-    obj_setErrorCode(methodHostObj, 0);
-    obj_setSysOut(methodHostObj, "");
+    obj_setErrorCode(method_host_obj, 0);
+    obj_setSysOut(method_host_obj, "");
 
     /* run method */
-    methodCode = (char*)methodPtr;
-    if (methodCode[0] == 'B' && methodCode[2] == '\n') {
+    method_code = (char*)method_ptr;
+    if (method_code[0] == 'B' && method_code[2] == '\n') {
         /* VM method */
-        subLocals = pikaVM_runAsmWithPars(methodHostObj, subLocals, vs->globals,
-                                          methodCode);
+        sub_locals = pikaVM_runAsmWithPars(method_host_obj, sub_locals,
+                                           vs->globals, method_code);
         /* get method return */
-        returnArg = arg_copy(args_getArg(subLocals->list, (char*)"return"));
+        return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
     } else {
         /* native method */
-        methodPtr(methodHostObj, subLocals->list);
+        method_ptr(method_host_obj, sub_locals->list);
         /* get method return */
-        returnArg = arg_copy(args_getArg(subLocals->list, (char*)"return"));
+        return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
     }
 
     /* transfer sysOut */
-    sysOut = obj_getSysOut(methodHostObj);
-    if (NULL != sysOut) {
-        args_setSysOut(vs->locals->list, sysOut);
+    sys_out = obj_getSysOut(method_host_obj);
+    if (NULL != sys_out) {
+        args_setSysOut(vs->locals->list, sys_out);
     }
     /* transfer errCode */
-    if (0 != obj_getErrorCode(methodHostObj)) {
+    if (0 != obj_getErrorCode(method_host_obj)) {
         /* method error */
         args_setErrorCode(vs->locals->list, 6);
     }
 
     goto RUN_exit;
 RUN_exit:
-    if (NULL != subLocals) {
-        obj_deinit(subLocals);
+    if (NULL != sub_locals) {
+        obj_deinit(sub_locals);
     }
     args_deinit(buffs);
-    return returnArg;
+    return return_arg;
 }
 
 static Arg* VM_instruction_handler_STR(PikaObj* self, VMState* vs, char* data) {
@@ -585,14 +596,20 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
     int offset = 0;
     int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
     PikaObj* hostObj = vs->locals;
+    uint8_t is_in_class = 0;
     /* use RunAs object */
     if (args_isArgExist(vs->locals->list, "__runAs")) {
         hostObj = args_getPtr(vs->locals->list, "__runAs");
+        is_in_class = 1;
     }
     while (1) {
         if ((methodPtr[0] == 'B') &&
             (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
-            class_defineMethod(hostObj, data, (Method)methodPtr);
+            if (is_in_class) {
+                class_defineObjectMethod(hostObj, data, (Method)methodPtr);
+            } else {
+                class_defineMethod(hostObj, data, (Method)methodPtr);
+            }
             break;
         }
         offset += __gotoNextLine(methodPtr);

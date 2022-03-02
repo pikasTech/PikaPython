@@ -110,7 +110,9 @@ int32_t obj_freeObj(PikaObj* self, char* subObjectName);
 
 /* method */
 int32_t class_defineMethod(PikaObj* self, char* declearation, Method methodPtr);
-
+int32_t class_defineObjectMethod(PikaObj* self,
+                                 char* declearation,
+                                 Method methodPtr);
 int32_t obj_removeArg(PikaObj* self, char* argPath);
 int32_t obj_isArgExist(PikaObj* self, char* argPath);
 PikaObj* obj_getClassObjByNewFun(PikaObj* self, char* name, NewFun newClassFun);

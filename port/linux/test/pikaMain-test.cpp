@@ -1091,7 +1091,7 @@ TEST(pikaMain, class_def) {
     obj_run(self, (char*)
     "class Test():\n"
     "    x = 1\n"
-    "    def hello(x):\n"
+    "    def hello(self, x):\n"
     "        return x + 2\n"
     "test = Test()\n"
     "x = test.hello(test.x)\n"
@@ -1114,13 +1114,13 @@ TEST(pikaMain, class_def_print) {
     obj_run(self, (char*)
     "class Test():\n"
     "    x = 1\n"
-    "    def hi():\n"
-    "        print('hi')\n"
+    "    def hi(self):\n"
+    "        print('hi' + str(self.x))\n"
     "test = Test()\n"
     "test.hi()\n"
     );
     /* assert */
-    EXPECT_STREQ(log_buff[0], (char*)"hi\r\n");
+    EXPECT_STREQ(log_buff[0], (char*)"hi1\r\n");
     EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
