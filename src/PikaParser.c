@@ -1441,8 +1441,15 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     if (strEqu(obj_getStr(ast, "block"), "class")) {
         Args* buffs = New_strBuff();
         char* declear = obj_getStr(ast, "declear");
-        char* thisClass = strsGetFirstToken(buffs, declear, '(');
-        char* superClass = strsCut(buffs, declear, '(', ')');
+        char* thisClass = NULL;
+        char* superClass = NULL;
+        if (strIsContain(declear, '(')) {
+            thisClass = strsGetFirstToken(buffs, declear, '(');
+            superClass = strsCut(buffs, declear, '(', ')');
+        } else {
+            thisClass = declear;
+            superClass = "";
+        }
         if (strEqu("", superClass)) {
             /* default superClass */
             superClass = "PikaStdLib.PikaObj";
