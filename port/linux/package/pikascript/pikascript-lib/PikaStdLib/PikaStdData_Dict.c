@@ -23,14 +23,14 @@ void PikaStdData_Dict_remove(PikaObj* self, char* key) {
 
 Arg* PikaStdData_Dict___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
-    return arg_setPtr(NULL, "", TYPE_POINTER, self);
+    return arg_setPtr(NULL, "", ARG_TYPE_POINTER, self);
 }
 
 Arg* PikaStdData_Dict___next__(PikaObj* self) {
     int __iter_i = args_getInt(self->list, "__iter_i");
     PikaObj* pyload = obj_getObj(self, "pyload", 0);
     Arg* res = arg_copy(args_getArg_index(pyload->list, __iter_i));
-    if (TYPE_POINTER == arg_getType(res)) {
+    if (ARG_TYPE_POINTER == arg_getType(res)) {
         arg_deinit(res);
         return arg_setNull(NULL);
     }

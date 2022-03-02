@@ -174,8 +174,8 @@ static Arg* VM_instruction_handler_NON(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_NEW(PikaObj* self, VMState* vs, char* data) {
     Arg* origin_arg = obj_getArg(vs->locals, data);
     Arg* new_arg = arg_copy(origin_arg);
-    origin_arg = arg_setType(origin_arg, TYPE_POINTER);
-    arg_setType(new_arg, TYPE_FREE_OBJECT);
+    origin_arg = arg_setType(origin_arg, ARG_TYPE_POINTER);
+    arg_setType(new_arg, ARG_TYPE_FREE_OBJECT);
     return new_arg;
 }
 
@@ -193,8 +193,8 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
         arg = arg_copy(obj_getArg(vs->globals, data));
     }
     ArgType arg_type = arg_getType(arg);
-    if (TYPE_OBJECT == arg_type) {
-        arg = arg_setType(arg, TYPE_POINTER);
+    if (ARG_TYPE_OBJECT == arg_type) {
+        arg = arg_setType(arg, ARG_TYPE_POINTER);
     }
     return arg;
 }
@@ -345,12 +345,12 @@ static Arg* __VM_OUT(PikaObj* self,
         hostObj = args_getPtr(vs->locals->list, "__runAs");
     }
     /* set free object to nomal object */
-    if (TYPE_FREE_OBJECT == outArg_type) {
-        arg_setType(outArg, TYPE_OBJECT);
+    if (ARG_TYPE_FREE_OBJECT == outArg_type) {
+        arg_setType(outArg, ARG_TYPE_OBJECT);
     }
     /* ouput arg to locals */
     obj_setArg(hostObj, data, outArg);
-    if (TYPE_MATE_OBJECT == outArg_type) {
+    if (ARG_TYPE_MATE_OBJECT == outArg_type) {
         if (is_init_obj == IS_INIT_OBJ_TRUE) {
             /* found a mate_object */
             /* init object */
@@ -427,22 +427,22 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     float num1_f = 0.0;
     float num2_f = 0.0;
     /* get int and float num */
-    if (type_arg1 == TYPE_INT) {
+    if (type_arg1 == ARG_TYPE_INT) {
         num1_i = arg_getInt(arg1);
         num1_f = (float)num1_i;
-    } else if (type_arg1 == TYPE_FLOAT) {
+    } else if (type_arg1 == ARG_TYPE_FLOAT) {
         num1_f = arg_getFloat(arg1);
         num1_i = (int)num1_f;
     }
-    if (type_arg2 == TYPE_INT) {
+    if (type_arg2 == ARG_TYPE_INT) {
         num2_i = arg_getInt(arg2);
         num2_f = (float)num2_i;
-    } else if (type_arg2 == TYPE_FLOAT) {
+    } else if (type_arg2 == ARG_TYPE_FLOAT) {
         num2_f = arg_getFloat(arg2);
         num2_i = (int)num2_f;
     }
     if (strEqu("+", data)) {
-        if ((type_arg1 == TYPE_STRING) && (type_arg2 == TYPE_STRING)) {
+        if ((type_arg1 == ARG_TYPE_STRING) && (type_arg2 == ARG_TYPE_STRING)) {
             char* num1_s = NULL;
             char* num2_s = NULL;
             Args* str_opt_buffs = New_strBuff();
@@ -454,7 +454,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
             goto OPT_exit;
         }
         /* match float */
-        if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+        if ((type_arg1 == ARG_TYPE_FLOAT) || type_arg2 == ARG_TYPE_FLOAT) {
             outArg = arg_setFloat(outArg, "", num1_f + num2_f);
             goto OPT_exit;
         }
@@ -463,7 +463,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         goto OPT_exit;
     }
     if (strEqu("-", data)) {
-        if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+        if ((type_arg1 == ARG_TYPE_FLOAT) || type_arg2 == ARG_TYPE_FLOAT) {
             outArg = arg_setFloat(outArg, "", num1_f - num2_f);
             goto OPT_exit;
         }
@@ -471,7 +471,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         goto OPT_exit;
     }
     if (strEqu("*", data)) {
-        if ((type_arg1 == TYPE_FLOAT) || type_arg2 == TYPE_FLOAT) {
+        if ((type_arg1 == ARG_TYPE_FLOAT) || type_arg2 == ARG_TYPE_FLOAT) {
             outArg = arg_setFloat(outArg, "", num1_f * num2_f);
             goto OPT_exit;
         }
@@ -508,7 +508,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     }
     if (strEqu("==", data)) {
         /* string compire */
-        if ((type_arg1 == TYPE_STRING) && (type_arg2 == TYPE_STRING)) {
+        if ((type_arg1 == ARG_TYPE_STRING) && (type_arg2 == ARG_TYPE_STRING)) {
             outArg = arg_setInt(outArg, "",
                                 strEqu(arg_getStr(arg1), arg_getStr(arg2)));
             goto OPT_exit;
@@ -631,7 +631,7 @@ static Arg* VM_instruction_handler_EST(PikaObj* self, VMState* vs, char* data) {
     if (arg == NULL) {
         return arg_setInt(NULL, "", 0);
     }
-    if (TYPE_NULL == arg_getType(arg)) {
+    if (ARG_TYPE_NULL == arg_getType(arg)) {
         return arg_setInt(NULL, "", 0);
     }
     return arg_setInt(NULL, "", 1);

@@ -58,7 +58,7 @@ void* args_getPtr(Args* self, char* name) {
 int32_t args_setPtr(Args* self, char* name, void* argPointer) {
     int32_t errCode = 0;
     Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, name, TYPE_POINTER, argPointer);
+    argNew = arg_setPtr(argNew, name, ARG_TYPE_POINTER, argPointer);
     args_setArg(self, argNew);
     return errCode;
 }
@@ -110,9 +110,9 @@ int64_t args_getInt(Args* self, char* name) {
         return -999999999;
     }
     ArgType arg_type = arg_getType(arg);
-    if (arg_type == TYPE_INT) {
+    if (arg_type == ARG_TYPE_INT) {
         return arg_getInt(arg);
-    } else if (arg_type == TYPE_FLOAT) {
+    } else if (arg_type == ARG_TYPE_FLOAT) {
         return (int)arg_getFloat(arg);
     }
     return -999999999;
@@ -126,7 +126,7 @@ ArgType args_getType(Args* self, char* name) {
     Arg* arg = NULL;
     arg = args_getArg(self, name);
     if (NULL == arg) {
-        return TYPE_NONE;
+        return ARG_TYPE_NONE;
     }
     return arg_getType(arg);
 }
@@ -137,9 +137,9 @@ float args_getFloat(Args* self, char* name) {
         return -999999999.0;
     }
     ArgType arg_type = arg_getType(arg);
-    if (arg_type == TYPE_FLOAT) {
+    if (arg_type == ARG_TYPE_FLOAT) {
         return arg_getFloat(arg);
-    } else if (arg_type == TYPE_INT) {
+    } else if (arg_type == ARG_TYPE_INT) {
         return (float)arg_getInt(arg);
     }
     return -999999999.0;
@@ -352,30 +352,30 @@ char* args_print(Args* self, char* name) {
     char* res = NULL;
     ArgType type = args_getType(self, name);
     Args* buffs = New_strBuff();
-    if (TYPE_NONE == type) {
+    if (ARG_TYPE_NONE == type) {
         /* can not get arg */
         res = NULL;
         goto exit;
     }
 
-    if (type == TYPE_INT) {
+    if (type == ARG_TYPE_INT) {
         int32_t val = args_getInt(self, name);
         res = getPrintStringFromInt(self, name, val);
         goto exit;
     }
 
-    if (type == TYPE_FLOAT) {
+    if (type == ARG_TYPE_FLOAT) {
         float val = args_getFloat(self, name);
         res = getPrintStringFromFloat(self, name, val);
         goto exit;
     }
 
-    if (type == TYPE_STRING) {
+    if (type == ARG_TYPE_STRING) {
         res = args_getStr(self, name);
         goto exit;
     }
 
-    if (type == TYPE_POINTER) {
+    if (type == ARG_TYPE_POINTER) {
         void* val = args_getPtr(self, name);
         res = getPrintStringFromPtr(self, name, val);
         goto exit;

@@ -103,7 +103,7 @@ int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
     }
     ArgType type = arg_getType(argEach);
     /* deinit sub object */
-    if (type == TYPE_OBJECT) {
+    if (type == ARG_TYPE_OBJECT) {
         PikaObj* subObj = arg_getPtr(argEach);
         obj_deinit(subObj);
     }
@@ -327,7 +327,7 @@ void* getNewClassObjFunByName(PikaObj* obj, char* name) {
 }
 
 int32_t __foreach_removeMethodInfo(Arg* argNow, Args* argList) {
-    if (arg_getType(argNow) == TYPE_METHOD) {
+    if (arg_getType(argNow) == ARG_TYPE_STATIC_METHOD) {
         args_removeArg(argList, argNow);
         return 0;
     }
@@ -359,7 +359,7 @@ static PikaObj* __initObj(PikaObj* obj, char* name) {
     thisClass = obj_getClassObjByNewFun(obj, name, newObjFun);
     newObj = removeMethodInfo(thisClass);
 
-    args_setPtrWithType(obj->list, name, TYPE_OBJECT, newObj);
+    args_setPtrWithType(obj->list, name, ARG_TYPE_OBJECT, newObj);
     res = obj_getPtr(obj, name);
     goto exit;
 exit:
@@ -374,11 +374,11 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
     /* finded object, check type*/
     ArgType type = args_getType(self->list, name);
     /* found mate Object */
-    if (type == TYPE_MATE_OBJECT) {
+    if (type == ARG_TYPE_MATE_OBJECT) {
         return __initObj(self, name);
     }
     /* found Objcet */
-    if (type == TYPE_OBJECT || type == TYPE_POINTER) {
+    if (type == ARG_TYPE_OBJECT || type == ARG_TYPE_POINTER) {
         return args_getPtr(self->list, name);
     }
     return NULL;
@@ -431,7 +431,7 @@ void obj_saveMethodInfo(PikaObj* self,
     /* +1 to add \0 */
     __platform_memcpy((void*)((uintptr_t)info + size_ptr), pars, size_pars + 1);
     arg = arg_setName(arg, method_name);
-    arg = arg_setType(arg, TYPE_METHOD);
+    arg = arg_setType(arg, ARG_TYPE_STATIC_METHOD);
     arg = arg_setContent(arg, info, size_info);
 
     args_setArg(self->list, arg);
@@ -487,7 +487,7 @@ int32_t obj_removeArg(PikaObj* self, char* argPath) {
     Args* buffs = New_strBuff();
     char* argName;
     int32_t res;
-    if (TYPE_OBJECT == arg_getType(obj_arg)) {
+    if (ARG_TYPE_OBJECT == arg_getType(obj_arg)) {
         obj_deinit(arg_getPtr(obj_arg));
     }
     int32_t err = 0;

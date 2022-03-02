@@ -98,7 +98,7 @@ uint8_t* content_deinit(uint8_t* self) {
 
 uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
     if (NULL == self) {
-        return content_init("", TYPE_NONE, content, size, NULL);
+        return content_init("", ARG_TYPE_NONE, content, size, NULL);
     }
 
     Hash nameHash = content_getNameHash(self);
@@ -112,7 +112,7 @@ uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
 
 uint8_t* content_setNameHash(uint8_t* self, Hash nameHash) {
     if (NULL == self) {
-        return content_init_hash(nameHash, TYPE_NONE, NULL, 0, NULL);
+        return content_init_hash(nameHash, ARG_TYPE_NONE, NULL, 0, NULL);
     }
     __arg* arg = (__arg*)self;
     arg->name_hash = nameHash;
@@ -140,7 +140,7 @@ ArgType content_getType(uint8_t* self) {
 }
 
 Arg* arg_newContent(Arg* self, uint32_t size) {
-    uint8_t* newContent = content_init("", TYPE_NONE, NULL, size, NULL);
+    uint8_t* newContent = content_init("", ARG_TYPE_NONE, NULL, size, NULL);
     arg_freeContent(self);
     return newContent;
 }
@@ -166,15 +166,15 @@ uint8_t* arg_getContent(Arg* self) {
 }
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val) {
-    return content_init(name, TYPE_INT, (uint8_t*)&val, sizeof(val), NULL);
+    return content_init(name, ARG_TYPE_INT, (uint8_t*)&val, sizeof(val), NULL);
 }
 
 Arg* arg_setNull(Arg* self) {
-    return content_init("", TYPE_NULL, NULL, 0, NULL);
+    return content_init("", ARG_TYPE_NULL, NULL, 0, NULL);
 }
 
 Arg* arg_setFloat(Arg* self, char* name, float val) {
-    return content_init(name, TYPE_FLOAT, (uint8_t*)&val, sizeof(val), NULL);
+    return content_init(name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val), NULL);
 }
 
 float arg_getFloat(Arg* self) {
@@ -191,7 +191,7 @@ Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {
-    return content_init(name, TYPE_STRING, (uint8_t*)string,
+    return content_init(name, ARG_TYPE_STRING, (uint8_t*)string,
                         strGetSize(string) + 1, NULL);
 }
 
@@ -222,7 +222,7 @@ Hash arg_getNameHash(Arg* self) {
 
 ArgType arg_getType(Arg* self) {
     if (NULL == self) {
-        return TYPE_NONE;
+        return ARG_TYPE_NONE;
     }
     return content_getType(self);
 }

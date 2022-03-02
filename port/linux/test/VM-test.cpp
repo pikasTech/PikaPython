@@ -680,8 +680,8 @@ TEST(VM, RUN_NEW) {
     ArgType newObj_type = arg_getType(newObj);
     ArgType outObj_type = arg_getType(outObj);
     EXPECT_EQ(x, 1);
-    EXPECT_EQ(newObj_type, TYPE_POINTER);
-    EXPECT_EQ(outObj_type, TYPE_OBJECT);
+    EXPECT_EQ(newObj_type, ARG_TYPE_POINTER);
+    EXPECT_EQ(outObj_type, ARG_TYPE_OBJECT);
     obj_deinit(self);
     // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -736,7 +736,7 @@ TEST(VM, class_x_1) {
     PikaObj* test = obj_getObj(self, (char*)"test", 0);
     Arg* test_arg = obj_getArg(self, (char*)"test");
     ArgType test_arg_type = arg_getType(test_arg);
-    EXPECT_EQ(test_arg_type, TYPE_OBJECT);
+    EXPECT_EQ(test_arg_type, ARG_TYPE_OBJECT);
     int x = obj_getInt(test, (char*)"x");
     EXPECT_EQ(x, 1);
     obj_deinit(self);

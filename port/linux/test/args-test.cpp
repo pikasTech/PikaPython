@@ -39,9 +39,9 @@ TEST(args, test2) {
     EXPECT_EQ(int64Out, 22221);
     EXPECT_EQ((uint64_t)pointer, 2222322);
     EXPECT_EQ(1, strEqu((char*)"teeeds", strOut));
-    EXPECT_EQ(args_getType(args, (char*)"int64Test"), TYPE_INT);
-    EXPECT_EQ(args_getType(args, (char*)"pointerTest"), TYPE_POINTER);
-    EXPECT_EQ(args_getType(args, (char*)"strTest"), TYPE_STRING);
+    EXPECT_EQ(args_getType(args, (char*)"int64Test"), ARG_TYPE_INT);
+    EXPECT_EQ(args_getType(args, (char*)"pointerTest"), ARG_TYPE_POINTER);
+    EXPECT_EQ(args_getType(args, (char*)"strTest"), ARG_TYPE_STRING);
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }

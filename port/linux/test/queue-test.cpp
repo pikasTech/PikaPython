@@ -12,7 +12,7 @@ TEST(queue, NEW) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(queue, TYPE_INT) {
+TEST(queue, ARG_TYPE_INT) {
     Queue* q = New_queue();
     queue_pushInt(q, 1);
     queue_pushInt(q, 2);
@@ -39,7 +39,7 @@ TEST(queue, arg) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(queue, TYPE_FLOAT) {
+TEST(queue, ARG_TYPE_FLOAT) {
     Queue* q = New_queue();
     queue_pushFloat(q, 1.1f);
     queue_pushFloat(q, 2.2f);
@@ -70,7 +70,7 @@ TEST(queueObj, init) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(queueObj, TYPE_INT) {
+TEST(queueObj, ARG_TYPE_INT) {
     QueueObj* q = New_TinyObj(NULL);
     queueObj_init(q);
     queueObj_pushInt(q, 1);
@@ -83,7 +83,7 @@ TEST(queueObj, TYPE_INT) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(queueObj, TYPE_FLOAT) {
+TEST(queueObj, ARG_TYPE_FLOAT) {
     QueueObj* q = New_TinyObj(NULL);
     queueObj_init(q);
     queueObj_pushFloat(q, 1.1f);
@@ -135,7 +135,7 @@ TEST(queueObj, currentObj) {
     PikaObj* currentObj = queueObj_getCurrentObj(q);
     EXPECT_TRUE(currentObj != NULL);
     ArgType type = args_getType(q->list, (char*)"0");
-    EXPECT_EQ(TYPE_OBJECT, type);
+    EXPECT_EQ(ARG_TYPE_OBJECT, type);
     obj_setInt(queueObj_getCurrentObj(q), (char*)"test", 1);
 
     queueObj_pushObj(q, (char*)"type2");
