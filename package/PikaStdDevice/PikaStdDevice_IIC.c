@@ -15,6 +15,10 @@ void PikaStdDevice_IIC_enable(PikaObj *self){
     obj_run(self, "platformEnable()");
 }
 
+void PikaStdDevice_IIC_disable(PikaObj *self){
+    obj_run(self, "platformDisable()");
+}
+
 void PikaStdDevice_IIC_setDeviceAddr(PikaObj *self, int addr){
     obj_setInt(self, "deviceAddr", addr);
 }
@@ -46,6 +50,11 @@ void PikaStdDevice_IIC_platformWrite(PikaObj *self){
 }
 
 void PikaStdDevice_IIC_platformEnable(PikaObj *self){
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
+void PikaStdDevice_IIC_platformDisable(PikaObj *self){
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
 }

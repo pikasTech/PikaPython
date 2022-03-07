@@ -31,6 +31,10 @@ void PikaStdDevice_PWM_enable(PikaObj* self) {
     obj_run(self, "platformEnable()");
 }
 
+void PikaStdDevice_PWM_disable(PikaObj *self){
+    obj_run(self, "platformDisable()");
+}
+
 float PikaStdDevice_PWM_getDuty(PikaObj* self) {
     return obj_getFloat(self, "duty");
 }
@@ -48,6 +52,11 @@ void PikaStdDevice_PWM_platformSetDuty(PikaObj* self) {
     obj_setSysOut(self, "[error] platform method need to be override.");
 }
 void PikaStdDevice_PWM_platformSetFrequency(PikaObj* self) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
+void PikaStdDevice_PWM_platformDisable(PikaObj *self){
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
 }

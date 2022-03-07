@@ -92,6 +92,9 @@ class ADC(TinyObj):
     def enable():
         pass
 
+    def disable():
+        pass
+
     def read() -> float:
         pass
 
@@ -101,6 +104,10 @@ class ADC(TinyObj):
 
     # need override
     def platformRead():
+        pass
+
+    # need override
+    def platformDisable():
         pass
 
 
@@ -118,6 +125,9 @@ class UART(TinyObj):
         pass
 
     def enable():
+        pass
+
+    def disable():
         pass
 
     def write(data: str):
@@ -138,6 +148,9 @@ class UART(TinyObj):
     def platformRead():
         pass
 
+    # need override
+    def platformDisable():
+        pass
 
 class IIC(TinyObj):
     def __init__():
@@ -158,6 +171,9 @@ class IIC(TinyObj):
     def enable():
         pass
 
+    def disable():
+        pass
+
     def write(addr: int, data: str):
         pass
 
@@ -176,6 +192,9 @@ class IIC(TinyObj):
     def platformRead():
         pass
 
+    # need override
+    def platformDisable():
+        pass
 
 class PWM(TinyObj):
     def __init__():
@@ -211,6 +230,9 @@ class PWM(TinyObj):
     def enable():
         pass
 
+    def disable():
+        pass
+
     def getFrequency() -> int:
         pass
 
@@ -227,4 +249,8 @@ class PWM(TinyObj):
 
     # need override
     def platformSetDuty():
+        pass
+
+    # need override
+    def platformDisable():
         pass
