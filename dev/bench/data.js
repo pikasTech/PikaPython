@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1646621649658,
+  "lastUpdate": 1646641669030,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -22769,6 +22769,60 @@ window.BENCHMARK_DATA = {
             "value": 0.0050002483448084965,
             "unit": "ms/iter",
             "extra": "iterations: 236010\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "1878ea884f1cb0a2965ef7a95bb92ba96e7326f1",
+          "message": "add disable api for adc iic pwm and uart in std device",
+          "timestamp": "2022-03-07T14:58:21+08:00",
+          "tree_id": "6d76ca194dfaabc657cf2b2fc4a4cb152c5feb3f",
+          "url": "https://github.com/pikasTech/pikascript/commit/1878ea884f1cb0a2965ef7a95bb92ba96e7326f1"
+        },
+        "date": 1646641666842,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 1419.5305560001314,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 1419.5305560001314 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 186.43899246944895,
+            "unit": "ms/iter",
+            "extra": "iterations: 5\ncpu: 186.359428407461 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 135.80496900665457,
+            "unit": "ms/iter",
+            "extra": "iterations: 7\ncpu: 135.79274334223314 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 35.22614432469933,
+            "unit": "ms/iter",
+            "extra": "iterations: 28\ncpu: 35.22291210193251 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000340489214678,
+            "unit": "ms/iter",
+            "extra": "iterations: 196382\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
