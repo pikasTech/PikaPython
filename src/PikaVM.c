@@ -475,6 +475,16 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         goto OPT_exit;
     }
     if (strEqu("-", data)) {
+        if (type_arg2 == ARG_TYPE_NONE) {
+            if (type_arg1 == ARG_TYPE_INT) {
+                outArg = arg_setInt(outArg, "", -num1_i);
+                goto OPT_exit;
+            }
+            if (type_arg1 == ARG_TYPE_FLOAT) {
+                outArg = arg_setFloat(outArg, "", -num1_f);
+                goto OPT_exit;
+            }
+        }
         if ((type_arg1 == ARG_TYPE_FLOAT) || type_arg2 == ARG_TYPE_FLOAT) {
             outArg = arg_setFloat(outArg, "", num1_f - num2_f);
             goto OPT_exit;
@@ -817,6 +827,14 @@ VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
         __platform_printf("[error]: Syntax error.\r\n");
         globals = NULL;
         goto exit;
+    }
+    /* if do not save pikaAsm to flash */
+    if ((1 == __platform_save_pikaAsm("")) &&
+        (!obj_isArgExist(self, "__asm"))) {
+        obj_setStr(self, "__asm", pikaAsm);
+        args_deinit(buffs);
+        buffs = NULL;
+        pikaAsm = obj_getStr(self, "__asm");
     }
     globals = pikaVM_runAsm(self, pikaAsm);
     goto exit;

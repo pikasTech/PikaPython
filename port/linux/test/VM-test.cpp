@@ -9,7 +9,8 @@ extern "C" {
 #include "dataMemory.h"
 #include "dataQueue.h"
 #include "dataStrs.h"
-
+#include "pika_config_gtest.h"
+extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 /* test head */
 VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
                                     VMParameters* locals,
@@ -741,5 +742,29 @@ TEST(VM, class_x_1) {
     EXPECT_EQ(x, 1);
     obj_deinit(self);
     args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, nag_a) {
+    char* line = (char*)
+            "a = 1\n"
+            "print(-a)\n"
+            "b = 0.5\n"
+            "print(-b)\n"
+        ;
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_multiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    pikaVM_runAsm(self, pikaAsm);
+    /* assert */
+    EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"-1\r\n");
+    EXPECT_STREQ(log_buff[0], (char*)"-0.500000\r\n");
+    /* deinit */
+    obj_deinit(self);
+    args_deinit(buffs);
+    /* check mem */
     EXPECT_EQ(pikaMemNow(), 0);
 }
