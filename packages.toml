@@ -53,6 +53,7 @@ releases = [
   "lts2021 3e87db85ca2171991f77bd3af59c4eaefed69110",
   "v1.3.5.1 9ebdaa5560c04f53af13743d00a5b7a8f00c0508",
   "v1.4.0 3b9dcd1b0c11e20a8e499e352b776d2996e9e291",
+  "v1.4.1 a0cad21ed9f1d263f8c2274a38f92e2fa6d50bfd",
 ]
 
 [[packages]]
