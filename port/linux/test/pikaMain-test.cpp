@@ -1177,7 +1177,6 @@ TEST(pikaMain, class_demo_2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(pikaMain, class_demo_3) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1193,6 +1192,37 @@ TEST(pikaMain, class_demo_3) {
         "    def speak(self):\n"
         "        print('i am a student')\n"
         " \n"
+        "p = people()\n"
+        "s = student()\n"
+        "p.speak()\n"
+        "s.speak()\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"i am a people\r\n");
+    EXPECT_STREQ(log_buff[0], (char*)"i am a student\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, class_demo_save_asm) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(self, (char*)
+        "class people:\n"
+        "    def speak(self):\n"
+        "        print('i am a people')\n"
+        " \n"
+        "class student(people):\n"
+        "    def speak(self):\n"
+        "        print('i am a student')\n"
+        " \n"
+    );
+    obj_run(self, (char*)
         "p = people()\n"
         "s = student()\n"
         "p.speak()\n"
