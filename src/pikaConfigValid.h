@@ -24,22 +24,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 #ifndef __PIKA_CFG_VALID_H__
-#define __PIKA_CFG_VALID_H__
+    #define __PIKA_CFG_VALID_H__
 
-#ifdef __PIKA_USER_CONFIC_INCLUDE__
-#include __PIKA_USER_CONFIC_INCLUDE__
-#else
+    /* default configuration  */
+    #define PIKA_CONFIG_LINE_BUFF_SIZE 128
+    #define PIKA_CONFIG_SPRINTF_BUFF_SIZE 128
+    #define PIKA_CONFIG_METHOD_NAME_BUFF_SIZE 32
 
-/* default configuration  */
-#define PIKA_CONFIG_LINE_BUFF_SIZE 128
-#define PIKA_CONFIG_SPRINTF_BUFF_SIZE 128
-#define PIKA_CONFIG_METHOD_NAME_BUFF_SIZE 32
-#define PIKA_CONFIG_METHOD_CACHE_ENABLE
+    #ifdef PIKA_CONFIG_ENABLE
+        #include "pika_config.h"
+    #else
+        #define PIKA_CONFIG_DEFAULT_SPACE
+    #endif
 
-#endif
+    #ifdef PIKA_CONFIG_DEFAULT_SPACE
 
-/* configuration validation */
+    #endif
+
+    #ifdef PIKA_CONFIG_DEFAULT_SPEED
+        #define PIKA_CONFIG_METHOD_CACHE_ENABLE
+    #endif
+    /* configuration validation */
 
 #endif

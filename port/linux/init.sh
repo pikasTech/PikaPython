@@ -22,7 +22,7 @@ cd $ROOT
 rm Release -rf
 mkdir Release
 cd Release 
-cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake -DCMAKE_BUILD_TYPE=Release -DPIKA_CONFIG_ENABLE=ON ..
 make -j
 
 cd $ROOT
