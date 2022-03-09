@@ -64,6 +64,7 @@ releases = [
   "v1.4.1 6539072bf7bebb242ea40f8595bfb5c9aae3de7f",
   "v1.4.2 5ae86929851ff6a62342a7072b77e9cf5be85f1c",
   "v1.4.3 17cc05c42cc26e694475a6c19f8d0712f8768750",
+  "v1.4.4 ac4247e5fd3e221eb110a1b41276849c623049ec",
 ]
 
 [[packages]]
@@ -131,12 +132,14 @@ releases = [
   "v1.0.0 3509764a2ed63c565e63f61814e9b656fc573841",
   "v1.0.1 e8bb5a8d18516f79da7115f73024cae70fa51590",
   "v1.1.0 ff2e72ccb08c6a5935ed7ed77dfaa3a074ff120f",
+  "v1.1.1 ac4247e5fd3e221eb110a1b41276849c623049ec",
 ]
 
 [[packages]]
 name = "pikaRTDevice"
 releases = [
   "v0.0.1 fe900b79d8d1075bb7e4e3dd9d4e1e187e0c9195",
+  "v1.0.0 ac4247e5fd3e221eb110a1b41276849c623049ec",
 ]
 
 [[packages]]
