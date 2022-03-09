@@ -297,7 +297,7 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
 
 Arg* obj_getMethod(PikaObj* obj, char* methodPath) {
     Arg* method = NULL;
-    char method_name_buff[PIKA_METHOD_NAME_BUFF_SIZE] = {0};
+    char method_name_buff[PIKA_CONFIG_METHOD_NAME_BUFF_SIZE] = {0};
     char* methodName = strGetLastToken(method_name_buff, methodPath, '.');
     method = obj_getArg(obj, methodName);
     PikaObj* methodHostClass;
@@ -577,7 +577,7 @@ void obj_shellLineProcess(PikaObj* self,
                           __obj_shellLineHandler_t __lineHandler_fun,
                           struct shell_config* cfg) {
     Args* buffs = New_strBuff();
-    char* rxBuff = args_getBuff(buffs, PIKA_SHELL_LINE_BUFF_SIZE);
+    char* rxBuff = args_getBuff(buffs, PIKA_CONFIG_LINE_BUFF_SIZE);
     char* input_line = NULL;
     uint8_t is_in_block = 0;
     __platform_printf(cfg->prefix);
@@ -626,7 +626,7 @@ void obj_shellLineProcess(PikaObj* self,
                 } else {
                     __platform_printf("... ");
                 }
-                __clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
+                __clearBuff(rxBuff, PIKA_CONFIG_LINE_BUFF_SIZE);
                 continue;
             }
             if (0 != strGetSize(rxBuff)) {
@@ -636,7 +636,7 @@ void obj_shellLineProcess(PikaObj* self,
                     char _n = '\n';
                     strAppendWithSize(rxBuff, &_n, 1);
                     obj_setStr(self, "shell_buff", rxBuff);
-                    __clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
+                    __clearBuff(rxBuff, PIKA_CONFIG_LINE_BUFF_SIZE);
                     __platform_printf("... ");
                     continue;
                 }
@@ -647,7 +647,7 @@ void obj_shellLineProcess(PikaObj* self,
             }
             __platform_printf(cfg->prefix);
 
-            __clearBuff(rxBuff, PIKA_SHELL_LINE_BUFF_SIZE);
+            __clearBuff(rxBuff, PIKA_CONFIG_LINE_BUFF_SIZE);
             continue;
         }
     }

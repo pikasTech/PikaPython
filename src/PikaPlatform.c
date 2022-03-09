@@ -80,7 +80,7 @@ PIKA_WEAK int __platform_vsnprintf(char* buff,
 PIKA_WEAK int __platform_sprintf(char* buff, char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    int res = vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+    int res = vsnprintf(buff, PIKA_CONFIG_SPRINTF_BUFF_SIZE, fmt, args);
     va_end(args);
     return res;
 }

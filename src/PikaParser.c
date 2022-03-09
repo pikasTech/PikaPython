@@ -1238,7 +1238,7 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     char* left = obj_getStr(subAst, "left");
     char* str = obj_getStr(subAst, "string");
     char* num = obj_getStr(subAst, "num");
-    char* buff = args_getBuff(buffs, PIKA_SPRINTF_BUFF_SIZE);
+    char* buff = args_getBuff(buffs, PIKA_CONFIG_SPRINTF_BUFF_SIZE);
     if (NULL != ref) {
         __platform_sprintf(buff, "%d REF %s\n", deepth, ref);
         pikaAsm = strsAppend(buffs, pikaAsm, buff);
