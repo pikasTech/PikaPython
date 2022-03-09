@@ -19,6 +19,8 @@
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=stack.str",
+                // "--gtest_filter=VM*",
+                // "--gtest_filter=arg*",
                 // "--gtest_filter=VM.class_x_1",
                 // "--gtest_filter=parser.add_a_b*",
                 // "--gtest_filter=parser.method_void",
@@ -37,7 +39,7 @@
                 // "--gtest_filter=VM.a_jjcc"
                 // "--gtest_filter=VM.a_1_1d1"
                 // "--gtest_filter=queue*"
-                // "--gtest_filter=parser*"
+                // "--gtest_filter=VM*"
                 // "--gtest_filter=parser._or_"
                 // "--gtest_filter=parser.while_true_block"
                 // "--gtest_filter=args*",
@@ -48,10 +50,10 @@
                 // "--gtest_filter=stack*",
                 // "--gtest_filter=strs*",
                 // "--gtest_filter=block.ifrun2"
-                // "--gtest_filter=sysObj.print"
+                // "--gtest_filter=sysObj*"
                 // "--gtest_filter=object_test.a_b"
                 // "--gtest_filter=object_test.voidRun"
-                // "--gtest_filter=object_test.printa"
+                // "--gtest_filter=object_test*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

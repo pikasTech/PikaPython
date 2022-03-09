@@ -100,7 +100,7 @@ char* strsPopTokenWithSkip(Args* buffs_p,
 
 char* strsGetCleanCmd(Args* outBuffs, char* cmd) {
     int32_t size = strGetSize(cmd);
-    Args buffs = {0};    
+    Args buffs = {0};
     char* tokens = Lexer_getTokens(&buffs, cmd);
     uint16_t token_size = Lexer_getTokenSize(tokens);
     char* strOut = args_getBuff(outBuffs, size);
@@ -158,7 +158,7 @@ char* strsDeleteBetween(Args* buffs_p, char* strIn, char begin, char end) {
 }
 
 static uint8_t Lexer_isError(char* line) {
-    Args buffs = {0};    
+    Args buffs = {0};
     uint8_t res = 0; /* not error */
     char* tokens = Lexer_getTokens(&buffs, line);
     if (NULL == tokens) {
@@ -172,7 +172,7 @@ exit:
 }
 
 static enum StmtType Lexer_matchStmtType(char* right) {
-    Args buffs = {0};    
+    Args buffs = {0};
     enum StmtType stmtType = STMT_none;
     char* rightWithoutSubStmt = strsDeleteBetween(&buffs, right, '(', ')');
     char* tokens = Lexer_getTokens(&buffs, rightWithoutSubStmt);
@@ -248,7 +248,7 @@ uint8_t Parser_checkIsDirect(char* str) {
 
 char* Lexer_printTokens(Args* outBuffs, char* tokens) {
     /* init */
-    Args buffs = {0};    
+    Args buffs = {0};
     char* printOut = strsCopy(&buffs, "");
 
     /* process */
@@ -282,7 +282,7 @@ Arg* Lexer_setToken(Arg* tokens_arg,
                     enum TokenType token_type,
                     char*
                     operator) {
-    Args buffs = {0};    
+    Args buffs = {0};
     char token_type_buff[3] = {0};
     token_type_buff[0] = 0x1F;
     token_type_buff[1] = token_type;
@@ -299,7 +299,7 @@ Arg* Lexer_setSymbel(Arg* tokens_arg,
                      char* stmt,
                      int32_t i,
                      int32_t* symbol_start_index) {
-    Args buffs = {0};    
+    Args buffs = {0};
     char* symbol_buff = NULL;
     /* nothing to add symbel */
     if (i == *symbol_start_index) {
@@ -565,7 +565,7 @@ char* Lexer_getTokenPyload(char* token) {
 }
 
 uint8_t Lexer_isContain(char* tokens, enum TokenType token_type, char* pyload) {
-    Args buffs = {0};    
+    Args buffs = {0};
     char* tokens_buff = strsCopy(&buffs, tokens);
     uint8_t res = 0;
     uint16_t token_size = Lexer_getTokenSize(tokens);
@@ -584,7 +584,7 @@ exit:
 }
 
 char* Lexer_getOperator(Args* outBuffs, char* stmt) {
-    Args buffs = {0};    
+    Args buffs = {0};
     char* tokens = Lexer_getTokens(&buffs, stmt);
     char* operator= NULL;
     const char operators[][6] = {
@@ -678,7 +678,7 @@ char* Parser_solveBranckets(Args* outBuffs,
                             char* stmt,
                             char* mode) {
     /* init objects */
-    Args buffs = {0};    
+    Args buffs = {0};
     Arg* right_arg = arg_setStr(NULL, "", "");
     uint8_t is_in_brancket = 0;
     args_setStr(&buffs, "index", "");
@@ -734,7 +734,8 @@ char* Parser_solveBranckets(Args* outBuffs,
                 right_arg = arg_strAppend(right_arg,
                                           ","
                                           "'");
-                right_arg = arg_strAppend(right_arg, args_getStr(&buffs, "obj"));
+                right_arg =
+                    arg_strAppend(right_arg, args_getStr(&buffs, "obj"));
                 right_arg = arg_strAppend(right_arg, "'");
             }
             right_arg = arg_strAppend(right_arg, ")");
@@ -769,7 +770,7 @@ char* Parser_solveLeftBranckets(Args* outBuffs, char* right, char* left) {
 }
 
 AST* AST_parseStmt(AST* ast, char* stmt) {
-    Args buffs = {0};    
+    Args buffs = {0};
     char* assignment = strsGetFirstToken(&buffs, stmt, '(');
     char* method = NULL;
     char* ref = NULL;
@@ -961,7 +962,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     }
     /* init data */
     AST* ast = New_queueObj();
-    Args buffs = {0};    
+    Args buffs = {0};
     uint8_t block_deepth, block_deepth_last;
     char *line_start, *stmt;
     /* get block deepth */
@@ -1186,7 +1187,7 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multi_line) {
     char* out_ASM = NULL;
     /* parse each line */
     while (1) {
-        Args buffs = {0};        
+        Args buffs = {0};
         /* get single line by pop multiline */
         char* line = strsGetFirstToken(&buffs, multi_line + line_offset, '\n');
         uint32_t line_size = strGetSize(line);
@@ -1223,7 +1224,7 @@ exit:
 
 char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     int deepth = obj_getInt(ast, "deepth");
-    Args buffs = {0};    
+    Args buffs = {0};
     while (1) {
         QueueObj* subStmt = queueObj_popObj(subAst);
         if (NULL == subStmt) {
@@ -1285,7 +1286,7 @@ char* ASM_addBlockDeepth(AST* ast,
 }
 
 char* AST_toPikaASM(AST* ast, Args* outBuffs) {
-    Args buffs = {0};    
+    Args buffs = {0};
     char* pikaAsm = strsCopy(&buffs, "");
     QueueObj* exitBlock = obj_getObj(ast, "exitBlock", 0);
     /* exiting from block */
@@ -1439,7 +1440,6 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     }
 
     if (strEqu(obj_getStr(ast, "block"), "class")) {
-        Args buffs = {0};        
         char* declear = obj_getStr(ast, "declear");
         char* thisClass = NULL;
         char* superClass = NULL;
@@ -1469,9 +1469,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 OUT self\n");
         pikaAsm = strsAppend(&buffs, pikaAsm, block_deepth_str);
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 RAS self\n");
-
         is_block_matched = 1;
-        strsDeinit(&buffs);
         goto exit;
     }
 

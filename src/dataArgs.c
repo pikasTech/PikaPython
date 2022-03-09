@@ -37,6 +37,10 @@ void args_deinit(Args* self) {
     link_deinit(self);
 }
 
+void args_deinit_stack(Args* self) {
+    link_deinit_stack(self);
+}
+
 int32_t args_setFloat(Args* self, char* name, float argFloat) {
     Arg* argNew = New_arg(NULL);
     argNew = arg_setFloat(argNew, name, argFloat);

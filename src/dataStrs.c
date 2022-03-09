@@ -114,7 +114,7 @@ char* strsFormat(Args* buffs_p, uint16_t buffSize, const char* fmt, ...) {
 }
 
 Arg* arg_strAppend(Arg* arg_in, char* str_to_append) {
-    Args buffs = {0};    
+    Args buffs = {0};
     char* str_out = strsAppend(&buffs, arg_getStr(arg_in), str_to_append);
     Arg* arg_out = arg_setStr(arg_in, "", str_out);
     arg_deinit(arg_in);
@@ -149,7 +149,8 @@ char* strsReplace(Args* buffs_p, char* orig, char* rep, char* with) {
         ins = tmp + len_rep;
         tmp = strstr(ins, rep);
     }
-    tmp = args_getBuff(buffs_p, strlen(orig) + (len_with - len_rep) * count + 1);
+    tmp =
+        args_getBuff(buffs_p, strlen(orig) + (len_with - len_rep) * count + 1);
     result = tmp;
     if (NULL == result) {
         return NULL;
@@ -189,10 +190,5 @@ char* strsGetLine(Args* buffs_p, char* code) {
 }
 
 void strsDeinit(Args* buffs_p) {
-    LinkNode* nowNode = buffs_p->firstNode;
-    while (NULL != nowNode) {
-        LinkNode* nodeNext = content_getNext(nowNode);
-        linkNode_deinit(nowNode);
-        nowNode = nodeNext;
-    }
+    link_deinit_stack(buffs_p);
 }

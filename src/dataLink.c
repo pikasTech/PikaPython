@@ -30,16 +30,23 @@
 #include "dataLinkNode.h"
 #include "dataMemory.h"
 
-void link_deinit(Link* self) {
+void __link_deinit_pyload(Link* self) {
     LinkNode* nowNode = self->firstNode;
     while (NULL != nowNode) {
         LinkNode* nodeNext = content_getNext(nowNode);
         linkNode_deinit(nowNode);
         nowNode = nodeNext;
     }
-    // DynMemPut(self->mem);
-    pikaFree(self, sizeof(Link));
     self = NULL;
+}
+
+void link_deinit(Link* self) {
+    __link_deinit_pyload(self);
+    pikaFree(self, sizeof(Link));
+}
+
+void link_deinit_stack(Link* self) {
+    __link_deinit_pyload(self);
 }
 
 void link_addNode(Link* self, void* content) {

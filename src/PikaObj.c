@@ -244,11 +244,11 @@ int32_t obj_load(PikaObj* self, Args* args, char* name) {
 }
 
 int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_ObjectFun) {
-    Args* initArgs = New_args(NULL);
+    Args initArgs = {0};
     void* (*new_Object)(Args * initArgs) = (void* (*)(Args*))new_ObjectFun;
-    void* subObject = new_Object(initArgs);
+    void* subObject = new_Object(&initArgs);
     obj_setPtr(self, subObjectName, subObject);
-    args_deinit(initArgs);
+    args_deinit(&initArgs);
     return 0;
 }
 
@@ -320,16 +320,19 @@ PikaObj* removeMethodInfo(PikaObj* thisClass) {
     return thisClass;
 }
 
+extern PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
     PikaObj* thisClass = obj_getClassObjByNewFun(NULL, name, newObjFun);
     PikaObj* newObj = removeMethodInfo(thisClass);
+    __pikaMain = newObj;
     return newObj;
 }
 
 static PikaObj* __initObj(PikaObj* obj, char* name) {
     PikaObj* res = NULL;
     NewFun newObjFun = (NewFun)getNewClassObjFunByName(obj, name);
-    Args buffs = {0};    PikaObj* thisClass;
+    Args buffs = {0};
+    PikaObj* thisClass;
     PikaObj* newObj;
     if (NULL == newObjFun) {
         /* no such object */
@@ -401,7 +404,8 @@ static void obj_saveMethodInfo(PikaObj* self,
                                char* method_dec,
                                void* method_ptr,
                                ArgType method_type) {
-    Args buffs = {0};    char* pars = strsRemovePrefix(&buffs, method_dec, method_name);
+    Args buffs = {0};
+    char* pars = strsRemovePrefix(&buffs, method_dec, method_name);
     Arg* arg = New_arg(NULL);
     uint32_t size_ptr = sizeof(void*);
     uint32_t size_pars = strGetSize(pars);
@@ -424,7 +428,8 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
                                             ArgType method_type) {
     int32_t size = strGetSize(declearation);
     int32_t res = 0;
-    Args buffs = {0};    char* cleanDeclearation =
+    Args buffs = {0};
+    char* cleanDeclearation =
         strDeleteChar(args_getBuff(&buffs, size), declearation, ' ');
     char* methodPath =
         strGetFirstToken(args_getBuff(&buffs, size), cleanDeclearation, '(');
@@ -548,7 +553,7 @@ static void __clearBuff(char* buff, int size) {
 void obj_shellLineProcess(PikaObj* self,
                           __obj_shellLineHandler_t __lineHandler_fun,
                           struct shell_config* cfg) {
-    Args buffs = {0};    
+    Args buffs = {0};
     char* rxBuff = args_getBuff(&buffs, PIKA_CONFIG_LINE_BUFF_SIZE);
     char* input_line = NULL;
     uint8_t is_in_block = 0;
@@ -579,7 +584,8 @@ void obj_shellLineProcess(PikaObj* self,
             /* still in block */
             if (is_in_block) {
                 /* load new line into buff */
-                Args buffs = {0};                char _n = '\n';
+                Args buffs = {0};
+                char _n = '\n';
                 strAppendWithSize(rxBuff, &_n, 1);
                 char* shell_buff_new =
                     strsAppend(&buffs, obj_getStr(self, "shell_buff"), rxBuff);
