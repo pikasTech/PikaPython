@@ -180,19 +180,28 @@ char* strGetLastToken(char* strOut, char* strIn, char sign) {
 }
 
 char* strPopToken(char* strOut, char* strIn, char sign) {
-    int32_t str_in_size = strGetSize(strIn);
-    if (0 == str_in_size) {
-        return strOut;
+    int32_t getSign = 0;
+    int32_t iPoped = 0;
+    int32_t iOut = 0;
+    int32_t size = strGetSize(strIn);
+    int32_t i = 0;
+    for (i = 0; i < size; i++) {
+        if (getSign) {
+            strIn[iPoped] = strIn[i];
+            iPoped++;
+            continue;
+        }
+        if (strIn[i] != sign) {
+            strOut[iOut++] = strIn[i];
+            continue;
+        }
+        if (strIn[i] == sign) {
+            getSign = 1;
+            continue;
+        }
     }
-    uintptr_t index = (uintptr_t)memchr(strIn, sign, strGetSize(strIn));
-    uint32_t pop_size = index - (uintptr_t)strIn + 1;
-    if (0 == index) {
-        strncpy(strOut, strIn, str_in_size);
-        strIn[0] = 0;
-        return strOut;
-    }
-    strncpy(strOut, strIn, pop_size - 1);
-    memmove(strIn, strIn + pop_size, str_in_size - pop_size + 1);
+    strOut[iOut] = 0;
+    strIn[iPoped] = 0;
     return strOut;
 }
 
