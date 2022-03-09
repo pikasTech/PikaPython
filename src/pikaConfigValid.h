@@ -25,12 +25,13 @@
  * SOFTWARE.
  */
 #ifndef __PIKA_CFG_VALID_H__
-    #define __PIKA_CFG_VALID_H__
+#define __PIKA_CFG_VALID_H__
 
     /* default configuration  */
     #define PIKA_CONFIG_LINE_BUFF_SIZE 128
     #define PIKA_CONFIG_SPRINTF_BUFF_SIZE 128
     #define PIKA_CONFIG_METHOD_NAME_BUFF_SIZE 32
+    #undef PIKA_CONFIG_METHOD_CACHE_ENABLE
 
     #ifdef PIKA_CONFIG_ENABLE
         #include "pika_config.h"
@@ -39,7 +40,6 @@
     #endif
 
     #ifdef PIKA_CONFIG_DEFAULT_SPACE
-
     #endif
 
     #ifdef PIKA_CONFIG_DEFAULT_SPEED
