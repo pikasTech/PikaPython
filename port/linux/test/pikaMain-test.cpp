@@ -1082,50 +1082,50 @@ TEST(pikaMain, class_arg) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, class_def) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     /* run */
-//     PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
-//     __platform_printf((char*)"BEGIN\r\n");
-//     obj_run(self, (char*)
-//     "class Test():\n"
-//     "    x = 1\n"
-//     "    def hello(self, x):\n"
-//     "        return x + 2\n"
-//     "test = Test()\n"
-//     "x = test.hello(test.x)\n"
-//     "print(x)\n"
-//     );
-//     /* assert */
-//     EXPECT_STREQ(log_buff[0], (char*)"3\r\n");
-//     EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
-//     /* deinit */
-//     obj_deinit(self);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, class_def) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(self, (char*)
+    "class Test():\n"
+    "    x = 1\n"
+    "    def hello(self, x):\n"
+    "        return x + 2\n"
+    "test = Test()\n"
+    "x = test.hello(test.x)\n"
+    "print(x)\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"3\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(pikaMain, class_def_print) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     /* run */
-//     PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
-//     __platform_printf((char*)"BEGIN\r\n");
-//     obj_run(self, (char*)
-//     "class Test():\n"
-//     "    x = 1\n"
-//     "    def hi(self):\n"
-//     "        print('hi' + str(self.x))\n"
-//     "test = Test()\n"
-//     "test.hi()\n"
-//     );
-//     /* assert */
-//     EXPECT_STREQ(log_buff[0], (char*)"hi1\r\n");
-//     EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
-//     /* deinit */
-//     obj_deinit(self);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, class_def_print) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(self, (char*)
+    "class Test():\n"
+    "    x = 1\n"
+    "    def hi(self):\n"
+    "        print('hi' + str(self.x))\n"
+    "test = Test()\n"
+    "test.hi()\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"hi1\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(pikaMain, class_demo_1) {
     /* init */
@@ -1153,29 +1153,29 @@ TEST(pikaMain, class_demo_1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, class_demo_2) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     /* run */
-//     PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
-//     __platform_printf((char*)"BEGIN\r\n");
-//     obj_run(self, (char*)
-//         "class Complex:\n"
-//         "    def __init__(self):\n"
-//         "        self.r = 3.0\n"
-//         "        self.i = -4.5\n"
-//         "x = Complex()\n"
-//         "print(x.r)\n"
-//         "print(x.i)\n"
-//     );
-//     /* assert */
-//     EXPECT_STREQ(log_buff[0], (char*)"-4.500000\r\n");
-//     EXPECT_STREQ(log_buff[1], (char*)"3.000000\r\n");
-//     EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
-//     /* deinit */
-//     obj_deinit(self);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, class_demo_2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(self, (char*)
+        "class Complex:\n"
+        "    def __init__(self):\n"
+        "        self.r = 3.0\n"
+        "        self.i = -4.5\n"
+        "x = Complex()\n"
+        "print(x.r)\n"
+        "print(x.i)\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"-4.500000\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"3.000000\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(pikaMain, class_demo_3) {
     /* init */

@@ -207,7 +207,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     PikaObj* method_host_obj;
     Arg* method_arg;
     Method method_ptr;
-    ArgType method_type;
+    ArgType method_type = ARG_TYPE_NONE;
     char* method_dec;
     char* type_list;
     char* method_code;
@@ -245,8 +245,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     method_ptr = (Method)methodArg_getPtr(method_arg);
     /* get method Decleartion */
     method_dec = strsCopy(&buffs, methodArg_getDec(method_arg));
-    arg_deinit(method_arg);
     method_type = arg_getType(method_arg);
+    arg_deinit(method_arg);
 
     /* get type list */
     type_list = strsCut(&buffs, method_dec, '(', ')');

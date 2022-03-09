@@ -25,7 +25,7 @@
                 // "--gtest_filter=parser.add_a_b*",
                 // "--gtest_filter=parser.method_void",
                 // "--gtest_filter=parser.add_a_b",
-                // "--gtest_filter=pikaMain.complex_str",
+                "--gtest_filter=pikaMain.class_def",
                 // "--gtest_filter=parser.mpy_demo_1",
                 // "--gtest_filter=parser.__set__",
                 // "--gtest_filter=parser.__get__",
