@@ -297,8 +297,8 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
 
 Arg* obj_getMethod(PikaObj* obj, char* methodPath) {
     Arg* method = NULL;
-    Args* buffs = New_strBuff();
-    char* methodName = strsGetLastToken(buffs, methodPath, '.');
+    char method_name_buff[PIKA_METHOD_NAME_BUFF_SIZE] = {0};
+    char* methodName = strGetLastToken(method_name_buff, methodPath, '.');
     method = obj_getArg(obj, methodName);
     PikaObj* methodHostClass;
     if (NULL != method) {
@@ -309,7 +309,6 @@ Arg* obj_getMethod(PikaObj* obj, char* methodPath) {
     method = arg_copy(obj_getArg(methodHostClass, methodName));
     obj_deinit(methodHostClass);
 exit:
-    args_deinit(buffs);
     return method;
 }
 
@@ -335,7 +334,10 @@ int32_t __foreach_removeMethodInfo(Arg* argNow, Args* argList) {
 }
 
 PikaObj* removeMethodInfo(PikaObj* thisClass) {
+#ifdef PIKA_CONFIG_METHOD_CACHE_ENABLE
+#else
     args_foreach(thisClass->list, __foreach_removeMethodInfo, thisClass->list);
+#endif
     return thisClass;
 }
 

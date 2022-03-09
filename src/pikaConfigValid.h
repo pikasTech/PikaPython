@@ -35,6 +35,8 @@
 /* default configuration  */
 #define PIKA_SHELL_LINE_BUFF_SIZE 128
 #define PIKA_SPRINTF_BUFF_SIZE 128
+#define PIKA_METHOD_NAME_BUFF_SIZE 32
+#define PIKA_CONFIG_METHOD_CACHE_ENABLE
 
 #endif
 
