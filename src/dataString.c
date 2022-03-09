@@ -147,6 +147,16 @@ char* strGetLastLine(char* strOut, char* strIn) {
     return strOut;
 }
 
+char* strPointToLastToken(char* strIn, char sign) {
+    int32_t size = strGetSize(strIn);
+    for (int32_t i = size - 1; i > -1; i--) {
+        if (strIn[i] == sign) {
+            return strIn + i + 1;
+        }
+    }
+    return strIn;
+}
+
 char* strGetLastToken(char* strOut, char* strIn, char sign) {
     int32_t size = strGetSize(strIn);
     int32_t buffSize = 0;

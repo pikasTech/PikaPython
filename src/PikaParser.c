@@ -787,7 +787,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     /* solve right stmt */
     if (isLeftExist) {
-        right = strsGetLastToken(buffs, stmt, '=');
+        right = strPointToLastToken( stmt, '=');
     } else {
         right = stmt;
     }

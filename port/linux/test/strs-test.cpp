@@ -55,7 +55,7 @@ TEST(strs, analizeDef) {
             printInfo("typeDeclearation", typeDeclearation);
             char* argName = strsGetFirstToken(buffs, typeDeclearation, ':');
             printInfo("argName", argName);
-            char* argType = strsGetLastToken(buffs, typeDeclearation, ':');
+            char* argType = strPointToLastToken( typeDeclearation, ':');
             printInfo("argType", argType);
         }
     }
@@ -90,10 +90,16 @@ TEST(strs, strsReplace) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(strs, cut_){
+TEST(strs, cut_) {
     Args* buffs = New_strBuff();
     char* res = strsCut(buffs, (char*)"print('test,test')", '(', ')');
     EXPECT_STREQ(res, (char*)"'test,test'");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(str, strPointToLastToken) {
+    char* tokens = (char*)"abc.efg";
+    char* last_token = strPointToLastToken(tokens, '.');
+    EXPECT_STREQ(last_token, (char*)"efg");
 }

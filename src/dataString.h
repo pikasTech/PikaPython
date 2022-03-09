@@ -56,5 +56,6 @@ char* strClear(char* str);
 int32_t strIsContain(char* str, char ch);
 char* strCopy(char* strBuff, char* strIn);
 char* strGetLastLine(char *strOut, char *strIn);
+char* strPointToLastToken(char* strIn, char sign);
 
 #endif
