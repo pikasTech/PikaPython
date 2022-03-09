@@ -239,43 +239,39 @@ int32_t args_setArg(Args* self, Arg* arg) {
     return 0;
 }
 
-
 #ifndef __PIKA_CFG_HASH_LIST_CACHE_SIZE
-#define __PIKA_CFG_HASH_LIST_CACHE_SIZE     4
+#define __PIKA_CFG_HASH_LIST_CACHE_SIZE 4
 #endif
 
 LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
-    
-    LinkNode ** ppnode = (LinkNode **)&(self->firstNode);
+    LinkNode** ppnode = (LinkNode**)&(self->firstNode);
     int_fast8_t n = 0;
-    
+
     while (NULL != (*ppnode)) {
         Arg* arg = (*ppnode);
         Hash thisNameHash = arg_getNameHash(arg);
         if (thisNameHash == nameHash) {
-        
-            __arg *tmp = (__arg *)(*ppnode);
+            __arg* tmp = (__arg*)(*ppnode);
             if (n > __PIKA_CFG_HASH_LIST_CACHE_SIZE) {
-
-                /* the first __PIKA_CFG_HASH_LIST_CACHE_SIZE items in the list 
-                 * is considered as a cache. 
+                /* the first __PIKA_CFG_HASH_LIST_CACHE_SIZE items in the list
+                 * is considered as a cache.
                  * Don't make __PIKA_CFG_HASH_LIST_CACHE_SIZE too big, otherwise
                  * this optimisation is useless.
                  */
-             
+
                 /*! remove current node from the list */
-                (*ppnode) = (LinkNode *)(tmp->next);
-                
+                (*ppnode) = (LinkNode*)(tmp->next);
+
                 /*! move the node to the cache */
-                tmp->next = (__arg *)(self->firstNode);
-                self->firstNode = (LinkNode *)tmp;
+                tmp->next = (__arg*)(self->firstNode);
+                self->firstNode = (LinkNode*)tmp;
             }
-            return (LinkNode *)tmp;
+            return (LinkNode*)tmp;
         }
         n++;
-        ppnode = (LinkNode **)&(((__arg *)(*ppnode))->next);
+        ppnode = (LinkNode**)&(((__arg*)(*ppnode))->next);
     }
-    
+
     return NULL;
 }
 
@@ -311,47 +307,47 @@ Arg* args_getArg_index(Args* self, int index) {
 }
 
 char* getPrintSring(Args* self, char* name, char* valString) {
-    Args* buffs = New_strBuff();
-    char* printName = strsFormat(buffs, 128, "[printBuff]%s", name);
-    char* printString = strsCopy(buffs, valString);
+    Args buffs = {0};
+    char* printName = strsFormat(&buffs, 128, "[printBuff]%s", name);
+    char* printString = strsCopy(&buffs, valString);
     args_setStr(self, printName, printString);
     char* res = args_getStr(self, printName);
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     return res;
 }
 
 char* getPrintStringFromInt(Args* self, char* name, int32_t val) {
-    Args* buffs = New_strBuff();
+    Args buffs = {0};
     char* res = NULL;
-    char* valString = strsFormat(buffs, 32, "%d", val);
+    char* valString = strsFormat(&buffs, 32, "%d", val);
     res = getPrintSring(self, name, valString);
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     return res;
 }
 
 char* getPrintStringFromFloat(Args* self, char* name, float val) {
-    Args* buffs = New_strBuff();
+    Args buffs = {0};
     char* res = NULL;
-    char* valString = strsFormat(buffs, 32, "%f", val);
+    char* valString = strsFormat(&buffs, 32, "%f", val);
     res = getPrintSring(self, name, valString);
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     return res;
 }
 
 char* getPrintStringFromPtr(Args* self, char* name, void* val) {
-    Args* buffs = New_strBuff();
+    Args buffs = {0};
     char* res = NULL;
     uint64_t intVal = (uintptr_t)val;
-    char* valString = strsFormat(buffs, 32, "0x%llx", intVal);
+    char* valString = strsFormat(&buffs, 32, "0x%llx", intVal);
     res = getPrintSring(self, name, valString);
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     return res;
 }
 
 char* args_print(Args* self, char* name) {
     char* res = NULL;
     ArgType type = args_getType(self, name);
-    Args* buffs = New_strBuff();
+    Args buffs = {0};
     if (ARG_TYPE_NONE == type) {
         /* can not get arg */
         res = NULL;
@@ -386,7 +382,7 @@ char* args_print(Args* self, char* name) {
     goto exit;
 
 exit:
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     return res;
 }
 

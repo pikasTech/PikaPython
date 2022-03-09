@@ -200,7 +200,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
 }
 
 static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
-    Args* buffs = New_strBuff();
+    Args buffs = {0};
     Arg* return_arg = NULL;
     VMParameters* sub_locals = NULL;
     char* methodPath = data;
@@ -244,12 +244,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     /* get method Ptr */
     method_ptr = (Method)methodArg_getPtr(method_arg);
     /* get method Decleartion */
-    method_dec = strsCopy(buffs, methodArg_getDec(method_arg));
+    method_dec = strsCopy(&buffs, methodArg_getDec(method_arg));
     arg_deinit(method_arg);
     method_type = arg_getType(method_arg);
 
     /* get type list */
-    type_list = strsCut(buffs, method_dec, '(', ')');
+    type_list = strsCut(&buffs, method_dec, '(', ')');
 
     if (type_list == NULL) {
         /* typeList no found */
@@ -272,8 +272,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         if (NULL == call_arg) {
             break;
         }
-        char* argDef = strsPopToken(buffs, type_list, ',');
-        char* argName = strsGetFirstToken(buffs, argDef, ':');
+        char* argDef = strsPopToken(&buffs, type_list, ',');
+        char* argName = strsGetFirstToken(&buffs, argDef, ':');
         call_arg = arg_setName(call_arg, argName);
         args_setArg(sub_locals->list, call_arg);
         call_arg_index++;
@@ -313,7 +313,7 @@ RUN_exit:
     if (NULL != sub_locals) {
         obj_deinit(sub_locals);
     }
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     return return_arg;
 }
 
@@ -457,12 +457,12 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         if ((type_arg1 == ARG_TYPE_STRING) && (type_arg2 == ARG_TYPE_STRING)) {
             char* num1_s = NULL;
             char* num2_s = NULL;
-            Args* str_opt_buffs = New_strBuff();
+            Args str_opt_buffs = {0};
             num1_s = arg_getStr(arg1);
             num2_s = arg_getStr(arg2);
-            char* opt_str_out = strsAppend(str_opt_buffs, num1_s, num2_s);
+            char* opt_str_out = strsAppend(&str_opt_buffs, num1_s, num2_s);
             outArg = arg_setStr(outArg, "", opt_str_out);
-            args_deinit(str_opt_buffs);
+            strsDeinit(&str_opt_buffs);
             goto OPT_exit;
         }
         /* match float */
@@ -714,7 +714,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
                           VMParameters* globals,
                           char* pikaAsm,
                           int32_t lineAddr) {
-    Args* buffs = New_strBuff();
+    Args buffs = {0};
     VMState vs = {
         .locals = locals,
         .globals = globals,
@@ -724,7 +724,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         .pc = pikaAsm + lineAddr,
         .ASM_start = pikaAsm,
     };
-    char* line = strsGetLine(buffs, vs.pc);
+    char* line = strsGetLine(&buffs, vs.pc);
     int32_t nextAddr = lineAddr + strGetSize(line) + 1;
     enum Instruct instruct;
     char invokeDeepth0[2] = {0}, invokeDeepth1[2] = {0};
@@ -760,7 +760,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     }
     goto nextLine;
 nextLine:
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     /* exit */
     if (-999 == vs.jmp) {
         return -99999;
@@ -804,10 +804,10 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
             __platform_printf("%s\r\n", sysOut);
         }
         if (0 != errcode) {
-            Args* buffs = New_strBuff();
-            char* onlyThisLine = strsGetFirstToken(buffs, thisLine, '\n');
+            Args buffs = {0};
+            char* onlyThisLine = strsGetFirstToken(&buffs, thisLine, '\n');
             __platform_printf("[info] input commond: %s\r\n", onlyThisLine);
-            args_deinit(buffs);
+            strsDeinit(&buffs);
         }
     }
     __clearInvokeQueues(locals);
@@ -820,9 +820,10 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
 }
 
 VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
-    Args* buffs = New_strBuff();
+    Args buffs = {0};
+    Args* buffs_p = &buffs;
     VMParameters* globals = NULL;
-    char* pikaAsm = Parser_multiLineToAsm(buffs, multiLine);
+    char* pikaAsm = Parser_multiLineToAsm(&buffs, multiLine);
     if (NULL == pikaAsm) {
         __platform_printf("[error]: Syntax error.\r\n");
         globals = NULL;
@@ -832,15 +833,15 @@ VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
     if ((1 == __platform_save_pikaAsm("")) &&
         (!obj_isArgExist(self, "__asm"))) {
         obj_setStr(self, "__asm", pikaAsm);
-        args_deinit(buffs);
-        buffs = NULL;
+        strsDeinit(&buffs);
+        buffs_p = NULL;
         pikaAsm = obj_getStr(self, "__asm");
     }
     globals = pikaVM_runAsm(self, pikaAsm);
     goto exit;
 exit:
-    if (NULL != buffs) {
-        args_deinit(buffs);
+    if (NULL != buffs_p) {
+        strsDeinit(&buffs);
     }
     return globals;
 }

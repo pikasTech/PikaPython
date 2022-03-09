@@ -329,8 +329,7 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
 static PikaObj* __initObj(PikaObj* obj, char* name) {
     PikaObj* res = NULL;
     NewFun newObjFun = (NewFun)getNewClassObjFunByName(obj, name);
-    Args* buffs = New_args(NULL);
-    PikaObj* thisClass;
+    Args buffs = {0};    PikaObj* thisClass;
     PikaObj* newObj;
     if (NULL == newObjFun) {
         /* no such object */
@@ -344,7 +343,7 @@ static PikaObj* __initObj(PikaObj* obj, char* name) {
     res = obj_getPtr(obj, name);
     goto exit;
 exit:
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     return res;
 }
 
@@ -402,13 +401,12 @@ static void obj_saveMethodInfo(PikaObj* self,
                                char* method_dec,
                                void* method_ptr,
                                ArgType method_type) {
-    Args* buffs = New_strBuff();
-    char* pars = strsRemovePrefix(buffs, method_dec, method_name);
+    Args buffs = {0};    char* pars = strsRemovePrefix(&buffs, method_dec, method_name);
     Arg* arg = New_arg(NULL);
     uint32_t size_ptr = sizeof(void*);
     uint32_t size_pars = strGetSize(pars);
     uint32_t size_info = size_ptr + size_pars + 1;
-    void* info = args_getBuff(buffs, size_info);
+    void* info = args_getBuff(&buffs, size_info);
     __platform_memcpy(info, &method_ptr, size_ptr);
     /* +1 to add \0 */
     __platform_memcpy((void*)((uintptr_t)info + size_ptr), pars, size_pars + 1);
@@ -417,7 +415,7 @@ static void obj_saveMethodInfo(PikaObj* self,
     arg = arg_setContent(arg, info, size_info);
 
     args_setArg(self->list, arg);
-    args_deinit(buffs);
+    strsDeinit(&buffs);
 }
 
 static int32_t __class_defineMethodWithType(PikaObj* self,
@@ -426,11 +424,10 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
                                             ArgType method_type) {
     int32_t size = strGetSize(declearation);
     int32_t res = 0;
-    Args* buffs = New_strBuff();
-    char* cleanDeclearation =
-        strDeleteChar(args_getBuff(buffs, size), declearation, ' ');
+    Args buffs = {0};    char* cleanDeclearation =
+        strDeleteChar(args_getBuff(&buffs, size), declearation, ' ');
     char* methodPath =
-        strGetFirstToken(args_getBuff(buffs, size), cleanDeclearation, '(');
+        strGetFirstToken(args_getBuff(&buffs, size), cleanDeclearation, '(');
 
     PikaObj* methodHost = obj_getObj(self, methodPath, 1);
     char* methodName;
@@ -446,7 +443,7 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
     res = 0;
     goto exit;
 exit:
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     return res;
 }
 
@@ -551,8 +548,8 @@ static void __clearBuff(char* buff, int size) {
 void obj_shellLineProcess(PikaObj* self,
                           __obj_shellLineHandler_t __lineHandler_fun,
                           struct shell_config* cfg) {
-    Args* buffs = New_strBuff();
-    char* rxBuff = args_getBuff(buffs, PIKA_CONFIG_LINE_BUFF_SIZE);
+    Args buffs = {0};    
+    char* rxBuff = args_getBuff(&buffs, PIKA_CONFIG_LINE_BUFF_SIZE);
     char* input_line = NULL;
     uint8_t is_in_block = 0;
     __platform_printf(cfg->prefix);
@@ -582,13 +579,12 @@ void obj_shellLineProcess(PikaObj* self,
             /* still in block */
             if (is_in_block) {
                 /* load new line into buff */
-                Args* buffs = New_strBuff();
-                char _n = '\n';
+                Args buffs = {0};                char _n = '\n';
                 strAppendWithSize(rxBuff, &_n, 1);
                 char* shell_buff_new =
-                    strsAppend(buffs, obj_getStr(self, "shell_buff"), rxBuff);
+                    strsAppend(&buffs, obj_getStr(self, "shell_buff"), rxBuff);
                 obj_setStr(self, "shell_buff", shell_buff_new);
-                args_deinit(buffs);
+                strsDeinit(&buffs);
                 /* go out from block */
                 if (rxBuff[0] != ' ') {
                     is_in_block = 0;
@@ -626,7 +622,7 @@ void obj_shellLineProcess(PikaObj* self,
             continue;
         }
     }
-    args_deinit(buffs);
+    strsDeinit(&buffs);
 }
 
 static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,

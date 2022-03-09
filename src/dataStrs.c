@@ -33,48 +33,48 @@ Args* New_strBuff(void) {
     return New_args(NULL);
 }
 
-char* strsRemovePrefix(Args* buffs, char* inputStr, char* prefix) {
+char* strsRemovePrefix(Args* buffs_p, char* inputStr, char* prefix) {
     int32_t size = strGetSize(inputStr);
-    char* buff = args_getBuff(buffs, size);
+    char* buff = args_getBuff(buffs_p, size);
     return strRemovePrefix(inputStr, prefix, buff);
 }
 
-char* strsGetDirectStr(Args* buffs, char* argPath) {
+char* strsGetDirectStr(Args* buffs_p, char* argPath) {
     char* directStr = NULL;
-    directStr = strsCut(buffs, argPath, '"', '"');
+    directStr = strsCut(buffs_p, argPath, '"', '"');
     if (NULL != directStr) {
         return directStr;
     }
-    directStr = strsCut(buffs, argPath, '\'', '\'');
+    directStr = strsCut(buffs_p, argPath, '\'', '\'');
     if (NULL != directStr) {
         return directStr;
     }
     return NULL;
 }
 
-char* strsAppend(Args* buffs, char* strOrigin, char* strToAppend) {
+char* strsAppend(Args* buffs_p, char* strOrigin, char* strToAppend) {
     int32_t size = strGetSize(strOrigin) + strGetSize(strToAppend);
-    char* buff = args_getBuff(buffs, size);
+    char* buff = args_getBuff(buffs_p, size);
     char* strOut = strCopy(buff, strOrigin);
     strAppend(strOut, strToAppend);
     return strOut;
 }
 
-char* strsGetLastToken(Args* buffs, char* argPath, char sign) {
+char* strsGetLastToken(Args* buffs_p, char* argPath, char sign) {
     int32_t size = strGetSize(argPath);
-    char* buff = args_getBuff(buffs, size);
+    char* buff = args_getBuff(buffs_p, size);
     return strGetLastToken(buff, argPath, sign);
 }
 
-char* strsCut(Args* buffs, char* strIn, char startSign, char endSign) {
+char* strsCut(Args* buffs_p, char* strIn, char startSign, char endSign) {
     int32_t size = strGetSize(strIn);
-    char* buff = args_getBuff(buffs, size);
+    char* buff = args_getBuff(buffs_p, size);
     return strCut(buff, strIn, startSign, endSign);
 }
 
-char* strsDeleteChar(Args* buffs, char* strIn, char ch) {
+char* strsDeleteChar(Args* buffs_p, char* strIn, char ch) {
     int32_t size = strGetSize(strIn);
-    return strDeleteChar(args_getBuff(buffs, size), strIn, ch);
+    return strDeleteChar(args_getBuff(buffs_p, size), strIn, ch);
 }
 
 static uint32_t getSizeOfFirstToken(char* str, char sign) {
@@ -87,42 +87,42 @@ static uint32_t getSizeOfFirstToken(char* str, char sign) {
     return size;
 }
 
-char* strsGetFirstToken(Args* buffs, char* strIn, char sign) {
+char* strsGetFirstToken(Args* buffs_p, char* strIn, char sign) {
     int32_t size = getSizeOfFirstToken(strIn, sign);
-    return strGetFirstToken(args_getBuff(buffs, size), strIn, sign);
+    return strGetFirstToken(args_getBuff(buffs_p, size), strIn, sign);
 }
 
-char* strsPopToken(Args* buffs, char* tokens, char sign) {
+char* strsPopToken(Args* buffs_p, char* tokens, char sign) {
     int32_t size = strGetSize(tokens);
-    char* buff = args_getBuff(buffs, size);
+    char* buff = args_getBuff(buffs_p, size);
     return strPopToken(buff, tokens, sign);
 }
 
-char* strsCopy(Args* buffs, char* source) {
+char* strsCopy(Args* buffs_p, char* source) {
     int32_t size = strGetSize(source);
-    char* buff = args_getBuff(buffs, size);
+    char* buff = args_getBuff(buffs_p, size);
     return strCopy(buff, source);
 }
 
-char* strsFormat(Args* buffs, uint16_t buffSize, const char* fmt, ...) {
+char* strsFormat(Args* buffs_p, uint16_t buffSize, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    char* res = args_getBuff(buffs, buffSize);
+    char* res = args_getBuff(buffs_p, buffSize);
     __platform_vsnprintf(res, buffSize, fmt, args);
     va_end(args);
     return res;
 }
 
 Arg* arg_strAppend(Arg* arg_in, char* str_to_append) {
-    Args* buffs = New_strBuff();
-    char* str_out = strsAppend(buffs, arg_getStr(arg_in), str_to_append);
+    Args buffs = {0};    
+    char* str_out = strsAppend(&buffs, arg_getStr(arg_in), str_to_append);
     Arg* arg_out = arg_setStr(arg_in, "", str_out);
     arg_deinit(arg_in);
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     return arg_out;
 }
 
-char* strsReplace(Args* buffs, char* orig, char* rep, char* with) {
+char* strsReplace(Args* buffs_p, char* orig, char* rep, char* with) {
     char* result;   // the return string
     char* ins;      // the next insert point
     char* tmp;      // varies
@@ -149,7 +149,7 @@ char* strsReplace(Args* buffs, char* orig, char* rep, char* with) {
         ins = tmp + len_rep;
         tmp = strstr(ins, rep);
     }
-    tmp = args_getBuff(buffs, strlen(orig) + (len_with - len_rep) * count + 1);
+    tmp = args_getBuff(buffs_p, strlen(orig) + (len_with - len_rep) * count + 1);
     result = tmp;
     if (NULL == result) {
         return NULL;
@@ -180,10 +180,19 @@ static int32_t __getLineSize(char* str) {
     }
 }
 
-char* strsGetLine(Args* buffs, char* code) {
+char* strsGetLine(Args* buffs_p, char* code) {
     int32_t lineSize = __getLineSize(code);
-    char* line = args_getBuff(buffs, lineSize + 1);
+    char* line = args_getBuff(buffs_p, lineSize + 1);
     __platform_memcpy(line, code, lineSize);
     line[lineSize + 1] = 0;
     return line;
+}
+
+void strsDeinit(Args* buffs_p) {
+    LinkNode* nowNode = buffs_p->firstNode;
+    while (NULL != nowNode) {
+        LinkNode* nodeNext = content_getNext(nowNode);
+        linkNode_deinit(nowNode);
+        nowNode = nodeNext;
+    }
 }

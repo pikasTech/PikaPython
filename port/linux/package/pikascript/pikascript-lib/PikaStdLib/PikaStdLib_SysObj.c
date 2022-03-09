@@ -79,22 +79,22 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
 
 char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
     ArgType type = arg_getType(arg);
-    Args* buffs = New_strBuff();
+    Args buffs = {0};    
     char* res = NULL;
     do {
         if (ARG_TYPE_INT == type) {
             int val = arg_getInt(arg);
-            res = strsFormat(buffs, 11, "%d", val);
+            res = strsFormat(&buffs, 11, "%d", val);
             break;
         }
         if (ARG_TYPE_FLOAT == type) {
             float val = arg_getFloat(arg);
-            res = strsFormat(buffs, 11, "%f", val);
+            res = strsFormat(&buffs, 11, "%f", val);
             break;
         }
     } while (0);
     obj_setStr(self, "__strtmp", res);
-    args_deinit(buffs);
+    strsDeinit(&buffs);
     return obj_getStr(self, "__strtmp");
 }
 
