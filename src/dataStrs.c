@@ -171,22 +171,10 @@ char* strsReplace(Args* buffs_p, char* orig, char* rep, char* with) {
     return result;
 }
 
-static int32_t __getLineSize(char* str) {
-    int i = 0;
-    while (1) {
-        if (str[i] == '\n') {
-            return i;
-        }
-        i++;
-    }
-}
-
 char* strsGetLine(Args* buffs_p, char* code) {
-    int32_t lineSize = __getLineSize(code);
-    char* line = args_getBuff(buffs_p, lineSize + 1);
-    __platform_memcpy(line, code, lineSize);
-    line[lineSize + 1] = 0;
-    return line;
+    int32_t lineSize = strGetLineSize(code);
+    char* line_buff = args_getBuff(buffs_p, lineSize + 1);
+    return strGetLine(line_buff, code);
 }
 
 void strsDeinit(Args* buffs_p) {

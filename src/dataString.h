@@ -57,5 +57,7 @@ int32_t strIsContain(char* str, char ch);
 char* strCopy(char* strBuff, char* strIn);
 char* strGetLastLine(char *strOut, char *strIn);
 char* strPointToLastToken(char* strIn, char sign);
+char* strGetLine(char* strOut, char*strIn);
+int32_t strGetLineSize(char* str);
 
 #endif

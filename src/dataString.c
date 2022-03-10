@@ -299,3 +299,20 @@ char* strCopy(char* strBuff, char* strIn) {
     __platform_memcpy(strBuff, strIn, strGetSize(strIn));
     return strBuff;
 }
+
+int32_t strGetLineSize(char* str) {
+    int i = 0;
+    while (1) {
+        if (str[i] == '\n') {
+            return i;
+        }
+        i++;
+    }
+}
+
+char* strGetLine(char* strOut, char* strIn) {
+    int32_t lineSize = strGetLineSize(strIn);
+    __platform_memcpy(strOut, strIn, lineSize);
+    strOut[lineSize] = 0;
+    return strOut;
+}

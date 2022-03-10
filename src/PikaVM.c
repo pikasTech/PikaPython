@@ -707,7 +707,6 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
                           VMParameters* globals,
                           char* pikaAsm,
                           int32_t lineAddr) {
-    Args buffs = {0};
     VMState vs = {
         .locals = locals,
         .globals = globals,
@@ -717,7 +716,8 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
         .pc = pikaAsm + lineAddr,
         .ASM_start = pikaAsm,
     };
-    char* line = strsGetLine(&buffs, vs.pc);
+    char line_buff[PIKA_CONFIG_PATH_BUFF_SIZE];
+    char* line = strGetLine(line_buff, vs.pc);
     int32_t nextAddr = lineAddr + strGetSize(line) + 1;
     enum Instruct instruct;
     char invokeDeepth0[2] = {0}, invokeDeepth1[2] = {0};
@@ -753,7 +753,6 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     }
     goto nextLine;
 nextLine:
-    strsDeinit(&buffs);
     /* exit */
     if (-999 == vs.jmp) {
         return -99999;

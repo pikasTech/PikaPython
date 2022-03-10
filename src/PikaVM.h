@@ -36,10 +36,8 @@ enum Instruct {
 };
 
 typedef struct ByteCodeUnit_t {
-    uint8_t block_deepth;
-    uint8_t invoke_deepth;
-    uint8_t is_new_line;
-    enum Instruct instruct;
+    uint8_t deepth;
+    uint8_t isNewLine_instruct;
     uint8_t data_size;
     uint8_t data[];
 } ByteCodeUnit;
@@ -47,21 +45,21 @@ typedef struct ByteCodeUnit_t {
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 
-#define byteCodeUnit_getBlockDeepth(self) ((self)->block_deepth)
-#define byteCodeUnit_getInvokeDeepth(self) ((self)->invoke_deepth)
+#define byteCodeUnit_getBlockDeepth(self) (((self)->deepth) & 0x0F)
+#define byteCodeUnit_getInvokeDeepth(self) (((self)->deepth) >> 4)
 #define byteCodeUnit_getDataSize(self) ((self)->data_size)
 #define byteCodeUnit_getData(self) (char*)((self)->data)
-#define byteCodeUnit_getInstruct(self) ((self)->instruct)
-#define byteCodeUnit_getIsNewLine(self) ((self)->is_new_line)
+#define byteCodeUnit_getInstruct(self) ((self)->isNewLine_instruct & 0x7F)
+#define byteCodeUnit_getIsNewLine(self) ((self)->isNewLine_instruct >> 7)
 
 #define byteCodeUnit_setBlockDeepth(self, val) \
     do {                                       \
-        ((self)->block_deepth) = val;          \
+        ((self)->deepth) |= (0x0F & val);      \
     } while (0)
 
-#define byteCodeUnit_setInvokeDeepth(self, val) \
-    do {                                        \
-        ((self)->invoke_deepth) = val;          \
+#define byteCodeUnit_setInvokeDeepth(self, val)  \
+    do {                                         \
+        ((self)->deepth) |= ((0x0F & val) << 4); \
     } while (0)
 
 #define byteCodeUnit_setDataSize(self, val) \
@@ -76,17 +74,15 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 
 #define byteCodeUnit_setInstruct(self, val) \
     do {                                    \
-        ((self)->instruct) = val;           \
+        ((self)->isNewLine_instruct) |= (0x7F & val); \
     } while (0)
 
-#define byteCodeUnit_setIsNewLine(self, val) \
-    do {                                     \
-        ((self)->is_new_line) = val;         \
+#define byteCodeUnit_setIsNewLine(self, val)          \
+    do {                                              \
+        ((self)->isNewLine_instruct) |= ((0x01 & val) << 7); \
     } while (0)
-
 
 ByteCodeUnit* New_byteCodeUnit(uint8_t data_size);
 void byteCodeUnit_deinit(ByteCodeUnit* self);
-
 
 #endif
