@@ -29,7 +29,60 @@
 #define __PIKA__VM__H
 #include "PikaObj.h"
 
+enum Instruct {
+#define __INS_ENUM
+#include "__instruction_table.cfg"
+    __INSTRCUTION_CNT,
+};
+
+typedef struct ByteCodeUnit_t {
+    uint8_t block_deepth;
+    uint8_t invoke_deepth;
+    uint8_t is_new_line;
+    enum Instruct instruct;
+    uint8_t data_size;
+    uint8_t data[];
+} ByteCodeUnit;
+
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
+
+#define byteCodeUnit_getBlockDeepth(self) ((self)->block_deepth)
+#define byteCodeUnit_getInvokeDeepth(self) ((self)->invoke_deepth)
+#define byteCodeUnit_getDataSize(self) ((self)->data_size)
+#define byteCodeUnit_getData(self) ((self)->data)
+#define byteCodeUnit_getInstruct(self) ((self)->instruct)
+#define byteCodeUnit_getIsNewLine(self) ((self)->is_new_line)
+
+
+#define byteCodeUnit_setBlockDeepth(self, val)          \
+    do {                                            \
+        ((self)->block_deepth) = val;                                       \
+    }while (0)
+
+#define byteCodeUnit_setInvokeDeepth(self, val)         \
+    do {                                            \
+        ((self)->invoke_deepth) = val;                                       \
+    }while (0)
+
+#define byteCodeUnit_setDataSize(self, val)         \
+    do {                                            \
+        ((self)->data_size) = val;                                       \
+    }while (0)
+
+#define byteCodeUnit_setData(self, val)         \
+    do {                                            \
+        ((self)->data) = val;                                       \
+    }while (0)
+
+#define byteCodeUnit_setInstruct(self, val)         \
+    do {                                            \
+        ((self)->instruct) = val;                                       \
+    }while (0)
+
+#define byteCodeUnit_setIsNewLine(self, val)            \
+    do {                                            \
+        ((self)->is_new_line) = val;                                       \
+    }while (0)
 
 #endif

@@ -31,6 +31,7 @@
 #include "dataStack.h"
 
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
-
+char* Parser_asmToByteCode(Args* outBuffs, char* pikaAsm);
+char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);
 
 #endif

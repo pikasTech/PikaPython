@@ -158,12 +158,6 @@ int32_t __clearInvokeQueues(VMParameters* vm_pars) {
     return 0;
 }
 
-enum Instruct {
-
-#define __INS_ENUM
-#include "__instruction_table.cfg"
-    __INSTRCUTION_CNT,
-};
 
 typedef Arg* (*VM_instruct_handler)(PikaObj* self, VMState* vs, char* data);
 
@@ -845,3 +839,4 @@ exit:
     }
     return globals;
 }
+

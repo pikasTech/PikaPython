@@ -768,3 +768,30 @@ TEST(VM, nag_a) {
     /* check mem */
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(ByteCodeUnit, base) {
+    ByteCodeUnit bu = {
+        .block_deepth = 1,
+        .invoke_deepth = 2,
+        .is_new_line = 0,
+        .instruct = (Instruct)3,
+        .data_size = 10,
+    };
+    EXPECT_EQ(byteCodeUnit_getDataSize(&bu), 10);
+    EXPECT_EQ(byteCodeUnit_getBlockDeepth(&bu), 1);
+    EXPECT_EQ(byteCodeUnit_getIsNewLine(&bu), 0);
+    EXPECT_EQ(byteCodeUnit_getInvokeDeepth(&bu), 2);
+    EXPECT_EQ(byteCodeUnit_getInstruct(&bu), 3);
+
+    byteCodeUnit_setDataSize(&bu, 11);
+    byteCodeUnit_setBlockDeepth(&bu, 2);
+    byteCodeUnit_setIsNewLine(&bu, 1);
+    byteCodeUnit_setInvokeDeepth(&bu, 3);
+    byteCodeUnit_setInstruct(&bu, (Instruct)4);
+
+    EXPECT_EQ(byteCodeUnit_getDataSize(&bu), 11);
+    EXPECT_EQ(byteCodeUnit_getBlockDeepth(&bu), 2);
+    EXPECT_EQ(byteCodeUnit_getIsNewLine(&bu), 1);
+    EXPECT_EQ(byteCodeUnit_getInvokeDeepth(&bu), 3);
+    EXPECT_EQ(byteCodeUnit_getInstruct(&bu), 4);
+}
