@@ -158,7 +158,6 @@ int32_t __clearInvokeQueues(VMParameters* vm_pars) {
     return 0;
 }
 
-
 typedef Arg* (*VM_instruct_handler)(PikaObj* self, VMState* vs, char* data);
 
 static Arg* VM_instruction_handler_NON(PikaObj* self, VMState* vs, char* data) {
@@ -840,3 +839,12 @@ exit:
     return globals;
 }
 
+ByteCodeUnit* New_byteCodeUnit(uint8_t data_size) {
+    ByteCodeUnit* self = pikaMalloc(sizeof(ByteCodeUnit) + data_size);
+    byteCodeUnit_setDataSize(self, data_size);
+    return self;
+}
+
+void byteCodeUnit_deinit(ByteCodeUnit* self) {
+    pikaFree(self, sizeof(ByteCodeUnit) + byteCodeUnit_getDataSize(self));
+}

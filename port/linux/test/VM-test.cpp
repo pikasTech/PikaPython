@@ -795,3 +795,12 @@ TEST(ByteCodeUnit, base) {
     EXPECT_EQ(byteCodeUnit_getInvokeDeepth(&bu), 3);
     EXPECT_EQ(byteCodeUnit_getInstruct(&bu), 4);
 }
+
+TEST(ByteCodeUnit, new_) {
+    char data[] = "test";
+    ByteCodeUnit* bu_p = New_byteCodeUnit(strGetSize(data) + 1);
+    byteCodeUnit_setData(bu_p, data);
+    EXPECT_STREQ(byteCodeUnit_getData(bu_p), (char*)"test");
+    byteCodeUnit_deinit(bu_p);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -1520,7 +1520,6 @@ int32_t AST_deinit(AST* ast) {
 }
 
 char* Parser_asmToByteCode(Args* outBuffs, char* pikaAsm){
-    Args buffs = {0};
     return NULL;
 }
 
