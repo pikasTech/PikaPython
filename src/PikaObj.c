@@ -368,8 +368,8 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
 }
 
 PikaObj* obj_getObj(PikaObj* self, char* objPath, int32_t keepDeepth) {
-    static char objPath_buff[PIKA_CONFIG_PATH_BUFF_SIZE];
-    __platform_memcpy(objPath_buff, objPath, sizeof(objPath_buff));
+    char objPath_buff[PIKA_CONFIG_PATH_BUFF_SIZE];
+    __platform_memcpy(objPath_buff, objPath, strGetSize(objPath) + 1);
     char token_buff[PIKA_CONFIG_NAME_BUFF_SIZE] = {0};
     int32_t token_num = strGetTokenNum(objPath, '.');
     PikaObj* obj = self;
