@@ -147,7 +147,7 @@ float method_getFloat(Args* args, char* argName);
 char* method_getStr(Args* args, char* argName);
 void method_returnArg(Args* args, Arg* arg);
 char* methodArg_getDec(Arg* method_arg);
-void* methodArg_getPtr(Arg* method_arg);
+Method methodArg_getPtr(Arg* method_arg);
 
 void obj_runNoRes(PikaObj* slef, char* cmd);
 void obj_run(PikaObj* self, char* cmd);

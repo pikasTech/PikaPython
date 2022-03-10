@@ -385,7 +385,7 @@ exit:
     return obj;
 }
 
-void* methodArg_getPtr(Arg* method_arg) {
+Method methodArg_getPtr(Arg* method_arg) {
     uint32_t size_ptr = sizeof(void*);
     void* info = arg_getContent(method_arg);
     void* ptr = NULL;

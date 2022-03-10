@@ -242,7 +242,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         goto RUN_exit;
     }
     /* get method Ptr */
-    method_ptr = (Method)methodArg_getPtr(method_arg);
+    method_ptr = methodArg_getPtr(method_arg);
     /* get method Decleartion */
     method_dec = strsCopy(&buffs, methodArg_getDec(method_arg));
     method_type = arg_getType(method_arg);
