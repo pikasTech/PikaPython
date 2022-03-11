@@ -35,7 +35,7 @@ void* pikaMalloc(uint32_t size) {
     if (0 != __is_locked_pikaMemory()) {
         __platform_wait();
     }
-    
+
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
 #if 0
     /* force alignment to avoid unaligned access */

@@ -773,15 +773,12 @@ TEST(ByteCodeUnit, base) {
     ByteCodeUnit bu = {
         .deepth = 0,
         .isNewLine_instruct = 0,
-        .data_size = 0,
     };
-    byteCodeUnit_setDataSize(&bu, 11);
     byteCodeUnit_setBlockDeepth(&bu, 2);
     byteCodeUnit_setIsNewLine(&bu, 1);
     byteCodeUnit_setInvokeDeepth(&bu, 3);
     byteCodeUnit_setInstruct(&bu, (Instruct)4);
 
-    EXPECT_EQ(byteCodeUnit_getDataSize(&bu), 11);
     EXPECT_EQ(byteCodeUnit_getBlockDeepth(&bu), 2);
     EXPECT_EQ(byteCodeUnit_getIsNewLine(&bu), 1);
     EXPECT_EQ(byteCodeUnit_getInvokeDeepth(&bu), 3);
@@ -790,9 +787,11 @@ TEST(ByteCodeUnit, base) {
 
 TEST(ByteCodeUnit, new_) {
     char data[] = "test";
-    ByteCodeUnit* bu_p = New_byteCodeUnit(strGetSize(data) + 1);
+    ByteCodeUnit* bu_p = New_byteCodeUnit(strGetSize(data));
     byteCodeUnit_setData(bu_p, data);
     EXPECT_STREQ(byteCodeUnit_getData(bu_p), (char*)"test");
+    EXPECT_EQ(byteCodeUnit_getTotleSize(bu_p), 8);
+    EXPECT_EQ(byteCodeUnit_getTotleSize_withDataSize(strGetSize(data)), 8);
     byteCodeUnit_deinit(bu_p);
     EXPECT_EQ(pikaMemNow(), 0);
 }

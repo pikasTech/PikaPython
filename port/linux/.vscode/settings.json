@@ -31,7 +31,11 @@
         "datastack.h": "c",
         "dataqueueobj.h": "c",
         "datastring.h": "c",
-        "datalink.h": "c"
+        "datalink.h": "c",
+        "array": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "utility": "c"
     },
     "python.formatting.provider": "autopep8"
 }

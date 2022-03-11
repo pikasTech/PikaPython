@@ -839,11 +839,11 @@ exit:
 }
 
 ByteCodeUnit* New_byteCodeUnit(uint8_t data_size) {
-    ByteCodeUnit* self = pikaMalloc(sizeof(ByteCodeUnit) + data_size);
-    byteCodeUnit_setDataSize(self, data_size);
+    ByteCodeUnit* self =
+        pikaMalloc(byteCodeUnit_getTotleSize_withDataSize(data_size));
     return self;
 }
 
 void byteCodeUnit_deinit(ByteCodeUnit* self) {
-    pikaFree(self, sizeof(ByteCodeUnit) + byteCodeUnit_getDataSize(self));
+    pikaFree(self, (byteCodeUnit_getTotleSize(self)));
 }
