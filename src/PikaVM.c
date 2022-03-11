@@ -696,7 +696,7 @@ const VM_instruct_handler VM_instruct_handler_table[__INSTRCUTION_CNT] = {
 #include "__instruction_table.cfg"
 };
 
-static enum Instruct __getInstruct(char* line) {
+enum Instruct pikaVM_getInstructFromAsm(char* line) {
 #define __INS_COMPIRE
 #include "__instruction_table.cfg"
     return NON;
@@ -733,7 +733,7 @@ int32_t pikaVM_runAsmLine(PikaObj* self,
     }
     invokeDeepth0[0] = line[0];
     invokeDeepth1[0] = line[0] + 1;
-    instruct = __getInstruct(line);
+    instruct = pikaVM_getInstructFromAsm(line);
     data = line + 6;
 
     vs.q0 = args_getPtr(locals->list, invokeDeepth0);
@@ -838,12 +838,12 @@ exit:
     return globals;
 }
 
-ByteCodeUnit* New_byteCodeUnit(uint8_t data_size) {
-    ByteCodeUnit* self =
-        pikaMalloc(byteCodeUnit_getTotleSize_withDataSize(data_size));
-    return self;
-}
+// ByteCodeUnit* New_byteCodeUnit(uint8_t data_size) {
+//     ByteCodeUnit* self =
+//         pikaMalloc(byteCodeUnit_getTotleSize_withDataSize(data_size));
+//     return self;
+// }
 
-void byteCodeUnit_deinit(ByteCodeUnit* self) {
-    pikaFree(self, (byteCodeUnit_getTotleSize(self)));
-}
+// void byteCodeUnit_deinit(ByteCodeUnit* self) {
+//     pikaFree(self, (byteCodeUnit_getTotleSize(self)));
+// }

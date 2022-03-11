@@ -30,8 +30,17 @@
 #include "dataQueueObj.h"
 #include "dataStack.h"
 
+typedef struct Asmer_t {
+    char* asm_code;
+    uint8_t block_deepth_now;
+    uint8_t is_new_line;
+    char* line_pointer;
+    uint16_t const_pool_index_now;
+} Asmer;
+
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
-char* Parser_asmToByteCode(Args* outBuffs, char* pikaAsm);
+char* ByteCodeUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);
+char* Asmer_asmToByteCode(Args* outBuffs, char* pikaAsm);
 
 #endif

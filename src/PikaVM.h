@@ -38,7 +38,7 @@ enum Instruct {
 typedef struct ByteCodeUnit_t {
     uint8_t deepth;
     uint8_t isNewLine_instruct;
-    uint8_t data[];
+    uint16_t const_pool_index;
 } ByteCodeUnit;
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
@@ -46,9 +46,10 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 
 #define byteCodeUnit_getBlockDeepth(self) (((self)->deepth) & 0x0F)
 #define byteCodeUnit_getInvokeDeepth(self) (((self)->deepth) >> 4)
-#define byteCodeUnit_getDataSize(self) (strGetSize((char*)(self)->data))
-#define byteCodeUnit_getData(self) (char*)((self)->data)
+// #define byteCodeUnit_getDataSize(self) (strGetSize((char*)(self)->data))
+// #define byteCodeUnit_getData(self) (char*)((self)->data)
 #define byteCodeUnit_getInstruct(self) ((self)->isNewLine_instruct & 0x7F)
+#define byteCodeUnit_getConstPoolIndex(self) ((self)->const_pool_index)
 #define byteCodeUnit_getIsNewLine(self) ((self)->isNewLine_instruct >> 7)
 
 #define byteCodeUnit_setBlockDeepth(self, val) \
@@ -56,15 +57,22 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
         ((self)->deepth) |= (0x0F & val);      \
     } while (0)
 
+#define byteCodeUnit_setConstPoolIndex(self, val) \
+    do {                                          \
+        ((self)->const_pool_index = val);         \
+    } while (0)
+
 #define byteCodeUnit_setInvokeDeepth(self, val)  \
     do {                                         \
         ((self)->deepth) |= ((0x0F & val) << 4); \
     } while (0)
 
-#define byteCodeUnit_setData(self, val)                            \
-    do {                                                           \
-        __platform_memcpy((self)->data, val, strGetSize(val) + 1); \
-    } while (0)
+/*
+ #define byteCodeUnit_setData(self, val)                            \
+     do {                                                           \
+         __platform_memcpy((self)->data, val, strGetSize(val) + 1); \
+     } while (0)
+*/
 
 #define byteCodeUnit_setInstruct(self, val)           \
     do {                                              \
@@ -79,10 +87,14 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 ByteCodeUnit* New_byteCodeUnit(uint8_t data_size);
 void byteCodeUnit_deinit(ByteCodeUnit* self);
 
-#define __get_alined_size(size) (((((size)-1) / 4) + 1) * 4)
-#define byteCodeUnit_getTotleSize_withDataSize(data_size) \
-    (__get_alined_size(sizeof(ByteCodeUnit) + data_size + 1))
-#define byteCodeUnit_getTotleSize(self) \
-    (byteCodeUnit_getTotleSize_withDataSize(byteCodeUnit_getDataSize(self)))
+/*
+ #define __get_alined_size(size) (((((size)-1) / 4) + 1) * 4)
+ #define byteCodeUnit_getTotleSize_withDataSize(data_size) \
+  (__get_alined_size(sizeof(ByteCodeUnit) + data_size + 1))
+ #define byteCodeUnit_getTotleSize(self) \
+  (byteCodeUnit_getTotleSize_withDataSize(byteCodeUnit_getDataSize(self)))
+*/
+
+enum Instruct pikaVM_getInstructFromAsm(char* line);
 
 #endif

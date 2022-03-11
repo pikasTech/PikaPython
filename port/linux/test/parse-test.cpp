@@ -2112,12 +2112,24 @@ TEST(parser, class_def) {
 TEST(parser, nag_a) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines = (char*)
-            "print(-a)\n"
-        ;
+    char* lines = (char*)"print(-a)\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
     printf("%s", pikaAsm);
     args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(asmer, asmer_to_byteCodeUnit) {
+    char* asm_line = (char*)
+        "B2\n"
+        "2 NUM 2\n"
+        "2 NUM 3\n"
+        "1 RUN add\n"
+        "0 RUN test.on\n"
+        ;
+    Args buffs = {0};
+    char* ByteCode = Asmer_asmToByteCode(&buffs, asm_line);
+    strsDeinit(&buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

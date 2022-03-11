@@ -1519,10 +1519,56 @@ int32_t AST_deinit(AST* ast) {
     return obj_deinit(ast);
 }
 
-char* Parser_asmToByteCode(Args* outBuffs, char* pikaAsm){
+char* Asmer_asmToByteCode(Args* outBuffs, char* pikaAsm) {
+    Asmer asmer = {
+        .asm_code = pikaAsm,
+        .block_deepth_now = 0,
+        .is_new_line = 0,
+        .line_pointer = pikaAsm,
+        .const_pool_index_now = 0,
+    };
+
+    Arg* const_pool_buff = arg_setStr(NULL, "", "");
+    char line_buff[PIKA_CONFIG_PATH_BUFF_SIZE] = {0};
+    for (int i = 0; i < strCountSign(pikaAsm, '\n'); i++) {
+        /* get line */
+        char* line = strGetLine(line_buff, asmer.line_pointer);
+
+        /* process block deepth flag*/
+        if ('B' == line[0]) {
+            asmer.block_deepth_now = line[1] - '0';
+            asmer.is_new_line = 1;
+            goto next_line;
+        }
+
+        /* process each ins */
+
+        /* load Asm to byte code unit */
+        ByteCodeUnit bu = {0};
+        byteCodeUnit_setBlockDeepth(&bu, asmer.block_deepth_now);
+        byteCodeUnit_setInvokeDeepth(&bu, line[0] - '0');
+        byteCodeUnit_setConstPoolIndex(&bu, asmer.const_pool_index_now);
+        byteCodeUnit_setInstruct(&bu, pikaVM_getInstructFromAsm(line));
+        if (asmer.is_new_line) {
+            byteCodeUnit_setIsNewLine(&bu, 1);
+            asmer.is_new_line = 0;
+        }
+
+        /* load const to const pool buff */
+        char* data = line + 6;
+        const_pool_buff = arg_strAppend(const_pool_buff, data);
+        const_pool_buff = arg_strAppend(const_pool_buff, "\n");
+
+        asmer.const_pool_index_now += strGetSize(data) + 1;
+    next_line:
+        /* point to next line */
+        asmer.line_pointer += strGetLineSize(asmer.line_pointer) + 1;
+    }
+
+    arg_deinit(const_pool_buff);
     return NULL;
 }
 
-char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode){
+char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode) {
     return NULL;
 }
