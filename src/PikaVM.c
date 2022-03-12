@@ -847,3 +847,54 @@ exit:
 // void byteCodeUnit_deinit(ByteCodeUnit* self) {
 //     pikaFree(self, (byteCodeUnit_getTotleSize(self)));
 // }
+
+void constPool_init(ConstPool* self) {
+    self->arg_buff = arg_setStr(NULL, "", "");
+    self->content_offset_now = 0;
+    self->size = strGetSize(arg_getContent(self->arg_buff)) + 1;
+}
+
+void constPool_deinit(ConstPool* self) {
+    arg_deinit(self->arg_buff);
+}
+
+void constPool_append(ConstPool* self, char* content) {
+    uint16_t size = strGetSize(content) + 1;
+    self->arg_buff = arg_append(self->arg_buff, content, size);
+    self->size += size;
+}
+
+char* constPool_getNow(ConstPool* self) {
+    if (self->content_offset_now >= self->size) {
+        /* is the end */
+        return NULL;
+    }
+    return (char*)(arg_getContent(self->arg_buff) +
+                   (uintptr_t)(self->content_offset_now));
+}
+
+uint16_t constPool_getLastOffset(ConstPool* self) {
+    return self->size;
+}
+
+char* constPool_getByOffset(ConstPool* self, uint16_t offset) {
+    return arg_getContent(self->arg_buff) + (uintptr_t)offset;
+}
+
+char* constPool_getNext(ConstPool* self) {
+    self->content_offset_now += strGetSize(constPool_getNow(self)) + 1;
+    return constPool_getNow(self);
+}
+
+char* constPool_getByIndex(ConstPool* self, uint16_t index) {
+    uint16_t ptr_befor = self->content_offset_now;
+    /* set ptr_now to begin */
+    self->content_offset_now = 0;
+    for (uint16_t i = 0; i < index; i++) {
+        constPool_getNext(self);
+    }
+    /* retore ptr_now */
+    char* res = constPool_getNow(self);
+    self->content_offset_now = ptr_befor;
+    return res;
+}

@@ -798,3 +798,32 @@ TEST(ByteCodeUnit, base) {
 //     byteCodeUnit_deinit(bu_p);
 //     EXPECT_EQ(pikaMemNow(), 0);
 // }
+
+TEST(ConstPool, get) {
+    ConstPool cp;
+    constPool_init(&cp);
+    char* next_content;
+    uint16_t next_offset;
+    next_offset = constPool_getLastOffset(&cp);
+    constPool_append(&cp, (char*)"hello");
+    next_content = constPool_getByOffset(&cp, next_offset);
+    EXPECT_STREQ(next_content, (char*)"hello");
+    next_offset = constPool_getLastOffset(&cp);
+    constPool_append(&cp, (char*)"world");
+    next_content = constPool_getByOffset(&cp, next_offset);
+    EXPECT_STREQ(next_content, (char*)"world");
+    char* first = constPool_getNow(&cp);
+    char* second = constPool_getNext(&cp);
+    char* third = constPool_getNext(&cp);
+    char* forth = constPool_getNext(&cp);
+    EXPECT_STREQ(first, (char*)"");
+    EXPECT_STREQ(second, (char*)"hello");
+    EXPECT_STREQ(third, (char*)"world");
+    EXPECT_EQ((uintptr_t)forth, (uintptr_t)NULL);
+    EXPECT_STREQ(constPool_getByIndex(&cp, 0), (char*)"");
+    EXPECT_STREQ(constPool_getByIndex(&cp, 1), (char*)"hello");
+    EXPECT_STREQ(constPool_getByIndex(&cp, 2), (char*)"world");
+    EXPECT_EQ((uintptr_t)constPool_getByIndex(&cp, 3), (uintptr_t)NULL);
+    constPool_deinit(&cp);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -35,6 +35,12 @@ enum Instruct {
     __INSTRCUTION_CNT,
 };
 
+typedef struct constPool_t {
+    Arg* arg_buff;
+    uint16_t content_offset_now;
+    uint16_t size;
+} ConstPool;
+
 typedef struct ByteCodeUnit_t {
     uint8_t deepth;
     uint8_t isNewLine_instruct;
@@ -96,5 +102,14 @@ void byteCodeUnit_deinit(ByteCodeUnit* self);
 */
 
 enum Instruct pikaVM_getInstructFromAsm(char* line);
+
+void constPool_init(ConstPool* self);
+void constPool_deinit(ConstPool* self);
+void constPool_append(ConstPool* self, char* content);
+char* constPool_getNow(ConstPool* self);
+char* constPool_getNext(ConstPool* self);
+char* constPool_getByIndex(ConstPool* self, uint16_t index);
+uint16_t constPool_getLastOffset(ConstPool* self);
+char* constPool_getByOffset(ConstPool* self, uint16_t offset);
 
 #endif
