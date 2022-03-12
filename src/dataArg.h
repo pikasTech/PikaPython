@@ -111,4 +111,6 @@ Arg* arg_init(Arg* self, void* voidPointer);
 void arg_deinit(Arg* self);
 
 Arg* New_arg(void* voidPointer);
+Arg* arg_append(Arg* arg_in, void* new_content, size_t new_size);
+
 #endif

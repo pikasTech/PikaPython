@@ -174,7 +174,8 @@ Arg* arg_setNull(Arg* self) {
 }
 
 Arg* arg_setFloat(Arg* self, char* name, float val) {
-    return content_init(name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val), NULL);
+    return content_init(name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val),
+                        NULL);
 }
 
 float arg_getFloat(Arg* self) {
@@ -245,4 +246,18 @@ Arg* arg_copy(Arg* argToBeCopy) {
     argCopied = arg_setNameHash(argCopied, arg_getNameHash(argToBeCopy));
     argCopied = arg_setType(argCopied, arg_getType(argToBeCopy));
     return argCopied;
+}
+
+Arg* arg_append(Arg* arg_in, void* new_content, size_t new_size) {
+    uint8_t* old_content = arg_getContent(arg_in);
+    size_t old_size = arg_getContentSize(arg_in);
+    /* create arg_out */
+    Arg* arg_out = arg_setContent(NULL, NULL, old_size + new_size);
+    /* copy old content */
+    __platform_memcpy(arg_getContent(arg_out), old_content, old_size);
+    /* copy new content */
+    __platform_memcpy(arg_getContent(arg_out) + old_size, new_content,
+                      new_size);
+    arg_deinit(arg_in);
+    return arg_out;
 }

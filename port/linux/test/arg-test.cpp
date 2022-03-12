@@ -67,3 +67,12 @@ TEST(arg_test, null) {
     arg_deinit(arg);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(arg_test, append) {
+    Arg* arg = arg_setStr(NULL, (char*)"", (char*)"test");
+    arg = arg_append(arg, (void*)"hello", sizeof("hello"));
+    EXPECT_STREQ(arg_getStr(arg), "test");
+    EXPECT_STREQ(arg_getStr(arg) + sizeof("test"), (char*)"hello");
+    arg_deinit(arg);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
