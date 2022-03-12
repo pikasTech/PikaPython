@@ -161,10 +161,6 @@ Arg* arg_setType(Arg* self, ArgType type) {
     return content_setType(self, type);
 }
 
-uint8_t* arg_getContent(Arg* self) {
-    return content_getContent(self);
-}
-
 Arg* arg_setInt(Arg* self, char* name, int64_t val) {
     return content_init(name, ARG_TYPE_INT, (uint8_t*)&val, sizeof(val), NULL);
 }

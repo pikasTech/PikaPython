@@ -91,7 +91,6 @@ Arg* arg_newContent(Arg* self, uint32_t size);
 Arg* arg_setType(Arg* self, ArgType type);
 Hash arg_getNameHash(Arg* self);
 ArgType arg_getType(Arg* self);
-uint8_t* arg_getContent(Arg* self);
 uint16_t arg_getContentSize(Arg* self);
 Hash hash_time33(char* str);
 
@@ -106,6 +105,8 @@ float arg_getFloat(Arg* self);
 void* arg_getPtr(Arg* self);
 char* arg_getStr(Arg* self);
 Arg* arg_copy(Arg* argToBeCopy);
+
+#define arg_getContent(self) ((uint8_t*)content_getContent((self)))
 
 Arg* arg_init(Arg* self, void* voidPointer);
 void arg_deinit(Arg* self);
