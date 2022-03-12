@@ -877,9 +877,6 @@ uint16_t constPool_getLastOffset(ConstPool* self) {
     return self->size;
 }
 
-char* constPool_getByOffset(ConstPool* self, uint16_t offset) {
-    return arg_getContent(self->arg_buff) + (uintptr_t)offset;
-}
 
 char* constPool_getNext(ConstPool* self) {
     self->content_offset_now += strGetSize(constPool_getNow(self)) + 1;

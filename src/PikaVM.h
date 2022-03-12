@@ -121,8 +121,11 @@ char* constPool_getNow(ConstPool* self);
 char* constPool_getNext(ConstPool* self);
 char* constPool_getByIndex(ConstPool* self, uint16_t index);
 uint16_t constPool_getLastOffset(ConstPool* self);
-char* constPool_getByOffset(ConstPool* self, uint16_t offset);
 void constPool_print(ConstPool* self);
+
+#define constPool_getByOffset(self, offset) \
+    ((char*)(arg_getContent((self)->arg_buff) + (uintptr_t)(offset)))
+
 void ByteCodeFrame_init(ByteCodeFrame* bf);
 void ByteCodeFrame_deinit(ByteCodeFrame* bf);
 
