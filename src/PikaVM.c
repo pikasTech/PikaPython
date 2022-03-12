@@ -905,11 +905,21 @@ void constPool_print(ConstPool* self) {
     self->content_offset_now = 0;
     while (1) {
         if (NULL == constPool_getNext(self)) {
-            return;
+            goto exit;
         }
         uint16_t offset = self->content_offset_now;
         __platform_printf("%d: %s\r\n", offset, constPool_getNow(self));
     }
+exit:
     /* retore ptr_now */
     self->content_offset_now = ptr_befor;
+    return;
+}
+
+void ByteCodeFrame_init(ByteCodeFrame* bf) {
+    constPool_init(&(bf->const_pool));
+}
+
+void ByteCodeFrame_deinit(ByteCodeFrame* bf) {
+    constPool_deinit(&(bf->const_pool));
 }

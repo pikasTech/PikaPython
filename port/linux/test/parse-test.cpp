@@ -2129,7 +2129,17 @@ TEST(asmer, asmer_to_byteCodeUnit) {
         "0 RUN test.on\n"
         ;
     Args buffs = {0};
-    char* ByteCode = Asmer_asmToByteCode(&buffs, asm_line);
+    ByteCodeFrame bf;
+    ByteCodeFrame_init(&bf);
+    ByteCodeFrame_appendFromAsm(&bf, asm_line);
+    constPool_print(&(bf.const_pool));
+    EXPECT_STREQ(constPool_getNext(&(bf.const_pool)), (char*)"2");
+    EXPECT_STREQ(constPool_getNext(&(bf.const_pool)), (char*)"3");
+    EXPECT_STREQ(constPool_getNext(&(bf.const_pool)), (char*)"add");
+    EXPECT_STREQ(constPool_getNext(&(bf.const_pool)), (char*)"test.on");
+    EXPECT_EQ((uintptr_t)constPool_getNext(&(bf.const_pool)), (uintptr_t)NULL);
+
+    ByteCodeFrame_deinit(&bf);
     strsDeinit(&buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

@@ -35,17 +35,28 @@ enum Instruct {
     __INSTRCUTION_CNT,
 };
 
-typedef struct constPool_t {
+typedef struct InsturctUnit_t {
+    uint8_t deepth;
+    uint8_t isNewLine_instruct;
+    uint16_t const_pool_index;
+} ByteCodeUnit;
+
+typedef struct ConstPool_t {
     Arg* arg_buff;
     uint16_t content_offset_now;
     uint16_t size;
 } ConstPool;
 
-typedef struct ByteCodeUnit_t {
-    uint8_t deepth;
-    uint8_t isNewLine_instruct;
-    uint16_t const_pool_index;
-} ByteCodeUnit;
+typedef struct InstructArray_t {
+    Arg* arg_buff;
+    uint16_t content_offset_now;
+    uint16_t size;
+} InstructArray;
+
+typedef struct ByteCodeFrame_t {
+    ConstPool const_pool;
+    InstructArray Instruct_array;
+} ByteCodeFrame;
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
@@ -112,5 +123,7 @@ char* constPool_getByIndex(ConstPool* self, uint16_t index);
 uint16_t constPool_getLastOffset(ConstPool* self);
 char* constPool_getByOffset(ConstPool* self, uint16_t offset);
 void constPool_print(ConstPool* self);
+void ByteCodeFrame_init(ByteCodeFrame* bf);
+void ByteCodeFrame_deinit(ByteCodeFrame* bf);
 
 #endif
