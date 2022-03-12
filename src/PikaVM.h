@@ -111,5 +111,6 @@ char* constPool_getNext(ConstPool* self);
 char* constPool_getByIndex(ConstPool* self, uint16_t index);
 uint16_t constPool_getLastOffset(ConstPool* self);
 char* constPool_getByOffset(ConstPool* self, uint16_t offset);
+void constPool_print(ConstPool* self);
 
 #endif

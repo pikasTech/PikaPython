@@ -800,6 +800,7 @@ TEST(ByteCodeUnit, base) {
 // }
 
 TEST(ConstPool, get) {
+    __platform_printf((char*)"BEGIN\r\n");
     ConstPool cp;
     constPool_init(&cp);
     char* next_content;
@@ -824,6 +825,10 @@ TEST(ConstPool, get) {
     EXPECT_STREQ(constPool_getByIndex(&cp, 1), (char*)"hello");
     EXPECT_STREQ(constPool_getByIndex(&cp, 2), (char*)"world");
     EXPECT_EQ((uintptr_t)constPool_getByIndex(&cp, 3), (uintptr_t)NULL);
+    constPool_print(&cp);
+    EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"1: hello\r\n");
+    EXPECT_STREQ(log_buff[0], (char*)"7: world\r\n");
     constPool_deinit(&cp);
     EXPECT_EQ(pikaMemNow(), 0);
 }

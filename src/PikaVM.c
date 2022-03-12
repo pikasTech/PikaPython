@@ -893,8 +893,23 @@ char* constPool_getByIndex(ConstPool* self, uint16_t index) {
     for (uint16_t i = 0; i < index; i++) {
         constPool_getNext(self);
     }
-    /* retore ptr_now */
     char* res = constPool_getNow(self);
+    /* retore ptr_now */
     self->content_offset_now = ptr_befor;
     return res;
+}
+
+void constPool_print(ConstPool* self) {
+    uint16_t ptr_befor = self->content_offset_now;
+    /* set ptr_now to begin */
+    self->content_offset_now = 0;
+    while (1) {
+        if (NULL == constPool_getNext(self)) {
+            return;
+        }
+        uint16_t offset = self->content_offset_now;
+        __platform_printf("%d: %s\r\n", offset, constPool_getNow(self));
+    }
+    /* retore ptr_now */
+    self->content_offset_now = ptr_befor;
 }
