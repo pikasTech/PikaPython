@@ -776,25 +776,22 @@ nextLine:
     return nextAddr;
 }
 
-int pikaVM_runInstructUnit(PikaObj* self,
-                           VMState* vs,
-                           InstructUnit* instruct_unit) {
-    char line_buff[PIKA_CONFIG_PATH_BUFF_SIZE];
-    enum Instruct instruct;
+int pikaVM_runInstructUnit(PikaObj* self, VMState* vs, InstructUnit* ins_unit) {
+    enum Instruct instruct = instructUnit_getInstruct(ins_unit);
     Arg* resArg;
     char invode_deepth0_str[2] = {0};
     char invode_deepth1_str[2] = {0};
     /* Found new script Line, clear the queues*/
-    if (instructUnit_getIsNewLine(instruct_unit)) {
+    if (instructUnit_getIsNewLine(ins_unit)) {
         args_setErrorCode(vs->locals->list, 0);
         args_setSysOut(vs->locals->list, (char*)"");
         __clearInvokeQueues(vs->locals);
         goto nextLine;
     }
-    invode_deepth0_str[0] = instructUnit_getInvokeDeepth(instruct_unit);
+    invode_deepth0_str[0] = instructUnit_getInvokeDeepth(ins_unit);
     invode_deepth1_str[0] = invode_deepth0_str[0] + 1;
 
-    uint16_t const_index = instructUnit_getConstPoolIndex(instruct_unit);
+    uint16_t const_index = instructUnit_getConstPoolIndex(ins_unit);
     char* data = constPool_getByOffset(vs->const_pool, const_index);
 
     vs->q0 = args_getPtr(vs->locals->list, invode_deepth0_str);
@@ -809,13 +806,13 @@ int pikaVM_runInstructUnit(PikaObj* self,
         args_setPtr(vs->locals->list, invode_deepth1_str, vs->q1);
     }
     /* run instruct */
-    resArg = VM_instruct_handler_table[instruct](self, &vs, data);
+    resArg = VM_instruct_handler_table[instruct](self, vs, data);
     if (NULL != resArg) {
         queue_pushArg(vs->q0, resArg);
     }
     goto nextLine;
 nextLine:
-    uint16_t ins_addr = 0;
+    int ins_addr = 0;
     // /* exit */
     // if (-999 == vs->jmp) {
     // return -99999;
@@ -1110,4 +1107,6 @@ VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
 }
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
-                                      ByteCodeFrame* byteCode_frame) {}
+                                      ByteCodeFrame* byteCode_frame) {
+    return pikaVM_runByteCodeWithPars(self, self, self, byteCode_frame);
+}
