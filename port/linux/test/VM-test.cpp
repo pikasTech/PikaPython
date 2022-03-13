@@ -857,3 +857,27 @@ TEST(InstructArray, set) {
     EXPECT_STREQ(log_buff[0], (char*)"3 OUT #12\r\n");
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, bytecode_jjcc) {
+    char* line = (char*)"a = (1 + 1.1) * 3 - 2 /4.0";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
+    printf("%s", pikaAsm);
+    ByteCodeFrame byte_frame;
+    byteCodeFrame_init(&byte_frame);
+    byteCodeFrame_appendFromAsm(&byte_frame, pikaAsm);
+    byteCodeFrame_print(&byte_frame);
+
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    // pikaVM_runAsm(self, pikaAsm);
+    pikaVM_runByteCodeFrame(self, &byte_frame);
+
+    float res = obj_getFloat(self, (char*)"a");
+
+    obj_deinit(self);
+    args_deinit(buffs);
+    byteCodeFrame_deinit(&byte_frame);
+
+    ASSERT_FLOAT_EQ(res, 5.8);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

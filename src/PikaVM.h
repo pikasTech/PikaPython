@@ -67,6 +67,7 @@ typedef struct VMState_t {
     Queue* q1;
     int32_t jmp;
     char* pc;
+    int32_t pc_i;
     char* ASM_start;
     ConstPool* const_pool;
 } VMState;
@@ -154,5 +155,6 @@ void instructUnit_init(InstructUnit* ins_unit);
 void instructUnit_print(InstructUnit* self);
 void instructArray_print(InstructArray* self);
 void byteCodeFrame_print(ByteCodeFrame* self);
+InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset);
 
 #endif
