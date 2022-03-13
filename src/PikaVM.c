@@ -80,6 +80,19 @@ static int __getThisBlockDeepth(char* start, char* code, int* offset) {
     return thisBlockDeepth;
 }
 
+static int VMState_getBlockDeepthNow(VMState* vs) {
+    if (vs->ASM_start == NULL) {
+        /* support run byteCode */
+        InstructUnit* ins_unit =
+            instructArray_getByOffset(vs->ins_array, vs->pc_i);
+        return instructUnit_getBlockDeepth(ins_unit);
+    } else {
+        /* support run Asm */
+        int offset = 0;
+        return __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
+    }
+}
+
 static int32_t __getAddrOffsetOfJUM(char* code) {
     int offset = 0;
     char* codeNow = code + offset;
@@ -393,8 +406,8 @@ static Arg* VM_instruction_handler_JMP(PikaObj* self, VMState* vs, char* data) {
 }
 
 static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
-    int offset = 0;
-    int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
+    int thisBlockDeepth;
+    thisBlockDeepth = VMState_getBlockDeepthNow(vs);
     Arg* assertArg = arg_copy(queue_popArg(vs->q0));
     int assert = arg_getInt(assertArg);
     arg_deinit(assertArg);
@@ -618,8 +631,7 @@ static Arg* VM_instruction_handler_RET(PikaObj* self, VMState* vs, char* data) {
 }
 
 static Arg* VM_instruction_handler_NEL(PikaObj* self, VMState* vs, char* data) {
-    int offset = 0;
-    int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
+    int thisBlockDeepth = VMState_getBlockDeepthNow(vs);
     char __else[] = "__else0";
     __else[6] = '0' + thisBlockDeepth;
     if (0 == args_getInt(self->list, __else)) {
@@ -1067,12 +1079,14 @@ VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
     args_setSysOut(locals->list, (char*)"");
     VMState vs = {
         .const_pool = &byteCode_frame->const_pool,
+        .ins_array = &byteCode_frame->instruct_array,
         .locals = locals,
         .globals = globals,
         .jmp = 0,
         .q0 = NULL,
         .q1 = NULL,
         .pc_i = 0,
+        .ASM_start = NULL,
     };
     while (vs.pc_i < size) {
         if (vs.pc_i == -99999) {

@@ -70,6 +70,7 @@ typedef struct VMState_t {
     int32_t pc_i;
     char* ASM_start;
     ConstPool* const_pool;
+    InstructArray* ins_array;
 } VMState;
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
