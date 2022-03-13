@@ -769,33 +769,32 @@ TEST(VM, nag_a) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(ByteCodeUnit, base) {
-    ByteCodeUnit bu = {
-        .deepth = 0,
-        .isNewLine_instruct = 0,
-        .const_pool_index = 0,
-    };
-    byteCodeUnit_setBlockDeepth(&bu, 2);
-    byteCodeUnit_setIsNewLine(&bu, 1);
-    byteCodeUnit_setInvokeDeepth(&bu, 3);
-    byteCodeUnit_setInstruct(&bu, (Instruct)4);
-    byteCodeUnit_setConstPoolIndex(&bu, 12);
+TEST(InstructUnit, base) {
+    InstructUnit bu;
+    instructUnit_init(&bu);
+    instructUnit_setBlockDeepth(&bu, 2);
+    instructUnit_setIsNewLine(&bu, 1);
+    instructUnit_setInvokeDeepth(&bu, 3);
+    instructUnit_setInstruct(&bu, (Instruct)4);
+    instructUnit_setConstPoolIndex(&bu, 12);
 
-    EXPECT_EQ(byteCodeUnit_getBlockDeepth(&bu), 2);
-    EXPECT_EQ(byteCodeUnit_getIsNewLine(&bu), 1);
-    EXPECT_EQ(byteCodeUnit_getInvokeDeepth(&bu), 3);
-    EXPECT_EQ(byteCodeUnit_getInstruct(&bu), 4);
-    EXPECT_EQ(byteCodeUnit_getConstPoolIndex(&bu), 12);
+    EXPECT_EQ(instructUnit_getBlockDeepth(&bu), 2);
+    EXPECT_EQ(instructUnit_getIsNewLine(&bu), 1);
+    EXPECT_EQ(instructUnit_getInvokeDeepth(&bu), 3);
+    EXPECT_EQ(instructUnit_getInstruct(&bu), 4);
+    EXPECT_EQ(instructUnit_getConstPoolIndex(&bu), 12);
+
+    instructUnit_print(&bu);
 }
 
-// TEST(ByteCodeUnit, new_) {
+// TEST(InstructUnit, new_) {
 //     char data[] = "test";
-//     ByteCodeUnit* bu_p = New_byteCodeUnit(strGetSize(data));
-//     byteCodeUnit_setData(bu_p, data);
-//     EXPECT_STREQ(byteCodeUnit_getData(bu_p), (char*)"test");
-//     EXPECT_EQ(byteCodeUnit_getTotleSize(bu_p), 8);
-//     EXPECT_EQ(byteCodeUnit_getTotleSize_withDataSize(strGetSize(data)), 8);
-//     byteCodeUnit_deinit(bu_p);
+//     InstructUnit* bu_p = New_instructUnit(strGetSize(data));
+//     instructUnit_setData(bu_p, data);
+//     EXPECT_STREQ(instructUnit_getData(bu_p), (char*)"test");
+//     EXPECT_EQ(instructUnit_getTotleSize(bu_p), 8);
+//     EXPECT_EQ(instructUnit_getTotleSize_withDataSize(strGetSize(data)), 8);
+//     instructUnit_deinit(bu_p);
 //     EXPECT_EQ(pikaMemNow(), 0);
 // }
 
@@ -830,5 +829,22 @@ TEST(ConstPool, get) {
     EXPECT_STREQ(log_buff[1], (char*)"1: hello\r\n");
     EXPECT_STREQ(log_buff[0], (char*)"7: world\r\n");
     constPool_deinit(&cp);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(InstructArray, set) {
+    InstructArray ia;
+    InstructUnit bu;
+    instructUnit_init(&bu);
+    instructUnit_setBlockDeepth(&bu, 2);
+    instructUnit_setIsNewLine(&bu, 1);
+    instructUnit_setInvokeDeepth(&bu, 3);
+    instructUnit_setInstruct(&bu, (Instruct)4);
+    instructUnit_setConstPoolIndex(&bu, 12);
+
+    instructArray_init(&ia);
+    instructArray_append(&ia, &bu);
+    instructArray_deinit(&ia);
+
     EXPECT_EQ(pikaMemNow(), 0);
 }

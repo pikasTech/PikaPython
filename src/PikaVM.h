@@ -35,11 +35,11 @@ enum Instruct {
     __INSTRCUTION_CNT,
 };
 
-typedef struct InsturctUnit_t {
+typedef struct InstructUnit_t {
     uint8_t deepth;
     uint8_t isNewLine_instruct;
     uint16_t const_pool_index;
-} ByteCodeUnit;
+} InstructUnit;
 
 typedef struct ConstPool_t {
     Arg* arg_buff;
@@ -61,55 +61,56 @@ typedef struct ByteCodeFrame_t {
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 
-#define byteCodeUnit_getBlockDeepth(self) (((self)->deepth) & 0x0F)
-#define byteCodeUnit_getInvokeDeepth(self) (((self)->deepth) >> 4)
-// #define byteCodeUnit_getDataSize(self) (strGetSize((char*)(self)->data))
-// #define byteCodeUnit_getData(self) (char*)((self)->data)
-#define byteCodeUnit_getInstruct(self) ((self)->isNewLine_instruct & 0x7F)
-#define byteCodeUnit_getConstPoolIndex(self) ((self)->const_pool_index)
-#define byteCodeUnit_getIsNewLine(self) ((self)->isNewLine_instruct >> 7)
+#define instructUnit_getBlockDeepth(self) (((self)->deepth) & 0x0F)
+#define instructUnit_getInvokeDeepth(self) (((self)->deepth) >> 4)
+// #define instructUnit_getDataSize(self) (strGetSize((char*)(self)->data))
+// #define instructUnit_getData(self) (char*)((self)->data)
+#define instructUnit_getInstruct(self) \
+    ((enum Instruct)((self)->isNewLine_instruct & 0x7F))
+#define instructUnit_getConstPoolIndex(self) ((self)->const_pool_index)
+#define instructUnit_getIsNewLine(self) ((self)->isNewLine_instruct >> 7)
 
-#define byteCodeUnit_setBlockDeepth(self, val) \
+#define instructUnit_setBlockDeepth(self, val) \
     do {                                       \
         ((self)->deepth) |= (0x0F & val);      \
     } while (0)
 
-#define byteCodeUnit_setConstPoolIndex(self, val) \
+#define instructUnit_setConstPoolIndex(self, val) \
     do {                                          \
         ((self)->const_pool_index = val);         \
     } while (0)
 
-#define byteCodeUnit_setInvokeDeepth(self, val)  \
+#define instructUnit_setInvokeDeepth(self, val)  \
     do {                                         \
         ((self)->deepth) |= ((0x0F & val) << 4); \
     } while (0)
 
 /*
- #define byteCodeUnit_setData(self, val)                            \
+ #define instructUnit_setData(self, val)                            \
      do {                                                           \
          __platform_memcpy((self)->data, val, strGetSize(val) + 1); \
      } while (0)
 */
 
-#define byteCodeUnit_setInstruct(self, val)           \
+#define instructUnit_setInstruct(self, val)           \
     do {                                              \
         ((self)->isNewLine_instruct) |= (0x7F & val); \
     } while (0)
 
-#define byteCodeUnit_setIsNewLine(self, val)                 \
+#define instructUnit_setIsNewLine(self, val)                 \
     do {                                                     \
         ((self)->isNewLine_instruct) |= ((0x01 & val) << 7); \
     } while (0)
 
-ByteCodeUnit* New_byteCodeUnit(uint8_t data_size);
-void byteCodeUnit_deinit(ByteCodeUnit* self);
+InstructUnit* New_instructUnit(uint8_t data_size);
+void instructUnit_deinit(InstructUnit* self);
 
 /*
  #define __get_alined_size(size) (((((size)-1) / 4) + 1) * 4)
- #define byteCodeUnit_getTotleSize_withDataSize(data_size) \
-  (__get_alined_size(sizeof(ByteCodeUnit) + data_size + 1))
- #define byteCodeUnit_getTotleSize(self) \
-  (byteCodeUnit_getTotleSize_withDataSize(byteCodeUnit_getDataSize(self)))
+ #define instructUnit_getTotleSize_withDataSize(data_size) \
+  (__get_alined_size(sizeof(InstructUnit) + data_size + 1))
+ #define instructUnit_getTotleSize(self) \
+  (instructUnit_getTotleSize_withDataSize(instructUnit_getDataSize(self)))
 */
 
 enum Instruct pikaVM_getInstructFromAsm(char* line);
@@ -123,10 +124,16 @@ char* constPool_getByIndex(ConstPool* self, uint16_t index);
 uint16_t constPool_getLastOffset(ConstPool* self);
 void constPool_print(ConstPool* self);
 
-#define constPool_getByOffset(self, offset) \
-    ((char*)(arg_getContent((self)->arg_buff) + (uintptr_t)(offset)))
+#define constPool_getByOffset(ConstPoll_p_self, uint16_t_offset) \
+    ((char*)(arg_getContent((ConstPoll_p_self)->arg_buff) +      \
+             (uintptr_t)(uint16_t_offset)))
 
 void ByteCodeFrame_init(ByteCodeFrame* bf);
 void ByteCodeFrame_deinit(ByteCodeFrame* bf);
+void instructArray_init(InstructArray* ia);
+void instructArray_deinit(InstructArray* ia);
+void instructArray_append(InstructArray* ia, InstructUnit* iu);
+void instructUnit_init(InstructUnit* iu);
+void instructUnit_print(InstructUnit* self);
 
 #endif

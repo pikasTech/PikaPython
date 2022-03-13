@@ -2120,7 +2120,7 @@ TEST(parser, nag_a) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(asmer, asmer_to_byteCodeUnit) {
+TEST(asmer, asmer_to_instructUnit) {
     char* asm_line = (char*)
         "B2\n"
         "2 NUM 2\n"

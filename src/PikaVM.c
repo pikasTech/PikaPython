@@ -838,20 +838,20 @@ exit:
     return globals;
 }
 
-// ByteCodeUnit* New_byteCodeUnit(uint8_t data_size) {
-//     ByteCodeUnit* self =
-//         pikaMalloc(byteCodeUnit_getTotleSize_withDataSize(data_size));
+// InstructUnit* New_instructUnit(uint8_t data_size) {
+//     InstructUnit* self =
+//         pikaMalloc(instructUnit_getTotleSize_withDataSize(data_size));
 //     return self;
 // }
 
-// void byteCodeUnit_deinit(ByteCodeUnit* self) {
-//     pikaFree(self, (byteCodeUnit_getTotleSize(self)));
+// void instructUnit_deinit(InstructUnit* self) {
+//     pikaFree(self, (instructUnit_getTotleSize(self)));
 // }
 
 void constPool_init(ConstPool* self) {
     self->arg_buff = arg_setStr(NULL, "", "");
     self->content_offset_now = 0;
-    self->size = strGetSize(arg_getContent(self->arg_buff)) + 1;
+    self->size = strGetSize((char*)arg_getContent(self->arg_buff)) + 1;
 }
 
 void constPool_deinit(ConstPool* self) {
@@ -876,7 +876,6 @@ char* constPool_getNow(ConstPool* self) {
 uint16_t constPool_getLastOffset(ConstPool* self) {
     return self->size;
 }
-
 
 char* constPool_getNext(ConstPool* self) {
     self->content_offset_now += strGetSize(constPool_getNow(self)) + 1;
@@ -919,4 +918,59 @@ void ByteCodeFrame_init(ByteCodeFrame* bf) {
 
 void ByteCodeFrame_deinit(ByteCodeFrame* bf) {
     constPool_deinit(&(bf->const_pool));
+}
+
+void instructArray_init(InstructArray* ia) {
+    ia->arg_buff = arg_setNull(NULL);
+}
+
+void instructArray_deinit(InstructArray* ia) {
+    arg_deinit(ia->arg_buff);
+}
+
+void instructArray_append(InstructArray* ia, InstructUnit* iu) {
+    ia->arg_buff = arg_append(ia->arg_buff, iu, sizeof(InstructUnit));
+}
+
+void instructUnit_init(InstructUnit* iu) {
+    iu->deepth = 0;
+    iu->const_pool_index = 0;
+    iu->isNewLine_instruct = 0;
+}
+
+InstructUnit* instructArray_getNow(InstructArray* self) {
+    if (self->content_offset_now >= self->size) {
+        /* is the end */
+        return NULL;
+    }
+    return (InstructUnit*)(arg_getContent(self->arg_buff) +
+                           (uintptr_t)(self->content_offset_now));
+}
+
+InstructUnit* instructArray_getNext(InstructArray* self) {
+    self->content_offset_now += sizeof(InstructUnit);
+    return instructArray_getNow(self);
+}
+
+InstructUnit* instructArray_getLast(InstructArray* self) {
+    if (0 == self->content_offset_now) {
+        return NULL;
+    }
+    self->content_offset_now -= sizeof(InstructUnit);
+    return instructArray_getNow(self);
+}
+
+char* instructUnit_getInstructStr(InstructUnit* self) {
+#define __INS_GET_INS_STR
+#include "__instruction_table.cfg"
+    return "NON";
+}
+
+void instructUnit_print(InstructUnit* self) {
+    if (instructUnit_getIsNewLine(self)) {
+        __platform_printf("B%d\n", instructUnit_getBlockDeepth(self));
+    }
+    __platform_printf("%d %s #%d\n ", instructUnit_getInvokeDeepth(self),
+                      instructUnit_getInstructStr(self),
+                      self->const_pool_index);
 }

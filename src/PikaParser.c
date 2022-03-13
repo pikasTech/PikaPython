@@ -1541,14 +1541,14 @@ ByteCodeFrame* ByteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm) {
         /* process each ins */
 
         /* load Asm to byte code unit */
-        ByteCodeUnit bu = {0};
-        byteCodeUnit_setBlockDeepth(&bu, asmer.block_deepth_now);
-        byteCodeUnit_setInvokeDeepth(&bu, line[0] - '0');
-        byteCodeUnit_setConstPoolIndex(
+        InstructUnit bu = {0};
+        instructUnit_setBlockDeepth(&bu, asmer.block_deepth_now);
+        instructUnit_setInvokeDeepth(&bu, line[0] - '0');
+        instructUnit_setConstPoolIndex(
             &bu, constPool_getLastOffset(&(bf->const_pool)));
-        byteCodeUnit_setInstruct(&bu, pikaVM_getInstructFromAsm(line));
+        instructUnit_setInstruct(&bu, pikaVM_getInstructFromAsm(line));
         if (asmer.is_new_line) {
-            byteCodeUnit_setIsNewLine(&bu, 1);
+            instructUnit_setIsNewLine(&bu, 1);
             asmer.is_new_line = 0;
         }
 

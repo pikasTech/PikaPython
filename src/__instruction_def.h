@@ -36,10 +36,17 @@
 #endif
 
 #if defined(__INS_COMPIRE)
-#define def_ins(__INS_NAME) \
-    if (0 == strncmp(line + 2, ""#__INS_NAME"", 3)) { \
-        return __INS_NAME; \
-    } 
+#define def_ins(__INS_NAME)                             \
+    if (0 == strncmp(line + 2, "" #__INS_NAME "", 3)) { \
+        return __INS_NAME;                              \
+    }
+#endif
+
+#if defined(__INS_GET_INS_STR)
+#define def_ins(__INS_NAME)                              \
+    if (__INS_NAME ==  instructUnit_getInstruct(self)){ \
+        return ""#__INS_NAME""; \
+    }
 #endif
 
 #undef __INS_ENUM
