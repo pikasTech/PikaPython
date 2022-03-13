@@ -55,7 +55,7 @@ typedef struct InstructArray_t {
 
 typedef struct ByteCodeFrame_t {
     ConstPool const_pool;
-    InstructArray Instruct_array;
+    InstructArray instruct_array;
 } ByteCodeFrame;
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
@@ -72,16 +72,16 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 
 #define instructUnit_setBlockDeepth(self, val) \
     do {                                       \
-        ((self)->deepth) |= (0x0F & (val));      \
+        ((self)->deepth) |= (0x0F & (val));    \
     } while (0)
 
 #define instructUnit_setConstPoolIndex(self, val) \
     do {                                          \
-        ((self)->const_pool_index = (val));         \
+        ((self)->const_pool_index = (val));       \
     } while (0)
 
-#define instructUnit_setInvokeDeepth(self, val)  \
-    do {                                         \
+#define instructUnit_setInvokeDeepth(self, val)    \
+    do {                                           \
         ((self)->deepth) |= ((0x0F & (val)) << 4); \
     } while (0)
 
@@ -92,13 +92,13 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
      } while (0)
 */
 
-#define instructUnit_setInstruct(self, val)           \
-    do {                                              \
+#define instructUnit_setInstruct(self, val)             \
+    do {                                                \
         ((self)->isNewLine_instruct) |= (0x7F & (val)); \
     } while (0)
 
-#define instructUnit_setIsNewLine(self, val)                 \
-    do {                                                     \
+#define instructUnit_setIsNewLine(self, val)                   \
+    do {                                                       \
         ((self)->isNewLine_instruct) |= ((0x01 & (val)) << 7); \
     } while (0)
 
@@ -130,6 +130,8 @@ void constPool_print(ConstPool* self);
 
 void byteCodeFrame_init(ByteCodeFrame* bf);
 void byteCodeFrame_deinit(ByteCodeFrame* bf);
+size_t byteCodeFrame_getSize(ByteCodeFrame* bf);
+
 void instructArray_init(InstructArray* ins_array);
 void instructArray_deinit(InstructArray* ins_array);
 void instructArray_append(InstructArray* ins_array, InstructUnit* ins_unit);

@@ -914,12 +914,12 @@ exit:
 
 void byteCodeFrame_init(ByteCodeFrame* self) {
     constPool_init(&(self->const_pool));
-    instructArray_init(&(self->Instruct_array));
+    instructArray_init(&(self->instruct_array));
 }
 
 void byteCodeFrame_deinit(ByteCodeFrame* self) {
     constPool_deinit(&(self->const_pool));
-    instructArray_deinit(&(self->Instruct_array));
+    instructArray_deinit(&(self->instruct_array));
 }
 
 void instructArray_init(InstructArray* ins_array) {
@@ -995,4 +995,8 @@ void instructArray_print(InstructArray* self) {
 exit:
     self->content_offset_now = offset_befor;
     return;
+}
+
+size_t byteCodeFrame_getSize(ByteCodeFrame* bf){
+    return bf->const_pool.size + bf->instruct_array.size;
 }

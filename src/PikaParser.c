@@ -1553,7 +1553,7 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
         }
 
         /* append instructUnit to instructArray */
-        instructArray_append(&(self->Instruct_array), &ins_unit);
+        instructArray_append(&(self->instruct_array), &ins_unit);
 
         /* load const to const pool buff */
         char* data = line + 6;
