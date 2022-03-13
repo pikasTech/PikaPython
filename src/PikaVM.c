@@ -31,8 +31,6 @@
 #include "PikaObj.h"
 #include "PikaParser.h"
 #include "PikaPlatform.h"
-#include "dataQueue.h"
-#include "dataQueueObj.h"
 #include "dataStrs.h"
 
 /* local head */
@@ -40,17 +38,6 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
                                     VMParameters* locals,
                                     VMParameters* globals,
                                     char* pikaAsm);
-
-typedef struct VMState_t {
-    VMParameters* locals;
-    VMParameters* globals;
-    Queue* q0;
-    Queue* q1;
-    int32_t jmp;
-    char* pc;
-    char* ASM_start;
-    ConstPool* const_pool;
-} VMState;
 
 static int32_t __gotoNextLine(char* code) {
     int offset = 0;

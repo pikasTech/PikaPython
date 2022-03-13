@@ -28,6 +28,8 @@
 #ifndef __PIKA__VM__H
 #define __PIKA__VM__H
 #include "PikaObj.h"
+#include "dataQueue.h"
+#include "dataQueueObj.h"
 
 enum Instruct {
 #define __INS_ENUM
@@ -57,6 +59,17 @@ typedef struct ByteCodeFrame_t {
     ConstPool const_pool;
     InstructArray instruct_array;
 } ByteCodeFrame;
+
+typedef struct VMState_t {
+    VMParameters* locals;
+    VMParameters* globals;
+    Queue* q0;
+    Queue* q1;
+    int32_t jmp;
+    char* pc;
+    char* ASM_start;
+    ConstPool* const_pool;
+} VMState;
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
