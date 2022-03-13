@@ -41,7 +41,7 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
                                     VMParameters* globals,
                                     char* pikaAsm);
 
-struct VMState_t {
+typedef struct VMState_t {
     VMParameters* locals;
     VMParameters* globals;
     Queue* q0;
@@ -49,8 +49,7 @@ struct VMState_t {
     int32_t jmp;
     char* pc;
     char* ASM_start;
-};
-typedef struct VMState_t VMState;
+} VMState;
 
 static int32_t __gotoNextLine(char* code) {
     int offset = 0;
