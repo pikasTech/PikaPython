@@ -881,3 +881,26 @@ TEST(VM, bytecode_jjcc) {
     ASSERT_FLOAT_EQ(res, 5.8);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, WHILE_byte) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =(char *)
+        "a = 1\n"
+        "b = 0\n"
+        "while a:\n"
+        "    b = 1\n"
+        "    a = 0\n"
+        "\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* self = New_TinyObj(NULL);
+    pikaVM_runWithConfig(self, lines, VMconfig_enableByteCode);
+    EXPECT_EQ(obj_getInt(self, (char*)"a"), 0);
+    EXPECT_EQ(obj_getInt(self, (char*)"b"), 1);
+    args_deinit(buffs);
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

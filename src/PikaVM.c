@@ -39,7 +39,7 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
                                     VMParameters* globals,
                                     char* pikaAsm);
 
-static int32_t __gotoNextLine(char* code) {
+static int32_t VMState_gotoNextLine(char* code) {
     int offset = 0;
     while (1) {
         if (code[offset] == '\n') {
@@ -50,7 +50,7 @@ static int32_t __gotoNextLine(char* code) {
     return offset + 1;
 }
 
-static int32_t __gotoLastLine(char* start, char* code) {
+static int32_t VMState_gotoLastLine(char* start, char* code) {
     int offset = -2;
     while (1) {
         char* codeNow = code + offset;
@@ -70,7 +70,7 @@ static int __getThisBlockDeepth(char* start, char* code, int* offset) {
     int thisBlockDeepth = -1;
     char* codeNow = code + *offset;
     while (1) {
-        *offset += __gotoLastLine(start, codeNow);
+        *offset += VMState_gotoLastLine(start, codeNow);
         codeNow = code + *offset;
         if (codeNow[0] == 'B') {
             thisBlockDeepth = codeNow[1] - '0';
@@ -93,51 +93,51 @@ static int VMState_getBlockDeepthNow(VMState* vs) {
     }
 }
 
-static int32_t __getAddrOffsetOfJUM(char* code) {
+static int32_t VMState_getAddrOffsetOfJUM(VMState* vs) {
     int offset = 0;
-    char* codeNow = code + offset;
+    char* codeNow = vs->pc + offset;
     while (1) {
-        offset += __gotoNextLine(codeNow);
-        codeNow = code + offset;
+        offset += VMState_gotoNextLine(codeNow);
+        codeNow = vs->pc + offset;
         if (0 == strncmp(codeNow, "0 JMP -1", 8)) {
             return offset;
         }
     }
 }
 
-static int32_t __getAddrOffsetFromJmp(char* start, char* code, int32_t jmp) {
+static int32_t VMState_getAddrOffsetFromJmp(VMState* vs) {
     int offset = 0;
-    int thisBlockDeepth = __getThisBlockDeepth(start, code, &offset);
-    char* codeNow = code + offset;
+    int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
+    char* codeNow = vs->pc + offset;
     int8_t blockNum = 0;
-    if (jmp > 0) {
+    if (vs->jmp > 0) {
         offset = 0;
-        codeNow = code + offset;
+        codeNow = vs->pc + offset;
         while (1) {
-            offset += __gotoNextLine(codeNow);
-            codeNow = code + offset;
+            offset += VMState_gotoNextLine(codeNow);
+            codeNow = vs->pc + offset;
             if (codeNow[0] == 'B') {
                 uint8_t blockDeepth = codeNow[1] - '0';
                 if (blockDeepth <= thisBlockDeepth) {
                     blockNum++;
                 }
             }
-            if (blockNum >= jmp) {
+            if (blockNum >= vs->jmp) {
                 break;
             }
         }
     }
-    if (jmp < 0) {
+    if (vs->jmp < 0) {
         while (1) {
-            offset += __gotoLastLine(start, codeNow);
-            codeNow = code + offset;
+            offset += VMState_gotoLastLine(vs->ASM_start, codeNow);
+            codeNow = vs->pc + offset;
             if (codeNow[0] == 'B') {
                 uint8_t blockDeepth = codeNow[1] - '0';
                 if (blockDeepth == thisBlockDeepth) {
                     blockNum--;
                 }
             }
-            if (blockNum <= jmp) {
+            if (blockNum <= vs->jmp) {
                 break;
             }
         }
@@ -616,7 +616,7 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
             }
             break;
         }
-        offset += __gotoNextLine(methodPtr);
+        offset += VMState_gotoNextLine(methodPtr);
         methodPtr = vs->pc + offset;
     }
     return NULL;
@@ -758,19 +758,20 @@ nextLine:
     }
     /* break or continue */
     if ((-998 == vs.jmp) || (-997 == vs.jmp)) {
-        int32_t loop_end_addr = __getAddrOffsetOfJUM(vs.pc);
+        int32_t loop_end_addr = VMState_getAddrOffsetOfJUM(&vs);
         /* break */
         if (-998 == vs.jmp) {
-            loop_end_addr += __gotoNextLine(vs.pc + loop_end_addr);
+            loop_end_addr += VMState_gotoNextLine(vs.pc + loop_end_addr);
             return lineAddr + loop_end_addr;
         }
         if (-997 == vs.jmp) {
-            loop_end_addr += __gotoLastLine(pikaAsm, vs.pc + loop_end_addr);
+            loop_end_addr +=
+                VMState_gotoLastLine(vs.ASM_start, vs.pc + loop_end_addr);
             return lineAddr + loop_end_addr;
         }
     }
     if (vs.jmp != 0) {
-        return lineAddr + __getAddrOffsetFromJmp(pikaAsm, vs.pc, vs.jmp);
+        return lineAddr + VMState_getAddrOffsetFromJmp(&vs);
     }
     return nextAddr;
 }
@@ -829,7 +830,7 @@ nextLine:
     // }
     // }
     // if (vs.jmp != 0) {
-    // return lineAddr + __getAddrOffsetFromJmp(pikaAsm, vs.pc, vs.jmp);
+    // return lineAddr + VMState_getAddrOffsetFromJmp(pikaAsm, vs.pc, vs.jmp);
     // }
     return vs->pc_i + sizeof(InstructUnit);
 }
@@ -869,7 +870,9 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     return pikaVM_runAsmWithPars(self, self, self, pikaAsm);
 }
 
-VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
+VMParameters* pikaVM_runWithConfig(PikaObj* self,
+                                   char* multiLine,
+                                   VMConfig cfg) {
     Args buffs = {0};
     Args* buffs_p = &buffs;
     VMParameters* globals = NULL;
@@ -887,14 +890,31 @@ VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
         buffs_p = NULL;
         pikaAsm = obj_getStr(self, "__asm");
     }
-    /* run asm */
-    globals = pikaVM_runAsm(self, pikaAsm);
+    if (cfg == VMconfig_enableByteCode) {
+        /* run byteCode */
+        ByteCodeFrame byte_frame;
+        byteCodeFrame_init(&byte_frame);
+        byteCodeFrame_appendFromAsm(&byte_frame, pikaAsm);
+        globals = pikaVM_runByteCodeFrame(self, &byte_frame);
+        byteCodeFrame_deinit(&byte_frame);
+    } else {
+        /* run asm */
+        globals = pikaVM_runAsm(self, pikaAsm);
+    }
     goto exit;
 exit:
     if (NULL != buffs_p) {
         strsDeinit(&buffs);
     }
     return globals;
+}
+
+VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
+    return pikaVM_runWithConfig(self, multiLine, VMconfig_eisableByteCode);
+}
+
+VMParameters* pikaVM_run_enableByteCode(PikaObj* self, char* multiLine) {
+    return pikaVM_runWithConfig(self, multiLine, VMconfig_enableByteCode);
 }
 
 // InstructUnit* New_instructUnit(uint8_t data_size) {

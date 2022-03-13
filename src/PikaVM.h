@@ -73,6 +73,11 @@ typedef struct VMState_t {
     InstructArray* ins_array;
 } VMState;
 
+typedef enum VMConfig_t {
+    VMconfig_enableByteCode,
+    VMconfig_eisableByteCode,
+} VMConfig;
+
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
@@ -157,5 +162,9 @@ void instructUnit_print(InstructUnit* self);
 void instructArray_print(InstructArray* self);
 void byteCodeFrame_print(ByteCodeFrame* self);
 InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset);
+VMParameters* pikaVM_run_enableByteCode(PikaObj* self, char* multiLine);
+VMParameters* pikaVM_runWithConfig(PikaObj* self,
+                                    char* multiLine,
+                                    VMConfig cfg);
 
 #endif
