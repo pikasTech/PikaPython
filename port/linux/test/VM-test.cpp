@@ -770,6 +770,7 @@ TEST(VM, nag_a) {
 }
 
 TEST(InstructUnit, base) {
+    __platform_printf((char*)"BEGIN\r\n");
     InstructUnit bu;
     instructUnit_init(&bu);
     instructUnit_setBlockDeepth(&bu, 2);
@@ -785,6 +786,10 @@ TEST(InstructUnit, base) {
     EXPECT_EQ(instructUnit_getConstPoolIndex(&bu), 12);
 
     instructUnit_print(&bu);
+    EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"B2\r\n");
+    EXPECT_STREQ(log_buff[0], (char*)"3 OUT #12\r\n");
+    EXPECT_EQ(pikaMemNow(), 0);
 }
 
 // TEST(InstructUnit, new_) {
@@ -833,6 +838,7 @@ TEST(ConstPool, get) {
 }
 
 TEST(InstructArray, set) {
+    __platform_printf((char*)"BEGIN\r\n");
     InstructArray ia;
     InstructUnit bu;
     instructUnit_init(&bu);
@@ -844,7 +850,10 @@ TEST(InstructArray, set) {
 
     instructArray_init(&ia);
     instructArray_append(&ia, &bu);
+    instructArray_print(&ia);
     instructArray_deinit(&ia);
-
+    EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"B2\r\n");
+    EXPECT_STREQ(log_buff[0], (char*)"3 OUT #12\r\n");
     EXPECT_EQ(pikaMemNow(), 0);
 }

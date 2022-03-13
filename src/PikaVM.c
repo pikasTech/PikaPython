@@ -922,6 +922,8 @@ void ByteCodeFrame_deinit(ByteCodeFrame* bf) {
 
 void instructArray_init(InstructArray* ia) {
     ia->arg_buff = arg_setNull(NULL);
+    ia->size = 0;
+    ia->content_offset_now = 0;
 }
 
 void instructArray_deinit(InstructArray* ia) {
@@ -930,6 +932,7 @@ void instructArray_deinit(InstructArray* ia) {
 
 void instructArray_append(InstructArray* ia, InstructUnit* iu) {
     ia->arg_buff = arg_append(ia->arg_buff, iu, sizeof(InstructUnit));
+    ia->size += sizeof(InstructUnit);
 }
 
 void instructUnit_init(InstructUnit* iu) {
@@ -968,9 +971,25 @@ char* instructUnit_getInstructStr(InstructUnit* self) {
 
 void instructUnit_print(InstructUnit* self) {
     if (instructUnit_getIsNewLine(self)) {
-        __platform_printf("B%d\n", instructUnit_getBlockDeepth(self));
+        __platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
     }
-    __platform_printf("%d %s #%d\n ", instructUnit_getInvokeDeepth(self),
+    __platform_printf("%d %s #%d\r\n", instructUnit_getInvokeDeepth(self),
                       instructUnit_getInstructStr(self),
                       self->const_pool_index);
+}
+
+void instructArray_print(InstructArray* self) {
+    uint16_t offset_befor = self->content_offset_now;
+    self->content_offset_now = 0;
+    while (1) {
+        InstructUnit* iu = instructArray_getNow(self);
+        if (NULL == iu) {
+            goto exit;
+        }
+        instructUnit_print(iu);
+        instructArray_getNext(self);
+    }
+exit:
+    self->content_offset_now = offset_befor;
+    return;
 }

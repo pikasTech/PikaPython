@@ -72,17 +72,17 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 
 #define instructUnit_setBlockDeepth(self, val) \
     do {                                       \
-        ((self)->deepth) |= (0x0F & val);      \
+        ((self)->deepth) |= (0x0F & (val));      \
     } while (0)
 
 #define instructUnit_setConstPoolIndex(self, val) \
     do {                                          \
-        ((self)->const_pool_index = val);         \
+        ((self)->const_pool_index = (val));         \
     } while (0)
 
 #define instructUnit_setInvokeDeepth(self, val)  \
     do {                                         \
-        ((self)->deepth) |= ((0x0F & val) << 4); \
+        ((self)->deepth) |= ((0x0F & (val)) << 4); \
     } while (0)
 
 /*
@@ -94,12 +94,12 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 
 #define instructUnit_setInstruct(self, val)           \
     do {                                              \
-        ((self)->isNewLine_instruct) |= (0x7F & val); \
+        ((self)->isNewLine_instruct) |= (0x7F & (val)); \
     } while (0)
 
 #define instructUnit_setIsNewLine(self, val)                 \
     do {                                                     \
-        ((self)->isNewLine_instruct) |= ((0x01 & val) << 7); \
+        ((self)->isNewLine_instruct) |= ((0x01 & (val)) << 7); \
     } while (0)
 
 InstructUnit* New_instructUnit(uint8_t data_size);
@@ -135,5 +135,6 @@ void instructArray_deinit(InstructArray* ia);
 void instructArray_append(InstructArray* ia, InstructUnit* iu);
 void instructUnit_init(InstructUnit* iu);
 void instructUnit_print(InstructUnit* self);
+void instructArray_print(InstructArray* self);
 
 #endif
