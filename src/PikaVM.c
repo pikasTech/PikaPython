@@ -49,6 +49,7 @@ typedef struct VMState_t {
     int32_t jmp;
     char* pc;
     char* ASM_start;
+    ConstPool* const_pool;
 } VMState;
 
 static int32_t __gotoNextLine(char* code) {
@@ -775,6 +776,69 @@ nextLine:
     return nextAddr;
 }
 
+int pikaVM_runInstructUnit(PikaObj* self,
+                           VMState* vs,
+                           InstructUnit* instruct_unit) {
+    char line_buff[PIKA_CONFIG_PATH_BUFF_SIZE];
+    enum Instruct instruct;
+    Arg* resArg;
+    char invode_deepth0_str[2] = {0};
+    char invode_deepth1_str[2] = {0};
+    /* Found new script Line, clear the queues*/
+    if (instructUnit_getIsNewLine(instruct_unit)) {
+        args_setErrorCode(vs->locals->list, 0);
+        args_setSysOut(vs->locals->list, (char*)"");
+        __clearInvokeQueues(vs->locals);
+        goto nextLine;
+    }
+    invode_deepth0_str[0] = instructUnit_getInvokeDeepth(instruct_unit);
+    invode_deepth1_str[0] = invode_deepth0_str[0] + 1;
+
+    uint16_t const_index = instructUnit_getConstPoolIndex(instruct_unit);
+    char* data = constPool_getByOffset(vs->const_pool, const_index);
+
+    vs->q0 = args_getPtr(vs->locals->list, invode_deepth0_str);
+    vs->q1 = args_getPtr(vs->locals->list, invode_deepth1_str);
+
+    if (NULL == vs->q0) {
+        vs->q0 = New_queue();
+        args_setPtr(vs->locals->list, invode_deepth0_str, vs->q0);
+    }
+    if (NULL == vs->q1) {
+        vs->q1 = New_queue();
+        args_setPtr(vs->locals->list, invode_deepth1_str, vs->q1);
+    }
+    /* run instruct */
+    resArg = VM_instruct_handler_table[instruct](self, &vs, data);
+    if (NULL != resArg) {
+        queue_pushArg(vs->q0, resArg);
+    }
+    goto nextLine;
+nextLine:
+    uint16_t ins_addr = 0;
+    // /* exit */
+    // if (-999 == vs->jmp) {
+    // return -99999;
+    // }
+    // /* break or continue */
+    // if ((-998 == vs->jmp) || (-997 == vs->jmp)) {
+    // int32_t loop_end_addr = __getAddrOffsetOfJUM(vs->pc);
+    // /* break */
+    // if (-998 == vs->jmp) {
+    // loop_end_addr += __gotoNextLine(vs->pc + loop_end_addr);
+    // return lineAddr + loop_end_addr;
+    // }
+    // if (-997 == vs->jmp) {
+    // loop_end_addr += __gotoLastLine(pikaAsm, vs.pc + loop_end_addr);
+    // return lineAddr + loop_end_addr;
+    // }
+    // }
+    // if (vs.jmp != 0) {
+    // return lineAddr + __getAddrOffsetFromJmp(pikaAsm, vs.pc, vs.jmp);
+    // }
+    return ins_addr;
+}
+
 VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
                                     VMParameters* locals,
                                     VMParameters* globals,
@@ -820,7 +884,7 @@ VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
         globals = NULL;
         goto exit;
     }
-    /* if do not save pikaAsm to flash */
+    /* save to ram if do not save to flash */
     if ((1 == __platform_save_pikaAsm("")) &&
         (!obj_isArgExist(self, "__asm"))) {
         obj_setStr(self, "__asm", pikaAsm);
@@ -828,6 +892,7 @@ VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
         buffs_p = NULL;
         pikaAsm = obj_getStr(self, "__asm");
     }
+    /* run asm */
     globals = pikaVM_runAsm(self, pikaAsm);
     goto exit;
 exit:
@@ -1004,3 +1069,45 @@ void byteCodeFrame_print(ByteCodeFrame* self) {
     constPool_print(&(self->const_pool));
     instructArray_print(&(self->instruct_array));
 }
+
+VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
+                                         VMParameters* locals,
+                                         VMParameters* globals,
+                                         ByteCodeFrame* byteCode_frame) {
+    int ins_addr = 0;
+    int size = byteCode_frame->instruct_array.size;
+    args_setErrorCode(locals->list, 0);
+    args_setSysOut(locals->list, (char*)"");
+    VMState vm_state_byteCode = {
+        .const_pool = &byteCode_frame->const_pool,
+        .locals = locals,
+        .globals = globals,
+        .jmp = 0,
+        .q0 = NULL,
+        .q1 = NULL,
+    };
+    while (ins_addr < size) {
+        if (ins_addr == -99999) {
+            break;
+        }
+        InstructUnit* this_instruct_unit =
+            instructArray_getNow(&(byteCode_frame->instruct_array));
+        ins_addr = pikaVM_runInstructUnit(self, &vm_state_byteCode,
+                                          this_instruct_unit);
+        char* sysOut = args_getSysOut(locals->list);
+        uint8_t errcode = args_getErrorCode(locals->list);
+        if (!strEqu("", sysOut)) {
+            __platform_printf("%s\r\n", sysOut);
+        }
+        if (0 != errcode) {
+            __platform_printf("[info] input commond: \r\n");
+            instructUnit_print(this_instruct_unit);
+        }
+    }
+    __clearInvokeQueues(locals);
+
+    return locals;
+}
+
+VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
+                                      ByteCodeFrame* byteCode_frame) {}

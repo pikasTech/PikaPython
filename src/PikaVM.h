@@ -60,6 +60,8 @@ typedef struct ByteCodeFrame_t {
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
+VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
+                                      ByteCodeFrame* byteCode_frame);
 
 #define instructUnit_getBlockDeepth(self) (((self)->deepth) & 0x0F)
 #define instructUnit_getInvokeDeepth(self) (((self)->deepth) >> 4)
