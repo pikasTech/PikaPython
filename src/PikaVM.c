@@ -768,6 +768,7 @@ int pikaVM_runInstructUnit(PikaObj* self, VMState* vs, InstructUnit* ins_unit) {
     Arg* resArg;
     char invode_deepth0_str[2] = {0};
     char invode_deepth1_str[2] = {0};
+    int ins_addr = 0;
     /* Found new script Line, clear the queues*/
     if (instructUnit_getIsNewLine(ins_unit)) {
         args_setErrorCode(vs->locals->list, 0);
@@ -799,7 +800,6 @@ int pikaVM_runInstructUnit(PikaObj* self, VMState* vs, InstructUnit* ins_unit) {
     }
     goto nextLine;
 nextLine:
-    int ins_addr = 0;
     // /* exit */
     // if (-999 == vs->jmp) {
     // return -99999;
