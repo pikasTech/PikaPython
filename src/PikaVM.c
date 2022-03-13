@@ -912,33 +912,36 @@ exit:
     return;
 }
 
-void ByteCodeFrame_init(ByteCodeFrame* bf) {
-    constPool_init(&(bf->const_pool));
+void byteCodeFrame_init(ByteCodeFrame* self) {
+    constPool_init(&(self->const_pool));
+    instructArray_init(&(self->Instruct_array));
 }
 
-void ByteCodeFrame_deinit(ByteCodeFrame* bf) {
-    constPool_deinit(&(bf->const_pool));
+void byteCodeFrame_deinit(ByteCodeFrame* self) {
+    constPool_deinit(&(self->const_pool));
+    instructArray_deinit(&(self->Instruct_array));
 }
 
-void instructArray_init(InstructArray* ia) {
-    ia->arg_buff = arg_setNull(NULL);
-    ia->size = 0;
-    ia->content_offset_now = 0;
+void instructArray_init(InstructArray* ins_array) {
+    ins_array->arg_buff = arg_setNull(NULL);
+    ins_array->size = 0;
+    ins_array->content_offset_now = 0;
 }
 
-void instructArray_deinit(InstructArray* ia) {
-    arg_deinit(ia->arg_buff);
+void instructArray_deinit(InstructArray* ins_array) {
+    arg_deinit(ins_array->arg_buff);
 }
 
-void instructArray_append(InstructArray* ia, InstructUnit* iu) {
-    ia->arg_buff = arg_append(ia->arg_buff, iu, sizeof(InstructUnit));
-    ia->size += sizeof(InstructUnit);
+void instructArray_append(InstructArray* ins_array, InstructUnit* ins_unit) {
+    ins_array->arg_buff =
+        arg_append(ins_array->arg_buff, ins_unit, sizeof(InstructUnit));
+    ins_array->size += sizeof(InstructUnit);
 }
 
-void instructUnit_init(InstructUnit* iu) {
-    iu->deepth = 0;
-    iu->const_pool_index = 0;
-    iu->isNewLine_instruct = 0;
+void instructUnit_init(InstructUnit* ins_unit) {
+    ins_unit->deepth = 0;
+    ins_unit->const_pool_index = 0;
+    ins_unit->isNewLine_instruct = 0;
 }
 
 InstructUnit* instructArray_getNow(InstructArray* self) {
@@ -982,11 +985,11 @@ void instructArray_print(InstructArray* self) {
     uint16_t offset_befor = self->content_offset_now;
     self->content_offset_now = 0;
     while (1) {
-        InstructUnit* iu = instructArray_getNow(self);
-        if (NULL == iu) {
+        InstructUnit* ins_unit = instructArray_getNow(self);
+        if (NULL == ins_unit) {
             goto exit;
         }
-        instructUnit_print(iu);
+        instructUnit_print(ins_unit);
         instructArray_getNext(self);
     }
 exit:

@@ -41,6 +41,6 @@ typedef struct Asmer_t {
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);
-ByteCodeFrame* ByteCodeFrame_appendFromAsm(ByteCodeFrame *bf, char* pikaAsm);
+ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame *bf, char* pikaAsm);
 
 #endif

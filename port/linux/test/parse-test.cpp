@@ -2129,17 +2129,19 @@ TEST(asmer, asmer_to_instructUnit) {
         "0 RUN test.on\n"
         ;
     Args buffs = {0};
-    ByteCodeFrame bf;
-    ByteCodeFrame_init(&bf);
-    ByteCodeFrame_appendFromAsm(&bf, asm_line);
-    constPool_print(&(bf.const_pool));
-    EXPECT_STREQ(constPool_getNext(&(bf.const_pool)), (char*)"2");
-    EXPECT_STREQ(constPool_getNext(&(bf.const_pool)), (char*)"3");
-    EXPECT_STREQ(constPool_getNext(&(bf.const_pool)), (char*)"add");
-    EXPECT_STREQ(constPool_getNext(&(bf.const_pool)), (char*)"test.on");
-    EXPECT_EQ((uintptr_t)constPool_getNext(&(bf.const_pool)), (uintptr_t)NULL);
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, asm_line);
+    constPool_print(&(bytecode_frame.const_pool));
+    EXPECT_STREQ(constPool_getNext(&(bytecode_frame.const_pool)), (char*)"2");
+    EXPECT_STREQ(constPool_getNext(&(bytecode_frame.const_pool)), (char*)"3");
+    EXPECT_STREQ(constPool_getNext(&(bytecode_frame.const_pool)), (char*)"add");
+    EXPECT_STREQ(constPool_getNext(&(bytecode_frame.const_pool)),
+                 (char*)"test.on");
+    EXPECT_EQ((uintptr_t)constPool_getNext(&(bytecode_frame.const_pool)),
+              (uintptr_t)NULL);
 
-    ByteCodeFrame_deinit(&bf);
+    byteCodeFrame_deinit(&bytecode_frame);
     strsDeinit(&buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

@@ -771,21 +771,21 @@ TEST(VM, nag_a) {
 
 TEST(InstructUnit, base) {
     __platform_printf((char*)"BEGIN\r\n");
-    InstructUnit bu;
-    instructUnit_init(&bu);
-    instructUnit_setBlockDeepth(&bu, 2);
-    instructUnit_setIsNewLine(&bu, 1);
-    instructUnit_setInvokeDeepth(&bu, 3);
-    instructUnit_setInstruct(&bu, (Instruct)4);
-    instructUnit_setConstPoolIndex(&bu, 12);
+    InstructUnit ins_unit;
+    instructUnit_init(&ins_unit);
+    instructUnit_setBlockDeepth(&ins_unit, 2);
+    instructUnit_setIsNewLine(&ins_unit, 1);
+    instructUnit_setInvokeDeepth(&ins_unit, 3);
+    instructUnit_setInstruct(&ins_unit, (Instruct)4);
+    instructUnit_setConstPoolIndex(&ins_unit, 12);
 
-    EXPECT_EQ(instructUnit_getBlockDeepth(&bu), 2);
-    EXPECT_EQ(instructUnit_getIsNewLine(&bu), 1);
-    EXPECT_EQ(instructUnit_getInvokeDeepth(&bu), 3);
-    EXPECT_EQ(instructUnit_getInstruct(&bu), 4);
-    EXPECT_EQ(instructUnit_getConstPoolIndex(&bu), 12);
+    EXPECT_EQ(instructUnit_getBlockDeepth(&ins_unit), 2);
+    EXPECT_EQ(instructUnit_getIsNewLine(&ins_unit), 1);
+    EXPECT_EQ(instructUnit_getInvokeDeepth(&ins_unit), 3);
+    EXPECT_EQ(instructUnit_getInstruct(&ins_unit), 4);
+    EXPECT_EQ(instructUnit_getConstPoolIndex(&ins_unit), 12);
 
-    instructUnit_print(&bu);
+    instructUnit_print(&ins_unit);
     EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
     EXPECT_STREQ(log_buff[1], (char*)"B2\r\n");
     EXPECT_STREQ(log_buff[0], (char*)"3 OUT #12\r\n");
@@ -839,19 +839,19 @@ TEST(ConstPool, get) {
 
 TEST(InstructArray, set) {
     __platform_printf((char*)"BEGIN\r\n");
-    InstructArray ia;
-    InstructUnit bu;
-    instructUnit_init(&bu);
-    instructUnit_setBlockDeepth(&bu, 2);
-    instructUnit_setIsNewLine(&bu, 1);
-    instructUnit_setInvokeDeepth(&bu, 3);
-    instructUnit_setInstruct(&bu, (Instruct)4);
-    instructUnit_setConstPoolIndex(&bu, 12);
+    InstructUnit ins_unit;
+    instructUnit_init(&ins_unit);
+    instructUnit_setBlockDeepth(&ins_unit, 2);
+    instructUnit_setIsNewLine(&ins_unit, 1);
+    instructUnit_setInvokeDeepth(&ins_unit, 3);
+    instructUnit_setInstruct(&ins_unit, (Instruct)4);
+    instructUnit_setConstPoolIndex(&ins_unit, 12);
 
-    instructArray_init(&ia);
-    instructArray_append(&ia, &bu);
-    instructArray_print(&ia);
-    instructArray_deinit(&ia);
+    InstructArray ins_array;
+    instructArray_init(&ins_array);
+    instructArray_append(&ins_array, &ins_unit);
+    instructArray_print(&ins_array);
+    instructArray_deinit(&ins_array);
     EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
     EXPECT_STREQ(log_buff[1], (char*)"B2\r\n");
     EXPECT_STREQ(log_buff[0], (char*)"3 OUT #12\r\n");

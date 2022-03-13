@@ -128,12 +128,12 @@ void constPool_print(ConstPool* self);
     ((char*)(arg_getContent((ConstPoll_p_self)->arg_buff) +      \
              (uintptr_t)(uint16_t_offset)))
 
-void ByteCodeFrame_init(ByteCodeFrame* bf);
-void ByteCodeFrame_deinit(ByteCodeFrame* bf);
-void instructArray_init(InstructArray* ia);
-void instructArray_deinit(InstructArray* ia);
-void instructArray_append(InstructArray* ia, InstructUnit* iu);
-void instructUnit_init(InstructUnit* iu);
+void byteCodeFrame_init(ByteCodeFrame* bf);
+void byteCodeFrame_deinit(ByteCodeFrame* bf);
+void instructArray_init(InstructArray* ins_array);
+void instructArray_deinit(InstructArray* ins_array);
+void instructArray_append(InstructArray* ins_array, InstructUnit* ins_unit);
+void instructUnit_init(InstructUnit* ins_unit);
 void instructUnit_print(InstructUnit* self);
 void instructArray_print(InstructArray* self);
 
