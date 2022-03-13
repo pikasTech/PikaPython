@@ -2132,8 +2132,7 @@ TEST(asmer, asmer_to_instructUnit) {
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
     byteCodeFrame_appendFromAsm(&bytecode_frame, asm_line);
-    constPool_print(&(bytecode_frame.const_pool));
-    instructArray_print(&(bytecode_frame.instruct_array));
+    byteCodeFrame_print(&bytecode_frame);
     size_t byteCode_size = byteCodeFrame_getSize(&bytecode_frame);
     EXPECT_EQ(byteCode_size, 33);
     EXPECT_STREQ(constPool_getNext(&(bytecode_frame.const_pool)), (char*)"2");

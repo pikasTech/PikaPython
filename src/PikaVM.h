@@ -138,5 +138,6 @@ void instructArray_append(InstructArray* ins_array, InstructUnit* ins_unit);
 void instructUnit_init(InstructUnit* ins_unit);
 void instructUnit_print(InstructUnit* self);
 void instructArray_print(InstructArray* self);
+void byteCodeFrame_print(ByteCodeFrame* self);
 
 #endif

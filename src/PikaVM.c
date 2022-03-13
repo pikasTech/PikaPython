@@ -997,6 +997,11 @@ exit:
     return;
 }
 
-size_t byteCodeFrame_getSize(ByteCodeFrame* bf){
+size_t byteCodeFrame_getSize(ByteCodeFrame* bf) {
     return bf->const_pool.size + bf->instruct_array.size;
+}
+
+void byteCodeFrame_print(ByteCodeFrame* self) {
+    constPool_print(&(self->const_pool));
+    instructArray_print(&(self->instruct_array));
 }
