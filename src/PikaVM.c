@@ -698,18 +698,42 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
         is_in_class = 1;
     }
     int offset = 0;
-    while (1) {
-        if ((methodPtr[0] == 'B') &&
-            (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
-            if (is_in_class) {
-                class_defineObjectMethod(hostObj, data, (Method)methodPtr);
-            } else {
-                class_defineMethod(hostObj, data, (Method)methodPtr);
+    if (vs->ASM_start == NULL) {
+        /* byteCode */
+        while (1) {
+            InstructUnit* ins_unit_now =
+                instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
+            if (!instructUnit_getIsNewLine(ins_unit_now)) {
+                offset += instructUnit_getSize();
+                continue;
             }
-            break;
+            if (instructUnit_getBlockDeepth(ins_unit_now) ==
+                thisBlockDeepth + 1) {
+                if (is_in_class) {
+                    class_defineObjectMethod(hostObj, data,
+                                             (Method)ins_unit_now);
+                } else {
+                    class_defineMethod(hostObj, data, (Method)ins_unit_now);
+                }
+                break;
+            }
+            offset += instructUnit_getSize();
         }
-        offset += __gotoNextLine(methodPtr);
-        methodPtr = vs->pc + offset;
+    } else {
+        /* Asm */
+        while (1) {
+            if ((methodPtr[0] == 'B') &&
+                (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
+                if (is_in_class) {
+                    class_defineObjectMethod(hostObj, data, (Method)methodPtr);
+                } else {
+                    class_defineMethod(hostObj, data, (Method)methodPtr);
+                }
+                break;
+            }
+            offset += __gotoNextLine(methodPtr);
+            methodPtr = vs->pc + offset;
+        }
     }
     return NULL;
 }
