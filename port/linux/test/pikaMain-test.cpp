@@ -1242,14 +1242,13 @@ TEST(pikaMain, for_if_continue_byte_code) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
-    pikaVM_runWithConfig(pikaMain, (char*)
+    pikaVM_run(pikaMain, (char*)
          "a = 0\n"
          "for i in range(0, 10):\n"
          "    if i == 5:\n"
          "        continue\n"
          "    a = a + i\n"
-         "\n",VMconfig_enableByteCode
-        );
+         "\n");
     /* collect */
     int a = obj_getInt(pikaMain, (char*)"a");
     /* assert */
@@ -1266,7 +1265,7 @@ TEST(pikaMain, print_in_def_byte_code) {
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
     __platform_printf((char*)"BEGIN\r\n");
-    pikaVM_run_enableByteCode(pikaMain, (char*)
+    pikaVM_run(pikaMain, (char*)
         "def test_print():\n"
         "    print('test')\n"
         "test_print()\n"

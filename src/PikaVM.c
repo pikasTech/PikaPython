@@ -779,9 +779,7 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     return res;
 }
 
-VMParameters* pikaVM_runWithConfig(PikaObj* self,
-                                   char* multiLine,
-                                   VMConfig cfg) {
+VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
     Args buffs = {0};
     Args* buffs_p = &buffs;
     VMParameters* globals = NULL;
@@ -799,28 +797,18 @@ VMParameters* pikaVM_runWithConfig(PikaObj* self,
         buffs_p = NULL;
         pikaAsm = obj_getStr(self, "__asm");
     }
-    if (cfg == VMconfig_enableByteCode) {
-        /* run byteCode */
-        ByteCodeFrame byte_frame;
-        byteCodeFrame_init(&byte_frame);
-        byteCodeFrame_appendFromAsm(&byte_frame, pikaAsm);
-        globals = pikaVM_runByteCodeFrame(self, &byte_frame);
-        byteCodeFrame_deinit(&byte_frame);
-    }
+    /* run byteCode */
+    ByteCodeFrame byte_frame;
+    byteCodeFrame_init(&byte_frame);
+    byteCodeFrame_appendFromAsm(&byte_frame, pikaAsm);
+    globals = pikaVM_runByteCodeFrame(self, &byte_frame);
+    byteCodeFrame_deinit(&byte_frame);
     goto exit;
 exit:
     if (NULL != buffs_p) {
         strsDeinit(&buffs);
     }
     return globals;
-}
-
-VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
-    return pikaVM_runWithConfig(self, multiLine, VMconfig_enableByteCode);
-}
-
-VMParameters* pikaVM_run_enableByteCode(PikaObj* self, char* multiLine) {
-    return pikaVM_runWithConfig(self, multiLine, VMconfig_enableByteCode);
 }
 
 // InstructUnit* New_instructUnit(uint8_t data_size) {

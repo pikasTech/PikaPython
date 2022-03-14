@@ -16,7 +16,7 @@ static void for_loop_10000(benchmark::State& state) {
     for (auto _ : state) {
         PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
         /* run */
-        pikaVM_run_enableByteCode(pikaMain, (char *)
+        pikaVM_run(pikaMain, (char *)
             "a = 0\n"
             "for i in range(0, 10000):\n"
             "    a = a + 1\n"
@@ -30,7 +30,7 @@ static void while_loop_10000(benchmark::State& state) {
     for (auto _ : state) {
         PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
         /* run */
-        pikaVM_run_enableByteCode(pikaMain, (char *)
+        pikaVM_run(pikaMain, (char *)
             "i = 0\n"
             "while i < 10000:\n"
             "    i = i + 1\n"

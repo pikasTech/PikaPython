@@ -782,7 +782,7 @@ TEST(VM, WHILE_byte) {
     printf("%s", pikaAsm);
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* self = New_TinyObj(NULL);
-    pikaVM_runWithConfig(self, lines, VMconfig_enableByteCode);
+    pikaVM_run(self, lines);
     EXPECT_EQ(obj_getInt(self, (char*)"a"), 0);
     EXPECT_EQ(obj_getInt(self, (char*)"b"), 1);
     args_deinit(buffs);
@@ -805,7 +805,7 @@ TEST(VM, for_break_byte) {
     printf("%s", pikaAsm);
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
-    pikaVM_runWithConfig(self, lines, VMconfig_enableByteCode);
+    pikaVM_run(self, lines);
     /* assert */
     int a = obj_getInt(self, (char*)"a");
     EXPECT_EQ(a, 10);
