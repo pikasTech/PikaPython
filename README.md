@@ -28,6 +28,12 @@
 
 [![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/pikascript/dev/bench/)
 
+# Telegram
+
+<img alt="tg" src="https://user-images.githubusercontent.com/88232613/158211488-0c27a35b-8ae4-4012-9954-f13cc374fdf7.jpg" width="300">
+
+https://t.me/+JL3TZ9k-Lfg2OWE1
+
 # 1. Abstract
 
 PikaScript is an ultra-lightweight Python engine with zero dependencies and zero-configuration, that can run with 4KB of RAM and 32KB of flash (such as STM32G030C8 and STM32F103C8).
