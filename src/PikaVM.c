@@ -827,22 +827,19 @@ nextLine:
     if (-999 == vs->jmp) {
         return -99999;
     }
-    // /* break or continue */
-    // if ((-998 == vs->jmp) || (-997 == vs->jmp)) {
-    // int32_t loop_end_addr = __getAddrOffsetOfJUM(vs->pc);
-    // /* break */
-    // if (-998 == vs->jmp) {
-    // loop_end_addr += __gotoNextLine(vs->pc + loop_end_addr);
-    // return lineAddr + loop_end_addr;
+    /* break */
+    if (-998 == vs->jmp) {
+        return vs->pc_i + VMState_getAddrOffsetOfBreak(vs);
+    }
+    /* continue */
+    if (-997 == vs->jmp) {
+        return vs->pc_i + VMState_getAddrOffsetOfContinue(vs);
+    }
+    // /* static jmp */
+    // if (vs->jmp != 0) {
+    //     return vs->pc_i + VMState_getAddrOffsetFromJmp(vs);
     // }
-    // if (-997 == vs->jmp) {
-    // loop_end_addr += __gotoLastLine(pikaAsm, vs.pc + loop_end_addr);
-    // return lineAddr + loop_end_addr;
-    // }
-    // }
-    // if (vs.jmp != 0) {
-    // return lineAddr + VMState_getAddrOffsetFromJmp(pikaAsm, vs.pc, vs.jmp);
-    // }
+    /* not jmp */
     return vs->pc_i + sizeof(InstructUnit);
 }
 
