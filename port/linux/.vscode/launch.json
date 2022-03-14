@@ -18,7 +18,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=VM.bytecode*",
+                // "--gtest_filter=VM.if_elif*",
                 // "--gtest_filter=stack.str",
                 // "--gtest_filter=VM*",
                 // "--gtest_filter=arg*",

@@ -350,28 +350,6 @@ TEST(VM, mem_x) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(VM, DEF_instruct) {
-    char* pikaAsm = (char*)
-    "B0\n"
-    "0 DEF test()\n"
-    "0 JMP 1\n"
-    "B1\n"
-    "0 NUM 1\n"
-    "0 RET\n"
-    "B0\n";
-    char* methodCode = (char*)
-    "B1\n"
-    "0 NUM 1\n"
-    "0 RET\n"
-    "B0\n";
-    PikaObj* self = New_TinyObj(NULL);
-    pikaVM_runAsm(self, pikaAsm);
-    char* methodPtr = (char*)obj_getPtr(self, (char*)"test");
-    EXPECT_STREQ(methodCode, methodPtr);
-    obj_deinit(self);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-
 TEST(VM, RET_instruct) {
     char* pikaAsm = (char*)
     "B1\n"
@@ -556,7 +534,6 @@ TEST(VM, if_elif) {
     int b = args_getInt(globals->list, (char*)"b");
     obj_deinit(self);
     args_deinit(buffs);
-    // obj_deinit(globals);
     ASSERT_FLOAT_EQ(b, 1);
     EXPECT_EQ(pikaMemNow(), 0);
 }

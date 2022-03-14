@@ -145,10 +145,12 @@ static int32_t VMState_getAddrOffsetFromJmp(VMState* vs) {
 
         if (vs->jmp > 0) {
             offset = 0;
-            this_ins_unit =
-                instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
             while (1) {
                 offset += instructUnit_getSize();
+                /* reach the end */
+                if (vs->pc_i + offset >= instructArray_getSize(vs->ins_array)) {
+                    break;
+                }
                 this_ins_unit =
                     instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
                 if (instructUnit_getIsNewLine(this_ins_unit)) {
@@ -976,6 +978,10 @@ nextLine:
     goto exit;
 exit:
     vs->jmp = 0;
+    /* reach the end */
+    if (pc_i_next >= instructArray_getSize(vs->ins_array)) {
+        return -99999;
+    }
     return pc_i_next;
 }
 
@@ -1011,13 +1017,13 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
 }
 
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
-    // ByteCodeFrame bytecode_frame;
-    // byteCodeFrame_init(&bytecode_frame);
-    // byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
-    // VMParameters* res = pikaVM_runByteCodeFrame(self, &bytecode_frame);
-    // byteCodeFrame_deinit(&bytecode_frame);
-    // return res;
-    return pikaVM_runAsmWithPars(self, self, self, pikaAsm);
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    // byteCodeFrame_print(&bytecode_frame);
+    VMParameters* res = pikaVM_runByteCodeFrame(self, &bytecode_frame);
+    byteCodeFrame_deinit(&bytecode_frame);
+    return res;
 }
 
 VMParameters* pikaVM_runWithConfig(PikaObj* self,

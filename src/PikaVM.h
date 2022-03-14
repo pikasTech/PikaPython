@@ -172,5 +172,7 @@ VMParameters* pikaVM_runWithConfig(PikaObj* self,
                      (uintptr_t)(int32_t_offset)));
 
 #define instructUnit_getSize(InstructUnit_p_self) ((size_t)sizeof(InstructUnit))
+#define instructArray_getSize(InsturctArry_p_self) \
+    ((size_t)(InsturctArry_p_self)->size)
 
 #endif
