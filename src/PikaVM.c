@@ -145,6 +145,21 @@ static int32_t VMState_getAddrOffsetFromJmp(VMState* vs) {
     return offset;
 }
 
+static int32_t VMState_getAddrOffsetOfBreak(VMState* vs) {
+    int32_t loop_end_addr = VMState_getAddrOffsetOfJUM(vs);
+    /* break */
+    loop_end_addr += VMState_gotoNextLine(vs->pc + loop_end_addr);
+    return loop_end_addr;
+}
+
+static int32_t VMState_getAddrOffsetOfContinue(VMState* vs) {
+    int32_t loop_end_addr = VMState_getAddrOffsetOfJUM(vs);
+    /* continue */
+    loop_end_addr +=
+        VMState_gotoLastLine(vs->ASM_start, vs->pc + loop_end_addr);
+    return loop_end_addr;
+}
+
 int32_t __clearInvokeQueues(VMParameters* vm_pars) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
         char deepth[2] = {0};
@@ -756,23 +771,19 @@ nextLine:
     if (-999 == vs.jmp) {
         return -99999;
     }
-    /* break or continue */
-    if ((-998 == vs.jmp) || (-997 == vs.jmp)) {
-        int32_t loop_end_addr = VMState_getAddrOffsetOfJUM(&vs);
-        /* break */
-        if (-998 == vs.jmp) {
-            loop_end_addr += VMState_gotoNextLine(vs.pc + loop_end_addr);
-            return lineAddr + loop_end_addr;
-        }
-        if (-997 == vs.jmp) {
-            loop_end_addr +=
-                VMState_gotoLastLine(vs.ASM_start, vs.pc + loop_end_addr);
-            return lineAddr + loop_end_addr;
-        }
+    /* break */
+    if (-998 == vs.jmp) {
+        return lineAddr + VMState_getAddrOffsetOfBreak(&vs);
     }
+    /* continue */
+    if (-997 == vs.jmp) {
+        return lineAddr + VMState_getAddrOffsetOfContinue(&vs);
+    }
+    /* static jmp */
     if (vs.jmp != 0) {
         return lineAddr + VMState_getAddrOffsetFromJmp(&vs);
     }
+    /* no jmp */
     return nextAddr;
 }
 
