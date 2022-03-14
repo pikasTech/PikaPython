@@ -34,11 +34,6 @@
 #include "dataStrs.h"
 
 /* local head */
-VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
-                                    VMParameters* locals,
-                                    VMParameters* globals,
-                                    char* pikaAsm);
-
 VMParameters* pikaVM_runByteCodeFrameWithPars(PikaObj* self,
                                               VMParameters* locals,
                                               VMParameters* globals,
@@ -88,7 +83,8 @@ static int32_t VMState_getAddrOffsetFromJmp(VMState* vs) {
         while (1) {
             offset += instructUnit_getSize();
             /* reach the end */
-            if (vs->pc_i + offset >= instructArray_getSize(vs->ins_array)) {
+            if (vs->pc_i + offset >=
+                (int)instructArray_getSize(vs->ins_array)) {
                 break;
             }
             this_ins_unit =
@@ -196,7 +192,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     ArgType method_type = ARG_TYPE_NONE;
     char* method_dec;
     char* type_list;
-    char* method_code;
     char* sys_out;
     /* return arg directly */
     if (strEqu(data, "")) {
@@ -269,7 +264,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     obj_setSysOut(method_host_obj, "");
 
     /* run method */
-    method_code = (char*)method_ptr;
     if (method_type == ARG_TYPE_NATIVE_METHOD) {
         /* native method */
         method_ptr(method_host_obj, sub_locals->list);
@@ -596,7 +590,6 @@ OPT_exit:
 }
 
 static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
-    char* methodPtr = vs->pc;
     int thisBlockDeepth = VMState_getBlockDeepthNow(vs);
 
     PikaObj* hostObj = vs->locals;
@@ -708,77 +701,6 @@ enum Instruct pikaVM_getInstructFromAsm(char* line) {
     return NON;
 }
 
-int32_t pikaVM_runAsmLine(PikaObj* self,
-                          VMParameters* locals,
-                          VMParameters* globals,
-                          char* pikaAsm,
-                          int32_t lineAddr) {
-    VMState vs = {
-        .locals = locals,
-        .globals = globals,
-        .q0 = NULL,
-        .q1 = NULL,
-        .jmp = 0,
-        .pc = pikaAsm + lineAddr,
-        .ASM_start = pikaAsm,
-    };
-    char line_buff[PIKA_CONFIG_PATH_BUFF_SIZE];
-    char* line = strGetLine(line_buff, vs.pc);
-    int32_t nextAddr = lineAddr + strGetSize(line) + 1;
-    enum Instruct instruct;
-    char invokeDeepth0[2] = {0}, invokeDeepth1[2] = {0};
-    char* data;
-    Arg* resArg;
-
-    /* Found new script Line, clear the queues*/
-    if ('B' == line[0]) {
-        args_setErrorCode(locals->list, 0);
-        args_setSysOut(locals->list, (char*)"");
-        __clearInvokeQueues(locals);
-        goto nextLine;
-    }
-    invokeDeepth0[0] = line[0];
-    invokeDeepth1[0] = line[0] + 1;
-    instruct = pikaVM_getInstructFromAsm(line);
-    data = line + 6;
-
-    vs.q0 = args_getPtr(locals->list, invokeDeepth0);
-    vs.q1 = args_getPtr(locals->list, invokeDeepth1);
-    if (NULL == vs.q0) {
-        vs.q0 = New_queue();
-        args_setPtr(locals->list, invokeDeepth0, vs.q0);
-    }
-    if (NULL == vs.q1) {
-        vs.q1 = New_queue();
-        args_setPtr(locals->list, invokeDeepth1, vs.q1);
-    }
-    /* run instruct */
-    resArg = VM_instruct_handler_table[instruct](self, &vs, data);
-    if (NULL != resArg) {
-        queue_pushArg(vs.q0, resArg);
-    }
-    goto nextLine;
-nextLine:
-    /* exit */
-    if (-999 == vs.jmp) {
-        return -99999;
-    }
-    /* break */
-    if (-998 == vs.jmp) {
-        return lineAddr + VMState_getAddrOffsetOfBreak(&vs);
-    }
-    /* continue */
-    if (-997 == vs.jmp) {
-        return lineAddr + VMState_getAddrOffsetOfContinue(&vs);
-    }
-    /* static jmp */
-    if (vs.jmp != 0) {
-        return lineAddr + VMState_getAddrOffsetFromJmp(&vs);
-    }
-    /* no jmp */
-    return nextAddr;
-}
-
 int pikaVM_runInstructUnit(PikaObj* self, VMState* vs, InstructUnit* ins_unit) {
     enum Instruct instruct = instructUnit_getInstruct(ins_unit);
     Arg* resArg;
@@ -842,41 +764,10 @@ nextLine:
 exit:
     vs->jmp = 0;
     /* reach the end */
-    if (pc_i_next >= instructArray_getSize(vs->ins_array)) {
+    if (pc_i_next >= (int)instructArray_getSize(vs->ins_array)) {
         return -99999;
     }
     return pc_i_next;
-}
-
-VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
-                                    VMParameters* locals,
-                                    VMParameters* globals,
-                                    char* pikaAsm) {
-    int lineAddr = 0;
-    int size = strGetSize(pikaAsm);
-    args_setErrorCode(locals->list, 0);
-    args_setSysOut(locals->list, (char*)"");
-    while (lineAddr < size) {
-        if (lineAddr == -99999) {
-            break;
-        }
-        char* thisLine = pikaAsm + lineAddr;
-        lineAddr = pikaVM_runAsmLine(self, locals, globals, pikaAsm, lineAddr);
-        char* sysOut = args_getSysOut(locals->list);
-        uint8_t errcode = args_getErrorCode(locals->list);
-        if (!strEqu("", sysOut)) {
-            __platform_printf("%s\r\n", sysOut);
-        }
-        if (0 != errcode) {
-            Args buffs = {0};
-            char* onlyThisLine = strsGetFirstToken(&buffs, thisLine, '\n');
-            __platform_printf("[info] input commond: %s\r\n", onlyThisLine);
-            strsDeinit(&buffs);
-        }
-    }
-    __clearInvokeQueues(locals);
-
-    return locals;
 }
 
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
@@ -1129,7 +1020,6 @@ VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
         .q0 = NULL,
         .q1 = NULL,
         .pc_i = pc_i,
-        .ASM_start = NULL,
     };
     while (vs.pc_i < size) {
         if (vs.pc_i == -99999) {

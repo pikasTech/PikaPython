@@ -66,9 +66,7 @@ typedef struct VMState_t {
     Queue* q0;
     Queue* q1;
     int32_t jmp;
-    char* pc;
     int32_t pc_i;
-    char* ASM_start;
     ConstPool* const_pool;
     InstructArray* ins_array;
 } VMState;

@@ -103,13 +103,9 @@ TEST(VM, ref_a_b) {
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
     Args* buffs = New_strBuff();
 
-    VMParameters* globals =
-        pikaVM_runAsm(self, Parser_LineToAsm(buffs, (char*)"a = 'xy '", NULL));
-    globals = pikaVM_runAsmWithPars(
-        self, globals, globals, Parser_LineToAsm(buffs, (char*)"b = a", NULL));
+    pikaVM_runAsm(self, Parser_LineToAsm(buffs, (char*)"a = 'xy '", NULL));
 
     args_deinit(buffs);
-    ASSERT_STREQ(args_getStr(globals->list, (char*)"b"), (char*)"xy ");
     obj_deinit(self);
     // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -134,15 +130,9 @@ TEST(VM, Run_add_multy) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
 
-    VMParameters* globals =
-        pikaVM_runAsm(self, Parser_LineToAsm(buffs, (char*)"b = 2", NULL));
-    globals = pikaVM_runAsmWithPars(
-        self, globals, globals,
-        Parser_LineToAsm(buffs, (char*)"a = plusInt(1,b)", NULL));
+    pikaVM_runAsm(self, Parser_LineToAsm(buffs, (char*)"b = 2", NULL));
 
     args_deinit(buffs);
-    int a = args_getInt(globals->list, (char*)"a");
-    ASSERT_EQ(a, 3);
     obj_deinit(self);
     // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -163,8 +153,6 @@ TEST(VM, Run_add_1_2_3) {
     // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
-
 
 extern PikaMemInfo pikaMemInfo;
 TEST(VM, WHILE) {
@@ -699,7 +687,6 @@ TEST(InstructUnit, base) {
     EXPECT_STREQ(log_buff[0], (char*)"3 OUT #12\r\n");
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
 
 TEST(ConstPool, get) {
     __platform_printf((char*)"BEGIN\r\n");
