@@ -391,8 +391,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
             /* byteCode */
             ByteCodeFrame bytecode_frame;
             byteCodeFrame_init(&bytecode_frame);
-            sub_locals = pikaVM_runByteCodeFrameWithPars(
-                method_host_obj, sub_locals, vs->globals, &bytecode_frame);
+            uint16_t pc_i =
+                (uintptr_t)method_ptr -
+                (uintptr_t)instructArray_getByOffset(vs->ins_array, 0);
+            sub_locals = pikaVM_runByteCodeWithPars(method_host_obj, sub_locals,
+                                                    vs->globals, vs->const_pool,
+                                                    vs->ins_array, pc_i);
             byteCodeFrame_deinit(&bytecode_frame);
         } else {
             /* Asm */
@@ -915,7 +919,7 @@ int pikaVM_runInstructUnit(PikaObj* self, VMState* vs, InstructUnit* ins_unit) {
     Arg* resArg;
     char invode_deepth0_str[2] = {0};
     char invode_deepth1_str[2] = {0};
-    int32_t offset = instructUnit_getSize();
+    int32_t pc_i_next = vs->pc_i + instructUnit_getSize();
     /* Found new script Line, clear the queues*/
     if (instructUnit_getIsNewLine(ins_unit)) {
         args_setErrorCode(vs->locals->list, 0);
@@ -949,30 +953,30 @@ int pikaVM_runInstructUnit(PikaObj* self, VMState* vs, InstructUnit* ins_unit) {
 nextLine:
     /* exit */
     if (-999 == vs->jmp) {
-        offset = -99999;
+        pc_i_next = -99999;
         goto exit;
     }
     /* break */
     if (-998 == vs->jmp) {
-        offset = VMState_getAddrOffsetOfBreak(vs);
+        pc_i_next = vs->pc_i + VMState_getAddrOffsetOfBreak(vs);
         goto exit;
     }
     /* continue */
     if (-997 == vs->jmp) {
-        offset = VMState_getAddrOffsetOfContinue(vs);
+        pc_i_next = vs->pc_i + VMState_getAddrOffsetOfContinue(vs);
         goto exit;
     }
     /* static jmp */
     if (vs->jmp != 0) {
-        offset = VMState_getAddrOffsetFromJmp(vs);
+        pc_i_next = vs->pc_i + VMState_getAddrOffsetFromJmp(vs);
         goto exit;
     }
     /* not jmp */
-    offset = instructUnit_getSize();
+    pc_i_next = vs->pc_i + instructUnit_getSize();
     goto exit;
 exit:
     vs->jmp = 0;
-    return vs->pc_i + offset;
+    return pc_i_next;
 }
 
 VMParameters* pikaVM_runAsmWithPars(PikaObj* self,

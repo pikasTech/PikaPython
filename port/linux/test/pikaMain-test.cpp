@@ -1260,24 +1260,24 @@ TEST(pikaMain, for_if_continue_byte_code) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, print_in_def_byte_code) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-//     /* run */
-//     __platform_printf((char*)"BEGIN\r\n");
-//     pikaVM_run_enableByteCode(pikaMain, (char*)
-//         "def test_print():\n"
-//         "    print('test')\n"
-//         "test_print()\n"
-//         );
-//     /* collect */
-//     /* assert */
-//     /* should only print once, so the second log (log_buff[1]) shuold be '\0' */
-//     EXPECT_STREQ(log_buff[0], "test\r\n");
-//     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
-//     /* deinit */
-//     obj_deinit(pikaMain);
-//     /* mem check */
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, print_in_def_byte_code) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\r\n");
+    pikaVM_run_enableByteCode(pikaMain, (char*)
+        "def test_print():\n"
+        "    print('test')\n"
+        "test_print()\n"
+        );
+    /* collect */
+    /* assert */
+    /* should only print once, so the second log (log_buff[1]) shuold be '\0' */
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}
