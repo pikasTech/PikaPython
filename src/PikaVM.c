@@ -1054,7 +1054,7 @@ exit:
 }
 
 VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
-    return pikaVM_runWithConfig(self, multiLine, VMconfig_desableByteCode);
+    return pikaVM_runWithConfig(self, multiLine, VMconfig_enableByteCode);
 }
 
 VMParameters* pikaVM_run_enableByteCode(PikaObj* self, char* multiLine) {
