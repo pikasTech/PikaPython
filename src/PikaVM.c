@@ -39,6 +39,11 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
                                     VMParameters* globals,
                                     char* pikaAsm);
 
+VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
+                                         VMParameters* locals,
+                                         VMParameters* globals,
+                                         ByteCodeFrame* byteCode_frame);
+
 static int32_t __gotoNextLine(char* code) {
     int offset = 0;
     while (1) {
@@ -375,8 +380,18 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
     } else {
         /* static method and object method */
-        sub_locals = pikaVM_runAsmWithPars(method_host_obj, sub_locals,
-                                           vs->globals, method_code);
+        if (vs->ASM_start == NULL) {
+            /* byteCode */
+            ByteCodeFrame bytecode_frame;
+            byteCodeFrame_init(&bytecode_frame);
+            sub_locals = pikaVM_runByteCodeWithPars(
+                method_host_obj, sub_locals, vs->globals, &bytecode_frame);
+            byteCodeFrame_deinit(&bytecode_frame);
+        } else {
+            /* Asm */
+            sub_locals = pikaVM_runAsmWithPars(method_host_obj, sub_locals,
+                                               vs->globals, method_code);
+        }
         /* get method return */
         return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
     }
