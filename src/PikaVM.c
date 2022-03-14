@@ -44,22 +44,22 @@ VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
                                          VMParameters* globals,
                                          ConstPool* const_pool,
                                          InstructArray* inst_array,
-                                         uint16_t pc_i);
+                                         uint16_t pc);
 
 static int VMState_getBlockDeepthNow(VMState* vs) {
     /* support run byteCode */
-    InstructUnit* ins_unit = instructArray_getByOffset(vs->ins_array, vs->pc_i);
+    InstructUnit* ins_unit = instructArray_getByOffset(vs->ins_array, vs->pc);
     return instructUnit_getBlockDeepth(ins_unit);
 }
 
 static int32_t VMState_getAddrOffsetOfJUM(VMState* vs) {
     int offset = 0;
     InstructUnit* ins_unit_now =
-        instructArray_getByOffset(vs->ins_array, vs->pc_i);
+        instructArray_getByOffset(vs->ins_array, vs->pc);
     while (1) {
         offset += instructUnit_getSize(ins_unit_now);
         ins_unit_now =
-            instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
+            instructArray_getByOffset(vs->ins_array, vs->pc + offset);
         uint16_t invoke_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
         enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
         char* data = constPool_getByOffset(
@@ -74,7 +74,7 @@ static int32_t VMState_getAddrOffsetFromJmp(VMState* vs) {
     int offset = 0;
     /* run byte Code */
     InstructUnit* this_ins_unit =
-        instructArray_getByOffset(vs->ins_array, vs->pc_i);
+        instructArray_getByOffset(vs->ins_array, vs->pc);
     int thisBlockDeepth = instructUnit_getBlockDeepth(this_ins_unit);
     int8_t blockNum = 0;
 
@@ -83,12 +83,11 @@ static int32_t VMState_getAddrOffsetFromJmp(VMState* vs) {
         while (1) {
             offset += instructUnit_getSize();
             /* reach the end */
-            if (vs->pc_i + offset >=
-                (int)instructArray_getSize(vs->ins_array)) {
+            if (vs->pc + offset >= (int)instructArray_getSize(vs->ins_array)) {
                 break;
             }
             this_ins_unit =
-                instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
+                instructArray_getByOffset(vs->ins_array, vs->pc + offset);
             if (instructUnit_getIsNewLine(this_ins_unit)) {
                 uint8_t blockDeepth =
                     instructUnit_getBlockDeepth(this_ins_unit);
@@ -105,7 +104,7 @@ static int32_t VMState_getAddrOffsetFromJmp(VMState* vs) {
         while (1) {
             offset -= instructUnit_getSize();
             this_ins_unit =
-                instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
+                instructArray_getByOffset(vs->ins_array, vs->pc + offset);
             if (instructUnit_getIsNewLine(this_ins_unit)) {
                 uint8_t blockDeepth =
                     instructUnit_getBlockDeepth(this_ins_unit);
@@ -274,11 +273,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         /* byteCode */
         ByteCodeFrame bytecode_frame;
         byteCodeFrame_init(&bytecode_frame);
-        uint16_t pc_i = (uintptr_t)method_ptr -
-                        (uintptr_t)instructArray_getByOffset(vs->ins_array, 0);
+        uint16_t pc = (uintptr_t)method_ptr -
+                      (uintptr_t)instructArray_getByOffset(vs->ins_array, 0);
         sub_locals =
             pikaVM_runByteCodeWithPars(method_host_obj, sub_locals, vs->globals,
-                                       vs->const_pool, vs->ins_array, pc_i);
+                                       vs->const_pool, vs->ins_array, pc);
         byteCodeFrame_deinit(&bytecode_frame);
 
         /* get method return */
@@ -603,7 +602,7 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
     /* byteCode */
     while (1) {
         InstructUnit* ins_unit_now =
-            instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
+            instructArray_getByOffset(vs->ins_array, vs->pc + offset);
         if (!instructUnit_getIsNewLine(ins_unit_now)) {
             offset += instructUnit_getSize();
             continue;
@@ -706,7 +705,7 @@ int pikaVM_runInstructUnit(PikaObj* self, VMState* vs, InstructUnit* ins_unit) {
     Arg* resArg;
     char invode_deepth0_str[2] = {0};
     char invode_deepth1_str[2] = {0};
-    int32_t pc_i_next = vs->pc_i + instructUnit_getSize();
+    int32_t pc_next = vs->pc + instructUnit_getSize();
     /* Found new script Line, clear the queues*/
     if (instructUnit_getIsNewLine(ins_unit)) {
         args_setErrorCode(vs->locals->list, 0);
@@ -740,34 +739,34 @@ int pikaVM_runInstructUnit(PikaObj* self, VMState* vs, InstructUnit* ins_unit) {
 nextLine:
     /* exit */
     if (-999 == vs->jmp) {
-        pc_i_next = -99999;
+        pc_next = -99999;
         goto exit;
     }
     /* break */
     if (-998 == vs->jmp) {
-        pc_i_next = vs->pc_i + VMState_getAddrOffsetOfBreak(vs);
+        pc_next = vs->pc + VMState_getAddrOffsetOfBreak(vs);
         goto exit;
     }
     /* continue */
     if (-997 == vs->jmp) {
-        pc_i_next = vs->pc_i + VMState_getAddrOffsetOfContinue(vs);
+        pc_next = vs->pc + VMState_getAddrOffsetOfContinue(vs);
         goto exit;
     }
     /* static jmp */
     if (vs->jmp != 0) {
-        pc_i_next = vs->pc_i + VMState_getAddrOffsetFromJmp(vs);
+        pc_next = vs->pc + VMState_getAddrOffsetFromJmp(vs);
         goto exit;
     }
     /* not jmp */
-    pc_i_next = vs->pc_i + instructUnit_getSize();
+    pc_next = vs->pc + instructUnit_getSize();
     goto exit;
 exit:
     vs->jmp = 0;
     /* reach the end */
-    if (pc_i_next >= (int)instructArray_getSize(vs->ins_array)) {
+    if (pc_next >= (int)instructArray_getSize(vs->ins_array)) {
         return -99999;
     }
-    return pc_i_next;
+    return pc_next;
 }
 
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
@@ -1007,7 +1006,7 @@ VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
                                          VMParameters* globals,
                                          ConstPool* const_pool,
                                          InstructArray* inst_array,
-                                         uint16_t pc_i) {
+                                         uint16_t pc) {
     int size = inst_array->size;
     args_setErrorCode(locals->list, 0);
     args_setSysOut(locals->list, (char*)"");
@@ -1019,15 +1018,15 @@ VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
         .jmp = 0,
         .q0 = NULL,
         .q1 = NULL,
-        .pc_i = pc_i,
+        .pc = pc,
     };
-    while (vs.pc_i < size) {
-        if (vs.pc_i == -99999) {
+    while (vs.pc < size) {
+        if (vs.pc == -99999) {
             break;
         }
         InstructUnit* this_ins_unit =
-            instructArray_getByOffset(inst_array, vs.pc_i);
-        vs.pc_i = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
+            instructArray_getByOffset(inst_array, vs.pc);
+        vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
         char* sysOut = args_getSysOut(locals->list);
         uint8_t errcode = args_getErrorCode(locals->list);
         if (!strEqu("", sysOut)) {
