@@ -164,75 +164,7 @@ TEST(VM, Run_add_1_2_3) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(VM, JEZ) {
-    char* pikaAsm = (char*)
-    "B0\n"
-    "0 REF False\n"
-    "0 JEZ 2\n"
-    "B0\n"
-    "B0\n";
-    PikaObj* self = New_TinyObj(NULL);
-    int lineAddr = 0;
-    Args* sysRes = New_args(NULL);
-    args_setErrorCode(sysRes, 0);
-    args_setSysOut(sysRes, (char*)"");
-    VMParameters* globals = self;
-    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
-    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
-    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
-    __clearInvokeQueues(globals);
-    obj_deinit(self);
-    args_deinit(sysRes);
-    // obj_deinit(globals);
-    EXPECT_EQ(lineAddr, 26);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
 
-TEST(VM, JMP) {
-    char* pikaAsm = (char*)
-    "B0\n"
-    "0 JMP 2\n"
-    "B0\n"
-    "B0\n";
-    PikaObj* self = New_TinyObj(NULL);
-    int lineAddr = 0;
-    Args* sysRes = New_args(NULL);
-    args_setErrorCode(sysRes, 0);
-    args_setSysOut(sysRes, (char*)"");
-    VMParameters* globals = self;
-    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
-    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
-    __clearInvokeQueues(globals);
-    obj_deinit(self);
-    args_deinit(sysRes);
-    // obj_deinit(globals);
-    EXPECT_EQ(lineAddr, 14);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-
-TEST(VM, JMP_back1) {
-    char* pikaAsm = (char*)
-    "B0\n"
-    "B0\n"
-    "0 JMP -1\n"
-    "B0\n"
-    "B0\n";
-    PikaObj* self = New_TinyObj(NULL);
-    int lineAddr = 0;
-    Args* sysRes = New_args(NULL);
-    args_setErrorCode(sysRes, 0);
-    args_setSysOut(sysRes, (char*)"");
-    VMParameters* globals = self;
-    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
-    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
-    lineAddr = pikaVM_runAsmLine(self, globals, globals, pikaAsm, lineAddr);
-    __clearInvokeQueues(globals);
-    obj_deinit(self);
-    args_deinit(sysRes);
-    // obj_deinit(globals);
-    EXPECT_EQ(lineAddr, 0);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
 
 extern PikaMemInfo pikaMemInfo;
 TEST(VM, WHILE) {
@@ -768,16 +700,6 @@ TEST(InstructUnit, base) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(InstructUnit, new_) {
-//     char data[] = "test";
-//     InstructUnit* bu_p = New_instructUnit(strGetSize(data));
-//     instructUnit_setData(bu_p, data);
-//     EXPECT_STREQ(instructUnit_getData(bu_p), (char*)"test");
-//     EXPECT_EQ(instructUnit_getTotleSize(bu_p), 8);
-//     EXPECT_EQ(instructUnit_getTotleSize_withDataSize(strGetSize(data)), 8);
-//     instructUnit_deinit(bu_p);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
 
 TEST(ConstPool, get) {
     __platform_printf((char*)"BEGIN\r\n");

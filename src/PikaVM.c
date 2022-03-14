@@ -51,203 +51,91 @@ VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
                                          InstructArray* inst_array,
                                          uint16_t pc_i);
 
-static int32_t __gotoNextLine(char* code) {
-    int offset = 0;
-    while (1) {
-        if (code[offset] == '\n') {
-            break;
-        }
-        offset++;
-    }
-    return offset + 1;
-}
-
-static int32_t __gotoLastLine(char* start, char* code) {
-    int offset = -2;
-    while (1) {
-        char* codeNow = code + offset;
-        if (codeNow == start) {
-            offset--;
-            break;
-        }
-        if (codeNow[0] == '\n') {
-            break;
-        }
-        offset--;
-    }
-    return offset + 1;
-}
-
-static int __getThisBlockDeepth(char* start, char* code, int* offset) {
-    int thisBlockDeepth = -1;
-    char* codeNow = code + *offset;
-    while (1) {
-        *offset += __gotoLastLine(start, codeNow);
-        codeNow = code + *offset;
-        if (codeNow[0] == 'B') {
-            thisBlockDeepth = codeNow[1] - '0';
-            break;
-        }
-    }
-    return thisBlockDeepth;
-}
-
 static int VMState_getBlockDeepthNow(VMState* vs) {
-    if (vs->ASM_start == NULL) {
-        /* support run byteCode */
-        InstructUnit* ins_unit =
-            instructArray_getByOffset(vs->ins_array, vs->pc_i);
-        return instructUnit_getBlockDeepth(ins_unit);
-    } else {
-        /* support run Asm */
-        int offset = 0;
-        return __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
-    }
+    /* support run byteCode */
+    InstructUnit* ins_unit = instructArray_getByOffset(vs->ins_array, vs->pc_i);
+    return instructUnit_getBlockDeepth(ins_unit);
 }
 
 static int32_t VMState_getAddrOffsetOfJUM(VMState* vs) {
     int offset = 0;
-    if (vs->ASM_start == NULL) {
-        InstructUnit* ins_unit_now =
-            instructArray_getByOffset(vs->ins_array, vs->pc_i);
-        while (1) {
-            offset += instructUnit_getSize(ins_unit_now);
-            ins_unit_now =
-                instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
-            uint16_t invoke_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
-            enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
-            char* data = constPool_getByOffset(
-                vs->const_pool, instructUnit_getConstPoolIndex(ins_unit_now));
-            if ((0 == invoke_deepth) && (JMP == ins) && strEqu(data, "-1")) {
-                return offset;
-            }
-        }
-    } else {
-        char* codeNow = vs->pc + offset;
-        while (1) {
-            offset += __gotoNextLine(codeNow);
-            codeNow = vs->pc + offset;
-            if (0 == strncmp(codeNow, "0 JMP -1", 8)) {
-                return offset;
-            }
+    InstructUnit* ins_unit_now =
+        instructArray_getByOffset(vs->ins_array, vs->pc_i);
+    while (1) {
+        offset += instructUnit_getSize(ins_unit_now);
+        ins_unit_now =
+            instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
+        uint16_t invoke_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
+        enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
+        char* data = constPool_getByOffset(
+            vs->const_pool, instructUnit_getConstPoolIndex(ins_unit_now));
+        if ((0 == invoke_deepth) && (JMP == ins) && strEqu(data, "-1")) {
+            return offset;
         }
     }
 }
 
 static int32_t VMState_getAddrOffsetFromJmp(VMState* vs) {
     int offset = 0;
-    if (vs->ASM_start == NULL) {
-        /* run byte Code */
-        InstructUnit* this_ins_unit =
-            instructArray_getByOffset(vs->ins_array, vs->pc_i);
-        int thisBlockDeepth = instructUnit_getBlockDeepth(this_ins_unit);
-        int8_t blockNum = 0;
+    /* run byte Code */
+    InstructUnit* this_ins_unit =
+        instructArray_getByOffset(vs->ins_array, vs->pc_i);
+    int thisBlockDeepth = instructUnit_getBlockDeepth(this_ins_unit);
+    int8_t blockNum = 0;
 
-        if (vs->jmp > 0) {
-            offset = 0;
-            while (1) {
-                offset += instructUnit_getSize();
-                /* reach the end */
-                if (vs->pc_i + offset >= instructArray_getSize(vs->ins_array)) {
-                    break;
-                }
-                this_ins_unit =
-                    instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
-                if (instructUnit_getIsNewLine(this_ins_unit)) {
-                    uint8_t blockDeepth =
-                        instructUnit_getBlockDeepth(this_ins_unit);
-                    if (blockDeepth <= thisBlockDeepth) {
-                        blockNum++;
-                    }
-                }
-                if (blockNum >= vs->jmp) {
-                    break;
+    if (vs->jmp > 0) {
+        offset = 0;
+        while (1) {
+            offset += instructUnit_getSize();
+            /* reach the end */
+            if (vs->pc_i + offset >= instructArray_getSize(vs->ins_array)) {
+                break;
+            }
+            this_ins_unit =
+                instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
+            if (instructUnit_getIsNewLine(this_ins_unit)) {
+                uint8_t blockDeepth =
+                    instructUnit_getBlockDeepth(this_ins_unit);
+                if (blockDeepth <= thisBlockDeepth) {
+                    blockNum++;
                 }
             }
-        }
-        if (vs->jmp < 0) {
-            while (1) {
-                offset -= instructUnit_getSize();
-                this_ins_unit =
-                    instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
-                if (instructUnit_getIsNewLine(this_ins_unit)) {
-                    uint8_t blockDeepth =
-                        instructUnit_getBlockDeepth(this_ins_unit);
-                    if (blockDeepth == thisBlockDeepth) {
-                        blockNum--;
-                    }
-                }
-                if (blockNum <= vs->jmp) {
-                    break;
-                }
+            if (blockNum >= vs->jmp) {
+                break;
             }
         }
-        return offset;
-    } else {
-        /* run asm */
-        int thisBlockDeepth =
-            __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
-        char* codeNow = vs->pc + offset;
-        int8_t blockNum = 0;
-        if (vs->jmp > 0) {
-            offset = 0;
-            codeNow = vs->pc + offset;
-            while (1) {
-                offset += __gotoNextLine(codeNow);
-                codeNow = vs->pc + offset;
-                if (codeNow[0] == 'B') {
-                    uint8_t blockDeepth = codeNow[1] - '0';
-                    if (blockDeepth <= thisBlockDeepth) {
-                        blockNum++;
-                    }
-                }
-                if (blockNum >= vs->jmp) {
-                    break;
-                }
-            }
-        }
-        if (vs->jmp < 0) {
-            while (1) {
-                offset += __gotoLastLine(vs->ASM_start, codeNow);
-                codeNow = vs->pc + offset;
-                if (codeNow[0] == 'B') {
-                    uint8_t blockDeepth = codeNow[1] - '0';
-                    if (blockDeepth == thisBlockDeepth) {
-                        blockNum--;
-                    }
-                }
-                if (blockNum <= vs->jmp) {
-                    break;
-                }
-            }
-        }
-        return offset;
     }
+    if (vs->jmp < 0) {
+        while (1) {
+            offset -= instructUnit_getSize();
+            this_ins_unit =
+                instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
+            if (instructUnit_getIsNewLine(this_ins_unit)) {
+                uint8_t blockDeepth =
+                    instructUnit_getBlockDeepth(this_ins_unit);
+                if (blockDeepth == thisBlockDeepth) {
+                    blockNum--;
+                }
+            }
+            if (blockNum <= vs->jmp) {
+                break;
+            }
+        }
+    }
+    return offset;
 }
 
 static int32_t VMState_getAddrOffsetOfBreak(VMState* vs) {
     int32_t offset = VMState_getAddrOffsetOfJUM(vs);
-    if (vs->ASM_start == NULL) {
-        /* byteCode */
-        offset += instructUnit_getSize();
-        return offset;
-    } else {
-        /* Asm */
-        offset += __gotoNextLine(vs->pc + offset);
-        return offset;
-    }
+    /* byteCode */
+    offset += instructUnit_getSize();
+    return offset;
 }
 
 static int32_t VMState_getAddrOffsetOfContinue(VMState* vs) {
     int32_t offset = VMState_getAddrOffsetOfJUM(vs);
-    if (vs->ASM_start == NULL) {
-        /* byteCode */
-        return offset;
-    } else {
-        /* Asm */
-        offset += __gotoLastLine(vs->ASM_start, vs->pc + offset);
-        return offset;
-    }
+    /* byteCode */
+    return offset;
 }
 
 int32_t __clearInvokeQueues(VMParameters* vm_pars) {
@@ -389,22 +277,16 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
     } else {
         /* static method and object method */
-        if (vs->ASM_start == NULL) {
-            /* byteCode */
-            ByteCodeFrame bytecode_frame;
-            byteCodeFrame_init(&bytecode_frame);
-            uint16_t pc_i =
-                (uintptr_t)method_ptr -
-                (uintptr_t)instructArray_getByOffset(vs->ins_array, 0);
-            sub_locals = pikaVM_runByteCodeWithPars(method_host_obj, sub_locals,
-                                                    vs->globals, vs->const_pool,
-                                                    vs->ins_array, pc_i);
-            byteCodeFrame_deinit(&bytecode_frame);
-        } else {
-            /* Asm */
-            sub_locals = pikaVM_runAsmWithPars(method_host_obj, sub_locals,
-                                               vs->globals, method_code);
-        }
+        /* byteCode */
+        ByteCodeFrame bytecode_frame;
+        byteCodeFrame_init(&bytecode_frame);
+        uint16_t pc_i = (uintptr_t)method_ptr -
+                        (uintptr_t)instructArray_getByOffset(vs->ins_array, 0);
+        sub_locals =
+            pikaVM_runByteCodeWithPars(method_host_obj, sub_locals, vs->globals,
+                                       vs->const_pool, vs->ins_array, pc_i);
+        byteCodeFrame_deinit(&bytecode_frame);
+
         /* get method return */
         return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
     }
@@ -725,44 +607,25 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
         is_in_class = 1;
     }
     int offset = 0;
-    if (vs->ASM_start == NULL) {
-        /* byteCode */
-        while (1) {
-            InstructUnit* ins_unit_now =
-                instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
-            if (!instructUnit_getIsNewLine(ins_unit_now)) {
-                offset += instructUnit_getSize();
-                continue;
-            }
-            if (instructUnit_getBlockDeepth(ins_unit_now) ==
-                thisBlockDeepth + 1) {
-                if (is_in_class) {
-                    class_defineObjectMethod(hostObj, data,
-                                             (Method)ins_unit_now);
-                } else {
-                    class_defineStaticMethod(hostObj, data,
-                                             (Method)ins_unit_now);
-                }
-                break;
-            }
+    /* byteCode */
+    while (1) {
+        InstructUnit* ins_unit_now =
+            instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
+        if (!instructUnit_getIsNewLine(ins_unit_now)) {
             offset += instructUnit_getSize();
+            continue;
         }
-    } else {
-        /* Asm */
-        while (1) {
-            if ((methodPtr[0] == 'B') &&
-                (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
-                if (is_in_class) {
-                    class_defineObjectMethod(hostObj, data, (Method)methodPtr);
-                } else {
-                    class_defineStaticMethod(hostObj, data, (Method)methodPtr);
-                }
-                break;
+        if (instructUnit_getBlockDeepth(ins_unit_now) == thisBlockDeepth + 1) {
+            if (is_in_class) {
+                class_defineObjectMethod(hostObj, data, (Method)ins_unit_now);
+            } else {
+                class_defineStaticMethod(hostObj, data, (Method)ins_unit_now);
             }
-            offset += __gotoNextLine(methodPtr);
-            methodPtr = vs->pc + offset;
+            break;
         }
+        offset += instructUnit_getSize();
     }
+
     return NULL;
 }
 
@@ -1053,9 +916,6 @@ VMParameters* pikaVM_runWithConfig(PikaObj* self,
         byteCodeFrame_appendFromAsm(&byte_frame, pikaAsm);
         globals = pikaVM_runByteCodeFrame(self, &byte_frame);
         byteCodeFrame_deinit(&byte_frame);
-    } else {
-        /* run asm */
-        globals = pikaVM_runAsm(self, pikaAsm);
     }
     goto exit;
 exit:
