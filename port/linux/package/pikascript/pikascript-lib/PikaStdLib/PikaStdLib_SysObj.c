@@ -45,7 +45,7 @@ void PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         obj_setSysOut(self, "mate_object");
         return;
     }
-    if (ARG_TYPE_STATIC_METHOD == type) {
+    if (ARG_TYPE_NATIVE_METHOD == type) {
         obj_setSysOut(self, "method");
         return;
     }
