@@ -16,7 +16,7 @@ static void for_loop_10000(benchmark::State& state) {
     for (auto _ : state) {
         PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
         /* run */
-        obj_run(pikaMain, (char *)
+        pikaVM_run_enableByteCode(pikaMain, (char *)
             "a = 0\n"
             "for i in range(0, 10000):\n"
             "    a = a + 1\n"
@@ -30,7 +30,7 @@ static void while_loop_10000(benchmark::State& state) {
     for (auto _ : state) {
         PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
         /* run */
-        obj_run(pikaMain, (char *)
+        pikaVM_run_enableByteCode(pikaMain, (char *)
             "i = 0\n"
             "while i < 10000:\n"
             "    i = i + 1\n"
@@ -56,16 +56,20 @@ static void prime_number_100(benchmark::State& state) {
             "    if is_prime:\n"
             "        num = num + i\n"
             "\n");
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
     for (auto _ : state) {
         PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
         /* run */
-        pikaVM_runAsm(pikaMain, pikaAsm);
+        pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
         num = obj_getInt(pikaMain, (char*)"num");
         if (1060 != num) {
             printf("[error]: prime_number_100\r\n");
         }
         obj_deinit(pikaMain);
     }
+    byteCodeFrame_deinit(&bytecode_frame);
     args_deinit(buffs);
 }
 BENCHMARK(prime_number_100)->Unit(benchmark::kMillisecond);
