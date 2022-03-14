@@ -688,8 +688,8 @@ OPT_exit:
 
 static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
     char* methodPtr = vs->pc;
-    int offset = 0;
-    int thisBlockDeepth = __getThisBlockDeepth(vs->ASM_start, vs->pc, &offset);
+    int thisBlockDeepth = VMState_getBlockDeepthNow(vs);
+
     PikaObj* hostObj = vs->locals;
     uint8_t is_in_class = 0;
     /* use RunAs object */
@@ -697,6 +697,7 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
         hostObj = args_getPtr(vs->locals->list, "__runAs");
         is_in_class = 1;
     }
+    int offset = 0;
     while (1) {
         if ((methodPtr[0] == 'B') &&
             (methodPtr[1] - '0' == thisBlockDeepth + 1)) {
