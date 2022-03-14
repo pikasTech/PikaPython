@@ -95,12 +95,29 @@ static int VMState_getBlockDeepthNow(VMState* vs) {
 
 static int32_t VMState_getAddrOffsetOfJUM(VMState* vs) {
     int offset = 0;
-    char* codeNow = vs->pc + offset;
-    while (1) {
-        offset += __gotoNextLine(codeNow);
-        codeNow = vs->pc + offset;
-        if (0 == strncmp(codeNow, "0 JMP -1", 8)) {
-            return offset;
+    if (vs->ASM_start == NULL) {
+        InstructUnit* ins_unit_now =
+            instructArray_getByOffset(vs->ins_array, vs->pc_i);
+        while (1) {
+            offset += instructUnit_getSize(ins_unit_now);
+            ins_unit_now =
+                instructArray_getByOffset(vs->ins_array, vs->pc_i + offset);
+            uint16_t invoke_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
+            enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
+            char* data = constPool_getByOffset(
+                vs->const_pool, instructUnit_getConstPoolIndex(ins_unit_now));
+            if ((0 == invoke_deepth) && (JMP == ins) && strEqu(data, "-1")) {
+                return offset;
+            }
+        }
+    } else {
+        char* codeNow = vs->pc + offset;
+        while (1) {
+            offset += __gotoNextLine(codeNow);
+            codeNow = vs->pc + offset;
+            if (0 == strncmp(codeNow, "0 JMP -1", 8)) {
+                return offset;
+            }
         }
     }
 }
@@ -195,18 +212,28 @@ static int32_t VMState_getAddrOffsetFromJmp(VMState* vs) {
 }
 
 static int32_t VMState_getAddrOffsetOfBreak(VMState* vs) {
-    int32_t loop_end_addr = VMState_getAddrOffsetOfJUM(vs);
-    /* break */
-    loop_end_addr += __gotoNextLine(vs->pc + loop_end_addr);
-    return loop_end_addr;
+    int32_t offset = VMState_getAddrOffsetOfJUM(vs);
+    if (vs->ASM_start == NULL) {
+        /* byteCode */
+        offset += instructUnit_getSize();
+        return offset;
+    } else {
+        /* Asm */
+        offset += __gotoNextLine(vs->pc + offset);
+        return offset;
+    }
 }
 
 static int32_t VMState_getAddrOffsetOfContinue(VMState* vs) {
-    int32_t loop_end_addr = VMState_getAddrOffsetOfJUM(vs);
-    /* continue */
-    loop_end_addr +=
-        __gotoLastLine(vs->ASM_start, vs->pc + loop_end_addr);
-    return loop_end_addr;
+    int32_t offset = VMState_getAddrOffsetOfJUM(vs);
+    if (vs->ASM_start == NULL) {
+        /* byteCode */
+        return offset;
+    } else {
+        /* Asm */
+        offset += __gotoLastLine(vs->ASM_start, vs->pc + offset);
+        return offset;
+    }
 }
 
 int32_t __clearInvokeQueues(VMParameters* vm_pars) {

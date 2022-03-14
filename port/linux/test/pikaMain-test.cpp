@@ -1236,3 +1236,26 @@ TEST(pikaMain, class_demo_save_asm) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, for_if_continue_byte_code) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    pikaVM_runWithConfig(pikaMain, (char*)
+         "a = 0\n"
+         "for i in range(0, 10):\n"
+         "    if i == 5:\n"
+         "        continue\n"
+         "    a = a + i\n"
+         "\n",VMconfig_enableByteCode
+        );
+    /* collect */
+    int a = obj_getInt(pikaMain, (char*)"a");
+    /* assert */
+    EXPECT_EQ(a, 40);
+    /* deinit */
+    obj_deinit(pikaMain);
+    /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}

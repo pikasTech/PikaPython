@@ -904,3 +904,28 @@ TEST(VM, WHILE_byte) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, for_break_byte) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =(char *)
+         "a = 0\n"
+         "for i in range(0, 10):\n"
+         "    if i == 5:\n"
+         "        break\n"
+         "    a = a + i\n"
+         "\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    pikaVM_runWithConfig(self, lines, VMconfig_enableByteCode);
+    /* assert */
+    int a = obj_getInt(self, (char*)"a");
+    EXPECT_EQ(a, 10);
+    /* deinit */
+    args_deinit(buffs);
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

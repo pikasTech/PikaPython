@@ -171,6 +171,6 @@ VMParameters* pikaVM_runWithConfig(PikaObj* self,
     ((InstructUnit*)(arg_getContent((InstructArray_p_self)->arg_buff) + \
                      (uintptr_t)(int32_t_offset)));
 
-#define instructUnit_getSize() ((size_t)sizeof(InstructUnit))
+#define instructUnit_getSize(InstructUnit_p_self) ((size_t)sizeof(InstructUnit))
 
 #endif
