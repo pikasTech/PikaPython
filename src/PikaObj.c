@@ -305,7 +305,7 @@ void* getNewClassObjFunByName(PikaObj* obj, char* name) {
 }
 
 int32_t __foreach_removeMethodInfo(Arg* argNow, Args* argList) {
-    if (arg_getType(argNow) == ARG_TYPE_STATIC_METHOD) {
+    if (arg_getType(argNow) == ARG_TYPE_NATIVE_METHOD) {
         args_removeArg(argList, argNow);
         return 0;
     }
@@ -452,12 +452,12 @@ exit:
     return res;
 }
 
-/* define a static method as default */
+/* define a native method as default */
 int32_t class_defineMethod(PikaObj* self,
                            char* declearation,
                            Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_STATIC_METHOD);
+                                        ARG_TYPE_NATIVE_METHOD);
 }
 
 /* define object method, object method is which startwith (self) */
@@ -466,6 +466,14 @@ int32_t class_defineObjectMethod(PikaObj* self,
                                  Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
                                         ARG_TYPE_OBJECT_METHOD);
+}
+
+/* define a static method as default */
+int32_t class_defineStaticMethod(PikaObj* self,
+                                 char* declearation,
+                                 Method methodPtr) {
+    return __class_defineMethodWithType(self, declearation, methodPtr,
+                                        ARG_TYPE_STATIC_METHOD);
 }
 
 PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {

@@ -368,19 +368,18 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
 
     /* run method */
     method_code = (char*)method_ptr;
-    if (method_code[0] == 'B' && method_code[2] == '\n') {
-        /* VM method */
-        sub_locals = pikaVM_runAsmWithPars(method_host_obj, sub_locals,
-                                           vs->globals, method_code);
-        /* get method return */
-        return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
-    } else {
+    if (method_type == ARG_TYPE_NATIVE_METHOD) {
         /* native method */
         method_ptr(method_host_obj, sub_locals->list);
         /* get method return */
         return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
+    } else {
+        /* static method and object method */
+        sub_locals = pikaVM_runAsmWithPars(method_host_obj, sub_locals,
+                                           vs->globals, method_code);
+        /* get method return */
+        return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
     }
-
     /* transfer sysOut */
     sys_out = obj_getSysOut(method_host_obj);
     if (NULL != sys_out) {
@@ -713,7 +712,8 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
                     class_defineObjectMethod(hostObj, data,
                                              (Method)ins_unit_now);
                 } else {
-                    class_defineMethod(hostObj, data, (Method)ins_unit_now);
+                    class_defineStaticMethod(hostObj, data,
+                                             (Method)ins_unit_now);
                 }
                 break;
             }
@@ -727,7 +727,7 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
                 if (is_in_class) {
                     class_defineObjectMethod(hostObj, data, (Method)methodPtr);
                 } else {
-                    class_defineMethod(hostObj, data, (Method)methodPtr);
+                    class_defineStaticMethod(hostObj, data, (Method)methodPtr);
                 }
                 break;
             }

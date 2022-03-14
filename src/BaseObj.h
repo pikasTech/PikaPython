@@ -28,9 +28,9 @@
 #ifndef _PikaObj_baseObj__H
 #define _PikaObj_baseObj__H
 #include "PikaObj.h"
+#include "PikaVM.h"
 #include "TinyObj.h"
 #include "dataMemory.h"
-#include "PikaVM.h"
 PikaObj* New_BaseObj(Args* args);
 int32_t obj_newObjFromClassLoader(PikaObj* self,
                                   char* objPath,

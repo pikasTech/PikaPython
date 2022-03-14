@@ -42,8 +42,9 @@ typedef enum {
     ARG_TYPE_OBJECT,
     ARG_TYPE_MATE_OBJECT,
     ARG_TYPE_FREE_OBJECT,
-    ARG_TYPE_STATIC_METHOD,
+    ARG_TYPE_NATIVE_METHOD,
     ARG_TYPE_OBJECT_METHOD,
+    ARG_TYPE_STATIC_METHOD,
 } ArgType;
 
 typedef struct __arg __arg;
