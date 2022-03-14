@@ -369,7 +369,6 @@ TEST(VM, DEF_instruct) {
     char* methodPtr = (char*)obj_getPtr(self, (char*)"test");
     EXPECT_STREQ(methodCode, methodPtr);
     obj_deinit(self);
-    // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 

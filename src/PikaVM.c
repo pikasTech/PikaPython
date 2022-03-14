@@ -1011,6 +1011,12 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
 }
 
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
+    // ByteCodeFrame bytecode_frame;
+    // byteCodeFrame_init(&bytecode_frame);
+    // byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    // VMParameters* res = pikaVM_runByteCodeFrame(self, &bytecode_frame);
+    // byteCodeFrame_deinit(&bytecode_frame);
+    // return res;
     return pikaVM_runAsmWithPars(self, self, self, pikaAsm);
 }
 
@@ -1204,6 +1210,16 @@ void instructUnit_print(InstructUnit* self) {
                       self->const_pool_index);
 }
 
+void instructUnit_printWithConst(InstructUnit* self, ConstPool* const_pool) {
+    if (instructUnit_getIsNewLine(self)) {
+        __platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
+    }
+    __platform_printf("%d %s %s (#%d)\r\n", instructUnit_getInvokeDeepth(self),
+                      instructUnit_getInstructStr(self),
+                      constPool_getByOffset(const_pool, self->const_pool_index),
+                      self->const_pool_index);
+}
+
 void instructArray_print(InstructArray* self) {
     uint16_t offset_befor = self->content_offset_now;
     self->content_offset_now = 0;
@@ -1263,7 +1279,7 @@ VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
         }
         if (0 != errcode) {
             __platform_printf("[info] input commond: \r\n");
-            instructUnit_print(this_ins_unit);
+            instructUnit_printWithConst(this_ins_unit, const_pool);
         }
     }
     __clearInvokeQueues(locals);
