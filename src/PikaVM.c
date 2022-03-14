@@ -39,10 +39,17 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
                                     VMParameters* globals,
                                     char* pikaAsm);
 
+VMParameters* pikaVM_runByteCodeFrameWithPars(PikaObj* self,
+                                              VMParameters* locals,
+                                              VMParameters* globals,
+                                              ByteCodeFrame* byteCode_frame);
+
 VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
                                          VMParameters* locals,
                                          VMParameters* globals,
-                                         ByteCodeFrame* byteCode_frame);
+                                         ConstPool* const_pool,
+                                         InstructArray* inst_array,
+                                         uint16_t pc_i);
 
 static int32_t __gotoNextLine(char* code) {
     int offset = 0;
@@ -384,7 +391,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
             /* byteCode */
             ByteCodeFrame bytecode_frame;
             byteCodeFrame_init(&bytecode_frame);
-            sub_locals = pikaVM_runByteCodeWithPars(
+            sub_locals = pikaVM_runByteCodeFrameWithPars(
                 method_host_obj, sub_locals, vs->globals, &bytecode_frame);
             byteCodeFrame_deinit(&bytecode_frame);
         } else {
@@ -1221,27 +1228,29 @@ void byteCodeFrame_print(ByteCodeFrame* self) {
 VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
                                          VMParameters* locals,
                                          VMParameters* globals,
-                                         ByteCodeFrame* byteCode_frame) {
-    int size = byteCode_frame->instruct_array.size;
+                                         ConstPool* const_pool,
+                                         InstructArray* inst_array,
+                                         uint16_t pc_i) {
+    int size = inst_array->size;
     args_setErrorCode(locals->list, 0);
     args_setSysOut(locals->list, (char*)"");
     VMState vs = {
-        .const_pool = &byteCode_frame->const_pool,
-        .ins_array = &byteCode_frame->instruct_array,
+        .const_pool = const_pool,
+        .ins_array = inst_array,
         .locals = locals,
         .globals = globals,
         .jmp = 0,
         .q0 = NULL,
         .q1 = NULL,
-        .pc_i = 0,
+        .pc_i = pc_i,
         .ASM_start = NULL,
     };
     while (vs.pc_i < size) {
         if (vs.pc_i == -99999) {
             break;
         }
-        InstructUnit* this_ins_unit = instructArray_getByOffset(
-            &(byteCode_frame->instruct_array), vs.pc_i);
+        InstructUnit* this_ins_unit =
+            instructArray_getByOffset(inst_array, vs.pc_i);
         vs.pc_i = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
         char* sysOut = args_getSysOut(locals->list);
         uint8_t errcode = args_getErrorCode(locals->list);
@@ -1258,7 +1267,16 @@ VMParameters* pikaVM_runByteCodeWithPars(PikaObj* self,
     return locals;
 }
 
+VMParameters* pikaVM_runByteCodeFrameWithPars(PikaObj* self,
+                                              VMParameters* locals,
+                                              VMParameters* globals,
+                                              ByteCodeFrame* byteCode_frame) {
+    return pikaVM_runByteCodeWithPars(self, locals, globals,
+                                      &byteCode_frame->const_pool,
+                                      &byteCode_frame->instruct_array, 0);
+}
+
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame) {
-    return pikaVM_runByteCodeWithPars(self, self, self, byteCode_frame);
+    return pikaVM_runByteCodeFrameWithPars(self, self, self, byteCode_frame);
 }
