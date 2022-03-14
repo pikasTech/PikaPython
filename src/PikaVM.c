@@ -1098,10 +1098,6 @@ InstructUnit* instructArray_getNow(InstructArray* self) {
                            (uintptr_t)(self->content_offset_now));
 }
 
-InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset) {
-    return (InstructUnit*)(arg_getContent(self->arg_buff) +
-                           (uintptr_t)(offset));
-}
 
 InstructUnit* instructArray_getNext(InstructArray* self) {
     self->content_offset_now += sizeof(InstructUnit);

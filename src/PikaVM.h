@@ -164,7 +164,11 @@ void byteCodeFrame_print(ByteCodeFrame* self);
 InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset);
 VMParameters* pikaVM_run_enableByteCode(PikaObj* self, char* multiLine);
 VMParameters* pikaVM_runWithConfig(PikaObj* self,
-                                    char* multiLine,
-                                    VMConfig cfg);
+                                   char* multiLine,
+                                   VMConfig cfg);
+
+#define instructArray_getByOffset(InstructArray_p_self, int32_t_offset) \
+    ((InstructUnit*)(arg_getContent((InstructArray_p_self)->arg_buff) + \
+                     (uintptr_t)(int32_t_offset)));
 
 #endif
