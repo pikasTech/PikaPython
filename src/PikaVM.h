@@ -130,7 +130,7 @@ void instructUnit_deinit(InstructUnit* self);
 /*
  #define __get_alined_size(size) (((((size)-1) / 4) + 1) * 4)
  #define instructUnit_getTotleSize_withDataSize(data_size) \
-  (__get_alined_size(sizeof(InstructUnit) + data_size + 1))
+  (__get_alined_size(instructUnit_getSize() + data_size + 1))
  #define instructUnit_getTotleSize(self) \
   (instructUnit_getTotleSize_withDataSize(instructUnit_getDataSize(self)))
 */
@@ -170,5 +170,7 @@ VMParameters* pikaVM_runWithConfig(PikaObj* self,
 #define instructArray_getByOffset(InstructArray_p_self, int32_t_offset) \
     ((InstructUnit*)(arg_getContent((InstructArray_p_self)->arg_buff) + \
                      (uintptr_t)(int32_t_offset)));
+
+#define instructUnit_getSize() ((size_t)sizeof(InstructUnit))
 
 #endif
