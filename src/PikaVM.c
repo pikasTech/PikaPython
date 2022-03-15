@@ -33,13 +33,6 @@
 #include "PikaPlatform.h"
 #include "dataStrs.h"
 
-/* local head */
-VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
-                                          VMParameters* locals,
-                                          VMParameters* globals,
-                                          ByteCodeFrame* bytecode_frame,
-                                          uint16_t pc);
-
 static InstructUnit* VMState_getInstructNow(VMState* vs) {
     return instructArray_getByOffset(&(vs->bytecode_frame->instruct_array),
                                      vs->pc);
