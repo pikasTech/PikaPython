@@ -103,7 +103,7 @@ uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
     }
 
     /* only copy */
-    if (content_getSize(self) >= size) {
+    if (content_getSize(self) == size) {
         __platform_memcpy(((__arg*)self)->content, content, size);
         return self;
     }
