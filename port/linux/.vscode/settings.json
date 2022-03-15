@@ -35,7 +35,13 @@
         "array": "c",
         "string_view": "c",
         "initializer_list": "c",
-        "utility": "c"
+        "utility": "c",
+        "any": "c",
+        "optional": "c",
+        "functional": "c",
+        "stdexcept": "c",
+        "typeinfo": "c",
+        "cmath": "c"
     },
     "python.formatting.provider": "autopep8"
 }

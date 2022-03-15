@@ -44,26 +44,48 @@
 #include "dataLink.h"
 #include "dataMemory.h"
 
-// dcl_class(PikaObj);
-typedef struct PikaObj_t PikaObj;
+typedef struct InstructUnit_t {
+    uint8_t deepth;
+    uint8_t isNewLine_instruct;
+    uint16_t const_pool_index;
+} InstructUnit;
+
+typedef struct ConstPool_t {
+    Arg* arg_buff;
+    uint16_t content_offset_now;
+    uint16_t size;
+} ConstPool;
+
+typedef struct InstructArray_t {
+    Arg* arg_buff;
+    uint16_t content_offset_now;
+    uint16_t size;
+} InstructArray;
+
+typedef struct ByteCodeFrame_t {
+    ConstPool const_pool;
+    InstructArray instruct_array;
+} ByteCodeFrame;
+
+typedef struct PikaObj_t {
+    /* list */
+    Args* list;
+} PikaObj;
 
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
 typedef PikaObj VMParameters;
 typedef void (*Method)(PikaObj* self, Args* args);
 
-struct PikaObj_t {
-    /* list */
-    Args* list;
-};
+typedef struct MethodInfo_t {
+    char* name;
+    char* dec;
+    char* ptr;
+    char* pars;
+    ArgType type;
+    ByteCodeFrame* bytecode_frame;
+} MethodInfo;
 
-// def_class(PikaObj,
-
-//     private_member(
-//         /* list */
-//         Args* list;
-//    )
-// )
 /* operation */
 int32_t obj_deinit(PikaObj* self);
 int32_t obj_init(PikaObj* self, Args* args);
@@ -113,11 +135,13 @@ int32_t class_defineMethod(PikaObj* self, char* declearation, Method methodPtr);
 
 int32_t class_defineObjectMethod(PikaObj* self,
                                  char* declearation,
-                                 Method methodPtr);
+                                 Method methodPtr,
+                                 ByteCodeFrame* bytecode_frame);
 
 int32_t class_defineStaticMethod(PikaObj* self,
                                  char* declearation,
-                                 Method methodPtr);
+                                 Method methodPtr,
+                                 ByteCodeFrame* bytecode_frame);
 
 int32_t obj_removeArg(PikaObj* self, char* argPath);
 int32_t obj_isArgExist(PikaObj* self, char* argPath);

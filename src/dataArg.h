@@ -30,7 +30,6 @@
 #include "dataLink.h"
 #include "dataMemory.h"
 
-typedef uint8_t Arg;
 typedef uint32_t Hash;
 typedef enum {
     ARG_TYPE_NONE,
@@ -48,15 +47,14 @@ typedef enum {
 } ArgType;
 
 typedef struct __arg __arg;
-
-struct __arg {
+typedef struct __arg {
     __arg* next;
     uint16_t size;
-    uint8_t type;
+    ArgType type;
     uint8_t __rsvd;
     Hash name_hash;
     uint8_t content[];
-};
+} Arg;
 
 // uint32_t content_getNameHash(uint8_t* content);
 #define content_getNameHash(__addr) (((__arg*)(__addr))->name_hash)

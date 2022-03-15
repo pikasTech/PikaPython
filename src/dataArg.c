@@ -269,6 +269,8 @@ Arg* arg_append(Arg* arg_in, void* new_content, size_t new_size) {
     size_t old_size = arg_getContentSize(arg_in);
     /* create arg_out */
     Arg* arg_out = arg_setContent(NULL, NULL, old_size + new_size);
+    arg_setType(arg_out, arg_getType(arg_in));
+    arg_setNameHash(arg_out, arg_getNameHash(arg_in));
     /* copy old content */
     __platform_memcpy(arg_getContent(arg_out), old_content, old_size);
     /* copy new content */

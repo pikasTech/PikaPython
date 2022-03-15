@@ -399,25 +399,15 @@ char* methodArg_getDec(Arg* method_arg) {
     return (char*)((uintptr_t)info + size_ptr);
 }
 
-static void obj_saveMethodInfo(PikaObj* self,
-                               char* method_name,
-                               char* method_dec,
-                               void* method_ptr,
-                               ArgType method_type) {
+static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     Args buffs = {0};
-    char* pars = strsRemovePrefix(&buffs, method_dec, method_name);
+    char* pars = strsRemovePrefix(&buffs, method_info->dec, method_info->name);
+    method_info->pars = pars;
     Arg* arg = New_arg(NULL);
-    uint32_t size_ptr = sizeof(void*);
     uint32_t size_pars = strGetSize(pars);
-    uint32_t size_info = size_ptr + size_pars + 1;
-    void* info = args_getBuff(&buffs, size_info);
-    __platform_memcpy(info, &method_ptr, size_ptr);
-    /* +1 to add \0 */
-    __platform_memcpy((void*)((uintptr_t)info + size_ptr), pars, size_pars + 1);
-    arg = arg_setName(arg, method_name);
-    arg = arg_setType(arg, method_type);
-    arg = arg_setContent(arg, info, size_info);
-
+    arg =
+        arg_setPtr(arg, method_info->name, method_info->type, method_info->ptr);
+    arg = arg_append(arg, method_info->pars, size_pars + 1);
     args_setArg(self->list, arg);
     strsDeinit(&buffs);
 }
@@ -443,9 +433,14 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
         goto exit;
     }
     methodName = strPointToLastToken(methodPath, '.');
-
-    obj_saveMethodInfo(methodHost, methodName, cleanDeclearation,
-                       (void*)methodPtr, method_type);
+    MethodInfo method_info = {
+        .dec = cleanDeclearation,
+        .name = methodName,
+        .ptr = (void*)methodPtr,
+        .type = method_type,
+        .bytecode_frame = bytecode_frame,
+    };
+    obj_saveMethodInfo(methodHost, &method_info);
     res = 0;
     goto exit;
 exit:
@@ -464,17 +459,19 @@ int32_t class_defineMethod(PikaObj* self,
 /* define object method, object method is which startwith (self) */
 int32_t class_defineObjectMethod(PikaObj* self,
                                  char* declearation,
-                                 Method methodPtr) {
+                                 Method methodPtr,
+                                 ByteCodeFrame* bytecode_frame) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_OBJECT_METHOD, NULL);
+                                        ARG_TYPE_OBJECT_METHOD, bytecode_frame);
 }
 
 /* define a static method as default */
 int32_t class_defineStaticMethod(PikaObj* self,
                                  char* declearation,
-                                 Method methodPtr) {
+                                 Method methodPtr,
+                                 ByteCodeFrame* bytecode_frame) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_STATIC_METHOD, NULL);
+                                        ARG_TYPE_STATIC_METHOD, bytecode_frame);
 }
 
 PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {

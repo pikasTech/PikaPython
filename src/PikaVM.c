@@ -611,9 +611,11 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
         }
         if (instructUnit_getBlockDeepth(ins_unit_now) == thisBlockDeepth + 1) {
             if (is_in_class) {
-                class_defineObjectMethod(hostObj, data, (Method)ins_unit_now);
+                class_defineObjectMethod(hostObj, data, (Method)ins_unit_now,
+                                         vs->bytecode_frame);
             } else {
-                class_defineStaticMethod(hostObj, data, (Method)ins_unit_now);
+                class_defineStaticMethod(hostObj, data, (Method)ins_unit_now,
+                                         vs->bytecode_frame);
             }
             break;
         }
