@@ -101,8 +101,9 @@ uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
         /* malloc */
         return content_init("", ARG_TYPE_NONE, content, size, NULL);
     }
-    /* no alloc */
-    if (content_getSize(self) == size) {
+
+    /* only copy */
+    if (content_getSize(self) >= size) {
         __platform_memcpy(((__arg*)self)->content, content, size);
         return self;
     }
