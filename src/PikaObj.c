@@ -396,7 +396,7 @@ Method methodArg_getPtr(Arg* method_arg) {
 char* methodArg_getDec(Arg* method_arg) {
     uint32_t size_ptr = sizeof(void*);
     void* info = arg_getContent(method_arg);
-    return (char*)((uintptr_t)info + size_ptr);
+    return (char*)((uintptr_t)info + 2 * size_ptr);
 }
 
 static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
@@ -407,6 +407,8 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     uint32_t size_pars = strGetSize(pars);
     arg =
         arg_setPtr(arg, method_info->name, method_info->type, method_info->ptr);
+    arg = arg_append(arg, &(method_info->bytecode_frame),
+                     sizeof(method_info->bytecode_frame));
     arg = arg_append(arg, method_info->pars, size_pars + 1);
     args_setArg(self->list, arg);
     strsDeinit(&buffs);
