@@ -67,8 +67,7 @@ typedef struct VMState_t {
     Queue* q1;
     int32_t jmp;
     int32_t pc;
-    ConstPool* const_pool;
-    InstructArray* ins_array;
+    ByteCodeFrame* bytecode_frame;
 } VMState;
 
 typedef enum VMConfig_t {

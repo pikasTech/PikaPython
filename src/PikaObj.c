@@ -425,7 +425,8 @@ static void obj_saveMethodInfo(PikaObj* self,
 static int32_t __class_defineMethodWithType(PikaObj* self,
                                             char* declearation,
                                             Method methodPtr,
-                                            ArgType method_type) {
+                                            ArgType method_type,
+                                            ByteCodeFrame* bytecode_frame) {
     int32_t size = strGetSize(declearation);
     int32_t res = 0;
     Args buffs = {0};
@@ -457,7 +458,7 @@ int32_t class_defineMethod(PikaObj* self,
                            char* declearation,
                            Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_NATIVE_METHOD);
+                                        ARG_TYPE_NATIVE_METHOD, NULL);
 }
 
 /* define object method, object method is which startwith (self) */
@@ -465,7 +466,7 @@ int32_t class_defineObjectMethod(PikaObj* self,
                                  char* declearation,
                                  Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_OBJECT_METHOD);
+                                        ARG_TYPE_OBJECT_METHOD, NULL);
 }
 
 /* define a static method as default */
@@ -473,7 +474,7 @@ int32_t class_defineStaticMethod(PikaObj* self,
                                  char* declearation,
                                  Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_STATIC_METHOD);
+                                        ARG_TYPE_STATIC_METHOD, NULL);
 }
 
 PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {
