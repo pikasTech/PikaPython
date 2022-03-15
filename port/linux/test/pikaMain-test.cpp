@@ -878,95 +878,95 @@ TEST(pikaMain, dict_index) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, task_run_once) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     /* run */
-//     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-//     obj_run(pikaMain,(char*)
-//             "def todo1():\n"
-//             "    print('task 1 running...')\n"
-//             "def todo2():\n"
-//             "    print('task 2 running...')\n"
-//             "task = GTestTask.Task()\n"
-//             "task.call_always(todo1)\n"
-//             "task.call_always(todo2)\n"
-//             "task.run_once()\n"
-//             "\n");
-//     /* collect */
-//     /* assert */
-//     EXPECT_STREQ(log_buff[0], (char*)"task 2 running...\r\n");
-//     EXPECT_STREQ(log_buff[1], (char*)"task 1 running...\r\n");
-//     /* deinit */
-//     obj_deinit(pikaMain);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, task_run_once) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    obj_run(pikaMain,(char*)
+            "def todo1():\n"
+            "    print('task 1 running...')\n"
+            "def todo2():\n"
+            "    print('task 2 running...')\n"
+            "task = GTestTask.Task()\n"
+            "task.call_always(todo1)\n"
+            "task.call_always(todo2)\n"
+            "task.run_once()\n"
+            "\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"task 2 running...\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"task 1 running...\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(pikaMain, task_run_when) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     /* run */
-//     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-//     obj_run(pikaMain,(char*)
-//             "def todo1():\n"
-//             "    print('task 1 running...')\n"
-//             "def todo2():\n"
-//             "    print('task 2 running...')\n"
-//             "def todo3():\n"
-//             "    print('task 3 running...')\n"
-//             "def when3():\n"
-//             "    return True\n"
-//             "task = GTestTask.Task()\n"
-//             "task.call_always(todo1)\n"
-//             "task.call_always(todo2)\n"
-//             "task.call_when(todo3, when3)\n"
-//             "task.run_once()\n"
-//             "\n");
-//     /* collect */
-//     /* assert */
-//     EXPECT_STREQ(log_buff[0], (char*)"task 3 running...\r\n");
-//     EXPECT_STREQ(log_buff[1], (char*)"task 2 running...\r\n");
-//     EXPECT_STREQ(log_buff[2], (char*)"task 1 running...\r\n");
-//     /* deinit */
-//     obj_deinit(pikaMain);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, task_run_when) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    obj_run(pikaMain,(char*)
+            "def todo1():\n"
+            "    print('task 1 running...')\n"
+            "def todo2():\n"
+            "    print('task 2 running...')\n"
+            "def todo3():\n"
+            "    print('task 3 running...')\n"
+            "def when3():\n"
+            "    return True\n"
+            "task = GTestTask.Task()\n"
+            "task.call_always(todo1)\n"
+            "task.call_always(todo2)\n"
+            "task.call_when(todo3, when3)\n"
+            "task.run_once()\n"
+            "\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"task 3 running...\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"task 2 running...\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"task 1 running...\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
-// TEST(pikaMain, task_run_period_until) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     /* run */
-//     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-//     __platform_printf((char*)"BEGIN\r\n");
-//     obj_run(pikaMain,(char*)
-//             "def todo1():\n"
-//             "    print('task 1 running...')\n"
-//             "def todo2():\n"
-//             "    print('task 2 running...')\n"
-//             "def todo3():\n"
-//             "    print('task 3 running...')\n"
-//             "def when3():\n"
-//             "    return True\n"
-//             "task = GTestTask.Task()\n"
-//             "task.call_period_ms(todo1, 200)\n"
-//             "task.call_period_ms(todo2, 500)\n"
-//             "# task.call_when(todo3, when3)\n"
-//             "task.run_until_ms(1000)\n"
-//             "\n");
-//     /* collect */
-//     /* assert */
-//     EXPECT_STREQ(log_buff[0], (char*)"task 1 running...\r\n");
-//     EXPECT_STREQ(log_buff[1], (char*)"task 1 running...\r\n");
-//     EXPECT_STREQ(log_buff[2], (char*)"task 2 running...\r\n");
-//     EXPECT_STREQ(log_buff[3], (char*)"task 1 running...\r\n");
-//     EXPECT_STREQ(log_buff[4], (char*)"task 1 running...\r\n");
-//     EXPECT_STREQ(log_buff[5], (char*)"task 2 running...\r\n");
-//     EXPECT_STREQ(log_buff[6], (char*)"task 1 running...\r\n");
-//     EXPECT_STREQ(log_buff[7], (char*)"BEGIN\r\n");
-//     /* deinit */
-//     obj_deinit(pikaMain);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, task_run_period_until) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(pikaMain,(char*)
+            "def todo1():\n"
+            "    print('task 1 running...')\n"
+            "def todo2():\n"
+            "    print('task 2 running...')\n"
+            "def todo3():\n"
+            "    print('task 3 running...')\n"
+            "def when3():\n"
+            "    return True\n"
+            "task = GTestTask.Task()\n"
+            "task.call_period_ms(todo1, 200)\n"
+            "task.call_period_ms(todo2, 500)\n"
+            "# task.call_when(todo3, when3)\n"
+            "task.run_until_ms(1000)\n"
+            "\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"task 1 running...\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"task 1 running...\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"task 2 running...\r\n");
+    EXPECT_STREQ(log_buff[3], (char*)"task 1 running...\r\n");
+    EXPECT_STREQ(log_buff[4], (char*)"task 1 running...\r\n");
+    EXPECT_STREQ(log_buff[5], (char*)"task 2 running...\r\n");
+    EXPECT_STREQ(log_buff[6], (char*)"task 1 running...\r\n");
+    EXPECT_STREQ(log_buff[7], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(pikaMain, fun_call) {
     /* init */
@@ -1153,29 +1153,29 @@ TEST(pikaMain, class_demo_1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, class_demo_2) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     /* run */
-//     PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
-//     __platform_printf((char*)"BEGIN\r\n");
-//     obj_run(self, (char*)
-//         "class Complex:\n"
-//         "    def __init__(self):\n"
-//         "        self.r = 3.0\n"
-//         "        self.i = -4.5\n"
-//         "x = Complex()\n"
-//         "print(x.r)\n"
-//         "print(x.i)\n"
-//     );
-//     /* assert */
-//     EXPECT_STREQ(log_buff[0], (char*)"-4.500000\r\n");
-//     EXPECT_STREQ(log_buff[1], (char*)"3.000000\r\n");
-//     EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
-//     /* deinit */
-//     obj_deinit(self);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, class_demo_2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(self, (char*)
+        "class Complex:\n"
+        "    def __init__(self):\n"
+        "        self.r = 3.0\n"
+        "        self.i = -4.5\n"
+        "x = Complex()\n"
+        "print(x.r)\n"
+        "print(x.i)\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"-4.500000\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"3.000000\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(pikaMain, class_demo_3) {
     /* init */

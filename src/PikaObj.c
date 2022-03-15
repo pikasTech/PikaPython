@@ -393,6 +393,14 @@ Method methodArg_getPtr(Arg* method_arg) {
     return ptr;
 }
 
+ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg) {
+    uint32_t size_ptr = sizeof(void*);
+    void* info = arg_getContent(method_arg) + size_ptr;
+    ByteCodeFrame* ptr = NULL;
+    __platform_memcpy(&ptr, info, size_ptr);
+    return ptr;
+}
+
 char* methodArg_getDec(Arg* method_arg) {
     uint32_t size_ptr = sizeof(void*);
     void* info = arg_getContent(method_arg);
@@ -405,10 +413,12 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     method_info->pars = pars;
     Arg* arg = New_arg(NULL);
     uint32_t size_pars = strGetSize(pars);
+    uintptr_t method_info_bytecode_frame =
+        (uintptr_t)method_info->bytecode_frame;
     arg =
         arg_setPtr(arg, method_info->name, method_info->type, method_info->ptr);
-    arg = arg_append(arg, &(method_info->bytecode_frame),
-                     sizeof(method_info->bytecode_frame));
+    arg = arg_append(arg, &(method_info_bytecode_frame),
+                     sizeof(method_info_bytecode_frame));
     arg = arg_append(arg, method_info->pars, size_pars + 1);
     args_setArg(self->list, arg);
     strsDeinit(&buffs);

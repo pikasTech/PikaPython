@@ -198,6 +198,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     char* method_dec;
     char* type_list;
     char* sys_out;
+    ByteCodeFrame* method_bytecodeFrame;
     /* return arg directly */
     if (strEqu(data, "")) {
         return_arg = arg_copy(queue_popArg(vs->q1));
@@ -232,6 +233,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     /* get method Decleartion */
     method_dec = strsCopy(&buffs, methodArg_getDec(method_arg));
     method_type = arg_getType(method_arg);
+    method_bytecodeFrame = methodArg_getBytecodeFrame(method_arg);
     arg_deinit(method_arg);
 
     /* get type list */
@@ -278,10 +280,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     } else {
         /* static method and object method */
         /* byteCode */
-        uint16_t pc =
-            (uintptr_t)method_ptr - (uintptr_t)VMState_getInstructStart(vs, 0);
+        uint16_t pc = (uintptr_t)method_ptr -
+                      (uintptr_t)instructArray_getByOffset(
+                          &(method_bytecodeFrame->instruct_array), 0);
         sub_locals = pikaVM_runByteCodeWithState(
-            method_host_obj, sub_locals, vs->globals, vs->bytecode_frame, pc);
+            method_host_obj, sub_locals, vs->globals, method_bytecodeFrame, pc);
 
         /* get method return */
         return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
