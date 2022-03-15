@@ -26,6 +26,12 @@
 
 [![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/pikascript/dev/bench/)
 
+
+## Tencent QQ Group:
+
+<img src="document/image/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
+
+
 # 1.简介
 
 PikaScript 是一个完全重写的超轻量级 python 引擎，零依赖，零配置，可以在  **Flash ≤ 32KB，RAM≤ 4KB**  的平台下运行(如 stm32g030c8 和 stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
@@ -221,18 +227,8 @@ http://pikascript.com
 
 # 4.交流与技术支持：
 
-## 微信交流群
-
-![微信截图_20210917133247](document/image/133729804-e1d0406b-a859-4ebc-b335-477e9c03810e.png)
-
-### 群已经满啦，加我QQ拉你进群~ qq: 645275593
-
 ## Tencent QQ： 
 645275593
-
-## Tencent QQ Group:
-
-<img src="document/image/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
 
 ## E-mail: 
 645275593@qq.com
