@@ -47,14 +47,16 @@ typedef enum {
 } ArgType;
 
 typedef struct __arg __arg;
-typedef struct __arg {
+struct __arg {
     __arg* next;
     uint16_t size;
     ArgType type;
     uint8_t __rsvd;
     Hash name_hash;
     uint8_t content[];
-} Arg;
+};
+
+typedef uint8_t Arg;
 
 // uint32_t content_getNameHash(uint8_t* content);
 #define content_getNameHash(__addr) (((__arg*)(__addr))->name_hash)

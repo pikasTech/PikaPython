@@ -1149,27 +1149,6 @@ exit:
     return ASM;
 }
 
-static Arg* ASM_saveSingleASM(Args* buffs_p,
-                              Arg* pikaAsmBuff,
-                              char* singleAsm,
-                              uint8_t isToFlash) {
-    if (isToFlash) {
-        uint8_t saveErr = __platform_save_pikaAsm(singleAsm);
-        if (0 == saveErr) {
-            if (NULL != pikaAsmBuff) {
-                arg_deinit(pikaAsmBuff);
-            }
-            return NULL;
-        }
-    }
-
-    char* pikaAsm = arg_getStr(pikaAsmBuff);
-    pikaAsm = strsAppend(buffs_p, pikaAsm, singleAsm);
-    arg_deinit(pikaAsmBuff);
-    pikaAsmBuff = arg_setStr(NULL, "", pikaAsm);
-    return pikaAsmBuff;
-}
-
 static char* ASM_loadASM(Args* outBuffs, Arg* pikaAsmBuff, uint8_t isToFlash) {
     if (isToFlash) {
         return __platform_load_pikaAsm();
@@ -1177,7 +1156,9 @@ static char* ASM_loadASM(Args* outBuffs, Arg* pikaAsmBuff, uint8_t isToFlash) {
     return strsCopy(outBuffs, arg_getStr(pikaAsmBuff));
 }
 
-char* Parser_multiLineToAsm(Args* outBuffs, char* multi_line) {
+char* Parser_multiLineToAsmOrByteCode(Args* outBuffs,
+                                      ByteCodeFrame* bytecode_frame,
+                                      char* multi_line) {
     Stack* block_stack = New_Stack();
     Arg* asm_buff = arg_setStr(NULL, "", "");
     uint32_t line_offset = 0;
@@ -1199,8 +1180,13 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multi_line) {
             strsDeinit(&buffs);
             goto exit;
         }
-        /* save ASM */
-        asm_buff = ASM_saveSingleASM(&buffs, asm_buff, single_ASM, is_to_flash);
+        if (NULL == bytecode_frame) {
+            /* store ASM */
+            asm_buff = arg_strAppend(asm_buff, single_ASM);
+        } else if (NULL == outBuffs) {
+            /* store ByteCode */
+            byteCodeFrame_appendFromAsm(bytecode_frame, single_ASM);
+        }
         strsDeinit(&buffs);
         /* exit when finished */
         if (line_offset >= multi_line_size) {
@@ -1211,8 +1197,12 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multi_line) {
     if (is_to_flash) {
         __platform_save_pikaAsm_EOF();
     }
-    /* load stored ASM */
-    out_ASM = ASM_loadASM(outBuffs, asm_buff, is_to_flash);
+    if (NULL != outBuffs) {
+        /* load stored ASM */
+        out_ASM = strsCopy(outBuffs, arg_getStr(asm_buff));
+    } else {
+        out_ASM = (char*)1;
+    }
     goto exit;
 exit:
     if (NULL != asm_buff) {
@@ -1220,6 +1210,21 @@ exit:
     }
     stack_deinit(block_stack);
     return out_ASM;
+};
+
+int BytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
+                                char* multi_line) {
+    if (NULL ==
+        Parser_multiLineToAsmOrByteCode(NULL, bytecode_frame, multi_line)) {
+        /* error */
+        return 1;
+    }
+    /* succeed */
+    return 0;
+};
+
+char* Parser_multiLineToAsm(Args* outBuffs, char* multi_line) {
+    return Parser_multiLineToAsmOrByteCode(outBuffs, NULL, multi_line);
 }
 
 char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {

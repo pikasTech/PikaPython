@@ -491,13 +491,7 @@ PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {
 }
 
 VMParameters* obj_runDirect(PikaObj* self, char* cmd) {
-    VMParameters* globals = NULL;
-
-    globals = pikaVM_run(self, cmd);
-    goto exit;
-
-exit:
-    return globals;
+    return pikaVM_run(self, cmd);
 }
 
 int32_t obj_removeArg(PikaObj* self, char* argPath) {
@@ -557,9 +551,7 @@ void obj_runNoRes(PikaObj* slef, char* cmd) {
 }
 
 void obj_run(PikaObj* self, char* cmd) {
-    /* safe, stop when error occord and error info would be print32_t */
     obj_runDirect(self, cmd);
-    // obj_deinit(globals);
 }
 
 static void __clearBuff(char* buff, int size) {

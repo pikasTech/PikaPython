@@ -27,9 +27,9 @@
 
 #ifndef __PIKA__PARSER__H
 #define __PIKA__PARSER__H
+#include "PikaVM.h"
 #include "dataQueueObj.h"
 #include "dataStack.h"
-#include "PikaVM.h"
 
 typedef struct Asmer_t {
     char* asm_code;
@@ -41,6 +41,8 @@ typedef struct Asmer_t {
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);
-ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame *bf, char* pikaAsm);
+ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
+int BytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
+                                            char* multi_line);
 
 #endif

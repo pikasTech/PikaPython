@@ -44,10 +44,6 @@ static InstructUnit* VMState_getInstructWithOffset(VMState* vs,
                                      vs->pc + offset);
 }
 
-static InstructUnit* VMState_getInstructStart(VMState* vs, int32_t offset) {
-    return instructArray_getByOffset(&(vs->bytecode_frame->instruct_array), 0);
-}
-
 static int VMState_getBlockDeepthNow(VMState* vs) {
     /* support run byteCode */
     InstructUnit* ins_unit = VMState_getInstructNow(vs);
@@ -786,10 +782,11 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
 
 VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
     Args buffs = {0};
-    Args* buffs_p = &buffs;
     VMParameters* globals = NULL;
-    char* pikaAsm = Parser_multiLineToAsm(&buffs, multiLine);
-    if (NULL == pikaAsm) {
+    /* init bytecode_frame */
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    if (1 == BytecodeFrame_fromMultiLine(&bytecode_frame, multiLine)) {
         __platform_printf("[error]: Syntax error.\r\n");
         globals = NULL;
         goto exit;
@@ -797,22 +794,14 @@ VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
     /* save to ram if do not save to flash */
     if ((1 == __platform_save_pikaAsm("")) &&
         (!obj_isArgExist(self, "__asm"))) {
-        obj_setStr(self, "__asm", pikaAsm);
-        strsDeinit(&buffs);
-        buffs_p = NULL;
-        pikaAsm = obj_getStr(self, "__asm");
+        /* TODO */
     }
     /* run byteCode */
-    ByteCodeFrame byte_frame;
-    byteCodeFrame_init(&byte_frame);
-    byteCodeFrame_appendFromAsm(&byte_frame, pikaAsm);
-    globals = pikaVM_runByteCodeFrame(self, &byte_frame);
-    byteCodeFrame_deinit(&byte_frame);
+    globals = pikaVM_runByteCodeFrame(self, &bytecode_frame);
     goto exit;
 exit:
-    if (NULL != buffs_p) {
-        strsDeinit(&buffs);
-    }
+    byteCodeFrame_deinit(&bytecode_frame);
+    strsDeinit(&buffs);
     return globals;
 }
 
