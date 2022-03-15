@@ -163,11 +163,11 @@ int32_t args_setStruct(Args* self,
                        char* name,
                        void* struct_ptr,
                        uint32_t struct_size) {
-    if (NULL == struct_ptr) {
+    Arg* struct_arg = arg_setStruct(NULL, name, struct_ptr, struct_size);
+    if (NULL == struct_arg) {
+        /* faild */
         return 1;
     }
-    Arg* struct_arg = arg_setContent(NULL, (uint8_t*)struct_ptr, struct_size);
-    struct_arg = arg_setName(struct_arg, name);
     args_setArg(self, struct_arg);
     return 0;
 }

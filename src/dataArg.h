@@ -114,5 +114,9 @@ void arg_deinit(Arg* self);
 
 Arg* New_arg(void* voidPointer);
 Arg* arg_append(Arg* arg_in, void* new_content, size_t new_size);
+Arg* arg_setStruct(Arg* self,
+                   char* name,
+                   void* struct_ptr,
+                   uint32_t struct_size);
 
 #endif

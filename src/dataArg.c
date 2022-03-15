@@ -98,9 +98,16 @@ uint8_t* content_deinit(uint8_t* self) {
 
 uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
     if (NULL == self) {
+        /* malloc */
         return content_init("", ARG_TYPE_NONE, content, size, NULL);
     }
+    /* no alloc */
+    if (content_getSize(self) == size) {
+        __platform_memcpy(((__arg*)self)->content, content, size);
+        return self;
+    }
 
+    /* realloc */
     Hash nameHash = content_getNameHash(self);
     ArgType type = content_getType(self);
     uint8_t* next = content_getNext(self);
@@ -147,6 +154,18 @@ Arg* arg_newContent(Arg* self, uint32_t size) {
 
 Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size) {
     return content_setContent(self, content, size);
+}
+
+Arg* arg_setStruct(Arg* self,
+                   char* name,
+                   void* struct_ptr,
+                   uint32_t struct_size) {
+    if (NULL == struct_ptr) {
+        return NULL;
+    }
+    Arg* struct_arg = arg_setContent(NULL, (uint8_t*)struct_ptr, struct_size);
+    struct_arg = arg_setName(struct_arg, name);
+    return struct_arg;
 }
 
 Arg* arg_setName(Arg* self, char* name) {

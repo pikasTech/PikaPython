@@ -774,7 +774,6 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
     byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
-    // byteCodeFrame_print(&bytecode_frame);
     VMParameters* res = pikaVM_runByteCodeFrame(self, &bytecode_frame);
     byteCodeFrame_deinit(&bytecode_frame);
     return res;
