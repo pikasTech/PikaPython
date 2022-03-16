@@ -274,9 +274,9 @@ TEST(VM, RET_instruct) {
     char* pikaAsm = (char*)
     "B1\n"
     "0 NUM 13\n"
-    "0 RET\n"
+    "0 RET \n"
     "0 NUM 2\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n";
     PikaObj* self = New_TinyObj(NULL);
     VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
@@ -295,7 +295,7 @@ TEST(VM, RUN_DEF) {
     "0 JMP 1\n"
     "B1\n"
     "0 NUM 1\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     "0 RUN test\n"
     "0 OUT a\n";
@@ -318,7 +318,7 @@ TEST(VM, RUN_global) {
     "0 JMP 1\n"
     "B1\n"
     "0 REF a\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     "0 RUN test\n"
     "0 OUT b\n";
@@ -347,7 +347,7 @@ TEST(VM, RUN_local_b) {
     "1 REF b\n"
     "1 REF a\n"
     "0 OPT +\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     "0 RUN test\n"
     "0 OUT c\n";
@@ -374,7 +374,7 @@ TEST(VM, RUN_DEF_add) {
     "1 REF b\n"
     "1 REF a\n"
     "0 OPT +\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     "1 NUM 1\n"
     "1 NUM 2\n"
@@ -597,9 +597,9 @@ TEST(VM, RUN_DEF_NEW) {
         "0 OUT newObj.x\n"
         "B1\n"
         "0 NEW newObj\n"
-        "0 RET\n"
+        "0 RET \n"
         "B1\n"
-        "0 RET\n"
+        "0 RET \n"
         "B0\n"
         "0 RUN testnew\n"
         "0 OUT outobj\n"

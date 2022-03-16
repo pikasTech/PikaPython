@@ -1322,7 +1322,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
             if (strEqu(blockType, "def")) {
                 pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm,
                                              blockTypeNum + 1);
-                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET\n");
+                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET \n");
             }
             /* return when exit class */
             if (strEqu(blockType, "class")) {
@@ -1332,7 +1332,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
                     strsAppend(outBuffs, pikaAsm, (char*)"0 RAS $origin\n");
                 pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 NEW self\n");
-                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET\n");
+                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET \n");
             }
         }
     }
@@ -1474,7 +1474,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     if (obj_isArgExist(ast, "return")) {
         /* parse stmt ast */
         pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 RET\n");
+        pikaAsm = strsAppend(&buffs, pikaAsm, "0 RET \n");
         is_block_matched = 1;
         goto exit;
     }
@@ -1538,12 +1538,32 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
 
         /* process each ins */
 
+        /* get constPool offset */
+        uint16_t const_pool_offset = 0;
+
+        char* data = line + 6;
+        uint16_t exist_offset =
+            constPool_getOffsetByData(&(self->const_pool), data);
+
+        /* get const offset */
+        if (strEqu(data, "")) {
+            /* not need const value */
+            const_pool_offset = 0;
+        } else if (65535 == exist_offset) {
+            /* push new const value */
+            const_pool_offset = constPool_getLastOffset(&(self->const_pool));
+            /* load const to const pool buff */
+            constPool_append(&(self->const_pool), data);
+        } else {
+            /* use exist const value */
+            const_pool_offset = exist_offset;
+        }
+
         /* load Asm to byte code unit */
         InstructUnit ins_unit = {0};
         instructUnit_setBlockDeepth(&ins_unit, asmer.block_deepth_now);
         instructUnit_setInvokeDeepth(&ins_unit, line[0] - '0');
-        instructUnit_setConstPoolIndex(
-            &ins_unit, constPool_getLastOffset(&(self->const_pool)));
+        instructUnit_setConstPoolIndex(&ins_unit, const_pool_offset);
         instructUnit_setInstruct(&ins_unit, pikaVM_getInstructFromAsm(line));
         if (asmer.is_new_line) {
             instructUnit_setIsNewLine(&ins_unit, 1);
@@ -1553,9 +1573,6 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
         /* append instructUnit to instructArray */
         instructArray_append(&(self->instruct_array), &ins_unit);
 
-        /* load const to const pool buff */
-        char* data = line + 6;
-        constPool_append(&(self->const_pool), data);
     next_line:
         /* point to next line */
         asmer.line_pointer += strGetLineSize(asmer.line_pointer) + 1;

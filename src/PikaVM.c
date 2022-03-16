@@ -850,6 +850,27 @@ uint16_t constPool_getLastOffset(ConstPool* self) {
     return self->size;
 }
 
+uint16_t constPool_getOffsetByData(ConstPool* self, char* data) {
+    uint16_t ptr_befor = self->content_offset_now;
+    /* set ptr_now to begin */
+    self->content_offset_now = 0;
+    uint16_t offset_out = 65535;
+    while (1) {
+        if (NULL == constPool_getNext(self)) {
+            goto exit;
+        }
+        uint16_t offset = self->content_offset_now;
+        if (strEqu(data, constPool_getNow(self))) {
+            offset_out = self->content_offset_now;
+            goto exit;
+        }
+    }
+exit:
+    /* retore ptr_now */
+    self->content_offset_now = ptr_befor;
+    return offset_out;
+}
+
 char* constPool_getNext(ConstPool* self) {
     self->content_offset_now += strGetSize(constPool_getNow(self)) + 1;
     return constPool_getNow(self);

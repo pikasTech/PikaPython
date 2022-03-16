@@ -37,7 +37,6 @@ enum Instruct {
     __INSTRCUTION_CNT,
 };
 
-
 typedef struct VMState_t {
     VMParameters* locals;
     VMParameters* globals;
@@ -151,5 +150,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
                                           VMParameters* globals,
                                           ByteCodeFrame* bytecode_frame,
                                           uint16_t pc);
+
+uint16_t constPool_getOffsetByData(ConstPool* self, char* data);
 
 #endif

@@ -755,7 +755,7 @@ TEST(parser, def_add) {
     "1 REF b\n"
     "0 OPT +\n"
     "B1\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     );
     args_deinit(buffs);
@@ -781,9 +781,9 @@ TEST(parser, def_add_return) {
     "1 REF a\n"
     "1 REF b\n"
     "0 OPT +\n"
-    "0 RET\n"
+    "0 RET \n"
     "B1\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     );
     args_deinit(buffs);
@@ -813,11 +813,11 @@ TEST(parser, def_while_return) {
     "1 REF a\n"
     "1 REF b\n"
     "0 OPT +\n"
-    "0 RET\n"
+    "0 RET \n"
     "B1\n"
     "0 JMP -1\n"
     "B1\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     );
     args_deinit(buffs);
@@ -844,11 +844,11 @@ TEST(parser, def_while_return_void) {
     "0 REF True\n"
     "0 JEZ 2\n"
     "B2\n"
-    "0 RET\n"
+    "0 RET \n"
     "B1\n"
     "0 JMP -1\n"
     "B1\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     );
     args_deinit(buffs);
@@ -1998,7 +1998,7 @@ TEST(parser, global) {
         "B1\n"
         "0 GLB y,z\n"
         "B1\n"
-        "0 RET\n"
+        "0 RET \n"
         "B0\n"
     );
     args_deinit(buffs);
@@ -2057,7 +2057,7 @@ TEST(parser, class_) {
         "0 RAS $origin\n"
         "B1\n"
         "0 NEW self\n"
-        "0 RET\n"
+        "0 RET \n"
         "B0\n"
     );
     args_deinit(buffs);
@@ -2097,13 +2097,19 @@ TEST(parser, class_def) {
     "1 STR hello\n"
     "0 RUN print\n"
     "B2\n"
-    "0 RET\n"
+    "0 RET \n"
     "B1\n"
     "0 RAS $origin\n"
     "B1\n"
     "0 NEW self\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n");
+
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    byteCodeFrame_print(&bytecode_frame);
+    byteCodeFrame_deinit(&bytecode_frame);
 
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2133,9 +2139,17 @@ TEST(asmer, asmer_to_instructUnit) {
     byteCodeFrame_init(&bytecode_frame);
     byteCodeFrame_appendFromAsm(&bytecode_frame, asm_line);
     byteCodeFrame_print(&bytecode_frame);
-    InstructUnit* ins_unit = instructArray_getByOffset(&(bytecode_frame.instruct_array), 4);
+    InstructUnit* ins_unit =
+        instructArray_getByOffset(&(bytecode_frame.instruct_array), 4);
     instructUnit_print(ins_unit);
     size_t byteCode_size = byteCodeFrame_getSize(&bytecode_frame);
+    uint16_t offset_out =
+        constPool_getOffsetByData(&(bytecode_frame.const_pool), (char*)"add");
+    char* data_out =
+        constPool_getByOffset(&(bytecode_frame.const_pool), offset_out);
+
+    /* assert */
+    EXPECT_STREQ(data_out, (char*)"add");
     EXPECT_EQ(byteCode_size, 33);
     EXPECT_STREQ(constPool_getNext(&(bytecode_frame.const_pool)), (char*)"2");
     EXPECT_STREQ(constPool_getNext(&(bytecode_frame.const_pool)), (char*)"3");
@@ -2144,7 +2158,7 @@ TEST(asmer, asmer_to_instructUnit) {
                  (char*)"test.on");
     EXPECT_EQ((uintptr_t)constPool_getNext(&(bytecode_frame.const_pool)),
               (uintptr_t)NULL);
-
+    /* deinit */
     byteCodeFrame_deinit(&bytecode_frame);
     strsDeinit(&buffs);
     EXPECT_EQ(pikaMemNow(), 0);

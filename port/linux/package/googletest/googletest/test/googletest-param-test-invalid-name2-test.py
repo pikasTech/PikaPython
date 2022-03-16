@@ -724,7 +724,7 @@ TEST(parser, def_add) {
     "1 REF a\n"
     "1 REF b\n"
     "0 OPT +\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     );
     args_deinit(buffs);
@@ -750,8 +750,8 @@ TEST(parser, def_add_return) {
     "1 REF a\n"
     "1 REF b\n"
     "0 OPT +\n"
-    "0 RET\n"
-    "0 RET\n"
+    "0 RET \n"
+    "0 RET \n"
     "B0\n"
     );
     args_deinit(buffs);
@@ -781,10 +781,10 @@ TEST(parser, def_while_return) {
     "1 REF a\n"
     "1 REF b\n"
     "0 OPT +\n"
-    "0 RET\n"
+    "0 RET \n"
     "B1\n"
     "0 JMP -1\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     );
     args_deinit(buffs);
@@ -811,10 +811,10 @@ TEST(parser, def_while_return_void) {
     "0 REF True\n"
     "0 JEZ 2\n"
     "B2\n"
-    "0 RET\n"
+    "0 RET \n"
     "B1\n"
     "0 JMP -1\n"
-    "0 RET\n"
+    "0 RET \n"
     "B0\n"
     );
     args_deinit(buffs);
