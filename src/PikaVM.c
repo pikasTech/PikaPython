@@ -703,7 +703,9 @@ enum Instruct pikaVM_getInstructFromAsm(char* line) {
     return NON;
 }
 
-int pikaVM_runInstructUnit(PikaObj* self, VMState* vs, InstructUnit* ins_unit) {
+static int pikaVM_runInstructUnit(PikaObj* self,
+                                  VMState* vs,
+                                  InstructUnit* ins_unit) {
     enum Instruct instruct = instructUnit_getInstruct(ins_unit);
     Arg* resArg;
     char invode_deepth0_str[2] = {0};
@@ -859,7 +861,6 @@ uint16_t constPool_getOffsetByData(ConstPool* self, char* data) {
         if (NULL == constPool_getNext(self)) {
             goto exit;
         }
-        uint16_t offset = self->content_offset_now;
         if (strEqu(data, constPool_getNow(self))) {
             offset_out = self->content_offset_now;
             goto exit;
@@ -979,10 +980,27 @@ void instructUnit_printWithConst(InstructUnit* self, ConstPool* const_pool) {
     if (instructUnit_getIsNewLine(self)) {
         __platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
     }
-    __platform_printf("%d %s %s (#%d)\r\n", instructUnit_getInvokeDeepth(self),
+    __platform_printf("%d %s %s \t\t(#%d)\r\n",
+                      instructUnit_getInvokeDeepth(self),
                       instructUnit_getInstructStr(self),
                       constPool_getByOffset(const_pool, self->const_pool_index),
                       self->const_pool_index);
+}
+
+void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool) {
+    uint16_t offset_befor = self->content_offset_now;
+    self->content_offset_now = 0;
+    while (1) {
+        InstructUnit* ins_unit = instructArray_getNow(self);
+        if (NULL == ins_unit) {
+            goto exit;
+        }
+        instructUnit_printWithConst(ins_unit, const_pool);
+        instructArray_getNext(self);
+    }
+exit:
+    self->content_offset_now = offset_befor;
+    return;
 }
 
 void instructArray_print(InstructArray* self) {
@@ -1007,7 +1025,10 @@ size_t byteCodeFrame_getSize(ByteCodeFrame* bf) {
 
 void byteCodeFrame_print(ByteCodeFrame* self) {
     constPool_print(&(self->const_pool));
-    instructArray_print(&(self->instruct_array));
+    instructArray_printWithConst(&(self->instruct_array), &(self->const_pool));
+    __platform_printf("---------------\r\n");
+    __platform_printf("byte code size: %d\r\n",
+                      self->const_pool.size + self->instruct_array.size);
 }
 
 VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,

@@ -152,5 +152,6 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
                                           uint16_t pc);
 
 uint16_t constPool_getOffsetByData(ConstPool* self, char* data);
+void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool);
 
 #endif

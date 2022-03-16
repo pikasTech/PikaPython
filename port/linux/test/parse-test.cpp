@@ -2170,3 +2170,57 @@ TEST(asmer, asmer_to_instructUnit) {
     strsDeinit(&buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(compiler, task) {
+    char* lines =(char*)
+        "len = __calls.len()\n"
+        "mode = 'none'\n"
+        "info_index = 0\n"
+        "for i in range(0, len):\n"
+        "    if len == 0:\n"
+        "        break\n"
+        "    if info_index == 0:\n"
+        "        mode = __calls[i]\n"
+        "        info_index = 1\n"
+        "    elif info_index == 1:\n"
+        "        if mode == 'always':\n"
+        "            todo = __calls[i]\n"
+        "            todo()\n"
+        "            info_index = 0\n"
+        "        elif mode == 'when':\n"
+        "            when = __calls[i]\n"
+        "            info_index = 2\n"
+        "        elif mode == 'period_ms':\n"
+        "            period_ms = __calls[i]\n"
+        "            info_index = 2\n"
+        "    elif info_index == 2:\n"
+        "        if mode == 'when':\n"
+        "            if when():\n"
+        "                todo = __calls[i]\n"
+        "                todo()\n"
+        "            info_index = 0\n"
+        "        elif mode == 'period_ms':\n"
+        "            todo = __calls[i]\n"
+        "            info_index = 3\n"
+        "    elif info_index == 3:\n"
+        "        if mode == 'period_ms':\n"
+        "            if __tick > __calls[i]:\n"
+        "                todo()\n"
+        "                __calls[i] = __tick + period_ms\n"
+        "            info_index = 0\n"
+        "\n";
+
+    Args buffs = {0};
+    char* pikaAsm = Parser_multiLineToAsm(&buffs, (char*)lines);
+
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    byteCodeFrame_print(&bytecode_frame);
+    printf("Asm size: %d\r\n", strGetSize(pikaAsm));
+    /* deinit */
+    byteCodeFrame_deinit(&bytecode_frame);
+    strsDeinit(&buffs);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}
