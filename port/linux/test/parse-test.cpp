@@ -1594,6 +1594,13 @@ TEST(parser, for_for_range) {
     "0 DEL _l0\n"
     "B0\n"
     );
+
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    byteCodeFrame_print(&bytecode_frame);
+    byteCodeFrame_deinit(&bytecode_frame);
+
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
