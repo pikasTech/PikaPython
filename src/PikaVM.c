@@ -783,10 +783,24 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
 VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
     Args buffs = {0};
     VMParameters* globals = NULL;
-    /* init bytecode_frame */
-    ByteCodeFrame bytecode_frame;
-    byteCodeFrame_init(&bytecode_frame);
-    if (1 == BytecodeFrame_fromMultiLine(&bytecode_frame, multiLine)) {
+    ByteCodeFrame bytecode_frame_stack;
+    ByteCodeFrame* bytecode_frame_p = NULL;
+    uint8_t is_use_heap_bytecode = 0;
+    if (!args_isArgExist(self->list, "__bytecode")) {
+        /* the first obj_run, save bytecode to heap */
+        is_use_heap_bytecode = 1;
+        /* load bytecode to heap */
+        args_setHeapStruct(self->list, "__bytecode", bytecode_frame_stack,
+                           byteCodeFrame_deinit);
+        /* get bytecode_ptr from heap */
+        bytecode_frame_p = args_getHeapStruct(self->list, "__bytecode");
+    } else {
+        /* not the first obj_run, bytecode only in stack */
+        /* get bytecode_ptr from stack */
+        bytecode_frame_p = &bytecode_frame_stack;
+    }
+    byteCodeFrame_init(bytecode_frame_p);
+    if (1 == BytecodeFrame_fromMultiLine(bytecode_frame_p, multiLine)) {
         __platform_printf("[error]: Syntax error.\r\n");
         globals = NULL;
         goto exit;
@@ -797,10 +811,12 @@ VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
         /* TODO */
     }
     /* run byteCode */
-    globals = pikaVM_runByteCodeFrame(self, &bytecode_frame);
+    globals = pikaVM_runByteCodeFrame(self, bytecode_frame_p);
     goto exit;
 exit:
-    byteCodeFrame_deinit(&bytecode_frame);
+    if (!is_use_heap_bytecode) {
+        byteCodeFrame_deinit(&bytecode_frame_stack);
+    }
     strsDeinit(&buffs);
     return globals;
 }
