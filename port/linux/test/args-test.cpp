@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 extern "C" {
+#include "PikaVM.h"
 #include "dataArgs.h"
 #include "dataString.h"
 }
@@ -148,15 +149,16 @@ TEST(args, test12) {
 struct test {
     int a;
     float b;
+    int c;
 };
 TEST(args, struct_) {
     Args* args = New_args(NULL);
-    struct test test_struct = {1, 2.2};
-    args_setStruct(args, (char*)"test", &test_struct, sizeof(struct test));
-    struct test test_struct_out;
-    args_getStruct(args, (char*)"test", &test_struct_out);
-    EXPECT_EQ(test_struct_out.a, 1);
-    EXPECT_FLOAT_EQ(test_struct_out.b, 2.2);
+    struct test test_struct = {1, 2.2, 4};
+    args_setStruct(args, (char*)"test", test_struct);
+    struct test* out_struct = (struct test*)args_getStruct(args, (char*)"test");
+    EXPECT_EQ(out_struct->a, 1);
+    EXPECT_FLOAT_EQ(out_struct->b, 2.2);
+    EXPECT_EQ(out_struct->c, 4);
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -191,6 +193,21 @@ TEST(args, int_float_convert) {
     /* assert */
     EXPECT_EQ(a, 10);
     EXPECT_FLOAT_EQ(b, 2);
+    /* check memory */
+    args_deinit(args);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(args, heap_struct) {
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    bytecode_frame.const_pool.size = 100;
+    Args* args = New_args(NULL);
+    args_setHeapStruct(args, (char*)"a", bytecode_frame, byteCodeFrame_deinit);
+    ByteCodeFrame* bf_out =
+        (ByteCodeFrame*)args_getHeapStruct(args, (char*)"a");
+    /* assert */
+    EXPECT_EQ(bf_out->const_pool.size, 100);
     /* check memory */
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);

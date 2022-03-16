@@ -159,10 +159,10 @@ int32_t args_copyArg(Args* self, Arg* argToBeCopy) {
     return 0;
 }
 
-int32_t args_setStruct(Args* self,
-                       char* name,
-                       void* struct_ptr,
-                       uint32_t struct_size) {
+int32_t args_setStructWithSize(Args* self,
+                               char* name,
+                               void* struct_ptr,
+                               uint32_t struct_size) {
     Arg* struct_arg = arg_setStruct(NULL, name, struct_ptr, struct_size);
     if (NULL == struct_arg) {
         /* faild */
@@ -172,11 +172,29 @@ int32_t args_setStruct(Args* self,
     return 0;
 }
 
-void* args_getStruct(Args* self, char* name, void* struct_out) {
+void* args_getStruct(Args* self, char* name) {
     Arg* struct_arg = args_getArg(self, name);
-    uint32_t struct_size = arg_getContentSize(struct_arg);
-    return __platform_memcpy(struct_out, arg_getContent(struct_arg),
-                             struct_size);
+    return arg_getContent(struct_arg);
+}
+
+void* args_getHeapStruct(Args* self, char* name) {
+    Arg* struct_arg = args_getArg(self, name);
+    return arg_getHeapStruct(struct_arg);
+}
+
+int32_t args_setHeapStructWithSize(Args* self,
+                                   char* name,
+                                   void* struct_ptr,
+                                   uint32_t struct_size,
+                                   void* struct_deinit_fun) {
+    Arg* struct_arg = arg_setHeapStruct(NULL, name, struct_ptr, struct_size,
+                                        struct_deinit_fun);
+    if (NULL == struct_arg) {
+        /* faild */
+        return 1;
+    }
+    args_setArg(self, struct_arg);
+    return 0;
 }
 
 int32_t args_copyArgByName(Args* self, char* name, Args* directArgs) {

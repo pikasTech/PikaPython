@@ -31,10 +31,6 @@
 #include "dataString.h"
 #include "stdlib.h"
 
-void arg_deinit(Arg* self) {
-    arg_freeContent(self);
-}
-
 uint16_t arg_getTotleSize(Arg* self) {
     return content_totleSize(self);
 }
@@ -165,8 +161,31 @@ Arg* arg_setStruct(Arg* self,
         return NULL;
     }
     Arg* struct_arg = arg_setContent(NULL, (uint8_t*)struct_ptr, struct_size);
+    struct_arg = arg_setType(struct_arg, ARG_TYPE_STRUCT);
     struct_arg = arg_setName(struct_arg, name);
     return struct_arg;
+}
+
+Arg* arg_setHeapStruct(Arg* self,
+                       char* name,
+                       void* struct_ptr,
+                       uint32_t struct_size,
+                       void* struct_deinit_fun) {
+    if (NULL == struct_ptr) {
+        return NULL;
+    }
+    Arg* struct_arg =
+        arg_setContent(NULL, (uint8_t*)&struct_deinit_fun, sizeof(void*));
+    struct_arg = arg_append(struct_arg, (uint8_t*)struct_ptr, struct_size);
+    struct_arg = arg_setType(struct_arg, ARG_TYPE_HEAP_STRUCT);
+    struct_arg = arg_setName(struct_arg, name);
+    return struct_arg;
+}
+
+void* arg_getHeapStructDeinitFun(Arg* self) {
+    void* deinit_fun = NULL;
+    __platform_memcpy(&deinit_fun, arg_getContent(self), sizeof(void*));
+    return deinit_fun;
 }
 
 Arg* arg_setName(Arg* self, char* name) {
@@ -278,4 +297,18 @@ Arg* arg_append(Arg* arg_in, void* new_content, size_t new_size) {
                       new_size);
     arg_deinit(arg_in);
     return arg_out;
+}
+
+void* arg_getHeapStruct(Arg* self) {
+    return arg_getContent(self) + sizeof(void*);
+}
+
+void arg_deinit(Arg* self) {
+    if (arg_getType(self) == ARG_TYPE_HEAP_STRUCT) {
+        /* deinit heap strcut */
+        StructDeinitFun struct_deinit_fun =
+            (StructDeinitFun)arg_getHeapStructDeinitFun(self);
+        struct_deinit_fun(arg_getHeapStruct(self));
+    }
+    arg_freeContent(self);
 }

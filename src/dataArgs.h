@@ -76,21 +76,34 @@ void args_bindStr(Args* self, char* name, char** stringPtr);
 void args_bind(Args* self, char* type, char* name, void* pointer);
 char* args_print(Args* self, char* name);
 
-int32_t args_setStruct(Args* self,
-                       char* name,
-                       void* struct_ptr,
-                       uint32_t struct_size);
-void* args_getStruct(Args* self, char* name, void* struct_out);
+int32_t args_setStructWithSize(Args* self,
+                               char* name,
+                               void* struct_ptr,
+                               uint32_t struct_size);
+
+int32_t args_setHeapStructWithSize(Args* self,
+                                   char* name,
+                                   void* struct_ptr,
+                                   uint32_t struct_size,
+                                   void* struct_deinit_fun);
+
+#define args_setStruct(Args_p_self, char_p_name, struct_)            \
+    args_setStructWithSize((Args_p_self), (char_p_name), &(struct_), \
+                           sizeof(struct_))
+
+#define args_setHeapStruct(Args_p_self, char_p_name, struct_,            \
+                           struct_deinit_fun)                            \
+    args_setHeapStructWithSize((Args_p_self), (char_p_name), &(struct_), \
+                               sizeof(struct_), (void*)struct_deinit_fun)
+
+void* args_getStruct(Args* self, char* name);
 
 int32_t args_set(Args* self, char* name, char* valueStr);
 int32_t args_setObjectWithClass(Args* self,
                                 char* objectName,
                                 char* className,
                                 void* objectPtr);
-int32_t args_setPtrWithType(Args* self,
-                            char* name,
-                            ArgType type,
-                            void* objPtr);
+int32_t args_setPtrWithType(Args* self, char* name, ArgType type, void* objPtr);
 int32_t args_foreach(Args* self,
                      int32_t (*eachHandle)(Arg* argEach, Args* handleArgs),
                      Args* handleArgs);
@@ -99,6 +112,7 @@ char* args_getBuff(Args* self, int32_t size);
 uint8_t args_setLiteral(Args* self, char* targetArgName, char* literal);
 int args_pushArg(Args* self, Arg* arg);
 Arg* args_getArg_index(Args* self, int index);
+void* args_getHeapStruct(Args* self, char* name);
 
 Args* New_args(Args* args);
 #endif

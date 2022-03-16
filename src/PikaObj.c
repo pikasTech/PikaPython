@@ -734,6 +734,8 @@ char* method_getStr(Args* args, char* argName) {
     return args_getStr(args, argName);
 }
 
+
+
 PikaObj* New_PikaObj(void) {
     PikaObj* self = pikaMalloc(sizeof(PikaObj));
     /* List */

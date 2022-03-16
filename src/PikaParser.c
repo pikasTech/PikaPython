@@ -1149,13 +1149,6 @@ exit:
     return ASM;
 }
 
-static char* ASM_loadASM(Args* outBuffs, Arg* pikaAsmBuff, uint8_t isToFlash) {
-    if (isToFlash) {
-        return __platform_load_pikaAsm();
-    }
-    return strsCopy(outBuffs, arg_getStr(pikaAsmBuff));
-}
-
 char* Parser_multiLineToAsmOrByteCode(Args* outBuffs,
                                       ByteCodeFrame* bytecode_frame,
                                       char* multi_line) {

@@ -44,7 +44,12 @@ typedef enum {
     ARG_TYPE_NATIVE_METHOD,
     ARG_TYPE_OBJECT_METHOD,
     ARG_TYPE_STATIC_METHOD,
+    ARG_TYPE_STRUCT,
+    ARG_TYPE_HEAP_STRUCT,
 } ArgType;
+
+
+typedef void (*StructDeinitFun)(void* struct_);
 
 typedef struct __arg __arg;
 struct __arg {
@@ -118,5 +123,11 @@ Arg* arg_setStruct(Arg* self,
                    char* name,
                    void* struct_ptr,
                    uint32_t struct_size);
+Arg* arg_setHeapStruct(Arg* self,
+                       char* name,
+                       void* struct_ptr,
+                       uint32_t struct_size,
+                       void* struct_deinit_fun);
+void* arg_getHeapStruct(Arg* self);
 
 #endif
