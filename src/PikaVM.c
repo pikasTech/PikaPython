@@ -926,20 +926,22 @@ void byteCodeFrame_deinit(ByteCodeFrame* self) {
     instructArray_deinit(&(self->instruct_array));
 }
 
-void instructArray_init(InstructArray* ins_array) {
-    ins_array->arg_buff = arg_setNull(NULL);
-    ins_array->size = 0;
-    ins_array->content_offset_now = 0;
+void instructArray_init(InstructArray* self) {
+    self->arg_buff = arg_setNull(NULL);
+    instructArray_update(self);
+    self->size = 0;
+    self->content_offset_now = 0;
 }
 
 void instructArray_deinit(InstructArray* ins_array) {
     arg_deinit(ins_array->arg_buff);
 }
 
-void instructArray_append(InstructArray* ins_array, InstructUnit* ins_unit) {
-    ins_array->arg_buff =
-        arg_append(ins_array->arg_buff, ins_unit, instructUnit_getSize());
-    ins_array->size += instructUnit_getSize();
+void instructArray_append(InstructArray* self, InstructUnit* ins_unit) {
+    self->arg_buff =
+        arg_append(self->arg_buff, ins_unit, instructUnit_getSize());
+    instructArray_update(self);
+    self->size += instructUnit_getSize();
 }
 
 void instructUnit_init(InstructUnit* ins_unit) {
@@ -949,7 +951,11 @@ void instructUnit_init(InstructUnit* ins_unit) {
 }
 
 static void* instructArray_getStart(InstructArray* self) {
-    return (void*)(arg_getContent(self->arg_buff));
+    return self->content_start;
+}
+
+void instructArray_update(InstructArray* self) {
+    self->content_start = (void*)arg_getContent(self->arg_buff);
 }
 
 static InstructUnit* instructArray_getNow(InstructArray* self) {
