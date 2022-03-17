@@ -102,29 +102,17 @@ int main(void) {
         /* boot from flash */
         pikaMain = newRootObj("pikaMain", New_PikaMain);
         __pikaMain = pikaMain;
+				printf("[info]: boot from flash.\r\n");
         if (code[0] == 'i') {
-            printf("[info]: compiling the python...\r\n");
-            main_codeBuff = arg_setStr(NULL, "", code);
-            // obj_run(pikaMain, arg_getStr(main_codeBuff));
-            Args* buffs = New_args(NULL);
-            Parser_multiLineToAsm(buffs, arg_getStr(main_codeBuff));
-            NVIC_SystemReset();
+            obj_run(pikaMain, code);
             goto main_loop;
         }
-        if (code[0] == 'B') {
-//            printf("==============[Pika ASM]==============\r\n");
-//            for (int i = 0; i < strGetSize(code); i++) {
-//                if ('\n' == code[i]) {
-//                    fputc('\r', (FILE*)!NULL);
-//                }
-//                fputc(code[i], (FILE*)!NULL);
-//            }
-//            printf("==============[Pika ASM]==============\r\n");
-            printf("[info]: asm size: %d\r\n", strGetSize(code));
-            printf("[info]: boot from Pika Asm.\r\n");
-            pikaVM_runAsm(pikaMain, code);
-            goto main_loop;
-        }
+//        if (code[0] == 'B') {
+//            printf("[info]: asm size: %d\r\n", strGetSize(code));
+//            printf("[info]: boot from Pika Asm.\r\n");
+//            pikaVM_runAsm(pikaMain, code);
+//            goto main_loop;
+//        }
     } else {
         /* boot from firmware */
         printf("[info]: boot from firmware.\r\n");

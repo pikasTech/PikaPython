@@ -18,6 +18,7 @@ print('mem.now :')
 mem.now()
 
 while True:
+    mem.now()
     io1.low()
     time.sleep_ms(500)
     io1.high()

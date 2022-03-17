@@ -17,7 +17,7 @@
         <TargetCommonOption>
           <Device>STM32G030C8Tx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32G0xx_DFP.1.4.0</PackID>
+          <PackID>Keil.STM32G0xx_DFP.1.3.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x20001FFF) IROM(0x8000000-0x800FFFF) CLOCK(8000000) CPUTYPE("Cortex-M0+") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -707,6 +707,11 @@
               <FilePath>..\pikascript\pikascript-api/PikaStdLib-api.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdLib_PikaObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/PikaStdLib_PikaObj-api.c</FilePath>
+            </File>
+            <File>
               <FileName>STM32G0_PWM-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/STM32G0_PWM-api.c</FilePath>
@@ -725,6 +730,16 @@
               <FileName>pikaScript.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/pikaScript.c</FilePath>
+            </File>
+            <File>
+              <FileName>machine_PWM-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_PWM-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>machine_Task-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_Task-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdTask_Task-api.c</FileName>
@@ -762,6 +777,16 @@
               <FilePath>..\pikascript\pikascript-api/PikaStdDevice_PWM-api.c</FilePath>
             </File>
             <File>
+              <FileName>machine_GPIO-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_GPIO-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>machine-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine-api.c</FilePath>
+            </File>
+            <File>
               <FileName>STM32G0_IIC-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/STM32G0_IIC-api.c</FilePath>
@@ -785,6 +810,16 @@
               <FileName>PikaStdDevice_Time-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdDevice_Time-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>machine_KEY-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_KEY-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>machine_LCD-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_LCD-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaPiZero-api.c</FileName>
@@ -812,6 +847,11 @@
               <FilePath>..\pikascript\pikascript-api/STM32G0_Time-api.c</FilePath>
             </File>
             <File>
+              <FileName>machine_Time-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_Time-api.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdLib_StringObj-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdLib_StringObj-api.c</FilePath>
@@ -822,9 +862,19 @@
               <FilePath>..\pikascript\pikascript-api/PikaPiZero_LCD-api.c</FilePath>
             </File>
             <File>
+              <FileName>machine_ADC-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_ADC-api.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdData_String-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdData_String-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>machine_Point-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_Point-api.c</FilePath>
             </File>
             <File>
               <FileName>STM32G0_Task-api.c</FileName>
@@ -847,6 +897,16 @@
               <FilePath>..\pikascript\pikascript-api/PikaStdDevice_ADC-api.c</FilePath>
             </File>
             <File>
+              <FileName>machine_UART-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_UART-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>machine_RGB-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_RGB-api.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaPiZero_KEY-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaPiZero_KEY-api.c</FilePath>
@@ -855,61 +915,6 @@
               <FileName>STM32G0_ADC-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/STM32G0_ADC-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_ADC-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_ADC-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_GPIO-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_GPIO-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_KEY-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_KEY-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_LCD-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_LCD-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_Point-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_Point-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_PWM-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_PWM-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_RGB-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_RGB-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_Task-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_Task-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_Time-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_Time-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_UART-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_UART-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine-api.c</FilePath>
             </File>
           </Files>
         </Group>

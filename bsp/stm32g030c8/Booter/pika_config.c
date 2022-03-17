@@ -164,12 +164,12 @@ uint32_t flash_write_char(uint32_t bassAddr,
     return flash_addr;
 }
 
-uint8_t __platform_Asm_is_to_flash(char* pyMultiLine) {
-    if (strCountSign(pyMultiLine, '\n') > 10) {
-        return 1;
-    }
-    return 0;
-}
+//uint8_t __platform_Asm_is_to_flash(char* pyMultiLine) {
+////    if (strCountSign(pyMultiLine, '\n') > 10) {
+////        return 1;
+////    }
+//    return 0;
+//}
 
 int32_t __saveStrToFlash(char* str,
                          uint32_t flashStart,
@@ -183,20 +183,20 @@ int32_t __saveStrToFlash(char* str,
     return 0;
 }
 
-char* __platform_load_pikaAsm() {
-    return (char*)FLASH_PIKA_ASM_START_ADDR;
-}
+//char* __platform_load_pikaAsm() {
+//    return (char*)FLASH_PIKA_ASM_START_ADDR;
+//}
 
-int32_t __platform_save_pikaAsm(char* PikaAsm) {
-    if (0 == globalWriteAddress) {
-        __eriseSelecttedFlash(FLASH_PIKA_ASM_START_ADDR,
-                              FLASH_PIKA_ASM_END_ADDR);
-    }
-    return __saveStrToFlash(PikaAsm, FLASH_PIKA_ASM_START_ADDR,
-                            FLASH_PIKA_ASM_END_ADDR, &globalWriteAddress);
-}
+//int32_t __platform_save_pikaAsm(char* PikaAsm) {
+//    if (0 == globalWriteAddress) {
+//        __eriseSelecttedFlash(FLASH_PIKA_ASM_START_ADDR,
+//                              FLASH_PIKA_ASM_END_ADDR);
+//    }
+//    return __saveStrToFlash(PikaAsm, FLASH_PIKA_ASM_START_ADDR,
+//                            FLASH_PIKA_ASM_END_ADDR, &globalWriteAddress);
+//}
 
-int32_t __platform_save_pikaAsm_EOF() {
+int32_t __save_pikaAsm_EOF() {
     for (int i = 0; i < 16; i++) {
         globalWriteAddress = flash_write_char(FLASH_PIKA_ASM_START_ADDR,
                                               globalWriteAddress, '\0');
@@ -336,7 +336,7 @@ void STM32_Code_flashHandler(void) {
     /* write EOF */
     __saveStrToFlash("\n\n", FLASH_PIKA_ASM_START_ADDR,
     FLASH_PIKA_ASM_END_ADDR, &globalWriteAddress);
-    __platform_save_pikaAsm_EOF();
+    __save_pikaAsm_EOF();
     HAL_FLASH_Lock();
     
     printf("[ OK ]: Write flash ok! \r\n");

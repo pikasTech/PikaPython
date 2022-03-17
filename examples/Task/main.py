@@ -20,6 +20,7 @@ mem.max()
 
 def rgb_task():
     rgb.flow()
+    mem.now()
 
 
 def led_task():
