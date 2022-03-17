@@ -824,11 +824,6 @@ VMParameters* pikaVM_runPyOrByteCode(PikaObj* self,
         /* load bytecode */
         byteCodeFrame_loadBytes(bytecode_frame_p, bytecode);
     }
-    /* save to ram if do not save to flash */
-    if ((1 == __platform_save_pikaAsm("")) &&
-        (!obj_isArgExist(self, "__asm"))) {
-        /* TODO */
-    }
     /* run byteCode */
     globals = pikaVM_runByteCodeFrame(self, bytecode_frame_p);
     goto exit;

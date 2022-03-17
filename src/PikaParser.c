@@ -1156,8 +1156,6 @@ char* Parser_multiLineToAsmOrByteCode(Args* outBuffs,
     Arg* asm_buff = arg_setStr(NULL, "", "");
     uint32_t line_offset = 0;
     uint32_t multi_line_size = strGetSize(multi_line);
-    /* check if store the Asm to flash */
-    uint8_t is_to_flash = __platform_Asm_is_to_flash(multi_line);
     char* out_ASM = NULL;
     /* parse each line */
     while (1) {
@@ -1185,10 +1183,6 @@ char* Parser_multiLineToAsmOrByteCode(Args* outBuffs,
         if (line_offset >= multi_line_size) {
             break;
         }
-    }
-    /* add EOF for flash storage */
-    if (is_to_flash) {
-        __platform_save_pikaAsm_EOF();
     }
     if (NULL != outBuffs) {
         /* load stored ASM */

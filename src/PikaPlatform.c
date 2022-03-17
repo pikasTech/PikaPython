@@ -85,21 +85,7 @@ PIKA_WEAK int __platform_sprintf(char* buff, char* fmt, ...) {
     return res;
 }
 
-PIKA_WEAK char* __platform_load_pikaAsm(void) {
-    /* faild */
-    return NULL;
-}
-PIKA_WEAK int32_t __platform_save_pikaAsm(char* PikaAsm) {
-    /* faild */
-    return 1;
-}
-PIKA_WEAK uint8_t __platform_Asm_is_to_flash(char* pyMultiLine) {
-    /* not to flash */
-    return 0;
-}
-PIKA_WEAK int32_t __platform_save_pikaAsm_EOF(void) {
-    return 1;
-}
+
 PIKA_WEAK void __platform_wait(void) {
     while (1) {
     };
