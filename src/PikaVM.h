@@ -131,5 +131,6 @@ uint16_t constPool_getOffsetByData(ConstPool* self, char* data);
 void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool);
 void constPool_update(ConstPool* self);
 void instructArray_update(InstructArray* self);
+void constPool_printAsArray(ConstPool* self);
 
 #endif

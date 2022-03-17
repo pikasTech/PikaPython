@@ -919,9 +919,14 @@ exit:
 }
 
 void byteCodeFrame_init(ByteCodeFrame* self) {
+    /* init to support append,
+       if only load static bytecode,
+       can not init */
     constPool_init(&(self->const_pool));
     instructArray_init(&(self->instruct_array));
 }
+
+void byteCodeFrame_fromFlash(ByteCodeFrame* self) {}
 
 void byteCodeFrame_deinit(ByteCodeFrame* self) {
     constPool_deinit(&(self->const_pool));
@@ -1097,4 +1102,27 @@ char* constPool_getByOffset(ConstPool* self, uint16_t offset) {
 
 InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset) {
     return (InstructUnit*)(instructArray_getStart(self) + (uintptr_t)offset);
+}
+
+void constPool_printAsArray(ConstPool* self) {
+    __platform_printf("char constArray[] = {\n");
+    uint16_t ptr_befor = self->content_offset_now;
+    /* set ptr_now to begin */
+    self->content_offset_now = 0;
+    while (1) {
+        if (NULL == constPool_getNext(self)) {
+            goto exit;
+        }
+        char* data_each = constPool_getNow(self);
+        /* todo start */
+        for (uint32_t i = 0; i < strGetSize(data_each) + 1; i++) {
+            __platform_printf("0x%02x, ", *(data_each + (uintptr_t)i));
+        }
+        /* todo end */
+    }
+exit:
+    __platform_printf("};\n");
+    /* retore ptr_now */
+    self->content_offset_now = ptr_befor;
+    return;
 }

@@ -2216,11 +2216,15 @@ TEST(compiler, task) {
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
     byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    /* do something */
     byteCodeFrame_print(&bytecode_frame);
     printf("Asm size: %d\r\n", strGetSize(pikaAsm));
+
+    constPool_printAsArray(&(bytecode_frame.const_pool));
+
     /* deinit */
     byteCodeFrame_deinit(&bytecode_frame);
     strsDeinit(&buffs);
-
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
