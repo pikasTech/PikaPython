@@ -823,12 +823,11 @@ exit:
     return globals;
 }
 
-char* constPool_getStart(ConstPool* self) {
-    return (char*)arg_getContent(self->arg_buff);
+static void* constPool_getStart(ConstPool* self) {
+    return (void*)arg_getContent(self->arg_buff);
 }
 
-void constPool_update(ConstPool *self){
-}
+void constPool_update(ConstPool* self) {}
 
 void constPool_init(ConstPool* self) {
     self->arg_buff = arg_setStr(NULL, "", "");
@@ -945,8 +944,8 @@ void instructUnit_init(InstructUnit* ins_unit) {
     ins_unit->isNewLine_instruct = 0;
 }
 
-static InstructUnit* instructArray_getStart(InstructArray* self) {
-    return (InstructUnit*)(arg_getContent(self->arg_buff));
+static void* instructArray_getStart(InstructArray* self) {
+    return (void*)(arg_getContent(self->arg_buff));
 }
 
 static InstructUnit* instructArray_getNow(InstructArray* self) {
@@ -954,7 +953,8 @@ static InstructUnit* instructArray_getNow(InstructArray* self) {
         /* is the end */
         return NULL;
     }
-    return instructArray_getStart(self) + (uintptr_t)(self->content_offset_now);
+    return (InstructUnit*)(instructArray_getStart(self) +
+                           (uintptr_t)(self->content_offset_now));
 }
 
 static InstructUnit* instructArray_getNext(InstructArray* self) {
@@ -1078,10 +1078,9 @@ VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
 }
 
 char* constPool_getByOffset(ConstPool* self, uint16_t offset) {
-    return (char*)((void*)constPool_getStart(self) + (uintptr_t)offset);
+    return (char*)(constPool_getStart(self) + (uintptr_t)offset);
 }
 
 InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset) {
-    return (InstructUnit*)((void*)instructArray_getStart(self) +
-                           (uintptr_t)offset);
+    return (InstructUnit*)(instructArray_getStart(self) + (uintptr_t)offset);
 }
