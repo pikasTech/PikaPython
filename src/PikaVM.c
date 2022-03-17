@@ -1204,4 +1204,5 @@ void byteCodeFrame_printAsArray(ByteCodeFrame* self) {
     instructArray_printAsArray(&(self->instruct_array));
     constPool_printAsArray(&(self->const_pool));
     __platform_printf("};\n");
+    __platform_printf("pikaVM_runByteCode(self, (uint8_t*)bytes);\n");
 }

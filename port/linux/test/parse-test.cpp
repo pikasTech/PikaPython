@@ -2228,4 +2228,9 @@ TEST(compiler, task) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
+TEST(compiler, demo1) {
+    char* lines = (char*)
+        "platformGetTick()";
+    Parser_compilePyToBytecodeArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

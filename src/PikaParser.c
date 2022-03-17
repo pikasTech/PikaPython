@@ -1583,3 +1583,14 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
 char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode) {
     return NULL;
 }
+
+void Parser_compilePyToBytecodeArray(char* lines) {
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    bytecodeFrame_fromMultiLine(&bytecode_frame, lines);
+    /* do something */
+    byteCodeFrame_print(&bytecode_frame);
+    byteCodeFrame_printAsArray(&bytecode_frame);
+    /* deinit */
+    byteCodeFrame_deinit(&bytecode_frame);
+}

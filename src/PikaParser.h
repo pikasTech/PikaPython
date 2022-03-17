@@ -44,5 +44,6 @@ char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);
 ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
 int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
                                             char* multi_line);
+void Parser_compilePyToBytecodeArray(char* lines);
 
 #endif
