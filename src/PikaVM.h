@@ -132,5 +132,8 @@ void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool);
 void constPool_update(ConstPool* self);
 void instructArray_update(InstructArray* self);
 void constPool_printAsArray(ConstPool* self);
+void instructArray_printAsArray(InstructArray* self);
+void byteCodeFrame_loadBytes(ByteCodeFrame* self, uint8_t* bytes);
+void byteCodeFrame_printAsArray(ByteCodeFrame* self);
 
 #endif

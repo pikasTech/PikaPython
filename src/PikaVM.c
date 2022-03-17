@@ -926,7 +926,15 @@ void byteCodeFrame_init(ByteCodeFrame* self) {
     instructArray_init(&(self->instruct_array));
 }
 
-void byteCodeFrame_fromFlash(ByteCodeFrame* self) {}
+void byteCodeFrame_loadBytes(ByteCodeFrame* self, uint8_t* bytes) {
+    uint16_t* ins_size_p = (uint16_t*)bytes;
+    void* ins_start_p = (uint16_t*)(bytes + 2);
+    uint16_t* const_size_p = ins_start_p + *ins_size_p;
+    self->instruct_array.size = *ins_size_p;
+    self->instruct_array.content_start = ins_start_p;
+    self->const_pool.size = *const_size_p;
+    self->const_pool.content_start = const_size_p + 2;
+}
 
 void byteCodeFrame_deinit(ByteCodeFrame* self) {
     constPool_deinit(&(self->const_pool));
@@ -1040,6 +1048,35 @@ exit:
     return;
 }
 
+void instructArray_printAsArray(InstructArray* self) {
+    uint16_t offset_befor = self->content_offset_now;
+    self->content_offset_now = 0;
+    uint8_t line_num = 12;
+    uint16_t g_i = 0;
+    uint8_t* ins_size_p = (uint8_t*)&self->size;
+    __platform_printf("0x%02x, ", *(ins_size_p));
+    __platform_printf("0x%02x, ", *(ins_size_p + (uintptr_t)1));
+    __platform_printf("/* instruct array size */\n");
+    while (1) {
+        InstructUnit* ins_unit = instructArray_getNow(self);
+        if (NULL == ins_unit) {
+            goto exit;
+        }
+        for (int i = 0; i < (int)instructUnit_getSize(ins_unit); i++) {
+            g_i++;
+            __platform_printf("0x%02x, ", *((uint8_t*)ins_unit + (uintptr_t)i));
+            if (g_i % line_num == 0) {
+                __platform_printf("\n");
+            }
+        }
+        instructArray_getNext(self);
+    }
+exit:
+    __platform_printf("/* instruct array */\n");
+    self->content_offset_now = offset_befor;
+    return;
+}
+
 size_t byteCodeFrame_getSize(ByteCodeFrame* bf) {
     return bf->const_pool.size + bf->instruct_array.size;
 }
@@ -1105,11 +1142,13 @@ InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset) {
 }
 
 void constPool_printAsArray(ConstPool* self) {
-    __platform_printf("char constArray[] = {\n");
     uint8_t* const_size_str = (uint8_t*)&(self->size);
-    __platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)1));
     __platform_printf("0x%02x, ", *(const_size_str));
+    __platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)1));
+    __platform_printf("/* const pool size */\n");
     uint16_t ptr_befor = self->content_offset_now;
+    uint8_t line_num = 12;
+    uint16_t g_i = 0;
     /* set ptr_now to begin */
     self->content_offset_now = 0;
     while (1) {
@@ -1120,12 +1159,23 @@ void constPool_printAsArray(ConstPool* self) {
         /* todo start */
         for (uint32_t i = 0; i < strGetSize(data_each) + 1; i++) {
             __platform_printf("0x%02x, ", *(data_each + (uintptr_t)i));
+            g_i++;
+            if (g_i % line_num == 0) {
+                __platform_printf("\n");
+            }
         }
         /* todo end */
     }
 exit:
-    __platform_printf("};\n");
     /* retore ptr_now */
+    __platform_printf("/* const pool */\n");
     self->content_offset_now = ptr_befor;
     return;
+}
+
+void byteCodeFrame_printAsArray(ByteCodeFrame* self) {
+    __platform_printf("const uint8_t bytes[] = {\n");
+    instructArray_printAsArray(&(self->instruct_array));
+    constPool_printAsArray(&(self->const_pool));
+    __platform_printf("};\n");
 }

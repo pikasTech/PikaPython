@@ -2220,11 +2220,12 @@ TEST(compiler, task) {
     byteCodeFrame_print(&bytecode_frame);
     printf("Asm size: %d\r\n", strGetSize(pikaAsm));
 
-    constPool_printAsArray(&(bytecode_frame.const_pool));
+    byteCodeFrame_printAsArray(&bytecode_frame);
 
     /* deinit */
     byteCodeFrame_deinit(&bytecode_frame);
     strsDeinit(&buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
 
