@@ -135,5 +135,6 @@ void constPool_printAsArray(ConstPool* self);
 void instructArray_printAsArray(InstructArray* self);
 void byteCodeFrame_loadBytes(ByteCodeFrame* self, uint8_t* bytes);
 void byteCodeFrame_printAsArray(ByteCodeFrame* self);
+VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode);
 
 #endif

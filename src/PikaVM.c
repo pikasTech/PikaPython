@@ -782,10 +782,20 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     return res;
 }
 
-VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
+VMParameters* pikaVM_runPyOrByteCode(PikaObj* self,
+                                     char* multiLine,
+                                     uint8_t* bytecode) {
+    uint8_t is_run_py;
+    if (NULL != multiLine) {
+        is_run_py = 1;
+    } else if (NULL != bytecode) {
+        is_run_py = 0;
+    } else {
+        return NULL;
+    }
     Args buffs = {0};
     VMParameters* globals = NULL;
-    ByteCodeFrame bytecode_frame_stack;
+    ByteCodeFrame bytecode_frame_stack = {0};
     ByteCodeFrame* bytecode_frame_p = NULL;
     uint8_t is_use_heap_bytecode = 0;
     if (!args_isArgExist(self->list, "__bytecode")) {
@@ -801,11 +811,18 @@ VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
         /* get bytecode_ptr from stack */
         bytecode_frame_p = &bytecode_frame_stack;
     }
-    byteCodeFrame_init(bytecode_frame_p);
-    if (1 == bytecodeFrame_fromMultiLine(bytecode_frame_p, multiLine)) {
-        __platform_printf("[error]: Syntax error.\r\n");
-        globals = NULL;
-        goto exit;
+    /* load or generate byte code frame */
+    if (is_run_py) {
+        /* generate byte code */
+        byteCodeFrame_init(bytecode_frame_p);
+        if (1 == bytecodeFrame_fromMultiLine(bytecode_frame_p, multiLine)) {
+            __platform_printf("[error]: Syntax error.\r\n");
+            globals = NULL;
+            goto exit;
+        }
+    } else {
+        /* load bytecode */
+        byteCodeFrame_loadBytes(bytecode_frame_p, bytecode);
     }
     /* save to ram if do not save to flash */
     if ((1 == __platform_save_pikaAsm("")) &&
@@ -821,6 +838,14 @@ exit:
     }
     strsDeinit(&buffs);
     return globals;
+}
+
+VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
+    return pikaVM_runPyOrByteCode(self, multiLine, NULL);
+}
+
+VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode) {
+    return pikaVM_runPyOrByteCode(self, NULL, bytecode);
 }
 
 static void* constPool_getStart(ConstPool* self) {
@@ -933,7 +958,7 @@ void byteCodeFrame_loadBytes(ByteCodeFrame* self, uint8_t* bytes) {
     self->instruct_array.size = *ins_size_p;
     self->instruct_array.content_start = ins_start_p;
     self->const_pool.size = *const_size_p;
-    self->const_pool.content_start = const_size_p + 2;
+    self->const_pool.content_start = (void*)const_size_p + 2;
 }
 
 void byteCodeFrame_deinit(ByteCodeFrame* self) {
@@ -1151,6 +1176,7 @@ void constPool_printAsArray(ConstPool* self) {
     uint16_t g_i = 0;
     /* set ptr_now to begin */
     self->content_offset_now = 0;
+    __platform_printf("0x00, ");
     while (1) {
         if (NULL == constPool_getNext(self)) {
             goto exit;
