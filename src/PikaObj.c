@@ -423,7 +423,6 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     args_setArg(self->list, arg);
     strsDeinit(&buffs);
 }
-
 static int32_t __class_defineMethodWithType(PikaObj* self,
                                             char* declearation,
                                             Method methodPtr,

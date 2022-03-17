@@ -1106,6 +1106,9 @@ InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset) {
 
 void constPool_printAsArray(ConstPool* self) {
     __platform_printf("char constArray[] = {\n");
+    uint8_t* const_size_str = (uint8_t*)&(self->size);
+    __platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)1));
+    __platform_printf("0x%02x, ", *(const_size_str));
     uint16_t ptr_befor = self->content_offset_now;
     /* set ptr_now to begin */
     self->content_offset_now = 0;
