@@ -824,13 +824,16 @@ exit:
 }
 
 static void* constPool_getStart(ConstPool* self) {
-    return (void*)arg_getContent(self->arg_buff);
+    return self->content_start;
 }
 
-void constPool_update(ConstPool* self) {}
+void constPool_update(ConstPool* self) {
+    self->content_start = (void*)arg_getContent(self->arg_buff);
+}
 
 void constPool_init(ConstPool* self) {
     self->arg_buff = arg_setStr(NULL, "", "");
+    constPool_update(self);
     self->content_offset_now = 0;
     self->size = strGetSize(constPool_getStart(self)) + 1;
 }
@@ -842,6 +845,7 @@ void constPool_deinit(ConstPool* self) {
 void constPool_append(ConstPool* self, char* content) {
     uint16_t size = strGetSize(content) + 1;
     self->arg_buff = arg_append(self->arg_buff, content, size);
+    constPool_update(self);
     self->size += size;
 }
 

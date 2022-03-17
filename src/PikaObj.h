@@ -54,14 +54,14 @@ typedef struct ConstPool_t {
     Arg* arg_buff;
     uint16_t content_offset_now;
     uint16_t size;
-    void* _;
+    void* content_start;
 } ConstPool;
 
 typedef struct InstructArray_t {
     Arg* arg_buff;
     uint16_t content_offset_now;
     uint16_t size;
-    void* _;
+    void* content_start;
 } InstructArray;
 
 typedef struct ByteCodeFrame_t {
