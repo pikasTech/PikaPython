@@ -823,10 +823,14 @@ exit:
     return globals;
 }
 
+char* constPool_getStart(ConstPool* self) {
+    return (char*)arg_getContent(self->arg_buff);
+}
+
 void constPool_init(ConstPool* self) {
     self->arg_buff = arg_setStr(NULL, "", "");
     self->content_offset_now = 0;
-    self->size = strGetSize((char*)arg_getContent(self->arg_buff)) + 1;
+    self->size = strGetSize(constPool_getStart(self)) + 1;
 }
 
 void constPool_deinit(ConstPool* self) {
@@ -844,8 +848,7 @@ char* constPool_getNow(ConstPool* self) {
         /* is the end */
         return NULL;
     }
-    return (char*)(arg_getContent(self->arg_buff) +
-                   (uintptr_t)(self->content_offset_now));
+    return constPool_getStart(self) + (uintptr_t)(self->content_offset_now);
 }
 
 uint16_t constPool_getLastOffset(ConstPool* self) {
@@ -939,29 +942,24 @@ void instructUnit_init(InstructUnit* ins_unit) {
     ins_unit->isNewLine_instruct = 0;
 }
 
-InstructUnit* instructArray_getNow(InstructArray* self) {
+static InstructUnit* instructArray_getStart(InstructArray* self) {
+    return (InstructUnit*)(arg_getContent(self->arg_buff));
+}
+
+static InstructUnit* instructArray_getNow(InstructArray* self) {
     if (self->content_offset_now >= self->size) {
         /* is the end */
         return NULL;
     }
-    return (InstructUnit*)(arg_getContent(self->arg_buff) +
-                           (uintptr_t)(self->content_offset_now));
+    return instructArray_getStart(self) + (uintptr_t)(self->content_offset_now);
 }
 
-InstructUnit* instructArray_getNext(InstructArray* self) {
+static InstructUnit* instructArray_getNext(InstructArray* self) {
     self->content_offset_now += instructUnit_getSize();
     return instructArray_getNow(self);
 }
 
-InstructUnit* instructArray_getLast(InstructArray* self) {
-    if (0 == self->content_offset_now) {
-        return NULL;
-    }
-    self->content_offset_now -= instructUnit_getSize();
-    return instructArray_getNow(self);
-}
-
-char* instructUnit_getInstructStr(InstructUnit* self) {
+static char* instructUnit_getInstructStr(InstructUnit* self) {
 #define __INS_GET_INS_STR
 #include "__instruction_table.cfg"
     return "NON";
@@ -976,7 +974,8 @@ void instructUnit_print(InstructUnit* self) {
                       self->const_pool_index);
 }
 
-void instructUnit_printWithConst(InstructUnit* self, ConstPool* const_pool) {
+static void instructUnit_printWithConst(InstructUnit* self,
+                                        ConstPool* const_pool) {
     if (instructUnit_getIsNewLine(self)) {
         __platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
     }
@@ -1073,4 +1072,13 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame) {
     return pikaVM_runByteCodeWithState(self, self, self, byteCode_frame, 0);
+}
+
+char* constPool_getByOffset(ConstPool* self, uint16_t offset) {
+    return (char*)((void*)constPool_getStart(self) + (uintptr_t)offset);
+}
+
+InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset) {
+    return (InstructUnit*)((void*)instructArray_getStart(self) +
+                           (uintptr_t)offset);
 }
