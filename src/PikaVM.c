@@ -839,7 +839,9 @@ void constPool_init(ConstPool* self) {
 }
 
 void constPool_deinit(ConstPool* self) {
-    arg_deinit(self->arg_buff);
+    if (NULL != self->arg_buff) {
+        arg_deinit(self->arg_buff);
+    }
 }
 
 void constPool_append(ConstPool* self, char* content) {
@@ -933,8 +935,10 @@ void instructArray_init(InstructArray* self) {
     self->content_offset_now = 0;
 }
 
-void instructArray_deinit(InstructArray* ins_array) {
-    arg_deinit(ins_array->arg_buff);
+void instructArray_deinit(InstructArray* self) {
+    if (NULL != self->arg_buff) {
+        arg_deinit(self->arg_buff);
+    }
 }
 
 void instructArray_append(InstructArray* self, InstructUnit* ins_unit) {

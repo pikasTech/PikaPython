@@ -104,7 +104,6 @@ char* constPool_getByOffset(ConstPool* self, uint16_t offset);
 uint16_t constPool_getLastOffset(ConstPool* self);
 void constPool_print(ConstPool* self);
 
-
 void byteCodeFrame_init(ByteCodeFrame* bf);
 void byteCodeFrame_deinit(ByteCodeFrame* bf);
 size_t byteCodeFrame_getSize(ByteCodeFrame* bf);
@@ -117,7 +116,6 @@ void instructUnit_print(InstructUnit* self);
 void instructArray_print(InstructArray* self);
 void byteCodeFrame_print(ByteCodeFrame* self);
 InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset);
-
 
 #define instructUnit_getSize(InstructUnit_p_self) ((size_t)sizeof(InstructUnit))
 #define instructArray_getSize(InsturctArry_p_self) \
@@ -132,5 +130,6 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
 uint16_t constPool_getOffsetByData(ConstPool* self, char* data);
 void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool);
 void constPool_update(ConstPool* self);
+void instructArray_update(InstructArray* self);
 
 #endif
