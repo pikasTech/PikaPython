@@ -802,7 +802,7 @@ VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
         bytecode_frame_p = &bytecode_frame_stack;
     }
     byteCodeFrame_init(bytecode_frame_p);
-    if (1 == BytecodeFrame_fromMultiLine(bytecode_frame_p, multiLine)) {
+    if (1 == bytecodeFrame_fromMultiLine(bytecode_frame_p, multiLine)) {
         __platform_printf("[error]: Syntax error.\r\n");
         globals = NULL;
         goto exit;

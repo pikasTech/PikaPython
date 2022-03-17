@@ -42,7 +42,7 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);
 ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
-int BytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
+int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
                                             char* multi_line);
 
 #endif

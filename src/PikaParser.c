@@ -1205,7 +1205,7 @@ exit:
     return out_ASM;
 };
 
-int BytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
+int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
                                 char* multi_line) {
     if (NULL ==
         Parser_multiLineToAsmOrByteCode(NULL, bytecode_frame, multi_line)) {
