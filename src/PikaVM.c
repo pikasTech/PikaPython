@@ -827,6 +827,9 @@ char* constPool_getStart(ConstPool* self) {
     return (char*)arg_getContent(self->arg_buff);
 }
 
+void constPool_update(ConstPool *self){
+}
+
 void constPool_init(ConstPool* self) {
     self->arg_buff = arg_setStr(NULL, "", "");
     self->content_offset_now = 0;
