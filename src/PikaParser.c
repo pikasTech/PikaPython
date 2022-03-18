@@ -1626,8 +1626,22 @@ int Parser_multiLineToFile(char* multi_line) {
     uint16_t instruct_array_size = bytecode_frame.instruct_array.size;
     byteCodeFrame_deinit(&bytecode_frame);
 
-    /* step 2, write const pool to file */
+    /* step 2, write instruct array to file */
+    __platform_fwrite(&instruct_array_size, 1, 2, bytecode_f);
+    byteCodeFrame_init(&bytecode_frame);
+    bytecode_frame.const_pool.output_f = bytecode_f;
+    bytecode_frame.instruct_array.output_f = bytecode_f;
+    /* instruct array to file */
+    bytecode_frame.instruct_array.output_redirect_fun =
+        __handler_instructArray_output_file;
+    Parser_parsePyLines(NULL, &bytecode_frame, multi_line);
+    byteCodeFrame_deinit(&bytecode_frame);
+
+    /* step 3, write const pool to file */
     __platform_fwrite(&const_pool_size, 1, 2, bytecode_f);
+    char void_ = 0;
+    /* add \0 at the start */
+    __platform_fwrite(&void_, 1, 1, bytecode_f);
     byteCodeFrame_init(&bytecode_frame);
     bytecode_frame.const_pool.output_f = bytecode_f;
     bytecode_frame.instruct_array.output_f = bytecode_f;
@@ -1637,17 +1651,6 @@ int Parser_multiLineToFile(char* multi_line) {
     /* instruct array to none */
     bytecode_frame.instruct_array.output_redirect_fun =
         __handler_instructArray_output_none;
-    Parser_parsePyLines(NULL, &bytecode_frame, multi_line);
-    byteCodeFrame_deinit(&bytecode_frame);
-
-    /* step 3, write instruct array to file */
-    __platform_fwrite(&instruct_array_size, 1, 2, bytecode_f);
-    byteCodeFrame_init(&bytecode_frame);
-    bytecode_frame.const_pool.output_f = bytecode_f;
-    bytecode_frame.instruct_array.output_f = bytecode_f;
-    /* instruct array to file */
-    bytecode_frame.instruct_array.output_redirect_fun =
-        __handler_instructArray_output_file;
     Parser_parsePyLines(NULL, &bytecode_frame, multi_line);
     byteCodeFrame_deinit(&bytecode_frame);
 

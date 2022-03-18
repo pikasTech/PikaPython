@@ -1298,10 +1298,14 @@ TEST(pikaMain, class_demo_1_file) {
         "print(x.i)\n"
         "print(x.f())\n";
     Parser_multiLineToFile((char*)lines);
+    char bytecodebuff[4096] = {0};
+    FILE* f = __platform_fopen("pika_bytecode.bin", "r");
+    __platform_fread(bytecodebuff, 1, 4096, f);
+    pikaVM_runByteCode(self, (uint8_t*)bytecodebuff);
     /* assert */
-    // EXPECT_STREQ(log_buff[0], (char*)"hello world\r\n");
-    // EXPECT_STREQ(log_buff[1], (char*)"12345\r\n");
-    // EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], (char*)"hello world\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"12345\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
