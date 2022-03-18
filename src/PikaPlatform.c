@@ -101,7 +101,7 @@ PIKA_WEAK char __platform_getchar(void) {
 #ifdef __linux
     return getchar();
 #else
-    __platform_printf("[error]: __platform_function need impaltment!\r\n");
+    __platform_printf("[error]: __platform_function need implementation!\r\n");
     while (1) {
     }
 #endif
@@ -111,7 +111,7 @@ PIKA_WEAK FILE* __platform_fopen(const char* filename, const char* modes) {
 #ifdef __linux
     return fopen(filename, modes);
 #else
-    __platform_printf("[error]: __platform_function need impaltment!\r\n");
+    __platform_printf("[error]: __platform_function need implementation!\r\n");
     while (1) {
     }
 #endif
@@ -121,7 +121,33 @@ PIKA_WEAK int __platform_fclose(FILE* stream) {
 #ifdef __linux
     return fclose(stream);
 #else
-    __platform_printf("[error]: __platform_function need impaltment!\r\n");
+    __platform_printf("[error]: __platform_function need implementation!\r\n");
+    while (1) {
+    }
+#endif
+}
+
+PIKA_WEAK size_t __platform_fwrite(const void* ptr,
+                                   size_t size,
+                                   size_t n,
+                                   FILE* stream) {
+#ifdef __linux
+    return fwrite(ptr, size, n, stream);
+#else
+    __platform_printf("[error]: __platform_function need implementation!\r\n");
+    while (1) {
+    }
+#endif
+}
+
+PIKA_WEAK size_t __platform_fread(void* ptr,
+                                  size_t size,
+                                  size_t n,
+                                  FILE* stream) {
+#ifdef __linux
+    return fread(ptr, size, n, stream);
+#else
+    __platform_printf("[error]: __platform_function need implementation!\r\n");
     while (1) {
     }
 #endif

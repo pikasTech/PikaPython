@@ -32,9 +32,9 @@
 #define __PIKA_PALTFORM__H
 #include <stdarg.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 /* Compiler */
 #if defined(__CC_ARM) || defined(__CLANG_ARM) /* ARM Compiler */
@@ -103,3 +103,5 @@ char __platform_getchar(void);
 /* file API */
 FILE* __platform_fopen(const char* filename, const char* modes);
 int __platform_fclose(FILE* stream);
+size_t __platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream);
+size_t __platform_fread(void* ptr, size_t size, size_t n, FILE* stream);
