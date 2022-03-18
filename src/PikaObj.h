@@ -216,6 +216,6 @@ void obj_shellLineProcess(PikaObj* self,
         __platform_fwrite()
         __platform_fclose()
 */
-int pikaCompile(char* python_lines, char* output_file_name);
+int pikaCompile(char* output_file_name, char* py_lines);
 
 #endif
