@@ -67,14 +67,6 @@ void HARDWARE_PRINTF_Init(void) {
     LL_USART_EnableIT_RXNE(USART1);
     LL_USART_EnableIT_PE(USART1);
 }
-//#pragma import(__use_no_semihosting)
-//void _sys_exit(int x) {
-//    x = x;
-//}
-
-//struct __FILE{
-//    int handle;
-//};
 
 //FILE __stdout;
 int fputc(int ch, FILE* f) {
@@ -104,7 +96,6 @@ void delay_us(uint32_t udelay) {
         }
     }
 }
-
 
 /* support pika Asm to flash */
 uint32_t globalWriteAddress = 0;
@@ -164,39 +155,28 @@ uint32_t flash_write_char(uint32_t bassAddr,
     return flash_addr;
 }
 
-//uint8_t __platform_Asm_is_to_flash(char* pyMultiLine) {
-////    if (strCountSign(pyMultiLine, '\n') > 10) {
-////        return 1;
-////    }
-//    return 0;
-//}
+int32_t __writeToFlash(char* ptr,
+											 uint32_t flashStart,
+											 uint32_t flashEnd,
+											 uint32_t *writeAddress_p,
+											 uint32_t size){
+		for (int i = 0; i < size; i++) {
+        (*writeAddress_p) =
+            flash_write_char(flashStart, (*writeAddress_p), ptr[i]);
+    }
+    return 0;
+}
+
 
 int32_t __saveStrToFlash(char* str,
                          uint32_t flashStart,
                          uint32_t flashEnd,
                          uint32_t* writeAddress_p) {
     uint32_t size = strGetSize(str);
-    for (int i = 0; i < size; i++) {
-        (*writeAddress_p) =
-            flash_write_char(flashStart, (*writeAddress_p), str[i]);
-    }
-    return 0;
+    return __writeToFlash(str, flashStart, flashEnd, writeAddress_p, size);
 }
 
-//char* __platform_load_pikaAsm() {
-//    return (char*)FLASH_PIKA_ASM_START_ADDR;
-//}
-
-//int32_t __platform_save_pikaAsm(char* PikaAsm) {
-//    if (0 == globalWriteAddress) {
-//        __eriseSelecttedFlash(FLASH_PIKA_ASM_START_ADDR,
-//                              FLASH_PIKA_ASM_END_ADDR);
-//    }
-//    return __saveStrToFlash(PikaAsm, FLASH_PIKA_ASM_START_ADDR,
-//                            FLASH_PIKA_ASM_END_ADDR, &globalWriteAddress);
-//}
-
-int32_t __save_pikaAsm_EOF() {
+int32_t __writeEOFToFlash() {
     for (int i = 0; i < 16; i++) {
         globalWriteAddress = flash_write_char(FLASH_PIKA_ASM_START_ADDR,
                                               globalWriteAddress, '\0');
@@ -231,7 +211,7 @@ void STM32_Code_Init(void) {
     codeHeap.wait = 0;
 }
 
-void __erise_all(void){
+void __eriseUserFlash(void){
     printf("[info]: erising flash... \r\n");
     /* init erise state */
     globalWriteAddress = 0;
@@ -325,7 +305,7 @@ void STM32_Code_flashHandler(void) {
     /* transmite is finished */
     printf("[info]: recieved size: %d\r\n", codeHeap.size);
     /* write to flash from buff (heap.content) */
-    __erise_all();
+    __eriseUserFlash();
     printf("[info]: Writing flash... \r\n");
     /* init write state */
     __platform_memset(flash_writeBuff, 0, sizeof(flash_writeBuff));
@@ -336,7 +316,7 @@ void STM32_Code_flashHandler(void) {
     /* write EOF */
     __saveStrToFlash("\n\n", FLASH_PIKA_ASM_START_ADDR,
     FLASH_PIKA_ASM_END_ADDR, &globalWriteAddress);
-    __save_pikaAsm_EOF();
+    __writeEOFToFlash();
     HAL_FLASH_Lock();
     
     printf("[ OK ]: Write flash ok! \r\n");
@@ -368,3 +348,23 @@ void __platform_wait(void){
         pika_memory_lock ++;
     }
 }
+
+/* file API */
+FILE* __platform_fopen(const char* filename, const char* modes){
+		__eriseUserFlash();
+		return NULL;
+};
+int __platform_fclose(FILE* stream){
+		__writeEOFToFlash();
+		return 0;
+};
+
+size_t __platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream){
+		__writeToFlash(	(char *)ptr, 
+										FLASH_PIKA_ASM_START_ADDR, 
+										FLASH_PIKA_ASM_END_ADDR, 
+										&globalWriteAddress, 
+										size * n);
+		return size * n;
+};
+

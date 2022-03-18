@@ -26,6 +26,7 @@
 #include "pikaVM.h"
 #include "stdbool.h"
 #include "pika_config.h"
+#include "pikaParser.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -98,21 +99,21 @@ int main(void) {
 
     /* boot pikaScript */
     char* code = (char*)FLASH_SCRIPT_START_ADDR;
-    if (code[0] != 0xFF) {
+    if ((code[0] != 0xFF) && (code[1] != 0xFF)) {
         /* boot from flash */
         pikaMain = newRootObj("pikaMain", New_PikaMain);
         __pikaMain = pikaMain;
-				printf("[info]: boot from flash.\r\n");
         if (code[0] == 'i') {
-            obj_run(pikaMain, code);
-            goto main_loop;
-        }
-//        if (code[0] == 'B') {
-//            printf("[info]: asm size: %d\r\n", strGetSize(code));
-//            printf("[info]: boot from Pika Asm.\r\n");
-//            pikaVM_runAsm(pikaMain, code);
-//            goto main_loop;
-//        }
+            printf("[info]: compiling the python script...\r\n");
+            main_codeBuff = arg_setStr(NULL, "", code);
+            // obj_run(pikaMain, arg_getStr(main_codeBuff));
+            Parser_multiLineToFile("", arg_getStr(main_codeBuff));
+            NVIC_SystemReset();
+        }else{
+					/* found byte code */
+						pikaVM_runByteCode(pikaMain, (uint8_t*) code);
+					  goto main_loop;
+				}
     } else {
         /* boot from firmware */
         printf("[info]: boot from firmware.\r\n");
