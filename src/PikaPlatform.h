@@ -34,6 +34,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 /* Compiler */
 #if defined(__CC_ARM) || defined(__CLANG_ARM) /* ARM Compiler */
@@ -45,55 +46,60 @@
 #endif
 /* default PIKA_WEAK */
 #ifndef PIKA_WEAK
-#define PIKA_WEAK 
+#define PIKA_WEAK
 #endif
 
 /* OS */
 #ifdef __RTTHREAD__
 #include <rtthread.h>
-#define __platform_printf(...)  rt_kprintf(__VA_ARGS__)
+#define __platform_printf(...) rt_kprintf(__VA_ARGS__)
 #endif
 
-
-/* 
+/*
     [Note]:
-    Create a pika_config.c to override the following weak functions to config PikaScript.
-    [Example]:
-    1. https://gitee.com/Lyon1998/pikascript/blob/master/package/STM32G030Booter/pika_config.c
-    2. https://gitee.com/Lyon1998/pikascript/blob/master/package/pikaRTBooter/pika_config.c
+    Create a pika_config.c to override the following weak functions to config
+   PikaScript. [Example]:
+    1.
+   https://gitee.com/Lyon1998/pikascript/blob/master/package/STM32G030Booter/pika_config.c
+    2.
+   https://gitee.com/Lyon1998/pikascript/blob/master/package/pikaRTBooter/pika_config.c
 */
 
 /* interrupt config */
-void    __platform_enable_irq_handle(void);
-void    __platform_disable_irq_handle(void);
+void __platform_enable_irq_handle(void);
+void __platform_disable_irq_handle(void);
 
 /* printf family config */
 #ifndef __platform_printf
-void    __platform_printf(char* fmt, ...);
+void __platform_printf(char* fmt, ...);
 #endif
-int     __platform_sprintf(char* buff, char* fmt, ...);
-int     __platform_vsprintf(char* buff, char* fmt, va_list args);
-int     __platform_vsnprintf(char* buff,
-                        size_t size,
-                        const char* fmt,
-                        va_list args);
+int __platform_sprintf(char* buff, char* fmt, ...);
+int __platform_vsprintf(char* buff, char* fmt, va_list args);
+int __platform_vsnprintf(char* buff,
+                         size_t size,
+                         const char* fmt,
+                         va_list args);
 
 /* libc config */
-void*   __platform_malloc(size_t size);
-void    __platform_free(void* ptr);
-void*   __platform_memset(void *mem, int ch, size_t size);
-void*   __platform_memcpy(void* dir, const void* src, size_t size);
+void* __platform_malloc(size_t size);
+void __platform_free(void* ptr);
+void* __platform_memset(void* mem, int ch, size_t size);
+void* __platform_memcpy(void* dir, const void* src, size_t size);
 
 /* pika memory pool config */
-void    __platform_pool_init(void);
-void    __platform_wait(void);
-void*   __impl_pikaMalloc(size_t size);
-void    __impl_pikaFree(void* ptrm, size_t size);
+void __platform_pool_init(void);
+void __platform_wait(void);
+void* __impl_pikaMalloc(size_t size);
+void __impl_pikaFree(void* ptrm, size_t size);
 uint8_t __is_locked_pikaMemory(void);
 uint8_t __is_quick_malloc(void);
-void    __quick_malloc_enable(void);
-void    __quick_malloc_disable(void);
+void __quick_malloc_enable(void);
+void __quick_malloc_disable(void);
 #endif
 
 /* support shell */
 char __platform_getchar(void);
+
+/* file API */
+FILE* __platform_fopen(const char* filename, const char* modes);
+int __platform_fclose(FILE* stream);

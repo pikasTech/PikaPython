@@ -41,7 +41,8 @@
         "functional": "c",
         "stdexcept": "c",
         "typeinfo": "c",
-        "cmath": "c"
+        "cmath": "c",
+        "fstream": "c"
     },
     "python.formatting.provider": "autopep8"
 }

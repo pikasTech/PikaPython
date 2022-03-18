@@ -101,7 +101,27 @@ PIKA_WEAK char __platform_getchar(void) {
 #ifdef __linux
     return getchar();
 #else
-    __platform_printf("[error]: __platform_getchar need impaltment!\r\n");
+    __platform_printf("[error]: __platform_function need impaltment!\r\n");
+    while (1) {
+    }
+#endif
+}
+
+PIKA_WEAK FILE* __platform_fopen(const char* filename, const char* modes) {
+#ifdef __linux
+    return fopen(filename, modes);
+#else
+    __platform_printf("[error]: __platform_function need impaltment!\r\n");
+    while (1) {
+    }
+#endif
+}
+
+PIKA_WEAK int __platform_fclose(FILE* stream) {
+#ifdef __linux
+    return fclose(stream);
+#else
+    __platform_printf("[error]: __platform_function need impaltment!\r\n");
     while (1) {
     }
 #endif
