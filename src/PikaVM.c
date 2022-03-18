@@ -856,6 +856,7 @@ void constPool_init(ConstPool* self) {
     constPool_update(self);
     self->content_offset_now = 0;
     self->size = strGetSize(constPool_getStart(self)) + 1;
+    self->output_redirect_fun = NULL;
 }
 
 void constPool_deinit(ConstPool* self) {
@@ -866,7 +867,11 @@ void constPool_deinit(ConstPool* self) {
 
 void constPool_append(ConstPool* self, char* content) {
     uint16_t size = strGetSize(content) + 1;
-    self->arg_buff = arg_append(self->arg_buff, content, size);
+    if (NULL == self->output_redirect_fun) {
+        self->arg_buff = arg_append(self->arg_buff, content, size);
+    } else {
+        self->output_redirect_fun(self, content);
+    };
     constPool_update(self);
     self->size += size;
 }
@@ -966,6 +971,7 @@ void instructArray_init(InstructArray* self) {
     instructArray_update(self);
     self->size = 0;
     self->content_offset_now = 0;
+    self->output_redirect_fun = NULL;
 }
 
 void instructArray_deinit(InstructArray* self) {
@@ -975,8 +981,12 @@ void instructArray_deinit(InstructArray* self) {
 }
 
 void instructArray_append(InstructArray* self, InstructUnit* ins_unit) {
-    self->arg_buff =
-        arg_append(self->arg_buff, ins_unit, instructUnit_getSize());
+    if (NULL == self->output_redirect_fun) {
+        self->arg_buff =
+            arg_append(self->arg_buff, ins_unit, instructUnit_getSize());
+    } else {
+        self->output_redirect_fun(self, ins_unit);
+    };
     instructArray_update(self);
     self->size += instructUnit_getSize();
 }
