@@ -1297,7 +1297,7 @@ TEST(pikaMain, class_demo_1_file) {
         " \n"
         "print(x.i)\n"
         "print(x.f())\n";
-    Parser_multiLineToFile((char*)lines, (char*)"pika_bytecode.bin");
+    Parser_multiLineToFile((char*)"pika_bytecode.bin", (char*)lines);
     char bytecodebuff[4096] = {0};
     FILE* f = __platform_fopen("pika_bytecode.bin", "r");
     fread(bytecodebuff, 1, 4096, f);

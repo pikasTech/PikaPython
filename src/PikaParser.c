@@ -1609,7 +1609,7 @@ static void __handler_instructArray_output_file(InstructArray* self,
     __platform_fwrite(ins_unit, 1, instructUnit_getSize(), self->output_f);
 }
 
-int Parser_multiLineToFile(char* multi_line, char* file_name) {
+int Parser_multiLineToFile(char* file_name, char* multi_line) {
     ByteCodeFrame bytecode_frame = {0};
 
     FILE* bytecode_f = __platform_fopen(file_name, "w+");
