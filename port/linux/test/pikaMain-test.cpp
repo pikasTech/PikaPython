@@ -1280,3 +1280,29 @@ TEST(pikaMain, print_in_def_byte_code) {
     /* mem check */
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, class_demo_1_file) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    char lines[] =
+        "class MyClass:\n"
+        "    i = 12345\n"
+        "    def f(self):\n"
+        "        return 'hello world'\n"
+        "        \n"
+        "x = MyClass()\n"
+        " \n"
+        "print(x.i)\n"
+        "print(x.f())\n";
+    Parser_multiLineToFile((char*)lines);
+    /* assert */
+    // EXPECT_STREQ(log_buff[0], (char*)"hello world\r\n");
+    // EXPECT_STREQ(log_buff[1], (char*)"12345\r\n");
+    // EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
