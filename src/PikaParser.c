@@ -1609,6 +1609,12 @@ static void __handler_instructArray_output_file(InstructArray* self,
     __platform_fwrite(ins_unit, 1, instructUnit_getSize(), self->output_f);
 }
 
+/* 
+    need implament :
+        __platform_fopen()
+        __platform_fwrite()
+        __platform_fclose()
+*/
 int pikaCompile(char* file_name, char* multi_line) {
     ByteCodeFrame bytecode_frame = {0};
 

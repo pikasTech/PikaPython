@@ -210,6 +210,12 @@ void obj_shellLineProcess(PikaObj* self,
                           __obj_shellLineHandler_t __lineHandler_fun,
                           struct shell_config* cfg);
 
+/* 
+    need implament :
+        __platform_fopen()
+        __platform_fwrite()
+        __platform_fclose()
+*/
 int pikaCompile(char* python_lines, char* output_file_name);
 
 #endif
