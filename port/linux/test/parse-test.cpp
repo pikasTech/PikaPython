@@ -2273,7 +2273,7 @@ TEST(compiler, file) {
         "                __calls[i] = __tick + period_ms\n"
         "            info_index = 0\n"
         "\n";
-    Parser_multiLineToFile((char*)"pika_bytecode.bin", (char*)lines);
+    pikaCompile((char*)"pika_bytecode.bin", (char*)lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -2416,6 +2416,6 @@ TEST(compiler, snake_file) {
         "    elif key_val == 3:\n"
         "        d = 3\n"
         "        isUpdate = 1\n";
-    Parser_multiLineToFile((char*)"pika_bytecode.bin", (char*)lines);
+    pikaCompile((char*)"pika_bytecode.bin", (char*)lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }

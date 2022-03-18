@@ -107,7 +107,7 @@ int main(void) {
             printf("[info]: compiling the python script...\r\n");
             main_codeBuff = arg_setStr(NULL, "", code);
             // obj_run(pikaMain, arg_getStr(main_codeBuff));
-            Parser_multiLineToFile("", arg_getStr(main_codeBuff));
+            pikaCompile("", arg_getStr(main_codeBuff));
             NVIC_SystemReset();
         }else{
 					/* found byte code */

@@ -43,8 +43,7 @@ char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);
 ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
 int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
-                                char* multi_line);
+                                char* python_lines);
 void Parser_compilePyToBytecodeArray(char* lines);
-int Parser_multiLineToFile(char* multi_line, char* file_name);
 
 #endif
