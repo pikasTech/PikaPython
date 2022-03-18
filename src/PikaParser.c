@@ -1615,10 +1615,10 @@ static void __handler_instructArray_output_file(InstructArray* self,
         __platform_fwrite()
         __platform_fclose()
 */
-int pikaCompile(char* file_name, char* multi_line) {
+int pikaCompile(char* python_lines, char* output_file_name) {
     ByteCodeFrame bytecode_frame = {0};
 
-    FILE* bytecode_f = __platform_fopen(file_name, "w+");
+    FILE* bytecode_f = __platform_fopen(python_lines, "w+");
     /* main process */
 
     /* step 1, get size of const pool and instruct array */
@@ -1627,7 +1627,7 @@ int pikaCompile(char* file_name, char* multi_line) {
     bytecode_frame.instruct_array.output_f = bytecode_f;
     bytecode_frame.instruct_array.output_redirect_fun =
         __handler_instructArray_output_none;
-    Parser_parsePyLines(NULL, &bytecode_frame, multi_line);
+    Parser_parsePyLines(NULL, &bytecode_frame, output_file_name);
     uint16_t const_pool_size = bytecode_frame.const_pool.size;
     uint16_t instruct_array_size = bytecode_frame.instruct_array.size;
     byteCodeFrame_deinit(&bytecode_frame);
@@ -1640,7 +1640,7 @@ int pikaCompile(char* file_name, char* multi_line) {
     /* instruct array to file */
     bytecode_frame.instruct_array.output_redirect_fun =
         __handler_instructArray_output_file;
-    Parser_parsePyLines(NULL, &bytecode_frame, multi_line);
+    Parser_parsePyLines(NULL, &bytecode_frame, output_file_name);
     byteCodeFrame_deinit(&bytecode_frame);
 
     /* step 3, write const pool to file */
@@ -1657,7 +1657,7 @@ int pikaCompile(char* file_name, char* multi_line) {
     /* instruct array to none */
     bytecode_frame.instruct_array.output_redirect_fun =
         __handler_instructArray_output_none;
-    Parser_parsePyLines(NULL, &bytecode_frame, multi_line);
+    Parser_parsePyLines(NULL, &bytecode_frame, output_file_name);
     byteCodeFrame_deinit(&bytecode_frame);
 
     /* deinit */
