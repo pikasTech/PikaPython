@@ -85,7 +85,6 @@ PIKA_WEAK int __platform_sprintf(char* buff, char* fmt, ...) {
     return res;
 }
 
-
 PIKA_WEAK void __platform_wait(void) {
     while (1) {
     };
@@ -99,6 +98,11 @@ PIKA_WEAK void* __platform_memcpy(void* dir, const void* src, size_t size) {
 }
 
 PIKA_WEAK char __platform_getchar(void) {
+#ifdef __linux
     return getchar();
+#else
+    __platform_printf("[error]: __platform_getchar need impaltment!\r\n");
+    while (1) {
+    }
+#endif
 }
-
