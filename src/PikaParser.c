@@ -1149,21 +1149,21 @@ exit:
     return ASM;
 }
 
-char* Parser_multiLineToAsmOrByteCode(Args* outBuffs,
-                                      ByteCodeFrame* bytecode_frame,
-                                      char* multi_line) {
+static char* Parser_parsePyLines(Args* outBuffs,
+                                 ByteCodeFrame* bytecode_frame,
+                                 char* py_lines) {
     Stack* block_stack = New_Stack();
     Arg* asm_buff = arg_setStr(NULL, "", "");
-    uint32_t line_offset = 0;
-    uint32_t multi_line_size = strGetSize(multi_line);
+    uint32_t lines_offset = 0;
+    uint32_t lines_num = strGetSize(py_lines);
     char* out_ASM = NULL;
     /* parse each line */
     while (1) {
         Args buffs = {0};
         /* get single line by pop multiline */
-        char* line = strsGetFirstToken(&buffs, multi_line + line_offset, '\n');
+        char* line = strsGetFirstToken(&buffs, py_lines + lines_offset, '\n');
         uint32_t line_size = strGetSize(line);
-        line_offset = line_offset + line_size + 1;
+        lines_offset = lines_offset + line_size + 1;
         /* parse single Line to Asm */
         char* single_ASM = Parser_LineToAsm(&buffs, line, block_stack);
         if (NULL == single_ASM) {
@@ -1180,7 +1180,7 @@ char* Parser_multiLineToAsmOrByteCode(Args* outBuffs,
         }
         strsDeinit(&buffs);
         /* exit when finished */
-        if (line_offset >= multi_line_size) {
+        if (lines_offset >= lines_num) {
             break;
         }
     }
@@ -1201,8 +1201,7 @@ exit:
 
 int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
                                 char* multi_line) {
-    if (NULL ==
-        Parser_multiLineToAsmOrByteCode(NULL, bytecode_frame, multi_line)) {
+    if (NULL == Parser_parsePyLines(NULL, bytecode_frame, multi_line)) {
         /* error */
         return 1;
     }
@@ -1211,7 +1210,7 @@ int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
 };
 
 char* Parser_multiLineToAsm(Args* outBuffs, char* multi_line) {
-    return Parser_multiLineToAsmOrByteCode(outBuffs, NULL, multi_line);
+    return Parser_parsePyLines(outBuffs, NULL, multi_line);
 }
 
 char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
@@ -1588,3 +1587,72 @@ void Parser_compilePyToBytecodeArray(char* lines) {
     /* deinit */
     byteCodeFrame_deinit(&bytecode_frame);
 }
+
+/* const Pool output redirect */
+static void __handler_constPool_output_file(ConstPool* self, char* content) {
+    /* to ram */
+    uint16_t size = strGetSize(content) + 1;
+    self->arg_buff = arg_append(self->arg_buff, content, size);
+    /* to flash */
+    __platform_fwrite(content, 1, size, self->output_f);
+}
+
+/* instruct array output redirect */
+static void __handler_instructArray_output_none(InstructArray* self,
+                                                InstructUnit* ins_unit) {
+    /* none */
+}
+
+static void __handler_instructArray_output_file(InstructArray* self,
+                                                InstructUnit* ins_unit) {
+    /* to flash */
+    __platform_fwrite(ins_unit, 1, instructUnit_getSize(), self->output_f);
+}
+
+int Parser_multiLineToFile(char* multi_line) {
+    ByteCodeFrame bytecode_frame = {0};
+
+    FILE* bytecode_f = __platform_fopen("pika_bytecode.bin", "w+");
+    /* main process */
+
+    /* step 1, get size of const pool and instruct array */
+    byteCodeFrame_init(&bytecode_frame);
+    bytecode_frame.const_pool.output_f = bytecode_f;
+    bytecode_frame.instruct_array.output_f = bytecode_f;
+    bytecode_frame.instruct_array.output_redirect_fun =
+        __handler_instructArray_output_none;
+    Parser_parsePyLines(NULL, &bytecode_frame, multi_line);
+    uint16_t const_pool_size = bytecode_frame.const_pool.size;
+    uint16_t instruct_array_size = bytecode_frame.instruct_array.size;
+    byteCodeFrame_deinit(&bytecode_frame);
+
+    /* step 2, write const pool to file */
+    __platform_fwrite(&const_pool_size, 1, 2, bytecode_f);
+    byteCodeFrame_init(&bytecode_frame);
+    bytecode_frame.const_pool.output_f = bytecode_f;
+    bytecode_frame.instruct_array.output_f = bytecode_f;
+    /* const pool to file */
+    bytecode_frame.const_pool.output_redirect_fun =
+        __handler_constPool_output_file;
+    /* instruct array to none */
+    bytecode_frame.instruct_array.output_redirect_fun =
+        __handler_instructArray_output_none;
+    Parser_parsePyLines(NULL, &bytecode_frame, multi_line);
+    byteCodeFrame_deinit(&bytecode_frame);
+
+    /* step 3, write instruct array to file */
+    __platform_fwrite(&instruct_array_size, 1, 2, bytecode_f);
+    byteCodeFrame_init(&bytecode_frame);
+    bytecode_frame.const_pool.output_f = bytecode_f;
+    bytecode_frame.instruct_array.output_f = bytecode_f;
+    /* instruct array to file */
+    bytecode_frame.instruct_array.output_redirect_fun =
+        __handler_instructArray_output_file;
+    Parser_parsePyLines(NULL, &bytecode_frame, multi_line);
+    byteCodeFrame_deinit(&bytecode_frame);
+
+    /* deinit */
+    __platform_fclose(bytecode_f);
+    /* succeed */
+    return 0;
+};

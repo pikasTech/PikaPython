@@ -857,6 +857,7 @@ void constPool_init(ConstPool* self) {
     self->content_offset_now = 0;
     self->size = strGetSize(constPool_getStart(self)) + 1;
     self->output_redirect_fun = NULL;
+    self->output_f = NULL;
 }
 
 void constPool_deinit(ConstPool* self) {
@@ -972,6 +973,7 @@ void instructArray_init(InstructArray* self) {
     self->size = 0;
     self->content_offset_now = 0;
     self->output_redirect_fun = NULL;
+    self->output_f = NULL;
 }
 
 void instructArray_deinit(InstructArray* self) {

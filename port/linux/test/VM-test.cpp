@@ -886,6 +886,7 @@ TEST(VM, load_static_bytes) {
                                             .size = 0,
                                             .content_start = NULL,
                                             .output_redirect_fun = NULL,
+                                            .output_f = NULL,
                                         },
                                     .instruct_array = {
                                         .arg_buff = NULL,
@@ -893,6 +894,7 @@ TEST(VM, load_static_bytes) {
                                         .size = 0,
                                         .content_start = NULL,
                                         .output_redirect_fun = NULL,
+                                        .output_f = NULL,
                                     }};
 
     byteCodeFrame_loadBytes(&bytecode_frame, (uint8_t*)bytes);

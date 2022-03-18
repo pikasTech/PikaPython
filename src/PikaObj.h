@@ -57,6 +57,7 @@ struct ConstPool_t {
     uint16_t size;
     void* content_start;
     void (*output_redirect_fun)(ConstPool* self, char* content);
+    FILE* output_f;
 };
 
 typedef struct InstructArray_t InstructArray;
@@ -66,6 +67,7 @@ struct InstructArray_t {
     uint16_t size;
     void* content_start;
     void (*output_redirect_fun)(InstructArray* self, InstructUnit* ins_unit);
+    FILE* output_f;
 };
 
 typedef struct ByteCodeFrame_t {
