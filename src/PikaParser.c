@@ -1609,10 +1609,10 @@ static void __handler_instructArray_output_file(InstructArray* self,
     __platform_fwrite(ins_unit, 1, instructUnit_getSize(), self->output_f);
 }
 
-int Parser_multiLineToFile(char* multi_line) {
+int Parser_multiLineToFile(char* multi_line, char* file_name) {
     ByteCodeFrame bytecode_frame = {0};
 
-    FILE* bytecode_f = __platform_fopen("pika_bytecode.bin", "w+");
+    FILE* bytecode_f = __platform_fopen(file_name, "w+");
     /* main process */
 
     /* step 1, get size of const pool and instruct array */
