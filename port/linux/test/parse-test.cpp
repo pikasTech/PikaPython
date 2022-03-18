@@ -2419,3 +2419,16 @@ TEST(compiler, snake_file) {
     pikaCompile((char*)"pika_bytecode.bin", (char*)lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(asmer, asm_to_bytecodeArray) {
+    char* pikaAsm =(char*)
+                              "B0\n"
+                              "0 RUN __init__\n";
+
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    byteCodeFrame_printAsArray(&bytecode_frame);
+    byteCodeFrame_deinit(&bytecode_frame);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

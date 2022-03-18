@@ -360,9 +360,17 @@ static Arg* __VM_OUT(PikaObj* self,
             init_method_arg = obj_getMethod(new_obj, "__init__");
             if (NULL != init_method_arg) {
                 arg_deinit(init_method_arg);
-                pikaVM_runAsm(new_obj,
-                              "B0\n"
-                              "0 RUN __init__\n");
+                // pikaVM_runAsm(new_obj,
+                //               "B0\n"
+                //               "0 RUN __init__\n");
+                const uint8_t bytes[] = {
+                    0x04, 0x00,             /* instruct array size */
+                    0x00, 0x82, 0x01, 0x00, /* instruct array */
+                    0x0a, 0x00,             /* const pool size */
+                    0x00, 0x5f, 0x5f, 0x69, 0x6e,
+                    0x69, 0x74, 0x5f, 0x5f, 0x00, /* const pool */
+                };
+                pikaVM_runByteCode(new_obj, (uint8_t*)bytes);
             }
         }
     }

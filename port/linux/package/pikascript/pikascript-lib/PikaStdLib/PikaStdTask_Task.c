@@ -3,11 +3,9 @@
 
 extern PikaObj* __pikaMain;
 void PikaStdTask_Task___init__(PikaObj* self) {
-    /*
-    obj_run(self,
-            "calls.__init__()\n"
-            "is_period = 0\n");
-    */
+    // obj_run(self,
+            // "calls.__init__()\n"
+            // "is_period = 0\n");
     const uint8_t bytes[] = {
         0x0c, 0x00, /* instruct array size */
         0x00, 0x82, 0x01, 0x00, 0x00, 0x85, 0x10, 0x00, 0x00, 0x04, 0x12, 0x00,
@@ -41,8 +39,7 @@ void PikaStdTask_Task_call_always(PikaObj* self, Arg* fun_todo) {
 void PikaStdTask_Task_call_when(PikaObj* self, Arg* fun_todo, Arg* fun_when) {
     obj_setArg(self, "fun_todo", fun_todo);
     obj_setArg(self, "fun_when", fun_when);
-    /*
-    obj_run(self,
+    /* obj_run(self,
             "calls.append('when')\n"
             "calls.append(fun_when)\n"
             "calls.append(fun_todo)\n");
@@ -67,8 +64,7 @@ void PikaStdTask_Task_call_period_ms(PikaObj* self,
                                      int period_ms) {
     obj_setArg(self, "fun_todo", fun_todo);
     obj_setInt(self, "period_ms", period_ms);
-    /*
-    obj_run(self,
+    /* obj_run(self,
             "calls.append('period_ms')\n"
             "calls.append(period_ms)\n"
             "calls.append(fun_todo)\n"
@@ -95,8 +91,7 @@ void PikaStdTask_Task_call_period_ms(PikaObj* self,
 void PikaStdTask_Task_run_once(PikaObj* self) {
     /* transfer the tick to pikaMain */
     obj_setInt(__pikaMain, "__tick", obj_getInt(self, "tick"));
-    /* Python
-    obj_run(__pikaMain,
+    /* obj_run(__pikaMain,
             "len = __calls.len()\n"
             "mode = 'none'\n"
             "info_index = 0\n"
