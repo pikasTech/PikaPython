@@ -1300,7 +1300,7 @@ TEST(pikaMain, class_demo_1_file) {
     Parser_multiLineToFile((char*)lines);
     char bytecodebuff[4096] = {0};
     FILE* f = __platform_fopen("pika_bytecode.bin", "r");
-    __platform_fread(bytecodebuff, 1, 4096, f);
+    fread(bytecodebuff, 1, 4096, f);
     pikaVM_runByteCode(self, (uint8_t*)bytecodebuff);
     /* assert */
     EXPECT_STREQ(log_buff[0], (char*)"hello world\r\n");

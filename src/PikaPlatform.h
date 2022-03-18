@@ -104,4 +104,3 @@ char __platform_getchar(void);
 FILE* __platform_fopen(const char* filename, const char* modes);
 int __platform_fclose(FILE* stream);
 size_t __platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream);
-size_t __platform_fread(void* ptr, size_t size, size_t n, FILE* stream);
