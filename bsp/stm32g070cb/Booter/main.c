@@ -118,9 +118,7 @@ int main(void){
         __pikaMain = pikaMain;
         if (code[0] == 'i') {
             printf("[info]: boot from Script.\r\n");
-            Arg* codeBuff = arg_setStr(NULL, "", code);
-            obj_run(pikaMain, arg_getStr(codeBuff));
-            arg_deinit(codeBuff);
+            obj_run(pikaMain, code);
             goto main_loop;
         }
     } else {
