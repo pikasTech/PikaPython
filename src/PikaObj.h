@@ -50,19 +50,23 @@ typedef struct InstructUnit_t {
     uint16_t const_pool_index;
 } InstructUnit;
 
-typedef struct ConstPool_t {
+typedef struct ConstPool_t ConstPool;
+struct ConstPool_t {
     Arg* arg_buff;
     uint16_t content_offset_now;
     uint16_t size;
     void* content_start;
-} ConstPool;
+    void (*output_redirect_fun)(ConstPool* self, char* content);
+};
 
-typedef struct InstructArray_t {
+typedef struct InstructArray_t InstructArray;
+struct InstructArray_t {
     Arg* arg_buff;
     uint16_t content_offset_now;
     uint16_t size;
     void* content_start;
-} InstructArray;
+    void (*output_redirect_fun)(InstructArray* self, InstructUnit* ins_unit);
+};
 
 typedef struct ByteCodeFrame_t {
     ConstPool const_pool;

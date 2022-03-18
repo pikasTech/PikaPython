@@ -885,12 +885,14 @@ TEST(VM, load_static_bytes) {
                                             .content_offset_now = 0,
                                             .size = 0,
                                             .content_start = NULL,
+                                            .output_redirect_fun = NULL,
                                         },
                                     .instruct_array = {
                                         .arg_buff = NULL,
                                         .content_offset_now = 0,
                                         .size = 0,
                                         .content_start = NULL,
+                                        .output_redirect_fun = NULL,
                                     }};
 
     byteCodeFrame_loadBytes(&bytecode_frame, (uint8_t*)bytes);
