@@ -2,11 +2,11 @@
 #include "BaseObj.h"
 
 void PikaStdDevice_ADC_enable(PikaObj* self) {
-    obj_run(self, "platformEnable()");
+    obj_runNativeMethod(self, "platformEnable", NULL);
 }
 
-void PikaStdDevice_ADC_disable(PikaObj *self){
-    obj_run(self, "platformDisable()");
+void PikaStdDevice_ADC_disable(PikaObj* self) {
+    obj_runNativeMethod(self, "platformDisable", NULL);
 }
 
 void PikaStdDevice_ADC_init(PikaObj* self) {
@@ -18,7 +18,7 @@ void PikaStdDevice_ADC___init__(PikaObj* self) {
 }
 
 float PikaStdDevice_ADC_read(PikaObj* self) {
-    obj_run(self, "platformRead()");
+    obj_runNativeMethod(self, "platformRead", NULL);
     return obj_getFloat(self, "val");
 }
 
@@ -31,7 +31,7 @@ void PikaStdDevice_ADC_platformEnable(PikaObj* self) {
     obj_setSysOut(self, "[error] platform method need to be override.");
 }
 
-void PikaStdDevice_ADC_platformDisable(PikaObj *self){
+void PikaStdDevice_ADC_platformDisable(PikaObj* self) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
 }

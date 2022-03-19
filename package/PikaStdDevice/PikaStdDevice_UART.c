@@ -2,11 +2,11 @@
 #include "BaseObj.h"
 
 void PikaStdDevice_UART_enable(PikaObj* self) {
-    obj_run(self, "platformEnable()");
+    obj_runNativeMethod(self, "platformEnable", NULL);
 }
 
 void PikaStdDevice_UART_disable(PikaObj *self){
-    obj_run(self, "platformDisable()");
+    obj_runNativeMethod(self, "platformDisable", NULL);
 }
 
 void PikaStdDevice_UART_init(PikaObj* self) {
@@ -21,7 +21,7 @@ void PikaStdDevice_UART___init__(PikaObj* self) {
 
 char* PikaStdDevice_UART_read(PikaObj* self, int length) {
     obj_setInt(self, "length", length);
-    obj_run(self, "platformRead()");
+    obj_runNativeMethod(self, "platformRead", NULL);
     return obj_getStr(self, "readData");
 }
 void PikaStdDevice_UART_setBaudRate(PikaObj* self, int baudRate) {
@@ -32,7 +32,7 @@ void PikaStdDevice_UART_setId(PikaObj* self, int id) {
 }
 void PikaStdDevice_UART_write(PikaObj* self, char* data) {
     obj_setStr(self, "writeData", data);
-    obj_run(self, "platformWrite()");
+    obj_runNativeMethod(self, "platformWrite", NULL);
 }
 
 void PikaStdDevice_UART_platformEnable(PikaObj* self) {

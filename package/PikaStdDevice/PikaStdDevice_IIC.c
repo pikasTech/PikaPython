@@ -12,11 +12,11 @@ void PikaStdDevice_IIC___init__(PikaObj* self) {
 }
 
 void PikaStdDevice_IIC_enable(PikaObj *self){
-    obj_run(self, "platformEnable()");
+    obj_runNativeMethod(self, "platformEnable", NULL);
 }
 
 void PikaStdDevice_IIC_disable(PikaObj *self){
-    obj_run(self, "platformDisable()");
+    obj_runNativeMethod(self, "platformDisable", NULL);
 }
 
 void PikaStdDevice_IIC_setDeviceAddr(PikaObj *self, int addr){
@@ -34,13 +34,13 @@ void PikaStdDevice_IIC_setPinSDA(PikaObj *self, char * pin){
 void PikaStdDevice_IIC_write(PikaObj *self, int addr, char * data){
     obj_setStr(self, "writeData", data);
     obj_setInt(self, "writeAddr", addr);
-    obj_run(self, "platformWrite()");
+    obj_runNativeMethod(self, "platformWrite", NULL);
 }
 
 char * PikaStdDevice_IIC_read(PikaObj *self, int addr, int length){
     obj_setInt(self, "length", length);
     obj_setInt(self, "readAddr", addr);
-    obj_run(self, "platformRead()");
+    obj_runNativeMethod(self, "platformRead", NULL);
     return obj_getStr(self, "readData");
 }
 
