@@ -275,7 +275,7 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
     return thisClass;
 }
 
-Arg* obj_getMethod(PikaObj* obj, char* methodPath) {
+Arg* obj_getMethodArg(PikaObj* obj, char* methodPath) {
     Arg* method = NULL;
     char* methodName = strPointToLastToken(methodPath, '.');
     method = obj_getArg(obj, methodName);
@@ -391,6 +391,13 @@ Method methodArg_getPtr(Arg* method_arg) {
     void* ptr = NULL;
     __platform_memcpy(&ptr, info, size_ptr);
     return ptr;
+}
+
+Method obj_getNativeMethod(PikaObj* self, char* method_name) {
+    Arg* method_arg = obj_getMethodArg(self, method_name);
+    Method res = methodArg_getPtr(method_arg);
+    arg_deinit(method_arg);
+    return res;
 }
 
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg) {
@@ -732,8 +739,6 @@ float method_getFloat(Args* args, char* argName) {
 char* method_getStr(Args* args, char* argName) {
     return args_getStr(args, argName);
 }
-
-
 
 PikaObj* New_PikaObj(void) {
     PikaObj* self = pikaMalloc(sizeof(PikaObj));

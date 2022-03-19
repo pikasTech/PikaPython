@@ -70,7 +70,7 @@ static void print_no_end(PikaObj* self, Args* args) {
     // obj_setSysOut(self, res);
 }
 
-static void print(PikaObj* self, Args* args) {
+void print(PikaObj* self, Args* args) {
     obj_setErrorCode(self, 0);
     char* res = args_print(args, "val");
     if (NULL == res) {

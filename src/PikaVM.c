@@ -213,9 +213,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         goto RUN_exit;
     }
     /* get method in local */
-    method_arg = obj_getMethod(method_host_obj, methodPath);
+    method_arg = obj_getMethodArg(method_host_obj, methodPath);
     if (NULL == method_arg) {
-        method_arg = obj_getMethod(vs->globals, methodPath);
+        method_arg = obj_getMethodArg(vs->globals, methodPath);
     }
     /* assert method*/
     if (NULL == method_arg) {
@@ -357,7 +357,7 @@ static Arg* __VM_OUT(PikaObj* self,
             PikaObj* new_obj = obj_getObj(hostObj, data, 0);
             /* run __init__() when init obj */
             Arg* init_method_arg = NULL;
-            init_method_arg = obj_getMethod(new_obj, "__init__");
+            init_method_arg = obj_getMethodArg(new_obj, "__init__");
             if (NULL != init_method_arg) {
                 arg_deinit(init_method_arg);
                 // pikaVM_runAsm(new_obj,

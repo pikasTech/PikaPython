@@ -1311,3 +1311,22 @@ TEST(pikaMain, class_demo_1_file) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, get_native_method) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    /* do some thing */
+    Method print_method = obj_getNativeMethod(pikaMain, (char*)"print");
+    Args args = {0};
+    args_setStr(&args, (char*)"val", (char*)"test");
+    print_method(pikaMain, &args);
+    args_deinit_stack(&args);
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"test\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

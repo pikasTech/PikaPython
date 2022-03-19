@@ -156,7 +156,7 @@ int32_t obj_isArgExist(PikaObj* self, char* argPath);
 PikaObj* obj_getClassObjByNewFun(PikaObj* self, char* name, NewFun newClassFun);
 PikaObj* newRootObj(char* name, NewFun newObjFun);
 PikaObj* obj_getClassObj(PikaObj* obj);
-Arg* obj_getMethod(PikaObj* obj, char* methodPath);
+Arg* obj_getMethodArg(PikaObj* obj, char* methodPath);
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode);
 int32_t obj_getErrorCode(PikaObj* self);
@@ -210,12 +210,13 @@ void obj_shellLineProcess(PikaObj* self,
                           __obj_shellLineHandler_t __lineHandler_fun,
                           struct shell_config* cfg);
 
-/* 
+/*
     need implament :
         __platform_fopen()
         __platform_fwrite()
         __platform_fclose()
 */
 int pikaCompile(char* output_file_name, char* py_lines);
+Method obj_getNativeMethod(PikaObj* self, char* method_name);
 
 #endif
