@@ -1318,10 +1318,9 @@ TEST(pikaMain, get_native_method) {
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     __platform_printf((char*)"BEGIN\r\n");
     /* do some thing */
-    Method print_method = obj_getNativeMethod(pikaMain, (char*)"print");
     Args args = {0};
     args_setStr(&args, (char*)"val", (char*)"test");
-    print_method(pikaMain, &args);
+    obj_runNativeMethod(pikaMain, (char*)"print", &args);
     args_deinit_stack(&args);
     /* assert */
     EXPECT_STREQ(log_buff[0], (char*)"test\r\n");

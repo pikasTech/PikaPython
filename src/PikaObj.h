@@ -218,5 +218,6 @@ void obj_shellLineProcess(PikaObj* self,
 */
 int pikaCompile(char* output_file_name, char* py_lines);
 Method obj_getNativeMethod(PikaObj* self, char* method_name);
+void obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
 
 #endif

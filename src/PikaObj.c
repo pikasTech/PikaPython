@@ -560,6 +560,11 @@ void obj_run(PikaObj* self, char* cmd) {
     obj_runDirect(self, cmd);
 }
 
+void obj_runNativeMethod(PikaObj* self, char* method_name, Args* args) {
+    Method native_method = obj_getNativeMethod(self, method_name);
+    native_method(self, args);
+}
+
 static void __clearBuff(char* buff, int size) {
     for (int i = 0; i < size; i++) {
         buff[i] = 0;
