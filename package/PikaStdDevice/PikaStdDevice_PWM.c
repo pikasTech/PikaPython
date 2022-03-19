@@ -2,8 +2,10 @@
 #include "BaseObj.h"
 
 void PikaStdDevice_PWM_init(PikaObj* self) {
-    obj_setStr(self, "pin", "PA8");
+    obj_setStr(self, "pin", "none");
+    obj_setStr(self, "name", "none");
     obj_setInt(self, "freq", 1000);
+    obj_setInt(self, "ch", 0);
     obj_setFloat(self, "duty", 0.5f);
 }
 
@@ -17,16 +19,20 @@ void PikaStdDevice_PWM_setPin(PikaObj* self, char* pin) {
 
 void PikaStdDevice_PWM_setFrequency(PikaObj* self, int freq) {
     obj_setInt(self, "freq", freq);
-    obj_runNativeMethod(self, "platformSetFrequency", NULL);
+    obj_run(self, "platformSetFrequency()");
 }
 
 void PikaStdDevice_PWM_setDuty(PikaObj* self, float duty) {
     obj_setFloat(self, "duty", duty);
-    obj_runNativeMethod(self, "platformSetDuty", NULL);
+    obj_run(self, "platformSetDuty()");
 }
 
 void PikaStdDevice_PWM_enable(PikaObj* self) {
-    obj_runNativeMethod(self, "platformEnable", NULL);
+    obj_run(self, "platformEnable()");
+}
+
+void PikaStdDevice_PWM_disable(PikaObj *self){
+    obj_run(self, "platformDisable()");
 }
 
 float PikaStdDevice_PWM_getDuty(PikaObj* self) {

@@ -3,10 +3,19 @@
 
 void PikaStdDevice_GPIO_init(PikaObj* self) {
     obj_setInt(self, "isEnable", 0);
-    obj_setStr(self, "pin", "PA0");
+    obj_setStr(self, "pin", "none");
     obj_setStr(self, "mode", "out");
     obj_setInt(self, "isOn", 0);
     obj_setStr(self, "pull", "none");
+    obj_setInt(self, "id", -999);
+}
+
+int PikaStdDevice_GPIO_getId(PikaObj* self) {
+    return obj_getInt(self, "id");
+}
+
+void PikaStdDevice_GPIO_setId(PikaObj* self, int id) {
+    obj_setInt(self, "id", id);
 }
 
 void PikaStdDevice_GPIO___init__(PikaObj* self) {
@@ -15,12 +24,12 @@ void PikaStdDevice_GPIO___init__(PikaObj* self) {
 
 void PikaStdDevice_GPIO_disable(PikaObj* self) {
     obj_setInt(self, "isEnable", 0);
-    obj_runNativeMethod(self, "platformDisable", NULL);
+    obj_run(self, "platformDisable()");
 }
 
 void PikaStdDevice_GPIO_enable(PikaObj* self) {
     obj_setInt(self, "isEnable", 1);
-    obj_runNativeMethod(self, "platformEnable", NULL);
+    obj_run(self, "platformEnable()");
 }
 
 char* PikaStdDevice_GPIO_getMode(PikaObj* self) {
@@ -33,23 +42,23 @@ char* PikaStdDevice_GPIO_getPin(PikaObj* self) {
 
 void PikaStdDevice_GPIO_low(PikaObj* self) {
     obj_setInt(self, "isOn", 0);
-    obj_runNativeMethod(self, "platformLow", NULL);
+    obj_run(self, "platformLow()");
 }
 
 void PikaStdDevice_GPIO_high(PikaObj* self) {
     obj_setInt(self, "isOn", 1);
-    obj_runNativeMethod(self, "platformHigh", NULL);
+    obj_run(self, "platformHigh()");
 }
 
 int PikaStdDevice_GPIO_read(PikaObj* self) {
-    obj_runNativeMethod(self, "platformRead", NULL);
+    obj_run(self, "platformRead()");
     return obj_getInt(self, "readBuff");
 }
 
 void PikaStdDevice_GPIO_setMode(PikaObj* self, char* mode) {
     if (strEqu(mode, "out") || strEqu(mode, "in")) {
         obj_setStr(self, "mode", mode);
-        obj_runNativeMethod(self, "platformSetMode", NULL);
+        obj_run(self, "platformSetMode()");
     } else {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error] GPIO mode should be 'out' or 'in'.");

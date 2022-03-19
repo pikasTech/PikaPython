@@ -2,7 +2,11 @@
 #include "BaseObj.h"
 
 void PikaStdDevice_ADC_enable(PikaObj* self) {
-    obj_runNativeMethod(self, "platformEnable", NULL);
+    obj_run(self, "platformEnable()");
+}
+
+void PikaStdDevice_ADC_disable(PikaObj *self){
+    obj_run(self, "platformDisable()");
 }
 
 void PikaStdDevice_ADC_init(PikaObj* self) {
@@ -14,7 +18,7 @@ void PikaStdDevice_ADC___init__(PikaObj* self) {
 }
 
 float PikaStdDevice_ADC_read(PikaObj* self) {
-    obj_runNativeMethod(self, "platformRead", NULL);
+    obj_run(self, "platformRead()");
     return obj_getFloat(self, "val");
 }
 

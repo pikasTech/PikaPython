@@ -2,7 +2,7 @@
 #include "BaseObj.h"
 
 void PikaStdDevice_UART_enable(PikaObj* self) {
-    obj_runNativeMethod(self, "platformEnable", NULL);
+    obj_run(self, "platformEnable()");
 }
 
 void PikaStdDevice_UART_disable(PikaObj *self){
@@ -21,7 +21,7 @@ void PikaStdDevice_UART___init__(PikaObj* self) {
 
 char* PikaStdDevice_UART_read(PikaObj* self, int length) {
     obj_setInt(self, "length", length);
-    obj_runNativeMethod(self, "platformRead", NULL);
+    obj_run(self, "platformRead()");
     return obj_getStr(self, "readData");
 }
 void PikaStdDevice_UART_setBaudRate(PikaObj* self, int baudRate) {
@@ -32,7 +32,7 @@ void PikaStdDevice_UART_setId(PikaObj* self, int id) {
 }
 void PikaStdDevice_UART_write(PikaObj* self, char* data) {
     obj_setStr(self, "writeData", data);
-    obj_runNativeMethod(self, "platformWrite", NULL);
+    obj_run(self, "platformWrite()");
 }
 
 void PikaStdDevice_UART_platformEnable(PikaObj* self) {
@@ -47,3 +47,9 @@ void PikaStdDevice_UART_platformWrite(PikaObj* self) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
 }
+
+void PikaStdDevice_UART_platformDisable(PikaObj *self){
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
