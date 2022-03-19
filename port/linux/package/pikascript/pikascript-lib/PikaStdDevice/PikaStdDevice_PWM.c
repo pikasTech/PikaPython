@@ -17,16 +17,16 @@ void PikaStdDevice_PWM_setPin(PikaObj* self, char* pin) {
 
 void PikaStdDevice_PWM_setFrequency(PikaObj* self, int freq) {
     obj_setInt(self, "freq", freq);
-    obj_run(self, "platformSetFrequency()");
+    obj_runNativeMethod(self, "platformSetFrequency", NULL);
 }
 
 void PikaStdDevice_PWM_setDuty(PikaObj* self, float duty) {
     obj_setFloat(self, "duty", duty);
-    obj_run(self, "platformSetDuty()");
+    obj_runNativeMethod(self, "platformSetDuty", NULL);
 }
 
 void PikaStdDevice_PWM_enable(PikaObj* self) {
-    obj_run(self, "platformEnable()");
+    obj_runNativeMethod(self, "platformEnable", NULL);
 }
 
 float PikaStdDevice_PWM_getDuty(PikaObj* self) {

@@ -79,7 +79,7 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
 
 char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
     ArgType type = arg_getType(arg);
-    Args buffs = {0};    
+    Args buffs = {0};
     char* res = NULL;
     do {
         if (ARG_TYPE_INT == type) {
@@ -112,22 +112,21 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     /* object */
     if (ARG_TYPE_POINTER == arg_getType(arg)) {
         PikaObj* arg_obj = arg_getPtr(arg);
-        pikaVM_runAsm(arg_obj,
-                      "B0\n"
-                      "0 RUN __iter__\n"
-                      "0 OUT __res\n");
+        // pikaVM_runAsm(arg_obj,
+        //               "B0\n"
+        //               "0 RUN __iter__\n"
+        //               "0 OUT __res\n");
+        const uint8_t bytes[] = {
+            0x08, 0x00, /* instruct array size */
+            0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x0a, 0x00, /* instruct array */
+            0x10, 0x00, /* const pool size */
+            0x00, 0x5f, 0x5f, 0x69, 0x74, 0x65, 0x72, 0x5f,
+            0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
+        };
+        pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
         return arg_copy(args_getArg(arg_obj->list, "__res"));
     }
     return arg_setNull(NULL);
-}
-
-Arg* PikaStdLib_SysObj_next(PikaObj* self, Arg* arg) {
-    PikaObj* arg_obj = arg_getPtr(arg);
-    pikaVM_runAsm(arg_obj,
-                  "B0\n"
-                  "0 RUN __next__\n"
-                  "0 OUT __res\n");
-    return arg_copy(args_getArg(arg_obj->list, "__res"));
 }
 
 Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2, int a3) {
@@ -150,11 +149,22 @@ Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
     if ((ARG_TYPE_OBJECT == obj_type) || (ARG_TYPE_POINTER == obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
-        pikaVM_runAsm(arg_obj,
-                      "B0\n"
-                      "1 REF __key\n"
-                      "0 RUN __get__\n"
-                      "0 OUT __res\n");
+        // pikaVM_runAsm(arg_obj,
+        //               "B0\n"
+        //               "1 REF __key\n"
+        //               "0 RUN __get__\n"
+        //               "0 OUT __res\n");
+        const uint8_t bytes[] = {
+            0x0c, 0x00, /* instruct array size */
+            0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x07, 0x00, 0x00, 0x04, 0x0f,
+            0x00,
+            /* instruct array */
+            0x15, 0x00, /* const pool size */
+            0x00, 0x5f, 0x5f, 0x6b, 0x65, 0x79, 0x00, 0x5f, 0x5f, 0x67, 0x65,
+            0x74, 0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65, 0x73,
+            0x00, /* const pool */
+        };
+        pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
         return arg_copy(args_getArg(arg_obj->list, "__res"));
     }
     return arg_setNull(NULL);
@@ -177,10 +187,21 @@ void PikaStdLib_SysObj___set__(PikaObj* self,
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
         obj_setArg(arg_obj, "__val", val);
-        pikaVM_runAsm(arg_obj,
-                      "B0\n"
-                      "1 REF __key\n"
-                      "1 REF __val\n"
-                      "0 RUN __set__\n");
+        // pikaVM_runAsm(arg_obj,
+        //               "B0\n"
+        //               "1 REF __key\n"
+        //               "1 REF __val\n"
+        //               "0 RUN __set__\n");
+        const uint8_t bytes[] = {
+            0x0c, 0x00, /* instruct array size */
+            0x10, 0x81, 0x01, 0x00, 0x10, 0x01, 0x07, 0x00, 0x00, 0x02, 0x0d,
+            0x00,
+            /* instruct array */
+            0x15, 0x00, /* const pool size */
+            0x00, 0x5f, 0x5f, 0x6b, 0x65, 0x79, 0x00, 0x5f, 0x5f, 0x76, 0x61,
+            0x6c, 0x00, 0x5f, 0x5f, 0x73, 0x65, 0x74, 0x5f, 0x5f,
+            0x00, /* const pool */
+        };
+        pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
     }
 }
