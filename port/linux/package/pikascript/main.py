@@ -1,5 +1,4 @@
 import PikaStdLib
-import PikaStdDevice
 import PikaStdData
 import GTestTask
 import PikaMath
