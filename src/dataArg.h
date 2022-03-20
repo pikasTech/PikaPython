@@ -55,7 +55,7 @@ typedef struct __arg __arg;
 struct __arg {
     __arg* next;
     uint16_t size;
-    ArgType type;
+    uint8_t type;
     uint8_t __rsvd;
     Hash name_hash;
     uint8_t content[];
