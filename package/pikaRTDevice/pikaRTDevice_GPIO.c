@@ -4,6 +4,7 @@
 rt_base_t pika_get_rt_mode_num(char* mode, char* pull);
 
 rt_base_t GPIO_get_pin_num(PikaObj* self) {
+#ifdef RT_USING_PIN
     char* pin = obj_getStr(self, "pin");
     int id = obj_getInt(self, "id");
     if (!strEqu("none", pin)) {
@@ -12,9 +13,14 @@ rt_base_t GPIO_get_pin_num(PikaObj* self) {
     } else {
         return id;
     }
+#else
+    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PIN macro. \r\n");
+    while(1);
+#endif
 }
 
 void pikaRTDevice_GPIO_platformEnable(PikaObj* self) {
+#ifdef RT_USING_PIN
     char* pin = obj_getStr(self, "pin");
     char* mode = obj_getStr(self, "mode");
     char* pull = obj_getStr(self, "pull");
@@ -27,9 +33,14 @@ void pikaRTDevice_GPIO_platformEnable(PikaObj* self) {
     }
     rt_base_t mode_num = pika_get_rt_mode_num(mode, pull);
     rt_pin_mode(pin_num, mode_num);
+#else
+    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PIN macro. \r\n");
+    while(1);
+#endif
 }
 
 rt_base_t pika_get_rt_mode_num(char* mode, char* pull) {
+#ifdef RT_USING_PIN
     if (strEqu(mode, "out")) {
         return PIN_MODE_OUTPUT;
     }
@@ -46,24 +57,48 @@ rt_base_t pika_get_rt_mode_num(char* mode, char* pull) {
     }
     /* default */
     return PIN_MODE_OUTPUT;
+#else
+    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PIN macro. \r\n");
+    while(1);
+#endif
 }
 
 void pikaRTDevice_GPIO_platformDisable(PikaObj* self) {}
 void pikaRTDevice_GPIO_platformHigh(PikaObj* self) {
+#ifdef RT_USING_PIN
     char* pin = obj_getStr(self, "pin");
     rt_base_t pin_num = GPIO_get_pin_num(self);
     rt_pin_write(pin_num, PIN_HIGH);
+#else
+    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PIN macro. \r\n");
+    while(1);
+#endif
 }
 void pikaRTDevice_GPIO_platformLow(PikaObj* self) {
+#ifdef RT_USING_PIN
     char* pin = obj_getStr(self, "pin");
     rt_base_t pin_num = GPIO_get_pin_num(self);
     rt_pin_write(pin_num, PIN_LOW);
+#else
+    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PIN macro. \r\n");
+    while(1);
+#endif
 }
 void pikaRTDevice_GPIO_platformRead(PikaObj* self) {
+#ifdef RT_USING_PIN
     char* pin = obj_getStr(self, "pin");
     rt_base_t pin_num = GPIO_get_pin_num(self);
     obj_setInt(self, "readBuff", rt_pin_read(pin_num));
+#else
+    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PIN macro. \r\n");
+    while(1);
+#endif
 }
 void pikaRTDevice_GPIO_platformSetMode(PikaObj* self) {
+#ifdef RT_USING_PIN
     pikaRTDevice_GPIO_platformEnable(self);
+#else
+    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PIN macro. \r\n");
+    while(1);
+#endif
 }
