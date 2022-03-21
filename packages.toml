@@ -143,6 +143,7 @@ name = "pikaRTDevice"
 releases = [
   "v0.0.1 fe900b79d8d1075bb7e4e3dd9d4e1e187e0c9195",
   "v1.0.0 ac4247e5fd3e221eb110a1b41276849c623049ec",
+  "v1.0.1 61e6a7352b656adbce0f2ad82ea1fc992dcbb603",
 ]
 
 [[packages]]
