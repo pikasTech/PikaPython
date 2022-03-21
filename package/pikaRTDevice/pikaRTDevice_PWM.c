@@ -11,7 +11,7 @@ struct rt_device_pwm* PWM_getDevice(PikaObj* self) {
     }
     return (struct rt_device_pwm*)pwm_device;
 #else
-    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PWM macro. \r\n");
+    __platform_printf("[error]: PWM driver is no enable, please check the RT_USING_PWM macro. \r\n");
     while(1);
 #endif
 }
@@ -22,7 +22,7 @@ void pikaRTDevice_PWM_platformEnable(PikaObj* self) {
     int ch = obj_getInt(self, "ch");
     rt_pwm_enable(pwm_dev, ch);
 #else
-    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PWM macro. \r\n");
+    __platform_printf("[error]: PWM driver is no enable, please check the RT_USING_PWM macro. \r\n");
     while(1);
 #endif
 }
@@ -37,7 +37,7 @@ void pikaRTDevice_PWM_platformSetDuty(PikaObj* self) {
     int pulse = (int)((float)period * duty);
     rt_pwm_set(pwm_dev, ch, period, pulse);
 #else
-    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PWM macro. \r\n");
+    __platform_printf("[error]: PWM driver is no enable, please check the RT_USING_PWM macro. \r\n");
     while(1);
 #endif
 }
@@ -46,7 +46,7 @@ void pikaRTDevice_PWM_platformSetFrequency(PikaObj* self) {
 #ifdef RT_USING_PWM
     pikaRTDevice_PWM_platformSetDuty(self);
 #else
-    __platform_printf("[error]: gpio driver is no enable, please check the RT_USING_PWM macro. \r\n");
+    __platform_printf("[error]: PWM driver is no enable, please check the RT_USING_PWM macro. \r\n");
     while(1);
 #endif
 }
