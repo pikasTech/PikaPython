@@ -1005,6 +1005,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdData_String-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_String-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_PikaObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2027,6 +2037,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdData_String-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_String-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_PikaObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3048,6 +3068,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdData_String-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_String-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_PikaObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4068,6 +4098,16 @@
               <FileName>PikaStdLib_StringObj-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_String-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_String-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_PikaObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
             </File>
           </Files>
         </Group>
