@@ -722,7 +722,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     /* Found new script Line, clear the queues*/
     if (instructUnit_getIsNewLine(ins_unit)) {
         args_setErrorCode(vs->locals->list, 0);
-        args_setSysOut(vs->locals->list, (char*)"");
+        // args_setSysOut(vs->locals->list, (char*)"");
         __clearInvokeQueues(vs->locals);
     }
 
@@ -1136,7 +1136,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
                                           uint16_t pc) {
     int size = bytecode_frame->instruct_array.size;
     args_setErrorCode(locals->list, 0);
-    args_setSysOut(locals->list, (char*)"");
+    // args_setSysOut(locals->list, (char*)"");
     VMState vs = {
         .bytecode_frame = bytecode_frame,
         .locals = locals,
@@ -1152,11 +1152,11 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         }
         InstructUnit* this_ins_unit = VMState_getInstructNow(&vs);
         vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
-        char* sysOut = args_getSysOut(locals->list);
+        // char* sysOut = args_getSysOut(locals->list);
         uint8_t errcode = args_getErrorCode(locals->list);
-        if (!strEqu("", sysOut)) {
-            __platform_printf("%s\r\n", sysOut);
-        }
+        // if (!strEqu("", sysOut)) {
+        //     __platform_printf("%s\r\n", sysOut);
+        // }
         if (0 != errcode) {
             __platform_printf("[info] input commond: \r\n");
             instructUnit_printWithConst(this_ins_unit,

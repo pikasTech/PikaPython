@@ -706,7 +706,14 @@ char* args_getSysOut(Args* args) {
 }
 
 void args_setSysOut(Args* args, char* str) {
-    args_setStr(args, "__sysOut", str);
+    // args_setStr(args, "__sysOut", str);
+    if (NULL == str) {
+        return;
+    }
+    if (strEqu("", str)) {
+        return;
+    }
+    __platform_printf("%s\r\n", str);
 }
 
 void obj_sysPrintf(PikaObj* self, char* fmt, ...) {
