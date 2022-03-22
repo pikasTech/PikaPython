@@ -38,6 +38,10 @@ static InstructUnit* VMState_getInstructNow(VMState* vs) {
                                      vs->pc);
 }
 
+static void VMState_setErrorCode(VMState* vs, uint8_t error_code) {
+    vs->error_code = error_code;
+}
+
 static InstructUnit* VMState_getInstructWithOffset(VMState* vs,
                                                    int32_t offset) {
     return instructArray_getByOffset(&(vs->bytecode_frame->instruct_array),
@@ -208,7 +212,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     }
     if (NULL == method_host_obj) {
         /* error, not found object */
-        args_setErrorCode(vs->locals->list, 1);
+        VMState_setErrorCode(vs, 1);
         args_setSysOut(vs->locals->list, "[error] runner: object no found.");
         goto RUN_exit;
     }
@@ -220,7 +224,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     /* assert method*/
     if (NULL == method_arg) {
         /* error, method no found */
-        args_setErrorCode(vs->locals->list, 2);
+        VMState_setErrorCode(vs, 2);
         args_setSysOut(vs->locals->list, "[error] runner: method no found.");
         goto RUN_exit;
     }
@@ -237,7 +241,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
 
     if (type_list == NULL) {
         /* typeList no found */
-        args_setErrorCode(vs->locals->list, 3);
+        VMState_setErrorCode(vs, 3);
         args_setSysOut(vs->locals->list, "[error] runner: type list no found.");
         goto RUN_exit;
     }
@@ -265,7 +269,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     }
 
     obj_setErrorCode(method_host_obj, 0);
-    obj_setSysOut(method_host_obj, "");
 
     /* run method */
     if (method_type == ARG_TYPE_NATIVE_METHOD) {
@@ -293,7 +296,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     /* transfer errCode */
     if (0 != obj_getErrorCode(method_host_obj)) {
         /* method error */
-        args_setErrorCode(vs->locals->list, 6);
+        VMState_setErrorCode(vs, 6);
     }
 
     goto RUN_exit;
@@ -721,7 +724,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     int32_t pc_next = vs->pc + instructUnit_getSize();
     /* Found new script Line, clear the queues*/
     if (instructUnit_getIsNewLine(ins_unit)) {
-        args_setErrorCode(vs->locals->list, 0);
+        VMState_setErrorCode(vs, 0);
         // args_setSysOut(vs->locals->list, (char*)"");
         __clearInvokeQueues(vs->locals);
     }
@@ -1135,8 +1138,6 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
                                           ByteCodeFrame* bytecode_frame,
                                           uint16_t pc) {
     int size = bytecode_frame->instruct_array.size;
-    args_setErrorCode(locals->list, 0);
-    // args_setSysOut(locals->list, (char*)"");
     VMState vs = {
         .bytecode_frame = bytecode_frame,
         .locals = locals,
@@ -1145,6 +1146,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         .q0 = NULL,
         .q1 = NULL,
         .pc = pc,
+        .error_code = 0,
     };
     while (vs.pc < size) {
         if (vs.pc == -99999) {
@@ -1152,8 +1154,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         }
         InstructUnit* this_ins_unit = VMState_getInstructNow(&vs);
         vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
-        uint8_t errcode = args_getErrorCode(locals->list);
-        if (0 != errcode) {
+        if (0 != vs.error_code) {
             __platform_printf("[info] input commond: \r\n");
             instructUnit_printWithConst(this_ins_unit,
                                         &(bytecode_frame->const_pool));

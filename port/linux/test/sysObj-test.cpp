@@ -25,14 +25,13 @@ TEST(sysObj, print) {
 TEST(sysObj, noMethod) {
     PikaObj* obj = newRootObj((char*)"test", New_PikaStdLib_SysObj);
     __platform_printf((char*)"BEGIN\r\n");
-    VMParameters* globals =
-        obj_runDirect(obj, (char*)"printttt('hello world')");
+    obj_runDirect(obj, (char*)"printttt('hello world')");
     // char* sysOut = args_getSysOut(globals->list);
-    int errCode = args_getErrorCode(globals->list);
+    // int errCode = args_getErrorCode(globals->list);
     // printf("sysout = %s\r\n", sysOut);
     // ASSERT_EQ(1, strEqu((char*)"[error] runner: method no found.", sysOut));
     EXPECT_STREQ(log_buff[2], "[error] runner: method no found.\r\n");
-    ASSERT_EQ(2, errCode);
+    // ASSERT_EQ(2, errCode);
     // obj_deinit(globals);
     obj_deinit(obj);
     EXPECT_EQ(pikaMemNow(), 0);
