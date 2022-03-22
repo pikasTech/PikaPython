@@ -1157,6 +1157,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
             __platform_printf("[info] input commond: \r\n");
             instructUnit_printWithConst(this_ins_unit,
                                         &(bytecode_frame->const_pool));
+            __platform_error_handle();
         }
     }
     __clearInvokeQueues(locals);

@@ -38,6 +38,9 @@ PIKA_WEAK void __platform_enable_irq_handle(void) {
 PIKA_WEAK void* __platform_malloc(size_t size) {
     return malloc(size);
 }
+PIKA_WEAK void __platform_error_handle(void){
+    return;
+}
 PIKA_WEAK void __platform_free(void* ptr) {
     free(ptr);
 }
