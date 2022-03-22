@@ -47,11 +47,6 @@ typedef struct VMState_t {
     ByteCodeFrame* bytecode_frame;
 } VMState;
 
-typedef enum VMConfig_t {
-    VMconfig_enableByteCode,
-    VMconfig_desableByteCode,
-} VMConfig;
-
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
