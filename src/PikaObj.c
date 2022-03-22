@@ -694,7 +694,8 @@ int32_t args_getErrorCode(Args* args) {
 }
 
 void obj_setSysOut(PikaObj* self, char* str) {
-    obj_setStr(self, "__sysOut", str);
+    // obj_setStr(self, "__sysOut", str);
+    args_setSysOut(self->list, str);
 }
 
 char* obj_getSysOut(PikaObj* self) {

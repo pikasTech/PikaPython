@@ -1152,11 +1152,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         }
         InstructUnit* this_ins_unit = VMState_getInstructNow(&vs);
         vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
-        // char* sysOut = args_getSysOut(locals->list);
         uint8_t errcode = args_getErrorCode(locals->list);
-        // if (!strEqu("", sysOut)) {
-        //     __platform_printf("%s\r\n", sysOut);
-        // }
         if (0 != errcode) {
             __platform_printf("[info] input commond: \r\n");
             instructUnit_printWithConst(this_ins_unit,
