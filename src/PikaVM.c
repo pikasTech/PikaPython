@@ -725,7 +725,6 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     /* Found new script Line, clear the queues*/
     if (instructUnit_getIsNewLine(ins_unit)) {
         VMState_setErrorCode(vs, 0);
-        // args_setSysOut(vs->locals->list, (char*)"");
         __clearInvokeQueues(vs->locals);
     }
 

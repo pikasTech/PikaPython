@@ -67,7 +67,6 @@ static void print_no_end(PikaObj* self, Args* args) {
         res = strsReplace(args, res, "\\t", "\t");
     }
     __platform_printf("%s", res);
-    // obj_setSysOut(self, res);
 }
 
 void print(PikaObj* self, Args* args) {
@@ -85,7 +84,6 @@ void print(PikaObj* self, Args* args) {
         res = strsReplace(args, res, "\\t", "\t");
     }
     __platform_printf("%s\r\n", res);
-    // obj_setSysOut(self, res);
 }
 
 PikaObj* New_BaseObj(Args* args) {
