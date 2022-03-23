@@ -390,7 +390,7 @@ Method methodArg_getPtr(Arg* method_arg) {
     void* info = arg_getContent(method_arg);
     void* ptr = NULL;
     __platform_memcpy(&ptr, info, size_ptr);
-    return (Method)ptr;
+    return ptr;
 }
 
 Method obj_getNativeMethod(PikaObj* self, char* method_name) {
@@ -445,22 +445,19 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
 
     PikaObj* methodHost = obj_getObj(self, methodPath, 1);
     char* methodName;
-
-		MethodInfo method_info = {
-        .dec = cleanDeclearation,
-        .name = methodName,
-        .ptr = (void*)methodPtr,
-        .type = method_type,
-        .bytecode_frame = bytecode_frame,
-    };
-
     if (NULL == methodHost) {
         /* no found method object */
         res = 1;
         goto exit;
     }
     methodName = strPointToLastToken(methodPath, '.');
-
+    MethodInfo method_info = {
+        .dec = cleanDeclearation,
+        .name = methodName,
+        .ptr = (void*)methodPtr,
+        .type = method_type,
+        .bytecode_frame = bytecode_frame,
+    };
     obj_saveMethodInfo(methodHost, &method_info);
     res = 0;
     goto exit;
