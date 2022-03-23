@@ -29,12 +29,16 @@
 #include "PikaPlatform.h"
 #include "dataArgs.h"
 
+void queue_init(Queue* queue) {
+    args_setInt(queue, "__t", 0);
+    args_setInt(queue, "__b", 0);
+    return queue;
+}
+
 Queue* New_queue(void) {
     Args* args = New_args(NULL);
-    args_setInt(args, "__t", 0);
-    args_setInt(args, "__b", 0);
-    Queue* queue = args;
-    return queue;
+    queue_init(args) ;
+    return (Queue*)args;
 }
 
 int32_t queue_deinit(Queue* queue) {

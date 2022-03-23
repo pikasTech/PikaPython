@@ -40,8 +40,9 @@ enum Instruct {
 typedef struct VMState_t {
     VMParameters* locals;
     VMParameters* globals;
-    Queue* q0;
-    Queue* q1;
+    Queue* qThis;
+    Queue* qSuper;
+    Queue* q[10];
     int32_t jmp;
     int32_t pc;
     ByteCodeFrame* bytecode_frame;
