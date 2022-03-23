@@ -32,7 +32,6 @@
 void queue_init(Queue* queue) {
     args_setInt(queue, "__t", 0);
     args_setInt(queue, "__b", 0);
-    return queue;
 }
 
 Queue* New_queue(void) {
