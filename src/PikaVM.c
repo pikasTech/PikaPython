@@ -198,7 +198,10 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     char* method_dec;
     char* type_list;
     char* sys_out;
+    Arg* call_arg = NULL;
+    uint8_t call_arg_index = 0;
     ByteCodeFrame* method_bytecodeFrame;
+		
     /* return arg directly */
     if (strEqu(data, "")) {
         return_arg = arg_copy(queue_popArg(vs->qSuper));
@@ -247,8 +250,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     }
 
     sub_locals = New_PikaObj();
-    Arg* call_arg = NULL;
-    uint8_t call_arg_index = 0;
     /* load pars */
     while (1) {
         /* load 'self' as the first arg when call object method */
@@ -892,7 +893,7 @@ char* constPool_getNow(ConstPool* self) {
         /* is the end */
         return NULL;
     }
-    return constPool_getStart(self) + (uintptr_t)(self->content_offset_now);
+    return (char*)((uintptr_t)constPool_getStart(self) + (uintptr_t)(self->content_offset_now));
 }
 
 uint16_t constPool_getLastOffset(ConstPool* self) {
@@ -965,11 +966,11 @@ void byteCodeFrame_init(ByteCodeFrame* self) {
 void byteCodeFrame_loadBytes(ByteCodeFrame* self, uint8_t* bytes) {
     uint16_t* ins_size_p = (uint16_t*)bytes;
     void* ins_start_p = (uint16_t*)(bytes + 2);
-    uint16_t* const_size_p = ins_start_p + *ins_size_p;
+    uint16_t* const_size_p = (uint16_t *)((uintptr_t)ins_start_p + (uintptr_t)*ins_size_p);
     self->instruct_array.size = *ins_size_p;
     self->instruct_array.content_start = ins_start_p;
     self->const_pool.size = *const_size_p;
-    self->const_pool.content_start = (void*)const_size_p + 2;
+    self->const_pool.content_start = (uint16_t *)((uintptr_t)const_size_p + 2);
 }
 
 void byteCodeFrame_deinit(ByteCodeFrame* self) {
@@ -1022,7 +1023,7 @@ static InstructUnit* instructArray_getNow(InstructArray* self) {
         /* is the end */
         return NULL;
     }
-    return (InstructUnit*)(instructArray_getStart(self) +
+    return (InstructUnit*)((uintptr_t)instructArray_getStart(self) +
                            (uintptr_t)(self->content_offset_now));
 }
 
@@ -1171,11 +1172,11 @@ VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
 }
 
 char* constPool_getByOffset(ConstPool* self, uint16_t offset) {
-    return (char*)(constPool_getStart(self) + (uintptr_t)offset);
+    return (char*)((uintptr_t)constPool_getStart(self) + (uintptr_t)offset);
 }
 
 InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset) {
-    return (InstructUnit*)(instructArray_getStart(self) + (uintptr_t)offset);
+    return (InstructUnit*)((uintptr_t)instructArray_getStart(self) + (uintptr_t)offset);
 }
 
 void constPool_printAsArray(ConstPool* self) {
