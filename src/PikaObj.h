@@ -220,4 +220,8 @@ int pikaCompile(char* output_file_name, char* py_lines);
 Method obj_getNativeMethod(PikaObj* self, char* method_name);
 void obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
 
+#define PIKA_PYTHON(x) 
+#define PIKA_BYTECODE_BEGIN
+#define PIKA_BYTECODE_END
+
 #endif

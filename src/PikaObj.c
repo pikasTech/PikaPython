@@ -452,11 +452,11 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
         goto exit;
     }
     methodName = strPointToLastToken(methodPath, '.');
-		method_info.dec = cleanDeclearation;
-		method_info.name = methodName;
-		method_info.ptr = (void*)methodPtr;
-		method_info.type = method_type;
-		method_info.bytecode_frame = bytecode_frame;
+    method_info.dec = cleanDeclearation;
+    method_info.name = methodName;
+    method_info.ptr = (void*)methodPtr;
+    method_info.type = method_type;
+    method_info.bytecode_frame = bytecode_frame;
     obj_saveMethodInfo(methodHost, &method_info);
     res = 0;
     goto exit;
