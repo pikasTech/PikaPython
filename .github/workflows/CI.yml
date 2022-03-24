@@ -66,3 +66,26 @@ jobs:
         git commit --allow-empty -a -m "update data_after.js"
         git push
 
+#   packageManager-windows:
+#     runs-on: windows-latest
+#     steps:
+#       - uses: actions/checkout@v2
+
+#       - name: PACKAGE_MANAGER
+#         run: cd ${{github.workspace}}/tools/pikaPackageManager && go run main.go
+
+  bytecode-gen:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: BYTECODE-GEN
+        run: |
+          cd ${{github.workspace}}/tools/pikaByteCodeGen
+          cd pikascript
+          pikaPackage.exe
+          cd ..
+          mkdir build
+          cd build 
+          cmake ..
+          make
