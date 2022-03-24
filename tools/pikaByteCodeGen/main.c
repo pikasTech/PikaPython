@@ -29,5 +29,9 @@ void main() {
     args_deinit(buffs);
     printf("[ OK ]: write file to 'pikaAsm.txt'. \r\n");
 
+    Parser_compilePyToBytecodeArray(pyText);
+    printf("\r\n\r\npress any key to exit...\r\n");
+    getchar();
+
     return;
 }
