@@ -24,10 +24,10 @@ void main() {
     Args* buffs = New_strBuff();
     char* pika_byte_code = Parser_multiLineToAsm(buffs, pyText);
 
-    FILE* file_byte_code = fopen("pikaByteCode.txt", "w");
+    FILE* file_byte_code = fopen("pikaAsm.txt", "w");
     fputs(pika_byte_code, file_byte_code);
     args_deinit(buffs);
-    printf("[ OK ]: write file to 'pikaByteCode.txt'. \r\n");
+    printf("[ OK ]: write file to 'pikaAsm.txt'. \r\n");
 
     return;
 }
