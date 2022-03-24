@@ -87,5 +87,4 @@ jobs:
           cd ..
           mkdir build
           cd build 
-          cmake ..
-          make
+          cmake --build ..
