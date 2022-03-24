@@ -1517,14 +1517,18 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
         .is_new_line = 0,
         .line_pointer = pikaAsm,
     };
-		uint16_t const_pool_offset;
-		char* data;
-		uint16_t exist_offset;
-		
+    uint16_t const_pool_offset;
+    char* data;
+    uint16_t exist_offset;
+
     char line_buff[PIKA_CONFIG_PATH_BUFF_SIZE] = {0};
     for (int i = 0; i < strCountSign(pikaAsm, '\n'); i++) {
         char* line = strGetLine(line_buff, asmer.line_pointer);
-				InstructUnit ins_unit = {0};
+        InstructUnit ins_unit = {0};
+        /* remove '\r' */
+        if (line[strGetSize(line) - 1] == '\r') {
+            line[strGetSize(line) - 1] = 0;
+        }
         /* process block deepth flag*/
         if ('B' == line[0]) {
             asmer.block_deepth_now = line[1] - '0';
@@ -1538,8 +1542,7 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
         const_pool_offset = 0;
 
         data = line + 6;
-        exist_offset =
-            constPool_getOffsetByData(&(self->const_pool), data);
+        exist_offset = constPool_getOffsetByData(&(self->const_pool), data);
 
         /* get const offset */
         if (strEqu(data, "")) {
@@ -1611,7 +1614,7 @@ static void __handler_instructArray_output_file(InstructArray* self,
     __platform_fwrite(ins_unit, 1, instructUnit_getSize(), self->output_f);
 }
 
-/* 
+/*
     need implament :
         __platform_fopen()
         __platform_fwrite()

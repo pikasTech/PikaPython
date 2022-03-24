@@ -2432,3 +2432,31 @@ TEST(asmer, asm_to_bytecodeArray) {
     byteCodeFrame_deinit(&bytecode_frame);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(asmer, asm_to_bytecode_0x0d) {
+    char* pikaAsm =(char*)
+                              "B0\n"
+                              "0 RUN __init__\n";
+    char* pikaAsm1 =(char*)
+                              "B0\r\n"
+                              "0 RUN __init__\r\n";
+
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    byteCodeFrame_printAsArray(&bytecode_frame);
+
+    ByteCodeFrame bytecode_frame1;
+    byteCodeFrame_init(&bytecode_frame1);
+    byteCodeFrame_appendFromAsm(&bytecode_frame1, pikaAsm1);
+    byteCodeFrame_printAsArray(&bytecode_frame1);
+
+    EXPECT_EQ(bytecode_frame1.const_pool.size, bytecode_frame.const_pool.size);
+    EXPECT_EQ(bytecode_frame1.instruct_array.size,
+              bytecode_frame.instruct_array.size);
+
+    /* deinit */
+    byteCodeFrame_deinit(&bytecode_frame1);
+    byteCodeFrame_deinit(&bytecode_frame);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
