@@ -83,7 +83,7 @@ jobs:
         run: |
           cd ${{github.workspace}}/tools/pikaByteCodeGen
           cd pikascript
-          pikaPackage.exe
+          ./pikaPackage.exe
           cd ..
           mkdir build
           cd build 
