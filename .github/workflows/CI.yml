@@ -74,17 +74,17 @@ jobs:
 #       - name: PACKAGE_MANAGER
 #         run: cd ${{github.workspace}}/tools/pikaPackageManager && go run main.go
 
-  bytecode-gen:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
+#   bytecode-gen:
+#     runs-on: windows-latest
+#     steps:
+#       - uses: actions/checkout@v2
 
-      - name: BYTECODE-GEN
-        run: |
-          cd ${{github.workspace}}/tools/pikaByteCodeGen
-          cd pikascript
-          ./pikaPackage.exe
-          cd ..
-          mkdir build
-          cd build 
-          cmake --build ..
+#       - name: BYTECODE-GEN
+#         run: |
+#           cd ${{github.workspace}}/tools/pikaByteCodeGen
+#           cd pikascript
+#           ./pikaPackage.exe
+#           cd ..
+#           mkdir build
+#           cd build 
+#           cmake ..
