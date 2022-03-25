@@ -2229,7 +2229,7 @@ TEST(compiler, task) {
 }
 
 TEST(compiler, demo1) {
-    char* lines = (char*)"platformGetTick()";
+    char* lines = (char*)"append(__val)";
     Parser_compilePyToBytecodeArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
