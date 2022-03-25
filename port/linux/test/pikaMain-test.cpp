@@ -1313,3 +1313,31 @@ TEST(pikaMain, get_native_method) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+
+TEST(pikaMain, hex_list) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\r\n");
+    pikaVM_run(pikaMain, (char*)
+            "bytes = PikaStdData.List()\n"
+            "bytes.append(0x0F)\n"
+            "bytes.append(0xFF)\n"
+            "sum = 0\n"
+            "for byte in bytes:\n"
+            "    sum = sum + byte\n"
+            "\n"
+            "print(sum)\n"
+        );
+    /* collect */
+    /* assert */
+    /* should only print once, so the second log (log_buff[1]) shuold be '\0' */
+    EXPECT_STREQ(log_buff[0], "270\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}

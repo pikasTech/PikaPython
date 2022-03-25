@@ -400,9 +400,15 @@ static Arg* VM_instruction_handler_RAS(PikaObj* self, VMState* vs, char* data) {
 
 static Arg* VM_instruction_handler_NUM(PikaObj* self, VMState* vs, char* data) {
     Arg* numArg = New_arg(NULL);
+    /* hex */
+    if (data[1] == 'x' || data[1] == 'X') {
+        return arg_setInt(numArg, "", strtol(data, NULL, 0));
+    }
+    /* float */
     if (strIsContain(data, '.')) {
         return arg_setFloat(numArg, "", atof(data));
     }
+    /* int */
     return arg_setInt(numArg, "", fast_atoi(data));
 }
 
@@ -892,7 +898,8 @@ char* constPool_getNow(ConstPool* self) {
         /* is the end */
         return NULL;
     }
-    return (char*)((uintptr_t)constPool_getStart(self) + (uintptr_t)(self->content_offset_now));
+    return (char*)((uintptr_t)constPool_getStart(self) +
+                   (uintptr_t)(self->content_offset_now));
 }
 
 uint16_t constPool_getLastOffset(ConstPool* self) {
@@ -965,7 +972,8 @@ void byteCodeFrame_init(ByteCodeFrame* self) {
 void byteCodeFrame_loadBytes(ByteCodeFrame* self, uint8_t* bytes) {
     uint16_t* ins_size_p = (uint16_t*)bytes;
     void* ins_start_p = (uint16_t*)(bytes + 2);
-    uint16_t* const_size_p = (uint16_t*)((uintptr_t)ins_start_p + (uintptr_t)(*ins_size_p));
+    uint16_t* const_size_p =
+        (uint16_t*)((uintptr_t)ins_start_p + (uintptr_t)(*ins_size_p));
     self->instruct_array.size = *ins_size_p;
     self->instruct_array.content_start = ins_start_p;
     self->const_pool.size = *const_size_p;
@@ -1175,7 +1183,8 @@ char* constPool_getByOffset(ConstPool* self, uint16_t offset) {
 }
 
 InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset) {
-    return (InstructUnit*)((uintptr_t)instructArray_getStart(self) + (uintptr_t)offset);
+    return (InstructUnit*)((uintptr_t)instructArray_getStart(self) +
+                           (uintptr_t)offset);
 }
 
 void constPool_printAsArray(ConstPool* self) {
