@@ -2460,3 +2460,24 @@ TEST(asmer, asm_to_bytecode_0x0d) {
     byteCodeFrame_deinit(&bytecode_frame);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, list_1_2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"print(list[0] + list[1])\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "3 REF list\n"
+                 "3 NUM 0\n"
+                 "2 RUN __get__\n"
+                 "3 REF list\n"
+                 "3 NUM 1\n"
+                 "2 RUN __get__\n"
+                 "1 OPT +\n"
+                 "0 RUN print\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

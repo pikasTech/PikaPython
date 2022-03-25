@@ -707,10 +707,13 @@ char* Parser_solveBranckets(Args* outBuffs,
     for (int i = 0; i < ps.length; i++) {
         ParserState_iterStart(&ps);
         /* matched [] */
+        /* found '[' */
         if ((TOKEN_devider == ps.token2.type) &&
             (strEqu(ps.token2.pyload, "["))) {
+            /* get 'obj' from obj[] */
             args_setStr(&buffs, "obj", ps.token1.pyload);
             is_in_brancket = 1;
+            /* fond ']' */
         } else if ((TOKEN_devider == ps.token2.type) &&
                    (strEqu(ps.token2.pyload, "]"))) {
             is_in_brancket = 0;
@@ -740,14 +743,18 @@ char* Parser_solveBranckets(Args* outBuffs,
             }
             right_arg = arg_strAppend(right_arg, ")");
             args_setStr(&buffs, "index", "");
+            /* in brancket and found '[' */
         } else if (is_in_brancket && (!strEqu(ps.token1.pyload, "["))) {
             char* index = args_getStr(&buffs, "index");
             Arg* index_arg = arg_setStr(NULL, "", index);
             index_arg = arg_strAppend(index_arg, ps.token1.pyload);
             args_setStr(&buffs, "index", arg_getStr(index_arg));
             arg_deinit(index_arg);
+            /* out of brancket and not found ']' */
         } else if (!is_in_brancket && (!strEqu(ps.token1.pyload, "]"))) {
-            right_arg = arg_strAppend(right_arg, ps.token1.pyload);
+            if (TOKEN_strEnd != ps.token1.type) {
+                right_arg = arg_strAppend(right_arg, ps.token1.pyload);
+            }
         }
         ParserState_iterEnd(&ps);
     }
