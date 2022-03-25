@@ -166,4 +166,5 @@ releases = [
 name = "W801Device"
 releases = [
   "v0.0.1 88f4e507f1665ca7ceda149aabf029f4e21e22c7",
+  "v1.0.0 7ae9cd062fa48ecfe4b843c9f13b0daef0efd79d",
 ]
