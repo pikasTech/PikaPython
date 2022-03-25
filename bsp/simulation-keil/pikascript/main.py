@@ -1,6 +1,7 @@
 from PikaObj import *
 import Device
 import PikaStdLib
+import PikaStdData
 
 led = Device.LED()
 uart = Device.Uart()
