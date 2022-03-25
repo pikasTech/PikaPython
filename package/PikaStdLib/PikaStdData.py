@@ -87,3 +87,8 @@ class String(TinyObj):
     # support val = string[] 
     def __get__() -> any:
         pass
+
+class ByteArray(List):
+    # convert a string to ByteArray
+    def fromString(s:str):
+        pass
