@@ -107,6 +107,7 @@ https://pikadoc.readthedocs.io/zh/latest/index.html
 |stm32f411ce|√|√|√|√|√|√|
 |stm32f407ze|√| | | | | |
 |stm32f407zg|√| | | | | |
+|stm32h750vb|√| | | | | |
 |stm32f051r8|√| | | | | |
 |ch582|√|√|√| |√|√|
 |ch32v103r8t6|√|√| | | | |
