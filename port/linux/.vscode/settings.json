@@ -42,7 +42,8 @@
         "stdexcept": "c",
         "typeinfo": "c",
         "cmath": "c",
-        "fstream": "c"
+        "fstream": "c",
+        "pika_config_gtest.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }
