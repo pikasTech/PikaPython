@@ -170,3 +170,9 @@ releases = [
   "v0.0.1 88f4e507f1665ca7ceda149aabf029f4e21e22c7",
   "v1.0.0 7ae9cd062fa48ecfe4b843c9f13b0daef0efd79d",
 ]
+
+[[packages]]
+name = "CH582"
+releases = [
+  "v1.0.0 7cdb0cf9ed161c3fc6802028a9e34c9f94b56244",
+]
