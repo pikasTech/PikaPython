@@ -108,7 +108,7 @@ https://pikadoc.readthedocs.io/zh/latest/index.html
 |stm32f407ze|√| | | | | |
 |stm32f407zg|√| | | | | |
 |stm32f051r8|√| | | | | |
-|ch582|√|√|√|√|√|√|
+|ch582|√|√|√| |√|√|
 |ch32v103r8t6|√|√| | | | |
 |cm32m101a|√| | | | | |
 |w801|√|√|√|√|√|√|
