@@ -237,6 +237,7 @@ http://pikascript.com
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
 | ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
 | 捐赠：EC600X QuecPython 开发板 | 移远模块 武加玉 |
 | Performance Point: 900->1400 | [GorgonMeducer](https://github.com/GorgonMeducer) |
