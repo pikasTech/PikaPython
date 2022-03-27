@@ -1175,6 +1175,7 @@ static char* Parser_parsePyLines(Args* outBuffs,
     uint16_t lines_num = strCountSign(py_lines, '\n');
     uint16_t lines_index = 0;
     char* out_ASM = NULL;
+    uint32_t line_size = 0;
     /* parse each line */
     while (1) {
         lines_index++;
@@ -1202,7 +1203,7 @@ static char* Parser_parsePyLines(Args* outBuffs,
             byteCodeFrame_appendFromAsm(bytecode_frame, single_ASM);
         }
     next_line:
-        uint32_t line_size = strGetSize(line);
+        line_size = strGetSize(line);
         lines_offset = lines_offset + line_size + 1;
         strsDeinit(&buffs);
         /* exit when finished */
