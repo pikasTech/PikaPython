@@ -194,7 +194,10 @@ Arg* obj_getArg(PikaObj* self, char* argPath) {
     return res;
 }
 
-int32_t obj_setArg(PikaObj* self, char* argPath, Arg* arg) {
+static int32_t __obj_setArg(PikaObj* self,
+                            char* argPath,
+                            Arg* arg,
+                            uint8_t is_copy) {
     /* setArg would copy arg */
     PikaObj* obj = obj_getObj(self, argPath, 1);
     if (NULL == obj) {
@@ -202,10 +205,23 @@ int32_t obj_setArg(PikaObj* self, char* argPath, Arg* arg) {
         return 1;
     }
     char* argName = strPointToLastToken(argPath, '.');
-    Arg* newArg = arg_copy(arg);
+    Arg* newArg;
+    if (is_copy) {
+        newArg = arg_copy(arg);
+    } else {
+        newArg = arg;
+    }
     newArg = arg_setName(newArg, argName);
     args_setArg(obj->list, newArg);
     return 0;
+}
+
+int32_t obj_setArg(PikaObj* self, char* argPath, Arg* arg) {
+    return __obj_setArg(self, argPath, arg, 1);
+};
+
+int32_t obj_setArg_noCopy(PikaObj* self, char* argPath, Arg* arg) {
+    return __obj_setArg(self, argPath, arg, 0);
 }
 
 void* obj_getPtr(PikaObj* self, char* argPath) {

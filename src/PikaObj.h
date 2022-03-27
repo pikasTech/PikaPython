@@ -107,6 +107,7 @@ int32_t obj_setPtr(PikaObj* self, char* argPath, void* pointer);
 int32_t obj_setFloat(PikaObj* self, char* argPath, float value);
 int32_t obj_setStr(PikaObj* self, char* argPath, char* str);
 int32_t obj_setArg(PikaObj* self, char* argPath, Arg* arg);
+int32_t obj_setArg_noCopy(PikaObj* self, char* argPath, Arg* arg);
 
 void* obj_getPtr(PikaObj* self, char* argPath);
 float obj_getFloat(PikaObj* self, char* argPath);

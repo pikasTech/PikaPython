@@ -351,7 +351,7 @@ static Arg* __VM_OUT(PikaObj* self,
         arg_setType(outArg, ARG_TYPE_OBJECT);
     }
     /* ouput arg to locals */
-    obj_setArg(hostObj, data, outArg);
+    obj_setArg_noCopy(hostObj, data, outArg);
     if ((ARG_TYPE_MATE_OBJECT == outArg_type) ||
         (ARG_TYPE_FREE_OBJECT == outArg_type)) {
         if (is_init_obj == IS_INIT_OBJ_TRUE) {
@@ -377,7 +377,6 @@ static Arg* __VM_OUT(PikaObj* self,
             }
         }
     }
-    arg_deinit(outArg);
     return NULL;
 }
 
