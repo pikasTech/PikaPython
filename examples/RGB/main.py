@@ -20,4 +20,5 @@ mem.max()
 while True:
     print('flowing')
     rgb.flow()
+    time.sleep_ms(100)
 
