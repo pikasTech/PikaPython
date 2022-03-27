@@ -43,6 +43,7 @@ int64_t queue_popInt(Queue* queue);
 float queue_popFloat(Queue* queue);
 char* queue_popStr(Queue* queue);
 Arg* queue_popArg(Queue* queue);
+Arg* queue_popArg_notDeinitArg(Queue* queue);
 int32_t queue_deinit_stack(Queue* queue);
 void queue_init(Queue* queue);
 #endif

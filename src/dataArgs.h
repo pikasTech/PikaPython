@@ -114,6 +114,7 @@ uint8_t args_setLiteral(Args* self, char* targetArgName, char* literal);
 int args_pushArg(Args* self, Arg* arg);
 Arg* args_getArg_index(Args* self, int index);
 void* args_getHeapStruct(Args* self, char* name);
+int32_t args_removeArg_notDeinitArg(Args* self, Arg* argNow);
 
 Args* New_args(Args* args);
 #endif

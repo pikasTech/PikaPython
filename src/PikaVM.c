@@ -203,7 +203,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     ByteCodeFrame* method_bytecodeFrame;
     /* return arg directly */
     if (strEqu(data, "")) {
-        return_arg = arg_copy(queue_popArg(vs->qSuper));
+        return_arg = queue_popArg_notDeinitArg(vs->qSuper);
         goto RUN_exit;
     }
 
@@ -255,7 +255,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         if ((method_type == ARG_TYPE_OBJECT_METHOD) && (call_arg_index == 0)) {
             call_arg = arg_setPtr(NULL, "", ARG_TYPE_POINTER, method_host_obj);
         } else {
-            call_arg = arg_copy(queue_popArg(vs->qSuper));
+            call_arg = queue_popArg_notDeinitArg(vs->qSuper);
         }
         /* exit when there is no arg in queue */
         if (NULL == call_arg) {
@@ -322,7 +322,7 @@ static Arg* __VM_OUT(PikaObj* self,
                      VMState* vs,
                      char* data,
                      is_init_obj_t is_init_obj) {
-    Arg* outArg = arg_copy(queue_popArg(vs->qThis));
+    Arg* outArg = queue_popArg_notDeinitArg(vs->qThis);
     ArgType outArg_type = arg_getType(outArg);
     PikaObj* hostObj = vs->locals;
     /* match global_list */
@@ -420,7 +420,7 @@ static Arg* VM_instruction_handler_JMP(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
     int thisBlockDeepth;
     thisBlockDeepth = VMState_getBlockDeepthNow(vs);
-    Arg* assertArg = arg_copy(queue_popArg(vs->qThis));
+    Arg* assertArg = queue_popArg_notDeinitArg(vs->qThis);
     int assert = arg_getInt(assertArg);
     arg_deinit(assertArg);
     char __else[] = "__else0";
@@ -435,8 +435,8 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
 
 static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     Arg* outArg = NULL;
-    Arg* arg1 = arg_copy(queue_popArg(vs->qSuper));
-    Arg* arg2 = arg_copy(queue_popArg(vs->qSuper));
+    Arg* arg1 = queue_popArg_notDeinitArg(vs->qSuper);
+    Arg* arg2 = queue_popArg_notDeinitArg(vs->qSuper);
     ArgType type_arg1 = arg_getType(arg1);
     ArgType type_arg2 = arg_getType(arg2);
     int num1_i = 0;
@@ -644,7 +644,7 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_RET(PikaObj* self, VMState* vs, char* data) {
     /* exit jmp signal */
     vs->jmp = -999;
-    Arg* returnArg = arg_copy(queue_popArg(vs->qThis));
+    Arg* returnArg = queue_popArg_notDeinitArg(vs->qThis);
     method_returnArg(vs->locals->list, returnArg);
     return NULL;
 }

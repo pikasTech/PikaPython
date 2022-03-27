@@ -36,7 +36,7 @@ void queue_init(Queue* queue) {
 
 Queue* New_queue(void) {
     Args* args = New_args(NULL);
-    queue_init(args) ;
+    queue_init(args);
     return (Queue*)args;
 }
 
@@ -56,7 +56,7 @@ int32_t queue_pushArg(Queue* queue, Arg* arg) {
     return args_setArg(args, arg);
 }
 
-Arg* queue_popArg(Queue* queue) {
+Arg* __queue_popArg(Queue* queue, uint8_t is_deinit_arg) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "__t");
     uint64_t bottom = args_getInt(args, "__b");
@@ -67,7 +67,20 @@ Arg* queue_popArg(Queue* queue) {
     args_setInt(args, "__b", bottom + 1);
     char buff[11];
     Arg* res = args_getArg(args, fast_itoa(buff, bottom));
+    if (is_deinit_arg) {
+        args_removeArg(args, res);
+    } else {
+        args_removeArg_notDeinitArg(args, res);
+    }
     return res;
+}
+
+Arg* queue_popArg(Queue* queue) {
+    return __queue_popArg(queue, 1);
+}
+
+Arg* queue_popArg_notDeinitArg(Queue* queue) {
+    return __queue_popArg(queue, 0);
 }
 
 int32_t queue_pushInt(Queue* queue, int val) {
