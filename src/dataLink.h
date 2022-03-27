@@ -30,7 +30,7 @@
 #include "dataLinkNode.h"
 #include "dataMemory.h"
 
-enum LINK_IS_DEINIT_SELF{
+enum LINK_IS_DEINIT_SELF {
     LINK_IS_DEINIT_SELF_ENABLE,
     LINK_IS_DEINIT_SELF_DISABLE,
 };
@@ -45,6 +45,7 @@ void link_deinit_stack(Link* self);
 void link_init(Link* self, void* args);
 void link_addNode(Link* self, void* content);
 void link_removeNode(Link* self, void* content);
+void link_removeNode_notDeinitNode(Link* self, void* content);
 LinkNode* link_getNode(Link* self, int64_t id);
 int32_t link_getSize(Link* self);
 Link* New_link(void* args);

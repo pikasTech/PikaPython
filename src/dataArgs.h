@@ -44,6 +44,7 @@ LinkNode* args_getNode(Args* self, char* name);
 Arg* args_getArgByIndex(Args* self, int32_t index);
 Arg* args_getArg(Args* self, char* name);
 int32_t args_removeArg(Args* self, Arg* argNow);
+int args_moveArg(Args* self, Args* dict, Arg* arg);
 Arg* args_getArg_hash(Args* self, Hash nameHash);
 
 int32_t args_setArg(Args* self, Arg* arg);

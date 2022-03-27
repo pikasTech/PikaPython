@@ -450,6 +450,16 @@ int32_t args_removeArg(Args* self, Arg* argNow) {
     return 0;
 }
 
+int args_moveArg(Args* self, Args* dict, Arg* argNow) {
+    if (NULL == argNow) {
+        /* can not found arg */
+        return 1;
+    }
+    link_removeNode_notDeinitNode(self, argNow);
+    args_pushArg(dict, argNow);
+    return 0;
+}
+
 Args* New_args(Args* args) {
     Args* self = New_link(NULL);
     return self;

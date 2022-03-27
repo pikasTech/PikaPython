@@ -212,3 +212,17 @@ TEST(args, heap_struct) {
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(args, args_move) {
+    Args* args = New_args(NULL);
+    Args* args2 = New_args(NULL);
+    args_setInt(args, (char*)"a", 100);
+    args_moveArg(args, args2, args_getArg(args, (char*)"a"));
+    /* assert */
+    EXPECT_EQ(-999999999, args_getInt(args, (char*)"a"));
+    EXPECT_EQ(100, args_getInt(args2, (char*)"a"));
+    /* deinit */
+    args_deinit(args);
+    args_deinit(args2);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

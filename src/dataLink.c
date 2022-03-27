@@ -58,7 +58,9 @@ void link_addNode(Link* self, void* content) {
     content_setNext(content, secondNode);
 }
 
-void link_removeNode(Link* self, void* content) {
+static void __link_removeNode(Link* self,
+                              void* content,
+                              uint8_t is_deinit_node) {
     LinkNode* nodeToDelete = NULL;
     LinkNode* nodeNow = self->firstNode;
     LinkNode* priorNode = NULL;
@@ -91,8 +93,18 @@ void link_removeNode(Link* self, void* content) {
 
 // deinit the node
 exit:
-    linkNode_deinit(nodeToDelete);
+    if (is_deinit_node) {
+        linkNode_deinit(nodeToDelete);
+    }
     return;
+}
+
+void link_removeNode(Link* self, void* content) {
+    __link_removeNode(self, content, 1);
+}
+
+void link_removeNode_notDeinitNode(Link* self, void* content) {
+    __link_removeNode(self, content, 0);
 }
 
 int32_t link_getSize(Link* self) {
