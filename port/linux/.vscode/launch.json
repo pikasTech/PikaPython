@@ -18,7 +18,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=parser.list_1_2",
+                // "--gtest_filter=parser.class_def_void_line",
                 // "--gtest_filter=VM.WHILE_byte",
                 // "--gtest_filter=pikaMain.task_run_once",
                 // "--gtest_filter=VM.if_elif*",

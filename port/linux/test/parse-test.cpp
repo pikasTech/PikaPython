@@ -482,7 +482,6 @@ TEST(parser, pikaPi) {
 
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
-                 "B0\n"
                  "0 RUN STM32.Time\n"
                  "0 OUT time\n"
                  "B0\n"
@@ -510,7 +509,6 @@ TEST(parser, pikaPi) {
                  "0 RUN PikaMath.Operator\n"
                  "0 OUT op\n"
                  "B0\n"
-                 "B0\n"
                  "0 RUN uart.init\n"
                  "B0\n"
                  "1 NUM 1\n"
@@ -521,11 +519,9 @@ TEST(parser, pikaPi) {
                  "B0\n"
                  "0 RUN uart.enable\n"
                  "B0\n"
-                 "B0\n"
                  "0 RUN rgb.init\n"
                  "B0\n"
                  "0 RUN rgb.enable\n"
-                 "B0\n"
                  "B0\n"
                  "1 STR hello 2\n"
                  "0 RUN print\n"
@@ -534,7 +530,6 @@ TEST(parser, pikaPi) {
                  "0 RUN print\n"
                  "B0\n"
                  "0 RUN mem.max\n"
-                 "B0\n"
                  "B0\n"
                  "0 REF True\n"
                  "0 JEZ 2\n"
@@ -548,11 +543,7 @@ TEST(parser, pikaPi) {
                  "0 RUN print\n"
                  "B0\n"
                  "0 JMP -1\n"
-                 "B0\n"
-                 "B0\n"
-                 "B0\n"
                  "B0\n");
-
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2478,6 +2469,60 @@ TEST(parser, list_1_2) {
                  "2 RUN __get__\n"
                  "1 OPT +\n"
                  "0 RUN print\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, class_def_void_line) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+            "class Test():\n"
+            "    x = 1\n"
+            "\n"
+            "    def hello():\n"
+            "#test\n"
+            "        print('hello')\n"
+            "    \n"
+            "\n"
+        ;
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+
+    EXPECT_STREQ(pikaAsm, (char*)
+    "B0\n"
+    "0 DEF Test()\n"
+    "0 JMP 1\n"
+    "B1\n"
+    "0 RUN PikaStdLib.PikaObj\n"
+    "0 OUT self\n"
+    "B1\n"
+    "0 RAS self\n"
+    "B1\n"
+    "0 NUM 1\n"
+    "0 OUT x\n"
+    "B1\n"
+    "0 DEF hello()\n"
+    "0 JMP 1\n"
+    "B2\n"
+    "1 STR hello\n"
+    "0 RUN print\n"
+    "B2\n"
+    "0 RET \n"
+    "B1\n"
+    "0 RAS $origin\n"
+    "B1\n"
+    "0 NEW self\n"
+    "0 RET \n"
+    "B0\n");
+
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    byteCodeFrame_print(&bytecode_frame);
+    byteCodeFrame_deinit(&bytecode_frame);
+
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

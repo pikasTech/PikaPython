@@ -1156,21 +1156,37 @@ exit:
     return ASM;
 }
 
+static int Parser_isVoidLine(char* line) {
+    for (uint32_t i = 0; i < strGetSize(line); i++) {
+        if (line[i] != ' ') {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 static char* Parser_parsePyLines(Args* outBuffs,
                                  ByteCodeFrame* bytecode_frame,
                                  char* py_lines) {
     Stack* block_stack = New_Stack();
     Arg* asm_buff = arg_setStr(NULL, "", "");
     uint32_t lines_offset = 0;
-    uint32_t lines_num = strGetSize(py_lines);
+    uint32_t lines_size = strGetSize(py_lines);
+    uint16_t lines_num = strCountSign(py_lines, '\n');
+    uint16_t lines_index = 0;
     char* out_ASM = NULL;
     /* parse each line */
     while (1) {
+        lines_index++;
         Args buffs = {0};
         /* get single line by pop multiline */
         char* line = strsGetFirstToken(&buffs, py_lines + lines_offset, '\n');
-        uint32_t line_size = strGetSize(line);
-        lines_offset = lines_offset + line_size + 1;
+        /* filter for not end \n */
+        if (lines_index != lines_num) {
+            if (Parser_isVoidLine(line)) {
+                goto next_line;
+            }
+        }
         /* parse single Line to Asm */
         char* single_ASM = Parser_LineToAsm(&buffs, line, block_stack);
         if (NULL == single_ASM) {
@@ -1185,9 +1201,12 @@ static char* Parser_parsePyLines(Args* outBuffs,
             /* store ByteCode */
             byteCodeFrame_appendFromAsm(bytecode_frame, single_ASM);
         }
+    next_line:
+        uint32_t line_size = strGetSize(line);
+        lines_offset = lines_offset + line_size + 1;
         strsDeinit(&buffs);
         /* exit when finished */
-        if (lines_offset >= lines_num) {
+        if (lines_offset >= lines_size) {
             break;
         }
     }
