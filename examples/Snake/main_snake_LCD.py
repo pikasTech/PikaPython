@@ -60,6 +60,7 @@ d = 0
 isUpdate = 1
 isEat = 0
 while True:
+    time.sleep_ms(50)
     if isUpdate:
         # isUpdate = 0
         # check eat fruit
