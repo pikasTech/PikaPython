@@ -970,12 +970,18 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     /* init data */
     AST* ast = New_queueObj();
     Args buffs = {0};
-    uint8_t block_deepth, block_deepth_last;
+    int8_t block_deepth, block_deepth_last;
     char *line_start, *stmt;
     /* get block deepth */
     block_deepth = Parser_getPyLineBlockDeepth(line);
     block_deepth_last = block_deepth;
     /* set block deepth */
+    if (block_deepth == -1) {
+        /* get block_deepth error */
+        obj_deinit(ast);
+        ast = NULL;
+        goto exit;
+    }
     obj_setInt(ast, "blockDeepth", block_deepth);
 
     /* check if exit block */
@@ -1306,6 +1312,10 @@ char* ASM_addBlockDeepth(AST* ast,
 char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     Args buffs = {0};
     char* pikaAsm = strsCopy(&buffs, "");
+    if (NULL == ast) {
+        pikaAsm = NULL;
+        goto exit;
+    }
     QueueObj* exitBlock = obj_getObj(ast, "exitBlock", 0);
     /* exiting from block */
     if (exitBlock != NULL) {
@@ -1522,6 +1532,10 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         goto exit;
     }
 exit:
+    if (NULL == pikaAsm) {
+        strsDeinit(&buffs);
+        return NULL;
+    }
     if (!is_block_matched) {
         /* parse stmt ast */
         pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);

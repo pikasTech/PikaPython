@@ -1314,7 +1314,6 @@ TEST(pikaMain, get_native_method) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(pikaMain, hex_list) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1359,6 +1358,25 @@ TEST(pikaMain, bytearray) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "448\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, not_4_space) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\r\n");
+    pikaVM_run(pikaMain, (char*)
+    "  print('test')\n"
+    );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
