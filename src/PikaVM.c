@@ -1162,8 +1162,23 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
         if (0 != vs.error_code) {
             __platform_printf("[info] input commond: \r\n");
-            instructUnit_printWithConst(this_ins_unit,
-                                        &(bytecode_frame->const_pool));
+            InstructUnit* head_ins_unit = this_ins_unit;
+            /* get first ins of a line */
+            while (1) {
+                if (instructUnit_getIsNewLine(head_ins_unit)) {
+                    break;
+                }
+                head_ins_unit--;
+            }
+            /* print inses of a line */
+            while (1) {
+                instructUnit_printWithConst(head_ins_unit,
+                                            &(bytecode_frame->const_pool));
+                head_ins_unit++;
+                if (head_ins_unit > this_ins_unit) {
+                    break;
+                }
+            }
             __platform_error_handle();
         }
     }
