@@ -112,7 +112,7 @@ https://pikadoc.readthedocs.io/zh/latest/index.html
 |ch582|√|√|√| |√|√|
 |ch32v103r8t6|√|√| | | | |
 |cm32m101a|√| | | | | |
-|w801|√|√|√|√|√|√|
+|w801|√| | | | | |
 |w806|√|√|√|√|√|√|
 |apm32f030r8|√| | | | | |
 |apm32e103vb|√| | | | | |
