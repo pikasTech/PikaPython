@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Session Name="D:\projects_1\display_and_control\WM_SDK_W806_0.4.0_FreeRTOS\WM_SDK_W806_0.4.0_FreeRTOS\Project\W806_SDK.cdkws">
+  <int Value="0" Name="m_selectedTab"/>
+  <wxString Value="D:\projects_1\display_and_control\WM_SDK_W806_0.4.0_FreeRTOS\WM_SDK_W806_0.4.0_FreeRTOS\Project\W806_SDK.cdkws" Name="m_workspaceName"/>
+  <TabInfoArray Name="TabInfoArray"/>
+  <SerializedObject Name="m_breakpoints">
+    <long Value="0" Name="Count"/>
+  </SerializedObject>
+</Session>
