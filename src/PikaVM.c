@@ -204,7 +204,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     char* sys_out;
     Arg* call_arg = NULL;
     uint8_t call_arg_index = 0;
+    uint8_t call_arg_num = 0;
     ByteCodeFrame* method_bytecodeFrame;
+    InstructUnit *this_ins, *super_ins;
+    this_ins = VMState_getInstructNow(vs);
+    uint8_t this_invoke_deepth = instructUnit_getInvokeDeepth(this_ins);
     /* return arg directly */
     if (strEqu(data, "")) {
         return_arg = queue_popArg_notDeinitArg(vs->qSuper);
@@ -254,16 +258,28 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
 
     sub_locals = New_PikaObj();
     /* load pars */
+    super_ins = this_ins;
     while (1) {
+        super_ins--;
+        if (instructUnit_getInvokeDeepth(super_ins) !=
+            (this_invoke_deepth + 1)) {
+            break;
+        }
+        if (instructUnit_getIsNewLine(super_ins)) {
+            break;
+        }
+        call_arg_num++;
+    }
+    if (method_type == ARG_TYPE_OBJECT_METHOD) {
+        call_arg_num++;
+    }
+
+    for (uint8_t i = 0; i < call_arg_num; i++) {
         /* load 'self' as the first arg when call object method */
         if ((method_type == ARG_TYPE_OBJECT_METHOD) && (call_arg_index == 0)) {
             call_arg = arg_setPtr(NULL, "", ARG_TYPE_POINTER, method_host_obj);
         } else {
             call_arg = queue_popArg_notDeinitArg(vs->qSuper);
-        }
-        /* exit when there is no arg in queue */
-        if (NULL == call_arg) {
-            break;
         }
         char* argDef = strsPopToken(&buffs, type_list, ',');
         char* argName = strsGetFirstToken(&buffs, argDef, ':');
@@ -744,22 +760,23 @@ static int pikaVM_runInstructUnit(PikaObj* self,
         __clearInvokeQueues(vs->locals);
     }
 
-    invode_deepth0_str[0] = instructUnit_getInvokeDeepth(ins_unit) + '0';
-    invode_deepth1_str[0] = invode_deepth0_str[0] + 1;
+    invode_deepth0_str[0] = '0';
+    // invode_deepth1_str[0] = invode_deepth0_str[0] + 1;
 
     char* data = VMState_getConstWithInstructUnit(vs, ins_unit);
 
     vs->qThis = args_getPtr(vs->locals->list, invode_deepth0_str);
-    vs->qSuper = args_getPtr(vs->locals->list, invode_deepth1_str);
+    // vs->qSuper = args_getPtr(vs->locals->list, "0");
 
     if (NULL == vs->qThis) {
         vs->qThis = New_queue();
         args_setPtr(vs->locals->list, invode_deepth0_str, vs->qThis);
     }
-    if (NULL == vs->qSuper) {
-        vs->qSuper = New_queue();
-        args_setPtr(vs->locals->list, invode_deepth1_str, vs->qSuper);
-    }
+    // if (NULL == vs->qSuper) {
+    //     vs->qSuper = New_queue();
+    //     args_setPtr(vs->locals->list, invode_deepth1_str, vs->qSuper);
+    // }
+    vs->qSuper = vs->qThis;
     /* run instruct */
     resArg = VM_instruct_handler_table[instruct](self, vs, data);
     if (NULL != resArg) {

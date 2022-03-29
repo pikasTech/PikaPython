@@ -114,9 +114,9 @@ TEST(VM, ref_a_b) {
 TEST(VM, Run_add) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
-
-    VMParameters* globals = pikaVM_runAsm(
-        self, Parser_LineToAsm(buffs, (char*)"a = plusInt(1,2)", NULL));
+    char* pikaAsm = Parser_LineToAsm(buffs, (char*)"a = plusInt(1,2)", NULL);
+    __platform_printf((char*)"%s", pikaAsm);
+    VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
 
     args_deinit(buffs);
     int a = args_getInt(globals->list, (char*)"a");
@@ -141,10 +141,10 @@ TEST(VM, Run_add_multy) {
 TEST(VM, Run_add_1_2_3) {
     PikaObj* self = newRootObj((char*)"root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
-
-    VMParameters* globals = pikaVM_runAsm(
-        self,
-        Parser_LineToAsm(buffs, (char*)"a = plusInt(1, plusInt(2,3) )", NULL));
+    char* pikaAsm =
+        Parser_LineToAsm(buffs, (char*)"a = plusInt(1, plusInt(2,3) )", NULL);
+    __platform_printf((char*)"%s", pikaAsm);
+    VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
 
     args_deinit(buffs);
     int a = args_getInt(globals->list, (char*)"a");
