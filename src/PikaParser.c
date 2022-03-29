@@ -1083,6 +1083,14 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         obj_setStr(ast, "return", "");
         goto block_matched;
     }
+    if (strIsStartWith(line_start, "import ")) {
+        stmt = "";
+        goto block_matched;
+    }
+    if (strIsStartWith(line_start, "from ")) {
+        stmt = "";
+        goto block_matched;
+    }
     if (strIsStartWith(line_start, "global ")) {
         stmt = "";
         char* global_list = line_start + 7;

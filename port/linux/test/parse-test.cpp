@@ -2526,3 +2526,45 @@ TEST(parser, class_def_void_line) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, multiLine_import) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =(char *)
+        "import TEE\n"
+        "from EE import *\n"
+        "while true:\n"
+        "    rgb.flow()\n"
+        "    if false:\n"
+        "        a=3\n"
+        "        test.on(add(2,3))\n"
+        "\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "B0\n"
+                 "B0\n"
+                 "0 REF true\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "0 RUN rgb.flow\n"
+                 "B1\n"
+                 "0 REF false\n"
+                 "0 JEZ 1\n"
+                 "B2\n"
+                 "0 NUM 3\n"
+                 "0 OUT a\n"
+                 "B2\n"
+                 "2 NUM 2\n"
+                 "2 NUM 3\n"
+                 "1 RUN add\n"
+                 "0 RUN test.on\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
