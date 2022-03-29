@@ -255,12 +255,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     sub_locals = New_PikaObj();
     /* load pars */
     while (1) {
-        /* load 'self' as the first arg when call object method */
-        if ((method_type == ARG_TYPE_OBJECT_METHOD) && (call_arg_index == 0)) {
-            call_arg = arg_setPtr(NULL, "", ARG_TYPE_POINTER, method_host_obj);
-        } else {
-            call_arg = stack_popArg(vs->sSuper);
-        }
+        call_arg = stack_popArg(vs->sSuper);
         /* exit when there is no arg in stack */
         if (NULL == call_arg) {
             break;
@@ -275,6 +270,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         call_arg = arg_setName(call_arg, argName);
         args_setArg(sub_locals->list, call_arg);
         call_arg_index++;
+    }
+
+    /* load 'self' as the first arg when call object method */
+    if (method_type == ARG_TYPE_OBJECT_METHOD) {
+        call_arg = arg_setPtr(NULL, "self", ARG_TYPE_POINTER, method_host_obj);
+        args_setArg(sub_locals->list, call_arg);
     }
 
     obj_setErrorCode(method_host_obj, 0);
