@@ -742,11 +742,6 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     // char invode_deepth1_str[2] = {0};
     int32_t pc_next = vs->pc + instructUnit_getSize();
     /* Found new script Line, clear the stacks */
-    if (instructUnit_getIsNewLine(ins_unit)) {
-        VMState_setErrorCode(vs, 0);
-        __clearInvokeStackes(vs->locals);
-    }
-
     invode_deepth0_str[0] = '0';
 
     char* data = VMState_getConstWithInstructUnit(vs, ins_unit);
