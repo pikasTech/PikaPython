@@ -139,16 +139,6 @@ static int32_t VMState_getAddrOffsetOfContinue(VMState* vs) {
     return offset;
 }
 
-int32_t __clearInvokeStackes(VMParameters* vm_pars) {
-    char deepth[2] = "0";
-    Stack* stack = (Stack*)args_getPtr(vm_pars->list, deepth);
-    if (NULL != stack) {
-        args_deinit(stack);
-        args_removeArg(vm_pars->list, args_getArg(vm_pars->list, deepth));
-    }
-    return 0;
-}
-
 typedef Arg* (*VM_instruct_handler)(PikaObj* self, VMState* vs, char* data);
 
 static Arg* VM_instruction_handler_NON(PikaObj* self, VMState* vs, char* data) {
@@ -204,7 +194,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     ByteCodeFrame* method_bytecodeFrame;
     /* return arg directly */
     if (strEqu(data, "")) {
-        return_arg = stack_popArg(vs->sSuper);
+        return_arg = stack_popArg(vs->stack);
         goto RUN_exit;
     }
 
@@ -259,7 +249,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         char* argDef = strPopLastToken(type_list, ',');
         strPopLastToken(argDef, ':');
         char* argName = argDef;
-        call_arg = stack_popArg(vs->sSuper);
+        call_arg = stack_popArg(vs->stack);
         call_arg = arg_setName(call_arg, argName);
         args_setArg(sub_locals->list, call_arg);
         call_arg_index++;
@@ -329,7 +319,7 @@ static Arg* __VM_OUT(PikaObj* self,
                      VMState* vs,
                      char* data,
                      is_init_obj_t is_init_obj) {
-    Arg* outArg = stack_popArg(vs->sThis);
+    Arg* outArg = stack_popArg(vs->stack);
     ArgType outArg_type = arg_getType(outArg);
     PikaObj* hostObj = vs->locals;
     /* match global_list */
@@ -426,7 +416,7 @@ static Arg* VM_instruction_handler_JMP(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
     int thisBlockDeepth;
     thisBlockDeepth = VMState_getBlockDeepthNow(vs);
-    Arg* assertArg = stack_popArg(vs->sThis);
+    Arg* assertArg = stack_popArg(vs->stack);
     int assert = arg_getInt(assertArg);
     arg_deinit(assertArg);
     char __else[] = "__else0";
@@ -441,8 +431,8 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
 
 static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     Arg* outArg = NULL;
-    Arg* arg2 = stack_popArg(vs->sSuper);
-    Arg* arg1 = stack_popArg(vs->sSuper);
+    Arg* arg2 = stack_popArg(vs->stack);
+    Arg* arg1 = stack_popArg(vs->stack);
     ArgType type_arg1 = arg_getType(arg1);
     ArgType type_arg2 = arg_getType(arg2);
     int num1_i = 0;
@@ -657,7 +647,7 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_RET(PikaObj* self, VMState* vs, char* data) {
     /* exit jmp signal */
     vs->jmp = -999;
-    Arg* returnArg = stack_popArg(vs->sThis);
+    Arg* returnArg = stack_popArg(vs->stack);
     method_returnArg(vs->locals->list, returnArg);
     return NULL;
 }
@@ -738,25 +728,13 @@ static int pikaVM_runInstructUnit(PikaObj* self,
                                   InstructUnit* ins_unit) {
     enum Instruct instruct = instructUnit_getInstruct(ins_unit);
     Arg* resArg;
-    char invode_deepth0_str[2] = {0};
     // char invode_deepth1_str[2] = {0};
     int32_t pc_next = vs->pc + instructUnit_getSize();
-    /* Found new script Line, clear the stacks */
-    invode_deepth0_str[0] = '0';
-
     char* data = VMState_getConstWithInstructUnit(vs, ins_unit);
-
-    vs->sThis = args_getPtr(vs->locals->list, invode_deepth0_str);
-
-    if (NULL == vs->sThis) {
-        vs->sThis = New_Stack();
-        args_setPtr(vs->locals->list, invode_deepth0_str, vs->sThis);
-    }
-    vs->sSuper = vs->sThis;
     /* run instruct */
     resArg = VM_instruct_handler_table[instruct](self, vs, data);
     if (NULL != resArg) {
-        stack_pushArg(vs->sThis, resArg);
+        stack_pushArg(vs->stack, resArg);
     }
     goto nextLine;
 nextLine:
@@ -1151,8 +1129,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         .locals = locals,
         .globals = globals,
         .jmp = 0,
-        .sThis = NULL,
-        .sSuper = NULL,
+        .stack = New_Stack(),
         .pc = pc,
         .error_code = 0,
     };
@@ -1188,8 +1165,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
             __platform_error_handle();
         }
     }
-    __clearInvokeStackes(locals);
-
+    stack_deinit(vs.stack);
     return locals;
 }
 
