@@ -258,14 +258,15 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         char* argDef = strPopLastToken(type_list, ',');
         strPopLastToken(argDef, ':');
         char* argName = argDef;
-        if (strEqu(argName, "")) {
+        /* reach the end */
+        if (0 == argName[0]) {
             break;
         }
         call_arg = stack_popArg(vs->sSuper);
         call_arg = arg_setName(call_arg, argName);
         args_setArg(sub_locals->list, call_arg);
         call_arg_index++;
-        /* reach the end */
+        /* reach the last */
         if (argDef == type_list) {
             break;
         }
