@@ -210,7 +210,8 @@ static char* parse(const char* line,
 
 TEST(parser, while_true_block) {
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
     s = parse("while true:", bf, s, bs);
     s = parse("    rgb.flow()", bf, s, bs);
@@ -232,7 +233,8 @@ TEST(parser, while_true_block) {
 
 TEST(parser, while_true_false) {
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
     s = parse("while true:", bf, s, bs);
     s = parse("    rgb.flow()", bf, s, bs);
@@ -277,7 +279,8 @@ TEST(parser, while_true_false) {
 
 TEST(parser, while_true_false_both_exit) {
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
     s = parse("while true:", bf, s, bs);
     s = parse("    rgb.flow()", bf, s, bs);
@@ -315,7 +318,8 @@ TEST(parser, while_true_false_both_exit) {
 
 TEST(parser, if_) {
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
     s = parse("if true:", bf, s, bs);
     s = parse("    rgb.flow()", bf, s, bs);
@@ -337,7 +341,8 @@ extern PikaMemInfo pikaMemInfo;
 TEST(parser, while_true_if_false_both_exit) {
     pikaMemInfo.heapUsedMax = 0;
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
     s = parse("while true:", bf, s, bs);
     s = parse("    rgb.flow()", bf, s, bs);

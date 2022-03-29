@@ -28,27 +28,54 @@
 #include "dataStack.h"
 #include "dataQueue.h"
 
-Stack* New_Stack(void) {
-    Args* args = New_args(NULL);
-    args_setInt(args, "_", 0);
-    Stack* stack = args;
-    return stack;
+void stack_reset(Stack* stack) {
+    stack->sp = (uint8_t*)arg_getContent(stack->stack_pyload);
+    stack->sp_size = (int16_t*)arg_getContent(stack->stack_size_array);
+    stack->top = 0;
+}
+
+int32_t stack_init(Stack* stack) {
+    stack->stack_pyload =
+        arg_setContent(NULL, NULL, PIKA_CONFIG_STACK_BUFF_SIZE);
+    stack->stack_size_array =
+        arg_setContent(NULL, NULL, PIKA_CONFIG_STACK_BUFF_SIZE / 4);
+    stack_reset(stack);
+    return 0;
+};
+
+void stack_pushSize(Stack* stack, int16_t size) {
+    *(stack->sp_size) = size;
+    stack->sp_size++;
+}
+
+int16_t stack_popSize(Stack* stack) {
+    stack->sp_size--;
+    return *(stack->sp_size);
 }
 
 int32_t stack_deinit(Stack* stack) {
-    Args* args = stack;
-    args_deinit(args);
+    arg_deinit(stack->stack_pyload);
+    arg_deinit(stack->stack_size_array);
     return 0;
 }
 
+void stack_pushPyload(Stack* stack, uint8_t* content, size_t size) {
+    __platform_memcpy(stack->sp, content, size);
+    stack->sp += size;
+}
+
+uint8_t* stack_popPyload(Stack* stack, size_t size) {
+    stack->sp -= size;
+    return stack->sp;
+}
+
 int32_t stack_pushArg(Stack* stack, Arg* arg) {
-    Args* args = stack;
-    uint64_t top = args_getInt(args, "_");
-    /* add top */
-    args_setInt(args, "_", top + 1);
-    char buff[11];
-    arg = arg_setName(arg, fast_itoa(buff, top));
-    return args_setArg(args, arg);
+    stack->top++;
+    int8_t size = arg_getTotleSize(arg);
+    stack_pushSize(stack, size);
+    stack_pushPyload(stack, arg, size);
+    arg_deinit(arg);
+    return 0;
 }
 
 int32_t stack_pushStr(Stack* stack, char* str) {
@@ -57,17 +84,12 @@ int32_t stack_pushStr(Stack* stack, char* str) {
 }
 
 Arg* stack_popArg(Stack* stack) {
-    Args* args = stack;
-    int64_t top = args_getInt(args, "_") - 1;
-    if (top < 0) {
+    if (stack->top == 0) {
         return NULL;
     }
-    char buff[11];
-    Arg* topArg = args_getArg(args, fast_itoa(buff, top));
-    Arg* res = arg_copy(topArg);
-    /* dec top */
-    args_setInt(args, "_", top);
-    args_removeArg(args, topArg);
+    stack->top--;
+    int16_t size = stack_popSize(stack);
+    Arg* res = arg_copy((Arg*)stack_popPyload(stack, size));
     return res;
 }
 
@@ -79,5 +101,5 @@ char* stack_popStr(Stack* stack, char* outBuff) {
 }
 
 int8_t stack_getTop(Stack* stack) {
-    return args_getInt(stack, "_");
+    return stack->top;
 }

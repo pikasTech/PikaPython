@@ -18,10 +18,11 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=VM.WHILE",
+                // "--gtest_filter=VM*",
+                // "--gtest_filter=parser.while_true_false",
                 // "--gtest_filter=VM.for_break_byte",
                 // "--gtest_filter=pikaMain.range",
-                // "--gtest_filter=parser.class_def_void_line",
+                // "--gtest_filter=parser.while_true_block",
                 // "--gtest_filter=VM.Run_add_1_2_3",
                 // "--gtest_filter=stack*",
                 // "--gtest_filter=pikaMain.task_run_once",

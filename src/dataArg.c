@@ -235,7 +235,6 @@ int64_t arg_getInt(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return -999999;
     }
-
     return *(int64_t*)(((__arg*)self)->content);
 }
 

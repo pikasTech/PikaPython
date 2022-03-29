@@ -1182,7 +1182,8 @@ static int Parser_isVoidLine(char* line) {
 static char* Parser_parsePyLines(Args* outBuffs,
                                  ByteCodeFrame* bytecode_frame,
                                  char* py_lines) {
-    Stack* block_stack = New_Stack();
+    Stack block_stack;
+    stack_init(&block_stack);
     Arg* asm_buff = arg_setStr(NULL, "", "");
     uint32_t lines_offset = 0;
     uint32_t lines_size = strGetSize(py_lines);
@@ -1203,7 +1204,7 @@ static char* Parser_parsePyLines(Args* outBuffs,
             }
         }
         /* parse single Line to Asm */
-        char* single_ASM = Parser_LineToAsm(&buffs, line, block_stack);
+        char* single_ASM = Parser_LineToAsm(&buffs, line, &block_stack);
         if (NULL == single_ASM) {
             out_ASM = NULL;
             strsDeinit(&buffs);
@@ -1236,7 +1237,7 @@ exit:
     if (NULL != asm_buff) {
         arg_deinit(asm_buff);
     }
-    stack_deinit(block_stack);
+    stack_deinit(&block_stack);
     return out_ASM;
 };
 

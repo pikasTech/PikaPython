@@ -194,7 +194,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     ByteCodeFrame* method_bytecodeFrame;
     /* return arg directly */
     if (strEqu(data, "")) {
-        return_arg = stack_popArg(vs->stack);
+        return_arg = stack_popArg(&(vs->stack));
         goto RUN_exit;
     }
 
@@ -249,7 +249,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         char* argDef = strPopLastToken(type_list, ',');
         strPopLastToken(argDef, ':');
         char* argName = argDef;
-        call_arg = stack_popArg(vs->stack);
+        call_arg = stack_popArg(&(vs->stack));
         call_arg = arg_setName(call_arg, argName);
         args_setArg(sub_locals->list, call_arg);
         call_arg_index++;
@@ -319,7 +319,7 @@ static Arg* __VM_OUT(PikaObj* self,
                      VMState* vs,
                      char* data,
                      is_init_obj_t is_init_obj) {
-    Arg* outArg = stack_popArg(vs->stack);
+    Arg* outArg = stack_popArg(&(vs->stack));
     ArgType outArg_type = arg_getType(outArg);
     PikaObj* hostObj = vs->locals;
     /* match global_list */
@@ -416,7 +416,7 @@ static Arg* VM_instruction_handler_JMP(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
     int thisBlockDeepth;
     thisBlockDeepth = VMState_getBlockDeepthNow(vs);
-    Arg* assertArg = stack_popArg(vs->stack);
+    Arg* assertArg = stack_popArg(&(vs->stack));
     int assert = arg_getInt(assertArg);
     arg_deinit(assertArg);
     char __else[] = "__else0";
@@ -431,8 +431,8 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
 
 static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     Arg* outArg = NULL;
-    Arg* arg2 = stack_popArg(vs->stack);
-    Arg* arg1 = stack_popArg(vs->stack);
+    Arg* arg2 = stack_popArg(&(vs->stack));
+    Arg* arg1 = stack_popArg(&(vs->stack));
     ArgType type_arg1 = arg_getType(arg1);
     ArgType type_arg2 = arg_getType(arg2);
     int num1_i = 0;
@@ -647,7 +647,7 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_RET(PikaObj* self, VMState* vs, char* data) {
     /* exit jmp signal */
     vs->jmp = -999;
-    Arg* returnArg = stack_popArg(vs->stack);
+    Arg* returnArg = stack_popArg(&(vs->stack));
     method_returnArg(vs->locals->list, returnArg);
     return NULL;
 }
@@ -734,7 +734,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     /* run instruct */
     resArg = VM_instruct_handler_table[instruct](self, vs, data);
     if (NULL != resArg) {
-        stack_pushArg(vs->stack, resArg);
+        stack_pushArg(&(vs->stack), resArg);
     }
     goto nextLine;
 nextLine:
@@ -1129,27 +1129,17 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         .locals = locals,
         .globals = globals,
         .jmp = 0,
-        .stack = New_Stack(),
         .pc = pc,
         .error_code = 0,
     };
+    stack_init(&(vs.stack));
     while (vs.pc < size) {
         if (vs.pc == -99999) {
             break;
         }
         InstructUnit* this_ins_unit = VMState_getInstructNow(&vs);
         if (instructUnit_getIsNewLine(this_ins_unit)) {
-            for (int8_t i = 0; i < stack_getTop(vs.stack); i++) {
-                // Args print_args = {0};
-                // Arg* print_arg = stack_popArg(vs.stack);
-                // arg_setName(print_arg, "val");
-                // args_setArg(&print_args, print_arg);
-                // if (ARG_TYPE_NONE != arg_getType(print_arg)) {
-                //     baseobj_print(self, &print_args);
-                // }
-                // args_deinit_stack(&print_args);
-                arg_deinit(stack_popArg(vs.stack));
-            }
+            stack_reset(&(vs.stack));
         }
         vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
         if (0 != vs.error_code) {
@@ -1178,7 +1168,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
             __platform_error_handle();
         }
     }
-    stack_deinit(vs.stack);
+    stack_deinit(&(vs.stack));
     return locals;
 }
 

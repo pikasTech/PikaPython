@@ -240,11 +240,12 @@ static char* parse(const char* line,
 
 TEST(parser, while_true_block) {
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+    stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
-    s = parse("while true:", bf, s, bs);
-    s = parse("    rgb.flow()", bf, s, bs);
-    s = parse("", bf, s, bs);
+    s = parse("while true:", bf, s, &bs);
+    s = parse("    rgb.flow()", bf, s, &bs);
+    s = parse("", bf, s, &bs);
     printf("%s", s);
     EXPECT_STREQ(s,
                  "B0\n"
@@ -255,24 +256,25 @@ TEST(parser, while_true_block) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n");
-    stack_deinit(bs);
+    stack_deinit(&bs);
     args_deinit(bf);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, while_true_false) {
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+    stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
-    s = parse("while true:", bf, s, bs);
-    s = parse("    rgb.flow()", bf, s, bs);
-    s = parse("    while false:", bf, s, bs);
-    s = parse("        a=3", bf, s, bs);
-    s = parse("        test.on(add(2,3))", bf, s, bs);
-    s = parse("    print('flowing')", bf, s, bs);
-    s = parse("", bf, s, bs);
+    s = parse("while true:", bf, s, &bs);
+    s = parse("    rgb.flow()", bf, s, &bs);
+    s = parse("    while false:", bf, s, &bs);
+    s = parse("        a=3", bf, s, &bs);
+    s = parse("        test.on(add(2,3))", bf, s, &bs);
+    s = parse("    print('flowing')", bf, s, &bs);
+    s = parse("", bf, s, &bs);
     Arg* buffArg = arg_setStr(NULL, (char*)"", s);
-    stack_deinit(bs);
+    stack_deinit(&bs);
     args_deinit(bf);
     s = arg_getStr(buffArg);
     printf("%s", s);
@@ -307,14 +309,15 @@ TEST(parser, while_true_false) {
 
 TEST(parser, while_true_false_both_exit) {
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+    stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
-    s = parse("while true:", bf, s, bs);
-    s = parse("    rgb.flow()", bf, s, bs);
-    s = parse("    while false:", bf, s, bs);
-    s = parse("        a=3", bf, s, bs);
-    s = parse("        test.on(add(2,3))", bf, s, bs);
-    s = parse("", bf, s, bs);
+    s = parse("while true:", bf, s, &bs);
+    s = parse("    rgb.flow()", bf, s, &bs);
+    s = parse("    while false:", bf, s, &bs);
+    s = parse("        a=3", bf, s, &bs);
+    s = parse("        test.on(add(2,3))", bf, s, &bs);
+    s = parse("", bf, s, &bs);
     printf("%s", s);
     EXPECT_STREQ(s,
                  "B0\n"
@@ -338,18 +341,19 @@ TEST(parser, while_true_false_both_exit) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n");
-    stack_deinit(bs);
+    stack_deinit(&bs);
     args_deinit(bf);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, if_) {
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+    stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
-    s = parse("if true:", bf, s, bs);
-    s = parse("    rgb.flow()", bf, s, bs);
-    s = parse("", bf, s, bs);
+    s = parse("if true:", bf, s, &bs);
+    s = parse("    rgb.flow()", bf, s, &bs);
+    s = parse("", bf, s, &bs);
     printf("%s", s);
     EXPECT_STREQ(s,
                  "B0\n"
@@ -358,7 +362,7 @@ TEST(parser, if_) {
                  "B1\n"
                  "0 RUN rgb.flow\n"
                  "B0\n");
-    stack_deinit(bs);
+    stack_deinit(&bs);
     args_deinit(bf);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -367,14 +371,15 @@ extern PikaMemInfo pikaMemInfo;
 TEST(parser, while_true_if_false_both_exit) {
     pikaMemInfo.heapUsedMax = 0;
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+    stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
-    s = parse("while true:", bf, s, bs);
-    s = parse("    rgb.flow()", bf, s, bs);
-    s = parse("    if false:", bf, s, bs);
-    s = parse("        a=3", bf, s, bs);
-    s = parse("        test.on(add(2,3))", bf, s, bs);
-    s = parse("", bf, s, bs);
+    s = parse("while true:", bf, s, &bs);
+    s = parse("    rgb.flow()", bf, s, &bs);
+    s = parse("    if false:", bf, s, &bs);
+    s = parse("        a=3", bf, s, &bs);
+    s = parse("        test.on(add(2,3))", bf, s, &bs);
+    s = parse("", bf, s, &bs);
     printf("%s", s);
     EXPECT_STREQ(s,
                  "B0\n"
@@ -396,7 +401,7 @@ TEST(parser, while_true_if_false_both_exit) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n");
-    stack_deinit(bs);
+    stack_deinit(&bs);
     args_deinit(bf);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1480,11 +1485,12 @@ TEST(parser, for_range_rtt) {
 
 TEST(parser, for_list) {
     Args* bf = New_strBuff();
-    Stack* bs = New_Stack();
+    Stack bs;
+    stack_init(&bs);
     char* s = strsCopy(bf, (char*)"");
-    s = parse("for arg in xrange(0,10):", bf, s, bs);
-    s = parse("    print(arg)", bf, s, bs);
-    s = parse("", bf, s, bs);
+    s = parse("for arg in xrange(0,10):", bf, s, &bs);
+    s = parse("    print(arg)", bf, s, &bs);
+    s = parse("", bf, s, &bs);
     printf("%s", s);
     EXPECT_STREQ(s,
                  "B0\n"
@@ -1506,7 +1512,7 @@ TEST(parser, for_list) {
                  "B0\n"
                  "0 DEL _l0\n"
                  "B0\n");
-    stack_deinit(bs);
+    stack_deinit(&bs);
     args_deinit(bf);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2553,4 +2559,3 @@ TEST(parser, multiLine_import) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
