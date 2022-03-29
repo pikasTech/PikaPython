@@ -41,6 +41,6 @@ int32_t obj_newObj(PikaObj* self,
                    char* className,
                    NewFun newFunPtr);
 Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr);
-
+void baseobj_print(PikaObj* self, Args* args);
 
 #endif

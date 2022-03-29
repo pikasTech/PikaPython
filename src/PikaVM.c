@@ -1138,6 +1138,19 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
             break;
         }
         InstructUnit* this_ins_unit = VMState_getInstructNow(&vs);
+        if (instructUnit_getIsNewLine(this_ins_unit)) {
+            for (int8_t i = 0; i < stack_getTop(vs.stack); i++) {
+                // Args print_args = {0};
+                // Arg* print_arg = stack_popArg(vs.stack);
+                // arg_setName(print_arg, "val");
+                // args_setArg(&print_args, print_arg);
+                // if (ARG_TYPE_NONE != arg_getType(print_arg)) {
+                //     baseobj_print(self, &print_args);
+                // }
+                // args_deinit_stack(&print_args);
+                arg_deinit(stack_popArg(vs.stack));
+            }
+        }
         vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
         if (0 != vs.error_code) {
             InstructUnit* head_ins_unit = this_ins_unit;

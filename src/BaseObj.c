@@ -35,7 +35,8 @@
 #include "dataStrs.h"
 
 Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr) {
-    Args buffs = {0};    Arg* argNew = New_arg(NULL);
+    Args buffs = {0};
+    Arg* argNew = New_arg(NULL);
     /* m means mate-object */
     argNew = arg_setPtr(argNew, objName, ARG_TYPE_MATE_OBJECT, (void*)objPtr);
     strsDeinit(&buffs);
@@ -69,7 +70,7 @@ static void print_no_end(PikaObj* self, Args* args) {
     __platform_printf("%s", res);
 }
 
-void print(PikaObj* self, Args* args) {
+void baseobj_print(PikaObj* self, Args* args) {
     obj_setErrorCode(self, 0);
     char* res = args_print(args, "val");
     if (NULL == res) {
@@ -88,7 +89,7 @@ void print(PikaObj* self, Args* args) {
 
 PikaObj* New_BaseObj(Args* args) {
     PikaObj* self = New_TinyObj(args);
-    class_defineMethod(self, "print(val:any)", print);
+    class_defineMethod(self, "print(val:any)", baseobj_print);
     class_defineMethod(self, "printNoEnd(val:any)", print_no_end);
     return self;
 }
