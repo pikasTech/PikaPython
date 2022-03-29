@@ -1166,6 +1166,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
                 }
             }
             __platform_error_handle();
+            vs.error_code = 0;
         }
     }
     stack_deinit(&(vs.stack));
