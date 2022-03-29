@@ -129,11 +129,10 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     return arg_setNull(NULL);
 }
 
-Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2, int a3) {
+Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2) {
     /* set template arg to create rangeObj */
     obj_setInt(self, "_r1", a1);
     obj_setInt(self, "_r2", a2);
-    obj_setInt(self, "_r3", a3);
     return arg_setMetaObj("", "PikaStdLib_RangeObj", New_PikaStdLib_RangeObj);
 }
 

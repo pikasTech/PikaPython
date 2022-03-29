@@ -29,6 +29,7 @@
 #define __PIKA__VM__H
 #include "PikaObj.h"
 #include "dataQueue.h"
+#include "dataStack.h"
 #include "dataQueueObj.h"
 
 enum Instruct {
@@ -40,9 +41,7 @@ enum Instruct {
 typedef struct VMState_t {
     VMParameters* locals;
     VMParameters* globals;
-    Queue* qThis;
-    Queue* qSuper;
-    Queue* q[10];
+    Stack *sThis, *sSuper;
     int32_t jmp;
     int32_t pc;
     ByteCodeFrame* bytecode_frame;

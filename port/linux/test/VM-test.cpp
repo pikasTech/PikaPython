@@ -18,7 +18,7 @@ VMParameters* pikaVM_runAsmWithPars(PikaObj* self,
                                     char* pikaAsm);
 char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack);
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
-int32_t __clearInvokeQueues(VMParameters* locals);
+int32_t __clearInvokeStackes(VMParameters* locals);
 int32_t pikaVM_runAsmLine(PikaObj* self,
                           VMParameters* locals,
                           VMParameters* globals,

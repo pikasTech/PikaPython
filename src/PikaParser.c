@@ -1401,18 +1401,13 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
             newAsm_arg = arg_strAppend(newAsm_arg,
                                        "0 REF _r1\n"
                                        "0 REF _r2\n"
-                                       "0 REF _r3\n"
-                                       "0 OUT ");
-            newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
-            newAsm_arg = arg_strAppend(newAsm_arg,
-                                       ".a1\n"
                                        "0 OUT ");
             newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
             newAsm_arg = arg_strAppend(newAsm_arg,
                                        ".a2\n"
                                        "0 OUT ");
             newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
-            newAsm_arg = arg_strAppend(newAsm_arg, ".a3\n");
+            newAsm_arg = arg_strAppend(newAsm_arg, ".a1\n");
         }
         pikaAsm = strsAppend(&buffs, pikaAsm, arg_getStr(newAsm_arg));
         arg_deinit(newAsm_arg);

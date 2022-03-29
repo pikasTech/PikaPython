@@ -139,13 +139,13 @@ static int32_t VMState_getAddrOffsetOfContinue(VMState* vs) {
     return offset;
 }
 
-int32_t __clearInvokeQueues(VMParameters* vm_pars) {
+int32_t __clearInvokeStackes(VMParameters* vm_pars) {
     for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
         char deepth[2] = {0};
         deepth[0] = deepthChar;
-        Queue* queue = (Queue*)args_getPtr(vm_pars->list, deepth);
-        if (NULL != queue) {
-            args_deinit(queue);
+        Stack* stack = (Stack*)args_getPtr(vm_pars->list, deepth);
+        if (NULL != stack) {
+            args_deinit(stack);
             args_removeArg(vm_pars->list, args_getArg(vm_pars->list, deepth));
         }
     }
@@ -207,7 +207,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     ByteCodeFrame* method_bytecodeFrame;
     /* return arg directly */
     if (strEqu(data, "")) {
-        return_arg = queue_popArg_notDeinitArg(vs->qSuper);
+        return_arg = stack_popArg(vs->sSuper);
         goto RUN_exit;
     }
 
@@ -259,14 +259,19 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         if ((method_type == ARG_TYPE_OBJECT_METHOD) && (call_arg_index == 0)) {
             call_arg = arg_setPtr(NULL, "", ARG_TYPE_POINTER, method_host_obj);
         } else {
-            call_arg = queue_popArg_notDeinitArg(vs->qSuper);
+            call_arg = stack_popArg(vs->sSuper);
         }
-        /* exit when there is no arg in queue */
+        /* exit when there is no arg in stack */
         if (NULL == call_arg) {
             break;
         }
-        char* argDef = strsPopToken(&buffs, type_list, ',');
+        char* argDef = strPointToLastToken(type_list, ',');
         char* argName = strsGetFirstToken(&buffs, argDef, ':');
+        if (argDef != type_list) {
+            *(argDef - 1) = 0;
+        } else {
+            *(argDef) = 0;
+        }
         call_arg = arg_setName(call_arg, argName);
         args_setArg(sub_locals->list, call_arg);
         call_arg_index++;
@@ -326,7 +331,7 @@ static Arg* __VM_OUT(PikaObj* self,
                      VMState* vs,
                      char* data,
                      is_init_obj_t is_init_obj) {
-    Arg* outArg = queue_popArg_notDeinitArg(vs->qThis);
+    Arg* outArg = stack_popArg(vs->sThis);
     ArgType outArg_type = arg_getType(outArg);
     PikaObj* hostObj = vs->locals;
     /* match global_list */
@@ -423,7 +428,7 @@ static Arg* VM_instruction_handler_JMP(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
     int thisBlockDeepth;
     thisBlockDeepth = VMState_getBlockDeepthNow(vs);
-    Arg* assertArg = queue_popArg_notDeinitArg(vs->qThis);
+    Arg* assertArg = stack_popArg(vs->sThis);
     int assert = arg_getInt(assertArg);
     arg_deinit(assertArg);
     char __else[] = "__else0";
@@ -438,8 +443,8 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
 
 static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     Arg* outArg = NULL;
-    Arg* arg1 = queue_popArg_notDeinitArg(vs->qSuper);
-    Arg* arg2 = queue_popArg_notDeinitArg(vs->qSuper);
+    Arg* arg2 = stack_popArg(vs->sSuper);
+    Arg* arg1 = stack_popArg(vs->sSuper);
     ArgType type_arg1 = arg_getType(arg1);
     ArgType type_arg2 = arg_getType(arg2);
     int num1_i = 0;
@@ -654,7 +659,7 @@ static Arg* VM_instruction_handler_DEF(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_RET(PikaObj* self, VMState* vs, char* data) {
     /* exit jmp signal */
     vs->jmp = -999;
-    Arg* returnArg = queue_popArg_notDeinitArg(vs->qThis);
+    Arg* returnArg = stack_popArg(vs->sThis);
     method_returnArg(vs->locals->list, returnArg);
     return NULL;
 }
@@ -738,10 +743,10 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     char invode_deepth0_str[2] = {0};
     char invode_deepth1_str[2] = {0};
     int32_t pc_next = vs->pc + instructUnit_getSize();
-    /* Found new script Line, clear the queues*/
+    /* Found new script Line, clear the stacks */
     if (instructUnit_getIsNewLine(ins_unit)) {
         VMState_setErrorCode(vs, 0);
-        __clearInvokeQueues(vs->locals);
+        __clearInvokeStackes(vs->locals);
     }
 
     invode_deepth0_str[0] = instructUnit_getInvokeDeepth(ins_unit) + '0';
@@ -749,21 +754,21 @@ static int pikaVM_runInstructUnit(PikaObj* self,
 
     char* data = VMState_getConstWithInstructUnit(vs, ins_unit);
 
-    vs->qThis = args_getPtr(vs->locals->list, invode_deepth0_str);
-    vs->qSuper = args_getPtr(vs->locals->list, invode_deepth1_str);
+    vs->sThis = args_getPtr(vs->locals->list, invode_deepth0_str);
+    vs->sSuper = args_getPtr(vs->locals->list, invode_deepth1_str);
 
-    if (NULL == vs->qThis) {
-        vs->qThis = New_queue();
-        args_setPtr(vs->locals->list, invode_deepth0_str, vs->qThis);
+    if (NULL == vs->sThis) {
+        vs->sThis = New_Stack();
+        args_setPtr(vs->locals->list, invode_deepth0_str, vs->sThis);
     }
-    if (NULL == vs->qSuper) {
-        vs->qSuper = New_queue();
-        args_setPtr(vs->locals->list, invode_deepth1_str, vs->qSuper);
+    if (NULL == vs->sSuper) {
+        vs->sSuper = New_Stack();
+        args_setPtr(vs->locals->list, invode_deepth1_str, vs->sSuper);
     }
     /* run instruct */
     resArg = VM_instruct_handler_table[instruct](self, vs, data);
     if (NULL != resArg) {
-        queue_pushArg(vs->qThis, resArg);
+        stack_pushArg(vs->sThis, resArg);
     }
     goto nextLine;
 nextLine:
@@ -1158,8 +1163,8 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         .locals = locals,
         .globals = globals,
         .jmp = 0,
-        .qThis = NULL,
-        .qSuper = NULL,
+        .sThis = NULL,
+        .sSuper = NULL,
         .pc = pc,
         .error_code = 0,
     };
@@ -1195,7 +1200,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
             __platform_error_handle();
         }
     }
-    __clearInvokeQueues(locals);
+    __clearInvokeStackes(locals);
 
     return locals;
 }

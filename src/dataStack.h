@@ -34,5 +34,7 @@ Stack* New_Stack(void);
 int32_t stack_deinit(Stack* stack);
 
 int32_t stack_pushStr(Stack* stack, char* str);
-char* stack_popStr(Stack* queue, char* outBuff);
+char* stack_popStr(Stack* stack, char* outBuff);
+Arg* stack_popArg(Stack* stack);
+int32_t stack_pushArg(Stack* stack, Arg* arg);
 #endif

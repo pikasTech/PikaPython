@@ -56,8 +56,8 @@ int32_t stack_pushStr(Stack* stack, char* str) {
     return stack_pushArg(stack, newArg);
 }
 
-Arg* stack_popArg(Queue* queue) {
-    Args* args = queue;
+Arg* stack_popArg(Stack* stack) {
+    Args* args = stack;
     int64_t top = args_getInt(args, "top") - 1;
     if (top < 0) {
         return NULL;
