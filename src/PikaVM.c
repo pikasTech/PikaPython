@@ -505,6 +505,13 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         goto OPT_exit;
     }
     if (strEqu("/", data)) {
+        if (0 == num2_f) {
+            VMState_setErrorCode(vs, 1);
+            args_setSysOut(vs->locals->list,
+                           "[error] operator: division by zero");
+            outArg = NULL;
+            goto OPT_exit;
+        }
         outArg = arg_setFloat(outArg, "", num1_f / num2_f);
         goto OPT_exit;
     }
@@ -1055,12 +1062,10 @@ void instructUnit_print(InstructUnit* self) {
 
 static void instructUnit_printWithConst(InstructUnit* self,
                                         ConstPool* const_pool) {
-    if (instructUnit_getIsNewLine(self)) {
-        __platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
-    }
-    __platform_printf("%d %s %s \t\t(#%d)\r\n",
-                      instructUnit_getInvokeDeepth(self),
-                      instructUnit_getInstructStr(self),
+    // if (instructUnit_getIsNewLine(self)) {
+    //     __platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
+    // }
+    __platform_printf("%s %s \t\t(#%d)\r\n", instructUnit_getInstructStr(self),
                       constPool_getByOffset(const_pool, self->const_pool_index),
                       self->const_pool_index);
 }
@@ -1172,6 +1177,11 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
             }
             /* print inses of a line */
             while (1) {
+                if (head_ins_unit != this_ins_unit) {
+                    __platform_printf("   ");
+                } else {
+                    __platform_printf(" -> ");
+                }
                 instructUnit_printWithConst(head_ins_unit,
                                             &(bytecode_frame->const_pool));
                 head_ins_unit++;
