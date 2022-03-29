@@ -157,6 +157,14 @@ char* strPointToLastToken(char* strIn, char sign) {
     return strIn;
 }
 
+char* strPopLastToken(char* strIn, char sign) {
+    char* last_token = strPointToLastToken(strIn, sign);
+    if (last_token != strIn) {
+        *(last_token - 1) = 0;
+    }
+    return last_token;
+}
+
 char* strGetLastToken(char* strOut, char* strIn, char sign) {
     int32_t size = strGetSize(strIn);
     int32_t buffSize = 0;

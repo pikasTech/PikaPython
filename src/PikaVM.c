@@ -191,7 +191,6 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
 }
 
 static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
-    Args buffs = {0};
     Arg* return_arg = NULL;
     VMParameters* sub_locals = NULL;
     char* methodPath = data;
@@ -205,6 +204,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     Arg* call_arg = NULL;
     uint8_t call_arg_index = 0;
     ByteCodeFrame* method_bytecodeFrame;
+    char method_str_buff[PIKA_CONFIG_PATH_BUFF_SIZE] = {0};
     /* return arg directly */
     if (strEqu(data, "")) {
         return_arg = stack_popArg(vs->sSuper);
@@ -237,13 +237,13 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     /* get method Ptr */
     method_ptr = methodArg_getPtr(method_arg);
     /* get method Decleartion */
-    method_dec = strsCopy(&buffs, methodArg_getDec(method_arg));
+    method_dec = strCopy(method_str_buff, methodArg_getDec(method_arg));
     method_type = arg_getType(method_arg);
     method_bytecodeFrame = methodArg_getBytecodeFrame(method_arg);
     arg_deinit(method_arg);
 
     /* get type list */
-    type_list = strsCut(&buffs, method_dec, '(', ')');
+    type_list = strCut(method_str_buff, method_dec, '(', ')');
 
     if (type_list == NULL) {
         /* typeList no found */
@@ -260,13 +260,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         if (NULL == call_arg) {
             break;
         }
-        char* argDef = strPointToLastToken(type_list, ',');
-        char* argName = strsGetFirstToken(&buffs, argDef, ':');
-        if (argDef != type_list) {
-            *(argDef - 1) = 0;
-        } else {
-            *(argDef) = 0;
-        }
+        char* argDef = strPopLastToken(type_list, ',');
+        strPopLastToken(argDef, ':');
+        char* argName = argDef;
         call_arg = arg_setName(call_arg, argName);
         args_setArg(sub_locals->list, call_arg);
         call_arg_index++;
@@ -314,7 +310,6 @@ RUN_exit:
     if (NULL != sub_locals) {
         obj_deinit(sub_locals);
     }
-    strsDeinit(&buffs);
     return return_arg;
 }
 
