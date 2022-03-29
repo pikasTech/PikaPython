@@ -37,13 +37,11 @@ void* pikaMalloc(uint32_t size) {
     }
 
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
-#if 0
+#if PIKA_CONFIG_ENABLE_ARG_ALIGN
     /* force alignment to avoid unaligned access */
-    if (sizeof(int_fast8_t) > 1) {
-        size = (size + sizeof(int_fast8_t) - 1) & ~(sizeof(int_fast8_t) - 1);
-    }
+    size = (size + 4 - 1) & ~(4 - 1);
 #endif
-    
+
     pikaMemInfo.heapUsed += size;
     if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
         pikaMemInfo.heapUsedMax = pikaMemInfo.heapUsed;
@@ -64,6 +62,13 @@ void pikaFree(void* mem, uint32_t size) {
     if (0 != __is_locked_pikaMemory()) {
         __platform_wait();
     }
+
+//! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
+#if PIKA_CONFIG_ENABLE_ARG_ALIGN
+    /* force alignment to avoid unaligned access */
+    size = (size + 4 - 1) & ~(4 - 1);
+#endif
+
     __platform_disable_irq_handle();
     __impl_pikaFree(mem, size);
     __platform_enable_irq_handle();
@@ -248,7 +253,7 @@ uint32_t aline_by(uint32_t size, uint32_t aline) {
 BitMap bitmap_init(uint32_t size) {
     BitMap mem_bit_map =
         (BitMap)__platform_malloc(((size - 1) / 8 + 1) * sizeof(char));
-    if (mem_bit_map == NULL){
+    if (mem_bit_map == NULL) {
         return NULL;
     }
     uint32_t size_mem_bit_map = (size - 1) / 8 + 1;

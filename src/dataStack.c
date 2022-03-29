@@ -71,7 +71,14 @@ uint8_t* stack_popPyload(Stack* stack, size_t size) {
 
 int32_t stack_pushArg(Stack* stack, Arg* arg) {
     stack->top++;
-    int8_t size = arg_getTotleSize(arg);
+    size_t size = arg_getTotleSize(arg);
+
+//! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
+#if PIKA_CONFIG_ENABLE_ARG_ALIGN
+    /* force alignment to avoid unaligned access */
+    size = (size + 4 - 1) & ~(4 - 1);
+#endif
+
     stack_pushSize(stack, size);
     stack_pushPyload(stack, arg, size);
     arg_deinit(arg);
