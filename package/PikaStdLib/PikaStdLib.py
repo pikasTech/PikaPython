@@ -37,7 +37,7 @@ class SysObj(BaseObj):
     def iter(arg: any) -> any:
         pass
 
-    def range(a1: int, a2: int, a3: int) -> any:
+    def range(a1: int, a2: int) -> any:
         pass
 
     def __set__(obj: any, key: any, val: any, obj_str: str):
