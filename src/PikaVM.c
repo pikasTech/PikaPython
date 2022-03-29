@@ -140,14 +140,11 @@ static int32_t VMState_getAddrOffsetOfContinue(VMState* vs) {
 }
 
 int32_t __clearInvokeStackes(VMParameters* vm_pars) {
-    for (char deepthChar = '0'; deepthChar < '9'; deepthChar++) {
-        char deepth[2] = {0};
-        deepth[0] = deepthChar;
-        Stack* stack = (Stack*)args_getPtr(vm_pars->list, deepth);
-        if (NULL != stack) {
-            args_deinit(stack);
-            args_removeArg(vm_pars->list, args_getArg(vm_pars->list, deepth));
-        }
+    char deepth[2] = "0";
+    Stack* stack = (Stack*)args_getPtr(vm_pars->list, deepth);
+    if (NULL != stack) {
+        args_deinit(stack);
+        args_removeArg(vm_pars->list, args_getArg(vm_pars->list, deepth));
     }
     return 0;
 }
@@ -255,13 +252,13 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     sub_locals = New_PikaObj();
     /* load pars */
     while (1) {
+        /* no arg */
+        if (')' == method_dec[1]) {
+            break;
+        }
         char* argDef = strPopLastToken(type_list, ',');
         strPopLastToken(argDef, ':');
         char* argName = argDef;
-        /* reach the end */
-        if (0 == argName[0]) {
-            break;
-        }
         call_arg = stack_popArg(vs->sSuper);
         call_arg = arg_setName(call_arg, argName);
         args_setArg(sub_locals->list, call_arg);
@@ -742,7 +739,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     enum Instruct instruct = instructUnit_getInstruct(ins_unit);
     Arg* resArg;
     char invode_deepth0_str[2] = {0};
-    char invode_deepth1_str[2] = {0};
+    // char invode_deepth1_str[2] = {0};
     int32_t pc_next = vs->pc + instructUnit_getSize();
     /* Found new script Line, clear the stacks */
     if (instructUnit_getIsNewLine(ins_unit)) {
@@ -750,22 +747,17 @@ static int pikaVM_runInstructUnit(PikaObj* self,
         __clearInvokeStackes(vs->locals);
     }
 
-    invode_deepth0_str[0] = instructUnit_getInvokeDeepth(ins_unit) + '0';
-    invode_deepth1_str[0] = invode_deepth0_str[0] + 1;
+    invode_deepth0_str[0] = '0';
 
     char* data = VMState_getConstWithInstructUnit(vs, ins_unit);
 
     vs->sThis = args_getPtr(vs->locals->list, invode_deepth0_str);
-    vs->sSuper = args_getPtr(vs->locals->list, invode_deepth1_str);
 
     if (NULL == vs->sThis) {
         vs->sThis = New_Stack();
         args_setPtr(vs->locals->list, invode_deepth0_str, vs->sThis);
     }
-    if (NULL == vs->sSuper) {
-        vs->sSuper = New_Stack();
-        args_setPtr(vs->locals->list, invode_deepth1_str, vs->sSuper);
-    }
+    vs->sSuper = vs->sThis;
     /* run instruct */
     resArg = VM_instruct_handler_table[instruct](self, vs, data);
     if (NULL != resArg) {
