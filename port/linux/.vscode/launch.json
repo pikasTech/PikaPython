@@ -20,7 +20,8 @@
             "args": [
                 // "--gtest_filter=pikaMain.range",
                 // "--gtest_filter=parser.class_def_void_line",
-                "--gtest_filter=VM.Run_add_1_2_3",
+                // "--gtest_filter=VM.Run_add_1_2_3",
+                // "--gtest_filter=stack*",
                 // "--gtest_filter=pikaMain.task_run_once",
                 // "--gtest_filter=VM.if_elif*",
                 // "--gtest_filter=stack.str",
