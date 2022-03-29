@@ -183,6 +183,10 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
     if (ARG_TYPE_OBJECT == arg_type) {
         arg = arg_setType(arg, ARG_TYPE_POINTER);
     }
+    if (NULL == arg) {
+        VMState_setErrorCode(vs, 1);
+        __platform_printf("[error] name '%s' is not defined\r\n", data);
+    }
     return arg;
 }
 
@@ -215,7 +219,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     if (NULL == method_host_obj) {
         /* error, not found object */
         VMState_setErrorCode(vs, 1);
-        args_setSysOut(vs->locals->list, "[error] runner: object no found.");
+        __platform_printf("[error] runner: method '%s' no found.\r\n", data);
         goto RUN_exit;
     }
     /* get method in local */
@@ -227,7 +231,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     if (NULL == method_arg) {
         /* error, method no found */
         VMState_setErrorCode(vs, 2);
-        args_setSysOut(vs->locals->list, "[error] runner: method no found.");
+        __platform_printf("[error] runner: method '%s' no found.\r\n", data);
         goto RUN_exit;
     }
     /* get method Ptr */
@@ -1166,7 +1170,6 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         InstructUnit* this_ins_unit = VMState_getInstructNow(&vs);
         vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
         if (0 != vs.error_code) {
-            __platform_printf("[info] input commond: \r\n");
             InstructUnit* head_ins_unit = this_ins_unit;
             /* get first ins of a line */
             while (1) {

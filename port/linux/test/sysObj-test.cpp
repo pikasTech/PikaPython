@@ -30,7 +30,8 @@ TEST(sysObj, noMethod) {
     // int errCode = args_getErrorCode(globals->list);
     // printf("sysout = %s\r\n", sysOut);
     // ASSERT_EQ(1, strEqu((char*)"[error] runner: method no found.", sysOut));
-    EXPECT_STREQ(log_buff[5], "[error] runner: method no found.\r\n");
+    EXPECT_STREQ(log_buff[4],
+                 "[error] runner: method 'printttt' no found.\r\n");
     // ASSERT_EQ(2, errCode);
     // obj_deinit(globals);
     obj_deinit(obj);
