@@ -986,7 +986,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
 
     /* check if exit block */
     if (NULL != block_stack) {
-        block_deepth_last = args_getInt(block_stack, "top");
+        block_deepth_last = stack_getTop(block_stack);
         /* exit each block */
         for (int i = 0; i < block_deepth_last - block_deepth; i++) {
             QueueObj* exit_block_queue = obj_getObj(ast, "exitBlock", 0);

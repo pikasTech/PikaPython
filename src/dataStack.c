@@ -30,7 +30,7 @@
 
 Stack* New_Stack(void) {
     Args* args = New_args(NULL);
-    args_setInt(args, "top", 0);
+    args_setInt(args, "_", 0);
     Stack* stack = args;
     return stack;
 }
@@ -43,9 +43,9 @@ int32_t stack_deinit(Stack* stack) {
 
 int32_t stack_pushArg(Stack* stack, Arg* arg) {
     Args* args = stack;
-    uint64_t top = args_getInt(args, "top");
+    uint64_t top = args_getInt(args, "_");
     /* add top */
-    args_setInt(args, "top", top + 1);
+    args_setInt(args, "_", top + 1);
     char buff[11];
     arg = arg_setName(arg, fast_itoa(buff, top));
     return args_setArg(args, arg);
@@ -58,7 +58,7 @@ int32_t stack_pushStr(Stack* stack, char* str) {
 
 Arg* stack_popArg(Stack* stack) {
     Args* args = stack;
-    int64_t top = args_getInt(args, "top") - 1;
+    int64_t top = args_getInt(args, "_") - 1;
     if (top < 0) {
         return NULL;
     }
@@ -66,14 +66,18 @@ Arg* stack_popArg(Stack* stack) {
     Arg* topArg = args_getArg(args, fast_itoa(buff, top));
     Arg* res = arg_copy(topArg);
     /* dec top */
-    args_setInt(args, "top", top);
+    args_setInt(args, "_", top);
     args_removeArg(args, topArg);
     return res;
 }
 
-char* stack_popStr(Stack* queue, char* outBuff) {
-    Arg* arg = stack_popArg(queue);
+char* stack_popStr(Stack* stack, char* outBuff) {
+    Arg* arg = stack_popArg(stack);
     strcpy(outBuff, arg_getStr(arg));
     arg_deinit(arg);
     return outBuff;
+}
+
+int8_t stack_getTop(Stack* stack) {
+    return args_getInt(stack, "_");
 }
