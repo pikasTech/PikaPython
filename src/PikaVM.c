@@ -255,17 +255,20 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     sub_locals = New_PikaObj();
     /* load pars */
     while (1) {
-        call_arg = stack_popArg(vs->sSuper);
-        /* exit when there is no arg in stack */
-        if (NULL == call_arg) {
-            break;
-        }
         char* argDef = strPopLastToken(type_list, ',');
         strPopLastToken(argDef, ':');
         char* argName = argDef;
+        if (strEqu(argName, "")) {
+            break;
+        }
+        call_arg = stack_popArg(vs->sSuper);
         call_arg = arg_setName(call_arg, argName);
         args_setArg(sub_locals->list, call_arg);
         call_arg_index++;
+        /* reach the end */
+        if (argDef == type_list) {
+            break;
+        }
     }
 
     /* load 'self' as the first arg when call object method */
