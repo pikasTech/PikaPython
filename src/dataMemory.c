@@ -47,7 +47,7 @@ void* pikaMalloc(uint32_t size) {
         pikaMemInfo.heapUsedMax = pikaMemInfo.heapUsed;
     }
     __platform_disable_irq_handle();
-    void* mem = __impl_pikaMalloc(size);
+    void* mem = __platform_malloc(size);
     __platform_enable_irq_handle();
     if (NULL == mem) {
         __platform_printf(
@@ -70,7 +70,7 @@ void pikaFree(void* mem, uint32_t size) {
 #endif
 
     __platform_disable_irq_handle();
-    __impl_pikaFree(mem, size);
+    __platform_free(mem);
     __platform_enable_irq_handle();
     pikaMemInfo.heapUsed -= size;
 }
@@ -159,13 +159,13 @@ void* pool_malloc(Pool* pool, uint32_t size) {
     uint32_t block_num_found = 0;
     uint8_t found_first_free = 0;
     uint32_t block_index;
-    if (__is_quick_malloc()) {
-        /* high speed malloc */
-        block_index = pool->purl_free_block_start + block_num_need - 1;
-        if (block_index < block_index_max) {
-            goto found;
-        }
-    }
+    // if (__is_quick_malloc()) {
+    //     /* high speed malloc */
+    //     block_index = pool->purl_free_block_start + block_num_need - 1;
+    //     if (block_index < block_index_max) {
+    //         goto found;
+    //     }
+    // }
 
     /* low speed malloc */
     for (block_index = pool->first_free_block;

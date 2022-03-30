@@ -87,15 +87,8 @@ void* __platform_memset(void* mem, int ch, size_t size);
 void* __platform_memcpy(void* dir, const void* src, size_t size);
 
 /* pika memory pool config */
-void __platform_pool_init(void);
 void __platform_wait(void);
-void* __impl_pikaMalloc(size_t size);
-void __impl_pikaFree(void* ptrm, size_t size);
 uint8_t __is_locked_pikaMemory(void);
-uint8_t __is_quick_malloc(void);
-void __quick_malloc_enable(void);
-void __quick_malloc_disable(void);
-#endif
 
 /* support shell */
 char __platform_getchar(void);
@@ -107,3 +100,5 @@ size_t __platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream);
 
 /* error */
 void __platform_error_handle(void);
+
+#endif

@@ -44,22 +44,9 @@ PIKA_WEAK void __platform_error_handle(){
 PIKA_WEAK void __platform_free(void* ptr) {
     free(ptr);
 }
-PIKA_WEAK void* __impl_pikaMalloc(size_t size) {
-    return __platform_malloc(size);
-}
-PIKA_WEAK void __impl_pikaFree(void* ptrm, size_t size) {
-    __platform_free(ptrm);
-}
-PIKA_WEAK void __platform_pool_init(void) {}
-PIKA_WEAK uint8_t __is_quick_malloc(void) {
-    return 0;
-}
-PIKA_WEAK void __quick_malloc_enable(void) {}
-PIKA_WEAK void __quick_malloc_disable(void) {}
 PIKA_WEAK uint8_t __is_locked_pikaMemory(void) {
     return 0;
 }
-
 #ifndef __platform_printf
 PIKA_WEAK void __platform_printf(char* fmt, ...) {
     va_list args;
