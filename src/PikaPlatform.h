@@ -26,7 +26,7 @@
  */
 
 /* micro pika configuration */
-#include "./pikaConfigValid.h"
+#include "./pika_config_valid.h"
 
 #ifndef __PIKA_PALTFORM__H
 #define __PIKA_PALTFORM__H
