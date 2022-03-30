@@ -37,21 +37,25 @@
     #define PIKA_METHOD_CACHE_ENABLE 0
 
     #ifdef PIKA_CONFIG_ENABLE
+        /* use user config */
         #include "pika_config.h"
     #else
         /* use size optimize as default */
         #define PIKA_OPTIMIZE_SIZE
     #endif
 
+    /* config for size optimize */
     #ifdef PIKA_OPTIMIZE_SIZE
         #undef PIKA_METHOD_CACHE_ENABLE
         #define PIKA_METHOD_CACHE_ENABLE 0
     #endif
 
+    /* config for speed optimize */
     #ifdef PIKA_OPTIMIZE_SPEED
         #undef PIKA_METHOD_CACHE_ENABLE
         #define PIKA_METHOD_CACHE_ENABLE 1
     #endif
+
     /* configuration validation */
 
 #endif
