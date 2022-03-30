@@ -25,8 +25,8 @@
  * SOFTWARE.
  */
 
-#ifndef __PIKA__VM__H
-#define __PIKA__VM__H
+#ifndef __PIKA_VM__H
+#define __PIKA_VM__H
 #include "PikaObj.h"
 #include "dataQueue.h"
 #include "dataStack.h"

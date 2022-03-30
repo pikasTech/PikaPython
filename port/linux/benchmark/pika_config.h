@@ -1,4 +1,4 @@
-#ifndef __PIKA__CONFIG__H
-    #define __PIKA__CONFIG__H
-    #define PIKA_CONFIG_DEFAULT_SPEED
+#ifndef __PIKA_CONFIG__H
+    #define __PIKA_CONFIG__H
+    #define PIKA_OPTIMIZE_SPEED
 #endif

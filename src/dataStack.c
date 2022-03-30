@@ -36,9 +36,9 @@ void stack_reset(Stack* stack) {
 
 int32_t stack_init(Stack* stack) {
     stack->stack_pyload =
-        arg_setContent(NULL, NULL, PIKA_CONFIG_STACK_BUFF_SIZE);
+        arg_setContent(NULL, NULL, PIKA_STACK_BUFF_SIZE);
     stack->stack_size_array =
-        arg_setContent(NULL, NULL, PIKA_CONFIG_STACK_BUFF_SIZE / 4);
+        arg_setContent(NULL, NULL, PIKA_STACK_BUFF_SIZE / 4);
     stack_reset(stack);
     return 0;
 };
@@ -74,7 +74,7 @@ int32_t stack_pushArg(Stack* stack, Arg* arg) {
     size_t size = arg_getTotleSize(arg);
 
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
-#if PIKA_CONFIG_ENABLE_ARG_ALIGN
+#if PIKA_ARG_ALIGN_ENABLE
     /* force alignment to avoid unaligned access */
     size = (size + 4 - 1) & ~(4 - 1);
 #endif

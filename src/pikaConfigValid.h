@@ -28,25 +28,29 @@
 #define __PIKA_CFG_VALID_H__
 
     /* default configuration  */
-    #define PIKA_CONFIG_LINE_BUFF_SIZE 128
-    #define PIKA_CONFIG_SPRINTF_BUFF_SIZE 128
-    #define PIKA_CONFIG_STACK_BUFF_SIZE 256
-    #define PIKA_CONFIG_NAME_BUFF_SIZE 32
-    #define PIKA_CONFIG_PATH_BUFF_SIZE 64
-    #define PIKA_CONFIG_ENABLE_ARG_ALIGN 1
-    #undef PIKA_CONFIG_METHOD_CACHE_ENABLE
+    #define PIKA_LINE_BUFF_SIZE 128
+    #define PIKA_SPRINTF_BUFF_SIZE 128
+    #define PIKA_STACK_BUFF_SIZE 256
+    #define PIKA_NAME_BUFF_SIZE 32
+    #define PIKA_PATH_BUFF_SIZE 64
+    #define PIKA_ARG_ALIGN_ENABLE 1
+    #define PIKA_METHOD_CACHE_ENABLE 0
 
     #ifdef PIKA_CONFIG_ENABLE
         #include "pika_config.h"
     #else
-        #define PIKA_CONFIG_DEFAULT_SPACE
+        /* use size optimize as default */
+        #define PIKA_OPTIMIZE_SIZE
     #endif
 
-    #ifdef PIKA_CONFIG_DEFAULT_SPACE
+    #ifdef PIKA_OPTIMIZE_SIZE
+        #undef PIKA_METHOD_CACHE_ENABLE
+        #define PIKA_METHOD_CACHE_ENABLE 0
     #endif
 
-    #ifdef PIKA_CONFIG_DEFAULT_SPEED
-        #define PIKA_CONFIG_METHOD_CACHE_ENABLE
+    #ifdef PIKA_OPTIMIZE_SPEED
+        #undef PIKA_METHOD_CACHE_ENABLE
+        #define PIKA_METHOD_CACHE_ENABLE 1
     #endif
     /* configuration validation */
 

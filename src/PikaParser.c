@@ -1272,7 +1272,7 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     char* left = obj_getStr(subAst, "left");
     char* str = obj_getStr(subAst, "string");
     char* num = obj_getStr(subAst, "num");
-    char* buff = args_getBuff(&buffs, PIKA_CONFIG_SPRINTF_BUFF_SIZE);
+    char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
     if (NULL != ref) {
         __platform_sprintf(buff, "%d REF %s\n", deepth, ref);
         pikaAsm = strsAppend(&buffs, pikaAsm, buff);
@@ -1566,7 +1566,7 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
     char* data;
     uint16_t exist_offset;
 
-    char line_buff[PIKA_CONFIG_PATH_BUFF_SIZE] = {0};
+    char line_buff[PIKA_PATH_BUFF_SIZE] = {0};
     for (int i = 0; i < strCountSign(pikaAsm, '\n'); i++) {
         char* line = strGetLine(line_buff, asmer.line_pointer);
         InstructUnit ins_unit = {0};

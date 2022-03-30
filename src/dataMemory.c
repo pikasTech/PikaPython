@@ -37,7 +37,7 @@ void* pikaMalloc(uint32_t size) {
     }
 
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
-#if PIKA_CONFIG_ENABLE_ARG_ALIGN
+#if PIKA_ARG_ALIGN_ENABLE
     /* force alignment to avoid unaligned access */
     size = (size + 4 - 1) & ~(4 - 1);
 #endif
@@ -64,7 +64,7 @@ void pikaFree(void* mem, uint32_t size) {
     }
 
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
-#if PIKA_CONFIG_ENABLE_ARG_ALIGN
+#if PIKA_ARG_ALIGN_ENABLE
     /* force alignment to avoid unaligned access */
     size = (size + 4 - 1) & ~(4 - 1);
 #endif

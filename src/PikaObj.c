@@ -329,7 +329,7 @@ int32_t __foreach_removeMethodInfo(Arg* argNow, Args* argList) {
 }
 
 PikaObj* removeMethodInfo(PikaObj* thisClass) {
-#ifdef PIKA_CONFIG_METHOD_CACHE_ENABLE
+#if PIKA_METHOD_CACHE_ENABLE
 #else
     args_foreach(thisClass->list, __foreach_removeMethodInfo, thisClass->list);
 #endif
@@ -384,9 +384,9 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
 }
 
 PikaObj* obj_getObj(PikaObj* self, char* objPath, int32_t keepDeepth) {
-    char objPath_buff[PIKA_CONFIG_PATH_BUFF_SIZE];
+    char objPath_buff[PIKA_PATH_BUFF_SIZE];
     __platform_memcpy(objPath_buff, objPath, strGetSize(objPath) + 1);
-    char token_buff[PIKA_CONFIG_NAME_BUFF_SIZE] = {0};
+    char token_buff[PIKA_NAME_BUFF_SIZE] = {0};
     int32_t token_num = strGetTokenNum(objPath, '.');
     PikaObj* obj = self;
     for (int32_t i = 0; i < token_num - keepDeepth; i++) {
@@ -590,7 +590,7 @@ void obj_shellLineProcess(PikaObj* self,
                           __obj_shellLineHandler_t __lineHandler_fun,
                           struct shell_config* cfg) {
     Args buffs = {0};
-    char* rxBuff = args_getBuff(&buffs, PIKA_CONFIG_LINE_BUFF_SIZE);
+    char* rxBuff = args_getBuff(&buffs, PIKA_LINE_BUFF_SIZE);
     char* input_line = NULL;
     uint8_t is_in_block = 0;
     __platform_printf(cfg->prefix);
@@ -639,7 +639,7 @@ void obj_shellLineProcess(PikaObj* self,
                 } else {
                     __platform_printf("... ");
                 }
-                __clearBuff(rxBuff, PIKA_CONFIG_LINE_BUFF_SIZE);
+                __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
                 continue;
             }
             if (0 != strGetSize(rxBuff)) {
@@ -649,7 +649,7 @@ void obj_shellLineProcess(PikaObj* self,
                     char _n = '\n';
                     strAppendWithSize(rxBuff, &_n, 1);
                     obj_setStr(self, "shell_buff", rxBuff);
-                    __clearBuff(rxBuff, PIKA_CONFIG_LINE_BUFF_SIZE);
+                    __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
                     __platform_printf("... ");
                     continue;
                 }
@@ -660,7 +660,7 @@ void obj_shellLineProcess(PikaObj* self,
             }
             __platform_printf(cfg->prefix);
 
-            __clearBuff(rxBuff, PIKA_CONFIG_LINE_BUFF_SIZE);
+            __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
             continue;
         }
     }
