@@ -45,7 +45,8 @@
         "fstream": "c",
         "pika_config_gtest.h": "c",
         "atomic": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "pika_config.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }
