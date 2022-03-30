@@ -28,30 +28,33 @@
 #define __PIKA_CFG_VALID_H__
 
     /* default configuration  */
-    #define PIKA_LINE_BUFF_SIZE 128
-    #define PIKA_SPRINTF_BUFF_SIZE 128
-    #define PIKA_STACK_BUFF_SIZE 256
-    #define PIKA_NAME_BUFF_SIZE 32
-    #define PIKA_PATH_BUFF_SIZE 64
-    #define PIKA_ARG_ALIGN_ENABLE 1
-    #define PIKA_METHOD_CACHE_ENABLE 0
+        #define PIKA_LINE_BUFF_SIZE 128
+        #define PIKA_SPRINTF_BUFF_SIZE 128
+        #define PIKA_STACK_BUFF_SIZE 256
+        #define PIKA_NAME_BUFF_SIZE 32
+        #define PIKA_PATH_BUFF_SIZE 64
+        #define PIKA_ARG_ALIGN_ENABLE 1
+        #define PIKA_METHOD_CACHE_ENABLE 0
+    
+    /* optimize options */
+        #define PIKA_OPTIMIZE_SIZE 0
+        #define PIKA_OPTIMIZE_SPEED 1
 
+    /* default optimize */
+        #define PIKA_OPTIMIZE PIKA_OPTIMIZE_SIZE
+
+    /* use user config */
     #ifdef PIKA_CONFIG_ENABLE
-        /* use user config */
         #include "pika_config.h"
-    #else
-        /* use size optimize as default */
-        #define PIKA_OPTIMIZE_SIZE
     #endif
 
     /* config for size optimize */
-    #ifdef PIKA_OPTIMIZE_SIZE
+    #if PIKA_OPTIMIZE == PIKA_OPTIMIZE_SIZE
         #undef PIKA_METHOD_CACHE_ENABLE
         #define PIKA_METHOD_CACHE_ENABLE 0
-    #endif
 
     /* config for speed optimize */
-    #ifdef PIKA_OPTIMIZE_SPEED
+    #elif PIKA_OPTIMIZE == PIKA_OPTIMIZE_SPEED
         #undef PIKA_METHOD_CACHE_ENABLE
         #define PIKA_METHOD_CACHE_ENABLE 1
     #endif
