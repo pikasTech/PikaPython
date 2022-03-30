@@ -3,7 +3,7 @@
 #include "BaseObj.h"
 #include "RGB_ASM.h"
 #include "dataStrs.h"
-#include "pika_config.h"
+#include "pika_bsp.h"
 #include "main.h"
 
 void RGB_reset() {

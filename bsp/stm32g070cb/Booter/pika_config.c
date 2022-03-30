@@ -1,4 +1,4 @@
-#include "pika_config.h"
+#include "pika_bsp.h"
 #include "main.h"
 #include <stdio.h>
 /* support interrupt */

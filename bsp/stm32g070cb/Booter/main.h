@@ -40,7 +40,7 @@ extern "C" {
 #include "stm32g0xx_ll_tim.h"
 #include "stm32g0xx_ll_usart.h"
 #include "stm32g0xx_ll_utils.h"
-#include "pika_config.h"
+#include "pika_bsp.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 

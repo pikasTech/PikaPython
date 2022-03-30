@@ -25,7 +25,7 @@
 #include "pikaScript.h"
 #include "pikaVM.h"
 #include "stdbool.h"
-#include "pika_config.h"
+#include "pika_bsp.h"
 #include "pikaParser.h"
 /* USER CODE END Includes */
 

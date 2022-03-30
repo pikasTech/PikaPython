@@ -60,7 +60,7 @@
 
 #ifdef STM32G030xx
 #include "stm32g0xx_hal.h"
-#include "pika_config.h"
+#include "pika_bsp.h"
 #define UART1_EXIST
 #define UART2_EXIST
 

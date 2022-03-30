@@ -1,6 +1,6 @@
 #include "LCD_Driver.h"
 #include "LCD_Config.h"
-#include "pika_config.h"
+#include "pika_bsp.h"
 #include "main.h"
 /* config SPI mode, chocie one from three */
 // #define SPI_SOFT

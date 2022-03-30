@@ -1,4 +1,4 @@
-#include "pika_config.h"
+#include "pika_bsp.h"
 #include "PikaObj.h"
 
 #if VSF_HAL_USE_GPIO == ENABLED && GPIO_COUNT > 0
