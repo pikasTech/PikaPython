@@ -1371,13 +1371,43 @@ TEST(pikaMain, not_4_space) {
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
     /* run */
     __platform_printf((char*)"BEGIN\r\n");
-    pikaVM_run(pikaMain, (char*)
-    "  print('test')\n"
-    );
+    pikaVM_run(pikaMain, (char*)"  print('test')\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, self_operator) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\r\n");
+    pikaVM_run(pikaMain, (char*)
+            "a = 1\n"
+            "b = 2\n"
+            "c = 3\n"
+            "d = 4\n"
+            "a += 2\n"
+            "b -= 3\n"
+            "c *= 4\n"
+            "d /= 2\n"
+        );
+    /* collect */
+    int a = obj_getInt(pikaMain, (char*)"a");
+    int b = obj_getInt(pikaMain, (char*)"b");
+    int c = obj_getInt(pikaMain, (char*)"c");
+    int d = obj_getInt(pikaMain, (char*)"d");
+    /* assert */
+    EXPECT_EQ(a, 3);
+    EXPECT_EQ(b, -1);
+    EXPECT_EQ(c, 12);
+    EXPECT_EQ(d, 2);
     /* deinit */
     obj_deinit(pikaMain);
     /* mem check */

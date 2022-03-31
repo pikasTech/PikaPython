@@ -761,6 +761,84 @@ char* Parser_solveLeftBranckets(Args* outBuffs, char* right, char* left) {
     return Parser_solveBranckets(outBuffs, left, right, "left");
 }
 
+uint8_t Parser_solveSelfOperator(Args* outbuffs,
+                                 char* stmt,
+                                 char** right_p,
+                                 char** left_p) {
+    char* left_new = NULL;
+    char* right_new = NULL;
+    Arg* left_arg = arg_setStr(NULL, "", "");
+    Arg* right_arg = arg_setStr(NULL, "", "");
+    Arg* right_arg_new = arg_setStr(NULL, "", "");
+    uint8_t is_left_exist = 0;
+
+    Args buffs = {0};
+    char _operator[2] = {0};
+    char* operator=(char*) _operator;
+    char* tokens = Lexer_getTokens(&buffs, stmt);
+    char* token_now = NULL;
+    uint16_t token_size = Lexer_getTokenSize(tokens);
+    uint8_t is_right = 0;
+    if (Lexer_isContain(tokens, TOKEN_operator, "+=")) {
+        operator[0] = '+';
+    }
+    if (Lexer_isContain(tokens, TOKEN_operator, "-=")) {
+        operator[0] = '-';
+    }
+    if (Lexer_isContain(tokens, TOKEN_operator, "*=")) {
+        operator[0] = '*';
+    }
+    if (Lexer_isContain(tokens, TOKEN_operator, "/=")) {
+        operator[0] = '/';
+    }
+    /* not found self operator */
+    if (operator[0] == 0) {
+        goto exit;
+    }
+    /* found self operator */
+    is_left_exist = 1;
+    for (int i = 0; i < token_size; i++) {
+        token_now = Lexer_popToken(&buffs, tokens);
+        char* token_pyload_now = Lexer_getTokenPyload(token_now);
+        if ((strEqu(token_pyload_now, "*=")) ||
+            (strEqu(token_pyload_now, "/=")) ||
+            (strEqu(token_pyload_now, "+=")) ||
+            (strEqu(token_pyload_now, "-="))) {
+            is_right = 1;
+            continue;
+        }
+        if (!is_right) {
+            left_arg = arg_strAppend(left_arg, token_pyload_now);
+        } else {
+            right_arg = arg_strAppend(right_arg, token_pyload_now);
+        }
+    }
+    /* connect right */
+    right_arg_new = arg_strAppend(right_arg_new, arg_getStr(left_arg));
+    right_arg_new = arg_strAppend(right_arg_new, operator);
+    right_arg_new = arg_strAppend(right_arg_new, "(");
+    right_arg_new = arg_strAppend(right_arg_new, arg_getStr(right_arg));
+    right_arg_new = arg_strAppend(right_arg_new, ")");
+
+    /* collect left_new and right_new */
+    left_new = arg_getStr(left_arg);
+    right_new = arg_getStr(right_arg_new);
+
+exit:
+    strsDeinit(&buffs);
+    if (NULL != right_new) {
+        *(right_p) = strsCopy(outbuffs, right_new);
+        ;
+    }
+    if (NULL != left_new) {
+        *(left_p) = strsCopy(outbuffs, left_new);
+    }
+    arg_deinit(right_arg);
+    arg_deinit(left_arg);
+    arg_deinit(right_arg_new);
+    return is_left_exist;
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args buffs = {0};
     char* assignment = strsGetFirstToken(&buffs, stmt, '(');
@@ -771,14 +849,17 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* left = NULL;
     char* right = NULL;
 
+    right = stmt;
     /* solve check direct */
     uint8_t isLeftExist = 0;
     if (Parser_checkIsDirect(assignment)) {
         isLeftExist = 1;
         left = strsGetFirstToken(&buffs, assignment, '=');
         right = strPointToLastToken(stmt, '=');
-    } else {
-        right = stmt;
+    }
+    /* solve the += -= /= *= stmt */
+    if (!isLeftExist) {
+        isLeftExist = Parser_solveSelfOperator(&buffs, stmt, &right, &left);
     }
 
     /* solve the [] stmt */
