@@ -1179,6 +1179,31 @@ static int Parser_isVoidLine(char* line) {
     return 1;
 }
 
+static uint8_t Parser_checkIsMultiComment(char* line) {
+    for (uint32_t i = 0; i < strGetSize(line); i++) {
+        /* not match ' or " */
+        if ((line[i] != '\'') && (line[i] != '"')) {
+            continue;
+        }
+        /* not match ''' or """ */
+        if (!((line[i + 1] == line[i]) && (line[i + 2] == line[i]))) {
+            continue;
+        }
+        /* check char befor the ''' or """ */
+        if (!((0 == i) || (line[i - 1] == ' '))) {
+            continue;
+        }
+        /* check char after the ''' or """ */
+        if (!((line[i + 3] == ' ') || (line[i + 3] == 0))) {
+            continue;
+        }
+        /* mached */
+        return 1;
+    }
+    /* not mached */
+    return 0;
+}
+
 static char* Parser_parsePyLines(Args* outBuffs,
                                  ByteCodeFrame* bytecode_frame,
                                  char* py_lines) {
@@ -1189,6 +1214,7 @@ static char* Parser_parsePyLines(Args* outBuffs,
     uint32_t lines_size = strGetSize(py_lines);
     uint16_t lines_num = strCountSign(py_lines, '\n');
     uint16_t lines_index = 0;
+    uint8_t is_in_multi_comment = 0;
     char* out_ASM = NULL;
     uint32_t line_size = 0;
     /* parse each line */
@@ -1203,6 +1229,18 @@ static char* Parser_parsePyLines(Args* outBuffs,
                 goto next_line;
             }
         }
+
+        /* filter for multiline comment ''' or """ */
+        if (Parser_checkIsMultiComment(line)) {
+            is_in_multi_comment = ~is_in_multi_comment;
+            goto next_line;
+        }
+
+        /* skipe multiline comment */
+        if (is_in_multi_comment) {
+            goto next_line;
+        }
+
         /* parse single Line to Asm */
         char* single_ASM = Parser_LineToAsm(&buffs, line, &block_stack);
         if (NULL == single_ASM) {
