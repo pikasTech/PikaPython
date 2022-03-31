@@ -38,6 +38,24 @@ typedef struct Asmer_t {
     char* line_pointer;
 } Asmer;
 
+enum TokenType {
+    TOKEN_strEnd = 0,
+    TOKEN_symbol,
+    TOKEN_keyword,
+    TOKEN_operator,
+    TOKEN_devider,
+    TOKEN_literal,
+};
+
+enum StmtType {
+    STMT_reference,
+    STMT_string,
+    STMT_number,
+    STMT_method,
+    STMT_operator,
+    STMT_none,
+};
+
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);

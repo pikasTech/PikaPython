@@ -39,6 +39,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs);
 char* Lexer_getTokens(Args* outBuffs, char* stmt);
 int32_t AST_deinit(AST* ast);
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
+uint8_t Lexer_isContain(char* tokens, enum TokenType token_type, char* pyload);
 
 uint16_t Lexer_getTokenSize(char* tokens) {
     if (strEqu("", tokens)) {
@@ -117,24 +118,6 @@ char* strsGetCleanCmd(Args* outBuffs, char* cmd) {
     strsDeinit(&buffs);
     return strOut;
 }
-
-enum TokenType {
-    TOKEN_strEnd = 0,
-    TOKEN_symbol,
-    TOKEN_keyword,
-    TOKEN_operator,
-    TOKEN_devider,
-    TOKEN_literal,
-};
-
-enum StmtType {
-    STMT_reference,
-    STMT_string,
-    STMT_number,
-    STMT_method,
-    STMT_operator,
-    STMT_none,
-};
 
 char* strsDeleteBetween(Args* buffs_p, char* strIn, char begin, char end) {
     int32_t size = strGetSize(strIn);
@@ -232,20 +215,6 @@ exit:
     return stmtType;
 }
 
-uint8_t Parser_checkIsDirect(char* str) {
-    /* include '0' */
-    uint32_t size = strGetSize(str) + 1;
-    for (uint32_t i = 1; i + 1 < size; i++) {
-        if ((str[i - 1] != '%') && (str[i - 1] != '!') && (str[i - 1] != '<') &&
-            (str[i - 1] != '>') && (str[i - 1] != '=') && (str[i - 1] != '+') &&
-            (str[i - 1] != '-') && (str[i - 1] != '*') && (str[i - 1] != '/') &&
-            (str[i + 1] != '=') && (str[i] == '=')) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
 char* Lexer_printTokens(Args* outBuffs, char* tokens) {
     /* init */
     Args buffs = {0};
@@ -276,6 +245,19 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
     printOut = strsCopy(outBuffs, printOut);
     strsDeinit(&buffs);
     return printOut;
+}
+
+uint8_t Parser_checkIsDirect(char* str) {
+    Args buffs = {0};
+    char* tokens = Lexer_getTokens(&buffs, str);
+    uint8_t res = 0;
+    if (Lexer_isContain(tokens, TOKEN_operator, "=")) {
+        res = 1;
+        goto exit;
+    }
+exit:
+    strsDeinit(&buffs);
+    return res;
 }
 
 Arg* Lexer_setToken(Arg* tokens_arg,
@@ -344,6 +326,9 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     for (int32_t i = 0; i < size; i++) {
         /* update char */
         c0 = stmt[i];
+        c1 = 0;
+        c2 = 0;
+        c3 = 0;
         if (i + 1 < size) {
             c1 = stmt[i + 1];
         }
@@ -411,7 +396,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             ('~' == c0)) {
             if (('*' == c0) || ('/' == c0)) {
                 /*
-                     //=, **=
+                    //=, **=
                 */
                 if ((c0 == c1) && ('=' == c2)) {
                     char content[4] = {0};
@@ -785,23 +770,21 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* num = NULL;
     char* left = NULL;
     char* right = NULL;
-    /* solve left */
+
+    /* solve check direct */
     uint8_t isLeftExist = 0;
     if (Parser_checkIsDirect(assignment)) {
         isLeftExist = 1;
-    }
-    if (isLeftExist) {
         left = strsGetFirstToken(&buffs, assignment, '=');
-    }
-    /* solve right stmt */
-    if (isLeftExist) {
         right = strPointToLastToken(stmt, '=');
     } else {
         right = stmt;
     }
+
     /* solve the [] stmt */
     right = Parser_solveRightBranckets(&buffs, right);
     char* right_new = Parser_solveLeftBranckets(&buffs, right, left);
+
     /* left is contain the '[]' */
     if (!strEqu(right_new, right)) {
         /* update new right */
@@ -809,6 +792,8 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         /* cancel left */
         isLeftExist = 0;
     }
+
+    /* set left */
     if (isLeftExist) {
         obj_setStr(ast, (char*)"left", left);
     }

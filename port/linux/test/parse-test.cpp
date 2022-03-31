@@ -2606,3 +2606,34 @@ TEST(parser, multiLine_comment) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, plus_equ) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"a += 1+1\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lexser, a_j) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_getTokens(buffs, (char*)"a=");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf((char*)"%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(printTokens,
+                 "{sym}a{opt}=");
+                 
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
