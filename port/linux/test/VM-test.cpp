@@ -231,7 +231,7 @@ TEST(VM, while_a_1to10) {
     char* line = (char*)
     "a = 0\n"
     "while a < 10:\n"
-    "    a = a + 1\n"
+    "    a += 1\n"
     "    print(a)\n"
     "\n";
     Args* buffs = New_strBuff();

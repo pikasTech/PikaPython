@@ -191,7 +191,7 @@ TEST(pikaMain, less_equ) {
     obj_runDirect(pikaMain, (char*)
     "a = 0\n"
     "while a <= 10:\n"
-    "    a = a + 1\n"
+    "    a += 1\n"
     "\n"
     );
     /* collect */
