@@ -27,12 +27,20 @@ fn main() {
     /* analyze file begin with main.py */
     compiler = Compiler::analyze_file(compiler, String::from("main"), false);
     /*
-        Compile packages in requestment.txt, solve the packages
-        as the top packages.
-     */
+       Compile packages in requestment.txt, solve the packages
+       as the top packages.
+    */
     for package in &version_info.package_list {
+        if (package.0 == "pikascript-core") {
+            continue;
+        }
         compiler = Compiler::analyze_file(compiler, String::from(package.0), true);
     }
+
+    compiler = Compiler::analyze_file(compiler, String::from("PikaStdTask"), true);
+    compiler = Compiler::analyze_file(compiler, String::from("PikaStdData"), true);
+    compiler = Compiler::analyze_file(compiler, String::from("PikaDebug"), true);
+
     println!();
 
     /* write the infomatrion to compiler-info */
