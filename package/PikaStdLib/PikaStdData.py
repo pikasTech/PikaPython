@@ -29,7 +29,7 @@ class List(TinyObj):
         pass
 
     # support list[]  = val
-    def __set__():
+    def __set__(obj: any, key: any, val: any, obj_str: str):
         pass
 
     # support val = list[] 
@@ -59,7 +59,7 @@ class Dict(TinyObj):
         pass
 
     # support dict[]  = val
-    def __set__():
+    def __set__(obj: any, key: any, val: any, obj_str: str):
         pass
 
     # support val = dict[] 
@@ -81,7 +81,7 @@ class String(TinyObj):
         pass
 
     # support string[]  = val
-    def __set__():
+    def __set__(obj: any, key: any, val: any, obj_str: str):
         pass
 
     # support val = string[] 

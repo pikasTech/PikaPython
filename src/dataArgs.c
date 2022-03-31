@@ -130,7 +130,7 @@ ArgType args_getType(Args* self, char* name) {
     Arg* arg = NULL;
     arg = args_getArg(self, name);
     if (NULL == arg) {
-        return ARG_TYPE_NONE;
+        return ARG_TYPE_NULL;
     }
     return arg_getType(arg);
 }

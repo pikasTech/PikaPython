@@ -185,7 +185,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     PikaObj* method_host_obj;
     Arg* method_arg;
     Method method_ptr;
-    ArgType method_type = ARG_TYPE_NONE;
+    ArgType method_type = ARG_TYPE_NULL;
     char* method_dec;
     char* type_list;
     char* sys_out;
@@ -218,7 +218,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     if (NULL == method_arg) {
         /* error, method no found */
         VMState_setErrorCode(vs, 2);
-        __platform_printf("[error] runner: method '%s' no found.\r\n", data);
+        __platform_printf("[error] name '%s' is not defined\r\n", data);
+
         goto RUN_exit;
     }
     /* get method Ptr */
@@ -1118,6 +1119,19 @@ void byteCodeFrame_print(ByteCodeFrame* self) {
                       self->const_pool.size + self->instruct_array.size);
 }
 
+void VMState_solveUnusedStack(VMState* vs) {
+    uint8_t top = stack_getTop(&(vs->stack));
+    for (int i = 0; i < top; i++) {
+        Arg* arg = stack_popArg(&(vs->stack));
+        ArgType type = arg_getType(arg);
+        if (type == ARG_TYPE_VOID) {
+            arg_deinit(arg);
+            continue;
+        }
+        arg_deinit(arg);
+    }
+}
+
 VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
                                           VMParameters* locals,
                                           VMParameters* globals,
@@ -1139,6 +1153,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         }
         InstructUnit* this_ins_unit = VMState_getInstructNow(&vs);
         if (instructUnit_getIsNewLine(this_ins_unit)) {
+            VMState_solveUnusedStack(&vs);
             stack_reset(&(vs.stack));
         }
         vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
@@ -1169,6 +1184,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
             vs.error_code = 0;
         }
     }
+    VMState_solveUnusedStack(&vs);
     stack_deinit(&(vs.stack));
     return locals;
 }

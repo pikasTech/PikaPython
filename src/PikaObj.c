@@ -355,7 +355,6 @@ Arg* newFreeObjArg(NewFun newObjFun) {
 }
 
 Arg* obj_newObjInPackage(NewFun newObjFun) {
-    // return arg_setMetaObj("", "", newObjFun);
     return newFreeObjArg(newObjFun);
 }
 

@@ -2675,3 +2675,42 @@ TEST(parser, plus_equ_) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, class_demo_3) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+        "class people:\n"
+        "    def speak(self):\n"
+        "        print('i am a people')\n"
+        " \n"
+        "class student(people):\n"
+        "    def speak(self):\n"
+        "        print('i am a student')\n"
+        " \n"
+        "p = people()\n"
+        "s = student()\n"
+        "p.speak()\n"
+        "s.speak()\n"
+        ;
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, a_a) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)
+        "a = 1\n"
+        "a\n"
+        "a\n"
+        ;
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
