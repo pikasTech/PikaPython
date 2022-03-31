@@ -31,12 +31,13 @@ fn main() {
        as the top packages.
     */
     for package in &version_info.package_list {
-        if (package.0 == "pikascript-core") {
+        if package.0 == "pikascript-core" {
             continue;
         }
         compiler = Compiler::analyze_file(compiler, String::from(package.0), true);
     }
 
+    /* Compile packages in PikaStdLib */
     compiler = Compiler::analyze_file(compiler, String::from("PikaStdTask"), true);
     compiler = Compiler::analyze_file(compiler, String::from("PikaStdData"), true);
     compiler = Compiler::analyze_file(compiler, String::from("PikaDebug"), true);
@@ -48,6 +49,7 @@ fn main() {
         File::create(format!("{}compiler-info.txt", compiler.dist_path)).unwrap();
     let compiler_info = format!("{:?}", compiler);
     compiler_info_file.write(compiler_info.as_bytes()).unwrap();
+
     /* make the -api.c file for each python class */
     for (_, class_info) in compiler.class_list.iter() {
         let api_file_path = format!("{}{}-api.c", compiler.dist_path, class_info.this_class_name);
@@ -70,17 +72,12 @@ fn main() {
             let name = String::from(class_info.this_class_name.to_string());
             f.write(format!("Arg *{}(PikaObj *self){{\n", &name).as_bytes())
                 .unwrap();
-            f.write(
-                format!(
-                    "    return arg_setMetaObj(\"\", \"{}\", New_{});\n",
-                    &name, &name
-                )
-                .as_bytes(),
-            )
-            .unwrap();
+            f.write(format!("    return obj_newObjInPackage(New_{});\n", &name).as_bytes())
+                .unwrap();
             f.write("}\n".as_bytes()).unwrap();
         }
     }
+
     /* make the .h file for each python class */
     for (_, class_info) in compiler.class_list.iter() {
         let api_file_path = format!("{}{}.h", compiler.dist_path, class_info.this_class_name);

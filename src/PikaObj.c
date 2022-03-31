@@ -336,12 +336,27 @@ PikaObj* removeMethodInfo(PikaObj* thisClass) {
     return thisClass;
 }
 
+PikaObj* newObjFromFun(NewFun newObjFun) {
+    PikaObj* thisClass = obj_getClassObjByNewFun(NULL, "", newObjFun);
+    return removeMethodInfo(thisClass);
+}
+
 extern PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
-    PikaObj* thisClass = obj_getClassObjByNewFun(NULL, name, newObjFun);
-    PikaObj* newObj = removeMethodInfo(thisClass);
+    PikaObj* newObj = newObjFromFun(newObjFun);
     __pikaMain = newObj;
     return newObj;
+}
+
+Arg* newFreeObjArg(NewFun newObjFun) {
+    PikaObj* newObj = newObjFromFun(newObjFun);
+    Arg* objArg = arg_setPtr(NULL, "", ARG_TYPE_FREE_OBJECT, newObj);
+    return objArg;
+}
+
+Arg* obj_newObjInPackage(NewFun newObjFun) {
+    return arg_setMetaObj("", "", newObjFun);
+    // return newFreeObjArg(newObjFun);
 }
 
 static PikaObj* __initObj(PikaObj* obj, char* name) {
