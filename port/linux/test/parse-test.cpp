@@ -2652,3 +2652,26 @@ TEST(lexser, a_j) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, plus_equ_) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"a -= (1+1-3)\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF a\n"
+                 "5 NUM 1\n"
+                 "5 NUM 1\n"
+                 "4 OPT +\n"
+                 "4 NUM 3\n"
+                 "3 OPT -\n"
+                 "2 RUN \n"
+                 "1 RUN \n"
+                 "0 OPT -\n"
+                 "0 OUT a\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

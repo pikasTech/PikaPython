@@ -1394,7 +1394,7 @@ TEST(pikaMain, self_operator) {
             "c = 3\n"
             "d = 4\n"
             "a += 2\n"
-            "b -= 3\n"
+            "b -= 1+1-3\n"
             "c *= 4\n"
             "d /= 2\n"
         );
@@ -1405,7 +1405,7 @@ TEST(pikaMain, self_operator) {
     int d = obj_getInt(pikaMain, (char*)"d");
     /* assert */
     EXPECT_EQ(a, 3);
-    EXPECT_EQ(b, -1);
+    EXPECT_EQ(b, 3);
     EXPECT_EQ(c, 12);
     EXPECT_EQ(d, 2);
     /* deinit */
