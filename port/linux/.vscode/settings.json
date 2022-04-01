@@ -46,7 +46,8 @@
         "pika_config_gtest.h": "c",
         "atomic": "c",
         "cstdint": "c",
-        "pika_config.h": "c"
+        "pika_config.h": "c",
+        "PikaParser.H": "cpp"
     },
     "python.formatting.provider": "autopep8"
 }

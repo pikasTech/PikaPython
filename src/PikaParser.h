@@ -31,13 +31,6 @@
 #include "dataQueueObj.h"
 #include "dataStack.h"
 
-typedef struct Asmer_t {
-    char* asm_code;
-    uint8_t block_deepth_now;
-    uint8_t is_new_line;
-    char* line_pointer;
-} Asmer;
-
 enum TokenType {
     TOKEN_strEnd = 0,
     TOKEN_symbol,
@@ -56,6 +49,29 @@ enum StmtType {
     STMT_none,
 };
 
+typedef struct Asmer_t {
+    char* asm_code;
+    uint8_t block_deepth_now;
+    uint8_t is_new_line;
+    char* line_pointer;
+} Asmer;
+
+struct LexToken {
+    char* token;
+    enum TokenType type;
+    char* pyload;
+};
+
+struct ParserState {
+    char* tokens;
+    uint16_t length;
+    struct LexToken token1;
+    struct LexToken token2;
+    Arg* last_token;
+    Args* iter_buffs;
+    Args* buffs_p;
+};
+
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);
@@ -63,5 +79,8 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
 int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
                                 char* python_lines);
 void Parser_compilePyToBytecodeArray(char* lines);
+#define ParserState_forEach(ps)  \
+    ParserState_beforeIter(&ps); \
+    for (int i = 0; i < ps.length; i++)
 
 #endif

@@ -904,3 +904,4 @@ TEST(VM, load_static_bytes) {
     EXPECT_EQ(bytecode_frame.const_pool.size, 177);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+

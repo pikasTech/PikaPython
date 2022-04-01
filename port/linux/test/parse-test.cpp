@@ -2714,3 +2714,16 @@ TEST(parser, a_a) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, a_cuohao_j) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"a = (3 - 4) - 4\n";
+    char* tokens = Lexer_getTokens(buffs, lines);
+    printf("%s\n", Lexer_printTokens(buffs, tokens));
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

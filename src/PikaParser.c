@@ -40,6 +40,12 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt);
 int32_t AST_deinit(AST* ast);
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 uint8_t Lexer_isContain(char* tokens, enum TokenType token_type, char* pyload);
+void ParserState_init(struct ParserState* ps);
+void ParserState_parse(struct ParserState* ps, char* stmt);
+void ParserState_deinit(struct ParserState* ps);
+void ParserState_beforeIter(struct ParserState* ps);
+void ParserState_iterStart(struct ParserState* ps);
+void ParserState_iterEnd(struct ParserState* ps);
 
 uint16_t Lexer_getTokenSize(char* tokens) {
     if (strEqu("", tokens)) {
@@ -158,37 +164,43 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     Args buffs = {0};
     enum StmtType stmtType = STMT_none;
     char* rightWithoutSubStmt = strsDeleteBetween(&buffs, right, '(', ')');
-    char* tokens = Lexer_getTokens(&buffs, rightWithoutSubStmt);
-    uint16_t token_size = strCountSign(tokens, 0x1F) + 1;
+
+    struct ParserState ps;
+    ParserState_init(&ps);
+    ParserState_parse(&ps, rightWithoutSubStmt);
+
     uint8_t is_get_operator = 0;
     uint8_t is_get_method = 0;
     uint8_t is_get_string = 0;
     uint8_t is_get_number = 0;
     uint8_t is_get_symbol = 0;
-    for (int i = 0; i < token_size; i++) {
-        char* token = strsPopToken(&buffs, tokens, 0x1F);
-        enum TokenType token_type = (enum TokenType)token[0];
+    ParserState_forEach(ps) {
+        ParserState_iterStart(&ps);
         /* collect type */
-        if (token_type == TOKEN_operator) {
+        if (ps.token1.type == TOKEN_operator) {
             is_get_operator = 1;
-            continue;
+            goto iter_continue;
         }
-        if (token_type == TOKEN_devider) {
+        if (ps.token2.type == TOKEN_devider) {
+            // if (strEqu(ps.token2.pyload, "(")) {
             is_get_method = 1;
-            continue;
+            goto iter_continue;
+            // }
         }
-        if (token_type == TOKEN_literal) {
-            if (token[1] == '\'' || token[1] == '"') {
+        if (ps.token1.type == TOKEN_literal) {
+            if (ps.token1.pyload[0] == '\'' || ps.token1.pyload[0] == '"') {
                 is_get_string = 1;
-                continue;
+                goto iter_continue;
             }
             is_get_number = 1;
-            continue;
+            goto iter_continue;
         }
-        if (token_type == TOKEN_symbol) {
+        if (ps.token1.type == TOKEN_symbol) {
             is_get_symbol = 1;
-            continue;
+            goto iter_continue;
         }
+    iter_continue:
+        ParserState_iterEnd(&ps);
     }
     if (is_get_operator) {
         stmtType = STMT_operator;
@@ -211,6 +223,7 @@ static enum StmtType Lexer_matchStmtType(char* right) {
         goto exit;
     }
 exit:
+    ParserState_deinit(&ps);
     strsDeinit(&buffs);
     return stmtType;
 }
@@ -396,7 +409,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             ('~' == c0)) {
             if (('*' == c0) || ('/' == c0)) {
                 /*
-                    //=, **=
+                    =, **=, //
                 */
                 if ((c0 == c1) && ('=' == c2)) {
                     char content[4] = {0};
@@ -587,22 +600,6 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     return operator;
 }
 
-struct LexToken {
-    char* token;
-    enum TokenType type;
-    char* pyload;
-};
-
-struct ParserState {
-    char* tokens;
-    uint16_t length;
-    struct LexToken token1;
-    struct LexToken token2;
-    Arg* last_token;
-    Args* iter_buffs;
-    Args* buffs_p;
-};
-
 void LexToken_update(struct LexToken* lex_token) {
     lex_token->type = Lexer_getTokenType(lex_token->token);
     lex_token->pyload = Lexer_getTokenPyload(lex_token->token);
@@ -610,8 +607,11 @@ void LexToken_update(struct LexToken* lex_token) {
 
 void ParserState_iterStart(struct ParserState* ps) {
     ps->iter_buffs = New_strBuff();
+    /* token1 is the last token */
     ps->token1.token = strsCopy(ps->iter_buffs, arg_getStr(ps->last_token));
+    /* token2 is the next token */
     ps->token2.token = Lexer_popToken(ps->iter_buffs, ps->tokens);
+    /* store last token */
     arg_deinit(ps->last_token);
     ps->last_token = arg_setStr(NULL, "", ps->token2.token);
 
@@ -688,8 +688,7 @@ char* Parser_solveBranckets(Args* outBuffs,
         }
         goto exit;
     }
-    ParserState_beforeIter(&ps);
-    for (int i = 0; i < ps.length; i++) {
+    ParserState_forEach(ps) {
         ParserState_iterStart(&ps);
         /* matched [] */
         /* found '[' */
@@ -906,13 +905,12 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         /* init parserStage */
         ParserState_init(&ps);
         ParserState_parse(&ps, subStmts);
-        ParserState_beforeIter(&ps);
         /* init process values */
         Arg* subStmt = arg_setStr(NULL, "", "");
         uint8_t is_in_brankets = 0;
         /* start iteration */
         char* subStmt_str = NULL;
-        for (int i = 0; i < ps.length; i++) {
+        ParserState_forEach(ps) {
             ParserState_iterStart(&ps);
             /* parse process */
             if (strEqu(ps.token1.pyload, "(")) {
