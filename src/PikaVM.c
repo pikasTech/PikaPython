@@ -459,6 +459,9 @@ static uint8_t VMState_getInputArgNum(VMState* vs) {
         if (invode_deepth == invode_deepth_this + 1) {
             num++;
         }
+        if (instructUnit_getIsNewLine(ins_unit_now)) {
+            break;
+        }
         if (invode_deepth <= invode_deepth_this) {
             break;
         }
