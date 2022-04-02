@@ -165,16 +165,12 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     enum StmtType stmtType = STMT_none;
     char* rightWithoutSubStmt = strsDeleteBetween(&buffs, right, '(', ')');
 
-    struct ParserState ps;
-    ParserState_init(&ps);
-    ParserState_parse(&ps, rightWithoutSubStmt);
-
     uint8_t is_get_operator = 0;
     uint8_t is_get_method = 0;
     uint8_t is_get_string = 0;
     uint8_t is_get_number = 0;
     uint8_t is_get_symbol = 0;
-    ParserState_forEach(ps) {
+    Lexer_forEachToken(ps, rightWithoutSubStmt) {
         ParserState_iterStart(&ps);
         /* collect type */
         if (ps.token1.type == TOKEN_operator) {
@@ -459,8 +455,8 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             }
 
             /* single operator */
-            /* 
-                +, -, *, ... / 
+            /*
+                +, -, *, ... /
             */
             char content[2] = {0};
             content[0] = c0;
@@ -651,18 +647,15 @@ char* Parser_solveBranckets(Args* outBuffs,
     Arg* right_arg = arg_setStr(NULL, "", "");
     uint8_t is_in_brancket = 0;
     args_setStr(&buffs, "index", "");
-    /* init parserState */
-    struct ParserState ps;
-    ParserState_init(&ps);
     /* exit when NULL */
     if (NULL == content) {
         arg_deinit(right_arg);
         right_arg = arg_setStr(right_arg, "", stmt);
         goto exit;
     }
-    ParserState_parse(&ps, content);
+    char* tokens = Lexer_getTokens(&buffs, content);
     /* exit when no '[' ']' */
-    if (!Lexer_isContain(ps.tokens, TOKEN_devider, "[")) {
+    if (!Lexer_isContain(tokens, TOKEN_devider, "[")) {
         /* not contain '[', return origin */
         arg_deinit(right_arg);
         if (strEqu(mode, "right")) {
@@ -672,7 +665,7 @@ char* Parser_solveBranckets(Args* outBuffs,
         }
         goto exit;
     }
-    ParserState_forEach(ps) {
+    Lexer_forEachToken(ps, content) {
         ParserState_iterStart(&ps);
         /* matched [] */
         /* found '[' */
@@ -726,11 +719,10 @@ char* Parser_solveBranckets(Args* outBuffs,
         }
         ParserState_iterEnd(&ps);
     }
-
+    ParserState_deinit(&ps);
 exit:
     /* clean and return */
     content = strsCopy(outBuffs, arg_getStr(right_arg));
-    ParserState_deinit(&ps);
     arg_deinit(right_arg);
     strsDeinit(&buffs);
     return content;
@@ -885,16 +877,12 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         char* subStmts = strsCut(&buffs, right, '(', ')');
         /* add ',' at the end */
         subStmts = strsAppend(&buffs, subStmts, ",");
-        struct ParserState ps;
-        /* init parserStage */
-        ParserState_init(&ps);
-        ParserState_parse(&ps, subStmts);
         /* init process values */
         Arg* subStmt = arg_setStr(NULL, "", "");
         uint8_t is_in_brankets = 0;
         /* start iteration */
         char* subStmt_str = NULL;
-        ParserState_forEach(ps) {
+        Lexer_forEachToken(ps, subStmts) {
             ParserState_iterStart(&ps);
             /* parse process */
             if (strEqu(ps.token1.pyload, "(")) {
