@@ -574,6 +574,20 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
             operator= strsCopy(&buffs, (char*)operators[i]);
         }
     }
+    /* match the last operator in equal level */
+    if ((strEqu(operator, "+")) || (strEqu(operator, "-"))) {
+        Lexer_forEachToken(ps, stmt) {
+            ParserState_iterStart(&ps);
+            if (strEqu(ps.token1.pyload, "+")) {
+                operator= strsCopy(&buffs, "+");
+            }
+            if (strEqu(ps.token1.pyload, "-")) {
+                operator= strsCopy(&buffs, "-");
+            }
+            ParserState_iterEnd(&ps);
+        }
+        ParserState_deinit(&ps);
+    }
     /* out put */
     operator= strsCopy(outBuffs, operator);
     strsDeinit(&buffs);
