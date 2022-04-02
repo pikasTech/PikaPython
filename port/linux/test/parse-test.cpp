@@ -579,10 +579,10 @@ TEST(parser, add_3) {
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
-                 "1 NUM 1\n"
+                 "2 NUM 1\n"
                  "2 NUM 2\n"
-                 "2 NUM 3\n"
                  "1 OPT +\n"
+                 "1 NUM 3\n"
                  "0 OPT +\n"
                  "0 OUT a\n");
     args_deinit(buffs);

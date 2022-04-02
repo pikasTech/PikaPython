@@ -60,7 +60,6 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
                                  char skipStart,
                                  char skipEnd) {
     uint8_t token_index_get = 0;
-    uint8_t token_index_isget = 0;
     uint8_t branket_deepth = 0;
     Arg* keeped_arg = arg_setStr(NULL, "", "");
     Arg* poped_arg = arg_setStr(NULL, "", "");
@@ -75,10 +74,9 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
             if (strEqu(ps.token1.pyload, ")")) {
                 branket_deepth--;
             }
-            if ((token_index_isget == 0) && (branket_deepth == 0)) {
+            if (branket_deepth == 0) {
                 if (strEqu(str, ps.token1.pyload)) {
                     token_index_get = token_index;
-                    token_index_isget = 1;
                 }
             }
             ParserState_iterEnd(&ps);
