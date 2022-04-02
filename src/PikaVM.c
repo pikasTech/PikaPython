@@ -33,6 +33,11 @@
 #include "PikaPlatform.h"
 #include "dataStrs.h"
 
+/* head declear start */
+static uint8_t VMState_getInputArgNum(VMState* vs);
+
+/* head declear end */
+
 static InstructUnit* VMState_getInstructNow(VMState* vs) {
     return instructArray_getByOffset(&(vs->bytecode_frame->instruct_array),
                                      vs->pc);
@@ -172,7 +177,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
     }
     if (NULL == arg) {
         VMState_setErrorCode(vs, 1);
-        __platform_printf("[error] name '%s' is not defined\r\n", data);
+        __platform_printf("NameError: name '%s' is not defined\r\n", data);
     }
     return arg;
 }
@@ -206,7 +211,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     if (NULL == method_host_obj) {
         /* error, not found object */
         VMState_setErrorCode(vs, 1);
-        __platform_printf("[error] runner: method '%s' no found.\r\n", data);
+        __platform_printf("Error: method '%s' no found.\r\n", data);
         goto RUN_exit;
     }
     /* get method in local */
@@ -218,7 +223,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     if (NULL == method_arg) {
         /* error, method no found */
         VMState_setErrorCode(vs, 2);
-        __platform_printf("[error] name '%s' is not defined\r\n", data);
+        __platform_printf("NameError: name '%s' is not defined\r\n", data);
 
         goto RUN_exit;
     }
@@ -241,12 +246,28 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     }
 
     sub_locals = New_PikaObj();
+    uint8_t arg_num_dec = 0;
+    if (strEqu("", type_list)) {
+        arg_num_dec = 0;
+    } else {
+        arg_num_dec = strCountSign(type_list, ',') + 1;
+    }
+    if (method_type == ARG_TYPE_OBJECT_METHOD) {
+        /* delete the 'self' */
+        arg_num_dec--;
+    }
+    uint8_t arg_num_input = VMState_getInputArgNum(vs);
+    if (arg_num_dec != arg_num_input) {
+        VMState_setErrorCode(vs, 3);
+        __platform_printf(
+            "TypeError: %s() takes %d positional argument but %d were "
+            "given\r\n",
+            data, arg_num_dec, arg_num_input);
+        goto RUN_exit;
+    }
+
     /* load pars */
-    while (1) {
-        /* no arg */
-        if (')' == method_dec[1]) {
-            break;
-        }
+    for (int i = 0; i < arg_num_dec; i++) {
         char* argDef = strPopLastToken(type_list, ',');
         strPopLastToken(argDef, ':');
         char* argName = argDef;
@@ -254,10 +275,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         call_arg = arg_setName(call_arg, argName);
         args_setArg(sub_locals->list, call_arg);
         call_arg_index++;
-        /* reach the last */
-        if (argDef == type_list) {
-            break;
-        }
     }
 
     /* load 'self' as the first arg when call object method */
@@ -455,8 +472,8 @@ static uint8_t VMState_getInputArgNum(VMState* vs) {
 static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     Arg* outArg = NULL;
     uint8_t input_arg_num = VMState_getInputArgNum(vs);
-    Arg* arg2;
-    Arg* arg1;
+    Arg* arg2 = NULL;
+    Arg* arg1 = NULL;
     if (input_arg_num == 2) {
         /* tow input */
         arg2 = stack_popArg(&(vs->stack));
@@ -538,7 +555,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         if (0 == num2_f) {
             VMState_setErrorCode(vs, 1);
             args_setSysOut(vs->locals->list,
-                           "[error] operator: division by zero");
+                           "ZeroDivisionError: division by zero");
             outArg = NULL;
             goto OPT_exit;
         }
