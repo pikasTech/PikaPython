@@ -905,3 +905,21 @@ TEST(VM, load_static_bytes) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(VM, multi_jian) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"a = (3-4) - 4\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    pikaVM_run(self, lines);
+    /* assert */
+    int a = obj_getInt(self, (char*)"a");
+    EXPECT_EQ(a, -5);
+    /* deinit */
+    args_deinit(buffs);
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
