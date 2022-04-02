@@ -32,7 +32,10 @@ TEST(VM, num1) {
     char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
     PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    __platform_printf((char*)"BEGIN\r\n");
     pikaVM_runAsm(self, pikaAsm);
+    EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], (char*)"1\r\n");
     obj_deinit(self);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
