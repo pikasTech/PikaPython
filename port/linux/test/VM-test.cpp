@@ -216,6 +216,7 @@ TEST(VM, a_1_1d1) {
 
 TEST(VM, a_jjcc) {
     char* line = (char*)"a = (1 + 1.1) * 3 - 2 /4.0";
+    printf("%s\r\n", line);
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);

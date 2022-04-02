@@ -54,55 +54,58 @@ uint16_t Lexer_getTokenSize(char* tokens) {
     return strCountSign(tokens, 0x1F) + 1;
 }
 
-char* strsPopTokenWithSkip_byStr(Args* buffs_p,
+char* strsPopTokenWithSkip_byStr(Args* outBuffs,
                                  char* stmts,
                                  char* str,
                                  char skipStart,
                                  char skipEnd) {
-    int32_t str_size = strGetSize(str);
-    int32_t size = strGetSize(stmts);
-    if (0 == size) {
-        return NULL;
-    }
-    char* strOut = args_getBuff(buffs_p, size);
-    int32_t stmtEnd = 0;
-    uint8_t isGetSign = 0;
-    int32_t parentheseDeepth = 0;
-    for (int32_t i = 0; i < size; i++) {
-        if (skipStart == stmts[i]) {
-            parentheseDeepth++;
-        }
-        if (skipEnd == stmts[i]) {
-            parentheseDeepth--;
-        }
-        if (parentheseDeepth == 0) {
-            if (0 == strncmp(stmts + i, str, str_size)) {
-                stmtEnd = i;
-                isGetSign = 1;
-                break;
+    uint8_t token_index_get = 0;
+    uint8_t token_index_isget = 0;
+    uint8_t branket_deepth = 0;
+    Arg* keeped_arg = arg_setStr(NULL, "", "");
+    Arg* poped_arg = arg_setStr(NULL, "", "");
+    {
+        uint8_t token_index = 0;
+        Lexer_forEachToken(ps, stmts) {
+            ParserState_iterStart(&ps);
+            token_index++;
+            if (strEqu(ps.token1.pyload, "(")) {
+                branket_deepth++;
             }
+            if (strEqu(ps.token1.pyload, ")")) {
+                branket_deepth--;
+            }
+            if ((token_index_isget == 0) && (branket_deepth == 0)) {
+                if (strEqu(str, ps.token1.pyload)) {
+                    token_index_get = token_index;
+                    token_index_isget = 1;
+                }
+            }
+            ParserState_iterEnd(&ps);
         }
+        ParserState_deinit(&ps);
     }
-    if (!isGetSign) {
-        stmtEnd = size;
+    {
+        uint8_t token_index = 0;
+        Lexer_forEachToken(ps, stmts) {
+            ParserState_iterStart(&ps);
+            token_index++;
+            if (token_index < token_index_get) {
+                poped_arg = arg_strAppend(poped_arg, ps.token1.pyload);
+            }
+            if (token_index > token_index_get) {
+                keeped_arg = arg_strAppend(keeped_arg, ps.token1.pyload);
+            }
+            ParserState_iterEnd(&ps);
+        }
+        ParserState_deinit(&ps);
     }
-    for (int32_t i = 0; i < stmtEnd; i++) {
-        strOut[i] = stmts[i];
-    }
-    memmove(stmts, stmts + stmtEnd + str_size, size);
-    strOut[stmtEnd] = 0;
-    return strOut;
-}
-
-char* strsPopTokenWithSkip(Args* buffs_p,
-                           char* stmts,
-                           char sign,
-                           char skipStart,
-                           char skipEnd) {
-    char str_buff[2] = {0};
-    str_buff[0] = sign;
-    return strsPopTokenWithSkip_byStr(buffs_p, stmts, str_buff, skipStart,
-                                      skipEnd);
+    char* keeped = arg_getStr(keeped_arg);
+    char* poped = strsCopy(outBuffs, arg_getStr(poped_arg));
+    __platform_memcpy(stmts, keeped, strGetSize(keeped) + 1);
+    arg_deinit(poped_arg);
+    arg_deinit(keeped_arg);
+    return poped;
 }
 
 char* strsGetCleanCmd(Args* outBuffs, char* cmd) {
@@ -595,8 +598,13 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
 }
 
 void LexToken_update(struct LexToken* lex_token) {
+    const char void_str[] = "";
     lex_token->type = Lexer_getTokenType(lex_token->token);
-    lex_token->pyload = Lexer_getTokenPyload(lex_token->token);
+    if (lex_token->type == TOKEN_strEnd) {
+        lex_token->pyload = (char*)void_str;
+    } else {
+        lex_token->pyload = Lexer_getTokenPyload(lex_token->token);
+    }
 }
 
 void ParserState_iterStart(struct ParserState* ps) {

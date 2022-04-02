@@ -19,8 +19,8 @@
             // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=pikaMain.list__set__",
-                "--gtest_filter=parser._3_3",
-                // "--gtest_filter=VM.a_jjcc",
+                // "--gtest_filter=parser._3_3",
+                "--gtest_filter=VM.a_jjcc",
                 // "--gtest_filter=parser.a_cuohao_j",
                 // "--gtest_filter=lexser.jjcc",
                 // "--gtest_filter=lexser.a_j",
