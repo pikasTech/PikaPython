@@ -857,11 +857,16 @@ TEST(parser, signed_num) {
     char* lines = (char*)"a = -1\n";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    char* tokens_print =
+        Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    printf("%s", tokens_print);
+    EXPECT_STREQ(tokens_print, (char*)"{sym}a{opt}={opt}-{lit}1\n");
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,(char *)
-    "B0\n"
-    "0 NUM -1\n"
-    "0 OUT a\n"
+        "B0\n"
+        "1 NUM 1\n"
+        "0 OPT -\n"
+        "0 OUT a\n"
     );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -877,7 +882,8 @@ TEST(parser, comp_signed_num) {
     EXPECT_STREQ(pikaAsm,(char *)
         "B0\n"
         "1 REF a\n"
-        "1 NUM -1\n"
+        "2 NUM 1\n"
+        "1 OPT -\n"
         "0 OPT >\n"
         "0 JEZ 1\n"
     );
@@ -949,7 +955,7 @@ TEST(lexser, symbol_Nag) {
     printf((char*)"%s\n", printTokens);
 
     /* assert */
-    EXPECT_STREQ(printTokens, "{lit}-10{opt}-{lit}20");
+    EXPECT_STREQ(printTokens, "{opt}-{lit}10{opt}-{lit}20");
 
     /* deinit */
     args_deinit(buffs);
@@ -1001,7 +1007,7 @@ TEST(lexser, symbol_2) {
     /* assert */
     EXPECT_STREQ(printTokens,
                  "{sym}a{opt}+{sym}b{opt}-{sym}c{dvd}({lit}25{opt}**={sym}ek{"
-                 "dvd}){opt}!={lit}-28");
+                 "dvd}){opt}!={opt}-{lit}28");
 
     /* deinit */
     args_deinit(buffs);
@@ -1105,9 +1111,10 @@ TEST(parser, mm) {
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,(char *)
         "B0\n"
-        "1 REF a\n"
-        "1 NUM -1\n"
-        "0 OPT **\n"
+        "2 REF a\n"
+        "1 OPT **\n"
+        "1 NUM 1\n"
+        "0 OPT -\n"
         "0 OUT a\n"
     );
     args_deinit(buffs);
@@ -1135,51 +1142,61 @@ TEST(parser, self_inc) {
     EXPECT_STREQ(pikaAsm,(char *)
         "B0\n"
         "1 REF a\n"
-        "2 NUM -1\n"
+        "3 NUM 1\n"
+        "2 OPT -\n"
         "1 RUN \n"
         "0 OPT +\n"
         "0 OUT a\n"
         "B0\n"
         "1 REF a\n"
-        "2 NUM -1\n"
+        "3 NUM 1\n"
+        "2 OPT -\n"
         "1 RUN \n"
         "0 OPT -\n"
         "0 OUT a\n"
         "B0\n"
         "1 REF a\n"
-        "2 NUM -1\n"
+        "3 NUM 1\n"
+        "2 OPT -\n"
         "1 RUN \n"
         "0 OPT *\n"
         "0 OUT a\n"
         "B0\n"
         "1 REF a\n"
-        "2 NUM -1\n"
+        "3 NUM 1\n"
+        "2 OPT -\n"
         "1 RUN \n"
         "0 OPT /\n"
         "0 OUT a\n"
         "B0\n"
         "1 REF a\n"
-        "1 NUM -1\n"
+        "2 NUM 1\n"
+        "1 OPT -\n"
         "0 OPT **=\n"
         "B0\n"
         "1 REF a\n"
-        "1 NUM -1\n"
+        "2 NUM 1\n"
+        "1 OPT -\n"
         "0 OPT //=\n"
         "B0\n"
         "1 REF a\n"
-        "1 NUM -1\n"
+        "2 NUM 1\n"
+        "1 OPT -\n"
         "0 OPT >=\n"
         "B0\n"
         "1 REF a\n"
-        "1 NUM -1\n"
+        "2 NUM 1\n"
+        "1 OPT -\n"
         "0 OPT <=\n"
         "B0\n"
         "1 REF a\n"
-        "1 NUM -1\n"
+        "2 NUM 1\n"
+        "1 OPT -\n"
         "0 OPT !=\n"
         "B0\n"
         "1 REF a\n"
-        "1 NUM -1\n"
+        "2 NUM 1\n"
+        "1 OPT -\n"
         "0 OPT %=\n"
     );
     args_deinit(buffs);
@@ -1195,8 +1212,9 @@ TEST(parser, n_n1) {
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,(char *)
         "B0\n"
-        "1 NUM -1\n"
-        "0 OPT ~\n"
+        "1 OPT ~\n"
+        "1 NUM 1\n"
+        "0 OPT -\n"
         "0 OUT a\n"
     );
     args_deinit(buffs);
@@ -2719,10 +2737,18 @@ TEST(parser, a_cuohao_j) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = (3 - 4) - 4\n";
-    char* tokens = Lexer_getTokens(buffs, lines);
-    printf("%s\n", Lexer_printTokens(buffs, tokens));
+    printf("%s\n", Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines)));
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    EXPECT_STREQ(pikaAsm, (char*)
+        "B0\n"
+        "3 NUM 3\n"
+        "3 NUM 4\n"
+        "2 OPT -\n"
+        "1 RUN \n"
+        "1 NUM 4\n"
+        "0 OPT -\n"
+        "0 OUT a\n");
     printf("%s", pikaAsm);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);

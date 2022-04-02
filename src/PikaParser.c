@@ -305,8 +305,7 @@ Arg* Lexer_setSymbel(Arg* tokens_arg,
     __platform_memcpy(symbol_buff, stmt + *symbol_start_index,
                       i - *symbol_start_index);
     /* literal */
-    if ((symbol_buff[0] == '-') || (symbol_buff[0] == '\'') ||
-        (symbol_buff[0] == '"') ||
+    if ((symbol_buff[0] == '\'') || (symbol_buff[0] == '"') ||
         ((symbol_buff[0] >= '0') && (symbol_buff[0] <= '9'))) {
         tokens_arg = Lexer_setToken(tokens_arg, TOKEN_literal, symbol_buff);
     } else {
@@ -458,33 +457,18 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
                     continue;
                 }
             }
-            /* single */
+
+            /* single operator */
+            /* 
+                +, -, *, ... / 
+            */
             char content[2] = {0};
             content[0] = c0;
-            if ('-' != c0) {
-                tokens_arg =
-                    Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
-                tokens_arg =
-                    Lexer_setToken(tokens_arg, TOKEN_operator, content);
-                continue;
-            }
-            /* when c0 is '-' */
-            if (!((c1 >= '0') && (c1 <= '9'))) {
-                /* is a '-' */
-                tokens_arg =
-                    Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
-                tokens_arg =
-                    Lexer_setToken(tokens_arg, TOKEN_operator, content);
-                continue;
-            }
-            if (i != symbol_start_index) {
-                /* is a '-' */
-                tokens_arg =
-                    Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
-                tokens_arg =
-                    Lexer_setToken(tokens_arg, TOKEN_operator, content);
-                continue;
-            }
+            tokens_arg =
+                Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
+            tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, content);
+            continue;
+
             /* is a symbel */
             continue;
         }

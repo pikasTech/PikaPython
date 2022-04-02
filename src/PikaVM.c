@@ -430,10 +430,42 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
     return NULL;
 }
 
+static uint8_t VMState_getInputArgNum(VMState* vs) {
+    InstructUnit* ins_unit_now = VMState_getInstructNow(vs);
+    uint8_t invode_deepth_this = instructUnit_getInvokeDeepth(ins_unit_now);
+    int32_t pc_this = vs->pc;
+    uint8_t num = 0;
+    while (1) {
+        ins_unit_now--;
+        pc_this -= instructUnit_getSize(ins_unit_now);
+        uint8_t invode_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
+        if (invode_deepth == invode_deepth_this + 1) {
+            num++;
+        }
+        if (invode_deepth <= invode_deepth_this) {
+            break;
+        }
+        if (pc_this <= 0) {
+            break;
+        }
+    }
+    return num;
+}
+
 static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     Arg* outArg = NULL;
-    Arg* arg2 = stack_popArg(&(vs->stack));
-    Arg* arg1 = stack_popArg(&(vs->stack));
+    uint8_t input_arg_num = VMState_getInputArgNum(vs);
+    Arg* arg2;
+    Arg* arg1;
+    if (input_arg_num == 2) {
+        /* tow input */
+        arg2 = stack_popArg(&(vs->stack));
+        arg1 = stack_popArg(&(vs->stack));
+    } else if (input_arg_num == 1) {
+        /* only one input */
+        arg2 = stack_popArg(&(vs->stack));
+        arg1 = arg_setNull(NULL);
+    }
     ArgType type_arg1 = arg_getType(arg1);
     ArgType type_arg2 = arg_getType(arg2);
     int num1_i = 0;
