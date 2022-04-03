@@ -772,8 +772,6 @@ uint8_t Parser_solveSelfOperator(Args* outbuffs,
     char _operator[2] = {0};
     char* operator=(char*) _operator;
     char* tokens = Lexer_getTokens(&buffs, stmt);
-    char* token_now = NULL;
-    uint16_t token_size = Lexer_getTokenSize(tokens);
     uint8_t is_right = 0;
     if (Lexer_isContain(tokens, TOKEN_operator, "+=")) {
         operator[0] = '+';
@@ -793,22 +791,24 @@ uint8_t Parser_solveSelfOperator(Args* outbuffs,
     }
     /* found self operator */
     is_left_exist = 1;
-    for (int i = 0; i < token_size; i++) {
-        token_now = Lexer_popToken(&buffs, tokens);
-        char* token_pyload_now = Lexer_getTokenPyload(token_now);
-        if ((strEqu(token_pyload_now, "*=")) ||
-            (strEqu(token_pyload_now, "/=")) ||
-            (strEqu(token_pyload_now, "+=")) ||
-            (strEqu(token_pyload_now, "-="))) {
+    Lexer_forEachToken(ps, stmt) {
+        ParserState_iterStart(&ps);
+        if ((strEqu(ps.token1.pyload, "*=")) ||
+            (strEqu(ps.token1.pyload, "/=")) ||
+            (strEqu(ps.token1.pyload, "+=")) ||
+            (strEqu(ps.token1.pyload, "-="))) {
             is_right = 1;
-            continue;
+            goto iter_continue;
         }
         if (!is_right) {
-            left_arg = arg_strAppend(left_arg, token_pyload_now);
+            left_arg = arg_strAppend(left_arg, ps.token1.pyload);
         } else {
-            right_arg = arg_strAppend(right_arg, token_pyload_now);
+            right_arg = arg_strAppend(right_arg, ps.token1.pyload);
         }
+    iter_continue:
+        ParserState_iterEnd(&ps);
     }
+    ParserState_deinit(&ps);
     /* connect right */
     right_arg_new = arg_strAppend(right_arg_new, arg_getStr(left_arg));
     right_arg_new = arg_strAppend(right_arg_new, operator);
