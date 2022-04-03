@@ -595,8 +595,9 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     return operator;
 }
 
+const char void_str[] = "";
+
 void LexToken_update(struct LexToken* lex_token) {
-    const char void_str[] = "";
     lex_token->type = Lexer_getTokenType(lex_token->token);
     if (lex_token->type == TOKEN_strEnd) {
         lex_token->pyload = (char*)void_str;
