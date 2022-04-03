@@ -46,6 +46,7 @@ typedef struct VMState_t {
     int32_t pc;
     ByteCodeFrame* bytecode_frame;
     uint8_t error_code;
+    uint8_t line_error_code;
 } VMState;
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);

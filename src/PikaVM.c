@@ -1180,7 +1180,7 @@ void VMState_solveUnusedStack(VMState* vs) {
             arg_deinit(arg);
             continue;
         }
-        if (vs->error_code != 0) {
+        if (vs->line_error_code != 0) {
             arg_deinit(arg);
             continue;
         }
@@ -1208,6 +1208,7 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
         .jmp = 0,
         .pc = pc,
         .error_code = 0,
+        .line_error_code = 0,
     };
     stack_init(&(vs.stack));
     while (vs.pc < size) {
@@ -1219,9 +1220,11 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
             VMState_solveUnusedStack(&vs);
             stack_reset(&(vs.stack));
             vs.error_code = 0;
+            vs.line_error_code = 0;
         }
         vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
         if (0 != vs.error_code) {
+            vs.line_error_code = vs.error_code;
             InstructUnit* head_ins_unit = this_ins_unit;
             /* get first ins of a line */
             while (1) {
@@ -1245,12 +1248,14 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
                 }
             }
             __platform_error_handle();
+            vs.error_code = 0;
         }
     }
     VMState_solveUnusedStack(&vs);
     stack_deinit(&(vs.stack));
     return locals;
 }
+
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame) {

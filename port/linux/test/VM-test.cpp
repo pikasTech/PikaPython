@@ -957,3 +957,18 @@ TEST(VM, _3_3) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, a_3) {
+    char* line = (char*)"a-3";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    __platform_printf((char*)"BEGIN\r\n");
+    pikaVM_runAsm(self, pikaAsm);
+    EXPECT_STREQ(log_buff[3], (char*)"BEGIN\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"NameError: name 'a' is not defined\r\n");
+    obj_deinit(self);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
