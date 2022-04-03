@@ -665,13 +665,14 @@ char* Parser_solveBranckets(Args* outBuffs,
     Arg* right_arg = arg_setStr(NULL, "", "");
     uint8_t is_in_brancket = 0;
     args_setStr(&buffs, "index", "");
-    char* tokens = Lexer_getTokens(&buffs, content);		
+    char* tokens;
     /* exit when NULL */
     if (NULL == content) {
         arg_deinit(right_arg);
         right_arg = arg_setStr(right_arg, "", stmt);
         goto exit;
     }
+    tokens = Lexer_getTokens(&buffs, content);
     /* exit when no '[' ']' */
     if (!Parser_isContainToken(tokens, TOKEN_devider, "[")) {
         /* not contain '[', return origin */
@@ -1010,12 +1011,12 @@ char* Parser_removeAnnotation(char* line) {
 }
 
 AST* AST_parseLine(char* line, Stack* block_stack) {
-		/* match block start keywords */
+    /* match block start keywords */
     const char control_keywords[][9] = {"break", "continue"};
 
     /* normal keyward */
     const char normal_keywords[][7] = {"while", "if", "elif"};
-		
+
     /* line is not exist */
     if (line == NULL) {
         return NULL;
@@ -1264,7 +1265,7 @@ static char* Parser_parsePyLines(Args* outBuffs,
     uint16_t lines_index = 0;
     uint8_t is_in_multi_comment = 0;
     char* out_ASM = NULL;
-		char* single_ASM;
+    char* single_ASM;
     uint32_t line_size = 0;
     /* parse each line */
     while (1) {
@@ -1408,8 +1409,8 @@ char* ASM_addBlockDeepth(AST* ast,
 char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     Args buffs = {0};
     char* pikaAsm = strsCopy(&buffs, "");
-		QueueObj* exitBlock;
-		uint8_t is_block_matched;
+    QueueObj* exitBlock;
+    uint8_t is_block_matched;
     if (NULL == ast) {
         pikaAsm = NULL;
         goto exit;
