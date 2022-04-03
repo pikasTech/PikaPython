@@ -65,7 +65,7 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
     Arg* poped_arg = arg_setStr(NULL, "", "");
     {
         uint8_t token_index = 0;
-        Lexer_forEachToken(ps, stmts) {
+        ParserState_forEachToken(ps, stmts) {
             ParserState_iterStart(&ps);
             token_index++;
             if (strEqu(ps.token1.pyload, "(")) {
@@ -85,7 +85,7 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
     }
     {
         uint8_t token_index = 0;
-        Lexer_forEachToken(ps, stmts) {
+        ParserState_forEachToken(ps, stmts) {
             ParserState_iterStart(&ps);
             token_index++;
             if (token_index < token_index_get) {
@@ -171,7 +171,7 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     uint8_t is_get_string = 0;
     uint8_t is_get_number = 0;
     uint8_t is_get_symbol = 0;
-    Lexer_forEachToken(ps, rightWithoutSubStmt) {
+    ParserState_forEachToken(ps, rightWithoutSubStmt) {
         ParserState_iterStart(&ps);
         /* collect type */
         if (ps.token1.type == TOKEN_operator) {
@@ -577,7 +577,7 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     }
     /* match the last operator in equal level */
     if ((strEqu(operator, "+")) || (strEqu(operator, "-"))) {
-        Lexer_forEachToken(ps, stmt) {
+        ParserState_forEachToken(ps, stmt) {
             ParserState_iterStart(&ps);
             if (strEqu(ps.token1.pyload, "+")) {
                 operator= strsCopy(&buffs, "+");
@@ -686,7 +686,7 @@ char* Parser_solveBranckets(Args* outBuffs,
         }
         goto exit;
     }
-    Lexer_forEachToken(ps, content) {
+    ParserState_forEachToken(ps, content) {
         ParserState_iterStart(&ps);
         /* matched [] */
         /* found '[' */
@@ -791,7 +791,7 @@ uint8_t Parser_solveSelfOperator(Args* outbuffs,
     }
     /* found self operator */
     is_left_exist = 1;
-    Lexer_forEachToken(ps, stmt) {
+    ParserState_forEachToken(ps, stmt) {
         ParserState_iterStart(&ps);
         if ((strEqu(ps.token1.pyload, "*=")) ||
             (strEqu(ps.token1.pyload, "/=")) ||
@@ -903,7 +903,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         uint8_t is_in_brankets = 0;
         /* start iteration */
         char* subStmt_str = NULL;
-        Lexer_forEachToken(ps, subStmts) {
+        ParserState_forEachToken(ps, subStmts) {
             ParserState_iterStart(&ps);
             /* parse process */
             if (strEqu(ps.token1.pyload, "(")) {

@@ -83,7 +83,7 @@ void Parser_compilePyToBytecodeArray(char* lines);
     ParserState_beforeIter(&parseState); \
     for (int i = 0; i < parseState.length; i++)
 
-#define Lexer_forEachToken(parseState, tokens) \
+#define ParserState_forEachToken(parseState, tokens) \
     struct ParserState ps;                     \
     /* init parserStage */                     \
     ParserState_init(&parseState);             \
