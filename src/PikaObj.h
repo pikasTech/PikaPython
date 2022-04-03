@@ -152,6 +152,10 @@ int32_t class_defineStaticMethod(PikaObj* self,
                                  Method methodPtr,
                                  ByteCodeFrame* bytecode_frame);
 
+int32_t class_defineConstructor(PikaObj* self,
+                                char* declearation,
+                                Method methodPtr);
+
 int32_t obj_removeArg(PikaObj* self, char* argPath);
 int32_t obj_isArgExist(PikaObj* self, char* argPath);
 PikaObj* obj_getClassObjByNewFun(PikaObj* self, char* name, NewFun newClassFun);

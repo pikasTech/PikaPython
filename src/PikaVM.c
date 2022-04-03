@@ -195,8 +195,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     char* type_list;
     char* sys_out;
     Arg* call_arg = NULL;
-		uint8_t arg_num_dec;
-		uint8_t arg_num_input;
+    uint8_t arg_num_dec;
+    uint8_t arg_num_input;
     uint8_t call_arg_index = 0;
     ByteCodeFrame* method_bytecodeFrame;
     /* return arg directly */
@@ -259,13 +259,20 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         arg_num_dec--;
     }
     arg_num_input = VMState_getInputArgNum(vs);
-    if (arg_num_dec != arg_num_input) {
-        VMState_setErrorCode(vs, 3);
-        __platform_printf(
-            "TypeError: %s() takes %d positional argument but %d were "
-            "given\r\n",
-            data, arg_num_dec, arg_num_input);
-        goto RUN_exit;
+
+    /* check arg num */
+    if (method_type == ARG_TYPE_CONSTRUCTOR_METHOD) {
+        /* not check decleard arg num for constrctor */
+    } else {
+        /* check arg num decleard and input */
+        if (arg_num_dec != arg_num_input) {
+            VMState_setErrorCode(vs, 3);
+            __platform_printf(
+                "TypeError: %s() takes %d positional argument but %d were "
+                "given\r\n",
+                data, arg_num_dec, arg_num_input);
+            goto RUN_exit;
+        }
     }
 
     /* load pars */
@@ -293,6 +300,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         method_ptr(method_host_obj, sub_locals->list);
         /* get method return */
         return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
+    } else if (method_type == ARG_TYPE_CONSTRUCTOR_METHOD) {
+        /* native method */
+        method_ptr(method_host_obj, sub_locals->list);
+        /* get method return */
+        return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
+
     } else {
         /* static method and object method */
         /* byteCode */
@@ -305,6 +318,29 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         /* get method return */
         return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
     }
+
+    if (arg_getType(return_arg) == ARG_TYPE_FREE_OBJECT) {
+        /* init object */
+        PikaObj* new_obj = arg_getPtr(return_arg);
+        /* run __init__() when init obj */
+        Arg* init_method_arg = NULL;
+        init_method_arg = obj_getMethodArg(new_obj, "__init__");
+        if (NULL != init_method_arg) {
+            arg_deinit(init_method_arg);
+            // pikaVM_runAsm(new_obj,
+            //               "B0\n"
+            //               "0 RUN __init__\n");
+            const uint8_t bytes[] = {
+                0x04, 0x00,             /* instruct array size */
+                0x00, 0x82, 0x01, 0x00, /* instruct array */
+                0x0a, 0x00,             /* const pool size */
+                0x00, 0x5f, 0x5f, 0x69, 0x6e,
+                0x69, 0x74, 0x5f, 0x5f, 0x00, /* const pool */
+            };
+            pikaVM_runByteCode(new_obj, (uint8_t*)bytes);
+        }
+    }
+
     /* transfer sysOut */
     sys_out = obj_getSysOut(method_host_obj);
     if (NULL != sys_out) {
@@ -369,8 +405,7 @@ static Arg* __VM_OUT(PikaObj* self,
     }
     /* ouput arg to locals */
     obj_setArg_noCopy(hostObj, data, outArg);
-    if ((ARG_TYPE_MATE_OBJECT == outArg_type) ||
-        (ARG_TYPE_FREE_OBJECT == outArg_type)) {
+    if (ARG_TYPE_MATE_OBJECT == outArg_type) {
         if (is_init_obj == IS_INIT_OBJ_TRUE) {
             /* found a mate_object */
             /* init object */
@@ -1257,7 +1292,6 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
     stack_deinit(&(vs.stack));
     return locals;
 }
-
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame) {

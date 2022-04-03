@@ -42,8 +42,5 @@ int32_t obj_newObj(PikaObj* self,
                    NewFun newFunPtr);
 Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr);
 void baseobj_print(PikaObj* self, Args* args);
-int32_t class_defineConstructor(PikaObj* self,
-                                char* declearation,
-                                Method methodPtr);
 
 #endif

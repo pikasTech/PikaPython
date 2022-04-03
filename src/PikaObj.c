@@ -500,7 +500,7 @@ int32_t class_defineConstructor(PikaObj* self,
                                 char* declearation,
                                 Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_NATIVE_METHOD, NULL);
+                                        ARG_TYPE_CONSTRUCTOR_METHOD, NULL);
 }
 
 /* define a native method as default */

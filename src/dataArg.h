@@ -44,12 +44,12 @@ typedef enum {
     ARG_TYPE_MATE_OBJECT,
     ARG_TYPE_FREE_OBJECT,
     ARG_TYPE_NATIVE_METHOD,
+    ARG_TYPE_CONSTRUCTOR_METHOD,
     ARG_TYPE_OBJECT_METHOD,
     ARG_TYPE_STATIC_METHOD,
     ARG_TYPE_STRUCT,
     ARG_TYPE_HEAP_STRUCT,
 } ArgType;
-
 
 typedef void (*StructDeinitFun)(void* struct_);
 
