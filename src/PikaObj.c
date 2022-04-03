@@ -423,6 +423,11 @@ Method methodArg_getPtr(Arg* method_arg) {
     return (Method)ptr;
 }
 
+char* methodArg_getTypeList(Arg* method_arg, Args* buffs) {
+    char* method_dec = strsCopy(buffs, methodArg_getDec(method_arg));
+    return strsCut(buffs, method_dec, '(', ')');
+}
+
 Method obj_getNativeMethod(PikaObj* self, char* method_name) {
     Arg* method_arg = obj_getMethodArg(self, method_name);
     if (NULL == method_arg) {

@@ -190,6 +190,7 @@ float method_getFloat(Args* args, char* argName);
 char* method_getStr(Args* args, char* argName);
 void method_returnArg(Args* args, Arg* arg);
 char* methodArg_getDec(Arg* method_arg);
+char* methodArg_getTypeList(Arg* method_arg, Args* buffs);
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg);
 Method methodArg_getPtr(Arg* method_arg);
 
