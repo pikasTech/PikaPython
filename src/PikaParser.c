@@ -169,10 +169,8 @@ static enum StmtType Lexer_matchStmtType(char* right) {
             goto iter_continue;
         }
         if (ps.token2.type == TOKEN_devider) {
-            // if (strEqu(ps.token2.pyload, "(")) {
             is_get_method = 1;
             goto iter_continue;
-            // }
         }
         if (ps.token1.type == TOKEN_literal) {
             if (ps.token1.pyload[0] == '\'' || ps.token1.pyload[0] == '"') {
