@@ -48,8 +48,9 @@ void ParserState_deinit(struct ParserState* ps);
 void ParserState_beforeIter(struct ParserState* ps);
 void ParserState_iterStart(struct ParserState* ps);
 void ParserState_iterEnd(struct ParserState* ps);
+char* Parser_popToken(Args* buffs_p, char* tokens);
 
-uint16_t Parser_getTokenSize(char* tokens) {
+uint16_t Tokens_getSize(char* tokens) {
     if (strEqu("", tokens)) {
         return 0;
     }
@@ -99,21 +100,19 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
 
 char* strsGetCleanCmd(Args* outBuffs, char* cmd) {
     int32_t size = strGetSize(cmd);
-    Args buffs = {0};
-    char* tokens = Lexer_getTokens(&buffs, cmd);
-    uint16_t token_size = Parser_getTokenSize(tokens);
     char* strOut = args_getBuff(outBuffs, size);
     int32_t iOut = 0;
-    for (uint16_t i = 0; i < token_size; i++) {
-        char* token = strsPopToken(&buffs, tokens, 0x1F);
-        for (uint16_t k = 0; k < strGetSize(token + 1); k++) {
-            strOut[iOut] = token[k + 1];
+    ParserState_forEachToken(ps, cmd) {
+        ParserState_iterStart(&ps);
+        for (uint16_t k = 0; k < strGetSize(ps.token1.pyload); k++) {
+            strOut[iOut] = ps.token1.pyload[k];
             iOut++;
         }
+        ParserState_iterEnd(&ps);
     }
+    ParserState_deinit(&ps);
     /* add \0 */
     strOut[iOut] = 0;
-    strsDeinit(&buffs);
     return strOut;
 }
 
@@ -222,9 +221,9 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
     char* printOut = strsCopy(&buffs, "");
 
     /* process */
-    uint16_t tokenSize = strCountSign(tokens, 0x1F) + 1;
-    for (uint16_t i = 0; i < tokenSize; i++) {
-        char* token = strsPopToken(&buffs, tokens, 0x1F);
+    uint16_t token_size = Tokens_getSize(tokens);
+    for (uint16_t i = 0; i < token_size; i++) {
+        char* token = Parser_popToken(&buffs, tokens);
         if (token[0] == TOKEN_operator) {
             printOut = strsAppend(&buffs, printOut, "{opt}");
             printOut = strsAppend(&buffs, printOut, token + 1);
@@ -540,7 +539,7 @@ uint8_t Parser_isContainToken(char* tokens,
     Args buffs = {0};
     char* tokens_buff = strsCopy(&buffs, tokens);
     uint8_t res = 0;
-    uint16_t token_size = Parser_getTokenSize(tokens);
+    uint16_t token_size = Tokens_getSize(tokens);
     for (int i = 0; i < token_size; i++) {
         char* token = Parser_popToken(&buffs, tokens_buff);
         if (token_type == Token_getType(token)) {
@@ -652,7 +651,7 @@ void ParserState_deinit(struct ParserState* ps) {
 
 void ParserState_parse(struct ParserState* ps, char* stmt) {
     ps->tokens = Lexer_getTokens(ps->buffs_p, stmt);
-    ps->length = Parser_getTokenSize(ps->tokens);
+    ps->length = Tokens_getSize(ps->tokens);
 }
 
 void ParserState_beforeIter(struct ParserState* ps) {
@@ -689,9 +688,9 @@ char* Parser_solveBranckets(Args* outBuffs,
         }
         goto exit;
     }
+    /* matched [] */
     ParserState_forEachToken(ps, content) {
         ParserState_iterStart(&ps);
-        /* matched [] */
         /* found '[' */
         if ((TOKEN_devider == ps.token2.type) &&
             (strEqu(ps.token2.pyload, "["))) {
