@@ -65,6 +65,8 @@ struct LexToken {
 struct ParserState {
     char* tokens;
     uint16_t length;
+    uint16_t iter_index;
+    uint8_t branket_deepth;
     struct LexToken token1;
     struct LexToken token2;
     Arg* last_token;
