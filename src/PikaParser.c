@@ -902,19 +902,12 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         subStmts = strsAppend(&buffs, subStmts, ",");
         /* init process values */
         Arg* subStmt = arg_setStr(NULL, "", "");
-        uint8_t is_in_brankets = 0;
         /* start iteration */
         char* subStmt_str = NULL;
         ParserState_forEachToken(ps, subStmts) {
             ParserState_iterStart(&ps);
             /* parse process */
-            if (strEqu(ps.token1.pyload, "(")) {
-                is_in_brankets++;
-            }
-            if (strEqu(ps.token1.pyload, ")")) {
-                is_in_brankets--;
-            }
-            if (is_in_brankets > 0) {
+            if (ps.branket_deepth > 0) {
                 /* in brankets */
                 /* append token to subStmt */
                 subStmt = arg_strAppend(subStmt, ps.token1.pyload);
