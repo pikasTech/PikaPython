@@ -495,6 +495,14 @@ exit:
     return res;
 }
 
+/* define a constructor method */
+int32_t class_defineConstructor(PikaObj* self,
+                                char* declearation,
+                                Method methodPtr) {
+    return __class_defineMethodWithType(self, declearation, methodPtr,
+                                        ARG_TYPE_NATIVE_METHOD, NULL);
+}
+
 /* define a native method as default */
 int32_t class_defineMethod(PikaObj* self,
                            char* declearation,

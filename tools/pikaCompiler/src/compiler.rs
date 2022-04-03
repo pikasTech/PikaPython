@@ -161,7 +161,7 @@ impl Compiler {
                     None => return compiler,
                 };
                 let package_new_object_method = format!("def {}()->any:", class_name_without_file);
-                package_now.push_method(package_new_object_method);
+                package_now.push_constructor(package_new_object_method);
             }
 
             return compiler;

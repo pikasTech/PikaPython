@@ -60,14 +60,18 @@ fn main() {
             .unwrap();
         f.write("/* ******************************** */\n".as_bytes())
             .unwrap();
+        /* create include for calsses */
         f.write(class_info.include().as_bytes()).unwrap();
         f.write("#include <stdio.h>\n".as_bytes()).unwrap();
         f.write("#include <stdlib.h>\n".as_bytes()).unwrap();
         f.write("#include \"BaseObj.h\"\n".as_bytes()).unwrap();
         f.write("\n".as_bytes()).unwrap();
+        /* create method api function */
         f.write(class_info.method_api_fn().as_bytes()).unwrap();
+        /* create new classs function */
         f.write(class_info.new_class_fn().as_bytes()).unwrap();
         f.write("\n".as_bytes()).unwrap();
+        /* create contruactor */
         if !class_info.is_package {
             let name = String::from(class_info.this_class_name.to_string());
             f.write(format!("Arg *{}(PikaObj *self){{\n", &name).as_bytes())

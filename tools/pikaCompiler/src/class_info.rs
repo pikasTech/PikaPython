@@ -57,14 +57,21 @@ impl ClassInfo {
         };
         return Some(new_class_info);
     }
-    pub fn push_method(&mut self, method_define: String) {
-        let method_info = match MethodInfo::new(&self.this_class_name, method_define) {
-            Some(method) => method,
-            None => return,
-        };
+    pub fn push_method_with_is_constructor(&mut self, method_define: String, is_constructor: bool) {
+        let method_info =
+            match MethodInfo::new(&self.this_class_name, method_define, is_constructor) {
+                Some(method) => method,
+                None => return,
+            };
         self.method_list
             .entry(method_info.name.clone())
             .or_insert(method_info);
+    }
+    pub fn push_method(&mut self, method_define: String) {
+        return self.push_method_with_is_constructor(method_define, false);
+    }
+    pub fn push_constructor(&mut self, method_define:String){
+        return self.push_method_with_is_constructor(method_define, true);
     }
     pub fn push_import(&mut self, import_define: String, file_name: &String) {
         let import_info = match ImportInfo::new(&self.this_class_name, import_define, &file_name) {

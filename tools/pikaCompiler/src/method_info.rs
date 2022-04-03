@@ -8,10 +8,15 @@ pub struct MethodInfo {
     pub name: String,
     pub arg_list: Option<ArgList>,
     pub return_type: Option<PyType>,
+    pub is_constructor: bool,
 }
 
 impl MethodInfo {
-    pub fn new(class_name: &String, input_define: String) -> Option<MethodInfo> {
+    pub fn new(
+        class_name: &String,
+        input_define: String,
+        is_constructor: bool,
+    ) -> Option<MethodInfo> {
         let define = match input_define.strip_prefix("def ") {
             Some(define) => define.to_string(),
             None => return None,
@@ -31,6 +36,7 @@ impl MethodInfo {
             arg_list: ArgList::new(&arg_list),
             return_type: return_type,
             class_name: class_name.clone(),
+            is_constructor: is_constructor,
         };
         return Some(method_info);
     }
@@ -43,9 +49,13 @@ impl MethodInfo {
             Some(t) => t.to_string(),
             None => String::from(""),
         };
+        let mut class_define_method = String::from("class_defineMethod");
+        if self.is_constructor {
+            class_define_method = String::from("class_defineConstructor");
+        }
         let define = format!(
-            "    class_defineMethod(self, \"{}({}){}\", {}_{}Method);\n",
-            self.name, arg_list, return_token, self.class_name, self.name
+            "    {}(self, \"{}({}){}\", {}_{}Method);\n",
+            class_define_method, self.name, arg_list, return_token, self.class_name, self.name
         );
         return define;
     }
@@ -110,10 +120,14 @@ mod tests {
         let method_info = MethodInfo::new(
             &String::from("Test"),
             String::from("def test(test:str, test2:int)->str:"),
+            false,
         );
         let define = method_info.as_ref().unwrap().method_impl_declear();
         let method_fn_impl = method_info.as_ref().unwrap().method_fn_impl();
-        assert_eq!(define, "char * Test_test(PikaObj *self, char * test, int test2);\n");
+        assert_eq!(
+            define,
+            "char * Test_test(PikaObj *self, char * test, int test2);\n"
+        );
         assert_eq!(
             method_fn_impl,
             "void Test_testMethod(PikaObj *self, Args *args){\n    char * test = args_getStr(args, \"test\");\n    int test2 = args_getInt(args, \"test2\");\n    char * res = Test_test(self, test, test2);\n    method_returnStr(args, res);\n}\n\n"
@@ -125,7 +139,8 @@ mod tests {
         assert_eq!(
             MethodInfo::new(
                 &String::from("Test"),
-                String::from("def test(test:str)->str:")
+                String::from("def test(test:str)->str:"),
+                false
             )
             .unwrap()
             .name,
@@ -134,7 +149,8 @@ mod tests {
         assert_eq!(
             MethodInfo::new(
                 &String::from("Test"),
-                String::from("def test(test:str)->str:")
+                String::from("def test(test:str)->str:"),
+                false
             )
             .unwrap()
             .return_type
@@ -145,7 +161,8 @@ mod tests {
         assert_eq!(
             MethodInfo::new(
                 &String::from("Test"),
-                String::from("def test(test:str)->str:")
+                String::from("def test(test:str)->str:"),
+                false
             )
             .unwrap()
             .arg_list
@@ -156,7 +173,8 @@ mod tests {
         assert_eq!(
             MethodInfo::new(
                 &String::from("Test"),
-                String::from("def test(test: str) ->str:")
+                String::from("def test(test: str) ->str:"),
+                false
             )
             .unwrap()
             .name,
@@ -165,7 +183,8 @@ mod tests {
         assert_eq!(
             MethodInfo::new(
                 &String::from("Test"),
-                String::from("def test(test: str) ->str:")
+                String::from("def test(test: str) ->str:"),
+                false
             )
             .unwrap()
             .return_type
@@ -176,7 +195,8 @@ mod tests {
         assert_eq!(
             MethodInfo::new(
                 &String::from("Test"),
-                String::from("def test(test: str) ->str:")
+                String::from("def test(test: str) ->str:"),
+                false
             )
             .unwrap()
             .arg_list
@@ -187,7 +207,8 @@ mod tests {
         assert_eq!(
             MethodInfo::new(
                 &String::from("Test"),
-                String::from("def test(test: str, test2: int) ->str:")
+                String::from("def test(test: str, test2: int) ->str:"),
+                false
             )
             .unwrap()
             .arg_list
@@ -201,6 +222,7 @@ mod tests {
         let method_info = MethodInfo::new(
             &String::from("Test"),
             String::from("def test(test:str, test2:int)->str:"),
+            false,
         );
         let define = method_info.unwrap().get_define();
         assert_eq!(define, String::from("    class_defineMethod(self, \"test(test:str,test2:int)->str\", Test_testMethod);\n"));
@@ -210,6 +232,7 @@ mod tests {
         let method_info = MethodInfo::new(
             &String::from("Test"),
             String::from("def test(test:str, test2:int):"),
+            false,
         );
         let define = method_info.unwrap().get_define();
         assert_eq!(
@@ -222,7 +245,7 @@ mod tests {
     #[test]
     fn test_get_define_no_return_no_arg_list() {
         let method_info =
-            MethodInfo::new(&String::from("Test"), String::from("def test():")).unwrap();
+            MethodInfo::new(&String::from("Test"), String::from("def test():"), false).unwrap();
         let define = method_info.get_define();
         let method_fn_name = method_info.method_api_name();
         assert_eq!(
