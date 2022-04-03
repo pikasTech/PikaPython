@@ -425,6 +425,9 @@ Method methodArg_getPtr(Arg* method_arg) {
 
 Method obj_getNativeMethod(PikaObj* self, char* method_name) {
     Arg* method_arg = obj_getMethodArg(self, method_name);
+    if (NULL == method_arg) {
+        return NULL;
+    }
     Method res = methodArg_getPtr(method_arg);
     arg_deinit(method_arg);
     return res;
@@ -599,6 +602,9 @@ void obj_run(PikaObj* self, char* cmd) {
 
 void obj_runNativeMethod(PikaObj* self, char* method_name, Args* args) {
     Method native_method = obj_getNativeMethod(self, method_name);
+    if (NULL == native_method) {
+        return;
+    }
     native_method(self, args);
 }
 

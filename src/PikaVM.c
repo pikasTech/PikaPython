@@ -305,7 +305,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         method_ptr(method_host_obj, sub_locals->list);
         /* get method return */
         return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
-
     } else {
         /* static method and object method */
         /* byteCode */
@@ -319,26 +318,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
     }
 
+    /* __init__() */
     if (arg_getType(return_arg) == ARG_TYPE_FREE_OBJECT) {
         /* init object */
         PikaObj* new_obj = arg_getPtr(return_arg);
         /* run __init__() when init obj */
-        Arg* init_method_arg = NULL;
-        init_method_arg = obj_getMethodArg(new_obj, "__init__");
-        if (NULL != init_method_arg) {
-            arg_deinit(init_method_arg);
-            // pikaVM_runAsm(new_obj,
-            //               "B0\n"
-            //               "0 RUN __init__\n");
-            const uint8_t bytes[] = {
-                0x04, 0x00,             /* instruct array size */
-                0x00, 0x82, 0x01, 0x00, /* instruct array */
-                0x0a, 0x00,             /* const pool size */
-                0x00, 0x5f, 0x5f, 0x69, 0x6e,
-                0x69, 0x74, 0x5f, 0x5f, 0x00, /* const pool */
-            };
-            pikaVM_runByteCode(new_obj, (uint8_t*)bytes);
-        }
+        obj_runNativeMethod(new_obj, "__init__", NULL);
     }
 
     /* transfer sysOut */
@@ -406,28 +391,11 @@ static Arg* __VM_OUT(PikaObj* self,
     /* ouput arg to locals */
     obj_setArg_noCopy(hostObj, data, outArg);
     if (ARG_TYPE_MATE_OBJECT == outArg_type) {
-        if (is_init_obj == IS_INIT_OBJ_TRUE) {
-            /* found a mate_object */
-            /* init object */
-            PikaObj* new_obj = obj_getObj(hostObj, data, 0);
-            /* run __init__() when init obj */
-            Arg* init_method_arg = NULL;
-            init_method_arg = obj_getMethodArg(new_obj, "__init__");
-            if (NULL != init_method_arg) {
-                arg_deinit(init_method_arg);
-                // pikaVM_runAsm(new_obj,
-                //               "B0\n"
-                //               "0 RUN __init__\n");
-                const uint8_t bytes[] = {
-                    0x04, 0x00,             /* instruct array size */
-                    0x00, 0x82, 0x01, 0x00, /* instruct array */
-                    0x0a, 0x00,             /* const pool size */
-                    0x00, 0x5f, 0x5f, 0x69, 0x6e,
-                    0x69, 0x74, 0x5f, 0x5f, 0x00, /* const pool */
-                };
-                pikaVM_runByteCode(new_obj, (uint8_t*)bytes);
-            }
-        }
+        /* found a mate_object */
+        /* init object */
+        PikaObj* new_obj = obj_getObj(hostObj, data, 0);
+        /* run __init__() when init obj */
+        obj_runNativeMethod(new_obj, "__init__", NULL);
     }
     return NULL;
 }
