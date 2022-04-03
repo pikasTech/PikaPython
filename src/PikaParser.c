@@ -453,9 +453,6 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
                 Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
             tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, content);
             continue;
-
-            /* is a symbel */
-            continue;
         }
         /* not */
         if ('n' == c0) {
@@ -668,13 +665,13 @@ char* Parser_solveBranckets(Args* outBuffs,
     Arg* right_arg = arg_setStr(NULL, "", "");
     uint8_t is_in_brancket = 0;
     args_setStr(&buffs, "index", "");
+    char* tokens = Lexer_getTokens(&buffs, content);		
     /* exit when NULL */
     if (NULL == content) {
         arg_deinit(right_arg);
         right_arg = arg_setStr(right_arg, "", stmt);
         goto exit;
     }
-    char* tokens = Lexer_getTokens(&buffs, content);
     /* exit when no '[' ']' */
     if (!Parser_isContainToken(tokens, TOKEN_devider, "[")) {
         /* not contain '[', return origin */
@@ -1013,6 +1010,12 @@ char* Parser_removeAnnotation(char* line) {
 }
 
 AST* AST_parseLine(char* line, Stack* block_stack) {
+		/* match block start keywords */
+    const char control_keywords[][9] = {"break", "continue"};
+
+    /* normal keyward */
+    const char normal_keywords[][7] = {"while", "if", "elif"};
+		
     /* line is not exist */
     if (line == NULL) {
         return NULL;
@@ -1056,11 +1059,6 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     line_start = line + block_deepth * 4;
     stmt = line_start;
 
-    /* match block start keywords */
-    const char control_keywords[][9] = {"break", "continue"};
-
-    /* normal keyward */
-    const char normal_keywords[][7] = {"while", "if", "elif"};
     for (uint32_t i = 0; i < sizeof(normal_keywords) / 7; i++) {
         char* keyword = (char*)normal_keywords[i];
         uint8_t keyword_len = strGetSize(keyword);
@@ -1266,6 +1264,7 @@ static char* Parser_parsePyLines(Args* outBuffs,
     uint16_t lines_index = 0;
     uint8_t is_in_multi_comment = 0;
     char* out_ASM = NULL;
+		char* single_ASM;
     uint32_t line_size = 0;
     /* parse each line */
     while (1) {
@@ -1292,7 +1291,7 @@ static char* Parser_parsePyLines(Args* outBuffs,
         }
 
         /* parse single Line to Asm */
-        char* single_ASM = Parser_LineToAsm(&buffs, line, &block_stack);
+        single_ASM = Parser_LineToAsm(&buffs, line, &block_stack);
         if (NULL == single_ASM) {
             out_ASM = NULL;
             strsDeinit(&buffs);
@@ -1409,11 +1408,13 @@ char* ASM_addBlockDeepth(AST* ast,
 char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     Args buffs = {0};
     char* pikaAsm = strsCopy(&buffs, "");
+		QueueObj* exitBlock;
+		uint8_t is_block_matched;
     if (NULL == ast) {
         pikaAsm = NULL;
         goto exit;
     }
-    QueueObj* exitBlock = obj_getObj(ast, "exitBlock", 0);
+    exitBlock = obj_getObj(ast, "exitBlock", 0);
     /* exiting from block */
     if (exitBlock != NULL) {
         while (1) {
@@ -1471,7 +1472,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     obj_setInt(ast, "deepth", 0);
 
     /* match block */
-    uint8_t is_block_matched = 0;
+    is_block_matched = 0;
     if (strEqu(obj_getStr(ast, "block"), "for")) {
         /* for "for" iter */
         char* arg_in = obj_getStr(ast, "arg_in");

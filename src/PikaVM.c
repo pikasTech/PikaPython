@@ -195,6 +195,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     char* type_list;
     char* sys_out;
     Arg* call_arg = NULL;
+		uint8_t arg_num_dec;
+		uint8_t arg_num_input;
     uint8_t call_arg_index = 0;
     ByteCodeFrame* method_bytecodeFrame;
     /* return arg directly */
@@ -246,7 +248,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     }
 
     sub_locals = New_PikaObj();
-    uint8_t arg_num_dec = 0;
+    arg_num_dec = 0;
     if (strEqu("", type_list)) {
         arg_num_dec = 0;
     } else {
@@ -256,7 +258,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         /* delete the 'self' */
         arg_num_dec--;
     }
-    uint8_t arg_num_input = VMState_getInputArgNum(vs);
+    arg_num_input = VMState_getInputArgNum(vs);
     if (arg_num_dec != arg_num_input) {
         VMState_setErrorCode(vs, 3);
         __platform_printf(
