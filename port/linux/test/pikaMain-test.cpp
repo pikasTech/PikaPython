@@ -1135,29 +1135,29 @@ TEST(pikaMain, class_demo_1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, class_demo_2) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     /* run */
-//     PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
-//     __platform_printf((char*)"BEGIN\r\n");
-//     obj_run(self, (char*)
-//         "class Complex:\n"
-//         "    def __init__(self):\n"
-//         "        self.r = 3.0\n"
-//         "        self.i = -4.5\n"
-//         "x = Complex()\n"
-//         "print(x.r)\n"
-//         "print(x.i)\n"
-//     );
-//     /* assert */
-//     EXPECT_STREQ(log_buff[0], (char*)"-4.500000\r\n");
-//     EXPECT_STREQ(log_buff[1], (char*)"3.000000\r\n");
-//     EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
-//     /* deinit */
-//     obj_deinit(self);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, class_demo_2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(self, (char*)
+        "class Complex:\n"
+        "    def __init__(self):\n"
+        "        self.r = 3.0\n"
+        "        self.i = -4.5\n"
+        "x = Complex()\n"
+        "print(x.r)\n"
+        "print(x.i)\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"-4.500000\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"3.000000\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(pikaMain, class_demo_3) {
     /* init */
@@ -1409,5 +1409,29 @@ TEST(pikaMain, self_operator) {
     /* deinit */
     obj_deinit(pikaMain);
     /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, class_demo_2_initwitharg) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(self, (char*)
+        "class Complex:\n"
+        "    def __init__(self, r, i):\n"
+        "        self.r = r\n"
+        "        self.i = i\n"
+        "x = Complex(3.0, -4.5)\n"
+        "print(x.r)\n"
+        "print(x.i)\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[0], (char*)"-4.500000\r\n");
+    EXPECT_STREQ(log_buff[1], (char*)"3.000000\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }

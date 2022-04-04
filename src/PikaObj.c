@@ -508,7 +508,7 @@ int32_t class_defineConstructor(PikaObj* self,
                                 char* declearation,
                                 Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_CONSTRUCTOR_METHOD, NULL);
+                                        ARG_TYPE_NATIVE_CONSTRUCTOR_METHOD, NULL);
 }
 
 /* define a native method as default */
@@ -517,6 +517,16 @@ int32_t class_defineMethod(PikaObj* self,
                            Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
                                         ARG_TYPE_NATIVE_METHOD, NULL);
+}
+
+/* define object method, object method is which startwith (self) */
+int32_t class_defineRunTimeConstructor(PikaObj* self,
+                                       char* declearation,
+                                       Method methodPtr,
+                                       ByteCodeFrame* bytecode_frame) {
+    return __class_defineMethodWithType(self, declearation, methodPtr,
+                                        ARG_TYPE_CONSTRUCTOR_METHOD,
+                                        bytecode_frame);
 }
 
 /* define object method, object method is which startwith (self) */

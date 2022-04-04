@@ -2059,7 +2059,7 @@ TEST(parser, class_) {
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm, (char* )
         "B0\n"
-        "0 DEF Test()\n"
+        "0 CLS Test()\n"
         "0 JMP 1\n"
         "B1\n"
         "0 RUN PikaStdLib.PikaObj\n"
@@ -2096,7 +2096,7 @@ TEST(parser, class_def) {
 
     EXPECT_STREQ(pikaAsm, (char*)
     "B0\n"
-    "0 DEF Test()\n"
+    "0 CLS Test()\n"
     "0 JMP 1\n"
     "B1\n"
     "0 RUN PikaStdLib.PikaObj\n"
@@ -2510,7 +2510,7 @@ TEST(parser, class_def_void_line) {
 
     EXPECT_STREQ(pikaAsm, (char*)
     "B0\n"
-    "0 DEF Test()\n"
+    "0 CLS Test()\n"
     "0 JMP 1\n"
     "B1\n"
     "0 RUN PikaStdLib.PikaObj\n"
