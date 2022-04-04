@@ -29,11 +29,11 @@ class List(TinyObj):
         pass
 
     # support list[]  = val
-    def __set__(obj: any, key: any, val: any, obj_str: str):
+    def __set__(__key: any, __val: any):
         pass
 
     # support val = list[] 
-    def __get__() -> any:
+    def __get__(__key: any) -> any:
         pass
 
 class Dict(TinyObj):
@@ -59,15 +59,18 @@ class Dict(TinyObj):
         pass
 
     # support dict[]  = val
-    def __set__(obj: any, key: any, val: any, obj_str: str):
+    def __set__(__key: any, __val: any):
         pass
 
     # support val = dict[] 
-    def __get__() -> any:
+    def __get__(__key: any) -> any:
         pass
 
 
 class String(TinyObj):
+    def __init__(s:str):
+        pass
+
     def set(s:str):
         pass
 
@@ -81,11 +84,11 @@ class String(TinyObj):
         pass
 
     # support string[]  = val
-    def __set__(obj: any, key: any, val: any, obj_str: str):
+    def __set__(__key: any, __val: any):
         pass
 
     # support val = string[] 
-    def __get__() -> any:
+    def __get__(__key: any) -> any:
         pass
 
 class ByteArray(List):
