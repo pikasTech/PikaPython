@@ -5,7 +5,7 @@ class people:
     def do_hi(self):
         print('hello i am people')
     def hi(self):
-        self.do_hi(self)
+        self.do_hi()
 
 class student(people):
     def do_hi(self):
