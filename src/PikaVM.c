@@ -322,6 +322,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     VMState_loadArgsFromMethodArg(vs, method_host_obj, sub_locals->list,
                                   method_arg, data);
 
+    /* load args faild */
+    if (vs->error_code != 0) {
+        goto exit;
+    }
+
     /* run method arg */
     return_arg =
         VMState_runMethodArg(vs, method_host_obj, sub_locals, method_arg);
@@ -335,9 +340,17 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
             PikaObj* sub_locals = New_PikaObj();
             VMState_loadArgsFromMethodArg(vs, new_obj, sub_locals->list,
                                           method_arg, "__init__");
-            Arg* return_arg =
+            Arg* return_arg = NULL;
+            /* load args faild */
+            if (vs->error_code != 0) {
+                goto init_exit;
+            }
+            return_arg =
                 VMState_runMethodArg(vs, new_obj, sub_locals, method_arg);
-            arg_deinit(return_arg);
+        init_exit:
+            if (NULL != return_arg) {
+                arg_deinit(return_arg);
+            }
             obj_deinit(sub_locals);
             arg_deinit(method_arg);
         }

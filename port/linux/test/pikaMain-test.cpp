@@ -686,6 +686,22 @@ TEST(pikaMain, for_in_string) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, string_no_init_arg) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(pikaMain, (char*)"s = PikaStdData.String()\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[3], (char*)"BEGIN\r\n");
+    EXPECT_STREQ(log_buff[2], (char*)"TypeError: __init__() takes 1 positional argument but 0 were given\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 // TEST(pikaMain, obj_no_free) {
 //     /* init */
 //     pikaMemInfo.heapUsedMax = 0;
@@ -1433,5 +1449,20 @@ TEST(pikaMain, class_demo_2_initwitharg) {
     EXPECT_STREQ(log_buff[2], (char*)"BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, def_args_err) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)"print()\n");
+    /* collect */
+
+    /* assert */
+
+    /* deinit */
+    obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
