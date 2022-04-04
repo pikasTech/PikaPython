@@ -9,6 +9,10 @@ void PikaStdData_String_set(PikaObj* self, char* s) {
     obj_setStr(self, "str", s);
 }
 
+void PikaStdData_String___init__(PikaObj* self, char* s) {
+    PikaStdData_String_set(self, s);
+}
+
 char* PikaStdData_String_get(PikaObj* self) {
     return obj_getStr(self, "str");
 }

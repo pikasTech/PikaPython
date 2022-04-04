@@ -246,17 +246,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     Arg* method_arg = NULL;
     Method method_ptr;
     ArgType method_type = ARG_TYPE_NULL;
-    char* type_list;
     char* sys_out;
-    Arg* call_arg = NULL;
-    uint8_t arg_num_dec;
-    uint8_t arg_num_input;
-    uint8_t call_arg_index = 0;
     ByteCodeFrame* method_bytecodeFrame;
     /* return arg directly */
     if (strEqu(data, "")) {
         return_arg = stack_popArg(&(vs->stack));
-        goto RUN_exit;
+        goto exit;
     }
 
     /* get method host obj */
@@ -268,7 +263,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         /* error, not found object */
         VMState_setErrorCode(vs, 1);
         __platform_printf("Error: method '%s' no found.\r\n", data);
-        goto RUN_exit;
+        goto exit;
     }
     /* get method in local */
     method_arg = obj_getMethodArg(method_host_obj, methodPath);
@@ -281,59 +276,18 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         VMState_setErrorCode(vs, 2);
         __platform_printf("NameError: name '%s' is not defined\r\n", data);
 
-        goto RUN_exit;
+        goto exit;
     }
     /* get method Ptr */
     method_ptr = methodArg_getPtr(method_arg);
     /* get method type list */
-    type_list = methodArg_getTypeList(method_arg, &buffs);
     method_type = arg_getType(method_arg);
     method_bytecodeFrame = methodArg_getBytecodeFrame(method_arg);
 
     sub_locals = New_PikaObj();
-    arg_num_dec = 0;
-    if (strEqu("", type_list)) {
-        arg_num_dec = 0;
-    } else {
-        arg_num_dec = strCountSign(type_list, ',') + 1;
-    }
-    if (method_type == ARG_TYPE_OBJECT_METHOD) {
-        /* delete the 'self' */
-        arg_num_dec--;
-    }
-    arg_num_input = VMState_getInputArgNum(vs);
-
-    /* check arg num */
-    if (method_type == ARG_TYPE_CONSTRUCTOR_METHOD) {
-        /* not check decleard arg num for constrctor */
-    } else {
-        /* check arg num decleard and input */
-        if (arg_num_dec != arg_num_input) {
-            VMState_setErrorCode(vs, 3);
-            __platform_printf(
-                "TypeError: %s() takes %d positional argument but %d were "
-                "given\r\n",
-                data, arg_num_dec, arg_num_input);
-            goto RUN_exit;
-        }
-    }
-
-    /* load pars */
-    for (int i = 0; i < arg_num_dec; i++) {
-        char* argDef = strPopLastToken(type_list, ',');
-        strPopLastToken(argDef, ':');
-        char* argName = argDef;
-        call_arg = stack_popArg(&(vs->stack));
-        call_arg = arg_setName(call_arg, argName);
-        args_setArg(sub_locals->list, call_arg);
-        call_arg_index++;
-    }
-
-    /* load 'self' as the first arg when call object method */
-    if (method_type == ARG_TYPE_OBJECT_METHOD) {
-        call_arg = arg_setPtr(NULL, "self", ARG_TYPE_POINTER, method_host_obj);
-        args_setArg(sub_locals->list, call_arg);
-    }
+    /* load args from vmState to sub_local->list */
+    VMState_loadArgsFromMethodArg(vs, method_host_obj, sub_locals->list,
+                                  method_arg);
 
     obj_setErrorCode(method_host_obj, 0);
 
@@ -365,8 +319,16 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     if (arg_getType(return_arg) == ARG_TYPE_FREE_OBJECT) {
         /* init object */
         PikaObj* new_obj = arg_getPtr(return_arg);
-        /* run __init__() when init obj */
-        obj_runNativeMethod(new_obj, "__init__", NULL);
+        Arg* method_arg = obj_getMethodArg(new_obj, "__init__");
+        if (NULL != method_arg) {
+            Args method_args = {0};
+            VMState_loadArgsFromMethodArg(vs, new_obj, &method_args,
+                                          method_arg);
+            Method method_ptr = methodArg_getPtr(method_arg);
+            method_ptr(new_obj, &method_args);
+            args_deinit_stack(&method_args);
+            arg_deinit(method_arg);
+        }
     }
 
     /* transfer sysOut */
@@ -380,8 +342,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         VMState_setErrorCode(vs, 6);
     }
 
-    goto RUN_exit;
-RUN_exit:
+    goto exit;
+exit:
     if (NULL != method_arg) {
         arg_deinit(method_arg);
     }

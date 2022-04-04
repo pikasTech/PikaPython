@@ -68,6 +68,9 @@ class Dict(TinyObj):
 
 
 class String(TinyObj):
+    def __init__(s:str):
+        pass
+
     def set(s:str):
         pass
 

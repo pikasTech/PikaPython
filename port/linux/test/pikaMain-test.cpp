@@ -669,8 +669,7 @@ TEST(pikaMain, for_in_string) {
     /* run */
     __platform_printf((char*)"BEGIN\n");
     obj_run(pikaMain, (char*)
-    "s = PikaStdData.String()\n"
-    "s.set('test')\n"
+    "s = PikaStdData.String('test')\n"
     "for c in s:\n"
     "    print(c)\n"
     "\n"
@@ -735,8 +734,7 @@ TEST(pikaMain, string__get__) {
     /* run */
     __platform_printf((char*)"BEGIN\n");
     obj_run(pikaMain, (char*)
-    "s = PikaStdData.String()\n"
-    "s.set('test')\n"
+    "s = PikaStdData.String('test')\n"
     "res = __get__(s, 2)\n"
     "\n"
     );
