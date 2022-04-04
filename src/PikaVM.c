@@ -243,7 +243,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     VMParameters* sub_locals = NULL;
     char* methodPath = data;
     PikaObj* method_host_obj;
-    Arg* method_arg;
+    Arg* method_arg = NULL;
     Method method_ptr;
     ArgType method_type = ARG_TYPE_NULL;
     char* type_list;
@@ -289,7 +289,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     type_list = methodArg_getTypeList(method_arg, &buffs);
     method_type = arg_getType(method_arg);
     method_bytecodeFrame = methodArg_getBytecodeFrame(method_arg);
-    arg_deinit(method_arg);
 
     sub_locals = New_PikaObj();
     arg_num_dec = 0;
@@ -383,6 +382,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
 
     goto RUN_exit;
 RUN_exit:
+    if (NULL != method_arg) {
+        arg_deinit(method_arg);
+    }
     if (NULL != sub_locals) {
         obj_deinit(sub_locals);
     }
