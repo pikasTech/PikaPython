@@ -336,24 +336,34 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         /* init object */
         PikaObj* new_obj = arg_getPtr(return_arg);
         Arg* method_arg = obj_getMethodArg(new_obj, "__init__");
-        if (NULL != method_arg) {
-            PikaObj* sub_locals = New_PikaObj();
-            VMState_loadArgsFromMethodArg(vs, new_obj, sub_locals->list,
-                                          method_arg, "__init__");
-            Arg* return_arg = NULL;
-            /* load args faild */
-            if (vs->error_code != 0) {
-                goto init_exit;
+        PikaObj* sub_locals = New_PikaObj();
+        Arg* return_arg = NULL;
+        if (NULL == method_arg) {
+            uint16_t arg_input_num = VMState_getInputArgNum(vs);
+            if (arg_input_num != 0) {
+                VMState_setErrorCode(vs, 3);
+                __platform_printf("TypeError: %s() takes no arguments\r\n",
+                                  data);
+                /* clear input args */
+                for (int i = 0; i < arg_input_num; i++) {
+                    arg_deinit(stack_popArg(&(vs->stack)));
+                }
             }
-            return_arg =
-                VMState_runMethodArg(vs, new_obj, sub_locals, method_arg);
-        init_exit:
-            if (NULL != return_arg) {
-                arg_deinit(return_arg);
-            }
-            obj_deinit(sub_locals);
-            arg_deinit(method_arg);
+            goto init_exit;
         }
+        VMState_loadArgsFromMethodArg(vs, new_obj, sub_locals->list, method_arg,
+                                      "__init__");
+        /* load args faild */
+        if (vs->error_code != 0) {
+            goto init_exit;
+        }
+        return_arg = VMState_runMethodArg(vs, new_obj, sub_locals, method_arg);
+    init_exit:
+        if (NULL != return_arg) {
+            arg_deinit(return_arg);
+        }
+        obj_deinit(sub_locals);
+        arg_deinit(method_arg);
     }
 
     /* transfer sysOut */
