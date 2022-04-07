@@ -1,4 +1,4 @@
-cd Release && ninja -j0
+cd Release && make -j
 cd ..
 
 RUN_TIMES=$1
