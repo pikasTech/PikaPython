@@ -5,75 +5,75 @@ import PikaStdTask
 
 class GPIO(PikaStdDevice.GPIO):
     # override
-    def platformHigh():
+    def platformHigh(self):
         pass
 
     # override
-    def platformLow():
+    def platformLow(self):
         pass
 
     # override
-    def platformEnable():
+    def platformEnable(self):
         pass
 
     # override
-    def platformDisable():
+    def platformDisable(self):
         pass
 
     # override
-    def platformSetMode():
+    def platformSetMode(self):
         pass
 
     # override
-    def platformRead():
+    def platformRead(self):
         pass
 
 
 class Time(PikaStdDevice.Time):
     # override
-    def sleep_s(s: int):
+    def sleep_s(self, s: int):
         pass
 
     # override
-    def sleep_ms(ms: int):
+    def sleep_ms(self, ms: int):
         pass
 
 
 class ADC(PikaStdDevice.ADC):
     # override
-    def platformEnable():
+    def platformEnable(self):
         pass
 
     # override
-    def platformRead():
+    def platformRead(self):
         pass
 
 
 class UART(PikaStdDevice.UART):
     # override
-    def platformEnable():
+    def platformEnable(self):
         pass
 
     # override
-    def platformWrite():
+    def platformWrite(self):
         pass
 
     # override
-    def platformRead():
+    def platformRead(self):
         pass
 
 
 class PWM(PikaStdDevice.PWM):
     # override
-    def platformEnable():
+    def platformEnable(self):
         pass
 
     # override
-    def platformSetFrequency():
+    def platformSetFrequency(self):
         pass
 
     # override
-    def platformSetDuty():
+    def platformSetDuty(self):
         pass
 
 
@@ -82,24 +82,24 @@ class IIC(PikaStdDevice.IIC):
     SDA = GPIO()
     # override
 
-    def platformEnable():
+    def platformEnable(self):
         pass
 
     # override
-    def platformWrite():
+    def platformWrite(self):
         pass
 
     # override
-    def platformRead():
+    def platformRead(self):
         pass
 
 
 class lowLevel(TinyObj):
-    def readPin(pin: str) -> int:
+    def readPin(self, pin: str) -> int:
         pass
 
 
 class Task(PikaStdTask.Task):
     # override
-    def platformGetTick():
+    def platformGetTick(self):
         pass
