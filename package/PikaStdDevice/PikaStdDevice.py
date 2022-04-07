@@ -2,255 +2,255 @@ from PikaObj import *
 
 
 class GPIO(TinyObj):
-    def __init__():
+    def __init__(self):
         pass
 
-    def init():
+    def init(self):
         pass
 
-    def setPin(pinName: str):
+    def setPin(self, pinName: str):
         pass
 
-    def setId(id: int):
+    def setId(self, id: int):
         pass
 
-    def getId() -> int:
+    def getId(self) -> int:
         pass
 
-    def getPin() -> str:
+    def getPin(self) -> str:
         pass
 
-    def setMode(mode: str):
+    def setMode(self, mode: str):
         pass
 
-    def getMode() -> str:
+    def getMode(self) -> str:
         pass
 
-    def setPull(pull: str):
+    def setPull(self, pull: str):
         pass
 
-    def enable():
+    def enable(self):
         pass
 
-    def disable():
+    def disable(self):
         pass
 
-    def high():
+    def high(self):
         pass
 
-    def low():
+    def low(self):
         pass
 
-    def read() -> int:
+    def read(self) -> int:
         pass
 
     # need be overrid
-    def platformHigh():
+    def platformHigh(self):
         pass
 
     # need override
-    def platformLow():
+    def platformLow(self):
         pass
 
     # need override
-    def platformEnable():
+    def platformEnable(self):
         pass
 
     # need override
-    def platformDisable():
+    def platformDisable(self):
         pass
 
     # need override
-    def platformSetMode():
+    def platformSetMode(self):
         pass
 
     # need override
-    def platformRead():
+    def platformRead(self):
         pass
 
 
 class Time(TinyObj):
     # need override
-    def sleep_s(s: int):
+    def sleep_s(self, s: int):
         pass
 
     # need override
-    def sleep_ms(ms: int):
+    def sleep_ms(self, ms: int):
         pass
 
 
 class ADC(TinyObj):
-    def __init__():
+    def __init__(self):
         pass
 
-    def init():
+    def init(self):
         pass
 
-    def setPin(pin: str):
+    def setPin(self, pin: str):
         pass
 
-    def enable():
+    def enable(self):
         pass
 
-    def disable():
+    def disable(self):
         pass
 
-    def read() -> float:
-        pass
-
-    # need override
-    def platformEnable():
+    def read(self) -> float:
         pass
 
     # need override
-    def platformRead():
+    def platformEnable(self):
         pass
 
     # need override
-    def platformDisable():
+    def platformRead(self):
+        pass
+
+    # need override
+    def platformDisable(self):
         pass
 
 
 class UART(TinyObj):
-    def __init__():
+    def __init__(self):
         pass
 
-    def init():
+    def init(self):
         pass
 
-    def setBaudRate(baudRate: int):
+    def setBaudRate(self, baudRate: int):
         pass
 
-    def setId(id: int):
+    def setId(self, id: int):
         pass
 
-    def enable():
+    def enable(self):
         pass
 
-    def disable():
+    def disable(self):
         pass
 
-    def write(data: str):
+    def write(self, data: str):
         pass
 
-    def read(length: int) -> str:
-        pass
-
-    # need override
-    def platformEnable():
+    def read(self, length: int) -> str:
         pass
 
     # need override
-    def platformWrite():
+    def platformEnable(self):
         pass
 
     # need override
-    def platformRead():
+    def platformWrite(self):
         pass
 
     # need override
-    def platformDisable():
+    def platformRead(self):
+        pass
+
+    # need override
+    def platformDisable(self):
         pass
 
 class IIC(TinyObj):
-    def __init__():
+    def __init__(self):
         pass
 
-    def init():
+    def init(self):
         pass
 
-    def setPinSCL(pin: str):
+    def setPinSCL(self, pin: str):
         pass
 
-    def setPinSDA(pin: str):
+    def setPinSDA(self, pin: str):
         pass
 
-    def setDeviceAddr(addr: int):
+    def setDeviceAddr(self, addr: int):
         pass
 
-    def enable():
+    def enable(self):
         pass
 
-    def disable():
+    def disable(self):
         pass
 
-    def write(addr: int, data: str):
+    def write(self, addr: int, data: str):
         pass
 
-    def read(addr: int, length: int) -> str:
-        pass
-
-    # need override
-    def platformEnable():
+    def read(self, addr: int, length: int) -> str:
         pass
 
     # need override
-    def platformWrite():
+    def platformEnable(self):
         pass
 
     # need override
-    def platformRead():
+    def platformWrite(self):
         pass
 
     # need override
-    def platformDisable():
+    def platformRead(self):
+        pass
+
+    # need override
+    def platformDisable(self):
         pass
 
 class PWM(TinyObj):
-    def __init__():
+    def __init__(self):
         pass
 
-    def init():
+    def init(self):
         pass
 
-    def setName(name: str):
+    def setName(self, name: str):
         pass
 
-    def getName() -> str:
+    def getName(self) -> str:
         pass
 
-    def setChannel(ch: int):
+    def setChannel(self, ch: int):
         pass
 
-    def getChannel() -> int:
+    def getChannel(self) -> int:
         pass
 
-    def setPin(pin: str):
+    def setPin(self, pin: str):
         pass
 
-    def setFrequency(freq: int):
+    def setFrequency(self, freq: int):
         pass
 
-    def setFreq(freq: int):
+    def setFreq(self, freq: int):
         pass
 
-    def setDuty(duty: float):
+    def setDuty(self, duty: float):
         pass
 
-    def enable():
+    def enable(self):
         pass
 
-    def disable():
+    def disable(self):
         pass
 
-    def getFrequency() -> int:
+    def getFrequency(self) -> int:
         pass
 
-    def getDuty() -> float:
-        pass
-
-    # need override
-    def platformEnable():
+    def getDuty(self) -> float:
         pass
 
     # need override
-    def platformSetFrequency():
+    def platformEnable(self):
         pass
 
     # need override
-    def platformSetDuty():
+    def platformSetFrequency(self):
         pass
 
     # need override
-    def platformDisable():
+    def platformSetDuty(self):
+        pass
+
+    # need override
+    def platformDisable(self):
         pass

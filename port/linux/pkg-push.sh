@@ -1,6 +1,6 @@
 pkg=$1
-cp package/pikascript/pikascript-lib/PikaStdLib ../../package/ -r
-cp package/pikascript/$pkg.py ../../package/PikaStdLib/ 
-git add package/pikascript/pikascript-lib/PikaStdLib
+cp package/pikascript/pikascript-lib/$pkg ../../package/ -r
+cp package/pikascript/$pkg.py ../../package/$pkg/ 
+git add package/pikascript/pikascript-lib/$pkg
 git add package/pikascript/$pkg.py
-git add ../../package/PikaStdLib
+git add ../../package/$pkg
