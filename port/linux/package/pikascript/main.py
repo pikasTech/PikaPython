@@ -5,7 +5,6 @@ import PikaMath
 import PikaStdDevice
 import PikaDebug
 import PikaStdData
-from PikaObj import *
 
 pkdb = PikaDebug.Debuger()
 list = PikaStdData.List()
