@@ -4,9 +4,12 @@ import GTestTask
 import PikaMath
 import PikaStdDevice
 import PikaDebug
+import PikaStdData
 from PikaObj import *
 
 pkdb = PikaDebug.Debuger()
+list = PikaStdData.List()
+io =PikaStdDevice.GPIO()
 
 class Test():
     x = 1
