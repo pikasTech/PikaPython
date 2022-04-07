@@ -11,25 +11,47 @@ impl ArgList {
     pub fn to_string(&self) -> String {
         return self.py_arg_list.clone();
     }
+
     pub fn new(py_arg_list: &Option<String>) -> Option<ArgList> {
         let py_arg_list = match py_arg_list {
             Some(x) => x,
             None => return None,
         };
+        /* remove space */
+        let py_arg_list = py_arg_list.replace(" ", "");
+        /* remove no type arg */
+        let py_arg_list_vecotr: Vec<&str> = py_arg_list.split(",").collect();
+        let mut py_arg_list = String::from("");
+        for arg_define in py_arg_list_vecotr.iter() {
+            let arg_define = String::from(*arg_define);
+            if arg_define.contains(":"){
+                py_arg_list.push_str(&arg_define);
+                py_arg_list.push_str(",");
+            }
+        }
+        /* remove the last ',' */
+        py_arg_list.remove(py_arg_list.len() - 1);
+
+        /* push py_arg_list */
         let mut arg_list = ArgList {
             py_arg_list: py_arg_list.clone(),
             list: BTreeMap::new(),
         };
-        let py_arg_list = py_arg_list.replace(" ", "");
-        let py_arg_list: Vec<&str> = py_arg_list.split(",").collect();
-        for arg_define in py_arg_list.iter() {
+
+        /* splite each arg */
+        let py_arg_list_vecotr: Vec<&str> = py_arg_list.split(",").collect();
+        for arg_define in py_arg_list_vecotr.iter() {
+            /* get arg name */
             let arg_name = match my_string::get_first_token(&arg_define.to_string(), ':') {
                 Some(name) => name,
-                None => return None,
+                /* if not get ':', ignore the arg */
+                None => String::from(""),
             };
+            /* get type name */
             let type_name = match my_string::get_last_token(&arg_define.to_string(), ':') {
                 Some(name) => name,
-                None => return None,
+                /* if not get ':', ignore the arg */
+                None => String::from(""),
             };
             arg_list
                 .list

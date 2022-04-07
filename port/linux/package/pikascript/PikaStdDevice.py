@@ -11,6 +11,12 @@ class GPIO(TinyObj):
     def setPin(pinName: str):
         pass
 
+    def setId(id: int):
+        pass
+
+    def getId() -> int:
+        pass
+
     def getPin() -> str:
         pass
 
@@ -86,6 +92,9 @@ class ADC(TinyObj):
     def enable():
         pass
 
+    def disable():
+        pass
+
     def read() -> float:
         pass
 
@@ -95,6 +104,10 @@ class ADC(TinyObj):
 
     # need override
     def platformRead():
+        pass
+
+    # need override
+    def platformDisable():
         pass
 
 
@@ -112,6 +125,9 @@ class UART(TinyObj):
         pass
 
     def enable():
+        pass
+
+    def disable():
         pass
 
     def write(data: str):
@@ -132,6 +148,9 @@ class UART(TinyObj):
     def platformRead():
         pass
 
+    # need override
+    def platformDisable():
+        pass
 
 class IIC(TinyObj):
     def __init__():
@@ -152,6 +171,9 @@ class IIC(TinyObj):
     def enable():
         pass
 
+    def disable():
+        pass
+
     def write(addr: int, data: str):
         pass
 
@@ -170,6 +192,9 @@ class IIC(TinyObj):
     def platformRead():
         pass
 
+    # need override
+    def platformDisable():
+        pass
 
 class PWM(TinyObj):
     def __init__():
@@ -178,16 +203,34 @@ class PWM(TinyObj):
     def init():
         pass
 
+    def setName(name: str):
+        pass
+
+    def getName() -> str:
+        pass
+
+    def setChannel(ch: int):
+        pass
+
+    def getChannel() -> int:
+        pass
+
     def setPin(pin: str):
         pass
 
     def setFrequency(freq: int):
         pass
 
+    def setFreq(freq: int):
+        pass
+
     def setDuty(duty: float):
         pass
 
     def enable():
+        pass
+
+    def disable():
         pass
 
     def getFrequency() -> int:
@@ -206,4 +249,8 @@ class PWM(TinyObj):
 
     # need override
     def platformSetDuty():
+        pass
+
+    # need override
+    def platformDisable():
         pass

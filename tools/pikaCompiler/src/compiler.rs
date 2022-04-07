@@ -137,6 +137,7 @@ impl Compiler {
             return compiler;
         }
 
+        /* analize class stmt */
         if line.starts_with("class") {
             let class_now = match ClassInfo::new(&file_name, &line, false) {
                 Some(s) => s,
@@ -167,6 +168,7 @@ impl Compiler {
             return compiler;
         }
 
+        /* analize def stmt */
         if line.starts_with("    def ") {
             let line = line.strip_prefix("    ").unwrap().to_string();
             let class_now = compiler

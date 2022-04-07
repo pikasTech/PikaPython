@@ -1,6 +1,6 @@
 class PyObj(BaseObj):
 
-    def importClass(className: str, fp: str):
+    def importClass(self, className: str, fp: str):
         pass
 
     def newObj(objName: str, className: str, fp: str):
