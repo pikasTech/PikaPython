@@ -1,15 +1,15 @@
 from PikaObj import *
 
 class LED(TinyObj):
-    def on():
+    def on(self):
         pass
-    def off():
+    def off(self):
         pass
 
 class Uart(TinyObj):
-    def send(data:str):
+    def send(self, data:str):
         pass
-    def setName(name:str):
+    def setName(self, name:str):
         pass
-    def printName():
+    def printName(self):
         pass
