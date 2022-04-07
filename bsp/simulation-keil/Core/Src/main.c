@@ -103,7 +103,6 @@ int main(void)
 	char inputBuff[256] = {0};
   while (1)
   {
-    static uint32_t r_mainloop_ncnt;
     fgets(inputBuff, sizeof(inputBuff), stdin);
     printf(">>> %s", inputBuff);
     obj_run(pikaMain, inputBuff);
