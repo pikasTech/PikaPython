@@ -2,7 +2,7 @@ from PikaObj import *
 
 
 class MemChecker(TinyObj):
-    def max():
+    def max(self):
         pass
 
     def now():

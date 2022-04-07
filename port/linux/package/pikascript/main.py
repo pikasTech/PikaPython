@@ -2,6 +2,7 @@ import PikaStdLib
 import PikaStdData
 import GTestTask
 import PikaMath
+import PikaStdDevice
 import PikaDebug
 from PikaObj import *
 

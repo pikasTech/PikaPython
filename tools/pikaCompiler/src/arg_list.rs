@@ -24,13 +24,17 @@ impl ArgList {
         let mut py_arg_list = String::from("");
         for arg_define in py_arg_list_vecotr.iter() {
             let arg_define = String::from(*arg_define);
-            if arg_define.contains(":"){
+            if arg_define.contains(":") {
                 py_arg_list.push_str(&arg_define);
                 py_arg_list.push_str(",");
             }
         }
-        /* remove the last ',' */
-        py_arg_list.remove(py_arg_list.len() - 1);
+        if py_arg_list.contains(",") {
+            /* remove the last ',' */
+            py_arg_list.remove(py_arg_list.len() - 1);
+        }else{
+            return None;
+        }
 
         /* push py_arg_list */
         let mut arg_list = ArgList {
