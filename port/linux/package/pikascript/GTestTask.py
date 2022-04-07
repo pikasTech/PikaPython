@@ -3,5 +3,5 @@ import PikaStdTask
 
 
 class Task(PikaStdTask.Task):
-    def platformGetTick():
+    def platformGetTick(self):
         pass
