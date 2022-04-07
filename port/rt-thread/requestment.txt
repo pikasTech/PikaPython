@@ -1,5 +1,5 @@
-pikascript-core==v1.6.0
-PikaStdLib==v1.6.0
+pikascript-core==v1.6.1
+PikaStdLib==v1.6.1
 pikaRTThread==v1.1.1
 pikaRTDevice==v1.0.1
 PikaStdDevice==v1.5.0
