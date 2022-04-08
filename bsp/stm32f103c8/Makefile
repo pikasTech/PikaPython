@@ -22,7 +22,7 @@ TARGET = stm32f103c8
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -Og
+OPT = -Os
 
 
 #######################################
@@ -39,6 +39,7 @@ C_SOURCES =  \
 $(shell find  ./pikascript/pikascript-core -name *.c) \
 $(shell find  ./pikascript/pikascript-api -name *.c) \
 $(shell find  ./pikascript/pikascript-lib -name *.c) \
+$(shell find  ./Booter -name *.c) \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c \
@@ -57,12 +58,7 @@ Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_dma.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c \
-Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c \
-Core/Booter/main.c \
-Core/Booter/gpio.c \
-Core/Booter/stm32f1xx_it.c \
-Core/Booter/stm32f1xx_hal_msp.c \
-Core/Booter/system_stm32f1xx.c
+Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c 
 
 # ASM sources
 ASM_SOURCES =  \
@@ -124,6 +120,7 @@ C_INCLUDES =  \
 -IDrivers/STM32F1xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32F1xx/Include \
 -IDrivers/CMSIS/Include \
+-I Booter \
 -I pikascript/pikascript-core \
 -I pikascript/pikascript-lib/STM32F1 \
 -I pikascript/pikascript-api
