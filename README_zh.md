@@ -286,6 +286,7 @@ cd pikascript/port/linux
 step2: 编译项目
 ```
 sh install_dependency.sh # 安装依赖，第一次用时运行
+sh pull-core.sh
 sh init.sh # 第一次编译前运行，之后就不用运行了 
 sh make.sh # 编译项目
 ```
