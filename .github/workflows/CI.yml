@@ -18,6 +18,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: INSTALL_NINJA
+      run: sudo apt install ninja-build
   
     - name: install_google_benchmark
       run: |
