@@ -1476,7 +1476,39 @@ TEST(pikaMain, class_args_err) {
     /* collect */
 
     /* assert */
-    EXPECT_STREQ(log_buff[4], (char*)"TypeError: PikaStdLib.MemChecker() takes no arguments\r\n");
+    EXPECT_STREQ(
+        log_buff[4],
+        (char*)"TypeError: PikaStdLib.MemChecker() takes no arguments\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, int_) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)"a = int('3')\n");
+    /* collect */
+    int a = obj_getInt(pikaMain, (char*)"a");
+    /* assert */
+    EXPECT_EQ(a, 3);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, len_) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)"a = len('331dd')\n");
+    /* collect */
+    int a = obj_getInt(pikaMain, (char*)"a");
+    /* assert */
+    EXPECT_EQ(a, 5);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

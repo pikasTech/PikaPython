@@ -72,6 +72,9 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_FLOAT == type) {
         return (int)arg_getFloat(arg);
     }
+    if (ARG_TYPE_STRING == type) {
+        return (int)fast_atoi(arg_getStr(arg));
+    }
     obj_setSysOut(self, "[error] convert to int type faild.");
     obj_setErrorCode(self, 1);
     return -999999999;
@@ -203,4 +206,13 @@ void PikaStdLib_SysObj___set__(PikaObj* self,
         };
         pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
     }
+}
+
+int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
+    if (ARG_TYPE_STRING == arg_getType(arg)) {
+        return strGetSize(arg_getStr(arg));
+    }
+    obj_setErrorCode(self, 1);
+    __platform_printf("[Error] len: arg type not support\r\n");
+    return -1;
 }
