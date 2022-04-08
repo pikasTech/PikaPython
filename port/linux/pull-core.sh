@@ -1,2 +1,2 @@
-rm package/pikascript/pikascript-core -r
-cp ../../src package/pikascript/pikascript-core -r
+rm -rf package/pikascript/pikascript-core
+cp -r ../../src package/pikascript/pikascript-core
