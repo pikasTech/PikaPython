@@ -17,8 +17,8 @@ pub struct ClassInfo {
 }
 
 impl ClassInfo {
-    pub fn add_file_profix(file_name: &String, class_name: &String, isPackage: bool) -> String {
-        if isPackage {
+    pub fn add_file_profix(file_name: &String, class_name: &String, is_package: bool) -> String {
+        if is_package {
             return class_name.clone();
         }
         if file_name == "main" {
@@ -39,7 +39,7 @@ impl ClassInfo {
         };
         let super_class_name = match super_class_name.find(".") {
             None => ClassInfo::add_file_profix(&file_name, &super_class_name, is_package),
-            Some(x) => super_class_name.replace(".", "_"),
+            Some(_x) => super_class_name.replace(".", "_"),
         };
         let mut this_calss_name = match my_string::get_first_token(&define, '(') {
             Some(s) => s,
@@ -70,18 +70,18 @@ impl ClassInfo {
     pub fn push_method(&mut self, method_define: String) {
         return self.push_method_with_is_constructor(method_define, false);
     }
-    pub fn push_constructor(&mut self, method_define:String){
+    pub fn push_constructor(&mut self, method_define: String) {
         return self.push_method_with_is_constructor(method_define, true);
     }
-    pub fn push_import(&mut self, import_define: String, file_name: &String) {
-        let import_info = match ImportInfo::new(&self.this_class_name, import_define, &file_name) {
-            Some(import) => import,
-            None => return,
-        };
-        self.import_list
-            .entry(import_info.import_class_name.clone())
-            .or_insert(import_info);
-    }
+    // pub fn push_import(&mut self, import_define: String, file_name: &String) {
+    //     let import_info = match ImportInfo::new(&self.this_class_name, import_define, &file_name) {
+    //         Some(import) => import,
+    //         None => return,
+    //     };
+    //     self.import_list
+    //         .entry(import_info.import_class_name.clone())
+    //         .or_insert(import_info);
+    // }
     pub fn push_object(&mut self, object_define: String, file_name: &String) {
         let object_info = match ObjectInfo::new(&self.this_class_name, object_define, &file_name) {
             Some(object) => object,

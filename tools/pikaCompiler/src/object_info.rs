@@ -24,7 +24,7 @@ impl ObjectInfo {
         };
         import_class_name = match import_class_name.find(".") {
             None => class_info::ClassInfo::add_file_profix(&file_name, &import_class_name, false),
-            Some(x) => import_class_name.replace(".", "_"),
+            Some(_x) => import_class_name.replace(".", "_"),
         };
         return Some(ObjectInfo {
             class_name: class_name.clone(),

@@ -51,24 +51,24 @@ impl PyType {
         }
         return "method_returnPtr".to_string();
     }
-    pub fn set_fn(&self) -> String {
-        if self.type_name == "int" {
-            return "args_setInt".to_string();
-        }
-        if self.type_name == "float" {
-            return "args_setFloat".to_string();
-        }
-        if self.type_name == "pointer" {
-            return "args_setPtr".to_string();
-        }
-        if self.type_name == "str" {
-            return "args_setStr".to_string();
-        }
-        if self.type_name == "any" {
-            return "args_setArg".to_string();
-        }
-        return "args_setPtr".to_string();
-    }
+    // pub fn set_fn(&self) -> String {
+    //     if self.type_name == "int" {
+    //         return "args_setInt".to_string();
+    //     }
+    //     if self.type_name == "float" {
+    //         return "args_setFloat".to_string();
+    //     }
+    //     if self.type_name == "pointer" {
+    //         return "args_setPtr".to_string();
+    //     }
+    //     if self.type_name == "str" {
+    //         return "args_setStr".to_string();
+    //     }
+    //     if self.type_name == "any" {
+    //         return "args_setArg".to_string();
+    //     }
+    //     return "args_setPtr".to_string();
+    // }
     pub fn get_fn(&self) -> String {
         if self.type_name == "int" {
             return "args_getInt".to_string();
