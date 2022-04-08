@@ -58,11 +58,11 @@ Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c \
-Core/Src/main.c \
-Core/Src/gpio.c \
-Core/Src/stm32f1xx_it.c \
-Core/Src/stm32f1xx_hal_msp.c \
-Core/Src/system_stm32f1xx.c
+Core/Booter/main.c \
+Core/Booter/gpio.c \
+Core/Booter/stm32f1xx_it.c \
+Core/Booter/stm32f1xx_hal_msp.c \
+Core/Booter/system_stm32f1xx.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -125,7 +125,7 @@ C_INCLUDES =  \
 -IDrivers/CMSIS/Device/ST/STM32F1xx/Include \
 -IDrivers/CMSIS/Include \
 -I pikascript/pikascript-core \
--I pikascript/pikascript-lib/STM32 \
+-I pikascript/pikascript-lib/STM32F1 \
 -I pikascript/pikascript-api
 
 
