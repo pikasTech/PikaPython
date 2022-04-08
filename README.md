@@ -263,6 +263,7 @@ cd pikascript/port/linux
 step2: Compile the project
 ```
 sh install_dependency.sh # install dependency 
+sh pull-core.sh
 sh init.sh # Only nedded in the first time.
 sh make.sh # Compile the project.
 ```
