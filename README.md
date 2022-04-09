@@ -146,6 +146,11 @@ https://pikadoc.readthedocs.io/en/latest/index.html
 |---|---|---|---|
 |linux|√|√|√|
 
+## Related Projects
+### PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌
+https://github.com/maxgerhardt/pikascript-pio-bluepill
+
+
 # 3.Characteristic
 ### (1)Run environment
 
@@ -216,6 +221,7 @@ Complete unit testes based on google test.
 # 5.Contribute
 | Content | Contributer |
 | --- | --- |
+| fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
 | ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
 | ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
 | 捐赠：EC600X QuecPython 开发板 | 移远模块 武加玉 |

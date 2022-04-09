@@ -160,6 +160,10 @@ http://pikascript.com
 |---|---|---|---|
 |linux|√|√|√|
 
+## 相关开源项目 
+### PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌
+https://github.com/maxgerhardt/pikascript-pio-bluepill
+
 # 3.特性
 ### (1)运行环境
 
@@ -239,6 +243,7 @@ http://pikascript.com
 # 5.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
 | ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
 | ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
 | 捐赠：EC600X QuecPython 开发板 | 移远模块 武加玉 |
