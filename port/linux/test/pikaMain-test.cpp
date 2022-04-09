@@ -1389,7 +1389,8 @@ TEST(pikaMain, not_4_space) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
-    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1], "[info]: only support 4 spaces\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     /* mem check */
