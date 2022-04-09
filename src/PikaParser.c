@@ -965,6 +965,7 @@ static int32_t Parser_getPyLineBlockDeepth(char* line) {
             if (0 == spaceNum % 4) {
                 return spaceNum / 4;
             }
+            __platform_printf("[info]: only support 4 spaces\r\n");
             /* space Num is not 4N, error*/
             return -1;
         }
