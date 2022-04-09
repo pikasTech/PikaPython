@@ -1251,7 +1251,7 @@ void VMState_solveUnusedStack(VMState* vs) {
             continue;
         }
         if (type == ARG_TYPE_INT) {
-            __platform_printf("%d\r\n", (int32_t)arg_getInt(arg));
+            __platform_printf("%d\r\n", (int)arg_getInt(arg));
         } else if (type == ARG_TYPE_FLOAT) {
             __platform_printf("%f\r\n", arg_getFloat(arg));
         } else if (type == ARG_TYPE_STRING) {
