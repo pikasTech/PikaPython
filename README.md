@@ -174,20 +174,21 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 
 Support method invoke, argument define, new object, free object, control flow(if\while) and operator ( + - * / < == > ). - Based on [Pika Runtime Core](../../tree/master/src/package/pikascript/pikascript-core).
 
-|Syntax|Compile-Time|Run-Time|
-|---|---|---|
-|Module Define    |√|-|
-|Module Import    |√|-|
-|Class Define     |√|√|
-|Class Inherit    |√|√|
-|Method Define    |√|√|
-|Method Override  |√|√|
-|Method Invoke    |√|√|
-|Argument Define  |√|√|
-|Argument Assignment  |√|√|
-|Object New       |√|√|
-|Object Free      |√|√|
-|Object Nest      |√|√|
+|Syntax|Compile-Time|Run-Time|Shell|
+|---|---|---|---|
+|Module Define          |√|-|-|
+|Module Import          |√|-|-|
+|Class Define           |√|√|-|
+|Class Inherit          |√|√|-|
+|Method Define          |√|√|-|
+|Method Override        |√|√|-|
+|Method Invoke          |√|√|√|
+|Argument Define        |√|√|√|
+|Argument Assignment    |√|√|√|
+|Object New             |√|√|√|
+|Object Free            |√|√|√|
+|Object Nest            |√|√|√|
+|Control flow           |√|√|√|
 
 #### Operator
 
