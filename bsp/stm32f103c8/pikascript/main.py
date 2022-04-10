@@ -1,4 +1,7 @@
-import STM32F1
 import PikaStdLib
 
 print('hello PikaScript!')
+
+mem = PikaStdLib.MemChecker()
+print('mem used max:')
+mem.max()
