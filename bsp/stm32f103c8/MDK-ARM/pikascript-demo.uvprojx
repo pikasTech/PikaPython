@@ -381,16 +381,6 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Application/MDK-ARM</GroupName>
-          <Files>
-            <File>
-              <FileName>startup_stm32f103xb.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>startup_stm32f103xb.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Drivers/STM32F1xx_HAL_Driver</GroupName>
           <Files>
             <File>
@@ -722,6 +712,11 @@
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Booter\usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_stm32f103xb.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\startup_stm32f103xb.s</FilePath>
             </File>
           </Files>
         </Group>
