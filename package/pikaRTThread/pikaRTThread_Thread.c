@@ -13,3 +13,7 @@
 void pikaRTThread_Thread_mdelay(PikaObj *self, int ms){
     rt_thread_mdelay(ms);
 }
+
+void pikaRTThread_Task_platformGetTick(PikaObj *self){
+    obj_setInt(self, "tick", rt_tick_get());
+}
