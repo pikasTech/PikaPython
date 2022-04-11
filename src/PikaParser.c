@@ -965,7 +965,6 @@ static int32_t Parser_getPyLineBlockDeepth(char* line) {
             if (0 == spaceNum % 4) {
                 return spaceNum / 4;
             }
-            __platform_printf("[info]: only support 4 spaces\r\n");
             /* space Num is not 4N, error*/
             return -1;
         }
@@ -1011,13 +1010,13 @@ char* Parser_removeAnnotation(char* line) {
     return line;
 }
 
+/* match block start keywords */
+const char control_keywords[][9] = {"break", "continue"};
+
+/* normal keyward */
+const char normal_keywords[][7] = {"while", "if", "elif"};
+
 AST* AST_parseLine(char* line, Stack* block_stack) {
-    /* match block start keywords */
-    const char control_keywords[][9] = {"break", "continue"};
-
-    /* normal keyward */
-    const char normal_keywords[][7] = {"while", "if", "elif"};
-
     /* line is not exist */
     if (line == NULL) {
         return NULL;
@@ -1025,25 +1024,26 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     /* init data */
     AST* ast = New_queueObj();
     Args buffs = {0};
-    int8_t block_deepth, block_deepth_last;
+    int8_t block_deepth_now, block_deepth_last = -1;
     char *line_start, *stmt;
     /* get block deepth */
-    block_deepth = Parser_getPyLineBlockDeepth(line);
-    block_deepth_last = block_deepth;
+    block_deepth_now = Parser_getPyLineBlockDeepth(line);
     /* set block deepth */
-    if (block_deepth == -1) {
+    if (block_deepth_now == -1) {
         /* get block_deepth error */
+        __platform_printf(
+            "IndentationError: unexpected indent, only support 4 spaces\r\n");
         obj_deinit(ast);
         ast = NULL;
         goto exit;
     }
-    obj_setInt(ast, "blockDeepth", block_deepth);
+    obj_setInt(ast, "blockDeepth", block_deepth_now);
 
     /* check if exit block */
     if (NULL != block_stack) {
         block_deepth_last = stack_getTop(block_stack);
         /* exit each block */
-        for (int i = 0; i < block_deepth_last - block_deepth; i++) {
+        for (int i = 0; i < block_deepth_last - block_deepth_now; i++) {
             QueueObj* exit_block_queue = obj_getObj(ast, "exitBlock", 0);
             /* create an exit_block queue */
             if (NULL == exit_block_queue) {
@@ -1058,7 +1058,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         }
     }
 
-    line_start = line + block_deepth * 4;
+    line_start = line + block_deepth_now * 4;
     stmt = line_start;
 
     for (uint32_t i = 0; i < sizeof(normal_keywords) / 7; i++) {
@@ -1420,44 +1420,44 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     /* exiting from block */
     if (exitBlock != NULL) {
         while (1) {
-            uint8_t blockTypeNum = obj_getInt(exitBlock, "top") -
-                                   obj_getInt(exitBlock, "bottom") - 1;
-            char* blockType = queueObj_popStr(exitBlock);
-            if (NULL == blockType) {
+            uint8_t block_type_num = obj_getInt(exitBlock, "top") -
+                                     obj_getInt(exitBlock, "bottom") - 1;
+            char* block_type = queueObj_popStr(exitBlock);
+            if (NULL == block_type) {
                 break;
             }
             /* goto the while start when exit while block */
-            if (strEqu(blockType, "while")) {
+            if (strEqu(block_type, "while")) {
                 pikaAsm =
-                    ASM_addBlockDeepth(ast, outBuffs, pikaAsm, blockTypeNum);
+                    ASM_addBlockDeepth(ast, outBuffs, pikaAsm, block_type_num);
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 JMP -1\n");
             }
             /* goto the while start when exit while block */
-            if (strEqu(blockType, "for")) {
+            if (strEqu(block_type, "for")) {
                 pikaAsm =
-                    ASM_addBlockDeepth(ast, outBuffs, pikaAsm, blockTypeNum);
+                    ASM_addBlockDeepth(ast, outBuffs, pikaAsm, block_type_num);
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 JMP -1\n");
                 /* garbage collect for the list */
                 pikaAsm =
-                    ASM_addBlockDeepth(ast, outBuffs, pikaAsm, blockTypeNum);
+                    ASM_addBlockDeepth(ast, outBuffs, pikaAsm, block_type_num);
                 char _l_x[] = "_lx";
                 char block_deepth_char =
-                    obj_getInt(ast, "blockDeepth") + blockTypeNum + '0';
+                    obj_getInt(ast, "blockDeepth") + block_type_num + '0';
                 _l_x[sizeof(_l_x) - 2] = block_deepth_char;
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 DEL ");
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)_l_x);
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"\n");
             }
             /* return when exit method */
-            if (strEqu(blockType, "def")) {
+            if (strEqu(block_type, "def")) {
                 pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm,
-                                             blockTypeNum + 1);
+                                             block_type_num + 1);
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 RET \n");
             }
             /* return when exit class */
-            if (strEqu(blockType, "class")) {
+            if (strEqu(block_type, "class")) {
                 pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm,
-                                             blockTypeNum + 1);
+                                             block_type_num + 1);
                 pikaAsm =
                     strsAppend(outBuffs, pikaAsm, (char*)"0 RAS $origin\n");
                 pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
