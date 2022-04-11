@@ -132,5 +132,6 @@ Arg* arg_setHeapStruct(Arg* self,
                        uint32_t struct_size,
                        void* struct_deinit_fun);
 void* arg_getHeapStruct(Arg* self);
+void arg_deinitHeap(Arg* self);
 
 #endif

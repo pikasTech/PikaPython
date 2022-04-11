@@ -302,13 +302,16 @@ void* arg_getHeapStruct(Arg* self) {
     return arg_getContent(self) + sizeof(void*);
 }
 
-void arg_deinit(Arg* self) {
+void arg_deinitHeap(Arg* self) {
     if (arg_getType(self) == ARG_TYPE_HEAP_STRUCT) {
         /* deinit heap strcut */
         StructDeinitFun struct_deinit_fun =
             (StructDeinitFun)arg_getHeapStructDeinitFun(self);
         struct_deinit_fun(arg_getHeapStruct(self));
     }
-    arg_freeContent(self);
 }
 
+void arg_deinit(Arg* self) {
+    arg_deinitHeap(self);
+    arg_freeContent(self);
+}

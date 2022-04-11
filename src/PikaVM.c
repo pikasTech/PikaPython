@@ -898,9 +898,9 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     return res;
 }
 
-VMParameters* pikaVM_runPyOrByteCode(PikaObj* self,
-                                     char* py_lines,
-                                     uint8_t* bytecode) {
+VMParameters* pikaVM_runPyLines_or_byteCode(PikaObj* self,
+                                            char* py_lines,
+                                            uint8_t* bytecode) {
     uint8_t is_run_py;
     if (NULL != py_lines) {
         is_run_py = 1;
@@ -967,12 +967,12 @@ exit:
     return globals;
 }
 
-VMParameters* pikaVM_run(PikaObj* self, char* multiLine) {
-    return pikaVM_runPyOrByteCode(self, multiLine, NULL);
+VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
+    return pikaVM_runPyLines_or_byteCode(self, py_lines, NULL);
 }
 
 VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode) {
-    return pikaVM_runPyOrByteCode(self, NULL, bytecode);
+    return pikaVM_runPyLines_or_byteCode(self, NULL, bytecode);
 }
 
 static void* constPool_getStart(ConstPool* self) {

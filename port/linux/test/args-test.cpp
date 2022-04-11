@@ -213,6 +213,28 @@ TEST(args, heap_struct) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(args, heap_struct_override) {
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    bytecode_frame.const_pool.size = 100;
+
+    ByteCodeFrame bytecode_frame_1;
+    byteCodeFrame_init(&bytecode_frame_1);
+    bytecode_frame_1.const_pool.size = 100;
+
+    Args* args = New_args(NULL);
+    args_setHeapStruct(args, (char*)"a", bytecode_frame, byteCodeFrame_deinit);
+    args_setHeapStruct(args, (char*)"a", bytecode_frame_1,
+                       byteCodeFrame_deinit);
+    ByteCodeFrame* bf_out =
+        (ByteCodeFrame*)args_getHeapStruct(args, (char*)"a");
+    /* assert */
+    EXPECT_EQ(bf_out->const_pool.size, 100);
+    /* check memory */
+    args_deinit(args);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(args, args_move) {
     Args* args = New_args(NULL);
     Args* args2 = New_args(NULL);

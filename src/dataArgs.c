@@ -234,6 +234,9 @@ int32_t __updateArg(Args* self, Arg* argNew) {
         priorNode = nodeNow;
         nodeNow = content_getNext(nodeNow);
     }
+
+    arg_deinitHeap(nodeToUpdate);
+
     nodeToUpdate = arg_setContent(nodeToUpdate, arg_getContent(argNew),
                                   arg_getContentSize(argNew));
 
@@ -247,7 +250,7 @@ int32_t __updateArg(Args* self, Arg* argNew) {
     content_setNext(priorNode, nodeToUpdate);
     goto exit;
 exit:
-    arg_deinit(argNew);
+    arg_freeContent(argNew);
     return 0;
 }
 
