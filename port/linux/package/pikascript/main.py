@@ -9,6 +9,7 @@ import PikaStdData
 pkdb = PikaDebug.Debuger()
 list = PikaStdData.List()
 io =PikaStdDevice.GPIO()
+mem = PikaStdLib.MemChecker()
 
 class Test():
     x = 1
@@ -17,4 +18,11 @@ class Test():
 test = Test()
 test.hi()
 
+def todo1():
+    test.hi()
+    mem.max()
+
 print('hello')
+
+task = GTestTask.Task()
+task.call_period_ms(todo1, 500)
