@@ -3,15 +3,17 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/codeskyblue/go-sh"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	cp "github.com/otiai10/copy"
 )
 
 var isShowSize = false
@@ -70,10 +72,38 @@ func main() {
 	}
 }
 
+func FilterDirsGlob(dir, suffix string) ([]string, error) {
+	return filepath.Glob(filepath.Join(dir, suffix))
+}
+
+func MoveFile(sourcePath, destPath string) error {
+	inputFile, err := os.Open(sourcePath)
+	if err != nil {
+		return fmt.Errorf("Couldn't open source file: %s", err)
+	}
+	outputFile, err := os.Create(destPath)
+	if err != nil {
+		inputFile.Close()
+		return fmt.Errorf("Couldn't open dest file: %s", err)
+	}
+	defer outputFile.Close()
+	_, err = io.Copy(outputFile, inputFile)
+	inputFile.Close()
+	if err != nil {
+		return fmt.Errorf("Writing to output file failed: %s", err)
+	}
+	// The copy was successful, so now delete the original file
+	err = os.Remove(sourcePath)
+	if err != nil {
+		return fmt.Errorf("Failed removing original file: %s", err)
+	}
+	return nil
+}
+
 func checkOutRequsetments(path string, repo *git.Repository, requerments []Requerment_t) {
-	exec.Command("cmd", "/C", "mkdir", "pikascript-lib").Run()
-	exec.Command("cmd", "/C", "mkdir", "pikascript-core").Run()
-	exec.Command("cmd", "/C", "mkdir", "pikascript-api").Run()
+	os.Mkdir("pikascript-lib", os.ModePerm)
+	os.Mkdir("pikascript-core", os.ModePerm)
+	os.Mkdir("pikascript-api", os.ModePerm)
 	workTree, _ := repo.Worktree()
 	for _, requerment := range requerments {
 		/* checkout commit */
@@ -85,22 +115,24 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 		CheckIfError(err)
 		/* update file */
 		var packagePath string = path + "/package/" + requerment.Name
-		var dirPath string = "pikascript-lib\\" + requerment.Name + "\\"
+		var dirPath string = "pikascript-lib/" + requerment.Name
 		if requerment.Name == "pikascript-core" {
 			packagePath = path + "/src"
-			dirPath = "pikascript-core\\"
-			packagePath = strings.ReplaceAll(packagePath, "/", "\\")
-			err = exec.Command("cmd", "/C", "copy", packagePath+"\\..\\tools\\pikaCompiler\\rust-msc-latest-win10.exe").Run()
+			dirPath = "pikascript-core"
+			err = sh.Command("cp", packagePath+"/../tools/pikaCompiler/rust-msc-latest-win10.exe", ".").Run()
 			CheckIfError(err)
 		}
-		packagePath = strings.ReplaceAll(packagePath, "/", "\\")
+		// fmt.Printf("    copy" + " " + packagePath + " " + dirPath + "\n")
+		CheckIfError(cp.Copy(packagePath, dirPath))
+		pyFileList, _ := FilterDirsGlob(packagePath, "*.py")
+		for i := range pyFileList {
+			pyFileSource := pyFileList[i]
+			pyFilePath := strings.Split(pyFileSource, "/")
+			pyFileName := pyFilePath[len(pyFilePath)-1]
+			fmt.Println("    Installed: " + pyFileName)
+			os.Rename(pyFileSource, pyFileName)
+		}
 
-		exec.Command("cmd", "/C", "mkdir", dirPath).Run()
-		fmt.Printf("copy" + " " + packagePath + " " + dirPath + "\n")
-		err = exec.Command("cmd", "/C", "copy", packagePath, dirPath).Run()
-		CheckIfError(err)
-		err = exec.Command("cmd", "/C", "copy", dirPath+"\\*.py").Run()
-		CheckIfError(err)
 	}
 	err := workTree.Checkout(&git.CheckoutOptions{
 		Hash:  plumbing.NewHash("master"),
