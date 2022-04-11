@@ -1606,3 +1606,31 @@ TEST(pikaMain, class_in_shell) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, class_TinyObj) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+
+    /* skip the first obj_run */
+    obj_run(pikaMain, (char*)"'BEGIN'");
+    /* as run in shell */
+    obj_run(pikaMain,(char*)
+            "class MyClass( TinyObj ):\n"
+            "    def __init__(self):\n"
+            "        self.val = 123\n"
+            "\n"
+            );
+    obj_run(pikaMain, (char*)
+            "x = MyClass()\n"
+            "x.val\n"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ((char*)"123\r\n", log_buff[0]);
+    EXPECT_STREQ((char*)"BEGIN\r\n", log_buff[1]);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
