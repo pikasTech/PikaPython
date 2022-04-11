@@ -1517,17 +1517,32 @@ TEST(pikaMain, len_) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, def_no_content) {
+TEST(pikaMain, def_in_shell) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+
+    /* skip the first obj_run */
+    obj_run(pikaMain, (char*)"'BEGIN'");
+    /* as run in shell */
     obj_run(pikaMain,(char*)
             "def test():\n"
-            "print(1)\n"
+            "    print('test')\n"
+            "\n"
             );
+    obj_run(pikaMain,(char*)
+            "def test2():\n"
+            "    print('test2')\n"
+            "\n"
+            );
+    obj_run(pikaMain, (char*)"test()\n");
+    obj_run(pikaMain, (char*)"test2()\n");
     /* collect */
     /* assert */
+    EXPECT_STREQ((char*)"test2\r\n", log_buff[0]);
+    EXPECT_STREQ((char*)"test\r\n", log_buff[1]);
+    EXPECT_STREQ((char*)"BEGIN\r\n", log_buff[2]);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

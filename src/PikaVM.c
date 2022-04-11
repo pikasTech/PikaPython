@@ -209,9 +209,9 @@ static Arg* VMState_runMethodArg(VMState* vs,
     } else {
         /* static method and object method */
         /* byteCode */
-        uint16_t pc = (uintptr_t)method_ptr -
-                      (uintptr_t)instructArray_getByOffset(
-                          &(method_bytecodeFrame->instruct_array), 0);
+        uintptr_t insturctArray_start = (uintptr_t)instructArray_getByOffset(
+            &(method_bytecodeFrame->instruct_array), 0);
+        uint16_t pc = (uintptr_t)method_ptr - insturctArray_start;
         sub_locals = pikaVM_runByteCodeWithState(
             method_host_obj, sub_locals, vs->globals, method_bytecodeFrame, pc);
 
@@ -899,10 +899,10 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
 }
 
 VMParameters* pikaVM_runPyOrByteCode(PikaObj* self,
-                                     char* multiLine,
+                                     char* py_lines,
                                      uint8_t* bytecode) {
     uint8_t is_run_py;
-    if (NULL != multiLine) {
+    if (NULL != py_lines) {
         is_run_py = 1;
     } else if (NULL != bytecode) {
         is_run_py = 0;
@@ -914,24 +914,39 @@ VMParameters* pikaVM_runPyOrByteCode(PikaObj* self,
     ByteCodeFrame bytecode_frame_stack = {0};
     ByteCodeFrame* bytecode_frame_p = NULL;
     uint8_t is_use_heap_bytecode = 0;
-    if (!args_isArgExist(self->list, "__bytecode")) {
-        /* the first obj_run, save bytecode to heap */
+
+    /*
+     * the first obj_run, cache bytecode to heap, to support 'def' and 'class'
+     */
+    if (!args_isArgExist(self->list, "__first_bytecode")) {
         is_use_heap_bytecode = 1;
         /* load bytecode to heap */
-        args_setHeapStruct(self->list, "__bytecode", bytecode_frame_stack,
+        args_setHeapStruct(self->list, "__first_bytecode", bytecode_frame_stack,
                            byteCodeFrame_deinit);
         /* get bytecode_ptr from heap */
-        bytecode_frame_p = args_getHeapStruct(self->list, "__bytecode");
+        bytecode_frame_p = args_getHeapStruct(self->list, "__first_bytecode");
     } else {
-        /* not the first obj_run, bytecode only in stack */
-        /* get bytecode_ptr from stack */
-        bytecode_frame_p = &bytecode_frame_stack;
+        /* not the first obj_run */
+        /* save 'def' and 'class' to heap */
+        if ((strIsStartWith(py_lines, "def ")) ||
+            (strIsStartWith(py_lines, "class "))) {
+            char* declear_name = strsGetFirstToken(&buffs, py_lines, ':');
+            /* load bytecode to heap */
+            args_setHeapStruct(self->list, declear_name, bytecode_frame_stack,
+                               byteCodeFrame_deinit);
+            /* get bytecode_ptr from heap */
+            bytecode_frame_p = args_getHeapStruct(self->list, declear_name);
+        } else {
+            /* get bytecode_ptr from stack */
+            bytecode_frame_p = &bytecode_frame_stack;
+        }
     }
+
     /* load or generate byte code frame */
     if (is_run_py) {
         /* generate byte code */
         byteCodeFrame_init(bytecode_frame_p);
-        if (1 == bytecodeFrame_fromMultiLine(bytecode_frame_p, multiLine)) {
+        if (1 == bytecodeFrame_fromMultiLine(bytecode_frame_p, py_lines)) {
             __platform_printf("[error]: Syntax error.\r\n");
             globals = NULL;
             goto exit;
@@ -940,6 +955,7 @@ VMParameters* pikaVM_runPyOrByteCode(PikaObj* self,
         /* load bytecode */
         byteCodeFrame_loadBytes(bytecode_frame_p, bytecode);
     }
+
     /* run byteCode */
     globals = pikaVM_runByteCodeFrame(self, bytecode_frame_p);
     goto exit;
