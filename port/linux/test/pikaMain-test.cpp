@@ -1578,3 +1578,31 @@ TEST(pikaMain, def_in_shell_override) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, class_in_shell) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+
+    /* skip the first obj_run */
+    obj_run(pikaMain, (char*)"'BEGIN'");
+    /* as run in shell */
+    obj_run(pikaMain,(char*)
+            "class Test():\n"
+            "    def hi(self):\n"
+            "        print('hi')\n"
+            "\n"
+            );
+    obj_run(pikaMain, (char*)
+            "t = Test()\n"
+            "t.hi()\n"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ((char*)"hi\r\n", log_buff[0]);
+    EXPECT_STREQ((char*)"BEGIN\r\n", log_buff[1]);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
