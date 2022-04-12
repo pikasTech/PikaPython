@@ -59,7 +59,7 @@ http://pikascript.com
 
 # Quick Start
 
-You can use [simulation project](document/1.三分钟快速上手.md) to quick start without hardware，or use the out-of-the-box develop board [Pika-Pi—Zero](https://item.taobao.com/item.htm?spm=a2126o.success.result.1.76224831Y0X1gO&id=654947372034).
+You can use [simulation project](https://pikadoc.readthedocs.io/en/latest/Keil%20%E4%BB%BF%E7%9C%9F%E5%B7%A5%E7%A8%8B.html) to quick start without hardware，or use the out-of-the-box develop board [Pika-Pi—Zero](https://item.taobao.com/item.htm?spm=a2126o.success.result.1.76224831Y0X1gO&id=654947372034).
 
 ![image](https://user-images.githubusercontent.com/88232613/141252834-93011ca7-f84b-4192-8e61-0e242796f62c.png)
 
