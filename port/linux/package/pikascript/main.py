@@ -7,7 +7,6 @@ import PikaDebug
 import PikaStdData
 
 pkdb = PikaDebug.Debuger()
-list = PikaStdData.List()
 io =PikaStdDevice.GPIO()
 mem = PikaStdLib.MemChecker()
 

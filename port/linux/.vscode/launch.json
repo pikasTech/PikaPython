@@ -15,8 +15,8 @@
             "name": "test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/pikascript_test",
-            // "program": "${workspaceFolder}/../build/src/boot/demo06-pikamain/pikascript_demo06-pikamain",
+            // "program": "${workspaceFolder}/build/test/pikascript_test",
+            "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=args.heap_struct_override",
                 // "--gtest_filter=pikaMain.list__set__",

@@ -47,7 +47,8 @@
         "atomic": "c",
         "cstdint": "c",
         "pika_config.h": "c",
-        "PikaParser.H": "cpp"
+        "PikaParser.H": "cpp",
+        "pikastddata_list.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }

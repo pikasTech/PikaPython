@@ -1634,3 +1634,22 @@ TEST(pikaMain, class_TinyObj) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, list_sysobj) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+
+    /* skip the first obj_run */
+    obj_run(pikaMain, (char*)
+    "a = list()\n"
+    "a.len()\n"
+    );
+    /* as run in shell */
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
