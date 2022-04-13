@@ -2771,3 +2771,23 @@ TEST(parser, _3_3) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, list_init) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"a = [1, 2, 3]\n";
+    printf("%s\n", Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines)));
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    EXPECT_STREQ(pikaAsm, (char*)
+        "B0\n"
+        "1 NUM 1\n"
+        "1 NUM 2\n"
+        "1 NUM 3\n"
+        "0 LST\n"
+        "0 OUT a\n"
+        );
+    printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

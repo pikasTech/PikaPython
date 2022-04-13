@@ -46,6 +46,7 @@ enum StmtType {
     STMT_number,
     STMT_method,
     STMT_operator,
+    STMT_list,
     STMT_none,
 };
 
@@ -85,10 +86,14 @@ void Parser_compilePyToBytecodeArray(char* lines);
     ParserState_beforeIter(&parseState); \
     for (int i = 0; i < parseState.length; i++)
 
-#define ParserState_forEachToken(parseState, tokens) \
-    struct ParserState ps;                     \
-    /* init parserStage */                     \
-    ParserState_init(&parseState);             \
-    ParserState_parse(&parseState, tokens);    \
+#define ParserState_forEachTokenExistPs(parseState, tokens) \
+    /* init parserStage */                                 \
+    ParserState_init(&parseState);                         \
+    ParserState_parse(&parseState, tokens);                \
     ParserState_forEach(parseState)
+
+#define ParserState_forEachToken(parseState, tokens) \
+    struct ParserState ps;                           \
+    ParserState_forEachTokenExistPs(parseState, tokens)
+
 #endif
