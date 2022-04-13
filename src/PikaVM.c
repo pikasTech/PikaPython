@@ -279,6 +279,20 @@ exit:
 }
 
 static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
+    uint8_t arg_num = VMState_getInputArgNum(vs);
+    Stack stack = {0};
+    stack_init(&stack);
+    /* load to local stack to change sort */
+    for (int i = 0; i < arg_num; i++) {
+        Arg* arg = stack_popArg(&(vs->stack));
+        stack_pushArg(&stack, arg);
+    }
+    for (int i = 0; i < arg_num; i++) {
+        Arg* arg = stack_popArg(&stack);
+        __platform_printf("%d\r\n", arg_getInt(arg));
+        arg_deinit(arg);
+    }
+    stack_deinit(&stack);
     return NULL;
 }
 

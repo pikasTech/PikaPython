@@ -2784,7 +2784,7 @@ TEST(parser, list_init) {
         "1 NUM 1\n"
         "1 NUM 2\n"
         "1 NUM 3\n"
-        "0 LST\n"
+        "0 LST \n"
         "0 OUT a\n"
         );
     printf("%s", pikaAsm);
