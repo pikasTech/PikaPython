@@ -278,6 +278,10 @@ exit:
     strsDeinit(&buffs);
 }
 
+static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
+    return NULL;
+}
+
 static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     Args buffs = {0};
     Arg* return_arg = NULL;
