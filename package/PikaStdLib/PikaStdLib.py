@@ -1,6 +1,5 @@
 from PikaObj import *
 
-
 class MemChecker(TinyObj):
     def max(self):
         pass
@@ -47,6 +46,12 @@ class SysObj(BaseObj):
         pass
 
     def len(self, arg:any) -> int:
+        pass
+
+    def list(self) -> any:
+        pass
+
+    def dict(self) -> any:
         pass
 
 

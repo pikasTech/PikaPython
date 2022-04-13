@@ -216,3 +216,13 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
     __platform_printf("[Error] len: arg type not support\r\n");
     return -1;
 }
+
+extern PikaObj *New_PikaStdData_Dict(Args *args);
+Arg * PikaStdLib_SysObj_dict(PikaObj *self){
+    return obj_newObjInPackage(New_PikaStdData_Dict);
+}
+
+extern PikaObj *New_PikaStdData_List(Args *args);
+Arg* PikaStdLib_SysObj_list(PikaObj *self){
+    return obj_newObjInPackage(New_PikaStdData_List);
+}
