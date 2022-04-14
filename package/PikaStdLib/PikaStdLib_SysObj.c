@@ -218,7 +218,7 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
 }
 
 Arg* PikaStdLib_SysObj_list(PikaObj *self){
-#if PIKA_BUILTIN_LIST_ENBALE
+#if PIKA_BUILTIN_LIST_ENABLE
     PikaObj *New_PikaStdData_List(Args *args);
     return obj_newObjInPackage(New_PikaStdData_List);
 #endif
@@ -228,7 +228,7 @@ Arg* PikaStdLib_SysObj_list(PikaObj *self){
 }
 
 Arg* PikaStdLib_SysObj_dict(PikaObj *self){
-#if PIKA_BUILTIN_DICT_ENBALE
+#if PIKA_BUILTIN_DICT_ENABLE
     PikaObj *New_PikaStdData_Dict(Args *args);
     return obj_newObjInPackage(New_PikaStdData_Dict);
 #endif

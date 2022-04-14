@@ -279,7 +279,7 @@ exit:
 }
 
 
-#if PIKA_BUILTIN_LIST_ENBALE
+#if PIKA_BUILTIN_LIST_ENABLE
 void PikaStdData_List_append(PikaObj* self, Arg* arg);
 void PikaStdData_List___init__(PikaObj* self);
 PikaObj* New_PikaStdData_List(Args* args);

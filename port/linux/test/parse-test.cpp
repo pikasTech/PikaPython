@@ -2772,7 +2772,7 @@ TEST(parser, _3_3) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_BUILTIN_LIST_ENBALE
+#if PIKA_BUILTIN_LIST_ENABLE
 TEST(parser, list_init) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();

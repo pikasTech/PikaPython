@@ -35,8 +35,8 @@
         #define PIKA_PATH_BUFF_SIZE 64
         #define PIKA_ARG_ALIGN_ENABLE 1
         #define PIKA_METHOD_CACHE_ENABLE 0
-        #define PIKA_BUILTIN_LIST_ENBALE 0
-        #define PIKA_BUILTIN_DICT_ENBALE 0
+        #define PIKA_BUILTIN_LIST_ENABLE 0
+        #define PIKA_BUILTIN_DICT_ENABLE 0
     
     /* optimize options */
         #define PIKA_OPTIMIZE_SIZE 0

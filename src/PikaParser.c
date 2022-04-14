@@ -918,7 +918,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         goto exit;
     }
 
-    #if PIKA_BUILTIN_LIST_ENBALE
+    #if PIKA_BUILTIN_LIST_ENABLE
     /* solve list stmt */
     if (STMT_list == stmtType) {
         obj_setStr(ast, (char*)"list", "list");
