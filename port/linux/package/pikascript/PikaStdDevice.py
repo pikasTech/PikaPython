@@ -254,3 +254,60 @@ class PWM(TinyObj):
     # need override
     def platformDisable(self):
         pass
+
+
+class SPI(TinyObj):
+    def __init__(self):
+        pass
+
+    def setPinSCK(self, pin: str):
+        pass
+
+    def setPinMOSI(self, pin: str):
+        pass
+
+    def setPinMISO(self, pin: str):
+        pass
+
+    def setName(self, name: str):
+        pass
+
+    def setId(self, id: int):
+        pass
+
+    def setPolarity(self, polarity: int):
+        pass
+
+    def setPhase(self, phase: int):
+        pass
+
+    def setBaudRate(self, baudRate: int):
+        pass
+
+    def enable(self):
+        pass
+
+    def disable(self):
+        pass
+
+    def write(self, data: str):
+        pass
+
+    def read(self, length: int) -> str:
+        pass
+
+    # need override
+    def platformEnable(self):
+        pass
+
+    # need override
+    def platformWrite(self):
+        pass
+
+    # need override
+    def platformRead(self):
+        pass
+
+    # need override
+    def platformDisable(self):
+        pass

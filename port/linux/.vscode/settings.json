@@ -48,7 +48,8 @@
         "cstdint": "c",
         "pika_config.h": "c",
         "PikaParser.H": "cpp",
-        "pikastddata_list.h": "c"
+        "pikastddata_list.h": "c",
+        "pikastddevice_spi.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }

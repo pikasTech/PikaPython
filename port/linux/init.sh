@@ -1,4 +1,7 @@
 ROOT=$PWD
+
+cp config/pika_config_default.h config/pika_config.h
+
 # git submodule init
 # git submodule update
 git config --unset-all core.filemode
