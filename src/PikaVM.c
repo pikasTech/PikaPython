@@ -278,8 +278,14 @@ exit:
     strsDeinit(&buffs);
 }
 
+void PikaStdData_List_append(PikaObj* self, Arg* arg);
+void PikaStdData_List___init__(PikaObj* self);
+extern PikaObj* New_PikaStdData_List(Args* args);
 static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
     uint8_t arg_num = VMState_getInputArgNum(vs);
+    Arg* list_arg = obj_newObjInPackage(New_PikaStdData_List);
+    PikaObj* list = arg_getPtr(list_arg);
+    PikaStdData_List___init__(list);
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */
@@ -289,11 +295,11 @@ static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
     }
     for (int i = 0; i < arg_num; i++) {
         Arg* arg = stack_popArg(&stack);
-        __platform_printf("%d\r\n", arg_getInt(arg));
+        PikaStdData_List_append(list, arg);
         arg_deinit(arg);
     }
     stack_deinit(&stack);
-    return NULL;
+    return list_arg;
 }
 
 static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
