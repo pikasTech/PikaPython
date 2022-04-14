@@ -1659,8 +1659,7 @@ TEST(pikaMain, list_init) {
     pikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-
-    /* skip the first obj_run */
+    __platform_printf((char*)"BEGIN\r\n");
     obj_run(pikaMain, (char*)
     "a = [1, 2, 3]\n"
     "a.len()\n"
@@ -1668,6 +1667,8 @@ TEST(pikaMain, list_init) {
     /* as run in shell */
     /* collect */
     /* assert */
+    EXPECT_STREQ((char*)"3\r\n", log_buff[0]);
+    EXPECT_STREQ((char*)"BEGIN\r\n", log_buff[1]);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
