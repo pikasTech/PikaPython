@@ -16,7 +16,7 @@ rm build -rf
 mkdir build
 sh api-make.sh
 cd build
-cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DPIKA_CONFIG_ENABLE=ON ..
 
 cd $ROOT
 rm Release -rf
