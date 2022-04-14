@@ -1,6 +1,9 @@
-sh update-compiler.sh
-rm build/test/pikascript_test
-sh make.sh
-build/test/pikascript_test 
-#build/benchmark/pikascript_benchmark --benchmark_format=json | tee benchmark_result.json
-#build/test/pikascript_test --gtest_filter=args_*
+# backup
+cp config/pika_config.h config/pika_config_backup.h
+
+cp config/pika_config_default.h config/pika_config.h && sh _gtest_once.sh && \
+cp config/pika_config_builtin_list.h config/pika_config.h && sh _gtest_once.sh && \
+cp config/pika_config_benchmark.h config/pika_config.h && sh _gtest_once.sh 
+
+# restore backup
+mv config/pika_config_backup.h config/pika_config.h
