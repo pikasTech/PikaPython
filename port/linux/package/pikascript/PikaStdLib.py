@@ -51,6 +51,8 @@ class SysObj(BaseObj):
     def list(self) -> any:
         pass
 
+    def dict(self) -> any:
+        pass
 
 class RangeObj(TinyObj):
     def __next__(self) -> any:
