@@ -2,7 +2,6 @@
 #include "BaseObj.h"
 #include "PikaObj.h"
 void PikaStdDevice_SPI___init__(PikaObj *self){
-
 }
 
 void PikaStdDevice_SPI_disable(PikaObj *self){
@@ -17,7 +16,6 @@ void PikaStdDevice_SPI_write(PikaObj *self, char * data){
     obj_setStr(self, "writeData", data);
     obj_runNativeMethod(self, "platformWrite", NULL);
 }
-
 
 char * PikaStdDevice_SPI_read(PikaObj *self, int length){
     obj_setInt(self, "length", length);
