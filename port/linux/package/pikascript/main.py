@@ -5,23 +5,6 @@ import PikaMath
 import PikaStdDevice
 import PikaDebug
 import PikaStdData
+from package.pikascript.PikaObj import printNoEnd
 
-pkdb = PikaDebug.Debuger()
-io =PikaStdDevice.GPIO()
 mem = PikaStdLib.MemChecker()
-
-class Test():
-    x = 1
-    def hi(self):
-        print('hi' + str(self.x))
-test = Test()
-test.hi()
-
-def todo1():
-    test.hi()
-    mem.max()
-
-print('hello')
-
-task = GTestTask.Task()
-task.call_period_ms(todo1, 500)

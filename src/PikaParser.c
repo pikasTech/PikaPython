@@ -620,6 +620,12 @@ void ParserState_iterStart(struct ParserState* ps) {
     if (strEqu(ps->token1.pyload, ")")) {
         ps->branket_deepth--;
     }
+    if (strEqu(ps->token1.pyload, "[")) {
+        ps->branket_deepth++;
+    }
+    if (strEqu(ps->token1.pyload, "]")) {
+        ps->branket_deepth--;
+    }
 }
 
 void LexToken_init(struct LexToken* lt) {
