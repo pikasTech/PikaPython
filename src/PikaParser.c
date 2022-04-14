@@ -917,6 +917,8 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         AST_parseStmt(queueObj_getCurrentObj(ast), subStmt2);
         goto exit;
     }
+
+    #if PIKA_BUILTIN_LIST_ENBALE
     /* solve list stmt */
     if (STMT_list == stmtType) {
         obj_setStr(ast, (char*)"list", "list");
@@ -953,6 +955,8 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         arg_deinit(subStmt);
         goto exit;
     }
+    #endif
+
     /* solve method stmt */
     if (STMT_method == stmtType) {
         method = strsGetFirstToken(&buffs, right, '(');

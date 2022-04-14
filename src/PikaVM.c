@@ -278,9 +278,11 @@ exit:
     strsDeinit(&buffs);
 }
 
+
+#if PIKA_BUILTIN_LIST_ENBALE
 void PikaStdData_List_append(PikaObj* self, Arg* arg);
 void PikaStdData_List___init__(PikaObj* self);
-extern PikaObj* New_PikaStdData_List(Args* args);
+PikaObj* New_PikaStdData_List(Args* args);
 static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
     uint8_t arg_num = VMState_getInputArgNum(vs);
     Arg* list_arg = obj_newObjInPackage(New_PikaStdData_List);
@@ -301,6 +303,7 @@ static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
     stack_deinit(&stack);
     return list_arg;
 }
+#endif
 
 static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     Args buffs = {0};

@@ -2772,6 +2772,7 @@ TEST(parser, _3_3) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_BUILTIN_LIST_ENBALE
 TEST(parser, list_init) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2811,3 +2812,4 @@ TEST(parser, list_init_fun) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif

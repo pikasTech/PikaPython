@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.0.0)
 add_compile_options(-Wall -Wextra -Wno-unused-parameter)
 OPTION(PIKA_CONFIG_ENABLE "pika config enable" OFF)
 IF(PIKA_CONFIG_ENABLE)
-    ADD_DEFINITIONS(-DPIKA_CONFIG_ENABLE)
 ENDIF(PIKA_CONFIG_ENABLE)
 
 project(pikascript VERSION 0.1.0)

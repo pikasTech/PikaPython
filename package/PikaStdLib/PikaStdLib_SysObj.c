@@ -217,12 +217,12 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
     return -1;
 }
 
-extern PikaObj *New_PikaStdData_Dict(Args *args);
-Arg * PikaStdLib_SysObj_dict(PikaObj *self){
-    return obj_newObjInPackage(New_PikaStdData_Dict);
-}
-
-extern PikaObj *New_PikaStdData_List(Args *args);
 Arg* PikaStdLib_SysObj_list(PikaObj *self){
+#if PIKA_BUILTIN_LIST_ENBALE
+    PikaObj *New_PikaStdData_List(Args *args);
     return obj_newObjInPackage(New_PikaStdData_List);
+#endif
+    obj_setErrorCode(self, 1);
+    __platform_printf("[Error] list: built-in list is not enabled.\r\n");
+    return arg_setNull(NULL);
 }

@@ -1654,6 +1654,7 @@ TEST(pikaMain, list_sysobj) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_BUILTIN_LIST_ENBALE
 TEST(pikaMain, list_init) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1673,3 +1674,4 @@ TEST(pikaMain, list_init) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
