@@ -7,7 +7,10 @@ void PikaStdDevice_CAN_addFilter(PikaObj* self,
                                  int ide,
                                  int mask,
                                  int mode,
-                                 int rtr) {}
+                                 int rtr) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
 
 void PikaStdDevice_CAN_disable(PikaObj* self) {
     obj_runNativeMethod(self, "platformDisable", NULL);

@@ -329,9 +329,6 @@ class CAN(TinyObj):
     def setMode(self, mode: str):
         pass
 
-    def addFilter(self, id:int, ide:int, rtr:int, mode:int,mask:int, hdr:int):
-        pass
-
     def enable(self):
         pass
 
@@ -342,6 +339,10 @@ class CAN(TinyObj):
         pass
 
     def read(self, length: int) -> str:
+        pass
+
+    # need override 
+    def addFilter(self, id:int, ide:int, rtr:int, mode:int,mask:int, hdr:int):
         pass
 
     # need override
