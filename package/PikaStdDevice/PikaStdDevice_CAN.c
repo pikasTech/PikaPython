@@ -1,6 +1,7 @@
 #include "PikaStdDevice_CAN.h"
 
 void PikaStdDevice_CAN___init__(PikaObj* self) {}
+
 void PikaStdDevice_CAN_addFilter(PikaObj* self,
                                  int hdr,
                                  int id,
