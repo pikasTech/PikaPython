@@ -342,7 +342,7 @@ class CAN(TinyObj):
         pass
 
     # need override 
-    def addFilter(self, id:int, ide:int, rtr:int, mode:int,mask:int, hdr:int):
+    def addFilter(self, id:int, ide:int, rtr:int, mode:int, mask:int, hdr:int):
         pass
 
     # need override

@@ -5,7 +5,7 @@ void PikaStdDevice_SPI___init__(PikaObj* self) {
     obj_setInt(self, "baudRate", 1000);
     obj_setInt(self, "id", 0);
     obj_setStr(self, "name", "none");
-    obj_setInt(self, "name", 0);
+    obj_setInt(self, "phase", 0);
     obj_setStr(self, "MISOpin", "none");
     obj_setStr(self, "MOSIpin", "none");
     obj_setStr(self, "SCKpin", "none");
@@ -44,7 +44,7 @@ void PikaStdDevice_SPI_setName(PikaObj* self, char* name) {
 }
 
 void PikaStdDevice_SPI_setPhase(PikaObj* self, int phase) {
-    obj_setInt(self, "name", phase);
+    obj_setInt(self, "phase", phase);
 }
 
 void PikaStdDevice_SPI_setPinMISO(PikaObj* self, char* pin) {
