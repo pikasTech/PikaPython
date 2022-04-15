@@ -1,0 +1,65 @@
+#include "PikaStdDevice_CAN.h"
+
+void PikaStdDevice_CAN___init__(PikaObj* self) {}
+void PikaStdDevice_CAN_addFilter(PikaObj* self,
+                                 int hdr,
+                                 int id,
+                                 int ide,
+                                 int mask,
+                                 int mode,
+                                 int rtr) {}
+
+void PikaStdDevice_CAN_disable(PikaObj* self) {
+    obj_runNativeMethod(self, "platformDisable", NULL);
+}
+
+void PikaStdDevice_CAN_enable(PikaObj* self) {
+    obj_runNativeMethod(self, "platformEnable", NULL);
+}
+
+void PikaStdDevice_CAN_setId(PikaObj* self, int id) {
+    obj_setInt(self, "id", id);
+}
+
+void PikaStdDevice_CAN_setMode(PikaObj* self, char* mode) {
+    obj_setStr(self, "mode", mode);
+}
+
+void PikaStdDevice_CAN_setName(PikaObj* self, char* name) {
+    obj_setStr(self, "name", name);
+}
+
+void PikaStdDevice_CAN_setBaudRate(PikaObj* self, int baudRate) {
+    obj_setInt(self, "baudRate", baudRate);
+}
+
+char* PikaStdDevice_CAN_read(PikaObj* self, int length) {
+    obj_setInt(self, "length", length);
+    obj_runNativeMethod(self, "platformRead", NULL);
+    return obj_getStr(self, "readData");
+}
+
+void PikaStdDevice_CAN_write(PikaObj* self, char* data) {
+    obj_setStr(self, "writeData", data);
+    obj_runNativeMethod(self, "platformWrite", NULL);
+}
+
+void PikaStdDevice_CAN_platformDisable(PikaObj* self) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
+void PikaStdDevice_CAN_platformEnable(PikaObj* self) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
+void PikaStdDevice_CAN_platformRead(PikaObj* self) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
+void PikaStdDevice_CAN_platformWrite(PikaObj* self) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}

@@ -311,3 +311,51 @@ class SPI(TinyObj):
     # need override
     def platformDisable(self):
         pass
+
+
+class CAN(TinyObj):
+    def __init__(self):
+        pass
+
+    def setName(self, name: str):
+        pass
+
+    def setId(self, id: int):
+        pass
+
+    def setBaudRate(self, baudRate: int):
+        pass
+
+    def setMode(self, mode: str):
+        pass
+
+    def addFilter(self, id:int, ide:int, rtr:int, mode:int,mask:int, hdr:int):
+        pass
+
+    def enable(self):
+        pass
+
+    def disable(self):
+        pass
+
+    def write(self, data: str):
+        pass
+
+    def read(self, length: int) -> str:
+        pass
+
+    # need override
+    def platformEnable(self):
+        pass
+
+    # need override
+    def platformWrite(self):
+        pass
+
+    # need override
+    def platformRead(self):
+        pass
+
+    # need override
+    def platformDisable(self):
+        pass
