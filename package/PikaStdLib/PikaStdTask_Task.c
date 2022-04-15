@@ -4,7 +4,10 @@
 extern PikaObj* __pikaMain;
 void PikaStdTask_Task___init__(PikaObj* self) {
     PIKA_PYTHON_BEGIN
-    PIKA_PYTHON(calls.__init__() is_period = 0)
+    PIKA_PYTHON(
+        calls.__init__()
+        is_period = 0
+        )
     const uint8_t bytes[] = {
         0x0c, 0x00, /* instruct array size */
         0x00, 0x82, 0x01, 0x00, 0x00, 0x85, 0x10, 0x00, 0x00, 0x04, 0x12, 0x00,
@@ -22,7 +25,10 @@ void PikaStdTask_Task___init__(PikaObj* self) {
 void PikaStdTask_Task_call_always(PikaObj* self, Arg* fun_todo) {
     obj_setArg(self, "fun_todo", fun_todo);
     PIKA_PYTHON_BEGIN
-    PIKA_PYTHON(calls.append('always') calls.append(fun_todo))
+    PIKA_PYTHON(
+    calls.append('always')
+    calls.append(fun_todo)
+    )
     const uint8_t bytes[] = {
         0x10, 0x00, /* instruct array size */
         0x10, 0x83, 0x01, 0x00, 0x00, 0x02, 0x08, 0x00, 0x10, 0x81, 0x15,
@@ -40,8 +46,11 @@ void PikaStdTask_Task_call_when(PikaObj* self, Arg* fun_todo, Arg* fun_when) {
     obj_setArg(self, "fun_todo", fun_todo);
     obj_setArg(self, "fun_when", fun_when);
     PIKA_PYTHON_BEGIN
-    PIKA_PYTHON(calls.append('when') calls.append(fun_when)
-                    calls.append(fun_todo))
+    PIKA_PYTHON(
+    calls.append('when')
+    calls.append(fun_when)
+    calls.append(fun_todo)
+    )
     const uint8_t bytes[] = {
         0x18, 0x00, /* instruct array size */
         0x10, 0x83, 0x01, 0x00, 0x00, 0x02, 0x06, 0x00, 0x10, 0x81, 0x13, 0x00,
@@ -64,8 +73,13 @@ void PikaStdTask_Task_call_period_ms(PikaObj* self,
     obj_setArg(self, "fun_todo", fun_todo);
     obj_setInt(self, "period_ms", period_ms);
     PIKA_PYTHON_BEGIN
-    PIKA_PYTHON(calls.append('period_ms') calls.append(period_ms)
-                    calls.append(fun_todo) calls.append(0) is_period = 1)
+    PIKA_PYTHON(
+    calls.append('period_ms')
+    calls.append(period_ms)
+    calls.append(fun_todo)
+    calls.append(0)
+    is_period = 1
+    )
     const uint8_t bytes[] =
         {
             0x28, 0x00, /* instruct array size */
@@ -194,7 +208,9 @@ void PikaStdTask_Task_run_once(PikaObj* self) {
 void __Task_update_tick(PikaObj* self) {
     if (obj_getInt(self, "is_perod")) {
         PIKA_PYTHON_BEGIN
-        PIKA_PYTHON(platformGetTick())
+        PIKA_PYTHON(
+        platformGetTick()
+        )
         const uint8_t bytes[] = {
             0x04, 0x00,             /* instruct array size */
             0x00, 0x82, 0x01, 0x00, /* instruct array */
