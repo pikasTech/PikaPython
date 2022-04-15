@@ -50,7 +50,9 @@
         "PikaParser.H": "cpp",
         "pikastddata_list.h": "c",
         "pikastddevice_spi.h": "c",
-        "pikastddevice_can.h": "c"
+        "pikastddevice_can.h": "c",
+        "ctypes.h": "c",
+        "ctypes_test.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }
