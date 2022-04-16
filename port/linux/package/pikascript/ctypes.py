@@ -9,5 +9,5 @@ class c_wchar_p(TinyObj):
         pass
 
 class Test(TinyObj):
-    def add(self, c_uint1:pointer, c_uint2:pointer)->int:
+    def add(self, c_uint1:c_uint, c_uint2:c_uint)->int:
         pass

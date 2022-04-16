@@ -12,18 +12,18 @@ impl PyType {
             return "float".to_string();
         }
         if self.type_name == "pointer" {
-            return "void *".to_string();
+            return "void*".to_string();
         }
         if self.type_name == "str" {
-            return "char *".to_string();
+            return "char*".to_string();
         }
         if self.type_name == "" {
             return "void".to_string();
         }
         if self.type_name == "any" {
-            return "Arg *".to_string();
+            return "Arg*".to_string();
         }
-        return "void *".to_string();
+        return "PikaObj*".to_string();
     }
     pub fn to_string(&self) -> String {
         return self.type_name.clone();
