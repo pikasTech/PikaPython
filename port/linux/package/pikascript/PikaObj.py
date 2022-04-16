@@ -5,6 +5,8 @@ class TinyObj:
 class BaseObj(TinyObj):
     pass
 
+class pointer:
+    pass
 
 def print(val: any):
     pass
