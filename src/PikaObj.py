@@ -5,10 +5,14 @@ class TinyObj:
 class BaseObj(TinyObj):
     pass
 
+class pointer:
+    pass
 
 def print(val: any):
     pass
 
+def printNoEnd(val: any):
+    pass
 
-def set(argPath: str, val: any):
+def taskLoop(task: any):
     pass
