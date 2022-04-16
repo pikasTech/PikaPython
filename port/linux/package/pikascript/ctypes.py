@@ -1,10 +1,10 @@
 from PikaObj import *
 
-class cUint(TinyObj):
+class c_uint(TinyObj):
     def __init__(self, value:int):
         pass
 
-class cWcharP(TinyObj):
+class c_wchar_p(TinyObj):
     def __init__(self, value:str):
         pass
 

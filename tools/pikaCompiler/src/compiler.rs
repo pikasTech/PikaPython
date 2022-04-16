@@ -143,6 +143,7 @@ impl Compiler {
                 Some(s) => s,
                 None => return compiler,
             };
+            let class_name_without_file = class_now.this_class_name_without_file.clone();
             let class_name = class_now.this_class_name.clone();
             compiler
                 .class_list
@@ -157,10 +158,6 @@ impl Compiler {
                     None => return compiler,
                 };
                 let package_now = compiler.class_list.get_mut(&package_now_name).unwrap();
-                let class_name_without_file = match my_string::get_last_token(&class_name, '_') {
-                    Some(s) => s,
-                    None => return compiler,
-                };
                 let package_new_object_method = format!("def {}()->any:", class_name_without_file);
                 package_now.push_constructor(package_new_object_method);
             }

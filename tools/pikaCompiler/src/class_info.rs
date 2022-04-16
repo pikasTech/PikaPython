@@ -8,6 +8,7 @@ use std::collections::BTreeMap;
 #[derive(Debug)]
 pub struct ClassInfo {
     pub this_class_name: String,
+    pub this_class_name_without_file: String,
     pub super_class_name: String,
     pub method_list: BTreeMap<String, MethodInfo>,
     pub object_list: BTreeMap<String, ObjectInfo>,
@@ -45,9 +46,11 @@ impl ClassInfo {
             Some(s) => s,
             None => return None,
         };
+        let this_class_name_without_file = this_calss_name.clone();
         this_calss_name = ClassInfo::add_file_profix(&file_name, &this_calss_name, is_package);
         let new_class_info = ClassInfo {
             this_class_name: this_calss_name,
+            this_class_name_without_file: this_class_name_without_file,
             super_class_name: super_class_name,
             method_list: BTreeMap::new(),
             object_list: BTreeMap::new(),

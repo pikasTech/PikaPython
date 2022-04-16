@@ -1,11 +1,12 @@
 #include "ctypes_Test.h"
-#include "ctypes_cUint.h"
-#include "ctypes_cWcharP.h"
-void ctypes_cUint___init__(PikaObj* self, int value) {
+#include "ctypes_c_uint.h"
+#include "ctypes_c_wchar_p.h"
+
+void ctypes_c_uint___init__(PikaObj *self, int value){
     obj_setInt(self, "value", value);
 }
 
-void ctypes_cWcharP___init__(PikaObj* self, char* value) {
+void ctypes_c_wchar_p___init__(PikaObj* self, char* value) {
     obj_setStr(self, "value", value);
 }
 
