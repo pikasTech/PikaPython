@@ -53,7 +53,8 @@
         "pikastddevice_can.h": "c",
         "ctypes.h": "c",
         "ctypes_test.h": "c",
-        "ctypes_c_uint.h": "c"
+        "ctypes_c_uint.h": "c",
+        "ctypes_utils.h": "c"
     },
     "python.formatting.provider": "autopep8"
 }
