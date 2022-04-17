@@ -4,15 +4,15 @@
 #include "ctypes_utils.h"
 
 void ctypes_c_uint___init__(PikaObj* self, int value) {
-    obj_setInt(self, "value", value);
+    ctypesUtils_setInt(self, value);
 }
 
 void ctypes_c_wchar_p___init__(PikaObj* self, char* value) {
-    obj_setStr(self, "value", value);
+    ctypesUtils_setStr(self, value);
 }
 
 int ctypes_Test_add(PikaObj* self, PikaObj* c_uint1, PikaObj* c_uint2) {
-    return obj_getInt(c_uint1, "value") + obj_getInt(c_uint2, "value");
+    return ctypesUtils_getInt(c_uint1) + ctypesUtils_getInt(c_uint2);
 }
 
 int ctypes_Test_dc_cpuapdu_hex(PikaObj* self,
