@@ -1,6 +1,7 @@
 #include "ctypes_Test.h"
 #include "ctypes_c_uint.h"
 #include "ctypes_c_wchar_p.h"
+#include "ctypes_c_float.h"
 #include "ctypes_utils.h"
 
 void ctypes_c_uint___init__(PikaObj* self, int value) {
@@ -9,6 +10,10 @@ void ctypes_c_uint___init__(PikaObj* self, int value) {
 
 void ctypes_c_wchar_p___init__(PikaObj* self, char* value) {
     ctypesUtils_setStr(self, value);
+}
+
+void ctypes_c_float___init__(PikaObj *self, float value){
+    ctypesUtils_setFloat(self, value);
 }
 
 int ctypes_Test_add(PikaObj* self, PikaObj* c_uint1, PikaObj* c_uint2) {
