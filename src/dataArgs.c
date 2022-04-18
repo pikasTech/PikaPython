@@ -80,6 +80,16 @@ int args_pushArg(Args* self, Arg* arg) {
     return 0;
 }
 
+void args_setMem(Args* self, char* name, void* src, size_t size) {
+    Arg* argNew = New_arg(NULL);
+    argNew = arg_newContent(argNew, size + sizeof(size_t));
+    argNew = arg_setName(argNew, name);
+    void* dir = arg_getContent(argNew);
+    __platform_memcpy(dir, &size, sizeof(size_t));
+    __platform_memcpy(dir + sizeof(size_t), src, size);
+    args_pushArg(self, argNew);
+}
+
 char* args_getBuff(Args* self, int32_t size) {
     Arg* argNew = New_arg(NULL);
     argNew = arg_newContent(argNew, size + 1);
@@ -99,6 +109,20 @@ char* args_getStr(Args* self, char* name) {
         return NULL;
     }
     return (char*)arg_getContent(arg);
+}
+
+void* args_getMem(Args* self, char* name) {
+    return (void*)args_getStr(self, name) + sizeof(size_t);
+}
+
+size_t args_getMemSize(Args* self, char* name) {
+    size_t mem_size = 0;
+    void* content = (void*)args_getStr(self, name);
+    if (NULL == content) {
+        return 0;
+    }
+    __platform_memcpy(&mem_size, content, sizeof(size_t));
+    return mem_size;
 }
 
 int32_t args_setInt(Args* self, char* name, int64_t int64In) {
@@ -476,3 +500,4 @@ Args* New_args(Args* args) {
     Args* self = New_link(NULL);
     return self;
 }
+

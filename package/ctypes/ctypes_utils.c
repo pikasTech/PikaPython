@@ -31,3 +31,15 @@ float ctypesUtils_getFloat(PikaObj* self) {
 void* ctypesUtils_getPtr(PikaObj* self) {
     return obj_getPtr(self, "value");
 }
+
+void ctypesUtils_setMem(PikaObj* self, void* src, size_t size) {
+    obj_setInt(self, "size", size);
+}
+
+size_t ctypesUtils_getMemSize(PikaObj* self) {
+    return obj_getInt(self, "size");
+}
+
+void* ctypesUtils_getMem(PikaObj* self) {
+    return NULL;
+}

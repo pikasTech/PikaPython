@@ -248,3 +248,17 @@ TEST(args, args_move) {
     args_deinit(args2);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(args, args_mem) {
+    char mem_test[] = {0x33, 0x55, 0x00, 0x15};
+    Args* args = New_args(NULL);
+    args_setMem(args, (char*)"mem", mem_test, sizeof(mem_test));
+    size_t mem_size = args_getMemSize(args, (char*)"mem");
+    char* mem_test_out = (char*)args_getMem(args, (char*)"mem");
+    EXPECT_EQ(mem_size, sizeof(mem_test));
+    EXPECT_EQ(mem_test_out[0], 0x33);
+    EXPECT_EQ(mem_test_out[1], 0x55);
+    EXPECT_EQ(mem_test_out[2], 0x00);
+    EXPECT_EQ(mem_test_out[3], 0x15);
+    args_deinit(args);
+}
