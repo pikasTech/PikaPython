@@ -33,13 +33,13 @@ void* ctypesUtils_getPtr(PikaObj* self) {
 }
 
 void ctypesUtils_setMem(PikaObj* self, void* src, size_t size) {
-    obj_setInt(self, "size", size);
+    obj_setMem(self, "value", src, size);
 }
 
 size_t ctypesUtils_getMemSize(PikaObj* self) {
-    return obj_getInt(self, "size");
+    return obj_getMemSize(self, "value");
 }
 
 void* ctypesUtils_getMem(PikaObj* self) {
-    return NULL;
+    return obj_getMem(self, "value");
 }
