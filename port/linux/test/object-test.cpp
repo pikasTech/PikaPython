@@ -221,18 +221,30 @@ TEST(object_test, obj_run_while) {
 
 TEST(object_test, obj_mem) {
     char mem_test[] = {0x33, 0x55, 0x00, 0x15};
-    PikaObj* obj = New_TinyObj(NULL);
-    obj_setMem(obj, (char*)"mem", mem_test, sizeof(mem_test));
-    size_t mem_size = obj_getMemSize(obj, (char*)"mem");
-    char* mem_test_out = (char*)obj_getMem(obj, (char*)"mem");
-    ArgType arg_type = arg_getType(obj_getArg(obj, (char*)"mem"));
+    char mem_out_buff[32] = {0};
+    PikaObj* self = New_TinyObj(NULL);
+    obj_setMem(self, (char*)"mem", mem_test, sizeof(mem_test));
+    size_t mem_size = obj_getMemSize(self, (char*)"mem");
+    char* mem_test_out = (char*)obj_getMem(self, (char*)"mem");
+    ArgType arg_type = arg_getType(obj_getArg(self, (char*)"mem"));
+    obj_loadMem(self, (char*)"mem", mem_out_buff);
+    /* assert */
     EXPECT_EQ(mem_size, sizeof(mem_test));
     EXPECT_EQ(mem_test_out[0], 0x33);
     EXPECT_EQ(mem_test_out[1], 0x55);
     EXPECT_EQ(mem_test_out[2], 0x00);
     EXPECT_EQ(mem_test_out[3], 0x15);
     EXPECT_EQ(arg_type, ARG_TYPE_MEM);
-    obj_deinit(obj);
+    /* deinit */
+    obj_deinit(self);
+
+    EXPECT_EQ(mem_out_buff[0], 0x33);
+    EXPECT_EQ(mem_out_buff[1], 0x55);
+    EXPECT_EQ(mem_out_buff[2], 0x00);
+    EXPECT_EQ(mem_out_buff[3], 0x15);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+    EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(object_test, mem) {

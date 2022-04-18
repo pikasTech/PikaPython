@@ -222,6 +222,19 @@ size_t obj_getMemSize(PikaObj* self, char* argPath) {
     return args_getMemSize(obj->list, argName);
 }
 
+size_t obj_loadMem(PikaObj* self, char* argPath, void* out_buff){
+    size_t size_mem = obj_getMemSize(self, argPath);
+    void* src = obj_getMem(self, argPath);
+    if(0 == size_mem){
+        return 0;
+    }
+    if(NULL == src){
+        return 0;
+    }
+    __platform_memcpy(out_buff, src, size_mem);
+    return size_mem;
+}
+
 static int32_t __obj_setArg(PikaObj* self,
                             char* argPath,
                             Arg* arg,

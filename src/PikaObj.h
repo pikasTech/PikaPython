@@ -117,6 +117,7 @@ int64_t obj_getInt(PikaObj* self, char* argPath);
 Arg* obj_getArg(PikaObj* self, char* argPath);
 void* obj_getMem(PikaObj* self, char* argPath);
 size_t obj_getMemSize(PikaObj* self, char* argPath);
+size_t obj_loadMem(PikaObj* self, char* argPath, void* out_buff);
 
 char* obj_print(PikaObj* self, char* name);
 
