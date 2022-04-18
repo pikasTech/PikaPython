@@ -25,22 +25,23 @@ fn main() {
     /* new a compiler, sellect to path */
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
     /* analyze file begin with main.py */
-    compiler = Compiler::analyze_file(compiler, String::from("main"), false);
+    compiler = Compiler::analize_file(compiler, String::from("main"), false);
     /*
        Compile packages in requestment.txt, solve the packages
        as the top packages.
     */
     for package in &version_info.package_list {
+        /* skip pikascript-core */
         if package.0 == "pikascript-core" {
             continue;
         }
-        compiler = Compiler::analyze_file(compiler, String::from(package.0), true);
+        compiler = Compiler::analize_file(compiler, String::from(package.0), true);
     }
 
     /* Compile packages in PikaStdLib */
-    compiler = Compiler::analyze_file(compiler, String::from("PikaStdTask"), true);
-    compiler = Compiler::analyze_file(compiler, String::from("PikaStdData"), true);
-    compiler = Compiler::analyze_file(compiler, String::from("PikaDebug"), true);
+    compiler = Compiler::analize_file(compiler, String::from("PikaStdTask"), true);
+    compiler = Compiler::analize_file(compiler, String::from("PikaStdData"), true);
+    compiler = Compiler::analize_file(compiler, String::from("PikaDebug"), true);
 
     println!();
 

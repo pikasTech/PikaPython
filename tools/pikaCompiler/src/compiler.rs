@@ -2,6 +2,7 @@ use crate::class_info::ClassInfo;
 use crate::my_string;
 // use crate::script::Script;
 use std::collections::BTreeMap;
+use std::collections::LinkedList;
 use std::fs;
 use std::fs::File;
 use std::io;
@@ -13,6 +14,7 @@ pub struct Compiler {
     pub class_list: BTreeMap<String, ClassInfo>,
     pub class_now_name: Option<String>,
     pub package_now_name: Option<String>,
+    pub compiled_list: LinkedList<String>,
 }
 
 impl Compiler {
@@ -23,10 +25,11 @@ impl Compiler {
             class_now_name: None,
             class_list: BTreeMap::new(),
             package_now_name: None,
+            compiled_list: LinkedList::new(),
         };
         return compiler;
     }
-    pub fn analyze_main_line(mut compiler: Compiler, line: &String) -> Compiler {
+    pub fn analize_main_line(mut compiler: Compiler, line: &String) -> Compiler {
         let file_name = "main".to_string();
         let class_name = "PikaMain".to_string();
         /* get class now or create one */
@@ -50,7 +53,7 @@ impl Compiler {
             let package_name = my_string::get_last_token(&line, ' ').unwrap();
             let package_obj_define = format!("{} = {}()", package_name, package_name);
             class_now.push_object(package_obj_define, &file_name);
-            return Compiler::analyze_file(compiler, package_name.to_string(), true);
+            return Compiler::analize_file(compiler, package_name.to_string(), true);
         }
         class_now.script_list.add(&line);
         return compiler;
@@ -69,17 +72,23 @@ impl Compiler {
         return Err(std::io::Error::from(std::io::ErrorKind::NotFound));
     }
 
-    pub fn analyze_file(mut compiler: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
-        println!("    compiling {}{}.py...", compiler.source_path, file_name);
-        let file = Compiler::open_file(format!("{}{}.py", compiler.source_path, file_name));
+    pub fn analize_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
+        /* check if compiled */
+        if self.compiled_list.contains(&file_name) {
+            return self;
+        }
+        self.compiled_list.push_back(String::clone(&file_name));
+        /* print info */
+        println!("    compiling {}{}.py...", self.source_path, file_name);
+        let file = Compiler::open_file(format!("{}{}.py", self.source_path, file_name));
         let mut file = match file {
             Ok(file) => file,
             Err(_) => {
                 println!(
                     "    [warning]: file: '{}{}.py' no found",
-                    compiler.source_path, file_name
+                    self.source_path, file_name
                 );
-                return compiler;
+                return self;
             }
         };
         /* solve top package.
@@ -96,14 +105,13 @@ impl Compiler {
             let pkg_define = format!("class {}(TinyObj):", &file_name);
             let pacakge_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
                 Some(s) => s,
-                None => return compiler,
+                None => return self,
             };
             let package_name = pacakge_now.this_class_name.clone();
-            compiler
-                .class_list
+            self.class_list
                 .entry(package_name.clone())
                 .or_insert(pacakge_now);
-            compiler.package_now_name = Some(package_name.clone());
+            self.package_now_name = Some(package_name.clone());
         }
         /* solve lines in file */
         let mut file_str = String::new();
@@ -111,9 +119,9 @@ impl Compiler {
         let lines: Vec<&str> = file_str.split('\n').collect();
         /* analyze each line of pikascript-api.py */
         for line in lines.iter() {
-            compiler = Compiler::analyze_line(compiler, line.to_string(), &file_name, is_top_pkg);
+            self = Compiler::analyze_line(self, line.to_string(), &file_name, is_top_pkg);
         }
-        return compiler;
+        return self;
     }
 
     pub fn analyze_line(
@@ -124,13 +132,13 @@ impl Compiler {
     ) -> Compiler {
         let line = line.replace("\r", "");
         if file_name == "main" {
-            return Compiler::analyze_main_line(compiler, &line);
+            return Compiler::analize_main_line(compiler, &line);
         }
 
         if line.starts_with("import ") {
             let tokens: Vec<&str> = line.split(" ").collect();
             let file = tokens[1];
-            return Compiler::analyze_file(compiler, file.to_string(), false);
+            return Compiler::analize_file(compiler, file.to_string(), false);
         }
 
         if line.starts_with("#") {
