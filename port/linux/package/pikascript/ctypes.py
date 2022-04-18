@@ -1,4 +1,3 @@
-from ctypes import c_byte
 from PikaObj import *
 
 class c_uint(TinyObj):
