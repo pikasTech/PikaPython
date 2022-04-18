@@ -40,6 +40,7 @@ releases = [
   "v1.6.1 9e24f8f7c8b39faa72f04935379be3b21a4f0545",
   "v1.6.2 fa56cc085a53cde6759df11c975b25f93dc7bd48",
   "v1.6.3 1e42f65a99b8e50619adaa13ca4b0b30123a05ac",
+  "v1.6.4 7362ba0d4b55abc304d3169989370f0dd8cddde0",
 ]
 
 [[packages]]
@@ -72,6 +73,7 @@ releases = [
   "v1.6.1 9e24f8f7c8b39faa72f04935379be3b21a4f0545",
   "v1.6.2 fa56cc085a53cde6759df11c975b25f93dc7bd48",
   "v1.6.3 1e42f65a99b8e50619adaa13ca4b0b30123a05ac",
+  "v1.6.4 7362ba0d4b55abc304d3169989370f0dd8cddde0",
 ]
 
 [[packages]]
@@ -189,4 +191,10 @@ releases = [
 name = "CH582"
 releases = [
   "v1.0.0 7cdb0cf9ed161c3fc6802028a9e34c9f94b56244",
+]
+
+[[packages]]
+name = "ctypes"
+releases = [
+  "v0.0.1 7362ba0d4b55abc304d3169989370f0dd8cddde0",
 ]
