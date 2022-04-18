@@ -174,6 +174,16 @@ int32_t obj_setStr(PikaObj* self, char* argPath, char* str) {
     return 0;
 }
 
+int32_t obj_setMem(PikaObj* self, char* argPath, void* src, size_t size) {
+    PikaObj* obj = obj_getObj(self, argPath, 1);
+    if (NULL == obj) {
+        return 1;
+    }
+    char* name = strPointToLastToken(argPath, '.');
+    args_setMem(obj->list, name, src, size);
+    return 0;
+}
+
 int64_t obj_getInt(PikaObj* self, char* argPath) {
     PikaObj* obj = obj_getObj(self, argPath, 1);
     if (NULL == obj) {
@@ -192,6 +202,24 @@ Arg* obj_getArg(PikaObj* self, char* argPath) {
     char* argName = strPointToLastToken(argPath, '.');
     Arg* res = args_getArg(obj->list, argName);
     return res;
+}
+
+void* obj_getMem(PikaObj* self, char* argPath) {
+    PikaObj* obj = obj_getObj(self, argPath, 1);
+    if (NULL == obj) {
+        return NULL;
+    }
+    char* argName = strPointToLastToken(argPath, '.');
+    return args_getMem(obj->list, argName);
+}
+
+size_t obj_getMemSize(PikaObj* self, char* argPath) {
+    PikaObj* obj = obj_getObj(self, argPath, 1);
+    if (NULL == obj) {
+        return 0;
+    }
+    char* argName = strPointToLastToken(argPath, '.');
+    return args_getMemSize(obj->list, argName);
 }
 
 static int32_t __obj_setArg(PikaObj* self,
@@ -508,7 +536,8 @@ int32_t class_defineConstructor(PikaObj* self,
                                 char* declearation,
                                 Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_NATIVE_CONSTRUCTOR_METHOD, NULL);
+                                        ARG_TYPE_NATIVE_CONSTRUCTOR_METHOD,
+                                        NULL);
 }
 
 /* define a native method as default */

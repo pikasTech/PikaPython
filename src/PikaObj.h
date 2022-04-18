@@ -108,12 +108,15 @@ int32_t obj_setFloat(PikaObj* self, char* argPath, float value);
 int32_t obj_setStr(PikaObj* self, char* argPath, char* str);
 int32_t obj_setArg(PikaObj* self, char* argPath, Arg* arg);
 int32_t obj_setArg_noCopy(PikaObj* self, char* argPath, Arg* arg);
+int32_t obj_setMem(PikaObj* self, char* argPath, void* src, size_t size);
 
 void* obj_getPtr(PikaObj* self, char* argPath);
 float obj_getFloat(PikaObj* self, char* argPath);
 char* obj_getStr(PikaObj* self, char* argPath);
 int64_t obj_getInt(PikaObj* self, char* argPath);
 Arg* obj_getArg(PikaObj* self, char* argPath);
+void* obj_getMem(PikaObj* self, char* argPath);
+size_t obj_getMemSize(PikaObj* self, char* argPath);
 
 char* obj_print(PikaObj* self, char* name);
 

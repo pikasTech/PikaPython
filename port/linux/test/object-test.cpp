@@ -2,8 +2,8 @@
 extern "C" {
 #include "BaseObj.h"
 #include "PikaStdLib_SysObj.h"
-#include "pika_config_gtest.h"
 #include "TinyObj.h"
+#include "pika_config_gtest.h"
 }
 
 void testFloat(PikaObj* obj, Args* args) {
@@ -94,13 +94,13 @@ TEST(object_test, test10) {
 }
 
 // TEST(object_test, test1) {
-    // PikaObj* process = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
-    // float floatTest = 12.231;
-    // obj_bindFloat(process, (char*)"testFloatBind", &floatTest);
-    // EXPECT_TRUE(
-        // strEqu((char*)"12.231000", obj_print(process, (char*)"testFloatBind")));
-    // obj_deinit(process);
-    // EXPECT_EQ(pikaMemNow(), 0);
+// PikaObj* process = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
+// float floatTest = 12.231;
+// obj_bindFloat(process, (char*)"testFloatBind", &floatTest);
+// EXPECT_TRUE(
+// strEqu((char*)"12.231000", obj_print(process, (char*)"testFloatBind")));
+// obj_deinit(process);
+// EXPECT_EQ(pikaMemNow(), 0);
 // }
 
 TEST(object_test, test2) {
@@ -217,6 +217,20 @@ TEST(object_test, obj_run_while) {
     obj_deinit(root);
     // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(object_test, obj_mem) {
+    char mem_test[] = {0x33, 0x55, 0x00, 0x15};
+    PikaObj* obj = New_TinyObj(NULL);
+    obj_setMem(obj, (char*)"mem", mem_test, sizeof(mem_test));
+    size_t mem_size = obj_getMemSize(obj, (char*)"mem");
+    char* mem_test_out = (char*)obj_getMem(obj, (char*)"mem");
+    EXPECT_EQ(mem_size, sizeof(mem_test));
+    EXPECT_EQ(mem_test_out[0], 0x33);
+    EXPECT_EQ(mem_test_out[1], 0x55);
+    EXPECT_EQ(mem_test_out[2], 0x00);
+    EXPECT_EQ(mem_test_out[3], 0x15);
+    obj_deinit(obj);
 }
 
 TEST(object_test, mem) {
