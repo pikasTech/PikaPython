@@ -112,17 +112,31 @@ char* args_getStr(Args* self, char* name) {
 }
 
 void* args_getMem(Args* self, char* name) {
-    return (void*)args_getStr(self, name) + sizeof(size_t);
+    if (NULL == self) {
+        return NULL;
+    }
+    Arg* arg = args_getArg(self, name);
+    if (NULL == arg) {
+        return NULL;
+    }
+    if (NULL == arg_getContent(arg)) {
+        return NULL;
+    }
+    return (char*)arg_getMem(arg);
 }
 
 size_t args_getMemSize(Args* self, char* name) {
-    size_t mem_size = 0;
-    void* content = (void*)args_getStr(self, name);
-    if (NULL == content) {
+    if (NULL == self) {
         return 0;
     }
-    __platform_memcpy(&mem_size, content, sizeof(size_t));
-    return mem_size;
+    Arg* arg = args_getArg(self, name);
+    if (NULL == arg) {
+        return 0;
+    }
+    if (NULL == arg_getContent(arg)) {
+        return 0;
+    }
+    return arg_getMemSize(arg);
 }
 
 int32_t args_setInt(Args* self, char* name, int64_t int64In) {
@@ -500,4 +514,3 @@ Args* New_args(Args* args) {
     Args* self = New_link(NULL);
     return self;
 }
-

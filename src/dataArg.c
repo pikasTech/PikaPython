@@ -153,6 +153,20 @@ Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size) {
     return content_setContent(self, content, size);
 }
 
+void* arg_getMem(Arg* self) {
+    return content_getContent(self) + sizeof(size_t);
+}
+
+size_t arg_getMemSize(Arg* self) {
+    size_t mem_size = 0;
+    void* content = (void*)arg_getContent(self);
+    if (NULL == content) {
+        return 0;
+    }
+    __platform_memcpy(&mem_size, content, sizeof(size_t));
+    return mem_size;
+}
+
 Arg* arg_setStruct(Arg* self,
                    char* name,
                    void* struct_ptr,

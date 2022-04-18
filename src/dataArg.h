@@ -113,6 +113,8 @@ int64_t arg_getInt(Arg* self);
 float arg_getFloat(Arg* self);
 void* arg_getPtr(Arg* self);
 char* arg_getStr(Arg* self);
+void* arg_getMem(Arg* self);
+size_t arg_getMemSize(Arg* self);
 Arg* arg_copy(Arg* argToBeCopy);
 
 #define arg_getContent(self) ((uint8_t*)content_getContent((self)))
