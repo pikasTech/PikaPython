@@ -225,11 +225,13 @@ TEST(object_test, obj_mem) {
     obj_setMem(obj, (char*)"mem", mem_test, sizeof(mem_test));
     size_t mem_size = obj_getMemSize(obj, (char*)"mem");
     char* mem_test_out = (char*)obj_getMem(obj, (char*)"mem");
+    ArgType arg_type = arg_getType(obj_getArg(obj, (char*)"mem"));
     EXPECT_EQ(mem_size, sizeof(mem_test));
     EXPECT_EQ(mem_test_out[0], 0x33);
     EXPECT_EQ(mem_test_out[1], 0x55);
     EXPECT_EQ(mem_test_out[2], 0x00);
     EXPECT_EQ(mem_test_out[3], 0x15);
+    EXPECT_EQ(arg_type, ARG_TYPE_MEM);
     obj_deinit(obj);
 }
 

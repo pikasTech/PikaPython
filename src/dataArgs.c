@@ -81,12 +81,7 @@ int args_pushArg(Args* self, Arg* arg) {
 }
 
 void args_setMem(Args* self, char* name, void* src, size_t size) {
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_newContent(argNew, size + sizeof(size_t));
-    argNew = arg_setName(argNew, name);
-    void* dir = arg_getContent(argNew);
-    __platform_memcpy(dir, &size, sizeof(size_t));
-    __platform_memcpy(dir + sizeof(size_t), src, size);
+    Arg* argNew = arg_setMem(NULL, name, src, size);
     args_pushArg(self, argNew);
 }
 

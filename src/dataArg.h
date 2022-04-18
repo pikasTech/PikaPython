@@ -35,6 +35,7 @@ typedef enum {
     ARG_TYPE_UNDEF = 0,
     ARG_TYPE_NONE,
     ARG_TYPE_VOID,
+    ARG_TYPE_MEM,
     ARG_TYPE_NULL,
     ARG_TYPE_INT,
     ARG_TYPE_FLOAT,
@@ -135,5 +136,6 @@ Arg* arg_setHeapStruct(Arg* self,
                        void* struct_deinit_fun);
 void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
+Arg* arg_setMem(Arg* self, char* name, void* src, size_t size);
 
 #endif

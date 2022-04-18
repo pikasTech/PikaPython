@@ -143,6 +143,16 @@ ArgType content_getType(uint8_t* self) {
     return (ArgType)arg->type;
 }
 
+Arg* arg_setMem(Arg* self, char* name, void* src, size_t size) {
+    self = arg_newContent(self, size + sizeof(size_t));
+    self = arg_setName(self, name);
+    self = arg_setType(self, ARG_TYPE_MEM);
+    void* dir = arg_getContent(self);
+    __platform_memcpy(dir, &size, sizeof(size_t));
+    __platform_memcpy(dir + sizeof(size_t), src, size);
+    return self;
+}
+
 Arg* arg_newContent(Arg* self, uint32_t size) {
     uint8_t* newContent = content_init("", ARG_TYPE_VOID, NULL, size, NULL);
     arg_freeContent(self);
