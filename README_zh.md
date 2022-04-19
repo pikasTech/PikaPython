@@ -27,11 +27,6 @@
 [![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/pikascript/dev/bench/)
 
 
-## Tencent QQ Group:
-
-<img src="document/image/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
-
-
 # 1.简介
 
 PikaScript 是一个完全重写的超轻量级 python 引擎，零依赖，零配置，可以在  **Flash ≤ 32KB，RAM≤ 4KB**  的平台下运行(如 stm32g030c8 和 stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
@@ -234,80 +229,21 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 
 # 4.交流与技术支持：
 
+## Tencent QQ Group:
+
+<img src="document/image/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
+
 ## Tencent QQ： 
 645275593
 
 ## E-mail: 
 645275593@qq.com
 
-# 5.贡献者
-| 内容 | 贡献者 |
-| --- | --- |
-| fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
-| ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
-| ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
-| 捐赠：EC600X QuecPython 开发板 | 移远模块 武加玉 |
-| Performance Point: 900->1400 | [GorgonMeducer](https://github.com/GorgonMeducer) |
-| stm32f051r8 BSP |[unsigned](https://gitee.com/unsigned0)|
-| stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
-| devc BSP |[unsigned](https://gitee.com/unsigned0)|
-| TC264D BSP |[unsigned](https://gitee.com/unsigned0)|
-| PikaVM 优化 | [GorgonMeducer](https://github.com/GorgonMeducer) |
-| W801Device package | 刘延(微信名) |
-| W806 bsp | 刘延(微信名) |
-| 捐赠：ESP32C3 5pic，调试器 |启明云端 沧御|
-| 捐赠：LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
-| PikaVSF OS package | [versaloon](https://github.com/versaloon) |
-| ESP32C3 BSP |沧御|
-| 捐赠：ESP32开发板、墨水屏*4 | name(微信名) |
-| 捐赠：智龙开发板 | 龙芯俱乐部 石南 |
-| package/STM32F1 | [sjy](https://gitee.com/shanjiayang) |
-| package/STM32F103RBBooter | [sjy](https://gitee.com/shanjiayang) |
-| bsp/stm32f103rb | [sjy](https://gitee.com/shanjiayang) |
-| 基于 QEMU 的 ARM-2D 仿真工程 | [liuduanfei](https://github.com/liuduanfei) |
-| 捐赠：GD32E103TB 芯片2片 | 信息牛(微信名) |
-| Rt-thread 支持包、适配层、模块| [Meco Jianting Man](https://github.com/mysterywolf) |
-| 捐赠：移远 EC600S-CN 4G模块 | 移远模块 |
-| 捐赠：博流 BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
-| 捐赠：中国移动 CM32M101A 开发板| 孟巍(微信名) |
-| 捐赠：APM32F030R8 开发板 | 极海半导体 陈成 |
-| 捐赠：APM32E103VB 开发板 | 极海半导体 陈成 |
-| 捐赠：APEX-Link 仿真器 | 极海半导体 陈成 |
-| 源码格式化，增加 git 属性文件 | [Meco Jianting Man](https://github.com/mysterywolf) |
-| demo/simulation-keil | 千帆(微信名) |
-| demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
-| demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
-| demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
 
-# 6.内核测试与开发
 
-## linux 下测试 pikascript 内核(推荐ubuntu20.04)：
 
-step1: 拉取项目
-``` shell
-git clone https://github.com/pikastech/pikascript
-cd pikascript/port/linux
-```
 
-step2: 编译项目
-```
-sh install_dependency.sh # 安装依赖，第一次用时运行
-sh pull-core.sh
-sh init.sh # 第一次编译前运行，之后就不用运行了 
-sh make.sh # 编译项目
-```
-
-step3: 运行单元测试
-``` shell	
-sh gtest.sh
-```
-
-step4: 运行基准测试
-``` shell
-sh ci_benchmark.sh
-```
-
-# 7.Demo展示
+# 5.Demo展示
 
 ## Demo 01 GPIO
 
@@ -600,3 +536,69 @@ while True:
 ## 几个旋转太阳~
 ![Hnet-image (6)](document/image/132945107-e473a2cc-9fbc-47f9-aaed-a28d3ad1048c.gif)
 
+# 6.内核测试与开发
+
+## linux 下测试 pikascript 内核(推荐ubuntu20.04)：
+
+step1: 拉取项目
+``` shell
+git clone https://github.com/pikastech/pikascript
+cd pikascript/port/linux
+```
+
+step2: 编译项目
+```
+sh install_dependency.sh # 安装依赖，第一次用时运行
+sh pull-core.sh
+sh init.sh # 第一次编译前运行，之后就不用运行了 
+sh make.sh # 编译项目
+```
+
+step3: 运行单元测试
+``` shell	
+sh gtest.sh
+```
+
+step4: 运行基准测试
+``` shell
+sh ci_benchmark.sh
+```
+
+# 7.贡献者
+| 内容 | 贡献者 |
+| --- | --- |
+| fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
+| ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
+| ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
+| 捐赠：EC600X QuecPython 开发板 | 移远模块 武加玉 |
+| Performance Point: 900->1400 | [GorgonMeducer](https://github.com/GorgonMeducer) |
+| stm32f051r8 BSP |[unsigned](https://gitee.com/unsigned0)|
+| stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
+| devc BSP |[unsigned](https://gitee.com/unsigned0)|
+| TC264D BSP |[unsigned](https://gitee.com/unsigned0)|
+| PikaVM 优化 | [GorgonMeducer](https://github.com/GorgonMeducer) |
+| W801Device package | 刘延(微信名) |
+| W806 bsp | 刘延(微信名) |
+| 捐赠：ESP32C3 5pic，调试器 |启明云端 沧御|
+| 捐赠：LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
+| PikaVSF OS package | [versaloon](https://github.com/versaloon) |
+| ESP32C3 BSP |沧御|
+| 捐赠：ESP32开发板、墨水屏*4 | name(微信名) |
+| 捐赠：智龙开发板 | 龙芯俱乐部 石南 |
+| package/STM32F1 | [sjy](https://gitee.com/shanjiayang) |
+| package/STM32F103RBBooter | [sjy](https://gitee.com/shanjiayang) |
+| bsp/stm32f103rb | [sjy](https://gitee.com/shanjiayang) |
+| 基于 QEMU 的 ARM-2D 仿真工程 | [liuduanfei](https://github.com/liuduanfei) |
+| 捐赠：GD32E103TB 芯片2片 | 信息牛(微信名) |
+| Rt-thread 支持包、适配层、模块| [Meco Jianting Man](https://github.com/mysterywolf) |
+| 捐赠：移远 EC600S-CN 4G模块 | 移远模块 |
+| 捐赠：博流 BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
+| 捐赠：中国移动 CM32M101A 开发板| 孟巍(微信名) |
+| 捐赠：APM32F030R8 开发板 | 极海半导体 陈成 |
+| 捐赠：APM32E103VB 开发板 | 极海半导体 陈成 |
+| 捐赠：APEX-Link 仿真器 | 极海半导体 陈成 |
+| 源码格式化，增加 git 属性文件 | [Meco Jianting Man](https://github.com/mysterywolf) |
+| demo/simulation-keil | 千帆(微信名) |
+| demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
+| demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
+| demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
