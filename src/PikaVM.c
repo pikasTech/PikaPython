@@ -425,9 +425,9 @@ static Arg* VM_instruction_handler_STR(PikaObj* self, VMState* vs, char* data) {
             /* eg. replace '\x33' to '3' */
             if ((data[i] == '\\') && (data[i + 1] == 'x')) {
                 char hex_str[] = "0x00";
-                hex_str[2] = data[i + 3];
-                hex_str[3] = data[i + 4];
-                char hex = (char)strtol(hex_str, NULL, 0) + '0';
+                hex_str[2] = data[i + 2];
+                hex_str[3] = data[i + 3];
+                char hex = (char)strtol(hex_str, NULL, 0);
                 transfered_str[i_out++] = hex;
                 i += 3;
                 continue;
