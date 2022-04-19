@@ -80,8 +80,8 @@ int args_pushArg(Args* self, Arg* arg) {
     return 0;
 }
 
-void args_setMem(Args* self, char* name, void* src, size_t size) {
-    Arg* argNew = arg_setMem(NULL, name, src, size);
+void args_setBytes(Args* self, char* name, void* src, size_t size) {
+    Arg* argNew = arg_setBytes(NULL, name, src, size);
     args_pushArg(self, argNew);
 }
 
@@ -106,7 +106,7 @@ char* args_getStr(Args* self, char* name) {
     return (char*)arg_getContent(arg);
 }
 
-void* args_getMem(Args* self, char* name) {
+void* args_getBytes(Args* self, char* name) {
     if (NULL == self) {
         return NULL;
     }
@@ -117,10 +117,10 @@ void* args_getMem(Args* self, char* name) {
     if (NULL == arg_getContent(arg)) {
         return NULL;
     }
-    return (char*)arg_getMem(arg);
+    return (char*)arg_getBytes(arg);
 }
 
-size_t args_getMemSize(Args* self, char* name) {
+size_t args_getBytesSize(Args* self, char* name) {
     if (NULL == self) {
         return 0;
     }
@@ -131,7 +131,7 @@ size_t args_getMemSize(Args* self, char* name) {
     if (NULL == arg_getContent(arg)) {
         return 0;
     }
-    return arg_getMemSize(arg);
+    return arg_getBytesSize(arg);
 }
 
 int32_t args_setInt(Args* self, char* name, int64_t int64In) {

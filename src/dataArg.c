@@ -143,7 +143,7 @@ ArgType content_getType(uint8_t* self) {
     return (ArgType)arg->type;
 }
 
-Arg* arg_setMem(Arg* self, char* name, void* src, size_t size) {
+Arg* arg_setBytes(Arg* self, char* name, void* src, size_t size) {
     self = arg_newContent(self, size + sizeof(size_t));
     self = arg_setName(self, name);
     self = arg_setType(self, ARG_TYPE_MEM);
@@ -163,11 +163,11 @@ Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size) {
     return content_setContent(self, content, size);
 }
 
-void* arg_getMem(Arg* self) {
+void* arg_getBytes(Arg* self) {
     return content_getContent(self) + sizeof(size_t);
 }
 
-size_t arg_getMemSize(Arg* self) {
+size_t arg_getBytesSize(Arg* self) {
     size_t mem_size = 0;
     void* content = (void*)arg_getContent(self);
     if (NULL == content) {

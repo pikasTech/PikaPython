@@ -117,7 +117,7 @@ void pool_deinit(Pool* pool) {
     bitmap_deinit(pool->bitmap);
 }
 
-void* pool_getMem_byBlockIndex(Pool* pool, uint32_t block_index) {
+void* pool_getBytes_byBlockIndex(Pool* pool, uint32_t block_index) {
     return pool->mem + block_index * pool->aline;
 }
 
@@ -212,7 +212,7 @@ found:
         pool->purl_free_block_start = block_index + 1;
     }
     /* return mem by block index */
-    return pool_getMem_byBlockIndex(pool, block_index - block_num_need + 1);
+    return pool_getBytes_byBlockIndex(pool, block_index - block_num_need + 1);
 }
 
 void pool_free(Pool* pool, void* mem, uint32_t size) {

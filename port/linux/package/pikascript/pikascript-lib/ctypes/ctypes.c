@@ -28,13 +28,13 @@ int ctypes_Test_dc_cpuapdu_hex(PikaObj* self,
     printf("input: slen = %d, sendbuf = %s\n", slen, sendbuf);
     ctypesUtils_setInt(rlen, 5);
     char rcv[] = {0x01, 0x02, 0x03, 0x00, 0x05, 0x08};
-    ctypesUtils_setMem(rcvbuf, rcv, sizeof(rcv));
+    ctypesUtils_setBytes(rcvbuf, rcv, sizeof(rcv));
     return 0;
 }
 
 void ctypes_Test_print_rcv(PikaObj* self, PikaObj* rcvbuf) {
-    char* rcv = ctypesUtils_getMem(rcvbuf);
-    size_t rcv_size = ctypesUtils_getMemSize(rcvbuf);
+    char* rcv = ctypesUtils_getBytes(rcvbuf);
+    size_t rcv_size = ctypesUtils_getBytesSize(rcvbuf);
     __platform_printf("{");
     for (size_t i = 0; i < rcv_size - 1; i++) {
         __platform_printf("%x, ", rcv[i]);

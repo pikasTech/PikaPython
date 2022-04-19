@@ -223,9 +223,9 @@ TEST(object_test, obj_mem) {
     char mem_test[] = {0x33, 0x55, 0x00, 0x15};
     char mem_out_buff[32] = {0};
     PikaObj* self = New_TinyObj(NULL);
-    obj_setMem(self, (char*)"mem", mem_test, sizeof(mem_test));
-    size_t mem_size = obj_getMemSize(self, (char*)"mem");
-    char* mem_test_out = (char*)obj_getMem(self, (char*)"mem");
+    obj_setBytes(self, (char*)"mem", mem_test, sizeof(mem_test));
+    size_t mem_size = obj_getBytesSize(self, (char*)"mem");
+    char* mem_test_out = (char*)obj_getBytes(self, (char*)"mem");
     ArgType arg_type = arg_getType(obj_getArg(self, (char*)"mem"));
     obj_loadMem(self, (char*)"mem", mem_out_buff);
     /* assert */

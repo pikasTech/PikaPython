@@ -174,13 +174,13 @@ int32_t obj_setStr(PikaObj* self, char* argPath, char* str) {
     return 0;
 }
 
-int32_t obj_setMem(PikaObj* self, char* argPath, void* src, size_t size) {
+int32_t obj_setBytes(PikaObj* self, char* argPath, void* src, size_t size) {
     PikaObj* obj = obj_getObj(self, argPath, 1);
     if (NULL == obj) {
         return 1;
     }
     char* name = strPointToLastToken(argPath, '.');
-    args_setMem(obj->list, name, src, size);
+    args_setBytes(obj->list, name, src, size);
     return 0;
 }
 
@@ -204,27 +204,27 @@ Arg* obj_getArg(PikaObj* self, char* argPath) {
     return res;
 }
 
-void* obj_getMem(PikaObj* self, char* argPath) {
+void* obj_getBytes(PikaObj* self, char* argPath) {
     PikaObj* obj = obj_getObj(self, argPath, 1);
     if (NULL == obj) {
         return NULL;
     }
     char* argName = strPointToLastToken(argPath, '.');
-    return args_getMem(obj->list, argName);
+    return args_getBytes(obj->list, argName);
 }
 
-size_t obj_getMemSize(PikaObj* self, char* argPath) {
+size_t obj_getBytesSize(PikaObj* self, char* argPath) {
     PikaObj* obj = obj_getObj(self, argPath, 1);
     if (NULL == obj) {
         return 0;
     }
     char* argName = strPointToLastToken(argPath, '.');
-    return args_getMemSize(obj->list, argName);
+    return args_getBytesSize(obj->list, argName);
 }
 
 size_t obj_loadMem(PikaObj* self, char* argPath, void* out_buff){
-    size_t size_mem = obj_getMemSize(self, argPath);
-    void* src = obj_getMem(self, argPath);
+    size_t size_mem = obj_getBytesSize(self, argPath);
+    void* src = obj_getBytes(self, argPath);
     if(0 == size_mem){
         return 0;
     }

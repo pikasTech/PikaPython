@@ -252,9 +252,9 @@ TEST(args, args_move) {
 TEST(args, args_mem) {
     char mem_test[] = {0x33, 0x55, 0x00, 0x15};
     Args* args = New_args(NULL);
-    args_setMem(args, (char*)"mem", mem_test, sizeof(mem_test));
-    size_t mem_size = args_getMemSize(args, (char*)"mem");
-    char* mem_test_out = (char*)args_getMem(args, (char*)"mem");
+    args_setBytes(args, (char*)"mem", mem_test, sizeof(mem_test));
+    size_t mem_size = args_getBytesSize(args, (char*)"mem");
+    char* mem_test_out = (char*)args_getBytes(args, (char*)"mem");
     EXPECT_EQ(mem_size, sizeof(mem_test));
     EXPECT_EQ(mem_test_out[0], 0x33);
     EXPECT_EQ(mem_test_out[1], 0x55);
