@@ -35,7 +35,7 @@ typedef enum {
     ARG_TYPE_UNDEF = 0,
     ARG_TYPE_NONE,
     ARG_TYPE_VOID,
-    ARG_TYPE_MEM,
+    ARG_TYPE_BYTES,
     ARG_TYPE_NULL,
     ARG_TYPE_INT,
     ARG_TYPE_FLOAT,

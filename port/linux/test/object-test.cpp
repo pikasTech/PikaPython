@@ -234,7 +234,7 @@ TEST(object_test, obj_mem) {
     EXPECT_EQ(mem_test_out[1], 0x55);
     EXPECT_EQ(mem_test_out[2], 0x00);
     EXPECT_EQ(mem_test_out[3], 0x15);
-    EXPECT_EQ(arg_type, ARG_TYPE_MEM);
+    EXPECT_EQ(arg_type, ARG_TYPE_BYTES);
     /* deinit */
     obj_deinit(self);
 
