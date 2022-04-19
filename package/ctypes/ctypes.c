@@ -23,7 +23,7 @@ int ctypes_Test_add(PikaObj* self, PikaObj* c_uint1, PikaObj* c_uint2) {
 int ctypes_Test_dc_cpuapdu_hex(PikaObj* self,
                                PikaObj* rcvbuf,
                                PikaObj* rlen,
-                               char* sendbuf,
+                               uint8_t* sendbuf,
                                int slen) {
     printf("input: slen = %d, sendbuf = %s\n", slen, sendbuf);
     ctypesUtils_setInt(rlen, 5);

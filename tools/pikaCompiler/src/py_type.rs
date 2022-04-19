@@ -17,6 +17,9 @@ impl PyType {
         if self.type_name == "str" {
             return "char*".to_string();
         }
+        if self.type_name == "bytes" {
+            return "uint8_t*".to_string();
+        }
         if self.type_name == "" {
             return "void".to_string();
         }
@@ -45,6 +48,9 @@ impl PyType {
         }
         if self.type_name == "str" {
             return "method_returnStr".to_string();
+        }
+        if self.type_name == "bytes" {
+            return "method_returnBytes".to_string();
         }
         if self.type_name == "any" {
             return "method_returnArg".to_string();
@@ -81,6 +87,9 @@ impl PyType {
         }
         if self.type_name == "str" {
             return "args_getStr".to_string();
+        }
+        if self.type_name == "bytes" {
+            return "args_getBytes".to_string();
         }
         if self.type_name == "any" {
             return "args_getArg".to_string();

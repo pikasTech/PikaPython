@@ -33,6 +33,7 @@
         #define PIKA_STACK_BUFF_SIZE 256
         #define PIKA_NAME_BUFF_SIZE 32
         #define PIKA_PATH_BUFF_SIZE 64
+        #define PIKA_BYTES_DEFAULT_SIZE 64
         #define PIKA_ARG_ALIGN_ENABLE 1
         #define PIKA_METHOD_CACHE_ENABLE 0
         #define PIKA_BUILTIN_LIST_ENABLE 0
