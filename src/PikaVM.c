@@ -278,7 +278,6 @@ exit:
     strsDeinit(&buffs);
 }
 
-
 #if PIKA_BUILTIN_LIST_ENABLE
 void PikaStdData_List_append(PikaObj* self, Arg* arg);
 void PikaStdData_List___init__(PikaObj* self);
@@ -418,6 +417,29 @@ exit:
 
 static Arg* VM_instruction_handler_STR(PikaObj* self, VMState* vs, char* data) {
     Arg* strArg = New_arg(NULL);
+    if (strIsContain(data, '\\')) {
+        Args buffs = {0};
+        char* transfered_str = args_getBuff(&buffs, strGetSize(data));
+        size_t i_out = 0;
+        for (size_t i = 0; i < strGetSize(data); i++) {
+            /* eg. replace '\x33' to '3' */
+            if ((data[i] == '\\') && (data[i + 1] == 'x')) {
+                char hex_str[] = "0x00";
+                hex_str[2] = data[i + 3];
+                hex_str[3] = data[i + 4];
+                char hex = (char)strtol(hex_str, NULL, 0) + '0';
+                transfered_str[i_out++] = hex;
+                i += 3;
+                continue;
+            }
+            /* normal char */
+            transfered_str[i_out++] = data[i];
+        }
+        Arg* return_arg = New_arg(NULL);
+        return_arg = arg_setStr(return_arg, "", transfered_str);
+        strsDeinit(&buffs);
+        return return_arg;
+    }
     return arg_setStr(strArg, "", data);
 }
 

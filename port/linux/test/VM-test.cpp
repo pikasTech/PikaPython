@@ -972,3 +972,21 @@ TEST(VM, a_3) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, hex_str) {
+    char* line = (char*)"a = '\\x33\\x35'";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    __platform_printf((char*)"BEGIN\r\n");
+    pikaVM_runAsm(self, pikaAsm);
+    /* collect */
+    char* a = obj_getStr(self, (char*)"a");
+    /* assert */
+    EXPECT_STREQ(a, (char*)"35");
+    /* deinit */
+    obj_deinit(self);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
