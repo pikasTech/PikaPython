@@ -167,6 +167,16 @@ void* arg_getBytes(Arg* self) {
     return content_getContent(self) + sizeof(size_t);
 }
 
+void arg_printBytes(Arg* self) {
+    size_t bytes_size = arg_getBytesSize(self);
+    uint8_t* bytes = arg_getBytes(self);
+    __platform_printf("b\'");
+    for (size_t i = 0; i < bytes_size; i++) {
+        __platform_printf("\\x%02x", bytes[i]);
+    }
+    __platform_printf("\'\r\n");
+}
+
 size_t arg_getBytesSize(Arg* self) {
     size_t mem_size = 0;
     void* content = (void*)arg_getContent(self);

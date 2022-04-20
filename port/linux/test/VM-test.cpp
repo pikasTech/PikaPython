@@ -990,3 +990,24 @@ TEST(VM, hex_str) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, hex_bytes) {
+    char* line = (char*)
+        "a = b'\\x03\\x05'\n"
+        "a\n"
+        ;
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_multiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj((char*)"root", New_PikaStdLib_SysObj);
+    __platform_printf((char*)"BEGIN\r\n");
+    pikaVM_runAsm(self, pikaAsm);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], (char*)"\\x03");
+    EXPECT_STREQ(log_buff[1], (char*)"\\x05");
+    /* deinit */
+    obj_deinit(self);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

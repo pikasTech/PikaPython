@@ -137,5 +137,6 @@ Arg* arg_setHeapStruct(Arg* self,
 void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
 Arg* arg_setBytes(Arg* self, char* name, void* src, size_t size);
+void arg_printBytes(Arg* self);
 
 #endif

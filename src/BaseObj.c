@@ -72,6 +72,13 @@ static void print_no_end(PikaObj* self, Args* args) {
 
 void baseobj_print(PikaObj* self, Args* args) {
     obj_setErrorCode(self, 0);
+    Arg* print_arg = args_getArg(args, "val");
+    if (NULL != print_arg) {
+        if (arg_getType(print_arg) == ARG_TYPE_BYTES) {
+            arg_printBytes(print_arg);
+            return;
+        }
+    }
     char* res = args_print(args, "val");
     if (NULL == res) {
         obj_setSysOut(self, "[error] print: can not print val");

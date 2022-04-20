@@ -415,7 +415,7 @@ exit:
     return return_arg;
 }
 
-static char* __get_transferd_str(Args* buffs, char* str) {
+static char* __get_transferd_str(Args* buffs, char* str, size_t* iout_p) {
     char* transfered_str = args_getBuff(buffs, strGetSize(str));
     size_t i_out = 0;
     for (size_t i = 0; i < strGetSize(str); i++) {
@@ -432,13 +432,15 @@ static char* __get_transferd_str(Args* buffs, char* str) {
         /* normal char */
         transfered_str[i_out++] = str[i];
     }
+    *iout_p = i_out;
     return transfered_str;
 }
 
 static Arg* VM_instruction_handler_STR(PikaObj* self, VMState* vs, char* data) {
     if (strIsContain(data, '\\')) {
         Args buffs = {0};
-        char* transfered_str = __get_transferd_str(&buffs, data);
+        size_t i_out = 0;
+        char* transfered_str = __get_transferd_str(&buffs, data, &i_out);
         Arg* return_arg = New_arg(NULL);
         return_arg = arg_setStr(return_arg, "", transfered_str);
         strsDeinit(&buffs);
@@ -450,10 +452,10 @@ static Arg* VM_instruction_handler_STR(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_BYT(PikaObj* self, VMState* vs, char* data) {
     if (strIsContain(data, '\\')) {
         Args buffs = {0};
-        char* transfered_str = __get_transferd_str(&buffs, data);
+        size_t i_out = 0;
+        char* transfered_str = __get_transferd_str(&buffs, data, &i_out);
         Arg* return_arg = New_arg(NULL);
-        return_arg =
-            arg_setBytes(return_arg, "", transfered_str, strGetSize(data));
+        return_arg = arg_setBytes(return_arg, "", transfered_str, i_out);
         strsDeinit(&buffs);
         return return_arg;
     }
@@ -1338,6 +1340,8 @@ void VMState_solveUnusedStack(VMState* vs) {
             __platform_printf("%f\r\n", arg_getFloat(arg));
         } else if (type == ARG_TYPE_STRING) {
             __platform_printf("%s\r\n", arg_getStr(arg));
+        } else if (type == ARG_TYPE_BYTES) {
+            arg_printBytes(arg);
         }
         arg_deinit(arg);
     }
