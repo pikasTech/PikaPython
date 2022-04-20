@@ -35,31 +35,3 @@ impl ImportInfo {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_import_info() {
-        assert_eq!(
-            ImportInfo::new(
-                &String::from("Test"),
-                String::from("ImportTest()"),
-                &"Pkg".to_string()
-            )
-            .unwrap()
-            .import_class_name,
-            String::from("Pkg_ImportTest")
-        );
-        assert_eq!(
-            ImportInfo::new(
-                &String::from("Test"),
-                String::from("ImportTest()"),
-                &"Pkg".to_string()
-            )
-            .unwrap()
-            .class_name,
-            String::from("Test")
-        );
-    }
-}

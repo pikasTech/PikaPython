@@ -298,30 +298,4 @@ mod tests {
             "testObj"
         );
     }
-    #[test]
-    fn test_push_import() {
-        let mut class_info = ClassInfo::new(
-            &String::from("Pkg"),
-            &String::from("class Test(SuperTest):"),
-            false,
-        )
-        .unwrap();
-        class_info.push_import(String::from("TestObj()"), &"Pkg".to_string());
-        assert_eq!(
-            class_info
-                .import_list
-                .get("Pkg_TestObj")
-                .unwrap()
-                .class_name,
-            "Pkg_Test"
-        );
-        assert_eq!(
-            class_info
-                .import_list
-                .get("Pkg_TestObj")
-                .unwrap()
-                .import_class_name,
-            "Pkg_TestObj"
-        );
-    }
 }
