@@ -1681,15 +1681,16 @@ TEST(pikaMain, ctypes) {
     pikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-    __platform_printf((char*)"BEGIN\r\n");
-    obj_run(pikaMain, (char*)
+    char* lines = (char*)
     "t = ctypes.Test()\n"
     "sendbuf = b'\\x03\\x04\\x33\\x00\\x05'\n"
     "rlen = ctypes.c_uint(0)\n"
     "rcvbuf = ctypes.c_char_p('')\n"
     "res = t.dc_cpuapdu_hex(5, sendbuf, rlen, rcvbuf)\n"
-    "t.print_rcv(rcvbuf)\n"
-    );
+    "t.print_rcv(rcvbuf)\n";
+    __platform_printf((char*)"%s\n", lines);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(pikaMain, lines);
     /* as run in shell */
     /* collect */
     Arg* sendbuf = obj_getArg(pikaMain, (char*)"sendbuf");
