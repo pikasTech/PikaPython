@@ -5,7 +5,7 @@ void ctypesUtils_setInt(PikaObj* self, int val);
 void ctypesUtils_setStr(PikaObj* self, char* val);
 void ctypesUtils_setFloat(PikaObj* self, float val);
 void ctypesUtils_setPtr(PikaObj* self, void* ptr);
-void ctypesUtils_setBytes(PikaObj* self, void* src, size_t size);
+void ctypesUtils_setBytes(PikaObj* self, uint8_t* src, size_t size);
 
 int ctypesUtils_getInt(PikaObj* self);
 char* ctypesUtils_getStr(PikaObj* self);
@@ -13,6 +13,6 @@ float ctypesUtils_getFloat(PikaObj* self);
 void* ctypesUtils_getPtr(PikaObj* self);
 
 size_t ctypesUtils_getBytesSize(PikaObj* self);
-void* ctypesUtils_getBytes(PikaObj* self);
+uint8_t* ctypesUtils_getBytes(PikaObj* self);
 
 #endif

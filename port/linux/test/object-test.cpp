@@ -220,8 +220,8 @@ TEST(object_test, obj_run_while) {
 }
 
 TEST(object_test, obj_mem) {
-    char mem_test[] = {0x33, 0x55, 0x00, 0x15};
-    char mem_out_buff[32] = {0};
+    uint8_t mem_test[] = {0x33, 0x55, 0x00, 0x15};
+    uint8_t mem_out_buff[32] = {0};
     PikaObj* self = New_TinyObj(NULL);
     obj_setBytes(self, (char*)"mem", mem_test, sizeof(mem_test));
     size_t mem_size = obj_getBytesSize(self, (char*)"mem");

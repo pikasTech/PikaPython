@@ -80,7 +80,7 @@ int args_pushArg(Args* self, Arg* arg) {
     return 0;
 }
 
-void args_setBytes(Args* self, char* name, void* src, size_t size) {
+void args_setBytes(Args* self, char* name, uint8_t* src, size_t size) {
     Arg* argNew = arg_setBytes(NULL, name, src, size);
     args_pushArg(self, argNew);
 }
@@ -106,7 +106,7 @@ char* args_getStr(Args* self, char* name) {
     return (char*)arg_getContent(arg);
 }
 
-void* args_getBytes(Args* self, char* name) {
+uint8_t* args_getBytes(Args* self, char* name) {
     if (NULL == self) {
         return NULL;
     }
@@ -117,7 +117,7 @@ void* args_getBytes(Args* self, char* name) {
     if (NULL == arg_getContent(arg)) {
         return NULL;
     }
-    return (char*)arg_getBytes(arg);
+    return arg_getBytes(arg);
 }
 
 size_t args_getBytesSize(Args* self, char* name) {

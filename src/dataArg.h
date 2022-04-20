@@ -114,7 +114,7 @@ int64_t arg_getInt(Arg* self);
 float arg_getFloat(Arg* self);
 void* arg_getPtr(Arg* self);
 char* arg_getStr(Arg* self);
-void* arg_getBytes(Arg* self);
+uint8_t* arg_getBytes(Arg* self);
 size_t arg_getBytesSize(Arg* self);
 Arg* arg_copy(Arg* argToBeCopy);
 
@@ -136,7 +136,7 @@ Arg* arg_setHeapStruct(Arg* self,
                        void* struct_deinit_fun);
 void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
-Arg* arg_setBytes(Arg* self, char* name, void* src, size_t size);
+Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 void arg_printBytes(Arg* self);
 
 #endif

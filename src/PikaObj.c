@@ -174,7 +174,7 @@ int32_t obj_setStr(PikaObj* self, char* argPath, char* str) {
     return 0;
 }
 
-int32_t obj_setBytes(PikaObj* self, char* argPath, void* src, size_t size) {
+int32_t obj_setBytes(PikaObj* self, char* argPath, uint8_t* src, size_t size) {
     PikaObj* obj = obj_getObj(self, argPath, 1);
     if (NULL == obj) {
         return 1;
@@ -204,7 +204,7 @@ Arg* obj_getArg(PikaObj* self, char* argPath) {
     return res;
 }
 
-void* obj_getBytes(PikaObj* self, char* argPath) {
+uint8_t* obj_getBytes(PikaObj* self, char* argPath) {
     PikaObj* obj = obj_getObj(self, argPath, 1);
     if (NULL == obj) {
         return NULL;
@@ -222,7 +222,7 @@ size_t obj_getBytesSize(PikaObj* self, char* argPath) {
     return args_getBytesSize(obj->list, argName);
 }
 
-size_t obj_loadMem(PikaObj* self, char* argPath, void* out_buff){
+size_t obj_loadMem(PikaObj* self, char* argPath, uint8_t* out_buff){
     size_t size_mem = obj_getBytesSize(self, argPath);
     void* src = obj_getBytes(self, argPath);
     if(0 == size_mem){

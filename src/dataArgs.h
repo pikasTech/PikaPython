@@ -115,8 +115,8 @@ int args_pushArg(Args* self, Arg* arg);
 Arg* args_getArg_index(Args* self, int index);
 void* args_getHeapStruct(Args* self, char* name);
 int32_t args_removeArg_notDeinitArg(Args* self, Arg* argNow);
-void* args_getBytes(Args* self, char* name);
-void args_setBytes(Args* self, char* name, void* src, size_t size);
+uint8_t* args_getBytes(Args* self, char* name);
+void args_setBytes(Args* self, char* name, uint8_t* src, size_t size);
 size_t args_getBytesSize(Args* self, char* name);
 
 Args* New_args(Args* args);

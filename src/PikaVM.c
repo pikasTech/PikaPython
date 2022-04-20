@@ -455,11 +455,12 @@ static Arg* VM_instruction_handler_BYT(PikaObj* self, VMState* vs, char* data) {
         size_t i_out = 0;
         char* transfered_str = __get_transferd_str(&buffs, data, &i_out);
         Arg* return_arg = New_arg(NULL);
-        return_arg = arg_setBytes(return_arg, "", transfered_str, i_out);
+        return_arg =
+            arg_setBytes(return_arg, "", (uint8_t*)transfered_str, i_out);
         strsDeinit(&buffs);
         return return_arg;
     }
-    return arg_setBytes(NULL, "", data, strGetSize(data));
+    return arg_setBytes(NULL, "", (uint8_t*)data, strGetSize(data));
 }
 
 typedef enum {

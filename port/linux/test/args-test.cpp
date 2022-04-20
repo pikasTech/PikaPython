@@ -250,7 +250,7 @@ TEST(args, args_move) {
 }
 
 TEST(args, args_mem) {
-    char mem_test[] = {0x33, 0x55, 0x00, 0x15};
+    uint8_t mem_test[] = {0x33, 0x55, 0x00, 0x15};
     Args* args = New_args(NULL);
     args_setBytes(args, (char*)"mem", mem_test, sizeof(mem_test));
     size_t mem_size = args_getBytesSize(args, (char*)"mem");
