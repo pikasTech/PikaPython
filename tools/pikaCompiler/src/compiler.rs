@@ -53,7 +53,7 @@ impl Compiler {
             let package_name = my_string::get_last_token(&line, ' ').unwrap();
             let package_obj_define = format!("{} = {}()", package_name, package_name);
             class_now.push_object(package_obj_define, &file_name);
-            return Compiler::analize_file(compiler, package_name.to_string(), true);
+            return Compiler::__do_analize_file(compiler, package_name.to_string(), true);
         }
         class_now.script_list.add(&line);
         return compiler;
@@ -72,7 +72,7 @@ impl Compiler {
         return Err(std::io::Error::from(std::io::ErrorKind::NotFound));
     }
 
-    pub fn analize_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
+    pub fn __do_analize_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
         /* check if compiled */
         if self.compiled_list.contains(&file_name) {
             return self;
@@ -138,7 +138,7 @@ impl Compiler {
         if line.starts_with("import ") {
             let tokens: Vec<&str> = line.split(" ").collect();
             let file = tokens[1];
-            return Compiler::analize_file(compiler, file.to_string(), false);
+            return Compiler::__do_analize_file(compiler, file.to_string(), false);
         }
 
         if line.starts_with("#") {

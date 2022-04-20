@@ -25,7 +25,7 @@ fn main() {
     /* new a compiler, sellect to path */
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
     /* analyze file begin with main.py */
-    compiler = Compiler::analize_file(compiler, String::from("main"), false);
+    compiler = Compiler::__do_analize_file(compiler, String::from("main"), false);
     /*
        Compile packages in requestment.txt, solve the packages
        as the top packages.
@@ -35,13 +35,13 @@ fn main() {
         if package.0 == "pikascript-core" {
             continue;
         }
-        compiler = Compiler::analize_file(compiler, String::from(package.0), true);
+        compiler = Compiler::__do_analize_file(compiler, String::from(package.0), true);
     }
 
     /* Compile packages in PikaStdLib */
-    compiler = Compiler::analize_file(compiler, String::from("PikaStdTask"), true);
-    compiler = Compiler::analize_file(compiler, String::from("PikaStdData"), true);
-    compiler = Compiler::analize_file(compiler, String::from("PikaDebug"), true);
+    compiler = Compiler::__do_analize_file(compiler, String::from("PikaStdTask"), true);
+    compiler = Compiler::__do_analize_file(compiler, String::from("PikaStdData"), true);
+    compiler = Compiler::__do_analize_file(compiler, String::from("PikaDebug"), true);
 
     println!();
 
