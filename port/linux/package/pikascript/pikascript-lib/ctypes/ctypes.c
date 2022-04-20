@@ -25,7 +25,15 @@ int ctypes_Test_dc_cpuapdu_hex(PikaObj* self,
                                PikaObj* rlen,
                                uint8_t* sendbuf,
                                int slen) {
-    printf("input: slen = %d, sendbuf = %s\n", slen, sendbuf);
+    /* print input */
+    __platform_printf("input: slen = %d\n", slen);
+    __platform_printf("sendbuf :\n");
+    for (int i = 0; i < slen; i++) {
+        __platform_printf("0x%02x ", sendbuf[i]);
+    }
+    __platform_printf("\n");
+
+    /* set output */
     ctypesUtils_setInt(rlen, 5);
     char rcv[] = {0x01, 0x02, 0x03, 0x00, 0x05, 0x08};
     ctypesUtils_setBytes(rcvbuf, rcv, sizeof(rcv));
@@ -37,8 +45,8 @@ void ctypes_Test_print_rcv(PikaObj* self, PikaObj* rcvbuf) {
     size_t rcv_size = ctypesUtils_getBytesSize(rcvbuf);
     __platform_printf("{");
     for (size_t i = 0; i < rcv_size - 1; i++) {
-        __platform_printf("%x, ", rcv[i]);
+        __platform_printf("0x%02x, ", rcv[i]);
     }
-    __platform_printf("%x", rcv[rcv_size - 1]);
+    __platform_printf("0x%02x", rcv[rcv_size - 1]);
     __platform_printf("}\r\n");
 }

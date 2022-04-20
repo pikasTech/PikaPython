@@ -1675,3 +1675,29 @@ TEST(pikaMain, list_init) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(pikaMain, ctypes) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    __platform_printf((char*)"BEGIN\r\n");
+    obj_run(pikaMain, (char*)
+    "t = ctypes.Test()\n"
+    "sendbuf = b'\\x03\\x04\\x33\\x00\\x05'\n"
+    "rlen = ctypes.c_uint(0)\n"
+    "rcvbuf = ctypes.c_char_p('')\n"
+    "res = t.dc_cpuapdu_hex(5, sendbuf, rlen, rcvbuf)\n"
+    "t.print_rcv(rcvbuf)\n"
+    );
+    /* as run in shell */
+    /* collect */
+    Arg* sendbuf = obj_getArg(pikaMain, (char*)"sendbuf");
+    Arg* rcvbuf = obj_getArg(pikaMain, (char*)"rcvbuf.value");
+    /* assert */
+    EXPECT_EQ(arg_getBytesSize(sendbuf), 5);
+    EXPECT_EQ(arg_getBytesSize(rcvbuf), 6);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
