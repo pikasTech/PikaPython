@@ -2813,3 +2813,21 @@ TEST(parser, list_init_fun) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(parser, bytes_iteral) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"a = b'\\x00\\x01'\n";
+    char* tokens_str = Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    printf("%s\n", tokens_str);
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm, (char*)
+        "B0\n"
+        "0 BYT \\x00\\x01\n"
+        "0 OUT a\n"
+        );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

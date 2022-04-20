@@ -415,32 +415,49 @@ exit:
     return return_arg;
 }
 
+static char* __get_transferd_str(Args* buffs, char* str) {
+    char* transfered_str = args_getBuff(buffs, strGetSize(str));
+    size_t i_out = 0;
+    for (size_t i = 0; i < strGetSize(str); i++) {
+        /* eg. replace '\x33' to '3' */
+        if ((str[i] == '\\') && (str[i + 1] == 'x')) {
+            char hex_str[] = "0x00";
+            hex_str[2] = str[i + 2];
+            hex_str[3] = str[i + 3];
+            char hex = (char)strtol(hex_str, NULL, 0);
+            transfered_str[i_out++] = hex;
+            i += 3;
+            continue;
+        }
+        /* normal char */
+        transfered_str[i_out++] = str[i];
+    }
+    return transfered_str;
+}
+
 static Arg* VM_instruction_handler_STR(PikaObj* self, VMState* vs, char* data) {
-    Arg* strArg = New_arg(NULL);
     if (strIsContain(data, '\\')) {
         Args buffs = {0};
-        char* transfered_str = args_getBuff(&buffs, strGetSize(data));
-        size_t i_out = 0;
-        for (size_t i = 0; i < strGetSize(data); i++) {
-            /* eg. replace '\x33' to '3' */
-            if ((data[i] == '\\') && (data[i + 1] == 'x')) {
-                char hex_str[] = "0x00";
-                hex_str[2] = data[i + 2];
-                hex_str[3] = data[i + 3];
-                char hex = (char)strtol(hex_str, NULL, 0);
-                transfered_str[i_out++] = hex;
-                i += 3;
-                continue;
-            }
-            /* normal char */
-            transfered_str[i_out++] = data[i];
-        }
+        char* transfered_str = __get_transferd_str(&buffs, data);
         Arg* return_arg = New_arg(NULL);
         return_arg = arg_setStr(return_arg, "", transfered_str);
         strsDeinit(&buffs);
         return return_arg;
     }
-    return arg_setStr(strArg, "", data);
+    return arg_setStr(NULL, "", data);
+}
+
+static Arg* VM_instruction_handler_BYT(PikaObj* self, VMState* vs, char* data) {
+    if (strIsContain(data, '\\')) {
+        Args buffs = {0};
+        char* transfered_str = __get_transferd_str(&buffs, data);
+        Arg* return_arg = New_arg(NULL);
+        return_arg =
+            arg_setBytes(return_arg, "", transfered_str, strGetSize(data));
+        strsDeinit(&buffs);
+        return return_arg;
+    }
+    return arg_setBytes(NULL, "", data, strGetSize(data));
 }
 
 typedef enum {

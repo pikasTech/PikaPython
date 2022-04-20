@@ -18,6 +18,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
+                // "--gtest_filter=parser.bytes_iteral",
                 // "--gtest_filter=parser.list_init_fun",
                 // "--gtest_filter=args.heap_struct_override",
                 // "--gtest_filter=pikaMain.list__set__",

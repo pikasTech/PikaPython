@@ -157,6 +157,7 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     uint8_t is_get_operator = 0;
     uint8_t is_get_method = 0;
     uint8_t is_get_string = 0;
+    uint8_t is_get_bytes = 0;
     uint8_t is_get_number = 0;
     uint8_t is_get_symbol = 0;
     uint8_t is_get_index = 0;
@@ -179,6 +180,12 @@ static enum StmtType Lexer_matchStmtType(char* right) {
             if (ps.token1.pyload[0] == '\'' || ps.token1.pyload[0] == '"') {
                 is_get_string = 1;
                 goto iter_continue;
+            }
+            if (ps.token1.pyload[1] == '\'' || ps.token1.pyload[1] == '"') {
+                if (ps.token1.pyload[0] == 'b') {
+                    is_get_bytes = 1;
+                    goto iter_continue;
+                }
             }
             is_get_number = 1;
             goto iter_continue;
@@ -204,6 +211,10 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     }
     if (is_get_string) {
         stmtType = STMT_string;
+        goto exit;
+    }
+    if (is_get_bytes) {
+        stmtType = STMT_bytes;
         goto exit;
     }
     if (is_get_number) {
@@ -290,22 +301,36 @@ Arg* Lexer_setSymbel(Arg* tokens_arg,
     char* symbol_buff = NULL;
     /* nothing to add symbel */
     if (i == *symbol_start_index) {
-        *symbol_start_index = -1;
         goto exit;
     }
     symbol_buff = args_getBuff(&buffs, i - *symbol_start_index);
     __platform_memcpy(symbol_buff, stmt + *symbol_start_index,
                       i - *symbol_start_index);
     /* literal */
-    if ((symbol_buff[0] == '\'') || (symbol_buff[0] == '"') ||
-        ((symbol_buff[0] >= '0') && (symbol_buff[0] <= '9'))) {
+    if ((symbol_buff[0] == '\'') || (symbol_buff[0] == '"')) {
+        /* "" or '' */
         tokens_arg = Lexer_setToken(tokens_arg, TOKEN_literal, symbol_buff);
-    } else {
-        /* symbol */
-        tokens_arg = Lexer_setToken(tokens_arg, TOKEN_symbol, symbol_buff);
+        goto exit;
     }
-    *symbol_start_index = -1;
+
+    if ((symbol_buff[0] >= '0') && (symbol_buff[0] <= '9')) {
+        /* number */
+        tokens_arg = Lexer_setToken(tokens_arg, TOKEN_literal, symbol_buff);
+        goto exit;
+    }
+
+    if ((symbol_buff[0] == 'b') &&
+        ((symbol_buff[1] == '\'') || (symbol_buff[1] == '"'))) {
+        /* b"" or b'' */
+        tokens_arg = Lexer_setToken(tokens_arg, TOKEN_literal, symbol_buff);
+        goto exit;
+    }
+
+    /* symbol */
+    tokens_arg = Lexer_setToken(tokens_arg, TOKEN_symbol, symbol_buff);
+    goto exit;
 exit:
+    *symbol_start_index = -1;
     strsDeinit(&buffs);
     return tokens_arg;
 }
@@ -918,7 +943,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         goto exit;
     }
 
-    #if PIKA_BUILTIN_LIST_ENABLE
+#if PIKA_BUILTIN_LIST_ENABLE
     /* solve list stmt */
     if (STMT_list == stmtType) {
         obj_setStr(ast, (char*)"list", "list");
@@ -955,7 +980,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         arg_deinit(subStmt);
         goto exit;
     }
-    #endif
+#endif
 
     /* solve method stmt */
     if (STMT_method == stmtType) {
@@ -1012,6 +1037,14 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         str = strsDeleteChar(&buffs, str, '\'');
         str = strsDeleteChar(&buffs, str, '\"');
         obj_setStr(ast, (char*)"string", str);
+        goto exit;
+    }
+    /* solve bytes stmt */
+    if (STMT_bytes == stmtType) {
+        str = right + 1;
+        str = strsDeleteChar(&buffs, str, '\'');
+        str = strsDeleteChar(&buffs, str, '\"');
+        obj_setStr(ast, (char*)"bytes", str);
         goto exit;
     }
     /* solve number stmt */
@@ -1433,6 +1466,7 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     char* ref = obj_getStr(subAst, "ref");
     char* left = obj_getStr(subAst, "left");
     char* str = obj_getStr(subAst, "string");
+    char* bytes = obj_getStr(subAst, "bytes");
     char* num = obj_getStr(subAst, "num");
     char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
     if (NULL != list) {
@@ -1453,6 +1487,10 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     }
     if (NULL != str) {
         __platform_sprintf(buff, "%d STR %s\n", deepth, str);
+        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
+    }
+    if (NULL != bytes) {
+        __platform_sprintf(buff, "%d BYT %s\n", deepth, bytes);
         pikaAsm = strsAppend(&buffs, pikaAsm, buff);
     }
     if (NULL != num) {

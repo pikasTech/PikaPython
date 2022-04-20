@@ -43,6 +43,7 @@ enum TokenType {
 enum StmtType {
     STMT_reference,
     STMT_string,
+    STMT_bytes,
     STMT_number,
     STMT_method,
     STMT_operator,
