@@ -26,7 +26,5 @@ rm Release -rf
 mkdir Release
 cd Release 
 cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DPIKA_CONFIG_ENABLE=ON ..
-ninja -j0
 
 cd $ROOT
-sh make.sh
