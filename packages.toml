@@ -41,6 +41,7 @@ releases = [
   "v1.6.2 fa56cc085a53cde6759df11c975b25f93dc7bd48",
   "v1.6.3 1e42f65a99b8e50619adaa13ca4b0b30123a05ac",
   "v1.6.4 7362ba0d4b55abc304d3169989370f0dd8cddde0",
+  "v1.6.5 3fae2b5e86a0de787f6785ccd72a6590b4984f88",
 ]
 
 [[packages]]
@@ -74,6 +75,7 @@ releases = [
   "v1.6.2 fa56cc085a53cde6759df11c975b25f93dc7bd48",
   "v1.6.3 1e42f65a99b8e50619adaa13ca4b0b30123a05ac",
   "v1.6.4 7362ba0d4b55abc304d3169989370f0dd8cddde0",
+  "v1.6.5 3fae2b5e86a0de787f6785ccd72a6590b4984f88",
 ]
 
 [[packages]]
@@ -197,4 +199,5 @@ releases = [
 name = "ctypes"
 releases = [
   "v0.0.1 7362ba0d4b55abc304d3169989370f0dd8cddde0",
+  "v0.0.2 3fae2b5e86a0de787f6785ccd72a6590b4984f88",
 ]
