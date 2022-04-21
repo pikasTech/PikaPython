@@ -1,4 +1,5 @@
-import PikaStdLib
+from PikaStdLib import MemChecker as MC
+from PikaObj import *
 import PikaStdData
 import GTestTask
 import PikaMath
@@ -7,5 +8,5 @@ import PikaDebug
 import ctypes
 import PikaStdData
 
-mem = PikaStdLib.MemChecker()
-
+mem = MC()
+mem.max()

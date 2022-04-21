@@ -1,5 +1,5 @@
 use crate::class_info::ClassInfo;
-use crate::my_string;
+// use crate::my_string;
 // use crate::script::Script;
 use std::collections::BTreeMap;
 use std::collections::LinkedList;
@@ -46,13 +46,15 @@ impl Compiler {
         };
         compiler.class_now_name = Some(class_name.clone());
 
-        if line.starts_with("from ") {
-            return compiler;
-        }
-        if line.starts_with("import ") {
-            let package_name = my_string::get_last_token(&line, ' ').unwrap();
+        if line.starts_with("import ") || line.starts_with("from ") {
+            let tokens: Vec<&str> = line.split(' ').collect();
+            let package_name = tokens[1];
+            if package_name == "PikaObj" {
+                return compiler;
+            }
             let package_obj_define = format!("{} = {}()", package_name, package_name);
             class_now.push_object(package_obj_define, &file_name);
+            class_now.script_list.add(&line);
             return Compiler::__do_analize_file(compiler, package_name.to_string(), true);
         }
         class_now.script_list.add(&line);
