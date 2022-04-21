@@ -347,6 +347,9 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     uint8_t c1 = 0;
     uint8_t c2 = 0;
     uint8_t c3 = 0;
+    uint8_t c4 = 0;
+    uint8_t c5 = 0;
+    uint8_t c6 = 0;
     int32_t symbol_start_index = -1;
     int is_in_string = 0;
     char* tokens;
@@ -358,6 +361,9 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         c1 = 0;
         c2 = 0;
         c3 = 0;
+        c4 = 0;
+        c5 = 0;
+        c6 = 0;
         if (i + 1 < size) {
             c1 = stmt[i + 1];
         }
@@ -366,6 +372,15 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         }
         if (i + 3 < size) {
             c3 = stmt[i + 3];
+        }
+        if (i + 4 < size) {
+            c4 = stmt[i + 4];
+        }
+        if (i + 5 < size) {
+            c5 = stmt[i + 5];
+        }
+        if (i + 6 < size) {
+            c6 = stmt[i + 6];
         }
         if (-1 == symbol_start_index) {
             symbol_start_index = i;
@@ -515,6 +530,28 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
                     Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
                 tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, " or ");
                 i = i + 2;
+                continue;
+            }
+        }
+        /* as */
+        if ('a' == c0) {
+            if (('s' == c1) && (' ' == c2)) {
+                tokens_arg =
+                    Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
+                tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, " as ");
+                i = i + 2;
+                continue;
+            }
+        }
+        /* import */
+        if ('i' == c0) {
+            if (('m' == c1) && ('p' == c2) && ('o' == c3) && ('r' == c4) &&
+                ('t' == c5) && (' ' == c6)) {
+                tokens_arg =
+                    Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
+                tokens_arg =
+                    Lexer_setToken(tokens_arg, TOKEN_operator, " import ");
+                i = i + 5;
                 continue;
             }
         }
@@ -1238,14 +1275,6 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         obj_setStr(ast, "return", "");
         goto block_matched;
     }
-    if (strIsStartWith(line_start, "import ")) {
-        stmt = "";
-        goto block_matched;
-    }
-    if (strIsStartWith(line_start, "from ")) {
-        stmt = "";
-        goto block_matched;
-    }
     if (strIsStartWith(line_start, "global ")) {
         stmt = "";
         char* global_list = line_start + 7;
@@ -1285,6 +1314,86 @@ exit:
     return ast;
 }
 
+static char* Parser_PreProcess_import(Args* buffs_p, char* line) {
+    Args buffs = {0};
+    char* line_out = line;
+    if (!strIsStartWith(line, "import ")) {
+        line_out = line;
+        goto exit;
+    }
+    char* alias = NULL;
+    char* origin = NULL;
+    char* stmt = line + 7;
+    ParserState_forEachToken(ps, stmt) {
+        ParserState_iterStart(&ps);
+        if (strEqu(ps.token2.pyload, " as ")) {
+            origin = strsCopy(&buffs, ps.token1.pyload);
+        }
+        if (strEqu(ps.token1.pyload, " as ")) {
+            alias = strsCopy(&buffs, ps.token2.pyload);
+        }
+        ParserState_iterEnd(&ps);
+    }
+    ParserState_deinit(&ps);
+
+    if (NULL == alias) {
+        line_out = strsCopy(buffs_p, "");
+        goto exit;
+    }
+
+    if (NULL == origin) {
+        line_out = strsCopy(buffs_p, "");
+        goto exit;
+    }
+
+    line_out =
+        strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "%s = %s", alias, origin);
+    line_out = strsCopy(buffs_p, line_out);
+exit:
+    strsDeinit(&buffs);
+    return line_out;
+}
+
+static char* Parser_PreProcess_from(Args* buffs_p, char* line) {
+    Args buffs = {0};
+    char* line_out = line;
+    if (!strIsStartWith(line, "from ")) {
+        line_out = line;
+        goto exit;
+    }
+    char* class = NULL;
+    char* module = NULL;
+    char* stmt = line + 5;
+    ParserState_forEachToken(ps, stmt) {
+        ParserState_iterStart(&ps);
+        if (strEqu(ps.token2.pyload, " import ")) {
+            module = strsCopy(&buffs, ps.token1.pyload);
+        }
+        if (strEqu(ps.token1.pyload, " import ")) {
+            class = strsCopy(&buffs, ps.token2.pyload);
+        }
+        ParserState_iterEnd(&ps);
+    }
+    ParserState_deinit(&ps);
+
+    if (NULL == module) {
+        line_out = strsCopy(buffs_p, "");
+        goto exit;
+    }
+
+    if (NULL == class) {
+        line_out = strsCopy(buffs_p, "");
+        goto exit;
+    }
+
+    line_out = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "%s = %s.%s", class,
+                          module, class);
+    line_out = strsCopy(buffs_p, line_out);
+exit:
+    strsDeinit(&buffs);
+    return line_out;
+}
+
 static char* Parser_linePreProcess(Args* buffs_p, char* line) {
     /* check syntex error */
     if (Lexer_isError(line)) {
@@ -1294,7 +1403,8 @@ static char* Parser_linePreProcess(Args* buffs_p, char* line) {
     /* process EOL */
     line = strsDeleteChar(buffs_p, line, '\r');
     line = Parser_removeAnnotation(line);
-
+    line = Parser_PreProcess_import(buffs_p, line);
+    line = Parser_PreProcess_from(buffs_p, line);
 exit:
     return line;
 }

@@ -2550,7 +2550,7 @@ TEST(parser, multiLine_import) {
     Args* buffs = New_strBuff();
     char* lines =(char *)
         "import TEE\n"
-        "from EE import *\n"
+        "from EE import C\n"
         "while true:\n"
         "    rgb.flow()\n"
         "    if false:\n"
@@ -2563,6 +2563,8 @@ TEST(parser, multiLine_import) {
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
                  "B0\n"
+                 "0 REF EE.C\n"
+                 "0 OUT C\n"
                  "B0\n"
                  "0 REF true\n"
                  "0 JEZ 2\n"
@@ -2827,6 +2829,24 @@ TEST(parser, bytes_iteral) {
         "B0\n"
         "0 BYT \\x00\\x01\n"
         "0 OUT a\n"
+        );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, import_as) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"import PikaStdLib as std\n";
+    char* tokens_str = Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    printf("%s\n", tokens_str);
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm, (char*)
+        "B0\n"
+        "0 REF PikaStdLib\n"
+        "0 OUT std\n"
         );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
