@@ -1363,6 +1363,7 @@ static char* Parser_PreProcess_from(Args* buffs_p, char* line) {
     }
     char* class = NULL;
     char* module = NULL;
+    char* alias = NULL;
     char* stmt = line + 5;
     ParserState_forEachToken(ps, stmt) {
         ParserState_iterStart(&ps);
@@ -1371,6 +1372,9 @@ static char* Parser_PreProcess_from(Args* buffs_p, char* line) {
         }
         if (strEqu(ps.token1.pyload, " import ")) {
             class = strsCopy(&buffs, ps.token2.pyload);
+        }
+        if (strEqu(ps.token1.pyload, " as ")) {
+            alias = strsCopy(&buffs, ps.token2.pyload);
         }
         ParserState_iterEnd(&ps);
     }
@@ -1386,7 +1390,11 @@ static char* Parser_PreProcess_from(Args* buffs_p, char* line) {
         goto exit;
     }
 
-    line_out = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "%s = %s.%s", class,
+    if (NULL == alias){
+        alias = class;
+    }
+
+    line_out = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "%s = %s.%s", alias,
                           module, class);
     line_out = strsCopy(buffs_p, line_out);
 exit:

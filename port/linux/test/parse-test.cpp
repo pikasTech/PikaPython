@@ -2551,6 +2551,7 @@ TEST(parser, multiLine_import) {
     char* lines =(char *)
         "import TEE\n"
         "from EE import C\n"
+        "from PikaStdLib import MemChecker as MC\n"
         "while true:\n"
         "    rgb.flow()\n"
         "    if false:\n"
@@ -2565,6 +2566,9 @@ TEST(parser, multiLine_import) {
                  "B0\n"
                  "0 REF EE.C\n"
                  "0 OUT C\n"
+                 "B0\n"
+                 "0 REF PikaStdLib.MemChecker\n"
+                 "0 OUT MC\n"
                  "B0\n"
                  "0 REF true\n"
                  "0 JEZ 2\n"
