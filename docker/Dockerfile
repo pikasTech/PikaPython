@@ -1,9 +1,6 @@
 FROM ubuntu:20.04
 
-RUN apt-get update
-RUN apt-get install wget -y
-
-RUN wget -O /etc/apt/sources.list http://mirrors.cloud.tencent.com/repo/ubuntu20_sources.list
+ADD ubuntu20_sources.list /etc/apt/sources.list
 
 RUN echo 'Asia/Shanghai' >/etc/timezone
 
@@ -40,3 +37,5 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 
 
 RUN apt-get install -y python3
+RUN git config --global --add safe.directory /usr/src/pikascript
+
