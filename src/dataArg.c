@@ -149,7 +149,7 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
     self = arg_setType(self, ARG_TYPE_BYTES);
     void* dir = arg_getContent(self);
     __platform_memcpy(dir, &size, sizeof(size_t));
-    __platform_memcpy(dir + sizeof(size_t), src, size);
+    __platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
     return self;
 }
 
