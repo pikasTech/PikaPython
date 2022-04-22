@@ -938,8 +938,26 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     uint8_t isLeftExist = 0;
     if (Parser_checkIsDirect(assignment)) {
         isLeftExist = 1;
-        left = strsGetFirstToken(&buffs, assignment, '=');
-        right = strPointToLastToken(stmt, '=');
+        left = strsCopy(&buffs, "");
+        right = strsCopy(&buffs, "");
+        uint8_t is_meet_equ = 0;
+        ParserState_forEachToken(ps, stmt) {
+            ParserState_iterStart(&ps);
+            if (strEqu(ps.token1.pyload, "=") &&
+                ps.token1.type == TOKEN_operator) {
+                is_meet_equ = 1;
+                ParserState_iterEnd(&ps);
+                continue;
+            }
+            if (0 == is_meet_equ) {
+                left = strsAppend(&buffs, left, ps.token1.pyload);
+            }
+            if (1 == is_meet_equ) {
+                right = strsAppend(&buffs, right, ps.token1.pyload);
+            }
+            ParserState_iterEnd(&ps);
+        }
+        ParserState_deinit(&ps);
     }
     /* solve the += -= /= *= stmt */
     if (!isLeftExist) {
@@ -1392,7 +1410,7 @@ static char* Parser_PreProcess_from(Args* buffs_p, char* line) {
         goto exit;
     }
 
-    if (NULL == alias){
+    if (NULL == alias) {
         alias = class;
     }
 
