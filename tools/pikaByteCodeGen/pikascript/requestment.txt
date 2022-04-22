@@ -1,1 +1,1 @@
-pikascript-core==v1.5.3
+pikascript-core==v1.7.0rc

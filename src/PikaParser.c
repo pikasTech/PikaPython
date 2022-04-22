@@ -740,13 +740,13 @@ char* Parser_solveBranckets(Args* outBuffs,
     Arg* right_arg = arg_setStr(NULL, "", "");
     uint8_t is_in_brancket = 0;
     args_setStr(&buffs, "index", "");
+    uint8_t matched = 0;
     /* exit when NULL */
     if (NULL == content) {
         arg_deinit(right_arg);
         right_arg = arg_setStr(right_arg, "", stmt);
         goto exit;
     }
-    uint8_t matched = 0;
     /* exit when not match
          (symble|iteral)'['
     */
@@ -1317,13 +1317,14 @@ exit:
 static char* Parser_PreProcess_import(Args* buffs_p, char* line) {
     Args buffs = {0};
     char* line_out = line;
+    char* alias = NULL;
+    char* origin = NULL;
+    char* stmt = line + 7;
     if (!strIsStartWith(line, "import ")) {
         line_out = line;
         goto exit;
     }
-    char* alias = NULL;
-    char* origin = NULL;
-    char* stmt = line + 7;
+
     ParserState_forEachToken(ps, stmt) {
         ParserState_iterStart(&ps);
         if (strEqu(ps.token2.pyload, " as ")) {
@@ -1357,14 +1358,15 @@ exit:
 static char* Parser_PreProcess_from(Args* buffs_p, char* line) {
     Args buffs = {0};
     char* line_out = line;
-    if (!strIsStartWith(line, "from ")) {
-        line_out = line;
-        goto exit;
-    }
     char* class = NULL;
     char* module = NULL;
     char* alias = NULL;
     char* stmt = line + 5;
+    if (!strIsStartWith(line, "from ")) {
+        line_out = line;
+        goto exit;
+    }
+
     ParserState_forEachToken(ps, stmt) {
         ParserState_iterStart(&ps);
         if (strEqu(ps.token2.pyload, " import ")) {
