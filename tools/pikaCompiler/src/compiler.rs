@@ -77,11 +77,11 @@ impl Compiler {
     pub fn __do_analize_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
         /* check if compiled */
         if self.compiled_list.contains(&file_name) {
-            return self;
+        } else {
+            println!("    compiling {}{}.py...", self.source_path, file_name);
         }
         self.compiled_list.push_back(String::clone(&file_name));
         /* print info */
-        println!("    compiling {}{}.py...", self.source_path, file_name);
         let file = Compiler::open_file(format!("{}{}.py", self.source_path, file_name));
         let mut file = match file {
             Ok(file) => file,
@@ -105,14 +105,14 @@ impl Compiler {
         */
         if file_name != "main" && is_top_pkg {
             let pkg_define = format!("class {}(TinyObj):", &file_name);
-            let pacakge_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
+            let package_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
                 Some(s) => s,
                 None => return self,
             };
-            let package_name = pacakge_now.this_class_name.clone();
+            let package_name = package_now.this_class_name.clone();
             self.class_list
                 .entry(package_name.clone())
-                .or_insert(pacakge_now);
+                .or_insert(package_now);
             self.package_now_name = Some(package_name.clone());
         }
         /* solve lines in file */
