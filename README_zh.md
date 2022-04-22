@@ -602,6 +602,7 @@ sh run.sh
 # 7.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| 赞助：500¥ (ctypes 相关） | 蒋太平 |
 | fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
 | ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
 | ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
