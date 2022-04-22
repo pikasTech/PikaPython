@@ -251,3 +251,14 @@ TEST(object_test, mem) {
     EXPECT_EQ(pikaMemNow(), 0);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(object_test, bytes) {
+    PikaObj* root = newRootObj((char*)"root", New_BaseObj);
+    uint8_t test_arg[] = {0x00, 0x02, 0x03, 0x05, 0x07};
+    obj_setBytes(root, (char*)"test", test_arg, sizeof(test_arg));
+    uint16_t mem_now_before = pikaMemNow();
+    obj_setBytes(root, (char*)"test", test_arg, sizeof(test_arg));
+    EXPECT_EQ(pikaMemNow(), mem_now_before);
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

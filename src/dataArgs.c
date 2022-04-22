@@ -82,7 +82,7 @@ int args_pushArg(Args* self, Arg* arg) {
 
 void args_setBytes(Args* self, char* name, uint8_t* src, size_t size) {
     Arg* argNew = arg_setBytes(NULL, name, src, size);
-    args_pushArg(self, argNew);
+    args_setArg(self, argNew);
 }
 
 char* args_getBuff(Args* self, int32_t size) {
