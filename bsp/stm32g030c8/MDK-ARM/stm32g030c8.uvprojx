@@ -276,7 +276,7 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x8002000</StartAddress>
+                <StartAddress>0x8000000</StartAddress>
                 <Size>0x10000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
@@ -752,11 +752,6 @@
               <FilePath>..\pikascript\pikascript-api/PikaStdDevice_UART-api.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdDevice-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api/PikaStdDevice-api.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaStdDevice_IIC-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdDevice_IIC-api.c</FilePath>
@@ -770,6 +765,11 @@
               <FileName>STM32G0_lowLevel-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/STM32G0_lowLevel-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/PikaDebug-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdDevice_PWM-api.c</FileName>
@@ -802,11 +802,6 @@
               <FilePath>..\pikascript\pikascript-api/PikaPiZero_Point-api.c</FilePath>
             </File>
             <File>
-              <FileName>STM32G0-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api/STM32G0-api.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaStdDevice_Time-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdDevice_Time-api.c</FilePath>
@@ -822,9 +817,9 @@
               <FilePath>..\pikascript\pikascript-api/machine_LCD-api.c</FilePath>
             </File>
             <File>
-              <FileName>PikaPiZero-api.c</FileName>
+              <FileName>PikaDebug_Debuger-api.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api/PikaPiZero-api.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api/PikaDebug_Debuger-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdLib_RangeObj-api.c</FileName>
@@ -850,6 +845,11 @@
               <FileName>machine_Time-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/machine_Time-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_ByteArray-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/PikaStdData_ByteArray-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdLib_StringObj-api.c</FileName>
@@ -1180,6 +1180,11 @@
               <FileName>STM32G0.py</FileName>
               <FileType>5</FileType>
               <FilePath>..\pikascript\STM32G0.py</FilePath>
+            </File>
+            <File>
+              <FileName>machine.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\machine.py</FilePath>
             </File>
           </Files>
         </Group>

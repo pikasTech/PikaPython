@@ -80,10 +80,11 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 extern PikaObj * __pikaMain;
 int main(void) {
     /* support bootLoader */
+		#ifdef SUPPORT_BOOTLOADER
     __disable_irq();
     SCB->VTOR = FLASH_BASE | 0x2000;
     __enable_irq();
-    
+    #endif
     /* system init */
     HAL_Init();
     SystemClock_Config();
