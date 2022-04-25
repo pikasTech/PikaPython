@@ -391,7 +391,7 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     return newObj;
 }
 
-Arg* obj_getRefArg(PikaObj* self){
+Arg* obj_getRefArg(PikaObj* self) {
     return arg_setPtr(NULL, "", ARG_TYPE_FREE_OBJECT, self);
 }
 
@@ -874,4 +874,16 @@ PikaObj* New_PikaObj(void) {
     /* List */
     self->list = New_args(NULL);
     return self;
+}
+
+void obj_refcntInc(PikaObj* self) {
+    obj_setInt(self, "_refcnt", obj_getInt(self, "_refcnt") + 1);
+}
+
+void obj_refcntDec(PikaObj* self) {
+    obj_setInt(self, "_refcnt", obj_getInt(self, "_refcnt") - 1);
+}
+
+int obj_refcntNow(PikaObj* self) {
+    return obj_getInt(self, "_refcnt");
 }

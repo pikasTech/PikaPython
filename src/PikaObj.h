@@ -226,6 +226,10 @@ void obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
 Arg* newFreeObjArg(NewFun newObjFun);
 Arg* obj_newObjInPackage(NewFun newObjFun);
 
+void obj_refcntInc(PikaObj* self);
+void obj_refcntDec(PikaObj* self);
+int obj_refcntNow(PikaObj* self);
+
 #define PIKA_PYTHON_BEGIN
 #define PIKA_PYTHON(x)
 #define PIKA_PYTHON_END
