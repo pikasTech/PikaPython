@@ -309,7 +309,8 @@ Arg* arg_copy(Arg* argToBeCopy) {
     if (NULL == argToBeCopy) {
         return NULL;
     }
-    if (ARG_TYPE_OBJECT == arg_getType(argToBeCopy)) {
+    ArgType arg_type = arg_getType(argToBeCopy);
+    if (ARG_TYPE_OBJECT == arg_type || ARG_TYPE_REF_OBJECT == arg_type) {
         obj_refcntInc(arg_getPtr(argToBeCopy));
     }
     Arg* argCopied = New_arg(NULL);
@@ -351,6 +352,12 @@ void arg_deinitHeap(Arg* self) {
 
 void arg_deinit(Arg* self) {
     arg_deinitHeap(self);
+    if (arg_getType(self) == ARG_TYPE_REF_OBJECT) {
+        PikaObj* obj = arg_getPtr(self);
+        if (obj_isArgExist(obj, "_refcnt")) {
+            obj_refcntDec(obj);
+        }
+    }
     arg_freeContent(self);
 }
 

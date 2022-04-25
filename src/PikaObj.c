@@ -110,13 +110,28 @@ int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
     return 0;
 }
 
-void deinitAllSubObj(PikaObj* self) {
+static void __deinitAllSubObj(PikaObj* self) {
     Args* args = self->list;
     args_foreach(args, deinitEachSubObj, NULL);
 }
 
+static void __obj_deinit_pyload(PikaObj* self) {
+    /* no refcnt, deinit directly */
+    if (!obj_isArgExist(self, "_refcnt")) {
+        __deinitAllSubObj(self);
+        return;
+    }
+    /* refcnt exist, only deinit when refcnt = 0 */
+    int ref_cnt = obj_refcntNow(self);
+    if (ref_cnt == 0 || ref_cnt == 1) {
+        __deinitAllSubObj(self);
+        return;
+    }
+    return;
+}
+
 int32_t obj_deinit(PikaObj* self) {
-    deinitAllSubObj(self);
+    __obj_deinit_pyload(self);
     args_deinit(self->list);
     pikaFree(self, sizeof(PikaObj));
     self = NULL;
@@ -381,6 +396,7 @@ PikaObj* removeMethodInfo(PikaObj* thisClass) {
 
 PikaObj* newObjFromFun(NewFun newObjFun) {
     PikaObj* thisClass = obj_getClassObjByNewFun(NULL, "", newObjFun);
+    obj_refcntInc(thisClass);
     return removeMethodInfo(thisClass);
 }
 
@@ -889,5 +905,6 @@ int obj_refcntNow(PikaObj* self) {
 }
 
 Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj) {
+    obj_refcntInc(obj);
     return arg_setPtr(self, name, ARG_TYPE_REF_OBJECT, obj);
 }

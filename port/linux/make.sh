@@ -1,4 +1,3 @@
 sh api-make.sh
-cd build
 ninja clean
-ninja -j0
+sh only_make.sh
