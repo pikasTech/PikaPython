@@ -329,6 +329,7 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
     Args* initArgs = New_args(NULL);
     PikaObj* thisClass = newClassFun(initArgs);
     obj_setPtr(thisClass, "_clsptr", (void*)newClassFun);
+    obj_setInt(thisClass, "_refcnt", 0);
     args_deinit(initArgs);
     return thisClass;
 }
@@ -388,6 +389,10 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     PikaObj* newObj = newObjFromFun(newObjFun);
     __pikaMain = newObj;
     return newObj;
+}
+
+Arg* obj_getRefArg(PikaObj* self){
+    return arg_setPtr(NULL, "", ARG_TYPE_FREE_OBJECT, self);
 }
 
 Arg* newFreeObjArg(NewFun newObjFun) {

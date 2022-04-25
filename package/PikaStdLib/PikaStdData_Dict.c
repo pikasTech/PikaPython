@@ -35,6 +35,11 @@ Arg* PikaStdData_Dict___next__(PikaObj* self) {
         arg_deinit(res);
         return arg_setNull(NULL);
     }
+    /* skip _refcnt */
+    if (hash_time33("_refcnt") == arg_getNameHash(res)) {
+        arg_deinit(res);
+        return arg_setNull(NULL);
+    }
     if (NULL == res) {
         return arg_setNull(NULL);
     }

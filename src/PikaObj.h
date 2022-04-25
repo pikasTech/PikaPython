@@ -174,10 +174,6 @@ int32_t args_getErrorCode(Args* args);
 void args_setSysOut(Args* args, char* str);
 char* obj_getSysOut(PikaObj* self);
 void obj_sysPrintf(PikaObj* self, char* fmt, ...);
-uint8_t obj_getRefArg(PikaObj* self,
-                      char* targetArgName,
-                      char* sourceArgPath,
-                      Args* targetArgs);
 uint8_t obj_getAnyArg(PikaObj* self,
                       char* targetArgName,
                       char* sourceArgPath,
