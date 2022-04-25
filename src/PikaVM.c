@@ -493,6 +493,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
         arg_setType(outArg, ARG_TYPE_OBJECT);
         arg_refCntInc(outArg);
     }
+
     /* ouput arg to locals */
     obj_setArg_noCopy(hostObj, data, outArg);
     if (ARG_TYPE_MATE_OBJECT == outArg_type) {
