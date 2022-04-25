@@ -62,7 +62,7 @@ void* args_getPtr(Args* self, char* name) {
 int32_t args_setPtr(Args* self, char* name, void* argPointer) {
     int32_t errCode = 0;
     Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, name, ARG_TYPE_POINTER, argPointer);
+    argNew = arg_setPtr(argNew, name, ARG_TYPE_REF_OBJECT, argPointer);
     args_setArg(self, argNew);
     return errCode;
 }
@@ -429,7 +429,7 @@ char* args_print(Args* self, char* name) {
         goto exit;
     }
 
-    if (type == ARG_TYPE_POINTER) {
+    if (type == ARG_TYPE_REF_OBJECT) {
         void* val = args_getPtr(self, name);
         res = getPrintStringFromPtr(self, name, val);
         goto exit;

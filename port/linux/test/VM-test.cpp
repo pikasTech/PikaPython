@@ -581,7 +581,7 @@ TEST(VM, RUN_NEW) {
     ArgType newObj_type = arg_getType(newObj);
     ArgType outObj_type = arg_getType(outObj);
     EXPECT_EQ(x, 1);
-    EXPECT_EQ(newObj_type, ARG_TYPE_POINTER);
+    EXPECT_EQ(newObj_type, ARG_TYPE_REF_OBJECT);
     EXPECT_EQ(outObj_type, ARG_TYPE_OBJECT);
     obj_deinit(self);
     // obj_deinit(globals);
