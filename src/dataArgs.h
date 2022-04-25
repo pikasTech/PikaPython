@@ -64,6 +64,7 @@ int32_t args_setFloatWithDefaultName(Args* self, float argFloat);
 int32_t args_setFloat(Args* self, char* name, float argFloat);
 float args_getFloat(Args* self, char* name);
 
+int32_t args_setRefObject(Args* self, char* name, void* argPointer);
 int32_t args_setPtr(Args* self, char* name, void* argPointer);
 void* args_getPtr(Args* self, char* name);
 

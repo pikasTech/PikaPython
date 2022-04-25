@@ -515,7 +515,7 @@ static Arg* VM_instruction_handler_RAS(PikaObj* self, VMState* vs, char* data) {
     }
     /* use "data" object to run */
     PikaObj* runAs = obj_getObj(vs->locals, data, 0);
-    args_setPtr(vs->locals->list, "__runAs", runAs);
+    args_setRefObject(vs->locals->list, "__runAs", runAs);
     return NULL;
 }
 

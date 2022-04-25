@@ -13,7 +13,7 @@ void ctypesUtils_setFloat(PikaObj* self, float val) {
 }
 
 void ctypesUtils_setPtr(PikaObj* self, void* ptr) {
-    obj_setPtr(self, "value", ptr);
+    obj_setRefObject(self, "value", ptr);
 }
 
 int ctypesUtils_getInt(PikaObj* self) {

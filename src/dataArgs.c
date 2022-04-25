@@ -62,6 +62,14 @@ void* args_getPtr(Args* self, char* name) {
 int32_t args_setPtr(Args* self, char* name, void* argPointer) {
     int32_t errCode = 0;
     Arg* argNew = New_arg(NULL);
+    argNew = arg_setPtr(argNew, name, ARG_TYPE_POINTER, argPointer);
+    args_setArg(self, argNew);
+    return errCode;
+}
+
+int32_t args_setRefObject(Args* self, char* name, void* argPointer) {
+    int32_t errCode = 0;
+    Arg* argNew = New_arg(NULL);
     argNew = arg_setPtr(argNew, name, ARG_TYPE_REF_OBJECT, argPointer);
     args_setArg(self, argNew);
     return errCode;

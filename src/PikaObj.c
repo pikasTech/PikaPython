@@ -144,13 +144,13 @@ int32_t obj_setInt(PikaObj* self, char* argPath, int64_t val) {
     return 0;
 }
 
-int32_t obj_setPtr(PikaObj* self, char* argPath, void* pointer) {
+int32_t obj_setRefObject(PikaObj* self, char* argPath, void* pointer) {
     PikaObj* obj = obj_getObj(self, argPath, 1);
     if (NULL == obj) {
         return 1;
     }
     char* name = strPointToLastToken(argPath, '.');
-    args_setPtr(obj->list, name, pointer);
+    args_setRefObject(obj->list, name, pointer);
     return 0;
 }
 
@@ -222,13 +222,13 @@ size_t obj_getBytesSize(PikaObj* self, char* argPath) {
     return args_getBytesSize(obj->list, argName);
 }
 
-size_t obj_loadMem(PikaObj* self, char* argPath, uint8_t* out_buff){
+size_t obj_loadMem(PikaObj* self, char* argPath, uint8_t* out_buff) {
     size_t size_mem = obj_getBytesSize(self, argPath);
     void* src = obj_getBytes(self, argPath);
-    if(0 == size_mem){
+    if (0 == size_mem) {
         return 0;
     }
-    if(NULL == src){
+    if (NULL == src) {
         return 0;
     }
     __platform_memcpy(out_buff, src, size_mem);
@@ -304,7 +304,7 @@ int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_ObjectFun) {
     Args initArgs = {0};
     void* (*new_Object)(Args * initArgs) = (void* (*)(Args*))new_ObjectFun;
     void* subObject = new_Object(&initArgs);
-    obj_setPtr(self, subObjectName, subObject);
+    obj_setRefObject(self, subObjectName, subObject);
     args_deinit(&initArgs);
     return 0;
 }
@@ -327,7 +327,7 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
                                  NewFun newClassFun) {
     Args* initArgs = New_args(NULL);
     PikaObj* thisClass = newClassFun(initArgs);
-    obj_setPtr(thisClass, "_clsptr", (void*)newClassFun);
+    obj_setRefObject(thisClass, "_clsptr", (void*)newClassFun);
     args_deinit(initArgs);
     return thisClass;
 }
@@ -826,7 +826,7 @@ void obj_sysPrintf(PikaObj* self, char* fmt, ...) {
     va_end(args);
 }
 
-void method_returnBytes(Args* args, uint8_t* val){
+void method_returnBytes(Args* args, uint8_t* val) {
     args_setBytes(args, "return", val, PIKA_BYTES_DEFAULT_SIZE);
 }
 
