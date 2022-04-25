@@ -67,10 +67,10 @@ int32_t args_setPtr(Args* self, char* name, void* argPointer) {
     return errCode;
 }
 
-int32_t args_setRefObject(Args* self, char* name, void* argPointer) {
+int32_t args_setRefObj(Args* self, char* name, void* argPointer) {
     int32_t errCode = 0;
     Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, name, ARG_TYPE_REF_OBJECT, argPointer);
+    argNew = arg_setRefObj(argNew, name, argPointer);
     args_setArg(self, argNew);
     return errCode;
 }

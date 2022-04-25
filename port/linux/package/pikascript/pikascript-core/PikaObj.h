@@ -229,6 +229,7 @@ Arg* obj_newObjInPackage(NewFun newObjFun);
 void obj_refcntInc(PikaObj* self);
 void obj_refcntDec(PikaObj* self);
 int obj_refcntNow(PikaObj* self);
+Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj);
 
 #define PIKA_PYTHON_BEGIN
 #define PIKA_PYTHON(x)

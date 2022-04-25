@@ -41,7 +41,7 @@ void PikaStdData_List_set(PikaObj* self, Arg* arg, int i) {
 
 Arg* PikaStdData_List___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
-    return arg_setPtr(NULL, "", ARG_TYPE_REF_OBJECT, self);
+    return arg_setRefObj(NULL, "", self);
 }
 
 Arg* PikaStdData_List___next__(PikaObj* self) {
@@ -66,9 +66,7 @@ void PikaStdData_ByteArray_fromString(PikaObj* self, char* s) {
     for (uint32_t i = 0; i < strGetSize(s); i++) {
         obj_setInt(self, "__val", (int)s[i]);
         PIKA_PYTHON_BEGIN
-        PIKA_PYTHON(
-            append(__val)
-        )
+        PIKA_PYTHON(append(__val))
         const uint8_t bytes[] = {
             0x08, 0x00, /* instruct array size */
             0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x07, 0x00, /* instruct array */

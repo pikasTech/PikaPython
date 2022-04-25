@@ -160,7 +160,7 @@ int32_t obj_setRefObject(PikaObj* self, char* argPath, void* pointer) {
         return 1;
     }
     char* name = strPointToLastToken(argPath, '.');
-    args_setRefObject(obj->list, name, pointer);
+    args_setRefObj(obj->list, name, pointer);
     return 0;
 }
 
@@ -886,4 +886,8 @@ void obj_refcntDec(PikaObj* self) {
 
 int obj_refcntNow(PikaObj* self) {
     return obj_getInt(self, "_refcnt");
+}
+
+Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj) {
+    return arg_setPtr(self, name, ARG_TYPE_REF_OBJECT, obj);
 }

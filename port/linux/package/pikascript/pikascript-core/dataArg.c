@@ -26,6 +26,7 @@
  */
 
 #include "dataArg.h"
+#include "PikaObj.h"
 #include "dataArgs.h"
 #include "dataMemory.h"
 #include "dataString.h"
@@ -307,6 +308,9 @@ Arg* New_arg(void* voidPointer) {
 Arg* arg_copy(Arg* argToBeCopy) {
     if (NULL == argToBeCopy) {
         return NULL;
+    }
+    if (ARG_TYPE_OBJECT == arg_getType(argToBeCopy)) {
+        obj_refcntInc(arg_getPtr(argToBeCopy));
     }
     Arg* argCopied = New_arg(NULL);
     argCopied = arg_setContent(argCopied, arg_getContent(argToBeCopy),
