@@ -349,3 +349,15 @@ void arg_deinit(Arg* self) {
     arg_deinitHeap(self);
     arg_freeContent(self);
 }
+
+void arg_refCntInc(Arg* self) {
+    ((__arg*)self)->ref_cnt++;
+}
+
+void arg_refCntDec(Arg* self) {
+    ((__arg*)self)->ref_cnt--;
+}
+
+uint8_t arg_getRefCnt(Arg* self) {
+    return ((__arg*)self)->ref_cnt;
+}

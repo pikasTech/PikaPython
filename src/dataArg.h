@@ -60,7 +60,7 @@ struct __arg {
     __arg* next;
     uint16_t size;
     uint8_t type;
-    uint8_t __rsvd;
+    uint8_t ref_cnt;
     Hash name_hash;
     uint8_t content[];
 };
@@ -138,5 +138,8 @@ void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 void arg_printBytes(Arg* self);
+void arg_refCntInc(Arg* self);
+void arg_refCntDec(Arg* self);
+uint8_t arg_getRefCnt(Arg* self);
 
 #endif

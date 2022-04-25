@@ -463,15 +463,7 @@ static Arg* VM_instruction_handler_BYT(PikaObj* self, VMState* vs, char* data) {
     return arg_setBytes(NULL, "", (uint8_t*)data, strGetSize(data));
 }
 
-typedef enum {
-    IS_INIT_OBJ_TRUE,
-    IS_INIT_OBJ_FALSE,
-} is_init_obj_t;
-
-static Arg* __VM_OUT(PikaObj* self,
-                     VMState* vs,
-                     char* data,
-                     is_init_obj_t is_init_obj) {
+static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
     Arg* outArg = stack_popArg(&(vs->stack));
     ArgType outArg_type = arg_getType(outArg);
     PikaObj* hostObj = vs->locals;
@@ -499,6 +491,7 @@ static Arg* __VM_OUT(PikaObj* self,
     /* set free object to nomal object */
     if (ARG_TYPE_FREE_OBJECT == outArg_type) {
         arg_setType(outArg, ARG_TYPE_OBJECT);
+        arg_refCntInc(outArg);
     }
     /* ouput arg to locals */
     obj_setArg_noCopy(hostObj, data, outArg);
@@ -510,10 +503,6 @@ static Arg* __VM_OUT(PikaObj* self,
         obj_runNativeMethod(new_obj, "__init__", NULL);
     }
     return NULL;
-}
-
-static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
-    return __VM_OUT(self, vs, data, IS_INIT_OBJ_TRUE);
 }
 
 /* run as */
