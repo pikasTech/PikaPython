@@ -144,6 +144,16 @@ int32_t obj_setInt(PikaObj* self, char* argPath, int64_t val) {
     return 0;
 }
 
+int32_t obj_setPtr(PikaObj* self, char* argPath, void* pointer) {
+    PikaObj* obj = obj_getObj(self, argPath, 1);
+    if (NULL == obj) {
+        return 1;
+    }
+    char* name = strPointToLastToken(argPath, '.');
+    args_setPtr(obj->list, name, pointer);
+    return 0;
+}
+
 int32_t obj_setRefObject(PikaObj* self, char* argPath, void* pointer) {
     PikaObj* obj = obj_getObj(self, argPath, 1);
     if (NULL == obj) {
@@ -300,15 +310,6 @@ int32_t obj_load(PikaObj* self, Args* args, char* name) {
     return 0;
 }
 
-int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_ObjectFun) {
-    Args initArgs = {0};
-    void* (*new_Object)(Args * initArgs) = (void* (*)(Args*))new_ObjectFun;
-    void* subObject = new_Object(&initArgs);
-    obj_setRefObject(self, subObjectName, subObject);
-    args_deinit(&initArgs);
-    return 0;
-}
-
 int32_t obj_freeObj(PikaObj* self, char* objPath) {
     PikaObj* obj = obj_getPtr(self, objPath);
     obj_deinit(obj);
@@ -327,7 +328,7 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
                                  NewFun newClassFun) {
     Args* initArgs = New_args(NULL);
     PikaObj* thisClass = newClassFun(initArgs);
-    obj_setRefObject(thisClass, "_clsptr", (void*)newClassFun);
+    obj_setPtr(thisClass, "_clsptr", (void*)newClassFun);
     args_deinit(initArgs);
     return thisClass;
 }

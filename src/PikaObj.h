@@ -104,6 +104,7 @@ int32_t obj_disable(PikaObj* self);
 // arg type operations
 int32_t obj_setInt(PikaObj* self, char* argPath, int64_t val);
 int32_t obj_setRefObject(PikaObj* self, char* argPath, void* pointer);
+int32_t obj_setPtr(PikaObj* self, char* argPath, void* pointer);
 int32_t obj_setFloat(PikaObj* self, char* argPath, float value);
 int32_t obj_setStr(PikaObj* self, char* argPath, char* str);
 int32_t obj_setArg(PikaObj* self, char* argPath, Arg* arg);

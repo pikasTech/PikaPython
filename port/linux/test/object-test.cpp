@@ -144,7 +144,7 @@ TEST(object_test, test8) {
 TEST(object_test, test9) {
     PikaObj* sys = newRootObj((char*)"sys", New_PikaStdLib_SysObj);
     obj_run(sys, (char*)"ls()");
-    obj_setRefObject(sys, (char*)"baseClass", (void*)New_TinyObj);
+    obj_setPtr(sys, (char*)"baseClass", (void*)New_TinyObj);
     obj_run(sys, (char*)"ls()");
     obj_deinit(sys);
     EXPECT_EQ(pikaMemNow(), 0);

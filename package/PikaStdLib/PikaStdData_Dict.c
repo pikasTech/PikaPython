@@ -30,7 +30,8 @@ Arg* PikaStdData_Dict___next__(PikaObj* self) {
     int __iter_i = args_getInt(self->list, "__iter_i");
     PikaObj* pyload = obj_getObj(self, "pyload", 0);
     Arg* res = arg_copy(args_getArg_index(pyload->list, __iter_i));
-    if (ARG_TYPE_REF_OBJECT == arg_getType(res)) {
+    /* skip pointer */
+    if (ARG_TYPE_POINTER == arg_getType(res)) {
         arg_deinit(res);
         return arg_setNull(NULL);
     }
