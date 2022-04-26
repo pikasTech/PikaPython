@@ -77,7 +77,6 @@ TEST(gc, ref1210) {
     EXPECT_EQ(obj_refcntNow(mem), 2);
     obj_removeArg(pikaMain, (char*)"mem2");
     EXPECT_EQ(obj_refcntNow(mem), 1);
-    obj_removeArg(pikaMain, (char*)"mem");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

@@ -588,12 +588,8 @@ VMParameters* obj_runDirect(PikaObj* self, char* cmd) {
 
 int32_t obj_removeArg(PikaObj* self, char* argPath) {
     PikaObj* objHost = obj_getObj(self, argPath, 1);
-    Arg* obj_arg = obj_getArg(self, argPath);
     char* argName;
     int32_t res;
-    if (ARG_TYPE_OBJECT == arg_getType(obj_arg)) {
-        obj_deinit(arg_getPtr(obj_arg));
-    }
     int32_t err = 0;
     if (NULL == objHost) {
         /* [error] object no found */
