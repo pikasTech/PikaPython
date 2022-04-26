@@ -108,6 +108,7 @@ TEST(gc, factory) {
     );
     /* collect */
     PikaObj* mem = obj_getObj(pikaMain, (char*)"mem");
+    EXPECT_EQ(obj_refcntNow(mem), 1);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
