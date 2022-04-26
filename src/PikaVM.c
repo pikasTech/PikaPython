@@ -1323,6 +1323,11 @@ void VMState_solveUnusedStack(VMState* vs) {
             arg_deinit(arg);
             continue;
         }
+        if (type == ARG_TYPE_FREE_OBJECT) {
+            obj_deinit(arg_getPtr(arg));
+            arg_deinit(arg);
+            continue;
+        }
         if (type == ARG_TYPE_INT) {
             __platform_printf("%d\r\n", (int)arg_getInt(arg));
         } else if (type == ARG_TYPE_FLOAT) {
