@@ -1,9 +1,10 @@
+#api
 import PikaStdDevice
 
-// kernel
-// TODO
+# kernel
+# TODO
 
-// hal
+# hal
 class GPIO(PikaStdDevice.GPIO):
     def platformHigh():
         pass

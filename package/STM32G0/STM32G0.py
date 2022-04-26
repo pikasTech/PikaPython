@@ -1,3 +1,4 @@
+#api
 from PikaObj import *
 import PikaStdDevice
 import PikaStdTask
