@@ -314,6 +314,8 @@ TEST(pikaMain, list_iter) {
     /* collect */
     PikaObj* res = (PikaObj*)obj_getPtr(pikaMain, (char*)"res");
     PikaObj* list = (PikaObj*)obj_getPtr(pikaMain, (char*)"list");
+    int ref_cnt = obj_refcntNow(list);
+    EXPECT_EQ(ref_cnt, 2);
     /* assert */
     EXPECT_EQ(res, list);
     /* deinit */

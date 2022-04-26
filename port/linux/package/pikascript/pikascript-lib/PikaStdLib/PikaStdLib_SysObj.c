@@ -127,7 +127,9 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
             0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
         };
         pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
-        return arg_copy(args_getArg(arg_obj->list, "__res"));
+        Arg* res = arg_copy(args_getArg(arg_obj->list, "__res"));
+        obj_removeArg(arg_obj, "__res");
+        return res;
     }
     return arg_setNull(NULL);
 }
