@@ -349,22 +349,22 @@ TEST(pikaMain, list_for_loop) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, range) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-//     /* run */
-//     obj_runDirect(pikaMain, (char*)
-//         "r = range(10, 0)\n"
-//         "r\n"
-//         "\n"
-//         );
-//     /* collect */
-//     /* assert */
-//     obj_deinit(pikaMain);
-//     /* mem check */
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, range) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_runDirect(pikaMain, (char*)
+        "r = range(10, 0)\n"
+        "r\n"
+        "\n"
+        );
+    /* collect */
+    /* assert */
+    obj_deinit(pikaMain);
+    /* mem check */
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST(pikaMain, for_in_range) {
     /* init */

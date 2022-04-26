@@ -390,19 +390,19 @@ Arg* obj_newObjInPackage(NewFun newObjFun) {
 
 static PikaObj* __initObj(PikaObj* obj, char* name) {
     PikaObj* res = NULL;
-    NewFun newObjFun = (NewFun)getNewClassObjFunByName(obj, name);
+    NewFun constructor = (NewFun)getNewClassObjFunByName(obj, name);
     Args buffs = {0};
     PikaObj* thisClass;
-    PikaObj* newObj;
-    if (NULL == newObjFun) {
+    PikaObj* new_obj;
+    if (NULL == constructor) {
         /* no such object */
         res = NULL;
         goto exit;
     }
-    thisClass = obj_getClassObjByNewFun(obj, name, newObjFun);
-    newObj = removeMethodInfo(thisClass);
-
-    args_setPtrWithType(obj->list, name, ARG_TYPE_OBJECT, newObj);
+    thisClass = obj_getClassObjByNewFun(obj, name, constructor);
+    new_obj = removeMethodInfo(thisClass);
+    obj_refcntInc(new_obj);
+    args_setPtrWithType(obj->list, name, ARG_TYPE_OBJECT, new_obj);
     res = obj_getPtr(obj, name);
     goto exit;
 exit:
