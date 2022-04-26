@@ -279,7 +279,7 @@ TEST(pikaMain, PikaStdData) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, iter) {
+TEST(pikaMain, list_method) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
@@ -291,6 +291,23 @@ TEST(pikaMain, iter) {
         "len = list.len()\n"
         "a1 = list.get(0)\n"
         "a2 = list.get(1)\n"
+        "\n"
+        );
+    /* collect */
+    /* assert */
+    /* deinit */
+    // obj_deinit(globals);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, list_iter) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_runDirect(pikaMain, (char*)
+        "list = PikaStdData.List()\n"
         "res = iter(list)\n"
         "\n"
         );

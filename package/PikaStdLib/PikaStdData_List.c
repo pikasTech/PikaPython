@@ -41,8 +41,7 @@ void PikaStdData_List_set(PikaObj* self, Arg* arg, int i) {
 
 Arg* PikaStdData_List___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
-    /* use weak ref to void loop ref */
-    return arg_setWeakRefObj(NULL, "", self);
+    return arg_setRefObj(NULL, "", self);
 }
 
 Arg* PikaStdData_List___next__(PikaObj* self) {
