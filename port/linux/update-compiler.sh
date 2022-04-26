@@ -1,5 +1,6 @@
 ROOT=$PWD
 cd ../../tools/pikaCompiler
+cargo clean
 cargo build
 cd $ROOT
 cp ../../tools/pikaCompiler/rust-msc-latest-linux package/pikascript/rust-msc-latest-linux
