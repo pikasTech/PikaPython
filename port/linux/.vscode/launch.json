@@ -11,7 +11,8 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=pikaMain.list_iter",
+                // "--gtest_filter=pikaMain.range",
+                // "--gtest_filter=pikaMain.range",
                 // "--gtest_filter=gc.*",
                 // "--gtest_filter=parser.bytes_iteral",
                 // "--gtest_filter=parser.list_init_fun",

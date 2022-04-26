@@ -153,7 +153,7 @@ static Arg* VM_instruction_handler_NON(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_NEW(PikaObj* self, VMState* vs, char* data) {
     Arg* origin_arg = obj_getArg(vs->locals, data);
     Arg* new_arg = arg_copy(origin_arg);
-    origin_arg = arg_setType(origin_arg, ARG_TYPE_REF_OBJECT);
+    origin_arg = arg_setType(origin_arg, ARG_TYPE_OBJECT);
     arg_setType(new_arg, ARG_TYPE_FREE_OBJECT);
     return new_arg;
 }
@@ -173,7 +173,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
     }
     ArgType arg_type = arg_getType(arg);
     if (ARG_TYPE_OBJECT == arg_type) {
-        arg = arg_setType(arg, ARG_TYPE_REF_OBJECT);
+        arg = arg_setType(arg, ARG_TYPE_OBJECT);
     }
     if (NULL == arg) {
         VMState_setErrorCode(vs, 1);
@@ -271,7 +271,7 @@ static void VMState_loadArgsFromMethodArg(VMState* vs,
     /* load 'self' as the first arg when call object method */
     if (method_type == ARG_TYPE_OBJECT_METHOD) {
         Arg* call_arg =
-            arg_setPtr(NULL, "self", ARG_TYPE_REF_OBJECT, method_host_obj);
+            arg_setPtr(NULL, "self", ARG_TYPE_OBJECT, method_host_obj);
         args_setArg(args, call_arg);
     }
 exit:
@@ -491,7 +491,6 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
     /* set free object to nomal object */
     if (ARG_TYPE_FREE_OBJECT == outArg_type) {
         arg_setType(outArg, ARG_TYPE_OBJECT);
-        arg_refCntInc(outArg);
     }
 
     /* ouput arg to locals */

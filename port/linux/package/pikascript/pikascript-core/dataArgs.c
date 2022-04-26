@@ -437,7 +437,7 @@ char* args_print(Args* self, char* name) {
         goto exit;
     }
 
-    if (type == ARG_TYPE_REF_OBJECT) {
+    if (type == ARG_TYPE_OBJECT) {
         void* val = args_getPtr(self, name);
         res = getPrintStringFromPtr(self, name, val);
         goto exit;

@@ -361,7 +361,7 @@ PikaObj* removeMethodInfo(PikaObj* thisClass) {
     return thisClass;
 }
 
-PikaObj* newObjFromFun(NewFun newObjFun) {
+PikaObj* obj_newObjDirect(NewFun newObjFun) {
     PikaObj* thisClass = obj_getClassObjByNewFun(NULL, "", newObjFun);
     obj_refcntInc(thisClass);
     return removeMethodInfo(thisClass);
@@ -369,7 +369,7 @@ PikaObj* newObjFromFun(NewFun newObjFun) {
 
 extern PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
-    PikaObj* newObj = newObjFromFun(newObjFun);
+    PikaObj* newObj = obj_newObjDirect(newObjFun);
     __pikaMain = newObj;
     return newObj;
 }
@@ -378,14 +378,14 @@ Arg* obj_getRefArg(PikaObj* self) {
     return arg_setPtr(NULL, "", ARG_TYPE_FREE_OBJECT, self);
 }
 
-Arg* newFreeObjArg(NewFun newObjFun) {
-    PikaObj* newObj = newObjFromFun(newObjFun);
+Arg* obj_newObjArg(NewFun newObjFun) {
+    PikaObj* newObj = obj_newObjDirect(newObjFun);
     Arg* objArg = arg_setPtr(NULL, "", ARG_TYPE_FREE_OBJECT, newObj);
     return objArg;
 }
 
 Arg* obj_newObjInPackage(NewFun newObjFun) {
-    return newFreeObjArg(newObjFun);
+    return obj_newObjArg(newObjFun);
 }
 
 static PikaObj* __initObj(PikaObj* obj, char* name) {
@@ -421,7 +421,7 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
         return __initObj(self, name);
     }
     /* found Objcet */
-    if (type == ARG_TYPE_OBJECT || type == ARG_TYPE_REF_OBJECT) {
+    if (type == ARG_TYPE_OBJECT || type == ARG_TYPE_OBJECT) {
         return args_getPtr(self->list, name);
     }
     return NULL;
@@ -869,9 +869,9 @@ int obj_refcntNow(PikaObj* self) {
 
 Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj) {
     obj_refcntInc(obj);
-    return arg_setPtr(self, name, ARG_TYPE_REF_OBJECT, obj);
+    return arg_setPtr(self, name, ARG_TYPE_OBJECT, obj);
 }
 
 Arg* arg_setWeakRefObj(Arg* self, char* name, PikaObj* obj) {
-    return arg_setPtr(self, name, ARG_TYPE_REF_OBJECT, obj);
+    return arg_setPtr(self, name, ARG_TYPE_OBJECT, obj);
 }

@@ -40,11 +40,10 @@ typedef enum {
     ARG_TYPE_INT,
     ARG_TYPE_FLOAT,
     ARG_TYPE_STRING,
-    ARG_TYPE_OBJECT,
     ARG_TYPE_MATE_OBJECT,
     ARG_TYPE_FREE_OBJECT,
+    ARG_TYPE_OBJECT,
     ARG_TYPE_POINTER,
-    ARG_TYPE_REF_OBJECT,
     ARG_TYPE_NATIVE_METHOD,
     ARG_TYPE_NATIVE_CONSTRUCTOR_METHOD,
     ARG_TYPE_CONSTRUCTOR_METHOD,
@@ -139,8 +138,5 @@ void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 void arg_printBytes(Arg* self);
-void arg_refCntInc(Arg* self);
-void arg_refCntDec(Arg* self);
-uint8_t arg_getRefCnt(Arg* self);
 
 #endif
