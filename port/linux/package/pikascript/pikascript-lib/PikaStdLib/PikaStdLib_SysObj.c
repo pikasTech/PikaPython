@@ -150,7 +150,7 @@ Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
         char_buff[0] = str_pyload[index];
         return arg_setStr(NULL, "", char_buff);
     }
-    if ((ARG_TYPE_OBJECT == obj_type) || (ARG_TYPE_OBJECT == obj_type)) {
+    if (ARG_TYPE_OBJECT == obj_type) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
         // pikaVM_runAsm(arg_obj,
@@ -187,7 +187,7 @@ void PikaStdLib_SysObj___set__(PikaObj* self,
         str_pyload[index] = str_val[0];
         obj_setStr(self, obj_str, str_pyload);
     }
-    if ((ARG_TYPE_OBJECT == obj_type) || (ARG_TYPE_OBJECT == obj_type)) {
+    if (ARG_TYPE_OBJECT == obj_type) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
         obj_setArg(arg_obj, "__val", val);
