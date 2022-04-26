@@ -50,6 +50,22 @@ TEST(gc, ref121) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+
+TEST(gc, ref12) {
+    /* init */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)"mem = PikaStdLib.MemChecker()");
+    PikaObj* mem = (PikaObj*)obj_getPtr(pikaMain, (char*)"mem");
+    EXPECT_EQ(obj_refcntNow(mem), 1);
+    obj_run(pikaMain, (char*)"mem2 = mem");
+    EXPECT_EQ(obj_refcntNow(mem), 2);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+
 TEST(gc, ref1210) {
     /* init */
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
