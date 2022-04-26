@@ -352,12 +352,17 @@ void arg_deinitHeap(Arg* self) {
 
 void arg_deinit(Arg* self) {
     arg_deinitHeap(self);
-    if (arg_getType(self) == ARG_TYPE_REF_OBJECT) {
-        PikaObj* obj = arg_getPtr(self);
-        if (obj_isArgExist(obj, "_refcnt")) {
-            obj_refcntDec(obj);
+    /* deinit sub object */
+    ArgType type = arg_getType(self);
+    if (type == ARG_TYPE_OBJECT || type == ARG_TYPE_REF_OBJECT) {
+        PikaObj* subObj = arg_getPtr(self);
+        obj_refcntDec(subObj);
+        int ref_cnt = obj_refcntNow(subObj);
+        if (ref_cnt <= 0) {
+            obj_deinit(subObj);
         }
     }
+    /* free the ref */
     arg_freeContent(self);
 }
 

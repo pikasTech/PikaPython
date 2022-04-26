@@ -871,3 +871,7 @@ Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj) {
     obj_refcntInc(obj);
     return arg_setPtr(self, name, ARG_TYPE_REF_OBJECT, obj);
 }
+
+Arg* arg_setWeakRefObj(Arg* self, char* name, PikaObj* obj) {
+    return arg_setPtr(self, name, ARG_TYPE_REF_OBJECT, obj);
+}

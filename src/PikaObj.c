@@ -96,43 +96,10 @@ char* fast_itoa(char* buf, uint32_t val) {
     return &p[val < 10];
 }
 
-int32_t deinitEachSubObj(Arg* argEach, Args* handleArgs) {
-    if (NULL != handleArgs) {
-        /* error: tOhis handle not need handle args */
-        return 1;
-    }
-    ArgType type = arg_getType(argEach);
-    /* deinit sub object */
-    if (type == ARG_TYPE_OBJECT) {
-        PikaObj* subObj = arg_getPtr(argEach);
-        obj_deinit(subObj);
-    }
-    return 0;
-}
-
-static void __deinitAllSubObj(PikaObj* self) {
-    Args* args = self->list;
-    args_foreach(args, deinitEachSubObj, NULL);
-}
-
-static void __obj_deinit_pyload(PikaObj* self) {
-    /* no refcnt, deinit directly */
-    if (!obj_isArgExist(self, "_refcnt")) {
-        __deinitAllSubObj(self);
-        return;
-    }
-    /* refcnt exist, only deinit when refcnt = 0 */
-    int ref_cnt = obj_refcntNow(self);
-    if (ref_cnt == 0 || ref_cnt == 1) {
-        __deinitAllSubObj(self);
-        return;
-    }
-    return;
-}
-
 int32_t obj_deinit(PikaObj* self) {
-    __obj_deinit_pyload(self);
+    /* free the list */
     args_deinit(self->list);
+    /* free the pointer */
     pikaFree(self, sizeof(PikaObj));
     self = NULL;
     return 0;
@@ -621,12 +588,8 @@ VMParameters* obj_runDirect(PikaObj* self, char* cmd) {
 
 int32_t obj_removeArg(PikaObj* self, char* argPath) {
     PikaObj* objHost = obj_getObj(self, argPath, 1);
-    Arg* obj_arg = obj_getArg(self, argPath);
     char* argName;
     int32_t res;
-    if (ARG_TYPE_OBJECT == arg_getType(obj_arg)) {
-        obj_deinit(arg_getPtr(obj_arg));
-    }
     int32_t err = 0;
     if (NULL == objHost) {
         /* [error] object no found */
@@ -906,5 +869,9 @@ int obj_refcntNow(PikaObj* self) {
 
 Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj) {
     obj_refcntInc(obj);
+    return arg_setPtr(self, name, ARG_TYPE_REF_OBJECT, obj);
+}
+
+Arg* arg_setWeakRefObj(Arg* self, char* name, PikaObj* obj) {
     return arg_setPtr(self, name, ARG_TYPE_REF_OBJECT, obj);
 }
