@@ -260,18 +260,17 @@ static void VMState_loadArgsFromMethodArg(VMState* vs,
 
     /* load pars */
     for (int i = 0; i < arg_num_dec; i++) {
-        char* argDef = strPopLastToken(type_list, ',');
-        strPopLastToken(argDef, ':');
-        char* argName = argDef;
+        char* arg_def = strPopLastToken(type_list, ',');
+        strPopLastToken(arg_def, ':');
+        char* arg_name = arg_def;
         Arg* call_arg = stack_popArg(&(vs->stack));
-        call_arg = arg_setName(call_arg, argName);
+        call_arg = arg_setName(call_arg, arg_name);
         args_setArg(args, call_arg);
     }
 
     /* load 'self' as the first arg when call object method */
     if (method_type == ARG_TYPE_OBJECT_METHOD) {
-        Arg* call_arg =
-            arg_setPtr(NULL, "self", ARG_TYPE_OBJECT, method_host_obj);
+        Arg* call_arg = arg_setRefObj(NULL, "self", method_host_obj);
         args_setArg(args, call_arg);
     }
 exit:
@@ -319,9 +318,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     }
 
     /* get method host obj */
-    method_host_obj = obj_getObj(self, methodPath, 1);
+    method_host_obj = obj_getObjWithKeepDeepth(self, methodPath, 1);
     if (NULL == method_host_obj) {
-        method_host_obj = obj_getObj(vs->locals, methodPath, 1);
+        method_host_obj = obj_getObjWithKeepDeepth(vs->locals, methodPath, 1);
     }
     if (NULL == method_host_obj) {
         /* error, not found object */
@@ -498,7 +497,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
     if (ARG_TYPE_MATE_OBJECT == outArg_type) {
         /* found a mate_object */
         /* init object */
-        PikaObj* new_obj = obj_getObj(hostObj, data, 0);
+        PikaObj* new_obj = obj_getObjWithKeepDeepth(hostObj, data, 0);
         /* run __init__() when init obj */
         obj_runNativeMethod(new_obj, "__init__", NULL);
     }
@@ -513,7 +512,7 @@ static Arg* VM_instruction_handler_RAS(PikaObj* self, VMState* vs, char* data) {
         return NULL;
     }
     /* use "data" object to run */
-    PikaObj* runAs = obj_getObj(vs->locals, data, 0);
+    PikaObj* runAs = obj_getObjWithKeepDeepth(vs->locals, data, 0);
     args_setRefObj(vs->locals->list, "__runAs", runAs);
     return NULL;
 }

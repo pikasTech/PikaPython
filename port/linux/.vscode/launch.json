@@ -11,62 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                "--gtest_filter=pikaMain.range",
-                // "--gtest_filter=pikaMain.range",
-                // "--gtest_filter=pikaMain.range",
-                // "--gtest_filter=gc.*",
-                // "--gtest_filter=parser.bytes_iteral",
-                // "--gtest_filter=parser.list_init_fun",
-                // "--gtest_filter=args.heap_struct_override",
-                // "--gtest_filter=pikaMain.list__set__",
-                // "--gtest_filter=parser._3_3",
-                // "--gtest_filter=VM.a_3",
-                // "--gtest_filter=parser.a_cuohao_j",
-                // "--gtest_filter=lexser.jjcc",
-                // "--gtest_filter=lexser.a_j",
-                // "--gtest_filter=VM.for_break_byte",
-                // "--gtest_filter=pikaMain.range",
-                // "--gtest_filter=parser.while_true_block",
-                // "--gtest_filter=VM.Run_add_1_2_3",
-                // "--gtest_filter=stack*",
-                // "--gtest_filter=pikaMain.task_run_once",
-                // "--gtest_filter=VM.if_elif*",
-                // "--gtest_filter=stack.str",
-                // "--gtest_filter=VM*",
-                // "--gtest_filter=arg*",
-                // "--gtest_filter=VM.class_x_1",
-                // "--gtest_filter=parser.add_a_b*",
-                // "--gtest_filter=parser.method_void",
-                // "--gtest_filter=parser.add_a_b",
-                // "--gtest_filter=pikaMain.class_def",
-                // "--gtest_filter=parser.mpy_demo_1",
-                // "--gtest_filter=parser.__set__",
-                // "--gtest_filter=parser.__get__",
-                // "--gtest_filter=pikaMain.print_with_enter",
-                // "--gtest_filter=pikaMain.str_fun",
-                // "--gtest_filter=pikaMain.str_add",
-                // "--gtest_filter=content*",
-                // "--gtest_filter=pikaMain.print_in_def",
-                // "--gtest_filter=pikaMain.list_for_loop"
-                // "--gtest_filter=pikaMain.err_scop"
-                // "--gtest_filter=VM.a_jjcc"
-                // "--gtest_filter=VM.a_1_1d1"
-                // "--gtest_filter=queue*"
-                // "--gtest_filter=VM*"
-                // "--gtest_filter=parser._or_"
-                // "--gtest_filter=parser.while_true_block"
-                // "--gtest_filter=args*",
-                // "--gtest_filter=arg*",
-                // "--gtest_filter=content*",
-                // "--gtest_filter=object_test.printa",
-                // "--gtest_filter=object_test*",
-                // "--gtest_filter=stack*",
-                // "--gtest_filter=strs*",
-                // "--gtest_filter=block.ifrun2"
-                // "--gtest_filter=sysObj*"
-                // "--gtest_filter=object_test.a_b"
-                // "--gtest_filter=object_test.voidRun"
-                // "--gtest_filter=object_test*"
+                // "--gtest_filter=pikaMain.class_def_print"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -1114,6 +1114,9 @@ TEST(pikaMain, class_def) {
     "x = test.hello(test.x)\n"
     "print(x)\n"
     );
+    /* collect */
+    PikaObj* test = obj_getObj(self, (char*)"test");
+    EXPECT_EQ(obj_refcntNow(test), 1);
     /* assert */
     EXPECT_STREQ(log_buff[0], (char*)"3\r\n");
     EXPECT_STREQ(log_buff[1], (char*)"BEGIN\r\n");
