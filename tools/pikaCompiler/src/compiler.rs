@@ -75,13 +75,7 @@ impl Compiler {
     }
 
     pub fn __do_analize_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
-        /* check if compiled */
-        if self.compiled_list.contains(&file_name) {
-        } else {
-            println!("    compiling {}{}.py...", self.source_path, file_name);
-        }
-        self.compiled_list.push_back(String::clone(&file_name));
-        /* print info */
+        /* open file */
         let file = Compiler::open_file(format!("{}{}.py", self.source_path, file_name));
         let mut file = match file {
             Ok(file) => file,
@@ -93,6 +87,29 @@ impl Compiler {
                 return self;
             }
         };
+        let mut file_str = String::new();
+        file.read_to_string(&mut file_str).unwrap();
+        /* check if 'api' file */
+        let lines: Vec<&str> = file_str.split('\n').collect();
+        let mut is_api = false;
+        if file_name == "main" {
+            is_api = true;
+        }
+        for line in lines.iter() {
+            if line.to_string().starts_with("#api") {
+                is_api = true;
+            }
+        }
+        if !is_api {
+            return self;
+        }
+
+        /* check if compiled */
+        if self.compiled_list.contains(&file_name) {
+        } else {
+            println!("    compiling {}{}.py...", self.source_path, file_name);
+        }
+        self.compiled_list.push_back(String::clone(&file_name));
         /* solve top package.
             About what is top package:
                 Top package is the package imported by main.py,
@@ -115,9 +132,6 @@ impl Compiler {
                 .or_insert(package_now);
             self.package_now_name = Some(package_name.clone());
         }
-        /* solve lines in file */
-        let mut file_str = String::new();
-        file.read_to_string(&mut file_str).unwrap();
         let lines: Vec<&str> = file_str.split('\n').collect();
         /* analyze each line of pikascript-api.py */
         for line in lines.iter() {

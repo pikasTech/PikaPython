@@ -1,3 +1,4 @@
+#api
 class PyObj(BaseObj):
 
     def importClass(self, className: str, fp: str):
