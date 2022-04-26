@@ -71,9 +71,9 @@ void Arm2D_Window_init(PikaObj* self) {
     obj_run(self, "background.init()");
     pika_arm2d_init();
     pika_arm2d_window.pika_windows_object = self;
-    pika_arm2d_window.pika_elems_object = obj_getObj(self, "elems", 0);
+    pika_arm2d_window.pika_elems_object = obj_getObj(self, "elems");
     pika_arm2d_window.pika_background_object =
-        obj_getObj(self, "background", 0);
+        obj_getObj(self, "background");
     pika_arm2d_window.dirty_region_list = NULL;
 }
 
