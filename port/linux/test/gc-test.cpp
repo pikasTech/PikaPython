@@ -50,7 +50,6 @@ TEST(gc, ref121) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(gc, ref12) {
     /* init */
     PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
@@ -64,7 +63,6 @@ TEST(gc, ref12) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
 
 TEST(gc, ref1210) {
     /* init */
@@ -93,6 +91,23 @@ TEST(gc, ref_move) {
     EXPECT_EQ(obj_refcntNow(mem), 2);
     obj_removeArg(pikaMain, (char*)"mem2");
     EXPECT_EQ(obj_refcntNow(mem), 1);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(gc, factory) {
+    /* init */
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, (char*)
+    "def factory():\n"
+    "    _mem = PikaStdLib.MemChecker()\n"
+    "    return _mem\n"
+    "mem = factory()\n"
+    );
+    /* collect */
+    PikaObj* mem = obj_getObj(pikaMain, (char*)"mem");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

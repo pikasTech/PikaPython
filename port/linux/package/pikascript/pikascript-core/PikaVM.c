@@ -823,8 +823,8 @@ static Arg* VM_instruction_handler_CLS(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_RET(PikaObj* self, VMState* vs, char* data) {
     /* exit jmp signal */
     vs->jmp = -999;
-    Arg* returnArg = stack_popArg(&(vs->stack));
-    method_returnArg(vs->locals->list, returnArg);
+    Arg* return_arg = stack_popArg(&(vs->stack));
+    method_returnArg(vs->locals->list, return_arg);
     return NULL;
 }
 
@@ -903,14 +903,14 @@ static int pikaVM_runInstructUnit(PikaObj* self,
                                   VMState* vs,
                                   InstructUnit* ins_unit) {
     enum Instruct instruct = instructUnit_getInstruct(ins_unit);
-    Arg* resArg;
+    Arg* return_arg;
     // char invode_deepth1_str[2] = {0};
     int32_t pc_next = vs->pc + instructUnit_getSize();
     char* data = VMState_getConstWithInstructUnit(vs, ins_unit);
     /* run instruct */
-    resArg = VM_instruct_handler_table[instruct](self, vs, data);
-    if (NULL != resArg) {
-        stack_pushArg(&(vs->stack), resArg);
+    return_arg = VM_instruct_handler_table[instruct](self, vs, data);
+    if (NULL != return_arg) {
+        stack_pushArg(&(vs->stack), return_arg);
     }
     goto nextLine;
 nextLine:
