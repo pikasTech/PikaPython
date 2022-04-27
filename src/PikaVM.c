@@ -35,6 +35,12 @@
 
 /* head declear start */
 static uint8_t VMState_getInputArgNum(VMState* vs);
+static VMParameters* __pikaVM_runByteCodeFrameWithState(
+    PikaObj* self,
+    VMParameters* locals,
+    VMParameters* globals,
+    ByteCodeFrame* bytecode_frame,
+    uint16_t pc);
 
 /* head declear end */
 
@@ -212,7 +218,7 @@ static Arg* VMState_runMethodArg(VMState* vs,
         uintptr_t insturctArray_start = (uintptr_t)instructArray_getByOffset(
             &(method_bytecodeFrame->instruct_array), 0);
         uint16_t pc = (uintptr_t)method_ptr - insturctArray_start;
-        sub_locals = pikaVM_runByteCodeWithState(
+        sub_locals = __pikaVM_runByteCodeFrameWithState(
             method_host_obj, sub_locals, vs->globals, method_bytecodeFrame, pc);
 
         /* get method return */
@@ -955,9 +961,9 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     return res;
 }
 
-VMParameters* pikaVM_runPyLines_or_byteCode(PikaObj* self,
-                                            char* py_lines,
-                                            uint8_t* bytecode) {
+static VMParameters* __pikaVM_runPyLines_or_byteCode(PikaObj* self,
+                                                     char* py_lines,
+                                                     uint8_t* bytecode) {
     uint8_t is_run_py;
     if (NULL != py_lines) {
         is_run_py = 1;
@@ -1025,11 +1031,11 @@ exit:
 }
 
 VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
-    return pikaVM_runPyLines_or_byteCode(self, py_lines, NULL);
+    return __pikaVM_runPyLines_or_byteCode(self, py_lines, NULL);
 }
 
 VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode) {
-    return pikaVM_runPyLines_or_byteCode(self, NULL, bytecode);
+    return __pikaVM_runPyLines_or_byteCode(self, NULL, bytecode);
 }
 
 static void* constPool_getStart(ConstPool* self) {
@@ -1341,11 +1347,12 @@ void VMState_solveUnusedStack(VMState* vs) {
     }
 }
 
-VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
-                                          VMParameters* locals,
-                                          VMParameters* globals,
-                                          ByteCodeFrame* bytecode_frame,
-                                          uint16_t pc) {
+static VMParameters* __pikaVM_runByteCodeFrameWithState(
+    PikaObj* self,
+    VMParameters* locals,
+    VMParameters* globals,
+    ByteCodeFrame* bytecode_frame,
+    uint16_t pc) {
     int size = bytecode_frame->instruct_array.size;
     VMState vs = {
         .bytecode_frame = bytecode_frame,
@@ -1404,7 +1411,8 @@ VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame) {
-    return pikaVM_runByteCodeWithState(self, self, self, byteCode_frame, 0);
+    return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
+                                              0);
 }
 
 char* constPool_getByOffset(ConstPool* self, uint16_t offset) {

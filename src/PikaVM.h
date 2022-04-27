@@ -118,12 +118,6 @@ InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset);
 #define instructArray_getSize(InsturctArry_p_self) \
     ((size_t)(InsturctArry_p_self)->size)
 
-VMParameters* pikaVM_runByteCodeWithState(PikaObj* self,
-                                          VMParameters* locals,
-                                          VMParameters* globals,
-                                          ByteCodeFrame* bytecode_frame,
-                                          uint16_t pc);
-
 uint16_t constPool_getOffsetByData(ConstPool* self, char* data);
 void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool);
 void constPool_update(ConstPool* self);
