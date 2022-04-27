@@ -237,6 +237,13 @@ PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,
                                            ByteCodeFrame* bytecode_frame);
 
+int32_t obj_newObj(PikaObj* self,
+                   char* objName,
+                   char* className,
+                   NewFun newFunPtr);
+
+Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr);
+
 #define PIKA_PYTHON_BEGIN
 #define PIKA_PYTHON(x)
 #define PIKA_PYTHON_END

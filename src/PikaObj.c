@@ -422,7 +422,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self, char* name) {
         return __initObj(self, name);
     }
     /* found Objcet */
-    if (type == ARG_TYPE_OBJECT) {
+    if (type == ARG_TYPE_OBJECT || type == ARG_TYPE_OBJECT_FREE) {
         return args_getPtr(self->list, name);
     }
     return NULL;
@@ -886,4 +886,40 @@ Arg* arg_setWeakRefObj(Arg* self, char* name, PikaObj* obj) {
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,
                                            ByteCodeFrame* byteCode_frame) {
-                                           }
+    return NULL;
+}
+
+Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr) {
+    Arg* argNew = New_arg(NULL);
+    /* m means mate-object */
+    argNew = arg_setPtr(argNew, objName, ARG_TYPE_OBJECT_MATE, (void*)objPtr);
+    return argNew;
+}
+
+int32_t obj_newSubObj(PikaObj* self,
+                      char* objName,
+                      char* className,
+                      NewFun newFunPtr) {
+    Arg* new_obj = obj_newObjArg(newFunPtr);
+    new_obj = arg_setName(new_obj, objName);
+    new_obj = arg_setType(new_obj, ARG_TYPE_OBJECT);
+    args_setArg(self->list, new_obj);
+    return 0;
+}
+
+int32_t obj_newSubObjByMate(PikaObj* self,
+                            char* objName,
+                            char* className,
+                            NewFun newFunPtr) {
+    /* add mate Obj, no inited */
+    Arg* new_obj = arg_setMetaObj(objName, className, newFunPtr);
+    args_setArg(self->list, new_obj);
+    return 0;
+}
+
+int32_t obj_newObj(PikaObj* self,
+                   char* objName,
+                   char* className,
+                   NewFun newFunPtr) {
+    return obj_newSubObjByMate(self, objName, className, newFunPtr);
+}

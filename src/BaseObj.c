@@ -34,22 +34,6 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
-Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr) {
-    Arg* argNew = New_arg(NULL);
-    /* m means mate-object */
-    argNew = arg_setPtr(argNew, objName, ARG_TYPE_OBJECT_MATE, (void*)objPtr);
-    return argNew;
-}
-
-int32_t obj_newObj(PikaObj* self,
-                   char* objName,
-                   char* className,
-                   NewFun newFunPtr) {
-    /* add mate Obj, no inited */
-    Arg* newobj = arg_setMetaObj(objName, className, newFunPtr);
-    args_setArg(self->list, newobj);
-    return 0;
-}
 
 static void print_no_end(PikaObj* self, Args* args) {
     obj_setErrorCode(self, 0);
