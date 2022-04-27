@@ -428,8 +428,8 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
 }
 
 static PikaObj* __obj_getObjWithKeepDeepth(PikaObj* self,
-                                  char* objPath,
-                                  int32_t keepDeepth) {
+                                           char* objPath,
+                                           int32_t keepDeepth) {
     char objPath_buff[PIKA_PATH_BUFF_SIZE];
     __platform_memcpy(objPath_buff, objPath, strGetSize(objPath) + 1);
     char token_buff[PIKA_NAME_BUFF_SIZE] = {0};
@@ -447,7 +447,7 @@ exit:
     return obj;
 }
 
-inline PikaObj* obj_getObj(PikaObj* self, char* objPath) {
+PikaObj* obj_getObj(PikaObj* self, char* objPath) {
     return __obj_getObjWithKeepDeepth(self, objPath, 0);
 }
 
@@ -508,6 +508,7 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     args_setArg(self->list, arg);
     strsDeinit(&buffs);
 }
+
 static int32_t __class_defineMethodWithType(PikaObj* self,
                                             char* declearation,
                                             Method methodPtr,
@@ -586,10 +587,6 @@ int32_t class_defineStaticMethod(PikaObj* self,
                                  ByteCodeFrame* bytecode_frame) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
                                         ARG_TYPE_STATIC_METHOD, bytecode_frame);
-}
-
-PIKA_WEAK int __runExtern_contral(PikaObj* self, char* cmd) {
-    return 0;
 }
 
 VMParameters* obj_runDirect(PikaObj* self, char* cmd) {
@@ -789,7 +786,6 @@ int32_t args_getErrorCode(Args* args) {
 }
 
 void obj_setSysOut(PikaObj* self, char* str) {
-    // obj_setStr(self, "__sysOut", str);
     args_setSysOut(self->list, str);
 }
 
