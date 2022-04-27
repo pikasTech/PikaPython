@@ -49,11 +49,11 @@ void PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         obj_setSysOut(self, "<class 'buitin_function_or_method'>");
         return;
     }
-    if (ARG_TYPE_METHOD_OBJECT== type) {
+    if (ARG_TYPE_METHOD_OBJECT == type) {
         obj_setSysOut(self, "<class 'method'>");
         return;
     }
-    if (ARG_TYPE_METHOD_STATIC== type) {
+    if (ARG_TYPE_METHOD_STATIC == type) {
         obj_setSysOut(self, "<class 'function'>");
         return;
     }
@@ -113,8 +113,7 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     /* a String, return a StringObj */
     if (ARG_TYPE_STRING == arg_getType(arg)) {
         obj_setStr(self, "_sobj", arg_getStr(arg));
-        return arg_setMetaObj("", "PikaStdLib_StringObj",
-                              New_PikaStdLib_StringObj);
+        return arg_newMetaObj(New_PikaStdLib_StringObj);
     }
     /* a MATE object, return itself */
     if (ARG_TYPE_OBJECT_MATE == arg_getType(arg)) {
@@ -146,7 +145,7 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2) {
     /* set template arg to create rangeObj */
     obj_setInt(self, "_r1", a1);
     obj_setInt(self, "_r2", a2);
-    return arg_setMetaObj("", "PikaStdLib_RangeObj", New_PikaStdLib_RangeObj);
+    return arg_newMetaObj(New_PikaStdLib_RangeObj);
 }
 
 Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {

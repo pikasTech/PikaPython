@@ -223,13 +223,13 @@ void obj_shellLineProcess(PikaObj* self,
 int pikaCompile(char* output_file_name, char* py_lines);
 Method obj_getNativeMethod(PikaObj* self, char* method_name);
 void obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
-Arg* obj_newObjArg(NewFun newObjFun);
+Arg* arg_newObj(NewFun newObjFun);
 Arg* obj_newObjInPackage(NewFun newObjFun);
 
 void obj_refcntInc(PikaObj* self);
 void obj_refcntDec(PikaObj* self);
 int obj_refcntNow(PikaObj* self);
-PikaObj* obj_newObjDirect(NewFun newObjFun);
+PikaObj* NewObjDirect(NewFun newObjFun);
 Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setWeakRefObj(Arg* self, char* name, PikaObj* obj);
 
@@ -242,7 +242,7 @@ int32_t obj_newObj(PikaObj* self,
                    char* className,
                    NewFun newFunPtr);
 
-Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr);
+Arg* arg_newMetaObj(NewFun objPtr);
 
 #define PIKA_PYTHON_BEGIN
 #define PIKA_PYTHON(x)

@@ -362,7 +362,7 @@ PikaObj* removeMethodInfo(PikaObj* thisClass) {
     return thisClass;
 }
 
-PikaObj* obj_newObjDirect(NewFun newObjFun) {
+PikaObj* NewObjDirect(NewFun newObjFun) {
     PikaObj* thisClass = obj_getClassObjByNewFun(NULL, "", newObjFun);
     obj_refcntInc(thisClass);
     return removeMethodInfo(thisClass);
@@ -370,7 +370,7 @@ PikaObj* obj_newObjDirect(NewFun newObjFun) {
 
 extern PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
-    PikaObj* newObj = obj_newObjDirect(newObjFun);
+    PikaObj* newObj = NewObjDirect(newObjFun);
     __pikaMain = newObj;
     return newObj;
 }
@@ -379,14 +379,25 @@ Arg* obj_getRefArg(PikaObj* self) {
     return arg_setPtr(NULL, "", ARG_TYPE_OBJECT_FREE, self);
 }
 
-Arg* obj_newObjArg(NewFun newObjFun) {
-    PikaObj* newObj = obj_newObjDirect(newObjFun);
+Arg* arg_newMetaObj(NewFun objPtr) {
+    Arg* argNew = New_arg(NULL);
+    /* m means mate-object */
+    argNew = arg_setPtr(argNew, "", ARG_TYPE_OBJECT_MATE, (void*)objPtr);
+    return argNew;
+}
+
+Arg* arg_newDirectObj(NewFun newObjFun) {
+    PikaObj* newObj = NewObjDirect(newObjFun);
     Arg* objArg = arg_setPtr(NULL, "", ARG_TYPE_OBJECT_FREE, newObj);
     return objArg;
 }
 
+Arg* arg_newObj(NewFun newObjFun) {
+    return arg_newDirectObj(newObjFun);
+}
+
 Arg* obj_newObjInPackage(NewFun newObjFun) {
-    return obj_newObjArg(newObjFun);
+    return arg_newObj(newObjFun);
 }
 
 static PikaObj* __initObj(PikaObj* obj, char* name) {
@@ -889,18 +900,11 @@ PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
     return NULL;
 }
 
-Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr) {
-    Arg* argNew = New_arg(NULL);
-    /* m means mate-object */
-    argNew = arg_setPtr(argNew, objName, ARG_TYPE_OBJECT_MATE, (void*)objPtr);
-    return argNew;
-}
-
 int32_t obj_newSubObj(PikaObj* self,
                       char* objName,
                       char* className,
                       NewFun newFunPtr) {
-    Arg* new_obj = obj_newObjArg(newFunPtr);
+    Arg* new_obj = arg_newObj(newFunPtr);
     new_obj = arg_setName(new_obj, objName);
     new_obj = arg_setType(new_obj, ARG_TYPE_OBJECT);
     args_setArg(self->list, new_obj);
@@ -912,7 +916,8 @@ int32_t obj_newSubObjByMate(PikaObj* self,
                             char* className,
                             NewFun newFunPtr) {
     /* add mate Obj, no inited */
-    Arg* new_obj = arg_setMetaObj(objName, className, newFunPtr);
+    Arg* new_obj = arg_newMetaObj(newFunPtr);
+    new_obj = arg_setName(new_obj, objName);
     args_setArg(self->list, new_obj);
     return 0;
 }
