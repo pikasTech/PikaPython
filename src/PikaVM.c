@@ -367,7 +367,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         VMState_runMethodArg(vs, method_host_obj, sub_locals, method_arg);
 
     /* __init__() */
-    if (arg_getType(return_arg) == ARG_TYPE_OBJECT_FREE) {
+    if (ARG_TYPE_OBJECT_FREE == arg_getType(return_arg)) {
         /* init object */
         PikaObj* new_obj = arg_getPtr(return_arg);
         Arg* method_arg = obj_getMethodArg(new_obj, "__init__");
@@ -504,7 +504,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
 
     /* ouput arg to locals */
     obj_setArg_noCopy(hostObj, data, outArg);
-    if (ARG_TYPE_OBJECT_MATE == outArg_type) {
+    if (ARG_TYPE_OBJECT_META == outArg_type) {
         /* found a mate_object */
         /* init object */
         PikaObj* new_obj = obj_getObj(hostObj, data);
@@ -1333,7 +1333,7 @@ void VMState_solveUnusedStack(VMState* vs) {
             arg_deinit(arg);
             continue;
         }
-        if (type == ARG_TYPE_OBJECT_FREE) {
+        if (ARG_TYPE_OBJECT_FREE == type) {
             obj_deinit(arg_getPtr(arg));
             arg_deinit(arg);
             continue;

@@ -41,8 +41,8 @@ void PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         obj_setSysOut(self, "<class 'object'>");
         return;
     }
-    if (ARG_TYPE_OBJECT_MATE == type) {
-        obj_setSysOut(self, "<class 'mate object'>");
+    if (ARG_TYPE_OBJECT_META == type) {
+        obj_setSysOut(self, "<class 'meta object'>");
         return;
     }
     if (ARG_TYPE_METHOD_NATIVE == type) {
@@ -116,7 +116,7 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
         return arg_newMetaObj(New_PikaStdLib_StringObj);
     }
     /* a MATE object, return itself */
-    if (ARG_TYPE_OBJECT_MATE == arg_getType(arg)) {
+    if (ARG_TYPE_OBJECT_META == arg_getType(arg)) {
         return arg_copy(arg);
     }
     /* object */

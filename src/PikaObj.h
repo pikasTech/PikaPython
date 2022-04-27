@@ -223,7 +223,6 @@ void obj_shellLineProcess(PikaObj* self,
 int pikaCompile(char* output_file_name, char* py_lines);
 Method obj_getNativeMethod(PikaObj* self, char* method_name);
 void obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
-Arg* arg_newObj(NewFun newObjFun);
 Arg* obj_newObjInPackage(NewFun newObjFun);
 
 void obj_refcntInc(PikaObj* self);
