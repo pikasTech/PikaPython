@@ -212,7 +212,7 @@ Arg* arg_setHeapStruct(Arg* self,
     Arg* struct_arg =
         arg_setContent(NULL, (uint8_t*)&struct_deinit_fun, sizeof(void*));
     struct_arg = arg_append(struct_arg, (uint8_t*)struct_ptr, struct_size);
-    struct_arg = arg_setType(struct_arg, ARG_TYPE_HEAP_STRUCT);
+    struct_arg = arg_setType(struct_arg, ARG_TYPE_STRUCT_HEAP);
     struct_arg = arg_setName(struct_arg, name);
     return struct_arg;
 }
@@ -344,7 +344,7 @@ void* arg_getHeapStruct(Arg* self) {
 void arg_deinitHeap(Arg* self) {
     ArgType type = arg_getType(self);
     /* deinit heap struct */
-    if (type == ARG_TYPE_HEAP_STRUCT) {
+    if (type == ARG_TYPE_STRUCT_HEAP) {
         /* deinit heap strcut */
         StructDeinitFun struct_deinit_fun =
             (StructDeinitFun)arg_getHeapStructDeinitFun(self);

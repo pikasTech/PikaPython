@@ -34,25 +34,26 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
+static const uint64_t __talbe_fast_atoi[][10] = {
+    {0, 1e0, 2e0, 3e0, 4e0, 5e0, 6e0, 7e0, 8e0, 9e0},
+    {0, 1e1, 2e1, 3e1, 4e1, 5e1, 6e1, 7e1, 8e1, 9e1},
+    {0, 1e2, 2e2, 3e2, 4e2, 5e2, 6e2, 7e2, 8e2, 9e2},
+    {0, 1e3, 2e3, 3e3, 4e3, 5e3, 6e3, 7e3, 8e3, 9e3},
+    {0, 1e4, 2e4, 3e4, 4e4, 5e4, 6e4, 7e4, 8e4, 9e4},
+    {0, 1e5, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, 8e5, 9e5},
+    {0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6, 9e6},
+    {0, 1e7, 2e7, 3e7, 4e7, 5e7, 6e7, 7e7, 8e7, 9e7},
+    {0, 1e8, 2e8, 3e8, 4e8, 5e8, 6e8, 7e8, 8e8, 9e8},
+    {0, 1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9},
+};
+
 int fast_atoi(char* src) {
     const char* p = src;
-    static const uint64_t a[][10] = {
-        {0, 1e0, 2e0, 3e0, 4e0, 5e0, 6e0, 7e0, 8e0, 9e0},
-        {0, 1e1, 2e1, 3e1, 4e1, 5e1, 6e1, 7e1, 8e1, 9e1},
-        {0, 1e2, 2e2, 3e2, 4e2, 5e2, 6e2, 7e2, 8e2, 9e2},
-        {0, 1e3, 2e3, 3e3, 4e3, 5e3, 6e3, 7e3, 8e3, 9e3},
-        {0, 1e4, 2e4, 3e4, 4e4, 5e4, 6e4, 7e4, 8e4, 9e4},
-        {0, 1e5, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, 8e5, 9e5},
-        {0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6, 8e6, 9e6},
-        {0, 1e7, 2e7, 3e7, 4e7, 5e7, 6e7, 7e7, 8e7, 9e7},
-        {0, 1e8, 2e8, 3e8, 4e8, 5e8, 6e8, 7e8, 8e8, 9e8},
-        {0, 1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9},
-    };
     uint16_t size = strGetSize(src);
     p = p + size - 1;
     if (*p) {
         int s = 0;
-        const uint64_t* n = a[0];
+        const uint64_t* n = __talbe_fast_atoi[0];
         while (p != src) {
             s += n[(*p - '0')];
             n += 10;
@@ -346,7 +347,7 @@ void* getNewClassObjFunByName(PikaObj* obj, char* name) {
 }
 
 int32_t __foreach_removeMethodInfo(Arg* argNow, Args* argList) {
-    if (arg_getType(argNow) == ARG_TYPE_NATIVE_METHOD) {
+    if (arg_getType(argNow) == ARG_TYPE_METHOD_NATIVE) {
         args_removeArg(argList, argNow);
         return 0;
     }
@@ -375,12 +376,12 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
 }
 
 Arg* obj_getRefArg(PikaObj* self) {
-    return arg_setPtr(NULL, "", ARG_TYPE_FREE_OBJECT, self);
+    return arg_setPtr(NULL, "", ARG_TYPE_OBJECT_FREE, self);
 }
 
 Arg* obj_newObjArg(NewFun newObjFun) {
     PikaObj* newObj = obj_newObjDirect(newObjFun);
-    Arg* objArg = arg_setPtr(NULL, "", ARG_TYPE_FREE_OBJECT, newObj);
+    Arg* objArg = arg_setPtr(NULL, "", ARG_TYPE_OBJECT_FREE, newObj);
     return objArg;
 }
 
@@ -417,7 +418,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self, char* name) {
     /* finded object, check type*/
     ArgType type = args_getType(self->list, name);
     /* found mate Object */
-    if (type == ARG_TYPE_MATE_OBJECT) {
+    if (type == ARG_TYPE_OBJECT_MATE) {
         return __initObj(self, name);
     }
     /* found Objcet */
@@ -549,7 +550,7 @@ int32_t class_defineConstructor(PikaObj* self,
                                 char* declearation,
                                 Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_NATIVE_CONSTRUCTOR_METHOD,
+                                        ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR,
                                         NULL);
 }
 
@@ -558,7 +559,7 @@ int32_t class_defineMethod(PikaObj* self,
                            char* declearation,
                            Method methodPtr) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_NATIVE_METHOD, NULL);
+                                        ARG_TYPE_METHOD_NATIVE, NULL);
 }
 
 /* define object method, object method is which startwith (self) */
@@ -567,7 +568,7 @@ int32_t class_defineRunTimeConstructor(PikaObj* self,
                                        Method methodPtr,
                                        ByteCodeFrame* bytecode_frame) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_CONSTRUCTOR_METHOD,
+                                        ARG_TYPE_METHOD_CONSTRUCTOR,
                                         bytecode_frame);
 }
 
@@ -577,7 +578,7 @@ int32_t class_defineObjectMethod(PikaObj* self,
                                  Method methodPtr,
                                  ByteCodeFrame* bytecode_frame) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_OBJECT_METHOD, bytecode_frame);
+                                        ARG_TYPE_METHOD_OBJECT, bytecode_frame);
 }
 
 /* define a static method as default */
@@ -586,7 +587,7 @@ int32_t class_defineStaticMethod(PikaObj* self,
                                  Method methodPtr,
                                  ByteCodeFrame* bytecode_frame) {
     return __class_defineMethodWithType(self, declearation, methodPtr,
-                                        ARG_TYPE_STATIC_METHOD, bytecode_frame);
+                                        ARG_TYPE_METHOD_STATIC, bytecode_frame);
 }
 
 VMParameters* obj_runDirect(PikaObj* self, char* cmd) {

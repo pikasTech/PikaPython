@@ -37,7 +37,7 @@
 Arg* arg_setMetaObj(char* objName, char* className, NewFun objPtr) {
     Arg* argNew = New_arg(NULL);
     /* m means mate-object */
-    argNew = arg_setPtr(argNew, objName, ARG_TYPE_MATE_OBJECT, (void*)objPtr);
+    argNew = arg_setPtr(argNew, objName, ARG_TYPE_OBJECT_MATE, (void*)objPtr);
     return argNew;
 }
 

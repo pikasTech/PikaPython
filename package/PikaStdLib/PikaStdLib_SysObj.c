@@ -26,27 +26,35 @@ void PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     }
     ArgType type = arg_getType(arg);
     if (ARG_TYPE_INT == type) {
-        obj_setSysOut(self, "int");
+        obj_setSysOut(self, "<class 'int'>");
         return;
     }
     if (ARG_TYPE_FLOAT == type) {
-        obj_setSysOut(self, "float");
+        obj_setSysOut(self, "<class 'float'>");
         return;
     }
     if (ARG_TYPE_STRING == type) {
-        obj_setSysOut(self, "string");
+        obj_setSysOut(self, "<class 'str'>");
         return;
     }
     if (ARG_TYPE_OBJECT == type) {
-        obj_setSysOut(self, "pointer");
+        obj_setSysOut(self, "<class 'object'>");
         return;
     }
-    if (ARG_TYPE_MATE_OBJECT == type) {
-        obj_setSysOut(self, "mate_object");
+    if (ARG_TYPE_OBJECT_MATE == type) {
+        obj_setSysOut(self, "<class 'mate object'>");
         return;
     }
-    if (ARG_TYPE_NATIVE_METHOD == type) {
-        obj_setSysOut(self, "method");
+    if (ARG_TYPE_METHOD_NATIVE == type) {
+        obj_setSysOut(self, "<class 'buitin_function_or_method'>");
+        return;
+    }
+    if (ARG_TYPE_METHOD_OBJECT== type) {
+        obj_setSysOut(self, "<class 'method'>");
+        return;
+    }
+    if (ARG_TYPE_METHOD_STATIC== type) {
+        obj_setSysOut(self, "<class 'function'>");
         return;
     }
 }
@@ -109,7 +117,7 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
                               New_PikaStdLib_StringObj);
     }
     /* a MATE object, return itself */
-    if (ARG_TYPE_MATE_OBJECT == arg_getType(arg)) {
+    if (ARG_TYPE_OBJECT_MATE == arg_getType(arg)) {
         return arg_copy(arg);
     }
     /* object */
