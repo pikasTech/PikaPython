@@ -324,9 +324,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     }
 
     /* get method host obj */
-    method_host_obj = obj_getObjWithKeepDeepth(self, methodPath, 1);
+    method_host_obj = obj_getSuperObj(self, methodPath);
     if (NULL == method_host_obj) {
-        method_host_obj = obj_getObjWithKeepDeepth(vs->locals, methodPath, 1);
+        method_host_obj = obj_getSuperObj(vs->locals, methodPath);
     }
     if (NULL == method_host_obj) {
         /* error, not found object */
@@ -503,7 +503,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
     if (ARG_TYPE_MATE_OBJECT == outArg_type) {
         /* found a mate_object */
         /* init object */
-        PikaObj* new_obj = obj_getObjWithKeepDeepth(hostObj, data, 0);
+        PikaObj* new_obj = obj_getObj(hostObj, data);
         /* run __init__() when init obj */
         obj_runNativeMethod(new_obj, "__init__", NULL);
     }
@@ -518,7 +518,7 @@ static Arg* VM_instruction_handler_RAS(PikaObj* self, VMState* vs, char* data) {
         return NULL;
     }
     /* use "data" object to run */
-    PikaObj* runAs = obj_getObjWithKeepDeepth(vs->locals, data, 0);
+    PikaObj* runAs = obj_getObj(vs->locals, data);
     args_setRefObj(vs->locals->list, "__runAs", runAs);
     return NULL;
 }

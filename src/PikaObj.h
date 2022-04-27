@@ -131,8 +131,8 @@ int32_t obj_setObjWithoutClass(PikaObj* self,
                                char* subObjectName,
                                void* new_projcetFun);
 PikaObj* obj_getObjDirect(PikaObj* self, char* name);
-PikaObj* obj_getObjWithKeepDeepth(PikaObj* self, char* objPath, int32_t deepth);
 PikaObj* obj_getObj(PikaObj* self, char* objPath);
+PikaObj* obj_getSuperObj(PikaObj* self, char* objPath);
 
 // subProcess
 int32_t obj_freeObj(PikaObj* self, char* subObjectName);

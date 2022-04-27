@@ -547,7 +547,7 @@ TEST(VM, RUN_AS) {
     ;
     PikaObj* self = newRootObj((char*)"", New_PikaMain);
     pikaVM_runAsm(self, pikaAsm);
-    PikaObj* as = obj_getObjWithKeepDeepth(self, (char*)"as", 0);
+    PikaObj* as = obj_getObj(self, (char*)"as");
     int x_as_ = obj_getInt(as, (char*)"x");
     int x_as = obj_getInt(self, (char*)"as.x");
     int x_origin = obj_getInt(self, (char*)"x");
@@ -611,7 +611,7 @@ TEST(VM, RUN_DEF_NEW) {
     PikaObj* self = newRootObj((char*)"", New_PikaMain);
     pikaVM_runAsm(self, pikaAsm);
     /* assert */
-    PikaObj* outobj = obj_getObjWithKeepDeepth(self, (char*)"outobj", 0);
+    PikaObj* outobj = obj_getObj(self, (char*)"outobj");
     int x = obj_getInt(outobj, (char*)"x");
     EXPECT_EQ(x, 1);
     /* deinit */
@@ -634,7 +634,7 @@ TEST(VM, class_x_1) {
     PikaObj* self = newRootObj((char*)"", New_PikaMain);
     pikaVM_runAsm(self, pikaAsm);
 
-    PikaObj* test = obj_getObjWithKeepDeepth(self, (char*)"test", 0);
+    PikaObj* test = obj_getObj(self, (char*)"test");
     Arg* test_arg = obj_getArg(self, (char*)"test");
     ArgType test_arg_type = arg_getType(test_arg);
     EXPECT_EQ(test_arg_type, ARG_TYPE_OBJECT);

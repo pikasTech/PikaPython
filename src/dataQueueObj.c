@@ -53,7 +53,7 @@ PikaObj* queueObj_getCurrentObj(QueueObj* self) {
     uint64_t current = obj_getInt(self, "top") - 1;
     char buff[11];
     char* currentStr = fast_itoa(buff, current);
-    return obj_getObjWithKeepDeepth(self, currentStr, 0);
+    return obj_getObj(self, currentStr);
 }
 
 PikaObj* queueObj_popObj(QueueObj* self) {
@@ -62,7 +62,7 @@ PikaObj* queueObj_popObj(QueueObj* self) {
     char* bottomStr = fast_itoa(buff, bottom);
     /* add bottom */
     obj_setInt(self, "bottom", bottom + 1);
-    PikaObj* res = obj_getObjWithKeepDeepth(self, bottomStr, 0);
+    PikaObj* res = obj_getObj(self, bottomStr);
     return res;
 }
 

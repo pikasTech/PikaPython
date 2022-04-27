@@ -1201,12 +1201,12 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         /* exit each block */
         for (int i = 0; i < block_deepth_last - block_deepth_now; i++) {
             QueueObj* exit_block_queue =
-                obj_getObjWithKeepDeepth(ast, "exitBlock", 0);
+                obj_getObj(ast, "exitBlock");
             /* create an exit_block queue */
             if (NULL == exit_block_queue) {
                 obj_newObj(ast, "exitBlock", "", New_TinyObj);
                 exit_block_queue =
-                    obj_getObjWithKeepDeepth(ast, "exitBlock", 0);
+                    obj_getObj(ast, "exitBlock");
                 queueObj_init(exit_block_queue);
             }
             char buff[10] = {0};
@@ -1671,7 +1671,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         pikaAsm = NULL;
         goto exit;
     }
-    exitBlock = obj_getObjWithKeepDeepth(ast, "exitBlock", 0);
+    exitBlock = obj_getObj(ast, "exitBlock");
     /* exiting from block */
     if (exitBlock != NULL) {
         while (1) {

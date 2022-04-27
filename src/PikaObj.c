@@ -116,7 +116,7 @@ int32_t obj_disable(PikaObj* self) {
 }
 
 int32_t obj_setInt(PikaObj* self, char* argPath, int64_t val) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         /* [error] object no found */
         return 1;
@@ -127,7 +127,7 @@ int32_t obj_setInt(PikaObj* self, char* argPath, int64_t val) {
 }
 
 int32_t obj_setPtr(PikaObj* self, char* argPath, void* pointer) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return 1;
     }
@@ -137,7 +137,7 @@ int32_t obj_setPtr(PikaObj* self, char* argPath, void* pointer) {
 }
 
 int32_t obj_setRefObject(PikaObj* self, char* argPath, void* pointer) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return 1;
     }
@@ -147,7 +147,7 @@ int32_t obj_setRefObject(PikaObj* self, char* argPath, void* pointer) {
 }
 
 int32_t obj_setFloat(PikaObj* self, char* argPath, float value) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return 1;
     }
@@ -157,7 +157,7 @@ int32_t obj_setFloat(PikaObj* self, char* argPath, float value) {
 }
 
 int32_t obj_setStr(PikaObj* self, char* argPath, char* str) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return 1;
     }
@@ -167,7 +167,7 @@ int32_t obj_setStr(PikaObj* self, char* argPath, char* str) {
 }
 
 int32_t obj_setBytes(PikaObj* self, char* argPath, uint8_t* src, size_t size) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return 1;
     }
@@ -177,7 +177,7 @@ int32_t obj_setBytes(PikaObj* self, char* argPath, uint8_t* src, size_t size) {
 }
 
 int64_t obj_getInt(PikaObj* self, char* argPath) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return -999999999;
     }
@@ -187,7 +187,7 @@ int64_t obj_getInt(PikaObj* self, char* argPath) {
 }
 
 Arg* obj_getArg(PikaObj* self, char* argPath) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return NULL;
     }
@@ -197,7 +197,7 @@ Arg* obj_getArg(PikaObj* self, char* argPath) {
 }
 
 uint8_t* obj_getBytes(PikaObj* self, char* argPath) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return NULL;
     }
@@ -206,7 +206,7 @@ uint8_t* obj_getBytes(PikaObj* self, char* argPath) {
 }
 
 size_t obj_getBytesSize(PikaObj* self, char* argPath) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return 0;
     }
@@ -232,7 +232,7 @@ static int32_t __obj_setArg(PikaObj* self,
                             Arg* arg,
                             uint8_t is_copy) {
     /* setArg would copy arg */
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         /* object no found */
         return 1;
@@ -258,7 +258,7 @@ int32_t obj_setArg_noCopy(PikaObj* self, char* argPath, Arg* arg) {
 }
 
 void* obj_getPtr(PikaObj* self, char* argPath) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return NULL;
     }
@@ -268,7 +268,7 @@ void* obj_getPtr(PikaObj* self, char* argPath) {
 }
 
 float obj_getFloat(PikaObj* self, char* argPath) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return -999.999;
     }
@@ -278,7 +278,7 @@ float obj_getFloat(PikaObj* self, char* argPath) {
 }
 
 char* obj_getStr(PikaObj* self, char* argPath) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     if (NULL == obj) {
         return NULL;
     }
@@ -427,7 +427,7 @@ PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
     return NULL;
 }
 
-PikaObj* obj_getObjWithKeepDeepth(PikaObj* self,
+static PikaObj* __obj_getObjWithKeepDeepth(PikaObj* self,
                                   char* objPath,
                                   int32_t keepDeepth) {
     char objPath_buff[PIKA_PATH_BUFF_SIZE];
@@ -448,7 +448,11 @@ exit:
 }
 
 PikaObj* obj_getObj(PikaObj* self, char* objPath) {
-    return obj_getObjWithKeepDeepth(self, objPath, 0);
+    return __obj_getObjWithKeepDeepth(self, objPath, 0);
+}
+
+PikaObj* obj_getSuperObj(PikaObj* self, char* objPath) {
+    return __obj_getObjWithKeepDeepth(self, objPath, 1);
 }
 
 Method methodArg_getPtr(Arg* method_arg) {
@@ -517,7 +521,7 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
     char* methodPath =
         strGetFirstToken(args_getBuff(&buffs, size), cleanDeclearation, '(');
 
-    PikaObj* methodHost = obj_getObjWithKeepDeepth(self, methodPath, 1);
+    PikaObj* methodHost = obj_getSuperObj(self, methodPath);
     MethodInfo method_info = {0};
     char* methodName;
     if (NULL == methodHost) {
@@ -593,7 +597,7 @@ VMParameters* obj_runDirect(PikaObj* self, char* cmd) {
 }
 
 int32_t obj_removeArg(PikaObj* self, char* argPath) {
-    PikaObj* objHost = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* objHost = obj_getSuperObj(self, argPath);
     char* argName;
     int32_t res;
     int32_t err = 0;
@@ -615,7 +619,7 @@ exit:
 }
 
 int32_t obj_isArgExist(PikaObj* self, char* argPath) {
-    PikaObj* obj = obj_getObjWithKeepDeepth(self, argPath, 1);
+    PikaObj* obj = obj_getSuperObj(self, argPath);
     int32_t res = 0;
     char* argName;
     Arg* arg;
