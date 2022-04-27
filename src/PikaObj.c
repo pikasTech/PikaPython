@@ -882,3 +882,8 @@ Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj) {
 Arg* arg_setWeakRefObj(Arg* self, char* name, PikaObj* obj) {
     return arg_setPtr(self, name, ARG_TYPE_OBJECT, obj);
 }
+
+PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
+                                           char* name,
+                                           ByteCodeFrame* byteCode_frame) {
+                                           }

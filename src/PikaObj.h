@@ -233,6 +233,10 @@ PikaObj* obj_newObjDirect(NewFun newObjFun);
 Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setWeakRefObj(Arg* self, char* name, PikaObj* obj);
 
+PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
+                                           char* name,
+                                           ByteCodeFrame* bytecode_frame);
+
 #define PIKA_PYTHON_BEGIN
 #define PIKA_PYTHON(x)
 #define PIKA_PYTHON_END
