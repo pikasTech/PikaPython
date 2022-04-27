@@ -2,7 +2,7 @@
 
 Arg* PikaStdData_String___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
-    return arg_setRefObj(NULL, "", self);
+    return arg_setRef(NULL, "", self);
 }
 
 void PikaStdData_String_set(PikaObj* self, char* s) {

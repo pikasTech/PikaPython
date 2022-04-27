@@ -881,12 +881,12 @@ int obj_refcntNow(PikaObj* self) {
     return obj_getInt(self, "_refcnt");
 }
 
-Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj) {
+Arg* arg_setRef(Arg* self, char* name, PikaObj* obj) {
     obj_refcntInc(obj);
     return arg_setPtr(self, name, ARG_TYPE_OBJECT, obj);
 }
 
-Arg* arg_setWeakRefObj(Arg* self, char* name, PikaObj* obj) {
+Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj) {
     return arg_setPtr(self, name, ARG_TYPE_OBJECT, obj);
 }
 

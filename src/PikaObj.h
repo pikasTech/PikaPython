@@ -229,8 +229,8 @@ void obj_refcntInc(PikaObj* self);
 void obj_refcntDec(PikaObj* self);
 int obj_refcntNow(PikaObj* self);
 PikaObj* NewObjDirect(NewFun newObjFun);
-Arg* arg_setRefObj(Arg* self, char* name, PikaObj* obj);
-Arg* arg_setWeakRefObj(Arg* self, char* name, PikaObj* obj);
+Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
+Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj);
 
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,

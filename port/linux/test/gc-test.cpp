@@ -14,7 +14,7 @@ extern "C" {
 TEST(gc, root) {
     PikaObj* root = newRootObj((char*)"root", New_PikaMain);
     EXPECT_EQ(obj_refcntNow(root), 1);
-    Arg* refArg = arg_setRefObj(NULL, (char*)"", root);
+    Arg* refArg = arg_setRef(NULL, (char*)"", root);
     EXPECT_EQ(obj_refcntNow(root), 2);
     arg_deinit(refArg);
     EXPECT_EQ(obj_refcntNow(root), 1);

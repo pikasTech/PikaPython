@@ -23,7 +23,7 @@ void PikaStdData_Dict_remove(PikaObj* self, char* key) {
 
 Arg* PikaStdData_Dict___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
-    return arg_setRefObj(NULL, "", self);
+    return arg_setRef(NULL, "", self);
 }
 
 Arg* PikaStdData_Dict___next__(PikaObj* self) {

@@ -276,7 +276,7 @@ static void VMState_loadArgsFromMethodArg(VMState* vs,
 
     /* load 'self' as the first arg when call object method */
     if (method_type == ARG_TYPE_METHOD_OBJECT) {
-        Arg* call_arg = arg_setRefObj(NULL, "self", method_host_obj);
+        Arg* call_arg = arg_setRef(NULL, "self", method_host_obj);
         args_setArg(args, call_arg);
     }
 exit:
