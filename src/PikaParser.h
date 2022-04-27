@@ -83,6 +83,9 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
 int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
                                 char* python_lines);
 void Parser_compilePyToBytecodeArray(char* lines);
+char* Parser_parsePyLines(Args* outBuffs,
+                          ByteCodeFrame* bytecode_frame,
+                          char* py_lines);
 #define ParserState_forEach(parseState)  \
     ParserState_beforeIter(&parseState); \
     for (int i = 0; i < parseState.length; i++)
