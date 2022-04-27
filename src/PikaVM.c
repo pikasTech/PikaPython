@@ -324,9 +324,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     }
 
     /* get method host obj */
-    method_host_obj = obj_getSuperObj(self, methodPath);
+    method_host_obj = obj_getHostObj(self, methodPath);
     if (NULL == method_host_obj) {
-        method_host_obj = obj_getSuperObj(vs->locals, methodPath);
+        method_host_obj = obj_getHostObj(vs->locals, methodPath);
     }
     if (NULL == method_host_obj) {
         /* error, not found object */
