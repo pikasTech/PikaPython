@@ -130,7 +130,6 @@ int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_projcetFun);
 int32_t obj_setObjWithoutClass(PikaObj* self,
                                char* subObjectName,
                                void* new_projcetFun);
-PikaObj* obj_getObjDirect(PikaObj* self, char* name);
 PikaObj* obj_getObj(PikaObj* self, char* objPath);
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath);
 

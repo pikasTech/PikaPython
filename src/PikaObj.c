@@ -410,7 +410,7 @@ exit:
     return res;
 }
 
-PikaObj* obj_getObjDirect(PikaObj* self, char* name) {
+static PikaObj* __obj_getObjDirect(PikaObj* self, char* name) {
     if (NULL == self) {
         return NULL;
     }
@@ -437,7 +437,7 @@ static PikaObj* __obj_getObjWithKeepDeepth(PikaObj* self,
     PikaObj* obj = self;
     for (int32_t i = 0; i < token_num - keepDeepth; i++) {
         char* token = strPopToken(token_buff, objPath_buff, '.');
-        obj = obj_getObjDirect(obj, token);
+        obj = __obj_getObjDirect(obj, token);
         if (obj == NULL) {
             goto exit;
         }
