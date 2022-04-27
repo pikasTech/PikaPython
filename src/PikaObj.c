@@ -896,10 +896,7 @@ PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
     return NULL;
 }
 
-int32_t obj_newSubObj(PikaObj* self,
-                      char* objName,
-                      char* className,
-                      NewFun newFunPtr) {
+int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr) {
     Arg* new_obj = arg_newDirectObj(newFunPtr);
     new_obj = arg_setName(new_obj, objName);
     new_obj = arg_setType(new_obj, ARG_TYPE_OBJECT);
@@ -907,10 +904,7 @@ int32_t obj_newSubObj(PikaObj* self,
     return 0;
 }
 
-int32_t obj_newSubObjByMeta(PikaObj* self,
-                            char* objName,
-                            char* className,
-                            NewFun newFunPtr) {
+int32_t obj_newMetaObj(PikaObj* self, char* objName, NewFun newFunPtr) {
     /* add meta Obj, no inited */
     Arg* new_obj = arg_newMetaObj(newFunPtr);
     new_obj = arg_setName(new_obj, objName);
@@ -922,5 +916,5 @@ int32_t obj_newObj(PikaObj* self,
                    char* objName,
                    char* className,
                    NewFun newFunPtr) {
-    return obj_newSubObjByMeta(self, objName, className, newFunPtr);
+    return obj_newMetaObj(self, objName, newFunPtr);
 }
