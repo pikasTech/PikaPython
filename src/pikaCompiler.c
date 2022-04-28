@@ -100,7 +100,7 @@ int pikaCompileFileWithOutputName(char* output_file_name,
 int pikaCompileFile(char* input_file_name) {
     Args buffs = {0};
     char* output_file_name = strsGetFirstToken(&buffs, input_file_name, '.');
-    output_file_name = strsAppend(&buffs, output_file_name, ".pikabytecode");
+    output_file_name = strsAppend(&buffs, input_file_name, ".o");
     pikaCompileFileWithOutputName(output_file_name, input_file_name);
     strsDeinit(&buffs);
     return 0;
