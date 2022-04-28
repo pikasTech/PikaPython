@@ -1830,11 +1830,11 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         }
         if (strEqu("", superClass)) {
             /* default superClass */
-            superClass = "__TinyObj__";
+            superClass = "TinyObj";
         }
         if (strEqu("TinyObj", superClass)) {
             /* default superClass */
-            superClass = "__TinyObj__";
+            superClass = "TinyObj";
         }
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 CLS ");
         pikaAsm = strsAppend(&buffs, pikaAsm,

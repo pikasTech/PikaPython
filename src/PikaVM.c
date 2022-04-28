@@ -327,7 +327,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         goto exit;
     }
     /* return tiny obj */
-    if (strEqu(data, "__TinyObj__")) {
+    if (strEqu(data, "TinyObj")) {
         return_arg = arg_newMetaObj(New_TinyObj);
         goto exit;
     }

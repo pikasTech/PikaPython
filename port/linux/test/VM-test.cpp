@@ -532,7 +532,7 @@ TEST(VM, EST) {
 TEST(VM, RUN_AS) {
     char* pikaAsm = (char*)
         "B0\n"
-        "0 RUN __TinyObj__\n"
+        "0 RUN TinyObj\n"
         "0 OUT as\n"
         "B0\n"
         "0 RAS as\n"
@@ -562,7 +562,7 @@ TEST(VM, RUN_AS) {
 TEST(VM, RUN_NEW) {
     char* pikaAsm = (char*)
         "B0\n"
-        "0 RUN __TinyObj__\n"
+        "0 RUN TinyObj\n"
         "0 OUT newObj\n"
         "0 NUM 1\n"
         "0 OUT newObj.x\n"
@@ -594,7 +594,7 @@ TEST(VM, RUN_DEF_NEW) {
         "0 DEF testnew()\n"
         "0 JMP 1\n"
         "B1\n"
-        "0 RUN __TinyObj__\n"
+        "0 RUN TinyObj\n"
         "0 OUT newObj\n"
         "B1\n"
         "0 NUM 1\n"
@@ -622,7 +622,7 @@ TEST(VM, RUN_DEF_NEW) {
 
 TEST(VM, class_x_1) {
     char* line = (char*)
-        "class Test(__TinyObj__):\n"
+        "class Test(TinyObj):\n"
         "    x = 1\n"
         "test = Test()\n"
         "print('test.x: ' + str(test.x))\n"
