@@ -376,7 +376,7 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
 }
 
 Arg* obj_getRefArg(PikaObj* self) {
-    return arg_setPtr(NULL, "", ARG_TYPE_OBJECT_FREE, self);
+    return arg_setPtr(NULL, "", ARG_TYPE_OBJECT_NEW, self);
 }
 
 Arg* arg_newMetaObj(NewFun new_obj_fun) {
@@ -388,7 +388,7 @@ Arg* arg_newMetaObj(NewFun new_obj_fun) {
 
 Arg* arg_newDirectObj(NewFun new_obj_fun) {
     PikaObj* newObj = NewObjDirect(new_obj_fun);
-    Arg* arg_new = arg_setPtr(NULL, "", ARG_TYPE_OBJECT_FREE, newObj);
+    Arg* arg_new = arg_setPtr(NULL, "", ARG_TYPE_OBJECT_NEW, newObj);
     return arg_new;
 }
 
@@ -429,7 +429,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self, char* name) {
         return __obj_initSubObj(self, name);
     }
     /* found Objcet */
-    if (type == ARG_TYPE_OBJECT || type == ARG_TYPE_OBJECT_FREE) {
+    if (type == ARG_TYPE_OBJECT || type == ARG_TYPE_OBJECT_NEW) {
         return args_getPtr(self->list, name);
     }
     return NULL;

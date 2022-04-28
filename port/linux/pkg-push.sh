@@ -5,7 +5,7 @@ exit 1;
 fi
 pkg=$1
 cp package/pikascript/pikascript-lib/$pkg ../../package/ -r
-cp package/pikascript/$pkg.py ../../package/$pkg/ 
+cp package/pikascript/$pkg.pyi ../../package/$pkg/ 
 git add package/pikascript/pikascript-lib/$pkg
-git add package/pikascript/$pkg.py
+git add package/pikascript/$pkg.pyi
 git add ../../package/$pkg

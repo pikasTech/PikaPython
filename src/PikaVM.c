@@ -160,7 +160,7 @@ static Arg* VM_instruction_handler_NEW(PikaObj* self, VMState* vs, char* data) {
     Arg* origin_arg = obj_getArg(vs->locals, data);
     Arg* new_arg = arg_copy(origin_arg);
     origin_arg = arg_setType(origin_arg, ARG_TYPE_OBJECT);
-    arg_setType(new_arg, ARG_TYPE_OBJECT_FREE);
+    arg_setType(new_arg, ARG_TYPE_OBJECT_NEW);
     return new_arg;
 }
 
@@ -367,7 +367,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         VMState_runMethodArg(vs, method_host_obj, sub_locals, method_arg);
 
     /* __init__() */
-    if (ARG_TYPE_OBJECT_FREE == arg_getType(return_arg)) {
+    if (ARG_TYPE_OBJECT_NEW == arg_getType(return_arg)) {
         /* init object */
         PikaObj* new_obj = arg_getPtr(return_arg);
         Arg* method_arg = obj_getMethodArg(new_obj, "__init__");
@@ -498,7 +498,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
         hostObj = args_getPtr(vs->locals->list, "__runAs");
     }
     /* set free object to nomal object */
-    if (ARG_TYPE_OBJECT_FREE == outArg_type) {
+    if (ARG_TYPE_OBJECT_NEW == outArg_type) {
         arg_setType(outArg, ARG_TYPE_OBJECT);
     }
 
@@ -1333,7 +1333,7 @@ void VMState_solveUnusedStack(VMState* vs) {
             arg_deinit(arg);
             continue;
         }
-        if (ARG_TYPE_OBJECT_FREE == type) {
+        if (ARG_TYPE_OBJECT_NEW == type) {
             obj_deinit(arg_getPtr(arg));
             arg_deinit(arg);
             continue;

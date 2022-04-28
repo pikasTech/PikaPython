@@ -2180,7 +2180,6 @@ TEST(asmer, asmer_to_instructUnit) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(asmer, asm_to_bytecodeArray) {
     char* pikaAsm =(char*)
                               "B0\n"
