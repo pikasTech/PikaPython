@@ -45,6 +45,10 @@ void PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         obj_setSysOut(self, "<class 'meta object'>");
         return;
     }
+    if (ARG_TYPE_BYTES == type) {
+        obj_setSysOut(self, "<class 'bytes'>");
+        return;
+    }
     if (ARG_TYPE_METHOD_NATIVE == type) {
         obj_setSysOut(self, "<class 'buitin_function_or_method'>");
         return;
