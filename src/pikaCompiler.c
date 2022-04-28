@@ -86,20 +86,22 @@ int pikaCompile(char* output_file_name, char* py_lines) {
     return 0;
 };
 
-int pikaCompileFileWithOutputName(char* output_file_name, char* input_file_name) {
-    char file_buff[PIKA_READ_FILE_BUFF_SIZE] = {0};
-    FILE* py_f = __platform_fopen(input_file_name, "r+");
-    __platform_fread(file_buff, PIKA_READ_FILE_BUFF_SIZE, 1, py_f);
+int pikaCompileFileWithOutputName(char* output_file_name,
+                                  char* input_file_name) {
+    char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
+    FILE* input_f = __platform_fopen(input_file_name, "r");
+    __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_f);
     pikaCompile(output_file_name, file_buff);
     __platform_free(file_buff);
+    __platform_fclose(input_f);
     return 0;
 }
 
 int pikaCompileFile(char* input_file_name) {
     Args buffs = {0};
     char* output_file_name = strsGetFirstToken(&buffs, input_file_name, '.');
-    output_file_name = strAppend(output_file_name, ".pikabin");
+    output_file_name = strsAppend(&buffs, output_file_name, ".pikabytecode");
     pikaCompileFileWithOutputName(output_file_name, input_file_name);
-    args_deinit(&buffs);
+    strsDeinit(&buffs);
     return 0;
 }
