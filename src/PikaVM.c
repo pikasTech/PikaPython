@@ -326,6 +326,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         return_arg = stack_popArg(&(vs->stack));
         goto exit;
     }
+    /* return tiny obj */
+    if (strEqu(data, "__TinyObj__")) {
+        return_arg = arg_newMetaObj(New_TinyObj);
+        goto exit;
+    }
 
     /* get method host obj */
     method_host_obj = obj_getHostObj(self, methodPath);

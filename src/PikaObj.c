@@ -33,7 +33,6 @@
 #include "dataMemory.h"
 #include "dataString.h"
 #include "dataStrs.h"
-#include "PikaMain.h"
 
 static const uint64_t __talbe_fast_atoi[][10] = {
     {0, 1e0, 2e0, 3e0, 4e0, 5e0, 6e0, 7e0, 8e0, 9e0},
@@ -917,7 +916,7 @@ int32_t obj_newObj(PikaObj* self,
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,
                                            ByteCodeFrame* byteCode_frame) {
-    obj_newDirectObj(self, name, New_PikaMain);
+    obj_newDirectObj(self, name, New_TinyObj);
     pikaVM_runByteCodeFrame(obj_getObj(self, name), byteCode_frame);
     return self;
 }

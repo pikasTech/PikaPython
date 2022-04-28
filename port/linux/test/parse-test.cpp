@@ -2050,7 +2050,7 @@ TEST(parser, class_) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
-        "class Test(PikaStdLib.PikaObj):\n"
+        "class Test(__TinyObj__):\n"
         "    x = 1\n"
         "\n"
         ;
@@ -2062,7 +2062,7 @@ TEST(parser, class_) {
         "0 CLS Test()\n"
         "0 JMP 1\n"
         "B1\n"
-        "0 RUN PikaStdLib.PikaObj\n"
+        "0 RUN __TinyObj__\n"
         "0 OUT self\n"
         "B1\n"
         "0 RAS self\n"
@@ -2099,7 +2099,7 @@ TEST(parser, class_def) {
     "0 CLS Test()\n"
     "0 JMP 1\n"
     "B1\n"
-    "0 RUN PikaStdLib.PikaObj\n"
+    "0 RUN __TinyObj__\n"
     "0 OUT self\n"
     "B1\n"
     "0 RAS self\n"
@@ -2264,7 +2264,7 @@ TEST(parser, class_def_void_line) {
     "0 CLS Test()\n"
     "0 JMP 1\n"
     "B1\n"
-    "0 RUN PikaStdLib.PikaObj\n"
+    "0 RUN __TinyObj__\n"
     "0 OUT self\n"
     "B1\n"
     "0 RAS self\n"

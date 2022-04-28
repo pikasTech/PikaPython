@@ -1082,7 +1082,7 @@ TEST(pikaMain, class_arg) {
     __platform_printf((char*)"BEGIN\r\n");
     Args* buffs = New_strBuff();
     char * pikaAsm = Parser_multiLineToAsm(buffs, (char*)
-        "class Test(PikaStdLib.PikaObj):\n"
+        "class Test(__TinyObj__):\n"
         "    x = 1\n"
         "\n"
         "test = Test()\n"
