@@ -19,7 +19,7 @@ void PikaStdTask_Task___init__(PikaObj* self) {
     };
     PIKA_PYTHON_END
     pikaVM_runByteCode(self, (uint8_t*)bytes);
-    obj_setRefObject(__pikaMain, "__calls", obj_getPtr(self, "calls"));
+    obj_setRef(__pikaMain, "__calls", obj_getPtr(self, "calls"));
 }
 
 void PikaStdTask_Task_call_always(PikaObj* self, Arg* fun_todo) {

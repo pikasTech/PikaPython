@@ -33,6 +33,7 @@
 #include "dataMemory.h"
 #include "dataString.h"
 #include "dataStrs.h"
+#include "PikaMain.h"
 
 static const uint64_t __talbe_fast_atoi[][10] = {
     {0, 1e0, 2e0, 3e0, 4e0, 5e0, 6e0, 7e0, 8e0, 9e0},
@@ -137,13 +138,13 @@ int32_t obj_setPtr(PikaObj* self, char* argPath, void* pointer) {
     return 0;
 }
 
-int32_t obj_setRefObject(PikaObj* self, char* argPath, void* pointer) {
+int32_t obj_setRef(PikaObj* self, char* argPath, void* pointer) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
         return 1;
     }
     char* name = strPointToLastToken(argPath, '.');
-    args_setRefObj(obj->list, name, pointer);
+    args_setRef(obj->list, name, pointer);
     return 0;
 }
 
@@ -215,7 +216,7 @@ size_t obj_getBytesSize(PikaObj* self, char* argPath) {
     return args_getBytesSize(obj->list, argName);
 }
 
-size_t obj_loadMem(PikaObj* self, char* argPath, uint8_t* out_buff) {
+size_t obj_loadBytes(PikaObj* self, char* argPath, uint8_t* out_buff) {
     size_t size_mem = obj_getBytesSize(self, argPath);
     void* src = obj_getBytes(self, argPath);
     if (0 == size_mem) {
@@ -890,12 +891,6 @@ Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj) {
     return arg_setPtr(self, name, ARG_TYPE_OBJECT, obj);
 }
 
-PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
-                                           char* name,
-                                           ByteCodeFrame* byteCode_frame) {
-    return NULL;
-}
-
 int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr) {
     Arg* new_obj = arg_newDirectObj(newFunPtr);
     new_obj = arg_setName(new_obj, objName);
@@ -917,4 +912,12 @@ int32_t obj_newObj(PikaObj* self,
                    char* className,
                    NewFun newFunPtr) {
     return obj_newMetaObj(self, objName, newFunPtr);
+}
+
+PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
+                                           char* name,
+                                           ByteCodeFrame* byteCode_frame) {
+    obj_newDirectObj(self, name, New_PikaMain);
+    pikaVM_runByteCodeFrame(obj_getObj(self, name), byteCode_frame);
+    return self;
 }

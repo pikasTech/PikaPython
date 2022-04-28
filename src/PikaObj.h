@@ -103,7 +103,7 @@ int32_t obj_disable(PikaObj* self);
 
 // arg type operations
 int32_t obj_setInt(PikaObj* self, char* argPath, int64_t val);
-int32_t obj_setRefObject(PikaObj* self, char* argPath, void* pointer);
+int32_t obj_setRef(PikaObj* self, char* argPath, void* pointer);
 int32_t obj_setPtr(PikaObj* self, char* argPath, void* pointer);
 int32_t obj_setFloat(PikaObj* self, char* argPath, float value);
 int32_t obj_setStr(PikaObj* self, char* argPath, char* str);
@@ -118,7 +118,7 @@ int64_t obj_getInt(PikaObj* self, char* argPath);
 Arg* obj_getArg(PikaObj* self, char* argPath);
 uint8_t* obj_getBytes(PikaObj* self, char* argPath);
 size_t obj_getBytesSize(PikaObj* self, char* argPath);
-size_t obj_loadMem(PikaObj* self, char* argPath, uint8_t* out_buff);
+size_t obj_loadBytes(PikaObj* self, char* argPath, uint8_t* out_buff);
 
 char* obj_print(PikaObj* self, char* name);
 
@@ -127,9 +127,6 @@ int32_t obj_load(PikaObj* self, Args* args, char* name);
 
 // subObject
 int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_projcetFun);
-int32_t obj_setObjWithoutClass(PikaObj* self,
-                               char* subObjectName,
-                               void* new_projcetFun);
 PikaObj* obj_getObj(PikaObj* self, char* objPath);
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath);
 

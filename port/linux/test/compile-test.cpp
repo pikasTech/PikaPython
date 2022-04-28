@@ -1,13 +1,18 @@
 
 #include "gtest/gtest.h"
 extern "C" {
-#include "BaseObj.h"
+#include "PikaMain.h"
 #include "PikaParser.h"
+#include "PikaStdLib_MemChecker.h"
+#include "PikaVM.h"
+#include "dataArgs.h"
 #include "dataMemory.h"
 #include "dataStrs.h"
-#include "pikaCompiler.h"
+#include "pikaScript.h"
+#include "pika_config_gtest.h"
 }
 
+extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 TEST(compiler, file) {
     char* lines =(char*)
         "len = __calls.len()\n"
@@ -112,7 +117,6 @@ TEST(compiler, demo1) {
     Parser_compilePyToBytecodeArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
 
 TEST(compiler, snake_file) {
     char* lines =(char*)
@@ -253,5 +257,62 @@ TEST(compiler, snake_file) {
         "        d = 3\n"
         "        isUpdate = 1\n";
     pikaCompile((char*)"snake.bin", (char*)lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, import_bf_mem) {
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    char* lines =(char*)
+        "def mytest():\n"
+        "    print('test')\n"
+        "\n";
+    ByteCodeFrame bf;
+    byteCodeFrame_init(&bf);
+    bytecodeFrame_fromMultiLine(&bf, lines);
+    obj_importModuleWithByteCodeFrame(pikaMain, (char*)"mtest", &bf);
+    byteCodeFrame_deinit(&bf);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, import_bf1) {
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    char* lines =(char*)
+        "def mytest():\n"
+        "    print('test_import_bf1')\n"
+        "\n";
+    ByteCodeFrame bf;
+    byteCodeFrame_init(&bf);
+    bytecodeFrame_fromMultiLine(&bf, lines);
+    obj_importModuleWithByteCodeFrame(pikaMain, (char*)"mtest", &bf);
+    obj_run(pikaMain, (char*)
+            "mtest.mytest()\n"
+            "\n"
+    );
+    EXPECT_STREQ(log_buff[0], "test_import_bf1\r\n");
+    byteCodeFrame_deinit(&bf);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, import_bf2) {
+    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    char* lines =(char*)
+        "class Test:\n"
+        "    def mytest(self):\n"
+        "        print('test_import_bf2')\n"
+        "\n";
+    ByteCodeFrame bf;
+    byteCodeFrame_init(&bf);
+    bytecodeFrame_fromMultiLine(&bf, lines);
+    obj_importModuleWithByteCodeFrame(pikaMain, (char*)"mtest", &bf);
+    obj_run(pikaMain, (char*)
+            "m = mtest.Test()\n"
+            "m.mytest()\n"
+            "\n"
+    );
+    byteCodeFrame_deinit(&bf);
+    obj_deinit(pikaMain);
+    EXPECT_STREQ(log_buff[0], "test_import_bf2\r\n");
     EXPECT_EQ(pikaMemNow(), 0);
 }

@@ -227,7 +227,7 @@ TEST(object_test, obj_mem) {
     size_t mem_size = obj_getBytesSize(self, (char*)"mem");
     char* mem_test_out = (char*)obj_getBytes(self, (char*)"mem");
     ArgType arg_type = arg_getType(obj_getArg(self, (char*)"mem"));
-    obj_loadMem(self, (char*)"mem", mem_out_buff);
+    obj_loadBytes(self, (char*)"mem", mem_out_buff);
     /* assert */
     EXPECT_EQ(mem_size, sizeof(mem_test));
     EXPECT_EQ(mem_test_out[0], 0x33);
