@@ -124,7 +124,7 @@ fn main() {
     f.write("#include <stdio.h>\n".as_bytes()).unwrap();
     f.write("#include <stdlib.h>\n".as_bytes()).unwrap();
     f.write("\n".as_bytes()).unwrap();
-    /* get script from main.py */
+    /* get script from main.pyi */
     let pika_main = compiler
         .class_list
         .get_mut(&"PikaMain".to_string())

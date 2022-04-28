@@ -145,7 +145,7 @@ impl ClassInfo {
         );
         /* create the root object */
         script_fn.push_str("    __pikaMain = newRootObj(\"pikaMain\", New_PikaMain);\r\n");
-        /* use obj_run to run the script in main.py */
+        /* use obj_run to run the script in main.pyi */
         script_fn.push_str("    obj_run(__pikaMain,\n");
         /* get the origin script content */
         let script_content_origin = String::from(&self.script_list.content);

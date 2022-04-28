@@ -1,4 +1,4 @@
 pikascript-core==v1.1.1
 PikaStdLib==v1.1.0
 PikaStdDevice==v1.4.1
-CH32V103==latest
+CH32V103==v1.0.0

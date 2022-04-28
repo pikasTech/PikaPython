@@ -49,7 +49,7 @@ impl VersionInfo {
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
         let lines: Vec<&str> = file_str.split('\n').collect();
-        /* analyze each line of pikascript-api.py */
+        /* analyze each line of pikascript-api.pyi */
         for line in lines.iter() {
             self = VersionInfo::analyze_line(self, line.to_string());
         }

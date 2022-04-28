@@ -1,4 +1,4 @@
 pikascript-core==v1.2.9
 PikaStdLib==v1.2.5
 pikaRTThread==v1.1.0
-SmartLoong==latest
+SmartLoong==v0.0.1

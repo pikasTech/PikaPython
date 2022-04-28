@@ -76,12 +76,17 @@ impl Compiler {
 
     pub fn __do_analize_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
         /* open file */
-        let file = Compiler::open_file(format!("{}{}.py", self.source_path, file_name));
+        let file: std::result::Result<std::fs::File, std::io::Error>;
+        if file_name == "main" {
+            file = Compiler::open_file(format!("{}main.py", self.source_path));
+        } else {
+            file = Compiler::open_file(format!("{}{}.pyi", self.source_path, file_name));
+        }
         let mut file = match file {
             Ok(file) => file,
             Err(_) => {
                 println!(
-                    "    [warning]: file: '{}{}.py' no found",
+                    "    [warning]: file: '{}{}.pyi' no found",
                     self.source_path, file_name
                 );
                 return self;
@@ -106,13 +111,15 @@ impl Compiler {
 
         /* check if compiled */
         if self.compiled_list.contains(&file_name) {
-        } else {
+        } else if file_name == "main" {
             println!("    compiling {}{}.py...", self.source_path, file_name);
+        } else {
+            println!("    compiling {}{}.pyi...", self.source_path, file_name);
         }
         self.compiled_list.push_back(String::clone(&file_name));
         /* solve top package.
             About what is top package:
-                Top package is the package imported by main.py,
+                Top package is the package imported by main.pyi,
                 and can be used to new objcet in runtime.
                 So the each classes of top package are loaded to flash.
             The top package is solved as an static object, and each calsses
@@ -133,7 +140,7 @@ impl Compiler {
             self.package_now_name = Some(package_name.clone());
         }
         let lines: Vec<&str> = file_str.split('\n').collect();
-        /* analyze each line of pikascript-api.py */
+        /* analyze each line of pikascript-api.pyi */
         for line in lines.iter() {
             self = Compiler::analyze_line(self, line.to_string(), &file_name, is_top_pkg);
         }

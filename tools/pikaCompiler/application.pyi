@@ -5,9 +5,9 @@ import PikaStdLib
 from PikaObj import *
 
 class Compiler(PikaStdLib.SysObj):
-    obj = PyInfo.PyObj()
-    PyInfo.PyMethod()
-    PyInfo.PyClass()
+    obj = PyInfo.pyiObj()
+    PyInfo.pyiMethod()
+    PyInfo.pyiClass()
     line = Arm2D.Line()
 
     def build(pythonApiPath: str, outputPath: str) -> int:
