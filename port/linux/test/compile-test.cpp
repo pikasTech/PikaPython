@@ -10,6 +10,7 @@ extern "C" {
 #include "dataStrs.h"
 #include "pikaScript.h"
 #include "pika_config_gtest.h"
+#include "pikaCompiler.h"
 }
 
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
@@ -314,5 +315,10 @@ TEST(compiler, import_bf2) {
     byteCodeFrame_deinit(&bf);
     obj_deinit(pikaMain);
     EXPECT_STREQ(log_buff[0], "test_import_bf2\r\n");
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, file1) {
+    pikaCompileFile((char*)"main.py");
     EXPECT_EQ(pikaMemNow(), 0);
 }

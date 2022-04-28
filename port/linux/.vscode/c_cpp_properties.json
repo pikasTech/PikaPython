@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/package/pikascript/pikascript-api/**",
-                "${workspaceFolder}/package/pikascript/pikascript-core/**"
+                "${workspaceFolder}/package/pikascript/pikascript-core/**",
+                "${workspaceFolder}/config/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

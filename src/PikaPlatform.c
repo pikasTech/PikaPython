@@ -129,3 +129,16 @@ PIKA_WEAK size_t __platform_fwrite(const void* ptr,
     }
 #endif
 }
+
+PIKA_WEAK size_t __platform_fread(void* ptr,
+                                   size_t size,
+                                   size_t n,
+                                   FILE* stream) {
+#ifdef __linux
+    return fread(ptr, size, n, stream);
+#else
+    __platform_printf("[error]: __platform_function need implementation!\r\n");
+    while (1) {
+    }
+#endif
+}

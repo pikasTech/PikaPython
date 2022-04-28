@@ -38,6 +38,7 @@
         #define PIKA_METHOD_CACHE_ENABLE 0
         #define PIKA_BUILTIN_LIST_ENABLE 0
         #define PIKA_BUILTIN_DICT_ENABLE 0
+        #define PIKA_READ_FILE_BUFF_SIZE 512
     
     /* optimize options */
         #define PIKA_OPTIMIZE_SIZE 0

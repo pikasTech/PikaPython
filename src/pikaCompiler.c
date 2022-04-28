@@ -1,11 +1,11 @@
-#include "PikaParser.h"
+#include "pikaCompiler.h"
 #include "BaseObj.h"
 #include "PikaObj.h"
+#include "PikaParser.h"
 #include "dataQueue.h"
 #include "dataQueueObj.h"
 #include "dataStack.h"
 #include "dataStrs.h"
-#include "pikaCompiler.h"
 
 /* const Pool output redirect */
 static void __handler_constPool_output_file(ConstPool* self, char* content) {
@@ -85,3 +85,21 @@ int pikaCompile(char* output_file_name, char* py_lines) {
     /* succeed */
     return 0;
 };
+
+int pikaCompileFileWithOutputName(char* output_file_name, char* input_file_name) {
+    char file_buff[PIKA_READ_FILE_BUFF_SIZE] = {0};
+    FILE* py_f = __platform_fopen(input_file_name, "r+");
+    __platform_fread(file_buff, PIKA_READ_FILE_BUFF_SIZE, 1, py_f);
+    pikaCompile(output_file_name, file_buff);
+    __platform_free(file_buff);
+    return 0;
+}
+
+int pikaCompileFile(char* input_file_name) {
+    Args buffs = {0};
+    char* output_file_name = strsGetFirstToken(&buffs, input_file_name, '.');
+    output_file_name = strAppend(output_file_name, ".pikabin");
+    pikaCompileFileWithOutputName(output_file_name, input_file_name);
+    args_deinit(&buffs);
+    return 0;
+}
