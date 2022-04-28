@@ -16,11 +16,6 @@ extern "C" {
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
 
-TEST(compiler, file1) {
-    pikaCompileFile((char*)"test/python/main.py");
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-
 
 TEST(compiler, file) {
     char* lines =(char*)
@@ -323,5 +318,16 @@ TEST(compiler, import_bf2) {
     byteCodeFrame_deinit(&bf);
     obj_deinit(pikaMain);
     EXPECT_STREQ(log_buff[0], "test_import_bf2\r\n");
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+
+TEST(compiler, file1) {
+    pikaCompileFile((char*)"test/python/main.py");
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, file2) {
+    pikaCompileFile((char*)"test/python/main_snake_LCD.py");
     EXPECT_EQ(pikaMemNow(), 0);
 }
