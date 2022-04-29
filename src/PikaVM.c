@@ -1025,7 +1025,7 @@ static VMParameters* __pikaVM_runPyLines_or_byteCode(PikaObj* self,
         }
     } else {
         /* load bytecode */
-        byteCodeFrame_loadBytes(bytecode_frame_p, bytecode);
+        byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode);
     }
 
     /* run byteCode */
@@ -1157,7 +1157,7 @@ void byteCodeFrame_init(ByteCodeFrame* self) {
     instructArray_init(&(self->instruct_array));
 }
 
-void byteCodeFrame_loadBytes(ByteCodeFrame* self, uint8_t* bytes) {
+void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes) {
     uint16_t* ins_size_p = (uint16_t*)bytes;
     void* ins_start_p = (uint16_t*)(bytes + 2);
     uint16_t* const_size_p =

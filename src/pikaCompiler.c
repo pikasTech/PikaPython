@@ -86,6 +86,13 @@ int pikaCompile(char* output_file_name, char* py_lines) {
     return 0;
 };
 
+/*
+    need implament :
+        __platform_fopen()
+        __platform_fread()
+        __platform_fwrite()
+        __platform_fclose()
+*/
 int pikaCompileFileWithOutputName(char* output_file_name,
                                   char* input_file_name) {
     char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
@@ -104,4 +111,15 @@ int pikaCompileFile(char* input_file_name) {
     pikaCompileFileWithOutputName(output_file_name, input_file_name);
     strsDeinit(&buffs);
     return 0;
+}
+
+PikaLib* New_PikaLib(void) {
+    return New_TinyObj(NULL);
+}
+
+void PikaLib_deinit(PikaLib* self) {
+    obj_deinit(self);
+}
+
+void PikaLib_LinkByteCode(PikaLib* self, char* module_name, uint8_t* bytecode) {
 }

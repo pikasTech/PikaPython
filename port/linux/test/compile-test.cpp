@@ -1,4 +1,3 @@
-
 #include "gtest/gtest.h"
 extern "C" {
 #include "PikaMain.h"
@@ -329,5 +328,11 @@ TEST(compiler, file1) {
 
 TEST(compiler, file2) {
     pikaCompileFile((char*)"test/python/main_snake_LCD.py");
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lib, init) {
+    PikaLib* lib = New_PikaLib();
+    PikaLib_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
 }

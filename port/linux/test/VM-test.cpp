@@ -901,7 +901,7 @@ TEST(VM, load_static_bytes) {
                                         .output_f = NULL,
                                     }};
 
-    byteCodeFrame_loadBytes(&bytecode_frame, (uint8_t*)bytes);
+    byteCodeFrame_loadByteCode(&bytecode_frame, (uint8_t*)bytes);
     byteCodeFrame_print(&bytecode_frame);
 
     EXPECT_EQ(instructArray_getSize(&(bytecode_frame.instruct_array)), 520);
