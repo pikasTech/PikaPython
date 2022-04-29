@@ -12,7 +12,8 @@
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c99",
             "cppStandard": "c++14",
-            "intelliSenseMode": "linux-clang-x64"
+            "intelliSenseMode": "linux-clang-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4
