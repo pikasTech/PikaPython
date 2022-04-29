@@ -1,1 +1,1 @@
-cd build && rm ./test/pikascript_test -f && ninja -j0
+cd build && rm ./test/pikascript_test -f && ninja -j8
