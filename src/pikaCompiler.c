@@ -114,7 +114,9 @@ int pikaCompileFile(char* input_file_name) {
 }
 
 PikaLib* New_PikaLib(void) {
-    return New_TinyObj(NULL);
+    PikaLib* self = New_TinyObj(NULL);
+    obj_newObj(self, "index", "", New_TinyObj);
+    return self;
 }
 
 void PikaLib_deinit(PikaLib* self) {
@@ -122,4 +124,9 @@ void PikaLib_deinit(PikaLib* self) {
 }
 
 void PikaLib_LinkByteCode(PikaLib* self, char* module_name, uint8_t* bytecode) {
+    PikaObj* index_obj = obj_getObj(self, "index");
+    obj_newObj(index_obj, module_name, "", New_TinyObj);
+    PikaObj* module_obj = obj_getObj(index_obj, module_name);
+    obj_setStr(module_obj, "name", module_name);
+    obj_setPtr(module_obj, "bytecode", bytecode);
 }

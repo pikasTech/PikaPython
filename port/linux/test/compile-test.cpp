@@ -7,14 +7,12 @@ extern "C" {
 #include "dataArgs.h"
 #include "dataMemory.h"
 #include "dataStrs.h"
+#include "pikaCompiler.h"
 #include "pikaScript.h"
 #include "pika_config_gtest.h"
-#include "pikaCompiler.h"
 }
 
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
-
-
 
 TEST(compiler, file) {
     char* lines =(char*)
@@ -320,7 +318,6 @@ TEST(compiler, import_bf2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(compiler, file1) {
     pikaCompileFile((char*)"test/python/main.py");
     EXPECT_EQ(pikaMemNow(), 0);
@@ -333,6 +330,16 @@ TEST(compiler, file2) {
 
 TEST(lib, init) {
     PikaLib* lib = New_PikaLib();
+    PikaLib_deinit(lib);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lib, lib_link_bytecode) {
+    PikaLib* lib = New_PikaLib();
+    PikaLib_LinkByteCode(lib, "module1", (uint8_t*)0x3344);
+    EXPECT_STREQ(obj_getStr(lib, "index.module1.name"), "module1");
+    EXPECT_EQ((uintptr_t)obj_getPtr(lib, "index.module1.bytecode"), 0x3344);
+    /* deinit */
     PikaLib_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
 }

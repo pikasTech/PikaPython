@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-sign-conversion)
+add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-sign-conversion -Wno-write-strings)
 OPTION(PIKA_CONFIG_ENABLE "pika config enable" OFF)
 IF(PIKA_CONFIG_ENABLE)
     ADD_DEFINITIONS(-DPIKA_CONFIG_ENABLE)
