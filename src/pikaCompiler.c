@@ -96,8 +96,16 @@ int pikaCompile(char* output_file_name, char* py_lines) {
 int pikaCompileFileWithOutputName(char* output_file_name,
                                   char* input_file_name) {
     char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
+    __platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
     FILE* input_f = __platform_fopen(input_file_name, "r");
-    __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_f);
+    size_t size =
+        __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_f);
+
+    if (size >= PIKA_READ_FILE_BUFF_SIZE) {
+        __platform_printf("error: not enough buff for input file.\r\n");
+        return 1;
+    }
+
     pikaCompile(output_file_name, file_buff);
     __platform_free(file_buff);
     __platform_fclose(input_f);
@@ -136,9 +144,9 @@ void LibObj_dynamicLink(LibObj* self, char* module_name, uint8_t* bytecode) {
 
 /* add bytecode to lib, and copy the bytecode to the buff in the lib */
 int LibObj_staticLink(LibObj* self,
-                        char* module_name,
-                        uint8_t* bytecode,
-                        size_t size) {
+                      char* module_name,
+                      uint8_t* bytecode,
+                      size_t size) {
     PikaObj* index_obj = obj_getObj(self, "index");
     if (!obj_isArgExist(index_obj, module_name)) {
         obj_newObj(index_obj, module_name, "", New_TinyObj);
@@ -153,6 +161,7 @@ int LibObj_staticLink(LibObj* self,
 
 int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
     char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
+    __platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
     Args buffs = {0};
     FILE* input_f = __platform_fopen(input_file_name, "r");
     /* read file */
