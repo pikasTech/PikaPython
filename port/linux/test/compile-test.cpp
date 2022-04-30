@@ -374,6 +374,8 @@ TEST(lib, lib_compile_link) {
     LibObj_listModules(lib);
     /* asset */
     EXPECT_STREQ(log_buff[0], "UnitTest\r\n");
+    EXPECT_STREQ(log_buff[1], "main\r\n");
+    EXPECT_STREQ(log_buff[2], "main_snake_LCD\r\n");
     /* deinit */
     LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
