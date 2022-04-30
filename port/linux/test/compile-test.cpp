@@ -364,13 +364,16 @@ TEST(lib, lib_push_files) {
 }
 
 TEST(lib, lib_compile_link) {
+    LibObj* lib = New_LibObj();
+
     pikaCompileFile("test/python/UnitTest.py");
     pikaCompileFile("test/python/main.py");
     pikaCompileFile("test/python/main_snake_LCD.py");
-    LibObj* lib = New_LibObj();
+
     LibObj_staticLinkFile(lib, "test/python/UnitTest.py.o");
     LibObj_staticLinkFile(lib, "test/python/main.py.o");
     LibObj_staticLinkFile(lib, "test/python/main_snake_LCD.py.o");
+
     LibObj_listModules(lib);
     /* asset */
     EXPECT_STREQ(log_buff[0], "UnitTest\r\n");
