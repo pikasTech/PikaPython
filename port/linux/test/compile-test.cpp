@@ -335,6 +335,10 @@ TEST(lib, init) {
 TEST(lib, lib_link_bytecode) {
     LibObj* lib = New_LibObj();
     LibObj_dynamicLink(lib, "module1", (uint8_t*)0x3344);
+    LibObj_dynamicLink(lib, "module2", (uint8_t*)0x33433);
+    LibObj_dynamicLink(lib, "module3", (uint8_t*)0x33433);
+    LibObj_dynamicLink(lib, "module4", (uint8_t*)0x33433);
+    LibObj_dynamicLink(lib, "module5", (uint8_t*)0x33433);
     EXPECT_STREQ(obj_getStr(lib, "index.module1.name"), "module1");
     EXPECT_EQ((uintptr_t)obj_getPtr(lib, "index.module1.bytecode"), 0x3344);
     /* deinit */
