@@ -32,9 +32,9 @@ TEST(stack, arg) {
     Stack s;
     stack_init(&s);
 
-    Arg* arg1 = arg_setInt(NULL, (char*)"", 10);
-    Arg* arg2 = arg_setInt(NULL, (char*)"", 20);
-    Arg* arg3 = arg_setInt(NULL, (char*)"", 30);
+    Arg* arg1 = arg_setInt(NULL, "", 10);
+    Arg* arg2 = arg_setInt(NULL, "", 20);
+    Arg* arg3 = arg_setInt(NULL, "", 30);
     stack_pushArg(&s, arg1);
     stack_pushArg(&s, arg2);
     stack_pushArg(&s, arg3);
@@ -54,13 +54,13 @@ TEST(stack, arg) {
 TEST(stack, str) {
     Stack s;
     stack_init(&s);
-    stack_pushStr(&s, (char*)"abc");
-    stack_pushStr(&s, (char*)"123");
-    stack_pushStr(&s, (char*)"xyz");
+    stack_pushStr(&s, "abc");
+    stack_pushStr(&s, "123");
+    stack_pushStr(&s, "xyz");
     char buff[32] = {0};
-    EXPECT_STREQ(stack_popStr(&s, buff), (char*)"xyz");
-    EXPECT_STREQ(stack_popStr(&s, buff), (char*)"123");
-    EXPECT_STREQ(stack_popStr(&s, buff), (char*)"abc");
+    EXPECT_STREQ(stack_popStr(&s, buff), "xyz");
+    EXPECT_STREQ(stack_popStr(&s, buff), "123");
+    EXPECT_STREQ(stack_popStr(&s, buff), "abc");
     stack_deinit(&s);
     EXPECT_EQ(pikaMemNow(), 0);
 }

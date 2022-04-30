@@ -26,15 +26,15 @@ TEST(queue, ARG_TYPE_INT) {
 
 TEST(queue, arg) {
     Queue* q = New_queue();
-    Arg* arg1 = arg_setInt(NULL, (char*)"", 1);
-    Arg* arg2 = arg_setFloat(NULL, (char*)"", 1.2);
-    Arg* arg3 = arg_setStr(NULL, (char*)"", (char*)"ij");
+    Arg* arg1 = arg_setInt(NULL, "", 1);
+    Arg* arg2 = arg_setFloat(NULL, "", 1.2);
+    Arg* arg3 = arg_setStr(NULL, "", "ij");
     queue_pushArg(q, arg1);
     queue_pushArg(q, arg2);
     queue_pushArg(q, arg3);
     EXPECT_EQ(arg_getInt(queue_popArg(q)), 1);
     EXPECT_FLOAT_EQ(arg_getFloat(queue_popArg(q)), 1.2);
-    EXPECT_STREQ(arg_getStr(queue_popArg(q)), (char*)"ij");
+    EXPECT_STREQ(arg_getStr(queue_popArg(q)), "ij");
     queue_deinit(q);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -53,12 +53,12 @@ TEST(queue, ARG_TYPE_FLOAT) {
 
 TEST(queue, str) {
     Queue* q = New_queue();
-    queue_pushStr(q, (char*)"abc");
-    queue_pushStr(q, (char*)"123");
-    queue_pushStr(q, (char*)"xyz");
-    EXPECT_STREQ(queue_popStr(q), (char*)"abc");
-    EXPECT_STREQ(queue_popStr(q), (char*)"123");
-    EXPECT_STREQ(queue_popStr(q), (char*)"xyz");
+    queue_pushStr(q, "abc");
+    queue_pushStr(q, "123");
+    queue_pushStr(q, "xyz");
+    EXPECT_STREQ(queue_popStr(q), "abc");
+    EXPECT_STREQ(queue_popStr(q), "123");
+    EXPECT_STREQ(queue_popStr(q), "xyz");
     queue_deinit(q);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -99,12 +99,12 @@ TEST(queueObj, ARG_TYPE_FLOAT) {
 TEST(queueObj, str) {
     QueueObj* q = New_TinyObj(NULL);
     queueObj_init(q);
-    queueObj_pushStr(q, (char*)"abc");
-    queueObj_pushStr(q, (char*)"123");
-    queueObj_pushStr(q, (char*)"xyz");
-    EXPECT_STREQ(queueObj_popStr(q), (char*)"abc");
-    EXPECT_STREQ(queueObj_popStr(q), (char*)"123");
-    EXPECT_STREQ(queueObj_popStr(q), (char*)"xyz");
+    queueObj_pushStr(q, "abc");
+    queueObj_pushStr(q, "123");
+    queueObj_pushStr(q, "xyz");
+    EXPECT_STREQ(queueObj_popStr(q), "abc");
+    EXPECT_STREQ(queueObj_popStr(q), "123");
+    EXPECT_STREQ(queueObj_popStr(q), "xyz");
     obj_deinit(q);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -112,9 +112,9 @@ TEST(queueObj, str) {
 TEST(queueObj, obj) {
     QueueObj* q = New_TinyObj(NULL);
     queueObj_init(q);
-    queueObj_pushObj(q, (char*)"type1");
-    queueObj_pushObj(q, (char*)"type2");
-    queueObj_pushObj(q, (char*)"type3");
+    queueObj_pushObj(q, "type1");
+    queueObj_pushObj(q, "type2");
+    queueObj_pushObj(q, "type3");
     PikaObj* obj1 = queueObj_popObj(q);
     PikaObj* obj2 = queueObj_popObj(q);
     PikaObj* obj3 = queueObj_popObj(q);
@@ -131,18 +131,18 @@ TEST(queueObj, currentObj) {
     QueueObj* q = New_TinyObj(NULL);
     queueObj_init(q);
 
-    queueObj_pushObj(q, (char*)"type1");
+    queueObj_pushObj(q, "type1");
     PikaObj* currentObj = queueObj_getCurrentObj(q);
     EXPECT_TRUE(currentObj != NULL);
-    ArgType type = args_getType(q->list, (char*)"0");
+    ArgType type = args_getType(q->list, "0");
     EXPECT_EQ(ARG_TYPE_OBJECT, type);
-    obj_setInt(queueObj_getCurrentObj(q), (char*)"test", 1);
+    obj_setInt(queueObj_getCurrentObj(q), "test", 1);
 
-    queueObj_pushObj(q, (char*)"type2");
-    obj_setInt(queueObj_getCurrentObj(q), (char*)"test", 2);
+    queueObj_pushObj(q, "type2");
+    obj_setInt(queueObj_getCurrentObj(q), "test", 2);
 
-    queueObj_pushObj(q, (char*)"type3");
-    obj_setInt(queueObj_getCurrentObj(q), (char*)"test", 3);
+    queueObj_pushObj(q, "type3");
+    obj_setInt(queueObj_getCurrentObj(q), "test", 3);
 
     PikaObj* obj1 = queueObj_popObj(q);
     PikaObj* obj2 = queueObj_popObj(q);
@@ -152,9 +152,9 @@ TEST(queueObj, currentObj) {
     EXPECT_NE((int64_t)obj2, 0);
     EXPECT_NE((int64_t)obj3, 0);
     EXPECT_EQ((int64_t)obj4, 0);
-    EXPECT_EQ(obj_getInt(obj1, (char*)"test"), 1);
-    EXPECT_EQ(obj_getInt(obj2, (char*)"test"), 2);
-    EXPECT_EQ(obj_getInt(obj3, (char*)"test"), 3);
+    EXPECT_EQ(obj_getInt(obj1, "test"), 1);
+    EXPECT_EQ(obj_getInt(obj2, "test"), 2);
+    EXPECT_EQ(obj_getInt(obj3, "test"), 3);
     obj_deinit(q);
     EXPECT_EQ(pikaMemNow(), 0);
 }

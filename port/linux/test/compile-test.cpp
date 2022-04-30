@@ -15,7 +15,7 @@ extern "C" {
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
 TEST(compiler, file) {
-    char* lines =(char*)
+    char* lines =
         "len = __calls.len()\n"
         "mode = 'none'\n"
         "info_index = 0\n"
@@ -52,12 +52,12 @@ TEST(compiler, file) {
         "                __calls[i] = __tick + period_ms\n"
         "            info_index = 0\n"
         "\n";
-    pikaCompile((char*)"task.bin", (char*)lines);
+    pikaCompile("task.bin", lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, task) {
-    char* lines =(char*)
+    char* lines =
         "len = __calls.len()\n"
         "mode = 'none'\n"
         "info_index = 0\n"
@@ -96,7 +96,7 @@ TEST(compiler, task) {
         "\n";
 
     Args buffs = {0};
-    char* pikaAsm = Parser_multiLineToAsm(&buffs, (char*)lines);
+    char* pikaAsm = Parser_multiLineToAsm(&buffs, lines);
 
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
@@ -114,13 +114,13 @@ TEST(compiler, task) {
 }
 
 TEST(compiler, demo1) {
-    char* lines = (char*)"append(__val)";
+    char* lines = "append(__val)";
     Parser_compilePyToBytecodeArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, snake_file) {
-    char* lines =(char*)
+    char* lines =
         "from PikaObj import *\n"
         "import PikaStdLib\n"
         "import machine \n"
@@ -257,36 +257,36 @@ TEST(compiler, snake_file) {
         "    elif key_val == 3:\n"
         "        d = 3\n"
         "        isUpdate = 1\n";
-    pikaCompile((char*)"snake.bin", (char*)lines);
+    pikaCompile("snake.bin", lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, import_bf_mem) {
-    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-    char* lines =(char*)
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    char* lines =
         "def mytest():\n"
         "    print('test')\n"
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
     bytecodeFrame_fromMultiLine(&bf, lines);
-    obj_importModuleWithByteCodeFrame(pikaMain, (char*)"mtest", &bf);
+    obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
     byteCodeFrame_deinit(&bf);
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, import_bf1) {
-    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-    char* lines =(char*)
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    char* lines =
         "def mytest():\n"
         "    print('test_import_bf1')\n"
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
     bytecodeFrame_fromMultiLine(&bf, lines);
-    obj_importModuleWithByteCodeFrame(pikaMain, (char*)"mtest", &bf);
-    obj_run(pikaMain, (char*)
+    obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
+    obj_run(pikaMain, 
             "mtest.mytest()\n"
             "\n"
     );
@@ -297,8 +297,8 @@ TEST(compiler, import_bf1) {
 }
 
 TEST(compiler, import_bf2) {
-    PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
-    char* lines =(char*)
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    char* lines =
         "class Test:\n"
         "    def mytest(self):\n"
         "        print('test_import_bf2')\n"
@@ -306,8 +306,8 @@ TEST(compiler, import_bf2) {
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
     bytecodeFrame_fromMultiLine(&bf, lines);
-    obj_importModuleWithByteCodeFrame(pikaMain, (char*)"mtest", &bf);
-    obj_run(pikaMain, (char*)
+    obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
+    obj_run(pikaMain, 
             "m = mtest.Test()\n"
             "m.mytest()\n"
             "\n"
@@ -319,12 +319,12 @@ TEST(compiler, import_bf2) {
 }
 
 TEST(compiler, file1) {
-    pikaCompileFile((char*)"test/python/main.py");
+    pikaCompileFile("test/python/main.py");
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, file2) {
-    pikaCompileFile((char*)"test/python/main_snake_LCD.py");
+    pikaCompileFile("test/python/main_snake_LCD.py");
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
