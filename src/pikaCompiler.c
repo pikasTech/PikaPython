@@ -113,20 +113,49 @@ int pikaCompileFile(char* input_file_name) {
     return 0;
 }
 
-PikaLib* New_PikaLib(void) {
-    PikaLib* self = New_TinyObj(NULL);
+LibObj* New_LibObj(void) {
+    LibObj* self = New_TinyObj(NULL);
     obj_newObj(self, "index", "", New_TinyObj);
     return self;
 }
 
-void PikaLib_deinit(PikaLib* self) {
+void LibObj_deinit(LibObj* self) {
     obj_deinit(self);
 }
 
-void PikaLib_LinkByteCode(PikaLib* self, char* module_name, uint8_t* bytecode) {
+/* add bytecode to lib, not copy the bytecode */
+void LibObj_LinkByteCode(LibObj* self, char* module_name, uint8_t* bytecode) {
     PikaObj* index_obj = obj_getObj(self, "index");
     obj_newObj(index_obj, module_name, "", New_TinyObj);
     PikaObj* module_obj = obj_getObj(index_obj, module_name);
     obj_setStr(module_obj, "name", module_name);
     obj_setPtr(module_obj, "bytecode", bytecode);
+}
+
+/* add bytecode to lib, and copy the bytecode to the buff in the lib */
+int LibObj_pushByteCode(LibObj* self,
+                        char* module_name,
+                        uint8_t* bytecode,
+                        size_t size) {
+    PikaObj* index_obj = obj_getObj(self, "index");
+    PikaObj* module_obj = obj_getObj(index_obj, module_name);
+    obj_setBytes(module_obj, "buff", bytecode, size);
+    /* link to buff */
+    LibObj_LinkByteCode(self, module_name, obj_getBytes(module_obj, "buff"));
+    return 0;
+}
+
+int LibObj_pushByteCodeFile(LibObj* self, char* input_file_name) {
+    char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
+    Args buffs = {0};
+    FILE* input_f = __platform_fopen(input_file_name, "r");
+    char* module_name = strsGetLastToken(&buffs, input_file_name, '/');
+    module_name[strlen(module_name) - 5] = 0;
+    size_t size =
+        __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_f);
+    LibObj_pushByteCode(self, module_name, (uint8_t*)file_buff, size);
+    __platform_free(file_buff);
+    __platform_fclose(input_f);
+    strsDeinit(&buffs);
+    return 0;
 }

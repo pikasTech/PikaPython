@@ -8,8 +8,13 @@ int pikaCompileFileWithOutputName(char* output_file_name,
                                   char* input_file_name);
 int pikaCompile(char* output_file_name, char* py_lines);
 
-typedef PikaObj PikaLib;
-PikaLib* New_PikaLib(void);
-void PikaLib_deinit(PikaLib* self);
-void PikaLib_LinkByteCode(PikaLib* self, char* module_name, uint8_t* bytecode);
+typedef PikaObj LibObj;
+LibObj* New_LibObj(void);
+void LibObj_deinit(LibObj* self);
+void LibObj_LinkByteCode(LibObj* self, char* module_name, uint8_t* bytecode);
+int LibObj_pushByteCode(LibObj* self,
+                        char* module_name,
+                        uint8_t* bytecode,
+                        size_t size);
+int LibObj_pushByteCodeFile(LibObj* self, char* input_file_name);
 #endif

@@ -286,10 +286,9 @@ TEST(compiler, import_bf1) {
     byteCodeFrame_init(&bf);
     bytecodeFrame_fromMultiLine(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
-    obj_run(pikaMain, 
+    obj_run(pikaMain,
             "mtest.mytest()\n"
-            "\n"
-    );
+            "\n");
     EXPECT_STREQ(log_buff[0], "test_import_bf1\r\n");
     byteCodeFrame_deinit(&bf);
     obj_deinit(pikaMain);
@@ -307,11 +306,10 @@ TEST(compiler, import_bf2) {
     byteCodeFrame_init(&bf);
     bytecodeFrame_fromMultiLine(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
-    obj_run(pikaMain, 
+    obj_run(pikaMain,
             "m = mtest.Test()\n"
             "m.mytest()\n"
-            "\n"
-    );
+            "\n");
     byteCodeFrame_deinit(&bf);
     obj_deinit(pikaMain);
     EXPECT_STREQ(log_buff[0], "test_import_bf2\r\n");
@@ -329,17 +327,25 @@ TEST(compiler, file2) {
 }
 
 TEST(lib, init) {
-    PikaLib* lib = New_PikaLib();
-    PikaLib_deinit(lib);
+    LibObj* lib = New_LibObj();
+    LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(lib, lib_link_bytecode) {
-    PikaLib* lib = New_PikaLib();
-    PikaLib_LinkByteCode(lib, "module1", (uint8_t*)0x3344);
+    LibObj* lib = New_LibObj();
+    LibObj_LinkByteCode(lib, "module1", (uint8_t*)0x3344);
     EXPECT_STREQ(obj_getStr(lib, "index.module1.name"), "module1");
     EXPECT_EQ((uintptr_t)obj_getPtr(lib, "index.module1.bytecode"), 0x3344);
     /* deinit */
-    PikaLib_deinit(lib);
+    LibObj_deinit(lib);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lib, lib_push_file) {
+    LibObj* lib = New_LibObj();
+    LibObj_pushByteCodeFile(lib, "test/python/main.py.o");
+    /* deinit */
+    LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
 }
