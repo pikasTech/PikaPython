@@ -139,6 +139,7 @@ int LibObj_pushByteCode(LibObj* self,
                         size_t size) {
     PikaObj* index_obj = obj_getObj(self, "index");
     PikaObj* module_obj = obj_getObj(index_obj, module_name);
+    /* copy bytecode to buff */
     obj_setBytes(module_obj, "buff", bytecode, size);
     /* link to buff */
     LibObj_LinkByteCode(self, module_name, obj_getBytes(module_obj, "buff"));
@@ -149,11 +150,18 @@ int LibObj_pushByteCodeFile(LibObj* self, char* input_file_name) {
     char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
     Args buffs = {0};
     FILE* input_f = __platform_fopen(input_file_name, "r");
-    char* module_name = strsGetLastToken(&buffs, input_file_name, '/');
-    module_name[strlen(module_name) - 5] = 0;
+    /* read file */
     size_t size =
         __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_f);
+    char* module_name = strsGetLastToken(&buffs, input_file_name, '/');
+
+    /* cut off '.py.o' */
+    module_name[strlen(module_name) - (sizeof(".py.o") - 1)] = 0;
+
+    /* push bytecode */
     LibObj_pushByteCode(self, module_name, (uint8_t*)file_buff, size);
+
+    /* deinit */
     __platform_free(file_buff);
     __platform_fclose(input_f);
     strsDeinit(&buffs);
