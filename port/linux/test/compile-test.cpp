@@ -334,7 +334,7 @@ TEST(lib, init) {
 
 TEST(lib, lib_link_bytecode) {
     LibObj* lib = New_LibObj();
-    LibObj_LinkByteCode(lib, "module1", (uint8_t*)0x3344);
+    LibObj_linkByteCode(lib, "module1", (uint8_t*)0x3344);
     EXPECT_STREQ(obj_getStr(lib, "index.module1.name"), "module1");
     EXPECT_EQ((uintptr_t)obj_getPtr(lib, "index.module1.bytecode"), 0x3344);
     /* deinit */
@@ -345,6 +345,19 @@ TEST(lib, lib_link_bytecode) {
 TEST(lib, lib_push_file) {
     LibObj* lib = New_LibObj();
     LibObj_pushByteCodeFile(lib, "test/python/main.py.o");
+    /* deinit */
+    LibObj_deinit(lib);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lib, lib_push_files) {
+    LibObj* lib = New_LibObj();
+    LibObj_pushByteCodeFile(lib, "test/python/main.py.o");
+    LibObj_pushByteCodeFile(lib, "test/python/main_snake_LCD.py.o");
+    LibObj_listModules(lib);
+    /* asset */
+    EXPECT_STREQ(log_buff[0], "main\r\n");
+    EXPECT_STREQ(log_buff[1], "main_snake_LCD\r\n");
     /* deinit */
     LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);

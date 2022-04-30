@@ -124,7 +124,7 @@ void LibObj_deinit(LibObj* self) {
 }
 
 /* add bytecode to lib, not copy the bytecode */
-void LibObj_LinkByteCode(LibObj* self, char* module_name, uint8_t* bytecode) {
+void LibObj_linkByteCode(LibObj* self, char* module_name, uint8_t* bytecode) {
     PikaObj* index_obj = obj_getObj(self, "index");
     if (!obj_isArgExist(index_obj, module_name)) {
         obj_newObj(index_obj, module_name, "", New_TinyObj);
@@ -147,7 +147,7 @@ int LibObj_pushByteCode(LibObj* self,
     /* copy bytecode to buff */
     obj_setBytes(module_obj, "buff", bytecode, size);
     /* link to buff */
-    LibObj_LinkByteCode(self, module_name, obj_getBytes(module_obj, "buff"));
+    LibObj_linkByteCode(self, module_name, obj_getBytes(module_obj, "buff"));
     return 0;
 }
 
@@ -171,4 +171,17 @@ int LibObj_pushByteCodeFile(LibObj* self, char* input_file_name) {
     __platform_fclose(input_f);
     strsDeinit(&buffs);
     return 0;
+}
+
+static int32_t __foreach_handler_listModules(Arg* argEach, Args* handleArgs) {
+    if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
+        PikaObj* module_obj = arg_getPtr(argEach);
+        __platform_printf("%s\r\n", obj_getStr(module_obj, "name"));
+    }
+    return 0;
+}
+
+void LibObj_listModules(LibObj* self) {
+    PikaObj* index_obj = obj_getObj(self, "index");
+    args_foreach(index_obj->list, __foreach_handler_listModules, NULL);
 }
