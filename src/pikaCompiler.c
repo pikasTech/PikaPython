@@ -124,7 +124,7 @@ void LibObj_deinit(LibObj* self) {
 }
 
 /* add bytecode to lib, not copy the bytecode */
-void LibObj_linkByteCode(LibObj* self, char* module_name, uint8_t* bytecode) {
+void LibObj_dynamicLink(LibObj* self, char* module_name, uint8_t* bytecode) {
     PikaObj* index_obj = obj_getObj(self, "index");
     if (!obj_isArgExist(index_obj, module_name)) {
         obj_newObj(index_obj, module_name, "", New_TinyObj);
@@ -135,7 +135,7 @@ void LibObj_linkByteCode(LibObj* self, char* module_name, uint8_t* bytecode) {
 }
 
 /* add bytecode to lib, and copy the bytecode to the buff in the lib */
-int LibObj_pushByteCode(LibObj* self,
+int LibObj_staticLink(LibObj* self,
                         char* module_name,
                         uint8_t* bytecode,
                         size_t size) {
@@ -147,11 +147,11 @@ int LibObj_pushByteCode(LibObj* self,
     /* copy bytecode to buff */
     obj_setBytes(module_obj, "buff", bytecode, size);
     /* link to buff */
-    LibObj_linkByteCode(self, module_name, obj_getBytes(module_obj, "buff"));
+    LibObj_dynamicLink(self, module_name, obj_getBytes(module_obj, "buff"));
     return 0;
 }
 
-int LibObj_pushByteCodeFile(LibObj* self, char* input_file_name) {
+int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
     char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
     Args buffs = {0};
     FILE* input_f = __platform_fopen(input_file_name, "r");
@@ -164,7 +164,7 @@ int LibObj_pushByteCodeFile(LibObj* self, char* input_file_name) {
     module_name[strlen(module_name) - (sizeof(".py.o") - 1)] = 0;
 
     /* push bytecode */
-    LibObj_pushByteCode(self, module_name, (uint8_t*)file_buff, size);
+    LibObj_staticLink(self, module_name, (uint8_t*)file_buff, size);
 
     /* deinit */
     __platform_free(file_buff);
