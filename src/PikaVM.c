@@ -751,7 +751,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         goto OPT_exit;
     }
     if (strEqu("~", data)) {
-        outArg = arg_setInt(outArg, "", ~num1_i);
+        outArg = arg_setInt(outArg, "", ~num2_i);
         goto OPT_exit;
     }
     if (strEqu(">>", data)) {
@@ -771,7 +771,11 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         goto OPT_exit;
     }
     if (strEqu(" not ", data)) {
-        outArg = arg_setInt(outArg, "", !num1_i);
+        outArg = arg_setInt(outArg, "", !num2_i);
+        goto OPT_exit;
+    }
+    if (strEqu(" import ", data)){
+        outArg = NULL;
         goto OPT_exit;
     }
 OPT_exit:
