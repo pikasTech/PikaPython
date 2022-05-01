@@ -244,12 +244,10 @@ int LibObj_saveToFile(LibObj* self, char* output_file_name) {
     __platform_memcpy(buff, &module_num, sizeof(uint32_t));
     /* aline to 32 bytes */
     __platform_fwrite(buff, 1, 32, out_file);
-
     /* write module index to file */
     args_foreach(self->list, __foreach_handler_writeIndex, &handleArgs);
     /* write module bytecode to file */
     args_foreach(self->list, __foreach_handler_writeBytecode, &handleArgs);
-
     args_deinit_stack(&handleArgs);
     /* main process */
     /* deinit */
