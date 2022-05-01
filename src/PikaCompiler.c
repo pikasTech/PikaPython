@@ -190,3 +190,68 @@ static int32_t __foreach_handler_listModules(Arg* argEach, Args* handleArgs) {
 void LibObj_listModules(LibObj* self) {
     args_foreach(self->list, __foreach_handler_listModules, NULL);
 }
+
+static int32_t __foreach_handler_writeBytecode(Arg* argEach, Args* handleArgs) {
+    FILE* out_file = args_getPtr(handleArgs, "out_file");
+    if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
+        PikaObj* module_obj = arg_getPtr(argEach);
+        char* bytecode = obj_getPtr(module_obj, "bytecode");
+        size_t bytecode_size = obj_getBytesSize(module_obj, "buff");
+        size_t aline_size =
+            aline_by(bytecode_size, sizeof(uint32_t)) - bytecode_size;
+        char aline_buff[sizeof(uint32_t)] = {0};
+        __platform_fwrite(bytecode, 1, bytecode_size, out_file);
+        __platform_fwrite(aline_buff, 1, aline_size, out_file);
+    }
+    return 0;
+}
+
+static int32_t __foreach_handler_writeIndex(Arg* argEach, Args* handleArgs) {
+    FILE* out_file = args_getPtr(handleArgs, "out_file");
+    if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
+        PikaObj* module_obj = arg_getPtr(argEach);
+        uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
+        char buff[32 - sizeof(uint32_t)] = {0};
+        bytecode_size = aline_by(bytecode_size, sizeof(uint32_t));
+        char* module_name = obj_getStr(module_obj, "name");
+        __platform_memcpy(buff, module_name, strGetSize(module_name));
+        __platform_fwrite(buff, 1, 32 - sizeof(bytecode_size), out_file);
+        __platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size), out_file);
+    }
+    return 0;
+}
+
+static int32_t __foreach_handler_getModuleNum(Arg* argEach, Args* handleArgs) {
+    if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
+        args_setInt(handleArgs, "module_num",
+                    args_getInt(handleArgs, "module_num") + 1);
+    }
+    return 0;
+}
+
+int LibObj_saveToFile(LibObj* self, char* output_file_name) {
+    FILE* out_file = __platform_fopen(output_file_name, "w+");
+
+    Args handleArgs = {0};
+    args_setPtr(&handleArgs, "out_file", out_file);
+    args_setInt(&handleArgs, "module_num", 0);
+
+    /* write module number to file */
+    char buff[32] = {0};
+    args_foreach(self->list, __foreach_handler_getModuleNum, &handleArgs);
+    uint32_t module_num = args_getInt(&handleArgs, "module_num");
+    __platform_memcpy(buff, &module_num, sizeof(uint32_t));
+
+    __platform_fwrite(buff, 1, 32, out_file);
+
+    /* write module index to file */
+    args_foreach(self->list, __foreach_handler_writeIndex, &handleArgs);
+    /* write module bytecode to file */
+    args_foreach(self->list, __foreach_handler_writeBytecode, &handleArgs);
+
+    args_deinit_stack(&handleArgs);
+    /* main process */
+    /* deinit */
+    __platform_fclose(out_file);
+    return 0;
+}

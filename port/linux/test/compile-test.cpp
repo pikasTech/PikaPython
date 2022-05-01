@@ -407,3 +407,25 @@ TEST(lib, compile_link_import) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(lib, lib_to_file) {
+    LibObj* lib = New_LibObj();
+
+    pikaCompileFile("test/python/UnitTest.py");
+    pikaCompileFile("test/python/main.py");
+    pikaCompileFile("test/python/main_snake_LCD.py");
+
+    LibObj_staticLinkFile(lib, "test/python/UnitTest.py.o");
+    LibObj_staticLinkFile(lib, "test/python/main.py.o");
+    LibObj_staticLinkFile(lib, "test/python/main_snake_LCD.py.o");
+
+    LibObj_listModules(lib);
+    LibObj_saveToFile(lib, "test/python/lib_to_file.py.a");
+    /* asset */
+    EXPECT_STREQ(log_buff[0], "UnitTest\r\n");
+    EXPECT_STREQ(log_buff[1], "main\r\n");
+    EXPECT_STREQ(log_buff[2], "main_snake_LCD\r\n");
+    /* deinit */
+    LibObj_deinit(lib);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

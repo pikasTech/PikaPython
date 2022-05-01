@@ -12,9 +12,10 @@ LibObj* New_LibObj(void);
 void LibObj_deinit(LibObj* self);
 void LibObj_dynamicLink(LibObj* self, char* module_name, uint8_t* bytecode);
 int LibObj_staticLink(LibObj* self,
-                        char* module_name,
-                        uint8_t* bytecode,
-                        size_t size);
+                      char* module_name,
+                      uint8_t* bytecode,
+                      size_t size);
 int LibObj_staticLinkFile(LibObj* self, char* input_file_name);
 void LibObj_listModules(LibObj* self);
+int LibObj_saveToFile(LibObj* self, char* output_file_name);
 #endif
