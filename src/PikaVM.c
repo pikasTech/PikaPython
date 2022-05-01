@@ -28,6 +28,7 @@
 #define __PIKA_OBJ_CLASS_IMPLEMENT
 #include "PikaVM.h"
 #include "BaseObj.h"
+#include "PikaCompiler.h"
 #include "PikaObj.h"
 #include "PikaParser.h"
 #include "PikaPlatform.h"
@@ -919,6 +920,20 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self, VMState* vs, char* data) {
                           data);
         return NULL;
     }
+    /* find module from the library */
+    LibObj* lib = obj_getPtr(self, "__lib");
+    PikaObj* index = obj_getObj(lib, "index");
+    PikaObj* module = obj_getObj(index, data);
+    /* exit when no module in '__lib' */
+    if (NULL == module) {
+        VMState_setErrorCode(vs, 3);
+        __platform_printf("ModuleNotFoundError: No module named '%s'\r\n",
+                          data);
+        return NULL;
+    }
+    /* import bytecode of the module */
+    uint8_t* bytecode = obj_getPtr(module, "bytecode");
+    obj_importModuleWithByteCode(self, data, bytecode);
     return NULL;
 }
 

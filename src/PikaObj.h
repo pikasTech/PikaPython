@@ -94,6 +94,8 @@ typedef struct MethodInfo_t {
     ByteCodeFrame* bytecode_frame;
 } MethodInfo;
 
+typedef PikaObj LibObj;
+
 /* operation */
 int32_t obj_deinit(PikaObj* self);
 int32_t obj_init(PikaObj* self, Args* args);
@@ -232,6 +234,9 @@ Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj);
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,
                                            ByteCodeFrame* bytecode_frame);
+PikaObj* obj_importModuleWithByteCode(PikaObj* self,
+                                      char* name,
+                                      uint8_t* byteCode);
 
 int32_t obj_newObj(PikaObj* self,
                    char* objName,
@@ -239,6 +244,7 @@ int32_t obj_newObj(PikaObj* self,
                    NewFun newFunPtr);
 
 Arg* arg_newMetaObj(NewFun objPtr);
+PikaObj* obj_linkLibrary(PikaObj* self, LibObj* library);
 
 #define PIKA_PYTHON_BEGIN
 #define PIKA_PYTHON(x)

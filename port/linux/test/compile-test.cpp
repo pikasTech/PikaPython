@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 extern "C" {
+#include "PikaCompiler.h"
 #include "PikaMain.h"
 #include "PikaParser.h"
 #include "PikaStdLib_MemChecker.h"
@@ -7,7 +8,6 @@ extern "C" {
 #include "dataArgs.h"
 #include "dataMemory.h"
 #include "dataStrs.h"
-#include "pikaCompiler.h"
 #include "pikaScript.h"
 #include "pika_config_gtest.h"
 }
@@ -385,5 +385,25 @@ TEST(lib, lib_compile_link) {
     EXPECT_STREQ(log_buff[2], "main_snake_LCD\r\n");
     /* deinit */
     LibObj_deinit(lib);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lib, compile_link_import) {
+    LibObj* lib = New_LibObj();
+
+    pikaCompileFile("test/python/test_module1.py");
+    LibObj_staticLinkFile(lib, "test/python/test_module1.py.o");
+    LibObj_listModules(lib);
+
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_linkLibrary(pikaMain, lib);
+    obj_run(pikaMain,
+            "import test_module1\n"
+            "test_module1.mytest()\n");
+    /* asset */
+    EXPECT_STREQ(log_buff[0], "test_module_1_hello\r\n");
+    /* deinit */
+    LibObj_deinit(lib);
+    obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }

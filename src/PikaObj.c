@@ -28,6 +28,7 @@
 #define __PIKA_OBJ_CLASS_IMPLEMENT
 #include "PikaObj.h"
 #include "BaseObj.h"
+#include "PikaCompiler.h"
 #include "PikaPlatform.h"
 #include "dataArgs.h"
 #include "dataMemory.h"
@@ -913,10 +914,23 @@ int32_t obj_newObj(PikaObj* self,
     return obj_newMetaObj(self, objName, newFunPtr);
 }
 
+PikaObj* obj_importModuleWithByteCode(PikaObj* self,
+                                      char* name,
+                                      uint8_t* byteCode) {
+    obj_newDirectObj(self, name, New_TinyObj);
+    pikaVM_runByteCode(obj_getObj(self, name), (uint8_t*)byteCode);
+    return self;
+}
+
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,
                                            ByteCodeFrame* byteCode_frame) {
     obj_newDirectObj(self, name, New_TinyObj);
     pikaVM_runByteCodeFrame(obj_getObj(self, name), byteCode_frame);
+    return self;
+}
+
+PikaObj* obj_linkLibrary(PikaObj* self, LibObj* library) {
+    obj_setPtr(self, "__lib", library);
     return self;
 }
