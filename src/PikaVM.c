@@ -774,7 +774,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         outArg = arg_setInt(outArg, "", !num2_i);
         goto OPT_exit;
     }
-    if (strEqu(" import ", data)){
+    if (strEqu(" import ", data)) {
         outArg = NULL;
         goto OPT_exit;
     }
@@ -909,7 +909,14 @@ exit:
 
 static Arg* VM_instruction_handler_IMP(PikaObj* self, VMState* vs, char* data) {
     /* the module is already imported, skip. */
-    if(obj_isArgExist(self, data)){
+    if (obj_isArgExist(self, data)) {
+        return NULL;
+    }
+    /* exit when no found '__lib' */
+    if (!obj_isArgExist(self, "__lib")) {
+        VMState_setErrorCode(vs, 3);
+        __platform_printf("ModuleNotFoundError: No module named '%s'\r\n",
+                          data);
         return NULL;
     }
     return NULL;

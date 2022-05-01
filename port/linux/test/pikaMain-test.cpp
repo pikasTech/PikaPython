@@ -22,11 +22,9 @@ TEST(pikaMain, init) {
 TEST(pikaMain, new_mem) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    VMParameters* globals =
-        obj_runDirect(pikaMain, 
-        "mem = PikaStdLib.MemChecker()\n"
-        "mem.max()\n"
-        );
+    VMParameters* globals = obj_runDirect(pikaMain,
+                                          "mem = PikaStdLib.MemChecker()\n"
+                                          "mem.max()\n");
     PikaObj* mem = (PikaObj*)args_getPtr(globals->list, "mem");
     PikaObj* memClassPtr = (PikaObj*)obj_getPtr(mem, "_clsptr");
     EXPECT_EQ((void*)memClassPtr, (void*)New_PikaStdLib_MemChecker);
@@ -40,15 +38,13 @@ TEST(pikaMain, list_new) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    VMParameters* globals =
-        obj_runDirect(pikaMain, 
-        "list = PikaStdData.List()\n"
-        "list.append(7)\n"
-        "list.append('eee')\n"
-        "len = list.len()\n"
-        "a1 = list.get(0)\n"
-        "a2 = list.get(1)\n"
-        );
+    VMParameters* globals = obj_runDirect(pikaMain,
+                                          "list = PikaStdData.List()\n"
+                                          "list.append(7)\n"
+                                          "list.append('eee')\n"
+                                          "len = list.len()\n"
+                                          "a1 = list.get(0)\n"
+                                          "a2 = list.get(1)\n");
     /* collect */
     int len = obj_getInt(globals, "len");
     int a1 = obj_getInt(globals, "a1");
@@ -70,13 +66,11 @@ TEST(pikaMain, int_float_convert) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    VMParameters* globals =
-        obj_runDirect(pikaMain, 
-        "a = 1\n"
-        "a_f = float(a)\n"
-        "b = 1.3\n"
-        "b_i = int(b)\n"
-        );
+    VMParameters* globals = obj_runDirect(pikaMain,
+                                          "a = 1\n"
+                                          "a_f = float(a)\n"
+                                          "b = 1.3\n"
+                                          "b_i = int(b)\n");
     /* collect */
     int a = obj_getInt(globals, "a");
     float a_f = obj_getFloat(globals, "a_f");
@@ -100,11 +94,10 @@ TEST(pikaMain, type_) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, 
-        "type(1)\n"
-        "b = 1.4\n"
-        "type(b)\n"
-        );
+    obj_runDirect(pikaMain,
+                  "type(1)\n"
+                  "b = 1.4\n"
+                  "type(b)\n");
     /* collect */
 
     /* assert */
@@ -188,12 +181,11 @@ TEST(pikaMain, less_equ) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, 
-    "a = 0\n"
-    "while a <= 10:\n"
-    "    a += 1\n"
-    "\n"
-    );
+    obj_runDirect(pikaMain,
+                  "a = 0\n"
+                  "while a <= 10:\n"
+                  "    a += 1\n"
+                  "\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
 
@@ -210,25 +202,24 @@ TEST(pikaMain, and_or_not) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, 
-    "a = 0\n"
-    "b = 0\n"
-    "c = 0\n"
-    "d = 0\n"
-    "if (1>2) or (2>1):\n"
-    "    a = 1\n"
-    "\n"
-    "if (1>2) and (2>1):\n"
-    "    b = 1\n"
-    "\n"
-    "if not (1>2):\n"
-    "    c = 1\n"
-    "\n"
-    "if not (2>1):\n"
-    "    d = 1\n"
-    "\n"
-    "e = ~1\n"
-    );
+    obj_runDirect(pikaMain,
+                  "a = 0\n"
+                  "b = 0\n"
+                  "c = 0\n"
+                  "d = 0\n"
+                  "if (1>2) or (2>1):\n"
+                  "    a = 1\n"
+                  "\n"
+                  "if (1>2) and (2>1):\n"
+                  "    b = 1\n"
+                  "\n"
+                  "if not (1>2):\n"
+                  "    c = 1\n"
+                  "\n"
+                  "if not (2>1):\n"
+                  "    d = 1\n"
+                  "\n"
+                  "e = ~1\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     int b = obj_getInt(pikaMain, "b");
@@ -267,14 +258,13 @@ TEST(pikaMain, PikaStdData) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, 
-    "dict = PikaStdData.Dict()\n"
-    "dict.set('a', 1)\n"
-    "dict.set('b', 2)\n"
-    "dict.remove('b')\n"
-    "a = dict.get('a')\n"
-    "b = dict.get('b')\n"
-    );
+    obj_run(pikaMain,
+            "dict = PikaStdData.Dict()\n"
+            "dict.set('a', 1)\n"
+            "dict.set('b', 2)\n"
+            "dict.remove('b')\n"
+            "a = dict.get('a')\n"
+            "b = dict.get('b')\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     int b = obj_getInt(pikaMain, "b");
@@ -292,15 +282,14 @@ TEST(pikaMain, list_method) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, 
-        "list = PikaStdData.List()\n"
-        "list.append(7)\n"
-        "list.append('eee')\n"
-        "len = list.len()\n"
-        "a1 = list.get(0)\n"
-        "a2 = list.get(1)\n"
-        "\n"
-        );
+    obj_runDirect(pikaMain,
+                  "list = PikaStdData.List()\n"
+                  "list.append(7)\n"
+                  "list.append('eee')\n"
+                  "len = list.len()\n"
+                  "a1 = list.get(0)\n"
+                  "a2 = list.get(1)\n"
+                  "\n");
     /* collect */
     /* assert */
     /* deinit */
@@ -314,11 +303,10 @@ TEST(pikaMain, list_iter) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, 
-        "list = PikaStdData.List()\n"
-        "res = iter(list)\n"
-        "\n"
-        );
+    obj_runDirect(pikaMain,
+                  "list = PikaStdData.List()\n"
+                  "res = iter(list)\n"
+                  "\n");
     /* collect */
     PikaObj* res = (PikaObj*)obj_getPtr(pikaMain, "res");
     PikaObj* list = (PikaObj*)obj_getPtr(pikaMain, "list");
@@ -337,16 +325,15 @@ TEST(pikaMain, list_for_loop) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, 
-        "list = PikaStdData.List()\n"
-        "list.append(7)\n"
-        "list.append('eee')\n"
-        "len = list.len()\n"
-        "for item in list:\n"
-        "    print(item)\n"
-        "    a = item\n"
-        "\n"
-        );
+    obj_runDirect(pikaMain,
+                  "list = PikaStdData.List()\n"
+                  "list.append(7)\n"
+                  "list.append('eee')\n"
+                  "len = list.len()\n"
+                  "for item in list:\n"
+                  "    print(item)\n"
+                  "    a = item\n"
+                  "\n");
     /* collect */
     char* a = obj_getStr(pikaMain, "a");
     /* assert */
@@ -362,11 +349,10 @@ TEST(pikaMain, range) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, 
-        "r = range(10, 0)\n"
-        "r\n"
-        "\n"
-        );
+    obj_runDirect(pikaMain,
+                  "r = range(10, 0)\n"
+                  "r\n"
+                  "\n");
     /* collect */
     /* assert */
     obj_deinit(pikaMain);
@@ -379,13 +365,12 @@ TEST(pikaMain, for_in_range) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, 
-        "a = 0\n"
-        "for i in range(0, 10):\n"
-        "    print(i)\n"
-        "    a = a + i\n"
-        "\n"
-        );
+    obj_runDirect(pikaMain,
+                  "a = 0\n"
+                  "for i in range(0, 10):\n"
+                  "    print(i)\n"
+                  "    a = a + i\n"
+                  "\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     /* assert */
@@ -401,14 +386,13 @@ TEST(pikaMain, for_for_in_range) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, 
-         "a = 0\n"
-         "for i in range(0, 10):\n"
-         "    for k in range(0, 3):\n"
-         "        print(k)\n"
-         "        a = a + k\n"
-         "\n"
-        );
+    obj_runDirect(pikaMain,
+                  "a = 0\n"
+                  "for i in range(0, 10):\n"
+                  "    for k in range(0, 3):\n"
+                  "        print(k)\n"
+                  "        a = a + k\n"
+                  "\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     /* assert */
@@ -424,14 +408,13 @@ TEST(pikaMain, for_if_break) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, 
-         "a = 0\n"
-         "for i in range(0, 10):\n"
-         "    if i == 5:\n"
-         "        break\n"
-         "    a = a + i\n"
-         "\n"
-        );
+    obj_runDirect(pikaMain,
+                  "a = 0\n"
+                  "for i in range(0, 10):\n"
+                  "    if i == 5:\n"
+                  "        break\n"
+                  "    a = a + i\n"
+                  "\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     /* assert */
@@ -447,14 +430,13 @@ TEST(pikaMain, for_if_continue) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, 
-         "a = 0\n"
-         "for i in range(0, 10):\n"
-         "    if i == 5:\n"
-         "        continue\n"
-         "    a = a + i\n"
-         "\n"
-        );
+    obj_run(pikaMain,
+            "a = 0\n"
+            "for i in range(0, 10):\n"
+            "    if i == 5:\n"
+            "        continue\n"
+            "    a = a + i\n"
+            "\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     /* assert */
@@ -475,11 +457,10 @@ TEST(pikaMain, print_in_def) {
     /* the test is used to fix too many print in def */
     /* clear the log_buff */
     memset(log_buff, 0, LOG_BUFF_MAX * LOG_SIZE);
-    obj_runDirect(pikaMain, 
-        "def test_print():\n"
-        "    print('test')\n"
-        "test_print()\n"
-        );
+    obj_runDirect(pikaMain,
+                  "def test_print():\n"
+                  "    print('test')\n"
+                  "test_print()\n");
     /* collect */
     /* assert */
     /* should only print once, so the second log (log_buff[1]) shuold be '\0' */
@@ -496,7 +477,7 @@ TEST(pikaMain, prime_100) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, 
+    obj_run(pikaMain,
             "num = 0\n"
             "i = 2\n"
             "for i in range(2 , 100):\n"
@@ -526,16 +507,15 @@ TEST(pikaMain, for_in_dict) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, 
-    "print('__start__')\n"
-    "dict = PikaStdData.Dict()\n"
-    "dict.set('a', 1)\n"
-    "dict.set('b', 2)\n"
-    "dict.remove('b')\n"
-    "for item in dict:\n"
-    "    print(item)\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "print('__start__')\n"
+            "dict = PikaStdData.Dict()\n"
+            "dict.set('a', 1)\n"
+            "dict.set('b', 2)\n"
+            "dict.remove('b')\n"
+            "for item in dict:\n"
+            "    print(item)\n"
+            "\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "1\r\n");
@@ -550,16 +530,15 @@ TEST(pikaMain, str_add) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, 
-    "a = 'a'\n"
-    "b = 'b'\n"
-    "c = a + b\n"
-    "d = 1\n"
-    "e = 1.2\n"
-    "g = c + str(d)\n"
-    "h = c + str(d) + str(e)\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "a = 'a'\n"
+            "b = 'b'\n"
+            "c = a + b\n"
+            "d = 1\n"
+            "e = 1.2\n"
+            "g = c + str(d)\n"
+            "h = c + str(d) + str(e)\n"
+            "\n");
     /* collect */
     char* c = obj_getStr(pikaMain, "c");
     char* g = obj_getStr(pikaMain, "g");
@@ -578,10 +557,9 @@ TEST(pikaMain, str_add_print) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, 
-    "print('test: ' + str(2233))\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "print('test: ' + str(2233))\n"
+            "\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "test: 2233\r\n");
@@ -595,11 +573,10 @@ TEST(pikaMain, int_float_to_str) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, 
-    "a = str(1)\n"
-    "b = str(1.2)\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "a = str(1)\n"
+            "b = str(1.2)\n"
+            "\n");
     /* collect */
     char* a = obj_getStr(pikaMain, "a");
     char* b = obj_getStr(pikaMain, "b");
@@ -616,20 +593,19 @@ TEST(pikaMain, str_eq) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, 
-    "a = '1ee'\n"
-    "b = '1ee'\n"
-    "c = '1e'\n"
-    "if a==b:\n"
-    "    res1 = 1\n"
-    "else:\n"
-    "    res1 = 0\n"
-    "if a==c:\n"
-    "    res2 = 1\n"
-    "else:\n"
-    "    res2 = 0\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "a = '1ee'\n"
+            "b = '1ee'\n"
+            "c = '1e'\n"
+            "if a==b:\n"
+            "    res1 = 1\n"
+            "else:\n"
+            "    res1 = 0\n"
+            "if a==c:\n"
+            "    res2 = 1\n"
+            "else:\n"
+            "    res2 = 0\n"
+            "\n");
     /* collect */
     int res1 = obj_getInt(pikaMain, "res1");
     int res2 = obj_getInt(pikaMain, "res2");
@@ -695,12 +671,11 @@ TEST(pikaMain, for_in_string) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\n");
-    obj_run(pikaMain, 
-    "s = PikaStdData.String('test')\n"
-    "for c in s:\n"
-    "    print(c)\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "s = PikaStdData.String('test')\n"
+            "for c in s:\n"
+            "    print(c)\n"
+            "\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[4], "BEGIN\n");
@@ -723,7 +698,9 @@ TEST(pikaMain, string_no_init_arg) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[3], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[2], "TypeError: __init__() takes 1 positional argument but 0 were given\r\n");
+    EXPECT_STREQ(log_buff[2],
+                 "TypeError: __init__() takes 1 positional argument but 0 were "
+                 "given\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -735,13 +712,12 @@ TEST(pikaMain, obj_no_free) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\n");
-    obj_run(pikaMain, 
-    "s = PikaStdData.String()\n"
-    "s.set('test')\n"
-    "s = PikaStdData.String()\n"
-    "s.set('test')\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "s = PikaStdData.String()\n"
+            "s.set('test')\n"
+            "s = PikaStdData.String()\n"
+            "s.set('test')\n"
+            "\n");
     /* collect */
     /* assert */
     /* deinit */
@@ -755,12 +731,11 @@ TEST(pikaMain, list__set__) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\n");
-    obj_run(pikaMain, 
-    "list = PikaStdData.List()\n"
-    "__set__(list, 0, 2, 'list')\n"
-    "res = __get__(list, 0)\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "list = PikaStdData.List()\n"
+            "__set__(list, 0, 2, 'list')\n"
+            "res = __get__(list, 0)\n"
+            "\n");
     /* collect */
     int res = obj_getInt(pikaMain, "res");
     /* assert */
@@ -776,11 +751,10 @@ TEST(pikaMain, string__get__) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\n");
-    obj_run(pikaMain, 
-    "s = PikaStdData.String('test')\n"
-    "res = __get__(s, 2)\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "s = PikaStdData.String('test')\n"
+            "res = __get__(s, 2)\n"
+            "\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
     /* assert */
@@ -796,12 +770,11 @@ TEST(pikaMain, dict__set__get) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\n");
-    obj_run(pikaMain, 
-    "list = PikaStdData.Dict()\n"
-    "__set__(list, 'a', 2, 'list')\n"
-    "res = __get__(list, 'a')\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "list = PikaStdData.Dict()\n"
+            "__set__(list, 'a', 2, 'list')\n"
+            "res = __get__(list, 'a')\n"
+            "\n");
     /* collect */
     int res = obj_getInt(pikaMain, "res");
     /* assert */
@@ -817,12 +790,11 @@ TEST(pikaMain, str___get____set__) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\n");
-    obj_run(pikaMain, 
-    "s = 'test'\n"
-    "res = __get__(s, 2)\n"
-    "__set__(s, 2, 'q', 's')\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "s = 'test'\n"
+            "res = __get__(s, 2)\n"
+            "__set__(s, 2, 'q', 's')\n"
+            "\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
     char* s = obj_getStr(pikaMain, "s");
@@ -840,13 +812,12 @@ TEST(pikaMain, str__index__) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\n");
-    obj_run(pikaMain, 
-    "s = 'test'\n"
-    "res = s[2]\n"
-    "res2 = 'eqrt'[2]\n"
-    "s[2] = 'q'\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "s = 'test'\n"
+            "res = s[2]\n"
+            "res2 = 'eqrt'[2]\n"
+            "s[2] = 'q'\n"
+            "\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
     char* res2 = obj_getStr(pikaMain, "res2");
@@ -867,12 +838,11 @@ TEST(pikaMain, list_index) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\n");
-    obj_run(pikaMain, 
-    "list = PikaStdData.List()\n"
-    "list[0] = 2\n"
-    "res = list[0]\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "list = PikaStdData.List()\n"
+            "list[0] = 2\n"
+            "res = list[0]\n"
+            "\n");
     /* collect */
     int res = obj_getInt(pikaMain, "res");
     /* assert */
@@ -888,12 +858,11 @@ TEST(pikaMain, dict_index) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\n");
-    obj_run(pikaMain, 
-    "dict = PikaStdData.Dict()\n"
-    "dict['a'] = 2\n"
-    "res = dict['a']\n"
-    "\n"
-    );
+    obj_run(pikaMain,
+            "dict = PikaStdData.Dict()\n"
+            "dict['a'] = 2\n"
+            "res = dict['a']\n"
+            "\n");
     /* collect */
     int res = obj_getInt(pikaMain, "res");
     /* assert */
@@ -1027,19 +996,18 @@ TEST(pikaMain, global) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
-        "x = 0\n"
-        "a = 0\n"
-        "z = 0\n"
-        "def test_global():\n"
-        "    global x\n"
-        "    global y, z\n"
-        "    x = 1\n"
-        "    a = 1\n"
-        "    z = 1\n"
-        "    print('test global')\n"
-        "test_global()\n"
-        "\n"
-    );
+            "x = 0\n"
+            "a = 0\n"
+            "z = 0\n"
+            "def test_global():\n"
+            "    global x\n"
+            "    global y, z\n"
+            "    x = 1\n"
+            "    a = 1\n"
+            "    z = 1\n"
+            "    print('test global')\n"
+            "test_global()\n"
+            "\n");
     /* assert */
     int x = obj_getInt(pikaMain, "x");
     int a = obj_getInt(pikaMain, "a");
@@ -1089,13 +1057,12 @@ TEST(pikaMain, class_arg) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     Args* buffs = New_strBuff();
-    char * pikaAsm = Parser_multiLineToAsm(buffs, 
-        "class Test(TinyObj):\n"
-        "    x = 1\n"
-        "\n"
-        "test = Test()\n"
-        "print(test.x)\n"
-    );
+    char* pikaAsm = Parser_multiLineToAsm(buffs,
+                                          "class Test(TinyObj):\n"
+                                          "    x = 1\n"
+                                          "\n"
+                                          "test = Test()\n"
+                                          "print(test.x)\n");
     printf("%s", pikaAsm);
     pikaVM_runAsm(pikaMain, pikaAsm);
     /* assert */
@@ -1113,15 +1080,14 @@ TEST(pikaMain, class_def) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-    "class Test():\n"
-    "    x = 1\n"
-    "    def hello(self, x):\n"
-    "        return x + 2\n"
-    "test = Test()\n"
-    "x = test.hello(test.x)\n"
-    "print(x)\n"
-    );
+    obj_run(self,
+            "class Test():\n"
+            "    x = 1\n"
+            "    def hello(self, x):\n"
+            "        return x + 2\n"
+            "test = Test()\n"
+            "x = test.hello(test.x)\n"
+            "print(x)\n");
     /* collect */
     PikaObj* test = obj_getObj(self, "test");
     EXPECT_EQ(obj_refcntNow(test), 1);
@@ -1139,14 +1105,13 @@ TEST(pikaMain, class_def_print) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-    "class Test():\n"
-    "    x = 1\n"
-    "    def hi(self):\n"
-    "        print('hi' + str(self.x))\n"
-    "test = Test()\n"
-    "test.hi()\n"
-    );
+    obj_run(self,
+            "class Test():\n"
+            "    x = 1\n"
+            "    def hi(self):\n"
+            "        print('hi' + str(self.x))\n"
+            "test = Test()\n"
+            "test.hi()\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "hi1\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
@@ -1161,17 +1126,16 @@ TEST(pikaMain, class_demo_1) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-        "class MyClass:\n"
-        "    i = 12345\n"
-        "    def f(self):\n"
-        "        return 'hello world'\n"
-        "        \n"
-        "x = MyClass()\n"
-        " \n"
-        "print(x.i)\n"
-        "print(x.f())\n"
-    );
+    obj_run(self,
+            "class MyClass:\n"
+            "    i = 12345\n"
+            "    def f(self):\n"
+            "        return 'hello world'\n"
+            "        \n"
+            "x = MyClass()\n"
+            " \n"
+            "print(x.i)\n"
+            "print(x.f())\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "hello world\r\n");
     EXPECT_STREQ(log_buff[1], "12345\r\n");
@@ -1187,15 +1151,14 @@ TEST(pikaMain, class_demo_2) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-        "class Complex:\n"
-        "    def __init__(self):\n"
-        "        self.r = 3.0\n"
-        "        self.i = -4.5\n"
-        "x = Complex()\n"
-        "print(x.r)\n"
-        "print(x.i)\n"
-    );
+    obj_run(self,
+            "class Complex:\n"
+            "    def __init__(self):\n"
+            "        self.r = 3.0\n"
+            "        self.i = -4.5\n"
+            "x = Complex()\n"
+            "print(x.r)\n"
+            "print(x.i)\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "-4.500000\r\n");
     EXPECT_STREQ(log_buff[1], "3.000000\r\n");
@@ -1211,20 +1174,19 @@ TEST(pikaMain, class_demo_3) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-        "class people:\n"
-        "    def speak(self):\n"
-        "        print('i am a people')\n"
-        " \n"
-        "class student(people):\n"
-        "    def speak(self):\n"
-        "        print('i am a student')\n"
-        " \n"
-        "p = people()\n"
-        "s = student()\n"
-        "p.speak()\n"
-        "s.speak()\n"
-    );
+    obj_run(self,
+            "class people:\n"
+            "    def speak(self):\n"
+            "        print('i am a people')\n"
+            " \n"
+            "class student(people):\n"
+            "    def speak(self):\n"
+            "        print('i am a student')\n"
+            " \n"
+            "p = people()\n"
+            "s = student()\n"
+            "p.speak()\n"
+            "s.speak()\n");
     /* assert */
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     EXPECT_STREQ(log_buff[1], "i am a people\r\n");
@@ -1240,22 +1202,20 @@ TEST(pikaMain, class_demo_save_asm) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-        "class people:\n"
-        "    def speak(self):\n"
-        "        print('i am a people')\n"
-        " \n"
-        "class student(people):\n"
-        "    def speak(self):\n"
-        "        print('i am a student')\n"
-        " \n"
-    );
-    obj_run(self, 
-        "p = people()\n"
-        "s = student()\n"
-        "p.speak()\n"
-        "s.speak()\n"
-    );
+    obj_run(self,
+            "class people:\n"
+            "    def speak(self):\n"
+            "        print('i am a people')\n"
+            " \n"
+            "class student(people):\n"
+            "    def speak(self):\n"
+            "        print('i am a student')\n"
+            " \n");
+    obj_run(self,
+            "p = people()\n"
+            "s = student()\n"
+            "p.speak()\n"
+            "s.speak()\n");
     /* assert */
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     EXPECT_STREQ(log_buff[1], "i am a people\r\n");
@@ -1270,13 +1230,13 @@ TEST(pikaMain, for_if_continue_byte_code) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    pikaVM_run(pikaMain, 
-         "a = 0\n"
-         "for i in range(0, 10):\n"
-         "    if i == 5:\n"
-         "        continue\n"
-         "    a = a + i\n"
-         "\n");
+    pikaVM_run(pikaMain,
+               "a = 0\n"
+               "for i in range(0, 10):\n"
+               "    if i == 5:\n"
+               "        continue\n"
+               "    a = a + i\n"
+               "\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     /* assert */
@@ -1293,11 +1253,10 @@ TEST(pikaMain, print_in_def_byte_code) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_run(pikaMain, 
-        "def test_print():\n"
-        "    print('test')\n"
-        "test_print()\n"
-        );
+    pikaVM_run(pikaMain,
+               "def test_print():\n"
+               "    print('test')\n"
+               "test_print()\n");
     /* collect */
     /* assert */
     /* should only print once, so the second log (log_buff[1]) shuold be '\0' */
@@ -1364,16 +1323,15 @@ TEST(pikaMain, hex_list) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_run(pikaMain, 
-            "bytes = PikaStdData.List()\n"
-            "bytes.append(0x0F)\n"
-            "bytes.append(0xFF)\n"
-            "sum = 0\n"
-            "for byte in bytes:\n"
-            "    sum = sum + byte\n"
-            "\n"
-            "print(sum)\n"
-        );
+    pikaVM_run(pikaMain,
+               "bytes = PikaStdData.List()\n"
+               "bytes.append(0x0F)\n"
+               "bytes.append(0xFF)\n"
+               "sum = 0\n"
+               "for byte in bytes:\n"
+               "    sum = sum + byte\n"
+               "\n"
+               "print(sum)\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "270\r\n");
@@ -1390,15 +1348,14 @@ TEST(pikaMain, bytearray) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_run(pikaMain, 
-            "bytes = PikaStdData.ByteArray()\n"
-            "bytes.fromString('test')\n"
-            "sum = 0\n"
-            "for byte in bytes:\n"
-            "    sum = sum + byte\n"
-            "\n"
-            "print(sum)\n"
-        );
+    pikaVM_run(pikaMain,
+               "bytes = PikaStdData.ByteArray()\n"
+               "bytes.fromString('test')\n"
+               "sum = 0\n"
+               "for byte in bytes:\n"
+               "    sum = sum + byte\n"
+               "\n"
+               "print(sum)\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "448\r\n");
@@ -1435,16 +1392,15 @@ TEST(pikaMain, self_operator) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_run(pikaMain, 
-            "a = 1\n"
-            "b = 2\n"
-            "c = 3\n"
-            "d = 4\n"
-            "a += 2\n"
-            "b -= 1+1-3\n"
-            "c *= 4\n"
-            "d /= 2\n"
-        );
+    pikaVM_run(pikaMain,
+               "a = 1\n"
+               "b = 2\n"
+               "c = 3\n"
+               "d = 4\n"
+               "a += 2\n"
+               "b -= 1+1-3\n"
+               "c *= 4\n"
+               "d /= 2\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     int b = obj_getInt(pikaMain, "b");
@@ -1467,15 +1423,14 @@ TEST(pikaMain, class_demo_2_initwitharg) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-        "class Complex:\n"
-        "    def __init__(self, r, i):\n"
-        "        self.r = r\n"
-        "        self.i = i\n"
-        "x = Complex(3.0, -4.5)\n"
-        "print(x.r)\n"
-        "print(x.i)\n"
-    );
+    obj_run(self,
+            "class Complex:\n"
+            "    def __init__(self, r, i):\n"
+            "        self.r = r\n"
+            "        self.i = i\n"
+            "x = Complex(3.0, -4.5)\n"
+            "print(x.r)\n"
+            "print(x.i)\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "-4.500000\r\n");
     EXPECT_STREQ(log_buff[1], "3.000000\r\n");
@@ -1509,9 +1464,8 @@ TEST(pikaMain, class_args_err) {
     /* collect */
 
     /* assert */
-    EXPECT_STREQ(
-        log_buff[4],
-        "TypeError: PikaStdLib.MemChecker() takes no arguments\r\n");
+    EXPECT_STREQ(log_buff[4],
+                 "TypeError: PikaStdLib.MemChecker() takes no arguments\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1559,13 +1513,11 @@ TEST(pikaMain, def_in_shell) {
     obj_run(pikaMain,
             "def test():\n"
             "    print('test')\n"
-            "\n"
-            );
+            "\n");
     obj_run(pikaMain,
             "def test2():\n"
             "    print('test2')\n"
-            "\n"
-            );
+            "\n");
     obj_run(pikaMain, "test()\n");
     obj_run(pikaMain, "test2()\n");
     /* collect */
@@ -1590,14 +1542,12 @@ TEST(pikaMain, def_in_shell_override) {
     obj_run(pikaMain,
             "def test():\n"
             "    print('test')\n"
-            "\n"
-            );
+            "\n");
     obj_run(pikaMain, "test()\n");
     obj_run(pikaMain,
             "def test():\n"
             "    print('test2')\n"
-            "\n"
-            );
+            "\n");
     obj_run(pikaMain, "test()\n");
     /* collect */
     /* assert */
@@ -1622,12 +1572,10 @@ TEST(pikaMain, class_in_shell) {
             "class Test():\n"
             "    def hi(self):\n"
             "        print('hi')\n"
-            "\n"
-            );
-    obj_run(pikaMain, 
+            "\n");
+    obj_run(pikaMain,
             "t = Test()\n"
-            "t.hi()\n"
-            );
+            "t.hi()\n");
     /* collect */
     /* assert */
     EXPECT_STREQ("hi\r\n", log_buff[0]);
@@ -1650,12 +1598,10 @@ TEST(pikaMain, class_TinyObj) {
             "class MyClass( TinyObj ):\n"
             "    def __init__(self):\n"
             "        self.val = 123\n"
-            "\n"
-            );
-    obj_run(pikaMain, 
+            "\n");
+    obj_run(pikaMain,
             "x = MyClass()\n"
-            "x.val\n"
-            );
+            "x.val\n");
     /* collect */
     /* assert */
     EXPECT_STREQ("123\r\n", log_buff[0]);
@@ -1672,10 +1618,9 @@ TEST(pikaMain, list_sysobj) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 
     /* skip the first obj_run */
-    obj_run(pikaMain, 
-    "a = list()\n"
-    "a.len()\n"
-    );
+    obj_run(pikaMain,
+            "a = list()\n"
+            "a.len()\n");
     /* as run in shell */
     /* collect */
     /* assert */
@@ -1691,10 +1636,9 @@ TEST(pikaMain, list_init) {
     /* run */
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain, 
-    "a = [1, 2, 3]\n"
-    "a.len()\n"
-    );
+    obj_run(pikaMain,
+            "a = [1, 2, 3]\n"
+            "a.len()\n");
     /* as run in shell */
     /* collect */
     /* assert */
@@ -1711,13 +1655,13 @@ TEST(pikaMain, ctypes) {
     pikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    char* lines = 
-    "t = ctypes.Test()\n"
-    "sendbuf = b'\\x03\\x04\\x33\\x00\\x05'\n"
-    "rlen = ctypes.c_uint(0)\n"
-    "rcvbuf = ctypes.c_char_p('')\n"
-    "res = t.dc_cpuapdu_hex(5, sendbuf, rlen, rcvbuf)\n"
-    "t.print_rcv(rcvbuf)\n";
+    char* lines =
+        "t = ctypes.Test()\n"
+        "sendbuf = b'\\x03\\x04\\x33\\x00\\x05'\n"
+        "rlen = ctypes.c_uint(0)\n"
+        "rcvbuf = ctypes.c_char_p('')\n"
+        "res = t.dc_cpuapdu_hex(5, sendbuf, rlen, rcvbuf)\n"
+        "t.print_rcv(rcvbuf)\n";
     __platform_printf("%s\n", lines);
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain, lines);
@@ -1728,6 +1672,25 @@ TEST(pikaMain, ctypes) {
     /* assert */
     EXPECT_EQ(arg_getBytesSize(sendbuf), 5);
     EXPECT_EQ(arg_getBytesSize(rcvbuf), 6);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, import_err) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    char* lines = "import qqpe\n";
+    __platform_printf("%s\n", lines);
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* as run in shell */
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2],
+                 "ModuleNotFoundError: No module named 'qqpe'\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
