@@ -1,4 +1,4 @@
-#include "pikaCompiler.h"
+#include "PikaCompiler.h"
 #include "BaseObj.h"
 #include "PikaObj.h"
 #include "PikaParser.h"
