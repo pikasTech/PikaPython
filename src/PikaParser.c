@@ -618,15 +618,16 @@ exit:
     return res;
 }
 
+static const char operators[][9] = {
+    "**", "~",   "*",  "/",  "%",  "//",  "+",     "-",     ">>",   "<<",
+    "&",  "^",   "|",  "<",  "<=", ">",   ">=",    "!=",    "==",   "%=",
+    "/=", "//=", "-=", "+=", "*=", "**=", " not ", " and ", " or ", " import "};
+
 char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args buffs = {0};
     char* tokens = Lexer_getTokens(&buffs, stmt);
     char* operator= NULL;
-    const char operators[][6] = {
-        "**", "~",   "*",  "/",  "%",  "//",  "+",     "-",     ">>",  "<<",
-        "&",  "^",   "|",  "<",  "<=", ">",   ">=",    "!=",    "==",  "%=",
-        "/=", "//=", "-=", "+=", "*=", "**=", " not ", " and ", " or "};
-    for (uint32_t i = 0; i < sizeof(operators) / 6; i++) {
+    for (uint32_t i = 0; i < sizeof(operators) / 9; i++) {
         if (Parser_isContainToken(tokens, TOKEN_operator,
                                   (char*)operators[i])) {
             operator= strsCopy(&buffs, (char*)operators[i]);
@@ -1200,13 +1201,11 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         block_deepth_last = stack_getTop(block_stack);
         /* exit each block */
         for (int i = 0; i < block_deepth_last - block_deepth_now; i++) {
-            QueueObj* exit_block_queue =
-                obj_getObj(ast, "exitBlock");
+            QueueObj* exit_block_queue = obj_getObj(ast, "exitBlock");
             /* create an exit_block queue */
             if (NULL == exit_block_queue) {
                 obj_newObj(ast, "exitBlock", "", New_TinyObj);
-                exit_block_queue =
-                    obj_getObj(ast, "exitBlock");
+                exit_block_queue = obj_getObj(ast, "exitBlock");
                 queueObj_init(exit_block_queue);
             }
             char buff[10] = {0};
@@ -1347,6 +1346,10 @@ static char* Parser_PreProcess_import(Args* buffs_p, char* line) {
 
     ParserState_forEachToken(ps, stmt) {
         ParserState_iterStart(&ps);
+        /* defaut set the 'origin' as the first token */
+        if (ps.iter_index == 1) {
+            origin = strsCopy(&buffs, ps.token1.pyload);
+        }
         if (strEqu(ps.token2.pyload, " as ")) {
             origin = strsCopy(&buffs, ps.token1.pyload);
         }
@@ -1357,19 +1360,17 @@ static char* Parser_PreProcess_import(Args* buffs_p, char* line) {
     }
     ParserState_deinit(&ps);
 
+    /* only import, not 'as' */
     if (NULL == alias) {
-        line_out = strsCopy(buffs_p, "");
+        line_out = line;
         goto exit;
     }
 
-    if (NULL == origin) {
-        line_out = strsCopy(buffs_p, "");
-        goto exit;
-    }
-
-    line_out =
-        strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "%s = %s", alias, origin);
+    /* 'import' and 'as' */
+    line_out = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "import %s\n%s = %s",
+                          origin, alias, origin);
     line_out = strsCopy(buffs_p, line_out);
+    goto exit;
 exit:
     strsDeinit(&buffs);
     return line_out;
@@ -1416,8 +1417,8 @@ static char* Parser_PreProcess_from(Args* buffs_p, char* line) {
         alias = class;
     }
 
-    line_out = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "%s = %s.%s", alias,
-                          module, class);
+    line_out = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "import %s\n%s = %s.%s",
+                          module, alias, module, class);
     line_out = strsCopy(buffs_p, line_out);
 exit:
     strsDeinit(&buffs);
@@ -1452,16 +1453,26 @@ char* Parser_LineToAsm(Args* buffs_p, char* line, Stack* blockStack) {
         ASM = "";
         goto exit;
     }
-
-    /* parse line to tokens */
-    /* parse tokens to AST */
-    ast = AST_parseLine(line, blockStack);
-    /* gen ASM from AST */
-    ASM = AST_toPikaASM(ast, buffs_p);
-exit:
-    if (NULL != ast) {
-        AST_deinit(ast);
+    /*
+        solve more lines
+        preprocess may generate more lines
+    */
+    uint8_t line_num = strCountSign(line, '\n') + 1;
+    for (int i = 0; i < line_num; i++) {
+        char* single_line = strsPopToken(buffs_p, line, '\n');
+        /* parse tokens to AST */
+        ast = AST_parseLine(single_line, blockStack);
+        /* gen ASM from AST */
+        if (ASM == NULL) {
+            ASM = AST_toPikaASM(ast, buffs_p);
+        } else {
+            ASM = strsAppend(buffs_p, ASM, AST_toPikaASM(ast, buffs_p));
+        }
+        if (NULL != ast) {
+            AST_deinit(ast);
+        }
     }
+exit:
     return ASM;
 }
 
