@@ -227,19 +227,21 @@ TEST(pikaMain, and_or_not) {
     "if not (2>1):\n"
     "    d = 1\n"
     "\n"
+    "e = ~1\n"
     );
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     int b = obj_getInt(pikaMain, "b");
     int c = obj_getInt(pikaMain, "c");
     int d = obj_getInt(pikaMain, "d");
+    int e = obj_getInt(pikaMain, "e");
 
     /* assert */
     EXPECT_EQ(1, a);
     EXPECT_EQ(0, b);
     EXPECT_EQ(1, c);
     EXPECT_EQ(0, d);
-
+    EXPECT_EQ(e, -2);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
