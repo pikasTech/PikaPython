@@ -214,6 +214,7 @@ TEST(pikaMain, and_or_not) {
     "a = 0\n"
     "b = 0\n"
     "c = 0\n"
+    "d = 0\n"
     "if (1>2) or (2>1):\n"
     "    a = 1\n"
     "\n"
@@ -223,16 +224,21 @@ TEST(pikaMain, and_or_not) {
     "if not (1>2):\n"
     "    c = 1\n"
     "\n"
+    "if not (2>1):\n"
+    "    d = 1\n"
+    "\n"
     );
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     int b = obj_getInt(pikaMain, "b");
     int c = obj_getInt(pikaMain, "c");
+    int d = obj_getInt(pikaMain, "d");
 
     /* assert */
     EXPECT_EQ(1, a);
     EXPECT_EQ(0, b);
     EXPECT_EQ(1, c);
+    EXPECT_EQ(0, d);
 
     /* deinit */
     obj_deinit(pikaMain);
