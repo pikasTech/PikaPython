@@ -47,6 +47,7 @@ enum StmtType {
     STMT_number,
     STMT_method,
     STMT_operator,
+    STMT_import,
     STMT_list,
     STMT_none,
 };

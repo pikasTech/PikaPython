@@ -161,9 +161,14 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     uint8_t is_get_number = 0;
     uint8_t is_get_symbol = 0;
     uint8_t is_get_index = 0;
+    uint8_t is_get_import = 0;
     ParserState_forEachToken(ps, rightWithoutSubStmt) {
         ParserState_iterStart(&ps);
         /* collect type */
+        if (strEqu(ps.token1.pyload, " import ")) {
+            is_get_import = 1;
+            goto iter_continue;
+        }
         if (strEqu(ps.token1.pyload, "[")) {
             is_get_index = 1;
             goto iter_continue;
@@ -196,6 +201,10 @@ static enum StmtType Lexer_matchStmtType(char* right) {
         }
     iter_continue:
         ParserState_iterEnd(&ps);
+    }
+    if (is_get_import) {
+        stmtType = STMT_import;
+        goto exit;
     }
     if (is_get_operator) {
         stmtType = STMT_operator;
@@ -933,6 +942,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* num = NULL;
     char* left = NULL;
     char* right = NULL;
+    char* import = NULL;
 
     right = stmt;
     /* solve check direct */
@@ -1085,6 +1095,12 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     if (STMT_reference == stmtType) {
         ref = right;
         obj_setStr(ast, (char*)"ref", ref);
+        goto exit;
+    }
+    /* solve import stmt */
+    if (STMT_import == stmtType) {
+        import = strsGetLastToken(&buffs, right, ' ');
+        obj_setStr(ast, (char*)"import", import);
         goto exit;
     }
     /* solve str stmt */
@@ -1619,6 +1635,7 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     char* str = obj_getStr(subAst, "string");
     char* bytes = obj_getStr(subAst, "bytes");
     char* num = obj_getStr(subAst, "num");
+    char* import = obj_getStr(subAst, "import");
     char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
     if (NULL != list) {
         __platform_sprintf(buff, "%d LST \n", deepth);
@@ -1650,6 +1667,10 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     }
     if (NULL != left) {
         __platform_sprintf(buff, "%d OUT %s\n", deepth, left);
+        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
+    }
+    if (NULL != import) {
+        __platform_sprintf(buff, "%d IMP %s\n", deepth, import);
         pikaAsm = strsAppend(&buffs, pikaAsm, buff);
     }
     obj_setInt(ast, "deepth", deepth - 1);

@@ -907,6 +907,10 @@ exit:
     return NULL;
 }
 
+static Arg* VM_instruction_handler_IMP(PikaObj* self, VMState* vs, char* data) {
+    return NULL;
+}
+
 const VM_instruct_handler VM_instruct_handler_table[__INSTRCUTION_CNT] = {
 #define __INS_TABLE
 #include "__instruction_table.cfg"
