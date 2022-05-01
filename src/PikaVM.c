@@ -908,6 +908,10 @@ exit:
 }
 
 static Arg* VM_instruction_handler_IMP(PikaObj* self, VMState* vs, char* data) {
+    /* the module is already imported, skip. */
+    if(obj_isArgExist(self, data)){
+        return NULL;
+    }
     return NULL;
 }
 
