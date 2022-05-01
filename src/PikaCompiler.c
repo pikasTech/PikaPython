@@ -236,12 +236,13 @@ int LibObj_saveToFile(LibObj* self, char* output_file_name) {
     args_setPtr(&handleArgs, "out_file", out_file);
     args_setInt(&handleArgs, "module_num", 0);
 
-    /* write module number to file */
+    /* write meta information */
     char buff[32] = {0};
     args_foreach(self->list, __foreach_handler_getModuleNum, &handleArgs);
     uint32_t module_num = args_getInt(&handleArgs, "module_num");
+    /* write module_num to the file */
     __platform_memcpy(buff, &module_num, sizeof(uint32_t));
-
+    /* aline to 32 bytes */
     __platform_fwrite(buff, 1, 32, out_file);
 
     /* write module index to file */
