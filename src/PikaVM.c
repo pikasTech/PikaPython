@@ -913,27 +913,13 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self, VMState* vs, char* data) {
     if (obj_isArgExist(self, data)) {
         return NULL;
     }
-    /* exit when no found '__lib' */
-    if (!obj_isArgExist(self, "__lib")) {
+    /* import module from '__lib' */
+    if (0 != obj_importModule(self, data)) {
         VMState_setErrorCode(vs, 3);
         __platform_printf("ModuleNotFoundError: No module named '%s'\r\n",
                           data);
         return NULL;
     }
-    /* find module from the library */
-    LibObj* lib = obj_getPtr(self, "__lib");
-    PikaObj* index = obj_getObj(lib, "index");
-    PikaObj* module = obj_getObj(index, data);
-    /* exit when no module in '__lib' */
-    if (NULL == module) {
-        VMState_setErrorCode(vs, 3);
-        __platform_printf("ModuleNotFoundError: No module named '%s'\r\n",
-                          data);
-        return NULL;
-    }
-    /* import bytecode of the module */
-    uint8_t* bytecode = obj_getPtr(module, "bytecode");
-    obj_importModuleWithByteCode(self, data, bytecode);
     return NULL;
 }
 

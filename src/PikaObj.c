@@ -934,3 +934,21 @@ PikaObj* obj_linkLibrary(PikaObj* self, LibObj* library) {
     obj_setPtr(self, "__lib", library);
     return self;
 }
+
+int obj_importModule(PikaObj* self, char* module_name) {
+    /* exit when no found '__lib' */
+    if (!obj_isArgExist(self, "__lib")) {
+        return 1;
+    }
+    /* find module from the library */
+    LibObj* lib = obj_getPtr(self, "__lib");
+    PikaObj* module = obj_getObj(lib, module_name);
+    /* exit when no module in '__lib' */
+    if (NULL == module) {
+        return 1;
+    }
+    /* import bytecode of the module */
+    uint8_t* bytecode = obj_getPtr(module, "bytecode");
+    obj_importModuleWithByteCode(self, module_name, bytecode);
+    return 0;
+}

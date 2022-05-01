@@ -123,7 +123,6 @@ int pikaCompileFile(char* input_file_name) {
 
 LibObj* New_LibObj(void) {
     LibObj* self = New_TinyObj(NULL);
-    obj_newObj(self, "index", "", New_TinyObj);
     return self;
 }
 
@@ -133,11 +132,10 @@ void LibObj_deinit(LibObj* self) {
 
 /* add bytecode to lib, not copy the bytecode */
 void LibObj_dynamicLink(LibObj* self, char* module_name, uint8_t* bytecode) {
-    PikaObj* index_obj = obj_getObj(self, "index");
-    if (!obj_isArgExist(index_obj, module_name)) {
-        obj_newObj(index_obj, module_name, "", New_TinyObj);
+    if (!obj_isArgExist(self, module_name)) {
+        obj_newObj(self, module_name, "", New_TinyObj);
     }
-    PikaObj* module_obj = obj_getObj(index_obj, module_name);
+    PikaObj* module_obj = obj_getObj(self, module_name);
     obj_setStr(module_obj, "name", module_name);
     obj_setPtr(module_obj, "bytecode", bytecode);
 }
@@ -147,11 +145,10 @@ int LibObj_staticLink(LibObj* self,
                       char* module_name,
                       uint8_t* bytecode,
                       size_t size) {
-    PikaObj* index_obj = obj_getObj(self, "index");
-    if (!obj_isArgExist(index_obj, module_name)) {
-        obj_newObj(index_obj, module_name, "", New_TinyObj);
+    if (!obj_isArgExist(self, module_name)) {
+        obj_newObj(self, module_name, "", New_TinyObj);
     }
-    PikaObj* module_obj = obj_getObj(index_obj, module_name);
+    PikaObj* module_obj = obj_getObj(self, module_name);
     /* copy bytecode to buff */
     obj_setBytes(module_obj, "buff", bytecode, size);
     /* link to buff */
@@ -191,6 +188,5 @@ static int32_t __foreach_handler_listModules(Arg* argEach, Args* handleArgs) {
 }
 
 void LibObj_listModules(LibObj* self) {
-    PikaObj* index_obj = obj_getObj(self, "index");
-    args_foreach(index_obj->list, __foreach_handler_listModules, NULL);
+    args_foreach(self->list, __foreach_handler_listModules, NULL);
 }

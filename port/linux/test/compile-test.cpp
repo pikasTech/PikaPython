@@ -339,8 +339,8 @@ TEST(lib, lib_link_bytecode) {
     LibObj_dynamicLink(lib, "module3", (uint8_t*)0x33433);
     LibObj_dynamicLink(lib, "module4", (uint8_t*)0x33433);
     LibObj_dynamicLink(lib, "module5", (uint8_t*)0x33433);
-    EXPECT_STREQ(obj_getStr(lib, "index.module1.name"), "module1");
-    EXPECT_EQ((uintptr_t)obj_getPtr(lib, "index.module1.bytecode"), 0x3344);
+    EXPECT_STREQ(obj_getStr(lib, "module1.name"), "module1");
+    EXPECT_EQ((uintptr_t)obj_getPtr(lib, "module1.bytecode"), 0x3344);
     /* deinit */
     LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
