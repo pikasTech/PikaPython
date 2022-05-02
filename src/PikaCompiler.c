@@ -244,11 +244,23 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     return 0;
 }
 
-int LibObj_loadLibrary(LibObj* self, char* library) {
+int LibObj_loadLibrary(LibObj* self, uint8_t* library) {
     uint32_t module_num = library[0];
+    uint8_t* bytecode_addr = library + LIB_INFO_BLOCK_SIZE * (module_num + 1);
+    for (uint32_t i = 0; i < module_num; i++) {
+        char* module_name = (char*)(library + LIB_INFO_BLOCK_SIZE * (i + 1));
+        LibObj_dynamicLink(self, module_name, bytecode_addr);
+        uint32_t module_size =
+            *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
+        bytecode_addr += module_size;
+    }
     return 0;
 }
 
 int LibObj_loadLibraryFile(LibObj* self, char* input_file_name) {
+    Arg* file_arg = arg_loadFile(NULL, input_file_name);
+    /* save file_arg as __lib_buf to libObj */
+    obj_setArg_noCopy(self, "__lib_buf", file_arg);
+    LibObj_loadLibrary(self, arg_getBytes(file_arg));
     return 0;
 }

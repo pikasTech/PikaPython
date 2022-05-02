@@ -429,3 +429,51 @@ TEST(lib, lib_to_file) {
     LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+
+TEST(lib, save2) {
+    LibObj* lib = New_LibObj();
+
+    pikaCompileFile("test/python/test_module1.py");
+    pikaCompileFile("test/python/test_module2.py");
+    pikaCompileFile("test/python/test_module3.py");
+
+    LibObj_staticLinkFile(lib, "test/python/test_module1.py.o");
+    LibObj_staticLinkFile(lib, "test/python/test_module2.py.o");
+    LibObj_staticLinkFile(lib, "test/python/test_module3.py.o");
+
+    LibObj_listModules(lib);
+    LibObj_saveLibraryFile(lib, "test/python/test_module.py.a");
+    /* asset */
+    EXPECT_STREQ(log_buff[0], "test_module1\r\n");
+    EXPECT_STREQ(log_buff[1], "test_module2\r\n");
+    EXPECT_STREQ(log_buff[2], "test_module3\r\n");
+    /* deinit */
+    LibObj_deinit(lib);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lib, load_file) {
+    /* compile */
+    LibObj* lib = New_LibObj();
+    LibObj_loadLibraryFile(lib, "test/python/test_module.py.a");
+
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_linkLibrary(pikaMain, lib);
+    obj_run(pikaMain,
+            "import test_module1\n"
+            "import test_module2\n"
+            "import test_module3\n"
+            "test_module1.mytest()\n"
+            "test_module2.mytest()\n"
+            "test_module3.mytest()\n"
+            );
+    /* asset */
+    EXPECT_STREQ(log_buff[2], "test_module_1_hello\r\n");
+    EXPECT_STREQ(log_buff[1], "test_module_2_hello\r\n");
+    EXPECT_STREQ(log_buff[0], "test_module_3_hello\r\n");
+    /* deinit */
+    LibObj_deinit(lib);
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
