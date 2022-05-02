@@ -32,9 +32,9 @@ TEST(queue, arg) {
     queue_pushArg(q, arg1);
     queue_pushArg(q, arg2);
     queue_pushArg(q, arg3);
-    EXPECT_EQ(arg_getInt(queue_popArg(q)), 1);
-    EXPECT_FLOAT_EQ(arg_getFloat(queue_popArg(q)), 1.2);
-    EXPECT_STREQ(arg_getStr(queue_popArg(q)), "ij");
+    EXPECT_EQ(queue_popInt(q), 1);
+    EXPECT_FLOAT_EQ(queue_popFloat(q), 1.2);
+    EXPECT_STREQ(queue_popStr(q), "ij");
     queue_deinit(q);
     EXPECT_EQ(pikaMemNow(), 0);
 }

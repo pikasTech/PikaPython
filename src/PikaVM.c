@@ -577,6 +577,9 @@ static uint8_t VMState_getInputArgNum(VMState* vs) {
         ins_unit_now--;
         pc_this -= instructUnit_getSize(ins_unit_now);
         uint8_t invode_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
+        if (pc_this < 0) {
+            break;
+        }
         if (invode_deepth == invode_deepth_this + 1) {
             num++;
         }
@@ -584,9 +587,6 @@ static uint8_t VMState_getInputArgNum(VMState* vs) {
             break;
         }
         if (invode_deepth <= invode_deepth_this) {
-            break;
-        }
-        if (pc_this <= 0) {
             break;
         }
     }
