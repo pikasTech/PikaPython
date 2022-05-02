@@ -96,7 +96,8 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
 
 char* strsGetCleanCmd(Args* outBuffs, char* cmd) {
     int32_t size = strGetSize(cmd);
-    char* strOut = args_getBuff(outBuffs, size);
+    /* lexer may generate more chars than input */
+    char* strOut = args_getBuff(outBuffs, size * 2);
     int32_t iOut = 0;
     ParserState_forEachToken(ps, cmd) {
         ParserState_iterStart(&ps);

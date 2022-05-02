@@ -420,7 +420,7 @@ TEST(lib, lib_to_file) {
     LibObj_staticLinkFile(lib, "test/python/main_snake_LCD.py.o");
 
     LibObj_listModules(lib);
-    LibObj_saveToFile(lib, "test/python/lib_to_file.py.a");
+    LibObj_saveLibraryFile(lib, "test/python/lib_to_file.py.a");
     /* asset */
     EXPECT_STREQ(log_buff[0], "UnitTest\r\n");
     EXPECT_STREQ(log_buff[1], "main\r\n");

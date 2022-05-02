@@ -59,10 +59,9 @@ static uint8_t* content_init_hash(Hash nameHash,
     self->name_hash = nameHash;
     self->type = type;
 
+    __platform_memset(self->content, 0, aline_by(size, sizeof(uint32_t)));
     if (NULL != content) {
         __platform_memcpy(self->content, content, size);
-    } else {
-        __platform_memset(self->content, 0, size);
     }
 
     return (uint8_t*)self;
@@ -149,6 +148,7 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
     self = arg_setName(self, name);
     self = arg_setType(self, ARG_TYPE_BYTES);
     void* dir = arg_getContent(self);
+    __platform_memset(dir, 0, size + sizeof(size_t));
     __platform_memcpy(dir, &size, sizeof(size_t));
     __platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
     return self;
@@ -359,6 +359,27 @@ void arg_deinitHeap(Arg* self) {
             obj_deinit(subObj);
         }
     }
+}
+
+/* load file as byte array */
+Arg* arg_loadFile(Arg* self, char* filename) {
+    char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
+    __platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
+    FILE* input_file = __platform_fopen(filename, "r");
+    Arg* res = New_arg(NULL);
+    size_t file_size =
+        __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_file);
+
+    if (file_size >= PIKA_READ_FILE_BUFF_SIZE) {
+        __platform_printf("error: not enough buff for input file.\r\n");
+        return NULL;
+    }
+    /* add '\0' to the end of the string */
+    res = arg_setBytes(res, "", (uint8_t*)file_buff, file_size + 1);
+
+    __platform_free(file_buff);
+    __platform_fclose(input_file);
+    return res;
 }
 
 void arg_deinit(Arg* self) {

@@ -17,5 +17,8 @@ int LibObj_staticLink(LibObj* self,
                       size_t size);
 int LibObj_staticLinkFile(LibObj* self, char* input_file_name);
 void LibObj_listModules(LibObj* self);
-int LibObj_saveToFile(LibObj* self, char* output_file_name);
+int LibObj_saveLibraryFile(LibObj* self, char* output_file_name);
+
+#define LIB_INFO_BLOCK_SIZE 32
+
 #endif

@@ -95,20 +95,12 @@ int pikaCompile(char* output_file_name, char* py_lines) {
 */
 int pikaCompileFileWithOutputName(char* output_file_name,
                                   char* input_file_name) {
-    char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
-    __platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
-    FILE* input_f = __platform_fopen(input_file_name, "r");
-    size_t size =
-        __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_f);
-
-    if (size >= PIKA_READ_FILE_BUFF_SIZE) {
-        __platform_printf("error: not enough buff for input file.\r\n");
+    Arg* input_file_arg = arg_loadFile(NULL, input_file_name);
+    if (NULL == input_file_arg) {
         return 1;
     }
-
-    pikaCompile(output_file_name, file_buff);
-    __platform_free(file_buff);
-    __platform_fclose(input_f);
+    pikaCompile(output_file_name, (char*)arg_getBytes(input_file_arg));
+    arg_deinit(input_file_arg);
     return 0;
 }
 
@@ -157,25 +149,21 @@ int LibObj_staticLink(LibObj* self,
 }
 
 int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
-    char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
-    __platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
     Args buffs = {0};
-    FILE* input_f = __platform_fopen(input_file_name, "r");
     /* read file */
-    size_t size =
-        __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_f);
+    Arg* input_file_arg = arg_loadFile(NULL, input_file_name);
     char* module_name = strsGetLastToken(&buffs, input_file_name, '/');
 
     /* cut off '.py.o' */
     module_name[strlen(module_name) - (sizeof(".py.o") - 1)] = 0;
 
     /* push bytecode */
-    LibObj_staticLink(self, module_name, (uint8_t*)file_buff, size);
+    LibObj_staticLink(self, module_name, arg_getBytes(input_file_arg),
+                      arg_getBytesSize(input_file_arg));
 
     /* deinit */
-    __platform_free(file_buff);
-    __platform_fclose(input_f);
     strsDeinit(&buffs);
+    arg_deinit(input_file_arg);
     return 0;
 }
 
@@ -211,11 +199,12 @@ static int32_t __foreach_handler_writeIndex(Arg* argEach, Args* handleArgs) {
     if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
         PikaObj* module_obj = arg_getPtr(argEach);
         uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
-        char buff[32 - sizeof(uint32_t)] = {0};
+        char buff[LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)] = {0};
         bytecode_size = aline_by(bytecode_size, sizeof(uint32_t));
         char* module_name = obj_getStr(module_obj, "name");
         __platform_memcpy(buff, module_name, strGetSize(module_name));
-        __platform_fwrite(buff, 1, 32 - sizeof(bytecode_size), out_file);
+        __platform_fwrite(buff, 1, LIB_INFO_BLOCK_SIZE - sizeof(bytecode_size),
+                          out_file);
         __platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size), out_file);
     }
     return 0;
@@ -229,7 +218,7 @@ static int32_t __foreach_handler_getModuleNum(Arg* argEach, Args* handleArgs) {
     return 0;
 }
 
-int LibObj_saveToFile(LibObj* self, char* output_file_name) {
+int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     FILE* out_file = __platform_fopen(output_file_name, "w+");
 
     Args handleArgs = {0};
@@ -237,13 +226,13 @@ int LibObj_saveToFile(LibObj* self, char* output_file_name) {
     args_setInt(&handleArgs, "module_num", 0);
 
     /* write meta information */
-    char buff[32] = {0};
+    char buff[LIB_INFO_BLOCK_SIZE] = {0};
     args_foreach(self->list, __foreach_handler_getModuleNum, &handleArgs);
     uint32_t module_num = args_getInt(&handleArgs, "module_num");
     /* write module_num to the file */
     __platform_memcpy(buff, &module_num, sizeof(uint32_t));
     /* aline to 32 bytes */
-    __platform_fwrite(buff, 1, 32, out_file);
+    __platform_fwrite(buff, 1, LIB_INFO_BLOCK_SIZE, out_file);
     /* write module index to file */
     args_foreach(self->list, __foreach_handler_writeIndex, &handleArgs);
     /* write module bytecode to file */
@@ -252,5 +241,14 @@ int LibObj_saveToFile(LibObj* self, char* output_file_name) {
     /* main process */
     /* deinit */
     __platform_fclose(out_file);
+    return 0;
+}
+
+int LibObj_loadLibrary(LibObj* self, char* library) {
+    uint32_t module_num = library[0];
+    return 0;
+}
+
+int LibObj_loadLibraryFile(LibObj* self, char* input_file_name) {
     return 0;
 }

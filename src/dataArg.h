@@ -138,5 +138,6 @@ void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 void arg_printBytes(Arg* self);
+Arg* arg_loadFile(Arg* self, char* filename);
 
 #endif
