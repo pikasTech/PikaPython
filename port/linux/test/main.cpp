@@ -8,5 +8,7 @@ extern "C" {
 int main(int argc, char** argv) {
     mem_pool_init();
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    int res = RUN_ALL_TESTS();
+    mem_pool_deinit();
+    return res;
 }

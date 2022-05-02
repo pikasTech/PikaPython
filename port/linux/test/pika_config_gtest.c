@@ -61,3 +61,9 @@ void mem_pool_init(void) {
         pikaPool = pool_init(pika_pool_size, pika_aline);
     #endif
 }
+
+void mem_pool_deinit(void) {
+    #if use_dynamic_pool
+        pool_deinit(&pikaPool);
+    #endif
+}
