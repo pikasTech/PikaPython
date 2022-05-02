@@ -39,3 +39,6 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 RUN apt-get install -y python3
 RUN git config --global --add safe.directory /usr/src/pikascript
 
+RUN apt-get install -y valgrind
+
+COPY . /usr/src/pikascript
