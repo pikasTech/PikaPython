@@ -1,5 +1,6 @@
 cp package/pikascript/pikascript-core/* ../../src
 cp package/pikascript/PikaObj.pyi ../../src
+git add test/python/*.py
 sh std_push.sh PikaStdLib
 sh std_push.sh PikaStdData
 sh std_push.sh PikaDebug
