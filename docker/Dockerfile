@@ -17,6 +17,8 @@ RUN apt-get install -y \
     cmake \
     sudo \
     ninja-build \
+    valgrind \
+    python3 \
     curl
 
 RUN git clone --branch v1.6.1 https://gitee.com/mirrors/google-benchmark benchmark && \
@@ -36,9 +38,9 @@ RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 
-RUN apt-get install -y python3
 RUN git config --global --add safe.directory /usr/src/pikascript
+RUN git config --global user.email "liang6516@outlook.com"
+RUN git config --global user.name "lyon"
 
-RUN apt-get install -y valgrind
 
 COPY . /usr/src/pikascript
