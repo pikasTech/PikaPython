@@ -86,6 +86,9 @@ void __platform_free(void* ptr);
 void* __platform_memset(void* mem, int ch, size_t size);
 void* __platform_memcpy(void* dir, const void* src, size_t size);
 
+void* __user_malloc(size_t size);
+void __user_free(void* ptr, size_t size);
+
 /* pika memory pool config */
 void __platform_wait(void);
 uint8_t __is_locked_pikaMemory(void);

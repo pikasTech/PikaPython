@@ -47,7 +47,7 @@ void* pikaMalloc(uint32_t size) {
         pikaMemInfo.heapUsedMax = pikaMemInfo.heapUsed;
     }
     __platform_disable_irq_handle();
-    void* mem = __platform_malloc(size);
+    void* mem = __user_malloc(size);
     __platform_enable_irq_handle();
     if (NULL == mem) {
         __platform_printf(
@@ -70,7 +70,7 @@ void pikaFree(void* mem, uint32_t size) {
 #endif
 
     __platform_disable_irq_handle();
-    __platform_free(mem);
+    __user_free(mem, size);
     __platform_enable_irq_handle();
     pikaMemInfo.heapUsed -= size;
 }

@@ -38,15 +38,27 @@ PIKA_WEAK void __platform_enable_irq_handle(void) {
 PIKA_WEAK void* __platform_malloc(size_t size) {
     return malloc(size);
 }
-PIKA_WEAK void __platform_error_handle(){
-    return;
-}
+
 PIKA_WEAK void __platform_free(void* ptr) {
     free(ptr);
 }
+
+PIKA_WEAK void* __user_malloc(size_t size) {
+    return __platform_malloc(size);
+}
+
+PIKA_WEAK void __user_free(void* ptr, size_t size) {
+    return __platform_free(ptr);
+}
+
+PIKA_WEAK void __platform_error_handle() {
+    return;
+}
+
 PIKA_WEAK uint8_t __is_locked_pikaMemory(void) {
     return 0;
 }
+
 #ifndef __platform_printf
 PIKA_WEAK void __platform_printf(char* fmt, ...) {
     va_list args;
@@ -131,9 +143,9 @@ PIKA_WEAK size_t __platform_fwrite(const void* ptr,
 }
 
 PIKA_WEAK size_t __platform_fread(void* ptr,
-                                   size_t size,
-                                   size_t n,
-                                   FILE* stream) {
+                                  size_t size,
+                                  size_t n,
+                                  FILE* stream) {
 #ifdef __linux
     return fread(ptr, size, n, stream);
 #else

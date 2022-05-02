@@ -38,23 +38,26 @@ Pool pikaPool = {.aline = pika_aline,
                  .bitmap = pika_bitmap,
                  .mem = pika_pool_mem,
                  .size = pika_pool_size};
-void* __impl_pikaMalloc(size_t size) {
+void* __user_malloc(size_t size) {
     return pool_malloc(&pikaPool, size);
 }
-void __impl_pikaFree(void* ptrm, size_t size) {
+void __user_free(void* ptrm, size_t size) {
     pool_free(&pikaPool, ptrm, size);
 }
 #endif
 
 #if use_dynamic_pool
 Pool pikaPool;
-void* __impl_pikaMalloc(size_t size) {
+void* __user_malloc(size_t size) {
     return pool_malloc(&pikaPool, size);
 }
-void __impl_pikaFree(void* ptrm, size_t size) {
+void __user_free(void* ptrm, size_t size) {
     pool_free(&pikaPool, ptrm, size);
 }
-void __platform_pool_init(void) {
-    pikaPool = pool_init(pika_pool_size, pika_aline);
-}
 #endif
+
+void mem_pool_init(void) {
+    #if use_dynamic_pool
+        pikaPool = pool_init(pika_pool_size, pika_aline);
+    #endif
+}
