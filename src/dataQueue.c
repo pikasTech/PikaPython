@@ -104,5 +104,17 @@ int32_t queue_pushStr(Queue* queue, char* str) {
 }
 
 char* queue_popStr(Queue* queue) {
-    return arg_getStr(queue_popArg(queue));
+    Args* args = queue;
+    uint64_t top = args_getInt(args, "__t");
+    uint64_t bottom = args_getInt(args, "__b");
+    if (top - bottom < 1) {
+        return NULL;
+    }
+    /* add bottom */
+    args_setInt(args, "__b", bottom + 1);
+    char buff[11];
+    Arg* res = args_getArg(args, fast_itoa(buff, bottom));
+    /* not deinit arg to keep str buff */
+    // args_removeArg(args, res);
+    return arg_getStr(res);
 }

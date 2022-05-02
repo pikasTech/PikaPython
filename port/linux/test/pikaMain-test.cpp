@@ -1296,6 +1296,7 @@ TEST(pikaMain, class_demo_1_file) {
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
+    __platform_fclose(f);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
