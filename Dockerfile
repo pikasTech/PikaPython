@@ -1,6 +1,6 @@
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 
-ADD docker/sources.list /etc/apt/sources.list
+ADD docker/ubuntu20_sources.list /etc/apt/sources.list
 
 RUN echo 'Asia/Shanghai' >/etc/timezone
 
