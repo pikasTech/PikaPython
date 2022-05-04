@@ -19,6 +19,7 @@ int LibObj_staticLinkFile(LibObj* self, char* input_file_name);
 void LibObj_listModules(LibObj* self);
 int LibObj_saveLibraryFile(LibObj* self, char* output_file_name);
 int LibObj_loadLibraryFile(LibObj* self, char* input_file_name);
+int Lib_loadLibraryFileToArray(char* origin_file_name, char* pikascript_root);
 
 #define LIB_VERSION_NUMBER 1
 #define LIB_INFO_BLOCK_SIZE 32

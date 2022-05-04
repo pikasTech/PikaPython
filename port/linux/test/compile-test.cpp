@@ -430,7 +430,6 @@ TEST(lib, lib_to_file) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(lib, save2) {
     LibObj* lib = New_LibObj();
 
@@ -466,8 +465,7 @@ TEST(lib, load_file) {
             "import test_module3\n"
             "test_module1.mytest()\n"
             "test_module2.mytest()\n"
-            "test_module3.mytest()\n"
-            );
+            "test_module3.mytest()\n");
     /* asset */
     EXPECT_STREQ(log_buff[2], "test_module_1_hello\r\n");
     EXPECT_STREQ(log_buff[1], "test_module_2_hello\r\n");
@@ -496,4 +494,9 @@ TEST(lib, load_err_file_type) {
     /* deinit */
     LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lib, lib_file_to_array) {
+    Lib_loadLibraryFileToArray("test/python/lib_to_file.py.a",
+                               "test/python");
 }

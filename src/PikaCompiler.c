@@ -287,19 +287,69 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library) {
     return 0;
 }
 
-int LibObj_loadLibraryFile(LibObj* self, char* input_file_name) {
-    Arg* file_arg = arg_loadFile(NULL, input_file_name);
+int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
+    Arg* file_arg = arg_loadFile(NULL, lib_file_name);
     if (NULL == file_arg) {
         __platform_printf("Error: Could not load library file '%s'\n",
-                          input_file_name);
+                          lib_file_name);
         return 1;
     }
     /* save file_arg as __lib_buf to libObj */
     obj_setArg_noCopy(self, "__lib_buf", file_arg);
     if (0 != LibObj_loadLibrary(self, arg_getBytes(file_arg))) {
         __platform_printf("Error: Could not load library from '%s'\n",
-                          input_file_name);
+                          lib_file_name);
         return 2;
     }
     return 0;
+}
+
+size_t pika_fputs(char* str, FILE* fp) {
+    size_t size = strGetSize(str);
+    return __platform_fwrite(str, 1, size, fp);
+}
+
+int Lib_loadLibraryFileToArray(char* origin_file_name, char* out_folder) {
+    Args buffs = {0};
+    Arg* file_arg = arg_loadFile(NULL, origin_file_name);
+    int res = 0;
+    if (NULL == file_arg) {
+        __platform_printf("Error: Could not load file '%s'\n",
+                          origin_file_name);
+        return 1;
+    }
+    char* output_file_name = NULL;
+    output_file_name = strsGetLastToken(&buffs, origin_file_name, '/');
+    output_file_name = strsAppend(&buffs, "__asset_", output_file_name);
+    output_file_name = strsReplace(&buffs, output_file_name, ".", "_");
+    output_file_name = strsAppend(&buffs, output_file_name, ".c");
+
+    char* output_file_path = strsAppend(&buffs, out_folder, "/");
+    output_file_path = strsAppend(&buffs, output_file_path, output_file_name);
+
+    FILE* fp = __platform_fopen(output_file_path, "w+");
+    char* array_name = strsGetLastToken(&buffs, origin_file_name, '/');
+    array_name = strsReplace(&buffs, array_name, ".", "_");
+    pika_fputs("const unsigned char", fp);
+    pika_fputs(array_name, fp);
+    pika_fputs("[] = {", fp);
+    char byte_buff[32] = {0};
+    uint8_t* array = arg_getBytes(file_arg);
+    for (size_t i = 0; i < arg_getBytesSize(file_arg); i++) {
+        if (i % 12 == 0) {
+            pika_fputs("\n    ", fp);
+        }
+        __platform_sprintf(byte_buff, "0x%02x, ", array[i]);
+        pika_fputs(byte_buff, fp);
+    }
+
+    pika_fputs("\n};\n", fp);
+    res = 0;
+    goto exit;
+
+exit:
+    __platform_fclose(fp);
+    strsDeinit(&buffs);
+    arg_deinit(file_arg);
+    return res;
 }
