@@ -19,6 +19,10 @@ RUN apt-get install -y \
     ninja-build \
     valgrind \
     python3 \
+    mingw-w64 \
+    mingw-w64-tools  \
+    mingw-w64-i686-dev  \
+    mingw-w64-x86-64-dev  \
     curl
 
 RUN git clone --branch v1.6.1 https://gitee.com/mirrors/google-benchmark benchmark && \
