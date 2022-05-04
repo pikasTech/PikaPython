@@ -228,9 +228,21 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     /* write meta information */
     char buff[LIB_INFO_BLOCK_SIZE] = {0};
     args_foreach(self->list, __foreach_handler_getModuleNum, &handleArgs);
+
+    /* meta info */
+    char magic_code[] = {0x7f, 'p', 'y', 'a'};
+    uint32_t version_num = 1;
     uint32_t module_num = args_getInt(&handleArgs, "module_num");
+
+    /* write meta info */
+    const uint32_t magic_code_offset = sizeof(uint32_t) * 0;
+    const uint32_t version_offset = sizeof(uint32_t) * 1;
+    const uint32_t module_num_offset = sizeof(uint32_t) * 2;
+
+    __platform_memcpy(buff + magic_code_offset, &magic_code, sizeof(uint32_t));
+    __platform_memcpy(buff + version_offset, &version_num, sizeof(uint32_t));
     /* write module_num to the file */
-    __platform_memcpy(buff, &module_num, sizeof(uint32_t));
+    __platform_memcpy(buff + module_num_offset, &module_num, sizeof(uint32_t));
     /* aline to 32 bytes */
     __platform_fwrite(buff, 1, LIB_INFO_BLOCK_SIZE, out_file);
     /* write module index to file */
@@ -245,7 +257,25 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
 }
 
 int LibObj_loadLibrary(LibObj* self, uint8_t* library) {
-    uint32_t module_num = library[0];
+    char* magic_code = (char*)library;
+
+    uint32_t* library_info = (uint32_t*)library;
+    uint32_t version_num = library_info[1];
+    uint32_t module_num = library_info[2];
+
+    /* check magic_code */
+    if (!((magic_code[0] == 0x7f) && (magic_code[1] == 'p') &&
+          (magic_code[2] == 'y') && (magic_code[3] == 'a'))) {
+        __platform_printf("Error: invalid magic code.\r\n");
+        return 1;
+    }
+    /* check version num */
+    if (version_num != LIB_VERSION_NUMBER) {
+        __platform_printf(
+            "Error: invalid version number. Expected %, got %\r\n",
+            LIB_VERSION_NUMBER, version_num);
+        return 2;
+    }
     uint8_t* bytecode_addr = library + LIB_INFO_BLOCK_SIZE * (module_num + 1);
     for (uint32_t i = 0; i < module_num; i++) {
         char* module_name = (char*)(library + LIB_INFO_BLOCK_SIZE * (i + 1));
@@ -259,8 +289,17 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library) {
 
 int LibObj_loadLibraryFile(LibObj* self, char* input_file_name) {
     Arg* file_arg = arg_loadFile(NULL, input_file_name);
+    if (NULL == file_arg) {
+        __platform_printf("Error: Could not load library file '%s'\n",
+                          input_file_name);
+        return 1;
+    }
     /* save file_arg as __lib_buf to libObj */
     obj_setArg_noCopy(self, "__lib_buf", file_arg);
-    LibObj_loadLibrary(self, arg_getBytes(file_arg));
+    if (0 != LibObj_loadLibrary(self, arg_getBytes(file_arg))) {
+        __platform_printf("Error: Could not load library from '%s'\n",
+                          input_file_name);
+        return 2;
+    }
     return 0;
 }

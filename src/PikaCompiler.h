@@ -20,6 +20,7 @@ void LibObj_listModules(LibObj* self);
 int LibObj_saveLibraryFile(LibObj* self, char* output_file_name);
 int LibObj_loadLibraryFile(LibObj* self, char* input_file_name);
 
+#define LIB_VERSION_NUMBER 1
 #define LIB_INFO_BLOCK_SIZE 32
 
 #endif

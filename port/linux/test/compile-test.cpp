@@ -477,3 +477,23 @@ TEST(lib, load_file) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(lib, load_no_file) {
+    /* compile */
+    LibObj* lib = New_LibObj();
+    int res = LibObj_loadLibraryFile(lib, "test/python/mian.py.o");
+    EXPECT_EQ(res, 1);
+    /* deinit */
+    LibObj_deinit(lib);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(lib, load_err_file_type) {
+    /* compile */
+    LibObj* lib = New_LibObj();
+    int res = LibObj_loadLibraryFile(lib, "test/python/main.py.o");
+    EXPECT_EQ(res, 2);
+    /* deinit */
+    LibObj_deinit(lib);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
