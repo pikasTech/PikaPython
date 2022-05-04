@@ -16,22 +16,16 @@ RUN apt-get install -y \
     vim \
     cmake \
     sudo \
-    ninja-build \
-    valgrind \
-    python3 \
-    mingw-w64 \
-    mingw-w64-tools  \
-    mingw-w64-i686-dev  \
-    mingw-w64-x86-64-dev  \
-    curl
+    curl \
+    python3
 
 RUN git clone --branch v1.6.1 https://gitee.com/mirrors/google-benchmark benchmark && \
         cd benchmark && \
         git clone https://gitee.com/mirrors/googletest && \
         cmake -E make_directory "build" && \
         cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../ && \
-        cmake --build "build" --config Release && \
-        sudo cmake --build "build" --config Release --target install
+        cmake --build "build" --config Release -j && \
+        sudo cmake --build "build" --config Release --target install -j
       
 
 # Get Rust
@@ -47,4 +41,16 @@ RUN git config --global user.email "liang6516@outlook.com"
 RUN git config --global user.name "lyon"
 
 
-COPY . /usr/src/pikascript
+RUN apt-get install -y \
+    ninja-build \
+    valgrind \
+    mingw-w64 \
+    mingw-w64-tools  \
+    mingw-w64-i686-dev  \
+    mingw-w64-x86-64-dev  \
+    wine
+
+RUN dpkg --add-architecture i386 && apt-get update && apt-get install wine32 -y
+
+
+COPY . /pikascript
