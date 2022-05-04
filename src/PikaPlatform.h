@@ -41,6 +41,8 @@
 #define PIKA_WEAK __attribute__((weak))
 #elif defined(__IAR_SYSTEMS_ICC__) /* for IAR Compiler */
 #define PIKA_WEAK __weak
+#elif defined(__MINGW32__) /* MINGW32 Compiler */
+#define PIKA_WEAK 
 #elif defined(__GNUC__) /* GNU GCC Compiler */
 #define PIKA_WEAK __attribute__((weak))
 #endif
