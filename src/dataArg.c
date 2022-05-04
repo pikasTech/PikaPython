@@ -364,13 +364,14 @@ void arg_deinitHeap(Arg* self) {
 /* load file as byte array */
 Arg* arg_loadFile(Arg* self, char* filename) {
     char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
+    Arg* res = New_arg(NULL);
     __platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
     FILE* input_file = __platform_fopen(filename, "r");
     if (NULL == input_file) {
         __platform_printf("Error: Couldn't open file '%s'\n", filename);
-        return NULL;
+        res = NULL;
+        goto exit;
     }
-    Arg* res = New_arg(NULL);
     size_t file_size =
         __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_file);
 
@@ -381,8 +382,11 @@ Arg* arg_loadFile(Arg* self, char* filename) {
     /* add '\0' to the end of the string */
     res = arg_setBytes(res, "", (uint8_t*)file_buff, file_size + 1);
 
+exit:
     __platform_free(file_buff);
-    __platform_fclose(input_file);
+    if (NULL != input_file) {
+        __platform_fclose(input_file);
+    }
     return res;
 }
 
