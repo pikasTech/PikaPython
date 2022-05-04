@@ -1,0 +1,398 @@
+B0
+B0
+B0
+0 RUN PikaStdLib.MemChecker
+0 OUT mem
+B0
+0 RUN mem.resetMax
+B0
+0 DEF EXPECT_EQ(test_name,input,expected)
+0 JMP 1
+B1
+1 STR -----TEST-----
+0 RUN print
+B1
+1 REF test_name
+0 RUN print
+B1
+1 REF input
+1 REF expected
+0 OPT !=
+0 JEZ 1
+B2
+1 STR [Error]
+0 RUN print
+B2
+1 REF test_name
+0 RUN print
+B2
+1 STR [info] Expected:
+0 RUN print
+B2
+1 REF expected
+0 RUN print
+B2
+1 STR [info] Input:
+0 RUN print
+B2
+1 REF input
+0 RUN print
+B2
+0 REF True
+0 JEZ 2
+B3
+0 NUM 1
+0 OUT is_err or 
+B2
+0 JMP -1
+B1
+0 NEL 1
+B2
+1 STR [ OK  ]
+0 RUN print
+B1
+0 RET 
+B0
+0 NUM 0
+0 OUT a
+B0
+2 NUM 0
+2 NUM 10
+1 RUN range
+0 RUN iter
+0 OUT _l0
+0 REF _r1
+0 REF _r2
+0 OUT _l0.a2
+0 OUT _l0.a1
+B0
+0 RUN _l0.__next__
+0 OUT i
+0 EST i
+0 JEZ 2
+B1
+1 REF i
+1 NUM 5
+0 OPT ==
+0 JEZ 1
+B2
+0 CTN
+B1
+1 REF a
+1 REF i
+0 OPT +
+0 OUT a
+B0
+0 JMP -1
+B0
+0 DEL _l0
+B0
+1 STR for_if_continue
+1 REF a
+1 NUM 40
+0 RUN EXPECT_EQ
+B0
+0 NUM 0
+0 OUT a
+B0
+2 NUM 0
+2 NUM 10
+1 RUN range
+0 RUN iter
+0 OUT _l0
+0 REF _r1
+0 REF _r2
+0 OUT _l0.a2
+0 OUT _l0.a1
+B0
+0 RUN _l0.__next__
+0 OUT i
+0 EST i
+0 JEZ 2
+B1
+1 REF i
+1 NUM 5
+0 OPT ==
+0 JEZ 1
+B2
+0 BRK
+B1
+1 REF a
+1 REF i
+0 OPT +
+0 OUT a
+B0
+0 JMP -1
+B0
+0 DEL _l0
+B0
+1 STR for_if_break
+1 REF a
+1 NUM 10
+0 RUN EXPECT_EQ
+B0
+0 NUM 0
+0 OUT a
+B0
+2 NUM 0
+2 NUM 10
+1 RUN range
+0 RUN iter
+0 OUT _l0
+0 REF _r1
+0 REF _r2
+0 OUT _l0.a2
+0 OUT _l0.a1
+B0
+0 RUN _l0.__next__
+0 OUT i
+0 EST i
+0 JEZ 2
+B1
+2 NUM 0
+2 NUM 3
+1 RUN range
+0 RUN iter
+0 OUT _l1
+0 REF _r1
+0 REF _r2
+0 OUT _l1.a2
+0 OUT _l1.a1
+B1
+0 RUN _l1.__next__
+0 OUT k
+0 EST k
+0 JEZ 2
+B2
+1 REF a
+1 REF k
+0 OPT +
+0 OUT a
+B1
+0 JMP -1
+B1
+0 DEL _l1
+B0
+0 JMP -1
+B0
+0 DEL _l0
+B0
+1 STR for_for_in_range
+1 REF a
+1 NUM 30
+0 RUN EXPECT_EQ
+B0
+0 NUM 0
+0 OUT a
+B0
+2 NUM 0
+2 NUM 10
+1 RUN range
+0 RUN iter
+0 OUT _l0
+0 REF _r1
+0 REF _r2
+0 OUT _l0.a2
+0 OUT _l0.a1
+B0
+0 RUN _l0.__next__
+0 OUT i
+0 EST i
+0 JEZ 2
+B1
+1 REF a
+1 REF i
+0 OPT +
+0 OUT a
+B0
+0 JMP -1
+B0
+0 DEL _l0
+B0
+1 STR for_in_range
+1 REF a
+1 NUM 45
+0 RUN EXPECT_EQ
+B0
+0 RUN PikaStdData.List
+0 OUT list
+B0
+1 NUM 7
+0 RUN list.append
+B0
+1 STR eee
+0 RUN list.append
+B0
+0 RUN list.len
+0 OUT len
+B0
+1 REF list
+0 RUN iter
+0 OUT _l0
+B0
+0 RUN _l0.__next__
+0 OUT item
+0 EST item
+0 JEZ 2
+B1
+0 REF item
+0 OUT a
+B0
+0 JMP -1
+B0
+0 DEL _l0
+B0
+1 STR list_for_loop
+1 REF a
+1 STR eee
+0 RUN EXPECT_EQ
+B0
+0 RUN PikaStdData.List
+0 OUT list
+B0
+1 NUM 7
+0 RUN list.append
+B0
+1 STR eee
+0 RUN list.append
+B0
+0 RUN list.len
+0 OUT len
+B0
+1 NUM 0
+0 RUN list.get
+0 OUT a1
+B0
+1 NUM 1
+0 RUN list.get
+0 OUT a2
+B0
+1 REF list
+0 RUN iter
+0 OUT res
+B0
+1 STR iter
+1 REF res
+1 REF list
+0 RUN EXPECT_EQ
+B0
+0 RUN PikaStdData.Dict
+0 OUT dict
+B0
+1 STR a
+1 NUM 1
+0 RUN dict.set
+B0
+1 STR b
+1 NUM 2
+0 RUN dict.set
+B0
+1 STR b
+0 RUN dict.remove
+B0
+1 STR a
+0 RUN dict.get
+0 OUT a
+B0
+1 STR b
+0 RUN dict.get
+0 OUT b
+B0
+1 STR PikaStdData
+1 REF a
+1 NUM 1
+0 RUN EXPECT_EQ
+B0
+1 STR PikaStdData_2
+1 REF b
+1 NUM 0
+0 RUN EXPECT_EQ
+B0
+0 NUM 0
+0 OUT num
+B0
+0 NUM 2
+0 OUT i
+B0
+2 NUM 2
+2 NUM 30
+1 RUN range
+0 RUN iter
+0 OUT _l0
+0 REF _r1
+0 REF _r2
+0 OUT _l0.a2
+0 OUT _l0.a1
+B0
+0 RUN _l0.__next__
+0 OUT i
+0 EST i
+0 JEZ 2
+B1
+0 NUM 2
+0 OUT j
+B1
+0 NUM 1
+0 OUT is_prime
+B1
+2 NUM 2
+2 REF i
+1 RUN range
+0 RUN iter
+0 OUT _l1
+0 REF _r1
+0 REF _r2
+0 OUT _l1.a2
+0 OUT _l1.a1
+B1
+0 RUN _l1.__next__
+0 OUT j
+0 EST j
+0 JEZ 2
+B2
+2 REF i
+2 REF j
+1 OPT %
+1 NUM 0
+0 OPT ==
+0 JEZ 1
+B3
+0 NUM 0
+0 OUT is_prime
+B3
+0 BRK
+B1
+0 JMP -1
+B1
+0 DEL _l1
+B1
+0 REF is_prime
+0 JEZ 1
+B2
+1 REF num
+1 REF i
+0 OPT +
+0 OUT num
+B0
+0 JMP -1
+B0
+0 DEL _l0
+B0
+1 STR prime_number_30
+1 REF num
+1 NUM 129
+0 RUN EXPECT_EQ
+B0
+1 STR ====================
+0 RUN print
+B0
+1 STR [Unit Tests Succeed]
+0 RUN print
+B0
+1 STR ====================
+0 RUN print
+B0
+1 STR mem used max:
+0 RUN print
+B0
+0 RUN mem.max

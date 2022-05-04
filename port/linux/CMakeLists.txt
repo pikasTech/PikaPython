@@ -7,6 +7,7 @@ ENDIF(PIKA_CONFIG_ENABLE)
 
 project(pikascript VERSION 0.1.0)
 
+
 include_directories(package/pikascript/pikascript-core)
 include_directories(package/pikascript/pikascript-api)
 include_directories(package/pikascript/pikascript-lib/PikaRunExternControl)
