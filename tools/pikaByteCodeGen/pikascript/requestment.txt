@@ -1,1 +1,1 @@
-pikascript-core==v1.7.1
+pikascript-core==latest

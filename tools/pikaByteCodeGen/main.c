@@ -4,6 +4,7 @@
 #include "PikaObj.h"
 #include "PikaParser.h"
 #include "dataStrs.h"
+#include "PikaCompiler.h"
 
 PikaObj* __pikaMain;
 
@@ -28,6 +29,8 @@ void main() {
     fputs(pika_byte_code, file_byte_code);
     args_deinit(buffs);
     printf("[ OK ]: write file to 'pikaAsm.txt'. \r\n");
+
+    pikaCompileFile("main.py");
 
     Parser_compilePyToBytecodeArray(pyText);
     printf("\r\n\r\npress any key to exit...\r\n");

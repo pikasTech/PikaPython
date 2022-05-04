@@ -1,5 +1,7 @@
 B0
+0 IMP PikaStdLib
 B0
+0 IMP PikaStdData
 B0
 0 RUN PikaStdLib.MemChecker
 0 OUT mem
