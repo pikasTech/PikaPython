@@ -48,7 +48,7 @@ PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 http://pikascript.com
 <img src="document/image/152632673-019a7f92-7b7f-4fb5-92b7-4ae4c26ec865.png" width="500"/>
 
-## 使用 Pika 包管理器[PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download)
+## 使用 Pika 包管理器[PikaPackage.exe](https://pikadoc.readthedocs.io/zh/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
 
 1. 直接运行[PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
 
