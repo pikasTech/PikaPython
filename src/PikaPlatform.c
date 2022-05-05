@@ -100,30 +100,30 @@ PIKA_WEAK void* __platform_memcpy(void* dir, const void* src, size_t size) {
 }
 
 PIKA_WEAK char __platform_getchar(void) {
-#ifdef __linux
+#if defined(__linux)||defined(_WIN32)
     return getchar();
 #else
-    __platform_printf("[error]: __platform_function need implementation!\r\n");
+    __platform_printf("[error]: __platform_getchar need implementation!\r\n");
     while (1) {
     }
 #endif
 }
 
 PIKA_WEAK FILE* __platform_fopen(const char* filename, const char* modes) {
-#ifdef __linux
+#if defined(__linux)||defined(_WIN32)
     return fopen(filename, modes);
 #else
-    __platform_printf("[error]: __platform_function need implementation!\r\n");
+    __platform_printf("[error]: __platform_fopen need implementation!\r\n");
     while (1) {
     }
 #endif
 }
 
 PIKA_WEAK int __platform_fclose(FILE* stream) {
-#ifdef __linux
+#if defined(__linux)||defined(_WIN32)
     return fclose(stream);
 #else
-    __platform_printf("[error]: __platform_function need implementation!\r\n");
+    __platform_printf("[error]: __platform_fclose need implementation!\r\n");
     while (1) {
     }
 #endif
@@ -133,10 +133,10 @@ PIKA_WEAK size_t __platform_fwrite(const void* ptr,
                                    size_t size,
                                    size_t n,
                                    FILE* stream) {
-#ifdef __linux
+#if defined(__linux)||defined(_WIN32)
     return fwrite(ptr, size, n, stream);
 #else
-    __platform_printf("[error]: __platform_function need implementation!\r\n");
+    __platform_printf("[error]: __platform_fwrite need implementation!\r\n");
     while (1) {
     }
 #endif
@@ -146,10 +146,10 @@ PIKA_WEAK size_t __platform_fread(void* ptr,
                                   size_t size,
                                   size_t n,
                                   FILE* stream) {
-#ifdef __linux
+#if defined(__linux)||defined(_WIN32)
     return fread(ptr, size, n, stream);
 #else
-    __platform_printf("[error]: __platform_function need implementation!\r\n");
+    __platform_printf("[error]: __platform_fread need implementation!\r\n");
     while (1) {
     }
 #endif

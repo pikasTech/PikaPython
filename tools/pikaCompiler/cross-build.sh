@@ -10,6 +10,7 @@ cp target/i686-pc-windows-gnu/release/libpikabinder.a libpikabinder
 
 cd ../pikaByteCodeGen
 cp ../pikaCompiler/libpikabinder . -r
+rm pikascript/pikascript-core -r
 cp ../../src pikascript/pikascript-core -r
 
 sh cross-win.sh
