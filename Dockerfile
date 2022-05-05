@@ -52,5 +52,8 @@ RUN apt-get install -y \
 
 RUN dpkg --add-architecture i386 && apt-get update && apt-get install wine32 -y
 
+RUN apt-get install -y golang
+RUN go env -w GO111MODULE=on
+RUN go env -w GOPROXY=https://goproxy.cn
 
-COPY . /pikascript
+COPY . root/pikascript
