@@ -5,10 +5,15 @@
 #include "PikaParser.h"
 #include "dataStrs.h"
 #include "PikaCompiler.h"
+#include "libpikabinder.h"
 
 PikaObj* __pikaMain;
 
 void main() {
+    /* run pika_binder to bind C modules */
+    pika_binder();
+
+
     FILE* file_mian_py = fopen("main.py", "rb");
     if (NULL == file_mian_py) {
         printf("[error]: main.py no found. \r\n");
