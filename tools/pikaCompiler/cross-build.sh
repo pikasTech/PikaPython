@@ -4,9 +4,9 @@ ROOT=$PWD
 rm libpikabinder -rf
 mkdir libpikabinder
 
-cargo build --release --target=x86_64-pc-windows-gnu
+cargo build --release --target=i686-pc-windows-gnu
 cbindgen --config cbindgen.toml --crate rust-msc --output libpikabinder/libpikabinder.h
-cp target/x86_64-pc-windows-gnu/release/libpikabinder.a libpikabinder
+cp target/i686-pc-windows-gnu/release/libpikabinder.a libpikabinder
 
 cd ../pikaByteCodeGen
 cp ../pikaCompiler/libpikabinder . -r

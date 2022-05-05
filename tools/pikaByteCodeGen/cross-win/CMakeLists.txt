@@ -13,7 +13,12 @@ add_executable(pikaByteCodeGen main.c
                ${pikascript-core}
 )
 
-target_link_libraries(pikaByteCodeGen  
+target_link_libraries(pikaByteCodeGen
+        bcrypt
+        user32
+        userenv
+        ws2_32
+        wsock32
         pikabinder
         )
 
