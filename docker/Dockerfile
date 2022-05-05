@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-ADD docker/ubuntu20_sources.list /etc/apt/sources.list
+ADD ubuntu20_sources.list /etc/apt/sources.list
 
 RUN echo 'Asia/Shanghai' >/etc/timezone
 
@@ -48,7 +48,8 @@ RUN apt-get install -y \
     mingw-w64-tools  \
     mingw-w64-i686-dev  \
     mingw-w64-x86-64-dev  \
-    wine
+    wine \
+    cbindgen
 
 RUN dpkg --add-architecture i386 && apt-get update && apt-get install wine32 -y
 
@@ -56,6 +57,10 @@ RUN apt-get install -y golang
 RUN go env -w GO111MODULE=on
 RUN go env -w GOPROXY=https://goproxy.cn
 
-RUN apt-get install -y cbindgen
+RUN git clone https://gitee.com/lyon1998/pikascript  root/pikascript
 
-COPY . root/pikascript
+ADD rust_config /root/.cargo/config
+RUN rustup target add i686-pc-windows-gnu
+
+
+
