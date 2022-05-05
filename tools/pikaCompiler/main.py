@@ -2,7 +2,10 @@ import Arm2D
 import PikaStdLib
 import ctypes
 import module
+import PikaDebug
 
+pdb = PikaDebug.Debuger()
+pdb.set_trace()
 line = Arm2D.Line()
 res = line.on()
 line.off()

@@ -91,8 +91,8 @@ impl Compiler {
                     Ok(file) => file,
                     Err(_) => {
                         println!(
-                            "    [warning]: file: '{}{}.pyi' no found",
-                            self.source_path, file_name
+                            "    [warning]: file: '{}{}.pyi' or '{}{}.py' no found",
+                            self.source_path, file_name, self.source_path, file_name
                         );
                         return self;
                     }
