@@ -1,16 +1,14 @@
 ROOT=$PWD
-cargo build --release
+cargo build --release --target=x86_64-pc-windows-gnu
 cbindgen --config cbindgen.toml --crate rust-msc --output libpikabinder/libpikabinder.h
-cp target/release/libpikabinder.a libpikabinder
+cp target/x86_64-pc-windows-gnu/release/libpikabinder.a libpikabinder
 
 cd ../pikaByteCodeGen
 cp ../pikaCompiler/libpikabinder . -r
 cp ../../src pikascript/pikascript-core -r
-rm build -rf
-mkdir build
-cd build
-cmake ..
-make -j
+
+sh cross-win.sh
+
 cp pikaByteCodeGen $ROOT/rust-msc-latest-linux
 cd $ROOT
 chmod +x rust-msc-latest-linux
