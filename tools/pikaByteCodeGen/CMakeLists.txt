@@ -13,9 +13,21 @@ add_executable(pikaByteCodeGen main.c
                ${pikascript-core}
 )
 
-target_link_libraries(pikaByteCodeGen  
-        pikabinder
-        )
+OPTION(CROSS_COMPILE "cross-compile" OFF)
+IF(CROSS_COMPILE)
+        target_link_libraries(pikaByteCodeGen  
+                pikabinder
+                ws2_32
+                bcrypt
+                user32
+                userenv
+                )
+ELSE(CROSS_COMPILE)
+        target_link_libraries(pikaByteCodeGen  
+                pikabinder
+                )
+ENDIF(CROSS_COMPILE)
+
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

@@ -14,6 +14,6 @@ cp ../../src pikascript/pikascript-core -r
 
 sh cross-win.sh
 
-cp pikaByteCodeGen $ROOT/rust-msc-latest-linux
+cp build-win/pikaByteCodeGen.exe $ROOT/rust-msc-latest-win10.exe
 cd $ROOT
 chmod +x rust-msc-latest-linux
