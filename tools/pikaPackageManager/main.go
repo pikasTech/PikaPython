@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
-	"github.com/codeskyblue/go-sh"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	cp "github.com/otiai10/copy"
@@ -119,18 +118,28 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 		if requerment.Name == "pikascript-core" {
 			packagePath = path + "/src"
 			dirPath = "pikascript-core"
-			err = sh.Command("cp", packagePath+"/../tools/pikaCompiler/rust-msc-latest-win10.exe", ".").Run()
+			CheckIfError(cp.Copy(packagePath+"/../tools/pikaCompiler/rust-msc-latest-win10.exe", "./rust-msc-latest-win10.exe"))
 			CheckIfError(err)
 		}
 		// fmt.Printf("    copy" + " " + packagePath + " " + dirPath + "\n")
 		CheckIfError(cp.Copy(packagePath, dirPath))
 		pyFileList, _ := FilterDirsGlob(packagePath, "*.py")
 		for i := range pyFileList {
-			pyFileSource := pyFileList[i]
+			pyFileSource := strings.ReplaceAll(pyFileList[i], "\\", "/")
 			pyFilePath := strings.Split(pyFileSource, "/")
 			pyFileName := pyFilePath[len(pyFilePath)-1]
 			fmt.Println("    Installed: " + pyFileName)
-			os.Rename(pyFileSource, pyFileName)
+			CheckIfError(os.Rename(pyFileSource, pyFileName))
+		}
+
+
+		pyiFileList, _ := FilterDirsGlob(packagePath, "*.pyi")
+		for i := range pyiFileList {
+			pyFileSource := strings.ReplaceAll(pyiFileList[i], "\\", "/")
+			pyFilePath := strings.Split(pyFileSource, "/")
+			pyFileName := pyFilePath[len(pyFilePath)-1]
+			fmt.Println("    Installed: " + pyFileName)
+			CheckIfError(os.Rename(pyFileSource, pyFileName))
 		}
 
 	}
