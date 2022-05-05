@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2018"
 
 [lib]
-name = "pika_binder"
+name = "pikabinder"
 crate-type = ["staticlib"]
-path = "src/bind_lib.rs"
+path = "src/lib.rs"
 
 [dependencies]
 libc = "0.2"
