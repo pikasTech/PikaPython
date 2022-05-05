@@ -67,6 +67,3 @@ RUN cd /root/pikascript && git pull
 ADD rust_config /root/.cargo/config
 RUN rustup target add i686-pc-windows-gnu
 RUN cd /root/pikascript/tools/pikaCompiler && sh build.sh
-
-
-
