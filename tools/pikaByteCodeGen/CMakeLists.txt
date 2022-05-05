@@ -6,10 +6,16 @@ enable_testing()
 
 aux_source_directory(pikascript/pikascript-core pikascript-core)
 include_directories(pikascript/pikascript-core)
+include_directories(libpikabinder)
+link_directories(libpikabinder)
 
 add_executable(pikaByteCodeGen main.c
                ${pikascript-core}
 )
+
+target_link_libraries(pikaByteCodeGen
+        pikabinder
+        )
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
