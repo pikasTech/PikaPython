@@ -25,6 +25,8 @@ IF(CROSS_COMPILE)
 ELSE(CROSS_COMPILE)
         target_link_libraries(pikaByteCodeGen  
                 pikabinder
+                pthread
+                dl
                 )
 ENDIF(CROSS_COMPILE)
 
