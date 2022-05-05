@@ -85,10 +85,18 @@ impl Compiler {
         let mut file = match file {
             Ok(file) => file,
             Err(_) => {
-                println!(
-                    "    [warning]: file: '{}{}.pyi' no found",
-                    self.source_path, file_name
-                );
+                /* if *.py exits, not print warning */
+                let file_py = Compiler::open_file(format!("{}{}.py", self.source_path, file_name));
+                match file_py {
+                    Ok(file) => file,
+                    Err(_) => {
+                        println!(
+                            "    [warning]: file: '{}{}.pyi' no found",
+                            self.source_path, file_name
+                        );
+                        return self;
+                    }
+                };
                 return self;
             }
         };

@@ -1,6 +1,7 @@
 import Arm2D
 import PikaStdLib
 import ctypes
+import module
 
 line = Arm2D.Line()
 res = line.on()
