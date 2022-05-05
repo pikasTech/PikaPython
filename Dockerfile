@@ -56,4 +56,6 @@ RUN apt-get install -y golang
 RUN go env -w GO111MODULE=on
 RUN go env -w GOPROXY=https://goproxy.cn
 
+RUN apt-get install -y cbindgen
+
 COPY . root/pikascript
