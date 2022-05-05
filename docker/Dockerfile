@@ -1,6 +1,9 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
-ADD ubuntu20_sources.list /etc/apt/sources.list
+ADD ubuntu22_sources.list /etc/apt/sources.list
+RUN touch /etc/apt/apt.conf.d/99verify-peer.conf \
+&& echo >>/etc/apt/apt.conf.d/99verify-peer.conf "Acquire { https::Verify-Peer false }"
+
 
 RUN echo 'Asia/Shanghai' >/etc/timezone
 
@@ -51,16 +54,19 @@ RUN apt-get install -y \
     wine \
     cbindgen
 
-RUN dpkg --add-architecture i386 && apt-get update && apt-get install wine32 -y
+# only need on ubuntu20.04
+# RUN dpkg --add-architecture i386 && apt-get update && apt-get install wine32 -y
 
 RUN apt-get install -y golang
 RUN go env -w GO111MODULE=on
 RUN go env -w GOPROXY=https://goproxy.cn
 
 RUN git clone https://gitee.com/lyon1998/pikascript  root/pikascript
+RUN cd /root/pikascript && git pull
 
 ADD rust_config /root/.cargo/config
 RUN rustup target add i686-pc-windows-gnu
+RUN cd /root/pikascript/tools/pikaCompiler && sh build.sh
 
 
 
