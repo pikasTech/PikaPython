@@ -49,7 +49,7 @@ http://pikascript.com
 
 <img src="document/image/152632673-019a7f92-7b7f-4fb5-92b7-4ae4c26ec865.png" width="500"/>
 
-## Use Pika package manager [PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download)
+## Use Pika package manager [PikaPackage.exe](https://pikadoc.readthedocs.io/zh/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
 
 1. Run the [PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download) directly, then the pikascript repo would be downloaded auto in the /tmp/pikascript folder of your current disc partition.
 
