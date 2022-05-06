@@ -120,9 +120,9 @@ impl Compiler {
         /* check if compiled */
         if self.compiled_list.contains(&file_name) {
         } else if file_name == "main" {
-            println!("    compiling {}{}.py...", self.source_path, file_name);
+            println!("    loading {}{}.py...", self.source_path, file_name);
         } else {
-            println!("    compiling {}{}.pyi...", self.source_path, file_name);
+            println!("    binding {}{}.pyi...", self.source_path, file_name);
         }
         self.compiled_list.push_back(String::clone(&file_name));
         /* solve top package.

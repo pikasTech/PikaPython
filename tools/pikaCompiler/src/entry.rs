@@ -32,7 +32,7 @@ pub fn pika_compiler_entry(){
     compiler = Compiler::__do_analize_file(compiler, String::from("PikaStdData"), true);
     compiler = Compiler::__do_analize_file(compiler, String::from("PikaDebug"), true);
 
-    println!();
+    // println!();
 
     /* write the infomatrion to compiler-info */
     let mut compiler_info_file =

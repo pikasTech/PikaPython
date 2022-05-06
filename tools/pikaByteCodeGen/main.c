@@ -9,9 +9,14 @@
 
 PikaObj* __pikaMain;
 
+void pikaCompileFileWithInfo(char* filename){
+    __platform_printf("    compiling %s...\r\n", filename);
+    pikaCompileFile(filename);
+}
+
 void main() {
     /* run pika_binder to bind C modules */
     pika_binder();
-    pikaCompileFile("main.py");
+    pikaCompileFileWithInfo("main.py");
     return;
 }
