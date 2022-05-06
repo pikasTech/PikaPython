@@ -353,3 +353,34 @@ exit:
     arg_deinit(file_arg);
     return res;
 }
+
+static void __Maker_compileModuleWithInfo(PikaMaker* self, char* module_name) {
+    Args buffs = {0};
+    char* input_file_name = strsAppend(&buffs, module_name, ".py");
+    char* input_file_path =
+        strsAppend(&buffs, obj_getStr(self, "pwd"), input_file_name);
+    __platform_printf("    compiling %s...\r\n", input_file_name);
+    char* output_file_name = strsAppend(&buffs, module_name, ".py.o");
+    char* output_file_path = NULL;
+    output_file_path =
+        strsAppend(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
+    output_file_path = strsAppend(&buffs, output_file_path, output_file_name);
+    pikaCompileFileWithOutputName(output_file_path, input_file_path);
+    strsDeinit(&buffs);
+}
+
+PikaMaker* New_PikaMaker(void) {
+    PikaMaker* self = New_TinyObj(NULL);
+    obj_setStr(self, "pwd", "");
+    return self;
+}
+
+void pikaMaker_setPWD(PikaMaker* self, char* pwd) {
+    obj_setStr(self, "pwd", pwd);
+}
+
+void pikaMaker_compileModule(PikaMaker* self, char* module_name) {
+    __Maker_compileModuleWithInfo(self, module_name);
+    /* update compile info */
+    obj_setStr(self, module_name, "compiled");
+}

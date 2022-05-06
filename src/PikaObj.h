@@ -95,6 +95,7 @@ typedef struct MethodInfo_t {
 } MethodInfo;
 
 typedef PikaObj LibObj;
+typedef PikaObj PikaMaker;
 
 /* operation */
 int32_t obj_deinit(PikaObj* self);

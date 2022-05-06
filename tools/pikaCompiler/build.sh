@@ -7,6 +7,7 @@ cp target/release/libpikabinder.a libpikabinder
 
 cd ../pikaByteCodeGen
 cp ../pikaCompiler/libpikabinder . -r
+rm pikascript/pikascript-core -r
 cp ../../src pikascript/pikascript-core -r
 rm build -rf
 mkdir build

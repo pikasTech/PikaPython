@@ -497,6 +497,20 @@ TEST(lib, load_err_file_type) {
 }
 
 TEST(lib, lib_file_to_array) {
-    Lib_loadLibraryFileToArray("test/python/lib_to_file.py.a",
-                               "test/python");
+    Lib_loadLibraryFileToArray("test/python/lib_to_file.py.a", "test/python");
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(make, maker) {
+    PikaMaker* maker = New_PikaMaker();
+    obj_deinit(maker);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(make, compile) {
+    PikaMaker* maker = New_PikaMaker();
+    pikaMaker_setPWD(maker, "package/pikascript/");
+    pikaMaker_compileModule(maker, "main");
+    obj_deinit(maker);
+    EXPECT_EQ(pikaMemNow(), 0);
 }
