@@ -519,6 +519,7 @@ TEST(make, depend) {
     PikaMaker* maker = New_PikaMaker();
     pikaMaker_setPWD(maker, "package/pikascript/");
     pikaMaker_getDependencies(maker, "main");
+    pikaMaker_printStates(maker);
     obj_deinit(maker);
     EXPECT_EQ(pikaMemNow(), 0);
 }
