@@ -1233,7 +1233,7 @@ void instructArray_update(InstructArray* self) {
     self->content_start = (void*)arg_getContent(self->arg_buff);
 }
 
-static InstructUnit* instructArray_getNow(InstructArray* self) {
+InstructUnit* instructArray_getNow(InstructArray* self) {
     if (self->content_offset_now >= self->size) {
         /* is the end */
         return NULL;
@@ -1242,7 +1242,7 @@ static InstructUnit* instructArray_getNow(InstructArray* self) {
                            (uintptr_t)(self->content_offset_now));
 }
 
-static InstructUnit* instructArray_getNext(InstructArray* self) {
+InstructUnit* instructArray_getNext(InstructArray* self) {
     self->content_offset_now += instructUnit_getSize();
     return instructArray_getNow(self);
 }

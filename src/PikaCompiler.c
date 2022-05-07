@@ -390,17 +390,57 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     ByteCodeFrame bf = {0};
     Args buffs = {0};
     byteCodeFrame_init(&bf);
-    char* file_path = strsAppend(&buffs, obj_getStr(self, "pwd"), module_name);
-    file_path = strsAppend(&buffs, file_path, ".py.o");
+    char* module_path =
+        strsAppend(&buffs, obj_getStr(self, "pwd"), module_name);
+    char* file_path = strsAppend(&buffs, module_path, ".py.o");
     Arg* file_arg = arg_loadFile(NULL, file_path);
     if (NULL == file_arg) {
         res = 1;
         goto exit;
     }
     byteCodeFrame_loadByteCode(&bf, arg_getBytes(file_arg));
-    byteCodeFrame_print(&bf);
+    ConstPool* const_pool = &bf.const_pool;
+    InstructArray* ins_array = &bf.instruct_array;
+
+    uint16_t offset_befor = ins_array->content_offset_now;
+    ins_array->content_offset_now = 0;
+    while (1) {
+        InstructUnit* ins_unit = instructArray_getNow(ins_array);
+        if (NULL == ins_unit) {
+            goto exit;
+        }
+        if (instructUnit_getInstruct(ins_unit) == IMP) {
+            char* imp_module_name =
+                constPool_getByOffset(const_pool, ins_unit->const_pool_index);
+            char* imp_module_path =
+                strsAppend(&buffs, obj_getStr(self, "pwd"), imp_module_name);
+            /* check if compiled the module */
+            if (obj_isArgExist(self, imp_module_name)) {
+                /* module info is exist, do nothing */
+            } else {
+                /* module info is not exist */
+                /* set module to be compile */
+                FILE* imp_file_py = __platform_fopen(
+                    strsAppend(&buffs, imp_module_path, ".py"), "r");
+                FILE* imp_file_pyi = __platform_fopen(
+                    strsAppend(&buffs, imp_module_path, ".pyi"), "r");
+                if (NULL != imp_file_py) {
+                    /* found *.py, push to nocompiled list */
+                    obj_setStr(self, imp_module_name, "nocompiled");
+                    __platform_fclose(imp_file_py);
+                }
+                if (NULL != imp_file_pyi) {
+                    /* found *.py, push to nocompiled list */
+                    obj_setStr(self, imp_module_name, "cmodule");
+                    __platform_fclose(imp_file_pyi);
+                }
+            }
+        }
+        instructArray_getNext(ins_array);
+    }
 
 exit:
+    ins_array->content_offset_now = offset_befor;
     if (NULL != file_arg) {
         arg_deinit(file_arg);
     }
