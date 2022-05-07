@@ -88,7 +88,9 @@ impl Compiler {
                 /* if *.py exits, not print warning */
                 let file_py = Compiler::open_file(format!("{}{}.py", self.source_path, file_name));
                 match file_py {
-                    Ok(file) => file,
+                    Ok(_) => {
+                        return self;
+                    }
                     Err(_) => {
                         println!(
                             "    [warning]: file: '{}{}.pyi' or '{}{}.py' no found",
@@ -97,25 +99,10 @@ impl Compiler {
                         return self;
                     }
                 };
-                return self;
             }
         };
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
-        /* check if 'api' file */
-        let lines: Vec<&str> = file_str.split('\n').collect();
-        let mut is_api = false;
-        if file_name == "main" {
-            is_api = true;
-        }
-        for line in lines.iter() {
-            if line.to_string().starts_with("#api") {
-                is_api = true;
-            }
-        }
-        if !is_api {
-            return self;
-        }
 
         /* check if compiled */
         if self.compiled_list.contains(&file_name) {
