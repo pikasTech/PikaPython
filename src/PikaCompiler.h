@@ -23,6 +23,7 @@ int Lib_loadLibraryFileToArray(char* origin_file_name, char* pikascript_root);
 PikaMaker* New_PikaMaker(void);
 void pikaMaker_setPWD(PikaMaker* self, char* pwd);
 void pikaMaker_compileModule(PikaMaker* self, char* module_name);
+int pikaMaker_getDependencies(PikaMaker* self, char* module_name);
 
 
 #define LIB_VERSION_NUMBER 1

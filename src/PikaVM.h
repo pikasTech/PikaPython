@@ -29,8 +29,8 @@
 #define __PIKA_VM__H
 #include "PikaObj.h"
 #include "dataQueue.h"
-#include "dataStack.h"
 #include "dataQueueObj.h"
+#include "dataStack.h"
 
 enum Instruct {
 #define __INS_ENUM
@@ -126,6 +126,7 @@ void constPool_printAsArray(ConstPool* self);
 void instructArray_printAsArray(InstructArray* self);
 void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes);
 void byteCodeFrame_printAsArray(ByteCodeFrame* self);
+void byteCodeFrame_init(ByteCodeFrame* self);
 VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode);
 
 #endif

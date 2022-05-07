@@ -385,8 +385,26 @@ void pikaMaker_compileModule(PikaMaker* self, char* module_name) {
     obj_setStr(self, module_name, "compiled");
 }
 
-void pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
-    __Maker_compileModuleWithInfo(self, module_name);
-    /* update compile info */
-    obj_setStr(self, module_name, "compiled");
+int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
+    int res = 0;
+    ByteCodeFrame bf = {0};
+    Args buffs = {0};
+    byteCodeFrame_init(&bf);
+    char* file_path = strsAppend(&buffs, obj_getStr(self, "pwd"), module_name);
+    file_path = strsAppend(&buffs, file_path, ".py.o");
+    Arg* file_arg = arg_loadFile(NULL, file_path);
+    if (NULL == file_arg) {
+        res = 1;
+        goto exit;
+    }
+    byteCodeFrame_loadByteCode(&bf, arg_getBytes(file_arg));
+    byteCodeFrame_print(&bf);
+
+exit:
+    if (NULL != file_arg) {
+        arg_deinit(file_arg);
+    }
+    strsDeinit(&buffs);
+    byteCodeFrame_deinit(&bf);
+    return res;
 }
