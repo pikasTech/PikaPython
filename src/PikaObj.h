@@ -247,6 +247,8 @@ int32_t obj_newObj(PikaObj* self,
 Arg* arg_newMetaObj(NewFun objPtr);
 PikaObj* obj_linkLibrary(PikaObj* self, LibObj* library);
 int obj_importModule(PikaObj* self, char* module_name);
+int32_t obj_newMetaObj(PikaObj* self, char* objName, NewFun newFunPtr);
+int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr);
 
 #define PIKA_PYTHON_BEGIN
 #define PIKA_PYTHON(x)

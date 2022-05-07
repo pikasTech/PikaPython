@@ -24,6 +24,7 @@ PikaMaker* New_PikaMaker(void);
 void pikaMaker_setPWD(PikaMaker* self, char* pwd);
 void pikaMaker_compileModule(PikaMaker* self, char* module_name);
 int pikaMaker_getDependencies(PikaMaker* self, char* module_name);
+void pikaMaker_printStates(PikaMaker* self);
 
 
 #define LIB_VERSION_NUMBER 1

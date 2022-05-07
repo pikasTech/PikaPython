@@ -4,6 +4,7 @@ import ctypes
 import GTestTask
 import PikaMath
 import PikaStdDevice
+import test_module1
 
 
 

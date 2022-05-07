@@ -379,10 +379,17 @@ void pikaMaker_setPWD(PikaMaker* self, char* pwd) {
     obj_setStr(self, "pwd", pwd);
 }
 
+void pikaMaker_setState(PikaMaker* self, char* module_name, char* state) {
+    obj_newMetaObj(self, module_name, New_TinyObj);
+    PikaObj* module_obj = obj_getObj(self, module_name);
+    obj_setStr(module_obj, "name", module_name);
+    obj_setStr(module_obj, "state", state);
+}
+
 void pikaMaker_compileModule(PikaMaker* self, char* module_name) {
     __Maker_compileModuleWithInfo(self, module_name);
     /* update compile info */
-    obj_setStr(self, module_name, "compiled");
+    pikaMaker_setState(self, module_name, "compiled");
 }
 
 int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
@@ -391,7 +398,8 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     Args buffs = {0};
     byteCodeFrame_init(&bf);
     char* module_path =
-        strsAppend(&buffs, obj_getStr(self, "pwd"), module_name);
+        strsAppend(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
+    module_path = strsAppend(&buffs, module_path, module_name);
     char* file_path = strsAppend(&buffs, module_path, ".py.o");
     Arg* file_arg = arg_loadFile(NULL, file_path);
     if (NULL == file_arg) {
@@ -426,13 +434,16 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                     strsAppend(&buffs, imp_module_path, ".pyi"), "r");
                 if (NULL != imp_file_py) {
                     /* found *.py, push to nocompiled list */
-                    obj_setStr(self, imp_module_name, "nocompiled");
+                    pikaMaker_setState(self, imp_module_name, "nocompiled");
                     __platform_fclose(imp_file_py);
-                }
-                if (NULL != imp_file_pyi) {
+                } else if (NULL != imp_file_pyi) {
                     /* found *.py, push to nocompiled list */
-                    obj_setStr(self, imp_module_name, "cmodule");
+                    pikaMaker_setState(self, imp_module_name, "cmodule");
                     __platform_fclose(imp_file_pyi);
+                } else {
+                    __platform_printf(
+                        "    [warning]: file: '%s.pyi' or '%s.py' no found",
+                        imp_module_name, imp_module_name);
                 }
             }
         }
@@ -447,4 +458,17 @@ exit:
     strsDeinit(&buffs);
     byteCodeFrame_deinit(&bf);
     return res;
+}
+
+int32_t __foreach_handler_printStates(Arg* argEach, Args* handleArgs) {
+    if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
+        PikaObj* module_obj = arg_getPtr(argEach);
+        __platform_printf("%s: %s\r\n", obj_getStr(module_obj, "name"),
+                          obj_getStr(module_obj, "state"));
+    }
+    return 0;
+}
+
+void pikaMaker_printStates(PikaMaker* self) {
+    args_foreach(self->list, __foreach_handler_printStates, NULL);
 }
