@@ -384,3 +384,9 @@ void pikaMaker_compileModule(PikaMaker* self, char* module_name) {
     /* update compile info */
     obj_setStr(self, module_name, "compiled");
 }
+
+void pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
+    __Maker_compileModuleWithInfo(self, module_name);
+    /* update compile info */
+    obj_setStr(self, module_name, "compiled");
+}
