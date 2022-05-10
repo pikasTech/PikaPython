@@ -52,9 +52,34 @@ impl Compiler {
             if package_name == "PikaObj" {
                 return compiler;
             }
+            /* add to script */
+            class_now.script_list.add(&line);
+
+            /* check file, break if *.py no found */
+            match Compiler::open_file(format!("{}{}.pyi", compiler.source_path, package_name)) {
+                Ok(_) => {}
+                Err(_) => {
+                    /* if *.py exits, not print warning */
+                    match Compiler::open_file(format!(
+                        "{}{}.py",
+                        compiler.source_path, package_name
+                    )) {
+                        Ok(_) => {
+                            return compiler;
+                        }
+                        Err(_) => {
+                            println!(
+                                "    [warning]: file: '{}{}.pyi' or '{}{}.py' no found",
+                                compiler.source_path, file_name, compiler.source_path, file_name
+                            );
+                            return compiler;
+                        }
+                    };
+                }
+            };
+
             let package_obj_define = format!("{} = {}()", package_name, package_name);
             class_now.push_object(package_obj_define, &file_name);
-            class_now.script_list.add(&line);
             return Compiler::__do_analize_file(compiler, package_name.to_string(), true);
         }
         class_now.script_list.add(&line);
