@@ -167,7 +167,7 @@ int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
     return 0;
 }
 
-static int32_t __foreach_handler_listModules(Arg* argEach, Args* handleArgs) {
+static int32_t __foreach_handler_listModules(Arg* argEach, Args* context) {
     if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
         PikaObj* module_obj = arg_getPtr(argEach);
         __platform_printf("%s\r\n", obj_getStr(module_obj, "name"));
@@ -179,8 +179,8 @@ void LibObj_listModules(LibObj* self) {
     args_foreach(self->list, __foreach_handler_listModules, NULL);
 }
 
-static int32_t __foreach_handler_writeBytecode(Arg* argEach, Args* handleArgs) {
-    FILE* out_file = args_getPtr(handleArgs, "out_file");
+static int32_t __foreach_handler_writeBytecode(Arg* argEach, Args* context) {
+    FILE* out_file = args_getPtr(context, "out_file");
     if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
         PikaObj* module_obj = arg_getPtr(argEach);
         char* bytecode = obj_getPtr(module_obj, "bytecode");
@@ -194,8 +194,8 @@ static int32_t __foreach_handler_writeBytecode(Arg* argEach, Args* handleArgs) {
     return 0;
 }
 
-static int32_t __foreach_handler_writeIndex(Arg* argEach, Args* handleArgs) {
-    FILE* out_file = args_getPtr(handleArgs, "out_file");
+static int32_t __foreach_handler_writeIndex(Arg* argEach, Args* context) {
+    FILE* out_file = args_getPtr(context, "out_file");
     if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
         PikaObj* module_obj = arg_getPtr(argEach);
         uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
@@ -210,10 +210,10 @@ static int32_t __foreach_handler_writeIndex(Arg* argEach, Args* handleArgs) {
     return 0;
 }
 
-static int32_t __foreach_handler_getModuleNum(Arg* argEach, Args* handleArgs) {
+static int32_t __foreach_handler_getModuleNum(Arg* argEach, Args* context) {
     if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
-        args_setInt(handleArgs, "module_num",
-                    args_getInt(handleArgs, "module_num") + 1);
+        args_setInt(context, "module_num",
+                    args_getInt(context, "module_num") + 1);
     }
     return 0;
 }
@@ -221,18 +221,18 @@ static int32_t __foreach_handler_getModuleNum(Arg* argEach, Args* handleArgs) {
 int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     FILE* out_file = __platform_fopen(output_file_name, "w+");
 
-    Args handleArgs = {0};
-    args_setPtr(&handleArgs, "out_file", out_file);
-    args_setInt(&handleArgs, "module_num", 0);
+    Args context = {0};
+    args_setPtr(&context, "out_file", out_file);
+    args_setInt(&context, "module_num", 0);
 
     /* write meta information */
     char buff[LIB_INFO_BLOCK_SIZE] = {0};
-    args_foreach(self->list, __foreach_handler_getModuleNum, &handleArgs);
+    args_foreach(self->list, __foreach_handler_getModuleNum, &context);
 
     /* meta info */
     char magic_code[] = {0x7f, 'p', 'y', 'a'};
     uint32_t version_num = 1;
-    uint32_t module_num = args_getInt(&handleArgs, "module_num");
+    uint32_t module_num = args_getInt(&context, "module_num");
 
     /* write meta info */
     const uint32_t magic_code_offset = sizeof(uint32_t) * 0;
@@ -246,10 +246,10 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     /* aline to 32 bytes */
     __platform_fwrite(buff, 1, LIB_INFO_BLOCK_SIZE, out_file);
     /* write module index to file */
-    args_foreach(self->list, __foreach_handler_writeIndex, &handleArgs);
+    args_foreach(self->list, __foreach_handler_writeIndex, &context);
     /* write module bytecode to file */
-    args_foreach(self->list, __foreach_handler_writeBytecode, &handleArgs);
-    args_deinit_stack(&handleArgs);
+    args_foreach(self->list, __foreach_handler_writeBytecode, &context);
+    args_deinit_stack(&context);
     /* main process */
     /* deinit */
     __platform_fclose(out_file);
@@ -460,7 +460,7 @@ exit:
     return res;
 }
 
-int32_t __foreach_handler_printStates(Arg* argEach, Args* handleArgs) {
+int32_t __foreach_handler_printStates(Arg* argEach, Args* context) {
     if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
         PikaObj* module_obj = arg_getPtr(argEach);
         __platform_printf("%s: %s\r\n", obj_getStr(module_obj, "name"),
@@ -471,4 +471,35 @@ int32_t __foreach_handler_printStates(Arg* argEach, Args* handleArgs) {
 
 void pikaMaker_printStates(PikaMaker* self) {
     args_foreach(self->list, __foreach_handler_printStates, NULL);
+}
+
+int32_t __foreach_handler_getFirstNocompiled(Arg* argEach, Args* context) {
+    if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
+        PikaObj* module_obj = arg_getPtr(argEach);
+        char* state = obj_getStr(module_obj, "state");
+        if (args_isArgExist(context, "res")) {
+            /* already get method */
+            return 0;
+        }
+        if (strEqu("nocompiled", state)) {
+            /* push module */
+            args_setStr(context, "res", obj_getStr(module_obj, "name"));
+            return 0;
+        }
+    }
+    return 0;
+}
+
+char* pikaMaker_getFirstNocompiled(PikaMaker* self) {
+    Args context = {0};
+    args_foreach(self->list, __foreach_handler_getFirstNocompiled, &context);
+    char* res = args_getStr(&context, "res");
+    if(NULL == res) {
+        /* remove res in maker */
+        obj_removeArg(self, "res");
+    }else{
+        obj_setStr(self, "res", res);
+    }
+    args_deinit_stack(&context);
+    return obj_getStr(self, "res");
 }

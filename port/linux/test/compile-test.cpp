@@ -520,6 +520,22 @@ TEST(make, depend) {
     pikaMaker_setPWD(maker, "package/pikascript/");
     pikaMaker_getDependencies(maker, "main");
     pikaMaker_printStates(maker);
+    char* uncompiled = pikaMaker_getFirstNocompiled(maker);
+    EXPECT_STREQ(uncompiled, "test_module1");
+    obj_deinit(maker);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(make, compile_depend) {
+    PikaMaker* maker = New_PikaMaker();
+    pikaMaker_setPWD(maker, "package/pikascript/");
+    pikaMaker_getDependencies(maker, "main");
+    char* uncompiled = pikaMaker_getFirstNocompiled(maker);
+    pikaMaker_compileModule(maker, uncompiled);
+    pikaMaker_getDependencies(maker, uncompiled);
+    uncompiled = pikaMaker_getFirstNocompiled(maker);
+    EXPECT_STREQ(uncompiled, "test_module3");
+    pikaMaker_printStates(maker);
     obj_deinit(maker);
     EXPECT_EQ(pikaMemNow(), 0);
 }
