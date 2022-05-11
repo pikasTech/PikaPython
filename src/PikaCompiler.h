@@ -27,6 +27,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name);
 void pikaMaker_printStates(PikaMaker* self);
 char* pikaMaker_getFirstNocompiled(PikaMaker* self);
 void pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name);
+void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name);
 
 
 #define LIB_VERSION_NUMBER 1

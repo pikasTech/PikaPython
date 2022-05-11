@@ -517,3 +517,21 @@ void pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name) {
         pikaMaker_getDependencies(self, uncompiled);
     }
 }
+
+int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
+    if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
+        LibObj* lib = args_getPtr(context, "__lib");
+        PikaObj* module_obj = arg_getPtr(argEach);
+        char* module_name = obj_getStr(module_obj, "name");
+    }
+    return 0;
+}
+
+void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
+    Args context = {0};
+    LibObj* lib = New_LibObj();
+    args_setPtr(&context, "__lib", lib);
+    args_foreach(self->list, __foreach_handler_linkCompiledModules, &context);
+    args_deinit_stack(&context);
+    LibObj_deinit(lib);
+}

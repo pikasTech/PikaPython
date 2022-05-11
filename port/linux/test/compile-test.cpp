@@ -548,3 +548,13 @@ TEST(make, compile_depend_all) {
     obj_deinit(maker);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(make, compile_link_all) {
+    PikaMaker* maker = New_PikaMaker();
+    pikaMaker_setPWD(maker, "package/pikascript/");
+    pikaMaker_compileModuleWithDepends(maker, "main");
+    pikaMaker_printStates(maker);
+    pikaMaker_linkCompiledModules(maker, "modules.a") ;
+    obj_deinit(maker);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
