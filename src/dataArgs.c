@@ -463,8 +463,8 @@ int32_t args_setPtrWithType(Args* self,
 }
 
 int32_t args_foreach(Args* self,
-                     int32_t (*eachHandle)(Arg* argEach, Args* handleArgs),
-                     Args* handleArgs) {
+                     int32_t (*eachHandle)(Arg* argEach, Args* context),
+                     Args* context) {
     if (NULL == self->firstNode) {
         return 0;
     }
@@ -475,7 +475,7 @@ int32_t args_foreach(Args* self,
             continue;
         }
         LinkNode* nextNode = content_getNext(nodeNow);
-        eachHandle(argNow, handleArgs);
+        eachHandle(argNow, context);
 
         if (NULL == nextNode) {
             break;
