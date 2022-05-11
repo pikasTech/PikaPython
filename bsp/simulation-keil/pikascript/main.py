@@ -2,6 +2,7 @@ from PikaObj import *
 import Device
 import PikaStdLib
 import PikaStdData
+import hello
 
 led = Device.LED()
 uart = Device.Uart()
@@ -15,3 +16,5 @@ print('mem used max:')
 mem.max()
 print('mem used now:')
 mem.now()
+
+hello.hi()

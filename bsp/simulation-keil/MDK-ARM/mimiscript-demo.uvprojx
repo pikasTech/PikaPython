@@ -774,6 +774,11 @@
               <FilePath>..\pikascript\main.py</FilePath>
             </File>
             <File>
+              <FileName>hello.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\hello.py</FilePath>
+            </File>
+            <File>
               <FileName>Device.pyi</FileName>
               <FileType>5</FileType>
               <FilePath>..\pikascript\Device.pyi</FilePath>
