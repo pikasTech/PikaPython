@@ -519,19 +519,39 @@ void pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name) {
 }
 
 int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
+    Args buffs = {0};
     if (arg_getType(argEach) == ARG_TYPE_OBJECT) {
         LibObj* lib = args_getPtr(context, "__lib");
+        PikaMaker* maker = args_getPtr(context, "__maker");
         PikaObj* module_obj = arg_getPtr(argEach);
         char* module_name = obj_getStr(module_obj, "name");
+        char* state = obj_getStr(module_obj, "state");
+        if (strEqu(state, "compiled")) {
+            char* pwd = obj_getStr(maker, "pwd");
+            char* folder_path = strsAppend(&buffs, pwd, "pikascript-api/");
+            char* module_file_name = strsAppend(&buffs, module_name, ".py.o");
+            char* module_file_path =
+                strsAppend(&buffs, folder_path, module_file_name);
+            LibObj_staticLinkFile(lib, module_file_path);
+        }
     }
+    strsDeinit(&buffs);
     return 0;
 }
 
 void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
     Args context = {0};
     LibObj* lib = New_LibObj();
+    Args buffs = {0};
+    __platform_printf("    linking %s...\n", lib_name);
     args_setPtr(&context, "__lib", lib);
+    args_setPtr(&context, "__maker", self);
     args_foreach(self->list, __foreach_handler_linkCompiledModules, &context);
     args_deinit_stack(&context);
+    char* pwd = obj_getStr(self, "pwd");
+    char* folder_path = strsAppend(&buffs, pwd, "pikascript-api/");
+    char* lib_file_path = strsAppend(&buffs, folder_path, lib_name);
+    LibObj_saveLibraryFile(lib, lib_file_path);
     LibObj_deinit(lib);
+    strsDeinit(&buffs);
 }

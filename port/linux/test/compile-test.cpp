@@ -554,7 +554,7 @@ TEST(make, compile_link_all) {
     pikaMaker_setPWD(maker, "package/pikascript/");
     pikaMaker_compileModuleWithDepends(maker, "main");
     pikaMaker_printStates(maker);
-    pikaMaker_linkCompiledModules(maker, "modules.a") ;
+    pikaMaker_linkCompiledModules(maker, "pikaModules.py.a") ;
     obj_deinit(maker);
     EXPECT_EQ(pikaMemNow(), 0);
 }
