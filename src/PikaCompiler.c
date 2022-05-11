@@ -330,7 +330,8 @@ int Lib_loadLibraryFileToArray(char* origin_file_name, char* out_folder) {
     FILE* fp = __platform_fopen(output_file_path, "w+");
     char* array_name = strsGetLastToken(&buffs, origin_file_name, '/');
     array_name = strsReplace(&buffs, array_name, ".", "_");
-    pika_fputs("const unsigned char", fp);
+    __platform_printf("    loading %s[]...\n", array_name);
+    pika_fputs("const unsigned char ", fp);
     pika_fputs(array_name, fp);
     pika_fputs("[] = {", fp);
     char byte_buff[32] = {0};
@@ -552,6 +553,7 @@ void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
     char* folder_path = strsAppend(&buffs, pwd, "pikascript-api/");
     char* lib_file_path = strsAppend(&buffs, folder_path, lib_name);
     LibObj_saveLibraryFile(lib, lib_file_path);
+    Lib_loadLibraryFileToArray(lib_file_path, folder_path);
     LibObj_deinit(lib);
     strsDeinit(&buffs);
 }
