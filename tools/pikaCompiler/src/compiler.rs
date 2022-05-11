@@ -132,7 +132,7 @@ impl Compiler {
         /* check if compiled */
         if self.compiled_list.contains(&file_name) {
         } else if file_name == "main" {
-            println!("    loading {}{}.py...", self.source_path, file_name);
+            println!("    scaning {}{}.py...", self.source_path, file_name);
         } else {
             println!("    binding {}{}.pyi...", self.source_path, file_name);
         }

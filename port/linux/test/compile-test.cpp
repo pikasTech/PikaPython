@@ -543,17 +543,7 @@ TEST(make, compile_depend) {
 TEST(make, compile_depend_all) {
     PikaMaker* maker = New_PikaMaker();
     pikaMaker_setPWD(maker, "package/pikascript/");
-    pikaMaker_compileModule(maker, "main");
-    pikaMaker_getDependencies(maker, "main");
-    while (1) {
-        char* uncompiled = pikaMaker_getFirstNocompiled(maker);
-        /* compiled all modules */
-        if(NULL == uncompiled){
-            break;
-        }
-        pikaMaker_compileModule(maker, uncompiled);
-        pikaMaker_getDependencies(maker, uncompiled);
-    }
+    pikaMaker_compileModuleWithDepends(maker, "main");
     pikaMaker_printStates(maker);
     obj_deinit(maker);
     EXPECT_EQ(pikaMemNow(), 0);

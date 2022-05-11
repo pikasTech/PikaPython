@@ -494,12 +494,26 @@ char* pikaMaker_getFirstNocompiled(PikaMaker* self) {
     Args context = {0};
     args_foreach(self->list, __foreach_handler_getFirstNocompiled, &context);
     char* res = args_getStr(&context, "res");
-    if(NULL == res) {
+    if (NULL == res) {
         /* remove res in maker */
         obj_removeArg(self, "res");
-    }else{
+    } else {
         obj_setStr(self, "res", res);
     }
     args_deinit_stack(&context);
     return obj_getStr(self, "res");
+}
+
+void pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name) {
+    pikaMaker_compileModule(self, module_name);
+    pikaMaker_getDependencies(self, module_name);
+    while (1) {
+        char* uncompiled = pikaMaker_getFirstNocompiled(self);
+        /* compiled all modules */
+        if (NULL == uncompiled) {
+            break;
+        }
+        pikaMaker_compileModule(self, uncompiled);
+        pikaMaker_getDependencies(self, uncompiled);
+    }
 }
