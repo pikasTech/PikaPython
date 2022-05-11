@@ -648,6 +648,11 @@
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-core\TinyObj.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaCompiler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-core\PikaCompiler.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -674,9 +679,19 @@
               <FilePath>..\pikascript\pikascript-api/pikaScript.c</FilePath>
             </File>
             <File>
+              <FileName>Device_LED-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/Device_LED-api.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdTask_Task-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdTask_Task-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>Device-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/Device-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaDebug-api.c</FileName>
@@ -709,6 +724,11 @@
               <FilePath>..\pikascript\pikascript-api/PikaStdData-api.c</FilePath>
             </File>
             <File>
+              <FileName>Device_Uart-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/Device_Uart-api.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdData_ByteArray-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdData_ByteArray-api.c</FilePath>
@@ -739,19 +759,9 @@
               <FilePath>..\pikascript\pikascript-api/PikaStdTask-api.c</FilePath>
             </File>
             <File>
-              <FileName>Device_LED-api.c</FileName>
+              <FileName>__asset_pikaModules_py_a.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\Device_LED-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>Device_Uart-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\Device_Uart-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>Device-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\Device-api.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api/__asset_pikaModules_py_a.c</FilePath>
             </File>
           </Files>
         </Group>
