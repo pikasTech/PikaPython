@@ -327,13 +327,13 @@ TEST(compiler, file2) {
 }
 
 TEST(lib, init) {
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
     LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(lib, lib_link_bytecode) {
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
     LibObj_dynamicLink(lib, "module1", (uint8_t*)0x3344);
     LibObj_dynamicLink(lib, "module2", (uint8_t*)0x33433);
     LibObj_dynamicLink(lib, "module3", (uint8_t*)0x33433);
@@ -347,7 +347,7 @@ TEST(lib, lib_link_bytecode) {
 }
 
 TEST(lib, lib_push_file) {
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
     LibObj_staticLinkFile(lib, "test/python/main.py.o");
     /* deinit */
     LibObj_deinit(lib);
@@ -355,7 +355,7 @@ TEST(lib, lib_push_file) {
 }
 
 TEST(lib, lib_push_files) {
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
     LibObj_staticLinkFile(lib, "test/python/main.py.o");
     LibObj_staticLinkFile(lib, "test/python/main_snake_LCD.py.o");
     LibObj_listModules(lib);
@@ -368,7 +368,7 @@ TEST(lib, lib_push_files) {
 }
 
 TEST(lib, lib_compile_link) {
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
 
     pikaCompileFile("test/python/UnitTest.py");
     pikaCompileFile("test/python/main.py");
@@ -389,14 +389,14 @@ TEST(lib, lib_compile_link) {
 }
 
 TEST(lib, compile_link_import) {
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
 
     pikaCompileFile("test/python/test_module1.py");
     LibObj_staticLinkFile(lib, "test/python/test_module1.py.o");
     LibObj_listModules(lib);
 
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    obj_linkLibrary(pikaMain, lib);
+    obj_linkLibObj(pikaMain, lib);
     obj_run(pikaMain,
             "import test_module1\n"
             "test_module1.mytest()\n");
@@ -409,7 +409,7 @@ TEST(lib, compile_link_import) {
 }
 
 TEST(lib, lib_to_file) {
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
 
     pikaCompileFile("test/python/UnitTest.py");
     pikaCompileFile("test/python/main.py");
@@ -431,7 +431,7 @@ TEST(lib, lib_to_file) {
 }
 
 TEST(lib, save2) {
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
 
     pikaCompileFile("test/python/test_module1.py");
     pikaCompileFile("test/python/test_module2.py");
@@ -454,11 +454,11 @@ TEST(lib, save2) {
 
 TEST(lib, load_file) {
     /* compile */
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
     LibObj_loadLibraryFile(lib, "test/python/test_module.py.a");
 
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    obj_linkLibrary(pikaMain, lib);
+    obj_linkLibObj(pikaMain, lib);
     obj_run(pikaMain,
             "import test_module1\n"
             "import test_module2\n"
@@ -478,7 +478,7 @@ TEST(lib, load_file) {
 
 TEST(lib, load_no_file) {
     /* compile */
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
     int res = LibObj_loadLibraryFile(lib, "test/python/mian.py.o");
     EXPECT_EQ(res, 1);
     /* deinit */
@@ -488,7 +488,7 @@ TEST(lib, load_no_file) {
 
 TEST(lib, load_err_file_type) {
     /* compile */
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
     int res = LibObj_loadLibraryFile(lib, "test/python/main.py.o");
     EXPECT_EQ(res, 2);
     /* deinit */

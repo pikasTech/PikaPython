@@ -8,7 +8,7 @@ int pikaCompileFileWithOutputName(char* output_file_name,
                                   char* input_file_name);
 int pikaCompile(char* output_file_name, char* py_lines);
 
-LibObj* New_LibObj(void);
+LibObj* New_LibObj(Args* args);
 void LibObj_deinit(LibObj* self);
 void LibObj_dynamicLink(LibObj* self, char* module_name, uint8_t* bytecode);
 int LibObj_staticLink(LibObj* self,
@@ -28,7 +28,7 @@ void pikaMaker_printStates(PikaMaker* self);
 char* pikaMaker_getFirstNocompiled(PikaMaker* self);
 void pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name);
 void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name);
-
+int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes);
 
 #define LIB_VERSION_NUMBER 1
 #define LIB_INFO_BLOCK_SIZE 32

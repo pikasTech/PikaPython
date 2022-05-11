@@ -113,7 +113,7 @@ int pikaCompileFile(char* input_file_name) {
     return 0;
 }
 
-LibObj* New_LibObj(void) {
+LibObj* New_LibObj(Args* args) {
     LibObj* self = New_TinyObj(NULL);
     return self;
 }
@@ -256,10 +256,10 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     return 0;
 }
 
-int LibObj_loadLibrary(LibObj* self, uint8_t* library) {
-    char* magic_code = (char*)library;
+int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
+    char* magic_code = (char*)library_bytes;
 
-    uint32_t* library_info = (uint32_t*)library;
+    uint32_t* library_info = (uint32_t*)library_bytes;
     uint32_t version_num = library_info[1];
     uint32_t module_num = library_info[2];
 
@@ -276,9 +276,11 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library) {
             LIB_VERSION_NUMBER, version_num);
         return 2;
     }
-    uint8_t* bytecode_addr = library + LIB_INFO_BLOCK_SIZE * (module_num + 1);
+    uint8_t* bytecode_addr =
+        library_bytes + LIB_INFO_BLOCK_SIZE * (module_num + 1);
     for (uint32_t i = 0; i < module_num; i++) {
-        char* module_name = (char*)(library + LIB_INFO_BLOCK_SIZE * (i + 1));
+        char* module_name =
+            (char*)(library_bytes + LIB_INFO_BLOCK_SIZE * (i + 1));
         LibObj_dynamicLink(self, module_name, bytecode_addr);
         uint32_t module_size =
             *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
@@ -542,7 +544,7 @@ int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
 
 void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
     Args context = {0};
-    LibObj* lib = New_LibObj();
+    LibObj* lib = New_LibObj(NULL);
     Args buffs = {0};
     __platform_printf("    linking %s...\n", lib_name);
     args_setPtr(&context, "__lib", lib);
