@@ -100,12 +100,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   /* user input buff */
 	
-	char inputBuff[256] = {0};
   while (1)
   {
-    fgets(inputBuff, sizeof(inputBuff), stdin);
-    printf(">>> %s", inputBuff);
-    obj_run(pikaMain, inputBuff);
   }
   /* USER CODE END 3 */
 }
