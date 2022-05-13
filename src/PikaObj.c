@@ -373,8 +373,6 @@ extern PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
     PikaObj* newObj = NewObjDirect(newObjFun);
     __pikaMain = newObj;
-    extern unsigned char pikaModules_py_a[];
-    obj_linkLibrary(newObj, pikaModules_py_a);
     return newObj;
 }
 

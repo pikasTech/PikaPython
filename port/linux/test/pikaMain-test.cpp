@@ -1701,7 +1701,7 @@ TEST(pikaMain, cmodule_in_py) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     /* run */
-    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    PikaObj* pikaMain = pikaScriptInit();
     char* lines =
         "import test_cmodule\n"
         "test_cmodule.test_mem()\n";
