@@ -942,7 +942,7 @@ PikaObj* obj_linkLibObj(PikaObj* self, LibObj* library) {
     return self;
 }
 
-uint8_t* obj_getModuleByteCode(PikaObj* self, char* module_name) {
+uint8_t* obj_getByteCodeFromModule(PikaObj* self, char* module_name) {
     /* exit when no found '__lib' */
     if (!obj_isArgExist(self, "__lib")) {
         return NULL;
@@ -958,7 +958,7 @@ uint8_t* obj_getModuleByteCode(PikaObj* self, char* module_name) {
 }
 
 int obj_runModule(PikaObj* self, char* module_name) {
-    uint8_t* bytecode = obj_getModuleByteCode(self, module_name);
+    uint8_t* bytecode = obj_getByteCodeFromModule(self, module_name);
     if (NULL == bytecode) {
         return 1;
     }
@@ -968,7 +968,7 @@ int obj_runModule(PikaObj* self, char* module_name) {
 
 int obj_importModule(PikaObj* self, char* module_name) {
     /* import bytecode of the module */
-    uint8_t* bytecode = obj_getModuleByteCode(self, module_name);
+    uint8_t* bytecode = obj_getByteCodeFromModule(self, module_name);
     if (NULL == bytecode) {
         return 1;
     }
