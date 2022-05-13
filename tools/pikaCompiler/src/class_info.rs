@@ -148,6 +148,7 @@ impl ClassInfo {
         /* use obj_run to run the script in main.pyi */
         script_fn.push_str("    extern unsigned char pikaModules_py_a[];\n");
         script_fn.push_str("    obj_linkLibrary(__pikaMain, pikaModules_py_a);\n");
+        script_fn.push_str("#if PIKA_INIT_STRING_ENABLE\n");
         script_fn.push_str("    obj_run(__pikaMain,\n");
         /* get the origin script content */
         let script_content_origin = String::from(&self.script_list.content);
@@ -164,6 +165,9 @@ impl ClassInfo {
         script_fn.push_str(&script_content);
         /* add the END of script string */
         script_fn.push_str("            \"\\n\");\n");
+        script_fn.push_str("#else \n");
+        script_fn.push_str("    obj_runModule(__pikaMain, \"main\");\n");
+        script_fn.push_str("#endif\n");
         script_fn.push_str("    return __pikaMain;\r\n");
         script_fn.push_str("}\r\n\r\n");
         return script_fn;

@@ -942,20 +942,36 @@ PikaObj* obj_linkLibObj(PikaObj* self, LibObj* library) {
     return self;
 }
 
-int obj_importModule(PikaObj* self, char* module_name) {
+uint8_t* obj_getModuleByteCode(PikaObj* self, char* module_name) {
     /* exit when no found '__lib' */
     if (!obj_isArgExist(self, "__lib")) {
-        return 1;
+        return NULL;
     }
     /* find module from the library */
     LibObj* lib = obj_getPtr(self, "__lib");
     PikaObj* module = obj_getObj(lib, module_name);
     /* exit when no module in '__lib' */
     if (NULL == module) {
+        return NULL;
+    }
+    return obj_getPtr(module, "bytecode");
+}
+
+int obj_runModule(PikaObj* self, char* module_name) {
+    uint8_t* bytecode = obj_getModuleByteCode(self, module_name);
+    if (NULL == bytecode) {
         return 1;
     }
+    pikaVM_runByteCode(self, bytecode);
+    return 0;
+}
+
+int obj_importModule(PikaObj* self, char* module_name) {
     /* import bytecode of the module */
-    uint8_t* bytecode = obj_getPtr(module, "bytecode");
+    uint8_t* bytecode = obj_getModuleByteCode(self, module_name);
+    if (NULL == bytecode) {
+        return 1;
+    }
     obj_importModuleWithByteCode(self, module_name, bytecode);
     return 0;
 }
