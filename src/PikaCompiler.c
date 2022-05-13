@@ -412,6 +412,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     module_path = strsAppend(&buffs, module_path, module_name);
     char* file_path = strsAppend(&buffs, module_path, ".py.o");
     Arg* file_arg = arg_loadFile(NULL, file_path);
+    uint8_t offset_befor = 0;
     if (NULL == file_arg) {
         res = 1;
         goto exit;
@@ -420,7 +421,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     ConstPool* const_pool = &bf.const_pool;
     InstructArray* ins_array = &bf.instruct_array;
 
-    uint16_t offset_befor = ins_array->content_offset_now;
+    offset_befor = ins_array->content_offset_now;
     ins_array->content_offset_now = 0;
     while (1) {
         InstructUnit* ins_unit = instructArray_getNow(ins_array);
