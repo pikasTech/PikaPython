@@ -1,9 +1,9 @@
 ROOT=$PWD
 rm libpikabinder -rf
 mkdir libpikabinder
-cargo build --release
+cargo build
 cbindgen --config cbindgen.toml --crate rust-msc --output libpikabinder/libpikabinder.h
-cp target/release/libpikabinder.a libpikabinder
+cp target/debug/libpikabinder.a libpikabinder
 
 cd ../pikaByteCodeGen
 cp ../pikaCompiler/libpikabinder . -r
