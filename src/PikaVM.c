@@ -913,8 +913,14 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self, VMState* vs, char* data) {
     if (obj_isArgExist(self, data)) {
         return NULL;
     }
+    /* find cmodule in root object */
+    extern PikaObj* __pikaMain;
+    if (obj_isArgExist(__pikaMain, data)) {
+        obj_setArg(self, data, obj_getArg(__pikaMain, data));
+        return NULL;
+    }
     /* import module from '__lib' */
-    if (0 != obj_importModule(self, data)) {
+    if (0 != obj_importModule(__pikaMain, data)) {
         VMState_setErrorCode(vs, 3);
         __platform_printf("ModuleNotFoundError: No module named '%s'\r\n",
                           data);

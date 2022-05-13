@@ -5,7 +5,7 @@ import GTestTask
 import PikaMath
 import PikaStdDevice
 import test_module1
-
+import test_cmodule
 
 
 

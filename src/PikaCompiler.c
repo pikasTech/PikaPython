@@ -95,12 +95,19 @@ int pikaCompile(char* output_file_name, char* py_lines) {
 */
 int pikaCompileFileWithOutputName(char* output_file_name,
                                   char* input_file_name) {
+    Args buffs = {0};
     Arg* input_file_arg = arg_loadFile(NULL, input_file_name);
     if (NULL == input_file_arg) {
         return 1;
     }
-    pikaCompile(output_file_name, (char*)arg_getBytes(input_file_arg));
+    char* lines = (char*)arg_getBytes(input_file_arg);
+    /* add '\n' at the end */
+    if (lines[strGetSize(lines) - 1] != '\n') {
+        lines = strsAppend(&buffs, lines, "\n");
+    }
+    pikaCompile(output_file_name, lines);
     arg_deinit(input_file_arg);
+    strsDeinit(&buffs);
     return 0;
 }
 

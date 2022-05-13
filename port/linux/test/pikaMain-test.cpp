@@ -1696,3 +1696,24 @@ TEST(pikaMain, import_err) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, cmodule_in_py) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    char* lines =
+        "import test_cmodule\n"
+        "test_cmodule.test_mem()\n";
+    __platform_printf("%s\n", lines);
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* as run in shell */
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1], "mem used max:\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
