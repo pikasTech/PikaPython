@@ -70,7 +70,10 @@ impl Compiler {
                         Err(_) => {
                             println!(
                                 "    [warning]: file: '{}{}.pyi' or '{}{}.py' no found",
-                                compiler.source_path, file_name, compiler.source_path, file_name
+                                compiler.source_path,
+                                package_name,
+                                compiler.source_path,
+                                package_name
                             );
                             return compiler;
                         }

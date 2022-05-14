@@ -453,7 +453,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                     __platform_fclose(imp_file_pyi);
                 } else {
                     __platform_printf(
-                        "    [warning]: file: '%s.pyi' or '%s.py' no found",
+                        "    [warning]: file: '%s.pyi' or '%s.py' no found\n",
                         imp_module_name, imp_module_name);
                 }
             }
