@@ -38,7 +38,7 @@ static void __handler_instructArray_output_file(InstructArray* self,
 int pikaCompile(char* output_file_name, char* py_lines) {
     ByteCodeFrame bytecode_frame = {0};
 
-    FILE* bytecode_f = __platform_fopen(output_file_name, "w+");
+    FILE* bytecode_f = __platform_fopen(output_file_name, "wb+");
     /* main process */
 
     /* step 1, get size of const pool and instruct array */
@@ -226,7 +226,7 @@ static int32_t __foreach_handler_getModuleNum(Arg* argEach, Args* context) {
 }
 
 int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
-    FILE* out_file = __platform_fopen(output_file_name, "w+");
+    FILE* out_file = __platform_fopen(output_file_name, "wb+");
 
     Args context = {0};
     args_setPtr(&context, "out_file", out_file);
@@ -336,7 +336,7 @@ int Lib_loadLibraryFileToArray(char* origin_file_name, char* out_folder) {
     char* output_file_path = strsAppend(&buffs, out_folder, "/");
     output_file_path = strsAppend(&buffs, output_file_path, output_file_name);
 
-    FILE* fp = __platform_fopen(output_file_path, "w+");
+    FILE* fp = __platform_fopen(output_file_path, "wb+");
     char* array_name = strsGetLastToken(&buffs, origin_file_name, '/');
     array_name = strsReplace(&buffs, array_name, ".", "_");
     __platform_printf("    loading %s[]...\n", array_name);
@@ -440,9 +440,9 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                 /* module info is not exist */
                 /* set module to be compile */
                 FILE* imp_file_py = __platform_fopen(
-                    strsAppend(&buffs, imp_module_path, ".py"), "r");
+                    strsAppend(&buffs, imp_module_path, ".py"), "rb");
                 FILE* imp_file_pyi = __platform_fopen(
-                    strsAppend(&buffs, imp_module_path, ".pyi"), "r");
+                    strsAppend(&buffs, imp_module_path, ".pyi"), "rb");
                 if (NULL != imp_file_py) {
                     /* found *.py, push to nocompiled list */
                     pikaMaker_setState(self, imp_module_name, "nocompiled");

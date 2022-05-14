@@ -366,7 +366,7 @@ Arg* arg_loadFile(Arg* self, char* filename) {
     char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
     Arg* res = New_arg(NULL);
     __platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
-    FILE* input_file = __platform_fopen(filename, "r");
+    FILE* input_file = __platform_fopen(filename, "rb");
     if (NULL == input_file) {
         __platform_printf("Error: Couldn't open file '%s'\n", filename);
         res = NULL;
