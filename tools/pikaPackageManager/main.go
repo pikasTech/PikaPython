@@ -123,7 +123,7 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 		}
 		// fmt.Printf("    copy" + " " + packagePath + " " + dirPath + "\n")
 		CheckIfError(cp.Copy(packagePath, dirPath))
-		pyFileList, _ := FilterDirsGlob(packagePath, "*.py")
+		pyFileList, _ := FilterDirsGlob(dirPath, "*.py")
 		for i := range pyFileList {
 			pyFileSource := strings.ReplaceAll(pyFileList[i], "\\", "/")
 			pyFilePath := strings.Split(pyFileSource, "/")
@@ -133,7 +133,7 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 		}
 
 
-		pyiFileList, _ := FilterDirsGlob(packagePath, "*.pyi")
+		pyiFileList, _ := FilterDirsGlob(dirPath, "*.pyi")
 		for i := range pyiFileList {
 			pyFileSource := strings.ReplaceAll(pyiFileList[i], "\\", "/")
 			pyFilePath := strings.Split(pyFileSource, "/")
