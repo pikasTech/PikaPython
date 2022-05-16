@@ -407,6 +407,8 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     ByteCodeFrame bf = {0};
     Args buffs = {0};
     byteCodeFrame_init(&bf);
+		ConstPool* const_pool = NULL;
+		InstructArray* ins_array = NULL;
     char* module_path =
         strsAppend(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
     module_path = strsAppend(&buffs, module_path, module_name);
@@ -418,8 +420,8 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
         goto exit;
     }
     byteCodeFrame_loadByteCode(&bf, arg_getBytes(file_arg));
-    ConstPool* const_pool = &bf.const_pool;
-    InstructArray* ins_array = &bf.instruct_array;
+    const_pool = &bf.const_pool;
+    ins_array = &bf.instruct_array;
 
     offset_befor = ins_array->content_offset_now;
     ins_array->content_offset_now = 0;

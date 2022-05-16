@@ -363,6 +363,7 @@ void arg_deinitHeap(Arg* self) {
 
 /* load file as byte array */
 Arg* arg_loadFile(Arg* self, char* filename) {
+		size_t file_size = 0;
     char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
     Arg* res = New_arg(NULL);
     __platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
@@ -372,7 +373,7 @@ Arg* arg_loadFile(Arg* self, char* filename) {
         res = NULL;
         goto exit;
     }
-    size_t file_size =
+    file_size =
         __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_file);
 
     if (file_size >= PIKA_READ_FILE_BUFF_SIZE) {

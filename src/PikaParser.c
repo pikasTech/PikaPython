@@ -1460,6 +1460,7 @@ exit:
 char* Parser_LineToAsm(Args* buffs_p, char* line, Stack* blockStack) {
     char* ASM = NULL;
     AST* ast = NULL;
+		uint8_t line_num = 0;
     /* pre process */
     line = Parser_linePreProcess(buffs_p, line);
     if (NULL == line) {
@@ -1474,7 +1475,7 @@ char* Parser_LineToAsm(Args* buffs_p, char* line, Stack* blockStack) {
         solve more lines
         preprocess may generate more lines
     */
-    uint8_t line_num = strCountSign(line, '\n') + 1;
+    line_num = strCountSign(line, '\n') + 1;
     for (int i = 0; i < line_num; i++) {
         char* single_line = strsPopToken(buffs_p, line, '\n');
         /* parse tokens to AST */

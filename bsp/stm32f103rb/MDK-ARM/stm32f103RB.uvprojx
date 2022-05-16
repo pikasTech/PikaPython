@@ -584,6 +584,11 @@
               <FileType>1</FileType>
               <FilePath>..\PikaScript\pikascript-core\TinyObj.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaCompiler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-core\PikaCompiler.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -673,6 +678,41 @@
               <FileName>PikaStdLib_StringObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\PikaScript\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_CAN.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_CAN.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebuger_Debuger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdLib\PikaDebuger_Debuger.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Dict.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdLib\PikaStdData_Dict.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_List.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdLib\PikaStdData_List.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_String.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdLib\PikaStdData_String.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdLib\PikaStdTask_Task.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -784,6 +824,76 @@
               <FileType>1</FileType>
               <FilePath>..\PikaScript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
             </File>
+            <File>
+              <FileName>__asset_pikaModules_py_a.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug_Debuger-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaDebug_Debuger-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaDebug-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_ByteArray-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdData_ByteArray-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Dict-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdData_Dict-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_List-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdData_List-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_String-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdData_String-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdData-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_CAN-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdDevice_CAN-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_SPI-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdDevice_SPI-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdDevice-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdLib_PikaObj-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdTask_Task-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-api\PikaStdTask-api.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -800,24 +910,24 @@
               <FilePath>..\PikaScript\main.py</FilePath>
             </File>
             <File>
-              <FileName>PikaObj.py</FileName>
+              <FileName>PikaObj.pyi</FileName>
               <FileType>5</FileType>
-              <FilePath>..\PikaScript\PikaObj.py</FilePath>
+              <FilePath>..\PikaScript\PikaObj.pyi</FilePath>
             </File>
             <File>
-              <FileName>PikaStdDevice.py</FileName>
+              <FileName>PikaStdDevice.pyi</FileName>
               <FileType>5</FileType>
-              <FilePath>..\PikaScript\PikaStdDevice.py</FilePath>
+              <FilePath>..\PikaScript\PikaStdDevice.pyi</FilePath>
             </File>
             <File>
-              <FileName>PikaStdLib.py</FileName>
+              <FileName>PikaStdLib.pyi</FileName>
               <FileType>5</FileType>
-              <FilePath>..\PikaScript\PikaStdLib.py</FilePath>
+              <FilePath>..\PikaScript\PikaStdLib.pyi</FilePath>
             </File>
             <File>
-              <FileName>STM32F1.py</FileName>
+              <FileName>STM32F1.pyi</FileName>
               <FileType>5</FileType>
-              <FilePath>..\PikaScript\STM32F1.py</FilePath>
+              <FilePath>..\PikaScript\STM32F1.pyi</FilePath>
             </File>
           </Files>
         </Group>
