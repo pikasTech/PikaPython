@@ -900,6 +900,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\TinyObj.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaCompiler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\PikaCompiler.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1014,6 +1019,36 @@
               <FileName>PikaStdLib_PikaObj-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>__asset_pikaModules_py_a.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug_Debuger-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaDebug_Debuger-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaDebug-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_ByteArray-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_ByteArray-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask_Task-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask-api.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1932,6 +1967,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\TinyObj.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaCompiler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\PikaCompiler.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2046,6 +2086,36 @@
               <FileName>PikaStdLib_PikaObj-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>__asset_pikaModules_py_a.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug_Debuger-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaDebug_Debuger-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaDebug-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_ByteArray-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_ByteArray-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask_Task-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask-api.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2963,6 +3033,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\TinyObj.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaCompiler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\PikaCompiler.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3077,6 +3152,36 @@
               <FileName>PikaStdLib_PikaObj-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>__asset_pikaModules_py_a.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug_Debuger-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaDebug_Debuger-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaDebug-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_ByteArray-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_ByteArray-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask_Task-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask-api.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3994,6 +4099,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\TinyObj.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaCompiler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\PikaCompiler.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4108,6 +4218,36 @@
               <FileName>PikaStdLib_PikaObj-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>__asset_pikaModules_py_a.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug_Debuger-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaDebug_Debuger-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaDebug-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaDebug-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_ByteArray-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_ByteArray-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask_Task-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask_Task-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdTask-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask-api.c</FilePath>
             </File>
           </Files>
         </Group>
