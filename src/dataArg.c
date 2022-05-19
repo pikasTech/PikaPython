@@ -25,6 +25,7 @@
  * SOFTWARE.
  */
 
+#define __DATA_ARG_CLASS_IMPLEMENT__
 #include "dataArg.h"
 #include "PikaObj.h"
 #include "dataArgs.h"
