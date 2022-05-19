@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1652962999865,
+  "lastUpdate": 1652965106979,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -50357,6 +50357,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000346329313693,
             "unit": "ms/iter",
             "extra": "iterations: 280660\ncpu: 0.005000000000000001 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b3590621726cfe61cadb490de3381a3b32b8c7e7",
+          "message": "Dev (#118)\n\n* add PLOOC\r\n\r\n* add PLOOC to kernal\r\n\r\n* remove unrequired files\r\n\r\n* remove pack\r\n\r\n* fix plooc ci in test/*.cpp\r\n\r\n* add test_common.h\r\n\r\nCo-authored-by: Gabriel Wang <embedded_zhuoran@Hotmail.com>",
+          "timestamp": "2022-05-19T20:52:19+08:00",
+          "tree_id": "20bd65424801a268d16be2cbd0488fa3cb9a23b1",
+          "url": "https://github.com/pikasTech/pikascript/commit/b3590621726cfe61cadb490de3381a3b32b8c7e7"
+        },
+        "date": 1652965103407,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 8229.621748029896,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 8229.621748029896 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 33.6806287002308,
+            "unit": "ms/iter",
+            "extra": "iterations: 34\ncpu: 33.67362377853326 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 20.100158333571606,
+            "unit": "ms/iter",
+            "extra": "iterations: 58\ncpu: 20.099875219784973 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 6.076002037812433,
+            "unit": "ms/iter",
+            "extra": "iterations: 193\ncpu: 6.075613379432608 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000409456158302,
+            "unit": "ms/iter",
+            "extra": "iterations: 234287\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
