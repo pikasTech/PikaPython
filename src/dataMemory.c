@@ -25,7 +25,6 @@
  * SOFTWARE.
  */
 
-#define __DATA_MEMORY_CLASS_IMPLEMENT__
 #include "dataMemory.h"
 #include "PikaPlatform.h"
 

@@ -25,9 +25,7 @@
  * SOFTWARE.
  */
 
-#define __PIKA_OBJ_CLASS_IMPLEMENT__
-#define __PIKAVM_CLASS_IMPLEMENT__
-
+#define __PIKA_OBJ_CLASS_IMPLEMENT
 #include "PikaVM.h"
 #include "BaseObj.h"
 #include "PikaCompiler.h"

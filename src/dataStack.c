@@ -25,7 +25,6 @@
  * SOFTWARE.
  */
 
-#define __DATA_ARG_CLASS_IMPLEMENT__
 #include "dataStack.h"
 #include "PikaObj.h"
 #include "dataQueue.h"

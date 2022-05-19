@@ -30,19 +30,6 @@
 
 #include "PikaPlatform.h"
 
-/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
- */
-//#define __PLOOC_CLASS_USE_STRICT_TEMPLATE__
-
-#if defined(__DATA_MEMORY_CLASS_IMPLEMENT__)
-#define __PLOOC_CLASS_IMPLEMENT__
-#elif defined(__DATA_MEMORY_CLASS_INHERIT__)
-#define __PLOOC_CLASS_INHERIT__
-#endif
-
-#include "__pika_ooc.h"
-
-
 typedef struct {
     uint32_t heapUsed;
     uint32_t heapUsedMax;
@@ -50,18 +37,14 @@ typedef struct {
 
 typedef uint8_t* BitMap;
 
-dcl_class(Pool);
-
-def_class(Pool, 
-    private_member(
-        BitMap bitmap;
-        uint8_t* mem;
-        uint8_t aline;
-        uint32_t size;
-        uint32_t first_free_block;
-        uint32_t purl_free_block_start;
-    )
-);
+typedef struct {
+    BitMap bitmap;
+    uint8_t* mem;
+    uint8_t aline;
+    uint32_t size;
+    uint32_t first_free_block;
+    uint32_t purl_free_block_start;
+} Pool;
 
 void pikaFree(void* mem, uint32_t size);
 void* pikaMalloc(uint32_t size);
@@ -82,7 +65,4 @@ void* pool_malloc(Pool* pool, uint32_t size);
 void pool_free(Pool* pool, void* mem, uint32_t size);
 void pool_deinit(Pool* pool);
 void pool_printBlocks(Pool* pool, uint32_t block_min, uint32_t block_max);
-
-#undef __DATA_MEMORY_CLASS_IMPLEMENT__
-#undef __DATA_MEMORY_CLASS_INHERIT__
 #endif

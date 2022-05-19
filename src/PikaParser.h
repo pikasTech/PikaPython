@@ -31,18 +31,6 @@
 #include "dataQueueObj.h"
 #include "dataStack.h"
 
-/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
- */
-//#define __PLOOC_CLASS_USE_STRICT_TEMPLATE__
-
-#if defined(__PIKA_PARSER_CLASS_IMPLEMENT__)
-#define __PLOOC_CLASS_IMPLEMENT__
-#elif defined(__PIKA_PARSER_CLASS_INHERIT__)
-#define __PLOOC_CLASS_INHERIT__
-#endif
-
-#include "__pika_ooc.h"
-
 enum TokenType {
     TOKEN_strEnd = 0,
     TOKEN_symbol,
@@ -64,42 +52,30 @@ enum StmtType {
     STMT_none,
 };
 
-dcl_class(Asmer);
+typedef struct Asmer_t {
+    char* asm_code;
+    uint8_t block_deepth_now;
+    uint8_t is_new_line;
+    char* line_pointer;
+} Asmer;
 
-def_class(Asmer, 
-    private_member(
-        char* asm_code;
-        uint8_t block_deepth_now;
-        uint8_t is_new_line;
-        char* line_pointer;
-    )
-);
+struct LexToken {
+    char* token;
+    enum TokenType type;
+    char* pyload;
+};
 
-dcl_class(LexToken);
-
-def_class(LexToken, 
-    private_member(
-        char* token;
-        enum TokenType type;
-        char* pyload;
-    )
-);
-
-dcl_class(ParserState);
-
-def_class(ParserState, 
-    private_member(
-        char* tokens;
-        uint16_t length;
-        uint16_t iter_index;
-        uint8_t branket_deepth;
-        struct LexToken token1;
-        struct LexToken token2;
-        Arg* last_token;
-        Args* iter_buffs;
-        Args* buffs_p;
-    )
-);
+struct ParserState {
+    char* tokens;
+    uint16_t length;
+    uint16_t iter_index;
+    uint8_t branket_deepth;
+    struct LexToken token1;
+    struct LexToken token2;
+    Arg* last_token;
+    Args* iter_buffs;
+    Args* buffs_p;
+};
 
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
@@ -124,8 +100,5 @@ char* Parser_parsePyLines(Args* outBuffs,
 #define ParserState_forEachToken(parseState, tokens) \
     struct ParserState ps;                           \
     ParserState_forEachTokenExistPs(parseState, tokens)
-
-#undef __PIKA_PARSER_CLASS_IMPLEMENT__
-#undef __PIKA_PARSER_CLASS_INHERIT__
 
 #endif

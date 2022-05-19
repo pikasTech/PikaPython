@@ -1,6 +1,3 @@
-
-#define __PIKA_OBJ_CLASS_IMPLEMENT__
-
 #include "PikaCompiler.h"
 #include "BaseObj.h"
 #include "PikaObj.h"
