@@ -48,7 +48,7 @@ PIKA_WEAK void* __user_malloc(size_t size) {
 }
 
 PIKA_WEAK void __user_free(void* ptr, size_t size) {
-    return __platform_free(ptr);
+    __platform_free(ptr);
 }
 
 PIKA_WEAK void __platform_error_handle() {
