@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include "test_common.h"
 extern "C" {
 #include "dataArg.h"
 #include "dataString.h"
