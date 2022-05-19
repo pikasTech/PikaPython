@@ -102,9 +102,7 @@ int pikaCompileFileWithOutputName(char* output_file_name,
     }
     char* lines = (char*)arg_getBytes(input_file_arg);
     /* add '\n' at the end */
-    if (lines[strGetSize(lines) - 1] != '\n') {
-        lines = strsAppend(&buffs, lines, "\n");
-    }
+    lines = strsAppend(&buffs, lines, "\n\n");
     pikaCompile(output_file_name, lines);
     arg_deinit(input_file_arg);
     strsDeinit(&buffs);
@@ -407,8 +405,8 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     ByteCodeFrame bf = {0};
     Args buffs = {0};
     byteCodeFrame_init(&bf);
-		ConstPool* const_pool = NULL;
-		InstructArray* ins_array = NULL;
+    ConstPool* const_pool = NULL;
+    InstructArray* ins_array = NULL;
     char* module_path =
         strsAppend(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
     module_path = strsAppend(&buffs, module_path, module_name);
