@@ -1437,6 +1437,12 @@ static char* Parser_PreProcess_from(Args* buffs_p, char* line) {
         alias = class;
     }
 
+    /* skip PikaObj */
+    if (strEqu(module, "PikaObj")){
+        line_out = strsCopy(buffs_p, "");
+        goto exit;
+    }
+
     line_out = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "import %s\n%s = %s.%s",
                           module, alias, module, class);
     line_out = strsCopy(buffs_p, line_out);

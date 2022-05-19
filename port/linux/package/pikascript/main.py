@@ -1,3 +1,4 @@
+from PikaObj import *
 import PikaStdLib
 import PikaStdData
 import ctypes
@@ -6,3 +7,5 @@ import PikaMath
 import PikaStdDevice
 import test_module1
 import test_cmodule
+
+print('hello pikascript!')
