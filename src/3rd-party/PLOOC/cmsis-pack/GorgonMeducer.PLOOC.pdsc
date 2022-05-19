@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<package schemaVersion="1.4" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="PACK.xsd">
+  <vendor>GorgonMeducer</vendor>
+  <name>PLOOC</name>
+  <description>The Protected Low-overhead Object Oriented Programming with ANSI-C, a.k.a PLOOC ['plu:k] is a set of well-polished C macro templates for praticing the Object-Oriented programming.</description>
+  <url>https://raw.githubusercontent.com/GorgonMeducer/PLOOC/master/cmsis-pack/</url>
+  <supportContact>https://github.com/GorgonMeducer/PLOOC/issues</supportContact>
+  <license>LICENSE</license>
+  <!-- optional license file -->
+  <!-- 
+  <license>
+  </license>
+  -->
+  
+  <repository type="git">https://github.com/GorgonMeducer/PLOOC.git</repository>
+  
+  <releases>
+    <release date="2022-05-12" version="4.6.2" url="https://raw.githubusercontent.com/GorgonMeducer/PLOOC/master/cmsis-pack/GorgonMeducer.PLOOC.4.6.2.pack">
+      - Improve compatibility with the latest C++
+    </release>
+    <release date="2022-01-02" version="4.6.1" url="https://github.com/GorgonMeducer/PLOOC/raw/64992d6626c828aecec5c0e8aa2cdfd2dca98721/cmsis-pack/GorgonMeducer.PLOOC.4.6.1.pack">
+      -  Add helper macros for heap
+          - Add __new_class and __free_class for using malloc and free together with constructors and destructors, i.e. xxxx_init() and xxxx_depose().
+      - Update example project
+      - Other minor update
+    </release>
+    <release date="2021-12-30" version="4.6.0" url="https://github.com/GorgonMeducer/PLOOC/raw/d767b581e5116364d5b0fdbff6f5596c75955b22/cmsis-pack/GorgonMeducer.PLOOC.4.6.0.pack">
+      - Improving CMSIS-Pack
+         - Add example
+         - Add code template for base class and derived class
+      - Other minor update
+    </release>
+    <release date="2021-12-29" version="4.5.9" url="https://github.com/GorgonMeducer/PLOOC/raw/e20695f36153aa6188b50721dfc12c9a731d7792/cmsis-pack/GorgonMeducer.PLOOC.4.5.9.pack">
+      - Add CMSIS-Pack
+      - Other minor update
+    </release>
+    
+  </releases>
+
+  <keywords>
+    <!-- keywords for indexing -->
+    <keyword>OOPC</keyword>
+  </keywords>
+  
+  <!-- apis section (optional - for Application Programming Interface descriptions) -->
+  <!-- 
+  <apis>
+  </apis>
+  -->
+  <!-- boards section (mandatory for Board Support Packs) -->
+  <!-- 
+  <boards>
+  </boards>
+  -->
+
+  <!-- devices section (mandatory for Device Family Packs) -->
+  <!--
+  <devices>
+  </devices>
+  -->
+
+  <!-- examples section (optional for all Software Packs)-->
+  <!--
+  <examples>
+  </examples>
+  -->
+    <examples>
+      <example name="plooc_example" folder="example" doc="README.md" version="1.2">
+        <description>This is a basic example demonstrating the development using PLOOC.</description>
+        <board name="uVision Simulator" vendor="Keil"/>
+        <project>
+          <environment name="uv"  folder="." load="project/mdk/plooc_example.uvprojx"/>
+        </project>
+        <attributes>
+          <component Cclass="CMSIS" Cgroup="Core"/>
+          <component Cclass="Device" Cgroup="Startup"/>
+          <keyword>PLOOC</keyword>
+          <keyword>Getting Started</keyword>
+        </attributes>
+      </example>
+    </examples> 
+  <!-- conditions section (optional for all Software Packs)-->
+  <!--
+  <conditions>
+  </conditions>
+  -->
+
+    <components>
+        <component Cclass="Language Extension" Cgroup="PLOOC" Cversion="4.6.2">
+          <description>A low-overhead OOPC template.</description>
+          <files>
+            <file category="header"     name="plooc.h"/>
+            <file category="header"     name="plooc_class.h"/>
+            <file category="header"     name="template/class/class_name.h"          attr="template" select="Base Class Template"/>
+            <file category="source"     name="template/class/class_name.c"          attr="template" select="Base Class Template"/>
+            <file category="header"     name="template/derived_class/class_name.h"  attr="template" select="Derived Class Template"/>
+            <file category="source"     name="template/derived_class/class_name.c"  attr="template" select="Derived Class Template"/>
+          </files>
+        </component>
+    </components>
+
+  <!-- optional taxonomy section for defining new component Class and Group names -->
+  <!--
+  <taxonomy>
+  </taxonomy>
+  -->
+  
+</package>
