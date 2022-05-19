@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include "test_common.h"
 extern "C" {
 #include "BaseObj.h"
 #include "PikaMain.h"

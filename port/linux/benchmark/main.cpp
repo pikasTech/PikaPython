@@ -1,5 +1,6 @@
 #include <benchmark/benchmark.h>
 #include "gtest/gtest.h"
+#include "test_common.h"
 
 extern "C" {
 #include "PikaMain.h"
