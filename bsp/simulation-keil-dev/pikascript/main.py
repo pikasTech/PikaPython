@@ -1,4 +1,3 @@
-from PikaObj import *
 import Device
 import PikaStdLib
 import PikaStdData
