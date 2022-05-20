@@ -31,15 +31,16 @@
 
 PikaScript 是一个完全重写的超轻量级 python 引擎，零依赖，零配置，可以在  **Flash ≤ 32KB，RAM≤ 4KB**  的平台下运行(如 stm32g030c8 和 stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
 
-PikaScript 具有框架式 C 模块开发工具，只要用 Python 写好调用 API ，就能够自动连接到 C 模块，非常方便快捷。不用手动处理任何全局表、宏定义、等等。
-
-PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松地调试 C 模块。
 
 ![output_Kgj52R](document/image/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
 <img src="document/image/147799764-5db2cb30-ee74-4cde-a2bd-b91c358ae3d9.png" width="500"/>
 
-![image](document/image/138021445-13643518-b0a3-4872-a290-5dec27697837.png)
+PikaScript 具有框架式 C 模块开发工具，只要用 Python 写好调用 API ，就能够自动连接到 C 模块，非常方便快捷。不用手动处理任何全局表、宏定义、等等。
+
+![image-20220520233540245](document/image/image-20220520233540245.png)
+
+PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松地调试 C 模块。
 
 # 获取 PikaScript:
 
