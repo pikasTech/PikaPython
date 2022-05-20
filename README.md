@@ -170,14 +170,12 @@ Support linux.
 
 Support subaggregate of python 3 standard syntax.
 
-Support class and method define, encapsulation-inheritance-polymorphism and moudles in compile time - Based on [Pika Pre-compiler](../../tree/master/tools/pikaCompiler).
-
-Support method invoke, argument define, new object, free object, control flow(if\while) and operator ( + - * / < == > ). - Based on [Pika Runtime Core](../../tree/master/src/package/pikascript/pikascript-core).
+Support class and method define, encapsulation-inheritance-polymorphism and moudles in `.pyi ` of C module.
 
 |Syntax|Compile-Time|Run-Time|Shell|
 |---|---|---|---|
 |Module Define          |√|-|-|
-|Module Import          |√|-|-|
+|Module Import          |√|√|√|
 |Class Define           |√|√|√|
 |Class Inherit          |√|√|√|
 |Method Define          |√|√|√|
@@ -198,9 +196,53 @@ Support method invoke, argument define, new object, free object, control flow(if
 
 #### Control flow
 
-| if | while | for | else | elif | break | continue |
-| --- | --- | --- | --- | --- | --- | --- |
-|√|√|√|√|√|√|√|
+| Syntax | State | Comment |
+| --- | --- | --- |
+| if | √ | |
+| while | √ | |
+| for in [list] | √ | (PikaStdData.List) |
+| for in range(a, b) | √ |  |
+| for in [dict] | √ | (PikaStdData.Dict) |
+| if elif else | √ | |
+| for break/continue | √ |
+| while break/continue | √ |
+
+#### Module
+
+| Syntax | Python Module | C Module |
+| --- | --- | --- |
+| import [module] | √ | √ |
+| from [module] import [class/function>]| √ | √ |
+| from [module] import * | - | PikaObj Module Only |
+
+#### List/Dict
+| Syntax | State | Comment |
+| --- | --- | --- |
+| l = list() | √  | Need enable built-in list in config. |
+| l = [a, b, c] | √  | Need enable built-in list in config. |
+| d = dict() | √ | Need enable built-in dict in config. |
+| d = {a:"x", b:"y", c:"z"} | -  | |
+
+#### Exception
+
+| try except | try except else | try except as | 
+| --- | --- | --- |
+| - | - | - |
+
+#### Slice
+
+| Syntax | str | bytes | list (PikaStdData.List) |
+| --- | --- | --- | --- |
+| test[i] | √ | - | √ |
+| test[a : b : c] | - | - | - |
+| test[a :] | - | - | - |
+
+#### Other keywords/Syntax
+
+| yield | is | comprehensions |
+| --- | --- | --- |
+| - | - | - |
+
 ### (4)Develop standard.
 
 Readability first, nearly never use macro function and global argument.

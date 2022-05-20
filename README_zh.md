@@ -191,7 +191,7 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 |语法|编译时|运行时|Shell|
 |---|---|---|---|
 |模块定义   |√|-|-|
-|模块导入   |√|-|-|
+|模块导入   |√|√|√|
 |类定义    |√|√|√|
 |类继承    |√|√|√|
 |方法定义   |√|√|√|
@@ -320,7 +320,7 @@ while True:
     print(val)
     time.sleep_ms(500)
 
- ```
+```
 
 ![mmexport1631351523907](document/image/132944185-0a01b1ba-8cf7-4f9f-9d73-fe9cbcd52f0b.png)
 
