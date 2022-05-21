@@ -152,7 +152,12 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 Support run in mcu without OS or file system. Can run in everywhere with **RAM ≥ 4kB** and **FLASH ≥ 32kB**，such as stm32g030, stm32f103c8t6，esp8266.
 
 ### (2)Develop enviroment
-Support run and program python scripts by serial.
+
+#### Support REPL by serial.
+
+<img src="assets/1641178790145-2f026e70-4ba1-4e9a-b05f-c602b2bd8cad.png" width="400" alt="微信交流群"/><br/>
+
+#### Support run and program python scripts by serial.
 
 <img src="document/image/134841230-85de6734-8467-4245-93a5-d452b5022b42.gif" width="400" alt="微信交流群"/><br/>
 
