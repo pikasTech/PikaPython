@@ -49,7 +49,7 @@ http://pikascript.com
 
 <img src="document/image/152632673-019a7f92-7b7f-4fb5-92b7-4ae4c26ec865.png" width="500"/>
 
-## Use Pika package manager [PikaPackage.exe](https://pikadoc.readthedocs.io/zh/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
+## Use Pika package manager [PikaPackage.exe](https://pikadoc.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
 
 1. Run the [PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download) directly, then the pikascript repo would be downloaded auto in the /tmp/pikascript folder of your current disc partition.
 
@@ -205,12 +205,12 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 | --- | --- | --- |
 | if | √ | |
 | while | √ | |
-| for in [list] | √ | (PikaStdData.List) |
+| for in [list] | √ | ([PikaStdData.List](https://pikadoc.readthedocs.io/en/latest/PikaStdData%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html)) |
 | for in range(a, b) | √ |  |
-| for in [dict] | √ | (PikaStdData.Dict) |
+| for in [dict] | √ | ([PikaStdData.Dict](https://pikadoc.readthedocs.io/en/latest/PikaStdData%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html)) |
 | if elif else | √ | |
-| for break/continue | √ |
-| while break/continue | √ |
+| for break/continue | √ ||
+| while break/continue | √ ||
 
 #### Module
 
@@ -223,9 +223,9 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 #### List/Dict
 | Syntax | State | Comment |
 | --- | --- | --- |
-| l = list() | √  | Need to enable the built-in-list in configuration. |
-| l = [a, b, c] | √  | Need to enable the built-in-list in configuration. |
-| d = dict() | √ | Need to enable the built-in-dict in configuration. |
+| l = list() | √  | Need to enable the built-in-list in [configuration](https://pikadoc.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
+| l = [a, b, c] | √  | Need to enable the built-in-list in [configuration](https://pikadoc.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
+| d = dict() | √ | Need to enable the built-in-dict in [configuration](https://pikadoc.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
 | d = {a:"x", b:"y", c:"z"} | -  | |
 
 #### Exception
