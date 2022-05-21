@@ -32,12 +32,13 @@ RUN git clone --branch v1.6.1 https://gitee.com/mirrors/google-benchmark benchma
       
 
 # Get Rust
+# change source of Rust
+ADD rust_config /root/.cargo/config
 ENV RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 
 ENV PATH="/root/.cargo/bin:${PATH}"
-
 
 RUN git config --global --add safe.directory /usr/src/pikascript
 RUN git config --global user.email "liang6516@outlook.com"
@@ -61,9 +62,13 @@ RUN apt-get install -y golang
 RUN go env -w GO111MODULE=on
 RUN go env -w GOPROXY=https://goproxy.cn
 
+
 RUN git clone https://gitee.com/lyon1998/pikascript  root/pikascript
 RUN cd /root/pikascript && git pull
 
-ADD rust_config /root/.cargo/config
 RUN rustup target add i686-pc-windows-gnu
 RUN cd /root/pikascript/tools/pikaCompiler && sh build.sh
+
+ADD .vimrc /root/.vimrc
+
+
