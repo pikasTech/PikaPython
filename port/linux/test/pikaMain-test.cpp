@@ -833,6 +833,32 @@ TEST(pikaMain, str__index__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, bytes__index__) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\n");
+    obj_run(pikaMain,
+            "s = b'test'\n"
+            "res = s[2]\n"
+            "res2 = b'eqrt'[2]\n"
+            "s[2] = b'q'\n"
+            "\n");
+    /* collect */
+    uint8_t* res = obj_getBytes(pikaMain, "res");
+    uint8_t* res2 = obj_getBytes(pikaMain, "res2");
+    uint8_t* s = obj_getBytes(pikaMain, "s");
+    /* assert */
+    EXPECT_STREQ((char*)res, "s");
+    EXPECT_STREQ((char*)res2, "r");
+    EXPECT_EQ(s[2], 'q');
+    // EXPECT_STREQ(s, "teqt");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(pikaMain, list_index) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
