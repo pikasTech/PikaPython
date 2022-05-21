@@ -217,7 +217,9 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 | Syntax | Python Module | C Module |
 | --- | --- | --- |
 | import [module] | √ | √ |
+| import [module] as | √ | - |
 | from [module] import [class/function>]| √ | - |
+| from [module] import [class/function>] as | √ | - |
 | from [module] import * | - | PikaObj Module Only |
 
 #### List/Dict
