@@ -218,9 +218,9 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 #### List/Dict
 | Syntax | State | Comment |
 | --- | --- | --- |
-| l = list() | √  | Need enable built-in list in config. |
-| l = [a, b, c] | √  | Need enable built-in list in config. |
-| d = dict() | √ | Need enable built-in dict in config. |
+| l = list() | √  | Need to enable the built-in-list in configuration. |
+| l = [a, b, c] | √  | Need to enable the built-in-list in configuration. |
+| d = dict() | √ | Need to enable the built-in-dict in configuration. |
 | d = {a:"x", b:"y", c:"z"} | -  | |
 
 #### Exception
