@@ -2605,3 +2605,22 @@ TEST(parser, str_equ) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, bytes_index) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "res2 = b'eqrt'[2]\n";
+    char* tokens_str = Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    printf("%s\n", tokens_str);
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 BYT eqrt\n"
+                 "1 NUM 2\n"
+                 "0 RUN __get__\n"
+                 "0 OUT res2\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
