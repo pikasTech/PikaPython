@@ -622,6 +622,7 @@ sh run.sh
 # 7.Contribute
 | Content | Contributer |
 | --- | --- |
+| Add [PLOOC](https://github.com/GorgonMeducer/PLOOC) support for PikaScript Core | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | Donate：500¥ (ctypes 相关） | 蒋太平 |
 | fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
 | ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
