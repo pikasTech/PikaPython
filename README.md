@@ -540,7 +540,7 @@ while True:
 
 The maximum RAM usage of these demos is only 3.56K, which is 4.56K if the 1K stack is included, and the maximum Flash usage is 30.4K. Refer to the 20K RAM and 64K Flash of STM32F103C8T6, less than 25% RAM and less than 50% Flash are used.
 
-A quick comparison can be made between the microPython chip STM32F405RG and the PikaScript chip STM32G070CB.
+A quick comparison can be made between the microPython's MCU STM32F405RG and the PikaScript's MCU STM32G070CB.
 
 ## RAM resource comparison
 ![image](document/image/132944731-a55ece1d-061f-4b91-ba87-bd6547be96a7.png)
