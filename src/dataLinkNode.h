@@ -27,8 +27,27 @@
 
 #ifndef _linkNode__H
 #define _linkNode__H
+
+#if defined(__DATA_LINK_NODE_CLASS_IMPLEMENT__)
+#define __PLOOC_CLASS_IMPLEMENT__
+#elif defined(__DATA_LINK_NODE_CLASS_INHERIT__)
+#define __PLOOC_CLASS_INHERIT__
+#endif
+
+#include "__pika_ooc.h"
+
 #include "dataMemory.h"
-typedef uint8_t LinkNode;
+
+
+/* clang-format off */
+dcl_class(LinkNode)
+def_class(LinkNode,
+    private_member(
+        void*__rsvd;
+    )
+);
+/* clang-format on */
+
 
 void linkNode_deinit(LinkNode* self);
 void linkNode_init(LinkNode* self, void* args);
