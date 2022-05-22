@@ -574,41 +574,11 @@ step2: build and run the docker contianer
 ```
 sh build.sh
 sh run.sh
-# now you are in the port/linux
 ```
 
 step3: init the port/linux
 ``` shell	
-sh pull-core.sh
-sh init.sh
-```
-
-step4: test the core 
-``` shell
-sh gtest.sh
-sh ci_benchmark.sh
-```
-
-step5: Run the REPL
-``` shell
-sh run.sh
-```
-
-## Test core in linux (ubuntu20.04 is recommend)
-
-step1: Clone the repo
-``` shell
-git clone https://github.com/pikastech/pikascript
-cd pikascript/port/linux
-```
-
-step2: install dependency
-```
-sh install_dependency.sh # install dependency 
-```
-
-step3: init the port/linux
-``` shell	
+cd port/linux
 sh pull-core.sh
 sh init.sh
 ```
