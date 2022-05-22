@@ -47,55 +47,38 @@
 dcl_class(InstructUnit);
 
 def_class(InstructUnit,
-    private_member(
-        uint8_t deepth;
-        uint8_t isNewLine_instruct;
-        uint16_t const_pool_index;
-    )
-);
-
+          private_member(uint8_t deepth; uint8_t isNewLine_instruct;
+                         uint16_t const_pool_index;));
 
 dcl_class(ConstPool);
 
-def_class(ConstPool,
-    private_member(
-        Arg* arg_buff;
-        uint16_t content_offset_now;
-        uint16_t size;
-        void* content_start;
-        void (*output_redirect_fun)(ConstPool* self, char* content);
-        FILE* output_f;
-    )
-);
+def_class(
+    ConstPool,
+    private_member(Arg* arg_buff; uint16_t content_offset_now; uint16_t size;
+                   void* content_start;
+                   void (*output_redirect_fun)(ConstPool* self, char* content);
+                   FILE * output_f;));
 
 dcl_class(InstructArray);
 
-def_class(InstructArray, 
+def_class(InstructArray,
 
-    private_member(
-        Arg* arg_buff;
-        uint16_t content_offset_now;
-        uint16_t size;
-        void* content_start;
-        void (*output_redirect_fun)(InstructArray* self, InstructUnit* ins_unit);
-        FILE* output_f;
-    )
+          private_member(Arg* arg_buff; uint16_t content_offset_now;
+                         uint16_t size;
+                         void* content_start;
+                         void (*output_redirect_fun)(InstructArray* self,
+                                                     InstructUnit* ins_unit);
+                         FILE * output_f;)
 
 );
 
 dcl_class(ByteCodeFrame);
 
-def_class(ByteCodeFrame, 
-    private_member(
-        ConstPool const_pool;
-        InstructArray instruct_array;
-    )
-);
+def_class(ByteCodeFrame,
+          private_member(ConstPool const_pool; InstructArray instruct_array;));
 
-typedef struct PikaObj_t {
-    /* list */
-    Args* list;
-} PikaObj;
+dcl_class(PikaObj);
+def_class(PikaObj, Args* list;);
 
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
@@ -104,16 +87,10 @@ typedef void (*Method)(PikaObj* self, Args* args);
 
 dcl_class(MethodInfo);
 
-def_class(MethodInfo, 
-    private_member(
-        char* name;
-        char* dec;
-        char* ptr;
-        char* pars;
-        ArgType type;
-        ByteCodeFrame* bytecode_frame;
-    )
-);
+def_class(MethodInfo,
+          private_member(char* name; char* dec; char* ptr; char* pars;
+                         ArgType type;
+                         ByteCodeFrame * bytecode_frame;));
 
 typedef PikaObj LibObj;
 typedef PikaObj PikaMaker;
