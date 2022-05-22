@@ -268,12 +268,12 @@ int32_t __updateArg(Args* self, Arg* argNew) {
             nodeToUpdate = nodeNow;
             break;
         }
-        if (content_getNext((Arg*)nodeNow) == NULL) {
+        if (arg_getNext((Arg*)nodeNow) == NULL) {
             // error, node no found
             goto exit;
         }
         priorNode = nodeNow;
-        nodeNow = (LinkNode*)content_getNext((Arg*)nodeNow);
+        nodeNow = (LinkNode*)arg_getNext((Arg*)nodeNow);
     }
 
     arg_deinitHeap((Arg*)nodeToUpdate);
@@ -289,7 +289,7 @@ int32_t __updateArg(Args* self, Arg* argNew) {
         goto exit;
     }
 
-    content_setNext((Arg*)priorNode, (Arg*)nodeToUpdate);
+    arg_setNext((Arg*)priorNode, (Arg*)nodeToUpdate);
     goto exit;
 exit:
     arg_freeContent(argNew);
@@ -325,15 +325,15 @@ LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
                  */
 
                 /*! remove current node from the list */
-                node = (LinkNode*)content_getNext((Arg*)arg);
+                node = (LinkNode*)arg_getNext((Arg*)arg);
 
                 /*! move the node to the cache */
-                content_setNext(arg, (Arg*)(self->firstNode));
+                arg_setNext(arg, (Arg*)(self->firstNode));
                 self->firstNode = (LinkNode*)arg;
             }
             return (LinkNode*)arg;
         }
-        node = (LinkNode*)content_getNext((Arg*)node);
+        node = (LinkNode*)arg_getNext((Arg*)node);
     }
     return NULL;
 }
@@ -364,7 +364,7 @@ Arg* args_getArg_index(Args* self, int index) {
         return NULL;
     }
     for (int i = 0; i < index; i++) {
-        nodeNow = (LinkNode*)content_getNext((Arg*)nodeNow);
+        nodeNow = (LinkNode*)arg_getNext((Arg*)nodeNow);
     }
     return (Arg*)nodeNow;
 }
@@ -471,7 +471,7 @@ int32_t args_foreach(Args* self,
         if (NULL == argNow) {
             continue;
         }
-        LinkNode* nextNode = (LinkNode*)content_getNext((Arg*)nodeNow);
+        LinkNode* nextNode = (LinkNode*)arg_getNext((Arg*)nodeNow);
         eachHandle(argNow, context);
 
         if (NULL == nextNode) {

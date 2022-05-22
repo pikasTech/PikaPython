@@ -33,7 +33,7 @@
 void __link_deinit_pyload(Link* self) {
     LinkNode* nowNode = self->firstNode;
     while (NULL != nowNode) {
-        LinkNode* nodeNext = (LinkNode*)content_getNext((Arg*)nowNode);
+        LinkNode* nodeNext = (LinkNode*)arg_getNext((Arg*)nowNode);
         linkNode_deinit(nowNode);
         nowNode = nodeNext;
     }
@@ -55,7 +55,7 @@ void link_addNode(Link* self, void* content) {
 
     self->firstNode = content;
     // change the first node to new node
-    content_setNext(content, (Arg*)secondNode);
+    arg_setNext(content, (Arg*)secondNode);
 }
 
 static void __link_removeNode(Link* self,
@@ -75,18 +75,18 @@ static void __link_removeNode(Link* self,
             goto exit;
         }
         priorNode = nodeNow;
-        nodeNow = (LinkNode*)content_getNext((Arg*)nodeNow);
+        nodeNow = (LinkNode*)arg_getNext((Arg*)nodeNow);
     }
 
-    nextNode = (LinkNode*)content_getNext((Arg*)nodeToDelete);
+    nextNode = (LinkNode*)arg_getNext((Arg*)nodeToDelete);
     if (nodeToDelete == self->firstNode) {
-        self->firstNode = (LinkNode*)content_getNext((Arg*)nodeToDelete);
+        self->firstNode = (LinkNode*)arg_getNext((Arg*)nodeToDelete);
     }
     if (NULL == priorNode) {
         self->firstNode = nextNode;
         goto exit;
     }
-    content_setNext((Arg*)priorNode, (Arg*)nextNode);
+    arg_setNext((Arg*)priorNode, (Arg*)nextNode);
     goto exit;
 
 // deinit the node
@@ -111,7 +111,7 @@ int32_t link_getSize(Link* self) {
     NowNode = self->firstNode;
     while (NULL != NowNode) {
         size++;
-        NowNode = (LinkNode*)content_getNext((Arg*)NowNode);
+        NowNode = (LinkNode*)arg_getNext((Arg*)NowNode);
     }
     return size;
 }

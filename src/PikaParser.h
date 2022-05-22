@@ -64,6 +64,7 @@ enum StmtType {
     STMT_none,
 };
 
+/* clang-format off */
 dcl_class(Asmer);
 
 def_class(Asmer, 
@@ -100,6 +101,7 @@ def_class(ParserState,
         Args* buffs_p;
     )
 );
+/* clang-format on */
 
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
@@ -116,9 +118,9 @@ char* Parser_parsePyLines(Args* outBuffs,
     for (int i = 0; i < parseState.length; i++)
 
 #define ParserState_forEachTokenExistPs(parseState, tokens) \
-    /* init parserStage */                                 \
-    ParserState_init(&parseState);                         \
-    ParserState_parse(&parseState, tokens);                \
+    /* init parserStage */                                  \
+    ParserState_init(&parseState);                          \
+    ParserState_parse(&parseState, tokens);                 \
     ParserState_forEach(parseState)
 
 #define ParserState_forEachToken(parseState, tokens) \

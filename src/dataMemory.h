@@ -42,7 +42,6 @@
 
 #include "__pika_ooc.h"
 
-
 typedef struct {
     uint32_t heapUsed;
     uint32_t heapUsedMax;
@@ -52,6 +51,7 @@ typedef uint8_t* BitMap;
 
 dcl_class(Pool);
 
+/* clang-format off */
 def_class(Pool, 
     private_member(
         BitMap bitmap;
@@ -62,6 +62,7 @@ def_class(Pool,
         uint32_t purl_free_block_start;
     )
 );
+/* clang-format on */
 
 void pikaFree(void* mem, uint32_t size);
 void* pikaMalloc(uint32_t size);

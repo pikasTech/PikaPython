@@ -50,6 +50,8 @@ enum Instruct {
 
 #include "__pika_ooc.h"
 
+/* clang-format off */
+
 dcl_class(VMState);
 
 def_class(VMState, 
@@ -64,6 +66,8 @@ def_class(VMState,
         uint8_t line_error_code;
     )
 );
+
+/* clang-format on */
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);

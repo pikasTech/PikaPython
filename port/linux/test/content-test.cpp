@@ -36,7 +36,7 @@ TEST(content, init) {
     ASSERT_EQ(hash_time33("name"), nameHash);
     ASSERT_EQ(ARG_TYPE_NONE, type);
 
-    content_deinit(self);
+    arg_freeContent(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -48,7 +48,7 @@ TEST(content, set) {
     contentIn[3] = 4;
     Arg* self = content_init("", ARG_TYPE_NONE, NULL, 0, NULL);
     self = content_setName(self, "name");
-    self = content_setType(self, ARG_TYPE_NONE);
+    self = arg_setType(self, ARG_TYPE_NONE);
     self = content_setContent(self, contentIn, 4);
 
     uint16_t typeOffset = content_typeOffset(self);
@@ -74,7 +74,7 @@ TEST(content, set) {
     ASSERT_EQ(hash_time33("name"), nameHash);
     ASSERT_EQ(ARG_TYPE_NONE, type);
 
-    content_deinit(self);
+    arg_freeContent(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -84,8 +84,8 @@ TEST(content, next) {
     uint8_t* c3 = content_getNext(c2);
 
     ASSERT_EQ(c3, c1);
-    content_deinit(c1);
-    content_deinit(c2);
+    arg_freeContent(c1);
+    arg_freeContent(c2);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -95,8 +95,8 @@ TEST(content, setNext) {
     uint8_t* c2 = content_getNext(c1);
     Hash c2NameHash = content_getNameHash(c2);
     EXPECT_EQ(c2NameHash, hash_time33("c2"));
-    content_deinit(c1);
-    content_deinit(c2);
+    arg_freeContent(c1);
+    arg_freeContent(c2);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif

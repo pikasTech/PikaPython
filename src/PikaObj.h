@@ -44,14 +44,17 @@
 #include "dataLink.h"
 #include "dataMemory.h"
 
-dcl_class(InstructUnit);
+/* clang-format off */
 
+dcl_class(InstructUnit);
 def_class(InstructUnit,
-          private_member(uint8_t deepth; uint8_t isNewLine_instruct;
-                         uint16_t const_pool_index;));
+    private_member(
+        uint8_t deepth; 
+        uint8_t isNewLine_instruct;
+        uint16_t const_pool_index;
+    ));
 
 dcl_class(ConstPool);
-
 def_class(ConstPool,
     private_member(
         Arg* arg_buff;
@@ -63,7 +66,6 @@ def_class(ConstPool,
     ));
 
 dcl_class(InstructArray);
-
 def_class(InstructArray,
     private_member(
         Arg* arg_buff; uint16_t content_offset_now;
@@ -99,6 +101,7 @@ def_class(MethodInfo,
         ArgType type;
         ByteCodeFrame * bytecode_frame;
         ));
+/* clang-format on */
 
 typedef PikaObj LibObj;
 typedef PikaObj PikaMaker;
