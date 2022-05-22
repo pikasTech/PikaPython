@@ -30,7 +30,7 @@
 #include "dataMemory.h"
 
 void linkNode_deinit(LinkNode* self) {
-    arg_deinit(self);
+    arg_deinit((Arg*)self);
 }
 
 void linkNode_init(LinkNode* self, void* args) {

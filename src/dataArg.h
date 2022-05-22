@@ -79,17 +79,16 @@ def_class(Arg,
     )
 );
 
-Hash content_getNameHash(Arg* self);
 ArgType content_getType(Arg* self);
 Arg* content_getNext(Arg* self);
 uint16_t content_getSize(Arg* self);
 uint8_t* content_getContent(Arg* self);
 uint16_t content_totleSize(Arg* self);
 uint8_t* content_deinit(Arg* self);
-uint8_t* content_setName(Arg* self, char* name);
-uint8_t* content_setType(Arg* self, ArgType type);
-uint8_t* content_setContent(Arg* self, uint8_t* content, uint16_t size);
-void content_setNext(Arg* self, uint8_t* next);
+Arg* content_setName(Arg* self, char* name);
+Arg* content_setType(Arg* self, ArgType type);
+Arg* content_setContent(Arg* self, uint8_t* content, uint16_t size);
+void content_setNext(Arg* self, Arg* next);
 uint16_t arg_getTotleSize(Arg* self);
 void arg_freeContent(Arg* self);
 

@@ -35,8 +35,8 @@ enum LINK_IS_DEINIT_SELF {
     LINK_IS_DEINIT_SELF_DISABLE,
 };
 
-typedef struct Class_link Link;
-struct Class_link {
+dcl_class(Link)
+struct Link{
     LinkNode* firstNode;
 };
 

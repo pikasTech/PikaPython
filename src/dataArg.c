@@ -48,14 +48,14 @@ Hash hash_time33(char* str) {
     return (hash & 0x7FFFFFFF);
 }
 
-static uint8_t* content_init_hash(Hash nameHash,
+static Arg* content_init_hash(Hash nameHash,
                                   ArgType type,
                                   uint8_t* content,
                                   uint32_t size,
-                                  uint8_t* next) {
+                                  Arg* next) {
     Arg* self = (Arg*)pikaMalloc(sizeof(Arg) + size);
 
-    self->next = (Arg*)next;
+    self->next = next;
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
@@ -65,14 +65,14 @@ static uint8_t* content_init_hash(Hash nameHash,
         __platform_memcpy(self->content, content, size);
     }
 
-    return (uint8_t*)self;
+    return self;
 }
 
-static uint8_t* content_init(char* name,
+static Arg* content_init(char* name,
                              ArgType type,
                              uint8_t* content,
                              uint16_t size,
-                             uint8_t* next) {
+                             Arg* next) {
     Hash nameHash = hash_time33(name);
     return content_init_hash(nameHash, type, content, size, next);
 }
@@ -93,7 +93,7 @@ uint8_t* content_deinit(Arg* self) {
     return 0;
 }
 
-uint8_t* content_setContent(Arg* self, uint8_t* content, uint16_t size) {
+Arg* content_setContent(Arg* self, uint8_t* content, uint16_t size) {
     if (NULL == self) {
         /* malloc */
         return content_init("", ARG_TYPE_VOID, content, size, NULL);
@@ -106,16 +106,16 @@ uint8_t* content_setContent(Arg* self, uint8_t* content, uint16_t size) {
     }
 
     /* realloc */
-    Hash nameHash = content_getNameHash(self);
+    Hash nameHash = arg_getNameHash(self);
     ArgType type = content_getType(self);
-    uint8_t* next = content_getNext(self);
-    uint8_t* newContent =
+    Arg* next = content_getNext(self);
+    Arg* newContent =
         content_init_hash(nameHash, type, content, size, next);
     content_deinit(self);
     return newContent;
 }
 
-uint8_t* content_setNameHash(Arg* self, Hash nameHash) {
+Arg* content_setNameHash(Arg* self, Hash nameHash) {
     if (NULL == self) {
         return content_init_hash(nameHash, ARG_TYPE_VOID, NULL, 0, NULL);
     }
@@ -124,11 +124,11 @@ uint8_t* content_setNameHash(Arg* self, Hash nameHash) {
     return self;
 }
 
-uint8_t* content_setName(Arg* self, char* name) {
+Arg* content_setName(Arg* self, char* name) {
     return content_setNameHash(self, hash_time33(name));
 }
 
-uint8_t* content_setType(Arg* self, ArgType type) {
+Arg* content_setType(Arg* self, ArgType type) {
     if (NULL == self) {
         return content_init("", type, NULL, 0, NULL);
     }
@@ -156,7 +156,7 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
 }
 
 Arg* arg_newContent(Arg* self, uint32_t size) {
-    uint8_t* newContent = content_init("", ARG_TYPE_VOID, NULL, size, NULL);
+    Arg* newContent = content_init("", ARG_TYPE_VOID, NULL, size, NULL);
     arg_freeContent(self);
     return newContent;
 }
@@ -288,7 +288,7 @@ Hash arg_getNameHash(Arg* self) {
     if (NULL == self) {
         return 999999;
     }
-    return content_getNameHash(self);
+    return self->name_hash;
 }
 
 ArgType arg_getType(Arg* self) {
@@ -399,10 +399,6 @@ void arg_deinit(Arg* self) {
     arg_freeContent(self);
 }
 
-Hash content_getNameHash(Arg* self) {
-    return ((Arg*)self)->name_hash;
-}
-
 Arg* content_getNext(Arg* self) {
     return (Arg*)(((Arg*)self)->next);
 }
@@ -415,7 +411,7 @@ uint8_t* content_getContent(Arg* self) {
     return ((Arg*)self)->content;
 }
 
-void content_setNext(Arg* self, uint8_t* next) {
+void content_setNext(Arg* self, Arg* next) {
     ((Arg*)self)->next = (Arg*)(next);
 }
 

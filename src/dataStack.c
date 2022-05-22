@@ -59,7 +59,7 @@ int32_t stack_deinit(Stack* stack) {
     return 0;
 }
 
-void stack_pushPyload(Stack* stack, uint8_t* content, size_t size) {
+void stack_pushPyload(Stack* stack, Arg* content, size_t size) {
     __platform_memcpy(stack->sp, content, size);
     stack->sp += size;
 }
@@ -82,7 +82,6 @@ int32_t stack_pushArg(Stack* stack, Arg* arg) {
     if (arg_getType(arg) == ARG_TYPE_OBJECT) {
         obj_refcntInc(arg_getPtr(arg));
     }
-
     stack_pushSize(stack, size);
     stack_pushPyload(stack, arg, size);
     arg_deinit(arg);

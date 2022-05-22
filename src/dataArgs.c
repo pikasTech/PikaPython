@@ -264,31 +264,32 @@ int32_t __updateArg(Args* self, Arg* argNew) {
     LinkNode* priorNode = NULL;
     Hash nameHash = arg_getNameHash(argNew);
     while (1) {
-        if (content_getNameHash(nodeNow) == nameHash) {
+        if (arg_getNameHash((Arg*)nodeNow) == nameHash) {
             nodeToUpdate = nodeNow;
             break;
         }
-        if (content_getNext(nodeNow) == NULL) {
+        if (content_getNext((Arg*)nodeNow) == NULL) {
             // error, node no found
             goto exit;
         }
         priorNode = nodeNow;
-        nodeNow = content_getNext(nodeNow);
+        nodeNow = (LinkNode*)content_getNext((Arg*)nodeNow);
     }
 
-    arg_deinitHeap(nodeToUpdate);
+    arg_deinitHeap((Arg*)nodeToUpdate);
 
-    nodeToUpdate = arg_setContent(nodeToUpdate, arg_getContent(argNew),
-                                  arg_getContentSize(argNew));
+    nodeToUpdate = (LinkNode*)arg_setContent(
+        (Arg*)nodeToUpdate, arg_getContent(argNew), arg_getContentSize(argNew));
 
-    nodeToUpdate = arg_setType(nodeToUpdate, arg_getType(argNew));
+    nodeToUpdate =
+        (LinkNode*)arg_setType((Arg*)nodeToUpdate, arg_getType(argNew));
     // update privior link, because arg_getContent would free origin pointer
     if (NULL == priorNode) {
         self->firstNode = nodeToUpdate;
         goto exit;
     }
 
-    content_setNext(priorNode, nodeToUpdate);
+    content_setNext((Arg*)priorNode, (Arg*)nodeToUpdate);
     goto exit;
 exit:
     arg_freeContent(argNew);
@@ -313,7 +314,7 @@ LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
     LinkNode* node = self->firstNode;
     int_fast8_t n = 0;
     while (NULL != node) {
-        Arg* arg = node;
+        Arg* arg = (Arg*)node;
         Hash thisNameHash = arg_getNameHash(arg);
         if (thisNameHash == nameHash) {
             if (n > __PIKA_CFG_HASH_LIST_CACHE_SIZE) {
@@ -324,7 +325,7 @@ LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
                  */
 
                 /*! remove current node from the list */
-                node = content_getNext(arg);
+                node = (LinkNode*)content_getNext((Arg*)arg);
 
                 /*! move the node to the cache */
                 content_setNext(arg, (Arg*)(self->firstNode));
@@ -332,7 +333,7 @@ LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
             }
             return (LinkNode*)arg;
         }
-        node = content_getNext(node);
+        node = (LinkNode*)content_getNext((Arg*)node);
     }
     return NULL;
 }
@@ -346,7 +347,7 @@ Arg* args_getArg_hash(Args* self, Hash nameHash) {
     if (NULL == node) {
         return NULL;
     }
-    return node;
+    return (Arg*)node;
 }
 
 Arg* args_getArg(Args* self, char* name) {
@@ -354,7 +355,7 @@ Arg* args_getArg(Args* self, char* name) {
     if (NULL == node) {
         return NULL;
     }
-    return node;
+    return (Arg*)node;
 }
 
 Arg* args_getArg_index(Args* self, int index) {
@@ -363,9 +364,9 @@ Arg* args_getArg_index(Args* self, int index) {
         return NULL;
     }
     for (int i = 0; i < index; i++) {
-        nodeNow = content_getNext(nodeNow);
+        nodeNow = (LinkNode*)content_getNext((Arg*)nodeNow);
     }
-    return nodeNow;
+    return (Arg*)nodeNow;
 }
 
 char* getPrintSring(Args* self, char* name, char* valString) {
@@ -466,11 +467,11 @@ int32_t args_foreach(Args* self,
     }
     LinkNode* nodeNow = self->firstNode;
     while (1) {
-        Arg* argNow = nodeNow;
+        Arg* argNow = (Arg*)nodeNow;
         if (NULL == argNow) {
             continue;
         }
-        LinkNode* nextNode = content_getNext(nodeNow);
+        LinkNode* nextNode = (LinkNode*)content_getNext((Arg*)nodeNow);
         eachHandle(argNow, context);
 
         if (NULL == nextNode) {
