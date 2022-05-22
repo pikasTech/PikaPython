@@ -68,8 +68,7 @@ typedef enum {
 
 typedef void (*StructDeinitFun)(void* struct_);
 
-dcl_class(__arg);
-
+typedef struct __arg __arg;
 def_class(__arg,
           private_member(__arg* next; uint16_t size; uint8_t type;
                          uint8_t ref_cnt;
@@ -82,7 +81,7 @@ Hash content_getNameHash(Arg* self);
 ArgType content_getType(uint8_t* self);
 Arg* content_getNext(Arg* self);
 uint16_t content_getSize(Arg* self);
-uint8_t *content_getContent(Arg* self);
+uint8_t* content_getContent(Arg* self);
 uint16_t content_totleSize(uint8_t* self);
 uint8_t* content_deinit(uint8_t* self);
 uint8_t* content_setName(uint8_t* self, char* name);

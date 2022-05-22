@@ -25,7 +25,6 @@
  * SOFTWARE.
  */
 
-#define __DATA_ARG_CLASS_IMPLEMENT__
 #include "dataArgs.h"
 #include "PikaObj.h"
 #include "PikaPlatform.h"
@@ -311,14 +310,12 @@ int32_t args_setArg(Args* self, Arg* arg) {
 #endif
 
 LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
-    LinkNode** ppnode = (LinkNode**)&(self->firstNode);
+    LinkNode* node = self->firstNode;
     int_fast8_t n = 0;
-
-    while (NULL != (*ppnode)) {
-        Arg* arg = (*ppnode);
+    while (NULL != node) {
+        Arg* arg = node;
         Hash thisNameHash = arg_getNameHash(arg);
         if (thisNameHash == nameHash) {
-            __arg* tmp = (__arg*)(*ppnode);
             if (n > __PIKA_CFG_HASH_LIST_CACHE_SIZE) {
                 /* the first __PIKA_CFG_HASH_LIST_CACHE_SIZE items in the list
                  * is considered as a cache.
@@ -327,18 +324,16 @@ LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
                  */
 
                 /*! remove current node from the list */
-                (*ppnode) = (LinkNode*)(tmp->next);
+                node = content_getNext(arg);
 
                 /*! move the node to the cache */
-                tmp->next = (__arg*)(self->firstNode);
-                self->firstNode = (LinkNode*)tmp;
+                content_setNext(arg, (Arg*)(self->firstNode));
+                self->firstNode = (LinkNode*)arg;
             }
-            return (LinkNode*)tmp;
+            return (LinkNode*)arg;
         }
-        n++;
-        ppnode = (LinkNode**)&(((__arg*)(*ppnode))->next);
+        node = content_getNext(node);
     }
-
     return NULL;
 }
 
