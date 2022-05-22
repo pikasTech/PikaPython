@@ -53,9 +53,9 @@ static uint8_t* content_init_hash(Hash nameHash,
                                   uint8_t* content,
                                   uint32_t size,
                                   uint8_t* next) {
-    __arg* self = (__arg*)pikaMalloc(sizeof(__arg) + size);
+    Arg* self = (Arg*)pikaMalloc(sizeof(Arg) + size);
 
-    self->next = (__arg*)next;
+    self->next = (Arg*)next;
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
@@ -77,8 +77,8 @@ static uint8_t* content_init(char* name,
     return content_init_hash(nameHash, type, content, size, next);
 }
 
-uint16_t content_totleSize(uint8_t* self) {
-    return ((__arg*)self)->size + sizeof(__arg);
+uint16_t content_totleSize(Arg* self) {
+    return ((Arg*)self)->size + sizeof(Arg);
 }
 
 void arg_freeContent(Arg* self) {
@@ -87,13 +87,13 @@ void arg_freeContent(Arg* self) {
     }
 }
 
-uint8_t* content_deinit(uint8_t* self) {
+uint8_t* content_deinit(Arg* self) {
     uint16_t totleSize = content_totleSize(self);
     pikaFree(self, totleSize);
     return 0;
 }
 
-uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
+uint8_t* content_setContent(Arg* self, uint8_t* content, uint16_t size) {
     if (NULL == self) {
         /* malloc */
         return content_init("", ARG_TYPE_VOID, content, size, NULL);
@@ -101,7 +101,7 @@ uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
 
     /* only copy */
     if (content_getSize(self) == size) {
-        __platform_memcpy(((__arg*)self)->content, content, size);
+        __platform_memcpy(((Arg*)self)->content, content, size);
         return self;
     }
 
@@ -115,32 +115,32 @@ uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size) {
     return newContent;
 }
 
-uint8_t* content_setNameHash(uint8_t* self, Hash nameHash) {
+uint8_t* content_setNameHash(Arg* self, Hash nameHash) {
     if (NULL == self) {
         return content_init_hash(nameHash, ARG_TYPE_VOID, NULL, 0, NULL);
     }
-    __arg* arg = (__arg*)self;
+    Arg* arg = (Arg*)self;
     arg->name_hash = nameHash;
     return self;
 }
 
-uint8_t* content_setName(uint8_t* self, char* name) {
+uint8_t* content_setName(Arg* self, char* name) {
     return content_setNameHash(self, hash_time33(name));
 }
 
-uint8_t* content_setType(uint8_t* self, ArgType type) {
+uint8_t* content_setType(Arg* self, ArgType type) {
     if (NULL == self) {
         return content_init("", type, NULL, 0, NULL);
     }
 
-    __arg* arg = (__arg*)self;
+    Arg* arg = (Arg*)self;
     arg->type = type;
 
     return self;
 }
 
-ArgType content_getType(uint8_t* self) {
-    __arg* arg = (__arg*)self;
+ArgType content_getType(Arg* self) {
+    Arg* arg = (Arg*)self;
     return (ArgType)arg->type;
 }
 
@@ -254,7 +254,7 @@ float arg_getFloat(Arg* self) {
         return -999.999;
     }
 
-    return *(float*)(((__arg*)self)->content);
+    return *(float*)(((Arg*)self)->content);
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
@@ -271,14 +271,14 @@ int64_t arg_getInt(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return -999999;
     }
-    return *(int64_t*)(((__arg*)self)->content);
+    return *(int64_t*)(((Arg*)self)->content);
 }
 
 void* arg_getPtr(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return NULL;
     }
-    return *(void**)(((__arg*)self)->content);
+    return *(void**)(((Arg*)self)->content);
 }
 char* arg_getStr(Arg* self) {
     return (char*)arg_getContent(self);
@@ -400,23 +400,23 @@ void arg_deinit(Arg* self) {
 }
 
 Hash content_getNameHash(Arg* self) {
-    return ((__arg*)self)->name_hash;
+    return ((Arg*)self)->name_hash;
 }
 
 Arg* content_getNext(Arg* self) {
-    return (Arg*)(((__arg*)self)->next);
+    return (Arg*)(((Arg*)self)->next);
 }
 
 uint16_t content_getSize(Arg* self) {
-    return ((__arg*)self)->size;
+    return ((Arg*)self)->size;
 }
 
 uint8_t* content_getContent(Arg* self) {
-    return ((__arg*)self)->content;
+    return ((Arg*)self)->content;
 }
 
 void content_setNext(Arg* self, uint8_t* next) {
-    ((__arg*)self)->next = (__arg*)(next);
+    ((Arg*)self)->next = (Arg*)(next);
 }
 
 uint8_t* arg_getContent(Arg* self) {

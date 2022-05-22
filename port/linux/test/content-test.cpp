@@ -11,7 +11,7 @@ TEST(content, init) {
     contentIn[1] = 2;
     contentIn[2] = 3;
     contentIn[3] = 4;
-    uint8_t* self = content_init("name", ARG_TYPE_NONE, contentIn, 4, NULL);
+    Arg* self = content_init("name", ARG_TYPE_NONE, contentIn, 4, NULL);
 
     uint16_t typeOffset = content_typeOffset(self);
     uint16_t sizeOffset = content_sizeOffset(self);
@@ -46,7 +46,7 @@ TEST(content, set) {
     contentIn[1] = 2;
     contentIn[2] = 3;
     contentIn[3] = 4;
-    uint8_t* self = content_init("", ARG_TYPE_NONE, NULL, 0, NULL);
+    Arg* self = content_init("", ARG_TYPE_NONE, NULL, 0, NULL);
     self = content_setName(self, "name");
     self = content_setType(self, ARG_TYPE_NONE);
     self = content_setContent(self, contentIn, 4);

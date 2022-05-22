@@ -68,26 +68,28 @@ typedef enum {
 
 typedef void (*StructDeinitFun)(void* struct_);
 
-typedef struct __arg __arg;
-def_class(__arg,
-          private_member(__arg* next; uint16_t size; uint8_t type;
-                         uint8_t ref_cnt;
-                         Hash name_hash;
-                         uint8_t content[];));
-
-typedef uint8_t Arg;
+dcl_class(Arg)
+def_class(Arg,
+    private_member(
+        Arg* next;
+        uint16_t size; uint8_t type;
+        uint8_t ref_cnt;
+        Hash name_hash;
+        uint8_t content[];
+    )
+);
 
 Hash content_getNameHash(Arg* self);
-ArgType content_getType(uint8_t* self);
+ArgType content_getType(Arg* self);
 Arg* content_getNext(Arg* self);
 uint16_t content_getSize(Arg* self);
 uint8_t* content_getContent(Arg* self);
-uint16_t content_totleSize(uint8_t* self);
-uint8_t* content_deinit(uint8_t* self);
-uint8_t* content_setName(uint8_t* self, char* name);
-uint8_t* content_setType(uint8_t* self, ArgType type);
-uint8_t* content_setContent(uint8_t* self, uint8_t* content, uint16_t size);
-void content_setNext(uint8_t* self, uint8_t* next);
+uint16_t content_totleSize(Arg* self);
+uint8_t* content_deinit(Arg* self);
+uint8_t* content_setName(Arg* self, char* name);
+uint8_t* content_setType(Arg* self, ArgType type);
+uint8_t* content_setContent(Arg* self, uint8_t* content, uint16_t size);
+void content_setNext(Arg* self, uint8_t* next);
 uint16_t arg_getTotleSize(Arg* self);
 void arg_freeContent(Arg* self);
 
