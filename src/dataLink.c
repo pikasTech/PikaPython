@@ -25,7 +25,6 @@
  * SOFTWARE.
  */
 
-#define __DATA_ARG_CLASS_IMPLEMENT__
 #define __DATA_MEMORY_CLASS_IMPLEMENT__
 
 #include "dataLink.h"

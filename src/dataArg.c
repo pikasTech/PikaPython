@@ -364,7 +364,7 @@ void arg_deinitHeap(Arg* self) {
 
 /* load file as byte array */
 Arg* arg_loadFile(Arg* self, char* filename) {
-		size_t file_size = 0;
+    size_t file_size = 0;
     char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
     Arg* res = New_arg(NULL);
     __platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
@@ -397,4 +397,28 @@ void arg_deinit(Arg* self) {
     arg_deinitHeap(self);
     /* free the ref */
     arg_freeContent(self);
+}
+
+Hash content_getNameHash(Arg* self) {
+    return ((__arg*)self)->name_hash;
+}
+
+Arg* content_getNext(Arg* self) {
+    return (Arg*)(((__arg*)self)->next);
+}
+
+uint16_t content_getSize(Arg* self) {
+    return ((__arg*)self)->size;
+}
+
+uint8_t* content_getContent(Arg* self) {
+    return ((__arg*)self)->content;
+}
+
+void content_setNext(Arg* self, uint8_t* next) {
+    ((__arg*)self)->next = (__arg*)(next);
+}
+
+uint8_t* arg_getContent(Arg* self) {
+    return (uint8_t*)content_getContent(self);
 }
