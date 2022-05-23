@@ -345,7 +345,7 @@ int Lib_loadLibraryFileToArray(char* origin_file_name, char* out_folder) {
     char* array_name = strsGetLastToken(&buffs, origin_file_name, '/');
     array_name = strsReplace(&buffs, array_name, ".", "_");
     __platform_printf("    loading %s[]...\n", array_name);
-    pika_fputs("const unsigned char ", fp);
+    pika_fputs("__attribute__((aligned(4))) const unsigned char ", fp);
     pika_fputs(array_name, fp);
     pika_fputs("[] = {", fp);
     char byte_buff[32] = {0};
