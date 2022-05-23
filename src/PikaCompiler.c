@@ -265,6 +265,10 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
 }
 
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
+    if (0 != ((intptr_t)library_bytes & 0x03)) {
+        return PIKA_ERR_UNALIGNED_PTR;
+    }
+
     char* magic_code = (char*)library_bytes;
 
     uint32_t* library_info = (uint32_t*)library_bytes;
@@ -275,14 +279,14 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
     if (!((magic_code[0] == 0x7f) && (magic_code[1] == 'p') &&
           (magic_code[2] == 'y') && (magic_code[3] == 'a'))) {
         __platform_printf("Error: invalid magic code.\r\n");
-        return 1;
+        return PIKA_ERR_ILLEGAL_MAGIC_CODE;
     }
     /* check version num */
     if (version_num != LIB_VERSION_NUMBER) {
         __platform_printf(
             "Error: invalid version number. Expected %, got %\r\n",
             LIB_VERSION_NUMBER, version_num);
-        return 2;
+        return PIKA_ERR_INVALID_VERSION_NUMBER;
     }
     uint8_t* bytecode_addr =
         library_bytes + LIB_INFO_BLOCK_SIZE * (module_num + 1);
@@ -294,7 +298,7 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
             *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
         bytecode_addr += module_size;
     }
-    return 0;
+    return PIKA_ERR_NONE;
 }
 
 int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
@@ -302,16 +306,16 @@ int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
     if (NULL == file_arg) {
         __platform_printf("Error: Could not load library file '%s'\n",
                           lib_file_name);
-        return 1;
+        return PIKA_ERR_IO_ERROR;
     }
     /* save file_arg as __lib_buf to libObj */
     obj_setArg_noCopy(self, "__lib_buf", file_arg);
     if (0 != LibObj_loadLibrary(self, arg_getBytes(file_arg))) {
         __platform_printf("Error: Could not load library from '%s'\n",
                           lib_file_name);
-        return 2;
+        return PIKA_ERR_OPERATION_FAILED;
     }
-    return 0;
+    return PIKA_ERR_NONE;
 }
 
 size_t pika_fputs(char* str, FILE* fp) {
