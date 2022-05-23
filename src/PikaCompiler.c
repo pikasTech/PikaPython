@@ -298,7 +298,7 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
             *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
         bytecode_addr += module_size;
     }
-    return PIKA_ERR_NONE;
+    return PIKA_OK;
 }
 
 int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
@@ -315,7 +315,7 @@ int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
                           lib_file_name);
         return PIKA_ERR_OPERATION_FAILED;
     }
-    return PIKA_ERR_NONE;
+    return PIKA_OK;
 }
 
 size_t pika_fputs(char* str, FILE* fp) {
