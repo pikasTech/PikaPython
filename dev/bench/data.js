@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1653282767056,
+  "lastUpdate": 1653297517888,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -52244,6 +52244,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005002329342702357,
             "unit": "ms/iter",
             "extra": "iterations: 265956\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "1912544842@qq.com",
+            "name": "dreamcmi",
+            "username": "dreamcmi"
+          },
+          "committer": {
+            "email": "645275593@qq.com",
+            "name": "李昂",
+            "username": "liang6516"
+          },
+          "distinct": true,
+          "id": "fefe9afb17d14c1a3bbe75c4c6a83d65831f451e",
+          "message": "Update ch582 sdk to v1.2, and solve the problem of running error at 80m frequency",
+          "timestamp": "2022-05-23T09:12:16Z",
+          "tree_id": "7f55130c278f4c9bade6791561ed6ea4931233ef",
+          "url": "https://github.com/pikasTech/pikascript/commit/fefe9afb17d14c1a3bbe75c4c6a83d65831f451e"
+        },
+        "date": 1653297513920,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 7507.917843465048,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 7507.917843465048 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 43.760299546580235,
+            "unit": "ms/iter",
+            "extra": "iterations: 32\ncpu: 43.75429877652599 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 21.793415073290948,
+            "unit": "ms/iter",
+            "extra": "iterations: 64\ncpu: 21.789352945635688 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 7.691698329542362,
+            "unit": "ms/iter",
+            "extra": "iterations: 182\ncpu: 7.691213623263302 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.00500053369112753,
+            "unit": "ms/iter",
+            "extra": "iterations: 280565\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
