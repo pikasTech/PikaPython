@@ -104,7 +104,4 @@ char* Parser_parsePyLines(Args* outBuffs,
     struct ParserState ps;                           \
     ParserState_forEachTokenExistPs(parseState, tokens)
 
-#undef __PIKA_PARSER_CLASS_IMPLEMENT__
-#undef __PIKA_PARSER_CLASS_INHERIT__
-
 #endif

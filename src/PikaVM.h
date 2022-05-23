@@ -132,6 +132,4 @@ VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode);
 InstructUnit* instructArray_getNow(InstructArray* self);
 InstructUnit* instructArray_getNext(InstructArray* self);
 
-#undef __PIKAVM_CLASS_IMPLEMENT__
-#undef __PIKAVM_CLASS_INHERIT__
 #endif

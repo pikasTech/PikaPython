@@ -247,7 +247,4 @@ int obj_runModule(PikaObj* self, char* module_name);
 #define PIKA_PYTHON(x)
 #define PIKA_PYTHON_END
 
-#undef __PIKA_OBJ_CLASS_IMPLEMENT__
-#undef __PIKA_OBJ_CLASS_INHERIT__
-
 #endif

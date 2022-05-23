@@ -28,18 +28,6 @@
 #ifndef _arg__H
 #define _arg__H
 
-/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
- */
-//#define __PLOOC_CLASS_USE_STRICT_TEMPLATE__
-
-#if defined(__DATA_ARG_CLASS_IMPLEMENT__)
-#define __PLOOC_CLASS_IMPLEMENT__
-#elif defined(__DATA_ARG_CLASS_INHERIT__)
-#define __PLOOC_CLASS_INHERIT__
-#endif
-
-#include "__pika_ooc.h"
-
 #include "dataLink.h"
 #include "dataMemory.h"
 
@@ -68,18 +56,15 @@ typedef enum {
 
 typedef void (*StructDeinitFun)(void* struct_);
 
-/* clang-format off */
-dcl_class(Arg)
-def_class(Arg,
-    private_member(
-        Arg* next;
-        uint16_t size; uint8_t type;
-        uint8_t ref_cnt;
-        Hash name_hash;
-        uint8_t content[];
-    )
-);
-/* clang-format on */
+typedef struct Arg Arg;
+struct Arg {
+    Arg* next;
+    uint16_t size;
+    uint8_t type;
+    uint8_t ref_cnt;
+    Hash name_hash;
+    uint8_t content[];
+};
 
 Arg* arg_getNext(Arg* self);
 uint16_t arg_getSize(Arg* self);
@@ -132,6 +117,4 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 void arg_printBytes(Arg* self);
 Arg* arg_loadFile(Arg* self, char* filename);
 
-#undef __DATA_ARG_CLASS_IMPLEMENT__
-#undef __DATA_ARG_CLASS_INHERIT__
 #endif
