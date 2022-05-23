@@ -57,6 +57,7 @@
 #define __platform_printf(...) rt_kprintf(__VA_ARGS__)
 #endif
 
+/* clang-format off */
 typedef enum {
     
     PIKA_ERR_UNKNOWN_INSTRUCTION                    = -11,
@@ -70,10 +71,10 @@ typedef enum {
     PIKA_ERR_ILLEGAL_MAGIC_CODE                     = -3,
     PIKA_ERR_OPERATION_FAILED                       = -2,
     PIKA_ERR_UNKNOWN                                = -1,
-    PIKA_ERR_NONE                                   = 0,
-    PIKA_ERR_OK                                     = 0,
+    PIKA_OK                                         =  0,
     
 } PikaErr;
+/* clang-format on*/
 
 /*
     [Note]:
