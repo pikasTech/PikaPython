@@ -73,10 +73,7 @@ class UART(PikaStdDevice.UART):
 
 
 class IIC(PikaStdDevice.IIC):
-    SCL = GPIO()
-    SDA = GPIO()
     # override
-
     def platformEnable():
         pass
 

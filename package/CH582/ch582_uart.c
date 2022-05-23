@@ -2,7 +2,6 @@
 #include "CH582_UART.h"
 #include "ch582_utils.h"
 
-
 void UART0_DeInit(void)
 {
     R8_UART0_FCR = 0x0;
@@ -108,14 +107,14 @@ void CH582_UART_platformRead(PikaObj *self)
     default:
         break;
     }
-
-    obj_setStr(self, "readData", readData);
+    obj_setBytes(self, "readData", readData, len);
 }
 
 void CH582_UART_platformWrite(PikaObj *self)
 {
     int id = obj_getInt(self, "id");
-    char *data = obj_getStr(self, "data");
+    char *data = NULL;
+    size_t len = obj_loadBytes(self, "data", data);
     switch (id)
     {
     case 0:
