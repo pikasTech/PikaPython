@@ -97,7 +97,12 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	/* user input buff */
 	printf("hardware init ok \r\n");
-	pikaScriptShell(pikaScriptInit());
+	
+	/* run the main.py */
+	PikaObj* pikaMain = pikaScriptInit();
+	
+	/* launch the REPL */
+	pikaScriptShell(pikaMain);
   /* USER CODE END 2 */
 
   /* Infinite loop */
