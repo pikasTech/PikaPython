@@ -950,19 +950,19 @@
               <FilePath>..\pikascript\main.py</FilePath>
             </File>
             <File>
-              <FileName>machine.py</FileName>
+              <FileName>machine.pyi</FileName>
               <FileType>5</FileType>
-              <FilePath>..\pikascript\machine.py</FilePath>
+              <FilePath>..\pikascript\machine.pyi</FilePath>
             </File>
             <File>
-              <FileName>PikaStdLib.py</FileName>
+              <FileName>PikaStdLib.pyi</FileName>
               <FileType>5</FileType>
-              <FilePath>..\pikascript\PikaStdLib.py</FilePath>
+              <FilePath>..\pikascript\PikaStdLib.pyi</FilePath>
             </File>
             <File>
-              <FileName>STM32F1.py</FileName>
+              <FileName>STM32F1.pyi</FileName>
               <FileType>5</FileType>
-              <FilePath>..\pikascript\STM32F1.py</FilePath>
+              <FilePath>..\pikascript\STM32F1.pyi</FilePath>
             </File>
           </Files>
         </Group>
