@@ -37,7 +37,7 @@
 #include <string.h>
 
 /* Compiler */
-#if defined(__CC_ARM) || defined(__CLANG_ARM) /* ARM Compiler */
+#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 5000000) /* ARM Compiler */
 #define PIKA_WEAK __attribute__((weak))
 #elif defined(__IAR_SYSTEMS_ICC__) /* for IAR Compiler */
 #define PIKA_WEAK __weak
@@ -56,6 +56,23 @@
 #include <rtthread.h>
 #define __platform_printf(...) rt_kprintf(__VA_ARGS__)
 #endif
+
+typedef enum {
+    
+    PIKA_ERR_UNKNOWN_INSTRUCTION                    = -11,
+    PIKA_ERR_OUT_OF_RANGE                           = -10,
+    PIKA_ERR_IO_ERROR                               = -9,
+    PIKA_ERR_INSUFFICIENT_RESOURCE                  = -8,
+    PIKA_ERR_INVALID_PARAM                          = -7,
+    PIKA_ERR_INVALID_PTR                            = -6,
+    PIKA_ERR_UNALIGNED_PTR                          = -5,
+    PIKA_ERR_INVALID_VERSION_NUMBER                 = -4,
+    PIKA_ERR_ILLEGAL_MAGIC_CODE                     = -3,
+    PIKA_ERR_OPERATION_FAILED                       = -2,
+    PIKA_ERR_UNKNOWN                                = -1,
+    PIKA_ERR_NONE = 0,
+    
+} PikaErr;
 
 /*
     [Note]:
