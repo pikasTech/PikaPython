@@ -137,6 +137,9 @@ class UART(TinyObj):
     def read(self, length: int) -> str:
         pass
 
+    # def readBytes(self, length: int) -> bytes:
+    #     pass
+
     # need override
     def platformEnable(self):
         pass
@@ -148,6 +151,10 @@ class UART(TinyObj):
     # need override
     def platformRead(self):
         pass
+
+    # need override
+    # def platformReadBytes(self):
+    #     pass
 
     # need override
     def platformDisable(self):
@@ -181,6 +188,9 @@ class IIC(TinyObj):
     def read(self, addr: int, length: int) -> str:
         pass
 
+    # def readBytes(self, addr: int, length: int) -> bytes:
+    #     pass
+
     # need override
     def platformEnable(self):
         pass
@@ -192,6 +202,10 @@ class IIC(TinyObj):
     # need override
     def platformRead(self):
         pass
+
+    # need override
+    # def platformReadBytes(self):
+    #     pass
 
     # need override
     def platformDisable(self):
@@ -297,6 +311,9 @@ class SPI(TinyObj):
     def read(self, length: int) -> str:
         pass
 
+    # def readBytes(self, length: int) -> bytes:
+    #     pass
+
     # need override
     def platformEnable(self):
         pass
@@ -308,6 +325,10 @@ class SPI(TinyObj):
     # need override
     def platformRead(self):
         pass
+
+    # need override
+    # def platformReadBytes(self):
+    #     pass
 
     # need override
     def platformDisable(self):
@@ -342,6 +363,9 @@ class CAN(TinyObj):
     def read(self, length: int) -> str:
         pass
 
+    # def readBytes(self, length: int) -> bytes:
+    #     pass
+
     # need override 
     def addFilter(self, id:int, ide:int, rtr:int, mode:int, mask:int, hdr:int):
         pass
@@ -357,6 +381,10 @@ class CAN(TinyObj):
     # need override
     def platformRead(self):
         pass
+
+    # need override
+    # def platformReadBytes(self):
+    #     pass
 
     # need override
     def platformDisable(self):
