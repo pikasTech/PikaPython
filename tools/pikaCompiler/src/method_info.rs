@@ -67,7 +67,7 @@ impl MethodInfo {
     }
     pub fn method_impl_declear(&self) -> String {
         let return_type_in_c = match self.return_type.as_ref() {
-            Some(x) => x.to_c_type(),
+            Some(x) => x.to_c_type_return(),
             None => String::from("void"),
         };
         let arg_list_in_c = match self.arg_list.as_ref() {
@@ -87,21 +87,38 @@ impl MethodInfo {
             None => "".to_string(),
         };
         let return_impl = match &self.return_type {
-            Some(x) => format!("    {}(args, res);\n", x.return_fn()),
+            Some(x) => {
+                x.return_fn()
+            },
             None => "".to_string(),
         };
         let return_type_in_c = match &self.return_type {
-            Some(x) => format!("{} res = ", x.to_c_type()),
+            Some(x) => format!("{} res = ", x.to_c_type_return()),
             None => "".to_string(),
         };
         let call_arg_list = match &self.arg_list {
             Some(x) => format!(", {}", x.call_arg_list()),
             None => "".to_string(),
         };
+
+        /* [example]
+        char * res = PikaStdDevice_UART_read(self, length);
+        */
+
         let call_method = format!(
             "    {}{}_{}(self{});\n",
             return_type_in_c, self.class_name, self.name, call_arg_list
         );
+
+        /* [example]
+
+        void PikaStdDevice_UART_readMethod(PikaObj *self, Args *args){
+            int length = args_getInt(args, "length");
+            char * res = PikaStdDevice_UART_read(self, length);
+            method_returnStr(args, res);
+        }
+
+        */
         method_fn_impl.push_str(&method_fn_name);
         method_fn_impl.push_str(&get_local_args);
         method_fn_impl.push_str(&call_method);

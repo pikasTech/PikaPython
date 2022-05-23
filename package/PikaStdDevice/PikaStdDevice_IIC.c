@@ -44,6 +44,13 @@ char* PikaStdDevice_IIC_read(PikaObj* self, int addr, int length) {
     return obj_getStr(self, "readData");
 }
 
+Arg* PikaStdDevice_IIC_readBytes(PikaObj *self, int addr, int length){
+    obj_setInt(self, "length", length);
+    obj_setInt(self, "readAddr", addr);
+    obj_runNativeMethod(self, "platformReadBytes", NULL);
+    return obj_getArg(self, "readData");
+}
+
 void PikaStdDevice_IIC_platformWrite(PikaObj* self) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
@@ -60,6 +67,11 @@ void PikaStdDevice_IIC_platformDisable(PikaObj* self) {
 }
 
 void PikaStdDevice_IIC_platformRead(PikaObj* self) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
+void PikaStdDevice_IIC_platformReadBytes(PikaObj* self) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
 }

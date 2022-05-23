@@ -25,10 +25,21 @@ void PikaStdDevice_SPI_write(PikaObj* self, char* data) {
     obj_runNativeMethod(self, "platformWrite", NULL);
 }
 
+void PikaStdDevice_SPI_writeBytes(PikaObj *self, uint8_t* data, int length){
+    obj_setBytes(self, "writeData", data, length);
+    obj_runNativeMethod(self, "platformWriteBytes", NULL);
+}
+
 char* PikaStdDevice_SPI_read(PikaObj* self, int length) {
     obj_setInt(self, "length", length);
     obj_runNativeMethod(self, "platformRead", NULL);
     return obj_getStr(self, "readData");
+}
+
+Arg* PikaStdDevice_SPI_readBytes(PikaObj *self, int length){
+    obj_setInt(self, "length", length);
+    obj_runNativeMethod(self, "platformReadBytes", NULL);
+    return obj_getArg(self, "readData");
 }
 
 void PikaStdDevice_SPI_setBaudRate(PikaObj* self, int baudRate) {
@@ -82,3 +93,14 @@ void PikaStdDevice_SPI_platformRead(PikaObj* self) {
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
 }
+
+void PikaStdDevice_SPI_platformWriteBytes(PikaObj *self){
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
+void PikaStdDevice_SPI_platformReadBytes(PikaObj *self){
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+

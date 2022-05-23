@@ -204,8 +204,8 @@ class IIC(TinyObj):
         pass
 
     # need override
-    # def platformReadBytes(self):
-    #     pass
+    def platformReadBytes(self):
+        pass
 
     # need override
     def platformDisable(self):
@@ -308,11 +308,14 @@ class SPI(TinyObj):
     def write(self, data: str):
         pass
 
+    def writeBytes(self, data: bytes, length: int):
+        pass
+
     def read(self, length: int) -> str:
         pass
 
-    # def readBytes(self, length: int) -> bytes:
-    #     pass
+    def readBytes(self, length: int) -> bytes:
+        pass
 
     # need override
     def platformEnable(self):
@@ -323,12 +326,16 @@ class SPI(TinyObj):
         pass
 
     # need override
+    def platformWriteBytes(self):
+        pass
+
+    # need override
     def platformRead(self):
         pass
 
     # need override
-    # def platformReadBytes(self):
-    #     pass
+    def platformReadBytes(self):
+        pass
 
     # need override
     def platformDisable(self):

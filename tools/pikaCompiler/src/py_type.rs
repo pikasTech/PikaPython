@@ -28,6 +28,32 @@ impl PyType {
         }
         return "PikaObj*".to_string();
     }
+
+    pub fn to_c_type_return(&self) -> String {
+        if self.type_name == "int" {
+            return "int".to_string();
+        }
+        if self.type_name == "float" {
+            return "float".to_string();
+        }
+        if self.type_name == "pointer" {
+            return "void*".to_string();
+        }
+        if self.type_name == "str" {
+            return "char*".to_string();
+        }
+        if self.type_name == "bytes" {
+            return "Arg*".to_string();
+        }
+        if self.type_name == "" {
+            return "void".to_string();
+        }
+        if self.type_name == "any" {
+            return "Arg*".to_string();
+        }
+        return "PikaObj*".to_string();
+    }
+
     pub fn to_string(&self) -> String {
         return self.type_name.clone();
     }
@@ -38,24 +64,24 @@ impl PyType {
     }
     pub fn return_fn(&self) -> String {
         if self.type_name == "int" {
-            return "method_returnInt".to_string();
+            return "    method_returnInt(args, res);\n".to_string();
         }
         if self.type_name == "float" {
-            return "method_returnFloat".to_string();
+            return "    method_returnFloat(args, res);\n".to_string();
         }
         if self.type_name == "pointer" {
-            return "method_returnPtr".to_string();
+            return "    method_returnPtr(args, res);\n".to_string();
         }
         if self.type_name == "str" {
-            return "method_returnStr".to_string();
+            return "    method_returnStr(args, res);\n".to_string();
         }
         if self.type_name == "bytes" {
-            return "method_returnBytes".to_string();
+            return "    method_returnArg(args, res);\n".to_string();
         }
         if self.type_name == "any" {
-            return "method_returnArg".to_string();
+            return "    method_returnArg(args, res);\n".to_string();
         }
-        return "method_returnPtr".to_string();
+        return "    method_returnPtr(args, res);\n".to_string();
     }
     // pub fn set_fn(&self) -> String {
     //     if self.type_name == "int" {
