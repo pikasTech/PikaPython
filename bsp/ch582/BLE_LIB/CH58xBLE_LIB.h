@@ -1,9 +1,10 @@
 /********************************** (C) COPYRIGHT ******************************
  * File Name         : CH58xBLE_LIB.H
  * Author            : WCH
- * Version           : V1.20
- * Date              : 2022/01/10
+ * Version           : V1.30
+ * Date              : 2022/03/18
  * Description       : head file
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
  *******************************************************************************/
 
 /******************************************************************************/
@@ -101,8 +102,8 @@ typedef uint32_t (*pfnSleepCB)( uint32_t );
 typedef void (*pfnLSECalibrationCB)( void );
 // Define function type that get temperature callback
 typedef uint16_t (*pfnTempSampleCB)( void );
-// Define function type that connect event complete callback. timeUs - the time relative to next connect event ( only effect in single connection).
-typedef void (*pfnConnectEventCB)( uint32_t timeUs ); // Call LL_ConnectEventRegister to init
+// Define function type that connect/advertise event complete callback.
+typedef void (*pfnEventCB)( uint32_t timeUs );
 // Define function type that library status callback.
 typedef void (*pfnLibStatusErrorCB)( uint8_t code, uint32_t status );
 // Define function type that process event
@@ -170,7 +171,7 @@ typedef struct
 /*********************************************************************
  * GLOBAL MACROS
  */
-#define VER_FILE  "CH58x_BLE_LIB_V1.2"
+#define VER_FILE  "CH58x_BLE_LIB_V1.3"
 extern const uint8_t VER_LIB[];  // LIB version
 #define SYSTEM_TIME_MICROSEN            625   // unit of process event timer is 625us
 #define MS1_TO_SYSTEM_TIME(x)  ((x)*1000/SYSTEM_TIME_MICROSEN)   // transform unit in ms to unit in 625us ( attentional bias )
@@ -212,8 +213,8 @@ extern const uint8_t VER_LIB[];  // LIB version
 
 /* TxPower define(Accuracy:¡À1dBm) */
 #define LL_TX_POWEER_MINUS_16_DBM       0x01
-#define LL_TX_POWEER_MINUS_11_DBM       0x03
-#define LL_TX_POWEER_MINUS_7_DBM        0x05
+#define LL_TX_POWEER_MINUS_12_DBM       0x02
+#define LL_TX_POWEER_MINUS_8_DBM        0x04
 #define LL_TX_POWEER_MINUS_5_DBM        0x07
 #define LL_TX_POWEER_MINUS_3_DBM        0x09
 #define LL_TX_POWEER_MINUS_1_DBM        0x0B
@@ -698,7 +699,7 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define GAP_BOND_COMPLETE_EVENT                 0x0E //!< Sent when the bonding process is complete. This event is sent as an tmos message defined as gapBondCompleteEvent_t.
 #define GAP_PAIRING_REQ_EVENT                   0x0F //!< Sent when an unexpected Pairing Request is received. This event is sent as an tmos message defined as gapPairingReqEvent_t.
 #define GAP_DIRECT_DEVICE_INFO_EVENT            0x10 //!< Sent when a direct Advertising Data is received. This event is sent as an tmos message defined as gapDirectDeviceInfoEvent_t.
-#define GAP_PHY_UPDATE_EVENT                    0x11 //!< Sent when a PHY Update Event is received. This event is sent as an tmos message defined as gapLinkUpdateEvent_t.
+#define GAP_PHY_UPDATE_EVENT                    0x11 //!< Sent when a PHY Update Event is received. This event is sent as an tmos message defined as gapPhyUpdateEvent_t.
 #define GAP_EXT_ADV_DEVICE_INFO_EVENT           0x12 //!< Sent when a Extended Advertising Data is received. This event is sent as an tmos message defined as gapExtAdvDeviceInfoEvent_t.
 #define GAP_MAKE_PERIODIC_ADV_DONE_EVENT        0x13 //!< Sent when the Set Periodic Advertising enable is complete. This event is sent as an tmos message defined as gapMakePeriodicRspEvent_t.
 #define GAP_END_PERIODIC_ADV_DONE_EVENT         0x14 //!< Sent when the Set Periodic Advertising disable is complete. This event is sent as an tmos message defined as gapEndPeriodicRspEvent_t.
@@ -780,7 +781,7 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define TGAP_CONN_EST_MAX_CE_LEN                16  //!< Local informational parameter about maximum length of connection needed.Default 0. (n * 0.625 mSec)
 
 // Proprietary
-#define TGAP_PRIVATE_ADDR_INT                   17  //!< Minimum Time Interval between private (resolvable) address changes.Default 15. (n * 1 minute)
+#define TGAP_PRIVATE_ADDR_INT                   17  //!< Minimum Time Interval between private (resolvable) address changes.Default 900. (n * 1 seconds)
 #define TGAP_SM_TIMEOUT                         18  //!< SM Message Timeout (milliseconds). Default 30 seconds.
 #define TGAP_SM_MIN_KEY_LEN                     19  //!< SM Minimum Key Length supported. Default 7.
 #define TGAP_SM_MAX_KEY_LEN                     20  //!< SM Maximum Key Length supported. Default 16.
@@ -833,7 +834,10 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define TGAP_PERIODIC_ADV_INT_MAX               56  //!< Maximum periodic advertising interval.Range: 0x0006 to 0xFFFF.Default 160. (n * 1.25 mSec)
 #define TGAP_PERIODIC_ADV_PROPERTIES            57  //!< Include TxPower in the periodic advertising PDU.
 
-#define TGAP_PARAMID_MAX                        58  //!< ID MAX-valid Parameter ID
+#define TGAP_SCAN_MAX_LENGTH                    58  //!< Extended scan maximum data length.Default 460
+#define TGAP_AFH_CHANNEL_MDOE                   59  //!< whether t he Controller¡¯s channel assessment scheme is enabled or disabled.Default disabled.
+
+#define TGAP_PARAMID_MAX                        60  //!< ID MAX-valid Parameter ID
 
 // GAP_DEVDISC_MODE_DEFINES GAP Device Discovery Modes
 #define DEVDISC_MODE_NONDISCOVERABLE            0x00  //!< No discoverable setting
@@ -866,7 +870,6 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define GAP_PHY_VAL_LE_1M                       0x01
 #define GAP_PHY_VAL_LE_2M                       0x02
 #define GAP_PHY_VAL_LE_CODED                    0x03
-#define GAP_PHY_VAL_LE_CODED_S2                 0x04
 
 // GAP_ADVERTISEMENT_TYPE_DEFINES GAP Scan PHY VAL TYPE(GAP_PHY_BIT_TYPE)
 #define GAP_PHY_BIT_TYPE
@@ -959,10 +962,17 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define GAP_ADTYPE_SERVICE_DATA_32BIT           0x20 //!< Service Data - 32-bit UUID
 #define GAP_ADTYPE_SERVICE_DATA_128BIT          0x21 //!< Service Data - 128-bit UUID
 #define GAP_ADTYPE_URI                          0x24 //!< URI
+#define GAP_ADTYPE_INDOOR_POSITION              0x25 //!< Indoor Positioning Service v1.0 or later
+#define GAP_ADTYPE_TRAN_DISCOVERY_DATA          0x26 //!< Transport Discovery Service v1.0 or later
 #define GAP_ADTYPE_SUPPORTED_FEATURES           0x27 //!< LE Supported Features
 #define GAP_ADTYPE_CHANNEL_MAP_UPDATE           0x28 //!< Channel Map Update Indication
+#define GAP_ADTYPE_PB_ADV                       0x29 //!< PB-ADV. Mesh Profile Specification Section 5.2.1
+#define GAP_ADTYPE_MESH_MESSAGE                 0x2A //!< Mesh Message. Mesh Profile Specification Section 3.3.1
+#define GAP_ADTYPE_MESH_BEACON                  0x2B //!< Mesh Beacon. Mesh Profile Specification Section 3.9
 #define GAP_ADTYPE_BIG_INFO                     0x2C //!< BIGInfo
 #define GAP_ADTYPE_BROADCAST_CODE               0x2D //!< Broadcast_Code
+#define GAP_ADTYPE_RSL_SET_IDENT                0x2E //!< Resolvable Set Identifier.Coordinated Set Identification Profile 1.0
+#define GAP_ADTYPE_ADV_INTERVAL_LONG            0x2F //!< Advertising Interval - long
 #define GAP_ADTYPE_3D_INFO_DATA                 0x3D //!< 3D Information Data
 #define GAP_ADTYPE_MANUFACTURER_SPECIFIC        0xFF //!< Manufacturer Specific Data: first 2 octets contain the Company Identifier Code followed by the additional manufacturer specific data
 
@@ -2617,11 +2627,20 @@ extern uint32_t LL_GetNumberOfUnAckPacket( uint16_t handle );
  * @brief   Register a callback function will be called after each connect event.
  *          Only effect in single connection
  *
- * @param   connectEventCB - callback function
+ * @param   connEventCB - callback function
  *
  * @return  None.
  */
-extern void LL_ConnectEventRegister( pfnConnectEventCB connectEventCB );
+extern void LL_ConnectEventRegister( pfnEventCB connEventCB );
+
+/**
+ * @brief   Register a callback function will be called after each advertise event.
+ *
+ * @param   advEventCB - callback function
+ *
+ * @return  None.
+ */
+extern void LL_AdvertiseEventRegister( pfnEventCB advEventCB );
 
 /**
  * @brief   set tx power level
@@ -3992,6 +4011,16 @@ extern bStatus_t GAPRole_SetPrivacyMode( uint8_t addrTypePeer, uint8_t *peerAddr
  *
  */
 extern bStatus_t GAPRole_SetPathLossReporting( gapRoleSetPathLossReporting_t *pParm );
+
+/**
+ * @brief   used to set power level management.
+ *
+ * @param   pParm - set power level parameters@ gapRolePowerlevelManagement_t
+ *
+ * @return  Command Status.
+ *
+ */
+extern bStatus_t GAPRole_SetPowerlevel( gapRolePowerlevelManagement_t *pParm );
 
 /*-------------------------------------------------------------------
  * FUNCTIONS - BROADCASTER_PROFILE_API Broadcaster Profile API
