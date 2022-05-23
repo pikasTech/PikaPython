@@ -38,36 +38,17 @@ enum Instruct {
     __INSTRCUTION_CNT,
 };
 
-/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
- */
-//#define __PLOOC_CLASS_USE_STRICT_TEMPLATE__
-
-#if defined(__PIKAVM_CLASS_IMPLEMENT__)
-#define __PLOOC_CLASS_IMPLEMENT__
-#elif defined(__PIKAVM_CLASS_INHERIT__)
-#define __PLOOC_CLASS_INHERIT__
-#endif
-
-#include "__pika_ooc.h"
-
-/* clang-format off */
-
-dcl_class(VMState);
-
-def_class(VMState, 
-    private_member(
-        VMParameters* locals;
-        VMParameters* globals;
-        Stack stack;
-        int32_t jmp;
-        int32_t pc;
-        ByteCodeFrame* bytecode_frame;
-        uint8_t error_code;
-        uint8_t line_error_code;
-    )
-);
-
-/* clang-format on */
+typedef struct VMState VMState;
+struct VMState {
+    VMParameters* locals;
+    VMParameters* globals;
+    Stack stack;
+    int32_t jmp;
+    int32_t pc;
+    ByteCodeFrame* bytecode_frame;
+    uint8_t error_code;
+    uint8_t line_error_code;
+};
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
