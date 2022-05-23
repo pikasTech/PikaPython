@@ -1,6 +1,4 @@
-#api
 from PikaObj import *
-
 
 class GPIO(TinyObj):
     def __init__(self):
@@ -134,11 +132,14 @@ class UART(TinyObj):
     def write(self, data: str):
         pass
 
+    def writeBytes(self, data: bytes, length: int):
+        pass
+
     def read(self, length: int) -> str:
         pass
 
-    # def readBytes(self, length: int) -> bytes:
-    #     pass
+    def readBytes(self, length: int) -> bytes:
+        pass
 
     # need override
     def platformEnable(self):
@@ -148,13 +149,16 @@ class UART(TinyObj):
     def platformWrite(self):
         pass
 
+    def platformWriteBytes(self):
+        pass
+
     # need override
     def platformRead(self):
         pass
 
     # need override
-    # def platformReadBytes(self):
-    #     pass
+    def platformReadBytes(self):
+        pass
 
     # need override
     def platformDisable(self):
@@ -185,11 +189,14 @@ class IIC(TinyObj):
     def write(self, addr: int, data: str):
         pass
 
+    def writeBytes(self, addr: int, data: bytes, length: int):
+        pass
+
     def read(self, addr: int, length: int) -> str:
         pass
 
-    # def readBytes(self, addr: int, length: int) -> bytes:
-    #     pass
+    def readBytes(self, addr: int, length: int) -> bytes:
+        pass
 
     # need override
     def platformEnable(self):
@@ -197,6 +204,10 @@ class IIC(TinyObj):
 
     # need override
     def platformWrite(self):
+        pass
+
+    # need override
+    def platformWriteBytes(self):
         pass
 
     # need override
@@ -367,11 +378,14 @@ class CAN(TinyObj):
     def write(self, data: str):
         pass
 
+    def writeBytes(self, data: bytes, length: int):
+        pass
+
     def read(self, length: int) -> str:
         pass
 
-    # def readBytes(self, length: int) -> bytes:
-    #     pass
+    def readBytes(self, length: int) -> bytes:
+        pass
 
     # need override 
     def addFilter(self, id:int, ide:int, rtr:int, mode:int, mask:int, hdr:int):
@@ -386,12 +400,16 @@ class CAN(TinyObj):
         pass
 
     # need override
+    def platformWriteBytes(self):
+        pass
+
+    # need override
     def platformRead(self):
         pass
 
     # need override
-    # def platformReadBytes(self):
-    #     pass
+    def platformReadBytes(self):
+        pass
 
     # need override
     def platformDisable(self):

@@ -43,9 +43,20 @@ char* PikaStdDevice_CAN_read(PikaObj* self, int length) {
     return obj_getStr(self, "readData");
 }
 
+Arg* PikaStdDevice_CAN_readBytes(PikaObj *self, int length){
+    obj_setInt(self, "length", length);
+    obj_runNativeMethod(self, "platformReadBytes", NULL);
+    return obj_getArg(self, "readData");
+}
+
 void PikaStdDevice_CAN_write(PikaObj* self, char* data) {
     obj_setStr(self, "writeData", data);
     obj_runNativeMethod(self, "platformWrite", NULL);
+}
+
+void PikaStdDevice_CAN_writeBytes(PikaObj *self, uint8_t* data, int length){
+    obj_setBytes(self, "writeData", data, length);
+    obj_runNativeMethod(self, "platformWriteBytes", NULL);
 }
 
 void PikaStdDevice_CAN_platformDisable(PikaObj* self) {
@@ -64,6 +75,16 @@ void PikaStdDevice_CAN_platformRead(PikaObj* self) {
 }
 
 void PikaStdDevice_CAN_platformWrite(PikaObj* self) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
+void PikaStdDevice_CAN_platformReadBytes(PikaObj *self){
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platform method need to be override.");
+}
+
+void PikaStdDevice_CAN_platformWriteBytes(PikaObj *self){
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
 }
