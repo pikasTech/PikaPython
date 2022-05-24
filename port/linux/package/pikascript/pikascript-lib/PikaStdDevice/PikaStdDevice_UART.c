@@ -28,7 +28,7 @@ char* PikaStdDevice_UART_read(PikaObj* self, int length) {
 Arg* PikaStdDevice_UART_readBytes(PikaObj *self, int length){
     obj_setInt(self, "length", length);
     obj_runNativeMethod(self, "platformReadBytes", NULL);
-    return obj_getArg(self, "readData");
+    return arg_copy(obj_getArg(self, "readData"));
 }
 
 void PikaStdDevice_UART_setBaudRate(PikaObj* self, int baudRate) {

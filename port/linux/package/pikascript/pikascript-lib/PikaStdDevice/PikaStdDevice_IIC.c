@@ -57,7 +57,7 @@ Arg* PikaStdDevice_IIC_readBytes(PikaObj* self, int addr, int length) {
     obj_setInt(self, "length", length);
     obj_setInt(self, "readAddr", addr);
     obj_runNativeMethod(self, "platformReadBytes", NULL);
-    return obj_getArg(self, "readData");
+    return arg_copy(obj_getArg(self, "readData"));
 }
 
 void PikaStdDevice_IIC_platformWrite(PikaObj* self) {

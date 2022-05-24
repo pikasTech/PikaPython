@@ -11,3 +11,5 @@ import TempDevTest as dev
 import TemplateDevice
 
 print('hello pikascript!')
+
+dev.test()
