@@ -60,7 +60,7 @@ typedef struct Arg Arg;
 struct Arg {
     Arg* next;
     uint16_t size;
-    uint8_t type;
+    ArgType type;
     uint8_t ref_cnt;
     Hash name_hash;
     uint8_t content[];
