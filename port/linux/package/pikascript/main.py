@@ -7,7 +7,7 @@ import PikaMath
 import PikaStdDevice
 import test_module1
 import test_cmodule
-import TempDevTest
+import TempDevTest as dev
 import TemplateDevice
 
 print('hello pikascript!')

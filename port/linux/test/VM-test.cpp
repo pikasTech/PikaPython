@@ -1012,3 +1012,31 @@ TEST(VM, hex_bytes) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, bytes_equ) {
+    char* line = 
+        "a = b'\\x03\\x05'\n"
+        "b = b'\\x03\\x05'\n"
+        "if a == b:\n"
+        "    c = 1\n"
+        "b = b'\\x02\\x05'\n"
+        "if a != b:\n"
+        "    d = 1\n"
+        ;
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_multiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runAsm(self, pikaAsm);
+    /* collect */
+    /* assert */
+    int c = obj_getInt(self, "c");
+    int d = obj_getInt(self, "d");
+    EXPECT_EQ(c, 1);
+    EXPECT_EQ(d, 1);
+    /* deinit */
+    obj_deinit(self);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

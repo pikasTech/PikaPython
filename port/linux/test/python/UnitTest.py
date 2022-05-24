@@ -3,21 +3,6 @@ import PikaStdData
 
 mem = PikaStdLib.MemChecker()
 mem.resetMax()
-def EXPECT_EQ(test_name, input, expected):
-    print('-----TEST-----')
-    print(test_name)
-    if input != expected:
-        print('[Error]')
-        print(test_name)
-        print('[info] Expected:')
-        print(expected)
-        print('[info] Input:')
-        print(input)
-        # error
-        while True:
-            is_error = 1
-    else:
-        print('[ OK  ]')
 
 a = 0
 for i in range(0, 10):

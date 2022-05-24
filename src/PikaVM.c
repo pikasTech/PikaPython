@@ -709,23 +709,48 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         outArg = arg_setInt(outArg, "", num1_i / num2_i);
         goto OPT_exit;
     }
-    if (strEqu("==", data)) {
+    if (strEqu("==", data) || strEqu("!=", data)) {
+        int8_t is_equ = -1;
+        /* type not equl, and type is not int or float */
+        if (type_arg1 != type_arg2) {
+            if ((type_arg1 != ARG_TYPE_FLOAT) && (type_arg1 != ARG_TYPE_INT)) {
+                is_equ = 0;
+                goto EQU_exit;
+            }
+            if ((type_arg2 != ARG_TYPE_FLOAT) && (type_arg2 != ARG_TYPE_INT)) {
+                is_equ = 0;
+                goto EQU_exit;
+            }
+        }
         /* string compire */
-        if ((type_arg1 == ARG_TYPE_STRING) && (type_arg2 == ARG_TYPE_STRING)) {
-            outArg = arg_setInt(outArg, "",
-                                strEqu(arg_getStr(arg1), arg_getStr(arg2)));
-            goto OPT_exit;
+        if (type_arg1 == ARG_TYPE_STRING) {
+            is_equ = strEqu(arg_getStr(arg1), arg_getStr(arg2));
+            goto EQU_exit;
+        }
+        /* bytes compire */
+        if (type_arg1 == ARG_TYPE_BYTES) {
+            if (arg_getBytesSize(arg1) != arg_getBytesSize(arg2)) {
+                is_equ = 0;
+                goto EQU_exit;
+            }
+            is_equ = 1;
+            for (size_t i = 0; i < arg_getBytesSize(arg1); i++) {
+                if (arg_getBytes(arg1)[i] != arg_getBytes(arg2)[i]) {
+                    is_equ = 0;
+                    goto EQU_exit;
+                }
+            }
+            goto EQU_exit;
         }
         /* default: int and float */
-        outArg =
-            arg_setInt(outArg, "",
-                       (num1_f - num2_f) * (num1_f - num2_f) < (float)0.000001);
-        goto OPT_exit;
-    }
-    if (strEqu("!=", data)) {
-        outArg = arg_setInt(
-            outArg, "",
-            !((num1_f - num2_f) * (num1_f - num2_f) < (float)0.000001));
+        is_equ = ((num1_f - num2_f) * (num1_f - num2_f) < (float)0.000001);
+        goto EQU_exit;
+    EQU_exit:
+        if (strEqu("==", data)) {
+            outArg = arg_setInt(outArg, "", is_equ);
+        } else {
+            outArg = arg_setInt(outArg, "", !is_equ);
+        }
         goto OPT_exit;
     }
     if (strEqu(">=", data)) {
