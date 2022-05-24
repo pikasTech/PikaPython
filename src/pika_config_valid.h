@@ -40,6 +40,7 @@
         #define PIKA_BUILTIN_DICT_ENABLE 0
         #define PIKA_READ_FILE_BUFF_SIZE 0x10000
         #define PIKA_INIT_STRING_ENABLE 0
+        #define PIKA_PLOOC_ENABLE 0
     
     /* optimize options */
         #define PIKA_OPTIMIZE_SIZE 0
