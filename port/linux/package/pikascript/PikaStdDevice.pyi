@@ -1,5 +1,6 @@
 from PikaObj import *
 
+
 class GPIO(TinyObj):
     def __init__(self):
         pass
@@ -164,6 +165,7 @@ class UART(TinyObj):
     def platformDisable(self):
         pass
 
+
 class IIC(TinyObj):
     def __init__(self):
         pass
@@ -221,6 +223,7 @@ class IIC(TinyObj):
     # need override
     def platformDisable(self):
         pass
+
 
 class PWM(TinyObj):
     def __init__(self):
@@ -387,8 +390,7 @@ class CAN(TinyObj):
     def readBytes(self, length: int) -> bytes:
         pass
 
-    # need override 
-    def addFilter(self, id:int, ide:int, rtr:int, mode:int, mask:int, hdr:int):
+    def addFilter(self, id: int, ide: int, rtr: int, mode: int, mask: int, hdr: int):
         pass
 
     # need override
