@@ -22,3 +22,5 @@ def test():
     uart.setBaudRate(115200)
     bt = uart.readBytes(5)
     EXPECT_EQ('uart.readBytes', bt, b'\x00\x01\x02\x03\x04')
+    uart.writeBytes(b'\xff\xfe\xfd\xfc', 4)
+
