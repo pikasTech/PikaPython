@@ -51,6 +51,13 @@
 #define PIKA_WEAK
 #endif
 
+/* align for bytecode */
+#if defined(_WIN32)
+#define PIKA_BYTECODE_ALIGN 
+#else
+#define PIKA_BYTECODE_ALIGN __attribute__((aligned(4)))
+#endif
+
 /* OS */
 #ifdef __RTTHREAD__
 #include <rtthread.h>
