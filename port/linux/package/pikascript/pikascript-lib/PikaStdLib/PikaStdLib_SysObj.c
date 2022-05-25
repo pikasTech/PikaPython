@@ -269,3 +269,15 @@ Arg* PikaStdLib_SysObj_dict(PikaObj* self) {
     __platform_printf("[Error] built-in dist is not enabled.\r\n");
     return arg_setNull(NULL);
 }
+
+char* PikaStdLib_SysObj_hex(PikaObj *self, int val){
+    char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
+    if(val > 0){
+        __platform_sprintf(buff, "0x%02x", val);
+    }else{
+        __platform_sprintf(buff, "-0x%02x", -val);
+    }
+    /* load the string from stack to heap */
+    obj_setStr(self, "__buf", buff);
+    return obj_getStr(self, "__buf");
+}

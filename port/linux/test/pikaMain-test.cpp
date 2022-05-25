@@ -1783,3 +1783,25 @@ TEST(pikaMain, CModule__str__) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, builtin_hex) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "hex(3)\n"
+            "hex(-3)\n"
+            "hex(1234)\n"
+            "hex(-12039)\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[4], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[3], "0x03\r\n");
+    EXPECT_STREQ(log_buff[2], "-0x03\r\n");
+    EXPECT_STREQ(log_buff[1], "0x4d2\r\n");
+    EXPECT_STREQ(log_buff[0], "-0x2f07\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
