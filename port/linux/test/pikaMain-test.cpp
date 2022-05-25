@@ -1805,3 +1805,33 @@ TEST(pikaMain, builtin_hex) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, builtin_ord) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "ord('a')\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "97\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, builtin_chr) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "chr(97)\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "a\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

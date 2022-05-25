@@ -270,13 +270,27 @@ Arg* PikaStdLib_SysObj_dict(PikaObj* self) {
     return arg_setNull(NULL);
 }
 
-char* PikaStdLib_SysObj_hex(PikaObj *self, int val){
+char* PikaStdLib_SysObj_hex(PikaObj* self, int val) {
     char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
-    if(val > 0){
+    if (val > 0) {
         __platform_sprintf(buff, "0x%02x", val);
-    }else{
+    } else {
         __platform_sprintf(buff, "-0x%02x", -val);
     }
+    /* load the string from stack to heap */
+    obj_setStr(self, "__buf", buff);
+    return obj_getStr(self, "__buf");
+}
+
+int PikaStdLib_SysObj_ord(PikaObj* self, char* val) {
+    return (int)val[0];
+}
+
+char* PikaStdLib_SysObj_chr(PikaObj* self, int val) {
+    char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
+    char to_str[] = "0";
+    to_str[0] = val;
+    __platform_sprintf(buff, "%s", to_str);
     /* load the string from stack to heap */
     obj_setStr(self, "__buf", buff);
     return obj_getStr(self, "__buf");
