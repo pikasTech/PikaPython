@@ -555,7 +555,13 @@ TEST(make, compile_link_all) {
     pikaMaker_setPWD(maker, "package/pikascript/");
     pikaMaker_compileModuleWithDepends(maker, "main");
     pikaMaker_printStates(maker);
-    pikaMaker_linkCompiledModules(maker, "pikaModules.py.a") ;
+    pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
     obj_deinit(maker);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __str__) {
+    char* lines = "__res = __str__()";
+    Parser_compilePyToBytecodeArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }

@@ -33,9 +33,16 @@ float PikaMath_Operator_minusFloat(PikaObj* self, float num1, float num2) {
 int PikaMath_Operator_minusInt(PikaObj* self, int num1, int num2) {
     return num1 - num2;
 }
+
 float PikaMath_Operator_plusFloat(PikaObj* self, float num1, float num2) {
     return num1 + num2;
 }
+
 int PikaMath_Operator_plusInt(PikaObj* self, int num1, int num2) {
     return num1 + num2;
+}
+
+char* PikaMath_Operator___str__(PikaObj *self){
+    obj_setStr(self, "__buf", "test");
+    return obj_getStr(self, "__buf");
 }

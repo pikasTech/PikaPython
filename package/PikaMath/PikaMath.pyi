@@ -1,42 +1,18 @@
-#api
 from PikaObj import *
 
+
 class Operator(TinyObj):
-    def plusInt(num1: int, num2: int) -> int:
-        pass
-
-    def plusFloat(num1: float, num2: float) -> float:
-        pass
-
-    def minusInt(num1: int, num2: int) -> int:
-        pass
-
-    def minusFloat(num1: float, num2: float) -> float:
-        pass
-
-    def equalInt(num1: int, num2: int) -> int:
-        pass
-
-    def equalFloat(num1: float, num2: float) -> int:
-        pass
-
-    def graterThanInt(num1: int, num2: int) -> int:
-        pass
-
-    def graterThanFloat(num1: float, num2: float) -> int:
-        pass
-
-    def lessThanInt(num1: int, num2: int) -> int:
-        pass
-
-    def lessThanFloat(num1: float, num2: float) -> int:
-        pass
-
-    def AND(flag1: int, flag2: int) -> int:
-        pass
-
-    def OR(flag1: int, flag2: int) -> int:
-        pass
-
-    def NOT(flag: int) -> int:
-        pass
+    def plusInt(self, num1: int, num2: int) -> int: ...
+    def plusFloat(self, num1: float, num2: float) -> float: ...
+    def minusInt(self, num1: int, num2: int) -> int: ...
+    def minusFloat(self, num1: float, num2: float) -> float: ...
+    def equalInt(self, num1: int, num2: int) -> int: ...
+    def equalFloat(self, num1: float, num2: float) -> int: ...
+    def graterThanInt(self, num1: int, num2: int) -> int: ...
+    def graterThanFloat(self, num1: float, num2: float) -> int: ...
+    def lessThanInt(self, num1: int, num2: int) -> int: ...
+    def lessThanFloat(self, num1: float, num2: float) -> int: ...
+    def AND(self, flag1: int, flag2: int) -> int: ...
+    def OR(self, flag1: int, flag2: int) -> int: ...
+    def NOT(self, flag: int) -> int: ...
+    def __str__(self) -> str: ...

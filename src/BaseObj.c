@@ -32,7 +32,6 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
-
 static void print_no_end(PikaObj* self, Args* args) {
     obj_setErrorCode(self, 0);
     char* res = args_print(args, "val");
@@ -50,12 +49,38 @@ static void print_no_end(PikaObj* self, Args* args) {
     __platform_printf("%s", res);
 }
 
-void baseobj_print(PikaObj* self, Args* args) {
+void Baseobj_print(PikaObj* self, Args* args) {
     obj_setErrorCode(self, 0);
-    Arg* print_arg = args_getArg(args, "val");
-    if (NULL != print_arg) {
-        if (arg_getType(print_arg) == ARG_TYPE_BYTES) {
-            arg_printBytes(print_arg);
+    Arg* arg = args_getArg(args, "val");
+    ArgType arg_type = arg_getType(arg);
+    if (NULL != arg) {
+        if (arg_getType(arg) == ARG_TYPE_BYTES) {
+            arg_printBytes(arg);
+            return;
+        }
+    }
+    if (ARG_TYPE_OBJECT == arg_type) {
+        PikaObj* obj = arg_getPtr(arg);
+        /* clang-format off */
+        PIKA_PYTHON(
+            __res = __str__()
+        )
+        /* clang-format on */
+
+        /* check method arg */
+        Arg* method_arg = obj_getMethodArg(obj, "__str__");
+        if (NULL != method_arg) {
+            arg_deinit(method_arg);
+            const uint8_t bytes[] = {
+                0x08, 0x00, /* instruct array size */
+                0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct
+                                                                   array */
+                0x0f, 0x00, /* const pool size */
+                0x00, 0x5f, 0x5f, 0x73, 0x74, 0x72, 0x5f, 0x5f, 0x00,
+                0x5f, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
+            };
+            pikaVM_runByteCode(obj, (uint8_t*)bytes);
+            __platform_printf("%s\r\n", obj_getStr(obj, "__res"));
             return;
         }
     }
@@ -76,7 +101,7 @@ void baseobj_print(PikaObj* self, Args* args) {
 
 PikaObj* New_BaseObj(Args* args) {
     PikaObj* self = New_TinyObj(args);
-    class_defineMethod(self, "print(val:any)", baseobj_print);
+    class_defineMethod(self, "print(val:any)", Baseobj_print);
     class_defineMethod(self, "printNoEnd(val:any)", print_no_end);
     return self;
 }
