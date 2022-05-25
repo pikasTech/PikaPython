@@ -1,5 +1,5 @@
-#api
 from PikaObj import *
+
 
 class c_uint(TinyObj):
     def __init__(self, value:int):...
@@ -34,3 +34,18 @@ class Test(TinyObj):
     def add(self, c_uint1:c_uint, c_uint2:c_uint)->int:...
     def dc_cpuapdu_hex(self, slen:int, sendbuf:bytes, rlen:c_uint, rcvbuf:c_char_p) -> int:...
     def print_rcv(self, rcvbuf: c_char_p):...
+
+class create_string_buffer(TinyObj):
+    def __init__(self, size:int):...
+
+    # support val = string[] 
+    def __get__(self, __key: int) -> int:
+        pass
+
+class c_buffer(TinyObj):
+    def __init__(self, value:any, size:int):
+        pass
+
+    # support val = string[] 
+    def __get__(self, __key: int) -> int:
+        pass
