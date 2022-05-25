@@ -538,6 +538,12 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self, VMState* vs, char* data) {
     if (data[1] == 'x' || data[1] == 'X') {
         return arg_setInt(numArg, "", strtol(data, NULL, 0));
     }
+    if (data[1] == 'o' || data[1] == 'O') {
+        char strtol_buff[10] = {0};
+        strtol_buff[0] = '0';
+        __platform_memcpy(strtol_buff + 1, data + 2, strGetSize(data) - 2);
+        return arg_setInt(numArg, "", strtol(strtol_buff, NULL, 0));
+    }
     /* float */
     if (strIsContain(data, '.')) {
         return arg_setFloat(numArg, "", atof(data));
