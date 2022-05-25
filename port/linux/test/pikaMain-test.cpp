@@ -1773,10 +1773,12 @@ TEST(pikaMain, CModule__str__) {
     __platform_printf("BEGIN\r\n");
     obj_run(self,
             "op = PikaMath.Operator()\n"
-            "print(op)\n");
+            "print(op)\n"
+            "print('obj: ' + str(op))\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "test\r\n");
-    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "obj: test\r\n");
+    EXPECT_STREQ(log_buff[1], "test\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);

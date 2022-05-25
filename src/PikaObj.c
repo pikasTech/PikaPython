@@ -974,3 +974,29 @@ int obj_importModule(PikaObj* self, char* module_name) {
     obj_importModuleWithByteCode(self, module_name, bytecode);
     return 0;
 }
+
+char* obj_toStr(PikaObj* self) {
+    /* clang-format off */
+    PIKA_PYTHON(
+        __res = __str__()
+    )
+    /* clang-format on */
+
+    /* check method arg */
+    Arg* method_arg = obj_getMethodArg(self, "__str__");
+    if (NULL != method_arg) {
+        arg_deinit(method_arg);
+        const uint8_t bytes[] = {
+            0x08, 0x00, /* instruct array size */
+            0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct
+                                                               array */
+            0x0f, 0x00, /* const pool size */
+            0x00, 0x5f, 0x5f, 0x73, 0x74, 0x72, 0x5f, 0x5f, 0x00,
+            0x5f, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
+        };
+        pikaVM_runByteCode(self, (uint8_t*)bytes);
+        char* str_res = obj_getStr(self, "__res");
+        return str_res;
+    }
+    return NULL;
+}

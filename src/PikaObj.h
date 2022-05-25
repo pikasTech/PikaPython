@@ -242,6 +242,7 @@ int obj_importModule(PikaObj* self, char* module_name);
 int32_t obj_newMetaObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int obj_runModule(PikaObj* self, char* module_name);
+char* obj_toStr(PikaObj* self);
 
 #define PIKA_PYTHON_BEGIN
 #define PIKA_PYTHON(x)
