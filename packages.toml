@@ -47,6 +47,7 @@ releases = [
   "v1.7.2 ff3243a0c829c713e112f5b42b0e3abe55c08a2e",
   "v1.8.0 6724a2a56bebf8c3595260ef702c03fafd7143eb",
   "v1.8.1 2a90da5b07f0a14218be6a5c6e21be0f79b32e48",
+  "v1.8.2 281600804a5393c6721eab8ec6160a376ba010b4",
 ]
 
 [[packages]]
@@ -86,6 +87,7 @@ releases = [
   "v1.7.2 ff3243a0c829c713e112f5b42b0e3abe55c08a2e",
   "v1.8.0 6724a2a56bebf8c3595260ef702c03fafd7143eb",
   "v1.8.1 2a90da5b07f0a14218be6a5c6e21be0f79b32e48",
+  "v1.8.2 281600804a5393c6721eab8ec6160a376ba010b4",
 ]
 
 [[packages]]
@@ -101,6 +103,13 @@ releases = [
   "v1.6.0 240f073472217ca6c3d6d04d5a860056f2c0b7d4",
   "v1.7.0 7826f74c839b5ecb3bd5d832c3f0b2e757acf2e6",
   "v1.8.0 9f3a52558338503571b37c034a12219566f27aa2",
+  "v1.8.2 281600804a5393c6721eab8ec6160a376ba010b4",
+]
+
+[[packages]]
+name = "TemplateDevice"
+releases = [
+  "v0.0.1 281600804a5393c6721eab8ec6160a376ba010b4",
 ]
 
 [[packages]]
