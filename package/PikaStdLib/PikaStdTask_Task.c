@@ -8,7 +8,7 @@ void PikaStdTask_Task___init__(PikaObj* self) {
     PIKA_PYTHON(
         calls.__init__()
         is_period = 0
-        )
+    )
     /* clang-format on */
     const uint8_t bytes[] = {
         0x0c, 0x00, /* instruct array size */
@@ -29,8 +29,8 @@ void PikaStdTask_Task_call_always(PikaObj* self, Arg* fun_todo) {
     PIKA_PYTHON_BEGIN
     /* clang-format off */
     PIKA_PYTHON(
-    calls.append('always')
-    calls.append(fun_todo)
+        calls.append('always')
+        calls.append(fun_todo)
     )
     /* clang-format on */
     const uint8_t bytes[] = {
@@ -52,9 +52,9 @@ void PikaStdTask_Task_call_when(PikaObj* self, Arg* fun_todo, Arg* fun_when) {
     PIKA_PYTHON_BEGIN
     /* clang-format off */
     PIKA_PYTHON(
-    calls.append('when')
-    calls.append(fun_when)
-    calls.append(fun_todo)
+        calls.append('when')
+        calls.append(fun_when)
+        calls.append(fun_todo)
     )
     /* clang-format on */
     const uint8_t bytes[] = {
@@ -81,10 +81,10 @@ void PikaStdTask_Task_call_period_ms(PikaObj* self,
     PIKA_PYTHON_BEGIN
     /* clang-format off */
     PIKA_PYTHON(
-    calls.append('period_ms')
-    calls.append(period_ms)
-    calls.append(fun_todo)
-    calls.append(0)
+        calls.append('period_ms')
+        calls.append(period_ms)
+        calls.append(fun_todo)
+        calls.append(0)
     is_period = 1
     )
     /* clang-format on */
@@ -220,7 +220,7 @@ void __Task_update_tick(PikaObj* self) {
         PIKA_PYTHON_BEGIN
         /* clang-format off */
         PIKA_PYTHON(
-        platformGetTick()
+            platformGetTick()
         )
         /* clang-format on */
         const uint8_t bytes[] = {

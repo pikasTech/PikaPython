@@ -66,7 +66,11 @@ void PikaStdData_ByteArray_fromString(PikaObj* self, char* s) {
     for (uint32_t i = 0; i < strGetSize(s); i++) {
         obj_setInt(self, "__val", (int)s[i]);
         PIKA_PYTHON_BEGIN
-        PIKA_PYTHON(append(__val))
+        /* clang-format off */
+        PIKA_PYTHON(
+            append(__val)
+        )
+        /* clang-format on */
         const uint8_t bytes[] = {
             0x08, 0x00, /* instruct array size */
             0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x07, 0x00, /* instruct array */
