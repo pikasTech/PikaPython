@@ -316,3 +316,20 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
     __platform_printf("Error: input arg type not supported.\r\n");
     return arg_setNull(NULL);
 }
+
+Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
+                                 Arg* end,
+                                 Arg* obj,
+                                 Arg* start,
+                                 int step) {
+    if ((arg_getType(start) == ARG_TYPE_INT) &&
+        (arg_getType(end) == ARG_TYPE_INT)) {
+        /* __slice__ is equal to __get__ */
+        if (arg_getInt(start) - arg_getInt(end) == 1) {
+            return PikaStdLib_SysObj___get__(self, start, obj);
+        }
+    }
+
+    /* No interger index only support __get__ */
+    return PikaStdLib_SysObj___get__(self, start, obj);
+}

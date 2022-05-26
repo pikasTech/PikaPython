@@ -804,14 +804,22 @@ char* Parser_solveBranckets(Args* outBuffs,
             args_setStr(&buffs, "index", arg_getStr(index_arg));
             arg_deinit(index_arg);
 
+            /* __slice__(obj, start, end, step) */
             if (strEqu(mode, "right")) {
-                right_arg = arg_strAppend(right_arg, "__get__(");
+                right_arg = arg_strAppend(right_arg, "__slice__(");
             } else if (strEqu(mode, "left")) {
                 right_arg = arg_strAppend(right_arg, "__set__(");
             }
             right_arg = arg_strAppend(right_arg, args_getStr(&buffs, "obj"));
             right_arg = arg_strAppend(right_arg, ",");
             right_arg = arg_strAppend(right_arg, args_getStr(&buffs, "index"));
+            /* __slice__(obj, index, indxe + 1, 1) */
+            if (strEqu(mode, "right")) {
+                right_arg = arg_strAppend(right_arg, ",");
+                right_arg =
+                    arg_strAppend(right_arg, args_getStr(&buffs, "index"));
+                right_arg = arg_strAppend(right_arg, " + 1, 1");
+            }
             if (strEqu(mode, "left")) {
                 right_arg = arg_strAppend(right_arg, ",");
                 right_arg = arg_strAppend(right_arg, stmt);

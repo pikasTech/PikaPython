@@ -1848,12 +1848,24 @@ TEST(parser, __get__3) {
                  "3 REF c\n"
                  "3 REF d\n"
                  "2 OPT +\n"
-                 "1 RUN __get__\n"
+                 "4 REF c\n"
+                 "4 REF d\n"
+                 "3 OPT +\n"
+                 "3 NUM 1\n"
+                 "2 OPT +\n"
+                 "2 NUM 1\n"
+                 "1 RUN __slice__\n"
                  "2 REF e\n"
                  "3 REF f\n"
                  "3 REF j\n"
                  "2 OPT *\n"
-                 "1 RUN __get__\n"
+                 "4 REF f\n"
+                 "4 REF j\n"
+                 "3 OPT *\n"
+                 "3 NUM 1\n"
+                 "2 OPT +\n"
+                 "2 NUM 1\n"
+                 "1 RUN __slice__\n"
                  "0 OPT +\n"
                  "0 OUT a\n");
     args_deinit(buffs);
@@ -1871,7 +1883,11 @@ TEST(parser, __get__) {
                  "B0\n"
                  "1 REF b\n"
                  "1 REF c\n"
-                 "0 RUN __get__\n"
+                 "2 REF c\n"
+                 "2 NUM 1\n"
+                 "1 OPT +\n"
+                 "1 NUM 1\n"
+                 "0 RUN __slice__\n"
                  "0 OUT a\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1890,7 +1906,13 @@ TEST(parser, __get__2) {
                  "2 REF c\n"
                  "2 REF d\n"
                  "1 OPT +\n"
-                 "0 RUN __get__\n"
+                 "3 REF c\n"
+                 "3 REF d\n"
+                 "2 OPT +\n"
+                 "2 NUM 1\n"
+                 "1 OPT +\n"
+                 "1 NUM 1\n"
+                 "0 RUN __slice__\n"
                  "0 OUT a\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2214,10 +2236,18 @@ TEST(parser, list_1_2) {
                  "B0\n"
                  "3 REF list\n"
                  "3 NUM 0\n"
-                 "2 RUN __get__\n"
+                 "4 NUM 0\n"
+                 "4 NUM 1\n"
+                 "3 OPT +\n"
+                 "3 NUM 1\n"
+                 "2 RUN __slice__\n"
                  "3 REF list\n"
                  "3 NUM 1\n"
-                 "2 RUN __get__\n"
+                 "4 NUM 1\n"
+                 "4 NUM 1\n"
+                 "3 OPT +\n"
+                 "3 NUM 1\n"
+                 "2 RUN __slice__\n"
                  "1 OPT +\n"
                  "0 RUN print\n");
     args_deinit(buffs);
@@ -2619,7 +2649,11 @@ TEST(parser, bytes_index) {
                  "B0\n"
                  "1 BYT eqrt\n"
                  "1 NUM 2\n"
-                 "0 RUN __get__\n"
+                 "2 NUM 2\n"
+                 "2 NUM 1\n"
+                 "1 OPT +\n"
+                 "1 NUM 1\n"
+                 "0 RUN __slice__\n"
                  "0 OUT res2\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
