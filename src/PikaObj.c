@@ -713,7 +713,7 @@ void obj_shellLineProcess(PikaObj* self,
                 obj_setStr(self, "shell_buff", shell_buff_new);
                 strsDeinit(&buffs);
                 /* go out from block */
-                if (rxBuff[0] != ' ') {
+                if ((rxBuff[0] != ' ') && (rxBuff[0] != '\t')) {
                     is_in_block = 0;
                     input_line = obj_getStr(self, "shell_buff");
                     if (SHELL_STATE_EXIT ==
