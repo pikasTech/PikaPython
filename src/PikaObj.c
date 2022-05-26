@@ -671,7 +671,7 @@ static void __clearBuff(char* buff, int size) {
     }
 }
 
-static void __obj_runChar(PikaObj* self, char inputChar){
+static enum shell_state __obj_runChar(PikaObj* self, char inputChar){
     struct shell_config* cfg = args_getStruct(self->list, "__shcfg");
     __obj_shellLineHandler_t __lineHandler_fun = obj_getPtr(self, "__shhdl");
     /* create the line buff for the first time */
@@ -691,66 +691,62 @@ static void __obj_runChar(PikaObj* self, char inputChar){
         uint32_t size = strGetSize(rxBuff);
         if (size == 0) {
             __platform_printf(" ");
-            return;
+            return SHELL_STATE_CONTINUE;
         }
         __platform_printf(" \b");
         rxBuff[size - 1] = 0;
-        return;
+        return SHELL_STATE_CONTINUE;
     }
     if (inputChar != '\r' && inputChar != '\n') {
         strAppendWithSize(rxBuff, &inputChar, 1);
-        return;
+        return SHELL_STATE_CONTINUE;
     }
     if ((inputChar == '\r') || (inputChar == '\n')) {
 #ifndef __linux
-    __platform_printf("\r\n");
+        __platform_printf("\r\n");
 #endif
-    /* still in block */
-    if (is_in_block) {
-        /* load new line into buff */
-        Args buffs = {0};
-        char _n = '\n';
-        strAppendWithSize(rxBuff, &_n, 1);
-        char* shell_buff_new =
-            strsAppend(&buffs, obj_getStr(self, "shell_buff"), rxBuff);
-        obj_setStr(self, "shell_buff", shell_buff_new);
-        strsDeinit(&buffs);
-        /* go out from block */
-        if ((rxBuff[0] != ' ') && (rxBuff[0] != '\t')) {
-            is_in_block = 0;
-            input_line = obj_getStr(self, "shell_buff");
-            if (SHELL_STATE_EXIT ==
-                __lineHandler_fun(self, input_line)) {
-                return;
-            }
-            __platform_printf(">>> ");
-        } else {
-            __platform_printf("... ");
-        }
-        __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
-        return;
-    }
-    if (0 != strGetSize(rxBuff)) {
-        /* go in block */
-        if (rxBuff[strGetSize(rxBuff) - 1] == ':') {
-            is_in_block = 1;
+        /* still in block */
+        if (is_in_block) {
+            /* load new line into buff */
+            Args buffs = {0};
             char _n = '\n';
             strAppendWithSize(rxBuff, &_n, 1);
-            obj_setStr(self, "shell_buff", rxBuff);
+            char* shell_buff_new =
+                strsAppend(&buffs, obj_getStr(self, "shell_buff"), rxBuff);
+            obj_setStr(self, "shell_buff", shell_buff_new);
+            strsDeinit(&buffs);
+            /* go out from block */
+            if ((rxBuff[0] != ' ') && (rxBuff[0] != '\t')) {
+                is_in_block = 0;
+                input_line = obj_getStr(self, "shell_buff");
+                return __lineHandler_fun(self, input_line);
+                __platform_printf(">>> ");
+            } else {
+                __platform_printf("... ");
+            }
             __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
-            __platform_printf("... ");
-            return;
+            return SHELL_STATE_CONTINUE;
         }
-    }
-    input_line = rxBuff;
-    if (SHELL_STATE_EXIT == __lineHandler_fun(self, input_line)) {
-        return;
-    }
-    __platform_printf(cfg->prefix);
+        if (0 != strGetSize(rxBuff)) {
+            /* go in block */
+            if (rxBuff[strGetSize(rxBuff) - 1] == ':') {
+                is_in_block = 1;
+                char _n = '\n';
+                strAppendWithSize(rxBuff, &_n, 1);
+                obj_setStr(self, "shell_buff", rxBuff);
+                __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
+                __platform_printf("... ");
+                return SHELL_STATE_CONTINUE;
+            }
+        }
+        input_line = rxBuff;
+        return __lineHandler_fun(self, input_line);
+        __platform_printf(cfg->prefix);
 
-    __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
-    return;
+        __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
+        return SHELL_STATE_CONTINUE;
     }
+    return SHELL_STATE_CONTINUE;
 }
 
 void obj_shellLineProcess(PikaObj* self,
@@ -762,7 +758,9 @@ void obj_shellLineProcess(PikaObj* self,
     obj_setPtr(self, "__shhdl", __lineHandler_fun);
     while (1) {
         char inputChar = __platform_getchar();
-        __obj_runChar(self, inputChar);
+        if(SHELL_STATE_EXIT == __obj_runChar(self, inputChar)){
+            break;
+        }
     }
 }
 
