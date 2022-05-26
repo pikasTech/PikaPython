@@ -295,3 +295,24 @@ char* PikaStdLib_SysObj_chr(PikaObj* self, int val) {
     obj_setStr(self, "__buf", buff);
     return obj_getStr(self, "__buf");
 }
+
+Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
+    ArgType type = arg_getType(val);
+    if (ARG_TYPE_INT == type) {
+        int size = arg_getInt(val);
+        /* src is NULL so the bytes are all '\0' */
+        Arg* bytes = arg_setBytes(NULL, "", NULL, size);
+        return bytes;
+    }
+    if (ARG_TYPE_BYTES == type) {
+        return arg_copy(val);
+    }
+    if (ARG_TYPE_STRING == type) {
+        int size = strGetSize(arg_getStr(val));
+        Arg* bytes = arg_setBytes(NULL, "", (uint8_t*)arg_getStr(val), size);
+        return bytes;
+    }
+    obj_setErrorCode(self, 1);
+    __platform_printf("Error: input arg type not supported.\r\n");
+    return arg_setNull(NULL);
+}

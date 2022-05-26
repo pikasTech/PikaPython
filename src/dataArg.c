@@ -133,9 +133,14 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
     self = arg_setName(self, name);
     self = arg_setType(self, ARG_TYPE_BYTES);
     void* dir = arg_getContent(self);
+    /* set content all to 0 */
     __platform_memset(dir, 0, size + sizeof(size_t));
     __platform_memcpy(dir, &size, sizeof(size_t));
-    __platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
+
+    /* set init value */
+    if (NULL != src) {
+        __platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
+    }
     return self;
 }
 
