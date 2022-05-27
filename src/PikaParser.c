@@ -309,6 +309,10 @@ Arg* Lexer_setSymbel(Arg* tokens_arg,
                      int32_t* symbol_start_index) {
     Args buffs = {0};
     char* symbol_buff = NULL;
+    if (-1 == *symbol_start_index) {
+        /* no found symbol start index */
+        goto exit;
+    }
     /* nothing to add symbel */
     if (i == *symbol_start_index) {
         goto exit;
@@ -578,6 +582,9 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         }
         if (i == size - 1) {
             /* last check symbel */
+            // if('\n' == c0){
+            //     continue;
+            // }
             tokens_arg =
                 Lexer_setSymbel(tokens_arg, stmt, size, &symbol_start_index);
         }

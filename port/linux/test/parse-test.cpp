@@ -2715,3 +2715,36 @@ TEST(parser, tab) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, parse_issue2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "    recv_buf[1] = dat \n";
+    char* tokens = Lexer_getTokens(buffs, lines);
+    uint16_t token_size = Tokens_getSize(tokens);
+    EXPECT_EQ(token_size, 8);
+    char* tokens_str = Lexer_printTokens(buffs, tokens);
+    printf("%s\n", tokens_str);
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B1\n"
+                 "1 REF recv_buf\n"
+                 "1 NUM 1\n"
+                 "1 REF dat\n"
+                 "1 STR recv_buf\n"
+                 "0 RUN __set__\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, parse_issue3) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "recv_buf[1] = dat ";
+    char* clean_cmd = strsGetCleanCmd(buffs, lines);
+    EXPECT_STREQ(clean_cmd, "recv_buf[1]=dat");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
