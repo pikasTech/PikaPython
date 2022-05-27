@@ -640,3 +640,7 @@ sh run.sh
 | demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=pikastech/pikascript&type=Date)](https://star-history.com/#pikastech/pikascript&Date)
