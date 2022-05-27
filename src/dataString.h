@@ -30,7 +30,7 @@
 #include "PikaPlatform.h"
 
 /* size */
-uint32_t strGetSize(char* pData);
+size_t strGetSize(char* pData);
 /* append */
 char* strAppend(char* strOut, char* pData);
 char* strAppend_unlimited(char* strOut, char* pData);

@@ -31,6 +31,7 @@
 #include "PikaVM.h"
 #include "TinyObj.h"
 #include "dataMemory.h"
+
 PikaObj* New_BaseObj(Args* args);
 void Baseobj_print(PikaObj* self, Args* args);
 

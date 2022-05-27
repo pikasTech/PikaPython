@@ -104,7 +104,7 @@ TEST(compiler, task) {
     byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
     /* do something */
     byteCodeFrame_print(&bytecode_frame);
-    printf("Asm size: %d\r\n", strGetSize(pikaAsm));
+    printf("Asm size: %d\r\n", (int)strGetSize(pikaAsm));
 
     byteCodeFrame_printAsArray(&bytecode_frame);
 

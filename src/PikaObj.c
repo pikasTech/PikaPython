@@ -671,19 +671,21 @@ static void __clearBuff(char* buff, int size) {
     }
 }
 
-static enum shell_state __obj_runChar(PikaObj* self, char inputChar){
+static void __obj_runCharBeforeRun(PikaObj* self) {
+    struct shell_config* cfg = args_getStruct(self->list, "__shcfg");
+    /* create the line buff for the first time */
+    obj_setBytes(self, "__shbuf", NULL, PIKA_LINE_BUFF_SIZE);
+    obj_setInt(self, "__shinb", 0);
+    /* print out the prefix when first entry */
+    __platform_printf(cfg->prefix);
+}
+
+enum shell_state obj_runChar(PikaObj* self, char inputChar) {
     struct shell_config* cfg = args_getStruct(self->list, "__shcfg");
     __obj_shellLineHandler_t __lineHandler_fun = obj_getPtr(self, "__shhdl");
-    /* create the line buff for the first time */
-    if(!obj_isArgExist(self, "__shbuf")){
-        obj_setBytes(self, "__shbuf" , NULL, PIKA_LINE_BUFF_SIZE);
-        /* print out the prefix when first entry */
-        __platform_printf(cfg->prefix);
-    }
-
     char* rxBuff = (char*)obj_getBytes(self, "__shbuf");
     char* input_line = NULL;
-    uint8_t is_in_block = 0;
+    int is_in_block = obj_getInt(self, "__shinb");
 #ifndef __linux
     __platform_printf("%c", inputChar);
 #endif
@@ -717,10 +719,11 @@ static enum shell_state __obj_runChar(PikaObj* self, char inputChar){
             strsDeinit(&buffs);
             /* go out from block */
             if ((rxBuff[0] != ' ') && (rxBuff[0] != '\t')) {
-                is_in_block = 0;
+                obj_setInt(self, "__shinb", 0);
                 input_line = obj_getStr(self, "shell_buff");
-                return __lineHandler_fun(self, input_line);
+                enum shell_state state = __lineHandler_fun(self, input_line);
                 __platform_printf(">>> ");
+                return state;
             } else {
                 __platform_printf("... ");
             }
@@ -730,7 +733,7 @@ static enum shell_state __obj_runChar(PikaObj* self, char inputChar){
         if (0 != strGetSize(rxBuff)) {
             /* go in block */
             if (rxBuff[strGetSize(rxBuff) - 1] == ':') {
-                is_in_block = 1;
+                obj_setInt(self, "__shinb", 1);
                 char _n = '\n';
                 strAppendWithSize(rxBuff, &_n, 1);
                 obj_setStr(self, "shell_buff", rxBuff);
@@ -740,32 +743,43 @@ static enum shell_state __obj_runChar(PikaObj* self, char inputChar){
             }
         }
         input_line = rxBuff;
-        return __lineHandler_fun(self, input_line);
+        enum shell_state state = __lineHandler_fun(self, input_line);
         __platform_printf(cfg->prefix);
-
         __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
-        return SHELL_STATE_CONTINUE;
+        return state;
     }
     return SHELL_STATE_CONTINUE;
+}
+
+static void obj_shellConfig(PikaObj* self,
+                            __obj_shellLineHandler_t __lineHandler_fun,
+                            struct shell_config* cfg) {
+    struct shell_config cfg_stack = {0};
+    __platform_memcpy(&cfg_stack, cfg, sizeof(cfg_stack));
+    args_setStruct(self->list, "__shcfg", cfg_stack);
+    obj_setPtr(self, "__shhdl", __lineHandler_fun);
 }
 
 void obj_shellLineProcess(PikaObj* self,
                           __obj_shellLineHandler_t __lineHandler_fun,
                           struct shell_config* cfg) {
-    struct shell_config cfg_stack = {0};
-    __platform_memcpy(&cfg_stack, cfg, sizeof(cfg_stack));
-    args_setStruct(self->list, "__shcfg", cfg_stack);
-    obj_setPtr(self, "__shhdl", __lineHandler_fun);
+    /* config the shell */
+    obj_shellConfig(self, __lineHandler_fun, cfg);
+
+    /* init the shell */
+    __obj_runCharBeforeRun(self);
+
+    /* getchar and run */
     while (1) {
         char inputChar = __platform_getchar();
-        if(SHELL_STATE_EXIT == __obj_runChar(self, inputChar)){
+        if (SHELL_STATE_EXIT == obj_runChar(self, inputChar)) {
             break;
         }
     }
 }
 
-static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,
-                                                       char* input_line) {
+static enum shell_state __obj_shellLineHandler_REPL(PikaObj* self,
+                                                    char* input_line) {
     /* exit */
     if (strEqu("exit()", input_line)) {
         /* exit pika shell */
@@ -776,11 +790,20 @@ static enum shell_state __obj_shellLineHandler_debuger(PikaObj* self,
     return SHELL_STATE_CONTINUE;
 }
 
+void obj_runCharInit(PikaObj* self) {
+    struct shell_config cfg = {
+        .prefix = ">>> ",
+    };
+    obj_shellConfig(self, __obj_shellLineHandler_REPL, &cfg);
+    /* init the shell */
+    __obj_runCharBeforeRun(self);
+}
+
 void pikaScriptShell(PikaObj* self) {
     struct shell_config cfg = {
         .prefix = ">>> ",
     };
-    obj_shellLineProcess(self, __obj_shellLineHandler_debuger, &cfg);
+    obj_shellLineProcess(self, __obj_shellLineHandler_REPL, &cfg);
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {

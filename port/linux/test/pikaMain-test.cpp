@@ -1850,3 +1850,29 @@ TEST(pikaMain, iteral_oct) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, REPL_push_mode) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_runCharInit(self);
+    char lines[] =
+        "print('test')\n"
+        "for i in range(0, 10):\n"
+        "    i\n"
+        "\n";
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(self, lines[i]);
+    }
+    /* assert */
+    EXPECT_STREQ(log_buff[18], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[14], "test\r\n");
+    EXPECT_STREQ(log_buff[11], "... ");
+    EXPECT_STREQ(log_buff[1], "9\r\n");
+    EXPECT_STREQ(log_buff[0], ">>> ");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

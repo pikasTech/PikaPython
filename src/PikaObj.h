@@ -243,6 +243,8 @@ int32_t obj_newMetaObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int obj_runModule(PikaObj* self, char* module_name);
 char* obj_toStr(PikaObj* self);
+void obj_runCharInit(PikaObj* self);
+enum shell_state obj_runChar(PikaObj* self, char inputChar);
 
 #define PIKA_PYTHON_BEGIN
 #define PIKA_PYTHON(x)

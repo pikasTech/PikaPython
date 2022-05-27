@@ -119,7 +119,7 @@ int32_t strGetTokenNum(char* strIn, char sign) {
     return strCountSign(strIn, sign) + 1;
 }
 
-uint32_t strGetSize(char* pData) {
+size_t strGetSize(char* pData) {
     return strlen(pData);
 }
 
