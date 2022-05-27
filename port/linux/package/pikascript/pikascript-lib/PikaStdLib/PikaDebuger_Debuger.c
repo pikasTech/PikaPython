@@ -2,7 +2,7 @@
 #include "dataStrs.h"
 
 extern PikaObj* __pikaMain;
-static enum shell_state __obj_shellLineHandler_REPL(PikaObj* self,
+static enum shell_state __obj_shellLineHandler_debug(PikaObj* self,
                                                        char* input_line) {
     /* continue */
     if (strEqu("c", input_line)) {
@@ -49,5 +49,5 @@ void PikaDebug_Debuger_set_trace(PikaObj* self) {
     struct shell_config cfg = {
         .prefix = "(pika-debug) ",
     };
-    obj_shellLineProcess(self, __obj_shellLineHandler_REPL, &cfg);
+    obj_shellLineProcess(self, __obj_shellLineHandler_debug, &cfg);
 }
