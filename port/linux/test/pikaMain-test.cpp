@@ -1891,3 +1891,16 @@ TEST(pikaMain, int_from_bytes) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+// TEST(pikaMain, big_bytes) {
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     /* run */
+//     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+//     __platform_printf("BEGIN\r\n");
+//     obj_run(self, "b = bytes(8192)\n");
+//     /* assert */
+//     /* deinit */
+//     obj_deinit(self);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }

@@ -40,6 +40,7 @@ int32_t stack_init(Stack* stack) {
     stack->stack_size_array =
         arg_setContent(NULL, NULL, PIKA_STACK_BUFF_SIZE / 4);
     stack_reset(stack);
+    stack->stack_totle_size = PIKA_STACK_BUFF_SIZE;
     return 0;
 };
 
@@ -60,6 +61,19 @@ int32_t stack_deinit(Stack* stack) {
 }
 
 void stack_pushPyload(Stack* stack, Arg* content, size_t size) {
+    size_t stack_size_after_push =
+        size + (stack->sp - arg_getContent(stack->stack_pyload));
+    if (stack_size_after_push > stack->stack_totle_size) {
+        __platform_printf(
+            "OverflowError: pika VM stack overflow, please use bigger "
+            "PIKA_STACK_BUFF_SIZE\r\n");
+        __platform_printf("Info: stack size request: %d\r\n",
+                          stack_size_after_push);
+        __platform_printf("Info: stack size now: %d\r\n",
+                          stack->stack_totle_size);
+        while (1) {
+        }
+    }
     __platform_memcpy(stack->sp, content, size);
     stack->sp += size;
 }
