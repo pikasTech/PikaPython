@@ -87,6 +87,16 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_STRING == type) {
         return (int)fast_atoi(arg_getStr(arg));
     }
+    if (ARG_TYPE_BYTES == type) {
+        size_t size = arg_getBytesSize(arg);
+        if (size != 1) {
+            obj_setSysOut(self, "ValueError: invalid literal for int()");
+            obj_setErrorCode(self, 1);
+            return -999999999;
+        }
+        uint8_t val = *arg_getBytes(arg);
+        return val;
+    }
     obj_setSysOut(self, "[error] convert to int type faild.");
     obj_setErrorCode(self, 1);
     return -999999999;
