@@ -598,14 +598,17 @@ sh run.sh
 ```
 
 # 7.Contribute
-| Content | Contributer |
+
+## [How to contribute](https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html)
+
+| Contribute log | Contributer |
 | --- | --- |
 | Add [PLOOC](https://github.com/GorgonMeducer/PLOOC) support for PikaScript Core | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | Donate：500¥ (ctypes 相关） | 蒋太平 |
 | fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
 | ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
 | ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
-| Donate：EC600X QuecPython 开发板 | 移远通信 武加玉 |
+| Donate：EC600X QuecPython Develop board| 移远通信 武加玉 |
 | Performance Point: 900->1400 | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | stm32f051r8 BSP |[unsigned](https://gitee.com/unsigned0)|
 | stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
@@ -614,25 +617,25 @@ sh run.sh
 | PikaVM improvement | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
-| Donate：ESP32C3 5pic，调试器 |启明云端 沧御|
-| Donate：LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
+| Donate：ESP32C3 5pic，linker|启明云端 沧御|
+| Donate：LS1C101 mcu 10pic, LS1c101 develop board，debuger|龙芯俱乐部 石南|
 | PikaVSF OS package | [versaloon](https://github.com/versaloon) |
 | ESP32C3 BSP |沧御|
-| Donate：ESP32开发板、墨水屏*4 | name(微信名) |
-| Donate：智龙开发板 | 龙芯俱乐部 石南 |
+| Donate：ESP32 board、ink lcd*4 | name(微信名) |
+| Donate：smartloong board | 龙芯俱乐部 石南 |
 | package/STM32F1 | [sjy](https://gitee.com/shanjiayang) |
 | package/STM32F103RBBooter | [sjy](https://gitee.com/shanjiayang) |
 | bsp/stm32f103rb | [sjy](https://gitee.com/shanjiayang) |
-| 基于QEMU的ARM-2D仿真工程 | [liuduanfei](https://github.com/liuduanfei) |
-| Donate：GD32E103TB芯片2片 | 信息牛(微信名) |
-| Rt-thread 支持包、适配层、模块| [Meco Jianting Man](https://github.com/mysterywolf) |
-| Donate：移远EC600S-CN 4G模块 | 移远模块 |
-| Donate：博流BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
-| Donate：中国移动CM32M101A 开发板| 孟巍(微信名) |
-| Donate：APM32F030R8 开发板 | 极海半导体 陈成 |
-| Donate：APM32E103VB 开发板 | 极海半导体 陈成 |
-| Donate：APEX-Link仿真器 | 极海半导体 陈成 |
-| 源码格式化，增加git属性文件 | [Meco Jianting Man](https://github.com/mysterywolf) |
+| QEMU ARM-2D simulation proejct | [liuduanfei](https://github.com/liuduanfei) |
+| Donate：GD32E103TB2 2 pic | 信息牛(微信名) |
+| Rt-thread bsp、port、module| [Meco Jianting Man](https://github.com/mysterywolf) |
+| Donate：EC600S-CN 4G| 移远模块 |
+| Donate：BL706 board|博流智能 [bouffalolab](https://github.com/bouffalolab)|
+| Donate：CM32M101A 开发板| 孟巍(微信名) |
+| Donate：APM32F030R8 board | 极海半导体 陈成 |
+| Donate：APM32E103VB board | 极海半导体 陈成 |
+| Donate：APEX-Link| 极海半导体 陈成 |
+| corde format，add gitattributes| [Meco Jianting Man](https://github.com/mysterywolf) |
 | demo/simulation-keil | 千帆(微信名) |
 | demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
