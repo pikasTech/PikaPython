@@ -1904,3 +1904,22 @@ TEST(pikaMain, int_from_bytes) {
 //     obj_deinit(self);
 //     EXPECT_EQ(pikaMemNow(), 0);
 // }
+
+TEST(pikaMain, utils_int_to_bytes) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, 
+    "ut = PikaStdData.Utils()\n"
+    "b = b'test'\n"
+    "b[0] = ut.int_to_bytes(0x35)\n"
+    "b\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[4], "\\x35");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

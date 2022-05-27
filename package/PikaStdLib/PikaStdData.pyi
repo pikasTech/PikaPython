@@ -1,4 +1,3 @@
-#api
 from PikaObj import *
 
 
@@ -21,6 +20,7 @@ class List(TinyObj):
     # get the length of list
     def len(self) -> int:
         pass
+
     # support for loop
     def __iter__(self) -> any:
         pass
@@ -33,9 +33,10 @@ class List(TinyObj):
     def __set__(self, __key: any, __val: any):
         pass
 
-    # support val = list[] 
+    # support val = list[]
     def __get__(self, __key: any) -> any:
         pass
+
 
 class Dict(TinyObj):
     def __init__(self):
@@ -63,19 +64,19 @@ class Dict(TinyObj):
     def __set__(self, __key: any, __val: any):
         pass
 
-    # support val = dict[] 
+    # support val = dict[]
     def __get__(self, __key: any) -> any:
         pass
 
 
 class String(TinyObj):
-    def __init__(self, s:str):
+    def __init__(self, s: str):
         pass
 
-    def set(self, s:str):
+    def set(self, s: str):
         pass
 
-    def get(self)->str:
+    def get(self) -> str:
         pass
 
     def __iter__(self) -> any:
@@ -88,11 +89,17 @@ class String(TinyObj):
     def __set__(self, __key: any, __val: any):
         pass
 
-    # support val = string[] 
+    # support val = string[]
     def __get__(self, __key: any) -> any:
         pass
 
+
 class ByteArray(List):
     # convert a string to ByteArray
-    def fromString(self, s:str):
+    def fromString(self, s: str):
+        pass
+
+
+class Utils(TinyObj):
+    def int_to_bytes(val: int) -> bytes:
         pass
