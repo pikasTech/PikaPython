@@ -756,6 +756,7 @@ char* Parser_solveBranckets(Args* outBuffs,
     /* init objects */
     Args buffs = {0};
     Arg* right_arg = arg_setStr(NULL, "", "");
+    Arg* end_arg = arg_setStr(NULL, "", "");
     uint8_t is_in_brancket = 0;
     args_setStr(&buffs, "index", "");
     uint8_t matched = 0;
@@ -810,6 +811,8 @@ char* Parser_solveBranckets(Args* outBuffs,
             index_arg = arg_strAppend(index_arg, ps.token1.pyload);
             args_setStr(&buffs, "index", arg_getStr(index_arg));
             arg_deinit(index_arg);
+            /* update index pointer */
+            index = args_getStr(&buffs, "index");
 
             /* __slice__(obj, start, end, step) */
             if (strEqu(mode, "right")) {
@@ -819,13 +822,19 @@ char* Parser_solveBranckets(Args* outBuffs,
             }
             right_arg = arg_strAppend(right_arg, args_getStr(&buffs, "obj"));
             right_arg = arg_strAppend(right_arg, ",");
-            right_arg = arg_strAppend(right_arg, args_getStr(&buffs, "index"));
+            /* slice only one item */
+            char* start = index;
+            /* end = start + 1 */
+            end_arg = arg_strAppend(end_arg, start);
+            end_arg = arg_strAppend(end_arg, " + 1");
+            char* end = arg_getStr(end_arg);
+            right_arg = arg_strAppend(right_arg, start);
             /* __slice__(obj, index, indxe + 1, 1) */
             if (strEqu(mode, "right")) {
                 right_arg = arg_strAppend(right_arg, ",");
                 right_arg =
-                    arg_strAppend(right_arg, args_getStr(&buffs, "index"));
-                right_arg = arg_strAppend(right_arg, " + 1, 1");
+                    arg_strAppend(right_arg, end);
+                right_arg = arg_strAppend(right_arg, ", 1");
             }
             if (strEqu(mode, "left")) {
                 right_arg = arg_strAppend(right_arg, ",");
@@ -859,6 +868,7 @@ exit:
     /* clean and return */
     content = strsCopy(outBuffs, arg_getStr(right_arg));
     arg_deinit(right_arg);
+    arg_deinit(end_arg);
     strsDeinit(&buffs);
     return content;
 }
