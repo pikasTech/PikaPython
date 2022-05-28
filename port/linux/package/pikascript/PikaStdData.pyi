@@ -101,5 +101,5 @@ class ByteArray(List):
 
 
 class Utils(TinyObj):
-    def int_to_bytes(val: int) -> bytes:
+    def int_to_bytes(self, val: int) -> bytes:
         pass

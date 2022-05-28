@@ -102,6 +102,10 @@ int pikaCompileFileWithOutputName(char* output_file_name,
         return 1;
     }
     char* lines = (char*)arg_getBytes(input_file_arg);
+    /* replace the "\r\n" to "\n" */
+    lines = strsReplace(&buffs, lines, "\r\n", "\n");
+    /* clear the void line */
+    lines = strsReplace(&buffs, lines, "\n\n", "\n");
     /* add '\n' at the end */
     lines = strsAppend(&buffs, lines, "\n\n");
     pikaCompile(output_file_name, lines);
