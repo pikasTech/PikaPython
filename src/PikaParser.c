@@ -756,7 +756,6 @@ char* Parser_solveBranckets(Args* outBuffs,
     /* init objects */
     Args buffs = {0};
     Arg* right_arg = arg_setStr(NULL, "", "");
-    Arg* end_arg = arg_setStr(NULL, "", "");
     uint8_t is_in_brancket = 0;
     args_setStr(&buffs, "index", "");
     uint8_t matched = 0;
@@ -825,15 +824,14 @@ char* Parser_solveBranckets(Args* outBuffs,
             /* slice only one item */
             char* start = index;
             /* end = start + 1 */
-            end_arg = arg_strAppend(end_arg, start);
+            Arg* end_arg = arg_setStr(NULL, "", start);
             end_arg = arg_strAppend(end_arg, " + 1");
             char* end = arg_getStr(end_arg);
             right_arg = arg_strAppend(right_arg, start);
             /* __slice__(obj, index, indxe + 1, 1) */
             if (strEqu(mode, "right")) {
                 right_arg = arg_strAppend(right_arg, ",");
-                right_arg =
-                    arg_strAppend(right_arg, end);
+                right_arg = arg_strAppend(right_arg, end);
                 right_arg = arg_strAppend(right_arg, ", 1");
             }
             if (strEqu(mode, "left")) {
@@ -848,6 +846,7 @@ char* Parser_solveBranckets(Args* outBuffs,
             }
             right_arg = arg_strAppend(right_arg, ")");
             args_setStr(&buffs, "index", "");
+            arg_deinit(end_arg);
             /* in brancket and found '[' */
         } else if (is_in_brancket && (!strEqu(ps.token1.pyload, "["))) {
             char* index = args_getStr(&buffs, "index");
@@ -868,7 +867,6 @@ exit:
     /* clean and return */
     content = strsCopy(outBuffs, arg_getStr(right_arg));
     arg_deinit(right_arg);
-    arg_deinit(end_arg);
     strsDeinit(&buffs);
     return content;
 }

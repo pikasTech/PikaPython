@@ -12,6 +12,7 @@
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=parser.parse_issue2"
+                "--gtest_filter=parser.__get__3"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
