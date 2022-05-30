@@ -3,10 +3,11 @@ project(pikaByteCodeGen VERSION 0.1.0)
 
 include(CTest)
 enable_testing()
-
+ADD_DEFINITIONS(-DPIKA_CONFIG_ENABLE)
 aux_source_directory(pikascript/pikascript-core pikascript-core)
 include_directories(pikascript/pikascript-core)
 include_directories(libpikabinder)
+include_directories(.)
 link_directories(libpikabinder)
 
 add_executable(pikaByteCodeGen main.c
