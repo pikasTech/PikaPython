@@ -169,17 +169,25 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2) {
 
 Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
     ArgType obj_type = arg_getType(obj);
+    int index = 0;
+    if (ARG_TYPE_INT == arg_getType(key)) {
+        index = arg_getInt(key);
+    }
     if (ARG_TYPE_STRING == obj_type) {
-        int index = arg_getInt(key);
         char* str_pyload = arg_getStr(obj);
         char char_buff[] = " ";
+        if (index < 0) {
+            index = strGetSize(str_pyload) + index;
+        }
         char_buff[0] = str_pyload[index];
         return arg_setStr(NULL, "", char_buff);
     }
     if (ARG_TYPE_BYTES == obj_type) {
-        int index = arg_getInt(key);
         uint8_t* bytes_pyload = arg_getBytes(obj);
         uint8_t byte_buff[] = " ";
+        if (index < 0) {
+            index = arg_getBytesSize(obj) + index;
+        }
         byte_buff[0] = bytes_pyload[index];
         return arg_setBytes(NULL, "", byte_buff, 1);
     }
@@ -332,14 +340,19 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
                                  Arg* obj,
                                  Arg* start,
                                  int step) {
-    if ((arg_getType(start) == ARG_TYPE_INT) &&
-        (arg_getType(end) == ARG_TYPE_INT)) {
-        /* __slice__ is equal to __get__ */
-        if (arg_getInt(start) - arg_getInt(end) == 1) {
-            return PikaStdLib_SysObj___get__(self, start, obj);
-        }
+    /* No interger index only support __get__ */
+    if (!(arg_getType(start) == ARG_TYPE_INT &&
+          arg_getType(end) == ARG_TYPE_INT)) {
+        return PikaStdLib_SysObj___get__(self, start, obj);
     }
 
-    /* No interger index only support __get__ */
-    return PikaStdLib_SysObj___get__(self, start, obj);
+    int start_i = arg_getInt(start);
+    int end_i = arg_getInt(end);
+
+    /* __slice__ is equal to __get__ */
+    if (end_i - start_i == 1) {
+        return PikaStdLib_SysObj___get__(self, start, obj);
+    }
+
+    return arg_setNull(NULL);
 }
