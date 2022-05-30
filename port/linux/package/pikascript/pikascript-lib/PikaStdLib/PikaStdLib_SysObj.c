@@ -366,5 +366,25 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
         return sliced_arg;
     }
 
+    if (ARG_TYPE_BYTES == arg_getType(obj)) {
+        Arg* sliced_arg = arg_setBytes(NULL, "", NULL, 0);
+        for (int i = start_i; i < end_i; i++) {
+            Arg* i_arg = arg_setInt(NULL, "", i);
+            Arg* item_arg = PikaStdLib_SysObj___get__(self, i_arg, obj);
+            uint8_t* bytes_origin = arg_getBytes(sliced_arg);
+            size_t size_origin = arg_getBytesSize(sliced_arg);
+            Arg* sliced_arg_new = arg_setBytes(NULL, "", NULL, size_origin + 1);
+            __platform_memcpy(arg_getBytes(sliced_arg_new), bytes_origin,
+                              size_origin);
+            __platform_memcpy(arg_getBytes(sliced_arg_new) + size_origin,
+                              arg_getBytes(item_arg), 1);
+            arg_deinit(sliced_arg);
+            sliced_arg = sliced_arg_new;
+            arg_deinit(item_arg);
+            arg_deinit(i_arg);
+        }
+        return sliced_arg;
+    }
+
     return arg_setNull(NULL);
 }

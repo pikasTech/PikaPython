@@ -1959,3 +1959,21 @@ TEST(pikaMain, slice1) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, slice2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, 
+    "b'test'[1:3]\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "\\x73");
+    EXPECT_STREQ(log_buff[2], "\\x65");
+    EXPECT_STREQ(log_buff[4], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
