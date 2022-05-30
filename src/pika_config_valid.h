@@ -74,13 +74,9 @@
     
     /* config for syntax level */
     #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MINIMAL
-        #undef PIKA_INIT_STRING_ENABLE
-        #define PIKA_INIT_STRING_ENABLE 0
         #undef PIKA_SYNTEX_ITEM_SLICE_ENABLE
         #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 0
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
-        #undef PIKA_INIT_STRING_ENABLE
-        #define PIKA_INIT_STRING_ENABLE 1
         #undef PIKA_SYNTEX_ITEM_SLICE_ENABLE
         #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
     #endif
