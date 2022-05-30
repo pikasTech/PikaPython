@@ -77,8 +77,14 @@
         #undef PIKA_SYNTEX_ITEM_SLICE_ENABLE
         #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 0
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
+        #undef PIKA_INIT_STRING_ENABLE
+        #define PIKA_INIT_STRING_ENABLE 1
         #undef PIKA_SYNTEX_ITEM_SLICE_ENABLE
         #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
+        #undef PIKA_BUILTIN_LIST_ENABLE
+        #define PIKA_BUILTIN_LIST_ENABLE 1
+        #undef PIKA_BUILTIN_DICT_ENABLE
+        #define PIKA_BUILTIN_DICT_ENABLE 1
     #endif
 
     /* configuration validation */

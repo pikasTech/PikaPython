@@ -8,8 +8,6 @@
 #include "dataStrs.h"
 #include "libpikabinder.h"
 
-PikaObj* __pikaMain;
-
 void main() {
     /* run pika_binder to bind C modules */
     pika_binder();
