@@ -67,6 +67,14 @@ You can use [simulation project](https://pikadoc.readthedocs.io/en/latest/Keil%2
 The board based on STM32G030C8T6 MCU, only 64kB Flash, 8kB RAM can run PikaScript with total peripheral device (GPIO、TIME、IIC、RGB、KEY、LCD、RGB). 
 CH340 is deployed to support USB to serial with Type-C USB, support download python script py serial, there are 4 RGB on the board and support the [LCD](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102).
 
+## Related Projects
+
+### PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌
+https://github.com/maxgerhardt/pikascript-pio-bluepill
+
+### PikaScript Bluepill Demo In GCC 🐍
+https://github.com/Chandler-Kluser/pikascript_gcc_bluepill
+
 # Document
 
 https://pikadoc.readthedocs.io/en/latest/index.html
@@ -141,11 +149,6 @@ https://pikadoc.readthedocs.io/en/latest/index.html
 |OS|port|Google Test|Benchmark|
 |---|---|---|---|
 |linux|√|√|√|
-
-## Related Projects
-### PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌
-https://github.com/maxgerhardt/pikascript-pio-bluepill
-
 
 # 3.Characteristic
 ### (1)Run environment
