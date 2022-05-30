@@ -354,5 +354,17 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
         return PikaStdLib_SysObj___get__(self, start, obj);
     }
 
+    if (ARG_TYPE_STRING == arg_getType(obj)) {
+        Arg* sliced_arg = arg_setStr(NULL, "", "");
+        for (int i = start_i; i < end_i; i++) {
+            Arg* i_arg = arg_setInt(NULL, "", i);
+            Arg* item_arg = PikaStdLib_SysObj___get__(self, i_arg, obj);
+            sliced_arg = arg_strAppend(sliced_arg, arg_getStr(item_arg));
+            arg_deinit(item_arg);
+            arg_deinit(i_arg);
+        }
+        return sliced_arg;
+    }
+
     return arg_setNull(NULL);
 }
