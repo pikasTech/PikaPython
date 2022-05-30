@@ -244,8 +244,8 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 
 | Syntax | str | bytes | list (PikaStdData.List) |
 | --- | --- | --- | --- |
-| test[i] | √ | - | √ |
-| test[a : b : c] | - | - | - |
+| test[i] | √ | √ | √ |
+| test[a : b : c] | √ | √ | - |
 | test[a :] | - | - | - |
 
 #### Other keywords/Syntax
