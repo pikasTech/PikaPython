@@ -1995,3 +1995,18 @@ TEST(pikaMain, slice2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(pikaMain, c_buffer) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, 
+    "version = ctypes.c_buffer(b\"\", 128)\n"
+    );
+    /* assert */
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
