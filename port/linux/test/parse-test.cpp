@@ -2767,3 +2767,22 @@ TEST(parser, slice1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, slice2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a = recv_buf[1:4:2]\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF recv_buf\n"
+                 "1 NUM 1\n"
+                 "1 NUM 4\n"
+                 "1 NUM 2\n"
+                 "0 RUN __slice__\n"
+                 "0 OUT a\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -755,54 +755,41 @@ static void __getSlicePars(Args* outBuffs,
                            char** pEnd,
                            char** pStep) {
     Args buffs = {0};
-    uint8_t colon_num = 0;
     *pStart = "";
     *pEnd = "";
     *pStep = "";
 
-    /* count colon_num */
+    /* slice */
+    uint8_t colon_i = 0;
     ParserState_forEachToken(ps, inner) {
         ParserState_iterStart(&ps);
         if (strEqu(ps.token1.pyload, ":") && ps.branket_deepth == 0) {
-            colon_num++;
+            colon_i++;
+            goto iter_continue1;
         }
+        if (colon_i == 0) {
+            *pStart = strsAppend(&buffs, *pStart, ps.token1.pyload);
+        }
+        if (colon_i == 1) {
+            *pEnd = strsAppend(&buffs, *pEnd, ps.token1.pyload);
+        }
+        if (colon_i == 2) {
+            *pStep = strsAppend(&buffs, *pStep, ps.token1.pyload);
+        }
+    iter_continue1:
         ParserState_iterEnd(&ps);
     }
     ParserState_deinit(&ps);
-
-    /* just a index */
-    if (colon_num == 0) {
-        *pStart = inner;
+    if (colon_i == 1) {
+        *pStep = "1";
+    }
+    if (colon_i == 0) {
         *pEnd = strsAppend(&buffs, *pStart, " + 1");
         *pStep = "1";
-        goto exit;
-    }
-
-    /* slice without step */
-    if (colon_num == 1) {
-        uint8_t colon_i = 0;
-        *pStep = "1";
-        ParserState_forEachToken(ps, inner) {
-            ParserState_iterStart(&ps);
-            if (strEqu(ps.token1.pyload, ":") && ps.branket_deepth == 0) {
-                colon_i++;
-                goto iter_continue;
-            }
-            if (colon_i == 0) {
-                *pStart = strsAppend(&buffs, *pStart, ps.token1.pyload);
-            }
-            if (colon_i == 1) {
-                *pEnd = strsAppend(&buffs, *pEnd, ps.token1.pyload);
-            }
-        iter_continue:
-            ParserState_iterEnd(&ps);
-        }
-        ParserState_deinit(&ps);
     }
 
     /* slice with step */
 
-exit:
     /* output */
     *pStart = strsCopy(outBuffs, *pStart);
     *pEnd = strsCopy(outBuffs, *pEnd);
