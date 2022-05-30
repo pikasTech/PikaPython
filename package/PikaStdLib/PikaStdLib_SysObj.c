@@ -340,6 +340,7 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
                                  Arg* obj,
                                  Arg* start,
                                  int step) {
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
     /* No interger index only support __get__ */
     if (!(arg_getType(start) == ARG_TYPE_INT &&
           arg_getType(end) == ARG_TYPE_INT)) {
@@ -385,6 +386,7 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
         }
         return sliced_arg;
     }
+#endif
 
     return arg_setNull(NULL);
 }
