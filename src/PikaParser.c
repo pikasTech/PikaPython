@@ -1048,9 +1048,12 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         isLeftExist = Parser_solveSelfOperator(&buffs, stmt, &right, &left);
     }
 
+    char* right_new = right;
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
     /* solve the [] stmt */
     right = Parser_solveRightBranckets(&buffs, right);
-    char* right_new = Parser_solveLeftBranckets(&buffs, right, left);
+    right_new = Parser_solveLeftBranckets(&buffs, right, left);
+#endif
 
     /* left is contain the '[]' */
     if (!strEqu(right_new, right)) {

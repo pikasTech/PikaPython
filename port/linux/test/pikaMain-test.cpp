@@ -807,6 +807,7 @@ TEST(pikaMain, str___get____set__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(pikaMain, str__index__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -832,7 +833,9 @@ TEST(pikaMain, str__index__) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(pikaMain, bytes__index__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -858,7 +861,9 @@ TEST(pikaMain, bytes__index__) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(pikaMain, list_index) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -878,7 +883,9 @@ TEST(pikaMain, list_index) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(pikaMain, dict_index) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -898,6 +905,7 @@ TEST(pikaMain, dict_index) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(pikaMain, task_run_once) {
     /* init */
@@ -1877,6 +1885,7 @@ TEST(pikaMain, REPL_push_mode) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(pikaMain, int_from_bytes) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1891,6 +1900,7 @@ TEST(pikaMain, int_from_bytes) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 // TEST(pikaMain, big_bytes) {
 //     /* init */
@@ -1905,6 +1915,7 @@ TEST(pikaMain, int_from_bytes) {
 //     EXPECT_EQ(pikaMemNow(), 0);
 // }
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(pikaMain, utils_int_to_bytes) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1923,7 +1934,9 @@ TEST(pikaMain, utils_int_to_bytes) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(pikaMain, neg_index) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1942,7 +1955,9 @@ TEST(pikaMain, neg_index) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(pikaMain, slice1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1959,7 +1974,9 @@ TEST(pikaMain, slice1) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(pikaMain, slice2) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1977,3 +1994,4 @@ TEST(pikaMain, slice2) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif

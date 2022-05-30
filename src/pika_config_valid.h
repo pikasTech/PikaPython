@@ -40,6 +40,7 @@
         #define PIKA_BUILTIN_DICT_ENABLE 0
         #define PIKA_READ_FILE_BUFF_SIZE 0x10000
         #define PIKA_INIT_STRING_ENABLE 0
+        #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
         #define PIKA_PLOOC_ENABLE 0
     
     /* optimize options */
@@ -53,7 +54,7 @@
     /* default optimize */
         #define PIKA_OPTIMIZE PIKA_OPTIMIZE_SIZE
     /* default syntax support level */
-        #define PIKA_SYNTAX_LEVEL PIKA_SYNTAX_LEVEL_MINIMAL
+        #define PIKA_SYNTAX_LEVEL PIKA_SYNTAX_LEVEL_MAXIMAL
 
     /* use user config */
     #ifdef PIKA_CONFIG_ENABLE
@@ -73,19 +74,15 @@
     
     /* config for syntax level */
     #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MINIMAL
-        #undef PIKA_BUILTIN_DICT_ENABLE
-        #define PIKA_BUILTIN_DICT_ENABLE 0
-        #undef PIKA_BUILTIN_LIST_ENABLE
-        #define PIKA_BUILTIN_LIST_ENABLE 0
         #undef PIKA_INIT_STRING_ENABLE
         #define PIKA_INIT_STRING_ENABLE 0
+        #undef PIKA_SYNTEX_ITEM_SLICE_ENABLE
+        #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 0
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
-        #undef PIKA_BUILTIN_DICT_ENABLE
-        #define PIKA_BUILTIN_DICT_ENABLE 1
-        #undef PIKA_BUILTIN_LIST_ENABLE
-        #define PIKA_BUILTIN_LIST_ENABLE 1
         #undef PIKA_INIT_STRING_ENABLE
         #define PIKA_INIT_STRING_ENABLE 1
+        #undef PIKA_SYNTEX_ITEM_SLICE_ENABLE
+        #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
     #endif
 
     /* configuration validation */

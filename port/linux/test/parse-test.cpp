@@ -1835,6 +1835,7 @@ TEST(parser, print_ddd) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(parser, __get__3) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -1871,7 +1872,9 @@ TEST(parser, __get__3) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(parser, __get__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -1892,7 +1895,9 @@ TEST(parser, __get__) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(parser, __get__2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -1917,7 +1922,9 @@ TEST(parser, __get__2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(parser, __set__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -1935,6 +1942,7 @@ TEST(parser, __set__) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(parser, str_p_str) {
     pikaMemInfo.heapUsedMax = 0;
@@ -2225,6 +2233,7 @@ TEST(asmer, asm_to_bytecode_0x0d) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(parser, list_1_2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2253,6 +2262,7 @@ TEST(parser, list_1_2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(parser, class_def_void_line) {
     pikaMemInfo.heapUsedMax = 0;
@@ -2636,6 +2646,7 @@ TEST(parser, str_equ) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(parser, bytes_index) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2658,6 +2669,7 @@ TEST(parser, bytes_index) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(parser, hex_iteral) {
     pikaMemInfo.heapUsedMax = 0;
@@ -2716,6 +2728,7 @@ TEST(parser, tab) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(parser, parse_issue2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2738,6 +2751,7 @@ TEST(parser, parse_issue2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(parser, parse_issue3) {
     pikaMemInfo.heapUsedMax = 0;
@@ -2749,6 +2763,7 @@ TEST(parser, parse_issue3) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(parser, slice1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2767,7 +2782,9 @@ TEST(parser, slice1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(parser, slice2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2786,3 +2803,4 @@ TEST(parser, slice2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
