@@ -2804,3 +2804,55 @@ TEST(parser, slice2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(parser, str_add1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "msg = \"device_names[\" + str(i) + \"]:\"";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    char* tokens_print =
+        Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    printf("%s\r\n", tokens_print);
+    EXPECT_STREQ(tokens_print,
+                 "{sym}msg{opt}={lit}\"device_names[\"{opt}+{sym}str{dvd}({sym}"
+                 "i{dvd}){opt}+{lit}\"]:\"");
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,(char *)
+        "B0\n"
+        "2 STR device_names[\n"
+        "3 REF i\n"
+        "2 RUN str\n"
+        "1 OPT +\n"
+        "1 STR ]:\n"
+        "0 OPT +\n"
+        "0 OUT msg\n"
+    );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, str_add2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "msg = \"device_names[\" + str(i)";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    char* tokens_print =
+        Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    printf("%s\r\n", tokens_print);
+    EXPECT_STREQ(tokens_print,
+                 "{sym}msg{opt}={lit}\"device_names[\"{opt}+{sym}str{dvd}({sym}"
+                 "i{dvd})");
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,(char *)
+        "B0\n"
+        "1 STR device_names[\n"
+        "2 REF i\n"
+        "1 RUN str\n"
+        "0 OPT +\n"
+        "0 OUT msg\n"
+    );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

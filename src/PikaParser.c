@@ -148,12 +148,41 @@ exit:
     return res;
 }
 
+static char* __removeTokensBetween(Args* outBuffs,
+                                   char* input,
+                                   char* token_pyload1,
+                                   char* token_pyload2) {
+    Args buffs = {0};
+    uint8_t block_deepth = 0;
+    char* output = "";
+    ParserState_forEachToken(ps, input) {
+        ParserState_iterStart(&ps);
+        if (strEqu(token_pyload1, ps.token1.pyload)) {
+            if (block_deepth == 0) {
+                output = strsAppend(&buffs, output, ps.token1.pyload);
+            }
+            block_deepth++;
+        }
+        if (strEqu(token_pyload2, ps.token1.pyload)) {
+            block_deepth--;
+        }
+        if (block_deepth == 0) {
+            output = strsAppend(&buffs, output, ps.token1.pyload);
+        }
+        ParserState_iterEnd(&ps);
+    }
+    ParserState_deinit(&ps);
+    output = strsCopy(outBuffs, output);
+    strsDeinit(&buffs);
+    return output;
+}
+
 static enum StmtType Lexer_matchStmtType(char* right) {
     Args buffs = {0};
     enum StmtType stmtType = STMT_none;
-    char* rightWithoutSubStmt = strsDeleteBetween(&buffs, right, '(', ')');
+    char* rightWithoutSubStmt = __removeTokensBetween(&buffs, right, "(", ")");
     rightWithoutSubStmt =
-        strsDeleteBetween(&buffs, rightWithoutSubStmt, '[', ']');
+        __removeTokensBetween(&buffs, rightWithoutSubStmt, "[", "]");
 
     uint8_t is_get_operator = 0;
     uint8_t is_get_method = 0;

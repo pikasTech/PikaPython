@@ -1922,12 +1922,11 @@ TEST(pikaMain, utils_int_to_bytes) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-    "ut = PikaStdData.Utils()\n"
-    "b = b'test'\n"
-    "b[0] = ut.int_to_bytes(0x35)\n"
-    "b\n"
-    );
+    obj_run(self,
+            "ut = PikaStdData.Utils()\n"
+            "b = b'test'\n"
+            "b[0] = ut.int_to_bytes(0x35)\n"
+            "b\n");
     /* assert */
     EXPECT_STREQ(log_buff[4], "\\x35");
     /* deinit */
@@ -1943,10 +1942,9 @@ TEST(pikaMain, neg_index) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-    "'test'[-2]\n"
-    "b'test'[-2]\n"
-    );
+    obj_run(self,
+            "'test'[-2]\n"
+            "b'test'[-2]\n");
     /* assert */
     EXPECT_STREQ(log_buff[1], "\\x73");
     EXPECT_STREQ(log_buff[3], "s\r\n");
@@ -1964,9 +1962,7 @@ TEST(pikaMain, slice1) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-    "'test'[1:3]\n"
-    );
+    obj_run(self, "'test'[1:3]\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "es\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
@@ -1983,9 +1979,7 @@ TEST(pikaMain, slice2) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-    "b'test'[1:3]\n"
-    );
+    obj_run(self, "b'test'[1:3]\n");
     /* assert */
     EXPECT_STREQ(log_buff[1], "\\x73");
     EXPECT_STREQ(log_buff[2], "\\x65");
@@ -2002,10 +1996,27 @@ TEST(pikaMain, c_buffer) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
+    obj_run(self, "version = ctypes.c_buffer(b\"\", 128)\n");
+    /* assert */
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, str_add1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
     obj_run(self, 
-    "version = ctypes.c_buffer(b\"\", 128)\n"
+        "i = 32\n"
+        "msg = \"device_names[\" + str(i) + \"]:\"\n"
+        "msg\n"
     );
     /* assert */
+    EXPECT_STREQ(log_buff[0], "device_names[32]:\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
