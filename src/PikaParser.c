@@ -778,6 +778,7 @@ void ParserState_beforeIter(struct ParserState* ps) {
         arg_setStr(NULL, "", Parser_popToken(ps->buffs_p, ps->tokens));
 }
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 static void __getSlicePars(Args* outBuffs,
                            char* inner,
                            char** pStart,
@@ -826,7 +827,9 @@ static void __getSlicePars(Args* outBuffs,
     /* clean */
     strsDeinit(&buffs);
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 char* Parser_solveBranckets(Args* outBuffs,
                             char* content,
                             char* stmt,
@@ -948,7 +951,9 @@ exit:
     strsDeinit(&buffs);
     return content;
 }
+#endif
 
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
     return Parser_solveBranckets(outBuffs, right, NULL, "right");
 }
@@ -956,6 +961,7 @@ char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
 char* Parser_solveLeftBranckets(Args* outBuffs, char* right, char* left) {
     return Parser_solveBranckets(outBuffs, left, right, "left");
 }
+#endif
 
 uint8_t Parser_solveSelfOperator(Args* outbuffs,
                                  char* stmt,
