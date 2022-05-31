@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-error=armcc-pragma-import -Wno-error=armcc-pragma-arm</MiscControls>
-              <Define>USE_FULL_LL_DRIVER,STM32G030xx,USE_HAL_DRIVER</Define>
+              <Define>USE_FULL_LL_DRIVER,STM32G030xx,USE_HAL_DRIVER,PIKA_CONFIG_ENABLE</Define>
               <Undefine></Undefine>
               <IncludePath>../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\Booter;..\pikascript\pikascript-lib/PikaStdDevice;..\pikascript\pikascript-lib/STM32G0;..\pikascript\pikascript-lib/PikaPiZero;..\pikascript\pikascript-lib/PikaStdLib;..\pikascript\pikascript-api;..\pikascript\pikascript-core</IncludePath>
             </VariousControls>
@@ -882,6 +882,11 @@
               <FilePath>..\pikascript\pikascript-api/PikaStdData_ByteArray-api.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdData_Utils-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/PikaStdData_Utils-api.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdLib_StringObj-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdLib_StringObj-api.c</FilePath>
@@ -1100,6 +1105,11 @@
               <FileName>PikaStdData_String.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_String.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_Utils.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_List.c</FileName>
