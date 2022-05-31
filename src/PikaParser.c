@@ -779,11 +779,11 @@ void ParserState_beforeIter(struct ParserState* ps) {
 }
 
 #if PIKA_SYNTEX_ITEM_SLICE_ENABLE
-static void __getSlicePars(Args* outBuffs,
-                           char* inner,
-                           char** pStart,
-                           char** pEnd,
-                           char** pStep) {
+static void Slice_getPars(Args* outBuffs,
+                          char* inner,
+                          char** pStart,
+                          char** pEnd,
+                          char** pStep) {
     Args buffs = {0};
     *pStart = "";
     *pEnd = "";
@@ -812,6 +812,12 @@ static void __getSlicePars(Args* outBuffs,
     ParserState_deinit(&ps);
     if (colon_i == 1) {
         *pStep = "1";
+        if (strEqu(*pStart, "")) {
+            *pStart = "0";
+        }
+        if (strEqu(*pEnd, "")) {
+            *pEnd = "-1";
+        }
     }
     if (colon_i == 0) {
         *pEnd = strsAppend(&buffs, *pStart, " + 1");
@@ -896,7 +902,7 @@ char* Parser_solveBranckets(Args* outBuffs,
             char* start = NULL;
             char* end = NULL;
             char* step = NULL;
-            __getSlicePars(&buffs, inner, &start, &end, &step);
+            Slice_getPars(&buffs, inner, &start, &end, &step);
             /* __slice__(obj, start, end, step) */
             if (strEqu(mode, "right")) {
                 right_arg = arg_strAppend(right_arg, "__slice__(");

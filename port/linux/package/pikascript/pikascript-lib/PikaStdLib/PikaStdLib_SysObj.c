@@ -356,6 +356,13 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
     }
 
     if (ARG_TYPE_STRING == arg_getType(obj)) {
+        size_t len = strGetSize(arg_getStr(obj));
+        if (start_i < 0) {
+            start_i += len;
+        }
+        if (end_i < 0) {
+            end_i += len + 1;
+        }
         Arg* sliced_arg = arg_setStr(NULL, "", "");
         for (int i = start_i; i < end_i; i++) {
             Arg* i_arg = arg_setInt(NULL, "", i);
@@ -368,6 +375,13 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
     }
 
     if (ARG_TYPE_BYTES == arg_getType(obj)) {
+        size_t len = arg_getBytesSize(obj);
+        if (start_i < 0) {
+            start_i += len;
+        }
+        if (end_i < 0) {
+            end_i += len + 1;
+        }
         Arg* sliced_arg = arg_setBytes(NULL, "", NULL, 0);
         for (int i = start_i; i < end_i; i++) {
             Arg* i_arg = arg_setInt(NULL, "", i);

@@ -2946,11 +2946,31 @@ TEST(parser, mpy1) {
         "fbuf.text('OVER', 15, 18)\n"
         "i2c.writeto(8, fbuf)\n"
         "\n"
-        "print('Score: ', score)\n"
-        ;
+        "print('Score: ', score)\n";
     printf("%s\r\n", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
     printf("%s", pikaAsm);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+TEST(parser, slice_12lkj) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a = b[:6]\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF b\n"
+                 "1 NUM 0\n"
+                 "1 NUM 6\n"
+                 "1 NUM 1\n"
+                 "0 RUN __slice__\n"
+                 "0 OUT a\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
