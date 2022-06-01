@@ -1,5 +1,6 @@
 while [ 1 ]
 do
-    git pull gitee master
+    sleep 30
+    git pull gitee master --rebase
     git push
 done
