@@ -2132,3 +2132,23 @@ TEST(pikaMain, string_index) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(pikaMain, list_for_append) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, 
+    "rcv_buf = PikaStdData.List()\n"
+    "for i in range(0, 1024):\n"
+    "    rcv_buf.append(0)\n"
+    "rcv_buf.len()\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1024\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

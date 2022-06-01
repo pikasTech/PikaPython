@@ -323,7 +323,7 @@ void arg_deinitHeap(Arg* self) {
         struct_deinit_fun(arg_getHeapStruct(self));
     }
     /* deinit sub object */
-    if (type == ARG_TYPE_OBJECT) {
+    if (ARG_TYPE_OBJECT == type) {
         PikaObj* subObj = arg_getPtr(self);
         obj_refcntDec(subObj);
         int ref_cnt = obj_refcntNow(subObj);
