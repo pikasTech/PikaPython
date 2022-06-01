@@ -93,7 +93,7 @@ int32_t stack_pushArg(Stack* stack, Arg* arg) {
     size = (size + 4 - 1) & ~(4 - 1);
 #endif
     /* add ref_cnt to keep object in stack */
-    if (arg_getType(arg) == ARG_TYPE_OBJECT) {
+    if (argType_isObject(arg_getType(arg))) {
         obj_refcntInc(arg_getPtr(arg));
     }
     stack_pushSize(stack, size);
@@ -115,7 +115,7 @@ Arg* stack_popArg(Stack* stack) {
     int16_t size = stack_popSize(stack);
     Arg* arg = arg_copy((Arg*)stack_popPyload(stack, size));
     /* decrase ref_cnt */
-    if (arg_getType(arg) == ARG_TYPE_OBJECT) {
+    if (argType_isObject(arg_getType(arg))) {
         obj_refcntDec(arg_getPtr(arg));
     }
     return arg;

@@ -2974,3 +2974,20 @@ TEST(parser, slice_12lkj) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(parser, str_string) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a = str(String('test'))\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 STR test\n"
+                 "1 RUN String\n"
+                 "0 RUN str\n"
+                 "0 OUT a\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

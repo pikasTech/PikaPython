@@ -2009,11 +2009,10 @@ TEST(pikaMain, str_add1) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-        "i = 32\n"
-        "msg = \"device_names[\" + str(i) + \"]:\"\n"
-        "msg\n"
-    );
+    obj_run(self,
+            "i = 32\n"
+            "msg = \"device_names[\" + str(i) + \"]:\"\n"
+            "msg\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "device_names[32]:\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
@@ -2098,10 +2097,9 @@ TEST(pikaMain, str_string) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-    "a = PikaStdData.String('test')\n"
-    "print(a)\n"
-    );
+    obj_run(self,
+            "a = PikaStdData.String('test')\n"
+            "print(a)\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "test\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
@@ -2117,12 +2115,11 @@ TEST(pikaMain, string_index) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-    "a = PikaStdData.String('test')\n"
-    "a[1]\n"
-    "a[1] = 'q'\n"
-    "print(a)\n"
-    );
+    obj_run(self,
+            "a = PikaStdData.String('test')\n"
+            "a[1]\n"
+            "a[1] = 'q'\n"
+            "print(a)\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "tqst\r\n");
     EXPECT_STREQ(log_buff[1], "e\r\n");
@@ -2139,12 +2136,11 @@ TEST(pikaMain, list_for_append) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_run(self, 
-    "rcv_buf = PikaStdData.List()\n"
-    "for i in range(0, 1024):\n"
-    "    rcv_buf.append(0)\n"
-    "rcv_buf.len()\n"
-    );
+    obj_run(self,
+            "rcv_buf = PikaStdData.List()\n"
+            "for i in range(0, 1024):\n"
+            "    rcv_buf.append(0)\n"
+            "rcv_buf.len()\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "1024\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
@@ -2152,3 +2148,18 @@ TEST(pikaMain, list_for_append) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+// TEST(pikaMain, string_str) {
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     /* run */
+//     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+//     __platform_printf("BEGIN\r\n");
+//     obj_run(self, "a = str(PikaStdData.String('test'))\n");
+//     /* assert */
+//     EXPECT_STREQ(log_buff[0], "test\r\n");
+//     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+//     /* deinit */
+//     obj_deinit(self);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
