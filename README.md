@@ -77,7 +77,9 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 
 https://pikadoc.readthedocs.io/en/latest/index.html
 
-## [How to contribute](https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html)
+## How to contribute
+
+https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html
 
 ## Folders
 [src](../../tree/master/src) - core code
