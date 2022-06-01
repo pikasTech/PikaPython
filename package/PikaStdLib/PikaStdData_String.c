@@ -1,4 +1,4 @@
-#include "PikaObj.h"
+#include "PikaStdData_String.h"
 
 Arg* PikaStdData_String___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
@@ -33,8 +33,8 @@ Arg* PikaStdData_String___next__(PikaObj* self) {
     return res;
 }
 
-Arg* PikaStdData_String___get__(PikaObj* self) {
-    int key_i = obj_getInt(self, "__key");
+Arg* PikaStdData_String___get__(PikaObj* self, Arg* __key) {
+    int key_i = arg_getInt(__key);
     char* str = obj_getStr(self, "str");
     uint16_t len = strGetSize(str);
     char char_buff[] = " ";
@@ -46,4 +46,19 @@ Arg* PikaStdData_String___get__(PikaObj* self) {
     }
 }
 
-void PikaStdData_String___set__(PikaObj* self) {}
+void PikaStdData_String___set__(PikaObj* self, Arg* __key, Arg* __val) {
+    int key_i = arg_getInt(__key);
+    char* str = obj_getStr(self, "str");
+    char* val = arg_getStr(__val);
+    uint16_t len = strGetSize(str);
+    if (key_i >= len) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("Error String Overflow\r\n");
+        return;
+    }
+    str[key_i] = val[0];
+}
+
+char* PikaStdData_String___str__(PikaObj* self) {
+    return obj_getStr(self, "str");
+}

@@ -2091,3 +2091,44 @@ TEST(pikaMain, slice_a12) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(pikaMain, str_string) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, 
+    "a = PikaStdData.String('test')\n"
+    "print(a)\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+TEST(pikaMain, string_index) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, 
+    "a = PikaStdData.String('test')\n"
+    "a[1]\n"
+    "a[1] = 'q'\n"
+    "print(a)\n"
+    );
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "tqst\r\n");
+    EXPECT_STREQ(log_buff[1], "e\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

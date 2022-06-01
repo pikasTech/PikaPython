@@ -59,7 +59,7 @@ void Baseobj_print(PikaObj* self, Args* args) {
             return;
         }
     }
-    if (ARG_TYPE_OBJECT == arg_type) {
+    if (argType_isObject(arg_type)) {
         char* to_str = obj_toStr(arg_getPtr(arg));
         if (NULL != to_str) {
             __platform_printf("%s\r\n", to_str);

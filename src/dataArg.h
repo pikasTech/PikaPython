@@ -116,5 +116,6 @@ void arg_deinitHeap(Arg* self);
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 void arg_printBytes(Arg* self);
 Arg* arg_loadFile(Arg* self, char* filename);
+uint8_t argType_isObject(ArgType type);
 
 #endif

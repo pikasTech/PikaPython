@@ -429,7 +429,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self, char* name) {
         return __obj_initSubObj(self, name);
     }
     /* found Objcet */
-    if (type == ARG_TYPE_OBJECT || type == ARG_TYPE_OBJECT_NEW) {
+    if (argType_isObject(type)) {
         return args_getPtr(self->list, name);
     }
     return NULL;

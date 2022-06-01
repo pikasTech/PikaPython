@@ -385,3 +385,10 @@ uint8_t* arg_getContent(Arg* self) {
 void arg_setNext(Arg* self, Arg* next) {
     self->next = next;
 }
+
+uint8_t argType_isObject(ArgType type) {
+    if (ARG_TYPE_OBJECT == type || ARG_TYPE_OBJECT_NEW == type) {
+        return 1;
+    }
+    return 0;
+}
