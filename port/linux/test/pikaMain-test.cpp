@@ -2149,17 +2149,17 @@ TEST(pikaMain, list_for_append) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(pikaMain, string_str) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     /* run */
-//     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
-//     __platform_printf("BEGIN\r\n");
-//     obj_run(self, "a = str(PikaStdData.String('test'))\n");
-//     /* assert */
-//     EXPECT_STREQ(log_buff[0], "test\r\n");
-//     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
-//     /* deinit */
-//     obj_deinit(self);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(pikaMain, string_str) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "str(PikaStdData.String('test'))\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

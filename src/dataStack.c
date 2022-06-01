@@ -114,8 +114,9 @@ Arg* stack_popArg(Stack* stack) {
     stack->top--;
     int16_t size = stack_popSize(stack);
     Arg* arg = arg_copy((Arg*)stack_popPyload(stack, size));
+    ArgType type = arg_getType(arg);
     /* decrase ref_cnt */
-    if (argType_isObject(arg_getType(arg))) {
+    if (argType_isObject(type)) {
         obj_refcntDec(arg_getPtr(arg));
     }
     return arg;

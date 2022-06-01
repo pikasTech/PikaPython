@@ -177,10 +177,6 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
         /* find in global list second */
         arg = arg_copy(obj_getArg(vs->globals, data));
     }
-    ArgType arg_type = arg_getType(arg);
-    if (ARG_TYPE_OBJECT == arg_type) {
-        arg = arg_setType(arg, ARG_TYPE_OBJECT);
-    }
     if (NULL == arg) {
         VMState_setErrorCode(vs, 1);
         __platform_printf("NameError: name '%s' is not defined\r\n", data);
@@ -373,11 +369,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
 
     /* __init__() */
     if (ARG_TYPE_OBJECT_NEW == arg_getType(return_arg)) {
+        arg_setType(return_arg, ARG_TYPE_OBJECT);
         /* init object */
         PikaObj* new_obj = arg_getPtr(return_arg);
         Arg* method_arg = obj_getMethodArg(new_obj, "__init__");
         PikaObj* sub_locals = New_PikaObj();
-        Arg* return_arg = NULL;
+        Arg* return_arg_init = NULL;
         if (NULL == method_arg) {
             uint16_t arg_input_num = VMState_getInputArgNum(vs);
             if (arg_input_num != 0) {
@@ -397,10 +394,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         if (vs->error_code != 0) {
             goto init_exit;
         }
-        return_arg = VMState_runMethodArg(vs, new_obj, sub_locals, method_arg);
+        return_arg_init =
+            VMState_runMethodArg(vs, new_obj, sub_locals, method_arg);
     init_exit:
-        if (NULL != return_arg) {
-            arg_deinit(return_arg);
+        if (NULL != return_arg_init) {
+            arg_deinit(return_arg_init);
         }
         obj_deinit(sub_locals);
         arg_deinit(method_arg);
@@ -1394,10 +1392,8 @@ void VMState_solveUnusedStack(VMState* vs) {
             arg_deinit(arg);
             continue;
         }
-        if (ARG_TYPE_OBJECT_NEW == type) {
-            obj_deinit(arg_getPtr(arg));
-            arg_deinit(arg);
-            continue;
+        if (argType_isObject(type)) {
+            __platform_printf("<object at 0x%02x>\r\n", (uintptr_t)arg_getPtr(arg));
         }
         if (type == ARG_TYPE_INT) {
             __platform_printf("%d\r\n", (int)arg_getInt(arg));
