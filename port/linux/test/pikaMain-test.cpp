@@ -1789,6 +1789,7 @@ TEST(pikaMain, CModule__str__) {
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
+    EXPECT_STREQ(log_buff[0], "del operator...\r\n");
     EXPECT_EQ(pikaMemNow(), 0);
 }
 

@@ -97,13 +97,29 @@ char* fast_itoa(char* buf, uint32_t val) {
     return &p[val < 10];
 }
 
-int32_t obj_deinit(PikaObj* self) {
+static int32_t obj_deinit_no_del(PikaObj* self) {
     /* free the list */
     args_deinit(self->list);
     /* free the pointer */
     pikaFree(self, sizeof(PikaObj));
     self = NULL;
     return 0;
+}
+
+int32_t obj_deinit(PikaObj* self) {
+    Arg* del = obj_getMethodArg(self, "__del__");
+    if (NULL != del) {
+        const uint8_t bytes[] = {
+            0x04, 0x00,             /* instruct array size */
+            0x00, 0x82, 0x01, 0x00, /* instruct array */
+            0x09, 0x00,             /* const pool size */
+            0x00, 0x5f, 0x5f, 0x64, 0x65,
+            0x6c, 0x5f, 0x5f, 0x00, /* const pool */
+        };
+        pikaVM_runByteCode(self, (uint8_t*)bytes);
+        arg_deinit(del);
+    }
+    return obj_deinit_no_del(self);
 }
 
 int32_t obj_enable(PikaObj* self) {
@@ -327,14 +343,21 @@ Arg* obj_getMethodArg(PikaObj* obj, char* methodPath) {
         goto exit;
     }
     methodHostClass = obj_getClassObj(obj);
+    if (NULL == methodHostClass) {
+        method = NULL;
+        goto exit;
+    }
     method = arg_copy(obj_getArg(methodHostClass, methodName));
-    obj_deinit(methodHostClass);
+    obj_deinit_no_del(methodHostClass);
 exit:
     return method;
 }
 
 PikaObj* obj_getClassObj(PikaObj* obj) {
     NewFun classPtr = (NewFun)obj_getPtr(obj, "_clsptr");
+    if (NULL == classPtr) {
+        return NULL;
+    }
     PikaObj* classObj = obj_getClassObjByNewFun(obj, "", classPtr);
     return classObj;
 }

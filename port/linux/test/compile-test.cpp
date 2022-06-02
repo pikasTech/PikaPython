@@ -565,3 +565,9 @@ TEST(compiler, __str__) {
     Parser_compilePyToBytecodeArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(compiler, __del__) {
+    char* lines = "__del__()";
+    Parser_compilePyToBytecodeArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
