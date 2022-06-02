@@ -36,7 +36,7 @@ TEST(cJSON, parse_print) {
     /* run */
     obj_setStr(pikaMain, "testjson", testjson);
     obj_run(pikaMain,
-            "a = cJSON.cJSON()\n"
+            "a = pika_cjson.cJSON()\n"
             "a.parse(testjson)\n"
             "a.print()\n");
     /* collect */
@@ -67,7 +67,7 @@ TEST(cJSON, getItem) {
     obj_setStr(pikaMain, "testjson", testjson);
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
-            "a = cJSON.cJSON()\n"
+            "a = pika_cjson.cJSON()\n"
             "a.parse(testjson)\n"
             "age = a.getObjectItem('age')\n"
             "age.print()\n");
