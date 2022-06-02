@@ -574,6 +574,8 @@ sh run.sh
 # 7.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| contrubute to PikaStdLib.String() | [purewind7](https://gitee.com/purewind7) |
+| Add [PLOOC](https://github.com/GorgonMeducer/PLOOC) support for PikaScript Core | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | 定向赞助：500¥ (ctypes 相关） | 蒋太平 |
 | fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
 | ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
