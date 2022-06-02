@@ -62,3 +62,29 @@ void PikaStdData_String___set__(PikaObj* self, Arg* __key, Arg* __val) {
 char* PikaStdData_String___str__(PikaObj* self) {
     return obj_getStr(self, "str");
 }
+
+int PikaStdData_String_startwith(PikaObj *self, char* prefix){
+    char *str = obj_getStr(self,"str");
+    char *p = prefix;
+    int i=0;
+    while(*p!='\0'){
+        if(*p!=str[i])
+            return 0;
+        p++;
+        i++;
+    }
+    return 1;
+}
+
+int PikaStdData_String_endwith(PikaObj *self, char* suffix){
+    char *str = obj_getStr(self,"str");
+    int len1=strlen(str);
+    int len2=strlen(suffix);
+    while(len2>=1){
+        if(suffix[len2-1]!=str[len1-1])
+            return 0;
+        len2--;
+        len1--;
+    }
+    return 1;
+}

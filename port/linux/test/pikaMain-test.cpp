@@ -2163,3 +2163,49 @@ TEST(pikaMain, string_str) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, string_startwith) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, 
+    "a = PikaStdData.String('test')\n"
+    "res1 = a.startwith('te')\n"
+    "res2 = a.startwith('st')\n"
+    );
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+
+    /* assert */
+    EXPECT_EQ(res1, 1);
+    EXPECT_EQ(res2, 0);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_endwith) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, 
+    "a = PikaStdData.String('test')\n"
+    "res1 = a.endwith('te')\n"
+    "res2 = a.endwith('st')\n"
+    );
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+
+    /* assert */
+    EXPECT_EQ(res1, 0);
+    EXPECT_EQ(res2, 1);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
