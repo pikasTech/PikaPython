@@ -2243,3 +2243,139 @@ TEST(pikaMain, string_endwith) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, string_isdigit) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, 
+    "a = PikaStdData.String('test')\n"
+    "b = PikaStdData.String('1234')\n"
+    "c = PikaStdData.String('test1234')\n"
+    "res1 = a.isdigit()\n"
+    "res2 = b.isdigit()\n"
+    "res3 = c.isdigit()\n"
+    );
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+    int res3 = obj_getInt(pikaMain, "res3");
+
+    /* assert */
+    EXPECT_EQ(res1, 0);
+    EXPECT_EQ(res2, 1);
+    EXPECT_EQ(res3, 0);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_islower) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, 
+    "a = PikaStdData.String('test')\n"
+    "b = PikaStdData.String('1234')\n"
+    "c = PikaStdData.String('Test')\n"
+    "res1 = a.islower()\n"
+    "res2 = b.islower()\n"
+    "res3 = c.islower()\n"
+    );
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+    int res3 = obj_getInt(pikaMain, "res3");
+
+    /* assert */
+    EXPECT_EQ(res1, 1);
+    EXPECT_EQ(res2, 0);
+    EXPECT_EQ(res3, 0);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_isalnum) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, 
+    "a = PikaStdData.String('test1234')\n"
+    "b = PikaStdData.String('1234')\n"
+    "c = PikaStdData.String('  ')\n"
+    "res1 = a.isalnum()\n"
+    "res2 = b.isalnum()\n"
+    "res3 = c.isalnum()\n"
+    );
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+    int res3 = obj_getInt(pikaMain, "res3");
+
+    /* assert */
+    EXPECT_EQ(res1, 1);
+    EXPECT_EQ(res2, 1);
+    EXPECT_EQ(res3, 0);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_isalpha) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, 
+    "a = PikaStdData.String('test')\n"
+    "b = PikaStdData.String('1234')\n"
+    "c = PikaStdData.String('  ')\n"
+    "res1 = a.isalpha()\n"
+    "res2 = b.isalpha()\n"
+    "res3 = c.isalpha()\n"
+    );
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+    int res3 = obj_getInt(pikaMain, "res3");
+
+    /* assert */
+    EXPECT_EQ(res1, 1);
+    EXPECT_EQ(res2, 0);
+    EXPECT_EQ(res3, 0);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_isspace) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain, 
+    "a = PikaStdData.String('test')\n"
+    "b = PikaStdData.String('  ')\n"
+    "res1 = a.isspace()\n"
+    "res2 = b.isspace()\n"
+    );
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+
+    /* assert */
+    EXPECT_EQ(res1, 0);
+    EXPECT_EQ(res2, 1);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

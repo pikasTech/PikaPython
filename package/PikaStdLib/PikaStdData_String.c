@@ -1,5 +1,5 @@
 #include "PikaStdData_String.h"
-
+#include "../PLOOC/PikaStdData_String_Util.h"
 Arg* PikaStdData_String___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
     return arg_setRef(NULL, "", self);
@@ -85,6 +85,61 @@ int PikaStdData_String_endwith(PikaObj *self, char* suffix){
             return 0;
         len2--;
         len1--;
+    }
+    return 1;
+}
+
+int PikaStdData_String_isdigit(PikaObj *self){
+    char *str = obj_getStr(self,"str");
+    int i=0;
+    while(str[i]!='\0'){
+            if(!isdigit((int)str[i]))
+                return 0;
+            i++;
+    }
+    return 1;
+}
+
+int PikaStdData_String_islower(PikaObj *self){
+    char *str = obj_getStr(self,"str");
+    int i=0;
+    while(str[i]!='\0'){
+            if(!islower((int)str[i]))
+                return 0;
+            i++;
+    }
+    return 1;
+}
+
+int PikaStdData_String_isalnum(PikaObj *self){
+    char *str = obj_getStr(self,"str");
+    int i=0;
+    while(str[i]!='\0'){
+            if(!isalnum((int)str[i]))
+                return 0;
+            i++;
+    }
+    return 1;
+}
+
+int PikaStdData_String_isalpha(PikaObj *self){
+    char *str = obj_getStr(self,"str");
+    int i=0;
+    while(str[i]!='\0'){
+            if(!isalpha((int)str[i]))
+                return 0;
+            i++;
+    }
+    return 1;
+}
+
+int PikaStdData_String_isspace(PikaObj *self){
+    char *str = obj_getStr(self,"str");
+    int i=0;
+    while(str[i]!='\0'){
+            if(!isspace((int)str[i]))
+                return 0;
+            i++;
     }
     return 1;
 }
