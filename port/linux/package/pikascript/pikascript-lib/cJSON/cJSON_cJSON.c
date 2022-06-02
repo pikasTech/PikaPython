@@ -25,9 +25,14 @@ void cJSON_cJSON___del__(PikaObj* self) {
 Arg* cJSON_cJSON_getObjectItem(PikaObj* self, char* string) {
     cJSON* item = obj_getPtr(self, "item");
     cJSON* subItem = cJSON_GetObjectItem(item, string);
-    Arg* subItem_arg = obj_newObjInPackage(New_cJSON_cJSON);
-    PikaObj* subCJSON = arg_getPtr(subItem_arg);
+
+    /* create subCJSON */
+    Arg* subCJSON_arg = obj_newObjInPackage(New_cJSON_cJSON);
+
+    /* init the subCJSON */
+    PikaObj* subCJSON = arg_getPtr(subCJSON_arg);
     obj_setPtr(subCJSON, "item", subItem);
     obj_setInt(subCJSON, "needfree", 0);
-    return subItem_arg;
+
+    return subCJSON_arg;
 }
