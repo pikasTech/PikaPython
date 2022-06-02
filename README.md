@@ -608,6 +608,7 @@ sh run.sh
 
 | Contribute log | Contributer |
 | --- | --- |
+| contrubute to PikaStdLib.String() | [purewind7](https://gitee.com/purewind7) |
 | Add [PLOOC](https://github.com/GorgonMeducer/PLOOC) support for PikaScript Core | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | Donate：500¥ (ctypes 相关） | 蒋太平 |
 | fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
