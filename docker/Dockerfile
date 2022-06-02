@@ -40,11 +40,6 @@ RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-RUN git config --global --add safe.directory /usr/src/pikascript
-RUN git config --global user.email "liang6516@outlook.com"
-RUN git config --global user.name "lyon"
-
-
 RUN apt-get install -y \
     ninja-build \
     valgrind \
