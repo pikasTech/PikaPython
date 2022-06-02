@@ -9,7 +9,8 @@ import test_module1
 import test_cmodule
 import TempDevTest as dev
 import TemplateDevice
-from PikaStdData import String
+import cJSON
+from PikaStdData import String as S
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')
