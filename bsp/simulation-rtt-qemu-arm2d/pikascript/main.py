@@ -22,9 +22,9 @@ loopTimes = 0
 
 print('hello pikaScript')
 print('mem used max:')
-mem.max()
+print(str(int(mem.getMax() * 1024)) + 'byte')
 print('mem used now:')
-mem.now()
+print(str(int(mem.getNow() * 1024)) + 'byte')
 while True:
     win.elems.b1.move(x0 + i * 2, y0 + i * 1)
     win.elems.b1.setAlpha(alpha0 - i * 1)
