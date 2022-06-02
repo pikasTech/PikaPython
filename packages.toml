@@ -240,3 +240,8 @@ releases = [
   "v1.0.0 e2a630358c0d490b198f7e8682fb61569eb7ec56",
 ]
 
+[[packages]]
+name = "pika_cjson"
+releases = [
+  "v0.0.1 60389c541db480f41a55498270094dd030df9e24",
+]
