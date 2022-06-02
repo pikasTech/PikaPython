@@ -1025,7 +1025,7 @@ int obj_runModule(PikaObj* self, char* module_name) {
 
 int obj_importModule(PikaObj* self, char* module_name) {
     /* import bytecode of the module */
-    uint8_t* bytecode = obj_getByteCodeFromModule(self, module_name);
+    uint8_t* bytecode = obj_getByteCodeFromModule(__pikaMain, module_name);
     if (NULL == bytecode) {
         return 1;
     }

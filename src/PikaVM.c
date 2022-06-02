@@ -948,12 +948,11 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self, VMState* vs, char* data) {
         return NULL;
     }
     /* import module from '__lib' */
-    if (0 != obj_importModule(__pikaMain, data)) {
-        VMState_setErrorCode(vs, 3);
-        __platform_printf("ModuleNotFoundError: No module named '%s'\r\n",
-                          data);
+    if (0 == obj_importModule(self, data)) {
         return NULL;
     }
+    VMState_setErrorCode(vs, 3);
+    __platform_printf("ModuleNotFoundError: No module named '%s'\r\n", data);
     return NULL;
 }
 
@@ -1393,7 +1392,8 @@ void VMState_solveUnusedStack(VMState* vs) {
             continue;
         }
         if (argType_isObject(type)) {
-            __platform_printf("<object at 0x%02x>\r\n", (uintptr_t)arg_getPtr(arg));
+            __platform_printf("<object at 0x%02x>\r\n",
+                              (uintptr_t)arg_getPtr(arg));
         }
         if (type == ARG_TYPE_INT) {
             __platform_printf("%d\r\n", (int)arg_getInt(arg));

@@ -2164,3 +2164,36 @@ TEST(pikaMain, string_str) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, module_import_from_module) {
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(self, pikaModules_py_a);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, 
+    "import test_module1\n"
+    "test_module1.test_module_import()\n"
+    );
+    EXPECT_STREQ(log_buff[0], "test_module_2_hello\r\n");
+    EXPECT_STREQ(log_buff[1], "in test module 2\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, module_1_module2_test) {
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(self, pikaModules_py_a);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, 
+    "import test_module1\n"
+    "test_module1.test_module2.mytest()\n"
+    );
+    EXPECT_STREQ(log_buff[0], "test_module_2_hello\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

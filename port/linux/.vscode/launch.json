@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=parser.slice_12lkj"
+                "--gtest_filter=pikaMain.module_import_from_module"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
