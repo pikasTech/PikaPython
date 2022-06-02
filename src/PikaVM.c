@@ -376,16 +376,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         PikaObj* sub_locals = New_PikaObj();
         Arg* return_arg_init = NULL;
         if (NULL == method_arg) {
-            uint16_t arg_input_num = VMState_getInputArgNum(vs);
-            if (arg_input_num != 0) {
-                VMState_setErrorCode(vs, 3);
-                __platform_printf("TypeError: %s() takes no arguments\r\n",
-                                  data);
-                /* clear input args */
-                for (int i = 0; i < arg_input_num; i++) {
-                    arg_deinit(stack_popArg(&(vs->stack)));
-                }
-            }
             goto init_exit;
         }
         VMState_loadArgsFromMethodArg(vs, new_obj, sub_locals->list, method_arg,
