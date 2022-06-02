@@ -1,5 +1,5 @@
 #include "PikaStdData_String.h"
-#include "../PikaStdLib/PikaStdData_String_Util.h"
+#include "PikaStdData_String_Util.h"
 
 Arg* PikaStdData_String___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
