@@ -70,12 +70,43 @@ class GPIO(TinyObj):
 
 
 class Time(TinyObj):
+    def __init__(self):
+        pass
+        
     # need override
     def sleep_s(self, s: int):
         pass
 
     # need override
     def sleep_ms(self, ms: int):
+        pass
+
+    # need override
+    def time(self) -> float:
+        pass
+
+    # need override
+    def time_ns(self) -> int:
+        pass
+
+    # need override
+    def gmtime(self, unix_time: float):
+        pass
+
+    # need override
+    def localtime(self, unix_time: float):
+        pass
+
+    # need override
+    def mktime(self) -> int:
+        pass
+    
+    # need override
+    def asctime(self):
+        pass
+    
+    # need override
+    def ctime(self, unix_time: float):
         pass
 
 
