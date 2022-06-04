@@ -81,6 +81,10 @@ class Time(TinyObj):
     def sleep_ms(self, ms: int):
         pass
 
+    # need override
+    def platformGetTick():
+        pass
+
     def time(self) -> float:
         pass
 

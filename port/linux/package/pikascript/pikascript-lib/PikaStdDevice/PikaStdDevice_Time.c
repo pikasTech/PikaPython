@@ -89,29 +89,29 @@ void status_deal(status s) {
 }
 
 //获取硬件平台的Unix时间戳,时间精度为1s级别，
-status time_get_unix_time(_timespec* this_timespec) {
-    this_timespec->tv_sec = (int64_t)(obj_getInt((void*)0, "tick") / 1000);
+status time_get_unix_time(PikaObj* self, _timespec* this_timespec) {
+    this_timespec->tv_sec = (int64_t)(obj_getInt(self, "tick") / 1000);
     return TIME_OK;
 }
 
 //获取硬件平台的Tick时间,时间精度为1s级别以下
 //即1s的小数部分
-status time_get_tick_ns(_timespec* this_timespec) {
-    this_timespec->tv_nsec = (obj_getInt((void*)0, "tick") % 1000) * 1000000;
+status time_get_tick_ns(PikaObj* self, _timespec* this_timespec) {
+    this_timespec->tv_nsec = (obj_getInt(self, "tick") % 1000) * 1000000;
     return TIME_OK;
 }
 
 //标准time()方法，返回以浮点数表示的从 epoch 开始的秒数的时间值。
 // epoch 是 1970 年 1 月 1 日 00:00:00 (UTC)，
-double time_time(void) {
+double time_time(PikaObj* self) {
     status res = 0;  //状态响应
     _timespec temp_timespec = {0};
     //调用硬件平台函数，获取当前时间
-    res = time_get_unix_time(&temp_timespec);
+    res = time_get_unix_time(self, &temp_timespec);
     if (res) {
         status_deal(res);
     }  //异常处理
-    res = time_get_tick_ns(&temp_timespec);
+    res = time_get_tick_ns(self, &temp_timespec);
     if (res) {
         status_deal(res);
     }  //异常处理
@@ -121,15 +121,15 @@ double time_time(void) {
 
 //标准time_ns()方法，返回以整数表示的从 epoch 开始的纳秒数的时间值。
 // epoch 是 1970 年 1 月 1 日 00:00:00 (UTC)，
-int64_t time_time_ns(void) {
+int64_t time_time_ns(PikaObj* self) {
     status res = 0;  //状态响应
     _timespec temp_timespec = {0};
     //调用硬件平台函数，获取当前时间
-    res = time_get_unix_time(&temp_timespec);
+    res = time_get_unix_time(self, &temp_timespec);
     if (res) {
         status_deal(res);
     }  //异常处理
-    res = time_get_tick_ns(&temp_timespec);
+    res = time_get_tick_ns(self, &temp_timespec);
     if (res) {
         status_deal(res);
     }  //异常处理
@@ -530,10 +530,26 @@ void time_asctime(const _tm* this_tm) {
 }
 
 float PikaStdDevice_Time_time(PikaObj* self) {
-    return time_time();
+    /* run platformGetTick() */
+    PIKA_PYTHON_BEGIN
+    /* clang-format off */
+        PIKA_PYTHON(
+            platformGetTick()
+        )
+    /* clang-format on */
+    const uint8_t bytes[] = {
+        0x04, 0x00,             /* instruct array size */
+        0x00, 0x82, 0x01, 0x00, /* instruct array */
+        0x11, 0x00,             /* const pool size */
+        0x00, 0x70, 0x6c, 0x61, 0x74, 0x66, 0x6f, 0x72, 0x6d,
+        0x47, 0x65, 0x74, 0x54, 0x69, 0x63, 0x6b, 0x00, /* const pool */
+    };
+    PIKA_PYTHON_END
+    pikaVM_runByteCode(self, (uint8_t*)bytes);
+    return time_time(self);
 }
 int PikaStdDevice_Time_time_ns(PikaObj* self) {
-    return time_time_ns();
+    return time_time_ns(self);
 }
 
 void time_set_tm_value(PikaObj* self, const _tm* this_tm) {
@@ -594,4 +610,9 @@ void PikaStdDevice_Time_ctime(PikaObj* self, float unix_time) {
 void PikaStdDevice_Time___init__(PikaObj* self) {
     obj_setInt(self, "locale", 8);
     PikaStdDevice_Time_localtime(self, 0.0);
+}
+
+void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platformGetTick() need to be override.");
 }
