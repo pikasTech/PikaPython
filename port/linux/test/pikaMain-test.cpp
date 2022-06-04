@@ -2379,3 +2379,36 @@ TEST(pikaMain, string_isspace) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, unix_time) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    obj_run(self, "mytime = PikaStdDevice.Time()\n"
+    "mytime.localtime(0.0)\n"
+    );
+    /* 获取数据比对 */
+    int tm_sec=obj_getInt(self,"mytime.tm_sec");
+    int tm_min=obj_getInt(self,"mytime.tm_min");
+    int tm_hour=obj_getInt(self,"mytime.tm_hour");
+    int tm_mday=obj_getInt(self,"mytime.tm_mday");
+    int tm_mon=obj_getInt(self,"mytime.tm_mon");
+    int tm_year=obj_getInt(self,"mytime.tm_year");
+    int tm_wday=obj_getInt(self,"mytime.tm_wday");
+    int tm_yday=obj_getInt(self,"mytime.tm_yday");
+    int tm_isdst=obj_getInt(self,"mytime.tm_isdst");
+    /* assert */
+    EXPECT_EQ(tm_sec, 0);
+    EXPECT_EQ(tm_min, 0);
+    EXPECT_EQ(tm_hour, 8);
+    EXPECT_EQ(tm_mday, 1);
+    EXPECT_EQ(tm_mon, 0);//1月
+    EXPECT_EQ(tm_year, 1970);
+    EXPECT_EQ(tm_wday, 4);//周四
+    EXPECT_EQ(tm_yday, 1);
+    EXPECT_EQ(tm_isdst, -1);
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
