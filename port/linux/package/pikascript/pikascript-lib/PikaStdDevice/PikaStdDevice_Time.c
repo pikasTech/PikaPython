@@ -241,6 +241,7 @@ status unix_time_to_utc_struct_time(_tm* this_tm,int64_t unix_time)
                     }
                     else
                     {
+                        total_day -= 31;
                         //2月
                         temp = 1;
                     }
