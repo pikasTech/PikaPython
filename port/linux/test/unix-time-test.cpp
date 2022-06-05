@@ -138,7 +138,7 @@ TEST(unix_time, iteration_form_1970_to_2070) {
         }
         //printf("\n\n");
     }
-    printf("Had passed %d times test !",record-test_num-1);
+    printf("Had passed %d times test !\r\n",record-test_num-1);
     /* assert */
     EXPECT_EQ(flag, 1);
     /* deinit */
