@@ -2379,4 +2379,3 @@ TEST(pikaMain, string_isspace) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-

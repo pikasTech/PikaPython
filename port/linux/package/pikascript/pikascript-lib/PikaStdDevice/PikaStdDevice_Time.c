@@ -206,17 +206,41 @@ status unix_time_to_utc_struct_time(_tm* this_tm, int64_t unix_time) {
 #define DAY_OF_100Y (36524)
 #define DAY_OF_4Y (1461)
 #define DAY_OF_1Y (365)
-        year_400 = total_day / DAY_OF_400Y;
+//400年也要注意，要实际401年才可
+        year_400 = (total_day-366) / DAY_OF_400Y;
         total_day -= year_400 * DAY_OF_400Y;
         //计算400年内的情况
-        year_100 = total_day / DAY_OF_100Y;
+        year_100 = (total_day-1) / DAY_OF_100Y;
         total_day -= year_100 * DAY_OF_100Y;
-        //计算100年内的情况
-        year_4 = total_day / DAY_OF_4Y;
+        //计算100年内的情况，要到第二年的第一天才算，即365+1
+        year_4 = (total_day-366) / DAY_OF_4Y;
+        //计算4年，需要格外注意0-5-8年，才会计算一个闰年，因为它才包含了4这个闰年，但并不包含8
         total_day -= year_4 * DAY_OF_4Y;
         //计算4年内的情况
-        year_1 = total_day / DAY_OF_1Y;
-        total_day -= year_1 * DAY_OF_1Y;
+        //需要减去1天，因为当天是不存在的
+        //需要注意闰年会多一天
+        //所有闰年都放在这里来考虑，即只要当前是闰年，那么这里就会剩下第一年闰年和第四年闰年两种情况
+        if(year_100 == 4 )
+        {
+            //第一年是闰年,此时为400*n+1年内
+            year_1 = 0;
+            february_offset=1;
+        }
+        else if(total_day <= DAY_OF_1Y * 4)
+        {
+            //100*n+(4,8,...96)+1年，都是从第二年算起，非闰年
+            //非闰年,需要减去1天，因为当天是不存在的
+            year_1 = (total_day-1) / DAY_OF_1Y;
+            total_day -= year_1 * DAY_OF_1Y;
+            february_offset=0;
+        }
+        else 
+        {
+            //第四年是闰年
+            year_1 = 4;
+            total_day -= year_1 * DAY_OF_1Y;
+            february_offset=1;
+        }
 
         //计算出当前年份
         this_tm->tm_year =
@@ -228,7 +252,7 @@ status unix_time_to_utc_struct_time(_tm* this_tm, int64_t unix_time) {
         //剩下的天数为1年内的天数,直接计算月和日
         //根据当前是否为闰年设置二月偏移量是否为1
         //能被4整除且不被100整除或者能被400整除
-        february_offset = (!year_1) && ((year_4) || (!year_100));
+
         //闰年需要减去一天再计算
         total_day -= february_offset;
         //使用二分法快速定位月份，使用平年计算，在月份确定到2月时，再考虑闰年
@@ -362,9 +386,13 @@ status utc_struct_time_to_unix_time(const _tm* this_tm, int64_t* unix_time) {
         return TIME_OVER_3200;
     }
 
+    //计算总年数要去掉尾巴，如年数20年，那么实际应该4个闰年，因为20这一年没有包含在里面
+    //要减去一年来算闰年次数
     //先计算到相对1600年的天数，再转换到1970年
-    dyear = this_tm->tm_year - YEAR_START;
+    dyear = this_tm->tm_year - YEAR_START - 1;
     total_leap_year = dyear / 4 - (dyear / 100 - dyear / 400 - 1);
+    //恢复减去的一年
+    dyear += 1 ;
     total_day = dyear * 365 + total_leap_year;
 
     //减去1970到1600的总天数
@@ -388,7 +416,7 @@ status utc_struct_time_to_unix_time(const _tm* this_tm, int64_t* unix_time) {
     }
 
     //根据天数以及时分秒计算Unix时间戳
-    *unix_time = total_day * DAY_SECOND + this_tm->tm_hour * 3600 +
+    *unix_time = (int64_t)total_day * DAY_SECOND + this_tm->tm_hour * 3600 +
                  this_tm->tm_min * 60 + this_tm->tm_sec;
 
     return TIME_OK;
@@ -406,7 +434,6 @@ void time_struct_format(const _tm* this_tm, char* str) {
 //标准库函数gmtime,将以自 epoch 开始的秒数表示的时间转换为 UTC 的 struct_time
 void time_gmtime(double unix_time, _tm* this_tm) {
     status res;
-    char str[200];
     //转化时间
     res = unix_time_to_utc_struct_time(this_tm, (int64_t)unix_time);
     if (res) {
@@ -416,11 +443,6 @@ void time_gmtime(double unix_time, _tm* this_tm) {
         unix_time_to_utc_struct_time(this_tm, (int64_t)0);
     }
 
-    //格式化字符
-    time_struct_format(this_tm, str);
-
-    //显示出来
-    time_printf("%s\n", str);
 }
 
 //标准库函数localtime,将以自 epoch 开始的秒数表示的时间转换为当地时间的
@@ -428,7 +450,6 @@ void time_gmtime(double unix_time, _tm* this_tm) {
 void time_localtime(double unix_time, _tm* this_tm, int locale) {
     status res;
     int local_offset;
-    char str[200];
 
     //获取本地时间偏移量(小时)
     local_offset = locale * 60 * 60;
@@ -444,11 +465,6 @@ void time_localtime(double unix_time, _tm* this_tm, int locale) {
         unix_time_to_utc_struct_time(this_tm, (int64_t)0);
     }
 
-    //格式化字符
-    time_struct_format(this_tm, str);
-
-    //显示出来
-    time_printf("%s\n", str);
 }
 
 //检测结构体时间是否在合适的范围内，但不检查它的正确性
@@ -462,16 +478,16 @@ status time_check_struct_time(const _tm* this_tm) {
     if (this_tm->tm_hour < 0 || this_tm->tm_hour > 23) {
         return TIME_ERROR_STRUCT_TIME;
     }
-    if (this_tm->tm_mday < 1 || this_tm->tm_sec > 31) {
+    if (this_tm->tm_mday < 1 || this_tm->tm_mday > 31) {
         return TIME_ERROR_STRUCT_TIME;
     }
-    if (this_tm->tm_mon < 0 || this_tm->tm_sec > 11) {
+    if (this_tm->tm_mon < 0 || this_tm->tm_mon > 11) {
         return TIME_ERROR_STRUCT_TIME;
     }
     if (this_tm->tm_wday < 0 || this_tm->tm_wday > 6) {
         return TIME_ERROR_STRUCT_TIME;
     }
-    if (this_tm->tm_yday < 0 || this_tm->tm_yday > 365) {
+    if (this_tm->tm_yday < 0 || this_tm->tm_yday > 366) {
         return TIME_ERROR_STRUCT_TIME;
     }
     return TIME_OK;
@@ -512,8 +528,7 @@ int64_t time_mktime(const _tm* this_tm, int locale) {
 }
 
 //标准库函数asctime()
-//把结构化时间struct_time元组表示为以下形式的字符串: `'Sun Jun 20 23:21:05
-// 1993'`。
+//把结构化时间struct_time元组表示为以下形式的字符串: `'Sun Jun 20 23:21:05 1993'`。
 void time_asctime(const _tm* this_tm) {
     //星期缩写，python标准库是三个字母，这里并不相同
     const char* week[] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
@@ -566,14 +581,24 @@ void time_set_tm_value(PikaObj* self, const _tm* this_tm) {
 
 void PikaStdDevice_Time_gmtime(PikaObj* self, float unix_time) {
     _tm this_tm;
+    char str[200];
     time_gmtime(unix_time, &this_tm);
     time_set_tm_value(self, &this_tm);
+    //格式化字符
+    time_struct_format(&this_tm, str);
+    //显示出来
+    time_printf("%s\n", str);
 }
 void PikaStdDevice_Time_localtime(PikaObj* self, float unix_time) {
     _tm this_tm;
+    char str[200];
     int locale = obj_getInt(self, "locale");
     time_localtime(unix_time, &this_tm, locale);
     time_set_tm_value(self, &this_tm);
+    //格式化字符
+    time_struct_format(&this_tm, str);
+    //显示出来
+    time_printf("%s\n", str);
 }
 
 void time_get_tm_value(PikaObj* self, _tm* this_tm) {
