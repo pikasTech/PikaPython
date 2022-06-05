@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654331840638,
+  "lastUpdate": 1654390291678,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -56724,6 +56724,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005001031653328311,
             "unit": "ms/iter",
             "extra": "iterations: 234272\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@gitee.com",
+            "name": "Gitee",
+            "username": "gitee-org"
+          },
+          "distinct": true,
+          "id": "ca7e3e6b4aeb6329d27732cc2f4b69921085c432",
+          "message": "!19 在time标准库中修复算法bug，增加测试实例。\nMerge pull request !19 from 陈广/master",
+          "timestamp": "2022-06-05T00:45:54Z",
+          "tree_id": "57e9ebc9ed5e2f5c2e059baee751eab540cfc829",
+          "url": "https://github.com/pikasTech/pikascript/commit/ca7e3e6b4aeb6329d27732cc2f4b69921085c432"
+        },
+        "date": 1654390286931,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6612.3203430508465,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6612.3203430508465 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 48.14551259977828,
+            "unit": "ms/iter",
+            "extra": "iterations: 29\ncpu: 48.10026621270984 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 23.693154614915017,
+            "unit": "ms/iter",
+            "extra": "iterations: 59\ncpu: 23.6880170180447 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 8.736137575982829,
+            "unit": "ms/iter",
+            "extra": "iterations: 161\ncpu: 8.73294048142821 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000909950533205,
+            "unit": "ms/iter",
+            "extra": "iterations: 280757\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
