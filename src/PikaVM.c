@@ -193,6 +193,10 @@ static Arg* VMState_runMethodArg(VMState* vs,
     Method method_ptr = methodArg_getPtr(method_arg);
     /* get method type list */
     ArgType method_type = arg_getType(method_arg);
+    /* error */
+    if (ARG_TYPE_VOID == method_type) {
+        return NULL;
+    }
     ByteCodeFrame* method_bytecodeFrame =
         methodArg_getBytecodeFrame(method_arg);
     obj_setErrorCode(method_host_obj, 0);
@@ -231,6 +235,9 @@ static void VMState_loadArgsFromMethodArg(VMState* vs,
     Args buffs = {0};
     /* get method type list */
     char* type_list = methodArg_getTypeList(method_arg, &buffs);
+    if (NULL == type_list) {
+        goto exit;
+    }
     ArgType method_type = arg_getType(method_arg);
     uint8_t arg_num_dec = 0;
     if (strEqu("", type_list)) {
