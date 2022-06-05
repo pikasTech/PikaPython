@@ -20,7 +20,9 @@ RUN apt-get install -y \
     cmake \
     sudo \
     curl \
-    python3
+    python3 \
+    pip \
+    cloc
 
 RUN git clone --branch v1.6.1 https://gitee.com/mirrors/google-benchmark benchmark && \
         cd benchmark && \
