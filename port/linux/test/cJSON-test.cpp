@@ -36,8 +36,7 @@ TEST(cJSON, parse_print) {
     /* run */
     obj_setStr(pikaMain, "testjson", testjson);
     obj_run(pikaMain,
-            "a = pika_cjson.cJSON()\n"
-            "a.parse(testjson)\n"
+            "a = pika_cjson.Parse(testjson)\n"
             "a.print()\n");
     /* collect */
     /* assert */
@@ -67,8 +66,7 @@ TEST(cJSON, getItem) {
     obj_setStr(pikaMain, "testjson", testjson);
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
-            "a = pika_cjson.cJSON()\n"
-            "a.parse(testjson)\n"
+            "a = pika_cjson.Parse(testjson)\n"
             "age = a.getObjectItem('age')\n"
             "age.print()\n");
     /* collect */
@@ -101,8 +99,7 @@ TEST(cJSON, next) {
     obj_setStr(pikaMain, "testjson", testjson);
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
-            "a = pika_cjson.cJSON()\n"
-            "a.parse(testjson)\n"
+            "a = pika_cjson.Parse(testjson)\n"
             "node = a.getChild()\n"
             "for i in range(0, 3):\n"
             "    node.print()\n"
@@ -140,8 +137,7 @@ TEST(cJSON, next_get_value) {
     obj_setStr(pikaMain, "testjson", testjson);
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
-            "a = pika_cjson.cJSON()\n"
-            "a.parse(testjson)\n"
+            "a = pika_cjson.Parse(testjson)\n"
             "node = a.getChild()\n"
             "val = PikaStdData.List()\n"
             "for i in range(0, 3):\n"

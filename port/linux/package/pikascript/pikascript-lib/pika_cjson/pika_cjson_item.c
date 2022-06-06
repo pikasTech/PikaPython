@@ -7,6 +7,7 @@
 #include "pika_cjson_Number.h"
 #include "pika_cjson_Object.h"
 #include "pika_cjson_ObjectReference.h"
+#include "pika_cjson_Parse.h"
 #include "pika_cjson_Raw.h"
 #include "pika_cjson_String.h"
 #include "pika_cjson_StringReference.h"
@@ -95,6 +96,17 @@ void pika_cjson_ArrayReference___init__(PikaObj* self, PikaObj* child) {
     pika_cjson_cJSON___init__(self);
     cJSON* child_item = obj_getPtr(child, "item");
     cJSON* item = cJSON_CreateArrayReference(child_item);
+    obj_setPtr(self, "item", item);
+    obj_setInt(self, "needfree", 1);
+}
+
+void pika_cjson_Parse___init__(PikaObj* self, char* value) {
+    cJSON* item = cJSON_Parse(value);
+    if (NULL == item) {
+        obj_setErrorCode(self, 3);
+        __platform_printf("Error: cJSON parse faild.\r\n");
+        return;
+    }
     obj_setPtr(self, "item", item);
     obj_setInt(self, "needfree", 1);
 }
