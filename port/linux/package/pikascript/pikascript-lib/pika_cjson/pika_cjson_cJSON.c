@@ -51,8 +51,6 @@ void pika_cjson_cJSON___init__(PikaObj* self) {
     obj_setInt(self, "cJSON_Array", 6);
     obj_setInt(self, "cJSON_Object", 7);
     obj_setInt(self, "cJSON_Raw", 8);
-    obj_setInt(self, "cJSON_IsReference", 9);
-    obj_setInt(self, "cJSON_StringIsConst", 10);
 }
 
 PikaObj* pika_cjson_cJSON_getChild(PikaObj* self) {
@@ -144,4 +142,73 @@ Arg* pika_cjson_cJSON_getValue(PikaObj* self) {
         return arg_setStr(NULL, "", item->valuestring);
     }
     return arg_setNull(NULL);
+}
+
+PikaObj* pika_cjson_cJSON_getArrayItem(PikaObj* self, int index) {
+    cJSON* item = obj_getPtr(self, "item");
+    cJSON* subItem = cJSON_GetArrayItem(item, index);
+
+    /* create subCJSON */
+    PikaObj* subCJSON = newNormalObj(New_pika_cjson_cJSON);
+
+    /* init the subCJSON */
+    obj_setPtr(subCJSON, "item", subItem);
+    obj_setInt(subCJSON, "needfree", 0);
+
+    return subCJSON;
+}
+
+int pika_cjson_cJSON_getArraySize(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_GetArraySize(item);
+}
+
+int pika_cjson_cJSON_isArray(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_IsArray(item);
+}
+
+int pika_cjson_cJSON_isBool(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_IsBool(item);
+}
+
+int pika_cjson_cJSON_isFalse(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_IsFalse(item);
+}
+
+int pika_cjson_cJSON_isInvalid(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_IsInvalid(item);
+}
+
+int pika_cjson_cJSON_isNull(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_IsNull(item);
+}
+
+int pika_cjson_cJSON_isNumber(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_IsNumber(item);
+}
+
+int pika_cjson_cJSON_isObject(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_IsObject(item);
+}
+
+int pika_cjson_cJSON_isRaw(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_IsRaw(item);
+}
+
+int pika_cjson_cJSON_isString(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_IsString(item);
+}
+
+int pika_cjson_cJSON_isTrue(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return cJSON_IsTrue(item);
 }
