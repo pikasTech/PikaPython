@@ -29,8 +29,9 @@ TEST(module, cmodule_import) {
     /* assert */
     /* deinit */
     EXPECT_STREQ("NameError: name 'TemplateDevice.qqee' is not defined\r\n",
+                 log_buff[5]);
+    EXPECT_STREQ("NameError: name 'qqee' is not defined\r\n",
                  log_buff[2]);
-    EXPECT_STREQ("BEGIN\r\n", log_buff[3]);
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }

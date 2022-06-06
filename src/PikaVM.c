@@ -354,14 +354,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         method_arg = obj_getMethodArg(vs->globals, methodPath);
     }
     /* assert method*/
-    if (NULL == method_arg) {
+    if (NULL == method_arg || ARG_TYPE_VOID == arg_getType(method_arg)) {
         /* error, method no found */
         VMState_setErrorCode(vs, 2);
         __platform_printf("NameError: name '%s' is not defined\r\n", data);
-
         goto exit;
     }
-
     sub_locals = New_PikaObj();
     /* load args from vmState to sub_local->list */
     arg_num_used = VMState_loadArgsFromMethodArg(
