@@ -160,3 +160,47 @@ TEST(cJSON, next_get_value) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(cJSON, item) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "a1 = pika_cjson.Null()\n"
+            "a2 = pika_cjson.True_()\n"
+            "a3 = pika_cjson.False_()\n"
+            "a4 = pika_cjson.Bool(True)\n"
+            "a5 = pika_cjson.Number(23)\n"
+            "a6 = pika_cjson.String('test')\n"
+            "a7 = pika_cjson.Raw('qqq')\n"
+            "a8 = pika_cjson.Array()\n"
+            "a9 = pika_cjson.Object()\n"
+            "\n"
+            "a1.print()\n"
+            "a2.print()\n"
+            "a3.print()\n"
+            "a4.print()\n"
+            "a5.print()\n"
+            "a6.print()\n"
+            "a7.print()\n"
+            "a8.print()\n"
+            "a9.print()\n"
+            "\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[9], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[8], "null\r\n");
+    EXPECT_STREQ(log_buff[7], "true\r\n");
+    EXPECT_STREQ(log_buff[6], "false\r\n");
+    EXPECT_STREQ(log_buff[5], "true\r\n");
+    EXPECT_STREQ(log_buff[4], "23\r\n");
+    EXPECT_STREQ(log_buff[3], "\"test\"\r\n");
+    EXPECT_STREQ(log_buff[2], "qqq\r\n");
+    EXPECT_STREQ(log_buff[1], "[]\r\n");
+    EXPECT_STREQ(log_buff[0], "{\n}\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -213,3 +213,17 @@ int pika_cjson_cJSON_isTrue(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     return cJSON_IsTrue(item);
 }
+
+void pika_cjson_cJSON_addItemToArray(PikaObj* self, PikaObj* item) {
+    cJSON* self_item = obj_getPtr(self, "item");
+    cJSON* item_item = obj_getPtr(item, "item");
+    cJSON_AddItemToArray(self_item, item_item);
+}
+
+void pika_cjson_cJSON_addItemToObject(PikaObj* self,
+                                      PikaObj* item,
+                                      char* string) {
+    cJSON* self_item = obj_getPtr(self, "item");
+    cJSON* item_item = obj_getPtr(item, "item");
+    cJSON_AddItemToObject(self_item, string, item_item);
+}
