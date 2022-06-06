@@ -49,3 +49,70 @@ void pika_cjson_cJSON___init__(PikaObj* self) {
     obj_setInt(self, "cJSON_IsReference", 9);
     obj_setInt(self, "cJSON_StringIsConst", 10);
 }
+
+PikaObj* pika_cjson_cJSON_getChild(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    cJSON* resItem = item->child;
+
+    /* create subCJSON */
+    PikaObj* resCJSON = newNormalObj(New_pika_cjson_cJSON);
+
+    /* init the subCJSON */
+    obj_setPtr(resCJSON, "item", resItem);
+    obj_setInt(resCJSON, "needfree", 0);
+
+    return resCJSON;
+}
+
+PikaObj* pika_cjson_cJSON_getNext(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    cJSON* resItem = item->next;
+
+    /* create subCJSON */
+    PikaObj* resCJSON = newNormalObj(New_pika_cjson_cJSON);
+
+    /* init the subCJSON */
+    obj_setPtr(resCJSON, "item", resItem);
+    obj_setInt(resCJSON, "needfree", 0);
+
+    return resCJSON;
+}
+
+PikaObj* pika_cjson_cJSON_getPrev(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    cJSON* resItem = item->prev;
+
+    /* create subCJSON */
+    PikaObj* resCJSON = newNormalObj(New_pika_cjson_cJSON);
+
+    /* init the subCJSON */
+    obj_setPtr(resCJSON, "item", resItem);
+    obj_setInt(resCJSON, "needfree", 0);
+
+    return resCJSON;
+}
+
+char* pika_cjson_cJSON_getString(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return item->string;
+}
+
+int pika_cjson_cJSON_getType(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return item->type;
+}
+
+float pika_cjson_cJSON_getValueDouble(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return item->valuedouble;
+}
+
+int pika_cjson_cJSON_getValueInt(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return item->valueint;
+}
+
+char* pika_cjson_cJSON_getValueString(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    return item->valuestring;
+}

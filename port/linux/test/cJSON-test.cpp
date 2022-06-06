@@ -79,3 +79,42 @@ TEST(cJSON, getItem) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(cJSON, next) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    char testjson[] =
+        "{\n"
+        "\"name\": \"mculover666\",\n"
+        "\"age\": 22,\n"
+        "\"weight\": 55.5,\n"
+        "\"address\":\n"
+        "{\n"
+        "    \"country\": \"China\",\n"
+        "    \"zip-code\": 111111\n"
+        "},\n"
+        "\"skill\": [\"c\", \"Java\", \"Python\"],\n"
+        "\"student\": false\n"
+        "}\n";
+    /* run */
+    obj_setStr(pikaMain, "testjson", testjson);
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "a = pika_cjson.cJSON()\n"
+            "a.parse(testjson)\n"
+            "node = a.getChild()\n"
+            "for i in range(0, 3):\n"
+            "    node.print()\n"
+            "    node = node.getNext()\n"
+            "\n");
+    /* collect */
+    EXPECT_STREQ(log_buff[3], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[2], "\"mculover666\"\r\n");
+    EXPECT_STREQ(log_buff[1], "22\r\n");
+    EXPECT_STREQ(log_buff[0], "55.5\r\n");
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
