@@ -116,3 +116,27 @@ char* pika_cjson_cJSON_getValueString(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     return item->valuestring;
 }
+
+Arg* pika_cjson_cJSON_getValue(PikaObj* self) {
+    cJSON* item = obj_getPtr(self, "item");
+    int type = item->type;
+    if (type == cJSON_Invalid) {
+        return arg_setNull(NULL);
+    }
+    if (type == cJSON_False) {
+        return arg_setInt(NULL, "", 0);
+    }
+    if (type == cJSON_True) {
+        return arg_setInt(NULL, "", 1);
+    }
+    if (type == cJSON_NULL) {
+        return arg_setNull(NULL);
+    }
+    if (type == cJSON_Number) {
+        return arg_setFloat(NULL, "", item->valuedouble);
+    }
+    if (type == cJSON_String) {
+        return arg_setStr(NULL, "", item->valuestring);
+    }
+    return arg_setNull(NULL);
+}
