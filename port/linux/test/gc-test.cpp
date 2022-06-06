@@ -11,6 +11,7 @@ extern "C" {
 #include "pikaScript.h"
 #include "pika_config_gtest.h"
 }
+extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
 TEST(gc, root) {
     PikaObj* root = newRootObj("root", New_PikaMain);
@@ -101,12 +102,11 @@ TEST(gc, factory) {
     /* init */
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, 
-    "def factory():\n"
-    "    _mem = PikaStdLib.MemChecker()\n"
-    "    return _mem\n"
-    "mem = factory()\n"
-    );
+    obj_run(pikaMain,
+            "def factory():\n"
+            "    _mem = PikaStdLib.MemChecker()\n"
+            "    return _mem\n"
+            "mem = factory()\n");
     /* collect */
     PikaObj* mem = obj_getObj(pikaMain, "mem");
     EXPECT_EQ(obj_refcntNow(mem), 1);
@@ -119,9 +119,26 @@ TEST(gc, not_out) {
     /* init */
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain, 
-    "PikaStdLib.MemChecker()\n"
-    );
+    obj_run(pikaMain, "PikaStdLib.MemChecker()\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(gc, heap_failed1) {
+    /* init */
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "recv_buf = PikaStdData.List()\n"
+            "RECV_MAX_SIZE=128\n"
+            "iteri = 0\n"
+            "for i in range(0, int(RECV_MAX_SIZE)):\n"
+            "    recv_buf.append(0)\n"
+            "    iteri += 1\n"
+            "iteri");
+    /* assert */
+    EXPECT_STREQ("128\r\n", log_buff[0]);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

@@ -3032,3 +3032,61 @@ TEST(parser, json_literal) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, issuekd) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "recv_buf = PikaStdData.List()\n"
+        "RECV_MAX_SIZE=128\n"
+        "iteri = 0\n"
+        "for i in range(0, int(RECV_MAX_SIZE)):\n"
+        "    recv_buf.append(0)\n"
+        "    iteri += 1\n"
+        "\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 RUN PikaStdData.List\n"
+                 "0 OUT recv_buf\n"
+                 "B0\n"
+                 "0 NUM 128\n"
+                 "0 OUT RECV_MAX_SIZE\n"
+                 "B0\n"
+                 "0 NUM 0\n"
+                 "0 OUT iteri\n"
+                 "B0\n"
+                 "2 NUM 0\n"
+                 "3 REF RECV_MAX_SIZE\n"
+                 "2 RUN int\n"
+                 "1 RUN range\n"
+                 "0 RUN iter\n"
+                 "0 OUT _l0\n"
+                 "0 REF _r1\n"
+                 "0 REF _r2\n"
+                 "0 OUT _l0.a2\n"
+                 "0 OUT _l0.a1\n"
+                 "B0\n"
+                 "0 RUN _l0.__next__\n"
+                 "0 OUT i\n"
+                 "0 EST i\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "1 NUM 0\n"
+                 "0 RUN recv_buf.append\n"
+                 "B1\n"
+                 "1 REF iteri\n"
+                 "2 NUM 1\n"
+                 "1 RUN \n"
+                 "0 OPT +\n"
+                 "0 OUT iteri\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n"
+                 "0 DEL _l0\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
