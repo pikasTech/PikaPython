@@ -204,3 +204,41 @@ TEST(cJSON, item) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(cJSON, construct) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "import pika_cjson as cjson\n"
+            "root = cjson.Object()\n"
+            "root.addItemToObject('name', cjson.String('mculover666'))\n"
+            "root.addItemToObject('age', cjson.Number(22))\n"
+            "root.addItemToObject('weight', cjson.Number(55.5))\n"
+            "address = cjson.Object()\n"
+            "address.addItemToObject('country', cjson.String('China'))\n"
+            "address.addItemToObject('zip-code', cjson.String('111111'))\n"
+            "root.addItemToObject('address', address)\n"
+            "skill = cjson.Array()\n"
+            "skill.addItemToArray(cjson.String('c'))\n"
+            "skill.addItemToArray(cjson.String('Java'))\n"
+            "skill.addItemToArray(cjson.String('Python'))\n"
+            "root.addItemToObject('skill', skill)\n"
+            "root.addItemToObject('student', cjson.False_())\n"
+            "root.print()\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(
+        log_buff[0],
+        "{\n\t\"name\":\t\"mculover666\",\n\t\"age\":\t22,\n\t\"weight\":\t55."
+        "5,\n\t\"address\":\t{\n\t\t\"country\":\t\"China\",\n\t\t\"zip-code\":"
+        "\t\"111111\"\n\t},\n\t\"skill\":\t[\"c\", \"Java\", "
+        "\"Python\"],\n\t\"student\":\tfalse\n}\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -218,6 +218,7 @@ void pika_cjson_cJSON_addItemToArray(PikaObj* self, PikaObj* item) {
     cJSON* self_item = obj_getPtr(self, "item");
     cJSON* item_item = obj_getPtr(item, "item");
     cJSON_AddItemToArray(self_item, item_item);
+    obj_setInt(item, "needfree", 0);
 }
 
 void pika_cjson_cJSON_addItemToObject(PikaObj* self,
@@ -226,4 +227,5 @@ void pika_cjson_cJSON_addItemToObject(PikaObj* self,
     cJSON* self_item = obj_getPtr(self, "item");
     cJSON* item_item = obj_getPtr(item, "item");
     cJSON_AddItemToObject(self_item, string, item_item);
+    obj_setInt(item, "needfree", 0);
 }
