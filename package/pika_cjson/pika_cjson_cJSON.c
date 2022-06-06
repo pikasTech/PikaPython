@@ -1,17 +1,6 @@
 #include "pika_cjson_cJSON.h"
 #include "cJSON.h"
 
-void pika_cjson_cJSON_parse(PikaObj* self, char* value) {
-    cJSON* item = cJSON_Parse(value);
-    if (NULL == item) {
-        obj_setErrorCode(self, 3);
-        __platform_printf("Error: cJSON parse faild.\r\n");
-        return;
-    }
-    obj_setPtr(self, "item", item);
-    obj_setInt(self, "needfree", 1);
-}
-
 char* pika_cjson_cJSON_print(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     char* res = cJSON_Print(item);
