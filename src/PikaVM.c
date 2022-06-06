@@ -227,11 +227,12 @@ static Arg* VMState_runMethodArg(VMState* vs,
     return return_arg;
 }
 
-static void VMState_loadArgsFromMethodArg(VMState* vs,
-                                          PikaObj* method_host_obj,
-                                          Args* args,
-                                          Arg* method_arg,
-                                          char* method_name) {
+static int VMState_loadArgsFromMethodArg(VMState* vs,
+                                         PikaObj* method_host_obj,
+                                         Args* args,
+                                         Arg* method_arg,
+                                         char* method_name,
+                                         int arg_num_used) {
     Args buffs = {0};
     /* get method type list */
     char* type_list = methodArg_getTypeList(method_arg, &buffs);
@@ -257,7 +258,7 @@ static void VMState_loadArgsFromMethodArg(VMState* vs,
         /* not check decleard arg num for constrctor */
     } else {
         /* check arg num decleard and input */
-        if (arg_num_dec != arg_num_input) {
+        if (arg_num_dec != arg_num_input - arg_num_used) {
             VMState_setErrorCode(vs, 3);
             __platform_printf(
                 "TypeError: %s() takes %d positional argument but %d were "
@@ -284,6 +285,7 @@ static void VMState_loadArgsFromMethodArg(VMState* vs,
     }
 exit:
     strsDeinit(&buffs);
+    return arg_num_dec;
 }
 
 #if PIKA_BUILTIN_LIST_ENABLE
@@ -323,6 +325,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     PikaObj* method_host_obj;
     Arg* method_arg = NULL;
     char* sys_out;
+    int arg_num_used = 0;
     /* return arg directly */
     if (strEqu(data, "")) {
         return_arg = stack_popArg(&(vs->stack));
@@ -361,8 +364,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
 
     sub_locals = New_PikaObj();
     /* load args from vmState to sub_local->list */
-    VMState_loadArgsFromMethodArg(vs, method_host_obj, sub_locals->list,
-                                  method_arg, data);
+    arg_num_used = VMState_loadArgsFromMethodArg(
+        vs, method_host_obj, sub_locals->list, method_arg, data, 0);
 
     /* load args faild */
     if (vs->error_code != 0) {
@@ -385,7 +388,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
             goto init_exit;
         }
         VMState_loadArgsFromMethodArg(vs, new_obj, sub_locals->list, method_arg,
-                                      "__init__");
+                                      "__init__", arg_num_used);
         /* load args faild */
         if (vs->error_code != 0) {
             goto init_exit;

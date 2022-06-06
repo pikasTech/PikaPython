@@ -1,5 +1,5 @@
-#include "cJSON.h"
 #include "pika_cjson_cJSON.h"
+#include "cJSON.h"
 
 void pika_cjson_cJSON_parse(PikaObj* self, char* value) {
     cJSON* item = cJSON_Parse(value);
@@ -34,4 +34,18 @@ PikaObj* pika_cjson_cJSON_getObjectItem(PikaObj* self, char* string) {
     obj_setInt(subCJSON, "needfree", 0);
 
     return subCJSON;
+}
+
+void pika_cjson_cJSON___init__(PikaObj* self) {
+    obj_setInt(self, "cJSON_Invalid", 0);
+    obj_setInt(self, "cJSON_False", 1);
+    obj_setInt(self, "cJSON_True", 2);
+    obj_setInt(self, "cJSON_NULL", 3);
+    obj_setInt(self, "cJSON_Number", 4);
+    obj_setInt(self, "cJSON_String", 5);
+    obj_setInt(self, "cJSON_Array", 6);
+    obj_setInt(self, "cJSON_Object", 7);
+    obj_setInt(self, "cJSON_Raw", 8);
+    obj_setInt(self, "cJSON_IsReference", 9);
+    obj_setInt(self, "cJSON_StringIsConst", 10);
 }
