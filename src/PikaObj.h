@@ -174,6 +174,7 @@ void method_returnStr(Args* args, char* val);
 void method_returnInt(Args* args, int32_t val);
 void method_returnFloat(Args* args, float val);
 void method_returnPtr(Args* args, void* val);
+void method_returnObj(Args* args, void* val);
 int32_t method_getInt(Args* args, char* argName);
 float method_getFloat(Args* args, char* argName);
 char* method_getStr(Args* args, char* argName);
@@ -219,7 +220,7 @@ Arg* obj_newObjInPackage(NewFun newObjFun);
 void obj_refcntInc(PikaObj* self);
 void obj_refcntDec(PikaObj* self);
 int obj_refcntNow(PikaObj* self);
-PikaObj* NewObjDirect(NewFun newObjFun);
+PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj);
 
@@ -244,6 +245,7 @@ int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int obj_runModule(PikaObj* self, char* module_name);
 char* obj_toStr(PikaObj* self);
 void obj_runCharInit(PikaObj* self);
+Arg* arg_newDirectObj(NewFun new_obj_fun);
 enum shell_state obj_runChar(PikaObj* self, char inputChar);
 
 #define PIKA_PYTHON_BEGIN

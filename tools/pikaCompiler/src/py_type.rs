@@ -81,7 +81,7 @@ impl PyType {
         if self.type_name == "any" {
             return "    method_returnArg(args, res);\n".to_string();
         }
-        return "    method_returnPtr(args, res);\n".to_string();
+        return "    method_returnObj(args, res);\n".to_string();
     }
     // pub fn set_fn(&self) -> String {
     //     if self.type_name == "int" {

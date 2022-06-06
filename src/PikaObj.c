@@ -385,7 +385,7 @@ PikaObj* removeMethodInfo(PikaObj* thisClass) {
     return thisClass;
 }
 
-PikaObj* NewObjDirect(NewFun newObjFun) {
+PikaObj* newNormalObj(NewFun newObjFun) {
     PikaObj* thisClass = obj_getClassObjByNewFun(NULL, "", newObjFun);
     obj_refcntInc(thisClass);
     return removeMethodInfo(thisClass);
@@ -393,7 +393,7 @@ PikaObj* NewObjDirect(NewFun newObjFun) {
 
 extern PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
-    PikaObj* newObj = NewObjDirect(newObjFun);
+    PikaObj* newObj = newNormalObj(newObjFun);
     __pikaMain = newObj;
     return newObj;
 }
@@ -410,7 +410,7 @@ Arg* arg_newMetaObj(NewFun new_obj_fun) {
 }
 
 Arg* arg_newDirectObj(NewFun new_obj_fun) {
-    PikaObj* newObj = NewObjDirect(new_obj_fun);
+    PikaObj* newObj = newNormalObj(new_obj_fun);
     Arg* arg_new = arg_setPtr(NULL, "", ARG_TYPE_OBJECT_NEW, newObj);
     return arg_new;
 }
@@ -901,6 +901,10 @@ void method_returnFloat(Args* args, float val) {
 
 void method_returnPtr(Args* args, void* val) {
     args_setPtr(args, "return", val);
+}
+
+void method_returnObj(Args* args, void* val) {
+    args_setPtrWithType(args, "return", ARG_TYPE_OBJECT_NEW, val);
 }
 
 void method_returnArg(Args* args, Arg* arg) {

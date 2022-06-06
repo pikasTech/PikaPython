@@ -271,7 +271,7 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
 Arg* PikaStdLib_SysObj_list(PikaObj* self) {
 #if PIKA_BUILTIN_LIST_ENABLE
     PikaObj* New_PikaStdData_List(Args * args);
-    return obj_newObjInPackage(New_PikaStdData_List);
+    return arg_newMetaObj(New_PikaStdData_List);
 #endif
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in list is not enabled.\r\n");
@@ -281,7 +281,7 @@ Arg* PikaStdLib_SysObj_list(PikaObj* self) {
 Arg* PikaStdLib_SysObj_dict(PikaObj* self) {
 #if PIKA_BUILTIN_DICT_ENABLE
     PikaObj* New_PikaStdData_Dict(Args * args);
-    return obj_newObjInPackage(New_PikaStdData_Dict);
+    return arg_newMetaObj(New_PikaStdData_Dict);
 #endif
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in dist is not enabled.\r\n");

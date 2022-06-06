@@ -294,8 +294,7 @@ PikaObj* New_PikaStdData_List(Args* args);
 static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
 #if PIKA_BUILTIN_LIST_ENABLE
     uint8_t arg_num = VMState_getInputArgNum(vs);
-    Arg* list_arg = obj_newObjInPackage(New_PikaStdData_List);
-    PikaObj* list = arg_getPtr(list_arg);
+    PikaObj* list = newNormalObj(New_PikaStdData_List);
     PikaStdData_List___init__(list);
     Stack stack = {0};
     stack_init(&stack);
@@ -310,7 +309,7 @@ static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
         arg_deinit(arg);
     }
     stack_deinit(&stack);
-    return list_arg;
+    return arg_setPtr(NULL, "", ARG_TYPE_OBJECT, list);
 #else
     return VM_instruction_handler_NON(self, vs, data);
 #endif
