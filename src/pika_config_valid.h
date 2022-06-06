@@ -29,7 +29,7 @@
 
     /* default configuration  */
         #define PIKA_LINE_BUFF_SIZE 128
-        #define PIKA_SPRINTF_BUFF_SIZE 128
+        #define PIKA_SPRINTF_BUFF_SIZE 256
         #define PIKA_STACK_BUFF_SIZE 256
         #define PIKA_NAME_BUFF_SIZE 32
         #define PIKA_PATH_BUFF_SIZE 64

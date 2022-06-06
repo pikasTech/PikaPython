@@ -2991,3 +2991,44 @@ TEST(parser, str_string) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, json_literal) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "a = '"
+        "{"
+        "\"name\": \"mculover666\","
+        "\"age\": 22,"
+        "\"weight\": 55.5,"
+        "\"address\":"
+        "{"
+        "    \"country\": \"China\","
+        "    \"zip-code\": 111111"
+        "},"
+        "\"skill\": [\"c\", \"Java\", \"Python\"],"
+        "\"student\": false"
+        "}'";
+    printf("%s\r\n", lines);
+    char* tokens_print =
+        Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    printf("%s\r\n", tokens_print);
+
+    EXPECT_STREQ(tokens_print,
+                 "{sym}a{opt}={lit}'{\"name\": \"mculover666\",\"age\": "
+                 "22,\"weight\": 55.5,\"address\":{    \"country\": \"China\", "
+                 "   \"zip-code\": 111111},\"skill\": [\"c\", \"Java\", "
+                 "\"Python\"],\"student\": false}'");
+
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(
+        pikaAsm,
+        "B0\n"
+        "0 STR {\"name\": \"mculover666\",\"age\": 22,\"weight\": "
+        "55.5,\"address\":{    \"country\": \"China\",    \"zip-code\": "
+        "111111},\"skill\": [\"c\", \"Java\", \"Python\"],\"student\": false}\n"
+        "0 OUT a\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

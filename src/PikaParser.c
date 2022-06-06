@@ -1222,9 +1222,11 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     /* solve str stmt */
     if (STMT_string == stmtType) {
-        str = right;
-        str = strsDeleteChar(&buffs, str, '\'');
-        str = strsDeleteChar(&buffs, str, '\"');
+        str = strsCopy(&buffs, right);
+        /* remove the first char */
+        str = str + 1;
+        /* remove the last char */
+        str[strGetSize(str) - 1] = '\0';
         obj_setStr(ast, (char*)"string", str);
         goto exit;
     }
