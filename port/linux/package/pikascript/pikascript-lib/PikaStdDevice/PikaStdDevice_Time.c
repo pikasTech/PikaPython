@@ -633,8 +633,10 @@ void PikaStdDevice_Time_ctime(PikaObj* self, float unix_time) {
 }
 
 void PikaStdDevice_Time___init__(PikaObj* self) {
+    _tm this_tm;
     obj_setInt(self, "locale", 8);
-    PikaStdDevice_Time_localtime(self, 0.0);
+    time_localtime(0.0, &this_tm, 8);
+    time_set_tm_value(self, &this_tm);
 }
 
 void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
