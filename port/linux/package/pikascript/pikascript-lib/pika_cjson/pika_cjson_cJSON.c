@@ -42,15 +42,16 @@ PikaObj* pika_cjson_cJSON_getObjectItem(PikaObj* self, char* string) {
 }
 
 void pika_cjson_cJSON___init__(PikaObj* self) {
-    obj_setInt(self, "cJSON_Invalid", 0);
-    obj_setInt(self, "cJSON_False", 1);
-    obj_setInt(self, "cJSON_True", 2);
-    obj_setInt(self, "cJSON_NULL", 3);
-    obj_setInt(self, "cJSON_Number", 4);
-    obj_setInt(self, "cJSON_String", 5);
-    obj_setInt(self, "cJSON_Array", 6);
-    obj_setInt(self, "cJSON_Object", 7);
-    obj_setInt(self, "cJSON_Raw", 8);
+    /* const value */
+    obj_setInt(self, "cJSON_Invalid", cJSON_Invalid);
+    obj_setInt(self, "cJSON_False", cJSON_False);
+    obj_setInt(self, "cJSON_True", cJSON_True);
+    obj_setInt(self, "cJSON_NULL", cJSON_NULL);
+    obj_setInt(self, "cJSON_Number", cJSON_Number);
+    obj_setInt(self, "cJSON_String", cJSON_String);
+    obj_setInt(self, "cJSON_Array", cJSON_Array);
+    obj_setInt(self, "cJSON_Object", cJSON_Object);
+    obj_setInt(self, "cJSON_Raw", cJSON_Raw);
 }
 
 PikaObj* pika_cjson_cJSON_getChild(PikaObj* self) {

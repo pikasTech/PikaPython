@@ -2,15 +2,15 @@ from PikaObj import *
 
 
 class cJSON(TinyObj):
-    cJSON_Invalid = 0
-    cJSON_False = 1
-    cJSON_True = 2
-    cJSON_NULL = 3
-    cJSON_Number = 4
-    cJSON_String = 5
-    cJSON_Array = 6
-    cJSON_Object = 7
-    cJSON_Raw = 8
+    cJSON_Invalid: int
+    cJSON_False: int
+    cJSON_True: int
+    cJSON_NULL: int
+    cJSON_Number: int
+    cJSON_String: int
+    cJSON_Array: int
+    cJSON_Object: int
+    cJSON_Raw: int
     def print(self) -> str: ...
     def parse(self, value: str): ...
     def __del__(self): ...
