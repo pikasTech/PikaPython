@@ -40,8 +40,7 @@ class cJSON(TinyObj):
     def addItemToObject(self, string: str, item: cJSON): ...
 
 
-class Parse(cJSON):
-    def __init__(self, value: str): ...
+def Parse(value: str) -> cJSON: ...
 
 
 class Null(cJSON):

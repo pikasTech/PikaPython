@@ -29,6 +29,7 @@ impl Compiler {
         };
         return compiler;
     }
+
     pub fn analize_main_line(mut compiler: Compiler, line: &String) -> Compiler {
         let file_name = "main".to_string();
         let class_name = "PikaMain".to_string();
@@ -114,10 +115,18 @@ impl Compiler {
         /* open file */
         let file: std::result::Result<std::fs::File, std::io::Error>;
         if file_name == "main" {
+            /* only the main.py is the .py file */
             file = Compiler::open_file(format!("{}main.py", self.source_path));
         } else {
+            /* other module is CMoudle, which is .pyi file */
             file = Compiler::open_file(format!("{}{}.pyi", self.source_path, file_name));
         }
+
+        /*
+            If the .pyi no exist, check if the .py exist
+                the .py files are solved by byteCodeGen, so if
+                there is .py files, binder need not print warning.
+        */
         let mut file = match file {
             Ok(file) => file,
             Err(_) => {
@@ -137,6 +146,7 @@ impl Compiler {
                 };
             }
         };
+
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
 
@@ -147,11 +157,13 @@ impl Compiler {
         } else {
             println!("    binding {}{}.pyi...", self.source_path, file_name);
         }
+
+        /* push to compiled list, only compile once */
         self.compiled_list.push_back(String::clone(&file_name));
         /* solve top package.
             About what is top package:
-                Top package is the package imported by main.pyi,
-                and can be used to new objcet in runtime.
+                Top package is the package imported by main.py directly,
+                and can be used to create objcet in runtime.
                 So the each classes of top package are loaded to flash.
             The top package is solved as an static object, and each calsses
                 of the top package is solved as a function of the static
@@ -159,6 +171,11 @@ impl Compiler {
                 to supply the class of static object.
         */
         if file_name != "main" && is_top_pkg {
+            /*
+                Solve the package as a class
+                    [Example]:
+                        class PikaStdDevice(TinyObj):
+            */
             let pkg_define = format!("class {}(TinyObj):", &file_name);
             let package_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
                 Some(s) => s,
@@ -171,9 +188,15 @@ impl Compiler {
             self.package_now_name = Some(package_name.clone());
         }
         let lines: Vec<&str> = file_str.split('\n').collect();
-        /* analyze each line of pikascript-api.pyi */
+        /* analyze each line of .pyi */
         for line in lines.iter() {
-            self = Compiler::analyze_line(self, line.to_string(), &file_name, is_top_pkg);
+            let line = line.replace("\r", "");
+
+            if file_name == "main" {
+                self = Compiler::analize_main_line(self, &line);
+            } else {
+                self = Compiler::analyze_line(self, line.to_string(), &file_name, is_top_pkg);
+            }
         }
         return self;
     }
@@ -184,11 +207,6 @@ impl Compiler {
         file_name: &String,
         is_top_pkg: bool,
     ) -> Compiler {
-        let line = line.replace("\r", "");
-        if file_name == "main" {
-            return Compiler::analize_main_line(compiler, &line);
-        }
-
         if line.starts_with("import ") {
             let tokens: Vec<&str> = line.split(" ").collect();
             let file = tokens[1];
@@ -201,20 +219,26 @@ impl Compiler {
 
         /* analize class stmt */
         if line.starts_with("class") {
+            /* create a new class */
             let class_now = match ClassInfo::new(&file_name, &line, false) {
                 Some(s) => s,
                 None => return compiler,
             };
             let class_name_without_file = class_now.this_class_name_without_file.clone();
             let class_name = class_now.this_class_name.clone();
+            /* regist this class to the class list of compiler */
             compiler
                 .class_list
                 .entry(class_name.clone())
                 .or_insert(class_now);
             compiler.class_now_name = Some(class_name.clone());
 
+            /* the class in to package can be import in runtime */
             if is_top_pkg {
-                /* solve the class as method of top package*/
+                /*
+                    Solve the class as method of top package
+                        the package is a class in main.py and the class is a method of the class in main.py.
+                */
                 let package_now_name = match compiler.package_now_name.clone() {
                     Some(s) => s,
                     None => return compiler,
@@ -227,7 +251,18 @@ impl Compiler {
             return compiler;
         }
 
-        /* analize def stmt */
+        /* analize function define */
+        if line.starts_with("def ") {
+            let package_now_name = match compiler.package_now_name.clone() {
+                Some(s) => s,
+                None => return compiler,
+            };
+            let package_now = compiler.class_list.get_mut(&package_now_name).unwrap();
+            package_now.push_method(line);
+            return compiler;
+        }
+
+        /* analize def stmt inner class */
         if line.starts_with("    def ") {
             let line = line.strip_prefix("    ").unwrap().to_string();
             let class_now = compiler
