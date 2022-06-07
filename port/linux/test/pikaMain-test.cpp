@@ -34,6 +34,21 @@ TEST(pikaMain, new_mem) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, unitTest) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runFile(pikaMain, "../../examples/UnitTest/main.py");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(pikaMain, list_new) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
