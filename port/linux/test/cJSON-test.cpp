@@ -428,7 +428,7 @@ TEST(cJSON, test7) {
     /* collect */
     /* assert */
 
-    EXPECT_STREQ(log_buff[0], "Android\r\n");
+    EXPECT_STREQ(log_buff[0], "shopping\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

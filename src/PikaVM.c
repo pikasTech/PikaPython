@@ -1091,9 +1091,17 @@ exit:
 
 VMParameters* pikaVM_runFile(PikaObj* self, char* filename) {
     Arg* file_arg = arg_loadFile(NULL, filename);
-    char* py_lines = (char*)arg_getBytes(file_arg);
-    VMParameters* res = pikaVM_run(self, py_lines);
+    char* lines = (char*)arg_getBytes(file_arg);
+    Args buffs = {0};
+    /* replace the "\r\n" to "\n" */
+    lines = strsReplace(&buffs, lines, "\r\n", "\n");
+    /* clear the void line */
+    lines = strsReplace(&buffs, lines, "\n\n", "\n");
+    /* add '\n' at the end */
+    lines = strsAppend(&buffs, lines, "\n\n");
+    VMParameters* res = pikaVM_run(self, lines);
     arg_deinit(file_arg);
+    strsDeinit(&buffs);
     return res;
 }
 
