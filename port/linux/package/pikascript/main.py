@@ -9,12 +9,11 @@ import test_module1
 import test_cmodule
 import TempDevTest as dev
 import TemplateDevice
-import pika_cjson 
+import pika_cjson as cjson
+import cjson_test
 from PikaStdData import String as S
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')
 print('mem used max:')
 mem.max()
-
-dev.test()

@@ -389,7 +389,6 @@ TEST(cJSON, test6) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(cJSON, parse_faild) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -414,6 +413,22 @@ TEST(cJSON, parse_faild) {
             "a.print()\n");
     /* collect */
     /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(cJSON, test7) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runFile(pikaMain, "../../examples/cJSON/test7.py");
+    /* collect */
+    /* assert */
+
+    EXPECT_STREQ(log_buff[0], "Android\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
