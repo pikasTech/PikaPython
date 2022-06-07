@@ -388,3 +388,33 @@ TEST(cJSON, test6) {
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+
+TEST(cJSON, parse_faild) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    char testjson[] =
+        "{{\n"
+        "\"name\": \"mculover666\",\n"
+        "\"age\": 22,\n"
+        "\"weight\": 55.5,\n"
+        "\"address\":\n"
+        "{\n"
+        "    \"country\": \"China\",\n"
+        "    \"zip-code\": 111111\n"
+        "},\n"
+        "\"skill\": [\"c\", \"Java\", \"Python\"],\n"
+        "\"student\": false\n"
+        "}\n";
+    /* run */
+    obj_setStr(pikaMain, "testjson", testjson);
+    obj_run(pikaMain,
+            "a = pika_cjson.Parse(testjson)\n"
+            "a.print()\n");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

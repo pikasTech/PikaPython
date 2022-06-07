@@ -904,6 +904,9 @@ void method_returnPtr(Args* args, void* val) {
 }
 
 void method_returnObj(Args* args, void* val) {
+    if (NULL == val) {
+        return;
+    }
     args_setPtrWithType(args, "return", ARG_TYPE_OBJECT_NEW, val);
 }
 
