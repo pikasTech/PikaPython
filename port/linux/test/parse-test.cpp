@@ -3094,7 +3094,7 @@ TEST(parser, issuekd) {
 TEST(parser, cjson_test4) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    Arg* lines_buff = arg_loadFile(NULL, "test/python/cJSON/test4.py");
+    Arg* lines_buff = arg_loadFile(NULL, "../../examples/cJSON/test4.py");
     char* lines = (char*)arg_getBytes(lines_buff);
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, lines);

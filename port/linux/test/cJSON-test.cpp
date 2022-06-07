@@ -245,7 +245,7 @@ TEST(cJSON, test1) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_runFile(pikaMain, "test/python/cJSON/test1.py");
+    pikaVM_runFile(pikaMain, "../../examples/cJSON/test1.py");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0],
@@ -265,7 +265,7 @@ TEST(cJSON, test2) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_runFile(pikaMain, "test/python/cJSON/test2.py");
+    pikaVM_runFile(pikaMain, "../../examples/cJSON/test2.py");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0],
@@ -285,7 +285,7 @@ TEST(cJSON, test3) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_runFile(pikaMain, "test/python/cJSON/test3.py");
+    pikaVM_runFile(pikaMain, "../../examples/cJSON/test3.py");
     /* collect */
     /* assert */
     EXPECT_STREQ(
@@ -307,7 +307,7 @@ TEST(cJSON, test4) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_runFile(pikaMain, "test/python/cJSON/test4.py");
+    pikaVM_runFile(pikaMain, "../../examples/cJSON/test4.py");
     /* collect */
     /* assert */
     EXPECT_STREQ(
@@ -333,7 +333,7 @@ TEST(cJSON, test5) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_runFile(pikaMain, "test/python/cJSON/test5.py");
+    pikaVM_runFile(pikaMain, "../../examples/cJSON/test5.py");
     /* collect */
     /* assert */
 
