@@ -278,3 +278,25 @@ TEST(cJSON, test2) {
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(cJSON, test3) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runFile(pikaMain, "test/python/cJSON/test3.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(
+        log_buff[0],
+        "{\n\t\"name\":\t\"mculover666\",\n\t\"age\":\t22,\n\t\"weight\":\t55."
+        "5,\n\t\"address\":\t{\n\t\t\"country\":\t\"China\",\n\t\t\"zip-code\":"
+        "\t\"111111\"\n\t},\n\t\"skill\":\t[\"c\", \"Java\", "
+        "\"Python\"],\n\t\"student\":\tfalse\n}\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}
