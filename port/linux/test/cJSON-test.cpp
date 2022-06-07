@@ -300,3 +300,29 @@ TEST(cJSON, test3) {
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(cJSON, test4) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runFile(pikaMain, "test/python/cJSON/test4.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(
+        log_buff[0],
+        "{\n\t\"data\":\t{\n\t\t\"requestSocialInsuranceFromYangCheng\":\t\"\","
+        "\n\t\t\"authenticationComparison\":\t\"no\",\n\t\t\"startupLogo\":"
+        "\t\"4\",\n\t\t\"cardType\":\t\"00,01,02,03,04\",\n\t\t\"synfromhis\":"
+        "\t\"no\",\n\t\t\"alarmThresholdValue\":\t\"37.2\","
+        "\n\t\t\"hospitalName\":\t\"jell\",\n\t\t\"facediscernMode\":\t\"01\","
+        "\n\t\t\"hospitalCode\":\t\"102\"\n\t},\n\t\"success\":\ttrue,"
+        "\n\t\"resultCode\":\t\"0000\",\n\t\"time\":\t\"2022-05-20 "
+        "14:10:27\",\n\t\"message\":\t\"ok\"\n}\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -3090,3 +3090,26 @@ TEST(parser, issuekd) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, cjson_test4) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    Arg* lines_buff = arg_loadFile(NULL, "test/python/cJSON/test4.py");
+    char* lines = (char*)arg_getBytes(lines_buff);
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n0 IMP pika_cjson\nB0\n0 STR "
+                 "{\"data\":{\"requestSocialInsuranceFromYangCheng\":\"\","
+                 "\"authenticationComparison\":\"no\",\"startupLogo\":\"4\","
+                 "\"cardType\":\"00,01,02,03,04\",\"synfromhis\":\"no\","
+                 "\"alarmThresholdValue\":\"37.2\",\"hospitalName\":\"jell\","
+                 "\"facediscernMode\":\"01\",\"hospitalCode\":\"102\"},"
+                 "\"success\":true,\"resultCode\":\"0000\",\"time\":\"2022-05-"
+                 "20 14:10:27\",\"message\":\"ok\"}\n0 OUT data1\nB0\n1 REF "
+                 "data1\n0 RUN pika_cjson.Parse\n0 OUT a\nB0\n0 RUN a.print\n");
+    args_deinit(buffs);
+    arg_deinit(lines_buff);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

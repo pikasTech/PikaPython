@@ -1796,8 +1796,10 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
         pikaAsm = strsAppend(&buffs, pikaAsm, buff);
     }
     if (NULL != str) {
-        __platform_sprintf(buff, "%d STR %s\n", deepth, str);
+        __platform_sprintf(buff, "%d STR ", deepth);
         pikaAsm = strsAppend(&buffs, pikaAsm, buff);
+        pikaAsm = strsAppend(&buffs, pikaAsm, str);
+        pikaAsm = strsAppend(&buffs, pikaAsm, "\n");
     }
     if (NULL != bytes) {
         __platform_sprintf(buff, "%d BYT %s\n", deepth, bytes);
@@ -2090,21 +2092,12 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
     char* data;
     uint16_t exist_offset;
 
-    char line_buff[PIKA_LINE_BUFF_SIZE] = {0};
     for (int i = 0; i < strCountSign(pikaAsm, '\n'); i++) {
-        size_t line_size = strGetLineSize(asmer.line_pointer);
-        if (line_size > PIKA_LINE_BUFF_SIZE) {
-            __platform_printf(
-                "OverflowError: Parser line buff overflow, please use bigger "
-                "PIKA_LINE_BUFF_SIZE\r\n");
-            __platform_printf("Info: line buff size request: %d\r\n",
-                              line_size);
-            __platform_printf("Info: line buff size now: %d\r\n",
-                              PIKA_LINE_BUFF_SIZE);
-            while (1)
-                ;
-        }
-        char* line = strGetLine(line_buff, asmer.line_pointer);
+        Args buffs = {0};
+        char* line = strsGetLine(&buffs, asmer.line_pointer);
+        Arg* line_buff = arg_setStr(NULL, "", line);
+        strsDeinit(&buffs);
+        line = arg_getStr(line_buff);
         InstructUnit ins_unit = {0};
         /* remove '\r' */
         if (line[strGetSize(line) - 1] == '\r') {
@@ -2155,6 +2148,7 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
     next_line:
         /* point to next line */
         asmer.line_pointer += strGetLineSize(asmer.line_pointer) + 1;
+        arg_deinit(line_buff);
     }
     return self;
 }

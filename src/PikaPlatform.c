@@ -84,6 +84,16 @@ PIKA_WEAK int __platform_sprintf(char* buff, char* fmt, ...) {
     va_start(args, fmt);
     int res = vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
     va_end(args);
+    if (res >= PIKA_SPRINTF_BUFF_SIZE) {
+        __platform_printf(
+            "OverflowError: sprintf buff size overflow, please use bigger "
+            "PIKA_SPRINTF_BUFF_SIZE\r\n");
+        __platform_printf("Info: buff size request: %d\r\n", res);
+        __platform_printf("Info: buff size now: %d\r\n",
+                          PIKA_SPRINTF_BUFF_SIZE);
+        while (1)
+            ;
+    }
     return res;
 }
 
@@ -100,7 +110,7 @@ PIKA_WEAK void* __platform_memcpy(void* dir, const void* src, size_t size) {
 }
 
 PIKA_WEAK char __platform_getchar(void) {
-#if defined(__linux)||defined(_WIN32)
+#if defined(__linux) || defined(_WIN32)
     return getchar();
 #else
     __platform_printf("[error]: __platform_getchar need implementation!\r\n");
@@ -110,7 +120,7 @@ PIKA_WEAK char __platform_getchar(void) {
 }
 
 PIKA_WEAK FILE* __platform_fopen(const char* filename, const char* modes) {
-#if defined(__linux)||defined(_WIN32)
+#if defined(__linux) || defined(_WIN32)
     return fopen(filename, modes);
 #else
     __platform_printf("[error]: __platform_fopen need implementation!\r\n");
@@ -120,7 +130,7 @@ PIKA_WEAK FILE* __platform_fopen(const char* filename, const char* modes) {
 }
 
 PIKA_WEAK int __platform_fclose(FILE* stream) {
-#if defined(__linux)||defined(_WIN32)
+#if defined(__linux) || defined(_WIN32)
     return fclose(stream);
 #else
     __platform_printf("[error]: __platform_fclose need implementation!\r\n");
@@ -133,7 +143,7 @@ PIKA_WEAK size_t __platform_fwrite(const void* ptr,
                                    size_t size,
                                    size_t n,
                                    FILE* stream) {
-#if defined(__linux)||defined(_WIN32)
+#if defined(__linux) || defined(_WIN32)
     return fwrite(ptr, size, n, stream);
 #else
     __platform_printf("[error]: __platform_fwrite need implementation!\r\n");
@@ -146,7 +156,7 @@ PIKA_WEAK size_t __platform_fread(void* ptr,
                                   size_t size,
                                   size_t n,
                                   FILE* stream) {
-#if defined(__linux)||defined(_WIN32)
+#if defined(__linux) || defined(_WIN32)
     return fread(ptr, size, n, stream);
 #else
     __platform_printf("[error]: __platform_fread need implementation!\r\n");
