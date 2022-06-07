@@ -386,6 +386,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     tokens_arg = arg_setStr(tokens_arg, "", "");
     int32_t size = strGetSize(stmt);
     uint8_t bracket_deepth = 0;
+    uint8_t cn1 = 0;
     uint8_t c0 = 0;
     uint8_t c1 = 0;
     uint8_t c2 = 0;
@@ -400,6 +401,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     /* process */
     for (int32_t i = 0; i < size; i++) {
         /* update char */
+        cn1 = 0;
         c0 = stmt[i];
         c1 = 0;
         c2 = 0;
@@ -407,6 +409,9 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         c4 = 0;
         c5 = 0;
         c6 = 0;
+        if (i - 1 >= 0) {
+            cn1 = stmt[i - 1];
+        }
         if (i + 1 < size) {
             c1 = stmt[i + 1];
         }
@@ -431,12 +436,12 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
 
         /* solve string */
         if (0 == is_in_string) {
-            if ('\'' == c0) {
+            if ('\'' == c0 && '\\' != cn1) {
                 /* in ' */
                 is_in_string = 1;
                 continue;
             }
-            if ('"' == c0) {
+            if ('"' == c0 && '\\' != cn1) {
                 /* in "" */
                 is_in_string = 2;
                 continue;
@@ -444,7 +449,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         }
 
         if (1 == is_in_string) {
-            if ('\'' == c0) {
+            if ('\'' == c0 && '\\' != cn1) {
                 is_in_string = 0;
                 tokens_arg = Lexer_setSymbel(tokens_arg, stmt, i + 1,
                                              &symbol_start_index);
@@ -452,7 +457,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             continue;
         }
         if (2 == is_in_string) {
-            if ('"' == c0) {
+            if ('"' == c0 && '\\' != cn1) {
                 is_in_string = 0;
                 tokens_arg = Lexer_setSymbel(tokens_arg, stmt, i + 1,
                                              &symbol_start_index);
@@ -1227,6 +1232,11 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         str = str + 1;
         /* remove the last char */
         str[strGetSize(str) - 1] = '\0';
+        /* replace */
+        if (strIsContain(str, '\\')) {
+            str = strsReplace(&buffs, str, "\\\"", "\"");
+            str = strsReplace(&buffs, str, "\\'", "'");
+        }
         obj_setStr(ast, (char*)"string", str);
         goto exit;
     }
@@ -2080,8 +2090,20 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
     char* data;
     uint16_t exist_offset;
 
-    char line_buff[PIKA_PATH_BUFF_SIZE] = {0};
+    char line_buff[PIKA_LINE_BUFF_SIZE] = {0};
     for (int i = 0; i < strCountSign(pikaAsm, '\n'); i++) {
+        size_t line_size = strGetLineSize(asmer.line_pointer);
+        if (line_size > PIKA_LINE_BUFF_SIZE) {
+            __platform_printf(
+                "OverflowError: Parser line buff overflow, please use bigger "
+                "PIKA_LINE_BUFF_SIZE\r\n");
+            __platform_printf("Info: line buff size request: %d\r\n",
+                              line_size);
+            __platform_printf("Info: line buff size now: %d\r\n",
+                              PIKA_LINE_BUFF_SIZE);
+            while (1)
+                ;
+        }
         char* line = strGetLine(line_buff, asmer.line_pointer);
         InstructUnit ins_unit = {0};
         /* remove '\r' */

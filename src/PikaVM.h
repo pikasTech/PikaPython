@@ -131,5 +131,6 @@ void byteCodeFrame_init(ByteCodeFrame* self);
 VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode);
 InstructUnit* instructArray_getNow(InstructArray* self);
 InstructUnit* instructArray_getNext(InstructArray* self);
+VMParameters* pikaVM_runFile(PikaObj* self, char* filename);
 
 #endif

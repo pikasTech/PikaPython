@@ -1089,6 +1089,14 @@ exit:
     return globals;
 }
 
+VMParameters* pikaVM_runFile(PikaObj* self, char* filename) {
+    Arg* file_arg = arg_loadFile(NULL, filename);
+    char* py_lines = (char*)arg_getBytes(file_arg);
+    VMParameters* res = pikaVM_run(self, py_lines);
+    arg_deinit(file_arg);
+    return res;
+}
+
 VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
     return __pikaVM_runPyLines_or_byteCode(self, py_lines, NULL);
 }

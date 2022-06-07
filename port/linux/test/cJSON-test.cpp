@@ -238,3 +238,43 @@ TEST(cJSON, construct) {
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(cJSON, test1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runFile(pikaMain, "test/python/cJSON/test1.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0],
+                 "{\n\t\"data\":\t{\n\t\t\"validTime\":\t28800,\n\t\t\"token\":"
+                 "\t\"3E6EA1D907B9CFEB6AB1DECB5667E4A7\"\n\t},\n\t\"success\":"
+                 "\ttrue,\n\t\"resultCode\":\t\"0000\"\n}\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(cJSON, test2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runFile(pikaMain, "test/python/cJSON/test2.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0],
+                 "{\n\t\"data\":\t{\n\t\t\"validTime\":\t28800,\n\t\t\"token\":"
+                 "\t\"3E6EA1D907B9CFEB6AB1DECB5667E4A7\"\n\t},\n\t\"success\":"
+                 "\ttrue,\n\t\"resultCode\":\t\"0000\"\n}\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}
