@@ -1797,9 +1797,11 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     }
     if (NULL != str) {
         __platform_sprintf(buff, "%d STR ", deepth);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
-        pikaAsm = strsAppend(&buffs, pikaAsm, str);
-        pikaAsm = strsAppend(&buffs, pikaAsm, "\n");
+        Arg* abuff = arg_setStr(NULL, "", buff);
+        abuff = arg_strAppend(abuff, str);
+        abuff = arg_strAppend(abuff, "\n");
+        pikaAsm = strsAppend(&buffs, pikaAsm, arg_getStr(abuff));
+        arg_deinit(abuff);
     }
     if (NULL != bytes) {
         __platform_sprintf(buff, "%d BYT %s\n", deepth, bytes);
