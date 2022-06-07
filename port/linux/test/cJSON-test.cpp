@@ -356,3 +356,35 @@ TEST(cJSON, test5) {
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(cJSON, test6) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runFile(pikaMain, "../../examples/cJSON/test6.py");
+    /* collect */
+    /* assert */
+
+    EXPECT_STREQ(
+        log_buff[0],
+        "{\n\t\"array33\":\t[\"c\", \"Java\", "
+        "\"Python\"],\n\t\"data\":\t{"
+        "\n\t\t\"requestSocialInsuranceFromYangCheng\":\t\"\","
+        "\n\t\t\"authenticationComparison\":\t\"no\",\n\t\t\"startupLogo\":"
+        "\t\"4\",\n\t\t\"cardType\":\t\"00,01,02,03,04\",\n\t\t\"synfromhis\":"
+        "\t\"no\",\n\t\t\"alarmThresholdValue\":\t\"37.2\","
+        "\n\t\t\"hospitalName\":"
+        "\t\"\344\275\231\346\235\255\345\206\234\350\264\270\345\270\202\345"
+        "\234\272\",\n\t\t\"facediscernMode\":\t\"02\",\n\t\t\"hospitalCode\":"
+        "\t\"102\"\n\t},\n\t\"success\":\ttrue,\n\t\"resultCode\":\t\"0000\","
+        "\n\t\"time\":\t\"2022-05-20 "
+        "14:10:27\",\n\t\"message\":"
+        "\t\"\346\223\215\344\275\234\346\210\220\345\212\237\"\n}\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}
