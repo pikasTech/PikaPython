@@ -102,7 +102,15 @@ impl Compiler {
         return Err(std::io::Error::from(std::io::ErrorKind::NotFound));
     }
 
-    pub fn __do_analize_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
+    pub fn analize_top_package(self: Compiler, file_name: String) -> Compiler {
+        return self.__do_analize_file(file_name, true);
+    }
+
+    pub fn analize_inner_package(self: Compiler, file_name: String) -> Compiler {
+        return self.__do_analize_file(file_name, false);
+    }
+
+    fn __do_analize_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
         /* open file */
         let file: std::result::Result<std::fs::File, std::io::Error>;
         if file_name == "main" {

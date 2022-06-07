@@ -1,9 +1,9 @@
 use crate::compiler::*;
+use crate::version_info::*;
 use std::fs::File;
 use std::io::prelude::*;
-use crate::version_info::*;
 
-pub fn pika_compiler_entry(){
+pub fn pika_compiler_entry() {
     /* new a version_info object */
     println!("(pikascript) packages installed:");
     let mut version_info = VersionInfo::new();
@@ -13,8 +13,9 @@ pub fn pika_compiler_entry(){
     println!("(pikascript) pika compiler:");
     /* new a compiler, sellect to path */
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
+
     /* analyze file begin with main.py */
-    compiler = Compiler::__do_analize_file(compiler, String::from("main"), false);
+    compiler = Compiler::analize_inner_package(compiler, String::from("main"));
     /*
        Compile packages in requestment.txt, solve the packages
        as the top packages.
@@ -24,13 +25,13 @@ pub fn pika_compiler_entry(){
         if package.0 == "pikascript-core" {
             continue;
         }
-        compiler = Compiler::__do_analize_file(compiler, String::from(package.0), true);
+        compiler = Compiler::analize_top_package(compiler, String::from(package.0));
     }
 
     /* Compile packages in PikaStdLib */
-    compiler = Compiler::__do_analize_file(compiler, String::from("PikaStdTask"), true);
-    compiler = Compiler::__do_analize_file(compiler, String::from("PikaStdData"), true);
-    compiler = Compiler::__do_analize_file(compiler, String::from("PikaDebug"), true);
+    compiler = Compiler::analize_top_package(compiler, String::from("PikaStdTask"));
+    compiler = Compiler::analize_top_package(compiler, String::from("PikaStdData"));
+    compiler = Compiler::analize_top_package(compiler, String::from("PikaDebug"));
 
     // println!();
 
