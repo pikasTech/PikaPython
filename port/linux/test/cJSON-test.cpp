@@ -433,3 +433,24 @@ TEST(cJSON, test7) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(cJSON, module) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_run(pikaMain, 
+    "import cjson_test\n"
+    "cjson_test.test_start()\n"
+    );
+    /* collect */
+    /* assert */
+
+    EXPECT_STREQ(log_buff[0], "shopping\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
