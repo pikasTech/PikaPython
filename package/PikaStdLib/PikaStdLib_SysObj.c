@@ -406,7 +406,8 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
         }
         return sliced_arg;
     }
-#endif
-
     return arg_setNull(NULL);
+#else
+    return PikaStdLib_SysObj___get__(self, start, obj);
+#endif
 }
