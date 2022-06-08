@@ -232,6 +232,7 @@ name = "ctypes"
 releases = [
   "v0.0.1 7362ba0d4b55abc304d3169989370f0dd8cddde0",
   "v0.0.2 3fae2b5e86a0de787f6785ccd72a6590b4984f88",
+  "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
 ]
 
 [[packages]]
@@ -244,4 +245,5 @@ releases = [
 name = "pika_cjson"
 releases = [
   "v0.0.1 60389c541db480f41a55498270094dd030df9e24",
+  "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
 ]
