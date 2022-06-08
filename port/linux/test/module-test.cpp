@@ -67,6 +67,7 @@ TEST(module, for_loop) {
             "test_module1.for_loop()\n");
     /* collect */
     /* assert */
+    EXPECT_STREQ("9\r\n", log_buff[0]);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

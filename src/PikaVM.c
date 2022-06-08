@@ -337,8 +337,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         goto exit;
     }
 
-    /* get method host obj */
+    /* get method host obj from self */
     method_host_obj = obj_getHostObj(self, methodPath);
+    /* get method host obj from local scope */
     if (NULL == method_host_obj) {
         method_host_obj = obj_getHostObj(vs->locals, methodPath);
     }
@@ -351,6 +352,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     /* get method in local */
     method_arg = obj_getMethodArg(method_host_obj, methodPath);
     if (NULL == method_arg) {
+        /* get method in global */
         method_arg = obj_getMethodArg(vs->globals, methodPath);
     }
     /* assert method*/
@@ -360,6 +362,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         __platform_printf("NameError: name '%s' is not defined\r\n", data);
         goto exit;
     }
+    /* create sub local scope */
     sub_locals = New_PikaObj();
     /* load args from vmState to sub_local->list */
     arg_num_used = VMState_loadArgsFromMethodArg(
@@ -1428,6 +1431,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     ByteCodeFrame* bytecode_frame,
     uint16_t pc) {
     int size = bytecode_frame->instruct_array.size;
+    /* locals is the local scope */
     VMState vs = {
         .bytecode_frame = bytecode_frame,
         .locals = locals,

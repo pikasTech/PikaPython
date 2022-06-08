@@ -141,6 +141,11 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     /* object */
     if (argType_isObject(arg_getType(arg))) {
         PikaObj* arg_obj = arg_getPtr(arg);
+        NewFun _clsptr = obj_getPtr(arg_obj, "_clsptr");
+        if (_clsptr == New_PikaStdLib_RangeObj) {
+            /* found RangeObj, return directly */
+            return arg_copy(arg);
+        }
         // pikaVM_runAsm(arg_obj,
         //               "B0\n"
         //               "0 RUN __iter__\n"
@@ -162,9 +167,10 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
 
 Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2) {
     /* set template arg to create rangeObj */
-    obj_setInt(self, "_r1", a1);
-    obj_setInt(self, "_r2", a2);
-    return arg_newMetaObj(New_PikaStdLib_RangeObj);
+    Arg* obj_arg = arg_newDirectObj(New_PikaStdLib_RangeObj);
+    obj_setInt(arg_getPtr(obj_arg), "a1", a1);
+    obj_setInt(arg_getPtr(obj_arg), "a2", a2);
+    return obj_arg;
 }
 
 Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
