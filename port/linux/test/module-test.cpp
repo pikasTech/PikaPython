@@ -72,3 +72,20 @@ TEST(module, for_loop) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(module, script) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    __platform_printf("BEGIN\r\n");
+    /* run */
+    obj_run(pikaMain, "import test_module4\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ("imported test moulde4\r\n", log_buff[0]);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

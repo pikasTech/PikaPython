@@ -981,7 +981,8 @@ int32_t obj_newObj(PikaObj* self,
 PikaObj* obj_importModuleWithByteCode(PikaObj* self,
                                       char* name,
                                       uint8_t* byteCode) {
-    obj_newDirectObj(self, name, New_TinyObj);
+    PikaObj* New_PikaStdLib_SysObj(Args * args);
+    obj_newDirectObj(self, name, New_PikaStdLib_SysObj);
     pikaVM_runByteCode(obj_getObj(self, name), (uint8_t*)byteCode);
     return self;
 }
