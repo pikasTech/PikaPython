@@ -190,7 +190,12 @@ impl Compiler {
         let lines: Vec<&str> = file_str.split('\n').collect();
         /* analyse each line of .pyi */
         for line in lines.iter() {
-            let line = line.replace("\r", "");
+            let mut line = line.replace("\r", "");
+            /* replace \t with 4 spaces */
+            if line.starts_with("\t") {
+                line = line.strip_prefix("\t").unwrap().to_string();
+                line.insert_str(0, "    ");
+            }
 
             if file_name == "main" {
                 self = Compiler::analyse_main_line(self, &line);
