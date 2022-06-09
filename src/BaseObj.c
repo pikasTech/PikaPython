@@ -41,11 +41,6 @@ static void print_no_end(PikaObj* self, Args* args) {
         return;
     }
     /* not empty */
-    if (strIsContain(res, '\\')) {
-        res = strsReplace(args, res, "\\n", "\n");
-        res = strsReplace(args, res, "\\r", "\r");
-        res = strsReplace(args, res, "\\t", "\t");
-    }
     __platform_printf("%s", res);
 }
 
@@ -71,12 +66,6 @@ void Baseobj_print(PikaObj* self, Args* args) {
         obj_setSysOut(self, "[error] print: can not print val");
         obj_setErrorCode(self, 1);
         return;
-    }
-    /* not empty */
-    if (strIsContain(res, '\\')) {
-        res = strsReplace(args, res, "\\n", "\n");
-        res = strsReplace(args, res, "\\r", "\r");
-        res = strsReplace(args, res, "\\t", "\t");
     }
     __platform_printf("%s\r\n", res);
 }

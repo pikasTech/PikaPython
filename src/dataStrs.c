@@ -131,6 +131,11 @@ char* strsReplace(Args* buffs_p, char* orig, char* rep, char* with) {
     int len_front;  // distance between rep and end of last rep
     int count;      // number of replacements
 
+    /* no need replace, skip */
+    if (NULL == strstr(orig, rep)) {
+        return orig;
+    }
+
     // sanity checks and initialization
     if (!orig || !rep)
         return NULL;

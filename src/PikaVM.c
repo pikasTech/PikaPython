@@ -428,21 +428,25 @@ exit:
 }
 
 static char* __get_transferd_str(Args* buffs, char* str, size_t* iout_p) {
-    char* transfered_str = args_getBuff(buffs, strGetSize(str));
+    char* str_rep = strsReplace(buffs, str, "\\n", "\n");
+    str_rep = strsReplace(buffs, str_rep, "\\r", "\r");
+    str_rep = strsReplace(buffs, str_rep, "\\t", "\t");
+
+    char* transfered_str = args_getBuff(buffs, strGetSize(str_rep));
     size_t i_out = 0;
-    for (size_t i = 0; i < strGetSize(str); i++) {
+    for (size_t i = 0; i < strGetSize(str_rep); i++) {
         /* eg. replace '\x33' to '3' */
-        if ((str[i] == '\\') && (str[i + 1] == 'x')) {
+        if ((str_rep[i] == '\\') && (str_rep[i + 1] == 'x')) {
             char hex_str[] = "0x00";
-            hex_str[2] = str[i + 2];
-            hex_str[3] = str[i + 3];
+            hex_str[2] = str_rep[i + 2];
+            hex_str[3] = str_rep[i + 3];
             char hex = (char)strtol(hex_str, NULL, 0);
             transfered_str[i_out++] = hex;
             i += 3;
             continue;
         }
         /* normal char */
-        transfered_str[i_out++] = str[i];
+        transfered_str[i_out++] = str_rep[i];
     }
     *iout_p = i_out;
     return transfered_str;

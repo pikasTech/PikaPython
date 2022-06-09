@@ -1,11 +1,20 @@
 #include "gtest/gtest.h"
 #include "test_common.h"
 extern "C" {
+#include "PikaMain.h"
+#include "PikaParser.h"
+#include "PikaStdLib_MemChecker.h"
+#include "PikaVM.h"
 #include "dataArgs.h"
 #include "dataMemory.h"
-#include "dataString.h"
 #include "dataStrs.h"
+#include "pikaScript.h"
+#include "pika_config_gtest.h"
 }
+
+extern PikaMemInfo pikaMemInfo;
+/* the log_buff of printf */
+extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
 static void printInfo(const char* argName, char* argVal) {
     printf("\t\t[info] %s: \"%s\"\r\n", argName, argVal);
@@ -34,14 +43,13 @@ TEST(strs, analizeDef) {
     char currentClassName[] = "Compiler";
     char line[] = "    def analizeFile(pythonApiPath: str):";
     printInfo("currentClassName", currentClassName);
-    char* defSentenceWithBlock =
-        strsRemovePrefix(buffs, line, "    def ");
+    char* defSentenceWithBlock = strsRemovePrefix(buffs, line, "    def ");
     char* defSentence = strsDeleteChar(buffs, defSentenceWithBlock, ' ');
     printInfo("defSentence", defSentence);
     char* methodName = strsGetFirstToken(buffs, defSentence, '(');
     printInfo("methodName", methodName);
-    char* methodObjPath = strsAppend(
-        buffs, strsAppend(buffs, currentClassName, "."), methodName);
+    char* methodObjPath =
+        strsAppend(buffs, strsAppend(buffs, currentClassName, "."), methodName);
     printInfo("methodObjPath", methodObjPath);
     char* returnType = strsCut(buffs, defSentence, '>', ':');
     printInfo("returnType", returnType);
@@ -56,7 +64,7 @@ TEST(strs, analizeDef) {
             printInfo("typeDeclearation", typeDeclearation);
             char* argName = strsGetFirstToken(buffs, typeDeclearation, ':');
             printInfo("argName", argName);
-            char* argType = strPointToLastToken( typeDeclearation, ':');
+            char* argType = strPointToLastToken(typeDeclearation, ':');
             printInfo("argType", argType);
         }
     }
@@ -103,4 +111,22 @@ TEST(str, strPointToLastToken) {
     char* tokens = "abc.efg";
     char* last_token = strPointToLastToken(tokens, '.');
     EXPECT_STREQ(last_token, "efg");
+}
+
+TEST(str, transfer) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_run(pikaMain, "'\\r\\n'\n");
+    /* collect */
+    /* assert */
+
+    EXPECT_STREQ(log_buff[0], "\r\n\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
 }
