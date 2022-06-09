@@ -13,10 +13,10 @@ class Compiler(PikaStdLib.SysObj):
     def build(pythonApiPath: str, outputPath: str) -> int:
         pass
 
-    def analyzestr(pythonApiPath: str) -> int:
+    def analysestr(pythonApiPath: str) -> int:
         pass
 
-    def analyzeLine(line: str) -> int:
+    def analyseLine(line: str) -> int:
         pass
 
 class MyRoot(PikaStdLib.SysObj):

@@ -152,7 +152,7 @@ mod tests {
     }
 
     #[test]
-    fn test_analize() {
+    fn test_analyse() {
         assert_eq!(
             MethodInfo::new(
                 &String::from("Test"),

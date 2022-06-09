@@ -213,7 +213,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_analize() {
+    fn test_analyse() {
         assert_eq!(
             ClassInfo::new(
                 &String::from("Pkg"),

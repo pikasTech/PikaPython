@@ -30,7 +30,7 @@ impl Compiler {
         return compiler;
     }
 
-    pub fn analize_main_line(mut compiler: Compiler, line: &String) -> Compiler {
+    pub fn analyse_main_line(mut compiler: Compiler, line: &String) -> Compiler {
         let file_name = "main".to_string();
         let class_name = "PikaMain".to_string();
         /* get class now or create one */
@@ -84,7 +84,7 @@ impl Compiler {
 
             let package_obj_define = format!("{} = {}()", package_name, package_name);
             class_now.push_object(package_obj_define, &file_name);
-            return Compiler::__do_analize_file(compiler, package_name.to_string(), true);
+            return Compiler::__do_analyse_file(compiler, package_name.to_string(), true);
         }
         class_now.script_list.add(&line);
         return compiler;
@@ -103,15 +103,15 @@ impl Compiler {
         return Err(std::io::Error::from(std::io::ErrorKind::NotFound));
     }
 
-    pub fn analize_top_package(self: Compiler, file_name: String) -> Compiler {
-        return self.__do_analize_file(file_name, true);
+    pub fn analyse_top_package(self: Compiler, file_name: String) -> Compiler {
+        return self.__do_analyse_file(file_name, true);
     }
 
-    pub fn analize_inner_package(self: Compiler, file_name: String) -> Compiler {
-        return self.__do_analize_file(file_name, false);
+    pub fn analyse_inner_package(self: Compiler, file_name: String) -> Compiler {
+        return self.__do_analyse_file(file_name, false);
     }
 
-    fn __do_analize_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
+    fn __do_analyse_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
         /* open file */
         let file: std::result::Result<std::fs::File, std::io::Error>;
         if file_name == "main" {
@@ -188,20 +188,20 @@ impl Compiler {
             self.package_now_name = Some(package_name.clone());
         }
         let lines: Vec<&str> = file_str.split('\n').collect();
-        /* analyze each line of .pyi */
+        /* analyse each line of .pyi */
         for line in lines.iter() {
             let line = line.replace("\r", "");
 
             if file_name == "main" {
-                self = Compiler::analize_main_line(self, &line);
+                self = Compiler::analyse_main_line(self, &line);
             } else {
-                self = Compiler::analyze_line(self, line.to_string(), &file_name, is_top_pkg);
+                self = Compiler::analyse_line(self, line.to_string(), &file_name, is_top_pkg);
             }
         }
         return self;
     }
 
-    pub fn analyze_line(
+    pub fn analyse_line(
         mut compiler: Compiler,
         line: String,
         file_name: &String,
@@ -210,14 +210,14 @@ impl Compiler {
         if line.starts_with("import ") {
             let tokens: Vec<&str> = line.split(" ").collect();
             let file = tokens[1];
-            return Compiler::__do_analize_file(compiler, file.to_string(), false);
+            return Compiler::__do_analyse_file(compiler, file.to_string(), false);
         }
 
         if line.starts_with("#") {
             return compiler;
         }
 
-        /* analize class stmt */
+        /* analyse class stmt */
         if line.starts_with("class") {
             /* create a new class */
             let class_now = match ClassInfo::new(&file_name, &line, false) {
@@ -251,7 +251,7 @@ impl Compiler {
             return compiler;
         }
 
-        /* analize function define */
+        /* analyse function define */
         if line.starts_with("def ") {
             let package_now_name = match compiler.package_now_name.clone() {
                 Some(s) => s,
@@ -262,7 +262,7 @@ impl Compiler {
             return compiler;
         }
 
-        /* analize def stmt inner class */
+        /* analyse def stmt inner class */
         if line.starts_with("    def ") {
             let line = line.strip_prefix("    ").unwrap().to_string();
             let class_now = compiler
@@ -295,21 +295,21 @@ impl Compiler {
 mod tests {
     use super::*;
     #[test]
-    fn test_analyze() {
+    fn test_analyse() {
         let compiler = Compiler::new(String::from(""), String::from(""));
-        let compiler = Compiler::analyze_line(
+        let compiler = Compiler::analyse_line(
             compiler,
             String::from("class Test(SuperTest):"),
             &"Pkg".to_string(),
             false,
         );
-        let compiler = Compiler::analyze_line(
+        let compiler = Compiler::analyse_line(
             compiler,
             String::from("    def test()"),
             &"Pkg".to_string(),
             false,
         );
-        let compiler = Compiler::analyze_line(
+        let compiler = Compiler::analyse_line(
             compiler,
             String::from("    testObj = TestObj()"),
             &"Pkg".to_string(),
