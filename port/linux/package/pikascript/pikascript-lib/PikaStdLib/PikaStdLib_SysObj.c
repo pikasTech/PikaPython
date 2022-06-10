@@ -418,3 +418,48 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
     return PikaStdLib_SysObj___get__(self, start, obj);
 #endif
 }
+
+void PikaStdLib_SysObj_print(PikaObj* self, Arg* val) {
+    obj_setErrorCode(self, 0);
+    ArgType arg_type = arg_getType(val);
+    if (NULL != val) {
+        if (arg_getType(val) == ARG_TYPE_BYTES) {
+            arg_printBytes(val);
+            return;
+        }
+    }
+    if (argType_isObject(arg_type)) {
+        char* to_str = obj_toStr(arg_getPtr(val));
+        if (NULL != to_str) {
+            __platform_printf("%s\r\n", to_str);
+            return;
+        }
+    }
+    Args* print_args = New_args(NULL);
+    args_setArg(print_args, arg_copy(val));
+    char* res = args_print(print_args, "val");
+    if (NULL == res) {
+        obj_setSysOut(self, "[error] print: can not print val");
+        obj_setErrorCode(self, 1);
+        args_deinit(print_args);
+        return;
+    }
+    __platform_printf("%s\r\n", res);
+    args_deinit(print_args);
+}
+
+void PikaStdLib_SysObj_printNoEnd(PikaObj* self, Arg* val) {
+    obj_setErrorCode(self, 0);
+    Args* print_args = New_args(NULL);
+    args_setArg(print_args, arg_copy(val));
+    char* res = args_print(print_args, "val");
+    if (NULL == res) {
+        obj_setSysOut(self, "[error] print: can not print val");
+        obj_setErrorCode(self, 1);
+        args_deinit(print_args);
+        return;
+    }
+    /* not empty */
+    __platform_printf("%s", res);
+    args_deinit(print_args);
+}

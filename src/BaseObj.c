@@ -32,47 +32,8 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
-static void print_no_end(PikaObj* self, Args* args) {
-    obj_setErrorCode(self, 0);
-    char* res = args_print(args, "val");
-    if (NULL == res) {
-        obj_setSysOut(self, "[error] print: can not print val");
-        obj_setErrorCode(self, 1);
-        return;
-    }
-    /* not empty */
-    __platform_printf("%s", res);
-}
-
-void Baseobj_print(PikaObj* self, Args* args) {
-    obj_setErrorCode(self, 0);
-    Arg* arg = args_getArg(args, "val");
-    ArgType arg_type = arg_getType(arg);
-    if (NULL != arg) {
-        if (arg_getType(arg) == ARG_TYPE_BYTES) {
-            arg_printBytes(arg);
-            return;
-        }
-    }
-    if (argType_isObject(arg_type)) {
-        char* to_str = obj_toStr(arg_getPtr(arg));
-        if (NULL != to_str) {
-            __platform_printf("%s\r\n", to_str);
-            return;
-        }
-    }
-    char* res = args_print(args, "val");
-    if (NULL == res) {
-        obj_setSysOut(self, "[error] print: can not print val");
-        obj_setErrorCode(self, 1);
-        return;
-    }
-    __platform_printf("%s\r\n", res);
-}
 
 PikaObj* New_BaseObj(Args* args) {
     PikaObj* self = New_TinyObj(args);
-    class_defineMethod(self, "print(val:any)", Baseobj_print);
-    class_defineMethod(self, "printNoEnd(val:any)", print_no_end);
     return self;
 }

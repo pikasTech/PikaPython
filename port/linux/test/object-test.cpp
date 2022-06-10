@@ -174,7 +174,7 @@ TEST(object_test, voidRun) {
 /* the log_buff of printf */
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 TEST(object_test, printa) {
-    PikaObj* root = newRootObj("root", New_BaseObj);
+    PikaObj* root = newRootObj("root", New_PikaStdLib_SysObj);
     obj_runDirect(root,
 
                   "a = 2\n"
