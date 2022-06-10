@@ -269,6 +269,9 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_STRING == arg_getType(arg)) {
         return strGetSize(arg_getStr(arg));
     }
+    if (ARG_TYPE_BYTES == arg_getType(arg)) {
+        return arg_getBytesSize(arg);
+    }
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] len: arg type not support\r\n");
     return -1;
