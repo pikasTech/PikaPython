@@ -116,6 +116,10 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
         res = strsFormat(&buffs, 11, "%f", val);
         goto exit;
     }
+    if (ARG_TYPE_BYTES == type) {
+        res = (char*)arg_getBytes(arg);
+        goto exit;
+    }
     if (argType_isObject(type)) {
         res = obj_toStr(arg_getPtr(arg));
         if (NULL != res) {
