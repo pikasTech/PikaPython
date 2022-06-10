@@ -57,7 +57,7 @@ TEST(args, test3) {
     args_copyArgByName(args1, "argtest1", args2);
     args_copyArgByName(args1, "strtest1", args2);
 
-    EXPECT_EQ(2.8830f, args_getFloat(args1, "argtest1"));
+    EXPECT_FLOAT_EQ(2.8830, args_getFloat(args1, "argtest1"));
     args_deinit(args1);
     args_deinit(args2);
     EXPECT_EQ(pikaMemNow(), 0);

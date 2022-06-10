@@ -163,7 +163,7 @@ int32_t obj_setRef(PikaObj* self, char* argPath, void* pointer) {
     return 0;
 }
 
-int32_t obj_setFloat(PikaObj* self, char* argPath, float value) {
+int32_t obj_setFloat(PikaObj* self, char* argPath, double value) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
         return 1;
@@ -284,13 +284,13 @@ void* obj_getPtr(PikaObj* self, char* argPath) {
     return res;
 }
 
-float obj_getFloat(PikaObj* self, char* argPath) {
+double obj_getFloat(PikaObj* self, char* argPath) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
         return -999.999;
     }
     char* argName = strPointToLastToken(argPath, '.');
-    float res = args_getFloat(obj->list, argName);
+    double res = args_getFloat(obj->list, argName);
     return res;
 }
 
@@ -895,7 +895,7 @@ void method_returnInt(Args* args, int32_t val) {
     args_setInt(args, "return", val);
 }
 
-void method_returnFloat(Args* args, float val) {
+void method_returnFloat(Args* args, double val) {
     args_setFloat(args, "return", val);
 }
 
@@ -919,7 +919,7 @@ int32_t method_getInt(Args* args, char* argName) {
     return args_getInt(args, argName);
 }
 
-float method_getFloat(Args* args, char* argName) {
+double method_getFloat(Args* args, char* argName) {
     return args_getFloat(args, argName);
 }
 

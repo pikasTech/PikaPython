@@ -1680,14 +1680,14 @@ char* Parser_parsePyLines(Args* outBuffs,
     while (1) {
         lines_index++;
         Args buffs = {0};
+
         /* get single line by pop multiline */
         char* line_origin =
             strsGetFirstToken(&buffs, py_lines + lines_offset, '\n');
         char* line = line_origin;
+
         /* support Tab */
-        if (strIsContain(line_origin, '\t')) {
-            line = strsReplace(&buffs, line_origin, "\t", "    ");
-        }
+        line = strsReplace(&buffs, line_origin, "\t", "    ");
         /* filter for not end \n */
         if (lines_index != lines_num) {
             if (Parser_isVoidLine(line)) {
@@ -1713,6 +1713,7 @@ char* Parser_parsePyLines(Args* outBuffs,
             strsDeinit(&buffs);
             goto exit;
         }
+
         if (NULL == bytecode_frame) {
             /* store ASM */
             asm_buff = arg_strAppend(asm_buff, single_ASM);
@@ -1720,10 +1721,12 @@ char* Parser_parsePyLines(Args* outBuffs,
             /* store ByteCode */
             byteCodeFrame_appendFromAsm(bytecode_frame, single_ASM);
         }
+
     next_line:
         line_size = strGetSize(line_origin);
         lines_offset = lines_offset + line_size + 1;
         strsDeinit(&buffs);
+
         /* exit when finished */
         if (lines_offset >= lines_size) {
             break;

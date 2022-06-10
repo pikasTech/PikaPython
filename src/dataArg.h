@@ -84,13 +84,13 @@ uint16_t arg_getContentSize(Arg* self);
 Hash hash_time33(char* str);
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val);
-Arg* arg_setFloat(Arg* self, char* name, float val);
+Arg* arg_setFloat(Arg* self, char* name, double val);
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer);
 Arg* arg_setStr(Arg* self, char* name, char* string);
 Arg* arg_setNull(Arg* self);
 
 int64_t arg_getInt(Arg* self);
-float arg_getFloat(Arg* self);
+double arg_getFloat(Arg* self);
 void* arg_getPtr(Arg* self);
 char* arg_getStr(Arg* self);
 uint8_t* arg_getBytes(Arg* self);

@@ -41,7 +41,7 @@ void args_deinit_stack(Args* self) {
     link_deinit_stack(self);
 }
 
-int32_t args_setFloat(Args* self, char* name, float argFloat) {
+int32_t args_setFloat(Args* self, char* name, double argFloat) {
     Arg* argNew = New_arg(NULL);
     argNew = arg_setFloat(argNew, name, argFloat);
     args_setArg(self, argNew);
@@ -176,7 +176,7 @@ ArgType args_getType(Args* self, char* name) {
     return arg_getType(arg);
 }
 
-float args_getFloat(Args* self, char* name) {
+double args_getFloat(Args* self, char* name) {
     Arg* arg = args_getArg(self, name);
     if (NULL == arg) {
         return -999999999.0;
@@ -388,7 +388,7 @@ char* getPrintStringFromInt(Args* self, char* name, int32_t val) {
     return res;
 }
 
-char* getPrintStringFromFloat(Args* self, char* name, float val) {
+char* getPrintStringFromFloat(Args* self, char* name, double val) {
     Args buffs = {0};
     char* res = NULL;
     char* valString = strsFormat(&buffs, 32, "%f", val);
@@ -424,7 +424,7 @@ char* args_print(Args* self, char* name) {
     }
 
     if (type == ARG_TYPE_FLOAT) {
-        float val = args_getFloat(self, name);
+        double val = args_getFloat(self, name);
         res = getPrintStringFromFloat(self, name, val);
         goto exit;
     }

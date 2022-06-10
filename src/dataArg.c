@@ -217,16 +217,16 @@ Arg* arg_setNull(Arg* self) {
     return arg_init("", ARG_TYPE_NULL, NULL, 0, NULL);
 }
 
-Arg* arg_setFloat(Arg* self, char* name, float val) {
+Arg* arg_setFloat(Arg* self, char* name, double val) {
     return arg_init(name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val), NULL);
 }
 
-float arg_getFloat(Arg* self) {
+double arg_getFloat(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return -999.999;
     }
 
-    return *(float*)self->content;
+    return *(double*)self->content;
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
