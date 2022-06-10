@@ -68,4 +68,4 @@ RUN cd /root/pikascript/tools/pikaCompiler && sh build.sh
 
 ADD .vimrc /root/.vimrc
 
-
+ADD bashrc /root/.bashrc
