@@ -1673,6 +1673,8 @@ char* Parser_parsePyLines(Args* outBuffs,
     uint16_t lines_num = strCountSign(py_lines, '\n');
     uint16_t lines_index = 0;
     uint8_t is_in_multi_comment = 0;
+    Arg* line_connection_arg = arg_setStr(NULL, "", "");
+    uint8_t is_line_connection = 0;
     char* out_ASM = NULL;
     char* single_ASM;
     uint32_t line_size = 0;
@@ -1684,10 +1686,30 @@ char* Parser_parsePyLines(Args* outBuffs,
         /* get single line by pop multiline */
         char* line_origin =
             strsGetFirstToken(&buffs, py_lines + lines_offset, '\n');
-        char* line = line_origin;
+
+        char* line = strsCopy(&buffs, line_origin);
+        /* line connection */
+        if (is_line_connection) {
+            is_line_connection = 0;
+            line_connection_arg = arg_strAppend(line_connection_arg, line);
+            line = strsCopy(&buffs, arg_getStr(line_connection_arg));
+            /* reflash the line_connection_arg */
+            arg_deinit(line_connection_arg);
+            line_connection_arg = arg_setStr(NULL, "", "");
+        }
+
+        /* check connection */
+        if ('\\' == line[strGetSize(line) - 1]) {
+            /* remove the '\\' */
+            line[strGetSize(line) - 1] = '\0';
+            is_line_connection = 1;
+            line_connection_arg = arg_strAppend(line_connection_arg, line);
+            goto next_line;
+        }
 
         /* support Tab */
-        line = strsReplace(&buffs, line_origin, "\t", "    ");
+        line = strsReplace(&buffs, line, "\t", "    ");
+
         /* filter for not end \n */
         if (lines_index != lines_num) {
             if (Parser_isVoidLine(line)) {
@@ -1742,6 +1764,9 @@ char* Parser_parsePyLines(Args* outBuffs,
 exit:
     if (NULL != asm_buff) {
         arg_deinit(asm_buff);
+    }
+    if (NULL != line_connection_arg) {
+        arg_deinit(line_connection_arg);
     }
     stack_deinit(&block_stack);
     return out_ASM;

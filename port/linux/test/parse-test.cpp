@@ -3077,3 +3077,42 @@ TEST(parser, cjson_test4) {
     arg_deinit(lines_buff);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, connection) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "print('\\\n"
+        "test')\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 STR test\n"
+                 "0 RUN print\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, connection2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "a = \\\n"
+        "3\n"
+        "print\\\n"
+        "(a)\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 NUM 3\n"
+                 "0 OUT a\n"
+                 "B0\n"
+                 "1 REF a\n"
+                 "0 RUN print\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

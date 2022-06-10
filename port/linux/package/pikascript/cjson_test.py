@@ -25,8 +25,61 @@ def test_start():
     # data1 = "{"data":{"jjj":"","333":"no","startupLogo":"4","cardType":"00,01,02,03,04","synfromhis":"no","alarmThresholdValue":"37.2","hospitalName":"jell","facediscernMode":"01","hospitalCode":"102"},"success":true,"resultCode":"0000","time":"2022-05-20 14:10:27","message":"ok"}"
     #data1 = "{\"data\":{\"requestSocialInsuranceFromYangCheng\":\"\",\"authenticationComparison\":\"no\",\"startupLogo\":\"4\",\"cardType\":\"00,01,02,03,04\",\"synfromhis\":\"no\",\"alarmThresholdValue\":\"37.2\",\"hospitalName\":\"余杭农贸市场\",\"facediscernMode\":\"01\",\"hospitalCode\":\"102\"},\"success\":true,\"resultCode\":\"0000\",\"time\":\"2022-05-20 14:10:27\",\"message\":\"操作成功\"} "
     #data1 = '{"sites": [{ "name":"Google", "info":[ "Android", "Google 搜索", "Google 翻译" ] }],"arraytest":{"test1":["c", "Java", "Python"],"test2":["c2", "Java2", "Python2"]},"data":{"requestSocialInsuranceFromYangCheng":"","authenticationComparison":"no","startupLogo":"4","cardType":"00,01,02,03,04","synfromhis":"no","alarmThresholdValue":"37.2","hospitalName":"余杭农贸市场","facediscernMode":"01","hospitalCode":"102"},"success":"true","resultCode":"0000","time":"2022-05-20 14:10:27","message":"操作成功"}'
-    data1 = '{"sites": [{ "name":"Google", "info":[ "Android", "Google search", "Google translation" ] },{ "name":"Runoob", "info":[ "ciniao jiaoc", "ciniao tool", "ciniao wechat" ] },{ "name":"Taobao", "info":[ "taobao", "shopping" ] }],"arraytest":{"test1":["c", "Java", "Python"],"test2":["c2", "Java2", "Python2"]},"data":{"requestSocialInsuranceFromYangCheng":"","authenticationComparison":"no","startupLogo":"4","cardType":"00,01,02,03,04","synfromhis":"no","alarmThresholdValue":"37.2","hospitalName":"余杭农贸市场","facediscernMode":"01","hospitalCode":"102"},"success":"true","resultCode":"0000","time":"2022-05-20 14:10:27","message":"操作成功"}'
-
+    # data1 = '{"sites": [{ "name":"Google", "info":[ "Android", "Google search", "Google translation" ] },{ "name":"Runoob", "info":[ "ciniao jiaoc", "ciniao tool", "ciniao wechat" ] },{ "name":"Taobao", "info":[ "taobao", "shopping" ] }],"arraytest":{"test1":["c", "Java", "Python"],"test2":["c2", "Java2", "Python2"]},"data":{"requestSocialInsuranceFromYangCheng":"","authenticationComparison":"no","startupLogo":"4","cardType":"00,01,02,03,04","synfromhis":"no","alarmThresholdValue":"37.2","hospitalName":"余杭农贸市场","facediscernMode":"01","hospitalCode":"102"},"success":"true","resultCode":"0000","time":"2022-05-20 14:10:27","message":"操作成功"}'
+    data1 = '{\
+        "sites":[\
+            {\
+                "name":"Google",\
+                "info":[\
+                    "Android",\
+                    "Google search",\
+                    "Google translation"\
+                ]\
+            },\
+            {\
+                "name":"Runoob",\
+                "info":[\
+                    "ciniao jiaoc",\
+                    "ciniao tool",\
+                    "ciniao wechat"\
+                ]\
+            },\
+            {\
+                "name":"Taobao",\
+                "info":[\
+                    "taobao",\
+                    "shopping"\
+                ]\
+            }\
+        ],\
+        "arraytest":{\
+            "test1":[\
+                "c",\
+                "Java",\
+                "Python"\
+            ],\
+            "test2":[\
+                "c2",\
+                "Java2",\
+                "Python2"\
+            ]\
+        },\
+        "data":{\
+            "requestSocialInsuranceFromYangCheng":"",\
+            "authenticationComparison":"no",\
+            "startupLogo":"4",\
+            "cardType":"00,01,02,03,04",\
+            "synfromhis":"no",\
+            "alarmThresholdValue":"37.2",\
+            "hospitalName":"余杭农贸市场",\
+            "facediscernMode":"01",\
+            "hospitalCode":"102"\
+        },\
+        "success":"true",\
+        "resultCode":"0000",\
+        "time":"2022-05-20 14:10:27",\
+        "message":"操作成功"\
+    }'
     a = cjson.Parse(data1)
     a.print()
     success = a.getObjectItem("success")
