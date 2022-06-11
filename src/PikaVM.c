@@ -184,9 +184,17 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
     return arg;
 }
 
+static int32_t __foreach_handler_deinitTuple(Arg* argEach, Args* context) {
+    if (arg_getType(argEach) == ARG_TYPE_TUPLE) {
+        PikaTuple* tuple = arg_getPtr(argEach);
+        tuple_deinit(tuple);
+    }
+    return PIKA_RES_OK;
+}
+
 static Arg* VMState_runMethodArg(VMState* vs,
                                  PikaObj* method_host_obj,
-                                 PikaObj* sub_locals,
+                                 PikaObj* method_args_obj,
                                  Arg* method_arg) {
     Arg* return_arg = NULL;
     /* get method Ptr */
@@ -204,26 +212,31 @@ static Arg* VMState_runMethodArg(VMState* vs,
     /* run method */
     if (method_type == ARG_TYPE_METHOD_NATIVE) {
         /* native method */
-        method_ptr(method_host_obj, sub_locals->list);
+        method_ptr(method_host_obj, method_args_obj->list);
         /* get method return */
-        return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
+        return_arg =
+            arg_copy(args_getArg(method_args_obj->list, (char*)"return"));
     } else if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
         /* native method */
-        method_ptr(method_host_obj, sub_locals->list);
+        method_ptr(method_host_obj, method_args_obj->list);
         /* get method return */
-        return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
+        return_arg =
+            arg_copy(args_getArg(method_args_obj->list, (char*)"return"));
     } else {
         /* static method and object method */
         /* byteCode */
         uintptr_t insturctArray_start = (uintptr_t)instructArray_getByOffset(
             &(method_bytecodeFrame->instruct_array), 0);
         uint16_t pc = (uintptr_t)method_ptr - insturctArray_start;
-        sub_locals = __pikaVM_runByteCodeFrameWithState(
-            method_host_obj, sub_locals, vs->globals, method_bytecodeFrame, pc);
+        method_args_obj = __pikaVM_runByteCodeFrameWithState(
+            method_host_obj, method_args_obj, vs->globals, method_bytecodeFrame,
+            pc);
 
         /* get method return */
-        return_arg = arg_copy(args_getArg(sub_locals->list, (char*)"return"));
+        return_arg =
+            arg_copy(args_getArg(method_args_obj->list, (char*)"return"));
     }
+    args_foreach(method_args_obj->list, __foreach_handler_deinitTuple, NULL);
     return return_arg;
 }
 
@@ -234,13 +247,24 @@ static int VMState_loadArgsFromMethodArg(VMState* vs,
                                          char* method_name,
                                          int arg_num_used) {
     Args buffs = {0};
+    uint8_t arg_num_dec = 0;
+    PIKA_BOOL is_variable = PIKA_FALSE;
+    PIKA_BOOL is_get_variable_arg = PIKA_FALSE;
+    uint8_t arg_num = 0;
+
     /* get method type list */
     char* type_list = methodArg_getTypeList(method_arg, &buffs);
     if (NULL == type_list) {
         goto exit;
     }
     ArgType method_type = arg_getType(method_arg);
-    uint8_t arg_num_dec = 0;
+
+    /* check variable */
+    if (strIsContain(type_list, '*')) {
+        is_variable = PIKA_TRUE;
+    }
+
+    /* get arg_num_dec */
     if (strEqu("", type_list)) {
         arg_num_dec = 0;
     } else {
@@ -254,8 +278,10 @@ static int VMState_loadArgsFromMethodArg(VMState* vs,
 
     /* check arg num */
     if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
-        method_type == ARG_TYPE_METHOD_CONSTRUCTOR) {
-        /* not check decleard arg num for constrctor */
+        method_type == ARG_TYPE_METHOD_CONSTRUCTOR ||
+        is_variable == PIKA_TRUE) {
+        /* skip for constrctor */
+        /* skip for variable args */
     } else {
         /* check arg num decleard and input */
         if (arg_num_dec != arg_num_input - arg_num_used) {
@@ -268,14 +294,68 @@ static int VMState_loadArgsFromMethodArg(VMState* vs,
         }
     }
 
-    /* load pars */
+    if (PIKA_TRUE == is_variable) {
+        arg_num = arg_num_input;
+    } else {
+        arg_num = arg_num_dec;
+    }
+
+    PikaTuple* tuple = NULL;
+    char* variable_tuple_name = NULL;
+
+    /* get variable tuple name */
+    char* type_list_buff = strsCopy(&buffs, type_list);
     for (int i = 0; i < arg_num_dec; i++) {
+        char* arg_def = strPopLastToken(type_list_buff, ',');
+        if (strIsStartWith(arg_def, "*")) {
+            /* skip the '*' */
+            variable_tuple_name = arg_def + 1;
+        }
+    }
+
+    /* load pars */
+    for (int i = 0; i < arg_num; i++) {
         char* arg_def = strPopLastToken(type_list, ',');
         strPopLastToken(arg_def, ':');
         char* arg_name = arg_def;
+        /* found variable arg */
+        if (strIsStartWith(arg_name, "*")) {
+            is_get_variable_arg = PIKA_TRUE;
+            tuple = New_tuple();
+            /* clear the type_list */
+            type_list = "";
+        }
+        if (PIKA_TRUE == is_get_variable_arg) {
+            /* clear the variable arg name */
+            arg_name = strsCopy(&buffs, "");
+        }
         Arg* call_arg = stack_popArg(&(vs->stack));
         call_arg = arg_setName(call_arg, arg_name);
-        args_setArg(args, call_arg);
+        /* load the variable arg */
+        if (PIKA_TRUE == is_get_variable_arg) {
+            list_append(&tuple->super, call_arg);
+            /* the append would copy the arg */
+            arg_deinit(call_arg);
+        } else {
+            /* load normal arg */
+            args_setArg(args, call_arg);
+        }
+    }
+
+    if (PIKA_TRUE == is_variable) {
+        /* resort the tuple */
+        PikaTuple* tuple_sorted = New_tuple();
+        if (NULL != tuple) {
+            int tuple_size = tuple_getSize(tuple);
+            for (int i = 0; i < tuple_size; i++) {
+                Arg* arg = tuple_getArg(tuple, tuple_size - 1 - i);
+                list_append(&(tuple_sorted->super), arg);
+            }
+            tuple_deinit(tuple);
+        }
+        /* load variable tuple */
+        args_setPtrWithType(args, variable_tuple_name, ARG_TYPE_TUPLE,
+                            tuple_sorted);
     }
 
     /* load 'self' as the first arg when call object method */
@@ -285,7 +365,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vs,
     }
 exit:
     strsDeinit(&buffs);
-    return arg_num_dec;
+    return arg_num;
 }
 
 #if PIKA_BUILTIN_LIST_ENABLE

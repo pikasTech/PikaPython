@@ -24,7 +24,12 @@ impl ArgList {
         let mut py_arg_list = String::from("");
         for arg_define in py_arg_list_vecotr.iter() {
             let arg_define = String::from(*arg_define);
-            if arg_define.contains(":") {
+            if arg_define.starts_with("*") {
+                /* variable parameters tuple */
+                py_arg_list.push_str(&arg_define);
+                py_arg_list.push_str(",");
+            } else if arg_define.contains(":") {
+                /* typed arg */
                 py_arg_list.push_str(&arg_define);
                 py_arg_list.push_str(",");
             }
@@ -32,7 +37,7 @@ impl ArgList {
         if py_arg_list.contains(",") {
             /* remove the last ',' */
             py_arg_list.remove(py_arg_list.len() - 1);
-        }else{
+        } else {
             return None;
         }
 
@@ -46,16 +51,27 @@ impl ArgList {
         let py_arg_list_vecotr: Vec<&str> = py_arg_list.split(",").collect();
         for arg_define in py_arg_list_vecotr.iter() {
             /* get arg name */
-            let arg_name = match my_string::get_first_token(&arg_define.to_string(), ':') {
+            let mut arg_name = match my_string::get_first_token(&arg_define.to_string(), ':') {
                 Some(name) => name,
-                /* if not get ':', ignore the arg */
-                None => String::from(""),
+                /* if not get ':', get the name */
+                None => String::from(arg_define.to_string()),
             };
+            if arg_name.starts_with("*") {
+                /* is the tuple variable parameter */
+                arg_name = arg_name.strip_prefix("*").unwrap().to_string();
+            }
             /* get type name */
             let type_name = match my_string::get_last_token(&arg_define.to_string(), ':') {
                 Some(name) => name,
                 /* if not get ':', ignore the arg */
-                None => String::from(""),
+                None => {
+                    if arg_define.starts_with("*") {
+                        /* is the tuple variable parameter */
+                        String::from("@tupleVarPar")
+                    } else {
+                        String::from("")
+                    }
+                }
             };
             arg_list
                 .list

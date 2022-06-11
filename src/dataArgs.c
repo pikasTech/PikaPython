@@ -41,11 +41,11 @@ void args_deinit_stack(Args* self) {
     link_deinit_stack(self);
 }
 
-int32_t args_setFloat(Args* self, char* name, double argFloat) {
+PIKA_RES args_setFloat(Args* self, char* name, double argFloat) {
     Arg* argNew = New_arg(NULL);
     argNew = arg_setFloat(argNew, name, argFloat);
     args_setArg(self, argNew);
-    return 0;
+    return PIKA_RES_OK;
 }
 
 void* args_getPtr(Args* self, char* name) {
@@ -59,38 +59,39 @@ void* args_getPtr(Args* self, char* name) {
     return pointer;
 }
 
-int32_t args_setPtr(Args* self, char* name, void* argPointer) {
-    int32_t errCode = 0;
+PIKA_RES args_setPtr(Args* self, char* name, void* argPointer) {
+    PIKA_RES errCode = PIKA_RES_OK;
     Arg* argNew = New_arg(NULL);
     argNew = arg_setPtr(argNew, name, ARG_TYPE_POINTER, argPointer);
     args_setArg(self, argNew);
     return errCode;
 }
 
-int32_t args_setRef(Args* self, char* name, void* argPointer) {
-    int32_t errCode = 0;
+PIKA_RES args_setRef(Args* self, char* name, void* argPointer) {
+    PIKA_RES errCode = PIKA_RES_OK;
     Arg* argNew = New_arg(NULL);
     argNew = arg_setRef(argNew, name, argPointer);
     args_setArg(self, argNew);
     return errCode;
 }
 
-int32_t args_setStr(Args* self, char* name, char* strIn) {
-    int32_t errCode = 0;
+PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
+    PIKA_RES errCode = PIKA_RES_OK;
     Arg* argNew = New_arg(NULL);
     argNew = arg_setStr(argNew, name, strIn);
     args_setArg(self, argNew);
     return errCode;
 }
 
-int args_pushArg(Args* self, Arg* arg) {
+PIKA_RES args_pushArg(Args* self, Arg* arg) {
     link_addNode(self, arg);
-    return 0;
+    return PIKA_RES_OK;
 }
 
-void args_setBytes(Args* self, char* name, uint8_t* src, size_t size) {
+PIKA_RES args_setBytes(Args* self, char* name, uint8_t* src, size_t size) {
     Arg* argNew = arg_setBytes(NULL, name, src, size);
     args_setArg(self, argNew);
+    return PIKA_RES_OK;
 }
 
 char* args_getBuff(Args* self, int32_t size) {
@@ -142,11 +143,11 @@ size_t args_getBytesSize(Args* self, char* name) {
     return arg_getBytesSize(arg);
 }
 
-int32_t args_setInt(Args* self, char* name, int64_t int64In) {
+PIKA_RES args_setInt(Args* self, char* name, int64_t int64In) {
     Arg* argNew = New_arg(NULL);
     argNew = arg_setInt(argNew, name, int64In);
     args_setArg(self, argNew);
-    return 0;
+    return PIKA_RES_OK;
 }
 
 int64_t args_getInt(Args* self, char* name) {
@@ -190,27 +191,27 @@ double args_getFloat(Args* self, char* name) {
     return -999999999.0;
 }
 
-int32_t args_copyArg(Args* self, Arg* argToBeCopy) {
+PIKA_RES args_copyArg(Args* self, Arg* argToBeCopy) {
     if (NULL == argToBeCopy) {
-        return 1;
+        return PIKA_RES_ERR_INVALID_PTR;
     }
     Arg* argCopied = arg_copy(argToBeCopy);
     args_setArg(self, argCopied);
 
-    return 0;
+    return PIKA_RES_OK;
 }
 
-int32_t args_setStructWithSize(Args* self,
-                               char* name,
-                               void* struct_ptr,
-                               uint32_t struct_size) {
+PIKA_RES args_setStructWithSize(Args* self,
+                                char* name,
+                                void* struct_ptr,
+                                uint32_t struct_size) {
     Arg* struct_arg = arg_setStruct(NULL, name, struct_ptr, struct_size);
     if (NULL == struct_arg) {
         /* faild */
-        return 1;
+        return PIKA_RES_ERR_ARG_NO_FOUND;
     }
     args_setArg(self, struct_arg);
-    return 0;
+    return PIKA_RES_OK;
 }
 
 void* args_getStruct(Args* self, char* name) {
@@ -223,25 +224,25 @@ void* args_getHeapStruct(Args* self, char* name) {
     return arg_getHeapStruct(struct_arg);
 }
 
-int32_t args_setHeapStructWithSize(Args* self,
-                                   char* name,
-                                   void* struct_ptr,
-                                   uint32_t struct_size,
-                                   void* struct_deinit_fun) {
+PIKA_RES args_setHeapStructWithSize(Args* self,
+                                    char* name,
+                                    void* struct_ptr,
+                                    uint32_t struct_size,
+                                    void* struct_deinit_fun) {
     Arg* struct_arg = arg_setHeapStruct(NULL, name, struct_ptr, struct_size,
                                         struct_deinit_fun);
     if (NULL == struct_arg) {
         /* faild */
-        return 1;
+        return PIKA_RES_ERR_ARG_NO_FOUND;
     }
     args_setArg(self, struct_arg);
-    return 0;
+    return PIKA_RES_OK;
 }
 
-int32_t args_copyArgByName(Args* self, char* name, Args* directArgs) {
+PIKA_RES args_copyArgByName(Args* self, char* name, Args* directArgs) {
     Arg* argToBeCopy = args_getArg(self, name);
     args_copyArg(directArgs, argToBeCopy);
-    return 0;
+    return PIKA_RES_OK;
 }
 
 int32_t args_isArgExist_hash(Args* self, Hash nameHash) {
@@ -258,7 +259,7 @@ int32_t args_isArgExist(Args* self, char* name) {
     return 0;
 }
 
-int32_t __updateArg(Args* self, Arg* argNew) {
+PIKA_RES __updateArg(Args* self, Arg* argNew) {
     LinkNode* nodeToUpdate = NULL;
     LinkNode* nodeNow = self->firstNode;
     LinkNode* priorNode = NULL;
@@ -293,17 +294,17 @@ int32_t __updateArg(Args* self, Arg* argNew) {
     goto exit;
 exit:
     arg_freeContent(argNew);
-    return 0;
+    return PIKA_RES_OK;
 }
 
-int32_t args_setArg(Args* self, Arg* arg) {
+PIKA_RES args_setArg(Args* self, Arg* arg) {
     Hash nameHash = arg_getNameHash(arg);
     if (!args_isArgExist_hash(self, nameHash)) {
         args_pushArg(self, arg);
-        return 0;
+        return PIKA_RES_OK;
     }
     __updateArg(self, arg);
-    return 0;
+    return PIKA_RES_OK;
 }
 
 #ifndef __PIKA_CFG_HASH_LIST_CACHE_SIZE
@@ -358,7 +359,7 @@ Arg* args_getArg(Args* self, char* name) {
     return (Arg*)node;
 }
 
-Arg* args_getArg_index(Args* self, int index) {
+Arg* args_getArgByidex(Args* self, int index) {
     LinkNode* nodeNow = self->firstNode;
     if (NULL == nodeNow) {
         return NULL;
@@ -449,21 +450,21 @@ exit:
     return res;
 }
 
-int32_t args_setPtrWithType(Args* self,
-                            char* name,
-                            ArgType type,
-                            void* objPtr) {
+PIKA_RES args_setPtrWithType(Args* self,
+                             char* name,
+                             ArgType type,
+                             void* objPtr) {
     Arg* argNew = New_arg(NULL);
     argNew = arg_setPtr(argNew, name, type, objPtr);
     args_setArg(self, argNew);
-    return 0;
+    return PIKA_RES_OK;
 }
 
-int32_t args_foreach(Args* self,
-                     int32_t (*eachHandle)(Arg* argEach, Args* context),
-                     Args* context) {
+PIKA_RES args_foreach(Args* self,
+                      int32_t (*eachHandle)(Arg* argEach, Args* context),
+                      Args* context) {
     if (NULL == self->firstNode) {
-        return 0;
+        return PIKA_RES_OK;
     }
     LinkNode* nodeNow = self->firstNode;
     while (1) {
@@ -479,38 +480,85 @@ int32_t args_foreach(Args* self,
         }
         nodeNow = nextNode;
     }
-    return 0;
+    return PIKA_RES_OK;
 }
 
-int32_t args_removeArg(Args* self, Arg* argNow) {
+PIKA_RES args_removeArg(Args* self, Arg* argNow) {
     if (NULL == argNow) {
-        /* can not found arg */
-        return 1;
+        return PIKA_RES_ERR_INVALID_PTR;
     }
     link_removeNode(self, argNow);
-    return 0;
+    return PIKA_RES_OK;
 }
 
-int32_t args_removeArg_notDeinitArg(Args* self, Arg* argNow) {
+PIKA_RES args_removeArg_notDeinitArg(Args* self, Arg* argNow) {
     if (NULL == argNow) {
-        /* can not found arg */
-        return 1;
+        return PIKA_RES_ERR_INVALID_PTR;
     }
     link_removeNode_notDeinitNode(self, argNow);
-    return 0;
+    return PIKA_RES_OK;
 }
 
-int args_moveArg(Args* self, Args* dict, Arg* argNow) {
+PIKA_RES args_moveArg(Args* self, Args* dict, Arg* argNow) {
     if (NULL == argNow) {
-        /* can not found arg */
-        return 1;
+        return PIKA_RES_ERR_INVALID_PTR;
     }
     link_removeNode_notDeinitNode(self, argNow);
     args_pushArg(dict, argNow);
-    return 0;
+    return PIKA_RES_OK;
 }
 
 Args* New_args(Args* args) {
     Args* self = New_link(NULL);
+    return self;
+}
+
+PikaDict* New_dict(void) {
+    PikaDict* self = (PikaDict*)New_args(NULL);
+    return self;
+}
+
+PikaList* New_list(void) {
+    PikaList* self = (PikaList*)New_args(NULL);
+    /* set top index for append */
+    args_setInt(&self->super, "top", 0);
+    return self;
+}
+
+PIKA_RES list_setArg(PikaList* self, int index, Arg* arg) {
+    char buff[11];
+    char* i_str = fast_itoa(buff, index);
+    int top = args_getInt(&self->super, "top");
+    if (index > top) {
+        return PIKA_RES_ERR_OUT_OF_RANGE;
+    }
+    arg_setName(arg, i_str);
+    args_setArg(&self->super, arg_copy(arg));
+    return PIKA_RES_OK;
+}
+
+Arg* list_getArg(PikaList* self, int index) {
+    char buff[11];
+    char* i_str = fast_itoa(buff, index);
+    return args_getArg(&self->super, i_str);
+}
+
+PIKA_RES list_append(PikaList* self, Arg* arg) {
+    int top = args_getInt(&self->super, "top");
+    char buff[11];
+    char* topStr = fast_itoa(buff, top);
+    Arg* arg_to_push = arg_copy(arg);
+    arg_setName(arg_to_push, topStr);
+    args_setArg(&self->super, arg_to_push);
+    /* top++ */
+    return args_setInt(&self->super, "top", top + 1);
+}
+
+size_t list_getSize(PikaList* self) {
+    return args_getInt(&self->super, "top");
+}
+
+PikaTuple* New_tuple(void) {
+    PikaTuple* self = (PikaTuple*)New_list();
     return self;
 }

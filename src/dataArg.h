@@ -52,6 +52,7 @@ typedef enum {
     ARG_TYPE_METHOD_STATIC,
     ARG_TYPE_STRUCT,
     ARG_TYPE_STRUCT_HEAP,
+    ARG_TYPE_TUPLE,
 } ArgType;
 
 typedef void (*StructDeinitFun)(void* struct_);
@@ -61,7 +62,7 @@ struct Arg {
     Arg* next;
     uint16_t size;
     uint8_t type;
-    uint8_t ref_cnt;
+    uint8_t sub_type;
     Hash name_hash;
     uint8_t content[];
 };

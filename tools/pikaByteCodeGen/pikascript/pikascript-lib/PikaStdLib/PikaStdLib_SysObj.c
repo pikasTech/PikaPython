@@ -116,7 +116,11 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
         res = strsFormat(&buffs, 11, "%f", val);
         goto exit;
     }
-    if (ARG_TYPE_OBJECT == type) {
+    if (ARG_TYPE_BYTES == type) {
+        res = (char*)arg_getBytes(arg);
+        goto exit;
+    }
+    if (argType_isObject(type)) {
         res = obj_toStr(arg_getPtr(arg));
         if (NULL != res) {
             goto exit;
@@ -139,8 +143,13 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
         return arg_copy(arg);
     }
     /* object */
-    if (ARG_TYPE_OBJECT == arg_getType(arg)) {
+    if (argType_isObject(arg_getType(arg))) {
         PikaObj* arg_obj = arg_getPtr(arg);
+        NewFun _clsptr = obj_getPtr(arg_obj, "_clsptr");
+        if (_clsptr == New_PikaStdLib_RangeObj) {
+            /* found RangeObj, return directly */
+            return arg_copy(arg);
+        }
         // pikaVM_runAsm(arg_obj,
         //               "B0\n"
         //               "0 RUN __iter__\n"
@@ -162,28 +171,37 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
 
 Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2) {
     /* set template arg to create rangeObj */
-    obj_setInt(self, "_r1", a1);
-    obj_setInt(self, "_r2", a2);
-    return arg_newMetaObj(New_PikaStdLib_RangeObj);
+    Arg* obj_arg = arg_newDirectObj(New_PikaStdLib_RangeObj);
+    obj_setInt(arg_getPtr(obj_arg), "a1", a1);
+    obj_setInt(arg_getPtr(obj_arg), "a2", a2);
+    return obj_arg;
 }
 
 Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
     ArgType obj_type = arg_getType(obj);
+    int index = 0;
+    if (ARG_TYPE_INT == arg_getType(key)) {
+        index = arg_getInt(key);
+    }
     if (ARG_TYPE_STRING == obj_type) {
-        int index = arg_getInt(key);
         char* str_pyload = arg_getStr(obj);
         char char_buff[] = " ";
+        if (index < 0) {
+            index = strGetSize(str_pyload) + index;
+        }
         char_buff[0] = str_pyload[index];
         return arg_setStr(NULL, "", char_buff);
     }
     if (ARG_TYPE_BYTES == obj_type) {
-        int index = arg_getInt(key);
         uint8_t* bytes_pyload = arg_getBytes(obj);
         uint8_t byte_buff[] = " ";
+        if (index < 0) {
+            index = arg_getBytesSize(obj) + index;
+        }
         byte_buff[0] = bytes_pyload[index];
         return arg_setBytes(NULL, "", byte_buff, 1);
     }
-    if (ARG_TYPE_OBJECT == obj_type) {
+    if (argType_isObject(obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
         // pikaVM_runAsm(arg_obj,
@@ -228,7 +246,7 @@ void PikaStdLib_SysObj___set__(PikaObj* self,
         bytes_pyload[index] = bytes_val[0];
         obj_setBytes(self, obj_str, bytes_pyload, bytes_len);
     }
-    if (ARG_TYPE_OBJECT == obj_type) {
+    if (argType_isObject(obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
         obj_setArg(arg_obj, "__val", val);
@@ -255,6 +273,9 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_STRING == arg_getType(arg)) {
         return strGetSize(arg_getStr(arg));
     }
+    if (ARG_TYPE_BYTES == arg_getType(arg)) {
+        return arg_getBytesSize(arg);
+    }
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] len: arg type not support\r\n");
     return -1;
@@ -263,7 +284,7 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
 Arg* PikaStdLib_SysObj_list(PikaObj* self) {
 #if PIKA_BUILTIN_LIST_ENABLE
     PikaObj* New_PikaStdData_List(Args * args);
-    return obj_newObjInPackage(New_PikaStdData_List);
+    return arg_newMetaObj(New_PikaStdData_List);
 #endif
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in list is not enabled.\r\n");
@@ -273,7 +294,7 @@ Arg* PikaStdLib_SysObj_list(PikaObj* self) {
 Arg* PikaStdLib_SysObj_dict(PikaObj* self) {
 #if PIKA_BUILTIN_DICT_ENABLE
     PikaObj* New_PikaStdData_Dict(Args * args);
-    return obj_newObjInPackage(New_PikaStdData_Dict);
+    return arg_newMetaObj(New_PikaStdData_Dict);
 #endif
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in dist is not enabled.\r\n");
@@ -332,14 +353,137 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
                                  Arg* obj,
                                  Arg* start,
                                  int step) {
-    if ((arg_getType(start) == ARG_TYPE_INT) &&
-        (arg_getType(end) == ARG_TYPE_INT)) {
-        /* __slice__ is equal to __get__ */
-        if (arg_getInt(start) - arg_getInt(end) == 1) {
-            return PikaStdLib_SysObj___get__(self, start, obj);
-        }
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+    /* No interger index only support __get__ */
+    if (!(arg_getType(start) == ARG_TYPE_INT &&
+          arg_getType(end) == ARG_TYPE_INT)) {
+        return PikaStdLib_SysObj___get__(self, start, obj);
     }
 
-    /* No interger index only support __get__ */
+    int start_i = arg_getInt(start);
+    int end_i = arg_getInt(end);
+
+    /* __slice__ is equal to __get__ */
+    if (end_i - start_i == 1) {
+        return PikaStdLib_SysObj___get__(self, start, obj);
+    }
+
+    if (ARG_TYPE_STRING == arg_getType(obj)) {
+        size_t len = strGetSize(arg_getStr(obj));
+        if (start_i < 0) {
+            start_i += len;
+        }
+        if (end_i < 0) {
+            end_i += len + 1;
+        }
+        Arg* sliced_arg = arg_setStr(NULL, "", "");
+        for (int i = start_i; i < end_i; i++) {
+            Arg* i_arg = arg_setInt(NULL, "", i);
+            Arg* item_arg = PikaStdLib_SysObj___get__(self, i_arg, obj);
+            sliced_arg = arg_strAppend(sliced_arg, arg_getStr(item_arg));
+            arg_deinit(item_arg);
+            arg_deinit(i_arg);
+        }
+        return sliced_arg;
+    }
+
+    if (ARG_TYPE_BYTES == arg_getType(obj)) {
+        size_t len = arg_getBytesSize(obj);
+        if (start_i < 0) {
+            start_i += len;
+        }
+        if (end_i < 0) {
+            end_i += len + 1;
+        }
+        Arg* sliced_arg = arg_setBytes(NULL, "", NULL, 0);
+        for (int i = start_i; i < end_i; i++) {
+            Arg* i_arg = arg_setInt(NULL, "", i);
+            Arg* item_arg = PikaStdLib_SysObj___get__(self, i_arg, obj);
+            uint8_t* bytes_origin = arg_getBytes(sliced_arg);
+            size_t size_origin = arg_getBytesSize(sliced_arg);
+            Arg* sliced_arg_new = arg_setBytes(NULL, "", NULL, size_origin + 1);
+            __platform_memcpy(arg_getBytes(sliced_arg_new), bytes_origin,
+                              size_origin);
+            __platform_memcpy(arg_getBytes(sliced_arg_new) + size_origin,
+                              arg_getBytes(item_arg), 1);
+            arg_deinit(sliced_arg);
+            sliced_arg = sliced_arg_new;
+            arg_deinit(item_arg);
+            arg_deinit(i_arg);
+        }
+        return sliced_arg;
+    }
+    return arg_setNull(NULL);
+#else
     return PikaStdLib_SysObj___get__(self, start, obj);
+#endif
+}
+
+static void __print_arg(PikaObj* self, Arg* val) {
+    obj_setErrorCode(self, 0);
+    ArgType arg_type = arg_getType(val);
+    if (NULL != val) {
+        if (arg_getType(val) == ARG_TYPE_BYTES) {
+            arg_printBytes(val);
+            return;
+        }
+    }
+    if (argType_isObject(arg_type)) {
+        char* to_str = obj_toStr(arg_getPtr(val));
+        if (NULL != to_str) {
+            __platform_printf("%s\r\n", to_str);
+            return;
+        }
+    }
+    Args* print_args = New_args(NULL);
+    arg_setName(val, "val");
+    args_setArg(print_args, arg_copy(val));
+    char* res = args_print(print_args, "val");
+    if (NULL == res) {
+        obj_setSysOut(self, "[error] print: can not print val");
+        obj_setErrorCode(self, 1);
+        args_deinit(print_args);
+        return;
+    }
+    obj_setStr(self, "_buf", res);
+    args_deinit(print_args);
+}
+
+void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val) {
+    int arg_size = tuple_getSize(val);
+    Arg* print_out_arg = arg_setStr(NULL, "", "");
+    PIKA_BOOL is_get_print = PIKA_FALSE;
+    for (int i = 0; i < arg_size; i++) {
+        Arg* arg = tuple_getArg(val, i);
+        __print_arg(self, arg);
+        char* item = obj_getStr(self, "_buf");
+        if (NULL != item) {
+            is_get_print = PIKA_TRUE;
+            print_out_arg = arg_strAppend(print_out_arg, item);
+            if (i < arg_size - 1) {
+                print_out_arg = arg_strAppend(print_out_arg, " ");
+            }
+            obj_removeArg(self, "_buf");
+        }
+    }
+    if (PIKA_TRUE == is_get_print) {
+        __platform_printf("%s\r\n", arg_getStr(print_out_arg));
+    }
+    arg_deinit(print_out_arg);
+}
+
+void PikaStdLib_SysObj_printNoEnd(PikaObj* self, Arg* val) {
+    obj_setErrorCode(self, 0);
+    Args* print_args = New_args(NULL);
+    args_setArg(print_args, arg_copy(val));
+    char* res = args_print(print_args, "val");
+    if (NULL == res) {
+        obj_setSysOut(self, "[error] print: can not print val");
+        obj_setErrorCode(self, 1);
+        args_deinit(print_args);
+        return;
+    }
+    /* not empty */
+    __platform_printf("%s", res);
+    args_deinit(print_args);
 }

@@ -37,12 +37,13 @@
 #include <string.h>
 
 /* Compiler */
-#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 5000000) /* ARM Compiler */
+#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 5000000) /* ARM Compiler \
+                                                              */
 #define PIKA_WEAK __attribute__((weak))
 #elif defined(__IAR_SYSTEMS_ICC__) /* for IAR Compiler */
 #define PIKA_WEAK __weak
 #elif defined(__MINGW32__) /* MINGW32 Compiler */
-#define PIKA_WEAK 
+#define PIKA_WEAK
 #elif defined(__GNUC__) /* GNU GCC Compiler */
 #define PIKA_WEAK __attribute__((weak))
 #endif
@@ -53,7 +54,7 @@
 
 /* align for bytecode */
 #if defined(_WIN32)
-#define PIKA_BYTECODE_ALIGN 
+#define PIKA_BYTECODE_ALIGN
 #else
 #define PIKA_BYTECODE_ALIGN __attribute__((aligned(4)))
 #endif
@@ -66,22 +67,31 @@
 
 /* clang-format off */
 typedef enum {
-    
-    PIKA_ERR_UNKNOWN_INSTRUCTION                    = -11,
-    PIKA_ERR_OUT_OF_RANGE                           = -10,
-    PIKA_ERR_IO_ERROR                               = -9,
-    PIKA_ERR_INSUFFICIENT_RESOURCE                  = -8,
-    PIKA_ERR_INVALID_PARAM                          = -7,
-    PIKA_ERR_INVALID_PTR                            = -6,
-    PIKA_ERR_UNALIGNED_PTR                          = -5,
-    PIKA_ERR_INVALID_VERSION_NUMBER                 = -4,
-    PIKA_ERR_ILLEGAL_MAGIC_CODE                     = -3,
-    PIKA_ERR_OPERATION_FAILED                       = -2,
-    PIKA_ERR_UNKNOWN                                = -1,
-    PIKA_OK                                         =  0,
-    
-} PikaErr;
+    PIKA_RES_ERR_ARG_NO_FOUND                           = -12,
+    PIKA_RES_ERR_UNKNOWN_INSTRUCTION                    = -11,
+    PIKA_RES_ERR_OUT_OF_RANGE                           = -10,
+    PIKA_RES_ERR_IO_ERROR                               = -9,
+    PIKA_RES_ERR_INSUFFICIENT_RESOURCE                  = -8,
+    PIKA_RES_ERR_INVALID_PARAM                          = -7,
+    PIKA_RES_ERR_INVALID_PTR                            = -6,
+    PIKA_RES_ERR_UNALIGNED_PTR                          = -5,
+    PIKA_RES_ERR_INVALID_VERSION_NUMBER                 = -4,
+    PIKA_RES_ERR_ILLEGAL_MAGIC_CODE                     = -3,
+    PIKA_RES_ERR_OPERATION_FAILED                       = -2,
+    PIKA_RES_ERR_UNKNOWN                                = -1,
+    PIKA_RES_OK                                         =  0,
+} PIKA_RES;
 /* clang-format on*/
+
+/* clang-format off */
+
+/* pikascript bool type */
+typedef enum {
+    PIKA_TRUE   = 1,
+    PIKA_FALSE  = 0,
+} PIKA_BOOL;
+
+/* clang-format on */
 
 /*
     [Note]:

@@ -3,22 +3,24 @@
 #include "PikaStdLib_SysObj.h"
 
 Arg* PikaStdData_Dict_get(PikaObj* self, char* key) {
-    PikaObj* pyload = obj_getObj(self, "pyload");
-    return arg_copy(obj_getArg(pyload, key));
+    PikaDict* dict = obj_getPtr(self, "dict");
+    return arg_copy(dict_getArg(dict, key));
 }
 
 void PikaStdData_Dict___init__(PikaObj* self) {
-    obj_newObj(self, "pyload", "", New_TinyObj);
+    PikaDict* dict = New_dict();
+    obj_setPtr(self, "dict", dict);
 }
 
 void PikaStdData_Dict_set(PikaObj* self, Arg* arg, char* key) {
-    PikaObj* pyload = obj_getObj(self, "pyload");
-    obj_setArg(pyload, key, arg);
+    PikaDict* dict = obj_getPtr(self, "dict");
+    arg_setName(arg, key);
+    dict_setArg(dict, arg_copy(arg));
 }
 
 void PikaStdData_Dict_remove(PikaObj* self, char* key) {
-    PikaObj* pyload = obj_getObj(self, "pyload");
-    obj_removeArg(pyload, key);
+    PikaDict* dict = obj_getPtr(self, "dict");
+    dict_removeArg(dict, dict_getArg(dict, key));
 }
 
 Arg* PikaStdData_Dict___iter__(PikaObj* self) {
@@ -28,18 +30,8 @@ Arg* PikaStdData_Dict___iter__(PikaObj* self) {
 
 Arg* PikaStdData_Dict___next__(PikaObj* self) {
     int __iter_i = args_getInt(self->list, "__iter_i");
-    PikaObj* pyload = obj_getObj(self, "pyload");
-    Arg* res = arg_copy(args_getArg_index(pyload->list, __iter_i));
-    /* skip pointer */
-    if (ARG_TYPE_POINTER == arg_getType(res)) {
-        arg_deinit(res);
-        return arg_setNull(NULL);
-    }
-    /* skip _refcnt */
-    if (hash_time33("_refcnt") == arg_getNameHash(res)) {
-        arg_deinit(res);
-        return arg_setNull(NULL);
-    }
+    PikaDict* dict = obj_getPtr(self, "dict");
+    Arg* res = arg_copy(args_getArgByidex(&dict->super, __iter_i));
     if (NULL == res) {
         return arg_setNull(NULL);
     }
@@ -51,6 +43,12 @@ void PikaStdData_Dict___set__(PikaObj* self) {
     PikaStdData_Dict_set(self, obj_getArg(self, "__val"),
                          obj_getStr(self, "__key"));
 }
+
 Arg* PikaStdData_Dict___get__(PikaObj* self) {
     return PikaStdData_Dict_get(self, obj_getStr(self, "__key"));
+}
+
+void PikaStdData_Dict___del__(PikaObj* self) {
+    PikaDict* dict = obj_getPtr(self, "dict");
+    dict_deinit(dict);
 }

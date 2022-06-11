@@ -2,41 +2,31 @@
 #include "PikaObj.h"
 
 void PikaStdData_List_append(PikaObj* self, Arg* arg) {
-    int top = obj_getInt(self, "top");
-    char buff[11];
-    char* topStr = fast_itoa(buff, top);
-    PikaObj* pyload = obj_getObj(self, "pyload");
-    obj_setArg(pyload, topStr, arg);
-    /* top++ */
-    obj_setInt(self, "top", top + 1);
+    PikaList* list = obj_getPtr(self, "list");
+    list_append(list, arg);
 }
 
 int PikaStdData_List_len(PikaObj* self) {
-    return obj_getInt(self, "top");
+    PikaList* list = obj_getPtr(self, "list");
+    return list_getSize(list);
 }
 
 Arg* PikaStdData_List_get(PikaObj* self, int i) {
-    char buff[11];
-    char* index = fast_itoa(buff, i);
-    PikaObj* pyload = obj_getObj(self, "pyload");
-    return arg_copy(obj_getArg(pyload, index));
+    PikaList* list = obj_getPtr(self, "list");
+    return arg_copy(list_getArg(list, i));
 }
+
 void PikaStdData_List___init__(PikaObj* self) {
-    /* set top index for append */
-    obj_setInt(self, "top", 0);
-    obj_newObj(self, "pyload", "", New_TinyObj);
+    PikaList* list = New_list();
+    obj_setPtr(self, "list", list);
 }
 
 void PikaStdData_List_set(PikaObj* self, Arg* arg, int i) {
-    char buff[11];
-    char* i_str = fast_itoa(buff, i);
-    int top = obj_getInt(self, "top");
-    if (i > top) {
+    PikaList* list = obj_getPtr(self, "list");
+    if (PIKA_RES_OK != list_setArg(list, i, arg)) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "[error]: index exceeded lengh of list.");
     }
-    PikaObj* pyload = obj_getObj(self, "pyload");
-    obj_setArg(pyload, i_str, arg);
 }
 
 Arg* PikaStdData_List___iter__(PikaObj* self) {
@@ -57,6 +47,7 @@ Arg* PikaStdData_List___next__(PikaObj* self) {
 Arg* PikaStdData_List___get__(PikaObj* self) {
     return PikaStdData_List_get(self, obj_getInt(self, "__key"));
 }
+
 void PikaStdData_List___set__(PikaObj* self) {
     PikaStdData_List_set(self, obj_getArg(self, "__val"),
                          obj_getInt(self, "__key"));
@@ -81,4 +72,9 @@ void PikaStdData_ByteArray_fromString(PikaObj* self, char* s) {
         pikaVM_runByteCode(self, (uint8_t*)bytes);
         PIKA_PYTHON_END
     }
+}
+
+void PikaStdData_List___del__(PikaObj* self) {
+    Args* list = obj_getPtr(self, "list");
+    args_deinit(list);
 }

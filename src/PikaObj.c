@@ -542,32 +542,32 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
 
 static int32_t __class_defineMethodWithType(PikaObj* self,
                                             char* declearation,
-                                            Method methodPtr,
+                                            Method method_ptr,
                                             ArgType method_type,
                                             ByteCodeFrame* bytecode_frame) {
     int32_t size = strGetSize(declearation);
     int32_t res = 0;
     Args buffs = {0};
-    char* cleanDeclearation =
+    char* clean_declearation =
         strDeleteChar(args_getBuff(&buffs, size), declearation, ' ');
-    char* methodPath =
-        strGetFirstToken(args_getBuff(&buffs, size), cleanDeclearation, '(');
+    char* method_path =
+        strGetFirstToken(args_getBuff(&buffs, size), clean_declearation, '(');
 
-    PikaObj* methodHost = obj_getHostObj(self, methodPath);
+    PikaObj* method_host = obj_getHostObj(self, method_path);
     MethodInfo method_info = {0};
-    char* methodName;
-    if (NULL == methodHost) {
+    char* method_name;
+    if (NULL == method_host) {
         /* no found method object */
         res = 1;
         goto exit;
     }
-    methodName = strPointToLastToken(methodPath, '.');
-    method_info.dec = cleanDeclearation;
-    method_info.name = methodName;
-    method_info.ptr = (void*)methodPtr;
+    method_name = strPointToLastToken(method_path, '.');
+    method_info.dec = clean_declearation;
+    method_info.name = method_name;
+    method_info.ptr = (void*)method_ptr;
     method_info.type = method_type;
     method_info.bytecode_frame = bytecode_frame;
-    obj_saveMethodInfo(methodHost, &method_info);
+    obj_saveMethodInfo(method_host, &method_info);
     res = 0;
     goto exit;
 exit:

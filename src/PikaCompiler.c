@@ -1,4 +1,29 @@
-
+/*
+ * This file is part of the PikaScript project.
+ * http://github.com/pikastech/pikascript
+ *
+ * MIT License
+ *
+ * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 #include "PikaCompiler.h"
 #include "BaseObj.h"
 #include "PikaObj.h"
@@ -268,7 +293,7 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
 
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
     if (0 != ((intptr_t)library_bytes & 0x03)) {
-        return PIKA_ERR_UNALIGNED_PTR;
+        return PIKA_RES_ERR_UNALIGNED_PTR;
     }
 
     char* magic_code = (char*)library_bytes;
@@ -281,14 +306,14 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
     if (!((magic_code[0] == 0x7f) && (magic_code[1] == 'p') &&
           (magic_code[2] == 'y') && (magic_code[3] == 'a'))) {
         __platform_printf("Error: invalid magic code.\r\n");
-        return PIKA_ERR_ILLEGAL_MAGIC_CODE;
+        return PIKA_RES_ERR_ILLEGAL_MAGIC_CODE;
     }
     /* check version num */
     if (version_num != LIB_VERSION_NUMBER) {
         __platform_printf(
             "Error: invalid version number. Expected %, got %\r\n",
             LIB_VERSION_NUMBER, version_num);
-        return PIKA_ERR_INVALID_VERSION_NUMBER;
+        return PIKA_RES_ERR_INVALID_VERSION_NUMBER;
     }
     uint8_t* bytecode_addr =
         library_bytes + LIB_INFO_BLOCK_SIZE * (module_num + 1);
@@ -300,7 +325,7 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
             *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
         bytecode_addr += module_size;
     }
-    return PIKA_OK;
+    return PIKA_RES_OK;
 }
 
 int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
@@ -308,16 +333,16 @@ int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
     if (NULL == file_arg) {
         __platform_printf("Error: Could not load library file '%s'\n",
                           lib_file_name);
-        return PIKA_ERR_IO_ERROR;
+        return PIKA_RES_ERR_IO_ERROR;
     }
     /* save file_arg as __lib_buf to libObj */
     obj_setArg_noCopy(self, "__lib_buf", file_arg);
     if (0 != LibObj_loadLibrary(self, arg_getBytes(file_arg))) {
         __platform_printf("Error: Could not load library from '%s'\n",
                           lib_file_name);
-        return PIKA_ERR_OPERATION_FAILED;
+        return PIKA_RES_ERR_OPERATION_FAILED;
     }
-    return PIKA_OK;
+    return PIKA_RES_OK;
 }
 
 size_t pika_fputs(char* str, FILE* fp) {

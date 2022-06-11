@@ -43,46 +43,46 @@ LinkNode* args_getNode(Args* self, char* name);
 
 Arg* args_getArgByIndex(Args* self, int32_t index);
 Arg* args_getArg(Args* self, char* name);
-int32_t args_removeArg(Args* self, Arg* argNow);
-int args_moveArg(Args* self, Args* dict, Arg* arg);
+PIKA_RES args_removeArg(Args* self, Arg* argNow);
+PIKA_RES args_moveArg(Args* self, Args* dict, Arg* arg);
 Arg* args_getArg_hash(Args* self, Hash nameHash);
 
-int32_t args_setArg(Args* self, Arg* arg);
+PIKA_RES args_setArg(Args* self, Arg* arg);
 
-int32_t args_copyArgByName(Args* self, char* name, Args* directList);
-int32_t args_copyArg(Args* self, Arg* argToBeCopy);
+PIKA_RES args_copyArgByName(Args* self, char* name, Args* directList);
+PIKA_RES args_copyArg(Args* self, Arg* argToBeCopy);
 
 ArgType args_getType(Args* self, char* name);
 int32_t args_isArgExist_hash(Args* self, Hash nameHash);
 int32_t args_isArgExist(Args* self, char* name);
 
-int32_t args_setStr(Args* self, char* name, char* strIn);
-int32_t args_setStrWithDefaultName(Args* self, char* strIn);
+PIKA_RES args_setStr(Args* self, char* name, char* strIn);
+PIKA_RES args_setStrWithDefaultName(Args* self, char* strIn);
 char* args_getStr(Args* self, char* name);
 
-int32_t args_setFloatWithDefaultName(Args* self, double argFloat);
-int32_t args_setFloat(Args* self, char* name, double argFloat);
+PIKA_RES args_setFloatWithDefaultName(Args* self, double argFloat);
+PIKA_RES args_setFloat(Args* self, char* name, double argFloat);
 double args_getFloat(Args* self, char* name);
 
-int32_t args_setRef(Args* self, char* name, void* argPointer);
-int32_t args_setPtr(Args* self, char* name, void* argPointer);
+PIKA_RES args_setRef(Args* self, char* name, void* argPointer);
+PIKA_RES args_setPtr(Args* self, char* name, void* argPointer);
 void* args_getPtr(Args* self, char* name);
 
-int32_t args_setInt(Args* self, char* name, int64_t int64In);
+PIKA_RES args_setInt(Args* self, char* name, int64_t int64In);
 int64_t args_getInt(Args* self, char* name);
 
 char* args_print(Args* self, char* name);
 
-int32_t args_setStructWithSize(Args* self,
-                               char* name,
-                               void* struct_ptr,
-                               uint32_t struct_size);
+PIKA_RES args_setStructWithSize(Args* self,
+                                char* name,
+                                void* struct_ptr,
+                                uint32_t struct_size);
 
-int32_t args_setHeapStructWithSize(Args* self,
-                                   char* name,
-                                   void* struct_ptr,
-                                   uint32_t struct_size,
-                                   void* struct_deinit_fun);
+PIKA_RES args_setHeapStructWithSize(Args* self,
+                                    char* name,
+                                    void* struct_ptr,
+                                    uint32_t struct_size,
+                                    void* struct_deinit_fun);
 
 #define args_setStruct(Args_p_self, char_p_name, struct_)            \
     args_setStructWithSize((Args_p_self), (char_p_name), &(struct_), \
@@ -95,25 +95,82 @@ int32_t args_setHeapStructWithSize(Args* self,
 
 void* args_getStruct(Args* self, char* name);
 
-int32_t args_set(Args* self, char* name, char* valueStr);
-int32_t args_setObjectWithClass(Args* self,
-                                char* objectName,
-                                char* className,
-                                void* objectPtr);
-int32_t args_setPtrWithType(Args* self, char* name, ArgType type, void* objPtr);
-int32_t args_foreach(Args* self,
-                     int32_t (*eachHandle)(Arg* argEach, Args* handleArgs),
-                     Args* handleArgs);
+PIKA_RES args_set(Args* self, char* name, char* valueStr);
+PIKA_RES args_setObjectWithClass(Args* self,
+                                 char* objectName,
+                                 char* className,
+                                 void* objectPtr);
+PIKA_RES args_setPtrWithType(Args* self,
+                             char* name,
+                             ArgType type,
+                             void* objPtr);
+PIKA_RES args_foreach(Args* self,
+                      int32_t (*eachHandle)(Arg* argEach, Args* context),
+                      Args* context);
 
 char* args_getBuff(Args* self, int32_t size);
-uint8_t args_setLiteral(Args* self, char* targetArgName, char* literal);
-int args_pushArg(Args* self, Arg* arg);
-Arg* args_getArg_index(Args* self, int index);
+PIKA_RES args_pushArg(Args* self, Arg* arg);
+Arg* args_getArgByidex(Args* self, int index);
 void* args_getHeapStruct(Args* self, char* name);
-int32_t args_removeArg_notDeinitArg(Args* self, Arg* argNow);
+PIKA_RES args_removeArg_notDeinitArg(Args* self, Arg* argNow);
 uint8_t* args_getBytes(Args* self, char* name);
-void args_setBytes(Args* self, char* name, uint8_t* src, size_t size);
+PIKA_RES args_setBytes(Args* self, char* name, uint8_t* src, size_t size);
 size_t args_getBytesSize(Args* self, char* name);
 
 Args* New_args(Args* args);
+
+typedef struct PikaList PikaList;
+struct PikaList {
+    Args super;
+};
+
+typedef struct PikaTuple PikaTuple;
+struct PikaTuple {
+    PikaList super;
+};
+
+typedef struct PikaDict PikaDict;
+struct PikaDict {
+    Args super;
+};
+
+/* dict api */
+PikaDict* New_dict(void);
+#define dict_setInt(self, name, val) \
+    args_setInt((&((self)->super)), (name), (val))
+#define dict_setFloat(self, name, val) \
+    args_setFloat((&((self)->super)), (name), (val))
+#define dict_setStr(self, name, val) \
+    args_setStr((&((self)->super)), (name), (val))
+#define dict_setPtr(self, name, val) \
+    args_setPtr((&((self)->super)), (name), (val))
+#define dict_setArg(self, val) args_setArg((&((self)->super)), (val))
+#define dict_removeArg(self, val) args_removeArg((&((self)->super)), (val))
+#define dict_setBytes(self, name, val, size) \
+    args_setBytes((&((self)->super)), (name), (val), (size))
+#define dict_getInt(self, name) (args_getInt((&((self)->super)), (name)))
+#define dict_getFloat(self, name) (args_getFloat((&((self)->super)), (name)))
+#define dict_getStr(self, name) (args_getStr((&((self)->super)), (name)))
+#define dict_getPtr(self, name) (args_getPtr((&((self)->super)), (name)))
+#define dict_getArg(self, name) (args_getArg((&((self)->super)), (name)))
+#define dict_getBytes(self, name) (args_getBytes((&((self)->super)), (name)))
+#define dict_getType(self, name) (args_getType((&((self)->super)), (name)))
+#define dict_getBytesSize(self, name) \
+    (args_getBytesSize((&((self)->super)), (name)))
+#define dict_deinit(self) (args_deinit((&((self)->super))))
+
+#define list_deinit(self) (args_deinit((&((self)->super))))
+PIKA_RES list_append(PikaList* self, Arg* arg);
+PIKA_RES list_setArg(PikaList* self, int index, Arg* arg);
+Arg* list_getArg(PikaList* self, int index);
+size_t list_getSize(PikaList* self);
+
+/* tuple api */
+#define tuple_deinit(self) (list_deinit((&((self)->super))))
+#define tuple_getArg(self, index) (list_getArg((&((self)->super)), (index)))
+#define tuple_getSize(self) (list_getSize((&((self)->super))))
+
+PikaList* New_list(void);
+PikaTuple* New_tuple(void);
+
 #endif
