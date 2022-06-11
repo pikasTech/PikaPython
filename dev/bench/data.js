@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1654858312138,
+  "lastUpdate": 1654959831971,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -59100,6 +59100,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000127988115389,
             "unit": "ms/iter",
             "extra": "iterations: 280663\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "b02672b1301d86d27ef1c55e020b1124cc1feae6",
+          "message": "!21 Support variable pars for print()\n* update pre-compiler\n* test passed for variable pars of print()\n* variable pars is tested ok for print()\n* skip arg_num check for variable\n* support *val in the preCompiler\n* add file\n* Merge branch 'dev' of https://gitee.com/lyon1998/pikascript into dev\n* fix warning\n* both update ByteCodeGen\n* use super instead of parent\n* create PikaList C list struct\n* use args inner the PikaStdData.List()\n* use PikaDict in PikaStdData.Dict()\n* support dict in c\n* support dict in c\n* clean Tinyobj",
+          "timestamp": "2022-06-11T14:56:51Z",
+          "tree_id": "c4ef04015aab59c6c830f4c2da363acb6620d43f",
+          "url": "https://github.com/pikasTech/pikascript/commit/b02672b1301d86d27ef1c55e020b1124cc1feae6"
+        },
+        "date": 1654959827144,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 5555.223431217374,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 5555.223431217374 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 48.42816736929334,
+            "unit": "ms/iter",
+            "extra": "iterations: 29\ncpu: 48.41321019656993 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 23.261867577755016,
+            "unit": "ms/iter",
+            "extra": "iterations: 59\ncpu: 23.260755670164897 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 9.000978815705457,
+            "unit": "ms/iter",
+            "extra": "iterations: 155\ncpu: 9.000538073595175 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.004999976346374877,
+            "unit": "ms/iter",
+            "extra": "iterations: 271050\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
