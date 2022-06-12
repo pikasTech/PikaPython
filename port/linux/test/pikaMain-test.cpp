@@ -1358,10 +1358,10 @@ TEST(pikaMain, get_native_method) {
     /* do some thing */
     Args args = {0};
     args_setStr(&args, "val", "test");
-    obj_runNativeMethod(pikaMain, "print", &args);
+    obj_runNativeMethod(pikaMain, "printNoEnd", &args);
     args_deinit_stack(&args);
     /* assert */
-    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_STREQ(log_buff[0], "test");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -1497,6 +1497,7 @@ TEST(pikaMain, def_args_err) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain, "print()\n");
+    // obj_run(pikaMain, "printNoEnd()\n");
     /* collect */
 
     /* assert */

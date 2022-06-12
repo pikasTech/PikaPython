@@ -481,7 +481,7 @@ TEST(lib, load_no_file) {
     /* compile */
     LibObj* lib = New_LibObj(NULL);
     int res = LibObj_loadLibraryFile(lib, "test/python/mian.py.o");
-    EXPECT_EQ(res, PIKA_ERR_IO_ERROR);
+    EXPECT_EQ(res, PIKA_RES_ERR_IO_ERROR);
     /* deinit */
     LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -491,7 +491,7 @@ TEST(lib, load_err_file_type) {
     /* compile */
     LibObj* lib = New_LibObj(NULL);
     int res = LibObj_loadLibraryFile(lib, "test/python/main.py.o");
-    EXPECT_EQ(res, PIKA_ERR_OPERATION_FAILED);
+    EXPECT_EQ(res, PIKA_RES_ERR_OPERATION_FAILED);
     /* deinit */
     LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);

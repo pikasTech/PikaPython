@@ -50,3 +50,5 @@ char* PikaMath_Operator___str__(PikaObj *self){
 void PikaMath_Operator___del__(PikaObj *self){
     __platform_printf("del operator...\r\n");
 }
+
+
