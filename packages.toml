@@ -132,6 +132,14 @@ releases = [
 ]
 
 [[packages]]
+name = "ctypes"
+releases = [
+  "v0.0.1 7362ba0d4b55abc304d3169989370f0dd8cddde0",
+  "v0.0.2 3fae2b5e86a0de787f6785ccd72a6590b4984f88",
+  "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
+]
+
+[[packages]]
 name = "STM32G0"
 releases = [
   "v1.0.2 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
@@ -240,14 +248,6 @@ name = "CH582"
 releases = [
   "v1.0.0 7cdb0cf9ed161c3fc6802028a9e34c9f94b56244",
   "v1.1.0 bfc01e09fd71c26a7140d23864c1d3052f23d087",
-]
-
-[[packages]]
-name = "ctypes"
-releases = [
-  "v0.0.1 7362ba0d4b55abc304d3169989370f0dd8cddde0",
-  "v0.0.2 3fae2b5e86a0de787f6785ccd72a6590b4984f88",
-  "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
 ]
 
 [[packages]]
