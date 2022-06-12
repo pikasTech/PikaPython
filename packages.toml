@@ -119,6 +119,12 @@ releases = [
 ]
 
 [[packages]]
+name = "PikaMath"
+releases = [
+  "v0.0.1 31146e2395e80b5785a4b2e526913a4590160e66",
+]
+
+[[packages]]
 name = "STM32G0"
 releases = [
   "v1.0.2 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
