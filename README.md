@@ -608,6 +608,7 @@ sh run.sh
 
 | Contribute log | Contributer |
 | --- | --- |
+| contrubute to PikaMath.Math() | [onceday](https://gitee.com/onceday) |
 | add support for Unix Time | [onceday](https://gitee.com/onceday) |
 | contrubute to PikaStdLib.String() | [purewind7](https://gitee.com/purewind7) |
 | Add [PLOOC](https://github.com/GorgonMeducer/PLOOC) support for PikaScript Core | [GorgonMeducer](https://github.com/GorgonMeducer) |
