@@ -125,6 +125,13 @@ releases = [
 ]
 
 [[packages]]
+name = "pika_cjson"
+releases = [
+  "v0.0.1 60389c541db480f41a55498270094dd030df9e24",
+  "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
+]
+
+[[packages]]
 name = "STM32G0"
 releases = [
   "v1.0.2 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
@@ -249,9 +256,3 @@ releases = [
   "v1.0.0 e2a630358c0d490b198f7e8682fb61569eb7ec56",
 ]
 
-[[packages]]
-name = "pika_cjson"
-releases = [
-  "v0.0.1 60389c541db480f41a55498270094dd030df9e24",
-  "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
-]
