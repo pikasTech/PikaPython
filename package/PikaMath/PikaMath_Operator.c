@@ -46,3 +46,9 @@ char* PikaMath_Operator___str__(PikaObj *self){
     obj_setStr(self, "__buf", "test");
     return obj_getStr(self, "__buf");
 }
+
+void PikaMath_Operator___del__(PikaObj *self){
+    __platform_printf("del operator...\r\n");
+}
+
+
