@@ -17,3 +17,85 @@ class Operator(TinyObj):
     def NOT(self, flag: int) -> int: ...
     def __str__(self) -> str: ...
     def __del__(self): ...
+
+class Math(TinyObj):
+    def __init__(self):
+        pass
+
+    def ceil(self, x:float) ->int:
+        pass
+    
+    def fabs(self, x:float) ->float:
+        pass
+
+    def floor(self, x:float) ->int:
+        pass
+
+    def fmod(self, x:float,y:float) ->float:
+        pass
+
+    def remainder(self ,x:float, y:float) ->float:
+        pass
+
+    def trunc(self, x:float) ->float:
+        pass
+
+    #幂函数和对数函数
+
+    def exp(self, x:float) ->float:
+        pass
+    
+    def log(self, x:float) ->float:
+        pass
+    
+    def log2(self, x:float) ->float:
+        pass
+
+    def log10(self, x:float) ->float:
+        pass
+
+    def pow(self, x:float, y:float) ->float:
+        pass
+
+    def sqrt(self, x:float) ->float:
+        pass
+
+    #三角函数
+    def acos(self, x:float) ->float:
+        pass
+    
+    def asin(self, x:float) ->float:
+        pass
+
+    def atan(self, x:float) ->float:
+        pass
+
+    def atan2(self, x:float,y:float) ->float:
+        pass
+    
+    def cos(self, x:float) ->float:
+        pass
+
+    def sin(self, x:float) ->float:
+        pass
+    
+    def tan(self, x:float) ->float:
+        pass
+    
+    #角度转换
+    def degrees(self, x:float) ->float:
+        pass
+
+    def radians(self, x:float) ->float:
+        pass
+
+    #双曲函数
+    def cosh(self, x:float) ->float:
+        pass
+
+    def sinh(self, x:float) ->float:
+        pass
+
+    def tanh(self, x:float) ->float:
+        pass
+    
