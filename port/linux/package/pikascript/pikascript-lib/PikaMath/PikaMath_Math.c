@@ -10,99 +10,99 @@ void PikaMath_Math___init__(PikaObj *self)
     obj_setFloat(self, "e", PI);
 }
 
-float PikaMath_Math_acos(PikaObj *self, float x)
+double PikaMath_Math_acos(PikaObj *self, double x)
 {
     return acos(x);
 }
-float PikaMath_Math_asin(PikaObj *self, float x)
+double PikaMath_Math_asin(PikaObj *self, double x)
 {
     return asin(x);
 }
-float PikaMath_Math_atan(PikaObj *self, float x)
+double PikaMath_Math_atan(PikaObj *self, double x)
 {
     return atan(x);
 }
-float PikaMath_Math_atan2(PikaObj *self, float x, float y)
+double PikaMath_Math_atan2(PikaObj *self, double x, double y)
 {
     return atan2(x,y);
 }
-int PikaMath_Math_ceil(PikaObj *self, float x)
+int PikaMath_Math_ceil(PikaObj *self, double x)
 {
     return ceil(x);
 }
-float PikaMath_Math_cos(PikaObj *self, float x)
+double PikaMath_Math_cos(PikaObj *self, double x)
 {
     return cos(x);
 }
-float PikaMath_Math_cosh(PikaObj *self, float x)
+double PikaMath_Math_cosh(PikaObj *self, double x)
 {
     return cosh(x);
 }
-float PikaMath_Math_degrees(PikaObj *self, float x)
+double PikaMath_Math_degrees(PikaObj *self, double x)
 {
     return x*180.0/PI;
 }
-float PikaMath_Math_exp(PikaObj *self, float x)
+double PikaMath_Math_exp(PikaObj *self, double x)
 {
     return exp(x);
 }
-float PikaMath_Math_fabs(PikaObj *self, float x)
+double PikaMath_Math_fabs(PikaObj *self, double x)
 {
     return fabs(x);
 }
-int PikaMath_Math_floor(PikaObj *self, float x)
+int PikaMath_Math_floor(PikaObj *self, double x)
 {
     return floor(x);
 }
-float PikaMath_Math_fmod(PikaObj *self, float x, float y)
+double PikaMath_Math_fmod(PikaObj *self, double x, double y)
 {
     return fmod(x,y);
 }
-float PikaMath_Math_log(PikaObj *self, float x)
+double PikaMath_Math_log(PikaObj *self, double x)
 {
     return log(x);
 }
-float PikaMath_Math_log10(PikaObj *self, float x)
+double PikaMath_Math_log10(PikaObj *self, double x)
 {
     return log10(x);
 }
-float PikaMath_Math_log2(PikaObj *self, float x)
+double PikaMath_Math_log2(PikaObj *self, double x)
 {
     return log2(x);
 }
-float PikaMath_Math_pow(PikaObj *self, float x, float y)
+double PikaMath_Math_pow(PikaObj *self, double x, double y)
 {
     return pow(x,y);
 }
-float PikaMath_Math_radians(PikaObj *self, float x)
+double PikaMath_Math_radians(PikaObj *self, double x)
 {
     return x*PI/180.0;
 }
-float PikaMath_Math_remainder(PikaObj *self, float x, float y)
+double PikaMath_Math_remainder(PikaObj *self, double x, double y)
 {
     return remainder(x,y);
 }
-float PikaMath_Math_sin(PikaObj *self, float x)
+double PikaMath_Math_sin(PikaObj *self, double x)
 {
     return sin(x);
 }
-float PikaMath_Math_sinh(PikaObj *self, float x)
+double PikaMath_Math_sinh(PikaObj *self, double x)
 {
     return sinh(x);
 }
-float PikaMath_Math_sqrt(PikaObj *self, float x)
+double PikaMath_Math_sqrt(PikaObj *self, double x)
 {
     return sqrt(x);
 }
-float PikaMath_Math_tan(PikaObj *self, float x)
+double PikaMath_Math_tan(PikaObj *self, double x)
 {
     return tan(x);
 }
-float PikaMath_Math_tanh(PikaObj *self, float x)
+double PikaMath_Math_tanh(PikaObj *self, double x)
 {
     return tanh(x);
 }
-float PikaMath_Math_trunc(PikaObj *self, float x)
+double PikaMath_Math_trunc(PikaObj *self, double x)
 {
     return trunc(x);
 }

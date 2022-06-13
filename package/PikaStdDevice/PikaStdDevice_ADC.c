@@ -17,7 +17,7 @@ void PikaStdDevice_ADC___init__(PikaObj* self) {
     PikaStdDevice_ADC_init(self);
 }
 
-float PikaStdDevice_ADC_read(PikaObj* self) {
+double PikaStdDevice_ADC_read(PikaObj* self) {
     obj_runNativeMethod(self, "platformRead", NULL);
     return obj_getFloat(self, "val");
 }

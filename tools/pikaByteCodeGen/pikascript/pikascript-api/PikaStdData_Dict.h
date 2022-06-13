@@ -9,6 +9,7 @@
 
 PikaObj *New_PikaStdData_Dict(Args *args);
 
+void PikaStdData_Dict___del__(PikaObj *self);
 Arg* PikaStdData_Dict___get__(PikaObj *self, Arg* __key);
 void PikaStdData_Dict___init__(PikaObj *self);
 Arg* PikaStdData_Dict___iter__(PikaObj *self);

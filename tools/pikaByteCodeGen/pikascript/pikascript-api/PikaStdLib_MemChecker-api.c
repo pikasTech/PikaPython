@@ -8,12 +8,12 @@
 #include "BaseObj.h"
 
 void PikaStdLib_MemChecker_getMaxMethod(PikaObj *self, Args *args){
-    float res = PikaStdLib_MemChecker_getMax(self);
+    double res = PikaStdLib_MemChecker_getMax(self);
     method_returnFloat(args, res);
 }
 
 void PikaStdLib_MemChecker_getNowMethod(PikaObj *self, Args *args){
-    float res = PikaStdLib_MemChecker_getNow(self);
+    double res = PikaStdLib_MemChecker_getNow(self);
     method_returnFloat(args, res);
 }
 

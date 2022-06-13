@@ -544,7 +544,7 @@ void time_asctime(const _tm* this_tm) {
     time_printf("%s\n", str);
 }
 
-float PikaStdDevice_Time_time(PikaObj* self) {
+double PikaStdDevice_Time_time(PikaObj* self) {
     /* run platformGetTick() */
     PIKA_PYTHON_BEGIN
     /* clang-format off */
@@ -579,7 +579,7 @@ void time_set_tm_value(PikaObj* self, const _tm* this_tm) {
     obj_setInt(self, "tm_isdst", this_tm->tm_isdst);
 }
 
-void PikaStdDevice_Time_gmtime(PikaObj* self, float unix_time) {
+void PikaStdDevice_Time_gmtime(PikaObj* self, double unix_time) {
     _tm this_tm;
     char str[200];
     time_gmtime(unix_time, &this_tm);
@@ -589,7 +589,7 @@ void PikaStdDevice_Time_gmtime(PikaObj* self, float unix_time) {
     //显示出来
     time_printf("%s\n", str);
 }
-void PikaStdDevice_Time_localtime(PikaObj* self, float unix_time) {
+void PikaStdDevice_Time_localtime(PikaObj* self, double unix_time) {
     _tm this_tm;
     char str[200];
     int locale = obj_getInt(self, "locale");
@@ -625,7 +625,7 @@ void PikaStdDevice_Time_asctime(PikaObj* self) {
     time_get_tm_value(self, &this_tm);
     time_asctime(&this_tm);
 }
-void PikaStdDevice_Time_ctime(PikaObj* self, float unix_time) {
+void PikaStdDevice_Time_ctime(PikaObj* self, double unix_time) {
     _tm this_tm;
     int locale = obj_getInt(self, "locale");
     time_localtime(unix_time, &this_tm, locale);

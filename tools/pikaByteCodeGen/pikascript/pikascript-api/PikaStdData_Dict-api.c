@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include "BaseObj.h"
 
+void PikaStdData_Dict___del__Method(PikaObj *self, Args *args){
+    PikaStdData_Dict___del__(self);
+}
+
 void PikaStdData_Dict___get__Method(PikaObj *self, Args *args){
     Arg* __key = args_getArg(args, "__key");
     Arg* res = PikaStdData_Dict___get__(self, __key);
@@ -52,6 +56,7 @@ void PikaStdData_Dict_setMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdData_Dict(Args *args){
     PikaObj *self = New_TinyObj(args);
+    class_defineMethod(self, "__del__()", PikaStdData_Dict___del__Method);
     class_defineMethod(self, "__get__(__key:any)->any", PikaStdData_Dict___get__Method);
     class_defineMethod(self, "__init__()", PikaStdData_Dict___init__Method);
     class_defineMethod(self, "__iter__()->any", PikaStdData_Dict___iter__Method);

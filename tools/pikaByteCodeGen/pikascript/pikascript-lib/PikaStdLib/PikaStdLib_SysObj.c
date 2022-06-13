@@ -63,7 +63,7 @@ void PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     }
 }
 
-float PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {
+double PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {
     ArgType type = arg_getType(arg);
     if (ARG_TYPE_INT == type) {
         return (float)arg_getInt(arg);
@@ -71,7 +71,7 @@ float PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_FLOAT == type) {
         return (float)arg_getFloat(arg);
     }
-    obj_setSysOut(self, "[error] convert to float type faild.");
+    obj_setSysOut(self, "[error] convert to double type faild.");
     obj_setErrorCode(self, 1);
     return -99999.99999;
 }
@@ -112,7 +112,7 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
         goto exit;
     }
     if (ARG_TYPE_FLOAT == type) {
-        float val = arg_getFloat(arg);
+        double val = arg_getFloat(arg);
         res = strsFormat(&buffs, 11, "%f", val);
         goto exit;
     }

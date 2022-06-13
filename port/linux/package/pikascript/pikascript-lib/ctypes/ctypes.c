@@ -13,7 +13,7 @@ void ctypes_c_wchar_p___init__(PikaObj* self, char* value) {
     ctypesUtils_setStr(self, value);
 }
 
-void ctypes_c_float___init__(PikaObj* self, float value) {
+void ctypes_c_float___init__(PikaObj* self, double value) {
     ctypesUtils_setFloat(self, value);
 }
 

@@ -9,7 +9,7 @@ impl PyType {
             return "int".to_string();
         }
         if self.type_name == "float" {
-            return "float".to_string();
+            return "double".to_string();
         }
         if self.type_name == "pointer" {
             return "void*".to_string();
@@ -37,7 +37,7 @@ impl PyType {
             return "int".to_string();
         }
         if self.type_name == "float" {
-            return "float".to_string();
+            return "double".to_string();
         }
         if self.type_name == "pointer" {
             return "void*".to_string();

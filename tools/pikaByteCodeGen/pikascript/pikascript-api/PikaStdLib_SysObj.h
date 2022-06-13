@@ -15,13 +15,15 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj *self, Arg* end, Arg* obj, Arg* start, 
 Arg* PikaStdLib_SysObj_bytes(PikaObj *self, Arg* val);
 char* PikaStdLib_SysObj_chr(PikaObj *self, int val);
 Arg* PikaStdLib_SysObj_dict(PikaObj *self);
-float PikaStdLib_SysObj_float(PikaObj *self, Arg* arg);
+double PikaStdLib_SysObj_float(PikaObj *self, Arg* arg);
 char* PikaStdLib_SysObj_hex(PikaObj *self, int val);
 int PikaStdLib_SysObj_int(PikaObj *self, Arg* arg);
 Arg* PikaStdLib_SysObj_iter(PikaObj *self, Arg* arg);
 int PikaStdLib_SysObj_len(PikaObj *self, Arg* arg);
 Arg* PikaStdLib_SysObj_list(PikaObj *self);
 int PikaStdLib_SysObj_ord(PikaObj *self, char* val);
+void PikaStdLib_SysObj_print(PikaObj *self, PikaTuple* val);
+void PikaStdLib_SysObj_printNoEnd(PikaObj *self, Arg* val);
 Arg* PikaStdLib_SysObj_range(PikaObj *self, int a1, int a2);
 void PikaStdLib_SysObj_remove(PikaObj *self, char* argPath);
 char* PikaStdLib_SysObj_str(PikaObj *self, Arg* arg);

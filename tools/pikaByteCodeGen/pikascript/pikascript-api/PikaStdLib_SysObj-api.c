@@ -50,7 +50,7 @@ void PikaStdLib_SysObj_dictMethod(PikaObj *self, Args *args){
 
 void PikaStdLib_SysObj_floatMethod(PikaObj *self, Args *args){
     Arg* arg = args_getArg(args, "arg");
-    float res = PikaStdLib_SysObj_float(self, arg);
+    double res = PikaStdLib_SysObj_float(self, arg);
     method_returnFloat(args, res);
 }
 
@@ -87,6 +87,16 @@ void PikaStdLib_SysObj_ordMethod(PikaObj *self, Args *args){
     char* val = args_getStr(args, "val");
     int res = PikaStdLib_SysObj_ord(self, val);
     method_returnInt(args, res);
+}
+
+void PikaStdLib_SysObj_printMethod(PikaObj *self, Args *args){
+    PikaTuple* val = args_getPtr(args, "val");
+    PikaStdLib_SysObj_print(self, val);
+}
+
+void PikaStdLib_SysObj_printNoEndMethod(PikaObj *self, Args *args){
+    Arg* val = args_getArg(args, "val");
+    PikaStdLib_SysObj_printNoEnd(self, val);
 }
 
 void PikaStdLib_SysObj_rangeMethod(PikaObj *self, Args *args){
@@ -127,6 +137,8 @@ PikaObj *New_PikaStdLib_SysObj(Args *args){
     class_defineMethod(self, "len(arg:any)->int", PikaStdLib_SysObj_lenMethod);
     class_defineMethod(self, "list()->any", PikaStdLib_SysObj_listMethod);
     class_defineMethod(self, "ord(val:str)->int", PikaStdLib_SysObj_ordMethod);
+    class_defineMethod(self, "print(*val)", PikaStdLib_SysObj_printMethod);
+    class_defineMethod(self, "printNoEnd(val:any)", PikaStdLib_SysObj_printNoEndMethod);
     class_defineMethod(self, "range(a1:int,a2:int)->any", PikaStdLib_SysObj_rangeMethod);
     class_defineMethod(self, "remove(argPath:str)", PikaStdLib_SysObj_removeMethod);
     class_defineMethod(self, "str(arg:any)->str", PikaStdLib_SysObj_strMethod);
