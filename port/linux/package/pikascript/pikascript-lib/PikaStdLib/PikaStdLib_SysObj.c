@@ -498,3 +498,13 @@ char* PikaStdLib_SysObj_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
     strsDeinit(&buffs);
     return res;
 }
+
+int PikaStdLib_SysObj_id(PikaObj* self, Arg* obj) {
+    uintptr_t ptr = 0;
+    if (argType_isObject(arg_getType(obj))) {
+        ptr = (uintptr_t)arg_getPtr(obj);
+    } else {
+        ptr = (uintptr_t)obj;
+    }
+    return ptr & (0x7FFFFFFF);
+}
