@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655172626914,
+  "lastUpdate": 1655177214073,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -59532,6 +59532,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005001319494054416,
             "unit": "ms/iter",
             "extra": "iterations: 213433\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "6acc0f9ecd11fbecb81219d14c49ee0e6adaa426",
+          "message": "!25 support format output for print()\n* test for format with tuple is ok\n* 'format'%var is ok (tuple var is not ok)\n* rename _cformat to cformat()\n* optimize the memory usage of format_list\n* add string-test.cpp\n* cformat() is ok\n* fix variable par load issue\n* use test_common.h\n* use test_common to simplify the gtest case\n* Merge branch 'master' into dev\n* fix float->double for bytecodegen\n* update to /package\n* Use double in C for float in python",
+          "timestamp": "2022-06-14T03:20:17Z",
+          "tree_id": "695882bc49115beabd5f126f692277bc63eb7954",
+          "url": "https://github.com/pikasTech/pikascript/commit/6acc0f9ecd11fbecb81219d14c49ee0e6adaa426"
+        },
+        "date": 1655177209043,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6549.8155241915965,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6549.8155241915965 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 42.728739465545786,
+            "unit": "ms/iter",
+            "extra": "iterations: 23\ncpu: 42.722340638666395 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 23.14349385472787,
+            "unit": "ms/iter",
+            "extra": "iterations: 42\ncpu: 23.14047301488038 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 7.635185100785168,
+            "unit": "ms/iter",
+            "extra": "iterations: 128\ncpu: 7.633802786555762 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000701112279342,
+            "unit": "ms/iter",
+            "extra": "iterations: 196377\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
