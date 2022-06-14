@@ -1,10 +1,5 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "PikaVM.h"
-#include "dataArgs.h"
-#include "dataString.h"
-}
+
 static int mem;
 TEST(args, test1) {
     mem = pikaMemNow();

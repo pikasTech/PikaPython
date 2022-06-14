@@ -101,7 +101,7 @@ char* Parser_parsePyLines(Args* outBuffs,
     ParserState_forEach(parseState)
 
 #define ParserState_forEachToken(parseState, tokens) \
-    struct ParserState ps;                           \
+    struct ParserState parseState;                           \
     ParserState_forEachTokenExistPs(parseState, tokens)
 
 uint16_t Tokens_getSize(char* tokens);

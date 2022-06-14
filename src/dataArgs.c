@@ -562,3 +562,53 @@ PikaTuple* New_tuple(void) {
     PikaTuple* self = (PikaTuple*)New_list();
     return self;
 }
+
+char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg) {
+    Args buffs = {0};
+    char* res = NULL;
+    ArgType type = arg_getType(arg);
+    if (ARG_TYPE_INT == type) {
+        int val = arg_getInt(arg);
+        res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);
+        goto exit;
+    }
+    if (ARG_TYPE_FLOAT == type) {
+        double val = arg_getFloat(arg);
+        res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);
+        goto exit;
+    }
+    if (ARG_TYPE_STRING == type) {
+        char* val = arg_getStr(arg);
+        res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);
+        goto exit;
+    }
+exit:
+    res = strsCopy(out_buffs, res);
+    strsDeinit(&buffs);
+    return res;
+}
+
+char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list) {
+    Args buffs = {0};
+    char* res = NULL;
+    char* fmt_buff = strsCopy(&buffs, fmt);
+    char* fmt_item = strsPopToken(&buffs, fmt_buff, '%');
+    Arg* res_buff = arg_setStr(NULL, "", fmt_item);
+
+    for (size_t i = 0; i < list_getSize(list); i++) {
+        Args buffs_item = {0};
+        Arg* arg = list_getArg(list, i);
+        char* fmt_item = strsPopToken(&buffs_item, fmt_buff, '%');
+        fmt_item = strsAppend(&buffs_item, "%", fmt_item);
+        char* str_format = strsFormatArg(&buffs_item, fmt_item, arg);
+        res_buff = arg_strAppend(res_buff, str_format);
+        strsDeinit(&buffs_item);
+    }
+    goto exit;
+
+exit:
+    res = strsCopy(out_buffs, arg_getStr(res_buff));
+    strsDeinit(&buffs);
+    arg_deinit(res_buff);
+    return res;
+}

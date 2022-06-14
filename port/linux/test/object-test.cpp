@@ -1,11 +1,4 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "BaseObj.h"
-#include "PikaStdLib_SysObj.h"
-#include "TinyObj.h"
-#include "pika_config_gtest.h"
-}
 
 void testFloat(PikaObj* obj, Args* args) {
     float val1 = args_getFloat(args, "val1");

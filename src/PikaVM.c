@@ -305,27 +305,35 @@ static int VMState_loadArgsFromMethodArg(VMState* vs,
 
     /* get variable tuple name */
     char* type_list_buff = strsCopy(&buffs, type_list);
+    int variable_arg_start = 0;
     for (int i = 0; i < arg_num_dec; i++) {
         char* arg_def = strPopLastToken(type_list_buff, ',');
         if (strIsStartWith(arg_def, "*")) {
             /* skip the '*' */
             variable_tuple_name = arg_def + 1;
+            variable_arg_start = arg_num_dec - i - 1;
+            is_get_variable_arg = PIKA_TRUE;
+            break;
         }
+    }
+
+    /* found variable arg */
+    if (PIKA_TRUE == is_get_variable_arg) {
+        tuple = New_tuple();
+        strPopLastToken(type_list, ',');
     }
 
     /* load pars */
     for (int i = 0; i < arg_num; i++) {
-        char* arg_def = strPopLastToken(type_list, ',');
-        strPopLastToken(arg_def, ':');
-        char* arg_name = arg_def;
-        /* found variable arg */
-        if (strIsStartWith(arg_name, "*")) {
-            is_get_variable_arg = PIKA_TRUE;
-            tuple = New_tuple();
-            /* clear the type_list */
-            type_list = "";
+        char* arg_name = NULL;
+        if (arg_num - i <= variable_arg_start) {
+            is_get_variable_arg = PIKA_FALSE;
         }
-        if (PIKA_TRUE == is_get_variable_arg) {
+        if (PIKA_FALSE == is_get_variable_arg) {
+            char* arg_def = strPopLastToken(type_list, ',');
+            strPopLastToken(arg_def, ':');
+            arg_name = arg_def;
+        } else {
             /* clear the variable arg name */
             arg_name = strsCopy(&buffs, "");
         }

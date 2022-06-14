@@ -1,21 +1,11 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "PikaMain.h"
-#include "PikaParser.h"
-#include "PikaStdLib_MemChecker.h"
-#include "PikaVM.h"
-#include "dataArgs.h"
-#include "dataMemory.h"
-#include "dataStrs.h"
-#include "pikaScript.h"
-#include "pika_config_gtest.h"
 #include "time.h"
 
+extern "C" {
 typedef struct tm _tm;
 extern int64_t time_mktime(const _tm* this_tm, int locale);
 extern void time_gmtime(double unix_time, _tm* this_tm);
-extern void time_asctime(const _tm* this_tm); 
+extern void time_asctime(const _tm* this_tm);
 void time_struct_format(const _tm* this_tm, char* str);
 }
 
@@ -76,16 +66,13 @@ TEST(unix_time, unix_time) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-int compare(const _tm* t1,const _tm* t2)
-{
-    int size = 8; //只比对前面8个数据
-    int *it1 = (int*)t1;
-    int *it2 = (int*)t2;
-    for(int i=0;i<size;i++)
-    {
-        //printf("t1=%d,t2=%d\n",it1[i],it2[i]);
-        if(it1[i]!=it2[i])
-        {
+int compare(const _tm* t1, const _tm* t2) {
+    int size = 8;  //只比对前面8个数据
+    int* it1 = (int*)t1;
+    int* it2 = (int*)t2;
+    for (int i = 0; i < size; i++) {
+        // printf("t1=%d,t2=%d\n",it1[i],it2[i]);
+        if (it1[i] != it2[i]) {
             printf("mytime:  ");
             time_asctime(t1);
             printf("ctime:  ");
@@ -98,47 +85,44 @@ int compare(const _tm* t1,const _tm* t2)
 
 TEST(unix_time, iteration_form_1970_to_2070) {
     /* init */
-    _tm temp1,*temp2;
+    _tm temp1, *temp2;
     int64_t tint1;
-    int64_t r=123456;
+    int64_t r = 123456;
     int flag = 1;
     char str[200];
     /* run */
 
     /* 获取数据比对 */
-    int test_num =365*100;
+    int test_num = 365 * 100;
     int record = test_num;
 
-    while(test_num--)
-    {
-        //r=randL2();
-        r+=24*60*60;
-        time_gmtime(r,&temp1);
-        tint1 = time_mktime(&temp1,0);
+    while (test_num--) {
+        // r=randL2();
+        r += 24 * 60 * 60;
+        time_gmtime(r, &temp1);
+        tint1 = time_mktime(&temp1, 0);
         temp2 = gmtime(&r);
-        temp1.tm_yday -=1;
-        temp1.tm_isdst =0;
-        temp2->tm_year+=1900;
-        if(compare(&temp1,temp2))
-        {
+        temp1.tm_yday -= 1;
+        temp1.tm_isdst = 0;
+        temp2->tm_year += 1900;
+        if (compare(&temp1, temp2)) {
             printf("error!\n");
             //格式化字符
             time_struct_format(&temp1, str);
             printf("%s\n", str);
             time_struct_format(temp2, str);
             printf("%s\n", str);
-            flag=0;
+            flag = 0;
             break;
         }
-        if(tint1 != r)
-        {
-            printf("\n error!tint1 = %ld ,r = %ld \n",tint1,r);
-            flag=0;
+        if (tint1 != r) {
+            printf("\n error!tint1 = %ld ,r = %ld \n", tint1, r);
+            flag = 0;
             break;
         }
-        //printf("\n\n");
+        // printf("\n\n");
     }
-    printf("Had passed %d times test !\r\n",record-test_num-1);
+    printf("Had passed %d times test !\r\n", record - test_num - 1);
     /* assert */
     EXPECT_EQ(flag, 1);
     /* deinit */

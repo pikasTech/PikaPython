@@ -1,10 +1,4 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "dataArg.h"
-#include "dataMemory.h"
-#include "dataString.h"
-}
 
 TEST(pool, init) {
     Pool p = pool_init(125, 4);

@@ -1,14 +1,5 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "BaseObj.h"
-#include "PikaStdLib_SysObj.h"
-#include "TinyObj.h"
-#include "pika_config_gtest.h"
-}
 
-/* the log_buff of printf */
-extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 TEST(sysObj, print) {
     PikaObj* obj = newRootObj("test", New_PikaStdLib_SysObj);
     VMParameters* globals = obj_runDirect(obj, "print('hello world')");

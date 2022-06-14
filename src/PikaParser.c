@@ -974,6 +974,105 @@ char* Parser_solveLeftBranckets(Args* outBuffs, char* right, char* left) {
 }
 #endif
 
+#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+char* Parser_solveFormat(Args* outBuffs, char* right) {
+    /* quick skip */
+    if (!strIsContain(right, '%')) {
+        return right;
+    }
+
+    PIKA_BOOL is_format = PIKA_FALSE;
+    ParserState_forEachToken(ps1, right) {
+        ParserState_iterStart(&ps1);
+        if (ps1.branket_deepth == 0 && strEqu(ps1.token1.pyload, "%")) {
+            is_format = PIKA_TRUE;
+        }
+        ParserState_iterEnd(&ps1);
+    }
+    ParserState_deinit(&ps1);
+    if (PIKA_FALSE == is_format) {
+        return right;
+    }
+
+    char* res = right;
+    Arg* str_buf = arg_setStr(NULL, "", "");
+    Arg* var_buf = arg_setStr(NULL, "", "");
+    PIKA_BOOL is_in_format = PIKA_FALSE;
+    PIKA_BOOL is_tuple = PIKA_FALSE;
+    PIKA_BOOL is_out_tuple = PIKA_FALSE;
+    Args buffs = {0};
+    char* fmt = NULL;
+    ParserState_forEachToken(ps, right) {
+        char* item = "";
+        ParserState_iterStart(&ps);
+        if (PIKA_FALSE == is_in_format) {
+            if (ps.token1.type != TOKEN_literal) {
+                item = ps.token1.pyload;
+                goto iter_continue;
+            }
+            if (ps.token1.pyload[0] != '\'' && ps.token1.pyload[0] != '"') {
+                item = ps.token1.pyload;
+                goto iter_continue;
+            }
+            if (!strEqu(ps.token2.pyload, "%")) {
+                item = ps.token1.pyload;
+                goto iter_continue;
+            }
+            /* found the format stmt */
+            is_in_format = PIKA_TRUE;
+            fmt = strsCopy(&buffs, ps.token1.pyload);
+            goto iter_continue;
+        }
+        if (PIKA_TRUE == is_in_format) {
+            /* check the format vars */
+            if (strEqu(ps.token1.pyload, "%")) {
+                /* is a tuple */
+                if (strEqu(ps.token2.pyload, "(")) {
+                    is_tuple = PIKA_TRUE;
+                }
+                goto iter_continue;
+            }
+            if (!is_tuple) {
+                str_buf = arg_strAppend(str_buf, "cformat(");
+                str_buf = arg_strAppend(str_buf, fmt);
+                str_buf = arg_strAppend(str_buf, ",");
+                str_buf = arg_strAppend(str_buf, ps.token1.pyload);
+                str_buf = arg_strAppend(str_buf, ")");
+                is_in_format = PIKA_FALSE;
+            }
+            if (is_tuple) {
+                /* found the end of tuple */
+                if (ps.branket_deepth == 0 && strEqu(ps.token1.pyload, ")")) {
+                    is_out_tuple = 1;
+                    is_in_format = PIKA_FALSE;
+                } else {
+                    /* push the vars inner the tuple */
+                    var_buf = arg_strAppend(var_buf, ps.token2.pyload);
+                }
+            }
+            if (is_out_tuple) {
+                str_buf = arg_strAppend(str_buf, "cformat(");
+                str_buf = arg_strAppend(str_buf, fmt);
+                str_buf = arg_strAppend(str_buf, ",");
+                str_buf = arg_strAppend(str_buf, arg_getStr(var_buf));
+            }
+        }
+    iter_continue:
+        if (!is_in_format) {
+            str_buf = arg_strAppend(str_buf, item);
+        }
+        ParserState_iterEnd(&ps);
+    }
+    ParserState_deinit(&ps);
+
+    res = strsCopy(outBuffs, arg_getStr(str_buf));
+    arg_deinit(str_buf);
+    arg_deinit(var_buf);
+    strsDeinit(&buffs);
+    return res;
+}
+#endif
+
 uint8_t Parser_solveSelfOperator(Args* outbuffs,
                                  char* stmt,
                                  char** right_p,
@@ -1094,13 +1193,11 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         isLeftExist = Parser_solveSelfOperator(&buffs, stmt, &right, &left);
     }
 
-    char* right_new = right;
 #if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+    char* right_new = right;
     /* solve the [] stmt */
     right = Parser_solveRightBranckets(&buffs, right);
     right_new = Parser_solveLeftBranckets(&buffs, right, left);
-#endif
-
     /* left is contain the '[]' */
     if (!strEqu(right_new, right)) {
         /* update new right */
@@ -1108,6 +1205,11 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         /* cancel left */
         isLeftExist = 0;
     }
+#endif
+
+#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+    right = Parser_solveFormat(&buffs, right);
+#endif
 
     /* set left */
     if (isLeftExist) {

@@ -1,11 +1,4 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "BaseObj.h"
-#include "dataMemory.h"
-#include "dataQueue.h"
-#include "dataQueueObj.h"
-}
 
 TEST(queue, NEW) {
     Queue* q = New_queue();

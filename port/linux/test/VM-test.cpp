@@ -1,16 +1,6 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
+
 extern "C" {
-#include "BaseObj.h"
-#include "PikaMain.h"
-#include "PikaMath_Operator.h"
-#include "PikaParser.h"
-#include "PikaStdLib_SysObj.h"
-#include "PikaVM.h"
-#include "dataMemory.h"
-#include "dataQueue.h"
-#include "dataStrs.h"
-#include "pika_config_gtest.h"
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 /* test head */
 VMParameters* pikaVM_runAsmWithPars(PikaObj* self,

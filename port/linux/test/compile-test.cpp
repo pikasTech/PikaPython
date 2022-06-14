@@ -1,19 +1,4 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "PikaCompiler.h"
-#include "PikaMain.h"
-#include "PikaParser.h"
-#include "PikaStdLib_MemChecker.h"
-#include "PikaVM.h"
-#include "dataArgs.h"
-#include "dataMemory.h"
-#include "dataStrs.h"
-#include "pikaScript.h"
-#include "pika_config_gtest.h"
-}
-
-extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
 TEST(compiler, file) {
     char* lines =

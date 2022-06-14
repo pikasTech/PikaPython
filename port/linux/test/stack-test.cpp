@@ -1,10 +1,4 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "BaseObj.h"
-#include "dataMemory.h"
-#include "dataStack.h"
-}
 
 TEST(stack, NEW) {
     Stack s;

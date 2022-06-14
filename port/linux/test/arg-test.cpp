@@ -1,9 +1,4 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "dataArg.h"
-#include "dataString.h"
-}
 
 TEST(arg_test, int_) {
     Arg* arg = New_arg(NULL);

@@ -164,6 +164,7 @@ PIKA_RES list_append(PikaList* self, Arg* arg);
 PIKA_RES list_setArg(PikaList* self, int index, Arg* arg);
 Arg* list_getArg(PikaList* self, int index);
 size_t list_getSize(PikaList* self);
+char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg);
 
 /* tuple api */
 #define tuple_deinit(self) (list_deinit((&((self)->super))))
@@ -172,5 +173,7 @@ size_t list_getSize(PikaList* self);
 
 PikaList* New_list(void);
 PikaTuple* New_tuple(void);
+
+char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list);
 
 #endif

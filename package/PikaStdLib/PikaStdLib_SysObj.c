@@ -1,6 +1,7 @@
-#include "BaseObj.h"
+#include "PikaStdLib_SysObj.h"
 #include "PikaStdLib_RangeObj.h"
 #include "PikaStdLib_StringObj.h"
+#include "PikaVM.h"
 #include "dataStrs.h"
 
 void PikaStdLib_SysObj_remove(PikaObj* self, char* argPath) {
@@ -486,4 +487,14 @@ void PikaStdLib_SysObj_printNoEnd(PikaObj* self, Arg* val) {
     /* not empty */
     __platform_printf("%s", res);
     args_deinit(print_args);
+}
+
+char* PikaStdLib_SysObj_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
+    Args buffs = {0};
+    pikaMemMaxReset();
+    char* res = strsFormatList(&buffs, fmt, &var->super);
+    obj_setStr(self, "_buf", res);
+    res = obj_getStr(self, "_buf");
+    strsDeinit(&buffs);
+    return res;
 }

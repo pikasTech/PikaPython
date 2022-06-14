@@ -1,9 +1,4 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "dataArgs.h"
-#include "dataString.h"
-}
 
 TEST(bitmap, init) {
     uint8_t* bitmap = bitmap_init(10);

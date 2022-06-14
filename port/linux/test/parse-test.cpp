@@ -1,11 +1,6 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "BaseObj.h"
-#include "PikaParser.h"
-#include "dataMemory.h"
-#include "dataStrs.h"
 
+extern "C" {
 /* head infomation */
 typedef QueueObj AST;
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
@@ -3116,3 +3111,41 @@ TEST(parser, connection2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+TEST(parser, format1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "s = 'res:%d' % 23";
+    printf("%s", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 STR res:%d\n"
+                 "1 NUM 23\n"
+                 "0 RUN cformat\n"
+                 "0 OUT s\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+TEST(parser, format2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "'res:%d:%d' % (23, 25)";
+    printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 STR res:%d:%d\n"
+                 "1 NUM 23\n"
+                 "1 NUM 25\n"
+                 "0 RUN cformat\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
