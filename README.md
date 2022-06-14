@@ -127,6 +127,7 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 |ESP32C3|√| | | | | |
 |TC264D|√| | | | | |
 |devc|√| | | | | |
+|EC600N|√| | | | | |
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
