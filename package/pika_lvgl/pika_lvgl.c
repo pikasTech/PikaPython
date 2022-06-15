@@ -4,6 +4,8 @@
 #include "pika_lvgl_arc.h"
 #include "pika_lvgl_lv_obj.h"
 
+PikaObj* pika_lv_event_listener_g;
+
 PikaObj* pika_lvgl_scr_act(PikaObj* self) {
     PikaObj* new_obj = newNormalObj(New_TinyObj);
     lv_obj_t* lv_obj = lv_scr_act();
@@ -12,6 +14,8 @@ PikaObj* pika_lvgl_scr_act(PikaObj* self) {
 }
 
 void pika_lvgl___init__(PikaObj* self) {
+    obj_newDirectObj(self, "lv_event_listener", New_TinyObj);
+    pika_lv_event_listener_g = obj_getObj(self, "lv_event_listener");
     obj_newDirectObj(self, "ALIGN", New_TinyObj);
     obj_setInt(self, "ALIGN.CENTER", LV_ALIGN_CENTER);
     obj_setInt(self, "ALIGN.DEFAULT", LV_ALIGN_DEFAULT);
@@ -77,6 +81,54 @@ void pika_lvgl___init__(PikaObj* self) {
     obj_setInt(self, "STATE.USER_3", LV_STATE_USER_3);
     obj_setInt(self, "STATE.USER_4", LV_STATE_USER_4);
     obj_setInt(self, "STATE.ANY", LV_STATE_ANY);
+
+    obj_newDirectObj(self, "EVENT", New_TinyObj);
+    obj_setInt(self, "EVENT.ALL", LV_EVENT_ALL);
+    obj_setInt(self, "EVENT.PRESSED", LV_EVENT_PRESSED);
+    obj_setInt(self, "EVENT.PRESSING", LV_EVENT_PRESSING);
+    obj_setInt(self, "EVENT.PRESS_LOST", LV_EVENT_PRESS_LOST);
+    obj_setInt(self, "EVENT.SHORT_CLICKED", LV_EVENT_SHORT_CLICKED);
+    obj_setInt(self, "EVENT.LONG_PRESSED", LV_EVENT_LONG_PRESSED);
+    obj_setInt(self, "EVENT.LONG_PRESSED_REPEAT", LV_EVENT_LONG_PRESSED_REPEAT);
+    obj_setInt(self, "EVENT.CLICKED", LV_EVENT_CLICKED);
+    obj_setInt(self, "EVENT.RELEASED", LV_EVENT_RELEASED);
+    obj_setInt(self, "EVENT.SCROLL_BEGIN", LV_EVENT_SCROLL_BEGIN);
+    obj_setInt(self, "EVENT.SCROLL_END", LV_EVENT_SCROLL_END);
+    obj_setInt(self, "EVENT.SCROLL", LV_EVENT_SCROLL);
+    obj_setInt(self, "EVENT.GESTURE", LV_EVENT_GESTURE);
+    obj_setInt(self, "EVENT.KEY", LV_EVENT_KEY);
+    obj_setInt(self, "EVENT.FOCUSED", LV_EVENT_FOCUSED);
+    obj_setInt(self, "EVENT.DEFOCUSED", LV_EVENT_DEFOCUSED);
+    obj_setInt(self, "EVENT.LEAVE", LV_EVENT_LEAVE);
+    obj_setInt(self, "EVENT.HIT_TEST", LV_EVENT_HIT_TEST);
+    obj_setInt(self, "EVENT.COVER_CHECK", LV_EVENT_COVER_CHECK);
+    obj_setInt(self, "EVENT.REFR_EXT_DRAW_SIZE", LV_EVENT_REFR_EXT_DRAW_SIZE);
+    obj_setInt(self, "EVENT.DRAW_MAIN_BEGIN", LV_EVENT_DRAW_MAIN_BEGIN);
+    obj_setInt(self, "EVENT.DRAW_MAIN", LV_EVENT_DRAW_MAIN);
+    obj_setInt(self, "EVENT.DRAW_MAIN_END", LV_EVENT_DRAW_MAIN_END);
+    obj_setInt(self, "EVENT.DRAW_POST_BEGIN", LV_EVENT_DRAW_POST_BEGIN);
+    obj_setInt(self, "EVENT.DRAW_POST", LV_EVENT_DRAW_POST);
+    obj_setInt(self, "EVENT.DRAW_POST_END", LV_EVENT_DRAW_POST_END);
+    obj_setInt(self, "EVENT.DRAW_PART_BEGIN", LV_EVENT_DRAW_PART_BEGIN);
+    obj_setInt(self, "EVENT.DRAW_PART_END", LV_EVENT_DRAW_PART_END);
+    obj_setInt(self, "EVENT.VALUE_CHANGED", LV_EVENT_VALUE_CHANGED);
+    obj_setInt(self, "EVENT.INSERT", LV_EVENT_INSERT);
+    obj_setInt(self, "EVENT.REFRESH", LV_EVENT_REFRESH);
+    obj_setInt(self, "EVENT.READY", LV_EVENT_READY);
+    obj_setInt(self, "EVENT.CANCEL", LV_EVENT_CANCEL);
+    obj_setInt(self, "EVENT.DELETE", LV_EVENT_DELETE);
+    obj_setInt(self, "EVENT.CHILD_CHANGED", LV_EVENT_CHILD_CHANGED);
+    obj_setInt(self, "EVENT.CHILD_CREATED", LV_EVENT_CHILD_CREATED);
+    obj_setInt(self, "EVENT.CHILD_DELETED", LV_EVENT_CHILD_DELETED);
+    obj_setInt(self, "EVENT.SCREEN_UNLOAD_START", LV_EVENT_SCREEN_UNLOAD_START);
+    obj_setInt(self, "EVENT.SCREEN_LOAD_START", LV_EVENT_SCREEN_LOAD_START);
+    obj_setInt(self, "EVENT.SCREEN_LOADED", LV_EVENT_SCREEN_LOADED);
+    obj_setInt(self, "EVENT.SCREEN_UNLOADED", LV_EVENT_SCREEN_UNLOADED);
+    obj_setInt(self, "EVENT.SIZE_CHANGED", LV_EVENT_SIZE_CHANGED);
+    obj_setInt(self, "EVENT.STYLE_CHANGED", LV_EVENT_STYLE_CHANGED);
+    obj_setInt(self, "EVENT.LAYOUT_CHANGED", LV_EVENT_LAYOUT_CHANGED);
+    obj_setInt(self, "EVENT.GET_SELF_SIZE", LV_EVENT_GET_SELF_SIZE);
+    obj_setInt(self, "EVENT.PREPROCESS", LV_EVENT_PREPROCESS);
 }
 
 PikaObj* pika_lvgl_obj(PikaObj* self, PikaObj* parent) {

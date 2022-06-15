@@ -4,6 +4,55 @@ from PikaObj import *
 def __init__(): ...
 
 
+class EVENT:
+    ALL: int
+    PRESSED: int
+    PRESSING: int
+    PRESS_LOST: int
+    SHORT_CLICKED: int
+    LONG_PRESSED: int
+    LONG_PRESSED_REPEAT: int
+    CLICKED: int
+    RELEASED: int
+    SCROLL_BEGIN: int
+    SCROLL_END: int
+    SCROLL: int
+    GESTURE: int
+    KEY: int
+    FOCUSED: int
+    DEFOCUSED: int
+    LEAVE: int
+    HIT_TEST: int
+    COVER_CHECK: int
+    REFR_EXT_DRAW_SIZE: int
+    DRAW_MAIN_BEGIN: int
+    DRAW_MAIN: int
+    DRAW_MAIN_END: int
+    DRAW_POST_BEGIN: int
+    DRAW_POST: int
+    DRAW_POST_END: int
+    DRAW_PART_BEGIN: int
+    DRAW_PART_END: int
+    VALUE_CHANGED: int
+    INSERT: int
+    REFRESH: int
+    READY: int
+    CANCEL: int
+    DELETE: int
+    CHILD_CHANGED: int
+    CHILD_CREATED: int
+    CHILD_DELETED: int
+    SCREEN_UNLOAD_START: int
+    SCREEN_LOAD_START: int
+    SCREEN_LOADED: int
+    SCREEN_UNLOADED: int
+    SIZE_CHANGED: int
+    STYLE_CHANGED: int
+    LAYOUT_CHANGED: int
+    GET_SELF_SIZE: int
+    PREPROCESS: int
+
+
 class ALIGN:
     DEFAULT: int
     TOP_LEFT: int
@@ -57,6 +106,10 @@ class ANIM:
     ON: int
 
 
+class lv_event(TinyObj):
+    def get_code(self) -> int: ...
+
+
 class lv_obj(TinyObj):
     def center(self): ...
     def set_size(self, size_x: int, size_y: int): ...
@@ -65,6 +118,7 @@ class lv_obj(TinyObj):
     def update_layout(self): ...
     def set_width(self, w: int): ...
     def add_state(self, state: int): ...
+    def add_event_cb(self, event_cb: any, filter: int, user_data: pointer): ...
 
 
 def obj(parent: lv_obj) -> lv_obj: ...
