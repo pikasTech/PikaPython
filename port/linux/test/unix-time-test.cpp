@@ -13,6 +13,7 @@ extern PikaMemInfo pikaMemInfo;
 /* the log_buff of printf */
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
+#if PIKA_STD_DEVICE_UNIX_TIME_ENABLE
 TEST(unix_time, time) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -32,7 +33,9 @@ TEST(unix_time, time) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_STD_DEVICE_UNIX_TIME_ENABLE
 TEST(unix_time, unix_time) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -65,6 +68,7 @@ TEST(unix_time, unix_time) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 int compare(const _tm* t1, const _tm* t2) {
     int size = 8;  //只比对前面8个数据

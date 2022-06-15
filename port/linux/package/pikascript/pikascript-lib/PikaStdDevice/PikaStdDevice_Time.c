@@ -10,6 +10,11 @@ void PikaStdDevice_Time_sleep_s(PikaObj* self, int s) {
     obj_setSysOut(self, "[error] platform method need to be override.");
 }
 
+void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] platformGetTick() need to be override.");
+}
+
 /*
  * @Author: Once day
  * @LastEditTime: 2022-06-04 12:10:52
@@ -206,40 +211,35 @@ status unix_time_to_utc_struct_time(_tm* this_tm, int64_t unix_time) {
 #define DAY_OF_100Y (36524)
 #define DAY_OF_4Y (1461)
 #define DAY_OF_1Y (365)
-//400年也要注意，要实际401年才可
-        year_400 = (total_day-366) / DAY_OF_400Y;
+        // 400年也要注意，要实际401年才可
+        year_400 = (total_day - 366) / DAY_OF_400Y;
         total_day -= year_400 * DAY_OF_400Y;
         //计算400年内的情况
-        year_100 = (total_day-1) / DAY_OF_100Y;
+        year_100 = (total_day - 1) / DAY_OF_100Y;
         total_day -= year_100 * DAY_OF_100Y;
         //计算100年内的情况，要到第二年的第一天才算，即365+1
-        year_4 = (total_day-366) / DAY_OF_4Y;
+        year_4 = (total_day - 366) / DAY_OF_4Y;
         //计算4年，需要格外注意0-5-8年，才会计算一个闰年，因为它才包含了4这个闰年，但并不包含8
         total_day -= year_4 * DAY_OF_4Y;
         //计算4年内的情况
         //需要减去1天，因为当天是不存在的
         //需要注意闰年会多一天
         //所有闰年都放在这里来考虑，即只要当前是闰年，那么这里就会剩下第一年闰年和第四年闰年两种情况
-        if(year_100 == 4 )
-        {
+        if (year_100 == 4) {
             //第一年是闰年,此时为400*n+1年内
             year_1 = 0;
-            february_offset=1;
-        }
-        else if(total_day <= DAY_OF_1Y * 4)
-        {
-            //100*n+(4,8,...96)+1年，都是从第二年算起，非闰年
+            february_offset = 1;
+        } else if (total_day <= DAY_OF_1Y * 4) {
+            // 100*n+(4,8,...96)+1年，都是从第二年算起，非闰年
             //非闰年,需要减去1天，因为当天是不存在的
-            year_1 = (total_day-1) / DAY_OF_1Y;
+            year_1 = (total_day - 1) / DAY_OF_1Y;
             total_day -= year_1 * DAY_OF_1Y;
-            february_offset=0;
-        }
-        else 
-        {
+            february_offset = 0;
+        } else {
             //第四年是闰年
             year_1 = 4;
             total_day -= year_1 * DAY_OF_1Y;
-            february_offset=1;
+            february_offset = 1;
         }
 
         //计算出当前年份
@@ -392,7 +392,7 @@ status utc_struct_time_to_unix_time(const _tm* this_tm, int64_t* unix_time) {
     dyear = this_tm->tm_year - YEAR_START - 1;
     total_leap_year = dyear / 4 - (dyear / 100 - dyear / 400 - 1);
     //恢复减去的一年
-    dyear += 1 ;
+    dyear += 1;
     total_day = dyear * 365 + total_leap_year;
 
     //减去1970到1600的总天数
@@ -442,7 +442,6 @@ void time_gmtime(double unix_time, _tm* this_tm) {
         // note: 异常情况返回默认时间起始点
         unix_time_to_utc_struct_time(this_tm, (int64_t)0);
     }
-
 }
 
 //标准库函数localtime,将以自 epoch 开始的秒数表示的时间转换为当地时间的
@@ -464,7 +463,6 @@ void time_localtime(double unix_time, _tm* this_tm, int locale) {
         //对于西时区来说，时间会缺失
         unix_time_to_utc_struct_time(this_tm, (int64_t)0);
     }
-
 }
 
 //检测结构体时间是否在合适的范围内，但不检查它的正确性
@@ -528,7 +526,8 @@ int64_t time_mktime(const _tm* this_tm, int locale) {
 }
 
 //标准库函数asctime()
-//把结构化时间struct_time元组表示为以下形式的字符串: `'Sun Jun 20 23:21:05 1993'`。
+//把结构化时间struct_time元组表示为以下形式的字符串: `'Sun Jun 20 23:21:05
+//1993'`。
 void time_asctime(const _tm* this_tm) {
     //星期缩写，python标准库是三个字母，这里并不相同
     const char* week[] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
@@ -563,11 +562,18 @@ double PikaStdDevice_Time_time(PikaObj* self) {
     pikaVM_runByteCode(self, (uint8_t*)bytes);
     return time_time(self);
 }
+
 int PikaStdDevice_Time_time_ns(PikaObj* self) {
     return time_time_ns(self);
 }
 
 void time_set_tm_value(PikaObj* self, const _tm* this_tm) {
+#if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(
+        self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+#else
+
     obj_setInt(self, "tm_sec", this_tm->tm_sec);
     obj_setInt(self, "tm_min", this_tm->tm_min);
     obj_setInt(self, "tm_hour", this_tm->tm_hour);
@@ -577,9 +583,16 @@ void time_set_tm_value(PikaObj* self, const _tm* this_tm) {
     obj_setInt(self, "tm_wday", this_tm->tm_wday);
     obj_setInt(self, "tm_yday", this_tm->tm_yday);
     obj_setInt(self, "tm_isdst", this_tm->tm_isdst);
+
+#endif
 }
 
 void PikaStdDevice_Time_gmtime(PikaObj* self, double unix_time) {
+#if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(
+        self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+#else
     _tm this_tm;
     char str[200];
     time_gmtime(unix_time, &this_tm);
@@ -588,8 +601,15 @@ void PikaStdDevice_Time_gmtime(PikaObj* self, double unix_time) {
     time_struct_format(&this_tm, str);
     //显示出来
     time_printf("%s\n", str);
+#endif
 }
+
 void PikaStdDevice_Time_localtime(PikaObj* self, double unix_time) {
+#if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(
+        self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+#else
     _tm this_tm;
     char str[200];
     int locale = obj_getInt(self, "locale");
@@ -599,9 +619,15 @@ void PikaStdDevice_Time_localtime(PikaObj* self, double unix_time) {
     time_struct_format(&this_tm, str);
     //显示出来
     time_printf("%s\n", str);
+#endif
 }
 
 void time_get_tm_value(PikaObj* self, _tm* this_tm) {
+#if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(
+        self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+#else
     this_tm->tm_sec = obj_getInt(self, "tm_sec");
     this_tm->tm_min = obj_getInt(self, "tm_min");
     this_tm->tm_hour = obj_getInt(self, "tm_hour");
@@ -611,35 +637,56 @@ void time_get_tm_value(PikaObj* self, _tm* this_tm) {
     this_tm->tm_wday = obj_getInt(self, "tm_wday");
     this_tm->tm_yday = obj_getInt(self, "tm_yday");
     this_tm->tm_isdst = obj_getInt(self, "tm_isdst");
+#endif
 }
 
 int PikaStdDevice_Time_mktime(PikaObj* self) {
+#if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(
+        self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+    return 0;
+#else
     _tm this_tm;
     int locale = obj_getInt(self, "locale");
     time_get_tm_value(self, &this_tm);
     return time_mktime(&this_tm, locale);
+#endif
 }
 
 void PikaStdDevice_Time_asctime(PikaObj* self) {
+#if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(
+        self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+#else
     _tm this_tm;
     time_get_tm_value(self, &this_tm);
     time_asctime(&this_tm);
+#endif
 }
 void PikaStdDevice_Time_ctime(PikaObj* self, double unix_time) {
+#if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(
+        self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+#else
     _tm this_tm;
     int locale = obj_getInt(self, "locale");
     time_localtime(unix_time, &this_tm, locale);
     time_asctime(&this_tm);
+#endif
 }
 
 void PikaStdDevice_Time___init__(PikaObj* self) {
+#if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(
+        self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
+#else
     _tm this_tm;
     obj_setInt(self, "locale", 8);
     time_localtime(0.0, &this_tm, 8);
     time_set_tm_value(self, &this_tm);
-}
-
-void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platformGetTick() need to be override.");
+#endif
 }

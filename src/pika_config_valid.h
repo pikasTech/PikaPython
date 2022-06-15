@@ -43,6 +43,7 @@
         #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
         #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
         #define PIKA_PLOOC_ENABLE 0
+        #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 1
     
     /* optimize options */
         #define PIKA_OPTIMIZE_SIZE 0
@@ -83,6 +84,8 @@
         #define PIKA_BUILTIN_DICT_ENABLE 0
         #undef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
         #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 0
+		#undef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+		#define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 0
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
         #undef PIKA_SYNTEX_ITEM_SLICE_ENABLE
         #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
@@ -92,6 +95,8 @@
         #define PIKA_BUILTIN_DICT_ENABLE 1
         #undef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
         #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
+		#undef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+		#define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 1
     #endif
 
     /* configuration validation */
