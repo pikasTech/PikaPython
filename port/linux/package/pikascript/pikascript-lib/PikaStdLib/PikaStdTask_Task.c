@@ -204,21 +204,7 @@ void PikaStdTask_Task_run_once(PikaObj* self) {
 
 void __Task_update_tick(PikaObj* self) {
     if (obj_getInt(self, "is_perod")) {
-        PIKA_PYTHON_BEGIN
-        /* clang-format off */
-        PIKA_PYTHON(
-            platformGetTick()
-        )
-        /* clang-format on */
-        const uint8_t bytes[] = {
-            0x04, 0x00,             /* instruct array size */
-            0x00, 0x82, 0x01, 0x00, /* instruct array */
-            0x11, 0x00,             /* const pool size */
-            0x00, 0x70, 0x6c, 0x61, 0x74, 0x66, 0x6f, 0x72, 0x6d,
-            0x47, 0x65, 0x74, 0x54, 0x69, 0x63, 0x6b, 0x00, /* const pool */
-        };
-        PIKA_PYTHON_END
-        pikaVM_runByteCode(self, (uint8_t*)bytes);
+        obj_runNativeMethod(self, "platformGetTick", NULL);
     }
 }
 

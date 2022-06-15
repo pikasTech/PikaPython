@@ -532,8 +532,9 @@ PIKA_RES list_setArg(PikaList* self, int index, Arg* arg) {
     if (index > top) {
         return PIKA_RES_ERR_OUT_OF_RANGE;
     }
-    arg_setName(arg, i_str);
-    args_setArg(&self->super, arg_copy(arg));
+    Arg* new_arg = arg_copy(arg);
+    new_arg = arg_setName(new_arg, i_str);
+    args_setArg(&self->super, new_arg);
     return PIKA_RES_OK;
 }
 

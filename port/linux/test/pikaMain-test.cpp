@@ -984,9 +984,9 @@ TEST(pikaMain, task_run_period_until) {
             "    if mem_now == 0:\n"
             "        mem_now = mem.getNow()\n"
             "    else:\n"
-            "        if mem.getNow() > mem_now:\n"
+            "        if mem.getNow() > mem_now + 0.05:\n"
             "            mem_lack = True\n"
-            "            print(cformat('%0.2f', mem.getNow()))\n"
+            "            print(cformat('%0.8f', mem.getNow()))\n"
             "def todo2():\n"
             "    print('task 2 running...')\n"
             "def todo3():\n"
@@ -996,7 +996,7 @@ TEST(pikaMain, task_run_period_until) {
             "task = GTestTask.Task()\n"
             "task.call_period_ms(todo1, 200)\n"
             "task.call_period_ms(todo2, 500)\n"
-            "# task.call_when(todo3, when3)\n"
+            "# task.call_always(todo3)\n"
             "task.run_until_ms(1000)\n"
             "\n");
     /* collect */
