@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Mile.Project.Windows.Legacy\Mile.Project.Platform.Win32.props" />
+  <Import Project="Mile.Project.Windows.Legacy\Mile.Project.Platform.x64.props" />
+  <Import Project="Mile.Project.Windows.Legacy\Mile.Project.Platform.ARM64.props" />
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{3CA6E070-4AC1-475E-BB17-CF29AE4806DF}</ProjectGuid>
+    <RootNamespace>LVGL</RootNamespace>
+    <MileProjectType>ConsoleApplication</MileProjectType>
+    <MileProjectManifestFile>LVGL.Simulator.manifest</MileProjectManifestFile>
+    <MileProjectEnableVCLTLSupport>true</MileProjectEnableVCLTLSupport>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)'=='Debug'">
+    <SupportLTL>false</SupportLTL>
+  </PropertyGroup>
+  <Import Project="Mile.Project.Windows.Legacy\Mile.Project.Cpp.props" />
+  <Import Project="freetype.props" />
+  <PropertyGroup>
+    <IncludePath>$(MSBuildThisFileDirectory)pikascript\pikascript-lib/PikaStdLib;$(MSBuildThisFileDirectory)pikascript\pikascript-core;$(MSBuildThisFileDirectory)pikascript\pikascript-api;$(MSBuildThisFileDirectory)lvgl;$(MSBuildThisFileDirectory);$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Optimization Condition="'$(Configuration)'=='Release'">MinSpace</Optimization>
+    </ClCompile>
+    <PreBuildEvent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">cd $(MSBuildThisFileDirectory)pikascript &amp;&amp; rust-msc-latest-win10.exe</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cd $(MSBuildThisFileDirectory)pikascript &amp;&amp; rust-msc-latest-win10.exe</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="LVGL.Portable.vcxitems" />
+  <Import Project="LVGL.Drivers.vcxitems" />
+  <ItemGroup>
+    <ClInclude Include="lv_conf.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lv_drv_conf.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="LVGL.Simulator.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Mile.Project.Properties.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaDebug.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaDebug_Debuger.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaMain.h" />
+    <ClInclude Include="pikascript\pikascript-api\pikaScript.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdData.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdData_ByteArray.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdData_Dict.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdData_List.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdData_String.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdData_Utils.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdLib.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdLib_MemChecker.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdLib_PikaObj.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdLib_RangeObj.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdLib_StringObj.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdLib_SysObj.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdTask.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdTask_Task.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_arc.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_bar.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_btn.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_checkbox.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_dropdown.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_label.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_lv_event.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_lv_obj.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_roller.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_slider.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_switch.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_table.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_textarea.h" />
+    <ClInclude Include="pikascript\pikascript-core\BaseObj.h" />
+    <ClInclude Include="pikascript\pikascript-core\dataArg.h" />
+    <ClInclude Include="pikascript\pikascript-core\dataArgs.h" />
+    <ClInclude Include="pikascript\pikascript-core\dataLink.h" />
+    <ClInclude Include="pikascript\pikascript-core\dataLinkNode.h" />
+    <ClInclude Include="pikascript\pikascript-core\dataMemory.h" />
+    <ClInclude Include="pikascript\pikascript-core\dataQueue.h" />
+    <ClInclude Include="pikascript\pikascript-core\dataQueueObj.h" />
+    <ClInclude Include="pikascript\pikascript-core\dataStack.h" />
+    <ClInclude Include="pikascript\pikascript-core\dataString.h" />
+    <ClInclude Include="pikascript\pikascript-core\dataStrs.h" />
+    <ClInclude Include="pikascript\pikascript-core\PikaCompiler.h" />
+    <ClInclude Include="pikascript\pikascript-core\PikaObj.h" />
+    <ClInclude Include="pikascript\pikascript-core\PikaParser.h" />
+    <ClInclude Include="pikascript\pikascript-core\PikaPlatform.h" />
+    <ClInclude Include="pikascript\pikascript-core\PikaVM.h" />
+    <ClInclude Include="pikascript\pikascript-core\pika_config_valid.h" />
+    <ClInclude Include="pikascript\pikascript-core\TinyObj.h" />
+    <ClInclude Include="pikascript\pikascript-core\__instruction_def.h" />
+    <ClInclude Include="pikascript\pikascript-core\__pika_ooc.h" />
+    <ClInclude Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_String_Util.h" />
+    <ClInclude Include="pikascript_entry.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LVGL.Simulator.cpp" />
+    <ClCompile Include="pikascript\pikascript-api\PikaDebug-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaDebug_Debuger-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaMain-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pikaScript.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdData-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdData_ByteArray-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdData_Dict-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdData_List-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdData_String-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdData_Utils-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdLib-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdLib_MemChecker-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdLib_PikaObj-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdLib_RangeObj-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdLib_StringObj-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdLib_SysObj-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdTask-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdTask_Task-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_arc-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_bar-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_btn-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_checkbox-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_dropdown-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_label-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_lv_event-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_lv_obj-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_roller-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_slider-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_switch-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_table-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_textarea-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\__asset_pikaModules_py_a.c" />
+    <ClCompile Include="pikascript\pikascript-core\BaseObj.c" />
+    <ClCompile Include="pikascript\pikascript-core\dataArg.c" />
+    <ClCompile Include="pikascript\pikascript-core\dataArgs.c" />
+    <ClCompile Include="pikascript\pikascript-core\dataLink.c" />
+    <ClCompile Include="pikascript\pikascript-core\dataLinkNode.c" />
+    <ClCompile Include="pikascript\pikascript-core\dataMemory.c" />
+    <ClCompile Include="pikascript\pikascript-core\dataQueue.c" />
+    <ClCompile Include="pikascript\pikascript-core\dataQueueObj.c" />
+    <ClCompile Include="pikascript\pikascript-core\dataStack.c" />
+    <ClCompile Include="pikascript\pikascript-core\dataString.c" />
+    <ClCompile Include="pikascript\pikascript-core\dataStrs.c" />
+    <ClCompile Include="pikascript\pikascript-core\PikaCompiler.c" />
+    <ClCompile Include="pikascript\pikascript-core\PikaObj.c" />
+    <ClCompile Include="pikascript\pikascript-core\PikaParser.c" />
+    <ClCompile Include="pikascript\pikascript-core\PikaPlatform.c" />
+    <ClCompile Include="pikascript\pikascript-core\PikaVM.c" />
+    <ClCompile Include="pikascript\pikascript-core\TinyObj.c" />
+    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaDebuger_Debuger.c" />
+    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_Dict.c" />
+    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_List.c" />
+    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_String.c" />
+    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_Utils.c" />
+    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c" />
+    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c" />
+    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c" />
+    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c" />
+    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdTask_Task.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_arc.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_bar.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_btn.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_checkbox.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_dropdown.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_label.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_lv_event.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_lv_obj.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_roller.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_slider.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_switch.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_table.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_textarea.c" />
+    <ClCompile Include="pikascript_entry.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LVGL.Simulator.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="LVGL.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="freetype.props" />
+    <ClInclude Include="pikascript\pikascript-core\__instruction_table.cfg">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </ClInclude>
+  </ItemGroup>
+  <Import Project="Mile.Project.Windows.Legacy\Mile.Project.Cpp.targets" />
+</Project>

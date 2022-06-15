@@ -1,0 +1,23 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "files.associations": {
+        "lvgl.h": "c",
+        "pika_lvgl_arc.h": "c",
+        "pika_lvgl_lv_obj.h": "c",
+        "pika_lvgl.h": "c",
+        "pika_lvgl_bar.h": "c",
+        "pika_lvgl_btn.h": "c",
+        "pikaplatform.h": "c",
+        "pika_lvgl_checkbox.h": "c",
+        "pika_lvgl_dropdown.h": "c",
+        "pika_lvgl_label.h": "c",
+        "pika_lvgl_roller.h": "c",
+        "pika_lvgl_slider.h": "c",
+        "pika_lvgl_switch.h": "c",
+        "pika_lvgl_table.h": "c",
+        "pika_lvgl_textarea.h": "c",
+        "pika_lvgl_align_cls.h": "c",
+        "pika_lvgl_palette_cls.h": "c",
+        "pika_lvgl_lv_event.h": "c"
+    }
+}
