@@ -32,7 +32,6 @@ TEST(string, cformat1) {
 }
 #endif
 
-
 #if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
 TEST(string, format1) {
     /* init */
@@ -82,6 +81,25 @@ TEST(string, print_file) {
     /* deinit */
     obj_deinit(pikaMain);
 
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+TEST(string, format_parse1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "print('tes:%0.2f'% mem.getMax())";
+    printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 STR tes:%0.2f\n"
+                 "2 RUN mem.getMax\n"
+                 "1 RUN cformat\n"
+                 "0 RUN print\n");
+    args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif

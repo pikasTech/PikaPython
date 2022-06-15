@@ -999,7 +999,7 @@ char* Parser_solveFormat(Args* outBuffs, char* right) {
     Arg* var_buf = arg_setStr(NULL, "", "");
     PIKA_BOOL is_in_format = PIKA_FALSE;
     PIKA_BOOL is_tuple = PIKA_FALSE;
-    PIKA_BOOL is_out_tuple = PIKA_FALSE;
+    PIKA_BOOL is_out_vars = PIKA_FALSE;
     Args buffs = {0};
     char* fmt = NULL;
     ParserState_forEachToken(ps, right) {
@@ -1029,32 +1029,32 @@ char* Parser_solveFormat(Args* outBuffs, char* right) {
                 /* is a tuple */
                 if (strEqu(ps.token2.pyload, "(")) {
                     is_tuple = PIKA_TRUE;
+                } else {
+                    var_buf = arg_strAppend(var_buf, ps.token2.pyload);
                 }
                 goto iter_continue;
             }
-            if (!is_tuple) {
-                str_buf = arg_strAppend(str_buf, "cformat(");
-                str_buf = arg_strAppend(str_buf, fmt);
-                str_buf = arg_strAppend(str_buf, ",");
-                str_buf = arg_strAppend(str_buf, ps.token1.pyload);
-                str_buf = arg_strAppend(str_buf, ")");
+            /* found the end of tuple */
+            if (ps.iter_index == ps.length) {
+                is_out_vars = PIKA_TRUE;
                 is_in_format = PIKA_FALSE;
+            } else {
+                /* push the vars inner the tuple */
+                var_buf = arg_strAppend(var_buf, ps.token2.pyload);
             }
-            if (is_tuple) {
-                /* found the end of tuple */
-                if (ps.branket_deepth == 0 && strEqu(ps.token1.pyload, ")")) {
-                    is_out_tuple = 1;
-                    is_in_format = PIKA_FALSE;
+            if (is_out_vars) {
+                if (is_tuple) {
+                    str_buf = arg_strAppend(str_buf, "cformat(");
+                    str_buf = arg_strAppend(str_buf, fmt);
+                    str_buf = arg_strAppend(str_buf, ",");
+                    str_buf = arg_strAppend(str_buf, arg_getStr(var_buf));
                 } else {
-                    /* push the vars inner the tuple */
-                    var_buf = arg_strAppend(var_buf, ps.token2.pyload);
+                    str_buf = arg_strAppend(str_buf, "cformat(");
+                    str_buf = arg_strAppend(str_buf, fmt);
+                    str_buf = arg_strAppend(str_buf, ",");
+                    str_buf = arg_strAppend(str_buf, arg_getStr(var_buf));
+                    str_buf = arg_strAppend(str_buf, ")");
                 }
-            }
-            if (is_out_tuple) {
-                str_buf = arg_strAppend(str_buf, "cformat(");
-                str_buf = arg_strAppend(str_buf, fmt);
-                str_buf = arg_strAppend(str_buf, ",");
-                str_buf = arg_strAppend(str_buf, arg_getStr(var_buf));
             }
         }
     iter_continue:
