@@ -8,5 +8,9 @@ void GTestTask_Task_platformGetTick(PikaObj* self) {
 }
 
 void GTestTask___init__(PikaObj* self) {
-    obj_setInt(self, "testval", 8848);
+    if (!obj_isArgExist(self, "testval")) {
+        obj_setInt(self, "testval", 8848);
+    } else {
+        obj_setInt(self, "testval", obj_getInt(self, "testval") + 1);
+    }
 }

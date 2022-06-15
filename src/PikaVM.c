@@ -599,13 +599,6 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
 
     /* ouput arg to locals */
     obj_setArg_noCopy(hostObj, data, outArg);
-    if (ARG_TYPE_OBJECT_META == outArg_type) {
-        /* found a mate_object */
-        /* init object */
-        PikaObj* new_obj = obj_getObj(hostObj, data);
-        /* run __init__() when init obj */
-        obj_runNativeMethod(new_obj, "__init__", NULL);
-    }
     return NULL;
 }
 
