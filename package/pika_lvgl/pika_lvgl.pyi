@@ -1,6 +1,62 @@
 from PikaObj import *
 
 
+def __init__(): ...
+
+
+class ALIGN:
+    DEFAULT: int
+    TOP_LEFT: int
+    TOP_MID: int
+    TOP_RIGHT: int
+    BOTTOM_LEFT: int
+    BOTTOM_MID: int
+    BOTTOM_RIGHT: int
+    LEFT_MID: int
+    RIGHT_MID: int
+    CENTER: int
+    OUT_TOP_LEFT: int
+    OUT_TOP_MID: int
+    OUT_TOP_RIGHT: int
+    OUT_BOTTOM_LEFT: int
+    OUT_BOTTOM_MID: int
+    OUT_BOTTOM_RIGHT: int
+    OUT_LEFT_TOP: int
+    OUT_LEFT_MID: int
+    OUT_LEFT_BOTTOM: int
+    OUT_RIGHT_TOP: int
+    OUT_RIGHT_MID: int
+    OUT_RIGHT_BOTTOM: int
+
+
+class PALETTE:
+    RED: int
+    PINK: int
+    PURPLE: int
+    DEEP_PURPLE: int
+    INDIGO: int
+    BLUE: int
+    LIGHT_BLUE: int
+    CYAN: int
+    TEAL: int
+    GREEN: int
+    LIGHT_GREEN: int
+    LIME: int
+    YELLOW: int
+    AMBER: int
+    ORANGE: int
+    DEEP_ORANGE: int
+    BROWN: int
+    BLUE_GREY: int
+    GREY: int
+    NONE: int
+
+
+class ANIM:
+    OFF: int
+    ON: int
+
+
 class lv_obj(TinyObj):
     def center(self): ...
     def set_size(self, size_x: int, size_y: int): ...
