@@ -61,4 +61,28 @@ void pika_lvgl___init__(PikaObj* self) {
     obj_newDirectObj(self, "ANIM", New_TinyObj);
     obj_setInt(self, "ANIM.ON", LV_ANIM_OFF);
     obj_setInt(self, "ANIM.OFF", LV_ANIM_ON);
+
+    obj_newDirectObj(self, "STATE", New_TinyObj);
+    obj_setInt(self, "STATE.DEFAULT", LV_STATE_DEFAULT);
+    obj_setInt(self, "STATE.CHECKED", LV_STATE_CHECKED);
+    obj_setInt(self, "STATE.FOCUSED", LV_STATE_FOCUSED);
+    obj_setInt(self, "STATE.FOCUS_KEY", LV_STATE_FOCUS_KEY);
+    obj_setInt(self, "STATE.EDITED", LV_STATE_EDITED);
+    obj_setInt(self, "STATE.HOVERED", LV_STATE_HOVERED);
+    obj_setInt(self, "STATE.PRESSED", LV_STATE_PRESSED);
+    obj_setInt(self, "STATE.SCROLLED", LV_STATE_SCROLLED);
+    obj_setInt(self, "STATE.DISABLED", LV_STATE_DISABLED);
+    obj_setInt(self, "STATE.USER_1", LV_STATE_USER_1);
+    obj_setInt(self, "STATE.USER_2", LV_STATE_USER_2);
+    obj_setInt(self, "STATE.USER_3", LV_STATE_USER_3);
+    obj_setInt(self, "STATE.USER_4", LV_STATE_USER_4);
+    obj_setInt(self, "STATE.ANY", LV_STATE_ANY);
+}
+
+PikaObj* pika_lvgl_obj(PikaObj* self, PikaObj* parent) {
+    lv_obj_t* lv_parent = obj_getPtr(parent, "lv_obj");
+    lv_obj_t* lv_obj = lv_obj_create(lv_parent);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
+    obj_setPtr(new_obj, "lv_obj", lv_obj);
+    return new_obj;
 }
