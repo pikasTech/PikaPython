@@ -51,6 +51,7 @@ releases = [
   "v1.8.3 3c7b765a3f9116cc7653491d067760912a5e7237",
   "v1.8.4 65a4c6bf0262ebbfa269b9c514d726f64a912f10",
   "v1.8.5 cbde99793b1e631ab7f54775cba3f5372895b560",
+  "v1.8.6 71364445e0894e660720f9a0c9e1db021663d6a1",
 ]
 
 [[packages]]
@@ -94,6 +95,7 @@ releases = [
   "v1.8.3 3c7b765a3f9116cc7653491d067760912a5e7237",
   "v1.8.4 65a4c6bf0262ebbfa269b9c514d726f64a912f10",
   "v1.8.5 cbde99793b1e631ab7f54775cba3f5372895b560",
+  "v1.8.6 71364445e0894e660720f9a0c9e1db021663d6a1",
 ]
 
 [[packages]]
@@ -129,6 +131,12 @@ name = "pika_cjson"
 releases = [
   "v0.0.1 60389c541db480f41a55498270094dd030df9e24",
   "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
+]
+
+[[packages]]
+name = "pika_lvgl"
+releases = [
+  "v0.0.1 71364445e0894e660720f9a0c9e1db021663d6a1",
 ]
 
 [[packages]]
