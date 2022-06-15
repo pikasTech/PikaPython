@@ -433,6 +433,7 @@ static PikaObj* __obj_initSubObj(PikaObj* obj, char* name) {
     thisClass = obj_getClassObjByNewFun(obj, name, constructor);
     new_obj = removeMethodInfo(thisClass);
     obj_refcntInc(new_obj);
+    obj_runNativeMethod(new_obj, "__init__", NULL);
     args_setPtrWithType(obj->list, name, ARG_TYPE_OBJECT, new_obj);
     res = obj_getPtr(obj, name);
     goto exit;

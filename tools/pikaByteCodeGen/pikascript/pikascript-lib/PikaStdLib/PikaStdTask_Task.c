@@ -3,25 +3,8 @@
 
 extern PikaObj* __pikaMain;
 void PikaStdTask_Task___init__(PikaObj* self) {
-    PIKA_PYTHON_BEGIN
-    /* clang-format off */
-    PIKA_PYTHON(
-        calls.__init__()
-        is_period = 0
-    )
-    /* clang-format on */
-    const uint8_t bytes[] = {
-        0x0c, 0x00, /* instruct array size */
-        0x00, 0x82, 0x01, 0x00, 0x00, 0x85, 0x10, 0x00, 0x00, 0x04, 0x12, 0x00,
-        /* instruct array */
-        0x1c, 0x00, /* const pool size */
-        0x00, 0x63, 0x61, 0x6c, 0x6c, 0x73, 0x2e, 0x5f, 0x5f, 0x69, 0x6e, 0x69,
-        0x74, 0x5f, 0x5f, 0x00, 0x30, 0x00, 0x69, 0x73, 0x5f, 0x70, 0x65, 0x72,
-        0x69, 0x6f, 0x64, 0x00, /* const pool */
-    };
-    PIKA_PYTHON_END
-    pikaVM_runByteCode(self, (uint8_t*)bytes);
-    obj_setRef(__pikaMain, "__calls", obj_getPtr(self, "calls"));
+    obj_setInt(self, "is_period", 0);
+    obj_setRef(__pikaMain, "__calls", obj_getObj(self, "calls"));
 }
 
 void PikaStdTask_Task_call_always(PikaObj* self, Arg* fun_todo) {
