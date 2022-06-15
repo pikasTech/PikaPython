@@ -680,9 +680,6 @@ void PikaStdDevice_Time_ctime(PikaObj* self, double unix_time) {
 
 void PikaStdDevice_Time___init__(PikaObj* self) {
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(
-        self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
 #else
     _tm this_tm;
     obj_setInt(self, "locale", 8);
