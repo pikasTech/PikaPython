@@ -68,7 +68,7 @@ void PikaStdTask_Task_call_period_ms(PikaObj* self,
         calls.append(period_ms)
         calls.append(fun_todo)
         calls.append(0)
-    is_period = 1
+        is_period = 1
     )
     /* clang-format on */
     const uint8_t bytes[] =

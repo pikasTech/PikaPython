@@ -17,8 +17,10 @@ Arg* PikaStdData_List_get(PikaObj* self, int i) {
 }
 
 void PikaStdData_List___init__(PikaObj* self) {
-    PikaList* list = New_list();
-    obj_setPtr(self, "list", list);
+    if (!obj_isArgExist(self, "list")) {
+        PikaList* list = New_list();
+        obj_setPtr(self, "list", list);
+    }
 }
 
 void PikaStdData_List_set(PikaObj* self, Arg* arg, int i) {
