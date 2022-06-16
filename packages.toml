@@ -141,6 +141,12 @@ releases = [
 ]
 
 [[packages]]
+name = "pika_lua"
+releases = [
+  "v0.0.1 b5da16e285a378a74fa7b7734cdd89be703d6f07",
+]
+
+[[packages]]
 name = "ctypes"
 releases = [
   "v0.0.1 7362ba0d4b55abc304d3169989370f0dd8cddde0",
