@@ -91,3 +91,9 @@ void pika_lvgl_lv_obj_add_event_cb(PikaObj* self,
     obj_newDirectObj(self, "_event_evt", New_pika_lvgl_lv_event);
     eventLicener_registEvent(pika_lv_event_listener_g, (uintptr_t)lv_obj, self);
 }
+
+void pika_lvgl_lv_obj_add_style(PikaObj* self, int selector, PikaObj* style) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_state_t* lv_style = obj_getPtr(style, "lv_style");
+    lv_obj_add_style(lv_obj, lv_style, selector);
+}

@@ -2,6 +2,7 @@
 #include "BaseObj.h"
 #include "lvgl.h"
 #include "pika_lvgl_arc.h"
+#include "pika_lvgl_lv_color_t.h"
 #include "pika_lvgl_lv_obj.h"
 
 PikaObj* pika_lv_event_listener_g;
@@ -129,6 +130,10 @@ void pika_lvgl___init__(PikaObj* self) {
     obj_setInt(self, "EVENT.LAYOUT_CHANGED", LV_EVENT_LAYOUT_CHANGED);
     obj_setInt(self, "EVENT.GET_SELF_SIZE", LV_EVENT_GET_SELF_SIZE);
     obj_setInt(self, "EVENT.PREPROCESS", LV_EVENT_PREPROCESS);
+
+    obj_newDirectObj(self, "OPA", New_TinyObj);
+    obj_setInt(self, "OPA.TRANSP", LV_OPA_TRANSP);
+    obj_setInt(self, "OPA.COVER", LV_OPA_COVER);
 }
 
 PikaObj* pika_lvgl_obj(PikaObj* self, PikaObj* parent) {
@@ -136,5 +141,23 @@ PikaObj* pika_lvgl_obj(PikaObj* self, PikaObj* parent) {
     lv_obj_t* lv_obj = lv_obj_create(lv_parent);
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
     obj_setPtr(new_obj, "lv_obj", lv_obj);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_palette_lighten(PikaObj* self, int lvl, int p) {
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_color_t);
+    lv_color_t lv_color = lv_palette_lighten(p, lvl);
+    args_setStruct(new_obj->list, "lv_color_struct", lv_color);
+    lv_color_t* plv_color = args_getStruct(new_obj->list, "lv_color_struct");
+    obj_setPtr(new_obj, "lv_color",plv_color);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_palette_main(PikaObj* self, int p) {
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_color_t);
+    lv_color_t lv_color = lv_palette_main(p);
+    args_setStruct(new_obj->list, "lv_color_struct", lv_color);
+    obj_setPtr(new_obj, "lv_color",
+               args_getStruct(new_obj->list, "lv_color_struct"));
     return new_obj;
 }
