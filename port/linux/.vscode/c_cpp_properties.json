@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/package/pikascript/pikascript-api/**",
                 "${workspaceFolder}/package/pikascript/pikascript-core/**",
-                "${workspaceFolder}/config/**"
+                "${workspaceFolder}/config/**",
+                "/usr/include/lua5.3"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

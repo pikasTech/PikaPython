@@ -69,3 +69,4 @@ RUN cd /root/pikascript/tools/pikaCompiler && sh build.sh
 ADD .vimrc /root/.vimrc
 
 ADD bashrc /root/.bashrc
+RUN apt-get install -y liblua5.3-dev

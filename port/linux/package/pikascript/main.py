@@ -12,6 +12,7 @@ import TemplateDevice
 import pika_cjson as cjson
 import cjson_test
 import test_module4
+import pika_lua
 from PikaStdData import String as S
 
 mem = PikaStdLib.MemChecker()

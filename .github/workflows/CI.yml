@@ -19,8 +19,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: INSTALL_NINJA
-      run: sudo apt install ninja-build
+    - name: INSTALL_PACKAGE
+      run: |
+        sudo apt install ninja-build
+        sudo apt install liblua5.3-dev
   
     - name: install_google_benchmark
       run: |
