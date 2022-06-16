@@ -26,7 +26,7 @@ void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
 
 //结构体时间类型定义(来源c标准库corect_wtime.h)
 //无论是16位整数还是32位整数都满足需求
-typedef struct __tm {
+typedef struct {
     int tm_sec;    // seconds after the minute - [0, 60] including leap second
     int tm_min;    // minutes after the hour - [0, 59]
     int tm_hour;   // hours since midnight - [0, 23]
@@ -42,7 +42,7 @@ typedef struct __tm {
 //直接支持64位秒数时间，附加时间精度为ns，根据设备决定，需要1GHz及以上时钟频率才能支持1ns级别时间精度
 //内部时间比对数据类型，传递给外界的时候会使用浮点数，所以精度会降低
 //但内部使用复合数据类型比对，以实现平台支持的最小时间精度比较
-typedef struct __timespec {
+typedef struct {
     int64_t tv_sec;   // Seconds - >= 0
     int32_t tv_nsec;  // Nanoseconds - [0, 999999999]
 } _timespec;
