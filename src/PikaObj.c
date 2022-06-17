@@ -1099,8 +1099,10 @@ void pks_eventLisener_init(PikaEventListener** p_self) {
 }
 
 void pks_eventLisener_deinit(PikaEventListener** p_self) {
-    obj_deinit(*p_self);
-    *p_self = NULL;
+    if (NULL != *p_self) {
+        obj_deinit(*p_self);
+        *p_self = NULL;
+    }
 }
 
 void pks_eventLisener_sendSignal(PikaEventListener* self,

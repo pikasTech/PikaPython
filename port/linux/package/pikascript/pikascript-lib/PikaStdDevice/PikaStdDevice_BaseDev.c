@@ -3,10 +3,14 @@
 #include "PikaObj.h"
 #include "dataStrs.h"
 
-PikaEventListener* g_pika_device_event_listener;
+extern PikaEventListener* g_pika_device_event_listener;
 
 void PikaStdDevice_BaseDev_addEventCallBack(PikaObj* self, Arg* eventCallBack) {
     obj_setArg(self, "eventCallBack", eventCallBack);
+    /* init event_listener for the first time */
+    if (NULL == g_pika_device_event_listener) {
+        pks_eventLisener_init(&g_pika_device_event_listener);
+    }
     if (PIKA_RES_OK != obj_runNativeMethod(self, "platformGetEventId", NULL)) {
         obj_setErrorCode(self, 1);
         __platform_printf("Error: Method %s no found.\r\n",

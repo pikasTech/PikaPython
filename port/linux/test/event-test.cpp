@@ -5,8 +5,6 @@ extern PikaEventListener* g_pika_device_event_listener;
 TEST(event, gpio) {
     /* init */
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    pks_eventLisener_init(&g_pika_device_event_listener);
-
     /* run */
     pikaVM_runFile(pikaMain, "../../examples/TemplateDevice/gpio_cb.py");
 
@@ -25,7 +23,6 @@ TEST(event, gpio) {
     EXPECT_STREQ(log_buff[0], "get falling edge!\r\n");
     /* deinit */
     obj_deinit(pikaMain);
-    pks_eventLisener_deinit(&g_pika_device_event_listener);
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
