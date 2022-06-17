@@ -3,7 +3,7 @@
 #include "PikaObj.h"
 #include "dataStrs.h"
 
-extern PikaEventListener* g_pika_device_event_listener;
+PikaEventListener* g_pika_device_event_listener;
 
 void PikaStdDevice_BaseDev_addEventCallBack(PikaObj* self, Arg* eventCallBack) {
     obj_setArg(self, "eventCallBack", eventCallBack);
