@@ -18,3 +18,7 @@ void TemplateDevice_CAN_platformWrite(PikaObj *self){
 void TemplateDevice_CAN_platformWriteBytes(PikaObj *self){
 
 }
+
+void TemplateDevice_CAN_platformGetEventId(PikaObj *self){
+
+}

@@ -12,3 +12,7 @@ void TemplateDevice_Time_platformGetTick(PikaObj *self){
     tick_ms += 50;
     obj_setInt(self, "tick", tick_ms);
 }
+
+void TemplateDevice_Time_platformGetEventId(PikaObj *self){
+
+}

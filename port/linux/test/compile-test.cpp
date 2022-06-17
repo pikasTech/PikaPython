@@ -556,3 +556,15 @@ TEST(compiler, __del__) {
     Parser_compilePyToBytecodeArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(compiler, event_cb) {
+    char* lines = "_eventCallBack(_eventSignal)";
+    Parser_compilePyToBytecodeArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, event_cb_lvgl) {
+    char* lines = "_event_cb(_event_evt)";
+    Parser_compilePyToBytecodeArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

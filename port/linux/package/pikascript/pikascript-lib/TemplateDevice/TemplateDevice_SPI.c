@@ -18,3 +18,7 @@ void TemplateDevice_SPI_platformWrite(PikaObj *self){
 void TemplateDevice_SPI_platformWriteBytes(PikaObj *self){
 
 }
+
+void TemplateDevice_SPI_platformGetEventId(PikaObj *self){
+
+}

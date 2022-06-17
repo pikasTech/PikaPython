@@ -2283,7 +2283,14 @@ void Parser_compilePyToBytecodeArray(char* lines) {
     bytecodeFrame_fromMultiLine(&bytecode_frame, lines);
     /* do something */
     byteCodeFrame_print(&bytecode_frame);
+
+    __platform_printf("\n\n/* clang-format off */\n");
+    __platform_printf("PIKA_PYTHON(\n");
+    __platform_printf("%s\n", lines);
+    __platform_printf(")\n");
+    __platform_printf("/* clang-format on */\n");
     byteCodeFrame_printAsArray(&bytecode_frame);
     /* deinit */
     byteCodeFrame_deinit(&bytecode_frame);
+    __platform_printf("\n\n");
 }

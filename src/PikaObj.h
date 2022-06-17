@@ -214,7 +214,7 @@ void obj_shellLineProcess(PikaObj* self,
 */
 int pikaCompile(char* output_file_name, char* py_lines);
 Method obj_getNativeMethod(PikaObj* self, char* method_name);
-void obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
+PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
 Arg* obj_newObjInPackage(NewFun newObjFun);
 
 void obj_refcntInc(PikaObj* self);
@@ -252,4 +252,16 @@ enum shell_state obj_runChar(PikaObj* self, char inputChar);
 #define PIKA_PYTHON(x)
 #define PIKA_PYTHON_END
 
+typedef PikaObj PikaEventListener;
+
+void pks_eventLisener_sendSignal(PikaEventListener* self,
+                             uint32_t eventId,
+                             int eventSignal);
+
+void pks_eventLicener_registEvent(PikaEventListener* self,
+                              uint32_t eventId,
+                              PikaObj* eventHandleObj);
+
+void pks_eventLisener_init(PikaEventListener** p_self);
+void pks_eventLisener_deinit(PikaEventListener** p_self);
 #endif

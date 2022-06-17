@@ -11,3 +11,7 @@ void TemplateDevice_ADC_platformEnable(PikaObj *self){
 void TemplateDevice_ADC_platformRead(PikaObj *self){
 
 }
+
+void TemplateDevice_ADC_platformGetEventId(PikaObj *self){
+
+}

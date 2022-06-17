@@ -681,12 +681,13 @@ void obj_run(PikaObj* self, char* cmd) {
     obj_runDirect(self, cmd);
 }
 
-void obj_runNativeMethod(PikaObj* self, char* method_name, Args* args) {
+PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args) {
     Method native_method = obj_getNativeMethod(self, method_name);
     if (NULL == native_method) {
-        return;
+        return PIKA_RES_ERR_ARG_NO_FOUND;
     }
     native_method(self, args);
+    return PIKA_RES_OK;
 }
 
 static void __clearBuff(char* buff, int size) {
@@ -1066,4 +1067,68 @@ char* obj_toStr(PikaObj* self) {
         return str_res;
     }
     return NULL;
+}
+
+void pks_eventLicener_registEvent(PikaEventListener* self,
+                                  uint32_t eventId,
+                                  PikaObj* eventHandleObj) {
+    Args buffs = {0};
+    char* event_name =
+        strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
+    obj_newDirectObj(self, event_name, New_TinyObj);
+    PikaObj* event_item = obj_getObj(self, event_name);
+    obj_setRef(event_item, "eventHandleObj", eventHandleObj);
+    strsDeinit(&buffs);
+}
+
+static PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
+                                                   uint32_t eventId) {
+    Args buffs = {0};
+    char* event_name =
+        strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
+    PikaObj* event_item = obj_getObj(self, event_name);
+    PikaObj* eventHandleObj = obj_getPtr(event_item, "eventHandleObj");
+    strsDeinit(&buffs);
+    return eventHandleObj;
+}
+
+extern PikaObj* __pikaMain;
+
+void pks_eventLisener_init(PikaEventListener** p_self) {
+    *p_self = newNormalObj(New_TinyObj);
+}
+
+void pks_eventLisener_deinit(PikaEventListener** p_self) {
+    obj_deinit(*p_self);
+    *p_self = NULL;
+}
+
+void pks_eventLisener_sendSignal(PikaEventListener* self,
+                                 uint32_t eventId,
+                                 int eventSignal) {
+    PikaObj* eventHandleObj = pks_eventLisener_getEventHandleObj(self, eventId);
+    if (NULL == eventHandleObj) {
+        __platform_printf(
+            "Error: can not find event handler by id: [0x%02x]\r\n", eventId);
+        return;
+    }
+    obj_setArg(__pikaMain, "_eventCallBack",
+               obj_getArg(eventHandleObj, "eventCallBack"));
+    obj_setInt(__pikaMain, "_eventSignal", eventSignal);
+    /* clang-format off */
+    PIKA_PYTHON(
+        _eventCallBack(_eventSignal)
+    )
+    /* clang-format on */
+    const uint8_t bytes[] = {
+        0x08, 0x00, /* instruct array size */
+        0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0e, 0x00, /* instruct array */
+        0x1d, 0x00,                                     /* const pool size */
+        0x00, 0x5f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x69, 0x67,
+        0x6e, 0x61, 0x6c, 0x00, 0x5f, 0x65, 0x76, 0x65, 0x6e, 0x74,
+        0x43, 0x61, 0x6c, 0x6c, 0x42, 0x61, 0x63, 0x6b, 0x00, /* const pool */
+    };
+    pikaVM_runByteCode(__pikaMain, (uint8_t*)bytes);
+    obj_removeArg(__pikaMain, "_eventCallBack");
+    obj_removeArg(__pikaMain, "_eventSignal");
 }

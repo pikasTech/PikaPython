@@ -12,3 +12,7 @@ void TemplateDevice_PWM_platformSetDuty(PikaObj *self){
 void TemplateDevice_PWM_platformSetFrequency(PikaObj *self){
 
 }
+
+void TemplateDevice_PWM_platformGetEventId(PikaObj *self){
+
+}

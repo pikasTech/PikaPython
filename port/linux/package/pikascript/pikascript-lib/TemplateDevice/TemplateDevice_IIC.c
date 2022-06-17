@@ -18,3 +18,7 @@ void TemplateDevice_IIC_platformWrite(PikaObj *self){
 void TemplateDevice_IIC_platformWriteBytes(PikaObj *self){
 
 }
+
+void TemplateDevice_IIC_platformGetEventId(PikaObj *self){
+
+}

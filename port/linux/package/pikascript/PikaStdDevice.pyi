@@ -1,7 +1,14 @@
 from PikaObj import *
 
 
-class GPIO(TinyObj):
+class BaseDev(TinyObj):
+    def addEventCallBack(self, eventCallback: any): ...
+
+    # need override
+    def platformGetEventId(self):...
+
+
+class GPIO(BaseDev):
     def __init__(self):
         pass
 
@@ -69,7 +76,7 @@ class GPIO(TinyObj):
         pass
 
 
-class Time(TinyObj):
+class Time(BaseDev):
     def __init__(self):
         pass
 
@@ -107,7 +114,7 @@ class Time(TinyObj):
         pass
 
 
-class ADC(TinyObj):
+class ADC(BaseDev):
     def __init__(self):
         pass
 
@@ -139,7 +146,7 @@ class ADC(TinyObj):
         pass
 
 
-class UART(TinyObj):
+class UART(BaseDev):
     def __init__(self):
         pass
 
@@ -194,7 +201,7 @@ class UART(TinyObj):
         pass
 
 
-class IIC(TinyObj):
+class IIC(BaseDev):
     def __init__(self):
         pass
 
@@ -253,7 +260,7 @@ class IIC(TinyObj):
         pass
 
 
-class PWM(TinyObj):
+class PWM(BaseDev):
     def __init__(self):
         pass
 
@@ -313,7 +320,7 @@ class PWM(TinyObj):
         pass
 
 
-class SPI(TinyObj):
+class SPI(BaseDev):
     def __init__(self):
         pass
 
@@ -384,7 +391,7 @@ class SPI(TinyObj):
         pass
 
 
-class CAN(TinyObj):
+class CAN(BaseDev):
     def __init__(self):
         pass
 

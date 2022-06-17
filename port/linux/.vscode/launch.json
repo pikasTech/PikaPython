@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                "--gtest_filter=pikaMain.task_run_period_until"
+                // "--gtest_filter=event.gpio"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

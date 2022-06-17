@@ -20,3 +20,7 @@ void TemplateDevice_UART_platformWriteBytes(PikaObj* self) {
     }
     printf("]\n");
 }
+
+void TemplateDevice_UART_platformGetEventId(PikaObj *self){
+
+}
