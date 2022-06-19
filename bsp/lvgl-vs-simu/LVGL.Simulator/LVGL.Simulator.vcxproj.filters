@@ -60,6 +60,8 @@
     <ClInclude Include="pikascript\pikascript-api\PikaStdTask.h" />
     <ClInclude Include="pikascript\pikascript-api\PikaStdTask_Task.h" />
     <ClInclude Include="pikascript\pikascript-api\pika_lvgl_lv_event.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_lv_color_t.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_style_t.h" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LVGL.Simulator.manifest" />
@@ -145,6 +147,9 @@
     <ClCompile Include="pikascript\pikascript-api\PikaStdTask-api.c" />
     <ClCompile Include="pikascript\pikascript-api\pika_lvgl_lv_event-api.c" />
     <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_lv_event.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_lv_color_t-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_style_t-api.c" />
+    <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_lv_style_t.c" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LVGL.Simulator.rc" />
