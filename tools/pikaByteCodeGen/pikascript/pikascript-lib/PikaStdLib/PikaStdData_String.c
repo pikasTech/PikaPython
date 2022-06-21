@@ -1,5 +1,7 @@
 #include "PikaStdData_String.h"
+#include "PikaStdData_List.h"
 #include "PikaStdData_String_Util.h"
+#include "dataStrs.h"
 
 Arg* PikaStdData_String___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
@@ -64,12 +66,12 @@ char* PikaStdData_String___str__(PikaObj* self) {
     return obj_getStr(self, "str");
 }
 
-int PikaStdData_String_startwith(PikaObj *self, char* prefix){
-    char *str = obj_getStr(self,"str");
-    char *p = prefix;
-    int i=0;
-    while(*p!='\0'){
-        if(*p!=str[i])
+int PikaStdData_String_startwith(PikaObj* self, char* prefix) {
+    char* str = obj_getStr(self, "str");
+    char* p = prefix;
+    int i = 0;
+    while (*p != '\0') {
+        if (*p != str[i])
             return 0;
         p++;
         i++;
@@ -77,12 +79,12 @@ int PikaStdData_String_startwith(PikaObj *self, char* prefix){
     return 1;
 }
 
-int PikaStdData_String_endwith(PikaObj *self, char* suffix){
-    char *str = obj_getStr(self,"str");
-    int len1=strlen(str);
-    int len2=strlen(suffix);
-    while(len2>=1){
-        if(suffix[len2-1]!=str[len1-1])
+int PikaStdData_String_endwith(PikaObj* self, char* suffix) {
+    char* str = obj_getStr(self, "str");
+    int len1 = strlen(str);
+    int len2 = strlen(suffix);
+    while (len2 >= 1) {
+        if (suffix[len2 - 1] != str[len1 - 1])
             return 0;
         len2--;
         len1--;
@@ -90,57 +92,87 @@ int PikaStdData_String_endwith(PikaObj *self, char* suffix){
     return 1;
 }
 
-int PikaStdData_String_isdigit(PikaObj *self){
-    char *str = obj_getStr(self,"str");
-    int i=0;
-    while(str[i]!='\0'){
-            if(!isdigit((int)str[i]))
-                return 0;
-            i++;
+int PikaStdData_String_isdigit(PikaObj* self) {
+    char* str = obj_getStr(self, "str");
+    int i = 0;
+    while (str[i] != '\0') {
+        if (!isdigit((int)str[i]))
+            return 0;
+        i++;
     }
     return 1;
 }
 
-int PikaStdData_String_islower(PikaObj *self){
-    char *str = obj_getStr(self,"str");
-    int i=0;
-    while(str[i]!='\0'){
-            if(!islower((int)str[i]))
-                return 0;
-            i++;
+int PikaStdData_String_islower(PikaObj* self) {
+    char* str = obj_getStr(self, "str");
+    int i = 0;
+    while (str[i] != '\0') {
+        if (!islower((int)str[i]))
+            return 0;
+        i++;
     }
     return 1;
 }
 
-int PikaStdData_String_isalnum(PikaObj *self){
-    char *str = obj_getStr(self,"str");
-    int i=0;
-    while(str[i]!='\0'){
-            if(!isalnum((int)str[i]))
-                return 0;
-            i++;
+int PikaStdData_String_isalnum(PikaObj* self) {
+    char* str = obj_getStr(self, "str");
+    int i = 0;
+    while (str[i] != '\0') {
+        if (!isalnum((int)str[i]))
+            return 0;
+        i++;
     }
     return 1;
 }
 
-int PikaStdData_String_isalpha(PikaObj *self){
-    char *str = obj_getStr(self,"str");
-    int i=0;
-    while(str[i]!='\0'){
-            if(!isalpha((int)str[i]))
-                return 0;
-            i++;
+int PikaStdData_String_isalpha(PikaObj* self) {
+    char* str = obj_getStr(self, "str");
+    int i = 0;
+    while (str[i] != '\0') {
+        if (!isalpha((int)str[i]))
+            return 0;
+        i++;
     }
     return 1;
 }
 
-int PikaStdData_String_isspace(PikaObj *self){
-    char *str = obj_getStr(self,"str");
-    int i=0;
-    while(str[i]!='\0'){
-            if(!isspace((int)str[i]))
-                return 0;
-            i++;
+int PikaStdData_String_isspace(PikaObj* self) {
+    char* str = obj_getStr(self, "str");
+    int i = 0;
+    while (str[i] != '\0') {
+        if (!isspace((int)str[i]))
+            return 0;
+        i++;
     }
     return 1;
+}
+
+Arg* PikaStdData_String_split(PikaObj* self, char* s) {
+    /* 创建一个 list 对象，并得到一个 arg (指向对象的引用) */
+    Arg* list_arg = arg_newDirectObj(New_PikaStdData_List);
+    /* 得到 list 对象 */
+    PikaObj* list = arg_getPtr(list_arg);
+    /* 初始化 list */
+    PikaStdData_List___init__(list);
+    /* 必须要加这一行，否则会被内核重复初始化 */
+    arg_setType(list_arg, ARG_TYPE_OBJECT);
+
+    Args buffs = {0};
+    char* str = obj_getStr(self, "str");
+
+    char sign = s[0];
+    int token_num = strCountSign(str, sign) + 1;
+
+    for (int i = 0; i < token_num; i++) {
+        char* token = strsPopToken(&buffs, str, sign);
+        /* 用 arg_set<type> 的 api 创建 arg */
+        Arg* token_arg = arg_setStr(NULL, "", token);
+        /* 添加到 list 对象 */
+        PikaStdData_List_append(list, token_arg);
+        /* 销毁 arg */
+        arg_deinit(token_arg);
+    }
+
+    strsDeinit(&buffs);
+    return list_arg;
 }

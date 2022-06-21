@@ -103,3 +103,22 @@ TEST(string, format_parse1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(string, split) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "s = PikaStdData.String('a,b,c,d')\n"
+            "tokens = s.split(',')\n"
+            "for item in tokens:\n"
+            "    print(item)\n"
+            "\n");
+    /* collect */
+    /* assert */
+    // EXPECT_STREQ("res:23", s);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
