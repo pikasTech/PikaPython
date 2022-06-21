@@ -581,7 +581,7 @@ cd pikascript/docker
 
 step2: build and run the docker contianer
 ```
-sh build.sh
+bash build.sh
 sh run.sh
 ```
 
