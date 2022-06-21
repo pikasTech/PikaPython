@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1655775318124,
+  "lastUpdate": 1655782610141,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -60558,6 +60558,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000572774885039,
             "unit": "ms/iter",
             "extra": "iterations: 181245\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "e31135ba90f7e2a0573d2e3c9e8327fd646034a7",
+          "message": "!31 fix run context problem when call the callback function\n* remove __pikaMain from StdTask\n* support run arg from other context(file name space)\n* format\n* use def_context in callback\n* supporting def_context, not ok",
+          "timestamp": "2022-06-21T03:29:29Z",
+          "tree_id": "5f53d4e7b280f28c3e141748340841344877900b",
+          "url": "https://github.com/pikasTech/pikascript/commit/e31135ba90f7e2a0573d2e3c9e8327fd646034a7"
+        },
+        "date": 1655782605425,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 7048.054081488594,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 7048.054081488594 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 39.49787891280652,
+            "unit": "ms/iter",
+            "extra": "iterations: 22\ncpu: 39.455124461129735 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 21.40542501792569,
+            "unit": "ms/iter",
+            "extra": "iterations: 41\ncpu: 21.403266137088448 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 7.094871490509623,
+            "unit": "ms/iter",
+            "extra": "iterations: 123\ncpu: 7.094156688059874 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000368698028534,
+            "unit": "ms/iter",
+            "extra": "iterations: 174016\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
