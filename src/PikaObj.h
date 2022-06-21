@@ -81,6 +81,7 @@ struct MethodInfo {
     char* dec;
     char* ptr;
     char* pars;
+    PikaObj* def_context;
     ArgType type;
     ByteCodeFrame* bytecode_frame;
 };
@@ -128,16 +129,20 @@ PikaObj* obj_getHostObj(PikaObj* self, char* objPath);
 int32_t obj_freeObj(PikaObj* self, char* subObjectName);
 
 /* method */
-int32_t class_defineMethod(PikaObj* self, char* declearation, Method methodPtr);
+int32_t class_defineMethod(PikaObj* self,
+                           char* declearation,
+                           Method methodPtr);
 
 int32_t class_defineObjectMethod(PikaObj* self,
                                  char* declearation,
                                  Method methodPtr,
+                                 PikaObj* def_context,
                                  ByteCodeFrame* bytecode_frame);
 
 int32_t class_defineStaticMethod(PikaObj* self,
                                  char* declearation,
                                  Method methodPtr,
+                                 PikaObj* def_context,
                                  ByteCodeFrame* bytecode_frame);
 
 int32_t class_defineConstructor(PikaObj* self,
@@ -147,6 +152,7 @@ int32_t class_defineConstructor(PikaObj* self,
 int32_t class_defineRunTimeConstructor(PikaObj* self,
                                        char* declearation,
                                        Method methodPtr,
+                                       PikaObj* def_context,
                                        ByteCodeFrame* bytecode_frame);
 
 int32_t obj_removeArg(PikaObj* self, char* argPath);
@@ -255,13 +261,14 @@ enum shell_state obj_runChar(PikaObj* self, char inputChar);
 typedef PikaObj PikaEventListener;
 
 void pks_eventLisener_sendSignal(PikaEventListener* self,
-                             uint32_t eventId,
-                             int eventSignal);
+                                 uint32_t eventId,
+                                 int eventSignal);
 
 void pks_eventLicener_registEvent(PikaEventListener* self,
-                              uint32_t eventId,
-                              PikaObj* eventHandleObj);
+                                  uint32_t eventId,
+                                  PikaObj* eventHandleObj);
 
 void pks_eventLisener_init(PikaEventListener** p_self);
 void pks_eventLisener_deinit(PikaEventListener** p_self);
+PikaObj* methodArg_getDefContext(Arg* method_arg);
 #endif

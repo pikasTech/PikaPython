@@ -207,6 +207,10 @@ static Arg* VMState_runMethodArg(VMState* vs,
     }
     ByteCodeFrame* method_bytecodeFrame =
         methodArg_getBytecodeFrame(method_arg);
+    PikaObj* method_context = methodArg_getDefContext(method_arg);
+    if (NULL != method_context) {
+        method_host_obj = method_context;
+    }
     obj_setErrorCode(method_host_obj, 0);
 
     /* run method */
@@ -229,8 +233,8 @@ static Arg* VMState_runMethodArg(VMState* vs,
             &(method_bytecodeFrame->instruct_array), 0);
         uint16_t pc = (uintptr_t)method_ptr - insturctArray_start;
         method_args_obj = __pikaVM_runByteCodeFrameWithState(
-            method_host_obj, method_args_obj, vs->globals, method_bytecodeFrame,
-            pc);
+            method_host_obj, method_args_obj, method_host_obj,
+            method_bytecodeFrame, pc);
 
         /* get method return */
         return_arg =
@@ -925,15 +929,15 @@ static Arg* __VM_instruction_handler_DEF(PikaObj* self,
         if (instructUnit_getBlockDeepth(ins_unit_now) == thisBlockDeepth + 1) {
             if (is_in_class) {
                 class_defineObjectMethod(hostObj, data, (Method)ins_unit_now,
-                                         vs->bytecode_frame);
+                                         self, vs->bytecode_frame);
             } else {
                 if (is_class) {
                     class_defineRunTimeConstructor(hostObj, data,
-                                                   (Method)ins_unit_now,
+                                                   (Method)ins_unit_now, self,
                                                    vs->bytecode_frame);
                 } else {
                     class_defineStaticMethod(hostObj, data,
-                                             (Method)ins_unit_now,
+                                             (Method)ins_unit_now, self,
                                              vs->bytecode_frame);
                 }
             }
