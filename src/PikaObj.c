@@ -122,16 +122,6 @@ int32_t obj_deinit(PikaObj* self) {
     return obj_deinit_no_del(self);
 }
 
-int32_t obj_enable(PikaObj* self) {
-    obj_setInt(self, "isEnable", 1);
-    return 0;
-}
-
-int32_t obj_disable(PikaObj* self) {
-    obj_setInt(self, "isEnable", 0);
-    return 0;
-}
-
 int32_t obj_setInt(PikaObj* self, char* argPath, int64_t val) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
@@ -304,24 +294,6 @@ char* obj_getStr(PikaObj* self, char* argPath) {
     return res;
 }
 
-int32_t obj_load(PikaObj* self, Args* args, char* name) {
-    args_copyArgByName(args, name, self->list);
-    return 0;
-}
-
-int32_t obj_freeObj(PikaObj* self, char* objPath) {
-    PikaObj* obj = obj_getPtr(self, objPath);
-    obj_deinit(obj);
-    return 0;
-}
-
-char* obj_print(PikaObj* self, char* name) {
-    if (NULL == self) {
-        return NULL;
-    }
-    return args_print(self->list, name);
-}
-
 PikaObj* obj_getClassObjByNewFun(PikaObj* context,
                                  char* name,
                                  NewFun newClassFun) {
@@ -396,10 +368,6 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     PikaObj* newObj = newNormalObj(newObjFun);
     __pikaMain = newObj;
     return newObj;
-}
-
-Arg* obj_getRefArg(PikaObj* self) {
-    return arg_setPtr(NULL, "", ARG_TYPE_OBJECT_NEW, self);
 }
 
 Arg* arg_newMetaObj(NewFun new_obj_fun) {
@@ -863,10 +831,6 @@ int32_t obj_getErrorCode(PikaObj* self) {
     return obj_getInt(self, "__errCode");
 }
 
-void args_setErrorCode(Args* args, int32_t errCode) {
-    args_setInt(args, "__errCode", errCode);
-}
-
 int32_t args_getErrorCode(Args* args) {
     if (!args_isArgExist(args, "__errCode")) {
         return 0;
@@ -882,10 +846,6 @@ char* obj_getSysOut(PikaObj* self) {
     return obj_getStr(self, "__sysOut");
 }
 
-char* args_getSysOut(Args* args) {
-    return args_getStr(args, "__sysOut");
-}
-
 void args_setSysOut(Args* args, char* str) {
     // args_setStr(args, "__sysOut", str);
     if (NULL == str) {
@@ -895,15 +855,6 @@ void args_setSysOut(Args* args, char* str) {
         return;
     }
     __platform_printf("%s\r\n", str);
-}
-
-void obj_sysPrintf(PikaObj* self, char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    char sysOut[128] = {0};
-    __platform_vsprintf(sysOut, fmt, args);
-    obj_setSysOut(self, sysOut);
-    va_end(args);
 }
 
 void method_returnBytes(Args* args, uint8_t* val) {
@@ -971,10 +922,6 @@ int obj_refcntNow(PikaObj* self) {
 
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj) {
     obj_refcntInc(obj);
-    return arg_setPtr(self, name, ARG_TYPE_OBJECT, obj);
-}
-
-Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj) {
     return arg_setPtr(self, name, ARG_TYPE_OBJECT, obj);
 }
 

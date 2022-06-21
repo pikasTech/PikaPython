@@ -28,18 +28,6 @@
 #include "dataString.h"
 #include "PikaPlatform.h"
 
-char* strAppendWithSize_unlimited(char* strOut, char* pData, int32_t Size) {
-    int32_t strOut_i = strGetSize(strOut);
-    for (int32_t i = 0; i < Size; i++) {
-        strOut[strOut_i + i] = pData[i];
-    }
-    strOut_i += Size;
-    // add \0 to the end of strOut
-    strOut[strOut_i] = 0;
-
-    return strOut;
-}
-
 char* strCut(char* strOut, char* strIn, char startSign, char endSign) {
     int32_t Size = strGetSize(strIn);
     int32_t iStart = 0;
@@ -89,10 +77,6 @@ char* strDeleteChar(char* strOut, char* strIn, char ch) {
     return strOut;
 }
 
-char* strDeleteEnter(char* str) {
-    return strDeleteChar(str, str, '\n');
-}
-
 char* strAppendWithSize(char* strOut, char* pData, int32_t Size) {
     int32_t strOut_i = strGetSize(strOut);
     for (int32_t i = 0; i < Size; i++) {
@@ -121,30 +105,6 @@ int32_t strGetTokenNum(char* strIn, char sign) {
 
 size_t strGetSize(char* pData) {
     return strlen(pData);
-}
-
-char* strAppend_unlimited(char* strOut, char* pData) {
-    uint32_t Size = 0;
-    Size = strGetSize(pData);
-    return strAppendWithSize_unlimited(strOut, pData, Size);
-}
-
-char* strGetLastLine(char* strOut, char* strIn) {
-    int32_t size = strGetSize(strIn);
-    char sign = '\n';
-    uint32_t beginIndex = 0;
-
-    /* skip the latest '\n' */
-    for (int32_t i = size - 2; i > -1; i--) {
-        if (strIn[i] == sign) {
-            beginIndex = i + 1;
-            break;
-        }
-    }
-
-    __platform_memcpy(strOut, strIn + beginIndex, size - beginIndex);
-    strOut[size - beginIndex + 1] = 0;
-    return strOut;
 }
 
 char* strPointToLastToken(char* strIn, char sign) {
@@ -226,31 +186,6 @@ char* strGetFirstToken(char* strOut, char* strIn, char sign) {
     return strOut;
 }
 
-int32_t strGetToken(char* string, char** argv, char sign) {
-    int32_t argc = 0;
-    uint32_t i = 0;
-    // arg_i point32_t to the arg operated now
-    int32_t arg_i = 0;
-    // if not found ' ', then put chars from CMD to argv_tem
-    int32_t char_i = 0;
-    for (i = 0; i < strGetSize(string); i++) {
-        if (string[i] != sign) {
-            argv[arg_i][char_i] = string[i];
-            char_i++;
-        }
-        if (string[i] == sign) {
-            // write '\0' to the end of argv
-            argv[arg_i][char_i] = 0;
-            arg_i++;
-            char_i = 0;
-        }
-        // write '\0' to the end of last argv
-        argv[arg_i][char_i] = 0;
-    }
-    argc = arg_i + 1;
-    return argc;
-}
-
 char* strAppend(char* strOut, char* pData) {
     uint32_t Size = 0;
     Size = strGetSize(pData);
@@ -285,13 +220,6 @@ char* strRemovePrefix(char* inputStr, char* prefix, char* outputStr) {
         outputStr[i - strGetSize(prefix)] = inputStr[i];
     }
     return outputStr;
-}
-
-char* strClear(char* str) {
-    for (uint32_t i = 0; i < sizeof(str); i++) {
-        str[i] = 0;
-    }
-    return str;
 }
 
 int32_t strIsContain(char* str, char ch) {

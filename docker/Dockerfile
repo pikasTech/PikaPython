@@ -70,3 +70,4 @@ ADD .vimrc /root/.vimrc
 
 ADD bashrc /root/.bashrc
 RUN apt-get install -y liblua5.3-dev
+RUN apt-get install -y lcov
