@@ -117,7 +117,10 @@ TEST(string, split) {
             "\n");
     /* collect */
     /* assert */
-    // EXPECT_STREQ("res:23", s);
+    EXPECT_STREQ(log_buff[0], "d\r\n");
+    EXPECT_STREQ(log_buff[1], "c\r\n");
+    EXPECT_STREQ(log_buff[2], "b\r\n");
+    EXPECT_STREQ(log_buff[3], "a\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

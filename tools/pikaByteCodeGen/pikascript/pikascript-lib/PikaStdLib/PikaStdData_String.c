@@ -147,15 +147,11 @@ int PikaStdData_String_isspace(PikaObj* self) {
     return 1;
 }
 
-Arg* PikaStdData_String_split(PikaObj* self, char* s) {
-    /* 创建一个 list 对象，并得到一个 arg (指向对象的引用) */
-    Arg* list_arg = arg_newDirectObj(New_PikaStdData_List);
-    /* 得到 list 对象 */
-    PikaObj* list = arg_getPtr(list_arg);
+PikaObj* PikaStdData_String_split(PikaObj* self, char* s) {
+    /* 创建 list 对象 */
+    PikaObj* list = newNormalObj(New_PikaStdData_List);
     /* 初始化 list */
     PikaStdData_List___init__(list);
-    /* 必须要加这一行，否则会被内核重复初始化 */
-    arg_setType(list_arg, ARG_TYPE_OBJECT);
 
     Args buffs = {0};
     char* str = obj_getStr(self, "str");
@@ -174,5 +170,5 @@ Arg* PikaStdData_String_split(PikaObj* self, char* s) {
     }
 
     strsDeinit(&buffs);
-    return list_arg;
+    return list;
 }
