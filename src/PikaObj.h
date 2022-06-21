@@ -124,14 +124,15 @@ int32_t obj_load(PikaObj* self, Args* args, char* name);
 int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_projcetFun);
 PikaObj* obj_getObj(PikaObj* self, char* objPath);
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath);
+PikaObj* obj_getHostObjWithIsClass(PikaObj* self,
+                                   char* objPath,
+                                   PIKA_BOOL* pIsClass);
 
 // subProcess
 int32_t obj_freeObj(PikaObj* self, char* subObjectName);
 
 /* method */
-int32_t class_defineMethod(PikaObj* self,
-                           char* declearation,
-                           Method methodPtr);
+int32_t class_defineMethod(PikaObj* self, char* declearation, Method methodPtr);
 
 int32_t class_defineObjectMethod(PikaObj* self,
                                  char* declearation,

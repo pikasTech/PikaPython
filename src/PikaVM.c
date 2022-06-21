@@ -192,10 +192,9 @@ static int32_t __foreach_handler_deinitTuple(Arg* argEach, Args* context) {
     return PIKA_RES_OK;
 }
 
-static Arg* VMState_runMethodArg(VMState* vs,
-                                 PikaObj* method_host_obj,
-                                 PikaObj* method_args_obj,
-                                 Arg* method_arg) {
+Arg* obj_runMethodArg(PikaObj* self,
+                      PikaObj* method_args_obj,
+                      Arg* method_arg) {
     Arg* return_arg = NULL;
     /* get method Ptr */
     Method method_ptr = methodArg_getPtr(method_arg);
@@ -209,20 +208,20 @@ static Arg* VMState_runMethodArg(VMState* vs,
         methodArg_getBytecodeFrame(method_arg);
     PikaObj* method_context = methodArg_getDefContext(method_arg);
     if (NULL != method_context) {
-        method_host_obj = method_context;
+        self = method_context;
     }
-    obj_setErrorCode(method_host_obj, 0);
+    obj_setErrorCode(self, 0);
 
     /* run method */
     if (method_type == ARG_TYPE_METHOD_NATIVE) {
         /* native method */
-        method_ptr(method_host_obj, method_args_obj->list);
+        method_ptr(self, method_args_obj->list);
         /* get method return */
         return_arg =
             arg_copy(args_getArg(method_args_obj->list, (char*)"return"));
     } else if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
         /* native method */
-        method_ptr(method_host_obj, method_args_obj->list);
+        method_ptr(self, method_args_obj->list);
         /* get method return */
         return_arg =
             arg_copy(args_getArg(method_args_obj->list, (char*)"return"));
@@ -233,8 +232,7 @@ static Arg* VMState_runMethodArg(VMState* vs,
             &(method_bytecodeFrame->instruct_array), 0);
         uint16_t pc = (uintptr_t)method_ptr - insturctArray_start;
         method_args_obj = __pikaVM_runByteCodeFrameWithState(
-            method_host_obj, method_args_obj, method_host_obj,
-            method_bytecodeFrame, pc);
+            self, method_args_obj, self, method_bytecodeFrame, pc);
 
         /* get method return */
         return_arg =
@@ -466,8 +464,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     }
 
     /* run method arg */
-    return_arg =
-        VMState_runMethodArg(vs, method_host_obj, sub_locals, method_arg);
+    return_arg = obj_runMethodArg(method_host_obj, sub_locals, method_arg);
 
     /* __init__() */
     if (ARG_TYPE_OBJECT_NEW == arg_getType(return_arg)) {
@@ -486,8 +483,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         if (vs->error_code != 0) {
             goto init_exit;
         }
-        return_arg_init =
-            VMState_runMethodArg(vs, new_obj, sub_locals, method_arg);
+        return_arg_init = obj_runMethodArg(new_obj, sub_locals, method_arg);
     init_exit:
         if (NULL != return_arg_init) {
             arg_deinit(return_arg_init);
