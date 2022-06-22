@@ -541,36 +541,8 @@ while True:
 
 # 6.内核测试与开发
 
-## Test core in docker (recommend)
-step1: Clone the repo
-``` shell
-git clone https://github.com/pikastech/pikascript
-cd pikascript/docker 
-```
-
-step2: build and run the docker contianer
-```
-sh build.sh
-sh run.sh
-# now you are in the port/linux
-```
-
-step3: init the port/linux
-``` shell	
-sh pull-core.sh
-sh init.sh
-```
-
-step4: test the core 
-``` shell
-sh gtest.sh
-sh ci_benchmark.sh
-```
-
-step5: Run the REPL
-``` shell
-sh run.sh
-```
+## 在 Docker 中测试 (recommend)
+[ Docker 开发环境搭建指南 ](https://pikadoc.readthedocs.io/zh/latest/get-start_linux.html)
 
 # 7.贡献者
 | 内容 | 贡献者 |
