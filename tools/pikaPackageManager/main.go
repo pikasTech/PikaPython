@@ -132,7 +132,6 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 			CheckIfError(os.Rename(pyFileSource, pyFileName))
 		}
 
-
 		pyiFileList, _ := FilterDirsGlob(dirPath, "*.pyi")
 		for i := range pyiFileList {
 			pyFileSource := strings.ReplaceAll(pyiFileList[i], "\\", "/")
@@ -207,10 +206,13 @@ func getRequestment(path string) ([]Requerment_t, bool) {
 		count++
 		line := scanner.Text()
 		line = strings.ReplaceAll(line, " ", "")
-		requerment.Name = strings.Split(line, "==")[0]
-		requerment.Version = strings.Split(line, "==")[1]
-		fmt.Printf("request: %s %s\n", requerment.Name, requerment.Version)
-		requestments = append(requestments, requerment)
+		req_info := strings.Split(line, "==")
+		if len(req_info) == 2 {
+			requerment.Name = strings.Split(line, "==")[0]
+			requerment.Version = strings.Split(line, "==")[1]
+			fmt.Printf("request: %s %s\n", requerment.Name, requerment.Version)
+			requestments = append(requestments, requerment)
+		}
 	}
 	return requestments, true
 }

@@ -2,3 +2,4 @@ pikascript-core==latest
 PikaStdLib==latest
 PikaStdDevice==v1.3.0
 STM32G0==latest
+
