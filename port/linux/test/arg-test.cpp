@@ -59,7 +59,7 @@ TEST(arg_test, null) {
     Arg* arg = New_arg(NULL);
     arg = arg_setNull(arg);
     ArgType type = arg_getType(arg);
-    EXPECT_EQ(ARG_TYPE_NULL, type);
+    EXPECT_EQ(ARG_TYPE_NONE, type);
     arg_deinit(arg);
     EXPECT_EQ(pikaMemNow(), 0);
 }

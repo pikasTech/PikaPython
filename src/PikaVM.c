@@ -171,6 +171,9 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
     if (strEqu(data, (char*)"False")) {
         return arg_setInt(NULL, "", 0);
     }
+    if (strEqu(data, (char*)"None")) {
+        return arg_setNull(NULL);
+    }
     /* find in local list first */
     Arg* arg = arg_copy(obj_getArg(vs->locals, data));
     if (NULL == arg) {
@@ -201,7 +204,7 @@ Arg* obj_runMethodArg(PikaObj* self,
     /* get method type list */
     ArgType method_type = arg_getType(method_arg);
     /* error */
-    if (ARG_TYPE_VOID == method_type) {
+    if (ARG_TYPE_NONE == method_type) {
         return NULL;
     }
     ByteCodeFrame* method_bytecodeFrame =
@@ -446,7 +449,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         method_arg = obj_getMethodArg(vs->globals, methodPath);
     }
     /* assert method*/
-    if (NULL == method_arg || ARG_TYPE_VOID == arg_getType(method_arg)) {
+    if (NULL == method_arg || ARG_TYPE_NONE == arg_getType(method_arg)) {
         /* error, method no found */
         VMState_setErrorCode(vs, 2);
         __platform_printf("NameError: name '%s' is not defined\r\n", data);
@@ -800,6 +803,10 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     }
     if (strEqu("==", data) || strEqu("!=", data)) {
         int8_t is_equ = -1;
+        if(type_arg1 == ARG_TYPE_NONE && type_arg2 == ARG_TYPE_NONE){
+            is_equ = 1;
+            goto EQU_exit;
+        }
         /* type not equl, and type is not int or float */
         if (type_arg1 != type_arg2) {
             if ((type_arg1 != ARG_TYPE_FLOAT) && (type_arg1 != ARG_TYPE_INT)) {
@@ -982,7 +989,7 @@ static Arg* VM_instruction_handler_EST(PikaObj* self, VMState* vs, char* data) {
     if (arg == NULL) {
         return arg_setInt(NULL, "", 0);
     }
-    if (ARG_TYPE_NULL == arg_getType(arg)) {
+    if (ARG_TYPE_NONE == arg_getType(arg)) {
         return arg_setInt(NULL, "", 0);
     }
     return arg_setInt(NULL, "", 1);
@@ -1484,7 +1491,7 @@ void VMState_solveUnusedStack(VMState* vs) {
     for (int i = 0; i < top; i++) {
         Arg* arg = stack_popArg(&(vs->stack));
         ArgType type = arg_getType(arg);
-        if (type == ARG_TYPE_VOID) {
+        if (type == ARG_TYPE_NONE) {
             arg_deinit(arg);
             continue;
         }

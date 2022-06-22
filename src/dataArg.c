@@ -89,7 +89,7 @@ void arg_freeContent(Arg* self) {
 Arg* arg_setContent(Arg* self, uint8_t* content, uint16_t size) {
     if (NULL == self) {
         /* malloc */
-        return arg_init("", ARG_TYPE_VOID, content, size, NULL);
+        return arg_init("", ARG_TYPE_NONE, content, size, NULL);
     }
 
     /* only copy */
@@ -109,7 +109,7 @@ Arg* arg_setContent(Arg* self, uint8_t* content, uint16_t size) {
 
 Arg* arg_setNameHash(Arg* self, Hash nameHash) {
     if (NULL == self) {
-        return arg_init_hash(nameHash, ARG_TYPE_VOID, NULL, 0, NULL);
+        return arg_init_hash(nameHash, ARG_TYPE_NONE, NULL, 0, NULL);
     }
     Arg* arg = (Arg*)self;
     arg->name_hash = nameHash;
@@ -146,7 +146,7 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
 }
 
 Arg* arg_newContent(Arg* self, uint32_t size) {
-    Arg* newContent = arg_init("", ARG_TYPE_VOID, NULL, size, NULL);
+    Arg* newContent = arg_init("", ARG_TYPE_NONE, NULL, size, NULL);
     arg_freeContent(self);
     return newContent;
 }
@@ -215,7 +215,7 @@ Arg* arg_setInt(Arg* self, char* name, int64_t val) {
 }
 
 Arg* arg_setNull(Arg* self) {
-    return arg_init("", ARG_TYPE_NULL, NULL, 0, NULL);
+    return arg_init("", ARG_TYPE_NONE, NULL, 0, NULL);
 }
 
 Arg* arg_setFloat(Arg* self, char* name, double val) {
@@ -265,7 +265,7 @@ Hash arg_getNameHash(Arg* self) {
 
 ArgType arg_getType(Arg* self) {
     if (NULL == self) {
-        return ARG_TYPE_NULL;
+        return ARG_TYPE_NONE;
     }
     return self->type;
 }

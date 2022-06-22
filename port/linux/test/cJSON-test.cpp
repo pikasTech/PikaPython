@@ -394,9 +394,22 @@ TEST(cJSON, parse_faild) {
     obj_setStr(pikaMain, "testjson", testjson);
     obj_run(pikaMain,
             "a = pika_cjson.Parse(testjson)\n"
-            "a.print()\n");
+            "b = pika_cjson.Parse('3')\n"
+            "if None == a:\n"
+            "    res = True\n"
+            "else:\n"
+            "    res = False\n"
+            "if None == b:\n"
+            "    res2 = True\n"
+            "else:\n"
+            "    res2 = False\n"
+            "\n");
     /* collect */
+    int res = obj_getInt(pikaMain, "res");
+    int res2 = obj_getInt(pikaMain, "res2");
     /* assert */
+    EXPECT_EQ(res, PIKA_TRUE);
+    EXPECT_EQ(res2, PIKA_FALSE);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -426,10 +439,9 @@ TEST(cJSON, module) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_run(pikaMain, 
-    "import cjson_test\n"
-    "cjson_test.test_start()\n"
-    );
+    pikaVM_run(pikaMain,
+               "import cjson_test\n"
+               "cjson_test.test_start()\n");
     /* collect */
     /* assert */
 
