@@ -44,6 +44,9 @@
         #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
         #define PIKA_PLOOC_ENABLE 0
         #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 1
+        #define PIKA_POOL_ENABLE 0
+        #define PIKA_POOL_SIZE 0x4000
+        #define PIKA_POOL_ALIGN 8
     
     /* optimize options */
         #define PIKA_OPTIMIZE_SIZE 0

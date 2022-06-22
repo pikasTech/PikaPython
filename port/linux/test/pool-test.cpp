@@ -1,5 +1,13 @@
 #include "test_common.h"
 
+extern "C" {
+Pool pool_init(uint32_t size, uint8_t aline);
+void* pool_malloc(Pool* pool, uint32_t size);
+void pool_free(Pool* pool, void* mem, uint32_t size);
+void pool_deinit(Pool* pool);
+void pool_printBlocks(Pool* pool, uint32_t block_min, uint32_t block_max);
+}
+
 TEST(pool, init) {
     Pool p = pool_init(125, 4);
     EXPECT_EQ(p.aline, 4);
