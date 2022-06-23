@@ -1640,10 +1640,12 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
     char* module_name = strsCopy(&buffs, file_name);
     strPopLastToken(module_name, '.');
 
+    __platform_printf("(pikascript) pika compiler:\r\n");
     PikaMaker* maker = New_PikaMaker();
     pikaMaker_compileModuleWithDepends(maker, module_name);
     pikaMaker_linkCompiledModules(maker, "pikaModules_cache.py.a");
     obj_deinit(maker);
+    __platform_printf("(pikascript) all succeed.\r\n\r\n");
 
     pikaMemMaxReset();
     Obj_linkLibraryFile(self, "pikascript-api/pikaModules_cache.py.a");
