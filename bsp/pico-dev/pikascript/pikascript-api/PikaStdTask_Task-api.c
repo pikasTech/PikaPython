@@ -2,7 +2,7 @@
 /* Warning! Don't modify this file! */
 /* ******************************** */
 #include "PikaStdTask_Task.h"
-#include "TinyObj.h"
+#include "PikaStdLib_SysObj.h"
 #include "PikaStdData_List.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,7 +47,7 @@ void PikaStdTask_Task_run_until_msMethod(PikaObj *self, Args *args){
 }
 
 PikaObj *New_PikaStdTask_Task(Args *args){
-    PikaObj *self = New_TinyObj(args);
+    PikaObj *self = New_PikaStdLib_SysObj(args);
     obj_newObj(self, "calls", "PikaStdData_List", New_PikaStdData_List);
     class_defineMethod(self, "__init__()", PikaStdTask_Task___init__Method);
     class_defineMethod(self, "call_always(fun_todo:any)", PikaStdTask_Task_call_alwaysMethod);
