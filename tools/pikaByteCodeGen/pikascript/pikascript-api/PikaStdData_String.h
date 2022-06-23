@@ -23,6 +23,7 @@ int PikaStdData_String_isdigit(PikaObj *self);
 int PikaStdData_String_islower(PikaObj *self);
 int PikaStdData_String_isspace(PikaObj *self);
 void PikaStdData_String_set(PikaObj *self, char* s);
+PikaObj* PikaStdData_String_split(PikaObj *self, char* s);
 int PikaStdData_String_startwith(PikaObj *self, char* prefix);
 
 #endif

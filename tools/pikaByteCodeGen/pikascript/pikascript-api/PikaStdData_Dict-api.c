@@ -43,6 +43,11 @@ void PikaStdData_Dict_getMethod(PikaObj *self, Args *args){
     method_returnArg(args, res);
 }
 
+void PikaStdData_Dict_keysMethod(PikaObj *self, Args *args){
+    PikaObj* res = PikaStdData_Dict_keys(self);
+    method_returnObj(args, res);
+}
+
 void PikaStdData_Dict_removeMethod(PikaObj *self, Args *args){
     char* key = args_getStr(args, "key");
     PikaStdData_Dict_remove(self, key);
@@ -63,6 +68,7 @@ PikaObj *New_PikaStdData_Dict(Args *args){
     class_defineMethod(self, "__next__()->any", PikaStdData_Dict___next__Method);
     class_defineMethod(self, "__set__(__key:any,__val:any)", PikaStdData_Dict___set__Method);
     class_defineMethod(self, "get(key:str)->any", PikaStdData_Dict_getMethod);
+    class_defineMethod(self, "keys()->dict_keys", PikaStdData_Dict_keysMethod);
     class_defineMethod(self, "remove(key:str)", PikaStdData_Dict_removeMethod);
     class_defineMethod(self, "set(key:str,arg:any)", PikaStdData_Dict_setMethod);
     return self;

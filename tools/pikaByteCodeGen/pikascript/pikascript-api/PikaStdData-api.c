@@ -32,6 +32,11 @@ void PikaStdData_UtilsMethod(PikaObj *self, Args *args){
     method_returnArg(args, res);
 }
 
+void PikaStdData_dict_keysMethod(PikaObj *self, Args *args){
+    Arg* res = PikaStdData_dict_keys(self);
+    method_returnArg(args, res);
+}
+
 PikaObj *New_PikaStdData(Args *args){
     PikaObj *self = New_TinyObj(args);
     class_defineConstructor(self, "ByteArray()->any", PikaStdData_ByteArrayMethod);
@@ -39,6 +44,7 @@ PikaObj *New_PikaStdData(Args *args){
     class_defineConstructor(self, "List()->any", PikaStdData_ListMethod);
     class_defineConstructor(self, "String()->any", PikaStdData_StringMethod);
     class_defineConstructor(self, "Utils()->any", PikaStdData_UtilsMethod);
+    class_defineConstructor(self, "dict_keys()->any", PikaStdData_dict_keysMethod);
     return self;
 }
 

@@ -80,6 +80,12 @@ void PikaStdData_String_setMethod(PikaObj *self, Args *args){
     PikaStdData_String_set(self, s);
 }
 
+void PikaStdData_String_splitMethod(PikaObj *self, Args *args){
+    char* s = args_getStr(args, "s");
+    PikaObj* res = PikaStdData_String_split(self, s);
+    method_returnObj(args, res);
+}
+
 void PikaStdData_String_startwithMethod(PikaObj *self, Args *args){
     char* prefix = args_getStr(args, "prefix");
     int res = PikaStdData_String_startwith(self, prefix);
@@ -102,6 +108,7 @@ PikaObj *New_PikaStdData_String(Args *args){
     class_defineMethod(self, "islower()->int", PikaStdData_String_islowerMethod);
     class_defineMethod(self, "isspace()->int", PikaStdData_String_isspaceMethod);
     class_defineMethod(self, "set(s:str)", PikaStdData_String_setMethod);
+    class_defineMethod(self, "split(s:str)->List", PikaStdData_String_splitMethod);
     class_defineMethod(self, "startwith(prefix:str)->int", PikaStdData_String_startwithMethod);
     return self;
 }

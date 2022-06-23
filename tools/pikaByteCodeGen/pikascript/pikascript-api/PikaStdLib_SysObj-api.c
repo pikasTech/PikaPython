@@ -37,6 +37,13 @@ void PikaStdLib_SysObj_bytesMethod(PikaObj *self, Args *args){
     method_returnArg(args, res);
 }
 
+void PikaStdLib_SysObj_cformatMethod(PikaObj *self, Args *args){
+    char* fmt = args_getStr(args, "fmt");
+    PikaTuple* var = args_getPtr(args, "var");
+    char* res = PikaStdLib_SysObj_cformat(self, fmt, var);
+    method_returnStr(args, res);
+}
+
 void PikaStdLib_SysObj_chrMethod(PikaObj *self, Args *args){
     int val = args_getInt(args, "val");
     char* res = PikaStdLib_SysObj_chr(self, val);
@@ -58,6 +65,12 @@ void PikaStdLib_SysObj_hexMethod(PikaObj *self, Args *args){
     int val = args_getInt(args, "val");
     char* res = PikaStdLib_SysObj_hex(self, val);
     method_returnStr(args, res);
+}
+
+void PikaStdLib_SysObj_idMethod(PikaObj *self, Args *args){
+    Arg* obj = args_getArg(args, "obj");
+    int res = PikaStdLib_SysObj_id(self, obj);
+    method_returnInt(args, res);
 }
 
 void PikaStdLib_SysObj_intMethod(PikaObj *self, Args *args){
@@ -128,10 +141,12 @@ PikaObj *New_PikaStdLib_SysObj(Args *args){
     class_defineMethod(self, "__set__(obj:any,key:any,val:any,obj_str:str)", PikaStdLib_SysObj___set__Method);
     class_defineMethod(self, "__slice__(obj:any,start:any,end:any,step:int)->any", PikaStdLib_SysObj___slice__Method);
     class_defineMethod(self, "bytes(val:any)->bytes", PikaStdLib_SysObj_bytesMethod);
+    class_defineMethod(self, "cformat(fmt:str,*var)->str", PikaStdLib_SysObj_cformatMethod);
     class_defineMethod(self, "chr(val:int)->str", PikaStdLib_SysObj_chrMethod);
     class_defineMethod(self, "dict()->any", PikaStdLib_SysObj_dictMethod);
     class_defineMethod(self, "float(arg:any)->float", PikaStdLib_SysObj_floatMethod);
     class_defineMethod(self, "hex(val:int)->str", PikaStdLib_SysObj_hexMethod);
+    class_defineMethod(self, "id(obj:any)->int", PikaStdLib_SysObj_idMethod);
     class_defineMethod(self, "int(arg:any)->int", PikaStdLib_SysObj_intMethod);
     class_defineMethod(self, "iter(arg:any)->any", PikaStdLib_SysObj_iterMethod);
     class_defineMethod(self, "len(arg:any)->int", PikaStdLib_SysObj_lenMethod);

@@ -16,6 +16,7 @@ Arg* PikaStdData_Dict___iter__(PikaObj *self);
 Arg* PikaStdData_Dict___next__(PikaObj *self);
 void PikaStdData_Dict___set__(PikaObj *self, Arg* __key, Arg* __val);
 Arg* PikaStdData_Dict_get(PikaObj *self, char* key);
+PikaObj* PikaStdData_Dict_keys(PikaObj *self);
 void PikaStdData_Dict_remove(PikaObj *self, char* key);
 void PikaStdData_Dict_set(PikaObj *self, Arg* arg, char* key);
 
