@@ -1,10 +1,10 @@
-cd RTE/Script
+@cd RTE/PikaScript
 
-if not exist pikascript-core (
-    pikaPackage.exe
+@if not exist pikascript-core (
+    @pikaPackage.exe
 )
-rust-msc-latest-win10.exe
+@rust-msc-latest-win10.exe
 
-copy /B "pikascript-api\*.*"
-copy /B "pikascript-core\*.*"
-copy /B "pikascript-lib\PikaStdLib\*.*"
+@copy /B "pikascript-api\*.*"
+@copy /B "pikascript-core\*.*"
+@copy /B "pikascript-lib\PikaStdLib\*.*"

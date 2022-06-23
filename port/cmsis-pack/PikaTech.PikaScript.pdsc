@@ -16,7 +16,7 @@
   <repository type="git">https://github.com/pikasTech/pikascript.git</repository>
   
   <releases>
-    <release date="2022-06-23" version="0.9.0" url="https://raw.githubusercontent.com/pikaTech/pikaScript/master/port/cmsis-pack/PikaTech.PikaScript.0.9.0.pack">
+    <release date="2022-06-23" version="0.9.1" url="https://raw.githubusercontent.com/pikaTech/pikaScript/master/port/cmsis-pack/PikaTech.PikaScript.0.9.1.pack">
         - First cmsis-pack
     </release>
     
@@ -91,7 +91,7 @@
         
         <condition id="Kernel">
             <description>The Kernel of the PikaScript</description>
-            <require Cclass="Script" Cgroup="PikaScript" Csub="Core" Cversion="1.8.6"/>
+            <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="1.8.6"/>
         </condition>
         
         <condition id="PLOOC_Pack">
@@ -136,7 +136,7 @@
   -->
 
     <components>
-        <bundle Cbundle="PikaScript" Cclass="Script" Cversion="1.8.6">
+        <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.8.6">
             <description>an ultra-lightweight Python engine</description>
             <doc>https://pikadoc.readthedocs.io/en/latest/index.html</doc>
 
@@ -191,10 +191,10 @@
                 <file               category="header"   name="PLOOC/plooc_class_strict.h"       condition="NO_PLOOC_Pack" />
                 <file               category="header"   name="PLOOC/plooc_class_black_box.h"    condition="NO_PLOOC_Pack" />
                 
-                <file attr="config" category="utility"  name="rust-msc-latest-win10.exe" />
-                <file attr="config" category="utility"  name="pikaPackage.exe" />
-                <file attr="config" category="utility"  name="pikaBeforBuild-keil.bat" />
-                <file attr="config" category="source"   name="requestment.txt" />
+                <file attr="config" category="utility"  name="rust-msc-latest-win10.exe"    version="1.0.0"/>
+                <file attr="config" category="utility"  name="pikaPackage.exe"              version="1.0.0"/>
+                <file attr="config" category="utility"  name="pikaBeforBuild-keil.bat"      version="1.0.1"/>
+                <file attr="config" category="source"   name="requestment.txt"              version="1.0.0"/>
                 <file attr="config" category="source"   name="main.py" />
                 
                 <!-- PLOOC -->
