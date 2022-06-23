@@ -996,6 +996,13 @@ PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
     return self;
 }
 
+PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name) {
+    obj_newMetaObj(self, "__lib", New_LibObj);
+    LibObj* lib = obj_getObj(self, "__lib");
+    LibObj_loadLibraryFile(lib, input_file_name);
+    return self;
+}
+
 PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
     obj_newMetaObj(self, "__lib", New_LibObj);
     LibObj* lib = obj_getObj(self, "__lib");

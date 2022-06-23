@@ -21,3 +21,6 @@ def while_loop():
     while i < 4:
         i += 1
         print(i)
+
+def newfun():
+    print('test in new fun')

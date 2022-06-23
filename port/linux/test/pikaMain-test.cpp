@@ -27,7 +27,7 @@ TEST(pikaMain, unitTest) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_runFile(pikaMain, "../../examples/UnitTest/main.py");
+    pikaVM_runSingleFile(pikaMain, "../../examples/UnitTest/main.py");
     /* collect */
     /* assert */
     /* deinit */

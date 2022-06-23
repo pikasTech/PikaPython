@@ -71,7 +71,7 @@ TEST(string, print_file) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_runFile(pikaMain, "../../examples/BuiltIn/print.py");
+    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/print.py");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "format: test,0123,15.50\r\n");

@@ -803,7 +803,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     }
     if (strEqu("==", data) || strEqu("!=", data)) {
         int8_t is_equ = -1;
-        if(type_arg1 == ARG_TYPE_NONE && type_arg2 == ARG_TYPE_NONE){
+        if (type_arg1 == ARG_TYPE_NONE && type_arg2 == ARG_TYPE_NONE) {
             is_equ = 1;
             goto EQU_exit;
         }
@@ -1184,10 +1184,10 @@ exit:
     return globals;
 }
 
-VMParameters* pikaVM_runFile(PikaObj* self, char* filename) {
+VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
+    Args buffs = {0};
     Arg* file_arg = arg_loadFile(NULL, filename);
     char* lines = (char*)arg_getBytes(file_arg);
-    Args buffs = {0};
     /* replace the "\r\n" to "\n" */
     lines = strsReplace(&buffs, lines, "\r\n", "\n");
     /* clear the void line */
@@ -1633,4 +1633,21 @@ void byteCodeFrame_printAsArray(ByteCodeFrame* self) {
     constPool_printAsArray(&(self->const_pool));
     __platform_printf("};\n");
     __platform_printf("pikaVM_runByteCode(self, (uint8_t*)bytes);\n");
+}
+
+PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
+    Args buffs = {0};
+    char* module_name = strsCopy(&buffs, file_name);
+    strPopLastToken(module_name, '.');
+
+    PikaMaker* maker = New_PikaMaker();
+    pikaMaker_compileModuleWithDepends(maker, module_name);
+    pikaMaker_linkCompiledModules(maker, "pikaModules_cache.py.a");
+    obj_deinit(maker);
+
+    pikaMemMaxReset();
+    Obj_linkLibraryFile(self, "pikascript-api/pikaModules_cache.py.a");
+    self = pikaVM_runSingleFile(self, file_name);
+    strsDeinit(&buffs);
+    return self;
 }

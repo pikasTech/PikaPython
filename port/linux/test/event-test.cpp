@@ -5,7 +5,7 @@ TEST(event, gpio) {
     /* init */
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    pikaVM_runFile(pikaMain, "../../examples/TemplateDevice/gpio_cb.py");
+    pikaVM_runSingleFile(pikaMain, "../../examples/TemplateDevice/gpio_cb.py");
 
 #define EVENT_SIGAL_IO_RISING_EDGE 0x01
 #define EVENT_SIGAL_IO_FALLING_EDGE 0x02

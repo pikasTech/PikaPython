@@ -4,7 +4,7 @@ TEST(chinese, test1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    pikaVM_runFile(pikaMain, "../../examples/Chinese/test_operator.py");
+    pikaVM_runSingleFile(pikaMain, "../../examples/Chinese/test_operator.py");
     obj_run(pikaMain, "test()");
     /* collect */
     /* assert */
