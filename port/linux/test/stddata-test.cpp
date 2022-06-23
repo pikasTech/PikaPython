@@ -1,5 +1,7 @@
 #include "test_common.h"
 
+
+#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
 TEST(stddata, test1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -20,3 +22,4 @@ TEST(stddata, test1) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
