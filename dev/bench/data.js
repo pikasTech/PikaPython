@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656071939581,
+  "lastUpdate": 1656072942087,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -62016,6 +62016,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000913821898377,
             "unit": "ms/iter",
             "extra": "iterations: 280712\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7a4fa9aa3d0585016f374bf2280e320f8a0e13ee",
+          "message": "merge Packdev (#159)\n\n* update to v1.8.7\r\n\r\n* Update pikaBeforBuild-keil.bat\r\n\r\n* remove trash\r\n\r\n* cmsis-pack v0.9.2\r\n\r\n* Delete README.md\r\n\r\n* rm big bin file\r\n\r\nCo-authored-by: Gabriel Wang <gabriel.wang@arm.com>",
+          "timestamp": "2022-06-24T20:08:47+08:00",
+          "tree_id": "47bfe3d8596436e09dbe90886c9579daef60a168",
+          "url": "https://github.com/pikasTech/pikascript/commit/7a4fa9aa3d0585016f374bf2280e320f8a0e13ee"
+        },
+        "date": 1656072936376,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6771.320999540664,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6771.320999540664 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 41.88123837734394,
+            "unit": "ms/iter",
+            "extra": "iterations: 30\ncpu: 41.85351965827085 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 22.42233396841682,
+            "unit": "ms/iter",
+            "extra": "iterations: 55\ncpu: 22.42015490423915 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 7.384773430417142,
+            "unit": "ms/iter",
+            "extra": "iterations: 167\ncpu: 7.3840835493387145 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000394049205005,
+            "unit": "ms/iter",
+            "extra": "iterations: 245956\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
