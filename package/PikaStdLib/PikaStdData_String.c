@@ -172,3 +172,8 @@ PikaObj* PikaStdData_String_split(PikaObj* self, char* s) {
     strsDeinit(&buffs);
     return list;
 }
+
+int PikaStdData_String___len__(PikaObj *self){
+    char* str = obj_getStr(self, "str");
+    return strGetSize(str);
+}

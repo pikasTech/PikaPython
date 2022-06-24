@@ -285,6 +285,31 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_BYTES == arg_getType(arg)) {
         return arg_getBytesSize(arg);
     }
+
+    if (argType_isObject(arg_getType(arg))) {
+        PikaObj* arg_obj = arg_getPtr(arg);
+        Arg* method_arg = obj_getMethodArg(arg_obj, "__len__");
+        if (NULL != method_arg) {
+            arg_deinit(method_arg);
+
+            /* clang-format off */
+        PIKA_PYTHON(
+        __res = __len__()
+        )
+            /* clang-format on */
+            const uint8_t bytes[] = {
+                0x08, 0x00, /* instruct array size */
+                0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct
+                                                                   array */
+                0x0f, 0x00, /* const pool size */
+                0x00, 0x5f, 0x5f, 0x6c, 0x65, 0x6e, 0x5f, 0x5f, 0x00,
+                0x5f, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
+            };
+            pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
+            return obj_getInt(arg_obj, "__res");
+        }
+    }
+
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] len: arg type not support\r\n");
     return -1;

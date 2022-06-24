@@ -119,7 +119,7 @@ char* PikaStdData_dict_keys___str__(PikaObj* self) {
     return obj_getStr(self, "_buf");
 }
 
-char* PikaStdData_Dict___str__(PikaObj *self){
+char* PikaStdData_Dict___str__(PikaObj* self) {
     Arg* str_arg = arg_setStr(NULL, "", "{");
 
     PikaDict* keys = obj_getPtr(self, "_keys");
@@ -150,4 +150,16 @@ char* PikaStdData_Dict___str__(PikaObj *self){
     obj_setStr(self, "_buf", arg_getStr(str_arg));
     arg_deinit(str_arg);
     return obj_getStr(self, "_buf");
+}
+
+int PikaStdData_Dict___len__(PikaObj* self) {
+    PikaDict* dict = obj_getPtr(self, "dict");
+    return args_getSize(&dict->super);
+}
+
+
+int PikaStdData_dict_keys___len__(PikaObj *self){
+    PikaObj* dictptr = obj_getPtr(self, "dictptr");
+    PikaDict* keys = obj_getPtr(dictptr, "_keys");
+    return args_getSize(&keys->super);
 }

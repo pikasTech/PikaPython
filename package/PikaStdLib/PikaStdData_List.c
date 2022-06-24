@@ -106,3 +106,7 @@ char* PikaStdData_List___str__(PikaObj* self) {
     arg_deinit(str_arg);
     return obj_getStr(self, "_buf");
 }
+
+int PikaStdData_List___len__(PikaObj *self){
+    return PikaStdData_List_len(self);
+}
