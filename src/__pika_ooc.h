@@ -29,7 +29,7 @@
 #ifndef __PIKA_OOC_H__
 #define __PIKA_OOC_H__
     #if PIKA_PLOOC_ENABLE
-        #include "../pikascript-lib/PLOOC/plooc_class.h"
+        #include "plooc_class.h"
     #else
     #define private_member(X) X
     #endif
