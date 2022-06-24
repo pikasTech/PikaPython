@@ -188,7 +188,7 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 
 在编译时支持 python 类和方法定义，完整支持封装、继承、多态、模块功能 - 基于 [Pika 预编译器](../../tree/master/tools/pikaCompiler)。
 
-在运行时支持 python 方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于 [Pika 运行时内核](../../tree/master/src/package/pikascript/pikascript-core)。
+在运行时支持 python 方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于 [Pika 运行时内核](../../tree/master/src)。
 
 |语法|编译时|运行时|Shell|
 |---|---|---|---|
