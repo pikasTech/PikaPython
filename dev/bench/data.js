@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656049575466,
+  "lastUpdate": 1656049912068,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -61854,6 +61854,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000152784546389,
             "unit": "ms/iter",
             "extra": "iterations: 185979\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "442e51e314e02fee180a0f079c381786affe3b3d",
+          "message": "!35 support try raise the first step\n* Merge branch 'master' into trydev\n* Merge branch 'master' into trydev\n* Merge branch 'master' into trydev\n* Merge branch 'master' into trydev\n* Merge branch 'master' into trydev\n* raise in function not ok\n* support except\n* add GER ins\n* try raise is test ok\n* support default raise RuntimeError\n* add except test\n* jmp to skip except block after try\n* add <try:> parse",
+          "timestamp": "2022-06-24T05:44:50Z",
+          "tree_id": "65b256b314b50df50d21f7c611d7ad4eeb4b5ff7",
+          "url": "https://github.com/pikasTech/pikascript/commit/442e51e314e02fee180a0f079c381786affe3b3d"
+        },
+        "date": 1656049907732,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6782.247196196886,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6782.247196196886 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 41.35607296844678,
+            "unit": "ms/iter",
+            "extra": "iterations: 26\ncpu: 41.348760191573156 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 22.364957153122496,
+            "unit": "ms/iter",
+            "extra": "iterations: 49\ncpu: 22.36405760341076 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 7.372738700829436,
+            "unit": "ms/iter",
+            "extra": "iterations: 147\ncpu: 7.372187794634981 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005001037092682845,
+            "unit": "ms/iter",
+            "extra": "iterations: 217378\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
