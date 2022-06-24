@@ -1500,8 +1500,7 @@ void VMState_solveUnusedStack(VMState* vs) {
             continue;
         }
         if (argType_isObject(type)) {
-            __platform_printf("<object at 0x%02x>\r\n",
-                              (uintptr_t)arg_getPtr(arg));
+            __platform_printf("%s\r\n", obj_toStr(arg_getPtr(arg)));
         }
         if (type == ARG_TYPE_INT) {
             __platform_printf("%d\r\n", (int)arg_getInt(arg));

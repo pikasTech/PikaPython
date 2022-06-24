@@ -1,5 +1,6 @@
 #include "BaseObj.h"
 #include "PikaObj.h"
+#include "dataStrs.h"
 
 void PikaStdData_List_append(PikaObj* self, Arg* arg) {
     PikaList* list = obj_getPtr(self, "list");
@@ -79,4 +80,29 @@ void PikaStdData_ByteArray_fromString(PikaObj* self, char* s) {
 void PikaStdData_List___del__(PikaObj* self) {
     Args* list = obj_getPtr(self, "list");
     args_deinit(list);
+}
+
+char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg);
+char* PikaStdData_List___str__(PikaObj* self) {
+    Arg* str_arg = arg_setStr(NULL, "", "[");
+    PikaList* list = obj_getPtr(self, "list");
+
+    int i = 0;
+    while (PIKA_TRUE) {
+        Arg* item = list_getArg(list, i);
+        if (NULL == item) {
+            break;
+        }
+        if (i != 0) {
+            str_arg = arg_strAppend(str_arg, ", ");
+        }
+        char* item_str = PikaStdLib_SysObj_str(self, item);
+        str_arg = arg_strAppend(str_arg, item_str);
+        i++;
+    }
+
+    str_arg = arg_strAppend(str_arg, "]");
+    obj_setStr(self, "_buf", arg_getStr(str_arg));
+    arg_deinit(str_arg);
+    return obj_getStr(self, "_buf");
 }

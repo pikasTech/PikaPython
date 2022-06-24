@@ -3,6 +3,7 @@
 #include "PikaObj.h"
 #include "PikaStdData_dict_keys.h"
 #include "PikaStdLib_SysObj.h"
+#include "dataStrs.h"
 
 Arg* PikaStdData_Dict_get(PikaObj* self, char* key) {
     PikaDict* dict = obj_getPtr(self, "dict");
@@ -90,4 +91,63 @@ Arg* PikaStdData_dict_keys___next__(PikaObj* self) {
     }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return res;
+}
+
+char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg);
+char* PikaStdData_dict_keys___str__(PikaObj* self) {
+    Arg* str_arg = arg_setStr(NULL, "", "dict_keys([");
+    PikaObj* dictptr = obj_getPtr(self, "dictptr");
+    PikaDict* keys = obj_getPtr(dictptr, "_keys");
+
+    int i = 0;
+    while (PIKA_TRUE) {
+        Arg* item = args_getArgByidex(&keys->super, i);
+        if (NULL == item) {
+            break;
+        }
+        if (i != 0) {
+            str_arg = arg_strAppend(str_arg, ", ");
+        }
+        char* item_str = PikaStdLib_SysObj_str(self, item);
+        str_arg = arg_strAppend(str_arg, item_str);
+        i++;
+    }
+
+    str_arg = arg_strAppend(str_arg, "])");
+    obj_setStr(self, "_buf", arg_getStr(str_arg));
+    arg_deinit(str_arg);
+    return obj_getStr(self, "_buf");
+}
+
+char* PikaStdData_Dict___str__(PikaObj *self){
+    Arg* str_arg = arg_setStr(NULL, "", "{");
+
+    PikaDict* keys = obj_getPtr(self, "_keys");
+    PikaDict* dict = obj_getPtr(self, "dict");
+
+    int i = 0;
+    while (PIKA_TRUE) {
+        Arg* item_key = args_getArgByidex(&keys->super, i);
+        Arg* item_val = args_getArgByidex(&dict->super, i);
+        if (NULL == item_key) {
+            break;
+        }
+        if (i != 0) {
+            str_arg = arg_strAppend(str_arg, ", ");
+        }
+        char* key_str = PikaStdLib_SysObj_str(self, item_key);
+        str_arg = arg_strAppend(str_arg, "'");
+        str_arg = arg_strAppend(str_arg, key_str);
+        str_arg = arg_strAppend(str_arg, "'");
+        str_arg = arg_strAppend(str_arg, ": ");
+
+        char* val_str = PikaStdLib_SysObj_str(self, item_val);
+        str_arg = arg_strAppend(str_arg, val_str);
+        i++;
+    }
+
+    str_arg = arg_strAppend(str_arg, "}");
+    obj_setStr(self, "_buf", arg_getStr(str_arg));
+    arg_deinit(str_arg);
+    return obj_getStr(self, "_buf");
 }
