@@ -958,13 +958,13 @@ char* Parser_solveBranckets(Args* outBuffs,
             }
         }
     }
-
+    char* right_res = NULL;
 exit:
     /* clean and return */
-    char* right = strsCopy(outBuffs, arg_getStr(right_arg));
+    right_res = strsCopy(outBuffs, arg_getStr(right_arg));
     arg_deinit(right_arg);
     strsDeinit(&buffs);
-    return right;
+    return right_res;
 }
 #endif
 

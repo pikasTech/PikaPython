@@ -1,2 +1,0 @@
-pikascript-core==latest
-PikaStdLib==latest
