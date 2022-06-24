@@ -38,6 +38,19 @@ enum Instruct {
     __INSTRCUTION_CNT,
 };
 
+typedef enum {
+    VM_JMP_EXIT = -999,
+    VM_JMP_CONTINUE = -997,
+    VM_JMP_BREAK = -998,
+    VM_JMP_RAISE = -996,
+} VM_JMP;
+
+typedef enum {
+    TRY_STATE_NONE = 0,
+    TRY_STATE_TOP,
+    TRY_STATE_INNER,
+} TRY_STATE;
+
 typedef struct VMState VMState;
 struct VMState {
     VMParameters* locals;
@@ -48,6 +61,8 @@ struct VMState {
     ByteCodeFrame* bytecode_frame;
     uint8_t error_code;
     uint8_t line_error_code;
+    uint8_t try_error_code;
+    TRY_STATE try_state;
 };
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);

@@ -65,23 +65,22 @@
 #define __platform_printf(...) rt_kprintf(__VA_ARGS__)
 #endif
 
-/* clang-format off */
 typedef enum {
-    PIKA_RES_ERR_ARG_NO_FOUND                           = -12,
-    PIKA_RES_ERR_UNKNOWN_INSTRUCTION                    = -11,
-    PIKA_RES_ERR_OUT_OF_RANGE                           = -10,
-    PIKA_RES_ERR_IO_ERROR                               = -9,
-    PIKA_RES_ERR_INSUFFICIENT_RESOURCE                  = -8,
-    PIKA_RES_ERR_INVALID_PARAM                          = -7,
-    PIKA_RES_ERR_INVALID_PTR                            = -6,
-    PIKA_RES_ERR_UNALIGNED_PTR                          = -5,
-    PIKA_RES_ERR_INVALID_VERSION_NUMBER                 = -4,
-    PIKA_RES_ERR_ILLEGAL_MAGIC_CODE                     = -3,
-    PIKA_RES_ERR_OPERATION_FAILED                       = -2,
-    PIKA_RES_ERR_UNKNOWN                                = -1,
-    PIKA_RES_OK                                         =  0,
+    PIKA_RES_OK = 0,
+    PIKA_RES_ERR_RUNTIME_ERROR,
+    PIKA_RES_ERR_ARG_NO_FOUND,
+    PIKA_RES_ERR_UNKNOWN_INSTRUCTION,
+    PIKA_RES_ERR_OUT_OF_RANGE,
+    PIKA_RES_ERR_IO_ERROR,
+    PIKA_RES_ERR_INSUFFICIENT_RESOURCE,
+    PIKA_RES_ERR_INVALID_PARAM,
+    PIKA_RES_ERR_INVALID_PTR,
+    PIKA_RES_ERR_UNALIGNED_PTR,
+    PIKA_RES_ERR_INVALID_VERSION_NUMBER,
+    PIKA_RES_ERR_ILLEGAL_MAGIC_CODE,
+    PIKA_RES_ERR_OPERATION_FAILED,
+    PIKA_RES_ERR_UNKNOWN,
 } PIKA_RES;
-/* clang-format on*/
 
 /* clang-format off */
 

@@ -1501,9 +1501,6 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         char* arg_in = strsPopToken(list_buffs, line_buff, ' ');
         obj_setStr(ast, "arg_in", arg_in);
         strsPopToken(list_buffs, line_buff, ' ');
-        if (strIsStartWith(line_buff, "range(")) {
-            obj_setInt(ast, "isRange", 1);
-        }
         char* list_in = strsPopToken(list_buffs, line_buff, ':');
         list_in = strsAppend(list_buffs, "iter(", list_in);
         list_in = strsAppend(list_buffs, list_in, ")");
@@ -1529,6 +1526,31 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         }
         goto block_matched;
     }
+
+    /* try */
+    if (strIsStartWith(line_start, "try")) {
+        if ((line_start[3] == ' ') || (line_start[3] == ':')) {
+            stmt = "";
+            obj_setStr(ast, "block", "try");
+            if (NULL != block_stack) {
+                stack_pushStr(block_stack, "try");
+            }
+        }
+        goto block_matched;
+    }
+
+    /* except */
+    if (strIsStartWith(line_start, "except")) {
+        if ((line_start[6] == ' ') || (line_start[6] == ':')) {
+            stmt = "";
+            obj_setStr(ast, "block", "except");
+            if (NULL != block_stack) {
+                stack_pushStr(block_stack, "except");
+            }
+        }
+        goto block_matched;
+    }
+
     if (strEqu(line_start, "return")) {
         obj_setStr(ast, "return", "");
         stmt = "";
@@ -1539,6 +1561,21 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         strsPopToken(&buffs, lineBuff, ' ');
         stmt = lineBuff;
         obj_setStr(ast, "return", "");
+        goto block_matched;
+    }
+    if (strEqu(line_start, "raise")) {
+        obj_setStr(ast, "raise", "");
+        stmt = "RuntimeError";
+        goto block_matched;
+    }
+    if (strIsStartWith(line_start, "raise ")) {
+        char* lineBuff = strsCopy(&buffs, line_start);
+        strsPopToken(&buffs, lineBuff, ' ');
+        stmt = lineBuff;
+        if (strEqu("", stmt)) {
+            stmt = "RuntimeError";
+        }
+        obj_setStr(ast, "raise", "");
         goto block_matched;
     }
     if (strIsStartWith(line_start, "global ")) {
@@ -1996,6 +2033,19 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 JMP -1\n");
             }
             /* goto the while start when exit while block */
+            if (strEqu(block_type, "try")) {
+                pikaAsm =
+                    ASM_addBlockDeepth(ast, outBuffs, pikaAsm, block_type_num);
+                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 NTR \n");
+                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 GER \n");
+                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 JEZ 2\n");
+            }
+
+            if (strEqu(block_type, "except")) {
+                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 SER 0\n");
+            }
+
+            /* goto the while start when exit while block */
             if (strEqu(block_type, "for")) {
                 pikaAsm =
                     ASM_addBlockDeepth(ast, outBuffs, pikaAsm, block_type_num);
@@ -2093,6 +2143,12 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 NEL 1\n");
         goto exit;
     }
+
+    if (strEqu(obj_getStr(ast, "block"), "try")) {
+        pikaAsm = strsAppend(&buffs, pikaAsm, "0 TRY \n");
+        goto exit;
+    }
+
     if (strEqu(obj_getStr(ast, "block"), "elif")) {
         /* skip if __else is 0 */
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 NEL 1\n");
@@ -2158,6 +2214,15 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         is_block_matched = 1;
         goto exit;
     }
+
+    if (obj_isArgExist(ast, "raise")) {
+        /* parse stmt ast */
+        pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
+        pikaAsm = strsAppend(&buffs, pikaAsm, "0 RIS \n");
+        is_block_matched = 1;
+        goto exit;
+    }
+
     if (obj_isArgExist(ast, "global")) {
         /* parse stmt ast */
         pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
