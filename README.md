@@ -610,6 +610,7 @@ sh run.sh
 | Contribute log | Contributer |
 | --- | --- |
 | Add [CMSIS-PACK](https://pikadoc.readthedocs.io/en/latest/get-start_cmsis-pack.html) | [GorgonMeducer](https://github.com/GorgonMeducer) |
+| donate: air32f103 board * 20 | 合宙 [xinxi204](https://gitee.com/xinxi204) |
 | contrubute to PikaMath.Math() | [onceday](https://gitee.com/onceday) |
 | add support for Unix Time | [onceday](https://gitee.com/onceday) |
 | contrubute to PikaStdLib.String() | [purewind7](https://gitee.com/purewind7) |
