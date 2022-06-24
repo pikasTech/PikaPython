@@ -27,27 +27,16 @@
 #ifndef __PIKA_CFG_VALID_H__
 #define __PIKA_CFG_VALID_H__
 
-    /* default configuration  */
-        #define PIKA_LINE_BUFF_SIZE 128
-        #define PIKA_SPRINTF_BUFF_SIZE 256
-        #define PIKA_STACK_BUFF_SIZE 256
-        #define PIKA_NAME_BUFF_SIZE 32
-        #define PIKA_PATH_BUFF_SIZE 64
-        #define PIKA_BYTES_DEFAULT_SIZE 64
-        #define PIKA_ARG_ALIGN_ENABLE 1
-        #define PIKA_METHOD_CACHE_ENABLE 0
-        #define PIKA_BUILTIN_LIST_ENABLE 0
-        #define PIKA_BUILTIN_DICT_ENABLE 0
-        #define PIKA_READ_FILE_BUFF_SIZE 0x10000
-        #define PIKA_INIT_STRING_ENABLE 0
-        #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
-        #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
-        #define PIKA_PLOOC_ENABLE 0
-        #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 1
-        #define PIKA_POOL_ENABLE 0
-        #define PIKA_POOL_SIZE 0x4000
-        #define PIKA_POOL_ALIGN 8
-    
+/* clang-format off */
+
+/*
+ * Don't modify the "pika_config_valid.h" file!
+ * If you want to change the config, create "pika_config.h",
+ * then #define PIKA_CONFIG_ENABLE in the Compiler Options.
+ * To see more:
+ * https://pikadoc.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html
+ */
+
     /* optimize options */
         #define PIKA_OPTIMIZE_SIZE 0
         #define PIKA_OPTIMIZE_SPEED 1
@@ -56,51 +45,154 @@
         #define PIKA_SYNTAX_LEVEL_MINIMAL 0
         #define PIKA_SYNTAX_LEVEL_MAXIMAL 1
 
-    /* default optimize */
-        #define PIKA_OPTIMIZE PIKA_OPTIMIZE_SIZE
-    /* default syntax support level */
-        #define PIKA_SYNTAX_LEVEL PIKA_SYNTAX_LEVEL_MAXIMAL
-
     /* use user config */
     #ifdef PIKA_CONFIG_ENABLE
         #include "pika_config.h"
     #endif
 
-    /* config for size optimize */
-    #if PIKA_OPTIMIZE == PIKA_OPTIMIZE_SIZE
-        #undef PIKA_METHOD_CACHE_ENABLE
-        #define PIKA_METHOD_CACHE_ENABLE 0
+    /* default optimize */
+    #ifndef PIKA_OPTIMIZE
+        #define PIKA_OPTIMIZE PIKA_OPTIMIZE_SIZE
+    #endif
 
-    /* config for speed optimize */
+    /* default syntax support level */
+    #ifndef PIKA_SYNTAX_LEVEL
+        #define PIKA_SYNTAX_LEVEL PIKA_SYNTAX_LEVEL_MAXIMAL
+    #endif
+
+    /* auto config for optimize */
+    #if PIKA_OPTIMIZE == PIKA_OPTIMIZE_SIZE
+        #ifndef PIKA_METHOD_CACHE_ENABLE
+            #define PIKA_METHOD_CACHE_ENABLE 0
+        #endif
+
     #elif PIKA_OPTIMIZE == PIKA_OPTIMIZE_SPEED
-        #undef PIKA_METHOD_CACHE_ENABLE
-        #define PIKA_METHOD_CACHE_ENABLE 1
+        #ifndef PIKA_METHOD_CACHE_ENABLE
+            #define PIKA_METHOD_CACHE_ENABLE 1
+        #endif
     #endif
     
-    /* config for syntax level */
+    /* auto config for syntax level */
     #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MINIMAL
-        #undef PIKA_SYNTEX_ITEM_SLICE_ENABLE
-        #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 0
-        #undef PIKA_BUILTIN_LIST_ENABLE
-        #define PIKA_BUILTIN_LIST_ENABLE 0
-        #undef PIKA_BUILTIN_DICT_ENABLE
-        #define PIKA_BUILTIN_DICT_ENABLE 0
-        #undef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
-        #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 0
-		#undef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
-		#define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 0
+        #ifndef PIKA_SYNTEX_ITEM_SLICE_ENABLE
+            #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 0
+        #endif
+
+        #ifndef PIKA_BUILTIN_LIST_ENABLE
+            #define PIKA_BUILTIN_LIST_ENABLE 0
+        #endif
+
+        #ifndef PIKA_BUILTIN_DICT_ENABLE
+            #define PIKA_BUILTIN_DICT_ENABLE 0
+        #endif
+
+        #ifndef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+            #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 0
+        #endif
+
+		#ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+		    #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 0
+        #endif
+
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
-        #undef PIKA_SYNTEX_ITEM_SLICE_ENABLE
-        #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
-        #undef PIKA_BUILTIN_LIST_ENABLE
-        #define PIKA_BUILTIN_LIST_ENABLE 1
-        #undef PIKA_BUILTIN_DICT_ENABLE
-        #define PIKA_BUILTIN_DICT_ENABLE 1
-        #undef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
-        #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
-		#undef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
-		#define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 1
+        #ifndef PIKA_SYNTEX_ITEM_SLICE_ENABLE
+            #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
+        #endif
+
+        #ifndef PIKA_BUILTIN_LIST_ENABLE
+            #define PIKA_BUILTIN_LIST_ENABLE 1 
+        #endif
+
+        #ifndef PIKA_BUILTIN_DICT_ENABLE
+            #define PIKA_BUILTIN_DICT_ENABLE 1
+        #endif
+
+        #ifndef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+            #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
+        #endif
+
+		#ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+		    #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 1
+        #endif
     #endif
+
+    /* default configuration  */
+    #ifndef PIKA_LINE_BUFF_SIZE
+        #define PIKA_LINE_BUFF_SIZE 128
+    #endif
+
+    #ifndef PIKA_SPRINTF_BUFF_SIZE
+        #define PIKA_SPRINTF_BUFF_SIZE 256
+    #endif
+
+    #ifndef PIKA_STACK_BUFF_SIZE
+        #define PIKA_STACK_BUFF_SIZE 256
+    #endif
+
+    #ifndef PIKA_NAME_BUFF_SIZE
+        #define PIKA_NAME_BUFF_SIZE 32
+    #endif
+
+    #ifndef PIKA_PATH_BUFF_SIZE
+        #define PIKA_PATH_BUFF_SIZE 64
+    #endif
+
+    #ifndef PIKA_BYTES_DEFAULT_SIZE
+        #define PIKA_BYTES_DEFAULT_SIZE 64
+    #endif
+
+    #ifndef PIKA_ARG_ALIGN_ENABLE
+        #define PIKA_ARG_ALIGN_ENABLE 1
+    #endif
+
+    #ifndef PIKA_METHOD_CACHE_ENABLE
+        #define PIKA_METHOD_CACHE_ENABLE 0
+    #endif
+
+    #ifndef PIKA_BUILTIN_LIST_ENABLE
+        #define PIKA_BUILTIN_LIST_ENABLE 0
+    #endif
+
+    #ifndef PIKA_BUILTIN_DICT_ENABLE
+        #define PIKA_BUILTIN_DICT_ENABLE 0
+    #endif
+
+    #ifndef PIKA_READ_FILE_BUFF_SIZE
+        #define PIKA_READ_FILE_BUFF_SIZE 0x10000
+    #endif
+
+    #ifndef PIKA_INIT_STRING_ENABLE
+        #define PIKA_INIT_STRING_ENABLE 0
+    #endif
+    
+    #ifndef PIKA_SYNTEX_ITEM_SLICE_ENABLE
+        #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
+    #endif
+
+    #ifndef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+        #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
+    #endif
+
+    #ifndef PIKA_PLOOC_ENABLE
+        #define PIKA_PLOOC_ENABLE 0
+    #endif
+
+    #ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+        #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 1
+    #endif
+
+    #ifndef PIKA_POOL_ENABLE
+        #define PIKA_POOL_ENABLE 0
+    #endif
+
+    #ifndef PIKA_POOL_SIZE
+        #define PIKA_POOL_SIZE 0x4000
+    #endif
+
+    #ifndef PIKA_POOL_ALIGN
+        #define PIKA_POOL_ALIGN 8
+    #endif
+    
 
     /* configuration validation */
 
