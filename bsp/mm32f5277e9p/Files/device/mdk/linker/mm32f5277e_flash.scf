@@ -1,0 +1,64 @@
+#!armclang -E --target=arm-arm-none-eabi -mcpu=star-mc1 -xc
+
+/* Stack Size */
+#if (defined(__stack_size__))
+  #define Stack_Size          __stack_size__
+#else
+  #define Stack_Size          0x1000
+#endif
+
+/* Heap Size */
+#if (defined(__heap_size__))
+  #define Heap_Size           __heap_size__
+#else
+  #define Heap_Size           0x4000
+#endif
+
+/* vectors. */
+#define  m_interrupts_start     0x08000000
+#define  m_interrupts_end       0x08000400
+#define  m_interrupts_size      (m_interrupts_end - m_interrupts_start)
+
+/* code in flash. */
+#define  m_text_start           0x08000400
+#define  m_text_end             0x08040000  /* 512KB. */
+#define  m_text_size            (m_text_end - m_text_start)
+
+/* data in sram. */
+#define  m_data_start           0x30000000
+#define  m_data_end             0x3001C000
+#define  m_data_size            (m_data_end - m_data_start)
+
+/* load region size_region. */
+LR_m_text m_interrupts_start m_interrupts_size+m_text_size
+{
+    /* vectors. */
+    VECTOR_ROM m_interrupts_start m_interrupts_size
+    {
+        * (RESET, +First)
+    }
+
+    /* code memory. */
+    ER_m_text m_text_start FIXED m_text_size
+    {
+        * (InRoot$$Sections)
+        .ANY (+RO)
+    }
+
+    /* rw memory. */
+    RW_m_data m_data_start  m_data_size-Stack_Size-Heap_Size
+    {
+        .ANY (+RW +ZI)
+    }
+
+    /* for heap. */
+    ARM_LIB_HEAP +0  EMPTY Heap_Size /* Heap region growing up. */
+    {
+    }
+
+    /* for stack. */
+    ARM_LIB_STACK m_data_start+m_data_size  EMPTY -Stack_Size /* Stack region growing down. */
+    {
+    }
+
+}
