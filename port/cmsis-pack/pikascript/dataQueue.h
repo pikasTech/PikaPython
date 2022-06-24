@@ -4,8 +4,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon ?? liang6516@outlook.com
- * Copyright (c) 2021 Gorgon Meducer ?? embedded_zhuoran@hotmail.com
+ * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +25,25 @@
  * SOFTWARE.
  */
 
-#ifndef __PIKA_OOC_H__
-#define __PIKA_OOC_H__
-    #if PIKA_PLOOC_ENABLE
-        #include "../pikascript-lib/PLOOC/plooc_class.h"
-    #else
-    #define private_member(X) X
-    #endif
+#ifndef __DATA_QUEUE__H
+#define __DATA_QUEUE__H
+#include "dataArgs.h"
+
+typedef Args Queue;
+Queue* New_queue(void);
+
+int32_t queue_deinit(Queue* queue);
+int32_t queue_pushInt(Queue* queue, int val);
+int32_t queue_pushFloat(Queue* queue, double val);
+int32_t queue_pushStr(Queue* queue, char* str);
+int32_t queue_pushArg(Queue* queue, Arg* arg);
+char* fast_itoa(char* buf, uint32_t val);
+
+int64_t queue_popInt(Queue* queue);
+double queue_popFloat(Queue* queue);
+char* queue_popStr(Queue* queue);
+Arg* queue_popArg(Queue* queue);
+Arg* queue_popArg_notDeinitArg(Queue* queue);
+int32_t queue_deinit_stack(Queue* queue);
+void queue_init(Queue* queue);
 #endif

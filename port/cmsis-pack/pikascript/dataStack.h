@@ -4,8 +4,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon ?? liang6516@outlook.com
- * Copyright (c) 2021 Gorgon Meducer ?? embedded_zhuoran@hotmail.com
+ * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +25,28 @@
  * SOFTWARE.
  */
 
-#ifndef __PIKA_OOC_H__
-#define __PIKA_OOC_H__
-    #if PIKA_PLOOC_ENABLE
-        #include "../pikascript-lib/PLOOC/plooc_class.h"
-    #else
-    #define private_member(X) X
-    #endif
+#ifndef __DATA_STACK__H
+#define __DATA_STACK__H
+#include "dataArgs.h"
+
+typedef struct Stack_t {
+    Arg* stack_pyload;
+    Arg* stack_size_array;
+    uint8_t* sp;
+    int16_t* sp_size;
+    int16_t top;
+    size_t stack_totle_size;
+} Stack;
+
+int32_t stack_deinit(Stack* stack);
+
+int32_t stack_pushStr(Stack* stack, char* str);
+char* stack_popStr(Stack* stack, char* outBuff);
+Arg* stack_popArg(Stack* stack);
+int32_t stack_pushArg(Stack* stack, Arg* arg);
+int8_t stack_getTop(Stack* stack);
+int32_t stack_init(Stack* stack);
+int16_t stack_popSize(Stack* stack);
+void stack_pushSize(Stack* stack, int16_t size);
+void stack_reset(Stack* stack);
 #endif

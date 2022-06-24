@@ -4,8 +4,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon ?? liang6516@outlook.com
- * Copyright (c) 2021 Gorgon Meducer ?? embedded_zhuoran@hotmail.com
+ * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +25,18 @@
  * SOFTWARE.
  */
 
-#ifndef __PIKA_OOC_H__
-#define __PIKA_OOC_H__
-    #if PIKA_PLOOC_ENABLE
-        #include "../pikascript-lib/PLOOC/plooc_class.h"
-    #else
-    #define private_member(X) X
-    #endif
-#endif
+#include "dataLinkNode.h"
+#include "dataArg.h"
+#include "dataMemory.h"
+
+void linkNode_deinit(LinkNode* self) {
+    arg_deinit((Arg*)self);
+}
+
+void linkNode_init(LinkNode* self, void* args) {
+    /* attribute */
+}
+
+LinkNode* New_linkNode(void* args) {
+    return NULL;
+}

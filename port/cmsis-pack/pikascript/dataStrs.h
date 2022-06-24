@@ -4,8 +4,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon ?? liang6516@outlook.com
- * Copyright (c) 2021 Gorgon Meducer ?? embedded_zhuoran@hotmail.com
+ * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +25,22 @@
  * SOFTWARE.
  */
 
-#ifndef __PIKA_OOC_H__
-#define __PIKA_OOC_H__
-    #if PIKA_PLOOC_ENABLE
-        #include "../pikascript-lib/PLOOC/plooc_class.h"
-    #else
-    #define private_member(X) X
-    #endif
+#ifndef __STR_ARGS__H
+#define __STR_ARGS__H
+#include "dataArgs.h"
+Args* New_strBuff(void);
+char* strsGetFirstToken(Args* buffs, char* strIn, char sign);
+char* strsGetLastToken(Args* buffs, char* arg_Path, char sign);
+char* strsPopToken(Args* buffs, char* tokens, char sign);
+char* strsCopy(Args* buffs, char* source);
+char* strsDeleteChar(Args* buff, char* strIn, char ch);
+char* strsCut(Args* buffs, char* strIn, char startSign, char endSign);
+char* strsRemovePrefix(Args* buffs, char* inputStr, char* prefix);
+char* strsAppend(Args* buffs, char* strOrigin, char* strAppend);
+char* strsFormat(Args* buffs, uint16_t buffSize, const char* fmt, ...);
+char* strsGetDirectStr(Args* buffs, char* argPath);
+Arg* arg_strAppend(Arg* arg_in, char* str_to_append);
+char* strsReplace(Args* buffs, char* orig, char* rep, char* with);
+char* strsGetLine(Args* buffs, char* code);
+void strsDeinit(Args* buffs);
 #endif

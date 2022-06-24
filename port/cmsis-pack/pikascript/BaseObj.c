@@ -4,8 +4,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon ?? liang6516@outlook.com
- * Copyright (c) 2021 Gorgon Meducer ?? embedded_zhuoran@hotmail.com
+ * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +25,15 @@
  * SOFTWARE.
  */
 
-#ifndef __PIKA_OOC_H__
-#define __PIKA_OOC_H__
-    #if PIKA_PLOOC_ENABLE
-        #include "../pikascript-lib/PLOOC/plooc_class.h"
-    #else
-    #define private_member(X) X
-    #endif
-#endif
+#include "BaseObj.h"
+#include "PikaObj.h"
+#include "TinyObj.h"
+#include "dataMemory.h"
+#include "dataString.h"
+#include "dataStrs.h"
+
+
+PikaObj* New_BaseObj(Args* args) {
+    PikaObj* self = New_TinyObj(args);
+    return self;
+}

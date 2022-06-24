@@ -4,8 +4,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon ?? liang6516@outlook.com
- * Copyright (c) 2021 Gorgon Meducer ?? embedded_zhuoran@hotmail.com
+ * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +25,24 @@
  * SOFTWARE.
  */
 
-#ifndef __PIKA_OOC_H__
-#define __PIKA_OOC_H__
-    #if PIKA_PLOOC_ENABLE
-        #include "../pikascript-lib/PLOOC/plooc_class.h"
-    #else
-    #define private_member(X) X
-    #endif
+#ifndef __DATA_QUEUE_OBJ__H
+#define __DATA_QUEUE_OBJ__H
+#include "PikaObj.h"
+typedef PikaObj QueueObj;
+
+QueueObj* New_queueObj(void);
+int32_t queueObj_init(QueueObj* self);
+
+int32_t queueObj_pushInt(QueueObj* self, int val);
+int32_t queueObj_pushFloat(QueueObj* self, double val);
+int32_t queueObj_pushStr(QueueObj* self, char* str);
+int32_t queueObj_pushObj(QueueObj* self, char* className);
+
+int64_t queueObj_popInt(QueueObj* self);
+double queueObj_popFloat(QueueObj* self);
+char* queueObj_popStr(QueueObj* self);
+PikaObj* queueObj_popObj(QueueObj* self);
+
+PikaObj* queueObj_getCurrentObj(QueueObj* self);
+
 #endif

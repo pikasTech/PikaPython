@@ -4,8 +4,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon ?? liang6516@outlook.com
- * Copyright (c) 2021 Gorgon Meducer ?? embedded_zhuoran@hotmail.com
+ * Copyright (c) 2021 GorgonMeducer ?? embedded_zhuoran@hotmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +25,30 @@
  * SOFTWARE.
  */
 
-#ifndef __PIKA_OOC_H__
-#define __PIKA_OOC_H__
-    #if PIKA_PLOOC_ENABLE
-        #include "../pikascript-lib/PLOOC/plooc_class.h"
-    #else
-    #define private_member(X) X
-    #endif
+#undef def_ins
+
+#if defined(__INS_ENUM)
+#define def_ins(__INS_NAME) __INS_NAME,
 #endif
+
+#if defined(__INS_TABLE)
+#define def_ins(__INS_NAME) [__INS_NAME] = &VM_instruction_handler_##__INS_NAME,
+#endif
+
+#if defined(__INS_COMPIRE)
+#define def_ins(__INS_NAME)                             \
+    if (0 == strncmp(line + 2, "" #__INS_NAME "", 3)) { \
+        return __INS_NAME;                              \
+    }
+#endif
+
+#if defined(__INS_GET_INS_STR)
+#define def_ins(__INS_NAME)                              \
+    if (__INS_NAME ==  instructUnit_getInstruct(self)){ \
+        return ""#__INS_NAME""; \
+    }
+#endif
+
+#undef __INS_ENUM
+#undef __INS_TABLE
+#undef __INS_COMPIRE
