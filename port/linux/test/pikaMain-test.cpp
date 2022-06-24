@@ -736,7 +736,7 @@ TEST(pikaMain, list__set__) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "list = PikaStdData.List()\n"
-            "__set__(list, 0, 2, 'list')\n"
+            "list = __set__(list, 0, 2)\n"
             "res = __get__(list, 0)\n"
             "\n");
     /* collect */
@@ -775,7 +775,7 @@ TEST(pikaMain, dict__set__get) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "list = PikaStdData.Dict()\n"
-            "__set__(list, 'a', 2, 'list')\n"
+            "list = __set__(list, 'a', 2)\n"
             "res = __get__(list, 'a')\n"
             "\n");
     /* collect */
@@ -796,7 +796,7 @@ TEST(pikaMain, str___get____set__) {
     obj_run(pikaMain,
             "s = 'test'\n"
             "res = __get__(s, 2)\n"
-            "__set__(s, 2, 'q', 's')\n"
+            "s = __set__(s, 2, 'q')\n"
             "\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");

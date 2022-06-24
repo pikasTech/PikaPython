@@ -912,6 +912,7 @@ char* Parser_solveBranckets(Args* outBuffs,
             if (strEqu(mode, "right")) {
                 right_arg = arg_strAppend(right_arg, "__slice__(");
             } else if (strEqu(mode, "left")) {
+                /* obj = __set__(obj, key, val) */
                 right_arg = arg_strAppend(right_arg, "__set__(");
             }
             right_arg = arg_strAppend(right_arg, args_getStr(&buffs, "obj"));
@@ -929,12 +930,6 @@ char* Parser_solveBranckets(Args* outBuffs,
             if (strEqu(mode, "left")) {
                 right_arg = arg_strAppend(right_arg, ",");
                 right_arg = arg_strAppend(right_arg, stmt);
-                right_arg = arg_strAppend(right_arg,
-                                          ","
-                                          "'");
-                right_arg =
-                    arg_strAppend(right_arg, args_getStr(&buffs, "obj"));
-                right_arg = arg_strAppend(right_arg, "'");
             }
             right_arg = arg_strAppend(right_arg, ")");
             /* clean the inner */
@@ -955,12 +950,21 @@ char* Parser_solveBranckets(Args* outBuffs,
         ParserState_iterEnd(&ps);
     }
     ParserState_deinit(&ps);
+    if (strEqu(mode, "left")) {
+        for (size_t i = 0; i < strGetSize(content); i++) {
+            if (content[i] == '[') {
+                content[i] = '\0';
+                break;
+            }
+        }
+    }
+
 exit:
     /* clean and return */
-    content = strsCopy(outBuffs, arg_getStr(right_arg));
+    char* right = strsCopy(outBuffs, arg_getStr(right_arg));
     arg_deinit(right_arg);
     strsDeinit(&buffs);
-    return content;
+    return right;
 }
 #endif
 
@@ -1202,8 +1206,6 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     if (!strEqu(right_new, right)) {
         /* update new right */
         right = right_new;
-        /* cancel left */
-        isLeftExist = 0;
     }
 #endif
 

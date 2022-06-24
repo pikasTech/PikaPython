@@ -1904,8 +1904,8 @@ TEST(parser, __set__) {
                  "1 REF a\n"
                  "1 REF b\n"
                  "1 REF c\n"
-                 "1 STR a\n"
-                 "0 RUN __set__\n");
+                 "0 RUN __set__\n"
+                 "0 OUT a\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2709,8 +2709,8 @@ TEST(parser, parse_issue2) {
                  "1 REF recv_buf\n"
                  "1 NUM 1\n"
                  "1 REF dat\n"
-                 "1 STR recv_buf\n"
-                 "0 RUN __set__\n");
+                 "0 RUN __set__\n"
+                 "0 OUT recv_buf\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

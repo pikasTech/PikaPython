@@ -121,7 +121,7 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
         res = (char*)arg_getBytes(arg);
         goto exit;
     }
-    if (ARG_TYPE_STRING == type){
+    if (ARG_TYPE_STRING == type) {
         res = arg_getStr(arg);
     }
     if (argType_isObject(type)) {
@@ -229,26 +229,29 @@ Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
     return arg_setNull(NULL);
 }
 
-void PikaStdLib_SysObj___set__(PikaObj* self,
-                               Arg* key,
-                               Arg* obj,
-                               char* obj_str,
-                               Arg* val) {
+Arg* PikaStdLib_SysObj___set__(PikaObj* self, Arg* key, Arg* obj, Arg* val) {
     ArgType obj_type = arg_getType(obj);
     if (ARG_TYPE_STRING == obj_type) {
         int index = arg_getInt(key);
         char* str_val = arg_getStr(val);
         char* str_pyload = arg_getStr(obj);
         str_pyload[index] = str_val[0];
-        obj_setStr(self, obj_str, str_pyload);
+        return arg_setStr(NULL, "", str_pyload);
     }
     if (ARG_TYPE_BYTES == obj_type) {
         int index = arg_getInt(key);
-        uint8_t* bytes_val = arg_getBytes(val);
+        uint8_t byte_val = 0;
+        if (ARG_TYPE_BYTES == arg_getType(val)) {
+            uint8_t* bytes_val = arg_getBytes(val);
+            byte_val = bytes_val[0];
+        }
+        if (ARG_TYPE_INT == arg_getType(val)) {
+            byte_val = arg_getInt(val);
+        }
         uint8_t* bytes_pyload = arg_getBytes(obj);
         size_t bytes_len = arg_getBytesSize(obj);
-        bytes_pyload[index] = bytes_val[0];
-        obj_setBytes(self, obj_str, bytes_pyload, bytes_len);
+        bytes_pyload[index] = byte_val;
+        return arg_setBytes(NULL, "", bytes_pyload, bytes_len);
     }
     if (argType_isObject(obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
@@ -270,7 +273,9 @@ void PikaStdLib_SysObj___set__(PikaObj* self,
             0x00, /* const pool */
         };
         pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
+        return arg_setRef(NULL, "", arg_obj);
     }
+    return NULL;
 }
 
 int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
