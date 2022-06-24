@@ -547,6 +547,7 @@ while True:
 # 7.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| Add [CMSIS-PACK](https://pikadoc.readthedocs.io/zh/latest/get-start_cmsis-pack.html) | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | contrubute to PikaMath.Math() | [onceday](https://gitee.com/onceday) |
 | add support for Unix Time | [onceday](https://gitee.com/onceday) |
 | contrubute to PikaStdLib.String() | [purewind7](https://gitee.com/purewind7) |
