@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1656001812446,
+  "lastUpdate": 1656030422438,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -61422,6 +61422,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000059160321095,
             "unit": "ms/iter",
             "extra": "iterations: 217370\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "gabriel.wang@arm.com",
+            "name": "Gabriel Wang",
+            "username": "GorgonMeducer"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "60a5028d5b9cd51b7acb608caf64628c4b15d0d4",
+          "message": "Add cmsis pack support (#154)\n\n* add script\r\n\r\n* add cmsis-pack\r\n\r\n* update bsp-pico and cmsis-pack",
+          "timestamp": "2022-06-24T08:19:33+08:00",
+          "tree_id": "9ba9522d5615a82e76a26173b24e4555522ad8e0",
+          "url": "https://github.com/pikasTech/pikascript/commit/60a5028d5b9cd51b7acb608caf64628c4b15d0d4"
+        },
+        "date": 1656030417058,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6768.632462269369,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6768.632462269369 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 42.38088741289943,
+            "unit": "ms/iter",
+            "extra": "iterations: 24\ncpu: 42.36686520638952 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 21.233228393358242,
+            "unit": "ms/iter",
+            "extra": "iterations: 48\ncpu: 21.232711193471946 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 7.3896764257518734,
+            "unit": "ms/iter",
+            "extra": "iterations: 139\ncpu: 7.387016547096743 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000312987189135,
+            "unit": "ms/iter",
+            "extra": "iterations: 211154\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
