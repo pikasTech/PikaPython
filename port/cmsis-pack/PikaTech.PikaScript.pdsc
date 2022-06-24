@@ -16,8 +16,8 @@
   <repository type="git">https://github.com/pikasTech/pikascript.git</repository>
   
   <releases>
-    <release date="2022-06-23" version="0.9.1" url="https://raw.githubusercontent.com/pikaTech/pikaScript/master/port/cmsis-pack/PikaTech.PikaScript.0.9.1.pack">
-        - First cmsis-pack
+    <release date="2022-06-24" version="0.9.2" url="https://raw.githubusercontent.com/pikaTech/pikaScript/master/port/cmsis-pack/PikaTech.PikaScript.0.9.2.pack">
+        - PikaScript v1.8.7
     </release>
     
   </releases>
@@ -136,11 +136,11 @@
   -->
 
     <components>
-        <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.8.6">
+        <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.8.7">
             <description>an ultra-lightweight Python engine</description>
             <doc>https://pikadoc.readthedocs.io/en/latest/index.html</doc>
 
-            <component Cgroup="PikaScript" Csub="Core" Cversion="1.8.6">
+            <component Cgroup="PikaScript" Csub="Core" Cversion="1.8.7">
               <description>PikaScript Kernel</description>
               <files>
                 <file attr="config" category="header"   name="pikascript-core/BaseObj.h" />
@@ -193,12 +193,9 @@
                 
                 <file attr="config" category="utility"  name="rust-msc-latest-win10.exe"    version="1.0.0"/>
                 <file attr="config" category="utility"  name="pikaPackage.exe"              version="1.0.0"/>
-                <file attr="config" category="utility"  name="pikaBeforBuild-keil.bat"      version="1.0.1"/>
-                <file attr="config" category="source"   name="requestment.txt"              version="1.0.0"/>
+                <file attr="config" category="utility"  name="pikaBeforBuild-keil.bat"      version="1.0.2"/>
+                <file attr="config" category="source"   name="requestment.txt"              version="1.0.1"/>
                 <file attr="config" category="source"   name="main.py" />
-                
-                <!-- PLOOC -->
-                
                 
               </files>
               <RTE_Components_h>
@@ -207,7 +204,7 @@
               </RTE_Components_h>
             </component>
             
-            <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.8.6" condition="Kernel">
+            <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.8.7" condition="Kernel">
               <description>The standard library for PikaScript</description>
               <files>
                 <file attr="config" category="sourceC"   name="pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c" />
