@@ -573,35 +573,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 # 6.Test and develop Core
 
 ## Test core in docker (recommend)
-step1: Clone the repo
-``` shell
-git clone https://github.com/pikastech/pikascript
-cd pikascript/docker 
-```
-
-step2: build and run the docker contianer
-```
-bash build.sh
-sh run.sh
-```
-
-step3: init the port/linux
-``` shell	
-cd port/linux
-sh pull-core.sh
-sh init.sh
-```
-
-step4: test the core 
-``` shell
-sh gtest.sh
-sh ci_benchmark.sh
-```
-
-step5: Run the REPL
-``` shell
-sh run.sh
-```
+[get start with docker](https://pikadoc.readthedocs.io/en/latest/get-start_linux.html)
 
 # 7.Contribute
 
