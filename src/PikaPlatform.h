@@ -35,6 +35,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if PIKA_ASSERT_ENABLE
+#include <assert.h>
+#else
+#define assert(...)
+#endif
 
 /* Compiler */
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 5000000) /* ARM Compiler \

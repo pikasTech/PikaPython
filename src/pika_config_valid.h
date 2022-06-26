@@ -192,6 +192,10 @@
     #ifndef PIKA_POOL_ALIGN
         #define PIKA_POOL_ALIGN 8
     #endif
+
+    #ifndef PIKA_ASSERT_ENABLE
+        #define PIKA_ASSERT_ENABLE 0
+    #endif
     
 
     /* configuration validation */

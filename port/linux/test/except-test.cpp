@@ -51,23 +51,28 @@ TEST(except, trydef1) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     /* run */
-    obj_run(pikaMain,
-            "def tryfn(a):\n"
-            "    if a == 1:\n"
-            "        print('a:1')\n"
-            "        raise\n"
-            "        print('a:1,after raise')\n"
-            "        return\n"
-            "    if a == 0:\n"
-            "        print('a:0')\n"
-            "        return\n"
-            "try:\n"
-            "    tryfn(1)\n"
-            "    tryfn(0)\n"
-            "except:\n"
-            "    print('in except')\n"
-            "\n");
+    pikaVM_runSingleFile(pikaMain, "../../examples/Exception/trydef1.py");
     /* collect */
+    /* assert */
+    EXPECT_STREQ("BEGIN\r\n", log_buff[2]);
+    EXPECT_STREQ("a:1\r\n", log_buff[1]);
+    EXPECT_STREQ("in except\r\n", log_buff[0]);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(except, try1file) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    /* run */
+    pikaVM_runSingleFile(pikaMain, "../../examples/Exception/try1.py");
+    /* collect */
+    EXPECT_STREQ("BEGIN\r\n", log_buff[2]);
+    EXPECT_STREQ("before raise\r\n", log_buff[1]);
+    EXPECT_STREQ("in except\r\n", log_buff[0]);
     /* assert */
     /* deinit */
     obj_deinit(pikaMain);

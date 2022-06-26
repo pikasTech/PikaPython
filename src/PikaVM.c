@@ -41,7 +41,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     VMParameters* globals,
     ByteCodeFrame* bytecode_frame,
     uint16_t pc,
-    TRY_STATE is_in_try);
+    TryInfo* try_info);
 
 /* head declear end */
 
@@ -173,12 +173,13 @@ static Arg* VM_instruction_handler_NON(PikaObj* self, VMState* vs, char* data) {
 }
 
 static Arg* VM_instruction_handler_TRY(PikaObj* self, VMState* vs, char* data) {
-    vs->try_state = TRY_STATE_TOP;
+    assert(NULL != vs->try_info);
+    vs->try_info->try_state = TRY_STATE_TOP;
     return NULL;
 }
 
 static Arg* VM_instruction_handler_NTR(PikaObj* self, VMState* vs, char* data) {
-    vs->try_state = TRY_STATE_NONE;
+    vs->try_info->try_state = TRY_STATE_NONE;
     return NULL;
 }
 
@@ -233,7 +234,8 @@ static int32_t __foreach_handler_deinitTuple(Arg* argEach, Args* context) {
 Arg* __obj_runMethodArgWithState(PikaObj* self,
                                  PikaObj* method_args_obj,
                                  Arg* method_arg,
-                                 TRY_STATE try_state) {
+                                 TryInfo* try_state) {
+    assert(NULL != try_state);
     Arg* return_arg = NULL;
     /* get method Ptr */
     Method method_ptr = methodArg_getPtr(method_arg);
@@ -284,8 +286,9 @@ Arg* __obj_runMethodArgWithState(PikaObj* self,
 Arg* obj_runMethodArg(PikaObj* self,
                       PikaObj* method_args_obj,
                       Arg* method_arg) {
+    TryInfo try_info = {0};
     return __obj_runMethodArgWithState(self, method_args_obj, method_arg,
-                                       TRY_STATE_NONE);
+                                       &try_info);
 }
 
 static int VMState_loadArgsFromMethodArg(VMState* vs,
@@ -462,10 +465,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     Arg* method_arg = NULL;
     char* sys_out;
     int arg_num_used = 0;
-    TRY_STATE sub_try_state = TRY_STATE_NONE;
-    if (vs->try_state == TRY_STATE_TOP ||
+    TryInfo sub_try_info = {0};
+    assert(NULL != vs->try_info);
+    if (vs->try_info->try_state == TRY_STATE_TOP ||
         vs->try_error_code == TRY_STATE_INNER) {
-        sub_try_state = TRY_STATE_INNER;
+        sub_try_info.try_state = TRY_STATE_INNER;
     }
     /* return arg directly */
     if (strEqu(data, "")) {
@@ -516,7 +520,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
 
     /* run method arg */
     return_arg = __obj_runMethodArgWithState(method_host_obj, sub_locals,
-                                             method_arg, sub_try_state);
+                                             method_arg, &sub_try_info);
 
     /* __init__() */
     if (ARG_TYPE_OBJECT_NEW == arg_getType(return_arg)) {
@@ -536,7 +540,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
             goto init_exit;
         }
         return_arg_init = __obj_runMethodArgWithState(
-            new_obj, sub_locals, method_arg, sub_try_state);
+            new_obj, sub_locals, method_arg, &sub_try_info);
     init_exit:
         if (NULL != return_arg_init) {
             arg_deinit(return_arg_init);
@@ -554,6 +558,13 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     if (0 != obj_getErrorCode(method_host_obj)) {
         /* method error */
         VMState_setErrorCode(vs, PIKA_RES_ERR_RUNTIME_ERROR);
+    }
+
+    /* check try result */
+    if (sub_try_info.try_result == TRY_RESULT_RAISE) {
+        /* try error */
+        VMState_setErrorCode(vs, PIKA_RES_ERR_RUNTIME_ERROR);
+        vs->jmp = VM_JMP_RAISE;
     }
 
     goto exit;
@@ -1029,9 +1040,10 @@ static Arg* VM_instruction_handler_RIS(PikaObj* self, VMState* vs, char* data) {
     VMState_setErrorCode(vs, err);
     arg_deinit(err_arg);
     /* raise jmp */
-    if (vs->try_state == TRY_STATE_TOP) {
+    if (vs->try_info->try_state == TRY_STATE_TOP) {
         vs->jmp = VM_JMP_RAISE;
-    } else if (vs->try_state == TRY_STATE_INNER) {
+    } else if (vs->try_info->try_state == TRY_STATE_INNER) {
+        vs->try_info->try_result = TRY_RESULT_RAISE;
         return VM_instruction_handler_RET(self, vs, data);
     }
     return NULL;
@@ -1137,6 +1149,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     int32_t pc_next = vs->pc + instructUnit_getSize();
     char* data = VMState_getConstWithInstructUnit(vs, ins_unit);
     /* run instruct */
+    assert(NULL != vs->try_info);
     return_arg = VM_instruct_handler_table[instruct](self, vs, data);
     if (NULL != return_arg) {
         stack_pushArg(&(vs->stack), return_arg);
@@ -1145,7 +1158,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
 nextLine:
     /* exit */
     if (VM_JMP_EXIT == vs->jmp) {
-        pc_next = -99999;
+        pc_next = VM_PC_EXIT;
         goto exit;
     }
     /* break */
@@ -1175,7 +1188,7 @@ exit:
     vs->jmp = 0;
     /* reach the end */
     if (pc_next >= (int)VMState_getInstructArraySize(vs)) {
-        return -99999;
+        return VM_PC_EXIT;
     }
     return pc_next;
 }
@@ -1595,7 +1608,8 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     VMParameters* globals,
     ByteCodeFrame* bytecode_frame,
     uint16_t pc,
-    TRY_STATE try_state) {
+    TryInfo* try_info) {
+    assert(NULL != try_info);
     int size = bytecode_frame->instruct_array.size;
     /* locals is the local scope */
     VMState vs = {
@@ -1607,11 +1621,11 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
         .error_code = PIKA_RES_OK,
         .line_error_code = PIKA_RES_OK,
         .try_error_code = PIKA_RES_OK,
-        .try_state = try_state,
+        .try_info = try_info,
     };
     stack_init(&(vs.stack));
     while (vs.pc < size) {
-        if (vs.pc == -99999) {
+        if (vs.pc == VM_PC_EXIT) {
             break;
         }
         InstructUnit* this_ins_unit = VMState_getInstructNow(&vs);
@@ -1632,11 +1646,11 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
                 }
                 head_ins_unit--;
             }
-            if (vs.try_state) {
+            if (vs.try_info->try_state) {
                 vs.try_error_code = vs.error_code;
             }
             /* print inses of a line */
-            if (!vs.try_state) {
+            if (!vs.try_info->try_state) {
                 while (1) {
                     if (head_ins_unit != this_ins_unit) {
                         __platform_printf("   ");
@@ -1662,8 +1676,10 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame) {
+    TryInfo try_info = {0};
+    try_info.try_state = TRY_STATE_NONE;
     return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
-                                              0, TRY_STATE_NONE);
+                                              0, &try_info);
 }
 
 char* constPool_getByOffset(ConstPool* self, uint16_t offset) {
