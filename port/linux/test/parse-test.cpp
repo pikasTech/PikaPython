@@ -3205,3 +3205,19 @@ TEST(parser, optissue1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, optissue2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "test(not get())";
+    printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 RUN get\n"
+                 "1 OPT  not \n"
+                 "0 RUN test\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
