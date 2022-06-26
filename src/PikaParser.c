@@ -676,14 +676,41 @@ static const char operators[][9] = {
 
 char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args buffs = {0};
-    char* tokens = Lexer_getTokens(&buffs, stmt);
     char* operator= NULL;
+    char* tokens = Lexer_getTokens(&buffs, stmt);
+
+    // use parse state foreach to get operator
     for (uint32_t i = 0; i < sizeof(operators) / 9; i++) {
-        if (Parser_isContainToken(tokens, TOKEN_operator,
-                                  (char*)operators[i])) {
-            operator= strsCopy(&buffs, (char*)operators[i]);
-        }
+        ParserState_forEachToken(ps, tokens) {
+            ParserState_iterStart(&ps);
+            // get operator
+            if (strEqu(ps.token2.pyload, (char*)operators[i])) {
+                // solve the iuuse of "~-1"
+                operator= strsCopy(&buffs, (char*)operators[i]);
+                ParserState_iterEnd(&ps);
+                break;
+            }
+            ParserState_iterEnd(&ps);
+        };
+        ParserState_deinit(&ps);
     }
+
+    /* solve the iuuse of "~-1" */
+    if (strEqu(operator, "-")) {
+        ParserState_forEachToken(ps, stmt) {
+            ParserState_iterStart(&ps);
+            if (strEqu(ps.token2.pyload, "-")) {
+                if (ps.token1.type == TOKEN_operator) {
+                    operator= strsCopy(&buffs, ps.token1.pyload);
+                    ParserState_iterEnd(&ps);
+                    break;
+                }
+            }
+            ParserState_iterEnd(&ps);
+        };
+        ParserState_deinit(&ps);
+    }
+
     /* match the last operator in equal level */
     if ((strEqu(operator, "+")) || (strEqu(operator, "-"))) {
         ParserState_forEachToken(ps, stmt) {

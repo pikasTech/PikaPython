@@ -92,7 +92,7 @@ char* Parser_parsePyLines(Args* outBuffs,
                           char* py_lines);
 #define ParserState_forEach(parseState)  \
     ParserState_beforeIter(&parseState); \
-    for (int i = 0; i < parseState.length; i++)
+    for (int __i = 0; __i < parseState.length; __i++)
 
 #define ParserState_forEachTokenExistPs(parseState, tokens) \
     /* init parserStage */                                  \

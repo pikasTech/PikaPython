@@ -1098,14 +1098,13 @@ TEST(parser, mm) {
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "2 REF a\n"
-        "1 OPT **\n"
-        "1 NUM 1\n"
-        "0 OPT -\n"
-        "0 OUT a\n"
-    );
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF a\n"
+                 "2 NUM 1\n"
+                 "1 OPT -\n"
+                 "0 OPT **\n"
+                 "0 OUT a\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1198,13 +1197,12 @@ TEST(parser, n_n1) {
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "1 OPT ~\n"
-        "1 NUM 1\n"
-        "0 OPT -\n"
-        "0 OUT a\n"
-    );
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 NUM 1\n"
+                 "1 OPT -\n"
+                 "0 OPT ~\n"
+                 "0 OUT a\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3188,6 +3186,22 @@ TEST(parser, try1) {
                  "0 RUN print\n"
                  "0 SER 0\n"
                  "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, optissue1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "~-1";
+    printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 NUM 1\n"
+                 "1 OPT -\n"
+                 "0 OPT ~\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

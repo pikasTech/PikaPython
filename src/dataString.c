@@ -104,6 +104,7 @@ int32_t strGetTokenNum(char* strIn, char sign) {
 }
 
 size_t strGetSize(char* pData) {
+    assert(pData != NULL);
     return strlen(pData);
 }
 
