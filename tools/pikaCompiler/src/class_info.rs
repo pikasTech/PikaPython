@@ -131,6 +131,7 @@ impl ClassInfo {
         script_fn.push_str(
             "    __platform_printf(\"======[pikascript packages installed]======\\r\\n\");\r\n",
         );
+        script_fn.push_str("    pks_printVersion();\r\n");
         for (package_name, package_version) in version_info.package_list {
             script_fn.push_str(
                 format!(

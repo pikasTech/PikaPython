@@ -29,6 +29,7 @@
 #define __MEMORY_H__
 
 #include "PikaPlatform.h"
+#include "PikaVersion.h"
 
 /*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
  */

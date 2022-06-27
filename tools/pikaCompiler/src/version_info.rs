@@ -28,6 +28,10 @@ impl VersionInfo {
         /* print the package info */
         println!("    {}", line.as_str());
         let package_name = my_string::get_first_token(&line, '=').unwrap();
+        // skip pikascript-core
+        if package_name == "pikascript-core" {
+            return self;
+        }
         let package_version = my_string::get_last_token(&line, '=').unwrap();
         self.package_list
             .entry(package_name)

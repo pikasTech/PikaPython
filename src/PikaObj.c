@@ -1134,3 +1134,10 @@ void pks_eventLisener_sendSignal(PikaEventListener* self,
     };
     pikaVM_runByteCode(eventHandleObj, (uint8_t*)bytes);
 }
+
+/* print major version info */
+void pks_printVersion(void) {
+    __platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n",
+                      PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR,
+                      PIKA_VERSION_MICRO, PIKA_EDIT_TIME);
+}

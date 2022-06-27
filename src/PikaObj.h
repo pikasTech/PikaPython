@@ -273,4 +273,7 @@ void pks_eventLisener_init(PikaEventListener** p_self);
 void pks_eventLisener_deinit(PikaEventListener** p_self);
 PikaObj* methodArg_getDefContext(Arg* method_arg);
 PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name);
+
+void pks_printVersion(void);
+
 #endif
