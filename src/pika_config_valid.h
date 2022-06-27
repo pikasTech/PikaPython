@@ -90,8 +90,16 @@
             #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 0
         #endif
 
-		#ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
-		    #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 0
+		    #ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+		        #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 0
+        #endif
+				
+        #ifndef PIKA_SYNTEX_EXCEPTION_ENABLE
+            #define PIKA_SYNTEX_EXCEPTION_ENABLE 0
+        #endif
+				
+        #ifndef PIKA_SYNTEX_IMPORT_EX_ENABLE
+            #define PIKA_SYNTEX_IMPORT_EX_ENABLE 0
         #endif
 
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
@@ -111,9 +119,18 @@
             #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
         #endif
 
-		#ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
-		    #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 1
+		    #ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
+		        #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 1
         #endif
+				
+				#ifndef PIKA_SYNTEX_EXCEPTION_ENABLE
+            #define PIKA_SYNTEX_EXCEPTION_ENABLE 1
+        #endif
+				
+        #ifndef PIKA_SYNTEX_IMPORT_EX_ENABLE
+            #define PIKA_SYNTEX_IMPORT_EX_ENABLE 1
+        #endif				
+				
     #endif
 
     /* default configuration  */
@@ -172,6 +189,14 @@
     #ifndef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
         #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
     #endif
+
+    #ifndef PIKA_SYNTEX_EXCEPTION_ENABLE
+        #define PIKA_SYNTEX_EXCEPTION_ENABLE 1
+    #endif
+
+    #ifndef PIKA_SYNTEX_IMPORT_EX_ENABLE
+        #define PIKA_SYNTEX_IMPORT_EX_ENABLE 1
+    #endif			
 
     #ifndef PIKA_PLOOC_ENABLE
         #define PIKA_PLOOC_ENABLE 0

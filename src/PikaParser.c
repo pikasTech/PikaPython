@@ -1556,6 +1556,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         goto block_matched;
     }
 
+#if PIKA_SYNTEX_EXCEPTION_ENABLE
     /* try */
     if (strIsStartWith(line_start, "try")) {
         if ((line_start[3] == ' ') || (line_start[3] == ':')) {
@@ -1579,6 +1580,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         }
         goto block_matched;
     }
+#endif
 
     if (strEqu(line_start, "return")) {
         obj_setStr(ast, "return", "");
@@ -1592,6 +1594,8 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         obj_setStr(ast, "return", "");
         goto block_matched;
     }
+		
+#if PIKA_SYNTEX_EXCEPTION_ENABLE
     if (strEqu(line_start, "raise")) {
         obj_setStr(ast, "raise", "");
         stmt = "RuntimeError";
@@ -1607,6 +1611,8 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         obj_setStr(ast, "raise", "");
         goto block_matched;
     }
+#endif
+		
     if (strIsStartWith(line_start, "global ")) {
         stmt = "";
         char* global_list = line_start + 7;
@@ -1646,6 +1652,7 @@ exit:
     return ast;
 }
 
+#if PIKA_SYNTEX_IMPORT_EX_ENABLE
 static char* Parser_PreProcess_import(Args* buffs_p, char* line) {
     Args buffs = {0};
     char* line_out = line;
@@ -1688,7 +1695,9 @@ exit:
     strsDeinit(&buffs);
     return line_out;
 }
+#endif
 
+#if PIKA_SYNTEX_IMPORT_EX_ENABLE
 static char* Parser_PreProcess_from(Args* buffs_p, char* line) {
     Args buffs = {0};
     char* line_out = line;
@@ -1743,6 +1752,7 @@ exit:
     strsDeinit(&buffs);
     return line_out;
 }
+#endif
 
 static char* Parser_linePreProcess(Args* buffs_p, char* line) {
     /* check syntex error */
@@ -1753,8 +1763,10 @@ static char* Parser_linePreProcess(Args* buffs_p, char* line) {
     /* process EOL */
     line = strsDeleteChar(buffs_p, line, '\r');
     line = Parser_removeAnnotation(line);
-    line = Parser_PreProcess_import(buffs_p, line);
+#if PIKA_SYNTEX_IMPORT_EX_ENABLE		
+    line = Parser_PreProcess_import(buffs_p, line);		
     line = Parser_PreProcess_from(buffs_p, line);
+#endif
 exit:
     return line;
 }
@@ -2061,6 +2073,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
                     ASM_addBlockDeepth(ast, outBuffs, pikaAsm, block_type_num);
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 JMP -1\n");
             }
+#if PIKA_SYNTEX_EXCEPTION_ENABLE
             /* goto the while start when exit while block */
             if (strEqu(block_type, "try")) {
                 pikaAsm =
@@ -2073,7 +2086,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
             if (strEqu(block_type, "except")) {
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 SER 0\n");
             }
-
+#endif
             /* goto the while start when exit while block */
             if (strEqu(block_type, "for")) {
                 pikaAsm =
@@ -2172,12 +2185,12 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 NEL 1\n");
         goto exit;
     }
-
+#if PIKA_SYNTEX_EXCEPTION_ENABLE
     if (strEqu(obj_getStr(ast, "block"), "try")) {
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 TRY \n");
         goto exit;
     }
-
+#endif
     if (strEqu(obj_getStr(ast, "block"), "elif")) {
         /* skip if __else is 0 */
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 NEL 1\n");
@@ -2243,7 +2256,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         is_block_matched = 1;
         goto exit;
     }
-
+#if PIKA_SYNTEX_EXCEPTION_ENABLE
     if (obj_isArgExist(ast, "raise")) {
         /* parse stmt ast */
         pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
@@ -2251,7 +2264,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         is_block_matched = 1;
         goto exit;
     }
-
+#endif
     if (obj_isArgExist(ast, "global")) {
         /* parse stmt ast */
         pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);

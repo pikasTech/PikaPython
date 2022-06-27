@@ -2282,6 +2282,7 @@ TEST(parser, class_def_void_line) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTEX_IMPORT_EX_ENABLE
 TEST(parser, multiLine_import) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2333,6 +2334,7 @@ TEST(parser, multiLine_import) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(parser, multiLine_comment) {
     pikaMemInfo.heapUsedMax = 0;
@@ -2575,6 +2577,7 @@ TEST(parser, bytes_iteral) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTEX_IMPORT_EX_ENABLE
 TEST(parser, import_as) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2593,6 +2596,7 @@ TEST(parser, import_as) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(parser, str_equ) {
     pikaMemInfo.heapUsedMax = 0;
@@ -3148,6 +3152,7 @@ TEST(parser, format2) {
 }
 #endif
 
+#if PIKA_SYNTEX_EXCEPTION_ENABLE
 TEST(parser, try1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -3189,6 +3194,7 @@ TEST(parser, try1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(parser, optissue1) {
     pikaMemInfo.heapUsedMax = 0;

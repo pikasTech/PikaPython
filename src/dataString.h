@@ -60,5 +60,6 @@ char* strPointToLastToken(char* strIn, char sign);
 char* strGetLine(char* strOut, char* strIn);
 int32_t strGetLineSize(char* str);
 char* strPopLastToken(char* strIn, char sign);
+char* strGetLastLine(char* strOut, char* strIn);
 
 #endif

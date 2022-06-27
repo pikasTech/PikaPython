@@ -253,3 +253,21 @@ char* strGetLine(char* strOut, char* strIn) {
     strOut[lineSize] = 0;
     return strOut;
 }
+
+char* strGetLastLine(char* strOut, char* strIn) {
+    int32_t size = strGetSize(strIn);
+    char sign = '\n';
+    uint32_t beginIndex = 0;
+
+    /* skip the latest '\n' */
+    for (int32_t i = size - 2; i > -1; i--) {
+        if (strIn[i] == sign) {
+            beginIndex = i + 1;
+            break;
+        }
+    }
+
+    __platform_memcpy(strOut, strIn + beginIndex, size - beginIndex);
+    strOut[size - beginIndex + 1] = 0;
+    return strOut;
+}
