@@ -182,6 +182,12 @@ releases = [
 ]
 
 [[packages]]
+name = "ESP32"
+releases = [
+  "v0.1.0 ee7e38e9422970bba86f5cd7774db8654edd38dc",
+]
+
+[[packages]]
 name = "STM32F4"
 releases = [
   "v0.0.1 5f992314b5ec9f201302eea8df8620e0cde600ae",
