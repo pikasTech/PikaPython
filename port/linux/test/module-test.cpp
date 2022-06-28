@@ -113,3 +113,27 @@ TEST(module, __init__2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+TEST(module, import_as_issue1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    __platform_printf("BEGIN\r\n");
+    /* run */
+    obj_run(pikaMain,
+            "import import_test as my_import\n"
+            "print(my_import.func())\n"
+            "print(import_test.func())\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "hello\r\n");
+    EXPECT_STREQ(log_buff[1], "hello\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

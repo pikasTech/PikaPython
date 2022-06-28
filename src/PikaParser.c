@@ -549,6 +549,12 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, content);
             continue;
         }
+
+        // not the string operator
+        if ((cn1 >= 'a' && cn1 <= 'z') || (cn1 >= 'A' && cn1 <= 'Z') ||
+            (cn1 >= '0' && cn1 <= '9') || cn1 == '_' || cn1 == '.') {
+            goto after_match_string_operator;
+        }
         /* not */
         if ('n' == c0) {
             if (('o' == c1) && ('t' == c2) && (' ' == c3)) {
@@ -603,6 +609,8 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
                 continue;
             }
         }
+    after_match_string_operator:
+
         /* skip spaces */
         if (' ' == c0) {
             /* not get symbal */
@@ -1594,7 +1602,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         obj_setStr(ast, "return", "");
         goto block_matched;
     }
-		
+
 #if PIKA_SYNTEX_EXCEPTION_ENABLE
     if (strEqu(line_start, "raise")) {
         obj_setStr(ast, "raise", "");
@@ -1612,7 +1620,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         goto block_matched;
     }
 #endif
-		
+
     if (strIsStartWith(line_start, "global ")) {
         stmt = "";
         char* global_list = line_start + 7;
@@ -1763,8 +1771,8 @@ static char* Parser_linePreProcess(Args* buffs_p, char* line) {
     /* process EOL */
     line = strsDeleteChar(buffs_p, line, '\r');
     line = Parser_removeAnnotation(line);
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE		
-    line = Parser_PreProcess_import(buffs_p, line);		
+#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+    line = Parser_PreProcess_import(buffs_p, line);
     line = Parser_PreProcess_from(buffs_p, line);
 #endif
 exit:

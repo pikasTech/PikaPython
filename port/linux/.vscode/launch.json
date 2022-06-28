@@ -19,7 +19,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=parser.optissue1"
+                // "--gtest_filter=module.import_as_issue1"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

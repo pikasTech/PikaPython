@@ -447,8 +447,8 @@ TEST(cJSON, module) {
     /* run */
     __platform_printf("BEGIN\r\n");
     pikaVM_run(pikaMain,
-               "import cjson_test\n"
-               "cjson_test.test_start()\n");
+               "import cjson_test as ctest\n"
+               "ctest.test_start()\n");
     /* collect */
     /* assert */
 

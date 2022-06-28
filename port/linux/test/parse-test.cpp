@@ -3227,3 +3227,21 @@ TEST(parser, optissue2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(lexser, import_issue1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_getTokens(buffs, "my_import = import_test");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf("%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(printTokens, "{sym}my_import{opt}={sym}import_test");
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
