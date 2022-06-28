@@ -581,6 +581,8 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+| ESP32 package |沧御|
+| MM32F5277E9P package |[unsigned](https://gitee.com/unsigned0)|
 | mm32f5277e9p BSP |[unsigned](https://gitee.com/unsigned0)|
 | Add [CMSIS-PACK](https://pikadoc.readthedocs.io/en/latest/get-start_cmsis-pack.html) | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | donate: air32f103 board * 20 | 合宙 [xinxi204](https://gitee.com/xinxi204) |

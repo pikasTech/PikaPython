@@ -547,6 +547,8 @@ while True:
 # 7.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| ESP32 package |沧御|
+| MM32F5277E9P package |[unsigned](https://gitee.com/unsigned0)|
 | mm32f5277e9p BSP |[unsigned](https://gitee.com/unsigned0)|
 | Add [CMSIS-PACK](https://pikadoc.readthedocs.io/zh/latest/get-start_cmsis-pack.html) | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | 捐赠：air32f103 开发板 * 20 | 合宙 [xinxi204](https://gitee.com/xinxi204) |
