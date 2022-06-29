@@ -106,33 +106,33 @@ http://pikascript.com
 # 2.平台支持列表
 
 ## MCU support
-|MCU|bsp|gpio|uart|pwm|adc|i2c|
-|---|---|---|---|---|---|---|
-|stm32g030c8|√|√|√|√|√|√|
-|stm32g070cB|√|√|√|√|√|√|
-|stm32f103c8|√|√|√|√|√|√|
-|stm32f103rb|√|√|√|√|√|√|
-|stm32f103ze|√|√|√|√|√|√|
-|stm32f103rc|√|√|√|√|√|√|
-|stm32f401cc|√|√|√|√|√|√|
-|stm32f411ce|√|√|√|√|√|√|
-|stm32f407ze|√| | | | | |
-|stm32f407zg|√| | | | | |
-|stm32h750vb|√| | | | | |
-|stm32f051r8|√| | | | | |
-|ch582|√|√|√| |√|√|
-|ch32v103r8t6|√|√| | | | |
-|cm32m101a|√| | | | | |
-|w801|√| | | | | |
-|w806|√|√|√|√|√|√|
-|apm32f030r8|√| | | | | |
-|apm32e103vb|√| | | | | |
-|bl-706|√| | | | | |
-|Raspberry Pico|√| | | | | |
-|ESP32C3|√| | | | | |
-|TC264D|√| | | | | |
-|devc|√| | | | | |
-|EC600N|√| | | | | |
+|MCU|bsp|gpio|time|uart|pwm|adc|i2c|
+|---|---|---|---|---|---|---|---|
+|stm32g030c8|√|√|√|√|√|√|√|
+|stm32g070cB|√|√|√|√|√|√|√|
+|stm32f103c8|√|√|√|√|√|√|√|
+|stm32f103rb|√|√|√|√|√|√|√|
+|stm32f103ze|√|√|√|√|√|√|√|
+|stm32f103rc|√|√|√|√|√|√|√|
+|stm32f401cc|√|√|√|√|√|√|√|
+|stm32f411ce|√|√|√|√|√|√|√|
+|stm32f407ze|√| | | | | | |
+|stm32f407zg|√| | | | | | |
+|stm32h750vb|√| | | | | | |
+|stm32f051r8|√| | | | | | |
+|ch582|√|√|√|√| |√|√|
+|ch32v103r8t6|√|√|√| | | | |
+|cm32m101a|√| | | | | | |
+|w801|√| | | | | | |
+|w806|√|√|√|√|√|√| |
+|apm32f030r8|√| | | | | | |
+|apm32e103vb|√| | | | | | |
+|bl-706|√| | | | | | |
+|Raspberry Pico|√| | | | | | |
+|ESP32C3|√|√|√| | | | |
+|TC264D|√| | | | | | |
+|devc|√| | | | | | |
+|EC600N|√| | | | | | |
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
@@ -206,23 +206,63 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 |对象嵌套   |√|√|√|
 |控制流     |√|√|√|
 
-#### 操作符
+#### Operator
 
 | + | - | * | / | == | > | < | >= | <= | % | ** | // | != | & | >> | << | and | or | not | += | -= | *= | /= |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 |√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|
 
-#### 控制流
+#### Control flow
 
-| if | while | for | else | elif | break | continue |
-| --- | --- | --- | --- | --- | --- | --- |
-|√|√|√|√|√|√|√|
-
-#### 数据结构
-
-| string | list | dict |
+| Syntax | State | Comment |
 | --- | --- | --- |
-|√|√|√|
+| if | √ | |
+| while | √ | |
+| for in [list] | √ | ([PikaStdData.List](https://pikadoc.readthedocs.io/zh/latest/PikaStdData%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html)) |
+| for in range(a, b) | √ |  |
+| for in [dict] | √ | ([PikaStdData.Dict](https://pikadoc.readthedocs.io/zh/latest/PikaStdData%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html)) |
+| if elif else | √ | |
+| for break/continue | √ ||
+| while break/continue | √ ||
+
+#### Module
+
+| Syntax | Python Module | C Module |
+| --- | --- | --- |
+| import [module] | √ | √ |
+| import [module] as | √ | - |
+| from [module] import [class/function>]| √ | - |
+| from [module] import [class/function>] as | √ | - |
+| from [module] import * | - | PikaObj Module Only |
+
+#### List/Dict
+| Syntax | State | Comment |
+| --- | --- | --- |
+| l = list() | √  | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
+| l = [a, b, c] | √  | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
+| d = dict() | √ | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
+| d = {a:"x", b:"y", c:"z"} | -  | |
+
+#### Exception
+
+| try except | try except else | try except as | 
+| --- | --- | --- |
+| - | - | - |
+
+#### Slice
+
+| Syntax | str | bytes | list (PikaStdData.List) |Comment |
+| --- | --- | --- | --- | --- |
+| test[i] | √ | √ | √ | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
+| test[a : b : c] | √ | √ | - | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
+| test[a :] | √ | √ | - |Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
+
+#### Other keywords/Syntax
+
+| yield | is | comprehensions |
+| --- | --- | --- |
+| - | - | - |
+
 
 ### (4)源码规范
 
