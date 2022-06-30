@@ -1076,7 +1076,14 @@ char* obj_toStr(PikaObj* self) {
         char* str_res = obj_getStr(self, "__res");
         return str_res;
     }
-    return NULL;
+
+    /* normal object */
+    Args buffs = {0};
+    char* str_res =
+        strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "<object at %p>", self);
+    obj_setStr(self, "__res", str_res);
+    strsDeinit(&buffs);
+    return obj_getStr(self, "__res");
 }
 
 void pks_eventLicener_registEvent(PikaEventListener* self,

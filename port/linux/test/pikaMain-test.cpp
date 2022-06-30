@@ -2391,3 +2391,28 @@ TEST(pikaMain, string_isspace) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, print_obj) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "mem = PikaStdLib.MemChecker()\n"
+            "mem\n"
+            "print(mem)\n"
+            "res = str(mem)\n");
+    /* collect */
+    char* res = obj_getStr(pikaMain, "res");
+
+    /* assert */
+    EXPECT_EQ(strIsStartWith(log_buff[0], "<object at "), true);
+    EXPECT_EQ(strIsStartWith(log_buff[1], "<object at "), true);
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    EXPECT_EQ(strIsStartWith(res, "<object at "), true);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -1620,9 +1620,9 @@ void VMState_solveUnusedStack(VMState* vs) {
             continue;
         }
         if (argType_isObject(type)) {
-            __platform_printf("%s\r\n", obj_toStr(arg_getPtr(arg)));
-        }
-        if (type == ARG_TYPE_INT) {
+            char* res = obj_toStr(arg_getPtr(arg));
+            __platform_printf("%s\r\n", res);
+        } else if (type == ARG_TYPE_INT) {
             __platform_printf("%d\r\n", (int)arg_getInt(arg));
         } else if (type == ARG_TYPE_FLOAT) {
             __platform_printf("%f\r\n", arg_getFloat(arg));
@@ -1630,9 +1630,9 @@ void VMState_solveUnusedStack(VMState* vs) {
             __platform_printf("%s\r\n", arg_getStr(arg));
         } else if (type == ARG_TYPE_BYTES) {
             arg_printBytes(arg);
-        } else if (argType_isObject(type) || ARG_TYPE_POINTER == type ||
+        } else if (ARG_TYPE_POINTER == type ||
                    ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
-            __platform_printf("0x%llx\r\n", arg_getPtr(arg));
+            __platform_printf("%p\r\n", arg_getPtr(arg));
         }
         arg_deinit(arg);
     }

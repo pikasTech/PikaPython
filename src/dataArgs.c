@@ -402,7 +402,7 @@ char* getPrintStringFromPtr(Args* self, char* name, void* val) {
     Args buffs = {0};
     char* res = NULL;
     uint64_t intVal = (uintptr_t)val;
-    char* valString = strsFormat(&buffs, 32, "0x%llx", intVal);
+    char* valString = strsFormat(&buffs, 32, "%p", intVal);
     res = getPrintSring(self, name, valString);
     strsDeinit(&buffs);
     return res;

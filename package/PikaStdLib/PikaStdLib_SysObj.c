@@ -47,6 +47,7 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         if (clsptr == New_PikaStdData_Dict) {
             return arg_setStr(NULL, "", "<class 'dict'>");
         }
+        return arg_setStr(NULL, "", "<class 'object'>");
     }
     if (ARG_TYPE_OBJECT_META == type) {
         return arg_setStr(NULL, "", "<class 'meta object'>");
