@@ -5,21 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
             "name": "test",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=module.import_as_issue1"
+                // "--gtest_filter=parser.dict_literal1"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

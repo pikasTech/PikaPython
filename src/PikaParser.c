@@ -183,6 +183,8 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     char* rightWithoutSubStmt = __removeTokensBetween(&buffs, right, "(", ")");
     rightWithoutSubStmt =
         __removeTokensBetween(&buffs, rightWithoutSubStmt, "[", "]");
+    rightWithoutSubStmt =
+        __removeTokensBetween(&buffs, rightWithoutSubStmt, "{", "}");
 
     uint8_t is_get_operator = 0;
     uint8_t is_get_method = 0;
@@ -190,7 +192,8 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     uint8_t is_get_bytes = 0;
     uint8_t is_get_number = 0;
     uint8_t is_get_symbol = 0;
-    uint8_t is_get_index = 0;
+    uint8_t is_get_list = 0;
+    uint8_t is_get_dict = 0;
     uint8_t is_get_import = 0;
     ParserState_forEachToken(ps, rightWithoutSubStmt) {
         ParserState_iterStart(&ps);
@@ -200,7 +203,11 @@ static enum StmtType Lexer_matchStmtType(char* right) {
             goto iter_continue;
         }
         if (strEqu(ps.token1.pyload, "[")) {
-            is_get_index = 1;
+            is_get_list = 1;
+            goto iter_continue;
+        }
+        if (strEqu(ps.token1.pyload, "{")) {
+            is_get_dict = 1;
             goto iter_continue;
         }
         if (ps.token1.type == TOKEN_operator) {
@@ -240,8 +247,12 @@ static enum StmtType Lexer_matchStmtType(char* right) {
         stmtType = STMT_operator;
         goto exit;
     }
-    if (is_get_index) {
+    if (is_get_list) {
         stmtType = STMT_list;
+        goto exit;
+    }
+    if (is_get_dict) {
+        stmtType = STMT_dict;
         goto exit;
     }
     if (is_get_method) {
@@ -467,7 +478,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
 
         /* match devider*/
         if (('(' == c0) || (')' == c0) || (',' == c0) || ('[' == c0) ||
-            (']' == c0) || (':' == c0)) {
+            (']' == c0) || (':' == c0) || ('{' == c0) || ('}' == c0)) {
             tokens_arg =
                 Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
             char content[2] = {0};
@@ -1309,6 +1320,46 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
 #endif
 
+#if PIKA_BUILTIN_DICT_ENABLE
+    /* solve list stmt */
+    if (STMT_dict == stmtType) {
+        obj_setStr(ast, (char*)"dict", "dict");
+        char* subStmts = strsCut(&buffs, right, '{', '}');
+        subStmts = strsAppend(&buffs, subStmts, ",");
+        Arg* subStmt = arg_setStr(NULL, "", "");
+        char* subStmt_str = NULL;
+        ParserState_forEachToken(ps, subStmts) {
+            ParserState_iterStart(&ps);
+            if (ps.branket_deepth > 0) {
+                /* in brankets */
+                /* append token to subStmt */
+                subStmt = arg_strAppend(subStmt, ps.token1.pyload);
+                subStmt_str = arg_getStr(subStmt);
+            } else {
+                /* not in brankets */
+                if (strEqu(ps.token1.pyload, ",") ||
+                    strEqu(ps.token1.pyload, ":")) {
+                    /* found "," or ":" push subStmt */
+                    queueObj_pushObj(ast, (char*)"stmt");
+                    subStmt_str = arg_getStr(subStmt);
+                    AST_parseStmt(queueObj_getCurrentObj(ast), subStmt_str);
+                    /* clear subStmt */
+                    arg_deinit(subStmt);
+                    subStmt = arg_setStr(NULL, "", "");
+                } else {
+                    /* not "," append subStmt */
+                    subStmt = arg_strAppend(subStmt, ps.token1.pyload);
+                    subStmt_str = arg_getStr(subStmt);
+                }
+            }
+            ParserState_iterEnd(&ps);
+        }
+        ParserState_deinit(&ps);
+        arg_deinit(subStmt);
+        goto exit;
+    }
+#endif
+
     /* solve method stmt */
     if (STMT_method == stmtType) {
         method = strsGetFirstToken(&buffs, right, '(');
@@ -1987,6 +2038,7 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     }
     char* method = obj_getStr(subAst, "method");
     char* list = obj_getStr(subAst, "list");
+    char* dict = obj_getStr(subAst, "dict");
     char* operator= obj_getStr(subAst, "operator");
     char* ref = obj_getStr(subAst, "ref");
     char* left = obj_getStr(subAst, "left");
@@ -1995,6 +2047,10 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     char* num = obj_getStr(subAst, "num");
     char* import = obj_getStr(subAst, "import");
     char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
+    if (NULL != dict) {
+        __platform_sprintf(buff, "%d DCT \n", deepth);
+        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
+    }
     if (NULL != list) {
         __platform_sprintf(buff, "%d LST \n", deepth);
         pikaAsm = strsAppend(&buffs, pikaAsm, buff);
