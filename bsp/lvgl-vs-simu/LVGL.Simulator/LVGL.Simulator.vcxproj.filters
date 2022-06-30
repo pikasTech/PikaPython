@@ -62,6 +62,13 @@
     <ClInclude Include="pikascript\pikascript-api\pika_lvgl_lv_event.h" />
     <ClInclude Include="pikascript\pikascript-api\pika_lvgl_lv_color_t.h" />
     <ClInclude Include="pikascript\pikascript-api\pika_lvgl_style_t.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_ALIGN.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_ANIM.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_EVENT.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_OPA.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_PALETTE.h" />
+    <ClInclude Include="pikascript\pikascript-api\pika_lvgl_STATE.h" />
+    <ClInclude Include="pikascript\pikascript-api\PikaStdData_dict_keys.h" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="LVGL.Simulator.manifest" />
@@ -150,6 +157,13 @@
     <ClCompile Include="pikascript\pikascript-api\pika_lvgl_lv_color_t-api.c" />
     <ClCompile Include="pikascript\pikascript-api\pika_lvgl_style_t-api.c" />
     <ClCompile Include="pikascript\pikascript-lib\pika_lvgl\pika_lvgl_lv_style_t.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_ALIGN-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_ANIM-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_EVENT-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_OPA-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_PALETTE-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\pika_lvgl_STATE-api.c" />
+    <ClCompile Include="pikascript\pikascript-api\PikaStdData_dict_keys-api.c" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LVGL.Simulator.rc" />
