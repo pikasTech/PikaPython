@@ -49,6 +49,7 @@ enum StmtType {
     STMT_operator,
     STMT_import,
     STMT_list,
+    STMT_dict,
     STMT_none,
 };
 

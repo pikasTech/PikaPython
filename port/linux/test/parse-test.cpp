@@ -3245,3 +3245,51 @@ TEST(lexser, import_issue1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(lexser, dict_literal1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_getTokens(
+        buffs,
+        "tinydict = {'name': 'runoob', 'likes': 123, 'url': 'www.runoob.com'}");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf("%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(printTokens,
+                 "{sym}tinydict{opt}={dvd}{{lit}'name'{dvd}:{lit}'runoob'{dvd},"
+                 "{lit}'likes'{dvd}:{lit}123{dvd},{lit}'url'{dvd}:{lit}'www."
+                 "runoob.com'{dvd}}");
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if PIKA_BUILTIN_DICT_ENABLE
+TEST(parser, dict_literal1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "tinydict = {'name': 'runoob', 'likes': 123, 'url': "
+        "'www.runoob.com'}";
+    printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 STR name\n"
+                 "1 STR runoob\n"
+                 "1 STR likes\n"
+                 "1 NUM 123\n"
+                 "1 STR url\n"
+                 "1 STR www.runoob.com\n"
+                 "0 DCT \n"
+                 "0 OUT tinydict\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

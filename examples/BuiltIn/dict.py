@@ -1,8 +1,5 @@
 import PikaStdData
-d = PikaStdData.Dict()
-d['a'] = 1
-d['b'] = 2
-d['c'] = 'test'
+d = {'a':1, 'b':2, 'c':'test'}
 print(d)
 for item in d:
     print(item)
