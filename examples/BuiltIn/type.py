@@ -1,3 +1,3 @@
-list = [1, 2, 3]
-if str(type(list)) == "<class 'list'>":
+mylist = [1, 2, 3]
+if str(type(mylist)) == "<class 'list'>":
     print('OK')
