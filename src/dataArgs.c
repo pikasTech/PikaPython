@@ -435,7 +435,8 @@ char* args_print(Args* self, char* name) {
         goto exit;
     }
 
-    if (argType_isObject(type)) {
+    if (argType_isObject(type) || ARG_TYPE_POINTER == type ||
+        ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
         void* val = args_getPtr(self, name);
         res = getPrintStringFromPtr(self, name, val);
         goto exit;

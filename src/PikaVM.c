@@ -1630,6 +1630,9 @@ void VMState_solveUnusedStack(VMState* vs) {
             __platform_printf("%s\r\n", arg_getStr(arg));
         } else if (type == ARG_TYPE_BYTES) {
             arg_printBytes(arg);
+        } else if (argType_isObject(type) || ARG_TYPE_POINTER == type ||
+                   ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
+            __platform_printf("0x%llx\r\n", arg_getPtr(arg));
         }
         arg_deinit(arg);
     }

@@ -19,49 +19,51 @@ void PikaStdLib_SysObj_remove(PikaObj* self, char* argPath) {
     }
 }
 
-void PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
+Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     if (NULL == arg) {
         obj_setSysOut(self, "[error] type: arg no found.");
         obj_setErrorCode(self, 1);
-        return;
+        return arg_setNull(NULL);
     }
     ArgType type = arg_getType(arg);
     if (ARG_TYPE_INT == type) {
-        obj_setSysOut(self, "<class 'int'>");
-        return;
+        return arg_setStr(NULL, "", "<class 'int'>");
     }
     if (ARG_TYPE_FLOAT == type) {
-        obj_setSysOut(self, "<class 'float'>");
-        return;
+        return arg_setStr(NULL, "", "<class 'float'>");
     }
     if (ARG_TYPE_STRING == type) {
-        obj_setSysOut(self, "<class 'str'>");
-        return;
+        return arg_setStr(NULL, "", "<class 'str'>");
     }
-    if (ARG_TYPE_OBJECT == type) {
-        obj_setSysOut(self, "<class 'object'>");
-        return;
+    if (argType_isObject(type)) {
+        PikaObj* obj = arg_getPtr(arg);
+        NewFun clsptr = obj_getClass(obj);
+        PikaObj* New_PikaStdData_List(Args * args);
+        if (clsptr == New_PikaStdData_List) {
+            return arg_setStr(NULL, "", "<class 'list'>");
+        }
+        /* dict */
+        PikaObj* New_PikaStdData_Dict(Args * args);
+        if (clsptr == New_PikaStdData_Dict) {
+            return arg_setStr(NULL, "", "<class 'dict'>");
+        }
     }
     if (ARG_TYPE_OBJECT_META == type) {
-        obj_setSysOut(self, "<class 'meta object'>");
-        return;
+        return arg_setStr(NULL, "", "<class 'meta object'>");
     }
     if (ARG_TYPE_BYTES == type) {
-        obj_setSysOut(self, "<class 'bytes'>");
-        return;
+        return arg_setStr(NULL, "", "<class 'bytes'>");
     }
     if (ARG_TYPE_METHOD_NATIVE == type) {
-        obj_setSysOut(self, "<class 'buitin_function_or_method'>");
-        return;
+        return arg_setStr(NULL, "", "<class 'buitin_function_or_method'>");
     }
     if (ARG_TYPE_METHOD_OBJECT == type) {
-        obj_setSysOut(self, "<class 'method'>");
-        return;
+        return arg_setStr(NULL, "", "<class 'method'>");
     }
     if (ARG_TYPE_METHOD_STATIC == type) {
-        obj_setSysOut(self, "<class 'function'>");
-        return;
+        return arg_setStr(NULL, "", "<class 'function'>");
     }
+    return arg_setNull(NULL);
 }
 
 double PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {

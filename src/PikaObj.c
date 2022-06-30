@@ -331,8 +331,12 @@ exit:
     return method;
 }
 
+NewFun obj_getClass(PikaObj* obj) {
+    return (NewFun)obj_getPtr(obj, "_clsptr");
+}
+
 PikaObj* obj_getClassObj(PikaObj* obj) {
-    NewFun classPtr = (NewFun)obj_getPtr(obj, "_clsptr");
+    NewFun classPtr = obj_getClass(obj);
     if (NULL == classPtr) {
         return NULL;
     }
@@ -1137,7 +1141,6 @@ void pks_eventLisener_sendSignal(PikaEventListener* self,
 
 /* print major version info */
 void pks_printVersion(void) {
-    __platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n",
-                      PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR,
-                      PIKA_VERSION_MICRO, PIKA_EDIT_TIME);
+    __platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n", PIKA_VERSION_MAJOR,
+                      PIKA_VERSION_MINOR, PIKA_VERSION_MICRO, PIKA_EDIT_TIME);
 }
