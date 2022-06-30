@@ -1,4 +1,3 @@
-import PikaStdData
 d = {'a':1, 'b':2, 'c':'test'}
 print(d)
 for item in d:
