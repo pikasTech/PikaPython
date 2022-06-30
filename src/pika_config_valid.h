@@ -179,7 +179,7 @@
     #endif
 
     #ifndef PIKA_INIT_STRING_ENABLE
-        #define PIKA_INIT_STRING_ENABLE 0
+        #define PIKA_INIT_STRING_ENABLE 1
     #endif
     
     #ifndef PIKA_SYNTEX_ITEM_SLICE_ENABLE
