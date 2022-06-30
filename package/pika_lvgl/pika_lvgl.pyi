@@ -3,8 +3,7 @@ from PikaObj import *
 
 def __init__(): ...
 
-
-class EVENT:
+class EVENT(TinyObj):
     ALL: int
     PRESSED: int
     PRESSING: int
@@ -51,9 +50,10 @@ class EVENT:
     LAYOUT_CHANGED: int
     GET_SELF_SIZE: int
     PREPROCESS: int
+    def __init__(self): ...
 
 
-class ALIGN:
+class ALIGN(TinyObj):
     DEFAULT: int
     TOP_LEFT: int
     TOP_MID: int
@@ -76,9 +76,10 @@ class ALIGN:
     OUT_RIGHT_TOP: int
     OUT_RIGHT_MID: int
     OUT_RIGHT_BOTTOM: int
+    def __init__(self): ...
 
 
-class PALETTE:
+class PALETTE(TinyObj):
     RED: int
     PINK: int
     PURPLE: int
@@ -99,16 +100,22 @@ class PALETTE:
     BLUE_GREY: int
     GREY: int
     NONE: int
+    def __init__(self): ...
 
 
-class OPA:
+class OPA(TinyObj):
     TRANSP: int
     COVER: int
+    def __init__(self): ...
 
 
-class ANIM:
+class ANIM(TinyObj):
     OFF: int
     ON: int
+    def __init__(self): ...
+
+class STATE(TinyObj):
+    def __init__(self): ...
 
 
 class lv_event(TinyObj):
