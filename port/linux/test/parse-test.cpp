@@ -3333,3 +3333,26 @@ TEST(parser, common_issue1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, def_issue1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "def options(self):\n"
+        "    ...\n"
+        "\n";
+    printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 DEF options(self)\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 REF ...\n"
+                 "B1\n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
