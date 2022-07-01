@@ -130,6 +130,7 @@ releases = [
 name = "PikaMath"
 releases = [
   "v0.0.1 31146e2395e80b5785a4b2e526913a4590160e66",
+  "v0.1.0 793634882044af25f30bb59c6511c615e56f85c5",
 ]
 
 [[packages]]
