@@ -22,10 +22,6 @@ class PWM(STM32G0.PWM):
     pass
 
 
-class Task(STM32G0.Task):
-    pass
-
-
 class RGB(PikaPiZero.RGB):
     pass
 

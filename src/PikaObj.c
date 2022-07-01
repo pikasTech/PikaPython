@@ -1089,6 +1089,7 @@ char* obj_toStr(PikaObj* self) {
     return obj_getStr(self, "__res");
 }
 
+#if PIKA_EVENT_ENABLE
 void pks_eventLicener_registEvent(PikaEventListener* self,
                                   uint32_t eventId,
                                   PikaObj* eventHandleObj) {
@@ -1148,6 +1149,7 @@ void pks_eventLisener_sendSignal(PikaEventListener* self,
     };
     pikaVM_runByteCode(eventHandleObj, (uint8_t*)bytes);
 }
+#endif
 
 /* print major version info */
 void pks_printVersion(void) {

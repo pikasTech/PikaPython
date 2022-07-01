@@ -526,6 +526,7 @@ void PikaStdLib_SysObj_printNoEnd(PikaObj* self, Arg* val) {
 }
 
 char* PikaStdLib_SysObj_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
+		#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
     Args buffs = {0};
     pikaMemMaxReset();
     char* res = strsFormatList(&buffs, fmt, &var->super);
@@ -533,6 +534,11 @@ char* PikaStdLib_SysObj_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
     res = obj_getStr(self, "_buf");
     strsDeinit(&buffs);
     return res;
+		#else
+    obj_setErrorCode(self, 1);
+    __platform_printf("[Error] PIKA_SYNTEX_ITEM_FORMAT_ENABLE is not enabled.\r\n");
+    return NULL;
+		#endif
 }
 
 int PikaStdLib_SysObj_id(PikaObj* self, Arg* obj) {

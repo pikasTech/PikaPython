@@ -712,6 +712,11 @@
               <FilePath>..\pikascript\pikascript-api/PikaStdDevice_CAN-api.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdDevice_BaseDev-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/PikaStdDevice_BaseDev-api.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdLib_PikaObj-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdLib_PikaObj-api.c</FilePath>
@@ -952,6 +957,11 @@
               <FilePath>..\pikascript\pikascript-api/PikaPiZero_KEY-api.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdData_dict_keys-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/PikaStdData_dict_keys-api.c</FilePath>
+            </File>
+            <File>
               <FileName>__asset_pikaModules_py_a.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/__asset_pikaModules_py_a.c</FilePath>
@@ -975,6 +985,11 @@
               <FileName>PikaStdDevice_ADC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_BaseDev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_BaseDev.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdDevice_GPIO.c</FileName>
