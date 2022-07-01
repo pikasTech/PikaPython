@@ -235,6 +235,9 @@ Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {
+    if(NULL == string){
+        return NULL;
+    }
     return arg_init(name, ARG_TYPE_STRING, (uint8_t*)string,
                     strGetSize(string) + 1, NULL);
 }

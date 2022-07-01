@@ -79,6 +79,9 @@ PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
     PIKA_RES errCode = PIKA_RES_OK;
     Arg* argNew = New_arg(NULL);
     argNew = arg_setStr(argNew, name, strIn);
+    if(NULL == argNew){
+        return PIKA_RES_ERR_INVALID_PTR;
+    }
     args_setArg(self, argNew);
     return errCode;
 }

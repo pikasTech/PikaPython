@@ -1,6 +1,7 @@
 #include "test_common.h"
 
 extern PikaEventListener* g_pika_device_event_listener;
+#if PIKA_EVENT_ENABLE
 TEST(event, gpio) {
     /* init */
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -25,3 +26,4 @@ TEST(event, gpio) {
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif

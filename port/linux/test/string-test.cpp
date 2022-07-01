@@ -1,5 +1,6 @@
 #include "test_common.h"
 
+#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
 TEST(string, cformat) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -14,6 +15,7 @@ TEST(string, cformat) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 #if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
 TEST(string, cformat1) {
