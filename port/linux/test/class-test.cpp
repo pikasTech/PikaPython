@@ -23,9 +23,11 @@ TEST(class, classpar1) {
     __platform_printf("BEGIN\r\n");
     pikaVM_runSingleFile(self, "../../examples/Class/classpar1.py");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "test\r\n");
-    EXPECT_STREQ(log_buff[1], "1\r\n");
-    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[4], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[3], "1\r\n");
+    EXPECT_STREQ(log_buff[2], "test\r\n");
+    EXPECT_STREQ(log_buff[1], "2\r\n");
+    EXPECT_STREQ(log_buff[0], "pewq\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
