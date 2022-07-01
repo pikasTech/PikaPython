@@ -2,8 +2,8 @@
 #include "Arm2D_common.h"
 void Arm2D_Element_update(PikaObj* self) {
     /* need to be override */
-    args_setErrorCode(self->list, 1);
-    args_setSysOut(self->list, "[error]: update method not be overrided !");
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error]: update method not be overrided !");
 }
 
 void Arm2D_Element_init(PikaObj* self) {

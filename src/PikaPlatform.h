@@ -35,11 +35,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* clang-format off */
 #if PIKA_ASSERT_ENABLE
 #include <assert.h>
 #else
-#define assert(...)
+    #ifndef assert
+        #define assert(...)
+    #endif
 #endif
+/* clang-format on */
 
 /* Compiler */
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 5000000) /* ARM Compiler \
