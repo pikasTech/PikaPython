@@ -1307,6 +1307,10 @@ exit:
 VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
     Args buffs = {0};
     Arg* file_arg = arg_loadFile(NULL, filename);
+    assert(NULL != file_arg);
+    if (NULL == file_arg) {
+        return NULL;
+    }
     char* lines = (char*)arg_getBytes(file_arg);
     /* replace the "\r\n" to "\n" */
     lines = strsReplace(&buffs, lines, "\r\n", "\n");

@@ -438,7 +438,8 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
         return args_getPtr(self->list, name);
     }
     /* found class */
-    if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
+    if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
+        type == ARG_TYPE_METHOD_CONSTRUCTOR) {
         *pIsClass = PIKA_TRUE;
         PikaObj* method_args_obj = New_TinyObj(NULL);
         Arg* cls_obj_arg = obj_runMethodArg(self, method_args_obj,
