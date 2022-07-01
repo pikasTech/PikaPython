@@ -1814,6 +1814,7 @@ exit:
 #endif
 
 static char* Parser_linePreProcess(Args* buffs_p, char* line) {
+    line = Parser_removeAnnotation(line);
     /* check syntex error */
     if (Lexer_isError(line)) {
         line = NULL;
@@ -1821,7 +1822,6 @@ static char* Parser_linePreProcess(Args* buffs_p, char* line) {
     }
     /* process EOL */
     line = strsDeleteChar(buffs_p, line, '\r');
-    line = Parser_removeAnnotation(line);
 #if PIKA_SYNTEX_IMPORT_EX_ENABLE
     line = Parser_PreProcess_import(buffs_p, line);
     line = Parser_PreProcess_from(buffs_p, line);

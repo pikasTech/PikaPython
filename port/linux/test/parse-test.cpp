@@ -3293,3 +3293,43 @@ TEST(parser, dict_literal1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(parser, common_issue1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "class ConfigParser():\n"
+        "    def options(self):\n"
+        "        # print(type(self.content)\n"
+        "        # print(self.content.split('['))\n"
+        "        print('test')\n"
+        "\n";
+    printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 CLS ConfigParser()\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 RUN TinyObj\n"
+                 "0 OUT self\n"
+                 "B1\n"
+                 "0 RAS self\n"
+                 "B1\n"
+                 "0 DEF options(self)\n"
+                 "0 JMP 1\n"
+                 "B2\n"
+                 "1 STR test\n"
+                 "0 RUN print\n"
+                 "B2\n"
+                 "0 RET \n"
+                 "B1\n"
+                 "0 RAS $origin\n"
+                 "B1\n"
+                 "0 NEW self\n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
