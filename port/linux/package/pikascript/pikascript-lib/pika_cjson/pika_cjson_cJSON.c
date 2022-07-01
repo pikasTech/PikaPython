@@ -19,6 +19,9 @@ void pika_cjson_cJSON___del__(PikaObj* self) {
 PikaObj* pika_cjson_cJSON_getObjectItem(PikaObj* self, char* string) {
     cJSON* item = obj_getPtr(self, "item");
     cJSON* subItem = cJSON_GetObjectItem(item, string);
+    if (NULL == subItem) {
+        return NULL;
+    }
 
     /* create subCJSON */
     PikaObj* subCJSON = newNormalObj(New_pika_cjson_cJSON);
@@ -46,6 +49,9 @@ void pika_cjson_cJSON___init__(PikaObj* self) {
 PikaObj* pika_cjson_cJSON_getChild(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     cJSON* resItem = item->child;
+    if(NULL == resItem){
+        return NULL;
+    }
 
     /* create subCJSON */
     PikaObj* resCJSON = newNormalObj(New_pika_cjson_cJSON);
@@ -60,6 +66,9 @@ PikaObj* pika_cjson_cJSON_getChild(PikaObj* self) {
 PikaObj* pika_cjson_cJSON_getNext(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     cJSON* resItem = item->next;
+    if(NULL == resItem){
+        return NULL;
+    }
 
     /* create subCJSON */
     PikaObj* resCJSON = newNormalObj(New_pika_cjson_cJSON);
@@ -74,6 +83,9 @@ PikaObj* pika_cjson_cJSON_getNext(PikaObj* self) {
 PikaObj* pika_cjson_cJSON_getPrev(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     cJSON* resItem = item->prev;
+    if(NULL == resItem){
+        return NULL;
+    }
 
     /* create subCJSON */
     PikaObj* resCJSON = newNormalObj(New_pika_cjson_cJSON);
@@ -137,6 +149,9 @@ Arg* pika_cjson_cJSON_getValue(PikaObj* self) {
 PikaObj* pika_cjson_cJSON_getArrayItem(PikaObj* self, int index) {
     cJSON* item = obj_getPtr(self, "item");
     cJSON* subItem = cJSON_GetArrayItem(item, index);
+    if(NULL == subItem){
+        return NULL;
+    }
 
     /* create subCJSON */
     PikaObj* subCJSON = newNormalObj(New_pika_cjson_cJSON);
