@@ -578,6 +578,10 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 # 7.Contribute
 
+<a href="https://github.com/pikastech/pikascript/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=pikastech/pikascript" />
+</a>
+
 ## [How to contribute](https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html)
 
 | Contribute log | Contributer |
