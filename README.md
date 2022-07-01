@@ -576,7 +576,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 ## Test core in docker (recommend)
 [get start with docker](https://pikadoc.readthedocs.io/en/latest/get-start_linux.html)
 
-# 7.Contribute
+# ✨ Contributors
 
 <a href="https://github.com/pikastech/pikascript/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=pikastech/pikascript" />
