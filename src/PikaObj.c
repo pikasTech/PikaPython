@@ -445,7 +445,9 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
         Arg* cls_obj_arg = obj_runMethodArg(self, method_args_obj,
                                             args_getArg(self->list, name));
         obj_deinit(method_args_obj);
-        obj_runNativeMethod(arg_getPtr(cls_obj_arg), "__init__", NULL);
+        if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
+            obj_runNativeMethod(arg_getPtr(cls_obj_arg), "__init__", NULL);
+        }
         PikaObj* res = arg_getPtr(cls_obj_arg);
         arg_deinit(cls_obj_arg);
         return res;
