@@ -897,6 +897,7 @@ char* Parser_solveBranckets(Args* outBuffs,
     uint8_t is_in_brancket = 0;
     args_setStr(&buffs, "inner", "");
     uint8_t matched = 0;
+    char* right_res = NULL;
     /* exit when NULL */
     if (NULL == content) {
         arg_deinit(right_arg);
@@ -1004,7 +1005,6 @@ char* Parser_solveBranckets(Args* outBuffs,
             }
         }
     }
-    char* right_res = NULL;
 exit:
     /* clean and return */
     right_res = strsCopy(outBuffs, arg_getStr(right_arg));

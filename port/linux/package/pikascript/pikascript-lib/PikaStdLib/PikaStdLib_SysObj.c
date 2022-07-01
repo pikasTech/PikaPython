@@ -152,7 +152,7 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     /* object */
     if (argType_isObject(arg_getType(arg))) {
         PikaObj* arg_obj = arg_getPtr(arg);
-        NewFun _clsptr = obj_getPtr(arg_obj, "_clsptr");
+        NewFun _clsptr = (NewFun)obj_getPtr(arg_obj, "_clsptr");
         if (_clsptr == New_PikaStdLib_RangeObj) {
             /* found RangeObj, return directly */
             return arg_copy(arg);
@@ -322,20 +322,22 @@ Arg* PikaStdLib_SysObj_list(PikaObj* self) {
 #if PIKA_BUILTIN_LIST_ENABLE
     PikaObj* New_PikaStdData_List(Args * args);
     return arg_newDirectObj(New_PikaStdData_List);
-#endif
+#else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in list is not enabled.\r\n");
     return arg_setNull(NULL);
+#endif
 }
 
 Arg* PikaStdLib_SysObj_dict(PikaObj* self) {
 #if PIKA_BUILTIN_DICT_ENABLE
     PikaObj* New_PikaStdData_Dict(Args * args);
     return arg_newDirectObj(New_PikaStdData_Dict);
-#endif
+#else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in dist is not enabled.\r\n");
     return arg_setNull(NULL);
+#endif
 }
 
 char* PikaStdLib_SysObj_hex(PikaObj* self, int val) {

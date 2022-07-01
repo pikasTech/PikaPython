@@ -194,7 +194,7 @@ int64_t obj_getInt(PikaObj* self, char* argPath) {
 }
 
 Arg* obj_getArg(PikaObj* self, char* argPath) {
-    PIKA_BOOL isClass = 0;
+    PIKA_BOOL isClass = PIKA_FALSE;
     PikaObj* obj = obj_getHostObjWithIsClass(self, argPath, &isClass);
     if (NULL == obj) {
         return NULL;
@@ -477,12 +477,12 @@ exit:
 }
 
 PikaObj* obj_getObj(PikaObj* self, char* objPath) {
-    PIKA_BOOL isClass = 0;
+    PIKA_BOOL isClass = PIKA_FALSE;
     return __obj_getObjWithKeepDeepth(self, objPath, &isClass, 0);
 }
 
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath) {
-    PIKA_BOOL isClass = 0;
+    PIKA_BOOL isClass = PIKA_FALSE;
     return __obj_getObjWithKeepDeepth(self, objPath, &isClass, 1);
 }
 
@@ -733,7 +733,7 @@ static void __obj_runCharBeforeRun(PikaObj* self) {
 
 enum shell_state obj_runChar(PikaObj* self, char inputChar) {
     struct shell_config* cfg = args_getStruct(self->list, "__shcfg");
-    __obj_shellLineHandler_t __lineHandler_fun = obj_getPtr(self, "__shhdl");
+    __obj_shellLineHandler_t __lineHandler_fun = (__obj_shellLineHandler_t)obj_getPtr(self, "__shhdl");
     char* rxBuff = (char*)obj_getBytes(self, "__shbuf");
     char* input_line = NULL;
     int is_in_block = obj_getInt(self, "__shinb");

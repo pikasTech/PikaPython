@@ -156,8 +156,6 @@ static int32_t VMState_getAddrOffsetOfRaise(VMState* vs) {
             return offset;
         }
     }
-    /* byteCode */
-    return offset;
 }
 
 static int32_t VMState_getAddrOffsetOfContinue(VMState* vs) {
@@ -218,7 +216,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
 }
 
 static Arg* VM_instruction_handler_GER(PikaObj* self, VMState* vs, char* data) {
-    PIKA_RES err = vs->try_error_code;
+    PIKA_RES err = (PIKA_RES)vs->try_error_code;
     Arg* err_arg = arg_setInt(NULL, "", err);
     return err_arg;
 }
@@ -286,7 +284,10 @@ Arg* __obj_runMethodArgWithState(PikaObj* self,
 Arg* obj_runMethodArg(PikaObj* self,
                       PikaObj* method_args_obj,
                       Arg* method_arg) {
-    TryInfo try_info = {0};
+    TryInfo try_info = {
+			.try_state = TRY_STATE_NONE,
+			.try_result = TRY_RESULT_NONE
+		};
     return __obj_runMethodArgWithState(self, method_args_obj, method_arg,
                                        &try_info);
 }
@@ -302,13 +303,19 @@ static int VMState_loadArgsFromMethodArg(VMState* vs,
     PIKA_BOOL is_variable = PIKA_FALSE;
     PIKA_BOOL is_get_variable_arg = PIKA_FALSE;
     uint8_t arg_num = 0;
-
+		ArgType method_type = ARG_TYPE_UNDEF;
+    uint8_t arg_num_input = 0;
+    PikaTuple* tuple = NULL;
+    char* variable_tuple_name = NULL;
+		char* type_list_buff = NULL;
+    int variable_arg_start = 0;
+		
     /* get method type list */
     char* type_list = methodArg_getTypeList(method_arg, &buffs);
     if (NULL == type_list) {
         goto exit;
     }
-    ArgType method_type = arg_getType(method_arg);
+    method_type = arg_getType(method_arg);
 
     /* check variable */
     if (strIsContain(type_list, '*')) {
@@ -325,7 +332,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vs,
         /* delete the 'self' */
         arg_num_dec--;
     }
-    uint8_t arg_num_input = VMState_getInputArgNum(vs);
+    arg_num_input = VMState_getInputArgNum(vs);
 
     /* check arg num */
     if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
@@ -351,12 +358,10 @@ static int VMState_loadArgsFromMethodArg(VMState* vs,
         arg_num = arg_num_dec;
     }
 
-    PikaTuple* tuple = NULL;
-    char* variable_tuple_name = NULL;
 
     /* get variable tuple name */
-    char* type_list_buff = strsCopy(&buffs, type_list);
-    int variable_arg_start = 0;
+    type_list_buff = strsCopy(&buffs, type_list);
+    variable_arg_start = 0;
     for (int i = 0; i < arg_num_dec; i++) {
         char* arg_def = strPopLastToken(type_list_buff, ',');
         if (strIsStartWith(arg_def, "*")) {
@@ -498,7 +503,10 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     Arg* method_arg = NULL;
     char* sys_out;
     int arg_num_used = 0;
-    TryInfo sub_try_info = {0};
+    TryInfo sub_try_info = {
+			.try_state = TRY_STATE_NONE,
+			.try_result = TRY_RESULT_NONE
+		};
     assert(NULL != vs->try_info);
     if (vs->try_info->try_state == TRY_STATE_TOP ||
         vs->try_error_code == TRY_STATE_INNER) {
@@ -1069,7 +1077,7 @@ static Arg* VM_instruction_handler_RET(PikaObj* self, VMState* vs, char* data) {
 
 static Arg* VM_instruction_handler_RIS(PikaObj* self, VMState* vs, char* data) {
     Arg* err_arg = stack_popArg(&(vs->stack));
-    PIKA_RES err = arg_getInt(err_arg);
+    PIKA_RES err = (PIKA_RES) arg_getInt(err_arg);
     VMState_setErrorCode(vs, err);
     arg_deinit(err_arg);
     /* raise jmp */
@@ -1716,7 +1724,10 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame) {
-    TryInfo try_info = {0};
+    TryInfo try_info = {
+			.try_state = TRY_STATE_NONE,
+			.try_result = TRY_RESULT_NONE
+		};
     try_info.try_state = TRY_STATE_NONE;
     return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
                                               0, &try_info);
