@@ -256,7 +256,7 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 | Syntax | str | bytes | list |
 | --- | --- | --- | --- |
 | test[i] | √ | √ | √ |
-| test[a : b : c] | √ | √ | - | 
+| test[a : b] | √ | √ | - | 
 | test[a :] | √ | √ | - |
 
 #### Other keywords/Syntax

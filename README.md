@@ -249,7 +249,7 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 | Syntax | str | bytes | list |
 | --- | --- | --- | --- |
 | test[i] | √ | √ | √ |
-| test[a : b : c] | √ | √ | - | 
+| test[a : b] | √ | √ | - | 
 | test[a :] | √ | √ | - |
 
 #### Other keywords/Syntax
