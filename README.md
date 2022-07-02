@@ -48,7 +48,7 @@ http://pikascript.com
 
 Note: You need the [Community Edition license (Now Free)](https://www.keil.com/pr/article/1299.htm) to build Keil projects, and the version of Keil should be newer than v5.36.
 
-[![](https://user-images.githubusercontent.com/88232613/169705287-afb58c8f-1b03-4155-abb2-1b432d5b852e.png)](http://pikascript.com)
+[![](assets/1644129110261-049ad5bb-21af-40e2-9533-a1c8c86790f1.jpg)](http://pikascript.com)
 
 ## Use Pika package manager [PikaPackage.exe](https://pikadoc.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
 
