@@ -107,56 +107,16 @@ http://pikascript.com
 # 2.平台支持列表
 
 ## MCU support
-|MCU|bsp|gpio|time|uart|pwm|adc|i2c|
-|---|---|---|---|---|---|---|---|
-|stm32g030c8|√|√|√|√|√|√|√|
-|stm32g070cB|√|√|√|√|√|√|√|
-|stm32f103c8|√|√|√|√|√|√|√|
-|stm32f103rb|√|√|√|√|√|√|√|
-|stm32f103ze|√|√|√|√|√|√|√|
-|stm32f103rc|√|√|√|√|√|√|√|
-|stm32f401cc|√|√|√|√|√|√|√|
-|stm32f411ce|√|√|√|√|√|√|√|
-|stm32f407ze|√| | | | | | |
-|stm32f407zg|√| | | | | | |
-|stm32h750vb|√| | | | | | |
-|stm32f051r8|√| | | | | | |
-|ch582|√|√|√|√| |√|√|
-|ch32v103r8t6|√|√|√| | | | |
-|cm32m101a|√| | | | | | |
-|w801|√| | | | | | |
-|w806|√|√|√|√|√|√|√|
-|apm32f030r8|√| | | | | | |
-|apm32e103vb|√| | | | | | |
-|bl-706|√| | | | | | |
-|Raspberry Pico|√| | | | | | |
-|ESP32C3|√|√|√| | | | |
-|TC264D|√| | | | | | |
-|devc|√| | | | | | |
-|EC600N|√| | | | | | |
+!INCLUDE "bsp.mdpp"
+
 
 ## Board support
-|Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
-|---|---|---|---|---|---|---|---|---|---|
-|[Pika-Pi-Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√|√|√|√|
+!INCLUDE "board.mdpp"
 
-|Board|bsp|arm-2d|
-|---|---|---|
-|QEMU-arm2d|√|√|
-
-|Board|bsp|LED|KEY|
-|---|---|---|---|
-|SmartLoong|√|√|√|√|
 
 ## OS support
-|OS|port|GPIO|TIME|PWM|
-|---|---|---|---|---|
-|RT-Thread|√|√|√|√|
-|vsf|√|√| | |
+!INCLUDE "os.mdpp"
 
-|OS|port|Google Test|Benchmark|
-|---|---|---|---|
-|linux|√|√|√|
 
 ## 相关开源项目 
 ### PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌
@@ -206,62 +166,8 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 |对象嵌套   |√|√|√|
 |控制流     |√|√|√|
 
-#### Operator
+!INCLUDE "syntax.mdpp"
 
-| + | - | * | / | == | > | < | >= | <= | % | ** | // | != | & | >> | << | and | or | not | += | -= | *= | /= |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|
-
-#### Control flow
-
-| Syntax | State | Comment |
-| --- | --- | --- |
-| if | √ | |
-| while | √ | |
-| for in [list] | √ | ([PikaStdData.List](https://pikadoc.readthedocs.io/zh/latest/PikaStdData%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html)) |
-| for in range(a, b) | √ |  |
-| for in [dict] | √ | ([PikaStdData.Dict](https://pikadoc.readthedocs.io/zh/latest/PikaStdData%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html)) |
-| if elif else | √ | |
-| for break/continue | √ ||
-| while break/continue | √ ||
-
-#### Module
-
-| Syntax | Python Module | C Module |
-| --- | --- | --- |
-| import [module] | √ | √ |
-| import [module] as | √ | - |
-| from [module] import [class/function>]| √ | - |
-| from [module] import [class/function>] as | √ | - |
-| from [module] import * | - | PikaObj Module Only |
-
-#### List/Dict
-| Syntax | State | Comment |
-| --- | --- | --- |
-| l = list() | √  | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| l = [a, b, c] | √  | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| d = dict() | √ | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| d = {'a':x, 'b':y, 'c':z} | √  | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html).|
-
-#### Exception
-
-| try except | try except else | try except as | 
-| --- | --- | --- |
-| - | - | - |
-
-#### Slice
-
-| Syntax | str | bytes | list (PikaStdData.List) |Comment |
-| --- | --- | --- | --- | --- |
-| test[i] | √ | √ | √ | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| test[a : b : c] | √ | √ | - | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| test[a :] | √ | √ | - |Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-
-#### Other keywords/Syntax
-
-| yield | is | comprehensions |
-| --- | --- | --- |
-| - | - | - |
 
 ### (4)源码规范
 
@@ -586,49 +492,5 @@ while True:
 # 7.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
-| ESP32 package |沧御|
-| MM32F5277E9P package |[unsigned](https://gitee.com/unsigned0)|
-| mm32f5277e9p BSP |[unsigned](https://gitee.com/unsigned0)|
-| Add [CMSIS-PACK](https://pikadoc.readthedocs.io/en/latest/get-start_cmsis-pack.html) | [GorgonMeducer](https://github.com/GorgonMeducer) |
-| donate: air32f103 board * 20 | 合宙 [xinxi204](https://gitee.com/xinxi204) |
-| contrubute to PikaMath.Math() | [onceday](https://gitee.com/onceday) |
-| add support for Unix Time | [onceday](https://gitee.com/onceday) |
-| contrubute to PikaStdLib.String() | [purewind7](https://gitee.com/purewind7) |
-| Add [PLOOC](https://github.com/GorgonMeducer/PLOOC) support for PikaScript Core | [GorgonMeducer](https://github.com/GorgonMeducer) |
-| Donate：500¥ (ctypes 相关） | 蒋太平 |
-| fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
-| ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
-| ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
-| Donate：EC600X QuecPython Develop board| 移远通信 武加玉 |
-| Performance Point: 900->1400 | [GorgonMeducer](https://github.com/GorgonMeducer) |
-| stm32f051r8 BSP |[unsigned](https://gitee.com/unsigned0)|
-| stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
-| devc BSP |[unsigned](https://gitee.com/unsigned0)|
-| TC264D BSP |[unsigned](https://gitee.com/unsigned0)|
-| PikaVM improvement | [GorgonMeducer](https://github.com/GorgonMeducer) |
-| W801Device package | 刘延(微信名) |
-| W806 bsp | 刘延(微信名) |
-| Donate：ESP32C3 5pic，linker|启明云端 沧御|
-| Donate：LS1C101 mcu 10pic, LS1c101 develop board，debuger|龙芯俱乐部 石南|
-| PikaVSF OS package | [versaloon](https://github.com/versaloon) |
-| ESP32C3 BSP |沧御|
-| Donate：ESP32 board、ink lcd*4 | name(微信名) |
-| Donate：smartloong board | 龙芯俱乐部 石南 |
-| package/STM32F1 | [sjy](https://gitee.com/shanjiayang) |
-| package/STM32F103RBBooter | [sjy](https://gitee.com/shanjiayang) |
-| bsp/stm32f103rb | [sjy](https://gitee.com/shanjiayang) |
-| QEMU ARM-2D simulation proejct | [liuduanfei](https://github.com/liuduanfei) |
-| Donate：GD32E103TB2 2 pic | 信息牛(微信名) |
-| Rt-thread bsp、port、module| [Meco Jianting Man](https://github.com/mysterywolf) |
-| Donate：EC600S-CN 4G| 移远模块 |
-| Donate：BL706 board|博流智能 [bouffalolab](https://github.com/bouffalolab)|
-| Donate：CM32M101A 开发板| 孟巍(微信名) |
-| Donate：APM32F030R8 board | 极海半导体 陈成 |
-| Donate：APM32E103VB board | 极海半导体 陈成 |
-| Donate：APEX-Link| 极海半导体 陈成 |
-| corde format，add gitattributes| [Meco Jianting Man](https://github.com/mysterywolf) |
-| demo/simulation-keil | 千帆(微信名) |
-| demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
-| demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
-| demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
+!INCLUDE "contributor.mdpp"
 
