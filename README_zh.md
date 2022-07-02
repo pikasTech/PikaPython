@@ -134,6 +134,7 @@ http://pikascript.com
 |TC264D         |√  |    |    |    |   |   |   |
 |devc           |√  |    |    |    |   |   |   |
 |EC600N         |√  |    |    |    |   |   |   |
+|mm32f5277e9p   |√  |√   |    |    |   |   |   |
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
