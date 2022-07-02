@@ -241,8 +241,8 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 | Syntax | State |
 | --- | --- |
 |try except | √ |
-|try except [errname]|  |
-|try except [errname] as [e] |  |
+|try except [errname]| - |
+|try except [errname] as [e] | - |
 
 #### Slice
 

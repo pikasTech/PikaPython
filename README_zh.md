@@ -248,8 +248,8 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 | Syntax | State |
 | --- | --- |
 |try except | √ |
-|try except [errname]|  |
-|try except [errname] as [e] |  |
+|try except [errname]| - |
+|try except [errname] as [e] | - |
 
 #### Slice
 

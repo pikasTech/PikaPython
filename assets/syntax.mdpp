@@ -40,8 +40,8 @@
 | Syntax | State |
 | --- | --- |
 |try except | √ |
-|try except [errname]|  |
-|try except [errname] as [e] |  |
+|try except [errname]| - |
+|try except [errname] as [e] | - |
 
 #### Slice
 
