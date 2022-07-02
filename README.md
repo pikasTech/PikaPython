@@ -207,16 +207,16 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 
 #### Control flow
 
-| Syntax | State | Comment |
-| --- | --- | --- |
-| if | √ | |
-| while | √ | |
-| for in [list] | √ | ([PikaStdData.List](https://pikadoc.readthedocs.io/zh/latest/PikaStdData%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html)) |
-| for in range(a, b) | √ |  |
-| for in [dict] | √ | ([PikaStdData.Dict](https://pikadoc.readthedocs.io/zh/latest/PikaStdData%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html)) |
-| if elif else | √ | |
-| for break/continue | √ ||
-| while break/continue | √ ||
+| Syntax | State |
+| --- | --- |
+| if | √ |
+| while | √ |
+| for in [list] | √ |
+| for in range(a, b) | √ |
+| for in [dict] | √ |
+| if elif else | √ |
+| for break/continue | √ |
+| while break/continue | √ |
 
 #### Module
 
@@ -229,26 +229,28 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 | from [module] import * | - | PikaObj Module Only |
 
 #### List/Dict
-| Syntax | State | Comment |
-| --- | --- | --- |
-| l = list() | √  | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| l = [a, b, c] | √  | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| d = dict() | √ | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| d = {'a':x, 'b':y, 'c':z} | √  | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html).|
+| Syntax | State |
+| --- | --- |
+| l = list() | √  |
+| l = [a, b, c] | √ |
+| d = dict() | √ |
+| d = {'a':x, 'b':y, 'c':z} | √ |
 
 #### Exception
 
-| try except | try except else | try except as | 
-| --- | --- | --- |
-| - | - | - |
+| Syntax | State |
+| --- | --- |
+|try except | √ |
+|try except [errname]|  |
+|try except [errname] as [e] |  |
 
 #### Slice
 
-| Syntax | str | bytes | list (PikaStdData.List) |Comment |
-| --- | --- | --- | --- | --- |
-| test[i] | √ | √ | √ | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| test[a : b : c] | √ | √ | - | Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| test[a :] | √ | √ | - |Can be disabled in [configuration](https://pikadoc.readthedocs.io/zh/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
+| Syntax | str | bytes | list |
+| --- | --- | --- | --- |
+| test[i] | √ | √ | √ |
+| test[a : b : c] | √ | √ | - | 
+| test[a :] | √ | √ | - |
 
 #### Other keywords/Syntax
 
