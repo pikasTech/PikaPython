@@ -247,9 +247,14 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 
 | Syntax | State |
 | --- | --- |
-|try except | √ |
-|try except [errname]| - |
-|try except [errname] as [e] | - |
+|try:| √ |
+|except:| √ |
+|except [Exception]:| - |
+|except [Exception] as [err]: | - |
+|except: ... else:| - |
+|raise:| √ |
+|raise [Exception]:| - |
+|finally:| - |
 
 #### Slice
 
