@@ -2,7 +2,7 @@ from PikaStdData import String
 
 
 class ConfigParser():
-    content = String('')
+    content = ''
     config_dict = {}
 
     def read(self, file_name):
@@ -11,11 +11,11 @@ class ConfigParser():
         self._parse()
 
     def read_string(self, content):
-        self.content = String(content)
+        self.content = content
         self._parse()
 
     def _parse(self):
-        content = self.content
+        content = String(self.content)
         lines = content.split('\n')
         for line in lines:
             line = String(line)
@@ -77,3 +77,22 @@ class ConfigParser():
             val = section_dict[key]
             items.append([key, val])
         return items
+
+    def __str__(self):
+        content = ''
+        section_keys = self.config_dict.keys()
+        for section_item in section_keys:
+            content += '[' + section_item + ']\n'
+            section_dict = self.config_dict[section_item]
+            section_keys = section_dict.keys()
+            for key in section_keys:
+                val = section_dict[key]
+                content += key + ' = ' + val + '\n'
+            content += '\n'
+        return content
+
+    def write(self, file_name):
+        self.content = self.__str__(self)
+        print('Error: write() method not implemented')
+        print(self.content)
+        raise
