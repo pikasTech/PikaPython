@@ -3356,3 +3356,10 @@ TEST(parser, def_issue1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, configparser){
+    Args buffs = {0};
+    char* res = Parser_fileToAsm(&buffs, "package/pikascript/configparser.py");
+    __platform_printf("%s", res);
+    strsDeinit(&buffs);
+}

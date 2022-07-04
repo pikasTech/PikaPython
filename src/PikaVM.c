@@ -171,7 +171,7 @@ static Arg* VM_instruction_handler_NON(PikaObj* self, VMState* vs, char* data) {
 }
 
 static Arg* VM_instruction_handler_TRY(PikaObj* self, VMState* vs, char* data) {
-    assert(NULL != vs->try_info);
+    pika_assert(NULL != vs->try_info);
     vs->try_info->try_state = TRY_STATE_TOP;
     return NULL;
 }
@@ -233,7 +233,7 @@ Arg* __obj_runMethodArgWithState(PikaObj* self,
                                  PikaObj* method_args_obj,
                                  Arg* method_arg,
                                  TryInfo* try_state) {
-    assert(NULL != try_state);
+    pika_assert(NULL != try_state);
     Arg* return_arg = NULL;
     /* get method Ptr */
     Method method_ptr = methodArg_getPtr(method_arg);
@@ -507,7 +507,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
 			.try_state = TRY_STATE_NONE,
 			.try_result = TRY_RESULT_NONE
 		};
-    assert(NULL != vs->try_info);
+    pika_assert(NULL != vs->try_info);
     if (vs->try_info->try_state == TRY_STATE_TOP ||
         vs->try_error_code == TRY_STATE_INNER) {
         sub_try_info.try_state = TRY_STATE_INNER;
@@ -541,7 +541,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         /* get method in global */
         method_arg = obj_getMethodArg(vs->globals, methodPath);
     }
-    /* assert method*/
+    /* pika_assert method*/
     if (NULL == method_arg || ARG_TYPE_NONE == arg_getType(method_arg)) {
         /* error, method no found */
         VMState_setErrorCode(vs, PIKA_RES_ERR_ARG_NO_FOUND);
@@ -753,13 +753,13 @@ static Arg* VM_instruction_handler_SER(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
     int thisBlockDeepth;
     thisBlockDeepth = VMState_getBlockDeepthNow(vs);
-    Arg* assertArg = stack_popArg(&(vs->stack));
-    int assert = arg_getInt(assertArg);
-    arg_deinit(assertArg);
+    Arg* pika_assertArg = stack_popArg(&(vs->stack));
+    int pika_assert = arg_getInt(pika_assertArg);
+    arg_deinit(pika_assertArg);
     char __else[] = "__else0";
     __else[6] = '0' + thisBlockDeepth;
-    args_setInt(self->list, __else, !assert);
-    if (0 == assert) {
+    args_setInt(self->list, __else, !pika_assert);
+    if (0 == pika_assert) {
         /* set __else flag */
         vs->jmp = fast_atoi(data);
     }
@@ -1190,7 +1190,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     int32_t pc_next = vs->pc + instructUnit_getSize();
     char* data = VMState_getConstWithInstructUnit(vs, ins_unit);
     /* run instruct */
-    assert(NULL != vs->try_info);
+    pika_assert(NULL != vs->try_info);
     return_arg = VM_instruct_handler_table[instruct](self, vs, data);
     if (NULL != return_arg) {
         stack_pushArg(&(vs->stack), return_arg);
@@ -1315,7 +1315,7 @@ exit:
 VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
     Args buffs = {0};
     Arg* file_arg = arg_loadFile(NULL, filename);
-    assert(NULL != file_arg);
+    pika_assert(NULL != file_arg);
     if (NULL == file_arg) {
         return NULL;
     }
@@ -1657,7 +1657,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     ByteCodeFrame* bytecode_frame,
     uint16_t pc,
     TryInfo* try_info) {
-    assert(NULL != try_info);
+    pika_assert(NULL != try_info);
     int size = bytecode_frame->instruct_array.size;
     /* locals is the local scope */
     VMState vs = {

@@ -127,3 +127,40 @@ TEST(string, split) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(string, strip) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "s = PikaStdData.String('  a,b,c, d  ')\n"
+            "res = s.strip()\n"
+            "\n");
+    /* collect */
+    char* res = obj_getStr(pikaMain, "res");
+    /* assert */
+    EXPECT_STREQ(res, "a,b,c, d");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+
+TEST(string, replace) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "s = PikaStdData.String('  a,b,c, d  ')\n"
+            "res = s.replace('a', 'A')\n"
+            "\n");
+    /* collect */
+    char* res = obj_getStr(pikaMain, "res");
+    /* assert */
+    EXPECT_STREQ(res, "  A,b,c, d  ");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

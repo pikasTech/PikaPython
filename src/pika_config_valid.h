@@ -234,6 +234,10 @@
         #define PIKA_EVENT_ENABLE 1
     #endif
 
+    #ifndef PIKA_DEBUG_ENABLE
+        #define PIKA_DEBUG_ENABLE 0
+    #endif
+
     /* configuration validation */
 
 #endif

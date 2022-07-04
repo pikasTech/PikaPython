@@ -14,6 +14,7 @@ import cjson_test
 import test_module4
 import pika_lua
 import import_test
+import configparser
 from PikaStdData import String as S
 
 mem = PikaStdLib.MemChecker()

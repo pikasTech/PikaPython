@@ -38,11 +38,13 @@
 
 /* clang-format off */
 #if PIKA_ASSERT_ENABLE
-#include <assert.h>
+    #define pika_assert(expr) \
+    if(!(expr)) { \
+        __platform_printf("Assertion failed: %s\nfile: %s:%d\n", #expr, __FILE__, __LINE__); \
+        abort(); \
+    }
 #else
-    #ifndef assert
-        #define assert(...)
-    #endif
+    #define pika_assert(...)
 #endif
 /* clang-format on */
 
@@ -90,6 +92,7 @@ typedef enum {
     PIKA_RES_ERR_ILLEGAL_MAGIC_CODE,
     PIKA_RES_ERR_OPERATION_FAILED,
     PIKA_RES_ERR_UNKNOWN,
+    PIKA_RES_ERR_SYNTAX_ERROR,
 } PIKA_RES;
 
 /* clang-format off */

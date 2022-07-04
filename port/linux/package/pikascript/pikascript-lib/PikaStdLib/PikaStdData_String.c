@@ -154,7 +154,7 @@ PikaObj* PikaStdData_String_split(PikaObj* self, char* s) {
     PikaStdData_List___init__(list);
 
     Args buffs = {0};
-    char* str = obj_getStr(self, "str");
+    char* str = strsCopy(&buffs, obj_getStr(self, "str"));
 
     char sign = s[0];
     int token_num = strCountSign(str, sign) + 1;
@@ -173,7 +173,40 @@ PikaObj* PikaStdData_String_split(PikaObj* self, char* s) {
     return list;
 }
 
-int PikaStdData_String___len__(PikaObj *self){
+int PikaStdData_String___len__(PikaObj* self) {
     char* str = obj_getStr(self, "str");
     return strGetSize(str);
+}
+
+char* PikaStdData_String_strip(PikaObj* self) {
+    Args buffs = {0};
+    char* str = strsCopy(&buffs, obj_getStr(self, "str"));
+    /* strip */
+    char* str_start = str;
+    for (size_t i = 0; i < strGetSize(str); i++) {
+        if (str[i] != ' ') {
+            str_start = (char*)(str + i);
+            break;
+        }
+    }
+
+    for (int i = strGetSize(str) - 1; i >= 0; i--) {
+        if (str[i] != ' ') {
+            str[i + 1] = '\0';
+            break;
+        }
+    }
+
+    obj_setStr(self, "_buf", str_start);
+    strsDeinit(&buffs);
+    return obj_getStr(self, "_buf");
+}
+
+char* PikaStdData_String_replace(PikaObj* self, char* new, char* old) {
+    Args buffs = {0};
+    char* str = strsCopy(&buffs, obj_getStr(self, "str"));
+    str = strsReplace(&buffs, str, old, new);
+    obj_setStr(self, "_buf", str);
+    strsDeinit(&buffs);
+    return obj_getStr(self, "_buf");
 }

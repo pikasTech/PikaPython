@@ -317,6 +317,7 @@ uint8_t Parser_checkIsDirect(char* str) {
     Args buffs = {0};
     char* tokens = Lexer_getTokens(&buffs, str);
     uint8_t res = 0;
+    pika_assert(NULL != tokens);
     if (Parser_isContainToken(tokens, TOKEN_operator, "=")) {
         res = 1;
         goto exit;
@@ -745,6 +746,9 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
         ParserState_deinit(&ps);
     }
     /* out put */
+    if (NULL == operator) {
+        return NULL;
+    }
     operator= strsCopy(outBuffs, operator);
     strsDeinit(&buffs);
     return operator;
@@ -802,6 +806,7 @@ void ParserState_init(struct ParserState* ps) {
     ps->last_token = NULL;
     ps->iter_buffs = NULL;
     ps->buffs_p = New_strBuff();
+    ps->result = PIKA_RES_OK;
     LexToken_init(&ps->token1);
     LexToken_init(&ps->token2);
 }
@@ -818,12 +823,23 @@ void ParserState_deinit(struct ParserState* ps) {
 }
 
 void ParserState_parse(struct ParserState* ps, char* stmt) {
+    if (NULL == stmt) {
+        ps->result = PIKA_RES_ERR_SYNTAX_ERROR;
+        return;
+    }
     ps->tokens = Lexer_getTokens(ps->buffs_p, stmt);
+    if (NULL == ps->tokens) {
+        ps->result = PIKA_RES_ERR_SYNTAX_ERROR;
+        return;
+    }
     ps->length = Tokens_getSize(ps->tokens);
 }
 
 void ParserState_beforeIter(struct ParserState* ps) {
     /* clear first token */
+    if (ps->result != PIKA_RES_OK) {
+        return;
+    }
     Parser_popToken(ps->buffs_p, ps->tokens);
     ps->last_token =
         arg_setStr(NULL, "", Parser_popToken(ps->buffs_p, ps->tokens));
@@ -1211,6 +1227,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     char* left = NULL;
     char* right = NULL;
     char* import = NULL;
+    PIKA_RES result = PIKA_RES_OK;
 
     right = stmt;
     /* solve check direct */
@@ -1269,6 +1286,10 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     if (STMT_operator == stmtType) {
         char* rightWithoutSubStmt = strsDeleteBetween(&buffs, right, '(', ')');
         char* operator= Lexer_getOperator(&buffs, rightWithoutSubStmt);
+        if (NULL == operator) {
+            result = PIKA_RES_ERR_SYNTAX_ERROR;
+            goto exit;
+        }
         obj_setStr(ast, (char*)"operator", operator);
         char* rightBuff = strsCopy(&buffs, right);
         char* subStmt1 =
@@ -1446,6 +1467,10 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
 exit:
     strsDeinit(&buffs);
+    if (result != PIKA_RES_OK) {
+        AST_deinit(ast);
+        return NULL;
+    }
     return ast;
 }
 
@@ -1969,7 +1994,10 @@ char* Parser_parsePyLines(Args* outBuffs,
 
         /* parse single Line to Asm */
         single_ASM = Parser_LineToAsm(&buffs, line, &block_stack);
-        if (NULL == single_ASM) {
+        #if PIKA_DEBUG
+            pika_assert(NULL != single_ASM);
+        #endif
+        if(NULL == single_ASM){
             out_ASM = NULL;
             strsDeinit(&buffs);
             goto exit;
@@ -2023,6 +2051,26 @@ int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
 
 char* Parser_multiLineToAsm(Args* outBuffs, char* multi_line) {
     return Parser_parsePyLines(outBuffs, NULL, multi_line);
+}
+
+char* Parser_fileToAsm(Args* outBuffs, char* filename) {
+    Args buffs = {0};
+    Arg* file_arg = arg_loadFile(NULL, filename);
+    pika_assert(NULL != file_arg);
+    if (NULL == file_arg) {
+        return NULL;
+    }
+    char* lines = (char*)arg_getBytes(file_arg);
+    /* replace the "\r\n" to "\n" */
+    lines = strsReplace(&buffs, lines, "\r\n", "\n");
+    /* clear the void line */
+    lines = strsReplace(&buffs, lines, "\n\n", "\n");
+    /* add '\n' at the end */
+    lines = strsAppend(&buffs, lines, "\n\n");
+    char* res = Parser_multiLineToAsm(&buffs, lines);
+    arg_deinit(file_arg);
+    strsDeinit(&buffs);
+    return res;
 }
 
 char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
