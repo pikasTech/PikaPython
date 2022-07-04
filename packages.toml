@@ -145,6 +145,13 @@ releases = [
   "v1.1.1 68b28c780861190639452ed0642e2f4064fa44c3",
 ]
 
+
+[[packages]]
+name = "pika_configparser"
+releases = [
+  "v0.0.1 571ceb837b7a912e3a8e4ae342767f4fb1eb7a9e",
+]
+
 [[packages]]
 name = "pika_lvgl"
 releases = [
