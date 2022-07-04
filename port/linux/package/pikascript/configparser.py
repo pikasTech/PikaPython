@@ -5,10 +5,6 @@ class ConfigParser():
     content = ''
     config_dict = {}
 
-    def read_string(self, content):
-        self.content = content
-        self._parse()
-
     def _parse(self):
         content = String(self.content)
         lines = content.split('\n')
@@ -87,12 +83,18 @@ class ConfigParser():
         return content
 
     def write(self, file_name):
-        self.content = self.__str__(self)
         print('Error: write() method not implemented')
-        print(self.content)
         raise
+        self.content = self.__str__(self)
+        print(self.content)
+
+    def read_string(self, content):
+        self.content = content
+        self._parse()
 
     def read(self, file_name):
         print('Error: read() method not implemented')
         raise
+        content = ''
+        self.content = content
         self._parse()
