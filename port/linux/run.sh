@@ -1,1 +1,2 @@
-./build/boot/demo06-pikamain/pikascript_demo06-pikamain
+cd package/pikascript && \
+./pika $1

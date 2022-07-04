@@ -11,9 +11,9 @@ class ConfigParser():
 
     def read_string(self, content):
         self.content = String(content)
-        self.__parse()
+        self._parse()
 
-    def __parse(self):
+    def _parse(self):
         content = self.content
         lines = content.split('\n')
         for line in lines:
