@@ -3359,7 +3359,7 @@ TEST(parser, def_issue1) {
 
 TEST(parser, configparser){
     Args buffs = {0};
-    char* res = Parser_fileToAsm(&buffs, "package/pikascript/configparser.py");
+    char* res = Parser_fileToAsm(&buffs, "package/pikascript/pika_configparser.py");
     __platform_printf("%s", res);
     strsDeinit(&buffs);
 }
