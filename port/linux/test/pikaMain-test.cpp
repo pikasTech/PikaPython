@@ -1881,6 +1881,21 @@ TEST(pikaMain, iteral_oct) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, iteral_bin) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "0b100\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "4\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(pikaMain, REPL_push_mode) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

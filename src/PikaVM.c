@@ -284,10 +284,8 @@ Arg* __obj_runMethodArgWithState(PikaObj* self,
 Arg* obj_runMethodArg(PikaObj* self,
                       PikaObj* method_args_obj,
                       Arg* method_arg) {
-    TryInfo try_info = {
-			.try_state = TRY_STATE_NONE,
-			.try_result = TRY_RESULT_NONE
-		};
+    TryInfo try_info = {.try_state = TRY_STATE_NONE,
+                        .try_result = TRY_RESULT_NONE};
     return __obj_runMethodArgWithState(self, method_args_obj, method_arg,
                                        &try_info);
 }
@@ -303,13 +301,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vs,
     PIKA_BOOL is_variable = PIKA_FALSE;
     PIKA_BOOL is_get_variable_arg = PIKA_FALSE;
     uint8_t arg_num = 0;
-		ArgType method_type = ARG_TYPE_UNDEF;
+    ArgType method_type = ARG_TYPE_UNDEF;
     uint8_t arg_num_input = 0;
     PikaTuple* tuple = NULL;
     char* variable_tuple_name = NULL;
-		char* type_list_buff = NULL;
+    char* type_list_buff = NULL;
     int variable_arg_start = 0;
-		
+
     /* get method type list */
     char* type_list = methodArg_getTypeList(method_arg, &buffs);
     if (NULL == type_list) {
@@ -357,7 +355,6 @@ static int VMState_loadArgsFromMethodArg(VMState* vs,
     } else {
         arg_num = arg_num_dec;
     }
-
 
     /* get variable tuple name */
     type_list_buff = strsCopy(&buffs, type_list);
@@ -503,10 +500,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     Arg* method_arg = NULL;
     char* sys_out;
     int arg_num_used = 0;
-    TryInfo sub_try_info = {
-			.try_state = TRY_STATE_NONE,
-			.try_result = TRY_RESULT_NONE
-		};
+    TryInfo sub_try_info = {.try_state = TRY_STATE_NONE,
+                            .try_result = TRY_RESULT_NONE};
     pika_assert(NULL != vs->try_info);
     if (vs->try_info->try_state == TRY_STATE_TOP ||
         vs->try_error_code == TRY_STATE_INNER) {
@@ -731,6 +726,11 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self, VMState* vs, char* data) {
         strtol_buff[0] = '0';
         __platform_memcpy(strtol_buff + 1, data + 2, strGetSize(data) - 2);
         return arg_setInt(numArg, "", strtol(strtol_buff, NULL, 0));
+    }
+    if (data[1] == 'b' || data[1] == 'B') {
+        char strtol_buff[10] = {0};
+        __platform_memcpy(strtol_buff, data + 2, strGetSize(data) - 2);
+        return arg_setInt(numArg, "", strtol(strtol_buff, NULL, 2));
     }
     /* float */
     if (strIsContain(data, '.')) {
@@ -1077,7 +1077,7 @@ static Arg* VM_instruction_handler_RET(PikaObj* self, VMState* vs, char* data) {
 
 static Arg* VM_instruction_handler_RIS(PikaObj* self, VMState* vs, char* data) {
     Arg* err_arg = stack_popArg(&(vs->stack));
-    PIKA_RES err = (PIKA_RES) arg_getInt(err_arg);
+    PIKA_RES err = (PIKA_RES)arg_getInt(err_arg);
     VMState_setErrorCode(vs, err);
     arg_deinit(err_arg);
     /* raise jmp */
@@ -1724,10 +1724,8 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame) {
-    TryInfo try_info = {
-			.try_state = TRY_STATE_NONE,
-			.try_result = TRY_RESULT_NONE
-		};
+    TryInfo try_info = {.try_state = TRY_STATE_NONE,
+                        .try_result = TRY_RESULT_NONE};
     try_info.try_state = TRY_STATE_NONE;
     return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
                                               0, &try_info);
