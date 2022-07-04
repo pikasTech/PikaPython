@@ -1,5 +1,4 @@
 from PikaStdData import String
-from PikaStdLib import MemChecker
 
 
 class ConfigParser():
@@ -7,7 +6,9 @@ class ConfigParser():
     config_dict = {}
 
     def read(self, file_name):
-        pass
+        print('Error: read() method not implemented')
+        raise
+        self._parse()
 
     def read_string(self, content):
         self.content = String(content)
@@ -36,22 +37,43 @@ class ConfigParser():
             value = value.strip()
             section_dict = self.config_dict[section]
             section_dict[key] = value
-        print(self.config_dict)
-        mem = MemChecker()
-        mem.now()
 
     def sections(self):
-        pass
+        section_keys = self.config_dict.keys()
+        sections = []
+        for section_item in section_keys:
+            sections.append(section_item)
+        return sections
 
-    def options(self):
-        str = String(self.content)
-        print(str.split('\n'))
+    def options(self, section):
+        section_dict = self.config_dict[section]
+        option_keys = section_dict.keys()
+        options = []
+        for option_item in option_keys:
+            options.append(option_item)
+        return options
 
     def get(self, section, option):
-        pass
+        section_dict = self.config_dict[section]
+        return section_dict[option]
 
     def set(self, section, option, value):
-        pass
+        section_dict = self.config_dict[section]
+        section_dict[option] = value
 
-    def items(self):
-        pass
+    # support config[key] = val
+    def __set__(self, __key, __val):
+        self.config_dict[__key] = __val
+
+    # support val = config[key]
+    def __get__(self, __key):
+        return self.config_dict[__key]
+
+    def items(self, section):
+        section_dict = self.config_dict[section]
+        section_keys = section_dict.keys()
+        items = []
+        for key in section_keys:
+            val = section_dict[key]
+            items.append([key, val])
+        return items
