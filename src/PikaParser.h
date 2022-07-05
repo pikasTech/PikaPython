@@ -46,6 +46,7 @@ enum StmtType {
     STMT_bytes,
     STMT_number,
     STMT_method,
+    STMT_chain,
     STMT_operator,
     STMT_import,
     STMT_list,

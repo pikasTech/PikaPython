@@ -202,12 +202,23 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
     if (strEqu(data, (char*)"RuntimeError")) {
         return arg_setInt(NULL, "", PIKA_RES_ERR_RUNTIME_ERROR);
     }
-    /* find in local list first */
-    Arg* arg = arg_copy(obj_getArg(vs->locals, data));
-    if (NULL == arg) {
-        /* find in global list second */
-        arg = arg_copy(obj_getArg(vs->globals, data));
+    Arg* arg = NULL;
+    if (data[0] == '.') {
+        /* find host from stack */
+        Arg* host_obj = stack_popArg(&(vs->stack));
+        if (argType_isObject(arg_getType(host_obj))) {
+            arg = arg_copy(obj_getArg(arg_getPtr(host_obj), data + 1));
+        }
+        arg_deinit(host_obj);
+    } else {
+        /* find in local list first */
+        arg = arg_copy(obj_getArg(vs->locals, data));
+        if (NULL == arg) {
+            /* find in global list second */
+            arg = arg_copy(obj_getArg(vs->globals, data));
+        }
     }
+
     if (NULL == arg) {
         VMState_setErrorCode(vs, PIKA_RES_ERR_ARG_NO_FOUND);
         __platform_printf("NameError: name '%s' is not defined\r\n", data);
@@ -498,6 +509,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     char* methodPath = data;
     PikaObj* method_host_obj;
     Arg* method_arg = NULL;
+    Arg* host_arg = NULL;
     char* sys_out;
     int arg_num_used = 0;
     TryInfo sub_try_info = {.try_state = TRY_STATE_NONE,
@@ -518,12 +530,38 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         goto exit;
     }
 
-    /* get method host obj from self */
-    method_host_obj = obj_getHostObj(self, methodPath);
-    /* get method host obj from local scope */
-    if (NULL == method_host_obj) {
-        method_host_obj = obj_getHostObj(vs->locals, methodPath);
+    if (methodPath[0] == '.') {
+        /* get method host obj from stack */
+        Arg* stack_tmp[PIKA_ARG_NUM_MAX] = {0};
+        int arg_num = VMState_getInputArgNum(vs);
+        if (arg_num > PIKA_ARG_NUM_MAX) {
+            __platform_printf(
+                "[ERROR] Too many args in RUN instruction, please use bigger "
+                "#define PIKA_ARG_NUM_MAX\n");
+            while (1) {
+            }
+        }
+        for (int i = 0; i < arg_num; i++) {
+            stack_tmp[i] = stack_popArg(&(vs->stack));
+        }
+        host_arg = stack_tmp[arg_num - 1];
+        if (argType_isObject(arg_getType(host_arg))) {
+            method_host_obj = arg_getPtr(host_arg);
+            arg_num_used++;
+        }
+        /* push back other args to stack */
+        for (int i = arg_num - 2; i >= 0; i--) {
+            stack_pushArg(&(vs->stack), stack_tmp[i]);
+        }
+    } else {
+        /* get method host obj from self */
+        method_host_obj = obj_getHostObj(self, methodPath);
+        /* get method host obj from local scope */
+        if (NULL == method_host_obj) {
+            method_host_obj = obj_getHostObj(vs->locals, methodPath);
+        }
     }
+
     if (NULL == method_host_obj) {
         /* error, not found object */
         VMState_setErrorCode(vs, PIKA_RES_ERR_ARG_NO_FOUND);
@@ -546,8 +584,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     /* create sub local scope */
     sub_locals = New_PikaObj();
     /* load args from vmState to sub_local->list */
-    arg_num_used = VMState_loadArgsFromMethodArg(
-        vs, method_host_obj, sub_locals->list, method_arg, data, 0);
+    arg_num_used += VMState_loadArgsFromMethodArg(
+        vs, method_host_obj, sub_locals->list, method_arg, data, arg_num_used);
 
     /* load args faild */
     if (vs->error_code != 0) {
@@ -610,6 +648,9 @@ exit:
     }
     if (NULL != sub_locals) {
         obj_deinit(sub_locals);
+    }
+    if (NULL != host_arg) {
+        arg_deinit(host_arg);
     }
     strsDeinit(&buffs);
     return return_arg;

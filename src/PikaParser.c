@@ -186,54 +186,64 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     rightWithoutSubStmt =
         __removeTokensBetween(&buffs, rightWithoutSubStmt, "{", "}");
 
-    uint8_t is_get_operator = 0;
-    uint8_t is_get_method = 0;
-    uint8_t is_get_string = 0;
-    uint8_t is_get_bytes = 0;
-    uint8_t is_get_number = 0;
-    uint8_t is_get_symbol = 0;
-    uint8_t is_get_list = 0;
-    uint8_t is_get_dict = 0;
-    uint8_t is_get_import = 0;
+    PIKA_BOOL is_get_operator = PIKA_FALSE;
+    PIKA_BOOL is_get_method = PIKA_FALSE;
+    PIKA_BOOL is_get_string = PIKA_FALSE;
+    PIKA_BOOL is_get_bytes = PIKA_FALSE;
+    PIKA_BOOL is_get_number = PIKA_FALSE;
+    PIKA_BOOL is_get_symbol = PIKA_FALSE;
+    PIKA_BOOL is_get_list = PIKA_FALSE;
+    PIKA_BOOL is_get_dict = PIKA_FALSE;
+    PIKA_BOOL is_get_import = PIKA_FALSE;
+    PIKA_BOOL is_get_chain = PIKA_FALSE;
     ParserState_forEachToken(ps, rightWithoutSubStmt) {
         ParserState_iterStart(&ps);
         /* collect type */
         if (strEqu(ps.token1.pyload, " import ")) {
-            is_get_import = 1;
+            is_get_import = PIKA_TRUE;
             goto iter_continue;
         }
         if (strEqu(ps.token1.pyload, "[")) {
-            is_get_list = 1;
+            is_get_list = PIKA_TRUE;
             goto iter_continue;
         }
+        if (strEqu(ps.token1.pyload, "...")) {
+            goto iter_continue;
+        }
+        if (strIsStartWith(ps.token1.pyload, ".")) {
+            if (ps.iter_index != 1) {
+                is_get_chain = PIKA_TRUE;
+                goto iter_continue;
+            }
+        }
         if (strEqu(ps.token1.pyload, "{")) {
-            is_get_dict = 1;
+            is_get_dict = PIKA_TRUE;
             goto iter_continue;
         }
         if (ps.token1.type == TOKEN_operator) {
-            is_get_operator = 1;
+            is_get_operator = PIKA_TRUE;
             goto iter_continue;
         }
         if (ps.token2.type == TOKEN_devider) {
-            is_get_method = 1;
+            is_get_method = PIKA_TRUE;
             goto iter_continue;
         }
         if (ps.token1.type == TOKEN_literal) {
             if (ps.token1.pyload[0] == '\'' || ps.token1.pyload[0] == '"') {
-                is_get_string = 1;
+                is_get_string = PIKA_TRUE;
                 goto iter_continue;
             }
             if (ps.token1.pyload[1] == '\'' || ps.token1.pyload[1] == '"') {
                 if (ps.token1.pyload[0] == 'b') {
-                    is_get_bytes = 1;
+                    is_get_bytes = PIKA_TRUE;
                     goto iter_continue;
                 }
             }
-            is_get_number = 1;
+            is_get_number = PIKA_TRUE;
             goto iter_continue;
         }
         if (ps.token1.type == TOKEN_symbol) {
-            is_get_symbol = 1;
+            is_get_symbol = PIKA_TRUE;
             goto iter_continue;
         }
     iter_continue:
@@ -253,6 +263,10 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     }
     if (is_get_dict) {
         stmtType = STMT_dict;
+        goto exit;
+    }
+    if (is_get_chain) {
+        stmtType = STMT_chain;
         goto exit;
     }
     if (is_get_method) {
@@ -845,7 +859,7 @@ void ParserState_beforeIter(struct ParserState* ps) {
         arg_setStr(NULL, "", Parser_popToken(ps->buffs_p, ps->tokens));
 }
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 static void Slice_getPars(Args* outBuffs,
                           char* inner,
                           char** pStart,
@@ -902,7 +916,7 @@ static void Slice_getPars(Args* outBuffs,
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 char* Parser_solveBranckets(Args* outBuffs,
                             char* content,
                             char* stmt,
@@ -1030,7 +1044,7 @@ exit:
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 char* Parser_solveRightBranckets(Args* outBuffs, char* right) {
     return Parser_solveBranckets(outBuffs, right, NULL, "right");
 }
@@ -1040,7 +1054,7 @@ char* Parser_solveLeftBranckets(Args* outBuffs, char* right, char* left) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
 char* Parser_solveFormat(Args* outBuffs, char* right) {
     /* quick skip */
     if (!strIsContain(right, '%')) {
@@ -1217,6 +1231,17 @@ exit:
     return is_left_exist;
 }
 
+PIKA_RES AST_setThisNode(AST* ast, char* node_type, char* node_content) {
+    return obj_setStr(ast, node_type, node_content);
+}
+
+AST* AST_parseStmt(AST* ast, char* stmt);
+PIKA_RES AST_parseSubStmt(AST* ast, char* node_content) {
+    queueObj_pushObj(ast, (char*)"stmt");
+    AST_parseStmt(queueObj_getCurrentObj(ast), node_content);
+    return PIKA_RES_OK;
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args buffs = {0};
     char* assignment = strsGetFirstToken(&buffs, stmt, '(');
@@ -1260,7 +1285,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         isLeftExist = Parser_solveSelfOperator(&buffs, stmt, &right, &left);
     }
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
     char* right_new = right;
     /* solve the [] stmt */
     right = Parser_solveRightBranckets(&buffs, right);
@@ -1272,13 +1297,13 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
 #endif
 
-#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
     right = Parser_solveFormat(&buffs, right);
 #endif
 
     /* set left */
     if (isLeftExist) {
-        obj_setStr(ast, (char*)"left", left);
+        AST_setThisNode(ast, (char*)"left", left);
     }
     /* match statment type */
     enum StmtType stmtType = Lexer_matchStmtType(right);
@@ -1290,22 +1315,20 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
             result = PIKA_RES_ERR_SYNTAX_ERROR;
             goto exit;
         }
-        obj_setStr(ast, (char*)"operator", operator);
+        AST_setThisNode(ast, (char*)"operator", operator);
         char* rightBuff = strsCopy(&buffs, right);
         char* subStmt1 =
             strsPopTokenWithSkip_byStr(&buffs, rightBuff, operator, '(', ')');
         char* subStmt2 = rightBuff;
-        queueObj_pushObj(ast, (char*)"stmt");
-        AST_parseStmt(queueObj_getCurrentObj(ast), subStmt1);
-        queueObj_pushObj(ast, (char*)"stmt");
-        AST_parseStmt(queueObj_getCurrentObj(ast), subStmt2);
+        AST_parseSubStmt(ast, subStmt1);
+        AST_parseSubStmt(ast, subStmt2);
         goto exit;
     }
 
 #if PIKA_BUILTIN_LIST_ENABLE
     /* solve list stmt */
     if (STMT_list == stmtType) {
-        obj_setStr(ast, (char*)"list", "list");
+        AST_setThisNode(ast, (char*)"list", "list");
         char* subStmts = strsCut(&buffs, right, '[', ']');
         subStmts = strsAppend(&buffs, subStmts, ",");
         Arg* subStmt = arg_setStr(NULL, "", "");
@@ -1321,9 +1344,8 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
                 /* not in brankets */
                 if (strEqu(ps.token1.pyload, ",")) {
                     /* found "," push subStmt */
-                    queueObj_pushObj(ast, (char*)"stmt");
                     subStmt_str = arg_getStr(subStmt);
-                    AST_parseStmt(queueObj_getCurrentObj(ast), subStmt_str);
+                    AST_parseSubStmt(ast, subStmt_str);
                     /* clear subStmt */
                     arg_deinit(subStmt);
                     subStmt = arg_setStr(NULL, "", "");
@@ -1344,7 +1366,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
 #if PIKA_BUILTIN_DICT_ENABLE
     /* solve list stmt */
     if (STMT_dict == stmtType) {
-        obj_setStr(ast, (char*)"dict", "dict");
+        AST_setThisNode(ast, (char*)"dict", "dict");
         char* subStmts = strsCut(&buffs, right, '{', '}');
         subStmts = strsAppend(&buffs, subStmts, ",");
         Arg* subStmt = arg_setStr(NULL, "", "");
@@ -1361,9 +1383,8 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
                 if (strEqu(ps.token1.pyload, ",") ||
                     strEqu(ps.token1.pyload, ":")) {
                     /* found "," or ":" push subStmt */
-                    queueObj_pushObj(ast, (char*)"stmt");
                     subStmt_str = arg_getStr(subStmt);
-                    AST_parseStmt(queueObj_getCurrentObj(ast), subStmt_str);
+                    AST_parseSubStmt(ast, subStmt_str);
                     /* clear subStmt */
                     arg_deinit(subStmt);
                     subStmt = arg_setStr(NULL, "", "");
@@ -1381,10 +1402,50 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
 #endif
 
+    /* solve method chain */
+    if (STMT_chain == stmtType) {
+        uint8_t last_chain_i = 0;
+        {
+            ParserState_forEachToken(ps, right) {
+                ParserState_iterStart(&ps);
+                if (ps.branket_deepth > 0) {
+                    ParserState_iterEnd(&ps);
+                    continue;
+                }
+                /* not in brankets */
+                if (strIsStartWith(ps.token1.pyload, ".")) {
+                    last_chain_i = ps.iter_index;
+                }
+                ParserState_iterEnd(&ps);
+            }
+            ParserState_deinit(&ps);
+        }
+        Arg* chainStmt = arg_setStr(NULL, "", "");
+        Arg* mainStmt = arg_setStr(NULL, "", "");
+        ParserState_forEachToken(ps, right) {
+            ParserState_iterStart(&ps);
+            /* append substmt1 to last_chain_i*/
+            if (ps.iter_index < last_chain_i) {
+                chainStmt = arg_strAppend(chainStmt, ps.token1.pyload);
+            }
+            /* append substmt2 from last_chain_i to end */
+            if (ps.iter_index >= last_chain_i) {
+                mainStmt = arg_strAppend(mainStmt, ps.token1.pyload);
+            }
+            ParserState_iterEnd(&ps);
+        }
+        ParserState_deinit(&ps);
+        AST_parseSubStmt(ast, arg_getStr(chainStmt));
+        AST_parseStmt(ast, arg_getStr(mainStmt));
+        arg_deinit(chainStmt);
+        arg_deinit(mainStmt);
+        goto exit;
+    }
+
     /* solve method stmt */
     if (STMT_method == stmtType) {
         method = strsGetFirstToken(&buffs, right, '(');
-        obj_setStr(ast, (char*)"method", method);
+        AST_setThisNode(ast, (char*)"method", method);
         char* subStmts = strsCut(&buffs, right, '(', ')');
         /* add ',' at the end */
         subStmts = strsAppend(&buffs, subStmts, ",");
@@ -1404,9 +1465,8 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
                 /* not in brankets */
                 if (strEqu(ps.token1.pyload, ",")) {
                     /* found "," push subStmt */
-                    queueObj_pushObj(ast, (char*)"stmt");
                     subStmt_str = arg_getStr(subStmt);
-                    AST_parseStmt(queueObj_getCurrentObj(ast), subStmt_str);
+                    AST_parseSubStmt(ast, subStmt_str);
                     /* clear subStmt */
                     arg_deinit(subStmt);
                     subStmt = arg_setStr(NULL, "", "");
@@ -1427,13 +1487,13 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     /* solve reference stmt */
     if (STMT_reference == stmtType) {
         ref = right;
-        obj_setStr(ast, (char*)"ref", ref);
+        AST_setThisNode(ast, (char*)"ref", ref);
         goto exit;
     }
     /* solve import stmt */
     if (STMT_import == stmtType) {
         import = strsGetLastToken(&buffs, right, ' ');
-        obj_setStr(ast, (char*)"import", import);
+        AST_setThisNode(ast, (char*)"import", import);
         goto exit;
     }
     /* solve str stmt */
@@ -1448,7 +1508,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
             str = strsReplace(&buffs, str, "\\\"", "\"");
             str = strsReplace(&buffs, str, "\\'", "'");
         }
-        obj_setStr(ast, (char*)"string", str);
+        AST_setThisNode(ast, (char*)"string", str);
         goto exit;
     }
     /* solve bytes stmt */
@@ -1456,13 +1516,13 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         str = right + 1;
         str = strsDeleteChar(&buffs, str, '\'');
         str = strsDeleteChar(&buffs, str, '\"');
-        obj_setStr(ast, (char*)"bytes", str);
+        AST_setThisNode(ast, (char*)"bytes", str);
         goto exit;
     }
     /* solve number stmt */
     if (STMT_number == stmtType) {
         num = right;
-        obj_setStr(ast, (char*)"num", num);
+        AST_setThisNode(ast, (char*)"num", num);
         goto exit;
     }
 exit:
@@ -1585,7 +1645,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         if (strIsStartWith(line_start, keyword) &&
             (line_start[keyword_len] == ' ')) {
             stmt = strsCut(&buffs, line_start, ' ', ':');
-            obj_setStr(ast, "block", keyword);
+            AST_setThisNode(ast, "block", keyword);
             if (NULL != block_stack) {
                 stack_pushStr(block_stack, keyword);
             }
@@ -1601,7 +1661,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         if ((strIsStartWith(line_start, keyward)) &&
             ((line_start[keyward_size] == ' ') ||
              (line_start[keyward_size] == 0))) {
-            obj_setStr(ast, keyward, "");
+            AST_setThisNode(ast, keyward, "");
             stmt = "";
             goto block_matched;
         }
@@ -1612,15 +1672,15 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         Args* list_buffs = New_strBuff();
         char* line_buff = strsCopy(list_buffs, line_start + 4);
         char* arg_in = strsPopToken(list_buffs, line_buff, ' ');
-        obj_setStr(ast, "arg_in", arg_in);
+        AST_setThisNode(ast, "arg_in", arg_in);
         strsPopToken(list_buffs, line_buff, ' ');
         char* list_in = strsPopToken(list_buffs, line_buff, ':');
         list_in = strsAppend(list_buffs, "iter(", list_in);
         list_in = strsAppend(list_buffs, list_in, ")");
         list_in = strsCopy(&buffs, list_in);
         args_deinit(list_buffs);
-        obj_setStr(ast, "block", "for");
-        obj_setStr(ast, "list_in", list_in);
+        AST_setThisNode(ast, "block", "for");
+        AST_setThisNode(ast, "list_in", list_in);
         if (NULL != block_stack) {
             stack_pushStr(block_stack, "for");
         }
@@ -1632,7 +1692,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     if (strIsStartWith(line_start, "else")) {
         if ((line_start[4] == ' ') || (line_start[4] == ':')) {
             stmt = "";
-            obj_setStr(ast, "block", "else");
+            AST_setThisNode(ast, "block", "else");
             if (NULL != block_stack) {
                 stack_pushStr(block_stack, "else");
             }
@@ -1645,7 +1705,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     if (strIsStartWith(line_start, "try")) {
         if ((line_start[3] == ' ') || (line_start[3] == ':')) {
             stmt = "";
-            obj_setStr(ast, "block", "try");
+            AST_setThisNode(ast, "block", "try");
             if (NULL != block_stack) {
                 stack_pushStr(block_stack, "try");
             }
@@ -1657,7 +1717,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     if (strIsStartWith(line_start, "except")) {
         if ((line_start[6] == ' ') || (line_start[6] == ':')) {
             stmt = "";
-            obj_setStr(ast, "block", "except");
+            AST_setThisNode(ast, "block", "except");
             if (NULL != block_stack) {
                 stack_pushStr(block_stack, "except");
             }
@@ -1667,7 +1727,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
 #endif
 
     if (strEqu(line_start, "return")) {
-        obj_setStr(ast, "return", "");
+        AST_setThisNode(ast, "return", "");
         stmt = "";
         goto block_matched;
     }
@@ -1675,13 +1735,13 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         char* lineBuff = strsCopy(&buffs, line_start);
         strsPopToken(&buffs, lineBuff, ' ');
         stmt = lineBuff;
-        obj_setStr(ast, "return", "");
+        AST_setThisNode(ast, "return", "");
         goto block_matched;
     }
 
 #if PIKA_SYNTEX_EXCEPTION_ENABLE
     if (strEqu(line_start, "raise")) {
-        obj_setStr(ast, "raise", "");
+        AST_setThisNode(ast, "raise", "");
         stmt = "RuntimeError";
         goto block_matched;
     }
@@ -1692,7 +1752,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         if (strEqu("", stmt)) {
             stmt = "RuntimeError";
         }
-        obj_setStr(ast, "raise", "");
+        AST_setThisNode(ast, "raise", "");
         goto block_matched;
     }
 #endif
@@ -1701,15 +1761,15 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         stmt = "";
         char* global_list = line_start + 7;
         global_list = strsGetCleanCmd(&buffs, global_list);
-        obj_setStr(ast, "global", global_list);
+        AST_setThisNode(ast, "global", global_list);
         goto block_matched;
     }
     if (strIsStartWith(line_start, (char*)"def ")) {
         stmt = "";
         char* declear = strsCut(&buffs, line_start, ' ', ':');
         declear = strsGetCleanCmd(&buffs, declear);
-        obj_setStr(ast, "block", "def");
-        obj_setStr(ast, "declear", declear);
+        AST_setThisNode(ast, "block", "def");
+        AST_setThisNode(ast, "declear", declear);
         if (NULL != block_stack) {
             stack_pushStr(block_stack, "def");
         }
@@ -1719,8 +1779,8 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         stmt = "";
         char* declear = strsCut(&buffs, line_start, ' ', ':');
         declear = strsGetCleanCmd(&buffs, declear);
-        obj_setStr(ast, "block", "class");
-        obj_setStr(ast, "declear", declear);
+        AST_setThisNode(ast, "block", "class");
+        AST_setThisNode(ast, "declear", declear);
         if (NULL != block_stack) {
             stack_pushStr(block_stack, "class");
         }
@@ -1994,10 +2054,10 @@ char* Parser_parsePyLines(Args* outBuffs,
 
         /* parse single Line to Asm */
         single_ASM = Parser_LineToAsm(&buffs, line, &block_stack);
-        #if PIKA_DEBUG
-            pika_assert(NULL != single_ASM);
-        #endif
-        if(NULL == single_ASM){
+#if PIKA_DEBUG
+        pika_assert(NULL != single_ASM);
+#endif
+        if (NULL == single_ASM) {
             out_ASM = NULL;
             strsDeinit(&buffs);
             goto exit;

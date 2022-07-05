@@ -1800,7 +1800,7 @@ TEST(parser, print_ddd) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 TEST(parser, __get__3) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -1839,7 +1839,7 @@ TEST(parser, __get__3) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 TEST(parser, __get__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -1862,7 +1862,7 @@ TEST(parser, __get__) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 TEST(parser, __get__2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -1889,7 +1889,7 @@ TEST(parser, __get__2) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 TEST(parser, __set__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2198,7 +2198,7 @@ TEST(asmer, asm_to_bytecode_0x0d) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 TEST(parser, list_1_2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2615,7 +2615,7 @@ TEST(parser, str_equ) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 TEST(parser, bytes_index) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2693,7 +2693,7 @@ TEST(parser, tab) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 TEST(parser, parse_issue2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2728,7 +2728,7 @@ TEST(parser, parse_issue3) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 TEST(parser, slice1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2749,7 +2749,7 @@ TEST(parser, slice1) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 TEST(parser, slice2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2919,7 +2919,7 @@ TEST(parser, mpy1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_ITEM_SLICE_ENABLE
+#if PIKA_SYNTEX_SLICE_ENABLE
 TEST(parser, slice_12lkj) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -3114,7 +3114,7 @@ TEST(parser, connection2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
 TEST(parser, format1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -3133,7 +3133,7 @@ TEST(parser, format1) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
 TEST(parser, format2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -3349,7 +3349,6 @@ TEST(parser, def_issue1) {
                  "0 DEF options(self)\n"
                  "0 JMP 1\n"
                  "B1\n"
-                 "0 REF ...\n"
                  "B1\n"
                  "0 RET \n"
                  "B0\n");
@@ -3357,9 +3356,48 @@ TEST(parser, def_issue1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(parser, configparser){
+TEST(parser, configparser) {
     Args buffs = {0};
-    char* res = Parser_fileToAsm(&buffs, "package/pikascript/pika_configparser.py");
-    __platform_printf("%s", res);
+    char* res =
+        Parser_fileToAsm(&buffs, "package/pikascript/pika_configparser.py");
+    // printf("%s", res);
     strsDeinit(&buffs);
+}
+
+TEST(lexser, function_chain) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_getTokens(buffs, "String('a,b,c').split(',')");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf("%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(
+        printTokens,
+        "{sym}String{dvd}({lit}'a,b,c'{dvd}){sym}.split{dvd}({lit}','{dvd})");
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, function_chain) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a = String('a,b,c').split(',')\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 STR a,b,c\n"
+                 "1 RUN String\n"
+                 "1 STR ,\n"
+                 "0 RUN .split\n"
+                 "0 OUT a\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
 }

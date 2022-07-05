@@ -1,6 +1,6 @@
 #include "test_common.h"
 
-#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
 TEST(string, cformat) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -17,7 +17,7 @@ TEST(string, cformat) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
 TEST(string, cformat1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -34,7 +34,7 @@ TEST(string, cformat1) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
 TEST(string, format1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -50,7 +50,7 @@ TEST(string, format1) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
 TEST(string, format2) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -66,7 +66,7 @@ TEST(string, format2) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
 TEST(string, print_file) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -87,7 +87,7 @@ TEST(string, print_file) {
 }
 #endif
 
-#if PIKA_SYNTEX_ITEM_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
 TEST(string, format_parse1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -146,7 +146,6 @@ TEST(string, strip) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(string, replace) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -160,6 +159,66 @@ TEST(string, replace) {
     char* res = obj_getStr(pikaMain, "res");
     /* assert */
     EXPECT_STREQ(res, "  A,b,c, d  ");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+TEST(string, replace_chain) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(
+        pikaMain,
+        "from PikaStdData import String as S\n"
+        "res = PikaStdData.String('  a,b,c, d  ').replace('a', 'A')\n"
+        "res2 = S(S('[test]').replace('[','')).replace(']','')\n"
+        "\n");
+    /* collect */
+    char* res = obj_getStr(pikaMain, "res");
+    char* res2 = obj_getStr(pikaMain, "res2");
+    /* assert */
+    EXPECT_STREQ(res, "  A,b,c, d  ");
+    EXPECT_STREQ(res2, "test");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+TEST(string, split_chain) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "PikaStdData.String('  a,b,c, d  ').split(',')\n"
+            "\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "[  a, b, c,  d  ]\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(string, str_chain) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "PikaStdData.String('test').str\n"
+            "\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

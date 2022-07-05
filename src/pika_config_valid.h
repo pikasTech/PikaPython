@@ -74,8 +74,8 @@
     
     /* auto config for syntax level */
     #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MINIMAL
-        #ifndef PIKA_SYNTEX_ITEM_SLICE_ENABLE
-            #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 0
+        #ifndef PIKA_SYNTEX_SLICE_ENABLE
+            #define PIKA_SYNTEX_SLICE_ENABLE 0
         #endif
 
         #ifndef PIKA_BUILTIN_LIST_ENABLE
@@ -86,8 +86,8 @@
             #define PIKA_BUILTIN_DICT_ENABLE 0
         #endif
 
-        #ifndef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
-            #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 0
+        #ifndef PIKA_SYNTEX_FORMAT_ENABLE
+            #define PIKA_SYNTEX_FORMAT_ENABLE 0
         #endif
 
         #ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
@@ -107,8 +107,8 @@
         #endif
 
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
-        #ifndef PIKA_SYNTEX_ITEM_SLICE_ENABLE
-            #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
+        #ifndef PIKA_SYNTEX_SLICE_ENABLE
+            #define PIKA_SYNTEX_SLICE_ENABLE 1
         #endif
 
         #ifndef PIKA_BUILTIN_LIST_ENABLE
@@ -119,8 +119,8 @@
             #define PIKA_BUILTIN_DICT_ENABLE 1
         #endif
 
-        #ifndef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
-            #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
+        #ifndef PIKA_SYNTEX_FORMAT_ENABLE
+            #define PIKA_SYNTEX_FORMAT_ENABLE 1
         #endif
 
         #ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
@@ -159,7 +159,7 @@
     #endif
 
     #ifndef PIKA_PATH_BUFF_SIZE
-        #define PIKA_PATH_BUFF_SIZE 64
+        #define PIKA_PATH_BUFF_SIZE 96
     #endif
 
     #ifndef PIKA_BYTES_DEFAULT_SIZE
@@ -190,12 +190,12 @@
         #define PIKA_INIT_STRING_ENABLE 1
     #endif
     
-    #ifndef PIKA_SYNTEX_ITEM_SLICE_ENABLE
-        #define PIKA_SYNTEX_ITEM_SLICE_ENABLE 1
+    #ifndef PIKA_SYNTEX_SLICE_ENABLE
+        #define PIKA_SYNTEX_SLICE_ENABLE 1
     #endif
 
-    #ifndef PIKA_SYNTEX_ITEM_FORMAT_ENABLE
-        #define PIKA_SYNTEX_ITEM_FORMAT_ENABLE 1
+    #ifndef PIKA_SYNTEX_FORMAT_ENABLE
+        #define PIKA_SYNTEX_FORMAT_ENABLE 1
     #endif
 
     #ifndef PIKA_SYNTEX_EXCEPTION_ENABLE
@@ -236,6 +236,10 @@
 
     #ifndef PIKA_DEBUG_ENABLE
         #define PIKA_DEBUG_ENABLE 0
+    #endif
+
+    #ifndef PIKA_ARG_NUM_MAX
+        #define PIKA_ARG_NUM_MAX 16
     #endif
 
     /* configuration validation */
