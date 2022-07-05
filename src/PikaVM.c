@@ -809,7 +809,7 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
 
 static uint8_t VMState_getInputArgNum(VMState* vs) {
     InstructUnit* ins_unit_now = VMState_getInstructNow(vs);
-    uint8_t invode_deepth_this = instructUnit_getInvokeDeepth(ins_unit_now);
+    uint8_t invoke_deepth_this = instructUnit_getInvokeDeepth(ins_unit_now);
     int32_t pc_this = vs->pc;
     uint8_t num = 0;
     while (1) {
@@ -819,13 +819,13 @@ static uint8_t VMState_getInputArgNum(VMState* vs) {
         if (pc_this < 0) {
             break;
         }
-        if (invode_deepth == invode_deepth_this + 1) {
+        if (invode_deepth == invoke_deepth_this + 1) {
             num++;
         }
         if (instructUnit_getIsNewLine(ins_unit_now)) {
             break;
         }
-        if (invode_deepth <= invode_deepth_this) {
+        if (invode_deepth <= invoke_deepth_this) {
             break;
         }
     }
@@ -1216,7 +1216,7 @@ const VM_instruct_handler VM_instruct_handler_table[__INSTRCUTION_CNT] = {
 #include "__instruction_table.cfg"
 };
 
-enum Instruct pikaVM_getInstructFromAsm(char* line) {
+enum Instruct pikaVM_getInstructFromAsm(char* ins_str) {
 #define __INS_COMPIRE
 #include "__instruction_table.cfg"
     return NON;

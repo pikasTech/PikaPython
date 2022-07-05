@@ -37,7 +37,7 @@
 
 #if defined(__INS_COMPIRE)
 #define def_ins(__INS_NAME)                             \
-    if (0 == strncmp(line + 2, "" #__INS_NAME "", 3)) { \
+    if (0 == strncmp(ins_str, "" #__INS_NAME "", 3)) { \
         return __INS_NAME;                              \
     }
 #endif

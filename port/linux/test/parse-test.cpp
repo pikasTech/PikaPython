@@ -1615,13 +1615,13 @@ TEST(parser, break_) {
                  "0 OUT i\n"
                  "0 JEZ 1\n"
                  "B2\n"
-                 "0 BRK\n"
+                 "0 BRK \n"
                  "B2\n"
-                 "0 BRK\n"
+                 "0 BRK \n"
                  "B2\n"
-                 "0 CTN\n"
+                 "0 CTN \n"
                  "B2\n"
-                 "0 CTN\n"
+                 "0 CTN \n"
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
@@ -1696,7 +1696,7 @@ TEST(parser, prime_100) {
                  "0 NUM 0\n"
                  "0 OUT is_prime\n"
                  "B3\n"
-                 "0 BRK\n"
+                 "0 BRK \n"
                  "B1\n"
                  "0 JMP -1\n"
                  "B1\n"
@@ -3358,9 +3358,7 @@ TEST(parser, def_issue1) {
 
 TEST(parser, configparser) {
     Args buffs = {0};
-    char* res =
-        Parser_fileToAsm(&buffs, "package/pikascript/pika_configparser.py");
-    // printf("%s", res);
+    Parser_fileToAsm(&buffs, "package/pikascript/pika_configparser.py");
     strsDeinit(&buffs);
 }
 
@@ -3398,6 +3396,49 @@ TEST(parser, function_chain) {
                  "1 STR ,\n"
                  "0 RUN .split\n"
                  "0 OUT a\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, num_issue) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "(((1 + (2 * 3)/(4 + 5))*(6 - 7) + (8 + 9) * 10)/11) - 12\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "8 NUM 1\n"
+                 "11 NUM 2\n"
+                 "11 NUM 3\n"
+                 "10 OPT *\n"
+                 "9 RUN \n"
+                 "11 NUM 4\n"
+                 "11 NUM 5\n"
+                 "10 OPT +\n"
+                 "9 RUN \n"
+                 "8 OPT /\n"
+                 "7 OPT +\n"
+                 "6 RUN \n"
+                 "8 NUM 6\n"
+                 "8 NUM 7\n"
+                 "7 OPT -\n"
+                 "6 RUN \n"
+                 "5 OPT *\n"
+                 "8 NUM 8\n"
+                 "8 NUM 9\n"
+                 "7 OPT +\n"
+                 "6 RUN \n"
+                 "6 NUM 10\n"
+                 "5 OPT *\n"
+                 "4 OPT +\n"
+                 "3 RUN \n"
+                 "3 NUM 11\n"
+                 "2 OPT /\n"
+                 "1 RUN \n"
+                 "1 NUM 12\n"
+                 "0 OPT -\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
