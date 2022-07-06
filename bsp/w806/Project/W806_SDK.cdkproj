@@ -158,7 +158,117 @@
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="pikascript">
+        <VirtualDirectory Name="pikascript-lib">
+          <VirtualDirectory Name="W801Device">
+            <File Name="pikascript/pikascript-lib/W801Device/fifo.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/W801Device/fifo.h">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/W801Device/W801_ADC.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/W801Device/W801_common.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/W801Device/W801_common.h">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/W801Device/W801_GPIO.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/W801Device/W801_IIC.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/W801Device/W801_PWM.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/W801Device/W801_Time.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/W801Device/W801_Uart.c">
+              <FileOption/>
+            </File>
+          </VirtualDirectory>
+          <VirtualDirectory Name="PikaStdDevice">
+            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_ADC.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_BaseDev.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_CAN.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_GPIO.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_IIC.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_PWM.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_SPI.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_Time.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_UART.c">
+              <FileOption/>
+            </File>
+          </VirtualDirectory>
+          <VirtualDirectory Name="PikaStdLib">
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdData_Dict.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdData_List.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdData_String.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdData_String_Util.h">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdData_Utils.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdTask_Task.c">
+              <FileOption/>
+            </File>
+          </VirtualDirectory>
+        </VirtualDirectory>
         <VirtualDirectory Name="pikascript-api">
+          <File Name="pikascript/pikascript-api/PikaDebug-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaDebug.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaDebug_Debuger-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaDebug_Debuger.h">
+            <FileOption/>
+          </File>
           <File Name="pikascript/pikascript-api/PikaMain-api.c">
             <FileOption/>
           </File>
@@ -171,10 +281,70 @@
           <File Name="pikascript/pikascript-api/pikaScript.h">
             <FileOption/>
           </File>
+          <File Name="pikascript/pikascript-api/PikaStdData-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_ByteArray-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_ByteArray.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_Dict-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_Dict.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_dict_keys-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_dict_keys.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_List-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_List.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_String-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_String.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_Utils-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_Utils.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdDevice-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdDevice.h">
+            <FileOption/>
+          </File>
           <File Name="pikascript/pikascript-api/PikaStdDevice_ADC-api.c">
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-api/PikaStdDevice_ADC.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdDevice_BaseDev-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdDevice_BaseDev.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdDevice_CAN-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdDevice_CAN.h">
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-api/PikaStdDevice_GPIO-api.c">
@@ -193,6 +363,12 @@
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-api/PikaStdDevice_PWM.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdDevice_SPI-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdDevice_SPI.h">
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-api/PikaStdDevice_Time-api.c">
@@ -219,6 +395,12 @@
           <File Name="pikascript/pikascript-api/PikaStdLib_MemChecker.h">
             <FileOption/>
           </File>
+          <File Name="pikascript/pikascript-api/PikaStdLib_PikaObj-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdLib_PikaObj.h">
+            <FileOption/>
+          </File>
           <File Name="pikascript/pikascript-api/PikaStdLib_RangeObj-api.c">
             <FileOption/>
           </File>
@@ -237,16 +419,40 @@
           <File Name="pikascript/pikascript-api/PikaStdLib_SysObj.h">
             <FileOption/>
           </File>
+          <File Name="pikascript/pikascript-api/PikaStdTask-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdTask.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdTask_Task-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdTask_Task.h">
+            <FileOption/>
+          </File>
           <File Name="pikascript/pikascript-api/W801Device-api.c">
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-api/W801Device.h">
             <FileOption/>
           </File>
+          <File Name="pikascript/pikascript-api/W801Device_ADC-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/W801Device_ADC.h">
+            <FileOption/>
+          </File>
           <File Name="pikascript/pikascript-api/W801Device_GPIO-api.c">
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-api/W801Device_GPIO.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/W801Device_IIC-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/W801Device_IIC.h">
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-api/W801Device_PWM-api.c">
@@ -267,10 +473,7 @@
           <File Name="pikascript/pikascript-api/W801Device_UART.h">
             <FileOption/>
           </File>
-          <File Name="pikascript/pikascript-api/W801Device_IIC-api.c">
-            <FileOption/>
-          </File>
-          <File Name="pikascript/pikascript-api/W801Device_ADC-api.c">
+          <File Name="pikascript/pikascript-api/__asset_pikaModules_py_a.c">
             <FileOption/>
           </File>
         </VirtualDirectory>
@@ -279,6 +482,9 @@
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-core/BaseObj.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-core/CMakeLists.txt">
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-core/dataArg.c">
@@ -341,6 +547,12 @@
           <File Name="pikascript/pikascript-core/dataStrs.h">
             <FileOption/>
           </File>
+          <File Name="pikascript/pikascript-core/PikaCompiler.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-core/PikaCompiler.h">
+            <FileOption/>
+          </File>
           <File Name="pikascript/pikascript-core/pikaConfigValid.h">
             <FileOption/>
           </File>
@@ -362,10 +574,19 @@
           <File Name="pikascript/pikascript-core/PikaPlatform.h">
             <FileOption/>
           </File>
+          <File Name="pikascript/pikascript-core/PikaVersion.h">
+            <FileOption/>
+          </File>
           <File Name="pikascript/pikascript-core/PikaVM.c">
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-core/PikaVM.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-core/pika_config_valid.h">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-core/README.md">
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-core/TinyObj.c">
@@ -377,74 +598,12 @@
           <File Name="pikascript/pikascript-core/__instruction_def.h">
             <FileOption/>
           </File>
+          <File Name="pikascript/pikascript-core/__instruction_table.cfg">
+            <FileOption/>
+          </File>
           <File Name="pikascript/pikascript-core/__pika_ooc.h">
             <FileOption/>
           </File>
-        </VirtualDirectory>
-        <VirtualDirectory Name="pikascript-lib">
-          <VirtualDirectory Name="PikaStdDevice">
-            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_ADC.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_GPIO.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_IIC.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_PWM.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_Time.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/PikaStdDevice/PikaStdDevice_UART.c">
-              <FileOption/>
-            </File>
-          </VirtualDirectory>
-          <VirtualDirectory Name="PikaStdLib">
-            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c">
-              <FileOption/>
-            </File>
-          </VirtualDirectory>
-          <VirtualDirectory Name="W801Device">
-            <File Name="pikascript/pikascript-lib/W801Device/W801_common.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_common.h">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_GPIO.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_PWM.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_Time.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_Uart.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/fifo.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_IIC.c">
-              <FileOption/>
-            </File>
-            <File Name="pikascript/pikascript-lib/W801Device/W801_ADC.c">
-              <FileOption/>
-            </File>
-          </VirtualDirectory>
         </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
@@ -708,6 +867,9 @@
       </File>
     </VirtualDirectory>
   </VirtualDirectory>
+  <VendorInfo>
+    <VendorName>NULL</VendorName>
+  </VendorInfo>
   <BuildConfigs>
     <BuildConfig Name="BuildSet">
       <Target>
@@ -801,13 +963,14 @@
           <RunUserProg>yes</RunUserProg>
           <UserProgName>$(ProjectPath)/cdk_aft_build.sh;$(ProjectPath)/aft_build_project.sh</UserProgName>
         </AfterMake>
+        <Tools/>
       </User>
       <Compiler>
         <Define>GCC_COMPILE=1;TLS_CONFIG_CPU_XT804=1</Define>
         <Undefine/>
         <Optim>Optimize (-O1)</Optim>
         <DebugLevel>Maximum (-g3)</DebugLevel>
-        <IncludePath>$(CDKPath)/CSKY/MinGW/csky-abiv2-elf-toolchain/csky-elfabiv2/include;$(ProjectPath);$(ProjectPath)/../../../../../../PH7/PH7;$(ProjectPath)/../Include;$(ProjectPath)/../Include/arch/xt804;$(ProjectPath)/../Include/arch/xt804/csi_core;$(ProjectPath)/../Include/arch/xt804/csi_dsp;$(ProjectPath)/../Include/driver;$(ProjectPath)/../Libraries/component/FreeRTOS/include;$(ProjectPath)/../Libraries/component/FreeRTOS/portable/xt804;$(ProjectPath)//inc;$(ProjectPath)/bsp/inc;$(ProjectPath)/pikascript/pikascript-api;$(ProjectPath)/pikascript/pikascript-core;$(ProjectPath)/pikascript/pikascript-lib/W801Device</IncludePath>
+        <IncludePath>$(CDKPath)/CSKY/MinGW/csky-abiv2-elf-toolchain/csky-elfabiv2/include;$(ProjectPath);$(ProjectPath)/../../../../../../PH7/PH7;$(ProjectPath)/../../../Desktop/w801sdk/wm_sdk_w800_20211115/app/pikascript/pikascript-api;$(ProjectPath)/../../../Desktop/w801sdk/wm_sdk_w800_20211115/app/pikascript/pikascript-core;$(ProjectPath)/../Include;$(ProjectPath)/../Include/arch/xt804;$(ProjectPath)/../Include/arch/xt804/csi_core;$(ProjectPath)/../Include/arch/xt804/csi_dsp;$(ProjectPath)/../Include/driver;$(ProjectPath)/../Libraries/component/FreeRTOS/include;$(ProjectPath)/../Libraries/component/FreeRTOS/portable/xt804;$(ProjectPath)//inc;$(ProjectPath)/bsp/inc;$(ProjectPath)/pikascript/pikascript-api;$(ProjectPath)/pikascript/pikascript-core;$(ProjectPath)/pikascript/pikascript-lib/PikaStdLib;$(ProjectPath)/pikascript/pikascript-lib/W801Device</IncludePath>
         <OtherFlags>-fdata-sections -c</OtherFlags>
         <Verbose>no</Verbose>
         <Ansi>no</Ansi>
@@ -824,7 +987,7 @@
       <Asm>
         <Define/>
         <Undefine/>
-        <IncludePath>$(CDKPath)/CSKY/csi/csi_core/csi_cdk/;$(CDKPath)/CSKY/csi/csi_core/include/;$(CDKPath)/CSKY/csi/csi_driver/include/;$(ProjectPath);$(ProjectPath)/../../../../../../PH7/PH7;$(ProjectPath)/../Include;$(ProjectPath)/../Include/arch/xt804;$(ProjectPath)/../Include/arch/xt804/csi_core;$(ProjectPath)/../Include/arch/xt804/csi_dsp;$(ProjectPath)/../Libraries/component/FreeRTOS/include;$(ProjectPath)/bsp/inc;$(ProjectPath)/pikascript/pikascript-api;$(ProjectPath)/pikascript/pikascript-core;$(ProjectPath)/pikascript/pikascript-lib/W801Device</IncludePath>
+        <IncludePath>$(CDKPath)/CSKY/csi/csi_core/csi_cdk/;$(CDKPath)/CSKY/csi/csi_core/include/;$(CDKPath)/CSKY/csi/csi_driver/include/;$(ProjectPath);$(ProjectPath)/../../../../../../PH7/PH7;$(ProjectPath)/../../../Desktop/w801sdk/wm_sdk_w800_20211115/app/pikascript/pikascript-api;$(ProjectPath)/../../../Desktop/w801sdk/wm_sdk_w800_20211115/app/pikascript/pikascript-core;$(ProjectPath)/../Include;$(ProjectPath)/../Include/arch/xt804;$(ProjectPath)/../Include/arch/xt804/csi_core;$(ProjectPath)/../Include/arch/xt804/csi_dsp;$(ProjectPath)/../Libraries/component/FreeRTOS/include;$(ProjectPath)/bsp/inc;$(ProjectPath)/pikascript/pikascript-api;$(ProjectPath)/pikascript/pikascript-core;$(ProjectPath)/pikascript/pikascript-lib/PikaStdLib;$(ProjectPath)/pikascript/pikascript-lib/W801Device</IncludePath>
         <OtherFlags/>
         <DebugLevel>gdwarf2</DebugLevel>
       </Asm>
@@ -859,6 +1022,7 @@
           <CPUNumber>0</CPUNumber>
           <Clock>12000</Clock>
           <Delay>10</Delay>
+          <NResetDelay>100</NResetDelay>
           <WaitReset>50</WaitReset>
           <DDC>yes</DDC>
           <TRST>yes</TRST>
@@ -872,6 +1036,11 @@
           <GDBName/>
           <GDBServerType>Local</GDBServerType>
           <OtherFlags/>
+          <ICEEnablePCSampling>yes</ICEEnablePCSampling>
+          <ICESamplingFreq>1000</ICESamplingFreq>
+          <RemoteICEEnablePCSampling>yes</RemoteICEEnablePCSampling>
+          <RemoteICESamplingPort>1026</RemoteICESamplingPort>
+          <Version>latest</Version>
         </ConfigICE>
         <ConfigSIM>
           <SIMTarget/>
@@ -879,6 +1048,7 @@
           <NoGraphic>yes</NoGraphic>
           <Log>no</Log>
           <SimTrace>no</SimTrace>
+          <Version>latest</Version>
         </ConfigSIM>
         <ConfigOpenOCD>
           <OpenOCDExecutablePath/>
@@ -888,6 +1058,8 @@
           <OpenOCDTclPort>6666</OpenOCDTclPort>
           <OpenOCDConfigOptions/>
           <OpenOCDTimeout>5000</OpenOCDTimeout>
+          <PluginID>openocd-sifive</PluginID>
+          <Version>latest</Version>
         </ConfigOpenOCD>
       </Debug>
       <Flash>
