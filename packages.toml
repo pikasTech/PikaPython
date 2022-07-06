@@ -282,7 +282,7 @@ name = "W801Device"
 releases = [
   "v0.0.1 88f4e507f1665ca7ceda149aabf029f4e21e22c7",
   "v1.0.0 7ae9cd062fa48ecfe4b843c9f13b0daef0efd79d",
-  "v1.1.0 8df290da3fadca745c0e471973a5b2a034ec2f83",
+  "v1.1.0 c53bf1483d015555b4823f129864444198227403",
 ]
 
 [[packages]]
