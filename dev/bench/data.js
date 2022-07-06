@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657072104617,
+  "lastUpdate": 1657072732105,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -65472,6 +65472,60 @@ window.BENCHMARK_DATA = {
             "value": 0.00500016709878511,
             "unit": "ms/iter",
             "extra": "iterations: 233206\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@gitee.com",
+            "name": "Gitee",
+            "username": "gitee-org"
+          },
+          "distinct": true,
+          "id": "c53bf1483d015555b4823f129864444198227403",
+          "message": "update  package/W801Device/W801_ADC.c.",
+          "timestamp": "2022-07-06T01:51:44Z",
+          "tree_id": "2ad7370e9fadef24e4ecdc380394dac142599db4",
+          "url": "https://github.com/pikasTech/pikascript/commit/c53bf1483d015555b4823f129864444198227403"
+        },
+        "date": 1657072727402,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6181.882959773801,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6181.882959773801 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 45.84217497434124,
+            "unit": "ms/iter",
+            "extra": "iterations: 26\ncpu: 45.821411500837726 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 24.676693982055376,
+            "unit": "ms/iter",
+            "extra": "iterations: 48\ncpu: 24.67533752705452 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 8.088797727621035,
+            "unit": "ms/iter",
+            "extra": "iterations: 145\ncpu: 8.08815054011141 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000260838218455,
+            "unit": "ms/iter",
+            "extra": "iterations: 234750\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
