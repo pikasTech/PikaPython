@@ -2458,7 +2458,11 @@ TEST(pikaMain, returnNullString) {
     char* lines =
         "import GTestTask\n"
         "task = GTestTask.Task()\n"
-        "s = task.returnNullString()\n"
+        "def test_return_none():\n"
+        "    s = task.returnNullString()\n"
+        "    return s\n"
+        "s = test_return_none()\n"
+        "print(s)\n"
         "if None == s:\n"
         "    print('s is None')\n";
     obj_run(pikaMain, lines);
