@@ -170,12 +170,11 @@ TEST(string, replace_chain) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(
-        pikaMain,
-        "from PikaStdData import String as S\n"
-        "res = PikaStdData.String('  a,b,c, d  ').replace('a', 'A')\n"
-        "res2 = S(S('[test]').replace('[','')).replace(']','')\n"
-        "\n");
+    obj_run(pikaMain,
+            "from PikaStdData import String as S\n"
+            "res = PikaStdData.String('  a,b,c, d  ').replace('a', 'A')\n"
+            "res2 = S(S('[test]').replace('[','')).replace(']','')\n"
+            "\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
     char* res2 = obj_getStr(pikaMain, "res2");
@@ -223,3 +222,22 @@ TEST(string, str_chain) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if PIKA_SYNTEX_FORMAT_ENABLE
+TEST(string, str_issue1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/str_issue1.py");
+    /* collect */
+    char* ret_str = obj_getStr(pikaMain, "ret_str");
+    /* assert */
+    EXPECT_STREQ(ret_str, "None");
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

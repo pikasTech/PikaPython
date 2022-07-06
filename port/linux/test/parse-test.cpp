@@ -3400,6 +3400,53 @@ TEST(parser, function_chain) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, str_issue1) {
+    char* lines =
+        "if str(type(data)) == \"<class 'str'>\" and str(type(included_data)) "
+        "== \"<class 'str'>\":\n"
+        "\n";
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "4 REF data\n"
+                 "3 RUN type\n"
+                 "2 RUN str\n"
+                 "2 STR <class 'str'>\n"
+                 "1 OPT ==\n"
+                 "4 REF included_data\n"
+                 "3 RUN type\n"
+                 "2 RUN str\n"
+                 "2 STR <class 'str'>\n"
+                 "1 OPT ==\n"
+                 "0 OPT  and \n"
+                 "0 JEZ 1\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, str_issue2) {
+    char* lines = "print('ret = %s' % str(ret))\n";
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 STR ret = %s\n"
+                 "3 REF ret\n"
+                 "2 RUN str\n"
+                 "1 RUN cformat\n"
+                 "0 RUN print\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(parser, num_issue) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
