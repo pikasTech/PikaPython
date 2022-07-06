@@ -3429,6 +3429,7 @@ TEST(parser, str_issue1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTEX_FORMAT_ENABLE
 TEST(parser, str_issue2) {
     char* lines = "print('ret = %s' % str(ret))\n";
     pikaMemInfo.heapUsedMax = 0;
@@ -3446,6 +3447,7 @@ TEST(parser, str_issue2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(parser, num_issue) {
     pikaMemInfo.heapUsedMax = 0;
