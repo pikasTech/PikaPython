@@ -136,6 +136,10 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 |---|---|---|---|---|---|---|---|---|---|
 |[Pika-Pi-Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√|√|√|√|
 
+|Board|bsp|pika_lvgl|
+|---|---|---|
+|lvgl-vs-simu|√|√|
+
 |Board|bsp|arm-2d|
 |---|---|---|
 |QEMU-arm2d|√|√|
