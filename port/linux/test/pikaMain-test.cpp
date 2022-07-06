@@ -2467,8 +2467,6 @@ TEST(pikaMain, returnNullString) {
     /* assert */
     ArgType type = arg_getType(s);
     EXPECT_EQ(type, ARG_TYPE_NONE);
-    EXPECT_STREQ(log_buff[0], "s is None\r\n");
-    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
