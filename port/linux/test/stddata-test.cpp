@@ -1,6 +1,5 @@
 #include "test_common.h"
 
-
 #if PIKA_SYNTEX_SLICE_ENABLE
 TEST(stddata, test1) {
     /* init */
@@ -24,5 +23,26 @@ TEST(stddata, test1) {
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+/* test b2a_hex */
+TEST(stddata, test2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "from PikaStdData import Utils\n"
+            "ut = Utils()\n"
+            "res = str(ut.b2a_hex(b'德卡科技'))\n");
+    /* collect */
+    char* res = obj_getStr(pikaMain, "res");
+    /* assert */
+    EXPECT_STREQ(res, "E5BEB7E58DA1E7A791E68A80");
+    /* deinit */
+    obj_deinit(pikaMain);
 }
 #endif
