@@ -14,3 +14,7 @@ void GTestTask___init__(PikaObj* self) {
         obj_setInt(self, "testval", obj_getInt(self, "testval") + 1);
     }
 }
+
+char* GTestTask_Task_returnNullString(PikaObj* self) {
+    return NULL;
+}
