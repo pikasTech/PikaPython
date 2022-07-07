@@ -64,6 +64,9 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_METHOD_STATIC == type) {
         return arg_setStr(NULL, "", "<class 'function'>");
     }
+    if (ARG_TYPE_NONE == type) {
+        return arg_setStr(NULL, "", "<class 'NoneType'>");
+    }
     return arg_setNull(NULL);
 }
 
@@ -107,6 +110,7 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
 }
 
 char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
+    obj_removeArg(self, "__buf");
     ArgType type = arg_getType(arg);
     Args buffs = {0};
     char* res = NULL;
@@ -126,6 +130,9 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
     }
     if (ARG_TYPE_STRING == type) {
         res = arg_getStr(arg);
+    }
+    if (ARG_TYPE_NONE == type) {
+        res = "None";
     }
     if (argType_isObject(type)) {
         res = obj_toStr(arg_getPtr(arg));
@@ -528,7 +535,7 @@ void PikaStdLib_SysObj_printNoEnd(PikaObj* self, Arg* val) {
 }
 
 char* PikaStdLib_SysObj_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
-		#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTEX_FORMAT_ENABLE
     Args buffs = {0};
     pikaMemMaxReset();
     char* res = strsFormatList(&buffs, fmt, &var->super);
@@ -536,11 +543,11 @@ char* PikaStdLib_SysObj_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
     res = obj_getStr(self, "_buf");
     strsDeinit(&buffs);
     return res;
-		#else
+#else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] PIKA_SYNTEX_FORMAT_ENABLE is not enabled.\r\n");
     return NULL;
-		#endif
+#endif
 }
 
 int PikaStdLib_SysObj_id(PikaObj* self, Arg* obj) {

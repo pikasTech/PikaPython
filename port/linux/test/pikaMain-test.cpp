@@ -2448,3 +2448,30 @@ TEST(pikaMain, num_issue1) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, returnNullString) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    char* lines =
+        "import GTestTask\n"
+        "task = GTestTask.Task()\n"
+        "def test_return_none():\n"
+        "    s = task.returnNullString()\n"
+        "    return s\n"
+        "s = test_return_none()\n"
+        "print(s)\n"
+        "if None == s:\n"
+        "    print('s is None')\n";
+    obj_run(pikaMain, lines);
+    /* collect */
+    Arg* s = obj_getArg(pikaMain, "s");
+    /* assert */
+    ArgType type = arg_getType(s);
+    EXPECT_EQ(type, ARG_TYPE_NONE);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -79,7 +79,7 @@ PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
     PIKA_RES errCode = PIKA_RES_OK;
     Arg* argNew = New_arg(NULL);
     argNew = arg_setStr(argNew, name, strIn);
-    if(NULL == argNew){
+    if (NULL == argNew) {
         return PIKA_RES_ERR_INVALID_PTR;
     }
     args_setArg(self, argNew);
@@ -587,8 +587,14 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg) {
         res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);
         goto exit;
     }
+    if (ARG_TYPE_NONE == type) {
+        res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, "None");
+        goto exit;
+    }
 exit:
-    res = strsCopy(out_buffs, res);
+    if (NULL != res) {
+        res = strsCopy(out_buffs, res);
+    }
     strsDeinit(&buffs);
     return res;
 }
@@ -606,6 +612,10 @@ char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list) {
         char* fmt_item = strsPopToken(&buffs_item, fmt_buff, '%');
         fmt_item = strsAppend(&buffs_item, "%", fmt_item);
         char* str_format = strsFormatArg(&buffs_item, fmt_item, arg);
+        if (NULL == str_format) {
+            strsDeinit(&buffs_item);
+            goto exit;
+        }
         res_buff = arg_strAppend(res_buff, str_format);
         strsDeinit(&buffs_item);
     }
