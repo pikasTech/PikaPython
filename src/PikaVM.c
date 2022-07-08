@@ -510,6 +510,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     PikaObj* method_host_obj;
     Arg* method_arg = NULL;
     Arg* host_arg = NULL;
+    PIKA_BOOL isClass = PIKA_FALSE;
     char* sys_out;
     int arg_num_used = 0;
     TryInfo sub_try_info = {.try_state = TRY_STATE_NONE,
@@ -555,10 +556,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         }
     } else {
         /* get method host obj from self */
-        method_host_obj = obj_getHostObj(self, methodPath);
+        method_host_obj = obj_getHostObjWithIsClass(self, methodPath, &isClass);
         /* get method host obj from local scope */
         if (NULL == method_host_obj) {
-            method_host_obj = obj_getHostObj(vs->locals, methodPath);
+            method_host_obj =
+                obj_getHostObjWithIsClass(vs->locals, methodPath, &isClass);
         }
     }
 
@@ -652,6 +654,11 @@ exit:
     if (NULL != host_arg) {
         arg_deinit(host_arg);
     }
+    if (isClass) {
+        /* class method */
+        obj_deinit(method_host_obj);
+    }
+
     strsDeinit(&buffs);
     return return_arg;
 }

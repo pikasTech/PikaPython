@@ -32,3 +32,21 @@ TEST(class, classpar1) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(class, static_method) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "import PikaMath\n"
+            "a = PikaMath.Operator.plusInt(10, 20)\n");
+    /* collect */
+    int a = obj_getInt(self, "a");
+    /* assert */
+    EXPECT_EQ(a, 30);
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

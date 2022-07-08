@@ -3,9 +3,6 @@ from PikaStdData import Utils
 img = cv.Image()
 img.read("test/assets/test.jpg")
 
-conv = cv.Converter()
-conv.toRGB565(img)
+cv.Converter.toRGB565(img)
+print(str(Utils.b2a_hex(img.data())))
 
-ut = Utils()
-
-print(str(ut.b2a_hex(img.data())))
