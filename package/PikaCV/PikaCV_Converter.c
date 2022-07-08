@@ -75,8 +75,7 @@ int out_func(              /* Returns 1 to continue, 0 to abort */
     /* Output the rectangular */
     for (y = rect->top; y <= rect->bottom; y++) {
         /* Copy a line */
-        memcpy(direction, source, width_out_rect);
-
+        __platform_memcpy(direction, source, width_out_rect);
         /* Update pointers */
         source += width_out_rect;
 
@@ -217,10 +216,11 @@ void PikaCV_Converter_toRGB565(PikaObj* self, PikaObj* image) {
     uint8_t* data_new = arg_getBytes(arg_data_new);
     if (img->format == PikaCV_ImageFormat_Type_RGB888) {
         for (int i = 0; i < img->size; i += 3) {
-            data_new[i / 3 * 2] =
-                (data[i] & 0xF8) | ((data[i + 1] >> 5) & 0x07);
-            data_new[i / 3 * 2 + 1] =
-                ((data[i + 1] & 0x1F) << 3) | ((data[i + 2] >> 3) & 0x07);
+            uint32_t* p888 = (uint32_t*)&data[i];
+            uint16_t* p565 = (uint16_t*)&data_new[i / 3 * 2];
+
+            *p565 = ((*p888 & 0x00F80000) >> 8) | ((*p888 & 0x0000FC00) >> 5) |
+                    ((*p888 & 0x000000F8) >> 3);
         }
         goto exit;
     }
@@ -261,12 +261,10 @@ void PikaCV_Converter_toRGB888(PikaObj* self, PikaObj* image) {
     uint8_t* data_new = arg_getBytes(arg_data_new);
     if (img->format == PikaCV_ImageFormat_Type_RGB565) {
         for (int i = 0; i < img->size; i += 2) {
-            data_new[i / 2 * 3] = (data[i] & 0xF8) | ((data[i] << 5) & 0x0700);
-            data_new[i / 2 * 3 + 1] = ((data[i] << 5) & 0xE000) |
-                                      ((data[i + 1] >> 3) & 0x1F00) |
-                                      ((data[i + 1] << 3) & 0x00E0);
-            data_new[i / 2 * 3 + 2] =
-                ((data[i + 1] << 3) & 0xF800) | ((data[i + 1] >> 1) & 0x007);
+            uint16_t* p565 = (uint16_t*)&data[i];
+            uint32_t* p888 = (uint32_t*)&data_new[i / 2 * 3];
+            *p888 = ((*p565 & 0xF800) << 8) | ((*p565 & 0x07E0) << 5) |
+                    ((*p565 & 0x001F) << 3);
         }
         goto exit;
     }
