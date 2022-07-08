@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657186732455,
+  "lastUpdate": 1657273354994,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -65958,6 +65958,60 @@ window.BENCHMARK_DATA = {
             "value": 0.0050003906547442896,
             "unit": "ms/iter",
             "extra": "iterations: 229985\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "b463e812bf0334b55835a3b31cda0c2f6c526e06",
+          "message": "!42 Support PikaCV, can read data from Jpeg and convert to rgb888/rgb565\n* add pikaCV-test.cpp\n* read(Image) and convert to RGB565 is tested ok\n* transfer can return res, but not assert\n* format tjpgd\n* add test for PikaCV\n* add assert for newContent\n* restore assets\n* restore PikaCV.pyi\n* restore PikaCV\n* restore uint16_t\n* add jpeg_test.py\n* move ADC, GPIO, RGB ... to Device\n* add jd_decomp\n* convert_JPEGtoREG888 is not ok\n* connecting tjpegdec\n* Converter.toRGB565() .toRGB888() .toGRay() eachother is ok\n* support Gray\n* add PikaCV_Image, PikaCV_ImageFormat\n* add classes for PikaCV\n* add PikaCV",
+          "timestamp": "2022-07-08T09:33:53Z",
+          "tree_id": "7e01566c156b9e7b5c80f2d90a79e614cdc54299",
+          "url": "https://github.com/pikasTech/pikascript/commit/b463e812bf0334b55835a3b31cda0c2f6c526e06"
+        },
+        "date": 1657273347482,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6630.130096723256,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6630.130096723256 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 42.123249013463116,
+            "unit": "ms/iter",
+            "extra": "iterations: 23\ncpu: 42.11730245209819 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 22.7875354917417,
+            "unit": "ms/iter",
+            "extra": "iterations: 42\ncpu: 22.78550688232094 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 7.542076123478594,
+            "unit": "ms/iter",
+            "extra": "iterations: 125\ncpu: 7.541330150476385 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000586321056586,
+            "unit": "ms/iter",
+            "extra": "iterations: 181588\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
