@@ -1154,3 +1154,7 @@ void pks_printVersion(void) {
     __platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n", PIKA_VERSION_MAJOR,
                       PIKA_VERSION_MINOR, PIKA_VERSION_MICRO, PIKA_EDIT_TIME);
 }
+
+void* obj_getStruct(PikaObj* self, char* name) {
+    return args_getStruct(self->list, name);
+}

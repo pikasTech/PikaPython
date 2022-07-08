@@ -32,7 +32,7 @@
 #include "dataString.h"
 #include "stdlib.h"
 
-uint16_t arg_getTotleSize(Arg* self) {
+uint32_t arg_getTotleSize(Arg* self) {
     return arg_totleSize(self);
 }
 
@@ -68,25 +68,25 @@ static Arg* arg_init_hash(Hash nameHash,
 static Arg* arg_init(char* name,
                      ArgType type,
                      uint8_t* content,
-                     uint16_t size,
+                     uint32_t size,
                      Arg* next) {
     Hash nameHash = hash_time33(name);
     return arg_init_hash(nameHash, type, content, size, next);
 }
 
-uint16_t arg_totleSize(Arg* self) {
+uint32_t arg_totleSize(Arg* self) {
     return ((Arg*)self)->size + sizeof(Arg);
 }
 
 void arg_freeContent(Arg* self) {
     if (NULL != self) {
-        uint16_t totleSize = arg_totleSize(self);
+        uint32_t totleSize = arg_totleSize(self);
         pikaFree(self, totleSize);
         return;
     }
 }
 
-Arg* arg_setContent(Arg* self, uint8_t* content, uint16_t size) {
+Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size) {
     if (NULL == self) {
         /* malloc */
         return arg_init("", ARG_TYPE_NONE, content, size, NULL);
@@ -130,6 +130,9 @@ Arg* arg_setType(Arg* self, ArgType type) {
 
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
     self = arg_newContent(self, size + sizeof(size_t) + 1);
+    if (NULL == self) {
+        return NULL;
+    }
     self = arg_setName(self, name);
     self = arg_setType(self, ARG_TYPE_BYTES);
     void* dir = arg_getContent(self);
@@ -146,8 +149,8 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
 }
 
 Arg* arg_newContent(Arg* self, uint32_t size) {
-    Arg* newContent = arg_init("", ARG_TYPE_NONE, NULL, size, NULL);
     arg_freeContent(self);
+    Arg* newContent = arg_init("", ARG_TYPE_NONE, NULL, size, NULL);
     return newContent;
 }
 
@@ -235,7 +238,7 @@ Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {
-    if(NULL == string){
+    if (NULL == string) {
         return NULL;
     }
     return arg_init(name, ARG_TYPE_STRING, (uint8_t*)string,
@@ -273,7 +276,7 @@ ArgType arg_getType(Arg* self) {
     return (ArgType)self->type;
 }
 
-uint16_t arg_getContentSize(Arg* self) {
+uint32_t arg_getContentSize(Arg* self) {
     return arg_getSize(self);
 }
 
@@ -378,7 +381,7 @@ Arg* arg_getNext(Arg* self) {
     return self->next;
 }
 
-uint16_t arg_getSize(Arg* self) {
+uint32_t arg_getSize(Arg* self) {
     return self->size;
 }
 

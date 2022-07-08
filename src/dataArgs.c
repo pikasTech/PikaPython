@@ -219,6 +219,9 @@ PIKA_RES args_setStructWithSize(Args* self,
 
 void* args_getStruct(Args* self, char* name) {
     Arg* struct_arg = args_getArg(self, name);
+    if (NULL == struct_arg) {
+        return NULL;
+    }
     return arg_getContent(struct_arg);
 }
 

@@ -17,6 +17,7 @@ import import_test
 import pika_configparser as configparser
 from PikaStdData import String as S
 import PikaDebug
+import PikaCV
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')

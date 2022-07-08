@@ -58,28 +58,27 @@ typedef void (*StructDeinitFun)(void* struct_);
 typedef struct Arg Arg;
 struct Arg {
     Arg* next;
-    uint16_t size;
+    uint32_t size;
     uint8_t type;
-    uint8_t sub_type;
     Hash name_hash;
     uint8_t content[];
 };
 
 Arg* arg_getNext(Arg* self);
-uint16_t arg_getSize(Arg* self);
+uint32_t arg_getSize(Arg* self);
 uint8_t* arg_getContent(Arg* self);
-uint16_t arg_totleSize(Arg* self);
+uint32_t arg_totleSize(Arg* self);
 void arg_setNext(Arg* self, Arg* next);
-uint16_t arg_getTotleSize(Arg* self);
+uint32_t arg_getTotleSize(Arg* self);
 void arg_freeContent(Arg* self);
 
 Arg* arg_setName(Arg* self, char* name);
-Arg* arg_setContent(Arg* self, uint8_t* content, uint16_t size);
+Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size);
 Arg* arg_newContent(Arg* self, uint32_t size);
 Arg* arg_setType(Arg* self, ArgType type);
 Hash arg_getNameHash(Arg* self);
 ArgType arg_getType(Arg* self);
-uint16_t arg_getContentSize(Arg* self);
+uint32_t arg_getContentSize(Arg* self);
 Hash hash_time33(char* str);
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val);
