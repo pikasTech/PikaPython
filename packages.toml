@@ -137,6 +137,12 @@ releases = [
 ]
 
 [[packages]]
+name = "PikaCV"
+releases = [
+  "v0.0.1 b463e812bf0334b55835a3b31cda0c2f6c526e06",
+]
+
+[[packages]]
 name = "pika_cjson"
 releases = [
   "v0.0.1 60389c541db480f41a55498270094dd030df9e24",
