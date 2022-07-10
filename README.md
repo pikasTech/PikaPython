@@ -130,7 +130,7 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 |devc           |√  |    |    |    |   |   |   |
 |EC600N         |√  |    |    |    |   |   |   |
 |mm32f5277e9p   |√  |√   |    |    |   |   |   |
-|xr806          |√  |    |    |    |   |   |   |
+|xr806(openharmony)|√  |    |    |    |   |   |   |
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
@@ -597,7 +597,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
-| xr806 bsp |[sjy](https://gitee.com/shanjiayang)|
+| xr806(openharmony) bsp |[sjy](https://gitee.com/shanjiayang)|
 | ESP32 package |沧御|
 | MM32F5277E9P package |[unsigned](https://gitee.com/unsigned0)|
 | mm32f5277e9p BSP |[unsigned](https://gitee.com/unsigned0)|
