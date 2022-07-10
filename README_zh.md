@@ -135,6 +135,7 @@ http://pikascript.com
 |devc           |√  |    |    |    |   |   |   |
 |EC600N         |√  |    |    |    |   |   |   |
 |mm32f5277e9p   |√  |√   |    |    |   |   |   |
+|xr806          |√  |    |    |    |   |   |   |
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
@@ -598,6 +599,7 @@ while True:
 # 7.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| xr806 bsp |[sjy](https://gitee.com/shanjiayang)|
 | ESP32 package |沧御|
 | MM32F5277E9P package |[unsigned](https://gitee.com/unsigned0)|
 | mm32f5277e9p BSP |[unsigned](https://gitee.com/unsigned0)|
