@@ -3517,3 +3517,24 @@ TEST(parser, branket_issue3) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(parser, branket_issue4) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a = b[c[y]]\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF b\n"
+                 "2 REF c\n"
+                 "2 REF y\n"
+                 "1 SLC \n"
+                 "0 SLC \n"
+                 "0 OUT a\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
