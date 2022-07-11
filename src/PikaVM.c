@@ -581,9 +581,19 @@ exit:
     return arg_num;
 }
 
+void __vm_List_append(PikaObj* self, Arg* arg) {
+    PikaList* list = obj_getPtr(self, "list");
+    list_append(list, arg);
+}
+
+void __vm_List___init__(PikaObj* self) {
+    if (!obj_isArgExist(self, "list")) {
+        PikaList* list = New_list();
+        obj_setPtr(self, "list", list);
+    }
+}
+
 #if PIKA_BUILTIN_LIST_ENABLE
-void PikaStdData_List_append(PikaObj* self, Arg* arg);
-void PikaStdData_List___init__(PikaObj* self);
 PikaObj* New_PikaStdData_List(Args* args);
 #endif
 
@@ -591,7 +601,7 @@ static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
 #if PIKA_BUILTIN_LIST_ENABLE
     uint8_t arg_num = VMState_getInputArgNum(vs);
     PikaObj* list = newNormalObj(New_PikaStdData_List);
-    PikaStdData_List___init__(list);
+    __vm_List___init__(list);
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */
@@ -601,7 +611,7 @@ static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
     }
     for (int i = 0; i < arg_num; i++) {
         Arg* arg = stack_popArg(&stack);
-        PikaStdData_List_append(list, arg);
+        __vm_List_append(list, arg);
         arg_deinit(arg);
     }
     stack_deinit(&stack);
@@ -611,9 +621,24 @@ static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
 #endif
 }
 
+void __vm_Dict___init__(PikaObj* self) {
+    PikaDict* dict = New_dict();
+    PikaDict* keys = New_dict();
+    obj_setPtr(self, "dict", dict);
+    obj_setPtr(self, "_keys", keys);
+}
+
+void __vm_Dict_set(PikaObj* self, Arg* arg, char* key) {
+    PikaDict* dict = obj_getPtr(self, "dict");
+    PikaDict* keys = obj_getPtr(self, "_keys");
+    Arg* arg_key = arg_setStr(NULL, key, key);
+    Arg* arg_new = arg_copy(arg);
+    arg_setName(arg_new, key);
+    dict_setArg(dict, arg_new);
+    dict_setArg(keys, arg_key);
+}
+
 #if PIKA_BUILTIN_DICT_ENABLE
-void PikaStdData_Dict_set(PikaObj* self, Arg* arg, char* key);
-void PikaStdData_Dict___init__(PikaObj* self);
 PikaObj* New_PikaStdData_Dict(Args* args);
 #endif
 
@@ -621,7 +646,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self, VMState* vs, char* data) {
 #if PIKA_BUILTIN_DICT_ENABLE
     uint8_t arg_num = VMState_getInputArgNum(vs);
     PikaObj* dict = newNormalObj(New_PikaStdData_Dict);
-    PikaStdData_Dict___init__(dict);
+    __vm_Dict___init__(dict);
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */
@@ -632,7 +657,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self, VMState* vs, char* data) {
     for (int i = 0; i < arg_num / 2; i++) {
         Arg* key_arg = stack_popArg(&stack);
         Arg* val_arg = stack_popArg(&stack);
-        PikaStdData_Dict_set(dict, val_arg, arg_getStr(key_arg));
+        __vm_Dict_set(dict, val_arg, arg_getStr(key_arg));
         arg_deinit(key_arg);
         arg_deinit(val_arg);
     }

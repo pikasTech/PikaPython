@@ -11,20 +11,11 @@ Arg* PikaStdData_Dict_get(PikaObj* self, char* key) {
 }
 
 void PikaStdData_Dict___init__(PikaObj* self) {
-    PikaDict* dict = New_dict();
-    PikaDict* keys = New_dict();
-    obj_setPtr(self, "dict", dict);
-    obj_setPtr(self, "_keys", keys);
+    __vm_Dict___init__(self);
 }
 
 void PikaStdData_Dict_set(PikaObj* self, Arg* arg, char* key) {
-    PikaDict* dict = obj_getPtr(self, "dict");
-    PikaDict* keys = obj_getPtr(self, "_keys");
-    Arg* arg_key = arg_setStr(NULL, key, key);
-    Arg* arg_new = arg_copy(arg);
-    arg_setName(arg_new, key);
-    dict_setArg(dict, arg_new);
-    dict_setArg(keys, arg_key);
+    __vm_Dict_set(self, arg, key);
 }
 
 void PikaStdData_Dict_remove(PikaObj* self, char* key) {

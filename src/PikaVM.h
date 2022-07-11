@@ -164,5 +164,9 @@ Arg* obj_runMethodArg(PikaObj* self, PikaObj* method_args_obj, Arg* method_arg);
 PikaObj* pikaVM_runFile(PikaObj* self, char* file_name);
 Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step);
 Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj);
+void __vm_List_append(PikaObj* self, Arg* arg);
+void __vm_List___init__(PikaObj* self);
+void __vm_Dict_set(PikaObj* self, Arg* arg, char* key);
+void __vm_Dict___init__(PikaObj* self);
 
 #endif
