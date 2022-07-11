@@ -686,9 +686,14 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         vs->try_error_code == TRY_STATE_INNER) {
         sub_try_info.try_state = TRY_STATE_INNER;
     }
-    /* return arg directly */
     if (strEqu(data, "")) {
-        return_arg = stack_popArg(&(vs->stack));
+        if (VMState_getInputArgNum(vs) < 2) {
+            /* return arg directly */
+            return_arg = stack_popArg(&(vs->stack));
+            goto exit;
+        }
+        /* create a tuple */
+        return_arg = VM_instruction_handler_LST(self, vs, "");
         goto exit;
     }
     /* return tiny obj */
