@@ -1800,7 +1800,7 @@ TEST(parser, print_ddd) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, __get__3) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -1839,7 +1839,7 @@ TEST(parser, __get__3) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, __get__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -1862,7 +1862,7 @@ TEST(parser, __get__) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, __get__2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -1889,7 +1889,7 @@ TEST(parser, __get__2) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, __set__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2198,7 +2198,7 @@ TEST(asmer, asm_to_bytecode_0x0d) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, list_1_2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2282,7 +2282,7 @@ TEST(parser, class_def_void_line) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(parser, multiLine_import) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2577,7 +2577,7 @@ TEST(parser, bytes_iteral) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(parser, import_as) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2615,7 +2615,7 @@ TEST(parser, str_equ) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, bytes_index) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2693,7 +2693,7 @@ TEST(parser, tab) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, parse_issue2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2728,7 +2728,7 @@ TEST(parser, parse_issue3) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, slice1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2749,7 +2749,7 @@ TEST(parser, slice1) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, slice2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -2919,7 +2919,7 @@ TEST(parser, mpy1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, slice_12lkj) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -3114,7 +3114,7 @@ TEST(parser, connection2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(parser, format1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -3133,7 +3133,7 @@ TEST(parser, format1) {
 }
 #endif
 
-#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(parser, format2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -3152,7 +3152,7 @@ TEST(parser, format2) {
 }
 #endif
 
-#if PIKA_SYNTEX_EXCEPTION_ENABLE
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
 TEST(parser, try1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -3429,7 +3429,7 @@ TEST(parser, str_issue1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(parser, str_issue2) {
     char* lines = "print('ret = %s' % str(ret))\n";
     pikaMemInfo.heapUsedMax = 0;
@@ -3491,3 +3491,30 @@ TEST(parser, num_issue) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+// #if PIKA_SYNTAX_SLICE_ENABLE
+#if 0
+TEST(parser, branket_issue2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "temp = hex(int('12'))[0:2]\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(parser, branket_issue3) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a = b[x][y]\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

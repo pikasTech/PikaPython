@@ -54,6 +54,7 @@ char* strsGetDirectStr(Args* buffs_p, char* argPath) {
 
 char* strsAppend(Args* buffs_p, char* strOrigin, char* strToAppend) {
     pika_assert(NULL != strToAppend);
+    pika_assert(NULL != strOrigin);
     int32_t size = strGetSize(strOrigin) + strGetSize(strToAppend);
     char* buff = args_getBuff(buffs_p, size);
     char* strOut = strCopy(buff, strOrigin);

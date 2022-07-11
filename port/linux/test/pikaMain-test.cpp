@@ -809,7 +809,7 @@ TEST(pikaMain, str___get____set__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, str__index__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -837,7 +837,7 @@ TEST(pikaMain, str__index__) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, bytes__index__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -865,7 +865,7 @@ TEST(pikaMain, bytes__index__) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, list_index) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -887,7 +887,7 @@ TEST(pikaMain, list_index) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, dict_index) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1922,7 +1922,7 @@ TEST(pikaMain, REPL_push_mode) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, int_from_bytes) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1952,7 +1952,7 @@ TEST(pikaMain, int_from_bytes) {
 //     EXPECT_EQ(pikaMemNow(), 0);
 // }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, utils_int_to_bytes) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1972,7 +1972,7 @@ TEST(pikaMain, utils_int_to_bytes) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, neg_index) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1992,7 +1992,7 @@ TEST(pikaMain, neg_index) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, slice1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -2009,7 +2009,7 @@ TEST(pikaMain, slice1) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, slice2) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -2058,7 +2058,7 @@ TEST(pikaMain, str_add1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, slice_eei) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -2075,7 +2075,7 @@ TEST(pikaMain, slice_eei) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, slice_a97) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -2092,7 +2092,7 @@ TEST(pikaMain, slice_a97) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, slice_a90) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -2109,7 +2109,7 @@ TEST(pikaMain, slice_a90) {
 }
 #endif
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, slice_a12) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -2145,7 +2145,7 @@ TEST(pikaMain, str_string) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, string_index) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

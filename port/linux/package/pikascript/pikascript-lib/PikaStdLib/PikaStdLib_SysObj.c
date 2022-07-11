@@ -399,7 +399,7 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
                                  Arg* obj,
                                  Arg* start,
                                  int step) {
-#if PIKA_SYNTEX_SLICE_ENABLE
+#if PIKA_SYNTAX_SLICE_ENABLE
     /* No interger index only support __get__ */
     if (!(arg_getType(start) == ARG_TYPE_INT &&
           arg_getType(end) == ARG_TYPE_INT)) {
@@ -535,7 +535,7 @@ void PikaStdLib_SysObj_printNoEnd(PikaObj* self, Arg* val) {
 }
 
 char* PikaStdLib_SysObj_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
-#if PIKA_SYNTEX_FORMAT_ENABLE
+		#if PIKA_SYNTAX_FORMAT_ENABLE
     Args buffs = {0};
     pikaMemMaxReset();
     char* res = strsFormatList(&buffs, fmt, &var->super);
@@ -545,7 +545,7 @@ char* PikaStdLib_SysObj_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
     return res;
 #else
     obj_setErrorCode(self, 1);
-    __platform_printf("[Error] PIKA_SYNTEX_FORMAT_ENABLE is not enabled.\r\n");
+    __platform_printf("[Error] PIKA_SYNTAX_FORMAT_ENABLE is not enabled.\r\n");
     return NULL;
 #endif
 }

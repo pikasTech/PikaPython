@@ -185,7 +185,7 @@ TEST(cJSON, item) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(cJSON, construct) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -265,7 +265,7 @@ TEST(cJSON, test2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(cJSON, test3) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -419,7 +419,7 @@ TEST(cJSON, parse_faild) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(cJSON, test7) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -437,7 +437,7 @@ TEST(cJSON, test7) {
 }
 #endif
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(cJSON, module) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

@@ -1,6 +1,6 @@
 #include "test_common.h"
 
-#if PIKA_SYNTEX_EXCEPTION_ENABLE
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
 TEST(except, try1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

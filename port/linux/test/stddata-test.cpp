@@ -1,6 +1,7 @@
 #include "test_common.h"
 
-#if PIKA_SYNTEX_SLICE_ENABLE
+
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(stddata, test1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -26,7 +27,7 @@ TEST(stddata, test1) {
 }
 #endif
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 /* test b2a_hex */
 TEST(stddata, test2) {
     /* init */

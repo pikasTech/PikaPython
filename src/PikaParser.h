@@ -50,6 +50,7 @@ enum StmtType {
     STMT_operator,
     STMT_import,
     STMT_list,
+    STMT_slice,
     STMT_dict,
     STMT_none,
 };
@@ -80,7 +81,7 @@ struct ParserState {
     Arg* last_token;
     Args* iter_buffs;
     Args* buffs_p;
-    PIKA_RES result; 
+    PIKA_RES result;
 };
 
 char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);

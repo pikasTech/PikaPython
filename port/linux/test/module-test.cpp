@@ -1,6 +1,6 @@
 #include "test_common.h"
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(module, cmodule_import) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -94,7 +94,7 @@ TEST(module, __init__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(module, __init__2) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -114,7 +114,7 @@ TEST(module, __init__2) {
 }
 #endif
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(module, import_as_issue1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

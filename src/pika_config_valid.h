@@ -74,8 +74,8 @@
     
     /* auto config for syntax level */
     #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MINIMAL
-        #ifndef PIKA_SYNTEX_SLICE_ENABLE
-            #define PIKA_SYNTEX_SLICE_ENABLE 0
+        #ifndef PIKA_SYNTAX_SLICE_ENABLE
+            #define PIKA_SYNTAX_SLICE_ENABLE 0
         #endif
 
         #ifndef PIKA_BUILTIN_LIST_ENABLE
@@ -86,20 +86,20 @@
             #define PIKA_BUILTIN_DICT_ENABLE 0
         #endif
 
-        #ifndef PIKA_SYNTEX_FORMAT_ENABLE
-            #define PIKA_SYNTEX_FORMAT_ENABLE 0
+        #ifndef PIKA_SYNTAX_FORMAT_ENABLE
+            #define PIKA_SYNTAX_FORMAT_ENABLE 0
         #endif
 
         #ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
             #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 0
         #endif
         
-        #ifndef PIKA_SYNTEX_EXCEPTION_ENABLE
-            #define PIKA_SYNTEX_EXCEPTION_ENABLE 0
+        #ifndef PIKA_SYNTAX_EXCEPTION_ENABLE
+            #define PIKA_SYNTAX_EXCEPTION_ENABLE 0
         #endif
         
-        #ifndef PIKA_SYNTEX_IMPORT_EX_ENABLE
-            #define PIKA_SYNTEX_IMPORT_EX_ENABLE 0
+        #ifndef PIKA_SYNTAX_IMPORT_EX_ENABLE
+            #define PIKA_SYNTAX_IMPORT_EX_ENABLE 0
         #endif
 
         #ifndef PIKA_EVENT_ENABLE
@@ -107,8 +107,8 @@
         #endif
 
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
-        #ifndef PIKA_SYNTEX_SLICE_ENABLE
-            #define PIKA_SYNTEX_SLICE_ENABLE 1
+        #ifndef PIKA_SYNTAX_SLICE_ENABLE
+            #define PIKA_SYNTAX_SLICE_ENABLE 1
         #endif
 
         #ifndef PIKA_BUILTIN_LIST_ENABLE
@@ -119,20 +119,20 @@
             #define PIKA_BUILTIN_DICT_ENABLE 1
         #endif
 
-        #ifndef PIKA_SYNTEX_FORMAT_ENABLE
-            #define PIKA_SYNTEX_FORMAT_ENABLE 1
+        #ifndef PIKA_SYNTAX_FORMAT_ENABLE
+            #define PIKA_SYNTAX_FORMAT_ENABLE 1
         #endif
 
         #ifndef PIKA_STD_DEVICE_UNIX_TIME_ENABLE
             #define PIKA_STD_DEVICE_UNIX_TIME_ENABLE 1
         #endif
         
-        #ifndef PIKA_SYNTEX_EXCEPTION_ENABLE
-            #define PIKA_SYNTEX_EXCEPTION_ENABLE 1
+        #ifndef PIKA_SYNTAX_EXCEPTION_ENABLE
+            #define PIKA_SYNTAX_EXCEPTION_ENABLE 1
         #endif
         
-        #ifndef PIKA_SYNTEX_IMPORT_EX_ENABLE
-            #define PIKA_SYNTEX_IMPORT_EX_ENABLE 1
+        #ifndef PIKA_SYNTAX_IMPORT_EX_ENABLE
+            #define PIKA_SYNTAX_IMPORT_EX_ENABLE 1
         #endif
 
         #ifndef PIKA_EVENT_ENABLE
@@ -190,20 +190,20 @@
         #define PIKA_INIT_STRING_ENABLE 1
     #endif
     
-    #ifndef PIKA_SYNTEX_SLICE_ENABLE
-        #define PIKA_SYNTEX_SLICE_ENABLE 1
+    #ifndef PIKA_SYNTAX_SLICE_ENABLE
+        #define PIKA_SYNTAX_SLICE_ENABLE 1
     #endif
 
-    #ifndef PIKA_SYNTEX_FORMAT_ENABLE
-        #define PIKA_SYNTEX_FORMAT_ENABLE 1
+    #ifndef PIKA_SYNTAX_FORMAT_ENABLE
+        #define PIKA_SYNTAX_FORMAT_ENABLE 1
     #endif
 
-    #ifndef PIKA_SYNTEX_EXCEPTION_ENABLE
-        #define PIKA_SYNTEX_EXCEPTION_ENABLE 1
+    #ifndef PIKA_SYNTAX_EXCEPTION_ENABLE
+        #define PIKA_SYNTAX_EXCEPTION_ENABLE 1
     #endif
 
-    #ifndef PIKA_SYNTEX_IMPORT_EX_ENABLE
-        #define PIKA_SYNTEX_IMPORT_EX_ENABLE 1
+    #ifndef PIKA_SYNTAX_IMPORT_EX_ENABLE
+        #define PIKA_SYNTAX_IMPORT_EX_ENABLE 1
     #endif      
 
     #ifndef PIKA_PLOOC_ENABLE

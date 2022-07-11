@@ -1,6 +1,6 @@
 #include "test_common.h"
 
-#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, cformat) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -17,7 +17,7 @@ TEST(string, cformat) {
 }
 #endif
 
-#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, cformat1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -34,7 +34,7 @@ TEST(string, cformat1) {
 }
 #endif
 
-#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, format1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -50,7 +50,7 @@ TEST(string, format1) {
 }
 #endif
 
-#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, format2) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -66,7 +66,7 @@ TEST(string, format2) {
 }
 #endif
 
-#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, print_file) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -87,7 +87,7 @@ TEST(string, print_file) {
 }
 #endif
 
-#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, format_parse1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -164,7 +164,7 @@ TEST(string, replace) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_IMPORT_EX_ENABLE
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(string, replace_chain) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -223,7 +223,7 @@ TEST(string, str_chain) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_SYNTEX_FORMAT_ENABLE
+#if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, str_issue1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

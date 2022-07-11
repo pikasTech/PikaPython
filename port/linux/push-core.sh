@@ -1,5 +1,3 @@
-python3 version.py
-mv PikaVersion.h package/pikascript/pikascript-core/
 cp package/pikascript/pikascript-core/* ../../src -r
 cp package/pikascript/PikaObj.pyi ../../src
 git add test/python/*.py
