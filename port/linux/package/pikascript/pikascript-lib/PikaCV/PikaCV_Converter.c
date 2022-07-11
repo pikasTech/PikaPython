@@ -1,5 +1,5 @@
 #include "PikaCV_Converter.h"
-#include "PikaCV_Transformer.h"
+#include "PikaCV_Transforms.h"
 #include "PikaCV_common.h"
 
 /* Session identifier for input/output functions (name, members and usage are as
@@ -325,7 +325,7 @@ void PikaCV_Converter_toBMP(PikaObj* self, PikaObj* image) {
         PikaCV_Converter_toBGR888(self, image);
     }
 
-    PikaCV_Transformer_rotateDown(self, image);
+    PikaCV_Transforms_rotateDown(self, image);
 
     BITMAPFILEHEADER bfh;
     BITMAPINFOHEADER bih;

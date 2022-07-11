@@ -99,8 +99,8 @@ class Converter(TinyObj):
         """Convert the image to BGR888"""
 
 
-class Transformer(TinyObj):
-    """The Transformer class is used to 
+class Transforms(TinyObj):
+    """The transforms class is used to 
     supply the rotate, flip, and crop operation for an image."""
     @staticmethod
     def rotateDown(image: Image):

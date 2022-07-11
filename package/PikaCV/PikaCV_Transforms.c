@@ -1,8 +1,8 @@
-#include "PikaCV_Transformer.h"
+#include "PikaCV_Transforms.h"
 #include "PikaCV_Converter.h"
 #include "PikaCV_common.h"
 
-void PikaCV_Transformer_rotateDown(PikaObj* self, PikaObj* image) {
+void PikaCV_Transforms_rotateDown(PikaObj* self, PikaObj* image) {
     PikaCV_Image* img = obj_getStruct(image, "image");
     if (NULL == img) {
         pika_assert(0);
