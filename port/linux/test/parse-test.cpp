@@ -3550,7 +3550,7 @@ TEST(parser, tuple1) {
                  "B0\n"
                  "1 REF a\n"
                  "1 REF b\n"
-                 "0 RUN\n");
+                 "0 RUN \n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
