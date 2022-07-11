@@ -31,7 +31,6 @@ void PikaCV_Transformer_rotateDown(PikaObj* self, PikaObj* image) {
         }
     }
     obj_setBytes(image, "_data", data_new, size_new);
-    img->format = PikaCV_ImageFormat_Type_BGR888;
     img->size = size_new;
     arg_deinit(arg_data_new);
 }
