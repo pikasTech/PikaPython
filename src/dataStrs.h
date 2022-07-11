@@ -43,4 +43,5 @@ Arg* arg_strAppend(Arg* arg_in, char* str_to_append);
 char* strsReplace(Args* buffs, char* orig, char* rep, char* with);
 char* strsGetLine(Args* buffs, char* code);
 void strsDeinit(Args* buffs);
+char* strsCacheArg(Args* buffs_p, Arg* arg);
 #endif

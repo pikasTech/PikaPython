@@ -937,106 +937,11 @@ static void Slice_getPars(Args* outBuffs,
 #endif
 
 #if PIKA_SYNTAX_SLICE_ENABLE
-char* Suger_solveRightBranckets(Args* outBuffs, char* right) {
+char* Suger_solveLeftBranckets(Args* outBuffs, char* right, char** left_p) {
     /* init objects */
     Args buffs = {0};
     Arg* right_arg = arg_setStr(NULL, "", "");
-    uint8_t is_in_brancket = 0;
-    args_setStr(&buffs, "inner", "");
-    uint8_t matched = 0;
-    char* right_res = NULL;
-    /* exit when not match
-         (symble | iteral | <]> | <)>) + <[>
-    */
-    ParserState_forEachToken(ps, right) {
-        ParserState_iterStart(&ps);
-        if (strEqu(ps.token2.pyload, "[")) {
-            if (TOKEN_symbol == ps.token1.type ||
-                TOKEN_literal == ps.token1.type ||
-                strEqu(ps.token1.pyload, "]") ||
-                strEqu(ps.token1.pyload, ")")) {
-                matched = 1;
-                ParserState_iterEnd(&ps);
-                break;
-            }
-        }
-        ParserState_iterEnd(&ps);
-    }
-    ParserState_deinit(&ps);
-    if (!matched) {
-        /* not contain '[', return origin */
-        arg_deinit(right_arg);
-        right_arg = arg_setStr(right_arg, "", right);
-        goto exit;
-    }
-
-    /* matched [] */
-    ParserState_forEachTokenExistPs(ps, right) {
-        ParserState_iterStart(&ps);
-        /* found '[' */
-        if ((TOKEN_devider == ps.token2.type) &&
-            (strEqu(ps.token2.pyload, "["))) {
-            /* get 'obj' from obj[] */
-            args_setStr(&buffs, "obj", ps.token1.pyload);
-            is_in_brancket = 1;
-            /* fond ']' */
-        } else if ((TOKEN_devider == ps.token2.type) &&
-                   (strEqu(ps.token2.pyload, "]"))) {
-            is_in_brancket = 0;
-            char* inner = args_getStr(&buffs, "inner");
-            Arg* inner_arg = arg_setStr(NULL, "", inner);
-            inner_arg = arg_strAppend(inner_arg, ps.token1.pyload);
-            args_setStr(&buffs, "inner", arg_getStr(inner_arg));
-            arg_deinit(inner_arg);
-            /* update inner pointer */
-            inner = args_getStr(&buffs, "inner");
-            char* start = NULL;
-            char* end = NULL;
-            char* step = NULL;
-            Slice_getPars(&buffs, inner, &start, &end, &step);
-            /* __slice__(obj, start, end, step) */
-            right_arg = arg_strAppend(right_arg, "__slice__(");
-            right_arg = arg_strAppend(right_arg, args_getStr(&buffs, "obj"));
-            right_arg = arg_strAppend(right_arg, ",");
-            /* slice only one item */
-            /* end = start + 1 */
-            right_arg = arg_strAppend(right_arg, start);
-            /* __slice__(obj, index, indxe + 1, 1) */
-            right_arg = arg_strAppend(right_arg, ",");
-            right_arg = arg_strAppend(right_arg, end);
-            right_arg = arg_strAppend(right_arg, ",");
-            right_arg = arg_strAppend(right_arg, step);
-            right_arg = arg_strAppend(right_arg, ")");
-            /* clean the inner */
-            args_setStr(&buffs, "inner", "");
-            /* in brancket and found '[' */
-        } else if (is_in_brancket && (!strEqu(ps.token1.pyload, "["))) {
-            char* inner = args_getStr(&buffs, "inner");
-            Arg* index_arg = arg_setStr(NULL, "", inner);
-            index_arg = arg_strAppend(index_arg, ps.token1.pyload);
-            args_setStr(&buffs, "inner", arg_getStr(index_arg));
-            arg_deinit(index_arg);
-            /* out of brancket and not found ']' */
-        } else if (!is_in_brancket && (!strEqu(ps.token1.pyload, "]"))) {
-            if (TOKEN_strEnd != ps.token1.type) {
-                right_arg = arg_strAppend(right_arg, ps.token1.pyload);
-            }
-        }
-        ParserState_iterEnd(&ps);
-    }
-    ParserState_deinit(&ps);
-exit:
-    /* clean and return */
-    right_res = strsCopy(outBuffs, arg_getStr(right_arg));
-    arg_deinit(right_arg);
-    strsDeinit(&buffs);
-    return right_res;
-}
-
-char* Suger_solveLeftBranckets(Args* outBuffs, char* right, char* left) {
-    /* init objects */
-    Args buffs = {0};
-    Arg* right_arg = arg_setStr(NULL, "", "");
+    char* left = *left_p;
     uint8_t is_in_brancket = 0;
     args_setStr(&buffs, "inner", "");
     uint8_t matched = 0;
@@ -1324,6 +1229,46 @@ PIKA_RES AST_parseSubStmt(AST* ast, char* node_content) {
     return PIKA_RES_OK;
 }
 
+char* Parser_popSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
+    Arg* substmt_arg = arg_setStr(NULL, "", "");
+    Arg* newstmt_arg = arg_setStr(NULL, "", "");
+    char* stmt = *stmt_p;
+    PIKA_BOOL is_get_substmt = 0;
+    Args buffs = {0};
+    ParserState_forEachToken(ps, stmt) {
+        ParserState_iterStart(&ps);
+        if (is_get_substmt) {
+            /* get new stmt */
+            newstmt_arg = arg_strAppend(newstmt_arg, ps.token1.pyload);
+            ParserState_iterEnd(&ps);
+            continue;
+        }
+        if (ps.branket_deepth > 0) {
+            /* ignore */
+            substmt_arg = arg_strAppend(substmt_arg, ps.token1.pyload);
+            ParserState_iterEnd(&ps);
+            continue;
+        }
+        if (strEqu(ps.token1.pyload, delimiter)) {
+            /* found delimiter */
+            is_get_substmt = 1;
+            ParserState_iterEnd(&ps);
+            continue;
+        }
+        /* collect substmt */
+        substmt_arg = arg_strAppend(substmt_arg, ps.token1.pyload);
+        ParserState_iterEnd(&ps);
+    }
+    ParserState_deinit(&ps);
+
+    strsDeinit(&buffs);
+
+    char* substmt = strsCacheArg(outbuffs, substmt_arg);
+    char* newstmt = strsCacheArg(outbuffs, newstmt_arg);
+    *stmt_p = newstmt;
+    return substmt;
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args buffs = {0};
     char* assignment = strsGetFirstToken(&buffs, stmt, '(');
@@ -1369,8 +1314,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
     /* solve the [] stmt */
-    right = Suger_solveRightBranckets(&buffs, right);
-    right = Suger_solveLeftBranckets(&buffs, right, left);
+    right = Suger_solveLeftBranckets(&buffs, right, &left);
 #endif
 
 #if PIKA_SYNTAX_FORMAT_ENABLE
@@ -1407,73 +1351,33 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         AST_setThisNode(ast, (char*)"list", "list");
         char* subStmts = strsCut(&buffs, right, '[', ']');
         subStmts = strsAppend(&buffs, subStmts, ",");
-        Arg* subStmt = arg_setStr(NULL, "", "");
-        char* subStmt_str = NULL;
-        ParserState_forEachToken(ps, subStmts) {
-            ParserState_iterStart(&ps);
-            if (ps.branket_deepth > 0) {
-                /* in brankets */
-                /* append token to subStmt */
-                subStmt = arg_strAppend(subStmt, ps.token1.pyload);
-                subStmt_str = arg_getStr(subStmt);
-            } else {
-                /* not in brankets */
-                if (strEqu(ps.token1.pyload, ",")) {
-                    /* found "," push subStmt */
-                    subStmt_str = arg_getStr(subStmt);
-                    AST_parseSubStmt(ast, subStmt_str);
-                    /* clear subStmt */
-                    arg_deinit(subStmt);
-                    subStmt = arg_setStr(NULL, "", "");
-                } else {
-                    /* not "," append subStmt */
-                    subStmt = arg_strAppend(subStmt, ps.token1.pyload);
-                    subStmt_str = arg_getStr(subStmt);
-                }
+        while (1) {
+            char* subStmt = Parser_popSubStmt(&buffs, &subStmts, ",");
+            AST_parseSubStmt(ast, subStmt);
+            if (strEqu(subStmts, "")) {
+                break;
             }
-            ParserState_iterEnd(&ps);
         }
-        ParserState_deinit(&ps);
-        arg_deinit(subStmt);
         goto exit;
     }
 #endif
 
 #if PIKA_BUILTIN_DICT_ENABLE
-    /* solve list stmt */
+    /* solve dict stmt */
     if (STMT_dict == stmtType) {
         AST_setThisNode(ast, (char*)"dict", "dict");
         char* subStmts = strsCut(&buffs, right, '{', '}');
         subStmts = strsAppend(&buffs, subStmts, ",");
-        Arg* subStmt = arg_setStr(NULL, "", "");
-        char* subStmt_str = NULL;
-        ParserState_forEachToken(ps, subStmts) {
-            ParserState_iterStart(&ps);
-            if (ps.branket_deepth > 0) {
-                /* in brankets */
-                /* append token to subStmt */
-                subStmt = arg_strAppend(subStmt, ps.token1.pyload);
-                subStmt_str = arg_getStr(subStmt);
-            } else {
-                /* not in brankets */
-                if (strEqu(ps.token1.pyload, ",") ||
-                    strEqu(ps.token1.pyload, ":")) {
-                    /* found "," or ":" push subStmt */
-                    subStmt_str = arg_getStr(subStmt);
-                    AST_parseSubStmt(ast, subStmt_str);
-                    /* clear subStmt */
-                    arg_deinit(subStmt);
-                    subStmt = arg_setStr(NULL, "", "");
-                } else {
-                    /* not "," append subStmt */
-                    subStmt = arg_strAppend(subStmt, ps.token1.pyload);
-                    subStmt_str = arg_getStr(subStmt);
-                }
+        while (1) {
+            char* subStmt = Parser_popSubStmt(&buffs, &subStmts, ",");
+            char* key = Parser_popSubStmt(&buffs, &subStmt, ":");
+            char* value = subStmt;
+            AST_parseSubStmt(ast, key);
+            AST_parseSubStmt(ast, value);
+            if (strEqu(subStmts, "")) {
+                break;
             }
-            ParserState_iterEnd(&ps);
         }
-        ParserState_deinit(&ps);
-        arg_deinit(subStmt);
         goto exit;
     }
 #endif
@@ -1518,6 +1422,30 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         goto exit;
     }
 
+    if (STMT_slice == stmtType) {
+        /* solve slice stmt */
+        AST_setThisNode(ast, (char*)"slice", "slice");
+        AST_parseSubStmt(ast, strsGetFirstToken(&buffs, right, '['));
+        char* slice_list = strsCut(&buffs, right, '[', ']');
+        slice_list = strsAppend(&buffs, slice_list, ":");
+        int index = 0;
+        while (1) {
+            char* slice_str = Parser_popSubStmt(&buffs, &slice_list, ":");
+            if (index == 0 && strEqu(slice_str, "")) {
+                AST_parseSubStmt(ast, "0");
+            } else if (index == 1 && strEqu(slice_str, "")) {
+                AST_parseSubStmt(ast, "-1");
+            } else {
+                AST_parseSubStmt(ast, slice_str);
+            }
+            index++;
+            if (strEqu("", slice_list)) {
+                break;
+            }
+        }
+        goto exit;
+    }
+
     /* solve method stmt */
     if (STMT_method == stmtType) {
         method = strsGetFirstToken(&buffs, right, '(');
@@ -1526,39 +1454,13 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         pika_assert(NULL != subStmts);
         /* add ',' at the end */
         subStmts = strsAppend(&buffs, subStmts, ",");
-        /* init process values */
-        Arg* subStmt = arg_setStr(NULL, "", "");
-        /* start iteration */
-        char* subStmt_str = NULL;
-        ParserState_forEachToken(ps, subStmts) {
-            ParserState_iterStart(&ps);
-            /* parse process */
-            if (ps.branket_deepth > 0) {
-                /* in brankets */
-                /* append token to subStmt */
-                subStmt = arg_strAppend(subStmt, ps.token1.pyload);
-                subStmt_str = arg_getStr(subStmt);
-            } else {
-                /* not in brankets */
-                if (strEqu(ps.token1.pyload, ",")) {
-                    /* found "," push subStmt */
-                    subStmt_str = arg_getStr(subStmt);
-                    AST_parseSubStmt(ast, subStmt_str);
-                    /* clear subStmt */
-                    arg_deinit(subStmt);
-                    subStmt = arg_setStr(NULL, "", "");
-                } else {
-                    /* not "," append subStmt */
-                    subStmt = arg_strAppend(subStmt, ps.token1.pyload);
-                    subStmt_str = arg_getStr(subStmt);
-                }
+        while (1) {
+            char* substmt = Parser_popSubStmt(&buffs, &subStmts, ",");
+            AST_parseSubStmt(ast, substmt);
+            if (strEqu("", subStmts)) {
+                break;
             }
-            /* parse preocess end */
-            ParserState_iterEnd(&ps);
-            continue;
         }
-        ParserState_deinit(&ps);
-        arg_deinit(subStmt);
         goto exit;
     }
     /* solve reference stmt */
@@ -2232,6 +2134,7 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     char* num = obj_getStr(subAst, "num");
     char* import = obj_getStr(subAst, "import");
     char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
+    char* slice = obj_getStr(subAst, "slice");
     if (NULL != dict) {
         __platform_sprintf(buff, "%d DCT \n", deepth);
         pikaAsm = strsAppend(&buffs, pikaAsm, buff);
@@ -2266,6 +2169,10 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     }
     if (NULL != num) {
         __platform_sprintf(buff, "%d NUM %s\n", deepth, num);
+        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
+    }
+    if (NULL != slice) {
+        __platform_sprintf(buff, "%d SLC \n", deepth);
         pikaAsm = strsAppend(&buffs, pikaAsm, buff);
     }
     if (NULL != left) {

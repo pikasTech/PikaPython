@@ -162,5 +162,7 @@ InstructUnit* instructArray_getNext(InstructArray* self);
 VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename);
 Arg* obj_runMethodArg(PikaObj* self, PikaObj* method_args_obj, Arg* method_arg);
 PikaObj* pikaVM_runFile(PikaObj* self, char* file_name);
+Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step);
+Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj);
 
 #endif

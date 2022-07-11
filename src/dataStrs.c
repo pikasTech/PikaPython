@@ -107,6 +107,13 @@ char* strsCopy(Args* buffs_p, char* source) {
     return strCopy(buff, source);
 }
 
+char* strsCacheArg(Args* buffs_p, Arg* arg) {
+    pika_assert(arg != NULL);
+    char* res = strsCopy(buffs_p, arg_getStr(arg));
+    arg_deinit(arg);
+    return res;
+}
+
 char* strsFormat(Args* buffs_p, uint16_t buffSize, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -117,7 +124,7 @@ char* strsFormat(Args* buffs_p, uint16_t buffSize, const char* fmt, ...) {
 }
 
 Arg* arg_strAppend(Arg* arg_in, char* str_to_append) {
-    pika_assert(NULL!=str_to_append);
+    pika_assert(NULL != str_to_append);
     Args buffs = {0};
     char* str_out = strsAppend(&buffs, arg_getStr(arg_in), str_to_append);
     Arg* arg_out = arg_setStr(arg_in, "", str_out);
