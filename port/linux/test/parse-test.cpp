@@ -3475,14 +3475,22 @@ TEST(parser, num_issue) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// #if PIKA_SYNTAX_SLICE_ENABLE
-#if 0
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, branket_issue2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "temp = hex(int('12'))[0:2]\n";
     __platform_printf("%s\n", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "3 STR 12\n"
+                 "2 RUN int\n"
+                 "1 RUN hex\n"
+                 "1 NUM 0\n"
+                 "1 NUM 2\n"
+                 "0 SLC \n"
+                 "0 OUT temp\n");
     __platform_printf("%s", pikaAsm);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -3497,6 +3505,14 @@ TEST(parser, branket_issue3) {
     __platform_printf("%s\n", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
     __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 REF b\n"
+                 "2 REF x\n"
+                 "1 SLC \n"
+                 "1 REF y\n"
+                 "0 SLC \n"
+                 "0 OUT a\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

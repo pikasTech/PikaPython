@@ -1269,6 +1269,52 @@ char* Parser_popSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
     return substmt;
 }
 
+char* Parser_popLastSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
+    uint8_t last_stmt_i = 0;
+    char* stmt = *stmt_p;
+    ParserState_forEachToken(ps, stmt) {
+        ParserState_iterStart(&ps);
+        if (strIsStartWith(ps.token1.pyload, delimiter)) {
+            /* found delimiter */
+            if (!strEqu(delimiter, "[") && ps.branket_deepth > 0) {
+                /* ignore */
+                ParserState_iterEnd(&ps);
+                continue;
+            }
+
+            /* for "[" */
+            if (ps.branket_deepth > 1) {
+                /* ignore */
+                ParserState_iterEnd(&ps);
+                continue;
+            }
+
+            last_stmt_i = ps.iter_index;
+        }
+        ParserState_iterEnd(&ps);
+    }
+    ParserState_deinit(&ps);
+
+    Arg* mainStmt = arg_setStr(NULL, "", "");
+    Arg* lastStmt = arg_setStr(NULL, "", "");
+    {
+        ParserState_forEachToken(ps, stmt) {
+            ParserState_iterStart(&ps);
+            if (ps.iter_index < last_stmt_i) {
+                mainStmt = arg_strAppend(mainStmt, ps.token1.pyload);
+            }
+            if (ps.iter_index >= last_stmt_i) {
+                lastStmt = arg_strAppend(lastStmt, ps.token1.pyload);
+            }
+            ParserState_iterEnd(&ps);
+        }
+        ParserState_deinit(&ps);
+    }
+
+    *stmt_p = strsCacheArg(outbuffs, mainStmt);
+    return strsCacheArg(outbuffs, lastStmt);
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args buffs = {0};
     char* assignment = strsGetFirstToken(&buffs, stmt, '(');
@@ -1384,49 +1430,20 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
 
     /* solve method chain */
     if (STMT_chain == stmtType) {
-        uint8_t last_chain_i = 0;
-        {
-            ParserState_forEachToken(ps, right) {
-                ParserState_iterStart(&ps);
-                if (ps.branket_deepth > 0) {
-                    ParserState_iterEnd(&ps);
-                    continue;
-                }
-                /* not in brankets */
-                if (strIsStartWith(ps.token1.pyload, ".")) {
-                    last_chain_i = ps.iter_index;
-                }
-                ParserState_iterEnd(&ps);
-            }
-            ParserState_deinit(&ps);
-        }
-        Arg* chainStmt = arg_setStr(NULL, "", "");
-        Arg* mainStmt = arg_setStr(NULL, "", "");
-        ParserState_forEachToken(ps, right) {
-            ParserState_iterStart(&ps);
-            /* append substmt1 to last_chain_i*/
-            if (ps.iter_index < last_chain_i) {
-                chainStmt = arg_strAppend(chainStmt, ps.token1.pyload);
-            }
-            /* append substmt2 from last_chain_i to end */
-            if (ps.iter_index >= last_chain_i) {
-                mainStmt = arg_strAppend(mainStmt, ps.token1.pyload);
-            }
-            ParserState_iterEnd(&ps);
-        }
-        ParserState_deinit(&ps);
-        AST_parseSubStmt(ast, arg_getStr(chainStmt));
-        AST_parseStmt(ast, arg_getStr(mainStmt));
-        arg_deinit(chainStmt);
-        arg_deinit(mainStmt);
+        char* stmt = strsCopy(&buffs, right);
+        char* lastStmt = Parser_popLastSubStmt(&buffs, &stmt, ".");
+        AST_parseSubStmt(ast, stmt);
+        AST_parseStmt(ast, lastStmt);
         goto exit;
     }
 
     if (STMT_slice == stmtType) {
         /* solve slice stmt */
         AST_setThisNode(ast, (char*)"slice", "slice");
-        AST_parseSubStmt(ast, strsGetFirstToken(&buffs, right, '['));
-        char* slice_list = strsCut(&buffs, right, '[', ']');
+        char* stmt = strsCopy(&buffs, right);
+        char* laststmt = Parser_popLastSubStmt(&buffs, &stmt, "[");
+        AST_parseSubStmt(ast, stmt);
+        char* slice_list = strsCut(&buffs, laststmt, '[', ']');
         slice_list = strsAppend(&buffs, slice_list, ":");
         int index = 0;
         while (1) {
