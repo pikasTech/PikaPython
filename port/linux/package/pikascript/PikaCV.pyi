@@ -22,6 +22,10 @@ class Image(TinyObj):
         """Read the image from the specified path, Need implement the   `__platform_fopen()`, `__platform_fread()` and `__platform_fclose()`"""
         ...
 
+    def write(self, path: str):
+        """Write the image to the specified path, Need implement the   `__platform_fopen()`, `__platform_fwrite()` and `__platform_fclose()`"""
+        ...
+
     def loadJpeg(self, bytes: any):
         """Load the image from bytes"""
 
@@ -81,3 +85,17 @@ class Converter(TinyObj):
     @staticmethod
     def toGray(image: Image):
         """Convert the image to Gray"""
+
+    @staticmethod
+    def toBMP(image: Image):
+        """Convert the image to BMP"""
+
+    @staticmethod
+    def toBGR888(image: Image):
+        """Convert the image to BGR888"""
+
+
+class Transformer(TinyObj):
+    @staticmethod
+    def rotateDown(image: Image):
+        """Rotate the image """

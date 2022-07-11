@@ -1,4 +1,5 @@
 #include "PikaCV_Converter.h"
+#include "PikaCV_Transformer.h"
 #include "PikaCV_common.h"
 
 /* Session identifier for input/output functions (name, members and usage are as
@@ -93,7 +94,7 @@ PIKA_RES Converter_JPEGtoRGB888(PikaObj* image) {
         return PIKA_RES_ERR_INVALID_PTR;
     }
     pika_assert(img->format == PikaCV_ImageFormat_Type_JPEG);
-    uint8_t* data = _Image_getData(image);
+    uint8_t* data = _image_getData(image);
     if (NULL == data) {
         __platform_printf("Converter_JPEGtoRGB888: data is NULL\n");
         return PIKA_RES_ERR_INVALID_PTR;
@@ -170,7 +171,7 @@ void PikaCV_Converter_toGray(PikaObj* self, PikaObj* image) {
 
     int size_new = img->height * img->width;
     Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
-    uint8_t* data = _Image_getData(image);
+    uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
     if (img->format == PikaCV_ImageFormat_Type_RGB888) {
         for (int i = 0; i < size_new; i++) {
@@ -279,6 +280,135 @@ void PikaCV_Converter_toRGB888(PikaObj* self, PikaObj* image) {
 exit:
     obj_setBytes(image, "_data", data_new, size_new);
     img->format = PikaCV_ImageFormat_Type_RGB565;
+    img->size = size_new;
+    arg_deinit(arg_data_new);
+}
+
+typedef struct /**** BMP file header structure ****/
+{
+    unsigned int bfSize;        /* Size of file */
+    unsigned short bfReserved1; /* Reserved */
+    unsigned short bfReserved2; /* ... */
+    unsigned int bfOffBits;     /* Offset to bitmap data */
+} BITMAPFILEHEADER;
+
+typedef struct /**** BMP file info structure ****/
+{
+    unsigned int biSize;         /* Size of info header */
+    int biWidth;                 /* Width of image */
+    int biHeight;                /* Height of image */
+    unsigned short biPlanes;     /* Number of color planes */
+    unsigned short biBitCount;   /* Number of bits per pixel */
+    unsigned int biCompression;  /* Type of compression to use */
+    unsigned int biSizeImage;    /* Size of image data */
+    int biXPelsPerMeter;         /* X pixels per meter */
+    int biYPelsPerMeter;         /* Y pixels per meter */
+    unsigned int biClrUsed;      /* Number of colors used */
+    unsigned int biClrImportant; /* Number of important colors */
+} BITMAPINFOHEADER;
+
+#define align(value, align) ((((value) + ((align)-1)) / (align)) * (align))
+
+void PikaCV_Converter_toBMP(PikaObj* self, PikaObj* image) {
+    PikaCV_Image* img = obj_getStruct(image, "image");
+    if (NULL == img) {
+        pika_assert(0);
+        return;
+    }
+    if (img->format == PikaCV_ImageFormat_Type_BMP) {
+        /* do nothing */
+        return;
+    }
+
+    /* convert to BGR */
+    if (img->format != PikaCV_ImageFormat_Type_BGR888) {
+        PikaCV_Converter_toBGR888(self, image);
+    }
+
+    PikaCV_Transformer_rotateDown(self, image);
+
+    BITMAPFILEHEADER bfh;
+    BITMAPINFOHEADER bih;
+    int i = 0, row_align;
+    int width = img->width;
+    int height = img->height;
+
+    // bmp的每行数据的长度要4字节对齐
+    row_align = align(width * 3, 4);
+
+    /* convert to BMP */
+    int size_new = img->height * row_align + 54;
+    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
+    uint8_t* data = _image_getData(image);
+    uint8_t* data_new = arg_getBytes(arg_data_new);
+
+    unsigned short bfType = 0x4d42;  //'BM'
+    bfh.bfReserved1 = 0;
+    bfh.bfReserved2 = 0;
+    bfh.bfSize = 2 + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) +
+                 row_align * height;
+    bfh.bfOffBits = 2 + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+
+    bih.biSize = sizeof(BITMAPINFOHEADER);
+    bih.biWidth = width;
+    bih.biHeight = height;
+    bih.biPlanes = 1;
+    bih.biBitCount = 24;
+    bih.biCompression = 0;
+    bih.biSizeImage = 0;
+    bih.biXPelsPerMeter = 0;
+    bih.biYPelsPerMeter = 0;
+    bih.biClrUsed = 0;
+    bih.biClrImportant = 0;
+
+    __platform_memset(data_new, 0, size_new);
+
+    __platform_memcpy(data_new, &bfType, sizeof(bfType));
+    __platform_memcpy(data_new + sizeof(bfType), &bfh, sizeof(bfh));
+    __platform_memcpy(data_new + sizeof(bfType) + sizeof(bfh), &bih,
+                      sizeof(bih));
+
+    for (i = 0; i < height; i++) {
+        __platform_memcpy(data_new + sizeof(bfType) + sizeof(bfh) +
+                              sizeof(bih) + row_align * i,
+                          data + width * 3 * i, width * 3);
+    }
+
+    obj_setBytes(image, "_data", data_new, size_new);
+    img->format = PikaCV_ImageFormat_Type_BMP;
+    img->size = size_new;
+    arg_deinit(arg_data_new);
+}
+
+void PikaCV_Converter_toBGR888(PikaObj* self, PikaObj* image) {
+    PikaCV_Image* img = obj_getStruct(image, "image");
+    if (NULL == img) {
+        pika_assert(0);
+        return;
+    }
+    if (img->format == PikaCV_ImageFormat_Type_BGR888) {
+        /* do nothing */
+        return;
+    }
+    /* to RGB888 */
+    if (img->format != PikaCV_ImageFormat_Type_RGB888) {
+        PikaCV_Converter_toRGB888(self, image);
+    }
+    /* to BGR888 */
+    int size_new = img->size;
+    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
+    uint8_t* data = _image_getData(image);
+    uint8_t* data_new = arg_getBytes(arg_data_new);
+
+    /* RBG888 to BGR888 */
+    for (int i = 0; i < img->size; i += 3) {
+        data_new[i] = data[i + 2];
+        data_new[i + 1] = data[i + 1];
+        data_new[i + 2] = data[i];
+    }
+
+    obj_setBytes(image, "_data", data_new, size_new);
+    img->format = PikaCV_ImageFormat_Type_BGR888;
     img->size = size_new;
     arg_deinit(arg_data_new);
 }
