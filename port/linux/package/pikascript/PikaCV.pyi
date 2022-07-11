@@ -19,11 +19,15 @@ class Image(TinyObj):
     def __init__(self): ...
 
     def read(self, path: str):
-        """Read the image from the specified path, Need implement the   `__platform_fopen()`, `__platform_fread()` and `__platform_fclose()`"""
+        """Read the image from the specified path, 
+        Need implement the   `__platform_fopen()`, `__platform_fread()`
+          and `__platform_fclose()`"""
         ...
 
     def write(self, path: str):
-        """Write the image to the specified path, Need implement the   `__platform_fopen()`, `__platform_fwrite()` and `__platform_fclose()`"""
+        """Write the image to the specified path, 
+        Need implement the   `__platform_fopen()`, `__platform_fwrite()` 
+        and `__platform_fclose()`"""
         ...
 
     def loadJpeg(self, bytes: any):
@@ -96,6 +100,8 @@ class Converter(TinyObj):
 
 
 class Transformer(TinyObj):
+    """The Transformer class is used to 
+    supply the rotate, flip, and crop operation for an image."""
     @staticmethod
     def rotateDown(image: Image):
         """Rotate the image """
