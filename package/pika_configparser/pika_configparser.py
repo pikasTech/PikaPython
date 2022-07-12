@@ -1,8 +1,4 @@
 from PikaStdData import String
-import PikaDebug as pdb
-
-d = pdb.Debuger()
-
 
 class ConfigParser():
     content = ''
