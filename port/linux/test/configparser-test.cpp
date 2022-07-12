@@ -24,8 +24,8 @@ TEST(configparser, test1) {
     /* run */
     obj_setStr(pikaMain, "s", s);
     obj_run(pikaMain,
-            "import configparser\n"
-            "config = configparser.ConfigParser()\n"
+            "import pika_configparser\n"
+            "config = pika_configparser.ConfigParser()\n"
             "config.read_string(s)\n");
     /* collect */
     /* assert */

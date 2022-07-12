@@ -13,7 +13,8 @@ User = hg\n\
 \n\
 [topsecret.server.com]\n\
 Port = 50022\n\
-ForwardX11 = no'
+ForwardX11 = no\n\
+content = http://sbkpda.hazz.hrss.gov.cn:9001/nontax_platforml/nontax/pay?Q=wj%2Bf'
 
 config.read_string(config_string)
 

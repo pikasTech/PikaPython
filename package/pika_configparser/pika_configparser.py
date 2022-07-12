@@ -1,4 +1,7 @@
 from PikaStdData import String
+import PikaDebug as pdb
+
+d = pdb.Debuger()
 
 
 class ConfigParser():
@@ -22,10 +25,8 @@ class ConfigParser():
                 continue
 
             stmt = line.split('=')
-            key = String(stmt[0])
-            value = String(stmt[1])
-            key = key.strip()
-            value = value.strip()
+            key = String(stmt[0]).strip()
+            value = String(_getvalue(stmt)).strip()
             section_dict = self.config_dict[section]
             section_dict[key] = value
 
@@ -98,3 +99,15 @@ class ConfigParser():
         content = ''
         self.content = content
         self._parse()
+
+def _getvalue(stmt):
+    index = 0
+    val = ''
+    for item in stmt:
+        if index > 0:
+            if val != '':
+                val += ('=' + item)
+            else:
+                val += item
+        index = index + 1
+    return val
