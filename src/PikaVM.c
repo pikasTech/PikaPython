@@ -74,14 +74,30 @@ static char* VMState_getConstWithInstructUnit(VMState* vs,
 
 static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vs) {
     int offset = 0;
-    InstructUnit* ins_unit_now = VMState_getInstructNow(vs);
+    int loop_deepth = -1;
+
+    /* find loop deepth */
     while (1) {
-        offset += instructUnit_getSize(ins_unit_now);
-        ins_unit_now = VMState_getInstructWithOffset(vs, offset);
+        offset -= instructUnit_getSize(ins_unit_now);
+        InstructUnit* ins_unit_now = VMState_getInstructWithOffset(vs, offset);
         uint16_t invoke_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
         enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
         char* data = VMState_getConstWithInstructUnit(vs, ins_unit_now);
-        if ((0 == invoke_deepth) && (JMP == ins) && strEqu(data, "-1")) {
+        if ((0 == invoke_deepth) && (JEZ == ins) && strEqu(data, "2")) {
+            loop_deepth = instructUnit_getBlockDeepth(ins_unit_now);
+            break;
+        }
+    }
+
+    offset = 0;
+    while (1) {
+        offset += instructUnit_getSize(ins_unit_now);
+        InstructUnit* ins_unit_now = VMState_getInstructWithOffset(vs, offset);
+        enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
+        char* data = VMState_getConstWithInstructUnit(vs, ins_unit_now);
+        int block_deepth_now = instructUnit_getBlockDeepth(ins_unit_now);
+        if ((block_deepth_now == loop_deepth) && (JMP == ins) &&
+            strEqu(data, "-1")) {
             return offset;
         }
     }
@@ -972,16 +988,25 @@ static Arg* VM_instruction_handler_SER(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_JEZ(PikaObj* self, VMState* vs, char* data) {
     int thisBlockDeepth;
     thisBlockDeepth = VMState_getBlockDeepthNow(vs);
+    int jmp_expect = fast_atoi(data);
     Arg* pika_assertArg = stack_popArg(&(vs->stack));
     int pika_assert = arg_getInt(pika_assertArg);
     arg_deinit(pika_assertArg);
     char __else[] = "__else0";
     __else[6] = '0' + thisBlockDeepth;
     args_setInt(self->list, __else, !pika_assert);
+
     if (0 == pika_assert) {
-        /* set __else flag */
-        vs->jmp = fast_atoi(data);
+        /* jump */
+        vs->jmp = jmp_expect;
     }
+
+    /* restore loop deepth */
+    if (2 == jmp_expect && 0 == pika_assert) {
+        int block_deepth_now = VMState_getBlockDeepthNow(vs);
+        vs->loop_deepth = block_deepth_now;
+    }
+
     return NULL;
 }
 
@@ -1885,6 +1910,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
         .globals = globals,
         .jmp = 0,
         .pc = pc,
+        .loop_deepth = 0,
         .error_code = PIKA_RES_OK,
         .line_error_code = PIKA_RES_OK,
         .try_error_code = PIKA_RES_OK,

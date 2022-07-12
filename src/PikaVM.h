@@ -72,6 +72,7 @@ struct VMState {
     int32_t jmp;
     int32_t pc;
     ByteCodeFrame* bytecode_frame;
+    uint8_t loop_deepth;
     uint8_t error_code;
     uint8_t line_error_code;
     uint8_t try_error_code;

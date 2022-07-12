@@ -2475,3 +2475,38 @@ TEST(pikaMain, returnNullString) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, for_loop_issue_1b2a3f1bdf) {
+    char* lines =
+        "res = 0\n"
+        "for i in range(0, 10):\n"
+        "    if i < 3:\n"
+        "        continue\n"
+        "    if i > 7:\n"
+        "        continue\n"
+        "    for i in range(i, i+3):\n"
+        "        res += i\n"
+        "\n";
+
+    Args* buffs = New_strBuff();
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+
+    obj_run(pikaMain, lines);
+    /* collect */
+    int res = obj_getInt(pikaMain, "res"); 
+    /* assert */
+    EXPECT_EQ(res, 90);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
