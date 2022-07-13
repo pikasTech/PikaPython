@@ -251,28 +251,13 @@ void PikaCV_Image_add(PikaObj *self, PikaObj* image){
     /* add two images */
     for (i = 0; i < (src->size)/3; i++) {
         result=src_data[i * 3] + img_data[i * 3];
-        if(result<MAX(src_data[i * 3],img_data[i * 3])){
-            src_data[i * 3]=255;
-        }
-        else{
-            src_data[i * 3]=result;
-        }
+        src_data[i * 3] = ((result<MAX(src_data[i * 3],img_data[i * 3]))?255:result);
         
         result=src_data[i * 3 + 1] + img_data[i * 3 + 1];
-        if(result<MAX(src_data[i * 3 + 1],img_data[i * 3 + 1])){
-            src_data[i * 3 + 1]=255;
-        }
-        else{
-            src_data[i * 3 + 1]=result;
-        }
+        src_data[i * 3 + 1] = ((result<MAX(src_data[i * 3 + 1],img_data[i * 3 + 1]))?255:result);
 
         result=src_data[i * 3 + 2] + img_data[i * 3 + 2];
-        if(result<MAX(src_data[i * 3 + 2],img_data[i * 3 + 2])){
-            src_data[i * 3 + 2]=255;
-        }
-        else{
-            src_data[i * 3 + 2]=result;
-        }
+        src_data[i * 3 + 2] = ((result<MAX(src_data[i * 3 + 2],img_data[i * 3 + 2]))?255:result);
 
     }
 
@@ -307,28 +292,13 @@ void PikaCV_Image_minus(PikaObj *self, PikaObj* image){
     /* minus two images */
     for (i = 0; i < (src->size)/3; i++) {
         result=src_data[i * 3] - img_data[i * 3];
-        if(result>MIN(src_data[i * 3],img_data[i * 3])){
-            src_data[i * 3]=0;
-        }
-        else{
-            src_data[i * 3]=result;
-        }
+        src_data[i * 3] = ((result<MIN(src_data[i * 3],img_data[i * 3]))?0:result);
         
         result=src_data[i * 3 + 1] - img_data[i * 3 + 1];
-        if(result>MIN(src_data[i * 3 + 1],img_data[i * 3 + 1])){
-            src_data[i * 3 + 1]=0;
-        }
-        else{
-            src_data[i * 3 + 1]=result;
-        }
+        src_data[i * 3 + 1] = ((result>MIN(src_data[i * 3 + 1],img_data[i * 3 + 1]))?0:result);
 
         result=src_data[i * 3 + 2] - img_data[i * 3 + 2];
-        if(result>MIN(src_data[i * 3 + 2],img_data[i * 3 + 2])){
-            src_data[i * 3 + 2]=0;
-        }
-        else{
-            src_data[i * 3 + 2]=result;
-        }
+        src_data[i * 3 + 2] = ((result<MIN(src_data[i * 3 + 2],img_data[i * 3 + 2]))?0:result);
 
     }
     
