@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657689645801,
+  "lastUpdate": 1657689656297,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -67306,6 +67306,60 @@ window.BENCHMARK_DATA = {
             "value": 0.0050001285072853365,
             "unit": "ms/iter",
             "extra": "iterations: 280602\ncpu: 0.005000000000000001 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "757419920@qq.com",
+            "name": "BearJan",
+            "username": "Renzhihan"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "d892a58462e0a8812115c1c8fab26ac9840fdc41",
+          "message": "!50 Support add and minus images in PikaCV\n* fix commit\n* fix commit\n* fix commit\n* Suppor add and minus in PikaCV\n* Support PikaCV add two images and minus two images.Minus haven't finished.",
+          "timestamp": "2022-07-13T05:13:04Z",
+          "tree_id": "bdc50c24663c9223e576d6377876f453e74f4892",
+          "url": "https://github.com/pikasTech/pikascript/commit/d892a58462e0a8812115c1c8fab26ac9840fdc41"
+        },
+        "date": 1657689650595,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6236.623760274749,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6236.623760274749 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 45.17956760166239,
+            "unit": "ms/iter",
+            "extra": "iterations: 22\ncpu: 45.17447250671854 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 24.382301249160633,
+            "unit": "ms/iter",
+            "extra": "iterations: 40\ncpu: 24.37957279078075 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 8.019717269757775,
+            "unit": "ms/iter",
+            "extra": "iterations: 122\ncpu: 8.017158309033107 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000702662070012,
+            "unit": "ms/iter",
+            "extra": "iterations: 194523\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
