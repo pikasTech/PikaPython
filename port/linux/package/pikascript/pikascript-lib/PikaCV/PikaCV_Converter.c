@@ -175,13 +175,13 @@ void PikaCV_Converter_toGray(PikaObj* self, PikaObj* image) {
     uint8_t* data_new = arg_getBytes(arg_data_new);
     if (img->format == PikaCV_ImageFormat_Type_RGB888) {
         for (int i = 0; i < size_new; i++) {
-            data_new[i] = (data[i * 3] + data[i * 3 + 1] + data[i * 3 + 2]) / 3;
+            data_new[i] = (uint16_t)(data[i * 3] + data[i * 3 + 1] + data[i * 3 + 2]) / 3;
         }
         goto exit;
     }
     if (img->format == PikaCV_ImageFormat_Type_RGB565) {
         for (int i = 0; i < size_new; i++) {
-            data_new[i] = (data[i * 2] + data[i * 2 + 1]) / 2;
+            data_new[i] = (uint16_t)(data[i * 2] + data[i * 2 + 1]) >> 1;
         }
         goto exit;
     }
