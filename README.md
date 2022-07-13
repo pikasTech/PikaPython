@@ -285,6 +285,8 @@ https://t.me/+JL3TZ9k-Lfg2OWE1
 
 ## E-mail: liang6516@outlook.com
 
+## Tencent QQ： 645275593
+
 # 5.Demo 
 
 The scripts in demos are in the [examples](examples) folder.
@@ -595,6 +597,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+| contrubute to PikaCV | [purewind7](https://gitee.com/purewind7) |
 | xr806(openharmony) bsp |[sjy](https://gitee.com/shanjiayang)|
 | ESP32 package |沧御|
 | MM32F5277E9P package |[unsigned](https://gitee.com/unsigned0)|

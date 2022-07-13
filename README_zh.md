@@ -288,6 +288,15 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 
 <img src="document/image/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
 
+## Tencent QQ： 
+645275593
+
+## E-mail: 
+645275593@qq.com
+
+
+
+
 
 # 5.Demo展示
 
@@ -590,6 +599,7 @@ while True:
 # 7.贡献者
 | 内容 | 贡献者 |
 | --- | --- |
+| contrubute to PikaCV | [purewind7](https://gitee.com/purewind7) |
 | xr806(openharmony) bsp |[sjy](https://gitee.com/shanjiayang)|
 | ESP32 package |沧御|
 | MM32F5277E9P package |[unsigned](https://gitee.com/unsigned0)|
