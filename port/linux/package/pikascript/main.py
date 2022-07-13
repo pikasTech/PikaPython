@@ -1,21 +1,17 @@
 from PikaObj import *
 import PikaStdLib
-import PikaStdData
+import PikaStdDevice
 import ctypes
 import GTestTask
 import PikaMath
-import PikaStdDevice
 import test_module1
 import test_cmodule
-import TempDevTest as dev
-import TemplateDevice
-import pika_cjson as cjson
+import TempDevTest
 import cjson_test
 import test_module4
 import pika_lua
 import import_test
-import pika_configparser as configparser
-from PikaStdData import String as S
+import pika_configparser
 import PikaDebug
 import PikaCV
 

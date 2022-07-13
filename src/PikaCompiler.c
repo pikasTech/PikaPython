@@ -371,7 +371,7 @@ int Lib_loadLibraryFileToArray(char* origin_file_name, char* out_folder) {
     FILE* fp = __platform_fopen(output_file_path, "wb+");
     char* array_name = strsGetLastToken(&buffs, origin_file_name, '/');
     array_name = strsReplace(&buffs, array_name, ".", "_");
-    __platform_printf("    loading %s[]...\n", array_name);
+    __platform_printf("  loading %s[]...\n", array_name);
     pika_fputs("#include \"PikaPlatform.h\"\n", fp);
     pika_fputs("/* warning: auto generated file, please do not modify */\n",
                fp);
@@ -404,7 +404,7 @@ static void __Maker_compileModuleWithInfo(PikaMaker* self, char* module_name) {
     char* input_file_name = strsAppend(&buffs, module_name, ".py");
     char* input_file_path =
         strsAppend(&buffs, obj_getStr(self, "pwd"), input_file_name);
-    __platform_printf("    compiling %s...\r\n", input_file_name);
+    __platform_printf("  compiling %s...\r\n", input_file_name);
     char* output_file_name = strsAppend(&buffs, module_name, ".py.o");
     char* output_file_path = NULL;
     output_file_path =
@@ -591,7 +591,7 @@ void pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path) {
     Args context = {0};
     LibObj* lib = New_LibObj(NULL);
     Args buffs = {0};
-    __platform_printf("    linking %s...\n", lib_path);
+    __platform_printf("  linking %s...\n", lib_path);
     args_setPtr(&context, "__lib", lib);
     args_setPtr(&context, "__maker", self);
     args_foreach(self->list, __foreach_handler_linkCompiledModules, &context);
