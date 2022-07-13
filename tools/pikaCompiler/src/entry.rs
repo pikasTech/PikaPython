@@ -15,7 +15,7 @@ pub fn pika_compiler_entry() {
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
 
     /* analyse file begin with main.py */
-    compiler = Compiler::analyse_top_package(compiler, String::from("main"));
+    compiler = Compiler::analyse_py_package_main(compiler, String::from("main"));
     /*
        Compile packages in requestment.txt, solve the packages
        as the top packages.
@@ -26,13 +26,13 @@ pub fn pika_compiler_entry() {
         if package_name == "pikascript-core" {
             continue;
         }
-        compiler = Compiler::analyse_top_package(compiler, String::from(package_name));
+        compiler = Compiler::analyse_c_package_top(compiler, String::from(package_name));
     }
 
     /* Compile packages in PikaStdLib */
-    compiler = Compiler::analyse_top_package(compiler, String::from("PikaStdTask"));
-    compiler = Compiler::analyse_top_package(compiler, String::from("PikaStdData"));
-    compiler = Compiler::analyse_top_package(compiler, String::from("PikaDebug"));
+    compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaStdTask"));
+    compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaStdData"));
+    compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaDebug"));
 
     // println!();
 

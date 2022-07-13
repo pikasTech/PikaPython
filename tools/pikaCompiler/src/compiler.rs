@@ -7,6 +7,14 @@ use std::fs;
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
+
+enum PackageType {
+    CPackageTop,
+    CPackageInner,
+    PyPackageTop,
+    PyPackageInner,
+}
+
 #[derive(Debug)]
 pub struct Compiler {
     pub dist_path: String,
@@ -30,9 +38,17 @@ impl Compiler {
         return compiler;
     }
 
-    pub fn analyse_main_line(mut compiler: Compiler, line: &String) -> Compiler {
-        let file_name = "main".to_string();
-        let class_name = "PikaMain".to_string();
+    pub fn analyse_py_line(mut compiler: Compiler, line: &String, is_top_pkg: bool) -> Compiler {
+        let file_name = match is_top_pkg {
+            true => "main".to_string(),
+            false => "".to_string(),
+        };
+
+        let class_name = match is_top_pkg {
+            true => "PikaMain".to_string(),
+            false => "".to_string(),
+        };
+
         /* get class now or create one */
         let class_now = match compiler.class_list.get_mut(&"PikaMain".to_string()) {
             Some(class_now) => class_now,
@@ -53,40 +69,18 @@ impl Compiler {
             if package_name == "PikaObj" {
                 return compiler;
             }
-            /* add to script */
-            class_now.script_list.add(&line);
 
-            /* check file, break if *.py no found */
-            match Compiler::open_file(format!("{}{}.pyi", compiler.source_path, package_name)) {
-                Ok(_) => {}
-                Err(_) => {
-                    /* if *.py exits, not print warning */
-                    match Compiler::open_file(format!(
-                        "{}{}.py",
-                        compiler.source_path, package_name
-                    )) {
-                        Ok(_) => {
-                            return compiler;
-                        }
-                        Err(_) => {
-                            println!(
-                                "    [warning]: file: '{}{}.pyi' or '{}{}.py' no found",
-                                compiler.source_path,
-                                package_name,
-                                compiler.source_path,
-                                package_name
-                            );
-                            return compiler;
-                        }
-                    };
-                }
-            };
+            if is_top_pkg {
+                /* add to script */
+                class_now.script_list.add(&line);
+            }
 
-            let package_obj_define = format!("{} = {}()", package_name, package_name);
-            class_now.push_object(package_obj_define, &file_name);
-            return Compiler::analyse_top_package(compiler, package_name.to_string());
+            return Compiler::analyse_package_from_py(compiler, package_name.to_string());
         }
-        class_now.script_list.add(&line);
+
+        if is_top_pkg {
+            class_now.script_list.add(&line);
+        }
         return compiler;
     }
 
@@ -103,24 +97,66 @@ impl Compiler {
         return Err(std::io::Error::from(std::io::ErrorKind::NotFound));
     }
 
-    pub fn analyse_top_package(self: Compiler, file_name: String) -> Compiler {
-        return self.__do_analyse_file(file_name, true);
+    pub fn analyse_py_package_main(self: Compiler, file_name: String) -> Compiler {
+        return self.__do_analyse_file(file_name, PackageType::PyPackageTop);
     }
 
-    pub fn analyse_inner_package(self: Compiler, file_name: String) -> Compiler {
-        return self.__do_analyse_file(file_name, false);
+    pub fn analyse_py_package_inner(self: Compiler, file_name: String) -> Compiler {
+        return self.__do_analyse_file(file_name, PackageType::PyPackageInner);
     }
 
-    fn __do_analyse_file(mut self: Compiler, file_name: String, is_top_pkg: bool) -> Compiler {
+    pub fn analyse_c_package_top(self: Compiler, file_name: String) -> Compiler {
+        return self.__do_analyse_file(file_name, PackageType::CPackageTop);
+    }
+
+    pub fn analyse_c_package_inner(self: Compiler, file_name: String) -> Compiler {
+        return self.__do_analyse_file(file_name, PackageType::CPackageInner);
+    }
+
+    pub fn analyse_package_from_py(mut self: Compiler, file_name: String) -> Compiler {
+        let suffix = String::from("pyi");
         /* open file */
         let file: std::result::Result<std::fs::File, std::io::Error>;
-        if file_name == "main" {
-            /* only the main.py is the .py file */
-            file = Compiler::open_file(format!("{}main.py", self.source_path));
-        } else {
-            /* other module is CMoudle, which is .pyi file */
-            file = Compiler::open_file(format!("{}{}.pyi", self.source_path, file_name));
-        }
+        file = Compiler::open_file(format!("{}{}.{}", self.source_path, file_name, suffix));
+        match file {
+            /* py import pyi => top_pyi */
+            Ok(_) => {
+                let class_now = match self.class_list.get_mut(&"PikaMain".to_string()) {
+                    Some(class_now) => class_now,
+                    None => return self,
+                };
+
+                /* create constructor for PikaMain */
+                let package_obj_define = format!("{} = {}()", file_name, file_name);
+                class_now.push_object(package_obj_define, &"main".to_string());
+
+                return Compiler::analyse_c_package_top(self, file_name);
+            }
+            Err(_) => {
+                /* py import py => inner_py */
+                return self.analyse_py_package_inner(file_name.clone());
+            }
+        };
+    }
+
+    fn __do_analyse_file(mut self: Compiler, file_name: String, pkg_type: PackageType) -> Compiler {
+        let is_top_c_pkg = match pkg_type {
+            PackageType::CPackageTop => true,
+            _ => false,
+        };
+
+        let is_top_py_pkg: bool = match pkg_type {
+            PackageType::PyPackageTop => true,
+            _ => false,
+        };
+
+        let suffix = match pkg_type {
+            PackageType::CPackageTop | PackageType::CPackageInner => "pyi",
+            PackageType::PyPackageTop | PackageType::PyPackageInner => "py",
+        };
+        /* open file */
+        let file: std::result::Result<std::fs::File, std::io::Error>;
+        file = Compiler::open_file(format!("{}{}.{}", self.source_path, file_name, suffix));
 
         /*
             If the .pyi no exist, check if the .py exist
@@ -130,32 +166,41 @@ impl Compiler {
         let mut file = match file {
             Ok(file) => file,
             Err(_) => {
-                /* if *.py exits, not print warning */
-                let file_py = Compiler::open_file(format!("{}{}.py", self.source_path, file_name));
-                match file_py {
-                    Ok(_) => {
-                        return self;
-                    }
-                    Err(_) => {
-                        println!(
-                            "    [warning]: file: '{}{}.pyi' or '{}{}.py' no found",
-                            self.source_path, file_name, self.source_path, file_name
-                        );
-                        return self;
-                    }
-                };
+                if suffix == "pyi" {
+                    /* if .pyi no exist, check .py exist */
+                    return self.analyse_py_package_inner(file_name.clone());
+                }
+
+                /* .py no exist, error */
+                println!(
+                    "    [warning]: file: '{}{}.pyi' or '{}{}.py' no found",
+                    self.source_path, file_name, self.source_path, file_name
+                );
+                return self;
             }
         };
 
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
 
-        /* check if compiled */
-        if self.compiled_list.contains(&file_name) {
-        } else if file_name == "main" {
-            println!("    scaning {}{}.py...", self.source_path, file_name);
-        } else {
-            println!("    binding {}{}.pyi...", self.source_path, file_name);
+        /* return when compiled */
+        if !self.compiled_list.contains(&file_name) {
+            /* print info */
+            match suffix {
+                "py" => {
+                    println!(
+                        "  scaning {}{}.{}...",
+                        self.source_path, file_name, suffix
+                    );
+                }
+                "pyi" => {
+                    println!(
+                        "    binding {}{}.{}...",
+                        self.source_path, file_name, suffix
+                    );
+                }
+                _ => {}
+            }
         }
 
         /* push to compiled list, only compile once */
@@ -170,8 +215,10 @@ impl Compiler {
                 object. To implament this, a [package]-api.c file is created
                 to supply the class of static object.
         */
-        if file_name != "main" && is_top_pkg {
+
+        if is_top_c_pkg {
             /*
+                Push top C package to PikaMain.
                 Solve the package as a class
                     [Example]:
                         class PikaStdDevice(TinyObj):
@@ -187,18 +234,22 @@ impl Compiler {
                 .or_insert(package_now);
             self.package_now_name = Some(package_name.clone());
         }
+
         let lines: Vec<&str> = file_str.split('\n').collect();
-        /* analyse each line of .pyi */
+        /* analyse each line */
         for line in lines.iter() {
             let line = line.replace("\r", "");
             /* replace \t with 4 spaces */
             let line = line.replace("\t", "    ");
 
-            if file_name == "main" {
-                self = Compiler::analyse_main_line(self, &line);
-            } else {
-                self = Compiler::analyse_pyi_line(self, line.to_string(), &file_name, is_top_pkg);
-            }
+            self = match pkg_type {
+                PackageType::CPackageTop | PackageType::CPackageInner => {
+                    Compiler::analyse_pyi_line(self, line.to_string(), &file_name, is_top_c_pkg)
+                }
+                PackageType::PyPackageTop | PackageType::PyPackageInner => {
+                    Compiler::analyse_py_line(self, &line, is_top_py_pkg)
+                }
+            };
         }
         return self;
     }
@@ -212,7 +263,7 @@ impl Compiler {
         if line.starts_with("import ") {
             let tokens: Vec<&str> = line.split(" ").collect();
             let file = tokens[1];
-            return Compiler::analyse_inner_package(compiler, file.to_string());
+            return Compiler::analyse_c_package_inner(compiler, file.to_string());
         }
 
         if line.starts_with("#") {
