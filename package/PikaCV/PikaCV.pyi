@@ -73,6 +73,11 @@ class Image(TinyObj):
     def size(self) -> int:
         """Get the size of the image by bytes"""
 
+    def add(self,image:Imgae):
+        """Add two images"""
+
+    def minus(self,image:Imgae):
+        """Minus two images"""
 
 class Converter(TinyObj):
     """The Converter class is used to 

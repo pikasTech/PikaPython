@@ -220,3 +220,118 @@ void PikaCV_Image_write(PikaObj* self, char* path) {
     __platform_fwrite(data, 1, size, fp);
     __platform_fclose(fp);
 }
+
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+
+void PikaCV_Image_add(PikaObj *self, PikaObj* image){
+    PikaCV_Image* src = obj_getStruct(self, "image");
+    PikaCV_Image* img = obj_getStruct(image, "image");
+    if (NULL == src || NULL == img) {
+        pika_assert(0);
+        return;
+    }
+    if (img->format != src->format ) {
+        obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf("unsupported image format\n");
+        return;
+    }
+    if (img->size != src->size ) {
+        obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf("illegal image size\n");
+        return;
+    }
+    
+    uint8_t* src_data = _image_getData(self);
+    uint8_t* img_data = _image_getData(image);
+
+    int i;
+    uint8_t result;
+
+    /* add two images */
+    for (i = 0; i < (src->size)/3; i++) {
+        result=src_data[i * 3] + img_data[i * 3];
+        if(result<MAX(src_data[i * 3],img_data[i * 3])){
+            src_data[i * 3]=255;
+        }
+        else{
+            src_data[i * 3]=result;
+        }
+        
+        result=src_data[i * 3 + 1] + img_data[i * 3 + 1];
+        if(result<MAX(src_data[i * 3 + 1],img_data[i * 3 + 1])){
+            src_data[i * 3 + 1]=255;
+        }
+        else{
+            src_data[i * 3 + 1]=result;
+        }
+
+        result=src_data[i * 3 + 2] + img_data[i * 3 + 2];
+        if(result<MAX(src_data[i * 3 + 2],img_data[i * 3 + 2])){
+            src_data[i * 3 + 2]=255;
+        }
+        else{
+            src_data[i * 3 + 2]=result;
+        }
+
+    }
+
+    obj_setBytes(self, "_data", src_data, src->size);
+
+}
+
+void PikaCV_Image_minus(PikaObj *self, PikaObj* image){
+    PikaCV_Image* src = obj_getStruct(self, "image");
+    PikaCV_Image* img = obj_getStruct(image, "image");
+    if (NULL == src || NULL == img) {
+        pika_assert(0);
+        return;
+    }
+    if (img->format != src->format ) {
+        obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf("unsupported image format\n");
+        return;
+    }
+    if (img->size != src->size ) {
+        obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf("unsupported image format\n");
+        return;
+    }
+    
+    uint8_t* src_data = _image_getData(self);
+    uint8_t* img_data = _image_getData(image);
+
+    int i;
+    uint8_t result;
+
+    /* minus two images */
+    for (i = 0; i < (src->size)/3; i++) {
+        result=src_data[i * 3] - img_data[i * 3];
+        if(result>MIN(src_data[i * 3],img_data[i * 3])){
+            src_data[i * 3]=0;
+        }
+        else{
+            src_data[i * 3]=result;
+        }
+        
+        result=src_data[i * 3 + 1] - img_data[i * 3 + 1];
+        if(result>MIN(src_data[i * 3 + 1],img_data[i * 3 + 1])){
+            src_data[i * 3 + 1]=0;
+        }
+        else{
+            src_data[i * 3 + 1]=result;
+        }
+
+        result=src_data[i * 3 + 2] - img_data[i * 3 + 2];
+        if(result>MIN(src_data[i * 3 + 2],img_data[i * 3 + 2])){
+            src_data[i * 3 + 2]=0;
+        }
+        else{
+            src_data[i * 3 + 2]=result;
+        }
+
+    }
+    
+    obj_setBytes(self, "_data", src_data, (src->size));
+
+}
