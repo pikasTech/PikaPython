@@ -34,17 +34,25 @@ impl ClassInfo {
     pub fn new(file_name: &String, define: &String, is_package: bool) -> Option<ClassInfo> {
         let define = define.strip_prefix("class ").unwrap().to_string();
         let define = define.replace(" ", "");
-        let super_class_name = match my_string::cut(&define, '(', ')') {
+        let mut super_class_name = match my_string::cut(&define, '(', ')') {
             Some(s) => s,
-            None => return None,
+            None => "TinyObj".to_string(),
         };
+        if super_class_name == "" {
+            super_class_name = "TinyObj".to_string();
+        }
         let super_class_name = match super_class_name.find(".") {
             None => ClassInfo::add_file_profix(&file_name, &super_class_name, is_package),
             Some(_x) => super_class_name.replace(".", "_"),
         };
         let mut this_calss_name = match my_string::get_first_token(&define, '(') {
             Some(s) => s,
-            None => return None,
+            None => match my_string::get_first_token(&define, ':') {
+                Some(s) => s,
+                None => {
+                    return None;
+                }
+            },
         };
         let this_class_name_without_file = this_calss_name.clone();
         this_calss_name = ClassInfo::add_file_profix(&file_name, &this_calss_name, is_package);

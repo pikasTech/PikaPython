@@ -84,7 +84,7 @@ impl Compiler {
 
             let package_obj_define = format!("{} = {}()", package_name, package_name);
             class_now.push_object(package_obj_define, &file_name);
-            return Compiler::__do_analyse_file(compiler, package_name.to_string(), true);
+            return Compiler::analyse_top_package(compiler, package_name.to_string());
         }
         class_now.script_list.add(&line);
         return compiler;
@@ -197,13 +197,13 @@ impl Compiler {
             if file_name == "main" {
                 self = Compiler::analyse_main_line(self, &line);
             } else {
-                self = Compiler::analyse_line(self, line.to_string(), &file_name, is_top_pkg);
+                self = Compiler::analyse_pyi_line(self, line.to_string(), &file_name, is_top_pkg);
             }
         }
         return self;
     }
 
-    pub fn analyse_line(
+    pub fn analyse_pyi_line(
         mut compiler: Compiler,
         line: String,
         file_name: &String,
@@ -212,7 +212,7 @@ impl Compiler {
         if line.starts_with("import ") {
             let tokens: Vec<&str> = line.split(" ").collect();
             let file = tokens[1];
-            return Compiler::__do_analyse_file(compiler, file.to_string(), false);
+            return Compiler::analyse_inner_package(compiler, file.to_string());
         }
 
         if line.starts_with("#") {
@@ -299,19 +299,19 @@ mod tests {
     #[test]
     fn test_analyse() {
         let compiler = Compiler::new(String::from(""), String::from(""));
-        let compiler = Compiler::analyse_line(
+        let compiler = Compiler::analyse_pyi_line(
             compiler,
             String::from("class Test(SuperTest):"),
             &"Pkg".to_string(),
             false,
         );
-        let compiler = Compiler::analyse_line(
+        let compiler = Compiler::analyse_pyi_line(
             compiler,
             String::from("    def test()"),
             &"Pkg".to_string(),
             false,
         );
-        let compiler = Compiler::analyse_line(
+        let compiler = Compiler::analyse_pyi_line(
             compiler,
             String::from("    testObj = TestObj()"),
             &"Pkg".to_string(),

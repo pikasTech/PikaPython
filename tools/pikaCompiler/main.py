@@ -1,4 +1,5 @@
 import PikaStdLib
+import PyInfo
 from pika_cjson import cJSON
 print('hello pikascript!')
 mem = PikaStdLib.MemChecker()

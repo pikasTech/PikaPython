@@ -15,17 +15,18 @@ pub fn pika_compiler_entry() {
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
 
     /* analyse file begin with main.py */
-    compiler = Compiler::analyse_inner_package(compiler, String::from("main"));
+    compiler = Compiler::analyse_top_package(compiler, String::from("main"));
     /*
        Compile packages in requestment.txt, solve the packages
        as the top packages.
     */
     for package in &version_info.package_list {
+        let package_name = package.0;
         /* skip pikascript-core */
-        if package.0 == "pikascript-core" {
+        if package_name == "pikascript-core" {
             continue;
         }
-        compiler = Compiler::analyse_top_package(compiler, String::from(package.0));
+        compiler = Compiler::analyse_top_package(compiler, String::from(package_name));
     }
 
     /* Compile packages in PikaStdLib */
