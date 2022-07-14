@@ -597,6 +597,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+| PikaMath.Quaternion() | [purewind7](https://gitee.com/purewind7) |
 | contrubute to PikaCV | [purewind7](https://gitee.com/purewind7) |
 | xr806(openharmony) bsp |[sjy](https://gitee.com/shanjiayang)|
 | ESP32 package |沧御|
