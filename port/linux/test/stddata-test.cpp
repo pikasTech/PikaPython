@@ -54,11 +54,11 @@ TEST(stddata, a2b_hex) {
     obj_run(pikaMain,
             "import binascii\n"
             "text = binascii.a2b_hex('e4b8ade69687e6b58be8af95e794a8e4be8b')\n"
-            "str(text)\n");
+            "res = str(text)\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
     /* assert */
-    EXPECT_STREQ(res, "E5BEB7E58DA1E7A791E68A80");
+    EXPECT_STREQ(res, "中文测试用例");
     /* deinit */
     obj_deinit(pikaMain);
 }
