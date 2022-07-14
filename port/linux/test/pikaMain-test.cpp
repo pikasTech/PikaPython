@@ -1404,17 +1404,17 @@ TEST(pikaMain, bytearray) {
     /* run */
     __platform_printf("BEGIN\r\n");
     pikaVM_run(pikaMain,
-               "bytes = PikaStdData.ByteArray()\n"
-               "bytes.fromString('test')\n"
+               "bytes = PikaStdData.ByteArray(b'test')\n"
                "sum = 0\n"
                "for byte in bytes:\n"
-               "    sum = sum + byte\n"
-               "\n"
-               "print(sum)\n");
+               "    sum += byte\n"
+               "print(bytes)\n"
+               "\n");
     /* collect */
+    int sum = obj_getInt(pikaMain, "sum");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "448\r\n");
-    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_EQ(sum, 448);
+    EXPECT_STREQ(log_buff[0], "bytearray(b'\\x74\\x65\\x73\\x74')\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     /* mem check */
@@ -2503,7 +2503,7 @@ TEST(pikaMain, for_loop_issue_1b2a3f1bdf) {
 
     obj_run(pikaMain, lines);
     /* collect */
-    int res = obj_getInt(pikaMain, "res"); 
+    int res = obj_getInt(pikaMain, "res");
     /* assert */
     EXPECT_EQ(res, 90);
     /* deinit */

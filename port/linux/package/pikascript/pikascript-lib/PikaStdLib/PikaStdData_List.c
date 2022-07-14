@@ -52,26 +52,6 @@ void PikaStdData_List___set__(PikaObj* self) {
                          obj_getInt(self, "__key"));
 }
 
-void PikaStdData_ByteArray_fromString(PikaObj* self, char* s) {
-    for (uint32_t i = 0; i < strGetSize(s); i++) {
-        obj_setInt(self, "__val", (int)s[i]);
-        PIKA_PYTHON_BEGIN
-        /* clang-format off */
-        PIKA_PYTHON(
-            append(__val)
-        )
-        /* clang-format on */
-        const uint8_t bytes[] = {
-            0x08, 0x00, /* instruct array size */
-            0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x07, 0x00, /* instruct array */
-            0x0e, 0x00, /* const pool size */
-            0x00, 0x5f, 0x5f, 0x76, 0x61, 0x6c, 0x00, 0x61,
-            0x70, 0x70, 0x65, 0x6e, 0x64, 0x00, /* const pool */
-        };
-        pikaVM_runByteCode(self, (uint8_t*)bytes);
-        PIKA_PYTHON_END
-    }
-}
 
 void PikaStdData_List___del__(PikaObj* self) {
     Args* list = obj_getPtr(self, "list");

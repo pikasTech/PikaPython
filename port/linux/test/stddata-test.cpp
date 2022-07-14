@@ -62,3 +62,25 @@ TEST(stddata, a2b_hex) {
     /* deinit */
     obj_deinit(pikaMain);
 }
+
+#if PIKA_SYNTAX_IMPORT_EX_ENABLE
+TEST(stddata, encode_decode) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/encode_decode.py");
+    /* collect */
+    char* b_s = obj_getStr(pikaMain, "b_s");
+    uint8_t* s_b = obj_getBytes(pikaMain, "s_b");
+    /* assert */
+    EXPECT_STREQ(b_s, "test");
+    EXPECT_EQ(s_b[0], 't');
+    EXPECT_EQ(s_b[1], 'e');
+    EXPECT_EQ(s_b[2], 's');
+    EXPECT_EQ(s_b[3], 't');
+    /* deinit */
+    obj_deinit(pikaMain);
+}
+#endif

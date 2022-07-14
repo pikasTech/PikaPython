@@ -210,3 +210,9 @@ char* PikaStdData_String_replace(PikaObj* self, char* new, char* old) {
     strsDeinit(&buffs);
     return obj_getStr(self, "_buf");
 }
+
+Arg* PikaStdData_String_encode(PikaObj* self) {
+    char* str = obj_getStr(self, "str");
+    Arg* arg = arg_setBytes(NULL, "", (uint8_t*)str, strGetSize(str));
+    return arg;
+}
