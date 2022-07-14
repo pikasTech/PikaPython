@@ -6,16 +6,7 @@ TEST(ctypes, test1) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_run(pikaMain,
-            "read_data = ctypes.c_buffer(b'', 16)\n"
-            "print(\"----read size----\")\n"
-            "datalen = len(read_data.raw)\n"
-            "print(datalen)\n"
-            "print(read_data.raw)\n"
-            "print(\"----read data----\")\n"
-            "for i in range(0,datalen):\n"
-            "    print(read_data.raw[i])\n"
-            "\n");
+    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/ctypes.py");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[67], "16\r\n");
