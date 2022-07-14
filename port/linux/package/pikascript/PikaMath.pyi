@@ -102,3 +102,40 @@ class Math(TinyObj):
 
     def tanh(self, x: float) -> float:
         pass
+
+class Quaternion(TinyObj):
+    def __init__(self):
+        pass
+    def set(self,x:float,y:float,z:float,w:float):
+        "xi+yj+zk+w"
+        pass
+    def get(self,key:int) -> float :
+        pass    
+    def add(self,quat:Quaternion): 
+        pass
+    def sub(self,quat:Quaternion): 
+        pass
+    def mul(self,quat:Quaternion): 
+        pass
+    def magnituded(self) -> float :
+        pass
+    def magnitudedsquare(self) -> float :
+        pass    
+    def reverse(self):
+        pass
+    def inverse(self):
+        pass
+    def normalize(self):
+        pass
+    def isnormalize(self) -> int:
+        pass
+    def dot(self,quat:Quaternion) -> float:
+        pass
+    def crossproduct(self,quat:Quaternion):
+        pass
+    def fromEuler(self,yaw:float,pitch:float,roll:float,mode:int) :
+        "mode=1 is deg and mode=0 is rad"
+        pass
+    def toEuler(self) -> List :
+        "Z-Y-X"
+        pass
