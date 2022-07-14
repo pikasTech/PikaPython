@@ -182,6 +182,12 @@ releases = [
 ]
 
 [[packages]]
+name = "binascii"
+releases = [
+  "v0.0.1 88896715867c2a89df3e3b733cba38cc84f5347c",
+]
+
+[[packages]]
 name = "STM32G0"
 releases = [
   "v1.0.2 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
