@@ -31,6 +31,7 @@
 #include "dataArgs.h"
 #include "dataLink.h"
 #include "dataMemory.h"
+#include "dataStrs.h"
 
 typedef struct InstructUnit InstructUnit;
 struct InstructUnit {

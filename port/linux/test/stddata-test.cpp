@@ -1,6 +1,5 @@
 #include "test_common.h"
 
-
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(stddata, test1) {
     /* init */
@@ -27,7 +26,6 @@ TEST(stddata, test1) {
 }
 #endif
 
-#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 /* test b2a_hex */
 TEST(stddata, test2) {
     /* init */
@@ -36,9 +34,8 @@ TEST(stddata, test2) {
     /* run */
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
-            "from PikaStdData import Utils\n"
-            "ut = Utils()\n"
-            "res = str(ut.b2a_hex(b'德卡科技'))\n");
+            "import binascii\n"
+            "res = str(binascii.b2a_hex(b'德卡科技'))\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
     /* assert */
@@ -46,4 +43,22 @@ TEST(stddata, test2) {
     /* deinit */
     obj_deinit(pikaMain);
 }
-#endif
+
+/* test a2b_hex */
+TEST(stddata, a2b_hex) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "import binascii\n"
+            "text = binascii.a2b_hex('e4b8ade69687e6b58be8af95e794a8e4be8b')\n"
+            "str(text)\n");
+    /* collect */
+    char* res = obj_getStr(pikaMain, "res");
+    /* assert */
+    EXPECT_STREQ(res, "E5BEB7E58DA1E7A791E68A80");
+    /* deinit */
+    obj_deinit(pikaMain);
+}

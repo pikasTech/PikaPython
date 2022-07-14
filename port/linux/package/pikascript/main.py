@@ -14,6 +14,7 @@ import import_test
 import pika_configparser
 import PikaDebug
 import PikaCV
+import binascii
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')
