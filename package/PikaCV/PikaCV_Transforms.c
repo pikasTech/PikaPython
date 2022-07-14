@@ -8,8 +8,8 @@ void PikaCV_Transforms_rotateDown(PikaObj* self, PikaObj* image) {
         pika_assert(0);
         return;
     }
-    if (img->format == PikaCV_ImageFormat_Type_BGR888 ||
-        img->format == PikaCV_ImageFormat_Type_RGB888) {
+    if ((img->format != PikaCV_ImageFormat_Type_BGR888) &&
+        (img->format != PikaCV_ImageFormat_Type_RGB888)) {
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf("unsupported image format\n");
         return;

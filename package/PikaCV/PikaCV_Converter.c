@@ -264,9 +264,15 @@ void PikaCV_Converter_toRGB888(PikaObj* self, PikaObj* image) {
     if (img->format == PikaCV_ImageFormat_Type_RGB565) {
         for (int i = 0; i < img->size; i += 2) {
             uint16_t* p565 = (uint16_t*)&data[i];
+            uint32_t buf888 = 0;
+            uint32_t* pbuf888 = (uint32_t*)&buf888;
+            *pbuf888 = ((*p565 & 0xF800) << 8) | ((*p565 & 0x07E0) << 5) |
+                       ((*p565 & 0x001F) << 3);
             uint32_t* p888 = (uint32_t*)&data_new[i / 2 * 3];
-            *p888 = ((*p565 & 0xF800) << 8) | ((*p565 & 0x07E0) << 5) |
-                    ((*p565 & 0x001F) << 3);
+
+            ((uint8_t*)p888)[0] = ((uint8_t*)pbuf888)[2];
+            ((uint8_t*)p888)[1] = ((uint8_t*)pbuf888)[1];
+            ((uint8_t*)p888)[2] = ((uint8_t*)pbuf888)[0];
         }
         goto exit;
     }
