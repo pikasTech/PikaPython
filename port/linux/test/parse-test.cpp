@@ -2490,7 +2490,7 @@ TEST(parser, _3_3) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_BUILTIN_LIST_ENABLE
+#if PIKA_BUILTIN_STRUCT_ENABLE
 TEST(parser, list_init) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -3252,7 +3252,7 @@ TEST(lexser, dict_literal1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_BUILTIN_DICT_ENABLE
+#if PIKA_BUILTIN_STRUCT_ENABLE
 TEST(parser, dict_literal1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();

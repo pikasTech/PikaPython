@@ -50,6 +50,74 @@ void ParserState_iterStart(struct ParserState* ps);
 void ParserState_iterEnd(struct ParserState* ps);
 char* Parser_popToken(Args* buffs_p, char* tokens);
 
+/* Syntex item */
+SyntaxItem syntexItemList[] = {
+    /* clang-format off */
+    {
+        .asmCode = "RUN",
+        .astNodeName = "method",
+        .isUseNodeValue = PIKA_TRUE
+    },
+    {
+        .asmCode = "OPT", 
+        .astNodeName = "operator", 
+        .isUseNodeValue = PIKA_TRUE
+    },
+    {
+        .asmCode = "BYT", 
+        .astNodeName = "bytes", 
+        .isUseNodeValue = PIKA_TRUE
+    },
+    {
+        .asmCode = "NUM", 
+        .astNodeName = "num", 
+        .isUseNodeValue = PIKA_TRUE
+    },
+    {
+        .asmCode = "IMP", 
+        .astNodeName = "import", 
+        .isUseNodeValue = PIKA_TRUE
+    },
+    {
+        .asmCode = "REF", 
+        .astNodeName = "ref", 
+        .isUseNodeValue = PIKA_TRUE
+    },
+    {
+        .asmCode = "STR", 
+        .astNodeName = "string", 
+        .isUseNodeValue = PIKA_TRUE
+    },
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+    {
+        .asmCode = "SLC", 
+        .astNodeName = "slice", 
+        .isUseNodeValue = PIKA_FALSE
+    },
+#endif
+
+#if PIKA_BUILTIN_STRUCT_ENABLE
+    {
+        .asmCode = "DCT", 
+        .astNodeName = "dict", 
+        .isUseNodeValue = PIKA_FALSE
+    },
+    {
+        .asmCode = "LST", 
+        .astNodeName = "list", 
+        .isUseNodeValue = PIKA_FALSE
+    },
+#endif
+
+    {
+        .asmCode = "OUT", 
+        .astNodeName = "left", 
+        .isUseNodeValue = PIKA_TRUE
+    }
+    /* clang-format on */
+};
+
 uint16_t Tokens_getSize(char* tokens) {
     if (strEqu("", tokens)) {
         return 0;
@@ -1391,7 +1459,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         goto exit;
     }
 
-#if PIKA_BUILTIN_LIST_ENABLE
+#if PIKA_BUILTIN_STRUCT_ENABLE
     /* solve list stmt */
     if (STMT_list == stmtType) {
         AST_setThisNode(ast, (char*)"list", "list");
@@ -1408,7 +1476,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
 #endif
 
-#if PIKA_BUILTIN_DICT_ENABLE
+#if PIKA_BUILTIN_STRUCT_ENABLE
     /* solve dict stmt */
     if (STMT_dict == stmtType) {
         AST_setThisNode(ast, (char*)"dict", "dict");
@@ -1437,6 +1505,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         goto exit;
     }
 
+#if PIKA_SYNTAX_SLICE_ENABLE
     if (STMT_slice == stmtType) {
         /* solve slice stmt */
         AST_setThisNode(ast, (char*)"slice", "slice");
@@ -1462,6 +1531,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         }
         goto exit;
     }
+#endif
 
     /* solve method stmt */
     if (STMT_method == stmtType) {
@@ -1793,7 +1863,7 @@ exit:
 }
 
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
-static char* Parser_PreProcess_import(Args* buffs_p, char* line) {
+static char* Suger_import(Args* buffs_p, char* line) {
     Args buffs = {0};
     char* line_out = line;
     char* alias = NULL;
@@ -1838,7 +1908,7 @@ exit:
 #endif
 
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
-static char* Parser_PreProcess_from(Args* buffs_p, char* line) {
+static char* Suger_from(Args* buffs_p, char* line) {
     Args buffs = {0};
     char* line_out = line;
     char* class = NULL;
@@ -1904,8 +1974,8 @@ static char* Parser_linePreProcess(Args* buffs_p, char* line) {
     /* process EOL */
     line = strsDeleteChar(buffs_p, line, '\r');
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
-    line = Parser_PreProcess_import(buffs_p, line);
-    line = Parser_PreProcess_from(buffs_p, line);
+    line = Suger_import(buffs_p, line);
+    line = Suger_from(buffs_p, line);
 #endif
 exit:
     return line;
@@ -2140,66 +2210,25 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
         obj_setInt(ast, "deepth", deepth + 1);
         pikaAsm = AST_appandPikaASM(ast, subStmt, &buffs, pikaAsm);
     }
-    char* method = obj_getStr(subAst, "method");
-    char* list = obj_getStr(subAst, "list");
-    char* dict = obj_getStr(subAst, "dict");
-    char* operator= obj_getStr(subAst, "operator");
-    char* ref = obj_getStr(subAst, "ref");
-    char* left = obj_getStr(subAst, "left");
-    char* str = obj_getStr(subAst, "string");
-    char* bytes = obj_getStr(subAst, "bytes");
-    char* num = obj_getStr(subAst, "num");
-    char* import = obj_getStr(subAst, "import");
     char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
-    char* slice = obj_getStr(subAst, "slice");
-    if (NULL != dict) {
-        __platform_sprintf(buff, "%d DCT \n", deepth);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
+
+    /* append the syntax item */
+    for (size_t i = 0; i < sizeof(syntexItemList) / sizeof(SyntaxItem); i++) {
+        char* astNodeVal = obj_getStr(subAst, syntexItemList[i].astNodeName);
+        if (NULL != astNodeVal) {
+            /* e.g. "0 RUN print \n" */
+            __platform_sprintf(buff, "%d %s ", deepth,
+                               syntexItemList[i].asmCode);
+            Arg* abuff = arg_setStr(NULL, "", buff);
+            if (syntexItemList[i].isUseNodeValue) {
+                abuff = arg_strAppend(abuff, astNodeVal);
+            }
+            abuff = arg_strAppend(abuff, "\n");
+            pikaAsm = strsAppend(&buffs, pikaAsm, arg_getStr(abuff));
+            arg_deinit(abuff);
+        }
     }
-    if (NULL != list) {
-        __platform_sprintf(buff, "%d LST \n", deepth);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
-    }
-    if (NULL != ref) {
-        __platform_sprintf(buff, "%d REF %s\n", deepth, ref);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
-    }
-    if (NULL != operator) {
-        __platform_sprintf(buff, "%d OPT %s\n", deepth, operator);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
-    }
-    if (NULL != method) {
-        __platform_sprintf(buff, "%d RUN %s\n", deepth, method);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
-    }
-    if (NULL != str) {
-        __platform_sprintf(buff, "%d STR ", deepth);
-        Arg* abuff = arg_setStr(NULL, "", buff);
-        abuff = arg_strAppend(abuff, str);
-        abuff = arg_strAppend(abuff, "\n");
-        pikaAsm = strsAppend(&buffs, pikaAsm, arg_getStr(abuff));
-        arg_deinit(abuff);
-    }
-    if (NULL != bytes) {
-        __platform_sprintf(buff, "%d BYT %s\n", deepth, bytes);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
-    }
-    if (NULL != num) {
-        __platform_sprintf(buff, "%d NUM %s\n", deepth, num);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
-    }
-    if (NULL != slice) {
-        __platform_sprintf(buff, "%d SLC \n", deepth);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
-    }
-    if (NULL != left) {
-        __platform_sprintf(buff, "%d OUT %s\n", deepth, left);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
-    }
-    if (NULL != import) {
-        __platform_sprintf(buff, "%d IMP %s\n", deepth, import);
-        pikaAsm = strsAppend(&buffs, pikaAsm, buff);
-    }
+
     obj_setInt(ast, "deepth", deepth - 1);
     goto exit;
 exit:

@@ -18,7 +18,7 @@ TEST(builtin, bytes) {
 }
 #endif
 
-#if PIKA_BUILTIN_LIST_ENABLE
+#if PIKA_BUILTIN_STRUCT_ENABLE
 TEST(builtin, type1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

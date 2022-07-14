@@ -302,6 +302,7 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
 }
 
 static Arg* VM_instruction_handler_SLC(PikaObj* self, VMState* vs, char* data) {
+#if PIKA_SYNTAX_SLICE_ENABLE
     int arg_num_input = VMState_getInputArgNum(vs);
     if (arg_num_input < 2) {
         return arg_setNull(NULL);
@@ -324,6 +325,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self, VMState* vs, char* data) {
         arg_deinit(start);
         return res;
     }
+#endif
     return arg_setNull(NULL);
 }
 
@@ -609,14 +611,18 @@ void __vm_List___init__(PikaObj* self) {
     }
 }
 
-#if PIKA_BUILTIN_LIST_ENABLE
+#if PIKA_BUILTIN_STRUCT_ENABLE
 PikaObj* New_PikaStdData_List(Args* args);
+PikaObj* New_PikaStdData_Tuple(Args* args);
 #endif
 
-static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
-#if PIKA_BUILTIN_LIST_ENABLE
+static Arg* _vm_create_list_or_tuple(PikaObj* self,
+                                     VMState* vs,
+                                     PIKA_BOOL is_list) {
+#if PIKA_BUILTIN_STRUCT_ENABLE
+    NewFun constructor = is_list ? New_PikaStdData_List : New_PikaStdData_Tuple;
     uint8_t arg_num = VMState_getInputArgNum(vs);
-    PikaObj* list = newNormalObj(New_PikaStdData_List);
+    PikaObj* list = newNormalObj(constructor);
     __vm_List___init__(list);
     Stack stack = {0};
     stack_init(&stack);
@@ -633,8 +639,12 @@ static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
     stack_deinit(&stack);
     return arg_setPtr(NULL, "", ARG_TYPE_OBJECT, list);
 #else
-    return VM_instruction_handler_NON(self, vs, data);
+    return VM_instruction_handler_NON(self, vs, "");
 #endif
+}
+
+static Arg* VM_instruction_handler_LST(PikaObj* self, VMState* vs, char* data) {
+    return _vm_create_list_or_tuple(self, vs, PIKA_TRUE);
 }
 
 void __vm_Dict___init__(PikaObj* self) {
@@ -654,12 +664,12 @@ void __vm_Dict_set(PikaObj* self, Arg* arg, char* key) {
     dict_setArg(keys, arg_key);
 }
 
-#if PIKA_BUILTIN_DICT_ENABLE
+#if PIKA_BUILTIN_STRUCT_ENABLE
 PikaObj* New_PikaStdData_Dict(Args* args);
 #endif
 
 static Arg* VM_instruction_handler_DCT(PikaObj* self, VMState* vs, char* data) {
-#if PIKA_BUILTIN_DICT_ENABLE
+#if PIKA_BUILTIN_STRUCT_ENABLE
     uint8_t arg_num = VMState_getInputArgNum(vs);
     PikaObj* dict = newNormalObj(New_PikaStdData_Dict);
     __vm_Dict___init__(dict);
@@ -709,7 +719,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
             goto exit;
         }
         /* create a tuple */
-        return_arg = VM_instruction_handler_LST(self, vs, "");
+        return_arg = _vm_create_list_or_tuple(self, vs, PIKA_FALSE);
         goto exit;
     }
     /* return tiny obj */

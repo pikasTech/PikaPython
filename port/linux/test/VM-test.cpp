@@ -223,12 +223,12 @@ TEST(VM, a_jjcc) {
 }
 
 TEST(VM, while_a_1to10) {
-    char* line = 
-    "a = 0\n"
-    "while a < 10:\n"
-    "    a += 1\n"
-    "    print(a)\n"
-    "\n";
+    char* line =
+        "a = 0\n"
+        "while a < 10:\n"
+        "    a += 1\n"
+        "    print(a)\n"
+        "\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -244,13 +244,13 @@ TEST(VM, while_a_1to10) {
 }
 
 TEST(VM, mem_x) {
-    char* line = 
-    "mem = PikaStdLib.MemChecker()\n"
-    "mem.x = 1\n"
-    "print(mem.x)\n"
-    "mem.x = 2\n"
-    "print(mem.x)\n"
-    "\n";
+    char* line =
+        "mem = PikaStdLib.MemChecker()\n"
+        "mem.x = 1\n"
+        "print(mem.x)\n"
+        "mem.x = 2\n"
+        "print(mem.x)\n"
+        "\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -266,13 +266,13 @@ TEST(VM, mem_x) {
 }
 
 TEST(VM, RET_instruct) {
-    char* pikaAsm = 
-    "B1\n"
-    "0 NUM 13\n"
-    "0 RET \n"
-    "0 NUM 2\n"
-    "0 RET \n"
-    "B0\n";
+    char* pikaAsm =
+        "B1\n"
+        "0 NUM 13\n"
+        "0 RET \n"
+        "0 NUM 2\n"
+        "0 RET \n"
+        "B0\n";
     PikaObj* self = New_TinyObj(NULL);
     VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
     Arg* return_arg = args_getArg(globals->list, "return");
@@ -284,16 +284,16 @@ TEST(VM, RET_instruct) {
 }
 
 TEST(VM, RUN_DEF) {
-    char* pikaAsm = 
-    "B0\n"
-    "0 DEF test()\n"
-    "0 JMP 1\n"
-    "B1\n"
-    "0 NUM 1\n"
-    "0 RET \n"
-    "B0\n"
-    "0 RUN test\n"
-    "0 OUT a\n";
+    char* pikaAsm =
+        "B0\n"
+        "0 DEF test()\n"
+        "0 JMP 1\n"
+        "B1\n"
+        "0 NUM 1\n"
+        "0 RET \n"
+        "B0\n"
+        "0 RUN test\n"
+        "0 OUT a\n";
     PikaObj* self = New_TinyObj(NULL);
     VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
     int num = obj_getInt(globals, "a");
@@ -304,19 +304,19 @@ TEST(VM, RUN_DEF) {
 }
 
 TEST(VM, RUN_global) {
-    char* pikaAsm = 
-    "B0\n"
-    "0 NUM 1\n"
-    "0 OUT a\n"
-    "B0\n"
-    "0 DEF test()\n"
-    "0 JMP 1\n"
-    "B1\n"
-    "0 REF a\n"
-    "0 RET \n"
-    "B0\n"
-    "0 RUN test\n"
-    "0 OUT b\n";
+    char* pikaAsm =
+        "B0\n"
+        "0 NUM 1\n"
+        "0 OUT a\n"
+        "B0\n"
+        "0 DEF test()\n"
+        "0 JMP 1\n"
+        "B1\n"
+        "0 REF a\n"
+        "0 RET \n"
+        "B0\n"
+        "0 RUN test\n"
+        "0 OUT b\n";
     PikaObj* self = New_TinyObj(NULL);
     pikaVM_runAsm(self, pikaAsm);
     int a = obj_getInt(self, "a");
@@ -329,23 +329,23 @@ TEST(VM, RUN_global) {
 }
 
 TEST(VM, RUN_local_b) {
-    char* pikaAsm = 
-    "B0\n"
-    "0 NUM 1\n"
-    "0 OUT a\n"
-    "B0\n"
-    "0 DEF test()\n"
-    "0 JMP 1\n"
-    "B1\n"
-    "0 REF a\n"
-    "0 OUT b\n"
-    "1 REF b\n"
-    "1 REF a\n"
-    "0 OPT +\n"
-    "0 RET \n"
-    "B0\n"
-    "0 RUN test\n"
-    "0 OUT c\n";
+    char* pikaAsm =
+        "B0\n"
+        "0 NUM 1\n"
+        "0 OUT a\n"
+        "B0\n"
+        "0 DEF test()\n"
+        "0 JMP 1\n"
+        "B1\n"
+        "0 REF a\n"
+        "0 OUT b\n"
+        "1 REF b\n"
+        "1 REF a\n"
+        "0 OPT +\n"
+        "0 RET \n"
+        "B0\n"
+        "0 RUN test\n"
+        "0 OUT c\n";
     PikaObj* self = newRootObj("", New_BaseObj);
     VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
     int a = obj_getInt(globals, "a");
@@ -361,20 +361,20 @@ TEST(VM, RUN_local_b) {
 }
 
 TEST(VM, RUN_DEF_add) {
-    char* pikaAsm = 
-    "B0\n"
-    "0 DEF add(a,b)\n"
-    "0 JMP 1\n"
-    "B1\n"
-    "1 REF b\n"
-    "1 REF a\n"
-    "0 OPT +\n"
-    "0 RET \n"
-    "B0\n"
-    "1 NUM 1\n"
-    "1 NUM 2\n"
-    "0 RUN add\n"
-    "0 OUT c\n";
+    char* pikaAsm =
+        "B0\n"
+        "0 DEF add(a,b)\n"
+        "0 JMP 1\n"
+        "B1\n"
+        "1 REF b\n"
+        "1 REF a\n"
+        "0 OPT +\n"
+        "0 RET \n"
+        "B0\n"
+        "1 NUM 1\n"
+        "1 NUM 2\n"
+        "0 RUN add\n"
+        "0 OUT c\n";
     PikaObj* self = newRootObj("", New_BaseObj);
     VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
     int a = obj_getInt(globals, "a");
@@ -391,11 +391,11 @@ TEST(VM, RUN_DEF_add) {
 }
 
 TEST(VM, run_def_add) {
-    char* line = 
-    "def add(a, b):\n"
-    "    return a + b\n"
-    "c = add(1,3)\n"
-    "\n";
+    char* line =
+        "def add(a, b):\n"
+        "    return a + b\n"
+        "c = add(1,3)\n"
+        "\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -411,11 +411,10 @@ TEST(VM, run_def_add) {
 }
 
 TEST(VM, equ) {
-    char* line = 
-    "if -1 == -1:\n"
-    "    a = 1\n"
-    "\n"
-    ;
+    char* line =
+        "if -1 == -1:\n"
+        "    a = 1\n"
+        "\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -431,15 +430,14 @@ TEST(VM, equ) {
 }
 
 TEST(VM, if_elif) {
-    char* line = 
-    "a = 2\n"
-    "b = 0\n"
-    "if a > 1:\n"
-    "    b = 1\n"
-    "elif a > 0:\n"
-    "    b = 2\n"
-    "\n"
-    ;
+    char* line =
+        "a = 2\n"
+        "b = 0\n"
+        "if a > 1:\n"
+        "    b = 1\n"
+        "elif a > 0:\n"
+        "    b = 2\n"
+        "\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -454,15 +452,14 @@ TEST(VM, if_elif) {
 }
 
 TEST(VM, if_else) {
-    char* line = 
-    "a = 0\n"
-    "b = 0\n"
-    "if a > 1:\n"
-    "    b = 1\n"
-    "else:\n"
-    "    b = 2\n"
-    "\n"
-    ;
+    char* line =
+        "a = 0\n"
+        "b = 0\n"
+        "if a > 1:\n"
+        "    b = 1\n"
+        "else:\n"
+        "    b = 2\n"
+        "\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -478,15 +475,14 @@ TEST(VM, if_else) {
 }
 
 TEST(VM, if_else_) {
-    char* line = 
-    "a = 2\n"
-    "b = 0\n"
-    "if a > 1:\n"
-    "    b = 1\n"
-    "else:\n"
-    "    b = 2\n"
-    "\n"
-    ;
+    char* line =
+        "a = 2\n"
+        "b = 0\n"
+        "if a > 1:\n"
+        "    b = 1\n"
+        "else:\n"
+        "    b = 2\n"
+        "\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -502,11 +498,10 @@ TEST(VM, if_else_) {
 }
 
 TEST(VM, EST) {
-    char* pikaAsm = 
-    "B0\n"
-    "0 EST a\n"
-    "0 OUT b\n"
-    ;
+    char* pikaAsm =
+        "B0\n"
+        "0 EST a\n"
+        "0 OUT b\n";
     PikaObj* self = newRootObj("", New_BaseObj);
     pikaVM_runAsm(self, pikaAsm);
     int a = obj_getInt(self, "a");
@@ -521,7 +516,7 @@ TEST(VM, EST) {
 }
 
 TEST(VM, RUN_AS) {
-    char* pikaAsm = 
+    char* pikaAsm =
         "B0\n"
         "0 RUN TinyObj\n"
         "0 OUT as\n"
@@ -534,8 +529,7 @@ TEST(VM, RUN_AS) {
         "0 RAS $origin\n"
         "B0\n"
         "0 NUM 2\n"
-        "0 OUT x\n"
-    ;
+        "0 OUT x\n";
     PikaObj* self = newRootObj("", New_PikaMain);
     pikaVM_runAsm(self, pikaAsm);
     PikaObj* as = obj_getObj(self, "as");
@@ -551,7 +545,7 @@ TEST(VM, RUN_AS) {
 }
 
 TEST(VM, RUN_NEW) {
-    char* pikaAsm = 
+    char* pikaAsm =
         "B0\n"
         "0 RUN TinyObj\n"
         "0 OUT newObj\n"
@@ -559,8 +553,7 @@ TEST(VM, RUN_NEW) {
         "0 OUT newObj.x\n"
         "B0\n"
         "0 NEW newObj\n"
-        "0 OUT outObj\n"
-    ;
+        "0 OUT outObj\n";
     PikaObj* self = newRootObj("", New_PikaMain);
     pikaVM_runAsm(self, pikaAsm);
     Arg* newObj = obj_getArg(self, "newObj");
@@ -580,7 +573,7 @@ TEST(VM, RUN_NEW) {
 }
 
 TEST(VM, RUN_DEF_NEW) {
-    char* pikaAsm = 
+    char* pikaAsm =
         "B0\n"
         "0 DEF testnew()\n"
         "0 JMP 1\n"
@@ -597,8 +590,7 @@ TEST(VM, RUN_DEF_NEW) {
         "0 RET \n"
         "B0\n"
         "0 RUN testnew\n"
-        "0 OUT outobj\n"
-    ;
+        "0 OUT outobj\n";
     PikaObj* self = newRootObj("", New_PikaMain);
     pikaVM_runAsm(self, pikaAsm);
     /* assert */
@@ -612,13 +604,12 @@ TEST(VM, RUN_DEF_NEW) {
 }
 
 TEST(VM, class_x_1) {
-    char* line = 
+    char* line =
         "class Test(TinyObj):\n"
         "    x = 1\n"
         "test = Test()\n"
         "print('test.x: ' + str(test.x))\n"
-        "\n"
-        ;
+        "\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -637,12 +628,11 @@ TEST(VM, class_x_1) {
 }
 
 TEST(VM, nag_a) {
-    char* line = 
-            "a = 1\n"
-            "print(-a)\n"
-            "b = 0.5\n"
-            "print(-b)\n"
-        ;
+    char* line =
+        "a = 1\n"
+        "print(-a)\n"
+        "b = 0.5\n"
+        "print(-b)\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -983,10 +973,9 @@ TEST(VM, hex_str) {
 }
 
 TEST(VM, hex_bytes) {
-    char* line = 
+    char* line =
         "a = b'\\x03\\x05'\n"
-        "a\n"
-        ;
+        "a\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -1004,15 +993,14 @@ TEST(VM, hex_bytes) {
 }
 
 TEST(VM, bytes_equ) {
-    char* line = 
+    char* line =
         "a = b'\\x03\\x05'\n"
         "b = b'\\x03\\x05'\n"
         "if a == b:\n"
         "    c = 1\n"
         "b = b'\\x02\\x05'\n"
         "if a != b:\n"
-        "    d = 1\n"
-        ;
+        "    d = 1\n";
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, line);
     printf("%s", pikaAsm);
@@ -1030,3 +1018,23 @@ TEST(VM, bytes_equ) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if PIKA_BUILTIN_STRUCT_ENABLE
+TEST(VM, tuple_literal) {
+    char* line = "(1,2,3)\n";
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_multiLineToAsm(buffs, line);
+    printf("%s", pikaAsm);
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runAsm(self, pikaAsm);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "(1, 2, 3)\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

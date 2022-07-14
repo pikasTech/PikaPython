@@ -1686,7 +1686,7 @@ TEST(pikaMain, list_sysobj) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_BUILTIN_LIST_ENABLE
+#if PIKA_BUILTIN_STRUCT_ENABLE
 TEST(pikaMain, list_init) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

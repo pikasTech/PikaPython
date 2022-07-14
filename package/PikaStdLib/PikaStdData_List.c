@@ -1,23 +1,11 @@
+#include "PikaStdData_List.h"
 #include "BaseObj.h"
 #include "PikaObj.h"
+#include "PikaStdData_Tuple.h"
 #include "dataStrs.h"
 
 void PikaStdData_List_append(PikaObj* self, Arg* arg) {
     __vm_List_append(self, arg);
-}
-
-int PikaStdData_List_len(PikaObj* self) {
-    PikaList* list = obj_getPtr(self, "list");
-    return list_getSize(list);
-}
-
-Arg* PikaStdData_List_get(PikaObj* self, int i) {
-    PikaList* list = obj_getPtr(self, "list");
-    return arg_copy(list_getArg(list, i));
-}
-
-void PikaStdData_List___init__(PikaObj* self) {
-    __vm_List___init__(self);
 }
 
 void PikaStdData_List_set(PikaObj* self, Arg* arg, int i) {
@@ -28,34 +16,14 @@ void PikaStdData_List_set(PikaObj* self, Arg* arg, int i) {
     }
 }
 
-Arg* PikaStdData_List___iter__(PikaObj* self) {
-    obj_setInt(self, "__iter_i", 0);
-    return arg_setRef(NULL, "", self);
-}
-
-Arg* PikaStdData_List___next__(PikaObj* self) {
-    int __iter_i = args_getInt(self->list, "__iter_i");
-    Arg* res = PikaStdData_List_get(self, __iter_i);
-    if (NULL == res) {
-        return arg_setNull(NULL);
-    }
-    args_setInt(self->list, "__iter_i", __iter_i + 1);
-    return res;
-}
-
-Arg* PikaStdData_List___get__(PikaObj* self) {
-    return PikaStdData_List_get(self, obj_getInt(self, "__key"));
-}
-
-void PikaStdData_List___set__(PikaObj* self) {
+void PikaStdData_List___set__(PikaObj* self, Arg* __key, Arg* __val) {
     PikaStdData_List_set(self, obj_getArg(self, "__val"),
                          obj_getInt(self, "__key"));
 }
 
 
-void PikaStdData_List___del__(PikaObj* self) {
-    Args* list = obj_getPtr(self, "list");
-    args_deinit(list);
+void PikaStdData_List___init__(PikaObj* self) {
+    __vm_List___init__(self);
 }
 
 char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg);
@@ -81,8 +49,4 @@ char* PikaStdData_List___str__(PikaObj* self) {
     obj_setStr(self, "_buf", arg_getStr(str_arg));
     arg_deinit(str_arg);
     return obj_getStr(self, "_buf");
-}
-
-int PikaStdData_List___len__(PikaObj *self){
-    return PikaStdData_List_len(self);
 }

@@ -78,12 +78,8 @@
             #define PIKA_SYNTAX_SLICE_ENABLE 0
         #endif
 
-        #ifndef PIKA_BUILTIN_LIST_ENABLE
-            #define PIKA_BUILTIN_LIST_ENABLE 0
-        #endif
-
-        #ifndef PIKA_BUILTIN_DICT_ENABLE
-            #define PIKA_BUILTIN_DICT_ENABLE 0
+        #ifndef PIKA_BUILTIN_STRUCT_ENABLE
+            #define PIKA_BUILTIN_STRUCT_ENABLE 0
         #endif
 
         #ifndef PIKA_SYNTAX_FORMAT_ENABLE
@@ -111,12 +107,8 @@
             #define PIKA_SYNTAX_SLICE_ENABLE 1
         #endif
 
-        #ifndef PIKA_BUILTIN_LIST_ENABLE
-            #define PIKA_BUILTIN_LIST_ENABLE 1 
-        #endif
-
-        #ifndef PIKA_BUILTIN_DICT_ENABLE
-            #define PIKA_BUILTIN_DICT_ENABLE 1
+        #ifndef PIKA_BUILTIN_STRUCT_ENABLE
+            #define PIKA_BUILTIN_STRUCT_ENABLE 1
         #endif
 
         #ifndef PIKA_SYNTAX_FORMAT_ENABLE
@@ -174,12 +166,8 @@
         #define PIKA_METHOD_CACHE_ENABLE 0
     #endif
 
-    #ifndef PIKA_BUILTIN_LIST_ENABLE
-        #define PIKA_BUILTIN_LIST_ENABLE 0
-    #endif
-
-    #ifndef PIKA_BUILTIN_DICT_ENABLE
-        #define PIKA_BUILTIN_DICT_ENABLE 0
+    #ifndef PIKA_BUILTIN_STRUCT_ENABLE
+        #define PIKA_BUILTIN_STRUCT_ENABLE 0
     #endif
 
     #ifndef PIKA_READ_FILE_BUFF_SIZE

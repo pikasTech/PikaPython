@@ -63,6 +63,12 @@ struct Asmer {
     char* line_pointer;
 };
 
+typedef struct SyntaxItem {
+    char* astNodeName;
+    char* asmCode;
+    PIKA_BOOL isUseNodeValue;
+} SyntaxItem;
+
 typedef struct LexToken LexToken;
 struct LexToken {
     char* token;
