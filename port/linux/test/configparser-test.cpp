@@ -34,3 +34,21 @@ TEST(configparser, test1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(configparser, test2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    pikaVM_runSingleFile(pikaMain,"test/python/configparser/test2.py");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
