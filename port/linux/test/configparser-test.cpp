@@ -46,7 +46,9 @@ TEST(configparser, test2) {
     /* run */
     pikaVM_runSingleFile(pikaMain,"test/python/configparser/test2.py");
     /* collect */
+    char* font_color = obj_getStr(pikaMain, "font_color");
     /* assert */
+    EXPECT_STREQ("#000000", font_color);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
