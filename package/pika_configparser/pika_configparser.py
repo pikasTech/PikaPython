@@ -5,11 +5,14 @@ class ConfigParser():
     config_dict = {}
 
     def _parse(self):
+        self.content = String(self.content).replace('\r', '')
         content = String(self.content)
         lines = content.split('\n')
         for line in lines:
             line = String(line)
             if line.startwith('#'):
+                continue
+            if line.startwith(';'):
                 continue
             if line.startwith('['):
                 section = String(line.replace('[', ''))
