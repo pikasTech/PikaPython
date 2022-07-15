@@ -306,7 +306,7 @@ Arg* PikaStdLib_SysObj_dict(PikaObj* self) {
 
 char* PikaStdLib_SysObj_hex(PikaObj* self, int val) {
     char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
-    if (val > 0) {
+    if (val >= 0) {
         __platform_sprintf(buff, "0x%02x", val);
     } else {
         __platform_sprintf(buff, "-0x%02x", -val);
