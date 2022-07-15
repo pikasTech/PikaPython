@@ -1,4 +1,5 @@
 #include "PikaStdLib_SysObj.h"
+#include "PikaStdData_FILEIO.h"
 #include "PikaStdLib_RangeObj.h"
 #include "PikaStdLib_StringObj.h"
 #include "PikaVM.h"
@@ -451,4 +452,16 @@ int PikaStdLib_SysObj_id(PikaObj* self, Arg* obj) {
         ptr = (uintptr_t)obj;
     }
     return ptr & (0x7FFFFFFF);
+}
+
+PikaObj* PikaStdLib_SysObj_open(PikaObj* self, char* mode, char* path) {
+#if PIKA_FILEIO_ENABLE
+    PikaObj* file = newNormalObj(New_PikaStdData_FILEIO);
+    PikaStdData_FILEIO_init(file, mode, path);
+    return file;
+#else
+    obj_setErrorCode(self, 1);
+    __platform_printf("[Error] PIKA_FILEIO_ENABLE is not enabled.\r\n");
+    return NULL;
+#endif
 }

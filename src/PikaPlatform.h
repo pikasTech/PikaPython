@@ -93,6 +93,7 @@ typedef enum {
     PIKA_RES_ERR_OPERATION_FAILED,
     PIKA_RES_ERR_UNKNOWN,
     PIKA_RES_ERR_SYNTAX_ERROR,
+    PIKA_RES_ERR_IO,
 } PIKA_RES;
 
 /* clang-format off */

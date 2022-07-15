@@ -84,3 +84,21 @@ TEST(stddata, encode_decode) {
     obj_deinit(pikaMain);
 }
 #endif
+
+#if PIKA_FILEIO_ENABLE
+TEST(stddata, fileio) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/file.py");
+    Arg* s = obj_getArg(pikaMain, "s");
+    Arg* b = obj_getArg(pikaMain, "b");
+    /* assert */
+    EXPECT_EQ(arg_getType(s), ARG_TYPE_STRING);
+    EXPECT_EQ(arg_getType(b), ARG_TYPE_BYTES);
+    /* deinit */
+    obj_deinit(pikaMain);
+}
+#endif

@@ -102,6 +102,10 @@
             #define PIKA_EVENT_ENABLE 0
         #endif
 
+        #ifndef PIKA_FILEIO_ENABLE
+            #define PIKA_FILEIO_ENABLE 0
+        #endif
+
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
         #ifndef PIKA_SYNTAX_SLICE_ENABLE
             #define PIKA_SYNTAX_SLICE_ENABLE 1
@@ -129,6 +133,10 @@
 
         #ifndef PIKA_EVENT_ENABLE
             #define PIKA_EVENT_ENABLE 1
+        #endif
+
+        #ifndef PIKA_FILEIO_ENABLE
+            #define PIKA_FILEIO_ENABLE 1
         #endif
         
     #endif
@@ -224,6 +232,10 @@
 
     #ifndef PIKA_DEBUG_ENABLE
         #define PIKA_DEBUG_ENABLE 0
+    #endif
+
+    #ifndef PIKA_FILEIO_ENABLE
+        #define PIKA_FILEIO_ENABLE 1
     #endif
 
     #ifndef PIKA_ARG_NUM_MAX
