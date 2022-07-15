@@ -51,7 +51,7 @@ void ParserState_iterEnd(struct ParserState* ps);
 char* Parser_popToken(Args* buffs_p, char* tokens);
 
 /* Syntex item */
-SyntaxItem syntexItemList[] = {
+const SyntaxItem syntexItemList[] = {
     /* clang-format off */
     {
         .asmCode = "RUN",

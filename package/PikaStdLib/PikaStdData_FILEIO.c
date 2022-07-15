@@ -25,6 +25,10 @@ void PikaStdData_FILEIO_close(PikaObj* self) {
 }
 
 Arg* PikaStdData_FILEIO_read(PikaObj* self, int size) {
+    if (size <= 0) {
+        /* read all */
+        size = PIKA_READ_FILE_BUFF_SIZE;
+    }
     FILE* f = obj_getPtr(self, "_f");
     if (f == NULL) {
         return NULL;
@@ -40,7 +44,9 @@ Arg* PikaStdData_FILEIO_read(PikaObj* self, int size) {
     char* mode = obj_getStr(self, "_mode");
     if (strIsContain(mode, 'b')) {
         /* binary */
-        return buf_arg;
+        Arg* res = arg_setBytes(NULL, "", buf, n);
+        arg_deinit(buf_arg);
+        return res;
     } else {
         /* text */
         Arg* res = arg_setStr(NULL, "", (char*)buf);
