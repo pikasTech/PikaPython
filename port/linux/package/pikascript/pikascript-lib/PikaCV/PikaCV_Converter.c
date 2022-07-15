@@ -286,7 +286,7 @@ void PikaCV_Converter_toRGB888(PikaObj* self, PikaObj* image) {
     }
 exit:
     obj_setBytes(image, "_data", data_new, size_new);
-    img->format = PikaCV_ImageFormat_Type_RGB565;
+    img->format = PikaCV_ImageFormat_Type_RGB888;
     img->size = size_new;
     arg_deinit(arg_data_new);
 }

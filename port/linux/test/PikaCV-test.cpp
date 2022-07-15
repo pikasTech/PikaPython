@@ -29,3 +29,18 @@ TEST(PikaCV, test2) {
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(PikaCV, test3) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/PikaCV/PikaCV_test3.py");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}

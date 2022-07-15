@@ -343,21 +343,25 @@ void PikaCV_Image_merge(PikaObj* self, PikaObj* B, PikaObj* G, PikaObj* R) {
         return;
     }
 
-    uint8_t* src_data = _image_getData(self);
-    uint8_t* B_data = _image_getData(B);
-    uint8_t* G_data = _image_getData(G);
-    uint8_t* R_data = _image_getData(R);
     src->size = Channel_B->size * 3;
     src->height = Channel_B->height;
     src->width = Channel_B->width;
 
-    for (int i = 0; i < src->size; i++) {
-        src_data[i * 3] = R_data[i];
-        src_data[i * 3 + 1] = G_data[i];
-        src_data[i * 3 + 2] = B_data[i];
+    Arg* src_new_data_arg = arg_setBytes(NULL, "", NULL, src->size);
+    uint8_t* src_data_new = arg_getBytes(src_new_data_arg);
+
+    uint8_t* B_data = _image_getData(B);
+    uint8_t* G_data = _image_getData(G);
+    uint8_t* R_data = _image_getData(R);
+
+    for (int i = 0; i < Channel_B->size; i++) {
+        src_data_new[i * 3] = R_data[i];
+        src_data_new[i * 3 + 1] = G_data[i];
+        src_data_new[i * 3 + 2] = B_data[i];
     }
 
-    obj_setBytes(self, "_data", src_data, (src->size));
+    obj_setBytes(self, "_data", src_data_new, (src->size));
+    arg_deinit(src_new_data_arg);
 }
 
 PikaObj* PikaCV_Image_split(PikaObj* self) {
