@@ -1,5 +1,6 @@
 #include "PikaCV_Image.h"
 #include "PikaCV_common.h"
+#include "PikaStdData_List.h"
 #include "dataStrs.h"
 
 void PikaCV_Image___init__(PikaObj* self) {
@@ -279,7 +280,7 @@ void PikaCV_Image_minus(PikaObj *self, PikaObj* image){
     }
     if (img->size != src->size ) {
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf("unsupported image format\n");
+        __platform_printf("illegal image size\n");
         return;
     }
     
@@ -304,4 +305,98 @@ void PikaCV_Image_minus(PikaObj *self, PikaObj* image){
     
     obj_setBytes(self, "_data", src_data, (src->size));
 
+}
+
+void PikaCV_Image_merge(PikaObj *self, PikaObj* B, PikaObj* G, PikaObj* R){
+    PikaCV_Image* src = obj_getStruct(self, "image");
+    PikaCV_Image* Channel_B = obj_getStruct(B, "image");
+    PikaCV_Image* Channel_G = obj_getStruct(G, "image");
+    PikaCV_Image* Channel_R = obj_getStruct(R, "image");
+    
+    if (NULL == src || NULL == Channel_B || NULL == Channel_G || NULL == Channel_R) {
+        pika_assert(0);
+        return;
+    }
+    if (PikaCV_ImageFormat_Type_RGB888 != src->format ) {
+        obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf("unsupported image format\n");
+        return;
+    }
+    if (PikaCV_ImageFormat_Type_GRAY != Channel_B->format || 
+        PikaCV_ImageFormat_Type_GRAY != Channel_G->format || 
+        PikaCV_ImageFormat_Type_GRAY != Channel_R->format) {
+        obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf("unsupported image format\n");
+        return;
+    }    
+    if (Channel_B->size != Channel_G->size || 
+        Channel_B->size != Channel_R->size) {
+        obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf("illegal image size\n");
+        return;
+    }
+    
+    uint8_t* src_data = _image_getData(self);
+    uint8_t* B_data = _image_getData(B);
+    uint8_t* G_data = _image_getData(G);
+    uint8_t* R_data = _image_getData(R);
+    src->size = Channel_B -> size * 3 ;
+    src->height = Channel_B -> height ;
+    src->width = Channel_B -> width ;
+
+    for (int i = 0; i < src->size; i++) {
+        src_data[i * 3] = R_data[i];
+        src_data[i * 3 + 1] = G_data[i];
+        src_data[i * 3 + 2] = B_data[i];
+    }
+    
+    obj_setBytes(self, "_data", src_data, (src->size));    
+}
+
+PikaObj* PikaCV_Image_split(PikaObj *self){
+    PikaCV_Image* src = obj_getStruct(self, "image");
+    
+    if (NULL == src) {
+        pika_assert(0);
+        return ;
+    }
+    if (PikaCV_ImageFormat_Type_RGB888 != src->format ) {
+        obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf("unsupported image format\n");
+        return;
+    }
+    
+    uint8_t* src_data = _image_getData(self);
+    Arg* arg_data_B = arg_setBytes(NULL, "", NULL, (src->size)/3);
+    Arg* arg_data_G = arg_setBytes(NULL, "", NULL, (src->size)/3);
+    Arg* arg_data_R = arg_setBytes(NULL, "", NULL, (src->size)/3);
+    
+    uint8_t* data_B = arg_getBytes(arg_data_B);
+    uint8_t* data_G = arg_getBytes(arg_data_G);
+    uint8_t* data_R = arg_getBytes(arg_data_R);
+
+    uint8_t* RGB[3] ={ data_R , data_G , data_B };
+
+    for(int i= 0 ; i < (src->size)/3 ; i++){
+        RGB[0][i] = src_data[i * 3];
+        RGB[1][i] = src_data[i * 3 + 1];
+        RGB[2][i] = src_data[i * 3 + 2];
+    }
+
+    PikaObj* list = newNormalObj(New_PikaStdData_List);
+    PikaStdData_List___init__(list);
+
+    for(int i= 0 ; i < 3 ; i++){
+        Arg* token_arg = arg_setBytes(NULL, "_data", RGB[i],src->size);
+        /* 添加到 list 对象 */
+        PikaStdData_List_append(list, token_arg);
+        /* 销毁 arg */
+        arg_deinit(token_arg);
+    }
+
+    arg_deinit(arg_data_B);
+    arg_deinit(arg_data_G);
+    arg_deinit(arg_data_R);
+
+    return list; 
 }

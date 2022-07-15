@@ -79,6 +79,12 @@ class Image(TinyObj):
     def minus(self,image:Imgae):
         """Minus two images"""
 
+    def split(self) -> List:
+        """Split one 3-channels image to three 1-channel"""
+
+    def merge(self,R:Image,G:Image,B:Image):
+        """Merge three 1-channel image to 3-channels"""
+
 class Converter(TinyObj):
     """The Converter class is used to 
     convert an image from one format to another."""
