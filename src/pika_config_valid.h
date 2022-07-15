@@ -179,7 +179,7 @@
     #endif
 
     #ifndef PIKA_READ_FILE_BUFF_SIZE
-        #define PIKA_READ_FILE_BUFF_SIZE 0x10000
+        #define PIKA_READ_FILE_BUFF_SIZE 0x1024 * 10
     #endif
 
     #ifndef PIKA_INIT_STRING_ENABLE
