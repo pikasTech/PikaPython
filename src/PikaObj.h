@@ -278,6 +278,8 @@ NewFun obj_getClass(PikaObj* obj);
 
 void pks_printVersion(void);
 void* obj_getStruct(PikaObj* self, char* name);
+PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
+                                            uint32_t eventId);
 
 #define obj_setStruct(PikaObj_p_self, char_p_name, struct_) \
     args_setStruct(((PikaObj_p_self)->list), char_p_name, struct_)

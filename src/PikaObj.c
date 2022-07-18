@@ -733,7 +733,8 @@ static void __obj_runCharBeforeRun(PikaObj* self) {
 
 enum shell_state obj_runChar(PikaObj* self, char inputChar) {
     struct shell_config* cfg = args_getStruct(self->list, "__shcfg");
-    __obj_shellLineHandler_t __lineHandler_fun = (__obj_shellLineHandler_t)obj_getPtr(self, "__shhdl");
+    __obj_shellLineHandler_t __lineHandler_fun =
+        (__obj_shellLineHandler_t)obj_getPtr(self, "__shhdl");
     char* rxBuff = (char*)obj_getBytes(self, "__shbuf");
     char* input_line = NULL;
     int is_in_block = obj_getInt(self, "__shinb");
@@ -1101,8 +1102,8 @@ void pks_eventLicener_registEvent(PikaEventListener* self,
     strsDeinit(&buffs);
 }
 
-static PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
-                                                   uint32_t eventId) {
+PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
+                                            uint32_t eventId) {
     Args buffs = {0};
     char* event_name =
         strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
