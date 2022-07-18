@@ -159,18 +159,19 @@ void PikaStdData_FILEIO_writelines(PikaObj* self, PikaObj* lines) {
     if (f == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO);
         __platform_printf("Error: can't write lines to file\n");
-        return -1;
+        return;
     }
     PikaList* list = obj_getPtr(lines, "list");
     if (list == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO);
         __platform_printf("Error: can't write lines to file\n");
-        return -1;
-    }   
-    int i;
-    for (i = 0; i < list_getSize(list); i++) {
-        PikaObj* line = list_getStr(list, i);
-        PikaStdData_FILEIO_write(self, line);
+        return;
     }
-    return 0;
+    for (size_t i = 0; i < list_getSize(list); i++) {
+        char* line = list_getStr(list, i);
+        Arg* arg_str = arg_setStr(NULL, "", line);
+        PikaStdData_FILEIO_write(self, arg_str);
+        arg_deinit(arg_str);
+    }
+    return;
 }
