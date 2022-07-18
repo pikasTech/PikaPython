@@ -153,9 +153,9 @@ int __platform_fclose(FILE* stream);
 size_t __platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream);
 size_t __platform_fread(void* ptr, size_t size, size_t n, FILE* stream);
 int __platform_fseek(FILE* stream, long offset, int whence);
+long __platform_ftell(FILE* stream);
 
 /* error */
 void __platform_error_handle(void);
-long __platform_ftell(FILE* stream);
 
 #endif

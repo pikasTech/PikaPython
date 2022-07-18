@@ -1,5 +1,6 @@
 #include "PikaStdData_FILEIO.h"
 #include <stdio.h>
+#include "PikaStdData_List.h"
 
 void PikaStdData_FILEIO_init(PikaObj* self, char* mode, char* path) {
     if (obj_isArgExist(self, "_f")) {
@@ -99,4 +100,77 @@ int PikaStdData_FILEIO_tell(PikaObj* self) {
         return -1;
     }
     return __platform_ftell(f);
+}
+
+char* PikaStdData_FILEIO_readline(PikaObj* self) {
+    FILE* f = obj_getPtr(self, "_f");
+    if (f == NULL) {
+        obj_setErrorCode(self, PIKA_RES_ERR_IO);
+        __platform_printf("Error: can't read line from file\n");
+        return NULL;
+    }
+    obj_setBytes(self, "_line_buff", NULL, PIKA_LINE_BUFF_SIZE);
+    char* line_buff = (char*)obj_getBytes(self, "_line_buff");
+    while (1) {
+        char char_buff[2] = {0};
+        int n = __platform_fread(char_buff, 1, 1, f);
+        if (n == 0) {
+            /* EOF */
+            return NULL;
+        }
+        if (char_buff[0] == '\n') {
+            /* end of line */
+            strAppend(line_buff, char_buff);
+            return line_buff;
+        }
+        if (strGetSize(line_buff) >= PIKA_LINE_BUFF_SIZE) {
+            /* line too long */
+            obj_setErrorCode(self, PIKA_RES_ERR_IO);
+            __platform_printf("Error: line too long\n");
+            return NULL;
+        }
+        strAppend(line_buff, char_buff);
+    }
+}
+
+PikaObj* PikaStdData_FILEIO_readlines(PikaObj* self) {
+    FILE* f = obj_getPtr(self, "_f");
+    if (f == NULL) {
+        obj_setErrorCode(self, PIKA_RES_ERR_IO);
+        __platform_printf("Error: can't read lines from file\n");
+        return NULL;
+    }
+    PikaObj* line_list = newNormalObj(New_PikaStdData_List);
+    PikaStdData_List___init__(line_list);
+    while (1) {
+        char* line = PikaStdData_FILEIO_readline(self);
+        if (line == NULL) {
+            break;
+        }
+        Arg* arg_str = arg_setStr(NULL, "", line);
+        PikaStdData_List_append(line_list, arg_str);
+        arg_deinit(arg_str);
+    }
+    return line_list;
+}
+
+void PikaStdData_FILEIO_writelines(PikaObj* self, PikaObj* lines) {
+    FILE* f = obj_getPtr(self, "_f");
+    if (f == NULL) {
+        obj_setErrorCode(self, PIKA_RES_ERR_IO);
+        __platform_printf("Error: can't write lines to file\n");
+        return -1;
+    }
+    PikaList* list = obj_getPtr(lines, "list");
+    if (list == NULL) {
+        obj_setErrorCode(self, PIKA_RES_ERR_IO);
+        __platform_printf("Error: can't write lines to file\n");
+        return -1;
+    }   
+    int i;
+    for (i = 0; i < list_getSize(list); i++) {
+        PikaObj* line = list_getStr(list, i);
+        PikaStdData_FILEIO_write(self, line);
+    }
+    return 0;
 }
