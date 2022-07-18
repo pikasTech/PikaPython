@@ -551,6 +551,26 @@ Arg* list_getArg(PikaList* self, int index) {
     return args_getArg(&self->super, i_str);
 }
 
+int list_getInt(PikaList* self, int index) {
+    Arg* arg = list_getArg(self, index);
+    return arg_getInt(arg);
+}
+
+double list_getFloat(PikaList* self, int index) {
+    Arg* arg = list_getArg(self, index);
+    return arg_getFloat(arg);
+}
+
+char* list_getStr(PikaList* self, int index) {
+    Arg* arg = list_getArg(self, index);
+    return arg_getStr(arg);
+}
+
+void* list_getPtr(PikaList* self, int index) {
+    Arg* arg = list_getArg(self, index);
+    return arg_getPtr(arg);
+}
+
 PIKA_RES list_append(PikaList* self, Arg* arg) {
     int top = args_getInt(&self->super, "top");
     char buff[11];

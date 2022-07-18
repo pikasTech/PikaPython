@@ -35,3 +35,21 @@ TEST(builtin, type1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+#if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
+TEST(builtin, seek) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/seek.py");
+    /* collect */
+    int len = obj_getInt(pikaMain, "len");
+    /* assert */
+    EXPECT_EQ(len, 3576);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

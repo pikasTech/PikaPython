@@ -162,6 +162,10 @@ PikaDict* New_dict(void);
 #define list_deinit(self) (args_deinit((&((self)->super))))
 PIKA_RES list_append(PikaList* self, Arg* arg);
 PIKA_RES list_setArg(PikaList* self, int index, Arg* arg);
+int list_getInt(PikaList* self, int index);
+double list_getFloat(PikaList* self, int index);
+char* list_getStr(PikaList* self, int index);
+void* list_getPtr(PikaList* self, int index);
 Arg* list_getArg(PikaList* self, int index);
 size_t list_getSize(PikaList* self);
 char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg);
@@ -170,6 +174,12 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg);
 #define tuple_deinit(self) (list_deinit((&((self)->super))))
 #define tuple_getArg(self, index) (list_getArg((&((self)->super)), (index)))
 #define tuple_getSize(self) (list_getSize((&((self)->super))))
+#define tuple_getInt(self, index) (list_getInt((&((self)->super)), (index)))
+#define tuple_getFloat(self, index) \
+    (list_getFloat((&((self)->super)), (index)))
+#define tuple_getStr(self, index) (list_getStr((&((self)->super)), (index)))
+#define tuple_getPtr(self, index) (list_getPtr((&((self)->super)), (index)))
+#define tuple_getType(self, index) (list_getType((&((self)->super)), (index)))
 
 PikaList* New_list(void);
 PikaTuple* New_tuple(void);
