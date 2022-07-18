@@ -116,3 +116,13 @@ class Transforms(TinyObj):
     @staticmethod
     def rotateDown(image: Image):
         """Rotate the image """
+    def threshold(image:Image,thre:int,maxval:int,thresholdType:int):
+        """
+        0:THRESH_BINARY 
+        1:THRESH_BINARY_INV
+        2:THRESH_TRUNC
+        3:THRESH_TOZERO
+        4:THRESH_TOZERO_INV
+        """
+    def setROI(image:Image,x:int,y:int,w:int,h:int) :
+        """xywh"""
