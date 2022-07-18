@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658130781715,
+  "lastUpdate": 1658132228753,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -68440,6 +68440,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000243244251833,
             "unit": "ms/iter",
             "extra": "iterations: 267187\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "757419920@qq.com",
+            "name": "purewind7",
+            "username": "Renzhihan"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "76aaf5c63beaf3ae0154e31baac11a060580edbd",
+          "message": "Add setROI and threshold in PikaCV",
+          "timestamp": "2022-07-18T08:10:45Z",
+          "tree_id": "33a1da50a528ac13cfcf0aee31ae185fd0d3310f",
+          "url": "https://github.com/pikasTech/pikascript/commit/76aaf5c63beaf3ae0154e31baac11a060580edbd"
+        },
+        "date": 1658132222779,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6092.325930874335,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6092.325930874335 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 52.443319440213926,
+            "unit": "ms/iter",
+            "extra": "iterations: 27\ncpu: 52.43689925961993 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 25.012704563459472,
+            "unit": "ms/iter",
+            "extra": "iterations: 56\ncpu: 25.011278775496784 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 9.479361776522463,
+            "unit": "ms/iter",
+            "extra": "iterations: 148\ncpu: 9.478317584317551 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000360591878976,
+            "unit": "ms/iter",
+            "extra": "iterations: 280737\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
