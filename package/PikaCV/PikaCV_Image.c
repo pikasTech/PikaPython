@@ -414,3 +414,6 @@ PikaObj* PikaCV_Image_split(PikaObj* self) {
 
     return list;
 }
+
+#undef MAX
+#undef MIN

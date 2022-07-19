@@ -123,6 +123,18 @@ class Transforms(TinyObj):
         2:THRESH_TRUNC
         3:THRESH_TOZERO
         4:THRESH_TOZERO_INV
+        5:OTSU
         """
     def setROI(image:Image,x:int,y:int,w:int,h:int) :
         """xywh"""
+    def getOTSUthre(image:Image) -> int:
+        """return otsu threshold"""
+    def setOTSU(image:Image):
+        """otsu"""
+    def resize(image:Image,x:int,y:int,resizeType:int):
+        """
+        resize image
+        0:NEAREST
+        TODO:
+        1:BILINEAR
+        """
