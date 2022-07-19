@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658134812775,
+  "lastUpdate": 1658226123799,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -68548,6 +68548,60 @@ window.BENCHMARK_DATA = {
             "value": 0.00500166529413981,
             "unit": "ms/iter",
             "extra": "iterations: 196568\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "李昂",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@gitee.com",
+            "name": "Gitee",
+            "username": "gitee-org"
+          },
+          "distinct": true,
+          "id": "1181e4b80f74e6600cdbd50532e015f5899d1125",
+          "message": "!63 Add resize and OTSU in PikaCV ,fix threshold\nMerge pull request !63 from BearJan/master",
+          "timestamp": "2022-07-19T10:11:22Z",
+          "tree_id": "dee1049d8f2d8d41d548a546ca0a5d646c4b74c0",
+          "url": "https://github.com/pikasTech/pikascript/commit/1181e4b80f74e6600cdbd50532e015f5899d1125"
+        },
+        "date": 1658226116707,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6059.092957360082,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6059.092957360082 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 53.199739173853445,
+            "unit": "ms/iter",
+            "extra": "iterations: 26\ncpu: 53.163579367522225 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 24.66205255718831,
+            "unit": "ms/iter",
+            "extra": "iterations: 57\ncpu: 24.657127126417997 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 9.530836265391718,
+            "unit": "ms/iter",
+            "extra": "iterations: 147\ncpu: 9.530304355185073 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000120865080837,
+            "unit": "ms/iter",
+            "extra": "iterations: 280553\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
