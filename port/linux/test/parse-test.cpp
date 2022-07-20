@@ -3341,7 +3341,7 @@ TEST(parser, def_issue1) {
 
 TEST(parser, configparser) {
     Args buffs = {0};
-    Parser_fileToAsm(&buffs, "package/pikascript/pika_configparser.py");
+    Parser_fileToAsm(&buffs, "package/pikascript/configparser.py");
     strsDeinit(&buffs);
 }
 

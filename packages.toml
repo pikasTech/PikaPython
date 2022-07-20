@@ -157,7 +157,7 @@ releases = [
 
 
 [[packages]]
-name = "pika_configparser"
+name = "configparser"
 releases = [
   "v0.0.1 571ceb837b7a912e3a8e4ae342767f4fb1eb7a9e",
 ]

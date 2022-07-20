@@ -11,7 +11,7 @@ import cjson_test
 import test_module4
 import pika_lua
 import import_test
-import pika_configparser
+import configparser
 import PikaDebug
 import PikaCV
 import binascii
