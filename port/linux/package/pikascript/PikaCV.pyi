@@ -138,3 +138,9 @@ class Transforms(TinyObj):
         TODO:
         1:BILINEAR
         """
+
+class Filter(TinyObj):
+    """The Filter class is used to 
+    supply some Image Filtering Algorithms ."""
+    def meanFilter(image:Image,ksizex:int,ksizey:int):
+        """ mean filter,ksize is odd"""
