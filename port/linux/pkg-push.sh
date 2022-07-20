@@ -39,6 +39,6 @@ git add ../../package/$pkg
 echo -e "$FLAG_INFO C files added:"
 # list files name in package/pikascript/pikascript-lib/$pkg
 ls  package/pikascript/pikascript-lib/$pkg
-echo -e "$FLAG_OK Push $pkg to ../../package successfully!"
+echo -e "$FLAG_OK Push \033[32m$pkg\033[0m to ../../package/$pkg successfully!"
 echo -e "$FLAG_NOTE Now, you can run 'git commit -a' to commit changes."
 echo -e "$FLAG_NOTE Then, you can run 'git push' to push to github/gitee."
