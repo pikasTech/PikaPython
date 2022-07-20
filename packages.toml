@@ -159,7 +159,7 @@ releases = [
 [[packages]]
 name = "configparser"
 releases = [
-  "v0.0.1 571ceb837b7a912e3a8e4ae342767f4fb1eb7a9e",
+  "v0.1.0 d3a9f6e226bb9cfccbfc588cc465672cefea9e82",
 ]
 
 [[packages]]
