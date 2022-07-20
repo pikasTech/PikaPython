@@ -28,7 +28,7 @@ void PikaStdData_List___init__(PikaObj* self) {
 
 char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg);
 char* PikaStdData_List___str__(PikaObj* self) {
-    Arg* str_arg = arg_setStr(NULL, "", "[");
+    Arg* str_arg = arg_newStr("[");
     PikaList* list = obj_getPtr(self, "list");
 
     int i = 0;

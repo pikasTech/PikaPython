@@ -65,7 +65,7 @@ TEST(arg_test, null) {
 }
 
 TEST(arg_test, append) {
-    Arg* arg = arg_setStr(NULL, "", "test");
+    Arg* arg = arg_newStr("test");
     arg = arg_append(arg, (void*)"hello", sizeof("hello"));
     EXPECT_STREQ(arg_getStr(arg), "test");
     EXPECT_STREQ(arg_getStr(arg) + sizeof("test"), "hello");

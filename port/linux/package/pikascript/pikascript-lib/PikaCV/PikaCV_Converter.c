@@ -101,7 +101,7 @@ PIKA_RES Converter_JPEGtoRGB888(PikaObj* image) {
     }
 
     size_t sz_work = 3500;
-    Arg* arg_work = arg_setBytes(NULL, "", NULL, sz_work);
+    Arg* arg_work = arg_newBytes(NULL, sz_work);
     JRESULT res;
     JDEC jdec;
     void* work = arg_getBytes(arg_work);
@@ -126,7 +126,7 @@ PIKA_RES Converter_JPEGtoRGB888(PikaObj* image) {
 
     /* Allocate memory for output image */
     Arg* arg_output =
-        arg_setBytes(NULL, "", NULL, jdec.width * jdec.height * N_BPP);
+        arg_newBytes(NULL, jdec.width * jdec.height * N_BPP);
     if (NULL == arg_output) {
         __platform_printf("Converter_JPEGtoRGB888: arg_setBytes failed\n");
         pika_res = PIKA_RES_ERR_INVALID_PTR;
@@ -170,7 +170,7 @@ void PikaCV_Converter_toGray(PikaObj* self, PikaObj* image) {
     }
 
     int size_new = img->height * img->width;
-    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
+    Arg* arg_data_new = arg_newBytes(NULL, size_new);
     uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
     if (img->format == PikaCV_ImageFormat_Type_RGB888) {
@@ -215,7 +215,7 @@ void PikaCV_Converter_toRGB565(PikaObj* self, PikaObj* image) {
     }
 
     int size_new = img->height * img->width * 2;
-    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
+    Arg* arg_data_new = arg_newBytes(NULL, size_new);
     uint8_t* data = obj_getBytes(image, "_data");
     uint8_t* data_new = arg_getBytes(arg_data_new);
     if (img->format == PikaCV_ImageFormat_Type_RGB888) {
@@ -258,7 +258,7 @@ void PikaCV_Converter_toRGB888(PikaObj* self, PikaObj* image) {
     }
 
     int size_new = img->height * img->width * 3;
-    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
+    Arg* arg_data_new = arg_newBytes(NULL, size_new);
     uint8_t* data = obj_getBytes(image, "_data");
     uint8_t* data_new = arg_getBytes(arg_data_new);
     if (img->format == PikaCV_ImageFormat_Type_RGB565) {
@@ -345,7 +345,7 @@ void PikaCV_Converter_toBMP(PikaObj* self, PikaObj* image) {
 
     /* convert to BMP */
     int size_new = img->height * row_align + 54;
-    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
+    Arg* arg_data_new = arg_newBytes(NULL, size_new);
     uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
 
@@ -403,7 +403,7 @@ void PikaCV_Converter_toBGR888(PikaObj* self, PikaObj* image) {
     }
     /* to BGR888 */
     int size_new = img->size;
-    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
+    Arg* arg_data_new = arg_newBytes(NULL, size_new);
     uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
 

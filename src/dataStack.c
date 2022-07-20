@@ -103,7 +103,7 @@ int32_t stack_pushArg(Stack* stack, Arg* arg) {
 }
 
 int32_t stack_pushStr(Stack* stack, char* str) {
-    Arg* newArg = arg_setStr(NULL, "", str);
+    Arg* newArg = arg_newStr(str);
     return stack_pushArg(stack, newArg);
 }
 

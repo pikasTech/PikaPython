@@ -72,7 +72,7 @@ Arg* __queue_popArg_noRmoveArg(Queue* queue) {
 }
 
 int32_t queue_pushInt(Queue* queue, int val) {
-    return queue_pushArg(queue, arg_setInt(NULL, "", val));
+    return queue_pushArg(queue, arg_newInt(val));
 }
 
 int64_t queue_popInt(Queue* queue) {
@@ -80,7 +80,7 @@ int64_t queue_popInt(Queue* queue) {
 }
 
 int32_t queue_pushFloat(Queue* queue, double val) {
-    return queue_pushArg(queue, arg_setFloat(NULL, "", val));
+    return queue_pushArg(queue, arg_newFloat(val));
 }
 
 double queue_popFloat(Queue* queue) {
@@ -88,7 +88,7 @@ double queue_popFloat(Queue* queue) {
 }
 
 int32_t queue_pushStr(Queue* queue, char* str) {
-    return queue_pushArg(queue, arg_setStr(NULL, "", str));
+    return queue_pushArg(queue, arg_newStr(str));
 }
 
 char* queue_popStr(Queue* queue) {

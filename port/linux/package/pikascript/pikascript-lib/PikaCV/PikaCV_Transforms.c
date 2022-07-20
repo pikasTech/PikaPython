@@ -18,7 +18,7 @@ void PikaCV_Transforms_rotateDown(PikaObj* self, PikaObj* image) {
     int width = img->width;
     int height = img->height;
     int size_new = width * height * 3;
-    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
+    Arg* arg_data_new = arg_newBytes(NULL, size_new);
     uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
     int i, j, k;
@@ -107,7 +107,7 @@ void PikaCV_Transforms_setROI(PikaObj *self, int h, PikaObj* image, int w, int x
     }
 
     int size_new = h * w * 3;
-    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
+    Arg* arg_data_new = arg_newBytes(NULL, size_new);
     uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
 
@@ -219,7 +219,7 @@ void PikaCV_Transforms_resize(PikaObj *self, PikaObj* image, int resizeType, int
     }    
 
     int size_new = x * y * 3;
-    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
+    Arg* arg_data_new = arg_newBytes(NULL, size_new);
     uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
 

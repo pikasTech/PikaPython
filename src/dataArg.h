@@ -86,6 +86,14 @@ Arg* arg_setFloat(Arg* self, char* name, double val);
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer);
 Arg* arg_setStr(Arg* self, char* name, char* string);
 Arg* arg_setNull(Arg* self);
+Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
+
+#define arg_newInt(val) arg_setInt(NULL, "", (val))
+#define arg_newFloat(val) arg_setFloat(NULL, "", (val))
+#define arg_newPtr(type, pointer) arg_setPtr(NULL, "", (type), (pointer))
+#define arg_newStr(string) arg_setStr(NULL, "", (string))
+#define arg_newNull() arg_setNull(NULL)
+#define arg_newBytes(src, size) arg_setBytes(NULL, "", (src), (size))
 
 int64_t arg_getInt(Arg* self);
 double arg_getFloat(Arg* self);
@@ -111,9 +119,9 @@ Arg* arg_setHeapStruct(Arg* self,
                        void* struct_deinit_fun);
 void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
-Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 void arg_printBytes(Arg* self);
 Arg* arg_loadFile(Arg* self, char* filename);
 uint8_t argType_isObject(ArgType type);
+
 
 #endif

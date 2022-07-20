@@ -5,7 +5,7 @@
 
 Arg* PikaStdData_String___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
-    return arg_setRef(NULL, "", self);
+    return arg_newRef(self);
 }
 
 void PikaStdData_String_set(PikaObj* self, char* s) {
@@ -28,9 +28,9 @@ Arg* PikaStdData_String___next__(PikaObj* self) {
     char char_buff[] = " ";
     if (__iter_i < len) {
         char_buff[0] = str[__iter_i];
-        res = arg_setStr(NULL, "", (char*)char_buff);
+        res = arg_newStr((char*)char_buff);
     } else {
-        return arg_setNull(NULL);
+        return arg_newNull();
     }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return res;
@@ -43,9 +43,9 @@ Arg* PikaStdData_String___get__(PikaObj* self, Arg* __key) {
     char char_buff[] = " ";
     if (key_i < len) {
         char_buff[0] = str[key_i];
-        return arg_setStr(NULL, "", (char*)char_buff);
+        return arg_newStr((char*)char_buff);
     } else {
-        return arg_setNull(NULL);
+        return arg_newNull();
     }
 }
 
@@ -162,7 +162,7 @@ PikaObj* PikaStdData_String_split(PikaObj* self, char* s) {
     for (int i = 0; i < token_num; i++) {
         char* token = strsPopToken(&buffs, str, sign);
         /* 用 arg_set<type> 的 api 创建 arg */
-        Arg* token_arg = arg_setStr(NULL, "", token);
+        Arg* token_arg = arg_newStr(token);
         /* 添加到 list 对象 */
         PikaStdData_List_append(list, token_arg);
         /* 销毁 arg */
@@ -213,6 +213,6 @@ char* PikaStdData_String_replace(PikaObj* self, char* new, char* old) {
 
 Arg* PikaStdData_String_encode(PikaObj* self) {
     char* str = obj_getStr(self, "str");
-    Arg* arg = arg_setBytes(NULL, "", (uint8_t*)str, strGetSize(str));
+    Arg* arg = arg_newBytes((uint8_t*)str, strGetSize(str));
     return arg;
 }

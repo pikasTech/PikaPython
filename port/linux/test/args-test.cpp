@@ -165,8 +165,8 @@ TEST(args, mem) {
 
 TEST(args, index) {
     Args* args = New_args(NULL);
-    args_pushArg(args, arg_setInt(NULL, "", 1));
-    args_pushArg(args, arg_setFloat(NULL, "", 2.4));
+    args_pushArg(args, arg_newInt(1));
+    args_pushArg(args, arg_newFloat(2.4));
 
     int a = arg_getInt(args_getArgByidex(args, 1));
     float b = arg_getFloat(args_getArgByidex(args, 0));

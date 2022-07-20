@@ -389,7 +389,7 @@ Arg* arg_newMetaObj(NewFun new_obj_fun) {
 
 Arg* arg_newDirectObj(NewFun new_obj_fun) {
     PikaObj* newObj = newNormalObj(new_obj_fun);
-    Arg* arg_new = arg_setPtr(NULL, "", ARG_TYPE_OBJECT_NEW, newObj);
+    Arg* arg_new = arg_newPtr(ARG_TYPE_OBJECT_NEW, newObj);
     return arg_new;
 }
 

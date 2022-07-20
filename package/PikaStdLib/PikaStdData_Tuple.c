@@ -18,14 +18,14 @@ void PikaStdData_Tuple___init__(PikaObj* self) {
 
 Arg* PikaStdData_Tuple___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
-    return arg_setRef(NULL, "", self);
+    return arg_newRef(self);
 }
 
 Arg* PikaStdData_Tuple___next__(PikaObj* self) {
     int __iter_i = args_getInt(self->list, "__iter_i");
     Arg* res = PikaStdData_Tuple_get(self, __iter_i);
     if (NULL == res) {
-        return arg_setNull(NULL);
+        return arg_newNull();
     }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return res;
@@ -42,7 +42,7 @@ void PikaStdData_Tuple___del__(PikaObj* self) {
 
 char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg);
 char* PikaStdData_Tuple___str__(PikaObj* self) {
-    Arg* str_arg = arg_setStr(NULL, "", "(");
+    Arg* str_arg = arg_newStr("(");
     PikaList* list = obj_getPtr(self, "list");
 
     int i = 0;

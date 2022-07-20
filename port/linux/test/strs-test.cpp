@@ -72,7 +72,7 @@ TEST(strs, mem) {
 }
 
 TEST(strs, arg_strAppend) {
-    Arg* str_arg = arg_setStr(NULL, "", "a");
+    Arg* str_arg = arg_newStr("a");
     str_arg = arg_strAppend(str_arg, "b");
     EXPECT_STREQ(arg_getStr(str_arg), "ab");
     arg_deinit(str_arg);

@@ -199,7 +199,7 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
             index = strGetSize(str_pyload) + index;
         }
         char_buff[0] = str_pyload[index];
-        return arg_setStr(NULL, "", char_buff);
+        return arg_newStr(char_buff);
     }
     if (ARG_TYPE_BYTES == obj_type) {
         uint8_t* bytes_pyload = arg_getBytes(obj);
@@ -208,7 +208,7 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
             index = arg_getBytesSize(obj) + index;
         }
         byte_buff[0] = bytes_pyload[index];
-        return arg_setBytes(NULL, "", byte_buff, 1);
+        return arg_newBytes(byte_buff, 1);
     }
     if (argType_isObject(obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
@@ -231,7 +231,7 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
         pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
         return arg_copy(args_getArg(arg_obj->list, "__res"));
     }
-    return arg_setNull(NULL);
+    return arg_newNull();
 }
 
 Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
@@ -258,9 +258,9 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
         if (end_i < 0) {
             end_i += len + 1;
         }
-        Arg* sliced_arg = arg_setStr(NULL, "", "");
+        Arg* sliced_arg = arg_newStr("");
         for (int i = start_i; i < end_i; i++) {
-            Arg* i_arg = arg_setInt(NULL, "", i);
+            Arg* i_arg = arg_newInt(i);
             Arg* item_arg = __vm_get(self, i_arg, obj);
             sliced_arg = arg_strAppend(sliced_arg, arg_getStr(item_arg));
             arg_deinit(item_arg);
@@ -277,13 +277,13 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
         if (end_i < 0) {
             end_i += len + 1;
         }
-        Arg* sliced_arg = arg_setBytes(NULL, "", NULL, 0);
+        Arg* sliced_arg = arg_newBytes(NULL, 0);
         for (int i = start_i; i < end_i; i++) {
-            Arg* i_arg = arg_setInt(NULL, "", i);
+            Arg* i_arg = arg_newInt(i);
             Arg* item_arg = __vm_get(self, i_arg, obj);
             uint8_t* bytes_origin = arg_getBytes(sliced_arg);
             size_t size_origin = arg_getBytesSize(sliced_arg);
-            Arg* sliced_arg_new = arg_setBytes(NULL, "", NULL, size_origin + 1);
+            Arg* sliced_arg_new = arg_newBytes(NULL, size_origin + 1);
             __platform_memcpy(arg_getBytes(sliced_arg_new), bytes_origin,
                               size_origin);
             __platform_memcpy(arg_getBytes(sliced_arg_new) + size_origin,
@@ -295,7 +295,7 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
         }
         return sliced_arg;
     }
-    return arg_setNull(NULL);
+    return arg_newNull();
 #else
     return __vm_get(self, start, obj);
 #endif
@@ -305,7 +305,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self, VMState* vs, char* data) {
 #if PIKA_SYNTAX_SLICE_ENABLE
     int arg_num_input = VMState_getInputArgNum(vs);
     if (arg_num_input < 2) {
-        return arg_setNull(NULL);
+        return arg_newNull();
     }
     if (arg_num_input == 2) {
         Arg* key = stack_popArg(&vs->stack);
@@ -326,7 +326,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self, VMState* vs, char* data) {
         return res;
     }
 #endif
-    return arg_setNull(NULL);
+    return arg_newNull();
 }
 
 static Arg* VM_instruction_handler_TRY(PikaObj* self, VMState* vs, char* data) {
@@ -350,16 +350,16 @@ static Arg* VM_instruction_handler_NEW(PikaObj* self, VMState* vs, char* data) {
 
 static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
     if (strEqu(data, (char*)"True")) {
-        return arg_setInt(NULL, "", 1);
+        return arg_newInt(1);
     }
     if (strEqu(data, (char*)"False")) {
-        return arg_setInt(NULL, "", 0);
+        return arg_newInt(0);
     }
     if (strEqu(data, (char*)"None")) {
-        return arg_setNull(NULL);
+        return arg_newNull();
     }
     if (strEqu(data, (char*)"RuntimeError")) {
-        return arg_setInt(NULL, "", PIKA_RES_ERR_RUNTIME_ERROR);
+        return arg_newInt(PIKA_RES_ERR_RUNTIME_ERROR);
     }
     Arg* arg = NULL;
     if (data[0] == '.') {
@@ -387,7 +387,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self, VMState* vs, char* data) {
 
 static Arg* VM_instruction_handler_GER(PikaObj* self, VMState* vs, char* data) {
     PIKA_RES err = (PIKA_RES)vs->try_error_code;
-    Arg* err_arg = arg_setInt(NULL, "", err);
+    Arg* err_arg = arg_newInt(err);
     return err_arg;
 }
 
@@ -637,7 +637,7 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
         arg_deinit(arg);
     }
     stack_deinit(&stack);
-    return arg_setPtr(NULL, "", ARG_TYPE_OBJECT, list);
+    return arg_newPtr(ARG_TYPE_OBJECT, list);
 #else
     return VM_instruction_handler_NON(self, vs, "");
 #endif
@@ -688,7 +688,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self, VMState* vs, char* data) {
         arg_deinit(val_arg);
     }
     stack_deinit(&stack);
-    return arg_setPtr(NULL, "", ARG_TYPE_OBJECT, dict);
+    return arg_newPtr(ARG_TYPE_OBJECT, dict);
 #else
     return VM_instruction_handler_NON(self, vs, data);
 #endif
@@ -895,7 +895,7 @@ static Arg* VM_instruction_handler_STR(PikaObj* self, VMState* vs, char* data) {
         strsDeinit(&buffs);
         return return_arg;
     }
-    return arg_setStr(NULL, "", data);
+    return arg_newStr(data);
 }
 
 static Arg* VM_instruction_handler_BYT(PikaObj* self, VMState* vs, char* data) {
@@ -909,7 +909,7 @@ static Arg* VM_instruction_handler_BYT(PikaObj* self, VMState* vs, char* data) {
         strsDeinit(&buffs);
         return return_arg;
     }
-    return arg_setBytes(NULL, "", (uint8_t*)data, strGetSize(data));
+    return arg_newBytes((uint8_t*)data, strGetSize(data));
 }
 
 static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
@@ -920,7 +920,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self, VMState* vs, char* data) {
     if (args_isArgExist(vs->locals->list, "__gl")) {
         char* global_list = args_getStr(vs->locals->list, "__gl");
         /* use a arg as buff */
-        Arg* global_list_arg = arg_setStr(NULL, "", global_list);
+        Arg* global_list_arg = arg_newStr(global_list);
         char* global_list_buff = arg_getStr(global_list_arg);
         /* for each arg arg in global_list */
         char token_buff[32] = {0};
@@ -1057,7 +1057,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
     } else if (input_arg_num == 1) {
         /* only one input */
         arg2 = stack_popArg(&(vs->stack));
-        arg1 = arg_setNull(NULL);
+        arg1 = arg_newNull();
     }
     ArgType type_arg1 = arg_getType(arg1);
     ArgType type_arg2 = arg_getType(arg2);
@@ -1363,12 +1363,12 @@ static Arg* VM_instruction_handler_DEL(PikaObj* self, VMState* vs, char* data) {
 static Arg* VM_instruction_handler_EST(PikaObj* self, VMState* vs, char* data) {
     Arg* arg = obj_getArg(vs->locals, data);
     if (arg == NULL) {
-        return arg_setInt(NULL, "", 0);
+        return arg_newInt(0);
     }
     if (ARG_TYPE_NONE == arg_getType(arg)) {
-        return arg_setInt(NULL, "", 0);
+        return arg_newInt(0);
     }
-    return arg_setInt(NULL, "", 1);
+    return arg_newInt(1);
 }
 
 static Arg* VM_instruction_handler_BRK(PikaObj* self, VMState* vs, char* data) {
@@ -1392,7 +1392,7 @@ static Arg* VM_instruction_handler_GLB(PikaObj* self, VMState* vs, char* data) {
         goto exit;
     }
     /* append to exist global_list */
-    global_list_buff = arg_setStr(NULL, "", global_list);
+    global_list_buff = arg_newStr(global_list);
     global_list_buff = arg_strAppend(global_list_buff, ",");
     global_list_buff = arg_strAppend(global_list_buff, data);
     args_setStr(vs->locals->list, "__gl", arg_getStr(global_list_buff));
@@ -1603,7 +1603,7 @@ void constPool_update(ConstPool* self) {
 }
 
 void constPool_init(ConstPool* self) {
-    self->arg_buff = arg_setStr(NULL, "", "");
+    self->arg_buff = arg_newStr("");
     constPool_update(self);
     self->content_offset_now = 0;
     self->size = strGetSize(constPool_getStart(self)) + 1;
@@ -1721,7 +1721,7 @@ void byteCodeFrame_deinit(ByteCodeFrame* self) {
 }
 
 void instructArray_init(InstructArray* self) {
-    self->arg_buff = arg_setNull(NULL);
+    self->arg_buff = arg_newNull();
     instructArray_update(self);
     self->size = 0;
     self->content_offset_now = 0;

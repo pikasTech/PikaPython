@@ -131,8 +131,8 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
                                  char skipStart,
                                  char skipEnd) {
     uint8_t divider_index = 0;
-    Arg* keeped_arg = arg_setStr(NULL, "", "");
-    Arg* poped_arg = arg_setStr(NULL, "", "");
+    Arg* keeped_arg = arg_newStr("");
+    Arg* poped_arg = arg_newStr("");
     ParserState_forEachToken(ps, stmts) {
         ParserState_iterStart(&ps);
         if (ps.branket_deepth == 0) {
@@ -876,7 +876,7 @@ void ParserState_iterStart(struct ParserState* ps) {
     ps->token2.token = Parser_popToken(ps->iter_buffs, ps->tokens);
     /* store last token */
     arg_deinit(ps->last_token);
-    ps->last_token = arg_setStr(NULL, "", ps->token2.token);
+    ps->last_token = arg_newStr(ps->token2.token);
 
     LexToken_update(&ps->token1);
     LexToken_update(&ps->token2);
@@ -944,7 +944,7 @@ void ParserState_beforeIter(struct ParserState* ps) {
     }
     Parser_popToken(ps->buffs_p, ps->tokens);
     ps->last_token =
-        arg_setStr(NULL, "", Parser_popToken(ps->buffs_p, ps->tokens));
+        arg_newStr(Parser_popToken(ps->buffs_p, ps->tokens));
 }
 
 #if PIKA_SYNTAX_SLICE_ENABLE
@@ -1008,7 +1008,7 @@ static void Slice_getPars(Args* outBuffs,
 char* Suger_solveLeftBranckets(Args* outBuffs, char* right, char** left_p) {
     /* init objects */
     Args buffs = {0};
-    Arg* right_arg = arg_setStr(NULL, "", "");
+    Arg* right_arg = arg_newStr("");
     char* left = *left_p;
     uint8_t is_in_brancket = 0;
     args_setStr(&buffs, "inner", "");
@@ -1057,7 +1057,7 @@ char* Suger_solveLeftBranckets(Args* outBuffs, char* right, char** left_p) {
                    (strEqu(ps.token2.pyload, "]"))) {
             is_in_brancket = 0;
             char* inner = args_getStr(&buffs, "inner");
-            Arg* inner_arg = arg_setStr(NULL, "", inner);
+            Arg* inner_arg = arg_newStr(inner);
             inner_arg = arg_strAppend(inner_arg, ps.token1.pyload);
             args_setStr(&buffs, "inner", arg_getStr(inner_arg));
             arg_deinit(inner_arg);
@@ -1080,7 +1080,7 @@ char* Suger_solveLeftBranckets(Args* outBuffs, char* right, char** left_p) {
             /* in brancket and found '[' */
         } else if (is_in_brancket && (!strEqu(ps.token1.pyload, "["))) {
             char* inner = args_getStr(&buffs, "inner");
-            Arg* index_arg = arg_setStr(NULL, "", inner);
+            Arg* index_arg = arg_newStr(inner);
             index_arg = arg_strAppend(index_arg, ps.token1.pyload);
             args_setStr(&buffs, "inner", arg_getStr(index_arg));
             arg_deinit(index_arg);
@@ -1130,8 +1130,8 @@ char* Suger_solveFormat(Args* outBuffs, char* right) {
     }
 
     char* res = right;
-    Arg* str_buf = arg_setStr(NULL, "", "");
-    Arg* var_buf = arg_setStr(NULL, "", "");
+    Arg* str_buf = arg_newStr("");
+    Arg* var_buf = arg_newStr("");
     PIKA_BOOL is_in_format = PIKA_FALSE;
     PIKA_BOOL is_tuple = PIKA_FALSE;
     PIKA_BOOL is_out_vars = PIKA_FALSE;
@@ -1214,9 +1214,9 @@ uint8_t Parser_solveSelfOperator(Args* outbuffs,
                                  char** left_p) {
     char* left_new = NULL;
     char* right_new = NULL;
-    Arg* left_arg = arg_setStr(NULL, "", "");
-    Arg* right_arg = arg_setStr(NULL, "", "");
-    Arg* right_arg_new = arg_setStr(NULL, "", "");
+    Arg* left_arg = arg_newStr("");
+    Arg* right_arg = arg_newStr("");
+    Arg* right_arg_new = arg_newStr("");
     uint8_t is_left_exist = 0;
 
     Args buffs = {0};
@@ -1298,8 +1298,8 @@ PIKA_RES AST_parseSubStmt(AST* ast, char* node_content) {
 }
 
 char* Parser_popSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
-    Arg* substmt_arg = arg_setStr(NULL, "", "");
-    Arg* newstmt_arg = arg_setStr(NULL, "", "");
+    Arg* substmt_arg = arg_newStr("");
+    Arg* newstmt_arg = arg_newStr("");
     char* stmt = *stmt_p;
     PIKA_BOOL is_get_substmt = 0;
     Args buffs = {0};
@@ -1363,8 +1363,8 @@ char* Parser_popLastSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
     }
     ParserState_deinit(&ps);
 
-    Arg* mainStmt = arg_setStr(NULL, "", "");
-    Arg* lastStmt = arg_setStr(NULL, "", "");
+    Arg* mainStmt = arg_newStr("");
+    Arg* lastStmt = arg_newStr("");
     {
         ParserState_forEachToken(ps, stmt) {
             ParserState_iterStart(&ps);
@@ -2057,13 +2057,13 @@ char* Parser_parsePyLines(Args* outBuffs,
                           char* py_lines) {
     Stack block_stack;
     stack_init(&block_stack);
-    Arg* asm_buff = arg_setStr(NULL, "", "");
+    Arg* asm_buff = arg_newStr("");
     uint32_t lines_offset = 0;
     uint32_t lines_size = strGetSize(py_lines);
     uint16_t lines_num = strCountSign(py_lines, '\n');
     uint16_t lines_index = 0;
     uint8_t is_in_multi_comment = 0;
-    Arg* line_connection_arg = arg_setStr(NULL, "", "");
+    Arg* line_connection_arg = arg_newStr("");
     uint8_t is_line_connection = 0;
     char* out_ASM = NULL;
     char* single_ASM;
@@ -2085,7 +2085,7 @@ char* Parser_parsePyLines(Args* outBuffs,
             line = strsCopy(&buffs, arg_getStr(line_connection_arg));
             /* reflash the line_connection_arg */
             arg_deinit(line_connection_arg);
-            line_connection_arg = arg_setStr(NULL, "", "");
+            line_connection_arg = arg_newStr("");
         }
 
         /* check connection */
@@ -2219,7 +2219,7 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
             /* e.g. "0 RUN print \n" */
             __platform_sprintf(buff, "%d %s ", deepth,
                                syntexItemList[i].asmCode);
-            Arg* abuff = arg_setStr(NULL, "", buff);
+            Arg* abuff = arg_newStr(buff);
             if (syntexItemList[i].isUseNodeValue) {
                 abuff = arg_strAppend(abuff, astNodeVal);
             }
@@ -2335,7 +2335,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     if (strEqu(obj_getStr(ast, "block"), "for")) {
         /* for "for" iter */
         char* arg_in = obj_getStr(ast, "arg_in");
-        Arg* newAsm_arg = arg_setStr(NULL, "", "");
+        Arg* newAsm_arg = arg_newStr("");
         char _l_x[] = "_lx";
         char block_deepth_char = '0';
         block_deepth_char += obj_getInt(ast, "blockDeepth");
@@ -2348,7 +2348,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         newAsm_arg = arg_strAppend(newAsm_arg, "\n");
         pikaAsm = strsAppend(&buffs, pikaAsm, arg_getStr(newAsm_arg));
         arg_deinit(newAsm_arg);
-        newAsm_arg = arg_setStr(NULL, "", "");
+        newAsm_arg = arg_newStr("");
         /* get next */
         /*     run next(_l<x>) */
         /*     check item is exist */
@@ -2526,7 +2526,7 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
         char* data = NULL;
         char ins_str[4] = "";
         char invoke_deepth[3] = "";
-        Arg* line_buff = arg_setStr(NULL, "", line);
+        Arg* line_buff = arg_newStr(line);
         strsDeinit(&buffs);
         line = arg_getStr(line_buff);
         InstructUnit ins_unit = {0};

@@ -347,7 +347,7 @@ void PikaCV_Image_merge(PikaObj* self, PikaObj* B, PikaObj* G, PikaObj* R) {
     src->height = Channel_B->height;
     src->width = Channel_B->width;
 
-    Arg* src_new_data_arg = arg_setBytes(NULL, "", NULL, src->size);
+    Arg* src_new_data_arg = arg_newBytes(NULL, src->size);
     uint8_t* src_data_new = arg_getBytes(src_new_data_arg);
 
     uint8_t* B_data = _image_getData(B);
@@ -378,9 +378,9 @@ PikaObj* PikaCV_Image_split(PikaObj* self) {
     }
 
     uint8_t* src_data = _image_getData(self);
-    Arg* arg_data_B = arg_setBytes(NULL, "", NULL, (src->size) / 3);
-    Arg* arg_data_G = arg_setBytes(NULL, "", NULL, (src->size) / 3);
-    Arg* arg_data_R = arg_setBytes(NULL, "", NULL, (src->size) / 3);
+    Arg* arg_data_B = arg_newBytes(NULL, (src->size) / 3);
+    Arg* arg_data_G = arg_newBytes(NULL, (src->size) / 3);
+    Arg* arg_data_R = arg_newBytes(NULL, (src->size) / 3);
 
     uint8_t* data_B = arg_getBytes(arg_data_B);
     uint8_t* data_G = arg_getBytes(arg_data_G);
@@ -401,7 +401,7 @@ PikaObj* PikaCV_Image_split(PikaObj* self) {
         PikaObj* img = newNormalObj(New_PikaCV_Image);
         PikaCV_Image___init__(img);
         PikaCV_Image_loadGray(img, RGB[i], src->width, src->height);
-        Arg* token_arg = arg_setPtr(NULL, "", ARG_TYPE_OBJECT, img);
+        Arg* token_arg = arg_newPtr(ARG_TYPE_OBJECT, img);
         /* 添加到 list 对象 */
         PikaStdData_List_append(list, token_arg);
         /* 销毁 arg */

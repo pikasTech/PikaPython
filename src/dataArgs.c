@@ -627,7 +627,7 @@ char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list) {
     char* res = NULL;
     char* fmt_buff = strsCopy(&buffs, fmt);
     char* fmt_item = strsPopToken(&buffs, fmt_buff, '%');
-    Arg* res_buff = arg_setStr(NULL, "", fmt_item);
+    Arg* res_buff = arg_newStr(fmt_item);
 
     for (size_t i = 0; i < list_getSize(list); i++) {
         Args buffs_item = {0};

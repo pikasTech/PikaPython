@@ -17,8 +17,8 @@ Arg* PikaStdLib_RangeObj___next__(PikaObj* self) {
     }
     /* exit */
     if (iter_i >= end) {
-        return arg_setNull(NULL);
+        return arg_newNull();
     }
     args_setInt(self->list, "iter_i", iter_i + foot);
-    return arg_setInt(NULL, "", iter_i);
+    return arg_newInt(iter_i);
 }

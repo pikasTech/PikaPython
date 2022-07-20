@@ -232,6 +232,9 @@ PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj);
 
+#define arg_newRef(obj) arg_setRef(NULL, "", (obj))
+#define arg_newWeakRef(obj) arg_setWeakRef(NULL, "", (obj))
+
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,
                                            ByteCodeFrame* bytecode_frame);

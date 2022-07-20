@@ -27,9 +27,9 @@ TEST(stack, arg) {
     Stack s;
     stack_init(&s);
 
-    Arg* arg1 = arg_setInt(NULL, "", 10);
-    Arg* arg2 = arg_setInt(NULL, "", 20);
-    Arg* arg3 = arg_setInt(NULL, "", 30);
+    Arg* arg1 = arg_newInt(10);
+    Arg* arg2 = arg_newInt(20);
+    Arg* arg3 = arg_newInt(30);
     stack_pushArg(&s, arg1);
     stack_pushArg(&s, arg2);
     stack_pushArg(&s, arg3);

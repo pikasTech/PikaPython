@@ -34,7 +34,7 @@ Arg* PikaStdData_FILEIO_read(PikaObj* self, int size) {
     if (f == NULL) {
         return NULL;
     }
-    Arg* buf_arg = arg_setBytes(NULL, "", NULL, size);
+    Arg* buf_arg = arg_newBytes(NULL, size);
     uint8_t* buf = arg_getBytes(buf_arg);
     /* read */
     int n = __platform_fread(buf, 1, size, f);
@@ -45,12 +45,12 @@ Arg* PikaStdData_FILEIO_read(PikaObj* self, int size) {
     char* mode = obj_getStr(self, "_mode");
     if (strIsContain(mode, 'b')) {
         /* binary */
-        Arg* res = arg_setBytes(NULL, "", buf, n);
+        Arg* res = arg_newBytes(buf, n);
         arg_deinit(buf_arg);
         return res;
     } else {
         /* text */
-        Arg* res = arg_setStr(NULL, "", (char*)buf);
+        Arg* res = arg_newStr((char*)buf);
         arg_deinit(buf_arg);
         return res;
     }
@@ -147,7 +147,7 @@ PikaObj* PikaStdData_FILEIO_readlines(PikaObj* self) {
         if (line == NULL) {
             break;
         }
-        Arg* arg_str = arg_setStr(NULL, "", line);
+        Arg* arg_str = arg_newStr(line);
         PikaStdData_List_append(line_list, arg_str);
         arg_deinit(arg_str);
     }
@@ -169,7 +169,7 @@ void PikaStdData_FILEIO_writelines(PikaObj* self, PikaObj* lines) {
     }
     for (size_t i = 0; i < list_getSize(list); i++) {
         char* line = list_getStr(list, i);
-        Arg* arg_str = arg_setStr(NULL, "", line);
+        Arg* arg_str = arg_newStr(line);
         PikaStdData_FILEIO_write(self, arg_str);
         arg_deinit(arg_str);
     }

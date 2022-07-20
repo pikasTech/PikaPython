@@ -24,51 +24,51 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     if (NULL == arg) {
         obj_setSysOut(self, "[error] type: arg no found.");
         obj_setErrorCode(self, 1);
-        return arg_setNull(NULL);
+        return arg_newNull();
     }
     ArgType type = arg_getType(arg);
     if (ARG_TYPE_INT == type) {
-        return arg_setStr(NULL, "", "<class 'int'>");
+        return arg_newStr("<class 'int'>");
     }
     if (ARG_TYPE_FLOAT == type) {
-        return arg_setStr(NULL, "", "<class 'float'>");
+        return arg_newStr("<class 'float'>");
     }
     if (ARG_TYPE_STRING == type) {
-        return arg_setStr(NULL, "", "<class 'str'>");
+        return arg_newStr("<class 'str'>");
     }
     if (argType_isObject(type)) {
         PikaObj* obj = arg_getPtr(arg);
         NewFun clsptr = obj_getClass(obj);
         PikaObj* New_PikaStdData_List(Args * args);
         if (clsptr == New_PikaStdData_List) {
-            return arg_setStr(NULL, "", "<class 'list'>");
+            return arg_newStr("<class 'list'>");
         }
         /* dict */
         PikaObj* New_PikaStdData_Dict(Args * args);
         if (clsptr == New_PikaStdData_Dict) {
-            return arg_setStr(NULL, "", "<class 'dict'>");
+            return arg_newStr("<class 'dict'>");
         }
-        return arg_setStr(NULL, "", "<class 'object'>");
+        return arg_newStr("<class 'object'>");
     }
     if (ARG_TYPE_OBJECT_META == type) {
-        return arg_setStr(NULL, "", "<class 'meta object'>");
+        return arg_newStr("<class 'meta object'>");
     }
     if (ARG_TYPE_BYTES == type) {
-        return arg_setStr(NULL, "", "<class 'bytes'>");
+        return arg_newStr("<class 'bytes'>");
     }
     if (ARG_TYPE_METHOD_NATIVE == type) {
-        return arg_setStr(NULL, "", "<class 'buitin_function_or_method'>");
+        return arg_newStr("<class 'buitin_function_or_method'>");
     }
     if (ARG_TYPE_METHOD_OBJECT == type) {
-        return arg_setStr(NULL, "", "<class 'method'>");
+        return arg_newStr("<class 'method'>");
     }
     if (ARG_TYPE_METHOD_STATIC == type) {
-        return arg_setStr(NULL, "", "<class 'function'>");
+        return arg_newStr("<class 'function'>");
     }
     if (ARG_TYPE_NONE == type) {
-        return arg_setStr(NULL, "", "<class 'NoneType'>");
+        return arg_newStr("<class 'NoneType'>");
     }
-    return arg_setNull(NULL);
+    return arg_newNull();
 }
 
 double PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {
@@ -181,7 +181,7 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
         obj_removeArg(arg_obj, "__res");
         return res;
     }
-    return arg_setNull(NULL);
+    return arg_newNull();
 }
 
 Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2) {
@@ -203,7 +203,7 @@ Arg* PikaStdLib_SysObj___set__(PikaObj* self, Arg* key, Arg* obj, Arg* val) {
         char* str_val = arg_getStr(val);
         char* str_pyload = arg_getStr(obj);
         str_pyload[index] = str_val[0];
-        return arg_setStr(NULL, "", str_pyload);
+        return arg_newStr(str_pyload);
     }
     if (ARG_TYPE_BYTES == obj_type) {
         int index = arg_getInt(key);
@@ -218,7 +218,7 @@ Arg* PikaStdLib_SysObj___set__(PikaObj* self, Arg* key, Arg* obj, Arg* val) {
         uint8_t* bytes_pyload = arg_getBytes(obj);
         size_t bytes_len = arg_getBytesSize(obj);
         bytes_pyload[index] = byte_val;
-        return arg_setBytes(NULL, "", bytes_pyload, bytes_len);
+        return arg_newBytes(bytes_pyload, bytes_len);
     }
     if (argType_isObject(obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
@@ -240,7 +240,7 @@ Arg* PikaStdLib_SysObj___set__(PikaObj* self, Arg* key, Arg* obj, Arg* val) {
             0x00, /* const pool */
         };
         pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
-        return arg_setRef(NULL, "", arg_obj);
+        return arg_newRef(arg_obj);
     }
     return NULL;
 }
@@ -289,7 +289,7 @@ Arg* PikaStdLib_SysObj_list(PikaObj* self) {
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in list is not enabled.\r\n");
-    return arg_setNull(NULL);
+    return arg_newNull();
 #endif
 }
 
@@ -300,7 +300,7 @@ Arg* PikaStdLib_SysObj_dict(PikaObj* self) {
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in dist is not enabled.\r\n");
-    return arg_setNull(NULL);
+    return arg_newNull();
 #endif
 }
 
@@ -335,7 +335,7 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
     if (ARG_TYPE_INT == type) {
         int size = arg_getInt(val);
         /* src is NULL so the bytes are all '\0' */
-        Arg* bytes = arg_setBytes(NULL, "", NULL, size);
+        Arg* bytes = arg_newBytes(NULL, size);
         return bytes;
     }
     if (ARG_TYPE_BYTES == type) {
@@ -343,12 +343,12 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
     }
     if (ARG_TYPE_STRING == type) {
         int size = strGetSize(arg_getStr(val));
-        Arg* bytes = arg_setBytes(NULL, "", (uint8_t*)arg_getStr(val), size);
+        Arg* bytes = arg_newBytes((uint8_t*)arg_getStr(val), size);
         return bytes;
     }
     obj_setErrorCode(self, 1);
     __platform_printf("Error: input arg type not supported.\r\n");
-    return arg_setNull(NULL);
+    return arg_newNull();
 }
 
 Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
@@ -391,7 +391,7 @@ static void __print_arg(PikaObj* self, Arg* val) {
 
 void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val) {
     int arg_size = tuple_getSize(val);
-    Arg* print_out_arg = arg_setStr(NULL, "", "");
+    Arg* print_out_arg = arg_newStr("");
     PIKA_BOOL is_get_print = PIKA_FALSE;
     for (int i = 0; i < arg_size; i++) {
         Arg* arg = tuple_getArg(val, i);

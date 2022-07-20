@@ -268,7 +268,7 @@ TEST(parser, while_true_false) {
     s = parse("        test.on(add(2,3))", bf, s, &bs);
     s = parse("    print('flowing')", bf, s, &bs);
     s = parse("", bf, s, &bs);
-    Arg* buffArg = arg_setStr(NULL, "", s);
+    Arg* buffArg = arg_newStr(s);
     stack_deinit(&bs);
     args_deinit(bf);
     s = arg_getStr(buffArg);
