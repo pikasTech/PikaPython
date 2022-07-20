@@ -144,3 +144,5 @@ class Filter(TinyObj):
     supply some Image Filtering Algorithms ."""
     def meanFilter(image:Image,ksizex:int,ksizey:int):
         """ mean filter,ksize is odd"""
+    def medianFilter(image:Image):
+        """ median filter,kernel size is 3*3"""
