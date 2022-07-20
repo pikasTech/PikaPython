@@ -1,5 +1,6 @@
 #include "PikaCV_Transforms.h"
 #include "PikaCV_Converter.h"
+#include "PikaCV_Filter.h"
 #include "PikaCV_common.h"
 #include "math.h"
 
@@ -254,3 +255,45 @@ void PikaCV_Transforms_resize(PikaObj *self, PikaObj* image, int resizeType, int
 
 #undef MAX
 #undef MIN
+
+void PikaCV_Transforms_adaptiveThreshold(PikaObj *self, int c, PikaObj* image, int maxval, int method, int subsize){
+    PikaCV_Image* src = obj_getStruct(image, "image");
+
+    if (NULL == src) {
+        pika_assert(0);
+        return;
+    }
+    if(c<-255||c>255){
+        pika_assert(0);
+        return;
+    }
+    if (src->format != PikaCV_ImageFormat_Type_GRAY) {
+        PikaCV_Converter_toGray(self,image);
+    }
+
+    int size = src->size;
+    uint8_t* src_data = _image_getData(image);
+    
+    switch (method)
+	{
+	case 0:
+		PikaCV_Filter_meanFilter(self,image,subsize,subsize);  //均值滤波
+		break;
+	case 1:
+		PikaCV_Filter_medianFilter(self,image);   //中值滤波
+		break;
+	default:
+		break;
+	}
+
+    uint8_t* smooth_data = _image_getData(image);
+    for(int i=0;i<size;i++){
+        smooth_data[i] -= c;
+    }
+    for(int i=0;i<size;i++){
+        src_data[i] = src_data[i] > smooth_data[i] ? maxval : 0 ;
+    }
+
+    obj_setBytes(image, "_data", src_data, src->size);
+
+}

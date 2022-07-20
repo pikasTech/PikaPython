@@ -138,7 +138,14 @@ class Transforms(TinyObj):
         TODO:
         1:BILINEAR
         """
-
+    def adaptiveThreshold(image:Image,maxval:int,subsize:int,c:int,method:int):
+        """
+        AdaptiveThreshold
+        method
+        0:meanFilter
+        1:medianFilter
+        #TODO 2:gaussianFilter
+        """
 class Filter(TinyObj):
     """The Filter class is used to 
     supply some Image Filtering Algorithms ."""
