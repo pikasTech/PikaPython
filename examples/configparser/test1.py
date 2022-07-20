@@ -1,4 +1,4 @@
-import pika_configparser as configparser
+import configparser
 from PikaStdLib import MemChecker
 config = configparser.ConfigParser()
 

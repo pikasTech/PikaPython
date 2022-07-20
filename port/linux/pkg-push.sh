@@ -17,6 +17,7 @@ echo -e "$FLAG_ERROR Package $pkg does not exist"
 exit 1;
 fi
 
+rm ../../package/$pkg -rf
 cp package/pikascript/pikascript-lib/$pkg ../../package/ -r
 git add package/pikascript/pikascript-lib/$pkg
 
@@ -31,6 +32,7 @@ fi
 # check if $pkg.py is exit
 if [ -f "package/pikascript/$pkg.py" ] ; then
 echo -e "$FLAG_INFO python files added"
+rm -rf ../../package/$pkg/*
 cp package/pikascript/$pkg.py ../../package/$pkg/
 git add package/pikascript/$pkg.py 
 echo "$pkg.py"
@@ -39,6 +41,7 @@ fi
 # check if test/python/$pkg folder is exit
 if [ -d "test/python/$pkg" ] ; then
 echo -e "$FLAG_INFO python test files added:"
+rm ../../examples/$pkg/* -rf
 cp test/python/$pkg/*.py ../../examples/$pkg -r
 git add ../../examples/$pkg
 ls ../../examples/$pkg
