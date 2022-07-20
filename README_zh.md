@@ -288,15 +288,7 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 
 <img src="document/image/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
 
-## Tencent QQ： 
-645275593
-
-## E-mail: 
-645275593@qq.com
-
-
-
-
+## E-mail: liang6516@outlook.com
 
 # 5.Demo展示
 
