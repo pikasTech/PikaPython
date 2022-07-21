@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658333682962,
+  "lastUpdate": 1658384060202,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -68764,6 +68764,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000427602854874,
             "unit": "ms/iter",
             "extra": "iterations: 188761\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "4eff1e69d561004aab6dac8601858476ac0a0db5",
+          "message": "use alloc instead of VLA to support MSVC in PikaCV\n\nmarkdown the mem err in PikaCV_test10.py",
+          "timestamp": "2022-07-21T14:06:03+08:00",
+          "tree_id": "dcab6db935ecbd414c818f4cf7b3da5557da6cab",
+          "url": "https://github.com/pikasTech/pikascript/commit/4eff1e69d561004aab6dac8601858476ac0a0db5"
+        },
+        "date": 1658384052959,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 6208.618332911938,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 6208.618332911938 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 45.005918247055256,
+            "unit": "ms/iter",
+            "extra": "iterations: 22\ncpu: 44.98531093510475 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 24.27595267184849,
+            "unit": "ms/iter",
+            "extra": "iterations: 40\ncpu: 24.274199969333676 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 8.054586931683792,
+            "unit": "ms/iter",
+            "extra": "iterations: 121\ncpu: 8.053321579609683 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000306162321781,
+            "unit": "ms/iter",
+            "extra": "iterations: 195646\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
