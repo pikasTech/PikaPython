@@ -23,6 +23,7 @@ jobs:
       run: |
         sudo apt install ninja-build
         sudo apt install liblua5.3-dev
+        sudo apt install valgrind
   
     - name: install_google_benchmark
       run: |

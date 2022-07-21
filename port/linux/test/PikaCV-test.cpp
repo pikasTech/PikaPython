@@ -136,7 +136,7 @@ TEST(PikaCV, test9) {
 }
 
 //! test faild in valgrind.sh, need fix.
-#if 0
+#if 1
 TEST(PikaCV, test10) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
