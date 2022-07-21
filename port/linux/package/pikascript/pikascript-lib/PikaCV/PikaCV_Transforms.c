@@ -19,7 +19,7 @@ void PikaCV_Transforms_rotateDown(PikaObj* self, PikaObj* image) {
     int width = img->width;
     int height = img->height;
     int size_new = width * height * 3;
-    Arg* arg_data_new = arg_newBytes(NULL, size_new);
+    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
     uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
     int i, j, k;
@@ -108,7 +108,7 @@ void PikaCV_Transforms_setROI(PikaObj *self, int h, PikaObj* image, int w, int x
     }
 
     int size_new = h * w * 3;
-    Arg* arg_data_new = arg_newBytes(NULL, size_new);
+    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
     uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
 
@@ -220,7 +220,7 @@ void PikaCV_Transforms_resize(PikaObj *self, PikaObj* image, int resizeType, int
     }    
 
     int size_new = x * y * 3;
-    Arg* arg_data_new = arg_newBytes(NULL, size_new);
+    Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
     uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
 
@@ -253,8 +253,7 @@ void PikaCV_Transforms_resize(PikaObj *self, PikaObj* image, int resizeType, int
     arg_deinit(arg_data_new);
 }
 
-#undef MAX
-#undef MIN
+
 
 void PikaCV_Transforms_adaptiveThreshold(PikaObj *self, int c, PikaObj* image, int maxval, int method, int subsize){
     PikaCV_Image* src = obj_getStruct(image, "image");
@@ -263,7 +262,7 @@ void PikaCV_Transforms_adaptiveThreshold(PikaObj *self, int c, PikaObj* image, i
         pika_assert(0);
         return;
     }
-    if(c<-255||c>255){
+    if(c < 0 || c > 255){
         pika_assert(0);
         return;
     }
@@ -273,27 +272,36 @@ void PikaCV_Transforms_adaptiveThreshold(PikaObj *self, int c, PikaObj* image, i
 
     int size = src->size;
     uint8_t* src_data = _image_getData(image);
-    
-    switch (method)
+    uint8_t* src_copy ;
+    src_copy = (uint8_t *)calloc(size,1);
+
+    memcpy(src_copy,src_data,size);
+
+    if (method==0)
 	{
-	case 0:
 		PikaCV_Filter_meanFilter(self,image,subsize,subsize);  //均值滤波
-		break;
-	case 1:
+	}
+	else if(method == 1){
 		PikaCV_Filter_medianFilter(self,image);   //中值滤波
-		break;
-	default:
-		break;
+	}
+	else{
+        free(src_copy);
+        return;
 	}
 
     uint8_t* smooth_data = _image_getData(image);
     for(int i=0;i<size;i++){
-        smooth_data[i] -= c;
+        
+        uint8_t result = smooth_data[i] - (uint8_t)c;
+        smooth_data[i] = ((result < MIN(smooth_data[i], (uint8_t)c)) ? 0 : result);
     }
     for(int i=0;i<size;i++){
-        src_data[i] = src_data[i] > smooth_data[i] ? maxval : 0 ;
+        src_copy[i] = ((src_copy[i] > smooth_data[i]) ? (uint8_t)maxval : 0) ;
     }
 
-    obj_setBytes(image, "_data", src_data, src->size);
-
+    obj_setBytes(image, "_data", src_copy, size);
+    free(src_copy);
 }
+
+#undef MAX
+#undef MIN
