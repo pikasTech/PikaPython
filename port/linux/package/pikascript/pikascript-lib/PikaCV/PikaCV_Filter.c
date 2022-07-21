@@ -132,10 +132,18 @@ void swap(uint8_t *x, uint8_t *y)
 }
 void quick_sort(uint8_t arr[], const int len)
 {
-    if (len <= 0)
+	Range *r;
+	int p = 0;
+
+    if (len <= 0){
         return;
-    Range r[len];
-    int p = 0;
+    }
+
+	r = (Range*)pikaMalloc(sizeof(Range)*len);
+	if (r == NULL) {
+		return;
+	}
+    
     r[p++] = new_Range(0, len - 1);
     while (p)
     {
@@ -164,6 +172,8 @@ void quick_sort(uint8_t arr[], const int len)
         if (range.end > left)
             r[p++] = new_Range(left, range.end);
     }
+
+	pikaFree((void*)r, sizeof(Range)*len);
 }
 
 void PikaCV_Filter_medianFilter(PikaObj *self, PikaObj *image)
