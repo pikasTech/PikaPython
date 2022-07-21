@@ -253,3 +253,11 @@ TEST(object_test, bytes) {
     obj_deinit(root);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(object_test, bytes_0_size) {
+    PikaObj* root = newRootObj("root", New_BaseObj);
+    uint8_t test[] = {0, 1, 2, 3, 4, 5};
+    obj_setBytes(root, "test", test, 0);
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
