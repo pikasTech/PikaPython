@@ -39,6 +39,9 @@ jobs:
     - name: TEST
       # Build your program with the given configuration
       run: cd ${{github.workspace}}/port/linux && bash gtest.sh
+
+    - name: VALGRIND
+      run: cd ${{github.workspace}}/port/linux && bash valgrind.sh
       
     - name: BENCHMARK
       run: cd ${{github.workspace}}/port/linux && bash ci_benchmark.sh
