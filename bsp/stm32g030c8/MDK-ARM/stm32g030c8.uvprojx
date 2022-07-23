@@ -277,7 +277,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0xf000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -752,11 +752,6 @@
               <FilePath>..\pikascript\pikascript-api/machine_PWM-api.c</FilePath>
             </File>
             <File>
-              <FileName>machine_Task-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api/machine_Task-api.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaStdTask_Task-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdTask_Task-api.c</FilePath>
@@ -970,6 +965,11 @@
               <FileName>STM32G0_ADC-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/STM32G0_ADC-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>machine_Task-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api\machine_Task-api.c</FilePath>
             </File>
           </Files>
         </Group>
