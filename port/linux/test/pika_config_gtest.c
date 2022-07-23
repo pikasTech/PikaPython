@@ -25,17 +25,3 @@ uint8_t __is_quick_malloc(void) {
     // return 1;
     return 0;
 }
-#if use_const_pool
-uint8_t pika_bitmap[PIKA_POOL_SIZE / PIKA_POOL_ALIGN / 8] = {0};
-uint8_t pika_pool_mem[PIKA_POOL_SIZE] = {0};
-Pool pikaPool = {.aline = PIKA_POOL_ALIGN,
-                 .bitmap = pika_bitmap,
-                 .mem = pika_pool_mem,
-                 .size = PIKA_POOL_SIZE};
-void* __user_malloc(size_t size) {
-    return pool_malloc(&pikaPool, size);
-}
-void __user_free(void* ptrm, size_t size) {
-    pool_free(&pikaPool, ptrm, size);
-}
-#endif

@@ -375,6 +375,9 @@ PikaObj* newNormalObj(NewFun newObjFun) {
 
 extern PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
+#if PIKA_POOL_ENABLE
+    mem_pool_init();
+#endif
     PikaObj* newObj = newNormalObj(newObjFun);
     __pikaMain = newObj;
     return newObj;
