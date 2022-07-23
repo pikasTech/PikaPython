@@ -10,7 +10,7 @@ void PikaCV_Image___init__(PikaObj* self) {
     }
     /* init */
     PikaCV_Image image = {
-        .format = PikaCV_ImageFormat_Type_Unknown,
+        .format = PikaCV_ImageFormat_Type_Empty,
         .width = 0,
         .height = 0,
         .size = 0,
@@ -56,7 +56,7 @@ Arg* PikaCV_Image_data(PikaObj* self) {
 int PikaCV_Image_format(PikaObj* self) {
     PikaCV_Image* image = obj_getStruct(self, "image");
     if (NULL == image) {
-        return PikaCV_ImageFormat_Type_Unknown;
+        return PikaCV_ImageFormat_Type_Empty;
     }
     return image->format;
 }
@@ -232,15 +232,15 @@ void PikaCV_Image_add(PikaObj* self, PikaObj* image) {
         pika_assert(0);
         return;
     }
-    if (img->format != src->format) {
+    if(!PikaCV_Format_CheckTwo(self,image,PikaCV_Check_ReturnError)){
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf("unsupported image format\n");
         return;
     }
-    if (img->size != src->size) {
+    if(!PikaCV_Size_Check(self,image,PikaCV_Check_SHW)){
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf("illegal image size\n");
-        return;
+        __platform_printf("illegal image size\n");        
+        return ;
     }
 
     uint8_t* src_data = _image_getData(self);
@@ -276,15 +276,15 @@ void PikaCV_Image_minus(PikaObj* self, PikaObj* image) {
         pika_assert(0);
         return;
     }
-    if (img->format != src->format) {
+    if(!PikaCV_Format_CheckTwo(self,image,PikaCV_Check_ReturnError)){
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf("unsupported image format\n");
         return;
     }
-    if (img->size != src->size) {
+    if(!PikaCV_Size_Check(self,image,PikaCV_Check_SHW)){
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf("illegal image size\n");
-        return;
+        __platform_printf("illegal image size\n");        
+        return ;
     }
 
     uint8_t* src_data = _image_getData(self);
@@ -324,20 +324,20 @@ void PikaCV_Image_merge(PikaObj* self, PikaObj* B, PikaObj* G, PikaObj* R) {
         pika_assert(0);
         return;
     }
-    if (PikaCV_ImageFormat_Type_RGB888 != src->format) {
+    if (!PikaCV_Format_Check(self,PikaCV_ImageFormat_Type_RGB888,PikaCV_Check_ReturnError)) {
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf("unsupported image format\n");
         return;
     }
-    if (PikaCV_ImageFormat_Type_GRAY != Channel_B->format ||
-        PikaCV_ImageFormat_Type_GRAY != Channel_G->format ||
-        PikaCV_ImageFormat_Type_GRAY != Channel_R->format) {
+    if (!PikaCV_Format_Check(B,PikaCV_ImageFormat_Type_GRAY,PikaCV_Check_ReturnError) ||
+        !PikaCV_Format_Check(G,PikaCV_ImageFormat_Type_GRAY,PikaCV_Check_ReturnError) ||
+        !PikaCV_Format_Check(R,PikaCV_ImageFormat_Type_GRAY,PikaCV_Check_ReturnError)) {
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf("unsupported image format\n");
         return;
     }
-    if (Channel_B->size != Channel_G->size ||
-        Channel_B->size != Channel_R->size) {
+    if (!PikaCV_Size_Check(B,G,PikaCV_Check_SHW) ||
+        !PikaCV_Size_Check(B,R,PikaCV_Check_SHW)) {
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf("illegal image size\n");
         return;
@@ -371,7 +371,7 @@ PikaObj* PikaCV_Image_split(PikaObj* self) {
         pika_assert(0);
         return NULL;
     }
-    if (PikaCV_ImageFormat_Type_RGB888 != src->format) {
+    if(!PikaCV_Format_Check(self,PikaCV_ImageFormat_Type_RGB888,PikaCV_Check_ReturnError)){
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf("unsupported image format\n");
         return NULL;
