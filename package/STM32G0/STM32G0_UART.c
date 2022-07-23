@@ -171,7 +171,7 @@ void STM32G0_UART_platformRead(PikaObj* self) {
 }
 
 void STM32G0_UART_platformWrite(PikaObj* self) {
-    char* data = obj_getStr(self, "data");
+    char* data = obj_getStr(self, "writeData");
     int id = obj_getInt(self, "id");
     USART_TypeDef* USARTx = UART_get_instance(id);
     for (int i = 0; i < strGetSize(data); i++) {
