@@ -419,3 +419,28 @@ void PikaCV_Converter_toBGR888(PikaObj* self, PikaObj* image) {
     img->size = size_new;
     arg_deinit(arg_data_new);
 }
+
+void PikaCV_Converter_converter(PikaObj *self, int format, PikaObj* image){
+    switch (format)
+    {
+    case PikaCV_ImageFormat_Type_RGB888:
+        PikaCV_Converter_toRGB888(self,image);
+        break;
+    case PikaCV_ImageFormat_Type_BGR888:
+        PikaCV_Converter_toBGR888(self,image);
+        break;
+    case PikaCV_ImageFormat_Type_RGB565:
+        PikaCV_Converter_toRGB565(self,image);
+        break; 
+    case PikaCV_ImageFormat_Type_GRAY:
+        PikaCV_Converter_toGray(self,image);
+        break; 
+    case PikaCV_ImageFormat_Type_BMP:
+        PikaCV_Converter_toBMP(self,image);
+        break;        
+    default:
+        break;
+    }
+
+    return ;
+}

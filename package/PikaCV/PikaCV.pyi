@@ -108,7 +108,14 @@ class Converter(TinyObj):
     @staticmethod
     def toBGR888(image: Image):
         """Convert the image to BGR888"""
-
+    def converter(image:Image,format:int):
+        """ 
+        2:RGB888
+        3:BGR888
+        4:RGB565
+        5:GRAY
+        6:BMP
+        """
 
 class Transforms(TinyObj):
     """The transforms class is used to 
