@@ -80,7 +80,7 @@ char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 extern PikaObj * __pikaMain;
 int main(void) {
     /* support bootLoader */
-		#ifdef SUPPORT_BOOTLOADER
+    #ifdef SUPPORT_BOOTLOADER
     __disable_irq();
     SCB->VTOR = FLASH_BASE | 0x2000;
     __enable_irq();
@@ -93,9 +93,9 @@ int main(void) {
     printf("[info]: stm32 hardware init ok\r\n");
     
     /* init mem pool */
-    #if use_mem_pool
-    pikaPool = pool_init(0x1800, 4);
-    printf("[info]: pika memory poool init ok \r\n");
+    #if PIKA_POOL_ENABLE
+    mem_pool_init();
+    printf("[info]: pika memory pool init ok \r\n");
     #endif
 
     /* boot pikaScript */

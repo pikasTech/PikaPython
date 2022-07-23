@@ -832,11 +832,6 @@
               <FilePath>..\pikascript\pikascript-api/machine_KEY-api.c</FilePath>
             </File>
             <File>
-              <FileName>machine_LCD-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api/machine_LCD-api.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaPiZero-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaPiZero-api.c</FilePath>

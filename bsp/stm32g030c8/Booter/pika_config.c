@@ -198,7 +198,7 @@ void __impl_pikaFree(void* ptrm, size_t size) {
 #endif
 
 /* support download python script by uart1 */
-uint8_t pika_memory_lock = 0;
+volatile uint8_t pika_memory_lock = 0;
 uint8_t __is_locked_pikaMemory(void){
     return pika_memory_lock;
 }
@@ -233,7 +233,14 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
         if (strIsStartWith(strLine, "import ")) {
             is_launch_code_recive = 1;
             codeHeap.auto_erase = 1;
-            codeHeap.content = pikaMalloc(codeHeap.size + 1);
+            __disable_irq();
+            if(!pika_memory_lock){
+                pika_memory_lock = 1;
+            }
+            mem_pool_deinit();
+            
+            __enable_irq();
+            codeHeap.content = malloc(FLASH_SCRIPT_END_ADDR - FLASH_SCRIPT_START_ADDR);
         }
         /* manual erase mode, send "import" to erase first,
            then send the python file.
@@ -243,6 +250,10 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
             codeHeap.auto_erase = 0;
             codeHeap.wait = 2;
             __disable_irq();
+            if(!pika_memory_lock){
+                pika_memory_lock = 1;
+            }
+            mem_pool_deinit();
             obj_deinit(__pikaMain);
             codeHeap.content = malloc(FLASH_PIKA_ASM_END_ADDR - FLASH_PIKA_ASM_START_ADDR);
             if(codeHeap.content == NULL){
@@ -261,14 +272,7 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
         }
     }
     if (1 == codeHeap.ena) {
-        if(!pika_memory_lock){
-            pika_memory_lock = 1;
-            #if use_mem_pool
-            __platform_disable_irq_handle();
-            pool_deinit(&pikaPool);
-            __platform_enable_irq_handle();
-            #endif
-        }
+
         if(codeHeap.wait > 0){
             codeHeap.wait--;
         }
@@ -276,9 +280,7 @@ uint8_t STM32_Code_reciveHandler(char* data, uint32_t rxSize) {
         codeHeap.oldSize = codeHeap.size;
         codeHeap.size += rxSize;
         /* write to heap buff */
-        if(codeHeap.auto_erase){
-            codeHeap.content = realloc(codeHeap.content, codeHeap.size + 1);
-        }
+        //  codeHeap.content = realloc(codeHeap.content, codeHeap.size + 1);
         memcpy(codeHeap.content + codeHeap.oldSize, data, rxSize);
         codeHeap.content[codeHeap.size] = 0;
         return 1;
