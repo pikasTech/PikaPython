@@ -2,17 +2,14 @@
 #include "PikaCV_Converter.h"
 
 int PikaCV_Format_Check(PikaObj* image,PikaCV_ImageFormat_Type type,PikaCV_Check_ReturnMode returnMode){
-    // return mode: 0
-    //              1
-    //              2
-    //PikaObj* self;
+    // return mode: 0 PikaCV_Check_ReturnError Only return inequality or equality
+    //              1 PikaCV_Check_Converter converter format to type when inequality
 
     PikaCV_Image* src = obj_getStruct(image, "image");
     switch (returnMode)
     {
     case PikaCV_Check_ReturnError:
         if(src->format != type){
-            //obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
             return 0;
         }else{
             return 1;
@@ -36,8 +33,8 @@ int PikaCV_Format_Check(PikaObj* image,PikaCV_ImageFormat_Type type,PikaCV_Check
 }
 
 int PikaCV_Format_CheckTwo(PikaObj* image1,PikaObj* image2,PikaCV_Check_ReturnMode returnMode){
-    //PikaObj* self;
-
+    // return mode: 0 PikaCV_Check_ReturnError Only return inequality or equality
+    //              1 PikaCV_Check_Converter converter format to type when inequality
     PikaCV_Image* src1 = obj_getStruct(image1, "image");
     PikaCV_Image* src2 = obj_getStruct(image2, "image");
 
@@ -45,7 +42,6 @@ int PikaCV_Format_CheckTwo(PikaObj* image1,PikaObj* image2,PikaCV_Check_ReturnMo
     {
     case PikaCV_Check_ReturnError:
         if(src1->format != src2->format){
-            //obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
             return 0;
         }else{
             return 1;
@@ -68,8 +64,9 @@ int PikaCV_Format_CheckTwo(PikaObj* image1,PikaObj* image2,PikaCV_Check_ReturnMo
 }
 
 int PikaCV_Size_Check(PikaObj* image1,PikaObj* image2,PikaCV_Check_SizeMode sizeMode){
-    //sPikaObj* self;
-
+    //sizeMode : 0 PikaCV_Check_Size Check size
+    //           1 PikaCV_Check_SHW  Check size,height and width
+    //           2 PikaCV_Check_HW   Check height and width
     PikaCV_Image* src1 = obj_getStruct(image1, "image");
     PikaCV_Image* src2 = obj_getStruct(image2, "image");
 
