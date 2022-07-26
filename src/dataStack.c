@@ -31,7 +31,7 @@
 
 void stack_reset(Stack* stack) {
     stack->sp = (uint8_t*)arg_getContent(stack->stack_pyload);
-    stack->sp_size = (int16_t*)arg_getContent(stack->stack_size_array);
+    stack->sp_size = (int32_t*)arg_getContent(stack->stack_size_array);
     stack->top = 0;
 }
 
@@ -44,12 +44,12 @@ int32_t stack_init(Stack* stack) {
     return 0;
 };
 
-void stack_pushSize(Stack* stack, int16_t size) {
+void stack_pushSize(Stack* stack, int32_t size) {
     *(stack->sp_size) = size;
     stack->sp_size++;
 }
 
-int16_t stack_popSize(Stack* stack) {
+int32_t stack_popSize(Stack* stack) {
     stack->sp_size--;
     return *(stack->sp_size);
 }
@@ -112,7 +112,7 @@ Arg* stack_popArg(Stack* stack) {
         return NULL;
     }
     stack->top--;
-    int16_t size = stack_popSize(stack);
+    int32_t size = stack_popSize(stack);
     Arg* arg = arg_copy((Arg*)stack_popPyload(stack, size));
     ArgType type = arg_getType(arg);
     /* decrase ref_cnt */
@@ -129,6 +129,6 @@ char* stack_popStr(Stack* stack, char* outBuff) {
     return outBuff;
 }
 
-int8_t stack_getTop(Stack* stack) {
+int32_t stack_getTop(Stack* stack) {
     return stack->top;
 }

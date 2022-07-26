@@ -135,8 +135,6 @@ TEST(PikaCV, test9) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-//! test faild in valgrind.sh, need fix.
-#if 1
 TEST(PikaCV, test10) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -151,4 +149,19 @@ TEST(PikaCV, test10) {
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
-#endif
+
+TEST(PikaCV, test11) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/PikaCV/PikaCV_test11.py");
+    /* collect */
+    Arg* data = obj_getArg(pikaMain, "data");
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}
