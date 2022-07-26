@@ -1,5 +1,6 @@
 #include "test_common.h"
 
+#if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
 TEST(PikaCV, test1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -158,10 +159,11 @@ TEST(PikaCV, test11) {
     __platform_printf("BEGIN\r\n");
     pikaVM_runSingleFile(pikaMain, "test/python/PikaCV/PikaCV_test11.py");
     /* collect */
-    Arg* data = obj_getArg(pikaMain, "data");
+    // Arg* data = obj_getArg(pikaMain, "data");
     /* assert */
     /* deinit */
     obj_deinit(pikaMain);
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
