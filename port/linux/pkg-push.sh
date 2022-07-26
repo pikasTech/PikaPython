@@ -44,6 +44,7 @@ if [ -d "test/python/$pkg" ] ; then
 echo "$FLAG_INFO python test files added:"
 rm ../../examples/$pkg/* -rf
 cp test/python/$pkg/*.py ../../examples/$pkg -r
+git add test/python/$pkg
 git add ../../examples/$pkg
 ls ../../examples/$pkg
 fi
