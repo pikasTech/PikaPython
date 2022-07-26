@@ -125,8 +125,7 @@ PIKA_RES Converter_JPEGtoRGB888(PikaObj* image) {
     io.width_pix = jdec.width;
 
     /* Allocate memory for output image */
-    Arg* arg_output =
-        arg_newBytes(NULL, jdec.width * jdec.height * N_BPP);
+    Arg* arg_output = arg_newBytes(NULL, jdec.width * jdec.height * N_BPP);
     if (NULL == arg_output) {
         __platform_printf("Converter_JPEGtoRGB888: arg_setBytes failed\n");
         pika_res = PIKA_RES_ERR_INVALID_PTR;
@@ -420,27 +419,26 @@ void PikaCV_Converter_toBGR888(PikaObj* self, PikaObj* image) {
     arg_deinit(arg_data_new);
 }
 
-void PikaCV_Converter_converter(PikaObj *self, int format, PikaObj* image){
-    switch (format)
-    {
-    case PikaCV_ImageFormat_Type_RGB888:
-        PikaCV_Converter_toRGB888(self,image);
-        break;
-    case PikaCV_ImageFormat_Type_BGR888:
-        PikaCV_Converter_toBGR888(self,image);
-        break;
-    case PikaCV_ImageFormat_Type_RGB565:
-        PikaCV_Converter_toRGB565(self,image);
-        break; 
-    case PikaCV_ImageFormat_Type_GRAY:
-        PikaCV_Converter_toGray(self,image);
-        break; 
-    case PikaCV_ImageFormat_Type_BMP:
-        PikaCV_Converter_toBMP(self,image);
-        break;        
-    default:
-        break;
+void PikaCV_Converter_converter(PikaObj* self, int format, PikaObj* image) {
+    switch (format) {
+        case PikaCV_ImageFormat_Type_RGB888:
+            PikaCV_Converter_toRGB888(self, image);
+            break;
+        case PikaCV_ImageFormat_Type_BGR888:
+            PikaCV_Converter_toBGR888(self, image);
+            break;
+        case PikaCV_ImageFormat_Type_RGB565:
+            PikaCV_Converter_toRGB565(self, image);
+            break;
+        case PikaCV_ImageFormat_Type_GRAY:
+            PikaCV_Converter_toGray(self, image);
+            break;
+        case PikaCV_ImageFormat_Type_BMP:
+            PikaCV_Converter_toBMP(self, image);
+            break;
+        default:
+            break;
     }
 
-    return ;
+    return;
 }
