@@ -8,16 +8,20 @@
 #endif
 
 void PikaStdDevice_Time_sleep_ms(PikaObj* self, int ms) {
-#if defined(__linux) || defined(_WIN32)
+#if defined(__linux)
     usleep(ms * 1000);
+#elif defined(_WIN32)
+    Sleep(ms);
 #else
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
 #endif
 }
 void PikaStdDevice_Time_sleep_s(PikaObj* self, int s) {
-#if defined(__linux) || defined(_WIN32)
+#if defined(__linux) 
     sleep(s);
+#elif defined(_WIN32)
+    Sleep(s * 1000);
 #else
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
@@ -40,7 +44,7 @@ void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
 
 //结构体时间类型定义(来源c标准库corect_wtime.h)
 //无论是16位整数还是32位整数都满足需求
-typedef struct {
+typedef struct _tm{
     int tm_sec;    // seconds after the minute - [0, 60] including leap second
     int tm_min;    // minutes after the hour - [0, 59]
     int tm_hour;   // hours since midnight - [0, 23]
