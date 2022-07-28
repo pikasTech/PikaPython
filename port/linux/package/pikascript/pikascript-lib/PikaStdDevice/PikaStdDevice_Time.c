@@ -1,13 +1,27 @@
 #include "PikaStdDevice_Time.h"
 #include "BaseObj.h"
+#if defined(__linux)
+#include <unistd.h>
+#endif
+#if defined(_WIN32)
+#include <windows.h>
+#endif
 
 void PikaStdDevice_Time_sleep_ms(PikaObj* self, int ms) {
+#if defined(__linux) || defined(_WIN32)
+    usleep(ms * 1000);
+#else
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
+#endif
 }
 void PikaStdDevice_Time_sleep_s(PikaObj* self, int s) {
+#if defined(__linux) || defined(_WIN32)
+    sleep(s);
+#else
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] platform method need to be override.");
+#endif
 }
 
 void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
@@ -527,7 +541,7 @@ int64_t time_mktime(const _tm* this_tm, int locale) {
 
 //标准库函数asctime()
 //把结构化时间struct_time元组表示为以下形式的字符串: `'Sun Jun 20 23:21:05
-//1993'`。
+// 1993'`。
 void time_asctime(const _tm* this_tm) {
     //星期缩写，python标准库是三个字母，这里并不相同
     const char* week[] = {"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"};
@@ -686,4 +700,11 @@ void PikaStdDevice_Time___init__(PikaObj* self) {
     time_localtime(0.0, &this_tm, 8);
     time_set_tm_value(self, &this_tm);
 #endif
+}
+
+void PikaStdDevice_Time_sleep(PikaObj* self, double s) {
+    Args* args = New_args(NULL);
+    args_setInt(args, "ms", s * 1000);
+    obj_runNativeMethod(self, "sleep_ms", args);
+    args_deinit(args);
 }

@@ -5,7 +5,7 @@ class BaseDev(TinyObj):
     def addEventCallBack(self, eventCallback: any): ...
 
     # need override
-    def platformGetEventId(self):...
+    def platformGetEventId(self): ...
 
 
 class GPIO(BaseDev):
@@ -90,6 +90,9 @@ class Time(BaseDev):
 
     # need override
     def platformGetTick():
+        pass
+
+    def sleep(self, s: float):
         pass
 
     def time(self) -> float:
