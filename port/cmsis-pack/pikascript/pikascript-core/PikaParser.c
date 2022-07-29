@@ -912,7 +912,7 @@ char* Parser_solveBranckets(Args* outBuffs,
             if (strEqu(mode, "right")) {
                 right_arg = arg_strAppend(right_arg, "__slice__(");
             } else if (strEqu(mode, "left")) {
-                right_arg = arg_strAppend(right_arg, "__set__(");
+                right_arg = arg_strAppend(right_arg, "__setitem__(");
             }
             right_arg = arg_strAppend(right_arg, args_getStr(&buffs, "obj"));
             right_arg = arg_strAppend(right_arg, ",");

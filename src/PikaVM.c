@@ -32,6 +32,9 @@
 #include "PikaParser.h"
 #include "PikaPlatform.h"
 #include "dataStrs.h"
+#if PIKA_MATH_ENABLE
+#include <math.h>
+#endif
 
 /* head declear start */
 static uint8_t VMState_getInputArgNum(VMState* vs);
@@ -213,20 +216,21 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
     if (argType_isObject(obj_type)) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
-        // pikaVM_runAsm(arg_obj,
-        //               "B0\n"
-        //               "1 REF __key\n"
-        //               "0 RUN __get__\n"
-        //               "0 OUT __res\n");
+        /* clang-format off */
+        PIKA_PYTHON(
+        __res = __getitem__(__key)
+        )
+        /* clang-format on */
         const uint8_t bytes[] = {
             0x0c, 0x00, /* instruct array size */
-            0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x07, 0x00, 0x00, 0x04, 0x0f,
+            0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x07, 0x00, 0x00, 0x04, 0x13,
             0x00,
             /* instruct array */
-            0x15, 0x00, /* const pool size */
+            0x19, 0x00, /* const pool size */
             0x00, 0x5f, 0x5f, 0x6b, 0x65, 0x79, 0x00, 0x5f, 0x5f, 0x67, 0x65,
-            0x74, 0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65, 0x73,
-            0x00, /* const pool */
+            0x74, 0x69, 0x74, 0x65, 0x6d, 0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x72,
+            0x65, 0x73, 0x00,
+            /* const pool */
         };
         pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
         return arg_copy(args_getArg(arg_obj->list, "__res"));
@@ -236,7 +240,7 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
 
 Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
 #if PIKA_SYNTAX_SLICE_ENABLE
-    /* No interger index only support __get__ */
+    /* No interger index only support __getitem__ */
     if (!(arg_getType(start) == ARG_TYPE_INT &&
           arg_getType(end) == ARG_TYPE_INT)) {
         return __vm_get(self, start, obj);
@@ -245,7 +249,7 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
     int start_i = arg_getInt(start);
     int end_i = arg_getInt(end);
 
-    /* __slice__ is equal to __get__ */
+    /* __slice__ is equal to __getitem__ */
     if (end_i - start_i == 1) {
         return __vm_get(self, start, obj);
     }
@@ -325,8 +329,15 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self, VMState* vs, char* data) {
         arg_deinit(start);
         return res;
     }
-#endif
     return arg_newNull();
+#else
+    Arg* key = stack_popArg(&vs->stack);
+    Arg* obj = stack_popArg(&vs->stack);
+    Arg* res = __vm_get(self, key, obj);
+    arg_deinit(key);
+    arg_deinit(obj);
+    return res;
+#endif
 }
 
 static Arg* VM_instruction_handler_TRY(PikaObj* self, VMState* vs, char* data) {
@@ -1151,12 +1162,28 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         goto OPT_exit;
     }
     if (strEqu("**", data)) {
-        float res = 1;
-        for (int i = 0; i < num2_i; i++) {
-            res = res * num1_f;
+        if (type_arg1 == ARG_TYPE_INT && type_arg2 == ARG_TYPE_INT) {
+            int res = 1;
+            for (int i = 0; i < num2_i; i++) {
+                res = res * num1_i;
+            }
+            outArg = arg_setInt(outArg, "", res);
+            goto OPT_exit;
+        } else if (type_arg1 == ARG_TYPE_FLOAT && type_arg2 == ARG_TYPE_INT) {
+            float res = 1;
+            for (int i = 0; i < num2_i; i++) {
+                res = res * num1_f;
+            }
+            outArg = arg_setFloat(outArg, "", res);
+            goto OPT_exit;
+        } else {
+            float res = 1;
+#if PIKA_MATH_ENABLE
+            res = pow(num1_f, num2_f);
+#endif
+            outArg = arg_setFloat(outArg, "", res);
+            goto OPT_exit;
         }
-        outArg = arg_setFloat(outArg, "", res);
-        goto OPT_exit;
     }
     if (strEqu("//", data)) {
         outArg = arg_setInt(outArg, "", num1_i / num2_i);

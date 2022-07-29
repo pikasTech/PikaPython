@@ -1801,7 +1801,7 @@ TEST(parser, print_ddd) {
 }
 
 #if PIKA_SYNTAX_SLICE_ENABLE
-TEST(parser, __get__3) {
+TEST(parser, __getitem__3) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[c+d] + e[f*j]\n";
@@ -1828,7 +1828,7 @@ TEST(parser, __get__3) {
 #endif
 
 #if PIKA_SYNTAX_SLICE_ENABLE
-TEST(parser, __get__) {
+TEST(parser, __getitem__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[c]\n";
@@ -1847,7 +1847,7 @@ TEST(parser, __get__) {
 #endif
 
 #if PIKA_SYNTAX_SLICE_ENABLE
-TEST(parser, __get__2) {
+TEST(parser, __getitem__2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[c+d]\n";
@@ -1868,7 +1868,7 @@ TEST(parser, __get__2) {
 #endif
 
 #if PIKA_SYNTAX_SLICE_ENABLE
-TEST(parser, __set__) {
+TEST(parser, __setitem__) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a[b] = c\n";
@@ -1880,7 +1880,7 @@ TEST(parser, __set__) {
                  "1 REF a\n"
                  "1 REF b\n"
                  "1 REF c\n"
-                 "0 RUN __set__\n"
+                 "0 RUN __setitem__\n"
                  "0 OUT a\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2677,7 +2677,7 @@ TEST(parser, parse_issue2) {
                  "1 REF recv_buf\n"
                  "1 NUM 1\n"
                  "1 REF dat\n"
-                 "0 RUN __set__\n"
+                 "0 RUN __setitem__\n"
                  "0 OUT recv_buf\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);

@@ -98,6 +98,7 @@ TEST(compiler, task) {
     byteCodeFrame_deinit(&bytecode_frame);
     strsDeinit(&buffs);
     EXPECT_EQ(pikaMemNow(), 0);
+
 }
 
 TEST(compiler, demo1) {
@@ -572,6 +573,18 @@ TEST(compiler, event_cb) {
 
 TEST(compiler, event_cb_lvgl) {
     char* lines = "eventCallBack(eventSignal)";
+    Parser_compilePyToBytecodeArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __setitem__) {
+    char* lines = "__setitem__(__key, __val)";
+    Parser_compilePyToBytecodeArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __getitem__) {
+    char* lines = "__res = __getitem__(__key)";
     Parser_compilePyToBytecodeArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }

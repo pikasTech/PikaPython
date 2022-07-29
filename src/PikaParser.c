@@ -1067,8 +1067,8 @@ char* Suger_solveLeftBranckets(Args* outBuffs, char* right, char** left_p) {
             char* end = NULL;
             char* step = NULL;
             Slice_getPars(&buffs, inner, &start, &end, &step);
-            /* obj = __set__(obj, key, val) */
-            right_arg = arg_strAppend(right_arg, "__set__(");
+            /* obj = __setitem__(obj, key, val) */
+            right_arg = arg_strAppend(right_arg, "__setitem__(");
             right_arg = arg_strAppend(right_arg, args_getStr(&buffs, "obj"));
             right_arg = arg_strAppend(right_arg, ",");
             right_arg = arg_strAppend(right_arg, start);

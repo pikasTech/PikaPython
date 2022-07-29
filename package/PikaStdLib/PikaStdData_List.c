@@ -16,7 +16,7 @@ void PikaStdData_List_set(PikaObj* self, Arg* arg, int i) {
     }
 }
 
-void PikaStdData_List___set__(PikaObj* self, Arg* __key, Arg* __val) {
+void PikaStdData_List___setitem__(PikaObj* self, Arg* __key, Arg* __val) {
     PikaStdData_List_set(self, obj_getArg(self, "__val"),
                          obj_getInt(self, "__key"));
 }

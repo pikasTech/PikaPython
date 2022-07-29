@@ -7,19 +7,19 @@
 #include <stdlib.h>
 #include "BaseObj.h"
 
-void PikaStdLib_SysObj___get__Method(PikaObj *self, Args *args){
+void PikaStdLib_SysObj___getitem__Method(PikaObj *self, Args *args){
     Arg* key = args_getArg(args, "key");
     Arg* obj = args_getArg(args, "obj");
-    Arg* res = PikaStdLib_SysObj___get__(self, key, obj);
+    Arg* res = PikaStdLib_SysObj___getitem__(self, key, obj);
     method_returnArg(args, res);
 }
 
-void PikaStdLib_SysObj___set__Method(PikaObj *self, Args *args){
+void PikaStdLib_SysObj___setitem__Method(PikaObj *self, Args *args){
     Arg* key = args_getArg(args, "key");
     Arg* obj = args_getArg(args, "obj");
     char* obj_str = args_getStr(args, "obj_str");
     Arg* val = args_getArg(args, "val");
-    PikaStdLib_SysObj___set__(self, key, obj, obj_str, val);
+    PikaStdLib_SysObj___setitem__(self, key, obj, obj_str, val);
 }
 
 void PikaStdLib_SysObj___slice__Method(PikaObj *self, Args *args){
@@ -137,8 +137,8 @@ void PikaStdLib_SysObj_typeMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdLib_SysObj(Args *args){
     PikaObj *self = New_BaseObj(args);
-    class_defineMethod(self, "__get__(obj:any,key:any)->any", PikaStdLib_SysObj___get__Method);
-    class_defineMethod(self, "__set__(obj:any,key:any,val:any,obj_str:str)", PikaStdLib_SysObj___set__Method);
+    class_defineMethod(self, "__getitem__(obj:any,key:any)->any", PikaStdLib_SysObj___getitem__Method);
+    class_defineMethod(self, "__setitem__(obj:any,key:any,val:any,obj_str:str)", PikaStdLib_SysObj___setitem__Method);
     class_defineMethod(self, "__slice__(obj:any,start:any,end:any,step:int)->any", PikaStdLib_SysObj___slice__Method);
     class_defineMethod(self, "bytes(val:any)->bytes", PikaStdLib_SysObj_bytesMethod);
     class_defineMethod(self, "cformat(fmt:str,*var)->str", PikaStdLib_SysObj_cformatMethod);

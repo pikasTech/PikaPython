@@ -25,7 +25,7 @@ Arg* PikaStdData_ByteArray___next__(PikaObj* self) {
     return res;
 }
 
-int PikaStdData_ByteArray___get__(PikaObj* self, int __key) {
+int PikaStdData_ByteArray___getitem__(PikaObj* self, int __key) {
     uint8_t* data = obj_getBytes(self, "raw");
     uint16_t len = obj_getBytesSize(self, "raw");
     if (__key < len) {
@@ -35,7 +35,7 @@ int PikaStdData_ByteArray___get__(PikaObj* self, int __key) {
     }
 }
 
-void PikaStdData_ByteArray___set__(PikaObj* self, int __key, int __val) {
+void PikaStdData_ByteArray___setitem__(PikaObj* self, int __key, int __val) {
     uint8_t* data = obj_getBytes(self, "raw");
     uint16_t len = obj_getBytesSize(self, "raw");
     if (__key < len) {

@@ -41,12 +41,12 @@ Arg* PikaStdData_Dict___next__(PikaObj* self) {
     return res;
 }
 
-void PikaStdData_Dict___set__(PikaObj* self, Arg* __key, Arg* __val) {
+void PikaStdData_Dict___setitem__(PikaObj* self, Arg* __key, Arg* __val) {
     PikaStdData_Dict_set(self, obj_getArg(self, "__val"),
                          obj_getStr(self, "__key"));
 }
 
-Arg* PikaStdData_Dict___get__(PikaObj* self, Arg* __key) {
+Arg* PikaStdData_Dict___getitem__(PikaObj* self, Arg* __key) {
     return PikaStdData_Dict_get(self, obj_getStr(self, "__key"));
 }
 

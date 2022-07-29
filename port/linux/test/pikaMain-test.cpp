@@ -728,7 +728,7 @@ TEST(pikaMain, obj_no_free) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, list__set__) {
+TEST(pikaMain, list__setitem__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -736,8 +736,8 @@ TEST(pikaMain, list__set__) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "list = PikaStdData.List()\n"
-            "list = __set__(list, 0, 2)\n"
-            "res = __get__(list, 0)\n"
+            "list = __setitem__(list, 0, 2)\n"
+            "res = __getitem__(list, 0)\n"
             "\n");
     /* collect */
     int res = obj_getInt(pikaMain, "res");
@@ -748,7 +748,7 @@ TEST(pikaMain, list__set__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, string__get__) {
+TEST(pikaMain, string__getitem__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -756,7 +756,7 @@ TEST(pikaMain, string__get__) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "s = PikaStdData.String('test')\n"
-            "res = __get__(s, 2)\n"
+            "res = __getitem__(s, 2)\n"
             "\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
@@ -767,7 +767,7 @@ TEST(pikaMain, string__get__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, dict__set__get) {
+TEST(pikaMain, dict__setitem__get) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -775,8 +775,8 @@ TEST(pikaMain, dict__set__get) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "list = PikaStdData.Dict()\n"
-            "list = __set__(list, 'a', 2)\n"
-            "res = __get__(list, 'a')\n"
+            "list = __setitem__(list, 'a', 2)\n"
+            "res = __getitem__(list, 'a')\n"
             "\n");
     /* collect */
     int res = obj_getInt(pikaMain, "res");
@@ -787,7 +787,7 @@ TEST(pikaMain, dict__set__get) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, str___get____set__) {
+TEST(pikaMain, str___getitem____setitem__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -795,8 +795,8 @@ TEST(pikaMain, str___get____set__) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "s = 'test'\n"
-            "res = __get__(s, 2)\n"
-            "s = __set__(s, 2, 'q')\n"
+            "res = __getitem__(s, 2)\n"
+            "s = __setitem__(s, 2, 'q')\n"
             "\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");

@@ -59,7 +59,7 @@ void ctypes_create_string_buffer___init__(PikaObj* self, int size) {
     __platform_printf("0x%x", &buffer);
 }
 
-int ctypes_create_string_buffer___get__(PikaObj* self, int __key) {
+int ctypes_create_string_buffer___getitem__(PikaObj* self, int __key) {
     uint8_t* buffer;
     int i;
 
@@ -68,7 +68,7 @@ int ctypes_create_string_buffer___get__(PikaObj* self, int __key) {
     return buffer[i];
 }
 
-int ctypes_c_buffer___get__(PikaObj* self, int __key) {
+int ctypes_c_buffer___getitem__(PikaObj* self, int __key) {
     int i;
     uint8_t* buffer;
 

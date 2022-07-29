@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include "BaseObj.h"
 
-void PikaStdData_String___get__Method(PikaObj *self, Args *args){
+void PikaStdData_String___getitem__Method(PikaObj *self, Args *args){
     Arg* __key = args_getArg(args, "__key");
-    Arg* res = PikaStdData_String___get__(self, __key);
+    Arg* res = PikaStdData_String___getitem__(self, __key);
     method_returnArg(args, res);
 }
 
@@ -28,10 +28,10 @@ void PikaStdData_String___next__Method(PikaObj *self, Args *args){
     method_returnArg(args, res);
 }
 
-void PikaStdData_String___set__Method(PikaObj *self, Args *args){
+void PikaStdData_String___setitem__Method(PikaObj *self, Args *args){
     Arg* __key = args_getArg(args, "__key");
     Arg* __val = args_getArg(args, "__val");
-    PikaStdData_String___set__(self, __key, __val);
+    PikaStdData_String___setitem__(self, __key, __val);
 }
 
 void PikaStdData_String___str__Method(PikaObj *self, Args *args){
@@ -88,11 +88,11 @@ void PikaStdData_String_startwithMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdData_String(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "__get__(__key:any)->any", PikaStdData_String___get__Method);
+    class_defineMethod(self, "__getitem__(__key:any)->any", PikaStdData_String___getitem__Method);
     class_defineMethod(self, "__init__(s:str)", PikaStdData_String___init__Method);
     class_defineMethod(self, "__iter__()->any", PikaStdData_String___iter__Method);
     class_defineMethod(self, "__next__()->any", PikaStdData_String___next__Method);
-    class_defineMethod(self, "__set__(__key:any,__val:any)", PikaStdData_String___set__Method);
+    class_defineMethod(self, "__setitem__(__key:any,__val:any)", PikaStdData_String___setitem__Method);
     class_defineMethod(self, "__str__()->str", PikaStdData_String___str__Method);
     class_defineMethod(self, "endwith(suffix:str)->int", PikaStdData_String_endwithMethod);
     class_defineMethod(self, "get()->str", PikaStdData_String_getMethod);

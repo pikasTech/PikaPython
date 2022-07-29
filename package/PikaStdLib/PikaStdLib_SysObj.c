@@ -114,7 +114,7 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
     obj_removeArg(self, "__buf");
     ArgType type = arg_getType(arg);
     Args buffs = {0};
-    char* res = NULL;
+    char* res = "";
     if (ARG_TYPE_INT == type) {
         int val = arg_getInt(arg);
         res = strsFormat(&buffs, 11, "%d", val);
@@ -192,11 +192,14 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2) {
     return obj_arg;
 }
 
-Arg* PikaStdLib_SysObj___get__(PikaObj* self, Arg* key, Arg* obj) {
+Arg* PikaStdLib_SysObj___getitem__(PikaObj* self, Arg* key, Arg* obj) {
     return __vm_get(self, key, obj);
 }
 
-Arg* PikaStdLib_SysObj___set__(PikaObj* self, Arg* key, Arg* obj, Arg* val) {
+Arg* PikaStdLib_SysObj___setitem__(PikaObj* self,
+                                   Arg* key,
+                                   Arg* obj,
+                                   Arg* val) {
     ArgType obj_type = arg_getType(obj);
     if (ARG_TYPE_STRING == obj_type) {
         int index = arg_getInt(key);
@@ -224,20 +227,21 @@ Arg* PikaStdLib_SysObj___set__(PikaObj* self, Arg* key, Arg* obj, Arg* val) {
         PikaObj* arg_obj = arg_getPtr(obj);
         obj_setArg(arg_obj, "__key", key);
         obj_setArg(arg_obj, "__val", val);
-        // pikaVM_runAsm(arg_obj,
-        //               "B0\n"
-        //               "1 REF __key\n"
-        //               "1 REF __val\n"
-        //               "0 RUN __set__\n");
+        /* clang-format off */
+        PIKA_PYTHON(
+        __setitem__(__key, __val)
+        )
+        /* clang-format on */
         const uint8_t bytes[] = {
             0x0c, 0x00, /* instruct array size */
             0x10, 0x81, 0x01, 0x00, 0x10, 0x01, 0x07, 0x00, 0x00, 0x02, 0x0d,
             0x00,
             /* instruct array */
-            0x15, 0x00, /* const pool size */
+            0x19, 0x00, /* const pool size */
             0x00, 0x5f, 0x5f, 0x6b, 0x65, 0x79, 0x00, 0x5f, 0x5f, 0x76, 0x61,
-            0x6c, 0x00, 0x5f, 0x5f, 0x73, 0x65, 0x74, 0x5f, 0x5f,
-            0x00, /* const pool */
+            0x6c, 0x00, 0x5f, 0x5f, 0x73, 0x65, 0x74, 0x69, 0x74, 0x65, 0x6d,
+            0x5f, 0x5f, 0x00,
+            /* const pool */
         };
         pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
         return arg_newRef(arg_obj);

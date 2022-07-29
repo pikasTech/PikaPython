@@ -39,7 +39,7 @@ class create_string_buffer(TinyObj):
     def __init__(self, size:int):...
 
     # support val = string[] 
-    def __get__(self, __key: int) -> int:
+    def __getitem__(self, __key: int) -> int:
         pass
 
 class c_buffer(TinyObj):
@@ -47,5 +47,5 @@ class c_buffer(TinyObj):
         pass
 
     # support val = string[] 
-    def __get__(self, __key: int) -> int:
+    def __getitem__(self, __key: int) -> int:
         pass

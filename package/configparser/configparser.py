@@ -53,11 +53,11 @@ class ConfigParser():
         section_dict[option] = value
 
     # support config[key] = val
-    def __set__(self, __key, __val):
+    def __setitem__(self, __key, __val):
         self.config_dict[__key] = __val
 
     # support val = config[key]
-    def __get__(self, __key):
+    def __getitem__(self, __key):
         return self.config_dict[__key]
 
     def items(self, section):

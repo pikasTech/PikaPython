@@ -138,7 +138,7 @@
         #ifndef PIKA_FILEIO_ENABLE
             #define PIKA_FILEIO_ENABLE 1
         #endif
-        
+
     #endif
 
     /* default configuration  */
@@ -240,6 +240,10 @@
 
     #ifndef PIKA_ARG_NUM_MAX
         #define PIKA_ARG_NUM_MAX 16
+    #endif
+
+    #ifndef PIKA_MATH_ENABLE
+        #define PIKA_MATH_ENABLE 0
     #endif
 
     /* configuration validation */

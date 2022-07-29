@@ -36,7 +36,7 @@ Arg* PikaStdData_String___next__(PikaObj* self) {
     return res;
 }
 
-Arg* PikaStdData_String___get__(PikaObj* self, Arg* __key) {
+Arg* PikaStdData_String___getitem__(PikaObj* self, Arg* __key) {
     int key_i = arg_getInt(__key);
     char* str = obj_getStr(self, "str");
     uint16_t len = strGetSize(str);
@@ -49,7 +49,7 @@ Arg* PikaStdData_String___get__(PikaObj* self, Arg* __key) {
     }
 }
 
-void PikaStdData_String___set__(PikaObj* self, Arg* __key, Arg* __val) {
+void PikaStdData_String___setitem__(PikaObj* self, Arg* __key, Arg* __val) {
     int key_i = arg_getInt(__key);
     char* str = obj_getStr(self, "str");
     char* val = arg_getStr(__val);

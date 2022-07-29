@@ -46,11 +46,11 @@ Arg* PikaStdData_List___next__(PikaObj* self) {
     return res;
 }
 
-Arg* PikaStdData_List___get__(PikaObj* self) {
+Arg* PikaStdData_List___getitem__(PikaObj* self) {
     return PikaStdData_List_get(self, obj_getInt(self, "__key"));
 }
 
-void PikaStdData_List___set__(PikaObj* self) {
+void PikaStdData_List___setitem__(PikaObj* self) {
     PikaStdData_List_set(self, obj_getArg(self, "__val"),
                          obj_getInt(self, "__key"));
 }
