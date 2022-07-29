@@ -88,7 +88,7 @@ TEST(builtin, file3) {
 }
 #endif
 
-#if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
+#if (PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL) && !PIKA_POOL_ENABLE
 TEST(builtin, bigfile) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
