@@ -80,18 +80,6 @@ class Time(BaseDev):
     def __init__(self):
         pass
 
-    # need override
-    def sleep_s(self, s: int):
-        pass
-
-    # need override
-    def sleep_ms(self, ms: int):
-        pass
-
-    # need override
-    def platformGetTick():
-        pass
-
     def sleep(self, s: float):
         pass
 
@@ -114,6 +102,18 @@ class Time(BaseDev):
         pass
 
     def ctime(self, unix_time: float):
+        pass
+
+    # need override
+    def sleep_s(self, s: int):
+        pass
+
+    # need override
+    def sleep_ms(self, ms: int):
+        pass
+
+    # need override
+    def platformGetTick():
         pass
 
 
