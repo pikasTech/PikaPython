@@ -1158,7 +1158,14 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         goto OPT_exit;
     }
     if (strEqu("%", data)) {
-        outArg = arg_setInt(outArg, "", num1_i % num2_i);
+        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
+            outArg = arg_setInt(outArg, "", num1_i % num2_i);
+            goto OPT_exit;
+        }
+        VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf(
+            "TypeError: unsupported operand type(s) for %: 'float'\n");
+        outArg = NULL;
         goto OPT_exit;
     }
     if (strEqu("**", data)) {
@@ -1177,16 +1184,28 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
             outArg = arg_setFloat(outArg, "", res);
             goto OPT_exit;
         } else {
-            float res = 1;
 #if PIKA_MATH_ENABLE
+            float res = 1;
             res = pow(num1_f, num2_f);
-#endif
             outArg = arg_setFloat(outArg, "", res);
             goto OPT_exit;
+#else
+            VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
+            __platform_printf(
+                "Operation float ** float is not enabled, please set "
+                "PIKA_MATH_ENABLE\n");
+#endif
         }
     }
     if (strEqu("//", data)) {
-        outArg = arg_setInt(outArg, "", num1_i / num2_i);
+        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
+            outArg = arg_setInt(outArg, "", num1_i / num2_i);
+            goto OPT_exit;
+        }
+        VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf(
+            "TypeError: unsupported operand type(s) for //: 'float'\n");
+        outArg = NULL;
         goto OPT_exit;
     }
     if (strEqu("==", data) || strEqu("!=", data)) {
@@ -1252,23 +1271,58 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self, VMState* vs, char* data) {
         goto OPT_exit;
     }
     if (strEqu("&", data)) {
-        outArg = arg_setInt(outArg, "", num1_i & num2_i);
+        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
+            outArg = arg_setInt(outArg, "", num1_i & num2_i);
+            goto OPT_exit;
+        }
+        VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf(
+            "TypeError: unsupported operand type(s) for &: 'float'\n");
+        outArg = NULL;
         goto OPT_exit;
     }
     if (strEqu("|", data)) {
-        outArg = arg_setInt(outArg, "", num1_i | num2_i);
+        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
+            outArg = arg_setInt(outArg, "", num1_i | num2_i);
+            goto OPT_exit;
+        }
+        VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf(
+            "TypeError: unsupported operand type(s) for |: 'float'\n");
+        outArg = NULL;
         goto OPT_exit;
     }
     if (strEqu("~", data)) {
-        outArg = arg_setInt(outArg, "", ~num2_i);
+        if (type_arg2 == ARG_TYPE_INT) {
+            outArg = arg_setInt(outArg, "", ~num2_i);
+            goto OPT_exit;
+        }
+        VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf(
+            "TypeError: unsupported operand type(s) for ~: 'float'\n");
+        outArg = NULL;
         goto OPT_exit;
     }
     if (strEqu(">>", data)) {
-        outArg = arg_setInt(outArg, "", num1_i >> num2_i);
+        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
+            outArg = arg_setInt(outArg, "", num1_i >> num2_i);
+            goto OPT_exit;
+        }
+        VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf(
+            "TypeError: unsupported operand type(s) for >>: 'float'\n");
+        outArg = NULL;
         goto OPT_exit;
     }
     if (strEqu("<<", data)) {
-        outArg = arg_setInt(outArg, "", num1_i << num2_i);
+        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
+            outArg = arg_setInt(outArg, "", num1_i << num2_i);
+            goto OPT_exit;
+        }
+        VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf(
+            "TypeError: unsupported operand type(s) for <<: 'float'\n");
+        outArg = NULL;
         goto OPT_exit;
     }
     if (strEqu(" and ", data)) {
