@@ -1,10 +1,9 @@
 use crate::my_string;
 use crate::py_arg::PyArg;
-use std::collections::BTreeMap;
 #[derive(Debug)]
 pub struct ArgList {
     py_arg_list: String,
-    list: BTreeMap<String, PyArg>,
+    list: Vec<PyArg>,
 }
 
 impl ArgList {
@@ -44,7 +43,7 @@ impl ArgList {
         /* push py_arg_list */
         let mut arg_list = ArgList {
             py_arg_list: py_arg_list.clone(),
-            list: BTreeMap::new(),
+            list: Vec::new(),
         };
 
         /* splite each arg */
@@ -73,16 +72,13 @@ impl ArgList {
                     }
                 }
             };
-            arg_list
-                .list
-                .entry(arg_name.clone())
-                .or_insert(PyArg::new(&arg_name, &type_name));
+            arg_list.list.push(PyArg::new(&arg_name, &type_name));
         }
         return Some(arg_list);
     }
     pub fn to_c(&self) -> String {
         let mut arg_list_in_c = String::from("");
-        for (i, (_, py_arg)) in self.list.iter().enumerate() {
+        for (i, py_arg) in self.list.iter().enumerate() {
             let arg_name = py_arg.name();
             let type_name_in_c = py_arg.c_type();
             arg_list_in_c.push_str(&type_name_in_c);
@@ -96,7 +92,7 @@ impl ArgList {
     }
     pub fn call_arg_list(&self) -> String {
         let mut call_arg_list = "".to_string();
-        for (i, (_, py_arg)) in self.list.iter().enumerate() {
+        for (i, py_arg) in self.list.iter().enumerate() {
             let arg_name = py_arg.name();
             call_arg_list.push_str(&arg_name);
             if i < self.list.len() - 1 {
@@ -107,7 +103,7 @@ impl ArgList {
     }
     pub fn get_local_args(&self) -> String {
         let mut get_local_args = "".to_string();
-        for (_, py_arg) in self.list.iter() {
+        for py_arg in self.list.iter() {
             get_local_args.push_str(&py_arg.get_local_arg());
         }
         return get_local_args;

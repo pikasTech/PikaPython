@@ -8,7 +8,7 @@ void PikaStdData_List_append(PikaObj* self, Arg* arg) {
     __vm_List_append(self, arg);
 }
 
-void PikaStdData_List_set(PikaObj* self, Arg* arg, int i) {
+void PikaStdData_List_set(PikaObj* self, int i, Arg* arg) {
     PikaList* list = obj_getPtr(self, "list");
     if (PIKA_RES_OK != list_setArg(list, i, arg)) {
         obj_setErrorCode(self, 1);
@@ -17,10 +17,9 @@ void PikaStdData_List_set(PikaObj* self, Arg* arg, int i) {
 }
 
 void PikaStdData_List___setitem__(PikaObj* self, Arg* __key, Arg* __val) {
-    PikaStdData_List_set(self, obj_getArg(self, "__val"),
-                         obj_getInt(self, "__key"));
+    PikaStdData_List_set(self, obj_getInt(self, "__key"),
+                         obj_getArg(self, "__val"));
 }
-
 
 void PikaStdData_List___init__(PikaObj* self) {
     __vm_List___init__(self);

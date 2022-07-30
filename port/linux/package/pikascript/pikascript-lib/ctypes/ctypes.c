@@ -22,10 +22,10 @@ int ctypes_Test_add(PikaObj* self, PikaObj* c_uint1, PikaObj* c_uint2) {
 }
 
 int ctypes_Test_dc_cpuapdu_hex(PikaObj* self,
-                               PikaObj* rcvbuf,
-                               PikaObj* rlen,
+                               int slen,
                                uint8_t* sendbuf,
-                               int slen) {
+                               PikaObj* rlen,
+                               PikaObj* rcvbuf) {
     /* print input */
     __platform_printf("input: slen = %d\n", slen);
     __platform_printf("sendbuf :\n");
@@ -77,7 +77,7 @@ int ctypes_c_buffer___getitem__(PikaObj* self, int __key) {
     return buffer[i];
 }
 
-void ctypes_c_buffer___init__(PikaObj* self, int size, Arg* value) {
+void ctypes_c_buffer___init__(PikaObj *self, Arg* value, int size){
     uint8_t* buffer;
     uint8_t* value_buffer;
     size_t value_size;

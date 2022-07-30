@@ -14,7 +14,7 @@ void PikaStdData_Dict___init__(PikaObj* self) {
     __vm_Dict___init__(self);
 }
 
-void PikaStdData_Dict_set(PikaObj* self, Arg* arg, char* key) {
+void PikaStdData_Dict_set(PikaObj* self, char* key, Arg* arg) {
     __vm_Dict_set(self, arg, key);
 }
 
@@ -42,8 +42,8 @@ Arg* PikaStdData_Dict___next__(PikaObj* self) {
 }
 
 void PikaStdData_Dict___setitem__(PikaObj* self, Arg* __key, Arg* __val) {
-    PikaStdData_Dict_set(self, obj_getArg(self, "__val"),
-                         obj_getStr(self, "__key"));
+    PikaStdData_Dict_set(self, obj_getStr(self, "__key"),
+                         obj_getArg(self, "__val"));
 }
 
 Arg* PikaStdData_Dict___getitem__(PikaObj* self, Arg* __key) {
@@ -148,8 +148,7 @@ int PikaStdData_Dict___len__(PikaObj* self) {
     return args_getSize(&dict->super);
 }
 
-
-int PikaStdData_dict_keys___len__(PikaObj *self){
+int PikaStdData_dict_keys___len__(PikaObj* self) {
     PikaObj* dictptr = obj_getPtr(self, "dictptr");
     PikaDict* keys = obj_getPtr(dictptr, "_keys");
     return args_getSize(&keys->super);

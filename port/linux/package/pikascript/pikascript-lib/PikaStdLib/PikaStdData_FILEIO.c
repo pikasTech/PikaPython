@@ -76,7 +76,7 @@ int PikaStdData_FILEIO_write(PikaObj* self, Arg* s) {
     return res;
 }
 
-int PikaStdData_FILEIO_seek(PikaObj* self, PikaTuple* fromwhere, int offset) {
+int PikaStdData_FILEIO_seek(PikaObj *self, int offset, PikaTuple* fromwhere){
     FILE* f = obj_getPtr(self, "_f");
     if (f == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO);

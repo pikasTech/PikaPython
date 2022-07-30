@@ -419,7 +419,7 @@ void PikaCV_Converter_toBGR888(PikaObj* self, PikaObj* image) {
     arg_deinit(arg_data_new);
 }
 
-void PikaCV_Converter_converter(PikaObj* self, int format, PikaObj* image) {
+void PikaCV_Converter_converter(PikaObj *self, PikaObj* image, int format){
     switch (format) {
         case PikaCV_ImageFormat_Type_RGB888:
             PikaCV_Converter_toRGB888(self, image);

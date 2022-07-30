@@ -48,7 +48,8 @@ void PikaCV_Transforms_threshold(PikaObj* self,
         pika_assert(0);
         return;
     }
-    PikaCV_Format_Check(image,PikaCV_ImageFormat_Type_GRAY,PikaCV_Check_Converter);
+    PikaCV_Format_Check(image, PikaCV_ImageFormat_Type_GRAY,
+                        PikaCV_Check_Converter);
     uint8_t* src_data = _image_getData(image);
 
     int i;
@@ -83,11 +84,11 @@ void PikaCV_Transforms_threshold(PikaObj* self,
 }
 
 void PikaCV_Transforms_setROI(PikaObj* self,
-                              int h,
                               PikaObj* image,
-                              int w,
                               int x,
-                              int y) {
+                              int y,
+                              int w,
+                              int h) {
     PikaCV_Image* src = obj_getStruct(image, "image");
     int width = src->width;
     int height = src->height;
@@ -96,7 +97,8 @@ void PikaCV_Transforms_setROI(PikaObj* self,
         pika_assert(0);
         return;
     }
-    PikaCV_Format_Check(image,PikaCV_ImageFormat_Type_RGB888,PikaCV_Check_Converter);
+    PikaCV_Format_Check(image, PikaCV_ImageFormat_Type_RGB888,
+                        PikaCV_Check_Converter);
     if (x <= 0 || y <= 0 || w <= 0 || h <= 0) {
         pika_assert(0);
         return;
@@ -136,7 +138,8 @@ int PikaCV_Transforms_getOTSUthre(PikaObj* self, PikaObj* image) {
         pika_assert(0);
         return 0;
     }
-    PikaCV_Format_Check(image,PikaCV_ImageFormat_Type_GRAY,PikaCV_Check_Converter);
+    PikaCV_Format_Check(image, PikaCV_ImageFormat_Type_GRAY,
+                        PikaCV_Check_Converter);
     const int Grayscale = 256;
     int width = src->width;
     int height = src->height;
@@ -183,7 +186,8 @@ void PikaCV_Transforms_setOTSU(PikaObj* self, PikaObj* image) {
         pika_assert(0);
         return;
     }
-    PikaCV_Format_Check(image,PikaCV_ImageFormat_Type_GRAY,PikaCV_Check_Converter);
+    PikaCV_Format_Check(image, PikaCV_ImageFormat_Type_GRAY,
+                        PikaCV_Check_Converter);
     int thre = PikaCV_Transforms_getOTSUthre(self, image);
     uint8_t* src_data = _image_getData(image);
 
@@ -200,9 +204,9 @@ void PikaCV_Transforms_setOTSU(PikaObj* self, PikaObj* image) {
 
 void PikaCV_Transforms_resize(PikaObj* self,
                               PikaObj* image,
-                              int resizeType,
                               int x,
-                              int y) {
+                              int y,
+                              int resizeType) {
     PikaCV_Image* src = obj_getStruct(image, "image");
     int width = src->width;
     int height = src->height;
@@ -214,7 +218,8 @@ void PikaCV_Transforms_resize(PikaObj* self,
         pika_assert(0);
         return;
     }
-    PikaCV_Format_Check(image,PikaCV_ImageFormat_Type_RGB888,PikaCV_Check_Converter);
+    PikaCV_Format_Check(image, PikaCV_ImageFormat_Type_RGB888,
+                        PikaCV_Check_Converter);
 
     int size_new = x * y * 3;
     Arg* arg_data_new = arg_setBytes(NULL, "", NULL, size_new);
@@ -251,11 +256,11 @@ void PikaCV_Transforms_resize(PikaObj* self,
 }
 
 void PikaCV_Transforms_adaptiveThreshold(PikaObj* self,
-                                         int c,
                                          PikaObj* image,
                                          int maxval,
-                                         int method,
-                                         int subsize) {
+                                         int subsize,
+                                         int c,
+                                         int method) {
     PikaCV_Image* src = obj_getStruct(image, "image");
 
     if (NULL == src) {
@@ -266,7 +271,8 @@ void PikaCV_Transforms_adaptiveThreshold(PikaObj* self,
         pika_assert(0);
         return;
     }
-    PikaCV_Format_Check(image,PikaCV_ImageFormat_Type_GRAY,PikaCV_Check_Converter);
+    PikaCV_Format_Check(image, PikaCV_ImageFormat_Type_GRAY,
+                        PikaCV_Check_Converter);
     int size = src->size;
     uint8_t* src_data = _image_getData(image);
     uint8_t* src_copy;
@@ -282,7 +288,7 @@ void PikaCV_Transforms_adaptiveThreshold(PikaObj* self,
         free(src_copy);
         return;
     }
- 
+
     /* update size after filter */
     size = src->size;
     uint8_t* smooth_data = _image_getData(image);

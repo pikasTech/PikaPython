@@ -192,13 +192,13 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2) {
     return obj_arg;
 }
 
-Arg* PikaStdLib_SysObj___getitem__(PikaObj* self, Arg* key, Arg* obj) {
+Arg* PikaStdLib_SysObj___getitem__(PikaObj* self, Arg* obj, Arg* key) {
     return __vm_get(self, key, obj);
 }
 
 Arg* PikaStdLib_SysObj___setitem__(PikaObj* self,
-                                   Arg* key,
                                    Arg* obj,
+                                   Arg* key,
                                    Arg* val) {
     ArgType obj_type = arg_getType(obj);
     if (ARG_TYPE_STRING == obj_type) {
@@ -458,7 +458,7 @@ int PikaStdLib_SysObj_id(PikaObj* self, Arg* obj) {
     return ptr & (0x7FFFFFFF);
 }
 
-PikaObj* PikaStdLib_SysObj_open(PikaObj* self, char* mode, char* path) {
+PikaObj* PikaStdLib_SysObj_open(PikaObj* self, char* path, char* mode) {
 #if PIKA_FILEIO_ENABLE
     PikaObj* file = newNormalObj(New_PikaStdData_FILEIO);
     PikaStdData_FILEIO_init(file, mode, path);

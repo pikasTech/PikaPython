@@ -49,7 +49,7 @@ void pika_cjson_cJSON___init__(PikaObj* self) {
 PikaObj* pika_cjson_cJSON_getChild(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     cJSON* resItem = item->child;
-    if(NULL == resItem){
+    if (NULL == resItem) {
         return NULL;
     }
 
@@ -66,7 +66,7 @@ PikaObj* pika_cjson_cJSON_getChild(PikaObj* self) {
 PikaObj* pika_cjson_cJSON_getNext(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     cJSON* resItem = item->next;
-    if(NULL == resItem){
+    if (NULL == resItem) {
         return NULL;
     }
 
@@ -83,7 +83,7 @@ PikaObj* pika_cjson_cJSON_getNext(PikaObj* self) {
 PikaObj* pika_cjson_cJSON_getPrev(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     cJSON* resItem = item->prev;
-    if(NULL == resItem){
+    if (NULL == resItem) {
         return NULL;
     }
 
@@ -126,30 +126,30 @@ Arg* pika_cjson_cJSON_getValue(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     int type = item->type;
     if (type == cJSON_Invalid) {
-        return arg_setNull(NULL);
+        return arg_newNull();
     }
     if (type == cJSON_False) {
-        return arg_setInt(NULL, "", 0);
+        return arg_newInt(0);
     }
     if (type == cJSON_True) {
-        return arg_setInt(NULL, "", 1);
+        return arg_newInt(1);
     }
     if (type == cJSON_NULL) {
-        return arg_setNull(NULL);
+        return arg_newNull();
     }
     if (type == cJSON_Number) {
-        return arg_setFloat(NULL, "", item->valuedouble);
+        return arg_newFloat(item->valuedouble);
     }
     if (type == cJSON_String) {
-        return arg_setStr(NULL, "", item->valuestring);
+        return arg_newStr(item->valuestring);
     }
-    return arg_setNull(NULL);
+    return arg_newNull();
 }
 
 PikaObj* pika_cjson_cJSON_getArrayItem(PikaObj* self, int index) {
     cJSON* item = obj_getPtr(self, "item");
     cJSON* subItem = cJSON_GetArrayItem(item, index);
-    if(NULL == subItem){
+    if (NULL == subItem) {
         return NULL;
     }
 
@@ -226,8 +226,8 @@ void pika_cjson_cJSON_addItemToArray(PikaObj* self, PikaObj* item) {
 }
 
 void pika_cjson_cJSON_addItemToObject(PikaObj* self,
-                                      PikaObj* item,
-                                      char* string) {
+                                      char* string,
+                                      PikaObj* item) {
     cJSON* self_item = obj_getPtr(self, "item");
     cJSON* item_item = obj_getPtr(item, "item");
     cJSON_AddItemToObject(self_item, string, item_item);

@@ -202,7 +202,7 @@ char* PikaStdData_String_strip(PikaObj* self) {
     return obj_getStr(self, "_buf");
 }
 
-char* PikaStdData_String_replace(PikaObj* self, char* new, char* old) {
+char* PikaStdData_String_replace(PikaObj* self, char* old, char* new) {
     Args buffs = {0};
     char* str = strsCopy(&buffs, obj_getStr(self, "str"));
     str = strsReplace(&buffs, str, old, new);
