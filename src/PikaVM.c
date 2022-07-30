@@ -710,7 +710,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     Arg* return_arg = NULL;
     VMParameters* sub_locals = NULL;
     char* methodPath = data;
-    PikaObj* method_host_obj;
+    PikaObj* method_host_obj = NULL;
     Arg* method_arg = NULL;
     Arg* host_arg = NULL;
     PIKA_BOOL isClass = PIKA_FALSE;
@@ -723,7 +723,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
         vs->try_error_code == TRY_STATE_INNER) {
         sub_try_info.try_state = TRY_STATE_INNER;
     }
-    if (strEqu(data, "")) {
+    if (data[0] == 0) {
         if (VMState_getInputArgNum(vs) < 2) {
             /* return arg directly */
             return_arg = stack_popArg(&(vs->stack));
@@ -862,7 +862,7 @@ exit:
     if (NULL != host_arg) {
         arg_deinit(host_arg);
     }
-    if (isClass) {
+    if (NULL!= method_host_obj && isClass) {
         /* class method */
         obj_deinit(method_host_obj);
     }
@@ -1675,10 +1675,6 @@ VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode) {
     return __pikaVM_runPyLines_or_byteCode(self, NULL, bytecode);
 }
 
-static void* constPool_getStart(ConstPool* self) {
-    return self->content_start;
-}
-
 void constPool_update(ConstPool* self) {
     self->content_start = (void*)arg_getContent(self->arg_buff);
 }
@@ -1716,10 +1712,6 @@ char* constPool_getNow(ConstPool* self) {
     }
     return (char*)((uintptr_t)constPool_getStart(self) +
                    (uintptr_t)(self->content_offset_now));
-}
-
-uint16_t constPool_getLastOffset(ConstPool* self) {
-    return self->size;
 }
 
 uint16_t constPool_getOffsetByData(ConstPool* self, char* data) {
@@ -1831,10 +1823,6 @@ void instructUnit_init(InstructUnit* ins_unit) {
     ins_unit->deepth = 0;
     ins_unit->const_pool_index = 0;
     ins_unit->isNewLine_instruct = 0;
-}
-
-static void* instructArray_getStart(InstructArray* self) {
-    return self->content_start;
 }
 
 void instructArray_update(InstructArray* self) {
@@ -2065,10 +2053,6 @@ VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
     try_info.try_state = TRY_STATE_NONE;
     return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
                                               0, &try_info);
-}
-
-char* constPool_getByOffset(ConstPool* self, uint16_t offset) {
-    return (char*)((uintptr_t)constPool_getStart(self) + (uintptr_t)offset);
 }
 
 InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset) {

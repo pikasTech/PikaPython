@@ -124,11 +124,15 @@ enum Instruct pikaVM_getInstructFromAsm(char* line);
 void constPool_init(ConstPool* self);
 void constPool_deinit(ConstPool* self);
 void constPool_append(ConstPool* self, char* content);
+
+#define constPool_getStart(self) ((self)->content_start)
+#define constPool_getLastOffset(self) ((self)->size)
+#define constPool_getByOffset(self, offset) \
+    (char*)((uintptr_t)constPool_getStart((self)) + (uintptr_t)(offset))
+
 char* constPool_getNow(ConstPool* self);
 char* constPool_getNext(ConstPool* self);
 char* constPool_getByIndex(ConstPool* self, uint16_t index);
-char* constPool_getByOffset(ConstPool* self, uint16_t offset);
-uint16_t constPool_getLastOffset(ConstPool* self);
 void constPool_print(ConstPool* self);
 
 void byteCodeFrame_init(ByteCodeFrame* bf);
@@ -147,6 +151,7 @@ InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset);
 #define instructUnit_getSize(InstructUnit_p_self) ((size_t)sizeof(InstructUnit))
 #define instructArray_getSize(InsturctArry_p_self) \
     ((size_t)(InsturctArry_p_self)->size)
+#define instructArray_getStart(InsturctArry_p_self) ((self)->content_start)
 
 uint16_t constPool_getOffsetByData(ConstPool* self, char* data);
 void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool);

@@ -305,8 +305,8 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
                                  NewFun newClassFun) {
     Args* initArgs = New_args(NULL);
     PikaObj* thisClass = newClassFun(initArgs);
-    obj_setPtr(thisClass, "_clsptr", (void*)newClassFun);
-    obj_setInt(thisClass, "_refcnt", 0);
+    thisClass->fnConstructor = newClassFun;
+    thisClass->refcnt = 0;
     args_deinit(initArgs);
     return thisClass;
 }
@@ -332,7 +332,7 @@ exit:
 }
 
 NewFun obj_getClass(PikaObj* obj) {
-    return (NewFun)obj_getPtr(obj, "_clsptr");
+    return (NewFun)obj->fnConstructor;
 }
 
 PikaObj* obj_getClassObj(PikaObj* obj) {
@@ -946,20 +946,11 @@ PikaObj* New_PikaObj(void) {
     PikaObj* self = pikaMalloc(sizeof(PikaObj));
     /* List */
     self->list = New_args(NULL);
+    self->refcnt = 0;
+    self->fnConstructor = NULL;
     return self;
 }
 
-void obj_refcntInc(PikaObj* self) {
-    obj_setInt(self, "_refcnt", obj_getInt(self, "_refcnt") + 1);
-}
-
-void obj_refcntDec(PikaObj* self) {
-    obj_setInt(self, "_refcnt", obj_getInt(self, "_refcnt") - 1);
-}
-
-int obj_refcntNow(PikaObj* self) {
-    return obj_getInt(self, "_refcnt");
-}
 
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj) {
     obj_refcntInc(obj);

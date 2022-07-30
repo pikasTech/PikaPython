@@ -290,7 +290,7 @@ Arg* arg_copy(Arg* argToBeCopy) {
     }
     ArgType arg_type = arg_getType(argToBeCopy);
     if (ARG_TYPE_OBJECT == arg_type) {
-        obj_refcntInc(arg_getPtr(argToBeCopy));
+        obj_refcntInc((PikaObj*)arg_getPtr(argToBeCopy));
     }
     Arg* argCopied = New_arg(NULL);
     argCopied = arg_setContent(argCopied, arg_getContent(argToBeCopy),

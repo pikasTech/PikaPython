@@ -94,7 +94,7 @@ int32_t stack_pushArg(Stack* stack, Arg* arg) {
 #endif
     /* add ref_cnt to keep object in stack */
     if (argType_isObject(arg_getType(arg))) {
-        obj_refcntInc(arg_getPtr(arg));
+        obj_refcntInc((PikaObj*)arg_getPtr(arg));
     }
     stack_pushSize(stack, size);
     stack_pushPyload(stack, arg, size);
@@ -117,7 +117,7 @@ Arg* stack_popArg(Stack* stack) {
     ArgType type = arg_getType(arg);
     /* decrase ref_cnt */
     if (argType_isObject(type)) {
-        obj_refcntDec(arg_getPtr(arg));
+        obj_refcntDec((PikaObj*)arg_getPtr(arg));
     }
     return arg;
 }

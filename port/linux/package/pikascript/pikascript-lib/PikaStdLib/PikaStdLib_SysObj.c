@@ -160,7 +160,7 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     /* object */
     if (argType_isObject(arg_getType(arg))) {
         PikaObj* arg_obj = arg_getPtr(arg);
-        NewFun _clsptr = (NewFun)obj_getPtr(arg_obj, "_clsptr");
+        NewFun _clsptr = (NewFun)arg_obj->fnConstructor;
         if (_clsptr == New_PikaStdLib_RangeObj) {
             /* found RangeObj, return directly */
             return arg_copy(arg);

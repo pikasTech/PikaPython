@@ -69,6 +69,8 @@ struct ByteCodeFrame {
 typedef struct PikaObj PikaObj;
 struct PikaObj {
     Args* list;
+    uint8_t refcnt;
+    void* fnConstructor;
 };
 
 typedef PikaObj* (*NewFun)(Args* args);
@@ -225,9 +227,6 @@ Method obj_getNativeMethod(PikaObj* self, char* method_name);
 PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
 Arg* obj_newObjInPackage(NewFun newObjFun);
 
-void obj_refcntInc(PikaObj* self);
-void obj_refcntDec(PikaObj* self);
-int obj_refcntNow(PikaObj* self);
 PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj);
@@ -283,6 +282,10 @@ void pks_printVersion(void);
 void* obj_getStruct(PikaObj* self, char* name);
 PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
                                             uint32_t eventId);
+
+#define obj_refcntDec(self) (((self)->refcnt--))
+#define obj_refcntInc(self) (((self)->refcnt)++)
+#define obj_refcntNow(self) ((self)->refcnt)
 
 #define obj_setStruct(PikaObj_p_self, char_p_name, struct_) \
     args_setStruct(((PikaObj_p_self)->list), char_p_name, struct_)
