@@ -251,7 +251,7 @@
     #endif
 
     #ifndef PIKA_ARG_BUFF_SIZE
-        #define PIKA_ARG_BUFF_SIZE sizeof(double)
+        #define PIKA_ARG_BUFF_SIZE 8
     #endif
 
     /* configuration validation */

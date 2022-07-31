@@ -46,9 +46,7 @@ static void prime_number_100(benchmark::State& state) {
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)
             "num = 0\n"
-            "i = 2\n"
             "for i in range(2,100):\n"
-            "    j=2\n"
             "    is_prime = 1\n"
             "    for j in range(2,i):\n"
             "        if i%j==0 :\n"

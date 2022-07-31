@@ -45,7 +45,7 @@ char* stack_popStr(Stack* stack, char* outBuff);
 int32_t stack_pushArg(Stack* stack, Arg* arg);
 int32_t stack_pushArg_noalloc(Stack* stack, Arg* arg);
 Arg* stack_popArg(Stack* stack);
-void stack_popArg_noalloc(Stack* stack, Arg* arg_dict);
+Arg* stack_popArg_noalloc(Stack* stack, Arg* arg_dict);
 int32_t stack_getTop(Stack* stack);
 int32_t stack_init(Stack* stack);
 int32_t stack_popSize(Stack* stack);

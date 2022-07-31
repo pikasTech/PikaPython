@@ -417,31 +417,33 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
                                        char* data,
                                        Arg* arg_return_stack) {
     if (strEqu(data, (char*)"True")) {
-        return arg_newInt(1);
+        return arg_setInt(arg_return_stack, "", 1);
     }
     if (strEqu(data, (char*)"False")) {
-        return arg_newInt(0);
+        return arg_setInt(arg_return_stack, "", 0);
     }
     if (strEqu(data, (char*)"None")) {
-        return arg_newNull();
+        return arg_setNull(arg_return_stack);
     }
     if (strEqu(data, (char*)"RuntimeError")) {
-        return arg_newInt(PIKA_RES_ERR_RUNTIME_ERROR);
+        return arg_setInt(arg_return_stack, "", PIKA_RES_ERR_RUNTIME_ERROR);
     }
     Arg* arg = NULL;
     if (data[0] == '.') {
         /* find host from stack */
         Arg* host_obj = stack_popArg(&(vs->stack));
         if (argType_isObject(arg_getType(host_obj))) {
-            arg = arg_copy(obj_getArg(arg_getPtr(host_obj), data + 1));
+            arg = arg_copy_noalloc(obj_getArg(arg_getPtr(host_obj), data + 1),
+                                   arg_return_stack);
         }
         arg_deinit(host_obj);
     } else {
         /* find in local list first */
-        arg = arg_copy(obj_getArg(vs->locals, data));
+        arg = arg_copy_noalloc(obj_getArg(vs->locals, data), arg_return_stack);
         if (NULL == arg) {
             /* find in global list second */
-            arg = arg_copy(obj_getArg(vs->globals, data));
+            arg = arg_copy_noalloc(obj_getArg(vs->globals, data),
+                                   arg_return_stack);
         }
     }
 
@@ -987,12 +989,12 @@ static Arg* VM_instruction_handler_STR(PikaObj* self,
         Args buffs = {0};
         size_t i_out = 0;
         char* transfered_str = __get_transferd_str(&buffs, data, &i_out);
-        Arg* return_arg = New_arg(NULL);
+        Arg* return_arg = arg_return_stack;
         return_arg = arg_setStr(return_arg, "", transfered_str);
         strsDeinit(&buffs);
         return return_arg;
     }
-    return arg_newStr(data);
+    return arg_setStr(arg_return_stack, "", data);
 }
 
 static Arg* VM_instruction_handler_BYT(PikaObj* self,
@@ -1081,7 +1083,7 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
                                        VMState* vs,
                                        char* data,
                                        Arg* arg_return_stack) {
-    Arg* numArg = New_arg(NULL);
+    Arg* numArg = arg_return_stack;
     /* hex */
     if (data[1] == 'x' || data[1] == 'X') {
         return arg_setInt(numArg, "", strtol(data, NULL, 0));
@@ -1128,9 +1130,15 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
     int thisBlockDeepth;
     thisBlockDeepth = VMState_getBlockDeepthNow(vs);
     int jmp_expect = fast_atoi(data);
-    Arg* pika_assertArg = stack_popArg(&(vs->stack));
+    arg_newStackBuff(pika_assertArg_stack, PIKA_ARG_BUFF_SIZE);
+    Arg* pika_assertArg =
+        stack_popArg_noalloc(&(vs->stack), &pika_assertArg_stack);
     int pika_assert = arg_getInt(pika_assertArg);
-    arg_deinit(pika_assertArg);
+    if (pika_assertArg == &pika_assertArg_stack) {
+        arg_deinitHeap(pika_assertArg);
+    } else {
+        arg_deinit(pika_assertArg);
+    }
     vs->ireg[thisBlockDeepth] = !pika_assert;
 
     if (0 == pika_assert) {
@@ -1178,16 +1186,18 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                                        Arg* arg_return_stack) {
     Arg* outArg = arg_return_stack;
     uint8_t input_arg_num = VMState_getInputArgNum(vs);
-    Arg* arg2 = NULL;
     Arg* arg1 = NULL;
+    Arg* arg2 = NULL;
+    arg_newStackBuff(arg1_stack, PIKA_ARG_BUFF_SIZE);
+    arg_newStackBuff(arg2_stack, PIKA_ARG_BUFF_SIZE);
     if (input_arg_num == 2) {
         /* tow input */
-        arg2 = stack_popArg(&(vs->stack));
-        arg1 = stack_popArg(&(vs->stack));
+        arg2 = stack_popArg_noalloc(&(vs->stack), &arg2_stack);
+        arg1 = stack_popArg_noalloc(&(vs->stack), &arg1_stack);
     } else if (input_arg_num == 1) {
         /* only one input */
-        arg2 = stack_popArg(&(vs->stack));
-        arg1 = arg_newNull();
+        arg2 = stack_popArg_noalloc(&(vs->stack), &arg2_stack);
+        arg1 = NULL;
     }
     ArgType type_arg1 = arg_getType(arg1);
     ArgType type_arg2 = arg_getType(arg2);
@@ -1461,8 +1471,16 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         goto OPT_exit;
     }
 OPT_exit:
-    arg_deinit(arg1);
-    arg_deinit(arg2);
+    if (arg1 == &arg1_stack) {
+        arg_deinitHeap(arg1);
+    } else {
+        arg_deinit(arg1);
+    }
+    if (arg2 == &arg2_stack) {
+        arg_deinitHeap(arg2);
+    } else {
+        arg_deinit(arg2);
+    }
     if (NULL != outArg) {
         return outArg;
     }
@@ -1587,12 +1605,12 @@ static Arg* VM_instruction_handler_EST(PikaObj* self,
                                        Arg* arg_return_stack) {
     Arg* arg = obj_getArg(vs->locals, data);
     if (arg == NULL) {
-        return arg_newInt(0);
+        return arg_setInt(arg_return_stack, "", 0);
     }
     if (ARG_TYPE_NONE == arg_getType(arg)) {
-        return arg_newInt(0);
+        return arg_setInt(arg_return_stack, "", 0);
     }
-    return arg_newInt(1);
+    return arg_setInt(arg_return_stack, "", 1);
 }
 
 static Arg* VM_instruction_handler_BRK(PikaObj* self,
@@ -1675,9 +1693,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
                                   VMState* vs,
                                   InstructUnit* ins_unit) {
     enum Instruct instruct = instructUnit_getInstruct(ins_unit);
-    Arg return_arg_stack = {0};
-    uint8_t arg_buff[PIKA_ARG_BUFF_SIZE];
-    arg_init_stack(&return_arg_stack, arg_buff, PIKA_ARG_BUFF_SIZE);
+    arg_newStackBuff(return_arg_stack, PIKA_ARG_BUFF_SIZE);
     Arg* return_arg = &return_arg_stack;
     // char invode_deepth1_str[2] = {0};
     int32_t pc_next = vs->pc + instructUnit_getSize();

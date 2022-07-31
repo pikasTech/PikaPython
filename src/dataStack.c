@@ -77,10 +77,11 @@ void stack_pushPyload(Stack* stack, Arg* content, size_t size) {
     if (content->is_serialized) {
         __platform_memcpy(stack->sp, content, size);
     } else {
-        content->is_serialized = 1;
         __platform_memcpy(stack->sp, content, sizeof(Arg));
         __platform_memcpy(stack->sp + sizeof(Arg), content->buffer,
                           size - sizeof(Arg));
+        /* transfer to serialized form */
+        ((Arg*)stack->sp)->is_serialized = PIKA_TRUE;
     }
     stack->sp += size;
 }
@@ -136,7 +137,7 @@ Arg* _stack_popArg(Stack* stack, Arg* arg_dict, PIKA_BOOL is_alloc) {
     if (is_alloc) {
         arg = arg_copy((Arg*)stack_popPyload(stack, size));
     } else {
-        arg_copy_noalloc((Arg*)stack_popPyload(stack, size), arg_dict);
+        arg = arg_copy_noalloc((Arg*)stack_popPyload(stack, size), arg_dict);
     }
     ArgType type = arg_getType(arg);
     /* decrase ref_cnt */
@@ -150,8 +151,8 @@ Arg* stack_popArg(Stack* stack) {
     return _stack_popArg(stack, NULL, PIKA_TRUE);
 }
 
-void stack_popArg_noalloc(Stack* stack, Arg* arg_dict) {
-    _stack_popArg(stack, arg_dict, PIKA_FALSE);
+Arg* stack_popArg_noalloc(Stack* stack, Arg* arg_dict) {
+    return _stack_popArg(stack, arg_dict, PIKA_FALSE);
 }
 
 char* stack_popStr(Stack* stack, char* outBuff) {

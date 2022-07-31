@@ -106,7 +106,7 @@ char* arg_getStr(Arg* self);
 uint8_t* arg_getBytes(Arg* self);
 size_t arg_getBytesSize(Arg* self);
 Arg* arg_copy(Arg* argToBeCopy);
-void arg_copy_noalloc(Arg* argToBeCopy, Arg* argToBeCopyTo);
+Arg* arg_copy_noalloc(Arg* argToBeCopy, Arg* argToBeCopyTo);
 
 uint8_t* arg_getContent(Arg* self);
 void arg_deinit(Arg* self);
@@ -139,5 +139,10 @@ uint8_t argType_isObject(ArgType type);
     ((type) == ARG_TYPE_OBJECT || (type) == ARG_TYPE_OBJECT_NEW)
 
 #endif
+
+#define arg_newStackBuff(__name, __size) \
+    Arg __name = {0};                   \
+    uint8_t __##__name##_buff[__size] = {0};    \
+    arg_init_stack(&__name, __##__name##_buff, __size)
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size);

@@ -57,7 +57,7 @@ static Arg* arg_init_hash(Hash nameHash,
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
-    self->is_serialized = 1;
+    self->is_serialized = PIKA_TRUE;
     __platform_memset(arg_getContent(self), 0,
                       aline_by(size, sizeof(uint32_t)));
     if (NULL != content) {
@@ -81,7 +81,7 @@ void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
     self->size = size;
     self->type = ARG_TYPE_UNDEF;
     self->name_hash = 0;
-    self->is_serialized = 0;
+    self->is_serialized = PIKA_FALSE;
 }
 
 uint32_t arg_totleSize(Arg* self) {
@@ -307,34 +307,40 @@ Arg* New_arg(void* voidPointer) {
     return NULL;
 }
 
-Arg* arg_copy(Arg* argToBeCopy) {
-    if (NULL == argToBeCopy) {
+Arg* arg_copy(Arg* arg_src) {
+    if (NULL == arg_src) {
         return NULL;
     }
-    ArgType arg_type = arg_getType(argToBeCopy);
+    ArgType arg_type = arg_getType(arg_src);
     if (ARG_TYPE_OBJECT == arg_type) {
-        obj_refcntInc((PikaObj*)arg_getPtr(argToBeCopy));
+        obj_refcntInc((PikaObj*)arg_getPtr(arg_src));
     }
     Arg* argCopied = New_arg(NULL);
-    argCopied = arg_setContent(argCopied, arg_getContent(argToBeCopy),
-                               arg_getContentSize(argToBeCopy));
-    argCopied = arg_setNameHash(argCopied, arg_getNameHash(argToBeCopy));
-    argCopied = arg_setType(argCopied, arg_getType(argToBeCopy));
+    argCopied = arg_setContent(argCopied, arg_getContent(arg_src),
+                               arg_getContentSize(arg_src));
+    argCopied = arg_setNameHash(argCopied, arg_getNameHash(arg_src));
+    argCopied = arg_setType(argCopied, arg_getType(arg_src));
     return argCopied;
 }
 
-void arg_copy_noalloc(Arg* argToBeCopy, Arg* argCopied) {
-    if (NULL == argToBeCopy || NULL == argCopied) {
-        return;
+Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
+    if (NULL == arg_src || NULL == arg_dict) {
+        return NULL;
     }
-    ArgType arg_type = arg_getType(argToBeCopy);
+    /* size is too big to be copied by noalloc */
+    if (arg_getSize(arg_src) > arg_getSize(arg_dict)) {
+        return arg_copy(arg_src);
+    }
+    ArgType arg_type = arg_getType(arg_src);
     if (ARG_TYPE_OBJECT == arg_type) {
-        obj_refcntInc((PikaObj*)arg_getPtr(argToBeCopy));
+        obj_refcntInc((PikaObj*)arg_getPtr(arg_src));
     }
-    argCopied = arg_setContent(argCopied, arg_getContent(argToBeCopy),
-                               arg_getContentSize(argToBeCopy));
-    argCopied = arg_setNameHash(argCopied, arg_getNameHash(argToBeCopy));
-    argCopied = arg_setType(argCopied, arg_getType(argToBeCopy));
+    arg_dict->is_serialized = PIKA_FALSE;
+    arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
+                              arg_getContentSize(arg_src));
+    arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
+    arg_dict = arg_setType(arg_dict, arg_getType(arg_src));
+    return arg_dict;
 }
 
 Arg* arg_append(Arg* self, void* new_content, size_t new_size) {
