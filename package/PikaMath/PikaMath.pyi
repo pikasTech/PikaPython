@@ -152,6 +152,6 @@ class Quaternion(TinyObj):
         "mode=1 is deg and mode=0 is rad"
         pass
 
-    def toEuler(self) -> List:
+    def toEuler(self) -> list:
         "Z-Y-X"
         pass
