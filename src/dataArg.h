@@ -57,9 +57,13 @@ typedef void (*StructDeinitFun)(void* struct_);
 
 typedef struct Arg Arg;
 struct Arg {
-    Arg* next;
+    union {
+        Arg* next;
+        uint8_t* buffer;
+    };
     uint32_t size;
     uint8_t type;
+    PIKA_BOOL is_serialized;
     Hash name_hash;
     uint8_t content[];
 };
@@ -126,7 +130,8 @@ uint8_t argType_isObject(ArgType type);
 
 #define arg_getNext(self) ((self)->next)
 #define arg_getSize(self) ((self)->size)
-#define arg_getContent(self) ((self)->content)
+#define arg_getContent(self) \
+    ((self)->is_serialized ? (self)->content : ((self)->buffer))
 #define arg_getNext(self) ((self)->next)
 #define arg_setNext(self, __next) ((self)->next = (__next))
 
@@ -134,3 +139,5 @@ uint8_t argType_isObject(ArgType type);
     ((type) == ARG_TYPE_OBJECT || (type) == ARG_TYPE_OBJECT_NEW)
 
 #endif
+
+void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size);

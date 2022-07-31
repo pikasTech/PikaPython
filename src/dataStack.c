@@ -74,7 +74,14 @@ void stack_pushPyload(Stack* stack, Arg* content, size_t size) {
         while (1) {
         }
     }
-    __platform_memcpy(stack->sp, content, size);
+    if (content->is_serialized) {
+        __platform_memcpy(stack->sp, content, size);
+    } else {
+        content->is_serialized = 1;
+        __platform_memcpy(stack->sp, content, sizeof(Arg));
+        __platform_memcpy(stack->sp + sizeof(Arg), content->buffer,
+                          size - sizeof(Arg));
+    }
     stack->sp += size;
 }
 
@@ -83,7 +90,7 @@ uint8_t* stack_popPyload(Stack* stack, size_t size) {
     return stack->sp;
 }
 
-int32_t stack_pushArg(Stack* stack, Arg* arg) {
+static int32_t _stack_pushArg(Stack* stack, Arg* arg, PIKA_BOOL is_alloc) {
     stack->top++;
     size_t size = arg_getTotleSize(arg);
 
@@ -98,8 +105,20 @@ int32_t stack_pushArg(Stack* stack, Arg* arg) {
     }
     stack_pushSize(stack, size);
     stack_pushPyload(stack, arg, size);
-    arg_deinit(arg);
+    if (is_alloc) {
+        arg_deinit(arg);
+    } else {
+        arg_deinitHeap(arg);
+    }
     return 0;
+}
+
+int32_t stack_pushArg(Stack* stack, Arg* arg) {
+    return _stack_pushArg(stack, arg, PIKA_TRUE);
+}
+
+int32_t stack_pushArg_noalloc(Stack* stack, Arg* arg) {
+    return _stack_pushArg(stack, arg, PIKA_FALSE);
 }
 
 int32_t stack_pushStr(Stack* stack, char* str) {
@@ -107,13 +126,18 @@ int32_t stack_pushStr(Stack* stack, char* str) {
     return stack_pushArg(stack, newArg);
 }
 
-Arg* stack_popArg(Stack* stack) {
+Arg* _stack_popArg(Stack* stack, Arg* arg_dict, PIKA_BOOL is_alloc) {
     if (stack->top == 0) {
         return NULL;
     }
     stack->top--;
     int32_t size = stack_popSize(stack);
-    Arg* arg = arg_copy((Arg*)stack_popPyload(stack, size));
+    Arg* arg = NULL;
+    if (is_alloc) {
+        arg = arg_copy((Arg*)stack_popPyload(stack, size));
+    } else {
+        arg_copy_noalloc((Arg*)stack_popPyload(stack, size), arg_dict);
+    }
     ArgType type = arg_getType(arg);
     /* decrase ref_cnt */
     if (argType_isObject(type)) {
@@ -122,13 +146,12 @@ Arg* stack_popArg(Stack* stack) {
     return arg;
 }
 
-void stack_popArg_noalloc(Stack* stack, Arg* arg_dict){
-    if (stack->top == 0) {
-        return;
-    }
-    stack->top--;
-    int32_t size = stack_popSize(stack);
-    arg_copy_noalloc((Arg*)stack_popPyload(stack, size), arg_dict);
+Arg* stack_popArg(Stack* stack) {
+    return _stack_popArg(stack, NULL, PIKA_TRUE);
+}
+
+void stack_popArg_noalloc(Stack* stack, Arg* arg_dict) {
+    _stack_popArg(stack, arg_dict, PIKA_FALSE);
 }
 
 char* stack_popStr(Stack* stack, char* outBuff) {

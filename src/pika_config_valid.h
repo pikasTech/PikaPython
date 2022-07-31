@@ -250,6 +250,10 @@
         #define PIKA_REGIST_SIZE 10
     #endif
 
+    #ifndef PIKA_ARG_BUFF_SIZE
+        #define PIKA_ARG_BUFF_SIZE sizeof(double)
+    #endif
+
     /* configuration validation */
 
 #endif

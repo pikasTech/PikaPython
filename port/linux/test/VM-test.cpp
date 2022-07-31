@@ -183,7 +183,6 @@ TEST(VM, a_1_1) {
 
     int res = args_getInt(globals->list, "a");
     obj_deinit(self);
-    // obj_deinit(globals);
     args_deinit(buffs);
     ASSERT_EQ(res, 2);
     EXPECT_EQ(pikaMemNow(), 0);

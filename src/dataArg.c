@@ -57,9 +57,11 @@ static Arg* arg_init_hash(Hash nameHash,
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
-    __platform_memset(self->content, 0, aline_by(size, sizeof(uint32_t)));
+    self->is_serialized = 1;
+    __platform_memset(arg_getContent(self), 0,
+                      aline_by(size, sizeof(uint32_t)));
     if (NULL != content) {
-        __platform_memcpy(self->content, content, size);
+        __platform_memcpy(arg_getContent(self), content, size);
     }
 
     return self;
@@ -72,6 +74,14 @@ static Arg* arg_init(char* name,
                      Arg* next) {
     Hash nameHash = hash_time33(name);
     return arg_init_hash(nameHash, type, content, size, next);
+}
+
+void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
+    self->buffer = buffer;
+    self->size = size;
+    self->type = ARG_TYPE_UNDEF;
+    self->name_hash = 0;
+    self->is_serialized = 0;
 }
 
 uint32_t arg_totleSize(Arg* self) {
@@ -93,8 +103,8 @@ Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size) {
     }
 
     /* only copy */
-    if (arg_getSize(self) == size) {
-        __platform_memcpy(((Arg*)self)->content, content, size);
+    if (arg_getSize(self) >= size) {
+        __platform_memcpy(arg_getContent((Arg*)self), content, size);
         return self;
     }
 
@@ -214,7 +224,13 @@ void* arg_getHeapStructDeinitFun(Arg* self) {
 }
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val) {
-    return arg_init(name, ARG_TYPE_INT, (uint8_t*)&val, sizeof(val), NULL);
+    if (NULL == self) {
+        return arg_init(name, ARG_TYPE_INT, (uint8_t*)&val, sizeof(val), NULL);
+    }
+    self = arg_setContent(self, (uint8_t*)&val, sizeof(val));
+    self = arg_setType(self, ARG_TYPE_INT);
+    self = arg_setName(self, name);
+    return self;
 }
 
 Arg* arg_setNull(Arg* self) {
@@ -222,7 +238,14 @@ Arg* arg_setNull(Arg* self) {
 }
 
 Arg* arg_setFloat(Arg* self, char* name, double val) {
-    return arg_init(name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val), NULL);
+    if (NULL == self) {
+        return arg_init(name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val),
+                        NULL);
+    }
+    self = arg_setContent(self, (uint8_t*)&val, sizeof(val));
+    self = arg_setType(self, ARG_TYPE_FLOAT);
+    self = arg_setName(self, name);
+    return self;
 }
 
 double arg_getFloat(Arg* self) {
@@ -230,7 +253,7 @@ double arg_getFloat(Arg* self) {
         return -999.999;
     }
 
-    return *(double*)self->content;
+    return *(double*)arg_getContent(self);
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
@@ -249,14 +272,14 @@ int64_t arg_getInt(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return -999999;
     }
-    return *(int64_t*)self->content;
+    return *(int64_t*)arg_getContent(self);
 }
 
 void* arg_getPtr(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return NULL;
     }
-    return *(void**)self->content;
+    return *(void**)arg_getContent(self);
 }
 char* arg_getStr(Arg* self) {
     return (char*)arg_getContent(self);
@@ -390,4 +413,3 @@ void arg_deinit(Arg* self) {
     /* free the ref */
     arg_freeContent(self);
 }
-
