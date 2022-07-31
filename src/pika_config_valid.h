@@ -246,8 +246,8 @@
         #define PIKA_MATH_ENABLE 0
     #endif
 
-    #ifndef PIKA_OBJ_REGIST_SIZE
-        #define PIKA_OBJ_REGIST_SIZE 10
+    #ifndef PIKA_REGIST_SIZE
+        #define PIKA_REGIST_SIZE 10
     #endif
 
     /* configuration validation */
