@@ -70,7 +70,7 @@ typedef struct PikaObj PikaObj;
 struct PikaObj {
     Args* list;
     uint8_t refcnt;
-    void* fnConstructor;
+    void* constructor;
 };
 
 typedef PikaObj* (*NewFun)(Args* args);

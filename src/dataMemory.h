@@ -62,8 +62,8 @@ struct Pool{
 
 void pikaFree(void* mem, uint32_t size);
 void* pikaMalloc(uint32_t size);
-uint16_t pikaMemNow(void);
-uint16_t pikaMemMax(void);
+uint32_t pikaMemNow(void);
+uint32_t pikaMemMax(void);
 void pikaMemMaxReset(void);
 
 uint32_t aline_by(uint32_t size, uint32_t aline);

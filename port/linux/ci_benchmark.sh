@@ -9,4 +9,4 @@ rm performance_data.json
 echo 
 
 # restore backup
-rm config/pika_config.h
+cp config/pika_config_default.h config/pika_config.h 

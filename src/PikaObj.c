@@ -305,7 +305,7 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
                                  NewFun newClassFun) {
     Args* initArgs = New_args(NULL);
     PikaObj* thisClass = newClassFun(initArgs);
-    thisClass->fnConstructor = newClassFun;
+    thisClass->constructor = newClassFun;
     thisClass->refcnt = 0;
     args_deinit(initArgs);
     return thisClass;
@@ -332,7 +332,7 @@ exit:
 }
 
 NewFun obj_getClass(PikaObj* obj) {
-    return (NewFun)obj->fnConstructor;
+    return (NewFun)obj->constructor;
 }
 
 PikaObj* obj_getClassObj(PikaObj* obj) {
@@ -947,7 +947,7 @@ PikaObj* New_PikaObj(void) {
     /* List */
     self->list = New_args(NULL);
     self->refcnt = 0;
-    self->fnConstructor = NULL;
+    self->constructor = NULL;
     return self;
 }
 

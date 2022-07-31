@@ -76,12 +76,12 @@ void pikaFree(void* mem, uint32_t size) {
     pikaMemInfo.heapUsed -= size;
 }
 
-uint16_t pikaMemNow(void) {
+uint32_t pikaMemNow(void) {
     return pikaMemInfo.heapUsed;
     // return 0;
 }
 
-uint16_t pikaMemMax(void) {
+uint32_t pikaMemMax(void) {
     return pikaMemInfo.heapUsedMax;
 }
 
