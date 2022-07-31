@@ -122,6 +122,15 @@ Arg* stack_popArg(Stack* stack) {
     return arg;
 }
 
+void stack_popArg_noalloc(Stack* stack, Arg* arg_dict){
+    if (stack->top == 0) {
+        return;
+    }
+    stack->top--;
+    int32_t size = stack_popSize(stack);
+    arg_copy_noalloc((Arg*)stack_popPyload(stack, size), arg_dict);
+}
+
 char* stack_popStr(Stack* stack, char* outBuff) {
     Arg* arg = stack_popArg(stack);
     strcpy(outBuff, arg_getStr(arg));

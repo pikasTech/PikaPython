@@ -300,6 +300,20 @@ Arg* arg_copy(Arg* argToBeCopy) {
     return argCopied;
 }
 
+void arg_copy_noalloc(Arg* argToBeCopy, Arg* argCopied) {
+    if (NULL == argToBeCopy || NULL == argCopied) {
+        return;
+    }
+    ArgType arg_type = arg_getType(argToBeCopy);
+    if (ARG_TYPE_OBJECT == arg_type) {
+        obj_refcntInc((PikaObj*)arg_getPtr(argToBeCopy));
+    }
+    argCopied = arg_setContent(argCopied, arg_getContent(argToBeCopy),
+                               arg_getContentSize(argToBeCopy));
+    argCopied = arg_setNameHash(argCopied, arg_getNameHash(argToBeCopy));
+    argCopied = arg_setType(argCopied, arg_getType(argToBeCopy));
+}
+
 Arg* arg_append(Arg* self, void* new_content, size_t new_size) {
     uint8_t* old_content = arg_getContent(self);
     size_t old_size = arg_getContentSize(self);
@@ -377,25 +391,3 @@ void arg_deinit(Arg* self) {
     arg_freeContent(self);
 }
 
-Arg* arg_getNext(Arg* self) {
-    return self->next;
-}
-
-uint32_t arg_getSize(Arg* self) {
-    return self->size;
-}
-
-uint8_t* arg_getContent(Arg* self) {
-    return self->content;
-}
-
-void arg_setNext(Arg* self, Arg* next) {
-    self->next = next;
-}
-
-uint8_t argType_isObject(ArgType type) {
-    if (ARG_TYPE_OBJECT == type || ARG_TYPE_OBJECT_NEW == type) {
-        return 1;
-    }
-    return 0;
-}

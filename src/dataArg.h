@@ -102,6 +102,7 @@ char* arg_getStr(Arg* self);
 uint8_t* arg_getBytes(Arg* self);
 size_t arg_getBytesSize(Arg* self);
 Arg* arg_copy(Arg* argToBeCopy);
+void arg_copy_noalloc(Arg* argToBeCopy, Arg* argToBeCopyTo);
 
 uint8_t* arg_getContent(Arg* self);
 void arg_deinit(Arg* self);
@@ -123,5 +124,13 @@ void arg_printBytes(Arg* self);
 Arg* arg_loadFile(Arg* self, char* filename);
 uint8_t argType_isObject(ArgType type);
 
+#define arg_getNext(self) ((self)->next)
+#define arg_getSize(self) ((self)->size)
+#define arg_getContent(self) ((self)->content)
+#define arg_getNext(self) ((self)->next)
+#define arg_setNext(self, __next) ((self)->next = (__next))
+
+#define argType_isObject(type) \
+    ((type) == ARG_TYPE_OBJECT || (type) == ARG_TYPE_OBJECT_NEW)
 
 #endif

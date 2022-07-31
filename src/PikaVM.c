@@ -183,10 +183,6 @@ static int32_t VMState_getAddrOffsetOfContinue(VMState* vs) {
     return offset;
 }
 
-static PikaObj* VMState_getLReg(VMState* vs, uint8_t index) {
-    return vs->lreg[index];
-}
-
 static void VMState_delLReg(VMState* vs, uint8_t index) {
     PikaObj* obj = vs->lreg[index];
     if (NULL != obj) {
@@ -784,7 +780,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self, VMState* vs, char* data) {
     /* get method host obj from reg */
     if (NULL == method_host_obj && _checkLReg(data)) {
         uint8_t reg_index = _getLRegIndex(data);
-        method_host_obj = VMState_getLReg(vs, reg_index);
+        method_host_obj = vs->lreg[reg_index];
     }
 
     /* get method host obj from stack */

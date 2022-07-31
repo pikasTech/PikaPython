@@ -81,6 +81,7 @@ struct VMState {
     TryInfo* try_info;
 };
 
+
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,

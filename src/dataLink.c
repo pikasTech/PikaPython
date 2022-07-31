@@ -55,7 +55,7 @@ void link_addNode(Link* self, void* content) {
 
     self->firstNode = content;
     // change the first node to new node
-    arg_setNext(content, (Arg*)secondNode);
+    arg_setNext((Arg*)content, (Arg*)secondNode);
 }
 
 static void __link_removeNode(Link* self,
