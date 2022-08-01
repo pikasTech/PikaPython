@@ -63,7 +63,7 @@ struct Arg {
     };
     uint32_t size;
     uint8_t type;
-    PIKA_BOOL is_serialized;
+    PIKA_BOOL serialized;
     Hash name_hash;
     uint8_t content[];
 };
@@ -131,7 +131,7 @@ uint8_t argType_isObject(ArgType type);
 #define arg_getNext(self) ((self)->next)
 #define arg_getSize(self) ((self)->size)
 #define arg_getContent(self) \
-    ((self)->is_serialized ? (self)->content : ((self)->buffer))
+    ((self)->serialized ? (self)->content : ((self)->buffer))
 #define arg_getNext(self) ((self)->next)
 #define arg_setNext(self, __next) ((self)->next = (__next))
 

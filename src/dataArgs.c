@@ -87,7 +87,14 @@ PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
 }
 
 PIKA_RES args_pushArg(Args* self, Arg* arg) {
-    link_addNode(self, arg);
+    Arg* new_arg = NULL;
+    if (!arg->serialized) {
+        new_arg = arg_copy(arg);
+        arg_deinit(arg);
+    } else {
+        new_arg = arg;
+    }
+    link_addNode(self, new_arg);
     return PIKA_RES_OK;
 }
 
@@ -299,6 +306,9 @@ PIKA_RES __updateArg(Args* self, Arg* argNew) {
     arg_setNext((Arg*)priorNode, (Arg*)nodeToUpdate);
     goto exit;
 exit:
+    if (!argNew->serialized) {
+        return PIKA_RES_OK;
+    }
     arg_freeContent(argNew);
     return PIKA_RES_OK;
 }

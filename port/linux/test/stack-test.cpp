@@ -33,9 +33,9 @@ TEST(stack, arg) {
     stack_pushArg(&s, arg1);
     stack_pushArg(&s, arg2);
     stack_pushArg(&s, arg3);
-    Arg* arg4 = stack_popArg(&s);
-    Arg* arg5 = stack_popArg(&s);
-    Arg* arg6 = stack_popArg(&s);
+    Arg* arg4 = stack_popArg_alloc(&s);
+    Arg* arg5 = stack_popArg_alloc(&s);
+    Arg* arg6 = stack_popArg_alloc(&s);
     EXPECT_EQ(arg_getInt(arg4), 30);
     EXPECT_EQ(arg_getInt(arg5), 20);
     EXPECT_EQ(arg_getInt(arg6), 10);

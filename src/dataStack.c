@@ -74,14 +74,14 @@ void stack_pushPyload(Stack* stack, Arg* content, size_t size) {
         while (1) {
         }
     }
-    if (content->is_serialized) {
+    if (content->serialized) {
         __platform_memcpy(stack->sp, content, size);
     } else {
         __platform_memcpy(stack->sp, content, sizeof(Arg));
         __platform_memcpy(stack->sp + sizeof(Arg), content->buffer,
                           size - sizeof(Arg));
         /* transfer to serialized form */
-        ((Arg*)stack->sp)->is_serialized = PIKA_TRUE;
+        ((Arg*)stack->sp)->serialized = PIKA_TRUE;
     }
     stack->sp += size;
 }
@@ -115,10 +115,9 @@ static int32_t _stack_pushArg(Stack* stack, Arg* arg, PIKA_BOOL is_alloc) {
 }
 
 int32_t stack_pushArg(Stack* stack, Arg* arg) {
-    return _stack_pushArg(stack, arg, PIKA_TRUE);
-}
-
-int32_t stack_pushArg_noalloc(Stack* stack, Arg* arg) {
+    if (arg->serialized) {
+        return _stack_pushArg(stack, arg, PIKA_TRUE);
+    }
     return _stack_pushArg(stack, arg, PIKA_FALSE);
 }
 
@@ -147,16 +146,16 @@ Arg* _stack_popArg(Stack* stack, Arg* arg_dict, PIKA_BOOL is_alloc) {
     return arg;
 }
 
-Arg* stack_popArg(Stack* stack) {
+Arg* stack_popArg_alloc(Stack* stack) {
     return _stack_popArg(stack, NULL, PIKA_TRUE);
 }
 
-Arg* stack_popArg_noalloc(Stack* stack, Arg* arg_dict) {
+Arg* stack_popArg(Stack* stack, Arg* arg_dict) {
     return _stack_popArg(stack, arg_dict, PIKA_FALSE);
 }
 
 char* stack_popStr(Stack* stack, char* outBuff) {
-    Arg* arg = stack_popArg(stack);
+    Arg* arg = stack_popArg_alloc(stack);
     strcpy(outBuff, arg_getStr(arg));
     arg_deinit(arg);
     return outBuff;

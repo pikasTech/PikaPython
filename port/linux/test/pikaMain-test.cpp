@@ -483,15 +483,17 @@ TEST(pikaMain, prime_100) {
     obj_run(pikaMain,
             "num = 0\n"
             "i = 2\n"
-            "for i in range(2 , 100):\n"
+            "while i < 100:\n"
             "    j=2\n"
             "    is_prime = 1\n"
-            "    for j in range(2 , i):\n"
+            "    while j < i:\n"
             "        if i%j==0 :\n"
             "            is_prime = 0\n"
             "            break\n"
+            "        j+=1\n"
             "    if is_prime:\n"
             "        num = num + i\n"
+            "    i+=1\n"
             "\n");
     /* collect */
     int num = obj_getInt(pikaMain, "num");
