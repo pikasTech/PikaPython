@@ -102,24 +102,24 @@
 
 - 五星：得到任意一个其他的五星徽章，或者得到三个三星徽章
 
-![41](C:\Users\liang\Desktop\pikascript\document\assets\41.png)
+![41](assets/41-16594077379821.png)
 
 ### 勋章列表
 
 | 贡献者                                                | 勋章                                                         |
 | ----------------------------------------------------- | ------------------------------------------------------------ |
-| [甜航](https://github.com/easyzoom)                   | 芯片专家-3星                                                 |
-| 千帆(微信名)                                          | 芯片专家-3星                                                 |
-| [ Meco Jianting Man](https://github.com/mysterywolf)  | 工具大师-1星、芯片专家-3星、commit冠军-3星                   |
-| [liuduanfei](https://github.com/liuduanfei)           | 芯片专家-3星                                                 |
-| [ sjy](https://gitee.com/shanjiayang)                 | 芯片专家-3星、commit冠军-1星                                 |
-| 沧御                                                  | 芯片专家-3星                                                 |
-| [versaloon](https://github.com/versaloon)             | 芯片专家-3星、commit冠军-1星                                 |
-| 刘延(微信名)                                          | 芯片专家-5星、MVP-5星                                        |
-| [GorgonMeducer](https://github.com/GorgonMeducer)     | 内核研究员-3星、工具大师-3星、文豪-3星、commit冠军-5星、MVP-5星 |
-| [unsigned](https://gitee.com/unsigned0)               | 芯片专家-3星、commit冠军-3星、                               |
-| [梦程MI](https://gitee.com/dreamcmi)                  | 芯片专家-5星、commit冠军-3星、MVP-5星                        |
-| [Maximilian Gerhardt](https://github.com/maxgerhardt) | 工具大师-1星                                                 |
-| [purewind7](https://gitee.com/purewind7)              | 模块设计师-3星、文豪-5星、commit冠军-5星、MVP-5星            |
-| [ onceday](https://gitee.com/onceday)                 | 模块设计师-3星、commit冠军-1星                               |
+| [甜航](https://github.com/easyzoom)                   | <img src="assets/26.png" alt="26" style="zoom: 25%;" />芯片专家-3星 |
+| 千帆(微信名)                                          | <img src="assets/26.png" alt="26" style="zoom: 25%;" />芯片专家-3星 |
+| [ Meco Jianting Man](https://github.com/mysterywolf)  | <img src="assets/12.png" alt="12" style="zoom:25%;" />工具大师-1星、<img src="assets/26.png" alt="26" style="zoom: 25%;" />芯片专家-3星、<img src="assets/23.png" alt="23" style="zoom:25%;" />commit冠军-3星 |
+| [liuduanfei](https://github.com/liuduanfei)           | <img src="assets/26.png" alt="26" style="zoom: 25%;" />芯片专家-3星 |
+| [ sjy](https://gitee.com/shanjiayang)                 | <img src="assets/26.png" alt="26" style="zoom: 25%;" />芯片专家-3星、<img src="assets/13.png" alt="13" style="zoom:25%;" />commit冠军-1星 |
+| 沧御                                                  | <img src="assets/26.png" alt="26" style="zoom: 25%;" />芯片专家-3星 |
+| [versaloon](https://github.com/versaloon)             | <img src="assets/26.png" alt="26" style="zoom: 25%;" />芯片专家-3星、<img src="assets/13.png" alt="13" style="zoom:25%;" />commit冠军-1星 |
+| 刘延(微信名)                                          | <img src="assets/36.png" alt="36" style="zoom:25%;" />芯片专家-5星、<img src="assets/41-16594077379821.png" alt="41" style="zoom:25%;" />MVP-5星 |
+| [GorgonMeducer](https://github.com/GorgonMeducer)     | <img src="assets/25.png" alt="25" style="zoom:25%;" />内核研究员-3星、<img src="assets/22.png" alt="22" style="zoom:25%;" />工具大师-3星、<img src="assets/21.png" alt="21" style="zoom:25%;" />文豪-3星、<img src="assets/33.png" alt="33" style="zoom:25%;" />commit冠军-5星、<img src="assets/41-16594077379821.png" alt="41" style="zoom:25%;" />MVP-5星 |
+| [unsigned](https://gitee.com/unsigned0)               | <img src="assets/26.png" alt="26" style="zoom: 25%;" />芯片专家-3星、<img src="assets/23.png" alt="23" style="zoom:25%;" />commit冠军-3星 |
+| [梦程MI](https://gitee.com/dreamcmi)                  | <img src="assets/36.png" alt="36" style="zoom:25%;" />芯片专家-5星、<img src="assets/23.png" alt="23" style="zoom:25%;" />commit冠军-3星、<img src="assets/41-16594077379821.png" alt="41" style="zoom:25%;" />MVP-5星 |
+| [Maximilian Gerhardt](https://github.com/maxgerhardt) | <img src="assets/12.png" alt="12" style="zoom:25%;" />工具大师-1星 |
+| [purewind7](https://gitee.com/purewind7)              | <img src="assets/24.png" alt="24" style="zoom:25%;" />模块设计师-3星、文豪-5星、commit冠军-5星、<img src="assets/41-16594077379821.png" alt="41" style="zoom:25%;" />MVP-5星 |
+| [ onceday](https://gitee.com/onceday)                 | <img src="assets/24.png" alt="24" style="zoom:25%;" />模块设计师-3星、<img src="assets/13.png" alt="13" style="zoom:25%;" />commit冠军-1星 |
 
