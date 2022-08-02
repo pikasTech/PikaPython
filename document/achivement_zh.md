@@ -120,6 +120,6 @@
 | [unsigned](https://gitee.com/unsigned0)               | <img src="assets/26.png" alt="26" style="zoom: 25%;" />芯片专家-3星、<img src="assets/23.png" alt="23" style="zoom:25%;" />commit冠军-3星 |
 | [梦程MI](https://gitee.com/dreamcmi)                  | <img src="assets/36.png" alt="36" style="zoom:25%;" />芯片专家-5星、<img src="assets/23.png" alt="23" style="zoom:25%;" />commit冠军-3星、<img src="assets/41-16594077379821.png" alt="41" style="zoom:25%;" />MVP-5星 |
 | [Maximilian Gerhardt](https://github.com/maxgerhardt) | <img src="assets/12.png" alt="12" style="zoom:25%;" />工具大师-1星 |
-| [purewind7](https://gitee.com/purewind7)              | <img src="assets/24.png" alt="24" style="zoom:25%;" />模块设计师-3星、文豪-5星、commit冠军-5星、<img src="assets/41-16594077379821.png" alt="41" style="zoom:25%;" />MVP-5星 |
+| [purewind7](https://gitee.com/purewind7)              | <img src="assets/24.png" alt="24" style="zoom:25%;" />模块设计师-3星、<img src="assets/31.png" alt="31" style="zoom:25%;" />文豪-5星、<img src="assets/33.png" alt="33" style="zoom:25%;" />commit冠军-5星、<img src="assets/41-16594077379821.png" alt="41" style="zoom:25%;" />MVP-5星 |
 | [ onceday](https://gitee.com/onceday)                 | <img src="assets/24.png" alt="24" style="zoom:25%;" />模块设计师-3星、<img src="assets/13.png" alt="13" style="zoom:25%;" />commit冠军-1星 |
 
