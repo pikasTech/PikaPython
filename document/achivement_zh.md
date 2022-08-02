@@ -110,7 +110,7 @@
 | ----------------------------------------------------- | :----------------------------------------------------------- |
 | [甜航](https://github.com/easyzoom)                   | <img src="assets/26.png" alt="26" width="130" />芯片专家-3星 |
 | 千帆(微信名)                                          | <img src="assets/26.png" alt="26" width="130" />芯片专家-3星 |
-| [ Meco Jianting Man](https://github.com/mysterywolf)  | <img src="assets/12.png" alt="12" width="130" />工具大师-1星、<img src="assets/26.png" alt="26" width="130" />芯片专家-3星、<img src="assets/23.png" alt="23" width="130" />commit冠军-3星 |
+| [ Meco Jianting Man](https://github.com/mysterywolf)  | <img src="assets/12.png" alt="12" width="130" />工具大师-1星、<img src="assets/26.png" alt="26" width="130" />芯片专家-3星、<img src="assets/23.png" alt="23" width="130" />commit冠军-3星<img src="assets/15.png" alt="15" width="130" />内核研究员-1星 |
 | [liuduanfei](https://github.com/liuduanfei)           | <img src="assets/26.png" alt="26" width="130" />芯片专家-3星 |
 | [ sjy](https://gitee.com/shanjiayang)                 | <img src="assets/26.png" alt="26" width="130" />芯片专家-3星、<img src="assets/13.png" alt="13" width="130" />commit冠军-1星 |
 | 沧御                                                  | <img src="assets/26.png" alt="26" width="130" />芯片专家-3星 |
