@@ -32,8 +32,8 @@ Arg* PikaStdData_Dict___iter__(PikaObj* self) {
 
 Arg* PikaStdData_Dict___next__(PikaObj* self) {
     int __iter_i = args_getInt(self->list, "__iter_i");
-    PikaDict* dict = obj_getPtr(self, "dict");
-    Arg* res = arg_copy(args_getArgByidex(&dict->super, __iter_i));
+    PikaDict* keys = obj_getPtr(self, "_keys");
+    Arg* res = arg_copy(args_getArgByidex(&keys->super, __iter_i));
     if (NULL == res) {
         return arg_newNull();
     }

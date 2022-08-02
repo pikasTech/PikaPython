@@ -15,9 +15,9 @@ TEST(stddata, test1) {
     EXPECT_STREQ(log_buff[2], "a\r\n");
     EXPECT_STREQ(log_buff[3], "b\r\n");
     EXPECT_STREQ(log_buff[4], "c\r\n");
-    EXPECT_STREQ(log_buff[5], "1\r\n");
-    EXPECT_STREQ(log_buff[6], "2\r\n");
-    EXPECT_STREQ(log_buff[7], "test\r\n");
+    EXPECT_STREQ(log_buff[5], "a\r\n");
+    EXPECT_STREQ(log_buff[6], "b\r\n");
+    EXPECT_STREQ(log_buff[7], "c\r\n");
     EXPECT_STREQ(log_buff[8], "{'c': test, 'b': 2, 'a': 1}\r\n");
     EXPECT_STREQ(log_buff[9], "BEGIN\r\n");
     /* deinit */

@@ -523,7 +523,7 @@ TEST(pikaMain, for_in_dict) {
             "\n");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "1\r\n");
+    EXPECT_STREQ(log_buff[0], "a\r\n");
     EXPECT_STREQ(log_buff[1], "__start__\r\n");
     /* deinit */
     obj_deinit(pikaMain);
