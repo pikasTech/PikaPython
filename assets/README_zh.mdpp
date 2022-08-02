@@ -1,3 +1,4 @@
+!INCLUDE "css.mdpp"
 <p align="center">
 	<img alt="logo" src="document/image/144221063-a85b2cb0-0416-493f-9afb-56cff31e977d.jpg" width="300">
 </p>
@@ -484,6 +485,8 @@ while True:
 # 8.贡献者
 | 贡献者 | [成就勋章](document/achivement_zh.md) |
 !INCLUDE "achivement_list.mdpp"
+
+<div class="log"></div>
 
 | 贡献记录 | 贡献者 |
 | --- | --- |
