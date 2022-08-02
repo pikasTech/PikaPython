@@ -481,7 +481,12 @@ while True:
 ## 在 Docker 中测试 (recommend)
 [ Docker 开发环境搭建指南 ](https://pikadoc.readthedocs.io/zh/latest/get-start_linux.html)
 
-# 7.贡献者
+# 8.贡献者
+## 成就
+| 贡献者 | 成就勋章 |
+!INCLUDE "achivement_list.mdpp"
+
+## 记录
 | 内容 | 贡献者 |
 | --- | --- |
 !INCLUDE "contributor.mdpp"
