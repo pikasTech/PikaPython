@@ -588,7 +588,7 @@ while True:
 ## 在 Docker 中测试 (recommend)
 [ Docker 开发环境搭建指南 ](https://pikadoc.readthedocs.io/zh/latest/get-start_linux.html)
 
-# 8.贡献者
+# 7.贡献者
 ## [如何参与贡献](https://pikadoc.readthedocs.io/zh/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html)
 
 | 贡献者 | [成就勋章](document/achivement_zh.md) |
