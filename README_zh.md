@@ -1,15 +1,3 @@
-<style>
-pre{
-    overflow-y: auto;
-    max-height: 300px;
-}
-
-div.log + table{
-    overflow-y: auto;
-    max-height: 300px;
-}
-
-</style>
 <p align="center">
 	<img alt="logo" src="document/image/144221063-a85b2cb0-0416-493f-9afb-56cff31e977d.jpg" width="300">
 </p>

@@ -1,0 +1,12 @@
+<style>
+pre{
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+div.log + table{
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+</style>
