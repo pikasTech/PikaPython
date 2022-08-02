@@ -97,3 +97,9 @@
 - 五星：commit 数量第1
 
 ![33](assets/33.png)
+
+### PikaScript MVP
+
+- 五星：得到任意一个其他的五星徽章，或者得到三个三星徽章
+
+![41](C:\Users\liang\Desktop\pikascript\document\assets\41.png)
