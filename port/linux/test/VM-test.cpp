@@ -1039,14 +1039,29 @@ TEST(VM, tuple_literal) {
 #endif
 
 TEST(VM, dvd_opt) {
-    char* line =
-    "a = 10%4\n";
+    char* line = "a = 10%4\n";
     PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
     obj_run(self, line);
     /* collect */
     int a = obj_getInt(self, "a");
     /* assert */
     EXPECT_EQ(a, 2);
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, del_) {
+    char* line =
+        "a = 1\n"
+        "print(a)\n"
+        "del a\n"
+        "print(a)\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_EQ(obj_isArgExist(self, "a"), 0);
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);

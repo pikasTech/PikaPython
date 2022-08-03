@@ -1133,8 +1133,7 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
     thisBlockDeepth = VMState_getBlockDeepthNow(vs);
     int jmp_expect = fast_atoi(data);
     arg_newStackBuff(pika_assertArg_stack, PIKA_ARG_BUFF_SIZE);
-    Arg* pika_assertArg =
-        stack_popArg(&(vs->stack), &pika_assertArg_stack);
+    Arg* pika_assertArg = stack_popArg(&(vs->stack), &pika_assertArg_stack);
     int pika_assert = arg_getInt(pika_assertArg);
     arg_deinit(pika_assertArg);
     vs->ireg[thisBlockDeepth] = !pika_assert;
@@ -1585,7 +1584,16 @@ static Arg* VM_instruction_handler_DEL(PikaObj* self,
         VMState_delLReg(vs, reg_index);
         return NULL;
     }
-    obj_removeArg(vs->locals, data);
+    if (obj_isArgExist(vs->locals, data)) {
+        obj_removeArg(vs->locals, data);
+        return NULL;
+    }
+    if (obj_isArgExist(vs->globals, data)) {
+        obj_removeArg(vs->globals, data);
+        return NULL;
+    }
+    VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
+    __platform_printf("NameError: name '%s' is not defined\n", data);
     return NULL;
 }
 
