@@ -1167,7 +1167,10 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
     int jmp_expect = fast_atoi(data);
     arg_newReg(pika_assertArg_reg, PIKA_ARG_BUFF_SIZE);
     Arg* pika_assertArg = stack_popArg(&(vs->stack), &pika_assertArg_reg);
-    int pika_assert = arg_getInt(pika_assertArg);
+    int pika_assert = 0;
+    if (NULL != pika_assertArg) {
+        pika_assert = arg_getInt(pika_assertArg);
+    }
     arg_deinit(pika_assertArg);
     vs->ireg[thisBlockDeepth] = !pika_assert;
 

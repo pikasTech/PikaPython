@@ -269,6 +269,7 @@ Arg* arg_setStr(Arg* self, char* name, char* string) {
 }
 
 int64_t arg_getInt(Arg* self) {
+    pika_assert(NULL!=self);
     if (NULL == arg_getContent(self)) {
         return -999999;
     }
@@ -327,7 +328,7 @@ Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
     if (NULL == arg_src) {
         return NULL;
     }
-    if (NULL == arg_dict){
+    if (NULL == arg_dict) {
         return arg_copy(arg_src);
     }
     /* size is too big to be copied by noalloc */
