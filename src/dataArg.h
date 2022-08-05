@@ -56,11 +56,12 @@ typedef enum {
 typedef void (*StructDeinitFun)(void* struct_);
 
 typedef struct Arg Arg;
+typedef union {
+    Arg* next;
+    uint8_t* buffer;
+} _arg_union;
 struct Arg {
-    union {
-        Arg* next;
-        uint8_t* buffer;
-    };
+    _arg_union _;
     uint32_t size;
     uint8_t type;
     PIKA_BOOL serialized;
@@ -128,21 +129,21 @@ void arg_printBytes(Arg* self);
 Arg* arg_loadFile(Arg* self, char* filename);
 uint8_t argType_isObject(ArgType type);
 
-#define arg_getNext(self) ((self)->next)
+#define arg_getNext(self) ((self)->_.next)
 #define arg_getSize(self) ((self)->size)
 #define arg_getContent(self) \
-    ((self)->serialized ? (self)->content : ((self)->buffer))
-#define arg_getNext(self) ((self)->next)
-#define arg_setNext(self, __next) ((self)->next = (__next))
+    ((self)->serialized ? (self)->content : ((self)->_.buffer))
+#define arg_getNext(self) ((self)->_.next)
+#define arg_setNext(self, __next) ((self)->_.next = (__next))
 
 #define argType_isObject(type) \
     ((type) == ARG_TYPE_OBJECT || (type) == ARG_TYPE_OBJECT_NEW)
 
 #endif
 
-#define arg_newReg(__name, __size) \
-    Arg __name = {0};                   \
-    uint8_t __##__name##_buff[__size] = {0};    \
+#define arg_newReg(__name, __size)           \
+    Arg __name = {0};                        \
+    uint8_t __##__name##_buff[__size] = {0}; \
     arg_init_stack(&__name, __##__name##_buff, __size)
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size);

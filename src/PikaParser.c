@@ -163,7 +163,7 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
 }
 
 char* strsGetCleanCmd(Args* outBuffs, char* cmd) {
-    pika_assert(cmd!=NULL);
+    pika_assert(cmd != NULL);
     int32_t size = strGetSize(cmd);
     /* lexer may generate more chars than input */
     char* strOut = args_getBuff(outBuffs, size * 2);
@@ -1301,7 +1301,7 @@ char* Parser_popSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
     Arg* substmt_arg = arg_newStr("");
     Arg* newstmt_arg = arg_newStr("");
     char* stmt = *stmt_p;
-    PIKA_BOOL is_get_substmt = 0;
+    PIKA_BOOL is_get_substmt = PIKA_FALSE;
     Args buffs = {0};
     ParserState_forEachToken(ps, stmt) {
         ParserState_iterStart(&ps);
@@ -1319,7 +1319,7 @@ char* Parser_popSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
         }
         if (strEqu(ps.token1.pyload, delimiter)) {
             /* found delimiter */
-            is_get_substmt = 1;
+            is_get_substmt = PIKA_TRUE;
             ParserState_iterEnd(&ps);
             continue;
         }
@@ -1861,7 +1861,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     }
 
 block_matched:
-    if (NULL == stmt){
+    if (NULL == stmt) {
         AST_deinit(ast);
         ast = NULL;
         goto exit;
@@ -2540,13 +2540,16 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
     };
     uint16_t const_pool_offset;
     uint16_t exist_offset;
-
+    int invoke_deepth_int = 0;
     for (int i = 0; i < strCountSign(pikaAsm, '\n'); i++) {
         Args buffs = {0};
         char* line = strsGetLine(&buffs, asmer.line_pointer);
         char* data = NULL;
         char ins_str[4] = "";
         char invoke_deepth[3] = "";
+        uint8_t space_num = 0;
+        uint8_t invoke_deepth_i = 0;
+        uint8_t ins_str_i = 0;
         Arg* line_buff = arg_newStr(line);
         strsDeinit(&buffs);
         line = arg_getStr(line_buff);
@@ -2567,9 +2570,6 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
         /* get constPool offset */
         const_pool_offset = 0;
 
-        uint8_t space_num = 0;
-        uint8_t invoke_deepth_i = 0;
-        uint8_t ins_str_i = 0;
         for (int i = 0; i < (int)strGetSize(line); i++) {
             if (space_num < 2) {
                 if (line[i] == ' ') {
@@ -2607,7 +2607,7 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
             const_pool_offset = exist_offset;
         }
 
-        int invoke_deepth_int = fast_atoi(invoke_deepth);
+        invoke_deepth_int = fast_atoi(invoke_deepth);
         /* load Asm to byte code unit */
         instructUnit_setBlockDeepth(&ins_unit, asmer.block_deepth_now);
         instructUnit_setInvokeDeepth(&ins_unit, invoke_deepth_int);

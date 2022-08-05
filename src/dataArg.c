@@ -53,7 +53,7 @@ static Arg* arg_init_hash(Hash nameHash,
                           uint32_t size,
                           Arg* next) {
     Arg* self = (Arg*)pikaMalloc(sizeof(Arg) + size);
-    self->next = next;
+    arg_setNext(self, next);
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
@@ -77,7 +77,7 @@ static Arg* arg_init(char* name,
 }
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
-    self->buffer = buffer;
+    self->_.buffer = buffer;
     self->size = size;
     self->type = ARG_TYPE_UNDEF;
     self->name_hash = 0;
