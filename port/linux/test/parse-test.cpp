@@ -3568,3 +3568,23 @@ TEST(parser, _del) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(parser, issue_fa13f4) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "d['language'].append('Java')\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 REF d\n"
+                 "2 STR language\n"
+                 "1 SLC \n"
+                 "1 STR Java\n"
+                 "0 RUN .append\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

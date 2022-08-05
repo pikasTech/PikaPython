@@ -2514,8 +2514,7 @@ TEST(pikaMain, for_loop_issue_1b2a3f1bdf) {
 }
 
 TEST(pikaMain, syantex_issue123lkjxi) {
-    char* lines =
-        "if i < 3\n";
+    char* lines = "if i < 3\n";
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -2533,8 +2532,7 @@ TEST(pikaMain, dump_issue_12l3kjioa) {
     char* lines =
         "if i = 1:\n"
         "    print('test')\n"
-        "\n"
-        ;
+        "\n";
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -2547,3 +2545,25 @@ TEST(pikaMain, dump_issue_12l3kjioa) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, issue_fa13f4) {
+    char* lines =
+        "d = {'language':['c','python']}\n"
+        "d['language'].append('Java')\n"
+        "print(d)\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "{'language': [c, python, Java]}\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

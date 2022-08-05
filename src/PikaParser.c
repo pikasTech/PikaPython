@@ -342,6 +342,10 @@ static enum StmtType Lexer_matchStmtType(char* right) {
         stmtType = STMT_operator;
         goto exit;
     }
+    if (is_get_chain) {
+        stmtType = STMT_chain;
+        goto exit;
+    }
     if (is_get_slice) {
         stmtType = STMT_slice;
         goto exit;
@@ -352,10 +356,6 @@ static enum StmtType Lexer_matchStmtType(char* right) {
     }
     if (is_get_dict) {
         stmtType = STMT_dict;
-        goto exit;
-    }
-    if (is_get_chain) {
-        stmtType = STMT_chain;
         goto exit;
     }
     if (is_get_method) {
