@@ -197,7 +197,7 @@ static void VMState_delLReg(VMState* vs, uint8_t index) {
 static void VMState_initReg(VMState* vs) {
     for (uint8_t i = 0; i < PIKA_REGIST_SIZE; i++) {
         vs->lreg[i] = NULL;
-        vs->ireg[i] = 0;
+        vs->ireg[i] = PIKA_FALSE;
     }
 }
 
@@ -1167,20 +1167,20 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
     int jmp_expect = fast_atoi(data);
     arg_newReg(pika_assertArg_reg, PIKA_ARG_BUFF_SIZE);
     Arg* pika_assertArg = stack_popArg(&(vs->stack), &pika_assertArg_reg);
-    int pika_assert = 0;
+    PIKA_BOOL pika_assert = PIKA_FALSE;
     if (NULL != pika_assertArg) {
-        pika_assert = arg_getInt(pika_assertArg);
+        pika_assert = (PIKA_BOOL)arg_getInt(pika_assertArg);
     }
     arg_deinit(pika_assertArg);
-    vs->ireg[thisBlockDeepth] = !pika_assert;
+    vs->ireg[thisBlockDeepth] = (PIKA_BOOL)!pika_assert;
 
-    if (0 == pika_assert) {
+    if (PIKA_FALSE == pika_assert) {
         /* jump */
         vs->jmp = jmp_expect;
     }
 
     /* restore loop deepth */
-    if (2 == jmp_expect && 0 == pika_assert) {
+    if (2 == jmp_expect && PIKA_FALSE == pika_assert) {
         int block_deepth_now = VMState_getBlockDeepthNow(vs);
         vs->loop_deepth = block_deepth_now;
     }
