@@ -78,7 +78,7 @@ void stack_pushPyload(Stack* stack, Arg* content, size_t size) {
         __platform_memcpy(stack->sp, content, size);
     } else {
         __platform_memcpy(stack->sp, content, sizeof(Arg));
-        __platform_memcpy(stack->sp + sizeof(Arg), content->buffer,
+        __platform_memcpy(stack->sp + sizeof(Arg), content->_.buffer,
                           size - sizeof(Arg));
         /* transfer to serialized form */
         ((Arg*)stack->sp)->serialized = PIKA_TRUE;
