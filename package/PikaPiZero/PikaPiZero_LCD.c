@@ -7,7 +7,7 @@ void PikaPiZero_LCD_clear(PikaObj *self, char * color){
     color_code = LCD_getColorCode(color);
     LCD_Clear(color_code);
 }
-void PikaPiZero_LCD_fill(PikaObj *self, char * color, int hight, int wight, int x0, int y0){
+void PikaPiZero_LCD_fill(PikaObj *self, int x0, int y0, int hight, int wight, char* color){
     u16 color_code = WHITE;
     color_code = LCD_getColorCode(color);
     LCD_Fill(x0, y0, hight, wight, color_code);
