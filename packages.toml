@@ -141,12 +141,14 @@ name = "PikaMath"
 releases = [
   "v0.0.1 31146e2395e80b5785a4b2e526913a4590160e66",
   "v0.1.0 793634882044af25f30bb59c6511c615e56f85c5",
+  "v0.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
 ]
 
 [[packages]]
 name = "PikaCV"
 releases = [
   "v0.0.1 b463e812bf0334b55835a3b31cda0c2f6c526e06",
+  "v0.1.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
 ]
 
 [[packages]]
@@ -156,6 +158,7 @@ releases = [
   "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
   "v1.1.0 0cf260fca1e7613dc5523fd09de00df952c9dbd3",
   "v1.1.1 68b28c780861190639452ed0642e2f4064fa44c3",
+  "v1.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
 ]
 
 
@@ -163,6 +166,7 @@ releases = [
 name = "configparser"
 releases = [
   "v0.1.0 d3a9f6e226bb9cfccbfc588cc465672cefea9e82",
+  "v0.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
 ]
 
 [[packages]]
@@ -184,6 +188,7 @@ releases = [
   "v0.0.2 3fae2b5e86a0de787f6785ccd72a6590b4984f88",
   "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
   "v1.0.1 5148412411e2de0d23e9c5857b0b4843f479a5be",
+  "v1.1.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
 ]
 
 [[packages]]
