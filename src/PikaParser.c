@@ -163,7 +163,6 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
 }
 
 char* strsGetCleanCmd(Args* outBuffs, char* cmd) {
-    pika_assert(cmd!=NULL);
     int32_t size = strGetSize(cmd);
     /* lexer may generate more chars than input */
     char* strOut = args_getBuff(outBuffs, size * 2);
@@ -1861,11 +1860,6 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     }
 
 block_matched:
-    if (NULL == stmt){
-        AST_deinit(ast);
-        ast = NULL;
-        goto exit;
-    }
     stmt = strsGetCleanCmd(&buffs, stmt);
     ast = AST_parseStmt(ast, stmt);
     goto exit;
