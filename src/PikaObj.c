@@ -163,14 +163,14 @@ int32_t obj_setFloat(PikaObj* self, char* argPath, double value) {
     return 0;
 }
 
-PIKA_RES obj_setStr(PikaObj* self, char* argPath, char* str) {
+int32_t obj_setStr(PikaObj* self, char* argPath, char* str) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
-        return PIKA_RES_ERR_INVALID_PTR;
+        return 1;
     }
     char* name = strPointToLastToken(argPath, '.');
     args_setStr(obj->list, name, str);
-    return PIKA_RES_OK;
+    return 0;
 }
 
 int32_t obj_setBytes(PikaObj* self, char* argPath, uint8_t* src, size_t size) {

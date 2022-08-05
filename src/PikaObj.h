@@ -104,7 +104,7 @@ int32_t obj_setInt(PikaObj* self, char* argPath, int64_t val);
 int32_t obj_setRef(PikaObj* self, char* argPath, void* pointer);
 int32_t obj_setPtr(PikaObj* self, char* argPath, void* pointer);
 int32_t obj_setFloat(PikaObj* self, char* argPath, double value);
-PIKA_RES obj_setStr(PikaObj* self, char* argPath, char* str);
+int32_t obj_setStr(PikaObj* self, char* argPath, char* str);
 int32_t obj_setArg(PikaObj* self, char* argPath, Arg* arg);
 int32_t obj_setArg_noCopy(PikaObj* self, char* argPath, Arg* arg);
 int32_t obj_setBytes(PikaObj* self, char* argPath, uint8_t* src, size_t size);

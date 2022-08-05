@@ -53,7 +53,7 @@ static Arg* arg_init_hash(Hash nameHash,
                           uint32_t size,
                           Arg* next) {
     Arg* self = (Arg*)pikaMalloc(sizeof(Arg) + size);
-    arg_setNext(self, next);
+    self->next = next;
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
@@ -77,7 +77,7 @@ static Arg* arg_init(char* name,
 }
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
-    self->_.buffer = buffer;
+    self->buffer = buffer;
     self->size = size;
     self->type = ARG_TYPE_UNDEF;
     self->name_hash = 0;
@@ -328,7 +328,7 @@ Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
     if (NULL == arg_src) {
         return NULL;
     }
-    if (NULL == arg_dict) {
+    if (NULL == arg_dict){
         return arg_copy(arg_src);
     }
     /* size is too big to be copied by noalloc */
