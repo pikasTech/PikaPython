@@ -140,7 +140,7 @@ uint8_t argType_isObject(ArgType type);
 
 #endif
 
-#define arg_newStackBuff(__name, __size) \
+#define arg_newReg(__name, __size) \
     Arg __name = {0};                   \
     uint8_t __##__name##_buff[__size] = {0};    \
     arg_init_stack(&__name, __##__name##_buff, __size)

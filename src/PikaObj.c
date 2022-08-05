@@ -311,13 +311,13 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
     return thisClass;
 }
 
-Arg* obj_getMethodArg(PikaObj* obj, char* methodPath) {
+Arg* _obj_getMethodArg(PikaObj* obj, char* methodPath, Arg* arg_reg) {
     Arg* method = NULL;
     char* methodName = strPointToLastToken(methodPath, '.');
     method = obj_getArg(obj, methodName);
     PikaObj* methodHostClass;
     if (NULL != method) {
-        method = arg_copy(method);
+        method = arg_copy_noalloc(method, arg_reg);
         goto exit;
     }
     methodHostClass = obj_getClassObj(obj);
@@ -325,10 +325,18 @@ Arg* obj_getMethodArg(PikaObj* obj, char* methodPath) {
         method = NULL;
         goto exit;
     }
-    method = arg_copy(obj_getArg(methodHostClass, methodName));
+    method = arg_copy_noalloc(obj_getArg(methodHostClass, methodName), arg_reg);
     obj_deinit_no_del(methodHostClass);
 exit:
     return method;
+}
+
+Arg* obj_getMethodArg(PikaObj* obj, char* methodPath) {
+    return _obj_getMethodArg(obj, methodPath, NULL);
+}
+
+Arg* obj_getMethodArg_noalloc(PikaObj* obj, char* methodPath, Arg* arg_reg) {
+    return _obj_getMethodArg(obj, methodPath, arg_reg);
 }
 
 NewFun obj_getClass(PikaObj* obj) {
@@ -503,9 +511,12 @@ Method methodArg_getPtr(Arg* method_arg) {
     return (Method)ptr;
 }
 
-char* methodArg_getTypeList(Arg* method_arg, Args* buffs) {
-    char* method_dec = strsCopy(buffs, methodArg_getDec(method_arg));
-    return strsCut(buffs, method_dec, '(', ')');
+char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
+    char* method_dec = strCopy(buffs, methodArg_getDec(method_arg));
+    if (strGetSize(method_dec) > size) {
+        return NULL;
+    }
+    return strCut(buffs, method_dec, '(', ')');
 }
 
 Method obj_getNativeMethod(PikaObj* self, char* method_name) {
@@ -950,7 +961,6 @@ PikaObj* New_PikaObj(void) {
     self->constructor = NULL;
     return self;
 }
-
 
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj) {
     obj_refcntInc(obj);

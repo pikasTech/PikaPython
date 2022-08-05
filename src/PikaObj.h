@@ -165,6 +165,7 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* self, char* name, NewFun newClassFun);
 PikaObj* newRootObj(char* name, NewFun newObjFun);
 PikaObj* obj_getClassObj(PikaObj* obj);
 Arg* obj_getMethodArg(PikaObj* obj, char* methodPath);
+Arg* obj_getMethodArg_noalloc(PikaObj* obj, char* methodPath, Arg* arg_reg);
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode);
 int32_t obj_getErrorCode(PikaObj* self);
@@ -190,7 +191,7 @@ double method_getFloat(Args* args, char* argName);
 char* method_getStr(Args* args, char* argName);
 void method_returnArg(Args* args, Arg* arg);
 char* methodArg_getDec(Arg* method_arg);
-char* methodArg_getTypeList(Arg* method_arg, Args* buffs);
+char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size);
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg);
 Method methodArg_getPtr(Arg* method_arg);
 

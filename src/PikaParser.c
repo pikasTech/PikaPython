@@ -943,8 +943,7 @@ void ParserState_beforeIter(struct ParserState* ps) {
         return;
     }
     Parser_popToken(ps->buffs_p, ps->tokens);
-    ps->last_token =
-        arg_newStr(Parser_popToken(ps->buffs_p, ps->tokens));
+    ps->last_token = arg_newStr(Parser_popToken(ps->buffs_p, ps->tokens));
 }
 
 #if PIKA_SYNTAX_SLICE_ENABLE
@@ -1830,6 +1829,13 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         AST_setThisNode(ast, "global", global_list);
         goto block_matched;
     }
+    if (strIsStartWith(line_start, "del ")) {
+        stmt = "";
+        char* del_dir = line_start + sizeof("del ") - 1;
+        del_dir = strsGetCleanCmd(&buffs, del_dir);
+        AST_setThisNode(ast, "del", del_dir);
+        goto block_matched;
+    }
     if (strIsStartWith(line_start, (char*)"def ")) {
         stmt = "";
         char* declear = strsCut(&buffs, line_start, ' ', ':');
@@ -2472,6 +2478,15 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 GLB ");
         pikaAsm = strsAppend(&buffs, pikaAsm, obj_getStr(ast, "global"));
+        pikaAsm = strsAppend(&buffs, pikaAsm, "\n");
+        is_block_matched = 1;
+        goto exit;
+    }
+    if (obj_isArgExist(ast, "del")) {
+        /* parse stmt ast */
+        pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
+        pikaAsm = strsAppend(&buffs, pikaAsm, "0 DEL ");
+        pikaAsm = strsAppend(&buffs, pikaAsm, obj_getStr(ast, "del"));
         pikaAsm = strsAppend(&buffs, pikaAsm, "\n");
         is_block_matched = 1;
         goto exit;
