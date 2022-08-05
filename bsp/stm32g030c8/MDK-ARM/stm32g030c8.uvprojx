@@ -702,11 +702,6 @@
               <FilePath>..\pikascript\pikascript-api/STM32G0_GPIO-api.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdData_FILEIO-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api/PikaStdData_FILEIO-api.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaStdLib-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdLib-api.c</FilePath>
@@ -750,11 +745,6 @@
               <FileName>PikaStdDevice_SPI-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdDevice_SPI-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Tuple-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api/PikaStdData_Tuple-api.c</FilePath>
             </File>
             <File>
               <FileName>machine_PWM-api.c</FileName>
@@ -840,11 +830,6 @@
               <FileName>machine_KEY-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/machine_KEY-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_LCD-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api/machine_LCD-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaPiZero-api.c</FileName>
@@ -1117,11 +1102,6 @@
               <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdData_Tuple.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_Tuple.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaStdLib_MemChecker.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c</FilePath>
@@ -1130,11 +1110,6 @@
               <FileName>PikaDebuger_Debuger.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_ByteArray.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_ByteArray.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_String.c</FileName>
@@ -1155,11 +1130,6 @@
               <FileName>PikaStdLib_SysObj.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_FILEIO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_FILEIO.c</FilePath>
             </File>
             <File>
               <FileName>RGB_ASM.lib</FileName>

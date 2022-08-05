@@ -1,24 +1,38 @@
 import STM32G0
 import PikaPiZero
 
-class GPIO(STM32G0.GPIO): ...
 
-class Time(STM32G0.Time): ...
+class GPIO(STM32G0.GPIO):
+    pass
 
-class ADC(STM32G0.ADC): ...
 
-class UART(STM32G0.UART): ...
+class Time(STM32G0.Time):
+    pass
 
-class PWM(STM32G0.PWM): ...
 
-class RGB(PikaPiZero.RGB): ...
+class ADC(STM32G0.ADC):
+    pass
 
-class KEY(PikaPiZero.KEY): ...
 
-# class LCD(PikaPiZero.LCD): ...
+class UART(STM32G0.UART):
+    pass
 
-# class Task(STM32G0.Task): ...
 
-# class IIC(STM32G0.IIC): ...
+class PWM(STM32G0.PWM):
+    pass
 
-class Point(PikaPiZero.Point): ...
+
+class RGB(PikaPiZero.RGB):
+    pass
+
+
+class KEY(PikaPiZero.KEY):
+    pass
+
+
+class LCD(PikaPiZero.LCD):
+    pass
+
+
+class Point(PikaPiZero.Point):
+    pass
