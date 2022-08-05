@@ -269,6 +269,7 @@ Arg* arg_setStr(Arg* self, char* name, char* string) {
 }
 
 int64_t arg_getInt(Arg* self) {
+    pika_assert(NULL!=self);
     if (NULL == arg_getContent(self)) {
         return -999999;
     }
