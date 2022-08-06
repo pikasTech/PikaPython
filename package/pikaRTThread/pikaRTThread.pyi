@@ -1,8 +1,6 @@
-#api
-from PikaObj import *
 import PikaStdTask
 
-class Thread(TinyObj):
+class Thread:
     def mdelay(ms: int):
         pass
 
