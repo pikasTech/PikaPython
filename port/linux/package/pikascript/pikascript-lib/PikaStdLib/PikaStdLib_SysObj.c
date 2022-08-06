@@ -461,7 +461,12 @@ int PikaStdLib_SysObj_id(PikaObj* self, Arg* obj) {
 PikaObj* PikaStdLib_SysObj_open(PikaObj* self, char* path, char* mode) {
 #if PIKA_FILEIO_ENABLE
     PikaObj* file = newNormalObj(New_PikaStdData_FILEIO);
-    PikaStdData_FILEIO_init(file, mode, path);
+    if (0 != PikaStdData_FILEIO_init(file, path, mode)) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("[Error] open: can not open file.\r\n");
+        obj_deinit(file);
+        return NULL;
+    }
     return file;
 #else
     obj_setErrorCode(self, 1);

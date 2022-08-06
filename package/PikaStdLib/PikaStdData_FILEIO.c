@@ -2,18 +2,18 @@
 #include <stdio.h>
 #include "PikaStdData_List.h"
 
-void PikaStdData_FILEIO_init(PikaObj* self, char* mode, char* path) {
+int PikaStdData_FILEIO_init(PikaObj* self, char* path, char* mode) {
     if (obj_isArgExist(self, "_f")) {
         /* already initialized */
-        return;
+        return 0;
     }
     FILE* f = __platform_fopen(path, mode);
     if (f == NULL) {
-        printf("Error: can't open file %s\n", path);
-        return;
+        return 1;
     }
     obj_setPtr(self, "_f", f);
     obj_setStr(self, "_mode", mode);
+    return 0;
 }
 
 void PikaStdData_FILEIO_close(PikaObj* self) {
@@ -76,7 +76,7 @@ int PikaStdData_FILEIO_write(PikaObj* self, Arg* s) {
     return res;
 }
 
-int PikaStdData_FILEIO_seek(PikaObj *self, int offset, PikaTuple* fromwhere){
+int PikaStdData_FILEIO_seek(PikaObj* self, int offset, PikaTuple* fromwhere) {
     FILE* f = obj_getPtr(self, "_f");
     if (f == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_IO);
