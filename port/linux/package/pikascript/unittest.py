@@ -1,10 +1,31 @@
 import _unittest
 
 
-class TestCase:
+class TestResult:
     def __init__(self):
-        pass
+        self.errorsNum = 0
+        self.failuresNum = 0
+        self.skippedNum = 0
+        self.testsRun = 0
+        self.errors = []
+        self.failures = []
+        self.skipped = []
+        self._newFailures = 0
 
+    def wasSuccessful(self):
+        return self.errorsNum == 0 and self.failuresNum == 0
+
+    def __str__(self):
+        # Format is compatible with CPython.
+        s = "<unittest.result.TestResult "
+        s += "run=%d, " % self.testsRun
+        s += "errors=%d, " % self.errorsNum
+        s += "failures=%d, " % self.failuresNum
+        s += "skipped=%d>" % self.skippedNum
+        return s
+
+
+class TestCase:
     def assertEqual(self, x, y):
         msg = "%r vs (expected) %r" % (x, y)
         _assert(x == y, msg)
@@ -29,27 +50,28 @@ class TestCase:
         msg = "Expected %r to be False" % x
         _assert(not x, msg)
 
+    def run(self, result, suite_name):
+        _unittest._case_run(self, result, suite_name)
+
 
 class TestSuite:
     def __init__(self, name):
         self._tests = []
         self.name = name
 
-    def addTest(self, cls):
-        self._tests.append(cls)
+    def addTest(self, case):
+        self._tests.append(case)
 
     def run(self, result):
-        for c in self._tests:
-            run_suite(c, result, self.name)
+        for case in self._tests:
+            case.run(result, self.name)
         return result
 
 
-class TestRunner:
+class TextTestRunner:
     def run(self, suite: TestSuite):
         res = TestResult()
-        suite.run(res)
-
-        res.printErrors()
+        _ = suite.run(res)
         print("----------------------------------------------------------------------")
         print("Ran %d tests\n" % res.testsRun)
         if res.failuresNum > 0 or res.errorsNum > 0:
@@ -61,38 +83,6 @@ class TestRunner:
             print(msg)
 
         return res
-
-
-class TestResult:
-    def __init__(self):
-        self.errorsNum = 0
-        self.failuresNum = 0
-        self.skippedNum = 0
-        self.testsRun = 0
-        self.errors = []
-        self.failures = []
-        self.skipped = []
-        self._newFailures = 0
-
-    def wasSuccessful(self):
-        return self.errorsNum == 0 and self.failuresNum == 0
-
-    def printErrors(self):
-        print()
-        self.printErrorList(self.errors)
-        self.printErrorList(self.failures)
-
-    def __str__(self):
-        # Format is compatible with CPython.
-        return "<unittest.result.TestResult run=%d errors=%d failures=%d>" % (\
-            self.testsRun,\
-            self.errorsNum,\
-            self.failuresNum,\
-        )
-
-def run_suite(c, test_result: TestResult, suite_name=""):
-    c.run(test_result)
-    return
 
 
 def _assert(res, msg):

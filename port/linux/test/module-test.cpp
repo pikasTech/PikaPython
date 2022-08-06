@@ -137,3 +137,21 @@ TEST(module, import_as_issue1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+#if PIKA_SYNTAX_LEVEL==PIKA_SYNTAX_LEVEL_MAXIMAL
+TEST(unittest, test1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/unittest/test1.py");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
