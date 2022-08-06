@@ -1737,6 +1737,12 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     if (strIsStartWith(line_start, "for ")) {
         Args* list_buffs = New_strBuff();
         char* line_buff = strsCopy(list_buffs, line_start + 4);
+        if (strCountSign(line_buff, ':') < 1) {
+            args_deinit(list_buffs);
+            obj_deinit(ast);
+            ast = NULL;
+            goto exit;
+        }
         char* arg_in = strsPopToken(list_buffs, line_buff, ' ');
         AST_setThisNode(ast, "arg_in", arg_in);
         strsPopToken(list_buffs, line_buff, ' ');
@@ -1840,6 +1846,11 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     if (strIsStartWith(line_start, (char*)"def ")) {
         stmt = "";
         char* declear = strsCut(&buffs, line_start, ' ', ':');
+        if (NULL == declear) {
+            obj_deinit(ast);
+            ast = NULL;
+            goto exit;
+        }
         declear = strsGetCleanCmd(&buffs, declear);
         AST_setThisNode(ast, "block", "def");
         AST_setThisNode(ast, "declear", declear);
@@ -1851,6 +1862,11 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
     if (strIsStartWith(line_start, (char*)"class ")) {
         stmt = "";
         char* declear = strsCut(&buffs, line_start, ' ', ':');
+        if (NULL == declear) {
+            obj_deinit(ast);
+            ast = NULL;
+            goto exit;
+        }
         declear = strsGetCleanCmd(&buffs, declear);
         AST_setThisNode(ast, "block", "class");
         AST_setThisNode(ast, "declear", declear);

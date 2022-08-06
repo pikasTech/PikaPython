@@ -2523,6 +2523,55 @@ TEST(pikaMain, syantex_issue123lkjxi) {
     obj_run(pikaMain, lines);
     /* collect */
     /* assert */
+    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, syantex_issue_fae13) {
+    char* lines = "for i < 3\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, syantex_issue_1289341) {
+    char* lines = "class lkj\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, syantex_issue_183571) {
+    char* lines = "def test\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
