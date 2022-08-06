@@ -139,6 +139,12 @@ uint8_t argType_isObject(ArgType type);
 #define argType_isObject(type) \
     ((type) == ARG_TYPE_OBJECT || (type) == ARG_TYPE_OBJECT_NEW)
 
+#define argType_isCallable(type)                                             \
+    ((type) == ARG_TYPE_METHOD_CONSTRUCTOR ||                                \
+     (type) == ARG_TYPE_METHOD_OBJECT || (type) == ARG_TYPE_METHOD_STATIC || \
+     (type) == ARG_TYPE_METHOD_NATIVE ||                                     \
+     (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR)
+
 #endif
 
 #define arg_newReg(__name, __size)           \

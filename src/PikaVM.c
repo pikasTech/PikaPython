@@ -893,6 +893,13 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     /* get method in local */
     method_arg =
         obj_getMethodArg_noalloc(method_host_obj, methodPath, &arg_reg1);
+
+    if (NULL == method_arg) {
+        /* get method in locals */
+        method_arg =
+            obj_getMethodArg_noalloc(vs->locals, methodPath, &arg_reg1);
+    }
+
     if (NULL == method_arg) {
         /* get method in global */
         method_arg =

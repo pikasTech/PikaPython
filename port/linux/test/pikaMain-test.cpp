@@ -2616,3 +2616,28 @@ TEST(pikaMain, issue_fa13f4) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(pikaMain, callback_issue_I5L1MI) {
+    char* lines =
+        "def callback(func):\n"
+        "    func()\n"
+        "\n"
+        "def test():\n"
+        "    print('hello')\n"
+        "\n"
+        "f = test\n"
+        "callback(f)\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "hello\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
