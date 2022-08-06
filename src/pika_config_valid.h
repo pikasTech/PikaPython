@@ -254,6 +254,14 @@
         #define PIKA_ARG_BUFF_SIZE 8
     #endif
 
+    #ifndef PIKA_INSTRUCT_HOOK_ENABLE
+        #define PIKA_INSTRUCT_HOOK_ENABLE 0
+    #endif
+
+    #ifndef PIKA_INSTRUCT_HOOK_PERIOD
+        #define PIKA_INSTRUCT_HOOK_PERIOD 50
+    #endif
+
     /* configuration validation */
 
 #endif

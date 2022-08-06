@@ -76,6 +76,7 @@ struct VMState {
     uint8_t error_code;
     uint8_t line_error_code;
     uint8_t try_error_code;
+    uint32_t ins_cnt;
     PikaObj* lreg[PIKA_REGIST_SIZE];
     PIKA_BOOL ireg[PIKA_REGIST_SIZE];
     TryInfo* try_info;

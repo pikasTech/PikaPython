@@ -191,3 +191,7 @@ PIKA_WEAK long __platform_ftell(FILE* stream) {
     }
 #endif
 }
+
+PIKA_WEAK void __pks_hook_instruct(void) {
+    return;
+}

@@ -158,4 +158,6 @@ long __platform_ftell(FILE* stream);
 /* error */
 void __platform_error_handle(void);
 
+void __pks_hook_instruct(void);
+
 #endif

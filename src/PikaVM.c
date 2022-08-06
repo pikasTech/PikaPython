@@ -2203,6 +2203,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
         .line_error_code = PIKA_RES_OK,
         .try_error_code = PIKA_RES_OK,
         .try_info = try_info,
+        .ins_cnt = 0,
     };
     stack_init(&(vs.stack));
     VMState_initReg(&vs);
@@ -2218,6 +2219,12 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             vs.line_error_code = 0;
         }
         vs.pc = pikaVM_runInstructUnit(self, &vs, this_ins_unit);
+        vs.ins_cnt++;
+#if PIKA_INSTRUCT_HOOK_ENABLE
+        if (vs.ins_cnt % PIKA_INSTRUCT_HOOK_PERIOD == 0) {
+            __pks_hook_instruct();
+        }
+#endif
         if (0 != vs.error_code) {
             vs.line_error_code = vs.error_code;
             InstructUnit* head_ins_unit = this_ins_unit;
