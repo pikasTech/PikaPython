@@ -30,6 +30,14 @@ git add package/pikascript/$pkg.pyi
 echo "$pkg.pyi"
 fi
 
+# check if $_pkg.pyi is exit
+if [ -f "package/pikascript/_$pkg.pyi" ] ; then
+echo "$FLAG_INFO python interface files added"
+cp package/pikascript/_$pkg.pyi ../../package/$pkg/
+git add package/pikascript/_$pkg.pyi 
+echo "_$pkg.pyi"
+fi
+
 # check if $pkg.py is exit
 if [ -f "package/pikascript/$pkg.py" ] ; then
 echo "$FLAG_INFO python files added"

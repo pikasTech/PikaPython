@@ -3345,6 +3345,13 @@ TEST(parser, configparser) {
     strsDeinit(&buffs);
 }
 
+TEST(parser, unittest) {
+    Args buffs = {0};
+    printf("%s\r\n",
+           Parser_fileToAsm(&buffs, "package/pikascript/unittest.py"));
+    strsDeinit(&buffs);
+}
+
 TEST(lexser, function_chain) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
