@@ -33,7 +33,7 @@ fi
 # check if $_pkg.pyi is exit
 if [ -f "package/pikascript/_$pkg.pyi" ] ; then
 echo "$FLAG_INFO python interface files added"
-cp package/pikascript/_$pkg.pyi ../../package/$pkg/
+cp "package/pikascript/_$pkg.pyi" ../../package/$pkg
 git add package/pikascript/_$pkg.pyi 
 echo "_$pkg.pyi"
 fi
@@ -41,7 +41,6 @@ fi
 # check if $pkg.py is exit
 if [ -f "package/pikascript/$pkg.py" ] ; then
 echo "$FLAG_INFO python files added"
-rm -rf ../../package/$pkg/*
 cp package/pikascript/$pkg.py ../../package/$pkg/
 git add package/pikascript/$pkg.py 
 echo "$pkg.py"
