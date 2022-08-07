@@ -277,7 +277,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0xf000</Size>
+                <Size>0x10000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -712,11 +712,6 @@
               <FilePath>..\pikascript\pikascript-api/PikaStdDevice_CAN-api.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdDevice_BaseDev-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api/PikaStdDevice_BaseDev-api.c</FilePath>
-            </File>
-            <File>
               <FileName>PikaStdLib_PikaObj-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/PikaStdLib_PikaObj-api.c</FilePath>
@@ -750,6 +745,11 @@
               <FileName>machine_PWM-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/machine_PWM-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>machine_Task-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_Task-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdTask_Task-api.c</FileName>
@@ -830,6 +830,11 @@
               <FileName>machine_KEY-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/machine_KEY-api.c</FilePath>
+            </File>
+            <File>
+              <FileName>machine_LCD-api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-api/machine_LCD-api.c</FilePath>
             </File>
             <File>
               <FileName>PikaPiZero-api.c</FileName>
@@ -947,11 +952,6 @@
               <FilePath>..\pikascript\pikascript-api/PikaPiZero_KEY-api.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdData_dict_keys-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api/PikaStdData_dict_keys-api.c</FilePath>
-            </File>
-            <File>
               <FileName>__asset_pikaModules_py_a.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/__asset_pikaModules_py_a.c</FilePath>
@@ -960,11 +960,6 @@
               <FileName>STM32G0_ADC-api.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-api/STM32G0_ADC-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>machine_Task-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\machine_Task-api.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -980,11 +975,6 @@
               <FileName>PikaStdDevice_ADC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_ADC.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice_BaseDev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_BaseDev.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdDevice_GPIO.c</FileName>
