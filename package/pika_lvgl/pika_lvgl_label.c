@@ -23,8 +23,8 @@ void pika_lvgl_label_set_text(PikaObj* self, char* txt) {
 }
 
 void pika_lvgl_label_set_style_text_align(PikaObj* self,
-                                          int selector,
-                                          int value) {
+                                          int value,
+                                          int selector) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_set_style_text_align(lv_obj, value, selector);
 }

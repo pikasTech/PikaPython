@@ -7,7 +7,7 @@ void pika_lvgl_roller___init__(PikaObj* self, PikaObj* parent) {
     obj_setPtr(self, "lv_obj", lv_obj);
 }
 
-void pika_lvgl_roller_set_options(PikaObj* self, int mode, char* options) {
+void pika_lvgl_roller_set_options(PikaObj *self, char* options, int mode){
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_roller_set_options(lv_obj, options, mode);
 }

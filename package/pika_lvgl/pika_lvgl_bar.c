@@ -7,7 +7,7 @@ void pika_lvgl_bar___init__(PikaObj* self, PikaObj* parent) {
     obj_setPtr(self, "lv_obj", lv_obj);
 }
 
-void pika_lvgl_bar_set_value(PikaObj* self, int anim, int value) {
+void pika_lvgl_bar_set_value(PikaObj *self, int value, int anim){
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_bar_set_value(lv_obj, value, value);
 }

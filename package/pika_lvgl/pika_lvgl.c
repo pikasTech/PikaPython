@@ -10,6 +10,7 @@
 #include "pika_lvgl_arc.h"
 #include "pika_lvgl_lv_color_t.h"
 #include "pika_lvgl_lv_obj.h"
+#include "pika_lvgl_indev_t.h"
 
 PikaObj* pika_lv_event_listener_g;
 
@@ -157,7 +158,7 @@ PikaObj* pika_lvgl_obj(PikaObj* self, PikaObj* parent) {
     return new_obj;
 }
 
-PikaObj* pika_lvgl_palette_lighten(PikaObj* self, int lvl, int p) {
+PikaObj* pika_lvgl_palette_lighten(PikaObj *self, int p, int lvl){
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_color_t);
     lv_color_t lv_color = lv_palette_lighten(p, lvl);
     args_setStruct(new_obj->list, "lv_color_struct", lv_color);
@@ -172,5 +173,12 @@ PikaObj* pika_lvgl_palette_main(PikaObj* self, int p) {
     args_setStruct(new_obj->list, "lv_color_struct", lv_color);
     obj_setPtr(new_obj, "lv_color",
                args_getStruct(new_obj->list, "lv_color_struct"));
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_indev_get_act(PikaObj *self){
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_indev_t);
+    lv_indev_t *lv_indev = lv_indev_get_act();
+    obj_setPtr(new_obj,"lv_indev", lv_indev);
     return new_obj;
 }

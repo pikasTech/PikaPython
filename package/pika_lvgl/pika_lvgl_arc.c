@@ -15,12 +15,12 @@ void pika_lvgl_arc_set_end_angle(PikaObj* self, int angle) {
     lv_arc_set_end_angle(lv_obj, angle);
 }
 
-void pika_lvgl_arc_set_bg_angles(PikaObj* self, int end, int start) {
+void pika_lvgl_arc_set_bg_angles(PikaObj *self, int start, int end){
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_arc_set_bg_angles(lv_obj, start, end);
 }
 
-void pika_lvgl_arc_set_angles(PikaObj* self, int end, int start) {
+void pika_lvgl_arc_set_angles(PikaObj *self, int start, int end){
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_arc_set_angles(lv_obj, start, end);
 }
