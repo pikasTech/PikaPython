@@ -10,4 +10,6 @@
 *__pycache__
 *bin/
 *obj/
+bsp/pico/MDK/mdk/RTE
+bsp/pico-dev/MDK/mdk/RTE
 

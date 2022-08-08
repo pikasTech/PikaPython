@@ -16,7 +16,7 @@
   <repository type="git">https://github.com/pikasTech/pikascript.git</repository>
 
   <releases>
-    <release date="2022-08-8" version="1.10.0" url="https://gitee.com/Lyon1998/pikascript/attach_files/1106948/download">
+    <release date="2022-08-08" version="1.10.0">
         - PikaScript v1.10.0
     </release>
 
@@ -136,11 +136,11 @@
   -->
 
   <components>
-    <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.8.7">
+    <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.10.0">
       <description>an ultra-lightweight Python engine</description>
       <doc>https://pikadoc.readthedocs.io/en/latest/index.html</doc>
 
-      <component Cgroup="PikaScript" Csub="Core" Cversion="1.8.7">
+      <component Cgroup="PikaScript" Csub="Core" Cversion="1.10.0">
         <description>PikaScript Kernel</description>
         <files>
           <!-- kernal begin -->
@@ -195,8 +195,9 @@
 
           <file attr="config" category="utility" name="rust-msc-latest-win10.exe" version="1.0.0" />
           <file attr="config" category="utility" name="pikaPackage.exe" version="1.0.0" />
-          <file attr="config" category="utility" name="pikaBeforBuild-keil.bat" version="1.0.2" />
-          <file attr="config" category="source" name="requestment.txt" version="1.0.1" />
+          <file attr="config" category="utility" name="pikaBeforBuild-keil.bat" version="1.1.0" />
+          <file attr="config" category="utility" name="clean.bat" version="1.0.1" />
+          <file attr="config" category="source" name="requestment.txt" version="1.1.0" />
           <file attr="config" category="source" name="main.py" />
 
         </files>
@@ -206,7 +207,7 @@
               </RTE_Components_h>
       </component>
 
-      <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.8.7" condition="Kernel">
+      <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.10.0" condition="Kernel">
         <description>The standard library for PikaScript</description>
         <files>
           <!-- lib begin -->
