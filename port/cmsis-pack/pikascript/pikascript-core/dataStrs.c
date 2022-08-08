@@ -53,6 +53,8 @@ char* strsGetDirectStr(Args* buffs_p, char* argPath) {
 }
 
 char* strsAppend(Args* buffs_p, char* strOrigin, char* strToAppend) {
+    pika_assert(NULL != strToAppend);
+    pika_assert(NULL != strOrigin);
     int32_t size = strGetSize(strOrigin) + strGetSize(strToAppend);
     char* buff = args_getBuff(buffs_p, size);
     char* strOut = strCopy(buff, strOrigin);
@@ -99,9 +101,17 @@ char* strsPopToken(Args* buffs_p, char* tokens, char sign) {
 }
 
 char* strsCopy(Args* buffs_p, char* source) {
+    pika_assert(source != NULL);
     int32_t size = strGetSize(source);
     char* buff = args_getBuff(buffs_p, size);
     return strCopy(buff, source);
+}
+
+char* strsCacheArg(Args* buffs_p, Arg* arg) {
+    pika_assert(arg != NULL);
+    char* res = strsCopy(buffs_p, arg_getStr(arg));
+    arg_deinit(arg);
+    return res;
 }
 
 char* strsFormat(Args* buffs_p, uint16_t buffSize, const char* fmt, ...) {
@@ -114,6 +124,7 @@ char* strsFormat(Args* buffs_p, uint16_t buffSize, const char* fmt, ...) {
 }
 
 Arg* arg_strAppend(Arg* arg_in, char* str_to_append) {
+    pika_assert(NULL != str_to_append);
     Args buffs = {0};
     char* str_out = strsAppend(&buffs, arg_getStr(arg_in), str_to_append);
     Arg* arg_out = arg_setStr(arg_in, "", str_out);

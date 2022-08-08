@@ -79,12 +79,22 @@ PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
     PIKA_RES errCode = PIKA_RES_OK;
     Arg* argNew = New_arg(NULL);
     argNew = arg_setStr(argNew, name, strIn);
+    if (NULL == argNew) {
+        return PIKA_RES_ERR_INVALID_PTR;
+    }
     args_setArg(self, argNew);
     return errCode;
 }
 
 PIKA_RES args_pushArg(Args* self, Arg* arg) {
-    link_addNode(self, arg);
+    Arg* new_arg = NULL;
+    if (!arg->serialized) {
+        new_arg = arg_copy(arg);
+        arg_deinit(arg);
+    } else {
+        new_arg = arg;
+    }
+    link_addNode(self, new_arg);
     return PIKA_RES_OK;
 }
 
@@ -172,7 +182,7 @@ ArgType args_getType(Args* self, char* name) {
     Arg* arg = NULL;
     arg = args_getArg(self, name);
     if (NULL == arg) {
-        return ARG_TYPE_NULL;
+        return ARG_TYPE_NONE;
     }
     return arg_getType(arg);
 }
@@ -216,6 +226,9 @@ PIKA_RES args_setStructWithSize(Args* self,
 
 void* args_getStruct(Args* self, char* name) {
     Arg* struct_arg = args_getArg(self, name);
+    if (NULL == struct_arg) {
+        return NULL;
+    }
     return arg_getContent(struct_arg);
 }
 
@@ -293,6 +306,9 @@ PIKA_RES __updateArg(Args* self, Arg* argNew) {
     arg_setNext((Arg*)priorNode, (Arg*)nodeToUpdate);
     goto exit;
 exit:
+    if (!argNew->serialized) {
+        return PIKA_RES_OK;
+    }
     arg_freeContent(argNew);
     return PIKA_RES_OK;
 }
@@ -402,7 +418,7 @@ char* getPrintStringFromPtr(Args* self, char* name, void* val) {
     Args buffs = {0};
     char* res = NULL;
     uint64_t intVal = (uintptr_t)val;
-    char* valString = strsFormat(&buffs, 32, "0x%llx", intVal);
+    char* valString = strsFormat(&buffs, 32, "%p", intVal);
     res = getPrintSring(self, name, valString);
     strsDeinit(&buffs);
     return res;
@@ -435,7 +451,8 @@ char* args_print(Args* self, char* name) {
         goto exit;
     }
 
-    if (argType_isObject(type)) {
+    if (argType_isObject(type) || ARG_TYPE_POINTER == type ||
+        ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
         void* val = args_getPtr(self, name);
         res = getPrintStringFromPtr(self, name, val);
         goto exit;
@@ -544,6 +561,26 @@ Arg* list_getArg(PikaList* self, int index) {
     return args_getArg(&self->super, i_str);
 }
 
+int list_getInt(PikaList* self, int index) {
+    Arg* arg = list_getArg(self, index);
+    return arg_getInt(arg);
+}
+
+double list_getFloat(PikaList* self, int index) {
+    Arg* arg = list_getArg(self, index);
+    return arg_getFloat(arg);
+}
+
+char* list_getStr(PikaList* self, int index) {
+    Arg* arg = list_getArg(self, index);
+    return arg_getStr(arg);
+}
+
+void* list_getPtr(PikaList* self, int index) {
+    Arg* arg = list_getArg(self, index);
+    return arg_getPtr(arg);
+}
+
 PIKA_RES list_append(PikaList* self, Arg* arg) {
     int top = args_getInt(&self->super, "top");
     char buff[11];
@@ -583,8 +620,14 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg) {
         res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);
         goto exit;
     }
+    if (ARG_TYPE_NONE == type) {
+        res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, "None");
+        goto exit;
+    }
 exit:
-    res = strsCopy(out_buffs, res);
+    if (NULL != res) {
+        res = strsCopy(out_buffs, res);
+    }
     strsDeinit(&buffs);
     return res;
 }
@@ -594,7 +637,7 @@ char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list) {
     char* res = NULL;
     char* fmt_buff = strsCopy(&buffs, fmt);
     char* fmt_item = strsPopToken(&buffs, fmt_buff, '%');
-    Arg* res_buff = arg_setStr(NULL, "", fmt_item);
+    Arg* res_buff = arg_newStr(fmt_item);
 
     for (size_t i = 0; i < list_getSize(list); i++) {
         Args buffs_item = {0};
@@ -602,6 +645,10 @@ char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list) {
         char* fmt_item = strsPopToken(&buffs_item, fmt_buff, '%');
         fmt_item = strsAppend(&buffs_item, "%", fmt_item);
         char* str_format = strsFormatArg(&buffs_item, fmt_item, arg);
+        if (NULL == str_format) {
+            strsDeinit(&buffs_item);
+            goto exit;
+        }
         res_buff = arg_strAppend(res_buff, str_format);
         strsDeinit(&buffs_item);
     }

@@ -29,6 +29,7 @@ char* pikaMaker_getFirstNocompiled(PikaMaker* self);
 void pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name);
 void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name);
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes);
+void pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path);
 
 #define LIB_VERSION_NUMBER 1
 #define LIB_INFO_BLOCK_SIZE 32

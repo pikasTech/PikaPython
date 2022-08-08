@@ -56,25 +56,6 @@ int32_t queue_pushArg(Queue* queue, Arg* arg) {
     return args_setArg(args, arg);
 }
 
-Arg* __queue_popArg(Queue* queue, uint8_t is_deinit_arg) {
-    Args* args = queue;
-    uint64_t top = args_getInt(args, "__t");
-    uint64_t bottom = args_getInt(args, "__b");
-    if (top - bottom < 1) {
-        return NULL;
-    }
-    /* add bottom */
-    args_setInt(args, "__b", bottom + 1);
-    char buff[11];
-    Arg* res = args_getArg(args, fast_itoa(buff, bottom));
-    if (is_deinit_arg) {
-        args_removeArg(args, res);
-    } else {
-        args_removeArg_notDeinitArg(args, res);
-    }
-    return res;
-}
-
 Arg* __queue_popArg_noRmoveArg(Queue* queue) {
     Args* args = queue;
     uint64_t top = args_getInt(args, "__t");
@@ -90,16 +71,8 @@ Arg* __queue_popArg_noRmoveArg(Queue* queue) {
     return res;
 }
 
-Arg* queue_popArg(Queue* queue) {
-    return __queue_popArg(queue, 1);
-}
-
-Arg* queue_popArg_notDeinitArg(Queue* queue) {
-    return __queue_popArg(queue, 0);
-}
-
 int32_t queue_pushInt(Queue* queue, int val) {
-    return queue_pushArg(queue, arg_setInt(NULL, "", val));
+    return queue_pushArg(queue, arg_newInt(val));
 }
 
 int64_t queue_popInt(Queue* queue) {
@@ -107,7 +80,7 @@ int64_t queue_popInt(Queue* queue) {
 }
 
 int32_t queue_pushFloat(Queue* queue, double val) {
-    return queue_pushArg(queue, arg_setFloat(NULL, "", val));
+    return queue_pushArg(queue, arg_newFloat(val));
 }
 
 double queue_popFloat(Queue* queue) {
@@ -115,7 +88,7 @@ double queue_popFloat(Queue* queue) {
 }
 
 int32_t queue_pushStr(Queue* queue, char* str) {
-    return queue_pushArg(queue, arg_setStr(NULL, "", str));
+    return queue_pushArg(queue, arg_newStr(str));
 }
 
 char* queue_popStr(Queue* queue) {

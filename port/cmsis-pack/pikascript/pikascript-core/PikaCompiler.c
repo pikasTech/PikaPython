@@ -371,7 +371,7 @@ int Lib_loadLibraryFileToArray(char* origin_file_name, char* out_folder) {
     FILE* fp = __platform_fopen(output_file_path, "wb+");
     char* array_name = strsGetLastToken(&buffs, origin_file_name, '/');
     array_name = strsReplace(&buffs, array_name, ".", "_");
-    __platform_printf("    loading %s[]...\n", array_name);
+    __platform_printf("  loading %s[]...\n", array_name);
     pika_fputs("#include \"PikaPlatform.h\"\n", fp);
     pika_fputs("/* warning: auto generated file, please do not modify */\n",
                fp);
@@ -404,7 +404,7 @@ static void __Maker_compileModuleWithInfo(PikaMaker* self, char* module_name) {
     char* input_file_name = strsAppend(&buffs, module_name, ".py");
     char* input_file_path =
         strsAppend(&buffs, obj_getStr(self, "pwd"), input_file_name);
-    __platform_printf("    compiling %s...\r\n", input_file_name);
+    __platform_printf("  compiling %s...\r\n", input_file_name);
     char* output_file_name = strsAppend(&buffs, module_name, ".py.o");
     char* output_file_path = NULL;
     output_file_path =
@@ -587,20 +587,30 @@ int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
     return 0;
 }
 
-void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
+void pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path) {
     Args context = {0};
     LibObj* lib = New_LibObj(NULL);
     Args buffs = {0};
-    __platform_printf("    linking %s...\n", lib_name);
+    __platform_printf("  linking %s...\n", lib_path);
     args_setPtr(&context, "__lib", lib);
     args_setPtr(&context, "__maker", self);
     args_foreach(self->list, __foreach_handler_linkCompiledModules, &context);
     args_deinit_stack(&context);
     char* pwd = obj_getStr(self, "pwd");
-    char* folder_path = strsAppend(&buffs, pwd, "pikascript-api/");
-    char* lib_file_path = strsAppend(&buffs, folder_path, lib_name);
+    char* lib_path_folder = strsCopy(&buffs, lib_path);
+    strPopLastToken(lib_path_folder, '/');
+    char* folder_path = strsAppend(&buffs, pwd, lib_path_folder);
+    folder_path = strsAppend(&buffs, folder_path, "/");
+    char* lib_file_path = strsAppend(&buffs, pwd, lib_path);
     LibObj_saveLibraryFile(lib, lib_file_path);
     Lib_loadLibraryFileToArray(lib_file_path, folder_path);
     LibObj_deinit(lib);
+    strsDeinit(&buffs);
+}
+
+void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
+    Args buffs = {0};
+    char* lib_file_path = strsAppend(&buffs, "pikascript-api/", lib_name);
+    pikaMaker_linkCompiledModulesFullPath(self, lib_file_path);
     strsDeinit(&buffs);
 }

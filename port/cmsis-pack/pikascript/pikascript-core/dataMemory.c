@@ -76,12 +76,12 @@ void pikaFree(void* mem, uint32_t size) {
     pikaMemInfo.heapUsed -= size;
 }
 
-uint16_t pikaMemNow(void) {
+uint32_t pikaMemNow(void) {
     return pikaMemInfo.heapUsed;
     // return 0;
 }
 
-uint16_t pikaMemMax(void) {
+uint32_t pikaMemMax(void) {
     return pikaMemInfo.heapUsedMax;
 }
 
@@ -109,6 +109,7 @@ Pool pool_init(uint32_t size, uint8_t aline) {
     pool.mem = __platform_malloc(pool_aline(&pool, pool.size));
     pool.first_free_block = 0;
     pool.purl_free_block_start = 0;
+    pool.inited = PIKA_TRUE;
     return pool;
 }
 
@@ -294,4 +295,28 @@ uint8_t bitmap_get(BitMap bitmap, uint32_t index) {
 
 void bitmap_deinit(BitMap bitmap) {
     __platform_free(bitmap);
+}
+
+#if PIKA_POOL_ENABLE
+Pool pikaPool = {0};
+void* __user_malloc(size_t size) {
+    return pool_malloc(&pikaPool, size);
+}
+void __user_free(void* ptrm, size_t size) {
+    pool_free(&pikaPool, ptrm, size);
+}
+#endif
+
+void mem_pool_init(void) {
+#if PIKA_POOL_ENABLE
+    if (!pikaPool.inited) {
+        pikaPool = pool_init(PIKA_POOL_SIZE, PIKA_POOL_ALIGN);
+    }
+#endif
+}
+
+void mem_pool_deinit(void) {
+#if PIKA_POOL_ENABLE
+    pool_deinit(&pikaPool);
+#endif
 }

@@ -29,6 +29,7 @@
 #define __MEMORY_H__
 
 #include "PikaPlatform.h"
+#include "PikaVersion.h"
 
 /*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
  */
@@ -54,14 +55,15 @@ struct Pool{
         uint32_t size;
         uint32_t first_free_block;
         uint32_t purl_free_block_start;
+        PIKA_BOOL inited;
     )
 };
 /* clang-format on */
 
 void pikaFree(void* mem, uint32_t size);
 void* pikaMalloc(uint32_t size);
-uint16_t pikaMemNow(void);
-uint16_t pikaMemMax(void);
+uint32_t pikaMemNow(void);
+uint32_t pikaMemMax(void);
 void pikaMemMaxReset(void);
 
 uint32_t aline_by(uint32_t size, uint32_t aline);
@@ -72,11 +74,8 @@ uint8_t bitmap_get(BitMap bitmap, uint32_t index);
 uint8_t bitmap_getByte(BitMap bitmap, uint32_t index);
 void bitmap_deinit(BitMap bitmap);
 
-Pool pool_init(uint32_t size, uint8_t aline);
-void* pool_malloc(Pool* pool, uint32_t size);
-void pool_free(Pool* pool, void* mem, uint32_t size);
-void pool_deinit(Pool* pool);
-void pool_printBlocks(Pool* pool, uint32_t block_min, uint32_t block_max);
+void mem_pool_deinit(void);
+void mem_pool_init(void);
 
 #undef __DATA_MEMORY_CLASS_IMPLEMENT__
 #endif

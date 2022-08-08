@@ -37,7 +37,7 @@ char* strAppend_unlimited(char* strOut, char* pData);
 char* strAppendWithSize(char* strOut, char* pData, int32_t Size);
 /* cut */
 char* strCut(char* strOut, char* strIn, char startSign, char endSign);
-/* assert */
+/* pika_assert */
 int32_t strIsStartWith(char* str, char* strStart);
 int32_t strEqu(char* str1, char* str2);
 /* delete */
@@ -60,5 +60,6 @@ char* strPointToLastToken(char* strIn, char sign);
 char* strGetLine(char* strOut, char* strIn);
 int32_t strGetLineSize(char* str);
 char* strPopLastToken(char* strIn, char sign);
+char* strGetLastLine(char* strOut, char* strIn);
 
 #endif

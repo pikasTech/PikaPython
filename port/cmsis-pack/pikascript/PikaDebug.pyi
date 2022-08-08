@@ -1,7 +1,4 @@
-#api
-from PikaObj import *
-
-class Debuger(TinyObj):
+class Debuger:
     def __init__(self):
         pass
 

@@ -33,8 +33,8 @@ typedef struct Stack_t {
     Arg* stack_pyload;
     Arg* stack_size_array;
     uint8_t* sp;
-    int16_t* sp_size;
-    int16_t top;
+    int32_t* sp_size;
+    int32_t top;
     size_t stack_totle_size;
 } Stack;
 
@@ -42,11 +42,12 @@ int32_t stack_deinit(Stack* stack);
 
 int32_t stack_pushStr(Stack* stack, char* str);
 char* stack_popStr(Stack* stack, char* outBuff);
-Arg* stack_popArg(Stack* stack);
 int32_t stack_pushArg(Stack* stack, Arg* arg);
-int8_t stack_getTop(Stack* stack);
+Arg* stack_popArg_alloc(Stack* stack);
+Arg* stack_popArg(Stack* stack, Arg* arg_dict);
+int32_t stack_getTop(Stack* stack);
 int32_t stack_init(Stack* stack);
-int16_t stack_popSize(Stack* stack);
-void stack_pushSize(Stack* stack, int16_t size);
+int32_t stack_popSize(Stack* stack);
+void stack_pushSize(Stack* stack, int32_t size);
 void stack_reset(Stack* stack);
 #endif

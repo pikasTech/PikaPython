@@ -9,6 +9,12 @@
 
 PikaObj *New_PikaStdData_ByteArray(Args *args);
 
-void PikaStdData_ByteArray_fromString(PikaObj *self, char* s);
+int PikaStdData_ByteArray___getitem__(PikaObj *self, int __key);
+void PikaStdData_ByteArray___init__(PikaObj *self, Arg* bytes);
+Arg* PikaStdData_ByteArray___iter__(PikaObj *self);
+Arg* PikaStdData_ByteArray___next__(PikaObj *self);
+void PikaStdData_ByteArray___setitem__(PikaObj *self, int __key, int __val);
+char* PikaStdData_ByteArray___str__(PikaObj *self);
+char* PikaStdData_ByteArray_decode(PikaObj *self);
 
 #endif

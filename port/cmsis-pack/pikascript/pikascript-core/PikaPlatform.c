@@ -101,6 +101,7 @@ PIKA_WEAK void __platform_wait(void) {
     while (1) {
     };
 }
+
 PIKA_WEAK void* __platform_memset(void* mem, int ch, size_t size) {
     return memset(mem, ch, size);
 }
@@ -119,6 +120,7 @@ PIKA_WEAK char __platform_getchar(void) {
 #endif
 }
 
+/* fopen */
 PIKA_WEAK FILE* __platform_fopen(const char* filename, const char* modes) {
 #if defined(__linux) || defined(_WIN32)
     return fopen(filename, modes);
@@ -129,6 +131,7 @@ PIKA_WEAK FILE* __platform_fopen(const char* filename, const char* modes) {
 #endif
 }
 
+/* fclose */
 PIKA_WEAK int __platform_fclose(FILE* stream) {
 #if defined(__linux) || defined(_WIN32)
     return fclose(stream);
@@ -139,6 +142,7 @@ PIKA_WEAK int __platform_fclose(FILE* stream) {
 #endif
 }
 
+/* fwrite */
 PIKA_WEAK size_t __platform_fwrite(const void* ptr,
                                    size_t size,
                                    size_t n,
@@ -152,6 +156,7 @@ PIKA_WEAK size_t __platform_fwrite(const void* ptr,
 #endif
 }
 
+/* fread */
 PIKA_WEAK size_t __platform_fread(void* ptr,
                                   size_t size,
                                   size_t n,
@@ -160,6 +165,28 @@ PIKA_WEAK size_t __platform_fread(void* ptr,
     return fread(ptr, size, n, stream);
 #else
     __platform_printf("[error]: __platform_fread need implementation!\r\n");
+    while (1) {
+    }
+#endif
+}
+
+/* fseek */
+PIKA_WEAK int __platform_fseek(FILE* stream, long offset, int whence) {
+#if defined(__linux) || defined(_WIN32)
+    return fseek(stream, offset, whence);
+#else
+    __platform_printf("[error]: __platform_fseek need implementation!\r\n");
+    while (1) {
+    }
+#endif
+}
+
+/* ftell */
+PIKA_WEAK long __platform_ftell(FILE* stream) {
+#if defined(__linux) || defined(_WIN32)
+    return ftell(stream);
+#else
+    __platform_printf("[error]: __platform_ftell need implementation!\r\n");
     while (1) {
     }
 #endif

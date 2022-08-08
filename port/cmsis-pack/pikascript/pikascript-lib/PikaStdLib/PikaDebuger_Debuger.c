@@ -26,7 +26,7 @@ static enum shell_state __obj_shellLineHandler_debug(PikaObj* self,
     /* print */
     if (strIsStartWith(input_line, "p ")) {
         char* path = input_line + 2;
-        Arg* asm_buff = arg_setStr(NULL, "", "B0\n1 REF ");
+        Arg* asm_buff = arg_newStr("B0\n1 REF ");
         asm_buff = arg_strAppend(asm_buff, path);
         asm_buff = arg_strAppend(asm_buff, "\n0 RUN print\n");
         pikaVM_runAsm(__pikaMain, arg_getStr(asm_buff));

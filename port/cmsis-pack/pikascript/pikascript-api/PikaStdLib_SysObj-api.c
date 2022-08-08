@@ -2,32 +2,32 @@
 /* Warning! Don't modify this file! */
 /* ******************************** */
 #include "PikaStdLib_SysObj.h"
-#include "BaseObj.h"
+#include "TinyObj.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "BaseObj.h"
 
 void PikaStdLib_SysObj___getitem__Method(PikaObj *self, Args *args){
-    Arg* key = args_getArg(args, "key");
     Arg* obj = args_getArg(args, "obj");
-    Arg* res = PikaStdLib_SysObj___getitem__(self, key, obj);
+    Arg* key = args_getArg(args, "key");
+    Arg* res = PikaStdLib_SysObj___getitem__(self, obj, key);
     method_returnArg(args, res);
 }
 
 void PikaStdLib_SysObj___setitem__Method(PikaObj *self, Args *args){
-    Arg* key = args_getArg(args, "key");
     Arg* obj = args_getArg(args, "obj");
-    char* obj_str = args_getStr(args, "obj_str");
+    Arg* key = args_getArg(args, "key");
     Arg* val = args_getArg(args, "val");
-    PikaStdLib_SysObj___setitem__(self, key, obj, obj_str, val);
+    Arg* res = PikaStdLib_SysObj___setitem__(self, obj, key, val);
+    method_returnArg(args, res);
 }
 
 void PikaStdLib_SysObj___slice__Method(PikaObj *self, Args *args){
-    Arg* end = args_getArg(args, "end");
     Arg* obj = args_getArg(args, "obj");
     Arg* start = args_getArg(args, "start");
+    Arg* end = args_getArg(args, "end");
     int step = args_getInt(args, "step");
-    Arg* res = PikaStdLib_SysObj___slice__(self, end, obj, start, step);
+    Arg* res = PikaStdLib_SysObj___slice__(self, obj, start, end, step);
     method_returnArg(args, res);
 }
 
@@ -96,6 +96,13 @@ void PikaStdLib_SysObj_listMethod(PikaObj *self, Args *args){
     method_returnArg(args, res);
 }
 
+void PikaStdLib_SysObj_openMethod(PikaObj *self, Args *args){
+    char* path = args_getStr(args, "path");
+    char* mode = args_getStr(args, "mode");
+    PikaObj* res = PikaStdLib_SysObj_open(self, path, mode);
+    method_returnObj(args, res);
+}
+
 void PikaStdLib_SysObj_ordMethod(PikaObj *self, Args *args){
     char* val = args_getStr(args, "val");
     int res = PikaStdLib_SysObj_ord(self, val);
@@ -132,13 +139,14 @@ void PikaStdLib_SysObj_strMethod(PikaObj *self, Args *args){
 
 void PikaStdLib_SysObj_typeMethod(PikaObj *self, Args *args){
     Arg* arg = args_getArg(args, "arg");
-    PikaStdLib_SysObj_type(self, arg);
+    Arg* res = PikaStdLib_SysObj_type(self, arg);
+    method_returnArg(args, res);
 }
 
 PikaObj *New_PikaStdLib_SysObj(Args *args){
-    PikaObj *self = New_BaseObj(args);
+    PikaObj *self = New_TinyObj(args);
     class_defineMethod(self, "__getitem__(obj:any,key:any)->any", PikaStdLib_SysObj___getitem__Method);
-    class_defineMethod(self, "__setitem__(obj:any,key:any,val:any,obj_str:str)", PikaStdLib_SysObj___setitem__Method);
+    class_defineMethod(self, "__setitem__(obj:any,key:any,val:any)->any", PikaStdLib_SysObj___setitem__Method);
     class_defineMethod(self, "__slice__(obj:any,start:any,end:any,step:int)->any", PikaStdLib_SysObj___slice__Method);
     class_defineMethod(self, "bytes(val:any)->bytes", PikaStdLib_SysObj_bytesMethod);
     class_defineMethod(self, "cformat(fmt:str,*var)->str", PikaStdLib_SysObj_cformatMethod);
@@ -151,13 +159,14 @@ PikaObj *New_PikaStdLib_SysObj(Args *args){
     class_defineMethod(self, "iter(arg:any)->any", PikaStdLib_SysObj_iterMethod);
     class_defineMethod(self, "len(arg:any)->int", PikaStdLib_SysObj_lenMethod);
     class_defineMethod(self, "list()->any", PikaStdLib_SysObj_listMethod);
+    class_defineMethod(self, "open(path:str,mode:str)->object", PikaStdLib_SysObj_openMethod);
     class_defineMethod(self, "ord(val:str)->int", PikaStdLib_SysObj_ordMethod);
     class_defineMethod(self, "print(*val)", PikaStdLib_SysObj_printMethod);
     class_defineMethod(self, "printNoEnd(val:any)", PikaStdLib_SysObj_printNoEndMethod);
     class_defineMethod(self, "range(a1:int,a2:int)->any", PikaStdLib_SysObj_rangeMethod);
     class_defineMethod(self, "remove(argPath:str)", PikaStdLib_SysObj_removeMethod);
     class_defineMethod(self, "str(arg:any)->str", PikaStdLib_SysObj_strMethod);
-    class_defineMethod(self, "type(arg:any)", PikaStdLib_SysObj_typeMethod);
+    class_defineMethod(self, "type(arg:any)->any", PikaStdLib_SysObj_typeMethod);
     return self;
 }
 

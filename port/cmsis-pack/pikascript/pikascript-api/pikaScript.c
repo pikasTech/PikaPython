@@ -8,8 +8,8 @@
 PikaObj *__pikaMain;
 PikaObj *pikaScriptInit(void){
     __platform_printf("======[pikascript packages installed]======\r\n");
-    __platform_printf("PikaStdLib==v1.8.7\r\n");
-    __platform_printf("pikascript-core==v1.8.7\r\n");
+    pks_printVersion();
+    __platform_printf("PikaStdLib==v1.10.0\r\n");
     __platform_printf("===========================================\r\n");
     __pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
