@@ -1220,143 +1220,206 @@ static uint8_t VMState_getInputArgNum(VMState* vs) {
     return num;
 }
 
+void VMOperatorInfo_init(VMOperatorInfo* info,
+                         PikaObj* self,
+                         VMState* vs,
+                         char* data,
+                         Arg* arg_ret_reg) {
+    info->opt = data;
+    info->ret = arg_ret_reg;
+    info->t1 = arg_getType(info->a1);
+    info->t2 = arg_getType(info->a2);
+    if (info->t1 == ARG_TYPE_INT) {
+        info->i1 = arg_getInt(info->a1);
+        info->f1 = (float)info->i1;
+    } else if (info->t1 == ARG_TYPE_FLOAT) {
+        info->f1 = arg_getFloat(info->a1);
+        info->i1 = (int)info->f1;
+    }
+    if (info->t2 == ARG_TYPE_INT) {
+        info->i2 = arg_getInt(info->a2);
+        info->f2 = (float)info->i2;
+    } else if (info->t2 == ARG_TYPE_FLOAT) {
+        info->f2 = arg_getFloat(info->a2);
+        info->i2 = (int)info->f2;
+    }
+}
+
+static void _OPT_ADD(VMOperatorInfo* opt) {
+    if ((opt->t1 == ARG_TYPE_STRING) && (opt->t2 == ARG_TYPE_STRING)) {
+        char* num1_s = NULL;
+        char* num2_s = NULL;
+        Args str_opt_buffs = {0};
+        num1_s = arg_getStr(opt->a1);
+        num2_s = arg_getStr(opt->a2);
+        char* opt_str_out = strsAppend(&str_opt_buffs, num1_s, num2_s);
+        opt->ret = arg_setStr(opt->ret, "", opt_str_out);
+        strsDeinit(&str_opt_buffs);
+        return;
+    }
+    /* match float */
+    if ((opt->t1 == ARG_TYPE_FLOAT) || opt->t2 == ARG_TYPE_FLOAT) {
+        opt->ret = arg_setFloat(opt->ret, "", opt->f1 + opt->f2);
+        return;
+    }
+    /* int is default */
+    opt->ret = arg_setInt(opt->ret, "", opt->i1 + opt->i2);
+    return;
+}
+
+static void _OPT_SUB(VMOperatorInfo* opt) {
+    if (opt->t2 == ARG_TYPE_NONE) {
+        if (opt->t1 == ARG_TYPE_INT) {
+            opt->ret = arg_setInt(opt->ret, "", -opt->i1);
+            return;
+        }
+        if (opt->t1 == ARG_TYPE_FLOAT) {
+            opt->ret = arg_setFloat(opt->ret, "", -opt->f1);
+            return;
+        }
+    }
+    if ((opt->t1 == ARG_TYPE_FLOAT) || opt->t2 == ARG_TYPE_FLOAT) {
+        opt->ret = arg_setFloat(opt->ret, "", opt->f1 - opt->f2);
+        return;
+    }
+    opt->ret = arg_setInt(opt->ret, "", opt->i1 - opt->i2);
+    return;
+}
+
+static void _OPT_EQU(VMOperatorInfo* opt) {
+    int8_t is_equ = -1;
+    if (opt->t1 == ARG_TYPE_NONE && opt->t2 == ARG_TYPE_NONE) {
+        is_equ = 1;
+        goto EQU_exit;
+    }
+    /* type not equl, and type is not int or float */
+    if (opt->t1 != opt->t2) {
+        if ((opt->t1 != ARG_TYPE_FLOAT) && (opt->t1 != ARG_TYPE_INT)) {
+            is_equ = 0;
+            goto EQU_exit;
+        }
+        if ((opt->t2 != ARG_TYPE_FLOAT) && (opt->t2 != ARG_TYPE_INT)) {
+            is_equ = 0;
+            goto EQU_exit;
+        }
+    }
+    /* string compire */
+    if (opt->t1 == ARG_TYPE_STRING) {
+        is_equ = strEqu(arg_getStr(opt->a1), arg_getStr(opt->a2));
+        goto EQU_exit;
+    }
+    /* bytes compire */
+    if (opt->t1 == ARG_TYPE_BYTES) {
+        if (arg_getBytesSize(opt->a1) != arg_getBytesSize(opt->a2)) {
+            is_equ = 0;
+            goto EQU_exit;
+        }
+        is_equ = 1;
+        for (size_t i = 0; i < arg_getBytesSize(opt->a1); i++) {
+            if (arg_getBytes(opt->a1)[i] != arg_getBytes(opt->a2)[i]) {
+                is_equ = 0;
+                goto EQU_exit;
+            }
+        }
+        goto EQU_exit;
+    }
+    /* default: int and float */
+    is_equ = ((opt->f1 - opt->f2) * (opt->f1 - opt->f2) < (float)0.000001);
+    goto EQU_exit;
+EQU_exit:
+    if (strEqu("==", opt->opt)) {
+        opt->ret = arg_setInt(opt->ret, "", is_equ);
+    } else {
+        opt->ret = arg_setInt(opt->ret, "", !is_equ);
+    }
+    return;
+}
+
 static Arg* VM_instruction_handler_OPT(PikaObj* self,
                                        VMState* vs,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    Arg* outArg = arg_ret_reg;
-    uint8_t input_arg_num = VMState_getInputArgNum(vs);
-    Arg* arg1 = NULL;
-    Arg* arg2 = NULL;
+    VMOperatorInfo opt = {0};
+    opt.input_arg_num = VMState_getInputArgNum(vs);
     arg_newReg(arg_reg1, PIKA_ARG_BUFF_SIZE);
     arg_newReg(arg_reg2, PIKA_ARG_BUFF_SIZE);
-    if (input_arg_num == 2) {
+    if (opt.input_arg_num == 2) {
         /* tow input */
-        arg2 = stack_popArg(&(vs->stack), &arg_reg2);
-        arg1 = stack_popArg(&(vs->stack), &arg_reg1);
-    } else if (input_arg_num == 1) {
+        opt.a2 = stack_popArg(&(vs->stack), &arg_reg2);
+        opt.a1 = stack_popArg(&(vs->stack), &arg_reg1);
+    } else if (opt.input_arg_num == 1) {
         /* only one input */
-        arg2 = stack_popArg(&(vs->stack), &arg_reg2);
-        arg1 = NULL;
+        opt.a2 = stack_popArg(&(vs->stack), &arg_reg2);
+        opt.a1 = NULL;
     }
-    ArgType type_arg1 = arg_getType(arg1);
-    ArgType type_arg2 = arg_getType(arg2);
-    int num1_i = 0;
-    int num2_i = 0;
-    float num1_f = 0.0;
-    float num2_f = 0.0;
+    VMOperatorInfo_init(&opt, self, vs, data, arg_ret_reg);
     /* get int and float num */
-    if (type_arg1 == ARG_TYPE_INT) {
-        num1_i = arg_getInt(arg1);
-        num1_f = (float)num1_i;
-    } else if (type_arg1 == ARG_TYPE_FLOAT) {
-        num1_f = arg_getFloat(arg1);
-        num1_i = (int)num1_f;
-    }
-    if (type_arg2 == ARG_TYPE_INT) {
-        num2_i = arg_getInt(arg2);
-        num2_f = (float)num2_i;
-    } else if (type_arg2 == ARG_TYPE_FLOAT) {
-        num2_f = arg_getFloat(arg2);
-        num2_i = (int)num2_f;
-    }
     if (strEqu("+", data)) {
-        if ((type_arg1 == ARG_TYPE_STRING) && (type_arg2 == ARG_TYPE_STRING)) {
-            char* num1_s = NULL;
-            char* num2_s = NULL;
-            Args str_opt_buffs = {0};
-            num1_s = arg_getStr(arg1);
-            num2_s = arg_getStr(arg2);
-            char* opt_str_out = strsAppend(&str_opt_buffs, num1_s, num2_s);
-            outArg = arg_setStr(outArg, "", opt_str_out);
-            strsDeinit(&str_opt_buffs);
-            goto OPT_exit;
-        }
-        /* match float */
-        if ((type_arg1 == ARG_TYPE_FLOAT) || type_arg2 == ARG_TYPE_FLOAT) {
-            outArg = arg_setFloat(outArg, "", num1_f + num2_f);
-            goto OPT_exit;
-        }
-        /* int is default */
-        outArg = arg_setInt(outArg, "", num1_i + num2_i);
+        _OPT_ADD(&opt);
         goto OPT_exit;
     }
     if (strEqu("-", data)) {
-        if (type_arg2 == ARG_TYPE_NONE) {
-            if (type_arg1 == ARG_TYPE_INT) {
-                outArg = arg_setInt(outArg, "", -num1_i);
-                goto OPT_exit;
-            }
-            if (type_arg1 == ARG_TYPE_FLOAT) {
-                outArg = arg_setFloat(outArg, "", -num1_f);
-                goto OPT_exit;
-            }
-        }
-        if ((type_arg1 == ARG_TYPE_FLOAT) || type_arg2 == ARG_TYPE_FLOAT) {
-            outArg = arg_setFloat(outArg, "", num1_f - num2_f);
-            goto OPT_exit;
-        }
-        outArg = arg_setInt(outArg, "", num1_i - num2_i);
+        _OPT_SUB(&opt);
         goto OPT_exit;
     }
     if (strEqu("*", data)) {
-        if ((type_arg1 == ARG_TYPE_FLOAT) || type_arg2 == ARG_TYPE_FLOAT) {
-            outArg = arg_setFloat(outArg, "", num1_f * num2_f);
+        if ((opt.t1 == ARG_TYPE_FLOAT) || opt.t2 == ARG_TYPE_FLOAT) {
+            opt.ret = arg_setFloat(opt.ret, "", opt.f1 * opt.f2);
             goto OPT_exit;
         }
-        outArg = arg_setInt(outArg, "", num1_i * num2_i);
+        opt.ret = arg_setInt(opt.ret, "", opt.i1 * opt.i2);
         goto OPT_exit;
     }
     if (strEqu("/", data)) {
-        if (0 == num2_f) {
+        if (0 == opt.f2) {
             VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
             args_setSysOut(vs->locals->list,
                            "ZeroDivisionError: division by zero");
-            outArg = NULL;
+            opt.ret = NULL;
             goto OPT_exit;
         }
-        outArg = arg_setFloat(outArg, "", num1_f / num2_f);
+        opt.ret = arg_setFloat(opt.ret, "", opt.f1 / opt.f2);
         goto OPT_exit;
     }
     if (strEqu("<", data)) {
-        outArg = arg_setInt(outArg, "", num1_f < num2_f);
+        opt.ret = arg_setInt(opt.ret, "", opt.f1 < opt.f2);
         goto OPT_exit;
     }
     if (strEqu(">", data)) {
-        outArg = arg_setInt(outArg, "", num1_f > num2_f);
+        opt.ret = arg_setInt(opt.ret, "", opt.f1 > opt.f2);
         goto OPT_exit;
     }
     if (strEqu("%", data)) {
-        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
-            outArg = arg_setInt(outArg, "", num1_i % num2_i);
+        if ((opt.t1 == ARG_TYPE_INT) && (opt.t2 == ARG_TYPE_INT)) {
+            opt.ret = arg_setInt(opt.ret, "", opt.i1 % opt.i2);
             goto OPT_exit;
         }
         VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf(
             "TypeError: unsupported operand type(s) for %: 'float'\n");
-        outArg = NULL;
+        opt.ret = NULL;
         goto OPT_exit;
     }
     if (strEqu("**", data)) {
-        if (type_arg1 == ARG_TYPE_INT && type_arg2 == ARG_TYPE_INT) {
+        if (opt.t1 == ARG_TYPE_INT && opt.t2 == ARG_TYPE_INT) {
             int res = 1;
-            for (int i = 0; i < num2_i; i++) {
-                res = res * num1_i;
+            for (int i = 0; i < opt.i2; i++) {
+                res = res * opt.i1;
             }
-            outArg = arg_setInt(outArg, "", res);
+            opt.ret = arg_setInt(opt.ret, "", res);
             goto OPT_exit;
-        } else if (type_arg1 == ARG_TYPE_FLOAT && type_arg2 == ARG_TYPE_INT) {
+        } else if (opt.t1 == ARG_TYPE_FLOAT && opt.t2 == ARG_TYPE_INT) {
             float res = 1;
-            for (int i = 0; i < num2_i; i++) {
-                res = res * num1_f;
+            for (int i = 0; i < opt.i2; i++) {
+                res = res * opt.f1;
             }
-            outArg = arg_setFloat(outArg, "", res);
+            opt.ret = arg_setFloat(opt.ret, "", res);
             goto OPT_exit;
         } else {
 #if PIKA_MATH_ENABLE
             float res = 1;
-            res = pow(num1_f, num2_f);
-            outArg = arg_setFloat(outArg, "", res);
+            res = pow(opt.f1, opt.f2);
+            opt.ret = arg_setFloat(opt.ret, "", res);
             goto OPT_exit;
 #else
             VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
@@ -1367,154 +1430,123 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         }
     }
     if (strEqu("//", data)) {
-        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
-            outArg = arg_setInt(outArg, "", num1_i / num2_i);
+        if ((opt.t1 == ARG_TYPE_INT) && (opt.t2 == ARG_TYPE_INT)) {
+            opt.ret = arg_setInt(opt.ret, "", opt.i1 / opt.i2);
             goto OPT_exit;
         }
         VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf(
             "TypeError: unsupported operand type(s) for //: 'float'\n");
-        outArg = NULL;
+        opt.ret = NULL;
         goto OPT_exit;
     }
     if (strEqu("==", data) || strEqu("!=", data)) {
-        int8_t is_equ = -1;
-        if (type_arg1 == ARG_TYPE_NONE && type_arg2 == ARG_TYPE_NONE) {
-            is_equ = 1;
-            goto EQU_exit;
-        }
-        /* type not equl, and type is not int or float */
-        if (type_arg1 != type_arg2) {
-            if ((type_arg1 != ARG_TYPE_FLOAT) && (type_arg1 != ARG_TYPE_INT)) {
-                is_equ = 0;
-                goto EQU_exit;
+        _OPT_EQU(&opt);
+        goto OPT_exit;
+    }
+    if (strEqu(" is ", data)) {
+        if (argType_isObject(opt.t1) && argType_isObject(opt.t2)) {
+            if (arg_getPtr(opt.a1) == arg_getPtr(opt.a2)) {
+                opt.ret = arg_setInt(opt.ret, "", 1);
+            } else {
+                opt.ret = arg_setInt(opt.ret, "", 0);
             }
-            if ((type_arg2 != ARG_TYPE_FLOAT) && (type_arg2 != ARG_TYPE_INT)) {
-                is_equ = 0;
-                goto EQU_exit;
-            }
+            goto OPT_exit;
         }
-        /* string compire */
-        if (type_arg1 == ARG_TYPE_STRING) {
-            is_equ = strEqu(arg_getStr(arg1), arg_getStr(arg2));
-            goto EQU_exit;
-        }
-        /* bytes compire */
-        if (type_arg1 == ARG_TYPE_BYTES) {
-            if (arg_getBytesSize(arg1) != arg_getBytesSize(arg2)) {
-                is_equ = 0;
-                goto EQU_exit;
-            }
-            is_equ = 1;
-            for (size_t i = 0; i < arg_getBytesSize(arg1); i++) {
-                if (arg_getBytes(arg1)[i] != arg_getBytes(arg2)[i]) {
-                    is_equ = 0;
-                    goto EQU_exit;
-                }
-            }
-            goto EQU_exit;
-        }
-        /* default: int and float */
-        is_equ = ((num1_f - num2_f) * (num1_f - num2_f) < (float)0.000001);
-        goto EQU_exit;
-    EQU_exit:
-        if (strEqu("==", data)) {
-            outArg = arg_setInt(outArg, "", is_equ);
-        } else {
-            outArg = arg_setInt(outArg, "", !is_equ);
-        }
+        opt.opt = "==";
+        _OPT_EQU(&opt);
         goto OPT_exit;
     }
     if (strEqu(">=", data)) {
-        outArg = arg_setInt(
-            outArg, "",
-            (num1_f > num2_f) ||
-                ((num1_f - num2_f) * (num1_f - num2_f) < (float)0.000001));
+        opt.ret = arg_setInt(
+            opt.ret, "",
+            (opt.f1 > opt.f2) ||
+                ((opt.f1 - opt.f2) * (opt.f1 - opt.f2) < (float)0.000001));
         goto OPT_exit;
     }
     if (strEqu("<=", data)) {
-        outArg = arg_setInt(
-            outArg, "",
-            (num1_f < num2_f) ||
-                ((num1_f - num2_f) * (num1_f - num2_f) < (float)0.000001));
+        opt.ret = arg_setInt(
+            opt.ret, "",
+            (opt.f1 < opt.f2) ||
+                ((opt.f1 - opt.f2) * (opt.f1 - opt.f2) < (float)0.000001));
         goto OPT_exit;
     }
     if (strEqu("&", data)) {
-        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
-            outArg = arg_setInt(outArg, "", num1_i & num2_i);
+        if ((opt.t1 == ARG_TYPE_INT) && (opt.t2 == ARG_TYPE_INT)) {
+            opt.ret = arg_setInt(opt.ret, "", opt.i1 & opt.i2);
             goto OPT_exit;
         }
         VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf(
             "TypeError: unsupported operand type(s) for &: 'float'\n");
-        outArg = NULL;
+        opt.ret = NULL;
         goto OPT_exit;
     }
     if (strEqu("|", data)) {
-        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
-            outArg = arg_setInt(outArg, "", num1_i | num2_i);
+        if ((opt.t1 == ARG_TYPE_INT) && (opt.t2 == ARG_TYPE_INT)) {
+            opt.ret = arg_setInt(opt.ret, "", opt.i1 | opt.i2);
             goto OPT_exit;
         }
         VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf(
             "TypeError: unsupported operand type(s) for |: 'float'\n");
-        outArg = NULL;
+        opt.ret = NULL;
         goto OPT_exit;
     }
     if (strEqu("~", data)) {
-        if (type_arg2 == ARG_TYPE_INT) {
-            outArg = arg_setInt(outArg, "", ~num2_i);
+        if (opt.t2 == ARG_TYPE_INT) {
+            opt.ret = arg_setInt(opt.ret, "", ~opt.i2);
             goto OPT_exit;
         }
         VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf(
             "TypeError: unsupported operand type(s) for ~: 'float'\n");
-        outArg = NULL;
+        opt.ret = NULL;
         goto OPT_exit;
     }
     if (strEqu(">>", data)) {
-        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
-            outArg = arg_setInt(outArg, "", num1_i >> num2_i);
+        if ((opt.t1 == ARG_TYPE_INT) && (opt.t2 == ARG_TYPE_INT)) {
+            opt.ret = arg_setInt(opt.ret, "", opt.i1 >> opt.i2);
             goto OPT_exit;
         }
         VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf(
             "TypeError: unsupported operand type(s) for >>: 'float'\n");
-        outArg = NULL;
+        opt.ret = NULL;
         goto OPT_exit;
     }
     if (strEqu("<<", data)) {
-        if ((type_arg1 == ARG_TYPE_INT) && (type_arg2 == ARG_TYPE_INT)) {
-            outArg = arg_setInt(outArg, "", num1_i << num2_i);
+        if ((opt.t1 == ARG_TYPE_INT) && (opt.t2 == ARG_TYPE_INT)) {
+            opt.ret = arg_setInt(opt.ret, "", opt.i1 << opt.i2);
             goto OPT_exit;
         }
         VMState_setErrorCode(vs, PIKA_RES_ERR_OPERATION_FAILED);
         __platform_printf(
             "TypeError: unsupported operand type(s) for <<: 'float'\n");
-        outArg = NULL;
+        opt.ret = NULL;
         goto OPT_exit;
     }
     if (strEqu(" and ", data)) {
-        outArg = arg_setInt(outArg, "", num1_i && num2_i);
+        opt.ret = arg_setInt(opt.ret, "", opt.i1 && opt.i2);
         goto OPT_exit;
     }
     if (strEqu(" or ", data)) {
-        outArg = arg_setInt(outArg, "", num1_i || num2_i);
+        opt.ret = arg_setInt(opt.ret, "", opt.i1 || opt.i2);
         goto OPT_exit;
     }
     if (strEqu(" not ", data)) {
-        outArg = arg_setInt(outArg, "", !num2_i);
+        opt.ret = arg_setInt(opt.ret, "", !opt.i2);
         goto OPT_exit;
     }
     if (strEqu(" import ", data)) {
-        outArg = NULL;
+        opt.ret = NULL;
         goto OPT_exit;
     }
 OPT_exit:
-    arg_deinit(arg1);
-    arg_deinit(arg2);
-    if (NULL != outArg) {
-        return outArg;
+    arg_deinit(opt.a1);
+    arg_deinit(opt.a2);
+    if (NULL != opt.ret) {
+        return opt.ret;
     }
     return NULL;
 }

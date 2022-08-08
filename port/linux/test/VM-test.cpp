@@ -1066,3 +1066,27 @@ TEST(VM, del_) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, is) {
+    char* line =
+        "a = 1\n"
+        "b = a\n"
+        "res1 = a is b\n"
+        "res2 = 1 is 1\n"
+        "c = TinyObj()\n"
+        "d = c\n"
+        "res3 = c is d\n"
+        "res4 = c is None\n";
+    ;
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_EQ(obj_getInt(self, "res1"), 1);
+    EXPECT_EQ(obj_getInt(self, "res2"), 1);
+    EXPECT_EQ(obj_getInt(self, "res3"), 1);
+    EXPECT_EQ(obj_getInt(self, "res4"), 0);
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -3595,3 +3595,19 @@ TEST(parser, issue_fa13f4) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(parser, _is) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a is b\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF a\n"
+                 "1 REF b\n"
+                 "0 OPT  is \n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

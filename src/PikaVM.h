@@ -82,6 +82,20 @@ struct VMState {
     TryInfo* try_info;
 };
 
+typedef struct VMOperatorInfo VMOperatorInfo;
+struct VMOperatorInfo {
+    char* opt;
+    ArgType t1;
+    ArgType t2;
+    Arg* a1;
+    Arg* a2;
+    double f1;
+    double f2;
+    int i1;
+    int i2;
+    Arg* ret;
+    int input_arg_num;
+};
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);

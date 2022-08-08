@@ -702,6 +702,16 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
                 continue;
             }
         }
+        /* is */
+        if ('i' == c0) {
+            if (('s' == c1) && (' ' == c2)) {
+                tokens_arg =
+                    Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
+                tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, " is ");
+                i = i + 2;
+                continue;
+            }
+        }
         /* as */
         if ('a' == c0) {
             if (('s' == c1) && (' ' == c2)) {
@@ -793,9 +803,10 @@ exit:
 }
 
 static const char operators[][9] = {
-    "**", "~",   "*",  "/",  "%",  "//",  "+",     "-",     ">>",   "<<",
-    "&",  "^",   "|",  "<",  "<=", ">",   ">=",    "!=",    "==",   "%=",
-    "/=", "//=", "-=", "+=", "*=", "**=", " not ", " and ", " or ", " import "};
+    "**", "~",  "*",   "/",     "%",     "//",   "+",       "-",
+    ">>", "<<", "&",   "^",     "|",     "<",    "<=",      ">",
+    ">=", "!=", "==",  " is ",  "%=",    "/=",   "//=",     "-=",
+    "+=", "*=", "**=", " not ", " and ", " or ", " import "};
 
 char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args buffs = {0};
