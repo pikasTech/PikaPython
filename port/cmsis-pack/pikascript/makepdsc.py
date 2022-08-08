@@ -9,12 +9,13 @@ class Group:
     subfix = ".c"
     name: str
 
-    def __init__(self, name: str, path: str, subfix: str, format='<file attr="config" category="sourceC"  name="%s" />'):
+    def __init__(self, name: str, path: str, subfix: str, format='<file attr="config" category="sourceC"  name="%s" />', dvd="/"):
         self.path = path
         self.files = []
         self.subfix = subfix
         self.format = format
         self.name = name
+        self.dvd = dvd
         self.update()
 
     def setformat(self, format: str):
@@ -27,7 +28,7 @@ class Group:
     def __str__(self):
         res = ""
         for file in self.files:
-            res += self.format % (self.path + '/' + file) + '\n'
+            res += self.format % (self.path + self.dvd + file) + '\n'
         return res
 
     def write(self):
@@ -57,7 +58,7 @@ lib_h = Group("libH", "pikascript-lib/PikaStdLib", ".h", format=formath)
 api_c = Group("apiC", "pikascript-api", ".c",   format=formatc)
 api_h = Group("apiH", "pikascript-api", ".h", format=formath)
 
-api_bat = Group("apiBat", "pikascript-api", "", format='@del %s')
+api_bat = Group("apiBat", "pikascript-api", "", format='@del "%s"', dvd="\\")
 
 collect("kernal", [kernal_c, kernal_h, kernal_cfg])
 collect("lib", [lib_c, lib_h, api_c, api_h])
