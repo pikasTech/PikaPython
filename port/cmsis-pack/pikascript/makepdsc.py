@@ -41,16 +41,20 @@ def collect(name, groupList: list[Group]):
             f.write(str(group))
 
 
+formatc = '<file attr="config" category="sourceC"  name="%s" />'
+formath = '<file attr="config" category="header"  name="%s" />'
+formatcfg = '<file attr="config" category="source"  name="%s" />'
+
 kernal_c = Group("kernalH", "pikascript-core", ".c")
 kernal_h = Group("kernalC", "pikascript-core", ".h",
-                 format='<file attr="config" category="header"  name="%s" />')
+                 format=formath)
 kernal_cfg = Group("kernalCfg", "pikascript-core", ".cfg",
-                   format='<file attr="config" category="source"  name="%s" />')
-lib_c = Group("libC", "pikascript-lib/PikaStdLib", ".c")
-lib_h = Group("libH", "pikascript-lib/PikaStdLib", ".h")
+                   format=formatcfg)
+lib_c = Group("libC", "pikascript-lib/PikaStdLib", ".c", format=formatc)
+lib_h = Group("libH", "pikascript-lib/PikaStdLib", ".h", format=formath)
 
-api_c = Group("apiC", "pikascript-api", ".c")
-api_h = Group("apiH", "pikascript-api", ".h")
+api_c = Group("apiC", "pikascript-api", ".c",   format=formatc)
+api_h = Group("apiH", "pikascript-api", ".h", format=formath)
 
 collect("kernal", [kernal_c, kernal_h, kernal_cfg])
 collect("lib", [lib_c, lib_h, api_c, api_h])

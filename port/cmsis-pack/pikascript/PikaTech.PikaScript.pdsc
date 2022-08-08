@@ -223,7 +223,7 @@
           <file attr="config" category="sourceC" name="pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c" />
           <file attr="config" category="sourceC" name="pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c" />
           <file attr="config" category="sourceC" name="pikascript-lib/PikaStdLib/PikaStdTask_Task.c" />
-          <file attr="config" category="sourceC" name="pikascript-lib/PikaStdLib/PikaStdData_String_Util.h" />
+          <file attr="config" category="header" name="pikascript-lib/PikaStdLib/PikaStdData_String_Util.h" />
           <file attr="config" category="sourceC" name="pikascript-api/PikaDebug-api.c" />
           <file attr="config" category="sourceC" name="pikascript-api/PikaDebug_Debuger-api.c" />
           <file attr="config" category="sourceC" name="pikascript-api/PikaMain-api.c" />
@@ -246,27 +246,28 @@
           <file attr="config" category="sourceC" name="pikascript-api/PikaStdTask-api.c" />
           <file attr="config" category="sourceC" name="pikascript-api/PikaStdTask_Task-api.c" />
           <file attr="config" category="sourceC" name="pikascript-api/__asset_pikaModules_py_a.c" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaDebug.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaDebug_Debuger.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaMain.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/pikaScript.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdData.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdData_ByteArray.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdData_Dict.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdData_dict_keys.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdData_FILEIO.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdData_List.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdData_String.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdData_Tuple.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdData_Utils.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdLib.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdLib_MemChecker.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdLib_PikaObj.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdLib_RangeObj.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdLib_StringObj.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdLib_SysObj.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdTask.h" />
-          <file attr="config" category="sourceC" name="pikascript-api/PikaStdTask_Task.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaDebug.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaDebug_Debuger.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaMain.h" />
+          <file attr="config" category="header" name="pikascript-api/pikaScript.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdData.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdData_ByteArray.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdData_Dict.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdData_dict_keys.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdData_FILEIO.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdData_List.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdData_String.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdData_Tuple.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdData_Utils.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdLib.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdLib_MemChecker.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdLib_PikaObj.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdLib_RangeObj.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdLib_StringObj.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdLib_SysObj.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdTask.h" />
+          <file attr="config" category="header" name="pikascript-api/PikaStdTask_Task.h" />
+
           <!-- lib end -->
         </files>
       </component>
