@@ -16,7 +16,7 @@
   <repository type="git">https://github.com/pikasTech/pikascript.git</repository>
 
   <releases>
-    <release date="2022-08-08" version="1.10.0">
+    <release date="2022-08-08" version="1.10.0" url="https://gitee.com/Lyon1998/pikascript/attach_files/1151246/download">
         - PikaScript v1.10.0
     </release>
 
