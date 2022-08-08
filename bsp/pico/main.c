@@ -103,26 +103,6 @@ static void system_init(void)
     
 }
 
-static void prime_number_100_c(void) {
-    volatile int num = 0;
-    /* run */
-    for (volatile int i = 2; i < 100; i++) {
-        volatile int is_prime = 1;
-        for (volatile int j = 2; j < i; j++) {
-            if (i % j == 0) {
-                is_prime = 0;
-                break;
-            }
-        }
-        if (is_prime) {
-            num = num + i;
-        }
-    }
-    if ( num != 1060){
-        printf("[error] in benchmark prime_number_100_c \r\n");
-    }
-}
-
 int main(void) 
 {
     system_init();
