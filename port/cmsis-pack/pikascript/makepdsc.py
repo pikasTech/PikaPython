@@ -1,4 +1,5 @@
 import os
+from sys import prefix
 from xmlrpc.server import list_public_methods
 
 
@@ -34,8 +35,8 @@ class Group:
             f.write(str(self))
 
 
-def collect(name, groupList: list[Group]):
-    with open(name + ".xml", 'w') as f:
+def collect(name, groupList: list[Group], subfix=".xml"):
+    with open(name + subfix, 'w') as f:
         for group in groupList:
             print(group)
             f.write(str(group))
@@ -56,5 +57,8 @@ lib_h = Group("libH", "pikascript-lib/PikaStdLib", ".h", format=formath)
 api_c = Group("apiC", "pikascript-api", ".c",   format=formatc)
 api_h = Group("apiH", "pikascript-api", ".h", format=formath)
 
+api_bat = Group("apiBat", "pikascript-api", "", format='@del %s')
+
 collect("kernal", [kernal_c, kernal_h, kernal_cfg])
 collect("lib", [lib_c, lib_h, api_c, api_h])
+collect("clean", [api_bat], subfix=".bat")
