@@ -1126,3 +1126,18 @@ TEST(VM, assert) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, issue_I5LHJG) {
+    char* line =
+        "res = (a, 2, 3)\n"
+        "[a, 2, 3]\n"
+        "{'x': a, 'y': 2, 'z': 3}\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_EQ(obj_isArgExist(self, "res"), 0);
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

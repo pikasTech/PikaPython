@@ -726,10 +726,12 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
     /* load to local stack to change sort */
     for (int i = 0; i < arg_num; i++) {
         Arg* arg = stack_popArg_alloc(&(vm->stack));
+        pika_assert(arg != NULL);
         stack_pushArg(&stack, arg);
     }
     for (int i = 0; i < arg_num; i++) {
         Arg* arg = stack_popArg_alloc(&stack);
+        pika_assert(arg != NULL);
         __vm_List_append(list, arg);
         arg_deinit(arg);
     }
@@ -1836,6 +1838,8 @@ static int pikaVM_runInstructUnit(PikaObj* self,
         VM_instruct_handler_table[instruct](self, vm, data, &return_Arg_reg);
     if (NULL != return_arg) {
         stack_pushArg(&(vm->stack), return_arg);
+    } else {
+        stack_pushArg(&(vm->stack), arg_newNull());
     }
     goto nextLine;
 nextLine:
@@ -1866,6 +1870,23 @@ nextLine:
     }
     /* not jmp */
     pc_next = vm->pc + instructUnit_getSize();
+
+    /* jump to next line */
+    if (vm->error_code != 0) {
+        while (1) {
+            InstructUnit* ins_next = instructArray_getByOffset(
+                &vm->bytecode_frame->instruct_array, pc_next);
+            if (instructUnit_getIsNewLine(ins_next)) {
+                goto exit;
+            }
+            if (pc_next >= (int)VMState_getInstructArraySize(vm)) {
+                pc_next = VM_PC_EXIT;
+                goto exit;
+            }
+            pc_next = pc_next + instructUnit_getSize();
+        }
+    }
+
     goto exit;
 exit:
     vm->jmp = 0;
