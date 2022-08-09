@@ -28,27 +28,47 @@ class TestResult:
 class TestCase:
     def assertEqual(self, x, y):
         msg = "%r vs (expected) %r" % (x, y)
-        _assert(x == y, msg)
+        assert x == y, msg
 
     def assertNotEqual(self, x, y):
         msg = "%r not expected to be equal %r" % (x, y)
-        _assert(x != y, msg)
+        assert x != y, msg
 
     def assertLessEqual(self, x, y):
         msg = "%r is expected to be <= %r" % (x, y)
-        _assert(x <= y, msg)
+        assert x <= y, msg
 
     def assertGreaterEqual(self, x, y):
         msg = "%r is expected to be >= %r" % (x, y)
-        _assert(x >= y, msg)
+        assert x >= y, msg
 
     def assertTrue(self, x):
         msg = "Expected %r to be True" % x
-        _assert(x, msg)
+        assert x, msg
 
     def assertFalse(self, x):
         msg = "Expected %r to be False" % x
-        _assert(not x, msg)
+        assert not x, msg
+
+    def assertIs(self, x, y):
+        msg = "%r is not %r" % (x, y)
+        assert x is y, msg
+
+    def assertIsNot(self, x, y):
+        msg = "%r is %r" % (x, y)
+        assert x is not y, msg
+
+    def assertIsNone(self, x):
+        msg = "%r is not None" % x
+        assert x is None, msg
+
+    def assertIsNotNone(self, x):
+        msg = "%r is None" % x
+        assert x is not None, msg
+
+    def assertIn(self, x, y):
+        msg = "Expected %r to be in %r" % (x, y)
+        assert x in y, msg
 
     def run(self, result, suite_name):
         _unittest._case_run(self, result, suite_name)
@@ -75,7 +95,9 @@ class TextTestRunner:
         print("----------------------------------------------------------------------")
         print("Ran %d tests\n" % res.testsRun)
         if res.failuresNum > 0 or res.errorsNum > 0:
-            print("FAILED (failures=%d, errors=%d)" % (res.failuresNum, res.errorsNum))
+            s = "FAILED"
+            s += " (%d errors, %d failures)" % (res.errorsNum, res.failuresNum)
+            print(s)
         else:
             msg = "OK"
             if res.skippedNum > 0:
@@ -83,9 +105,3 @@ class TextTestRunner:
             print(msg)
 
         return res
-
-
-def _assert(res, msg):
-    if not res:
-        print("Assertion failed: %s" % msg)
-        raise
