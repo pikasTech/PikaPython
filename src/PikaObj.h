@@ -273,6 +273,11 @@ void pks_eventLicener_registEvent(PikaEventListener* self,
                                   uint32_t eventId,
                                   PikaObj* eventHandleObj);
 
+void pks_eventLicener_removeEvent(PikaEventListener* self, uint32_t eventId);
+
+PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
+                                            uint32_t eventId);
+
 void pks_eventLisener_init(PikaEventListener** p_self);
 void pks_eventLisener_deinit(PikaEventListener** p_self);
 PikaObj* methodArg_getDefContext(Arg* method_arg);
@@ -281,8 +286,6 @@ NewFun obj_getClass(PikaObj* obj);
 
 void pks_printVersion(void);
 void* obj_getStruct(PikaObj* self, char* name);
-PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
-                                            uint32_t eventId);
 
 #define obj_refcntDec(self) (((self)->refcnt--))
 #define obj_refcntInc(self) (((self)->refcnt)++)

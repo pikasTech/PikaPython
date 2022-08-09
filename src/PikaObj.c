@@ -244,9 +244,9 @@ size_t obj_loadBytes(PikaObj* self, char* argPath, uint8_t* out_buff) {
 }
 
 static PIKA_RES __obj_setArg(PikaObj* self,
-                            char* argPath,
-                            Arg* arg,
-                            uint8_t is_copy) {
+                             char* argPath,
+                             Arg* arg,
+                             uint8_t is_copy) {
     /* setArg would copy arg */
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
@@ -1106,6 +1106,14 @@ void pks_eventLicener_registEvent(PikaEventListener* self,
     obj_newDirectObj(self, event_name, New_TinyObj);
     PikaObj* event_item = obj_getObj(self, event_name);
     obj_setRef(event_item, "eventHandleObj", eventHandleObj);
+    strsDeinit(&buffs);
+}
+
+void pks_eventLicener_removeEvent(PikaEventListener* self, uint32_t eventId) {
+    Args buffs = {0};
+    char* event_name =
+        strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
+    obj_removeArg(self, event_name);
     strsDeinit(&buffs);
 }
 

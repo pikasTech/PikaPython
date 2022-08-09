@@ -26,4 +26,22 @@ TEST(event, gpio) {
 
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(event, remove_regist) {
+    /* init */
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    pks_eventLisener_init(&g_pika_device_event_listener);
+    PikaObj* testobj = newNormalObj(New_TinyObj);
+    pks_eventLicener_registEvent(g_pika_device_event_listener, 0, testobj);
+    EXPECT_EQ(testobj->refcnt, 2);
+    pks_eventLicener_removeEvent(g_pika_device_event_listener, 0);
+    EXPECT_EQ(testobj->refcnt, 1);
+    /* deinit */
+    obj_deinit(pikaMain);
+    obj_deinit(testobj);
+    pks_eventLisener_deinit(&g_pika_device_event_listener);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
