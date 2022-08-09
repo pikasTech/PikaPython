@@ -3651,3 +3651,28 @@ TEST(parser, _in2) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
+TEST(parser, assert_) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "assert True\n"
+        "assert 1 == 1, 'testparser'\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF True\n"
+                 "0 ASS \n"
+                 "B0\n"
+                 "2 NUM 1\n"
+                 "2 NUM 1\n"
+                 "1 OPT ==\n"
+                 "1 STR testparser\n"
+                 "0 ASS \n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

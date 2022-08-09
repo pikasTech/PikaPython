@@ -1105,3 +1105,24 @@ TEST(VM, in) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, assert) {
+    char* line =
+        "assert True\n"
+        "assert 1 == 1, 'testparser'\n"
+        "assert 1 == 2, 'testparser'\n"
+        "res1 = 0\n"
+        "try:\n"
+        "    assert False\n"
+        "except:\n"
+        "    res1 = 1\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    int res1 = obj_getInt(self, "res1");
+    /* assert */
+    EXPECT_EQ(res1, 1);
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -1780,6 +1780,21 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         }
         goto block_matched;
     }
+    /* assert */
+    if (strIsStartWith(line_start, "assert ")) {
+        stmt = "";
+        AST_setThisNode(ast, "assert", "");
+        char* lineBuff = strsCopy(&buffs, line_start + 7);
+        /* assert expr [, msg] */
+        while (1) {
+            char* subStmt = Parser_popSubStmt(&buffs, &lineBuff, ",");
+            AST_parseSubStmt(ast, subStmt);
+            if (strEqu(lineBuff, "")) {
+                break;
+            }
+        }
+        goto block_matched;
+    }
 #endif
 
     if (strIsStartWith(line_start, "global ")) {

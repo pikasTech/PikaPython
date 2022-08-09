@@ -1660,6 +1660,43 @@ static Arg* VM_instruction_handler_RIS(PikaObj* self,
     return NULL;
 }
 
+static Arg* VM_instruction_handler_ASS(PikaObj* self,
+                                       VMState* vm,
+                                       char* data,
+                                       Arg* arg_ret_reg) {
+    arg_newReg(reg1, PIKA_ARG_BUFF_SIZE);
+    arg_newReg(reg2, PIKA_ARG_BUFF_SIZE);
+    Arg* arg1 = NULL;
+    Arg* arg2 = NULL;
+    Arg* res = NULL;
+    int arg_num = VMState_getInputArgNum(vm);
+    if (arg_num == 1) {
+        arg1 = stack_popArg(&vm->stack, &reg1);
+    }
+    if (arg_num == 2) {
+        arg2 = stack_popArg(&vm->stack, &reg2);
+        arg1 = stack_popArg(&vm->stack, &reg1);
+    }
+    /* assert faild */
+    if (arg_getType(arg1) == ARG_TYPE_INT && arg_getInt(arg1) == 0) {
+        stack_pushArg(&vm->stack, arg_newInt(PIKA_RES_ERR_ASSERT));
+        res = VM_instruction_handler_RIS(self, vm, data, arg_ret_reg);
+        if (vm->try_info->try_state == TRY_STATE_NONE) {
+            if (arg_num == 1) {
+                __platform_printf("AssertionError\n", data);
+            }
+            if (arg_num == 2) {
+                __platform_printf("AssertionError: %s\n", arg_getStr(arg2));
+            }
+        }
+        goto exit;
+    }
+exit:
+    arg_deinit(arg1);
+    arg_deinit(arg2);
+    return res;
+}
+
 static Arg* VM_instruction_handler_NEL(PikaObj* self,
                                        VMState* vm,
                                        char* data,
