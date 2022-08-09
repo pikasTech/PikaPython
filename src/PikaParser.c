@@ -50,74 +50,6 @@ void ParserState_iterStart(struct ParserState* ps);
 void ParserState_iterEnd(struct ParserState* ps);
 char* Parser_popToken(Args* buffs_p, char* tokens);
 
-/* Syntex item */
-const SyntaxItem syntexItemList[] = {
-    /* clang-format off */
-    {
-        .asmCode = "RUN",
-        .astNodeName = "method",
-        .isUseNodeValue = PIKA_TRUE
-    },
-    {
-        .asmCode = "OPT", 
-        .astNodeName = "operator", 
-        .isUseNodeValue = PIKA_TRUE
-    },
-    {
-        .asmCode = "BYT", 
-        .astNodeName = "bytes", 
-        .isUseNodeValue = PIKA_TRUE
-    },
-    {
-        .asmCode = "NUM", 
-        .astNodeName = "num", 
-        .isUseNodeValue = PIKA_TRUE
-    },
-    {
-        .asmCode = "IMP", 
-        .astNodeName = "import", 
-        .isUseNodeValue = PIKA_TRUE
-    },
-    {
-        .asmCode = "REF", 
-        .astNodeName = "ref", 
-        .isUseNodeValue = PIKA_TRUE
-    },
-    {
-        .asmCode = "STR", 
-        .astNodeName = "string", 
-        .isUseNodeValue = PIKA_TRUE
-    },
-
-#if PIKA_SYNTAX_SLICE_ENABLE
-    {
-        .asmCode = "SLC", 
-        .astNodeName = "slice", 
-        .isUseNodeValue = PIKA_FALSE
-    },
-#endif
-
-#if PIKA_BUILTIN_STRUCT_ENABLE
-    {
-        .asmCode = "DCT", 
-        .astNodeName = "dict", 
-        .isUseNodeValue = PIKA_FALSE
-    },
-    {
-        .asmCode = "LST", 
-        .astNodeName = "list", 
-        .isUseNodeValue = PIKA_FALSE
-    },
-#endif
-
-    {
-        .asmCode = "OUT", 
-        .astNodeName = "left", 
-        .isUseNodeValue = PIKA_TRUE
-    }
-    /* clang-format on */
-};
-
 uint16_t Tokens_getSize(char* tokens) {
     if (strEqu("", tokens)) {
         return 0;
@@ -712,6 +644,16 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
                 continue;
             }
         }
+        /* in */
+        if ('i' == c0) {
+            if (('n' == c1) && (' ' == c2)) {
+                tokens_arg =
+                    Lexer_setSymbel(tokens_arg, stmt, i, &symbol_start_index);
+                tokens_arg = Lexer_setToken(tokens_arg, TOKEN_operator, " in ");
+                i = i + 2;
+                continue;
+            }
+        }
         /* as */
         if ('a' == c0) {
             if (('s' == c1) && (' ' == c2)) {
@@ -803,10 +745,10 @@ exit:
 }
 
 static const char operators[][9] = {
-    "**", "~",  "*",   "/",     "%",     "//",   "+",       "-",
-    ">>", "<<", "&",   "^",     "|",     "<",    "<=",      ">",
-    ">=", "!=", "==",  " is ",  "%=",    "/=",   "//=",     "-=",
-    "+=", "*=", "**=", " not ", " and ", " or ", " import "};
+    "**", "~",  "*",  "/",    "%",     "//",    "+",    "-",
+    ">>", "<<", "&",  "^",    "|",     "<",     "<=",   ">",
+    ">=", "!=", "==", " is ", " in ",  "%=",    "/=",   "//=",
+    "-=", "+=", "*=", "**=",  " not ", " and ", " or ", " import "};
 
 char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args buffs = {0};
@@ -1829,13 +1771,13 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         goto block_matched;
     }
     if (strIsStartWith(line_start, "raise ")) {
+        AST_setThisNode(ast, "raise", "");
         char* lineBuff = strsCopy(&buffs, line_start);
         strsPopToken(&buffs, lineBuff, ' ');
         stmt = lineBuff;
         if (strEqu("", stmt)) {
             stmt = "RuntimeError";
         }
-        AST_setThisNode(ast, "raise", "");
         goto block_matched;
     }
 #endif
@@ -2241,6 +2183,7 @@ char* Parser_fileToAsm(Args* outBuffs, char* filename) {
 char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     int deepth = obj_getInt(ast, "deepth");
     Args buffs = {0};
+    /* append each queue item */
     while (1) {
         QueueObj* subStmt = queueObj_popObj(subAst);
         if (NULL == subStmt) {
@@ -2249,17 +2192,32 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
         obj_setInt(ast, "deepth", deepth + 1);
         pikaAsm = AST_appandPikaASM(ast, subStmt, &buffs, pikaAsm);
     }
+
+    /* Byte code generate rules */
+    const GenRule rules_subAst[] = {
+        {._asm = "RUN", .type = VAL_DYNAMIC, .ast = "method"},
+        {._asm = "OPT", .type = VAL_DYNAMIC, .ast = "operator"},
+        {._asm = "BYT", .type = VAL_DYNAMIC, .ast = "bytes"},
+        {._asm = "NUM", .type = VAL_DYNAMIC, .ast = "num"},
+        {._asm = "IMP", .type = VAL_DYNAMIC, .ast = "import"},
+        {._asm = "REF", .type = VAL_DYNAMIC, .ast = "ref"},
+        {._asm = "STR", .type = VAL_DYNAMIC, .ast = "string"},
+        {._asm = "SLC", .type = VAL_NONEVAL, .ast = "slice"},
+        {._asm = "DCT", .type = VAL_NONEVAL, .ast = "dict"},
+        {._asm = "LST", .type = VAL_NONEVAL, .ast = "list"},
+        {._asm = "OUT", .type = VAL_DYNAMIC, .ast = "left"}};
+
     char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
 
     /* append the syntax item */
-    for (size_t i = 0; i < sizeof(syntexItemList) / sizeof(SyntaxItem); i++) {
-        char* astNodeVal = obj_getStr(subAst, syntexItemList[i].astNodeName);
+    for (size_t i = 0; i < sizeof(rules_subAst) / sizeof(GenRule); i++) {
+        GenRule rule = rules_subAst[i];
+        char* astNodeVal = obj_getStr(subAst, rule.ast);
         if (NULL != astNodeVal) {
             /* e.g. "0 RUN print \n" */
-            __platform_sprintf(buff, "%d %s ", deepth,
-                               syntexItemList[i].asmCode);
+            __platform_sprintf(buff, "%d %s ", deepth, rule._asm);
             Arg* abuff = arg_newStr(buff);
-            if (syntexItemList[i].isUseNodeValue) {
+            if (rule.type == VAL_DYNAMIC) {
                 abuff = arg_strAppend(abuff, astNodeVal);
             }
             abuff = arg_strAppend(abuff, "\n");
@@ -2286,6 +2244,29 @@ char* ASM_addBlockDeepth(AST* ast,
         buffs_p, pikaAsm,
         fast_itoa(buff, obj_getInt(ast, "blockDeepth") + deepthOffset));
     pikaAsm = strsAppend(buffs_p, pikaAsm, (char*)"\n");
+    return pikaAsm;
+}
+
+char* GenRule_toAsm(GenRule rule,
+                    Args* buffs,
+                    AST* ast,
+                    char* pikaAsm,
+                    int deepth) {
+    char* buff = args_getBuff(buffs, PIKA_SPRINTF_BUFF_SIZE);
+    /* parse stmt ast */
+    pikaAsm = AST_appandPikaASM(ast, ast, buffs, pikaAsm);
+    /* e.g. "0 CTN \n" */
+    __platform_sprintf(buff, "%d %s ", deepth, rule._asm);
+    Arg* abuff = arg_newStr(buff);
+    if (rule.type == VAL_DYNAMIC) {
+        abuff = arg_strAppend(abuff, obj_getStr(ast, rule.ast));
+    }
+    if (rule.type == VAL_STATIC_) {
+        abuff = arg_strAppend(abuff, rule.val);
+    }
+    abuff = arg_strAppend(abuff, "\n");
+    pikaAsm = strsAppend(buffs, pikaAsm, arg_getStr(abuff));
+    arg_deinit(abuff);
     return pikaAsm;
 }
 
@@ -2408,30 +2389,6 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         is_block_matched = 1;
         goto exit;
     }
-    if (strEqu(obj_getStr(ast, "block"), "while")) {
-        /* parse stmt ast */
-        pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 JEZ 2\n");
-        is_block_matched = 1;
-        goto exit;
-    }
-    if (strEqu(obj_getStr(ast, "block"), "if")) {
-        /* parse stmt ast */
-        pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 JEZ 1\n");
-        is_block_matched = 1;
-        goto exit;
-    }
-    if (strEqu(obj_getStr(ast, "block"), "else")) {
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 NEL 1\n");
-        goto exit;
-    }
-#if PIKA_SYNTAX_EXCEPTION_ENABLE
-    if (strEqu(obj_getStr(ast, "block"), "try")) {
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 TRY \n");
-        goto exit;
-    }
-#endif
     if (strEqu(obj_getStr(ast, "block"), "elif")) {
         /* skip if __else is 0 */
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 NEL 1\n");
@@ -2489,54 +2446,41 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
         is_block_matched = 1;
         goto exit;
     }
+    /* generate code for block ast */
+    const GenRule rules_block[] = {
+        {._asm = "TRY", .type = VAL_NONEVAL, .ast = "try"},
+        {._asm = "NEL", .type = VAL_STATIC_, .ast = "else", .val = "1"},
+        {._asm = "JEZ", .type = VAL_STATIC_, .ast = "if", .val = "1"},
+        {._asm = "JEZ", .type = VAL_STATIC_, .ast = "while", .val = "2"},
+    };
 
-    if (obj_isArgExist(ast, "return")) {
-        /* parse stmt ast */
-        pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 RET \n");
-        is_block_matched = 1;
-        goto exit;
+    for (size_t i = 0; i < sizeof(rules_block) / sizeof(GenRule); i++) {
+        GenRule rule = rules_block[i];
+        if (strEqu(obj_getStr(ast, "block"), rule.ast)) {
+            pikaAsm = GenRule_toAsm(rule, &buffs, ast, pikaAsm, 0);
+            is_block_matched = 1;
+            goto exit;
+        }
     }
-#if PIKA_SYNTAX_EXCEPTION_ENABLE
-    if (obj_isArgExist(ast, "raise")) {
-        /* parse stmt ast */
-        pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 RIS \n");
-        is_block_matched = 1;
-        goto exit;
-    }
-#endif
-    if (obj_isArgExist(ast, "global")) {
-        /* parse stmt ast */
-        pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 GLB ");
-        pikaAsm = strsAppend(&buffs, pikaAsm, obj_getStr(ast, "global"));
-        pikaAsm = strsAppend(&buffs, pikaAsm, "\n");
-        is_block_matched = 1;
-        goto exit;
-    }
-    if (obj_isArgExist(ast, "del")) {
-        /* parse stmt ast */
-        pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 DEL ");
-        pikaAsm = strsAppend(&buffs, pikaAsm, obj_getStr(ast, "del"));
-        pikaAsm = strsAppend(&buffs, pikaAsm, "\n");
-        is_block_matched = 1;
-        goto exit;
-    }
-    if (obj_isArgExist(ast, "break")) {
-        /* parse stmt ast */
-        pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 BRK \n");
-        is_block_matched = 1;
-        goto exit;
-    }
-    if (obj_isArgExist(ast, "continue")) {
-        /* parse stmt ast */
-        pikaAsm = AST_appandPikaASM(ast, ast, &buffs, pikaAsm);
-        pikaAsm = strsAppend(&buffs, pikaAsm, "0 CTN \n");
-        is_block_matched = 1;
-        goto exit;
+
+    const GenRule rules_topAst[] = {
+        {._asm = "CTN", .type = VAL_NONEVAL, .ast = "continue"},
+        {._asm = "BRK", .type = VAL_NONEVAL, .ast = "break"},
+        {._asm = "DEL", .type = VAL_DYNAMIC, .ast = "del"},
+        {._asm = "GLB", .type = VAL_DYNAMIC, .ast = "global"},
+        {._asm = "RIS", .type = VAL_DYNAMIC, .ast = "raise"},
+        {._asm = "ASS", .type = VAL_NONEVAL, .ast = "assert"},
+        {._asm = "RET", .type = VAL_NONEVAL, .ast = "return"}};
+
+    /* generate code for top level ast */
+    for (size_t i = 0; i < sizeof(rules_topAst) / sizeof(rules_topAst[0]);
+         i++) {
+        GenRule item = rules_topAst[i];
+        if (obj_isArgExist(ast, item.ast)) {
+            pikaAsm = GenRule_toAsm(item, &buffs, ast, pikaAsm, 0);
+            is_block_matched = 1;
+            goto exit;
+        }
     }
 exit:
     if (NULL == pikaAsm) {

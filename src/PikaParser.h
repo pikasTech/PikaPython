@@ -63,11 +63,18 @@ struct Asmer {
     char* line_pointer;
 };
 
-typedef struct SyntaxItem {
-    char* astNodeName;
-    char* asmCode;
-    PIKA_BOOL isUseNodeValue;
-} SyntaxItem;
+typedef enum _GenRuleValType {
+    VAL_NONEVAL,
+    VAL_DYNAMIC,
+    VAL_STATIC_,
+} GenRuleValType;
+
+typedef struct GenRule {
+    char* _asm;
+    GenRuleValType type;
+    char* ast;
+    char* val;
+} GenRule;
 
 typedef struct LexToken LexToken;
 struct LexToken {

@@ -3611,3 +3611,43 @@ TEST(parser, _is) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, _in) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a in b\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF a\n"
+                 "1 REF b\n"
+                 "0 OPT  in \n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, _in2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "res1 = 'a' in 'aaa'\n"
+        "res2 = 'aaa' in 'a'\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 STR a\n"
+                 "1 STR aaa\n"
+                 "0 OPT  in \n"
+                 "0 OUT res1\n"
+                 "B0\n"
+                 "1 STR aaa\n"
+                 "1 STR a\n"
+                 "0 OPT  in \n"
+                 "0 OUT res2\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
