@@ -3347,8 +3347,8 @@ TEST(parser, configparser) {
 
 TEST(parser, unittest) {
     Args buffs = {0};
-    printf("%s\r\n",
-           Parser_fileToAsm(&buffs, "package/pikascript/unittest.py"));
+    char* ASM = Parser_fileToAsm(&buffs, "package/pikascript/unittest.py");
+    printf("%s\r\n", ASM);
     strsDeinit(&buffs);
 }
 

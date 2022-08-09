@@ -1874,13 +1874,13 @@ nextLine:
     /* jump to next line */
     if (vm->error_code != 0) {
         while (1) {
+            if (pc_next >= (int)VMState_getInstructArraySize(vm)) {
+                pc_next = VM_PC_EXIT;
+                goto exit;
+            }
             InstructUnit* ins_next = instructArray_getByOffset(
                 &vm->bytecode_frame->instruct_array, pc_next);
             if (instructUnit_getIsNewLine(ins_next)) {
-                goto exit;
-            }
-            if (pc_next >= (int)VMState_getInstructArraySize(vm)) {
-                pc_next = VM_PC_EXIT;
                 goto exit;
             }
             pc_next = pc_next + instructUnit_getSize();

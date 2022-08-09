@@ -2191,6 +2191,7 @@ char* Parser_fileToAsm(Args* outBuffs, char* filename) {
     lines = strsAppend(&buffs, lines, "\n\n");
     char* res = Parser_multiLineToAsm(&buffs, lines);
     arg_deinit(file_arg);
+    res = strsCopy(outBuffs, res);
     strsDeinit(&buffs);
     return res;
 }
