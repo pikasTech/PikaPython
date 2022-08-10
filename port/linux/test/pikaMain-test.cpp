@@ -1567,7 +1567,7 @@ TEST(pikaMain, def_in_shell) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 
     /* skip the first obj_run */
-    obj_run(pikaMain, "'BEGIN'");
+    __platform_printf("BEGIN\r\n");
     /* as run in shell */
     obj_run(pikaMain,
             "def test():\n"
@@ -1596,7 +1596,7 @@ TEST(pikaMain, def_in_shell_override) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 
     /* skip the first obj_run */
-    obj_run(pikaMain, "'BEGIN'");
+    __platform_printf("BEGIN\r\n");
     /* as run in shell */
     obj_run(pikaMain,
             "def test():\n"
@@ -1625,7 +1625,7 @@ TEST(pikaMain, class_in_shell) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 
     /* skip the first obj_run */
-    obj_run(pikaMain, "'BEGIN'");
+    __platform_printf("BEGIN\r\n");
     /* as run in shell */
     obj_run(pikaMain,
             "class Test():\n"
@@ -1651,7 +1651,7 @@ TEST(pikaMain, class_TinyObj) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 
     /* skip the first obj_run */
-    obj_run(pikaMain, "'BEGIN'");
+    __platform_printf("BEGIN\r\n");
     /* as run in shell */
     obj_run(pikaMain,
             "class MyClass( TinyObj ):\n"
@@ -1829,10 +1829,10 @@ TEST(pikaMain, builtin_hex) {
             "hex(-12039)\n");
     /* assert */
     EXPECT_STREQ(log_buff[4], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[3], "0x03\r\n");
-    EXPECT_STREQ(log_buff[2], "-0x03\r\n");
-    EXPECT_STREQ(log_buff[1], "0x4d2\r\n");
-    EXPECT_STREQ(log_buff[0], "-0x2f07\r\n");
+    EXPECT_STREQ(log_buff[3], "'0x03'\r\n");
+    EXPECT_STREQ(log_buff[2], "'-0x03'\r\n");
+    EXPECT_STREQ(log_buff[1], "'0x4d2'\r\n");
+    EXPECT_STREQ(log_buff[0], "'-0x2f07'\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1862,7 +1862,7 @@ TEST(pikaMain, builtin_chr) {
     obj_run(self, "chr(97)\n");
     /* assert */
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[0], "a\r\n");
+    EXPECT_STREQ(log_buff[0], "'a'\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1986,7 +1986,7 @@ TEST(pikaMain, neg_index) {
             "b'test'[-2]\n");
     /* assert */
     EXPECT_STREQ(log_buff[1], "\\x73");
-    EXPECT_STREQ(log_buff[3], "s\r\n");
+    EXPECT_STREQ(log_buff[3], "'s'\r\n");
     EXPECT_STREQ(log_buff[4], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
@@ -2003,7 +2003,7 @@ TEST(pikaMain, slice1) {
     __platform_printf("BEGIN\r\n");
     obj_run(self, "'test'[1:3]\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "es\r\n");
+    EXPECT_STREQ(log_buff[0], "'es'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
@@ -2053,7 +2053,7 @@ TEST(pikaMain, str_add1) {
             "msg = \"device_names[\" + str(i) + \"]:\"\n"
             "msg\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "device_names[32]:\r\n");
+    EXPECT_STREQ(log_buff[0], "'device_names[32]:'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
@@ -2069,7 +2069,7 @@ TEST(pikaMain, slice_eei) {
     __platform_printf("BEGIN\r\n");
     obj_run(self, "'test'[1:-1]\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "est\r\n");
+    EXPECT_STREQ(log_buff[0], "'est'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
@@ -2086,7 +2086,7 @@ TEST(pikaMain, slice_a97) {
     __platform_printf("BEGIN\r\n");
     obj_run(self, "'test'[:-2]\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "tes\r\n");
+    EXPECT_STREQ(log_buff[0], "'tes'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
@@ -2103,7 +2103,7 @@ TEST(pikaMain, slice_a90) {
     __platform_printf("BEGIN\r\n");
     obj_run(self, "'test'[1:]\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "est\r\n");
+    EXPECT_STREQ(log_buff[0], "'est'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
@@ -2161,7 +2161,7 @@ TEST(pikaMain, string_index) {
             "print(a)\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "tqst\r\n");
-    EXPECT_STREQ(log_buff[1], "e\r\n");
+    EXPECT_STREQ(log_buff[1], "'e'\r\n");
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
@@ -2196,7 +2196,7 @@ TEST(pikaMain, string_str) {
     __platform_printf("BEGIN\r\n");
     obj_run(self, "str(PikaStdData.String('test'))\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_STREQ(log_buff[0], "'test'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
@@ -2609,7 +2609,7 @@ TEST(pikaMain, issue_fa13f4) {
     obj_run(pikaMain, lines);
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "{'language': [c, python, Java]}\r\n");
+    EXPECT_STREQ(log_buff[0], "{'language': ['c', 'python', 'Java']}\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);

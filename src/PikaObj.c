@@ -522,6 +522,17 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
     return strCut(buffs, method_dec, '(', ')');
 }
 
+char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
+    char* method_dec = strCopy(buffs, methodArg_getDec(method_arg));
+    char res[PIKA_NAME_BUFF_SIZE] = {0};
+    if (strGetSize(method_dec) > size) {
+        return NULL;
+    }
+    strPopToken(res, method_dec, '(');
+    strCopy(buffs, res);
+    return buffs;
+}
+
 Method obj_getNativeMethod(PikaObj* self, char* method_name) {
     Arg* method_arg = obj_getMethodArg(self, method_name);
     if (NULL == method_arg) {
@@ -556,10 +567,9 @@ PikaObj* methodArg_getDefContext(Arg* method_arg) {
 
 static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     Args buffs = {0};
-    char* pars = strsRemovePrefix(&buffs, method_info->dec, method_info->name);
-    method_info->pars = pars;
+    method_info->pars = method_info->dec;
     Arg* arg = New_arg(NULL);
-    uint32_t size_pars = strGetSize(pars);
+    uint32_t size_pars = strGetSize(method_info->pars);
     uintptr_t method_info_bytecode_frame =
         (uintptr_t)method_info->bytecode_frame;
     uintptr_t method_info_def_context = (uintptr_t)method_info->def_context;

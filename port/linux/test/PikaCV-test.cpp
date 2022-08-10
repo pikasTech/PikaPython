@@ -1,6 +1,7 @@
 #include "test_common.h"
 
-#if (PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL) && (!PIKA_POOL_ENABLE)
+#if (PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL) && (!PIKA_POOL_ENABLE) && \
+    (PIKA_STACK_BUFF_SIZE > 0x1000)
 TEST(PikaCV, test1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

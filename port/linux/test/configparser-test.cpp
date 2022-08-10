@@ -1,6 +1,6 @@
 #include "test_common.h"
-
-#if PIKA_SYNTAX_SLICE_ENABLE
+#if PIKA_STACK_BUFF_SIZE >= 0x1000
+#if PIKA_SYNTAX_SLICE_ENABLE 
 TEST(configparser, test1) {
     char* s =
         "[DEFAULT]\n"
@@ -53,4 +53,5 @@ TEST(configparser, test2) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 #endif

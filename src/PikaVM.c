@@ -555,7 +555,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                                          Arg* method_arg,
                                          char* method_name,
                                          int arg_num_used) {
-    char _buffs1[PIKA_LINE_BUFF_SIZE / 2] = {0};
+    char _buffs1[PIKA_LINE_BUFF_SIZE] = {0};
     char* buffs1 = (char*)_buffs1;
     char _buffs2[PIKA_LINE_BUFF_SIZE / 2] = {0};
     char* buffs2 = (char*)_buffs2;
@@ -2290,7 +2290,7 @@ void VMState_solveUnusedStack(VMState* vm) {
         } else if (type == ARG_TYPE_FLOAT) {
             __platform_printf("%f\r\n", arg_getFloat(arg));
         } else if (type == ARG_TYPE_STRING) {
-            __platform_printf("%s\r\n", arg_getStr(arg));
+            __platform_printf("'%s'\r\n", arg_getStr(arg));
         } else if (type == ARG_TYPE_BYTES) {
             arg_printBytes(arg);
         } else if (ARG_TYPE_POINTER == type ||

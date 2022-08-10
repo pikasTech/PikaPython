@@ -113,7 +113,7 @@ TEST(str, transfer) {
     /* collect */
     /* assert */
 
-    EXPECT_STREQ(log_buff[0], "\r\n\r\n");
+    EXPECT_STREQ(log_buff[0], "'\r\n'\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

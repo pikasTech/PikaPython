@@ -1,5 +1,6 @@
 #include "test_common.h"
 
+#if PIKA_STACK_BUFF_SIZE >= 0x1000
 TEST(cJSON, parse_print) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -56,7 +57,7 @@ TEST(cJSON, getItem) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[0], "22\r\n");
+    EXPECT_STREQ(log_buff[0], "'22'\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -91,9 +92,9 @@ TEST(cJSON, next) {
             "\n");
     /* collect */
     EXPECT_STREQ(log_buff[3], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[2], "\"mculover666\"\r\n");
-    EXPECT_STREQ(log_buff[1], "22\r\n");
-    EXPECT_STREQ(log_buff[0], "55.5\r\n");
+    EXPECT_STREQ(log_buff[2], "'\"mculover666\"'\r\n");
+    EXPECT_STREQ(log_buff[1], "'22'\r\n");
+    EXPECT_STREQ(log_buff[0], "'55.5'\r\n");
     /* assert */
     /* deinit */
     obj_deinit(pikaMain);
@@ -171,15 +172,15 @@ TEST(cJSON, item) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[9], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[8], "null\r\n");
-    EXPECT_STREQ(log_buff[7], "true\r\n");
-    EXPECT_STREQ(log_buff[6], "false\r\n");
-    EXPECT_STREQ(log_buff[5], "true\r\n");
-    EXPECT_STREQ(log_buff[4], "23\r\n");
-    EXPECT_STREQ(log_buff[3], "\"test\"\r\n");
-    EXPECT_STREQ(log_buff[2], "qqq\r\n");
-    EXPECT_STREQ(log_buff[1], "[]\r\n");
-    EXPECT_STREQ(log_buff[0], "{\n}\r\n");
+    EXPECT_STREQ(log_buff[8], "'null'\r\n");
+    EXPECT_STREQ(log_buff[7], "'true'\r\n");
+    EXPECT_STREQ(log_buff[6], "'false'\r\n");
+    EXPECT_STREQ(log_buff[5], "'true'\r\n");
+    EXPECT_STREQ(log_buff[4], "'23'\r\n");
+    EXPECT_STREQ(log_buff[3], "'\"test\"'\r\n");
+    EXPECT_STREQ(log_buff[2], "'qqq'\r\n");
+    EXPECT_STREQ(log_buff[1], "'[]'\r\n");
+    EXPECT_STREQ(log_buff[0], "'{\n}'\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -213,10 +214,10 @@ TEST(cJSON, construct) {
     /* assert */
     EXPECT_STREQ(
         log_buff[0],
-        "{\n\t\"name\":\t\"mculover666\",\n\t\"age\":\t22,\n\t\"weight\":\t55."
+        "'{\n\t\"name\":\t\"mculover666\",\n\t\"age\":\t22,\n\t\"weight\":\t55."
         "5,\n\t\"address\":\t{\n\t\t\"country\":\t\"China\",\n\t\t\"zip-code\":"
         "\t\"111111\"\n\t},\n\t\"skill\":\t[\"c\", \"Java\", "
-        "\"Python\"],\n\t\"student\":\tfalse\n}\r\n");
+        "\"Python\"],\n\t\"student\":\tfalse\n}'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -235,9 +236,9 @@ TEST(cJSON, test1) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0],
-                 "{\n\t\"data\":\t{\n\t\t\"validTime\":\t28800,\n\t\t\"token\":"
+                 "'{\n\t\"data\":\t{\n\t\t\"validTime\":\t28800,\n\t\t\"token\":"
                  "\t\"3E6EA1D907B9CFEB6AB1DECB5667E4A7\"\n\t},\n\t\"success\":"
-                 "\ttrue,\n\t\"resultCode\":\t\"0000\"\n}\r\n");
+                 "\ttrue,\n\t\"resultCode\":\t\"0000\"\n}'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -255,9 +256,9 @@ TEST(cJSON, test2) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0],
-                 "{\n\t\"data\":\t{\n\t\t\"validTime\":\t28800,\n\t\t\"token\":"
+                 "'{\n\t\"data\":\t{\n\t\t\"validTime\":\t28800,\n\t\t\"token\":"
                  "\t\"3E6EA1D907B9CFEB6AB1DECB5667E4A7\"\n\t},\n\t\"success\":"
-                 "\ttrue,\n\t\"resultCode\":\t\"0000\"\n}\r\n");
+                 "\ttrue,\n\t\"resultCode\":\t\"0000\"\n}'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -277,10 +278,10 @@ TEST(cJSON, test3) {
     /* assert */
     EXPECT_STREQ(
         log_buff[0],
-        "{\n\t\"name\":\t\"mculover666\",\n\t\"age\":\t22,\n\t\"weight\":\t55."
+        "'{\n\t\"name\":\t\"mculover666\",\n\t\"age\":\t22,\n\t\"weight\":\t55."
         "5,\n\t\"address\":\t{\n\t\t\"country\":\t\"China\",\n\t\t\"zip-code\":"
         "\t\"111111\"\n\t},\n\t\"skill\":\t[\"c\", \"Java\", "
-        "\"Python\"],\n\t\"student\":\tfalse\n}\r\n");
+        "\"Python\"],\n\t\"student\":\tfalse\n}'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -300,14 +301,14 @@ TEST(cJSON, test4) {
     /* assert */
     EXPECT_STREQ(
         log_buff[0],
-        "{\n\t\"data\":\t{\n\t\t\"requestSocialInsuranceFromYangCheng\":\t\"\","
+        "'{\n\t\"data\":\t{\n\t\t\"requestSocialInsuranceFromYangCheng\":\t\"\","
         "\n\t\t\"authenticationComparison\":\t\"no\",\n\t\t\"startupLogo\":"
         "\t\"4\",\n\t\t\"cardType\":\t\"00,01,02,03,04\",\n\t\t\"synfromhis\":"
         "\t\"no\",\n\t\t\"alarmThresholdValue\":\t\"37.2\","
         "\n\t\t\"hospitalName\":\t\"jell\",\n\t\t\"facediscernMode\":\t\"01\","
         "\n\t\t\"hospitalCode\":\t\"102\"\n\t},\n\t\"success\":\ttrue,"
         "\n\t\"resultCode\":\t\"0000\",\n\t\"time\":\t\"2022-05-20 "
-        "14:10:27\",\n\t\"message\":\t\"ok\"\n}\r\n");
+        "14:10:27\",\n\t\"message\":\t\"ok\"\n}'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -327,7 +328,7 @@ TEST(cJSON, test5) {
 
     EXPECT_STREQ(
         log_buff[0],
-        "{\n\t\"data\":\t{\n\t\t\"requestSocialInsuranceFromYangCheng\":\t\"\","
+        "'{\n\t\"data\":\t{\n\t\t\"requestSocialInsuranceFromYangCheng\":\t\"\","
         "\n\t\t\"authenticationComparison\":\t\"no\",\n\t\t\"startupLogo\":"
         "\t\"4\",\n\t\t\"cardType\":\t\"00,01,02,03,04\",\n\t\t\"synfromhis\":"
         "\t\"no\",\n\t\t\"alarmThresholdValue\":\t\"37.2\","
@@ -337,7 +338,7 @@ TEST(cJSON, test5) {
         "\t\"102\"\n\t},\n\t\"success\":\ttrue,\n\t\"resultCode\":\t\"0000\","
         "\n\t\"time\":\t\"2022-05-20 "
         "14:10:27\",\n\t\"message\":"
-        "\t\"\346\223\215\344\275\234\346\210\220\345\212\237\"\n}\r\n");
+        "\t\"\346\223\215\344\275\234\346\210\220\345\212\237\"\n}'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -357,7 +358,7 @@ TEST(cJSON, test6) {
 
     EXPECT_STREQ(
         log_buff[0],
-        "{\n\t\"array33\":\t[\"c\", \"Java\", "
+        "'{\n\t\"array33\":\t[\"c\", \"Java\", "
         "\"Python\"],\n\t\"data\":\t{"
         "\n\t\t\"requestSocialInsuranceFromYangCheng\":\t\"\","
         "\n\t\t\"authenticationComparison\":\t\"no\",\n\t\t\"startupLogo\":"
@@ -369,7 +370,7 @@ TEST(cJSON, test6) {
         "\t\"102\"\n\t},\n\t\"success\":\ttrue,\n\t\"resultCode\":\t\"0000\","
         "\n\t\"time\":\t\"2022-05-20 "
         "14:10:27\",\n\t\"message\":"
-        "\t\"\346\223\215\344\275\234\346\210\220\345\212\237\"\n}\r\n");
+        "\t\"\346\223\215\344\275\234\346\210\220\345\212\237\"\n}'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -457,4 +458,6 @@ TEST(cJSON, module) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
+
 #endif

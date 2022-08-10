@@ -198,7 +198,7 @@ TEST(string, split_chain) {
             "\n");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "[  a, b, c,  d  ]\r\n");
+    EXPECT_STREQ(log_buff[0], "['  a', 'b', 'c', ' d  ']\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -216,7 +216,7 @@ TEST(string, str_chain) {
             "\n");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_STREQ(log_buff[0], "'test'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);

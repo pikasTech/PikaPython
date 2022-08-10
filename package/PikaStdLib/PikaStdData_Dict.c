@@ -100,7 +100,13 @@ char* PikaStdData_dict_keys___str__(PikaObj* self) {
             str_arg = arg_strAppend(str_arg, ", ");
         }
         char* item_str = PikaStdLib_SysObj_str(self, item);
+        if (arg_getType(item) == ARG_TYPE_STRING) {
+            str_arg = arg_strAppend(str_arg, "'");
+        }
         str_arg = arg_strAppend(str_arg, item_str);
+        if (arg_getType(item) == ARG_TYPE_STRING) {
+            str_arg = arg_strAppend(str_arg, "'");
+        }
         i++;
     }
 
@@ -133,7 +139,13 @@ char* PikaStdData_Dict___str__(PikaObj* self) {
         str_arg = arg_strAppend(str_arg, ": ");
 
         char* val_str = PikaStdLib_SysObj_str(self, item_val);
+        if (arg_getType(item_val) == ARG_TYPE_STRING) {
+            str_arg = arg_strAppend(str_arg, "'");
+        }
         str_arg = arg_strAppend(str_arg, val_str);
+        if (arg_getType(item_val) == ARG_TYPE_STRING) {
+            str_arg = arg_strAppend(str_arg, "'");
+        }
         i++;
     }
 

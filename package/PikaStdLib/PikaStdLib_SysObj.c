@@ -474,3 +474,28 @@ PikaObj* PikaStdLib_SysObj_open(PikaObj* self, char* path, char* mode) {
     return NULL;
 #endif
 }
+
+/* __dir_each */
+int32_t __dir_each(Arg* argEach, Args* context) {
+    PikaObj* list = args_getPtr(context, "list");
+    if (argType_isCallable(arg_getType(argEach))) {
+        char name_buff[PIKA_LINE_BUFF_SIZE / 2] = {0};
+        char* method_name =
+            methodArg_getName(argEach, name_buff, sizeof(name_buff));
+        Arg* arg_str = arg_newStr(method_name);
+        __vm_List_append(list, arg_str);
+        arg_deinit(arg_str);
+    }
+    return 0;
+}
+
+PikaObj* PikaStdLib_SysObj_dir(PikaObj* self, PikaObj* obj) {
+    PikaObj* New_PikaStdData_List(Args * args);
+    PikaObj* list = newNormalObj(New_PikaStdData_List);
+    __vm_List___init__(list);
+    Args* context = New_args(NULL);
+    args_setPtr(context, "list", list);
+    args_foreach(obj->list, __dir_each, context);
+    args_deinit(context);
+    return list;
+}

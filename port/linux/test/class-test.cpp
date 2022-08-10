@@ -50,3 +50,23 @@ TEST(class, static_method) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(class, dir_) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "class T:\n"
+            "    def a(self):\n"
+            "        return 1\n"
+            "t = T()\n"
+            "l = dir(t)\n"
+            "print(l)\n");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

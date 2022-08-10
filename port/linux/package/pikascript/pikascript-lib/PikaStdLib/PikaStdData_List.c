@@ -40,7 +40,13 @@ char* PikaStdData_List___str__(PikaObj* self) {
             str_arg = arg_strAppend(str_arg, ", ");
         }
         char* item_str = PikaStdLib_SysObj_str(self, item);
+        if (arg_getType(item) == ARG_TYPE_STRING) {
+            str_arg = arg_strAppend(str_arg, "'");
+        }
         str_arg = arg_strAppend(str_arg, item_str);
+        if (arg_getType(item) == ARG_TYPE_STRING) {
+            str_arg = arg_strAppend(str_arg, "'");
+        }
         i++;
     }
 
