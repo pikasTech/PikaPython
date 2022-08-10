@@ -70,7 +70,7 @@ typedef enum _GenRuleValType {
 } GenRuleValType;
 
 typedef struct GenRule {
-    char* _asm;
+    char* ins;
     GenRuleValType type;
     char* ast;
     char* val;

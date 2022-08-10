@@ -2211,17 +2211,17 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
 
     /* Byte code generate rules */
     const GenRule rules_subAst[] = {
-        {._asm = "RUN", .type = VAL_DYNAMIC, .ast = "method"},
-        {._asm = "OPT", .type = VAL_DYNAMIC, .ast = "operator"},
-        {._asm = "BYT", .type = VAL_DYNAMIC, .ast = "bytes"},
-        {._asm = "NUM", .type = VAL_DYNAMIC, .ast = "num"},
-        {._asm = "IMP", .type = VAL_DYNAMIC, .ast = "import"},
-        {._asm = "REF", .type = VAL_DYNAMIC, .ast = "ref"},
-        {._asm = "STR", .type = VAL_DYNAMIC, .ast = "string"},
-        {._asm = "SLC", .type = VAL_NONEVAL, .ast = "slice"},
-        {._asm = "DCT", .type = VAL_NONEVAL, .ast = "dict"},
-        {._asm = "LST", .type = VAL_NONEVAL, .ast = "list"},
-        {._asm = "OUT", .type = VAL_DYNAMIC, .ast = "left"}};
+        {.ins = "RUN", .type = VAL_DYNAMIC, .ast = "method"},
+        {.ins = "OPT", .type = VAL_DYNAMIC, .ast = "operator"},
+        {.ins = "BYT", .type = VAL_DYNAMIC, .ast = "bytes"},
+        {.ins = "NUM", .type = VAL_DYNAMIC, .ast = "num"},
+        {.ins = "IMP", .type = VAL_DYNAMIC, .ast = "import"},
+        {.ins = "REF", .type = VAL_DYNAMIC, .ast = "ref"},
+        {.ins = "STR", .type = VAL_DYNAMIC, .ast = "string"},
+        {.ins = "SLC", .type = VAL_NONEVAL, .ast = "slice"},
+        {.ins = "DCT", .type = VAL_NONEVAL, .ast = "dict"},
+        {.ins = "LST", .type = VAL_NONEVAL, .ast = "list"},
+        {.ins = "OUT", .type = VAL_DYNAMIC, .ast = "left"}};
 
     char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
 
@@ -2231,7 +2231,7 @@ char* AST_appandPikaASM(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
         char* astNodeVal = obj_getStr(subAst, rule.ast);
         if (NULL != astNodeVal) {
             /* e.g. "0 RUN print \n" */
-            __platform_sprintf(buff, "%d %s ", deepth, rule._asm);
+            __platform_sprintf(buff, "%d %s ", deepth, rule.ins);
             Arg* abuff = arg_newStr(buff);
             if (rule.type == VAL_DYNAMIC) {
                 abuff = arg_strAppend(abuff, astNodeVal);
@@ -2272,7 +2272,7 @@ char* GenRule_toAsm(GenRule rule,
     /* parse stmt ast */
     pikaAsm = AST_appandPikaASM(ast, ast, buffs, pikaAsm);
     /* e.g. "0 CTN \n" */
-    __platform_sprintf(buff, "%d %s ", deepth, rule._asm);
+    __platform_sprintf(buff, "%d %s ", deepth, rule.ins);
     Arg* abuff = arg_newStr(buff);
     if (rule.type == VAL_DYNAMIC) {
         abuff = arg_strAppend(abuff, obj_getStr(ast, rule.ast));
@@ -2464,10 +2464,10 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     }
     /* generate code for block ast */
     const GenRule rules_block[] = {
-        {._asm = "TRY", .type = VAL_NONEVAL, .ast = "try"},
-        {._asm = "NEL", .type = VAL_STATIC_, .ast = "else", .val = "1"},
-        {._asm = "JEZ", .type = VAL_STATIC_, .ast = "if", .val = "1"},
-        {._asm = "JEZ", .type = VAL_STATIC_, .ast = "while", .val = "2"},
+        {.ins = "TRY", .type = VAL_NONEVAL, .ast = "try"},
+        {.ins = "NEL", .type = VAL_STATIC_, .ast = "else", .val = "1"},
+        {.ins = "JEZ", .type = VAL_STATIC_, .ast = "if", .val = "1"},
+        {.ins = "JEZ", .type = VAL_STATIC_, .ast = "while", .val = "2"},
     };
 
     for (size_t i = 0; i < sizeof(rules_block) / sizeof(GenRule); i++) {
@@ -2480,13 +2480,13 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     }
 
     const GenRule rules_topAst[] = {
-        {._asm = "CTN", .type = VAL_NONEVAL, .ast = "continue"},
-        {._asm = "BRK", .type = VAL_NONEVAL, .ast = "break"},
-        {._asm = "DEL", .type = VAL_DYNAMIC, .ast = "del"},
-        {._asm = "GLB", .type = VAL_DYNAMIC, .ast = "global"},
-        {._asm = "RIS", .type = VAL_DYNAMIC, .ast = "raise"},
-        {._asm = "ASS", .type = VAL_NONEVAL, .ast = "assert"},
-        {._asm = "RET", .type = VAL_NONEVAL, .ast = "return"}};
+        {.ins = "CTN", .type = VAL_NONEVAL, .ast = "continue"},
+        {.ins = "BRK", .type = VAL_NONEVAL, .ast = "break"},
+        {.ins = "DEL", .type = VAL_DYNAMIC, .ast = "del"},
+        {.ins = "GLB", .type = VAL_DYNAMIC, .ast = "global"},
+        {.ins = "RIS", .type = VAL_DYNAMIC, .ast = "raise"},
+        {.ins = "ASS", .type = VAL_NONEVAL, .ast = "assert"},
+        {.ins = "RET", .type = VAL_NONEVAL, .ast = "return"}};
 
     /* generate code for top level ast */
     for (size_t i = 0; i < sizeof(rules_topAst) / sizeof(rules_topAst[0]);
