@@ -106,6 +106,10 @@
             #define PIKA_FILEIO_ENABLE 0
         #endif
 
+        #ifndef PIKA_EXEC_ENABLE
+            #define PIKA_EXEC_ENABLE 0
+        #endif
+
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
         #ifndef PIKA_SYNTAX_SLICE_ENABLE
             #define PIKA_SYNTAX_SLICE_ENABLE 1
@@ -137,6 +141,10 @@
 
         #ifndef PIKA_FILEIO_ENABLE
             #define PIKA_FILEIO_ENABLE 1
+        #endif
+
+        #ifndef PIKA_EXEC_ENABLE
+            #define PIKA_EXEC_ENABLE 1
         #endif
 
     #endif
@@ -260,6 +268,10 @@
 
     #ifndef PIKA_INSTRUCT_HOOK_PERIOD
         #define PIKA_INSTRUCT_HOOK_PERIOD 50
+    #endif
+
+    #ifndef PIKA_EXEC_ENABLE
+        #define PIKA_EXEC_ENABLE 1
     #endif
 
     /* configuration validation */

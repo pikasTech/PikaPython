@@ -499,3 +499,12 @@ PikaObj* PikaStdLib_SysObj_dir(PikaObj* self, PikaObj* obj) {
     args_deinit(context);
     return list;
 }
+
+void PikaStdLib_SysObj_exec(PikaObj* self, char* code) {
+#if PIKA_EXEC_ENABLE
+    obj_run(self, code);
+#else
+    obj_setErrorCode(self, 1);
+    __platform_printf("[Error] PIKA_EXEC_ENABLE is not enabled.\r\n");
+#endif
+}

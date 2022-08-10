@@ -79,6 +79,9 @@ class SysObj:
     @staticmethod
     def dir(obj: object) -> list: ...
 
+    @staticmethod
+    def exec(code: str): ...
+
 
 class RangeObj:
     def __next__(self) -> any: ...
