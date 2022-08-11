@@ -1,4 +1,3 @@
-import _unittest
 from PikaStdData import String
 
 
