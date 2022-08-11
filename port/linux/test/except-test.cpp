@@ -79,4 +79,30 @@ TEST(except, try1file) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(except, for_loop) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    /* run */
+    obj_run(pikaMain,
+            "sum = 0\n"
+            "for i in range(0, 10):\n"
+            "    try:\n"
+            "        if i == 3:\n"
+            "            raise\n"
+            "        print(i)\n"
+            "        sum += i\n"
+            "    except:\n"
+            "        print('in except')\n"
+            "\n");
+    /* collect */
+    int sum = obj_getInt(pikaMain, "sum");
+    /* assert */
+    EXPECT_EQ(sum, 42);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif

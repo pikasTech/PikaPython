@@ -393,6 +393,13 @@ static Arg* VM_instruction_handler_TRY(PikaObj* self,
     return NULL;
 }
 
+static Arg* VM_instruction_handler_EXP(PikaObj* self,
+                                       VMState* vm,
+                                       char* data,
+                                       Arg* arg_ret_reg) {
+    return NULL;
+}
+
 static Arg* VM_instruction_handler_NTR(PikaObj* self,
                                        VMState* vm,
                                        char* data,

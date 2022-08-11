@@ -77,7 +77,10 @@ class TestCase:
                 result.testsRun += 1
                 self.test_fn = getattr(self, name)
                 print("[ RUN      ] %s.%s" % (suite_name, name))
-                self.test_fn()
+                try:
+                    self.test_fn()
+                except:
+                    result.errorsNum += 1
 
 
 class TestSuite:

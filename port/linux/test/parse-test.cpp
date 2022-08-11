@@ -3169,6 +3169,7 @@ TEST(parser, try1) {
                  "0 GER \n"
                  "0 JEZ 2\n"
                  "B0\n"
+                 "0 EXP \n"
                  "B1\n"
                  "1 STR in except\n"
                  "0 RUN print\n"
@@ -3672,6 +3673,55 @@ TEST(parser, assert_) {
                  "1 OPT ==\n"
                  "1 STR testparser\n"
                  "0 ASS \n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTAX_EXCEPTION_ENABLE
+TEST(parser, except_for) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "for i in range(0, 10):\n"
+        "    try:\n"
+        "        a\n"
+        "    except:\n"
+        "        b\n"
+        "\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 NUM 0\n"
+                 "2 NUM 10\n"
+                 "1 RUN range\n"
+                 "0 RUN iter\n"
+                 "0 OUT _l0\n"
+                 "B0\n"
+                 "0 RUN _l0.__next__\n"
+                 "0 OUT i\n"
+                 "0 EST i\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "0 TRY \n"
+                 "B2\n"
+                 "0 REF a\n"
+                 "B1\n"
+                 "0 NTR \n"
+                 "0 GER \n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "0 EXP \n"
+                 "B2\n"
+                 "0 REF b\n"
+                 "0 SER 0\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n"
+                 "0 DEL _l0\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

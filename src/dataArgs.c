@@ -605,6 +605,28 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg) {
     Args buffs = {0};
     char* res = NULL;
     ArgType type = arg_getType(arg);
+    const char* syms[] = {"%s", "%r"};
+    for (size_t i = 0; i < sizeof(syms) / sizeof(char*); i++) {
+        char* sym = (char*)syms[i];
+        if (strstr(fmt, sym)) {
+            if (type == ARG_TYPE_STRING) {
+                fmt = strsReplace(&buffs, fmt, sym, "%s");
+                break;
+            }
+            if (type == ARG_TYPE_INT) {
+                fmt = strsReplace(&buffs, fmt, sym, "%d");
+                break;
+            }
+            if (type == ARG_TYPE_FLOAT) {
+                fmt = strsReplace(&buffs, fmt, sym, "%f");
+                break;
+            }
+            if (type == ARG_TYPE_POINTER) {
+                fmt = strsReplace(&buffs, fmt, sym, "%p");
+                break;
+            }
+        }
+    }
     if (ARG_TYPE_INT == type) {
         int val = arg_getInt(arg);
         res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);

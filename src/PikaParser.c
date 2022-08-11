@@ -2465,6 +2465,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs) {
     /* generate code for block ast */
     const GenRule rules_block[] = {
         {.ins = "TRY", .type = VAL_NONEVAL, .ast = "try"},
+        {.ins = "EXP", .type = VAL_NONEVAL, .ast = "except"},
         {.ins = "NEL", .type = VAL_STATIC_, .ast = "else", .val = "1"},
         {.ins = "JEZ", .type = VAL_STATIC_, .ast = "if", .val = "1"},
         {.ins = "JEZ", .type = VAL_STATIC_, .ast = "while", .val = "2"},
