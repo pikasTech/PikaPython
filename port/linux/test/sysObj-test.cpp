@@ -28,3 +28,47 @@ TEST(sysObj, noMethod) {
     obj_deinit(obj);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(sysObj, getattr) {
+    char* lines =
+        "class Test:\n"
+        "    def __init__(self):\n"
+        "        self.a = 1\n"
+        "test = Test()\n"
+        "aa = getattr(test, 'a')\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    int aa = obj_getInt(pikaMain, "aa");
+    /* assert */
+    EXPECT_EQ(1, aa);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(sysObj, setattr) {
+    char* lines =
+        "class Test:\n"
+        "\n"
+        "test = Test()\n"
+        "setattr(test, 'a', 2)\n"
+        "aa = test.a\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    int aa = obj_getInt(pikaMain, "aa");
+    /* assert */
+    EXPECT_EQ(2, aa);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

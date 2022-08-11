@@ -66,7 +66,7 @@ char* PikaStdData_String___str__(PikaObj* self) {
     return obj_getStr(self, "str");
 }
 
-int PikaStdData_String_startwith(PikaObj* self, char* prefix) {
+int PikaStdData_String_startswith(PikaObj* self, char* prefix) {
     char* str = obj_getStr(self, "str");
     char* p = prefix;
     int i = 0;
@@ -79,7 +79,7 @@ int PikaStdData_String_startwith(PikaObj* self, char* prefix) {
     return 1;
 }
 
-int PikaStdData_String_endwith(PikaObj* self, char* suffix) {
+int PikaStdData_String_endswith(PikaObj* self, char* suffix) {
     char* str = obj_getStr(self, "str");
     int len1 = strlen(str);
     int len2 = strlen(suffix);

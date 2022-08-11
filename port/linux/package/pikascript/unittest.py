@@ -1,4 +1,5 @@
 import _unittest
+from PikaStdData import String
 
 
 class TestResult:
@@ -70,8 +71,13 @@ class TestCase:
         msg = "Expected %r to be in %r" % (x, y)
         assert x in y, msg
 
-    def run(self, result, suite_name):
-        _unittest._case_run(self, result, suite_name)
+    def run(self, result: TestResult, suite_name):
+        for name in dir(self):
+            if String(name).startswith("test"):
+                result.testsRun += 1
+                self.test_fn = getattr(self, name)
+                print("[ RUN      ] %s.%s" % (suite_name, name))
+                self.test_fn()
 
 
 class TestSuite:
@@ -82,7 +88,7 @@ class TestSuite:
     def addTest(self, case):
         self._tests.append(case)
 
-    def run(self, result):
+    def run(self, result: TestResult):
         for case in self._tests:
             case.run(result, self.name)
         return result
@@ -93,13 +99,13 @@ class TextTestRunner:
         res = TestResult()
         _ = suite.run(res)
         print("----------------------------------------------------------------------")
-        print("Ran %d tests\n" % res.testsRun)
+        print("[----------] %d tests from %s\n" % res.testsRun, suite.name)
         if res.failuresNum > 0 or res.errorsNum > 0:
             s = "FAILED"
             s += " (%d errors, %d failures)" % (res.errorsNum, res.failuresNum)
             print(s)
         else:
-            msg = "OK"
+            msg = "[==========]"
             if res.skippedNum > 0:
                 msg += " (skipped=%d)" % res.skippedNum
             print(msg)

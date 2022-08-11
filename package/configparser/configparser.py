@@ -10,11 +10,11 @@ class ConfigParser():
         lines = content.split('\n')
         for line in lines:
             line = String(line)
-            if line.startwith('#'):
+            if line.startswith('#'):
                 continue
-            if line.startwith(';'):
+            if line.startswith(';'):
                 continue
-            if line.startwith('['):
+            if line.startswith('['):
                 section = String(line.replace('[', ''))
                 section = section.replace(']', '')
                 self.config_dict[section] = {}

@@ -508,3 +508,28 @@ void PikaStdLib_SysObj_exec(PikaObj* self, char* code) {
     __platform_printf("[Error] PIKA_EXEC_ENABLE is not enabled.\r\n");
 #endif
 }
+
+Arg* PikaStdLib_SysObj_getattr(PikaObj* self, PikaObj* obj, char* name) {
+    Arg* res = NULL;
+    if (NULL == obj) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("[Error] getattr: can not get attr of NULL.\r\n");
+        return NULL;
+    }
+    res = arg_copy(obj_getArg(obj, name));
+    return res;
+}
+
+void PikaStdLib_SysObj_setattr(PikaObj* self,
+                               PikaObj* obj,
+                               char* name,
+                               Arg* val) {
+    if (NULL == obj) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("[Error] setattr: obj is null.\r\n");
+        goto exit;
+    }
+    obj_setArg(obj, name, val);
+exit:
+    return;
+}
