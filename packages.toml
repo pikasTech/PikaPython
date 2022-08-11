@@ -161,6 +161,11 @@ releases = [
   "v1.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
 ]
 
+[[packages]]
+name = "unittest"
+releases = [
+  "v0.1.0 cd6dfbbb714228e7e0f147515d58450644e7dadf",
+]
 
 [[packages]]
 name = "configparser"
