@@ -149,7 +149,33 @@ TEST(unittest, test1) {
     __platform_printf("BEGIN\r\n");
     pikaVM_runSingleFile(pikaMain, "test/python/unittest/test1.py");
     /* collect */
+    int testsRun = obj_getInt(pikaMain, "res.testsRun");
+    int errorsNum = obj_getInt(pikaMain, "res.errorsNum");
     /* assert */
+    EXPECT_EQ(testsRun, 3);
+    EXPECT_EQ(errorsNum, 0);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTAX_LEVEL==PIKA_SYNTAX_LEVEL_MAXIMAL
+TEST(unittest, test2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/unittest/test2.py");
+    /* collect */
+    int testsRun = obj_getInt(pikaMain, "res.testsRun");
+    int errorsNum = obj_getInt(pikaMain, "res.errorsNum");
+    /* assert */
+    EXPECT_EQ(testsRun, 4);
+    EXPECT_EQ(errorsNum, 1);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

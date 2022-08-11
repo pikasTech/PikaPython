@@ -79,7 +79,9 @@ class TestCase:
                 print("[ RUN      ] %s.%s" % (suite_name, name))
                 try:
                     self.test_fn()
+                    print("[       OK ] %s.%s" % (suite_name, name))
                 except:
+                    print("[  FAILED  ] %s.%s" % (suite_name, name))
                     result.errorsNum += 1
 
 
@@ -100,17 +102,20 @@ class TestSuite:
 class TextTestRunner:
     def run(self, suite: TestSuite):
         res = TestResult()
+        print("[----------] tests from %s" % suite.name)
         _ = suite.run(res)
-        print("----------------------------------------------------------------------")
-        print("[----------] %d tests from %s\n" % res.testsRun, suite.name)
+        print("[----------] %d tests from %s" % res.testsRun, suite.name)
+        print('')
+        print('[==========]')
         if res.failuresNum > 0 or res.errorsNum > 0:
-            s = "FAILED"
+            s = "[  FAILED  ]"
             s += " (%d errors, %d failures)" % (res.errorsNum, res.failuresNum)
             print(s)
         else:
-            msg = "[==========]"
+            msg = ""
             if res.skippedNum > 0:
                 msg += " (skipped=%d)" % res.skippedNum
             print(msg)
+            print("[  PASSED  ] %d tests" % res.testsRun)
 
         return res

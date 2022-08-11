@@ -169,6 +169,9 @@ static int32_t VMState_getAddrOffsetOfRaise(VMState* vm) {
     InstructUnit* ins_unit_now = VMState_getInstructNow(vm);
     while (1) {
         offset += instructUnit_getSize(ins_unit_now);
+        if (vm->pc + offset >= (int)VMState_getInstructArraySize(vm)) {
+            return 0;
+        }
         ins_unit_now = VMState_getInstructWithOffset(vm, offset);
         enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
         if ((NTR == ins)) {
@@ -806,6 +809,17 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
 #endif
 }
 
+static Arg* VM_instruction_handler_RET(PikaObj* self,
+                                       VMState* vm,
+                                       char* data,
+                                       Arg* arg_ret_reg) {
+    /* exit jmp signal */
+    vm->jmp = VM_JMP_EXIT;
+    Arg* return_arg = stack_popArg_alloc(&(vm->stack));
+    method_returnArg(vm->locals->list, return_arg);
+    return NULL;
+}
+
 static Arg* VM_instruction_handler_RUN(PikaObj* self,
                                        VMState* vm,
                                        char* data,
@@ -824,7 +838,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
                             .try_result = TRY_RESULT_NONE};
     pika_assert(NULL != vm->try_info);
     if (vm->try_info->try_state == TRY_STATE_TOP ||
-        vm->try_error_code == TRY_STATE_INNER) {
+        vm->try_info->try_state == TRY_STATE_INNER) {
         sub_try_info.try_state = TRY_STATE_INNER;
     }
 
@@ -983,7 +997,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (sub_try_info.try_result == TRY_RESULT_RAISE) {
         /* try error */
         VMState_setErrorCode(vm, PIKA_RES_ERR_RUNTIME_ERROR);
-        vm->jmp = VM_JMP_RAISE;
+        if (vm->try_info->try_state == TRY_STATE_TOP) {
+            vm->jmp = VM_JMP_RAISE;
+        } else if (vm->try_info->try_state == TRY_STATE_INNER) {
+            vm->try_info->try_result = TRY_RESULT_RAISE;
+            goto exit;
+        }
     }
 
     goto exit;
@@ -1640,17 +1659,6 @@ static Arg* VM_instruction_handler_CLS(PikaObj* self,
     return __VM_instruction_handler_DEF(self, vm, data, 1);
 }
 
-static Arg* VM_instruction_handler_RET(PikaObj* self,
-                                       VMState* vm,
-                                       char* data,
-                                       Arg* arg_ret_reg) {
-    /* exit jmp signal */
-    vm->jmp = VM_JMP_EXIT;
-    Arg* return_arg = stack_popArg_alloc(&(vm->stack));
-    method_returnArg(vm->locals->list, return_arg);
-    return NULL;
-}
-
 static Arg* VM_instruction_handler_RIS(PikaObj* self,
                                        VMState* vm,
                                        char* data,
@@ -1867,7 +1875,13 @@ nextLine:
     }
     /* raise */
     if (VM_JMP_RAISE == vm->jmp) {
-        pc_next = vm->pc + VMState_getAddrOffsetOfRaise(vm);
+        int offset = VMState_getAddrOffsetOfRaise(vm);
+        if (0 == offset) {
+            /* can not found end of try, return */
+            pc_next = VM_PC_EXIT;
+            goto exit;
+        }
+        pc_next = vm->pc + offset;
         goto exit;
     }
     /* static jmp */

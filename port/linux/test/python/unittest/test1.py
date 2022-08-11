@@ -14,12 +14,7 @@ class TestUnittestAssertions(unittest.TestCase):
         print("in testFalse...")
         self.assertFalse(False)
 
-    def testFalse2(self):
-        print("in testFalse2...")
-        self.assertFalse(True)
-
-
 suit = unittest.TestSuite("test1")
 suit.addTest(TestUnittestAssertions())
 runner = unittest.TextTestRunner()
-runner.run(suit)
+res = runner.run(suit)
