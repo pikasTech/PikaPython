@@ -93,7 +93,7 @@ TEST(string, format_parse1) {
     Args* buffs = New_strBuff();
     char* lines = "print('tes:%0.2f'% mem.getMax())";
     printf("%s\n", lines);
-    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"

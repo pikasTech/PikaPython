@@ -83,12 +83,12 @@ struct LexToken {
     char* pyload;
 };
 
-typedef struct ParserState ParsetState;
-struct ParserState {
+typedef struct Cursor ParsetState;
+struct Cursor {
     char* tokens;
     uint16_t length;
     uint16_t iter_index;
-    uint8_t branket_deepth;
+    int8_t branket_deepth;
     struct LexToken token1;
     struct LexToken token2;
     Arg* last_token;
@@ -97,31 +97,29 @@ struct ParserState {
     PIKA_RES result;
 };
 
-char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
+char* Parser_fileToAsm(Args* outBuffs, char* filename);
+char* Parser_linesToAsm(Args* outBuffs, char* multiLine);
+char* Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines);
+char* Parser_linesToArray(char* lines);
+
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
-char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);
 ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
-int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
-                                char* python_lines);
-void Parser_compilePyToBytecodeArray(char* lines);
-char* Parser_parsePyLines(Args* outBuffs,
-                          ByteCodeFrame* bytecode_frame,
-                          char* py_lines);
-#define ParserState_forEach(parseState)  \
-    ParserState_beforeIter(&parseState); \
-    for (int __i = 0; __i < parseState.length; __i++)
+int bytecodeFrame_fromLines(ByteCodeFrame* bytecode_frame, char* python_lines);
 
-#define ParserState_forEachTokenExistPs(parseState, tokens) \
-    /* init parserStage */                                  \
-    ParserState_init(&parseState);                          \
-    ParserState_parse(&parseState, tokens);                 \
-    ParserState_forEach(parseState)
+#define Cursor_forEach(cursor)  \
+    Cursor_beforeIter(&cursor); \
+    for (int __i = 0; __i < cursor.length; __i++)
 
-#define ParserState_forEachToken(parseState, tokens) \
-    struct ParserState parseState;                   \
-    ParserState_forEachTokenExistPs(parseState, tokens)
+#define Cursor_forEachTokenExistPs(cursor, tokens) \
+    /* init parserStage */                         \
+    Cursor_init(&cursor);                          \
+    Cursor_parse(&cursor, tokens);                 \
+    Cursor_forEach(cursor)
+
+#define Cursor_forEachToken(cursor, tokens) \
+    struct Cursor cursor;                   \
+    Cursor_forEachTokenExistPs(cursor, tokens)
 
 uint16_t Tokens_getSize(char* tokens);
-char* Parser_fileToAsm(Args* outBuffs, char* filename);
 
 #endif

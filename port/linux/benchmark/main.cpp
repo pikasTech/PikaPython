@@ -44,7 +44,7 @@ BENCHMARK(while_loop_10000)->Unit(benchmark::kMillisecond);
 static void prime_number_100(benchmark::State& state) {
     int num = 0;
     Args* buffs = New_strBuff();
-    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)
+    char* pikaAsm = Parser_linesToAsm(buffs, (char*)
             "num = 0\n"
             "for i in range(2,100):\n"
             "    is_prime = 1\n"

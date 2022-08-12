@@ -1113,7 +1113,7 @@ TEST(pikaMain, class_arg) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     Args* buffs = New_strBuff();
-    char* pikaAsm = Parser_multiLineToAsm(buffs,
+    char* pikaAsm = Parser_linesToAsm(buffs,
                                           "class Test(TinyObj):\n"
                                           "    x = 1\n"
                                           "\n"
@@ -2492,7 +2492,7 @@ TEST(pikaMain, for_loop_issue_1b2a3f1bdf) {
 
     Args* buffs = New_strBuff();
     __platform_printf("%s\n", lines);
-    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
     __platform_printf("%s", pikaAsm);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);

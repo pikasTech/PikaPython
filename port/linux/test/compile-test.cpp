@@ -39,7 +39,7 @@ TEST(compiler, file) {
         "            info_index = 0\n"
         "\n";
     pikaCompile("task.bin", lines);
-    Parser_compilePyToBytecodeArray(lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -83,7 +83,7 @@ TEST(compiler, task) {
         "\n";
 
     Args buffs = {0};
-    char* pikaAsm = Parser_multiLineToAsm(&buffs, lines);
+    char* pikaAsm = Parser_linesToAsm(&buffs, lines);
 
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
@@ -103,7 +103,7 @@ TEST(compiler, task) {
 
 TEST(compiler, demo1) {
     char* lines = "append(__val)";
-    Parser_compilePyToBytecodeArray(lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -257,7 +257,7 @@ TEST(compiler, import_bf_mem) {
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
-    bytecodeFrame_fromMultiLine(&bf, lines);
+    bytecodeFrame_fromLines(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
     byteCodeFrame_deinit(&bf);
     obj_deinit(pikaMain);
@@ -272,7 +272,7 @@ TEST(compiler, import_bf1) {
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
-    bytecodeFrame_fromMultiLine(&bf, lines);
+    bytecodeFrame_fromLines(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
     obj_run(pikaMain,
             "mtest.mytest()\n"
@@ -292,7 +292,7 @@ TEST(compiler, import_bf2) {
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
-    bytecodeFrame_fromMultiLine(&bf, lines);
+    bytecodeFrame_fromLines(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
     obj_run(pikaMain,
             "m = mtest.Test()\n"
@@ -549,42 +549,42 @@ TEST(make, compile_link_all) {
 
 TEST(compiler, __str__) {
     char* lines = "__res = __str__()";
-    Parser_compilePyToBytecodeArray(lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __len__) {
     char* lines = "__res = __len__()";
-    Parser_compilePyToBytecodeArray(lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __del__) {
     char* lines = "__del__()";
-    Parser_compilePyToBytecodeArray(lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, event_cb) {
     char* lines = "_eventCallBack(_eventSignal)";
-    Parser_compilePyToBytecodeArray(lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, event_cb_lvgl) {
     char* lines = "eventCallBack(eventSignal)";
-    Parser_compilePyToBytecodeArray(lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __setitem__) {
     char* lines = "__setitem__(__key, __val)";
-    Parser_compilePyToBytecodeArray(lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __getitem__) {
     char* lines = "__res = __getitem__(__key)";
-    Parser_compilePyToBytecodeArray(lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }

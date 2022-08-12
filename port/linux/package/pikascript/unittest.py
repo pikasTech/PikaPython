@@ -17,12 +17,8 @@ class TestResult:
 
     def __str__(self):
         # Format is compatible with CPython.
-        s = "<unittest.result.TestResult "
-        s += "run=%d, " % self.testsRun
-        s += "errors=%d, " % self.errorsNum
-        s += "failures=%d, " % self.failuresNum
-        s += "skipped=%d>" % self.skippedNum
-        return s
+        return "<unittest.result.TestResult run=%d, errors=%d, failures=%d,skipped=%d>" % (
+            self.testsRun, self.errorsNum, self.failuresNum, self.skippedNum)
 
 
 class TestCase:
@@ -107,9 +103,8 @@ class TextTestRunner:
         print('')
         print('[==========]')
         if res.failuresNum > 0 or res.errorsNum > 0:
-            s = "[  FAILED  ]"
-            s += " (%d errors, %d failures)" % (res.errorsNum, res.failuresNum)
-            print(s)
+            print("[  FAILED  ] (%d errors, %d failures)" % (
+                res.errorsNum, res.failuresNum))
         else:
             msg = ""
             if res.skippedNum > 0:
