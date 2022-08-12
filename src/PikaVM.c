@@ -1842,19 +1842,16 @@ static int pikaVM_runInstructUnit(PikaObj* self,
                                   VMState* vm,
                                   InstructUnit* ins_unit) {
     enum Instruct instruct = instructUnit_getInstruct(ins_unit);
-    arg_newReg(return_Arg_reg, PIKA_ARG_BUFF_SIZE);
-    Arg* return_arg = &return_Arg_reg;
+    arg_newReg(ret_reg, PIKA_ARG_BUFF_SIZE);
+    Arg* return_arg = &ret_reg;
     // char invode_deepth1_str[2] = {0};
     int32_t pc_next = vm->pc + instructUnit_getSize();
     char* data = VMState_getConstWithInstructUnit(vm, ins_unit);
     /* run instruct */
     pika_assert(NULL != vm->try_info);
-    return_arg =
-        VM_instruct_handler_table[instruct](self, vm, data, &return_Arg_reg);
+    return_arg = VM_instruct_handler_table[instruct](self, vm, data, &ret_reg);
     if (NULL != return_arg) {
         stack_pushArg(&(vm->stack), return_arg);
-    } else {
-        stack_pushArg(&(vm->stack), arg_newNull());
     }
     goto nextLine;
 nextLine:
