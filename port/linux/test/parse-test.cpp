@@ -560,7 +560,8 @@ TEST(parser, add) {
                  "1 NUM 1\n"
                  "1 NUM 1\n"
                  "0 OPT +\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -568,7 +569,7 @@ TEST(parser, add) {
 TEST(parser, add_3) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines = "a = 1 + 2 + 3\n";
+    char* lines = "a = 1 + 2 + 3";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
     printf("%s", pikaAsm);
@@ -579,7 +580,8 @@ TEST(parser, add_3) {
                  "1 OPT +\n"
                  "1 NUM 3\n"
                  "0 OPT +\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -596,7 +598,8 @@ TEST(parser, add_a_pp) {
                  "1 REF a\n"
                  "1 NUM 1\n"
                  "0 OPT +\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -647,7 +650,8 @@ TEST(parser, add_m2p3) {
                  "1 OPT *\n"
                  "1 NUM 3\n"
                  "0 OPT +\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -667,7 +671,8 @@ TEST(parser, add_m2p3_) {
                  "2 OPT +\n"
                  "1 RUN \n"
                  "0 OPT *\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -687,7 +692,8 @@ TEST(parser, add_m12p3_) {
                  "1 RUN \n"
                  "1 NUM 3\n"
                  "0 OPT *\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -704,7 +710,8 @@ TEST(parser, method_equ) {
                  "1 RUN right.read\n"
                  "1 NUM 1\n"
                  "0 OPT ==\n"
-                 "0 JEZ 1\n");
+                 "0 JEZ 1\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -721,7 +728,8 @@ TEST(parser, equ_method) {
                  "1 NUM 1\n"
                  "1 RUN right.read\n"
                  "0 OPT ==\n"
-                 "0 JEZ 1\n");
+                 "0 JEZ 1\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -731,8 +739,7 @@ TEST(parser, def_add) {
     Args* buffs = New_strBuff();
     char* lines =
         "def add(a, b):\n"
-        "    a + b\n"
-        "\n";
+        "    a + b";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
     printf("%s", pikaAsm);
@@ -858,6 +865,7 @@ TEST(parser, signed_num) {
         "1 NUM 1\n"
         "0 OPT -\n"
         "0 OUT a\n"
+        "B0\n"
     );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -877,6 +885,7 @@ TEST(parser, comp_signed_num) {
         "1 OPT -\n"
         "0 OPT >\n"
         "0 JEZ 1\n"
+        "B0\n"
     );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1104,7 +1113,8 @@ TEST(parser, mm) {
                  "2 NUM 1\n"
                  "1 OPT -\n"
                  "0 OPT **\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1185,7 +1195,7 @@ TEST(parser, self_inc) {
         "2 NUM 1\n"
         "1 OPT -\n"
         "0 OPT %=\n"
-    );
+        "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1202,7 +1212,8 @@ TEST(parser, n_n1) {
                  "2 NUM 1\n"
                  "1 OPT -\n"
                  "0 OPT ~\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1225,7 +1236,7 @@ TEST(parser, or_) {
         "2 OPT <=\n"
         "1 RUN \n"
         "0 OPT  or \n"
-    );
+        "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1272,7 +1283,7 @@ TEST(parser, annotation) {
         "B0\n"
         "0 REF t\n"
         "0 OUT a\n"
-    );
+        "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1282,8 +1293,7 @@ TEST(parser, annotation_block) {
     Args* buffs = New_strBuff();
     char* lines =
         "while True:\n"
-        "    a = 1\n"
-        "\n";
+        "    a = 1";
     printf("%s", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
     printf("%s", pikaAsm);
@@ -1301,7 +1311,7 @@ TEST(parser, annotation_block) {
     lines =
         "while True:\n"
         "    a = 1\n"
-        "#\n";
+        "#";
     printf("%s", lines);
     pikaAsm = Parser_multiLineToAsm(buffs, lines);
     printf("%s", pikaAsm);
@@ -1312,13 +1322,15 @@ TEST(parser, annotation_block) {
         "B1\n"
         "0 NUM 1\n"
         "0 OUT a\n"
+        "B0\n"
+        "0 JMP -1\n"
+        "B0\n"
     );
     lines =
         "while True:\n"
         "    a = 1\n"
         "#test\n"
-        "    b = 2\n"
-        "\n";
+        "    b = 2";
     printf("%s", lines);
     pikaAsm = Parser_multiLineToAsm(buffs, lines);
     printf("%s", pikaAsm);
@@ -1728,7 +1740,8 @@ TEST(parser, __iter__) {
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
                  "0 RUN __iter__\n"
-                 "0 OUT __res\n");
+                 "0 OUT __res\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1795,7 +1808,8 @@ TEST(parser, print_ddd) {
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
                  "1 STR [Info]: in Python config...\n"
-                 "0 RUN print\n");
+                 "0 RUN print\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1821,7 +1835,8 @@ TEST(parser, __getitem__3) {
                  "2 OPT *\n"
                  "1 SLC \n"
                  "0 OPT +\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1840,7 +1855,8 @@ TEST(parser, __getitem__) {
                  "1 REF b\n"
                  "1 REF c\n"
                  "0 SLC \n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1861,7 +1877,8 @@ TEST(parser, __getitem__2) {
                  "2 REF d\n"
                  "1 OPT +\n"
                  "0 SLC \n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1881,7 +1898,8 @@ TEST(parser, __setitem__) {
                  "1 REF b\n"
                  "1 REF c\n"
                  "0 RUN __setitem__\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1901,7 +1919,8 @@ TEST(parser, str_p_str) {
                  "2 NUM 1\n"
                  "1 RUN str\n"
                  "0 OPT +\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -1990,7 +2009,8 @@ TEST(parser, mpy_demo_1) {
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
                  "0 STR  .,-:;i+hHM$*#@ \n"
-                 "0 OUT chars\n");
+                 "0 OUT chars\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2193,7 +2213,8 @@ TEST(parser, list_1_2) {
                  "3 NUM 1\n"
                  "2 SLC \n"
                  "1 OPT +\n"
-                 "0 RUN print\n");
+                 "0 RUN print\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2368,7 +2389,8 @@ TEST(parser, plus_equ) {
                  "2 OPT +\n"
                  "1 RUN \n"
                  "0 OPT +\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2409,7 +2431,8 @@ TEST(parser, plus_equ_) {
                  "2 RUN \n"
                  "1 RUN \n"
                  "0 OPT -\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2466,7 +2489,8 @@ TEST(parser, a_cuohao_j) {
                  "1 RUN \n"
                  "1 NUM 4\n"
                  "0 OPT -\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     printf("%s", pikaAsm);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2484,7 +2508,8 @@ TEST(parser, _3_3) {
                  "2 NUM 3\n"
                  "1 OPT -\n"
                  "1 NUM 3\n"
-                 "0 OPT +\n");
+                 "0 OPT +\n"
+                 "B0\n");
     printf("%s", pikaAsm);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2504,7 +2529,8 @@ TEST(parser, list_init) {
                  "1 NUM 2\n"
                  "1 NUM 3\n"
                  "0 LST \n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     printf("%s", pikaAsm);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2523,7 +2549,8 @@ TEST(parser, list_init_fun) {
                  "2 NUM 2\n"
                  "2 NUM 3\n"
                  "1 LST \n"
-                 "0 RUN test\n");
+                 "0 RUN test\n"
+                 "B0\n");
     printf("%s", pikaAsm);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2542,7 +2569,8 @@ TEST(parser, bytes_iteral) {
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
                  "0 BYT \\x00\\x01\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2562,7 +2590,8 @@ TEST(parser, import_as) {
                  "0 IMP PikaStdLib\n"
                  "B0\n"
                  "0 REF PikaStdLib\n"
-                 "0 OUT std\n");
+                 "0 OUT std\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2580,7 +2609,8 @@ TEST(parser, str_equ) {
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
                  "0 STR num =\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2600,7 +2630,8 @@ TEST(parser, bytes_index) {
                  "1 BYT eqrt\n"
                  "1 NUM 2\n"
                  "0 SLC \n"
-                 "0 OUT res2\n");
+                 "0 OUT res2\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2618,7 +2649,8 @@ TEST(parser, hex_iteral) {
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
                  "0 NUM 0b10\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2678,7 +2710,8 @@ TEST(parser, parse_issue2) {
                  "1 NUM 1\n"
                  "1 REF dat\n"
                  "0 RUN __setitem__\n"
-                 "0 OUT recv_buf\n");
+                 "0 OUT recv_buf\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2708,7 +2741,8 @@ TEST(parser, slice1) {
                  "1 NUM 1\n"
                  "1 NUM 4\n"
                  "0 SLC \n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2729,7 +2763,8 @@ TEST(parser, slice2) {
                  "1 NUM 4\n"
                  "1 NUM 2\n"
                  "0 SLC \n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2757,7 +2792,7 @@ TEST(parser, str_add1) {
         "1 STR ]:\n"
         "0 OPT +\n"
         "0 OUT msg\n"
-    );
+        "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2782,7 +2817,7 @@ TEST(parser, str_add2) {
         "1 RUN str\n"
         "0 OPT +\n"
         "0 OUT msg\n"
-    );
+        "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2898,7 +2933,8 @@ TEST(parser, slice_12lkj) {
                  "1 NUM 0\n"
                  "1 NUM 6\n"
                  "0 SLC \n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2917,7 +2953,8 @@ TEST(parser, slice_oifjlk) {
                  "2 NUM 1\n"
                  "1 OPT -\n"
                  "0 SLC \n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2935,7 +2972,8 @@ TEST(parser, str_string) {
                  "2 STR test\n"
                  "1 RUN String\n"
                  "0 RUN str\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -2976,7 +3014,8 @@ TEST(parser, json_literal) {
         "0 STR {\"name\": \"mculover666\",\"age\": 22,\"weight\": "
         "55.5,\"address\":{    \"country\": \"China\",    \"zip-code\": "
         "111111},\"skill\": [\"c\", \"Java\", \"Python\"],\"student\": false}\n"
-        "0 OUT a\n");
+        "0 OUT a\n"
+        "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3052,7 +3091,8 @@ TEST(parser, cjson_test4) {
                  "\"facediscernMode\":\"01\",\"hospitalCode\":\"102\"},"
                  "\"success\":true,\"resultCode\":\"0000\",\"time\":\"2022-05-"
                  "20 14:10:27\",\"message\":\"ok\"}\n0 OUT data1\nB0\n1 REF "
-                 "data1\n0 RUN pika_cjson.Parse\n0 OUT a\nB0\n0 RUN a.print\n");
+                 "data1\n0 RUN pika_cjson.Parse\n0 OUT a\nB0\n0 RUN a.print\n"
+                 "B0\n");
     args_deinit(buffs);
     arg_deinit(lines_buff);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -3070,7 +3110,8 @@ TEST(parser, connection) {
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
                  "1 STR test\n"
-                 "0 RUN print\n");
+                 "0 RUN print\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3092,7 +3133,8 @@ TEST(parser, connection2) {
                  "0 OUT a\n"
                  "B0\n"
                  "1 REF a\n"
-                 "0 RUN print\n");
+                 "0 RUN print\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3110,7 +3152,8 @@ TEST(parser, format1) {
                  "1 STR res:%d\n"
                  "1 NUM 23\n"
                  "0 RUN cformat\n"
-                 "0 OUT s\n");
+                 "0 OUT s\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3129,7 +3172,8 @@ TEST(parser, format2) {
                  "1 STR res:%d:%d\n"
                  "1 NUM 23\n"
                  "1 NUM 25\n"
-                 "0 RUN cformat\n");
+                 "0 RUN cformat\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3191,7 +3235,8 @@ TEST(parser, optissue1) {
                  "B0\n"
                  "2 NUM 1\n"
                  "1 OPT -\n"
-                 "0 OPT ~\n");
+                 "0 OPT ~\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3207,7 +3252,8 @@ TEST(parser, optissue2) {
                  "B0\n"
                  "2 RUN get\n"
                  "1 OPT  not \n"
-                 "0 RUN test\n");
+                 "0 RUN test\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3272,7 +3318,8 @@ TEST(parser, dict_literal1) {
                  "1 STR url\n"
                  "1 STR www.runoob.com\n"
                  "0 DCT \n"
-                 "0 OUT tinydict\n");
+                 "0 OUT tinydict\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3386,7 +3433,8 @@ TEST(parser, function_chain) {
                  "1 RUN String\n"
                  "1 STR ,\n"
                  "0 RUN .split\n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3434,7 +3482,8 @@ TEST(parser, str_issue2) {
                  "3 REF ret\n"
                  "2 RUN str\n"
                  "1 RUN cformat\n"
-                 "0 RUN print\n");
+                 "0 RUN print\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3478,7 +3527,8 @@ TEST(parser, num_issue) {
                  "2 OPT /\n"
                  "1 RUN \n"
                  "1 NUM 12\n"
-                 "0 OPT -\n");
+                 "0 OPT -\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3498,7 +3548,8 @@ TEST(parser, branket_issue2) {
                  "1 NUM 0\n"
                  "1 NUM 2\n"
                  "0 SLC \n"
-                 "0 OUT temp\n");
+                 "0 OUT temp\n"
+                 "B0\n");
     __platform_printf("%s", pikaAsm);
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -3520,7 +3571,8 @@ TEST(parser, branket_issue3) {
                  "1 SLC \n"
                  "1 REF y\n"
                  "0 SLC \n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3541,7 +3593,8 @@ TEST(parser, branket_issue4) {
                  "2 REF y\n"
                  "1 SLC \n"
                  "0 SLC \n"
-                 "0 OUT a\n");
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3558,7 +3611,8 @@ TEST(parser, tuple1) {
                  "B0\n"
                  "1 REF a\n"
                  "1 REF b\n"
-                 "0 RUN \n");
+                 "0 RUN \n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3572,7 +3626,8 @@ TEST(parser, _del) {
     __platform_printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
-                 "0 DEL a\n");
+                 "0 DEL a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3591,7 +3646,8 @@ TEST(parser, issue_fa13f4) {
                  "2 STR language\n"
                  "1 SLC \n"
                  "1 STR Java\n"
-                 "0 RUN .append\n");
+                 "0 RUN .append\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3608,7 +3664,8 @@ TEST(parser, _is) {
                  "B0\n"
                  "1 REF a\n"
                  "1 REF b\n"
-                 "0 OPT  is \n");
+                 "0 OPT  is \n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3624,7 +3681,8 @@ TEST(parser, _in) {
                  "B0\n"
                  "1 REF a\n"
                  "1 REF b\n"
-                 "0 OPT  in \n");
+                 "0 OPT  in \n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3648,7 +3706,8 @@ TEST(parser, _in2) {
                  "1 STR aaa\n"
                  "1 STR a\n"
                  "0 OPT  in \n"
-                 "0 OUT res2\n");
+                 "0 OUT res2\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3672,7 +3731,8 @@ TEST(parser, assert_) {
                  "2 NUM 1\n"
                  "1 OPT ==\n"
                  "1 STR testparser\n"
-                 "0 ASS \n");
+                 "0 ASS \n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -3687,8 +3747,7 @@ TEST(parser, except_for) {
         "    try:\n"
         "        a\n"
         "    except:\n"
-        "        b\n"
-        "\n";
+        "        b";
     __platform_printf("%s\n", lines);
     char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
     __platform_printf("%s", pikaAsm);
@@ -3726,3 +3785,51 @@ TEST(parser, except_for) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(parser, line_void_issue_l1k2i) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "mem = PikaStdLib.MemChecker()";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 RUN PikaStdLib.MemChecker\n"
+                 "0 OUT mem\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, while_void_novoid) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "while True:\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 REF True\n"
+                 "0 JEZ 2\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n");
+    {
+        char* lines = "while True:";
+        __platform_printf("%s\n", lines);
+        char* pikaAsm = Parser_multiLineToAsm(buffs, lines);
+        __platform_printf("%s", pikaAsm);
+        EXPECT_STREQ(pikaAsm,
+                     "B0\n"
+                     "0 REF True\n"
+                     "0 JEZ 2\n"
+                     "B0\n"
+                     "0 JMP -1\n"
+                     "B0\n");
+    }
+
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

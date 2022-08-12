@@ -100,7 +100,8 @@ TEST(string, format_parse1) {
                  "2 STR tes:%0.2f\n"
                  "2 RUN mem.getMax\n"
                  "1 RUN cformat\n"
-                 "0 RUN print\n");
+                 "0 RUN print\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

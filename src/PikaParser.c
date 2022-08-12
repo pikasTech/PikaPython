@@ -2055,8 +2055,7 @@ char* Parser_parsePyLines(Args* outBuffs,
     stack_init(&block_stack);
     Arg* asm_buff = arg_newStr("");
     uint32_t lines_offset = 0;
-    uint32_t lines_size = strGetSize(py_lines);
-    uint16_t lines_num = strCountSign(py_lines, '\n');
+    uint16_t lines_num = strCountSign(py_lines, '\n') + 1;
     uint16_t lines_index = 0;
     uint8_t is_in_multi_comment = 0;
     Arg* line_connection_arg = arg_newStr("");
@@ -2068,12 +2067,19 @@ char* Parser_parsePyLines(Args* outBuffs,
     while (1) {
         lines_index++;
         Args buffs = {0};
+        char* line_origin = NULL;
+        char* line = NULL;
+
+        /* add void line to the end */
+        if (lines_index >= lines_num + 1) {
+            line = "";
+            goto parse_line;
+        }
 
         /* get single line by pop multiline */
-        char* line_origin =
-            strsGetFirstToken(&buffs, py_lines + lines_offset, '\n');
+        line_origin = strsGetFirstToken(&buffs, py_lines + lines_offset, '\n');
 
-        char* line = strsCopy(&buffs, line_origin);
+        line = strsCopy(&buffs, line_origin);
         /* line connection */
         if (is_line_connection) {
             is_line_connection = 0;
@@ -2095,12 +2101,12 @@ char* Parser_parsePyLines(Args* outBuffs,
 
         /* support Tab */
         line = strsReplace(&buffs, line, "\t", "    ");
+        /* remove \r */
+        line = strsReplace(&buffs, line, "\r", "");
 
         /* filter for not end \n */
-        if (lines_index != lines_num) {
-            if (Parser_isVoidLine(line)) {
-                goto next_line;
-            }
+        if (Parser_isVoidLine(line)) {
+            goto next_line;
         }
 
         /* filter for multiline comment ''' or """ */
@@ -2114,6 +2120,7 @@ char* Parser_parsePyLines(Args* outBuffs,
             goto next_line;
         }
 
+    parse_line:
         /* parse single Line to Asm */
         single_ASM = Parser_LineToAsm(&buffs, line, &block_stack);
 #if PIKA_DEBUG
@@ -2134,12 +2141,14 @@ char* Parser_parsePyLines(Args* outBuffs,
         }
 
     next_line:
-        line_size = strGetSize(line_origin);
-        lines_offset = lines_offset + line_size + 1;
+        if (lines_index < lines_num) {
+            line_size = strGetSize(line_origin);
+            lines_offset = lines_offset + line_size + 1;
+        }
         strsDeinit(&buffs);
 
         /* exit when finished */
-        if (lines_offset >= lines_size) {
+        if (lines_index >= lines_num + 1) {
             break;
         }
     }

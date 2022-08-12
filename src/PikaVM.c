@@ -2004,12 +2004,7 @@ VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
         return NULL;
     }
     char* lines = (char*)arg_getBytes(file_arg);
-    /* replace the "\r\n" to "\n" */
-    lines = strsReplace(&buffs, lines, "\r\n", "\n");
     /* clear the void line */
-    lines = strsReplace(&buffs, lines, "\n\n", "\n");
-    /* add '\n' at the end */
-    lines = strsAppend(&buffs, lines, "\n\n");
     VMParameters* res = pikaVM_run(self, lines);
     arg_deinit(file_arg);
     strsDeinit(&buffs);
