@@ -1,49 +1,44 @@
-#api
-from PikaObj import *
-import PikaStdLib
-
-
-class RGB(TinyObj):
-    def init():
+class RGB:
+    def init(self):
         pass
 
-    def enable():
+    def enable(self):
         pass
 
-    def red():
+    def red(self):
         pass
 
-    def green():
+    def green(self):
         pass
 
-    def blue():
+    def blue(self):
         pass
 
-    def white():
+    def white(self):
         pass
 
-    def flow():
+    def flow(self):
         pass
 
 
-class KEY(TinyObj):
-    def init():
+class KEY:
+    def init(self):
         pass
 
-    def get() -> int:
-        pass
-
-
-class LCD(TinyObj):
-    def init():
-        pass
-
-    def clear(color: str):
-        pass
-
-    def fill(x0: int, y0: int, hight: int, wight: int, color: str):
+    def get(self) -> int:
         pass
 
 
-class Point(TinyObj):
+class LCD:
+    def init(self):
+        pass
+
+    def clear(self, color: str):
+        pass
+
+    def fill(self, x0: int, y0: int, hight: int, wight: int, color: str):
+        pass
+
+
+class Point:
     pass
