@@ -1,7 +1,4 @@
-from PikaObj import *
-
-
-class ImageFormat(TinyObj):
+class ImageFormat:
     """The ImageFormat class is used to 
     store the image format enum of an image."""
     RGB888: int
@@ -11,7 +8,7 @@ class ImageFormat(TinyObj):
     def __init__(self): ...
 
 
-class Image(TinyObj):
+class Image:
     """Create a empty image. The image can be 
     filled with data by read a file e.g.: `read()` 
     or load bytes e.g:. `loadRGB888`, `loadRGB565`, `loadGray` or `loadJpeg`"""
@@ -85,7 +82,7 @@ class Image(TinyObj):
     def merge(self,R:Image,G:Image,B:Image):
         """Merge three 1-channel image to 3-channels"""
 
-class Converter(TinyObj):
+class Converter:
     """The Converter class is used to 
     convert an image from one format to another."""
 
@@ -117,7 +114,7 @@ class Converter(TinyObj):
         6:BMP
         """
 
-class Transforms(TinyObj):
+class Transforms:
     """The transforms class is used to 
     supply the rotate, flip, and crop operation for an image."""
     @staticmethod
@@ -153,7 +150,7 @@ class Transforms(TinyObj):
         1:medianFilter
         #TODO 2:gaussianFilter
         """
-class Filter(TinyObj):
+class Filter:
     """The Filter class is used to 
     supply some Image Filtering Algorithms ."""
     def meanFilter(image:Image,ksizex:int,ksizey:int):
