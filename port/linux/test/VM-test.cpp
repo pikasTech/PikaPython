@@ -1160,3 +1160,16 @@ TEST(VM, vars_runtime) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if PIKA_BUILTIN_STRUCT_ENABLE
+TEST(VM, list_add) {
+    char* line = "[1, 2, 3] + [4, 5, 6]";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

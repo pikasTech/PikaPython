@@ -216,7 +216,6 @@ static enum StmtType Lexer_matchStmtType(char* right) {
             }
             /* ( <,> | <=> ) + <[> */
             is_get_list = PIKA_TRUE;
-            goto iter_continue;
         }
         if (strEqu(ps.token1.pyload, "[") && ps.iter_index == 1) {
             /* VOID + <[> */
@@ -1472,6 +1471,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         char* laststmt = Parser_popLastSubStmt(&buffs, &stmt, "[");
         AST_parseSubStmt(ast, stmt);
         char* slice_list = strsCut(&buffs, laststmt, '[', ']');
+        pika_assert(slice_list != NULL);
         slice_list = strsAppend(&buffs, slice_list, ":");
         int index = 0;
         while (1) {

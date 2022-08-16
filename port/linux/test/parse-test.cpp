@@ -3921,3 +3921,28 @@ TEST(parser, vars_runtime) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if PIKA_BUILTIN_STRUCT_ENABLE
+TEST(parser, issues_I5MIFO) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "[1, 2, 3] + [4, 5, 6]";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 NUM 1\n"
+                 "2 NUM 2\n"
+                 "2 NUM 3\n"
+                 "1 LST \n"
+                 "2 NUM 4\n"
+                 "2 NUM 5\n"
+                 "2 NUM 6\n"
+                 "1 LST \n"
+                 "0 OPT +\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

@@ -11,8 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                "--gtest_filter=VM.vars_runtime"
-                // "--gtest_filter=parser.*"
+                // "--gtest_filter=parser.issues_I5MIFO"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

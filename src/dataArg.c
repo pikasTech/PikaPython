@@ -429,8 +429,3 @@ void arg_deinit(Arg* self) {
     /* free the ref */
     arg_freeContent(self);
 }
-
-PikaTuple* args_getTuple(Args* self, char* name) {
-    PikaObj* tuple_obj = args_getPtr(self, name);
-    return obj_getPtr(tuple_obj, "list");
-}

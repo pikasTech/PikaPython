@@ -38,6 +38,9 @@ class List(Tuple):
 
     def __str__(self) -> str: ...
 
+    def __add__(self, others: List) -> List:
+        """ support list + list"""
+
 
 class Dict:
     def __init__(self): ...

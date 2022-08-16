@@ -588,3 +588,15 @@ TEST(compiler, __getitem__) {
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(compiler, __add__) {
+    char* lines = "__res = __add__(__others)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __sub__) {
+    char* lines = "__res = __sub__(__others)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
