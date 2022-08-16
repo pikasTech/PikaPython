@@ -26,6 +26,5 @@ void PikaStdDevice_BaseDev_addEventCallBack(PikaObj* self, Arg* eventCallBack) {
 }
 
 void PikaStdDevice_BaseDev_platformGetEventId(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }

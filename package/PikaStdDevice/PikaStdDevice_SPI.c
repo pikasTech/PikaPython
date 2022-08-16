@@ -75,31 +75,25 @@ void PikaStdDevice_SPI_setPolarity(PikaObj* self, int polarity) {
 }
 
 void PikaStdDevice_SPI_platformDisable(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_SPI_platformEnable(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_SPI_platformWrite(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_SPI_platformRead(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_SPI_platformWriteBytes(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_SPI_platformReadBytes(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }

@@ -12,7 +12,7 @@ void PikaStdData_List_set(PikaObj* self, int i, Arg* arg) {
     PikaList* list = obj_getPtr(self, "list");
     if (PIKA_RES_OK != list_setArg(list, i, arg)) {
         obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[error]: index exceeded lengh of list.");
+        obj_setSysOut(self, "Error: index exceeded lengh of list.");
     }
 }
 

@@ -1099,7 +1099,7 @@ TEST(pikaMain, synac_err_1) {
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain, "print('testtest)\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -1432,7 +1432,7 @@ TEST(pikaMain, not_4_space) {
     pikaVM_run(pikaMain, "  print('test')\n");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
     EXPECT_STREQ(
         log_buff[1],
         "IndentationError: unexpected indent, only support 4 spaces\r\n");
@@ -2523,7 +2523,7 @@ TEST(pikaMain, syantex_issue123lkjxi) {
     obj_run(pikaMain, lines);
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2539,7 +2539,7 @@ TEST(pikaMain, syantex_issue_fae13) {
     obj_run(pikaMain, lines);
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2555,7 +2555,7 @@ TEST(pikaMain, syantex_issue_1289341) {
     obj_run(pikaMain, lines);
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2571,7 +2571,7 @@ TEST(pikaMain, syantex_issue_183571) {
     obj_run(pikaMain, lines);
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

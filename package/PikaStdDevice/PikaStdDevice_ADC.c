@@ -27,16 +27,13 @@ void PikaStdDevice_ADC_setPin(PikaObj* self, char* pin) {
 }
 
 void PikaStdDevice_ADC_platformEnable(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_ADC_platformDisable(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_ADC_platformRead(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }

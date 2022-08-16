@@ -295,4 +295,9 @@ void* obj_getStruct(PikaObj* self, char* name);
 #define obj_setStruct(PikaObj_p_self, char_p_name, struct_) \
     args_setStruct(((PikaObj_p_self)->list), char_p_name, struct_)
 
+#define ABSTRACT_METHOD_DECLARE(x)                                        \
+    obj_setErrorCode(self, 1);                                            \
+    __platform_printf("Error: abstract method `%s()` need override.\r\n", \
+                      __FUNCTION__)
+
 #endif
