@@ -124,7 +124,7 @@ impl PyType {
             return "args_getArg".to_string();
         }
         if self.type_name == "@tupleVarPar" {
-            return "args_getPtr".to_string();
+            return "args_getTuple".to_string();
         }
         return "args_getPtr".to_string();
     }

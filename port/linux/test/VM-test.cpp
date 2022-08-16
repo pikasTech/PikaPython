@@ -1141,3 +1141,22 @@ TEST(VM, issue_I5LHJG) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, vars_runtime) {
+    char* line =
+        "def testvars(a, *b):\n"
+        "    sum = 0\n"
+        "    for i in b:\n"
+        "        sum += i\n"
+        "    return a * sum\n"
+        "res = testvars(6, 2, 3, 4, 5)\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    int res = obj_getInt(self, "res");
+    /* assert */
+    EXPECT_EQ(res, 84);
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

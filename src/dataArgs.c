@@ -596,6 +596,18 @@ size_t list_getSize(PikaList* self) {
     return args_getInt(&self->super, "top");
 }
 
+void list_reverse(PikaList* self) {
+    int top = list_getSize(self);
+    for (int i = 0; i < top / 2; i++) {
+        Arg* arg_i = arg_copy(list_getArg(self, i));
+        Arg* arg_top = arg_copy(list_getArg(self, top - i - 1));
+        list_setArg(self, i, arg_top);
+        list_setArg(self, top - i - 1, arg_i);
+        arg_deinit(arg_i);
+        arg_deinit(arg_top);
+    }
+}
+
 PikaTuple* New_tuple(void) {
     PikaTuple* self = (PikaTuple*)New_list();
     return self;

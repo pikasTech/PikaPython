@@ -438,6 +438,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     if (strEqu(data, (char*)"RuntimeError")) {
         return arg_setInt(arg_ret_reg, "", PIKA_RES_ERR_RUNTIME_ERROR);
     }
+
     Arg* arg = NULL;
     if (data[0] == '.') {
         /* find host from stack */
@@ -447,15 +448,17 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
                                    arg_ret_reg);
         }
         arg_deinit(host_obj);
-    } else {
-        /* find in local list first */
-        arg = arg_copy_noalloc(obj_getArg(vm->locals, data), arg_ret_reg);
-        if (NULL == arg) {
-            /* find in global list second */
-            arg = arg_copy_noalloc(obj_getArg(vm->globals, data), arg_ret_reg);
-        }
+        goto exit;
     }
 
+    /* find in local list first */
+    arg = arg_copy_noalloc(obj_getArg(vm->locals, data), arg_ret_reg);
+    if (NULL == arg) {
+        /* find in global list second */
+        arg = arg_copy_noalloc(obj_getArg(vm->globals, data), arg_ret_reg);
+    }
+
+exit:
     if (NULL == arg) {
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         __platform_printf("NameError: name '%s' is not defined\r\n", data);
@@ -632,7 +635,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         arg_num = arg_num_dec;
     }
 
-    if (strIsContain(type_list, '*')) {
+    if (is_variable) {
         /* get variable tuple name */
         type_list_buff = strCopy(buffs2, type_list);
         variable_arg_start = 0;
@@ -682,19 +685,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
 
     if (PIKA_TRUE == is_variable) {
-        /* resort the tuple */
-        PikaTuple* tuple_sorted = New_tuple();
-        if (NULL != tuple) {
-            int tuple_size = tuple_getSize(tuple);
-            for (int i = 0; i < tuple_size; i++) {
-                Arg* arg = tuple_getArg(tuple, tuple_size - 1 - i);
-                list_append(&(tuple_sorted->super), arg);
-            }
-            tuple_deinit(tuple);
-        }
+        list_reverse(&tuple->super);
         /* load variable tuple */
-        args_setPtrWithType(args, variable_tuple_name, ARG_TYPE_TUPLE,
-                            tuple_sorted);
+        PikaObj* New_PikaStdData_Tuple(Args * args);
+        PikaObj* tuple_obj = newNormalObj(New_PikaStdData_Tuple);
+        obj_setPtr(tuple_obj, "list", tuple);
+        args_setPtrWithType(args, variable_tuple_name, ARG_TYPE_OBJECT,
+                            tuple_obj);
     }
 
     /* load 'self' as the first arg when call object method */

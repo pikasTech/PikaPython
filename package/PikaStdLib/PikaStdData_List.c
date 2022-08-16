@@ -55,3 +55,8 @@ char* PikaStdData_List___str__(PikaObj* self) {
     arg_deinit(str_arg);
     return obj_getStr(self, "_buf");
 }
+
+void PikaStdData_List_reverse(PikaObj* self) {
+    PikaList* list = obj_getPtr(self, "list");
+    list_reverse(list);
+}

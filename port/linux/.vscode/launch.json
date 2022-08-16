@@ -11,7 +11,8 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=pikaMain.synac_err_1"
+                "--gtest_filter=VM.vars_runtime"
+                // "--gtest_filter=parser.*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

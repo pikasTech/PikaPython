@@ -3871,3 +3871,53 @@ TEST(lexser, connet_part1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, vars_runtime) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "def testvars(a, *b):\n"
+        "    sum = 0\n"
+        "    for i in b:\n"
+        "        sum += i\n"
+        "    return a * sum";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 DEF testvars(a,*b)\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 NUM 0\n"
+                 "0 OUT sum\n"
+                 "B1\n"
+                 "1 REF b\n"
+                 "0 RUN iter\n"
+                 "0 OUT _l1\n"
+                 "B1\n"
+                 "0 RUN _l1.__next__\n"
+                 "0 OUT i\n"
+                 "0 EST i\n"
+                 "0 JEZ 2\n"
+                 "B2\n"
+                 "1 REF sum\n"
+                 "2 REF i\n"
+                 "1 RUN \n"
+                 "0 OPT +\n"
+                 "0 OUT sum\n"
+                 "B1\n"
+                 "0 JMP -1\n"
+                 "B1\n"
+                 "0 DEL _l1\n"
+                 "B1\n"
+                 "1 REF a\n"
+                 "1 REF sum\n"
+                 "0 OPT *\n"
+                 "0 RET \n"
+                 "B1\n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
