@@ -1,39 +1,41 @@
 class Tuple:
-    def __init__(self):
-        """get an arg by the index"""
+    def __init__(self): ...
 
     def get(self, i: int) -> any:
-        """get the length of list"""
+        """get an arg by the index"""
 
     def len(self) -> int:
-        """support for loop"""
+        """get the length of list"""
 
     def __iter__(self) -> any:
         """support for loop"""
 
     def __next__(self) -> any:
+        """support for loop"""
+
+    def __getitem__(self, __key: any) -> any:
         """support val = list[]"""
 
-    def __getitem__(self, __key: any) -> any: ...
     def __del__(self): ...
     def __str__(self) -> str: ...
     def __len__(self) -> int: ...
 
 
 class List(Tuple):
-    def __init__(self):
-        """add an arg after the end of list"""
+    def __init__(self): ...
 
     def append(self, arg: any):
-        """set an arg by the index"""
+        """add an arg after the end of list"""
 
     def set(self, i: int, arg: any):
-        """support list[]  = val"""
+        """set an arg by the index"""
 
     def reverse(self):
         """reverse the list"""
 
-    def __setitem__(self, __key: any, __val: any): ...
+    def __setitem__(self, __key: any, __val: any):
+        """support list[]  = val"""
+
     def __str__(self) -> str: ...
 
 
