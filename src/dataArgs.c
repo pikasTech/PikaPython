@@ -331,12 +331,15 @@ PIKA_RES args_setArg(Args* self, Arg* arg) {
 #endif
 
 LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
-    LinkNode* node = self->firstNode;
-    int_fast8_t n = 0;
-    while (NULL != node) {
-        Arg* arg = (Arg*)node;
-        Hash thisNameHash = arg_getNameHash(arg);
+    LinkNode** pnode = &self->firstNode;
+    // uint8_t n = 0;
+    while (NULL != (*pnode)) {
+        Arg* arg = (Arg*)(*pnode);
+        Hash thisNameHash = arg->name_hash;
+        // n++;
         if (thisNameHash == nameHash) {
+            Arg* tmp = (Arg*)(*pnode);
+#if 0
             if (n > __PIKA_CFG_HASH_LIST_CACHE_SIZE) {
                 /* the first __PIKA_CFG_HASH_LIST_CACHE_SIZE items in the list
                  * is considered as a cache.
@@ -345,15 +348,16 @@ LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
                  */
 
                 /*! remove current node from the list */
-                node = (LinkNode*)arg_getNext((Arg*)arg);
+                *pnode = (LinkNode*)arg_getNext(tmp);
 
                 /*! move the node to the cache */
-                arg_setNext(arg, (Arg*)(self->firstNode));
-                self->firstNode = (LinkNode*)arg;
+                arg_setNext(tmp, (Arg*)(self->firstNode));
+                self->firstNode = (LinkNode*)tmp;
             }
-            return (LinkNode*)arg;
+#endif
+            return (LinkNode*)tmp;
         }
-        node = (LinkNode*)arg_getNext((Arg*)node);
+        pnode = (LinkNode**)&(arg_getNext((Arg*)(*pnode)));
     }
     return NULL;
 }
