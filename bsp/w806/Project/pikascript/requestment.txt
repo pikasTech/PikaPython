@@ -1,4 +1,4 @@
-pikascript-core==v1.9.0
-PikaStdLib==v1.9.0
-PikaStdDevice==v1.9.0
+pikascript-core==v1.10.0
+PikaStdLib==v1.10.0
+PikaStdDevice==v1.10.0
 W801Device==v1.1.0
