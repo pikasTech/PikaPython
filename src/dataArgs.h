@@ -122,6 +122,7 @@ Args* New_args(Args* args);
 typedef struct PikaList PikaList;
 struct PikaList {
     Args super;
+    uint32_t top;
 };
 
 typedef struct PikaTuple PikaTuple;
@@ -176,8 +177,7 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg);
 #define tuple_getArg(self, index) (list_getArg((&((self)->super)), (index)))
 #define tuple_getSize(self) (list_getSize((&((self)->super))))
 #define tuple_getInt(self, index) (list_getInt((&((self)->super)), (index)))
-#define tuple_getFloat(self, index) \
-    (list_getFloat((&((self)->super)), (index)))
+#define tuple_getFloat(self, index) (list_getFloat((&((self)->super)), (index)))
 #define tuple_getStr(self, index) (list_getStr((&((self)->super)), (index)))
 #define tuple_getPtr(self, index) (list_getPtr((&((self)->super)), (index)))
 #define tuple_getType(self, index) (list_getType((&((self)->super)), (index)))

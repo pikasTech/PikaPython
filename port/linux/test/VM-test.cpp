@@ -1168,6 +1168,7 @@ TEST(VM, list_add) {
     obj_run(self, line);
     /* collect */
     /* assert */
+    EXPECT_STREQ(log_buff[0], "[1, 2, 3, 4, 5, 6]\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);

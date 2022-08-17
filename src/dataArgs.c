@@ -367,6 +367,7 @@ Arg* args_getArg_hash(Args* self, Hash nameHash) {
     return (Arg*)node;
 }
 
+
 Arg* args_getArg(Args* self, char* name) {
     LinkNode* node = args_getNode(self, name);
     if (NULL == node) {
@@ -543,22 +544,18 @@ PikaList* New_list(void) {
 }
 
 PIKA_RES list_setArg(PikaList* self, int index, Arg* arg) {
-    char buff[11];
-    char* i_str = fast_itoa(buff, index);
     int top = args_getInt(&self->super, "top");
     if (index > top) {
         return PIKA_RES_ERR_OUT_OF_RANGE;
     }
     Arg* new_arg = arg_copy(arg);
-    new_arg = arg_setName(new_arg, i_str);
+    new_arg = arg_setNameHash(new_arg, index);
     args_setArg(&self->super, new_arg);
     return PIKA_RES_OK;
 }
 
 Arg* list_getArg(PikaList* self, int index) {
-    char buff[11];
-    char* i_str = fast_itoa(buff, index);
-    return args_getArg(&self->super, i_str);
+    return args_getArg_hash(&self->super, index);
 }
 
 int list_getInt(PikaList* self, int index) {
@@ -583,10 +580,8 @@ void* list_getPtr(PikaList* self, int index) {
 
 PIKA_RES list_append(PikaList* self, Arg* arg) {
     int top = args_getInt(&self->super, "top");
-    char buff[11];
-    char* topStr = fast_itoa(buff, top);
     Arg* arg_to_push = arg_copy(arg);
-    arg_setName(arg_to_push, topStr);
+    arg_setNameHash(arg_to_push, (Hash)top);
     args_setArg(&self->super, arg_to_push);
     /* top++ */
     return args_setInt(&self->super, "top", top + 1);

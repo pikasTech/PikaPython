@@ -2,6 +2,8 @@
     "C_Cpp.clang_format_style": "{ BasedOnStyle: Chromium, IndentWidth: 4}",
     "files.associations": {
         "pikastdlib_sysobj.h": "c",
-        "pikastddata_list.h": "c"
+        "pikastddata_list.h": "c",
+        "dataargs.h": "c",
+        "dataarg.h": "c"
     }
 }

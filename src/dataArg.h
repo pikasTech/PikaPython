@@ -153,3 +153,4 @@ uint8_t argType_isObject(ArgType type);
     arg_init_stack(&__name, __##__name##_buff, __size)
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size);
+Arg* arg_setNameHash(Arg* self, Hash nameHash);
