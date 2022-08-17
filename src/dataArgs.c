@@ -42,9 +42,12 @@ void args_deinit_stack(Args* self) {
 }
 
 PIKA_RES args_setFloat(Args* self, char* name, double argFloat) {
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setFloat(argNew, name, argFloat);
-    args_setArg(self, argNew);
+    Arg* arg = args_getArg(self, name);
+    Arg* arg_new = arg_setFloat(arg, name, argFloat);
+    if (arg == arg_new) {
+        return PIKA_RES_OK;
+    }
+    args_setArg(self, arg_new);
     return PIKA_RES_OK;
 }
 
@@ -60,11 +63,7 @@ void* args_getPtr(Args* self, char* name) {
 }
 
 PIKA_RES args_setPtr(Args* self, char* name, void* argPointer) {
-    PIKA_RES errCode = PIKA_RES_OK;
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, name, ARG_TYPE_POINTER, argPointer);
-    args_setArg(self, argNew);
-    return errCode;
+    return args_setPtrWithType(self, name, ARG_TYPE_POINTER, argPointer);
 }
 
 PIKA_RES args_setRef(Args* self, char* name, void* argPointer) {
@@ -154,9 +153,13 @@ size_t args_getBytesSize(Args* self, char* name) {
 }
 
 PIKA_RES args_setInt(Args* self, char* name, int64_t int64In) {
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setInt(argNew, name, int64In);
-    args_setArg(self, argNew);
+    Arg* arg = args_getArg(self, name);
+    Arg* arg_new = arg_setInt(arg, name, int64In);
+    if (arg_new == arg) {
+        /* arg_new is a new alloced arg */
+        return PIKA_RES_OK;
+    }
+    args_setArg(self, arg_new);
     return PIKA_RES_OK;
 }
 
@@ -367,7 +370,6 @@ Arg* args_getArg_hash(Args* self, Hash nameHash) {
     return (Arg*)node;
 }
 
-
 Arg* args_getArg(Args* self, char* name) {
     LinkNode* node = args_getNode(self, name);
     if (NULL == node) {
@@ -472,10 +474,14 @@ PIKA_RES args_setPtrWithType(Args* self,
                              char* name,
                              ArgType type,
                              void* objPtr) {
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, name, type, objPtr);
-    args_setArg(self, argNew);
-    return PIKA_RES_OK;
+    PIKA_RES errCode = PIKA_RES_OK;
+    Arg* arg = args_getArg(self, name);
+    Arg* arg_new = arg_setPtr(arg, name, type, objPtr);
+    if (arg == arg_new) {
+        return errCode;
+    }
+    args_setArg(self, arg_new);
+    return errCode;
 }
 
 PIKA_RES args_foreach(Args* self,
