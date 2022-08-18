@@ -1167,8 +1167,9 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
         return arg_setInt(numArg, "", strtol(strtol_buff, NULL, 2));
     }
     /* float */
-    if (strIsContain(data, '.')) {
-        return arg_setFloat(numArg, "", atof(data));
+    if (strIsContain(data, '.') ||
+        (strIsContain(data, 'e') || strIsContain(data, 'E'))) {
+        return arg_setFloat(numArg, "", strtod(data, NULL));
     }
     /* int */
     return arg_setInt(numArg, "", fast_atoi(data));
