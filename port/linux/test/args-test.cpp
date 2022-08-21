@@ -1,10 +1,5 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "PikaVM.h"
-#include "dataArgs.h"
-#include "dataString.h"
-}
+
 static int mem;
 TEST(args, test1) {
     mem = pikaMemNow();
@@ -57,7 +52,7 @@ TEST(args, test3) {
     args_copyArgByName(args1, "argtest1", args2);
     args_copyArgByName(args1, "strtest1", args2);
 
-    EXPECT_EQ(2.8830f, args_getFloat(args1, "argtest1"));
+    EXPECT_FLOAT_EQ(2.8830, args_getFloat(args1, "argtest1"));
     args_deinit(args1);
     args_deinit(args2);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -170,11 +165,11 @@ TEST(args, mem) {
 
 TEST(args, index) {
     Args* args = New_args(NULL);
-    args_pushArg(args, arg_setInt(NULL, "", 1));
-    args_pushArg(args, arg_setFloat(NULL, "", 2.4));
+    args_pushArg(args, arg_newInt(1));
+    args_pushArg(args, arg_newFloat(2.4));
 
-    int a = arg_getInt(args_getArg_index(args, 1));
-    float b = arg_getFloat(args_getArg_index(args, 0));
+    int a = arg_getInt(args_getArgByidex(args, 1));
+    float b = arg_getFloat(args_getArgByidex(args, 0));
     /* assert */
     EXPECT_EQ(a, 1);
     EXPECT_FLOAT_EQ(b, 2.4);
@@ -258,4 +253,27 @@ TEST(args, args_mem) {
     EXPECT_EQ(mem_test_out[2], 0x00);
     EXPECT_EQ(mem_test_out[3], 0x15);
     args_deinit(args);
+}
+
+TEST(args, dict) {
+    PikaDict* dict = New_dict();
+    int64_t int64Out = 0;
+    void* pointer = NULL;
+    char* strOut = NULL;
+    dict_setInt(dict, "int64Test", (int64_t)22221);
+    dict_setPtr(dict, "pointerTest", (void*)2222322);
+    dict_setStr(dict, "strTest", "teeeds");
+
+    int64Out = dict_getInt(dict, "int64Test");
+    pointer = dict_getPtr(dict, "pointerTest");
+    strOut = dict_getStr(dict, "strTest");
+
+    EXPECT_EQ(int64Out, 22221);
+    EXPECT_EQ((uint64_t)pointer, 2222322);
+    EXPECT_EQ(1, strEqu("teeeds", strOut));
+    EXPECT_EQ(dict_getType(dict, "int64Test"), ARG_TYPE_INT);
+    EXPECT_EQ(dict_getType(dict, "pointerTest"), ARG_TYPE_POINTER);
+    EXPECT_EQ(dict_getType(dict, "strTest"), ARG_TYPE_STRING);
+    dict_deinit(dict);
+    EXPECT_EQ(pikaMemNow(), 0);
 }

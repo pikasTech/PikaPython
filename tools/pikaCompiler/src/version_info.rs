@@ -18,7 +18,7 @@ impl VersionInfo {
         return version_info;
     }
 
-    fn analyze_line(mut self, line: String) -> VersionInfo {
+    fn analyse_line(mut self, line: String) -> VersionInfo {
         /* delete '\r' */
         let line = line.replace("\r", "");
         /* skip void line */
@@ -28,6 +28,10 @@ impl VersionInfo {
         /* print the package info */
         println!("    {}", line.as_str());
         let package_name = my_string::get_first_token(&line, '=').unwrap();
+        // skip pikascript-core
+        if package_name == "pikascript-core" {
+            return self;
+        }
         let package_version = my_string::get_last_token(&line, '=').unwrap();
         self.package_list
             .entry(package_name)
@@ -35,7 +39,7 @@ impl VersionInfo {
         return self;
     }
 
-    pub fn analyze_file(mut self, source_path: String) -> VersionInfo {
+    pub fn analyse_file(mut self, source_path: String) -> VersionInfo {
         self.source_path = source_path;
         let file = File::open(&self.source_path);
         let mut file = match file {
@@ -49,9 +53,9 @@ impl VersionInfo {
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
         let lines: Vec<&str> = file_str.split('\n').collect();
-        /* analyze each line of pikascript-api.pyi */
+        /* analyse each line of pikascript-api.pyi */
         for line in lines.iter() {
-            self = VersionInfo::analyze_line(self, line.to_string());
+            self = VersionInfo::analyse_line(self, line.to_string());
         }
         return self;
     }
@@ -61,9 +65,9 @@ impl VersionInfo {
 mod tests {
     use super::*;
     #[test]
-    fn test_analyze() {
+    fn test_analyse() {
         let mut version_info = VersionInfo::new();
-        version_info = VersionInfo::analyze_file(version_info, String::from("test_source_path"));
+        version_info = VersionInfo::analyse_file(version_info, String::from("test_source_path"));
         assert_eq!(version_info.source_path, "test_source_path");
     }
 }

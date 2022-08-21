@@ -1,9 +1,5 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "dataArg.h"
-#include "dataString.h"
-}
+
 #if 0
 TEST(content, init) {
     uint8_t contentIn[4] = {0};

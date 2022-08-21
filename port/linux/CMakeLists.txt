@@ -7,12 +7,16 @@ ENDIF(PIKA_CONFIG_ENABLE)
 
 project(pikascript VERSION 0.1.0)
 
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
+SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage -lgcov")
 
 include_directories(package/pikascript/pikascript-core)
 include_directories(package/pikascript/pikascript-api)
 include_directories(package/pikascript/pikascript-lib/PikaRunExternControl)
 include_directories(package/pikascript/pikascript-lib/PikaRunExternControl)
 include_directories(test)
+INCLUDE_DIRECTORIES(/usr/include/lua5.3)
 include_directories(config)
 # include_directories(boot/demo01-led)
 add_subdirectory(package/googletest)

@@ -1,4 +1,4 @@
-cp config/pika_config_optimize_speed.h config/pika_config.h 
+cp config/pika_config_benchmark.h config/pika_config.h 
 
 bash ci_benchmark_times.sh 20
 python3 ci_benchmark_select.py
@@ -9,4 +9,4 @@ rm performance_data.json
 echo 
 
 # restore backup
-rm config/pika_config.h
+cp config/pika_config_default.h config/pika_config.h 

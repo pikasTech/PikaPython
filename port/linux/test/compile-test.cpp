@@ -1,110 +1,96 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "PikaCompiler.h"
-#include "PikaMain.h"
-#include "PikaParser.h"
-#include "PikaStdLib_MemChecker.h"
-#include "PikaVM.h"
-#include "dataArgs.h"
-#include "dataMemory.h"
-#include "dataStrs.h"
-#include "pikaScript.h"
-#include "pika_config_gtest.h"
-}
-
-extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
 TEST(compiler, file) {
     char* lines =
-        "len = __calls.len()\n"
+        "len = calls.len()\n"
         "mode = 'none'\n"
         "info_index = 0\n"
         "for i in range(0, len):\n"
         "    if len == 0:\n"
         "        break\n"
         "    if info_index == 0:\n"
-        "        mode = __calls[i]\n"
+        "        mode = calls[i]\n"
         "        info_index = 1\n"
         "    elif info_index == 1:\n"
         "        if mode == 'always':\n"
-        "            todo = __calls[i]\n"
+        "            todo = calls[i]\n"
         "            todo()\n"
         "            info_index = 0\n"
         "        elif mode == 'when':\n"
-        "            when = __calls[i]\n"
+        "            when = calls[i]\n"
         "            info_index = 2\n"
         "        elif mode == 'period_ms':\n"
-        "            period_ms = __calls[i]\n"
+        "            period_ms = calls[i]\n"
         "            info_index = 2\n"
         "    elif info_index == 2:\n"
         "        if mode == 'when':\n"
         "            if when():\n"
-        "                todo = __calls[i]\n"
+        "                todo = calls[i]\n"
         "                todo()\n"
         "            info_index = 0\n"
         "        elif mode == 'period_ms':\n"
-        "            todo = __calls[i]\n"
+        "            todo = calls[i]\n"
         "            info_index = 3\n"
         "    elif info_index == 3:\n"
         "        if mode == 'period_ms':\n"
-        "            if __tick > __calls[i]:\n"
+        "            if tick > calls[i]:\n"
         "                todo()\n"
-        "                __calls[i] = __tick + period_ms\n"
+        "                calls[i] = tick + period_ms\n"
         "            info_index = 0\n"
         "\n";
     pikaCompile("task.bin", lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, task) {
     char* lines =
-        "len = __calls.len()\n"
+        "len = calls.len()\n"
         "mode = 'none'\n"
         "info_index = 0\n"
         "for i in range(0, len):\n"
         "    if len == 0:\n"
         "        break\n"
         "    if info_index == 0:\n"
-        "        mode = __calls[i]\n"
+        "        mode = calls[i]\n"
         "        info_index = 1\n"
         "    elif info_index == 1:\n"
         "        if mode == 'always':\n"
-        "            todo = __calls[i]\n"
+        "            todo = calls[i]\n"
         "            todo()\n"
         "            info_index = 0\n"
         "        elif mode == 'when':\n"
-        "            when = __calls[i]\n"
+        "            when = calls[i]\n"
         "            info_index = 2\n"
         "        elif mode == 'period_ms':\n"
-        "            period_ms = __calls[i]\n"
+        "            period_ms = calls[i]\n"
         "            info_index = 2\n"
         "    elif info_index == 2:\n"
         "        if mode == 'when':\n"
         "            if when():\n"
-        "                todo = __calls[i]\n"
+        "                todo = calls[i]\n"
         "                todo()\n"
         "            info_index = 0\n"
         "        elif mode == 'period_ms':\n"
-        "            todo = __calls[i]\n"
+        "            todo = calls[i]\n"
         "            info_index = 3\n"
         "    elif info_index == 3:\n"
         "        if mode == 'period_ms':\n"
-        "            if __tick > __calls[i]:\n"
+        "            if tick > calls[i]:\n"
         "                todo()\n"
-        "                __calls[i] = __tick + period_ms\n"
+        "                calls[i] = tick + period_ms\n"
         "            info_index = 0\n"
         "\n";
 
     Args buffs = {0};
-    char* pikaAsm = Parser_multiLineToAsm(&buffs, lines);
+    char* pikaAsm = Parser_linesToAsm(&buffs, lines);
 
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
     byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
     /* do something */
     byteCodeFrame_print(&bytecode_frame);
-    printf("Asm size: %d\r\n", strGetSize(pikaAsm));
+    printf("Asm size: %d\r\n", (int)strGetSize(pikaAsm));
 
     byteCodeFrame_printAsArray(&bytecode_frame);
 
@@ -112,11 +98,12 @@ TEST(compiler, task) {
     byteCodeFrame_deinit(&bytecode_frame);
     strsDeinit(&buffs);
     EXPECT_EQ(pikaMemNow(), 0);
+
 }
 
 TEST(compiler, demo1) {
     char* lines = "append(__val)";
-    Parser_compilePyToBytecodeArray(lines);
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -270,7 +257,7 @@ TEST(compiler, import_bf_mem) {
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
-    bytecodeFrame_fromMultiLine(&bf, lines);
+    bytecodeFrame_fromLines(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
     byteCodeFrame_deinit(&bf);
     obj_deinit(pikaMain);
@@ -285,7 +272,7 @@ TEST(compiler, import_bf1) {
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
-    bytecodeFrame_fromMultiLine(&bf, lines);
+    bytecodeFrame_fromLines(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
     obj_run(pikaMain,
             "mtest.mytest()\n"
@@ -305,7 +292,7 @@ TEST(compiler, import_bf2) {
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
-    bytecodeFrame_fromMultiLine(&bf, lines);
+    bytecodeFrame_fromLines(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
     obj_run(pikaMain,
             "m = mtest.Test()\n"
@@ -481,7 +468,7 @@ TEST(lib, load_no_file) {
     /* compile */
     LibObj* lib = New_LibObj(NULL);
     int res = LibObj_loadLibraryFile(lib, "test/python/mian.py.o");
-    EXPECT_EQ(res, 1);
+    EXPECT_EQ(res, PIKA_RES_ERR_IO_ERROR);
     /* deinit */
     LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -491,7 +478,7 @@ TEST(lib, load_err_file_type) {
     /* compile */
     LibObj* lib = New_LibObj(NULL);
     int res = LibObj_loadLibraryFile(lib, "test/python/main.py.o");
-    EXPECT_EQ(res, 2);
+    EXPECT_EQ(res, PIKA_RES_ERR_OPERATION_FAILED);
     /* deinit */
     LibObj_deinit(lib);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -555,7 +542,61 @@ TEST(make, compile_link_all) {
     pikaMaker_setPWD(maker, "package/pikascript/");
     pikaMaker_compileModuleWithDepends(maker, "main");
     pikaMaker_printStates(maker);
-    pikaMaker_linkCompiledModules(maker, "pikaModules.py.a") ;
+    pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
     obj_deinit(maker);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __str__) {
+    char* lines = "__res = __str__()";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __len__) {
+    char* lines = "__res = __len__()";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __del__) {
+    char* lines = "__del__()";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, event_cb) {
+    char* lines = "_eventCallBack(_eventSignal)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, event_cb_lvgl) {
+    char* lines = "eventCallBack(eventSignal)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __setitem__) {
+    char* lines = "__setitem__(__key, __val)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __getitem__) {
+    char* lines = "__res = __getitem__(__key)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __add__) {
+    char* lines = "__res = __add__(__others)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __sub__) {
+    char* lines = "__res = __sub__(__others)";
+    Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }

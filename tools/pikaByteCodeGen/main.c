@@ -8,7 +8,12 @@
 #include "dataStrs.h"
 #include "libpikabinder.h"
 
+/* fake implement */
 PikaObj* __pikaMain;
+void New_PikaStdLib_SysObj(void){}
+void New_PikaStdData_List(void) {}
+void New_PikaStdData_Dict(void) {}
+void New_PikaStdData_Tuple(void) {}
 
 void main() {
     /* run pika_binder to bind C modules */

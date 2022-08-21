@@ -3205,7 +3205,129 @@
   </DebugSessions>
   <Dependencies Name="BuildSet"/>
   <VirtualDirectory Name="PikaScript">
+    <VirtualDirectory Name="pikascript-api">
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaDebug-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaDebug.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaDebug_Debuger-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaDebug_Debuger.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaMain-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaMain.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/pikaScript.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/pikaScript.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_ByteArray-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_ByteArray.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_Dict-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_Dict.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_dict_keys-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_dict_keys.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_List-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_List.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_String-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_String.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_Utils-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdData_Utils.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_MemChecker-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_MemChecker.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_PikaObj-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_PikaObj.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_RangeObj-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_RangeObj.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_StringObj-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_StringObj.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_SysObj-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_SysObj.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdTask-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdTask.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdTask_Task-api.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdTask_Task.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-api/__asset_pikaModules_py_a.c">
+        <FileOption/>
+      </File>
+    </VirtualDirectory>
     <VirtualDirectory Name="pikascript-core">
+      <File Name="../../../../../../../app/pikascript/pikascript-core/.gitignore">
+        <FileOption/>
+      </File>
       <File Name="../../../../../../../app/pikascript/pikascript-core/BaseObj.c">
         <FileOption/>
       </File>
@@ -3272,6 +3394,12 @@
       <File Name="../../../../../../../app/pikascript/pikascript-core/dataStrs.h">
         <FileOption/>
       </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaCompiler.c">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaCompiler.h">
+        <FileOption/>
+      </File>
       <File Name="../../../../../../../app/pikascript/pikascript-core/PikaObj.c">
         <FileOption/>
       </File>
@@ -3290,10 +3418,19 @@
       <File Name="../../../../../../../app/pikascript/pikascript-core/PikaPlatform.h">
         <FileOption/>
       </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/PikaVersion.h">
+        <FileOption/>
+      </File>
       <File Name="../../../../../../../app/pikascript/pikascript-core/PikaVM.c">
         <FileOption/>
       </File>
       <File Name="../../../../../../../app/pikascript/pikascript-core/PikaVM.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/pika_config_valid.h">
+        <FileOption/>
+      </File>
+      <File Name="../../../../../../../app/pikascript/pikascript-core/README.md">
         <FileOption/>
       </File>
       <File Name="../../../../../../../app/pikascript/pikascript-core/TinyObj.c">
@@ -3302,44 +3439,33 @@
       <File Name="../../../../../../../app/pikascript/pikascript-core/TinyObj.h">
         <FileOption/>
       </File>
-    </VirtualDirectory>
-    <VirtualDirectory Name="pikascript-api">
-      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaMain-api.c">
+      <File Name="../../../../../../../app/pikascript/pikascript-core/__instruction_def.h">
         <FileOption/>
       </File>
-      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaMain.h">
+      <File Name="../../../../../../../app/pikascript/pikascript-core/__instruction_table.cfg">
         <FileOption/>
       </File>
-      <File Name="../../../../../../../app/pikascript/pikascript-api/pikaScript.c">
-        <FileOption/>
-      </File>
-      <File Name="../../../../../../../app/pikascript/pikascript-api/pikaScript.h">
-        <FileOption/>
-      </File>
-      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib-api.c">
-        <FileOption/>
-      </File>
-      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib.h">
-        <FileOption/>
-      </File>
-      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_MemChecker-api.c">
-        <FileOption/>
-      </File>
-      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_MemChecker.h">
-        <FileOption/>
-      </File>
-      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_SysObj-api.c">
-        <FileOption/>
-      </File>
-      <File Name="../../../../../../../app/pikascript/pikascript-api/PikaStdLib_SysObj.h">
+      <File Name="../../../../../../../app/pikascript/pikascript-core/__pika_ooc.h">
         <FileOption/>
       </File>
     </VirtualDirectory>
     <VirtualDirectory Name="PikaStdLib">
+      <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c"/>
+      <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdData_Dict.c"/>
+      <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdData_List.c"/>
+      <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdData_String.c"/>
+      <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdData_String_Util.h"/>
+      <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdData_Utils.c"/>
       <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c"/>
+      <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c"/>
+      <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c"/>
       <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c"/>
+      <File Name="../../../../../../../app/pikascript/pikascript-lib/PikaStdLib/PikaStdTask_Task.c"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <VendorInfo>
+    <VendorName>NULL</VendorName>
+  </VendorInfo>
   <BuildConfigs>
     <BuildConfig Name="BuildSet">
       <Target>
@@ -3433,13 +3559,14 @@
           <RunUserProg>yes</RunUserProg>
           <UserProgName>../../../../../../../tools/w800/utilities/cdk_aft_build.sh;../../../../../../../tools/w800/utilities/aft_build_project.sh</UserProgName>
         </AfterMake>
+        <Tools/>
       </User>
       <Compiler>
         <Define>GCC_COMPILE=1;TLS_CONFIG_CPU_XT804=1;NIMBLE_FTR=1</Define>
         <Undefine/>
         <Optim>Optimize more (-O2)</Optim>
         <DebugLevel>Maximum (-g3)</DebugLevel>
-        <IncludePath>$(CDKPath)/CSKY/MinGW/csky-abiv2-elf-toolchain/csky-elfabiv2/include;$(ProjectPath);$(ProjectPath)/../../../../../../../app/pikascript/pikascript-api;$(ProjectPath)/../../../../../../../app/pikascript/pikascript-core;$(ProjectPath)/../../../../../../../demo;$(ProjectPath)/../../../../../../../include;$(ProjectPath)/../../../../../../../include/app;$(ProjectPath)/../../../../../../../include/arch/xt804;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_core;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_dsp;$(ProjectPath)/../../../../../../../include/bt;$(ProjectPath)/../../../../../../../include/driver;$(ProjectPath)/../../../../../../../include/net;$(ProjectPath)/../../../../../../../include/os;$(ProjectPath)/../../../../../../../include/platform;$(ProjectPath)/../../../../../../../include/wifi;$(ProjectPath)/../../../../../../../platform/common/params;$(ProjectPath)/../../../../../../../platform/drivers/spi;$(ProjectPath)/../../../../../../../platform/inc;$(ProjectPath)/../../../../../../../platform/sys;$(ProjectPath)/../../../../../../../src/app;$(ProjectPath)/../../../../../../../src/app/bleapp;$(ProjectPath)/../../../../../../../src/app/btapp;$(ProjectPath)/../../../../../../../src/app/cJSON;$(ProjectPath)/../../../../../../../src/app/dhcpserver;$(ProjectPath)/../../../../../../../src/app/dnsserver;$(ProjectPath)/../../../../../../../src/app/factorycmd;$(ProjectPath)/../../../../../../../src/app/fatfs;$(ProjectPath)/../../../../../../../src/app/httpclient;$(ProjectPath)/../../../../../../../src/app/iperf;$(ProjectPath)/../../../../../../../src/app/libcoap/include;$(ProjectPath)/../../../../../../../src/app/libwebsockets-2.1-stable;$(ProjectPath)/../../../../../../../src/app/mDNS/mDNSCore;$(ProjectPath)/../../../../../../../src/app/mDNS/mDNSPosix;$(ProjectPath)/../../../../../../../src/app/mbedtls/include;$(ProjectPath)/../../../../../../../src/app/mbedtls/include/mbedtls;$(ProjectPath)/../../../../../../../src/app/mbedtls/ports;$(ProjectPath)/../../../../../../../src/app/mqtt;$(ProjectPath)/../../../../../../../src/app/oneshotconfig;$(ProjectPath)/../../../../../../../src/app/ota;$(ProjectPath)/../../../../../../../src/app/ping;$(ProjectPath)/../../../../../../../src/app/polarssl/include;$(ProjectPath)/../../../../../../../src/app/web;$(ProjectPath)/../../../../../../../src/app/wm_atcmd;$(ProjectPath)/../../../../../../../src/bt/blehost/ext/tinycrypt/include;$(ProjectPath)/../../../../../../../src/bt/blehost/ext/tinycrypt/include/tinycrypt;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/include/host;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/mesh/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/mesh/include/mesh;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/mesh/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/porting/w800/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gap/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gap/include/services/gap;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gatt/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gatt/include/services/gatt;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/config/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/config/include/store/config;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/config/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/ram/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/ram/include/store/ram;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/util/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/util/include/host/util;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/include/nimble;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/transport/uart/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/transport/uart/include/transport/uart;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/hal;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/log;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/log_common;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/logcfg;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/mem;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/modlog;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/nimble;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/os;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/stats;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/syscfg;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/sysflash;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/sysinit;$(ProjectPath)/../../../../../../../src/network/api2.0.3;$(ProjectPath)/../../../../../../../src/network/lwip2.0.3/apps/httpd;$(ProjectPath)/../../../../../../../src/network/lwip2.0.3/apps/snmp;$(ProjectPath)/../../../../../../../src/network/lwip2.0.3/include;$(ProjectPath)/../../../../../../../src/network/lwip2.0.3/include/arch;$(ProjectPath)/../../../../../../../src/network/lwip2.0.3/include/lwip;$(ProjectPath)/../../../../../../../src/os/rtos/include</IncludePath>
+        <IncludePath>$(CDKPath)/CSKY/MinGW/csky-abiv2-elf-toolchain/csky-elfabiv2/include;$(ProjectPath);$(ProjectPath)/../../../../../../../app/pikascript/pikascript-api;$(ProjectPath)/../../../../../../../app/pikascript/pikascript-core;$(ProjectPath)/../../../../../../../app/pikascript/pikascript-lib/PikaStdLib;$(ProjectPath)/../../../../../../../demo;$(ProjectPath)/../../../../../../../include;$(ProjectPath)/../../../../../../../include/app;$(ProjectPath)/../../../../../../../include/arch/xt804;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_core;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_dsp;$(ProjectPath)/../../../../../../../include/bt;$(ProjectPath)/../../../../../../../include/driver;$(ProjectPath)/../../../../../../../include/net;$(ProjectPath)/../../../../../../../include/os;$(ProjectPath)/../../../../../../../include/platform;$(ProjectPath)/../../../../../../../include/wifi;$(ProjectPath)/../../../../../../../platform/common/params;$(ProjectPath)/../../../../../../../platform/drivers/spi;$(ProjectPath)/../../../../../../../platform/inc;$(ProjectPath)/../../../../../../../platform/sys;$(ProjectPath)/../../../../../../../src/app;$(ProjectPath)/../../../../../../../src/app/bleapp;$(ProjectPath)/../../../../../../../src/app/btapp;$(ProjectPath)/../../../../../../../src/app/cJSON;$(ProjectPath)/../../../../../../../src/app/dhcpserver;$(ProjectPath)/../../../../../../../src/app/dnsserver;$(ProjectPath)/../../../../../../../src/app/factorycmd;$(ProjectPath)/../../../../../../../src/app/fatfs;$(ProjectPath)/../../../../../../../src/app/httpclient;$(ProjectPath)/../../../../../../../src/app/iperf;$(ProjectPath)/../../../../../../../src/app/libcoap/include;$(ProjectPath)/../../../../../../../src/app/libwebsockets-2.1-stable;$(ProjectPath)/../../../../../../../src/app/mDNS/mDNSCore;$(ProjectPath)/../../../../../../../src/app/mDNS/mDNSPosix;$(ProjectPath)/../../../../../../../src/app/mbedtls/include;$(ProjectPath)/../../../../../../../src/app/mbedtls/include/mbedtls;$(ProjectPath)/../../../../../../../src/app/mbedtls/ports;$(ProjectPath)/../../../../../../../src/app/mqtt;$(ProjectPath)/../../../../../../../src/app/oneshotconfig;$(ProjectPath)/../../../../../../../src/app/ota;$(ProjectPath)/../../../../../../../src/app/ping;$(ProjectPath)/../../../../../../../src/app/polarssl/include;$(ProjectPath)/../../../../../../../src/app/web;$(ProjectPath)/../../../../../../../src/app/wm_atcmd;$(ProjectPath)/../../../../../../../src/bt/blehost/ext/tinycrypt/include;$(ProjectPath)/../../../../../../../src/bt/blehost/ext/tinycrypt/include/tinycrypt;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/include/host;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/mesh/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/mesh/include/mesh;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/mesh/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/porting/w800/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gap/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gap/include/services/gap;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gatt/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gatt/include/services/gatt;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/config/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/config/include/store/config;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/config/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/ram/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/ram/include/store/ram;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/util/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/util/include/host/util;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/include/nimble;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/transport/uart/include;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/transport/uart/include/transport/uart;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/hal;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/log;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/log_common;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/logcfg;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/mem;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/modlog;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/nimble;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/os;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/stats;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/syscfg;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/sysflash;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/sysinit;$(ProjectPath)/../../../../../../../src/network/api2.0.3;$(ProjectPath)/../../../../../../../src/network/lwip2.0.3/apps/httpd;$(ProjectPath)/../../../../../../../src/network/lwip2.0.3/apps/snmp;$(ProjectPath)/../../../../../../../src/network/lwip2.0.3/include;$(ProjectPath)/../../../../../../../src/network/lwip2.0.3/include/arch;$(ProjectPath)/../../../../../../../src/network/lwip2.0.3/include/lwip;$(ProjectPath)/../../../../../../../src/os/rtos/include</IncludePath>
         <OtherFlags>-fdata-sections -c</OtherFlags>
         <Verbose>no</Verbose>
         <Ansi>no</Ansi>
@@ -3456,7 +3583,7 @@
       <Asm>
         <Define/>
         <Undefine/>
-        <IncludePath>$(CDKPath)/CSKY/csi/csi_core/csi_cdk/;$(CDKPath)/CSKY/csi/csi_core/include/;$(CDKPath)/CSKY/csi/csi_driver/include/;$(ProjectPath);$(ProjectPath)/../../../../../../../app/pikascript/pikascript-api;$(ProjectPath)/../../../../../../../app/pikascript/pikascript-core;$(ProjectPath)/../../../../../../../include;$(ProjectPath)/../../../../../../../include/arch/xt804;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_core;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_dsp;$(ProjectPath)/../../../../../../../include/os;$(ProjectPath)/../../../../../../../include/platform;$(ProjectPath)/../../../../../../../src/app/bleapp;$(ProjectPath)/../../../../../../../src/app/btapp;$(ProjectPath)/../../../../../../../src/app/factorycmd;$(ProjectPath)/../../../../../../../src/app/fatfs;$(ProjectPath)/../../../../../../../src/bt/blehost/ext/tinycrypt/include/tinycrypt;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/include/host;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/mesh/include/mesh;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/mesh/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gap/include/services/gap;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gatt/include/services/gatt;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/config/include/store/config;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/config/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/ram/include/store/ram;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/util/include/host/util;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/include/nimble;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/transport/uart/include/transport/uart;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/hal;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/log;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/log_common;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/logcfg;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/mem;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/modlog;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/nimble;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/os;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/stats;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/syscfg;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/sysflash;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/sysinit;$(ProjectPath)/../../../../../../../src/os/rtos/include</IncludePath>
+        <IncludePath>$(CDKPath)/CSKY/csi/csi_core/csi_cdk/;$(CDKPath)/CSKY/csi/csi_core/include/;$(CDKPath)/CSKY/csi/csi_driver/include/;$(ProjectPath);$(ProjectPath)/../../../../../../../app/pikascript/pikascript-api;$(ProjectPath)/../../../../../../../app/pikascript/pikascript-core;$(ProjectPath)/../../../../../../../app/pikascript/pikascript-lib/PikaStdLib;$(ProjectPath)/../../../../../../../include;$(ProjectPath)/../../../../../../../include/arch/xt804;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_core;$(ProjectPath)/../../../../../../../include/arch/xt804/csi_dsp;$(ProjectPath)/../../../../../../../include/os;$(ProjectPath)/../../../../../../../include/platform;$(ProjectPath)/../../../../../../../src/app/bleapp;$(ProjectPath)/../../../../../../../src/app/btapp;$(ProjectPath)/../../../../../../../src/app/factorycmd;$(ProjectPath)/../../../../../../../src/app/fatfs;$(ProjectPath)/../../../../../../../src/bt/blehost/ext/tinycrypt/include/tinycrypt;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/include/host;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/mesh/include/mesh;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/mesh/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gap/include/services/gap;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/services/gatt/include/services/gatt;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/config/include/store/config;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/config/src;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/store/ram/include/store/ram;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/host/util/include/host/util;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/include/nimble;$(ProjectPath)/../../../../../../../src/bt/blehost/nimble/transport/uart/include/transport/uart;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/hal;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/log;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/log_common;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/logcfg;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/mem;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/modlog;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/nimble;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/os;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/stats;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/syscfg;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/sysflash;$(ProjectPath)/../../../../../../../src/bt/blehost/porting/w800/include/sysinit;$(ProjectPath)/../../../../../../../src/os/rtos/include</IncludePath>
         <OtherFlags/>
         <DebugLevel>gdwarf2</DebugLevel>
       </Asm>
@@ -3469,6 +3596,7 @@
         <OtherFlags>-Wl,-zmax-page-size=1024 -mhard-float</OtherFlags>
         <AutoLDFile>no</AutoLDFile>
         <LinkType/>
+        <IncludeAllLibs>no</IncludeAllLibs>
       </Linker>
       <Debug>
         <LoadApplicationAtStartup>yes</LoadApplicationAtStartup>
@@ -3490,6 +3618,7 @@
           <CPUNumber>0</CPUNumber>
           <Clock>12000</Clock>
           <Delay>10</Delay>
+          <NResetDelay>100</NResetDelay>
           <WaitReset>50</WaitReset>
           <DDC>yes</DDC>
           <TRST>no</TRST>
@@ -3503,6 +3632,11 @@
           <GDBName/>
           <GDBServerType>Local</GDBServerType>
           <OtherFlags/>
+          <ICEEnablePCSampling>yes</ICEEnablePCSampling>
+          <ICESamplingFreq>1000</ICESamplingFreq>
+          <RemoteICEEnablePCSampling>yes</RemoteICEEnablePCSampling>
+          <RemoteICESamplingPort>1026</RemoteICESamplingPort>
+          <Version>latest</Version>
         </ConfigICE>
         <ConfigSIM>
           <SIMTarget/>
@@ -3510,6 +3644,7 @@
           <NoGraphic>yes</NoGraphic>
           <Log>no</Log>
           <SimTrace>no</SimTrace>
+          <Version>latest</Version>
         </ConfigSIM>
         <ConfigOpenOCD>
           <OpenOCDExecutablePath/>
@@ -3519,6 +3654,8 @@
           <OpenOCDTclPort>6666</OpenOCDTclPort>
           <OpenOCDConfigOptions/>
           <OpenOCDTimeout>5000</OpenOCDTimeout>
+          <PluginID>openocd-sifive</PluginID>
+          <Version>latest</Version>
         </ConfigOpenOCD>
       </Debug>
       <Flash>

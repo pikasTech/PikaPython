@@ -1,9 +1,8 @@
-#api
-from PikaObj import *
 import PikaStdData
+import PikaStdLib
 
 
-class Task(TinyObj):
+class Task(PikaStdLib.SysObj):
     calls = PikaStdData.List()
 
     def __init__(self):

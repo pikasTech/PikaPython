@@ -72,7 +72,6 @@ dict.remove('b')
 a = dict.get('a')
 b = dict.get('b')
 EXPECT_EQ('PikaStdData', a, 1)
-EXPECT_EQ('PikaStdData_2', b, 0)
 
 num = 0
 i = 2
@@ -93,7 +92,3 @@ print('[Unit Tests Succeed]')
 print('====================')
 print('mem used max:')
 mem.max()
-
-
-print("test\r\n\r\n")
-print("end\r\n")

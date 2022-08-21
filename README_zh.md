@@ -31,12 +31,13 @@
 
 PikaScript 是一个完全重写的超轻量级 python 引擎，零依赖，零配置，可以在  **Flash ≤ 32KB，RAM≤ 4KB**  的平台下运行(如 stm32g030c8 和 stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
 
-
 ![output_Kgj52R](document/image/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
 
 <img src="document/image/147799764-5db2cb30-ee74-4cde-a2bd-b91c358ae3d9.png" width="500"/>
 
 PikaScript 具有框架式 C 模块开发工具，只要用 Python 写好调用 API ，就能够自动连接到 C 模块，非常方便快捷。不用手动处理任何全局表、宏定义、等等。
+
+所有的工具也是全部开源的，在 tools 目录下。
 
 ![image-20220520233540245](document/image/image-20220520233540245.png)
 
@@ -47,7 +48,8 @@ PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 ## 使用在线图形化工程生成器
 生成器地址:
 http://pikascript.com
-<img src="document/image/152632673-019a7f92-7b7f-4fb5-92b7-4ae4c26ec865.png" width="500"/>
+
+[![](assets/1644129110261-049ad5bb-21af-40e2-9533-a1c8c86790f1.jpg)](http://pikascript.com)
 
 ## 使用 Pika 包管理器[PikaPackage.exe](https://pikadoc.readthedocs.io/zh/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
 
@@ -105,37 +107,44 @@ http://pikascript.com
 # 2.平台支持列表
 
 ## MCU support
-|MCU|bsp|gpio|uart|pwm|adc|i2c|
-|---|---|---|---|---|---|---|
-|stm32g030c8|√|√|√|√|√|√|
-|stm32g070cB|√|√|√|√|√|√|
-|stm32f103c8|√|√|√|√|√|√|
-|stm32f103rb|√|√|√|√|√|√|
-|stm32f103ze|√|√|√|√|√|√|
-|stm32f103rc|√|√|√|√|√|√|
-|stm32f401cc|√|√|√|√|√|√|
-|stm32f411ce|√|√|√|√|√|√|
-|stm32f407ze|√| | | | | |
-|stm32f407zg|√| | | | | |
-|stm32h750vb|√| | | | | |
-|stm32f051r8|√| | | | | |
-|ch582|√|√|√| |√|√|
-|ch32v103r8t6|√|√| | | | |
-|cm32m101a|√| | | | | |
-|w801|√| | | | | |
-|w806|√|√|√|√|√|√|
-|apm32f030r8|√| | | | | |
-|apm32e103vb|√| | | | | |
-|bl-706|√| | | | | |
-|Raspberry Pico|√| | | | | |
-|ESP32C3|√| | | | | |
-|TC264D|√| | | | | |
-|devc|√| | | | | |
+|MCU            |bsp|gpio|time|uart|pwm|adc|i2c|
+|---|---|---|---|---|---|---|---|
+|stm32g030c8    |√  |√   |√   |√   |√  |√  |√  |
+|stm32g070cB    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f103c8    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f103rb    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f103ze    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f103rc    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f401cc    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f411ce    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f407ze    |√  |    |    |    |   |   |   |
+|stm32f407zg    |√  |    |    |    |   |   |   |
+|stm32h750vb    |√  |    |    |    |   |   |   |
+|stm32f051r8    |√  |    |    |    |   |   |   |
+|ch582          |√  |√   |√   |√   |   |√  |√  |
+|ch32v103r8t6   |√  |√   |√   |    |   |   |   |
+|cm32m101a      |√  |    |    |    |   |   |   |
+|w801           |√  |    |    |    |   |   |   |
+|w806           |√  |√   |√   |√   |√  |√  |√  |
+|apm32f030r8    |√  |    |    |    |   |   |   |
+|apm32e103vb    |√  |    |    |    |   |   |   |
+|bl-706         |√  |    |    |    |   |   |   |
+|Raspberry Pico |√  |    |    |    |   |   |   |
+|ESP32C3        |√  |√   |√   |    |   |   |   |
+|TC264D         |√  |    |    |    |   |   |   |
+|devc           |√  |    |    |    |   |   |   |
+|EC600N         |√  |    |    |    |   |   |   |
+|mm32f5277e9p   |√  |√   |    |    |   |   |   |
+|xr806(openharmony)|√  |    |    |    |   |   |   |
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
 |---|---|---|---|---|---|---|---|---|---|
 |[Pika-Pi-Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√|√|√|√|
+
+|Board|bsp|pika_lvgl|
+|---|---|---|
+|lvgl-vs-simu|√|√|
 
 |Board|bsp|arm-2d|
 |---|---|---|
@@ -146,7 +155,6 @@ http://pikascript.com
 |SmartLoong|√|√|√|√|
 
 ## OS support
-
 |OS|port|GPIO|TIME|PWM|
 |---|---|---|---|---|
 |RT-Thread|√|√|√|√|
@@ -186,7 +194,7 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 
 在编译时支持 python 类和方法定义，完整支持封装、继承、多态、模块功能 - 基于 [Pika 预编译器](../../tree/master/tools/pikaCompiler)。
 
-在运行时支持 python 方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于 [Pika 运行时内核](../../tree/master/src/package/pikascript/pikascript-core)。
+在运行时支持 python 方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于 [Pika 运行时内核](../../tree/master/src)。
 
 |语法|编译时|运行时|Shell|
 |---|---|---|---|
@@ -204,23 +212,69 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 |对象嵌套   |√|√|√|
 |控制流     |√|√|√|
 
-#### 操作符
+#### Operator
 
 | + | - | * | / | == | > | < | >= | <= | % | ** | // | != | & | >> | << | and | or | not | += | -= | *= | /= |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 |√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|
 
-#### 控制流
+#### Control flow
 
-| if | while | for | else | elif | break | continue |
-| --- | --- | --- | --- | --- | --- | --- |
-|√|√|√|√|√|√|√|
+| Syntax | State |
+| --- | --- |
+| if | √ |
+| while | √ |
+| for in [list] | √ |
+| for in range(a, b) | √ |
+| for in [dict] | √ |
+| if elif else | √ |
+| for break/continue | √ |
+| while break/continue | √ |
 
-#### 数据结构
+#### Module
 
-| string | list | dict |
+| Syntax | Python Module | C Module |
 | --- | --- | --- |
-|√|√|√|
+| import [module] | √ | √ |
+| import [module] as | √ | - |
+| from [module] import [class/function>]| √ | - |
+| from [module] import [class/function>] as | √ | - |
+| from [module] import * | - | PikaObj Module Only |
+
+#### List/Dict
+| Syntax | State |
+| --- | --- |
+| l = list() | √  |
+| l = [a, b, c] | √ |
+| d = dict() | √ |
+| d = {'a':x, 'b':y, 'c':z} | √ |
+
+#### Exception
+
+| Syntax | State |
+| --- | --- |
+|try:| √ |
+|except:| √ |
+|except [Exception]:| - |
+|except [Exception] as [err]: | - |
+|except: ... else:| - |
+|raise:| √ |
+|raise [Exception]:| - |
+|finally:| - |
+
+#### Slice
+
+| Syntax | str | bytes | list |
+| --- | --- | --- | --- |
+| test[i] | √ | √ | √ |
+| test[a : b] | √ | √ | - | 
+| test[a :] | √ | √ | - |
+
+#### Other keywords/Syntax
+
+| yield | is | comprehensions |
+| --- | --- | --- |
+| - | - | - |
 
 ### (4)源码规范
 
@@ -234,15 +288,7 @@ https://github.com/maxgerhardt/pikascript-pio-bluepill
 
 <img src="document/image/136304186-e49610e4-ce01-4524-99b6-b56842d56411.png" width="300" alt="微信交流群"/><br/>
 
-## Tencent QQ： 
-645275593
-
-## E-mail: 
-645275593@qq.com
-
-
-
-
+## E-mail: liang6516@outlook.com
 
 # 5.Demo展示
 
@@ -539,103 +585,80 @@ while True:
 
 # 6.内核测试与开发
 
-## Test core in docker (recommend)
-step1: Clone the repo
-``` shell
-git clone https://github.com/pikastech/pikascript
-cd pikascript/docker 
-```
-
-step2: build and run the docker contianer
-```
-sh build.sh
-sh run.sh
-# now you are in the port/linux
-```
-
-step3: init the port/linux
-``` shell	
-sh pull-core.sh
-sh init.sh
-```
-
-step4: test the core 
-``` shell
-sh gtest.sh
-sh ci_benchmark.sh
-```
-
-step5: Run the REPL
-``` shell
-sh run.sh
-```
-
-## Test core in linux (ubuntu20.04 is recommend)
-
-step1: Clone the repo
-``` shell
-git clone https://github.com/pikastech/pikascript
-cd pikascript/port/linux
-```
-
-step2: install dependency
-```
-sh install_dependency.sh # install dependency 
-```
-
-step3: init the port/linux
-``` shell	
-sh pull-core.sh
-sh init.sh
-```
-
-step4: test the core 
-``` shell
-sh gtest.sh
-sh ci_benchmark.sh
-```
-
-step5: Run the REPL
-``` shell
-sh run.sh
-```
+## 在 Docker 中测试 (recommend)
+[ Docker 开发环境搭建指南 ](https://pikadoc.readthedocs.io/zh/latest/get-start_linux.html)
 
 # 7.贡献者
-| 内容 | 贡献者 |
+## [如何参与贡献](https://pikadoc.readthedocs.io/zh/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html)
+
+| 贡献者 | [成就勋章](document/achivement_zh.md) |
+| ----------------------------------------------------- | :----------------------------------------------------------- |
+| [甜航](https://github.com/easyzoom)                   | <img src="assets/26.png" alt="26" width="80" /> |
+| 千帆(微信名)                                          | <img src="assets/26.png" alt="26" width="80" /> |
+| [ Meco Jianting Man](https://github.com/mysterywolf)  | <img src="assets/22.png" alt="12" width="80" /><img src="assets/26.png" alt="26" width="80" /><img src="assets/23.png" alt="23" width="80" /><img src="assets/15.png" alt="15" width="80" /><img src="assets/11.png" alt="15" width="80" /><img src="assets/41.png" alt="41" width="80" />|
+| [liuduanfei](https://github.com/liuduanfei)           | <img src="assets/26.png" alt="26" width="80" /> |
+| [ sjy](https://gitee.com/shanjiayang)                 | <img src="assets/26.png" alt="26" width="80" /><img src="assets/13.png" alt="13" width="80" /> |
+| 沧御                                                  | <img src="assets/26.png" alt="26" width="80" /> |
+| [versaloon](https://github.com/versaloon)             | <img src="assets/26.png" alt="26" width="80" /><img src="assets/13.png" alt="13" width="80" /> |
+| 刘延(微信名)                                          | <img src="assets/36.png" alt="36" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
+| [GorgonMeducer](https://github.com/GorgonMeducer)     | <img src="assets/25.png" alt="25" width="80" /><img src="assets/22.png" alt="22" width="80" /><img src="assets/21.png" alt="21" width="80" /><img src="assets/33.png" alt="33" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
+| [unsigned](https://gitee.com/unsigned0)               | <img src="assets/26.png" alt="26" width="80" /><img src="assets/23.png" alt="23" width="80" /> |
+| [梦程MI](https://gitee.com/dreamcmi)                  | <img src="assets/36.png" alt="36" width="80" /><img src="assets/23.png" alt="23" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
+| [Maximilian Gerhardt](https://github.com/maxgerhardt) | <img src="assets/12.png" alt="12" width="80" /> |
+| [purewind7](https://gitee.com/purewind7)              | <img src="assets/24.png" alt="24" width="80" /><img src="assets/31.png" alt="31" width="80" /><img src="assets/33.png" alt="33" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
+| [ onceday](https://gitee.com/onceday)                 | <img src="assets/24.png" alt="24" width="80" /><img src="assets/13.png" alt="13" width="80" /> |
+
+
+<div class="log"></div>
+
+| 贡献记录 | 贡献者 |
 | --- | --- |
-| 定向赞助：500¥ (ctypes 相关） | 蒋太平 |
+| PikaMath.Quaternion() | [purewind7](https://gitee.com/purewind7) |
+| contrubute to PikaCV | [purewind7](https://gitee.com/purewind7) |
+| xr806(openharmony) bsp |[sjy](https://gitee.com/shanjiayang)|
+| ESP32 package |沧御|
+| MM32F5277E9P package |[unsigned](https://gitee.com/unsigned0)|
+| mm32f5277e9p BSP |[unsigned](https://gitee.com/unsigned0)|
+| Add [CMSIS-PACK](https://pikadoc.readthedocs.io/en/latest/get-start_cmsis-pack.html) | [GorgonMeducer](https://github.com/GorgonMeducer) |
+| donate: air32f103 board * 20 | 合宙 [xinxi204](https://gitee.com/xinxi204) |
+| contrubute to PikaMath.Math() | [onceday](https://gitee.com/onceday) |
+| add support for Unix Time | [onceday](https://gitee.com/onceday) |
+| contrubute to PikaStdLib.String() | [purewind7](https://gitee.com/purewind7) |
+| Add [PLOOC](https://github.com/GorgonMeducer/PLOOC) support for PikaScript Core | [GorgonMeducer](https://github.com/GorgonMeducer) |
+| Donate：500¥ (ctypes 相关） | 蒋太平 |
 | fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
 | ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
 | ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
-| 捐赠：EC600X QuecPython 开发板 | 移远通信 武加玉 |
+| Donate：EC600X QuecPython Develop board| 移远通信 武加玉 |
 | Performance Point: 900->1400 | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | stm32f051r8 BSP |[unsigned](https://gitee.com/unsigned0)|
 | stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
 | devc BSP |[unsigned](https://gitee.com/unsigned0)|
 | TC264D BSP |[unsigned](https://gitee.com/unsigned0)|
-| PikaVM 优化 | [GorgonMeducer](https://github.com/GorgonMeducer) |
+| PikaVM improvement | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
-| 捐赠：ESP32C3 5pic，调试器 |启明云端 沧御|
-| 捐赠：LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
+| Donate：ESP32C3 5pic，linker|启明云端 沧御|
+| Donate：LS1C101 mcu 10pic, LS1c101 develop board，debuger|龙芯俱乐部 石南|
 | PikaVSF OS package | [versaloon](https://github.com/versaloon) |
 | ESP32C3 BSP |沧御|
-| 捐赠：ESP32开发板、墨水屏*4 | name(微信名) |
-| 捐赠：智龙开发板 | 龙芯俱乐部 石南 |
+| Donate：ESP32 board、ink lcd*4 | name(微信名) |
+| Donate：smartloong board | 龙芯俱乐部 石南 |
 | package/STM32F1 | [sjy](https://gitee.com/shanjiayang) |
 | package/STM32F103RBBooter | [sjy](https://gitee.com/shanjiayang) |
 | bsp/stm32f103rb | [sjy](https://gitee.com/shanjiayang) |
-| 基于 QEMU 的 ARM-2D 仿真工程 | [liuduanfei](https://github.com/liuduanfei) |
-| 捐赠：GD32E103TB 芯片2片 | 信息牛(微信名) |
-| Rt-thread 支持包、适配层、模块| [Meco Jianting Man](https://github.com/mysterywolf) |
-| 捐赠：移远 EC600S-CN 4G模块 | 移远模块 |
-| 捐赠：博流 BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
-| 捐赠：中国移动 CM32M101A 开发板| 孟巍(微信名) |
-| 捐赠：APM32F030R8 开发板 | 极海半导体 陈成 |
-| 捐赠：APM32E103VB 开发板 | 极海半导体 陈成 |
-| 捐赠：APEX-Link 仿真器 | 极海半导体 陈成 |
-| 源码格式化，增加 git 属性文件 | [Meco Jianting Man](https://github.com/mysterywolf) |
+| QEMU ARM-2D simulation proejct | [liuduanfei](https://github.com/liuduanfei) |
+| Donate：GD32E103TB2 2 pic | 信息牛(微信名) |
+| Rt-thread bsp、port、module| [Meco Jianting Man](https://github.com/mysterywolf) |
+| Donate：EC600S-CN 4G| 移远模块 |
+| Donate：BL706 board|博流智能 [bouffalolab](https://github.com/bouffalolab)|
+| Donate：CM32M101A 开发板| 孟巍(微信名) |
+| Donate：APM32F030R8 board | 极海半导体 陈成 |
+| Donate：APM32E103VB board | 极海半导体 陈成 |
+| Donate：APEX-Link| 极海半导体 陈成 |
+| corde format，add gitattributes| [Meco Jianting Man](https://github.com/mysterywolf) |
 | demo/simulation-keil | 千帆(微信名) |
 | demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
+

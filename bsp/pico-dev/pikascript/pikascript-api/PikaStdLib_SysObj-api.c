@@ -7,19 +7,47 @@
 #include <stdlib.h>
 #include "BaseObj.h"
 
-void PikaStdLib_SysObj___get__Method(PikaObj *self, Args *args){
+void PikaStdLib_SysObj___getitem__Method(PikaObj *self, Args *args){
     Arg* key = args_getArg(args, "key");
     Arg* obj = args_getArg(args, "obj");
-    Arg* res = PikaStdLib_SysObj___get__(self, key, obj);
+    Arg* res = PikaStdLib_SysObj___getitem__(self, key, obj);
     method_returnArg(args, res);
 }
 
-void PikaStdLib_SysObj___set__Method(PikaObj *self, Args *args){
+void PikaStdLib_SysObj___setitem__Method(PikaObj *self, Args *args){
     Arg* key = args_getArg(args, "key");
     Arg* obj = args_getArg(args, "obj");
     char* obj_str = args_getStr(args, "obj_str");
     Arg* val = args_getArg(args, "val");
-    PikaStdLib_SysObj___set__(self, key, obj, obj_str, val);
+    PikaStdLib_SysObj___setitem__(self, key, obj, obj_str, val);
+}
+
+void PikaStdLib_SysObj___slice__Method(PikaObj *self, Args *args){
+    Arg* end = args_getArg(args, "end");
+    Arg* obj = args_getArg(args, "obj");
+    Arg* start = args_getArg(args, "start");
+    int step = args_getInt(args, "step");
+    Arg* res = PikaStdLib_SysObj___slice__(self, end, obj, start, step);
+    method_returnArg(args, res);
+}
+
+void PikaStdLib_SysObj_bytesMethod(PikaObj *self, Args *args){
+    Arg* val = args_getArg(args, "val");
+    Arg* res = PikaStdLib_SysObj_bytes(self, val);
+    method_returnArg(args, res);
+}
+
+void PikaStdLib_SysObj_cformatMethod(PikaObj *self, Args *args){
+    char* fmt = args_getStr(args, "fmt");
+    PikaTuple* var = args_getPtr(args, "var");
+    char* res = PikaStdLib_SysObj_cformat(self, fmt, var);
+    method_returnStr(args, res);
+}
+
+void PikaStdLib_SysObj_chrMethod(PikaObj *self, Args *args){
+    int val = args_getInt(args, "val");
+    char* res = PikaStdLib_SysObj_chr(self, val);
+    method_returnStr(args, res);
 }
 
 void PikaStdLib_SysObj_dictMethod(PikaObj *self, Args *args){
@@ -29,8 +57,20 @@ void PikaStdLib_SysObj_dictMethod(PikaObj *self, Args *args){
 
 void PikaStdLib_SysObj_floatMethod(PikaObj *self, Args *args){
     Arg* arg = args_getArg(args, "arg");
-    float res = PikaStdLib_SysObj_float(self, arg);
+    double res = PikaStdLib_SysObj_float(self, arg);
     method_returnFloat(args, res);
+}
+
+void PikaStdLib_SysObj_hexMethod(PikaObj *self, Args *args){
+    int val = args_getInt(args, "val");
+    char* res = PikaStdLib_SysObj_hex(self, val);
+    method_returnStr(args, res);
+}
+
+void PikaStdLib_SysObj_idMethod(PikaObj *self, Args *args){
+    Arg* obj = args_getArg(args, "obj");
+    int res = PikaStdLib_SysObj_id(self, obj);
+    method_returnInt(args, res);
 }
 
 void PikaStdLib_SysObj_intMethod(PikaObj *self, Args *args){
@@ -54,6 +94,22 @@ void PikaStdLib_SysObj_lenMethod(PikaObj *self, Args *args){
 void PikaStdLib_SysObj_listMethod(PikaObj *self, Args *args){
     Arg* res = PikaStdLib_SysObj_list(self);
     method_returnArg(args, res);
+}
+
+void PikaStdLib_SysObj_ordMethod(PikaObj *self, Args *args){
+    char* val = args_getStr(args, "val");
+    int res = PikaStdLib_SysObj_ord(self, val);
+    method_returnInt(args, res);
+}
+
+void PikaStdLib_SysObj_printMethod(PikaObj *self, Args *args){
+    PikaTuple* val = args_getPtr(args, "val");
+    PikaStdLib_SysObj_print(self, val);
+}
+
+void PikaStdLib_SysObj_printNoEndMethod(PikaObj *self, Args *args){
+    Arg* val = args_getArg(args, "val");
+    PikaStdLib_SysObj_printNoEnd(self, val);
 }
 
 void PikaStdLib_SysObj_rangeMethod(PikaObj *self, Args *args){
@@ -81,14 +137,23 @@ void PikaStdLib_SysObj_typeMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdLib_SysObj(Args *args){
     PikaObj *self = New_BaseObj(args);
-    class_defineMethod(self, "__get__(obj:any,key:any)->any", PikaStdLib_SysObj___get__Method);
-    class_defineMethod(self, "__set__(obj:any,key:any,val:any,obj_str:str)", PikaStdLib_SysObj___set__Method);
+    class_defineMethod(self, "__getitem__(obj:any,key:any)->any", PikaStdLib_SysObj___getitem__Method);
+    class_defineMethod(self, "__setitem__(obj:any,key:any,val:any,obj_str:str)", PikaStdLib_SysObj___setitem__Method);
+    class_defineMethod(self, "__slice__(obj:any,start:any,end:any,step:int)->any", PikaStdLib_SysObj___slice__Method);
+    class_defineMethod(self, "bytes(val:any)->bytes", PikaStdLib_SysObj_bytesMethod);
+    class_defineMethod(self, "cformat(fmt:str,*var)->str", PikaStdLib_SysObj_cformatMethod);
+    class_defineMethod(self, "chr(val:int)->str", PikaStdLib_SysObj_chrMethod);
     class_defineMethod(self, "dict()->any", PikaStdLib_SysObj_dictMethod);
     class_defineMethod(self, "float(arg:any)->float", PikaStdLib_SysObj_floatMethod);
+    class_defineMethod(self, "hex(val:int)->str", PikaStdLib_SysObj_hexMethod);
+    class_defineMethod(self, "id(obj:any)->int", PikaStdLib_SysObj_idMethod);
     class_defineMethod(self, "int(arg:any)->int", PikaStdLib_SysObj_intMethod);
     class_defineMethod(self, "iter(arg:any)->any", PikaStdLib_SysObj_iterMethod);
     class_defineMethod(self, "len(arg:any)->int", PikaStdLib_SysObj_lenMethod);
     class_defineMethod(self, "list()->any", PikaStdLib_SysObj_listMethod);
+    class_defineMethod(self, "ord(val:str)->int", PikaStdLib_SysObj_ordMethod);
+    class_defineMethod(self, "print(*val)", PikaStdLib_SysObj_printMethod);
+    class_defineMethod(self, "printNoEnd(val:any)", PikaStdLib_SysObj_printNoEndMethod);
     class_defineMethod(self, "range(a1:int,a2:int)->any", PikaStdLib_SysObj_rangeMethod);
     class_defineMethod(self, "remove(argPath:str)", PikaStdLib_SysObj_removeMethod);
     class_defineMethod(self, "str(arg:any)->str", PikaStdLib_SysObj_strMethod);

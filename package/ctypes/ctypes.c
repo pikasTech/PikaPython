@@ -1,4 +1,5 @@
 #include "ctypes_Test.h"
+#include "ctypes_c_buffer.h"
 #include "ctypes_c_float.h"
 #include "ctypes_c_uint.h"
 #include "ctypes_c_wchar_p.h"
@@ -12,7 +13,7 @@ void ctypes_c_wchar_p___init__(PikaObj* self, char* value) {
     ctypesUtils_setStr(self, value);
 }
 
-void ctypes_c_float___init__(PikaObj* self, float value) {
+void ctypes_c_float___init__(PikaObj* self, double value) {
     ctypesUtils_setFloat(self, value);
 }
 
@@ -21,10 +22,10 @@ int ctypes_Test_add(PikaObj* self, PikaObj* c_uint1, PikaObj* c_uint2) {
 }
 
 int ctypes_Test_dc_cpuapdu_hex(PikaObj* self,
-                               PikaObj* rcvbuf,
-                               PikaObj* rlen,
+                               int slen,
                                uint8_t* sendbuf,
-                               int slen) {
+                               PikaObj* rlen,
+                               PikaObj* rcvbuf) {
     /* print input */
     __platform_printf("input: slen = %d\n", slen);
     __platform_printf("sendbuf :\n");
@@ -49,4 +50,55 @@ void ctypes_Test_print_rcv(PikaObj* self, PikaObj* rcvbuf) {
     }
     __platform_printf("0x%02x", rcv[rcv_size - 1]);
     __platform_printf("}\r\n");
+}
+
+void ctypes_create_string_buffer___init__(PikaObj* self, int size) {
+    uint8_t* buffer;
+    obj_setBytes(self, "raw", NULL, size);
+    buffer = obj_getBytes(self, "raw");
+    __platform_printf("0x%x", &buffer);
+}
+
+int ctypes_create_string_buffer___getitem__(PikaObj* self, int __key) {
+    uint8_t* buffer;
+    int i;
+
+    i = __key;
+    buffer = obj_getBytes(self, "raw");
+    return buffer[i];
+}
+
+int ctypes_c_buffer___getitem__(PikaObj* self, int __key) {
+    int i;
+    uint8_t* buffer;
+
+    i = __key;
+    buffer = obj_getBytes(self, "raw");
+    return buffer[i];
+}
+
+void ctypes_c_buffer___init__(PikaObj *self, Arg* value, int size){
+    uint8_t* buffer;
+    uint8_t* value_buffer;
+    size_t value_size;
+    ArgType arg_type;
+
+    arg_type = arg_getType(value);
+    if (arg_type == ARG_TYPE_BYTES) {
+        obj_setBytes(self, "raw", NULL, size);
+        buffer = obj_getBytes(self, "raw");
+        value_size = arg_getBytesSize(value);
+        value_buffer = arg_getBytes(value);
+        __platform_memcpy(buffer, value_buffer, value_size);
+    } else if (ARG_TYPE_STRING == arg_type) {
+        obj_setBytes(self, "raw", NULL, size);
+        buffer = obj_getBytes(self, "raw");
+        value_buffer = (uint8_t*)arg_getStr(value);
+        __platform_memcpy(buffer, value_buffer,
+                          strGetSize((char*)value_buffer) + 1);
+    } else {
+        __platform_printf("value type is not support!");
+        while (1)
+            ;
+    }
 }

@@ -9,8 +9,7 @@ void PikaStdDevice_CAN_addFilter(PikaObj* self,
                                  int mask,
                                  int mode,
                                  int rtr) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_CAN_disable(PikaObj* self) {
@@ -43,27 +42,42 @@ char* PikaStdDevice_CAN_read(PikaObj* self, int length) {
     return obj_getStr(self, "readData");
 }
 
+Arg* PikaStdDevice_CAN_readBytes(PikaObj *self, int length){
+    obj_setInt(self, "length", length);
+    obj_runNativeMethod(self, "platformReadBytes", NULL);
+    return arg_copy(obj_getArg(self, "readData"));
+}
+
 void PikaStdDevice_CAN_write(PikaObj* self, char* data) {
     obj_setStr(self, "writeData", data);
     obj_runNativeMethod(self, "platformWrite", NULL);
 }
 
+void PikaStdDevice_CAN_writeBytes(PikaObj *self, uint8_t* data, int length){
+    obj_setBytes(self, "writeData", data, length);
+    obj_runNativeMethod(self, "platformWriteBytes", NULL);
+}
+
 void PikaStdDevice_CAN_platformDisable(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_CAN_platformEnable(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_CAN_platformRead(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_CAN_platformWrite(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
+}
+
+void PikaStdDevice_CAN_platformReadBytes(PikaObj *self){
+    ABSTRACT_METHOD_DECLARE();
+}
+
+void PikaStdDevice_CAN_platformWriteBytes(PikaObj *self){
+    ABSTRACT_METHOD_DECLARE();
 }

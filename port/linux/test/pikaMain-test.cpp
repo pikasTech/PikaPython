@@ -1,18 +1,5 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "PikaMain.h"
-#include "PikaParser.h"
-#include "PikaStdLib_MemChecker.h"
-#include "PikaVM.h"
-#include "dataArgs.h"
-#include "dataMemory.h"
-#include "dataStrs.h"
-#include "pikaScript.h"
-#include "pika_config_gtest.h"
-}
 
-extern PikaMemInfo pikaMemInfo;
 TEST(pikaMain, init) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = pikaScriptInit();
@@ -27,12 +14,27 @@ TEST(pikaMain, new_mem) {
                                           "mem = PikaStdLib.MemChecker()\n"
                                           "mem.max()\n");
     PikaObj* mem = (PikaObj*)args_getPtr(globals->list, "mem");
-    PikaObj* memClassPtr = (PikaObj*)obj_getPtr(mem, "_clsptr");
+    PikaObj* memClassPtr = (PikaObj*)mem->constructor;
     EXPECT_EQ((void*)memClassPtr, (void*)New_PikaStdLib_MemChecker);
     obj_deinit(pikaMain);
     // obj_deinit(globals);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+// TEST(pikaMain, unitTest) {
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     /* run */
+//     __platform_printf("BEGIN\r\n");
+//     pikaVM_runSingleFile(pikaMain, "../../examples/UnitTest/main.py");
+//     /* collect */
+//     /* assert */
+//     /* deinit */
+//     obj_deinit(pikaMain);
+
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 TEST(pikaMain, list_new) {
     /* init */
@@ -481,15 +483,17 @@ TEST(pikaMain, prime_100) {
     obj_run(pikaMain,
             "num = 0\n"
             "i = 2\n"
-            "for i in range(2 , 100):\n"
+            "while i < 100:\n"
             "    j=2\n"
             "    is_prime = 1\n"
-            "    for j in range(2 , i):\n"
+            "    while j < i:\n"
             "        if i%j==0 :\n"
             "            is_prime = 0\n"
             "            break\n"
+            "        j+=1\n"
             "    if is_prime:\n"
             "        num = num + i\n"
+            "    i+=1\n"
             "\n");
     /* collect */
     int num = obj_getInt(pikaMain, "num");
@@ -519,7 +523,7 @@ TEST(pikaMain, for_in_dict) {
             "\n");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "1\r\n");
+    EXPECT_STREQ(log_buff[0], "a\r\n");
     EXPECT_STREQ(log_buff[1], "__start__\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -726,7 +730,7 @@ TEST(pikaMain, obj_no_free) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, list__set__) {
+TEST(pikaMain, list__setitem__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -734,8 +738,8 @@ TEST(pikaMain, list__set__) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "list = PikaStdData.List()\n"
-            "__set__(list, 0, 2, 'list')\n"
-            "res = __get__(list, 0)\n"
+            "list = __setitem__(list, 0, 2)\n"
+            "res = __getitem__(list, 0)\n"
             "\n");
     /* collect */
     int res = obj_getInt(pikaMain, "res");
@@ -746,7 +750,7 @@ TEST(pikaMain, list__set__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, string__get__) {
+TEST(pikaMain, string__getitem__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -754,7 +758,7 @@ TEST(pikaMain, string__get__) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "s = PikaStdData.String('test')\n"
-            "res = __get__(s, 2)\n"
+            "res = __getitem__(s, 2)\n"
             "\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
@@ -765,7 +769,7 @@ TEST(pikaMain, string__get__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, dict__set__get) {
+TEST(pikaMain, dict__setitem__get) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -773,8 +777,8 @@ TEST(pikaMain, dict__set__get) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "list = PikaStdData.Dict()\n"
-            "__set__(list, 'a', 2, 'list')\n"
-            "res = __get__(list, 'a')\n"
+            "list = __setitem__(list, 'a', 2)\n"
+            "res = __getitem__(list, 'a')\n"
             "\n");
     /* collect */
     int res = obj_getInt(pikaMain, "res");
@@ -785,7 +789,7 @@ TEST(pikaMain, dict__set__get) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, str___get____set__) {
+TEST(pikaMain, str___getitem____setitem__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -793,8 +797,8 @@ TEST(pikaMain, str___get____set__) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "s = 'test'\n"
-            "res = __get__(s, 2)\n"
-            "__set__(s, 2, 'q', 's')\n"
+            "res = __getitem__(s, 2)\n"
+            "s = __setitem__(s, 2, 'q')\n"
             "\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
@@ -807,6 +811,7 @@ TEST(pikaMain, str___get____set__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, str__index__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -832,7 +837,9 @@ TEST(pikaMain, str__index__) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, bytes__index__) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -858,7 +865,9 @@ TEST(pikaMain, bytes__index__) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, list_index) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -878,7 +887,9 @@ TEST(pikaMain, list_index) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, dict_index) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -898,6 +909,7 @@ TEST(pikaMain, dict_index) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(pikaMain, task_run_once) {
     /* init */
@@ -960,8 +972,23 @@ TEST(pikaMain, task_run_period_until) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
+            "import PikaStdLib\n"
+            "mem = PikaStdLib.MemChecker()\n"
+            "mem_now = 0\n"
+            "mem_max = 0\n"
+            "mem_lack = False\n"
             "def todo1():\n"
+            "    global mem_now\n"
+            "    global mem_lack\n"
+            "    global mem_max\n"
+            "    mem_max = mem.getMax()\n"
             "    print('task 1 running...')\n"
+            "    if mem_now == 0:\n"
+            "        mem_now = mem.getNow()\n"
+            "    else:\n"
+            "        if mem.getNow() > mem_now + 1:\n"
+            "            mem_lack = True\n"
+            "            print(cformat('%0.8f', mem.getNow()))\n"
             "def todo2():\n"
             "    print('task 2 running...')\n"
             "def todo3():\n"
@@ -971,10 +998,11 @@ TEST(pikaMain, task_run_period_until) {
             "task = GTestTask.Task()\n"
             "task.call_period_ms(todo1, 200)\n"
             "task.call_period_ms(todo2, 500)\n"
-            "# task.call_when(todo3, when3)\n"
+            "# task.call_always(todo3)\n"
             "task.run_until_ms(1000)\n"
             "\n");
     /* collect */
+    int mem_lack = obj_getInt(pikaMain, "mem_lack");
     /* assert */
     EXPECT_STREQ(log_buff[0], "task 1 running...\r\n");
     EXPECT_STREQ(log_buff[1], "task 1 running...\r\n");
@@ -984,6 +1012,7 @@ TEST(pikaMain, task_run_period_until) {
     EXPECT_STREQ(log_buff[5], "task 2 running...\r\n");
     EXPECT_STREQ(log_buff[6], "task 1 running...\r\n");
     EXPECT_STREQ(log_buff[7], "BEGIN\r\n");
+    EXPECT_EQ(mem_lack, 0);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1070,7 +1099,7 @@ TEST(pikaMain, synac_err_1) {
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain, "print('testtest)\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -1084,7 +1113,7 @@ TEST(pikaMain, class_arg) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     Args* buffs = New_strBuff();
-    char* pikaAsm = Parser_multiLineToAsm(buffs,
+    char* pikaAsm = Parser_linesToAsm(buffs,
                                           "class Test(TinyObj):\n"
                                           "    x = 1\n"
                                           "\n"
@@ -1335,10 +1364,10 @@ TEST(pikaMain, get_native_method) {
     /* do some thing */
     Args args = {0};
     args_setStr(&args, "val", "test");
-    obj_runNativeMethod(pikaMain, "print", &args);
+    obj_runNativeMethod(pikaMain, "printNoEnd", &args);
     args_deinit_stack(&args);
     /* assert */
-    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_STREQ(log_buff[0], "test");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -1377,17 +1406,17 @@ TEST(pikaMain, bytearray) {
     /* run */
     __platform_printf("BEGIN\r\n");
     pikaVM_run(pikaMain,
-               "bytes = PikaStdData.ByteArray()\n"
-               "bytes.fromString('test')\n"
+               "bytes = PikaStdData.ByteArray(b'test')\n"
                "sum = 0\n"
                "for byte in bytes:\n"
-               "    sum = sum + byte\n"
-               "\n"
-               "print(sum)\n");
+               "    sum += byte\n"
+               "print(bytes)\n"
+               "\n");
     /* collect */
+    int sum = obj_getInt(pikaMain, "sum");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "448\r\n");
-    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_EQ(sum, 448);
+    EXPECT_STREQ(log_buff[0], "bytearray(b'\\x74\\x65\\x73\\x74')\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     /* mem check */
@@ -1403,7 +1432,7 @@ TEST(pikaMain, not_4_space) {
     pikaVM_run(pikaMain, "  print('test')\n");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "[error]: Syntax error.\r\n");
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
     EXPECT_STREQ(
         log_buff[1],
         "IndentationError: unexpected indent, only support 4 spaces\r\n");
@@ -1474,6 +1503,7 @@ TEST(pikaMain, def_args_err) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain, "print()\n");
+    // obj_run(pikaMain, "printNoEnd()\n");
     /* collect */
 
     /* assert */
@@ -1483,21 +1513,22 @@ TEST(pikaMain, def_args_err) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, class_args_err) {
-    /* init */
-    pikaMemInfo.heapUsedMax = 0;
-    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    /* run */
-    obj_run(pikaMain, "mem = PikaStdLib.MemChecker(0)\n");
-    /* collect */
+// TEST(pikaMain, class_args_err) {
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     /* run */
+//     obj_run(pikaMain, "mem = PikaStdLib.MemChecker(0)\n");
+//     /* collect */
 
-    /* assert */
-    EXPECT_STREQ(log_buff[4],
-                 "TypeError: PikaStdLib.MemChecker() takes no arguments\r\n");
-    /* deinit */
-    obj_deinit(pikaMain);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+//     /* assert */
+//     EXPECT_STREQ(log_buff[4],
+//                  "TypeError: PikaStdLib.MemChecker() takes no
+//                  arguments\r\n");
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 TEST(pikaMain, int_) {
     /* init */
@@ -1536,7 +1567,7 @@ TEST(pikaMain, def_in_shell) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 
     /* skip the first obj_run */
-    obj_run(pikaMain, "'BEGIN'");
+    __platform_printf("BEGIN\r\n");
     /* as run in shell */
     obj_run(pikaMain,
             "def test():\n"
@@ -1565,7 +1596,7 @@ TEST(pikaMain, def_in_shell_override) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 
     /* skip the first obj_run */
-    obj_run(pikaMain, "'BEGIN'");
+    __platform_printf("BEGIN\r\n");
     /* as run in shell */
     obj_run(pikaMain,
             "def test():\n"
@@ -1594,7 +1625,7 @@ TEST(pikaMain, class_in_shell) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 
     /* skip the first obj_run */
-    obj_run(pikaMain, "'BEGIN'");
+    __platform_printf("BEGIN\r\n");
     /* as run in shell */
     obj_run(pikaMain,
             "class Test():\n"
@@ -1620,7 +1651,7 @@ TEST(pikaMain, class_TinyObj) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 
     /* skip the first obj_run */
-    obj_run(pikaMain, "'BEGIN'");
+    __platform_printf("BEGIN\r\n");
     /* as run in shell */
     obj_run(pikaMain,
             "class MyClass( TinyObj ):\n"
@@ -1657,7 +1688,7 @@ TEST(pikaMain, list_sysobj) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if PIKA_BUILTIN_LIST_ENABLE
+#if PIKA_BUILTIN_STRUCT_ENABLE
 TEST(pikaMain, list_init) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1740,6 +1771,872 @@ TEST(pikaMain, cmodule_in_py) {
     /* assert */
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     EXPECT_STREQ(log_buff[1], "mem used max:\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, class___str___print) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "class Test():\n"
+            "    def __str__(self):\n"
+            "        return 'test'\n"
+            "test = Test()\n"
+            "print(test)\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, CModule__str__) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "op = PikaMath.Operator()\n"
+            "print(op)\n"
+            "print('obj: ' + str(op))\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "obj: test\r\n");
+    EXPECT_STREQ(log_buff[1], "test\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_STREQ(log_buff[0], "del operator...\r\n");
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, builtin_hex) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "hex(3)\n"
+            "hex(-3)\n"
+            "hex(1234)\n"
+            "hex(-12039)\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[4], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[3], "'0x03'\r\n");
+    EXPECT_STREQ(log_buff[2], "'-0x03'\r\n");
+    EXPECT_STREQ(log_buff[1], "'0x4d2'\r\n");
+    EXPECT_STREQ(log_buff[0], "'-0x2f07'\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, builtin_ord) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "ord('a')\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "97\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, builtin_chr) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "chr(97)\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "'a'\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, iteral_oct) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "0o100\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "64\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, iteral_bin) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "0b100\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "4\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, REPL_push_mode) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_runCharInit(self);
+    char lines[] =
+        "print('test')\n"
+        "for i in range(0, 10):\n"
+        "    i\n"
+        "\n";
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(self, lines[i]);
+    }
+    /* assert */
+    EXPECT_STREQ(log_buff[18], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[14], "test\r\n");
+    EXPECT_STREQ(log_buff[11], "... ");
+    EXPECT_STREQ(log_buff[1], "9\r\n");
+    EXPECT_STREQ(log_buff[0], ">>> ");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, int_from_bytes) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "int(b'test'[0])\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "116\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+// TEST(pikaMain, big_bytes) {
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     /* run */
+//     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+//     __platform_printf("BEGIN\r\n");
+//     obj_run(self, "b = bytes(8192)\n");
+//     /* assert */
+//     /* deinit */
+//     obj_deinit(self);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, utils_int_to_bytes) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "ut = PikaStdData.Utils()\n"
+            "b = b'test'\n"
+            "b[0] = ut.int_to_bytes(0x35)\n"
+            "b\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[4], "\\x35");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, neg_index) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "'test'[-2]\n"
+            "b'test'[-2]\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "\\x73");
+    EXPECT_STREQ(log_buff[3], "'s'\r\n");
+    EXPECT_STREQ(log_buff[4], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, slice1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "'test'[1:3]\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "'es'\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, slice2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "b'test'[1:3]\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "\\x73");
+    EXPECT_STREQ(log_buff[2], "\\x65");
+    EXPECT_STREQ(log_buff[4], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+TEST(pikaMain, c_buffer) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "version = ctypes.c_buffer(b\"\", 128)\n");
+    /* assert */
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, str_add1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "i = 32\n"
+            "msg = \"device_names[\" + str(i) + \"]:\"\n"
+            "msg\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "'device_names[32]:'\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, slice_eei) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "'test'[1:-1]\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "'est'\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, slice_a97) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "'test'[:-2]\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "'tes'\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, slice_a90) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "'test'[1:]\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "'est'\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, slice_a12) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "b'test'[1:]\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "\\x74");
+    EXPECT_STREQ(log_buff[2], "\\x73");
+    EXPECT_STREQ(log_buff[3], "\\x65");
+    EXPECT_STREQ(log_buff[5], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+TEST(pikaMain, str_string) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "a = PikaStdData.String('test')\n"
+            "print(a)\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, string_index) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "a = PikaStdData.String('test')\n"
+            "a[1]\n"
+            "a[1] = 'q'\n"
+            "print(a)\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "tqst\r\n");
+    EXPECT_STREQ(log_buff[1], "'e'\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+TEST(pikaMain, list_for_append) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "rcv_buf = PikaStdData.List()\n"
+            "for i in range(0, 1024):\n"
+            "    rcv_buf.append(0)\n"
+            "rcv_buf.len()\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1024\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_str) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self, "str(PikaStdData.String('test'))\n");
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "'test'\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, module_import_from_module) {
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(self, pikaModules_py_a);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "import test_module1\n"
+            "test_module1.test_module_import()\n");
+    EXPECT_STREQ(log_buff[0], "test_module_2_hello\r\n");
+    EXPECT_STREQ(log_buff[1], "in test module 2\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, module_1_module2_test) {
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(self, pikaModules_py_a);
+    __platform_printf("BEGIN\r\n");
+    obj_run(self,
+            "import test_module1\n"
+            "test_module1.test_module2.mytest()\n");
+    EXPECT_STREQ(log_buff[0], "test_module_2_hello\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_startswith) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "a = PikaStdData.String('test')\n"
+            "res1 = a.startswith('te')\n"
+            "res2 = a.startswith('st')\n");
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+
+    /* assert */
+    EXPECT_EQ(res1, 1);
+    EXPECT_EQ(res2, 0);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_endswith) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "a = PikaStdData.String('test')\n"
+            "res1 = a.endswith('te')\n"
+            "res2 = a.endswith('st')\n");
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+
+    /* assert */
+    EXPECT_EQ(res1, 0);
+    EXPECT_EQ(res2, 1);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_isdigit) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "a = PikaStdData.String('test')\n"
+            "b = PikaStdData.String('1234')\n"
+            "c = PikaStdData.String('test1234')\n"
+            "res1 = a.isdigit()\n"
+            "res2 = b.isdigit()\n"
+            "res3 = c.isdigit()\n");
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+    int res3 = obj_getInt(pikaMain, "res3");
+
+    /* assert */
+    EXPECT_EQ(res1, 0);
+    EXPECT_EQ(res2, 1);
+    EXPECT_EQ(res3, 0);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_islower) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "a = PikaStdData.String('test')\n"
+            "b = PikaStdData.String('1234')\n"
+            "c = PikaStdData.String('Test')\n"
+            "res1 = a.islower()\n"
+            "res2 = b.islower()\n"
+            "res3 = c.islower()\n");
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+    int res3 = obj_getInt(pikaMain, "res3");
+
+    /* assert */
+    EXPECT_EQ(res1, 1);
+    EXPECT_EQ(res2, 0);
+    EXPECT_EQ(res3, 0);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_isalnum) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "a = PikaStdData.String('test1234')\n"
+            "b = PikaStdData.String('1234')\n"
+            "c = PikaStdData.String('  ')\n"
+            "res1 = a.isalnum()\n"
+            "res2 = b.isalnum()\n"
+            "res3 = c.isalnum()\n");
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+    int res3 = obj_getInt(pikaMain, "res3");
+
+    /* assert */
+    EXPECT_EQ(res1, 1);
+    EXPECT_EQ(res2, 1);
+    EXPECT_EQ(res3, 0);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_isalpha) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "a = PikaStdData.String('test')\n"
+            "b = PikaStdData.String('1234')\n"
+            "c = PikaStdData.String('  ')\n"
+            "res1 = a.isalpha()\n"
+            "res2 = b.isalpha()\n"
+            "res3 = c.isalpha()\n");
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+    int res3 = obj_getInt(pikaMain, "res3");
+
+    /* assert */
+    EXPECT_EQ(res1, 1);
+    EXPECT_EQ(res2, 0);
+    EXPECT_EQ(res3, 0);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, string_isspace) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "a = PikaStdData.String('test')\n"
+            "b = PikaStdData.String('  ')\n"
+            "res1 = a.isspace()\n"
+            "res2 = b.isspace()\n");
+    /* collect */
+    int res1 = obj_getInt(pikaMain, "res1");
+    int res2 = obj_getInt(pikaMain, "res2");
+
+    /* assert */
+    EXPECT_EQ(res1, 0);
+    EXPECT_EQ(res2, 1);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, print_obj) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "mem = PikaStdLib.MemChecker()\n"
+            "mem\n"
+            "print(mem)\n"
+            "res = str(mem)\n");
+    /* collect */
+    char* res = obj_getStr(pikaMain, "res");
+
+    /* assert */
+    EXPECT_EQ(strIsStartWith(log_buff[0], "<object at "), true);
+    EXPECT_EQ(strIsStartWith(log_buff[1], "<object at "), true);
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    EXPECT_EQ(strIsStartWith(res, "<object at "), true);
+
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, num_issue1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    char* lines = "(((1 + (2 * 3)/(4 + 5))*(6 - 7) + (8 + 9) * 10)/11) - 12\n";
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "3.303030\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, returnNullString) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    char* lines =
+        "import GTestTask\n"
+        "task = GTestTask.Task()\n"
+        "def test_return_none():\n"
+        "    s = task.returnNullString()\n"
+        "    return s\n"
+        "s = test_return_none()\n"
+        "print(s)\n"
+        "if None == s:\n"
+        "    print('s is None')\n";
+    obj_run(pikaMain, lines);
+    /* collect */
+    Arg* s = obj_getArg(pikaMain, "s");
+    /* assert */
+    ArgType type = arg_getType(s);
+    EXPECT_EQ(type, ARG_TYPE_NONE);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, for_loop_issue_1b2a3f1bdf) {
+    char* lines =
+        "res = 0\n"
+        "for i in range(0, 10):\n"
+        "    if i < 3:\n"
+        "        continue\n"
+        "    if i > 7:\n"
+        "        continue\n"
+        "    for i in range(i, i+3):\n"
+        "        res += i\n"
+        "\n";
+
+    Args* buffs = New_strBuff();
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+
+    obj_run(pikaMain, lines);
+    /* collect */
+    int res = obj_getInt(pikaMain, "res");
+    /* assert */
+    EXPECT_EQ(res, 90);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, syantex_issue123lkjxi) {
+    char* lines = "if i < 3\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, syantex_issue_fae13) {
+    char* lines = "for i < 3\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, syantex_issue_1289341) {
+    char* lines = "class lkj\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, syantex_issue_183571) {
+    char* lines = "def test\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, dump_issue_12l3kjioa) {
+    char* lines =
+        "if i = 1:\n"
+        "    print('test')\n"
+        "\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if PIKA_SYNTAX_SLICE_ENABLE
+TEST(pikaMain, issue_fa13f4) {
+    char* lines =
+        "d = {'language':['c','python']}\n"
+        "d['language'].append('Java')\n"
+        "print(d)\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "{'language': ['c', 'python', 'Java']}\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+TEST(pikaMain, callback_issue_I5L1MI) {
+    char* lines =
+        "def callback(func):\n"
+        "    func()\n"
+        "\n"
+        "def test():\n"
+        "    print('hello')\n"
+        "\n"
+        "f = test\n"
+        "callback(f)\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, lines);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "hello\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

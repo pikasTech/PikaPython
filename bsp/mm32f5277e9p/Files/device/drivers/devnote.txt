@@ -1,0 +1,8 @@
+TIM驱动程序需要至少提供如下功能的API
+
+将TIM简化成一个通用的定时器模块，而不是严格follow硬件设计
+
+- periodical interrupt trigger
+- pwm
+- output compare
+- input capture 

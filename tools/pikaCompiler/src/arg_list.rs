@@ -1,10 +1,9 @@
 use crate::my_string;
 use crate::py_arg::PyArg;
-use std::collections::BTreeMap;
 #[derive(Debug)]
 pub struct ArgList {
     py_arg_list: String,
-    list: BTreeMap<String, PyArg>,
+    list: Vec<PyArg>,
 }
 
 impl ArgList {
@@ -24,7 +23,12 @@ impl ArgList {
         let mut py_arg_list = String::from("");
         for arg_define in py_arg_list_vecotr.iter() {
             let arg_define = String::from(*arg_define);
-            if arg_define.contains(":") {
+            if arg_define.starts_with("*") {
+                /* variable parameters tuple */
+                py_arg_list.push_str(&arg_define);
+                py_arg_list.push_str(",");
+            } else if arg_define.contains(":") {
+                /* typed arg */
                 py_arg_list.push_str(&arg_define);
                 py_arg_list.push_str(",");
             }
@@ -32,41 +36,49 @@ impl ArgList {
         if py_arg_list.contains(",") {
             /* remove the last ',' */
             py_arg_list.remove(py_arg_list.len() - 1);
-        }else{
+        } else {
             return None;
         }
 
         /* push py_arg_list */
         let mut arg_list = ArgList {
             py_arg_list: py_arg_list.clone(),
-            list: BTreeMap::new(),
+            list: Vec::new(),
         };
 
         /* splite each arg */
         let py_arg_list_vecotr: Vec<&str> = py_arg_list.split(",").collect();
         for arg_define in py_arg_list_vecotr.iter() {
             /* get arg name */
-            let arg_name = match my_string::get_first_token(&arg_define.to_string(), ':') {
+            let mut arg_name = match my_string::get_first_token(&arg_define.to_string(), ':') {
                 Some(name) => name,
-                /* if not get ':', ignore the arg */
-                None => String::from(""),
+                /* if not get ':', get the name */
+                None => String::from(arg_define.to_string()),
             };
+            if arg_name.starts_with("*") {
+                /* is the tuple variable parameter */
+                arg_name = arg_name.strip_prefix("*").unwrap().to_string();
+            }
             /* get type name */
             let type_name = match my_string::get_last_token(&arg_define.to_string(), ':') {
                 Some(name) => name,
                 /* if not get ':', ignore the arg */
-                None => String::from(""),
+                None => {
+                    if arg_define.starts_with("*") {
+                        /* is the tuple variable parameter */
+                        String::from("@tupleVarPar")
+                    } else {
+                        String::from("")
+                    }
+                }
             };
-            arg_list
-                .list
-                .entry(arg_name.clone())
-                .or_insert(PyArg::new(&arg_name, &type_name));
+            arg_list.list.push(PyArg::new(&arg_name, &type_name));
         }
         return Some(arg_list);
     }
     pub fn to_c(&self) -> String {
         let mut arg_list_in_c = String::from("");
-        for (i, (_, py_arg)) in self.list.iter().enumerate() {
+        for (i, py_arg) in self.list.iter().enumerate() {
             let arg_name = py_arg.name();
             let type_name_in_c = py_arg.c_type();
             arg_list_in_c.push_str(&type_name_in_c);
@@ -80,7 +92,7 @@ impl ArgList {
     }
     pub fn call_arg_list(&self) -> String {
         let mut call_arg_list = "".to_string();
-        for (i, (_, py_arg)) in self.list.iter().enumerate() {
+        for (i, py_arg) in self.list.iter().enumerate() {
             let arg_name = py_arg.name();
             call_arg_list.push_str(&arg_name);
             if i < self.list.len() - 1 {
@@ -91,7 +103,7 @@ impl ArgList {
     }
     pub fn get_local_args(&self) -> String {
         let mut get_local_args = "".to_string();
-        for (_, py_arg) in self.list.iter() {
+        for py_arg in self.list.iter() {
             get_local_args.push_str(&py_arg.get_local_arg());
         }
         return get_local_args;

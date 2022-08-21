@@ -48,7 +48,7 @@ http://pikascript.com
 
 Note: You need the [Community Edition license (Now Free)](https://www.keil.com/pr/article/1299.htm) to build Keil projects, and the version of Keil should be newer than v5.36.
 
-[![](https://user-images.githubusercontent.com/88232613/169705287-afb58c8f-1b03-4155-abb2-1b432d5b852e.png)](http://pikascript.com)
+[![](assets/1644129110261-049ad5bb-21af-40e2-9533-a1c8c86790f1.jpg)](http://pikascript.com)
 
 ## Use Pika package manager [PikaPackage.exe](https://pikadoc.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
 
@@ -67,9 +67,19 @@ You can use [simulation project](https://pikadoc.readthedocs.io/en/latest/Keil%2
 The board based on STM32G030C8T6 MCU, only 64kB Flash, 8kB RAM can run PikaScript with total peripheral device (GPIO、TIME、IIC、RGB、KEY、LCD、RGB). 
 CH340 is deployed to support USB to serial with Type-C USB, support download python script py serial, there are 4 RGB on the board and support the [LCD](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102).
 
+# Related Projects
+
+- ⭐ [PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
+
+- ⭐ [PikaScript Bluepill Demo In GCC 🐍](https://github.com/Chandler-Kluser/pikascript_gcc_bluepill)
+
 # Document
 
 https://pikadoc.readthedocs.io/en/latest/index.html
+
+## How to contribute
+
+https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html
 
 ## Folders
 [src](../../tree/master/src) - core code
@@ -90,38 +100,46 @@ https://pikadoc.readthedocs.io/en/latest/index.html
 
 # 2.Platform support
 
+
 ## MCU support
-|MCU|bsp|gpio|uart|pwm|adc|i2c|
-|---|---|---|---|---|---|---|
-|stm32g030c8|√|√|√|√|√|√|
-|stm32g070cB|√|√|√|√|√|√|
-|stm32f103c8|√|√|√|√|√|√|
-|stm32f103rb|√|√|√|√|√|√|
-|stm32f103ze|√|√|√|√|√|√|
-|stm32f103rc|√|√|√|√|√|√|
-|stm32f401cc|√|√|√|√|√|√|
-|stm32f411ce|√|√|√|√|√|√|
-|stm32f407ze|√| | | | | |
-|stm32f407zg|√| | | | | |
-|stm32h750vb|√| | | | | |
-|stm32f051r8|√| | | | | |
-|ch582|√|√|√| |√|√|
-|ch32v103r8t6|√|√| | | | |
-|cm32m101a|√| | | | | |
-|w801|√| | | | | |
-|w806|√|√|√|√|√|√|
-|apm32f030r8|√| | | | | |
-|apm32e103vb|√| | | | | |
-|bl-706|√| | | | | |
-|Raspberry Pico|√| | | | | |
-|ESP32C3|√| | | | | |
-|TC264D|√| | | | | |
-|devc|√| | | | | |
+|MCU            |bsp|gpio|time|uart|pwm|adc|i2c|
+|---|---|---|---|---|---|---|---|
+|stm32g030c8    |√  |√   |√   |√   |√  |√  |√  |
+|stm32g070cB    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f103c8    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f103rb    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f103ze    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f103rc    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f401cc    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f411ce    |√  |√   |√   |√   |√  |√  |√  |
+|stm32f407ze    |√  |    |    |    |   |   |   |
+|stm32f407zg    |√  |    |    |    |   |   |   |
+|stm32h750vb    |√  |    |    |    |   |   |   |
+|stm32f051r8    |√  |    |    |    |   |   |   |
+|ch582          |√  |√   |√   |√   |   |√  |√  |
+|ch32v103r8t6   |√  |√   |√   |    |   |   |   |
+|cm32m101a      |√  |    |    |    |   |   |   |
+|w801           |√  |    |    |    |   |   |   |
+|w806           |√  |√   |√   |√   |√  |√  |√  |
+|apm32f030r8    |√  |    |    |    |   |   |   |
+|apm32e103vb    |√  |    |    |    |   |   |   |
+|bl-706         |√  |    |    |    |   |   |   |
+|Raspberry Pico |√  |    |    |    |   |   |   |
+|ESP32C3        |√  |√   |√   |    |   |   |   |
+|TC264D         |√  |    |    |    |   |   |   |
+|devc           |√  |    |    |    |   |   |   |
+|EC600N         |√  |    |    |    |   |   |   |
+|mm32f5277e9p   |√  |√   |    |    |   |   |   |
+|xr806(openharmony)|√  |    |    |    |   |   |   |
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
 |---|---|---|---|---|---|---|---|---|---|
 |[Pika-Pi-Zero](https://item.taobao.com/item.htm?spm=a230r.1.14.1.4f2e27a8R0qWJn&id=654947372034&ns=1&abbucket=15#detail)|√|√|√|√|√|√|√|√|√|
+
+|Board|bsp|pika_lvgl|
+|---|---|---|
+|lvgl-vs-simu|√|√|
 
 |Board|bsp|arm-2d|
 |---|---|---|
@@ -130,9 +148,7 @@ https://pikadoc.readthedocs.io/en/latest/index.html
 |Board|bsp|LED|KEY|
 |---|---|---|---|
 |SmartLoong|√|√|√|√|
-
 ## OS support
-
 |OS|port|GPIO|TIME|PWM|
 |---|---|---|---|---|
 |RT-Thread|√|√|√|√|
@@ -141,11 +157,6 @@ https://pikadoc.readthedocs.io/en/latest/index.html
 |OS|port|Google Test|Benchmark|
 |---|---|---|---|
 |linux|√|√|√|
-
-## Related Projects
-### PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌
-https://github.com/maxgerhardt/pikascript-pio-bluepill
-
 
 # 3.Characteristic
 ### (1)Run environment
@@ -202,16 +213,16 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 
 #### Control flow
 
-| Syntax | State | Comment |
-| --- | --- | --- |
-| if | √ | |
-| while | √ | |
-| for in [list] | √ | ([PikaStdData.List](https://pikadoc.readthedocs.io/en/latest/PikaStdData%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html)) |
-| for in range(a, b) | √ |  |
-| for in [dict] | √ | ([PikaStdData.Dict](https://pikadoc.readthedocs.io/en/latest/PikaStdData%20%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html)) |
-| if elif else | √ | |
-| for break/continue | √ ||
-| while break/continue | √ ||
+| Syntax | State |
+| --- | --- |
+| if | √ |
+| while | √ |
+| for in [list] | √ |
+| for in range(a, b) | √ |
+| for in [dict] | √ |
+| if elif else | √ |
+| for break/continue | √ |
+| while break/continue | √ |
 
 #### Module
 
@@ -224,26 +235,33 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 | from [module] import * | - | PikaObj Module Only |
 
 #### List/Dict
-| Syntax | State | Comment |
-| --- | --- | --- |
-| l = list() | √  | Need to enable the built-in-list in [configuration](https://pikadoc.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| l = [a, b, c] | √  | Need to enable the built-in-list in [configuration](https://pikadoc.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| d = dict() | √ | Need to enable the built-in-dict in [configuration](https://pikadoc.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html). |
-| d = {a:"x", b:"y", c:"z"} | -  | |
+| Syntax | State |
+| --- | --- |
+| l = list() | √  |
+| l = [a, b, c] | √ |
+| d = dict() | √ |
+| d = {'a':x, 'b':y, 'c':z} | √ |
 
 #### Exception
 
-| try except | try except else | try except as | 
-| --- | --- | --- |
-| - | - | - |
+| Syntax | State |
+| --- | --- |
+|try:| √ |
+|except:| √ |
+|except [Exception]:| - |
+|except [Exception] as [err]: | - |
+|except: ... else:| - |
+|raise:| √ |
+|raise [Exception]:| - |
+|finally:| - |
 
 #### Slice
 
-| Syntax | str | bytes | list (PikaStdData.List) |
+| Syntax | str | bytes | list |
 | --- | --- | --- | --- |
-| test[i] | √ | - | √ |
-| test[a : b : c] | - | - | - |
-| test[a :] | - | - | - |
+| test[i] | √ | √ | √ |
+| test[a : b] | √ | √ | - | 
+| test[a :] | √ | √ | - |
 
 #### Other keywords/Syntax
 
@@ -266,8 +284,6 @@ Complete unit testes based on google test.
 https://t.me/+JL3TZ9k-Lfg2OWE1
 
 ## E-mail: liang6516@outlook.com
-
-## Tencent QQ： 645275593
 
 # 5.Demo 
 
@@ -567,45 +583,55 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 # 6.Test and develop Core
 
 ## Test core in docker (recommend)
-step1: Clone the repo
-``` shell
-git clone https://github.com/pikastech/pikascript
-cd pikascript/docker 
-```
+[get start with docker](https://pikadoc.readthedocs.io/en/latest/get-start_linux.html)
 
-step2: build and run the docker contianer
-```
-sh build.sh
-sh run.sh
-```
+# ✨ Contributors
 
-step3: init the port/linux
-``` shell	
-cd port/linux
-sh pull-core.sh
-sh init.sh
-```
+<a href="https://github.com/pikastech/pikascript/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=pikastech/pikascript" />
+</a>
 
-step4: test the core 
-``` shell
-sh gtest.sh
-sh ci_benchmark.sh
-```
+## [How to contribute](https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html)
 
-step5: Run the REPL
-``` shell
-sh run.sh
-```
+| Contributer | [Achivements](document/achivement.md) |
+| ----------------------------------------------------- | :----------------------------------------------------------- |
+| [甜航](https://github.com/easyzoom)                   | <img src="assets/26.png" alt="26" width="80" /> |
+| 千帆(微信名)                                          | <img src="assets/26.png" alt="26" width="80" /> |
+| [ Meco Jianting Man](https://github.com/mysterywolf)  | <img src="assets/22.png" alt="12" width="80" /><img src="assets/26.png" alt="26" width="80" /><img src="assets/23.png" alt="23" width="80" /><img src="assets/15.png" alt="15" width="80" /><img src="assets/11.png" alt="15" width="80" /><img src="assets/41.png" alt="41" width="80" />|
+| [liuduanfei](https://github.com/liuduanfei)           | <img src="assets/26.png" alt="26" width="80" /> |
+| [ sjy](https://gitee.com/shanjiayang)                 | <img src="assets/26.png" alt="26" width="80" /><img src="assets/13.png" alt="13" width="80" /> |
+| 沧御                                                  | <img src="assets/26.png" alt="26" width="80" /> |
+| [versaloon](https://github.com/versaloon)             | <img src="assets/26.png" alt="26" width="80" /><img src="assets/13.png" alt="13" width="80" /> |
+| 刘延(微信名)                                          | <img src="assets/36.png" alt="36" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
+| [GorgonMeducer](https://github.com/GorgonMeducer)     | <img src="assets/25.png" alt="25" width="80" /><img src="assets/22.png" alt="22" width="80" /><img src="assets/21.png" alt="21" width="80" /><img src="assets/33.png" alt="33" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
+| [unsigned](https://gitee.com/unsigned0)               | <img src="assets/26.png" alt="26" width="80" /><img src="assets/23.png" alt="23" width="80" /> |
+| [梦程MI](https://gitee.com/dreamcmi)                  | <img src="assets/36.png" alt="36" width="80" /><img src="assets/23.png" alt="23" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
+| [Maximilian Gerhardt](https://github.com/maxgerhardt) | <img src="assets/12.png" alt="12" width="80" /> |
+| [purewind7](https://gitee.com/purewind7)              | <img src="assets/24.png" alt="24" width="80" /><img src="assets/31.png" alt="31" width="80" /><img src="assets/33.png" alt="33" width="80" /><img src="assets/41-16594077379821.png" alt="41" width="80" /> |
+| [ onceday](https://gitee.com/onceday)                 | <img src="assets/24.png" alt="24" width="80" /><img src="assets/13.png" alt="13" width="80" /> |
 
-# 7.Contribute
-| Content | Contributer |
+
+<div class="log"></div>
+
+| Contribute log | Contributer |
 | --- | --- |
+| PikaMath.Quaternion() | [purewind7](https://gitee.com/purewind7) |
+| contrubute to PikaCV | [purewind7](https://gitee.com/purewind7) |
+| xr806(openharmony) bsp |[sjy](https://gitee.com/shanjiayang)|
+| ESP32 package |沧御|
+| MM32F5277E9P package |[unsigned](https://gitee.com/unsigned0)|
+| mm32f5277e9p BSP |[unsigned](https://gitee.com/unsigned0)|
+| Add [CMSIS-PACK](https://pikadoc.readthedocs.io/en/latest/get-start_cmsis-pack.html) | [GorgonMeducer](https://github.com/GorgonMeducer) |
+| donate: air32f103 board * 20 | 合宙 [xinxi204](https://gitee.com/xinxi204) |
+| contrubute to PikaMath.Math() | [onceday](https://gitee.com/onceday) |
+| add support for Unix Time | [onceday](https://gitee.com/onceday) |
+| contrubute to PikaStdLib.String() | [purewind7](https://gitee.com/purewind7) |
 | Add [PLOOC](https://github.com/GorgonMeducer/PLOOC) support for PikaScript Core | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | Donate：500¥ (ctypes 相关） | 蒋太平 |
 | fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
 | ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
 | ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
-| Donate：EC600X QuecPython 开发板 | 移远通信 武加玉 |
+| Donate：EC600X QuecPython Develop board| 移远通信 武加玉 |
 | Performance Point: 900->1400 | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | stm32f051r8 BSP |[unsigned](https://gitee.com/unsigned0)|
 | stm32f407ze BSP |[unsigned](https://gitee.com/unsigned0)|
@@ -614,26 +640,31 @@ sh run.sh
 | PikaVM improvement | [GorgonMeducer](https://github.com/GorgonMeducer) |
 | W801Device package | 刘延(微信名) |
 | W806 bsp | 刘延(微信名) |
-| Donate：ESP32C3 5pic，调试器 |启明云端 沧御|
-| Donate：LS1C101芯片10pic, LS1c101开发板，调试器|龙芯俱乐部 石南|
+| Donate：ESP32C3 5pic，linker|启明云端 沧御|
+| Donate：LS1C101 mcu 10pic, LS1c101 develop board，debuger|龙芯俱乐部 石南|
 | PikaVSF OS package | [versaloon](https://github.com/versaloon) |
 | ESP32C3 BSP |沧御|
-| Donate：ESP32开发板、墨水屏*4 | name(微信名) |
-| Donate：智龙开发板 | 龙芯俱乐部 石南 |
+| Donate：ESP32 board、ink lcd*4 | name(微信名) |
+| Donate：smartloong board | 龙芯俱乐部 石南 |
 | package/STM32F1 | [sjy](https://gitee.com/shanjiayang) |
 | package/STM32F103RBBooter | [sjy](https://gitee.com/shanjiayang) |
 | bsp/stm32f103rb | [sjy](https://gitee.com/shanjiayang) |
-| 基于QEMU的ARM-2D仿真工程 | [liuduanfei](https://github.com/liuduanfei) |
-| Donate：GD32E103TB芯片2片 | 信息牛(微信名) |
-| Rt-thread 支持包、适配层、模块| [Meco Jianting Man](https://github.com/mysterywolf) |
-| Donate：移远EC600S-CN 4G模块 | 移远模块 |
-| Donate：博流BL706 开发板|博流智能 [bouffalolab](https://github.com/bouffalolab)|
-| Donate：中国移动CM32M101A 开发板| 孟巍(微信名) |
-| Donate：APM32F030R8 开发板 | 极海半导体 陈成 |
-| Donate：APM32E103VB 开发板 | 极海半导体 陈成 |
-| Donate：APEX-Link仿真器 | 极海半导体 陈成 |
-| 源码格式化，增加git属性文件 | [Meco Jianting Man](https://github.com/mysterywolf) |
+| QEMU ARM-2D simulation proejct | [liuduanfei](https://github.com/liuduanfei) |
+| Donate：GD32E103TB2 2 pic | 信息牛(微信名) |
+| Rt-thread bsp、port、module| [Meco Jianting Man](https://github.com/mysterywolf) |
+| Donate：EC600S-CN 4G| 移远模块 |
+| Donate：BL706 board|博流智能 [bouffalolab](https://github.com/bouffalolab)|
+| Donate：CM32M101A 开发板| 孟巍(微信名) |
+| Donate：APM32F030R8 board | 极海半导体 陈成 |
+| Donate：APM32E103VB board | 极海半导体 陈成 |
+| Donate：APEX-Link| 极海半导体 陈成 |
+| corde format，add gitattributes| [Meco Jianting Man](https://github.com/mysterywolf) |
 | demo/simulation-keil | 千帆(微信名) |
 | demo/stm32f103zet6/demo01-led-stm32f103zet6 | [甜航](https://github.com/easyzoom) |
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=pikastech/pikascript&type=Date)](https://star-history.com/#pikastech/pikascript&Date)

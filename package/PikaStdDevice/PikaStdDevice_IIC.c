@@ -37,6 +37,15 @@ void PikaStdDevice_IIC_write(PikaObj* self, int addr, char* data) {
     obj_runNativeMethod(self, "platformWrite", NULL);
 }
 
+void PikaStdDevice_IIC_writeBytes(PikaObj* self,
+                                  int addr,
+                                  uint8_t* data,
+                                  int length) {
+    obj_setBytes(self, "writeData", data, length);
+    obj_setInt(self, "writeAddr", addr);
+    obj_runNativeMethod(self, "platformWriteBytes", NULL);
+}
+
 char* PikaStdDevice_IIC_read(PikaObj* self, int addr, int length) {
     obj_setInt(self, "length", length);
     obj_setInt(self, "readAddr", addr);
@@ -44,22 +53,33 @@ char* PikaStdDevice_IIC_read(PikaObj* self, int addr, int length) {
     return obj_getStr(self, "readData");
 }
 
+Arg* PikaStdDevice_IIC_readBytes(PikaObj* self, int addr, int length) {
+    obj_setInt(self, "length", length);
+    obj_setInt(self, "readAddr", addr);
+    obj_runNativeMethod(self, "platformReadBytes", NULL);
+    return arg_copy(obj_getArg(self, "readData"));
+}
+
 void PikaStdDevice_IIC_platformWrite(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_IIC_platformEnable(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_IIC_platformDisable(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
 }
 
 void PikaStdDevice_IIC_platformRead(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_DECLARE();
+}
+
+void PikaStdDevice_IIC_platformReadBytes(PikaObj* self) {
+    ABSTRACT_METHOD_DECLARE();
+}
+
+void PikaStdDevice_IIC_platformWriteBytes(PikaObj* self) {
+    ABSTRACT_METHOD_DECLARE();
 }

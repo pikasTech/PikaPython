@@ -1,5 +1,5 @@
 #api
-class PyObj(BaseObj):
+class PyObj:
 
     def importClass(self, className: str, fp: str):
         pass
@@ -17,7 +17,7 @@ class PyObj(BaseObj):
         pass
 
 
-class PyMethod (SysObj):
+class PyMethod ( ):
     def makeMethodFun(fp: str):
         pass
 

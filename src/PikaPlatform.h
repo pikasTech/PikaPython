@@ -36,13 +36,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* clang-format off */
+#if PIKA_ASSERT_ENABLE
+    #define pika_assert(expr) \
+    if(!(expr)) { \
+        __platform_printf("Assertion failed: %s\nfile: %s:%d\n", #expr, __FILE__, __LINE__); \
+        abort(); \
+    }
+#else
+    #define pika_assert(...)
+#endif
+/* clang-format on */
+
 /* Compiler */
-#if defined(__CC_ARM) || defined(__CLANG_ARM) /* ARM Compiler */
+#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 5000000) /* ARM Compiler \
+                                                              */
 #define PIKA_WEAK __attribute__((weak))
 #elif defined(__IAR_SYSTEMS_ICC__) /* for IAR Compiler */
 #define PIKA_WEAK __weak
 #elif defined(__MINGW32__) /* MINGW32 Compiler */
-#define PIKA_WEAK 
+#define PIKA_WEAK
 #elif defined(__GNUC__) /* GNU GCC Compiler */
 #define PIKA_WEAK __attribute__((weak))
 #endif
@@ -51,11 +64,48 @@
 #define PIKA_WEAK
 #endif
 
+/* align for bytecode */
+#if defined(_WIN32)
+#define PIKA_BYTECODE_ALIGN
+#else
+#define PIKA_BYTECODE_ALIGN __attribute__((aligned(4)))
+#endif
+
 /* OS */
 #ifdef __RTTHREAD__
 #include <rtthread.h>
 #define __platform_printf(...) rt_kprintf(__VA_ARGS__)
 #endif
+
+typedef enum {
+    PIKA_RES_OK = 0,
+    PIKA_RES_ERR_RUNTIME_ERROR,
+    PIKA_RES_ERR_ARG_NO_FOUND,
+    PIKA_RES_ERR_UNKNOWN_INSTRUCTION,
+    PIKA_RES_ERR_OUT_OF_RANGE,
+    PIKA_RES_ERR_IO_ERROR,
+    PIKA_RES_ERR_INSUFFICIENT_RESOURCE,
+    PIKA_RES_ERR_INVALID_PARAM,
+    PIKA_RES_ERR_INVALID_PTR,
+    PIKA_RES_ERR_UNALIGNED_PTR,
+    PIKA_RES_ERR_INVALID_VERSION_NUMBER,
+    PIKA_RES_ERR_ILLEGAL_MAGIC_CODE,
+    PIKA_RES_ERR_OPERATION_FAILED,
+    PIKA_RES_ERR_UNKNOWN,
+    PIKA_RES_ERR_SYNTAX_ERROR,
+    PIKA_RES_ERR_IO,
+    PIKA_RES_ERR_ASSERT,
+} PIKA_RES;
+
+/* clang-format off */
+
+/* pikascript bool type */
+typedef enum {
+    PIKA_TRUE   = 1,
+    PIKA_FALSE  = 0,
+} PIKA_BOOL;
+
+/* clang-format on */
 
 /*
     [Note]:
@@ -103,8 +153,12 @@ FILE* __platform_fopen(const char* filename, const char* modes);
 int __platform_fclose(FILE* stream);
 size_t __platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream);
 size_t __platform_fread(void* ptr, size_t size, size_t n, FILE* stream);
+int __platform_fseek(FILE* stream, long offset, int whence);
+long __platform_ftell(FILE* stream);
 
 /* error */
 void __platform_error_handle(void);
+
+void __pks_hook_instruct(void);
 
 #endif

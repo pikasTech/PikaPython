@@ -1,9 +1,11 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
+
 extern "C" {
-#include "dataArg.h"
-#include "dataMemory.h"
-#include "dataString.h"
+Pool pool_init(uint32_t size, uint8_t aline);
+void* pool_malloc(Pool* pool, uint32_t size);
+void pool_free(Pool* pool, void* mem, uint32_t size);
+void pool_deinit(Pool* pool);
+void pool_printBlocks(Pool* pool, uint32_t block_min, uint32_t block_max);
 }
 
 TEST(pool, init) {

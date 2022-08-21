@@ -12,6 +12,7 @@ cd ../pikaByteCodeGen
 cp ../pikaCompiler/libpikabinder . -r
 rm pikascript/pikascript-core -r
 cp ../../src pikascript/pikascript-core -r
+touch pikascript/pikascript-core/keep
 
 sh cross-win.sh
 

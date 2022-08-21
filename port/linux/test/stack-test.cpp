@@ -1,10 +1,4 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "BaseObj.h"
-#include "dataMemory.h"
-#include "dataStack.h"
-}
 
 TEST(stack, NEW) {
     Stack s;
@@ -33,15 +27,15 @@ TEST(stack, arg) {
     Stack s;
     stack_init(&s);
 
-    Arg* arg1 = arg_setInt(NULL, "", 10);
-    Arg* arg2 = arg_setInt(NULL, "", 20);
-    Arg* arg3 = arg_setInt(NULL, "", 30);
+    Arg* arg1 = arg_newInt(10);
+    Arg* arg2 = arg_newInt(20);
+    Arg* arg3 = arg_newInt(30);
     stack_pushArg(&s, arg1);
     stack_pushArg(&s, arg2);
     stack_pushArg(&s, arg3);
-    Arg* arg4 = stack_popArg(&s);
-    Arg* arg5 = stack_popArg(&s);
-    Arg* arg6 = stack_popArg(&s);
+    Arg* arg4 = stack_popArg_alloc(&s);
+    Arg* arg5 = stack_popArg_alloc(&s);
+    Arg* arg6 = stack_popArg_alloc(&s);
     EXPECT_EQ(arg_getInt(arg4), 30);
     EXPECT_EQ(arg_getInt(arg5), 20);
     EXPECT_EQ(arg_getInt(arg6), 10);

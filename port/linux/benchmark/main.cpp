@@ -44,11 +44,9 @@ BENCHMARK(while_loop_10000)->Unit(benchmark::kMillisecond);
 static void prime_number_100(benchmark::State& state) {
     int num = 0;
     Args* buffs = New_strBuff();
-    char* pikaAsm = Parser_multiLineToAsm(buffs, (char*)
+    char* pikaAsm = Parser_linesToAsm(buffs, (char*)
             "num = 0\n"
-            "i = 2\n"
             "for i in range(2,100):\n"
-            "    j=2\n"
             "    is_prime = 1\n"
             "    for j in range(2,i):\n"
             "        if i%j==0 :\n"
@@ -66,7 +64,7 @@ static void prime_number_100(benchmark::State& state) {
         pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
         num = obj_getInt(pikaMain, (char*)"num");
         if (1060 != num) {
-            printf("[error]: prime_number_100\r\n");
+            printf("Error: prime_number_100\r\n");
         }
         obj_deinit(pikaMain);
     }
@@ -93,7 +91,7 @@ static void prime_number_100_c(benchmark::State& state) {
             }
         }
         if (1060 != num) {
-            printf("[error]: prime_number_100\r\n");
+            printf("Error: prime_number_100\r\n");
         }
     }
 }

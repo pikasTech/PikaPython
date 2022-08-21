@@ -38,36 +38,65 @@ enum Instruct {
     __INSTRCUTION_CNT,
 };
 
-/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
- */
-//#define __PLOOC_CLASS_USE_STRICT_TEMPLATE__
+typedef enum {
+    VM_JMP_EXIT = -999,
+    VM_JMP_CONTINUE = -997,
+    VM_JMP_BREAK = -998,
+    VM_JMP_RAISE = -996,
+} VM_JMP;
 
-#if defined(__PIKAVM_CLASS_IMPLEMENT__)
-#define __PLOOC_CLASS_IMPLEMENT__
-#elif defined(__PIKAVM_CLASS_INHERIT__)
-#define __PLOOC_CLASS_INHERIT__
-#endif
+typedef enum { VM_PC_EXIT = -99999 } VM_PC;
 
-#include "__pika_ooc.h"
+typedef enum {
+    TRY_STATE_NONE = 0,
+    TRY_STATE_TOP,
+    TRY_STATE_INNER,
+} TRY_STATE;
 
-/* clang-format off */
+typedef enum {
+    TRY_RESULT_NONE = 0,
+    TRY_RESULT_RAISE,
+} TRY_RESULT;
 
-dcl_class(VMState);
+typedef struct TryInfo TryInfo;
+struct TryInfo {
+    TRY_STATE try_state;
+    TRY_RESULT try_result;
+};
 
-def_class(VMState, 
-    private_member(
-        VMParameters* locals;
-        VMParameters* globals;
-        Stack stack;
-        int32_t jmp;
-        int32_t pc;
-        ByteCodeFrame* bytecode_frame;
-        uint8_t error_code;
-        uint8_t line_error_code;
-    )
-);
+typedef struct VMState VMState;
+struct VMState {
+    VMParameters* locals;
+    VMParameters* globals;
+    Stack stack;
+    int32_t jmp;
+    int32_t pc;
+    ByteCodeFrame* bytecode_frame;
+    uint8_t loop_deepth;
+    uint8_t error_code;
+    uint8_t line_error_code;
+    uint8_t try_error_code;
+    uint32_t ins_cnt;
+    PikaObj* lreg[PIKA_REGIST_SIZE];
+    PIKA_BOOL ireg[PIKA_REGIST_SIZE];
+    TryInfo* try_info;
+};
 
-/* clang-format on */
+typedef struct OperatorInfo OperatorInfo;
+struct OperatorInfo {
+    char* opt;
+    ArgType t1;
+    ArgType t2;
+    Arg* a1;
+    Arg* a2;
+    double f1;
+    double f2;
+    int i1;
+    int i2;
+    Arg* res;
+    int num;
+    VMState* vm;
+};
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
@@ -114,11 +143,15 @@ enum Instruct pikaVM_getInstructFromAsm(char* line);
 void constPool_init(ConstPool* self);
 void constPool_deinit(ConstPool* self);
 void constPool_append(ConstPool* self, char* content);
+
+#define constPool_getStart(self) ((self)->content_start)
+#define constPool_getLastOffset(self) ((self)->size)
+#define constPool_getByOffset(self, offset) \
+    (char*)((uintptr_t)constPool_getStart((self)) + (uintptr_t)(offset))
+
 char* constPool_getNow(ConstPool* self);
 char* constPool_getNext(ConstPool* self);
 char* constPool_getByIndex(ConstPool* self, uint16_t index);
-char* constPool_getByOffset(ConstPool* self, uint16_t offset);
-uint16_t constPool_getLastOffset(ConstPool* self);
 void constPool_print(ConstPool* self);
 
 void byteCodeFrame_init(ByteCodeFrame* bf);
@@ -137,6 +170,7 @@ InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset);
 #define instructUnit_getSize(InstructUnit_p_self) ((size_t)sizeof(InstructUnit))
 #define instructArray_getSize(InsturctArry_p_self) \
     ((size_t)(InsturctArry_p_self)->size)
+#define instructArray_getStart(InsturctArry_p_self) ((self)->content_start)
 
 uint16_t constPool_getOffsetByData(ConstPool* self, char* data);
 void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool);
@@ -150,7 +184,14 @@ void byteCodeFrame_init(ByteCodeFrame* self);
 VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode);
 InstructUnit* instructArray_getNow(InstructArray* self);
 InstructUnit* instructArray_getNext(InstructArray* self);
+VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename);
+Arg* obj_runMethodArg(PikaObj* self, PikaObj* method_args_obj, Arg* method_arg);
+PikaObj* pikaVM_runFile(PikaObj* self, char* file_name);
+Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step);
+Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj);
+void __vm_List_append(PikaObj* self, Arg* arg);
+void __vm_List___init__(PikaObj* self);
+void __vm_Dict_set(PikaObj* self, Arg* arg, char* key);
+void __vm_Dict___init__(PikaObj* self);
 
-#undef __PIKAVM_CLASS_IMPLEMENT__
-#undef __PIKAVM_CLASS_INHERIT__
 #endif

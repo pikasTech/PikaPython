@@ -57,7 +57,14 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 
-
+char __platform_getchar(void) {
+    uint8_t ch;
+    while(1){
+        if(HAL_OK == HAL_UART_Receive(&huart1, &ch, 1, 0)){
+            return ch;
+        }
+    }
+}
 
 
 /* USER CODE END 0 */
@@ -93,7 +100,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   PikaObj *pikaMain = pikaScriptInit();
-	
+	pikaScriptShell(pikaMain);
   /* USER CODE END 2 */
 
   /* Infinite loop */

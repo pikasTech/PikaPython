@@ -1,51 +1,26 @@
-#api
+# api
 from PikaObj import *
 
 
 class MemChecker(TinyObj):
-    def max(self):
-        pass
-
-    def now():
-        pass
-
-    def getMax() -> float:
-        pass
-
-    def getNow() -> float:
-        pass
-
-    def resetMax():
-        pass
+    def max(self): ...
+    def now(): ...
+    def getMax() -> float: ...
+    def getNow() -> float: ...
+    def resetMax(): ...
 
 
 class SysObj(BaseObj):
-    def type(arg: any):
-        pass
-
-    def remove(argPath: str):
-        pass
-
-    def int(arg: any) -> int:
-        pass
-
-    def float(arg: any) -> float:
-        pass
-
-    def str(arg: any) -> str:
-        pass
-
-    def iter(arg: any) -> any:
-        pass
-
-    def range(a1: int, a2: int) -> any:
-        pass
-
-    def __set__(obj: any, key: any, val: any, obj_str: str):
-        pass
-
-    def __get__(obj: any, key: any) -> any:
-        pass
+    def type(arg: any): ...
+    def remove(argPath: str): ...
+    def int(arg: any) -> int: ...
+    def float(arg: any) -> float: ...
+    def str(arg: any) -> str: ...
+    def iter(arg: any) -> any: ...
+    def range(a1: int, a2: int) -> any: ...
+    def __setitem__(obj: any, key: any, val: any, obj_str: str): ...
+    def __getitem__(obj: any, key: any) -> any: ...
+    def print(self, *val): ...
 
 
 class RangeObj(TinyObj):
@@ -56,6 +31,7 @@ class RangeObj(TinyObj):
 class StringObj(TinyObj):
     def __next__() -> any:
         pass
+
 
 class PikaObj(TinyObj):
     pass

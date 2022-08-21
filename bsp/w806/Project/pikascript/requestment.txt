@@ -1,4 +1,4 @@
-pikascript-core==lts2021
-PikaStdLib==lts2021
-PikaStdDevice==v1.4.3
-W801Device==v1.0.0
+pikascript-core==v1.10.0
+PikaStdLib==v1.10.0
+PikaStdDevice==v1.10.0
+W801Device==v1.1.0

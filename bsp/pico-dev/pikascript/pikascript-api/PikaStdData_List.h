@@ -9,11 +9,12 @@
 
 PikaObj *New_PikaStdData_List(Args *args);
 
-Arg* PikaStdData_List___get__(PikaObj *self, Arg* __key);
+void PikaStdData_List___del__(PikaObj *self);
+Arg* PikaStdData_List___getitem__(PikaObj *self, Arg* __key);
 void PikaStdData_List___init__(PikaObj *self);
 Arg* PikaStdData_List___iter__(PikaObj *self);
 Arg* PikaStdData_List___next__(PikaObj *self);
-void PikaStdData_List___set__(PikaObj *self, Arg* __key, Arg* __val);
+void PikaStdData_List___setitem__(PikaObj *self, Arg* __key, Arg* __val);
 void PikaStdData_List_append(PikaObj *self, Arg* arg);
 Arg* PikaStdData_List_get(PikaObj *self, int i);
 int PikaStdData_List_len(PikaObj *self);

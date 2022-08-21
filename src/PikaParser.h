@@ -31,18 +31,6 @@
 #include "dataQueueObj.h"
 #include "dataStack.h"
 
-/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
- */
-//#define __PLOOC_CLASS_USE_STRICT_TEMPLATE__
-
-#if defined(__PIKA_PARSER_CLASS_IMPLEMENT__)
-#define __PLOOC_CLASS_IMPLEMENT__
-#elif defined(__PIKA_PARSER_CLASS_INHERIT__)
-#define __PLOOC_CLASS_INHERIT__
-#endif
-
-#include "__pika_ooc.h"
-
 enum TokenType {
     TOKEN_strEnd = 0,
     TOKEN_symbol,
@@ -58,76 +46,80 @@ enum StmtType {
     STMT_bytes,
     STMT_number,
     STMT_method,
+    STMT_chain,
     STMT_operator,
     STMT_import,
     STMT_list,
+    STMT_slice,
+    STMT_dict,
     STMT_none,
 };
 
-/* clang-format off */
-dcl_class(Asmer);
+typedef struct Asmer Asmer;
+struct Asmer {
+    char* asm_code;
+    uint8_t block_deepth_now;
+    uint8_t is_new_line;
+    char* line_pointer;
+};
 
-def_class(Asmer, 
-    private_member(
-        char* asm_code;
-        uint8_t block_deepth_now;
-        uint8_t is_new_line;
-        char* line_pointer;
-    )
-);
+typedef enum _GenRuleValType {
+    VAL_NONEVAL,
+    VAL_DYNAMIC,
+    VAL_STATIC_,
+} GenRuleValType;
 
-dcl_class(LexToken);
+typedef struct GenRule {
+    char* ins;
+    GenRuleValType type;
+    char* ast;
+    char* val;
+} GenRule;
 
-def_class(LexToken, 
-    private_member(
-        char* token;
-        enum TokenType type;
-        char* pyload;
-    )
-);
+typedef struct LexToken LexToken;
+struct LexToken {
+    char* token;
+    enum TokenType type;
+    char* pyload;
+};
 
-dcl_class(ParserState);
+typedef struct Cursor ParsetState;
+struct Cursor {
+    char* tokens;
+    uint16_t length;
+    uint16_t iter_index;
+    int8_t branket_deepth;
+    struct LexToken token1;
+    struct LexToken token2;
+    Arg* last_token;
+    Args* iter_buffs;
+    Args* buffs_p;
+    PIKA_RES result;
+};
 
-def_class(ParserState, 
-    private_member(
-        char* tokens;
-        uint16_t length;
-        uint16_t iter_index;
-        uint8_t branket_deepth;
-        struct LexToken token1;
-        struct LexToken token2;
-        Arg* last_token;
-        Args* iter_buffs;
-        Args* buffs_p;
-    )
-);
-/* clang-format on */
+char* Parser_fileToAsm(Args* outBuffs, char* filename);
+char* Parser_linesToAsm(Args* outBuffs, char* multiLine);
+char* Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines);
+char* Parser_linesToArray(char* lines);
 
-char* Parser_multiLineToAsm(Args* outBuffs, char* multiLine);
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
-char* Parser_byteCodeToAsm(Args* outBuffs, char* pikaByteCode);
 ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
-int bytecodeFrame_fromMultiLine(ByteCodeFrame* bytecode_frame,
-                                char* python_lines);
-void Parser_compilePyToBytecodeArray(char* lines);
-char* Parser_parsePyLines(Args* outBuffs,
-                          ByteCodeFrame* bytecode_frame,
-                          char* py_lines);
-#define ParserState_forEach(parseState)  \
-    ParserState_beforeIter(&parseState); \
-    for (int i = 0; i < parseState.length; i++)
+int bytecodeFrame_fromLines(ByteCodeFrame* bytecode_frame, char* python_lines);
 
-#define ParserState_forEachTokenExistPs(parseState, tokens) \
-    /* init parserStage */                                  \
-    ParserState_init(&parseState);                          \
-    ParserState_parse(&parseState, tokens);                 \
-    ParserState_forEach(parseState)
+#define Cursor_forEach(cursor)  \
+    Cursor_beforeIter(&cursor); \
+    for (int __i = 0; __i < cursor.length; __i++)
 
-#define ParserState_forEachToken(parseState, tokens) \
-    struct ParserState ps;                           \
-    ParserState_forEachTokenExistPs(parseState, tokens)
+#define Cursor_forEachTokenExistPs(cursor, tokens) \
+    /* init parserStage */                         \
+    Cursor_init(&cursor);                          \
+    Cursor_parse(&cursor, tokens);                 \
+    Cursor_forEach(cursor)
 
-#undef __PIKA_PARSER_CLASS_IMPLEMENT__
-#undef __PIKA_PARSER_CLASS_INHERIT__
+#define Cursor_forEachToken(cursor, tokens) \
+    struct Cursor cursor;                   \
+    Cursor_forEachTokenExistPs(cursor, tokens)
+
+uint16_t Tokens_getSize(char* tokens);
 
 #endif

@@ -6,8 +6,6 @@ import PikaMath
 import PikaStdDevice
 
 
-
-
 mem = PikaStdLib.MemChecker()
 
 num = 10

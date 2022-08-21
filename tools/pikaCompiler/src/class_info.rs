@@ -34,17 +34,25 @@ impl ClassInfo {
     pub fn new(file_name: &String, define: &String, is_package: bool) -> Option<ClassInfo> {
         let define = define.strip_prefix("class ").unwrap().to_string();
         let define = define.replace(" ", "");
-        let super_class_name = match my_string::cut(&define, '(', ')') {
+        let mut super_class_name = match my_string::cut(&define, '(', ')') {
             Some(s) => s,
-            None => return None,
+            None => "TinyObj".to_string(),
         };
+        if super_class_name == "" {
+            super_class_name = "TinyObj".to_string();
+        }
         let super_class_name = match super_class_name.find(".") {
             None => ClassInfo::add_file_profix(&file_name, &super_class_name, is_package),
             Some(_x) => super_class_name.replace(".", "_"),
         };
         let mut this_calss_name = match my_string::get_first_token(&define, '(') {
             Some(s) => s,
-            None => return None,
+            None => match my_string::get_first_token(&define, ':') {
+                Some(s) => s,
+                None => {
+                    return None;
+                }
+            },
         };
         let this_class_name_without_file = this_calss_name.clone();
         this_calss_name = ClassInfo::add_file_profix(&file_name, &this_calss_name, is_package);
@@ -60,7 +68,7 @@ impl ClassInfo {
         };
         return Some(new_class_info);
     }
-    pub fn push_method_with_is_constructor(&mut self, method_define: String, is_constructor: bool) {
+    fn __push_method_or_constructor(&mut self, method_define: String, is_constructor: bool) {
         let method_info =
             match MethodInfo::new(&self.this_class_name, method_define, is_constructor) {
                 Some(method) => method,
@@ -71,10 +79,10 @@ impl ClassInfo {
             .or_insert(method_info);
     }
     pub fn push_method(&mut self, method_define: String) {
-        return self.push_method_with_is_constructor(method_define, false);
+        return self.__push_method_or_constructor(method_define, false);
     }
     pub fn push_constructor(&mut self, method_define: String) {
-        return self.push_method_with_is_constructor(method_define, true);
+        return self.__push_method_or_constructor(method_define, true);
     }
     // pub fn push_import(&mut self, import_define: String, file_name: &String) {
     //     let import_info = match ImportInfo::new(&self.this_class_name, import_define, &file_name) {
@@ -131,6 +139,7 @@ impl ClassInfo {
         script_fn.push_str(
             "    __platform_printf(\"======[pikascript packages installed]======\\r\\n\");\r\n",
         );
+        script_fn.push_str("    pks_printVersion();\r\n");
         for (package_name, package_version) in version_info.package_list {
             script_fn.push_str(
                 format!(
@@ -213,7 +222,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_analize() {
+    fn test_analyse() {
         assert_eq!(
             ClassInfo::new(
                 &String::from("Pkg"),

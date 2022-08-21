@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="lv_drivers">
+      <UniqueIdentifier>{220d71a2-1f71-4976-b6bb-2f9c7f429b7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lv_drivers\.github">
+      <UniqueIdentifier>{f2b736cd-c818-4138-9a4b-a684d129471f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lv_drivers\display">
+      <UniqueIdentifier>{19ba8719-c125-418d-99ed-8509f72f298a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lv_drivers\docs">
+      <UniqueIdentifier>{1d03be13-026c-4fc9-a31a-d5dc20bc5766}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lv_drivers\gtkdrv">
+      <UniqueIdentifier>{eb8dc1fd-774a-4eee-ade7-da8de2c874ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lv_drivers\indev">
+      <UniqueIdentifier>{2bc5841f-2bb7-419a-9c59-b38fdd58f114}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lv_drivers\sdl">
+      <UniqueIdentifier>{dc621d19-da3c-4035-958c-da4511ab09db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lv_drivers\wayland">
+      <UniqueIdentifier>{b1a9cb95-b02e-4879-90a0-641ef686122c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lv_drivers\win32drv">
+      <UniqueIdentifier>{7ac75e15-a83c-4c6c-a117-eee2200dc14f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lv_drivers\display\drm.h">
+      <Filter>lv_drivers\display</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\display\fbdev.h">
+      <Filter>lv_drivers\display</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\display\GC9A01.h">
+      <Filter>lv_drivers\display</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\display\ILI9341.h">
+      <Filter>lv_drivers\display</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\display\monitor.h">
+      <Filter>lv_drivers\display</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\display\R61581.h">
+      <Filter>lv_drivers\display</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\display\SHARP_MIP.h">
+      <Filter>lv_drivers\display</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\display\SSD1963.h">
+      <Filter>lv_drivers\display</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\display\ST7565.h">
+      <Filter>lv_drivers\display</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\display\UC1610.h">
+      <Filter>lv_drivers\display</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\gtkdrv\gtkdrv.h">
+      <Filter>lv_drivers\gtkdrv</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\indev\AD_touch.h">
+      <Filter>lv_drivers\indev</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\indev\evdev.h">
+      <Filter>lv_drivers\indev</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\indev\FT5406EE8.h">
+      <Filter>lv_drivers\indev</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\indev\keyboard.h">
+      <Filter>lv_drivers\indev</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\indev\libinput_drv.h">
+      <Filter>lv_drivers\indev</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\indev\mouse.h">
+      <Filter>lv_drivers\indev</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\indev\mousewheel.h">
+      <Filter>lv_drivers\indev</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\indev\xkb.h">
+      <Filter>lv_drivers\indev</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\indev\XPT2046.h">
+      <Filter>lv_drivers\indev</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\sdl\sdl.h">
+      <Filter>lv_drivers\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\sdl\sdl_common.h">
+      <Filter>lv_drivers\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\sdl\sdl_gpu.h">
+      <Filter>lv_drivers\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\wayland\wayland.h">
+      <Filter>lv_drivers\wayland</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\win32drv\win32drv.h">
+      <Filter>lv_drivers\win32drv</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\lv_drv_conf_template.h">
+      <Filter>lv_drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="lv_drivers\win_drv.h">
+      <Filter>lv_drivers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lv_drivers\display\drm.c">
+      <Filter>lv_drivers\display</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\display\fbdev.c">
+      <Filter>lv_drivers\display</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\display\GC9A01.c">
+      <Filter>lv_drivers\display</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\display\ILI9341.c">
+      <Filter>lv_drivers\display</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\display\R61581.c">
+      <Filter>lv_drivers\display</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\display\SHARP_MIP.c">
+      <Filter>lv_drivers\display</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\display\SSD1963.c">
+      <Filter>lv_drivers\display</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\display\ST7565.c">
+      <Filter>lv_drivers\display</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\display\UC1610.c">
+      <Filter>lv_drivers\display</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\gtkdrv\gtkdrv.c">
+      <Filter>lv_drivers\gtkdrv</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\indev\AD_touch.c">
+      <Filter>lv_drivers\indev</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\indev\evdev.c">
+      <Filter>lv_drivers\indev</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\indev\FT5406EE8.c">
+      <Filter>lv_drivers\indev</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\indev\libinput.c">
+      <Filter>lv_drivers\indev</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\indev\xkb.c">
+      <Filter>lv_drivers\indev</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\indev\XPT2046.c">
+      <Filter>lv_drivers\indev</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\sdl\sdl.c">
+      <Filter>lv_drivers\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\sdl\sdl_common.c">
+      <Filter>lv_drivers\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\sdl\sdl_gpu.c">
+      <Filter>lv_drivers\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\wayland\wayland.c">
+      <Filter>lv_drivers\wayland</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\win32drv\win32drv.c">
+      <Filter>lv_drivers\win32drv</Filter>
+    </ClCompile>
+    <ClCompile Include="lv_drivers\win_drv.c">
+      <Filter>lv_drivers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lv_drivers\.github\auto-comment.yml">
+      <Filter>lv_drivers\.github</Filter>
+    </None>
+    <None Include="lv_drivers\.github\stale.yml">
+      <Filter>lv_drivers\.github</Filter>
+    </None>
+    <None Include="lv_drivers\docs\astyle_c">
+      <Filter>lv_drivers\docs</Filter>
+    </None>
+    <None Include="lv_drivers\docs\astyle_h">
+      <Filter>lv_drivers\docs</Filter>
+    </None>
+    <None Include="lv_drivers\gtkdrv\broadway.png">
+      <Filter>lv_drivers\gtkdrv</Filter>
+    </None>
+    <None Include="lv_drivers\gtkdrv\README.md">
+      <Filter>lv_drivers\gtkdrv</Filter>
+    </None>
+    <None Include="lv_drivers\wayland\.gitignore">
+      <Filter>lv_drivers\wayland</Filter>
+    </None>
+    <None Include="lv_drivers\wayland\CMakeLists.txt">
+      <Filter>lv_drivers\wayland</Filter>
+    </None>
+    <None Include="lv_drivers\wayland\README.md">
+      <Filter>lv_drivers\wayland</Filter>
+    </None>
+    <None Include="lv_drivers\.git">
+      <Filter>lv_drivers</Filter>
+    </None>
+    <None Include="lv_drivers\.gitignore">
+      <Filter>lv_drivers</Filter>
+    </None>
+    <None Include="lv_drivers\CMakeLists.txt">
+      <Filter>lv_drivers</Filter>
+    </None>
+    <None Include="lv_drivers\library.json">
+      <Filter>lv_drivers</Filter>
+    </None>
+    <None Include="lv_drivers\LICENSE">
+      <Filter>lv_drivers</Filter>
+    </None>
+    <None Include="lv_drivers\lv_drivers.mk">
+      <Filter>lv_drivers</Filter>
+    </None>
+    <None Include="lv_drivers\README.md">
+      <Filter>lv_drivers</Filter>
+    </None>
+  </ItemGroup>
+</Project>

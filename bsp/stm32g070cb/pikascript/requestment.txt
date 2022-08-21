@@ -1,6 +1,6 @@
-pikascript-core==v1.8.0
-PikaStdLib==v1.8.0
-PikaStdDevice==v1.8.0
-STM32G0==v1.3.0
-PikaPiZero==v1.2.0
-Arm2D==v0.4.0
+pikascript-core==v1.10.0
+PikaStdLib==v1.10.0
+PikaStdDevice==v1.10.0
+STM32G0==v1.3.1
+PikaPiZero==v1.3.0
+Arm2D==v0.4.1

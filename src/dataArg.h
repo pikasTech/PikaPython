@@ -28,18 +28,6 @@
 #ifndef _arg__H
 #define _arg__H
 
-/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
- */
-//#define __PLOOC_CLASS_USE_STRICT_TEMPLATE__
-
-#if defined(__DATA_ARG_CLASS_IMPLEMENT__)
-#define __PLOOC_CLASS_IMPLEMENT__
-#elif defined(__DATA_ARG_CLASS_INHERIT__)
-#define __PLOOC_CLASS_INHERIT__
-#endif
-
-#include "__pika_ooc.h"
-
 #include "dataLink.h"
 #include "dataMemory.h"
 
@@ -47,8 +35,6 @@ typedef uint32_t Hash;
 typedef enum {
     ARG_TYPE_UNDEF = 0,
     ARG_TYPE_NONE,
-    ARG_TYPE_NULL,
-    ARG_TYPE_VOID,
     ARG_TYPE_INT,
     ARG_TYPE_FLOAT,
     ARG_TYPE_STRING,
@@ -64,53 +50,64 @@ typedef enum {
     ARG_TYPE_METHOD_STATIC,
     ARG_TYPE_STRUCT,
     ARG_TYPE_STRUCT_HEAP,
+    ARG_TYPE_TUPLE,
 } ArgType;
 
 typedef void (*StructDeinitFun)(void* struct_);
 
-/* clang-format off */
-dcl_class(Arg)
-def_class(Arg,
-    private_member(
-        Arg* next;
-        uint16_t size; uint8_t type;
-        uint8_t ref_cnt;
-        Hash name_hash;
-        uint8_t content[];
-    )
-);
-/* clang-format on */
+typedef struct Arg Arg;
+typedef union {
+    Arg* next;
+    uint8_t* buffer;
+} _arg_union;
+struct Arg {
+    _arg_union _;
+    uint32_t size;
+    uint8_t type;
+    PIKA_BOOL serialized;
+    Hash name_hash;
+    uint8_t content[];
+};
 
 Arg* arg_getNext(Arg* self);
-uint16_t arg_getSize(Arg* self);
+uint32_t arg_getSize(Arg* self);
 uint8_t* arg_getContent(Arg* self);
-uint16_t arg_totleSize(Arg* self);
+uint32_t arg_totleSize(Arg* self);
 void arg_setNext(Arg* self, Arg* next);
-uint16_t arg_getTotleSize(Arg* self);
+uint32_t arg_getTotleSize(Arg* self);
 void arg_freeContent(Arg* self);
 
 Arg* arg_setName(Arg* self, char* name);
-Arg* arg_setContent(Arg* self, uint8_t* content, uint16_t size);
+Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size);
 Arg* arg_newContent(Arg* self, uint32_t size);
 Arg* arg_setType(Arg* self, ArgType type);
 Hash arg_getNameHash(Arg* self);
 ArgType arg_getType(Arg* self);
-uint16_t arg_getContentSize(Arg* self);
+uint32_t arg_getContentSize(Arg* self);
 Hash hash_time33(char* str);
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val);
-Arg* arg_setFloat(Arg* self, char* name, float val);
+Arg* arg_setFloat(Arg* self, char* name, double val);
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer);
 Arg* arg_setStr(Arg* self, char* name, char* string);
 Arg* arg_setNull(Arg* self);
+Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
+
+#define arg_newInt(val) arg_setInt(NULL, "", (val))
+#define arg_newFloat(val) arg_setFloat(NULL, "", (val))
+#define arg_newPtr(type, pointer) arg_setPtr(NULL, "", (type), (pointer))
+#define arg_newStr(string) arg_setStr(NULL, "", (string))
+#define arg_newNull() arg_setNull(NULL)
+#define arg_newBytes(src, size) arg_setBytes(NULL, "", (src), (size))
 
 int64_t arg_getInt(Arg* self);
-float arg_getFloat(Arg* self);
+double arg_getFloat(Arg* self);
 void* arg_getPtr(Arg* self);
 char* arg_getStr(Arg* self);
 uint8_t* arg_getBytes(Arg* self);
 size_t arg_getBytesSize(Arg* self);
 Arg* arg_copy(Arg* argToBeCopy);
+Arg* arg_copy_noalloc(Arg* argToBeCopy, Arg* argToBeCopyTo);
 
 uint8_t* arg_getContent(Arg* self);
 void arg_deinit(Arg* self);
@@ -128,10 +125,31 @@ Arg* arg_setHeapStruct(Arg* self,
                        void* struct_deinit_fun);
 void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
-Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 void arg_printBytes(Arg* self);
 Arg* arg_loadFile(Arg* self, char* filename);
+uint8_t argType_isObject(ArgType type);
 
-#undef __DATA_ARG_CLASS_IMPLEMENT__
-#undef __DATA_ARG_CLASS_INHERIT__
+#define arg_getNext(self) ((self)->_.next)
+#define arg_getSize(self) ((self)->size)
+#define arg_getContent(self) \
+    ((self)->serialized ? (self)->content : ((self)->_.buffer))
+#define arg_getNext(self) ((self)->_.next)
+#define arg_setNext(self, __next) ((self)->_.next = (__next))
+
+#define argType_isObject(type) \
+    ((type) == ARG_TYPE_OBJECT || (type) == ARG_TYPE_OBJECT_NEW)
+
+#define argType_isCallable(type)                                             \
+    ((type) == ARG_TYPE_METHOD_CONSTRUCTOR ||                                \
+     (type) == ARG_TYPE_METHOD_OBJECT || (type) == ARG_TYPE_METHOD_STATIC || \
+     (type) == ARG_TYPE_METHOD_NATIVE ||                                     \
+     (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR)
+
 #endif
+
+#define arg_newReg(__name, __size)           \
+    Arg __name = {0};                        \
+    uint8_t __##__name##_buff[__size] = {0}; \
+    arg_init_stack(&__name, __##__name##_buff, __size)
+
+void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size);

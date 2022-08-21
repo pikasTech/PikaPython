@@ -793,6 +793,18 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>44</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-core\PikaCompiler.c</PathWithFileName>
+      <FilenameWithoutPath>PikaCompiler.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
   </Group>
 
   <Group>
@@ -803,25 +815,13 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>44</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-lib\PikaStdLib\PikaDebuger_Debuger.c</PathWithFileName>
-      <FilenameWithoutPath>PikaDebuger_Debuger.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>6</GroupNumber>
       <FileNumber>45</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_Dict.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdData_Dict.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_RangeObj.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdLib_RangeObj.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -832,8 +832,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_List.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdData_List.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_Dict.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_Dict.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -844,8 +844,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_String.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdData_String.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdTask_Task.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdTask_Task.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -856,8 +856,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdLib_MemChecker.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdLib_StringObj.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -868,8 +868,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdLib_RangeObj.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_Tuple.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_Tuple.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -880,8 +880,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdLib_StringObj.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdLib_MemChecker.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -892,8 +892,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdLib_SysObj.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c</PathWithFileName>
+      <FilenameWithoutPath>PikaDebuger_Debuger.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -904,8 +904,68 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-lib\PikaStdLib\PikaStdTask_Task.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdTask_Task.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_ByteArray.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_ByteArray.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>53</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_String.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_String.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>54</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_Utils.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_Utils.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>55</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_List.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_List.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>56</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdLib_SysObj.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>57</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_FILEIO.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_FILEIO.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -919,73 +979,13 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>7</GroupNumber>
-      <FileNumber>53</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-api\PikaMain-api.c</PathWithFileName>
-      <FilenameWithoutPath>PikaMain-api.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>54</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-api\pikaScript.c</PathWithFileName>
-      <FilenameWithoutPath>pikaScript.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>55</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-api\PikaStdLib_MemChecker-api.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdLib_MemChecker-api.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>56</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdLib_PikaObj-api.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>57</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-api\PikaStdLib_RangeObj-api.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdLib_RangeObj-api.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>7</GroupNumber>
       <FileNumber>58</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdLib_StringObj-api.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdData_FILEIO-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_FILEIO-api.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -996,8 +996,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdLib_SysObj-api.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdLib-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdLib-api.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1008,8 +1008,236 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\pikascript\pikascript-api\PikaStdLib-api.c</PathWithFileName>
-      <FilenameWithoutPath>PikaStdLib-api.c</FilenameWithoutPath>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdLib_PikaObj-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdLib_PikaObj-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>61</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdData_Dict-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_Dict-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>62</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/pikaScript.c</PathWithFileName>
+      <FilenameWithoutPath>pikaScript.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>63</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdData_Tuple-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_Tuple-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>64</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdTask_Task-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdTask_Task-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>65</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaDebug-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaDebug-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>66</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdData_List-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_List-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>67</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaDebug_Debuger-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaDebug_Debuger-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>68</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdLib_RangeObj-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdLib_RangeObj-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>69</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaMain-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaMain-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>70</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdData-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>71</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdData_ByteArray-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_ByteArray-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>72</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdData_Utils-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_Utils-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>73</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdLib_StringObj-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdLib_StringObj-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>74</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdData_String-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_String-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>75</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdLib_MemChecker-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdLib_MemChecker-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>76</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdLib_SysObj-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdLib_SysObj-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>77</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdTask-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdTask-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>78</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/PikaStdData_dict_keys-api.c</PathWithFileName>
+      <FilenameWithoutPath>PikaStdData_dict_keys-api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>79</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\pikascript\pikascript-api/__asset_pikaModules_py_a.c</PathWithFileName>
+      <FilenameWithoutPath>__asset_pikaModules_py_a.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

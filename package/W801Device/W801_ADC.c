@@ -132,7 +132,7 @@ void W801Device_ADC_init(PikaObj *self)
 	
 }
 
-float W801Device_ADC_read(PikaObj* self) {
+double W801Device_ADC_read(PikaObj* self) {
     obj_run(self, "platformRead()");
     return obj_getFloat(self, "val");
 }

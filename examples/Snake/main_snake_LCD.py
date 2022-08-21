@@ -1,4 +1,3 @@
-from PikaObj import *
 import PikaStdLib
 import machine 
 

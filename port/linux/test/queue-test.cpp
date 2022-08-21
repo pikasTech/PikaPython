@@ -1,11 +1,4 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "BaseObj.h"
-#include "dataMemory.h"
-#include "dataQueue.h"
-#include "dataQueueObj.h"
-}
 
 TEST(queue, NEW) {
     Queue* q = New_queue();
@@ -27,9 +20,9 @@ TEST(queue, ARG_TYPE_INT) {
 
 TEST(queue, arg) {
     Queue* q = New_queue();
-    Arg* arg1 = arg_setInt(NULL, "", 1);
-    Arg* arg2 = arg_setFloat(NULL, "", 1.2);
-    Arg* arg3 = arg_setStr(NULL, "", "ij");
+    Arg* arg1 = arg_newInt(1);
+    Arg* arg2 = arg_newFloat(1.2);
+    Arg* arg3 = arg_newStr("ij");
     queue_pushArg(q, arg1);
     queue_pushArg(q, arg2);
     queue_pushArg(q, arg3);

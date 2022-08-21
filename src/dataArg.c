@@ -25,7 +25,6 @@
  * SOFTWARE.
  */
 
-#define __DATA_ARG_CLASS_IMPLEMENT__
 #include "dataArg.h"
 #include "PikaObj.h"
 #include "dataArgs.h"
@@ -33,7 +32,7 @@
 #include "dataString.h"
 #include "stdlib.h"
 
-uint16_t arg_getTotleSize(Arg* self) {
+uint32_t arg_getTotleSize(Arg* self) {
     return arg_totleSize(self);
 }
 
@@ -54,13 +53,15 @@ static Arg* arg_init_hash(Hash nameHash,
                           uint32_t size,
                           Arg* next) {
     Arg* self = (Arg*)pikaMalloc(sizeof(Arg) + size);
-    self->next = next;
+    arg_setNext(self, next);
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
-    __platform_memset(self->content, 0, aline_by(size, sizeof(uint32_t)));
+    self->serialized = PIKA_TRUE;
+    __platform_memset(arg_getContent(self), 0,
+                      aline_by(size, sizeof(uint32_t)));
     if (NULL != content) {
-        __platform_memcpy(self->content, content, size);
+        __platform_memcpy(arg_getContent(self), content, size);
     }
 
     return self;
@@ -69,33 +70,41 @@ static Arg* arg_init_hash(Hash nameHash,
 static Arg* arg_init(char* name,
                      ArgType type,
                      uint8_t* content,
-                     uint16_t size,
+                     uint32_t size,
                      Arg* next) {
     Hash nameHash = hash_time33(name);
     return arg_init_hash(nameHash, type, content, size, next);
 }
 
-uint16_t arg_totleSize(Arg* self) {
+void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
+    self->_.buffer = buffer;
+    self->size = size;
+    self->type = ARG_TYPE_UNDEF;
+    self->name_hash = 0;
+    self->serialized = PIKA_FALSE;
+}
+
+uint32_t arg_totleSize(Arg* self) {
     return ((Arg*)self)->size + sizeof(Arg);
 }
 
 void arg_freeContent(Arg* self) {
     if (NULL != self) {
-        uint16_t totleSize = arg_totleSize(self);
+        uint32_t totleSize = arg_totleSize(self);
         pikaFree(self, totleSize);
         return;
     }
 }
 
-Arg* arg_setContent(Arg* self, uint8_t* content, uint16_t size) {
+Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size) {
     if (NULL == self) {
         /* malloc */
-        return arg_init("", ARG_TYPE_VOID, content, size, NULL);
+        return arg_init("", ARG_TYPE_NONE, content, size, NULL);
     }
 
     /* only copy */
-    if (arg_getSize(self) == size) {
-        __platform_memcpy(((Arg*)self)->content, content, size);
+    if (arg_getSize(self) >= size) {
+        __platform_memcpy(arg_getContent((Arg*)self), content, size);
         return self;
     }
 
@@ -110,7 +119,7 @@ Arg* arg_setContent(Arg* self, uint8_t* content, uint16_t size) {
 
 Arg* arg_setNameHash(Arg* self, Hash nameHash) {
     if (NULL == self) {
-        return arg_init_hash(nameHash, ARG_TYPE_VOID, NULL, 0, NULL);
+        return arg_init_hash(nameHash, ARG_TYPE_NONE, NULL, 0, NULL);
     }
     Arg* arg = (Arg*)self;
     arg->name_hash = nameHash;
@@ -130,19 +139,28 @@ Arg* arg_setType(Arg* self, ArgType type) {
 }
 
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
-    self = arg_newContent(self, size + sizeof(size_t));
+    self = arg_newContent(self, size + sizeof(size_t) + 1);
+    if (NULL == self) {
+        return NULL;
+    }
     self = arg_setName(self, name);
     self = arg_setType(self, ARG_TYPE_BYTES);
     void* dir = arg_getContent(self);
-    __platform_memset(dir, 0, size + sizeof(size_t));
+    /* set content all to 0 */
+    __platform_memset(dir, 0, size + sizeof(size_t) + 1);
+    /* setsize */
     __platform_memcpy(dir, &size, sizeof(size_t));
-    __platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
+
+    /* set init value */
+    if (NULL != src) {
+        __platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
+    }
     return self;
 }
 
 Arg* arg_newContent(Arg* self, uint32_t size) {
-    Arg* newContent = arg_init("", ARG_TYPE_VOID, NULL, size, NULL);
     arg_freeContent(self);
+    Arg* newContent = arg_init("", ARG_TYPE_NONE, NULL, size, NULL);
     return newContent;
 }
 
@@ -206,23 +224,36 @@ void* arg_getHeapStructDeinitFun(Arg* self) {
 }
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val) {
-    return arg_init(name, ARG_TYPE_INT, (uint8_t*)&val, sizeof(val), NULL);
+    if (NULL == self) {
+        return arg_init(name, ARG_TYPE_INT, (uint8_t*)&val, sizeof(val), NULL);
+    }
+    self = arg_setContent(self, (uint8_t*)&val, sizeof(val));
+    self = arg_setType(self, ARG_TYPE_INT);
+    self = arg_setName(self, name);
+    return self;
 }
 
 Arg* arg_setNull(Arg* self) {
-    return arg_init("", ARG_TYPE_NULL, NULL, 0, NULL);
+    return arg_init("", ARG_TYPE_NONE, NULL, 0, NULL);
 }
 
-Arg* arg_setFloat(Arg* self, char* name, float val) {
-    return arg_init(name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val), NULL);
+Arg* arg_setFloat(Arg* self, char* name, double val) {
+    if (NULL == self) {
+        return arg_init(name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val),
+                        NULL);
+    }
+    self = arg_setContent(self, (uint8_t*)&val, sizeof(val));
+    self = arg_setType(self, ARG_TYPE_FLOAT);
+    self = arg_setName(self, name);
+    return self;
 }
 
-float arg_getFloat(Arg* self) {
+double arg_getFloat(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return -999.999;
     }
 
-    return *(float*)self->content;
+    return *(double*)arg_getContent(self);
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
@@ -230,22 +261,26 @@ Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {
+    if (NULL == string) {
+        return NULL;
+    }
     return arg_init(name, ARG_TYPE_STRING, (uint8_t*)string,
                     strGetSize(string) + 1, NULL);
 }
 
 int64_t arg_getInt(Arg* self) {
+    pika_assert(NULL != self);
     if (NULL == arg_getContent(self)) {
         return -999999;
     }
-    return *(int64_t*)self->content;
+    return *(int64_t*)arg_getContent(self);
 }
 
 void* arg_getPtr(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return NULL;
     }
-    return *(void**)self->content;
+    return *(void**)arg_getContent(self);
 }
 char* arg_getStr(Arg* self) {
     return (char*)arg_getContent(self);
@@ -260,12 +295,12 @@ Hash arg_getNameHash(Arg* self) {
 
 ArgType arg_getType(Arg* self) {
     if (NULL == self) {
-        return ARG_TYPE_NULL;
+        return ARG_TYPE_NONE;
     }
-    return self->type;
+    return (ArgType)self->type;
 }
 
-uint16_t arg_getContentSize(Arg* self) {
+uint32_t arg_getContentSize(Arg* self) {
     return arg_getSize(self);
 }
 
@@ -273,20 +308,43 @@ Arg* New_arg(void* voidPointer) {
     return NULL;
 }
 
-Arg* arg_copy(Arg* argToBeCopy) {
-    if (NULL == argToBeCopy) {
+Arg* arg_copy(Arg* arg_src) {
+    if (NULL == arg_src) {
         return NULL;
     }
-    ArgType arg_type = arg_getType(argToBeCopy);
+    ArgType arg_type = arg_getType(arg_src);
     if (ARG_TYPE_OBJECT == arg_type) {
-        obj_refcntInc(arg_getPtr(argToBeCopy));
+        obj_refcntInc((PikaObj*)arg_getPtr(arg_src));
     }
     Arg* argCopied = New_arg(NULL);
-    argCopied = arg_setContent(argCopied, arg_getContent(argToBeCopy),
-                               arg_getContentSize(argToBeCopy));
-    argCopied = arg_setNameHash(argCopied, arg_getNameHash(argToBeCopy));
-    argCopied = arg_setType(argCopied, arg_getType(argToBeCopy));
+    argCopied = arg_setContent(argCopied, arg_getContent(arg_src),
+                               arg_getContentSize(arg_src));
+    argCopied = arg_setNameHash(argCopied, arg_getNameHash(arg_src));
+    argCopied = arg_setType(argCopied, arg_getType(arg_src));
     return argCopied;
+}
+
+Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
+    if (NULL == arg_src) {
+        return NULL;
+    }
+    if (NULL == arg_dict) {
+        return arg_copy(arg_src);
+    }
+    /* size is too big to be copied by noalloc */
+    if (arg_getSize(arg_src) > arg_getSize(arg_dict)) {
+        return arg_copy(arg_src);
+    }
+    ArgType arg_type = arg_getType(arg_src);
+    if (ARG_TYPE_OBJECT == arg_type) {
+        obj_refcntInc((PikaObj*)arg_getPtr(arg_src));
+    }
+    arg_dict->serialized = PIKA_FALSE;
+    arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
+                              arg_getContentSize(arg_src));
+    arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
+    arg_dict = arg_setType(arg_dict, arg_getType(arg_src));
+    return arg_dict;
 }
 
 Arg* arg_append(Arg* self, void* new_content, size_t new_size) {
@@ -319,7 +377,7 @@ void arg_deinitHeap(Arg* self) {
         struct_deinit_fun(arg_getHeapStruct(self));
     }
     /* deinit sub object */
-    if (type == ARG_TYPE_OBJECT) {
+    if (ARG_TYPE_OBJECT == type) {
         PikaObj* subObj = arg_getPtr(self);
         obj_refcntDec(subObj);
         int ref_cnt = obj_refcntNow(subObj);
@@ -360,24 +418,14 @@ exit:
 }
 
 void arg_deinit(Arg* self) {
+    if (NULL == self) {
+        return;
+    }
     /* deinit arg pointed heap */
     arg_deinitHeap(self);
+    if (!self->serialized) {
+        return;
+    }
     /* free the ref */
     arg_freeContent(self);
-}
-
-Arg* arg_getNext(Arg* self) {
-    return self->next;
-}
-
-uint16_t arg_getSize(Arg* self) {
-    return self->size;
-}
-
-uint8_t* arg_getContent(Arg* self) {
-    return self->content;
-}
-
-void arg_setNext(Arg* self, Arg* next) {
-    self->next = next;
 }

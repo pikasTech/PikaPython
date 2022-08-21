@@ -1,11 +1,4 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
-extern "C" {
-#include "BaseObj.h"
-#include "PikaStdLib_SysObj.h"
-#include "TinyObj.h"
-#include "pika_config_gtest.h"
-}
 
 void testFloat(PikaObj* obj, Args* args) {
     float val1 = args_getFloat(args, "val1");
@@ -174,7 +167,7 @@ TEST(object_test, voidRun) {
 /* the log_buff of printf */
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 TEST(object_test, printa) {
-    PikaObj* root = newRootObj("root", New_BaseObj);
+    PikaObj* root = newRootObj("root", New_PikaStdLib_SysObj);
     obj_runDirect(root,
 
                   "a = 2\n"
@@ -257,6 +250,14 @@ TEST(object_test, bytes) {
     uint16_t mem_now_before = pikaMemNow();
     obj_setBytes(root, "test", test_arg, sizeof(test_arg));
     EXPECT_EQ(pikaMemNow(), mem_now_before);
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(object_test, bytes_0_size) {
+    PikaObj* root = newRootObj("root", New_BaseObj);
+    uint8_t test[] = {0, 1, 2, 3, 4, 5};
+    obj_setBytes(root, "test", test, 0);
     obj_deinit(root);
     EXPECT_EQ(pikaMemNow(), 0);
 }

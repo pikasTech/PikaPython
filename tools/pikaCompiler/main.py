@@ -1,23 +1,12 @@
-import Arm2D
 import PikaStdLib
-import ctypes
-import module
-import PikaDebug
+import test
+from pika_cjson import cJSON
+print('hello pikascript!')
+mem = PikaStdLib.MemChecker()
+print('mem used max:')
+mem.max()
 
-pdb = PikaDebug.Debuger()
-pdb.set_trace()
-line = Arm2D.Line()
-res = line.on()
-line.off()
-line.moveTo(20)
-
-while True:
-    if right.read() == 1:
-        print('right')
-
-    if left.read() == 0:
-        print("left")
-    if up.read() == 0:
-        print('up\n')
-    if down.read() == 0:
-        print('down')
+json = cJSON()
+json.parse('{"name": "mculover666","age": 22,"weight": 55.5,"address":{"country": "China","zip-code": 111111"},"skill": ["c", "Java", "Python"],"student": false}')
+json.print()
+print('END')

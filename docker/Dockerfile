@@ -20,11 +20,13 @@ RUN apt-get install -y \
     cmake \
     sudo \
     curl \
-    python3
+    python3 \
+    pip \
+    cloc
 
 RUN git clone --branch v1.6.1 https://gitee.com/mirrors/google-benchmark benchmark && \
         cd benchmark && \
-        git clone https://gitee.com/mirrors/googletest && \
+        git clone --branch release-1.11.0 https://gitee.com/mirrors/googletest && \
         cmake -E make_directory "build" && \
         cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../ && \
         cmake --build "build" --config Release -j && \
@@ -39,11 +41,6 @@ ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 
 ENV PATH="/root/.cargo/bin:${PATH}"
-
-RUN git config --global --add safe.directory /usr/src/pikascript
-RUN git config --global user.email "liang6516@outlook.com"
-RUN git config --global user.name "lyon"
-
 
 RUN apt-get install -y \
     ninja-build \
@@ -71,4 +68,6 @@ RUN cd /root/pikascript/tools/pikaCompiler && sh build.sh
 
 ADD .vimrc /root/.vimrc
 
-
+ADD bashrc /root/.bashrc
+RUN apt-get install -y liblua5.3-dev
+RUN apt-get install -y lcov
