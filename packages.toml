@@ -174,10 +174,7 @@ releases = [
 
 [[packages]]
 name = "pika_lvgl"
-releases = [
-  "v0.0.1 71364445e0894e660720f9a0c9e1db021663d6a1",
-  "v0.1.0 4e663e449d77c0e1a26f3e3251c4b33ebd894145"
-]
+releases = [ "v0.0.1 71364445e0894e660720f9a0c9e1db021663d6a1" ]
 
 [[packages]]
 name = "pika_lua"
