@@ -306,8 +306,7 @@ releases = [
 name = "CH582"
 releases = [
   "v1.0.0 7cdb0cf9ed161c3fc6802028a9e34c9f94b56244",
-  "v1.1.0 bfc01e09fd71c26a7140d23864c1d3052f23d087",
-  "v1.1.1 a6fa7945f9880abfaa3f3cee6e92a225481c426a"
+  "v1.1.0 bfc01e09fd71c26a7140d23864c1d3052f23d087"
 ]
 
 [[packages]]
