@@ -1,7 +1,4 @@
-#api
-from PikaObj import *
 import PikaStdDevice
-
 
 class GPIO(PikaStdDevice.GPIO):
     # override
@@ -94,6 +91,6 @@ class IIC(PikaStdDevice.IIC):
         pass
 
 
-class lowLevel(TinyObj):
+class lowLevel:
     def readPin(pin: str) -> int:
         pass
