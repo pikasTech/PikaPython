@@ -29,6 +29,7 @@ TEST(sysObj, noMethod) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(sysObj, getattr) {
     char* lines =
         "class Test:\n"
@@ -50,7 +51,9 @@ TEST(sysObj, getattr) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if !PIKA_NANO_ENABLE
 TEST(sysObj, setattr) {
     char* lines =
         "class Test:\n"
@@ -72,3 +75,4 @@ TEST(sysObj, setattr) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif

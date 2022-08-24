@@ -965,6 +965,7 @@ TEST(pikaMain, task_run_when) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(pikaMain, task_run_period_until) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1017,6 +1018,7 @@ TEST(pikaMain, task_run_period_until) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(pikaMain, fun_call) {
     /* init */
@@ -1356,6 +1358,7 @@ TEST(pikaMain, class_demo_1_file) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(pikaMain, get_native_method) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1373,6 +1376,7 @@ TEST(pikaMain, get_native_method) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(pikaMain, hex_list) {
     /* init */
@@ -1816,6 +1820,7 @@ TEST(pikaMain, CModule__str__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(pikaMain, builtin_hex) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1837,7 +1842,10 @@ TEST(pikaMain, builtin_hex) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+
+#if !PIKA_NANO_ENABLE
 TEST(pikaMain, builtin_ord) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1852,7 +1860,9 @@ TEST(pikaMain, builtin_ord) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
+#if !PIKA_NANO_ENABLE
 TEST(pikaMain, builtin_chr) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1867,6 +1877,7 @@ TEST(pikaMain, builtin_chr) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(pikaMain, iteral_oct) {
     /* init */

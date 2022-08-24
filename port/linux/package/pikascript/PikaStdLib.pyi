@@ -1,20 +1,22 @@
-from typing import List
-
+from PikaObj import *
 
 class MemChecker:
     def max(self): ...
     def now(self): ...
+
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def getMax(self) -> float: ...
+
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def getNow(self) -> float: ...
+
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def resetMax(self): ...
 
 
 class SysObj:
     @staticmethod
     def type(arg: any) -> any: ...
-
-    @staticmethod
-    def remove(argPath: str): ...
 
     @staticmethod
     def int(arg: any) -> int: ...
@@ -35,6 +37,7 @@ class SysObj:
     def print(*val): ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def printNoEnd(val: any): ...
 
     @staticmethod
@@ -50,18 +53,23 @@ class SysObj:
     def len(arg: any) -> int: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def list() -> any: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def dict() -> any: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def hex(val: int) -> str: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def ord(val: str) -> int: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def chr(val: int) -> str: ...
 
     @staticmethod
@@ -71,21 +79,27 @@ class SysObj:
     def cformat(fmt: str, *var) -> str: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def id(obj: any) -> int: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def open(path: str, mode: str) -> object: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def dir(obj: object) -> list: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def exec(code: str): ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def getattr(obj: object, name: str) -> any: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def setattr(obj: object, name: str, val: any): ...
 
 
@@ -96,6 +110,3 @@ class RangeObj:
 class StringObj:
     def __next__(self) -> any: ...
 
-
-class PikaObj:
-    ...

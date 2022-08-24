@@ -50,6 +50,22 @@
         #include "pika_config.h"
     #endif
 
+    /* default pika_nano_enabled */
+    #ifndef PIKA_NANO_ENABLE
+        #define PIKA_NANO_ENABLE 0
+    #endif
+
+    #if PIKA_NANO_ENABLE
+        #ifndef PIKA_OPTIMIZE
+            #define PIKA_OPTIMIZE PIKA_OPTIMIZE_SIZE
+        #endif
+
+        /* default syntax support level */
+        #ifndef PIKA_SYNTAX_LEVEL
+            #define PIKA_SYNTAX_LEVEL PIKA_SYNTAX_LEVEL_MINIMAL
+        #endif
+    #endif
+
     /* default optimize */
     #ifndef PIKA_OPTIMIZE
         #define PIKA_OPTIMIZE PIKA_OPTIMIZE_SIZE
