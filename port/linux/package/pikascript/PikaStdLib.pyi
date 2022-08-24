@@ -47,17 +47,18 @@ class SysObj:
     def __getitem__(obj: any, key: any) -> any: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("PIKA_BUILTIN_STRUCT_ENABLE")
     def __slice__(obj: any, start: any, end: any, step: int) -> any: ...
 
     @staticmethod
     def len(arg: any) -> int: ...
 
     @staticmethod
-    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    @PIKA_C_MACRO_IF("PIKA_BUILTIN_STRUCT_ENABLE")
     def list() -> any: ...
 
     @staticmethod
-    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    @PIKA_C_MACRO_IF("PIKA_BUILTIN_STRUCT_ENABLE")
     def dict() -> any: ...
 
     @staticmethod
@@ -73,9 +74,11 @@ class SysObj:
     def chr(val: int) -> str: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def bytes(val: any) -> bytes: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("PIKA_SYNTAX_FORMAT_ENABLE")
     def cformat(fmt: str, *var) -> str: ...
 
     @staticmethod
@@ -83,7 +86,7 @@ class SysObj:
     def id(obj: any) -> int: ...
 
     @staticmethod
-    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    @PIKA_C_MACRO_IF("PIKA_FILEIO_ENABLE")
     def open(path: str, mode: str) -> object: ...
 
     @staticmethod
@@ -91,7 +94,7 @@ class SysObj:
     def dir(obj: object) -> list: ...
 
     @staticmethod
-    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    @PIKA_C_MACRO_IF("PIKA_EXEC_ENABLE")
     def exec(code: str): ...
 
     @staticmethod
@@ -103,10 +106,12 @@ class SysObj:
     def setattr(obj: object, name: str, val: any): ...
 
 
+@PIKA_C_MACRO_IF("0")
 class RangeObj:
     def __next__(self) -> any: ...
 
 
+@PIKA_C_MACRO_IF("0")
 class StringObj:
     def __next__(self) -> any: ...
 
