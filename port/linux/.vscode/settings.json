@@ -4,6 +4,12 @@
         "pikastdlib_sysobj.h": "c",
         "pikastddata_list.h": "c",
         "dataargs.h": "c",
-        "dataarg.h": "c"
+        "dataarg.h": "c",
+        "_socket_socket.h": "c",
+        "*.tcc": "c",
+        "fstream": "c",
+        "system_error": "c",
+        "unistd.h": "c",
+        "types.h": "c"
     }
 }
