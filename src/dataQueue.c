@@ -51,7 +51,8 @@ int32_t queue_pushArg(Queue* queue, Arg* arg) {
     uint64_t top = args_getInt(args, "__t");
     /* add top */
     args_setInt(args, "__t", top + 1);
-    arg = arg_setNameHash(arg, top);
+    char buff[11];
+    arg = arg_setName(arg, fast_itoa(buff, top));
     return args_setArg(args, arg);
 }
 
@@ -64,7 +65,8 @@ Arg* __queue_popArg_noRmoveArg(Queue* queue) {
     }
     /* add bottom */
     args_setInt(args, "__b", bottom + 1);
-    Arg* res = args_getArg_hash(args, bottom);
+    char buff[11];
+    Arg* res = args_getArg(args, fast_itoa(buff, bottom));
     /* not deinit arg to keep str buff */
     return res;
 }

@@ -286,6 +286,7 @@ PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name);
 NewFun obj_getClass(PikaObj* obj);
 
 void pks_printVersion(void);
+void pks_getVersion(char *buff);
 void* obj_getStruct(PikaObj* self, char* name);
 
 #define obj_refcntDec(self) (((self)->refcnt--))

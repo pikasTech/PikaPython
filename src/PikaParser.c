@@ -36,7 +36,7 @@
 /* local head */
 typedef QueueObj AST;
 char* AST_toPikaASM(AST* ast, Args* outBuffs);
-char* Lexer_getTokens(Args* outBuffs, char* stmt);
+char* Lexer_parseLine(Args* outBuffs, char* stmt);
 int32_t AST_deinit(AST* ast);
 char* Parser_linesToAsm(Args* outBuffs, char* multiLine);
 uint8_t Parser_isContainToken(char* tokens,
@@ -138,7 +138,7 @@ char* strsDeleteBetween(Args* buffs_p, char* strIn, char begin, char end) {
 static uint8_t Lexer_isError(char* line) {
     Args buffs = {0};
     uint8_t res = 0; /* not error */
-    char* tokens = Lexer_getTokens(&buffs, line);
+    char* tokens = Lexer_parseLine(&buffs, line);
     if (NULL == tokens) {
         res = 1; /* lex error */
         goto exit;
@@ -350,7 +350,7 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
 
 uint8_t Parser_checkIsDirect(char* str) {
     Args buffs = {0};
-    char* tokens = Lexer_getTokens(&buffs, str);
+    char* tokens = Lexer_parseLine(&buffs, str);
     uint8_t res = 0;
     pika_assert(NULL != tokens);
     if (Parser_isContainToken(tokens, TOKEN_operator, "=")) {
@@ -427,7 +427,7 @@ exit:
 
 /* tokens is devided by space */
 /* a token is [TOKENTYPE|(CONTENT)] */
-char* Lexer_getTokens(Args* outBuffs, char* stmt) {
+char* Lexer_parseLine(Args* outBuffs, char* stmt) {
     /* init */
     Arg* tokens_arg = New_arg(NULL);
     tokens_arg = arg_setStr(tokens_arg, "", "");
@@ -443,6 +443,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     uint8_t c6 = 0;
     int32_t symbol_start_index = -1;
     int is_in_string = 0;
+    int is_number = 0;
     char* tokens;
 
     /* process */
@@ -478,6 +479,10 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             c6 = stmt[i + 6];
         }
         if (-1 == symbol_start_index) {
+            is_number = 0;
+            if ((c0 >= '0') && (c0 <= '9')) {
+                is_number = 1;
+            }
             symbol_start_index = i;
         }
 
@@ -538,6 +543,11 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             ('+' == c0) || ('-' == c0) || ('!' == c0) || ('=' == c0) ||
             ('%' == c0) || ('&' == c0) || ('|' == c0) || ('^' == c0) ||
             ('~' == c0)) {
+            if ('-' == c0 && is_number) {
+                if ((cn1 == 'e') || (cn1 == 'E')) {
+                    continue;
+                }
+            }
             if (('*' == c0) || ('/' == c0)) {
                 /*
                     =, **=, //
@@ -687,7 +697,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         if (' ' == c0) {
             /* not get symbal */
             if (i == symbol_start_index) {
-                symbol_start_index++;
+                symbol_start_index = -1;
             } else {
                 /* already get symbal */
                 tokens_arg =
@@ -752,7 +762,7 @@ static const char operators[][9] = {
 char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args buffs = {0};
     char* operator= NULL;
-    char* tokens = Lexer_getTokens(&buffs, stmt);
+    char* tokens = Lexer_parseLine(&buffs, stmt);
 
     // use parse state foreach to get operator
     for (uint32_t i = 0; i < sizeof(operators) / 9; i++) {
@@ -888,7 +898,7 @@ void Cursor_parse(struct Cursor* ps, char* stmt) {
         ps->result = PIKA_RES_ERR_SYNTAX_ERROR;
         return;
     }
-    ps->tokens = Lexer_getTokens(ps->buffs_p, stmt);
+    ps->tokens = Lexer_parseLine(ps->buffs_p, stmt);
     if (NULL == ps->tokens) {
         ps->result = PIKA_RES_ERR_SYNTAX_ERROR;
         return;
@@ -1180,7 +1190,7 @@ uint8_t Parser_solveSelfOperator(Args* outbuffs,
     Args buffs = {0};
     char _operator[2] = {0};
     char* operator=(char*) _operator;
-    char* tokens = Lexer_getTokens(&buffs, stmt);
+    char* tokens = Lexer_parseLine(&buffs, stmt);
     uint8_t is_right = 0;
     if (Parser_isContainToken(tokens, TOKEN_operator, "+=")) {
         operator[0] = '+';

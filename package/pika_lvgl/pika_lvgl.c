@@ -11,6 +11,7 @@
 #include "pika_lvgl_lv_color_t.h"
 #include "pika_lvgl_lv_obj.h"
 #include "pika_lvgl_indev_t.h"
+#include "pika_lvgl_lv_timer_t.h"
 
 PikaObj* pika_lv_event_listener_g;
 
@@ -182,3 +183,11 @@ PikaObj* pika_lvgl_indev_get_act(PikaObj *self){
     obj_setPtr(new_obj,"lv_indev", lv_indev);
     return new_obj;
 }
+
+PikaObj* pika_lvgl_timer_create_basic(PikaObj *self){
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_timer_t);
+    lv_timer_t *lv_timer = lv_timer_create_basic();
+    obj_setPtr(new_obj,"lv_timer", lv_timer);
+    return new_obj;
+}
+

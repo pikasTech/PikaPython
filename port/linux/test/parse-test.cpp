@@ -8,7 +8,7 @@ char* AST_toPikaASM(AST* ast, Args* outBuffs);
 AST* AST_parseLine(char* line, Stack* blockStack);
 char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack);
 int32_t AST_deinit(AST* ast);
-char* Lexer_getTokens(Args* outBuffs, char* stmt);
+char* Lexer_parseLine(Args* outBuffs, char* stmt);
 char* Lexer_printTokens(Args* outBuffs, char* tokens);
 char* strsPopTokenWithSkip_byStr(Args* buffs,
                                  char* stmts,
@@ -856,7 +856,7 @@ TEST(parser, signed_num) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     char* tokens_print =
-        Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+        Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines));
     printf("%s", tokens_print);
     EXPECT_STREQ(tokens_print, "{sym}a{opt}={opt}-{lit}1\n");
     printf("%s", pikaAsm);
@@ -897,7 +897,7 @@ TEST(lexser, symbol_add) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, " res = add(1,2)");
+    char* tokens = Lexer_parseLine(buffs, " res = add(1,2)");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -916,7 +916,7 @@ TEST(lexser, symbol_1) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, "a(");
+    char* tokens = Lexer_parseLine(buffs, "a(");
     char* printTokens = Lexer_printTokens(buffs, tokens);
 
     /* assert */
@@ -933,7 +933,7 @@ TEST(lexser, operator_not) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, "not not not ");
+    char* tokens = Lexer_parseLine(buffs, "not not not ");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -951,7 +951,7 @@ TEST(lexser, symbol_Nag) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, "-10-20");
+    char* tokens = Lexer_parseLine(buffs, "-10-20");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -969,7 +969,7 @@ TEST(lexser, operator_all) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs,
+    char* tokens = Lexer_parseLine(buffs,
                                    "not or and "
                                    "+ += - -="
                                    "* ** *= **="
@@ -1000,7 +1000,7 @@ TEST(lexser, symbol_2) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, "a+b-c(25**=ek)!=-28");
+    char* tokens = Lexer_parseLine(buffs, "a+b-c(25**=ek)!=-28");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -1020,7 +1020,7 @@ TEST(lexser, symbol_and) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, " res = add(1 and lkj,2)");
+    char* tokens = Lexer_parseLine(buffs, " res = add(1 and lkj,2)");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -1040,7 +1040,7 @@ TEST(lexser, sting) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, " a= 'elk 2'");
+    char* tokens = Lexer_parseLine(buffs, " a= 'elk 2'");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -1058,7 +1058,7 @@ TEST(lexser, num_1) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, "1");
+    char* tokens = Lexer_parseLine(buffs, "1");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -1076,7 +1076,7 @@ TEST(lexser, jjcc) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, "a = (1 + 1.1) * 3 - 2 /4.0");
+    char* tokens = Lexer_parseLine(buffs, "a = (1 + 1.1) * 3 - 2 /4.0");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -2402,7 +2402,7 @@ TEST(lexser, a_j) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, "a=");
+    char* tokens = Lexer_parseLine(buffs, "a=");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -2479,7 +2479,7 @@ TEST(parser, a_cuohao_j) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = (3 - 4) - 4\n";
-    printf("%s\n", Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines)));
+    printf("%s\n", Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines)));
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     EXPECT_STREQ(pikaAsm,
@@ -2501,7 +2501,7 @@ TEST(parser, _3_3) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "-3+3\n";
-    printf("%s\n", Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines)));
+    printf("%s\n", Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines)));
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     EXPECT_STREQ(pikaAsm,
@@ -2521,7 +2521,7 @@ TEST(parser, list_init) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = [1, 2, 3]\n";
-    printf("%s\n", Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines)));
+    printf("%s\n", Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines)));
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     EXPECT_STREQ(pikaAsm,
@@ -2541,7 +2541,7 @@ TEST(parser, list_init_fun) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "test([1, 2, 3])\n";
-    printf("%s\n", Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines)));
+    printf("%s\n", Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines)));
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     EXPECT_STREQ(pikaAsm,
@@ -2562,7 +2562,7 @@ TEST(parser, bytes_iteral) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b'\\x00\\x01'\n";
-    char* tokens_str = Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    char* tokens_str = Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines));
     printf("%s\n", tokens_str);
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
@@ -2581,7 +2581,7 @@ TEST(parser, import_as) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "import PikaStdLib as std\n";
-    char* tokens_str = Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    char* tokens_str = Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines));
     printf("%s\n", tokens_str);
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
@@ -2602,7 +2602,7 @@ TEST(parser, str_equ) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = 'num ='\n";
-    char* tokens_str = Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    char* tokens_str = Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines));
     printf("%s\n", tokens_str);
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
@@ -2621,7 +2621,7 @@ TEST(parser, bytes_index) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "res2 = b'eqrt'[2]\n";
-    char* tokens_str = Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    char* tokens_str = Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines));
     printf("%s\n", tokens_str);
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
@@ -2642,7 +2642,7 @@ TEST(parser, hex_iteral) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = 0b10\n";
-    char* tokens_str = Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    char* tokens_str = Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines));
     printf("%s\n", tokens_str);
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
@@ -2663,7 +2663,7 @@ TEST(parser, tab) {
         "for i in range(0, 100):\n"
         "\tprint(i)\n"
         "\n";
-    char* tokens_str = Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+    char* tokens_str = Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines));
     printf("%s\n", tokens_str);
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
@@ -2697,7 +2697,7 @@ TEST(parser, parse_issue2) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "    recv_buf[1] = dat \n";
-    char* tokens = Lexer_getTokens(buffs, lines);
+    char* tokens = Lexer_parseLine(buffs, lines);
     uint16_t token_size = Tokens_getSize(tokens);
     EXPECT_EQ(token_size, 8);
     char* tokens_str = Lexer_printTokens(buffs, tokens);
@@ -2778,7 +2778,7 @@ TEST(parser, str_add1) {
     printf("%s\r\n", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     char* tokens_print =
-        Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+        Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines));
     printf("%s\r\n", tokens_print);
     EXPECT_STREQ(tokens_print,
                  "{sym}msg{opt}={lit}\"device_names[\"{opt}+{sym}str{dvd}({sym}"
@@ -2805,7 +2805,7 @@ TEST(parser, str_add2) {
     printf("%s\r\n", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     char* tokens_print =
-        Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+        Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines));
     printf("%s\r\n", tokens_print);
     EXPECT_STREQ(tokens_print,
                  "{sym}msg{opt}={lit}\"device_names[\"{opt}+{sym}str{dvd}({sym}"
@@ -2998,7 +2998,7 @@ TEST(parser, json_literal) {
         "}'";
     printf("%s\r\n", lines);
     char* tokens_print =
-        Lexer_printTokens(buffs, Lexer_getTokens(buffs, lines));
+        Lexer_printTokens(buffs, Lexer_parseLine(buffs, lines));
     printf("%s\r\n", tokens_print);
 
     EXPECT_STREQ(tokens_print,
@@ -3265,7 +3265,7 @@ TEST(lexser, import_issue1) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, "my_import = import_test");
+    char* tokens = Lexer_parseLine(buffs, "my_import = import_test");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -3283,7 +3283,7 @@ TEST(lexser, dict_literal1) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(
+    char* tokens = Lexer_parseLine(
         buffs,
         "tinydict = {'name': 'runoob', 'likes': 123, 'url': 'www.runoob.com'}");
     char* printTokens = Lexer_printTokens(buffs, tokens);
@@ -3407,7 +3407,7 @@ TEST(lexser, function_chain) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, "String('a,b,c').split(',')");
+    char* tokens = Lexer_parseLine(buffs, "String('a,b,c').split(',')");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -3860,7 +3860,7 @@ TEST(lexser, connet_part1) {
     Args* buffs = New_strBuff();
 
     /* run */
-    char* tokens = Lexer_getTokens(buffs, "method(a,");
+    char* tokens = Lexer_parseLine(buffs, "method(a,");
     char* printTokens = Lexer_printTokens(buffs, tokens);
     printf("%s\n", printTokens);
 
@@ -3946,3 +3946,23 @@ TEST(parser, issues_I5MIFO) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(lexser, science_num) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+
+    /* run */
+    char* tokens = Lexer_parseLine(buffs, "1.0e-2, 10e2, 0.1e-2, aie2, aie-2");
+    char* printTokens = Lexer_printTokens(buffs, tokens);
+    printf("%s\n", printTokens);
+
+    /* assert */
+    EXPECT_STREQ(printTokens,
+                 "{lit}1.0e-2{dvd},{lit}10e2{dvd},{lit}0.1e-2{dvd},{sym}aie2{"
+                 "dvd},{sym}aie{opt}-{lit}2");
+
+    /* deinit */
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -1174,3 +1174,28 @@ TEST(VM, list_add) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(VM, science_num){
+    char* line = 
+    "a = 1.0e-3\n"
+    "b = 2e-5\n"
+    "c = -3e-5\n"
+    "d = 0.4e2\n"
+    ;
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    double a = obj_getFloat(self, "a");
+    double b = obj_getFloat(self, "b");
+    double c = obj_getFloat(self, "c");
+    double d = obj_getFloat(self, "d");
+    /* assert */
+    EXPECT_DOUBLE_EQ(a, 1.0e-3);
+    EXPECT_DOUBLE_EQ(b, 2.0e-5);
+    EXPECT_DOUBLE_EQ(c, -3e-5);
+    EXPECT_DOUBLE_EQ(d, 0.4e2);
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
