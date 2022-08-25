@@ -116,6 +116,7 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 |stm32f407zg    |√  |    |    |    |   |   |   |
 |stm32h750vb    |√  |    |    |    |   |   |   |
 |stm32f051r8    |√  |    |    |    |   |   |   |
+|air32f103cb    |√  |√   |    |    |   |   |   |
 |ch582          |√  |√   |√   |√   |   |√  |√  |
 |ch32v103r8t6   |√  |√   |√   |    |   |   |   |
 |cm32m101a      |√  |    |    |    |   |   |   |
@@ -130,6 +131,7 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 |EC600N         |√  |    |    |    |   |   |   |
 |mm32f5277e9p   |√  |√   |    |    |   |   |   |
 |xr806(openharmony)|√  |    |    |    |   |   |   |
+
 
 ## Board support
 |Board|bsp|gpio|uart|pwm|adc|i2c|rgb|lcd|arm-2d|
