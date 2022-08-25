@@ -325,3 +325,7 @@ releases = [ "v1.0.0 e2a630358c0d490b198f7e8682fb61569eb7ec56" ]
 [[packages]]
 name = "MM32F5277E9P"
 releases = [ "v0.0.1 176232225939eccfaedfea412699a2e53c38ace1" ]
+
+[[packages]]
+name = "AIR32F1"
+releases = [ "v0.0.1 9f9579c54ebddb12c66afc8da64a987767ff512f" ]
