@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "delay.h"
 #include "air32f10x.h"
+#include "air_rcc.h"
 
 #define PRINTF_LOG 	printf
 #include "pikaScript.h"
@@ -13,11 +14,13 @@ void DMA_RecvConfiguration(void);
 void DMA_SendConfiguration(void);
 #define BUFFSIZE 	8
 uint8_t Buff[BUFFSIZE];
+void RCC_ClkConfiguration(void);
 
 int main(void)
 {	
 	RCC_ClocksTypeDef clocks;
-	
+	RCC_ClkConfiguration();		//????
+
 	Delay_Init();
 	UART_Configuration(115200);
 	RCC_GetClocksFreq(&clocks);
@@ -35,7 +38,34 @@ int main(void)
 	}
 }
 
+void RCC_ClkConfiguration(void)
+{
+	RCC_DeInit(); //??RCC???
 
+	RCC_HSEConfig(RCC_HSE_ON); //??HSE
+	while (RCC_GetFlagStatus(RCC_FLAG_HSERDY) == RESET)
+		; //??HSE??
+
+	RCC_PLLCmd(DISABLE);										 //??PLL
+	AIR_RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_27, 1); //??PLL,8*27=216MHz
+
+	RCC_PLLCmd(ENABLE); //??PLL
+	while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET)
+		; //??PLL??
+
+	RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK); //??PLL??????
+
+	RCC_HCLKConfig(RCC_SYSCLK_Div1); //??AHB??
+	RCC_PCLK1Config(RCC_HCLK_Div2);	 //??APB1??
+	RCC_PCLK2Config(RCC_HCLK_Div1);	 //??APB2??
+
+	RCC_LSICmd(ENABLE); //????????
+	while (RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET)
+		;				//??LSI??
+	RCC_HSICmd(ENABLE); //????????
+	while (RCC_GetFlagStatus(RCC_FLAG_HSIRDY) == RESET)
+		; //??HSI??
+}
 
 void UART_Configuration(uint32_t bound)
 {

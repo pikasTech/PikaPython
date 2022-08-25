@@ -5,10 +5,11 @@ static uint16_t MsNumber=0;
 
 void Delay_Init()
 {
-
+	RCC_ClocksTypeDef clocks;
+	RCC_GetClocksFreq(&clocks); //??????
 	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);	
-	UsNumber=SystemCoreClock/8000000;				
-	MsNumber=(u16)UsNumber*1000;					
+	UsNumber=clocks.HCLK_Frequency/HSE_VALUE;				
+	MsNumber=(u16)UsNumber*1000;							
 }								    
 
     								   

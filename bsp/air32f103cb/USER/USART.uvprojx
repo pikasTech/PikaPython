@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,PIKA_CONFIG_ENABLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\SYSTEM\delay;..\USER;..\DRIVER\luatos-soc-air32f103\Libraries\AIR32F10xLib\inc;..\DRIVER\luatos-soc-air32f103\Libraries\CMSIS\Include;..\DRIVER\luatos-soc-air32f103\Libraries\CORE;..\DRIVER\luatos-soc-air32f103\Libraries\CMSIS\Lib\ARM;..\pikascript\pikascript-lib/PikaStdDevice;..\pikascript\pikascript-lib/AIR32F1;..\pikascript\pikascript-lib/PikaStdLib;..\pikascript\pikascript-api;..\pikascript\pikascript-core</IncludePath>
+              <IncludePath>..\SYSTEM\delay;..\USER;..\DRIVER\luatos-soc-air32f103\Libraries\AIR32F10xLib\inc;..\DRIVER\luatos-soc-air32f103\Libraries\CMSIS\Include;..\DRIVER\luatos-soc-air32f103\Libraries\CORE;..\DRIVER\luatos-soc-air32f103\Libraries\CMSIS\Lib\ARM;..\pikascript\pikascript-lib/PikaStdDevice;..\pikascript\pikascript-lib/AIR32F1;..\pikascript\pikascript-lib/PikaStdLib;..\pikascript\pikascript-api;..\pikascript\pikascript-core;..\DRIVER\luatos-soc-air32f103\Libraries\AIR32F10xLib\lib</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -458,6 +458,11 @@
               <FileName>air32f10x_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\DRIVER\luatos-soc-air32f103\Libraries\AIR32F10xLib\src\air32f10x_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>air.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\DRIVER\luatos-soc-air32f103\Libraries\AIR32F10xLib\lib\air.lib</FilePath>
             </File>
           </Files>
         </Group>
