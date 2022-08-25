@@ -41,6 +41,19 @@ impl Compiler {
         return compiler;
     }
 
+    pub fn clean_path(&mut self) {
+        /* create path if not exist */
+        if !fs::metadata(&self.dist_path).is_ok() {
+            fs::create_dir_all(&self.dist_path).unwrap();
+        }
+        /* clean the path */
+        let file_list = fs::read_dir(&self.dist_path).unwrap();
+        for file in file_list {
+            let file_path = file.unwrap().path();
+            fs::remove_file(file_path).unwrap();
+        }
+    }
+
     pub fn analyse_py_line(mut compiler: Compiler, line: &String, is_top_pkg: bool) -> Compiler {
         let file_name = match is_top_pkg {
             true => "main".to_string(),

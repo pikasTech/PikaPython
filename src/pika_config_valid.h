@@ -60,14 +60,10 @@
             #define PIKA_OPTIMIZE PIKA_OPTIMIZE_SIZE
         #endif
 
+        /* default syntax support level */
         #ifndef PIKA_SYNTAX_LEVEL
             #define PIKA_SYNTAX_LEVEL PIKA_SYNTAX_LEVEL_MINIMAL
         #endif
-
-        #ifndef PIKA_INIT_STRING_ENABLE
-            #define PIKA_INIT_STRING_ENABLE 0
-        #endif
-
     #endif
 
     /* default optimize */
