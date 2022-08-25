@@ -182,7 +182,8 @@ releases = [
 name = "pika_lvgl"
 releases = [
   "v0.0.1 71364445e0894e660720f9a0c9e1db021663d6a1",
-  "v0.1.0 027f06710e83ee3daa7b706fb8a9bf23b1ab14e4"
+  "v0.1.0 027f06710e83ee3daa7b706fb8a9bf23b1ab14e4",
+  "v0.2.0 871fbf701c24c9c05792d3c551c44b699f4de7bf"
 ]
 
 [[packages]]
