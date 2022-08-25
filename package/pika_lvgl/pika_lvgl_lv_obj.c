@@ -53,19 +53,13 @@ PikaObj* eventLisener_getHandler(PikaObj* self, uintptr_t event_id) {
     return event_handler;
 }
 
-extern PikaObj* __pikaMain;
 static void __pika_event_cb(lv_event_t* e) {
     lv_obj_t* target = lv_event_get_target(e);
     PikaObj* event_handler =
         eventLisener_getHandler(pika_lv_event_listener_g, (uintptr_t)target);
     PikaObj* evt = obj_getObj(event_handler, "_event_evt");
     obj_setPtr(evt, "lv_event", e);
-    obj_setArg(__pikaMain, "_event_cb", obj_getArg(event_handler, "_event_cb"));
-    obj_setArg(__pikaMain, "_event_evt",
-               obj_getArg(event_handler, "_event_evt"));
-    obj_run(__pikaMain, "_event_cb(_event_evt)");
-    obj_removeArg(__pikaMain, "_event_cb");
-    obj_removeArg(__pikaMain, "_event_evt");
+    obj_run(event_handler, "_event_cb(_event_evt)");
 }
 
 void eventLicener_registEvent(PikaObj* self,
