@@ -1,7 +1,9 @@
 import os
 
 version = "1.10.3"
+version_lvgl = "0.2.0"
 date = "2022-08-26"
+
 
 class Group:
     path: str
@@ -63,14 +65,22 @@ api_h = Group("apiH", "pikascript-api", ".h", format=formath)
 api_bat = Group("apiBat", "pikascript-api", "", format='@del "%s"', dvd="\\")
 
 collect("kernal", [kernal_c, kernal_h, kernal_cfg])
-collect("lib", [lib_c, lib_h, api_c, api_h, lvgl_c, lvgl_h])
+collect("lib", [lib_c, lib_h, api_c, api_h])
+collect('lib_lvgl', [lvgl_c, lvgl_h])
 collect("clean", [api_bat], subfix=".bat")
 
 pdsc_xml_str = open('PikaTech.PikaScript.xml', 'r').read()
 kernal_xml_str = open('kernal.xml', 'r').read()
 lib_xml_str = open('lib.xml', 'r').read()
+lib_lvgl_xml_str = open('lib_lvgl.xml', 'r').read()
 
-pdsc_gen_str = pdsc_xml_str.replace('@KERNAL', kernal_xml_str).replace('@LIB', lib_xml_str).replace('@VERSION', version)
+pdsc_gen_str = pdsc_xml_str\
+    .replace('@LVGL_LIB', lib_lvgl_xml_str)\
+    .replace('@LVGL_VERSION', version_lvgl)\
+    .replace('@KERNAL', kernal_xml_str)\
+    .replace('@LIB', lib_xml_str)\
+    .replace('@VERSION', version)\
+    .replace('@DATE', date)\
 
 with open('PikaTech.PikaScript.pdsc', 'w') as f:
     f.write(pdsc_gen_str)
@@ -79,3 +89,4 @@ with open('PikaTech.PikaScript.pdsc', 'w') as f:
 # rm lib.xml
 os.remove('kernal.xml')
 os.remove('lib.xml')
+os.remove('lib_lvgl.xml')

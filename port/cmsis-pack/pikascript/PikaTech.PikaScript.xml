@@ -143,9 +143,7 @@
       <component Cgroup="PikaScript" Csub="Core" Cversion="@VERSION">
         <description>PikaScript Kernel</description>
         <files>
-          
-          @KERNAL
-
+@KERNAL
           <file attr="config" category="header" name="__pika_ooc.h" />
           <file category="header" name="PLOOC/plooc_class.h" condition="NO_PLOOC_Pack" />
           <file category="header" name="PLOOC/plooc.h" condition="NO_PLOOC_Pack" />
@@ -153,25 +151,29 @@
           <file category="header" name="PLOOC/plooc_class_simple_c90.h" condition="NO_PLOOC_Pack" />
           <file category="header" name="PLOOC/plooc_class_strict.h" condition="NO_PLOOC_Pack" />
           <file category="header" name="PLOOC/plooc_class_black_box.h" condition="NO_PLOOC_Pack" />
-
           <file attr="config" category="utility" name="rust-msc-latest-win10.exe" version="1.0.0" />
           <file attr="config" category="utility" name="pikaPackage.exe" version="1.0.0" />
           <file attr="config" category="utility" name="pikaBeforBuild-keil.bat" version="1.1.0" />
           <file attr="config" category="utility" name="clean.bat" version="1.0.1" />
           <file attr="config" category="source" name="requestment.txt" version="1.1.0" />
           <file attr="config" category="source" name="main.py" />
-
         </files>
         <RTE_Components_h>
-
 #define RTE_Script_PikaScript
-              </RTE_Components_h>
+        </RTE_Components_h>
       </component>
 
       <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="@VERSION" condition="Kernel">
         <description>The standard library for PikaScript</description>
         <files>
-        @LIB
+@LIB
+        </files>
+      </component>
+
+      <component Cgroup="PikaScript" Csub="pika_lvgl" Cversion="@LVGL_VERSION" condition="Kernel">
+        <description>The lvgl module for PikaScript</description>
+        <files>
+@LVGL_LIB
         </files>
       </component>
 
