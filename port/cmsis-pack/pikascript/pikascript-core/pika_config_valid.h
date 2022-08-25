@@ -50,6 +50,22 @@
         #include "pika_config.h"
     #endif
 
+    /* default pika_nano_enabled */
+    #ifndef PIKA_NANO_ENABLE
+        #define PIKA_NANO_ENABLE 0
+    #endif
+
+    #if PIKA_NANO_ENABLE
+        #ifndef PIKA_OPTIMIZE
+            #define PIKA_OPTIMIZE PIKA_OPTIMIZE_SIZE
+        #endif
+
+        /* default syntax support level */
+        #ifndef PIKA_SYNTAX_LEVEL
+            #define PIKA_SYNTAX_LEVEL PIKA_SYNTAX_LEVEL_MINIMAL
+        #endif
+    #endif
+
     /* default optimize */
     #ifndef PIKA_OPTIMIZE
         #define PIKA_OPTIMIZE PIKA_OPTIMIZE_SIZE
@@ -106,6 +122,10 @@
             #define PIKA_FILEIO_ENABLE 0
         #endif
 
+        #ifndef PIKA_EXEC_ENABLE
+            #define PIKA_EXEC_ENABLE 0
+        #endif
+
     #elif PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
         #ifndef PIKA_SYNTAX_SLICE_ENABLE
             #define PIKA_SYNTAX_SLICE_ENABLE 1
@@ -137,6 +157,10 @@
 
         #ifndef PIKA_FILEIO_ENABLE
             #define PIKA_FILEIO_ENABLE 1
+        #endif
+
+        #ifndef PIKA_EXEC_ENABLE
+            #define PIKA_EXEC_ENABLE 1
         #endif
 
     #endif
@@ -252,6 +276,18 @@
 
     #ifndef PIKA_ARG_BUFF_SIZE
         #define PIKA_ARG_BUFF_SIZE 8
+    #endif
+
+    #ifndef PIKA_INSTRUCT_HOOK_ENABLE
+        #define PIKA_INSTRUCT_HOOK_ENABLE 0
+    #endif
+
+    #ifndef PIKA_INSTRUCT_HOOK_PERIOD
+        #define PIKA_INSTRUCT_HOOK_PERIOD 50
+    #endif
+
+    #ifndef PIKA_EXEC_ENABLE
+        #define PIKA_EXEC_ENABLE 1
     #endif
 
     /* configuration validation */

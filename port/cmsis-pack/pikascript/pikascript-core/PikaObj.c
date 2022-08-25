@@ -244,9 +244,9 @@ size_t obj_loadBytes(PikaObj* self, char* argPath, uint8_t* out_buff) {
 }
 
 static PIKA_RES __obj_setArg(PikaObj* self,
-                            char* argPath,
-                            Arg* arg,
-                            uint8_t is_copy) {
+                             char* argPath,
+                             Arg* arg,
+                             uint8_t is_copy) {
     /* setArg would copy arg */
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
@@ -522,6 +522,17 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
     return strCut(buffs, method_dec, '(', ')');
 }
 
+char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
+    char* method_dec = strCopy(buffs, methodArg_getDec(method_arg));
+    char res[PIKA_NAME_BUFF_SIZE] = {0};
+    if (strGetSize(method_dec) > size) {
+        return NULL;
+    }
+    strPopToken(res, method_dec, '(');
+    strCopy(buffs, res);
+    return buffs;
+}
+
 Method obj_getNativeMethod(PikaObj* self, char* method_name) {
     Arg* method_arg = obj_getMethodArg(self, method_name);
     if (NULL == method_arg) {
@@ -556,10 +567,9 @@ PikaObj* methodArg_getDefContext(Arg* method_arg) {
 
 static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     Args buffs = {0};
-    char* pars = strsRemovePrefix(&buffs, method_info->dec, method_info->name);
-    method_info->pars = pars;
+    method_info->pars = method_info->dec;
     Arg* arg = New_arg(NULL);
-    uint32_t size_pars = strGetSize(pars);
+    uint32_t size_pars = strGetSize(method_info->pars);
     uintptr_t method_info_bytecode_frame =
         (uintptr_t)method_info->bytecode_frame;
     uintptr_t method_info_def_context = (uintptr_t)method_info->def_context;
@@ -1109,6 +1119,14 @@ void pks_eventLicener_registEvent(PikaEventListener* self,
     strsDeinit(&buffs);
 }
 
+void pks_eventLicener_removeEvent(PikaEventListener* self, uint32_t eventId) {
+    Args buffs = {0};
+    char* event_name =
+        strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
+    obj_removeArg(self, event_name);
+    strsDeinit(&buffs);
+}
+
 PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
                                             uint32_t eventId) {
     Args buffs = {0};
@@ -1161,6 +1179,11 @@ void pks_eventLisener_sendSignal(PikaEventListener* self,
 void pks_printVersion(void) {
     __platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n", PIKA_VERSION_MAJOR,
                       PIKA_VERSION_MINOR, PIKA_VERSION_MICRO, PIKA_EDIT_TIME);
+}
+
+void pks_getVersion(char *buff)
+{
+    __platform_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR, PIKA_VERSION_MICRO);
 }
 
 void* obj_getStruct(PikaObj* self, char* name) {

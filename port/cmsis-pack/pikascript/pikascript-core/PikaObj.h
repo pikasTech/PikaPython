@@ -192,6 +192,7 @@ char* method_getStr(Args* args, char* argName);
 void method_returnArg(Args* args, Arg* arg);
 char* methodArg_getDec(Arg* method_arg);
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size);
+char* methodArg_getName(Arg* method_arg, char* buffs, size_t size);
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg);
 Method methodArg_getPtr(Arg* method_arg);
 
@@ -273,6 +274,11 @@ void pks_eventLicener_registEvent(PikaEventListener* self,
                                   uint32_t eventId,
                                   PikaObj* eventHandleObj);
 
+void pks_eventLicener_removeEvent(PikaEventListener* self, uint32_t eventId);
+
+PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
+                                            uint32_t eventId);
+
 void pks_eventLisener_init(PikaEventListener** p_self);
 void pks_eventLisener_deinit(PikaEventListener** p_self);
 PikaObj* methodArg_getDefContext(Arg* method_arg);
@@ -280,9 +286,8 @@ PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name);
 NewFun obj_getClass(PikaObj* obj);
 
 void pks_printVersion(void);
+void pks_getVersion(char *buff);
 void* obj_getStruct(PikaObj* self, char* name);
-PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
-                                            uint32_t eventId);
 
 #define obj_refcntDec(self) (((self)->refcnt--))
 #define obj_refcntInc(self) (((self)->refcnt)++)
@@ -290,5 +295,10 @@ PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
 
 #define obj_setStruct(PikaObj_p_self, char_p_name, struct_) \
     args_setStruct(((PikaObj_p_self)->list), char_p_name, struct_)
+
+#define ABSTRACT_METHOD_DECLARE(x)                                        \
+    obj_setErrorCode(self, 1);                                            \
+    __platform_printf("Error: abstract method `%s()` need override.\r\n", \
+                      __FUNCTION__)
 
 #endif

@@ -17,7 +17,7 @@ Arg* PikaStdData_String___next__(PikaObj *self);
 void PikaStdData_String___setitem__(PikaObj *self, Arg* __key, Arg* __val);
 char* PikaStdData_String___str__(PikaObj *self);
 Arg* PikaStdData_String_encode(PikaObj *self);
-int PikaStdData_String_endwith(PikaObj *self, char* suffix);
+int PikaStdData_String_endswith(PikaObj *self, char* suffix);
 char* PikaStdData_String_get(PikaObj *self);
 int PikaStdData_String_isalnum(PikaObj *self);
 int PikaStdData_String_isalpha(PikaObj *self);
@@ -27,7 +27,7 @@ int PikaStdData_String_isspace(PikaObj *self);
 char* PikaStdData_String_replace(PikaObj *self, char* old, char* new);
 void PikaStdData_String_set(PikaObj *self, char* s);
 PikaObj* PikaStdData_String_split(PikaObj *self, char* s);
-int PikaStdData_String_startwith(PikaObj *self, char* prefix);
+int PikaStdData_String_startswith(PikaObj *self, char* prefix);
 char* PikaStdData_String_strip(PikaObj *self);
 
 #endif
