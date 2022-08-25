@@ -328,4 +328,7 @@ releases = [ "v0.0.1 176232225939eccfaedfea412699a2e53c38ace1" ]
 
 [[packages]]
 name = "AIR32F1"
-releases = [ "v0.0.1 9f9579c54ebddb12c66afc8da64a987767ff512f" ]
+releases = [
+  "v0.0.1 9f9579c54ebddb12c66afc8da64a987767ff512f",
+  "v0.1.0 faa9c6230149d09188114af7af822e5d34af6b55"
+]
