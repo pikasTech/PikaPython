@@ -159,7 +159,7 @@ releases = [ "v0.1.0 cd6dfbbb714228e7e0f147515d58450644e7dadf" ]
 
 [[packages]]
 name = "socket"
-releases = [ "v0.1.0 7244267b6839b8af2238b6cdd9a73e4a3aebb347" ]
+releases = [ "v0.1.0 3d97469e254c501683100c46a6691da499316078" ]
 
 [[packages]]
 name = "random"
