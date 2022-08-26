@@ -91,7 +91,7 @@
 
     <condition id="Kernel">
       <description>The Kernel of the PikaScript</description>
-      <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="1.8.6" />
+      <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="1.10.3" />
     </condition>
 
     <condition id="PLOOC_Pack">

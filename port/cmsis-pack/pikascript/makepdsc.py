@@ -1,8 +1,10 @@
+from copy import copy
 import os
 
 version = "1.10.3"
 version_lvgl = "0.2.0"
 date = "2022-08-26"
+url = "https://gitee.com/Lyon1998/pikascript/attach_files/1151246/download"
 
 
 class Group:
@@ -81,6 +83,7 @@ pdsc_gen_str = pdsc_xml_str\
     .replace('@LIB', lib_xml_str)\
     .replace('@VERSION', version)\
     .replace('@DATE', date)\
+    .replace('@URL', url)\
 
 with open('PikaTech.PikaScript.pdsc', 'w') as f:
     f.write(pdsc_gen_str)
@@ -90,3 +93,5 @@ with open('PikaTech.PikaScript.pdsc', 'w') as f:
 os.remove('kernal.xml')
 os.remove('lib.xml')
 os.remove('lib_lvgl.xml')
+# copy .pdsc to ..
+os.system('cp PikaTech.PikaScript.pdsc ..')

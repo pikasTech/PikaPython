@@ -16,7 +16,7 @@
   <repository type="git">https://github.com/pikasTech/pikascript.git</repository>
 
   <releases>
-    <release date="@DATE" version="@VERSION" url="https://gitee.com/Lyon1998/pikascript/attach_files/1151246/download">
+    <release date="@DATE" version="@VERSION" url="@URL">
         - PikaScript v@VERSION
     </release>
 
@@ -91,7 +91,7 @@
 
     <condition id="Kernel">
       <description>The Kernel of the PikaScript</description>
-      <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="1.8.6" />
+      <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="@VERSION" />
     </condition>
 
     <condition id="PLOOC_Pack">
