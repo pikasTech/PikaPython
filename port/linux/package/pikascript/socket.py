@@ -4,6 +4,7 @@ AF_INET = 2
 SOCK_STREAM = 1
 
 
+
 class socket(_socket.socket):
     family = AF_INET
     type = SOCK_STREAM
@@ -20,9 +21,6 @@ class socket(_socket.socket):
         if len(vars) > 2:
             self.proto = vars[2]
         self._init()
-
-    def gethostname(self):
-        return self._gethostname()
 
     def bind(self, host_port):
         host = host_port[0]
@@ -51,3 +49,6 @@ class socket(_socket.socket):
 
     def recv(self, num):
         return self._recv(num)
+
+def gethostname():
+    return _socket._gethostname()

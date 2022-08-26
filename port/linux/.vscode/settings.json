@@ -1,6 +1,7 @@
 {
     "C_Cpp.clang_format_style": "{ BasedOnStyle: Chromium, IndentWidth: 4}",
     "files.associations": {
+        "*.rs": "rust",
         "pikastdlib_sysobj.h": "c",
         "pikastddata_list.h": "c",
         "dataargs.h": "c",
@@ -10,6 +11,7 @@
         "fstream": "c",
         "system_error": "c",
         "unistd.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "_socket.h": "c"
     }
 }

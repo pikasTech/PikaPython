@@ -1,3 +1,4 @@
+#include "_socket.h"
 #include "_socket_socket.h"
 #ifdef __linux__
 #include <arpa/inet.h>
@@ -6,14 +7,94 @@
 #include <unistd.h>
 #endif
 
+PIKA_WEAK int __platform_socket(int __domain, int __type, int __protocol) {
+#ifdef __linux__
+    return socket(__domain, __type, __protocol);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK int __platform_bind(int __fd,
+                              const struct sockaddr* __addr,
+                              socklen_t __addr_len) {
+#ifdef __linux__
+    return bind(__fd, __addr, __addr_len);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK int __platform_listen(int __fd, int __n) {
+#ifdef __linux__
+    return listen(__fd, __n);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK int __platform_accept(int __fd,
+                                struct sockaddr* __addr,
+                                socklen_t* __addr_len) {
+#ifdef __linux__
+    return accept(__fd, __addr, __addr_len);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK int __platform_connect(int __fd,
+                                 const struct sockaddr* __addr,
+                                 socklen_t __addr_len) {
+#ifdef __linux__
+    return connect(__fd, __addr, __addr_len);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK int __platform_send(int __fd,
+                              const void* __buf,
+                              size_t __n,
+                              int __flags) {
+#ifdef __linux__
+    return send(__fd, __buf, __n, __flags);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK int __platform_recv(int __fd, void* __buf, size_t __n, int __flags) {
+#ifdef __linux__
+    return recv(__fd, __buf, __n, __flags);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK int __platform_close(int __fd) {
+#ifdef __linux__
+    return close(__fd);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+/* gethostname */
+PIKA_WEAK int __platform_gethostname(char* __name, size_t __len) {
+#ifdef __linux__
+    return gethostname(__name, __len);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
 void _socket_socket__init(PikaObj* self) {
     int family = obj_getInt(self, "family");
     int type = obj_getInt(self, "type");
     int protocol = obj_getInt(self, "protocol");
     int sockfd = 0;
-#ifdef __linux__
-    sockfd = socket(family, type, protocol);
-#endif
+    sockfd = __platform_socket(family, type, protocol);
     if (sockfd < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         __platform_printf("socket error\n");
@@ -24,9 +105,7 @@ void _socket_socket__init(PikaObj* self) {
 
 void _socket_socket__close(PikaObj* self) {
     int sockfd = obj_getInt(self, "sockfd");
-#ifdef __linux__
-    close(sockfd);
-#endif
+    __platform_close(sockfd);
 }
 
 void _socket_socket__send(PikaObj* self, Arg* data) {
@@ -44,9 +123,7 @@ void _socket_socket__send(PikaObj* self, Arg* data) {
 
     int sockfd = obj_getInt(self, "sockfd");
     int ret = 0;
-#ifdef __linux__
-    ret = send(sockfd, data_send, len, 0);
-#endif
+    ret = __platform_send(sockfd, data_send, len, 0);
     if (ret < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         __platform_printf("send error\n");
@@ -59,10 +136,8 @@ void _socket_socket__accept(PikaObj* self) {
     int client_sockfd = 0;
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
-#ifdef __linux__
-    client_sockfd =
-        accept(sockfd, (struct sockaddr*)&client_addr, &client_addr_len);
-#endif
+    client_sockfd = __platform_accept(sockfd, (struct sockaddr*)&client_addr,
+                                      &client_addr_len);
     if (client_sockfd < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         __platform_printf("accept error\n");
@@ -77,11 +152,9 @@ char* _socket_socket__recv(PikaObj* self, int num) {
     int ret = 0;
     char* data = NULL;
     uint8_t* data_recv = NULL;
-#ifdef __linux__
     obj_setBytes(self, "_recv_data", NULL, num);
     data_recv = obj_getBytes(self, "_recv_data");
-    ret = recv(sockfd, data_recv, num, 0);
-#endif
+    ret = __platform_recv(sockfd, data_recv, num, 0);
     if (ret < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         __platform_printf("recv error\n");
@@ -93,9 +166,7 @@ char* _socket_socket__recv(PikaObj* self, int num) {
 
 void _socket_socket__listen(PikaObj* self, int num) {
     int sockfd = obj_getInt(self, "sockfd");
-#ifdef __linux__
-    listen(sockfd, num);
-#endif
+    __platform_listen(sockfd, num);
 }
 
 void _socket_socket__connect(PikaObj* self, char* host, int port) {
@@ -104,9 +175,8 @@ void _socket_socket__connect(PikaObj* self, char* host, int port) {
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = inet_addr(host);
-#ifdef __linux__
-    connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
-#endif
+    __platform_connect(sockfd, (struct sockaddr*)&server_addr,
+                       sizeof(server_addr));
 }
 
 void _socket_socket__bind(PikaObj* self, char* host, int port) {
@@ -115,16 +185,13 @@ void _socket_socket__bind(PikaObj* self, char* host, int port) {
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = inet_addr(host);
-#ifdef __linux__
-    bind(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
-#endif
+    __platform_bind(sockfd, (struct sockaddr*)&server_addr,
+                    sizeof(server_addr));
 }
 
-char* _socket_socket__gethostname(PikaObj* self) {
+char* _socket__gethostname(PikaObj* self) {
     char hostname_buff[128] = {0};
     char* hostname = (char*)hostname_buff;
-#ifdef __linux__
-    gethostname(hostname_buff, 128);
-#endif
-    return hostname;
+    __platform_gethostname(hostname_buff, 128);
+    return obj_cacheStr(self, hostname);
 }
