@@ -60,7 +60,8 @@ releases = [
   "v1.10.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
   "v1.10.1 1578eacdea69766dcebc2017a99c4fade19ef53f",
   "v1.10.2 d3669ee95de98eb85e6a264aa28825ce7a011a11",
-  "v1.10.3 11088f6b4ba3d5b545fe4bfdc8c27ab4fbe01936"
+  "v1.10.3 11088f6b4ba3d5b545fe4bfdc8c27ab4fbe01936",
+  "v1.10.4 f09ea25237cd35a27fd071198ff771c8b4a088ad"
 ]
 
 [[packages]]
@@ -113,7 +114,8 @@ releases = [
   "v1.10.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
   "v1.10.1 1578eacdea69766dcebc2017a99c4fade19ef53f",
   "v1.10.2 d3669ee95de98eb85e6a264aa28825ce7a011a11",
-  "v1.10.3 11088f6b4ba3d5b545fe4bfdc8c27ab4fbe01936"
+  "v1.10.3 11088f6b4ba3d5b545fe4bfdc8c27ab4fbe01936",
+  "v1.10.4 f09ea25237cd35a27fd071198ff771c8b4a088ad"
 ]
 
 [[packages]]
@@ -135,7 +137,8 @@ releases = [
   "v1.9.0 0892f1d426e3d69daaff1251d8e45d2ef60d1ad4",
   "v1.10.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
   "v1.10.2 d3669ee95de98eb85e6a264aa28825ce7a011a11",
-  "v1.10.3 11088f6b4ba3d5b545fe4bfdc8c27ab4fbe01936"
+  "v1.10.3 11088f6b4ba3d5b545fe4bfdc8c27ab4fbe01936",
+  "v1.10.4 f09ea25237cd35a27fd071198ff771c8b4a088ad"
 ]
 
 [[packages]]
@@ -159,7 +162,7 @@ releases = [ "v0.1.0 cd6dfbbb714228e7e0f147515d58450644e7dadf" ]
 
 [[packages]]
 name = "socket"
-releases = [ "v0.1.0 3d97469e254c501683100c46a6691da499316078" ]
+releases = [ "v0.1.0 f09ea25237cd35a27fd071198ff771c8b4a088ad" ]
 
 [[packages]]
 name = "random"
