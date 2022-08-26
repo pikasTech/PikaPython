@@ -61,25 +61,25 @@ Arg* PikaStdDevice_IIC_readBytes(PikaObj* self, int addr, int length) {
 }
 
 void PikaStdDevice_IIC_platformWrite(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_IIC_platformEnable(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_IIC_platformDisable(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_IIC_platformRead(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_IIC_platformReadBytes(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_IIC_platformWriteBytes(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }

@@ -48,23 +48,23 @@ void PikaStdDevice_UART_writeBytes(PikaObj *self, uint8_t* data, int length){
 }
 
 void PikaStdDevice_UART_platformEnable(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 void PikaStdDevice_UART_platformRead(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 void PikaStdDevice_UART_platformWrite(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_UART_platformDisable(PikaObj *self){
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_UART_platformReadBytes(PikaObj *self){
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_UART_platformWriteBytes(PikaObj *self){
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }

@@ -80,33 +80,33 @@ void PikaStdDevice_GPIO_setPin(PikaObj* self, char* pinName) {
 }
 
 void PikaStdDevice_GPIO_platformDisable(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_GPIO_platformEnable(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_GPIO_platformLow(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_GPIO_platformHigh(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_GPIO_platformSetMode(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_GPIO_platformOff(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_GPIO_platformOn(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_GPIO_platformRead(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }

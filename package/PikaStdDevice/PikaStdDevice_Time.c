@@ -13,7 +13,7 @@ void PikaStdDevice_Time_sleep_ms(PikaObj* self, int ms) {
 #elif defined(_WIN32)
     Sleep(ms);
 #else
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 #endif
 }
 void PikaStdDevice_Time_sleep_s(PikaObj* self, int s) {
@@ -22,7 +22,7 @@ void PikaStdDevice_Time_sleep_s(PikaObj* self, int s) {
 #elif defined(_WIN32)
     Sleep(s * 1000);
 #else
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 #endif
 }
 

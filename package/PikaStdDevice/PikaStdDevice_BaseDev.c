@@ -26,5 +26,5 @@ void PikaStdDevice_BaseDev_addEventCallBack(PikaObj* self, Arg* eventCallBack) {
 }
 
 void PikaStdDevice_BaseDev_platformGetEventId(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }

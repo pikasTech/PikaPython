@@ -44,17 +44,17 @@ int PikaStdDevice_PWM_getFrequency(PikaObj* self) {
 }
 
 void PikaStdDevice_PWM_platformEnable(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 void PikaStdDevice_PWM_platformSetDuty(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 void PikaStdDevice_PWM_platformSetFrequency(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_PWM_platformDisable(PikaObj *self){
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 char* PikaStdDevice_PWM_getName(PikaObj* self) {

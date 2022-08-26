@@ -27,13 +27,13 @@ void PikaStdDevice_ADC_setPin(PikaObj* self, char* pin) {
 }
 
 void PikaStdDevice_ADC_platformEnable(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_ADC_platformDisable(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_ADC_platformRead(PikaObj* self) {
-    ABSTRACT_METHOD_DECLARE();
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
