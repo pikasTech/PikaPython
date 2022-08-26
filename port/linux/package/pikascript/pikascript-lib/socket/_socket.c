@@ -2,9 +2,10 @@
 #include "_socket_socket.h"
 #ifdef __linux__
 #include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 #include <unistd.h>
+#else
+/* you need to implement this for your platform */
+#include "__platform_socket.h"
 #endif
 
 PIKA_WEAK int __platform_socket(int __domain, int __type, int __protocol) {

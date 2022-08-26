@@ -14,6 +14,7 @@
         "types.h": "c",
         "_socket.h": "c",
         "random.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "inet.h": "c"
     }
 }
