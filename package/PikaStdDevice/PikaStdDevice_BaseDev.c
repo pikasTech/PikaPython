@@ -3,6 +3,10 @@
 #include "PikaObj.h"
 #include "dataStrs.h"
 
+#if !(PIKASCRIPT_VERSION_NUM >= PIKASCRIPT_VERSION_TO_NUM(1, 10, 4))
+#error "require pikascript kernal version >= v1.10.4"
+#endif
+
 PikaEventListener* g_pika_device_event_listener;
 
 void PikaStdDevice_BaseDev_addEventCallBack(PikaObj* self, Arg* eventCallBack) {

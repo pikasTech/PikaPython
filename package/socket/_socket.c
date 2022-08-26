@@ -8,6 +8,10 @@
 #include "__platform_socket.h"
 #endif
 
+#if !(PIKASCRIPT_VERSION_NUM >= PIKASCRIPT_VERSION_TO_NUM(1, 10, 4))
+#error "require pikascript kernal version >= v1.10.4"
+#endif
+
 PIKA_WEAK int __platform_socket(int __domain, int __type, int __protocol) {
 #ifdef __linux__
     return socket(__domain, __type, __protocol);
