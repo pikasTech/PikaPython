@@ -147,21 +147,19 @@ void _socket_socket__accept(PikaObj* self) {
     obj_setStr(self, "client_addr", inet_ntoa(client_addr.sin_addr));
 }
 
-char* _socket_socket__recv(PikaObj* self, int num) {
+Arg* _socket_socket__recv(PikaObj* self, int num) {
     int sockfd = obj_getInt(self, "sockfd");
     int ret = 0;
-    char* data = NULL;
     uint8_t* data_recv = NULL;
-    obj_setBytes(self, "_recv_data", NULL, num);
-    data_recv = obj_getBytes(self, "_recv_data");
+    Arg* res = arg_newBytes(NULL, num);
+    data_recv = arg_getBytes(res);
     ret = __platform_recv(sockfd, data_recv, num, 0);
     if (ret < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         __platform_printf("recv error\n");
         return NULL;
     }
-    data = (char*)data_recv;
-    return data;
+    return res;
 }
 
 void _socket_socket__listen(PikaObj* self, int num) {
@@ -185,8 +183,13 @@ void _socket_socket__bind(PikaObj* self, char* host, int port) {
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = inet_addr(host);
-    __platform_bind(sockfd, (struct sockaddr*)&server_addr,
-                    sizeof(server_addr));
+    int res = __platform_bind(sockfd, (struct sockaddr*)&server_addr,
+                              sizeof(server_addr));
+    if (res < 0) {
+        obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
+        __platform_printf("bind error\n");
+        return;
+    }
 }
 
 char* _socket__gethostname(PikaObj* self) {

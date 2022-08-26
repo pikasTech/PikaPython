@@ -17,6 +17,7 @@ import PikaCV
 import binascii
 import unittest
 import socket
+import random
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')

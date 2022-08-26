@@ -12,6 +12,8 @@
         "system_error": "c",
         "unistd.h": "c",
         "types.h": "c",
-        "_socket.h": "c"
+        "_socket.h": "c",
+        "random.h": "c",
+        "cstdlib": "c"
     }
 }

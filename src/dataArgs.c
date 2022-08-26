@@ -699,3 +699,8 @@ PikaTuple* args_getTuple(Args* self, char* name) {
     PikaObj* tuple_obj = args_getPtr(self, name);
     return obj_getPtr(tuple_obj, "list");
 }
+
+char* args_cacheStr(Args* self, char* str){
+    args_setStr(self, "__str_cache", str);
+    return args_getStr(self, "__str_cache");
+}

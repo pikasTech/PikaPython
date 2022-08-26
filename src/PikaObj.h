@@ -286,7 +286,7 @@ PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name);
 NewFun obj_getClass(PikaObj* obj);
 
 void pks_printVersion(void);
-void pks_getVersion(char *buff);
+void pks_getVersion(char* buff);
 void* obj_getStruct(PikaObj* self, char* name);
 
 #define obj_refcntDec(self) (((self)->refcnt--))
@@ -300,5 +300,12 @@ void* obj_getStruct(PikaObj* self, char* name);
     obj_setErrorCode(self, 1);                                            \
     __platform_printf("Error: abstract method `%s()` need override.\r\n", \
                       __FUNCTION__)
+
+#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(x)                            \
+    __platform_printf("Error: weak function `%s()` need override.\r\n", \
+                      __FUNCTION__);                                    \
+    while (1)
+
+char* obj_cacheStr(PikaObj* self, char* str);
 
 #endif

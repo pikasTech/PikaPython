@@ -11,7 +11,7 @@ class socket(_socket.socket):
     sockfd = 0
     client_sockfd = 0
     client_addr = ''
-    proto = 0
+    protocol = 0
 
     def __init__(self, *vars):
         if len(vars) > 0:

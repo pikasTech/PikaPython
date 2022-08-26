@@ -187,5 +187,6 @@ PikaTuple* New_tuple(void);
 PikaTuple* args_getTuple(Args* self, char* name);
 
 char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list);
+char* args_cacheStr(Args* self, char* str);
 
 #endif
