@@ -3,8 +3,8 @@
 #include "PikaObj.h"
 #include "dataStrs.h"
 
-#if !(PIKASCRIPT_VERSION_NUM >= PIKASCRIPT_VERSION_TO_NUM(1, 10, 4))
-#error "require pikascript kernal version >= v1.10.4"
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 10, 4)
+#error "This library requires PikaScript version 1.10.4 or higher"
 #endif
 
 PikaEventListener* g_pika_device_event_listener;

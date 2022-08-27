@@ -315,5 +315,7 @@ char* obj_cacheStr(PikaObj* self, char* str);
     PIKASCRIPT_VERSION_TO_NUM(PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR, \
                               PIKA_VERSION_MICRO)
 
+#define PIKASCRIPT_VERSION_REQUIRE_MINIMUN(majer, minor, micro) \
+    (PIKASCRIPT_VERSION_NUM >= PIKASCRIPT_VERSION_TO_NUM(majer, minor, micro))
 
 #endif
