@@ -4,13 +4,22 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #else
-/* you need to implement this for your platform */
+/*
+    You need to create the __platform_socket.h for your platform.
+    For example:
+    You can #include "lwip/socket.h" in the __platform_socket.h
+*/
 #include "__platform_socket.h"
 #endif
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 10, 4)
 #error "This library requires PikaScript version 1.10.4 or higher"
 #endif
+
+/*
+    The functinos start with PIKA_WEAK are weak functions,
+    you need to override them in your platform.
+*/
 
 PIKA_WEAK int __platform_socket(int __domain, int __type, int __protocol) {
 #ifdef __linux__
