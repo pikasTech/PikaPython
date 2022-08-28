@@ -61,12 +61,12 @@ typedef union {
     uint8_t* buffer;
 } _arg_union;
 struct Arg {
-    _arg_union _;
-    uint32_t size;
-    uint8_t type;
-    PIKA_BOOL serialized;
-    Hash name_hash;
-    uint8_t content[];
+    _arg_union _;       // 32/64 bit
+    uint32_t size;      // 32 bit
+    uint8_t type;       // 8 bit
+    uint32_t flag;      //
+    Hash name_hash;     // 32bit
+    uint8_t content[];  // n bit
 };
 
 Arg* arg_getNext(Arg* self);

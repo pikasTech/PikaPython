@@ -4000,3 +4000,23 @@ TEST(parser, issues_I5OJQB) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+
+TEST(parser, keyword1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "test(a=1, b ='test')";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 NUM 1\n"
+                 "1 OUT a\n"
+                 "1 STR test\n"
+                 "1 OUT b\n"
+                 "0 RUN test\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
