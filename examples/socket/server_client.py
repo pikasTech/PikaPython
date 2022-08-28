@@ -5,7 +5,7 @@ from PikaStdData import ByteArray
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = "127.0.0.1"
-port = 9999 + random.randint(0, 100)
+port = 9999 + random.randint(0, 1000)
 print("port:", port)
 server.bind((host, port))
 server.listen(5)
