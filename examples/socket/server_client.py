@@ -17,13 +17,13 @@ res = server.accept()
 accept = res[0]
 addr = res[1]
 
-print("recv from client： %s" % str(addr))
+print("recv from client: %s" % str(addr))
 
 client.send(String("send test from client").encode())
-print("server recv：", ByteArray(accept.recv(1024)).decode())
+print("server recv:", ByteArray(accept.recv(1024)).decode())
 
 accept.send(String("send test from server").encode())
-print("client recv：", ByteArray(client.recv(1024)).decode())
+print("client recv:", ByteArray(client.recv(1024)).decode())
 
 accept.close()
 client.close()
