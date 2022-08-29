@@ -1,2 +1,2 @@
-cd pikascript && python3 makepdsc.py
+cd pikascript && python makepdsc.py
 cd ..
