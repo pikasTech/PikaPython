@@ -16,6 +16,8 @@
         "random.h": "c",
         "cstdlib": "c",
         "inet.h": "c",
-        "re.h": "c"
+        "re.h": "c",
+        "cre.h": "c",
+        "pcre.h": "c"
     }
 }

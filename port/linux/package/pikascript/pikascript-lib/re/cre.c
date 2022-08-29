@@ -304,10 +304,12 @@ int **re_searchall2(pcre *re, const char *s, int len, int *out_number, int *out_
 				*out_vec_number = group_n;
 			group_n *= 3;
 		}
-		if (!vec)
+		if (!vec){
 			goto e_er;
+		}
+		int rc;
 	match:
-		int rc = pcre_exec(re, NULL, s, len, start_offset, 0, vec, group_n);
+		rc = pcre_exec(re, NULL, s, len, start_offset, 0, vec, group_n);
 		if (rc == PCRE_ERROR_NOMATCH)
 		{
 			if (out_number)
