@@ -57,8 +57,7 @@ static Arg* arg_init_hash(Hash nameHash,
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
-    arg_setSerialized(self, PIKA_TRUE);
-    arg_setIsKeyword(self, PIKA_FALSE);
+    self->serialized = PIKA_TRUE;
     __platform_memset(arg_getContent(self), 0,
                       aline_by(size, sizeof(uint32_t)));
     if (NULL != content) {
@@ -82,8 +81,7 @@ void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
     self->size = size;
     self->type = ARG_TYPE_UNDEF;
     self->name_hash = 0;
-    arg_setSerialized(self, PIKA_FALSE);
-    arg_setIsKeyword(self, PIKA_FALSE);
+    self->serialized = PIKA_FALSE;
 }
 
 uint32_t arg_totleSize(Arg* self) {
@@ -341,7 +339,7 @@ Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
     if (ARG_TYPE_OBJECT == arg_type) {
         obj_refcntInc((PikaObj*)arg_getPtr(arg_src));
     }
-    arg_setSerialized(arg_dict, PIKA_FALSE);
+    arg_dict->serialized = PIKA_FALSE;
     arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
                               arg_getContentSize(arg_src));
     arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
@@ -425,7 +423,7 @@ void arg_deinit(Arg* self) {
     }
     /* deinit arg pointed heap */
     arg_deinitHeap(self);
-    if (!arg_getSerialized(self)) {
+    if (!self->serialized) {
         return;
     }
     /* free the ref */

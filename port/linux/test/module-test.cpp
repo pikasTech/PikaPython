@@ -138,7 +138,7 @@ TEST(module, import_as_issue1) {
 }
 #endif
 
-#if PIKA_SYNTAX_LEVEL==PIKA_SYNTAX_LEVEL_MAXIMAL
+#if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
 TEST(unittest, test1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -160,7 +160,7 @@ TEST(unittest, test1) {
 }
 #endif
 
-#if PIKA_SYNTAX_LEVEL==PIKA_SYNTAX_LEVEL_MAXIMAL
+#if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
 TEST(unittest, test2) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -216,3 +216,95 @@ TEST(socket, server_client) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+#if !PIKA_NANO_ENABLE
+TEST(re, match) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/re/match.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[3], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[2],
+                 "matchObj.group(0) :  Cats are smarter than dogs\r\n");
+    EXPECT_STREQ(log_buff[1], "matchObj.group(1) :  Cats\r\n");
+    EXPECT_STREQ(log_buff[0], "matchObj.group(2) :  smarter\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if !PIKA_NANO_ENABLE
+TEST(re, search){
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/re/search.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1], "[0, 3]\r\n");
+    EXPECT_STREQ(log_buff[0], "[11, 14]\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if !PIKA_NANO_ENABLE
+TEST(re, sub){
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/re/sub.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1], "the phone number is:  2004-959-559 \r\n");
+    EXPECT_STREQ(log_buff[0], "the phone number is:  2004959559\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+
+#if !PIKA_NANO_ENABLE
+TEST(re, findall) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/re/findall.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1],
+                 "[['2020-1-1', '2020', '1', '1'], ['2022-12-22', '2022', "
+                 "'12', '22'], ['2018-3-31', '2018', '3', '31']]\r\n");
+    EXPECT_STREQ(
+        log_buff[0],
+        "date: 2020, 2022, 2018. Wrong format: 2031-13-31, 2032-12-33 ...\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+

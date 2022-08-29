@@ -15,6 +15,7 @@
         "_socket.h": "c",
         "random.h": "c",
         "cstdlib": "c",
-        "inet.h": "c"
+        "inet.h": "c",
+        "re.h": "c"
     }
 }

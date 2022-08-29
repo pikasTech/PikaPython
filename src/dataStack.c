@@ -74,14 +74,14 @@ void stack_pushPyload(Stack* stack, Arg* content, size_t size) {
         while (1) {
         }
     }
-    if (arg_getSerialized(content)) {
+    if (content->serialized) {
         __platform_memcpy(stack->sp, content, size);
     } else {
         __platform_memcpy(stack->sp, content, sizeof(Arg));
         __platform_memcpy(stack->sp + sizeof(Arg), content->_.buffer,
                           size - sizeof(Arg));
         /* transfer to serialized form */
-        arg_setSerialized((Arg*)stack->sp, PIKA_TRUE);
+        ((Arg*)stack->sp)->serialized = PIKA_TRUE;
     }
     stack->sp += size;
 }
@@ -116,7 +116,7 @@ static int32_t _stack_pushArg(Stack* stack, Arg* arg, PIKA_BOOL is_alloc) {
 
 int32_t stack_pushArg(Stack* stack, Arg* arg) {
     pika_assert(arg != NULL);
-    if (arg_getSerialized(arg)) {
+    if (arg->serialized) {
         return _stack_pushArg(stack, arg, PIKA_TRUE);
     }
     return _stack_pushArg(stack, arg, PIKA_FALSE);
