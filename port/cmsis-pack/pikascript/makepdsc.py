@@ -1,4 +1,4 @@
-from copy import copy
+import shutil
 import os
 
 version = "1.10.3"
@@ -94,4 +94,4 @@ os.remove('kernal.xml')
 os.remove('lib.xml')
 os.remove('lib_lvgl.xml')
 # copy .pdsc to ..
-os.system('cp PikaTech.PikaScript.pdsc ..')
+shutil.copy('PikaTech.PikaScript.pdsc', '..')
