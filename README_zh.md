@@ -305,7 +305,6 @@ mem = PikaStdLib.MemChecker()
 io1 = STM32G0.GPIO()
 time = STM32G0.Time()
 
-io1.init()
 io1.setPin('PA8')
 io1.setMode('out')
 io1.enable()
@@ -335,7 +334,6 @@ import STM32G0
 
 time = STM32G0.Time()
 uart = STM32G0.UART()
-uart.init()
 uart.setId(1)
 uart.setBaudRate(115200)
 uart.enable()
@@ -359,7 +357,6 @@ import STM32G0
 time = STM32G0.Time()
 adc1 = STM32G0.ADC()
 
-adc1.init()
 adc1.setPin('PA1')
 adc1.enable()
 
