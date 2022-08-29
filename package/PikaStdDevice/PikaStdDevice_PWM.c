@@ -44,21 +44,17 @@ int PikaStdDevice_PWM_getFrequency(PikaObj* self) {
 }
 
 void PikaStdDevice_PWM_platformEnable(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 void PikaStdDevice_PWM_platformSetDuty(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 void PikaStdDevice_PWM_platformSetFrequency(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_PWM_platformDisable(PikaObj *self){
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 char* PikaStdDevice_PWM_getName(PikaObj* self) {

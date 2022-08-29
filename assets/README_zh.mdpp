@@ -92,7 +92,9 @@ http://pikascript.com
 
 [bsp](../../tree/master/bsp) - 裸机芯片/板卡支持
 
-[port](../../tree/master/port) - 操作系统支持
+[port](../../tree/master/port) - 操作系统和包管理器支持
+
+[test](../../tree/master/port/linux/test) - 单元测试
 
 [document](../../tree/master/document) - 开发文档
 

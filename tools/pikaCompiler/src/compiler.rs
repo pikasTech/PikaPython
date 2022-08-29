@@ -1,4 +1,5 @@
 use crate::class_info::ClassInfo;
+use crate::decorator::Decorator;
 // use crate::my_string;
 // use crate::script::Script;
 use std::collections::BTreeMap;
@@ -20,9 +21,10 @@ pub struct Compiler {
     pub dist_path: String,
     pub source_path: String,
     pub class_list: BTreeMap<String, ClassInfo>,
-    pub class_now_name: Option<String>,
-    pub package_now_name: Option<String>,
+    pub class_name_now: Option<String>,
+    pub package_name_now: Option<String>,
     pub compiled_list: LinkedList<String>,
+    pub decorator_list_now: Vec<Decorator>,
 }
 
 impl Compiler {
@@ -30,12 +32,26 @@ impl Compiler {
         let compiler = Compiler {
             dist_path: dist_path.clone(),
             source_path: source_path.clone(),
-            class_now_name: None,
+            class_name_now: None,
             class_list: BTreeMap::new(),
-            package_now_name: None,
+            package_name_now: None,
             compiled_list: LinkedList::new(),
+            decorator_list_now: Vec::new(),
         };
         return compiler;
+    }
+
+    pub fn clean_path(&mut self) {
+        /* create path if not exist */
+        if !fs::metadata(&self.dist_path).is_ok() {
+            fs::create_dir_all(&self.dist_path).unwrap();
+        }
+        /* clean the path */
+        let file_list = fs::read_dir(&self.dist_path).unwrap();
+        for file in file_list {
+            let file_path = file.unwrap().path();
+            fs::remove_file(file_path).unwrap();
+        }
     }
 
     pub fn analyse_py_line(mut compiler: Compiler, line: &String, is_top_pkg: bool) -> Compiler {
@@ -61,7 +77,7 @@ impl Compiler {
                 .unwrap(),
             ),
         };
-        compiler.class_now_name = Some(class_name.clone());
+        compiler.class_name_now = Some(class_name.clone());
 
         if line.starts_with("import ") || line.starts_with("from ") {
             let tokens: Vec<&str> = line.split(' ').collect();
@@ -188,10 +204,7 @@ impl Compiler {
             /* print info */
             match suffix {
                 "py" => {
-                    println!(
-                        "  scaning {}{}.{}...",
-                        self.source_path, file_name, suffix
-                    );
+                    println!("  scaning {}{}.{}...", self.source_path, file_name, suffix);
                 }
                 "pyi" => {
                     println!(
@@ -232,7 +245,7 @@ impl Compiler {
             self.class_list
                 .entry(package_name.clone())
                 .or_insert(package_now);
-            self.package_now_name = Some(package_name.clone());
+            self.package_name_now = Some(package_name.clone());
         }
 
         let lines: Vec<&str> = file_str.split('\n').collect();
@@ -270,6 +283,16 @@ impl Compiler {
             return compiler;
         }
 
+        if line.starts_with("@") || line.starts_with("    @") {
+            let stmt = line.replace("@", "").replace(" ", "");
+            let decorator_this = match Decorator::new(stmt) {
+                Some(s) => s,
+                None => return compiler,
+            };
+            compiler.decorator_list_now.push(decorator_this);
+            return compiler;
+        }
+
         /* analyse class stmt */
         if line.starts_with("class") {
             /* create a new class */
@@ -284,7 +307,7 @@ impl Compiler {
                 .class_list
                 .entry(class_name.clone())
                 .or_insert(class_now);
-            compiler.class_now_name = Some(class_name.clone());
+            compiler.class_name_now = Some(class_name.clone());
 
             /* the class in to package can be import in runtime */
             if is_top_pkg {
@@ -292,13 +315,17 @@ impl Compiler {
                     Solve the class as method of top package
                         the package is a class in main.py and the class is a method of the class in main.py.
                 */
-                let package_now_name = match compiler.package_now_name.clone() {
+                let package_now_name = match compiler.package_name_now.clone() {
                     Some(s) => s,
                     None => return compiler,
                 };
                 let package_now = compiler.class_list.get_mut(&package_now_name).unwrap();
                 let package_new_object_method = format!("def {}()->any:", class_name_without_file);
-                package_now.push_constructor(package_new_object_method);
+                package_now.push_constructor(
+                    package_new_object_method,
+                    compiler.decorator_list_now.clone(),
+                );
+                compiler.decorator_list_now.clear();
             }
 
             return compiler;
@@ -306,12 +333,13 @@ impl Compiler {
 
         /* analyse function define */
         if line.starts_with("def ") {
-            let package_now_name = match compiler.package_now_name.clone() {
+            let package_now_name = match compiler.package_name_now.clone() {
                 Some(s) => s,
                 None => return compiler,
             };
             let package_now = compiler.class_list.get_mut(&package_now_name).unwrap();
-            package_now.push_method(line);
+            package_now.push_method(line, compiler.decorator_list_now.clone());
+            compiler.decorator_list_now.clear();
             return compiler;
         }
 
@@ -320,9 +348,10 @@ impl Compiler {
             let line = line.strip_prefix("    ").unwrap().to_string();
             let class_now = compiler
                 .class_list
-                .get_mut(&compiler.class_now_name.clone().unwrap())
+                .get_mut(&compiler.class_name_now.clone().unwrap())
                 .unwrap();
-            class_now.push_method(line);
+            class_now.push_method(line, compiler.decorator_list_now.clone());
+            compiler.decorator_list_now.clear();
             return compiler;
         }
 
@@ -334,7 +363,7 @@ impl Compiler {
             let line = line.strip_prefix("    ").unwrap().to_string();
             let class_now = compiler
                 .class_list
-                .get_mut(&compiler.class_now_name.clone().unwrap())
+                .get_mut(&compiler.class_name_now.clone().unwrap())
                 .unwrap();
             class_now.push_object(line, &file_name);
             return compiler;

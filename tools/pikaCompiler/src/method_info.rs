@@ -1,4 +1,5 @@
 use crate::arg_list::ArgList;
+use crate::decorator::Decorator;
 use crate::my_string;
 use crate::py_type::PyType;
 
@@ -9,6 +10,7 @@ pub struct MethodInfo {
     pub arg_list: Option<ArgList>,
     pub return_type: Option<PyType>,
     pub is_constructor: bool,
+    pub decorator_list: Vec<Decorator>,
 }
 
 impl MethodInfo {
@@ -37,6 +39,7 @@ impl MethodInfo {
             return_type: return_type,
             class_name: class_name.clone(),
             is_constructor: is_constructor,
+            decorator_list: Vec::new(),
         };
         return Some(method_info);
     }
@@ -53,12 +56,33 @@ impl MethodInfo {
         if self.is_constructor {
             class_define_method = String::from("class_defineConstructor");
         }
-        let define = format!(
-            "    {}(self, \"{}({}){}\", {}_{}Method);\n",
-            class_define_method, self.name, arg_list, return_token, self.class_name, self.name
+
+        let mut define = String::from("");
+
+        for decorator in &self.decorator_list {
+            define.push_str(decorator.gen_before().as_str());
+        }
+
+        define.push_str(
+            format!(
+                "    {}(self, \"{}({}){}\", {}_{}Method);\n",
+                class_define_method, self.name, arg_list, return_token, self.class_name, self.name
+            )
+            .as_str(),
         );
+
+        let mut decorator_list_reverse = self.decorator_list.clone();
+        decorator_list_reverse.reverse();
+        for decorator in decorator_list_reverse {
+            define.push_str(decorator.gen_after().as_str());
+        }
+
         return define;
     }
+    pub fn set_decorator_list(&mut self, decorator_list: Vec<Decorator>) {
+        self.decorator_list = decorator_list;
+    }
+
     pub fn method_api_name(&self) -> String {
         return format!(
             "void {}_{}Method(PikaObj *self, Args *args)",
@@ -87,9 +111,7 @@ impl MethodInfo {
             None => "".to_string(),
         };
         let return_impl = match &self.return_type {
-            Some(x) => {
-                x.return_fn()
-            },
+            Some(x) => x.return_fn(),
             None => "".to_string(),
         };
         let return_type_in_c = match &self.return_type {

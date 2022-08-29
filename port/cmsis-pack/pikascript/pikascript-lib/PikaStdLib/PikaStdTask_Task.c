@@ -213,5 +213,5 @@ void PikaStdTask_Task_run_until_ms(PikaObj* self, int until_ms) {
 
 void PikaStdTask_Task_platformGetTick(PikaObj* self) {
     obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    __platform_printf("Error: abstract method %s need implament", __FUNCTION__);
 }

@@ -94,6 +94,7 @@ typedef enum {
     PIKA_RES_ERR_UNKNOWN,
     PIKA_RES_ERR_SYNTAX_ERROR,
     PIKA_RES_ERR_IO,
+    PIKA_RES_ERR_ASSERT,
 } PIKA_RES;
 
 /* clang-format off */
@@ -157,5 +158,7 @@ long __platform_ftell(FILE* stream);
 
 /* error */
 void __platform_error_handle(void);
+
+void __pks_hook_instruct(void);
 
 #endif

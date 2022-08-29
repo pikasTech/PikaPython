@@ -52,7 +52,7 @@ void* pikaMalloc(uint32_t size) {
     __platform_enable_irq_handle();
     if (NULL == mem) {
         __platform_printf(
-            "[error]: No heap space! Please reset the device.\r\n");
+            "Error: No heap space! Please reset the device.\r\n");
         while (1) {
         }
     }

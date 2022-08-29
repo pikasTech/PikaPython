@@ -1,3 +1,4 @@
+use crate::decorator::Decorator;
 use crate::import_info::ImportInfo;
 use crate::method_info::MethodInfo;
 use crate::my_string;
@@ -68,21 +69,28 @@ impl ClassInfo {
         };
         return Some(new_class_info);
     }
-    fn __push_method_or_constructor(&mut self, method_define: String, is_constructor: bool) {
-        let method_info =
+
+    fn __push_method_or_constructor(
+        &mut self,
+        method_define: String,
+        is_constructor: bool,
+        decorator_list: Vec<Decorator>,
+    ) {
+        let mut method_info =
             match MethodInfo::new(&self.this_class_name, method_define, is_constructor) {
                 Some(method) => method,
                 None => return,
             };
+        method_info.set_decorator_list(decorator_list);
         self.method_list
             .entry(method_info.name.clone())
             .or_insert(method_info);
     }
-    pub fn push_method(&mut self, method_define: String) {
-        return self.__push_method_or_constructor(method_define, false);
+    pub fn push_method(&mut self, method_define: String, decorator_list: Vec<Decorator>) {
+        return self.__push_method_or_constructor(method_define, false, decorator_list);
     }
-    pub fn push_constructor(&mut self, method_define: String) {
-        return self.__push_method_or_constructor(method_define, true);
+    pub fn push_constructor(&mut self, method_define: String, decorator_list: Vec<Decorator>) {
+        return self.__push_method_or_constructor(method_define, true, decorator_list);
     }
     // pub fn push_import(&mut self, import_define: String, file_name: &String) {
     //     let import_info = match ImportInfo::new(&self.this_class_name, import_define, &file_name) {
@@ -188,9 +196,7 @@ impl ClassInfo {
         new_class_fn.push_str(&new_class_fn_head);
         let derive = format!("    PikaObj *self = New_{}(args);\n", self.super_class_name);
         new_class_fn.push_str(&derive);
-        for (_, import_info) in self.import_list.iter() {
-            new_class_fn.push_str(&import_info.import_fn());
-        }
+
         for (_, object_info) in self.object_list.iter() {
             new_class_fn.push_str(&object_info.new_object_fn());
         }
@@ -214,103 +220,5 @@ impl ClassInfo {
             method_fn_declear.push_str(&method_info.method_impl_declear());
         }
         return method_fn_declear;
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_analyse() {
-        assert_eq!(
-            ClassInfo::new(
-                &String::from("Pkg"),
-                &String::from("class Test(SuperTest):"),
-                false
-            )
-            .unwrap()
-            .this_class_name,
-            "Pkg_Test"
-        );
-        assert_eq!(
-            ClassInfo::new(
-                &String::from("Pkg"),
-                &String::from("class Test(SuperTest):"),
-                false
-            )
-            .unwrap()
-            .super_class_name,
-            "Pkg_SuperTest"
-        );
-    }
-    #[test]
-    fn test_push_method() {
-        let mut class_info = ClassInfo::new(
-            &String::from("Pkg"),
-            &String::from("class Test(SuperTest):"),
-            false,
-        )
-        .unwrap();
-        class_info.push_method(String::from("def test(data: str)-> str:"));
-        assert_eq!(
-            class_info.method_list.get("test").unwrap().class_name,
-            "Pkg_Test"
-        );
-        assert_eq!(class_info.method_list.get("test").unwrap().name, "test");
-        assert_eq!(
-            class_info
-                .method_list
-                .get("test")
-                .as_ref()
-                .unwrap()
-                .return_type
-                .as_ref()
-                .unwrap()
-                .to_string(),
-            "str"
-        );
-        assert_eq!(
-            class_info
-                .method_list
-                .get("test")
-                .as_ref()
-                .unwrap()
-                .arg_list
-                .as_ref()
-                .unwrap()
-                .to_string(),
-            "data:str"
-        );
-    }
-    #[test]
-    fn test_push_object() {
-        let mut class_info = ClassInfo::new(
-            &String::from("Pkg"),
-            &String::from("class Test(SuperTest):"),
-            false,
-        )
-        .unwrap();
-        class_info.push_object(String::from("testObj = TestObj()"), &"Pkg".to_string());
-        assert_eq!(
-            class_info.object_list.get("testObj").unwrap().class_name,
-            "Pkg_Test"
-        );
-        assert_eq!(
-            class_info.object_list.get("testObj").unwrap().name,
-            "testObj"
-        );
-        assert_eq!(
-            class_info
-                .object_list
-                .get("testObj")
-                .unwrap()
-                .import_class_name,
-            "Pkg_TestObj"
-        );
-        assert_eq!(
-            class_info.object_list.get("testObj").unwrap().name,
-            "testObj"
-        );
     }
 }

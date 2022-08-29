@@ -38,7 +38,7 @@ void checker_assertMemFree()
         pikaMemMaxReset();
         return;
     }
-    printf("[Error]: Memory free error.\r\n");
+    printf("Error: Memory free error.\r\n");
     while (1)
         ;
 }

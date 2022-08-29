@@ -76,11 +76,27 @@ struct VMState {
     uint8_t error_code;
     uint8_t line_error_code;
     uint8_t try_error_code;
+    uint32_t ins_cnt;
     PikaObj* lreg[PIKA_REGIST_SIZE];
     PIKA_BOOL ireg[PIKA_REGIST_SIZE];
     TryInfo* try_info;
 };
 
+typedef struct OperatorInfo OperatorInfo;
+struct OperatorInfo {
+    char* opt;
+    ArgType t1;
+    ArgType t2;
+    Arg* a1;
+    Arg* a2;
+    double f1;
+    double f2;
+    int i1;
+    int i2;
+    Arg* res;
+    int num;
+    VMState* vm;
+};
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);

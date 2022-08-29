@@ -3,6 +3,10 @@
 #include "PikaObj.h"
 #include "dataStrs.h"
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 10, 4)
+#error "This library requires PikaScript version 1.10.4 or higher"
+#endif
+
 PikaEventListener* g_pika_device_event_listener;
 
 void PikaStdDevice_BaseDev_addEventCallBack(PikaObj* self, Arg* eventCallBack) {
@@ -26,6 +30,5 @@ void PikaStdDevice_BaseDev_addEventCallBack(PikaObj* self, Arg* eventCallBack) {
 }
 
 void PikaStdDevice_BaseDev_platformGetEventId(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }

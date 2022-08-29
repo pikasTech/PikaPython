@@ -13,3 +13,9 @@ def print(val: any):
 
 def set(argPath: str, val: any):
     pass
+
+class any:
+    pass
+
+def PIKA_C_MACRO_IF(fun: any):
+    pass

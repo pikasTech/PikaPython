@@ -596,6 +596,18 @@ size_t list_getSize(PikaList* self) {
     return args_getInt(&self->super, "top");
 }
 
+void list_reverse(PikaList* self) {
+    int top = list_getSize(self);
+    for (int i = 0; i < top / 2; i++) {
+        Arg* arg_i = arg_copy(list_getArg(self, i));
+        Arg* arg_top = arg_copy(list_getArg(self, top - i - 1));
+        list_setArg(self, i, arg_top);
+        list_setArg(self, top - i - 1, arg_i);
+        arg_deinit(arg_i);
+        arg_deinit(arg_top);
+    }
+}
+
 PikaTuple* New_tuple(void) {
     PikaTuple* self = (PikaTuple*)New_list();
     return self;
@@ -605,6 +617,28 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg) {
     Args buffs = {0};
     char* res = NULL;
     ArgType type = arg_getType(arg);
+    const char* syms[] = {"%s", "%r"};
+    for (size_t i = 0; i < sizeof(syms) / sizeof(char*); i++) {
+        char* sym = (char*)syms[i];
+        if (strstr(fmt, sym)) {
+            if (type == ARG_TYPE_STRING) {
+                fmt = strsReplace(&buffs, fmt, sym, "%s");
+                break;
+            }
+            if (type == ARG_TYPE_INT) {
+                fmt = strsReplace(&buffs, fmt, sym, "%d");
+                break;
+            }
+            if (type == ARG_TYPE_FLOAT) {
+                fmt = strsReplace(&buffs, fmt, sym, "%f");
+                break;
+            }
+            if (type == ARG_TYPE_POINTER) {
+                fmt = strsReplace(&buffs, fmt, sym, "%p");
+                break;
+            }
+        }
+    }
     if (ARG_TYPE_INT == type) {
         int val = arg_getInt(arg);
         res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);
@@ -659,4 +693,9 @@ exit:
     strsDeinit(&buffs);
     arg_deinit(res_buff);
     return res;
+}
+
+PikaTuple* args_getTuple(Args* self, char* name) {
+    PikaObj* tuple_obj = args_getPtr(self, name);
+    return obj_getPtr(tuple_obj, "list");
 }

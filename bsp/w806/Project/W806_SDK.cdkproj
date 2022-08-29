@@ -254,6 +254,13 @@
             <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdTask_Task.c">
               <FileOption/>
             </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdData_ByteArray.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdData_FILEIO.c">
+              <FileOption/>
+            </File>
+            <File Name="pikascript/pikascript-lib/PikaStdLib/PikaStdData_Tuple.c"/>
           </VirtualDirectory>
         </VirtualDirectory>
         <VirtualDirectory Name="pikascript-api">
@@ -474,6 +481,12 @@
             <FileOption/>
           </File>
           <File Name="pikascript/pikascript-api/__asset_pikaModules_py_a.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_Tuple-api.c">
+            <FileOption/>
+          </File>
+          <File Name="pikascript/pikascript-api/PikaStdData_FILEIO-api.c">
             <FileOption/>
           </File>
         </VirtualDirectory>

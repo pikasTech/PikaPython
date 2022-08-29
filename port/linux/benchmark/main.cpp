@@ -64,7 +64,7 @@ static void prime_number_100(benchmark::State& state) {
         pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
         num = obj_getInt(pikaMain, (char*)"num");
         if (1060 != num) {
-            printf("[error]: prime_number_100\r\n");
+            printf("Error: prime_number_100\r\n");
         }
         obj_deinit(pikaMain);
     }
@@ -91,7 +91,7 @@ static void prime_number_100_c(benchmark::State& state) {
             }
         }
         if (1060 != num) {
-            printf("[error]: prime_number_100\r\n");
+            printf("Error: prime_number_100\r\n");
         }
     }
 }

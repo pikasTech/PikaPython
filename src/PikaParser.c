@@ -36,7 +36,7 @@
 /* local head */
 typedef QueueObj AST;
 char* AST_toPikaASM(AST* ast, Args* outBuffs);
-char* Lexer_getTokens(Args* outBuffs, char* stmt);
+char* Lexer_parseLine(Args* outBuffs, char* stmt);
 int32_t AST_deinit(AST* ast);
 char* Parser_linesToAsm(Args* outBuffs, char* multiLine);
 uint8_t Parser_isContainToken(char* tokens,
@@ -138,7 +138,7 @@ char* strsDeleteBetween(Args* buffs_p, char* strIn, char begin, char end) {
 static uint8_t Lexer_isError(char* line) {
     Args buffs = {0};
     uint8_t res = 0; /* not error */
-    char* tokens = Lexer_getTokens(&buffs, line);
+    char* tokens = Lexer_parseLine(&buffs, line);
     if (NULL == tokens) {
         res = 1; /* lex error */
         goto exit;
@@ -216,7 +216,6 @@ static enum StmtType Lexer_matchStmtType(char* right) {
             }
             /* ( <,> | <=> ) + <[> */
             is_get_list = PIKA_TRUE;
-            goto iter_continue;
         }
         if (strEqu(ps.token1.pyload, "[") && ps.iter_index == 1) {
             /* VOID + <[> */
@@ -351,7 +350,7 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
 
 uint8_t Parser_checkIsDirect(char* str) {
     Args buffs = {0};
-    char* tokens = Lexer_getTokens(&buffs, str);
+    char* tokens = Lexer_parseLine(&buffs, str);
     uint8_t res = 0;
     pika_assert(NULL != tokens);
     if (Parser_isContainToken(tokens, TOKEN_operator, "=")) {
@@ -428,7 +427,7 @@ exit:
 
 /* tokens is devided by space */
 /* a token is [TOKENTYPE|(CONTENT)] */
-char* Lexer_getTokens(Args* outBuffs, char* stmt) {
+char* Lexer_parseLine(Args* outBuffs, char* stmt) {
     /* init */
     Arg* tokens_arg = New_arg(NULL);
     tokens_arg = arg_setStr(tokens_arg, "", "");
@@ -444,6 +443,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     uint8_t c6 = 0;
     int32_t symbol_start_index = -1;
     int is_in_string = 0;
+    int is_number = 0;
     char* tokens;
 
     /* process */
@@ -479,6 +479,10 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             c6 = stmt[i + 6];
         }
         if (-1 == symbol_start_index) {
+            is_number = 0;
+            if ((c0 >= '0') && (c0 <= '9')) {
+                is_number = 1;
+            }
             symbol_start_index = i;
         }
 
@@ -539,6 +543,11 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
             ('+' == c0) || ('-' == c0) || ('!' == c0) || ('=' == c0) ||
             ('%' == c0) || ('&' == c0) || ('|' == c0) || ('^' == c0) ||
             ('~' == c0)) {
+            if ('-' == c0 && is_number) {
+                if ((cn1 == 'e') || (cn1 == 'E')) {
+                    continue;
+                }
+            }
             if (('*' == c0) || ('/' == c0)) {
                 /*
                     =, **=, //
@@ -688,7 +697,7 @@ char* Lexer_getTokens(Args* outBuffs, char* stmt) {
         if (' ' == c0) {
             /* not get symbal */
             if (i == symbol_start_index) {
-                symbol_start_index++;
+                symbol_start_index = -1;
             } else {
                 /* already get symbal */
                 tokens_arg =
@@ -753,7 +762,7 @@ static const char operators[][9] = {
 char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args buffs = {0};
     char* operator= NULL;
-    char* tokens = Lexer_getTokens(&buffs, stmt);
+    char* tokens = Lexer_parseLine(&buffs, stmt);
 
     // use parse state foreach to get operator
     for (uint32_t i = 0; i < sizeof(operators) / 9; i++) {
@@ -889,7 +898,7 @@ void Cursor_parse(struct Cursor* ps, char* stmt) {
         ps->result = PIKA_RES_ERR_SYNTAX_ERROR;
         return;
     }
-    ps->tokens = Lexer_getTokens(ps->buffs_p, stmt);
+    ps->tokens = Lexer_parseLine(ps->buffs_p, stmt);
     if (NULL == ps->tokens) {
         ps->result = PIKA_RES_ERR_SYNTAX_ERROR;
         return;
@@ -906,7 +915,6 @@ void Cursor_beforeIter(struct Cursor* ps) {
     ps->last_token = arg_newStr(Parser_popToken(ps->buffs_p, ps->tokens));
 }
 
-#if PIKA_SYNTAX_SLICE_ENABLE
 static void Slice_getPars(Args* outBuffs,
                           char* inner,
                           char** pStart,
@@ -961,10 +969,11 @@ static void Slice_getPars(Args* outBuffs,
     /* clean */
     strsDeinit(&buffs);
 }
-#endif
 
-#if PIKA_SYNTAX_SLICE_ENABLE
-char* Suger_solveLeftBranckets(Args* outBuffs, char* right, char** left_p) {
+char* Suger_solveLeftSlice(Args* outBuffs, char* right, char** left_p) {
+#if !PIKA_SYNTAX_SLICE_ENABLE
+    return right;
+#endif
     /* init objects */
     Args buffs = {0};
     Arg* right_arg = arg_newStr("");
@@ -1066,10 +1075,11 @@ exit:
     strsDeinit(&buffs);
     return right_res;
 }
-#endif
 
-#if PIKA_SYNTAX_FORMAT_ENABLE
 char* Suger_solveFormat(Args* outBuffs, char* right) {
+#if !PIKA_SYNTAX_FORMAT_ENABLE
+    return right;
+#endif
     /* quick skip */
     if (!strIsContain(right, '%')) {
         return right;
@@ -1165,7 +1175,6 @@ char* Suger_solveFormat(Args* outBuffs, char* right) {
     strsDeinit(&buffs);
     return res;
 }
-#endif
 
 uint8_t Parser_solveSelfOperator(Args* outbuffs,
                                  char* stmt,
@@ -1181,7 +1190,7 @@ uint8_t Parser_solveSelfOperator(Args* outbuffs,
     Args buffs = {0};
     char _operator[2] = {0};
     char* operator=(char*) _operator;
-    char* tokens = Lexer_getTokens(&buffs, stmt);
+    char* tokens = Lexer_parseLine(&buffs, stmt);
     uint8_t is_right = 0;
     if (Parser_isContainToken(tokens, TOKEN_operator, "+=")) {
         operator[0] = '+';
@@ -1342,6 +1351,70 @@ char* Parser_popLastSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
     return strsCacheArg(outbuffs, lastStmt);
 }
 
+static void _AST_parse_list(AST* ast, Args* buffs, char* stmt) {
+#if !PIKA_BUILTIN_STRUCT_ENABLE
+    return;
+#endif
+    AST_setThisNode(ast, (char*)"list", "list");
+    char* subStmts = strsCut(buffs, stmt, '[', ']');
+    subStmts = strsAppend(buffs, subStmts, ",");
+    while (1) {
+        char* subStmt = Parser_popSubStmt(buffs, &subStmts, ",");
+        AST_parseSubStmt(ast, subStmt);
+        if (strEqu(subStmts, "")) {
+            break;
+        }
+    }
+    return;
+}
+
+static void _AST_parse_dict(AST* ast, Args* buffs, char* stmt) {
+#if !PIKA_BUILTIN_STRUCT_ENABLE
+    return;
+#endif
+    AST_setThisNode(ast, (char*)"dict", "dict");
+    char* subStmts = strsCut(buffs, stmt, '{', '}');
+    subStmts = strsAppend(buffs, subStmts, ",");
+    while (1) {
+        char* subStmt = Parser_popSubStmt(buffs, &subStmts, ",");
+        char* key = Parser_popSubStmt(buffs, &subStmt, ":");
+        char* value = subStmt;
+        AST_parseSubStmt(ast, key);
+        AST_parseSubStmt(ast, value);
+        if (strEqu(subStmts, "")) {
+            break;
+        }
+    }
+}
+
+static void _AST_parse_slice(AST* ast, Args* buffs, char* stmt) {
+#if !PIKA_SYNTAX_SLICE_ENABLE
+    return;
+#endif
+    AST_setThisNode(ast, (char*)"slice", "slice");
+    stmt = strsCopy(buffs, stmt);
+    char* laststmt = Parser_popLastSubStmt(buffs, &stmt, "[");
+    AST_parseSubStmt(ast, stmt);
+    char* slice_list = strsCut(buffs, laststmt, '[', ']');
+    pika_assert(slice_list != NULL);
+    slice_list = strsAppend(buffs, slice_list, ":");
+    int index = 0;
+    while (1) {
+        char* slice_str = Parser_popSubStmt(buffs, &slice_list, ":");
+        if (index == 0 && strEqu(slice_str, "")) {
+            AST_parseSubStmt(ast, "0");
+        } else if (index == 1 && strEqu(slice_str, "")) {
+            AST_parseSubStmt(ast, "-1");
+        } else {
+            AST_parseSubStmt(ast, slice_str);
+        }
+        index++;
+        if (strEqu("", slice_list)) {
+            break;
+        }
+    }
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args buffs = {0};
     char* assignment = strsGetFirstToken(&buffs, stmt, '(');
@@ -1385,14 +1458,9 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         isLeftExist = Parser_solveSelfOperator(&buffs, stmt, &right, &left);
     }
 
-#if PIKA_SYNTAX_SLICE_ENABLE
     /* solve the [] stmt */
-    right = Suger_solveLeftBranckets(&buffs, right, &left);
-#endif
-
-#if PIKA_SYNTAX_FORMAT_ENABLE
+    right = Suger_solveLeftSlice(&buffs, right, &left);
     right = Suger_solveFormat(&buffs, right);
-#endif
 
     /* set left */
     if (isLeftExist) {
@@ -1418,42 +1486,17 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         goto exit;
     }
 
-#if PIKA_BUILTIN_STRUCT_ENABLE
     /* solve list stmt */
     if (STMT_list == stmtType) {
-        AST_setThisNode(ast, (char*)"list", "list");
-        char* subStmts = strsCut(&buffs, right, '[', ']');
-        subStmts = strsAppend(&buffs, subStmts, ",");
-        while (1) {
-            char* subStmt = Parser_popSubStmt(&buffs, &subStmts, ",");
-            AST_parseSubStmt(ast, subStmt);
-            if (strEqu(subStmts, "")) {
-                break;
-            }
-        }
+        _AST_parse_list(ast, &buffs, right);
         goto exit;
     }
-#endif
 
-#if PIKA_BUILTIN_STRUCT_ENABLE
     /* solve dict stmt */
     if (STMT_dict == stmtType) {
-        AST_setThisNode(ast, (char*)"dict", "dict");
-        char* subStmts = strsCut(&buffs, right, '{', '}');
-        subStmts = strsAppend(&buffs, subStmts, ",");
-        while (1) {
-            char* subStmt = Parser_popSubStmt(&buffs, &subStmts, ",");
-            char* key = Parser_popSubStmt(&buffs, &subStmt, ":");
-            char* value = subStmt;
-            AST_parseSubStmt(ast, key);
-            AST_parseSubStmt(ast, value);
-            if (strEqu(subStmts, "")) {
-                break;
-            }
-        }
+        _AST_parse_dict(ast, &buffs, right);
         goto exit;
     }
-#endif
 
     /* solve method chain */
     if (STMT_chain == stmtType) {
@@ -1464,33 +1507,11 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         goto exit;
     }
 
-#if PIKA_SYNTAX_SLICE_ENABLE
     if (STMT_slice == stmtType) {
         /* solve slice stmt */
-        AST_setThisNode(ast, (char*)"slice", "slice");
-        char* stmt = strsCopy(&buffs, right);
-        char* laststmt = Parser_popLastSubStmt(&buffs, &stmt, "[");
-        AST_parseSubStmt(ast, stmt);
-        char* slice_list = strsCut(&buffs, laststmt, '[', ']');
-        slice_list = strsAppend(&buffs, slice_list, ":");
-        int index = 0;
-        while (1) {
-            char* slice_str = Parser_popSubStmt(&buffs, &slice_list, ":");
-            if (index == 0 && strEqu(slice_str, "")) {
-                AST_parseSubStmt(ast, "0");
-            } else if (index == 1 && strEqu(slice_str, "")) {
-                AST_parseSubStmt(ast, "-1");
-            } else {
-                AST_parseSubStmt(ast, slice_str);
-            }
-            index++;
-            if (strEqu("", slice_list)) {
-                break;
-            }
-        }
+        _AST_parse_slice(ast, &buffs, right);
         goto exit;
     }
-#endif
 
     /* solve method stmt */
     if (STMT_method == stmtType) {
@@ -1864,8 +1885,10 @@ exit:
     return ast;
 }
 
-#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 static char* Suger_import(Args* buffs_p, char* line) {
+#if !PIKA_SYNTAX_IMPORT_EX_ENABLE
+    return line;
+#endif
     Args buffs = {0};
     char* line_out = line;
     char* alias = NULL;
@@ -1907,10 +1930,11 @@ exit:
     strsDeinit(&buffs);
     return line_out;
 }
-#endif
 
-#if PIKA_SYNTAX_IMPORT_EX_ENABLE
 static char* Suger_from(Args* buffs_p, char* line) {
+#if !PIKA_SYNTAX_IMPORT_EX_ENABLE
+    return line;
+#endif
     Args buffs = {0};
     char* line_out = line;
     char* class = NULL;
@@ -1964,7 +1988,6 @@ exit:
     strsDeinit(&buffs);
     return line_out;
 }
-#endif
 
 static char* Parser_linePreProcess(Args* buffs_p, char* line) {
     line = Parser_removeAnnotation(line);
@@ -1975,10 +1998,8 @@ static char* Parser_linePreProcess(Args* buffs_p, char* line) {
     }
     /* process EOL */
     line = strsDeleteChar(buffs_p, line, '\r');
-#if PIKA_SYNTAX_IMPORT_EX_ENABLE
     line = Suger_import(buffs_p, line);
     line = Suger_from(buffs_p, line);
-#endif
 exit:
     return line;
 }
@@ -2148,9 +2169,6 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
     parse_line:
         /* parse single Line to Asm */
         single_ASM = Parser_LineToAsm(&buffs, line, &block_stack);
-#if PIKA_DEBUG
-        pika_assert(NULL != single_ASM);
-#endif
     parse_after:
         if (NULL == single_ASM) {
             out_ASM = NULL;

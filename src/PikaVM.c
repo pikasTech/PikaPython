@@ -438,6 +438,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     if (strEqu(data, (char*)"RuntimeError")) {
         return arg_setInt(arg_ret_reg, "", PIKA_RES_ERR_RUNTIME_ERROR);
     }
+
     Arg* arg = NULL;
     if (data[0] == '.') {
         /* find host from stack */
@@ -447,15 +448,17 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
                                    arg_ret_reg);
         }
         arg_deinit(host_obj);
-    } else {
-        /* find in local list first */
-        arg = arg_copy_noalloc(obj_getArg(vm->locals, data), arg_ret_reg);
-        if (NULL == arg) {
-            /* find in global list second */
-            arg = arg_copy_noalloc(obj_getArg(vm->globals, data), arg_ret_reg);
-        }
+        goto exit;
     }
 
+    /* find in local list first */
+    arg = arg_copy_noalloc(obj_getArg(vm->locals, data), arg_ret_reg);
+    if (NULL == arg) {
+        /* find in global list second */
+        arg = arg_copy_noalloc(obj_getArg(vm->globals, data), arg_ret_reg);
+    }
+
+exit:
     if (NULL == arg) {
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         __platform_printf("NameError: name '%s' is not defined\r\n", data);
@@ -632,7 +635,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         arg_num = arg_num_dec;
     }
 
-    if (strIsContain(type_list, '*')) {
+    if (is_variable) {
         /* get variable tuple name */
         type_list_buff = strCopy(buffs2, type_list);
         variable_arg_start = 0;
@@ -682,19 +685,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
 
     if (PIKA_TRUE == is_variable) {
-        /* resort the tuple */
-        PikaTuple* tuple_sorted = New_tuple();
-        if (NULL != tuple) {
-            int tuple_size = tuple_getSize(tuple);
-            for (int i = 0; i < tuple_size; i++) {
-                Arg* arg = tuple_getArg(tuple, tuple_size - 1 - i);
-                list_append(&(tuple_sorted->super), arg);
-            }
-            tuple_deinit(tuple);
-        }
+        list_reverse(&tuple->super);
         /* load variable tuple */
-        args_setPtrWithType(args, variable_tuple_name, ARG_TYPE_TUPLE,
-                            tuple_sorted);
+        PikaObj* New_PikaStdData_Tuple(Args * args);
+        PikaObj* tuple_obj = newNormalObj(New_PikaStdData_Tuple);
+        obj_setPtr(tuple_obj, "list", tuple);
+        args_setPtrWithType(args, variable_tuple_name, ARG_TYPE_OBJECT,
+                            tuple_obj);
     }
 
     /* load 'self' as the first arg when call object method */
@@ -1170,8 +1167,9 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
         return arg_setInt(numArg, "", strtol(strtol_buff, NULL, 2));
     }
     /* float */
-    if (strIsContain(data, '.')) {
-        return arg_setFloat(numArg, "", atof(data));
+    if (strIsContain(data, '.') ||
+        (strIsContain(data, 'e') || strIsContain(data, 'E'))) {
+        return arg_setFloat(numArg, "", strtod(data, NULL));
     }
     /* int */
     return arg_setInt(numArg, "", fast_atoi(data));
@@ -1275,6 +1273,47 @@ void operatorInfo_init(OperatorInfo* info,
 }
 
 static void _OPT_ADD(OperatorInfo* op) {
+    if (argType_isObject(op->t1)) {
+        if (!argType_isObject(op->t2)) {
+            VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
+            __platform_printf("TypeError: unsupported operand +\n");
+            op->res = NULL;
+            return;
+        }
+        PikaObj* obj1 = arg_getPtr(op->a1);
+        Arg* method_add = obj_getMethodArg(obj1, "__add__");
+        if (NULL == method_add) {
+            VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
+            __platform_printf("TypeError: unsupported operand +\n");
+            op->res = NULL;
+            return;
+        }
+        arg_deinit(method_add);
+        PikaObj* obj2 = arg_getPtr(op->a2);
+        obj_setPtr(obj1, "__others", obj2);
+        /* clang-format off */
+        PIKA_PYTHON(
+        __res = __add__(__others)
+        )
+        /* clang-format on */
+        const uint8_t bytes[] = {
+            0x0c, 0x00, /* instruct array size */
+            0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04, 0x12,
+            0x00,
+            /* instruct array */
+            0x18, 0x00, /* const pool size */
+            0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00, 0x5f,
+            0x5f, 0x61, 0x64, 0x64, 0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65,
+            0x73, 0x00, /* const pool */
+        };
+        pikaVM_runByteCode(obj1, (uint8_t*)bytes);
+        Arg* __res = arg_copy(obj_getArg(obj1, "__res"));
+        op->res = __res;
+        obj_removeArg(obj1, "__others");
+        obj_removeArg(obj1, "__res");
+        return;
+    }
+
     if ((op->t1 == ARG_TYPE_STRING) && (op->t2 == ARG_TYPE_STRING)) {
         char* num1_s = NULL;
         char* num2_s = NULL;
@@ -1297,6 +1336,46 @@ static void _OPT_ADD(OperatorInfo* op) {
 }
 
 static void _OPT_SUB(OperatorInfo* op) {
+    if (argType_isObject(op->t1)) {
+        if (!argType_isObject(op->t2)) {
+            VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
+            __platform_printf("TypeError: unsupported operand +\n");
+            op->res = NULL;
+            return;
+        }
+        PikaObj* obj1 = arg_getPtr(op->a1);
+        Arg* method_sub = obj_getMethodArg(obj1, "__sub__");
+        if (NULL == method_sub) {
+            VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
+            __platform_printf("TypeError: unsupported operand +\n");
+            op->res = NULL;
+            return;
+        }
+        arg_deinit(method_sub);
+        PikaObj* obj2 = arg_getPtr(op->a2);
+        obj_setPtr(obj1, "__others", obj2);
+        /* clang-format off */
+        PIKA_PYTHON(
+        __res = __sub__(__others)
+        )
+        /* clang-format on */
+        const uint8_t bytes[] = {
+            0x0c, 0x00, /* instruct array size */
+            0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04, 0x12,
+            0x00,
+            /* instruct array */
+            0x18, 0x00, /* const pool size */
+            0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00, 0x5f,
+            0x5f, 0x73, 0x75, 0x62, 0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65,
+            0x73, 0x00, /* const pool */
+        };
+        pikaVM_runByteCode(obj1, (uint8_t*)bytes);
+        Arg* __res = arg_copy(obj_getArg(obj1, "__res"));
+        op->res = __res;
+        obj_removeArg(obj1, "__others");
+        obj_removeArg(obj1, "__res");
+        return;
+    }
     if (op->t2 == ARG_TYPE_NONE) {
         if (op->t1 == ARG_TYPE_INT) {
             op->res = arg_setInt(op->res, "", -op->i1);
@@ -1973,7 +2052,7 @@ static VMParameters* __pikaVM_runPyLines_or_byteCode(PikaObj* self,
         /* generate byte code */
         byteCodeFrame_init(bytecode_frame_p);
         if (1 == bytecodeFrame_fromLines(bytecode_frame_p, py_lines)) {
-            __platform_printf("[error]: Syntax error.\r\n");
+            __platform_printf("Error: Syntax error.\r\n");
             globals = NULL;
             goto exit;
         }

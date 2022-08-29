@@ -56,17 +56,19 @@ typedef enum {
 typedef void (*StructDeinitFun)(void* struct_);
 
 typedef struct Arg Arg;
+
 typedef union {
     Arg* next;
     uint8_t* buffer;
 } _arg_union;
+
 struct Arg {
-    _arg_union _;
-    uint32_t size;
-    uint8_t type;
-    PIKA_BOOL serialized;
-    Hash name_hash;
-    uint8_t content[];
+    _arg_union _;       // 32/64 bit
+    uint32_t size;      // 32 bit
+    uint8_t type;       // 8 bit
+    PIKA_BOOL flag;     //
+    Hash name_hash;     // 32bit
+    uint8_t content[];  // n bit
 };
 
 Arg* arg_getNext(Arg* self);
@@ -131,8 +133,22 @@ uint8_t argType_isObject(ArgType type);
 
 #define arg_getNext(self) ((self)->_.next)
 #define arg_getSize(self) ((self)->size)
+
+#define ARG_FLAG_MASK_SERIALIZED 0x01
+#define ARG_FLAG_MASK_ISKEYWORD 0x02
+
+#define arg_getSerialized(self) ((self)->flag & ARG_FLAG_MASK_SERIALIZED)
+#define arg_setSerialized(self, _serialized)                     \
+    ((self)->flag = ((self)->flag & ~ARG_FLAG_MASK_SERIALIZED) | \
+                    ((_serialized) ? ARG_FLAG_MASK_SERIALIZED : 0))
+#define arg_getIsKeyword(self) ((self)->flag & ARG_FLAG_MASK_ISKEYWORD)
+
+#define arg_setIsKeyword(self, _isKeyword)                      \
+    ((self)->flag = ((self)->flag & ~ARG_FLAG_MASK_ISKEYWORD) | \
+                    ((_isKeyword) ? ARG_FLAG_MASK_ISKEYWORD : 0))
+
 #define arg_getContent(self) \
-    ((self)->serialized ? (self)->content : ((self)->_.buffer))
+    (arg_getSerialized(self) ? (self)->content : ((self)->_.buffer))
 #define arg_getNext(self) ((self)->_.next)
 #define arg_setNext(self, __next) ((self)->_.next = (__next))
 

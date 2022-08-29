@@ -48,29 +48,23 @@ void PikaStdDevice_UART_writeBytes(PikaObj *self, uint8_t* data, int length){
 }
 
 void PikaStdDevice_UART_platformEnable(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 void PikaStdDevice_UART_platformRead(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 void PikaStdDevice_UART_platformWrite(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_UART_platformDisable(PikaObj *self){
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_UART_platformReadBytes(PikaObj *self){
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
 void PikaStdDevice_UART_platformWriteBytes(PikaObj *self){
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platform method need to be override.");
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }

@@ -1,91 +1,89 @@
-#api
-from PikaObj import *
 import PikaStdDevice
 import PikaStdTask
 
 
 class GPIO(PikaStdDevice.GPIO):
     # override
-    def platformHigh():
+    def platformHigh(self):
         pass
 
     # override
-    def platformLow():
+    def platformLow(self):
         pass
 
     # override
-    def platformEnable():
+    def platformEnable(self):
         pass
 
     # override
-    def platformDisable():
+    def platformDisable(self):
         pass
 
     # override
-    def platformSetMode():
+    def platformSetMode(self):
         pass
 
     # override
-    def platformRead():
+    def platformRead(self):
         pass
 
 
 class Time(PikaStdDevice.Time):
     # override
-    def sleep_s(s: int):
+    def sleep_s(self, s: int):
         pass
 
     # override
-    def sleep_ms(ms: int):
+    def sleep_ms(self, ms: int):
         pass
 
 
 class ADC(PikaStdDevice.ADC):
     # override
-    def platformEnable():
+    def platformEnable(self):
         pass
 
     # override
-    def platformRead():
+    def platformRead(self):
         pass
 
     # override
-    def platformDisable():
+    def platformDisable(self):
         pass
 
 
 class UART(PikaStdDevice.UART):
     # override
-    def platformEnable():
+    def platformEnable(self):
         pass
 
     # override
-    def platformWrite():
+    def platformWrite(self):
         pass
 
     # override
-    def platformRead():
+    def platformRead(self):
         pass
 
     # override
-    def platformDisable():
+    def platformDisable(self):
         pass
 
 
 class IIC(PikaStdDevice.IIC):
     # override
-    def platformEnable():
+    def platformEnable(self):
         pass
 
     # override
-    def platformDisable():
+    def platformDisable(self):
         pass
 
     # override
-    def platformWrite():
+    def platformWrite(self):
         pass
 
     # override
-    def platformRead():
+    def platformRead(self):
         pass
 

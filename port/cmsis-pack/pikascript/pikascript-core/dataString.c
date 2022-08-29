@@ -233,7 +233,7 @@ int32_t strIsContain(char* str, char ch) {
 }
 
 char* strCopy(char* strBuff, char* strIn) {
-    __platform_memcpy(strBuff, strIn, strGetSize(strIn));
+    __platform_memcpy(strBuff, strIn, strGetSize(strIn) + 1);
     return strBuff;
 }
 

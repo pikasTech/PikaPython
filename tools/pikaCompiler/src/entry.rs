@@ -34,30 +34,39 @@ pub fn pika_compiler_entry() {
     compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaStdData"));
     compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaDebug"));
 
+    /* clean pikascript-api/ */
+    compiler.clean_path();
+
     // println!();
 
     /* write the infomatrion to compiler-info */
-    let mut compiler_info_file =
-        File::create(format!("{}compiler-info.txt", compiler.dist_path)).unwrap();
-    let compiler_info = format!("{:?}", compiler);
-    compiler_info_file.write(compiler_info.as_bytes()).unwrap();
+    // let mut compiler_info_file =
+    //     File::create(format!("{}compiler-info.txt", compiler.dist_path)).unwrap();
+    // let compiler_info = format!("{:?}", compiler);
+    // compiler_info_file.write(compiler_info.as_bytes()).unwrap();
 
     /* make the -api.c file for each python class */
+
+    let api_file_path = format!("{}__pikaBinding.c", compiler.dist_path);
+    let mut f = File::create(api_file_path).unwrap();
+    f.write("/* ******************************** */\n".as_bytes())
+        .unwrap();
+    f.write("/* Warning! Don't modify this file! */\n".as_bytes())
+        .unwrap();
+    f.write("/* ******************************** */\n".as_bytes())
+        .unwrap();
+    /* create include for calsses */
+    f.write("#include <stdio.h>\n".as_bytes()).unwrap();
+    f.write("#include <stdlib.h>\n".as_bytes()).unwrap();
+    f.write("#include \"BaseObj.h\"\n".as_bytes()).unwrap();
+
     for (_, class_info) in compiler.class_list.iter() {
-        let api_file_path = format!("{}{}-api.c", compiler.dist_path, class_info.this_class_name);
-        let mut f = File::create(api_file_path).unwrap();
-        f.write("/* ******************************** */\n".as_bytes())
-            .unwrap();
-        f.write("/* Warning! Don't modify this file! */\n".as_bytes())
-            .unwrap();
-        f.write("/* ******************************** */\n".as_bytes())
-            .unwrap();
         /* create include for calsses */
         f.write(class_info.include().as_bytes()).unwrap();
-        f.write("#include <stdio.h>\n".as_bytes()).unwrap();
-        f.write("#include <stdlib.h>\n".as_bytes()).unwrap();
-        f.write("#include \"BaseObj.h\"\n".as_bytes()).unwrap();
-        f.write("\n".as_bytes()).unwrap();
+    }
+    f.write("\n".as_bytes()).unwrap();
+
+    for (_, class_info) in compiler.class_list.iter() {
         /* create method api function */
         f.write(class_info.method_api_fn().as_bytes()).unwrap();
         /* create new classs function */

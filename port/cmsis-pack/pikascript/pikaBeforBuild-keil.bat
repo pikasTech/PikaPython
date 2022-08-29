@@ -8,6 +8,7 @@
 @copy /B "pikascript-api\*.*"
 @copy /B "pikascript-core\*.*"
 @copy /B "pikascript-lib\PikaStdLib\*.*"
+@copy /B "pikascript-lib\pika_lvgl\*.*"
 
 @echo clean up...
 @clean.bat

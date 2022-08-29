@@ -59,6 +59,9 @@ releases = [
   "v1.9.2 cf7876efdaf92f9f92e25370066f811f6892a5cb",
   "v1.10.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
   "v1.10.1 1578eacdea69766dcebc2017a99c4fade19ef53f",
+  "v1.10.2 d3669ee95de98eb85e6a264aa28825ce7a011a11",
+  "v1.10.3 11088f6b4ba3d5b545fe4bfdc8c27ab4fbe01936",
+  "v1.10.4 f09ea25237cd35a27fd071198ff771c8b4a088ad"
 ]
 
 [[packages]]
@@ -110,6 +113,9 @@ releases = [
   "v1.9.2 cf7876efdaf92f9f92e25370066f811f6892a5cb",
   "v1.10.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
   "v1.10.1 1578eacdea69766dcebc2017a99c4fade19ef53f",
+  "v1.10.2 d3669ee95de98eb85e6a264aa28825ce7a011a11",
+  "v1.10.3 11088f6b4ba3d5b545fe4bfdc8c27ab4fbe01936",
+  "v1.10.4 f09ea25237cd35a27fd071198ff771c8b4a088ad"
 ]
 
 [[packages]]
@@ -130,12 +136,9 @@ releases = [
   "v1.8.7 88f015bcb2bc5dd1260f35125822b2ba4535d861",
   "v1.9.0 0892f1d426e3d69daaff1251d8e45d2ef60d1ad4",
   "v1.10.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
-]
-
-[[packages]]
-name = "TemplateDevice"
-releases = [
-  "v0.0.1 281600804a5393c6721eab8ec6160a376ba010b4",
+  "v1.10.2 d3669ee95de98eb85e6a264aa28825ce7a011a11",
+  "v1.10.3 11088f6b4ba3d5b545fe4bfdc8c27ab4fbe01936",
+  "v1.10.4 f09ea25237cd35a27fd071198ff771c8b4a088ad"
 ]
 
 [[packages]]
@@ -143,49 +146,33 @@ name = "PikaMath"
 releases = [
   "v0.0.1 31146e2395e80b5785a4b2e526913a4590160e66",
   "v0.1.0 793634882044af25f30bb59c6511c615e56f85c5",
-  "v0.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
+  "v0.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e"
 ]
 
 [[packages]]
 name = "PikaCV"
 releases = [
   "v0.0.1 b463e812bf0334b55835a3b31cda0c2f6c526e06",
-  "v0.1.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
-]
-
-[[packages]]
-name = "pika_cjson"
-releases = [
-  "v0.0.1 60389c541db480f41a55498270094dd030df9e24",
-  "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
-  "v1.1.0 0cf260fca1e7613dc5523fd09de00df952c9dbd3",
-  "v1.1.1 68b28c780861190639452ed0642e2f4064fa44c3",
-  "v1.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
+  "v0.1.0 211569c5a0169dbb700885d21fbbe0c678126e9e"
 ]
 
 [[packages]]
 name = "unittest"
-releases = [
-  "v0.1.0 cd6dfbbb714228e7e0f147515d58450644e7dadf",
-]
+releases = [ "v0.1.0 cd6dfbbb714228e7e0f147515d58450644e7dadf" ]
+
+[[packages]]
+name = "socket"
+releases = [ "v0.1.0 f09ea25237cd35a27fd071198ff771c8b4a088ad" ]
+
+[[packages]]
+name = "random"
+releases = [ "v0.1.0 7244267b6839b8af2238b6cdd9a73e4a3aebb347" ]
 
 [[packages]]
 name = "configparser"
 releases = [
   "v0.1.0 d3a9f6e226bb9cfccbfc588cc465672cefea9e82",
-  "v0.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
-]
-
-[[packages]]
-name = "pika_lvgl"
-releases = [
-  "v0.0.1 71364445e0894e660720f9a0c9e1db021663d6a1",
-]
-
-[[packages]]
-name = "pika_lua"
-releases = [
-  "v0.0.1 b5da16e285a378a74fa7b7734cdd89be703d6f07",
+  "v0.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e"
 ]
 
 [[packages]]
@@ -195,14 +182,81 @@ releases = [
   "v0.0.2 3fae2b5e86a0de787f6785ccd72a6590b4984f88",
   "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
   "v1.0.1 5148412411e2de0d23e9c5857b0b4843f479a5be",
-  "v1.1.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
+  "v1.1.0 211569c5a0169dbb700885d21fbbe0c678126e9e"
 ]
 
 [[packages]]
 name = "binascii"
+releases = [ "v0.0.1 88896715867c2a89df3e3b733cba38cc84f5347c" ]
+
+[[packages]]
+name = "pika_cjson"
 releases = [
-  "v0.0.1 88896715867c2a89df3e3b733cba38cc84f5347c",
+  "v0.0.1 60389c541db480f41a55498270094dd030df9e24",
+  "v1.0.0 cbde99793b1e631ab7f54775cba3f5372895b560",
+  "v1.1.0 0cf260fca1e7613dc5523fd09de00df952c9dbd3",
+  "v1.1.1 68b28c780861190639452ed0642e2f4064fa44c3",
+  "v1.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e"
 ]
+
+[[packages]]
+name = "pika_lvgl"
+releases = [
+  "v0.0.1 71364445e0894e660720f9a0c9e1db021663d6a1",
+  "v0.1.0 027f06710e83ee3daa7b706fb8a9bf23b1ab14e4",
+  "v0.2.0 871fbf701c24c9c05792d3c551c44b699f4de7bf"
+]
+
+[[packages]]
+name = "pika_lua"
+releases = [ "v0.0.1 b5da16e285a378a74fa7b7734cdd89be703d6f07" ]
+
+[[packages]]
+name = "pikaRTThread"
+releases = [
+  "v1.0.0 3509764a2ed63c565e63f61814e9b656fc573841",
+  "v1.0.1 e8bb5a8d18516f79da7115f73024cae70fa51590",
+  "v1.1.0 ff2e72ccb08c6a5935ed7ed77dfaa3a074ff120f",
+  "v1.1.1 ac4247e5fd3e221eb110a1b41276849c623049ec",
+  "v1.2.0 e2e94bb3a349985641fa686341757cfbd18207e2",
+  "v1.3.0 9f3a52558338503571b37c034a12219566f27aa2"
+]
+
+[[packages]]
+name = "PikaVSF"
+releases = [ "v0.0.1 f755ec10042f4deefef1c5491f5e91a651f71a1b" ]
+
+[[packages]]
+name = "Arm2D"
+releases = [
+  "v0.0.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
+  "v0.1.0 1b0384c5b20e336645b24df808f98548912405b8",
+  "v0.2.0 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
+  "v0.3.0 f188b2cb2ee4948ce189eeca9fd7c6d095c8bda9",
+  "v0.3.1 3dd996b973cca2d7eecf990f08ce2c4974e22872",
+  "v0.3.2 88ad9d8a757cc79a4cdc554e543c565decb4861a",
+  "v0.3.3 bcee87c3d7d09db093f92ba825019dd3ec8726a7",
+  "v0.3.4 7345c222bd446bad6eb32a32f38cad36867fba7c",
+  "v0.4.0 9f3a52558338503571b37c034a12219566f27aa2",
+  "v0.4.1 0892f1d426e3d69daaff1251d8e45d2ef60d1ad4"
+]
+
+[[packages]]
+name = "PLOOC"
+releases = [ "v1.0.0 e2a630358c0d490b198f7e8682fb61569eb7ec56" ]
+
+[[packages]]
+name = "pikaRTDevice"
+releases = [
+  "v0.0.1 fe900b79d8d1075bb7e4e3dd9d4e1e187e0c9195",
+  "v1.0.0 ac4247e5fd3e221eb110a1b41276849c623049ec",
+  "v1.0.1 61e6a7352b656adbce0f2ad82ea1fc992dcbb603",
+  "v1.1.0 9f3a52558338503571b37c034a12219566f27aa2"
+]
+
+[[packages]]
+name = "TemplateDevice"
+releases = [ "v0.0.1 281600804a5393c6721eab8ec6160a376ba010b4" ]
 
 [[packages]]
 name = "STM32G0"
@@ -213,7 +267,7 @@ releases = [
   "v1.1.1 f755ec10042f4deefef1c5491f5e91a651f71a1b",
   "v1.2.0 19e644a2ef411aa49016bf106f4be8beeb0827b1",
   "v1.3.0 9f3a52558338503571b37c034a12219566f27aa2",
-  "v1.3.1 3119a938dac7a723be3775aaaff5bc337a165567",
+  "v1.3.1 3119a938dac7a723be3775aaaff5bc337a165567"
 ]
 
 [[packages]]
@@ -224,19 +278,18 @@ releases = [
   "v1.0.2 4d7209bb174b1df26d22352a757cc43faaff4012",
   "v1.0.3 86377d1a3c19cd01b1dc109180be437373ce7c5f",
   "v1.1.0 186b951078c76b1c80b8111d76097970c21a3004",
+  "v1.1.1 567d0b19ce998a290fa538845d107c744ccd0258"
 ]
 
 [[packages]]
 name = "ESP32"
-releases = [
-  "v0.1.0 ee7e38e9422970bba86f5cd7774db8654edd38dc",
-]
+releases = [ "v0.1.0 ee7e38e9422970bba86f5cd7774db8654edd38dc" ]
 
 [[packages]]
 name = "STM32F4"
 releases = [
   "v0.0.1 5f992314b5ec9f201302eea8df8620e0cde600ae",
-  "v0.0.2 8bcb5ad868ec8961f2a3f08329a46ab0b780596b",
+  "v0.0.2 8bcb5ad868ec8961f2a3f08329a46ab0b780596b"
 ]
 
 [[packages]]
@@ -253,69 +306,24 @@ releases = [
   "v1.1.2 0052a28582ac8a85cc48e1d676d9a3be5cb1b93f",
   "v1.1.3 f755ec10042f4deefef1c5491f5e91a651f71a1b",
   "v1.2.0 9f3a52558338503571b37c034a12219566f27aa2",
-  "v1.3.0 9d7b155af3260c0fc00be05598c807b71d7cc198",
-]
-
-[[packages]]
-name = "Arm2D"
-releases = [
-  "v0.0.1 af42fd61884dc7048628b0d3bafaa42697f6e8ea",
-  "v0.1.0 1b0384c5b20e336645b24df808f98548912405b8",
-  "v0.2.0 83f2639bf61a3b000a9bae5c5977bd67afdf57d1",
-  "v0.3.0 f188b2cb2ee4948ce189eeca9fd7c6d095c8bda9",
-  "v0.3.1 3dd996b973cca2d7eecf990f08ce2c4974e22872",
-  "v0.3.2 88ad9d8a757cc79a4cdc554e543c565decb4861a",
-  "v0.3.3 bcee87c3d7d09db093f92ba825019dd3ec8726a7",
-  "v0.3.4 7345c222bd446bad6eb32a32f38cad36867fba7c",
-  "v0.4.0 9f3a52558338503571b37c034a12219566f27aa2",
-  "v0.4.1 0892f1d426e3d69daaff1251d8e45d2ef60d1ad4",
+  "v1.3.0 9d7b155af3260c0fc00be05598c807b71d7cc198"
 ]
 
 [[packages]]
 name = "CH32V103"
-releases = [
-  "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
-]
+releases = [ "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d" ]
 
-
-[[packages]]
-name = "pikaRTThread"
-releases = [
-  "v1.0.0 3509764a2ed63c565e63f61814e9b656fc573841",
-  "v1.0.1 e8bb5a8d18516f79da7115f73024cae70fa51590",
-  "v1.1.0 ff2e72ccb08c6a5935ed7ed77dfaa3a074ff120f",
-  "v1.1.1 ac4247e5fd3e221eb110a1b41276849c623049ec",
-  "v1.2.0 e2e94bb3a349985641fa686341757cfbd18207e2",
-  "v1.3.0 9f3a52558338503571b37c034a12219566f27aa2",
-]
-
-[[packages]]
-name = "pikaRTDevice"
-releases = [
-  "v0.0.1 fe900b79d8d1075bb7e4e3dd9d4e1e187e0c9195",
-  "v1.0.0 ac4247e5fd3e221eb110a1b41276849c623049ec",
-  "v1.0.1 61e6a7352b656adbce0f2ad82ea1fc992dcbb603",
-  "v1.1.0 9f3a52558338503571b37c034a12219566f27aa2",
-]
 
 [[packages]]
 name = "SmartLoong"
-releases = [
-  "v0.0.1 a5437de66e8cff600be247eae63ac9114b6b153f",
-]
-
-[[packages]]
-name = "PikaVSF"
-releases = [
-  "v0.0.1 f755ec10042f4deefef1c5491f5e91a651f71a1b",
-]
+releases = [ "v0.0.1 a5437de66e8cff600be247eae63ac9114b6b153f" ]
 
 [[packages]]
 name = "W801Device"
 releases = [
   "v0.0.1 88f4e507f1665ca7ceda149aabf029f4e21e22c7",
   "v1.0.0 7ae9cd062fa48ecfe4b843c9f13b0daef0efd79d",
-  "v1.1.0 c53bf1483d015555b4823f129864444198227403",
+  "v1.1.0 c53bf1483d015555b4823f129864444198227403"
 ]
 
 [[packages]]
@@ -323,16 +331,17 @@ name = "CH582"
 releases = [
   "v1.0.0 7cdb0cf9ed161c3fc6802028a9e34c9f94b56244",
   "v1.1.0 bfc01e09fd71c26a7140d23864c1d3052f23d087",
+  "v1.1.1 268c8433a1add8c902d694808682890a2df8c1fc"
 ]
 
 [[packages]]
-name = "PLOOC"
-releases = [
-  "v1.0.0 e2a630358c0d490b198f7e8682fb61569eb7ec56",
-]
+name = "MM32F5277E9P"
+releases = [ "v0.0.1 176232225939eccfaedfea412699a2e53c38ace1" ]
 
 [[packages]]
-name="MM32F5277E9P"
+name = "AIR32F1"
 releases = [
-  "v0.0.1 176232225939eccfaedfea412699a2e53c38ace1",
+  "v0.0.1 9f9579c54ebddb12c66afc8da64a987767ff512f",
+  "v0.1.0 faa9c6230149d09188114af7af822e5d34af6b55"
 ]
+

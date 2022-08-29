@@ -461,11 +461,75 @@ int PikaStdLib_SysObj_id(PikaObj* self, Arg* obj) {
 PikaObj* PikaStdLib_SysObj_open(PikaObj* self, char* path, char* mode) {
 #if PIKA_FILEIO_ENABLE
     PikaObj* file = newNormalObj(New_PikaStdData_FILEIO);
-    PikaStdData_FILEIO_init(file, mode, path);
+    if (0 != PikaStdData_FILEIO_init(file, path, mode)) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("[Error] open: can not open file.\r\n");
+        obj_deinit(file);
+        return NULL;
+    }
     return file;
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] PIKA_FILEIO_ENABLE is not enabled.\r\n");
     return NULL;
 #endif
+}
+
+/* __dir_each */
+int32_t __dir_each(Arg* argEach, Args* context) {
+    PikaObj* list = args_getPtr(context, "list");
+    if (argType_isCallable(arg_getType(argEach))) {
+        char name_buff[PIKA_LINE_BUFF_SIZE / 2] = {0};
+        char* method_name =
+            methodArg_getName(argEach, name_buff, sizeof(name_buff));
+        Arg* arg_str = arg_newStr(method_name);
+        __vm_List_append(list, arg_str);
+        arg_deinit(arg_str);
+    }
+    return 0;
+}
+
+PikaObj* PikaStdLib_SysObj_dir(PikaObj* self, PikaObj* obj) {
+    PikaObj* New_PikaStdData_List(Args * args);
+    PikaObj* list = newNormalObj(New_PikaStdData_List);
+    __vm_List___init__(list);
+    Args* context = New_args(NULL);
+    args_setPtr(context, "list", list);
+    args_foreach(obj->list, __dir_each, context);
+    args_deinit(context);
+    return list;
+}
+
+void PikaStdLib_SysObj_exec(PikaObj* self, char* code) {
+#if PIKA_EXEC_ENABLE
+    obj_run(self, code);
+#else
+    obj_setErrorCode(self, 1);
+    __platform_printf("[Error] PIKA_EXEC_ENABLE is not enabled.\r\n");
+#endif
+}
+
+Arg* PikaStdLib_SysObj_getattr(PikaObj* self, PikaObj* obj, char* name) {
+    Arg* res = NULL;
+    if (NULL == obj) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("[Error] getattr: can not get attr of NULL.\r\n");
+        return NULL;
+    }
+    res = arg_copy(obj_getArg(obj, name));
+    return res;
+}
+
+void PikaStdLib_SysObj_setattr(PikaObj* self,
+                               PikaObj* obj,
+                               char* name,
+                               Arg* val) {
+    if (NULL == obj) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("[Error] setattr: obj is null.\r\n");
+        goto exit;
+    }
+    obj_setArg(obj, name, val);
+exit:
+    return;
 }

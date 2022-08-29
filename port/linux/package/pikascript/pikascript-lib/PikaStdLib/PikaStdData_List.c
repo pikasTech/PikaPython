@@ -12,7 +12,7 @@ void PikaStdData_List_set(PikaObj* self, int i, Arg* arg) {
     PikaList* list = obj_getPtr(self, "list");
     if (PIKA_RES_OK != list_setArg(list, i, arg)) {
         obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[error]: index exceeded lengh of list.");
+        obj_setSysOut(self, "Error: index exceeded lengh of list.");
     }
 }
 
@@ -54,4 +54,26 @@ char* PikaStdData_List___str__(PikaObj* self) {
     obj_setStr(self, "_buf", arg_getStr(str_arg));
     arg_deinit(str_arg);
     return obj_getStr(self, "_buf");
+}
+
+void PikaStdData_List_reverse(PikaObj* self) {
+    PikaList* list = obj_getPtr(self, "list");
+    list_reverse(list);
+}
+
+PikaObj* PikaStdData_List___add__(PikaObj* self, PikaObj* others) {
+    PikaObj* res = newNormalObj(New_PikaStdData_List);
+    PikaStdData_List___init__(res);
+    PikaList* list_res = obj_getPtr(res, "list");
+    PikaList* list1 = obj_getPtr(self, "list");
+    PikaList* list2 = obj_getPtr(others, "list");
+    for (size_t i = 0; i < list_getSize(list1); i++) {
+        Arg* arg = list_getArg(list1, i);
+        list_append(list_res, arg);
+    }
+    for (size_t i = 0; i < list_getSize(list2); i++) {
+        Arg* arg = list_getArg(list2, i);
+        list_append(list_res, arg);
+    }
+    return res;
 }

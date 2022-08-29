@@ -27,6 +27,7 @@
         "pika_lvgl_state.h": "c",
         "pika_lvgl_anim.h": "c",
         "pika_lvgl_indev_t.h": "c",
-        "pika_lvgl_point_t.h": "c"
+        "pika_lvgl_point_t.h": "c",
+        "pika_lvgl_lv_timer_t.h": "c"
     }
 }

@@ -1181,6 +1181,15 @@ void pks_printVersion(void) {
                       PIKA_VERSION_MINOR, PIKA_VERSION_MICRO, PIKA_EDIT_TIME);
 }
 
+void pks_getVersion(char *buff)
+{
+    __platform_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR, PIKA_VERSION_MICRO);
+}
+
 void* obj_getStruct(PikaObj* self, char* name) {
     return args_getStruct(self->list, name);
+}
+
+char* obj_cacheStr(PikaObj* self, char* str) {
+    return args_cacheStr(self->list, str);
 }

@@ -1,6 +1,10 @@
+from copy import copy
 import os
-from sys import prefix
-from xmlrpc.server import list_public_methods
+
+version = "1.10.3"
+version_lvgl = "0.2.0"
+date = "2022-08-26"
+url = "https://gitee.com/Lyon1998/pikascript/attach_files/1151246/download"
 
 
 class Group:
@@ -54,6 +58,8 @@ kernal_cfg = Group("kernalCfg", "pikascript-core", ".cfg",
                    format=formatcfg)
 lib_c = Group("libC", "pikascript-lib/PikaStdLib", ".c", format=formatc)
 lib_h = Group("libH", "pikascript-lib/PikaStdLib", ".h", format=formath)
+lvgl_c = Group("libC", "pikascript-lib/pika_lvgl", ".c", format=formatc)
+lvgl_h = Group("libH", "pikascript-lib/pika_lvgl", ".h", format=formath)
 
 api_c = Group("apiC", "pikascript-api", ".c",   format=formatc)
 api_h = Group("apiH", "pikascript-api", ".h", format=formath)
@@ -62,4 +68,30 @@ api_bat = Group("apiBat", "pikascript-api", "", format='@del "%s"', dvd="\\")
 
 collect("kernal", [kernal_c, kernal_h, kernal_cfg])
 collect("lib", [lib_c, lib_h, api_c, api_h])
+collect('lib_lvgl', [lvgl_c, lvgl_h])
 collect("clean", [api_bat], subfix=".bat")
+
+pdsc_xml_str = open('PikaTech.PikaScript.xml', 'r').read()
+kernal_xml_str = open('kernal.xml', 'r').read()
+lib_xml_str = open('lib.xml', 'r').read()
+lib_lvgl_xml_str = open('lib_lvgl.xml', 'r').read()
+
+pdsc_gen_str = pdsc_xml_str\
+    .replace('@LVGL_LIB', lib_lvgl_xml_str)\
+    .replace('@LVGL_VERSION', version_lvgl)\
+    .replace('@KERNAL', kernal_xml_str)\
+    .replace('@LIB', lib_xml_str)\
+    .replace('@VERSION', version)\
+    .replace('@DATE', date)\
+    .replace('@URL', url)\
+
+with open('PikaTech.PikaScript.pdsc', 'w') as f:
+    f.write(pdsc_gen_str)
+
+# rm kernal.xml
+# rm lib.xml
+os.remove('kernal.xml')
+os.remove('lib.xml')
+os.remove('lib_lvgl.xml')
+# copy .pdsc to ..
+os.system('cp PikaTech.PikaScript.pdsc ..')

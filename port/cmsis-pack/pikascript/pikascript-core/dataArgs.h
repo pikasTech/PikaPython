@@ -168,6 +168,7 @@ char* list_getStr(PikaList* self, int index);
 void* list_getPtr(PikaList* self, int index);
 Arg* list_getArg(PikaList* self, int index);
 size_t list_getSize(PikaList* self);
+void list_reverse(PikaList* self);
 char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg);
 
 /* tuple api */
@@ -183,6 +184,7 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg);
 
 PikaList* New_list(void);
 PikaTuple* New_tuple(void);
+PikaTuple* args_getTuple(Args* self, char* name);
 
 char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list);
 

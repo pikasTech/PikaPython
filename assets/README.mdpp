@@ -86,7 +86,9 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 
 [bsp](../../tree/master/bsp) - mcu/board support
 
-[port](../../tree/master/port) - OS support
+[port](../../tree/master/port) - OS and package manager
+
+[test](../../tree/master/port/linux/test) - unit test
 
 [document](../../tree/master/document) - developt document
 

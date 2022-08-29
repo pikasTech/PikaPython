@@ -100,10 +100,10 @@ typedef enum {
 /* clang-format off */
 
 /* pikascript bool type */
-typedef enum {
-    PIKA_TRUE   = 1,
-    PIKA_FALSE  = 0,
-} PIKA_BOOL;
+typedef enum{
+    PIKA_TRUE = 1,
+    PIKA_FALSE = 0,
+}PIKA_BOOL;
 
 /* clang-format on */
 

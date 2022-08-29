@@ -11,6 +11,7 @@ mod py_type;
 mod script;
 mod version_info;
 mod entry;
+mod decorator;
 
 use entry::*;
 
