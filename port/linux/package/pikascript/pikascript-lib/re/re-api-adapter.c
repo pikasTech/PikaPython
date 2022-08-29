@@ -235,6 +235,7 @@ char* re_sub(PikaObj* self,
     b[len] = 0;
     obj_setStr(self, "_b", b);
     free(b);
+    free(s);
     return obj_getStr(self, "_b");
 }
 PikaObj* re_compile(PikaObj* self, char* pattern) {
@@ -566,5 +567,6 @@ char* re_Pattern_sub(PikaObj* self, char* repl, char* subjet, PikaTuple* val) {
     b[len] = 0;
     obj_setStr(self, "_b", b);
     free(b);
+    free(s);
     return obj_getStr(self, "_b");
 }
