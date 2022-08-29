@@ -94,15 +94,15 @@
       <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="1.10.3" />
     </condition>
 
+    <condition id="NO_LVGL_Pack">
+      <description>The existance of the LVGL</description>
+      <!--<deny Cclass="LVGL" Cgroup="lvgl" Cversion="9.0.0-dev" />-->
+      <require condition="Kernel" />
+    </condition>
+
     <condition id="PLOOC_Pack">
       <description>The Kernel of the PikaScript</description>
       <require Cclass="Language Extension" Cgroup="PLOOC" />
-    </condition>
-    
-    <condition id="NO_LVGL_Pack">
-      <description>The existance of the LVGL</description>
-      <deny Cclass="LVGL" Cgroup="lvgl" Cversion="9.0.0-dev" />
-      <require condition="Kernel" />
     </condition>
 
     <condition id="NO_PLOOC_Pack">

@@ -94,6 +94,12 @@
       <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="@VERSION" />
     </condition>
 
+    <condition id="NO_LVGL_Pack">
+      <description>The existance of the LVGL</description>
+      <!--<deny Cclass="LVGL" Cgroup="lvgl" Cversion="9.0.0-dev" />-->
+      <require condition="Kernel" />
+    </condition>
+
     <condition id="PLOOC_Pack">
       <description>The Kernel of the PikaScript</description>
       <require Cclass="Language Extension" Cgroup="PLOOC" />
@@ -170,7 +176,7 @@
         </files>
       </component>
 
-      <component Cgroup="PikaScript" Csub="pika_lvgl" Cversion="@LVGL_VERSION" condition="Kernel">
+      <component Cgroup="PikaScript" Csub="pika_lvgl" Cversion="@LVGL_VERSION" condition="NO_LVGL_Pack">
         <description>The lvgl module for PikaScript</description>
         <files>
 @LVGL_LIB
