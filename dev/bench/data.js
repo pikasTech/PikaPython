@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661760563164,
+  "lastUpdate": 1661764266893,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -76590,6 +76590,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000210921910988,
             "unit": "ms/iter",
             "extra": "iterations: 280645\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "cfbc2d98f97136cfe99db5d31c7c0eada32f5d85",
+          "message": "fix cre.c:310:3: error: a label can only be part of a statement and a declaration is not a statement",
+          "timestamp": "2022-08-29T16:58:01+08:00",
+          "tree_id": "b21dd7aa341a555696113419825d2c2884d3f9e1",
+          "url": "https://github.com/pikasTech/pikascript/commit/cfbc2d98f97136cfe99db5d31c7c0eada32f5d85"
+        },
+        "date": 1661764259876,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 10597.93929001822,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 10597.93929001822 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 30.462853467559004,
+            "unit": "ms/iter",
+            "extra": "iterations: 38\ncpu: 30.46137046252492 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 16.781661799211225,
+            "unit": "ms/iter",
+            "extra": "iterations: 70\ncpu: 16.773044542099097 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 4.7182308345273976,
+            "unit": "ms/iter",
+            "extra": "iterations: 249\ncpu: 4.717898322657219 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.00500029923795317,
+            "unit": "ms/iter",
+            "extra": "iterations: 234654\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
