@@ -14,6 +14,10 @@
 #include "re_Match.h"
 #include "re_Pattern.h"
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 10, 5)
+#error PikaScript version 1.10.5 or later is required.
+#endif
+
 void re_Match___init__args(PikaObj* self, char* sub, int* vec, int ven);
 
 void pre_init_re(PikaObj* self) {
