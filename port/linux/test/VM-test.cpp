@@ -1175,13 +1175,12 @@ TEST(VM, list_add) {
 }
 #endif
 
-TEST(VM, science_num){
-    char* line = 
-    "a = 1.0e-3\n"
-    "b = 2e-5\n"
-    "c = -3e-5\n"
-    "d = 0.4e2\n"
-    ;
+TEST(VM, science_num) {
+    char* line =
+        "a = 1.0e-3\n"
+        "b = 2e-5\n"
+        "c = -3e-5\n"
+        "d = 0.4e2\n";
     PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
     obj_run(self, line);
     /* collect */
@@ -1199,3 +1198,15 @@ TEST(VM, science_num){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(VM, issue_I5OJQB) {
+    char* line = "s = '\\\\'";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    char* s = obj_getStr(self, "s");
+    /* assert */
+    EXPECT_STREQ(s, "\\");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

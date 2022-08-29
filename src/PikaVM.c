@@ -1025,6 +1025,7 @@ static char* __get_transferd_str(Args* buffs, char* str, size_t* iout_p) {
     char* str_rep = strsReplace(buffs, str, "\\n", "\n");
     str_rep = strsReplace(buffs, str_rep, "\\r", "\r");
     str_rep = strsReplace(buffs, str_rep, "\\t", "\t");
+    str_rep = strsReplace(buffs, str_rep, "\\\\", "\\");
 
     char* transfered_str = args_getBuff(buffs, strGetSize(str_rep));
     size_t i_out = 0;
