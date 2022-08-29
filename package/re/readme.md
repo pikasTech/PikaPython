@@ -4,20 +4,8 @@ This module is made for pikaScript, aiming at providing the same usage as the re
 
 ## import module
 
-Register *re* module before you initialize pika interpreter, which occurs in *New_PikaMain()* in *PikaMain-api.c* by default.
-
-``` c
-// [PikaMain-api.c]
-#include "re.h"
-
-PikaObj *New_PikaMain(Args *args){
-    PikaObj *se
-    lf = New_PikaStdLib_SysObj(args);
-    // ...
-    obj_newObj(self, "re", "re", New_re);
-    // ...
-    return self;
-}
+``` python
+import re
 ```
 
 ## usage
