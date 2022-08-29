@@ -96,7 +96,7 @@
 
     <condition id="NO_LVGL_Pack">
       <description>The existance of the LVGL</description>
-      <!--<deny Cclass="LVGL" Cgroup="lvgl" Cversion="9.0.0-dev" />-->
+      <deny Cclass="LVGL" Cgroup="lvgl" Csub="PikaScript Binding" Cversion="0.2.0" />
       <require condition="Kernel" />
     </condition>
 
@@ -173,10 +173,11 @@
         <description>The standard library for PikaScript</description>
         <files>
 @LIB
+            <file attr="config" category="sourceC"  name="__pikaBindingLVGLDefault.c" version="@LVGL_VERSION" />
         </files>
       </component>
 
-      <component Cgroup="PikaScript" Csub="pika_lvgl" Cversion="@LVGL_VERSION" condition="NO_LVGL_Pack">
+      <component Cgroup="PikaScript" Csub="pika_lvgl" Cversion="@LVGL_VERSION" condition="Kernel">
         <description>The lvgl module for PikaScript</description>
         <files>
 @LVGL_LIB

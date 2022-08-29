@@ -58,6 +58,7 @@ PACK_BASE_FILES="
   main.py
   __pika_ooc.h
   pikaBeforBuild-keil.bat
+  __pikaBindingLVGLDefault.c
   clean.bat
   ../../../LICENSE
   ../../../README.md
