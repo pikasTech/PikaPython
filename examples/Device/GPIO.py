@@ -5,7 +5,6 @@ mem = PikaStdLib.MemChecker()
 io1 = machine.GPIO()
 time = machine.Time()
 
-io1.init()
 io1.setPin('PA8')
 io1.setMode('out')
 io1.enable()

@@ -2,7 +2,6 @@ from PikaObj import *
 import PikaStdLib
 import machine 
 pin = machine.GPIO()
-pin.init()
 pin.setPin('PA0')
 pin.setMode('in')
 pin.setPull('down')

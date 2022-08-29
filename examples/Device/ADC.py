@@ -4,7 +4,6 @@ import machine
 time = machine.Time()
 adc1 = machine.ADC()
 
-adc1.init()
 adc1.setPin('PA1')
 adc1.enable()
 
