@@ -613,6 +613,7 @@ while True:
 
 | 贡献记录 | 贡献者 |
 | --- | --- |
+| re module | [eglwang](https://gitee.com/eglwang) |
 | PikaMath.Quaternion() | [purewind7](https://gitee.com/purewind7) |
 | contrubute to PikaCV | [purewind7](https://gitee.com/purewind7) |
 | xr806(openharmony) bsp |[sjy](https://gitee.com/shanjiayang)|
