@@ -175,7 +175,7 @@
             <Pre_Include_Local_Component_h>
 
 #include "RTE_Components.h"
-#if !((defined(LV_USE_PIKASCRITP_BINDING) && LV_USE_PIKASCRITP_BINDING) ||  (defined(PIKA_USE_LVGL_BINDING) && PIKA_USE_LVGL_BINDING))
+#if !((defined(LV_USE_PIKASCRIPT_BINDING) && LV_USE_PIKASCRIPT_BINDING) ||  (defined(PIKA_USE_LVGL_BINDING) && PIKA_USE_LVGL_BINDING))
 #   define PIKA_MODULE_PIKA_LVGL_DISABLE    1
 #endif
             </Pre_Include_Local_Component_h>
