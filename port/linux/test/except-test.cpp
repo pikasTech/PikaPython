@@ -35,6 +35,7 @@ TEST(except, trycmodule1) {
             "import pika_cjson\n"
             "try:\n"
             "    b = pika_cjson.Parse('')\n"
+            "    print('after faild')\n"
             "except:\n"
             "    print('parse faild')\n"
             "\n");
@@ -105,4 +106,37 @@ TEST(except, for_loop) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(except, dict) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    /* run */
+    pikaVM_runSingleFile(pikaMain, "../../examples/Exception/trydict.py");
+    /* collect */
+    int res = obj_getInt(pikaMain, "res");
+    EXPECT_EQ(res, 5);
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(except, len) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    /* run */
+    pikaVM_runSingleFile(pikaMain, "../../examples/Exception/trylen.py");
+    /* collect */
+    int res = obj_getInt(pikaMain, "res");
+    EXPECT_EQ(res, 5);
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

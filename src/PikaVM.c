@@ -183,6 +183,10 @@ static int32_t VMState_getAddrOffsetOfRaise(VMState* vm) {
         if ((NTR == ins)) {
             return offset;
         }
+        /* if not found except, return */
+        if (RET == ins) {
+            return 0;
+        }
     }
 }
 
@@ -398,7 +402,7 @@ static Arg* VM_instruction_handler_TRY(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
     pika_assert(NULL != vm->try_info);
-    vm->try_info->try_state = TRY_STATE_TOP;
+    vm->try_info->try_state = TRY_STATE_INNER;
     return NULL;
 }
 
@@ -840,10 +844,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     TryInfo sub_try_info = {.try_state = TRY_STATE_NONE,
                             .try_result = TRY_RESULT_NONE};
     pika_assert(NULL != vm->try_info);
-    if (vm->try_info->try_state == TRY_STATE_TOP ||
-        vm->try_info->try_state == TRY_STATE_INNER) {
-        sub_try_info.try_state = TRY_STATE_INNER;
-    }
+
+    /* transfer try_state */
+    sub_try_info.try_state = vm->try_info->try_state;
 
     /* tuple or single arg */
     if (data[0] == 0) {
@@ -956,6 +959,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     return_arg = obj_runMethodArgWithState_noalloc(
         method_host_obj, sub_locals, method_arg, &sub_try_info, arg_ret_reg);
 
+    if (sub_try_info.try_result != TRY_RESULT_NONE) {
+        /* try result */
+        vm->error_code = sub_try_info.try_result;
+    }
+
     /* __init__() */
     if (ARG_TYPE_OBJECT_NEW == arg_getType(return_arg)) {
         arg_setType(return_arg, ARG_TYPE_OBJECT);
@@ -994,18 +1002,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (0 != obj_getErrorCode(method_host_obj)) {
         /* method error */
         VMState_setErrorCode(vm, PIKA_RES_ERR_RUNTIME_ERROR);
-    }
-
-    /* check try result */
-    if (sub_try_info.try_result == TRY_RESULT_RAISE) {
-        /* try error */
-        VMState_setErrorCode(vm, PIKA_RES_ERR_RUNTIME_ERROR);
-        if (vm->try_info->try_state == TRY_STATE_TOP) {
-            vm->jmp = VM_JMP_RAISE;
-        } else if (vm->try_info->try_state == TRY_STATE_INNER) {
-            vm->try_info->try_result = TRY_RESULT_RAISE;
-            goto exit;
-        }
     }
 
     goto exit;
@@ -1762,13 +1758,6 @@ static Arg* VM_instruction_handler_RIS(PikaObj* self,
     PIKA_RES err = (PIKA_RES)arg_getInt(err_arg);
     VMState_setErrorCode(vm, err);
     arg_deinit(err_arg);
-    /* raise jmp */
-    if (vm->try_info->try_state == TRY_STATE_TOP) {
-        vm->jmp = VM_JMP_RAISE;
-    } else if (vm->try_info->try_state == TRY_STATE_INNER) {
-        vm->try_info->try_result = TRY_RESULT_RAISE;
-        return VM_instruction_handler_RET(self, vm, data, arg_ret_reg);
-    }
     return NULL;
 }
 
@@ -1945,6 +1934,14 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     /* run instruct */
     pika_assert(NULL != vm->try_info);
     return_arg = VM_instruct_handler_table[instruct](self, vm, data, &ret_reg);
+
+    if (vm->error_code != PIKA_RES_OK) {
+        /* raise jmp */
+        if (vm->try_info->try_state == TRY_STATE_INNER) {
+            vm->jmp = VM_JMP_RAISE;
+        };
+    }
+
     if (NULL != return_arg) {
         stack_pushArg(&(vm->stack), return_arg);
     }
@@ -1971,6 +1968,7 @@ nextLine:
         if (0 == offset) {
             /* can not found end of try, return */
             pc_next = VM_PC_EXIT;
+            vm->try_info->try_result = TRY_RESULT_RAISE;
             goto exit;
         }
         pc_next = vm->pc + offset;

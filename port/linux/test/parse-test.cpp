@@ -4019,3 +4019,60 @@ TEST(parser, keyword1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, except_dict) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "dict = {'a':1, 'b':2, 'c':3}\n"
+        "try: \n"
+        "    print(dict['a'])\n"
+        "    print(dict['d'])\n"
+        "    print(dict['b'])\n"
+        "except :\n"
+        "    print('in except')\n";
+
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 STR a\n"
+                 "1 NUM 1\n"
+                 "1 STR b\n"
+                 "1 NUM 2\n"
+                 "1 STR c\n"
+                 "1 NUM 3\n"
+                 "0 DCT \n"
+                 "0 OUT dict\n"
+                 "B0\n"
+                 "0 TRY \n"
+                 "B1\n"
+                 "2 REF dict\n"
+                 "2 STR a\n"
+                 "1 SLC \n"
+                 "0 RUN print\n"
+                 "B1\n"
+                 "2 REF dict\n"
+                 "2 STR d\n"
+                 "1 SLC \n"
+                 "0 RUN print\n"
+                 "B1\n"
+                 "2 REF dict\n"
+                 "2 STR b\n"
+                 "1 SLC \n"
+                 "0 RUN print\n"
+                 "B0\n"
+                 "0 NTR \n"
+                 "0 GER \n"
+                 "0 JEZ 2\n"
+                 "B0\n"
+                 "0 EXP \n"
+                 "B1\n"
+                 "1 STR in except\n"
+                 "0 RUN print\n"
+                 "0 SER 0\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
