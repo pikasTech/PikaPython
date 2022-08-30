@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661857282778,
+  "lastUpdate": 1661869238887,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -77292,6 +77292,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000196182538923,
             "unit": "ms/iter",
             "extra": "iterations: 234579\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "216df31fbdfc5333e899e0ed8bdf68bf1c922922",
+          "message": "Merge pull request #205 from GorgonMeducer/update-cmsis-pack-for-lvgl-binding\n\nUpdate cmsis pack for lvgl binding",
+          "timestamp": "2022-08-30T22:07:22+08:00",
+          "tree_id": "a50a91a67529ac941b81eb14afc0f52a3903d88d",
+          "url": "https://github.com/pikasTech/pikascript/commit/216df31fbdfc5333e899e0ed8bdf68bf1c922922"
+        },
+        "date": 1661869232647,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 10527.373528917191,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 10527.373528917191 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 30.61694358576954,
+            "unit": "ms/iter",
+            "extra": "iterations: 38\ncpu: 30.60098184358881 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 16.811809563463175,
+            "unit": "ms/iter",
+            "extra": "iterations: 70\ncpu: 16.807712988587905 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 4.749989566142721,
+            "unit": "ms/iter",
+            "extra": "iterations: 246\ncpu: 4.749522743033402 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000438907181424,
+            "unit": "ms/iter",
+            "extra": "iterations: 234517\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
