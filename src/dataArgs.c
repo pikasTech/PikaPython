@@ -34,6 +34,7 @@
 #include "dataStrs.h"
 
 void args_deinit(Args* self) {
+    pika_assert(self != NULL);
     link_deinit(self);
 }
 
@@ -368,6 +369,7 @@ Arg* args_getArg_hash(Args* self, Hash nameHash) {
 }
 
 Arg* args_getArg(Args* self, char* name) {
+    pika_assert(NULL != self);
     LinkNode* node = args_getNode(self, name);
     if (NULL == node) {
         return NULL;
@@ -597,6 +599,7 @@ size_t list_getSize(PikaList* self) {
 }
 
 void list_reverse(PikaList* self) {
+    pika_assert(NULL != self);
     int top = list_getSize(self);
     for (int i = 0; i < top / 2; i++) {
         Arg* arg_i = arg_copy(list_getArg(self, i));

@@ -57,6 +57,7 @@ static Arg* arg_init_hash(Hash nameHash,
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
+    self->flag = 0;
     arg_setSerialized(self, PIKA_TRUE);
     arg_setIsKeyword(self, PIKA_FALSE);
     __platform_memset(arg_getContent(self), 0,
@@ -64,7 +65,7 @@ static Arg* arg_init_hash(Hash nameHash,
     if (NULL != content) {
         __platform_memcpy(arg_getContent(self), content, size);
     }
-
+    pika_assert(self->flag < ARG_FLAG_MAX);
     return self;
 }
 
@@ -82,6 +83,7 @@ void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
     self->size = size;
     self->type = ARG_TYPE_UNDEF;
     self->name_hash = 0;
+    self->flag = 0;
     arg_setSerialized(self, PIKA_FALSE);
     arg_setIsKeyword(self, PIKA_FALSE);
 }
@@ -157,6 +159,7 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
     if (NULL != src) {
         __platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
     }
+    pika_assert(self->flag < ARG_FLAG_MAX);
     return self;
 }
 
@@ -314,16 +317,18 @@ Arg* arg_copy(Arg* arg_src) {
     if (NULL == arg_src) {
         return NULL;
     }
+    pika_assert(arg_src->flag < ARG_FLAG_MAX);
     ArgType arg_type = arg_getType(arg_src);
     if (ARG_TYPE_OBJECT == arg_type) {
         obj_refcntInc((PikaObj*)arg_getPtr(arg_src));
     }
-    Arg* argCopied = New_arg(NULL);
-    argCopied = arg_setContent(argCopied, arg_getContent(arg_src),
-                               arg_getContentSize(arg_src));
-    argCopied = arg_setNameHash(argCopied, arg_getNameHash(arg_src));
-    argCopied = arg_setType(argCopied, arg_getType(arg_src));
-    return argCopied;
+    Arg* arg_dict = New_arg(NULL);
+    arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
+                              arg_getContentSize(arg_src));
+    arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
+    arg_dict = arg_setType(arg_dict, arg_getType(arg_src));
+    arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
+    return arg_dict;
 }
 
 Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
@@ -346,6 +351,7 @@ Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
                               arg_getContentSize(arg_src));
     arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
     arg_dict = arg_setType(arg_dict, arg_getType(arg_src));
+    arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
     return arg_dict;
 }
 
