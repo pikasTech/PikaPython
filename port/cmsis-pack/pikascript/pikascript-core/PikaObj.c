@@ -1189,3 +1189,7 @@ void pks_getVersion(char *buff)
 void* obj_getStruct(PikaObj* self, char* name) {
     return args_getStruct(self->list, name);
 }
+
+char* obj_cacheStr(PikaObj* self, char* str) {
+    return args_cacheStr(self->list, str);
+}

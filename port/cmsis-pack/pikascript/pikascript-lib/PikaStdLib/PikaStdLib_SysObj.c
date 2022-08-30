@@ -384,7 +384,7 @@ static void __print_arg(PikaObj* self, Arg* val) {
     args_setArg(print_args, arg_copy(val));
     char* res = args_print(print_args, "val");
     if (NULL == res) {
-        obj_setSysOut(self, "[error] print: can not print val");
+        obj_setSysOut(self, "Error: can not print val");
         obj_setErrorCode(self, 1);
         args_deinit(print_args);
         return;
@@ -422,7 +422,7 @@ void PikaStdLib_SysObj_printNoEnd(PikaObj* self, Arg* val) {
     args_setArg(print_args, arg_copy(val));
     char* res = args_print(print_args, "val");
     if (NULL == res) {
-        obj_setSysOut(self, "[error] print: can not print val");
+        obj_setSysOut(self, "Error: print: can not print val");
         obj_setErrorCode(self, 1);
         args_deinit(print_args);
         return;

@@ -49,7 +49,6 @@ typedef enum { VM_PC_EXIT = -99999 } VM_PC;
 
 typedef enum {
     TRY_STATE_NONE = 0,
-    TRY_STATE_TOP,
     TRY_STATE_INNER,
 } TRY_STATE;
 

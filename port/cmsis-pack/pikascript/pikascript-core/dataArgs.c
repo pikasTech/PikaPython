@@ -88,7 +88,7 @@ PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
 
 PIKA_RES args_pushArg(Args* self, Arg* arg) {
     Arg* new_arg = NULL;
-    if (!arg->serialized) {
+    if (!arg_getSerialized(arg)) {
         new_arg = arg_copy(arg);
         arg_deinit(arg);
     } else {
@@ -306,7 +306,7 @@ PIKA_RES __updateArg(Args* self, Arg* argNew) {
     arg_setNext((Arg*)priorNode, (Arg*)nodeToUpdate);
     goto exit;
 exit:
-    if (!argNew->serialized) {
+    if (!arg_getSerialized(argNew)) {
         return PIKA_RES_OK;
     }
     arg_freeContent(argNew);
@@ -698,4 +698,9 @@ exit:
 PikaTuple* args_getTuple(Args* self, char* name) {
     PikaObj* tuple_obj = args_getPtr(self, name);
     return obj_getPtr(tuple_obj, "list");
+}
+
+char* args_cacheStr(Args* self, char* str){
+    args_setStr(self, "__str_cache", str);
+    return args_getStr(self, "__str_cache");
 }

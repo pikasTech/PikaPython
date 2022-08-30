@@ -7,7 +7,12 @@
 
 Arg* PikaStdData_Dict_get(PikaObj* self, char* key) {
     PikaDict* dict = obj_getPtr(self, "dict");
-    return arg_copy(dict_getArg(dict, key));
+    Arg* res = dict_getArg(dict, key);
+    if (NULL == res) {
+        obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
+        __platform_printf("KeyError: %s\n", key);
+    }
+    return arg_copy(res);
 }
 
 void PikaStdData_Dict___init__(PikaObj* self) {

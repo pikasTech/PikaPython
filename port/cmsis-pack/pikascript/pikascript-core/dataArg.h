@@ -56,15 +56,17 @@ typedef enum {
 typedef void (*StructDeinitFun)(void* struct_);
 
 typedef struct Arg Arg;
+
 typedef union {
     Arg* next;
     uint8_t* buffer;
 } _arg_union;
+
 struct Arg {
     _arg_union _;
     uint32_t size;
     uint8_t type;
-    PIKA_BOOL serialized;
+    PIKA_BOOL flag;
     Hash name_hash;
     uint8_t content[];
 };
@@ -129,10 +131,25 @@ void arg_printBytes(Arg* self);
 Arg* arg_loadFile(Arg* self, char* filename);
 uint8_t argType_isObject(ArgType type);
 
+#define ARG_FLAG_MASK_SERIALIZED 0x01
+#define ARG_FLAG_MASK_IsKeyword 0x02
+
 #define arg_getNext(self) ((self)->_.next)
 #define arg_getSize(self) ((self)->size)
+#define arg_getSerialized(self) ((self)->flag & ARG_FLAG_MASK_SERIALIZED)
+#define arg_setSerialized(self, __serialized)                           \
+    do {                                                                \
+        (self)->flag = ((self)->flag & ~ARG_FLAG_MASK_SERIALIZED) |     \
+                       ((__serialized) ? ARG_FLAG_MASK_SERIALIZED : 0); \
+    } while (0)
+#define arg_getIsKeyword(self) ((self)->flag & ARG_FLAG_MASK_IsKeyword)
+#define arg_setIsKeyword(self, __isKeyword)                           \
+    do {                                                              \
+        (self)->flag = ((self)->flag & ~ARG_FLAG_MASK_IsKeyword) |    \
+                       ((__isKeyword) ? ARG_FLAG_MASK_IsKeyword : 0); \
+    } while (0)
 #define arg_getContent(self) \
-    ((self)->serialized ? (self)->content : ((self)->_.buffer))
+    ((arg_getSerialized(self)) ? (self)->content : ((self)->_.buffer))
 #define arg_getNext(self) ((self)->_.next)
 #define arg_setNext(self, __next) ((self)->_.next = (__next))
 

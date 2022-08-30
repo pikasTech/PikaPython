@@ -75,6 +75,12 @@ static char* VMState_getConstWithInstructUnit(VMState* vm,
                                  instructUnit_getConstPoolIndex(ins_unit));
 }
 
+static int VMState_getInvokeDeepthNow(VMState* vm) {
+    /* support run byteCode */
+    InstructUnit* ins_unit = VMState_getInstructNow(vm);
+    return instructUnit_getInvokeDeepth(ins_unit);
+}
+
 static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
     int offset = 0;
     int loop_deepth = -1;
@@ -176,6 +182,10 @@ static int32_t VMState_getAddrOffsetOfRaise(VMState* vm) {
         enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
         if ((NTR == ins)) {
             return offset;
+        }
+        /* if not found except, return */
+        if (RET == ins) {
+            return 0;
         }
     }
 }
@@ -392,7 +402,7 @@ static Arg* VM_instruction_handler_TRY(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
     pika_assert(NULL != vm->try_info);
-    vm->try_info->try_state = TRY_STATE_TOP;
+    vm->try_info->try_state = TRY_STATE_INNER;
     return NULL;
 }
 
@@ -834,10 +844,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     TryInfo sub_try_info = {.try_state = TRY_STATE_NONE,
                             .try_result = TRY_RESULT_NONE};
     pika_assert(NULL != vm->try_info);
-    if (vm->try_info->try_state == TRY_STATE_TOP ||
-        vm->try_info->try_state == TRY_STATE_INNER) {
-        sub_try_info.try_state = TRY_STATE_INNER;
-    }
+
+    /* transfer try_state */
+    sub_try_info.try_state = vm->try_info->try_state;
 
     /* tuple or single arg */
     if (data[0] == 0) {
@@ -950,6 +959,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     return_arg = obj_runMethodArgWithState_noalloc(
         method_host_obj, sub_locals, method_arg, &sub_try_info, arg_ret_reg);
 
+    if (sub_try_info.try_result != TRY_RESULT_NONE) {
+        /* try result */
+        vm->error_code = sub_try_info.try_result;
+    }
+
     /* __init__() */
     if (ARG_TYPE_OBJECT_NEW == arg_getType(return_arg)) {
         arg_setType(return_arg, ARG_TYPE_OBJECT);
@@ -990,18 +1004,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         VMState_setErrorCode(vm, PIKA_RES_ERR_RUNTIME_ERROR);
     }
 
-    /* check try result */
-    if (sub_try_info.try_result == TRY_RESULT_RAISE) {
-        /* try error */
-        VMState_setErrorCode(vm, PIKA_RES_ERR_RUNTIME_ERROR);
-        if (vm->try_info->try_state == TRY_STATE_TOP) {
-            vm->jmp = VM_JMP_RAISE;
-        } else if (vm->try_info->try_state == TRY_STATE_INNER) {
-            vm->try_info->try_result = TRY_RESULT_RAISE;
-            goto exit;
-        }
-    }
-
     goto exit;
 exit:
     if (NULL != method_arg) {
@@ -1025,6 +1027,7 @@ static char* __get_transferd_str(Args* buffs, char* str, size_t* iout_p) {
     char* str_rep = strsReplace(buffs, str, "\\n", "\n");
     str_rep = strsReplace(buffs, str_rep, "\\r", "\r");
     str_rep = strsReplace(buffs, str_rep, "\\t", "\t");
+    str_rep = strsReplace(buffs, str_rep, "\\\\", "\\");
 
     char* transfered_str = args_getBuff(buffs, strGetSize(str_rep));
     size_t i_out = 0;
@@ -1087,6 +1090,13 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     Arg* outArg = stack_popArg(&vm->stack, &outArg_reg);
     // Arg* outArg = stack_popArg_alloc(&vm->stack);
     ArgType outArg_type = arg_getType(outArg);
+
+    if (VMState_getInvokeDeepthNow(vm) > 0) {
+        /* in block, is a keyword arg */
+        arg_setIsKeyword(outArg, PIKA_TRUE);
+        arg_setName(outArg, data);
+        return arg_copy_noalloc(outArg, arg_ret_reg);
+    }
 
     if (_checkLReg(data)) {
         uint8_t index = _getLRegIndex(data);
@@ -1195,8 +1205,7 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    int thisBlockDeepth;
-    thisBlockDeepth = VMState_getBlockDeepthNow(vm);
+    int thisBlockDeepth = VMState_getBlockDeepthNow(vm);
     int jmp_expect = fast_atoi(data);
     arg_newReg(pika_assertArg_reg, PIKA_ARG_BUFF_SIZE);
     Arg* pika_assertArg = stack_popArg(&(vm->stack), &pika_assertArg_reg);
@@ -1234,6 +1243,9 @@ static uint8_t VMState_getInputArgNum(VMState* vm) {
             break;
         }
         if (invode_deepth == invoke_deepth_this + 1) {
+            if (instructUnit_getInstruct(ins_unit_now) == OUT) {
+                continue;
+            }
             num++;
         }
         if (instructUnit_getIsNewLine(ins_unit_now)) {
@@ -1746,13 +1758,6 @@ static Arg* VM_instruction_handler_RIS(PikaObj* self,
     PIKA_RES err = (PIKA_RES)arg_getInt(err_arg);
     VMState_setErrorCode(vm, err);
     arg_deinit(err_arg);
-    /* raise jmp */
-    if (vm->try_info->try_state == TRY_STATE_TOP) {
-        vm->jmp = VM_JMP_RAISE;
-    } else if (vm->try_info->try_state == TRY_STATE_INNER) {
-        vm->try_info->try_result = TRY_RESULT_RAISE;
-        return VM_instruction_handler_RET(self, vm, data, arg_ret_reg);
-    }
     return NULL;
 }
 
@@ -1929,6 +1934,14 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     /* run instruct */
     pika_assert(NULL != vm->try_info);
     return_arg = VM_instruct_handler_table[instruct](self, vm, data, &ret_reg);
+
+    if (vm->error_code != PIKA_RES_OK) {
+        /* raise jmp */
+        if (vm->try_info->try_state == TRY_STATE_INNER) {
+            vm->jmp = VM_JMP_RAISE;
+        };
+    }
+
     if (NULL != return_arg) {
         stack_pushArg(&(vm->stack), return_arg);
     }
@@ -1955,6 +1968,7 @@ nextLine:
         if (0 == offset) {
             /* can not found end of try, return */
             pc_next = VM_PC_EXIT;
+            vm->try_info->try_result = TRY_RESULT_RAISE;
             goto exit;
         }
         pc_next = vm->pc + offset;
