@@ -574,8 +574,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     char _buffs2[PIKA_LINE_BUFF_SIZE / 2] = {0};
     char* buffs2 = (char*)_buffs2;
     uint8_t arg_num_dec = 0;
-    PIKA_BOOL is_variable = PIKA_FALSE;
-    PIKA_BOOL is_get_variable_arg = PIKA_FALSE;
+    PIKA_BOOL vars_or_keys = PIKA_FALSE;
     uint8_t arg_num = 0;
     ArgType method_type = ARG_TYPE_UNDEF;
     uint8_t arg_num_input = 0;
@@ -611,13 +610,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     /* check variable */
     if (strIsContain(type_list, '*')) {
-        is_variable = PIKA_TRUE;
+        vars_or_keys = PIKA_TRUE;
     }
 
     /* check arg num */
     if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
         method_type == ARG_TYPE_METHOD_CONSTRUCTOR ||
-        is_variable == PIKA_TRUE) {
+        vars_or_keys == PIKA_TRUE) {
         /* skip for constrctor */
         /* skip for variable args */
     } else {
@@ -632,13 +631,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         }
     }
 
-    if (PIKA_TRUE == is_variable) {
+    if (PIKA_TRUE == vars_or_keys) {
         arg_num = arg_num_input;
     } else {
         arg_num = arg_num_dec;
     }
 
-    if (is_variable) {
+    if (vars_or_keys) {
         type_list_buff = strCopy(buffs2, type_list);
         variable_arg_start = 0;
         for (int i = 0; i < arg_num_dec; i++) {
@@ -648,7 +647,11 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                 /* skip the '*' */
                 variable_tuple_name = arg_def + 1;
                 variable_arg_start = arg_num_dec - i - 1;
-                is_get_variable_arg = PIKA_TRUE;
+                /* create tuple */
+                if (NULL == tuple) {
+                    tuple = New_tuple();
+                    strPopLastToken(type_list, ',');
+                }
                 break;
             }
             if (arg_def[0] == '*' && arg_def[1] == '*') {
@@ -659,19 +662,10 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         }
     }
 
-    /* create tuple */
-    if (variable_tuple_name != NULL) {
-        tuple = New_tuple();
-        strPopLastToken(type_list, ',');
-    }
-
     /* load pars */
     for (int i = 0; i < arg_num; i++) {
         char* arg_name = NULL;
-        if (arg_num - i <= variable_arg_start) {
-            is_get_variable_arg = PIKA_FALSE;
-        }
-        if (PIKA_FALSE == is_get_variable_arg) {
+        if (tuple == NULL || arg_num - i <= variable_arg_start) {
             char* arg_def = strPopLastToken(type_list, ',');
             strPopLastToken(arg_def, ':');
             arg_name = arg_def;
@@ -680,9 +674,11 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             arg_name = "";
         }
         Arg* call_arg = stack_popArg_alloc(&(vm->stack));
-        call_arg = arg_setName(call_arg, arg_name);
+        if (arg_name[0] != '*') {
+            call_arg = arg_setName(call_arg, arg_name);
+        }
         /* load the variable arg */
-        if (PIKA_TRUE == is_get_variable_arg) {
+        if (tuple != NULL && (arg_num - i > variable_arg_start)) {
             list_append(&tuple->super, call_arg);
             /* the append would copy the arg */
             arg_deinit(call_arg);
@@ -700,7 +696,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         args_setArg(args, call_arg);
     }
 
-    if (PIKA_TRUE == is_variable) {
+    if (tuple != NULL) {
         list_reverse(&tuple->super);
         /* load variable tuple */
         PikaObj* New_PikaStdData_Tuple(Args * args);

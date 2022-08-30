@@ -1225,3 +1225,18 @@ TEST(vm, keyword_2) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, keyword_3) {
+    char* line =
+        "def test(**keys):\n"
+        "    print(keys['a'], keys['b'])\n"
+        "test(a=1, b= 2)";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1 2\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
