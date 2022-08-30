@@ -75,13 +75,24 @@ pub fn pika_compiler_entry() {
     f.write("\n".as_bytes()).unwrap();
 
     for (_, class_info) in compiler.class_list.iter() {
+        /* get module_name */
+        let mut module_name = class_info.this_file_name.clone();
+        if module_name == "" {
+            module_name = class_info.this_class_name.clone();
+        }
+        /* create module control macro */
+        let module_define = format!(
+            "#ifndef PIKA_MODULE_{}_DISABLE\n",
+            module_name.to_ascii_uppercase()
+        );
+        f.write(module_define.as_bytes()).unwrap();
         /* create method api function */
         f.write(class_info.method_api_fn().as_bytes()).unwrap();
         /* create new classs function */
         f.write(class_info.new_class_fn().as_bytes()).unwrap();
-        f.write("\n".as_bytes()).unwrap();
         /* create contruactor */
         if !class_info.is_package {
+            f.write("\n".as_bytes()).unwrap();
             let name = String::from(class_info.this_class_name.to_string());
             f.write(format!("Arg *{}(PikaObj *self){{\n", &name).as_bytes())
                 .unwrap();
@@ -89,6 +100,8 @@ pub fn pika_compiler_entry() {
                 .unwrap();
             f.write("}\n".as_bytes()).unwrap();
         }
+        f.write("#endif\n".as_bytes()).unwrap();
+        f.write("\n".as_bytes()).unwrap();
     }
 
     /* make the .h file for each python class */

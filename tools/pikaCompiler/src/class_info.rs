@@ -8,6 +8,7 @@ use crate::version_info::VersionInfo;
 use std::collections::BTreeMap;
 #[derive(Debug)]
 pub struct ClassInfo {
+    pub this_file_name: String,
     pub this_class_name: String,
     pub this_class_name_without_file: String,
     pub super_class_name: String,
@@ -58,6 +59,7 @@ impl ClassInfo {
         let this_class_name_without_file = this_calss_name.clone();
         this_calss_name = ClassInfo::add_file_profix(&file_name, &this_calss_name, is_package);
         let new_class_info = ClassInfo {
+            this_file_name: file_name.clone(),
             this_class_name: this_calss_name,
             this_class_name_without_file: this_class_name_without_file,
             super_class_name: super_class_name,
