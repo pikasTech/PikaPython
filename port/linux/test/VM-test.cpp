@@ -1211,6 +1211,7 @@ TEST(VM, issue_I5OJQB) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(vm, keyword_2) {
     char* line =
         "def test(a, b):\n"
@@ -1240,3 +1241,4 @@ TEST(vm, keyword_3) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
