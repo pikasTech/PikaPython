@@ -133,6 +133,7 @@ uint8_t argType_isObject(ArgType type);
 
 #define ARG_FLAG_MASK_SERIALIZED 0x01
 #define ARG_FLAG_MASK_IsKeyword 0x02
+#define ARG_FLAG_MAX 0x04
 
 #define arg_getNext(self) ((self)->_.next)
 #define arg_getSize(self) ((self)->size)

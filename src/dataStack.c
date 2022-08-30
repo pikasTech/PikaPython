@@ -144,6 +144,7 @@ Arg* _stack_popArg(Stack* stack, Arg* arg_dict, PIKA_BOOL is_alloc) {
     if (argType_isObject(type)) {
         obj_refcntDec((PikaObj*)arg_getPtr(arg));
     }
+    pika_assert(arg->flag < ARG_FLAG_MAX);
     return arg;
 }
 
