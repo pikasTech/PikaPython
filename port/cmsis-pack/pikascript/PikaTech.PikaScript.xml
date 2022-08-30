@@ -94,6 +94,12 @@
       <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="@VERSION" />
     </condition>
 
+    <condition id="NO_LVGL_Pack">
+      <description>The existance of the LVGL</description>
+      <deny Cclass="LVGL" Cgroup="lvgl" Csub="PikaScript Binding" Cversion="0.2.0" />
+      <require condition="Kernel" />
+    </condition>
+
     <condition id="PLOOC_Pack">
       <description>The Kernel of the PikaScript</description>
       <require Cclass="Language Extension" Cgroup="PLOOC" />
@@ -167,6 +173,7 @@
         <description>The standard library for PikaScript</description>
         <files>
 @LIB
+            <file attr="config" category="sourceC"  name="__pikaBindingLVGLDefault.c" version="@LVGL_VERSION" />
         </files>
       </component>
 

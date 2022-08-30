@@ -50,6 +50,7 @@ def collect(name, groupList: list[Group], subfix=".xml"):
 formatc = '<file attr="config" category="sourceC"  name="%s" />'
 formath = '<file attr="config" category="header"  name="%s" />'
 formatcfg = '<file attr="config" category="source"  name="%s" />'
+formatccond = '<file attr="config" category="sourceC"  name="%s" condition="NO_LVGL_Pack" />'
 
 kernal_c = Group("kernalH", "pikascript-core", ".c")
 kernal_h = Group("kernalC", "pikascript-core", ".h",
@@ -58,7 +59,7 @@ kernal_cfg = Group("kernalCfg", "pikascript-core", ".cfg",
                    format=formatcfg)
 lib_c = Group("libC", "pikascript-lib/PikaStdLib", ".c", format=formatc)
 lib_h = Group("libH", "pikascript-lib/PikaStdLib", ".h", format=formath)
-lvgl_c = Group("libC", "pikascript-lib/pika_lvgl", ".c", format=formatc)
+lvgl_c = Group("libC", "pikascript-lib/pika_lvgl", ".c", format=formatccond)
 lvgl_h = Group("libH", "pikascript-lib/pika_lvgl", ".h", format=formath)
 
 api_c = Group("apiC", "pikascript-api", ".c",   format=formatc)

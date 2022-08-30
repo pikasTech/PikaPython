@@ -94,6 +94,12 @@
       <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="1.10.3" />
     </condition>
 
+    <condition id="NO_LVGL_Pack">
+      <description>The existance of the LVGL</description>
+      <deny Cclass="LVGL" Cgroup="lvgl" Csub="PikaScript Binding" Cversion="0.2.0" />
+      <require condition="Kernel" />
+    </condition>
+
     <condition id="PLOOC_Pack">
       <description>The Kernel of the PikaScript</description>
       <require Cclass="Language Extension" Cgroup="PLOOC" />
@@ -268,20 +274,21 @@
 <file attr="config" category="header"  name="pikascript-api/pika_lvgl_table.h" />
 <file attr="config" category="header"  name="pikascript-api/pika_lvgl_textarea.h" />
 
+            <file attr="config" category="sourceC"  name="__pikaBindingLVGLDefault.c" version="0.2.0" />
         </files>
       </component>
 
       <component Cgroup="PikaScript" Csub="pika_lvgl" Cversion="0.2.0" condition="Kernel">
         <description>The lvgl module for PikaScript</description>
         <files>
-<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl.c" />
-<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl_indev_t.c" />
-<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl_lv_event.c" />
-<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl_lv_obj.c" />
-<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl_lv_style_t.c" />
-<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lv_point_t.c" />
-<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lv_timer_t.c" />
-<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lv_wegit.c" />
+<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl.c" condition="NO_LVGL_Pack" />
+<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl_indev_t.c" condition="NO_LVGL_Pack" />
+<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl_lv_event.c" condition="NO_LVGL_Pack" />
+<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl_lv_obj.c" condition="NO_LVGL_Pack" />
+<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl_lv_style_t.c" condition="NO_LVGL_Pack" />
+<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lv_point_t.c" condition="NO_LVGL_Pack" />
+<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lv_timer_t.c" condition="NO_LVGL_Pack" />
+<file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lv_wegit.c" condition="NO_LVGL_Pack" />
 
         </files>
       </component>
