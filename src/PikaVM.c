@@ -589,7 +589,9 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     ArgType method_type = ARG_TYPE_UNDEF;
     uint8_t arg_num_input = 0;
     PikaTuple* tuple = NULL;
+    PikaDict* dict = NULL;
     char* variable_tuple_name = NULL;
+    char* keyword_dict_name = NULL;
     char* type_list_buff = NULL;
     int variable_arg_start = 0;
     /* get method type list */
@@ -604,11 +606,6 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
     method_type = arg_getType(method_arg);
 
-    /* check variable */
-    if (strIsContain(type_list, '*')) {
-        is_variable = PIKA_TRUE;
-    }
-
     /* get arg_num_dec */
     if (strEqu("", type_list)) {
         arg_num_dec = 0;
@@ -620,6 +617,11 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         arg_num_dec--;
     }
     arg_num_input = VMState_getInputArgNum(vm);
+
+    /* check variable */
+    if (strIsContain(type_list, '*')) {
+        is_variable = PIKA_TRUE;
+    }
 
     /* check arg num */
     if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
@@ -646,23 +648,28 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
 
     if (is_variable) {
-        /* get variable tuple name */
         type_list_buff = strCopy(buffs2, type_list);
         variable_arg_start = 0;
         for (int i = 0; i < arg_num_dec; i++) {
             char* arg_def = strPopLastToken(type_list_buff, ',');
-            if (strIsStartWith(arg_def, "*")) {
+            if (arg_def[0] == '*' && arg_def[1] != '*') {
+                /* get variable tuple name */
                 /* skip the '*' */
                 variable_tuple_name = arg_def + 1;
                 variable_arg_start = arg_num_dec - i - 1;
                 is_get_variable_arg = PIKA_TRUE;
                 break;
             }
+            if (arg_def[0] == '*' && arg_def[1] == '*') {
+                /* get keyword dict name */
+                keyword_dict_name = arg_def + 2;
+                break;
+            }
         }
     }
 
-    /* found variable arg */
-    if (PIKA_TRUE == is_get_variable_arg) {
+    /* create tuple */
+    if (variable_tuple_name != NULL) {
         tuple = New_tuple();
         strPopLastToken(type_list, ',');
     }
@@ -688,10 +695,20 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             list_append(&tuple->super, call_arg);
             /* the append would copy the arg */
             arg_deinit(call_arg);
-        } else {
-            /* load normal arg */
-            args_setArg(args, call_arg);
+            continue;
         }
+        if (arg_getIsKeyword(call_arg)) {
+            if (NULL == dict) {
+                dict = New_dict();
+            }
+            /* load the keyword arg */
+            dict_setArg(dict, call_arg);
+            /* the append would copy the arg */
+            arg_deinit(call_arg);
+            continue;
+        }
+        /* load normal arg */
+        args_setArg(args, call_arg);
     }
 
     if (PIKA_TRUE == is_variable) {
