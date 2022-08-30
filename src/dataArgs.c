@@ -34,6 +34,7 @@
 #include "dataStrs.h"
 
 void args_deinit(Args* self) {
+    pika_assert(self != NULL);
     link_deinit(self);
 }
 

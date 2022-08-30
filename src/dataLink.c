@@ -41,6 +41,7 @@ void __link_deinit_pyload(Link* self) {
 }
 
 void link_deinit(Link* self) {
+    pika_assert(self != NULL);
     __link_deinit_pyload(self);
     pikaFree(self, sizeof(Link));
 }

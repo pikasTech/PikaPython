@@ -1214,7 +1214,7 @@ TEST(VM, issue_I5OJQB) {
 TEST(vm, keyword_2) {
     char* line =
         "def test(a, b):\n"
-        "    print(a, b)\n"
+        "    print(__kwargs['a'], __kwargs['b'])\n"
         "test(a=1, b= 2)";
     PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
     obj_run(self, line);

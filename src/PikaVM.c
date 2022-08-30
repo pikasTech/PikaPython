@@ -485,14 +485,6 @@ static Arg* VM_instruction_handler_GER(PikaObj* self,
     return err_arg;
 }
 
-static int32_t __foreach_handler_deinitTuple(Arg* argEach, Args* context) {
-    if (arg_getType(argEach) == ARG_TYPE_TUPLE) {
-        PikaTuple* tuple = arg_getPtr(argEach);
-        tuple_deinit(tuple);
-    }
-    return PIKA_RES_OK;
-}
-
 Arg* _obj_runMethodArgWithState(PikaObj* self,
                                 PikaObj* method_args_obj,
                                 Arg* method_arg,
@@ -542,7 +534,6 @@ Arg* _obj_runMethodArgWithState(PikaObj* self,
         return_arg = arg_copy_noalloc(
             args_getArg(method_args_obj->list, (char*)"return"), ret_arg_reg);
     }
-    args_foreach(method_args_obj->list, __foreach_handler_deinitTuple, NULL);
     return return_arg;
 }
 
@@ -717,6 +708,17 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         obj_setPtr(tuple_obj, "list", tuple);
         args_setPtrWithType(args, variable_tuple_name, ARG_TYPE_OBJECT,
                             tuple_obj);
+    }
+
+    if (dict != NULL) {
+        if (NULL == keyword_dict_name) {
+            keyword_dict_name = "__kwargs";
+        }
+        /* load keyword dict */
+        PikaObj* New_PikaStdData_Dict(Args * args);
+        PikaObj* dict_obj = newNormalObj(New_PikaStdData_Dict);
+        obj_setPtr(dict_obj, "dict", dict);
+        args_setPtrWithType(args, keyword_dict_name, ARG_TYPE_OBJECT, dict_obj);
     }
 
     /* load 'self' as the first arg when call object method */

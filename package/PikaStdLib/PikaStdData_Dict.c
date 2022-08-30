@@ -59,7 +59,9 @@ void PikaStdData_Dict___del__(PikaObj* self) {
     PikaDict* dict = obj_getPtr(self, "dict");
     PikaDict* keys = obj_getPtr(self, "_keys");
     dict_deinit(dict);
-    dict_deinit(keys);
+    if (NULL != keys) {
+        dict_deinit(keys);
+    }
 }
 
 void PikaStdData_dict_keys___init__(PikaObj* self, PikaObj* dict) {
