@@ -322,12 +322,13 @@ Arg* arg_copy(Arg* arg_src) {
     if (ARG_TYPE_OBJECT == arg_type) {
         obj_refcntInc((PikaObj*)arg_getPtr(arg_src));
     }
-    Arg* argCopied = New_arg(NULL);
-    argCopied = arg_setContent(argCopied, arg_getContent(arg_src),
-                               arg_getContentSize(arg_src));
-    argCopied = arg_setNameHash(argCopied, arg_getNameHash(arg_src));
-    argCopied = arg_setType(argCopied, arg_getType(arg_src));
-    return argCopied;
+    Arg* arg_dict = New_arg(NULL);
+    arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
+                              arg_getContentSize(arg_src));
+    arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
+    arg_dict = arg_setType(arg_dict, arg_getType(arg_src));
+    arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
+    return arg_dict;
 }
 
 Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
@@ -350,6 +351,7 @@ Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
                               arg_getContentSize(arg_src));
     arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
     arg_dict = arg_setType(arg_dict, arg_getType(arg_src));
+    arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
     return arg_dict;
 }
 

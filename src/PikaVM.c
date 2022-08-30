@@ -703,8 +703,6 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             }
             /* load the keyword arg */
             dict_setArg(dict, call_arg);
-            /* the append would copy the arg */
-            arg_deinit(call_arg);
             continue;
         }
         /* load normal arg */
