@@ -210,7 +210,15 @@
 
       <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.10.6" condition="Kernel">
         <description>The standard library for PikaScript</description>
+        <Pre_Include_Local_Component_h>
+
+#include "RTE_Components.h"
+#if !((defined(LV_USE_PIKASCRIPT_BINDING) &#38;&#38; LV_USE_PIKASCRIPT_BINDING) ||  (defined(PIKA_USE_LVGL_BINDING) &#38;&#38; PIKA_USE_LVGL_BINDING))
+#   define PIKA_MODULE_PIKA_LVGL_DISABLE    1
+#endif
+        </Pre_Include_Local_Component_h>
         <files>
+
 <file attr="config" category="sourceC"  name="pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c" />
 <file attr="config" category="sourceC"  name="pikascript-lib/PikaStdLib/PikaStdData_ByteArray.c" />
 <file attr="config" category="sourceC"  name="pikascript-lib/PikaStdLib/PikaStdData_Dict.c" />
@@ -274,7 +282,6 @@
 <file attr="config" category="header"  name="pikascript-api/pika_lvgl_table.h" />
 <file attr="config" category="header"  name="pikascript-api/pika_lvgl_textarea.h" />
 
-            <file attr="config" category="sourceC"  name="__pikaBindingLVGLDefault.c" version="0.2.0" />
         </files>
       </component>
 
@@ -290,7 +297,14 @@
 <file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lv_timer_t.c" condition="NO_LVGL_Pack" />
 <file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lv_wegit.c" condition="NO_LVGL_Pack" />
 
+
         </files>
+        
+        <RTE_Components_h>
+
+/*! \brief enable PikaScrit Binding */
+#define PIKA_USE_LVGL_BINDING          1
+        </RTE_Components_h>
       </component>
 
     </bundle>

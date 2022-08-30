@@ -171,9 +171,16 @@
 
       <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="@VERSION" condition="Kernel">
         <description>The standard library for PikaScript</description>
+        <Pre_Include_Local_Component_h>
+
+#include "RTE_Components.h"
+#if !((defined(LV_USE_PIKASCRIPT_BINDING) &#38;&#38; LV_USE_PIKASCRIPT_BINDING) ||  (defined(PIKA_USE_LVGL_BINDING) &#38;&#38; PIKA_USE_LVGL_BINDING))
+#   define PIKA_MODULE_PIKA_LVGL_DISABLE    1
+#endif
+        </Pre_Include_Local_Component_h>
         <files>
+
 @LIB
-            <file attr="config" category="sourceC"  name="__pikaBindingLVGLDefault.c" version="@LVGL_VERSION" />
         </files>
       </component>
 
@@ -181,7 +188,14 @@
         <description>The lvgl module for PikaScript</description>
         <files>
 @LVGL_LIB
+
         </files>
+        
+        <RTE_Components_h>
+
+/*! \brief enable PikaScrit Binding */
+#define PIKA_USE_LVGL_BINDING          1
+        </RTE_Components_h>
       </component>
 
     </bundle>
