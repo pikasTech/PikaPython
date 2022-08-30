@@ -75,6 +75,12 @@ static char* VMState_getConstWithInstructUnit(VMState* vm,
                                  instructUnit_getConstPoolIndex(ins_unit));
 }
 
+static int VMState_getInvokeDeepthNow(VMState* vm) {
+    /* support run byteCode */
+    InstructUnit* ins_unit = VMState_getInstructNow(vm);
+    return instructUnit_getInvokeDeepth(ins_unit);
+}
+
 static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
     int offset = 0;
     int loop_deepth = -1;
@@ -1089,6 +1095,13 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     // Arg* outArg = stack_popArg_alloc(&vm->stack);
     ArgType outArg_type = arg_getType(outArg);
 
+    if (VMState_getInvokeDeepthNow(vm) > 0) {
+        /* in block, is a keyword arg */
+        arg_setIsKeyword(outArg, PIKA_TRUE);
+        arg_setName(outArg, data);
+        return arg_copy_noalloc(outArg, arg_ret_reg);
+    }
+
     if (_checkLReg(data)) {
         uint8_t index = _getLRegIndex(data);
         if (argType_isObject(outArg_type)) {
@@ -1196,8 +1209,7 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    int thisBlockDeepth;
-    thisBlockDeepth = VMState_getBlockDeepthNow(vm);
+    int thisBlockDeepth = VMState_getBlockDeepthNow(vm);
     int jmp_expect = fast_atoi(data);
     arg_newReg(pika_assertArg_reg, PIKA_ARG_BUFF_SIZE);
     Arg* pika_assertArg = stack_popArg(&(vm->stack), &pika_assertArg_reg);
@@ -1235,6 +1247,9 @@ static uint8_t VMState_getInputArgNum(VMState* vm) {
             break;
         }
         if (invode_deepth == invoke_deepth_this + 1) {
+            if (instructUnit_getInstruct(ins_unit_now) == OUT) {
+                continue;
+            }
             num++;
         }
         if (instructUnit_getIsNewLine(ins_unit_now)) {

@@ -88,7 +88,7 @@ PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
 
 PIKA_RES args_pushArg(Args* self, Arg* arg) {
     Arg* new_arg = NULL;
-    if (!arg->serialized) {
+    if (!arg_getSerialized(arg)) {
         new_arg = arg_copy(arg);
         arg_deinit(arg);
     } else {
@@ -306,7 +306,7 @@ PIKA_RES __updateArg(Args* self, Arg* argNew) {
     arg_setNext((Arg*)priorNode, (Arg*)nodeToUpdate);
     goto exit;
 exit:
-    if (!argNew->serialized) {
+    if (!arg_getSerialized(argNew)) {
         return PIKA_RES_OK;
     }
     arg_freeContent(argNew);
