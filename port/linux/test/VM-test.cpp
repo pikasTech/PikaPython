@@ -1198,6 +1198,7 @@ TEST(VM, science_num) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(VM, issue_I5OJQB) {
     char* line = "s = '\\\\'";
     PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
@@ -1205,7 +1206,23 @@ TEST(VM, issue_I5OJQB) {
     /* collect */
     char* s = obj_getStr(self, "s");
     /* assert */
-    EXPECT_STREQ(s, "\\");
+    EXPECT_STREQ(log_buff[0], "1");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+TEST(vm, keyword_2) {
+    char* line =
+        "def test(a, b):\n"
+        "    print(a, b)\n"
+        "test(a=1, b= 2)";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1 2\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
