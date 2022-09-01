@@ -131,6 +131,7 @@ Arg* arg_setNameHash(Arg* self, Hash nameHash) {
 }
 
 Arg* arg_setName(Arg* self, char* name) {
+    pika_assert(NULL != name);
     return arg_setNameHash(self, hash_time33(name));
 }
 

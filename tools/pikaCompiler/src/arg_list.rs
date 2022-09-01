@@ -55,6 +55,10 @@ impl ArgList {
                 /* if not get ':', get the name */
                 None => String::from(arg_define.to_string()),
             };
+            if arg_name.starts_with("**") {
+                /* is the dict variable parameter */
+                arg_name = arg_name.strip_prefix("**").unwrap().to_string();
+            }
             if arg_name.starts_with("*") {
                 /* is the tuple variable parameter */
                 arg_name = arg_name.strip_prefix("*").unwrap().to_string();
@@ -64,9 +68,11 @@ impl ArgList {
                 Some(name) => name,
                 /* if not get ':', ignore the arg */
                 None => {
-                    if arg_define.starts_with("*") {
+                    if arg_define.starts_with("*") && arg_define.chars().nth(1).unwrap() != '*' {
                         /* is the tuple variable parameter */
                         String::from("@tupleVarPar")
+                    } else if arg_define.starts_with("*") {
+                        String::from("@dictVarPar")
                     } else {
                         String::from("")
                     }

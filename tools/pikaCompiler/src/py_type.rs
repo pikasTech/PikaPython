@@ -29,6 +29,9 @@ impl PyType {
         if self.type_name == "@tupleVarPar" {
             return "PikaTuple*".to_string();
         }
+        if self.type_name == "@dictVarPar" {
+            return "PikaDict*".to_string();
+        }
         return "PikaObj*".to_string();
     }
 
@@ -125,6 +128,9 @@ impl PyType {
         }
         if self.type_name == "@tupleVarPar" {
             return "args_getTuple".to_string();
+        }
+        if self.type_name == "@dictVarPar" {
+            return "args_getDict".to_string();
         }
         return "args_getPtr".to_string();
     }

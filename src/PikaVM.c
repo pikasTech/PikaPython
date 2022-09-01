@@ -287,7 +287,10 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
             /* const pool */
         };
         pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
-        return arg_copy(args_getArg(arg_obj->list, "__res"));
+        Arg* __res = args_getArg(arg_obj->list, "__res");
+        if (NULL != __res) {
+            return arg_copy(__res);
+        }
     }
     return arg_newNull();
 }
@@ -652,12 +655,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                     tuple = New_tuple();
                     strPopLastToken(type_list, ',');
                 }
-                break;
+                continue;
             }
             if (arg_def[0] == '*' && arg_def[1] == '*') {
                 /* get keyword dict name */
                 keyword_dict_name = arg_def + 2;
-                break;
+                dict = New_dict();
+                continue;
             }
         }
     }
@@ -669,27 +673,27 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             char* arg_def = strPopLastToken(type_list, ',');
             strPopLastToken(arg_def, ':');
             arg_name = arg_def;
-        } else {
-            /* clear the variable arg name */
-            arg_name = "";
         }
         Arg* call_arg = stack_popArg_alloc(&(vm->stack));
-        if (arg_name[0] != '*') {
+
+        /* only normal arg use format name */
+        if (arg_name != NULL && arg_name[0] != '*') {
             call_arg = arg_setName(call_arg, arg_name);
+        }
+        /* load the keyword arg */
+        if (call_arg != NULL && arg_getIsKeyword(call_arg)) {
+            if (NULL == dict) {
+                dict = New_dict();
+            }
+            arg_setIsKeyword(call_arg, PIKA_FALSE);
+            dict_setArg(dict, call_arg);
+            continue;
         }
         /* load the variable arg */
         if (tuple != NULL && (arg_num - i > variable_arg_start)) {
             list_append(&tuple->super, call_arg);
             /* the append would copy the arg */
             arg_deinit(call_arg);
-            continue;
-        }
-        if (arg_getIsKeyword(call_arg)) {
-            if (NULL == dict) {
-                dict = New_dict();
-            }
-            /* load the keyword arg */
-            dict_setArg(dict, call_arg);
             continue;
         }
         /* load normal arg */

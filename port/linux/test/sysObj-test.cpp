@@ -76,3 +76,18 @@ TEST(sysObj, setattr) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+#if !PIKA_NANO_ENABLE
+TEST(sysobj, print_no_end) {
+    char* line =
+        "print('test', end='')\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "test");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

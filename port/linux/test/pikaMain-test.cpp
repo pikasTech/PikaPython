@@ -1358,25 +1358,25 @@ TEST(pikaMain, class_demo_1_file) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if !PIKA_NANO_ENABLE
-TEST(pikaMain, get_native_method) {
-    /* init */
-    pikaMemInfo.heapUsedMax = 0;
-    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    __platform_printf("BEGIN\r\n");
-    /* do some thing */
-    Args args = {0};
-    args_setStr(&args, "val", "test");
-    obj_runNativeMethod(pikaMain, "printNoEnd", &args);
-    args_deinit_stack(&args);
-    /* assert */
-    EXPECT_STREQ(log_buff[0], "test");
-    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
-    /* deinit */
-    obj_deinit(pikaMain);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-#endif
+// #if !PIKA_NANO_ENABLE
+// TEST(pikaMain, get_native_method) {
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     __platform_printf("BEGIN\r\n");
+//     /* do some thing */
+//     Args args = {0};
+//     args_setStr(&args, "val", "t");
+//     obj_runNativeMethod(pikaMain, "ord", &args);
+//     args_deinit_stack(&args);
+//     /* assert */
+//     EXPECT_STREQ(log_buff[0], "test\r\n");
+//     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
+// #endif
 
 TEST(pikaMain, hex_list) {
     /* init */

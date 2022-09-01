@@ -88,6 +88,9 @@ PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
 }
 
 PIKA_RES args_pushArg(Args* self, Arg* arg) {
+    if (NULL == arg) {
+        return PIKA_RES_ERR_ARG_NO_FOUND;
+    }
     Arg* new_arg = NULL;
     if (!arg_getSerialized(arg)) {
         new_arg = arg_copy(arg);
@@ -584,6 +587,9 @@ void* list_getPtr(PikaList* self, int index) {
 }
 
 PIKA_RES list_append(PikaList* self, Arg* arg) {
+    if (NULL == arg) {
+        return PIKA_RES_ERR_ARG_NO_FOUND;
+    }
     int top = args_getInt(&self->super, "top");
     char buff[11];
     char* topStr = fast_itoa(buff, top);
@@ -595,6 +601,7 @@ PIKA_RES list_append(PikaList* self, Arg* arg) {
 }
 
 size_t list_getSize(PikaList* self) {
+    pika_assert(NULL != self);
     return args_getInt(&self->super, "top");
 }
 
@@ -698,12 +705,19 @@ exit:
     return res;
 }
 
+/* tuple */
 PikaTuple* args_getTuple(Args* self, char* name) {
     PikaObj* tuple_obj = args_getPtr(self, name);
     return obj_getPtr(tuple_obj, "list");
 }
 
-char* args_cacheStr(Args* self, char* str){
+/* dict */
+PikaDict* args_getDict(Args* self, char* name) {
+    PikaObj* tuple_obj = args_getPtr(self, name);
+    return obj_getPtr(tuple_obj, "dict");
+}
+
+char* args_cacheStr(Args* self, char* str) {
     args_setStr(self, "__str_cache", str);
     return args_getStr(self, "__str_cache");
 }
