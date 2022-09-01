@@ -653,6 +653,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                 /* create tuple */
                 if (NULL == tuple) {
                     tuple = New_tuple();
+                    /* remove the format arg */
                     strPopLastToken(type_list, ',');
                 }
                 continue;
@@ -661,6 +662,8 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                 /* get keyword dict name */
                 keyword_dict_name = arg_def + 2;
                 dict = New_dict();
+                /* remove the format arg */
+                strPopLastToken(type_list, ',');
                 continue;
             }
         }
@@ -668,18 +671,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     /* load pars */
     for (int i = 0; i < arg_num; i++) {
-        char* arg_name = NULL;
-        if (tuple == NULL || arg_num - i <= variable_arg_start) {
-            char* arg_def = strPopLastToken(type_list, ',');
-            strPopLastToken(arg_def, ':');
-            arg_name = arg_def;
-        }
         Arg* call_arg = stack_popArg_alloc(&(vm->stack));
-
-        /* only normal arg use format name */
-        if (arg_name != NULL && arg_name[0] != '*') {
-            call_arg = arg_setName(call_arg, arg_name);
-        }
         /* load the keyword arg */
         if (call_arg != NULL && arg_getIsKeyword(call_arg)) {
             if (NULL == dict) {
@@ -689,6 +681,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             dict_setArg(dict, call_arg);
             continue;
         }
+
         /* load the variable arg */
         if (tuple != NULL && (arg_num - i > variable_arg_start)) {
             list_append(&tuple->super, call_arg);
@@ -696,8 +689,12 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             arg_deinit(call_arg);
             continue;
         }
+
         /* load normal arg */
-        args_setArg(args, call_arg);
+        char* arg_name = strPopLastToken(type_list, ',');
+        /* skip type hint */
+        strPopLastToken(arg_name, ':');
+        args_setArg(args, arg_setName(call_arg, arg_name));
     }
 
     if (tuple != NULL) {

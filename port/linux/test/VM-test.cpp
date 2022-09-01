@@ -1241,4 +1241,34 @@ TEST(vm, keyword_3) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, keyword_4) {
+    char* line =
+        "def test(a, b, **keys):\n"
+        "    print(keys['a'], keys['b'], a, b)\n"
+        "test(3, 4, a=1, b= 2)";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1 2 3 4\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, vars_keyward) {
+    char* line =
+        "def test(a, b, *vars, **keys):\n"
+        "    print(keys['a'], keys['b'], a, b, vars[0])\n"
+        "test(3, 4, 5, a=1, b= 2)";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1 2 3 4 5\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif
