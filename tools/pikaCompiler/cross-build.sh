@@ -16,5 +16,6 @@ touch pikascript/pikascript-core/keep
 
 sh cross-win.sh
 
-cp build-win/pikaByteCodeGen.exe $ROOT/rust-msc-latest-win10-dev.exe
+cp build-win/pikaByteCodeGen.exe $ROOT/rust-msc-latest-win10.exe
 cd $ROOT
+
