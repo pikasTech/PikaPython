@@ -1258,17 +1258,19 @@ TEST(vm, keyword_4) {
 }
 
 TEST(vm, vars_keyward) {
-    char* line =
-        "def test(a, b, *vars, **keys):\n"
-        "    print(keys['a'], keys['b'], a, b, vars[0])\n"
-        "test(3, 4, 5, a=1, b= 2)";
-    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
-    obj_run(self, line);
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/function.py");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "1 2 3 4 5\r\n");
     /* deinit */
-    obj_deinit(self);
+    obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
