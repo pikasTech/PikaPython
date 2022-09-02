@@ -6,6 +6,8 @@ class Demo():
         self.funcs = []
         self.funcs.append(self.a)
         self.funcs.append(self.b)
+        self.funcs.append(self.c)
+        self.val = 'ppp'
 
 
     def a(self):
@@ -13,6 +15,9 @@ class Demo():
 
     def b(self):
         print('b')
+
+    def c(self):
+        print(self.val)
 
     def get_funcs(self):
         return self.funcs
@@ -23,7 +28,8 @@ class Test():
         funcs = demo.get_funcs()
         print('----------------------------')
         for func in funcs:
-            func()
+            demo.func = func 
+            demo.func()
 
 test = Test()
 test.funcs_test()

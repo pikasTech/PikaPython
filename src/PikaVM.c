@@ -566,9 +566,27 @@ Arg* obj_runMethodArg(PikaObj* self,
                                      &try_info);
 }
 
+char* _loadDefaultArgs(char* type_list,
+                           char* arg_name,
+                           PikaDict* dict,
+                           Args* locals) {
+    while (strIsContain(arg_name, '=')) {
+        strPopLastToken(arg_name, '=');
+        /* load default arg from dict */
+        if (dict != NULL) {
+            Arg* default_arg = dict_getArg(dict, arg_name);
+            if (default_arg != NULL) {
+                args_setArg(locals, arg_copy(default_arg));
+            }
+        }
+        arg_name = strPopLastToken(type_list, ',');
+    }
+    return arg_name;
+}
+
 static int VMState_loadArgsFromMethodArg(VMState* vm,
                                          PikaObj* method_host_obj,
-                                         Args* args,
+                                         Args* locals,
                                          Arg* method_arg,
                                          char* method_name,
                                          int arg_num_used) {
@@ -577,7 +595,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     char _buffs2[PIKA_LINE_BUFF_SIZE / 2] = {0};
     char* buffs2 = (char*)_buffs2;
     uint8_t arg_num_dec = 0;
-    PIKA_BOOL vars_or_keys = PIKA_FALSE;
+    PIKA_BOOL vars_or_keys_or_default = PIKA_FALSE;
     uint8_t arg_num = 0;
     ArgType method_type = ARG_TYPE_UNDEF;
     uint8_t arg_num_input = 0;
@@ -613,13 +631,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     /* check variable */
     if (strIsContain(type_list, '*') || strIsContain(type_list, '=')) {
-        vars_or_keys = PIKA_TRUE;
+        vars_or_keys_or_default = PIKA_TRUE;
     }
 
     /* check arg num */
     if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
         method_type == ARG_TYPE_METHOD_CONSTRUCTOR ||
-        vars_or_keys == PIKA_TRUE) {
+        vars_or_keys_or_default == PIKA_TRUE) {
         /* skip for constrctor */
         /* skip for variable args */
     } else {
@@ -634,14 +652,15 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         }
     }
 
-    if (PIKA_TRUE == vars_or_keys) {
+    if (PIKA_TRUE == vars_or_keys_or_default) {
         arg_num = arg_num_input;
     } else {
         arg_num = arg_num_dec;
     }
 
-    if (vars_or_keys) {
+    if (vars_or_keys_or_default) {
         type_list_buff = strCopy(buffs2, type_list);
+        int default_num = strCountSign(type_list_buff, '=');
         variable_arg_start = 0;
         for (int i = 0; i < arg_num_dec; i++) {
             char* arg_def = strPopLastToken(type_list_buff, ',');
@@ -649,7 +668,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                 /* get variable tuple name */
                 /* skip the '*' */
                 variable_tuple_name = arg_def + 1;
-                variable_arg_start = arg_num_dec - i - 1;
+                variable_arg_start = arg_num_dec - i - 1 - default_num;
                 /* create tuple */
                 if (NULL == tuple) {
                     tuple = New_tuple();
@@ -690,11 +709,19 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             continue;
         }
 
-        /* load normal arg */
         char* arg_name = strPopLastToken(type_list, ',');
+
+        arg_name = _loadDefaultArgs(type_list, arg_name, dict, locals);
+
         /* skip type hint */
         strPopLastToken(arg_name, ':');
-        args_setArg(args, arg_setName(call_arg, arg_name));
+        /* load normal arg */
+        args_setArg(locals, arg_setName(call_arg, arg_name));
+    }
+
+    if (strIsContain(type_list, '=')) {
+        char* arg_name = strPopLastToken(type_list, ',');
+        _loadDefaultArgs(type_list, arg_name, dict, locals);
     }
 
     if (tuple != NULL) {
@@ -703,7 +730,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         PikaObj* New_PikaStdData_Tuple(Args * args);
         PikaObj* tuple_obj = newNormalObj(New_PikaStdData_Tuple);
         obj_setPtr(tuple_obj, "list", tuple);
-        args_setPtrWithType(args, variable_tuple_name, ARG_TYPE_OBJECT,
+        args_setPtrWithType(locals, variable_tuple_name, ARG_TYPE_OBJECT,
                             tuple_obj);
     }
 
@@ -715,13 +742,14 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         PikaObj* New_PikaStdData_Dict(Args * args);
         PikaObj* dict_obj = newNormalObj(New_PikaStdData_Dict);
         obj_setPtr(dict_obj, "dict", dict);
-        args_setPtrWithType(args, keyword_dict_name, ARG_TYPE_OBJECT, dict_obj);
+        args_setPtrWithType(locals, keyword_dict_name, ARG_TYPE_OBJECT,
+                            dict_obj);
     }
 
     /* load 'self' as the first arg when call object method */
     if (method_type == ARG_TYPE_METHOD_OBJECT) {
         Arg* call_arg = arg_setRef(NULL, "self", method_host_obj);
-        args_setArg(args, call_arg);
+        args_setArg(locals, call_arg);
     }
 exit:
     return arg_num;
@@ -1215,19 +1243,13 @@ static Arg* VM_instruction_handler_SER(PikaObj* self,
     return NULL;
 }
 
-static Arg* VM_instruction_handler_JEZ(PikaObj* self,
-                                       VMState* vm,
-                                       char* data,
-                                       Arg* arg_ret_reg) {
+static Arg* _VM_JEZ(PikaObj* self,
+                    VMState* vm,
+                    char* data,
+                    Arg* arg_ret_reg,
+                    int pika_assert) {
     int thisBlockDeepth = VMState_getBlockDeepthNow(vm);
     int jmp_expect = fast_atoi(data);
-    arg_newReg(pika_assertArg_reg, PIKA_ARG_BUFF_SIZE);
-    Arg* pika_assertArg = stack_popArg(&(vm->stack), &pika_assertArg_reg);
-    int pika_assert = 0;
-    if (NULL != pika_assertArg) {
-        pika_assert = arg_getInt(pika_assertArg);
-    }
-    arg_deinit(pika_assertArg);
     vm->ireg[thisBlockDeepth] = !pika_assert;
 
     if (0 == pika_assert) {
@@ -1242,6 +1264,34 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
     }
 
     return NULL;
+}
+
+static Arg* VM_instruction_handler_JEZ(PikaObj* self,
+                                       VMState* vm,
+                                       char* data,
+                                       Arg* arg_ret_reg) {
+    arg_newReg(pika_assertArg_reg, PIKA_ARG_BUFF_SIZE);
+    Arg* pika_assertArg = stack_popArg(&(vm->stack), &pika_assertArg_reg);
+    int pika_assert = 0;
+    if (NULL != pika_assertArg) {
+        pika_assert = arg_getInt(pika_assertArg);
+    }
+    arg_deinit(pika_assertArg);
+    return _VM_JEZ(self, vm, data, arg_ret_reg, pika_assert);
+}
+
+static Arg* VM_instruction_handler_JNZ(PikaObj* self,
+                                       VMState* vm,
+                                       char* data,
+                                       Arg* arg_ret_reg) {
+    arg_newReg(pika_assertArg_reg, PIKA_ARG_BUFF_SIZE);
+    Arg* pika_assertArg = stack_popArg(&(vm->stack), &pika_assertArg_reg);
+    int pika_assert = 0;
+    if (NULL != pika_assertArg) {
+        pika_assert = arg_getInt(pika_assertArg);
+    }
+    arg_deinit(pika_assertArg);
+    return _VM_JEZ(self, vm, data, arg_ret_reg, !pika_assert);
 }
 
 static uint8_t VMState_getInputArgNum(VMState* vm) {
