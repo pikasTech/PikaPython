@@ -4094,8 +4094,14 @@ TEST(parser, default_fn_1) {
                  "0 DEF test(a=,b=)\n"
                  "0 JMP 1\n"
                  "B1\n"
+                 "0 EST a\n"
+                 "0 JNZ 2\n"
+                 "B1\n"
                  "0 NUM 1\n"
                  "0 OUT a\n"
+                 "B1\n"
+                 "0 EST b\n"
+                 "0 JNZ 2\n"
                  "B1\n"
                  "0 STR test\n"
                  "0 OUT b\n"
@@ -4104,9 +4110,7 @@ TEST(parser, default_fn_1) {
                  "0 RUN print\n"
                  "B1\n"
                  "0 RET \n"
-                 "B0\n"
-
-    );
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

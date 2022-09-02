@@ -612,7 +612,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     arg_num_input = VMState_getInputArgNum(vm);
 
     /* check variable */
-    if (strIsContain(type_list, '*')) {
+    if (strIsContain(type_list, '*') || strIsContain(type_list, '=')) {
         vars_or_keys = PIKA_TRUE;
     }
 

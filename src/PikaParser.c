@@ -2552,6 +2552,12 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
             int stmt_num = strGetTokenNum(defaultStmts, ',');
             for (int i = 0; i < stmt_num; i++) {
                 char* stmt = strsPopToken(&buffs, defaultStmts, ',');
+                char* arg_name = strsGetFirstToken(&buffs, stmt, '=');
+                pikaAsm = ASM_addBlockDeepth(ast, &buffs, pikaAsm, 1);
+                pikaAsm = strsAppend(&buffs, pikaAsm, "0 EST ");
+                pikaAsm = strsAppend(&buffs, pikaAsm, arg_name);
+                pikaAsm = strsAppend(&buffs, pikaAsm, "\n");
+                pikaAsm = strsAppend(&buffs, pikaAsm, "0 JNZ 2\n");
                 AST* ast_this = AST_parseLine_withBlockDeepth(
                     stmt, AST_getBlockDeepthNow(ast) + 1);
                 pikaAsm =
