@@ -4079,11 +4079,11 @@ TEST(parser, except_dict) {
 }
 #endif
 
-TEST(parser, defulat_fn_1) {
+TEST(parser, default_fn_1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
-        "def test(a=1):\n"
+        "def test(a=1, b='test'):\n"
         "    print(a)";
 
     __platform_printf("%s\n", lines);
@@ -4091,14 +4091,22 @@ TEST(parser, defulat_fn_1) {
     __platform_printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
-                 "0 DEF test(a=)\n"
+                 "0 DEF test(a=,b=)\n"
                  "0 JMP 1\n"
+                 "B1\n"
+                 "0 NUM 1\n"
+                 "0 OUT a\n"
+                 "B1\n"
+                 "0 STR test\n"
+                 "0 OUT b\n"
                  "B1\n"
                  "1 REF a\n"
                  "0 RUN print\n"
                  "B1\n"
                  "0 RET \n"
-                 "B0\n");
+                 "B0\n"
+
+    );
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

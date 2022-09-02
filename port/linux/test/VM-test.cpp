@@ -1273,4 +1273,43 @@ TEST(vm, vars_keyward) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, cb_1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "../../examples/Callback/test1.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[3], "__init__\r\n");
+    EXPECT_STREQ(log_buff[1], "a\r\n");
+    EXPECT_STREQ(log_buff[0], "b\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, cb_2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "../../examples/Callback/test2.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[3], "__init__\r\n");
+    EXPECT_STREQ(log_buff[1], "a\r\n");
+    EXPECT_STREQ(log_buff[0], "b\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

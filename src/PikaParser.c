@@ -1263,8 +1263,12 @@ exit:
     return is_left_exist;
 }
 
-PIKA_RES AST_setNodeAttr(AST* ast, char* node_type, char* node_content) {
-    return obj_setStr(ast, node_type, node_content);
+PIKA_RES AST_setNodeAttr(AST* ast, char* attr_name, char* attr_val) {
+    return obj_setStr(ast, attr_name, attr_val);
+}
+
+char* AST_getNodeAttr(AST* ast, char* attr_name) {
+    return obj_getStr(ast, attr_name);
 }
 
 PIKA_RES AST_setNodeBlock(AST* ast, char* node_content) {
@@ -1690,7 +1694,9 @@ const char control_keywords[][9] = {"break", "continue"};
 /* normal keyward */
 const char normal_keywords[][7] = {"while", "if", "elif"};
 
-AST* AST_parseLine(char* line, Stack* block_stack) {
+AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
+                                                  Stack* block_stack,
+                                                  int block_deepth) {
     Stack s;
     stack_init(&s);
     if (block_stack == NULL) {
@@ -1716,10 +1722,11 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         ast = NULL;
         goto exit;
     }
+    block_deepth_now += block_deepth;
     obj_setInt(ast, "blockDeepth", block_deepth_now);
 
     /* check if exit block */
-    block_deepth_last = stack_getTop(block_stack);
+    block_deepth_last = stack_getTop(block_stack) + block_deepth;
     /* exit each block */
     for (int i = 0; i < block_deepth_last - block_deepth_now; i++) {
         QueueObj* exit_block_queue = obj_getObj(ast, "exitBlock");
@@ -1735,7 +1742,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         queueObj_pushStr(exit_block_queue, block_type);
     }
 
-    line_start = line + block_deepth_now * 4;
+    line_start = line + (block_deepth_now - block_deepth) * 4;
     stmt = line_start;
 
     // "while" "if" "elif"
@@ -1894,7 +1901,7 @@ AST* AST_parseLine(char* line, Stack* block_stack) {
         char* defaultStmt = _defGetDefault(&buffs, &declare);
         AST_setNodeBlock(ast, "def");
         AST_setNodeAttr(ast, "declare", declare);
-        if(defaultStmt[0] != '\0'){
+        if (defaultStmt[0] != '\0') {
             AST_setNodeAttr(ast, "default", defaultStmt);
         }
         stack_pushStr(block_stack, "def");
@@ -1928,6 +1935,23 @@ exit:
     stack_deinit(&s);
     strsDeinit(&buffs);
     return ast;
+}
+
+static AST* AST_parseLine_withBlockStack(char* line, Stack* block_stack) {
+    return AST_parseLine_withBlockStack_withBlockDeepth(line, block_stack, 0);
+}
+
+static AST* AST_parseLine_withBlockDeepth(char* line, int block_deepth) {
+    return AST_parseLine_withBlockStack_withBlockDeepth(line, NULL,
+                                                        block_deepth);
+}
+
+int AST_getBlockDeepthNow(AST* ast) {
+    return obj_getInt(ast, "blockDeepth");
+}
+
+AST* AST_parseLine(char* line) {
+    return AST_parseLine_withBlockStack(line, NULL);
 }
 
 static char* Suger_import(Args* buffs_p, char* line) {
@@ -2071,7 +2095,7 @@ char* Parser_LineToAsm(Args* buffs_p, char* line, Stack* blockStack) {
     for (int i = 0; i < line_num; i++) {
         char* single_line = strsPopToken(buffs_p, line, '\n');
         /* parse tokens to AST */
-        ast = AST_parseLine(single_line, blockStack);
+        ast = AST_parseLine_withBlockStack(single_line, blockStack);
         /* gen ASM from AST */
         if (ASM == NULL) {
             ASM = AST_genAsm(ast, buffs_p);
@@ -2357,9 +2381,9 @@ char* ASM_addBlockDeepth(AST* ast,
                          uint8_t deepthOffset) {
     pikaAsm = strsAppend(buffs_p, pikaAsm, (char*)"B");
     char buff[11];
-    pikaAsm = strsAppend(
-        buffs_p, pikaAsm,
-        fast_itoa(buff, obj_getInt(ast, "blockDeepth") + deepthOffset));
+    pikaAsm =
+        strsAppend(buffs_p, pikaAsm,
+                   fast_itoa(buff, AST_getBlockDeepthNow(ast) + deepthOffset));
     pikaAsm = strsAppend(buffs_p, pikaAsm, (char*)"\n");
     return pikaAsm;
 }
@@ -2436,7 +2460,7 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
                     ASM_addBlockDeepth(ast, outBuffs, pikaAsm, block_type_num);
                 char _l_x[] = "_lx";
                 char block_deepth_char =
-                    obj_getInt(ast, "blockDeepth") + block_type_num + '0';
+                    AST_getBlockDeepthNow(ast) + block_type_num + '0';
                 _l_x[sizeof(_l_x) - 2] = block_deepth_char;
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 DEL ");
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)_l_x);
@@ -2475,7 +2499,7 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
         Arg* newAsm_arg = arg_newStr("");
         char _l_x[] = "_lx";
         char block_deepth_char = '0';
-        block_deepth_char += obj_getInt(ast, "blockDeepth");
+        block_deepth_char += AST_getBlockDeepthNow(ast);
         _l_x[sizeof(_l_x) - 2] = block_deepth_char;
         /* init iter */
         /*     get the iter(_l<x>) */
@@ -2517,11 +2541,25 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
         goto exit;
     }
     if (strEqu(AST_getThisBlock(ast), "def")) {
+        char* defaultStmts = AST_getNodeAttr(ast, "default");
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 DEF ");
-        pikaAsm = strsAppend(&buffs, pikaAsm, obj_getStr(ast, "declare"));
+        pikaAsm = strsAppend(&buffs, pikaAsm, AST_getNodeAttr(ast, "declare"));
         pikaAsm = strsAppend(&buffs, pikaAsm,
                              "\n"
                              "0 JMP 1\n");
+
+        if (NULL != defaultStmts) {
+            int stmt_num = strGetTokenNum(defaultStmts, ',');
+            for (int i = 0; i < stmt_num; i++) {
+                char* stmt = strsPopToken(&buffs, defaultStmts, ',');
+                AST* ast_this = AST_parseLine_withBlockDeepth(
+                    stmt, AST_getBlockDeepthNow(ast) + 1);
+                pikaAsm =
+                    strsAppend(&buffs, pikaAsm, AST_genAsm(ast_this, &buffs));
+                AST_deinit(ast_this);
+            }
+        }
+
         is_block_matched = 1;
         goto exit;
     }
@@ -2552,7 +2590,7 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
                                         "0 JMP 1\n"));
         char block_deepth_str[] = "B0\n";
         /* goto deeper block */
-        block_deepth_str[1] += obj_getInt(ast, "blockDeepth") + 1;
+        block_deepth_str[1] += AST_getBlockDeepthNow(ast) + 1;
         pikaAsm = strsAppend(&buffs, pikaAsm, block_deepth_str);
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 RUN ");
         pikaAsm = strsAppend(&buffs, pikaAsm, superClass);
