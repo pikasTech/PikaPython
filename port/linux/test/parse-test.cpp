@@ -4,7 +4,7 @@ extern "C" {
 /* head infomation */
 typedef QueueObj AST;
 char* Parser_linesToAsm(Args* outBuffs, char* multiLine);
-char* AST_toPikaASM(AST* ast, Args* outBuffs);
+char* AST_genAsm(AST* ast, Args* outBuffs);
 AST* AST_parseLine(char* line, Stack* blockStack);
 char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack);
 int32_t AST_deinit(AST* ast);
@@ -21,7 +21,7 @@ char* strsGetCleanCmd(Args* outBuffs, char* cmd);
 TEST(parser, NEW) {
     AST* ast = AST_parseLine("add(a,b)", NULL);
     Args* buffs = New_strBuff();
-    char* pikaAsm = AST_toPikaASM(ast, buffs);
+    char* pikaAsm = AST_genAsm(ast, buffs);
     printf("%s", pikaAsm);
     args_deinit(buffs);
     AST_deinit(ast);
@@ -31,7 +31,7 @@ TEST(parser, NEW) {
 TEST(parser, add_a_b) {
     AST* ast = AST_parseLine("add( a , b)", NULL);
     Args* buffs = New_strBuff();
-    char* pikaAsm = AST_toPikaASM(ast, buffs);
+    char* pikaAsm = AST_genAsm(ast, buffs);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -46,7 +46,7 @@ TEST(parser, add_a_b) {
 TEST(parser, add_a_b_c) {
     AST* ast = AST_parseLine("d = add(add(a,b)  , c)", NULL);
     Args* buffs = New_strBuff();
-    char* pikaAsm = AST_toPikaASM(ast, buffs);
+    char* pikaAsm = AST_genAsm(ast, buffs);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -64,7 +64,7 @@ TEST(parser, add_a_b_c) {
 TEST(parser, method1) {
     AST* ast = AST_parseLine("d.p = a.add(b.add(a,se.b)  , pmw.c)", NULL);
     Args* buffs = New_strBuff();
-    char* pikaAsm = AST_toPikaASM(ast, buffs);
+    char* pikaAsm = AST_genAsm(ast, buffs);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -4078,3 +4078,27 @@ TEST(parser, except_dict) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(parser, defulat_fn_1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "def test(a=1):\n"
+        "    print(a)";
+
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 DEF test(a=)\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "1 REF a\n"
+                 "0 RUN print\n"
+                 "B1\n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

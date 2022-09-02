@@ -36,7 +36,7 @@
 #include <math.h>
 #endif
 
-/* head declear start */
+/* head declare start */
 static uint8_t VMState_getInputArgNum(VMState* vm);
 static VMParameters* __pikaVM_runByteCodeFrameWithState(
     PikaObj* self,
@@ -46,7 +46,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     uint16_t pc,
     TryInfo* try_info);
 
-/* head declear end */
+/* head declare end */
 
 static InstructUnit* VMState_getInstructNow(VMState* vm) {
     return instructArray_getByOffset(&(vm->bytecode_frame->instruct_array),
@@ -623,7 +623,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         /* skip for constrctor */
         /* skip for variable args */
     } else {
-        /* check arg num decleard and input */
+        /* check arg num declared and input */
         if (arg_num_dec != arg_num_input - arg_num_used) {
             VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
             __platform_printf(
@@ -2063,12 +2063,12 @@ static VMParameters* __pikaVM_runPyLines_or_byteCode(PikaObj* self,
         /* save 'def' and 'class' to heap */
         if ((strIsStartWith(py_lines, "def ")) ||
             (strIsStartWith(py_lines, "class "))) {
-            char* declear_name = strsGetFirstToken(&buffs, py_lines, ':');
+            char* declare_name = strsGetFirstToken(&buffs, py_lines, ':');
             /* load bytecode to heap */
-            args_setHeapStruct(self->list, declear_name, bytecode_frame_stack,
+            args_setHeapStruct(self->list, declare_name, bytecode_frame_stack,
                                byteCodeFrame_deinit);
             /* get bytecode_ptr from heap */
-            bytecode_frame_p = args_getHeapStruct(self->list, declear_name);
+            bytecode_frame_p = args_getHeapStruct(self->list, declare_name);
         } else {
             /* get bytecode_ptr from stack */
             bytecode_frame_p = &bytecode_frame_stack;

@@ -48,11 +48,11 @@ TEST(strs, analizeDef) {
         int argNum = strCountSign(typeList, ',') + 1;
         char* typeListBuff = strsCopy(buffs, typeList);
         for (int i = 0; i < argNum; i++) {
-            char* typeDeclearation = strsPopToken(buffs, typeListBuff, ',');
-            printInfo("typeDeclearation", typeDeclearation);
-            char* argName = strsGetFirstToken(buffs, typeDeclearation, ':');
+            char* typeDeclareation = strsPopToken(buffs, typeListBuff, ',');
+            printInfo("typeDeclareation", typeDeclareation);
+            char* argName = strsGetFirstToken(buffs, typeDeclareation, ':');
             printInfo("argName", argName);
-            char* argType = strPointToLastToken(typeDeclearation, ':');
+            char* argType = strPointToLastToken(typeDeclareation, ':');
             printInfo("argType", argType);
         }
     }

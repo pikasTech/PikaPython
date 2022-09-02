@@ -588,18 +588,18 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
 }
 
 static int32_t __class_defineMethodWithType(PikaObj* self,
-                                            char* declearation,
+                                            char* declareation,
                                             Method method_ptr,
                                             ArgType method_type,
                                             PikaObj* def_context,
                                             ByteCodeFrame* bytecode_frame) {
-    int32_t size = strGetSize(declearation);
+    int32_t size = strGetSize(declareation);
     int32_t res = 0;
     Args buffs = {0};
-    char* clean_declearation =
-        strDeleteChar(args_getBuff(&buffs, size), declearation, ' ');
+    char* clean_declareation =
+        strDeleteChar(args_getBuff(&buffs, size), declareation, ' ');
     char* method_path =
-        strGetFirstToken(args_getBuff(&buffs, size), clean_declearation, '(');
+        strGetFirstToken(args_getBuff(&buffs, size), clean_declareation, '(');
 
     PikaObj* method_host = obj_getHostObj(self, method_path);
     MethodInfo method_info = {0};
@@ -610,7 +610,7 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
         goto exit;
     }
     method_name = strPointToLastToken(method_path, '.');
-    method_info.dec = clean_declearation;
+    method_info.dec = clean_declareation;
     method_info.name = method_name;
     method_info.ptr = (void*)method_ptr;
     method_info.type = method_type;
@@ -626,50 +626,50 @@ exit:
 
 /* define a constructor method */
 int32_t class_defineConstructor(PikaObj* self,
-                                char* declearation,
+                                char* declareation,
                                 Method methodPtr) {
-    return __class_defineMethodWithType(self, declearation, methodPtr,
+    return __class_defineMethodWithType(self, declareation, methodPtr,
                                         ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR,
                                         NULL, NULL);
 }
 
 /* define a native method as default */
 int32_t class_defineMethod(PikaObj* self,
-                           char* declearation,
+                           char* declareation,
                            Method methodPtr) {
-    return __class_defineMethodWithType(self, declearation, methodPtr,
+    return __class_defineMethodWithType(self, declareation, methodPtr,
                                         ARG_TYPE_METHOD_NATIVE, NULL, NULL);
 }
 
 /* define object method, object method is which startwith (self) */
 int32_t class_defineRunTimeConstructor(PikaObj* self,
-                                       char* declearation,
+                                       char* declareation,
                                        Method methodPtr,
                                        PikaObj* def_context,
                                        ByteCodeFrame* bytecode_frame) {
-    return __class_defineMethodWithType(self, declearation, methodPtr,
+    return __class_defineMethodWithType(self, declareation, methodPtr,
                                         ARG_TYPE_METHOD_CONSTRUCTOR,
                                         def_context, bytecode_frame);
 }
 
 /* define object method, object method is which startwith (self) */
 int32_t class_defineObjectMethod(PikaObj* self,
-                                 char* declearation,
+                                 char* declareation,
                                  Method methodPtr,
                                  PikaObj* def_context,
                                  ByteCodeFrame* bytecode_frame) {
-    return __class_defineMethodWithType(self, declearation, methodPtr,
+    return __class_defineMethodWithType(self, declareation, methodPtr,
                                         ARG_TYPE_METHOD_OBJECT, def_context,
                                         bytecode_frame);
 }
 
 /* define a static method as default */
 int32_t class_defineStaticMethod(PikaObj* self,
-                                 char* declearation,
+                                 char* declareation,
                                  Method methodPtr,
                                  PikaObj* def_context,
                                  ByteCodeFrame* bytecode_frame) {
-    return __class_defineMethodWithType(self, declearation, methodPtr,
+    return __class_defineMethodWithType(self, declareation, methodPtr,
                                         ARG_TYPE_METHOD_STATIC, def_context,
                                         bytecode_frame);
 }

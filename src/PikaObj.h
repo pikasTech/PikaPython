@@ -135,26 +135,26 @@ PikaObj* obj_getHostObjWithIsClass(PikaObj* self,
 int32_t obj_freeObj(PikaObj* self, char* subObjectName);
 
 /* method */
-int32_t class_defineMethod(PikaObj* self, char* declearation, Method methodPtr);
+int32_t class_defineMethod(PikaObj* self, char* declareation, Method methodPtr);
 
 int32_t class_defineObjectMethod(PikaObj* self,
-                                 char* declearation,
+                                 char* declareation,
                                  Method methodPtr,
                                  PikaObj* def_context,
                                  ByteCodeFrame* bytecode_frame);
 
 int32_t class_defineStaticMethod(PikaObj* self,
-                                 char* declearation,
+                                 char* declareation,
                                  Method methodPtr,
                                  PikaObj* def_context,
                                  ByteCodeFrame* bytecode_frame);
 
 int32_t class_defineConstructor(PikaObj* self,
-                                char* declearation,
+                                char* declareation,
                                 Method methodPtr);
 
 int32_t class_defineRunTimeConstructor(PikaObj* self,
-                                       char* declearation,
+                                       char* declareation,
                                        Method methodPtr,
                                        PikaObj* def_context,
                                        ByteCodeFrame* bytecode_frame);
