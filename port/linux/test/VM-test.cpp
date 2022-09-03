@@ -1268,7 +1268,8 @@ TEST(vm, vars_keyward) {
     pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/function.py");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0], "1 2 3 4 5\r\n");
+    EXPECT_STREQ(log_buff[1], "1 2 3 4 5 10\r\n");
+    EXPECT_STREQ(log_buff[0], "1 2 3 4 5 12\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
