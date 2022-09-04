@@ -1,13 +1,3 @@
-
-/* This module contains internal functions for testing newlines when more than
-one kind of newline is to be recognized. When a newline is found, its length is
-returned. In principle, we could implement several newline "types", each
-referring to a different set of newline characters. At present, PCRE supports
-only NLTYPE_FIXED, which gets handled without these functions, NLTYPE_ANYCRLF,
-and NLTYPE_ANY. The full list of Unicode newline characters is taken from
-http://unicode.org/unicode/reports/tr18/. */
-
-
 #include "re_config.h"
 #include "pcre_internal.h"
 

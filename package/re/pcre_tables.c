@@ -1,10 +1,4 @@
 
-/* This module contains some fixed tables that are used by more than one of the
-PCRE code modules. The tables are also #included by the pcretest program, which
-uses macros to change their names from _pcre_xxx to xxxx, thereby avoiding name
-clashes with the library. */
-
-
 #include "re_config.h"
 #include "pcre_internal.h"
 

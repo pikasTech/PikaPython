@@ -42,9 +42,9 @@ void re_free_findall(char **ss, int n);
 
 char *pcre_sub(const char *pat, const char *to, const char *s, int len, int opt);
 
-char *pcre_subn(const char *pat, const char *to, const char *s, int len, int n, int opt);
+char *pcre_subn(const char *pat, const char *to, const char *s, int len, int n, int opt, int *out_repl_times);
 
-char *re_subn2(pcre *re, const char *to, const char *s, int len, int n, int opt);
+char *re_subn2(pcre *re, const char *to, const char *s, int len, int n, int opt, int *out_repl_times);
 
 char *re_sub2(pcre *re, const char *to, const char *s, int len, int opt);
 #endif
