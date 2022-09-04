@@ -693,7 +693,6 @@ TEST(pikaMain, for_in_string) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if 0
 TEST(pikaMain, string_no_init_arg) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -711,7 +710,6 @@ TEST(pikaMain, string_no_init_arg) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-#endif
 
 TEST(pikaMain, obj_no_free) {
     /* init */
@@ -721,9 +719,7 @@ TEST(pikaMain, obj_no_free) {
     __platform_printf("BEGIN\n");
     obj_run(pikaMain,
             "s = PikaStdData.String()\n"
-            "s.set('test')\n"
             "s = PikaStdData.String()\n"
-            "s.set('test')\n"
             "\n");
     /* collect */
     /* assert */

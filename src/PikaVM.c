@@ -637,12 +637,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     /* check arg num */
     if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
         method_type == ARG_TYPE_METHOD_CONSTRUCTOR ||
-        vars_or_keys_or_default == PIKA_TRUE) {
+        vars_or_keys_or_default == PIKA_TRUE || arg_num_used != 0) {
         /* skip for constrctor */
         /* skip for variable args */
+        /* arg_num_used != 0 means it is a factory method */
     } else {
         /* check arg num declared and input */
-        if (arg_num_dec < arg_num_input - arg_num_used) {
+        if (arg_num_dec != arg_num_input - arg_num_used) {
             VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
             __platform_printf(
                 "TypeError: %s() takes %d positional argument but %d were "
