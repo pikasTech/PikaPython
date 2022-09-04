@@ -693,6 +693,7 @@ TEST(pikaMain, for_in_string) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if 0
 TEST(pikaMain, string_no_init_arg) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -710,6 +711,7 @@ TEST(pikaMain, string_no_init_arg) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(pikaMain, obj_no_free) {
     /* init */

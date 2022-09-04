@@ -241,7 +241,7 @@ TEST(re, match) {
 #endif
 
 #if !PIKA_NANO_ENABLE
-TEST(re, search){
+TEST(re, search) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -253,8 +253,8 @@ TEST(re, search){
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[1], "[0, 3]\r\n");
-    EXPECT_STREQ(log_buff[0], "[11, 14]\r\n");
+    EXPECT_STREQ(log_buff[1], "(0, 3)\r\n");
+    EXPECT_STREQ(log_buff[0], "(11, 14)\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -262,7 +262,7 @@ TEST(re, search){
 #endif
 
 #if !PIKA_NANO_ENABLE
-TEST(re, sub){
+TEST(re, sub) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -282,7 +282,6 @@ TEST(re, sub){
 }
 #endif
 
-
 #if !PIKA_NANO_ENABLE
 TEST(re, findall) {
     /* init */
@@ -296,9 +295,9 @@ TEST(re, findall) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[1],
-                 "[['2020-1-1', '2020', '1', '1'], ['2022-12-22', '2022', "
-                 "'12', '22'], ['2018-3-31', '2018', '3', '31']]\r\n");
+    EXPECT_STREQ(
+        log_buff[1],
+        "[('2020', '1', '1'), ('2022', '12', '22'), ('2018', '3', '31')]\r\n");
     EXPECT_STREQ(
         log_buff[0],
         "date: 2020, 2022, 2018. Wrong format: 2031-13-31, 2032-12-33 ...\r\n");
@@ -307,4 +306,3 @@ TEST(re, findall) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
-

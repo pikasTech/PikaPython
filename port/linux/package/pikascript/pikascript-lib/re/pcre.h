@@ -2,6 +2,47 @@
 #ifndef _PCRE_H
 #define _PCRE_H
 
+/* When an application links to a PCRE DLL in Windows, the symbols that are
+imported have to be identified as such. When building PCRE, the appropriate
+export setting is defined in pcre_internal.h, which includes this file. So we
+don't change existing definitions of PCRE_EXP_DECL and PCRECPP_EXP_DECL. */
+
+#if defined(_WIN32) && !defined(PCRE_STATIC)
+#  ifndef PCRE_EXP_DECL
+#    define PCRE_EXP_DECL  extern __declspec(dllimport)
+#  endif
+#  ifdef __cplusplus
+#    ifndef PCRECPP_EXP_DECL
+#      define PCRECPP_EXP_DECL  extern __declspec(dllimport)
+#    endif
+#    ifndef PCRECPP_EXP_DEFN
+#      define PCRECPP_EXP_DEFN  __declspec(dllimport)
+#    endif
+#  endif
+#endif
+
+/* By default, we use the standard "extern" declarations. */
+
+#ifndef PCRE_EXP_DECL
+#  ifdef __cplusplus
+#    define PCRE_EXP_DECL  extern "C"
+#  else
+#    define PCRE_EXP_DECL  extern
+#  endif
+#endif
+
+#ifdef __cplusplus
+#  ifndef PCRECPP_EXP_DECL
+#    define PCRECPP_EXP_DECL  extern
+#  endif
+#  ifndef PCRECPP_EXP_DEFN
+#    define PCRECPP_EXP_DEFN
+#  endif
+#endif
+
+/* Have to include stdlib.h in order to ensure that size_t is defined;
+it is needed here for malloc. */
+
 #include <stdlib.h>
 
 
@@ -138,17 +179,17 @@ typedef struct pcre_callout_block {
 
 
 #ifndef VPCOMPAT
-void *(*pcre_malloc)(size_t);
-void  (*pcre_free)(void *);
-void *(*pcre_stack_malloc)(size_t);
-void  (*pcre_stack_free)(void *);
-int   (*pcre_callout)(pcre_callout_block *);
+PCRE_EXP_DECL void *(*pcre_malloc)(size_t);
+PCRE_EXP_DECL void  (*pcre_free)(void *);
+PCRE_EXP_DECL void *(*pcre_stack_malloc)(size_t);
+PCRE_EXP_DECL void  (*pcre_stack_free)(void *);
+PCRE_EXP_DECL int   (*pcre_callout)(pcre_callout_block *);
 #else
-void *pcre_malloc(size_t);
-void  pcre_free(void *);
-void *pcre_stack_malloc(size_t);
-void  pcre_stack_free(void *);
-int   pcre_callout(pcre_callout_block *);
+PCRE_EXP_DECL void *pcre_malloc(size_t);
+PCRE_EXP_DECL void  pcre_free(void *);
+PCRE_EXP_DECL void *pcre_stack_malloc(size_t);
+PCRE_EXP_DECL void  pcre_stack_free(void *);
+PCRE_EXP_DECL int   pcre_callout(pcre_callout_block *);
 #endif
 
 pcre *pcre_compile(const char *, int, const char **, int *,

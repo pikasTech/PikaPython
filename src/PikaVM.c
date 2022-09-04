@@ -567,9 +567,9 @@ Arg* obj_runMethodArg(PikaObj* self,
 }
 
 char* _loadDefaultArgs(char* type_list,
-                           char* arg_name,
-                           PikaDict* dict,
-                           Args* locals) {
+                       char* arg_name,
+                       PikaDict* dict,
+                       Args* locals) {
     while (strIsContain(arg_name, '=')) {
         strPopLastToken(arg_name, '=');
         /* load default arg from dict */
@@ -642,12 +642,12 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         /* skip for variable args */
     } else {
         /* check arg num declared and input */
-        if (arg_num_dec != arg_num_input - arg_num_used) {
+        if (arg_num_dec < arg_num_input - arg_num_used) {
             VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
             __platform_printf(
                 "TypeError: %s() takes %d positional argument but %d were "
                 "given\r\n",
-                method_name, arg_num_dec, arg_num_input);
+                method_name, arg_num_dec, arg_num_input - arg_num_used);
             goto exit;
         }
     }

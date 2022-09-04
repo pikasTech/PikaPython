@@ -772,7 +772,7 @@ PikaObj *__split(void *pattern__or__re,
     m_n = _m_n;
     char *b = NULL;
     Arg *str_arg1;
-    Arg *sub_arg;
+    // Arg *sub_arg;
     if (!vcs)
     {
         return NULL;
@@ -948,7 +948,7 @@ PikaObj *__findall(void *pattern__or__re,
         }
         sub_list = newNormalObj(New_PikaStdData_Tuple);
         obj_setPtr(sub_list, "list", tu);
-        sub_arg = arg_newRef(sub_list);
+        sub_arg = arg_newPtr(ARG_TYPE_OBJECT, sub_list);
         PikaStdData_List_append(list, sub_arg);
         arg_deinit(sub_arg);
         free(b);
