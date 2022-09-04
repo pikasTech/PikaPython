@@ -1,8 +1,4 @@
 
-/* This module contains an internal function for validating UTF-8 character
-strings. */
-
-
 #include "re_config.h"
 #include "pcre_internal.h"
 

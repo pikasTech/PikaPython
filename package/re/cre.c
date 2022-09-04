@@ -1,15 +1,16 @@
-﻿
-/* #define PCRE_STATIC */
-
+﻿/* 
+*
+*	Generally additional utility functions.
+*	L flag, also known as re.LOCALE in Python is not available here.
+*	Wrong results may be returned in re_sub likes funcitones when 'repl' contains '\', '\\\\1' for example. 
+*
+*	4/9/2022
+*/
 #include <stdio.h>
 #include <string.h>
 #include "pcre.h"
 #include "cre.h"
 
-/// @brief the the number of groups in a re pattern
-/// @param re: re pattern
-/// @param out_groups_number : from 0,1,2,3,4...
-/// @return a array pointer, free if after using
 int *_re_get_vec_table(pcre *re, int *out_groups_number)
 {
 	int brackets_number = 0;
@@ -25,18 +26,9 @@ int *_re_get_vec_table(pcre *re, int *out_groups_number)
 	return vec;
 }
 
-/*************************************************************************
-
-* (https?)://((\w+\.)+)(\w+)
-* hihsid dii https://www.baidu.com, http://glwang.com
-*************************************************************************/
-
 int *pcre_match(const char *_pat, const char *s, int len, int *out_vec_number, int opt)
 {
 	int *vec = NULL;
-	// int group_n = 0;
-	//int rc;
-	// int start_offset = 0;
 	pcre *re = re_get_match_re(_pat, opt);
 	if (!re)
 		return NULL;
@@ -67,9 +59,9 @@ match:
 	}
 	if (rc <= 0)
 		goto e_er;
-	if (vec[0] == vec[1]) // a empty match
+	if (vec[0] == vec[1])
 	{
-		start_offset++; // advace a position
+		start_offset++;
 		if (start_offset >= len)
 			goto e_er;
 		goto match;
@@ -84,9 +76,6 @@ e_er:
 int *pcre_fullmatch(const char *_pat, const char *s, int len, int *out_vec_number, int opt)
 {
 	int *vec = NULL;
-	// int group_n = 0;
-	//int rc;
-	// int start_offset = 0;
 	opt &= ~PCRE_MULTILINE;
 	pcre *re = re_get_fullmatch_re(_pat, opt);
 	if (!re)
@@ -118,9 +107,9 @@ match:
 	}
 	if (rc <= 0)
 		goto e_er;
-	if (vec[0] == vec[1]) // a empty match
+	if (vec[0] == vec[1])
 	{
-		start_offset++; // advace a position
+		start_offset++;
 		if (start_offset >= len)
 			goto e_er;
 		goto match;
@@ -252,9 +241,9 @@ match:
 	}
 	if (rc <= 0)
 		goto e_er;
-	if (vec[0] == vec[1]) // a empty match
+	if (vec[0] == vec[1])
 	{
-		start_offset++; // advace a position
+		start_offset++;
 		if (start_offset >= len)
 			goto e_er;
 		goto match;
@@ -277,17 +266,10 @@ int **re_searchall(const char *pat, const char *s, int len, int *out_number, int
 	pcre_free(re);
 	return res;
 }
-/// @brief find all match in a string
-/// @param re: re pattern
-/// @param s : string searching in
-/// @param out_number : the number of matches
-/// @return a vector table, vrc[n] is the nth matchs,
-/// vrc[group_n][i*2] - vrc[group_n][i*2+1] is the begining-offset and ending-offset of group i.
-/// Use re_free_searchall() to free the memory
 int **re_searchall2(pcre *re, const char *s, int len, int *out_number, int *out_vec_number, int opt)
 {
 	int start_offset = 0;
-	int **vecs = NULL; // to store vec
+	int **vecs = NULL;
 	int vec_cap = 4;
 	int vec_n = 0;
 	int *vec = NULL;
@@ -304,7 +286,8 @@ int **re_searchall2(pcre *re, const char *s, int len, int *out_number, int *out_
 				*out_vec_number = group_n;
 			group_n *= 3;
 		}
-		if (!vec){
+		if (!vec)
+		{
 			goto e_er;
 		}
 		int rc;
@@ -319,14 +302,13 @@ int **re_searchall2(pcre *re, const char *s, int len, int *out_number, int *out_
 		}
 		if (rc <= 0)
 			goto e_er;
-		if (vec[0] == vec[1]) // a empty match
+		if (vec[0] == vec[1])
 		{
-			start_offset++; // advace a position
+			start_offset++;
 			if (start_offset >= len)
 				goto e_er;
 			goto match;
 		}
-		//to sotre vec
 		if (!vecs)
 		{
 			vecs = (int **)malloc(sizeof(int *) * vec_cap);
@@ -334,32 +316,28 @@ int **re_searchall2(pcre *re, const char *s, int len, int *out_number, int *out_
 				goto e_er;
 		}
 
-		if (vec_n >= vec_cap) // need to recap this list
+		if (vec_n >= vec_cap)
 		{
 			vec_cap *= 2;
 			void *p = realloc(vecs, vec_cap * sizeof(int *));
 			if (!p)
 				goto e_er;
-			// if (p != vecs) // move data
-			// {
-			// memmove(p, vecs, vec_n * sizeof(int*));
 			vecs = (int **)p;
-			// }
 		}
 		vecs[vec_n++] = vec;
 		start_offset = vec[1];
 	}
 e_er:
 	if (vec)
-		free(vec); // the latest vec table
+		free(vec);
 	if (!vecs)
 		return NULL;
 	for (int j = 0; j < vec_n; j++)
 	{
 		if (vecs[j])
-			free((void *)(vecs[j])); // free vec table
+			free((void *)(vecs[j]));
 	}
-	free(vecs); // free the table list
+	free(vecs);
 	return NULL;
 }
 void re_free_searchall(int **vecs, int n)
@@ -369,9 +347,9 @@ void re_free_searchall(int **vecs, int n)
 	for (int j = 0; j < n; j++)
 	{
 		if (vecs[j])
-			free((void *)(vecs[j])); // free vec table
+			free((void *)(vecs[j]));
 	}
-	free(vecs); // free the table list
+	free(vecs);
 }
 
 /* the following functions return (a) string in heap, which means it need to be freed after using*/
@@ -438,9 +416,9 @@ match:
 	}
 	if (rc <= 0)
 		goto e_er;
-	if (vec[0] == vec[1]) // a empty match
+	if (vec[0] == vec[1])
 	{
-		start_offset++; // advace a position
+		start_offset++;
 		if (start_offset >= len)
 			goto e_er;
 		goto match;
@@ -498,9 +476,9 @@ void re_free_findall(char **ss, int n)
 	for (int j = 0; j < n; j++)
 	{
 		if (ss[j])
-			free((void *)(ss[j])); // free vec table
+			free((void *)(ss[j]));
 	}
-	free(ss); // free the table list
+	free(ss);
 }
 
 char *pcre_sub(const char *pat, const char *to, const char *s, int len, int opt)
@@ -514,30 +492,20 @@ char *pcre_sub(const char *pat, const char *to, const char *s, int len, int opt)
 	pcre_free(re);
 	return res;
 }
-char *pcre_subn(const char *pat, const char *to, const char *s, int len, int n, int opt)
+char *pcre_subn(const char *pat, const char *to, const char *s, int len, int n, int opt, int *out_repl_times)
 {
 	const char *error;
 	int erroffset;
 	pcre *re = pcre_compile(pat, opt, &error, &erroffset, NULL);
 	if (!re)
 		return NULL;
-	char *res = re_subn2(re, to, s, len, n, opt);
+	char *res = re_subn2(re, to, s, len, n, opt, out_repl_times);
 	pcre_free(re);
 	return res;
 }
-/// @brief substitute a string with a pattern expression, given replacement limit
-/// @param re : re pattern for matching
-/// @param to : re pattern to replacement
-/// @param s : string searching in
-/// @param len : length of <s>
-/// @param n : the replacement number
-/// @return if no replacement, return s exactly, otherwise return a new string, free it after using
-char *re_subn2(pcre *re, const char *to, const char *s, int len, int n, int opt)
+char *re_subn2(pcre *re, const char *to, const char *s, int len, int n, int opt, int *out_repl_times)
 {
 	int group_n = 0;
-	// int	 group_n2 = 0;
-	// int *vec = NULL;
-	// int *vec2 = NULL;
 	pcre *re2 = NULL;
 	int vcs1_n = 0, vcs2_n = 0;
 	int **vcs1 = re_searchall2(re, s, len, &vcs1_n, &group_n, opt);
@@ -545,11 +513,8 @@ char *re_subn2(pcre *re, const char *to, const char *s, int len, int n, int opt)
 	int match_limit = 0;
 	if (!vcs1_n)
 	{
-		//no match, no replacement
 		return (char *)s;
 	}
-	//to determine '\\' and group like: '\group_n'
-	//3 groups, 0, 1, 2->\\, 3->\group_n, if any
 	const char *p2 = "(\\\\\\\\|\\\\\\d{1,2})";
 	int erroffset;
 	const char *error;
@@ -559,76 +524,55 @@ char *re_subn2(pcre *re, const char *to, const char *s, int len, int n, int opt)
 	re2 = pcre_compile(p2, 0, &error, &erroffset, NULL);
 	if (!re2)
 		goto exit_error;
-	//match <to>
 	len_to = strlen(to);
 	vcs2 = re_searchall2(re2, to, len_to, &vcs2_n, NULL, 0);
-	//if (!vcs2)
-	//{
-	//	//goto exit_error;
-	//	vcs2_n = 0;
-	//}
-
 	pcre_free(re2);
 	re2 = NULL;
-	//note that re2 is no use after this, onece we get vcs2
-	remain_length2 = len_to; // the remain length in 'to' exclude from all '\\' and all '\n'
+	remain_length2 = len_to;
 	for (int i = 0; i < vcs2_n; i++)
 	{
-		int *vc = vcs2[i]; // (0,1)->'\\'or'\n', (2,3)->'\\', (4,5)->'\n', (6,7,8)
+		int *vc = vcs2[i];
 		int vc0 = vc[0] + 1;
 		if (to[vc0] == '\\')
 		{
 			vc[2] = 0;
 			remain_length2 -= 2;
 		}
-		else // \n,
+		else
 		{
 			int wanted_number = 0;
-			//vc[1]--;
 			int l_n = vc[1] - vc0;
 			if (l_n == 1)
 			{
 				wanted_number = to[vc0] - '0';
 				remain_length2 -= 2;
 			}
-			else // if(l_n==2)
+			else
 			{
 				wanted_number = (to[vc0] - '0') * 10 + to[vc0 + 1] - '0';
 				remain_length2 -= 3;
 			}
 			if (wanted_number <= 0 || wanted_number >= group_n)
 				goto exit_error;
-			//store it in vc[2]
 			vc[2] = wanted_number;
 		}
 	}
-	//now that vcs2 stores data of which group is used in replacement
-	//Nx9, N is the number of groups used in every one replcaement,
-	//while vcs2[2] is the exact group number used in replacement
 
-	//parse 'to'
-	//get the remian size
 	match_limit = n ? (n <= vcs1_n ? n : vcs1_n) : vcs1_n;
 	remain_size = len + remain_length2 * match_limit;
-	//match times
 	for (int i = 0; i < match_limit; i++)
 	{
 		int *vc = vcs1[i];
-		//vc[1]-vc[0] is the match sequence which need to be replaced, while the following are groups
 		remain_size -= vc[1] - vc[0];
-		// the replcaements
-		// 'to' e.g.: \\ \1, \2, ....\x
 		for (int j = 0; j < vcs2_n; j++)
 		{
 			int *v2 = vcs2[j];
 			if (v2[2])
 			{
-				//replaced to a group
 				remain_size += GetGroupLen(vc, v2[2]);
 			}
 			else
 			{
-				//replaced to a '/'
 				remain_size++;
 			}
 		}
@@ -655,13 +599,11 @@ char *re_subn2(pcre *re, const char *to, const char *s, int len, int n, int opt)
 				int to_group_at = vc[to_group * 2];
 				int to_group_end = vc[to_group * 2 + 1];
 				int g_l = to_group_end - to_group_at;
-				//replaced to a group
 				memcpy(new_s + pi, s + to_group_at, g_l);
 				pi += g_l;
 			}
 			else
 			{
-				//replaced to a '/'
 				new_s[pi++] = '\\';
 			}
 			m_start = v2[1];
@@ -669,9 +611,10 @@ char *re_subn2(pcre *re, const char *to, const char *s, int len, int n, int opt)
 		m_len = len_to - m_start;
 		memcpy(new_s + pi, to + m_start, m_len);
 		pi += m_len;
-		// end of one match
 		qi = vc[1];
 	}
+	if (out_repl_times)
+		*out_repl_times = match_limit;
 	if (vcs1)
 		re_free_searchall(vcs1, vcs1_n);
 	if (vcs2)
@@ -692,13 +635,7 @@ exit_error:
 		pcre_free(re2);
 	return NULL;
 }
-/// @brief substitute a string with a pattern expression
-/// @param re : re pattern for matching
-/// @param to : re pattern to replacement
-/// @param s : string searching in
-/// @param len : length of <s>
-/// @return if no replacement, return s exactly, otherwise return a new string, free it after using
 char *re_sub2(pcre *re, const char *to, const char *s, int len, int opt)
 {
-	return re_subn2(re, to, s, len, 0, opt);
+	return re_subn2(re, to, s, len, 0, opt, NULL);
 }
