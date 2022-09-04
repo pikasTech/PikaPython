@@ -92,6 +92,7 @@ TEST(sysobj, print_no_end) {
 }
 #endif
 
+#if !PIKA_NANO_ENABLE
 TEST(sysobj, print) {
     char* line =
         "print(0, ['Hi'])\n";
@@ -117,3 +118,4 @@ TEST(sysobj, print2) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
