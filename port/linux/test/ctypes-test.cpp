@@ -9,7 +9,7 @@ TEST(ctypes, test1) {
     pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/ctypes.py");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[67], "16\r\n");
+    EXPECT_STREQ(log_buff[18], "16\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

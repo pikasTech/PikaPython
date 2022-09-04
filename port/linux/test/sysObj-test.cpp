@@ -91,3 +91,29 @@ TEST(sysobj, print_no_end) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(sysobj, print) {
+    char* line =
+        "print(0, ['Hi'])\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "0 ['Hi']\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(sysobj, print2) {
+    char* line =
+        "print(0, ['Hi'], b'test')\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "0 ['Hi'] b'\\x74\\x65\\x73\\x74'\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

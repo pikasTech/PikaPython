@@ -174,14 +174,26 @@ uint8_t* arg_getBytes(Arg* self) {
     return arg_getContent(self) + sizeof(size_t);
 }
 
-void arg_printBytes(Arg* self) {
-    size_t bytes_size = arg_getBytesSize(self);
-    uint8_t* bytes = arg_getBytes(self);
-    __platform_printf("b\'");
+char* __printBytes(PikaObj* self, Arg* arg) {
+    Args buffs = {0};
+    size_t bytes_size = arg_getBytesSize(arg);
+    uint8_t* bytes = arg_getBytes(arg);
+    Arg* str_arg = arg_newStr("b\'");
     for (size_t i = 0; i < bytes_size; i++) {
-        __platform_printf("\\x%02x", bytes[i]);
+        char* str_item = strsFormat(&buffs, 16, "\\x%02x", bytes[i]);
+        str_arg = arg_strAppend(str_arg, str_item);
     }
-    __platform_printf("\'\r\n");
+    str_arg = arg_strAppend(str_arg, "\'");
+    char* str_res = obj_cacheStr(self, arg_getStr(str_arg));
+    strsDeinit(&buffs);
+    arg_deinit(str_arg);
+    return str_res;
+}
+
+void arg_printBytes(Arg* self) {
+    PikaObj* obj = New_PikaObj();
+    __platform_printf("%s\r\n", __printBytes(obj, self));
+    obj_deinit(obj);
 }
 
 size_t arg_getBytesSize(Arg* self) {

@@ -983,8 +983,7 @@ TEST(VM, hex_bytes) {
     pikaVM_runAsm(self, pikaAsm);
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[2], "\\x03");
-    EXPECT_STREQ(log_buff[1], "\\x05");
+    EXPECT_STREQ(log_buff[0], "b'\\x03\\x05'\r\n");
     /* deinit */
     obj_deinit(self);
     args_deinit(buffs);

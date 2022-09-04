@@ -1976,7 +1976,7 @@ TEST(pikaMain, utils_int_to_bytes) {
             "b[0] = ut.int_to_bytes(0x35)\n"
             "b\n");
     /* assert */
-    EXPECT_STREQ(log_buff[4], "\\x35");
+    EXPECT_STREQ(log_buff[0], "b'\\x35\\x65\\x73\\x74'\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1994,9 +1994,9 @@ TEST(pikaMain, neg_index) {
             "'test'[-2]\n"
             "b'test'[-2]\n");
     /* assert */
-    EXPECT_STREQ(log_buff[1], "\\x73");
-    EXPECT_STREQ(log_buff[3], "'s'\r\n");
-    EXPECT_STREQ(log_buff[4], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "b'\\x73'\r\n");
+    EXPECT_STREQ(log_buff[1], "'s'\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2029,9 +2029,8 @@ TEST(pikaMain, slice2) {
     __platform_printf("BEGIN\r\n");
     obj_run(self, "b'test'[1:3]\n");
     /* assert */
-    EXPECT_STREQ(log_buff[1], "\\x73");
-    EXPECT_STREQ(log_buff[2], "\\x65");
-    EXPECT_STREQ(log_buff[4], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "b'\\x65\\x73'\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2129,10 +2128,8 @@ TEST(pikaMain, slice_a12) {
     __platform_printf("BEGIN\r\n");
     obj_run(self, "b'test'[1:]\n");
     /* assert */
-    EXPECT_STREQ(log_buff[1], "\\x74");
-    EXPECT_STREQ(log_buff[2], "\\x73");
-    EXPECT_STREQ(log_buff[3], "\\x65");
-    EXPECT_STREQ(log_buff[5], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "b'\\x65\\x73\\x74'\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);

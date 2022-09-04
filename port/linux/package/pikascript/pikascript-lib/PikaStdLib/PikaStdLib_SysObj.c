@@ -363,20 +363,18 @@ Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
     return __vm_slice(self, end, obj, start, step);
 }
 
-static void __print_arg(PikaObj* self, Arg* val) {
+static char* __print_arg(PikaObj* self, Arg* val) {
     obj_setErrorCode(self, 0);
     ArgType arg_type = arg_getType(val);
     if (NULL != val) {
         if (arg_getType(val) == ARG_TYPE_BYTES) {
-            arg_printBytes(val);
-            return;
+            return __printBytes(self, val);
         }
     }
     if (argType_isObject(arg_type)) {
         char* to_str = obj_toStr(arg_getPtr(val));
         if (NULL != to_str) {
-            __platform_printf("%s\r\n", to_str);
-            return;
+            return obj_cacheStr(self, to_str);
         }
     }
     Args* print_args = New_args(NULL);
@@ -387,10 +385,11 @@ static void __print_arg(PikaObj* self, Arg* val) {
         obj_setSysOut(self, "Error: can not print val");
         obj_setErrorCode(self, 1);
         args_deinit(print_args);
-        return;
+        return NULL;
     }
-    obj_setStr(self, "_buf", res);
+    res = obj_cacheStr(self, res);
     args_deinit(print_args);
+    return res;
 }
 
 void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
@@ -399,15 +398,13 @@ void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
     PIKA_BOOL is_get_print = PIKA_FALSE;
     for (int i = 0; i < arg_size; i++) {
         Arg* arg = tuple_getArg(val, i);
-        __print_arg(self, arg);
-        char* item = obj_getStr(self, "_buf");
+        char* item = __print_arg(self, arg);
         if (NULL != item) {
             is_get_print = PIKA_TRUE;
             print_out_arg = arg_strAppend(print_out_arg, item);
             if (i < arg_size - 1) {
                 print_out_arg = arg_strAppend(print_out_arg, " ");
             }
-            obj_removeArg(self, "_buf");
         }
     }
     char* end = dict_getStr(ops, "end");

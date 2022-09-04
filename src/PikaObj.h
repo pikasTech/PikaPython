@@ -307,6 +307,7 @@ void* obj_getStruct(PikaObj* self, char* name);
     while (1)
 
 char* obj_cacheStr(PikaObj* self, char* str);
+char* __printBytes(PikaObj* self, Arg* arg);
 
 #define PIKASCRIPT_VERSION_TO_NUM(majer, minor, micro) \
     majer * 100 * 100 + minor * 100 + micro
