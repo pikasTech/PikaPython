@@ -1,9 +1,4 @@
 
-/* This module contains an internal function that is used to match an extended
-class (one that contains characters whose values are > 255). It is used by both
-pcre_exec() and pcre_def_exec(). */
-
-
 #include "re_config.h"
 #include "pcre_internal.h"
 

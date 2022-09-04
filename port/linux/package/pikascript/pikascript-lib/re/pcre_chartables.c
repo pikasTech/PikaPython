@@ -1,25 +1,3 @@
-/*************************************************
-*      Perl-Compatible Regular Expressions       *
-*************************************************/
-
-/* This file contains character tables that are used when no external tables
-are passed to PCRE by the application that calls it. The tables are used only
-for characters whose code values are less than 256.
-
-This is a default version of the tables that assumes ASCII encoding. A program
-called dftables (which is distributed with PCRE) can be used to build
-alternative versions of this file. This is necessary if you are running in an
-EBCDIC environment, or if you want to default to a different encoding, for
-example ISO-8859-1. When dftables is run, it creates these tables in the
-current locale. If PCRE is configured with --enable-rebuild-chartables, this
-happens automatically.
-
-The following #includes are present because without the gcc 4.x may remove the
-array definition from the final binary if PCRE is built into a static library
-and dead code stripping is activated. This leads to link errors. Pulling in the
-header ensures that the array gets flagged as "someone outside this compilation
-unit might reference this" and so it will always be supplied to the linker. */
-
 #include "re_config.h"
 #include "pcre_internal.h"
 
