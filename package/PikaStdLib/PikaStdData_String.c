@@ -2,15 +2,14 @@
 #include "PikaStdData_List.h"
 #include "PikaStdData_String_Util.h"
 #include "dataStrs.h"
-#define StdStringUTF8Support 1
 
-#ifdef StdStringUTF8Support
+#if StdStringUTF8Support
 
 static int _pcre_valid_utf8(const char *string, int length);
-int _pcre_utf8_get(const char *string, int length, int at, char *out_buf);
-int _pcre_utf8_get_offset(const char *string, int length, int at, int *out_char_len);
-int _pcre_utf8_strlen(const char *string, int length);
-int __str_repl(PikaObj *self, char *str, int str_len, int repl_at, int repl_len, char *val, int val_len);
+static int _pcre_utf8_get(const char *string, int length, int at, char *out_buf);
+static int _pcre_utf8_get_offset(const char *string, int length, int at, int *out_char_len);
+static int _pcre_utf8_strlen(const char *string, int length);
+static int __str_repl(PikaObj *self, char *str, int str_len, int repl_at, int repl_len, char *val, int val_len);
 
 const static uint8_t _pcre_utf8_table4[] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -399,7 +398,7 @@ static int _pcre_valid_utf8(const char *string, int length)
     }
     return -1;
 }
-int _pcre_utf8_get(const char *string, int length, int at, char *out_buf)
+static int _pcre_utf8_get(const char *string, int length, int at, char *out_buf)
 {
     const uint8_t *p;
     int ab, c;
@@ -436,7 +435,7 @@ int _pcre_utf8_get(const char *string, int length, int at, char *out_buf)
     out_buf[ab] = '\0';
     return ab;
 }
-int _pcre_utf8_get_offset(const char *string, int length, int at, int *out_char_len)
+static int _pcre_utf8_get_offset(const char *string, int length, int at, int *out_char_len)
 {
     const uint8_t *p;
     int ab, c;
@@ -473,7 +472,7 @@ int _pcre_utf8_get_offset(const char *string, int length, int at, int *out_char_
         *out_char_len = ab;
     return p - string;
 }
-int _pcre_utf8_strlen(const char *string, int length)
+static int _pcre_utf8_strlen(const char *string, int length)
 {
     const uint8_t *p;
     int i, ab, c;
@@ -499,7 +498,7 @@ int _pcre_utf8_strlen(const char *string, int length)
     return i;
 }
 
-int __str_repl(PikaObj *self, char *str, int str_len, int repl_at, int repl_len, char *val, int val_len)
+static int __str_repl(PikaObj *self, char *str, int str_len, int repl_at, int repl_len, char *val, int val_len)
 {
     if (val_len > repl_len)
     {
