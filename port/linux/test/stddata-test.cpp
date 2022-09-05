@@ -141,5 +141,23 @@ TEST(dict, in){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(list, slice){
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "[1, 2, 3, 4][0:2]\n"
+            "(5, 6, 7, 8)[1:4]\n"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "(6, 7, 8)\r\n");
+    EXPECT_STREQ(log_buff[1], "[1, 2]\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 #endif

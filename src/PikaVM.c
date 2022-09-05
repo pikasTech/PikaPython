@@ -356,6 +356,25 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
         }
         return sliced_arg;
     }
+
+    if (argType_isObject(arg_getType(obj))){
+        PikaObj* arg_obj = arg_getPtr(obj);
+        PikaObj *New_PikaStdData_List(Args *args);
+        PikaObj *New_PikaStdData_Tuple(Args *args);
+        if (arg_obj->constructor == New_PikaStdData_List ||
+            arg_obj->constructor == New_PikaStdData_Tuple) {
+            PikaObj* sliced_obj = newNormalObj(arg_obj->constructor);
+            __vm_List___init__(sliced_obj);
+            for (int i = start_i; i < end_i; i++) {
+                Arg* i_arg = arg_newInt(i);
+                Arg* item_arg = __vm_get(self, i_arg, obj);
+                __vm_List_append(sliced_obj, item_arg);
+                arg_deinit(item_arg);
+                arg_deinit(i_arg);
+            }
+            return arg_newPtr(ARG_TYPE_OBJECT, sliced_obj);
+        }
+    }
     return arg_newNull();
 #else
     return __vm_get(self, start, obj);
