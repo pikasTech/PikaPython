@@ -438,6 +438,7 @@ PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
     if (argType_isObject(arg_getType(self))) {
         return arg_getPtr(self);
     }
+#if !PIKA_NANO_ENABLE
     if (arg_getType(self) == ARG_TYPE_STRING) {
         PikaObj* New_PikaStdData_String(Args * args);
         PikaObj* obj = newNormalObj(New_PikaStdData_String);
@@ -452,6 +453,7 @@ PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
         *pIsTemp = 1;
         return obj;
     }
+#endif
     return NULL;
 }
 
