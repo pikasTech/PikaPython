@@ -127,7 +127,7 @@ int32_t obj_load(PikaObj* self, Args* args, char* name);
 int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_projcetFun);
 PikaObj* obj_getObj(PikaObj* self, char* objPath);
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath);
-PikaObj* obj_getHostObjWithIsClass(PikaObj* self,
+PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
                                    char* objPath,
                                    PIKA_BOOL* pIsClass);
 
@@ -235,7 +235,6 @@ Arg* arg_setObj(Arg* self, char* name, PikaObj* obj);
 
 #define arg_newObj(obj) arg_setObj(NULL, "", (obj))
 #define arg_newRef(obj) arg_setRef(NULL, "", (obj))
-#define arg_newWeakRef(obj) arg_setWeakRef(NULL, "", (obj))
 
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,
@@ -308,6 +307,7 @@ void* obj_getStruct(PikaObj* self, char* name);
     while (1)
 
 char* obj_cacheStr(PikaObj* self, char* str);
+PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* is_convert);
 char* __printBytes(PikaObj* self, Arg* arg);
 
 #define PIKASCRIPT_VERSION_TO_NUM(majer, minor, micro) \

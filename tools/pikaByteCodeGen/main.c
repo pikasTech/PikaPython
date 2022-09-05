@@ -14,6 +14,8 @@ void New_PikaStdLib_SysObj(void){}
 void New_PikaStdData_List(void) {}
 void New_PikaStdData_Dict(void) {}
 void New_PikaStdData_Tuple(void) {}
+void New_PikaStdData_String(void) {}
+void New_PikaStdData_ByteArray(void) {}
 
 void main() {
     /* run pika_binder to bind C modules */

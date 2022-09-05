@@ -161,3 +161,40 @@ TEST(list, slice){
 }
 
 #endif
+
+#if !PIKA_NANO_ENABLE
+TEST(str, split){
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "'test,test'.split(',')\n"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "['test', 'test']\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(str, split2){
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "s = 'test,test'\n"
+            "s.split(',')\n"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "['test', 'test']\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

@@ -198,7 +198,7 @@ int64_t obj_getInt(PikaObj* self, char* argPath) {
 
 Arg* obj_getArg(PikaObj* self, char* argPath) {
     PIKA_BOOL isClass = PIKA_FALSE;
-    PikaObj* obj = obj_getHostObjWithIsClass(self, argPath, &isClass);
+    PikaObj* obj = obj_getHostObjWithIsTemp(self, argPath, &isClass);
     if (NULL == obj) {
         return NULL;
     }
@@ -434,10 +434,24 @@ exit:
     return res;
 }
 
+PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
+    if (argType_isObject(arg_getType(self))) {
+        return arg_getPtr(self);
+    }
+    if (arg_getType(self) == ARG_TYPE_STRING) {
+        PikaObj* New_PikaStdData_String(Args * args);
+        PikaObj* obj = newNormalObj(New_PikaStdData_String);
+        obj_setStr(obj, "str", arg_getStr(self));
+        *pIsTemp = 1;
+        return obj;
+    }
+    return NULL;
+}
+
 static PikaObj* __obj_getObjDirect(PikaObj* self,
                                    char* name,
-                                   PIKA_BOOL* pIsClass) {
-    *pIsClass = PIKA_FALSE;
+                                   PIKA_BOOL* pIsTemp) {
+    *pIsTemp = PIKA_FALSE;
     if (NULL == self) {
         return NULL;
     }
@@ -454,7 +468,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
     /* found class */
     if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
         type == ARG_TYPE_METHOD_CONSTRUCTOR) {
-        *pIsClass = PIKA_TRUE;
+        *pIsTemp = PIKA_TRUE;
         PikaObj* method_args_obj = New_TinyObj(NULL);
         Arg* cls_obj_arg = obj_runMethodArg(self, method_args_obj,
                                             args_getArg(self->list, name));
@@ -466,12 +480,15 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
         arg_deinit(cls_obj_arg);
         return res;
     }
+    if (type == ARG_TYPE_STRING) {
+        return _arg_to_obj(args_getArg(self->list, name), pIsTemp);
+    }
     return NULL;
 }
 
 static PikaObj* __obj_getObjWithKeepDeepth(PikaObj* self,
                                            char* objPath,
-                                           PIKA_BOOL* pIsClass,
+                                           PIKA_BOOL* pIsTemp,
                                            int32_t keepDeepth) {
     char objPath_buff[PIKA_PATH_BUFF_SIZE];
     __platform_memcpy(objPath_buff, objPath, strGetSize(objPath) + 1);
@@ -480,7 +497,7 @@ static PikaObj* __obj_getObjWithKeepDeepth(PikaObj* self,
     PikaObj* obj = self;
     for (int32_t i = 0; i < token_num - keepDeepth; i++) {
         char* token = strPopToken(token_buff, objPath_buff, '.');
-        obj = __obj_getObjDirect(obj, token, pIsClass);
+        obj = __obj_getObjDirect(obj, token, pIsTemp);
         if (obj == NULL) {
             goto exit;
         }
@@ -500,10 +517,10 @@ PikaObj* obj_getHostObj(PikaObj* self, char* objPath) {
     return __obj_getObjWithKeepDeepth(self, objPath, &isClass, 1);
 }
 
-PikaObj* obj_getHostObjWithIsClass(PikaObj* self,
-                                   char* objPath,
-                                   PIKA_BOOL* pIsClass) {
-    return __obj_getObjWithKeepDeepth(self, objPath, pIsClass, 1);
+PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
+                                  char* objPath,
+                                  PIKA_BOOL* pIsTemp) {
+    return __obj_getObjWithKeepDeepth(self, objPath, pIsTemp, 1);
 }
 
 Method methodArg_getPtr(Arg* method_arg) {

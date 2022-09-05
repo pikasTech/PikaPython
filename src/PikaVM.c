@@ -357,10 +357,10 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
         return sliced_arg;
     }
 
-    if (argType_isObject(arg_getType(obj))){
+    if (argType_isObject(arg_getType(obj))) {
         PikaObj* arg_obj = arg_getPtr(obj);
-        PikaObj *New_PikaStdData_List(Args *args);
-        PikaObj *New_PikaStdData_Tuple(Args *args);
+        PikaObj* New_PikaStdData_List(Args * args);
+        PikaObj* New_PikaStdData_Tuple(Args * args);
         if (arg_obj->constructor == New_PikaStdData_List ||
             arg_obj->constructor == New_PikaStdData_Tuple) {
             PikaObj* sliced_obj = newNormalObj(arg_obj->constructor);
@@ -899,7 +899,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     PikaObj* method_host_obj = NULL;
     Arg* method_arg = NULL;
     Arg* host_arg = NULL;
-    PIKA_BOOL isClass = PIKA_FALSE;
+    PIKA_BOOL is_temp = PIKA_FALSE;
     char* sys_out;
     int arg_num_used = 0;
     arg_newReg(arg_reg1, 64);
@@ -952,8 +952,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
             stack_tmp[i] = stack_popArg_alloc(&(vm->stack));
         }
         host_arg = stack_tmp[arg_num - 1];
-        if (argType_isObject(arg_getType(host_arg))) {
-            method_host_obj = arg_getPtr(host_arg);
+        method_host_obj = _arg_to_obj(host_arg, &is_temp);
+        if (NULL != method_host_obj) {
             arg_num_used++;
         }
         /* push back other args to stack */
@@ -964,13 +964,13 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 
     /* get method host obj from self */
     if (NULL == method_host_obj) {
-        method_host_obj = obj_getHostObjWithIsClass(self, methodPath, &isClass);
+        method_host_obj = obj_getHostObjWithIsTemp(self, methodPath, &is_temp);
     }
 
     /* get method host obj from local scope */
     if (NULL == method_host_obj) {
         method_host_obj =
-            obj_getHostObjWithIsClass(vm->locals, methodPath, &isClass);
+            obj_getHostObjWithIsTemp(vm->locals, methodPath, &is_temp);
     }
 
     /* method host obj is not found */
@@ -1077,7 +1077,7 @@ exit:
     if (NULL != host_arg) {
         arg_deinit(host_arg);
     }
-    if (NULL != method_host_obj && isClass) {
+    if (NULL != method_host_obj && is_temp) {
         /* class method */
         obj_deinit(method_host_obj);
     }
