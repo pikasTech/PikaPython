@@ -102,3 +102,24 @@ TEST(stddata, fileio) {
     obj_deinit(pikaMain);
 }
 #endif
+
+#if!PIKA_NANO_ENABLE
+TEST(list, in){
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "a = [1, 2, 3]\n"
+            "if 1 in a:\n"
+            "    print('1 in a')\n"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1 in a\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

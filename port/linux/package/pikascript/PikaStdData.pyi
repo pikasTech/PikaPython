@@ -41,6 +41,9 @@ class List(Tuple):
     def __add__(self, others: List) -> List:
         """ support list + list"""
 
+    def __contains__(self, val: any) -> int:
+        """ support val in list """
+
 
 class Dict:
     def __init__(self): ...

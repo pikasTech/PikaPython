@@ -77,3 +77,14 @@ PikaObj* PikaStdData_List___add__(PikaObj* self, PikaObj* others) {
     }
     return res;
 }
+
+int PikaStdData_List___contains__(PikaObj* self, Arg* val) {
+    PikaList* list = obj_getPtr(self, "list");
+    for (size_t i = 0; i < list_getSize(list); i++) {
+        Arg* arg = list_getArg(list, i);
+        if (arg_isEqual(arg, val)) {
+            return 1;
+        }
+    }
+    return 0;
+}

@@ -600,3 +600,9 @@ TEST(compiler, __sub__) {
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(compiler, __contains__) {
+    char* lines = "__res = __contains__(__others)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

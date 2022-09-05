@@ -110,6 +110,10 @@ PIKA_WEAK void* __platform_memcpy(void* dir, const void* src, size_t size) {
     return memcpy(dir, src, size);
 }
 
+PIKA_WEAK int __platform_memcmp(const void* s1, const void* s2, size_t n) {
+    return memcmp(s1, s2, n);
+}
+
 PIKA_WEAK char __platform_getchar(void) {
 #if defined(__linux) || defined(_WIN32)
     return getchar();

@@ -1594,6 +1594,34 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             }
             goto exit;
         }
+        if (argType_isObject(op.t2)) {
+            PikaObj* obj2 = arg_getPtr(op.a2);
+            Arg* __contains__ = obj_getMethodArg(obj2, "__contains__");
+            if (NULL != __contains__) {
+                arg_deinit(__contains__);
+                /* clang-format off */
+                PIKA_PYTHON(
+                __res = __contains__(__others)
+                )
+                obj_setArg(obj2, "__others", op.a1);
+                /* clang-format on */
+                const uint8_t bytes[] = {
+                    0x0c, 0x00, /* instruct array size */
+                    0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04,
+                    0x17, 0x00,
+                    /* instruct array */
+                    0x1d, 0x00, /* const pool size */
+                    0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00,
+                    0x5f, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x73,
+                    0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65, 0x73,
+                    0x00, /* const pool */
+                };
+                pikaVM_runByteCode(obj2, (uint8_t*)bytes);
+                op.res = arg_setInt(op.res, "", obj_getInt(obj2, "__res"));
+                goto exit;
+            }
+        }
+
         VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
         args_setSysOut(vm->locals->list,
                        "Operation 'in' is not supported for this "
