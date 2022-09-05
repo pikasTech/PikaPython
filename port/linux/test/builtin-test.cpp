@@ -138,3 +138,20 @@ TEST(builtin, callback_1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(builtin, utf8) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/utf8.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], "你好,Hello, Bonjour.\r\n");
+    EXPECT_STREQ(log_buff[1], "你好，Hello, Bonjour.\r\n");
+    EXPECT_STREQ(log_buff[0], "Hi, Hello, Bonjour.\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -3,7 +3,7 @@
 #include "PikaStdData_String_Util.h"
 #include "dataStrs.h"
 
-#if StdStringUTF8Support
+#if PIKA_STRING_UTF8_ENABLE
 
 static int _pcre_valid_utf8(const char *string, int length);
 static int _pcre_utf8_get(const char *string, int length, int at, char *out_buf);
@@ -11,7 +11,7 @@ static int _pcre_utf8_get_offset(const char *string, int length, int at, int *ou
 static int _pcre_utf8_strlen(const char *string, int length);
 static int __str_repl(PikaObj *self, char *str, int str_len, int repl_at, int repl_len, char *val, int val_len);
 
-const static uint8_t _pcre_utf8_table4[] = {
+static const uint8_t _pcre_utf8_table4[] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -26,7 +26,7 @@ Arg *PikaStdData_String___iter__(PikaObj *self)
 
 void PikaStdData_String_set(PikaObj *self, char *s)
 {
-#ifdef StdStringUTF8Support
+#ifdef PIKA_STRING_UTF8_ENABLE
     int r = _pcre_valid_utf8(s, -1);
     if (r >= 0)
     {
@@ -40,7 +40,7 @@ void PikaStdData_String_set(PikaObj *self, char *s)
 
 void PikaStdData_String___init__(PikaObj *self, char *s)
 {
-#ifdef StdStringUTF8Support
+#ifdef PIKA_STRING_UTF8_ENABLE
     int r = _pcre_valid_utf8(s, -1);
     if (r >= 0)
     {
@@ -62,8 +62,8 @@ Arg *PikaStdData_String___next__(PikaObj *self)
     int __iter_i = args_getInt(self->list, "__iter_i");
     char *str = obj_getStr(self, "str");
     uint16_t len = strGetSize(str);
-    Arg *res = NULL;
-#if StdStringUTF8Support
+    // Arg *res = NULL;
+#if PIKA_STRING_UTF8_ENABLE
     char char_buff[5];
     int r = _pcre_utf8_get(str, len, __iter_i, char_buff);
     if (r < 0)
@@ -93,7 +93,7 @@ Arg *PikaStdData_String___getitem__(PikaObj *self, Arg *__key)
     int key_i = arg_getInt(__key);
     char *str = obj_getStr(self, "str");
     uint16_t len = strGetSize(str);
-#ifdef StdStringUTF8Support
+#ifdef PIKA_STRING_UTF8_ENABLE
     char char_buff[5];
     int r = _pcre_utf8_get(str, len, key_i, char_buff);
     if (r < 0)
@@ -121,7 +121,7 @@ void PikaStdData_String___setitem__(PikaObj *self, Arg *__key, Arg *__val)
     char *str = obj_getStr(self, "str");
     char *val = arg_getStr(__val);
     uint16_t len = strGetSize(str);
-#if StdStringUTF8Support
+#if PIKA_STRING_UTF8_ENABLE
     int ulen = _pcre_utf8_strlen(str, len);
     int len2 = strlen(val);
     int ulen_val = _pcre_utf8_strlen(val, len2);
@@ -288,7 +288,7 @@ PikaObj *PikaStdData_String_split(PikaObj *self, char *s)
 int PikaStdData_String___len__(PikaObj *self)
 {
     char *str = obj_getStr(self, "str");
-#if StdStringUTF8Support
+#if PIKA_STRING_UTF8_ENABLE
     int n = _pcre_utf8_strlen(str, -1);
     if (n < 0)
     {
@@ -348,7 +348,7 @@ Arg *PikaStdData_String_encode(PikaObj *self)
     return arg;
 }
 
-#ifdef StdStringUTF8Support
+#ifdef PIKA_STRING_UTF8_ENABLE
 
 static int _pcre_valid_utf8(const char *string, int length)
 {
@@ -365,35 +365,35 @@ static int _pcre_valid_utf8(const char *string, int length)
         if (!(c & 0x80))
             continue;
         if (c < 0xc0)
-            return p - string;
+            return (uintptr_t)p - (uintptr_t)string;
         ab = _pcre_utf8_table4[c & 0x3f];
         if (length < ab || ab > 3)
-            return p - string;
+            return (uintptr_t)p - (uintptr_t)string;
         length -= ab;
         if ((*(++p) & 0xc0) != 0x80)
-            return p - string;
+            return (uintptr_t)p - (uintptr_t)string;
         switch (ab)
         {
         case 1:
             if ((c & 0x3e) == 0)
-                return p - string;
+                return (uintptr_t)p - (uintptr_t)string;
             continue;
         case 2:
             if ((c == 0xe0 && (*p & 0x20) == 0) ||
                 (c == 0xed && *p >= 0xa0))
-                return p - string;
+                return (uintptr_t)p - (uintptr_t)string;
             break;
         case 3:
             if ((c == 0xf0 && (*p & 0x30) == 0) ||
                 (c > 0xf4) ||
                 (c == 0xf4 && *p > 0x8f))
-                return p - string;
+                return (uintptr_t)p - (uintptr_t)string;
             break;
         }
         while (--ab > 0)
         {
             if ((*(++p) & 0xc0) != 0x80)
-                return p - string;
+                return (uintptr_t)p - (uintptr_t)string;
         }
     }
     return -1;
@@ -465,12 +465,12 @@ static int _pcre_utf8_get_offset(const char *string, int length, int at, int *ou
     {
         if (out_char_len)
             *out_char_len = 1;
-        return p - string;
+        return (uintptr_t)p - (uintptr_t)string;
     };
     ab = _pcre_utf8_table4[c & 0x3f] + 1;
     if (out_char_len)
         *out_char_len = ab;
-    return p - string;
+    return (uintptr_t)p - (uintptr_t)string;
 }
 static int _pcre_utf8_strlen(const char *string, int length)
 {
@@ -510,6 +510,7 @@ static int __str_repl(PikaObj *self, char *str, int str_len, int repl_at, int re
         s_new = arg_strAppend(s_new, str + repl_at + repl_len);
         obj_removeArg(self, "str");
         int rs = obj_setArg(self, "str", s_new);
+        arg_deinit(s_new);
         if (rs)
             return -rs;
         return 0;
