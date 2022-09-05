@@ -22,6 +22,7 @@
         "pikastddata_dict.h": "c",
         "pikacv.h": "c",
         "pikacv_image.h": "c",
-        "pikacv_filter.h": "c"
+        "pikacv_filter.h": "c",
+        "pika_config.h": "c"
     }
 }

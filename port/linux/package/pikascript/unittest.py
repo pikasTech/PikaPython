@@ -1,6 +1,3 @@
-from PikaStdData import String
-
-
 class TestResult:
     def __init__(self):
         self.errorsNum = 0
@@ -68,7 +65,7 @@ class TestCase:
 
     def run(self, result: TestResult, suite_name):
         for name in dir(self):
-            if String(name).startswith("test"):
+            if name.startswith("test"):
                 result.testsRun += 1
                 self.test_fn = getattr(self, name)
                 print("[ RUN      ] %s.%s" % (suite_name, name))

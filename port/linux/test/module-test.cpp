@@ -211,6 +211,9 @@ TEST(socket, server_client) {
     pikaVM_runSingleFile(pikaMain, "test/python/socket/server_client.py");
     /* collect */
     /* assert */
+    EXPECT_STREQ(log_buff[2], "recv from client: 127.0.0.1\r\n");
+    EXPECT_STREQ(log_buff[1], "server recv: send test from client\r\n");
+    EXPECT_STREQ(log_buff[0], "client recv: send test from server\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

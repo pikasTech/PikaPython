@@ -1,21 +1,19 @@
-from PikaStdData import String
 
 class ConfigParser():
     content = ''
     config_dict = {}
 
     def _parse(self):
-        self.content = String(self.content).replace('\r', '')
-        content = String(self.content)
+        self.content = self.content.replace('\r', '')
+        content = self.content
         lines = content.split('\n')
         for line in lines:
-            line = String(line)
             if line.startswith('#'):
                 continue
             if line.startswith(';'):
                 continue
             if line.startswith('['):
-                section = String(line.replace('[', ''))
+                section = line.replace('[', '')
                 section = section.replace(']', '')
                 self.config_dict[section] = {}
                 continue
@@ -24,8 +22,8 @@ class ConfigParser():
                 continue
 
             stmt = line.split('=')
-            key = String(stmt[0]).strip()
-            value = String(_getvalue(stmt)).strip()
+            key = stmt[0].strip()
+            value = _getvalue(stmt).strip()
             section_dict = self.config_dict[section]
             section_dict[key] = value
 

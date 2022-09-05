@@ -445,6 +445,13 @@ PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
         *pIsTemp = 1;
         return obj;
     }
+    if (arg_getType(self) == ARG_TYPE_BYTES) {
+        PikaObj* New_PikaStdData_ByteArray(Args * args);
+        PikaObj* obj = newNormalObj(New_PikaStdData_ByteArray);
+        obj_setArg(obj, "raw", self);
+        *pIsTemp = 1;
+        return obj;
+    }
     return NULL;
 }
 
@@ -480,10 +487,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
         arg_deinit(cls_obj_arg);
         return res;
     }
-    if (type == ARG_TYPE_STRING) {
-        return _arg_to_obj(args_getArg(self->list, name), pIsTemp);
-    }
-    return NULL;
+    return _arg_to_obj(args_getArg(self->list, name), pIsTemp);
 }
 
 static PikaObj* __obj_getObjWithKeepDeepth(PikaObj* self,
