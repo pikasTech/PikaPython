@@ -122,7 +122,7 @@ void PikaStdData_String___setitem__(PikaObj *self, Arg *__key, Arg *__val)
     char *val = arg_getStr(__val);
     uint16_t len = strGetSize(str);
 #if PIKA_STRING_UTF8_ENABLE
-    int ulen = _pcre_utf8_strlen(str, len);
+    // int ulen = _pcre_utf8_strlen(str, len);
     int len2 = strlen(val);
     int ulen_val = _pcre_utf8_strlen(val, len2);
     if (ulen_val != 1)
@@ -294,7 +294,7 @@ int PikaStdData_String___len__(PikaObj *self)
     {
         obj_setErrorCode(self, __LINE__);
         __platform_printf("Error. Internal error(-%d)\r\n", __LINE__);
-        return;
+        return n;
     }
     return n;
 #else
@@ -358,7 +358,7 @@ static int _pcre_valid_utf8(const char *string, int length)
         length = strlen(string);
     }
 
-    for (p = string; length-- > 0; p++)
+    for (p = (const uint8_t*)string; length-- > 0; p++)
     {
         int ab;
         int c = *p;
@@ -409,7 +409,7 @@ static int _pcre_utf8_get(const char *string, int length, int at, char *out_buf)
     if (at < 0 || at >= length)
         return -1;
 
-    for (p = string; length > 0 && at; p++, at--)
+    for (p = (const uint8_t*)string; length > 0 && at; p++, at--)
     {
         c = *p;
         if (!(c & 0x80))
@@ -446,7 +446,7 @@ static int _pcre_utf8_get_offset(const char *string, int length, int at, int *ou
     if (at < 0 || at >= length)
         return -1;
 
-    for (p = string; length > 0 && at; p++, at--)
+    for (p = (const uint8_t*)string; length > 0 && at; p++, at--)
     {
         c = *p;
         if (!(c & 0x80))
@@ -481,7 +481,7 @@ static int _pcre_utf8_strlen(const char *string, int length)
         length = strlen(string);
     }
 
-    for (i = 0, p = string; length > 0; i++, p++)
+    for (i = 0, p = (const uint8_t*)string; length > 0; i++, p++)
     {
         c = *p;
         if (!(c & 0x80))
