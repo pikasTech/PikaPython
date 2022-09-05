@@ -372,7 +372,7 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
                 arg_deinit(item_arg);
                 arg_deinit(i_arg);
             }
-            return arg_newPtr(ARG_TYPE_OBJECT, sliced_obj);
+            return arg_newObj(sliced_obj);
         }
     }
     return arg_newNull();
@@ -815,7 +815,7 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
         arg_deinit(arg);
     }
     stack_deinit(&stack);
-    return arg_newPtr(ARG_TYPE_OBJECT, list);
+    return arg_newObj(list);
 #else
     return VM_instruction_handler_NON(self, vm, "", NULL);
 #endif
@@ -872,7 +872,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
         arg_deinit(val_arg);
     }
     stack_deinit(&stack);
-    return arg_newPtr(ARG_TYPE_OBJECT, dict);
+    return arg_newObj(dict);
 #else
     return VM_instruction_handler_NON(self, vm, data, arg_ret_reg);
 #endif

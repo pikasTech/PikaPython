@@ -975,9 +975,13 @@ PikaObj* New_PikaObj(void) {
     return self;
 }
 
+Arg* arg_setObj(Arg* self, char* name, PikaObj* obj) {
+    return arg_setPtr(self, name, ARG_TYPE_OBJECT, obj);
+}
+
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj) {
     obj_refcntInc(obj);
-    return arg_setPtr(self, name, ARG_TYPE_OBJECT, obj);
+    return arg_setObj(self, name, obj);
 }
 
 int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr) {

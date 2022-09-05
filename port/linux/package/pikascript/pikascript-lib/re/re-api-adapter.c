@@ -948,7 +948,7 @@ PikaObj *__findall(void *pattern__or__re,
         }
         sub_list = newNormalObj(New_PikaStdData_Tuple);
         obj_setPtr(sub_list, "list", tu);
-        sub_arg = arg_newPtr(ARG_TYPE_OBJECT, sub_list);
+        sub_arg = arg_newObj(sub_list);
         PikaStdData_List_append(list, sub_arg);
         arg_deinit(sub_arg);
         free(b);
