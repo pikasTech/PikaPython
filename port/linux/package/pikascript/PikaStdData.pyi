@@ -20,6 +20,9 @@ class Tuple:
     def __str__(self) -> str: ...
     def __len__(self) -> int: ...
 
+    def __contains__(self, val: any) -> int:
+        """ support val in list """
+
 
 class List(Tuple):
     def __init__(self): ...
@@ -41,9 +44,6 @@ class List(Tuple):
     def __add__(self, others: List) -> List:
         """ support list + list"""
 
-    def __contains__(self, val: any) -> int:
-        """ support val in list """
-
 
 class Dict:
     def __init__(self): ...
@@ -63,6 +63,9 @@ class Dict:
     def __str__(self) -> str: ...
     def keys(self) -> dict_keys: ...
     def __len__(self) -> int: ...
+
+    def __contains__(self, val: any) -> int:
+        """ support val in list """
 
 
 class dict_keys:

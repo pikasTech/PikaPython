@@ -18,6 +18,7 @@
         "inet.h": "c",
         "re.h": "c",
         "cre.h": "c",
-        "pcre.h": "c"
+        "pcre.h": "c",
+        "pikastddata_dict.h": "c"
     }
 }

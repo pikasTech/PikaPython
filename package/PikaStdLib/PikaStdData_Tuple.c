@@ -74,3 +74,14 @@ char* PikaStdData_Tuple___str__(PikaObj* self) {
 int PikaStdData_Tuple___len__(PikaObj* self) {
     return PikaStdData_Tuple_len(self);
 }
+
+int PikaStdData_Tuple___contains__(PikaObj* self, Arg* val) {
+    PikaList* list = obj_getPtr(self, "list");
+    for (size_t i = 0; i < list_getSize(list); i++) {
+        Arg* arg = list_getArg(list, i);
+        if (arg_isEqual(arg, val)) {
+            return 1;
+        }
+    }
+    return 0;
+}

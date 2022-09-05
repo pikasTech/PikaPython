@@ -122,4 +122,24 @@ TEST(list, in){
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(dict, in){
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "if \"a\" in {\"a\":1, \"b\":2}:\n"
+            "    print('a in dict')\n"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "a in dict\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+
 #endif

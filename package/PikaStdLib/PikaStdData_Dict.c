@@ -172,3 +172,23 @@ int PikaStdData_dict_keys___len__(PikaObj* self) {
     PikaDict* keys = obj_getPtr(dictptr, "_keys");
     return args_getSize(&keys->super);
 }
+
+int dict_contains(PikaDict* dict, Arg* key) {
+    int i = 0;
+    while (PIKA_TRUE) {
+        Arg* item = args_getArgByidex(&dict->super, i);
+        if (NULL == item) {
+            break;
+        }
+        if (arg_isEqual(item, key)) {
+            return PIKA_TRUE;
+        }
+        i++;
+    }
+    return PIKA_FALSE;
+}
+
+int PikaStdData_Dict___contains__(PikaObj *self, Arg* val){
+    PikaDict* dict = obj_getPtr(self, "_keys");
+    return dict_contains(dict, val);
+}

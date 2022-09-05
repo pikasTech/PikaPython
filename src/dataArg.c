@@ -458,18 +458,19 @@ PIKA_BOOL arg_isEqual(Arg* self, Arg* other) {
     if (arg_getType(self) != arg_getType(other)) {
         return PIKA_FALSE;
     }
-    if (arg_getContentSize(self) != arg_getContentSize(other)) {
-        return PIKA_FALSE;
-    }
     if (arg_getType(self) == ARG_TYPE_OBJECT) {
         if (arg_getPtr(self) != arg_getPtr(other)) {
             return PIKA_FALSE;
         }
-    } else {
-        if (0 != __platform_memcmp(arg_getContent(self), arg_getContent(other),
-                                   arg_getContentSize(self))) {
-            return PIKA_FALSE;
+    }
+    if (arg_getType(self) == ARG_TYPE_STRING){
+        if (strEqu(arg_getStr(self), arg_getStr(other))){
+            return PIKA_TRUE;
         }
+    }
+    if (0 != __platform_memcmp(arg_getContent(self), arg_getContent(other),
+                               arg_getContentSize(self))) {
+        return PIKA_FALSE;
     }
     return PIKA_TRUE;
 }
