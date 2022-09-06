@@ -19,7 +19,7 @@ import unittest
 import socket
 import random
 import re
-
+import PikaNN
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')
 print('mem used max:')
