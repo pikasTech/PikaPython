@@ -1,6 +1,6 @@
 #include "Arm2D_common.h"
 
-void Arm2D_BackGround_init(PikaObj* self) {
+void Arm2D_BackGround___init__(PikaObj* self) {
     obj_setStr(self, "color", "white");
 }
 

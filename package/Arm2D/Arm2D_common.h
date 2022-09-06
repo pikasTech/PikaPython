@@ -5,10 +5,10 @@
 #include "Arm2D_Box.h"
 #include "BaseObj.h"
 #include "arm_2d.h"
-#include "arm_2d_helper.h"
 #include "dataStrs.h"
 #include "pikaScript.h"
-#include "arm2d_config.h"
+#include "arm_2d_cfg.h"
+#include "arm_2d_helper.h"
 
 #ifndef ARM2DQEMUBOOTER_APP_ARM2D_H_
 #define APPLICATIONS_APP_ARM2D_H_
@@ -70,5 +70,20 @@ typedef struct {
     arm_2d_location_t tCentre;
     arm_2d_region_t tRegion;
 } rotate_tile_t;
+
+#define __implement_tile(__NAME, __WIDTH, __HEIGHT, __TYPE, ...)                \
+            ARM_NOINIT static __TYPE                                            \
+                __NAME##Buffer[(__WIDTH) * (__HEIGHT)];                         \
+            const arm_2d_tile_t __NAME = {                                      \
+                .tRegion = {                                                    \
+                    .tSize = {(__WIDTH), (__HEIGHT)},                           \
+                },                                                              \
+                .tInfo.bIsRoot = true,                                          \
+                .pchBuffer = (uint8_t *)__NAME##Buffer,                         \
+                __VA_ARGS__                                                     \
+            };
+
+#define implement_tile(__NAME, __WIDTH, __HEIGHT, __TYPE, ...)                  \
+            __implement_tile(__NAME, __WIDTH, __HEIGHT, __TYPE, ##__VA_ARGS__)
 
 #endif

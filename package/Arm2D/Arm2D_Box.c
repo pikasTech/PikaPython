@@ -3,7 +3,7 @@
 #include "asset_corner_box.h"
 #include "dataArgs.h"
 
-void Arm2D_Box_init(PikaObj* self) {
+void Arm2D_Box___init__(PikaObj* self) {
     /* init element info */
     obj_setInt(self, "alpha", 255);
     obj_setInt(self, "x", 0);

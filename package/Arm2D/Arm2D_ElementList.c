@@ -5,7 +5,7 @@ int32_t __foreach_ElementList_update(Arg* elem, Args* buffs) {
     ArgType type = arg_getType(elem);
     if (ARG_TYPE_OBJECT == type) {
         PikaObj* elemObj = arg_getPtr(elem);
-        pikaVM_runAsm(elemObj, "0 RUN update\n");
+        obj_runNativeMethod(elemObj, "update", NULL);
     }
     return 0;
 }

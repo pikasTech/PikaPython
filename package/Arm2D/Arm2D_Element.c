@@ -6,7 +6,7 @@ void Arm2D_Element_update(PikaObj* self) {
     obj_setSysOut(self, "[error]: update method not be overrided !");
 }
 
-void Arm2D_Element_init(PikaObj* self) {
+void Arm2D_Element___init__(PikaObj* self) {
     /* init element info */
     obj_setInt(self, "alpha", 255);
     obj_setInt(self, "x", 0);
