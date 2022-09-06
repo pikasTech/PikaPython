@@ -26,7 +26,7 @@ Arg *PikaStdData_String___iter__(PikaObj *self)
 
 void PikaStdData_String_set(PikaObj *self, char *s)
 {
-#ifdef PIKA_STRING_UTF8_ENABLE
+#if PIKA_STRING_UTF8_ENABLE
     int r = _pcre_valid_utf8(s, -1);
     if (r >= 0)
     {
@@ -40,7 +40,7 @@ void PikaStdData_String_set(PikaObj *self, char *s)
 
 void PikaStdData_String___init__(PikaObj *self, char *s)
 {
-#ifdef PIKA_STRING_UTF8_ENABLE
+#if PIKA_STRING_UTF8_ENABLE
     int r = _pcre_valid_utf8(s, -1);
     if (r >= 0)
     {
@@ -62,7 +62,6 @@ Arg *PikaStdData_String___next__(PikaObj *self)
     int __iter_i = args_getInt(self->list, "__iter_i");
     char *str = obj_getStr(self, "str");
     uint16_t len = strGetSize(str);
-    // Arg *res = NULL;
 #if PIKA_STRING_UTF8_ENABLE
     char char_buff[5];
     int r = _pcre_utf8_get(str, len, __iter_i, char_buff);
@@ -73,6 +72,7 @@ Arg *PikaStdData_String___next__(PikaObj *self)
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return arg_newStr((char *)char_buff);
 #else
+    Arg *res = NULL;
     char char_buff[] = " ";
     if (__iter_i < len)
     {
@@ -93,7 +93,7 @@ Arg *PikaStdData_String___getitem__(PikaObj *self, Arg *__key)
     int key_i = arg_getInt(__key);
     char *str = obj_getStr(self, "str");
     uint16_t len = strGetSize(str);
-#ifdef PIKA_STRING_UTF8_ENABLE
+#if PIKA_STRING_UTF8_ENABLE
     char char_buff[5];
     int r = _pcre_utf8_get(str, len, key_i, char_buff);
     if (r < 0)
@@ -348,7 +348,7 @@ Arg *PikaStdData_String_encode(PikaObj *self)
     return arg;
 }
 
-#ifdef PIKA_STRING_UTF8_ENABLE
+#if PIKA_STRING_UTF8_ENABLE
 
 static int _pcre_valid_utf8(const char *string, int length)
 {

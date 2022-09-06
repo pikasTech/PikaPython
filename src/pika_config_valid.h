@@ -64,6 +64,12 @@
         #ifndef PIKA_SYNTAX_LEVEL
             #define PIKA_SYNTAX_LEVEL PIKA_SYNTAX_LEVEL_MINIMAL
         #endif
+
+
+        #ifndef PIKA_STRING_UTF8_ENABLE
+            #define PIKA_STRING_UTF8_ENABLE 0
+        #endif
+
     #endif
 
     /* default optimize */

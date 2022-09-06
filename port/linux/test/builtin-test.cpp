@@ -139,6 +139,7 @@ TEST(builtin, callback_1) {
 }
 #endif
 
+#if !PIKA_NANO_ENABLE
 TEST(builtin, utf8) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -155,3 +156,4 @@ TEST(builtin, utf8) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
