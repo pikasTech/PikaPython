@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662424518851,
+  "lastUpdate": 1662470339234,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -78156,6 +78156,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000276475093431,
             "unit": "ms/iter",
             "extra": "iterations: 183508\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "52252114+Renzhihan@users.noreply.github.com",
+            "name": "任祉涵",
+            "username": "Renzhihan"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "36b3d2775ac6fefdaeba87f95101d6d4ba3b5996",
+          "message": "PikaNN simple version (#211)\n\n* PikaNN sample\r\n\r\n* Delete __asset_lib_to_file_py_a.c\r\n\r\n* Update CMakeLists.txt\r\n\r\nCo-authored-by: Lyon <88232613+pikasTech@users.noreply.github.com>",
+          "timestamp": "2022-09-06T21:08:10+08:00",
+          "tree_id": "1f9259949c293167ee2791473c38b082068d9ef2",
+          "url": "https://github.com/pikasTech/pikascript/commit/36b3d2775ac6fefdaeba87f95101d6d4ba3b5996"
+        },
+        "date": 1662470330380,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 10156.699934692026,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 10156.699934692026 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 31.134915456011907,
+            "unit": "ms/iter",
+            "extra": "iterations: 31\ncpu: 31.124884013043793 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 17.046485905301733,
+            "unit": "ms/iter",
+            "extra": "iterations: 59\ncpu: 17.044704894082784 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 4.923783768811434,
+            "unit": "ms/iter",
+            "extra": "iterations: 203\ncpu: 4.9228588342179975 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000624631259553,
+            "unit": "ms/iter",
+            "extra": "iterations: 200869\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
