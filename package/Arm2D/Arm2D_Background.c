@@ -9,7 +9,7 @@ char* Arm2D_BackGround_getColor(PikaObj* self) {
 }
 
 void Arm2D_BackGround_update(PikaObj* self) {
-    void* target_tile = pika_arm2d_window.pfb_tile_now;
+    void* target_tile = pika_arm2d_globals.pfb_tile_now;
 
     char* color = obj_getStr(self, "color");
     uint16_t backGroundColor = getColorCode(color);

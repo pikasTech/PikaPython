@@ -26,16 +26,16 @@ typedef struct __pika_arm2d_box_info_t {
     uint16_t color_code, color_code_last;
 } pika_arm2d_box_info_t;
 
-typedef struct __pika_arm2d_window_t {
+typedef struct __pika_arm2d_globals_t {
     arm_2d_tile_t* pfb_tile_now;
     bool pfb_is_new_frame;
     arm_2d_region_list_item_t* dirty_region_list;
     PikaObj* pika_windows_object;
     PikaObj* pika_background_object;
     PikaObj* pika_elems_object;
-} pika_arm2d_window_t;
+} pika_arm2d_globals_t;
 
-extern pika_arm2d_window_t pika_arm2d_window;
+extern pika_arm2d_globals_t pika_arm2d_globals;
 
 /* GLCD RGB color definitions */
 #define GLCD_COLOR_BLACK 0x0000      /*   0,   0,   0 */
@@ -71,7 +71,7 @@ typedef struct {
 } rotate_tile_t;
 
 #define __implement_tile(__NAME, __WIDTH, __HEIGHT, __TYPE, ...)                \
-            ARM_NOINIT static __TYPE                                            \
+            static __TYPE                                            \
                 __NAME##Buffer[(__WIDTH) * (__HEIGHT)];                         \
             const arm_2d_tile_t __NAME = {                                      \
                 .tRegion = {                                                    \
@@ -149,6 +149,10 @@ typedef struct {
                 arm_2dp_gray8_tile_rotation_with_src_mask_and_opacity
 #   define arm_2dp_tile_rotation_with_src_mask                                  \
                 arm_2dp_gray8_tile_rotation_with_src_mask
+
+#   define arm_2d_tile_rotation                                  \
+                arm_2d_gray8_tile_rotation
+
 #elif __GLCD_CFG_COLOUR_DEPTH__ == 16
 
 #   define __arm_2d_color_t         arm_2d_color_rgb565_t
@@ -207,6 +211,10 @@ typedef struct {
                 arm_2dp_rgb565_tile_rotation_with_src_mask_and_opacity
 #   define arm_2dp_tile_rotation_with_src_mask                                  \
                 arm_2dp_rgb565_tile_rotation_with_src_mask
+
+
+#   define arm_2d_tile_rotation                                  \
+                arm_2d_rgb565_tile_rotation
 #elif __GLCD_CFG_COLOUR_DEPTH__ == 32
 
 #   define __arm_2d_color_t         arm_2d_color_cccn888_t
@@ -265,6 +273,10 @@ typedef struct {
                 arm_2dp_cccn888_tile_rotation_with_src_mask_and_opacity
 #   define arm_2dp_tile_rotation_with_src_mask                                  \
                 arm_2dp_cccn888_tile_rotation_with_src_mask
+
+#   define arm_2d_tile_rotation                                  \
+                arm_2d_cccn888_tile_rotation
+
 #else
 #   error Unsupported colour depth!
 #endif

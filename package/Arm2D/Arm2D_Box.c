@@ -23,8 +23,8 @@ int __max(int x, int y) {
 }
 
 void Arm2D_Box_update(PikaObj* self) {
-    void* target_tile = pika_arm2d_window.pfb_tile_now;
-    bool bIsNewFrame = pika_arm2d_window.pfb_is_new_frame;
+    void* target_tile = pika_arm2d_globals.pfb_tile_now;
+    bool bIsNewFrame = pika_arm2d_globals.pfb_is_new_frame;
 
     arm_2d_region_t arg2d_regin = {0};
     arg2d_regin.tSize.iHeight = obj_getInt(self, "height");

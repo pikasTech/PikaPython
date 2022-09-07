@@ -47,12 +47,10 @@ extern
 const arm_2d_tile_t c_tileWhiteDotAlphaQuarter;
 
 /*============================ PROTOTYPES ====================================*/
-__attribute__((nothrow)) 
 
 /*============================ LOCAL VARIABLES ===============================*/
 
-declare_tile(s_tCorner)
-implement_tile(s_tCorner, 7, 7, uint8_t,
+impl_fb(s_tCorner, 7, 7, uint8_t,
     .tInfo = {
         .bIsRoot = true,
         .bHasEnforcedColour = true,

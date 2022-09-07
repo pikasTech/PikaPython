@@ -11,20 +11,6 @@ int Arm2D_is_point_inside_region(PikaObj* self,
     return arm_2d_is_point_inside_region(_region, _location);
 }
 
-int Arm2D_is_root_tile(PikaObj* self, PikaObj* tile) {
-    arm_2d_tile_t* _tile = obj_getStruct(tile, "_self");
-    return arm_2d_is_root_tile(_tile);
-}
-
-PikaObj* Arm2D_get_absolute_location(PikaObj* self, PikaObj* tile) {
-    arm_2d_tile_t* _tile = obj_getStruct(tile, "_self");
-    arm_2d_location_t _location = {0};
-    arm_2d_get_absolute_location(_tile, &_location);
-    PikaObj* location = newNormalObj(New_Arm2D_Location);
-    obj_setStruct(location, "_self", _location);
-    return location;
-}
-
 void Arm2D___init__(PikaObj* self) {
     int32_t __Arm2D_platform_Init();
     __Arm2D_platform_Init();
@@ -35,6 +21,12 @@ void Arm2D___init__(PikaObj* self) {
     obj_setInt(self, "CP_MODE_Y_MIRROR", ARM_2D_CP_MODE_Y_MIRROR);
     obj_setInt(self, "CP_MODE_X_MIRROR", ARM_2D_CP_MODE_X_MIRROR);
     obj_setInt(self, "CP_MODE_XY_MIRROR", ARM_2D_CP_MODE_XY_MIRROR);
+
+    obj_setInt(self, "COLOR_WHITE", GLCD_COLOR_WHITE);
+    obj_setInt(self, "COLOR_BLACK", GLCD_COLOR_BLACK);
+    obj_setInt(self, "COLOR_RED", GLCD_COLOR_RED);
+    obj_setInt(self, "COLOR_BLUE", GLCD_COLOR_BLUE);
+    obj_setInt(self, "COLOR_GREEN", GLCD_COLOR_GREEN);
 
     pika_arm2d_init();
 }
@@ -50,7 +42,11 @@ int Arm2D_tile_copy(PikaObj* self,
     return arm_2d_tile_copy(_src, _des, _des_reg, mode);
 }
 
-int Arm2D_alpha_blending(PikaObj *self, PikaObj* src, PikaObj* des, PikaObj* reg, int alp){
+int Arm2D_alpha_blending(PikaObj* self,
+                         PikaObj* src,
+                         PikaObj* des,
+                         PikaObj* reg,
+                         int alp) {
     arm_2d_tile_t* _src = obj_getStruct(src, "_self");
     arm_2d_tile_t* _des = obj_getStruct(des, "_self");
     arm_2d_region_t* _reg = obj_getStruct(reg, "_self");
@@ -67,4 +63,32 @@ void Arm2D_update(PikaObj* self) {
     extern arm_2d_helper_pfb_t s_tPFBHelper;
     while (arm_fsm_rt_cpl != arm_2d_helper_pfb_task(&s_tPFBHelper, NULL))
         ;
+}
+
+PikaObj* Arm2D_create_location(PikaObj* self, int x, int y) {
+    PikaObj* location = newNormalObj(New_Arm2D_Location);
+    arm_2d_location_t _location = {
+        .iX = x,
+        .iY = y,
+    };
+    obj_setStruct(location, "_self", _location);
+    return location;
+}
+
+PikaObj* Arm2D_create_region(PikaObj* self, int x, int y, int w, int h) {
+    PikaObj* region = newNormalObj(New_Arm2D_Region);
+    arm_2d_region_t _region = {
+        .tLocation =
+            {
+                .iX = x,
+                .iY = y,
+            },
+        .tSize =
+            {
+                .iWidth = w,
+                .iHeight = h,
+            },
+    };
+    obj_setStruct(region, "_self", _region);
+    return region;
 }
