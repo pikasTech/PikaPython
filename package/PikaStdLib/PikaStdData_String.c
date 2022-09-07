@@ -124,6 +124,13 @@ void PikaStdData_String___setitem__(PikaObj *self, Arg *__key, Arg *__val)
 #if PIKA_STRING_UTF8_ENABLE
     // int ulen = _pcre_utf8_strlen(str, len);
     int len2 = strlen(val);
+    int is_invalid = _pcre_valid_utf8(val, len2);
+    if (is_invalid >= 0)
+    {
+        obj_setErrorCode(self, __LINE__);
+        __platform_printf("Error String invalid\r\n");
+        return;
+    }
     int ulen_val = _pcre_utf8_strlen(val, len2);
     if (ulen_val != 1)
     {
