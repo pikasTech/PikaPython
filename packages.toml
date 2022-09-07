@@ -248,7 +248,8 @@ releases = [
   "v0.3.3 bcee87c3d7d09db093f92ba825019dd3ec8726a7",
   "v0.3.4 7345c222bd446bad6eb32a32f38cad36867fba7c",
   "v0.4.0 9f3a52558338503571b37c034a12219566f27aa2",
-  "v0.4.1 0892f1d426e3d69daaff1251d8e45d2ef60d1ad4"
+  "v0.4.1 0892f1d426e3d69daaff1251d8e45d2ef60d1ad4",
+  "v0.5.0 c25d624cda5cc10bbdf803e1c343fc553e32477f"
 ]
 
 [[packages]]
@@ -323,7 +324,6 @@ releases = [
 name = "CH32V103"
 releases = [ "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d" ]
 
-
 [[packages]]
 name = "SmartLoong"
 releases = [ "v0.0.1 a5437de66e8cff600be247eae63ac9114b6b153f" ]
@@ -354,4 +354,3 @@ releases = [
   "v0.0.1 9f9579c54ebddb12c66afc8da64a987767ff512f",
   "v0.1.0 faa9c6230149d09188114af7af822e5d34af6b55"
 ]
-
