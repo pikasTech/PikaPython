@@ -86,7 +86,7 @@ void draw_round_corner_box( const arm_2d_tile_t *ptTarget,
                             ARM_2D_CP_MODE_X_MIRROR |
                             ARM_2D_CP_MODE_Y_MIRROR);
                             
-    arm_2d_rgb565_fill_colour_with_mask_and_opacity(   
+    arm_2d_fill_colour_with_mask_and_opacity(   
                                             ptTarget, 
                                             &tRegion, 
                                             &s_tCorner, 
@@ -103,7 +103,7 @@ void draw_round_corner_box( const arm_2d_tile_t *ptTarget,
                             ARM_2D_CP_MODE_COPY |
                             ARM_2D_CP_MODE_Y_MIRROR);
                             
-    arm_2d_rgb565_fill_colour_with_mask_and_opacity(   
+    arm_2d_fill_colour_with_mask_and_opacity(   
                                             ptTarget, 
                                             &tRegion, 
                                             &s_tCorner, 
@@ -112,7 +112,7 @@ void draw_round_corner_box( const arm_2d_tile_t *ptTarget,
 
     arm_2d_op_wait_async(NULL);
 
-    arm_2dp_rgb565_fill_colour_with_opacity(   
+    arm_2dp_fill_colour_with_opacity(   
         NULL,
         ptTarget, 
         &(arm_2d_region_t) {
@@ -130,7 +130,7 @@ void draw_round_corner_box( const arm_2d_tile_t *ptTarget,
     
     arm_2d_op_wait_async(NULL);
 
-    arm_2dp_rgb565_fill_colour_with_opacity(   
+    arm_2dp_fill_colour_with_opacity(   
         NULL,
         ptTarget, 
         &(arm_2d_region_t) {
@@ -155,7 +155,7 @@ void draw_round_corner_box( const arm_2d_tile_t *ptTarget,
                             NULL, 
                             ARM_2D_CP_MODE_COPY);
 
-    arm_2d_rgb565_fill_colour_with_mask_and_opacity(   
+    arm_2d_fill_colour_with_mask_and_opacity(   
                                             ptTarget, 
                                             &tRegion, 
                                             &s_tCorner, 
@@ -172,7 +172,7 @@ void draw_round_corner_box( const arm_2d_tile_t *ptTarget,
                             ARM_2D_CP_MODE_COPY     |
                             ARM_2D_CP_MODE_X_MIRROR );
                             
-    arm_2d_rgb565_fill_colour_with_mask_and_opacity(  
+    arm_2d_fill_colour_with_mask_and_opacity(  
                                             ptTarget, 
                                             &tRegion, 
                                             &s_tCorner, 
@@ -181,7 +181,7 @@ void draw_round_corner_box( const arm_2d_tile_t *ptTarget,
 
     arm_2d_op_wait_async(NULL);
 
-    arm_2dp_rgb565_fill_colour_with_opacity(   
+    arm_2dp_fill_colour_with_opacity(   
         NULL,
         ptTarget, 
         &(arm_2d_region_t) {

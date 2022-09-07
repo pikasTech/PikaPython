@@ -8,7 +8,7 @@
 #include "pikaScript.h"
 
 pika_arm2d_window_t pika_arm2d_window;
-static arm_2d_helper_pfb_t s_tPFBHelper;
+arm_2d_helper_pfb_t s_tPFBHelper;
 
 static IMPL_PFB_ON_LOW_LV_RENDERING(__pfb_render_handler) {
     const arm_2d_tile_t* pfb_tile = &(ptPFB->tTile);
@@ -67,16 +67,9 @@ void pika_arm2d_init(void) {
 }
 
 void Arm2D_Window___init__(PikaObj* self) {
-    __Arm2D_platform_Init();
-    pika_arm2d_init();
     pika_arm2d_window.pika_windows_object = self;
     pika_arm2d_window.pika_elems_object = obj_getObj(self, "elems");
     pika_arm2d_window.pika_background_object =
         obj_getObj(self, "background");
     pika_arm2d_window.dirty_region_list = NULL;
-}
-
-void Arm2D_Window_update(PikaObj* self) {
-    while (arm_fsm_rt_cpl != arm_2d_helper_pfb_task(&s_tPFBHelper, NULL))
-        ;
 }

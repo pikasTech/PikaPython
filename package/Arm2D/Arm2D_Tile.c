@@ -1,4 +1,6 @@
-#include "Arm2D_tile.h"
+#include "Arm2D_Tile.h"
+#include "Arm2D_Corner.h"
+#include "Arm2D_WhiteDotAlpha.h"
 #include "Arm2D_Region.h"
 #include "Arm2D_common.h"
 
@@ -59,4 +61,29 @@ int Arm2D_Tile_width_compare(PikaObj* self, PikaObj* reference) {
     arm_2d_tile_t* _self = obj_getStruct(self, "_self");
     arm_2d_tile_t* _reference = obj_getStruct(reference, "_self");
     return arm_2d_tile_width_compare(_self, _reference);
+}
+
+void Arm2D_Corner___init__(PikaObj *self){
+    extern arm_2d_tile_t s_tCorner;
+    obj_setStruct(self, "_self", s_tCorner);
+}
+
+void Arm2D_WhiteDotAlpha___init__(PikaObj *self){
+    extern arm_2d_tile_t c_tileWhiteDotAlphaQuarter;
+    obj_setStruct(self, "_self", c_tileWhiteDotAlphaQuarter);
+}
+
+int Arm2D_Tile_transform(PikaObj *self, PikaObj* reg, PikaObj* centre){
+    arm_2d_tile_t* _self = obj_getStruct(self, "_self");
+    arm_2d_region_t* _reg = obj_getStruct(reg, "_self");
+    arm_2d_location_t* _centre = obj_getStruct(centre, "_self");
+    return arm_2d_tile_transform(_self, _reg, _centre);
+}
+
+
+int Arm2D_Tile_rotate(PikaObj *self, PikaObj* reg, PikaObj* centre){
+    arm_2d_tile_t* _self = obj_getStruct(self, "_self");
+    arm_2d_region_t* _reg = obj_getStruct(reg, "_self");
+    arm_2d_location_t* _centre = obj_getStruct(centre, "_self");
+    return arm_2d_tile_rotate(_self, _reg, _centre);
 }
