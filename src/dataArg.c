@@ -295,6 +295,9 @@ int64_t arg_getInt(Arg* self) {
 }
 
 void* arg_getPtr(Arg* self) {
+    if (arg_getType(self) == ARG_TYPE_NONE) {
+        return NULL;
+    }
     if (NULL == arg_getContent(self)) {
         return NULL;
     }
@@ -463,8 +466,8 @@ PIKA_BOOL arg_isEqual(Arg* self, Arg* other) {
             return PIKA_FALSE;
         }
     }
-    if (arg_getType(self) == ARG_TYPE_STRING){
-        if (strEqu(arg_getStr(self), arg_getStr(other))){
+    if (arg_getType(self) == ARG_TYPE_STRING) {
+        if (strEqu(arg_getStr(self), arg_getStr(other))) {
             return PIKA_TRUE;
         }
     }

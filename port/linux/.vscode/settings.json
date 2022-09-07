@@ -23,6 +23,7 @@
         "pikacv.h": "c",
         "pikacv_image.h": "c",
         "pikacv_filter.h": "c",
-        "pika_config.h": "c"
+        "pika_config.h": "c",
+        "gtesttask.h": "c"
     }
 }

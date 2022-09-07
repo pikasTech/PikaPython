@@ -20,3 +20,7 @@ char* GTestTask_Task_returnNullString(PikaObj* self) {
     __platform_printf("returnNullString\n");
     return NULL;
 }
+
+void GTestTask_test(PikaObj* self, int a, PikaObj* b) {
+    __platform_printf("GTestTask_test: %d, %lx\r\n", a, (uintptr_t)b);
+}

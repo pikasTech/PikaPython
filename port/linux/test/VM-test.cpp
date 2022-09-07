@@ -1323,11 +1323,10 @@ TEST(vm, default_no_input) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
     __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain, 
-    "def test(a = 1):\n"
-    "    print(a)\n"
-    "test()"
-    );
+    obj_run(pikaMain,
+            "def test(a = 1):\n"
+            "    print(a)\n"
+            "test()");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "1\r\n");
@@ -1344,11 +1343,10 @@ TEST(vm, default_1) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
     __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain, 
-    "def test(a = 1):\n"
-    "    print(a)\n"
-    "test(a = 2)"
-    );
+    obj_run(pikaMain,
+            "def test(a = 1):\n"
+            "    print(a)\n"
+            "test(a = 2)");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "2\r\n");
@@ -1365,11 +1363,10 @@ TEST(vm, default_2) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
     __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain, 
-    "def test(a, b = 1):\n"
-    "    print(a, b)\n"
-    "test(1, b = 2)"
-    );
+    obj_run(pikaMain,
+            "def test(a, b = 1):\n"
+            "    print(a, b)\n"
+            "test(1, b = 2)");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "1 2\r\n");
@@ -1386,13 +1383,12 @@ TEST(vm, default_3) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
     __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain, 
-    "def myprint(end='\\n', *var):\n"
-    "    for v in var:\n"
-    "        print(v, end = end)\n"
-    "myprint(1, 2)\n"
-    "myprint(1, 2, end=';\\n')\n"
-    );
+    obj_run(pikaMain,
+            "def myprint(end='\\n', *var):\n"
+            "    for v in var:\n"
+            "        print(v, end = end)\n"
+            "myprint(1, 2)\n"
+            "myprint(1, 2, end=';\\n')\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[3], "1\n");
@@ -1412,22 +1408,38 @@ TEST(vm, default_4) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
     __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain, 
-    "def test(end=5, *var):\n"
-    "    res = end\n"
-    "    print('end', end)\n"
-    "    for v in var:\n"
-    "        res += v\n"
-    "    return res\n"
-    "test(1, 2, 3)\n"
-    "test(1, 2, 3, end=6)\n"
-    );
+    obj_run(pikaMain,
+            "def test(end=5, *var):\n"
+            "    res = end\n"
+            "    print('end', end)\n"
+            "    for v in var:\n"
+            "        res += v\n"
+            "    return res\n"
+            "test(1, 2, 3)\n"
+            "test(1, 2, 3, end=6)\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[3], "end 5\r\n");
     EXPECT_STREQ(log_buff[2], "11\r\n");
     EXPECT_STREQ(log_buff[1], "end 6\r\n");
     EXPECT_STREQ(log_buff[0], "12\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, none) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "GTestTask.test(1, None)");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "GTestTask_test: 1, 0\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
