@@ -10,15 +10,15 @@ static const uint8_t _pcre_utf8_table4[] = {
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
     3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5};
 
-const char mask1 = 0x80; // 0x1000,0000, 6'
-const char mask2 = 0xc0; // 0x1100,0000, 5'
-const char mask3 = 0xe0; // 0x1110,0000, 4'
-const char mask4 = 0xf0; // 0x1111,0000, 3'
+const char mask1 = 0x80;
+const char mask2 = 0xc0;
+const char mask3 = 0xe0;
+const char mask4 = 0xf0;
 
-const char nmask1 = 0x3f; // 0x0011,1111
-const char nmask2 = 0x1f; // 0x0001,1111
-const char nmask3 = 0x0f; // 0x0000,1111
-const char nmask4 = 0x07; // 0x0000,0111
+const char nmask1 = 0x3f;
+const char nmask2 = 0x1f;
+const char nmask3 = 0x0f;
+const char nmask4 = 0x07;
 
 int _valid_utf8(const char *string, int length)
 {
@@ -208,18 +208,18 @@ int __utf8_to_utf32_char_LE(const char *utf8, char *out_buf)
     {
     case 1:
         a = c & nmask2;
-        b = utf8[1] & nmask1; //(a:000x,xx)(xx, b:00xx,xxxx)
+        b = utf8[1] & nmask1;
         out_buf[0] = b | a << 6;
-        out_buf[1] = a >> 2; // 0xxxx00000
+        out_buf[1] = a >> 2;
         out_buf[2] = 0;
         out_buf[3] = 0;
         return 2;
     case 2:
         a = c & nmask3;
-        b = utf8[1] & nmask1;         // A:1110,xxxx,  B:10xx,xxxx,   C:10xx,xxxx
-        c = utf8[2] & nmask1;         // a:0000,(xxxx, b:00xx,xx)(xx, c:00xx,xxxx)
-        out_buf[0] = c | b << 6;      // lower byte
-        out_buf[1] = b >> 2 | a << 4; // higher byte
+        b = utf8[1] & nmask1;
+        c = utf8[2] & nmask1;
+        out_buf[0] = c | b << 6;
+        out_buf[1] = b >> 2 | a << 4;
         out_buf[2] = 0;
         out_buf[3] = 0;
         return 3;
@@ -227,10 +227,10 @@ int __utf8_to_utf32_char_LE(const char *utf8, char *out_buf)
         a = c & nmask4;
         b = utf8[1] & nmask1;
         c = utf8[2] & nmask1;
-        d = utf8[3] & nmask1;         // a:0000,0(xxx, b:00xx,(xxxx, c:00xx,xx(xx, d:00xx,xxxx
-        out_buf[0] = d | c << 6;      // lower byte
-        out_buf[1] = c >> 2 | b << 4; //
-        out_buf[2] = b >> 4 | a << 2; // higher byte
+        d = utf8[3] & nmask1;
+        out_buf[0] = d | c << 6;
+        out_buf[1] = c >> 2 | b << 4;
+        out_buf[2] = b >> 4 | a << 2;
         out_buf[3] = 0;
         return 4;
     default:
@@ -295,25 +295,25 @@ int32_t __utf8_decode(const char *utf8, int left_length)
     {
     case 1:
         a = c & nmask2;
-        b = utf8[1] & nmask1; //(a:000x,xx)(xx, b:00xx,xxxx)
-        ucode = b | (a&0x03) << 6;
-        ucode |= (a >> 2) << 8; // 0xxxx00000
+        b = utf8[1] & nmask1;
+        ucode = b | (a & 0x03) << 6;
+        ucode |= (a >> 2) << 8;
         break;
     case 2:
         a = c & nmask3;
-        b = utf8[1] & nmask1;            // A:1110,xxxx,  B:10xx,xxxx,   C:10xx,xxxx
-        c = utf8[2] & nmask1;            // a:0000,(xxxx, b:00xx,xx)(xx, c:00xx,xxxx)
-        ucode = c | (b&0x03) << 6;              // lower byte
-        ucode |= (b >> 2 | a << 4) << 8; // higher byte
+        b = utf8[1] & nmask1;
+        c = utf8[2] & nmask1;
+        ucode = c | (b & 0x03) << 6;
+        ucode |= (b >> 2 | a << 4) << 8;
         break;
     case 3:
         a = c & nmask4;
         b = utf8[1] & nmask1;
         c = utf8[2] & nmask1;
-        d = utf8[3] & nmask1;             // a:0000,0(xxx, b:00xx,(xxxx, c:00xx,xx(xx, d:00xx,xxxx
-        ucode = d | (c&0x03) << 6;               // lower byte
-        ucode |= (c >> 2 | (b&0x0f) << 4) << 8;  //
-        ucode |= (b >> 4 | a << 2) << 16; // higher byte
+        d = utf8[3] & nmask1;
+        ucode = d | (c & 0x03) << 6;
+        ucode |= (c >> 2 | (b & 0x0f) << 4) << 8;
+        ucode |= (b >> 4 | a << 2) << 16;
         break;
     default:
         return -1;
@@ -408,7 +408,7 @@ int __utf8_to_utf16_LE_withBOM(const char *utf8, int len, char *out_buf)
     out_buf[1] = '\xfe';
     return size + 2;
 }
-Arg* _str_encode(char*str,  char*encoding)
+Arg *_str_encode(char *str, char *encoding)
 {
     if (strEqu(encoding, "utf-8"))
     {
