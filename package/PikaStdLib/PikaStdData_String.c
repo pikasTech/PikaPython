@@ -3,21 +3,6 @@
 #include "PikaStdData_String_Util.h"
 #include "dataStrs.h"
 
-#if PIKA_STRING_UTF8_ENABLE
-
-static int _pcre_valid_utf8(const char *string, int length);
-static int _pcre_utf8_get(const char *string, int length, int at, char *out_buf);
-static int _pcre_utf8_get_offset(const char *string, int length, int at, int *out_char_len);
-static int _pcre_utf8_strlen(const char *string, int length);
-static int __str_repl(PikaObj *self, char *str, int str_len, int repl_at, int repl_len, char *val, int val_len);
-
-static const uint8_t _pcre_utf8_table4[] = {
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5};
-
-#endif
 Arg *PikaStdData_String___iter__(PikaObj *self)
 {
     obj_setInt(self, "__iter_i", 0);
@@ -27,7 +12,7 @@ Arg *PikaStdData_String___iter__(PikaObj *self)
 void PikaStdData_String_set(PikaObj *self, char *s)
 {
 #if PIKA_STRING_UTF8_ENABLE
-    int r = _pcre_valid_utf8(s, -1);
+    int r = _valid_utf8(s, -1);
     if (r >= 0)
     {
         obj_setErrorCode(self, __LINE__);
@@ -41,7 +26,7 @@ void PikaStdData_String_set(PikaObj *self, char *s)
 void PikaStdData_String___init__(PikaObj *self, char *s)
 {
 #if PIKA_STRING_UTF8_ENABLE
-    int r = _pcre_valid_utf8(s, -1);
+    int r = _valid_utf8(s, -1);
     if (r >= 0)
     {
         obj_setErrorCode(self, __LINE__);
@@ -64,7 +49,7 @@ Arg *PikaStdData_String___next__(PikaObj *self)
     uint16_t len = strGetSize(str);
 #if PIKA_STRING_UTF8_ENABLE
     char char_buff[5];
-    int r = _pcre_utf8_get(str, len, __iter_i, char_buff);
+    int r = _utf8_get(str, len, __iter_i, char_buff);
     if (r < 0)
     {
         return arg_newNull();
@@ -95,7 +80,7 @@ Arg *PikaStdData_String___getitem__(PikaObj *self, Arg *__key)
     uint16_t len = strGetSize(str);
 #if PIKA_STRING_UTF8_ENABLE
     char char_buff[5];
-    int r = _pcre_utf8_get(str, len, key_i, char_buff);
+    int r = _utf8_get(str, len, key_i, char_buff);
     if (r < 0)
     {
         return arg_newNull();
@@ -122,16 +107,15 @@ void PikaStdData_String___setitem__(PikaObj *self, Arg *__key, Arg *__val)
     char *val = arg_getStr(__val);
     uint16_t len = strGetSize(str);
 #if PIKA_STRING_UTF8_ENABLE
-    // int ulen = _pcre_utf8_strlen(str, len);
     int len2 = strlen(val);
-    int is_invalid = _pcre_valid_utf8(val, len2);
+    int is_invalid = _valid_utf8(val, len2);
     if (is_invalid >= 0)
     {
         obj_setErrorCode(self, __LINE__);
         __platform_printf("Error String invalid\r\n");
         return;
     }
-    int ulen_val = _pcre_utf8_strlen(val, len2);
+    int ulen_val = _utf8_strlen(val, len2);
     if (ulen_val != 1)
     {
         obj_setErrorCode(self, __LINE__);
@@ -139,7 +123,7 @@ void PikaStdData_String___setitem__(PikaObj *self, Arg *__key, Arg *__val)
         return;
     }
     int char_len;
-    int repl_at = _pcre_utf8_get_offset(str, len, key_i, &char_len);
+    int repl_at = _utf8_get_offset(str, len, key_i, &char_len);
     if (repl_at < 0)
     {
         obj_setErrorCode(self, __LINE__);
@@ -296,11 +280,11 @@ int PikaStdData_String___len__(PikaObj *self)
 {
     char *str = obj_getStr(self, "str");
 #if PIKA_STRING_UTF8_ENABLE
-    int n = _pcre_utf8_strlen(str, -1);
+    int n = _utf8_strlen(str, -1);
     if (n < 0)
     {
         obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error. Internal error(-%d)\r\n", __LINE__);
+        __platform_printf("Error. Internal error(%d)\r\n", __LINE__);
         return n;
     }
     return n;
@@ -348,183 +332,35 @@ char *PikaStdData_String_replace(PikaObj *self, char *old, char *new)
     return obj_getStr(self, "_buf");
 }
 
-Arg *PikaStdData_String_encode(PikaObj *self)
+Arg *PikaStdData_String_encode(PikaObj *self, PikaTuple *encoding)
 {
     char *str = obj_getStr(self, "str");
-    Arg *arg = arg_newBytes((uint8_t *)str, strGetSize(str));
-    return arg;
-}
 
 #if PIKA_STRING_UTF8_ENABLE
-
-static int _pcre_valid_utf8(const char *string, int length)
-{
-    const uint8_t *p;
-    if (length < 0)
+    char *to_code = NULL;
+    int argn = tuple_getSize(encoding);
+    if (argn < 1)
     {
-        length = strlen(string);
+        return arg_newBytes((uint8_t *)str, strGetSize(str));
     }
-
-    for (p = (const uint8_t*)string; length-- > 0; p++)
+    Arg *arg_i = tuple_getArg(encoding, 0);
+    if (arg_getType(arg_i) != ARG_TYPE_STRING)
     {
-        int ab;
-        int c = *p;
-        if (!(c & 0x80))
-            continue;
-        if (c < 0xc0)
-            return (uintptr_t)p - (uintptr_t)string;
-        ab = _pcre_utf8_table4[c & 0x3f];
-        if (length < ab || ab > 3)
-            return (uintptr_t)p - (uintptr_t)string;
-        length -= ab;
-        if ((*(++p) & 0xc0) != 0x80)
-            return (uintptr_t)p - (uintptr_t)string;
-        switch (ab)
-        {
-        case 1:
-            if ((c & 0x3e) == 0)
-                return (uintptr_t)p - (uintptr_t)string;
-            continue;
-        case 2:
-            if ((c == 0xe0 && (*p & 0x20) == 0) ||
-                (c == 0xed && *p >= 0xa0))
-                return (uintptr_t)p - (uintptr_t)string;
-            break;
-        case 3:
-            if ((c == 0xf0 && (*p & 0x30) == 0) ||
-                (c > 0xf4) ||
-                (c == 0xf4 && *p > 0x8f))
-                return (uintptr_t)p - (uintptr_t)string;
-            break;
-        }
-        while (--ab > 0)
-        {
-            if ((*(++p) & 0xc0) != 0x80)
-                return (uintptr_t)p - (uintptr_t)string;
-        }
+        obj_setErrorCode(self, __LINE__);
+        __platform_printf("Error invaliad arguments\r\n");
+        return NULL;
     }
-    return -1;
-}
-static int _pcre_utf8_get(const char *string, int length, int at, char *out_buf)
-{
-    const uint8_t *p;
-    int ab, c;
-    if (length < 0)
+    to_code = arg_getStr(arg_i);
+    strlwr(to_code);
+    Arg *res = _str_encode(str, to_code);
+    if (!res)
     {
-        length = strlen(string);
+        obj_setErrorCode(self, __LINE__);
+        __platform_printf("Error internal error\r\n");
+        return NULL;
     }
-    if (at < 0 || at >= length)
-        return -1;
-
-    for (p = (const uint8_t*)string; length > 0 && at; p++, at--)
-    {
-        c = *p;
-        if (!(c & 0x80))
-        {
-            length--;
-            continue;
-        }
-        ab = _pcre_utf8_table4[c & 0x3f];
-        p += ab++;
-        length -= ab;
-    }
-    if (at || length <= 0)
-        return -2;
-    c = *p;
-    if (!(c & 0x80))
-    {
-        *out_buf = c;
-        out_buf[1] = 0;
-        return 1;
-    };
-    ab = _pcre_utf8_table4[c & 0x3f] + 1;
-    memcpy(out_buf, p, ab);
-    out_buf[ab] = '\0';
-    return ab;
-}
-static int _pcre_utf8_get_offset(const char *string, int length, int at, int *out_char_len)
-{
-    const uint8_t *p;
-    int ab, c;
-    if (length < 0)
-    {
-        length = strlen(string);
-    }
-    if (at < 0 || at >= length)
-        return -1;
-
-    for (p = (const uint8_t*)string; length > 0 && at; p++, at--)
-    {
-        c = *p;
-        if (!(c & 0x80))
-        {
-            length--;
-            continue;
-        }
-        ab = _pcre_utf8_table4[c & 0x3f];
-        p += ab++;
-        length -= ab;
-    }
-    if (at)
-        return -2;
-    c = *p;
-    if (!(c & 0x80))
-    {
-        if (out_char_len)
-            *out_char_len = 1;
-        return (uintptr_t)p - (uintptr_t)string;
-    };
-    ab = _pcre_utf8_table4[c & 0x3f] + 1;
-    if (out_char_len)
-        *out_char_len = ab;
-    return (uintptr_t)p - (uintptr_t)string;
-}
-static int _pcre_utf8_strlen(const char *string, int length)
-{
-    const uint8_t *p;
-    int i, ab, c;
-    if (length < 0)
-    {
-        length = strlen(string);
-    }
-
-    for (i = 0, p = (const uint8_t*)string; length > 0; i++, p++)
-    {
-        c = *p;
-        if (!(c & 0x80))
-        {
-            length--;
-            continue;
-        }
-        ab = _pcre_utf8_table4[c & 0x3f];
-        p += ab++;
-        length -= ab;
-    }
-    if (length < 0)
-        return -1;
-    return i;
-}
-
-static int __str_repl(PikaObj *self, char *str, int str_len, int repl_at, int repl_len, char *val, int val_len)
-{
-    if (val_len > repl_len)
-    {
-        str[repl_at] = 0;
-        Arg *s_new = arg_newStr(str);
-        if (!s_new)
-            return -1;
-        s_new = arg_strAppend(s_new, val);
-        s_new = arg_strAppend(s_new, str + repl_at + repl_len);
-        obj_removeArg(self, "str");
-        int rs = obj_setArg(self, "str", s_new);
-        arg_deinit(s_new);
-        if (rs)
-            return -rs;
-        return 0;
-    }
-    char *s = str + repl_at;
-    memcpy(s, val, val_len);
-    memmove(s + val_len, s + repl_len, str_len - repl_at - repl_len + 1);
-    return 0;
-}
+    return res;
+#else
+    return arg_newBytes((uint8_t *)str, strGetSize(str));
 #endif
+}
