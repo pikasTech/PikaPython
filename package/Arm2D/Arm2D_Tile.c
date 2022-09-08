@@ -88,11 +88,3 @@ void Arm2D_Star___init__(PikaObj *self){
     extern arm_2d_tile_t c_tilePictureSunRGB565;
     obj_setStruct(self, "_self", c_tilePictureSunRGB565);
 }
-
-int Arm2D_Tile_rotation(PikaObj *self, PikaObj* des, PikaObj* des_reg, PikaObj* centre, double angle, int mask_color){
-    arm_2d_tile_t* _self = obj_getStruct(self, "_self");
-    arm_2d_tile_t* _des = obj_getStruct(des, "_self");
-    arm_2d_region_t* _des_reg = obj_getStruct(des_reg, "_self");
-    arm_2d_location_t* _centre = obj_getStruct(centre, "_self");
-    return arm_2d_tile_rotation(_self, _des, _des_reg, *_centre, angle, mask_color);
-}

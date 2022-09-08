@@ -92,3 +92,20 @@ PikaObj* Arm2D_create_region(PikaObj* self, int x, int y, int w, int h) {
     obj_setStruct(region, "_self", _region);
     return region;
 }
+
+int Arm2D_tile_rotation(PikaObj* self,
+                        PikaObj* src,
+                        PikaObj* des,
+                        PikaObj* des_reg,
+                        PikaObj* centre,
+                        double angle,
+                        int mask_color) {
+    static arm_2d_op_trans_t op_trans;
+    arm_2d_tile_t* _src = obj_getStruct(src, "_self");
+    arm_2d_tile_t* _des = obj_getStruct(des, "_self");
+    arm_2d_region_t* _des_reg = obj_getStruct(des_reg, "_self");
+    arm_2d_location_t* _centre = obj_getStruct(centre, "_self");
+    int bIsNewFrame = pika_arm2d_globals.pfb_is_new_frame;
+    return arm_2dp_tile_rotation(&op_trans, _src, _des, _des_reg, *_centre,
+                                 angle, mask_color);
+}

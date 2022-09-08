@@ -11,7 +11,7 @@ void Arm2D_Box___init__(PikaObj* self) {
     /* init box info */
     obj_setInt(self, "weight", 50);
     obj_setInt(self, "height", 50);
-    obj_setInt(self, "color", getColorCode("blue"));
+    obj_setInt(self, "color", GLCD_COLOR_BLUE);
 }
 
 int __min(int x, int y) {
@@ -36,8 +36,8 @@ void Arm2D_Box_update(PikaObj* self) {
     draw_round_corner_box(target_tile, &arg2d_regin, color_code, alpha, bIsNewFrame);
 }
 
-void Arm2D_Box_setColor(PikaObj* self, char* color) {
-    obj_setInt(self, "color",  getColorCode(color));
+void Arm2D_Box_setColor(PikaObj* self, int color) {
+    obj_setInt(self, "color",  color);
 }
 
 void Arm2D_Box_setSize(PikaObj* self, int x, int y) {
