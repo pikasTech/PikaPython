@@ -1,8 +1,7 @@
 #include "PikaNN_net.h"
+#include "PikaNN_common.h"
 #include <sys/time.h>
 #include <time.h>
-#include "./TinyMaix/include/tinymaix.h"
-#define TM_GET_US() ((uint32_t)(clock() * 1000000 / CLOCKS_PER_SEC))
 
 #if TM_MDL_TYPE == TM_MDL_INT8
 #include "./TinyMaix/tools/tmdl/mnist_valid_q.h"
@@ -130,7 +129,7 @@ uint8_t mnist_pic[28 * 28] = {
 };
 #endif
 
-static tm_err_t layer_cb(tm_mdl_t* mdl, tml_head_t* lh) {  // dump middle result
+tm_err_t layer_cb(tm_mdl_t* mdl, tml_head_t* lh) {  // dump middle result
     int h = lh->out_dims[1];
     int w = lh->out_dims[2];
     int ch = lh->out_dims[3];
@@ -159,7 +158,7 @@ static tm_err_t layer_cb(tm_mdl_t* mdl, tml_head_t* lh) {  // dump middle result
     return TM_OK;
 }
 
-static void parse_output(tm_mat_t* outs) {
+void parse_output(tm_mat_t* outs) {
     tm_mat_t out = outs[0];
     float* data = out.dataf;
     float maxp = 0;

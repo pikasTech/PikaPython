@@ -24,6 +24,7 @@
         "pikacv_image.h": "c",
         "pikacv_filter.h": "c",
         "pika_config.h": "c",
-        "gtesttask.h": "c"
+        "gtesttask.h": "c",
+        "mnist_valid_q.h": "c"
     }
 }

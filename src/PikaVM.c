@@ -977,9 +977,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     pika_assert(NULL != vm->run_state);
 
     /* inhert */
-    if (CLS ==
-        VMstate_getInstructWithOffset(vm, -2 * (int)instructUnit_getSize())) {
-        skip_init = PIKA_TRUE;
+    if (vm->pc - 2 * (int)instructUnit_getSize() >= 0) {
+        if (CLS == VMstate_getInstructWithOffset(
+                       vm, -2 * (int)instructUnit_getSize())) {
+            skip_init = PIKA_TRUE;
+        }
     }
 
     /* tuple or single arg */
