@@ -210,9 +210,9 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 
 #### Operator
 
-| + | - | * | / | == | > | < | >= | <= | % | ** | // | != | & | >> | << | and | or | not | += | -= | *= | /= |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|
+| + | - | * | / | == | > | < | >= | <= | % | ** | // | != | & | >> | << | and | or | not | in | += | -= | *= | /= |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|√|
 
 #### Control flow
 
@@ -263,14 +263,14 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 | Syntax | str | bytes | list |
 | --- | --- | --- | --- |
 | test[i] | √ | √ | √ |
-| test[a : b] | √ | √ | - | 
-| test[a :] | √ | √ | - |
+| test[a : b] | √ | √ | √ | 
+| test[a :] | √ | √ | √ |
 
 #### Other keywords/Syntax
 
 | yield | is | comprehensions |
 | --- | --- | --- |
-| - | - | - |
+| - | √ | - |
 
 ### (4)Develop standard.
 
