@@ -34,13 +34,7 @@ void rx_single_line_handle(char *line) {
 
 /* 接收数据回调函数 */
 static rt_err_t uart_input_callback(rt_device_t dev, rt_size_t size) {
-
-}
-
-static void clearBuff(char *buff, uint32_t size) {
-	for (int i = 0; i < size; i++) {
-		buff[i] = 0;
-	}
+    return 0;
 }
 
 static void uart_init() {

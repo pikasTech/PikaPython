@@ -8,9 +8,16 @@
  * 2021-11-30     liang       the first version
  */
 #include <board.h>
-#include "arm2d_config.h"
+#include "arm_2d_cfg.h"
 
 /* need implement in platform */
+
+int32_t GLCD_DrawBitmap (uint32_t x,
+                         uint32_t y,
+                         uint32_t width,
+                         uint32_t height,
+                         const uint8_t *bitmap);
+
 int32_t __Arm2D_platform_drawRegin(uint32_t x,
                                    uint32_t y,
                                    uint32_t width,
@@ -21,4 +28,5 @@ int32_t __Arm2D_platform_drawRegin(uint32_t x,
 
 /* need implement in platform */
 int32_t __Arm2D_platform_Init(){
+    return 0;
 }
