@@ -1003,6 +1003,7 @@ Arg* arg_setObj(Arg* self, char* name, PikaObj* obj) {
 }
 
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj) {
+    pika_assert(NULL!= obj);
     obj_refcntInc(obj);
     return arg_setObj(self, name, obj);
 }

@@ -1444,3 +1444,59 @@ TEST(vm, none) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, super_) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "class test:\n"
+            "    def __init__(self):\n"
+            "        print('in test init')\n"
+            "class test2(test):\n"
+            "    def __init__(self):\n"
+            "        super().__init__()\n"
+            "        print('in test2 init')\n"
+            "t = test2()");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "in test2 init\r\n");
+    EXPECT_STREQ(log_buff[1], "in test init\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, super_val) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "class test:\n"
+            "    def __init__(self):\n"
+            "        self.a = 1\n"
+            "        self.b = 2\n"
+            "class test2(test):\n"
+            "    def __init__(self):\n"
+            "        super().__init__()\n"
+            "        self.c = 3\n"
+            "        self.d = 4\n"
+            "t = test2()\n"
+            "print(t.a, t.b, t.c, t.d)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "1 2 3 4\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
