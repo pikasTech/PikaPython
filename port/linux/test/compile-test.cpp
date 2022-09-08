@@ -606,3 +606,9 @@ TEST(compiler, __contains__) {
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(compiler, __callback) {
+    char* lines = "__callback(__frameBuffer, __isNewFrame)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
