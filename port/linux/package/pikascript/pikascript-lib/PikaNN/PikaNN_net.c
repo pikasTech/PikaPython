@@ -199,7 +199,6 @@ void PikaNN_net_load(PikaObj* self) {
         TM_PRINTF("tm model load err %d\n", res);
         return;
     }
-    obj_setStruct(self, "mdl", mdl);
     obj_setStruct(self, "in", in);
     return;
 }

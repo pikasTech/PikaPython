@@ -26,9 +26,6 @@ void _lm_test(void) {
         return;
     }
 
-    tm_unload(&mdl);
-
-
     uint32_t _start, _finish;
     float _time;
     _start = TM_GET_US();
@@ -54,10 +51,11 @@ void _lm_test(void) {
     else
         TM_PRINTF("tm run error: %d\n", res);
 
+    tm_unload(&mdl);
+
     return;
 }
 
-
-void PikaNN_test(PikaObj* self){
+void PikaNN_test(PikaObj* self) {
     _lm_test();
 }
