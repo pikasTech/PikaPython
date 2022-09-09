@@ -2074,7 +2074,7 @@ static char* Suger_multiAssign(Args* out_buffs, char* line) {
         }
         Cursor_deinit(&cs);
     }
-    line_out_arg = arg_strAppend(line_out_arg, "del %tmp\n");
+    line_out_arg = arg_strAppend(line_out_arg, "del %tmp");
 
     line_out = strsCopy(out_buffs, arg_getStr(line_out_arg));
 exit:
