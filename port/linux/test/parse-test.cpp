@@ -4138,7 +4138,7 @@ TEST(parser, multi_return) {
                  "0 SLC \n"
                  "0 OUT b\n"
                  "B0\n"
-                 "0 DEL %tmp\n"
+                 "0 DEL $tmp\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
