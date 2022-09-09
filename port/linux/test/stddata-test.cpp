@@ -197,4 +197,22 @@ TEST(str, split2){
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(dict, cmodule){
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "s = GTestTask.test_dict()\n"
+            "print(s)"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "{'para2': 2, 'para1': 1}\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif

@@ -842,6 +842,9 @@ static Arg* VM_instruction_handler_LST(PikaObj* self,
 }
 
 void __vm_Dict___init__(PikaObj* self) {
+    if (obj_isArgExist(self, "dict")) {
+        return;
+    }
     PikaDict* dict = New_dict();
     PikaDict* keys = New_dict();
     obj_setPtr(self, "dict", dict);
