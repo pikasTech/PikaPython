@@ -228,7 +228,7 @@ static void VMState_initReg(VMState* vm) {
 }
 
 static PIKA_BOOL _checkLReg(char* data) {
-    if ((data[0] == '_') && (data[1] == 'l') && (data[2] >= '0') &&
+    if ((data[0] == '$') && (data[1] == 'l') && (data[2] >= '0') &&
         (data[2] <= '9')) {
         return PIKA_TRUE;
     }

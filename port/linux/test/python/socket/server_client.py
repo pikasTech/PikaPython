@@ -11,9 +11,7 @@ server.listen(5)
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((host, port))
 
-res = server.accept()
-accept = res[0]
-addr = res[1]
+accept, addr = server.accept()
 
 print("recv from client: %s" % str(addr))
 

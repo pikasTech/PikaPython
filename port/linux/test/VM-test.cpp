@@ -1500,3 +1500,25 @@ TEST(vm, super_val) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if !PIKA_NANO_ENABLE
+TEST(vm, multi_return) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "a,b = (1,2)");
+    /* collect */
+    int a= obj_getInt(pikaMain, "a");
+    int b= obj_getInt(pikaMain, "b");
+    /* assert */
+    EXPECT_EQ(a, 1);
+    EXPECT_EQ(b, 2);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

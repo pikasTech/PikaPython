@@ -1439,9 +1439,9 @@ TEST(parser, for_range) {
                  "2 NUM 10\n"
                  "1 RUN range\n"
                  "0 RUN iter\n"
-                 "0 OUT _l0\n"
+                 "0 OUT $l0\n"
                  "B0\n"
-                 "0 RUN _l0.__next__\n"
+                 "0 RUN $l0.__next__\n"
                  "0 OUT i\n"
                  "0 EST i\n"
                  "0 JEZ 2\n"
@@ -1451,7 +1451,7 @@ TEST(parser, for_range) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
-                 "0 DEL _l0\n"
+                 "0 DEL $l0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1474,9 +1474,9 @@ TEST(parser, for_range_rtt) {
                  "2 NUM 3\n"
                  "1 RUN range\n"
                  "0 RUN iter\n"
-                 "0 OUT _l0\n"
+                 "0 OUT $l0\n"
                  "B0\n"
-                 "0 RUN _l0.__next__\n"
+                 "0 RUN $l0.__next__\n"
                  "0 OUT i\n"
                  "0 EST i\n"
                  "0 JEZ 2\n"
@@ -1489,7 +1489,7 @@ TEST(parser, for_range_rtt) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
-                 "0 DEL _l0\n"
+                 "0 DEL $l0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1510,9 +1510,9 @@ TEST(parser, for_list) {
                  "2 NUM 10\n"
                  "1 RUN xrange\n"
                  "0 RUN iter\n"
-                 "0 OUT _l0\n"
+                 "0 OUT $l0\n"
                  "B0\n"
-                 "0 RUN _l0.__next__\n"
+                 "0 RUN $l0.__next__\n"
                  "0 OUT arg\n"
                  "0 EST arg\n"
                  "0 JEZ 2\n"
@@ -1522,7 +1522,7 @@ TEST(parser, for_list) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
-                 "0 DEL _l0\n"
+                 "0 DEL $l0\n"
                  "B0\n");
     stack_deinit(&bs);
     args_deinit(bf);
@@ -1551,9 +1551,9 @@ TEST(parser, for_for_range) {
     "2 NUM 10\n"
     "1 RUN range\n"
     "0 RUN iter\n"
-    "0 OUT _l0\n"
+    "0 OUT $l0\n"
     "B0\n"
-    "0 RUN _l0.__next__\n"
+    "0 RUN $l0.__next__\n"
     "0 OUT i\n"
     "0 EST i\n"
     "0 JEZ 2\n"
@@ -1562,9 +1562,9 @@ TEST(parser, for_for_range) {
     "2 NUM 3\n"
     "1 RUN range\n"
     "0 RUN iter\n"
-    "0 OUT _l1\n"
+    "0 OUT $l1\n"
     "B1\n"
-    "0 RUN _l1.__next__\n"
+    "0 RUN $l1.__next__\n"
     "0 OUT k\n"
     "0 EST k\n"
     "0 JEZ 2\n"
@@ -1579,11 +1579,11 @@ TEST(parser, for_for_range) {
     "B1\n"
     "0 JMP -1\n"
     "B1\n"
-    "0 DEL _l1\n"
+    "0 DEL $l1\n"
     "B0\n"
     "0 JMP -1\n"
     "B0\n"
-    "0 DEL _l0\n"
+    "0 DEL $l0\n"
     "B0\n"
     );
 
@@ -1617,9 +1617,9 @@ TEST(parser, break_) {
                  "2 NUM 3\n"
                  "1 RUN range\n"
                  "0 RUN iter\n"
-                 "0 OUT _l0\n"
+                 "0 OUT $l0\n"
                  "B0\n"
-                 "0 RUN _l0.__next__\n"
+                 "0 RUN $l0.__next__\n"
                  "0 OUT i\n"
                  "0 EST i\n"
                  "0 JEZ 2\n"
@@ -1638,7 +1638,7 @@ TEST(parser, break_) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
-                 "0 DEL _l0\n"
+                 "0 DEL $l0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1675,9 +1675,9 @@ TEST(parser, prime_100) {
                  "2 NUM 100\n"
                  "1 RUN range\n"
                  "0 RUN iter\n"
-                 "0 OUT _l0\n"
+                 "0 OUT $l0\n"
                  "B0\n"
-                 "0 RUN _l0.__next__\n"
+                 "0 RUN $l0.__next__\n"
                  "0 OUT i\n"
                  "0 EST i\n"
                  "0 JEZ 2\n"
@@ -1692,9 +1692,9 @@ TEST(parser, prime_100) {
                  "2 REF i\n"
                  "1 RUN range\n"
                  "0 RUN iter\n"
-                 "0 OUT _l1\n"
+                 "0 OUT $l1\n"
                  "B1\n"
-                 "0 RUN _l1.__next__\n"
+                 "0 RUN $l1.__next__\n"
                  "0 OUT j\n"
                  "0 EST j\n"
                  "0 JEZ 2\n"
@@ -1713,7 +1713,7 @@ TEST(parser, prime_100) {
                  "B1\n"
                  "0 JMP -1\n"
                  "B1\n"
-                 "0 DEL _l1\n"
+                 "0 DEL $l1\n"
                  "B1\n"
                  "0 REF is_prime\n"
                  "0 JEZ 1\n"
@@ -1725,7 +1725,7 @@ TEST(parser, prime_100) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
-                 "0 DEL _l0\n"
+                 "0 DEL $l0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1781,9 +1781,9 @@ TEST(parser, for_in_string) {
                  "B0\n"
                  "1 STR test\n"
                  "0 RUN iter\n"
-                 "0 OUT _l0\n"
+                 "0 OUT $l0\n"
                  "B0\n"
-                 "0 RUN _l0.__next__\n"
+                 "0 RUN $l0.__next__\n"
                  "0 OUT b\n"
                  "0 EST b\n"
                  "0 JEZ 2\n"
@@ -1793,7 +1793,7 @@ TEST(parser, for_in_string) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
-                 "0 DEL _l0\n"
+                 "0 DEL $l0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2674,9 +2674,9 @@ TEST(parser, tab) {
                  "2 NUM 100\n"
                  "1 RUN range\n"
                  "0 RUN iter\n"
-                 "0 OUT _l0\n"
+                 "0 OUT $l0\n"
                  "B0\n"
-                 "0 RUN _l0.__next__\n"
+                 "0 RUN $l0.__next__\n"
                  "0 OUT i\n"
                  "0 EST i\n"
                  "0 JEZ 2\n"
@@ -2686,7 +2686,7 @@ TEST(parser, tab) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
-                 "0 DEL _l0\n"
+                 "0 DEL $l0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -3051,9 +3051,9 @@ TEST(parser, issuekd) {
                  "2 RUN int\n"
                  "1 RUN range\n"
                  "0 RUN iter\n"
-                 "0 OUT _l0\n"
+                 "0 OUT $l0\n"
                  "B0\n"
-                 "0 RUN _l0.__next__\n"
+                 "0 RUN $l0.__next__\n"
                  "0 OUT i\n"
                  "0 EST i\n"
                  "0 JEZ 2\n"
@@ -3069,7 +3069,7 @@ TEST(parser, issuekd) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
-                 "0 DEL _l0\n"
+                 "0 DEL $l0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -3758,9 +3758,9 @@ TEST(parser, except_for) {
                  "2 NUM 10\n"
                  "1 RUN range\n"
                  "0 RUN iter\n"
-                 "0 OUT _l0\n"
+                 "0 OUT $l0\n"
                  "B0\n"
-                 "0 RUN _l0.__next__\n"
+                 "0 RUN $l0.__next__\n"
                  "0 OUT i\n"
                  "0 EST i\n"
                  "0 JEZ 2\n"
@@ -3780,14 +3780,14 @@ TEST(parser, except_for) {
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
-                 "0 DEL _l0\n"
+                 "0 DEL $l0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
 
-TEST(parser, line_void_issue_l1k2i) {
+TEST(parser, line_void_issue$l1k2i) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "mem = PikaStdLib.MemChecker()";
@@ -3894,9 +3894,9 @@ TEST(parser, vars_runtime) {
                  "B1\n"
                  "1 REF b\n"
                  "0 RUN iter\n"
-                 "0 OUT _l1\n"
+                 "0 OUT $l1\n"
                  "B1\n"
-                 "0 RUN _l1.__next__\n"
+                 "0 RUN $l1.__next__\n"
                  "0 OUT i\n"
                  "0 EST i\n"
                  "0 JEZ 2\n"
@@ -3909,7 +3909,7 @@ TEST(parser, vars_runtime) {
                  "B1\n"
                  "0 JMP -1\n"
                  "B1\n"
-                 "0 DEL _l1\n"
+                 "0 DEL $l1\n"
                  "B1\n"
                  "1 REF a\n"
                  "1 REF sum\n"
@@ -4114,3 +4114,72 @@ TEST(parser, default_fn_1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if !PIKA_NANO_ENABLE
+TEST(parser, multi_return) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a , b = c";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 REF c\n"
+                 "0 OUT $tmp\n"
+                 "B0\n"
+                 "1 REF $tmp\n"
+                 "1 NUM 0\n"
+                 "0 SLC \n"
+                 "0 OUT a\n"
+                 "B0\n"
+                 "1 REF $tmp\n"
+                 "1 NUM 1\n"
+                 "0 SLC \n"
+                 "0 OUT b\n"
+                 "B0\n"
+                 "0 DEL %tmp\n"
+                 "B0\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, multi_return_) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "test['a , b'] = c";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF test\n"
+                 "1 STR a , b\n"
+                 "1 REF c\n"
+                 "0 RUN __setitem__\n"
+                 "0 OUT test\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, multi_return_2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "'test,q'[0] = c";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 STR test,q\n"
+                 "1 NUM 0\n"
+                 "1 REF c\n"
+                 "0 RUN __setitem__\n"
+                 "0 OUT 'test,q'\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
