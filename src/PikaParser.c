@@ -1688,6 +1688,23 @@ char* _defGetDefault(Args* outBuffs, char** dec_out) {
     return default_out;
 }
 
+static char* Suger_multiReturn(Args* out_buffs, char* line) {
+#if PIKA_NANO_ENABLE
+    return line;
+#endif
+    Cursor_forEachToken(cs, line) {
+        Cursor_iterStart(&cs);
+        if (cs.branket_deepth == 0 && strEqu(cs.token1.pyload, ",")) {
+            line = strsFormat(out_buffs, strGetSize(line) + 3, "(%s)", line);
+            Cursor_iterEnd(&cs);
+            break;
+        }
+        Cursor_iterEnd(&cs);
+    }
+    Cursor_deinit(&cs);
+    return line;
+}
+
 /* match block start keywords */
 const char control_keywords[][9] = {"break", "continue"};
 
@@ -1838,6 +1855,7 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
         char* lineBuff = strsCopy(&buffs, line_start);
         strsPopToken(&buffs, lineBuff, ' ');
         stmt = lineBuff;
+        stmt = Suger_multiReturn(&buffs, stmt);
         AST_setNodeAttr(ast, "return", "");
         goto block_matched;
     }

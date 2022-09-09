@@ -4182,3 +4182,23 @@ TEST(parser, multi_return_2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+#if !PIKA_NANO_ENABLE
+TEST(parser, multi_return_3) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "return a,b";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF a\n"
+                 "1 REF b\n"
+                 "0 RUN \n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
