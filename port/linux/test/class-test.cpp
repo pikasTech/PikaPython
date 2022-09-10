@@ -1,5 +1,6 @@
 #include "test_common.h"
 
+#if !PIKA_NANO_ENABLE
 TEST(class, class_par) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -50,6 +51,7 @@ TEST(class, static_method) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(class, dir_) {
     /* init */

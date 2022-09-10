@@ -16,9 +16,6 @@ class MemChecker:
 
 class SysObj:
     @staticmethod
-    def type(arg: any) -> any: ...
-
-    @staticmethod
     def int(arg: any) -> int: ...
 
     @staticmethod
@@ -41,6 +38,10 @@ class SysObj:
 
     @staticmethod
     def __getitem__(obj: any, key: any) -> any: ...
+
+    @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    def type(arg: any) -> any: ...
 
     @staticmethod
     @PIKA_C_MACRO_IF("PIKA_BUILTIN_STRUCT_ENABLE")

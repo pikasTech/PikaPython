@@ -474,6 +474,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
     if (argType_isObject(type)) {
         return args_getPtr(self->list, name);
     }
+    #if !PIKA_NANO_ENABLE
     /* found class */
     if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
         type == ARG_TYPE_METHOD_CONSTRUCTOR) {
@@ -489,6 +490,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
         arg_deinit(cls_obj_arg);
         return res;
     }
+    #endif
     return _arg_to_obj(args_getArg(self->list, name), pIsTemp);
 }
 

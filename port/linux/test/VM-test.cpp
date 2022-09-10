@@ -1445,6 +1445,7 @@ TEST(vm, none) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(vm, super_) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1500,6 +1501,7 @@ TEST(vm, super_val) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 #if !PIKA_NANO_ENABLE
 TEST(vm, multi_return) {

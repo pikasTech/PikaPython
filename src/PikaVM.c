@@ -81,10 +81,12 @@ static char* VMState_getConstWithInstructUnit(VMState* vm,
                                  instructUnit_getConstPoolIndex(ins_unit));
 }
 
+#if !PIKA_NANO_ENABLE
 static char* VMState_getConstWithOffset(VMState* vm, int32_t offset) {
     return VMState_getConstWithInstructUnit(
         vm, VMState_getInstructUnitWithOffset(vm, offset));
 }
+#endif
 
 static int VMState_getInvokeDeepthNow(VMState* vm) {
     /* support run byteCode */
@@ -183,6 +185,7 @@ static int32_t VMState_getAddrOffsetOfBreak(VMState* vm) {
     return offset;
 }
 
+#if !PIKA_NANO_ENABLE
 static int32_t VMState_getAddrOffsetOfRaise(VMState* vm) {
     int offset = 0;
     InstructUnit* ins_unit_now = VMState_getInstructNow(vm);
@@ -202,6 +205,7 @@ static int32_t VMState_getAddrOffsetOfRaise(VMState* vm) {
         }
     }
 }
+#endif
 
 static int32_t VMState_getAddrOffsetOfContinue(VMState* vm) {
     int32_t offset = VMState_getAddrOffsetOfJmpBack(vm);
@@ -905,6 +909,7 @@ static Arg* VM_instruction_handler_RET(PikaObj* self,
     return NULL;
 }
 
+#if !PIKA_NANO_ENABLE
 static char* _find_super_class_name(VMState* vm) {
     /* find super class */
     int offset = 0;
@@ -931,7 +936,9 @@ static char* _find_super_class_name(VMState* vm) {
         }
     }
 }
+#endif
 
+#if !PIKA_NANO_ENABLE
 static char* _find_self_name(VMState* vm) {
     /* find super class */
     int offset = 0;
@@ -958,6 +965,7 @@ static char* _find_self_name(VMState* vm) {
         }
     }
 }
+#endif
 
 static Arg* VM_instruction_handler_RUN(PikaObj* self,
                                        VMState* vm,
@@ -1001,12 +1009,14 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         goto exit;
     }
 
+    #if !PIKA_NANO_ENABLE
     /* support for super() */
     if (strEqu(run_path, "super")) {
         run_path = _find_super_class_name(vm);
         vm->in_super = 1;
         skip_init = 1;
     }
+    #endif
 
     /* return tiny obj */
     if (strEqu(run_path, "TinyObj")) {
@@ -1014,10 +1024,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         goto exit;
     }
 
+    #if !PIKA_NANO_ENABLE
     if (!skip_init && vm->in_super) {
         vm->in_super = PIKA_FALSE;
         obj_this = obj_getPtr(vm->locals, _find_self_name(vm));
     }
+    #endif
 
     /* get method host obj from reg */
     if (NULL == method_host && _checkLReg(run_path)) {
@@ -1025,6 +1037,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         method_host = vm->lreg[reg_index];
     }
 
+    #if !PIKA_NANO_ENABLE
     /* get method host obj from stack */
     if (NULL == method_host && run_path[0] == '.') {
         /* get method host obj from stack */
@@ -1050,6 +1063,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
             stack_pushArg(&(vm->stack), stack_tmp[i]);
         }
     }
+    #endif
 
     /* get method host obj from self */
     if (NULL == method_host) {
@@ -1964,6 +1978,9 @@ static Arg* VM_instruction_handler_RIS(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
+    #if PIKA_NANO_ENABLE
+    return NULL;
+    #endif
     Arg* err_arg = stack_popArg_alloc(&(vm->stack));
     PIKA_RES err = (PIKA_RES)arg_getInt(err_arg);
     VMState_setErrorCode(vm, err);
@@ -1975,6 +1992,9 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
+    #if PIKA_NANO_ENABLE
+    return NULL;
+    #endif
     arg_newReg(reg1, PIKA_ARG_BUFF_SIZE);
     arg_newReg(reg2, PIKA_ARG_BUFF_SIZE);
     Arg* arg1 = NULL;
@@ -2173,6 +2193,7 @@ nextLine:
         goto exit;
     }
     /* raise */
+    #if !PIKA_NANO_ENABLE
     if (VM_JMP_RAISE == vm->jmp) {
         int offset = VMState_getAddrOffsetOfRaise(vm);
         if (0 == offset) {
@@ -2184,6 +2205,7 @@ nextLine:
         pc_next = vm->pc + offset;
         goto exit;
     }
+    #endif
     /* static jmp */
     if (vm->jmp != 0) {
         pc_next = vm->pc + VMState_getAddrOffsetFromJmp(vm);

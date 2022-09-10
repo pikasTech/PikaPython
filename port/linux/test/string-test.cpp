@@ -188,6 +188,7 @@ TEST(string, replace_chain) {
 }
 #endif
 
+#if !PIKA_NANO_ENABLE
 TEST(string, split_chain) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -205,6 +206,7 @@ TEST(string, split_chain) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(string, str_chain) {
     /* init */
