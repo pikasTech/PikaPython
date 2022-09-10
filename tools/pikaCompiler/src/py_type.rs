@@ -60,9 +60,9 @@ impl PyType {
         return "PikaObj*".to_string();
     }
 
-    pub fn to_string(&self) -> String {
-        return self.type_name.clone();
-    }
+    // pub fn to_string(&self) -> String {
+    //     return self.type_name.clone();
+    // }
     pub fn new(type_name: &String) -> PyType {
         return PyType {
             type_name: type_name.clone(),

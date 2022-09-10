@@ -43,15 +43,35 @@ impl MethodInfo {
         };
         return Some(method_info);
     }
-    pub fn get_define(&self) -> String {
-        let return_token = match &self.return_type {
-            Some(s) => format!("->{}", s.to_string()),
-            None => String::from(""),
-        };
+    pub fn get_arg_list_define(&self) -> String {
         let arg_list = match &self.arg_list {
-            Some(t) => t.to_string(),
-            None => String::from(""),
+            Some(arg_list) => arg_list.to_string(),
+            None => "".to_string(),
         };
+        /* filter for type hint */
+        let arg_defs: Vec<&str> = arg_list.split(',').collect();
+        let mut arg_list_filted = Vec::new();
+        for arg_def in arg_defs {
+            let arg_def: Vec<&str> = arg_def.split(':').collect();
+            arg_list_filted.push(arg_def[0].to_string());
+        }
+        // arg_list_filted to arg_list
+        let mut arg_list = String::new();
+        for arg in arg_list_filted.clone() {
+            arg_list.push_str(&arg);
+            if arg != arg_list_filted.last().unwrap().to_string() {
+                arg_list.push_str(",");
+            }
+        }
+        return arg_list;
+    }
+
+    pub fn get_define(&self) -> String {
+        // let return_token = match &self.return_type {
+        //     Some(s) => format!("->{}", s.to_string()),
+        //     None => String::from(""),
+        // };
+        let arg_list = self.get_arg_list_define();
         let mut class_define_method = String::from("class_defineMethod");
         if self.is_constructor {
             class_define_method = String::from("class_defineConstructor");
@@ -65,8 +85,8 @@ impl MethodInfo {
 
         define.push_str(
             format!(
-                "    {}(self, \"{}({}){}\", {}_{}Method);\n",
-                class_define_method, self.name, arg_list, return_token, self.class_name, self.name
+                "    {}(self, \"{}({})\", {}_{}Method);\n",
+                class_define_method, self.name, arg_list, self.class_name, self.name
             )
             .as_str(),
         );
