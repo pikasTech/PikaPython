@@ -215,4 +215,41 @@ TEST(dict, cmodule){
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(dict, items){
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "d = {'a':1, 'b':2}\n"
+            "print(d.items())\n"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "dict_items([('b', 2), ('a', 1)])\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+// TEST(dict, items2){
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     /* run */
+//     __platform_printf("BEGIN\r\n");
+//     obj_run(pikaMain,
+//             "d = {'a':1, 'b':2}\n"
+//             "for k, v in d.items():\n"
+//             "    print(k, v)\n"
+//             );
+//     /* collect */
+//     /* assert */
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
+
 #endif

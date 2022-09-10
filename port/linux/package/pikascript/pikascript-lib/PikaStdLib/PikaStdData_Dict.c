@@ -1,6 +1,8 @@
 #include "PikaStdData_Dict.h"
 #include "BaseObj.h"
 #include "PikaObj.h"
+#include "PikaStdData_Tuple.h"
+#include "PikaStdData_dict_items.h"
 #include "PikaStdData_dict_keys.h"
 #include "PikaStdLib_SysObj.h"
 #include "dataStrs.h"
@@ -72,6 +74,12 @@ PikaObj* PikaStdData_Dict_keys(PikaObj* self) {
     PikaObj* dict_keys = newNormalObj(New_PikaStdData_dict_keys);
     PikaStdData_dict_keys___init__(dict_keys, self);
     return dict_keys;
+}
+
+PikaObj* PikaStdData_Dict_items(PikaObj* self) {
+    PikaObj* dict_items = newNormalObj(New_PikaStdData_dict_items);
+    PikaStdData_dict_keys___init__(dict_items, self);
+    return dict_items;
 }
 
 Arg* PikaStdData_dict_keys___iter__(PikaObj* self) {
@@ -188,7 +196,61 @@ int dict_contains(PikaDict* dict, Arg* key) {
     return PIKA_FALSE;
 }
 
-int PikaStdData_Dict___contains__(PikaObj *self, Arg* val){
+int PikaStdData_Dict___contains__(PikaObj* self, Arg* val) {
     PikaDict* dict = obj_getPtr(self, "_keys");
     return dict_contains(dict, val);
+}
+
+Arg* PikaStdData_dict_items___iter__(PikaObj* self) {
+    obj_setInt(self, "__iter_i", 0);
+    return arg_newRef(self);
+}
+
+int PikaStdData_dict_items___len__(PikaObj* self) {
+    PikaObj* dictptr = obj_getPtr(self, "dictptr");
+    PikaDict* keys = obj_getPtr(dictptr, "_keys");
+    return args_getSize(&keys->super);
+}
+
+Arg* PikaStdData_dict_items___next__(PikaObj* self) {
+    int __iter_i = args_getInt(self->list, "__iter_i");
+    PikaObj* dictptr = obj_getPtr(self, "dictptr");
+    PikaDict* keys = obj_getPtr(dictptr, "_keys");
+    PikaDict* dict = obj_getPtr(dictptr, "dict");
+    Arg* key = args_getArgByidex(&keys->super, __iter_i);
+    Arg* val = args_getArgByidex(&dict->super, __iter_i);
+    if (NULL == key) {
+        return arg_newNull();
+    }
+    PikaObj* tuple = newNormalObj(New_PikaStdData_Tuple);
+    PikaStdData_Tuple___init__(tuple);
+    PikaList* list = obj_getPtr(tuple, "list");
+    list_append(list, key);
+    list_append(list, val);
+    args_setInt(self->list, "__iter_i", __iter_i + 1);
+    return arg_newObj(tuple);
+}
+
+char* PikaStdData_dict_items___str__(PikaObj* self) {
+    Arg* str_arg = arg_newStr("dict_items([");
+    int i = 0;
+    obj_setInt(self, "__iter_i", 0);
+    while (PIKA_TRUE) {
+        Arg* item = PikaStdData_dict_items___next__(self);
+        if (arg_getType(item) == ARG_TYPE_NONE) {
+            arg_deinit(item);
+            break;
+        }
+        if (i != 0) {
+            str_arg = arg_strAppend(str_arg, ", ");
+        }
+        char* item_str = PikaStdLib_SysObj_str(self, item);
+        str_arg = arg_strAppend(str_arg, item_str);
+        i++;
+        arg_deinit(item);
+    }
+    str_arg = arg_strAppend(str_arg, "])");
+    obj_setStr(self, "_buf", arg_getStr(str_arg));
+    arg_deinit(str_arg);
+    return obj_getStr(self, "_buf");
 }
