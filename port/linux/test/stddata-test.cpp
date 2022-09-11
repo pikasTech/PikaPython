@@ -103,8 +103,8 @@ TEST(stddata, fileio) {
 }
 #endif
 
-#if!PIKA_NANO_ENABLE
-TEST(list, in){
+#if !PIKA_NANO_ENABLE
+TEST(list, in) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -113,8 +113,7 @@ TEST(list, in){
     obj_run(pikaMain,
             "a = [1, 2, 3]\n"
             "if 1 in a:\n"
-            "    print('1 in a')\n"
-            );
+            "    print('1 in a')\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "1 in a\r\n");
@@ -123,7 +122,7 @@ TEST(list, in){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(dict, in){
+TEST(dict, in) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -131,8 +130,7 @@ TEST(dict, in){
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
             "if \"a\" in {\"a\":1, \"b\":2}:\n"
-            "    print('a in dict')\n"
-            );
+            "    print('a in dict')\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "a in dict\r\n");
@@ -141,7 +139,7 @@ TEST(dict, in){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(list, slice){
+TEST(list, slice) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -149,8 +147,7 @@ TEST(list, slice){
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
             "[1, 2, 3, 4][0:2]\n"
-            "(5, 6, 7, 8)[1:4]\n"
-            );
+            "(5, 6, 7, 8)[1:4]\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "(6, 7, 8)\r\n");
@@ -163,15 +160,13 @@ TEST(list, slice){
 #endif
 
 #if !PIKA_NANO_ENABLE
-TEST(str, split){
+TEST(str, split) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain,
-            "'test,test'.split(',')\n"
-            );
+    obj_run(pikaMain, "'test,test'.split(',')\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "['test', 'test']\r\n");
@@ -180,7 +175,7 @@ TEST(str, split){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(str, split2){
+TEST(str, split2) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -188,8 +183,7 @@ TEST(str, split2){
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
             "s = 'test,test'\n"
-            "s.split(',')\n"
-            );
+            "s.split(',')\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "['test', 'test']\r\n");
@@ -198,7 +192,7 @@ TEST(str, split2){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(dict, cmodule){
+TEST(dict, cmodule) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -206,8 +200,7 @@ TEST(dict, cmodule){
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
             "s = GTestTask.test_dict()\n"
-            "print(s)"
-            );
+            "print(s)");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "{'para2': 2, 'para1': 1}\r\n");
@@ -216,7 +209,7 @@ TEST(dict, cmodule){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(dict, items){
+TEST(dict, items) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -224,8 +217,7 @@ TEST(dict, items){
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
             "d = {'a':1, 'b':2}\n"
-            "print(d.items())\n"
-            );
+            "print(d.items())\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "dict_items([('b', 2), ('a', 1)])\r\n");
@@ -234,22 +226,44 @@ TEST(dict, items){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-// TEST(dict, items2){
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-//     /* run */
-//     __platform_printf("BEGIN\r\n");
-//     obj_run(pikaMain,
-//             "d = {'a':1, 'b':2}\n"
-//             "for k, v in d.items():\n"
-//             "    print(k, v)\n"
-//             );
-//     /* collect */
-//     /* assert */
-//     /* deinit */
-//     obj_deinit(pikaMain);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
+TEST(dict, items2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "d = {'a':1, 'b':2}\n"
+            "for i in d.items():\n"
+            "    print(i)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[1], "('b', 2)\r\n");
+    EXPECT_STREQ(log_buff[0], "('a', 1)\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(dict, items_kv) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "d = {'a':1, 'b':2}\n"
+            "for k, v in d.items():\n"
+            "    print(k, v)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "a 1\r\n");
+    EXPECT_STREQ(log_buff[1], "b 2\r\n");
+    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 #endif

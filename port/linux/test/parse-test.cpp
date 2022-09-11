@@ -4205,11 +4205,67 @@ TEST(parser, multi_return_3) {
 TEST(parser, multi_return_4) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines = "for a,b in c:\n"
-                  "    print(a,b)";
+    char* lines =
+        "for a,b in c:\n"
+        "    print(a,b)";
     __platform_printf("%s\n", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     __platform_printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, for_multi) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "d = {'a':1, 'b':2}\n"
+        "for k, v in d.items():\n"
+        "    print(k, v)\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 STR a\n"
+                 "1 NUM 1\n"
+                 "1 STR b\n"
+                 "1 NUM 2\n"
+                 "0 DCT \n"
+                 "0 OUT d\n"
+                 "B0\n"
+                 "1 RUN d.items\n"
+                 "0 RUN iter\n"
+                 "0 OUT $l0\n"
+                 "B0\n"
+                 "0 RUN $l0.__next__\n"
+                 "0 OUT $tmp\n"
+                 "0 EST $tmp\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "1 REF $tmp\n"
+                 "1 NUM 0\n"
+                 "0 SLC \n"
+                 "0 OUT k\n"
+                 "B1\n"
+                 "1 REF $tmp\n"
+                 "1 NUM 1\n"
+                 "0 SLC \n"
+                 "0 OUT v\n"
+                 "B1\n"
+                 "0 DEL $tmp\n"
+                 "B1\n"
+                 "1 REF k\n"
+                 "1 REF v\n"
+                 "0 RUN print\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n"
+                 "0 DEL $l0\n"
+                 "B0\n"
+
+    );
+
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

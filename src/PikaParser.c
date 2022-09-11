@@ -48,6 +48,7 @@ void Cursor_deinit(struct Cursor* cs);
 void Cursor_beforeIter(struct Cursor* cs);
 void Cursor_iterStart(struct Cursor* cs);
 void Cursor_iterEnd(struct Cursor* cs);
+char* Cursor_popToken(Args* buffs, char** tokens, char* devide);
 char* Parser_popToken(Args* buffs_p, char* tokens);
 
 uint16_t Tokens_getSize(char* tokens) {
@@ -924,6 +925,37 @@ void Cursor_beforeIter(struct Cursor* cs) {
     cs->last_token = arg_newStr(Parser_popToken(cs->buffs_p, cs->tokens));
 }
 
+char* Cursor_popToken(Args* buffs, char** tokens, char* devide) {
+    Arg* out_item = arg_newStr("");
+    Arg* tokens_after = arg_newStr("");
+    PIKA_BOOL is_find_devide = PIKA_FALSE;
+    Cursor_forEachToken(cs, *tokens) {
+        Cursor_iterStart(&cs);
+        if ((cs.branket_deepth == 0 && strEqu(cs.token1.pyload, devide)) ||
+            cs.iter_index == cs.length) {
+            is_find_devide = PIKA_TRUE;
+            Cursor_iterEnd(&cs);
+            continue;
+        }
+        if (!is_find_devide) {
+            out_item = arg_strAppend(out_item, cs.token1.pyload);
+        } else {
+            tokens_after = arg_strAppend(tokens_after, cs.token1.pyload);
+        }
+        Cursor_iterEnd(&cs);
+    }
+    Cursor_deinit(&cs);
+    /* cache out item */
+    char* out_item_str = strsCopy(buffs, arg_getStr(out_item));
+    arg_deinit(out_item);
+    /* cache tokens after */
+    char* token_after_str = strsCopy(buffs, arg_getStr(tokens_after));
+    arg_deinit(tokens_after);
+    /* update tokens */
+    *tokens = token_after_str;
+    return out_item_str;
+}
+
 static void Slice_getPars(Args* outBuffs,
                           char* inner,
                           char** pStart,
@@ -1793,6 +1825,7 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
     if (strIsStartWith(line_start, "for ")) {
         Args* list_buffs = New_strBuff();
         char* line_buff = strsCopy(list_buffs, line_start + 4);
+        line_buff = strsGetCleanCmd(list_buffs, line_buff);
         if (strCountSign(line_buff, ':') < 1) {
             args_deinit(list_buffs);
             obj_deinit(ast);
@@ -2018,6 +2051,19 @@ exit:
     return line_out;
 }
 
+static PIKA_BOOL _check_is_multi_assign(char* arg_list) {
+    PIKA_BOOL res = PIKA_FALSE;
+    Cursor_forEachToken(cs, arg_list) {
+        Cursor_iterStart(&cs);
+        if ((cs.branket_deepth == 0 && strEqu(cs.token1.pyload, ","))) {
+            res = PIKA_TRUE;
+        }
+        Cursor_iterEnd(&cs);
+    }
+    Cursor_deinit(&cs);
+    return res;
+}
+
 static char* Suger_multiAssign(Args* out_buffs, char* line) {
 #if PIKA_NANO_ENABLE
     return line;
@@ -2025,7 +2071,6 @@ static char* Suger_multiAssign(Args* out_buffs, char* line) {
     Args buffs = {0};
     char* line_out = line;
     PIKA_BOOL is_assign = PIKA_FALSE;
-    PIKA_BOOL is_multi_assign = PIKA_FALSE;
     Arg* stmt = arg_newStr("");
     Arg* out_list = arg_newStr("");
     Arg* out_item = arg_newStr("");
@@ -2052,17 +2097,7 @@ static char* Suger_multiAssign(Args* out_buffs, char* line) {
         goto exit;
     }
 
-    {
-        Cursor_forEachToken(cs, arg_getStr(out_list)) {
-            Cursor_iterStart(&cs);
-            if ((cs.branket_deepth == 0 && strEqu(cs.token1.pyload, ","))) {
-                is_multi_assign = PIKA_TRUE;
-            }
-            Cursor_iterEnd(&cs);
-        }
-        Cursor_deinit(&cs);
-    }
-    if (!is_multi_assign) {
+    if (!_check_is_multi_assign(arg_getStr(out_list))) {
         line_out = line;
         goto exit;
     }
@@ -2070,27 +2105,17 @@ static char* Suger_multiAssign(Args* out_buffs, char* line) {
     char* line_item =
         strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "$tmp= %s\n", arg_getStr(stmt));
     line_out_arg = arg_strAppend(line_out_arg, line_item);
-    {
-        Cursor_forEachToken(cs, arg_getStr(out_list)) {
-            Cursor_iterStart(&cs);
-            if ((cs.branket_deepth == 0 && strEqu(cs.token1.pyload, ",")) ||
-                cs.iter_index == cs.length) {
-                char* line_item =
-                    strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "%s = $tmp[%d]\n",
-                               arg_getStr(out_item), out_num);
-                line_out_arg = arg_strAppend(line_out_arg, line_item);
 
-                /* clear out_item */
-                arg_deinit(out_item);
-                out_item = arg_newStr("");
-                out_num++;
-                Cursor_iterEnd(&cs);
-                continue;
-            }
-            out_item = arg_strAppend(out_item, cs.token1.pyload);
-            Cursor_iterEnd(&cs);
+    char* out_list_str = arg_getStr(out_list);
+    while (1) {
+        char* item = Cursor_popToken(&buffs, &out_list_str, ",");
+        if (item[0] == '\0') {
+            break;
         }
-        Cursor_deinit(&cs);
+        char* line_item = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                                     "%s = $tmp[%d]\n", item, out_num);
+        line_out_arg = arg_strAppend(line_out_arg, line_item);
+        out_num++;
     }
     line_out_arg = arg_strAppend(line_out_arg, "del $tmp");
 
@@ -2601,6 +2626,7 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
     if (strEqu(AST_getThisBlock(ast), "for")) {
         /* for "for" iter */
         char* arg_in = obj_getStr(ast, "arg_in");
+        char* arg_in_kv = NULL;
         Arg* newAsm_arg = arg_newStr("");
         char _l_x[] = "$lx";
         char block_deepth_char = '0';
@@ -2618,6 +2644,18 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
         /* get next */
         /*     run next(_l<x>) */
         /*     check item is exist */
+        /*
+            $n = $lx.next()
+            EST $n
+            k, v = $n
+            DEL $n
+        */
+
+        if (_check_is_multi_assign(arg_in)) {
+            arg_in_kv = arg_in;
+            arg_in = "$tmp";
+        }
+
         pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 0);
         newAsm_arg = arg_strAppend(newAsm_arg, "0 RUN ");
         newAsm_arg = arg_strAppend(newAsm_arg, _l_x);
@@ -2632,6 +2670,28 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
         newAsm_arg = arg_strAppend(newAsm_arg, "\n0 JEZ 2\n");
         pikaAsm = strsAppend(&buffs, pikaAsm, arg_getStr(newAsm_arg));
         arg_deinit(newAsm_arg);
+
+        if (NULL != arg_in_kv) {
+            int out_num = 0;
+            while (1) {
+                char* item = Cursor_popToken(&buffs, &arg_in_kv, ",");
+                if (item[0] == '\0') {
+                    break;
+                }
+                char* stmt = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                                        "%s = $tmp[%d]\n", item, out_num);
+
+                AST* ast_this = AST_parseLine_withBlockDeepth(
+                    stmt, AST_getBlockDeepthNow(ast) + 1);
+                pikaAsm =
+                    strsAppend(&buffs, pikaAsm, AST_genAsm(ast_this, &buffs));
+                AST_deinit(ast_this);
+                out_num++;
+            }
+            pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
+            pikaAsm = strsAppend(&buffs, pikaAsm, "0 DEL $tmp\n");
+        }
+
         is_block_matched = 1;
         goto exit;
     }
