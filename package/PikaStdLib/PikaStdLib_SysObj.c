@@ -184,11 +184,30 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     return arg_newNull();
 }
 
-Arg* PikaStdLib_SysObj_range(PikaObj* self, int a1, int a2) {
+Arg* PikaStdLib_SysObj_range(PikaObj* self, PikaTuple* ax) {
     /* set template arg to create rangeObj */
     Arg* obj_arg = arg_newDirectObj(New_PikaStdLib_RangeObj);
-    obj_setInt(arg_getPtr(obj_arg), "a1", a1);
-    obj_setInt(arg_getPtr(obj_arg), "a2", a2);
+    PikaObj* range_obj = arg_getPtr(obj_arg);
+    if (tuple_getSize(ax) == 1) {
+        int start = 0;
+        int end = arg_getInt(tuple_getArg(ax, 0));
+        obj_setInt(range_obj, "_start", start);
+        obj_setInt(range_obj, "_end", end);
+        obj_setInt(range_obj, "_step", 1);
+    } else if (tuple_getSize(ax) == 2) {
+        int start = arg_getInt(tuple_getArg(ax, 0));
+        int end = arg_getInt(tuple_getArg(ax, 1));
+        obj_setInt(range_obj, "_start", start);
+        obj_setInt(range_obj, "_end", end);
+        obj_setInt(range_obj, "_step", 1);
+    } else if (tuple_getSize(ax) == 3) {
+        int start = arg_getInt(tuple_getArg(ax, 0));
+        int end = arg_getInt(tuple_getArg(ax, 1));
+        int step = arg_getInt(tuple_getArg(ax, 2));
+        obj_setInt(range_obj, "_start", start);
+        obj_setInt(range_obj, "_end", end);
+        obj_setInt(range_obj, "_step", step);
+    }
     return obj_arg;
 }
 

@@ -1549,3 +1549,45 @@ TEST(vm, multi_return_fn) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(vm, rang_1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "sum = 0\n"
+            "for i in range(10):\n"
+            "    sum += i\n");
+    /* collect */
+    int sum = obj_getInt(pikaMain, "sum");
+    /* assert */
+    EXPECT_EQ(sum, 45);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, rang_3) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "sum = 0\n"
+            "for i in range(-5, 20, 2):\n"
+            "    sum += i\n");
+    /* collect */
+    int sum = obj_getInt(pikaMain, "sum");
+    /* assert */
+    EXPECT_EQ(sum, 91);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

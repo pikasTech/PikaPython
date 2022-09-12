@@ -1,14 +1,10 @@
 #include "PikaObj.h"
 
 Arg* PikaStdLib_RangeObj___next__(PikaObj* self) {
-    int a1 = args_getInt(self->list, "a1");
-    int a2 = args_getInt(self->list, "a2");
-    int start = 0;
-    int end = 0;
-    int foot = 1;
+    int start = args_getInt(self->list, "_start");
+    int end = args_getInt(self->list, "_end");
+    int step = args_getInt(self->list, "_step");
     /* only start and end */
-    start = a1;
-    end = a2;
     /* start */
     int iter_i = args_getInt(self->list, "iter_i");
     /* iter_i is not inited */
@@ -19,6 +15,6 @@ Arg* PikaStdLib_RangeObj___next__(PikaObj* self) {
     if (iter_i >= end) {
         return arg_newNull();
     }
-    args_setInt(self->list, "iter_i", iter_i + foot);
+    args_setInt(self->list, "iter_i", iter_i + step);
     return arg_newInt(iter_i);
 }
