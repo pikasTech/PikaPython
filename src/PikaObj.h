@@ -182,11 +182,11 @@ uint8_t obj_getAnyArg(PikaObj* self,
                       Args* targetArgs);
 
 void method_returnStr(Args* args, char* val);
-void method_returnInt(Args* args, int32_t val);
+void method_returnInt(Args* args, int64_t val);
 void method_returnFloat(Args* args, double val);
 void method_returnPtr(Args* args, void* val);
 void method_returnObj(Args* args, void* val);
-int32_t method_getInt(Args* args, char* argName);
+int64_t method_getInt(Args* args, char* argName);
 double method_getFloat(Args* args, char* argName);
 char* method_getStr(Args* args, char* argName);
 void method_returnArg(Args* args, Arg* arg);
@@ -202,7 +202,7 @@ VMParameters* obj_runDirect(PikaObj* self, char* cmd);
 PikaObj* New_PikaObj(void);
 
 /* tools */
-int fast_atoi(char* src);
+int64_t fast_atoi(char* src);
 char* fast_itoa(char* buf, uint32_t val);
 
 /* shell */

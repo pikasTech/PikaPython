@@ -37,3 +37,7 @@ PikaObj* GTestTask_test_dict(PikaObj* self) {
     arg_deinit(para2);
     return dict;
 }
+
+int64_t GTestTask_test64(PikaObj *self, int64_t a, int64_t b){
+    return a * b;
+}

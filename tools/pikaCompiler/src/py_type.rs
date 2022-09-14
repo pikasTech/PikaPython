@@ -8,6 +8,9 @@ impl PyType {
         if self.type_name == "int" {
             return "int".to_string();
         }
+        if self.type_name == "int64"{
+            return "int64_t".to_string();
+        }
         if self.type_name == "float" {
             return "double".to_string();
         }
@@ -38,6 +41,9 @@ impl PyType {
     pub fn to_c_type_return(&self) -> String {
         if self.type_name == "int" {
             return "int".to_string();
+        }
+        if self.type_name == "int64" {
+            return "int64_t".to_string();
         }
         if self.type_name == "float" {
             return "double".to_string();
@@ -70,6 +76,9 @@ impl PyType {
     }
     pub fn return_fn(&self) -> String {
         if self.type_name == "int" {
+            return "    method_returnInt(args, res);\n".to_string();
+        }
+        if self.type_name == "int64" {
             return "    method_returnInt(args, res);\n".to_string();
         }
         if self.type_name == "float" {
@@ -109,6 +118,9 @@ impl PyType {
     // }
     pub fn get_fn(&self) -> String {
         if self.type_name == "int" {
+            return "args_getInt".to_string();
+        }
+        if self.type_name == "int64" {
             return "args_getInt".to_string();
         }
         if self.type_name == "float" {

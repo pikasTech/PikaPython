@@ -27,6 +27,7 @@
         "gtesttask.h": "c",
         "mnist_valid_q.h": "c",
         "pikaplatform.h": "c",
-        "pikastddata_dict_items.h": "c"
+        "pikastddata_dict_items.h": "c",
+        "gtesttask_task.h": "c"
     }
 }

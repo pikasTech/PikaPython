@@ -1591,3 +1591,23 @@ TEST(vm, rang_3) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, test64) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "import GTestTask\n"
+            "res = GTestTask.test64(4294967295, 20)\n");
+    /* collect */
+    int64_t res = obj_getInt(pikaMain, "res");
+    /* assert */
+    EXPECT_EQ(res, 4294967295 * 20);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

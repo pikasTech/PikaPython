@@ -47,12 +47,12 @@ static const uint64_t __talbe_fast_atoi[][10] = {
     {0, 1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9},
 };
 
-int fast_atoi(char* src) {
+int64_t fast_atoi(char* src) {
     const char* p = src;
     uint16_t size = strGetSize(src);
     p = p + size - 1;
     if (*p) {
-        int s = 0;
+        int64_t s = 0;
         const uint64_t* n = __talbe_fast_atoi[0];
         while (p != src) {
             s += n[(*p - '0')];
@@ -192,7 +192,7 @@ int64_t obj_getInt(PikaObj* self, char* argPath) {
         return -999999999;
     }
     char* argName = strPointToLastToken(argPath, '.');
-    int res = args_getInt(obj->list, argName);
+    int64_t res = args_getInt(obj->list, argName);
     return res;
 }
 
@@ -474,7 +474,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
     if (argType_isObject(type)) {
         return args_getPtr(self->list, name);
     }
-    #if !PIKA_NANO_ENABLE
+#if !PIKA_NANO_ENABLE
     /* found class */
     if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
         type == ARG_TYPE_METHOD_CONSTRUCTOR) {
@@ -490,7 +490,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
         arg_deinit(cls_obj_arg);
         return res;
     }
-    #endif
+#endif
     return _arg_to_obj(args_getArg(self->list, name), pIsTemp);
 }
 
@@ -955,7 +955,7 @@ void method_returnStr(Args* args, char* val) {
     args_setStr(args, "return", val);
 }
 
-void method_returnInt(Args* args, int32_t val) {
+void method_returnInt(Args* args, int64_t val) {
     args_setInt(args, "return", val);
 }
 
@@ -979,7 +979,7 @@ void method_returnArg(Args* args, Arg* arg) {
     args_setArg(args, arg);
 }
 
-int32_t method_getInt(Args* args, char* argName) {
+int64_t method_getInt(Args* args, char* argName) {
     return args_getInt(args, argName);
 }
 
@@ -1005,7 +1005,7 @@ Arg* arg_setObj(Arg* self, char* name, PikaObj* obj) {
 }
 
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj) {
-    pika_assert(NULL!= obj);
+    pika_assert(NULL != obj);
     obj_refcntInc(obj);
     return arg_setObj(self, name, obj);
 }
