@@ -98,6 +98,17 @@ struct OperatorInfo {
     VMState* vm;
 };
 
+typedef enum VM_SIGNAL_CTRL {
+    VM_SIGNAL_CTRL_NONE = 0,
+    VM_SIGNAL_CTRL_EXIT,
+} VM_SIGNAL_CTRL;
+
+typedef struct VMSignal VMSignal;
+struct VMSignal {
+    VM_SIGNAL_CTRL signal_ctrl;
+    int vm_cnt;
+};
+
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
@@ -193,5 +204,8 @@ void __vm_List_append(PikaObj* self, Arg* arg);
 void __vm_List___init__(PikaObj* self);
 void __vm_Dict_set(PikaObj* self, Arg* arg, char* key);
 void __vm_Dict___init__(PikaObj* self);
+VM_SIGNAL_CTRL VMSignal_getCtrl(void);
+void pks_vm_exit(void);
+void pks_vmSignal_setCtrlElear(void);
 
 #endif

@@ -1612,3 +1612,57 @@ TEST(vm, test64) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if !PIKA_NANO_ENABLE
+TEST(vm, exit) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "i = 0\n"
+            "while True:\n"
+            "    i += 1\n"
+            "    print(i)\n"
+            "    if i == 10:\n"
+            "        exit()\n");
+    /* collect */
+    int i = obj_getInt(pikaMain, "i");
+    /* assert */
+    EXPECT_EQ(i, 10);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, exit_fn) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "i = 0\n"
+            "def test():\n"
+            "    global i\n"
+            "    while True:\n"
+            "        i += 1\n"
+            "        print(i)\n"
+            "        if i == 10:\n"
+            "            exit()\n"
+            "while True:\n"
+            "    test()\n");
+    /* collect */
+    int i = obj_getInt(pikaMain, "i");
+    /* assert */
+    EXPECT_EQ(i, 10);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif

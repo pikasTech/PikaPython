@@ -538,3 +538,7 @@ void PikaStdLib_SysObj_setattr(PikaObj* self,
 exit:
     return;
 }
+
+void PikaStdLib_SysObj_exit(PikaObj *self){
+    pks_vm_exit();
+}

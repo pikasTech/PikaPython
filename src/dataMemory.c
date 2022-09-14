@@ -29,7 +29,7 @@
 #include "dataMemory.h"
 #include "PikaPlatform.h"
 
-PikaMemInfo pikaMemInfo = {0};
+volatile PikaMemInfo pikaMemInfo = {0};
 
 void* pikaMalloc(uint32_t size) {
     /* pika memory lock */

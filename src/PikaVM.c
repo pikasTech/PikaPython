@@ -36,6 +36,23 @@
 #include <math.h>
 #endif
 
+static volatile VMSignal PikaVMSignal = {
+    .signal_ctrl = VM_SIGNAL_CTRL_NONE,
+    .vm_cnt = 0,
+};
+
+VM_SIGNAL_CTRL VMSignal_getCtrl(void) {
+    return PikaVMSignal.signal_ctrl;
+}
+
+void pks_vm_exit(void) {
+    PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_EXIT;
+}
+
+void pks_vmSignal_setCtrlElear(void) {
+    PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_NONE;
+}
+
 /* head declare start */
 static uint8_t VMState_getInputArgNum(VMState* vm);
 static VMParameters* __pikaVM_runByteCodeFrameWithState(
@@ -1009,14 +1026,14 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         goto exit;
     }
 
-    #if !PIKA_NANO_ENABLE
+#if !PIKA_NANO_ENABLE
     /* support for super() */
     if (strEqu(run_path, "super")) {
         run_path = _find_super_class_name(vm);
         vm->in_super = 1;
         skip_init = 1;
     }
-    #endif
+#endif
 
     /* return tiny obj */
     if (strEqu(run_path, "TinyObj")) {
@@ -1024,12 +1041,12 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         goto exit;
     }
 
-    #if !PIKA_NANO_ENABLE
+#if !PIKA_NANO_ENABLE
     if (!skip_init && vm->in_super) {
         vm->in_super = PIKA_FALSE;
         obj_this = obj_getPtr(vm->locals, _find_self_name(vm));
     }
-    #endif
+#endif
 
     /* get method host obj from reg */
     if (NULL == method_host && _checkLReg(run_path)) {
@@ -1037,7 +1054,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         method_host = vm->lreg[reg_index];
     }
 
-    #if !PIKA_NANO_ENABLE
+#if !PIKA_NANO_ENABLE
     /* get method host obj from stack */
     if (NULL == method_host && run_path[0] == '.') {
         /* get method host obj from stack */
@@ -1063,7 +1080,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
             stack_pushArg(&(vm->stack), stack_tmp[i]);
         }
     }
-    #endif
+#endif
 
     /* get method host obj from self */
     if (NULL == method_host) {
@@ -1978,9 +1995,9 @@ static Arg* VM_instruction_handler_RIS(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    #if PIKA_NANO_ENABLE
+#if PIKA_NANO_ENABLE
     return NULL;
-    #endif
+#endif
     Arg* err_arg = stack_popArg_alloc(&(vm->stack));
     PIKA_RES err = (PIKA_RES)arg_getInt(err_arg);
     VMState_setErrorCode(vm, err);
@@ -1992,9 +2009,9 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    #if PIKA_NANO_ENABLE
+#if PIKA_NANO_ENABLE
     return NULL;
-    #endif
+#endif
     arg_newReg(reg1, PIKA_ARG_BUFF_SIZE);
     arg_newReg(reg2, PIKA_ARG_BUFF_SIZE);
     Arg* arg1 = NULL;
@@ -2169,7 +2186,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
         /* raise jmp */
         if (vm->run_state->try_state == TRY_STATE_INNER) {
             vm->jmp = VM_JMP_RAISE;
-        }else{
+        } else {
             /* exit */
             vm->jmp = VM_JMP_EXIT;
         }
@@ -2195,8 +2212,8 @@ nextLine:
         pc_next = vm->pc + VMState_getAddrOffsetOfContinue(vm);
         goto exit;
     }
-    /* raise */
-    #if !PIKA_NANO_ENABLE
+/* raise */
+#if !PIKA_NANO_ENABLE
     if (VM_JMP_RAISE == vm->jmp) {
         int offset = VMState_getAddrOffsetOfRaise(vm);
         if (0 == offset) {
@@ -2208,7 +2225,7 @@ nextLine:
         pc_next = vm->pc + offset;
         goto exit;
     }
-    #endif
+#endif
     /* static jmp */
     if (vm->jmp != 0) {
         pc_next = vm->pc + VMState_getAddrOffsetFromJmp(vm);
@@ -2668,7 +2685,14 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     };
     stack_init(&(vm.stack));
     VMState_initReg(&vm);
+    if (PikaVMSignal.vm_cnt == 0) {
+        pks_vmSignal_setCtrlElear();
+    }
+    PikaVMSignal.vm_cnt++;
     while (vm.pc < size) {
+        if (VMSignal_getCtrl() == VM_SIGNAL_CTRL_EXIT) {
+            vm.pc = VM_PC_EXIT;
+        }
         if (vm.pc == VM_PC_EXIT) {
             break;
         }
@@ -2721,6 +2745,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     }
     VMState_solveUnusedStack(&vm);
     stack_deinit(&(vm.stack));
+    PikaVMSignal.vm_cnt--;
     return locals;
 }
 

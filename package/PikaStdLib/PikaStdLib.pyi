@@ -1,5 +1,6 @@
 from PikaObj import *
 
+
 class MemChecker:
     def max(self): ...
     def now(self): ...
@@ -102,6 +103,10 @@ class SysObj:
     @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def setattr(obj: object, name: str, val: any): ...
 
+    @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    def exit(): ...
+
 
 @PIKA_C_MACRO_IF("0")
 class RangeObj:
@@ -111,4 +116,3 @@ class RangeObj:
 @PIKA_C_MACRO_IF("0")
 class StringObj:
     def __next__(self) -> any: ...
-
