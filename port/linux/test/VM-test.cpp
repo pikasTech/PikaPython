@@ -1105,11 +1105,11 @@ TEST(VM, in) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(VM, assert) {
     char* line =
         "assert True\n"
         "assert 1 == 1, 'testparser'\n"
-        "assert 1 == 2, 'testparser'\n"
         "res1 = 0\n"
         "try:\n"
         "    assert False\n"
@@ -1125,6 +1125,7 @@ TEST(VM, assert) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(VM, issue_I5LHJG) {
     char* line =

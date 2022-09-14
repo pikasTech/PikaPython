@@ -2169,7 +2169,10 @@ static int pikaVM_runInstructUnit(PikaObj* self,
         /* raise jmp */
         if (vm->run_state->try_state == TRY_STATE_INNER) {
             vm->jmp = VM_JMP_RAISE;
-        };
+        }else{
+            /* exit */
+            vm->jmp = VM_JMP_EXIT;
+        }
     }
 
     if (NULL != return_arg) {
