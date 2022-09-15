@@ -226,6 +226,11 @@ static enum StmtType Lexer_matchStmtType(char* right) {
         if (strEqu(cs.token1.pyload, "...")) {
             goto iter_continue;
         }
+
+        if (strEqu(cs.token1.pyload, "pass")){
+            goto iter_continue;
+        }
+         
         if (strIsStartWith(cs.token1.pyload, ".")) {
             if (cs.iter_index != 1) {
                 is_get_chain = PIKA_TRUE;

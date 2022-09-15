@@ -4270,4 +4270,45 @@ TEST(parser, for_multi) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, pass_) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "pass\n"
+        "def testpass():\n"
+        "    pass\n"
+        "for i in range(10):\n"
+        "    pass\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "B0\n"
+                 "0 DEF testpass()\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "B1\n"
+                 "0 RET \n"
+                 "B0\n"
+                 "2 NUM 10\n"
+                 "1 RUN range\n"
+                 "0 RUN iter\n"
+                 "0 OUT $l0\n"
+                 "B0\n"
+                 "0 RUN $l0.__next__\n"
+                 "0 OUT i\n"
+                 "0 EST i\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n"
+                 "0 DEL $l0\n"
+                 "B0\n");
+
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
