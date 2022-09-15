@@ -307,7 +307,7 @@ void* obj_getStruct(PikaObj* self, char* name);
     while (1)
 
 char* obj_cacheStr(PikaObj* self, char* str);
-PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* is_convert);
+PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp);
 char* __printBytes(PikaObj* self, Arg* arg);
 
 #define PIKASCRIPT_VERSION_TO_NUM(majer, minor, micro) \

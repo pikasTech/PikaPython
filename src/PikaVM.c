@@ -278,12 +278,18 @@ static Arg* VM_instruction_handler_NON(PikaObj* self,
 }
 
 Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
-    ArgType obj_type = arg_getType(obj);
+    ArgType type = arg_getType(obj);
+    Arg* obj_new = NULL;
     int index = 0;
     if (ARG_TYPE_INT == arg_getType(key)) {
         index = arg_getInt(key);
     }
-    if (ARG_TYPE_STRING == obj_type) {
+    if (ARG_TYPE_STRING == type) {
+#if PIKA_STRING_UTF8_ENABLE
+        PIKA_BOOL is_temp = 0;
+        obj_new = arg_newObj(_arg_to_obj(obj, &is_temp));
+        type = arg_getType(obj_new);
+#else
         char* str_pyload = arg_getStr(obj);
         char char_buff[] = " ";
         if (index < 0) {
@@ -291,8 +297,9 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
         }
         char_buff[0] = str_pyload[index];
         return arg_newStr(char_buff);
+#endif
     }
-    if (ARG_TYPE_BYTES == obj_type) {
+    if (ARG_TYPE_BYTES == type) {
         uint8_t* bytes_pyload = arg_getBytes(obj);
         uint8_t byte_buff[] = " ";
         if (index < 0) {
@@ -301,8 +308,13 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
         byte_buff[0] = bytes_pyload[index];
         return arg_newBytes(byte_buff, 1);
     }
-    if (argType_isObject(obj_type)) {
-        PikaObj* arg_obj = arg_getPtr(obj);
+    if (argType_isObject(type)) {
+        PikaObj* arg_obj = NULL;
+        if (obj_new != NULL) {
+            arg_obj = arg_getPtr(obj_new);
+        } else {
+            arg_obj = arg_getPtr(obj);
+        }
         obj_setArg(arg_obj, "__key", key);
         /* clang-format off */
         PIKA_PYTHON(
@@ -322,9 +334,17 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
         };
         pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
         Arg* __res = args_getArg(arg_obj->list, "__res");
+        Arg* res = NULL;
         if (NULL != __res) {
-            return arg_copy(__res);
+            res = arg_copy(__res);
         }
+        if (NULL != obj_new) {
+            arg_deinit(obj_new);
+        }
+        if (NULL == res) {
+            return arg_newNull();
+        }
+        return res;
     }
     return arg_newNull();
 }

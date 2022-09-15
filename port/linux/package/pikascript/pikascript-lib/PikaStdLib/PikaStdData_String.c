@@ -78,6 +78,9 @@ Arg *PikaStdData_String___next__(PikaObj *self)
 Arg *PikaStdData_String___getitem__(PikaObj *self, Arg *__key)
 {
     int key_i = arg_getInt(__key);
+    if (key_i < 0){
+        key_i = PikaStdData_String___len__(self) + key_i;
+    }
     char *str = obj_getStr(self, "str");
     uint16_t len = strGetSize(str);
 #if PIKA_STRING_UTF8_ENABLE

@@ -244,3 +244,29 @@ TEST(string, str_issue1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+#if PIKA_STRING_UTF8_ENABLE
+TEST(string, utf8_1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "s = '你好，Hello, Halo, Hi.'\n"
+            "s1 = s[0:9]\n"
+            "s2 = s[0:2]\n"
+            "s1\n"
+            "s2\n");
+    /* collect */
+    char* s1 = obj_getStr(pikaMain, "s1");
+    char* s2 = obj_getStr(pikaMain, "s2");
+    /* assert */
+    EXPECT_STREQ(s1, "你好，Hello,");
+    EXPECT_STREQ(s2, "你好");
+    /* deinit */
+    obj_deinit(pikaMain);
+
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
