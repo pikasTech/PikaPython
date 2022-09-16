@@ -1,6 +1,6 @@
-pikascript-core
-PikaStdLib
-PikaStdDevice
+pikascript-core==v1.10.3
+PikaStdLib==v1.10.3
+PikaStdDevice==v1.10.3
 STM32G0==v1.3.1
 PikaPiZero==v1.3.0
 Arm2D==v0.4.1
