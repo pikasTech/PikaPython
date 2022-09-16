@@ -65,8 +65,8 @@ typedef union {
 struct Arg {
     _arg_union _;
     uint32_t size;
-    uint8_t type;
-    PIKA_BOOL flag;
+    ArgType type;
+    uint8_t flag;
     Hash name_hash;
     uint8_t content[];
 };
