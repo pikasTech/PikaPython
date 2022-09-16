@@ -1,4 +1,4 @@
-pikascript-core==v1.10.3
-PikaStdLib==v1.10.3
-PikaStdDevice==v1.10.3
+pikascript-core==v1.11.0
+PikaStdLib==v1.11.0
+PikaStdDevice==v1.11.0
 AIR32F1==latest
