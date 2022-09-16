@@ -443,14 +443,14 @@ PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
         PikaObj* New_PikaStdData_String(Args * args);
         PikaObj* obj = newNormalObj(New_PikaStdData_String);
         obj_setStr(obj, "str", arg_getStr(self));
-        *pIsTemp = 1;
+        *pIsTemp = PIKA_TRUE;
         return obj;
     }
     if (arg_getType(self) == ARG_TYPE_BYTES) {
         PikaObj* New_PikaStdData_ByteArray(Args * args);
         PikaObj* obj = newNormalObj(New_PikaStdData_ByteArray);
         obj_setArg(obj, "raw", self);
-        *pIsTemp = 1;
+        *pIsTemp = PIKA_TRUE;
         return obj;
     }
 #endif

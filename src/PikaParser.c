@@ -2080,6 +2080,8 @@ static char* Suger_multiAssign(Args* out_buffs, char* line) {
     Arg* out_list = arg_newStr("");
     Arg* out_item = arg_newStr("");
     Arg* line_out_arg = arg_newStr("");
+    char* line_item = NULL;
+    char* out_list_str = NULL;
     int out_num = 0;
     Cursor_forEachToken(cs, line) {
         Cursor_iterStart(&cs);
@@ -2107,11 +2109,11 @@ static char* Suger_multiAssign(Args* out_buffs, char* line) {
         goto exit;
     }
 
-    char* line_item =
+    line_item =
         strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "$tmp= %s\n", arg_getStr(stmt));
     line_out_arg = arg_strAppend(line_out_arg, line_item);
 
-    char* out_list_str = arg_getStr(out_list);
+    out_list_str = arg_getStr(out_list);
     while (1) {
         char* item = Cursor_popToken(&buffs, &out_list_str, ",");
         if (item[0] == '\0') {
@@ -2547,6 +2549,25 @@ char* GenRule_toAsm(GenRule rule,
 }
 
 char* AST_genAsm(AST* ast, Args* outBuffs) {
+    
+    const GenRule rules_topAst[] = {
+        {.ins = "CTN", .type = VAL_NONEVAL, .ast = "continue"},
+        {.ins = "BRK", .type = VAL_NONEVAL, .ast = "break"},
+        {.ins = "DEL", .type = VAL_DYNAMIC, .ast = "del"},
+        {.ins = "GLB", .type = VAL_DYNAMIC, .ast = "global"},
+        {.ins = "RIS", .type = VAL_DYNAMIC, .ast = "raise"},
+        {.ins = "ASS", .type = VAL_NONEVAL, .ast = "assert"},
+        {.ins = "RET", .type = VAL_NONEVAL, .ast = "return"}};
+
+    /* generate code for block ast */
+    const GenRule rules_block[] = {
+        {.ins = "TRY", .type = VAL_NONEVAL, .ast = "try"},
+        {.ins = "EXP", .type = VAL_NONEVAL, .ast = "except"},
+        {.ins = "NEL", .type = VAL_STATIC_, .ast = "else", .val = "1"},
+        {.ins = "JEZ", .type = VAL_STATIC_, .ast = "if", .val = "1"},
+        {.ins = "JEZ", .type = VAL_STATIC_, .ast = "while", .val = "2"},
+    };        
+        
     Args buffs = {0};
     char* pikaAsm = strsCopy(&buffs, "");
     QueueObj* exitBlock;
@@ -2777,14 +2798,7 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
         is_block_matched = 1;
         goto exit;
     }
-    /* generate code for block ast */
-    const GenRule rules_block[] = {
-        {.ins = "TRY", .type = VAL_NONEVAL, .ast = "try"},
-        {.ins = "EXP", .type = VAL_NONEVAL, .ast = "except"},
-        {.ins = "NEL", .type = VAL_STATIC_, .ast = "else", .val = "1"},
-        {.ins = "JEZ", .type = VAL_STATIC_, .ast = "if", .val = "1"},
-        {.ins = "JEZ", .type = VAL_STATIC_, .ast = "while", .val = "2"},
-    };
+
 
     for (size_t i = 0; i < sizeof(rules_block) / sizeof(GenRule); i++) {
         GenRule rule = rules_block[i];
@@ -2794,15 +2808,6 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
             goto exit;
         }
     }
-
-    const GenRule rules_topAst[] = {
-        {.ins = "CTN", .type = VAL_NONEVAL, .ast = "continue"},
-        {.ins = "BRK", .type = VAL_NONEVAL, .ast = "break"},
-        {.ins = "DEL", .type = VAL_DYNAMIC, .ast = "del"},
-        {.ins = "GLB", .type = VAL_DYNAMIC, .ast = "global"},
-        {.ins = "RIS", .type = VAL_DYNAMIC, .ast = "raise"},
-        {.ins = "ASS", .type = VAL_NONEVAL, .ast = "assert"},
-        {.ins = "RET", .type = VAL_NONEVAL, .ast = "return"}};
 
     /* generate code for top level ast */
     for (size_t i = 0; i < sizeof(rules_topAst) / sizeof(rules_topAst[0]);

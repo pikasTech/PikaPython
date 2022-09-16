@@ -244,7 +244,7 @@ static void VMState_delLReg(VMState* vm, uint8_t index) {
 static void VMState_initReg(VMState* vm) {
     for (uint8_t i = 0; i < PIKA_REGIST_SIZE; i++) {
         vm->lreg[i] = NULL;
-        vm->ireg[i] = 0;
+        vm->ireg[i] = PIKA_FALSE;
     }
 }
 
@@ -286,7 +286,7 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
     }
     if (ARG_TYPE_STRING == type) {
 #if PIKA_STRING_UTF8_ENABLE
-        PIKA_BOOL is_temp = 0;
+        PIKA_BOOL is_temp = PIKA_FALSE;
         obj_new = arg_newObj(_arg_to_obj(obj, &is_temp));
         type = arg_getType(obj_new);
 #else
@@ -417,7 +417,7 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
         PikaObj* New_PikaStdData_Tuple(Args * args);
         if (arg_obj->constructor == New_PikaStdData_List ||
             arg_obj->constructor == New_PikaStdData_Tuple) {
-            PikaObj* sliced_obj = newNormalObj(arg_obj->constructor);
+            PikaObj* sliced_obj = newNormalObj((NewFun)arg_obj->constructor);
             __vm_List___init__(sliced_obj);
             for (int i = start_i; i < end_i; i++) {
                 Arg* i_arg = arg_newInt(i);
@@ -1050,8 +1050,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     /* support for super() */
     if (strEqu(run_path, "super")) {
         run_path = _find_super_class_name(vm);
-        vm->in_super = 1;
-        skip_init = 1;
+        vm->in_super = PIKA_TRUE;
+        skip_init = PIKA_TRUE;
     }
 #endif
 
@@ -1418,7 +1418,7 @@ static Arg* _VM_JEZ(PikaObj* self,
                     int pika_assert) {
     int thisBlockDeepth = VMState_getBlockDeepthNow(vm);
     int jmp_expect = fast_atoi(data);
-    vm->ireg[thisBlockDeepth] = !pika_assert;
+    vm->ireg[thisBlockDeepth] = (PIKA_BOOL)!pika_assert;
 
     if (0 == pika_assert) {
         /* jump */
