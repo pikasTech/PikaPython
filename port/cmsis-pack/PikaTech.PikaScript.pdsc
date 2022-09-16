@@ -16,8 +16,8 @@
   <repository type="git">https://github.com/pikasTech/pikascript.git</repository>
 
   <releases>
-    <release date="2022-08-30" version="1.10.6" url="https://gitee.com/Lyon1998/pikascript/attach_files/1151246/download">
-        - PikaScript v1.10.6
+    <release date="2022-09-16" version="1.11.0" url="https://gitee.com/Lyon1998/pikascript/attach_files/1151246/download">
+        - PikaScript v1.11.0
     </release>
 
   </releases>
@@ -91,7 +91,7 @@
 
     <condition id="Kernel">
       <description>The Kernel of the PikaScript</description>
-      <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="1.10.6" />
+      <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="1.11.0" />
     </condition>
 
     <condition id="NO_LVGL_Pack">
@@ -142,11 +142,11 @@
   -->
 
   <components>
-    <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.10.6">
+    <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.11.0">
       <description>an ultra-lightweight Python engine</description>
       <doc>https://pikadoc.readthedocs.io/en/latest/index.html</doc>
 
-      <component Cgroup="PikaScript" Csub="Core" Cversion="1.10.6">
+      <component Cgroup="PikaScript" Csub="Core" Cversion="1.11.0">
         <description>PikaScript Kernel</description>
         <files>
 <file attr="config" category="sourceC"  name="pikascript-core/BaseObj.c" />
@@ -208,7 +208,7 @@
         </RTE_Components_h>
       </component>
 
-      <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.10.6" condition="Kernel">
+      <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.11.0" condition="Kernel">
         <description>The standard library for PikaScript</description>
         <Pre_Include_Local_Component_h>
 
