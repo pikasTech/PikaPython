@@ -1,3 +1,3 @@
-pikascript-core==v1.10.7
-PikaStdLib==v1.10.7
+pikascript-core
+PikaStdLib
 Arm2D==v0.6.0
