@@ -227,10 +227,10 @@ static enum StmtType Lexer_matchStmtType(char* right) {
             goto iter_continue;
         }
 
-        if (strEqu(cs.token1.pyload, "pass")){
+        if (strEqu(cs.token1.pyload, "pass")) {
             goto iter_continue;
         }
-         
+
         if (strIsStartWith(cs.token1.pyload, ".")) {
             if (cs.iter_index != 1) {
                 is_get_chain = PIKA_TRUE;
@@ -2549,7 +2549,6 @@ char* GenRule_toAsm(GenRule rule,
 }
 
 char* AST_genAsm(AST* ast, Args* outBuffs) {
-    
     const GenRule rules_topAst[] = {
         {.ins = "CTN", .type = VAL_NONEVAL, .ast = "continue"},
         {.ins = "BRK", .type = VAL_NONEVAL, .ast = "break"},
@@ -2566,8 +2565,8 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
         {.ins = "NEL", .type = VAL_STATIC_, .ast = "else", .val = "1"},
         {.ins = "JEZ", .type = VAL_STATIC_, .ast = "if", .val = "1"},
         {.ins = "JEZ", .type = VAL_STATIC_, .ast = "while", .val = "2"},
-    };        
-        
+    };
+
     Args buffs = {0};
     char* pikaAsm = strsCopy(&buffs, "");
     QueueObj* exitBlock;
@@ -2798,7 +2797,6 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
         is_block_matched = 1;
         goto exit;
     }
-
 
     for (size_t i = 0; i < sizeof(rules_block) / sizeof(GenRule); i++) {
         GenRule rule = rules_block[i];
