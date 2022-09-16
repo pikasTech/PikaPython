@@ -57,6 +57,7 @@ static Arg* arg_init_hash(Hash nameHash,
     self->size = size;
     self->name_hash = nameHash;
     self->type = type;
+    self->flag = 0;
     arg_setSerialized(self, PIKA_TRUE);
     arg_setIsKeyword(self, PIKA_FALSE);
     __platform_memset(arg_getContent(self), 0,
@@ -64,7 +65,7 @@ static Arg* arg_init_hash(Hash nameHash,
     if (NULL != content) {
         __platform_memcpy(arg_getContent(self), content, size);
     }
-
+    pika_assert(self->flag < ARG_FLAG_MAX);
     return self;
 }
 
@@ -82,6 +83,7 @@ void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
     self->size = size;
     self->type = ARG_TYPE_UNDEF;
     self->name_hash = 0;
+    self->flag = 0;
     arg_setSerialized(self, PIKA_FALSE);
     arg_setIsKeyword(self, PIKA_FALSE);
 }
@@ -129,6 +131,7 @@ Arg* arg_setNameHash(Arg* self, Hash nameHash) {
 }
 
 Arg* arg_setName(Arg* self, char* name) {
+    pika_assert(NULL != name);
     return arg_setNameHash(self, hash_time33(name));
 }
 
@@ -157,6 +160,7 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
     if (NULL != src) {
         __platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
     }
+    pika_assert(self->flag < ARG_FLAG_MAX);
     return self;
 }
 
@@ -170,14 +174,26 @@ uint8_t* arg_getBytes(Arg* self) {
     return arg_getContent(self) + sizeof(size_t);
 }
 
-void arg_printBytes(Arg* self) {
-    size_t bytes_size = arg_getBytesSize(self);
-    uint8_t* bytes = arg_getBytes(self);
-    __platform_printf("b\'");
+char* __printBytes(PikaObj* self, Arg* arg) {
+    Args buffs = {0};
+    size_t bytes_size = arg_getBytesSize(arg);
+    uint8_t* bytes = arg_getBytes(arg);
+    Arg* str_arg = arg_newStr("b\'");
     for (size_t i = 0; i < bytes_size; i++) {
-        __platform_printf("\\x%02x", bytes[i]);
+        char* str_item = strsFormat(&buffs, 16, "\\x%02x", bytes[i]);
+        str_arg = arg_strAppend(str_arg, str_item);
     }
-    __platform_printf("\'\r\n");
+    str_arg = arg_strAppend(str_arg, "\'");
+    char* str_res = obj_cacheStr(self, arg_getStr(str_arg));
+    strsDeinit(&buffs);
+    arg_deinit(str_arg);
+    return str_res;
+}
+
+void arg_printBytes(Arg* self) {
+    PikaObj* obj = New_PikaObj();
+    __platform_printf("%s\r\n", __printBytes(obj, self));
+    obj_deinit(obj);
 }
 
 size_t arg_getBytesSize(Arg* self) {
@@ -279,6 +295,9 @@ int64_t arg_getInt(Arg* self) {
 }
 
 void* arg_getPtr(Arg* self) {
+    if (arg_getType(self) == ARG_TYPE_NONE) {
+        return NULL;
+    }
     if (NULL == arg_getContent(self)) {
         return NULL;
     }
@@ -314,16 +333,18 @@ Arg* arg_copy(Arg* arg_src) {
     if (NULL == arg_src) {
         return NULL;
     }
+    pika_assert(arg_src->flag < ARG_FLAG_MAX);
     ArgType arg_type = arg_getType(arg_src);
     if (ARG_TYPE_OBJECT == arg_type) {
         obj_refcntInc((PikaObj*)arg_getPtr(arg_src));
     }
-    Arg* argCopied = New_arg(NULL);
-    argCopied = arg_setContent(argCopied, arg_getContent(arg_src),
-                               arg_getContentSize(arg_src));
-    argCopied = arg_setNameHash(argCopied, arg_getNameHash(arg_src));
-    argCopied = arg_setType(argCopied, arg_getType(arg_src));
-    return argCopied;
+    Arg* arg_dict = New_arg(NULL);
+    arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
+                              arg_getContentSize(arg_src));
+    arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
+    arg_dict = arg_setType(arg_dict, arg_getType(arg_src));
+    arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
+    return arg_dict;
 }
 
 Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
@@ -346,6 +367,7 @@ Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
                               arg_getContentSize(arg_src));
     arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
     arg_dict = arg_setType(arg_dict, arg_getType(arg_src));
+    arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
     return arg_dict;
 }
 
@@ -430,4 +452,28 @@ void arg_deinit(Arg* self) {
     }
     /* free the ref */
     arg_freeContent(self);
+}
+
+PIKA_BOOL arg_isEqual(Arg* self, Arg* other) {
+    if (NULL == self || NULL == other) {
+        return PIKA_FALSE;
+    }
+    if (arg_getType(self) != arg_getType(other)) {
+        return PIKA_FALSE;
+    }
+    if (arg_getType(self) == ARG_TYPE_OBJECT) {
+        if (arg_getPtr(self) != arg_getPtr(other)) {
+            return PIKA_FALSE;
+        }
+    }
+    if (arg_getType(self) == ARG_TYPE_STRING) {
+        if (strEqu(arg_getStr(self), arg_getStr(other))) {
+            return PIKA_TRUE;
+        }
+    }
+    if (0 != __platform_memcmp(arg_getContent(self), arg_getContent(other),
+                               arg_getContentSize(self))) {
+        return PIKA_FALSE;
+    }
+    return PIKA_TRUE;
 }

@@ -65,8 +65,8 @@ typedef union {
 struct Arg {
     _arg_union _;
     uint32_t size;
-    uint8_t type;
-    PIKA_BOOL flag;
+    ArgType type;
+    uint8_t flag;
     Hash name_hash;
     uint8_t content[];
 };
@@ -133,6 +133,7 @@ uint8_t argType_isObject(ArgType type);
 
 #define ARG_FLAG_MASK_SERIALIZED 0x01
 #define ARG_FLAG_MASK_IsKeyword 0x02
+#define ARG_FLAG_MAX 0x04
 
 #define arg_getNext(self) ((self)->_.next)
 #define arg_getSize(self) ((self)->size)
@@ -170,3 +171,4 @@ uint8_t argType_isObject(ArgType type);
     arg_init_stack(&__name, __##__name##_buff, __size)
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size);
+PIKA_BOOL arg_isEqual(Arg* self, Arg* other);

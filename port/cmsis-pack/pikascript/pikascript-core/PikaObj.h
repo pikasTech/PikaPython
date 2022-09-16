@@ -127,7 +127,7 @@ int32_t obj_load(PikaObj* self, Args* args, char* name);
 int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_projcetFun);
 PikaObj* obj_getObj(PikaObj* self, char* objPath);
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath);
-PikaObj* obj_getHostObjWithIsClass(PikaObj* self,
+PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
                                    char* objPath,
                                    PIKA_BOOL* pIsClass);
 
@@ -135,26 +135,26 @@ PikaObj* obj_getHostObjWithIsClass(PikaObj* self,
 int32_t obj_freeObj(PikaObj* self, char* subObjectName);
 
 /* method */
-int32_t class_defineMethod(PikaObj* self, char* declearation, Method methodPtr);
+int32_t class_defineMethod(PikaObj* self, char* declareation, Method methodPtr);
 
 int32_t class_defineObjectMethod(PikaObj* self,
-                                 char* declearation,
+                                 char* declareation,
                                  Method methodPtr,
                                  PikaObj* def_context,
                                  ByteCodeFrame* bytecode_frame);
 
 int32_t class_defineStaticMethod(PikaObj* self,
-                                 char* declearation,
+                                 char* declareation,
                                  Method methodPtr,
                                  PikaObj* def_context,
                                  ByteCodeFrame* bytecode_frame);
 
 int32_t class_defineConstructor(PikaObj* self,
-                                char* declearation,
+                                char* declareation,
                                 Method methodPtr);
 
 int32_t class_defineRunTimeConstructor(PikaObj* self,
-                                       char* declearation,
+                                       char* declareation,
                                        Method methodPtr,
                                        PikaObj* def_context,
                                        ByteCodeFrame* bytecode_frame);
@@ -182,11 +182,11 @@ uint8_t obj_getAnyArg(PikaObj* self,
                       Args* targetArgs);
 
 void method_returnStr(Args* args, char* val);
-void method_returnInt(Args* args, int32_t val);
+void method_returnInt(Args* args, int64_t val);
 void method_returnFloat(Args* args, double val);
 void method_returnPtr(Args* args, void* val);
 void method_returnObj(Args* args, void* val);
-int32_t method_getInt(Args* args, char* argName);
+int64_t method_getInt(Args* args, char* argName);
 double method_getFloat(Args* args, char* argName);
 char* method_getStr(Args* args, char* argName);
 void method_returnArg(Args* args, Arg* arg);
@@ -202,7 +202,7 @@ VMParameters* obj_runDirect(PikaObj* self, char* cmd);
 PikaObj* New_PikaObj(void);
 
 /* tools */
-int fast_atoi(char* src);
+int64_t fast_atoi(char* src);
 char* fast_itoa(char* buf, uint32_t val);
 
 /* shell */
@@ -231,10 +231,10 @@ Arg* obj_newObjInPackage(NewFun newObjFun);
 
 PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
-Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj);
+Arg* arg_setObj(Arg* self, char* name, PikaObj* obj);
 
+#define arg_newObj(obj) arg_setObj(NULL, "", (obj))
 #define arg_newRef(obj) arg_setRef(NULL, "", (obj))
-#define arg_newWeakRef(obj) arg_setWeakRef(NULL, "", (obj))
 
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,
@@ -307,6 +307,8 @@ void* obj_getStruct(PikaObj* self, char* name);
     while (1)
 
 char* obj_cacheStr(PikaObj* self, char* str);
+PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp);
+char* __printBytes(PikaObj* self, Arg* arg);
 
 #define PIKASCRIPT_VERSION_TO_NUM(majer, minor, micro) \
     majer * 100 * 100 + minor * 100 + micro

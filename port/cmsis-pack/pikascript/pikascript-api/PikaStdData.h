@@ -24,6 +24,7 @@ Arg* PikaStdData_List(PikaObj *self);
 Arg* PikaStdData_String(PikaObj *self);
 Arg* PikaStdData_Tuple(PikaObj *self);
 Arg* PikaStdData_Utils(PikaObj *self);
+Arg* PikaStdData_dict_items(PikaObj *self);
 Arg* PikaStdData_dict_keys(PikaObj *self);
 
 #endif

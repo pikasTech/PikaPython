@@ -60,7 +60,7 @@ int32_t stack_deinit(Stack* stack) {
     return 0;
 }
 
-void stack_pushPyload(Stack* stack, Arg* content, size_t size) {
+void stack_pushPyload(Stack* stack, Arg* in, size_t size) {
     size_t stack_size_after_push =
         size + (stack->sp - arg_getContent(stack->stack_pyload));
     if (stack_size_after_push > stack->stack_totle_size) {
@@ -74,14 +74,14 @@ void stack_pushPyload(Stack* stack, Arg* content, size_t size) {
         while (1) {
         }
     }
-    if (arg_getSerialized(content)) {
-        __platform_memcpy(stack->sp, content, size);
+    Arg* top = (Arg*)stack->sp;
+    if (arg_getSerialized(in)) {
+        __platform_memcpy(top, in, size);
     } else {
-        __platform_memcpy(stack->sp, content, sizeof(Arg));
-        __platform_memcpy(stack->sp + sizeof(Arg), content->_.buffer,
-                          size - sizeof(Arg));
+        __platform_memcpy(top, in, sizeof(Arg));
+        __platform_memcpy(top->content, in->_.buffer, size - sizeof(Arg));
         /* transfer to serialized form */
-        arg_setSerialized((Arg*)stack->sp, PIKA_TRUE);
+        arg_setSerialized(top, PIKA_TRUE);
     }
     stack->sp += size;
 }
@@ -144,6 +144,7 @@ Arg* _stack_popArg(Stack* stack, Arg* arg_dict, PIKA_BOOL is_alloc) {
     if (argType_isObject(type)) {
         obj_refcntDec((PikaObj*)arg_getPtr(arg));
     }
+    pika_assert(arg->flag < ARG_FLAG_MAX);
     return arg;
 }
 

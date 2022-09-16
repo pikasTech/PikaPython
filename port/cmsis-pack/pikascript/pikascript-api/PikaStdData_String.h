@@ -24,7 +24,7 @@ int PikaStdData_String___len__(PikaObj *self);
 Arg* PikaStdData_String___next__(PikaObj *self);
 void PikaStdData_String___setitem__(PikaObj *self, Arg* __key, Arg* __val);
 char* PikaStdData_String___str__(PikaObj *self);
-Arg* PikaStdData_String_encode(PikaObj *self);
+Arg* PikaStdData_String_encode(PikaObj *self, PikaTuple* encoding);
 int PikaStdData_String_endswith(PikaObj *self, char* suffix);
 char* PikaStdData_String_get(PikaObj *self);
 int PikaStdData_String_isalnum(PikaObj *self);

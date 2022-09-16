@@ -17,6 +17,7 @@
 
 PikaObj *New_PikaStdData_Tuple(Args *args);
 
+int PikaStdData_Tuple___contains__(PikaObj *self, Arg* val);
 void PikaStdData_Tuple___del__(PikaObj *self);
 Arg* PikaStdData_Tuple___getitem__(PikaObj *self, Arg* __key);
 void PikaStdData_Tuple___init__(PikaObj *self);

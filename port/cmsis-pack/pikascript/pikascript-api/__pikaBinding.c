@@ -35,6 +35,8 @@
 #include "TinyObj.h"
 #include "PikaStdData_Utils.h"
 #include "TinyObj.h"
+#include "PikaStdData_dict_items.h"
+#include "TinyObj.h"
 #include "PikaStdData_dict_keys.h"
 #include "TinyObj.h"
 #include "PikaStdLib.h"
@@ -111,7 +113,7 @@ void PikaDebug_DebugerMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaDebug(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineConstructor(self, "Debuger()->any", PikaDebug_DebugerMethod);
+    class_defineConstructor(self, "Debuger()", PikaDebug_DebugerMethod);
     return self;
 }
 #endif
@@ -185,6 +187,11 @@ void PikaStdData_UtilsMethod(PikaObj *self, Args *args){
     method_returnArg(args, res);
 }
 
+void PikaStdData_dict_itemsMethod(PikaObj *self, Args *args){
+    Arg* res = PikaStdData_dict_items(self);
+    method_returnArg(args, res);
+}
+
 void PikaStdData_dict_keysMethod(PikaObj *self, Args *args){
     Arg* res = PikaStdData_dict_keys(self);
     method_returnArg(args, res);
@@ -192,14 +199,15 @@ void PikaStdData_dict_keysMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdData(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineConstructor(self, "ByteArray()->any", PikaStdData_ByteArrayMethod);
-    class_defineConstructor(self, "Dict()->any", PikaStdData_DictMethod);
-    class_defineConstructor(self, "FILEIO()->any", PikaStdData_FILEIOMethod);
-    class_defineConstructor(self, "List()->any", PikaStdData_ListMethod);
-    class_defineConstructor(self, "String()->any", PikaStdData_StringMethod);
-    class_defineConstructor(self, "Tuple()->any", PikaStdData_TupleMethod);
-    class_defineConstructor(self, "Utils()->any", PikaStdData_UtilsMethod);
-    class_defineConstructor(self, "dict_keys()->any", PikaStdData_dict_keysMethod);
+    class_defineConstructor(self, "ByteArray()", PikaStdData_ByteArrayMethod);
+    class_defineConstructor(self, "Dict()", PikaStdData_DictMethod);
+    class_defineConstructor(self, "FILEIO()", PikaStdData_FILEIOMethod);
+    class_defineConstructor(self, "List()", PikaStdData_ListMethod);
+    class_defineConstructor(self, "String()", PikaStdData_StringMethod);
+    class_defineConstructor(self, "Tuple()", PikaStdData_TupleMethod);
+    class_defineConstructor(self, "Utils()", PikaStdData_UtilsMethod);
+    class_defineConstructor(self, "dict_items()", PikaStdData_dict_itemsMethod);
+    class_defineConstructor(self, "dict_keys()", PikaStdData_dict_keysMethod);
     return self;
 }
 #endif
@@ -244,13 +252,13 @@ void PikaStdData_ByteArray_decodeMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdData_ByteArray(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "__getitem__(__key:int)->int", PikaStdData_ByteArray___getitem__Method);
-    class_defineMethod(self, "__init__(bytes:any)", PikaStdData_ByteArray___init__Method);
-    class_defineMethod(self, "__iter__()->any", PikaStdData_ByteArray___iter__Method);
-    class_defineMethod(self, "__next__()->any", PikaStdData_ByteArray___next__Method);
-    class_defineMethod(self, "__setitem__(__key:int,__val:int)", PikaStdData_ByteArray___setitem__Method);
-    class_defineMethod(self, "__str__()->str", PikaStdData_ByteArray___str__Method);
-    class_defineMethod(self, "decode()->str", PikaStdData_ByteArray_decodeMethod);
+    class_defineMethod(self, "__getitem__(__key)", PikaStdData_ByteArray___getitem__Method);
+    class_defineMethod(self, "__init__(bytes)", PikaStdData_ByteArray___init__Method);
+    class_defineMethod(self, "__iter__()", PikaStdData_ByteArray___iter__Method);
+    class_defineMethod(self, "__next__()", PikaStdData_ByteArray___next__Method);
+    class_defineMethod(self, "__setitem__(__key,__val)", PikaStdData_ByteArray___setitem__Method);
+    class_defineMethod(self, "__str__()", PikaStdData_ByteArray___str__Method);
+    class_defineMethod(self, "decode()", PikaStdData_ByteArray_decodeMethod);
     return self;
 }
 
@@ -260,6 +268,12 @@ Arg *PikaStdData_ByteArray(PikaObj *self){
 #endif
 
 #ifndef PIKA_MODULE_PIKASTDDATA_DISABLE
+void PikaStdData_Dict___contains__Method(PikaObj *self, Args *args){
+    Arg* val = args_getArg(args, "val");
+    int res = PikaStdData_Dict___contains__(self, val);
+    method_returnInt(args, res);
+}
+
 void PikaStdData_Dict___del__Method(PikaObj *self, Args *args){
     PikaStdData_Dict___del__(self);
 }
@@ -306,6 +320,11 @@ void PikaStdData_Dict_getMethod(PikaObj *self, Args *args){
     method_returnArg(args, res);
 }
 
+void PikaStdData_Dict_itemsMethod(PikaObj *self, Args *args){
+    PikaObj* res = PikaStdData_Dict_items(self);
+    method_returnObj(args, res);
+}
+
 void PikaStdData_Dict_keysMethod(PikaObj *self, Args *args){
     PikaObj* res = PikaStdData_Dict_keys(self);
     method_returnObj(args, res);
@@ -324,18 +343,20 @@ void PikaStdData_Dict_setMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdData_Dict(Args *args){
     PikaObj *self = New_TinyObj(args);
+    class_defineMethod(self, "__contains__(val)", PikaStdData_Dict___contains__Method);
     class_defineMethod(self, "__del__()", PikaStdData_Dict___del__Method);
-    class_defineMethod(self, "__getitem__(__key:any)->any", PikaStdData_Dict___getitem__Method);
+    class_defineMethod(self, "__getitem__(__key)", PikaStdData_Dict___getitem__Method);
     class_defineMethod(self, "__init__()", PikaStdData_Dict___init__Method);
-    class_defineMethod(self, "__iter__()->any", PikaStdData_Dict___iter__Method);
-    class_defineMethod(self, "__len__()->int", PikaStdData_Dict___len__Method);
-    class_defineMethod(self, "__next__()->any", PikaStdData_Dict___next__Method);
-    class_defineMethod(self, "__setitem__(__key:any,__val:any)", PikaStdData_Dict___setitem__Method);
-    class_defineMethod(self, "__str__()->str", PikaStdData_Dict___str__Method);
-    class_defineMethod(self, "get(key:str)->any", PikaStdData_Dict_getMethod);
-    class_defineMethod(self, "keys()->dict_keys", PikaStdData_Dict_keysMethod);
-    class_defineMethod(self, "remove(key:str)", PikaStdData_Dict_removeMethod);
-    class_defineMethod(self, "set(key:str,arg:any)", PikaStdData_Dict_setMethod);
+    class_defineMethod(self, "__iter__()", PikaStdData_Dict___iter__Method);
+    class_defineMethod(self, "__len__()", PikaStdData_Dict___len__Method);
+    class_defineMethod(self, "__next__()", PikaStdData_Dict___next__Method);
+    class_defineMethod(self, "__setitem__(__key,__val)", PikaStdData_Dict___setitem__Method);
+    class_defineMethod(self, "__str__()", PikaStdData_Dict___str__Method);
+    class_defineMethod(self, "get(key)", PikaStdData_Dict_getMethod);
+    class_defineMethod(self, "items()", PikaStdData_Dict_itemsMethod);
+    class_defineMethod(self, "keys()", PikaStdData_Dict_keysMethod);
+    class_defineMethod(self, "remove(key)", PikaStdData_Dict_removeMethod);
+    class_defineMethod(self, "set(key,arg)", PikaStdData_Dict_setMethod);
     return self;
 }
 
@@ -398,14 +419,14 @@ void PikaStdData_FILEIO_writelinesMethod(PikaObj *self, Args *args){
 PikaObj *New_PikaStdData_FILEIO(Args *args){
     PikaObj *self = New_TinyObj(args);
     class_defineMethod(self, "close()", PikaStdData_FILEIO_closeMethod);
-    class_defineMethod(self, "init(path:str,mode:str)->int", PikaStdData_FILEIO_initMethod);
-    class_defineMethod(self, "read(size:int)->any", PikaStdData_FILEIO_readMethod);
-    class_defineMethod(self, "readline()->str", PikaStdData_FILEIO_readlineMethod);
-    class_defineMethod(self, "readlines()->List", PikaStdData_FILEIO_readlinesMethod);
-    class_defineMethod(self, "seek(offset:int,*fromwhere)->int", PikaStdData_FILEIO_seekMethod);
-    class_defineMethod(self, "tell()->int", PikaStdData_FILEIO_tellMethod);
-    class_defineMethod(self, "write(s:any)->int", PikaStdData_FILEIO_writeMethod);
-    class_defineMethod(self, "writelines(lines:List)", PikaStdData_FILEIO_writelinesMethod);
+    class_defineMethod(self, "init(path,mode)", PikaStdData_FILEIO_initMethod);
+    class_defineMethod(self, "read(size)", PikaStdData_FILEIO_readMethod);
+    class_defineMethod(self, "readline()", PikaStdData_FILEIO_readlineMethod);
+    class_defineMethod(self, "readlines()", PikaStdData_FILEIO_readlinesMethod);
+    class_defineMethod(self, "seek(offset,*fromwhere)", PikaStdData_FILEIO_seekMethod);
+    class_defineMethod(self, "tell()", PikaStdData_FILEIO_tellMethod);
+    class_defineMethod(self, "write(s)", PikaStdData_FILEIO_writeMethod);
+    class_defineMethod(self, "writelines(lines)", PikaStdData_FILEIO_writelinesMethod);
     return self;
 }
 
@@ -453,13 +474,13 @@ void PikaStdData_List_setMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdData_List(Args *args){
     PikaObj *self = New_PikaStdData_Tuple(args);
-    class_defineMethod(self, "__add__(others:List)->List", PikaStdData_List___add__Method);
+    class_defineMethod(self, "__add__(others)", PikaStdData_List___add__Method);
     class_defineMethod(self, "__init__()", PikaStdData_List___init__Method);
-    class_defineMethod(self, "__setitem__(__key:any,__val:any)", PikaStdData_List___setitem__Method);
-    class_defineMethod(self, "__str__()->str", PikaStdData_List___str__Method);
-    class_defineMethod(self, "append(arg:any)", PikaStdData_List_appendMethod);
+    class_defineMethod(self, "__setitem__(__key,__val)", PikaStdData_List___setitem__Method);
+    class_defineMethod(self, "__str__()", PikaStdData_List___str__Method);
+    class_defineMethod(self, "append(arg)", PikaStdData_List_appendMethod);
     class_defineMethod(self, "reverse()", PikaStdData_List_reverseMethod);
-    class_defineMethod(self, "set(i:int,arg:any)", PikaStdData_List_setMethod);
+    class_defineMethod(self, "set(i,arg)", PikaStdData_List_setMethod);
     return self;
 }
 
@@ -507,7 +528,8 @@ void PikaStdData_String___str__Method(PikaObj *self, Args *args){
 }
 
 void PikaStdData_String_encodeMethod(PikaObj *self, Args *args){
-    Arg* res = PikaStdData_String_encode(self);
+    PikaTuple* encoding = args_getTuple(args, "encoding");
+    Arg* res = PikaStdData_String_encode(self, encoding);
     method_returnArg(args, res);
 }
 
@@ -578,26 +600,26 @@ void PikaStdData_String_stripMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdData_String(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "__getitem__(__key:any)->any", PikaStdData_String___getitem__Method);
-    class_defineMethod(self, "__init__(s:str)", PikaStdData_String___init__Method);
-    class_defineMethod(self, "__iter__()->any", PikaStdData_String___iter__Method);
-    class_defineMethod(self, "__len__()->int", PikaStdData_String___len__Method);
-    class_defineMethod(self, "__next__()->any", PikaStdData_String___next__Method);
-    class_defineMethod(self, "__setitem__(__key:any,__val:any)", PikaStdData_String___setitem__Method);
-    class_defineMethod(self, "__str__()->str", PikaStdData_String___str__Method);
-    class_defineMethod(self, "encode()->bytes", PikaStdData_String_encodeMethod);
-    class_defineMethod(self, "endswith(suffix:str)->int", PikaStdData_String_endswithMethod);
-    class_defineMethod(self, "get()->str", PikaStdData_String_getMethod);
-    class_defineMethod(self, "isalnum()->int", PikaStdData_String_isalnumMethod);
-    class_defineMethod(self, "isalpha()->int", PikaStdData_String_isalphaMethod);
-    class_defineMethod(self, "isdigit()->int", PikaStdData_String_isdigitMethod);
-    class_defineMethod(self, "islower()->int", PikaStdData_String_islowerMethod);
-    class_defineMethod(self, "isspace()->int", PikaStdData_String_isspaceMethod);
-    class_defineMethod(self, "replace(old:str,new:str)->str", PikaStdData_String_replaceMethod);
-    class_defineMethod(self, "set(s:str)", PikaStdData_String_setMethod);
-    class_defineMethod(self, "split(s:str)->List", PikaStdData_String_splitMethod);
-    class_defineMethod(self, "startswith(prefix:str)->int", PikaStdData_String_startswithMethod);
-    class_defineMethod(self, "strip()->str", PikaStdData_String_stripMethod);
+    class_defineMethod(self, "__getitem__(__key)", PikaStdData_String___getitem__Method);
+    class_defineMethod(self, "__init__(s)", PikaStdData_String___init__Method);
+    class_defineMethod(self, "__iter__()", PikaStdData_String___iter__Method);
+    class_defineMethod(self, "__len__()", PikaStdData_String___len__Method);
+    class_defineMethod(self, "__next__()", PikaStdData_String___next__Method);
+    class_defineMethod(self, "__setitem__(__key,__val)", PikaStdData_String___setitem__Method);
+    class_defineMethod(self, "__str__()", PikaStdData_String___str__Method);
+    class_defineMethod(self, "encode(*encoding)", PikaStdData_String_encodeMethod);
+    class_defineMethod(self, "endswith(suffix)", PikaStdData_String_endswithMethod);
+    class_defineMethod(self, "get()", PikaStdData_String_getMethod);
+    class_defineMethod(self, "isalnum()", PikaStdData_String_isalnumMethod);
+    class_defineMethod(self, "isalpha()", PikaStdData_String_isalphaMethod);
+    class_defineMethod(self, "isdigit()", PikaStdData_String_isdigitMethod);
+    class_defineMethod(self, "islower()", PikaStdData_String_islowerMethod);
+    class_defineMethod(self, "isspace()", PikaStdData_String_isspaceMethod);
+    class_defineMethod(self, "replace(old,new)", PikaStdData_String_replaceMethod);
+    class_defineMethod(self, "set(s)", PikaStdData_String_setMethod);
+    class_defineMethod(self, "split(s)", PikaStdData_String_splitMethod);
+    class_defineMethod(self, "startswith(prefix)", PikaStdData_String_startswithMethod);
+    class_defineMethod(self, "strip()", PikaStdData_String_stripMethod);
     return self;
 }
 
@@ -607,6 +629,12 @@ Arg *PikaStdData_String(PikaObj *self){
 #endif
 
 #ifndef PIKA_MODULE_PIKASTDDATA_DISABLE
+void PikaStdData_Tuple___contains__Method(PikaObj *self, Args *args){
+    Arg* val = args_getArg(args, "val");
+    int res = PikaStdData_Tuple___contains__(self, val);
+    method_returnInt(args, res);
+}
+
 void PikaStdData_Tuple___del__Method(PikaObj *self, Args *args){
     PikaStdData_Tuple___del__(self);
 }
@@ -654,15 +682,16 @@ void PikaStdData_Tuple_lenMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdData_Tuple(Args *args){
     PikaObj *self = New_TinyObj(args);
+    class_defineMethod(self, "__contains__(val)", PikaStdData_Tuple___contains__Method);
     class_defineMethod(self, "__del__()", PikaStdData_Tuple___del__Method);
-    class_defineMethod(self, "__getitem__(__key:any)->any", PikaStdData_Tuple___getitem__Method);
+    class_defineMethod(self, "__getitem__(__key)", PikaStdData_Tuple___getitem__Method);
     class_defineMethod(self, "__init__()", PikaStdData_Tuple___init__Method);
-    class_defineMethod(self, "__iter__()->any", PikaStdData_Tuple___iter__Method);
-    class_defineMethod(self, "__len__()->int", PikaStdData_Tuple___len__Method);
-    class_defineMethod(self, "__next__()->any", PikaStdData_Tuple___next__Method);
-    class_defineMethod(self, "__str__()->str", PikaStdData_Tuple___str__Method);
-    class_defineMethod(self, "get(i:int)->any", PikaStdData_Tuple_getMethod);
-    class_defineMethod(self, "len()->int", PikaStdData_Tuple_lenMethod);
+    class_defineMethod(self, "__iter__()", PikaStdData_Tuple___iter__Method);
+    class_defineMethod(self, "__len__()", PikaStdData_Tuple___len__Method);
+    class_defineMethod(self, "__next__()", PikaStdData_Tuple___next__Method);
+    class_defineMethod(self, "__str__()", PikaStdData_Tuple___str__Method);
+    class_defineMethod(self, "get(i)", PikaStdData_Tuple_getMethod);
+    class_defineMethod(self, "len()", PikaStdData_Tuple_lenMethod);
     return self;
 }
 
@@ -680,12 +709,47 @@ void PikaStdData_Utils_int_to_bytesMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdData_Utils(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "int_to_bytes(val:int)->bytes", PikaStdData_Utils_int_to_bytesMethod);
+    class_defineMethod(self, "int_to_bytes(val)", PikaStdData_Utils_int_to_bytesMethod);
     return self;
 }
 
 Arg *PikaStdData_Utils(PikaObj *self){
     return obj_newObjInPackage(New_PikaStdData_Utils);
+}
+#endif
+
+#ifndef PIKA_MODULE_PIKASTDDATA_DISABLE
+void PikaStdData_dict_items___iter__Method(PikaObj *self, Args *args){
+    Arg* res = PikaStdData_dict_items___iter__(self);
+    method_returnArg(args, res);
+}
+
+void PikaStdData_dict_items___len__Method(PikaObj *self, Args *args){
+    int res = PikaStdData_dict_items___len__(self);
+    method_returnInt(args, res);
+}
+
+void PikaStdData_dict_items___next__Method(PikaObj *self, Args *args){
+    Arg* res = PikaStdData_dict_items___next__(self);
+    method_returnArg(args, res);
+}
+
+void PikaStdData_dict_items___str__Method(PikaObj *self, Args *args){
+    char* res = PikaStdData_dict_items___str__(self);
+    method_returnStr(args, res);
+}
+
+PikaObj *New_PikaStdData_dict_items(Args *args){
+    PikaObj *self = New_TinyObj(args);
+    class_defineMethod(self, "__iter__()", PikaStdData_dict_items___iter__Method);
+    class_defineMethod(self, "__len__()", PikaStdData_dict_items___len__Method);
+    class_defineMethod(self, "__next__()", PikaStdData_dict_items___next__Method);
+    class_defineMethod(self, "__str__()", PikaStdData_dict_items___str__Method);
+    return self;
+}
+
+Arg *PikaStdData_dict_items(PikaObj *self){
+    return obj_newObjInPackage(New_PikaStdData_dict_items);
 }
 #endif
 
@@ -712,10 +776,10 @@ void PikaStdData_dict_keys___str__Method(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdData_dict_keys(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "__iter__()->any", PikaStdData_dict_keys___iter__Method);
-    class_defineMethod(self, "__len__()->int", PikaStdData_dict_keys___len__Method);
-    class_defineMethod(self, "__next__()->any", PikaStdData_dict_keys___next__Method);
-    class_defineMethod(self, "__str__()->str", PikaStdData_dict_keys___str__Method);
+    class_defineMethod(self, "__iter__()", PikaStdData_dict_keys___iter__Method);
+    class_defineMethod(self, "__len__()", PikaStdData_dict_keys___len__Method);
+    class_defineMethod(self, "__next__()", PikaStdData_dict_keys___next__Method);
+    class_defineMethod(self, "__str__()", PikaStdData_dict_keys___str__Method);
     return self;
 }
 
@@ -747,14 +811,14 @@ void PikaStdLib_SysObjMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdLib(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineConstructor(self, "MemChecker()->any", PikaStdLib_MemCheckerMethod);
+    class_defineConstructor(self, "MemChecker()", PikaStdLib_MemCheckerMethod);
 #if 0
-    class_defineConstructor(self, "RangeObj()->any", PikaStdLib_RangeObjMethod);
+    class_defineConstructor(self, "RangeObj()", PikaStdLib_RangeObjMethod);
 #endif
 #if 0
-    class_defineConstructor(self, "StringObj()->any", PikaStdLib_StringObjMethod);
+    class_defineConstructor(self, "StringObj()", PikaStdLib_StringObjMethod);
 #endif
-    class_defineConstructor(self, "SysObj()->any", PikaStdLib_SysObjMethod);
+    class_defineConstructor(self, "SysObj()", PikaStdLib_SysObjMethod);
     return self;
 }
 #endif
@@ -785,10 +849,10 @@ void PikaStdLib_MemChecker_resetMaxMethod(PikaObj *self, Args *args){
 PikaObj *New_PikaStdLib_MemChecker(Args *args){
     PikaObj *self = New_TinyObj(args);
 #if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "getMax()->float", PikaStdLib_MemChecker_getMaxMethod);
+    class_defineMethod(self, "getMax()", PikaStdLib_MemChecker_getMaxMethod);
 #endif
 #if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "getNow()->float", PikaStdLib_MemChecker_getNowMethod);
+    class_defineMethod(self, "getNow()", PikaStdLib_MemChecker_getNowMethod);
 #endif
     class_defineMethod(self, "max()", PikaStdLib_MemChecker_maxMethod);
     class_defineMethod(self, "now()", PikaStdLib_MemChecker_nowMethod);
@@ -811,7 +875,7 @@ void PikaStdLib_RangeObj___next__Method(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdLib_RangeObj(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "__next__()->any", PikaStdLib_RangeObj___next__Method);
+    class_defineMethod(self, "__next__()", PikaStdLib_RangeObj___next__Method);
     return self;
 }
 
@@ -828,7 +892,7 @@ void PikaStdLib_StringObj___next__Method(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdLib_StringObj(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "__next__()->any", PikaStdLib_StringObj___next__Method);
+    class_defineMethod(self, "__next__()", PikaStdLib_StringObj___next__Method);
     return self;
 }
 
@@ -897,6 +961,10 @@ void PikaStdLib_SysObj_execMethod(PikaObj *self, Args *args){
     PikaStdLib_SysObj_exec(self, code);
 }
 
+void PikaStdLib_SysObj_exitMethod(PikaObj *self, Args *args){
+    PikaStdLib_SysObj_exit(self);
+}
+
 void PikaStdLib_SysObj_floatMethod(PikaObj *self, Args *args){
     Arg* arg = args_getArg(args, "arg");
     double res = PikaStdLib_SysObj_float(self, arg);
@@ -960,18 +1028,13 @@ void PikaStdLib_SysObj_ordMethod(PikaObj *self, Args *args){
 
 void PikaStdLib_SysObj_printMethod(PikaObj *self, Args *args){
     PikaTuple* val = args_getTuple(args, "val");
-    PikaStdLib_SysObj_print(self, val);
-}
-
-void PikaStdLib_SysObj_printNoEndMethod(PikaObj *self, Args *args){
-    Arg* val = args_getArg(args, "val");
-    PikaStdLib_SysObj_printNoEnd(self, val);
+    PikaDict* ops = args_getDict(args, "ops");
+    PikaStdLib_SysObj_print(self, val, ops);
 }
 
 void PikaStdLib_SysObj_rangeMethod(PikaObj *self, Args *args){
-    int a1 = args_getInt(args, "a1");
-    int a2 = args_getInt(args, "a2");
-    Arg* res = PikaStdLib_SysObj_range(self, a1, a2);
+    PikaTuple* ax = args_getTuple(args, "ax");
+    Arg* res = PikaStdLib_SysObj_range(self, ax);
     method_returnArg(args, res);
 }
 
@@ -996,61 +1059,63 @@ void PikaStdLib_SysObj_typeMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdLib_SysObj(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "__getitem__(obj:any,key:any)->any", PikaStdLib_SysObj___getitem__Method);
-    class_defineMethod(self, "__setitem__(obj:any,key:any,val:any)->any", PikaStdLib_SysObj___setitem__Method);
+    class_defineMethod(self, "__getitem__(obj,key)", PikaStdLib_SysObj___getitem__Method);
+    class_defineMethod(self, "__setitem__(obj,key,val)", PikaStdLib_SysObj___setitem__Method);
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    class_defineMethod(self, "__slice__(obj:any,start:any,end:any,step:int)->any", PikaStdLib_SysObj___slice__Method);
+    class_defineMethod(self, "__slice__(obj,start,end,step)", PikaStdLib_SysObj___slice__Method);
 #endif
 #if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "bytes(val:any)->bytes", PikaStdLib_SysObj_bytesMethod);
+    class_defineMethod(self, "bytes(val)", PikaStdLib_SysObj_bytesMethod);
 #endif
 #if PIKA_SYNTAX_FORMAT_ENABLE
-    class_defineMethod(self, "cformat(fmt:str,*var)->str", PikaStdLib_SysObj_cformatMethod);
+    class_defineMethod(self, "cformat(fmt,*var)", PikaStdLib_SysObj_cformatMethod);
 #endif
 #if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "chr(val:int)->str", PikaStdLib_SysObj_chrMethod);
+    class_defineMethod(self, "chr(val)", PikaStdLib_SysObj_chrMethod);
 #endif
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    class_defineMethod(self, "dict()->any", PikaStdLib_SysObj_dictMethod);
+    class_defineMethod(self, "dict()", PikaStdLib_SysObj_dictMethod);
 #endif
 #if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "dir(obj:object)->list", PikaStdLib_SysObj_dirMethod);
+    class_defineMethod(self, "dir(obj)", PikaStdLib_SysObj_dirMethod);
 #endif
 #if PIKA_EXEC_ENABLE
-    class_defineMethod(self, "exec(code:str)", PikaStdLib_SysObj_execMethod);
-#endif
-    class_defineMethod(self, "float(arg:any)->float", PikaStdLib_SysObj_floatMethod);
-#if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "getattr(obj:object,name:str)->any", PikaStdLib_SysObj_getattrMethod);
+    class_defineMethod(self, "exec(code)", PikaStdLib_SysObj_execMethod);
 #endif
 #if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "hex(val:int)->str", PikaStdLib_SysObj_hexMethod);
+    class_defineMethod(self, "exit()", PikaStdLib_SysObj_exitMethod);
+#endif
+    class_defineMethod(self, "float(arg)", PikaStdLib_SysObj_floatMethod);
+#if !PIKA_NANO_ENABLE
+    class_defineMethod(self, "getattr(obj,name)", PikaStdLib_SysObj_getattrMethod);
 #endif
 #if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "id(obj:any)->int", PikaStdLib_SysObj_idMethod);
+    class_defineMethod(self, "hex(val)", PikaStdLib_SysObj_hexMethod);
 #endif
-    class_defineMethod(self, "int(arg:any)->int", PikaStdLib_SysObj_intMethod);
-    class_defineMethod(self, "iter(arg:any)->any", PikaStdLib_SysObj_iterMethod);
-    class_defineMethod(self, "len(arg:any)->int", PikaStdLib_SysObj_lenMethod);
+#if !PIKA_NANO_ENABLE
+    class_defineMethod(self, "id(obj)", PikaStdLib_SysObj_idMethod);
+#endif
+    class_defineMethod(self, "int(arg)", PikaStdLib_SysObj_intMethod);
+    class_defineMethod(self, "iter(arg)", PikaStdLib_SysObj_iterMethod);
+    class_defineMethod(self, "len(arg)", PikaStdLib_SysObj_lenMethod);
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    class_defineMethod(self, "list()->any", PikaStdLib_SysObj_listMethod);
+    class_defineMethod(self, "list()", PikaStdLib_SysObj_listMethod);
 #endif
 #if PIKA_FILEIO_ENABLE
-    class_defineMethod(self, "open(path:str,mode:str)->object", PikaStdLib_SysObj_openMethod);
+    class_defineMethod(self, "open(path,mode)", PikaStdLib_SysObj_openMethod);
 #endif
 #if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "ord(val:str)->int", PikaStdLib_SysObj_ordMethod);
+    class_defineMethod(self, "ord(val)", PikaStdLib_SysObj_ordMethod);
 #endif
-    class_defineMethod(self, "print(*val)", PikaStdLib_SysObj_printMethod);
+    class_defineMethod(self, "print(*val,**ops)", PikaStdLib_SysObj_printMethod);
+    class_defineMethod(self, "range(*ax)", PikaStdLib_SysObj_rangeMethod);
 #if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "printNoEnd(val:any)", PikaStdLib_SysObj_printNoEndMethod);
+    class_defineMethod(self, "setattr(obj,name,val)", PikaStdLib_SysObj_setattrMethod);
 #endif
-    class_defineMethod(self, "range(a1:int,a2:int)->any", PikaStdLib_SysObj_rangeMethod);
+    class_defineMethod(self, "str(arg)", PikaStdLib_SysObj_strMethod);
 #if !PIKA_NANO_ENABLE
-    class_defineMethod(self, "setattr(obj:object,name:str,val:any)", PikaStdLib_SysObj_setattrMethod);
+    class_defineMethod(self, "type(arg)", PikaStdLib_SysObj_typeMethod);
 #endif
-    class_defineMethod(self, "str(arg:any)->str", PikaStdLib_SysObj_strMethod);
-    class_defineMethod(self, "type(arg:any)->any", PikaStdLib_SysObj_typeMethod);
     return self;
 }
 
@@ -1067,7 +1132,7 @@ void PikaStdTask_TaskMethod(PikaObj *self, Args *args){
 
 PikaObj *New_PikaStdTask(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineConstructor(self, "Task()->any", PikaStdTask_TaskMethod);
+    class_defineConstructor(self, "Task()", PikaStdTask_TaskMethod);
     return self;
 }
 #endif
@@ -1115,13 +1180,13 @@ PikaObj *New_PikaStdTask_Task(Args *args){
     PikaObj *self = New_PikaStdLib_SysObj(args);
     obj_newObj(self, "calls", "PikaStdData_List", New_PikaStdData_List);
     class_defineMethod(self, "__init__()", PikaStdTask_Task___init__Method);
-    class_defineMethod(self, "call_always(fun_todo:any)", PikaStdTask_Task_call_alwaysMethod);
-    class_defineMethod(self, "call_period_ms(fun_todo:any,period_ms:int)", PikaStdTask_Task_call_period_msMethod);
-    class_defineMethod(self, "call_when(fun_todo:any,fun_when:any)", PikaStdTask_Task_call_whenMethod);
+    class_defineMethod(self, "call_always(fun_todo)", PikaStdTask_Task_call_alwaysMethod);
+    class_defineMethod(self, "call_period_ms(fun_todo,period_ms)", PikaStdTask_Task_call_period_msMethod);
+    class_defineMethod(self, "call_when(fun_todo,fun_when)", PikaStdTask_Task_call_whenMethod);
     class_defineMethod(self, "platformGetTick()", PikaStdTask_Task_platformGetTickMethod);
     class_defineMethod(self, "run_forever()", PikaStdTask_Task_run_foreverMethod);
     class_defineMethod(self, "run_once()", PikaStdTask_Task_run_onceMethod);
-    class_defineMethod(self, "run_until_ms(until_ms:int)", PikaStdTask_Task_run_until_msMethod);
+    class_defineMethod(self, "run_until_ms(until_ms)", PikaStdTask_Task_run_until_msMethod);
     return self;
 }
 
@@ -1291,37 +1356,37 @@ void pika_lvgl_timer_create_basicMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineConstructor(self, "ALIGN()->any", pika_lvgl_ALIGNMethod);
-    class_defineConstructor(self, "ANIM()->any", pika_lvgl_ANIMMethod);
-    class_defineConstructor(self, "EVENT()->any", pika_lvgl_EVENTMethod);
-    class_defineConstructor(self, "OPA()->any", pika_lvgl_OPAMethod);
-    class_defineConstructor(self, "PALETTE()->any", pika_lvgl_PALETTEMethod);
-    class_defineConstructor(self, "STATE()->any", pika_lvgl_STATEMethod);
+    class_defineConstructor(self, "ALIGN()", pika_lvgl_ALIGNMethod);
+    class_defineConstructor(self, "ANIM()", pika_lvgl_ANIMMethod);
+    class_defineConstructor(self, "EVENT()", pika_lvgl_EVENTMethod);
+    class_defineConstructor(self, "OPA()", pika_lvgl_OPAMethod);
+    class_defineConstructor(self, "PALETTE()", pika_lvgl_PALETTEMethod);
+    class_defineConstructor(self, "STATE()", pika_lvgl_STATEMethod);
     class_defineMethod(self, "__init__()", pika_lvgl___init__Method);
-    class_defineConstructor(self, "arc()->any", pika_lvgl_arcMethod);
-    class_defineConstructor(self, "bar()->any", pika_lvgl_barMethod);
-    class_defineConstructor(self, "btn()->any", pika_lvgl_btnMethod);
-    class_defineConstructor(self, "checkbox()->any", pika_lvgl_checkboxMethod);
-    class_defineConstructor(self, "dropdown()->any", pika_lvgl_dropdownMethod);
-    class_defineMethod(self, "indev_get_act()->indev_t", pika_lvgl_indev_get_actMethod);
-    class_defineConstructor(self, "indev_t()->any", pika_lvgl_indev_tMethod);
-    class_defineConstructor(self, "label()->any", pika_lvgl_labelMethod);
-    class_defineConstructor(self, "lv_color_t()->any", pika_lvgl_lv_color_tMethod);
-    class_defineConstructor(self, "lv_event()->any", pika_lvgl_lv_eventMethod);
-    class_defineConstructor(self, "lv_obj()->any", pika_lvgl_lv_objMethod);
-    class_defineConstructor(self, "lv_timer_t()->any", pika_lvgl_lv_timer_tMethod);
-    class_defineMethod(self, "obj(parent:lv_obj)->lv_obj", pika_lvgl_objMethod);
-    class_defineMethod(self, "palette_lighten(p:int,lvl:int)->lv_color_t", pika_lvgl_palette_lightenMethod);
-    class_defineMethod(self, "palette_main(p:int)->lv_color_t", pika_lvgl_palette_mainMethod);
-    class_defineConstructor(self, "point_t()->any", pika_lvgl_point_tMethod);
-    class_defineConstructor(self, "roller()->any", pika_lvgl_rollerMethod);
-    class_defineMethod(self, "scr_act()->lv_obj", pika_lvgl_scr_actMethod);
-    class_defineConstructor(self, "slider()->any", pika_lvgl_sliderMethod);
-    class_defineConstructor(self, "style_t()->any", pika_lvgl_style_tMethod);
-    class_defineConstructor(self, "switch()->any", pika_lvgl_switchMethod);
-    class_defineConstructor(self, "table()->any", pika_lvgl_tableMethod);
-    class_defineConstructor(self, "textarea()->any", pika_lvgl_textareaMethod);
-    class_defineMethod(self, "timer_create_basic()->lv_timer_t", pika_lvgl_timer_create_basicMethod);
+    class_defineConstructor(self, "arc()", pika_lvgl_arcMethod);
+    class_defineConstructor(self, "bar()", pika_lvgl_barMethod);
+    class_defineConstructor(self, "btn()", pika_lvgl_btnMethod);
+    class_defineConstructor(self, "checkbox()", pika_lvgl_checkboxMethod);
+    class_defineConstructor(self, "dropdown()", pika_lvgl_dropdownMethod);
+    class_defineMethod(self, "indev_get_act()", pika_lvgl_indev_get_actMethod);
+    class_defineConstructor(self, "indev_t()", pika_lvgl_indev_tMethod);
+    class_defineConstructor(self, "label()", pika_lvgl_labelMethod);
+    class_defineConstructor(self, "lv_color_t()", pika_lvgl_lv_color_tMethod);
+    class_defineConstructor(self, "lv_event()", pika_lvgl_lv_eventMethod);
+    class_defineConstructor(self, "lv_obj()", pika_lvgl_lv_objMethod);
+    class_defineConstructor(self, "lv_timer_t()", pika_lvgl_lv_timer_tMethod);
+    class_defineMethod(self, "obj(parent)", pika_lvgl_objMethod);
+    class_defineMethod(self, "palette_lighten(p,lvl)", pika_lvgl_palette_lightenMethod);
+    class_defineMethod(self, "palette_main(p)", pika_lvgl_palette_mainMethod);
+    class_defineConstructor(self, "point_t()", pika_lvgl_point_tMethod);
+    class_defineConstructor(self, "roller()", pika_lvgl_rollerMethod);
+    class_defineMethod(self, "scr_act()", pika_lvgl_scr_actMethod);
+    class_defineConstructor(self, "slider()", pika_lvgl_sliderMethod);
+    class_defineConstructor(self, "style_t()", pika_lvgl_style_tMethod);
+    class_defineConstructor(self, "switch()", pika_lvgl_switchMethod);
+    class_defineConstructor(self, "table()", pika_lvgl_tableMethod);
+    class_defineConstructor(self, "textarea()", pika_lvgl_textareaMethod);
+    class_defineMethod(self, "timer_create_basic()", pika_lvgl_timer_create_basicMethod);
     return self;
 }
 #endif
@@ -1528,26 +1593,26 @@ void pika_lvgl_arc_set_valueMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_arc(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_arc___init__Method);
-    class_defineMethod(self, "get_angle_end()->int", pika_lvgl_arc_get_angle_endMethod);
-    class_defineMethod(self, "get_angle_start()->int", pika_lvgl_arc_get_angle_startMethod);
-    class_defineMethod(self, "get_bg_angle_end()->int", pika_lvgl_arc_get_bg_angle_endMethod);
-    class_defineMethod(self, "get_bg_angle_start()->int", pika_lvgl_arc_get_bg_angle_startMethod);
-    class_defineMethod(self, "get_max_value()->int", pika_lvgl_arc_get_max_valueMethod);
-    class_defineMethod(self, "get_min_value()->int", pika_lvgl_arc_get_min_valueMethod);
-    class_defineMethod(self, "get_mode()->int", pika_lvgl_arc_get_modeMethod);
-    class_defineMethod(self, "get_value()->int", pika_lvgl_arc_get_valueMethod);
-    class_defineMethod(self, "set_angles(start:int,end:int)", pika_lvgl_arc_set_anglesMethod);
-    class_defineMethod(self, "set_bg_angles(start:int,end:int)", pika_lvgl_arc_set_bg_anglesMethod);
-    class_defineMethod(self, "set_bg_end_angle(angle:int)", pika_lvgl_arc_set_bg_end_angleMethod);
-    class_defineMethod(self, "set_bg_start_angle(start:int)", pika_lvgl_arc_set_bg_start_angleMethod);
-    class_defineMethod(self, "set_change_rate(rate:int)", pika_lvgl_arc_set_change_rateMethod);
-    class_defineMethod(self, "set_end_angle(angle:int)", pika_lvgl_arc_set_end_angleMethod);
-    class_defineMethod(self, "set_mode(mode:int)", pika_lvgl_arc_set_modeMethod);
-    class_defineMethod(self, "set_range(min:int,max:int)", pika_lvgl_arc_set_rangeMethod);
-    class_defineMethod(self, "set_rotation(rotation:int)", pika_lvgl_arc_set_rotationMethod);
-    class_defineMethod(self, "set_start_angle(start:int)", pika_lvgl_arc_set_start_angleMethod);
-    class_defineMethod(self, "set_value(value:int)", pika_lvgl_arc_set_valueMethod);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_arc___init__Method);
+    class_defineMethod(self, "get_angle_end()", pika_lvgl_arc_get_angle_endMethod);
+    class_defineMethod(self, "get_angle_start()", pika_lvgl_arc_get_angle_startMethod);
+    class_defineMethod(self, "get_bg_angle_end()", pika_lvgl_arc_get_bg_angle_endMethod);
+    class_defineMethod(self, "get_bg_angle_start()", pika_lvgl_arc_get_bg_angle_startMethod);
+    class_defineMethod(self, "get_max_value()", pika_lvgl_arc_get_max_valueMethod);
+    class_defineMethod(self, "get_min_value()", pika_lvgl_arc_get_min_valueMethod);
+    class_defineMethod(self, "get_mode()", pika_lvgl_arc_get_modeMethod);
+    class_defineMethod(self, "get_value()", pika_lvgl_arc_get_valueMethod);
+    class_defineMethod(self, "set_angles(start,end)", pika_lvgl_arc_set_anglesMethod);
+    class_defineMethod(self, "set_bg_angles(start,end)", pika_lvgl_arc_set_bg_anglesMethod);
+    class_defineMethod(self, "set_bg_end_angle(angle)", pika_lvgl_arc_set_bg_end_angleMethod);
+    class_defineMethod(self, "set_bg_start_angle(start)", pika_lvgl_arc_set_bg_start_angleMethod);
+    class_defineMethod(self, "set_change_rate(rate)", pika_lvgl_arc_set_change_rateMethod);
+    class_defineMethod(self, "set_end_angle(angle)", pika_lvgl_arc_set_end_angleMethod);
+    class_defineMethod(self, "set_mode(mode)", pika_lvgl_arc_set_modeMethod);
+    class_defineMethod(self, "set_range(min,max)", pika_lvgl_arc_set_rangeMethod);
+    class_defineMethod(self, "set_rotation(rotation)", pika_lvgl_arc_set_rotationMethod);
+    class_defineMethod(self, "set_start_angle(start)", pika_lvgl_arc_set_start_angleMethod);
+    class_defineMethod(self, "set_value(value)", pika_lvgl_arc_set_valueMethod);
     return self;
 }
 
@@ -1612,16 +1677,16 @@ void pika_lvgl_bar_set_valueMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_bar(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_bar___init__Method);
-    class_defineMethod(self, "get_max_value()->int", pika_lvgl_bar_get_max_valueMethod);
-    class_defineMethod(self, "get_min_value()->int", pika_lvgl_bar_get_min_valueMethod);
-    class_defineMethod(self, "get_mode()->int", pika_lvgl_bar_get_modeMethod);
-    class_defineMethod(self, "get_start_value()->int", pika_lvgl_bar_get_start_valueMethod);
-    class_defineMethod(self, "get_value()->int", pika_lvgl_bar_get_valueMethod);
-    class_defineMethod(self, "set_mode(mode:int)", pika_lvgl_bar_set_modeMethod);
-    class_defineMethod(self, "set_range(min:int,max:int)", pika_lvgl_bar_set_rangeMethod);
-    class_defineMethod(self, "set_start_value(start_value:int,anim:int)", pika_lvgl_bar_set_start_valueMethod);
-    class_defineMethod(self, "set_value(value:int,anim:int)", pika_lvgl_bar_set_valueMethod);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_bar___init__Method);
+    class_defineMethod(self, "get_max_value()", pika_lvgl_bar_get_max_valueMethod);
+    class_defineMethod(self, "get_min_value()", pika_lvgl_bar_get_min_valueMethod);
+    class_defineMethod(self, "get_mode()", pika_lvgl_bar_get_modeMethod);
+    class_defineMethod(self, "get_start_value()", pika_lvgl_bar_get_start_valueMethod);
+    class_defineMethod(self, "get_value()", pika_lvgl_bar_get_valueMethod);
+    class_defineMethod(self, "set_mode(mode)", pika_lvgl_bar_set_modeMethod);
+    class_defineMethod(self, "set_range(min,max)", pika_lvgl_bar_set_rangeMethod);
+    class_defineMethod(self, "set_start_value(start_value,anim)", pika_lvgl_bar_set_start_valueMethod);
+    class_defineMethod(self, "set_value(value,anim)", pika_lvgl_bar_set_valueMethod);
     return self;
 }
 
@@ -1638,7 +1703,7 @@ void pika_lvgl_btn___init__Method(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_btn(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_btn___init__Method);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_btn___init__Method);
     return self;
 }
 
@@ -1670,10 +1735,10 @@ void pika_lvgl_checkbox_set_text_staticMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_checkbox(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_checkbox___init__Method);
-    class_defineMethod(self, "get_text()->str", pika_lvgl_checkbox_get_textMethod);
-    class_defineMethod(self, "set_text(txt:str)", pika_lvgl_checkbox_set_textMethod);
-    class_defineMethod(self, "set_text_static(txt:str)", pika_lvgl_checkbox_set_text_staticMethod);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_checkbox___init__Method);
+    class_defineMethod(self, "get_text()", pika_lvgl_checkbox_get_textMethod);
+    class_defineMethod(self, "set_text(txt)", pika_lvgl_checkbox_set_textMethod);
+    class_defineMethod(self, "set_text_static(txt)", pika_lvgl_checkbox_set_text_staticMethod);
     return self;
 }
 
@@ -1789,27 +1854,27 @@ void pika_lvgl_dropdown_set_textMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_dropdown(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_dropdown___init__Method);
-    class_defineMethod(self, "add_option(option:str,pos:int)", pika_lvgl_dropdown_add_optionMethod);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_dropdown___init__Method);
+    class_defineMethod(self, "add_option(option,pos)", pika_lvgl_dropdown_add_optionMethod);
     class_defineMethod(self, "clear_options()", pika_lvgl_dropdown_clear_optionsMethod);
     class_defineMethod(self, "close()", pika_lvgl_dropdown_closeMethod);
-    class_defineMethod(self, "get_dir()->int", pika_lvgl_dropdown_get_dirMethod);
-    class_defineMethod(self, "get_option_cnt()->int", pika_lvgl_dropdown_get_option_cntMethod);
-    class_defineMethod(self, "get_option_index(option:str)->int", pika_lvgl_dropdown_get_option_indexMethod);
-    class_defineMethod(self, "get_options()->str", pika_lvgl_dropdown_get_optionsMethod);
-    class_defineMethod(self, "get_selected()->int", pika_lvgl_dropdown_get_selectedMethod);
-    class_defineMethod(self, "get_selected_highlight()->int", pika_lvgl_dropdown_get_selected_highlightMethod);
-    class_defineMethod(self, "get_selected_str()->str", pika_lvgl_dropdown_get_selected_strMethod);
-    class_defineMethod(self, "get_symbol()->int", pika_lvgl_dropdown_get_symbolMethod);
-    class_defineMethod(self, "get_text()->str", pika_lvgl_dropdown_get_textMethod);
-    class_defineMethod(self, "is_open()->int", pika_lvgl_dropdown_is_openMethod);
+    class_defineMethod(self, "get_dir()", pika_lvgl_dropdown_get_dirMethod);
+    class_defineMethod(self, "get_option_cnt()", pika_lvgl_dropdown_get_option_cntMethod);
+    class_defineMethod(self, "get_option_index(option)", pika_lvgl_dropdown_get_option_indexMethod);
+    class_defineMethod(self, "get_options()", pika_lvgl_dropdown_get_optionsMethod);
+    class_defineMethod(self, "get_selected()", pika_lvgl_dropdown_get_selectedMethod);
+    class_defineMethod(self, "get_selected_highlight()", pika_lvgl_dropdown_get_selected_highlightMethod);
+    class_defineMethod(self, "get_selected_str()", pika_lvgl_dropdown_get_selected_strMethod);
+    class_defineMethod(self, "get_symbol()", pika_lvgl_dropdown_get_symbolMethod);
+    class_defineMethod(self, "get_text()", pika_lvgl_dropdown_get_textMethod);
+    class_defineMethod(self, "is_open()", pika_lvgl_dropdown_is_openMethod);
     class_defineMethod(self, "open()", pika_lvgl_dropdown_openMethod);
-    class_defineMethod(self, "set_dir(dir:int)", pika_lvgl_dropdown_set_dirMethod);
-    class_defineMethod(self, "set_options(options:str)", pika_lvgl_dropdown_set_optionsMethod);
-    class_defineMethod(self, "set_selected(sel_opt:int)", pika_lvgl_dropdown_set_selectedMethod);
-    class_defineMethod(self, "set_selected_hightlight(en:int)", pika_lvgl_dropdown_set_selected_hightlightMethod);
-    class_defineMethod(self, "set_symbol(symbol:str)", pika_lvgl_dropdown_set_symbolMethod);
-    class_defineMethod(self, "set_text(txt:str)", pika_lvgl_dropdown_set_textMethod);
+    class_defineMethod(self, "set_dir(dir)", pika_lvgl_dropdown_set_dirMethod);
+    class_defineMethod(self, "set_options(options)", pika_lvgl_dropdown_set_optionsMethod);
+    class_defineMethod(self, "set_selected(sel_opt)", pika_lvgl_dropdown_set_selectedMethod);
+    class_defineMethod(self, "set_selected_hightlight(en)", pika_lvgl_dropdown_set_selected_hightlightMethod);
+    class_defineMethod(self, "set_symbol(symbol)", pika_lvgl_dropdown_set_symbolMethod);
+    class_defineMethod(self, "set_text(txt)", pika_lvgl_dropdown_set_textMethod);
     return self;
 }
 
@@ -1826,7 +1891,7 @@ void pika_lvgl_indev_t_get_vectMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_indev_t(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "get_vect(point:point_t)", pika_lvgl_indev_t_get_vectMethod);
+    class_defineMethod(self, "get_vect(point)", pika_lvgl_indev_t_get_vectMethod);
     return self;
 }
 
@@ -1864,11 +1929,11 @@ void pika_lvgl_label_set_textMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_label(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_label___init__Method);
-    class_defineMethod(self, "set_long_mode(mode:int)", pika_lvgl_label_set_long_modeMethod);
-    class_defineMethod(self, "set_recolor(en:int)", pika_lvgl_label_set_recolorMethod);
-    class_defineMethod(self, "set_style_text_align(value:int,selector:int)", pika_lvgl_label_set_style_text_alignMethod);
-    class_defineMethod(self, "set_text(txt:str)", pika_lvgl_label_set_textMethod);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_label___init__Method);
+    class_defineMethod(self, "set_long_mode(mode)", pika_lvgl_label_set_long_modeMethod);
+    class_defineMethod(self, "set_recolor(en)", pika_lvgl_label_set_recolorMethod);
+    class_defineMethod(self, "set_style_text_align(value,selector)", pika_lvgl_label_set_style_text_alignMethod);
+    class_defineMethod(self, "set_text(txt)", pika_lvgl_label_set_textMethod);
     return self;
 }
 
@@ -1901,8 +1966,8 @@ void pika_lvgl_lv_event_get_targetMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_lv_event(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "get_code()->int", pika_lvgl_lv_event_get_codeMethod);
-    class_defineMethod(self, "get_target()->lv_obj", pika_lvgl_lv_event_get_targetMethod);
+    class_defineMethod(self, "get_code()", pika_lvgl_lv_event_get_codeMethod);
+    class_defineMethod(self, "get_target()", pika_lvgl_lv_event_get_targetMethod);
     return self;
 }
 
@@ -1979,17 +2044,17 @@ void pika_lvgl_lv_obj_update_layoutMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_lv_obj(Args *args){
     PikaObj *self = New_TinyObj(args);
-    class_defineMethod(self, "add_event_cb(event_cb:any,filter:int,user_data:pointer)", pika_lvgl_lv_obj_add_event_cbMethod);
-    class_defineMethod(self, "add_state(state:int)", pika_lvgl_lv_obj_add_stateMethod);
-    class_defineMethod(self, "add_style(style:style_t,selector:int)", pika_lvgl_lv_obj_add_styleMethod);
-    class_defineMethod(self, "align(align:int,x_ofs:int,y_ofs:int)", pika_lvgl_lv_obj_alignMethod);
+    class_defineMethod(self, "add_event_cb(event_cb,filter,user_data)", pika_lvgl_lv_obj_add_event_cbMethod);
+    class_defineMethod(self, "add_state(state)", pika_lvgl_lv_obj_add_stateMethod);
+    class_defineMethod(self, "add_style(style,selector)", pika_lvgl_lv_obj_add_styleMethod);
+    class_defineMethod(self, "align(align,x_ofs,y_ofs)", pika_lvgl_lv_obj_alignMethod);
     class_defineMethod(self, "center()", pika_lvgl_lv_obj_centerMethod);
-    class_defineMethod(self, "get_x()->int", pika_lvgl_lv_obj_get_xMethod);
-    class_defineMethod(self, "get_y()->int", pika_lvgl_lv_obj_get_yMethod);
-    class_defineMethod(self, "set_hight(h:int)", pika_lvgl_lv_obj_set_hightMethod);
-    class_defineMethod(self, "set_pos(x:int,y:int)", pika_lvgl_lv_obj_set_posMethod);
-    class_defineMethod(self, "set_size(size_x:int,size_y:int)", pika_lvgl_lv_obj_set_sizeMethod);
-    class_defineMethod(self, "set_width(w:int)", pika_lvgl_lv_obj_set_widthMethod);
+    class_defineMethod(self, "get_x()", pika_lvgl_lv_obj_get_xMethod);
+    class_defineMethod(self, "get_y()", pika_lvgl_lv_obj_get_yMethod);
+    class_defineMethod(self, "set_hight(h)", pika_lvgl_lv_obj_set_hightMethod);
+    class_defineMethod(self, "set_pos(x,y)", pika_lvgl_lv_obj_set_posMethod);
+    class_defineMethod(self, "set_size(size_x,size_y)", pika_lvgl_lv_obj_set_sizeMethod);
+    class_defineMethod(self, "set_width(w)", pika_lvgl_lv_obj_set_widthMethod);
     class_defineMethod(self, "update_layout()", pika_lvgl_lv_obj_update_layoutMethod);
     return self;
 }
@@ -2017,8 +2082,8 @@ void pika_lvgl_lv_timer_t_set_periodMethod(PikaObj *self, Args *args){
 PikaObj *New_pika_lvgl_lv_timer_t(Args *args){
     PikaObj *self = New_TinyObj(args);
     class_defineMethod(self, "_del()", pika_lvgl_lv_timer_t__delMethod);
-    class_defineMethod(self, "set_cb(cb:any)", pika_lvgl_lv_timer_t_set_cbMethod);
-    class_defineMethod(self, "set_period(period:int)", pika_lvgl_lv_timer_t_set_periodMethod);
+    class_defineMethod(self, "set_cb(cb)", pika_lvgl_lv_timer_t_set_cbMethod);
+    class_defineMethod(self, "set_period(period)", pika_lvgl_lv_timer_t_set_periodMethod);
     return self;
 }
 
@@ -2062,9 +2127,9 @@ void pika_lvgl_roller_set_visible_row_countMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_roller(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_roller___init__Method);
-    class_defineMethod(self, "set_options(options:str,mode:int)", pika_lvgl_roller_set_optionsMethod);
-    class_defineMethod(self, "set_visible_row_count(row_cnt:int)", pika_lvgl_roller_set_visible_row_countMethod);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_roller___init__Method);
+    class_defineMethod(self, "set_options(options,mode)", pika_lvgl_roller_set_optionsMethod);
+    class_defineMethod(self, "set_visible_row_count(row_cnt)", pika_lvgl_roller_set_visible_row_countMethod);
     return self;
 }
 
@@ -2081,7 +2146,7 @@ void pika_lvgl_slider___init__Method(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_slider(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_slider___init__Method);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_slider___init__Method);
     return self;
 }
 
@@ -2148,15 +2213,15 @@ PikaObj *New_pika_lvgl_style_t(Args *args){
     PikaObj *self = New_TinyObj(args);
     class_defineMethod(self, "__init__()", pika_lvgl_style_t___init__Method);
     class_defineMethod(self, "init()", pika_lvgl_style_t_initMethod);
-    class_defineMethod(self, "set_bg_color(color:lv_color_t)", pika_lvgl_style_t_set_bg_colorMethod);
-    class_defineMethod(self, "set_bg_opa(opa:int)", pika_lvgl_style_t_set_bg_opaMethod);
-    class_defineMethod(self, "set_outline_color(color:lv_color_t)", pika_lvgl_style_t_set_outline_colorMethod);
-    class_defineMethod(self, "set_outline_pad(pad:int)", pika_lvgl_style_t_set_outline_padMethod);
-    class_defineMethod(self, "set_outline_width(w:int)", pika_lvgl_style_t_set_outline_widthMethod);
-    class_defineMethod(self, "set_radius(radius:int)", pika_lvgl_style_t_set_radiusMethod);
-    class_defineMethod(self, "set_shadow_color(color:lv_color_t)", pika_lvgl_style_t_set_shadow_colorMethod);
-    class_defineMethod(self, "set_shadow_spread(s:int)", pika_lvgl_style_t_set_shadow_spreadMethod);
-    class_defineMethod(self, "set_shadow_width(w:int)", pika_lvgl_style_t_set_shadow_widthMethod);
+    class_defineMethod(self, "set_bg_color(color)", pika_lvgl_style_t_set_bg_colorMethod);
+    class_defineMethod(self, "set_bg_opa(opa)", pika_lvgl_style_t_set_bg_opaMethod);
+    class_defineMethod(self, "set_outline_color(color)", pika_lvgl_style_t_set_outline_colorMethod);
+    class_defineMethod(self, "set_outline_pad(pad)", pika_lvgl_style_t_set_outline_padMethod);
+    class_defineMethod(self, "set_outline_width(w)", pika_lvgl_style_t_set_outline_widthMethod);
+    class_defineMethod(self, "set_radius(radius)", pika_lvgl_style_t_set_radiusMethod);
+    class_defineMethod(self, "set_shadow_color(color)", pika_lvgl_style_t_set_shadow_colorMethod);
+    class_defineMethod(self, "set_shadow_spread(s)", pika_lvgl_style_t_set_shadow_spreadMethod);
+    class_defineMethod(self, "set_shadow_width(w)", pika_lvgl_style_t_set_shadow_widthMethod);
     return self;
 }
 
@@ -2173,7 +2238,7 @@ void pika_lvgl_switch___init__Method(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_switch(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_switch___init__Method);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_switch___init__Method);
     return self;
 }
 
@@ -2197,8 +2262,8 @@ void pika_lvgl_table_set_cell_valueMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_table(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_table___init__Method);
-    class_defineMethod(self, "set_cell_value(row:int,col:int,txt:str)", pika_lvgl_table_set_cell_valueMethod);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_table___init__Method);
+    class_defineMethod(self, "set_cell_value(row,col,txt)", pika_lvgl_table_set_cell_valueMethod);
     return self;
 }
 
@@ -2220,8 +2285,8 @@ void pika_lvgl_textarea_set_one_lineMethod(PikaObj *self, Args *args){
 
 PikaObj *New_pika_lvgl_textarea(Args *args){
     PikaObj *self = New_pika_lvgl_lv_obj(args);
-    class_defineMethod(self, "__init__(parent:lv_obj)", pika_lvgl_textarea___init__Method);
-    class_defineMethod(self, "set_one_line(en:int)", pika_lvgl_textarea_set_one_lineMethod);
+    class_defineMethod(self, "__init__(parent)", pika_lvgl_textarea___init__Method);
+    class_defineMethod(self, "set_one_line(en)", pika_lvgl_textarea_set_one_lineMethod);
     return self;
 }
 

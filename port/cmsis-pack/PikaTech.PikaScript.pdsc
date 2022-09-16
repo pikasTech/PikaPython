@@ -243,6 +243,7 @@
 <file attr="config" category="header"  name="pikascript-api/PikaStdData.h" />
 <file attr="config" category="header"  name="pikascript-api/PikaStdData_ByteArray.h" />
 <file attr="config" category="header"  name="pikascript-api/PikaStdData_Dict.h" />
+<file attr="config" category="header"  name="pikascript-api/PikaStdData_dict_items.h" />
 <file attr="config" category="header"  name="pikascript-api/PikaStdData_dict_keys.h" />
 <file attr="config" category="header"  name="pikascript-api/PikaStdData_FILEIO.h" />
 <file attr="config" category="header"  name="pikascript-api/PikaStdData_List.h" />

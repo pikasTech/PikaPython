@@ -64,6 +64,12 @@
         #ifndef PIKA_SYNTAX_LEVEL
             #define PIKA_SYNTAX_LEVEL PIKA_SYNTAX_LEVEL_MINIMAL
         #endif
+
+
+        #ifndef PIKA_STRING_UTF8_ENABLE
+            #define PIKA_STRING_UTF8_ENABLE 0
+        #endif
+
     #endif
 
     /* default optimize */
@@ -288,6 +294,11 @@
 
     #ifndef PIKA_EXEC_ENABLE
         #define PIKA_EXEC_ENABLE 1
+    #endif
+
+    /* support for UTF-8 in PikaStdData_String */
+    #ifndef PIKA_STRING_UTF8_ENABLE
+        #define PIKA_STRING_UTF8_ENABLE 1
     #endif
 
     /* configuration validation */

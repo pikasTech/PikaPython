@@ -8,6 +8,7 @@
 @del "pikascript-api\PikaStdData.h"
 @del "pikascript-api\PikaStdData_ByteArray.h"
 @del "pikascript-api\PikaStdData_Dict.h"
+@del "pikascript-api\PikaStdData_dict_items.h"
 @del "pikascript-api\PikaStdData_dict_keys.h"
 @del "pikascript-api\PikaStdData_FILEIO.h"
 @del "pikascript-api\PikaStdData_List.h"
