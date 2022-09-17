@@ -1,4 +1,11 @@
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
+#else
+#include "../../lvgl.h"
+#endif
+
+#ifdef PIKASCRIPT
+
 #include "pika_lvgl_lv_event.h"
 
 int pika_lvgl_lv_event_get_code(PikaObj *self){
@@ -14,3 +21,4 @@ PikaObj* pika_lvgl_lv_event_get_target(PikaObj *self){
     obj_setPtr(new_obj, "lv_obj", lv_obj);
     return new_obj;
 }
+#endif
