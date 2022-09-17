@@ -1247,7 +1247,7 @@ static char* __get_transferd_str(Args* buffs, char* str, size_t* iout_p) {
             char hex_str[] = "0x00";
             hex_str[2] = str_rep[i + 2];
             hex_str[3] = str_rep[i + 3];
-            char hex = (char)strtol(hex_str, NULL, 0);
+            char hex = (char)strtoll(hex_str, NULL, 0);
             transfered_str[i_out++] = hex;
             i += 3;
             continue;
@@ -1373,18 +1373,18 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
     Arg* numArg = arg_ret_reg;
     /* hex */
     if (data[1] == 'x' || data[1] == 'X') {
-        return arg_setInt(numArg, "", strtol(data, NULL, 0));
+        return arg_setInt(numArg, "", strtoll(data, NULL, 0));
     }
     if (data[1] == 'o' || data[1] == 'O') {
-        char strtol_buff[10] = {0};
-        strtol_buff[0] = '0';
-        __platform_memcpy(strtol_buff + 1, data + 2, strGetSize(data) - 2);
-        return arg_setInt(numArg, "", strtol(strtol_buff, NULL, 0));
+        char strtoll_buff[10] = {0};
+        strtoll_buff[0] = '0';
+        __platform_memcpy(strtoll_buff + 1, data + 2, strGetSize(data) - 2);
+        return arg_setInt(numArg, "", strtoll(strtoll_buff, NULL, 0));
     }
     if (data[1] == 'b' || data[1] == 'B') {
-        char strtol_buff[10] = {0};
-        __platform_memcpy(strtol_buff, data + 2, strGetSize(data) - 2);
-        return arg_setInt(numArg, "", strtol(strtol_buff, NULL, 2));
+        char strtoll_buff[10] = {0};
+        __platform_memcpy(strtoll_buff, data + 2, strGetSize(data) - 2);
+        return arg_setInt(numArg, "", strtoll(strtoll_buff, NULL, 2));
     }
     /* float */
     if (strIsContain(data, '.') ||
@@ -2664,7 +2664,11 @@ void VMState_solveUnusedStack(VMState* vm) {
             char* res = obj_toStr(arg_getPtr(arg));
             __platform_printf("%s\r\n", res);
         } else if (type == ARG_TYPE_INT) {
+            #if PIKA_PRINT_LLD_ENABLE
+            __platform_printf("%lld\r\n", arg_getInt(arg));
+            #else
             __platform_printf("%d\r\n", (int)arg_getInt(arg));
+            #endif
         } else if (type == ARG_TYPE_FLOAT) {
             __platform_printf("%f\r\n", arg_getFloat(arg));
         } else if (type == ARG_TYPE_STRING) {

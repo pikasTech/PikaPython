@@ -1690,3 +1690,43 @@ TEST(vm, pass_) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, test64_hex) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "import GTestTask\n"
+            "res = GTestTask.test64(0xffffffff, 20)\n");
+    /* collect */
+    int64_t res = obj_getInt(pikaMain, "res");
+    /* assert */
+    EXPECT_EQ(res, 4294967295 * 20);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, test64_hex_print) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "0xffffffff\n"
+            "print(0xffffffff)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "4294967295\r\n");
+    EXPECT_STREQ(log_buff[1], "4294967295\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

@@ -401,10 +401,10 @@ char* getPrintSring(Args* self, char* name, char* valString) {
     return res;
 }
 
-char* getPrintStringFromInt(Args* self, char* name, int32_t val) {
+char* getPrintStringFromInt(Args* self, char* name, int64_t val) {
     Args buffs = {0};
     char* res = NULL;
-    char* valString = strsFormat(&buffs, 32, "%d", val);
+    char* valString = strsFormat(&buffs, 32, "%lld", val);
     res = getPrintSring(self, name, valString);
     strsDeinit(&buffs);
     return res;
@@ -440,7 +440,7 @@ char* args_print(Args* self, char* name) {
     }
 
     if (type == ARG_TYPE_INT) {
-        int32_t val = args_getInt(self, name);
+        int64_t val = args_getInt(self, name);
         res = getPrintStringFromInt(self, name, val);
         goto exit;
     }

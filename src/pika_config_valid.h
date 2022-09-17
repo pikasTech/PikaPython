@@ -300,6 +300,10 @@
     #ifndef PIKA_STRING_UTF8_ENABLE
         #define PIKA_STRING_UTF8_ENABLE 1
     #endif
+    
+    #ifndef PIKA_PRINT_LLD_ENABLE
+        #define PIKA_PRINT_LLD_ENABLE 1
+    #endif
 
     /* configuration validation */
 
