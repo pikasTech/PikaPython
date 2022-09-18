@@ -1,6 +1,6 @@
 import _modbus
 
-"""
+
 class ModBus(_modbus._ModBus):
     def deserializeReadBits(self, msgLength: int):
         dest = bytes(msgLength)
@@ -12,7 +12,7 @@ class ModBus(_modbus._ModBus):
         super().deserializeReadInputBits(msgLength, dest)
         return list(dest)
 
-    def deserializeReadRegisters(self, msgLength: int):
+    def deserializeReadRegisters(self, msgLength: int) -> list:
         dest = bytes(2 * msgLength)
         super().deserializeReadRegisters(msgLength, dest)
         ret = []
@@ -56,4 +56,3 @@ class ModBusRTU(ModBus):
 class ModBusTCP(ModBus):
     def __init__(self, sendBuffSize: int, readBuffSize: int):
         self.__init__tcp(sendBuffSize, readBuffSize)
-"""

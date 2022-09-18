@@ -1,9 +1,7 @@
 #include "_modbus__ModBus.h"
-#include "_modbus__ModBusRTU.h"
-#include "_modbus__ModBusTCP.h"
 #include "agile_modbus.h"
 
-void _modbus__ModBusRTU___init__(PikaObj* self,
+void _modbus__ModBus___init__rtu(PikaObj* self,
                                  int sendBUffSize,
                                  int readBuffSize) {
     agile_modbus_rtu_t ctx_rtu = {0};
@@ -22,7 +20,7 @@ void _modbus__ModBus_setSlave(PikaObj* self, int slave) {
     agile_modbus_set_slave(ctx, slave);
 }
 
-void _modbus__ModBusTCP___init__(PikaObj* self,
+void _modbus__ModBus___init__tcp(PikaObj* self,
                                  int sendBuffSize,
                                  int readBuffSize) {
     agile_modbus_tcp_t ctx_tcp = {0};
@@ -180,4 +178,14 @@ int _modbus__ModBus_serializeWriteRegisters(PikaObj* self,
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
     return agile_modbus_serialize_write_registers(ctx, addr, nb,
                                                   (uint16_t*)src);
+}
+
+Arg* _modbus__ModBus_getSendBuff(PikaObj* self) {
+    agile_modbus_t* ctx = obj_getPtr(self, "ctx");
+    return arg_newBytes(ctx->send_buf, ctx->send_bufsz);
+}
+
+Arg* _modbus__ModBus_getReadBuff(PikaObj* self) {
+    agile_modbus_t* ctx = obj_getPtr(self, "ctx");
+    return arg_newBytes(ctx->read_buf, ctx->read_bufsz);
 }
