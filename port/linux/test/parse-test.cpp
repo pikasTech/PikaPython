@@ -4311,4 +4311,26 @@ TEST(parser, pass_) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, modbus_1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "dest[i + 1] * 256\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 REF dest\n"
+                 "3 REF i\n"
+                 "3 NUM 1\n"
+                 "2 OPT +\n"
+                 "1 SLC \n"
+                 "1 NUM 256\n"
+                 "0 OPT *\n"
+                 "B0\n");
+
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
