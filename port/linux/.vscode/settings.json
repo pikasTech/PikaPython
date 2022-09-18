@@ -60,6 +60,10 @@
         "streambuf": "c",
         "tuple": "c",
         "typeinfo": "c",
-        "variant": "c"
+        "variant": "c",
+        "_modbus__modbus.h": "c",
+        "agile_modbus.h": "c",
+        "_modbus__modbusrtu.h": "c",
+        "_modbus__modbustcp.h": "c"
     }
 }

@@ -20,6 +20,8 @@ import socket
 import random
 import re
 import PikaNN
+import modbus
+
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')
 print('mem used max:')
