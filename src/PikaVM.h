@@ -77,6 +77,7 @@ struct VMState {
     uint8_t try_error_code;
     uint32_t ins_cnt;
     PIKA_BOOL in_super;
+    uint8_t super_invoke_deepth;
     PikaObj* lreg[PIKA_REGIST_SIZE];
     PIKA_BOOL ireg[PIKA_REGIST_SIZE];
     RunState* run_state;

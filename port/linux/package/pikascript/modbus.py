@@ -52,8 +52,7 @@ class ModBus(_modbus._ModBus):
 
     def deserializeReadRegisters(self, msg: bytes) -> list:
         self.readBuff = msg
-        length = len(msg)
-        dest = super().deserializeReadRegisters(length)
+        dest = super().deserializeReadRegisters(len(msg))
         ret = []
         for i in range(0, len(dest), 2):
             ret.append(int(dest[i]) + int(dest[i + 1]) * 256)

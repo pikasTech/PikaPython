@@ -1527,6 +1527,7 @@ TEST(vm, super_val_) {
     char* t2_a = obj_getStr(pikaMain, "t2.a");
     /* assert */
     EXPECT_EQ(t1_a, 1);
+    EXPECT_STREQ(t2_a, "1");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

@@ -1051,6 +1051,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (strEqu(run_path, "super")) {
         run_path = _find_super_class_name(vm);
         vm->in_super = PIKA_TRUE;
+        vm->super_invoke_deepth = VMState_getInvokeDeepthNow(vm);
         skip_init = PIKA_TRUE;
     }
 #endif
@@ -1060,13 +1061,6 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         return_arg = arg_newMetaObj(New_TinyObj);
         goto exit;
     }
-
-#if !PIKA_NANO_ENABLE
-    if (!skip_init && vm->in_super) {
-        vm->in_super = PIKA_FALSE;
-        obj_this = obj_getPtr(vm->locals, _find_self_name(vm));
-    }
-#endif
 
     /* get method host obj from reg */
     if (NULL == method_host && _checkLReg(run_path)) {
@@ -1119,6 +1113,14 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         __platform_printf("Error: method '%s' no found.\r\n", run_path);
         goto exit;
     }
+
+#if !PIKA_NANO_ENABLE
+    if (!skip_init && vm->in_super &&
+        VMState_getInvokeDeepthNow(vm) == vm->super_invoke_deepth - 1) {
+        vm->in_super = PIKA_FALSE;
+        obj_this = obj_getPtr(vm->locals, _find_self_name(vm));
+    }
+#endif
 
     /* get object this */
     if (NULL == obj_this) {
@@ -2664,11 +2666,11 @@ void VMState_solveUnusedStack(VMState* vm) {
             char* res = obj_toStr(arg_getPtr(arg));
             __platform_printf("%s\r\n", res);
         } else if (type == ARG_TYPE_INT) {
-            #if PIKA_PRINT_LLD_ENABLE
+#if PIKA_PRINT_LLD_ENABLE
             __platform_printf("%lld\r\n", arg_getInt(arg));
-            #else
+#else
             __platform_printf("%d\r\n", (int)arg_getInt(arg));
-            #endif
+#endif
         } else if (type == ARG_TYPE_FLOAT) {
             __platform_printf("%f\r\n", arg_getFloat(arg));
         } else if (type == ARG_TYPE_STRING) {
@@ -2706,6 +2708,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
         .run_state = run_state,
         .ins_cnt = 0,
         .in_super = PIKA_FALSE,
+        .super_invoke_deepth = 0,
     };
     stack_init(&(vm.stack));
     VMState_initReg(&vm);
