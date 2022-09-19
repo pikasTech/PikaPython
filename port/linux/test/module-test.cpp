@@ -322,10 +322,12 @@ TEST(modbus, rtu_master) {
     pikaVM_runSingleFile(pikaMain, "test/python/modbus/rtu_master.py");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[1],
+    EXPECT_STREQ(log_buff[3], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[2],
                  "b'\\x01\\x03\\x00\\x00\\x00\\x0a\\xc5\\xcd'\r\n");
-    EXPECT_STREQ(log_buff[0], "[0, 0, 1234, 0, 0, 123, 0, 0, 0, 0]\r\n");
+    EXPECT_STREQ(log_buff[1], "[0, 0, 1234, 0, 0, 123, 0, 0, 0, 0]\r\n");
+    EXPECT_STREQ(log_buff[0],
+                 "b'\\x01\\x06\\x00\\x00\\x12\\x34\\x84\\xbd'\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
