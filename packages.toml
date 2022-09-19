@@ -362,3 +362,7 @@ releases = [
   "v0.0.1 9f9579c54ebddb12c66afc8da64a987767ff512f",
   "v0.1.0 faa9c6230149d09188114af7af822e5d34af6b55"
 ]
+
+[[packages]]
+name = "modbus"
+releases = [ "v0.0.1 729ce8a497d73b53888180b9f6d0dfdac145df26" ]
