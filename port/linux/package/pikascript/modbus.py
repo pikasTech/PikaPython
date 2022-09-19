@@ -29,10 +29,7 @@ class ModBus(_modbus._ModBus):
         return ret
 
     def serializeWriteBits(self, addr: int, nb: int, src: list):
-        src = bytes(len(src))
-        for i in range(len(src)):
-            src[i] = 1 if src[i] else 0
-        return super().serializeWriteBits(addr, nb, src)
+        return super().serializeWriteBits(addr, nb, bytes(src))
 
     def serializeWriteRegisters(self, addr: int, nb: int, src: list):
         _src = bytes(2 * len(src))
