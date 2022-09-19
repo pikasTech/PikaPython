@@ -266,4 +266,34 @@ TEST(dict, items_kv) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stddata, list_str) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "list('test')");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "['t', 'e', 's', 't']\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, list_bytes) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "list(b'test')");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "[116, 101, 115, 116]\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

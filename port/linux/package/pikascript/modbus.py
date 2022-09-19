@@ -2,12 +2,12 @@ import _modbus
 
 
 class ModBus(_modbus._ModBus):
-    def deserializeReadBits(self, msgLength: int):
+    def deserializeReadBits(self, msgLength: int) -> list:
         dest = bytes(msgLength)
         super().deserializeReadBits(msgLength, dest)
         return list(dest)
 
-    def deserializeReadInputBits(self, msgLength: int):
+    def deserializeReadInputBits(self, msgLength: int) -> list:
         dest = bytes(msgLength)
         super().deserializeReadInputBits(msgLength, dest)
         return list(dest)

@@ -98,7 +98,6 @@ TEST(compiler, task) {
     byteCodeFrame_deinit(&bytecode_frame);
     strsDeinit(&buffs);
     EXPECT_EQ(pikaMemNow(), 0);
-
 }
 
 TEST(compiler, demo1) {
@@ -609,6 +608,17 @@ TEST(compiler, __contains__) {
 
 TEST(compiler, __callback) {
     char* lines = "__callback(__frameBuffer, __isNewFrame)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __list) {
+    char* lines =
+        "__res = []\n"
+        "for __item in __list:\n"
+        "    __res.append(__item)\n"
+        "del __item\n"
+        "del __list\n";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
