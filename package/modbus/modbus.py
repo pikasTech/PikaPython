@@ -2,48 +2,88 @@ import _modbus
 
 
 class ModBus(_modbus._ModBus):
-    def deserializeReadBits(self, msgLength: int) -> list:
-        dest = bytes(msgLength)
-        super().deserializeReadBits(msgLength, dest)
-        return list(dest)
 
-    def deserializeReadInputBits(self, msgLength: int) -> list:
-        dest = bytes(msgLength)
-        super().deserializeReadInputBits(msgLength, dest)
-        return list(dest)
+    def serializeWriteBits(self, addr: int, nb: int, src: list) -> bytes:
+        lenth = super().serializeWriteBits(addr, nb, bytes(src))
+        return self.sendBuff[0:lenth]
 
-    def deserializeReadRegisters(self, msgLength: int) -> list:
-        dest = bytes(2 * msgLength)
-        super().deserializeReadRegisters(msgLength, dest)
-        ret = []
-        for i in range(0, len(dest), 2):
-            ret.append(dest[i] + dest[i + 1] * 256)
-        return ret
-
-    def deserializeReadInputRegisters(self, msgLength: int) -> list:
-        dest = bytes(2 * msgLength)
-        super().deserializeReadInputRegisters(msgLength, dest)
-        ret = []
-        for i in range(0, len(dest), 2):
-            ret.append(dest[i] + dest[i + 1] * 256)
-        return ret
-
-    def serializeWriteBits(self, addr: int, nb: int, src: list):
-        return super().serializeWriteBits(addr, nb, bytes(src))
-
-    def serializeWriteRegisters(self, addr: int, nb: int, src: list):
+    def serializeWriteRegisters(self, addr: int, nb: int, src: list) -> bytes:
         _src = bytes(2 * len(src))
         for i in range(len(src)):
             _src[2 * i] = src[i] % 256
             _src[2 * i + 1] = src[i] // 256
-        return super().serializeWriteRegisters(addr, nb, _src)
+        lenth = super().serializeWriteRegisters(addr, nb, _src)
+        return self.sendBuff[0:lenth]
 
-    def deserializeWriteAndReadRegisters(self, msgLength: int) -> list:
-        dest = bytes(2 * msgLength)
-        super().deserializeWriteAndReadRegisters(msgLength, dest)
+    def serializeReadBits(self, addr: int, nb: int) -> bytes:
+        lenth = super().serializeReadBits(addr, nb)
+        return self.sendBuff[0:lenth]
+
+    def serializeReadInputBits(self, addr: int, nb: int) -> bytes:
+        lenth = super().serializeReadInputBits(addr, nb)
+        return self.sendBuff[0:lenth]
+
+    def serializeReadRegisters(self, addr: int, nb: int) -> bytes:
+        lenth = super().serializeReadRegisters(addr, nb)
+        return self.sendBuff[0:lenth]
+
+    def serializeReadInputRegisters(self, addr: int, nb: int) -> bytes:
+        lenth = super().serializeReadInputRegisters(addr, nb)
+        return self.sendBuff[0:lenth]
+
+    def serializeWriteBit(self, addr: int, status: int) -> bytes:
+        lenth = super().serializeWriteBit(addr, status)
+        return self.sendBuff[0:lenth]
+
+    def serializeWriteRegister(self, addr: int, value: int) -> bytes:
+        lenth = super().serializeWriteRegister(addr, value)
+        return self.sendBuff[0:lenth]
+
+    def serializeMaskWriteRegister(self, addr: int, andMask: int, orMask: int) -> bytes:
+        lenth = super().serializeMaskWriteRegister(addr, andMask, orMask)
+        return self.sendBuff[0:lenth]
+
+    def serializeReportSlaveId(self) -> int:
+        lenth = super().serializeReportSlaveId()
+        return self.sendBuff[0:lenth]
+
+    def deserializeReadRegisters(self, msg: bytes) -> list:
+        self.readBuff = msg
+        length = len(msg)
+        dest = super().deserializeReadRegisters(length)
         ret = []
         for i in range(0, len(dest), 2):
-            ret.append(dest[i] + dest[i + 1] * 256)
+            ret.append(int(dest[i]) + int(dest[i + 1]) * 256)
+        return ret
+
+    def deserializeReadBits(self, msg: bytes) -> list:
+        self.readBuff = msg
+        length = len(msg)
+        dest = super().deserializeReadBits(length)
+        return list(dest)
+
+    def deserializeReadInputBits(self, msg: bytes) -> list:
+        self.readBuff = msg
+        length = len(msg)
+        dest = super().deserializeReadInputBits(length)
+        return list(dest)
+
+    def deserializeReadInputRegisters(self, msg: bytes) -> list:
+        self.readBuff = msg
+        length = len(msg)
+        dest = super().deserializeReadInputRegisters(length)
+        ret = []
+        for i in range(0, len(dest), 2):
+            ret.append(int(dest[i]) + int(dest[i + 1]) * 256)
+        return ret
+
+    def deserializeWriteAndReadRegisters(self, msg: bytes) -> list:
+        self.readBuff = msg
+        length = len(msg)
+        dest = super().deserializeWriteAndReadRegisters(length)
+        ret = []
+        for i in range(0, len(dest), 2):
+            ret.append(int(dest[i]) + int(dest[i + 1]) * 256)
         return ret
 
 

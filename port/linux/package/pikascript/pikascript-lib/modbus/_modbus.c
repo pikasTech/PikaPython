@@ -5,14 +5,14 @@ void _modbus__ModBus___init__rtu(PikaObj* self,
                                  int sendBUffSize,
                                  int readBuffSize) {
     agile_modbus_rtu_t ctx_rtu = {0};
-    agile_modbus_t* ctx = &ctx_rtu._ctx;
     obj_setBytes(self, "sendBuff", NULL, sendBUffSize);
     obj_setBytes(self, "readBuff", NULL, readBuffSize);
     agile_modbus_rtu_init(&ctx_rtu, obj_getBytes(self, "sendBuff"),
                           sendBUffSize, obj_getBytes(self, "readBuff"),
                           readBuffSize);
     obj_setStruct(self, "ctx_rtu", ctx_rtu);
-    obj_setPtr(self, "ctx", ctx);
+    agile_modbus_rtu_t* ctx_rtu_heap = obj_getStruct(self, "ctx_rtu");
+    obj_setPtr(self, "ctx", &ctx_rtu_heap->_ctx);
 }
 
 void _modbus__ModBus_setSlave(PikaObj* self, int slave) {
@@ -24,14 +24,14 @@ void _modbus__ModBus___init__tcp(PikaObj* self,
                                  int sendBuffSize,
                                  int readBuffSize) {
     agile_modbus_tcp_t ctx_tcp = {0};
-    agile_modbus_t* ctx = &ctx_tcp._ctx;
     obj_setBytes(self, "sendBuff", NULL, sendBuffSize);
     obj_setBytes(self, "readBuff", NULL, readBuffSize);
     agile_modbus_tcp_init(&ctx_tcp, obj_getBytes(self, "sendBuff"),
                           sendBuffSize, obj_getBytes(self, "readBuff"),
                           readBuffSize);
     obj_setStruct(self, "ctx_tcp", ctx_tcp);
-    obj_setPtr(self, "ctx", ctx);
+    agile_modbus_tcp_t* ctx_tcp_heap = obj_getStruct(self, "ctx_tcp");
+    obj_setPtr(self, "ctx", &ctx_tcp_heap->_ctx);
 }
 
 int _modbus__ModBus_deserializeMaskWriteRegister(PikaObj* self, int msgLength) {
@@ -39,51 +39,54 @@ int _modbus__ModBus_deserializeMaskWriteRegister(PikaObj* self, int msgLength) {
     return agile_modbus_deserialize_mask_write_register(ctx, msgLength);
 }
 
-int _modbus__ModBus_deserializeReadBits(PikaObj* self,
-                                        int msgLength,
-                                        uint8_t* dest) {
+Arg* _modbus__ModBus_deserializeReadRegisters(PikaObj* self, int msgLength) {
+    uint16_t buff[128] = {0};
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
-    return agile_modbus_deserialize_read_bits(ctx, msgLength, dest);
+    int len = agile_modbus_deserialize_read_registers(ctx, msgLength,
+                                                      (uint16_t*)buff);
+    return arg_newBytes((uint8_t*)buff, len * 2);
 }
 
-int _modbus__ModBus_deserializeReadInputBits(PikaObj* self,
-                                             int msgLength,
-                                             uint8_t* dest) {
+Arg* _modbus__ModBus_deserializeReadBits(PikaObj* self, int msgLength) {
+    uint8_t buff[128] = {0};
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
-    return agile_modbus_deserialize_read_input_bits(ctx, msgLength, dest);
+    int len = agile_modbus_deserialize_read_bits(ctx, msgLength, buff);
+    return arg_newBytes(buff, len);
 }
 
-int _modbus__ModBus_deserializeReadInputRegisters(PikaObj* self,
-                                                  int msgLength,
-                                                  uint8_t* dest) {
+Arg* _modbus__ModBus_deserializeReadInputBits(PikaObj* self, int msgLength) {
+    uint8_t buff[128] = {0};
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
-    return agile_modbus_deserialize_read_input_registers(ctx, msgLength,
-                                                         (uint16_t*)dest);
+    int len = agile_modbus_deserialize_read_input_bits(ctx, msgLength, buff);
+    return arg_newBytes(buff, len);
 }
 
-int _modbus__ModBus_deserializeReadRegisters(PikaObj* self,
-                                             int msgLength,
-                                             uint8_t* dest) {
+Arg* _modbus__ModBus_deserializeReadInputRegisters(PikaObj* self,
+                                                   int msgLength) {
+    uint16_t buff[128] = {0};
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
-    return agile_modbus_deserialize_read_registers(ctx, msgLength,
-                                                   (uint16_t*)dest);
+    int len = agile_modbus_deserialize_read_input_registers(ctx, msgLength,
+                                                            (uint16_t*)buff);
+    return arg_newBytes((uint8_t*)buff, len * 2);
 }
 
-int _modbus__ModBus_deserializeReportSlaveId(PikaObj* self,
-                                             int msgLength,
-                                             int maxDest,
-                                             uint8_t* dest) {
+Arg* _modbus__ModBus_deserializeReportSlaveId(PikaObj* self,
+                                              int msgLength,
+                                              int maxDest) {
+    uint8_t buff[128] = {0};
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
-    return agile_modbus_deserialize_report_slave_id(ctx, msgLength, maxDest,
-                                                    dest);
+    int len = agile_modbus_deserialize_report_slave_id(ctx, msgLength, maxDest,
+                                                       (uint8_t*)buff);
+    return arg_newBytes(buff, len);
 }
 
-int _modbus__ModBus_deserializeWriteAndReadRegisters(PikaObj* self,
-                                                     int msgLength,
-                                                     uint8_t* dest) {
+Arg* _modbus__ModBus_deserializeWriteAndReadRegisters(PikaObj* self,
+                                                      int msgLength) {
+    uint16_t buff[128] = {0};
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
-    return agile_modbus_deserialize_write_and_read_registers(ctx, msgLength,
-                                                             (uint16_t*)dest);
+    int len = agile_modbus_deserialize_write_and_read_registers(
+        ctx, msgLength, (uint16_t*)buff);
+    return arg_newBytes((uint8_t*)buff, len * 2);
 }
 
 int _modbus__ModBus_deserializeWriteBit(PikaObj* self, int msgLength) {

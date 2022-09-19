@@ -1502,6 +1502,36 @@ TEST(vm, super_val) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, super_val_) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "class test:\n"
+            "    def test(self, a):\n"
+            "        self.a = a\n"
+            "class test2(test):\n"
+            "    def test(self, a):\n"
+            "        super().test(str(a))\n"
+            "t1 = test()\n"
+            "t2 = test2()\n"
+            "t1.test(1)\n"
+            "t2.test(1)\n");
+    /* collect */
+    int t1_a = obj_getInt(pikaMain, "t1.a");
+    char* t2_a = obj_getStr(pikaMain, "t2.a");
+    /* assert */
+    EXPECT_EQ(t1_a, 1);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 #if !PIKA_NANO_ENABLE
