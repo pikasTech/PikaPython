@@ -3,16 +3,16 @@ import _modbus
 
 class ModBus(_modbus._ModBus):
 
-    def serializeWriteBits(self, addr: int, nb: int, src: list) -> bytes:
-        lenth = super().serializeWriteBits(addr, nb, bytes(src))
+    def serializeWriteBits(self, addr: int, src: list) -> bytes:
+        lenth = super().serializeWriteBits(addr, len(list), bytes(src))
         return self.sendBuff[0:lenth]
 
-    def serializeWriteRegisters(self, addr: int, nb: int, src: list) -> bytes:
+    def serializeWriteRegisters(self, addr: int, src: list) -> bytes:
         _src = bytes(2 * len(src))
         for i in range(len(src)):
             _src[2 * i] = src[i] % 256
             _src[2 * i + 1] = src[i] // 256
-        lenth = super().serializeWriteRegisters(addr, nb, _src)
+        lenth = super().serializeWriteRegisters(addr, len(src), _src)
         return self.sendBuff[0:lenth]
 
     def serializeReadBits(self, addr: int, nb: int) -> bytes:
