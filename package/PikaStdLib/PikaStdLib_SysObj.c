@@ -394,6 +394,23 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
         Arg* bytes = arg_newBytes((uint8_t*)arg_getStr(val), size);
         return bytes;
     }
+#if !PIKA_NANO_ENABLE
+    if (argType_isObject(type)) {
+        PikaObj* obj = arg_getPtr(val);
+        PikaObj* New_PikaStdData_List(Args * args);
+        PikaObj* New_PikaStdData_Tuple(Args * args);
+        if (obj->constructor == New_PikaStdData_List ||
+            obj->constructor == New_PikaStdData_Tuple) {
+            PikaList* list = obj_getPtr(obj, "list");
+            Arg* bytes = arg_newBytes(NULL, list_getSize(list));
+            uint8_t* bytes_raw = arg_getBytes(bytes);
+            for (size_t i = 0; i < list_getSize(list); i++) {
+                bytes_raw[i] = (uint8_t)list_getInt(list, i);
+            }
+            return bytes;
+        }
+    }
+#endif
     obj_setErrorCode(self, 1);
     __platform_printf("Error: input arg type not supported.\r\n");
     return arg_newNull();

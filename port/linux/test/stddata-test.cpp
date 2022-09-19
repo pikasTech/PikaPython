@@ -296,4 +296,19 @@ TEST(stddata, list_bytes) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stddata, bytes_list) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "bytes([1,2,3,4])");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "b'\\x01\\x02\\x03\\x04'\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
