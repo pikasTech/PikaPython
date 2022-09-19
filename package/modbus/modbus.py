@@ -39,7 +39,10 @@ class ModBus(_modbus._ModBus):
         lenth = super().serializeWriteRegister(addr, value)
         return self.sendBuff[0:lenth]
 
-    def serializeMaskWriteRegister(self, addr: int, andMask: int, orMask: int) -> bytes:
+    def serializeMaskWriteRegister(self,
+                                   addr: int,
+                                   andMask: int,
+                                   orMask: int) -> bytes:
         lenth = super().serializeMaskWriteRegister(addr, andMask, orMask)
         return self.sendBuff[0:lenth]
 
