@@ -10,7 +10,7 @@ ProjectPath            :=./
 IntermediateDirectory  :=Obj
 OutDir                 :=$(IntermediateDirectory)
 User                   :=lyon
-Date                   :=17/08/2022
+Date                   :=19/09/2022
 CDKPath                :=D:/C-Sky/CDK
 ToolchainPath          :=D:/C-Sky/CDKRepo/Toolchain/CKV2ElfMinilib/V3.10.29/R/
 LinkerName             :=csky-elfabiv2-gcc
@@ -73,24 +73,18 @@ ASFLAGS  := -mcpu=ck804ef  -mhard-float    -Wa,--gdwarf2
 Objects0=$(IntermediateDirectory)/src_main$(ObjectSuffix) $(IntermediateDirectory)/src_wm_hal_msp$(ObjectSuffix) $(IntermediateDirectory)/src_wm_it$(ObjectSuffix) $(IntermediateDirectory)/src_mytask$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_adc$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_cpu$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_gpio$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_hal$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_i2c$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_internal_flash$(ObjectSuffix) \
 	$(IntermediateDirectory)/drivers_wm_pmu$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_pwm$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_spi$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_spi_flash$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_tim$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_touch$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_uart$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_wdg$(ObjectSuffix) $(IntermediateDirectory)/drivers_wm_lcd$(ObjectSuffix) $(IntermediateDirectory)/bsp_board_init$(ObjectSuffix) \
 	$(IntermediateDirectory)/bsp_startup$(ObjectSuffix) $(IntermediateDirectory)/bsp_system$(ObjectSuffix) $(IntermediateDirectory)/bsp_trap_c$(ObjectSuffix) $(IntermediateDirectory)/bsp_vectors$(ObjectSuffix) $(IntermediateDirectory)/libc_libc_port$(ObjectSuffix) $(IntermediateDirectory)/FreeRTOS_croutine$(ObjectSuffix) $(IntermediateDirectory)/FreeRTOS_event_groups$(ObjectSuffix) $(IntermediateDirectory)/FreeRTOS_list$(ObjectSuffix) $(IntermediateDirectory)/FreeRTOS_queue$(ObjectSuffix) $(IntermediateDirectory)/FreeRTOS_stream_buffer$(ObjectSuffix) \
-	$(IntermediateDirectory)/FreeRTOS_tasks$(ObjectSuffix) $(IntermediateDirectory)/FreeRTOS_timers$(ObjectSuffix) $(IntermediateDirectory)/xt804_cpu_task_sw$(ObjectSuffix) $(IntermediateDirectory)/xt804_port$(ObjectSuffix) $(IntermediateDirectory)/MemMang_heap_5$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaDebug-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaDebug_Debuger-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaMain-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_pikaScript$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdData-api$(ObjectSuffix) \
-	$(IntermediateDirectory)/pikascript-api_PikaStdData_ByteArray-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdData_Dict-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdData_dict_keys-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdData_List-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdData_String-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdData_Utils-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdDevice-api$(ObjectSuffix) 
+	$(IntermediateDirectory)/FreeRTOS_tasks$(ObjectSuffix) $(IntermediateDirectory)/FreeRTOS_timers$(ObjectSuffix) $(IntermediateDirectory)/xt804_cpu_task_sw$(ObjectSuffix) $(IntermediateDirectory)/xt804_port$(ObjectSuffix) $(IntermediateDirectory)/MemMang_heap_5$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api___asset_pikaModules_py_a$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api___pikaBinding$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_pikaScript$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_BaseObj$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataArg$(ObjectSuffix) \
+	$(IntermediateDirectory)/pikascript-core_dataArgs$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataLink$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataLinkNode$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataMemory$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataQueue$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataQueueObj$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataStack$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataString$(ObjectSuffix) 
 
-Objects1=$(IntermediateDirectory)/pikascript-api_PikaStdDevice_ADC-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdDevice_BaseDev-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdDevice_CAN-api$(ObjectSuffix) \
-	$(IntermediateDirectory)/pikascript-api_PikaStdDevice_GPIO-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdDevice_IIC-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdDevice_PWM-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdDevice_SPI-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdDevice_Time-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdDevice_UART-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdLib-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdLib_MemChecker-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdLib_PikaObj-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdLib_RangeObj-api$(ObjectSuffix) \
-	$(IntermediateDirectory)/pikascript-api_PikaStdLib_StringObj-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdLib_SysObj-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdTask-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdTask_Task-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_W801Device-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_W801Device_ADC-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_W801Device_GPIO-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_W801Device_IIC-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_W801Device_PWM-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_W801Device_Time-api$(ObjectSuffix) \
-	$(IntermediateDirectory)/pikascript-api_W801Device_UART-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api___asset_pikaModules_py_a$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdData_Tuple-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-api_PikaStdData_FILEIO-api$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_BaseObj$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataArg$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataArgs$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataLink$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataLinkNode$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataMemory$(ObjectSuffix) \
-	$(IntermediateDirectory)/pikascript-core_dataQueue$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataQueueObj$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataStack$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataString$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_dataStrs$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_PikaCompiler$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_PikaObj$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_PikaParser$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_PikaPlatform$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_PikaVM$(ObjectSuffix) \
-	$(IntermediateDirectory)/pikascript-core_TinyObj$(ObjectSuffix) 
-
-Objects2=$(IntermediateDirectory)/W801Device_fifo$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_ADC$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_common$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_GPIO$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_IIC$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_PWM$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_Time$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_Uart$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_ADC$(ObjectSuffix) \
-	$(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_BaseDev$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_CAN$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_GPIO$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_IIC$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_PWM$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_SPI$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_Time$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_UART$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaDebuger_Debuger$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_Dict$(ObjectSuffix) \
-	$(IntermediateDirectory)/PikaStdLib_PikaStdData_List$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_String$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_Utils$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdLib_MemChecker$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdLib_RangeObj$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdLib_StringObj$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdLib_SysObj$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdTask_Task$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_ByteArray$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_FILEIO$(ObjectSuffix) \
-	$(IntermediateDirectory)/PikaStdLib_PikaStdData_Tuple$(ObjectSuffix) $(IntermediateDirectory)/__rt_entry$(ObjectSuffix) 
+Objects1=$(IntermediateDirectory)/pikascript-core_dataStrs$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_PikaCompiler$(ObjectSuffix) \
+	$(IntermediateDirectory)/pikascript-core_PikaObj$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_PikaParser$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_PikaPlatform$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_PikaVM$(ObjectSuffix) $(IntermediateDirectory)/pikascript-core_TinyObj$(ObjectSuffix) $(IntermediateDirectory)/W801Device_fifo$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_ADC$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_common$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_GPIO$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_IIC$(ObjectSuffix) \
+	$(IntermediateDirectory)/W801Device_W801_PWM$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_Time$(ObjectSuffix) $(IntermediateDirectory)/W801Device_W801_Uart$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_ADC$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_BaseDev$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_CAN$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_GPIO$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_IIC$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_PWM$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_SPI$(ObjectSuffix) \
+	$(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_Time$(ObjectSuffix) $(IntermediateDirectory)/PikaStdDevice_PikaStdDevice_UART$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaDebuger_Debuger$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_Dict$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_List$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_String$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_Utils$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdLib_MemChecker$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdLib_RangeObj$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdLib_StringObj$(ObjectSuffix) \
+	$(IntermediateDirectory)/PikaStdLib_PikaStdLib_SysObj$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdTask_Task$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_ByteArray$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_FILEIO$(ObjectSuffix) $(IntermediateDirectory)/PikaStdLib_PikaStdData_Tuple$(ObjectSuffix) $(IntermediateDirectory)/__rt_entry$(ObjectSuffix) 
 
 
 
-Objects=$(Objects0) $(Objects1) $(Objects2) 
+Objects=$(Objects0) $(Objects1) 
 
 ##
 ## Main Build Targets 
@@ -289,200 +283,20 @@ $(IntermediateDirectory)/MemMang_heap_5$(ObjectSuffix): ../Libraries/component/F
 Lst/MemMang_heap_5$(PreprocessSuffix): ../Libraries/component/FreeRTOS/portable/MemMang/heap_5.c
 	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/MemMang_heap_5$(PreprocessSuffix) ../Libraries/component/FreeRTOS/portable/MemMang/heap_5.c
 
-$(IntermediateDirectory)/pikascript-api_PikaDebug-api$(ObjectSuffix): pikascript/pikascript-api/PikaDebug-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaDebug-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaDebug-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaDebug-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaDebug-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaDebug-api$(PreprocessSuffix): pikascript/pikascript-api/PikaDebug-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaDebug-api$(PreprocessSuffix) pikascript/pikascript-api/PikaDebug-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaDebug_Debuger-api$(ObjectSuffix): pikascript/pikascript-api/PikaDebug_Debuger-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaDebug_Debuger-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaDebug_Debuger-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaDebug_Debuger-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaDebug_Debuger-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaDebug_Debuger-api$(PreprocessSuffix): pikascript/pikascript-api/PikaDebug_Debuger-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaDebug_Debuger-api$(PreprocessSuffix) pikascript/pikascript-api/PikaDebug_Debuger-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaMain-api$(ObjectSuffix): pikascript/pikascript-api/PikaMain-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaMain-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaMain-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaMain-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaMain-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaMain-api$(PreprocessSuffix): pikascript/pikascript-api/PikaMain-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaMain-api$(PreprocessSuffix) pikascript/pikascript-api/PikaMain-api.c
-
-$(IntermediateDirectory)/pikascript-api_pikaScript$(ObjectSuffix): pikascript/pikascript-api/pikaScript.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/pikaScript.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_pikaScript$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_pikaScript$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_pikaScript$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_pikaScript$(PreprocessSuffix): pikascript/pikascript-api/pikaScript.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_pikaScript$(PreprocessSuffix) pikascript/pikascript-api/pikaScript.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdData-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdData-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdData-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdData-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdData-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdData-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdData-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdData-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdData-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdData-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdData_ByteArray-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdData_ByteArray-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdData_ByteArray-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdData_ByteArray-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdData_ByteArray-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdData_ByteArray-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdData_ByteArray-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdData_ByteArray-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdData_ByteArray-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdData_ByteArray-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdData_Dict-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdData_Dict-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdData_Dict-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdData_Dict-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdData_Dict-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdData_Dict-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdData_Dict-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdData_Dict-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdData_Dict-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdData_Dict-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdData_dict_keys-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdData_dict_keys-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdData_dict_keys-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdData_dict_keys-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdData_dict_keys-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdData_dict_keys-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdData_dict_keys-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdData_dict_keys-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdData_dict_keys-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdData_dict_keys-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdData_List-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdData_List-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdData_List-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdData_List-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdData_List-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdData_List-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdData_List-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdData_List-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdData_List-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdData_List-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdData_String-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdData_String-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdData_String-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdData_String-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdData_String-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdData_String-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdData_String-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdData_String-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdData_String-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdData_String-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdData_Utils-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdData_Utils-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdData_Utils-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdData_Utils-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdData_Utils-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdData_Utils-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdData_Utils-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdData_Utils-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdData_Utils-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdData_Utils-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdDevice-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdDevice-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdDevice-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdDevice-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdDevice-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdDevice-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdDevice-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdDevice-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdDevice-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdDevice-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdDevice_ADC-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdDevice_ADC-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdDevice_ADC-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdDevice_ADC-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdDevice_ADC-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdDevice_ADC-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdDevice_ADC-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdDevice_ADC-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdDevice_ADC-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdDevice_ADC-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdDevice_BaseDev-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdDevice_BaseDev-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdDevice_BaseDev-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdDevice_BaseDev-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdDevice_BaseDev-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdDevice_BaseDev-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdDevice_BaseDev-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdDevice_BaseDev-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdDevice_BaseDev-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdDevice_BaseDev-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdDevice_CAN-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdDevice_CAN-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdDevice_CAN-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdDevice_CAN-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdDevice_CAN-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdDevice_CAN-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdDevice_CAN-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdDevice_CAN-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdDevice_CAN-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdDevice_CAN-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdDevice_GPIO-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdDevice_GPIO-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdDevice_GPIO-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdDevice_GPIO-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdDevice_GPIO-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdDevice_GPIO-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdDevice_GPIO-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdDevice_GPIO-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdDevice_GPIO-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdDevice_GPIO-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdDevice_IIC-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdDevice_IIC-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdDevice_IIC-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdDevice_IIC-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdDevice_IIC-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdDevice_IIC-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdDevice_IIC-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdDevice_IIC-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdDevice_IIC-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdDevice_IIC-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdDevice_PWM-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdDevice_PWM-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdDevice_PWM-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdDevice_PWM-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdDevice_PWM-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdDevice_PWM-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdDevice_PWM-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdDevice_PWM-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdDevice_PWM-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdDevice_PWM-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdDevice_SPI-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdDevice_SPI-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdDevice_SPI-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdDevice_SPI-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdDevice_SPI-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdDevice_SPI-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdDevice_SPI-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdDevice_SPI-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdDevice_SPI-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdDevice_SPI-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdDevice_Time-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdDevice_Time-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdDevice_Time-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdDevice_Time-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdDevice_Time-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdDevice_Time-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdDevice_Time-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdDevice_Time-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdDevice_Time-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdDevice_Time-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdDevice_UART-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdDevice_UART-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdDevice_UART-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdDevice_UART-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdDevice_UART-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdDevice_UART-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdDevice_UART-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdDevice_UART-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdDevice_UART-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdDevice_UART-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdLib-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdLib-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdLib-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdLib-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdLib-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdLib-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdLib-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdLib-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdLib-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdLib-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdLib_MemChecker-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdLib_MemChecker-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdLib_MemChecker-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdLib_MemChecker-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdLib_MemChecker-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdLib_MemChecker-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdLib_MemChecker-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdLib_MemChecker-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdLib_MemChecker-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdLib_MemChecker-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdLib_PikaObj-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdLib_PikaObj-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdLib_PikaObj-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdLib_PikaObj-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdLib_PikaObj-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdLib_PikaObj-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdLib_PikaObj-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdLib_PikaObj-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdLib_PikaObj-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdLib_PikaObj-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdLib_RangeObj-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdLib_RangeObj-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdLib_RangeObj-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdLib_RangeObj-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdLib_RangeObj-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdLib_RangeObj-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdLib_RangeObj-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdLib_RangeObj-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdLib_RangeObj-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdLib_RangeObj-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdLib_StringObj-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdLib_StringObj-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdLib_StringObj-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdLib_StringObj-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdLib_StringObj-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdLib_StringObj-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdLib_StringObj-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdLib_StringObj-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdLib_StringObj-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdLib_StringObj-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdLib_SysObj-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdLib_SysObj-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdLib_SysObj-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdLib_SysObj-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdLib_SysObj-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdLib_SysObj-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdLib_SysObj-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdLib_SysObj-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdLib_SysObj-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdLib_SysObj-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdTask-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdTask-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdTask-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdTask-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdTask-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdTask-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdTask-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdTask-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdTask-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdTask-api.c
-
-$(IntermediateDirectory)/pikascript-api_PikaStdTask_Task-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdTask_Task-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdTask_Task-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdTask_Task-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdTask_Task-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdTask_Task-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdTask_Task-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdTask_Task-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdTask_Task-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdTask_Task-api.c
-
-$(IntermediateDirectory)/pikascript-api_W801Device-api$(ObjectSuffix): pikascript/pikascript-api/W801Device-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/W801Device-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_W801Device-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_W801Device-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_W801Device-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_W801Device-api$(PreprocessSuffix): pikascript/pikascript-api/W801Device-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_W801Device-api$(PreprocessSuffix) pikascript/pikascript-api/W801Device-api.c
-
-$(IntermediateDirectory)/pikascript-api_W801Device_ADC-api$(ObjectSuffix): pikascript/pikascript-api/W801Device_ADC-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/W801Device_ADC-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_W801Device_ADC-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_W801Device_ADC-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_W801Device_ADC-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_W801Device_ADC-api$(PreprocessSuffix): pikascript/pikascript-api/W801Device_ADC-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_W801Device_ADC-api$(PreprocessSuffix) pikascript/pikascript-api/W801Device_ADC-api.c
-
-$(IntermediateDirectory)/pikascript-api_W801Device_GPIO-api$(ObjectSuffix): pikascript/pikascript-api/W801Device_GPIO-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/W801Device_GPIO-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_W801Device_GPIO-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_W801Device_GPIO-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_W801Device_GPIO-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_W801Device_GPIO-api$(PreprocessSuffix): pikascript/pikascript-api/W801Device_GPIO-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_W801Device_GPIO-api$(PreprocessSuffix) pikascript/pikascript-api/W801Device_GPIO-api.c
-
-$(IntermediateDirectory)/pikascript-api_W801Device_IIC-api$(ObjectSuffix): pikascript/pikascript-api/W801Device_IIC-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/W801Device_IIC-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_W801Device_IIC-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_W801Device_IIC-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_W801Device_IIC-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_W801Device_IIC-api$(PreprocessSuffix): pikascript/pikascript-api/W801Device_IIC-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_W801Device_IIC-api$(PreprocessSuffix) pikascript/pikascript-api/W801Device_IIC-api.c
-
-$(IntermediateDirectory)/pikascript-api_W801Device_PWM-api$(ObjectSuffix): pikascript/pikascript-api/W801Device_PWM-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/W801Device_PWM-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_W801Device_PWM-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_W801Device_PWM-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_W801Device_PWM-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_W801Device_PWM-api$(PreprocessSuffix): pikascript/pikascript-api/W801Device_PWM-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_W801Device_PWM-api$(PreprocessSuffix) pikascript/pikascript-api/W801Device_PWM-api.c
-
-$(IntermediateDirectory)/pikascript-api_W801Device_Time-api$(ObjectSuffix): pikascript/pikascript-api/W801Device_Time-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/W801Device_Time-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_W801Device_Time-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_W801Device_Time-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_W801Device_Time-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_W801Device_Time-api$(PreprocessSuffix): pikascript/pikascript-api/W801Device_Time-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_W801Device_Time-api$(PreprocessSuffix) pikascript/pikascript-api/W801Device_Time-api.c
-
-$(IntermediateDirectory)/pikascript-api_W801Device_UART-api$(ObjectSuffix): pikascript/pikascript-api/W801Device_UART-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/W801Device_UART-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_W801Device_UART-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_W801Device_UART-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_W801Device_UART-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_W801Device_UART-api$(PreprocessSuffix): pikascript/pikascript-api/W801Device_UART-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_W801Device_UART-api$(PreprocessSuffix) pikascript/pikascript-api/W801Device_UART-api.c
-
 $(IntermediateDirectory)/pikascript-api___asset_pikaModules_py_a$(ObjectSuffix): pikascript/pikascript-api/__asset_pikaModules_py_a.c  
 	$(CC) $(SourceSwitch) pikascript/pikascript-api/__asset_pikaModules_py_a.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api___asset_pikaModules_py_a$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api___asset_pikaModules_py_a$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api___asset_pikaModules_py_a$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
 Lst/pikascript-api___asset_pikaModules_py_a$(PreprocessSuffix): pikascript/pikascript-api/__asset_pikaModules_py_a.c
 	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api___asset_pikaModules_py_a$(PreprocessSuffix) pikascript/pikascript-api/__asset_pikaModules_py_a.c
 
-$(IntermediateDirectory)/pikascript-api_PikaStdData_Tuple-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdData_Tuple-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdData_Tuple-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdData_Tuple-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdData_Tuple-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdData_Tuple-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdData_Tuple-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdData_Tuple-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdData_Tuple-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdData_Tuple-api.c
+$(IntermediateDirectory)/pikascript-api___pikaBinding$(ObjectSuffix): pikascript/pikascript-api/__pikaBinding.c  
+	$(CC) $(SourceSwitch) pikascript/pikascript-api/__pikaBinding.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api___pikaBinding$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api___pikaBinding$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api___pikaBinding$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
+Lst/pikascript-api___pikaBinding$(PreprocessSuffix): pikascript/pikascript-api/__pikaBinding.c
+	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api___pikaBinding$(PreprocessSuffix) pikascript/pikascript-api/__pikaBinding.c
 
-$(IntermediateDirectory)/pikascript-api_PikaStdData_FILEIO-api$(ObjectSuffix): pikascript/pikascript-api/PikaStdData_FILEIO-api.c  
-	$(CC) $(SourceSwitch) pikascript/pikascript-api/PikaStdData_FILEIO-api.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_PikaStdData_FILEIO-api$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_PikaStdData_FILEIO-api$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_PikaStdData_FILEIO-api$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
-Lst/pikascript-api_PikaStdData_FILEIO-api$(PreprocessSuffix): pikascript/pikascript-api/PikaStdData_FILEIO-api.c
-	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_PikaStdData_FILEIO-api$(PreprocessSuffix) pikascript/pikascript-api/PikaStdData_FILEIO-api.c
+$(IntermediateDirectory)/pikascript-api_pikaScript$(ObjectSuffix): pikascript/pikascript-api/pikaScript.c  
+	$(CC) $(SourceSwitch) pikascript/pikascript-api/pikaScript.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-api_pikaScript$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-api_pikaScript$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-api_pikaScript$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
+Lst/pikascript-api_pikaScript$(PreprocessSuffix): pikascript/pikascript-api/pikaScript.c
+	$(CC) $(CFLAGS)$(IncludeCPath) $(PreprocessOnlySwitch) $(OutputSwitch) Lst/pikascript-api_pikaScript$(PreprocessSuffix) pikascript/pikascript-api/pikaScript.c
 
 $(IntermediateDirectory)/pikascript-core_BaseObj$(ObjectSuffix): pikascript/pikascript-core/BaseObj.c  
 	$(CC) $(SourceSwitch) pikascript/pikascript-core/BaseObj.c $(CFLAGS) -MMD -MP -MT$(IntermediateDirectory)/pikascript-core_BaseObj$(ObjectSuffix) -MF$(IntermediateDirectory)/pikascript-core_BaseObj$(DependSuffix) $(ObjectSwitch)$(IntermediateDirectory)/pikascript-core_BaseObj$(ObjectSuffix) $(IncludeCPath) $(IncludePackagePath)
