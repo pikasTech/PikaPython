@@ -1,6 +1,10 @@
 #include "_modbus__ModBus.h"
 #include "agile_modbus.h"
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 11, 1)
+#error "pikascript version must be greater than 1.11.1"
+#endif
+
 void _modbus__ModBus___init__rtu(PikaObj* self,
                                  int sendBUffSize,
                                  int readBuffSize) {
