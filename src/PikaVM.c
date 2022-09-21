@@ -1142,11 +1142,20 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         method = obj_getMethodArg_noalloc(vm->globals, run_path, &arg_reg1);
     }
 
-    /* assert method type */
+    /* assert method exist */
     if (NULL == method || ARG_TYPE_NONE == arg_getType(method)) {
         /* error, method no found */
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         __platform_printf("NameError: name '%s' is not defined\r\n", run_path);
+        goto exit;
+    }
+
+    /* assert methodd type */
+    if (!argType_isCallable(arg_getType(method))) {
+        /* error, method no found */
+        VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
+        __platform_printf("TypeError: '%s' object is not callable\r\n",
+                          run_path);
         goto exit;
     }
 
