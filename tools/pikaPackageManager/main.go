@@ -35,6 +35,22 @@ type Config_t struct {
 }
 
 func main() {
+	res := process()
+	delay := 3
+	if res != 0 {
+		delay = 15
+	}
+	if res == 0 {
+		fmt.Println("Update OK !")
+	}
+	fmt.Println()
+	for i := delay; i >= 0; i-- {
+		time.Sleep(1 * time.Second)
+		fmt.Printf("    [This window will auto close after %2d second(s)]\r", i)
+	}
+}
+
+func process() int {
 	superPath := "/tmp"
 	path := "/pikascript"
 
@@ -43,32 +59,26 @@ func main() {
 
 	packages, res := getPackages(superPath + path)
 	if !res {
-		fmt.Printf("[error]: get package info faild.\n")
-		return
+		fmt.Printf("Error! get package info faild.\n")
+		return -1
 	}
 	fmt.Printf("\n")
 
 	requerments, res := getRequestment("requestment.txt")
 	if !res {
-		fmt.Printf("[error]: get requerment info faild.\n")
-		return
+		fmt.Printf("Error! get requerment info faild.\n")
+		return -1
 	}
 	fmt.Printf("\n")
 
 	requerments, res = matchRequestments(packages, requerments)
 	if !res {
-		fmt.Printf("[error]: match requestment faild.\n")
-		return
+		return -1
 	}
 	fmt.Printf("\n")
 
 	checkOutRequsetments(superPath+path, repo, requerments)
-
-	fmt.Println("update OK !")
-	for i := 3; i >= 0; i-- {
-		time.Sleep(1 * time.Second)
-		fmt.Println("this window will auto close after", i, "s...")
-	}
+	return 0
 }
 
 func FilterDirsGlob(dir, suffix string) ([]string, error) {
@@ -106,7 +116,7 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 	workTree, _ := repo.Worktree()
 	for _, requerment := range requerments {
 		/* checkout commit */
-		fmt.Printf("checking out: %s\n", requerment.Commit)
+		fmt.Printf("Checking out: %s\n", requerment.Commit)
 		err := workTree.Checkout(&git.CheckoutOptions{
 			Hash:  plumbing.NewHash(requerment.Commit),
 			Force: true,
@@ -181,15 +191,15 @@ func matchRequestments(packages []Package_t, requerments []Requerment_t) ([]Requ
 	for i, requerment := range requerments {
 		pkg, res := getMatchedPackage(requerment, packages)
 		if !res {
-			fmt.Printf("[error]: match package for %s faild.\n", requerment.Name)
+			fmt.Printf("Error! match package for %s faild.\n", requerment.Name)
 			return requerments, false
 		}
 		commit, res := getMatchedCommit(requerment.Version, pkg)
 		if !res {
-			fmt.Printf("[error]: match commit for %s faild.\n", requerment.Name)
+			fmt.Printf("Error! cannot find version '%s' for package '%s'.\n", requerment.Version, requerment.Name)
 			return requerments, false
 		}
-		fmt.Printf("matched: %s %s\n", pkg.Name, commit)
+		fmt.Printf("Matched: %s %s\n", pkg.Name, commit)
 		requerments[i].Commit = commit
 	}
 	return requerments, true
@@ -210,7 +220,7 @@ func getRequestment(path string) ([]Requerment_t, bool) {
 		if len(req_info) == 2 {
 			requerment.Name = strings.Split(line, "==")[0]
 			requerment.Version = strings.Split(line, "==")[1]
-			fmt.Printf("request: %s %s\n", requerment.Name, requerment.Version)
+			fmt.Printf("Request: %s %s\n", requerment.Name, requerment.Version)
 			requestments = append(requestments, requerment)
 		}
 	}
@@ -241,21 +251,23 @@ func readPathSize(path string) {
 			continue
 		}
 		size, _ := pathSize(path)
-		fmt.Printf("recived : %2f MB \n", float64(size)/1024/1024)
-		time.Sleep(time.Second)
+		fmt.Printf("Recived: %.3f MB \r", float64(size)/1024/1024)
+		time.Sleep(time.Millisecond * 200)
 	}
 }
 
 func updatePikascript(path string) *git.Repository {
-	pathExist, err := PathExists(path)
+	pathExist, err := PathExists(path + "/package")
 	if err != nil {
 		fmt.Printf("PathExists(%s),err(%v)\n", path, err)
 	}
 	if !pathExist {
 		/* clone the pikascript repo */
-		fmt.Printf("downloading pikascript to %s...\n", path)
-		fmt.Printf("need about 10 min(s)\n")
-		fmt.Printf("please wait...\n")
+		fmt.Printf("Downloading pikascript to %s...\n", path)
+		fmt.Printf("Need about 10 min(s)\n")
+		fmt.Printf("Please wait...\n")
+		/* remove pikascript folder */
+		os.RemoveAll(path)
 		isShowSize = true
 		_, err = git.PlainClone(path, false, &git.CloneOptions{
 			URL:      "https://gitee.com/lyon1998/pikascript",
@@ -269,8 +281,11 @@ func updatePikascript(path string) *git.Repository {
 	/* pull the pikascript repo */
 	repo, _ := git.PlainOpen(path)
 	w, _ := repo.Worktree()
-	fmt.Println("updating pikascript...")
-	w.Pull(&git.PullOptions{RemoteName: "origin"})
+	fmt.Println("Updating pikascript...")
+	err = w.Pull(&git.PullOptions{RemoteName: "origin"})
+	if err != nil {
+		println("Error repository is broken.")
+	}
 	ref, _ := repo.Head()
 	commit, _ := repo.CommitObject(ref.Hash())
 	fmt.Println(commit)
