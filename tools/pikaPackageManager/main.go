@@ -282,10 +282,7 @@ func updatePikascript(path string) *git.Repository {
 	repo, _ := git.PlainOpen(path)
 	w, _ := repo.Worktree()
 	fmt.Println("Updating pikascript...")
-	err = w.Pull(&git.PullOptions{RemoteName: "origin"})
-	if err != nil {
-		println("Error repository is broken.")
-	}
+	w.Pull(&git.PullOptions{RemoteName: "origin"})
 	ref, _ := repo.Head()
 	commit, _ := repo.CommitObject(ref.Hash())
 	fmt.Println(commit)
