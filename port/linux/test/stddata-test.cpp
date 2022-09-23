@@ -311,4 +311,66 @@ TEST(stddata, bytes_list) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stddata, list_pop_) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "l = [1,2,3,4]\n"
+            "l.pop()\n"
+            "l.pop()\n"
+            "l");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "[1, 2]\r\n");
+    EXPECT_STREQ(log_buff[1], "3\r\n");
+    EXPECT_STREQ(log_buff[2], "4\r\n");
+    EXPECT_STREQ(log_buff[3], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, list_remove_) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "l = [1,2,3,4,5]\n"
+            "l.remove(2)\n"
+            "l\n"
+            "l.remove(3)\n"
+            "l");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "[1, 3, 4, 5]\r\n");
+    EXPECT_STREQ(log_buff[0], "[1, 4, 5]\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, list_insert_) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "l = [1,2,3]\n"
+            "l.insert(1, 'q')\n"
+            "l");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "[1, 'q', 2, 3]\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

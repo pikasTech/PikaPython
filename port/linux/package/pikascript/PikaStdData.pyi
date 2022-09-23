@@ -1,3 +1,6 @@
+from PikaObj import *
+
+
 class Tuple:
     def __init__(self): ...
 
@@ -35,6 +38,15 @@ class List(Tuple):
 
     def reverse(self):
         """reverse the list"""
+
+    def pop(self) -> any:
+        """pop the last element"""
+
+    def remove(self, val: any):
+        """remove the first element"""
+
+    def insert(self, i: int, arg: any):
+        """insert an arg before the index"""
 
     def __setitem__(self, __key: any, __val: any):
         """support list[]  = val"""
@@ -75,11 +87,13 @@ class dict_keys:
     def __str__(self) -> str: ...
     def __len__(self) -> int: ...
 
+
 class dict_items:
     def __iter__(self) -> any: ...
     def __next__(self) -> any: ...
     def __str__(self) -> str: ...
     def __len__(self) -> int: ...
+
 
 class String:
     def __init__(self, s: str): ...

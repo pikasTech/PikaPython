@@ -77,3 +77,22 @@ PikaObj* PikaStdData_List___add__(PikaObj* self, PikaObj* others) {
     }
     return res;
 }
+
+void PikaStdData_List_insert(PikaObj *self, int i, Arg* arg){
+    PikaList* list = obj_getPtr(self, "list");
+    if (PIKA_RES_OK != list_insert(list, i, arg)) {
+        obj_setErrorCode(self, 1);
+        obj_setSysOut(self, "Error: index exceeded lengh of list.");
+    }
+}
+
+Arg* PikaStdData_List_pop(PikaObj *self){
+    PikaList* list = obj_getPtr(self, "list");
+    return list_pop(list);
+}
+
+void PikaStdData_List_remove(PikaObj *self, Arg* val){
+    PikaList* list = obj_getPtr(self, "list");
+    list_remove(list, val);
+}
+
