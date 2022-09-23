@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -78,6 +79,14 @@ func process() int {
 	fmt.Printf("\n")
 
 	checkOutRequsetments(superPath+path, repo, requerments)
+
+	// check main.py file is exist
+	if _, err := os.Stat("main.py"); os.IsNotExist(err) {
+		return 0
+	}
+
+	fmt.Printf("\n")
+	cmdRun("rust-msc-latest-win10.exe")
 	return 0
 }
 
@@ -321,4 +330,34 @@ func pathSize(path string) (int64, error) {
 		return err
 	})
 	return size, err
+}
+
+func cmdRun(dir string) {
+	cmd := exec.Command(dir)
+	cmdReader, err := cmd.StdoutPipe()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error creating StdoutPipe for Cmd", err)
+		return
+	}
+
+	scanner := bufio.NewScanner(cmdReader)
+	scanner.Split(bufio.ScanBytes)
+
+	go func() {
+		for scanner.Scan() {
+			fmt.Printf("%s", scanner.Text())
+		}
+	}()
+
+	err = cmd.Start()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error starting Cmd", err)
+		return
+	}
+
+	err = cmd.Wait()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error waiting for Cmd", err)
+		return
+	}
 }
