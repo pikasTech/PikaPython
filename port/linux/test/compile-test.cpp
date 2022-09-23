@@ -622,3 +622,21 @@ TEST(compiler, __list) {
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(compiler, getattr) {
+    char* lines = "@res = __getattribute__(@name)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, getattr2) {
+    char* lines = "@res = __getattr__(@name)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, setattr) {
+    char* lines = "__setattr__(@name, @value)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

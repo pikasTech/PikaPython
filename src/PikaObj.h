@@ -71,7 +71,12 @@ struct PikaObj {
     Args* list;
     uint8_t refcnt;
     void* constructor;
+    uint8_t proxy;
 };
+
+#define PIKA_PROXY_GETATTRIBUTE 0x01
+#define PIKA_PROXY_GETATTR 0x02
+#define PIKA_PROXY_SETATTR 0x04
 
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
@@ -128,8 +133,8 @@ int32_t obj_addOther(PikaObj* self, char* subObjectName, void* new_projcetFun);
 PikaObj* obj_getObj(PikaObj* self, char* objPath);
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath);
 PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
-                                   char* objPath,
-                                   PIKA_BOOL* pIsClass);
+                                  char* objPath,
+                                  PIKA_BOOL* pIsClass);
 
 // subProcess
 int32_t obj_freeObj(PikaObj* self, char* subObjectName);

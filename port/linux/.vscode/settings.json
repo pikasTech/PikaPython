@@ -65,6 +65,7 @@
         "agile_modbus.h": "c",
         "_modbus__modbusrtu.h": "c",
         "_modbus__modbustcp.h": "c",
-        "pikastddata_string.h": "c"
+        "pikastddata_string.h": "c",
+        "gtesttask_proxytest.h": "c"
     }
 }

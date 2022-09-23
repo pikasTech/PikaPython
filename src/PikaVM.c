@@ -508,48 +508,147 @@ static Arg* VM_instruction_handler_NEW(PikaObj* self,
     return new_arg;
 }
 
+static Arg* _proxy_getattribute(PikaObj* host, char* name) {
+#if PIKA_NANO_ENABLE
+    return NULL;
+#endif
+    if ('@' != name[0] && (host->proxy & PIKA_PROXY_GETATTRIBUTE)) {
+        args_setStr(host->list, "@name", name);
+        /* clang-format off */
+        PIKA_PYTHON(
+        @res = __getattribute__(@name)
+        )
+        /* clang-format on */
+        const uint8_t bytes[] = {
+            0x0c, 0x00, /* instruct array size */
+            0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x07, 0x00, 0x00, 0x04, 0x18,
+            0x00,
+            /* instruct array */
+            0x1d, 0x00, /* const pool size */
+            0x00, 0x40, 0x6e, 0x61, 0x6d, 0x65, 0x00, 0x5f, 0x5f, 0x67, 0x65,
+            0x74, 0x61, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x5f,
+            0x5f, 0x00, 0x40, 0x72, 0x65, 0x73, 0x00, /* const pool */
+        };
+        pikaVM_runByteCode(host, (uint8_t*)bytes);
+        return args_getArg(host->list, "@res");
+    }
+    return NULL;
+}
+
+static Arg* _proxy_getattr(PikaObj* host, char* name) {
+#if PIKA_NANO_ENABLE
+    return NULL;
+#endif
+    if ('@' != name[0] && (host->proxy & PIKA_PROXY_GETATTR)) {
+        args_setStr(host->list, "@name", name);
+        /* clang-format off */
+        PIKA_PYTHON(
+        @res = __getattr__(@name)
+        )
+        /* clang-format on */
+        const uint8_t bytes[] = {
+            0x0c, 0x00, /* instruct array size */
+            0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x07, 0x00, 0x00, 0x04, 0x13,
+            0x00,
+            /* instruct array */
+            0x18, 0x00, /* const pool size */
+            0x00, 0x40, 0x6e, 0x61, 0x6d, 0x65, 0x00, 0x5f, 0x5f, 0x67, 0x65,
+            0x74, 0x61, 0x74, 0x74, 0x72, 0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65,
+            0x73, 0x00, /* const pool */
+        };
+        pikaVM_runByteCode(host, (uint8_t*)bytes);
+        return args_getArg(host->list, "@res");
+    }
+    return NULL;
+}
+
 static Arg* VM_instruction_handler_REF(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    if (strEqu(data, (char*)"True")) {
+    PikaObj* host_object = NULL;
+    char* arg_path = data;
+    char* arg_name = strPointToLastToken(arg_path, '.');
+    PIKA_BOOL is_temp = PIKA_FALSE;
+    if (strEqu(arg_path, (char*)"True")) {
         return arg_setInt(arg_ret_reg, "", 1);
     }
-    if (strEqu(data, (char*)"False")) {
+    if (strEqu(arg_path, (char*)"False")) {
         return arg_setInt(arg_ret_reg, "", 0);
     }
-    if (strEqu(data, (char*)"None")) {
+    if (strEqu(arg_path, (char*)"None")) {
         return arg_setNull(arg_ret_reg);
     }
-    if (strEqu(data, (char*)"RuntimeError")) {
+    if (strEqu(arg_path, (char*)"RuntimeError")) {
         return arg_setInt(arg_ret_reg, "", PIKA_RES_ERR_RUNTIME_ERROR);
     }
 
-    Arg* arg = NULL;
-    if (data[0] == '.') {
+    Arg* res = NULL;
+    if (arg_path[0] == '.') {
         /* find host from stack */
         Arg* host_obj = stack_popArg_alloc(&(vm->stack));
         if (argType_isObject(arg_getType(host_obj))) {
-            arg = arg_copy_noalloc(obj_getArg(arg_getPtr(host_obj), data + 1),
+            host_object = arg_getPtr(host_obj);
+            res = arg_copy_noalloc(obj_getArg(host_object, arg_path + 1),
                                    arg_ret_reg);
         }
         arg_deinit(host_obj);
         goto exit;
     }
 
+    /* host_object is self */
+    if (NULL == host_object) {
+        if (!strIsContain(arg_path, '.')) {
+            host_object = vm->locals;
+        }
+    }
+
     /* find in local list first */
-    arg = arg_copy_noalloc(obj_getArg(vm->locals, data), arg_ret_reg);
-    if (NULL == arg) {
-        /* find in global list second */
-        arg = arg_copy_noalloc(obj_getArg(vm->globals, data), arg_ret_reg);
+    if (NULL == host_object) {
+        host_object = obj_getHostObjWithIsTemp(vm->locals, arg_path, &is_temp);
+    }
+
+    /* find in global list */
+    if (NULL == host_object) {
+        host_object = obj_getHostObjWithIsTemp(vm->globals, arg_path, &is_temp);
+    }
+
+    /* error cannot found host_object */
+    if (NULL == host_object) {
+        goto exit;
+    }
+
+    /* proxy */
+    if (NULL == res) {
+        res = _proxy_getattribute(host_object, arg_name);
+    }
+
+    /* find res in host */
+    if (NULL == res) {
+        res = args_getArg(host_object->list, arg_name);
+    }
+
+    /* find res in globlas */
+    if (NULL == res) {
+        res = args_getArg(vm->globals->list, arg_name);
+    }
+
+    /* proxy */
+    if (NULL == res) {
+        res = _proxy_getattr(host_object, arg_name);
     }
 
 exit:
-    if (NULL == arg) {
+    if (NULL == res) {
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        __platform_printf("NameError: name '%s' is not defined\r\n", data);
+        __platform_printf("NameError: name '%s' is not defined\r\n", arg_path);
+    } else {
+        res = arg_copy_noalloc(res, arg_ret_reg);
     }
-    return arg;
+    if (is_temp) {
+        obj_deinit(host_object);
+    }
+    return res;
 }
 
 static Arg* VM_instruction_handler_GER(PikaObj* self,
@@ -1303,33 +1402,65 @@ static Arg* VM_instruction_handler_BYT(PikaObj* self,
     return arg_newBytes((uint8_t*)data, strGetSize(data));
 }
 
+static PIKA_BOOL _proxy_setattr(PikaObj* self, char* name, Arg* arg) {
+#if PIKA_NANO_ENABLE
+    return PIKA_FALSE;
+#endif
+    if (self->proxy & PIKA_PROXY_SETATTR) {
+        obj_setStr(self, "@name", name);
+        obj_setArg(self, "@value", arg);
+        /* clang-format off */
+        PIKA_PYTHON(
+        __setattr__(@name, @value)
+        )
+        /* clang-format on */
+        const uint8_t bytes[] = {
+            0x0c, 0x00, /* instruct array size */
+            0x10, 0x81, 0x01, 0x00, 0x10, 0x01, 0x07, 0x00, 0x00, 0x02, 0x0e,
+            0x00,
+            /* instruct array */
+            0x1a, 0x00, /* const pool size */
+            0x00, 0x40, 0x6e, 0x61, 0x6d, 0x65, 0x00, 0x40, 0x76, 0x61, 0x6c,
+            0x75, 0x65, 0x00, 0x5f, 0x5f, 0x73, 0x65, 0x74, 0x61, 0x74, 0x74,
+            0x72, 0x5f, 0x5f, 0x00, /* const pool */
+        };
+        pikaVM_runByteCode(self, (uint8_t*)bytes);
+        return PIKA_TRUE;
+    }
+    return PIKA_FALSE;
+}
+
 static Arg* VM_instruction_handler_OUT(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
+    char* arg_path = data;
+    char* arg_name = strPointToLastToken(arg_path, '.');
+    PikaObj* host_obj = NULL;
+    PIKA_BOOL is_temp = PIKA_FALSE;
     arg_newReg(outArg_reg, PIKA_ARG_BUFF_SIZE);
-    Arg* outArg = stack_popArg(&vm->stack, &outArg_reg);
+    Arg* out_arg = stack_popArg(&vm->stack, &outArg_reg);
     // Arg* outArg = stack_popArg_alloc(&vm->stack);
-    ArgType outArg_type = arg_getType(outArg);
+    ArgType outArg_type = arg_getType(out_arg);
 
     if (VMState_getInvokeDeepthNow(vm) > 0) {
         /* in block, is a keyword arg */
-        arg_setIsKeyword(outArg, PIKA_TRUE);
-        arg_setName(outArg, data);
-        return arg_copy_noalloc(outArg, arg_ret_reg);
+        arg_setIsKeyword(out_arg, PIKA_TRUE);
+        arg_setName(out_arg, arg_path);
+        return arg_copy_noalloc(out_arg, arg_ret_reg);
     }
 
-    if (_checkLReg(data)) {
-        uint8_t index = _getLRegIndex(data);
+    if (_checkLReg(arg_path)) {
+        uint8_t index = _getLRegIndex(arg_path);
         if (argType_isObject(outArg_type)) {
-            PikaObj* obj = arg_getPtr(outArg);
+            PikaObj* obj = arg_getPtr(out_arg);
             VMState_setLReg(vm, index, obj);
-            arg_deinit(outArg);
+            arg_deinit(out_arg);
         }
         return NULL;
     }
 
-    PikaObj* hostObj = vm->locals;
+    PikaObj* context = vm->locals;
     /* match global_list */
     if (args_isArgExist(vm->locals->list, "__gl")) {
         char* global_list = args_getStr(vm->locals->list, "__gl");
@@ -1340,24 +1471,34 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
         char token_buff[32] = {0};
         for (int i = 0; i < strCountSign(global_list, ',') + 1; i++) {
             char* global_arg = strPopToken(token_buff, global_list_buff, ',');
-            /* matched global arg, hostObj set to global */
-            if (strEqu(global_arg, data)) {
-                hostObj = vm->globals;
+            /* matched global arg, context set to global */
+            if (strEqu(global_arg, arg_path)) {
+                context = vm->globals;
             }
         }
         arg_deinit(global_list_arg);
     }
     /* use RunAs object */
     if (args_isArgExist(vm->locals->list, "__runAs")) {
-        hostObj = args_getPtr(vm->locals->list, "__runAs");
+        context = args_getPtr(vm->locals->list, "__runAs");
     }
     /* set free object to nomal object */
     if (ARG_TYPE_OBJECT_NEW == outArg_type) {
-        arg_setType(outArg, ARG_TYPE_OBJECT);
+        arg_setType(out_arg, ARG_TYPE_OBJECT);
     }
 
-    /* ouput arg to locals */
-    obj_setArg_noCopy(hostObj, data, outArg);
+    /* ouput arg to context */
+    if (arg_path == arg_name) {
+        obj_setArg_noCopy(context, arg_path, out_arg);
+        return NULL;
+    }
+
+    host_obj = obj_getHostObjWithIsTemp(context, arg_path, &is_temp);
+    if (_proxy_setattr(host_obj, arg_name, out_arg)) {
+        return NULL;
+    }
+
+    obj_setArg_noCopy(context, arg_path, out_arg);
     return NULL;
 }
 

@@ -1,4 +1,5 @@
 #include "GTestTask.h"
+#include "GTestTask_ProxyTest.h"
 #include "GTestTask_Task.h"
 #include "PikaStdData_Dict.h"
 
@@ -38,6 +39,17 @@ PikaObj* GTestTask_test_dict(PikaObj* self) {
     return dict;
 }
 
-int64_t GTestTask_test64(PikaObj *self, int64_t a, int64_t b){
+int64_t GTestTask_test64(PikaObj* self, int64_t a, int64_t b) {
     return a * b;
+}
+
+Arg* GTestTask_ProxyTest___getattribute__(PikaObj* self, char* __name) {
+    return arg_newStr(__name);
+}
+
+void GTestTask_ProxyTest___setattr__(PikaObj* self,
+                                     char* __name,
+                                     Arg* __value) {
+    __platform_printf("GTestTask_ProxyTest___setattr__: %s, %s\r\n", __name,
+                      arg_getStr(__value));
 }
