@@ -4,12 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	cp "github.com/otiai10/copy"
@@ -17,6 +19,7 @@ import (
 
 var isShowSize = false
 var isErr = 0
+var isDebug = false
 
 type Requerment_t struct {
 	Name    string
@@ -57,18 +60,22 @@ func main() {
 func process() int {
 	superPath := "/tmp"
 	path := "/pikascript_packages"
+	var repo *git.Repository
 
 	go readPathSize(superPath + path)
-	repo := updatePikascript(superPath + path)
+	if !isDebug {
+		repo = updatePikascript(superPath + path)
+	}
 
-	requerments, res := getRequestment("requestment.txt")
+	requestments, res := getRequestment("requestment.txt")
 	if !res {
-		fmt.Printf("Error! get requerment info faild.\n")
+		fmt.Printf("Error! get requestment info faild.\n")
 		return -1
 	}
 	fmt.Printf("\n")
 
-	checkOutRequsetments(superPath+path, repo, requerments)
+	checkout_requestments(superPath+path, repo, requestments)
+	save_requestments(requestments)
 
 	// check main.py file is exist
 	if _, err := os.Stat("main.py"); os.IsNotExist(err) {
@@ -78,6 +85,19 @@ func process() int {
 	fmt.Printf("\n")
 	cmdRun("rust-msc-latest-win10.exe")
 	return isErr
+}
+
+func save_requestments(requestments []Requerment_t) {
+	os.Remove("requestment.txt")
+	f, err := os.OpenFile("requestment.txt", os.O_CREATE, 0666)
+	CheckIfError(err)
+	for i, requestment := range requestments {
+		f.WriteString(requestment.Name + "==" + requestment.Version)
+		if i != len(requestments)-1 {
+			f.WriteString("\r\n")
+		}
+	}
+	f.Close()
 }
 
 func FilterDirsGlob(dir, suffix string) ([]string, error) {
@@ -108,7 +128,7 @@ func MoveFile(sourcePath, destPath string) error {
 	return nil
 }
 
-func checkOutRequsetments(path string, repo *git.Repository, requerments []Requerment_t) {
+func checkout_requestments(path string, repo *git.Repository, requerments []Requerment_t) {
 	os.Mkdir("pikascript-lib", os.ModePerm)
 	os.Mkdir("pikascript-core", os.ModePerm)
 	os.Mkdir("pikascript-api", os.ModePerm)
@@ -167,19 +187,72 @@ func getRequestment(path string) ([]Requerment_t, bool) {
 	scanner := bufio.NewScanner(requestment_file)
 	var count int
 	for scanner.Scan() {
-		var requerment Requerment_t
+		var requestment Requerment_t
+		var res int
 		count++
 		line := scanner.Text()
 		line = strings.ReplaceAll(line, " ", "")
+		line = strings.ReplaceAll(line, "\r", "")
+		if line == "" {
+			continue
+		}
+		if !strings.Contains(line, "==") {
+			line, res = match_default_version(line)
+		}
+		if res != 0 {
+			return nil, false
+		}
 		req_info := strings.Split(line, "==")
 		if len(req_info) == 2 {
-			requerment.Name = strings.Split(line, "==")[0]
-			requerment.Version = strings.Split(line, "==")[1]
-			fmt.Printf("Request: %s %s\n", requerment.Name, requerment.Version)
-			requestments = append(requestments, requerment)
+			requestment.Name = strings.Split(line, "==")[0]
+			requestment.Version = strings.Split(line, "==")[1]
+			fmt.Printf("Request: %s %s\n", requestment.Name, requestment.Version)
+			requestments = append(requestments, requestment)
 		}
 	}
 	return requestments, true
+}
+
+func http_get_str(url string) string {
+	resp, err := http.Get(url)
+	CheckIfError(err)
+	// fsize, err := strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 32)
+	fsize := 1024 * 1024
+	data := make([]byte, fsize)
+	n, _ := resp.Body.Read(data)
+	data = data[0:n]
+	return string(data)
+}
+
+func match_default_version(line string) (string, int) {
+	var config Config_t
+	var found int
+	req_name := line
+	toml_str := http_get_str("https://gitee.com/Lyon1998/pikascript/raw/master/packages.toml")
+	_, err := toml.Decode(toml_str, &config)
+	CheckIfError(err)
+	for i_package, pkg := range config.Packages {
+		i := 0
+		for _, release := range pkg.Releases {
+			pkg.ReleasesName = append(pkg.ReleasesName, strings.Split(release, " ")[0])
+			pkg.ReleasesCommit = append(pkg.ReleasesCommit, strings.Split(release, " ")[1])
+			i++
+		}
+		config.Packages[i_package] = pkg
+	}
+	var pkg Package_t
+	packages := config.Packages
+	for _, pkg = range packages {
+		if req_name == pkg.Name {
+			found = 1
+			break
+		}
+	}
+	if found == 1 {
+		req_version := strings.Split(pkg.Releases[len(pkg.Releases)-1], " ")[0]
+		return req_name + "==" + req_version, 0
+	}
+	return "", 1
 }
 
 func readPathSize(path string) {

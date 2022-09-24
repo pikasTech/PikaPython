@@ -1,2 +1,2 @@
 go build -ldflags="-w -s"
-upx -9 pikaPackage.exe
+upx -8 pikaPackage.exe
