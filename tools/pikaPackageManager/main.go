@@ -119,10 +119,14 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 		var dirPath string = "pikascript-lib/" + requerment.Name
 		if requerment.Name == "pikascript-core" {
 			dirPath = "pikascript-core"
-			CheckIfError(cp.Copy(packagePath+"/rust-msc-latest-win10.exe", "./rust-msc-latest-win10.exe"))
 		}
 		// fmt.Printf("    copy" + " " + packagePath + " " + dirPath + "\n")
 		CheckIfError(cp.Copy(packagePath, dirPath))
+
+		if requerment.Name == "pikascript-core" {
+			CheckIfError(os.Rename(dirPath+"/rust-msc-latest-win10.exe", "./rust-msc-latest-win10.exe"))
+		}
+
 		pyFileList, _ := FilterDirsGlob(dirPath, "*.py")
 		for i := range pyFileList {
 			pyFileSource := strings.ReplaceAll(pyFileList[i], "\\", "/")
