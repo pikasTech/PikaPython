@@ -10,13 +10,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BurntSushi/toml"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	cp "github.com/otiai10/copy"
 )
 
 var isShowSize = false
+var isErr = 0
 
 type Requerment_t struct {
 	Name    string
@@ -37,12 +37,15 @@ type Config_t struct {
 
 func main() {
 	res := process()
+	println()
 	delay := 3
 	if res != 0 {
 		delay = 15
 	}
 	if res == 0 {
-		fmt.Println("Update OK !")
+		fmt.Printf("\x1b[32;1m%s\x1b[0m\n", fmt.Sprintf("Succeed: %s", "Update OK !"))
+	} else {
+		fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("Error: %s", "Some error(s) occored. Please Check."))
 	}
 	fmt.Println()
 	for i := delay; i >= 0; i-- {
@@ -53,17 +56,10 @@ func main() {
 
 func process() int {
 	superPath := "/tmp"
-	path := "/pikascript"
+	path := "/pikascript_packages"
 
 	go readPathSize(superPath + path)
 	repo := updatePikascript(superPath + path)
-
-	packages, res := getPackages(superPath + path)
-	if !res {
-		fmt.Printf("Error! get package info faild.\n")
-		return -1
-	}
-	fmt.Printf("\n")
 
 	requerments, res := getRequestment("requestment.txt")
 	if !res {
@@ -72,22 +68,16 @@ func process() int {
 	}
 	fmt.Printf("\n")
 
-	requerments, res = matchRequestments(packages, requerments)
-	if !res {
-		return -1
-	}
-	fmt.Printf("\n")
-
 	checkOutRequsetments(superPath+path, repo, requerments)
 
 	// check main.py file is exist
 	if _, err := os.Stat("main.py"); os.IsNotExist(err) {
-		return 0
+		return isErr
 	}
 
 	fmt.Printf("\n")
 	cmdRun("rust-msc-latest-win10.exe")
-	return 0
+	return isErr
 }
 
 func FilterDirsGlob(dir, suffix string) ([]string, error) {
@@ -124,21 +114,12 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 	os.Mkdir("pikascript-api", os.ModePerm)
 	workTree, _ := repo.Worktree()
 	for _, requerment := range requerments {
-		/* checkout commit */
-		fmt.Printf("Checking out: %s\n", requerment.Commit)
-		err := workTree.Checkout(&git.CheckoutOptions{
-			Hash:  plumbing.NewHash(requerment.Commit),
-			Force: true,
-		})
-		CheckIfError(err)
 		/* update file */
-		var packagePath string = path + "/package/" + requerment.Name
+		var packagePath string = path + "/" + requerment.Name + "/" + requerment.Name + "@" + requerment.Version
 		var dirPath string = "pikascript-lib/" + requerment.Name
 		if requerment.Name == "pikascript-core" {
-			packagePath = path + "/src"
 			dirPath = "pikascript-core"
-			CheckIfError(cp.Copy(packagePath+"/../tools/pikaCompiler/rust-msc-latest-win10.exe", "./rust-msc-latest-win10.exe"))
-			CheckIfError(err)
+			CheckIfError(cp.Copy(packagePath+"/rust-msc-latest-win10.exe", "./rust-msc-latest-win10.exe"))
 		}
 		// fmt.Printf("    copy" + " " + packagePath + " " + dirPath + "\n")
 		CheckIfError(cp.Copy(packagePath, dirPath))
@@ -147,7 +128,7 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 			pyFileSource := strings.ReplaceAll(pyFileList[i], "\\", "/")
 			pyFilePath := strings.Split(pyFileSource, "/")
 			pyFileName := pyFilePath[len(pyFilePath)-1]
-			fmt.Println("    Installed: " + pyFileName)
+			fmt.Println("Installed: " + pyFileName + ": " + requerment.Version)
 			CheckIfError(os.Rename(pyFileSource, pyFileName))
 		}
 
@@ -156,7 +137,7 @@ func checkOutRequsetments(path string, repo *git.Repository, requerments []Reque
 			pyFileSource := strings.ReplaceAll(pyiFileList[i], "\\", "/")
 			pyFilePath := strings.Split(pyFileSource, "/")
 			pyFileName := pyFilePath[len(pyFilePath)-1]
-			fmt.Println("    Installed: " + pyFileName)
+			fmt.Println("Installed: " + pyFileName + ": " + requerment.Version)
 			CheckIfError(os.Rename(pyFileSource, pyFileName))
 		}
 
@@ -171,47 +152,8 @@ func CheckIfError(err error) {
 	if err == nil {
 		return
 	}
-
-	fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
-}
-func getMatchedPackage(requerment Requerment_t, packages []Package_t) (Package_t, bool) {
-	var pkg Package_t
-	for _, pkg = range packages {
-		if requerment.Name == pkg.Name {
-			return pkg, true
-		}
-	}
-	return pkg, false
-}
-
-func getMatchedCommit(requestVersion string, pkg Package_t) (string, bool) {
-	for i, packageVersion := range pkg.ReleasesName {
-		if packageVersion == requestVersion {
-			return pkg.ReleasesCommit[i], true
-		}
-		if "latest" == requestVersion {
-			return "master", true
-		}
-	}
-	return "", false
-}
-
-func matchRequestments(packages []Package_t, requerments []Requerment_t) ([]Requerment_t, bool) {
-	for i, requerment := range requerments {
-		pkg, res := getMatchedPackage(requerment, packages)
-		if !res {
-			fmt.Printf("Error! match package for %s faild.\n", requerment.Name)
-			return requerments, false
-		}
-		commit, res := getMatchedCommit(requerment.Version, pkg)
-		if !res {
-			fmt.Printf("Error! cannot find version '%s' for package '%s'.\n", requerment.Version, requerment.Name)
-			return requerments, false
-		}
-		fmt.Printf("Matched: %s %s\n", pkg.Name, commit)
-		requerments[i].Commit = commit
-	}
-	return requerments, true
+	isErr = -1
+	fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("Error: %s", err))
 }
 
 func getRequestment(path string) ([]Requerment_t, bool) {
@@ -236,24 +178,6 @@ func getRequestment(path string) ([]Requerment_t, bool) {
 	return requestments, true
 }
 
-func getPackages(path string) ([]Package_t, bool) {
-	var config Config_t
-	if _, err := toml.DecodeFile(path+"/packages.toml", &config); err != nil {
-		fmt.Println(err)
-		return config.Packages, false
-	}
-	for i_package, pkg := range config.Packages {
-		i := 0
-		for _, release := range pkg.Releases {
-			pkg.ReleasesName = append(pkg.ReleasesName, strings.Split(release, " ")[0])
-			pkg.ReleasesCommit = append(pkg.ReleasesCommit, strings.Split(release, " ")[1])
-			i++
-		}
-		config.Packages[i_package] = pkg
-	}
-	return config.Packages, true
-}
-
 func readPathSize(path string) {
 	for {
 		if !isShowSize {
@@ -266,7 +190,7 @@ func readPathSize(path string) {
 }
 
 func updatePikascript(path string) *git.Repository {
-	pathExist, err := PathExists(path + "/package")
+	pathExist, err := PathExists(path + "/pikascript-core")
 	if err != nil {
 		fmt.Printf("PathExists(%s),err(%v)\n", path, err)
 	}
@@ -279,7 +203,7 @@ func updatePikascript(path string) *git.Repository {
 		os.RemoveAll(path)
 		isShowSize = true
 		_, err = git.PlainClone(path, false, &git.CloneOptions{
-			URL:      "https://gitee.com/lyon1998/pikascript",
+			URL:      "https://gitee.com/lyon1998/pikascript_packages",
 			Progress: os.Stdout,
 		})
 		if nil != err {
