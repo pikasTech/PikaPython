@@ -1,9 +1,9 @@
 import shutil
 import os
 
-version = "1.11.0"
-version_lvgl = "0.2.0"
-date = "2022-09-16"
+version = "1.11.2"
+version_lvgl = "latest"
+date = "2022-09-24"
 url = "https://gitee.com/Lyon1998/pikascript/attach_files/1151246/download"
 
 

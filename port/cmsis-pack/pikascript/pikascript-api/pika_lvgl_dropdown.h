@@ -28,7 +28,7 @@ char* pika_lvgl_dropdown_get_options(PikaObj *self);
 int pika_lvgl_dropdown_get_selected(PikaObj *self);
 int pika_lvgl_dropdown_get_selected_highlight(PikaObj *self);
 char* pika_lvgl_dropdown_get_selected_str(PikaObj *self);
-int pika_lvgl_dropdown_get_symbol(PikaObj *self);
+char* pika_lvgl_dropdown_get_symbol(PikaObj *self);
 char* pika_lvgl_dropdown_get_text(PikaObj *self);
 int pika_lvgl_dropdown_is_open(PikaObj *self);
 void pika_lvgl_dropdown_open(PikaObj *self);

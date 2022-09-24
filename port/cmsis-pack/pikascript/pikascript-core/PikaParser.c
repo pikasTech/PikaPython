@@ -179,14 +179,21 @@ static char* __removeTokensBetween(Args* outBuffs,
     return output;
 }
 
+char* _remove_sub_stmt(Args* outBuffs, char* stmt) {
+    Args buffs = {0};
+    stmt = strsCopy(&buffs, stmt);
+    stmt = __removeTokensBetween(&buffs, stmt, "(", ")");
+    stmt = __removeTokensBetween(&buffs, stmt, "[", "]");
+    stmt = __removeTokensBetween(&buffs, stmt, "{", "}");
+    char* res = args_cacheStr(outBuffs, stmt);
+    strsDeinit(&buffs);
+    return res;
+}
+
 static enum StmtType Lexer_matchStmtType(char* right) {
     Args buffs = {0};
     enum StmtType stmtType = STMT_none;
-    char* rightWithoutSubStmt = __removeTokensBetween(&buffs, right, "(", ")");
-    rightWithoutSubStmt =
-        __removeTokensBetween(&buffs, rightWithoutSubStmt, "[", "]");
-    rightWithoutSubStmt =
-        __removeTokensBetween(&buffs, rightWithoutSubStmt, "{", "}");
+    char* rightWithoutSubStmt = _remove_sub_stmt(&buffs, right);
 
     PIKA_BOOL is_get_operator = PIKA_FALSE;
     PIKA_BOOL is_get_method = PIKA_FALSE;
@@ -1528,7 +1535,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     enum StmtType stmtType = Lexer_matchStmtType(right);
     /* solve operator stmt */
     if (STMT_operator == stmtType) {
-        char* rightWithoutSubStmt = strsDeleteBetween(&buffs, right, '(', ')');
+        char* rightWithoutSubStmt = _remove_sub_stmt(&buffs, right);
         char* operator= Lexer_getOperator(&buffs, rightWithoutSubStmt);
         if (NULL == operator) {
             result = PIKA_RES_ERR_SYNTAX_ERROR;

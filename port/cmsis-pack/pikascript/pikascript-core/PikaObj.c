@@ -197,14 +197,15 @@ int64_t obj_getInt(PikaObj* self, char* argPath) {
 }
 
 Arg* obj_getArg(PikaObj* self, char* argPath) {
-    PIKA_BOOL isClass = PIKA_FALSE;
-    PikaObj* obj = obj_getHostObjWithIsTemp(self, argPath, &isClass);
+    PIKA_BOOL is_temp = PIKA_FALSE;
+    PikaObj* obj = obj_getHostObjWithIsTemp(self, argPath, &is_temp);
     if (NULL == obj) {
         return NULL;
     }
+    Arg* res = NULL;
     char* argName = strPointToLastToken(argPath, '.');
-    Arg* res = args_getArg(obj->list, argName);
-    if (isClass) {
+    res = args_getArg(obj->list, argName);
+    if (is_temp) {
         obj_setArg(self, "_buf", res);
         res = obj_getArg(self, "_buf");
         obj_deinit(obj);
@@ -443,14 +444,18 @@ PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
         PikaObj* New_PikaStdData_String(Args * args);
         PikaObj* obj = newNormalObj(New_PikaStdData_String);
         obj_setStr(obj, "str", arg_getStr(self));
-        *pIsTemp = PIKA_TRUE;
+        if (NULL != pIsTemp) {
+            *pIsTemp = PIKA_TRUE;
+        }
         return obj;
     }
     if (arg_getType(self) == ARG_TYPE_BYTES) {
         PikaObj* New_PikaStdData_ByteArray(Args * args);
         PikaObj* obj = newNormalObj(New_PikaStdData_ByteArray);
         obj_setArg(obj, "raw", self);
-        *pIsTemp = PIKA_TRUE;
+        if (NULL != pIsTemp) {
+            *pIsTemp = PIKA_TRUE;
+        }
         return obj;
     }
 #endif
@@ -516,13 +521,13 @@ exit:
 }
 
 PikaObj* obj_getObj(PikaObj* self, char* objPath) {
-    PIKA_BOOL isClass = PIKA_FALSE;
-    return __obj_getObjWithKeepDeepth(self, objPath, &isClass, 0);
+    PIKA_BOOL is_temp = PIKA_FALSE;
+    return __obj_getObjWithKeepDeepth(self, objPath, &is_temp, 0);
 }
 
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath) {
-    PIKA_BOOL isClass = PIKA_FALSE;
-    return __obj_getObjWithKeepDeepth(self, objPath, &isClass, 1);
+    PIKA_BOOL is_temp = PIKA_FALSE;
+    return __obj_getObjWithKeepDeepth(self, objPath, &is_temp, 1);
 }
 
 PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
@@ -590,6 +595,30 @@ PikaObj* methodArg_getDefContext(Arg* method_arg) {
     return context;
 }
 
+void _update_proxy(PikaObj* self, char* name) {
+#if PIKA_NANO_ENABLE
+    return;
+#endif
+    if (!(self->proxy & PIKA_PROXY_GETATTRIBUTE)) {
+        if (strEqu(name, "__getattribute__")) {
+            self->proxy |= PIKA_PROXY_GETATTRIBUTE;
+            return;
+        }
+    }
+    if (!(self->proxy & PIKA_PROXY_GETATTR)) {
+        if (strEqu(name, "__getattr__")) {
+            self->proxy |= PIKA_PROXY_GETATTR;
+            return;
+        }
+    }
+    if (!(self->proxy & PIKA_PROXY_SETATTR)) {
+        if (strEqu(name, "__setattr__")) {
+            self->proxy |= PIKA_PROXY_SETATTR;
+            return;
+        }
+    }
+}
+
 static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     Args buffs = {0};
     method_info->pars = method_info->dec;
@@ -608,6 +637,7 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
                      sizeof(method_info_def_context));
     arg = arg_append(arg, method_info->pars, size_pars + 1);
 
+    _update_proxy(self, method_info->name);
     args_setArg(self->list, arg);
     strsDeinit(&buffs);
 }
@@ -997,6 +1027,7 @@ PikaObj* New_PikaObj(void) {
     self->list = New_args(NULL);
     self->refcnt = 0;
     self->constructor = NULL;
+    self->proxy = 0;
     return self;
 }
 

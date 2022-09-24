@@ -401,10 +401,10 @@ char* getPrintSring(Args* self, char* name, char* valString) {
     return res;
 }
 
-char* getPrintStringFromInt(Args* self, char* name, int32_t val) {
+char* getPrintStringFromInt(Args* self, char* name, int64_t val) {
     Args buffs = {0};
     char* res = NULL;
-    char* valString = strsFormat(&buffs, 32, "%d", val);
+    char* valString = strsFormat(&buffs, 32, "%lld", val);
     res = getPrintSring(self, name, valString);
     strsDeinit(&buffs);
     return res;
@@ -440,7 +440,7 @@ char* args_print(Args* self, char* name) {
     }
 
     if (type == ARG_TYPE_INT) {
-        int32_t val = args_getInt(self, name);
+        int64_t val = args_getInt(self, name);
         res = getPrintStringFromInt(self, name, val);
         goto exit;
     }
@@ -598,6 +598,64 @@ PIKA_RES list_append(PikaList* self, Arg* arg) {
     args_setArg(&self->super, arg_to_push);
     /* top++ */
     return args_setInt(&self->super, "top", top + 1);
+}
+
+Arg* list_pop(PikaList* list) {
+    int top = args_getInt(&list->super, "top");
+    if (top <= 0) {
+        return NULL;
+    }
+    Arg* arg = list_getArg(list, top - 1);
+    Arg* res = arg_copy(arg);
+    args_removeArg(&list->super, arg);
+    args_setInt(&list->super, "top", top - 1);
+    return res;
+}
+
+PIKA_RES list_remove(PikaList* list, Arg* arg) {
+    int top = args_getInt(&list->super, "top");
+    int i_remove = 0;
+    if (top <= 0) {
+        return PIKA_RES_ERR_OUT_OF_RANGE;
+    }
+    for (int i = 0; i < top; i++) {
+        Arg* arg_now = list_getArg(list, i);
+        if (arg_isEqual(arg_now, arg)) {
+            i_remove = i;
+            args_removeArg(&list->super, arg_now);
+            break;
+        }
+    }
+    /* move args */
+    for (int i = i_remove + 1; i < top; i++) {
+        char buff[11];
+        char* i_str = fast_itoa(buff, i - 1);
+        Arg* arg_now = list_getArg(list, i);
+        arg_setName(arg_now, i_str);
+    }
+    args_setInt(&list->super, "top", top - 1);
+    return PIKA_RES_OK;
+}
+
+PIKA_RES list_insert(PikaList* self, int index, Arg* arg) {
+    int top = args_getInt(&self->super, "top");
+    if (index > top) {
+        return PIKA_RES_ERR_OUT_OF_RANGE;
+    }
+    /* move args */
+    for (int i = top - 1; i >= index; i--) {
+        char buff[11];
+        char* i_str = fast_itoa(buff, i + 1);
+        Arg* arg_now = list_getArg(self, i);
+        arg_setName(arg_now, i_str);
+    }
+    char buff[11];
+    char* i_str = fast_itoa(buff, index);
+    Arg* arg_to_push = arg_copy(arg);
+    arg_setName(arg_to_push, i_str);
+    args_setArg(&self->super, arg_to_push);
+    args_setInt(&self->super, "top", top + 1);
+    return PIKA_RES_OK;
 }
 
 size_t list_getSize(PikaList* self) {

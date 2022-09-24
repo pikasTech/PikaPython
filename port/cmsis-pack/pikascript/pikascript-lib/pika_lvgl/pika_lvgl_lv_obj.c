@@ -1,7 +1,14 @@
-﻿#include "pika_lvgl_lv_obj.h"
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+#include "lvgl.h"
+#else
+#include "../../lvgl.h"
+#endif
+
+#ifdef PIKASCRIPT
+
+#include "pika_lvgl_lv_obj.h"
 #include "BaseObj.h"
 #include "dataStrs.h"
-#include "lvgl.h"
 #include "pika_lvgl.h"
 #include "pika_lvgl_arc.h"
 #include "pika_lvgl_lv_event.h"
@@ -88,7 +95,7 @@ void pika_lvgl_lv_obj_add_event_cb(PikaObj* self,
 
 void pika_lvgl_lv_obj_add_style(PikaObj *self, PikaObj* style, int selector){
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_state_t* lv_style = obj_getPtr(style, "lv_style");
+    lv_style_t* lv_style = obj_getPtr(style, "lv_style");
     lv_obj_add_style(lv_obj, lv_style, selector);
 }
 
@@ -106,3 +113,4 @@ void pika_lvgl_lv_obj_set_pos(PikaObj *self, int x, int y){
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_set_pos(lv_obj, x, y);
 }
+#endif

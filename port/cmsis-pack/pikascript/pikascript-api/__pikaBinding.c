@@ -462,6 +462,22 @@ void PikaStdData_List_appendMethod(PikaObj *self, Args *args){
     PikaStdData_List_append(self, arg);
 }
 
+void PikaStdData_List_insertMethod(PikaObj *self, Args *args){
+    int i = args_getInt(args, "i");
+    Arg* arg = args_getArg(args, "arg");
+    PikaStdData_List_insert(self, i, arg);
+}
+
+void PikaStdData_List_popMethod(PikaObj *self, Args *args){
+    Arg* res = PikaStdData_List_pop(self);
+    method_returnArg(args, res);
+}
+
+void PikaStdData_List_removeMethod(PikaObj *self, Args *args){
+    Arg* val = args_getArg(args, "val");
+    PikaStdData_List_remove(self, val);
+}
+
 void PikaStdData_List_reverseMethod(PikaObj *self, Args *args){
     PikaStdData_List_reverse(self);
 }
@@ -479,6 +495,9 @@ PikaObj *New_PikaStdData_List(Args *args){
     class_defineMethod(self, "__setitem__(__key,__val)", PikaStdData_List___setitem__Method);
     class_defineMethod(self, "__str__()", PikaStdData_List___str__Method);
     class_defineMethod(self, "append(arg)", PikaStdData_List_appendMethod);
+    class_defineMethod(self, "insert(i,arg)", PikaStdData_List_insertMethod);
+    class_defineMethod(self, "pop()", PikaStdData_List_popMethod);
+    class_defineMethod(self, "remove(val)", PikaStdData_List_removeMethod);
     class_defineMethod(self, "reverse()", PikaStdData_List_reverseMethod);
     class_defineMethod(self, "set(i,arg)", PikaStdData_List_setMethod);
     return self;
@@ -1009,7 +1028,8 @@ void PikaStdLib_SysObj_lenMethod(PikaObj *self, Args *args){
 }
 
 void PikaStdLib_SysObj_listMethod(PikaObj *self, Args *args){
-    Arg* res = PikaStdLib_SysObj_list(self);
+    PikaTuple* val = args_getTuple(args, "val");
+    Arg* res = PikaStdLib_SysObj_list(self, val);
     method_returnArg(args, res);
 }
 
@@ -1099,7 +1119,7 @@ PikaObj *New_PikaStdLib_SysObj(Args *args){
     class_defineMethod(self, "iter(arg)", PikaStdLib_SysObj_iterMethod);
     class_defineMethod(self, "len(arg)", PikaStdLib_SysObj_lenMethod);
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    class_defineMethod(self, "list()", PikaStdLib_SysObj_listMethod);
+    class_defineMethod(self, "list(*val)", PikaStdLib_SysObj_listMethod);
 #endif
 #if PIKA_FILEIO_ENABLE
     class_defineMethod(self, "open(path,mode)", PikaStdLib_SysObj_openMethod);
@@ -1804,8 +1824,8 @@ void pika_lvgl_dropdown_get_selected_strMethod(PikaObj *self, Args *args){
 }
 
 void pika_lvgl_dropdown_get_symbolMethod(PikaObj *self, Args *args){
-    int res = pika_lvgl_dropdown_get_symbol(self);
-    method_returnInt(args, res);
+    char* res = pika_lvgl_dropdown_get_symbol(self);
+    method_returnStr(args, res);
 }
 
 void pika_lvgl_dropdown_get_textMethod(PikaObj *self, Args *args){

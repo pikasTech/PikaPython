@@ -1,4 +1,11 @@
-﻿#include "lvgl.h"
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+#include "lvgl.h"
+#else
+#include "../../lvgl.h"
+#endif
+
+#ifdef PIKASCRIPT
+
 #include "pika_lvgl_style_t.h"
 
 void pika_lvgl_style_t_init(PikaObj* self) {
@@ -60,3 +67,4 @@ void pika_lvgl_style_t_set_shadow_width(PikaObj *self, int w){
     lv_style_t* lv_style = obj_getPtr(self, "lv_style");
     lv_style_set_shadow_width(lv_style, w);
 }
+#endif

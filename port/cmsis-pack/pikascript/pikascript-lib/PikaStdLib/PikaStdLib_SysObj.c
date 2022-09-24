@@ -148,40 +148,32 @@ exit:
 }
 
 Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
-    /* a String, return a StringObj */
-    if (ARG_TYPE_STRING == arg_getType(arg)) {
-        obj_setStr(self, "_sobj", arg_getStr(arg));
-        return arg_newMetaObj(New_PikaStdLib_StringObj);
-    }
-    /* a MATE object, return itself */
-    if (ARG_TYPE_OBJECT_META == arg_getType(arg)) {
+    /* object */
+    PIKA_BOOL is_temp = 0;
+    PikaObj* arg_obj = _arg_to_obj(arg, &is_temp);
+    NewFun _clsptr = (NewFun)arg_obj->constructor;
+    if (_clsptr == New_PikaStdLib_RangeObj) {
+        /* found RangeObj, return directly */
         return arg_copy(arg);
     }
-    /* object */
-    if (argType_isObject(arg_getType(arg))) {
-        PikaObj* arg_obj = arg_getPtr(arg);
-        NewFun _clsptr = (NewFun)arg_obj->constructor;
-        if (_clsptr == New_PikaStdLib_RangeObj) {
-            /* found RangeObj, return directly */
-            return arg_copy(arg);
-        }
-        // pikaVM_runAsm(arg_obj,
-        //               "B0\n"
-        //               "0 RUN __iter__\n"
-        //               "0 OUT __res\n");
-        const uint8_t bytes[] = {
-            0x08, 0x00, /* instruct array size */
-            0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x0a, 0x00, /* instruct array */
-            0x10, 0x00, /* const pool size */
-            0x00, 0x5f, 0x5f, 0x69, 0x74, 0x65, 0x72, 0x5f,
-            0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
-        };
-        pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
-        Arg* res = arg_copy(args_getArg(arg_obj->list, "__res"));
-        obj_removeArg(arg_obj, "__res");
-        return res;
+    // pikaVM_runAsm(arg_obj,
+    //               "B0\n"
+    //               "0 RUN __iter__\n"
+    //               "0 OUT __res\n");
+    const uint8_t bytes[] = {
+        0x08, 0x00, /* instruct array size */
+        0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x0a, 0x00, /* instruct array */
+        0x10, 0x00,                                     /* const pool size */
+        0x00, 0x5f, 0x5f, 0x69, 0x74, 0x65, 0x72, 0x5f,
+        0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
+    };
+    pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
+    Arg* res = arg_copy(args_getArg(arg_obj->list, "__res"));
+    obj_removeArg(arg_obj, "__res");
+    if (is_temp) {
+        obj_refcntDec(arg_obj);
     }
-    return arg_newNull();
+    return res;
 }
 
 Arg* PikaStdLib_SysObj_range(PikaObj* self, PikaTuple* ax) {
@@ -305,15 +297,48 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
     return -1;
 }
 
-Arg* PikaStdLib_SysObj_list(PikaObj* self) {
+Arg* PikaStdLib_SysObj_list(PikaObj* self, PikaTuple* val) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
+    if (1 == tuple_getSize(val)) {
+        Arg* in = tuple_getArg(val, 0);
+        obj_setArg(self, "__list", in);
+        /* clang-format off */
+        PIKA_PYTHON(
+        __res = []
+        for __item in __list:
+            __res.append(__item)
+        del __item
+        del __list
+        )
+        /* clang-format on */
+        const uint8_t bytes[] = {
+            0x3c, 0x00, /* instruct array size */
+            0x00, 0x95, 0x00, 0x00, 0x00, 0x04, 0x01, 0x00, 0x10, 0x81, 0x07,
+            0x00, 0x00, 0x02, 0x0e, 0x00, 0x00, 0x04, 0x13, 0x00, 0x00, 0x82,
+            0x17, 0x00, 0x00, 0x04, 0x24, 0x00, 0x00, 0x0d, 0x24, 0x00, 0x00,
+            0x07, 0x2b, 0x00, 0x11, 0x81, 0x24, 0x00, 0x01, 0x02, 0x2d, 0x00,
+            0x00, 0x86, 0x3a, 0x00, 0x00, 0x8c, 0x13, 0x00, 0x00, 0x8c, 0x24,
+            0x00, 0x00, 0x8c, 0x07, 0x00,
+            /* instruct array */
+            0x3d, 0x00, /* const pool size */
+            0x00, 0x5f, 0x5f, 0x72, 0x65, 0x73, 0x00, 0x5f, 0x5f, 0x6c, 0x69,
+            0x73, 0x74, 0x00, 0x69, 0x74, 0x65, 0x72, 0x00, 0x24, 0x6c, 0x30,
+            0x00, 0x24, 0x6c, 0x30, 0x2e, 0x5f, 0x5f, 0x6e, 0x65, 0x78, 0x74,
+            0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x69, 0x74, 0x65, 0x6d, 0x00, 0x32,
+            0x00, 0x5f, 0x5f, 0x72, 0x65, 0x73, 0x2e, 0x61, 0x70, 0x70, 0x65,
+            0x6e, 0x64, 0x00, 0x2d, 0x31, 0x00,
+            /* const pool */
+        };
+        pikaVM_runByteCode(self, (uint8_t*)bytes);
+        return arg_copy(obj_getArg(self, "__res"));
+    }
     PikaObj* New_PikaStdData_List(Args * args);
     return arg_newDirectObj(New_PikaStdData_List);
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in list is not enabled.\r\n");
-    return arg_newNull();
 #endif
+    return arg_newNull();
 }
 
 Arg* PikaStdLib_SysObj_dict(PikaObj* self) {
@@ -369,6 +394,23 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
         Arg* bytes = arg_newBytes((uint8_t*)arg_getStr(val), size);
         return bytes;
     }
+#if !PIKA_NANO_ENABLE
+    if (argType_isObject(type)) {
+        PikaObj* obj = arg_getPtr(val);
+        PikaObj* New_PikaStdData_List(Args * args);
+        PikaObj* New_PikaStdData_Tuple(Args * args);
+        if (obj->constructor == New_PikaStdData_List ||
+            obj->constructor == New_PikaStdData_Tuple) {
+            PikaList* list = obj_getPtr(obj, "list");
+            Arg* bytes = arg_newBytes(NULL, list_getSize(list));
+            uint8_t* bytes_raw = arg_getBytes(bytes);
+            for (size_t i = 0; i < list_getSize(list); i++) {
+                bytes_raw[i] = (uint8_t)list_getInt(list, i);
+            }
+            return bytes;
+        }
+    }
+#endif
     obj_setErrorCode(self, 1);
     __platform_printf("Error: input arg type not supported.\r\n");
     return arg_newNull();
@@ -539,6 +581,6 @@ exit:
     return;
 }
 
-void PikaStdLib_SysObj_exit(PikaObj *self){
+void PikaStdLib_SysObj_exit(PikaObj* self) {
     pks_vm_exit();
 }

@@ -34,7 +34,7 @@ int PikaStdLib_SysObj_id(PikaObj *self, Arg* obj);
 int PikaStdLib_SysObj_int(PikaObj *self, Arg* arg);
 Arg* PikaStdLib_SysObj_iter(PikaObj *self, Arg* arg);
 int PikaStdLib_SysObj_len(PikaObj *self, Arg* arg);
-Arg* PikaStdLib_SysObj_list(PikaObj *self);
+Arg* PikaStdLib_SysObj_list(PikaObj *self, PikaTuple* val);
 PikaObj* PikaStdLib_SysObj_open(PikaObj *self, char* path, char* mode);
 int PikaStdLib_SysObj_ord(PikaObj *self, char* val);
 void PikaStdLib_SysObj_print(PikaObj *self, PikaTuple* val, PikaDict* ops);

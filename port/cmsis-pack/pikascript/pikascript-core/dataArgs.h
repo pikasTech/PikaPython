@@ -189,5 +189,8 @@ PikaDict* args_getDict(Args* self, char* name);
 
 char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list);
 char* args_cacheStr(Args* self, char* str);
+PIKA_RES list_insert(PikaList* self, int index, Arg* arg);
+Arg* list_pop(PikaList* list);
+PIKA_RES list_remove(PikaList* list, Arg* arg);
 
 #endif

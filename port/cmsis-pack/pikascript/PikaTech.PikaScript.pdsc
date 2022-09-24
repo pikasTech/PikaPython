@@ -16,8 +16,8 @@
   <repository type="git">https://github.com/pikasTech/pikascript.git</repository>
 
   <releases>
-    <release date="2022-09-16" version="1.11.0" url="https://gitee.com/Lyon1998/pikascript/attach_files/1151246/download">
-        - PikaScript v1.11.0
+    <release date="2022-09-24" version="1.11.2" url="https://gitee.com/Lyon1998/pikascript/attach_files/1151246/download">
+        - PikaScript v1.11.2
     </release>
 
   </releases>
@@ -91,7 +91,7 @@
 
     <condition id="Kernel">
       <description>The Kernel of the PikaScript</description>
-      <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="1.11.0" />
+      <require Cclass="PikaScript" Cgroup="PikaScript" Csub="Core" Cversion="1.11.2" />
     </condition>
 
     <condition id="NO_LVGL_Pack">
@@ -142,11 +142,11 @@
   -->
 
   <components>
-    <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.11.0">
+    <bundle Cbundle="PikaScript" Cclass="PikaScript" Cversion="1.11.2">
       <description>an ultra-lightweight Python engine</description>
       <doc>https://pikadoc.readthedocs.io/en/latest/index.html</doc>
 
-      <component Cgroup="PikaScript" Csub="Core" Cversion="1.11.0">
+      <component Cgroup="PikaScript" Csub="Core" Cversion="1.11.2">
         <description>PikaScript Kernel</description>
         <files>
 <file attr="config" category="sourceC"  name="pikascript-core/BaseObj.c" />
@@ -208,7 +208,7 @@
         </RTE_Components_h>
       </component>
 
-      <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.11.0" condition="Kernel">
+      <component Cgroup="PikaScript" Csub="PikaStdLib" Cversion="1.11.2" condition="Kernel">
         <description>The standard library for PikaScript</description>
         <Pre_Include_Local_Component_h>
 
@@ -286,7 +286,7 @@
         </files>
       </component>
 
-      <component Cgroup="PikaScript" Csub="pika_lvgl" Cversion="0.2.0" condition="Kernel">
+      <component Cgroup="PikaScript" Csub="pika_lvgl" Cversion="latest" condition="Kernel">
         <description>The lvgl module for PikaScript</description>
         <files>
 <file attr="config" category="sourceC"  name="pikascript-lib/pika_lvgl/pika_lvgl.c" condition="NO_LVGL_Pack" />
