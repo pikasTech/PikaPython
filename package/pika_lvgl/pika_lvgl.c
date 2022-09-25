@@ -18,6 +18,7 @@
 #include "pika_lvgl_lv_color_t.h"
 #include "pika_lvgl_lv_obj.h"
 #include "pika_lvgl_lv_timer_t.h"
+#include "pika_lvgl_TEXT_DECOR.h"
 
 PikaObj* pika_lv_event_listener_g;
 
@@ -36,6 +37,12 @@ void pika_lvgl_STATE___init__(PikaObj* self) {
     obj_setInt(self, "USER_3", LV_STATE_USER_3);
     obj_setInt(self, "USER_4", LV_STATE_USER_4);
     obj_setInt(self, "ANY", LV_STATE_ANY);
+}
+
+void pika_lvgl_TEXT_DECOR___init__(PikaObj *self){
+    obj_setInt(self, "NONE", LV_TEXT_DECOR_NONE);
+    obj_setInt(self, "UNDERLINE", LV_TEXT_DECOR_UNDERLINE);
+    obj_setInt(self, "STRIKETHROUGH", LV_TEXT_DECOR_STRIKETHROUGH);
 }
 
 void pika_lvgl_ANIM___init__(PikaObj* self) {

@@ -26,9 +26,9 @@ void pika_lvgl_lv_obj_center(PikaObj* self) {
     lv_obj_center(lv_obj);
 }
 
-void pika_lvgl_lv_obj_set_size(PikaObj* self, int size_x, int size_y) {
+void pika_lvgl_lv_obj_set_size(PikaObj* self, int w, int h) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_obj_set_size(lv_obj, size_x, size_y);
+    lv_obj_set_size(lv_obj, w, h);
 }
 
 void pika_lvgl_lv_obj_align(PikaObj* self, int align, int x_ofs, int y_ofs) {
@@ -103,6 +103,9 @@ void pika_lvgl_lv_obj_add_style(PikaObj* self, PikaObj* style, int selector) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_style_t* lv_style = obj_getPtr(style, "lv_style");
     lv_obj_add_style(lv_obj, lv_style, selector);
+    char sytle_ref_name[] = "_stylex";
+    sytle_ref_name[sizeof(sytle_ref_name) - 2] = '0' + lv_obj->style_cnt;
+    obj_setRef(self, sytle_ref_name, style);
 }
 
 int pika_lvgl_lv_obj_get_x(PikaObj* self) {
@@ -118,6 +121,164 @@ int pika_lvgl_lv_obj_get_y(PikaObj* self) {
 void pika_lvgl_lv_obj_set_pos(PikaObj* self, int x, int y) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_set_pos(lv_obj, x, y);
+}
+
+void pika_lvgl_lv_obj_align_to(PikaObj* self,
+                               PikaObj* base,
+                               int align,
+                               int x_ofs,
+                               int y_ofs) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_t* lv_base = obj_getPtr(base, "lv_obj");
+    lv_obj_align_to(lv_obj, lv_base, align, x_ofs, y_ofs);
+}
+
+int pika_lvgl_lv_obj_get_content_height(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_get_content_height(lv_obj);
+}
+
+int pika_lvgl_lv_obj_get_content_width(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_get_content_width(lv_obj);
+}
+
+int pika_lvgl_lv_obj_get_height(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_get_height(lv_obj);
+}
+
+int pika_lvgl_lv_obj_get_self_height(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_get_self_height(lv_obj);
+}
+
+int pika_lvgl_lv_obj_get_self_width(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_get_self_width(lv_obj);
+}
+
+int pika_lvgl_lv_obj_get_width(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_get_width(lv_obj);
+}
+
+int pika_lvgl_lv_obj_get_x2(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_get_x2(lv_obj);
+}
+
+int pika_lvgl_lv_obj_get_x_aligned(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_get_x_aligned(lv_obj);
+}
+
+int pika_lvgl_lv_obj_get_y2(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_get_y2(lv_obj);
+}
+
+int pika_lvgl_lv_obj_get_y_aligned(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_get_y_aligned(lv_obj);
+}
+
+int pika_lvgl_lv_obj_hit_test(PikaObj* self, PikaObj* point) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_point_t* lv_point = obj_getPtr(point, "lv_point");
+    return lv_obj_hit_test(lv_obj, lv_point);
+}
+
+void pika_lvgl_lv_obj_invalidate(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_invalidate(lv_obj);
+}
+
+int pika_lvgl_lv_obj_is_layout_positioned(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_is_layout_positioned(lv_obj);
+}
+
+int pika_lvgl_lv_obj_is_visible(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_is_visible(lv_obj);
+}
+
+void pika_lvgl_lv_obj_mark_layout_as_dirty(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_mark_layout_as_dirty(lv_obj);
+}
+
+void pika_lvgl_lv_obj_move_to(PikaObj* self, int x, int y) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_move_to(lv_obj, x, y);
+}
+
+void pika_lvgl_lv_obj_move_children_by(PikaObj* self,
+                                       int x_diff,
+                                       int y_diff,
+                                       int ignore_floating) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_move_children_by(lv_obj, x_diff, y_diff, ignore_floating);
+}
+
+void pika_lvgl_lv_obj_refr_pos(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_refr_pos(lv_obj);
+}
+
+int pika_lvgl_lv_obj_refr_size(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_refr_size(lv_obj);
+}
+
+int pika_lvgl_lv_obj_refresh_self_size(PikaObj* self) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    return lv_obj_refresh_self_size(lv_obj);
+}
+
+void pika_lvgl_lv_obj_set_align(PikaObj* self, int align) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_set_align(lv_obj, align);
+}
+
+void pika_lvgl_lv_obj_set_content_height(PikaObj* self, int h) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_set_content_height(lv_obj, h);
+}
+
+void pika_lvgl_lv_obj_set_content_width(PikaObj* self, int w) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_set_content_width(lv_obj, w);
+}
+
+void pika_lvgl_lv_obj_set_ext_click_area(PikaObj* self, int size) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_set_ext_click_area(lv_obj, size);
+}
+
+void pika_lvgl_lv_obj_set_layout(PikaObj* self, int layout) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_set_layout(lv_obj, layout);
+}
+
+void pika_lvgl_lv_obj_set_x(PikaObj* self, int x) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_set_x(lv_obj, x);
+}
+
+void pika_lvgl_lv_obj_set_y(PikaObj* self, int y) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_set_y(lv_obj, y);
+}
+
+void pika_lvgl_lv_obj_transform_point(PikaObj* self,
+                                      PikaObj* p,
+                                      int recursive,
+                                      int inv) {
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_point_t* lv_point = obj_getPtr(p, "lv_point");
+    lv_obj_transform_point(lv_obj, lv_point, recursive, inv);
 }
 
 #endif
