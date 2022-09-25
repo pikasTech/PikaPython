@@ -9,7 +9,6 @@
 #include "pika_lvgl_lv_timer_t.h"
 
 PikaEventListener* g_pika_lv_timer_event_listener;
-
 void __pika_timer_cb(lv_timer_t* timer) {
     PikaObj* eventHandleObj = pks_eventLisener_getEventHandleObj(
         g_pika_lv_timer_event_listener, (uint32_t)timer);

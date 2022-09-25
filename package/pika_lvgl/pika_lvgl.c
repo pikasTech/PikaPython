@@ -5,8 +5,8 @@
 #endif
 
 #ifdef PIKASCRIPT
-#include "pika_lvgl.h"
 #include "BaseObj.h"
+#include "pika_lvgl.h"
 #include "pika_lvgl_ALIGN.h"
 #include "pika_lvgl_ANIM.h"
 #include "pika_lvgl_EVENT.h"
@@ -14,9 +14,9 @@
 #include "pika_lvgl_PALETTE.h"
 #include "pika_lvgl_STATE.h"
 #include "pika_lvgl_arc.h"
+#include "pika_lvgl_indev_t.h"
 #include "pika_lvgl_lv_color_t.h"
 #include "pika_lvgl_lv_obj.h"
-#include "pika_lvgl_indev_t.h"
 #include "pika_lvgl_lv_timer_t.h"
 
 PikaObj* pika_lv_event_listener_g;
@@ -165,9 +165,19 @@ PikaObj* pika_lvgl_obj(PikaObj* self, PikaObj* parent) {
     return new_obj;
 }
 
-PikaObj* pika_lvgl_palette_lighten(PikaObj *self, int p, int lvl){
+
+PikaObj* pika_lvgl_palette_lighten(PikaObj* self, int p, int lvl) {
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_color_t);
     lv_color_t lv_color = lv_palette_lighten(p, lvl);
+    args_setStruct(new_obj->list, "lv_color_struct", lv_color);
+    lv_color_t* plv_color = args_getStruct(new_obj->list, "lv_color_struct");
+    obj_setPtr(new_obj, "lv_color", plv_color);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_lv_color_hex(PikaObj* self, int64_t hex) {
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_color_t);
+    lv_color_t lv_color = lv_color_hex(hex);
     args_setStruct(new_obj->list, "lv_color_struct", lv_color);
     lv_color_t* plv_color = args_getStruct(new_obj->list, "lv_color_struct");
     obj_setPtr(new_obj, "lv_color", plv_color);
@@ -183,17 +193,17 @@ PikaObj* pika_lvgl_palette_main(PikaObj* self, int p) {
     return new_obj;
 }
 
-PikaObj* pika_lvgl_indev_get_act(PikaObj *self){
+PikaObj* pika_lvgl_indev_get_act(PikaObj* self) {
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_indev_t);
-    lv_indev_t *lv_indev = lv_indev_get_act();
-    obj_setPtr(new_obj,"lv_indev", lv_indev);
+    lv_indev_t* lv_indev = lv_indev_get_act();
+    obj_setPtr(new_obj, "lv_indev", lv_indev);
     return new_obj;
 }
 
-PikaObj* pika_lvgl_timer_create_basic(PikaObj *self){
+PikaObj* pika_lvgl_timer_create_basic(PikaObj* self) {
     PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_timer_t);
-    lv_timer_t *lv_timer = lv_timer_create_basic();
-    obj_setPtr(new_obj,"lv_timer", lv_timer);
+    lv_timer_t* lv_timer = lv_timer_create_basic();
+    obj_setPtr(new_obj, "lv_timer", lv_timer);
     return new_obj;
 }
 #endif
