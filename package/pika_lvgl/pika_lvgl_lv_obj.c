@@ -6,14 +6,20 @@
 
 #ifdef PIKASCRIPT
 
-#include "pika_lvgl_lv_obj.h"
 #include "BaseObj.h"
 #include "dataStrs.h"
 #include "pika_lvgl.h"
 #include "pika_lvgl_arc.h"
 #include "pika_lvgl_lv_event.h"
+#include "pika_lvgl_lv_obj.h"
 
 extern PikaObj* pika_lv_event_listener_g;
+
+void pika_lvgl_lv_obj___init__(PikaObj* self, PikaObj* parent) {
+    lv_obj_t* lv_parent = obj_getPtr(parent, "lv_obj");
+    lv_obj_t* lv_obj = lv_obj_create(lv_parent);
+    obj_setPtr(self, "lv_obj", lv_obj);
+}
 
 void pika_lvgl_lv_obj_center(PikaObj* self) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
@@ -30,7 +36,7 @@ void pika_lvgl_lv_obj_align(PikaObj* self, int align, int x_ofs, int y_ofs) {
     lv_obj_align(lv_obj, align, x_ofs, y_ofs);
 }
 
-void pika_lvgl_lv_obj_set_hight(PikaObj* self, int h) {
+void pika_lvgl_lv_obj_set_height(PikaObj* self, int h) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_set_height(lv_obj, h);
 }
@@ -93,24 +99,25 @@ void pika_lvgl_lv_obj_add_event_cb(PikaObj* self,
     eventLicener_registEvent(pika_lv_event_listener_g, (uintptr_t)lv_obj, self);
 }
 
-void pika_lvgl_lv_obj_add_style(PikaObj *self, PikaObj* style, int selector){
+void pika_lvgl_lv_obj_add_style(PikaObj* self, PikaObj* style, int selector) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_style_t* lv_style = obj_getPtr(style, "lv_style");
     lv_obj_add_style(lv_obj, lv_style, selector);
 }
 
-int pika_lvgl_lv_obj_get_x(PikaObj *self){
+int pika_lvgl_lv_obj_get_x(PikaObj* self) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     return lv_obj_get_x(lv_obj);
 }
 
-int pika_lvgl_lv_obj_get_y(PikaObj *self){
+int pika_lvgl_lv_obj_get_y(PikaObj* self) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     return lv_obj_get_y(lv_obj);
 }
 
-void pika_lvgl_lv_obj_set_pos(PikaObj *self, int x, int y){
+void pika_lvgl_lv_obj_set_pos(PikaObj* self, int x, int y) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_set_pos(lv_obj, x, y);
 }
+
 #endif
