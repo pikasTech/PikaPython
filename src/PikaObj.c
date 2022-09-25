@@ -382,6 +382,7 @@ PikaObj* removeMethodInfo(PikaObj* thisClass) {
 PikaObj* newNormalObj(NewFun newObjFun) {
     PikaObj* thisClass = obj_getClassObjByNewFun(NULL, "", newObjFun);
     obj_refcntInc(thisClass);
+    obj_setFlag(thisClass, OBJ_FLAG_ALREADY_INIT);
     return removeMethodInfo(thisClass);
 }
 
@@ -599,21 +600,21 @@ void _update_proxy(PikaObj* self, char* name) {
 #if PIKA_NANO_ENABLE
     return;
 #endif
-    if (!(self->proxy & PIKA_PROXY_GETATTRIBUTE)) {
+    if (!obj_getFlag(self, OBJ_FLAG_PROXY_GETATTRIBUTE)) {
         if (strEqu(name, "__getattribute__")) {
-            self->proxy |= PIKA_PROXY_GETATTRIBUTE;
+            obj_setFlag(self, OBJ_FLAG_PROXY_GETATTRIBUTE);
             return;
         }
     }
-    if (!(self->proxy & PIKA_PROXY_GETATTR)) {
+    if (!obj_getFlag(self, OBJ_FLAG_PROXY_GETATTR)) {
         if (strEqu(name, "__getattr__")) {
-            self->proxy |= PIKA_PROXY_GETATTR;
+            obj_setFlag(self, OBJ_FLAG_PROXY_GETATTR);
             return;
         }
     }
-    if (!(self->proxy & PIKA_PROXY_SETATTR)) {
+    if (!obj_getFlag(self, OBJ_FLAG_PROXY_SETATTR)) {
         if (strEqu(name, "__setattr__")) {
-            self->proxy |= PIKA_PROXY_SETATTR;
+            obj_setFlag(self, OBJ_FLAG_PROXY_SETATTR);
             return;
         }
     }
@@ -1001,7 +1002,14 @@ void method_returnObj(Args* args, void* val) {
     if (NULL == val) {
         return;
     }
-    args_setPtrWithType(args, "return", ARG_TYPE_OBJECT_NEW, val);
+    ArgType type;
+    PikaObj* obj = (PikaObj*)val;
+    if (obj_getFlag(obj, OBJ_FLAG_ALREADY_INIT)) {
+        type = ARG_TYPE_OBJECT;
+    } else {
+        type = ARG_TYPE_OBJECT_NEW;
+    }
+    args_setPtrWithType(args, "return", type, val);
 }
 
 void method_returnArg(Args* args, Arg* arg) {
@@ -1027,7 +1035,7 @@ PikaObj* New_PikaObj(void) {
     self->list = New_args(NULL);
     self->refcnt = 0;
     self->constructor = NULL;
-    self->proxy = 0;
+    self->flag = 0;
     return self;
 }
 

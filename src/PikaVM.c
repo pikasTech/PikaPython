@@ -512,7 +512,7 @@ static Arg* _proxy_getattribute(PikaObj* host, char* name) {
 #if PIKA_NANO_ENABLE
     return NULL;
 #endif
-    if ('@' != name[0] && (host->proxy & PIKA_PROXY_GETATTRIBUTE)) {
+    if ('@' != name[0] && obj_getFlag(host, OBJ_FLAG_PROXY_GETATTRIBUTE)) {
         args_setStr(host->list, "@name", name);
         /* clang-format off */
         PIKA_PYTHON(
@@ -539,7 +539,7 @@ static Arg* _proxy_getattr(PikaObj* host, char* name) {
 #if PIKA_NANO_ENABLE
     return NULL;
 #endif
-    if ('@' != name[0] && (host->proxy & PIKA_PROXY_GETATTR)) {
+    if ('@' != name[0] && obj_getFlag(host, OBJ_FLAG_PROXY_GETATTR)) {
         args_setStr(host->list, "@name", name);
         /* clang-format off */
         PIKA_PYTHON(
@@ -934,10 +934,8 @@ void __vm_List_append(PikaObj* self, Arg* arg) {
 }
 
 void __vm_List___init__(PikaObj* self) {
-    if (!obj_isArgExist(self, "list")) {
-        PikaList* list = New_list();
-        obj_setPtr(self, "list", list);
-    }
+    PikaList* list = New_list();
+    obj_setPtr(self, "list", list);
 }
 
 #if PIKA_BUILTIN_STRUCT_ENABLE
@@ -982,9 +980,6 @@ static Arg* VM_instruction_handler_LST(PikaObj* self,
 }
 
 void __vm_Dict___init__(PikaObj* self) {
-    if (obj_isArgExist(self, "dict")) {
-        return;
-    }
     PikaDict* dict = New_dict();
     PikaDict* keys = New_dict();
     obj_setPtr(self, "dict", dict);
@@ -1406,7 +1401,7 @@ static PIKA_BOOL _proxy_setattr(PikaObj* self, char* name, Arg* arg) {
 #if PIKA_NANO_ENABLE
     return PIKA_FALSE;
 #endif
-    if (self->proxy & PIKA_PROXY_SETATTR) {
+    if obj_getFlag (self, OBJ_FLAG_PROXY_SETATTR) {
         obj_setStr(self, "@name", name);
         obj_setArg(self, "@value", arg);
         /* clang-format off */

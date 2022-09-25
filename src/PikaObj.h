@@ -71,12 +71,17 @@ struct PikaObj {
     Args* list;
     uint8_t refcnt;
     void* constructor;
-    uint8_t proxy;
+    uint8_t flag;
 };
 
-#define PIKA_PROXY_GETATTRIBUTE 0x01
-#define PIKA_PROXY_GETATTR 0x02
-#define PIKA_PROXY_SETATTR 0x04
+#define OBJ_FLAG_PROXY_GETATTRIBUTE 0x01
+#define OBJ_FLAG_PROXY_GETATTR 0x02
+#define OBJ_FLAG_PROXY_SETATTR 0x04
+#define OBJ_FLAG_ALREADY_INIT 0x08
+
+#define obj_getFlag(__self, __flag) ((__self)->flag & (__flag))
+#define obj_setFlag(__self, __flag) ((__self)->flag |= (__flag))
+#define obj_clearFlag(__self, __flag) ((__self)->flag &= ~(__flag))
 
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
