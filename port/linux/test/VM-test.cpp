@@ -1881,4 +1881,24 @@ TEST(vm, c_module_get_set_attr) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(vm, class_attr_ref) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "class test:\n"
+            "    a = 1\n"
+            "    b = a\n"
+            "t = test()\n");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

@@ -105,14 +105,18 @@ class SysObj:
 
     @staticmethod
     @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    def hasattr(obj: object, name: str) -> int: ...
+
+    @ staticmethod
+    @ PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def exit(): ...
 
 
-@PIKA_C_MACRO_IF("0")
+@ PIKA_C_MACRO_IF("0")
 class RangeObj:
     def __next__(self) -> any: ...
 
 
-@PIKA_C_MACRO_IF("0")
+@ PIKA_C_MACRO_IF("0")
 class StringObj:
     def __next__(self) -> any: ...

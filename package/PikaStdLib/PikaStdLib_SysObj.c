@@ -584,3 +584,12 @@ exit:
 void PikaStdLib_SysObj_exit(PikaObj* self) {
     pks_vm_exit();
 }
+
+int PikaStdLib_SysObj_hasattr(PikaObj* self, PikaObj* obj, char* name) {
+    if (NULL == obj) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("[Error] hasattr: obj is null.\r\n");
+        return 0;
+    }
+    return obj_isArgExist(obj, name);
+}

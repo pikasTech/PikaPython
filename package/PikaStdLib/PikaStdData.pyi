@@ -78,7 +78,7 @@ class Dict:
     def __len__(self) -> int: ...
 
     def __contains__(self, val: any) -> int:
-        """ support val in list """
+        """ support val in dict """
 
 
 class dict_keys:
