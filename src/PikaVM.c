@@ -1489,8 +1489,10 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     }
 
     host_obj = obj_getHostObjWithIsTemp(context, arg_path, &is_temp);
-    if (_proxy_setattr(host_obj, arg_name, out_arg)) {
-        return NULL;
+    if (host_obj != NULL) {
+        if (_proxy_setattr(host_obj, arg_name, out_arg)) {
+            return NULL;
+        }
     }
 
     obj_setArg_noCopy(context, arg_path, out_arg);
