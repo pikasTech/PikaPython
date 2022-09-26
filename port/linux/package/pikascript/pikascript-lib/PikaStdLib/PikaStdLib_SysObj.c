@@ -563,8 +563,16 @@ Arg* PikaStdLib_SysObj_getattr(PikaObj* self, PikaObj* obj, char* name) {
         __platform_printf("[Error] getattr: can not get attr of NULL.\r\n");
         return NULL;
     }
-    res = arg_copy(obj_getArg(obj, name));
-    return res;
+    Arg* arg = obj_getArg(obj, name);
+    if (NULL == arg) {
+        arg = obj_getMethodArg(obj, name);
+        return arg;
+    }
+    if (NULL != arg) {
+        res = arg_copy(arg);
+        return res;
+    }
+    return NULL;
 }
 
 void PikaStdLib_SysObj_setattr(PikaObj* self,
@@ -591,5 +599,13 @@ int PikaStdLib_SysObj_hasattr(PikaObj* self, PikaObj* obj, char* name) {
         __platform_printf("[Error] hasattr: obj is null.\r\n");
         return 0;
     }
-    return obj_isArgExist(obj, name);
+    if (obj_isArgExist(obj, name)) {
+        return 1;
+    }
+    Arg* method = obj_getMethodArg(obj, name);
+    if (NULL != method) {
+        arg_deinit(method);
+        return 1;
+    }
+    return 0;
 }
