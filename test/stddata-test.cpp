@@ -373,4 +373,25 @@ TEST(stddata, list_insert_) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stddata, dict_update) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "d = {'a':1, 'b':2, 'c':3}\n"
+            "d.update({'b':4, 'd':5})\n"
+            "res1 = d['b']\n"
+            "res2 = d['a']\n"
+            "print(d)\n");
+    /* collect */
+    /* assert */
+    EXPECT_EQ(obj_getInt(pikaMain, "res1"), 4);
+    EXPECT_EQ(obj_getInt(pikaMain, "res2"), 1);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

@@ -58,19 +58,26 @@ class List(Tuple):
 
 
 class Dict:
-    def __init__(self): ...
-    # get an arg by the key
+    def __init__(self):
+        """ get an arg by the key """
+
     def get(self, key: str) -> any: ...
-    # set an arg by the key
-    def set(self, key: str, arg: any): ...
-    # remove an arg by the key
-    def remove(self, key: str): ...
+
+    def set(self, key: str, arg: any):
+        """ set an arg by the key """
+
+    def remove(self, key: str):
+        """ remove an arg by the key """
+
     def __iter__(self) -> any: ...
     def __next__(self) -> any: ...
-    # support dict[]  = val
-    def __setitem__(self, __key: any, __val: any): ...
-    # support val = dict[]
-    def __getitem__(self, __key: any) -> any: ...
+
+    def __setitem__(self, __key: any, __val: any):
+        """ support dict[]  = val """
+
+    def __getitem__(self, __key: any) -> any:
+        """ support val = dict[] """
+
     def __del__(self): ...
     def __str__(self) -> str: ...
     def keys(self) -> dict_keys: ...
@@ -79,6 +86,9 @@ class Dict:
 
     def __contains__(self, val: any) -> int:
         """ support val in dict """
+
+    def update(self, other: Dict):
+        """ update dict """
 
 
 class dict_keys:
@@ -101,12 +111,16 @@ class String:
     def get(self) -> str: ...
     def __iter__(self) -> any: ...
     def __next__(self) -> any: ...
-    # support string[]  = val
-    def __setitem__(self, __key: any, __val: any): ...
-    # support val = string[]
-    def __getitem__(self, __key: any) -> any: ...
-    # support str()
-    def __str__(self) -> str: ...
+
+    def __setitem__(self, __key: any, __val: any):
+        """ support string[]  = val """
+
+    def __getitem__(self, __key: any) -> any:
+        """ support val = string[] """
+
+    def __str__(self) -> str:
+        """ support str() """
+
     def __len__(self) -> int: ...
     def encode(self, *encoding) -> bytes: ...
     def startswith(self, prefix: str) -> int: ...
@@ -122,14 +136,18 @@ class String:
 
 
 class ByteArray:
-    # convert a string to ByteArray
-    def __init__(self, bytes: any): ...
-    # support for loop
-    def __iter__(self) -> any: ...
-    # support for loop
-    def __next__(self) -> any: ...
-    # support [] index
-    def __getitem__(self, __key: int) -> int: ...
+    def __init__(self, bytes: any):
+        """ convert a bytes to ByteArray """
+
+    def __iter__(self) -> any:
+        """ support for loop """
+
+    def __next__(self) -> any:
+        """ support for loop """
+
+    def __getitem__(self, __key: int) -> int:
+        """ support [] index """
+
     def __setitem__(self, __key: int, __val: int): ...
     def __str__(self) -> str: ...
     def decode(self) -> str: ...
@@ -148,5 +166,5 @@ class FILEIO:
 
 
 class Utils:
-    # convert a int to bytes
-    def int_to_bytes(self, val: int) -> bytes: ...
+    def int_to_bytes(self, val: int) -> bytes:
+        """ convert a int to bytes """

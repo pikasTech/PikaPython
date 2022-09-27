@@ -57,7 +57,7 @@ class SysObj:
 
     @staticmethod
     @PIKA_C_MACRO_IF("PIKA_BUILTIN_STRUCT_ENABLE")
-    def dict() -> any: ...
+    def dict(*val) -> any: ...
 
     @staticmethod
     @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")

@@ -640,3 +640,12 @@ TEST(compiler, setattr) {
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(compiler, dict_update) {
+    char* lines = 
+    "for @item in @other:\n"
+    "    @self[@item] = @other[@item]\n"
+    ;
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

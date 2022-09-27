@@ -341,7 +341,7 @@ Arg* PikaStdLib_SysObj_list(PikaObj* self, PikaTuple* val) {
     return arg_newNull();
 }
 
-Arg* PikaStdLib_SysObj_dict(PikaObj* self) {
+Arg* PikaStdLib_SysObj_dict(PikaObj *self, PikaTuple* val){
 #if PIKA_BUILTIN_STRUCT_ENABLE
     PikaObj* New_PikaStdData_Dict(Args * args);
     return arg_newDirectObj(New_PikaStdData_Dict);
