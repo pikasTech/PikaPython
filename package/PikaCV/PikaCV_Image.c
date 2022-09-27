@@ -406,7 +406,7 @@ PikaObj* PikaCV_Image_split(PikaObj* self) {
         PikaObj* img = newNormalObj(New_PikaCV_Image);
         PikaCV_Image___init__(img);
         PikaCV_Image_loadGray(img, src->width, src->height, RGB[i]);
-        Arg* token_arg = arg_newPtr(ARG_TYPE_OBJECT, img);
+        Arg* token_arg = arg_newObj(img);
         /* 添加到 list 对象 */
         PikaStdData_List_append(list, token_arg);
         /* 销毁 arg */

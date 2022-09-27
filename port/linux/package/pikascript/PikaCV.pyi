@@ -70,17 +70,18 @@ class Image:
     def size(self) -> int:
         """Get the size of the image by bytes"""
 
-    def add(self,image:Imgae):
+    def add(self, image: Image):
         """Add two images"""
 
-    def minus(self,image:Imgae):
+    def minus(self, image: Image):
         """Minus two images"""
 
-    def split(self) -> List:
+    def split(self) -> list:
         """Split one 3-channels image to three 1-channel"""
 
-    def merge(self,R:Image,G:Image,B:Image):
+    def merge(self, R: Image, G: Image, B: Image):
         """Merge three 1-channel image to 3-channels"""
+
 
 class Converter:
     """The Converter class is used to 
@@ -105,7 +106,7 @@ class Converter:
     @staticmethod
     def toBGR888(image: Image):
         """Convert the image to BGR888"""
-    def converter(image:Image,format:int):
+    def converter(image: Image, format: int):
         """ 
         2:RGB888
         3:BGR888
@@ -114,13 +115,14 @@ class Converter:
         6:BMP
         """
 
+
 class Transforms:
     """The transforms class is used to 
     supply the rotate, flip, and crop operation for an image."""
     @staticmethod
     def rotateDown(image: Image):
         """Rotate the image """
-    def threshold(image:Image,thre:int,maxval:int,thresholdType:int):
+    def threshold(image: Image, thre: int, maxval: int, thresholdType: int):
         """
         0:THRESH_BINARY 
         1:THRESH_BINARY_INV
@@ -129,20 +131,20 @@ class Transforms:
         4:THRESH_TOZERO_INV
         5:OTSU
         """
-    def setROI(image:Image,x:int,y:int,w:int,h:int) :
+    def setROI(image: Image, x: int, y: int, w: int, h: int):
         """xywh"""
-    def getOTSUthre(image:Image) -> int:
+    def getOTSUthre(image: Image) -> int:
         """return otsu threshold"""
-    def setOTSU(image:Image):
+    def setOTSU(image: Image):
         """otsu"""
-    def resize(image:Image,x:int,y:int,resizeType:int):
+    def resize(image: Image, x: int, y: int, resizeType: int):
         """
         resize image
         0:NEAREST
         TODO:
         1:BILINEAR
         """
-    def adaptiveThreshold(image:Image,maxval:int,subsize:int,c:int,method:int):
+    def adaptiveThreshold(image: Image, maxval: int, subsize: int, c: int, method: int):
         """
         AdaptiveThreshold
         method
@@ -150,10 +152,12 @@ class Transforms:
         1:medianFilter
         #TODO 2:gaussianFilter
         """
+
+
 class Filter:
     """The Filter class is used to 
     supply some Image Filtering Algorithms ."""
-    def meanFilter(image:Image,ksizex:int,ksizey:int):
+    def meanFilter(image: Image, ksizex: int, ksizey: int):
         """ mean filter,ksize is odd"""
-    def medianFilter(image:Image):
+    def medianFilter(image: Image):
         """ median filter,kernel size is 3*3"""
