@@ -1913,10 +1913,26 @@ TEST(vm, getattr_native) {
             "mem = PikaStdLib.MemChecker()\n"
             "if hasattr(mem, 'max'):\n"
             "    max = getattr(mem, 'max')\n"
-            "    max()\n"
-            );
+            "    max()\n");
     /* collect */
     /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, issue_dict_update) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/issue/issue_dict_update.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(obj_getStr(pikaMain, "inner"), "widget5");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

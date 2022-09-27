@@ -4738,4 +4738,14 @@ TEST(parser, issue_big_dict) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, issue_dict_update) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* pikaAsm =
+        Parser_fileToAsm(buffs, "test/python/issue/issue_dict_update.py");
+    __platform_printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
