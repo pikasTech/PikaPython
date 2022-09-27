@@ -333,7 +333,6 @@ TEST(modbus, rtu_master) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(proxy, test1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -363,6 +362,7 @@ TEST(issue, global) {
     pikaVM_runSingleFile(pikaMain, "test/python/issue/issue_global.py");
     /* collect */
     /* assert */
+    EXPECT_EQ(obj_getInt(pikaMain, "testpara.timer2_flag"), 1);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

@@ -144,7 +144,7 @@ PIKA_RES obj_setPtr(PikaObj* self, char* argPath, void* pointer) {
     return PIKA_RES_OK;
 }
 
-PIKA_RES obj_setRef(PikaObj* self, char* argPath, void* pointer) {
+PIKA_RES obj_setRef(PikaObj* self, char* argPath, PikaObj* pointer) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
         /* [error] object no found */
