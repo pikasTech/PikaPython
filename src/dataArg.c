@@ -255,7 +255,7 @@ Arg* arg_setNull(Arg* self) {
     return arg_init("", ARG_TYPE_NONE, NULL, 0, NULL);
 }
 
-Arg* arg_setFloat(Arg* self, char* name, double val) {
+Arg* arg_setFloat(Arg* self, char* name, pika_float val) {
     if (NULL == self) {
         return arg_init(name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val),
                         NULL);
@@ -266,12 +266,12 @@ Arg* arg_setFloat(Arg* self, char* name, double val) {
     return self;
 }
 
-double arg_getFloat(Arg* self) {
+pika_float arg_getFloat(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return -999.999;
     }
 
-    return *(double*)arg_getContent(self);
+    return *(pika_float*)arg_getContent(self);
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {

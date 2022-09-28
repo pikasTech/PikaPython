@@ -107,7 +107,7 @@ int pika_cjson_cJSON_getType(PikaObj* self) {
     return item->type;
 }
 
-double pika_cjson_cJSON_getValueDouble(PikaObj* self) {
+pika_float pika_cjson_cJSON_getValueDouble(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     return item->valuedouble;
 }

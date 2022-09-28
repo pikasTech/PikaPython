@@ -10,17 +10,17 @@ void PikaMath_Quaternion___init__(PikaObj* self) {
 }
 
 void PikaMath_Quaternion_set(PikaObj* self,
-                             double x,
-                             double y,
-                             double z,
-                             double w) {
+                             pika_float x,
+                             pika_float y,
+                             pika_float z,
+                             pika_float w) {
     obj_setFloat(self, "x", x);
     obj_setFloat(self, "y", y);
     obj_setFloat(self, "z", z);
     obj_setFloat(self, "w", w);
 }
 
-double PikaMath_Quaternion_get(PikaObj* self, int key) {
+pika_float PikaMath_Quaternion_get(PikaObj* self, int key) {
     if (key == 0) {
         return obj_getFloat(self, "x");
     }
@@ -103,12 +103,12 @@ void PikaMath_Quaternion_mul(PikaObj* self, PikaObj* quat) {
     obj_setFloat(self, "z", z_mul);
     obj_setFloat(self, "w", w_mul);
 }
-double PikaMath_Quaternion_magnituded(PikaObj* self) {
+pika_float PikaMath_Quaternion_magnituded(PikaObj* self) {
     float magnituded = PikaMath_Quaternion_magnitudedsquare(self);
 
     return pow(magnituded, 0.5);
 }
-double PikaMath_Quaternion_magnitudedsquare(PikaObj* self) {
+pika_float PikaMath_Quaternion_magnitudedsquare(PikaObj* self) {
     float x = obj_getFloat(self, "x");
     float y = obj_getFloat(self, "y");
     float z = obj_getFloat(self, "z");
@@ -170,7 +170,7 @@ void PikaMath_Quaternion_crossproduct(PikaObj* self, PikaObj* quat) {
     obj_setFloat(self, "w", 0.0);
 }
 
-double PikaMath_Quaternion_dot(PikaObj* self, PikaObj* quat) {
+pika_float PikaMath_Quaternion_dot(PikaObj* self, PikaObj* quat) {
     float x_ = obj_getFloat(quat, "x");
     float y_ = obj_getFloat(quat, "y");
     float z_ = obj_getFloat(quat, "z");
@@ -218,9 +218,9 @@ int PikaMath_Quaternion_isnormalize(PikaObj* self) {
 #define DegToRad(x) ((x)*PI_DIV_180)
 
 void PikaMath_Quaternion_fromEuler(PikaObj* self,
-                                   double yaw,
-                                   double pitch,
-                                   double roll,
+                                   pika_float yaw,
+                                   pika_float pitch,
+                                   pika_float roll,
                                    int mode) {
     if (mode) {
         pitch = DegToRad(pitch);

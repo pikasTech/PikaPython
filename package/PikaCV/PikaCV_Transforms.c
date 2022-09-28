@@ -151,10 +151,10 @@ int PikaCV_Transforms_getOTSUthre(PikaObj* self, PikaObj* image) {
         graynum[data[i]]++;
     }
 
-    double P[256] = {0.0};
-    double PK[256] = {0.0};
-    double MK[256] = {0.0};
-    double srcpixnum = width * height, sumtmpPK = 0, sumtmpMK = 0;
+    pika_float P[256] = {0.0};
+    pika_float PK[256] = {0.0};
+    pika_float MK[256] = {0.0};
+    pika_float srcpixnum = width * height, sumtmpPK = 0, sumtmpMK = 0;
     for (int i = 0; i < Grayscale; ++i) {
         P[i] = graynum[i] / srcpixnum;
         PK[i] = sumtmpPK + P[i];
@@ -163,12 +163,12 @@ int PikaCV_Transforms_getOTSUthre(PikaObj* self, PikaObj* image) {
         sumtmpMK = MK[i];
     }
 
-    double Var = 0;
+    pika_float Var = 0;
     for (int k = 0; k < Grayscale; ++k) {
         if (PK[k] > 0.0) {
-            double t = MK[Grayscale - 1] * PK[k] - MK[k];
-            double w = PK[k] * (1 - PK[k]);
-            double variance = t * t / w;
+            pika_float t = MK[Grayscale - 1] * PK[k] - MK[k];
+            pika_float w = PK[k] * (1 - PK[k]);
+            pika_float variance = t * t / w;
             if (variance > Var) {
                 Var = variance;
                 threshold = k;
@@ -226,8 +226,8 @@ void PikaCV_Transforms_resize(PikaObj* self,
     uint8_t* data = _image_getData(image);
     uint8_t* data_new = arg_getBytes(arg_data_new);
 
-    double scale_x = (double)width / (double)x;
-    double scale_y = (double)height / (double)y;
+    pika_float scale_x = (pika_float)width / (pika_float)x;
+    pika_float scale_y = (pika_float)height / (pika_float)y;
     if (resizeType == 0) {
         for (int i = 0; i < y; ++i) {
             int sy = floor(i * scale_y);

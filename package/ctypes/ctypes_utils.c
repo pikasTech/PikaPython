@@ -8,7 +8,7 @@ void ctypesUtils_setStr(PikaObj* self, char* val) {
     obj_setStr(self, "value", val);
 }
 
-void ctypesUtils_setFloat(PikaObj* self, double val) {
+void ctypesUtils_setFloat(PikaObj* self, pika_float val) {
     obj_setFloat(self, "value", val);
 }
 
@@ -24,7 +24,7 @@ char* ctypesUtils_getStr(PikaObj* self) {
     return obj_getStr(self, "value");
 }
 
-double ctypesUtils_getFloat(PikaObj* self) {
+pika_float ctypesUtils_getFloat(PikaObj* self) {
     return obj_getFloat(self, "value");
 }
 

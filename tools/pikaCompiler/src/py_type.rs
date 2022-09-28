@@ -12,7 +12,7 @@ impl PyType {
             return "int64_t".to_string();
         }
         if self.type_name == "float" {
-            return "double".to_string();
+            return "pika_float".to_string();
         }
         if self.type_name == "pointer" {
             return "void*".to_string();
@@ -46,7 +46,7 @@ impl PyType {
             return "int64_t".to_string();
         }
         if self.type_name == "float" {
-            return "double".to_string();
+            return "pika_float".to_string();
         }
         if self.type_name == "pointer" {
             return "void*".to_string();

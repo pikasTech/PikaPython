@@ -34,12 +34,12 @@ QueueObj* New_queueObj(void);
 int32_t queueObj_init(QueueObj* self);
 
 int32_t queueObj_pushInt(QueueObj* self, int val);
-int32_t queueObj_pushFloat(QueueObj* self, double val);
+int32_t queueObj_pushFloat(QueueObj* self, pika_float val);
 int32_t queueObj_pushStr(QueueObj* self, char* str);
 int32_t queueObj_pushObj(QueueObj* self, char* className);
 
 int64_t queueObj_popInt(QueueObj* self);
-double queueObj_popFloat(QueueObj* self);
+pika_float queueObj_popFloat(QueueObj* self);
 char* queueObj_popStr(QueueObj* self);
 PikaObj* queueObj_popObj(QueueObj* self);
 

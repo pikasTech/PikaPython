@@ -1188,11 +1188,18 @@ TEST(VM, science_num) {
     double b = obj_getFloat(self, "b");
     double c = obj_getFloat(self, "c");
     double d = obj_getFloat(self, "d");
-    /* assert */
+/* assert */
+#if pika_floatYPE_DOUBLE
     EXPECT_DOUBLE_EQ(a, 1.0e-3);
     EXPECT_DOUBLE_EQ(b, 2.0e-5);
     EXPECT_DOUBLE_EQ(c, -3e-5);
     EXPECT_DOUBLE_EQ(d, 0.4e2);
+#else
+    EXPECT_FLOAT_EQ(a, 1.0e-3);
+    EXPECT_FLOAT_EQ(b, 2.0e-5);
+    EXPECT_FLOAT_EQ(c, -3e-5);
+    EXPECT_FLOAT_EQ(d, 0.4e2);
+#endif
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);

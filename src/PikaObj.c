@@ -155,7 +155,7 @@ PIKA_RES obj_setRef(PikaObj* self, char* argPath, PikaObj* pointer) {
     return PIKA_RES_OK;
 }
 
-PIKA_RES obj_setFloat(PikaObj* self, char* argPath, double value) {
+PIKA_RES obj_setFloat(PikaObj* self, char* argPath, pika_float value) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
         /* [error] object no found */
@@ -284,13 +284,13 @@ void* obj_getPtr(PikaObj* self, char* argPath) {
     return res;
 }
 
-double obj_getFloat(PikaObj* self, char* argPath) {
+pika_float obj_getFloat(PikaObj* self, char* argPath) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
         return -999.999;
     }
     char* argName = strPointToLastToken(argPath, '.');
-    double res = args_getFloat(obj->list, argName);
+    pika_float res = args_getFloat(obj->list, argName);
     return res;
 }
 
@@ -990,7 +990,7 @@ void method_returnInt(Args* args, int64_t val) {
     args_setInt(args, "return", val);
 }
 
-void method_returnFloat(Args* args, double val) {
+void method_returnFloat(Args* args, pika_float val) {
     args_setFloat(args, "return", val);
 }
 
@@ -1021,7 +1021,7 @@ int64_t method_getInt(Args* args, char* argName) {
     return args_getInt(args, argName);
 }
 
-double method_getFloat(Args* args, char* argName) {
+pika_float method_getFloat(Args* args, char* argName) {
     return args_getFloat(args, argName);
 }
 

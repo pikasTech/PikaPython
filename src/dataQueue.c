@@ -79,11 +79,11 @@ int64_t queue_popInt(Queue* queue) {
     return arg_getInt(__queue_popArg_noRmoveArg(queue));
 }
 
-int32_t queue_pushFloat(Queue* queue, double val) {
+int32_t queue_pushFloat(Queue* queue, pika_float val) {
     return queue_pushArg(queue, arg_newFloat(val));
 }
 
-double queue_popFloat(Queue* queue) {
+pika_float queue_popFloat(Queue* queue) {
     return arg_getFloat(__queue_popArg_noRmoveArg(queue));
 }
 

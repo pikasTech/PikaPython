@@ -22,7 +22,7 @@ void PikaStdDevice_PWM_setFrequency(PikaObj* self, int freq) {
     obj_runNativeMethod(self, "platformSetFrequency",NULL);
 }
 
-void PikaStdDevice_PWM_setDuty(PikaObj* self, double duty) {
+void PikaStdDevice_PWM_setDuty(PikaObj* self, pika_float duty) {
     obj_setFloat(self, "duty", duty);
     obj_runNativeMethod(self, "platformSetDuty",NULL);
 }
@@ -35,7 +35,7 @@ void PikaStdDevice_PWM_disable(PikaObj *self){
     obj_runNativeMethod(self, "platformDisable",NULL);
 }
 
-double PikaStdDevice_PWM_getDuty(PikaObj* self) {
+pika_float PikaStdDevice_PWM_getDuty(PikaObj* self) {
     return obj_getFloat(self, "duty");
 }
 

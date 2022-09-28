@@ -86,7 +86,7 @@ int64_t queueObj_popInt(QueueObj* self) {
     return res;
 }
 
-int32_t queueObj_pushFloat(QueueObj* self, double val) {
+int32_t queueObj_pushFloat(QueueObj* self, pika_float val) {
     uint64_t top = obj_getInt(self, "top");
     char buff[11];
     char* topStr = fast_itoa(buff, top);
@@ -95,13 +95,13 @@ int32_t queueObj_pushFloat(QueueObj* self, double val) {
     return obj_setFloat(self, topStr, val);
 }
 
-double queueObj_popFloat(QueueObj* self) {
+pika_float queueObj_popFloat(QueueObj* self) {
     uint64_t bottom = obj_getInt(self, "bottom");
     char buff[11];
     char* bottomStr = fast_itoa(buff, bottom);
     /* add bottom */
     obj_setInt(self, "bottom", bottom + 1);
-    double res = obj_getFloat(self, bottomStr);
+    pika_float res = obj_getFloat(self, bottomStr);
     obj_removeArg(self, bottomStr);
     return res;
 }

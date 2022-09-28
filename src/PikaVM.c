@@ -1658,14 +1658,14 @@ void operatorInfo_init(OperatorInfo* info,
     info->vm = vm;
     if (info->t1 == ARG_TYPE_INT) {
         info->i1 = arg_getInt(info->a1);
-        info->f1 = (float)info->i1;
+        info->f1 = (pika_float)info->i1;
     } else if (info->t1 == ARG_TYPE_FLOAT) {
         info->f1 = arg_getFloat(info->a1);
         info->i1 = (int)info->f1;
     }
     if (info->t2 == ARG_TYPE_INT) {
         info->i2 = arg_getInt(info->a2);
-        info->f2 = (float)info->i2;
+        info->f2 = (pika_float)info->i2;
     } else if (info->t2 == ARG_TYPE_FLOAT) {
         info->f2 = arg_getFloat(info->a2);
         info->i2 = (int)info->f2;
@@ -1832,7 +1832,7 @@ static void _OPT_EQU(OperatorInfo* op) {
         goto exit;
     }
     /* default: int and float */
-    is_equ = ((op->f1 - op->f2) * (op->f1 - op->f2) < (float)0.000001);
+    is_equ = ((op->f1 - op->f2) * (op->f1 - op->f2) < (pika_float)0.000001);
     goto exit;
 exit:
     if (strEqu("==", op->opt)) {
@@ -2018,14 +2018,14 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = arg_setInt(
             op.res, "",
             (op.f1 > op.f2) ||
-                ((op.f1 - op.f2) * (op.f1 - op.f2) < (float)0.000001));
+                ((op.f1 - op.f2) * (op.f1 - op.f2) < (pika_float)0.000001));
         goto exit;
     }
     if (strEqu("<=", data)) {
         op.res = arg_setInt(
             op.res, "",
             (op.f1 < op.f2) ||
-                ((op.f1 - op.f2) * (op.f1 - op.f2) < (float)0.000001));
+                ((op.f1 - op.f2) * (op.f1 - op.f2) < (pika_float)0.000001));
         goto exit;
     }
     if (strEqu("&", data)) {

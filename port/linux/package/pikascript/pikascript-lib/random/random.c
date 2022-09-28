@@ -10,8 +10,8 @@ int random_randint(PikaObj *self, int a, int b){
     return rand() % (b - a + 1) + a;
 }
 
-double random_random(PikaObj *self){
-    return rand() / (double)RAND_MAX;
+pika_float random_random(PikaObj *self){
+    return rand() / (pika_float)RAND_MAX;
 }
 
 int random_randrange(PikaObj *self, int start, int stop, int step){
@@ -28,6 +28,6 @@ PikaObj* random_seed(PikaObj *self, int a){
     return NULL;
 }
 
-double random_uniform(PikaObj *self, double a, double b){
+pika_float random_uniform(PikaObj *self, pika_float a, pika_float b){
     return (b - a) * random_random(self) + a;
 }

@@ -9,8 +9,12 @@ TEST(class, class_par) {
     __platform_printf("BEGIN\r\n");
     obj_run(self, "pi = PikaMath.Math.pi\n");
     /* assert */
-    double pi = obj_getFloat(self, "pi");
+    pika_float pi = obj_getFloat(self, "pi");
+#if pika_floatYPE_DOUBLE
     EXPECT_DOUBLE_EQ(pi, 3.141592653589793115997963468544185161590576171875l);
+#else
+    EXPECT_FLOAT_EQ(pi, 3.141592653589793115997963468544185161590576171875l);
+#endif
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);

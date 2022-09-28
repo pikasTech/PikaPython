@@ -4,6 +4,7 @@ supporting internal functions that are not used by other modules. */
 
 
 #include "re_config.h"
+#include "PikaObj.h"
 #define NLBLOCK cd             /* Block containing newline information */
 #define PSSTART start_pattern  /* Field containing processed string start */
 #define PSEND   end_pattern    /* Field containing processed string end */
@@ -3850,8 +3851,8 @@ we set the flag only if there is a literal "\r" or "\n" in the class. */
           if (lengthptr != NULL)
             {
             int delta = (repeat_min - 1)*length_prevgroup;
-            if ((double)(repeat_min - 1)*(double)length_prevgroup >
-                                                            (double)INT_MAX ||
+            if ((pika_float)(repeat_min - 1)*(pika_float)length_prevgroup >
+                                                            (pika_float)INT_MAX ||
                 OFLOW_MAX - *lengthptr < delta)
               {
               *errorcodeptr = ERR20;
@@ -3903,9 +3904,9 @@ we set the flag only if there is a literal "\r" or "\n" in the class. */
           {
           int delta = repeat_max * (length_prevgroup + 1 + 2 + 2*LINK_SIZE) -
                       2 - 2*LINK_SIZE;   /* Last one doesn't nest */
-          if ((double)repeat_max *
-                (double)(length_prevgroup + 1 + 2 + 2*LINK_SIZE)
-                  > (double)INT_MAX ||
+          if ((pika_float)repeat_max *
+                (pika_float)(length_prevgroup + 1 + 2 + 2*LINK_SIZE)
+                  > (pika_float)INT_MAX ||
               OFLOW_MAX - *lengthptr < delta)
             {
             *errorcodeptr = ERR20;

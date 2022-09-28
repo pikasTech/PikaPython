@@ -41,7 +41,7 @@ void pika_cjson_Bool___init__(PikaObj* self, int bolean) {
     obj_setInt(self, "needfree", 1);
 }
 
-void pika_cjson_Number___init__(PikaObj* self, double num) {
+void pika_cjson_Number___init__(PikaObj* self, pika_float num) {
     pika_cjson_cJSON___init__(self);
     cJSON* item = cJSON_CreateNumber(num);
     obj_setPtr(self, "item", item);

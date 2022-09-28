@@ -124,7 +124,7 @@ status time_get_tick_ns(PikaObj* self, _timespec* this_timespec) {
 
 //标准time()方法，返回以浮点数表示的从 epoch 开始的秒数的时间值。
 // epoch 是 1970 年 1 月 1 日 00:00:00 (UTC)，
-double time_time(PikaObj* self) {
+pika_float time_time(PikaObj* self) {
     status res = 0;  //状态响应
     _timespec temp_timespec = {0};
     //调用硬件平台函数，获取当前时间
@@ -137,7 +137,7 @@ double time_time(PikaObj* self) {
         status_deal(res);
     }  //异常处理
     //以浮点数返回时间，float
-    return temp_timespec.tv_sec + (double)temp_timespec.tv_nsec / 1000000000;
+    return temp_timespec.tv_sec + (pika_float)temp_timespec.tv_nsec / 1000000000;
 }
 
 //标准time_ns()方法，返回以整数表示的从 epoch 开始的纳秒数的时间值。
@@ -448,7 +448,7 @@ void time_struct_format(const _tm* this_tm, char* str) {
 }
 
 //标准库函数gmtime,将以自 epoch 开始的秒数表示的时间转换为 UTC 的 struct_time
-void time_gmtime(double unix_time, _tm* this_tm) {
+void time_gmtime(pika_float unix_time, _tm* this_tm) {
     status res;
     //转化时间
     res = unix_time_to_utc_struct_time(this_tm, (int64_t)unix_time);
@@ -462,7 +462,7 @@ void time_gmtime(double unix_time, _tm* this_tm) {
 
 //标准库函数localtime,将以自 epoch 开始的秒数表示的时间转换为当地时间的
 // struct_time
-void time_localtime(double unix_time, _tm* this_tm, int locale) {
+void time_localtime(pika_float unix_time, _tm* this_tm, int locale) {
     status res;
     int local_offset;
 
@@ -559,7 +559,7 @@ void time_asctime(const _tm* this_tm) {
     time_printf("%s\n", str);
 }
 
-double PikaStdDevice_Time_time(PikaObj* self) {
+pika_float PikaStdDevice_Time_time(PikaObj* self) {
     /* run platformGetTick() */
     PIKA_PYTHON_BEGIN
     /* clang-format off */
@@ -603,7 +603,7 @@ void time_set_tm_value(PikaObj* self, const _tm* this_tm) {
 #endif
 }
 
-void PikaStdDevice_Time_gmtime(PikaObj* self, double unix_time) {
+void PikaStdDevice_Time_gmtime(PikaObj* self, pika_float unix_time) {
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
     obj_setErrorCode(self, 1);
     obj_setSysOut(
@@ -620,7 +620,7 @@ void PikaStdDevice_Time_gmtime(PikaObj* self, double unix_time) {
 #endif
 }
 
-void PikaStdDevice_Time_localtime(PikaObj* self, double unix_time) {
+void PikaStdDevice_Time_localtime(PikaObj* self, pika_float unix_time) {
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
     obj_setErrorCode(self, 1);
     obj_setSysOut(
@@ -681,7 +681,7 @@ void PikaStdDevice_Time_asctime(PikaObj* self) {
     time_asctime(&this_tm);
 #endif
 }
-void PikaStdDevice_Time_ctime(PikaObj* self, double unix_time) {
+void PikaStdDevice_Time_ctime(PikaObj* self, pika_float unix_time) {
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
     obj_setErrorCode(self, 1);
     obj_setSysOut(
@@ -704,7 +704,7 @@ void PikaStdDevice_Time___init__(PikaObj* self) {
 #endif
 }
 
-void PikaStdDevice_Time_sleep(PikaObj* self, double s) {
+void PikaStdDevice_Time_sleep(PikaObj* self, pika_float s) {
     Args* args = New_args(NULL);
     args_setInt(args, "ms", s * 1000);
     obj_runNativeMethod(self, "sleep_ms", args);

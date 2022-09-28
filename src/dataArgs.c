@@ -42,7 +42,7 @@ void args_deinit_stack(Args* self) {
     link_deinit_stack(self);
 }
 
-PIKA_RES args_setFloat(Args* self, char* name, double argFloat) {
+PIKA_RES args_setFloat(Args* self, char* name, pika_float argFloat) {
     Arg* argNew = New_arg(NULL);
     argNew = arg_setFloat(argNew, name, argFloat);
     args_setArg(self, argNew);
@@ -191,7 +191,7 @@ ArgType args_getType(Args* self, char* name) {
     return arg_getType(arg);
 }
 
-double args_getFloat(Args* self, char* name) {
+pika_float args_getFloat(Args* self, char* name) {
     Arg* arg = args_getArg(self, name);
     if (NULL == arg) {
         return -999999999.0;
@@ -200,7 +200,7 @@ double args_getFloat(Args* self, char* name) {
     if (arg_type == ARG_TYPE_FLOAT) {
         return arg_getFloat(arg);
     } else if (arg_type == ARG_TYPE_INT) {
-        return (float)arg_getInt(arg);
+        return (pika_float)arg_getInt(arg);
     }
     return -999999999.0;
 }
@@ -410,7 +410,7 @@ char* getPrintStringFromInt(Args* self, char* name, int64_t val) {
     return res;
 }
 
-char* getPrintStringFromFloat(Args* self, char* name, double val) {
+char* getPrintStringFromFloat(Args* self, char* name, pika_float val) {
     Args buffs = {0};
     char* res = NULL;
     char* valString = strsFormat(&buffs, 32, "%f", val);
@@ -446,7 +446,7 @@ char* args_print(Args* self, char* name) {
     }
 
     if (type == ARG_TYPE_FLOAT) {
-        double val = args_getFloat(self, name);
+        pika_float val = args_getFloat(self, name);
         res = getPrintStringFromFloat(self, name, val);
         goto exit;
     }
@@ -571,7 +571,7 @@ int list_getInt(PikaList* self, int index) {
     return arg_getInt(arg);
 }
 
-double list_getFloat(PikaList* self, int index) {
+pika_float list_getFloat(PikaList* self, int index) {
     Arg* arg = list_getArg(self, index);
     return arg_getFloat(arg);
 }
@@ -713,7 +713,7 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg) {
         goto exit;
     }
     if (ARG_TYPE_FLOAT == type) {
-        double val = arg_getFloat(arg);
+        pika_float val = arg_getFloat(arg);
         res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);
         goto exit;
     }

@@ -113,14 +113,14 @@ int32_t obj_disable(PikaObj* self);
 PIKA_RES obj_setInt(PikaObj* self, char* argPath, int64_t val);
 PIKA_RES obj_setRef(PikaObj* self, char* argPath, PikaObj* pointer);
 PIKA_RES obj_setPtr(PikaObj* self, char* argPath, void* pointer);
-PIKA_RES obj_setFloat(PikaObj* self, char* argPath, double value);
+PIKA_RES obj_setFloat(PikaObj* self, char* argPath, pika_float value);
 PIKA_RES obj_setStr(PikaObj* self, char* argPath, char* str);
 PIKA_RES obj_setArg(PikaObj* self, char* argPath, Arg* arg);
 PIKA_RES obj_setArg_noCopy(PikaObj* self, char* argPath, Arg* arg);
 PIKA_RES obj_setBytes(PikaObj* self, char* argPath, uint8_t* src, size_t size);
 
 void* obj_getPtr(PikaObj* self, char* argPath);
-double obj_getFloat(PikaObj* self, char* argPath);
+pika_float obj_getFloat(PikaObj* self, char* argPath);
 char* obj_getStr(PikaObj* self, char* argPath);
 int64_t obj_getInt(PikaObj* self, char* argPath);
 Arg* obj_getArg(PikaObj* self, char* argPath);
@@ -193,11 +193,11 @@ uint8_t obj_getAnyArg(PikaObj* self,
 
 void method_returnStr(Args* args, char* val);
 void method_returnInt(Args* args, int64_t val);
-void method_returnFloat(Args* args, double val);
+void method_returnFloat(Args* args, pika_float val);
 void method_returnPtr(Args* args, void* val);
 void method_returnObj(Args* args, void* val);
 int64_t method_getInt(Args* args, char* argName);
-double method_getFloat(Args* args, char* argName);
+pika_float method_getFloat(Args* args, char* argName);
 char* method_getStr(Args* args, char* argName);
 void method_returnArg(Args* args, Arg* arg);
 char* methodArg_getDec(Arg* method_arg);

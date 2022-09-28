@@ -14,10 +14,10 @@ void PikaStdLib_MemChecker_resetMax(PikaObj* self) {
     pikaMemMaxReset();
 }
 
-double PikaStdLib_MemChecker_getMax(PikaObj* self) {
+pika_float PikaStdLib_MemChecker_getMax(PikaObj* self) {
     return pikaMemMax() / 1024.0;
 }
 
-double PikaStdLib_MemChecker_getNow(PikaObj* self) {
+pika_float PikaStdLib_MemChecker_getNow(PikaObj* self) {
     return pikaMemNow() / 1024.0;
 }
