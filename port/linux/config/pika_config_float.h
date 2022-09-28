@@ -1,0 +1,4 @@
+#define PIKA_STACK_BUFF_SIZE 1024 * 1024
+#define PIKA_ASSERT_ENABLE 1
+#define PIKA_MATH_ENABLE 1
+#define pika_floatYPE_DOUBLE 0
