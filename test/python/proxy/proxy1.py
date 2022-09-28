@@ -22,8 +22,8 @@ class DataBinding:
                 _name = attr.replace("-", "_")
                 funcName = "set_%s" % _name
                 if hasattr(element, funcName):
-                    func = getattr(element, funcName)
-                    func(value)
+                    element.func = getattr(element, funcName)
+                    element.func(value)
                 else:
                     if hasattr(element, "obj") and element.obj:
                         setattr(element.obj, _name, value)

@@ -394,4 +394,20 @@ TEST(stddata, dict_update) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(issue, id_test) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/issue/issue_id_test.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "dog2 eat...\r\n");
+    EXPECT_STREQ(log_buff[3], "dog1 eat...\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

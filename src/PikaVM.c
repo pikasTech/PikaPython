@@ -1190,14 +1190,14 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     }
 #endif
 
-    /* get method host obj from self */
+    /* get method host obj from local scope */
     if (NULL == method_host) {
-        method_host = obj_getHostObjWithIsTemp(self, run_path, &is_temp);
+        method_host = obj_getHostObjWithIsTemp(vm->locals, run_path, &is_temp);
     }
 
     /* get method host obj from local scope */
     if (NULL == method_host) {
-        method_host = obj_getHostObjWithIsTemp(vm->locals, run_path, &is_temp);
+        method_host = obj_getHostObjWithIsTemp(vm->globals, run_path, &is_temp);
     }
 
     /* method host obj is not found */
