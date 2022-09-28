@@ -87,7 +87,7 @@ int compare(const _tm* t1, const _tm* t2) {
     return 0;
 }
 
-#if pika_floatYPE_DOUBLE
+#if PIKA_FLOAT_TYPE_DOUBLE
 TEST(unix_time, iteration_form_1970_to_2070) {
     /* init */
     _tm temp1, *temp2;

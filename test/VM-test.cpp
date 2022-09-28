@@ -1189,7 +1189,7 @@ TEST(VM, science_num) {
     double c = obj_getFloat(self, "c");
     double d = obj_getFloat(self, "d");
 /* assert */
-#if pika_floatYPE_DOUBLE
+#if PIKA_FLOAT_TYPE_DOUBLE
     EXPECT_DOUBLE_EQ(a, 1.0e-3);
     EXPECT_DOUBLE_EQ(b, 2.0e-5);
     EXPECT_DOUBLE_EQ(c, -3e-5);
