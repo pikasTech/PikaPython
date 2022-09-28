@@ -163,7 +163,7 @@ void __platform_error_handle(void);
 
 void __pks_hook_instruct(void);
 
-#if pika_floatYPE_DOUBLE
+#if PIKA_FLOAT_TYPE_DOUBLE
 #define pika_float double
 #else
 #define pika_float float
