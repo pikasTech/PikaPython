@@ -1,4 +1,4 @@
-#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -445,8 +445,8 @@ void pika_lvgl_img_dsc_t___init__(PikaObj* self, PikaObj* dsc_dict) {
     //             .cf = LV_IMG_SRC_FILE,
     //         },
     // };
-    extern const lv_img_dsc_t asset_evue_designer;
-    obj_setStruct(self, "img_dsc", asset_evue_designer);
+    // extern const lv_img_dsc_t asset_evue_designer;
+    // obj_setStruct(self, "img_dsc", asset_evue_designer);
 }
 
 void pika_lvgl_img_set_src(PikaObj* self, PikaObj* src) {

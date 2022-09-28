@@ -1,4 +1,4 @@
-#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -463,10 +463,10 @@ void pika_lvgl_style_t_set_pad_ver(PikaObj* self, int value) {
     lv_style_t* lv_style = obj_getPtr(self, "lv_style");
     lv_style_set_pad_ver(lv_style, value);
 }
-void pika_lvgl_style_t_set_prop_meta(PikaObj* self, int prop, int meta) {
-    lv_style_t* lv_style = obj_getPtr(self, "lv_style");
-    lv_style_set_prop_meta(lv_style, prop, meta);
-}
+// void pika_lvgl_style_t_set_prop_meta(PikaObj* self, int prop, int meta) {
+// lv_style_t* lv_style = obj_getPtr(self, "lv_style");
+// lv_style_set_prop_meta(lv_style, prop, meta);
+//}
 void pika_lvgl_style_t_set_size(PikaObj* self, int value) {
     lv_style_t* lv_style = obj_getPtr(self, "lv_style");
     lv_style_set_size(lv_style, value);
