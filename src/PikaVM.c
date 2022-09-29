@@ -366,21 +366,17 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
     }
 
     if (ARG_TYPE_STRING == arg_getType(obj)) {
-        size_t len = strGetSize(arg_getStr(obj));
-        if (start_i < 0) {
-            start_i += len;
+        char* string_slice(Args * outBuffs, char* str, int start, int end);
+        Args buffs = {0};
+        Arg* sliced_arg = NULL;
+        char* sliced_str =
+            string_slice(&buffs, arg_getStr(obj), start_i, end_i);
+        if (NULL != sliced_str) {
+            sliced_arg = arg_newStr(sliced_str);
+        } else {
+            sliced_arg = arg_newNull();
         }
-        if (end_i < 0) {
-            end_i += len + 1;
-        }
-        Arg* sliced_arg = arg_newStr("");
-        for (int i = start_i; i < end_i; i++) {
-            Arg* i_arg = arg_newInt(i);
-            Arg* item_arg = __vm_get(self, i_arg, obj);
-            sliced_arg = arg_strAppend(sliced_arg, arg_getStr(item_arg));
-            arg_deinit(item_arg);
-            arg_deinit(i_arg);
-        }
+        strsDeinit(&buffs);
         return sliced_arg;
     }
 

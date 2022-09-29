@@ -426,4 +426,18 @@ TEST(str, strip) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(str, big_slice) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/issue/issue_big_str_slice.py");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

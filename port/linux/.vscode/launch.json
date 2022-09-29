@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=proxy.test1"
+                "--gtest_filter=str.big_slice"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

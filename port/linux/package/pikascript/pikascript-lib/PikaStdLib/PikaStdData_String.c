@@ -4,6 +4,7 @@
 #include "dataStrs.h"
 
 char* _strlwr(char* str);
+static int string_len(char* str);
 
 Arg* PikaStdData_String___iter__(PikaObj* self) {
     obj_setInt(self, "__iter_i", 0);
@@ -64,29 +65,50 @@ Arg* PikaStdData_String___next__(PikaObj* self) {
 #endif
 }
 
+static int _str_get(char* str, int key_i, char* char_buff) {
+    uint16_t len = strGetSize(str);
+    if (key_i < 0) {
+        key_i = string_len(str) + key_i;
+    }
+#if PIKA_STRING_UTF8_ENABLE
+    return _utf8_get(str, len, key_i, char_buff);
+#else
+    if (key_i < len) {
+        char_buff[0] = str[key_i];
+        return 0;
+    }
+    return -1;
+#endif
+}
+
+char* string_slice(Args* outBuffs, char* str, int start, int end) {
+    char* res = args_getBuff(outBuffs, strGetSize(str));
+    if (start < 0) {
+        start += string_len(str);
+    }
+    if (end < 0) {
+        end += string_len(str) + 1;
+    }
+    for (int i = start; i < end; i++) {
+        char char_buff[5] = {0};
+        int r = _str_get(str, i, char_buff);
+        if (r < 0) {
+            return NULL;
+        }
+        res = strAppend(res, char_buff);
+    }
+    return res;
+}
+
 Arg* PikaStdData_String___getitem__(PikaObj* self, Arg* __key) {
     int key_i = arg_getInt(__key);
-    if (key_i < 0) {
-        key_i = PikaStdData_String___len__(self) + key_i;
-    }
     char* str = obj_getStr(self, "str");
-    uint16_t len = strGetSize(str);
-#if PIKA_STRING_UTF8_ENABLE
-    char char_buff[5];
-    int r = _utf8_get(str, len, key_i, char_buff);
+    char char_buff[5] = {0};
+    int r = _str_get(str, key_i, char_buff);
     if (r < 0) {
         return arg_newNull();
     }
     return arg_newStr((char*)char_buff);
-#else
-    char char_buff[] = " ";
-    if (key_i < len) {
-        char_buff[0] = str[key_i];
-        return arg_newStr((char*)char_buff);
-    } else {
-        return arg_newNull();
-    }
-#endif
 }
 
 void PikaStdData_String___setitem__(PikaObj* self, Arg* __key, Arg* __val) {
@@ -242,19 +264,23 @@ PikaObj* PikaStdData_String_split(PikaObj* self, char* s) {
     return list;
 }
 
-int PikaStdData_String___len__(PikaObj* self) {
-    char* str = obj_getStr(self, "str");
+static int string_len(char* str) {
 #if PIKA_STRING_UTF8_ENABLE
     int n = _utf8_strlen(str, -1);
-    if (n < 0) {
-        obj_setErrorCode(self, __LINE__);
-        __platform_printf("Error. Internal error(%d)\r\n", __LINE__);
-        return n;
-    }
     return n;
 #else
     return strGetSize(str);
 #endif
+}
+
+int PikaStdData_String___len__(PikaObj* self) {
+    char* str = obj_getStr(self, "str");
+    int n = string_len(str);
+    if (n < 0) {
+        obj_setErrorCode(self, __LINE__);
+        __platform_printf("Error. Internal error(%d)\r\n", __LINE__);
+    }
+    return n;
 }
 
 char* PikaStdData_String_strip(PikaObj* self, PikaTuple* chrs) {
