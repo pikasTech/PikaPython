@@ -410,4 +410,20 @@ TEST(issue, id_test) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(str, strip) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "s1 = 'test$'.strip('$')");
+    /* collect */
+    /* assert */
+    char* s1 = obj_getStr(pikaMain, "s1");
+    EXPECT_STREQ(s1, "test");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

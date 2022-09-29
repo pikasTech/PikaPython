@@ -65,8 +65,7 @@ char* strCut(char* strOut, char* strIn, char startSign, char endSign) {
 
 char* strDeleteChar(char* strOut, char* strIn, char ch) {
     int32_t iOut = 0;
-    uint32_t size = strGetSize(strIn);
-    for (uint32_t i = 0; i < size; i++) {
+    for (uint32_t i = 0; i < strGetSize(strIn); i++) {
         if (ch == strIn[i]) {
             continue;
         }

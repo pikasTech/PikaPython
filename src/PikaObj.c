@@ -621,6 +621,7 @@ void _update_proxy(PikaObj* self, char* name) {
 }
 
 static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
+    Args buffs = {0};
     method_info->pars = method_info->dec;
     Arg* arg = New_arg(NULL);
     uint32_t size_pars = strGetSize(method_info->pars);
@@ -639,6 +640,7 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
 
     _update_proxy(self, method_info->name);
     args_setArg(self->list, arg);
+    strsDeinit(&buffs);
 }
 
 static int32_t __class_defineMethodWithType(PikaObj* self,

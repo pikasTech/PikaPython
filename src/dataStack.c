@@ -41,7 +41,6 @@ int32_t stack_init(Stack* stack) {
         arg_setContent(NULL, NULL, PIKA_STACK_BUFF_SIZE / 4);
     stack_reset(stack);
     stack->stack_totle_size = PIKA_STACK_BUFF_SIZE;
-    stack->big_arg_buffer = New_args(NULL);
     return 0;
 };
 
@@ -58,18 +57,10 @@ int32_t stack_popSize(Stack* stack) {
 int32_t stack_deinit(Stack* stack) {
     arg_deinit(stack->stack_pyload);
     arg_deinit(stack->stack_size_array);
-    args_deinit(stack->big_arg_buffer);
     return 0;
 }
 
 void stack_pushPyload(Stack* stack, Arg* in, size_t size) {
-    #if 0
-    if (size > PIKA_STACK_BIG_ARG_SIZE) {
-        in->name_hash = (uintptr_t)stack->sp;
-        args_setArg(stack->big_arg_buffer, arg_copy(in));
-        return;
-    }
-    #endif
     size_t stack_size_after_push =
         size + (stack->sp - arg_getContent(stack->stack_pyload));
     if (stack_size_after_push > stack->stack_totle_size) {
@@ -96,13 +87,6 @@ void stack_pushPyload(Stack* stack, Arg* in, size_t size) {
 }
 
 uint8_t* stack_popPyload(Stack* stack, size_t size) {
-    #if 0
-    if (size > PIKA_STACK_BIG_ARG_SIZE) {
-        Arg* arg =
-            args_getArg_hash(stack->big_arg_buffer, (uintptr_t)stack->sp);
-        return (uint8_t*)arg;
-    };
-    #endif
     stack->sp -= size;
     return stack->sp;
 }
