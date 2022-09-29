@@ -36,6 +36,7 @@ typedef struct Stack_t {
     int32_t* sp_size;
     int32_t top;
     size_t stack_totle_size;
+    Args* big_arg_buffer;
 } Stack;
 
 int32_t stack_deinit(Stack* stack);
