@@ -68,5 +68,6 @@
         "pikastddata_string.h": "c",
         "gtesttask_proxytest.h": "c",
         "datastack.h": "c"
-    }
+    },
+    "python.formatting.provider": "autopep8"
 }

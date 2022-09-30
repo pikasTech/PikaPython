@@ -249,12 +249,25 @@ impl Compiler {
         }
 
         let lines: Vec<&str> = file_str.split('\n').collect();
+        let mut last_line = String::from("");
         /* analyse each line */
         for line in lines.iter() {
-            let line = line.replace("\r", "");
+            let mut line = line.replace("\r", "");
             /* replace \t with 4 spaces */
-            let line = line.replace("\t", "    ");
-
+            line = line.replace("\t", "    ");
+            if line.contains("(") && !line.contains(")") {
+                last_line = line.clone();
+                continue;
+            }
+            if last_line != "" {
+                if line.contains(")") {
+                    line = format!("{}{}", last_line, line);
+                    last_line = String::from("");
+                } else {
+                    last_line = format!("{}{}", last_line, line);
+                    continue;
+                }
+            }
             self = match pkg_type {
                 PackageType::CPackageTop | PackageType::CPackageInner => {
                     Compiler::analyse_pyi_line(self, line.to_string(), &file_name, is_top_c_pkg)

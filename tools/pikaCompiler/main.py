@@ -1,5 +1,6 @@
 import PikaStdLib
 import test
+import TemplateDevice
 from pika_cjson import cJSON
 print('hello pikascript!')
 mem = PikaStdLib.MemChecker()

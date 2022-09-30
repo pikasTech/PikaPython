@@ -4,4 +4,3 @@ class Debuger:
 
     def set_trace(self):
         pass
-    
