@@ -1459,7 +1459,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
         Arg* global_list_arg = arg_newStr(global_list);
         char* global_list_buff = arg_getStr(global_list_arg);
         /* for each arg arg in global_list */
-        char token_buff[32] = {0};
+        char token_buff[PIKA_NAME_BUFF_SIZE] = {0};
         for (int i = 0; i < strCountSign(global_list, ',') + 1; i++) {
             char* global_arg = strPopToken(token_buff, global_list_buff, ',');
             /* matched global arg, context set to global */
