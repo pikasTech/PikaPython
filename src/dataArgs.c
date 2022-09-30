@@ -765,12 +765,18 @@ exit:
 
 /* tuple */
 PikaTuple* args_getTuple(Args* self, char* name) {
+    if (NULL == self) {
+        return NULL;
+    }
     PikaObj* tuple_obj = args_getPtr(self, name);
     return obj_getPtr(tuple_obj, "list");
 }
 
 /* dict */
 PikaDict* args_getDict(Args* self, char* name) {
+    if (NULL == self) {
+        return NULL;
+    }
     PikaObj* tuple_obj = args_getPtr(self, name);
     return obj_getPtr(tuple_obj, "dict");
 }
