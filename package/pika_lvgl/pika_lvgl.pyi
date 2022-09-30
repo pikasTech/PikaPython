@@ -1,4 +1,5 @@
-﻿from PikaObj import *
+﻿from tkinter import HIDDEN
+from PikaObj import *
 
 
 def __init__(): ...
@@ -266,11 +267,69 @@ class style_t:
     def set_pad_ver(self, value: int): ...
     def set_pad_gap(self, value: int): ...
     def prop_has_flag(self, prop: int, flag: int) -> int: ...
+    def set_flex_flow(self, value: int): ...
+    def set_flex_main_place(self, value: int): ...
+    def set_flex_cross_place(self, value: int): ...
+    def set_flex_track_place(self, value: int): ...
+    def set_flex_grow(self, value: int): ...
 
+class LAYOUT_FLEX:
+    value: int
+    def __init__(self): ...
+
+class SIZE:
+    CONTENT:int
+    def __init__(self): ...
+
+class flag_t:
+    HIDDEN: int
+    CLICKABLE: int
+    CLICK_FOCUSABLE: int 
+    CHECKABLE: int
+    SCROLLABLE: int
+    SCROLL_ELASTIC: int
+    SCROLL_MOMENTUM: int
+    SCROLL_ONE: int
+    SCROLL_CHAIN_HOR: int
+    SCROLL_CHAIN_VER: int
+    SCROLL_CHAIN: int
+    SCROLL_ON_FOCUS: int
+    SCROLL_WITH_ARROW: int
+    SNAPPABLE: int
+    PRESS_LOCK: int
+    EVENT_BUBBLE: int
+    GESTURE_BUBBLE: int
+    ADV_HITTEST: int
+    IGNORE_LAYOUT: int
+    FLOATING: int
+    OVERFLOW_VISIBLE: int
+    LAYOUT_1: int
+    LAYOUT_2: int
+    WIDGET_1: int
+    WIDGET_2: int
+    USER_1: int
+    USER_2: int
+    USER_3: int
+    USER_4: int
+    def __init__(self): ...
+
+class FLEX_FLOW:
+    ROW: int
+    COLUMN: int
+    ROW_WRAP: int
+    ROW_REVERSE: int
+    ROW_WRAP_REVERSE: int
+    COLUMN_WRAP: int
+    COLUMN_REVERSE: int
+    COLUMN_WRAP_REVERSE: int
+    
+    def __init__(self): ...
 
 class lv_obj:
     def __init__(self, parent: lv_obj): ...
     def add_state(self, state: int): ...
+    def add_flag(self, flag:int): ...
+    def clear_flag(self, flag:int): ...
     def add_event_cb(self, event_cb: any, filter: int, user_data: pointer): ...
     def add_style(self, style: style_t, selector: int): ...
     def set_pos(self, x: int, y: int): ...
@@ -318,13 +377,27 @@ class lv_obj:
     def set_ext_click_area(self, size: int): ...
     # def get_click_area(self, area: lv_area_t): ...
     def hit_test(self, point: point_t) -> int: ...
-
+    def set_flex_flow(self, flow: int): ...
+    def set_flex_align(self, main_place: int, cross_place: int, align: int): ...
+    def set_id(self, id: str): ...
+    def get_id(self) -> str: ...
 
 class indev_t:
     def get_vect(self, point: point_t): ...
 
+class FLEX_ALIGN:
+    START: int
+    END: int
+    CENTER: int
+    SPACE_EVENLY: int
+    SPACE_AROUND: int
+    SPACE_BETWEEN: int 
+    def __init__(self): ...
 
-def obj(parent: lv_obj) -> lv_obj: ...
+class obj(lv_obj):
+    FLAG:flag_t
+    def __init__(self, *parent) : ...
+
 def indev_get_act() -> indev_t: ...
 
 

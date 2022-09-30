@@ -472,4 +472,29 @@ void pika_lvgl_style_t_set_size(PikaObj* self, int value) {
     lv_style_set_size(lv_style, value);
 }
 
+void pika_lvgl_style_t_set_flex_cross_place(PikaObj* self, int value) {
+    lv_style_t* lv_style = obj_getPtr(self, "lv_style");
+    lv_style_set_flex_cross_place(lv_style, value);
+}
+
+void pika_lvgl_style_t_set_flex_flow(PikaObj* self, int value) {
+    lv_style_t* lv_style = obj_getPtr(self, "lv_style");
+    lv_style_set_flex_flow(lv_style, value);
+}
+
+void pika_lvgl_style_t_set_flex_grow(PikaObj* self, int value) {
+    lv_style_t* lv_style = obj_getPtr(self, "lv_style");
+    lv_style_set_flex_grow(lv_style, value);
+}
+
+void pika_lvgl_style_t_set_flex_main_place(PikaObj* self, int value) {
+    lv_style_t* lv_style = obj_getPtr(self, "lv_style");
+    lv_style_set_flex_main_place(lv_style, value);
+}
+
+void pika_lvgl_style_t_set_flex_track_place(PikaObj* self, int value) {
+    lv_style_t* lv_style = obj_getPtr(self, "lv_style");
+    lv_style_set_flex_track_place(lv_style, value);
+}
+
 #endif
