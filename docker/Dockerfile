@@ -63,6 +63,7 @@ RUN go env -w GOPROXY=https://goproxy.cn
 RUN git clone https://gitee.com/lyon1998/pikascript  root/pikascript
 RUN cd /root/pikascript && git pull
 
+RUN apt-get install -y upx
 RUN rustup target add i686-pc-windows-gnu
 RUN cd /root/pikascript/tools/pikaCompiler && sh build.sh
 
