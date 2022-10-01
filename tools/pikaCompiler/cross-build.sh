@@ -18,4 +18,6 @@ sh cross-win.sh
 
 cp build-win/pikaByteCodeGen.exe $ROOT/rust-msc-latest-win10.exe
 cd $ROOT
+strip -s rust-msc-latest-win10.exe
+upx -9 rust-msc-latest-win10.exe
 
