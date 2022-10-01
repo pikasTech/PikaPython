@@ -18,3 +18,5 @@ make -j
 cp pikaByteCodeGen $ROOT/rust-msc-latest-linux
 cd $ROOT
 chmod +x rust-msc-latest-linux
+strip -s rust-msc-latest-linux
+upx -9 rust-msc-latest-linux
