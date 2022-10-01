@@ -440,4 +440,19 @@ TEST(str, big_slice) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(std, eval) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "eval('1+1')");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "2\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

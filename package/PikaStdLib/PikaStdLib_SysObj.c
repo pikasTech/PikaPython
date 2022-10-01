@@ -609,3 +609,13 @@ int PikaStdLib_SysObj_hasattr(PikaObj* self, PikaObj* obj, char* name) {
     }
     return 0;
 }
+
+Arg* PikaStdLib_SysObj_eval(PikaObj* self, char* code) {
+    Args buffs = {0};
+    char* cmd = strsAppend(&buffs, "@res = ", code);
+    obj_run(self, cmd);
+    Arg* res = arg_copy(obj_getArg(self, "@res"));
+    strsDeinit(&buffs);
+    obj_removeArg(self, "@res");
+    return res;
+}

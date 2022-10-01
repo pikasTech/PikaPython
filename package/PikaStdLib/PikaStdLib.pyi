@@ -96,6 +96,10 @@ class SysObj:
     def exec(code: str): ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("PIKA_EXEC_ENABLE")
+    def eval(code: str) -> any: ...
+
+    @staticmethod
     @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def getattr(obj: object, name: str) -> any: ...
 
