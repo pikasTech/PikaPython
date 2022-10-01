@@ -1,7 +1,6 @@
 #include "test_common.h"
 
-#if (PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL) && (!PIKA_POOL_ENABLE) && \
-    (PIKA_STACK_BUFF_SIZE > 0x6000)
+#if (PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL) && (!PIKA_POOL_ENABLE)
 
 TEST(PikaNN, test1) {
     /* init */

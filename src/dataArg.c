@@ -275,7 +275,14 @@ pika_float arg_getFloat(Arg* self) {
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
-    return arg_init(name, type, (uint8_t*)&pointer, sizeof(uintptr_t), NULL);
+    if (NULL == self) {
+        return arg_init(name, type, (uint8_t*)&pointer, sizeof(uintptr_t),
+                        NULL);
+    }
+    self = arg_setContent(self, (uint8_t*)&pointer, sizeof(pointer));
+    self = arg_setType(self, type);
+    self = arg_setName(self, name);
+    return self;
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {

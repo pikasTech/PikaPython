@@ -54,8 +54,7 @@ TEST(builtin, seek) {
 }
 #endif
 
-#if (PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL) && \
-    (PIKA_STACK_BUFF_SIZE >= 0x1000)
+#if (PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL)
 TEST(builtin, file2) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -89,8 +88,7 @@ TEST(builtin, file3) {
 }
 #endif
 
-#if (PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL) && !PIKA_POOL_ENABLE && \
-    (PIKA_STACK_BUFF_SIZE >= 0x1000)
+#if (PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL) && !PIKA_POOL_ENABLE
 TEST(builtin, bigfile) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

@@ -1,6 +1,5 @@
 #include "test_common.h"
 
-#if PIKA_STACK_BUFF_SIZE >= 0x1000
 TEST(cJSON, parse_print) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -454,6 +453,4 @@ TEST(cJSON, module) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-#endif
-
 #endif

@@ -309,6 +309,10 @@
         #define PIKA_FLOAT_TYPE_DOUBLE 1
     #endif
 
+    #ifndef PIKA_BIG_ARG_SIZE
+        #define PIKA_BIG_ARG_SIZE 64
+    #endif
+
     /* configuration validation */
 
 #endif

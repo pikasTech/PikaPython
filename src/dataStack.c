@@ -92,9 +92,10 @@ uint8_t* stack_popPyload(Stack* stack, size_t size) {
 }
 
 static int32_t _stack_pushArg(Stack* stack, Arg* arg, PIKA_BOOL is_alloc) {
+    PIKA_BOOL is_big_arg = PIKA_FALSE;
+    arg_newReg(big_arg_ref, PIKA_ARG_BUFF_SIZE);
     stack->top++;
     size_t size = arg_getTotleSize(arg);
-
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
 #if PIKA_ARG_ALIGN_ENABLE
     /* force alignment to avoid unaligned access */
@@ -104,13 +105,25 @@ static int32_t _stack_pushArg(Stack* stack, Arg* arg, PIKA_BOOL is_alloc) {
     if (argType_isObject(arg_getType(arg))) {
         obj_refcntInc((PikaObj*)arg_getPtr(arg));
     }
+
+    if (arg_getSerialized(arg) && size > PIKA_BIG_ARG_SIZE) {
+        is_big_arg = PIKA_TRUE;
+        arg_setPtr(&big_arg_ref, "", ARG_TYPE_BIG_ARG_PTR, arg);
+        arg = &big_arg_ref;
+        size = arg_getTotleSize(arg);
+    }
+
     stack_pushSize(stack, size);
     stack_pushPyload(stack, arg, size);
+
+    if (is_big_arg) {
+        return 0;
+    }
     if (is_alloc) {
         arg_deinit(arg);
-    } else {
-        arg_deinitHeap(arg);
+        return 0;
     }
+    arg_deinitHeap(arg);
     return 0;
 }
 
@@ -134,18 +147,27 @@ Arg* _stack_popArg(Stack* stack, Arg* arg_dict, PIKA_BOOL is_alloc) {
     stack->top--;
     int32_t size = stack_popSize(stack);
     Arg* arg = NULL;
+    Arg* arg_res = NULL;
     if (is_alloc) {
         arg = arg_copy((Arg*)stack_popPyload(stack, size));
     } else {
         arg = arg_copy_noalloc((Arg*)stack_popPyload(stack, size), arg_dict);
     }
     ArgType type = arg_getType(arg);
+    arg_res = arg;
+    if (type == ARG_TYPE_BIG_ARG_PTR) {
+        arg_res = arg_getPtr(arg);
+        if (is_alloc) {
+            arg_deinit(arg);
+        }
+        type = arg_getType(arg_res);
+    }
     /* decrase ref_cnt */
     if (argType_isObject(type)) {
-        obj_refcntDec((PikaObj*)arg_getPtr(arg));
+        obj_refcntDec((PikaObj*)arg_getPtr(arg_res));
     }
-    pika_assert(arg->flag < ARG_FLAG_MAX);
-    return arg;
+    pika_assert(arg_res->flag < ARG_FLAG_MAX);
+    return arg_res;
 }
 
 Arg* stack_popArg_alloc(Stack* stack) {

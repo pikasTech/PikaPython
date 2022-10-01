@@ -85,7 +85,7 @@ TEST(stddata, encode_decode) {
 }
 #endif
 
-#if PIKA_FILEIO_ENABLE && PIKA_STACK_BUFF_SIZE > 0x1000
+#if PIKA_FILEIO_ENABLE
 TEST(stddata, fileio) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
