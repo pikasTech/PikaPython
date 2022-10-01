@@ -24,6 +24,7 @@ jobs:
         sudo apt install ninja-build
         sudo apt install liblua5.3-dev
         sudo apt install valgrind
+        sudo apt install upx
   
     - name: install_google_benchmark
       run: |
