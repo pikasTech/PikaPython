@@ -323,4 +323,9 @@ char* pika_lvgl_lv_obj_get_id(PikaObj* self) {
     return arg_getStr(id_arg);
 }
 
+void pika_lvgl_lv_obj_set_flex_grow(PikaObj *self, int value){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_set_flex_grow(lv_obj, value);
+}
+
 #endif
