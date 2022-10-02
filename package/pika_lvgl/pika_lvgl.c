@@ -201,6 +201,7 @@ void pika_lvgl___init__(PikaObj* self) {
     obj_newDirectObj(self, "lv_event_listener", New_TinyObj);
     pika_lv_event_listener_g = obj_getObj(self, "lv_event_listener");
     pika_lv_id_register_g = New_args(NULL);
+    lv_png_init();
 }
 
 void pika_lvgl_obj___init__(PikaObj* self, PikaTuple* parent) {
@@ -286,6 +287,10 @@ void pika_lvgl_LAYOUT_FLEX___init__(PikaObj* self) {
 
 void pika_lvgl_SIZE___init__(PikaObj *self){
     obj_setInt(self, "CONTENT", LV_SIZE_CONTENT);
+}
+
+int pika_lvgl_pct(PikaObj *self, int x){
+    return LV_PCT(x);
 }
 
 #endif
