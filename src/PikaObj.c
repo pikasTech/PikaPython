@@ -1074,8 +1074,18 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
                                       char* name,
                                       uint8_t* byteCode) {
     PikaObj* New_PikaStdLib_SysObj(Args * args);
-    obj_newDirectObj(self, name, New_PikaStdLib_SysObj);
-    pikaVM_runByteCode(obj_getObj(self, name), (uint8_t*)byteCode);
+    if (!obj_isArgExist(__pikaMain, name)) {
+        obj_newDirectObj(__pikaMain, name, New_PikaStdLib_SysObj);
+        pikaVM_runByteCode(obj_getObj(__pikaMain, name), (uint8_t*)byteCode);
+    }
+    if (self != __pikaMain) {
+        Arg* module_arg = obj_getArg(__pikaMain, name);
+        PikaObj* module_obj = arg_getPtr(module_arg);
+        obj_setArg(self, name, module_arg);
+        pika_assert(argType_isObject(arg_getType(module_arg)));
+        /* decrase refcnt to avoid circle reference */
+        obj_refcntDec(module_obj);
+    }
     return self;
 }
 
@@ -1089,33 +1099,33 @@ PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
 }
 
 PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name) {
-    obj_newMetaObj(self, "__lib", New_LibObj);
-    LibObj* lib = obj_getObj(self, "__lib");
+    obj_newMetaObj(self, "@lib", New_LibObj);
+    LibObj* lib = obj_getObj(self, "@lib");
     LibObj_loadLibraryFile(lib, input_file_name);
     return self;
 }
 
 PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
-    obj_newMetaObj(self, "__lib", New_LibObj);
-    LibObj* lib = obj_getObj(self, "__lib");
+    obj_newMetaObj(self, "@lib", New_LibObj);
+    LibObj* lib = obj_getObj(self, "@lib");
     LibObj_loadLibrary(lib, library_bytes);
     return self;
 }
 
 PikaObj* obj_linkLibObj(PikaObj* self, LibObj* library) {
-    obj_setPtr(self, "__lib", library);
+    obj_setPtr(self, "@lib", library);
     return self;
 }
 
 uint8_t* obj_getByteCodeFromModule(PikaObj* self, char* module_name) {
-    /* exit when no found '__lib' */
-    if (!obj_isArgExist(self, "__lib")) {
+    /* exit when no found '@lib' */
+    if (!obj_isArgExist(self, "@lib")) {
         return NULL;
     }
     /* find module from the library */
-    LibObj* lib = obj_getPtr(self, "__lib");
+    LibObj* lib = obj_getPtr(self, "@lib");
     PikaObj* module = obj_getObj(lib, module_name);
-    /* exit when no module in '__lib' */
+    /* exit when no module in '@lib' */
     if (NULL == module) {
         return NULL;
     }

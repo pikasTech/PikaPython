@@ -335,8 +335,8 @@ int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
                           lib_file_name);
         return PIKA_RES_ERR_IO_ERROR;
     }
-    /* save file_arg as __lib_buf to libObj */
-    obj_setArg_noCopy(self, "__lib_buf", file_arg);
+    /* save file_arg as @lib_buf to libObj */
+    obj_setArg_noCopy(self, "@lib_buf", file_arg);
     if (0 != LibObj_loadLibrary(self, arg_getBytes(file_arg))) {
         __platform_printf("Error: Could not load library from '%s'\n",
                           lib_file_name);
@@ -569,7 +569,7 @@ void pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name) {
 int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
     Args buffs = {0};
     if (argType_isObject(arg_getType(argEach))) {
-        LibObj* lib = args_getPtr(context, "__lib");
+        LibObj* lib = args_getPtr(context, "@lib");
         PikaMaker* maker = args_getPtr(context, "__maker");
         PikaObj* module_obj = arg_getPtr(argEach);
         char* module_name = obj_getStr(module_obj, "name");
@@ -592,7 +592,7 @@ void pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path) {
     LibObj* lib = New_LibObj(NULL);
     Args buffs = {0};
     __platform_printf("  linking %s...\n", lib_path);
-    args_setPtr(&context, "__lib", lib);
+    args_setPtr(&context, "@lib", lib);
     args_setPtr(&context, "__maker", self);
     args_foreach(self->list, __foreach_handler_linkCompiledModules, &context);
     args_deinit_stack(&context);

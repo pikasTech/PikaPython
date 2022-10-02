@@ -368,4 +368,24 @@ TEST(issue, global) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(module, mod1_mod2_mod1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, 
+    "import test_module1\n"
+    "test_module1.test_module2.test_module1.mytest()"
+    );
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "test_module_1_hello\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

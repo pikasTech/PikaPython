@@ -1152,6 +1152,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         goto exit;
     }
 
+    if (strEqu(run_path, "object")) {
+        return_arg = arg_newMetaObj(New_TinyObj);
+        goto exit;
+    }
+
     /* get method host obj from reg */
     if (NULL == method_host && _checkLReg(run_path)) {
         uint8_t reg_index = _getLRegIndex(run_path);
@@ -2321,7 +2326,7 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
         obj_setArg(self, data, obj_getArg(__pikaMain, data));
         return NULL;
     }
-    /* import module from '__lib' */
+    /* import module from '@lib' */
     if (0 == obj_importModule(self, data)) {
         return NULL;
     }

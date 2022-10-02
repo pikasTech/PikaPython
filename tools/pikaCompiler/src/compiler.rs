@@ -199,36 +199,6 @@ impl Compiler {
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
 
-        /* return when compiled */
-        if !self.compiled_list.contains(&file_name) {
-            /* print info */
-            match suffix {
-                "py" => {
-                    println!("  scaning {}{}.{}...", self.source_path, file_name, suffix);
-                }
-                "pyi" => {
-                    println!(
-                        "    binding {}{}.{}...",
-                        self.source_path, file_name, suffix
-                    );
-                }
-                _ => {}
-            }
-        }
-
-        /* push to compiled list, only compile once */
-        self.compiled_list.push_back(String::clone(&file_name));
-        /* solve top package.
-            About what is top package:
-                Top package is the package imported by main.py directly,
-                and can be used to create objcet in runtime.
-                So the each classes of top package are loaded to flash.
-            The top package is solved as an static object, and each calsses
-                of the top package is solved as a function of the static
-                object. To implament this, a [package]-api.c file is created
-                to supply the class of static object.
-        */
-
         if is_top_c_pkg {
             /*
                 Push top C package to PikaMain.
@@ -247,6 +217,42 @@ impl Compiler {
                 .or_insert(package_now);
             self.package_name_now = Some(package_name.clone());
         }
+
+        /* return when compiled */
+        if !self.compiled_list.contains(&file_name) {
+            /* print info */
+            match suffix {
+                "py" => {
+                    println!("  scaning {}{}.{}...", self.source_path, file_name, suffix);
+                }
+                "pyi" => {
+                    println!(
+                        "    binding {}{}.{}...",
+                        self.source_path, file_name, suffix
+                    );
+                }
+                _ => {}
+            }
+        } else {
+            /* not scan *.py again */
+            match suffix {
+                "py" => return self,
+                _ => {}
+            }
+        }
+
+        /* push to compiled list, only compile once */
+        self.compiled_list.push_back(String::clone(&file_name));
+        /* solve top package.
+            About what is top package:
+                Top package is the package imported by main.py directly,
+                and can be used to create objcet in runtime.
+                So the each classes of top package are loaded to flash.
+            The top package is solved as an static object, and each calsses
+                of the top package is solved as a function of the static
+                object. To implament this, a [package]-api.c file is created
+                to supply the class of static object.
+        */
 
         let lines: Vec<&str> = file_str.split('\n').collect();
         let mut last_line = String::from("");
