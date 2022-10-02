@@ -1082,6 +1082,7 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
         Arg* module_arg = obj_getArg(__pikaMain, name);
         PikaObj* module_obj = arg_getPtr(module_arg);
         obj_setArg(self, name, module_arg);
+        arg_setIsWeakRef(obj_getArg(self, name), PIKA_TRUE);
         pika_assert(argType_isObject(arg_getType(module_arg)));
         /* decrase refcnt to avoid circle reference */
         obj_refcntDec(module_obj);

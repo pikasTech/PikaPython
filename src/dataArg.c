@@ -399,6 +399,9 @@ void* arg_getHeapStruct(Arg* self) {
 }
 
 void arg_deinitHeap(Arg* self) {
+    if (arg_getIsWeakRef(self)) {
+        return;
+    }
     ArgType type = arg_getType(self);
     /* deinit heap struct */
     if (type == ARG_TYPE_STRUCT_HEAP) {
