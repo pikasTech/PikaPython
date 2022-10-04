@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664895398661,
+  "lastUpdate": 1664895462351,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -81880,6 +81880,60 @@ window.BENCHMARK_DATA = {
             "value": 0.005000053614830037,
             "unit": "ms/iter",
             "extra": "iterations: 280784\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "114990001+apear67@users.noreply.github.com",
+            "name": "apear67",
+            "username": "apear67"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "63bd77b50dcbeae3fedb875af4fb30b12d99fb03",
+          "message": "Create 20190813_裴恩政_网络编程综合实验.txt (#240)",
+          "timestamp": "2022-10-04T22:37:35+08:00",
+          "tree_id": "2b84fa7dba5aeb9473246876b0cfdaf546c81a7f",
+          "url": "https://github.com/pikasTech/pikascript/commit/63bd77b50dcbeae3fedb875af4fb30b12d99fb03"
+        },
+        "date": 1664895456202,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 13515.070106450497,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 13515.070106450497 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 32.54550229671163,
+            "unit": "ms/iter",
+            "extra": "iterations: 36\ncpu: 32.52468099892529 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 17.553978148541113,
+            "unit": "ms/iter",
+            "extra": "iterations: 67\ncpu: 17.551572159012405 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 3.6998923255839364,
+            "unit": "ms/iter",
+            "extra": "iterations: 314\ncpu: 3.6995738539407146 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005001070563306547,
+            "unit": "ms/iter",
+            "extra": "iterations: 233462\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
