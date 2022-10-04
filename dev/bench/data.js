@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664885693791,
+  "lastUpdate": 1664893999988,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -81772,6 +81772,60 @@ window.BENCHMARK_DATA = {
             "value": 0.0050009860175487955,
             "unit": "ms/iter",
             "extra": "iterations: 195097\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "115007489+xxdnme@users.noreply.github.com",
+            "name": "xxdnme",
+            "username": "xxdnme"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aeea04784d23ac723e8d77550d04f4cc29fbe141",
+          "message": "周尧-25190616-网络编程实验 (#236)\n\n* Create 周尧-25190616-网络编程实验课\r\n\r\n* Rename 周尧-25190616-网络编程实验课 to 周尧-25190616-网络编程.txt",
+          "timestamp": "2022-10-04T22:13:35+08:00",
+          "tree_id": "248237322f3661ae92158957aa73ad096f14b315",
+          "url": "https://github.com/pikasTech/pikascript/commit/aeea04784d23ac723e8d77550d04f4cc29fbe141"
+        },
+        "date": 1664893992852,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 13499.155935322915,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 13499.155935322915 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 32.59319630603248,
+            "unit": "ms/iter",
+            "extra": "iterations: 36\ncpu: 32.56771422857335 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 17.51019757320027,
+            "unit": "ms/iter",
+            "extra": "iterations: 67\ncpu: 17.50875955548608 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 3.7043072023332555,
+            "unit": "ms/iter",
+            "extra": "iterations: 314\ncpu: 3.7039352859956383 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000320251069666,
+            "unit": "ms/iter",
+            "extra": "iterations: 234417\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
