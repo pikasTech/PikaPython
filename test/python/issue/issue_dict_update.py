@@ -4,3 +4,4 @@ nodes = {"type": "div", "attributes": {"class": "container", "style": {"width": 
 print(nodes)
 inner = nodes['nodes'][2]['nodes'][0]['widgetName']
 PikaStdLib.MemChecker().max()
+PikaStdLib.MemChecker().now()
