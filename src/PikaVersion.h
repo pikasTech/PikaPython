@@ -2,4 +2,4 @@
 #define PIKA_VERSION_MINOR       11
 #define PIKA_VERSION_MICRO       3
 
-#define PIKA_EDIT_TIME      "2022/10/04 17:53:56"
+#define PIKA_EDIT_TIME      "2022/10/04 18:01:55"

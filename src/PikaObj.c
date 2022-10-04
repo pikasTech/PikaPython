@@ -819,7 +819,7 @@ enum shell_state obj_runChar(PikaObj* self, char inputChar) {
     char* rxBuff = (char*)obj_getBytes(self, "__shbuf");
     char* input_line = NULL;
     int is_in_block = obj_getInt(self, "__shinb");
-#ifndef __linux
+#if !(defined(__linux) || defined(_WIN32))
     __platform_printf("%c", inputChar);
 #endif
     if ((inputChar == '\b') || (inputChar == 127)) {
@@ -837,7 +837,7 @@ enum shell_state obj_runChar(PikaObj* self, char inputChar) {
         return SHELL_STATE_CONTINUE;
     }
     if ((inputChar == '\r') || (inputChar == '\n')) {
-#ifndef __linux
+#if !(defined(__linux) || defined(_WIN32))
         __platform_printf("\r\n");
 #endif
         /* still in block */
