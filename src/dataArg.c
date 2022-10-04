@@ -457,7 +457,7 @@ void arg_deinit(Arg* self) {
     }
     /* deinit arg pointed heap */
     arg_deinitHeap(self);
-    if (!arg_getSerialized(self)) {
+    if (!arg_isSerialized(self)) {
         return;
     }
     /* free the ref */

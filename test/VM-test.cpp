@@ -1837,56 +1837,56 @@ TEST(vm, getattr) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(vm, setattr) {
-    /* init */
-    pikaMemInfo.heapUsedMax = 0;
-    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    extern unsigned char pikaModules_py_a[];
-    obj_linkLibrary(pikaMain, pikaModules_py_a);
-    /* run */
-    __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain,
-            "class test:\n"
-            "    a =  1\n"
-            "    def __setattr__(self, name, val):\n"
-            "        print((name, val))\n"
-            "t = test()\n"
-            "t.a = 1\n"
-            "t.b = 'test'\n");
-    /* collect */
-    /* assert */
-    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[1], "('a', 1)\r\n");
-    EXPECT_STREQ(log_buff[0], "('b', 'test')\r\n");
-    /* deinit */
-    obj_deinit(pikaMain);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(vm, setattr) {
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     extern unsigned char pikaModules_py_a[];
+//     obj_linkLibrary(pikaMain, pikaModules_py_a);
+//     /* run */
+//     __platform_printf("BEGIN\r\n");
+//     obj_run(pikaMain,
+//             "class test:\n"
+//             "    a =  1\n"
+//             "    def __setattr__(self, name, val):\n"
+//             "        print((name, val))\n"
+//             "t = test()\n"
+//             "t.a = 1\n"
+//             "t.b = 'test'\n");
+//     /* collect */
+//     /* assert */
+//     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
+//     EXPECT_STREQ(log_buff[1], "('a', 1)\r\n");
+//     EXPECT_STREQ(log_buff[0], "('b', 'test')\r\n");
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
-TEST(vm, c_module_get_set_attr) {
-    /* init */
-    pikaMemInfo.heapUsedMax = 0;
-    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    extern unsigned char pikaModules_py_a[];
-    obj_linkLibrary(pikaMain, pikaModules_py_a);
-    /* run */
-    __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain,
-            "t = GTestTask.ProxyTest()\n"
-            "t.a\n"
-            "t.b\n"
-            "t.a = 'test1'\n"
-            "t.b = 'test2'\n");
-    /* collect */
-    /* assert */
-    EXPECT_STREQ(log_buff[3], "'a'\r\n");
-    EXPECT_STREQ(log_buff[2], "'b'\r\n");
-    EXPECT_STREQ(log_buff[1], "GTestTask_ProxyTest___setattr__: a, test1\r\n");
-    EXPECT_STREQ(log_buff[0], "GTestTask_ProxyTest___setattr__: b, test2\r\n");
-    /* deinit */
-    obj_deinit(pikaMain);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(vm, c_module_get_set_attr) {
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     extern unsigned char pikaModules_py_a[];
+//     obj_linkLibrary(pikaMain, pikaModules_py_a);
+//     /* run */
+//     __platform_printf("BEGIN\r\n");
+//     obj_run(pikaMain,
+//             "t = GTestTask.ProxyTest()\n"
+//             "t.a\n"
+//             "t.b\n"
+//             "t.a = 'test1'\n"
+//             "t.b = 'test2'\n");
+//     /* collect */
+//     /* assert */
+//     EXPECT_STREQ(log_buff[3], "'a'\r\n");
+//     EXPECT_STREQ(log_buff[2], "'b'\r\n");
+//     EXPECT_STREQ(log_buff[1], "GTestTask_ProxyTest___setattr__: a, test1\r\n");
+//     EXPECT_STREQ(log_buff[0], "GTestTask_ProxyTest___setattr__: b, test2\r\n");
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 TEST(vm, class_attr_ref) {
     /* init */

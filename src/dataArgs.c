@@ -92,7 +92,7 @@ PIKA_RES args_pushArg(Args* self, Arg* arg) {
         return PIKA_RES_ERR_ARG_NO_FOUND;
     }
     Arg* new_arg = NULL;
-    if (!arg_getSerialized(arg)) {
+    if (!arg_isSerialized(arg)) {
         new_arg = arg_copy(arg);
         arg_deinit(arg);
     } else {
@@ -310,7 +310,7 @@ PIKA_RES __updateArg(Args* self, Arg* argNew) {
     arg_setNext((Arg*)priorNode, (Arg*)nodeToUpdate);
     goto exit;
 exit:
-    if (!arg_getSerialized(argNew)) {
+    if (!arg_isSerialized(argNew)) {
         return PIKA_RES_OK;
     }
     arg_freeContent(argNew);

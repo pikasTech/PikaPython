@@ -1443,7 +1443,11 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
         /* in block, is a keyword arg */
         arg_setIsKeyword(out_arg, PIKA_TRUE);
         arg_setName(out_arg, arg_path);
-        return arg_copy_noalloc(out_arg, arg_ret_reg);
+        Arg* res = arg_copy_noalloc(out_arg, arg_ret_reg);
+        if (arg_isSerialized(out_arg)) {
+            arg_deinit(out_arg);
+        }
+        return res;
     }
 
     if (_checkLReg(arg_path)) {

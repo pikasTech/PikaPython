@@ -4748,4 +4748,23 @@ TEST(parser, issue_dict_update) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, object_test2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = (char*)"hello(name = 'world', isShow = isShow)";
+    printf("%s", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 STR world\n"
+                 "1 OUT name\n"
+                 "1 REF isShow\n"
+                 "1 OUT isShow\n"
+                 "0 RUN hello\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

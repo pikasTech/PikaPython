@@ -140,7 +140,7 @@ uint8_t argType_isObject(ArgType type);
 
 #define arg_getNext(self) ((self)->_.next)
 #define arg_getSize(self) ((self)->size)
-#define arg_getSerialized(self) ((self)->flag & ARG_FLAG_MASK_SERIALIZED)
+#define arg_isSerialized(self) ((self)->flag & ARG_FLAG_MASK_SERIALIZED)
 #define arg_setSerialized(self, __serialized)                           \
     do {                                                                \
         (self)->flag = ((self)->flag & ~ARG_FLAG_MASK_SERIALIZED) |     \
@@ -161,7 +161,7 @@ uint8_t argType_isObject(ArgType type);
     } while (0)
 
 #define arg_getContent(self) \
-    ((arg_getSerialized(self)) ? (self)->content : ((self)->_.buffer))
+    ((arg_isSerialized(self)) ? (self)->content : ((self)->_.buffer))
 #define arg_getNext(self) ((self)->_.next)
 #define arg_setNext(self, __next) ((self)->_.next = (__next))
 
