@@ -6,5 +6,11 @@
 
 int main(int argc, char *argv[]) {
 	PikaObj* pikaMain = pikaScriptInit();
+	pikaScriptShell(pikaMain);
 	return 0;
 }
+
+char __platfrom_getChar(void){
+	return (char)getchar();
+}
+
