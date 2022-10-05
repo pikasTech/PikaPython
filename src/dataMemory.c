@@ -245,12 +245,6 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
     return;
 }
 
-uint32_t aline_by(uint32_t size, uint32_t aline) {
-    if (size == 0) {
-        return 0;
-    }
-    return ((size - 1) / aline + 1) * aline;
-}
 
 BitMap bitmap_init(uint32_t size) {
     BitMap mem_bit_map =

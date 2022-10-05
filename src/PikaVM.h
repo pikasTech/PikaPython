@@ -92,8 +92,8 @@ struct OperatorInfo {
     Arg* a2;
     pika_float f1;
     pika_float f2;
-    int i1;
-    int i2;
+    int64_t i1;
+    int64_t i2;
     Arg* res;
     int num;
     VMState* vm;

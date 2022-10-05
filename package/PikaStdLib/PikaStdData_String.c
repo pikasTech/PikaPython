@@ -297,14 +297,16 @@ char* PikaStdData_String_strip(PikaObj* self, PikaTuple* chrs) {
     char* str = strsCopy(&buffs, obj_getStr(self, "str"));
     /* strip */
     char* str_start = str;
-    for (size_t i = 0; i < strGetSize(str); i++) {
+    size_t len = strlen(str);
+    for (size_t i = 0; i < len; i++) {
         if (str[i] != to_strip) {
             str_start = (char*)(str + i);
             break;
         }
     }
 
-    for (int i = strGetSize(str) - 1; i >= 0; i--) {
+    len = strlen(str);
+    for (int i = len - 1; i >= 0; i--) {
         if (str[i] != to_strip) {
             str[i + 1] = '\0';
             break;

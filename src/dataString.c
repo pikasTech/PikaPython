@@ -92,7 +92,8 @@ char* strAppendWithSize(char* strOut, char* pData, int32_t Size) {
 
 int32_t strCountSign(char* strIn, char sign) {
     int32_t count = 0;
-    for (uint32_t i = 0; i < strGetSize(strIn); i++) {
+    size_t len = strGetSize(strIn);
+    for (uint32_t i = 0; i < len; i++) {
         if (sign == strIn[i]) {
             count++;
         }
@@ -217,15 +218,16 @@ char* strRemovePrefix(char* inputStr, char* prefix, char* outputStr) {
     if (!strIsStartWith(inputStr, prefix)) {
         return NULL;
     }
-
-    for (uint32_t i = strGetSize(prefix); i < strGetSize(inputStr); i++) {
+    size_t len = strGetSize(inputStr);
+    for (uint32_t i = strGetSize(prefix); i < len; i++) {
         outputStr[i - strGetSize(prefix)] = inputStr[i];
     }
     return outputStr;
 }
 
 int32_t strIsContain(char* str, char ch) {
-    for (uint32_t i = 0; i < strGetSize(str); i++) {
+    size_t len = strGetSize(str);
+    for (uint32_t i = 0; i < len; i++) {
         if (str[i] == ch) {
             return 1;
         }

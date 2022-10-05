@@ -60,13 +60,14 @@ struct Pool{
 };
 /* clang-format on */
 
+#define aline_by(size, aline) \
+    (((size) == 0) ? 0 : (((size)-1) / (aline) + 1) * (aline))
+
 void pikaFree(void* mem, uint32_t size);
 void* pikaMalloc(uint32_t size);
 uint32_t pikaMemNow(void);
 uint32_t pikaMemMax(void);
 void pikaMemMaxReset(void);
-
-uint32_t aline_by(uint32_t size, uint32_t aline);
 
 BitMap bitmap_init(uint32_t size);
 void bitmap_set(BitMap bitmap, uint32_t index, uint8_t bit);

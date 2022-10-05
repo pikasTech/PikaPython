@@ -566,17 +566,24 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     char* arg_path = data;
     char* arg_name = strPointToLastToken(arg_path, '.');
     PIKA_BOOL is_temp = PIKA_FALSE;
-    if (strEqu(arg_path, (char*)"True")) {
-        return arg_setInt(arg_ret_reg, "", 1);
-    }
-    if (strEqu(arg_path, (char*)"False")) {
-        return arg_setInt(arg_ret_reg, "", 0);
-    }
-    if (strEqu(arg_path, (char*)"None")) {
-        return arg_setNull(arg_ret_reg);
-    }
-    if (strEqu(arg_path, (char*)"RuntimeError")) {
-        return arg_setInt(arg_ret_reg, "", PIKA_RES_ERR_RUNTIME_ERROR);
+
+    switch (data[0]) {
+        case 'T':
+            if (strEqu(arg_path, (char*)"True")) {
+                return arg_setInt(arg_ret_reg, "", 1);
+            }
+        case 'F':
+            if (strEqu(arg_path, (char*)"False")) {
+                return arg_setInt(arg_ret_reg, "", 0);
+            }
+        case 'N':
+            if (strEqu(arg_path, (char*)"None")) {
+                return arg_setNull(arg_ret_reg);
+            }
+        case 'R':
+            if (strEqu(arg_path, (char*)"RuntimeError")) {
+                return arg_setInt(arg_ret_reg, "", PIKA_RES_ERR_RUNTIME_ERROR);
+            }
     }
 
     Arg* res = NULL;
@@ -1345,7 +1352,8 @@ static char* __get_transferd_str(Args* buffs, char* str, size_t* iout_p) {
 
     char* transfered_str = args_getBuff(buffs, strGetSize(str_rep));
     size_t i_out = 0;
-    for (size_t i = 0; i < strGetSize(str_rep); i++) {
+    size_t len = strGetSize(str_rep);
+    for (size_t i = 0; i < len; i++) {
         /* eg. replace '\x33' to '3' */
         if ((str_rep[i] == '\\') && (str_rep[i + 1] == 'x')) {
             char hex_str[] = "0x00";
@@ -1529,29 +1537,32 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    Arg* numArg = arg_ret_reg;
+    /* fast return */
+    if (data[1] == '\0') {
+        return arg_setInt(arg_ret_reg, "", data[0] - '0');
+    }
     /* hex */
     if (data[1] == 'x' || data[1] == 'X') {
-        return arg_setInt(numArg, "", strtoll(data, NULL, 0));
+        return arg_setInt(arg_ret_reg, "", strtoll(data, NULL, 0));
     }
     if (data[1] == 'o' || data[1] == 'O') {
         char strtoll_buff[10] = {0};
         strtoll_buff[0] = '0';
         __platform_memcpy(strtoll_buff + 1, data + 2, strGetSize(data) - 2);
-        return arg_setInt(numArg, "", strtoll(strtoll_buff, NULL, 0));
+        return arg_setInt(arg_ret_reg, "", strtoll(strtoll_buff, NULL, 0));
     }
     if (data[1] == 'b' || data[1] == 'B') {
         char strtoll_buff[10] = {0};
         __platform_memcpy(strtoll_buff, data + 2, strGetSize(data) - 2);
-        return arg_setInt(numArg, "", strtoll(strtoll_buff, NULL, 2));
+        return arg_setInt(arg_ret_reg, "", strtoll(strtoll_buff, NULL, 2));
     }
     /* float */
     if (strIsContain(data, '.') ||
         (strIsContain(data, 'e') || strIsContain(data, 'E'))) {
-        return arg_setFloat(numArg, "", strtod(data, NULL));
+        return arg_setFloat(arg_ret_reg, "", strtod(data, NULL));
     }
     /* int */
-    return arg_setInt(numArg, "", fast_atoi(data));
+    return arg_setInt(arg_ret_reg, "", fast_atoi(data));
 }
 
 static Arg* VM_instruction_handler_JMP(PikaObj* self,
@@ -1664,14 +1675,14 @@ void operatorInfo_init(OperatorInfo* info,
         info->f1 = (pika_float)info->i1;
     } else if (info->t1 == ARG_TYPE_FLOAT) {
         info->f1 = arg_getFloat(info->a1);
-        info->i1 = (int)info->f1;
+        info->i1 = (int64_t)info->f1;
     }
     if (info->t2 == ARG_TYPE_INT) {
         info->i2 = arg_getInt(info->a2);
         info->f2 = (pika_float)info->i2;
     } else if (info->t2 == ARG_TYPE_FLOAT) {
         info->f2 = arg_getFloat(info->a2);
-        info->i2 = (int)info->f2;
+        info->i2 = (int64_t)info->f2;
     }
 }
 
@@ -1895,40 +1906,84 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     }
     /* init operator info */
     operatorInfo_init(&op, self, vm, data, arg_ret_reg);
-    if (data[0] == '<' && data[1] == 0) {
-        op.res = arg_setInt(op.res, "", op.f1 < op.f2);
-        goto exit;
-    }
-    if (data[0] == '+') {
-        _OPT_ADD(&op);
-        goto exit;
+    switch (data[0]) {
+        case '+':
+            _OPT_ADD(&op);
+            goto exit;
+        case '%':
+            if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
+                op.res = arg_setInt(op.res, "", op.i1 % op.i2);
+                goto exit;
+            }
+            VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
+            __platform_printf(
+                "TypeError: unsupported operand type(s) for %: 'float'\n");
+            op.res = NULL;
+            goto exit;
+        case '-':
+            _OPT_SUB(&op);
+            goto exit;
     }
     if (data[1] == '=' && (data[0] == '!' || data[0] == '=')) {
         _OPT_EQU(&op);
         goto exit;
     }
-    if (data[0] == '%') {
-        if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
-            op.res = arg_setInt(op.res, "", op.i1 % op.i2);
-            goto exit;
+    if (data[1] == 0) {
+        switch (data[0]) {
+            case '<':
+                op.res = arg_setInt(op.res, "", op.f1 < op.f2);
+                goto exit;
+            case '*':
+                if ((op.t1 == ARG_TYPE_FLOAT) || op.t2 == ARG_TYPE_FLOAT) {
+                    op.res = arg_setFloat(op.res, "", op.f1 * op.f2);
+                    goto exit;
+                }
+                op.res = arg_setInt(op.res, "", op.i1 * op.i2);
+                goto exit;
+            case '&':
+                if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
+                    op.res = arg_setInt(op.res, "", op.i1 & op.i2);
+                    goto exit;
+                }
+                VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
+                __platform_printf(
+                    "TypeError: unsupported operand type(s) for &: 'float'\n");
+                op.res = NULL;
+                goto exit;
+            case '|':
+                if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
+                    op.res = arg_setInt(op.res, "", op.i1 | op.i2);
+                    goto exit;
+                }
+                VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
+                __platform_printf(
+                    "TypeError: unsupported operand type(s) for |: 'float'\n");
+                op.res = NULL;
+                goto exit;
+            case '~':
+                if (op.t2 == ARG_TYPE_INT) {
+                    op.res = arg_setInt(op.res, "", ~op.i2);
+                    goto exit;
+                }
+                VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
+                __platform_printf(
+                    "TypeError: unsupported operand type(s) for ~: 'float'\n");
+                op.res = NULL;
+                goto exit;
+            case '/':
+                if (0 == op.f2) {
+                    VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
+                    args_setSysOut(vm->locals->list,
+                                   "ZeroDivisionError: division by zero");
+                    op.res = NULL;
+                    goto exit;
+                }
+                op.res = arg_setFloat(op.res, "", op.f1 / op.f2);
+                goto exit;
+            case '>':
+                op.res = arg_setInt(op.res, "", op.f1 > op.f2);
+                goto exit;
         }
-        VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf(
-            "TypeError: unsupported operand type(s) for %: 'float'\n");
-        op.res = NULL;
-        goto exit;
-    }
-    if (data[0] == '-') {
-        _OPT_SUB(&op);
-        goto exit;
-    }
-    if (data[0] == '*' && data[1] == 0) {
-        if ((op.t1 == ARG_TYPE_FLOAT) || op.t2 == ARG_TYPE_FLOAT) {
-            op.res = arg_setFloat(op.res, "", op.f1 * op.f2);
-            goto exit;
-        }
-        op.res = arg_setInt(op.res, "", op.i1 * op.i2);
-        goto exit;
     }
     if (data[1] == 'i' && data[2] == 'n') {
         if (op.t1 == ARG_TYPE_STRING && op.t2 == ARG_TYPE_STRING) {
@@ -1974,21 +2029,6 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = NULL;
         goto exit;
     }
-    if (data[0] == '/' && data[1] == 0) {
-        if (0 == op.f2) {
-            VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-            args_setSysOut(vm->locals->list,
-                           "ZeroDivisionError: division by zero");
-            op.res = NULL;
-            goto exit;
-        }
-        op.res = arg_setFloat(op.res, "", op.f1 / op.f2);
-        goto exit;
-    }
-    if (data[0] == '>' && data[1] == 0) {
-        op.res = arg_setInt(op.res, "", op.f1 > op.f2);
-        goto exit;
-    }
     if (data[0] == '*' && data[1] == '*') {
         _OPT_POW(&op);
         goto exit;
@@ -2029,39 +2069,6 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             op.res, "",
             (op.f1 < op.f2) ||
                 ((op.f1 - op.f2) * (op.f1 - op.f2) < (pika_float)0.000001));
-        goto exit;
-    }
-    if (data[0] == '&' && data[1] == 0) {
-        if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
-            op.res = arg_setInt(op.res, "", op.i1 & op.i2);
-            goto exit;
-        }
-        VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf(
-            "TypeError: unsupported operand type(s) for &: 'float'\n");
-        op.res = NULL;
-        goto exit;
-    }
-    if (data[0] == '|' && data[1] == 0) {
-        if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
-            op.res = arg_setInt(op.res, "", op.i1 | op.i2);
-            goto exit;
-        }
-        VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf(
-            "TypeError: unsupported operand type(s) for |: 'float'\n");
-        op.res = NULL;
-        goto exit;
-    }
-    if (data[0] == '~' && data[1] == 0) {
-        if (op.t2 == ARG_TYPE_INT) {
-            op.res = arg_setInt(op.res, "", ~op.i2);
-            goto exit;
-        }
-        VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf(
-            "TypeError: unsupported operand type(s) for ~: 'float'\n");
-        op.res = NULL;
         goto exit;
     }
     if (data[0] == '>' && data[1] == '>') {
@@ -2963,7 +2970,8 @@ void constPool_printAsArray(ConstPool* self) {
         }
         char* data_each = constPool_getNow(self);
         /* todo start */
-        for (uint32_t i = 0; i < strGetSize(data_each) + 1; i++) {
+        size_t len = strlen(data_each);
+        for (uint32_t i = 0; i < len + 1; i++) {
             __platform_printf("0x%02x, ", *(data_each + (uintptr_t)i));
             g_i++;
             if (g_i % line_num == 0) {
