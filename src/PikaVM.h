@@ -161,6 +161,10 @@ void constPool_append(ConstPool* self, char* content);
 #define constPool_getByOffset(self, offset) \
     (char*)((uintptr_t)constPool_getStart((self)) + (uintptr_t)(offset))
 
+#define VMState_getConstWithInstructUnit(__vm, __ins_unit)        \
+    (constPool_getByOffset(&((__vm)->bytecode_frame->const_pool), \
+                           instructUnit_getConstPoolIndex(__ins_unit)))
+
 char* constPool_getNow(ConstPool* self);
 char* constPool_getNext(ConstPool* self);
 char* constPool_getByIndex(ConstPool* self, uint16_t index);
@@ -176,13 +180,31 @@ void instructArray_append(InstructArray* ins_array, InstructUnit* ins_unit);
 void instructUnit_init(InstructUnit* ins_unit);
 void instructUnit_print(InstructUnit* self);
 void instructArray_print(InstructArray* self);
-void byteCodeFrame_print(ByteCodeFrame* self);
-InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset);
 
-#define instructUnit_getSize(InstructUnit_p_self) ((size_t)sizeof(InstructUnit))
+#define instructArray_getStart(InsturctArry_p_self) \
+    ((InsturctArry_p_self)->content_start)
+
 #define instructArray_getSize(InsturctArry_p_self) \
     ((size_t)(InsturctArry_p_self)->size)
-#define instructArray_getStart(InsturctArry_p_self) ((self)->content_start)
+
+#define VMState_getInstructArraySize(vm) \
+    (instructArray_getSize(&((vm)->bytecode_frame->instruct_array)))
+
+#define instructArray_getByOffset(__self, __offset)                \
+    ((InstructUnit*)((uintptr_t)instructArray_getStart((__self)) + \
+                     (uintptr_t)(__offset)))
+
+#define VMState_getInstructUnitWithOffset(vm, offset)                   \
+    (instructArray_getByOffset(&((vm)->bytecode_frame->instruct_array), \
+                               (vm)->pc + (offset)))
+
+#define VMState_getInstructNow(vm)                                      \
+    (instructArray_getByOffset(&((vm)->bytecode_frame->instruct_array), \
+                               (vm)->pc))
+
+void byteCodeFrame_print(ByteCodeFrame* self);
+
+#define instructUnit_getSize(InstructUnit_p_self) ((size_t)sizeof(InstructUnit))
 
 uint16_t constPool_getOffsetByData(ConstPool* self, char* data);
 void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool);

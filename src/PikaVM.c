@@ -65,19 +65,8 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
 
 /* head declare end */
 
-static InstructUnit* VMState_getInstructNow(VMState* vm) {
-    return instructArray_getByOffset(&(vm->bytecode_frame->instruct_array),
-                                     vm->pc);
-}
-
 static void VMState_setErrorCode(VMState* vm, uint8_t error_code) {
     vm->error_code = error_code;
-}
-
-static InstructUnit* VMState_getInstructUnitWithOffset(VMState* vm,
-                                                       int32_t offset) {
-    return instructArray_getByOffset(&(vm->bytecode_frame->instruct_array),
-                                     vm->pc + offset);
 }
 
 static enum Instruct VMstate_getInstructWithOffset(VMState* vm,
@@ -90,12 +79,6 @@ static int VMState_getBlockDeepthNow(VMState* vm) {
     /* support run byteCode */
     InstructUnit* ins_unit = VMState_getInstructNow(vm);
     return instructUnit_getBlockDeepth(ins_unit);
-}
-
-static char* VMState_getConstWithInstructUnit(VMState* vm,
-                                              InstructUnit* ins_unit) {
-    return constPool_getByOffset(&(vm->bytecode_frame->const_pool),
-                                 instructUnit_getConstPoolIndex(ins_unit));
 }
 
 #if !PIKA_NANO_ENABLE
@@ -123,7 +106,7 @@ static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
         uint16_t invoke_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
         enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
         char* data = VMState_getConstWithInstructUnit(vm, ins_unit_now);
-        if ((0 == invoke_deepth) && (JEZ == ins) && strEqu(data, "2")) {
+        if ((0 == invoke_deepth) && (JEZ == ins) && data[0] == '2') {
             loop_deepth = instructUnit_getBlockDeepth(ins_unit_now);
             break;
         }
@@ -138,14 +121,10 @@ static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
         char* data = VMState_getConstWithInstructUnit(vm, ins_unit_now);
         int block_deepth_now = instructUnit_getBlockDeepth(ins_unit_now);
         if ((block_deepth_now == loop_deepth) && (JMP == ins) &&
-            strEqu(data, "-1")) {
+            data[0] == '-' && data[1] == '1') {
             return offset;
         }
     }
-}
-
-static size_t VMState_getInstructArraySize(VMState* vm) {
-    return instructArray_getSize(&(vm->bytecode_frame->instruct_array));
 }
 
 static int32_t VMState_getAddrOffsetFromJmp(VMState* vm) {
@@ -154,13 +133,13 @@ static int32_t VMState_getAddrOffsetFromJmp(VMState* vm) {
     InstructUnit* this_ins_unit = VMState_getInstructNow(vm);
     int thisBlockDeepth = instructUnit_getBlockDeepth(this_ins_unit);
     int8_t blockNum = 0;
-
+    int pc_max = (int)VMState_getInstructArraySize(vm);
     if (vm->jmp > 0) {
         offset = 0;
         while (1) {
             offset += instructUnit_getSize();
             /* reach the end */
-            if (vm->pc + offset >= (int)VMState_getInstructArraySize(vm)) {
+            if (vm->pc + offset >= pc_max) {
                 break;
             }
             this_ins_unit = VMState_getInstructUnitWithOffset(vm, offset);
@@ -793,7 +772,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     method_type = arg_getType(method_arg);
 
     /* get arg_num_dec */
-    if (strEqu("", type_list)) {
+    if (type_list[0] == 0) {
         arg_num_dec = 0;
     } else {
         arg_num_dec = strCountSign(type_list, ',') + 1;
@@ -1608,13 +1587,12 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    arg_newReg(pika_assertArg_reg, PIKA_ARG_BUFF_SIZE);
-    Arg* pika_assertArg = stack_popArg(&(vm->stack), &pika_assertArg_reg);
+    Arg* pika_assertArg = stack_popArg(&(vm->stack), arg_ret_reg);
     int pika_assert = 0;
     if (NULL != pika_assertArg) {
         pika_assert = arg_getInt(pika_assertArg);
+        arg_deinit(pika_assertArg);
     }
-    arg_deinit(pika_assertArg);
     return _VM_JEZ(self, vm, data, arg_ret_reg, pika_assert);
 }
 
@@ -1622,13 +1600,12 @@ static Arg* VM_instruction_handler_JNZ(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    arg_newReg(pika_assertArg_reg, PIKA_ARG_BUFF_SIZE);
-    Arg* pika_assertArg = stack_popArg(&(vm->stack), &pika_assertArg_reg);
+    Arg* pika_assertArg = stack_popArg(&(vm->stack), arg_ret_reg);
     int pika_assert = 0;
     if (NULL != pika_assertArg) {
         pika_assert = arg_getInt(pika_assertArg);
+        arg_deinit(pika_assertArg);
     }
-    arg_deinit(pika_assertArg);
     return _VM_JEZ(self, vm, data, arg_ret_reg, !pika_assert);
 }
 
@@ -2946,11 +2923,6 @@ VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
     run_state.try_state = TRY_STATE_NONE;
     return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
                                               0, &run_state);
-}
-
-InstructUnit* instructArray_getByOffset(InstructArray* self, int32_t offset) {
-    return (InstructUnit*)((uintptr_t)instructArray_getStart(self) +
-                           (uintptr_t)offset);
 }
 
 void constPool_printAsArray(ConstPool* self) {
