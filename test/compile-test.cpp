@@ -657,3 +657,23 @@ TEST(compiler, i_pp) {
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(compiler, benchmark) {
+    char* lines =
+        "num = 0\n"
+        "i = 2\n"
+        "while i < 1000:\n"
+        "    is_prime = 1\n"
+        "    j = 2\n"
+        "    while j < i:\n"
+        "        if i%j==0 :\n"
+        "            is_prime = 0\n"
+        "            break\n"
+        "        j += 1 \n"
+        "    if is_prime:\n"
+        "        num = num + i\n"
+        "    i += 1\n"
+        "\n";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

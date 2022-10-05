@@ -1838,7 +1838,7 @@ static void _OPT_EQU(OperatorInfo* op) {
     is_equ = ((op->f1 - op->f2) * (op->f1 - op->f2) < (pika_float)0.000001);
     goto exit;
 exit:
-    if (strEqu("==", op->opt)) {
+    if (op->opt[0] == '=') {
         op->res = arg_setInt(op->res, "", is_equ);
     } else {
         op->res = arg_setInt(op->res, "", !is_equ);
@@ -1895,15 +1895,34 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     }
     /* init operator info */
     operatorInfo_init(&op, self, vm, data, arg_ret_reg);
-    if (strEqu("+", data)) {
+    if (data[0] == '<' && data[1] == 0) {
+        op.res = arg_setInt(op.res, "", op.f1 < op.f2);
+        goto exit;
+    }
+    if (data[0] == '+') {
         _OPT_ADD(&op);
         goto exit;
     }
-    if (strEqu("-", data)) {
+    if (data[1] == '=' && (data[0] == '!' || data[0] == '=')) {
+        _OPT_EQU(&op);
+        goto exit;
+    }
+    if (data[0] == '%') {
+        if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
+            op.res = arg_setInt(op.res, "", op.i1 % op.i2);
+            goto exit;
+        }
+        VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
+        __platform_printf(
+            "TypeError: unsupported operand type(s) for %: 'float'\n");
+        op.res = NULL;
+        goto exit;
+    }
+    if (data[0] == '-') {
         _OPT_SUB(&op);
         goto exit;
     }
-    if (strEqu("*", data)) {
+    if (data[0] == '*' && data[1] == 0) {
         if ((op.t1 == ARG_TYPE_FLOAT) || op.t2 == ARG_TYPE_FLOAT) {
             op.res = arg_setFloat(op.res, "", op.f1 * op.f2);
             goto exit;
@@ -1911,7 +1930,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = arg_setInt(op.res, "", op.i1 * op.i2);
         goto exit;
     }
-    if (strEqu(" in ", data)) {
+    if (data[1] == 'i' && data[2] == 'n') {
         if (op.t1 == ARG_TYPE_STRING && op.t2 == ARG_TYPE_STRING) {
             if (strstr(arg_getStr(op.a2), arg_getStr(op.a1))) {
                 op.res = arg_setInt(op.res, "", 1);
@@ -1955,7 +1974,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = NULL;
         goto exit;
     }
-    if (strEqu("/", data)) {
+    if (data[0] == '/' && data[1] == 0) {
         if (0 == op.f2) {
             VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
             args_setSysOut(vm->locals->list,
@@ -1966,30 +1985,15 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = arg_setFloat(op.res, "", op.f1 / op.f2);
         goto exit;
     }
-    if (strEqu("<", data)) {
-        op.res = arg_setInt(op.res, "", op.f1 < op.f2);
-        goto exit;
-    }
-    if (strEqu(">", data)) {
+    if (data[0] == '>' && data[1] == 0) {
         op.res = arg_setInt(op.res, "", op.f1 > op.f2);
         goto exit;
     }
-    if (strEqu("%", data)) {
-        if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
-            op.res = arg_setInt(op.res, "", op.i1 % op.i2);
-            goto exit;
-        }
-        VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf(
-            "TypeError: unsupported operand type(s) for %: 'float'\n");
-        op.res = NULL;
-        goto exit;
-    }
-    if (strEqu("**", data)) {
+    if (data[0] == '*' && data[1] == '*') {
         _OPT_POW(&op);
         goto exit;
     }
-    if (strEqu("//", data)) {
+    if (data[0] == '/' && data[1] == '/') {
         if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
             op.res = arg_setInt(op.res, "", op.i1 / op.i2);
             goto exit;
@@ -2000,11 +2004,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = NULL;
         goto exit;
     }
-    if (strEqu("==", data) || strEqu("!=", data)) {
-        _OPT_EQU(&op);
-        goto exit;
-    }
-    if (strEqu(" is ", data)) {
+    if (data[1] == 'i' && data[2] == 's') {
         if (argType_isObject(op.t1) && argType_isObject(op.t2)) {
             if (arg_getPtr(op.a1) == arg_getPtr(op.a2)) {
                 op.res = arg_setInt(op.res, "", 1);
@@ -2017,21 +2017,21 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         _OPT_EQU(&op);
         goto exit;
     }
-    if (strEqu(">=", data)) {
+    if (data[0] == '>' && data[1] == '=') {
         op.res = arg_setInt(
             op.res, "",
             (op.f1 > op.f2) ||
                 ((op.f1 - op.f2) * (op.f1 - op.f2) < (pika_float)0.000001));
         goto exit;
     }
-    if (strEqu("<=", data)) {
+    if (data[0] == '<' && data[1] == '=') {
         op.res = arg_setInt(
             op.res, "",
             (op.f1 < op.f2) ||
                 ((op.f1 - op.f2) * (op.f1 - op.f2) < (pika_float)0.000001));
         goto exit;
     }
-    if (strEqu("&", data)) {
+    if (data[0] == '&' && data[1] == 0) {
         if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
             op.res = arg_setInt(op.res, "", op.i1 & op.i2);
             goto exit;
@@ -2042,7 +2042,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = NULL;
         goto exit;
     }
-    if (strEqu("|", data)) {
+    if (data[0] == '|' && data[1] == 0) {
         if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
             op.res = arg_setInt(op.res, "", op.i1 | op.i2);
             goto exit;
@@ -2053,7 +2053,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = NULL;
         goto exit;
     }
-    if (strEqu("~", data)) {
+    if (data[0] == '~' && data[1] == 0) {
         if (op.t2 == ARG_TYPE_INT) {
             op.res = arg_setInt(op.res, "", ~op.i2);
             goto exit;
@@ -2064,7 +2064,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = NULL;
         goto exit;
     }
-    if (strEqu(">>", data)) {
+    if (data[0] == '>' && data[1] == '>') {
         if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
             op.res = arg_setInt(op.res, "", op.i1 >> op.i2);
             goto exit;
@@ -2075,7 +2075,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = NULL;
         goto exit;
     }
-    if (strEqu("<<", data)) {
+    if (data[0] == '<' && data[1] == '<') {
         if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
             op.res = arg_setInt(op.res, "", op.i1 << op.i2);
             goto exit;
@@ -2086,20 +2086,19 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.res = NULL;
         goto exit;
     }
-    if (strEqu(" and ", data)) {
+    if (data[0] == ' ' && data[1] == 'a' && data[2] == 'n' && data[3] == 'd' &&
+        data[4] == ' ') {
         op.res = arg_setInt(op.res, "", op.i1 && op.i2);
         goto exit;
     }
-    if (strEqu(" or ", data)) {
+    if (data[0] == ' ' && data[1] == 'o' && data[2] == 'r' && data[3] == ' ' &&
+        data[4] == 0) {
         op.res = arg_setInt(op.res, "", op.i1 || op.i2);
         goto exit;
     }
-    if (strEqu(" not ", data)) {
+    if (data[0] == ' ' && data[1] == 'n' && data[2] == 'o' && data[3] == 't' &&
+        data[4] == ' ' && data[5] == 0) {
         op.res = arg_setInt(op.res, "", !op.i2);
-        goto exit;
-    }
-    if (strEqu(" import ", data)) {
-        op.res = NULL;
         goto exit;
     }
 exit:
