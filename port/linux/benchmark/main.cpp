@@ -46,18 +46,18 @@ static void prime_number_100(benchmark::State& state) {
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_linesToAsm(buffs, (char*)
             "num = 0\n"
-	    "i = 2\n"
+	        "i = 2\n"
             "while i < 100:\n"
             "    is_prime = 1\n"
-	    "    j = 2\n"
+	        "    j = 2\n"
             "    while j < i:\n"
             "        if i%j==0 :\n"
             "            is_prime = 0\n"
             "            break\n"
-	    "        j += 1 \n"
+	        "        j += 1 \n"
             "    if is_prime:\n"
             "        num = num + i\n"
-	    "    i += 1\n"
+	        "    i += 1\n"
             "\n");
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);

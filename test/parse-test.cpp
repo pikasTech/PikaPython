@@ -4767,4 +4767,37 @@ TEST(parser, object_test2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, i_pp) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "i = 0\n"
+        "while i < 10000:\n"
+        "    i += 1\n";
+    printf("%s", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 NUM 0\n"
+                 "0 OUT i\n"
+                 "B0\n"
+                 "1 REF i\n"
+                 "1 NUM 10000\n"
+                 "0 OPT <\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "1 REF i\n"
+                 "2 NUM 1\n"
+                 "1 RUN \n"
+                 "0 OPT +\n"
+                 "0 OUT i\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n");
+
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif

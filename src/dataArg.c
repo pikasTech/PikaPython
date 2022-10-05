@@ -47,19 +47,23 @@ Hash hash_time33(char* str) {
     return (hash & 0x7FFFFFFF);
 }
 
-static Arg* arg_init_hash(Hash nameHash,
+static Arg* _arg_set_hash(Arg* self,
+                          Hash nameHash,
                           ArgType type,
                           uint8_t* content,
                           uint32_t size,
                           Arg* next) {
-    Arg* self = (Arg*)pikaMalloc(sizeof(Arg) + size);
-    arg_setNext(self, next);
-    self->size = size;
+    /* create arg if not exist */
+    if (NULL == self || self->size < size) {
+        self = (Arg*)pikaMalloc(sizeof(Arg) + size);
+        self->size = size;
+        self->flag = 0;
+        arg_setSerialized(self, PIKA_TRUE);
+        arg_setIsKeyword(self, PIKA_FALSE);
+        arg_setNext(self, next);
+    }
     self->name_hash = nameHash;
     self->type = type;
-    self->flag = 0;
-    arg_setSerialized(self, PIKA_TRUE);
-    arg_setIsKeyword(self, PIKA_FALSE);
     __platform_memset(arg_getContent(self), 0,
                       aline_by(size, sizeof(uint32_t)));
     if (NULL != content) {
@@ -69,13 +73,30 @@ static Arg* arg_init_hash(Hash nameHash,
     return self;
 }
 
-static Arg* arg_init(char* name,
-                     ArgType type,
-                     uint8_t* content,
-                     uint32_t size,
-                     Arg* next) {
+static Arg* arg_create_hash(Hash nameHash,
+                            ArgType type,
+                            uint8_t* content,
+                            uint32_t size,
+                            Arg* next) {
+    return _arg_set_hash(NULL, nameHash, type, content, size, next);
+}
+
+static Arg* arg_create(char* name,
+                       ArgType type,
+                       uint8_t* content,
+                       uint32_t size,
+                       Arg* next) {
     Hash nameHash = hash_time33(name);
-    return arg_init_hash(nameHash, type, content, size, next);
+    return arg_create_hash(nameHash, type, content, size, next);
+}
+
+static Arg* arg_set(Arg* self,
+                    char* name,
+                    ArgType type,
+                    uint8_t* content,
+                    uint32_t size) {
+    Hash nameHash = hash_time33(name);
+    return _arg_set_hash(self, nameHash, type, content, size, NULL);
 }
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
@@ -103,7 +124,7 @@ void arg_freeContent(Arg* self) {
 Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size) {
     if (NULL == self) {
         /* malloc */
-        return arg_init("", ARG_TYPE_NONE, content, size, NULL);
+        return arg_create("", ARG_TYPE_NONE, content, size, NULL);
     }
 
     /* only copy */
@@ -116,14 +137,14 @@ Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size) {
     Hash nameHash = arg_getNameHash(self);
     ArgType type = arg_getType(self);
     Arg* next = arg_getNext(self);
-    Arg* newContent = arg_init_hash(nameHash, type, content, size, next);
+    Arg* newContent = arg_create_hash(nameHash, type, content, size, next);
     arg_freeContent(self);
     return newContent;
 }
 
 Arg* arg_setNameHash(Arg* self, Hash nameHash) {
     if (NULL == self) {
-        return arg_init_hash(nameHash, ARG_TYPE_NONE, NULL, 0, NULL);
+        return arg_create_hash(nameHash, ARG_TYPE_NONE, NULL, 0, NULL);
     }
     Arg* arg = (Arg*)self;
     arg->name_hash = nameHash;
@@ -137,7 +158,7 @@ Arg* arg_setName(Arg* self, char* name) {
 
 Arg* arg_setType(Arg* self, ArgType type) {
     if (NULL == self) {
-        return arg_init("", type, NULL, 0, NULL);
+        return arg_create("", type, NULL, 0, NULL);
     }
     self->type = type;
     return self;
@@ -166,7 +187,7 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
 
 Arg* arg_newContent(Arg* self, uint32_t size) {
     arg_freeContent(self);
-    Arg* newContent = arg_init("", ARG_TYPE_NONE, NULL, size, NULL);
+    Arg* newContent = arg_create("", ARG_TYPE_NONE, NULL, size, NULL);
     return newContent;
 }
 
@@ -213,10 +234,8 @@ Arg* arg_setStruct(Arg* self,
     if (NULL == struct_ptr) {
         return NULL;
     }
-    Arg* struct_arg = arg_setContent(NULL, (uint8_t*)struct_ptr, struct_size);
-    struct_arg = arg_setType(struct_arg, ARG_TYPE_STRUCT);
-    struct_arg = arg_setName(struct_arg, name);
-    return struct_arg;
+    return arg_set(self, name, ARG_TYPE_STRUCT, (uint8_t*)struct_ptr,
+                   struct_size);
 }
 
 Arg* arg_setHeapStruct(Arg* self,
@@ -242,28 +261,15 @@ void* arg_getHeapStructDeinitFun(Arg* self) {
 }
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val) {
-    if (NULL == self) {
-        return arg_init(name, ARG_TYPE_INT, (uint8_t*)&val, sizeof(val), NULL);
-    }
-    self = arg_setContent(self, (uint8_t*)&val, sizeof(val));
-    self = arg_setType(self, ARG_TYPE_INT);
-    self = arg_setName(self, name);
-    return self;
+    return arg_set(self, name, ARG_TYPE_INT, (uint8_t*)&val, sizeof(val));
 }
 
 Arg* arg_setNull(Arg* self) {
-    return arg_init("", ARG_TYPE_NONE, NULL, 0, NULL);
+    return arg_set(self, "", ARG_TYPE_NONE, NULL, 0);
 }
 
 Arg* arg_setFloat(Arg* self, char* name, pika_float val) {
-    if (NULL == self) {
-        return arg_init(name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val),
-                        NULL);
-    }
-    self = arg_setContent(self, (uint8_t*)&val, sizeof(val));
-    self = arg_setType(self, ARG_TYPE_FLOAT);
-    self = arg_setName(self, name);
-    return self;
+    return arg_set(self, name, ARG_TYPE_FLOAT, (uint8_t*)&val, sizeof(val));
 }
 
 pika_float arg_getFloat(Arg* self) {
@@ -275,22 +281,15 @@ pika_float arg_getFloat(Arg* self) {
 }
 
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer) {
-    if (NULL == self) {
-        return arg_init(name, type, (uint8_t*)&pointer, sizeof(uintptr_t),
-                        NULL);
-    }
-    self = arg_setContent(self, (uint8_t*)&pointer, sizeof(pointer));
-    self = arg_setType(self, type);
-    self = arg_setName(self, name);
-    return self;
+    return arg_set(self, name, type, (uint8_t*)&pointer, sizeof(uintptr_t));
 }
 
 Arg* arg_setStr(Arg* self, char* name, char* string) {
     if (NULL == string) {
         return NULL;
     }
-    return arg_init(name, ARG_TYPE_STRING, (uint8_t*)string,
-                    strGetSize(string) + 1, NULL);
+    return arg_set(self, name, ARG_TYPE_STRING, (uint8_t*)string,
+                   strGetSize(string) + 1);
 }
 
 int64_t arg_getInt(Arg* self) {

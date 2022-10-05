@@ -1881,8 +1881,9 @@ TEST(vm, getattr) {
 //     /* assert */
 //     EXPECT_STREQ(log_buff[3], "'a'\r\n");
 //     EXPECT_STREQ(log_buff[2], "'b'\r\n");
-//     EXPECT_STREQ(log_buff[1], "GTestTask_ProxyTest___setattr__: a, test1\r\n");
-//     EXPECT_STREQ(log_buff[0], "GTestTask_ProxyTest___setattr__: b, test2\r\n");
+//     EXPECT_STREQ(log_buff[1], "GTestTask_ProxyTest___setattr__: a,
+//     test1\r\n"); EXPECT_STREQ(log_buff[0], "GTestTask_ProxyTest___setattr__:
+//     b, test2\r\n");
 //     /* deinit */
 //     obj_deinit(pikaMain);
 //     EXPECT_EQ(pikaMemNow(), 0);
@@ -1963,3 +1964,37 @@ TEST(vm, issue_big_dict_update) {
 }
 
 #endif
+
+TEST(vm, i_pp) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    /* clang-format off */
+    PIKA_PYTHON(
+    i = 0
+    while i < 10000:
+        i += 1
+    )
+    /* clang-format on */
+    const uint8_t bytes[] = {
+        0x30, 0x00, /* instruct array size */
+        0x00, 0x85, 0x01, 0x00, 0x00, 0x04, 0x03, 0x00, 0x10, 0x81, 0x03, 0x00,
+        0x10, 0x05, 0x05, 0x00, 0x00, 0x08, 0x0b, 0x00, 0x00, 0x07, 0x0d, 0x00,
+        0x11, 0x81, 0x03, 0x00, 0x21, 0x05, 0x0f, 0x00, 0x11, 0x02, 0x00, 0x00,
+        0x01, 0x08, 0x11, 0x00, 0x01, 0x04, 0x03, 0x00, 0x00, 0x86, 0x13, 0x00,
+        /* instruct array */
+        0x16, 0x00, /* const pool size */
+        0x00, 0x30, 0x00, 0x69, 0x00, 0x31, 0x30, 0x30, 0x30, 0x30, 0x00, 0x3c,
+        0x00, 0x32, 0x00, 0x31, 0x00, 0x2b, 0x00, 0x2d, 0x31,
+        0x00, /* const pool */
+    };
+    pikaVM_runByteCode(pikaMain, (uint8_t*)bytes);
+    EXPECT_EQ(obj_getInt(pikaMain, "i"), 10000);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}

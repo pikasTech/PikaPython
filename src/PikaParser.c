@@ -386,7 +386,7 @@ Arg* Lexer_setToken(Arg* tokens_arg,
     char* tokens = arg_getStr(tokens_arg);
     tokens = strsAppend(&buffs, tokens, token_type_buff);
     tokens = strsAppend(&buffs, tokens, operator);
-    Arg* new_tokens_arg = arg_setStr(tokens_arg, "", tokens);
+    Arg* new_tokens_arg = arg_newStr(tokens);
     arg_deinit(tokens_arg);
     strsDeinit(&buffs);
     return new_tokens_arg;
@@ -1038,7 +1038,7 @@ char* Suger_leftSlice(Args* outBuffs, char* right, char** left_p) {
     /* exit when NULL */
     if (NULL == left) {
         arg_deinit(right_arg);
-        right_arg = arg_setStr(right_arg, "", right);
+        right_arg = arg_newStr(right);
         goto exit;
     }
     /* exit when not match
@@ -1060,7 +1060,7 @@ char* Suger_leftSlice(Args* outBuffs, char* right, char** left_p) {
     if (!matched) {
         /* not contain '[', return origin */
         arg_deinit(right_arg);
-        right_arg = arg_setStr(right_arg, "", right);
+        right_arg = arg_newStr(right);
         goto exit;
     }
 

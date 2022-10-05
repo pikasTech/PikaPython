@@ -127,7 +127,7 @@ Arg* arg_strAppend(Arg* arg_in, char* str_to_append) {
     pika_assert(NULL != str_to_append);
     Args buffs = {0};
     char* str_out = strsAppend(&buffs, arg_getStr(arg_in), str_to_append);
-    Arg* arg_out = arg_setStr(arg_in, "", str_out);
+    Arg* arg_out = arg_newStr(str_out);
     arg_deinit(arg_in);
     strsDeinit(&buffs);
     return arg_out;

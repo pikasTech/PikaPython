@@ -642,10 +642,18 @@ TEST(compiler, setattr) {
 }
 
 TEST(compiler, dict_update) {
-    char* lines = 
-    "for @item in @other:\n"
-    "    @self[@item] = @other[@item]\n"
-    ;
+    char* lines =
+        "for @item in @other:\n"
+        "    @self[@item] = @other[@item]\n";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, i_pp) {
+    char* lines =
+        "i = 0\n"
+        "while i < 10000:\n"
+        "    i += 1\n";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }

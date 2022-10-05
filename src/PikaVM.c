@@ -1126,9 +1126,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (run_path[0] == 0) {
         if (VMState_getInputArgNum(vm) < 2) {
             /* return arg directly */
-            Arg* arg1 = stack_popArg(&(vm->stack), &arg_reg1);
-            return_arg = arg_copy_noalloc(arg1, arg_ret_reg);
-            arg_deinit(arg1);
+            return_arg = stack_popArg(&(vm->stack), arg_ret_reg);
             goto exit;
         }
         /* create a tuple */
