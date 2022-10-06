@@ -102,11 +102,6 @@ static Arg* arg_set(Arg* self,
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
     self->_.buffer = buffer;
     self->size = size;
-    self->type = ARG_TYPE_UNDEF;
-    self->name_hash = 0;
-    self->flag = 0;
-    arg_setSerialized(self, PIKA_FALSE);
-    arg_setIsKeyword(self, PIKA_FALSE);
 }
 
 uint32_t arg_totleSize(Arg* self) {
@@ -313,12 +308,6 @@ char* arg_getStr(Arg* self) {
     return (char*)arg_getContent(self);
 }
 
-Hash arg_getNameHash(Arg* self) {
-    if (NULL == self) {
-        return 999999;
-    }
-    return self->name_hash;
-}
 
 ArgType arg_getType(Arg* self) {
     if (NULL == self) {
