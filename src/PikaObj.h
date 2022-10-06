@@ -78,8 +78,10 @@ struct PikaObj {
 #define OBJ_FLAG_PROXY_GETATTR 0x02
 #define OBJ_FLAG_PROXY_SETATTR 0x04
 #define OBJ_FLAG_ALREADY_INIT 0x08
+#define OBJ_FLAG_RUN_AS 0x16
+#define OBJ_FLAG_GLOBALS 0x32
 
-#define obj_getFlag(__self, __flag) ((__self)->flag & (__flag))
+#define obj_getFlag(__self, __flag) (((__self)->flag & (__flag)) == (__flag))
 #define obj_setFlag(__self, __flag) ((__self)->flag |= (__flag))
 #define obj_clearFlag(__self, __flag) ((__self)->flag &= ~(__flag))
 

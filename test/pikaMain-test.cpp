@@ -2477,8 +2477,7 @@ TEST(pikaMain, returnNullString) {
     /* collect */
     Arg* s = obj_getArg(pikaMain, "s");
     /* assert */
-    ArgType type = arg_getType(s);
-    EXPECT_EQ(type, ARG_TYPE_NONE);
+    EXPECT_EQ((uintptr_t)s, NULL);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

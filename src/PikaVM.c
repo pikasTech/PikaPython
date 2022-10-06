@@ -1265,7 +1265,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     }
 
     /* __init__() */
-    if (ARG_TYPE_OBJECT_NEW == arg_getType(return_arg)) {
+    if (NULL != return_arg && ARG_TYPE_OBJECT_NEW == arg_getType(return_arg)) {
         arg_setType(return_arg, ARG_TYPE_OBJECT);
         /* init object */
         PikaObj* new_obj = arg_getPtr(return_arg);
@@ -1422,8 +1422,10 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     arg_newReg(outArg_reg, PIKA_ARG_BUFF_SIZE);
     Arg* out_arg = stack_popArg(&vm->stack, &outArg_reg);
     // Arg* outArg = stack_popArg_alloc(&vm->stack);
+    if (NULL == out_arg) {
+        return NULL;
+    }
     ArgType outArg_type = arg_getType(out_arg);
-
     if (VMState_getInvokeDeepthNow(vm) > 0) {
         /* in block, is a keyword arg */
         arg_setIsKeyword(out_arg, PIKA_TRUE);
@@ -1447,7 +1449,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
 
     PikaObj* context = vm->locals;
     /* match global_list */
-    if (args_isArgExist(vm->locals->list, "@g")) {
+    if (obj_getFlag(vm->locals, OBJ_FLAG_GLOBALS)) {
         char* global_list = args_getStr(vm->locals->list, "@g");
         /* use a arg as buff */
         Arg* global_list_arg = arg_newStr(global_list);
@@ -1463,7 +1465,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
         arg_deinit(global_list_arg);
     }
     /* use RunAs object */
-    if (args_isArgExist(vm->locals->list, "@r")) {
+    if (obj_getFlag(vm->locals, OBJ_FLAG_RUN_AS)) {
         context = args_getPtr(vm->locals->list, "@r");
     }
     /* set free object to nomal object */
@@ -1503,11 +1505,13 @@ static Arg* VM_instruction_handler_RAS(PikaObj* self,
     if (strEqu(data, "$origin")) {
         /* use origin object to run */
         obj_removeArg(vm->locals, "@r");
+        obj_clearFlag(vm->locals, OBJ_FLAG_RUN_AS);
         return NULL;
     }
     /* use "data" object to run */
     PikaObj* runAs = obj_getObj(vm->locals, data);
     args_setRef(vm->locals->list, "@r", runAs);
+    obj_setFlag(vm->locals, OBJ_FLAG_RUN_AS);
     return NULL;
 }
 
@@ -1643,16 +1647,18 @@ void operatorInfo_init(OperatorInfo* info,
                        Arg* arg_ret_reg) {
     info->opt = data;
     info->res = arg_ret_reg;
-    info->t1 = arg_getType(info->a1);
+    if (info->a1 != NULL) {
+        info->t1 = arg_getType(info->a1);
+        if (info->t1 == ARG_TYPE_INT) {
+            info->i1 = arg_getInt(info->a1);
+            info->f1 = (pika_float)info->i1;
+        } else if (info->t1 == ARG_TYPE_FLOAT) {
+            info->f1 = arg_getFloat(info->a1);
+            info->i1 = (int64_t)info->f1;
+        }
+    }
     info->t2 = arg_getType(info->a2);
     info->vm = vm;
-    if (info->t1 == ARG_TYPE_INT) {
-        info->i1 = arg_getInt(info->a1);
-        info->f1 = (pika_float)info->i1;
-    } else if (info->t1 == ARG_TYPE_FLOAT) {
-        info->f1 = arg_getFloat(info->a1);
-        info->i1 = (int64_t)info->f1;
-    }
     if (info->t2 == ARG_TYPE_INT) {
         info->i2 = arg_getInt(info->a2);
         info->f2 = (pika_float)info->i2;
@@ -2102,7 +2108,7 @@ static Arg* __VM_instruction_handler_DEF(PikaObj* self,
     PikaObj* hostObj = vm->locals;
     uint8_t is_in_class = 0;
     /* use RunAs object */
-    if (args_isArgExist(vm->locals->list, "@r")) {
+    if (obj_getFlag(vm->locals, OBJ_FLAG_RUN_AS)) {
         hostObj = args_getPtr(vm->locals->list, "@r");
         is_in_class = 1;
     }
@@ -2281,6 +2287,7 @@ static Arg* VM_instruction_handler_GLB(PikaObj* self,
     /* create new global_list */
     if (NULL == global_list) {
         args_setStr(vm->locals->list, "@g", data);
+        obj_setFlag(vm->locals, OBJ_FLAG_GLOBALS);
         goto exit;
     }
     /* append to exist global_list */

@@ -85,7 +85,7 @@ Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size);
 Arg* arg_newContent(Arg* self, uint32_t size);
 Arg* arg_setType(Arg* self, ArgType type);
 #define arg_getNameHash(__self) ((__self)->name_hash)
-ArgType arg_getType(Arg* self);
+#define arg_getType(__self) ((ArgType)(__self)->type)
 uint32_t arg_getContentSize(Arg* self);
 Hash hash_time33(char* str);
 

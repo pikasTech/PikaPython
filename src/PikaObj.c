@@ -437,6 +437,9 @@ exit:
 }
 
 PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
+    if (NULL == self) {
+        return NULL;
+    }
     if (argType_isObject(arg_getType(self))) {
         return arg_getPtr(self);
     }

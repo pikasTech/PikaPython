@@ -309,13 +309,6 @@ char* arg_getStr(Arg* self) {
 }
 
 
-ArgType arg_getType(Arg* self) {
-    if (NULL == self) {
-        return ARG_TYPE_NONE;
-    }
-    return (ArgType)self->type;
-}
-
 uint32_t arg_getContentSize(Arg* self) {
     return arg_getSize(self);
 }
