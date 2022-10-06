@@ -59,13 +59,13 @@ static Arg* _arg_set_hash(Arg* self,
         self->size = size;
         self->flag = 0;
         arg_setSerialized(self, PIKA_TRUE);
-        arg_setIsKeyword(self, PIKA_FALSE);
+        // arg_setIsKeyword(self, PIKA_FALSE);
         arg_setNext(self, next);
+        __platform_memset(arg_getContent(self), 0,
+                          aline_by(size, sizeof(uint32_t)));
     }
     self->name_hash = nameHash;
     self->type = type;
-    __platform_memset(arg_getContent(self), 0,
-                      aline_by(size, sizeof(uint32_t)));
     if (NULL != content) {
         __platform_memcpy(arg_getContent(self), content, size);
     }

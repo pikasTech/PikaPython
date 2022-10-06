@@ -48,7 +48,7 @@ TEST(strs, analizeDef) {
         int argNum = strCountSign(typeList, ',') + 1;
         char* typeListBuff = strsCopy(buffs, typeList);
         for (int i = 0; i < argNum; i++) {
-            char* typeDeclareation = strsPopToken(buffs, typeListBuff, ',');
+            char* typeDeclareation = strsPopToken(buffs, &typeListBuff, ',');
             printInfo("typeDeclareation", typeDeclareation);
             char* argName = strsGetFirstToken(buffs, typeDeclareation, ':');
             printInfo("argName", argName);

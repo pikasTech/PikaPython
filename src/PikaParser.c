@@ -49,7 +49,7 @@ void Cursor_beforeIter(struct Cursor* cs);
 void Cursor_iterStart(struct Cursor* cs);
 void Cursor_iterEnd(struct Cursor* cs);
 char* Cursor_popToken(Args* buffs, char** tokens, char* devide);
-char* Parser_popToken(Args* buffs_p, char* tokens);
+char* Parser_popToken(Args* buffs_p, char** tokens);
 
 uint16_t Tokens_getSize(char* tokens) {
     if (strEqu("", tokens)) {
@@ -337,7 +337,7 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
     /* process */
     uint16_t token_size = Tokens_getSize(tokens);
     for (uint16_t i = 0; i < token_size; i++) {
-        char* token = Parser_popToken(&buffs, tokens);
+        char* token = Parser_popToken(&buffs, &tokens);
         if (token[0] == TOKEN_operator) {
             printOut = strsAppend(&buffs, printOut, "{opt}");
             printOut = strsAppend(&buffs, printOut, token + 1);
@@ -742,7 +742,7 @@ char* Lexer_parseLine(Args* outBuffs, char* stmt) {
     return tokens;
 }
 
-char* Parser_popToken(Args* buffs_p, char* tokens) {
+char* Parser_popToken(Args* buffs_p, char** tokens) {
     return strsPopToken(buffs_p, tokens, 0x1F);
 }
 
@@ -762,7 +762,7 @@ uint8_t Parser_isContainToken(char* tokens,
     uint8_t res = 0;
     uint16_t token_size = Tokens_getSize(tokens);
     for (int i = 0; i < token_size; i++) {
-        char* token = Parser_popToken(&buffs, tokens_buff);
+        char* token = Parser_popToken(&buffs, &tokens_buff);
         if (token_type == Token_getType(token)) {
             if (strEqu(Token_getPyload(token), pyload)) {
                 res = 1;
@@ -858,7 +858,7 @@ void Cursor_iterStart(struct Cursor* cs) {
     /* token1 is the last token */
     cs->token1.token = strsCopy(cs->iter_buffs, arg_getStr(cs->last_token));
     /* token2 is the next token */
-    cs->token2.token = Parser_popToken(cs->iter_buffs, cs->tokens);
+    cs->token2.token = Parser_popToken(cs->iter_buffs, &cs->tokens);
     /* store last token */
     arg_deinit(cs->last_token);
     cs->last_token = arg_newStr(cs->token2.token);
@@ -933,8 +933,8 @@ void Cursor_beforeIter(struct Cursor* cs) {
     if (cs->result != PIKA_RES_OK) {
         return;
     }
-    Parser_popToken(cs->buffs_p, cs->tokens);
-    cs->last_token = arg_newStr(Parser_popToken(cs->buffs_p, cs->tokens));
+    Parser_popToken(cs->buffs_p, &cs->tokens);
+    cs->last_token = arg_newStr(Parser_popToken(cs->buffs_p, &cs->tokens));
 }
 
 char* Cursor_popToken(Args* buffs, char** tokens, char* devide) {
@@ -1707,12 +1707,12 @@ char* _defGetDefault(Args* outBuffs, char** dec_out) {
     char* arg_list = strsCut(&buffs, dec_str, '(', ')');
     int arg_num = strCountSign(arg_list, ',') + 1;
     for (int i = 0; i < arg_num; i++) {
-        char* arg_str = strsPopToken(&buffs, arg_list, ',');
+        char* arg_str = strsPopToken(&buffs, &arg_list, ',');
         int is_default = 0;
         if (strIsContain(arg_str, '=')) {
             default_arg = arg_strAppend(default_arg, arg_str);
             default_arg = arg_strAppend(default_arg, ",");
-            arg_str = strsPopToken(&buffs, arg_str, '=');
+            arg_str = strsPopToken(&buffs, &arg_str, '=');
             is_default = 1;
         }
         dec_arg = arg_strAppend(dec_arg, arg_str);
@@ -1844,10 +1844,10 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
             ast = NULL;
             goto exit;
         }
-        char* arg_in = strsPopToken(list_buffs, line_buff, ' ');
+        char* arg_in = strsPopToken(list_buffs, &line_buff, ' ');
         AST_setNodeAttr(ast, "arg_in", arg_in);
-        strsPopToken(list_buffs, line_buff, ' ');
-        char* list_in = strsPopToken(list_buffs, line_buff, ':');
+        strsPopToken(list_buffs, &line_buff, ' ');
+        char* list_in = strsPopToken(list_buffs, &line_buff, ':');
         list_in = strsAppend(list_buffs, "iter(", list_in);
         list_in = strsAppend(list_buffs, list_in, ")");
         list_in = strsCopy(&buffs, list_in);
@@ -1898,7 +1898,7 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
     }
     if (strIsStartWith(line_start, "return ")) {
         char* lineBuff = strsCopy(&buffs, line_start);
-        strsPopToken(&buffs, lineBuff, ' ');
+        strsPopToken(&buffs, &lineBuff, ' ');
         stmt = lineBuff;
         stmt = Suger_multiReturn(&buffs, stmt);
         AST_setNodeAttr(ast, "return", "");
@@ -1914,7 +1914,7 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
     if (strIsStartWith(line_start, "raise ")) {
         AST_setNodeAttr(ast, "raise", "");
         char* lineBuff = strsCopy(&buffs, line_start);
-        strsPopToken(&buffs, lineBuff, ' ');
+        strsPopToken(&buffs, &lineBuff, ' ');
         stmt = lineBuff;
         if (strEqu("", stmt)) {
             stmt = "RuntimeError";
@@ -2237,7 +2237,7 @@ char* Parser_LineToAsm(Args* buffs_p, char* line, Stack* blockStack) {
     */
     line_num = strCountSign(line, '\n') + 1;
     for (int i = 0; i < line_num; i++) {
-        char* single_line = strsPopToken(buffs_p, line, '\n');
+        char* single_line = strsPopToken(buffs_p, &line, '\n');
         /* parse tokens to AST */
         ast = AST_parseLine_withBlockStack(single_line, blockStack);
         /* gen ASM from AST */
@@ -2748,7 +2748,7 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
         if (NULL != defaultStmts) {
             int stmt_num = strGetTokenNum(defaultStmts, ',');
             for (int i = 0; i < stmt_num; i++) {
-                char* stmt = strsPopToken(&buffs, defaultStmts, ',');
+                char* stmt = strsPopToken(&buffs, &defaultStmts, ',');
                 char* arg_name = strsGetFirstToken(&buffs, stmt, '=');
                 pikaAsm = ASM_addBlockDeepth(ast, &buffs, pikaAsm, 1);
                 pikaAsm = strsAppend(&buffs, pikaAsm, "0 EST ");

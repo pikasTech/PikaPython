@@ -94,10 +94,8 @@ char* strsGetFirstToken(Args* buffs_p, char* strIn, char sign) {
     return strGetFirstToken(args_getBuff(buffs_p, size), strIn, sign);
 }
 
-char* strsPopToken(Args* buffs_p, char* tokens, char sign) {
-    int32_t size = strGetSize(tokens);
-    char* buff = args_getBuff(buffs_p, size);
-    return strPopToken(buff, tokens, sign);
+char* strsPopToken(Args* buffs_p, char** tokens, char sign) {
+    return strsCopy(buffs_p, strPopFirstToken(tokens, sign));
 }
 
 char* strsCopy(Args* buffs_p, char* source) {

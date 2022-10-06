@@ -738,13 +738,13 @@ char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list) {
     Args buffs = {0};
     char* res = NULL;
     char* fmt_buff = strsCopy(&buffs, fmt);
-    char* fmt_item = strsPopToken(&buffs, fmt_buff, '%');
+    char* fmt_item = strsPopToken(&buffs, &fmt_buff, '%');
     Arg* res_buff = arg_newStr(fmt_item);
 
     for (size_t i = 0; i < list_getSize(list); i++) {
         Args buffs_item = {0};
         Arg* arg = list_getArg(list, i);
-        char* fmt_item = strsPopToken(&buffs_item, fmt_buff, '%');
+        char* fmt_item = strsPopToken(&buffs_item, &fmt_buff, '%');
         fmt_item = strsAppend(&buffs_item, "%", fmt_item);
         char* str_format = strsFormatArg(&buffs_item, fmt_item, arg);
         if (NULL == str_format) {

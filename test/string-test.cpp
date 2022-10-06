@@ -270,3 +270,27 @@ TEST(string, utf8_1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST(string, popfirsttoken) {
+    char test[] = "a,b,c, d";
+    char* p = test;
+    char* token = strPopFirstToken(&p, ',');
+    EXPECT_STREQ(token, "a");
+    EXPECT_STREQ(p, "b,c, d");
+}
+
+TEST(string, popfirsttoken_no) {
+    char test[] = "a,b,c, d";
+    char* p = test;
+    char* token = strPopFirstToken(&p, '.');
+    EXPECT_STREQ(token, "a,b,c, d");
+    EXPECT_STREQ(p, "");
+}
+
+TEST(string, popfirsttoken_void) {
+    char test[] = "";
+    char* p = test;
+    char* token = strPopFirstToken(&p, '.');
+    EXPECT_STREQ(token, "");
+    EXPECT_STREQ(p, "");
+}

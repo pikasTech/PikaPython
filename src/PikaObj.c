@@ -505,12 +505,12 @@ static PikaObj* __obj_getObjWithKeepDeepth(PikaObj* self,
                                            PIKA_BOOL* pIsTemp,
                                            int32_t keepDeepth) {
     char objPath_buff[PIKA_PATH_BUFF_SIZE];
+    char* objPath_ptr = objPath_buff;
     __platform_memcpy(objPath_buff, objPath, strGetSize(objPath) + 1);
-    char token_buff[PIKA_NAME_BUFF_SIZE] = {0};
     int32_t token_num = strGetTokenNum(objPath, '.');
     PikaObj* obj = self;
     for (int32_t i = 0; i < token_num - keepDeepth; i++) {
-        char* token = strPopToken(token_buff, objPath_buff, '.');
+        char* token = strPopFirstToken(&objPath_ptr, '.');
         obj = __obj_getObjDirect(obj, token, pIsTemp);
         if (obj == NULL) {
             goto exit;
@@ -555,11 +555,10 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
 
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
     char* method_dec = strCopy(buffs, methodArg_getDec(method_arg));
-    char res[PIKA_NAME_BUFF_SIZE] = {0};
     if (strGetSize(method_dec) > size) {
         return NULL;
     }
-    strPopToken(res, method_dec, '(');
+    char* res = strPopFirstToken(&method_dec, '(');
     strCopy(buffs, res);
     return buffs;
 }

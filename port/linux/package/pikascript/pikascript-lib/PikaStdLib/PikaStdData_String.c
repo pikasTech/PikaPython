@@ -251,7 +251,7 @@ PikaObj* PikaStdData_String_split(PikaObj* self, char* s) {
     int token_num = strCountSign(str, sign) + 1;
 
     for (int i = 0; i < token_num; i++) {
-        char* token = strsPopToken(&buffs, str, sign);
+        char* token = strsPopToken(&buffs, &str, sign);
         /* 用 arg_set<type> 的 api 创建 arg */
         Arg* token_arg = arg_newStr(token);
         /* 添加到 list 对象 */

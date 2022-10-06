@@ -47,7 +47,7 @@ char* strDeleteChar(char* strOut, char* strIn, char ch);
 char* strRemovePrefix(char* inputStr, char* prefix, char* outputStr);
 /* token */
 int32_t strGetToken(char* string, char** argv, char sign);
-char* strPopToken(char* strOut, char* strIn, char sign);
+char* strPopFirstToken(char** strIn, char sign);
 int32_t strCountSign(char* strIn, char sign);
 int32_t strGetTokenNum(char* strIn, char sign);
 char* strGetFirstToken(char* strOut, char* strIn, char sign);
