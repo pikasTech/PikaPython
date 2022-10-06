@@ -1447,8 +1447,8 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
 
     PikaObj* context = vm->locals;
     /* match global_list */
-    if (args_isArgExist(vm->locals->list, "__gl")) {
-        char* global_list = args_getStr(vm->locals->list, "__gl");
+    if (args_isArgExist(vm->locals->list, "@g")) {
+        char* global_list = args_getStr(vm->locals->list, "@g");
         /* use a arg as buff */
         Arg* global_list_arg = arg_newStr(global_list);
         char* global_list_buff = arg_getStr(global_list_arg);
@@ -1463,8 +1463,8 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
         arg_deinit(global_list_arg);
     }
     /* use RunAs object */
-    if (args_isArgExist(vm->locals->list, "__runAs")) {
-        context = args_getPtr(vm->locals->list, "__runAs");
+    if (args_isArgExist(vm->locals->list, "@r")) {
+        context = args_getPtr(vm->locals->list, "@r");
     }
     /* set free object to nomal object */
     if (ARG_TYPE_OBJECT_NEW == outArg_type) {
@@ -1502,12 +1502,12 @@ static Arg* VM_instruction_handler_RAS(PikaObj* self,
                                        Arg* arg_ret_reg) {
     if (strEqu(data, "$origin")) {
         /* use origin object to run */
-        obj_removeArg(vm->locals, "__runAs");
+        obj_removeArg(vm->locals, "@r");
         return NULL;
     }
     /* use "data" object to run */
     PikaObj* runAs = obj_getObj(vm->locals, data);
-    args_setRef(vm->locals->list, "__runAs", runAs);
+    args_setRef(vm->locals->list, "@r", runAs);
     return NULL;
 }
 
@@ -2102,8 +2102,8 @@ static Arg* __VM_instruction_handler_DEF(PikaObj* self,
     PikaObj* hostObj = vm->locals;
     uint8_t is_in_class = 0;
     /* use RunAs object */
-    if (args_isArgExist(vm->locals->list, "__runAs")) {
-        hostObj = args_getPtr(vm->locals->list, "__runAs");
+    if (args_isArgExist(vm->locals->list, "@r")) {
+        hostObj = args_getPtr(vm->locals->list, "@r");
         is_in_class = 1;
     }
     int offset = 0;
@@ -2277,17 +2277,17 @@ static Arg* VM_instruction_handler_GLB(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
     Arg* global_list_buff = NULL;
-    char* global_list = args_getStr(vm->locals->list, "__gl");
+    char* global_list = args_getStr(vm->locals->list, "@g");
     /* create new global_list */
     if (NULL == global_list) {
-        args_setStr(vm->locals->list, "__gl", data);
+        args_setStr(vm->locals->list, "@g", data);
         goto exit;
     }
     /* append to exist global_list */
     global_list_buff = arg_newStr(global_list);
     global_list_buff = arg_strAppend(global_list_buff, ",");
     global_list_buff = arg_strAppend(global_list_buff, data);
-    args_setStr(vm->locals->list, "__gl", arg_getStr(global_list_buff));
+    args_setStr(vm->locals->list, "@g", arg_getStr(global_list_buff));
     goto exit;
 exit:
     if (NULL != global_list_buff) {
