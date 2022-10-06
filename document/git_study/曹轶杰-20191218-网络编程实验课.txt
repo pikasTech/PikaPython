@@ -1,0 +1,102 @@
+# 导入selenium包
+import os.path
+import pickle
+import re
+from time import sleep
+from selenium import webdriver
+from bs4 import  BeautifulSoup
+import requests
+
+ # 初始化一个引用计数，用于后面的图片简单命名
+index = 0
+# 设置代理服务器端口
+proxies = {'https':'http://127.0.0.1:10900'}
+
+next_url = ''
+# 定义爬虫方法
+def geturl(url):
+    # 创建浏览器对象
+    browser = webdriver.Firefox(executable_path="D:\GeckoDriver\geckodriver.exe")
+    # 设置要爬取的网站
+    browser.get(url)
+    # css获得对应html形成列表
+    s = browser.find_elements_by_css_selector("div[class='post-preview-container'] a")
+    pic = s[:]
+    for i in pic:
+        # print(i)
+        huoqvpicture(str(i.get_attribute("href")))
+        sleep(1)
+    print("翻页")
+    # 获取下一页的链接
+    link = browser.find_elements_by_css_selector("div[class='paginator numbered-paginator mt-8 mb-4 space-x-2 flex justify-center items-center'] a")
+    # print(str(link[-1].get_attribute("href")))
+    # 将下一页链接的值赋给next_url
+    next_url = str(link[-1].get_attribute("href"))
+    browser.close()
+    # print(next_url)
+    geturl(next_url)
+
+def huoqvpicture(url):
+    browser = webdriver.Firefox(executable_path="D:\GeckoDriver\geckodriver.exe")
+    # global index
+    browser.get(url)
+    n = browser.find_elements_by_css_selector("section[id='content'] section")
+    try:
+        s = browser.find_elements_by_css_selector("div[class='notice notice-small post-notice post-notice-resized'] a")
+        print(str(s[-1].get_attribute("href")))
+        DownLoadPicture(str(s[-1].get_attribute("href")), str(n[0].get_attribute("data-id")))
+        # index = 0
+    except:
+        p = browser.find_elements_by_css_selector("section[class='image-container note-container blacklisted'] picture img")
+        print(str(p[-1].get_attribute("src")))
+        DownLoadPicture(str(p[-1].get_attribute("src")), str(n[0].get_attribute("data-id")))
+        # index = 1
+    # 确定图片格式
+    # print(index)
+    # 定位original picture链接所在位置
+    # print(s[-1].get_attribute("src"))
+    # 打印链接地址
+    #图片名称
+
+    sleep(1)
+    print(str(n[0].get_attribute("data-id")))
+    browser.close()
+
+def DownLoadPicture(url,name):
+    root = "./picture/"
+    path1 =root + name + '.jpg'
+    path2 =root + name + '.png'
+    # 若文件是.jpg 格式
+    try:
+        if not os.path.exists(root):
+            os.mkdir(root)
+        if not os.path.exists(path1):
+            sleep(1)
+            r = requests.get(url,proxies=proxies)
+            print(r.status_code)
+            with open(path1, 'wb') as f:
+                f.write(r.content)
+                f.close()
+                print("文件保存成功")
+        else:
+            print("文件已存在")
+    # 若文件是.png 格式
+    except:
+        if not os.path.exists(root):
+            os.mkdir(root)
+        if not os.path.exists(path2):
+            sleep(1)
+            r = requests.get(url, proxies=proxies)
+            print(r.status_code)
+            with open(path2, 'wb') as f:
+                f.write(r.content)
+                f.close()
+                print("文件保存成功")
+        else:
+            print("文件已存在")
+    sleep(1)
+
+
+if __name__ == "__main__":
+    url = "https://danbooru.donmai.us/"
+    geturl(url)
