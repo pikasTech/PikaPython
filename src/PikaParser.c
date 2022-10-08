@@ -1673,7 +1673,8 @@ char* Parser_removeAnnotation(char* line) {
             is_in_pika_float_quotes_deepth = !is_in_pika_float_quotes_deepth;
             continue;
         }
-        if (!(is_in_single_quotes == 0 && is_in_pika_float_quotes_deepth == 0)) {
+        if (!(is_in_single_quotes == 0 &&
+              is_in_pika_float_quotes_deepth == 0)) {
             continue;
         }
         if ('#' == line[i]) {
