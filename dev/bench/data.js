@@ -14175,18 +14175,6 @@ window.BENCHMARK_DATA = {
             "value": 88.47217665593301,
             "unit": "ms/iter",
             "extra": "iterations: 8\ncpu: 88.46249999977987 ms\nthreads: 1"
-          },
-          {
-            "name": "prime_number_100/iterations:20",
-            "value": 23.23781146156006,
-            "unit": "ms/iter",
-            "extra": "iterations: 20\ncpu: 23.237192428964274 ms\nthreads: 1"
-          },
-          {
-            "name": "prime_number_100_c/iterations:20",
-            "value": 0.00522092533999138,
-            "unit": "ms/iter",
-            "extra": "iterations: 20\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       },
@@ -14229,18 +14217,6 @@ window.BENCHMARK_DATA = {
             "value": 89.592761302098,
             "unit": "ms/iter",
             "extra": "iterations: 8\ncpu: 89.5874999989052 ms\nthreads: 1"
-          },
-          {
-            "name": "prime_number_100/iterations:20",
-            "value": 23.422172712481107,
-            "unit": "ms/iter",
-            "extra": "iterations: 20\ncpu: 23.409148935884136 ms\nthreads: 1"
-          },
-          {
-            "name": "prime_number_100_c/iterations:20",
-            "value": 0.00519154255125026,
-            "unit": "ms/iter",
-            "extra": "iterations: 20\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       },
@@ -14283,18 +14259,6 @@ window.BENCHMARK_DATA = {
             "value": 86.28784131490143,
             "unit": "ms/iter",
             "extra": "iterations: 8\ncpu: 86.27872694502545 ms\nthreads: 1"
-          },
-          {
-            "name": "prime_number_100/iterations:20",
-            "value": 22.605157632741918,
-            "unit": "ms/iter",
-            "extra": "iterations: 20\ncpu: 22.601623974965612 ms\nthreads: 1"
-          },
-          {
-            "name": "prime_number_100_c/iterations:20",
-            "value": 0.005266598357319418,
-            "unit": "ms/iter",
-            "extra": "iterations: 20\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       },
@@ -14337,18 +14301,6 @@ window.BENCHMARK_DATA = {
             "value": 108.15277647117382,
             "unit": "ms/iter",
             "extra": "iterations: 8\ncpu: 108.1453431378334 ms\nthreads: 1"
-          },
-          {
-            "name": "prime_number_100/iterations:20",
-            "value": 29.02996169950636,
-            "unit": "ms/iter",
-            "extra": "iterations: 20\ncpu: 29.03056209165852 ms\nthreads: 1"
-          },
-          {
-            "name": "prime_number_100_c/iterations:20",
-            "value": 0.005228692812836368,
-            "unit": "ms/iter",
-            "extra": "iterations: 20\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       },
@@ -14391,18 +14343,6 @@ window.BENCHMARK_DATA = {
             "value": 89.28017792744978,
             "unit": "ms/iter",
             "extra": "iterations: 10\ncpu: 89.19229346381968 ms\nthreads: 1"
-          },
-          {
-            "name": "prime_number_100/iterations:20",
-            "value": 23.437337545972298,
-            "unit": "ms/iter",
-            "extra": "iterations: 20\ncpu: 23.38982737334051 ms\nthreads: 1"
-          },
-          {
-            "name": "prime_number_100_c/iterations:20",
-            "value": 0.0051850184902920765,
-            "unit": "ms/iter",
-            "extra": "iterations: 20\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       },
