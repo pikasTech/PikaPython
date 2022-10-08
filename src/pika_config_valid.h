@@ -91,6 +91,7 @@
     #elif PIKA_OPTIMIZE == PIKA_OPTIMIZE_SPEED
         #ifndef PIKA_METHOD_CACHE_ENABLE
             #define PIKA_METHOD_CACHE_ENABLE 1
+            #define PIKA_ARG_CACHE_ENABLE 1
         #endif
     #endif
     
@@ -309,12 +310,16 @@
         #define PIKA_FLOAT_TYPE_DOUBLE 1
     #endif
 
+    #ifndef PIKA_ARG_CACHE_ENABLE
+        #define PIKA_ARG_CACHE_ENABLE 0
+    #endif
+
     #ifndef PIKA_ARG_CACHE_POOL_SIZE
         #define PIKA_ARG_CACHE_POOL_SIZE 32
     #endif
 
     #ifndef PIKA_ARG_CACHE_SIZE
-        #define PIKA_ARG_CACHE_SIZE 8 
+        #define PIKA_ARG_CACHE_SIZE sizeof(Arg) + 32
     #endif
 
     /* configuration validation */

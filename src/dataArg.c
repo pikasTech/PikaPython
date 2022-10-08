@@ -32,38 +32,41 @@
 #include "dataString.h"
 #include "stdlib.h"
 
-static PIKA_BOOL _do_arg_cache_push(Arg* self, size_t size) {
+static PIKA_BOOL _arg_cache_push(Arg* self, uint32_t size) {
+#if !PIKA_ARG_CACHE_ENABLE
+    return PIKA_FALSE;
+#else
     extern PikaMemInfo pikaMemInfo;
-    if (size != PIKA_ARG_CACHE_SIZE) {
+    if (self->heap_size <= PIKA_ARG_CACHE_SIZE ||
+        self->heap_size >= 2 * PIKA_ARG_CACHE_SIZE) {
         return PIKA_FALSE;
     }
     if (PIKA_ARG_CACHE_POOL_SIZE <= pikaMemInfo.cache_pool_top) {
         return PIKA_FALSE;
     }
     pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top++] = (uint8_t*)self;
-    pikaMemInfo.heapUsed -= mem_align(arg_getTotleSize(self));
+    pikaMemInfo.heapUsed -= mem_align(sizeof(Arg) + size);
     return PIKA_TRUE;
+#endif
 }
 
-static PIKA_BOOL _arg_cache_push(Arg* self) {
-    int size = arg_getSize(self);
-    return _do_arg_cache_push(self, size);
-    return PIKA_FALSE;
-}
-
-static Arg* _arg_cache_pop(size_t size) {
-    Arg* self = NULL;
+static Arg* _arg_cache_pop(uint32_t size) {
+#if !PIKA_ARG_CACHE_ENABLE
+    return NULL;
+#else
+    uint32_t req_heap_size = mem_align(sizeof(Arg) + size);
     extern PikaMemInfo pikaMemInfo;
-    if (!(size == PIKA_ARG_CACHE_SIZE)) {
+    if (req_heap_size >= PIKA_ARG_CACHE_SIZE) {
         return NULL;
     }
     if (!(pikaMemInfo.cache_pool_top > 0)) {
         return NULL;
     }
     --pikaMemInfo.cache_pool_top;
-    self = (Arg*)pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top];
-    pikaMemInfo.heapUsed += mem_align(arg_getTotleSize(self));
+    Arg* self = (Arg*)pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top];
+    pikaMemInfo.heapUsed += mem_align(sizeof(Arg) + size);
     return self;
+#endif
 }
 
 uint32_t arg_getTotleSize(Arg* self) {
@@ -97,13 +100,15 @@ static Arg* _arg_set_hash(Arg* self,
         }
         if (NULL == self) {
             self = (Arg*)pikaMalloc(sizeof(Arg) + size);
-            self->size = size;
             if (PIKA_ASSERT_ENABLE) {
                 extern PikaMemInfo pikaMemInfo;
                 pikaMemInfo.alloc_times_cache--;
             }
+#if PIKA_ARG_CACHE_ENABLE
+            self->heap_size = mem_align(sizeof(Arg) + size);
+#endif
         }
-        size = self->size;
+        self->size = size;
         self->flag = 0;
         arg_setSerialized(self, PIKA_TRUE);
         // arg_setIsKeyword(self, PIKA_FALSE);
@@ -158,7 +163,7 @@ uint32_t arg_totleSize(Arg* self) {
 void arg_freeContent(Arg* self) {
     if (NULL != self) {
         uint32_t totleSize = arg_totleSize(self);
-        if (_arg_cache_push(self)) {
+        if (_arg_cache_push(self, self->size)) {
             return;
         }
         pikaFree(self, totleSize);
