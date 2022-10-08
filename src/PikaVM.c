@@ -2315,9 +2315,9 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
         return NULL;
     }
     /* find cmodule in root object */
-    extern PikaObj* __pikaMain;
-    if (obj_isArgExist(__pikaMain, data)) {
-        obj_setArg(self, data, obj_getArg(__pikaMain, data));
+    extern volatile PikaObj* __pikaMain;
+    if (obj_isArgExist((PikaObj*)__pikaMain, data)) {
+        obj_setArg(self, data, obj_getArg((PikaObj*)__pikaMain, data));
         return NULL;
     }
     /* import module from '@lib' */

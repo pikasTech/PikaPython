@@ -119,9 +119,9 @@ int32_t obj_deinit(PikaObj* self) {
         pikaVM_runByteCode(self, (uint8_t*)bytes);
         arg_deinit(del);
     }
-    extern PikaObj* __pikaMain;
+    extern volatile PikaObj* __pikaMain;
     void _mem_cache_deinit(void);
-    if (self == __pikaMain) {
+    if (self == (PikaObj*)__pikaMain) {
         _mem_cache_deinit();
     }
     return obj_deinit_no_del(self);
@@ -391,7 +391,7 @@ PikaObj* newNormalObj(NewFun newObjFun) {
     return removeMethodInfo(thisClass);
 }
 
-extern PikaObj* __pikaMain;
+extern volatile PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
 #if PIKA_POOL_ENABLE
     mem_pool_init();
@@ -1081,12 +1081,12 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
                                       char* name,
                                       uint8_t* byteCode) {
     PikaObj* New_PikaStdLib_SysObj(Args * args);
-    if (!obj_isArgExist(__pikaMain, name)) {
-        obj_newDirectObj(__pikaMain, name, New_PikaStdLib_SysObj);
-        pikaVM_runByteCode(obj_getObj(__pikaMain, name), (uint8_t*)byteCode);
+    if (!obj_isArgExist((PikaObj*)__pikaMain, name)) {
+        obj_newDirectObj((PikaObj*)__pikaMain, name, New_PikaStdLib_SysObj);
+        pikaVM_runByteCode(obj_getObj((PikaObj*)__pikaMain, name), (uint8_t*)byteCode);
     }
-    if (self != __pikaMain) {
-        Arg* module_arg = obj_getArg(__pikaMain, name);
+    if (self != (PikaObj*)__pikaMain) {
+        Arg* module_arg = obj_getArg((PikaObj*)__pikaMain, name);
         PikaObj* module_obj = arg_getPtr(module_arg);
         obj_setArg(self, name, module_arg);
         arg_setIsWeakRef(obj_getArg(self, name), PIKA_TRUE);
@@ -1151,7 +1151,7 @@ int obj_runModule(PikaObj* self, char* module_name) {
 
 int obj_importModule(PikaObj* self, char* module_name) {
     /* import bytecode of the module */
-    uint8_t* bytecode = obj_getByteCodeFromModule(__pikaMain, module_name);
+    uint8_t* bytecode = obj_getByteCodeFromModule((PikaObj*)__pikaMain, module_name);
     if (NULL == bytecode) {
         return 1;
     }

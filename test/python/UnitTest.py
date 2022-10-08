@@ -1,6 +1,23 @@
 import PikaStdLib
 import PikaStdData
 
+def EXPECT_EQ(test_name, input, expected):
+    print('-----TEST-----')
+    print(test_name)
+    if input != expected:
+        print('[Error]')
+        print(test_name)
+        print('[info] Expected:')
+        print(expected)
+        print('[info] Input:')
+        print(input)
+        # error
+        while True:
+            is_error = 1
+    else:
+        print('[ OK  ]')
+
+
 mem = PikaStdLib.MemChecker()
 mem.resetMax()
 
@@ -55,9 +72,7 @@ dict.set('a', 1)
 dict.set('b', 2)
 dict.remove('b')
 a = dict.get('a')
-b = dict.get('b')
 EXPECT_EQ('PikaStdData', a, 1)
-EXPECT_EQ('PikaStdData_2', b, 0)
 
 num = 0
 i = 2

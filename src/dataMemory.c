@@ -40,7 +40,7 @@ void* pikaMalloc(uint32_t size) {
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
 #if PIKA_ARG_ALIGN_ENABLE
     /* force alignment to avoid unaligned access */
-    size = mem_align(size); 
+    size = mem_align(size);
 #endif
 
     pikaMemInfo.heapUsed += size;
@@ -309,7 +309,7 @@ void mem_pool_init(void) {
 
 void _mem_cache_deinit(void) {
     while (pikaMemInfo.cache_pool_top) {
-        __platform_free(pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top - 1]);
+        __user_free(pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top - 1], 0);
         pikaMemInfo.cache_pool_top--;
     }
 }

@@ -1,7 +1,7 @@
 #include "PikaVM.h"
 #include "dataStrs.h"
 
-extern PikaObj* __pikaMain;
+extern volatile PikaObj* __pikaMain;
 static enum shell_state __obj_shellLineHandler_debug(PikaObj* self,
                                                        char* input_line) {
     /* continue */
@@ -15,7 +15,7 @@ static enum shell_state __obj_shellLineHandler_debug(PikaObj* self,
     /* launch shell */
     if (strEqu("sh", input_line)) {
         /* exit pika shell */
-        pikaScriptShell(__pikaMain);
+        pikaScriptShell((PikaObj*)__pikaMain);
         return SHELL_STATE_CONTINUE;
     }
     /* quit */
@@ -29,11 +29,11 @@ static enum shell_state __obj_shellLineHandler_debug(PikaObj* self,
         Arg* asm_buff = arg_newStr("B0\n1 REF ");
         asm_buff = arg_strAppend(asm_buff, path);
         asm_buff = arg_strAppend(asm_buff, "\n0 RUN print\n");
-        pikaVM_runAsm(__pikaMain, arg_getStr(asm_buff));
+        pikaVM_runAsm((PikaObj*)__pikaMain, arg_getStr(asm_buff));
         arg_deinit(asm_buff);
         return SHELL_STATE_CONTINUE;
     }
-    obj_run(__pikaMain, input_line);
+    obj_run((PikaObj*)__pikaMain, input_line);
     return SHELL_STATE_CONTINUE;
 }
 
