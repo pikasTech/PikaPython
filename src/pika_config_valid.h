@@ -309,6 +309,14 @@
         #define PIKA_FLOAT_TYPE_DOUBLE 1
     #endif
 
+    #ifndef PIKA_ARG_CACHE_POOL_SIZE
+        #define PIKA_ARG_CACHE_POOL_SIZE 32
+    #endif
+
+    #ifndef PIKA_ARG_CACHE_SIZE
+        #define PIKA_ARG_CACHE_SIZE 8 
+    #endif
+
     /* configuration validation */
 
 #endif

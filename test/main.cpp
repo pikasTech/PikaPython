@@ -10,5 +10,13 @@ int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     int res = RUN_ALL_TESTS();
     mem_pool_deinit();
+    extern PikaMemInfo pikaMemInfo;
+    if (PIKA_ASSERT_ENABLE) {
+        printf("[ Info]: alloc times: %d, cached times: %d (%0.2f%%)\r\n",
+               pikaMemInfo.alloc_times, pikaMemInfo.alloc_times_cache,
+               ((float)pikaMemInfo.alloc_times_cache /
+                (float)pikaMemInfo.alloc_times) *
+                   100.0);
+    }
     return res;
 }

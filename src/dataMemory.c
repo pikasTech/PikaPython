@@ -40,7 +40,7 @@ void* pikaMalloc(uint32_t size) {
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
 #if PIKA_ARG_ALIGN_ENABLE
     /* force alignment to avoid unaligned access */
-    size = (size + 4 - 1) & ~(4 - 1);
+    size = mem_align(size); 
 #endif
 
     pikaMemInfo.heapUsed += size;
@@ -51,8 +51,7 @@ void* pikaMalloc(uint32_t size) {
     void* mem = __user_malloc(size);
     __platform_enable_irq_handle();
     if (NULL == mem) {
-        __platform_printf(
-            "Error: No heap space! Please reset the device.\r\n");
+        __platform_printf("Error: No heap space! Please reset the device.\r\n");
         while (1) {
         }
     }
@@ -67,7 +66,7 @@ void pikaFree(void* mem, uint32_t size) {
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
 #if PIKA_ARG_ALIGN_ENABLE
     /* force alignment to avoid unaligned access */
-    size = (size + 4 - 1) & ~(4 - 1);
+    size = mem_align(size);
 #endif
 
     __platform_disable_irq_handle();
@@ -245,7 +244,6 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
     return;
 }
 
-
 BitMap bitmap_init(uint32_t size) {
     BitMap mem_bit_map =
         (BitMap)__platform_malloc(((size - 1) / 8 + 1) * sizeof(char));
@@ -309,7 +307,15 @@ void mem_pool_init(void) {
 #endif
 }
 
+void _mem_cache_deinit(void) {
+    while (pikaMemInfo.cache_pool_top) {
+        __platform_free(pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top - 1]);
+        pikaMemInfo.cache_pool_top--;
+    }
+}
+
 void mem_pool_deinit(void) {
+    _mem_cache_deinit();
 #if PIKA_POOL_ENABLE
     pool_deinit(&pikaPool);
 #endif

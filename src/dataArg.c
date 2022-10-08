@@ -32,6 +32,40 @@
 #include "dataString.h"
 #include "stdlib.h"
 
+static PIKA_BOOL _do_arg_cache_push(Arg* self, size_t size) {
+    extern PikaMemInfo pikaMemInfo;
+    if (size != PIKA_ARG_CACHE_SIZE) {
+        return PIKA_FALSE;
+    }
+    if (PIKA_ARG_CACHE_POOL_SIZE <= pikaMemInfo.cache_pool_top) {
+        return PIKA_FALSE;
+    }
+    pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top++] = (uint8_t*)self;
+    pikaMemInfo.heapUsed -= mem_align(arg_getTotleSize(self));
+    return PIKA_TRUE;
+}
+
+static PIKA_BOOL _arg_cache_push(Arg* self) {
+    int size = arg_getSize(self);
+    return _do_arg_cache_push(self, size);
+    return PIKA_FALSE;
+}
+
+static Arg* _arg_cache_pop(size_t size) {
+    Arg* self = NULL;
+    extern PikaMemInfo pikaMemInfo;
+    if (!(size == PIKA_ARG_CACHE_SIZE)) {
+        return NULL;
+    }
+    if (!(pikaMemInfo.cache_pool_top > 0)) {
+        return NULL;
+    }
+    --pikaMemInfo.cache_pool_top;
+    self = (Arg*)pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top];
+    pikaMemInfo.heapUsed += mem_align(arg_getTotleSize(self));
+    return self;
+}
+
 uint32_t arg_getTotleSize(Arg* self) {
     return arg_totleSize(self);
 }
@@ -55,8 +89,21 @@ static Arg* _arg_set_hash(Arg* self,
                           Arg* next) {
     /* create arg if not exist */
     if (NULL == self || self->size < size) {
-        self = (Arg*)pikaMalloc(sizeof(Arg) + size);
-        self->size = size;
+        self = _arg_cache_pop(size);
+        if (PIKA_ASSERT_ENABLE) {
+            extern PikaMemInfo pikaMemInfo;
+            pikaMemInfo.alloc_times++;
+            pikaMemInfo.alloc_times_cache++;
+        }
+        if (NULL == self) {
+            self = (Arg*)pikaMalloc(sizeof(Arg) + size);
+            self->size = size;
+            if (PIKA_ASSERT_ENABLE) {
+                extern PikaMemInfo pikaMemInfo;
+                pikaMemInfo.alloc_times_cache--;
+            }
+        }
+        size = self->size;
         self->flag = 0;
         arg_setSerialized(self, PIKA_TRUE);
         // arg_setIsKeyword(self, PIKA_FALSE);
@@ -111,6 +158,9 @@ uint32_t arg_totleSize(Arg* self) {
 void arg_freeContent(Arg* self) {
     if (NULL != self) {
         uint32_t totleSize = arg_totleSize(self);
+        if (_arg_cache_push(self)) {
+            return;
+        }
         pikaFree(self, totleSize);
         return;
     }
@@ -307,7 +357,6 @@ void* arg_getPtr(Arg* self) {
 char* arg_getStr(Arg* self) {
     return (char*)arg_getContent(self);
 }
-
 
 uint32_t arg_getContentSize(Arg* self) {
     return arg_getSize(self);

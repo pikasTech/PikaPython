@@ -119,6 +119,11 @@ int32_t obj_deinit(PikaObj* self) {
         pikaVM_runByteCode(self, (uint8_t*)bytes);
         arg_deinit(del);
     }
+    extern PikaObj* __pikaMain;
+    void _mem_cache_deinit(void);
+    if (self == __pikaMain) {
+        _mem_cache_deinit();
+    }
     return obj_deinit_no_del(self);
 }
 

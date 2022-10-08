@@ -1,5 +1,15 @@
 #include "test_common.h"
 
+TEST(arg_test, cache_){
+    Arg* arg1 = arg_newInt(1);
+    arg_deinit(arg1);
+    Arg* arg2 = arg_newInt(2);
+    int val = arg_getInt(arg2);
+    EXPECT_EQ(val, 2);
+    arg_deinit(arg2);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(arg_test, int_) {
     Arg* arg = New_arg(NULL);
     arg = arg_setInt(arg, "test", 1);
@@ -64,11 +74,11 @@ TEST(arg_test, null) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+Arg* arg_strAppend(Arg* arg_in, char* str_to_append);
 TEST(arg_test, append) {
     Arg* arg = arg_newStr("test");
-    arg = arg_append(arg, (void*)"hello", sizeof("hello"));
-    EXPECT_STREQ(arg_getStr(arg), "test");
-    EXPECT_STREQ(arg_getStr(arg) + sizeof("test"), "hello");
+    arg = arg_strAppend(arg, "hello");
+    EXPECT_STREQ(arg_getStr(arg), "testhello");
     arg_deinit(arg);
     EXPECT_EQ(pikaMemNow(), 0);
 }
