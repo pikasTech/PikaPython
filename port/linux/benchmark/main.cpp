@@ -41,6 +41,27 @@ static void while_loop_10000(benchmark::State& state) {
 }
 BENCHMARK(while_loop_10000)->Unit(benchmark::kMillisecond);
 
+void __platform_printf(char* fmt, ...) {}
+static void for_print_1000(benchmark::State& state) {
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_linesToAsm(buffs, (char*)
+            "for i in range(1000):\n"
+            "    print(i)\n"
+            "\n");
+    ByteCodeFrame bytecode_frame;
+    byteCodeFrame_init(&bytecode_frame);
+    byteCodeFrame_appendFromAsm(&bytecode_frame, pikaAsm);
+    for (auto _ : state) {
+        PikaObj* pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+        /* run */
+        pikaVM_runByteCodeFrame(pikaMain, &bytecode_frame);
+        obj_deinit(pikaMain);
+    }
+    byteCodeFrame_deinit(&bytecode_frame);
+    args_deinit(buffs);
+}
+BENCHMARK(for_print_1000)->Unit(benchmark::kMillisecond);
+
 static void prime_number_100(benchmark::State& state) {
     int num = 0;
     Args* buffs = New_strBuff();
@@ -100,5 +121,6 @@ static void prime_number_100_c(benchmark::State& state) {
     }
 }
 BENCHMARK(prime_number_100_c)->Unit(benchmark::kMillisecond);
+
 
 BENCHMARK_MAIN();
