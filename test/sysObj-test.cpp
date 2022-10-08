@@ -79,8 +79,7 @@ TEST(sysObj, setattr) {
 
 #if !PIKA_NANO_ENABLE
 TEST(sysobj, print_no_end) {
-    char* line =
-        "print('test', end='')\n";
+    char* line = "print('test', end='')\n";
     PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
     obj_run(self, line);
     /* collect */
@@ -94,8 +93,7 @@ TEST(sysobj, print_no_end) {
 
 #if !PIKA_NANO_ENABLE
 TEST(sysobj, print) {
-    char* line =
-        "print(0, ['Hi'])\n";
+    char* line = "print(0, ['Hi'])\n";
     PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
     obj_run(self, line);
     /* collect */
@@ -107,8 +105,7 @@ TEST(sysobj, print) {
 }
 
 TEST(sysobj, print2) {
-    char* line =
-        "print(0, ['Hi'], b'test')\n";
+    char* line = "print(0, ['Hi'], b'test')\n";
     PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
     obj_run(self, line);
     /* collect */
