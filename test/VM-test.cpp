@@ -274,7 +274,7 @@ TEST(VM, RET_instruct) {
         "B0\n";
     PikaObj* self = New_TinyObj(NULL);
     VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
-    Arg* return_arg = args_getArg(globals->list, "return");
+    Arg* return_arg = args_getArg(globals->list, "@rt");
     int num = arg_getInt(return_arg);
     EXPECT_EQ(num, 13);
     obj_deinit(self);

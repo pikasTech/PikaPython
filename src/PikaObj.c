@@ -979,23 +979,23 @@ void args_setSysOut(Args* args, char* str) {
 }
 
 void method_returnBytes(Args* args, uint8_t* val) {
-    args_setBytes(args, "return", val, PIKA_BYTES_DEFAULT_SIZE);
+    args_setBytes(args, "@rt", val, PIKA_BYTES_DEFAULT_SIZE);
 }
 
 void method_returnStr(Args* args, char* val) {
-    args_setStr(args, "return", val);
+    args_setStr(args, "@rt", val);
 }
 
 void method_returnInt(Args* args, int64_t val) {
-    args_setInt(args, "return", val);
+    args_setInt(args, "@rt", val);
 }
 
 void method_returnFloat(Args* args, pika_float val) {
-    args_setFloat(args, "return", val);
+    args_setFloat(args, "@rt", val);
 }
 
 void method_returnPtr(Args* args, void* val) {
-    args_setPtr(args, "return", val);
+    args_setPtr(args, "@rt", val);
 }
 
 void method_returnObj(Args* args, void* val) {
@@ -1009,11 +1009,11 @@ void method_returnObj(Args* args, void* val) {
     } else {
         type = ARG_TYPE_OBJECT_NEW;
     }
-    args_setPtrWithType(args, "return", type, val);
+    args_setPtrWithType(args, "@rt", type, val);
 }
 
 void method_returnArg(Args* args, Arg* arg) {
-    arg = arg_setName(arg, "return");
+    arg = arg_setName(arg, "@rt");
     args_setArg(args, arg);
 }
 

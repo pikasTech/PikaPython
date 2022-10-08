@@ -643,7 +643,7 @@ static Arg* VM_instruction_handler_GER(PikaObj* self,
 }
 
 Arg* _get_return_arg(PikaObj* locals) {
-    Arg* res = args_getArg(locals->list, (char*)"return");
+    Arg* res = args_getArg(locals->list, (char*)"@rt");
     args_removeArg_notDeinitArg(locals->list, res);
     return res;
 }
