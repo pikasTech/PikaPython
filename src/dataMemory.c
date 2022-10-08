@@ -308,10 +308,12 @@ void mem_pool_init(void) {
 }
 
 void _mem_cache_deinit(void) {
+#if PIKA_ARG_CACHE_ENABLE
     while (pikaMemInfo.cache_pool_top) {
         __user_free(pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top - 1], 0);
         pikaMemInfo.cache_pool_top--;
     }
+#endif
 }
 
 void mem_pool_deinit(void) {
