@@ -677,3 +677,11 @@ TEST(compiler, benchmark) {
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(compiler, for_print_1k) {
+    char* lines =
+        "for i in range(1000):\n"
+        "    print(i)\n";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
