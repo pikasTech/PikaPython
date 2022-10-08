@@ -642,6 +642,12 @@ static Arg* VM_instruction_handler_GER(PikaObj* self,
     return err_arg;
 }
 
+Arg* _get_return_arg(PikaObj* locals) {
+    Arg* res = args_getArg(locals->list, (char*)"return");
+    args_removeArg_notDeinitArg(locals->list, res);
+    return res;
+}
+
 Arg* _obj_runMethodArgWithState(PikaObj* self,
                                 PikaObj* locals,
                                 Arg* method_arg,
@@ -670,14 +676,12 @@ Arg* _obj_runMethodArgWithState(PikaObj* self,
         /* native method */
         method_ptr(self, locals->list);
         /* get method return */
-        return_arg = arg_copy_noalloc(
-            args_getArg(locals->list, (char*)"return"), ret_arg_reg);
+        return_arg = _get_return_arg(locals);
     } else if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
         /* native method */
         method_ptr(self, locals->list);
         /* get method return */
-        return_arg = arg_copy_noalloc(
-            args_getArg(locals->list, (char*)"return"), ret_arg_reg);
+        return_arg = _get_return_arg(locals);
     } else {
         /* static method and object method */
         /* byteCode */
@@ -688,8 +692,7 @@ Arg* _obj_runMethodArgWithState(PikaObj* self,
             self, locals, self, method_bytecodeFrame, pc, run_state);
 
         /* get method return */
-        return_arg = arg_copy_noalloc(
-            args_getArg(locals->list, (char*)"return"), ret_arg_reg);
+        return_arg = _get_return_arg(locals);
     }
     return return_arg;
 }
