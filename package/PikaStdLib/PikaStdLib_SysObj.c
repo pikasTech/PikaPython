@@ -619,3 +619,21 @@ Arg* PikaStdLib_SysObj_eval(PikaObj* self, char* code) {
     obj_removeArg(self, "@res");
     return res;
 }
+
+static enum shell_state __obj_shellLineHandler_input(PikaObj* self,
+                                                     char* input_line,
+                                                     struct shell_config* cfg) {
+    cfg->context = arg_newStr(input_line);
+    return SHELL_STATE_EXIT;
+}
+
+char* PikaStdLib_SysObj_input(PikaObj* self, PikaTuple* info) {
+    struct shell_config cfg = {.prefix = "", .context = NULL};
+    if (tuple_getSize(info) > 0) {
+        __platform_printf(tuple_getStr(info, 0));
+    }
+    _temp_obj_shellLineProcess(self, __obj_shellLineHandler_input, &cfg);
+    char* res = obj_cacheStr(self, arg_getStr(cfg.context));
+    arg_deinit(cfg.context);
+    return res;
+}

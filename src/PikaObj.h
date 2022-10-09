@@ -220,15 +220,23 @@ char* fast_itoa(char* buf, uint32_t val);
 /* shell */
 void pikaScriptShell(PikaObj* self);
 enum shell_state { SHELL_STATE_CONTINUE, SHELL_STATE_EXIT };
-typedef enum shell_state (*__obj_shellLineHandler_t)(PikaObj*, char*);
 
 struct shell_config {
     char* prefix;
+    void* context;
 };
+
+typedef enum shell_state (*__obj_shellLineHandler_t)(PikaObj*,
+                                                     char*,
+                                                     struct shell_config*);
 
 void obj_shellLineProcess(PikaObj* self,
                           __obj_shellLineHandler_t __lineHandler_fun,
                           struct shell_config* cfg);
+
+void _temp_obj_shellLineProcess(PikaObj* self,
+                                __obj_shellLineHandler_t __lineHandler_fun,
+                                struct shell_config* cfg);
 
 /*
     need implament :

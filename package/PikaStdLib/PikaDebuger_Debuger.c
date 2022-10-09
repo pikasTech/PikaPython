@@ -2,8 +2,10 @@
 #include "dataStrs.h"
 
 extern volatile PikaObj* __pikaMain;
-static enum shell_state __obj_shellLineHandler_debug(PikaObj* self,
-                                                       char* input_line) {
+static enum shell_state __obj_shellLineHandler_debug(
+    PikaObj* self,
+    char* input_line,
+    struct shell_config* config) {
     /* continue */
     if (strEqu("c", input_line)) {
         return SHELL_STATE_EXIT;

@@ -115,6 +115,10 @@ class SysObj:
     @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def exit(): ...
 
+    @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    def input(*info) -> str: ...
+
 
 @PIKA_C_MACRO_IF("0")
 class RangeObj:
