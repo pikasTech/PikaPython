@@ -661,10 +661,8 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
     int32_t size = strGetSize(declareation);
     int32_t res = 0;
     Args buffs = {0};
-    char* clean_declareation =
-        strDeleteChar(args_getBuff(&buffs, size), declareation, ' ');
     char* method_path =
-        strGetFirstToken(args_getBuff(&buffs, size), clean_declareation, '(');
+        strGetFirstToken(args_getBuff(&buffs, size), declareation, '(');
 
     PikaObj* method_host = obj_getHostObj(self, method_path);
     MethodInfo method_info = {0};
@@ -675,7 +673,7 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
         goto exit;
     }
     method_name = strPointToLastToken(method_path, '.');
-    method_info.dec = clean_declareation;
+    method_info.dec = declareation;
     method_info.name = method_name;
     method_info.ptr = (void*)method_ptr;
     method_info.type = method_type;
