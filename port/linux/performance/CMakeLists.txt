@@ -1,0 +1,13 @@
+set(BINARY ${CMAKE_PROJECT_NAME}_performance)
+file(GLOB_RECURSE PERFORMANCE_SOURCES LIST_DIRECTORIES false *.h *.cpp *.c)
+set(SOURCES ${PERFORMANCE_SOURCES})
+add_executable(${BINARY} ${PERFORMANCE_SOURCES})
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
+
+# 链接src生成的lib库和gtest库
+target_link_libraries(${BINARY} PUBLIC 
+        -Wl,--whole-archive ${CMAKE_PROJECT_NAME}-core -Wl,--no-whole-archive)
