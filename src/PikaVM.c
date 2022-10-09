@@ -863,7 +863,9 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         if (tuple != NULL && (arg_num - i > variable_arg_start)) {
             list_append(&tuple->super, call_arg);
             /* the append would copy the arg */
-            arg_deinit(call_arg);
+            if (NULL != call_arg) {
+                arg_deinit(call_arg);
+            }
             continue;
         }
 
@@ -1292,7 +1294,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
             arg_deinit(return_arg_init);
         }
         obj_deinit(sub_locals);
-        arg_deinit(method_arg);
+        if (NULL != method_arg) {
+            arg_deinit(method_arg);
+        }
     }
 
     /* transfer sysOut */
@@ -2094,8 +2098,12 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         goto exit;
     }
 exit:
-    arg_deinit(op.a1);
-    arg_deinit(op.a2);
+    if (NULL != op.a1) {
+        arg_deinit(op.a1);
+    }
+    if (NULL != op.a2) {
+        arg_deinit(op.a2);
+    }
     if (NULL != op.res) {
         return op.res;
     }
@@ -2211,7 +2219,9 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
     }
 exit:
     arg_deinit(arg1);
-    arg_deinit(arg2);
+    if (NULL != arg2) {
+        arg_deinit(arg2);
+    }
     return res;
 }
 

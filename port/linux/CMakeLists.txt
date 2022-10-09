@@ -7,11 +7,6 @@ ENDIF(PIKA_CONFIG_ENABLE)
 
 project(pikascript VERSION 0.1.0)
 
-# SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
-# SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
-# SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
-# SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
-
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
 SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
 SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage -lgcov")
@@ -35,4 +30,5 @@ add_subdirectory(test)
 add_subdirectory(boot/demo06-pikamain)
 add_subdirectory(boot/banchmark)
 add_subdirectory(benchmark)
+add_subdirectory(performance)
 

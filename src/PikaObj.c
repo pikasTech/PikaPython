@@ -479,14 +479,19 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
         return NULL;
     }
     /* finded object, check type*/
-    ArgType type = args_getType(self->list, name);
+    Arg* arg_obj = args_getArg(self->list, name);
+    ArgType type = ARG_TYPE_NONE;
+    if (NULL == arg_obj) {
+        return NULL;
+    }
+    type = arg_getType(arg_obj);
     /* found meta Object */
     if (type == ARG_TYPE_OBJECT_META) {
         return __obj_initSubObj(self, name);
     }
     /* found Objcet */
     if (argType_isObject(type)) {
-        return args_getPtr(self->list, name);
+        return arg_getPtr(arg_obj);
     }
 #if !PIKA_NANO_ENABLE
     /* found class */
@@ -494,8 +499,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
         type == ARG_TYPE_METHOD_CONSTRUCTOR) {
         *pIsTemp = PIKA_TRUE;
         PikaObj* method_args_obj = New_TinyObj(NULL);
-        Arg* cls_obj_arg = obj_runMethodArg(self, method_args_obj,
-                                            args_getArg(self->list, name));
+        Arg* cls_obj_arg = obj_runMethodArg(self, method_args_obj, arg_obj);
         obj_deinit(method_args_obj);
         if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
             obj_runNativeMethod(arg_getPtr(cls_obj_arg), "__init__", NULL);
@@ -505,7 +509,7 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
         return res;
     }
 #endif
-    return _arg_to_obj(args_getArg(self->list, name), pIsTemp);
+    return _arg_to_obj(arg_obj, pIsTemp);
 }
 
 static PikaObj* __obj_getObjWithKeepDeepth(PikaObj* self,
@@ -514,7 +518,7 @@ static PikaObj* __obj_getObjWithKeepDeepth(PikaObj* self,
                                            int32_t keepDeepth) {
     char objPath_buff[PIKA_PATH_BUFF_SIZE];
     char* objPath_ptr = objPath_buff;
-    __platform_memcpy(objPath_buff, objPath, strGetSize(objPath) + 1);
+    strcpy(objPath_buff, objPath);
     int32_t token_num = strGetTokenNum(objPath, '.');
     PikaObj* obj = self;
     for (int32_t i = 0; i < token_num - keepDeepth; i++) {
@@ -1083,7 +1087,8 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
     PikaObj* New_PikaStdLib_SysObj(Args * args);
     if (!obj_isArgExist((PikaObj*)__pikaMain, name)) {
         obj_newDirectObj((PikaObj*)__pikaMain, name, New_PikaStdLib_SysObj);
-        pikaVM_runByteCode(obj_getObj((PikaObj*)__pikaMain, name), (uint8_t*)byteCode);
+        pikaVM_runByteCode(obj_getObj((PikaObj*)__pikaMain, name),
+                           (uint8_t*)byteCode);
     }
     if (self != (PikaObj*)__pikaMain) {
         Arg* module_arg = obj_getArg((PikaObj*)__pikaMain, name);
@@ -1151,7 +1156,8 @@ int obj_runModule(PikaObj* self, char* module_name) {
 
 int obj_importModule(PikaObj* self, char* module_name) {
     /* import bytecode of the module */
-    uint8_t* bytecode = obj_getByteCodeFromModule((PikaObj*)__pikaMain, module_name);
+    uint8_t* bytecode =
+        obj_getByteCodeFromModule((PikaObj*)__pikaMain, module_name);
     if (NULL == bytecode) {
         return 1;
     }

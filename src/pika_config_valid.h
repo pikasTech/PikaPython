@@ -90,8 +90,12 @@
 
     #elif PIKA_OPTIMIZE == PIKA_OPTIMIZE_SPEED
         #ifndef PIKA_METHOD_CACHE_ENABLE
-            #define PIKA_METHOD_CACHE_ENABLE 1
-            #define PIKA_ARG_CACHE_ENABLE 1
+            #ifndef PIKA_METHOD_CACHE_ENABLE
+                #define PIKA_METHOD_CACHE_ENABLE 1
+            #endif
+            #ifndef PIKA_ARG_CACHE_ENABLE
+                #define PIKA_ARG_CACHE_ENABLE 1
+            #endif
         #endif
     #endif
     

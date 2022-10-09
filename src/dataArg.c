@@ -93,19 +93,21 @@ static Arg* _arg_set_hash(Arg* self,
     /* create arg if not exist */
     if (NULL == self || self->size < size) {
         self = _arg_cache_pop(size);
-        if (PIKA_ASSERT_ENABLE) {
-            extern PikaMemInfo pikaMemInfo;
-            pikaMemInfo.alloc_times++;
-            pikaMemInfo.alloc_times_cache++;
-        }
-        if (NULL == self) {
-            self = (Arg*)pikaMalloc(sizeof(Arg) + size);
-            if (PIKA_ASSERT_ENABLE) {
-                extern PikaMemInfo pikaMemInfo;
-                pikaMemInfo.alloc_times_cache--;
-            }
+        uint32_t heap_size = sizeof(Arg) + size;
 #if PIKA_ARG_CACHE_ENABLE
-            self->heap_size = mem_align(sizeof(Arg) + size);
+        // if (heap_size < PIKA_ARG_CACHE_SIZE) {
+        //     heap_size = PIKA_ARG_CACHE_SIZE;
+        // }
+        extern PikaMemInfo pikaMemInfo;
+        pikaMemInfo.alloc_times++;
+        pikaMemInfo.alloc_times_cache++;
+#endif
+        if (NULL == self) {
+            self = (Arg*)pikaMalloc(heap_size);
+#if PIKA_ARG_CACHE_ENABLE
+            extern PikaMemInfo pikaMemInfo;
+            pikaMemInfo.alloc_times_cache--;
+            self->heap_size = mem_align(heap_size);
 #endif
         }
         self->size = size;
@@ -113,13 +115,14 @@ static Arg* _arg_set_hash(Arg* self,
         arg_setSerialized(self, PIKA_TRUE);
         // arg_setIsKeyword(self, PIKA_FALSE);
         arg_setNext(self, next);
-        __platform_memset(arg_getContent(self), 0,
-                          aline_by(size, sizeof(uint32_t)));
     }
     self->name_hash = nameHash;
     self->type = type;
     if (NULL != content) {
         __platform_memcpy(arg_getContent(self), content, size);
+    } else {
+        __platform_memset(arg_getContent(self), 0,
+                          aline_by(size, sizeof(uint32_t)));
     }
     pika_assert(self->flag < ARG_FLAG_MAX);
     return self;
@@ -416,17 +419,33 @@ Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
 Arg* arg_append(Arg* self, void* new_content, size_t new_size) {
     uint8_t* old_content = arg_getContent(self);
     size_t old_size = arg_getContentSize(self);
+    Arg* new_arg = NULL;
+#if PIKA_ARG_CACHE_ENABLE
     /* create arg_out */
-    Arg* arg_out = arg_setContent(NULL, NULL, old_size + new_size);
-    arg_setType(arg_out, arg_getType(self));
-    arg_setNameHash(arg_out, arg_getNameHash(self));
-    /* copy old content */
-    __platform_memcpy(arg_getContent(arg_out), old_content, old_size);
+    if (self->heap_size > mem_align(sizeof(Arg) + old_size + new_size)) {
+        new_arg = self;
+        new_arg->size = old_size + new_size;
+        extern PikaMemInfo pikaMemInfo;
+        pikaMemInfo.heapUsed += mem_align(sizeof(Arg) + old_size + new_size) -
+                                mem_align(sizeof(Arg) + old_size);
+    }
+#endif
+    if (NULL == new_arg) {
+        new_arg = arg_setContent(NULL, NULL, old_size + new_size);
+    }
+    arg_setType(new_arg, arg_getType(self));
+    arg_setNameHash(new_arg, arg_getNameHash(self));
+    if (self != new_arg) {
+        /* copy old content */
+        __platform_memcpy(arg_getContent(new_arg), old_content, old_size);
+    }
     /* copy new content */
-    __platform_memcpy(arg_getContent(arg_out) + old_size, new_content,
+    __platform_memcpy(arg_getContent(new_arg) + old_size, new_content,
                       new_size);
-    arg_deinit(self);
-    return arg_out;
+    if (self != new_arg) {
+        arg_deinit(self);
+    }
+    return new_arg;
 }
 
 void* arg_getHeapStruct(Arg* self) {
@@ -487,9 +506,7 @@ exit:
 }
 
 void arg_deinit(Arg* self) {
-    if (NULL == self) {
-        return;
-    }
+    pika_assert(NULL != self);
     /* deinit arg pointed heap */
     arg_deinitHeap(self);
     if (!arg_isSerialized(self)) {

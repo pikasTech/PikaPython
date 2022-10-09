@@ -1,4 +1,4 @@
-cd Release && ninja -j8
+cd Release && ninja -j0
 cd ..
 
 RUN_TIMES=$1
