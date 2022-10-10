@@ -611,6 +611,9 @@ void _update_proxy(PikaObj* self, char* name) {
 #if PIKA_NANO_ENABLE
     return;
 #endif
+    if (name[0] != '_' || name[1] != '_') {
+        return;
+    }
     if (!obj_getFlag(self, OBJ_FLAG_PROXY_GETATTRIBUTE)) {
         if (strEqu(name, "__getattribute__")) {
             obj_setFlag(self, OBJ_FLAG_PROXY_GETATTRIBUTE);
@@ -661,10 +664,7 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
     int32_t size = strGetSize(declareation);
     int32_t res = 0;
     Args buffs = {0};
-    char* method_path =
-        strGetFirstToken(args_getBuff(&buffs, size), declareation, '(');
-
-    PikaObj* method_host = obj_getHostObj(self, method_path);
+    PikaObj* method_host = self;
     MethodInfo method_info = {0};
     char* method_name;
     if (NULL == method_host) {
@@ -672,7 +672,9 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
         res = 1;
         goto exit;
     }
-    method_name = strPointToLastToken(method_path, '.');
+    method_name =
+        strGetFirstToken(args_getBuff(&buffs, size), declareation, '(');
+
     method_info.dec = declareation;
     method_info.name = method_name;
     method_info.ptr = (void*)method_ptr;
