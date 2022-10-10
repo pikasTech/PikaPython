@@ -32,9 +32,11 @@
 PIKA_WEAK void __platform_disable_irq_handle(void) {
     /* disable irq to support thread */
 }
+
 PIKA_WEAK void __platform_enable_irq_handle(void) {
     /* disable irq to support thread */
 }
+
 PIKA_WEAK void* __platform_malloc(size_t size) {
     return malloc(size);
 }
@@ -57,6 +59,10 @@ PIKA_WEAK void __platform_error_handle() {
 
 PIKA_WEAK uint8_t __is_locked_pikaMemory(void) {
     return 0;
+}
+
+PIKA_WEAK int64_t __platform_getTick(void){
+		return -1;
 }
 
 #ifndef __platform_printf

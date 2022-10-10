@@ -926,10 +926,64 @@ void obj_shellLineProcess(PikaObj* self,
     __obj_runCharBeforeRun(self);
 
     /* getchar and run */
+		char inputChar[2] = {0};
     while (1) {
-        char inputChar = __platform_getchar();
+				inputChar[1] = inputChar[0];
+        inputChar[0] = __platform_getchar();
+			
+				/* #! xxx */
+				if (inputChar[0] == '!' && inputChar[1] == '#'){
+						/* start */
+						char* buff = pikaMalloc(PIKA_READ_FILE_BUFF_SIZE);
+						char input[2] = {0};
+						int buff_i = 0;
+						PIKA_BOOL is_first_line = PIKA_TRUE;
+						while(1){
+								input[1] = input[0];
+								input[0] = __platform_getchar();
+								if(input[0] == '!' && input[1] == '#'){
+										buff[buff_i - 1] = 0;
+										for(int i = 0;i < 4;i++){
+												/* eat 'pika' */
+												__platform_getchar();
+										}
+										break;
+								}
+								if('\r' == input[0]){
+									  continue;
+								}
+								if(is_first_line){
+									 if('\n' == input[0]){
+										  is_first_line = PIKA_FALSE;
+									 }
+									 continue;
+								}
+								buff[buff_i++] = input[0];
+						}
+						/* end */
+						__platform_printf("\r\n=============== [code] ===============\r\n");
+						size_t len = strGetSize(buff);
+						for (int i = 0;i < len; i ++){
+							  if(buff[i] == '\r'){
+									 continue;
+								}
+								if(buff[i] == '\n'){
+									 __platform_printf("\r\n");
+									 continue;
+								}
+								__platform_printf("%c", buff[i]);
+						}
+						__platform_printf("\r\n");
+						__platform_printf("=============== [code] ===============\r\n");
+						obj_run(self, (char* )buff);
+						pikaFree(buff, PIKA_READ_FILE_BUFF_SIZE);
+						__platform_printf(cfg->prefix);
+						continue;
+				}
+
+			
         if (SHELL_STATE_EXIT ==
-            _do_obj_runChar(self, inputChar, cfg, __lineHandler_fun)) {
+            _do_obj_runChar(self, inputChar[0], cfg, __lineHandler_fun)) {
             break;
         }
     }
@@ -954,6 +1008,7 @@ void _temp_obj_shellLineProcess(PikaObj* self,
 static enum shell_state __obj_shellLineHandler_REPL(PikaObj* self,
                                                     char* input_line,
                                                     struct shell_config* cfg) {
+
     /* exit */
     if (strEqu("exit()", input_line)) {
         /* exit pika shell */
