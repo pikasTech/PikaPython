@@ -38,12 +38,12 @@
  */
 
     /* optimize options */
-        #define PIKA_OPTIMIZE_SIZE 0
-        #define PIKA_OPTIMIZE_SPEED 1
+    #define PIKA_OPTIMIZE_SIZE 0
+    #define PIKA_OPTIMIZE_SPEED 1
 
     /* syntax support level */
-        #define PIKA_SYNTAX_LEVEL_MINIMAL 0
-        #define PIKA_SYNTAX_LEVEL_MAXIMAL 1
+    #define PIKA_SYNTAX_LEVEL_MINIMAL 0
+    #define PIKA_SYNTAX_LEVEL_MAXIMAL 1
 
     /* use user config */
     #ifdef PIKA_CONFIG_ENABLE
@@ -90,12 +90,10 @@
 
     #elif PIKA_OPTIMIZE == PIKA_OPTIMIZE_SPEED
         #ifndef PIKA_METHOD_CACHE_ENABLE
-            #ifndef PIKA_METHOD_CACHE_ENABLE
-                #define PIKA_METHOD_CACHE_ENABLE 1
-            #endif
-            #ifndef PIKA_ARG_CACHE_ENABLE
-                #define PIKA_ARG_CACHE_ENABLE 1
-            #endif
+            #define PIKA_METHOD_CACHE_ENABLE 1
+        #endif
+        #ifndef PIKA_ARG_CACHE_ENABLE
+            #define PIKA_ARG_CACHE_ENABLE 1
         #endif
     #endif
     
