@@ -937,6 +937,7 @@ void obj_shellLineProcess(PikaObj* self,
             char* buff = pikaMalloc(PIKA_READ_FILE_BUFF_SIZE);
             char input[2] = {0};
             int buff_i = 0;
+            PIKA_BOOL is_exit = PIKA_FALSE;
             PIKA_BOOL is_first_line = PIKA_TRUE;
             while (1) {
                 input[1] = input[0];
@@ -976,7 +977,13 @@ void obj_shellLineProcess(PikaObj* self,
             __platform_printf("\r\n");
             __platform_printf("=============== [code] ===============\r\n");
             obj_run(self, (char*)buff);
+            if (NULL != strstr(buff, "exit()")) {
+                is_exit = PIKA_TRUE;
+            }
             pikaFree(buff, PIKA_READ_FILE_BUFF_SIZE);
+            if (is_exit) {
+                return;
+            }
             __platform_printf(cfg->prefix);
             continue;
         }
