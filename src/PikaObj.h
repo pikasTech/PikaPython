@@ -74,6 +74,14 @@ struct PikaObj {
     uint8_t flag;
 };
 
+typedef struct RangeData RangeData;
+struct RangeData{
+    int64_t start;
+    int64_t end;
+    int64_t step;
+    int64_t i;
+};
+
 #define OBJ_FLAG_PROXY_GETATTRIBUTE 0x01
 #define OBJ_FLAG_PROXY_GETATTR 0x02
 #define OBJ_FLAG_PROXY_SETATTR 0x04
@@ -100,6 +108,12 @@ struct MethodInfo {
     ArgType type;
     ByteCodeFrame* bytecode_frame;
 };
+
+typedef struct MethodInfoStore {
+    void* ptr;
+    ByteCodeFrame* bytecode_frame;
+    PikaObj* def_context;
+} MethodInfoStore;
 
 typedef PikaObj LibObj;
 typedef PikaObj PikaMaker;

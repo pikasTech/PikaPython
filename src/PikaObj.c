@@ -550,29 +550,24 @@ PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
 }
 
 Method methodArg_getPtr(Arg* method_arg) {
-    uint32_t size_ptr = sizeof(void*);
-    void* info = arg_getContent(method_arg);
-    void* ptr = NULL;
-    __platform_memcpy(&ptr, info, size_ptr);
-    return (Method)ptr;
+    MethodInfoStore* method_store =
+        (MethodInfoStore*)arg_getContent(method_arg);
+    return method_store->ptr;
 }
 
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
-    char* method_dec = strCopy(buffs, methodArg_getDec(method_arg));
-    if (strGetSize(method_dec) > size) {
-        return NULL;
-    }
-    return strCut(buffs, method_dec, '(', ')');
+    char* method_dec = methodArg_getDec(method_arg);
+    pika_assert(strGetSize(method_dec) <= size);
+    char* res = strCut(buffs, method_dec, '(', ')');
+    pika_assert(NULL != res);
+    return res;
 }
 
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
-    char* method_dec = strCopy(buffs, methodArg_getDec(method_arg));
-    if (strGetSize(method_dec) > size) {
-        return NULL;
-    }
-    char* res = strPopFirstToken(&method_dec, '(');
-    strCopy(buffs, res);
-    return buffs;
+    char* method_dec = methodArg_getDec(method_arg);
+    pika_assert(strGetSize(method_dec) <= size);
+    char* res = strGetFirstToken(buffs, method_dec, '(');
+    return res;
 }
 
 Method obj_getNativeMethod(PikaObj* self, char* method_name) {
@@ -586,25 +581,20 @@ Method obj_getNativeMethod(PikaObj* self, char* method_name) {
 }
 
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg) {
-    uint32_t size_ptr = sizeof(void*);
-    void* info = arg_getContent(method_arg) + size_ptr;
-    ByteCodeFrame* ptr = NULL;
-    __platform_memcpy(&ptr, info, size_ptr);
-    return ptr;
+    MethodInfoStore* method_store =
+        (MethodInfoStore*)arg_getContent(method_arg);
+    return method_store->bytecode_frame;
 }
 
 char* methodArg_getDec(Arg* method_arg) {
-    uint32_t size_ptr = sizeof(void*);
     void* info = arg_getContent(method_arg);
-    return (char*)((uintptr_t)info + 3 * size_ptr);
+    return (char*)(info + sizeof(MethodInfoStore));
 }
 
 PikaObj* methodArg_getDefContext(Arg* method_arg) {
-    uint32_t size_ptr = sizeof(void*);
-    void* info = arg_getContent(method_arg) + 2 * size_ptr;
-    PikaObj* context = NULL;
-    __platform_memcpy(&context, info, size_ptr);
-    return context;
+    MethodInfoStore* method_store =
+        (MethodInfoStore*)arg_getContent(method_arg);
+    return method_store->def_context;
 }
 
 void _update_proxy(PikaObj* self, char* name) {
@@ -638,19 +628,17 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     method_info->pars = method_info->dec;
     Arg* arg = New_arg(NULL);
     uint32_t size_pars = strGetSize(method_info->pars);
-    uintptr_t method_info_bytecode_frame =
-        (uintptr_t)method_info->bytecode_frame;
-    uintptr_t method_info_def_context = (uintptr_t)method_info->def_context;
+    MethodInfoStore method_store = {
+        .ptr = method_info->ptr,
+        .bytecode_frame = method_info->bytecode_frame,
+        .def_context = method_info->def_context,
+    };
     /* the first arg_value */
-    arg =
-        arg_setPtr(arg, method_info->name, method_info->type, method_info->ptr);
-    /* the seconed */
-    arg = arg_append(arg, &(method_info_bytecode_frame),
-                     sizeof(method_info_bytecode_frame));
-    arg = arg_append(arg, &(method_info_def_context),
-                     sizeof(method_info_def_context));
+    arg = arg_setStruct(arg, method_info->name, &method_store,
+                        sizeof(method_store));
     arg = arg_append(arg, method_info->pars, size_pars + 1);
-
+    pika_assert(NULL != arg);
+    arg_setType(arg, method_info->type);
     _update_proxy(self, method_info->name);
     args_setArg(self->list, arg);
 }
@@ -1078,23 +1066,23 @@ void args_setSysOut(Args* args, char* str) {
 }
 
 void method_returnBytes(Args* args, uint8_t* val) {
-    args_setBytes(args, "@rt", val, PIKA_BYTES_DEFAULT_SIZE);
+    args_pushArg_name(args, "@rt", arg_newBytes(val, PIKA_BYTES_DEFAULT_SIZE));
 }
 
 void method_returnStr(Args* args, char* val) {
-    args_setStr(args, "@rt", val);
+    args_pushArg_name(args, "@rt", arg_newStr(val));
 }
 
 void method_returnInt(Args* args, int64_t val) {
-    args_setInt(args, "@rt", val);
+    args_pushArg_name(args, "@rt", arg_newInt(val));
 }
 
 void method_returnFloat(Args* args, pika_float val) {
-    args_setFloat(args, "@rt", val);
+    args_pushArg_name(args, "@rt", arg_newFloat(val));
 }
 
 void method_returnPtr(Args* args, void* val) {
-    args_setPtr(args, "@rt", val);
+    args_pushArg_name(args, "@rt", arg_newPtr(ARG_TYPE_POINTER, val));
 }
 
 void method_returnObj(Args* args, void* val) {
@@ -1108,12 +1096,11 @@ void method_returnObj(Args* args, void* val) {
     } else {
         type = ARG_TYPE_OBJECT_NEW;
     }
-    args_setPtrWithType(args, "@rt", type, val);
+    args_pushArg_name(args, "@rt", arg_newPtr(type, val));
 }
 
 void method_returnArg(Args* args, Arg* arg) {
-    arg = arg_setName(arg, "@rt");
-    args_setArg(args, arg);
+    args_pushArg_name(args, "@rt", arg);
 }
 
 int64_t method_getInt(Args* args, char* argName) {
@@ -1151,7 +1138,7 @@ Arg* arg_setRef(Arg* self, char* name, PikaObj* obj) {
 int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr) {
     Arg* new_obj = arg_newDirectObj(newFunPtr);
     new_obj = arg_setName(new_obj, objName);
-    new_obj = arg_setType(new_obj, ARG_TYPE_OBJECT);
+    arg_setType(new_obj, ARG_TYPE_OBJECT);
     args_setArg(self->list, new_obj);
     return 0;
 }

@@ -478,7 +478,7 @@ static Arg* VM_instruction_handler_NEW(PikaObj* self,
                                        Arg* arg_ret_reg) {
     Arg* origin_arg = obj_getArg(vm->locals, data);
     Arg* new_arg = arg_copy(origin_arg);
-    origin_arg = arg_setType(origin_arg, ARG_TYPE_OBJECT);
+    arg_setType(origin_arg, ARG_TYPE_OBJECT);
     arg_setType(new_arg, ARG_TYPE_OBJECT_NEW);
     return new_arg;
 }
@@ -876,7 +876,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         /* skip type hint */
         strPopLastToken(arg_name, ':');
         /* load normal arg */
-        args_setArg(locals, arg_setName(call_arg, arg_name));
+        args_pushArg_name(locals, arg_name, call_arg);
     }
 
     if (strIsContain(type_list, '=')) {
@@ -1260,6 +1260,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
                                                    &sub_run_state, arg_ret_reg);
     if (skip_init) {
         if (arg_getType(return_arg) == ARG_TYPE_OBJECT_NEW) {
+            pika_assert(NULL != return_arg);
             arg_setType(return_arg, ARG_TYPE_OBJECT);
         }
     }
@@ -1271,6 +1272,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 
     /* __init__() */
     if (NULL != return_arg && ARG_TYPE_OBJECT_NEW == arg_getType(return_arg)) {
+        pika_assert(NULL != return_arg);
         arg_setType(return_arg, ARG_TYPE_OBJECT);
         /* init object */
         PikaObj* new_obj = arg_getPtr(return_arg);
@@ -1477,6 +1479,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     }
     /* set free object to nomal object */
     if (ARG_TYPE_OBJECT_NEW == outArg_type) {
+        pika_assert(NULL != out_arg);
         arg_setType(out_arg, ARG_TYPE_OBJECT);
     }
 

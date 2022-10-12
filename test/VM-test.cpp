@@ -1589,7 +1589,7 @@ TEST(vm, multi_return_fn) {
 }
 #endif
 
-TEST(vm, rang_1) {
+TEST(vm, range_1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);

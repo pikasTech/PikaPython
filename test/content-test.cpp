@@ -44,7 +44,8 @@ TEST(content, set) {
     contentIn[3] = 4;
     Arg* self = content_init("", ARG_TYPE_NONE, NULL, 0, NULL);
     self = content_setName(self, "name");
-    self = arg_setType(self, ARG_TYPE_NONE);
+    pika_assert(NULL != self);
+arg_setType(self, ARG_TYPE_NONE);
     self = content_setContent(self, contentIn, 4);
 
     uint16_t typeOffset = content_typeOffset(self);

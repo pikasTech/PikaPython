@@ -60,12 +60,20 @@ void* args_getPtr(Args* self, char* name) {
     return pointer;
 }
 
+PIKA_RES args_setPtrWithType(Args* self, char* name, ArgType type, void* val) {
+    Arg* arg = args_getArg(self, name);
+    if (NULL == arg) {
+        args_pushArg_name(self, name, arg_newPtr(type, val));
+        return PIKA_RES_OK;
+    }
+    void** val_ptr = (void**)arg_getContent(arg);
+    *val_ptr = val;
+    arg_setType(arg, type);
+    return PIKA_RES_OK;
+}
+
 PIKA_RES args_setPtr(Args* self, char* name, void* argPointer) {
-    PIKA_RES errCode = PIKA_RES_OK;
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, name, ARG_TYPE_POINTER, argPointer);
-    args_setArg(self, argNew);
-    return errCode;
+    return args_setPtrWithType(self, name, ARG_TYPE_POINTER, argPointer);
 }
 
 PIKA_RES args_setRef(Args* self, char* name, void* argPointer) {
@@ -88,9 +96,6 @@ PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
 }
 
 PIKA_RES args_pushArg(Args* self, Arg* arg) {
-    if (NULL == arg) {
-        return PIKA_RES_ERR_ARG_NO_FOUND;
-    }
     Arg* new_arg = NULL;
     if (!arg_isSerialized(arg)) {
         new_arg = arg_copy(arg);
@@ -102,6 +107,10 @@ PIKA_RES args_pushArg(Args* self, Arg* arg) {
     return PIKA_RES_OK;
 }
 
+PIKA_RES args_pushArg_name(Args* self, char* name, Arg* arg) {
+    return args_pushArg(self, arg_setName(arg, name));
+}
+
 PIKA_RES args_setBytes(Args* self, char* name, uint8_t* src, size_t size) {
     Arg* argNew = arg_setBytes(NULL, name, src, size);
     args_setArg(self, argNew);
@@ -110,7 +119,7 @@ PIKA_RES args_setBytes(Args* self, char* name, uint8_t* src, size_t size) {
 
 char* args_getBuff(Args* self, int32_t size) {
     Arg* argNew = New_arg(NULL);
-    argNew = arg_newContent(argNew, size + 1);
+    argNew = arg_newContent(size + 1);
     args_pushArg(self, argNew);
     return (char*)arg_getContent(argNew);
 }
@@ -157,10 +166,14 @@ size_t args_getBytesSize(Args* self, char* name) {
     return arg_getBytesSize(arg);
 }
 
-PIKA_RES args_setInt(Args* self, char* name, int64_t int64In) {
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setInt(argNew, name, int64In);
-    args_setArg(self, argNew);
+PIKA_RES args_setInt(Args* self, char* name, int64_t val) {
+    Arg* arg = args_getArg(self, name);
+    if (NULL == arg) {
+        args_pushArg_name(self, name, arg_newInt(val));
+        return PIKA_RES_OK;
+    }
+    int64_t* val_ptr = (int64_t*)arg_getContent(arg);
+    *val_ptr = val;
     return PIKA_RES_OK;
 }
 
@@ -280,6 +293,10 @@ PIKA_RES __updateArg(Args* self, Arg* argNew) {
     LinkNode* nodeToUpdate = NULL;
     LinkNode* nodeNow = self->firstNode;
     LinkNode* priorNode = NULL;
+    PIKA_RES res;
+    if (NULL == self->firstNode) {
+        return PIKA_RES_ERR_ARG_NO_FOUND;
+    }
     Hash nameHash = arg_getNameHash(argNew);
     while (1) {
         if (arg_getNameHash((Arg*)nodeNow) == nameHash) {
@@ -288,7 +305,7 @@ PIKA_RES __updateArg(Args* self, Arg* argNew) {
         }
         if (arg_getNext((Arg*)nodeNow) == NULL) {
             // error, node no found
-            goto exit;
+            return PIKA_RES_ERR_ARG_NO_FOUND;
         }
         priorNode = nodeNow;
         nodeNow = (LinkNode*)arg_getNext((Arg*)nodeNow);
@@ -297,33 +314,33 @@ PIKA_RES __updateArg(Args* self, Arg* argNew) {
     arg_deinitHeap((Arg*)nodeToUpdate);
 
     nodeToUpdate = (LinkNode*)arg_setContent(
-        (Arg*)nodeToUpdate, arg_getContent(argNew), arg_getContentSize(argNew));
+        (Arg*)nodeToUpdate, arg_getContent(argNew), arg_getSize(argNew));
 
-    nodeToUpdate =
-        (LinkNode*)arg_setType((Arg*)nodeToUpdate, arg_getType(argNew));
+    pika_assert(NULL != nodeToUpdate);
+    arg_setType((Arg*)nodeToUpdate, arg_getType(argNew));
     // update privior link, because arg_getContent would free origin pointer
     if (NULL == priorNode) {
         self->firstNode = nodeToUpdate;
+        res = PIKA_RES_OK;
         goto exit;
     }
 
     arg_setNext((Arg*)priorNode, (Arg*)nodeToUpdate);
+    res = PIKA_RES_OK;
     goto exit;
 exit:
     if (!arg_isSerialized(argNew)) {
-        return PIKA_RES_OK;
+        return res;
     }
     arg_freeContent(argNew);
-    return PIKA_RES_OK;
+    return res;
 }
 
 PIKA_RES args_setArg(Args* self, Arg* arg) {
-    Hash nameHash = arg_getNameHash(arg);
-    if (!args_isArgExist_hash(self, nameHash)) {
-        args_pushArg(self, arg);
+    if (PIKA_RES_OK == __updateArg(self, arg)) {
         return PIKA_RES_OK;
     }
-    __updateArg(self, arg);
+    args_pushArg(self, arg);
     return PIKA_RES_OK;
 }
 
@@ -331,13 +348,21 @@ PIKA_RES args_setArg(Args* self, Arg* arg) {
 #define __PIKA_CFG_HASH_LIST_CACHE_SIZE 4
 #endif
 
+#define __USE_PIKA_HASH_LIST_CACHE 0
+
 LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
     LinkNode* node = self->firstNode;
+#if __USE_PIKA_HASH_LIST_CACHE
     int_fast8_t n = 0;
+#endif
     while (NULL != node) {
         Arg* arg = (Arg*)node;
         Hash thisNameHash = arg_getNameHash(arg);
+#if __USE_PIKA_HASH_LIST_CACHE
+        n++;
+#endif
         if (thisNameHash == nameHash) {
+#if __USE_PIKA_HASH_LIST_CACHE
             if (n > __PIKA_CFG_HASH_LIST_CACHE_SIZE) {
                 /* the first __PIKA_CFG_HASH_LIST_CACHE_SIZE items in the list
                  * is considered as a cache.
@@ -352,6 +377,7 @@ LinkNode* args_getNode_hash(Args* self, Hash nameHash) {
                 arg_setNext(arg, (Arg*)(self->firstNode));
                 self->firstNode = (LinkNode*)arg;
             }
+#endif
             return (LinkNode*)arg;
         }
         node = (LinkNode*)arg_getNext((Arg*)node);
@@ -374,9 +400,6 @@ Arg* args_getArg_hash(Args* self, Hash nameHash) {
 Arg* args_getArg(Args* self, char* name) {
     pika_assert(NULL != self);
     LinkNode* node = args_getNode(self, name);
-    if (NULL == node) {
-        return NULL;
-    }
     return (Arg*)node;
 }
 
@@ -472,16 +495,6 @@ exit:
     return res;
 }
 
-PIKA_RES args_setPtrWithType(Args* self,
-                             char* name,
-                             ArgType type,
-                             void* objPtr) {
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setPtr(argNew, name, type, objPtr);
-    args_setArg(self, argNew);
-    return PIKA_RES_OK;
-}
-
 PIKA_RES args_foreach(Args* self,
                       int32_t (*eachHandle)(Arg* argEach, Args* context),
                       Args* context) {
@@ -543,7 +556,7 @@ PikaDict* New_dict(void) {
 PikaList* New_list(void) {
     PikaList* self = (PikaList*)New_args(NULL);
     /* set top index for append */
-    args_setInt(&self->super, "top", 0);
+    args_pushArg_name(&self->super, "top", arg_newInt(0));
     return self;
 }
 

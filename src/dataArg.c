@@ -164,14 +164,12 @@ uint32_t arg_totleSize(Arg* self) {
 }
 
 void arg_freeContent(Arg* self) {
-    if (NULL != self) {
-        uint32_t totleSize = arg_totleSize(self);
-        if (_arg_cache_push(self, self->size)) {
-            return;
-        }
-        pikaFree(self, totleSize);
+    pika_assert(NULL != self);
+    if (_arg_cache_push(self, self->size)) {
         return;
     }
+    pikaFree(self, arg_totleSize(self));
+    return;
 }
 
 Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size) {
@@ -209,21 +207,14 @@ Arg* arg_setName(Arg* self, char* name) {
     return arg_setNameHash(self, hash_time33(name));
 }
 
-Arg* arg_setType(Arg* self, ArgType type) {
-    if (NULL == self) {
-        return arg_create("", type, NULL, 0, NULL);
-    }
-    self->type = type;
-    return self;
-}
-
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
-    self = arg_newContent(self, size + sizeof(size_t) + 1);
+    self = arg_newContent(size + sizeof(size_t) + 1);
     if (NULL == self) {
         return NULL;
     }
     self = arg_setName(self, name);
-    self = arg_setType(self, ARG_TYPE_BYTES);
+    pika_assert(NULL != self);
+    arg_setType(self, ARG_TYPE_BYTES);
     void* dir = arg_getContent(self);
     /* set content all to 0 */
     __platform_memset(dir, 0, size + sizeof(size_t) + 1);
@@ -238,8 +229,7 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
     return self;
 }
 
-Arg* arg_newContent(Arg* self, uint32_t size) {
-    arg_freeContent(self);
+Arg* arg_newContent(uint32_t size) {
     Arg* newContent = arg_create("", ARG_TYPE_NONE, NULL, size, NULL);
     return newContent;
 }
@@ -302,7 +292,8 @@ Arg* arg_setHeapStruct(Arg* self,
     Arg* struct_arg =
         arg_setContent(NULL, (uint8_t*)&struct_deinit_fun, sizeof(void*));
     struct_arg = arg_append(struct_arg, (uint8_t*)struct_ptr, struct_size);
-    struct_arg = arg_setType(struct_arg, ARG_TYPE_STRUCT_HEAP);
+    pika_assert(NULL != struct_arg);
+    arg_setType(struct_arg, ARG_TYPE_STRUCT_HEAP);
     struct_arg = arg_setName(struct_arg, name);
     return struct_arg;
 }
@@ -387,7 +378,8 @@ Arg* arg_copy(Arg* arg_src) {
     arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
                               arg_getContentSize(arg_src));
     arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
-    arg_dict = arg_setType(arg_dict, arg_getType(arg_src));
+    pika_assert(NULL != arg_dict);
+    arg_setType(arg_dict, arg_getType(arg_src));
     arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
     return arg_dict;
 }
@@ -411,7 +403,8 @@ Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
     arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
                               arg_getContentSize(arg_src));
     arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
-    arg_dict = arg_setType(arg_dict, arg_getType(arg_src));
+    pika_assert(NULL != arg_dict);
+    arg_setType(arg_dict, arg_getType(arg_src));
     arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
     return arg_dict;
 }
@@ -433,6 +426,7 @@ Arg* arg_append(Arg* self, void* new_content, size_t new_size) {
     if (NULL == new_arg) {
         new_arg = arg_setContent(NULL, NULL, old_size + new_size);
     }
+    pika_assert(NULL != new_arg);
     arg_setType(new_arg, arg_getType(self));
     arg_setNameHash(new_arg, arg_getNameHash(self));
     if (self != new_arg) {
@@ -463,6 +457,7 @@ void arg_deinitHeap(Arg* self) {
         StructDeinitFun struct_deinit_fun =
             (StructDeinitFun)arg_getHeapStructDeinitFun(self);
         struct_deinit_fun(arg_getHeapStruct(self));
+        return;
     }
     /* deinit sub object */
     if (ARG_TYPE_OBJECT == type) {
@@ -472,6 +467,7 @@ void arg_deinitHeap(Arg* self) {
         if (ref_cnt <= 0) {
             obj_deinit(subObj);
         }
+        return;
     }
 }
 

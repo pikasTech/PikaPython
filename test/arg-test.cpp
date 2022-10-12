@@ -1,6 +1,6 @@
 #include "test_common.h"
 
-TEST(arg_test, cache_){
+TEST(arg_test, cache_) {
     Arg* arg1 = arg_newInt(1);
     arg_deinit(arg1);
     Arg* arg2 = arg_newInt(2);
@@ -57,8 +57,9 @@ TEST(arg_test, name) {
 }
 
 TEST(arg_test, type) {
-    Arg* arg = New_arg(NULL);
-    arg = arg_setType(arg, ARG_TYPE_NONE);
+    Arg* arg = arg_newInt(1);
+    pika_assert(NULL != arg);
+    arg_setType(arg, ARG_TYPE_NONE);
     ArgType type = arg_getType(arg);
     EXPECT_EQ(ARG_TYPE_NONE, type);
     arg_deinit(arg);
