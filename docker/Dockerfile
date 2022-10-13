@@ -77,3 +77,4 @@ RUN apt-get install -y wget
 RUN wget https://gitee.com/Lyon1998/pikascript/attach_files/1213873/download -O code-server.deb
 RUN dpkg -i code-server.deb
 ADD code-server-config.yaml /root/.config/code-server/config.yaml
+RUN cd root/pikascript && git remote add github https://github.com/pikastech/pikascript
