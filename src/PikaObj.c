@@ -588,7 +588,7 @@ ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg) {
 
 char* methodArg_getDec(Arg* method_arg) {
     void* info = arg_getContent(method_arg);
-    return (char*)(info + sizeof(MethodInfoStore));
+    return (char*)((uintptr_t)info + sizeof(MethodInfoStore));
 }
 
 PikaObj* methodArg_getDefContext(Arg* method_arg) {

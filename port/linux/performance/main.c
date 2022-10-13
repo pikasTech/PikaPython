@@ -8,6 +8,9 @@
 #include "pikaScript.h"
 #include <time.h>
 
+void __platform_printf(char* format, ...) {
+}
+
 int main(void) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
@@ -17,7 +20,7 @@ int main(void) {
     /* clang-format off */
     clock_t start = clock();
     pikaVM_run(pikaMain, 
-    "for i in range(100000):\n"
+    "for i in range(500000):\n"
     "    print(i)"
     );
     clock_t end = clock();

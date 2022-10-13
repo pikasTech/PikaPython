@@ -2518,6 +2518,7 @@ TEST(pikaMain, for_loop_issue_1b2a3f1bdf) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#define pika_floatYPE_DOUBLE 0
 TEST(pikaMain, syantex_issue123lkjxi) {
     char* lines = "if i < 3\n";
     /* init */
