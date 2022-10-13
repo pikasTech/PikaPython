@@ -26,6 +26,7 @@
  */
 
 #include "PikaObj.h"
+#include <stdint.h>
 #include "BaseObj.h"
 #include "PikaCompiler.h"
 #include "PikaPlatform.h"
@@ -587,8 +588,9 @@ ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg) {
 }
 
 char* methodArg_getDec(Arg* method_arg) {
-    void* info = arg_getContent(method_arg);
-    return (char*)((uintptr_t)info + sizeof(MethodInfoStore));
+    MethodInfoStore* method_store =
+        (MethodInfoStore*)arg_getContent(method_arg);
+    return method_store->declareation;
 }
 
 PikaObj* methodArg_getDefContext(Arg* method_arg) {
@@ -625,18 +627,16 @@ void _update_proxy(PikaObj* self, char* name) {
 }
 
 static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
-    method_info->pars = method_info->dec;
     Arg* arg = New_arg(NULL);
-    uint32_t size_pars = strGetSize(method_info->pars);
     MethodInfoStore method_store = {
         .ptr = method_info->ptr,
         .bytecode_frame = method_info->bytecode_frame,
         .def_context = method_info->def_context,
+        .declareation = method_info->dec,  // const
     };
     /* the first arg_value */
     arg = arg_setStruct(arg, method_info->name, &method_store,
                         sizeof(method_store));
-    arg = arg_append(arg, method_info->pars, size_pars + 1);
     pika_assert(NULL != arg);
     arg_setType(arg, method_info->type);
     _update_proxy(self, method_info->name);

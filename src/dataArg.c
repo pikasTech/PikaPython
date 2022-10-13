@@ -40,8 +40,8 @@ static PIKA_BOOL _arg_cache_push(Arg* self, uint32_t size) {
         return PIKA_FALSE;
     }
     extern PikaMemInfo pikaMemInfo;
-    if (self->heap_size <= PIKA_ARG_CACHE_SIZE ||
-        self->heap_size >= 2 * PIKA_ARG_CACHE_SIZE) {
+    if (self->heap_size < PIKA_ARG_CACHE_SIZE ||
+        self->heap_size > 2 * PIKA_ARG_CACHE_SIZE) {
         return PIKA_FALSE;
     }
     if (PIKA_ARG_CACHE_POOL_SIZE <= pikaMemInfo.cache_pool_top) {
@@ -59,7 +59,7 @@ static Arg* _arg_cache_pop(uint32_t size) {
 #else
     uint32_t req_heap_size = mem_align(sizeof(Arg) + size);
     extern PikaMemInfo pikaMemInfo;
-    if (req_heap_size >= PIKA_ARG_CACHE_SIZE) {
+    if (req_heap_size > PIKA_ARG_CACHE_SIZE) {
         return NULL;
     }
     if (!(pikaMemInfo.cache_pool_top > 0)) {

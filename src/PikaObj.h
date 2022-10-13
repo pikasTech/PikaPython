@@ -75,7 +75,7 @@ struct PikaObj {
 };
 
 typedef struct RangeData RangeData;
-struct RangeData{
+struct RangeData {
     int64_t start;
     int64_t end;
     int64_t step;
@@ -113,6 +113,8 @@ typedef struct MethodInfoStore {
     void* ptr;
     ByteCodeFrame* bytecode_frame;
     PikaObj* def_context;
+    char* declareation;
+    char* type_list;
 } MethodInfoStore;
 
 typedef PikaObj LibObj;
