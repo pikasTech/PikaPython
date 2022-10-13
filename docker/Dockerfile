@@ -60,7 +60,7 @@ RUN go env -w GO111MODULE=on
 RUN go env -w GOPROXY=https://goproxy.cn
 
 
-RUN git clone https://gitee.com/lyon1998/pikascript  root/pikascript
+RUN git clone https://gitee.com/lyon1998/pikascript  root/pikascript --depth 1
 RUN cd /root/pikascript && git pull
 
 RUN apt-get install -y upx
