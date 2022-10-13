@@ -78,3 +78,8 @@ RUN wget https://gitee.com/Lyon1998/pikascript/attach_files/1213873/download -O 
 RUN dpkg -i code-server.deb
 ADD code-server-config.yaml /root/.config/code-server/config.yaml
 RUN cd root/pikascript && git remote add github https://github.com/pikastech/pikascript
+# RUN code-server --install-extension ms-python.python
+RUN code-server --install-extension llvm-vs-code-extensions.vscode-clangd
+RUN code-server --install-extension vscodevim.vim
+RUN code-server --install-extension zhuangtongfa.material-theme
+RUN apt-get install clangd -y
