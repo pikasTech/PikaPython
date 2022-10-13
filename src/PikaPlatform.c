@@ -61,8 +61,8 @@ PIKA_WEAK uint8_t __is_locked_pikaMemory(void) {
     return 0;
 }
 
-PIKA_WEAK int64_t __platform_getTick(void){
-		return -1;
+PIKA_WEAK int64_t __platform_getTick(void) {
+    return -1;
 }
 
 #ifndef __platform_printf
@@ -208,4 +208,8 @@ PIKA_WEAK long __platform_ftell(FILE* stream) {
 
 PIKA_WEAK void __pks_hook_instruct(void) {
     return;
+}
+
+PIKA_WEAK PIKA_BOOL __pks_hook_arg_cache_filter(void* self) {
+    return PIKA_TRUE;
 }

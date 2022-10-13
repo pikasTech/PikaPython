@@ -36,6 +36,9 @@ static PIKA_BOOL _arg_cache_push(Arg* self, uint32_t size) {
 #if !PIKA_ARG_CACHE_ENABLE
     return PIKA_FALSE;
 #else
+    if (PIKA_FALSE == __pks_hook_arg_cache_filter(self)) {
+        return PIKA_FALSE;
+    }
     extern PikaMemInfo pikaMemInfo;
     if (self->heap_size <= PIKA_ARG_CACHE_SIZE ||
         self->heap_size >= 2 * PIKA_ARG_CACHE_SIZE) {
