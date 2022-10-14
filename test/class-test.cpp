@@ -79,15 +79,41 @@ TEST(class, dir_) {
 
 extern "C" {
 
+void PikaStdLib_SysObj_intMethod(PikaObj* self, Args* args);
+void PikaStdLib_SysObj_floatMethod(PikaObj* self, Args* args);
 PikaObj* New_NativeMethodBase(Args* args) {
     PikaObj* self = New_TinyObj(NULL);
-    const struct NativeClass native_class = {
-        .super = NULL,
-        .methodGroup = NULL,
-        .methodGroupCount = 0,
+    static const MethodInfoStore method = {
+        .ptr = (void*)PikaStdLib_SysObj_floatMethod,
+        .bytecode_frame = NULL,
+        .def_context = NULL,
+        .declareation = "float(arg)",
+        .type_list = "arg",
     };
+    static const Arg methods[] = {
+        {._ = {.buffer = (uint8_t*)&method},
+         .size = sizeof(method),
+#if PIKA_ARG_CACHE_ENABLE
+         .heap_size = 0,
+#endif
+         .type = ARG_TYPE_METHOD_NATIVE,
+         .flag = 0,
+         .name_hash = 259121563},
+    };
+    static const NativeProperty prop = {
+        .super = NULL,
+        .methodGroup = methods,
+        .methodGroupCount = sizeof(methods) / sizeof(methods[0]),
+    };
+    obj_setPtr(self, "@n", (void*)&prop);
     return self;
 }
 }
 
-TEST(class, native_class1) {}
+TEST(class, native_class1) {
+    PikaObj* native_obj = newNormalObj(New_NativeMethodBase);
+    obj_run(native_obj, "float(123)\n");
+    obj_deinit(native_obj);
+    EXPECT_STREQ(log_buff[0], "123.000000\r\n");
+    EXPECT_EQ(pikaMemNow(), 0);
+}

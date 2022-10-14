@@ -135,26 +135,26 @@ void arg_printBytes(Arg* self);
 Arg* arg_loadFile(Arg* self, char* filename);
 uint8_t argType_isObject(ArgType type);
 
-#define ARG_FLAG_MASK_SERIALIZED 0x01
-#define ARG_FLAG_MASK_IsKeyword 0x02
+#define ARG_FLAG_SERIALIZED 0x01
+#define ARG_FLAG_KEYWORD 0x02
 #define ARG_FLAG_WEAK_REF 0x04
 
 #define ARG_FLAG_MAX 0x08
 
 #define arg_getNext(self) ((self)->_.next)
 #define arg_getSize(self) ((self)->size)
-#define arg_isSerialized(self) ((self)->flag & ARG_FLAG_MASK_SERIALIZED)
+#define arg_isSerialized(self) ((self)->flag & ARG_FLAG_SERIALIZED)
 #define arg_setSerialized(self, __serialized)                           \
     do {                                                                \
-        (self)->flag = ((self)->flag & ~ARG_FLAG_MASK_SERIALIZED) |     \
-                       ((__serialized) ? ARG_FLAG_MASK_SERIALIZED : 0); \
+        (self)->flag = ((self)->flag & ~ARG_FLAG_SERIALIZED) |     \
+                       ((__serialized) ? ARG_FLAG_SERIALIZED : 0); \
     } while (0)
 
-#define arg_getIsKeyword(self) ((self)->flag & ARG_FLAG_MASK_IsKeyword)
+#define arg_getIsKeyword(self) ((self)->flag & ARG_FLAG_KEYWORD)
 #define arg_setIsKeyword(self, __isKeyword)                           \
     do {                                                              \
-        (self)->flag = ((self)->flag & ~ARG_FLAG_MASK_IsKeyword) |    \
-                       ((__isKeyword) ? ARG_FLAG_MASK_IsKeyword : 0); \
+        (self)->flag = ((self)->flag & ~ARG_FLAG_KEYWORD) |    \
+                       ((__isKeyword) ? ARG_FLAG_KEYWORD : 0); \
     } while (0)
 #define arg_getIsWeakRef(self) ((self)->flag & ARG_FLAG_WEAK_REF)
 #define arg_setIsWeakRef(self, __isWeakRef)                     \

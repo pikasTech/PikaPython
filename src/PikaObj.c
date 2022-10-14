@@ -330,6 +330,17 @@ Arg* _obj_getMethodArg(PikaObj* obj, char* methodPath, Arg* arg_reg) {
         method = arg_copy_noalloc(method, arg_reg);
         goto exit;
     }
+    NativeProperty* prop = obj_getPtr(obj, "@n");
+    Hash method_hash = hash_time33(methodName);
+    if (NULL != prop) {
+        for (uint32_t i = 0; i < prop->methodGroupCount; i++) {
+            Arg* prop_this = (Arg*)(prop->methodGroup + i);
+            if (method_hash == prop_this->name_hash) {
+                method = prop_this;
+                goto exit;
+            }
+        }
+    }
     methodHostClass = obj_getClassObj(obj);
     if (NULL == methodHostClass) {
         method = NULL;
