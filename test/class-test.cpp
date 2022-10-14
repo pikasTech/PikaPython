@@ -76,3 +76,18 @@ TEST(class, dir_) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+extern "C" {
+
+PikaObj* New_NativeMethodBase(Args* args) {
+    PikaObj* self = New_TinyObj(NULL);
+    const struct NativeClass native_class = {
+        .super = NULL,
+        .methodGroup = NULL,
+        .methodGroupCount = 0,
+    };
+    return self;
+}
+}
+
+TEST(class, native_class1) {}
