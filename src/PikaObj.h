@@ -66,6 +66,20 @@ struct ByteCodeFrame {
     InstructArray instruct_array;
 };
 
+typedef struct NativeMethod {
+    const Hash hash;
+    const char* name;
+    const char* pars;
+    const void* funPtr;
+} NativeMethod;
+
+typedef struct NativeClass NativeClass;
+struct NativeClass {
+    const NativeClass* super;
+    const NativeMethod* methodGroup;
+    uint32_t methodGroupCount;
+};
+
 typedef struct PikaObj PikaObj;
 struct PikaObj {
     Args* list;
