@@ -200,12 +200,25 @@ impl ClassInfo {
         let class_def = format!("class_def({}){{\n", self.this_class_name);
         new_class_fn.push_str(&class_def);
 
-        for (_, method_info) in self.method_list.iter() {
+        let method_info_list = self.method_list.values().collect::<Vec<&MethodInfo>>();
+
+        /* sort by name_hash */
+        let mut method_info_list_sorted = method_info_list.clone();
+        method_info_list_sorted.sort_by(|a, b| {
+            let lhs = (a.name_hash) as u32;
+            let rhs = (b.name_hash) as u32;
+            return lhs.cmp(&rhs);
+        });
+
+        for method_info in method_info_list_sorted.iter() {
             new_class_fn.push_str(&method_info.get_define());
         }
 
         new_class_fn.push_str(&"};\n");
-        let class_inhert = format!("class_inhert({}, {});\n\n", self.this_class_name, self.super_class_name);
+        let class_inhert = format!(
+            "class_inhert({}, {});\n\n",
+            self.this_class_name, self.super_class_name
+        );
 
         new_class_fn.push_str(&class_inhert);
 

@@ -331,17 +331,48 @@ Arg* _obj_getProp(PikaObj* obj, char* name) {
         }
     }
     Hash method_hash = hash_time33(name);
+#define BINARY_SEARCH_ENABLE 1
     while (1) {
         if (prop == NULL) {
             break;
         }
-        for (uint32_t i = 0; i < prop->methodGroupCount; i++) {
+#if BINARY_SEARCH_ENABLE
+        /* binary search */
+        int size = prop->methodGroupCount;
+        if (size == 0) {
+            goto next;
+        }
+        int left = 0;
+        int right = size - 1;
+        int mid = 0;
+        int i = 0;
+        while (1) {
+            i++;
+            if (left > right) {
+                break;
+            }
+            mid = (right + left) >> 1;
+            Arg* prop_this = (Arg*)(prop->methodGroup + mid);
+            if (prop_this->name_hash == method_hash) {
+                method = prop_this;
+                goto exit;
+            } else if (prop_this->name_hash < method_hash) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+#else
+        for (int i = 0; i < (int)prop->methodGroupCount; i++) {
             Arg* prop_this = (Arg*)(prop->methodGroup + i);
-            if (method_hash == prop_this->name_hash) {
+            if (prop_this->name_hash == method_hash) {
                 method = prop_this;
                 goto exit;
             }
         }
+        goto next;
+#endif
+    next:
         prop = (NativeProperty*)prop->super;
     }
 exit:

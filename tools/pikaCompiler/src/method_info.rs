@@ -11,10 +11,14 @@ pub struct MethodInfo {
     pub return_type: Option<PyType>,
     pub is_constructor: bool,
     pub decorator_list: Vec<Decorator>,
+    pub name_hash: u32,
+    pub sorted: bool,
 }
 
-pub fn hash_time33(key: &String) -> u32{
-    let res = key.chars().fold(5381 as u32, |hash, c| hash.wrapping_mul(33).wrapping_add(c as u32));
+pub fn hash_time33(key: &String) -> u32 {
+    let res = key.chars().fold(5381 as u32, |hash, c| {
+        hash.wrapping_mul(33).wrapping_add(c as u32)
+    });
     return res & 0x7FFFFFFF;
 }
 
@@ -39,12 +43,14 @@ impl MethodInfo {
             None => None,
         };
         let method_info = MethodInfo {
-            name: name,
+            name: name.clone(),
             arg_list: ArgList::new(&arg_list),
             return_type: return_type,
             class_name: class_name.clone(),
             is_constructor: is_constructor,
             decorator_list: Vec::new(),
+            name_hash: hash_time33(&name.clone()),
+            sorted: false,
         };
         return Some(method_info);
     }
@@ -72,10 +78,6 @@ impl MethodInfo {
     }
 
     pub fn get_define(&self) -> String {
-        // let return_token = match &self.return_type {
-        //     Some(s) => format!("->{}", s.to_string()),
-        //     None => String::from(""),
-        // };
         let mut class_define_method = String::from("method_def");
         if self.is_constructor {
             class_define_method = String::from("constructor_def");
@@ -90,10 +92,7 @@ impl MethodInfo {
         define.push_str(
             format!(
                 "    {}({}_{}, {}),\n",
-                class_define_method,
-                self.class_name,
-                self.name,
-                hash_time33(&self.name)
+                class_define_method, self.class_name, self.name, self.name_hash
             )
             .as_str(),
         );

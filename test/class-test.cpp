@@ -89,8 +89,8 @@ void PikaStdLib_SysObj_printMethod(PikaObj* self, Args* args);
 method_typedef(PikaStdLib_SysObj_print, "print", "*val,**ops");
 
 class_def(PikaStdLib_SysObj){
-    method_def(PikaStdLib_SysObj_float, hash_time33("float")),
     method_def(PikaStdLib_SysObj_int, hash_time33("int")),
+    method_def(PikaStdLib_SysObj_float, hash_time33("float")),
     method_def(PikaStdLib_SysObj_print, hash_time33("print")),
 };
 class_inhert(PikaStdLib_SysObj, TinyObj);
