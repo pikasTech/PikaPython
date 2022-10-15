@@ -83,3 +83,7 @@ TEST(arg_test, append) {
     arg_deinit(arg);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(arg_test, hash_1) {
+    EXPECT_EQ(hash_time33("print"), 271190290);
+}

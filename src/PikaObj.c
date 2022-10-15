@@ -321,6 +321,24 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
     return thisClass;
 }
 
+Arg* _obj_getProp(PikaObj* obj, char* name) {
+    NativeProperty* prop = obj_getPtr(obj, "@p");
+    Hash method_hash = hash_time33(name);
+    while (1) {
+        if (prop == NULL) {
+            break;
+        }
+        for (uint32_t i = 0; i < prop->methodGroupCount; i++) {
+            Arg* prop_this = (Arg*)(prop->methodGroup + i);
+            if (method_hash == prop_this->name_hash) {
+                return prop_this;
+            }
+        }
+        prop = (NativeProperty*)prop->super;
+    }
+    return NULL;
+}
+
 Arg* _obj_getMethodArg(PikaObj* obj, char* methodPath, Arg* arg_reg) {
     Arg* method = NULL;
     char* methodName = strPointToLastToken(methodPath, '.');
@@ -330,16 +348,9 @@ Arg* _obj_getMethodArg(PikaObj* obj, char* methodPath, Arg* arg_reg) {
         method = arg_copy_noalloc(method, arg_reg);
         goto exit;
     }
-    NativeProperty* prop = obj_getPtr(obj, "@p");
-    Hash method_hash = hash_time33(methodName);
-    if (NULL != prop) {
-        for (uint32_t i = 0; i < prop->methodGroupCount; i++) {
-            Arg* prop_this = (Arg*)(prop->methodGroup + i);
-            if (method_hash == prop_this->name_hash) {
-                method = prop_this;
-                goto exit;
-            }
-        }
+    method = _obj_getProp(obj, methodName);
+    if (NULL != method) {
+        goto exit;
     }
     methodHostClass = obj_getClassObj(obj);
     if (NULL == methodHostClass) {
@@ -380,18 +391,10 @@ void* getNewClassObjFunByName(PikaObj* obj, char* name) {
     return newClassObjFun;
 }
 
-int32_t __foreach_removeMethodInfo(Arg* argNow, Args* argList) {
-    if (arg_getType(argNow) == ARG_TYPE_METHOD_NATIVE) {
-        args_removeArg(argList, argNow);
-        return 0;
-    }
-    return 0;
-}
-
 PikaObj* removeMethodInfo(PikaObj* thisClass) {
 #if PIKA_METHOD_CACHE_ENABLE
 #else
-    args_foreach(thisClass->list, __foreach_removeMethodInfo, thisClass->list);
+    // args_removeArg(thisClass->list, args_getArg(thisClass->list, "@p"));
 #endif
     return thisClass;
 }
@@ -493,6 +496,9 @@ static PikaObj* __obj_getObjDirect(PikaObj* self,
     /* finded object, check type*/
     Arg* arg_obj = args_getArg(self->list, name);
     ArgType type = ARG_TYPE_NONE;
+    if (NULL == arg_obj) {
+        arg_obj = _obj_getProp(self, name);
+    }
     if (NULL == arg_obj) {
         return NULL;
     }
@@ -1382,3 +1388,21 @@ void* obj_getStruct(PikaObj* self, char* name) {
 char* obj_cacheStr(PikaObj* self, char* str) {
     return args_cacheStr(self->list, str);
 }
+
+void _obj_updateProxyFlag(PikaObj* self) {
+    if (!obj_getFlag(self, OBJ_FLAG_PROXY_GETATTRIBUTE)) {
+        if (NULL != _obj_getProp(self, "__getattribute__")) {
+            obj_setFlag(self, OBJ_FLAG_PROXY_GETATTRIBUTE);
+        }
+    }
+    if (!obj_getFlag(self, OBJ_FLAG_PROXY_GETATTR)) {
+        if (NULL != _obj_getProp(self, "__getattr__")) {
+            obj_setFlag(self, OBJ_FLAG_PROXY_GETATTR);
+        }
+    }
+    if (!obj_getFlag(self, OBJ_FLAG_PROXY_SETATTR)) {
+        if (NULL != _obj_getProp(self, "__setattr__")) {
+            obj_setFlag(self, OBJ_FLAG_PROXY_SETATTR);
+        }
+    }
+};

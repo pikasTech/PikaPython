@@ -610,6 +610,11 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
         res = args_getArg(host_object->list, arg_name);
     }
 
+    /* find res in host prop */
+    if (NULL == res){
+        res = _obj_getProp(host_object, arg_name);
+    }
+
     /* find res in globlas */
     if (NULL == res) {
         res = args_getArg(vm->globals->list, arg_name);

@@ -425,7 +425,7 @@ const MethodProp floatMethod = {
 #define class_def(_class) const Arg _class##Collect[] =
 
 #define class_inhert(_class, _super)                              \
-    extern const NativeProperty _super##NativeProp;             \
+    extern const NativeProperty _super##NativeProp;               \
     const NativeProperty _class##NativeProp = {                   \
         .super = &_super##NativeProp,                             \
         .methodGroup = _class##Collect,                           \
@@ -435,7 +435,11 @@ const MethodProp floatMethod = {
 
 #define pika_class(_method) _method##NativeProp
 
-#define obj_setClass(_self, _method) \
-    obj_setPtr((_self), "@p", (void*)&pika_class(_method))
+void _obj_updateProxyFlag(PikaObj* self);
+#define obj_setClass(_self, _method)                        \
+    obj_setPtr((_self), "@p", (void*)&pika_class(_method)); \
+    _obj_updateProxyFlag((_self))
+
+Arg* _obj_getProp(PikaObj* obj, char* name);
 
 #endif

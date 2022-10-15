@@ -13,8 +13,9 @@ pub struct MethodInfo {
     pub decorator_list: Vec<Decorator>,
 }
 
-pub fn hash_time33(key: &String) -> usize {
-    key.chars().fold(5381 as usize, |hash, c| hash.wrapping_mul(33).wrapping_add(c as usize))
+pub fn hash_time33(key: &String) -> u32{
+    let res = key.chars().fold(5381 as u32, |hash, c| hash.wrapping_mul(33).wrapping_add(c as u32));
+    return res & 0x7FFFFFFF;
 }
 
 impl MethodInfo {
