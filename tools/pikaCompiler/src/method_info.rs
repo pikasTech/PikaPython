@@ -13,6 +13,10 @@ pub struct MethodInfo {
     pub decorator_list: Vec<Decorator>,
 }
 
+pub fn hash_time33(key: &String) -> usize {
+    key.chars().fold(5381 as usize, |hash, c| hash.wrapping_mul(33).wrapping_add(c as usize))
+}
+
 impl MethodInfo {
     pub fn new(
         class_name: &String,
@@ -71,9 +75,9 @@ impl MethodInfo {
         //     Some(s) => format!("->{}", s.to_string()),
         //     None => String::from(""),
         // };
-        let mut class_define_method = String::from("class_defineMethod");
+        let mut class_define_method = String::from("method_def");
         if self.is_constructor {
-            class_define_method = String::from("class_defineConstructor");
+            class_define_method = String::from("constructor_def");
         }
 
         let mut define = String::from("");
@@ -84,12 +88,11 @@ impl MethodInfo {
 
         define.push_str(
             format!(
-                "    {}(self, \"{}\", \"{}\", \n        {}_{}Method);\n",
+                "    {}({}_{}, {}),\n",
                 class_define_method,
-                self.name,
-                self.get_arg_list_define(),
                 self.class_name,
-                self.name
+                self.name,
+                hash_time33(&self.name)
             )
             .as_str(),
         );
@@ -170,7 +173,7 @@ impl MethodInfo {
         method_fn_impl.push_str(&return_impl);
         method_fn_impl.push_str("}\n");
         let typedef = format!(
-            "method_typedef(\n    {}_{},\n    \"{}\",\n    \"{}\"\n);\n\n",
+            "method_typedef(\n    {}_{},\n    \"{}\", \"{}\"\n);\n\n",
             self.class_name,
             self.name,
             self.name,

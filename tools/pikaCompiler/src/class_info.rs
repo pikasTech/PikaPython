@@ -196,6 +196,19 @@ impl ClassInfo {
     pub fn new_class_fn(&self) -> String {
         let mut new_class_fn = String::new();
         let new_class_fn_head = format!("{}{{\n", self.new_class_fn_name());
+
+        let class_def = format!("class_def({}){{\n", self.this_class_name);
+        new_class_fn.push_str(&class_def);
+
+        for (_, method_info) in self.method_list.iter() {
+            new_class_fn.push_str(&method_info.get_define());
+        }
+
+        new_class_fn.push_str(&"};\n");
+        let class_inhert = format!("class_inhert({}, {});\n\n", self.this_class_name, self.super_class_name);
+
+        new_class_fn.push_str(&class_inhert);
+
         new_class_fn.push_str(&new_class_fn_head);
         let derive = format!("    PikaObj *self = New_{}(args);\n", self.super_class_name);
         new_class_fn.push_str(&derive);
@@ -204,9 +217,8 @@ impl ClassInfo {
             new_class_fn.push_str(&object_info.new_object_fn());
         }
 
-        for (_, method_info) in self.method_list.iter() {
-            new_class_fn.push_str(&method_info.get_define());
-        }
+        let obj_set_class = format!("    obj_setClass(self, {});\n", self.this_class_name);
+        new_class_fn.push_str(&obj_set_class);
 
         new_class_fn.push_str("    return self;\n");
         new_class_fn.push_str("}\n");

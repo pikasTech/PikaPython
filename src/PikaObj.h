@@ -425,6 +425,7 @@ const MethodProp floatMethod = {
 #define class_def(_class) const Arg _class##Collect[] =
 
 #define class_inhert(_class, _super)                              \
+    extern const NativeProperty _super##NativeProp;             \
     const NativeProperty _class##NativeProp = {                   \
         .super = &_super##NativeProp,                             \
         .methodGroup = _class##Collect,                           \
