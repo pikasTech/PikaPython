@@ -85,7 +85,7 @@ impl MethodInfo {
 
         define.push_str(
             format!(
-                "    {}(self, \"{}\", \"{}\", \n        {}_{}Method);\n",
+                "    {}(self, \"{}\", \"{}\", \n        {}_{}Method);\n\n",
                 class_define_method, self.name, arg_list, self.class_name, self.name
             )
             .as_str(),
