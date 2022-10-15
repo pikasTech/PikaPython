@@ -89,6 +89,7 @@ PikaObj* New_NativeMethodBase(Args* args) {
         .def_context = NULL,
         .declareation = "float(arg)",
         .type_list = "arg",
+        .name = "float",
     };
     static const Arg methods[] = {
         {._ = {.buffer = (uint8_t*)&method},

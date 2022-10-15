@@ -138,7 +138,7 @@ TEST(module, import_as_issue1) {
 #endif
 
 #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
-TEST(unittest, test1) {
+TEST(module, unittest_test1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -160,7 +160,7 @@ TEST(unittest, test1) {
 #endif
 
 #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
-TEST(unittest, test2) {
+TEST(module, unittest_test2) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);

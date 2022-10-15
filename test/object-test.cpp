@@ -37,13 +37,10 @@ void add(PikaObj* obj, Args* args) {
 
 PikaObj* New_PikaObj_test(Args* args) {
     PikaObj* self = New_PikaStdLib_SysObj(args);
-    class_defineMethod(self, "hello(name,isShow)", hello);
-    class_defineMethod(
-        self, "hello2(name1,name2,name3,isShow)", hello2);
-    class_defineMethod(self,
-                       "testFloat(val1,val2,isShow)",
-                       testFloat);
-    class_defineMethod(self, "add(val1,val2)", add);
+    class_defineMethod(self, "hello", "name,isShow", hello);
+    class_defineMethod(self, "hello2", "name1,name2,name3,isShow", hello2);
+    class_defineMethod(self, "testFloat", "val1,val2,isShow", testFloat);
+    class_defineMethod(self, "add", "val1,val2", add);
     return self;
 }
 
@@ -60,7 +57,7 @@ PikaObj* New_USART(Args* args) {
     PikaObj* self = New_TinyObj(args);
 
     /* bind the method */
-    class_defineMethod(self, "send(data:str)", sendMethod);
+    class_defineMethod(self, "send", "data:str", sendMethod);
 
     /* return the object */
     return self;

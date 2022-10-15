@@ -80,6 +80,7 @@ uint32_t arg_getTotleSize(Arg* self) {
  * time33 hash
  */
 Hash hash_time33(char* str) {
+    pika_assert(str != NULL);
     Hash hash = 5381;
     while (*str) {
         hash += (hash << 5) + (*str++);

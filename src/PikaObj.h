@@ -110,7 +110,7 @@ struct MethodInfo {
     char* name;
     char* dec;
     char* ptr;
-    char* pars;
+    char* typelist;
     PikaObj* def_context;
     ArgType type;
     ByteCodeFrame* bytecode_frame;
@@ -122,6 +122,7 @@ typedef struct MethodInfoStore {
     PikaObj* def_context;
     char* declareation;
     char* type_list;
+    char* name;
 } MethodInfoStore;
 
 typedef PikaObj LibObj;
@@ -170,7 +171,10 @@ PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
 int32_t obj_freeObj(PikaObj* self, char* subObjectName);
 
 /* method */
-int32_t class_defineMethod(PikaObj* self, char* declareation, Method methodPtr);
+int32_t class_defineMethod(PikaObj* self,
+                           char* name,
+                           char* typelist,
+                           Method methodPtr);
 
 int32_t class_defineObjectMethod(PikaObj* self,
                                  char* declareation,
@@ -185,7 +189,8 @@ int32_t class_defineStaticMethod(PikaObj* self,
                                  ByteCodeFrame* bytecode_frame);
 
 int32_t class_defineConstructor(PikaObj* self,
-                                char* declareation,
+                                char* name,
+                                char* typelist,
                                 Method methodPtr);
 
 int32_t class_defineRunTimeConstructor(PikaObj* self,

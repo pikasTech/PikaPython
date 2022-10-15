@@ -568,6 +568,11 @@ Method methodArg_getPtr(Arg* method_arg) {
 }
 
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
+    MethodInfoStore* method_store =
+        (MethodInfoStore*)arg_getContent(method_arg);
+    if (NULL != method_store->type_list) {
+        return strcpy(buffs, method_store->type_list);
+    }
     char* method_dec = methodArg_getDec(method_arg);
     pika_assert(strGetSize(method_dec) <= size);
     char* res = strCut(buffs, method_dec, '(', ')');
@@ -576,6 +581,11 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
 }
 
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
+    MethodInfoStore* method_store =
+        (MethodInfoStore*)arg_getContent(method_arg);
+    if (NULL != method_store->name) {
+        return strcpy(buffs, method_store->name);
+    }
     char* method_dec = methodArg_getDec(method_arg);
     pika_assert(strGetSize(method_dec) <= size);
     char* res = strGetFirstToken(buffs, method_dec, '(');
@@ -644,42 +654,46 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
         .bytecode_frame = method_info->bytecode_frame,
         .def_context = method_info->def_context,
         .declareation = method_info->dec,  // const
+        .type_list = method_info->typelist,
+        .name = method_info->name,
     };
+    char* name = method_info->name;
+    if (NULL == method_info->name) {
+        char name_buff[PIKA_LINE_BUFF_SIZE / 2] = {0};
+        name = strGetFirstToken(name_buff, method_info->dec, '(');
+    }
     /* the first arg_value */
-    arg = arg_setStruct(arg, method_info->name, &method_store,
-                        sizeof(method_store));
+    arg = arg_setStruct(arg, name, &method_store, sizeof(method_store));
     pika_assert(NULL != arg);
     arg_setType(arg, method_info->type);
-    _update_proxy(self, method_info->name);
+    _update_proxy(self, name);
     args_setArg(self->list, arg);
 }
 
 static int32_t __class_defineMethodWithType(PikaObj* self,
                                             char* declareation,
+                                            char* name,
+                                            char* typelist,
                                             Method method_ptr,
                                             ArgType method_type,
                                             PikaObj* def_context,
                                             ByteCodeFrame* bytecode_frame) {
-    int32_t size = strGetSize(declareation);
     int32_t res = 0;
     Args buffs = {0};
     PikaObj* method_host = self;
     MethodInfo method_info = {0};
-    char* method_name;
     if (NULL == method_host) {
         /* no found method object */
         res = 1;
         goto exit;
     }
-    method_name =
-        strGetFirstToken(args_getBuff(&buffs, size), declareation, '(');
-
     method_info.dec = declareation;
-    method_info.name = method_name;
+    method_info.name = name;
     method_info.ptr = (void*)method_ptr;
     method_info.type = method_type;
     method_info.def_context = def_context;
     method_info.bytecode_frame = bytecode_frame;
+    method_info.typelist = typelist;
     obj_saveMethodInfo(method_host, &method_info);
     res = 0;
     goto exit;
@@ -690,18 +704,20 @@ exit:
 
 /* define a constructor method */
 int32_t class_defineConstructor(PikaObj* self,
-                                char* declareation,
+                                char* name,
+                                char* typelist,
                                 Method methodPtr) {
-    return __class_defineMethodWithType(self, declareation, methodPtr,
+    return __class_defineMethodWithType(self, NULL, name, typelist, methodPtr,
                                         ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR,
                                         NULL, NULL);
 }
 
 /* define a native method as default */
 int32_t class_defineMethod(PikaObj* self,
-                           char* declareation,
+                           char* name,
+                           char* typelist,
                            Method methodPtr) {
-    return __class_defineMethodWithType(self, declareation, methodPtr,
+    return __class_defineMethodWithType(self, NULL, name, typelist, methodPtr,
                                         ARG_TYPE_METHOD_NATIVE, NULL, NULL);
 }
 
@@ -711,8 +727,8 @@ int32_t class_defineRunTimeConstructor(PikaObj* self,
                                        Method methodPtr,
                                        PikaObj* def_context,
                                        ByteCodeFrame* bytecode_frame) {
-    return __class_defineMethodWithType(self, declareation, methodPtr,
-                                        ARG_TYPE_METHOD_CONSTRUCTOR,
+    return __class_defineMethodWithType(self, declareation, NULL, NULL,
+                                        methodPtr, ARG_TYPE_METHOD_CONSTRUCTOR,
                                         def_context, bytecode_frame);
 }
 
@@ -722,9 +738,9 @@ int32_t class_defineObjectMethod(PikaObj* self,
                                  Method methodPtr,
                                  PikaObj* def_context,
                                  ByteCodeFrame* bytecode_frame) {
-    return __class_defineMethodWithType(self, declareation, methodPtr,
-                                        ARG_TYPE_METHOD_OBJECT, def_context,
-                                        bytecode_frame);
+    return __class_defineMethodWithType(self, declareation, NULL, NULL,
+                                        methodPtr, ARG_TYPE_METHOD_OBJECT,
+                                        def_context, bytecode_frame);
 }
 
 /* define a static method as default */
@@ -733,9 +749,9 @@ int32_t class_defineStaticMethod(PikaObj* self,
                                  Method methodPtr,
                                  PikaObj* def_context,
                                  ByteCodeFrame* bytecode_frame) {
-    return __class_defineMethodWithType(self, declareation, methodPtr,
-                                        ARG_TYPE_METHOD_STATIC, def_context,
-                                        bytecode_frame);
+    return __class_defineMethodWithType(self, declareation, NULL, NULL,
+                                        methodPtr, ARG_TYPE_METHOD_STATIC,
+                                        def_context, bytecode_frame);
 }
 
 VMParameters* obj_runDirect(PikaObj* self, char* cmd) {
