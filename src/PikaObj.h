@@ -368,4 +368,69 @@ char* __printBytes(PikaObj* self, Arg* arg);
 #define PIKASCRIPT_VERSION_REQUIRE_MINIMUN(majer, minor, micro) \
     (PIKASCRIPT_VERSION_NUM >= PIKASCRIPT_VERSION_TO_NUM(majer, minor, micro))
 
+/*
+const MethodProp floatMethod = {
+    .ptr = (void*)PikaStdLib_SysObj_floatMethod,
+    .bytecode_frame = NULL,
+    .def_context = NULL,
+    .declareation = "float(arg)",
+    .type_list = "arg",
+    .name = "float",
+};
+*/
+
+#define method_typedef(_method, _name, _typelist) \
+    const MethodProp _method##Prop = {            \
+        .ptr = (void*)_method##Method,            \
+        .bytecode_frame = NULL,                   \
+        .def_context = NULL,                      \
+        .declareation = NULL,                     \
+        .type_list = _typelist,                   \
+        .name = _name,                            \
+    };
+
+/* clang-format off */
+#if PIKA_ARG_CACHE_ENABLE
+#define method_def(_method, _hash)           \
+    {                                               \
+        ._ =                                        \
+            {                                       \
+                .buffer = (uint8_t*)&_method##Prop  \
+            },                                      \
+        .size = sizeof(MethodProp),                 \
+        .heap_size = 0,                             \
+        .type = ARG_TYPE_METHOD_NATIVE,             \
+        .flag = 0,                                  \
+        .name_hash = _hash                          \
+    }
+#else
+#define method_def(_method, _hash)           \
+    {                                               \
+        ._ =                                        \
+            {                                       \
+                .buffer = (uint8_t*)&_method##Prop  \
+            },                                      \
+        .size = sizeof(MethodProp),                 \
+        .type = ARG_TYPE_METHOD_NATIVE,             \
+        .flag = 0,                                  \
+        .name_hash = _hash                          \
+    }
+#endif
+/* clang-format on */
+
+#define class_def(_class) const Arg _class##Collect[] =
+
+#define class_inhert(_class, _super)                              \
+    const NativeProperty _class##NativeProp = {                   \
+        .super = &_super##NativeProp,                             \
+        .methodGroup = _class##Collect,                           \
+        .methodGroupCount =                                       \
+            sizeof(_class##Collect) / sizeof(_class##Collect[0]), \
+    }
+
+#define pika_class(_method) _method##NativeProp
+
+#define obj_setClass(_self, _method) \
+    obj_setPtr((_self), "@p", (void*)&pika_class(_method))
+
 #endif

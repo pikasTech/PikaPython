@@ -27,9 +27,9 @@
 
 #include "PikaObj.h"
 
-const NativeProperty TinyObj_prop = {.super = NULL,
-                                     .methodGroup = NULL,
-                                     .methodGroupCount = 0};
+const NativeProperty TinyObjNativeProp = {.super = NULL,
+                                          .methodGroup = NULL,
+                                          .methodGroupCount = 0};
 
 PikaObj* New_TinyObj(Args* args) {
     PikaObj* self = New_PikaObj();

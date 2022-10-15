@@ -81,51 +81,20 @@ extern "C" {
 
 void PikaStdLib_SysObj_intMethod(PikaObj* self, Args* args);
 void PikaStdLib_SysObj_floatMethod(PikaObj* self, Args* args);
+void PikaStdLib_SysObj_printMethod(PikaObj* self, Args* args);
 
-const MethodProp floatMethod = {
-    .ptr = (void*)PikaStdLib_SysObj_floatMethod,
-    .bytecode_frame = NULL,
-    .def_context = NULL,
-    .declareation = "float(arg)",
-    .type_list = "arg",
-    .name = "float",
+method_typedef(PikaStdLib_SysObj_float, "float", "arg");
+method_typedef(PikaStdLib_SysObj_int, "int", "arg");
+method_typedef(PikaStdLib_SysObj_print, "print", "*val,**ops");
+class_def(PikaStdLib_SysObj){
+    method_def(PikaStdLib_SysObj_float, hash_time33("float")),
+    method_def(PikaStdLib_SysObj_int, hash_time33("int")),
+    method_def(PikaStdLib_SysObj_print, hash_time33("print")),
 };
-const MethodProp intMethod = {
-    .ptr = (void*)PikaStdLib_SysObj_intMethod,
-    .bytecode_frame = NULL,
-    .def_context = NULL,
-    .declareation = "int(arg)",
-    .type_list = "arg",
-    .name = "int",
-};
-const Arg methods[] = {
-    {._ = {.buffer = (uint8_t*)&floatMethod},
-     .size = sizeof(MethodProp),
-#if PIKA_ARG_CACHE_ENABLE
-     .heap_size = 0,
-#endif
-     .type = ARG_TYPE_METHOD_NATIVE,
-     .flag = 0,
-     .name_hash = 259121563},
-    {._ = {.buffer = (uint8_t*)&intMethod},
-     .size = sizeof(MethodProp),
-#if PIKA_ARG_CACHE_ENABLE
-     .heap_size = 0,
-#endif
-     .type = ARG_TYPE_METHOD_NATIVE,
-     .flag = 0,
-     .name_hash = hash_time33("int")},
-};
-
-const NativeProperty NativePropertyProp = {
-    .super = &TinyObj_prop,
-    .methodGroup = methods,
-    .methodGroupCount = sizeof(methods) / sizeof(methods[0]),
-};
-
+class_inhert(PikaStdLib_SysObj, TinyObj);
 PikaObj* New_NativeMethodBase(Args* args) {
     PikaObj* self = New_TinyObj(NULL);
-    obj_setPtr(self, "@p", (void*)&NativePropertyProp);
+    obj_setClass(self, PikaStdLib_SysObj);
     return self;
 }
 }
@@ -133,6 +102,7 @@ PikaObj* New_NativeMethodBase(Args* args) {
 TEST(class, native_class1) {
     PikaObj* native_obj = newNormalObj(New_NativeMethodBase);
     obj_run(native_obj,
+            "print('hello', 123)\n"
             "int(123.0000)\n"
             "float(123)\n");
     obj_deinit(native_obj);

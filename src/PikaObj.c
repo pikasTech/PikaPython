@@ -562,14 +562,12 @@ PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
 }
 
 Method methodArg_getPtr(Arg* method_arg) {
-    MethodProp* method_store =
-        (MethodProp*)arg_getContent(method_arg);
+    MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
     return method_store->ptr;
 }
 
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
-    MethodProp* method_store =
-        (MethodProp*)arg_getContent(method_arg);
+    MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
     if (NULL != method_store->type_list) {
         return strcpy(buffs, method_store->type_list);
     }
@@ -581,8 +579,7 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
 }
 
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
-    MethodProp* method_store =
-        (MethodProp*)arg_getContent(method_arg);
+    MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
     if (NULL != method_store->name) {
         return strcpy(buffs, method_store->name);
     }
@@ -603,20 +600,17 @@ Method obj_getNativeMethod(PikaObj* self, char* method_name) {
 }
 
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg) {
-    MethodProp* method_store =
-        (MethodProp*)arg_getContent(method_arg);
+    MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
     return method_store->bytecode_frame;
 }
 
 char* methodArg_getDec(Arg* method_arg) {
-    MethodProp* method_store =
-        (MethodProp*)arg_getContent(method_arg);
+    MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
     return method_store->declareation;
 }
 
 PikaObj* methodArg_getDefContext(Arg* method_arg) {
-    MethodProp* method_store =
-        (MethodProp*)arg_getContent(method_arg);
+    MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
     return method_store->def_context;
 }
 
