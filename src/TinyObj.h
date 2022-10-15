@@ -29,4 +29,5 @@
 #define __TYNYOBJ__H
 #include "PikaObj.h"
 PikaObj* New_TinyObj(Args* args);
+extern const NativeProperty TinyObj_Prop;
 #endif

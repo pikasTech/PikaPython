@@ -79,42 +79,67 @@ TEST(class, dir_) {
 
 extern "C" {
 
-void PikaStdLib_SysObj_intMethod(PikaObj* self, Args* args);
 void PikaStdLib_SysObj_floatMethod(PikaObj* self, Args* args);
+void PikaStdLib_SysObj_intMethod(PikaObj* self, Args* args);
+
+const MethodInfoStore NativeMethodBase_floatProp = {
+    .ptr = (void*)PikaStdLib_SysObj_floatMethod,
+    .bytecode_frame = NULL,
+    .def_context = NULL,
+    .declareation = NULL,
+    .type_list = "arg",
+    .name = "float",
+};
+
+const MethodInfoStore NativeMethodBase_intProp = {
+    .ptr = (void*)PikaStdLib_SysObj_intMethod,
+    .bytecode_frame = NULL,
+    .def_context = NULL,
+    .declareation = NULL,
+    .type_list = "arg",
+    .name = "int",
+};
+
+const Arg NativeMethodBase_MethodGroup[] = {
+    {._ = {.buffer = (uint8_t*)&NativeMethodBase_floatProp},
+     .size = sizeof(MethodInfoStore),
+#if PIKA_ARG_CACHE_ENABLE
+     .heap_size = 0,
+#endif
+     .type = ARG_TYPE_METHOD_NATIVE,
+     .flag = 0,
+     .name_hash = 259121563},
+    {._ = {.buffer = (uint8_t*)&NativeMethodBase_intProp},
+     .size = sizeof(MethodInfoStore),
+#if PIKA_ARG_CACHE_ENABLE
+     .heap_size = 0,
+#endif
+     .type = ARG_TYPE_METHOD_NATIVE,
+     .flag = 0,
+     .name_hash = 193495088},
+};
+
+const NativeProperty NativeProperty_Prop = {
+    .super = &TinyObj_Prop,
+    .methodGroup = NativeMethodBase_MethodGroup,
+    .methodGroupCount = sizeof(NativeMethodBase_MethodGroup) /
+                        sizeof(NativeMethodBase_MethodGroup[0]),
+};
+
 PikaObj* New_NativeMethodBase(Args* args) {
     PikaObj* self = New_TinyObj(NULL);
-    static const MethodInfoStore method = {
-        .ptr = (void*)PikaStdLib_SysObj_floatMethod,
-        .bytecode_frame = NULL,
-        .def_context = NULL,
-        .declareation = "float(arg)",
-        .type_list = "arg",
-        .name = "float",
-    };
-    static const Arg methods[] = {
-        {._ = {.buffer = (uint8_t*)&method},
-         .size = sizeof(method),
-#if PIKA_ARG_CACHE_ENABLE
-         .heap_size = 0,
-#endif
-         .type = ARG_TYPE_METHOD_NATIVE,
-         .flag = 0,
-         .name_hash = 259121563},
-    };
-    static const NativeProperty prop = {
-        .super = NULL,
-        .methodGroup = methods,
-        .methodGroupCount = sizeof(methods) / sizeof(methods[0]),
-    };
-    obj_setPtr(self, "@n", (void*)&prop);
+    obj_setPtr(self, "@p", (void*)&NativeProperty_Prop);
     return self;
 }
 }
 
 TEST(class, native_class1) {
     PikaObj* native_obj = newNormalObj(New_NativeMethodBase);
-    obj_run(native_obj, "float(123)\n");
+    obj_run(native_obj,
+            "int(123.0000)\n"
+            "float(123)\n");
     obj_deinit(native_obj);
+    EXPECT_STREQ(log_buff[1], "123\r\n");
     EXPECT_STREQ(log_buff[0], "123.000000\r\n");
     EXPECT_EQ(pikaMemNow(), 0);
 }
