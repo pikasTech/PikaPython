@@ -116,14 +116,14 @@ struct MethodInfo {
     ByteCodeFrame* bytecode_frame;
 };
 
-typedef struct MethodInfoStore {
+typedef struct MethodProp {
     void* ptr;
     ByteCodeFrame* bytecode_frame;
     PikaObj* def_context;
     char* declareation;
     char* type_list;
     char* name;
-} MethodInfoStore;
+} MethodProp;
 
 typedef PikaObj LibObj;
 typedef PikaObj PikaMaker;

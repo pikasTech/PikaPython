@@ -79,56 +79,53 @@ TEST(class, dir_) {
 
 extern "C" {
 
-void PikaStdLib_SysObj_floatMethod(PikaObj* self, Args* args);
 void PikaStdLib_SysObj_intMethod(PikaObj* self, Args* args);
+void PikaStdLib_SysObj_floatMethod(PikaObj* self, Args* args);
 
-const MethodInfoStore NativeMethodBase_floatProp = {
+const MethodProp floatMethod = {
     .ptr = (void*)PikaStdLib_SysObj_floatMethod,
     .bytecode_frame = NULL,
     .def_context = NULL,
-    .declareation = NULL,
+    .declareation = "float(arg)",
     .type_list = "arg",
     .name = "float",
 };
-
-const MethodInfoStore NativeMethodBase_intProp = {
+const MethodProp intMethod = {
     .ptr = (void*)PikaStdLib_SysObj_intMethod,
     .bytecode_frame = NULL,
     .def_context = NULL,
-    .declareation = NULL,
+    .declareation = "int(arg)",
     .type_list = "arg",
     .name = "int",
 };
-
-const Arg NativeMethodBase_MethodGroup[] = {
-    {._ = {.buffer = (uint8_t*)&NativeMethodBase_floatProp},
-     .size = sizeof(MethodInfoStore),
+const Arg methods[] = {
+    {._ = {.buffer = (uint8_t*)&floatMethod},
+     .size = sizeof(MethodProp),
 #if PIKA_ARG_CACHE_ENABLE
      .heap_size = 0,
 #endif
      .type = ARG_TYPE_METHOD_NATIVE,
      .flag = 0,
      .name_hash = 259121563},
-    {._ = {.buffer = (uint8_t*)&NativeMethodBase_intProp},
-     .size = sizeof(MethodInfoStore),
+    {._ = {.buffer = (uint8_t*)&intMethod},
+     .size = sizeof(MethodProp),
 #if PIKA_ARG_CACHE_ENABLE
      .heap_size = 0,
 #endif
      .type = ARG_TYPE_METHOD_NATIVE,
      .flag = 0,
-     .name_hash = 193495088},
+     .name_hash = hash_time33("int")},
 };
 
-const NativeProperty NativeProperty_Prop = {
-    .super = &TinyObj_Prop,
-    .methodGroup = NativeMethodBase_MethodGroup,
-    .methodGroupCount = sizeof(NativeMethodBase_MethodGroup) /
-                        sizeof(NativeMethodBase_MethodGroup[0]),
+const NativeProperty NativePropertyProp = {
+    .super = &TinyObj_prop,
+    .methodGroup = methods,
+    .methodGroupCount = sizeof(methods) / sizeof(methods[0]),
 };
 
 PikaObj* New_NativeMethodBase(Args* args) {
     PikaObj* self = New_TinyObj(NULL);
-    obj_setPtr(self, "@p", (void*)&NativeProperty_Prop);
+    obj_setPtr(self, "@p", (void*)&NativePropertyProp);
     return self;
 }
 }

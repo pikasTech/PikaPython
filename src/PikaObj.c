@@ -562,14 +562,14 @@ PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
 }
 
 Method methodArg_getPtr(Arg* method_arg) {
-    MethodInfoStore* method_store =
-        (MethodInfoStore*)arg_getContent(method_arg);
+    MethodProp* method_store =
+        (MethodProp*)arg_getContent(method_arg);
     return method_store->ptr;
 }
 
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
-    MethodInfoStore* method_store =
-        (MethodInfoStore*)arg_getContent(method_arg);
+    MethodProp* method_store =
+        (MethodProp*)arg_getContent(method_arg);
     if (NULL != method_store->type_list) {
         return strcpy(buffs, method_store->type_list);
     }
@@ -581,8 +581,8 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
 }
 
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
-    MethodInfoStore* method_store =
-        (MethodInfoStore*)arg_getContent(method_arg);
+    MethodProp* method_store =
+        (MethodProp*)arg_getContent(method_arg);
     if (NULL != method_store->name) {
         return strcpy(buffs, method_store->name);
     }
@@ -603,20 +603,20 @@ Method obj_getNativeMethod(PikaObj* self, char* method_name) {
 }
 
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg) {
-    MethodInfoStore* method_store =
-        (MethodInfoStore*)arg_getContent(method_arg);
+    MethodProp* method_store =
+        (MethodProp*)arg_getContent(method_arg);
     return method_store->bytecode_frame;
 }
 
 char* methodArg_getDec(Arg* method_arg) {
-    MethodInfoStore* method_store =
-        (MethodInfoStore*)arg_getContent(method_arg);
+    MethodProp* method_store =
+        (MethodProp*)arg_getContent(method_arg);
     return method_store->declareation;
 }
 
 PikaObj* methodArg_getDefContext(Arg* method_arg) {
-    MethodInfoStore* method_store =
-        (MethodInfoStore*)arg_getContent(method_arg);
+    MethodProp* method_store =
+        (MethodProp*)arg_getContent(method_arg);
     return method_store->def_context;
 }
 
@@ -649,7 +649,7 @@ void _update_proxy(PikaObj* self, char* name) {
 
 static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     Arg* arg = New_arg(NULL);
-    MethodInfoStore method_store = {
+    MethodProp method_store = {
         .ptr = method_info->ptr,
         .bytecode_frame = method_info->bytecode_frame,
         .def_context = method_info->def_context,

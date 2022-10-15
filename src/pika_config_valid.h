@@ -321,7 +321,7 @@
     #endif
 
     #ifndef PIKA_ARG_CACHE_SIZE
-        #define PIKA_ARG_CACHE_SIZE sizeof(Arg) + sizeof(MethodInfoStore)
+        #define PIKA_ARG_CACHE_SIZE sizeof(Arg) + sizeof(MethodProp)
     #endif
 
     /* configuration validation */
