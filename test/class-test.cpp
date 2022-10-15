@@ -80,23 +80,29 @@ TEST(class, dir_) {
 extern "C" {
 
 void PikaStdLib_SysObj_intMethod(PikaObj* self, Args* args);
-void PikaStdLib_SysObj_floatMethod(PikaObj* self, Args* args);
-void PikaStdLib_SysObj_printMethod(PikaObj* self, Args* args);
-
-method_typedef(PikaStdLib_SysObj_float, "float", "arg");
 method_typedef(PikaStdLib_SysObj_int, "int", "arg");
+
+void PikaStdLib_SysObj_floatMethod(PikaObj* self, Args* args);
+method_typedef(PikaStdLib_SysObj_float, "float", "arg");
+
+void PikaStdLib_SysObj_printMethod(PikaObj* self, Args* args);
 method_typedef(PikaStdLib_SysObj_print, "print", "*val,**ops");
+
 class_def(PikaStdLib_SysObj){
     method_def(PikaStdLib_SysObj_float, hash_time33("float")),
     method_def(PikaStdLib_SysObj_int, hash_time33("int")),
     method_def(PikaStdLib_SysObj_print, hash_time33("print")),
 };
 class_inhert(PikaStdLib_SysObj, TinyObj);
+
 PikaObj* New_NativeMethodBase(Args* args) {
     PikaObj* self = New_TinyObj(NULL);
     obj_setClass(self, PikaStdLib_SysObj);
     return self;
 }
+
+
+
 }
 
 TEST(class, native_class1) {

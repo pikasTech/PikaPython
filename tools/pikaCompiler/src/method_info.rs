@@ -71,7 +71,6 @@ impl MethodInfo {
         //     Some(s) => format!("->{}", s.to_string()),
         //     None => String::from(""),
         // };
-        let arg_list = self.get_arg_list_define();
         let mut class_define_method = String::from("class_defineMethod");
         if self.is_constructor {
             class_define_method = String::from("class_defineConstructor");
@@ -85,8 +84,12 @@ impl MethodInfo {
 
         define.push_str(
             format!(
-                "    {}(self, \"{}\", \"{}\", \n        {}_{}Method);\n\n",
-                class_define_method, self.name, arg_list, self.class_name, self.name
+                "    {}(self, \"{}\", \"{}\", \n        {}_{}Method);\n",
+                class_define_method,
+                self.name,
+                self.get_arg_list_define(),
+                self.class_name,
+                self.name
             )
             .as_str(),
         );
@@ -165,7 +168,15 @@ impl MethodInfo {
         method_fn_impl.push_str(&get_local_args);
         method_fn_impl.push_str(&call_method);
         method_fn_impl.push_str(&return_impl);
-        method_fn_impl.push_str("}\n\n");
+        method_fn_impl.push_str("}\n");
+        let typedef = format!(
+            "method_typedef(\n    {}_{},\n    \"{}\",\n    \"{}\"\n);\n\n",
+            self.class_name,
+            self.name,
+            self.name,
+            self.get_arg_list_define(),
+        );
+        method_fn_impl.push_str(&typedef);
         return method_fn_impl;
     }
 }

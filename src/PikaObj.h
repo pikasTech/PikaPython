@@ -391,7 +391,7 @@ const MethodProp floatMethod = {
 
 /* clang-format off */
 #if PIKA_ARG_CACHE_ENABLE
-#define method_def(_method, _hash)           \
+#define _method_def(_method, _hash, _type)           \
     {                                               \
         ._ =                                        \
             {                                       \
@@ -399,25 +399,29 @@ const MethodProp floatMethod = {
             },                                      \
         .size = sizeof(MethodProp),                 \
         .heap_size = 0,                             \
-        .type = ARG_TYPE_METHOD_NATIVE,             \
+        .type = _type,                              \
         .flag = 0,                                  \
         .name_hash = _hash                          \
     }
 #else
-#define method_def(_method, _hash)           \
+#define _method_def(_method, _hash, _type)          \
     {                                               \
         ._ =                                        \
             {                                       \
                 .buffer = (uint8_t*)&_method##Prop  \
             },                                      \
         .size = sizeof(MethodProp),                 \
-        .type = ARG_TYPE_METHOD_NATIVE,             \
+        .type = _type,                              \
         .flag = 0,                                  \
         .name_hash = _hash                          \
     }
 #endif
 /* clang-format on */
 
+#define method_def(_method, _hash) \
+    _method_def(_method, _hash, ARG_TYPE_METHOD_NATIVE)
+#define constructor_def(_method, _hash) \
+    _method_def(_method, _hash, ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR)
 #define class_def(_class) const Arg _class##Collect[] =
 
 #define class_inhert(_class, _super)                              \
