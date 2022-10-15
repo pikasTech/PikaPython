@@ -88,7 +88,6 @@ char* fast_itoa(char* buf, uint32_t val) {
     *p = '\0';
     while (val >= 100) {
         uint32_t const old = val;
-
         p -= 2;
         val /= 100;
         __platform_memcpy(p, &str100p[old - (val * 100)], sizeof(uint16_t));
@@ -323,6 +322,14 @@ PikaObj* obj_getClassObjByNewFun(PikaObj* context,
 
 Arg* _obj_getProp(PikaObj* obj, char* name) {
     NativeProperty* prop = obj_getPtr(obj, "@p");
+    PikaObj* class_obj = NULL;
+    Arg* method = NULL;
+    if (NULL == prop) {
+        if (NULL != obj->constructor) {
+            class_obj = obj_getClassObj(obj);
+            prop = obj_getPtr(class_obj, "@p");
+        }
+    }
     Hash method_hash = hash_time33(name);
     while (1) {
         if (prop == NULL) {
@@ -331,19 +338,23 @@ Arg* _obj_getProp(PikaObj* obj, char* name) {
         for (uint32_t i = 0; i < prop->methodGroupCount; i++) {
             Arg* prop_this = (Arg*)(prop->methodGroup + i);
             if (method_hash == prop_this->name_hash) {
-                return prop_this;
+                method = prop_this;
+                goto exit;
             }
         }
         prop = (NativeProperty*)prop->super;
     }
-    return NULL;
+exit:
+    if (NULL != class_obj) {
+        obj_deinit_no_del(class_obj);
+    }
+    return method;
 }
 
 Arg* _obj_getMethodArg(PikaObj* obj, char* methodPath, Arg* arg_reg) {
     Arg* method = NULL;
     char* methodName = strPointToLastToken(methodPath, '.');
     method = obj_getArg(obj, methodName);
-    PikaObj* methodHostClass;
     if (NULL != method) {
         method = arg_copy_noalloc(method, arg_reg);
         goto exit;
@@ -352,13 +363,6 @@ Arg* _obj_getMethodArg(PikaObj* obj, char* methodPath, Arg* arg_reg) {
     if (NULL != method) {
         goto exit;
     }
-    methodHostClass = obj_getClassObj(obj);
-    if (NULL == methodHostClass) {
-        method = NULL;
-        goto exit;
-    }
-    method = arg_copy_noalloc(obj_getArg(methodHostClass, methodName), arg_reg);
-    obj_deinit_no_del(methodHostClass);
 exit:
     return method;
 }
@@ -394,7 +398,7 @@ void* getNewClassObjFunByName(PikaObj* obj, char* name) {
 PikaObj* removeMethodInfo(PikaObj* thisClass) {
 #if PIKA_METHOD_CACHE_ENABLE
 #else
-    // args_removeArg(thisClass->list, args_getArg(thisClass->list, "@p"));
+    args_removeArg(thisClass->list, args_getArg(thisClass->list, "@p"));
 #endif
     return thisClass;
 }
