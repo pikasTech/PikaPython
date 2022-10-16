@@ -28,6 +28,10 @@
 PikaObj* pika_lv_event_listener_g;
 Args* pika_lv_id_register_g;
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 11, 5)
+#error "pikascript version must be greater than 1.11.5"
+#endif
+
 void pika_lvgl_STATE___init__(PikaObj* self) {
     obj_setInt(self, "DEFAULT", LV_STATE_DEFAULT);
     obj_setInt(self, "CHECKED", LV_STATE_CHECKED);
@@ -208,7 +212,7 @@ void pika_lvgl_obj___init__(PikaObj* self, PikaTuple* parent) {
     PikaObj* parent_obj = NULL;
     if (NULL == parent) {
         void pika_lvgl_flag_tMethod(PikaObj * self, Args * args);
-        class_defineConstructor(self, "FLAG()", pika_lvgl_flag_tMethod);
+        class_defineConstructor(self, "FLAG", "", pika_lvgl_flag_tMethod);
         return;
     }
     if (tuple_getSize(parent) == 1) {
