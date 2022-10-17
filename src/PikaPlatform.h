@@ -170,4 +170,8 @@ PIKA_BOOL __pks_hook_arg_cache_filter(void* self);
 #define pika_float float
 #endif
 
+#ifdef _WIN32
+#pragma warning(disable : 4996)
+#endif
+
 #endif
