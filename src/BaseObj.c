@@ -32,6 +32,10 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
+extern const NativeProperty TinyObjNativeProp;
+const NativeProperty BaseObjNativeProp = {.super = &TinyObjNativeProp,
+                                          .methodGroup = NULL,
+                                          .methodGroupCount = 0};
 
 PikaObj* New_BaseObj(Args* args) {
     PikaObj* self = New_TinyObj(args);
