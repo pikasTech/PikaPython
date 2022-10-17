@@ -416,19 +416,35 @@ const MethodProp floatMethod = {
         .name_hash = _hash                          \
     }
 #endif
+
+#ifdef _WIN32
+#define __BEFORE_MOETHOD_DEF                        \
+    {                                               \
+        ._ =                                        \
+            {                                       \
+                .buffer = NULL                      \
+            },                                      \
+        .size = 0,                                  \
+        .type = ARG_TYPE_NONE,                      \
+        .flag = 0,                                  \
+        .name_hash = 0                              \
+    },
+#else
+#define __BEFORE_MOETHOD_DEF                           
+#endif
 /* clang-format on */
 
 #define method_def(_method, _hash) \
     _method_def(_method, _hash, ARG_TYPE_METHOD_NATIVE)
 #define constructor_def(_method, _hash) \
     _method_def(_method, _hash, ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR)
-#define class_def(_class) const Arg _class##Collect[] =
+#define class_def(_class) const ConstArg _class##Collect[] =
 
 #define class_inhert(_class, _super)                              \
     extern const NativeProperty _super##NativeProp;               \
     const NativeProperty _class##NativeProp = {                   \
         .super = &_super##NativeProp,                             \
-        .methodGroup = _class##Collect,                           \
+        .methodGroup = (Arg*)_class##Collect,                     \
         .methodGroupCount =                                       \
             sizeof(_class##Collect) / sizeof(_class##Collect[0]), \
     }

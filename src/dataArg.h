@@ -75,6 +75,17 @@ struct Arg {
     uint8_t content[];
 };
 
+typedef struct ConstArg {
+    _arg_union _;
+    uint32_t size;
+#if PIKA_ARG_CACHE_ENABLE
+    uint32_t heap_size;
+#endif
+    ArgType type;
+    uint8_t flag;
+    Hash name_hash;
+}ConstArg;
+
 Arg* arg_getNext(Arg* self);
 uint32_t arg_getSize(Arg* self);
 uint8_t* arg_getContent(Arg* self);

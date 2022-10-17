@@ -200,6 +200,10 @@ impl ClassInfo {
         let class_def = format!("class_def({}){{\n", self.this_class_name);
         new_class_fn.push_str(&class_def);
 
+        // new_class_fn.push_str("#ifdef _WIN32\n");
+        new_class_fn.push_str("    __BEFORE_MOETHOD_DEF\n");
+        // new_class_fn.push_str("#endif\n");
+
         let method_info_list = self.method_list.values().collect::<Vec<&MethodInfo>>();
 
         /* sort by name_hash */
