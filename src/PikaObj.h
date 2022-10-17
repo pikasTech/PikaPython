@@ -417,7 +417,8 @@ const MethodProp floatMethod = {
     }
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || \
+    (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000))
 #define __BEFORE_MOETHOD_DEF                        \
     {                                               \
         ._ =                                        \
