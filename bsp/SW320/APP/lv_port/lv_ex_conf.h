@@ -1,0 +1,1 @@
+#define LV_USE_DEMO_WIDGETS 1
