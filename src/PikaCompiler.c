@@ -311,7 +311,7 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
     /* check version num */
     if (version_num != LIB_VERSION_NUMBER) {
         __platform_printf(
-            "Error: invalid version number. Expected %, got %\r\n",
+            "Error: invalid version number. Expected %d, got %d\r\n",
             LIB_VERSION_NUMBER, version_num);
         return PIKA_RES_ERR_INVALID_VERSION_NUMBER;
     }

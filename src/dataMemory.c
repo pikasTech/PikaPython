@@ -136,7 +136,7 @@ void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
         if (is_end) {
             break;
         }
-        __platform_printf("0x%x\t: ", i * pool->aline, (i + 15) * pool->aline);
+        __platform_printf("0x%x\t: 0x%d", i * pool->aline, (i + 15) * pool->aline);
         for (uint32_t j = i; j < i + 16; j += 4) {
             if (is_end) {
                 break;

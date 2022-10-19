@@ -6,6 +6,7 @@
 char log_buff[LOG_BUFF_MAX][LOG_SIZE] = {0};
 uint32_t log_index = 0;
 
+#ifndef __platform_printf
 /* save printf content to log_buff */
 void __platform_printf(char* fmt, ...) {
     va_list args;
@@ -19,6 +20,7 @@ void __platform_printf(char* fmt, ...) {
     vsnprintf(log_buff[0], LOG_SIZE - 1, fmt, args);
     va_end(args);
 }
+#endif
 
 /* quick_malloc is always open */
 uint8_t __is_quick_malloc(void) {

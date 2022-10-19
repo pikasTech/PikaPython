@@ -865,7 +865,7 @@ static void _do__obj_runCharBeforeRun(PikaObj* self, struct shell_config* cfg) {
     /* create the line buff for the first time */
     obj_setBytes(self, "@sh_buff", NULL, PIKA_LINE_BUFF_SIZE);
     obj_setInt(self, "@sh_is_in_block", 0);
-    __platform_printf(cfg->prefix);
+    __platform_printf("%s", cfg->prefix);
 }
 
 static void __obj_runCharBeforeRun(PikaObj* self) {
@@ -940,7 +940,7 @@ enum shell_state _do_obj_runChar(PikaObj* self,
         }
         input_line = rxBuff;
         enum shell_state state = __lineHandler_fun(self, input_line, cfg);
-        __platform_printf(cfg->prefix);
+        __platform_printf("%s", cfg->prefix);
         __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
         return state;
     }
@@ -1031,7 +1031,7 @@ void obj_shellLineProcess(PikaObj* self,
             if (is_exit) {
                 return;
             }
-            __platform_printf(cfg->prefix);
+            __platform_printf("%s", cfg->prefix);
             continue;
         }
 

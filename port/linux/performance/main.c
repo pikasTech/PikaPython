@@ -8,8 +8,10 @@
 #include "pikaScript.h"
 #include <time.h>
 
+#ifndef __platform_printf
 void __platform_printf(char* format, ...) {
 }
+#endif
 
 int main(void) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);

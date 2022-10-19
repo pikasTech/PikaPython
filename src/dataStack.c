@@ -81,9 +81,9 @@ void stack_pushPyload(Stack* stack,
             "OverflowError: pika VM stack overflow, please use bigger "
             "PIKA_STACK_BUFF_SIZE\r\n");
         __platform_printf("Info: stack size request: %d\r\n",
-                          stack_size_after_push);
+                          (int)stack_size_after_push);
         __platform_printf("Info: stack size now: %d\r\n",
-                          stack->stack_totle_size);
+                          (int)stack->stack_totle_size);
         while (1) {
         }
     }

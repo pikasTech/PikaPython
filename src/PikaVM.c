@@ -1914,7 +1914,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             }
             VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
             __platform_printf(
-                "TypeError: unsupported operand type(s) for %: 'float'\n");
+                "TypeError: unsupported operand type(s) for %%: 'float'\n");
             op.res = NULL;
             goto exit;
         case '-':
@@ -2217,7 +2217,7 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
         res = VM_instruction_handler_RIS(self, vm, data, arg_ret_reg);
         if (vm->run_state->try_state == TRY_STATE_NONE) {
             if (arg_num == 1) {
-                __platform_printf("AssertionError\n", data);
+                __platform_printf("AssertionError\n");
             }
             if (arg_num == 2) {
                 __platform_printf("AssertionError: %s\n", arg_getStr(arg2));
@@ -2834,7 +2834,7 @@ void VMState_solveUnusedStack(VMState* vm) {
             __platform_printf("%s\r\n", res);
         } else if (type == ARG_TYPE_INT) {
 #if PIKA_PRINT_LLD_ENABLE
-            __platform_printf("%lld\r\n", arg_getInt(arg));
+            __platform_printf("%ld\r\n", arg_getInt(arg));
 #else
             __platform_printf("%d\r\n", (int)arg_getInt(arg));
 #endif
