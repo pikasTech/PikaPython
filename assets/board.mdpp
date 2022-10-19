@@ -5,6 +5,7 @@
 |Board|bsp|pika_lvgl|
 |---|---|---|
 |lvgl-vs-simu|√|√|
+|swm320|√|√|
 
 |Board|bsp|arm-2d|
 |---|---|---|

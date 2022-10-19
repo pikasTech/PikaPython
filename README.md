@@ -130,6 +130,7 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 |ESP32C3        |√  |√   |√   |    |   |   |   |
 |TC264D         |√  |    |    |    |   |   |   |
 |devc           |√  |    |    |    |   |   |   |
+|visual-studio  |√  |    |    |    |   |   |   |
 |EC600N         |√  |    |    |    |   |   |   |
 |mm32f5277e9p   |√  |√   |    |    |   |   |   |
 |xr806(openharmony)|√  |    |    |    |   |   |   |
@@ -143,6 +144,7 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 |Board|bsp|pika_lvgl|
 |---|---|---|
 |lvgl-vs-simu|√|√|
+|swm320|√|√|
 
 |Board|bsp|arm-2d|
 |---|---|---|

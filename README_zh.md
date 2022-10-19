@@ -135,6 +135,7 @@ http://pikascript.com
 |ESP32C3        |√  |√   |√   |    |   |   |   |
 |TC264D         |√  |    |    |    |   |   |   |
 |devc           |√  |    |    |    |   |   |   |
+|visual-studio  |√  |    |    |    |   |   |   |
 |EC600N         |√  |    |    |    |   |   |   |
 |mm32f5277e9p   |√  |√   |    |    |   |   |   |
 |xr806(openharmony)|√  |    |    |    |   |   |   |
@@ -148,6 +149,7 @@ http://pikascript.com
 |Board|bsp|pika_lvgl|
 |---|---|---|
 |lvgl-vs-simu|√|√|
+|swm320|√|√|
 
 |Board|bsp|arm-2d|
 |---|---|---|
