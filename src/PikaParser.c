@@ -35,22 +35,28 @@
 
 /* local head */
 typedef QueueObj AST;
+char* Lexer_getTokens(Args* outBuffs, char* stmt);
 char* AST_genAsm(AST* ast, Args* outBuffs);
-char* Lexer_parseLine(Args* outBuffs, char* stmt);
 int32_t AST_deinit(AST* ast);
-char* Parser_linesToAsm(Args* outBuffs, char* multiLine);
-uint8_t Parser_isContainToken(char* tokens,
-                              enum TokenType token_type,
-                              char* pyload);
-void Cursor_init(struct Cursor* cs);
-void Cursor_parse(struct Cursor* cs, char* stmt);
-void Cursor_deinit(struct Cursor* cs);
-void Cursor_beforeIter(struct Cursor* cs);
+
+uint8_t Tokens_isContain(char* tokens, enum TokenType token_type, char* pyload);
+char* Tokens_pop(Args* buffs_p, char** tokens);
+
+/* Cursor preivilage */
+void _Cursor_init(struct Cursor* cs);
+void _Cursor_parse(struct Cursor* cs, char* stmt);
+void _Cursor_beforeIter(struct Cursor* cs);
+
+/* Cursor iter api */
 void Cursor_iterStart(struct Cursor* cs);
 void Cursor_iterEnd(struct Cursor* cs);
-char* Cursor_popToken(Args* buffs, char** tokens, char* devide);
-char* Parser_popToken(Args* buffs_p, char** tokens);
+void Cursor_deinit(struct Cursor* cs);
 
+/* Cursor high level api */
+char* Cursor_popToken(Args* buffs, char** stmt, char* devide);
+PIKA_BOOL Cursor_isContain(char* stmt, TokenType type, char* pyload);
+
+char* Parser_linesToAsm(Args* outBuffs, char* multiLine);
 uint16_t Tokens_getSize(char* tokens) {
     if (strEqu("", tokens)) {
         return 0;
@@ -139,7 +145,7 @@ char* strsDeleteBetween(Args* buffs_p, char* strIn, char begin, char end) {
 static uint8_t Lexer_isError(char* line) {
     Args buffs = {0};
     uint8_t res = 0; /* not error */
-    char* tokens = Lexer_parseLine(&buffs, line);
+    char* tokens = Lexer_getTokens(&buffs, line);
     if (NULL == tokens) {
         res = 1; /* lex error */
         goto exit;
@@ -307,18 +313,38 @@ static enum StmtType Lexer_matchStmtType(char* right) {
         goto exit;
     }
     if (is_get_string) {
+        /* support multi assign */
+        if (Cursor_isContain(right, TOKEN_devider, ",")) {
+            stmtType = STMT_tuple;
+            goto exit;
+        }
         stmtType = STMT_string;
         goto exit;
     }
     if (is_get_bytes) {
+        /* support multi assign */
+        if (Cursor_isContain(right, TOKEN_devider, ",")) {
+            stmtType = STMT_tuple;
+            goto exit;
+        }
         stmtType = STMT_bytes;
         goto exit;
     }
     if (is_get_number) {
+        /* support multi assign */
+        if (Cursor_isContain(right, TOKEN_devider, ",")) {
+            stmtType = STMT_tuple;
+            goto exit;
+        }
         stmtType = STMT_number;
         goto exit;
     }
     if (is_get_symbol) {
+        /* support multi assign */
+        if (Cursor_isContain(right, TOKEN_devider, ",")) {
+            stmtType = STMT_tuple;
+            goto exit;
+        }
         stmtType = STMT_reference;
         goto exit;
     }
@@ -337,7 +363,7 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
     /* process */
     uint16_t token_size = Tokens_getSize(tokens);
     for (uint16_t i = 0; i < token_size; i++) {
-        char* token = Parser_popToken(&buffs, &tokens);
+        char* token = Tokens_pop(&buffs, &tokens);
         if (token[0] == TOKEN_operator) {
             printOut = strsAppend(&buffs, printOut, "{opt}");
             printOut = strsAppend(&buffs, printOut, token + 1);
@@ -363,10 +389,9 @@ char* Lexer_printTokens(Args* outBuffs, char* tokens) {
 
 uint8_t Parser_checkIsDirect(char* str) {
     Args buffs = {0};
-    char* tokens = Lexer_parseLine(&buffs, str);
     uint8_t res = 0;
-    pika_assert(NULL != tokens);
-    if (Parser_isContainToken(tokens, TOKEN_operator, "=")) {
+    pika_assert(NULL != str);
+    if (Cursor_isContain(str, TOKEN_operator, "=")) {
         res = 1;
         goto exit;
     }
@@ -440,7 +465,7 @@ exit:
 
 /* tokens is devided by space */
 /* a token is [TOKENTYPE|(CONTENT)] */
-char* Lexer_parseLine(Args* outBuffs, char* stmt) {
+char* Lexer_getTokens(Args* outBuffs, char* stmt) {
     /* init */
     Arg* tokens_arg = New_arg(NULL);
     tokens_arg = arg_setStr(tokens_arg, "", "");
@@ -742,7 +767,7 @@ char* Lexer_parseLine(Args* outBuffs, char* stmt) {
     return tokens;
 }
 
-char* Parser_popToken(Args* buffs_p, char** tokens) {
+char* Tokens_pop(Args* buffs_p, char** tokens) {
     return strsPopToken(buffs_p, tokens, 0x1F);
 }
 
@@ -754,15 +779,15 @@ char* Token_getPyload(char* token) {
     return (char*)((uintptr_t)token + 1);
 }
 
-uint8_t Parser_isContainToken(char* tokens,
-                              enum TokenType token_type,
-                              char* pyload) {
+uint8_t Tokens_isContain(char* tokens,
+                         enum TokenType token_type,
+                         char* pyload) {
     Args buffs = {0};
     char* tokens_buff = strsCopy(&buffs, tokens);
     uint8_t res = 0;
     uint16_t token_size = Tokens_getSize(tokens);
     for (int i = 0; i < token_size; i++) {
-        char* token = Parser_popToken(&buffs, &tokens_buff);
+        char* token = Tokens_pop(&buffs, &tokens_buff);
         if (token_type == Token_getType(token)) {
             if (strEqu(Token_getPyload(token), pyload)) {
                 res = 1;
@@ -784,7 +809,7 @@ static const char operators[][9] = {
 char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args buffs = {0};
     char* operator= NULL;
-    char* tokens = Lexer_parseLine(&buffs, stmt);
+    char* tokens = Lexer_getTokens(&buffs, stmt);
 
     // use parse state foreach to get operator
     for (uint32_t i = 0; i < sizeof(operators) / 9; i++) {
@@ -858,7 +883,7 @@ void Cursor_iterStart(struct Cursor* cs) {
     /* token1 is the last token */
     cs->token1.token = strsCopy(cs->iter_buffs, arg_getStr(cs->last_token));
     /* token2 is the next token */
-    cs->token2.token = Parser_popToken(cs->iter_buffs, &cs->tokens);
+    cs->token2.token = Tokens_pop(cs->iter_buffs, &cs->tokens);
     /* store last token */
     arg_deinit(cs->last_token);
     cs->last_token = arg_newStr(cs->token2.token);
@@ -891,7 +916,7 @@ void LexToken_init(struct LexToken* lt) {
     lt->type = TOKEN_strEnd;
 }
 
-void Cursor_init(struct Cursor* cs) {
+void _Cursor_init(struct Cursor* cs) {
     cs->tokens = NULL;
     cs->length = 0;
     cs->iter_index = 0;
@@ -915,12 +940,12 @@ void Cursor_deinit(struct Cursor* cs) {
     args_deinit(cs->buffs_p);
 }
 
-void Cursor_parse(struct Cursor* cs, char* stmt) {
+void _Cursor_parse(struct Cursor* cs, char* stmt) {
     if (NULL == stmt) {
         cs->result = PIKA_RES_ERR_SYNTAX_ERROR;
         return;
     }
-    cs->tokens = Lexer_parseLine(cs->buffs_p, stmt);
+    cs->tokens = Lexer_getTokens(cs->buffs_p, stmt);
     if (NULL == cs->tokens) {
         cs->result = PIKA_RES_ERR_SYNTAX_ERROR;
         return;
@@ -928,13 +953,28 @@ void Cursor_parse(struct Cursor* cs, char* stmt) {
     cs->length = Tokens_getSize(cs->tokens);
 }
 
-void Cursor_beforeIter(struct Cursor* cs) {
+void _Cursor_beforeIter(struct Cursor* cs) {
     /* clear first token */
     if (cs->result != PIKA_RES_OK) {
         return;
     }
-    Parser_popToken(cs->buffs_p, &cs->tokens);
-    cs->last_token = arg_newStr(Parser_popToken(cs->buffs_p, &cs->tokens));
+    Tokens_pop(cs->buffs_p, &cs->tokens);
+    cs->last_token = arg_newStr(Tokens_pop(cs->buffs_p, &cs->tokens));
+}
+
+PIKA_BOOL Cursor_isContain(char* stmt, TokenType type, char* pyload) {
+    /* fast return */
+    if (!strstr(stmt, pyload)) {
+        return PIKA_FALSE;
+    }
+    Args buffs = {0};
+    PIKA_BOOL res = PIKA_FALSE;
+    char* tokens = Lexer_getTokens(&buffs, stmt);
+    if (Tokens_isContain(tokens, type, pyload)) {
+        res = PIKA_TRUE;
+    }
+    strsDeinit(&buffs);
+    return res;
 }
 
 char* Cursor_popToken(Args* buffs, char** tokens, char* devide) {
@@ -943,11 +983,13 @@ char* Cursor_popToken(Args* buffs, char** tokens, char* devide) {
     PIKA_BOOL is_find_devide = PIKA_FALSE;
     Cursor_forEachToken(cs, *tokens) {
         Cursor_iterStart(&cs);
-        if ((cs.branket_deepth == 0 && strEqu(cs.token1.pyload, devide)) ||
-            cs.iter_index == cs.length) {
-            is_find_devide = PIKA_TRUE;
-            Cursor_iterEnd(&cs);
-            continue;
+        if (!is_find_devide) {
+            if ((cs.branket_deepth == 0 && strEqu(cs.token1.pyload, devide)) ||
+                cs.iter_index == cs.length) {
+                is_find_devide = PIKA_TRUE;
+                Cursor_iterEnd(&cs);
+                continue;
+            }
         }
         if (!is_find_devide) {
             out_item = arg_strAppend(out_item, cs.token1.pyload);
@@ -1243,18 +1285,17 @@ uint8_t Suger_selfOperator(Args* outbuffs,
     Args buffs = {0};
     char _operator[2] = {0};
     char* operator=(char*) _operator;
-    char* tokens = Lexer_parseLine(&buffs, stmt);
     uint8_t is_right = 0;
-    if (Parser_isContainToken(tokens, TOKEN_operator, "+=")) {
+    if (Cursor_isContain(stmt, TOKEN_operator, "+=")) {
         operator[0] = '+';
     }
-    if (Parser_isContainToken(tokens, TOKEN_operator, "-=")) {
+    if (Cursor_isContain(stmt, TOKEN_operator, "-=")) {
         operator[0] = '-';
     }
-    if (Parser_isContainToken(tokens, TOKEN_operator, "*=")) {
+    if (Cursor_isContain(stmt, TOKEN_operator, "*=")) {
         operator[0] = '*';
     }
-    if (Parser_isContainToken(tokens, TOKEN_operator, "/=")) {
+    if (Cursor_isContain(stmt, TOKEN_operator, "/=")) {
         operator[0] = '/';
     }
     /* not found self operator */
@@ -1533,6 +1574,10 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     /* match statment type */
     enum StmtType stmtType = Lexer_matchStmtType(right);
+    if (STMT_tuple == stmtType) {
+        right = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "(%s)", right);
+        stmtType = STMT_method;
+    }
     /* solve operator stmt */
     if (STMT_operator == stmtType) {
         char* rightWithoutSubStmt = _remove_sub_stmt(&buffs, right);
@@ -2018,7 +2063,7 @@ AST* AST_parseLine(char* line) {
     return AST_parseLine_withBlockStack(line, NULL);
 }
 
-static char* Suger_import(Args* buffs_p, char* line) {
+static char* Suger_import_as(Args* out_buffs, char* line) {
 #if !PIKA_SYNTAX_IMPORT_EX_ENABLE
     return line;
 #endif
@@ -2027,41 +2072,27 @@ static char* Suger_import(Args* buffs_p, char* line) {
     char* alias = NULL;
     char* origin = NULL;
     char* stmt = line + 7;
+
+    /* not import, exit */
     if (!strIsStartWith(line, "import ")) {
         line_out = line;
         goto exit;
     }
 
-    Cursor_forEachToken(cs, stmt) {
-        Cursor_iterStart(&cs);
-        /* defaut set the 'origin' as the first token */
-        if (cs.iter_index == 1) {
-            origin = strsCopy(&buffs, cs.token1.pyload);
-        }
-        if (strEqu(cs.token2.pyload, " as ")) {
-            origin = strsCopy(&buffs, cs.token1.pyload);
-        }
-        if (strEqu(cs.token1.pyload, " as ")) {
-            alias = strsCopy(&buffs, cs.token2.pyload);
-        }
-        Cursor_iterEnd(&cs);
-    }
-    Cursor_deinit(&cs);
-
-    /* only import, not 'as' */
-    if (NULL == alias) {
+    if (!Cursor_isContain(stmt, TOKEN_operator, " as ")) {
         line_out = line;
         goto exit;
     }
 
+    /* {origin} as {alias} */
+    origin = Cursor_popToken(&buffs, &stmt, " as ");
+    alias = stmt;
+
     /* 'import' and 'as' */
     line_out = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "import %s\n%s = %s",
                           origin, alias, origin);
-    line_out = strsCopy(buffs_p, line_out);
-    goto exit;
 exit:
-    strsDeinit(&buffs);
-    return line_out;
+    return strsReturnOut(&buffs, out_buffs, line_out);
 }
 
 static PIKA_BOOL _check_is_multi_assign(char* arg_list) {
@@ -2144,7 +2175,7 @@ exit:
     return line_out;
 }
 
-static char* Suger_from(Args* buffs_p, char* line) {
+static char* Suger_from_import_as(Args* buffs_p, char* line) {
 #if !PIKA_SYNTAX_IMPORT_EX_ENABLE
     return line;
 #endif
@@ -2159,29 +2190,12 @@ static char* Suger_from(Args* buffs_p, char* line) {
         goto exit;
     }
 
-    Cursor_forEachToken(cs, stmt) {
-        Cursor_iterStart(&cs);
-        if (strEqu(cs.token2.pyload, " import ")) {
-            module = strsCopy(&buffs, cs.token1.pyload);
-        }
-        if (strEqu(cs.token1.pyload, " import ")) {
-            class = strsCopy(&buffs, cs.token2.pyload);
-        }
-        if (strEqu(cs.token1.pyload, " as ")) {
-            alias = strsCopy(&buffs, cs.token2.pyload);
-        }
-        Cursor_iterEnd(&cs);
-    }
-    Cursor_deinit(&cs);
-
-    if (NULL == module) {
-        line_out = strsCopy(buffs_p, "");
-        goto exit;
-    }
-
-    if (NULL == class) {
-        line_out = strsCopy(buffs_p, "");
-        goto exit;
+    module = Cursor_popToken(&buffs, &stmt, " import ");
+    if (!Cursor_isContain(stmt, TOKEN_operator, " as ")) {
+        class = stmt;
+    } else {
+        class = Cursor_popToken(&buffs, &stmt, " as ");
+        alias = stmt;
     }
 
     if (NULL == alias) {
@@ -2194,27 +2208,62 @@ static char* Suger_from(Args* buffs_p, char* line) {
         goto exit;
     }
 
-    line_out = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "import %s\n%s = %s.%s",
-                          module, alias, module, class);
+    char* class_after = "";
+    while (1) {
+        char* class_item = Cursor_popToken(&buffs, &class, ",");
+        if (class_item[0] == '\0') {
+            break;
+        }
+        class_item = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "%s.%s,", module,
+                                class_item);
+        class_after = strsAppend(&buffs, class_after, class_item);
+    }
+    class_after[strlen(class_after) - 1] = '\0';
+    class = class_after;
+
+    line_out = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "import %s\n%s = %s",
+                          module, alias, class);
     line_out = strsCopy(buffs_p, line_out);
 exit:
     strsDeinit(&buffs);
     return line_out;
 }
 
-static char* Parser_linePreProcess(Args* buffs_p, char* line) {
+static char* Suger_import(Args* buffs_p, char* line) {
+    line = Suger_import_as(buffs_p, line);
+    line = Suger_from_import_as(buffs_p, line);
+    return line;
+}
+
+static char* Parser_linePreProcess(Args* outbuffs, char* line) {
     line = Parser_removeAnnotation(line);
+    Arg* line_buff = NULL;
     /* check syntex error */
     if (Lexer_isError(line)) {
         line = NULL;
         goto exit;
     }
     /* process EOL */
-    line = strsDeleteChar(buffs_p, line, '\r');
-    line = Suger_import(buffs_p, line);
-    line = Suger_from(buffs_p, line);
-    line = Suger_multiAssign(buffs_p, line);
+    line = strsDeleteChar(outbuffs, line, '\r');
+    /* process import */
+    line = Suger_import(outbuffs, line);
+
+    /* process multi assign */
+    int line_num = strCountSign(line, '\n') + 1;
+    line_buff = arg_newStr("");
+    for (int i = 0; i < line_num; i++) {
+        if (i > 0) {
+            line_buff = arg_strAppend(line_buff, "\n");
+        }
+        char* single_line = strsPopToken(outbuffs, &line, '\n');
+        single_line = Suger_multiAssign(outbuffs, single_line);
+        line_buff = arg_strAppend(line_buff, single_line);
+    }
+    line = strsCopy(outbuffs, arg_getStr(line_buff));
 exit:
+    if (NULL != line_buff) {
+        arg_deinit(line_buff);
+    }
     return line;
 }
 

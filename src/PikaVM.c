@@ -611,7 +611,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     }
 
     /* find res in host prop */
-    if (NULL == res){
+    if (NULL == res) {
         res = _obj_getProp(host_object, arg_name);
     }
 

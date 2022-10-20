@@ -31,17 +31,18 @@
 #include "dataQueueObj.h"
 #include "dataStack.h"
 
-enum TokenType {
+typedef enum TokenType {
     TOKEN_strEnd = 0,
     TOKEN_symbol,
     TOKEN_keyword,
     TOKEN_operator,
     TOKEN_devider,
     TOKEN_literal,
-};
+} TokenType;
 
 enum StmtType {
     STMT_reference,
+    STMT_tuple,
     STMT_string,
     STMT_bytes,
     STMT_number,
@@ -106,14 +107,14 @@ char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
 int bytecodeFrame_fromLines(ByteCodeFrame* bytecode_frame, char* python_lines);
 
-#define Cursor_forEach(cursor)  \
-    Cursor_beforeIter(&cursor); \
+#define Cursor_forEach(cursor)   \
+    _Cursor_beforeIter(&cursor); \
     for (int __i = 0; __i < cursor.length; __i++)
 
 #define Cursor_forEachTokenExistPs(cursor, tokens) \
     /* init parserStage */                         \
-    Cursor_init(&cursor);                          \
-    Cursor_parse(&cursor, tokens);                 \
+    _Cursor_init(&cursor);                         \
+    _Cursor_parse(&cursor, tokens);                \
     Cursor_forEach(cursor)
 
 #define Cursor_forEachToken(cursor, tokens) \

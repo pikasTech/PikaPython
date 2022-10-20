@@ -62,6 +62,12 @@ char* strsAppend(Args* buffs_p, char* strOrigin, char* strToAppend) {
     return strOut;
 }
 
+char* strsReturnOut(Args* buffs, Args* outbuffs, char* str) {
+    char* line_out = strsCopy(outbuffs, str);
+    strsDeinit(buffs);
+    return line_out;
+}
+
 char* strsGetLastToken(Args* buffs_p, char* argPath, char sign) {
     int32_t size = strGetSize(argPath);
     char* buff = args_getBuff(buffs_p, size);

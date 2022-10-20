@@ -518,6 +518,7 @@ TEST(make, compile_depend) {
     pikaMaker_setPWD(maker, "package/pikascript/");
     pikaMaker_getDependencies(maker, "main");
     char* uncompiled = pikaMaker_getFirstNocompiled(maker);
+    pika_assert(NULL != uncompiled);
     pikaMaker_compileModule(maker, uncompiled);
     pikaMaker_getDependencies(maker, uncompiled);
     uncompiled = pikaMaker_getFirstNocompiled(maker);

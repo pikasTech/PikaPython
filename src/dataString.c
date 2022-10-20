@@ -111,7 +111,7 @@ size_t strGetSize(char* pData) {
 }
 
 char* strPointToLastToken(char* strIn, char sign) {
-    if(!strIsContain(strIn, sign)){
+    if (!strIsContain(strIn, sign)) {
         return strIn;
     }
     int32_t size = strGetSize(strIn);
@@ -191,6 +191,10 @@ int32_t strIsStartWith(char* str, char* strStart) {
         /* input is null */
         return 0;
     }
+    /* fast return */
+    if (str[0] != strStart[0]) {
+        return 0;
+    }
     uint32_t size = strGetSize(strStart);
     if (0 == strncmp(str, strStart, size)) {
         return 1;
@@ -217,8 +221,8 @@ char* strRemovePrefix(char* inputStr, char* prefix, char* outputStr) {
 }
 
 int32_t strIsContain(char* str, char ch) {
-    while(*str){
-        if (*str == ch){
+    while (*str) {
+        if (*str == ch) {
             return 1;
         }
         str++;
