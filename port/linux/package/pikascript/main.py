@@ -1,25 +1,9 @@
-from PikaObj import *
-import PikaStdLib
-import PikaStdDevice
-import ctypes
-import GTestTask
-import PikaMath
-import test_module1, test_cmodule
-import TempDevTest
-import cjson_test
-import test_module4
-import pika_lua
-import import_test
+import PikaStdLib, PikaStdDevice, PikaMath, PikaDebug, PikaCV, PikaNN
+import random, re, modbus, socket, unittest, binascii, ctypes
+import pika_lua, pika_cjson, cjson_test
+import GTestTask, TempDevTest
 import configparser
-import PikaDebug
-import PikaCV
-import binascii
-import unittest
-import socket
-import random
-import re
-import PikaNN
-import modbus
+import test_module1, test_cmodule, test_module4, import_test
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')

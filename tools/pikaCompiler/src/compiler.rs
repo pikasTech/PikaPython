@@ -79,8 +79,31 @@ impl Compiler {
         };
         compiler.class_name_now = Some(class_name.clone());
 
-        if line.starts_with("import ") || line.starts_with("from ") {
+        if line.starts_with("import ") {
+            let tokens: Vec<&str> = line.split(" as ").collect();
+            let package_list = tokens[0];
+            let package_list = package_list.replace("import ", "");
+            let package_list = package_list.replace(" ", "");
+            // get token 1 to
+            if package_list == "PikaObj" {
+                return compiler;
+            }
+
+            if is_top_pkg {
+                /* add to script */
+                class_now.script_list.add(&line);
+            }
+
+            let package_items: Vec<&str> = package_list.split(',').collect();
+            for item in package_items {
+                compiler = Compiler::analyse_package_from_py(compiler, item.to_string());
+            }
+            return compiler;
+        }
+
+        if line.starts_with("from ") {
             let tokens: Vec<&str> = line.split(' ').collect();
+            // get token 1 to
             let package_name = tokens[1];
             if package_name == "PikaObj" {
                 return compiler;
