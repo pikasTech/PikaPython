@@ -615,6 +615,7 @@ while True:
 
 | 贡献记录 | 贡献者 |
 | --- | --- |
+| Donate：500¥ | [edmund_wz](https://gitee.com/edmund_wz) |
 | Donate：500¥ | [Meco Jianting Man](https://github.com/mysterywolf) |
 | Donate：500¥ | [hardsofttech](https://gitee.com/hardsofttech) |
 | re module | [eglwang](https://gitee.com/eglwang) |

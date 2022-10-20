@@ -617,6 +617,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+| Donate：500¥ | [edmund_wz](https://gitee.com/edmund_wz) |
 | Donate：500¥ | [Meco Jianting Man](https://github.com/mysterywolf) |
 | Donate：500¥ | [hardsofttech](https://gitee.com/hardsofttech) |
 | re module | [eglwang](https://gitee.com/eglwang) |
