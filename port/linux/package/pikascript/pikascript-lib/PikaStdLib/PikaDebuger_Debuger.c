@@ -5,7 +5,7 @@ extern volatile PikaObj* __pikaMain;
 static enum shell_state __obj_shellLineHandler_debug(
     PikaObj* self,
     char* input_line,
-    struct shell_config* config) {
+    struct ShellConfig* config) {
     /* continue */
     if (strEqu("c", input_line)) {
         return SHELL_STATE_EXIT;
@@ -48,8 +48,9 @@ void PikaDebug_Debuger_set_trace(PikaObj* self) {
     if (!obj_getInt(self, "enable")) {
         return;
     }
-    struct shell_config cfg = {
+    struct ShellConfig cfg = {
         .prefix = "(pika-debug) ",
+        .handler = __obj_shellLineHandler_debug,
     };
-    obj_shellLineProcess(self, __obj_shellLineHandler_debug, &cfg);
+    obj_shellLineProcess(self, &cfg);
 }

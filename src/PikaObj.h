@@ -249,22 +249,23 @@ char* fast_itoa(char* buf, uint32_t val);
 void pikaScriptShell(PikaObj* self);
 enum shell_state { SHELL_STATE_CONTINUE, SHELL_STATE_EXIT };
 
-struct shell_config {
+typedef struct ShellConfig ShellConfig;
+typedef enum shell_state (*sh_handler)(PikaObj*, char*, ShellConfig*);
+
+struct ShellConfig {
     char* prefix;
+    sh_handler handler;
     void* context;
+    char lineBuff[PIKA_LINE_BUFF_SIZE];
+    char* blockBuffName;
+    PIKA_BOOL inBlock;
 };
 
-typedef enum shell_state (*__obj_shellLineHandler_t)(PikaObj*,
-                                                     char*,
-                                                     struct shell_config*);
-
-void obj_shellLineProcess(PikaObj* self,
-                          __obj_shellLineHandler_t __lineHandler_fun,
-                          struct shell_config* cfg);
+void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg);
 
 void _temp_obj_shellLineProcess(PikaObj* self,
-                                __obj_shellLineHandler_t __lineHandler_fun,
-                                struct shell_config* cfg);
+                                sh_handler __lineHandler_fun,
+                                struct ShellConfig* cfg);
 
 /*
     need implament :
@@ -304,7 +305,6 @@ int32_t obj_newMetaObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int obj_runModule(PikaObj* self, char* module_name);
 char* obj_toStr(PikaObj* self);
-void obj_runCharInit(PikaObj* self);
 Arg* arg_newDirectObj(NewFun new_obj_fun);
 enum shell_state obj_runChar(PikaObj* self, char inputChar);
 

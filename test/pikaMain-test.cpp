@@ -1913,7 +1913,6 @@ TEST(pikaMain, REPL_push_mode) {
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
-    obj_runCharInit(self);
     char lines[] =
         "print('test')\n"
         "for i in range(0, 10):\n"
