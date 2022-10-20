@@ -2229,10 +2229,39 @@ exit:
     return line_out;
 }
 
-static char* Suger_import(Args* buffs_p, char* line) {
-    line = Suger_import_as(buffs_p, line);
-    line = Suger_from_import_as(buffs_p, line);
-    return line;
+static char* Suger_import(Args* outbuffs, char* line) {
+    line = Suger_import_as(outbuffs, line);
+    line = Suger_from_import_as(outbuffs, line);
+    Arg* line_buff = arg_newStr("");
+    while (1) {
+        char* single_line = strPopFirstToken(&line, '\n');
+        if (single_line[0] == '\0') {
+            break;
+        }
+        if (strIsStartWith(single_line, "import ")) {
+            if (strIsContain(single_line, ',')) {
+                single_line = single_line + 7;
+                while (1) {
+                    char* single_import = strPopFirstToken(&single_line, ',');
+                    if (single_import[0] == '\0') {
+                        break;
+                    }
+                    line_buff = arg_strAppend(line_buff, "import ");
+                    line_buff = arg_strAppend(line_buff, single_import);
+                    line_buff = arg_strAppend(line_buff, "\n");
+                }
+                char* line_after = arg_getStr(line_buff);
+                line_after[strlen(line_after) - 1] = '\0';
+            }
+        }
+        line_buff = arg_strAppend(line_buff, single_line);
+        line_buff = arg_strAppend(line_buff, "\n");
+    }
+    char* line_after = arg_getStr(line_buff);
+    line_after[strlen(line_after) - 1] = '\0';
+    line_after = strsCopy(outbuffs, line_after);
+    arg_deinit(line_buff);
+    return line_after;
 }
 
 static char* Parser_linePreProcess(Args* outbuffs, char* line) {

@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                "--gtest_filter=parser.multi_from_import_as"
+                "--gtest_filter=parser.multi_import"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -321,7 +321,7 @@
     #endif
 
     #ifndef PIKA_ARG_CACHE_SIZE
-        #define PIKA_ARG_CACHE_SIZE sizeof(Arg) + 8
+        #define PIKA_ARG_CACHE_SIZE sizeof(Arg) + 16
     #endif
 
     /* configuration validation */

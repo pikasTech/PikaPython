@@ -4,8 +4,7 @@ import PikaStdDevice
 import ctypes
 import GTestTask
 import PikaMath
-import test_module1
-import test_cmodule
+import test_module1, test_cmodule
 import TempDevTest
 import cjson_test
 import test_module4
