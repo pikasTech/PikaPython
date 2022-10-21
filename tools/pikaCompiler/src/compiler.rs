@@ -96,7 +96,7 @@ impl Compiler {
 
             let package_items: Vec<&str> = package_list.split(',').collect();
             for item in package_items {
-                compiler = Compiler::analyse_package_from_py(compiler, item.to_string());
+                compiler = Compiler::analyse_py_or_pyi_or_pyo(compiler, item.to_string());
             }
             return compiler;
         }
@@ -114,7 +114,7 @@ impl Compiler {
                 class_now.script_list.add(&line);
             }
 
-            return Compiler::analyse_package_from_py(compiler, package_name.to_string());
+            return Compiler::analyse_py_or_pyi_or_pyo(compiler, package_name.to_string());
         }
 
         if is_top_pkg {
@@ -152,7 +152,26 @@ impl Compiler {
         return self.__do_analyse_file(file_name, PackageType::CPackageInner);
     }
 
-    pub fn analyse_package_from_py(mut self: Compiler, file_name: String) -> Compiler {
+    pub fn analyse_py_or_pyi_or_pyo(mut self: Compiler, file_name: String) -> Compiler {
+        /* check py.o */
+        let suffix = String::from("py.o");
+        /* open file */
+        let file: std::result::Result<std::fs::File, std::io::Error>;
+        file = Compiler::open_file(format!("{}{}.{}", self.source_path, file_name, suffix));
+        match file {
+            /* py import py.o => do nothing */
+            Ok(_) => {
+                println!(
+                    "    found {}{}.{}...",
+                    self.source_path, file_name, suffix
+                );
+                return self;
+            }
+            /* continue */
+            Err(_) => {}
+        }
+
+        /* check pyi */
         let suffix = String::from("pyi");
         /* open file */
         let file: std::result::Result<std::fs::File, std::io::Error>;
@@ -171,11 +190,12 @@ impl Compiler {
 
                 return Compiler::analyse_c_package_top(self, file_name);
             }
-            Err(_) => {
-                /* py import py => inner_py */
-                return self.analyse_py_package_inner(file_name.clone());
-            }
+            /* continue */
+            Err(_) => {}
         };
+
+        /* py import py => inner_py */
+        return self.analyse_py_package_inner(file_name.clone());
     }
 
     fn __do_analyse_file(mut self: Compiler, file_name: String, pkg_type: PackageType) -> Compiler {
@@ -205,15 +225,15 @@ impl Compiler {
         let mut file = match file {
             Ok(file) => file,
             Err(_) => {
-                if suffix == "pyi" {
-                    /* if .pyi no exist, check .py exist */
-                    return self.analyse_py_package_inner(file_name.clone());
-                }
-
                 /* .py no exist, error */
                 println!(
-                    "    [warning]: file: '{}{}.pyi' or '{}{}.py' no found",
-                    self.source_path, file_name, self.source_path, file_name
+                    "    [warning]: file: '{}{}.pyi', '{}{}.py' or '{}{}.py.o' no found",
+                    self.source_path,
+                    file_name,
+                    self.source_path,
+                    file_name,
+                    self.source_path,
+                    file_name
                 );
                 return self;
             }
@@ -318,6 +338,7 @@ impl Compiler {
         if line.starts_with("import ") {
             let tokens: Vec<&str> = line.split(" ").collect();
             let file = tokens[1];
+            /* cmodule cannot import pymodule */
             return Compiler::analyse_c_package_inner(compiler, file.to_string());
         }
 

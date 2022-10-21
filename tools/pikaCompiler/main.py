@@ -2,6 +2,7 @@ import PikaStdLib
 import test, module
 
 import TemplateDevice
+import test_pyo
 from pika_cjson import cJSON
 print('hello pikascript!')
 mem = PikaStdLib.MemChecker()

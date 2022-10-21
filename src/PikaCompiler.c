@@ -480,7 +480,36 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                     strsAppend(&buffs, imp_module_path, ".py"), "rb");
                 FILE* imp_file_pyi = __platform_fopen(
                     strsAppend(&buffs, imp_module_path, ".pyi"), "rb");
-                if (NULL != imp_file_py) {
+                FILE* imp_file_pyo = __platform_fopen(
+                    strsAppend(&buffs, imp_module_path, ".py.o"), "rb");
+                if (NULL != imp_file_pyo) {
+                    __platform_printf("  loading %s.py.o...\r\n",
+                                      imp_module_path);
+                    /* found *.py.o, push to compiled list */
+                    pikaMaker_setState(self, imp_module_name, "compiled");
+                    char* imp_api_path = strsAppend(
+                        &buffs, obj_getStr(self, "pwd"), "pikascript-api/");
+                    imp_api_path =
+                        strsAppend(&buffs, imp_api_path, imp_module_name);
+                    FILE* imp_file_pyo_api = __platform_fopen(
+                        strsAppend(&buffs, imp_api_path, ".py.o"), "wb+");
+                    /* copy imp_file_pyo to imp_api_path */
+                    uint8_t* buff = (uint8_t*)__platform_malloc(128);
+                    size_t read_size = 0;
+                    while (1) {
+                        read_size =
+                            __platform_fread(buff, 1, 128, imp_file_pyo);
+                        if (read_size > 0) {
+                            __platform_fwrite(buff, 1, read_size,
+                                              imp_file_pyo_api);
+                        } else {
+                            break;
+                        }
+                    }
+                    __platform_free(buff);
+                    __platform_fclose(imp_file_pyo);
+                    __platform_fclose(imp_file_pyo_api);
+                } else if (NULL != imp_file_py) {
                     /* found *.py, push to nocompiled list */
                     pikaMaker_setState(self, imp_module_name, "nocompiled");
                     __platform_fclose(imp_file_py);
@@ -490,8 +519,9 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                     __platform_fclose(imp_file_pyi);
                 } else {
                     __platform_printf(
-                        "    [warning]: file: '%s.pyi' or '%s.py' no found\n",
-                        imp_module_name, imp_module_name);
+                        "    [warning]: file: '%s.pyi', '%s.py' or '%s.py.o' "
+                        "no found\n",
+                        imp_module_name, imp_module_name, imp_module_name);
                 }
             }
         }
