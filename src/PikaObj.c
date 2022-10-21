@@ -1020,15 +1020,15 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
             char* file_name = PIKA_SHELL_SAVE_FILE_NAME;
             __platform_printf("[   Info] Saving file to '%s'...\r\n",
                               file_name);
-            FILE* fp = __platform_fopen(file_name, "wb");
+            FILE* fp = __platform_fopen(file_name, "w+");
             if (NULL == fp) {
                 __platform_printf("[  Error] Open file '%s' error!\r\n",
                                   file_name);
                 __platform_fclose(fp);
             } else {
-                __platform_fwrite(buff, 1, len + 1, fp);
+                __platform_fwrite(buff, 1, len, fp);
                 __platform_printf("[   Info] Writing %d bytes to '%s'\r\n",
-                                  (int)(len + 1), file_name);
+                                  (int)(len), file_name);
                 __platform_fclose(fp);
             }
 #endif
