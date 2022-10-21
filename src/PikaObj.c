@@ -876,7 +876,6 @@ enum shell_state _do_obj_runChar(PikaObj* self,
                                  char inputChar,
                                  ShellConfig* cfg) {
     char* rxBuff = cfg->lineBuff;
-    int is_in_block = cfg->inBlock;
     char* input_line = NULL;
 #if !(defined(__linux) || defined(_WIN32))
     __platform_printf("%c", inputChar);
@@ -900,7 +899,7 @@ enum shell_state _do_obj_runChar(PikaObj* self,
         __platform_printf("\r\n");
 #endif
         /* still in block */
-        if (is_in_block) {
+        if (cfg->blockBuffName != NULL && cfg->inBlock) {
             /* load new line into buff */
             Args buffs = {0};
             char _n = '\n';
@@ -922,7 +921,7 @@ enum shell_state _do_obj_runChar(PikaObj* self,
             __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
             return SHELL_STATE_CONTINUE;
         }
-        if (0 != strGetSize(rxBuff)) {
+        if (cfg->blockBuffName != NULL && 0 != strGetSize(rxBuff)) {
             /* go in block */
             if (rxBuff[strGetSize(rxBuff) - 1] == ':') {
                 cfg->inBlock = PIKA_TRUE;
@@ -1032,9 +1031,7 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
     }
 }
 
-void _temp_obj_shellLineProcess(PikaObj* self,
-                                sh_handler __lineHandler_fun,
-                                ShellConfig* cfg) {
+void _temp_obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
     /* init the shell */
     _obj_runChar_beforeRun(self, cfg);
 
@@ -1062,7 +1059,7 @@ static enum shell_state __obj_shellLineHandler_REPL(PikaObj* self,
 
 void pikaScriptShell(PikaObj* self) {
     ShellConfig cfg = {
-        .handler= __obj_shellLineHandler_REPL,
+        .handler = __obj_shellLineHandler_REPL,
         .prefix = ">>> ",
         .blockBuffName = "@sh0",
     };

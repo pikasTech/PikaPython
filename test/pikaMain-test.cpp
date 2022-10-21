@@ -1114,11 +1114,11 @@ TEST(pikaMain, class_arg) {
     __platform_printf("BEGIN\r\n");
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_linesToAsm(buffs,
-                                          "class Test(TinyObj):\n"
-                                          "    x = 1\n"
-                                          "\n"
-                                          "test = Test()\n"
-                                          "print(test.x)\n");
+                                      "class Test(TinyObj):\n"
+                                      "    x = 1\n"
+                                      "\n"
+                                      "test = Test()\n"
+                                      "print(test.x)\n");
     printf("%s", pikaAsm);
     pikaVM_runAsm(pikaMain, pikaAsm);
     /* assert */
@@ -1842,7 +1842,6 @@ TEST(pikaMain, builtin_hex) {
 }
 #endif
 
-
 #if !PIKA_NANO_ENABLE
 TEST(pikaMain, builtin_ord) {
     /* init */
@@ -1931,6 +1930,27 @@ TEST(pikaMain, REPL_push_mode) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+#if 0
+TEST(pikaMain, REPL_input) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    char lines[] =
+        "res = input('input:\\n')\n"
+        "1234\n"
+        "print(res)\n";
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(self, lines[i]);
+    }
+    /* assert */
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(pikaMain, int_from_bytes) {

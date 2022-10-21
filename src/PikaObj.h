@@ -263,9 +263,7 @@ struct ShellConfig {
 
 void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg);
 
-void _temp_obj_shellLineProcess(PikaObj* self,
-                                sh_handler __lineHandler_fun,
-                                struct ShellConfig* cfg);
+void _temp_obj_shellLineProcess(PikaObj* self, ShellConfig* cfg);
 
 /*
     need implament :

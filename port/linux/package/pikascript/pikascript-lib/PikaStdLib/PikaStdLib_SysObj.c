@@ -631,11 +631,15 @@ static enum shell_state __obj_shellLineHandler_input(PikaObj* self,
 }
 
 char* PikaStdLib_SysObj_input(PikaObj* self, PikaTuple* info) {
-    struct ShellConfig cfg = {.prefix = "", .context = NULL};
+    struct ShellConfig cfg = {
+        .prefix = "",
+        .context = NULL,
+        .handler = __obj_shellLineHandler_input,
+    };
     if (tuple_getSize(info) > 0) {
         __platform_printf("%s", tuple_getStr(info, 0));
     }
-    _temp_obj_shellLineProcess(self, __obj_shellLineHandler_input, &cfg);
+    _temp_obj_shellLineProcess(self, &cfg);
     char* res = obj_cacheStr(self, arg_getStr(cfg.context));
     arg_deinit(cfg.context);
     return res;
