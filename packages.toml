@@ -198,7 +198,8 @@ releases = [ "v0.1.0 7244267b6839b8af2238b6cdd9a73e4a3aebb347" ]
 name = "configparser"
 releases = [
   "v0.1.0 d3a9f6e226bb9cfccbfc588cc465672cefea9e82",
-  "v0.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e"
+  "v0.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
+  "v0.2.1 5fa138c9c19a315d66d8e02fa5901479e30ca892"
 ]
 
 [[packages]]
