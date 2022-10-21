@@ -324,6 +324,13 @@
         #define PIKA_ARG_CACHE_SIZE sizeof(Arg) + 16
     #endif
 
+    #ifndef PIKA_SHELL_SAVE_FILE_ENABLE
+        #define PIKA_SHELL_SAVE_FILE_ENABLE 0
+    #endif
+
+    #ifndef PIKA_SHELL_SAVE_FILE_NAME
+        #define PIKA_SHELL_SAVE_FILE_NAME "pika_shell_save.py"
+    #endif
     /* configuration validation */
 
 #endif

@@ -999,7 +999,7 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
                 buff[buff_i++] = input[0];
             }
             /* end */
-            __platform_printf("\r\n=============== [code] ===============\r\n");
+            __platform_printf("\r\n=============== [Code] ===============\r\n");
             size_t len = strGetSize(buff);
             for (size_t i = 0; i < len; i++) {
                 if (buff[i] == '\r') {
@@ -1012,7 +1012,27 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
                 __platform_printf("%c", buff[i]);
             }
             __platform_printf("\r\n");
-            __platform_printf("=============== [code] ===============\r\n");
+            __platform_printf("=============== [File] ===============\r\n");
+            __platform_printf("[   Info] File buff used: %d/%d (%0.2f%%)\r\n",
+                              (int)len, (int)PIKA_READ_FILE_BUFF_SIZE,
+                              ((float)len / (float)PIKA_READ_FILE_BUFF_SIZE));
+#if PIKA_SHELL_SAVE_FILE_ENABLE
+            char* file_name = PIKA_SHELL_SAVE_FILE_NAME;
+            __platform_printf("[   Info] Saving file to '%s'...\r\n",
+                              file_name);
+            FILE* fp = __platform_fopen(file_name, "wb");
+            if (NULL == fp) {
+                __platform_printf("[  Error] Open file '%s' error!\r\n",
+                                  file_name);
+                __platform_fclose(fp);
+            } else {
+                __platform_fwrite(buff, 1, len + 1, fp);
+                __platform_printf("[   Info] Writing %d bytes to '%s'\r\n",
+                                  (int)(len + 1), file_name);
+                __platform_fclose(fp);
+            }
+#endif
+            __platform_printf("=============== [ Run] ===============\r\n");
             obj_run(self, (char*)buff);
             if (NULL != strstr(buff, "exit()")) {
                 is_exit = PIKA_TRUE;
