@@ -1027,9 +1027,11 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
                 __platform_fclose(fp);
             } else {
                 __platform_fwrite(buff, 1, len, fp);
-                __platform_printf("[   Info] Writing %d bytes to '%s'\r\n",
+                __platform_printf("[   Info] Writing %d bytes to '%s'...\r\n",
                                   (int)(len), file_name);
                 __platform_fclose(fp);
+                __platform_printf("[    OK ] Writing to '%s' succeed!\r\n",
+                                  file_name);
             }
 #endif
             __platform_printf("=============== [ Run] ===============\r\n");
