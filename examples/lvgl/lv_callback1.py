@@ -1,3 +1,4 @@
+#!pika
 import pika_lvgl as lv
 import PikaStdLib
 mem = PikaStdLib.MemChecker()
@@ -22,3 +23,5 @@ btn2.add_event_cb(event_cb_2, lv.EVENT.CLICKED, 0)
 
 print('mem used max: %0.2f kB' % (mem.getMax()))
 print('mem used now: %0.2f kB' % (mem.getNow()))
+
+#!pika

@@ -1,3 +1,4 @@
+#!pika
 import pika_lvgl as lv
 import PikaStdLib
 mem = PikaStdLib.MemChecker()
@@ -11,3 +12,5 @@ obj2.align(lv.ALIGN.CENTER, 60, 30)
 
 print('mem used max: %0.2f kB' % (mem.getMax()))
 print('mem used now: %0.2f kB' % (mem.getNow()))
+
+#!pika

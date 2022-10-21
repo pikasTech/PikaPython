@@ -1,3 +1,4 @@
+#!pika
 import pika_lvgl as lv
 from PikaStdLib import MemChecker
 
@@ -28,3 +29,5 @@ obj.add_event_cb(drag_event_handler, lv.EVENT.PRESSING, None)
 label = lv.label(obj)
 label.set_text("Drag me")
 label.center()
+
+#!pika

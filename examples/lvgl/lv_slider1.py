@@ -1,3 +1,4 @@
+#!pika
 import pika_lvgl as lv
 import PikaStdLib
 mem = PikaStdLib.MemChecker()
@@ -14,3 +15,5 @@ slider_label.align_to(slider, lv.ALIGN.OUT_BOTTOM_MID, 0, 10)
 
 print('mem used max: %0.2f kB' % (mem.getMax()))
 print('mem used now: %0.2f kB' % (mem.getNow()))
+
+#!pika
