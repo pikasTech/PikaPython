@@ -391,4 +391,7 @@ releases = [ "v0.0.1 b3b2f1c0e30b703666342ae4628e544299cdbd11" ]
 
 [[packages]]
 name = "pika_fatfs"
-releases = [ "v0.0.1 280700b8a8eee1849d16ac68871d014392edf269" ]
+releases = [
+  "v0.0.1 280700b8a8eee1849d16ac68871d014392edf269",
+  "v0.1.0 8ab8cd90be83f1cb86e2b2bcbb3b68d99d034815"
+]
