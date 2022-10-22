@@ -1343,7 +1343,7 @@ TEST(pikaMain, class_demo_1_file) {
     pikaCompile("pika_bytecode.bin", lines);
     char bytecodebuff[4096] = {0};
     FILE* f = __platform_fopen("pika_bytecode.bin", "rb");
-    printf("size: %ld\n", fread(bytecodebuff, 1, 4096, f));
+    printf("size: %ld\n", __platform_fread(bytecodebuff, 1, 4096, f));
     __platform_printf("BEGIN\r\n");
     pikaVM_runByteCode(self, (uint8_t*)bytecodebuff);
     /* assert */

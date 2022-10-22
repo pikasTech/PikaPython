@@ -67,7 +67,10 @@
         "_modbus__modbustcp.h": "c",
         "pikastddata_string.h": "c",
         "gtesttask_proxytest.h": "c",
-        "datastack.h": "c"
+        "datastack.h": "c",
+        "syscall.h": "c",
+        "fcntl.h": "c"
     },
-    "python.formatting.provider": "autopep8"
+    "python.formatting.provider": "autopep8",
+    "C_Cpp.errorSquiggles": "Disabled"
 }
