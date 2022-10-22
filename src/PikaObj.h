@@ -236,9 +236,7 @@ char* methodArg_getName(Arg* method_arg, char* buffs, size_t size);
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg);
 Method methodArg_getPtr(Arg* method_arg);
 
-void obj_runNoRes(PikaObj* slef, char* cmd);
-void obj_run(PikaObj* self, char* cmd);
-VMParameters* obj_runDirect(PikaObj* self, char* cmd);
+VMParameters* obj_run(PikaObj* self, char* cmd);
 PikaObj* New_PikaObj(void);
 
 /* tools */

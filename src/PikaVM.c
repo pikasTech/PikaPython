@@ -2478,13 +2478,13 @@ static VMParameters* __pikaVM_runPyLines_or_byteCode(PikaObj* self,
     /*
      * the first obj_run, cache bytecode to heap, to support 'def' and 'class'
      */
-    if (!args_isArgExist(self->list, "__first_bytecode")) {
+    if (!args_isArgExist(self->list, "@bc0")) {
         is_use_heap_bytecode = 1;
         /* load bytecode to heap */
-        args_setHeapStruct(self->list, "__first_bytecode", bytecode_frame_stack,
+        args_setHeapStruct(self->list, "@bc0", bytecode_frame_stack,
                            byteCodeFrame_deinit);
         /* get bytecode_ptr from heap */
-        bytecode_frame_p = args_getHeapStruct(self->list, "__first_bytecode");
+        bytecode_frame_p = args_getHeapStruct(self->list, "@bc0");
     } else {
         /* not the first obj_run */
         /* save 'def' and 'class' to heap */

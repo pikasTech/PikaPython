@@ -55,7 +55,7 @@ int32_t main()
         fgets(inputBuff, sizeof(inputBuff), stdin);
 
         /* run PikaScript and get res */
-        PikaObj *globals = obj_runDirect(root, inputBuff);
+        PikaObj *globals = obj_run(root, inputBuff);
 
         /* get system output of PikaScript*/
         char *sysOut = args_getSysOut(globals->list);;

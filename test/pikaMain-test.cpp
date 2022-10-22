@@ -10,9 +10,9 @@ TEST(pikaMain, init) {
 TEST(pikaMain, new_mem) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    VMParameters* globals = obj_runDirect(pikaMain,
-                                          "mem = PikaStdLib.MemChecker()\n"
-                                          "mem.max()\n");
+    VMParameters* globals = obj_run(pikaMain,
+                                    "mem = PikaStdLib.MemChecker()\n"
+                                    "mem.max()\n");
     PikaObj* mem = (PikaObj*)args_getPtr(globals->list, "mem");
     PikaObj* memClassPtr = (PikaObj*)mem->constructor;
     EXPECT_EQ((void*)memClassPtr, (void*)New_PikaStdLib_MemChecker);
@@ -41,13 +41,13 @@ TEST(pikaMain, list_new) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    VMParameters* globals = obj_runDirect(pikaMain,
-                                          "list = PikaStdData.List()\n"
-                                          "list.append(7)\n"
-                                          "list.append('eee')\n"
-                                          "len = list.len()\n"
-                                          "a1 = list.get(0)\n"
-                                          "a2 = list.get(1)\n");
+    VMParameters* globals = obj_run(pikaMain,
+                                    "list = PikaStdData.List()\n"
+                                    "list.append(7)\n"
+                                    "list.append('eee')\n"
+                                    "len = list.len()\n"
+                                    "a1 = list.get(0)\n"
+                                    "a2 = list.get(1)\n");
     /* collect */
     int len = obj_getInt(globals, "len");
     int a1 = obj_getInt(globals, "a1");
@@ -69,11 +69,11 @@ TEST(pikaMain, int_float_convert) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    VMParameters* globals = obj_runDirect(pikaMain,
-                                          "a = 1\n"
-                                          "a_f = float(a)\n"
-                                          "b = 1.3\n"
-                                          "b_i = int(b)\n");
+    VMParameters* globals = obj_run(pikaMain,
+                                    "a = 1\n"
+                                    "a_f = float(a)\n"
+                                    "b = 1.3\n"
+                                    "b_i = int(b)\n");
     /* collect */
     int a = obj_getInt(globals, "a");
     float a_f = obj_getFloat(globals, "a_f");
@@ -97,10 +97,10 @@ TEST(pikaMain, type_) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain,
-                  "type(1)\n"
-                  "b = 1.4\n"
-                  "type(b)\n");
+    obj_run(pikaMain,
+            "type(1)\n"
+            "b = 1.4\n"
+            "type(b)\n");
     /* collect */
 
     /* assert */
@@ -116,7 +116,7 @@ TEST(pikaMain, a_signed) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, "a = -1\n");
+    obj_run(pikaMain, "a = -1\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
 
@@ -133,7 +133,7 @@ TEST(pikaMain, a_mm) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, "a = -1.1 ** 3\n");
+    obj_run(pikaMain, "a = -1.1 ** 3\n");
     /* collect */
     float a = obj_getFloat(pikaMain, "a");
 
@@ -150,7 +150,7 @@ TEST(pikaMain, a_n1) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, "a = -2\n");
+    obj_run(pikaMain, "a = -2\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
 
@@ -167,7 +167,7 @@ TEST(pikaMain, a_l4) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain, "a = 1<<4\n");
+    obj_run(pikaMain, "a = 1<<4\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
 
@@ -184,11 +184,11 @@ TEST(pikaMain, less_equ) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain,
-                  "a = 0\n"
-                  "while a <= 10:\n"
-                  "    a += 1\n"
-                  "\n");
+    obj_run(pikaMain,
+            "a = 0\n"
+            "while a <= 10:\n"
+            "    a += 1\n"
+            "\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
 
@@ -205,24 +205,24 @@ TEST(pikaMain, and_or_not) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain,
-                  "a = 0\n"
-                  "b = 0\n"
-                  "c = 0\n"
-                  "d = 0\n"
-                  "if (1>2) or (2>1):\n"
-                  "    a = 1\n"
-                  "\n"
-                  "if (1>2) and (2>1):\n"
-                  "    b = 1\n"
-                  "\n"
-                  "if not (1>2):\n"
-                  "    c = 1\n"
-                  "\n"
-                  "if not (2>1):\n"
-                  "    d = 1\n"
-                  "\n"
-                  "e = ~1\n");
+    obj_run(pikaMain,
+            "a = 0\n"
+            "b = 0\n"
+            "c = 0\n"
+            "d = 0\n"
+            "if (1>2) or (2>1):\n"
+            "    a = 1\n"
+            "\n"
+            "if (1>2) and (2>1):\n"
+            "    b = 1\n"
+            "\n"
+            "if not (1>2):\n"
+            "    c = 1\n"
+            "\n"
+            "if not (2>1):\n"
+            "    d = 1\n"
+            "\n"
+            "e = ~1\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     int b = obj_getInt(pikaMain, "b");
@@ -285,14 +285,14 @@ TEST(pikaMain, list_method) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain,
-                  "list = PikaStdData.List()\n"
-                  "list.append(7)\n"
-                  "list.append('eee')\n"
-                  "len = list.len()\n"
-                  "a1 = list.get(0)\n"
-                  "a2 = list.get(1)\n"
-                  "\n");
+    obj_run(pikaMain,
+            "list = PikaStdData.List()\n"
+            "list.append(7)\n"
+            "list.append('eee')\n"
+            "len = list.len()\n"
+            "a1 = list.get(0)\n"
+            "a2 = list.get(1)\n"
+            "\n");
     /* collect */
     /* assert */
     /* deinit */
@@ -306,10 +306,10 @@ TEST(pikaMain, list_iter) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain,
-                  "list = PikaStdData.List()\n"
-                  "res = iter(list)\n"
-                  "\n");
+    obj_run(pikaMain,
+            "list = PikaStdData.List()\n"
+            "res = iter(list)\n"
+            "\n");
     /* collect */
     PikaObj* res = (PikaObj*)obj_getPtr(pikaMain, "res");
     PikaObj* list = (PikaObj*)obj_getPtr(pikaMain, "list");
@@ -328,15 +328,15 @@ TEST(pikaMain, list_for_loop) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain,
-                  "list = PikaStdData.List()\n"
-                  "list.append(7)\n"
-                  "list.append('eee')\n"
-                  "len = list.len()\n"
-                  "for item in list:\n"
-                  "    print(item)\n"
-                  "    a = item\n"
-                  "\n");
+    obj_run(pikaMain,
+            "list = PikaStdData.List()\n"
+            "list.append(7)\n"
+            "list.append('eee')\n"
+            "len = list.len()\n"
+            "for item in list:\n"
+            "    print(item)\n"
+            "    a = item\n"
+            "\n");
     /* collect */
     char* a = obj_getStr(pikaMain, "a");
     /* assert */
@@ -352,10 +352,10 @@ TEST(pikaMain, range) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain,
-                  "r = range(10, 0)\n"
-                  "r\n"
-                  "\n");
+    obj_run(pikaMain,
+            "r = range(10, 0)\n"
+            "r\n"
+            "\n");
     /* collect */
     /* assert */
     obj_deinit(pikaMain);
@@ -368,12 +368,12 @@ TEST(pikaMain, for_in_range) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain,
-                  "a = 0\n"
-                  "for i in range(0, 10):\n"
-                  "    print(i)\n"
-                  "    a = a + i\n"
-                  "\n");
+    obj_run(pikaMain,
+            "a = 0\n"
+            "for i in range(0, 10):\n"
+            "    print(i)\n"
+            "    a = a + i\n"
+            "\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     /* assert */
@@ -389,13 +389,13 @@ TEST(pikaMain, for_for_in_range) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain,
-                  "a = 0\n"
-                  "for i in range(0, 10):\n"
-                  "    for k in range(0, 3):\n"
-                  "        print(k)\n"
-                  "        a = a + k\n"
-                  "\n");
+    obj_run(pikaMain,
+            "a = 0\n"
+            "for i in range(0, 10):\n"
+            "    for k in range(0, 3):\n"
+            "        print(k)\n"
+            "        a = a + k\n"
+            "\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     /* assert */
@@ -411,13 +411,13 @@ TEST(pikaMain, for_if_break) {
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    obj_runDirect(pikaMain,
-                  "a = 0\n"
-                  "for i in range(0, 10):\n"
-                  "    if i == 5:\n"
-                  "        break\n"
-                  "    a = a + i\n"
-                  "\n");
+    obj_run(pikaMain,
+            "a = 0\n"
+            "for i in range(0, 10):\n"
+            "    if i == 5:\n"
+            "        break\n"
+            "    a = a + i\n"
+            "\n");
     /* collect */
     int a = obj_getInt(pikaMain, "a");
     /* assert */
@@ -460,10 +460,10 @@ TEST(pikaMain, print_in_def) {
     /* the test is used to fix too many print in def */
     /* clear the log_buff */
     memset(log_buff, 0, LOG_BUFF_MAX * LOG_SIZE);
-    obj_runDirect(pikaMain,
-                  "def test_print():\n"
-                  "    print('test')\n"
-                  "test_print()\n");
+    obj_run(pikaMain,
+            "def test_print():\n"
+            "    print('test')\n"
+            "test_print()\n");
     /* collect */
     /* assert */
     /* should only print once, so the second log (log_buff[1]) shuold be '\0' */
@@ -2684,6 +2684,35 @@ TEST(pikaMain, runchar_multiline) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[1], "hello\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, callback_run_char) {
+    char* lines =
+        "def test2():\r\n"
+        "    print('hello')\r\n"
+        "\r\n"
+        "def test():\r\n"
+        "    print('hello')\r\n"
+        "    print('in test')\r\n"
+        "\r\n"
+        "def test3():\r\n"
+        "    print('hello3')\r\n"
+        "\r\n"
+        "test()\r\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(pikaMain, lines[i]);
+    }
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "in test\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

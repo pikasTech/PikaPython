@@ -2,7 +2,7 @@
 
 TEST(sysObj, print) {
     PikaObj* obj = newRootObj("test", New_PikaStdLib_SysObj);
-    VMParameters* globals = obj_runDirect(obj, "print('hello world')");
+    VMParameters* globals = obj_run(obj, "print('hello world')");
     // char* sysOut = args_getSysOut(globals->list);
     int errCode = args_getErrorCode(globals->list);
     // printf("sysout = %s\r\n", sysOut);
@@ -17,7 +17,7 @@ TEST(sysObj, print) {
 TEST(sysObj, noMethod) {
     PikaObj* obj = newRootObj("test", New_PikaStdLib_SysObj);
     __platform_printf("BEGIN\r\n");
-    obj_runDirect(obj, "printttt('hello world')");
+    obj_run(obj, "printttt('hello world')");
     // char* sysOut = args_getSysOut(globals->list);
     // int errCode = args_getErrorCode(globals->list);
     // printf("sysout = %s\r\n", sysOut);

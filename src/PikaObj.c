@@ -790,10 +790,6 @@ int32_t class_defineStaticMethod(PikaObj* self,
                                         def_context, bytecode_frame);
 }
 
-VMParameters* obj_runDirect(PikaObj* self, char* cmd) {
-    return pikaVM_run(self, cmd);
-}
-
 int32_t obj_removeArg(PikaObj* self, char* argPath) {
     PikaObj* objHost = obj_getHostObj(self, argPath);
     char* argName;
@@ -841,13 +837,8 @@ exit:
     return res;
 }
 
-void obj_runNoRes(PikaObj* slef, char* cmd) {
-    /* unsafe, nothing would happend when error occord */
-    obj_runDirect(slef, cmd);
-}
-
-void obj_run(PikaObj* self, char* cmd) {
-    obj_runDirect(self, cmd);
+VMParameters* obj_run(PikaObj* self, char* cmd) {
+    return pikaVM_run(self, cmd);
 }
 
 PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args) {
@@ -921,6 +912,7 @@ enum shell_state _do_obj_runChar(PikaObj* self,
                 cfg->inBlock = PIKA_FALSE;
                 input_line = obj_getStr(self, cfg->blockBuffName);
                 state = cfg->handler(self, input_line, cfg);
+                __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
                 __platform_printf(">>> ");
                 goto exit;
             } else {

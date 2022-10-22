@@ -114,7 +114,7 @@ TEST(object_test, test3) {
 
 TEST(object_test, test6) {
     PikaObj* obj = newRootObj("test", New_PikaObj_test);
-    VMParameters* globals = obj_runDirect(obj, "res = add(1, 2)");
+    VMParameters* globals = obj_run(obj, "res = add(1, 2)");
     int32_t res = obj_getInt(globals, "res");
     EXPECT_EQ(3, res);
     obj_deinit(obj);
@@ -141,15 +141,15 @@ TEST(object_test, test9) {
 
 TEST(object_test, noMethod) {
     PikaObj* root = newRootObj("root", New_MYROOT1);
-    obj_runNoRes(root, "noDefindMethod()");
+    obj_run(root, "noDefindMethod()");
     obj_deinit(root);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(object_test, a_b) {
     PikaObj* root = newRootObj("root", New_MYROOT1);
-    obj_runNoRes(root, "b=1");
-    obj_runNoRes(root, "a=b");
+    obj_run(root, "b=1");
+    obj_run(root, "a=b");
     obj_deinit(root);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -165,7 +165,7 @@ TEST(object_test, voidRun) {
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 TEST(object_test, printa) {
     PikaObj* root = newRootObj("root", New_PikaStdLib_SysObj);
-    obj_runDirect(root,
+    obj_run(root,
 
                   "a = 2\n"
                   "print(a)\n");
@@ -199,7 +199,7 @@ TEST(object_test, obj_run_while) {
         "    b = 1\n"
         "    a = 0\n"
         "\n";
-    VMParameters* globals = obj_runDirect(root, lines);
+    VMParameters* globals = obj_run(root, lines);
     EXPECT_EQ(obj_getInt(globals, "a"), 0);
     EXPECT_EQ(obj_getInt(globals, "b"), 1);
     obj_deinit(root);

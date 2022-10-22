@@ -507,21 +507,27 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                         }
                     }
                     __platform_free(buff);
-                    __platform_fclose(imp_file_pyo);
                     __platform_fclose(imp_file_pyo_api);
                 } else if (NULL != imp_file_py) {
                     /* found *.py, push to nocompiled list */
                     pikaMaker_setState(self, imp_module_name, "nocompiled");
-                    __platform_fclose(imp_file_py);
                 } else if (NULL != imp_file_pyi) {
                     /* found *.py, push to nocompiled list */
                     pikaMaker_setState(self, imp_module_name, "cmodule");
-                    __platform_fclose(imp_file_pyi);
                 } else {
                     __platform_printf(
                         "    [warning]: file: '%s.pyi', '%s.py' or '%s.py.o' "
                         "no found\n",
                         imp_module_name, imp_module_name, imp_module_name);
+                }
+                if (NULL != imp_file_pyo) {
+                    __platform_fclose(imp_file_pyo);
+                }
+                if (NULL != imp_file_pyi) {
+                    __platform_fclose(imp_file_pyi);
+                }
+                if (NULL != imp_file_py) {
+                    __platform_fclose(imp_file_py);
                 }
             }
         }
