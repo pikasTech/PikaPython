@@ -259,6 +259,7 @@ struct ShellConfig {
     char lineBuff[PIKA_LINE_BUFF_SIZE];
     char* blockBuffName;
     PIKA_BOOL inBlock;
+    char lastChar;
 };
 
 void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg);

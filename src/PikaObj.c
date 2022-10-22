@@ -877,22 +877,30 @@ enum shell_state _do_obj_runChar(PikaObj* self,
                                  ShellConfig* cfg) {
     char* rxBuff = cfg->lineBuff;
     char* input_line = NULL;
+    enum shell_state state = SHELL_STATE_CONTINUE;
 #if !(defined(__linux) || defined(_WIN32))
     __platform_printf("%c", inputChar);
 #endif
+    if (inputChar == '\n' && cfg->lastChar == '\r') {
+        state = SHELL_STATE_CONTINUE;
+        goto exit;
+    }
     if ((inputChar == '\b') || (inputChar == 127)) {
         uint32_t size = strGetSize(rxBuff);
         if (size == 0) {
             __platform_printf(" ");
-            return SHELL_STATE_CONTINUE;
+            state = SHELL_STATE_CONTINUE;
+            goto exit;
         }
         __platform_printf(" \b");
         rxBuff[size - 1] = 0;
-        return SHELL_STATE_CONTINUE;
+        state = SHELL_STATE_CONTINUE;
+        goto exit;
     }
-    if (inputChar != '\r' && inputChar != '\n') {
+    if ((inputChar != '\r') && (inputChar != '\n')) {
         strAppendWithSize(rxBuff, &inputChar, 1);
-        return SHELL_STATE_CONTINUE;
+        state = SHELL_STATE_CONTINUE;
+        goto exit;
     }
     if ((inputChar == '\r') || (inputChar == '\n')) {
 #if !(defined(__linux) || defined(_WIN32))
@@ -912,17 +920,18 @@ enum shell_state _do_obj_runChar(PikaObj* self,
             if ((rxBuff[0] != ' ') && (rxBuff[0] != '\t')) {
                 cfg->inBlock = PIKA_FALSE;
                 input_line = obj_getStr(self, cfg->blockBuffName);
-                enum shell_state state = cfg->handler(self, input_line, cfg);
+                state = cfg->handler(self, input_line, cfg);
                 __platform_printf(">>> ");
-                return state;
+                goto exit;
             } else {
                 __platform_printf("... ");
             }
             __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
-            return SHELL_STATE_CONTINUE;
+            state = SHELL_STATE_CONTINUE;
+            goto exit;
         }
+        /* go in block */
         if (cfg->blockBuffName != NULL && 0 != strGetSize(rxBuff)) {
-            /* go in block */
             if (rxBuff[strGetSize(rxBuff) - 1] == ':') {
                 cfg->inBlock = PIKA_TRUE;
                 char _n = '\n';
@@ -930,16 +939,19 @@ enum shell_state _do_obj_runChar(PikaObj* self,
                 obj_setStr(self, cfg->blockBuffName, rxBuff);
                 __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
                 __platform_printf("... ");
-                return SHELL_STATE_CONTINUE;
+                state = SHELL_STATE_CONTINUE;
+                goto exit;
             }
         }
         input_line = rxBuff;
-        enum shell_state state = cfg->handler(self, input_line, cfg);
+        state = cfg->handler(self, input_line, cfg);
         __platform_printf("%s", cfg->prefix);
         __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
-        return state;
+        goto exit;
     }
-    return SHELL_STATE_CONTINUE;
+exit:
+    cfg->lastChar = inputChar;
+    return state;
 }
 
 enum shell_state obj_runChar(PikaObj* self, char inputChar) {
@@ -949,8 +961,8 @@ enum shell_state obj_runChar(PikaObj* self, char inputChar) {
         ShellConfig newcfg = {
             .prefix = ">>> ",
             .blockBuffName = "@sh1",
+            .handler = __obj_shellLineHandler_REPL,
         };
-        newcfg.handler = __obj_shellLineHandler_REPL;
         args_setStruct(self->list, "@shcfg", newcfg);
         cfg = args_getStruct(self->list, "@shcfg");
         _obj_runChar_beforeRun(self, cfg);

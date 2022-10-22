@@ -2666,3 +2666,25 @@ TEST(pikaMain, callback_issue_I5L1MI) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, runchar_multiline) {
+    char* lines =
+        "def test():\r\n"
+        "    print('hello')\r\n"
+        "\r\n"
+        "test()\r\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(pikaMain, lines[i]);
+    }
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "hello\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
