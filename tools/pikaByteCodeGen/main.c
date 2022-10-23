@@ -59,17 +59,19 @@ int main(int argc, char** argv) {
 
     /* example ./rust-msc-latest-linux main.py -o out.a */
     if (3 == parc) {
-        PikaMaker* maker = New_PikaMaker();
-        char* module_entry = argv[1];
-        /* remove subfix */
-        char* subfix = strrchr(module_entry, '.');
-        if (subfix) {
-            *subfix = '\0';
+        if (0 == strcmp(argv[2], "-o")) {
+            PikaMaker* maker = New_PikaMaker();
+            char* module_entry = argv[1];
+            /* remove subfix */
+            char* subfix = strrchr(module_entry, '.');
+            if (subfix) {
+                *subfix = '\0';
+            }
+            pikaMaker_compileModuleWithDepends(maker, module_entry);
+            pikaMaker_linkCompiledModules(maker, argv[3]);
+            obj_deinit(maker);
+            return 0;
         }
-        pikaMaker_compileModuleWithDepends(maker, module_entry);
-        pikaMaker_linkCompiledModules(maker, argv[2]);
-        obj_deinit(maker);
-        return 0;
     }
 
     /* example: ./rust-msc-latest-linux -c main.py */
