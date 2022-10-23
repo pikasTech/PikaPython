@@ -43,8 +43,8 @@ struct InstructUnit {
 typedef struct ConstPool ConstPool;
 struct ConstPool {
     Arg* arg_buff;
-    uint16_t content_offset_now;
-    uint16_t size;
+    uint32_t content_offset_now;
+    uint32_t size;
     void* content_start;
     void (*output_redirect_fun)(ConstPool* self, char* content);
     FILE* output_f;
@@ -53,8 +53,8 @@ struct ConstPool {
 typedef struct InstructArray InstructArray;
 struct InstructArray {
     Arg* arg_buff;
-    uint16_t content_offset_now;
-    uint16_t size;
+    uint32_t content_offset_now;
+    uint32_t size;
     void* content_start;
     void (*output_redirect_fun)(InstructArray* self, InstructUnit* ins_unit);
     FILE* output_f;

@@ -74,12 +74,13 @@ int pikaCompile(char* output_file_name, char* py_lines) {
     bytecode_frame.instruct_array.output_redirect_fun =
         __handler_instructArray_output_none;
     Parser_linesToBytes(&bytecode_frame, py_lines);
-    uint16_t const_pool_size = bytecode_frame.const_pool.size;
-    uint16_t instruct_array_size = bytecode_frame.instruct_array.size;
+    uint32_t const_pool_size = bytecode_frame.const_pool.size;
+    uint32_t instruct_array_size = bytecode_frame.instruct_array.size;
     byteCodeFrame_deinit(&bytecode_frame);
 
     /* step 2, write instruct array to file */
-    __platform_fwrite(&instruct_array_size, 1, 2, bytecode_f);
+    __platform_fwrite(&instruct_array_size, 1, sizeof(instruct_array_size),
+                      bytecode_f);
     byteCodeFrame_init(&bytecode_frame);
     bytecode_frame.const_pool.output_f = bytecode_f;
     bytecode_frame.instruct_array.output_f = bytecode_f;
@@ -90,7 +91,7 @@ int pikaCompile(char* output_file_name, char* py_lines) {
     byteCodeFrame_deinit(&bytecode_frame);
 
     /* step 3, write const pool to file */
-    __platform_fwrite(&const_pool_size, 1, 2, bytecode_f);
+    __platform_fwrite(&const_pool_size, 1, sizeof(const_pool_size), bytecode_f);
     char void_ = 0;
     /* add \0 at the start */
     __platform_fwrite(&void_, 1, 1, bytecode_f);
@@ -214,7 +215,7 @@ void LibObj_listModules(LibObj* self) {
     args_foreach(self->list, __foreach_handler_listModules, NULL);
 }
 
-static int32_t __foreach_handler_writeBytecode(Arg* argEach, Args* context) {
+static int32_t __foreach_handler_libWriteBytecode(Arg* argEach, Args* context) {
     FILE* out_file = args_getPtr(context, "out_file");
     if (argType_isObject(arg_getType(argEach))) {
         PikaObj* module_obj = arg_getPtr(argEach);
@@ -229,7 +230,7 @@ static int32_t __foreach_handler_writeBytecode(Arg* argEach, Args* context) {
     return 0;
 }
 
-static int32_t __foreach_handler_writeIndex(Arg* argEach, Args* context) {
+static int32_t __foreach_handler_libWriteIndex(Arg* argEach, Args* context) {
     FILE* out_file = args_getPtr(context, "out_file");
     if (argType_isObject(arg_getType(argEach))) {
         PikaObj* module_obj = arg_getPtr(argEach);
@@ -266,7 +267,7 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
 
     /* meta info */
     char magic_code[] = {0x7f, 'p', 'y', 'a'};
-    uint32_t version_num = 1;
+    uint32_t version_num = LIB_VERSION_NUMBER;
     uint32_t module_num = args_getInt(&context, "module_num");
 
     /* write meta info */
@@ -281,9 +282,9 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     /* aline to 32 bytes */
     __platform_fwrite(buff, 1, LIB_INFO_BLOCK_SIZE, out_file);
     /* write module index to file */
-    args_foreach(self->list, __foreach_handler_writeIndex, &context);
+    args_foreach(self->list, __foreach_handler_libWriteIndex, &context);
     /* write module bytecode to file */
-    args_foreach(self->list, __foreach_handler_writeBytecode, &context);
+    args_foreach(self->list, __foreach_handler_libWriteBytecode, &context);
     args_deinit_stack(&context);
     /* main process */
     /* deinit */
