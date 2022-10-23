@@ -16,6 +16,7 @@ cd package/pikascript/pikascript-core
 cd $ROOT
 rm build -rf
 mkdir build
+./package/pikascript/rust-msc-latest-linux -c package/pikascript/cjson_test.py
 sh api-make.sh
 cd build
 cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DPIKA_CONFIG_ENABLE=ON ..
