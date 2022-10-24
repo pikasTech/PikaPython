@@ -33,6 +33,20 @@
 #include "dataStack.h"
 #include "dataStrs.h"
 
+const char magic_code_pyo[] = {0x7f, 'p', 'y', 'o'};
+
+static uint8_t* arg_getBytecode(Arg* self) {
+    uint8_t* bytecode_file = arg_getBytes(self);
+    uint8_t* bytecode_start =
+        bytecode_file + sizeof(magic_code_pyo) + sizeof(uint32_t);
+    return bytecode_start;
+}
+
+static size_t arg_getBytecodeSize(Arg* self) {
+    size_t size_all = arg_getBytesSize(self);
+    return size_all - sizeof(magic_code_pyo) - sizeof(uint32_t);
+}
+
 /* const Pool output redirect */
 static void __handler_constPool_output_file(ConstPool* self, char* content) {
     /* to ram */
@@ -86,9 +100,17 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     }
     uint32_t const_pool_size = bytecode_frame.const_pool.size;
     uint32_t instruct_array_size = bytecode_frame.instruct_array.size;
+    uint32_t bytecode_size = const_pool_size + instruct_array_size +
+                             sizeof(const_pool_size) +
+                             sizeof(instruct_array_size);
     byteCodeFrame_deinit(&bytecode_frame);
 
     /* step 2, write instruct array to file */
+    /* write magic code */
+    __platform_fwrite(magic_code_pyo, 1, sizeof(magic_code_pyo), bytecode_f);
+    /* write bytecode size */
+    __platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size), bytecode_f);
+    /* write ins array size */
     __platform_fwrite(&instruct_array_size, 1, sizeof(instruct_array_size),
                       bytecode_f);
     byteCodeFrame_init(&bytecode_frame);
@@ -208,8 +230,8 @@ int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
     module_name[strlen(module_name) - (sizeof(".py.o") - 1)] = 0;
 
     /* push bytecode */
-    LibObj_staticLink(self, module_name, arg_getBytes(input_file_arg),
-                      arg_getBytesSize(input_file_arg));
+    LibObj_staticLink(self, module_name, arg_getBytecode(input_file_arg),
+                      arg_getBytecodeSize(input_file_arg));
 
     /* deinit */
     strsDeinit(&buffs);

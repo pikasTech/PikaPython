@@ -2652,7 +2652,13 @@ void byteCodeFrame_init(ByteCodeFrame* self) {
     instructArray_init(&(self->instruct_array));
 }
 
+extern const char magic_code_pyo[4];
 void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes) {
+    if (bytes[0] == magic_code_pyo[0] && bytes[1] == magic_code_pyo[1] &&
+        bytes[2] == magic_code_pyo[2] && bytes[3] == magic_code_pyo[3]) {
+        /* load from file, found magic code, skip head */
+        bytes = bytes + sizeof(magic_code_pyo) + sizeof(uint32_t);
+    }
     uint32_t* ins_size_p = (uint32_t*)bytes;
     void* ins_start_p = (uint32_t*)((uintptr_t)bytes + sizeof(*ins_size_p));
     uint32_t* const_size_p =
