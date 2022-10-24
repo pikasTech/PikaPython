@@ -4,6 +4,8 @@
 #include "dataStrs.h"
 
 extern PikaObj* pikaMain;
+/* support by booter */
+extern UART_HandleTypeDef huart1;
 
 #ifdef UART1_EXIST
 pika_uart_t pika_uart1;
@@ -18,8 +20,6 @@ pika_uart_t pika_uart3;
 pika_uart_t pika_uart4;
 #endif
 
-/* support by booter */
-extern UART_HandleTypeDef huart1;
 
 static pika_uart_t* getPikaUart(uint8_t id) {
 #ifdef UART1_EXIST
@@ -98,7 +98,12 @@ static uint8_t getUartId(UART_HandleTypeDef* huart) {
     return 0;
 }
 
+extern UART_HandleTypeDef huart1;
+
 static UART_HandleTypeDef* getUartHandle(uint8_t id) {
+	  if(id == 1){
+			  return &huart1;
+		}
     pika_uart_t* pika_uart = getPikaUart(id);
     if (NULL == pika_uart) {
         return NULL;
@@ -300,7 +305,7 @@ void STM32F1_UART_platformRead(PikaObj* self) {
     pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
 
     UART_Start_Receive_IT(
-        &pika_uart->huart,
+        getUartHandle(id),
         (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
     obj_setStr(self,"readData", readBuff);
     args_deinit(buffs);
@@ -309,15 +314,7 @@ void STM32F1_UART_platformRead(PikaObj* self) {
 void STM32F1_UART_platformWrite(PikaObj* self) {
     char *data = obj_getStr(self, "writeData");
     int id = obj_getInt(self, "id");
-    HAL_UART_Transmit(getUartHandle(id), (uint8_t*)data, strGetSize(data), 100);
-}
-
-void STM32F1_UART_clearRxBuff(pika_uart_t* pika_uart) {
-    pika_uart->rxBuffOffset = 0;
-    pika_uart->rxBuff[pika_uart->rxBuffOffset] = 0;
-    UART_Start_Receive_IT(
-        &pika_uart->huart,
-        (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
+    HAL_UART_Transmit(getUartHandle(id), (uint8_t*)data, strGetSize(data), 0xffff);
 }
 
 char pikaShell[RX_BUFF_LENGTH] = {0};
