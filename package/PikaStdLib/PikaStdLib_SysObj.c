@@ -79,7 +79,7 @@ pika_float PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_FLOAT == type) {
         return (float)arg_getFloat(arg);
     }
-    obj_setSysOut(self, "[error] convert to pika_float type faild.");
+    obj_setSysOut(self, "[error] convert to pika_float type failed.");
     obj_setErrorCode(self, 1);
     return -99999.99999;
 }
@@ -105,7 +105,7 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
         uint8_t val = *arg_getBytes(arg);
         return val;
     }
-    obj_setSysOut(self, "[error] convert to int type faild.");
+    obj_setSysOut(self, "[error] convert to int type failed.");
     obj_setErrorCode(self, 1);
     return -999999999;
 }

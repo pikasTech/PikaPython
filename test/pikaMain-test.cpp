@@ -1091,7 +1091,7 @@ TEST(pikaMain, complex_str) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, synac_err_1) {
+TEST(pikaMain, syntax_err_1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     /* run */

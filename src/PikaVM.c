@@ -1255,7 +1255,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     arg_num_used += VMState_loadArgsFromMethodArg(
         vm, obj_this, sub_locals->list, method, run_path, arg_num_used);
 
-    /* load args faild */
+    /* load args failed */
     if (vm->error_code != 0) {
         goto exit;
     }
@@ -1290,7 +1290,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         }
         VMState_loadArgsFromMethodArg(vm, new_obj, sub_locals->list, method_arg,
                                       "__init__", arg_num_used);
-        /* load args faild */
+        /* load args failed */
         if (vm->error_code != 0) {
             goto init_exit;
         }
@@ -2211,7 +2211,7 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
         arg2 = stack_popArg(&vm->stack, &reg2);
         arg1 = stack_popArg(&vm->stack, &reg1);
     }
-    /* assert faild */
+    /* assert failed */
     if (arg_getType(arg1) == ARG_TYPE_INT && arg_getInt(arg1) == 0) {
         stack_pushArg(&vm->stack, arg_newInt(PIKA_RES_ERR_ASSERT));
         res = VM_instruction_handler_RIS(self, vm, data, arg_ret_reg);
@@ -2506,7 +2506,7 @@ static VMParameters* __pikaVM_runPyLines_or_byteCode(PikaObj* self,
     if (is_run_py) {
         /* generate byte code */
         byteCodeFrame_init(bytecode_frame_p);
-        if (1 == bytecodeFrame_fromLines(bytecode_frame_p, py_lines)) {
+        if (PIKA_RES_OK != Parser_linesToBytes(bytecode_frame_p, py_lines)) {
             __platform_printf("Error: Syntax error.\r\n");
             globals = NULL;
             goto exit;

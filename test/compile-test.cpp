@@ -256,7 +256,7 @@ TEST(compiler, import_bf_mem) {
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
-    bytecodeFrame_fromLines(&bf, lines);
+    Parser_linesToBytes(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
     byteCodeFrame_deinit(&bf);
     obj_deinit(pikaMain);
@@ -271,7 +271,7 @@ TEST(compiler, import_bf1) {
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
-    bytecodeFrame_fromLines(&bf, lines);
+    Parser_linesToBytes(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
     obj_run(pikaMain,
             "mtest.mytest()\n"
@@ -291,7 +291,7 @@ TEST(compiler, import_bf2) {
         "\n";
     ByteCodeFrame bf;
     byteCodeFrame_init(&bf);
-    bytecodeFrame_fromLines(&bf, lines);
+    Parser_linesToBytes(&bf, lines);
     obj_importModuleWithByteCodeFrame(pikaMain, "mtest", &bf);
     obj_run(pikaMain,
             "m = mtest.Test()\n"

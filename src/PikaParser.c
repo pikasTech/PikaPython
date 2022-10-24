@@ -2506,18 +2506,12 @@ exit:
     return out_ASM;
 };
 
-char* Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines) {
-    return _Parser_linesToBytesOrAsm(NULL, bf, py_lines);
-}
-
-int bytecodeFrame_fromLines(ByteCodeFrame* bytecode_frame, char* multi_line) {
-    if (NULL == Parser_linesToBytes(bytecode_frame, multi_line)) {
-        /* error */
-        return 1;
+PIKA_RES Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines) {
+    if (1 == (uintptr_t)_Parser_linesToBytesOrAsm(NULL, bf, py_lines)) {
+        return PIKA_RES_OK;
     }
-    /* succeed */
-    return 0;
-};
+    return PIKA_RES_ERR_SYNTAX_ERROR;
+}
 
 char* Parser_linesToAsm(Args* outBuffs, char* multi_line) {
     return _Parser_linesToBytesOrAsm(outBuffs, NULL, multi_line);
@@ -3024,7 +3018,7 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
 char* Parser_linesToArray(char* lines) {
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
-    bytecodeFrame_fromLines(&bytecode_frame, lines);
+    Parser_linesToBytes(&bytecode_frame, lines);
     /* do something */
     byteCodeFrame_print(&bytecode_frame);
 

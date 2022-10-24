@@ -377,7 +377,7 @@ TEST(cJSON, test6) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(cJSON, parse_faild) {
+TEST(cJSON, parse_failed) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);

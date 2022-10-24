@@ -59,7 +59,7 @@ char* strCut(char* strOut, char* strIn, char startSign, char endSign) {
         /* succeed */
         return strOut;
     }
-    /* faild */
+    /* failed */
     return NULL;
 }
 

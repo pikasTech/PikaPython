@@ -20,7 +20,7 @@ void pika_lua_eval(PikaObj* self, char* cmd) {
     int res = luaL_dostring(pika_L, cmd);
     if (LUA_OK != res) {
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
-        obj_setSysOut(self, "Error: Lua dostring faild.\r\n");
+        obj_setSysOut(self, "Error: Lua dostring failed.\r\n");
     }
 }
 

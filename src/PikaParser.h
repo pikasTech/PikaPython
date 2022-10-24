@@ -100,12 +100,11 @@ struct Cursor {
 
 char* Parser_fileToAsm(Args* outBuffs, char* filename);
 char* Parser_linesToAsm(Args* outBuffs, char* multiLine);
-char* Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines);
+PIKA_RES Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines);
 char* Parser_linesToArray(char* lines);
 
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
-int bytecodeFrame_fromLines(ByteCodeFrame* bytecode_frame, char* python_lines);
 
 #define Cursor_forEach(cursor)   \
     _Cursor_beforeIter(&cursor); \

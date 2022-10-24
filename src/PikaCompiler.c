@@ -61,10 +61,16 @@ static void __handler_instructArray_output_file(InstructArray* self,
         __platform_fclose()
 */
 
-int pikaCompile(char* output_file_name, char* py_lines) {
+PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
+    PIKA_RES res = PIKA_RES_OK;
     ByteCodeFrame bytecode_frame = {0};
 
     FILE* bytecode_f = __platform_fopen(output_file_name, "wb+");
+    if (NULL == bytecode_f) {
+        __platform_printf("Error: open file %s failed.\r\n", output_file_name);
+        res = PIKA_RES_ERR_IO_ERROR;
+        goto exit;
+    }
     /* main process */
 
     /* step 1, get size of const pool and instruct array */
@@ -73,7 +79,11 @@ int pikaCompile(char* output_file_name, char* py_lines) {
     bytecode_frame.instruct_array.output_f = bytecode_f;
     bytecode_frame.instruct_array.output_redirect_fun =
         __handler_instructArray_output_none;
-    Parser_linesToBytes(&bytecode_frame, py_lines);
+    res = Parser_linesToBytes(&bytecode_frame, py_lines);
+    if (PIKA_RES_OK != res) {
+        __platform_printf("    Error: Syntax error.\r\n");
+        goto exit;
+    }
     uint32_t const_pool_size = bytecode_frame.const_pool.size;
     uint32_t instruct_array_size = bytecode_frame.instruct_array.size;
     byteCodeFrame_deinit(&bytecode_frame);
@@ -105,12 +115,15 @@ int pikaCompile(char* output_file_name, char* py_lines) {
     bytecode_frame.instruct_array.output_redirect_fun =
         __handler_instructArray_output_none;
     Parser_linesToBytes(&bytecode_frame, py_lines);
-    byteCodeFrame_deinit(&bytecode_frame);
 
     /* deinit */
-    __platform_fclose(bytecode_f);
+exit:
+    byteCodeFrame_deinit(&bytecode_frame);
+    if (NULL != bytecode_f) {
+        __platform_fclose(bytecode_f);
+    }
     /* succeed */
-    return 0;
+    return res;
 };
 
 /*
@@ -120,12 +133,12 @@ int pikaCompile(char* output_file_name, char* py_lines) {
         __platform_fwrite()
         __platform_fclose()
 */
-int pikaCompileFileWithOutputName(char* output_file_name,
-                                  char* input_file_name) {
+PIKA_RES pikaCompileFileWithOutputName(char* output_file_name,
+                                       char* input_file_name) {
     Args buffs = {0};
     Arg* input_file_arg = arg_loadFile(NULL, input_file_name);
     if (NULL == input_file_arg) {
-        return 1;
+        return PIKA_RES_ERR_IO_ERROR;
     }
     char* lines = (char*)arg_getBytes(input_file_arg);
     /* replace the "\r\n" to "\n" */
@@ -134,19 +147,20 @@ int pikaCompileFileWithOutputName(char* output_file_name,
     lines = strsReplace(&buffs, lines, "\n\n", "\n");
     /* add '\n' at the end */
     lines = strsAppend(&buffs, lines, "\n\n");
-    pikaCompile(output_file_name, lines);
+    PIKA_RES res = pikaCompile(output_file_name, lines);
     arg_deinit(input_file_arg);
     strsDeinit(&buffs);
-    return 0;
+    return res;
 }
 
-int pikaCompileFile(char* input_file_name) {
+PIKA_RES pikaCompileFile(char* input_file_name) {
     Args buffs = {0};
     char* output_file_name = strsGetFirstToken(&buffs, input_file_name, '.');
     output_file_name = strsAppend(&buffs, input_file_name, ".o");
-    pikaCompileFileWithOutputName(output_file_name, input_file_name);
+    PIKA_RES res =
+        pikaCompileFileWithOutputName(output_file_name, input_file_name);
     strsDeinit(&buffs);
-    return 0;
+    return res;
 }
 
 LibObj* New_LibObj(Args* args) {
@@ -400,7 +414,8 @@ exit:
     return res;
 }
 
-static void __Maker_compileModuleWithInfo(PikaMaker* self, char* module_name) {
+static PIKA_RES __Maker_compileModuleWithInfo(PikaMaker* self,
+                                              char* module_name) {
     Args buffs = {0};
     char* input_file_name = strsAppend(&buffs, module_name, ".py");
     char* input_file_path =
@@ -411,13 +426,16 @@ static void __Maker_compileModuleWithInfo(PikaMaker* self, char* module_name) {
     output_file_path =
         strsAppend(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
     output_file_path = strsAppend(&buffs, output_file_path, output_file_name);
-    pikaCompileFileWithOutputName(output_file_path, input_file_path);
+    PIKA_RES res =
+        pikaCompileFileWithOutputName(output_file_path, input_file_path);
     strsDeinit(&buffs);
+    return res;
 }
 
 PikaMaker* New_PikaMaker(void) {
     PikaMaker* self = New_TinyObj(NULL);
     obj_setStr(self, "pwd", "");
+    obj_setInt(self, "err", 0);
     return self;
 }
 
@@ -432,10 +450,15 @@ void pikaMaker_setState(PikaMaker* self, char* module_name, char* state) {
     obj_setStr(module_obj, "state", state);
 }
 
-void pikaMaker_compileModule(PikaMaker* self, char* module_name) {
-    __Maker_compileModuleWithInfo(self, module_name);
+PIKA_RES pikaMaker_compileModule(PikaMaker* self, char* module_name) {
+    PIKA_RES res = __Maker_compileModuleWithInfo(self, module_name);
     /* update compile info */
-    pikaMaker_setState(self, module_name, "compiled");
+    if (PIKA_RES_OK == res) {
+        pikaMaker_setState(self, module_name, "compiled");
+    } else {
+        pikaMaker_setState(self, module_name, "failed");
+    }
+    return res;
 }
 
 int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
@@ -589,8 +612,14 @@ char* pikaMaker_getFirstNocompiled(PikaMaker* self) {
     return obj_getStr(self, "res");
 }
 
-void pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name) {
-    pikaMaker_compileModule(self, module_name);
+PIKA_RES pikaMaker_compileModuleWithDepends(PikaMaker* self,
+                                            char* module_name) {
+    PIKA_RES res = PIKA_RES_OK;
+    res = pikaMaker_compileModule(self, module_name);
+    if (PIKA_RES_OK != res) {
+        obj_setInt(self, "err", res);
+        return res;
+    }
     pikaMaker_getDependencies(self, module_name);
     while (1) {
         char* uncompiled = pikaMaker_getFirstNocompiled(self);
@@ -598,9 +627,14 @@ void pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name) {
         if (NULL == uncompiled) {
             break;
         }
-        pikaMaker_compileModule(self, uncompiled);
+        res = pikaMaker_compileModule(self, uncompiled);
+        if (PIKA_RES_OK != res) {
+            obj_setInt(self, "err", res);
+            return res;
+        }
         pikaMaker_getDependencies(self, uncompiled);
     }
+    return PIKA_RES_OK;
 }
 
 int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
@@ -624,7 +658,13 @@ int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
     return 0;
 }
 
-void pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path) {
+PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
+                                               char* lib_path) {
+    PIKA_RES compile_err = obj_getInt(self, "err");
+    if (PIKA_RES_OK != compile_err) {
+        __platform_printf("  Error: compile failed, link aborted.\r\n");
+        return compile_err;
+    }
     Args context = {0};
     LibObj* lib = New_LibObj(NULL);
     Args buffs = {0};
@@ -643,11 +683,13 @@ void pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path) {
     Lib_loadLibraryFileToArray(lib_file_path, folder_path);
     LibObj_deinit(lib);
     strsDeinit(&buffs);
+    return PIKA_RES_OK;
 }
 
-void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
+PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
     Args buffs = {0};
     char* lib_file_path = strsAppend(&buffs, "pikascript-api/", lib_name);
-    pikaMaker_linkCompiledModulesFullPath(self, lib_file_path);
+    PIKA_RES res = pikaMaker_linkCompiledModulesFullPath(self, lib_file_path);
     strsDeinit(&buffs);
+    return res;
 }

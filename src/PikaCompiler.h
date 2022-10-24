@@ -3,10 +3,10 @@
 #include "PikaObj.h"
 #include "stdint.h"
 
-int pikaCompileFile(char* input_file_name);
-int pikaCompileFileWithOutputName(char* output_file_name,
-                                  char* input_file_name);
-int pikaCompile(char* output_file_name, char* py_lines);
+PIKA_RES pikaCompileFile(char* input_file_name);
+PIKA_RES pikaCompileFileWithOutputName(char* output_file_name,
+                                       char* input_file_name);
+PIKA_RES pikaCompile(char* output_file_name, char* py_lines);
 
 LibObj* New_LibObj(Args* args);
 void LibObj_deinit(LibObj* self);
@@ -22,14 +22,14 @@ int LibObj_loadLibraryFile(LibObj* self, char* input_file_name);
 int Lib_loadLibraryFileToArray(char* origin_file_name, char* pikascript_root);
 PikaMaker* New_PikaMaker(void);
 void pikaMaker_setPWD(PikaMaker* self, char* pwd);
-void pikaMaker_compileModule(PikaMaker* self, char* module_name);
+PIKA_RES pikaMaker_compileModule(PikaMaker* self, char* module_name);
 int pikaMaker_getDependencies(PikaMaker* self, char* module_name);
 void pikaMaker_printStates(PikaMaker* self);
 char* pikaMaker_getFirstNocompiled(PikaMaker* self);
-void pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name);
-void pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name);
+PIKA_RES pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name);
+PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path);
+PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name);
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes);
-void pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path);
 
 #define LIB_VERSION_NUMBER 2
 #define LIB_INFO_BLOCK_SIZE 32

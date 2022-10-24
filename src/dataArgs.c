@@ -234,7 +234,7 @@ PIKA_RES args_setStructWithSize(Args* self,
                                 uint32_t struct_size) {
     Arg* struct_arg = arg_setStruct(NULL, name, struct_ptr, struct_size);
     if (NULL == struct_arg) {
-        /* faild */
+        /* failed */
         return PIKA_RES_ERR_ARG_NO_FOUND;
     }
     args_setArg(self, struct_arg);
@@ -262,7 +262,7 @@ PIKA_RES args_setHeapStructWithSize(Args* self,
     Arg* struct_arg = arg_setHeapStruct(NULL, name, struct_ptr, struct_size,
                                         struct_deinit_fun);
     if (NULL == struct_arg) {
-        /* faild */
+        /* failed */
         return PIKA_RES_ERR_ARG_NO_FOUND;
     }
     args_setArg(self, struct_arg);

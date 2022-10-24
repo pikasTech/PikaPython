@@ -35,12 +35,13 @@ TEST(except, trycmodule1) {
             "import pika_cjson\n"
             "try:\n"
             "    b = pika_cjson.Parse('')\n"
-            "    print('after faild')\n"
+            "    print('after failed')\n"
             "except:\n"
-            "    print('parse faild')\n"
+            "    print('parse failed')\n"
             "\n");
     /* collect */
     EXPECT_STREQ("BEGIN\r\n", log_buff[2]);
+    EXPECT_STREQ("parse failed\r\n", log_buff[0]);
     /* assert */
     /* deinit */
     obj_deinit(pikaMain);

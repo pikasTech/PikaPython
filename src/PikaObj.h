@@ -270,7 +270,6 @@ void _temp_obj_shellLineProcess(PikaObj* self, ShellConfig* cfg);
         __platform_fwrite()
         __platform_fclose()
 */
-int pikaCompile(char* output_file_name, char* py_lines);
 Method obj_getNativeMethod(PikaObj* self, char* method_name);
 PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
 Arg* obj_newObjInPackage(NewFun newObjFun);

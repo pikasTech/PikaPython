@@ -8,6 +8,25 @@
 #include "dataStrs.h"
 #include "libpikabinder.h"
 
+void help(char* argv0) {
+    Args buffs = {0};
+    char* exe = argv0;
+    printf(
+        "Usage:\r\n"
+        "    %s"
+        " - [Binding C modules and compile all from main.py]\r\n"
+        "    %s test.py"
+        " - [Compile all from test.py]\r\n"
+        "    %s test.py -o out.a"
+        " - [Compile all from test.py and link to out.a]\r\n"
+        "    %s -c test.py"
+        " - [Only compile test.py to test.py.o]\r\n"
+        "    %s -c test.py -o out.o"
+        " - [Only compile test.py to out.o]\r\n",
+        exe, exe, exe, exe, exe);
+    strsDeinit(&buffs);
+}
+
 /* fake implement */
 PikaObj* __pikaMain;
 void New_PikaStdLib_SysObj(void) {}
@@ -20,7 +39,6 @@ char* string_slice(Args* outBuffs, char* str, int start, int end) {
     return NULL;
 }
 
-void help(char* argv0);
 int main(int argc, char** argv) {
     int parc = argc - 1;
     if (0 == parc) {
@@ -29,9 +47,9 @@ int main(int argc, char** argv) {
         pika_binder();
         PikaMaker* maker = New_PikaMaker();
         pikaMaker_compileModuleWithDepends(maker, "main");
-        pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
+        PIKA_RES res = pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
         obj_deinit(maker);
-        return 0;
+        return res;
     }
 
     /* example: ./rust-msc-latest-linux -h | --help */
@@ -52,9 +70,9 @@ int main(int argc, char** argv) {
             *subfix = '\0';
         }
         pikaMaker_compileModuleWithDepends(maker, module_entry);
-        pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
+        PIKA_RES res = pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
         obj_deinit(maker);
-        return 0;
+        return res;
     }
 
     /* example ./rust-msc-latest-linux main.py -o out.a */
@@ -68,9 +86,9 @@ int main(int argc, char** argv) {
                 *subfix = '\0';
             }
             pikaMaker_compileModuleWithDepends(maker, module_entry);
-            pikaMaker_linkCompiledModules(maker, argv[3]);
+            PIKA_RES res = pikaMaker_linkCompiledModules(maker, argv[3]);
             obj_deinit(maker);
-            return 0;
+            return res;
         }
     }
 
@@ -88,9 +106,10 @@ int main(int argc, char** argv) {
             }
             module_out = strsAppend(&buffs, module_out, ".py.o");
             printf("compiling %s to %s...\r\n", module_entry, module_out);
-            pikaCompileFileWithOutputName(module_out, module_entry);
+            PIKA_RES res =
+                pikaCompileFileWithOutputName(module_out, module_entry);
             strsDeinit(&buffs);
-            return 0;
+            return res;
         }
     }
 
@@ -100,33 +119,14 @@ int main(int argc, char** argv) {
             /* compile only */
             char* module_entry = argv[2];
             printf("compiling %s to %s...\r\n", module_entry, argv[4]);
-            pikaCompileFileWithOutputName(argv[4], module_entry);
-            return 0;
+            PIKA_RES res = pikaCompileFileWithOutputName(argv[4], module_entry);
+            return res;
         }
     }
 
     /* no valid input */
-    printf("invalid input\r\n");
+    printf("Invalid input.\r\n");
     help(argv[0]);
 
-    return 0;
-}
-
-void help(char* argv0) {
-    Args buffs = {0};
-    char* exe = argv0;
-    printf(
-        "Usage:\r\n"
-        "    %s"
-        " - [Binding C modules and compile all from main.py]\r\n"
-        "    %s test.py"
-        " - [Compile all from test.py]\r\n"
-        "    %s test.py -o out.a"
-        " - [Compile all from test.py and link to out.a]\r\n"
-        "    %s -c test.py"
-        " - [Only compile test.py to test.py.o]\r\n"
-        "    %s -c test.py -o out.o"
-        " - [Only compile test.py to out.o]\r\n",
-        exe, exe, exe, exe, exe);
-    strsDeinit(&buffs);
+    return -1;
 }
