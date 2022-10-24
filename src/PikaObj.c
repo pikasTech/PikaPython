@@ -968,12 +968,14 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
 
     /* getchar and run */
     char inputChar[2] = {0};
+    int bytecode_index = 1;
     while (1) {
         inputChar[1] = inputChar[0];
         inputChar[0] = __platform_getchar();
 
-        /* #! xxx */
+        /* run python script */
         if (inputChar[0] == '!' && inputChar[1] == '#') {
+            /* #! xxx */
             /* start */
             char* buff = pikaMalloc(PIKA_READ_FILE_BUFF_SIZE);
             char input[2] = {0};
@@ -1049,6 +1051,33 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
             }
             __platform_printf("%s", cfg->prefix);
             continue;
+        }
+
+        /* run xx.py.o */
+        if (inputChar[0] == 'p' && inputChar[1] == 0x7f) {
+            for (int i = 0; i < 2; i++) {
+                /* eat 'yo' */
+                __platform_getchar();
+            }
+            uint32_t size = 0;
+            for (int i = 0; i < 4; i++) {
+                uint8_t* size_byte = (uint8_t*)&size;
+                size_byte[i] = __platform_getchar();
+            }
+            uint8_t* buff = pikaMalloc(size);
+            for (uint32_t i = 0; i < size; i++) {
+                buff[i] = __platform_getchar();
+            }
+            __platform_printf("\r\n=============== [Code] ===============\r\n");
+            __platform_printf("[   Info] Bytecode size: %d\r\n", size);
+            __platform_printf("=============== [ RUN] ===============\r\n");
+            pikaVM_runByteCode(self, buff);
+            char bytecode_buff_name[] = "@bc1";
+            bytecode_buff_name[3] = '0' + bytecode_index;
+            bytecode_index++;
+            obj_setBytes(self, bytecode_buff_name, buff, size);
+            pikaFree(buff, size);
+            return;
         }
 
         if (SHELL_STATE_EXIT == _do_obj_runChar(self, inputChar[0], cfg)) {
@@ -1318,10 +1347,10 @@ char* obj_toStr(PikaObj* self) {
     if (NULL != method_arg) {
         arg_deinit(method_arg);
         const uint8_t bytes[] = {
-            0x08, 0x00, 0x00, 0x00,/* instruct array size */
+            0x08, 0x00, 0x00, 0x00, /* instruct array size */
             0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct
                                                                array */
-            0x0f, 0x00, 0x00, 0x00,/* const pool size */
+            0x0f, 0x00, 0x00, 0x00, /* const pool size */
             0x00, 0x5f, 0x5f, 0x73, 0x74, 0x72, 0x5f, 0x5f, 0x00,
             0x5f, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
         };
@@ -1397,9 +1426,9 @@ void pks_eventLisener_sendSignal(PikaEventListener* self,
 )
     /* clang-format on */
     const uint8_t bytes[] = {
-        0x08, 0x00, 0x00, 0x00,/* instruct array size */
+        0x08, 0x00, 0x00, 0x00, /* instruct array size */
         0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0d, 0x00, /* instruct array */
-        0x1b, 0x00, 0x00, 0x00,                                    /* const pool size */
+        0x1b, 0x00, 0x00, 0x00,                         /* const pool size */
         0x00, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x69, 0x67,
         0x6e, 0x61, 0x6c, 0x00, 0x65, 0x76, 0x65, 0x6e, 0x74,
         0x43, 0x61, 0x6c, 0x6c, 0x42, 0x61, 0x63, 0x6b, 0x00, /* const pool */
