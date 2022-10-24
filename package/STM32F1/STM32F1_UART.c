@@ -302,12 +302,12 @@ void STM32F1_UART_platformRead(PikaObj* self) {
     UART_Start_Receive_IT(
         &pika_uart->huart,
         (uint8_t*)(pika_uart->rxBuff + pika_uart->rxBuffOffset), 1);
-    args_deinit(buffs);
     obj_setStr(self,"readData", readBuff);
+    args_deinit(buffs);
 }
 
 void STM32F1_UART_platformWrite(PikaObj* self) {
-    char *data = obj_getStr(self, "data");
+    char *data = obj_getStr(self, "writeData");
     int id = obj_getInt(self, "id");
     HAL_UART_Transmit(getUartHandle(id), (uint8_t*)data, strGetSize(data), 100);
 }

@@ -38,7 +38,7 @@ void W801Device_IIC_platformRead(PikaObj* self)
 void W801Device_IIC_platformWrite(PikaObj* self)
 {
 	int addr = obj_getInt(self, "addr");
-    char* data = obj_getStr(self, "data");
+    char* data = obj_getStr(self, "writeData");
     I2C_HandleTypeDef* iic = obj_getPtr(self, "iic");
     HAL_I2C_Write(iic, iic->deviceAddr, addr, (uint8_t*)data,strGetSize(data));
 }

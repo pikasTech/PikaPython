@@ -114,7 +114,7 @@ void CH582_UART_platformWrite(PikaObj *self)
 {
     int id = obj_getInt(self, "id");
     char *data = NULL;
-    size_t len = obj_loadBytes(self, "data", data);
+    size_t len = obj_loadBytes(self, "writeData", data);
     switch (id)
     {
     case 0:

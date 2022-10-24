@@ -343,13 +343,13 @@ void W801Device_UART_platformRead(PikaObj *self)
 	}
 	FifoRead(id-1,readBuff,length);    
 	
-    obj_setStr(self, "readBuff", readBuff);	   
+    obj_setStr(self, "readData", readBuff);	   
 	args_deinit(buffs);
     
 }
 void W801Device_UART_platformWrite(PikaObj *self)
 {
-	char* data = obj_getStr(self, "data");
+	char* data = obj_getStr(self, "writeData");
     int id = obj_getInt(self, "id");
     
 	switch(id)

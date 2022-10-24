@@ -244,7 +244,7 @@ void STM32G0_IIC_platformRead(PikaObj* self) {
 
 void STM32G0_IIC_platformWrite(PikaObj* self) {
     int addr = obj_getInt(self, "addr");
-    char* data = obj_getStr(self, "data");
+    char* data = obj_getStr(self, "writeData");
     pika_IIC_info* iic = obj_getPtr(self, "iic");
 
     MPU_Write_Len(iic, iic->deviceAddr, addr, strGetSize(data), (uint8_t*)data);

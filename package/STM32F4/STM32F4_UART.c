@@ -297,7 +297,7 @@ void STM32F4_UART_platformRead(PikaObj* self) {
 }
 
 void STM32F4_UART_platformWrite(PikaObj* self) {
-    char *data = obj_getStr(self, "data");
+    char *data = obj_getStr(self, "writeData");
     int id = obj_getInt(self, "id");
     HAL_UART_Transmit(getUartHandle(id), (uint8_t*)data, strGetSize(data), 100);
 }
