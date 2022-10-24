@@ -1071,12 +1071,12 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
             __platform_printf("\r\n=============== [Code] ===============\r\n");
             __platform_printf("[   Info] Bytecode size: %d\r\n", size);
             __platform_printf("=============== [ RUN] ===============\r\n");
-            pikaVM_runByteCode(self, buff);
             char bytecode_buff_name[] = "@bc1";
             bytecode_buff_name[3] = '0' + bytecode_index;
             bytecode_index++;
             obj_setBytes(self, bytecode_buff_name, buff, size);
             pikaFree(buff, size);
+            pikaVM_runByteCode(self, obj_getBytes(self, bytecode_buff_name));
             return;
         }
 
