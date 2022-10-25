@@ -896,7 +896,9 @@ enum shell_state _do_obj_runChar(PikaObj* self,
             __clearBuff(cfg);
             goto exit;
         }
-        rxBuff[cfg->lineBuff_i++] = inputChar;
+        if ('\0' != inputChar) {
+            rxBuff[cfg->lineBuff_i++] = inputChar;
+        }
         state = SHELL_STATE_CONTINUE;
         goto exit;
     }
