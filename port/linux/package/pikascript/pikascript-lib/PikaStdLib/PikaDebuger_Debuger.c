@@ -51,7 +51,7 @@ void PikaDebug_Debuger_set_trace(PikaObj* self) {
     struct ShellConfig cfg = {
         .prefix = "(pika-debug) ",
         .handler = __obj_shellLineHandler_debug,
-        .getchar = __platform_getchar,
+        .fn_getchar = __platform_getchar,
     };
     _do_pikaScriptShell(self, &cfg);
 }

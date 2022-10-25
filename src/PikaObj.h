@@ -260,7 +260,7 @@ struct ShellConfig {
     char* blockBuffName;
     PIKA_BOOL inBlock;
     char lastChar;
-    sh_getchar getchar;
+    sh_getchar fn_getchar;
 };
 
 void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg);

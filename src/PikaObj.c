@@ -978,7 +978,7 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
     int bytecode_index = 1;
     while (1) {
         inputChar[1] = inputChar[0];
-        inputChar[0] = cfg->getchar();
+        inputChar[0] = cfg->fn_getchar();
 
         /* run python script */
         if (inputChar[0] == '!' && inputChar[1] == '#') {
@@ -991,12 +991,12 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             PIKA_BOOL is_first_line = PIKA_TRUE;
             while (1) {
                 input[1] = input[0];
-                input[0] = cfg->getchar();
+                input[0] = cfg->fn_getchar();
                 if (input[0] == '!' && input[1] == '#') {
                     buff[buff_i - 1] = 0;
                     for (int i = 0; i < 4; i++) {
                         /* eat 'pika' */
-                        cfg->getchar();
+                        cfg->fn_getchar();
                     }
                     break;
                 }
@@ -1064,16 +1064,16 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
         if (inputChar[0] == 'p' && inputChar[1] == 0x7f) {
             for (int i = 0; i < 2; i++) {
                 /* eat 'yo' */
-                cfg->getchar();
+                cfg->fn_getchar();
             }
             uint32_t size = 0;
             for (int i = 0; i < 4; i++) {
                 uint8_t* size_byte = (uint8_t*)&size;
-                size_byte[i] = cfg->getchar();
+                size_byte[i] = cfg->fn_getchar();
             }
             uint8_t* buff = pikaMalloc(size);
             for (uint32_t i = 0; i < size; i++) {
-                buff[i] = cfg->getchar();
+                buff[i] = cfg->fn_getchar();
             }
             __platform_printf("\r\n=============== [Code] ===============\r\n");
             __platform_printf("[   Info] Bytecode size: %d\r\n", size);
@@ -1099,7 +1099,7 @@ void _temp__do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
 
     /* getchar and run */
     while (1) {
-        char inputChar = cfg->getchar();
+        char inputChar = cfg->fn_getchar();
         if (SHELL_STATE_EXIT == _do_obj_runChar(self, inputChar, cfg)) {
             break;
         }
@@ -1126,7 +1126,7 @@ static volatile ShellConfig g_repl_cfg = {
 };
 
 void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn) {
-    g_repl_cfg.getchar = getchar_fn;
+    g_repl_cfg.fn_getchar = getchar_fn;
     _do_pikaScriptShell(self, (ShellConfig*)&g_repl_cfg);
 }
 

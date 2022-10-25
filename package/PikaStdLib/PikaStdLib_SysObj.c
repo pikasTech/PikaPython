@@ -635,7 +635,7 @@ char* PikaStdLib_SysObj_input(PikaObj* self, PikaTuple* info) {
         .prefix = "",
         .context = NULL,
         .handler = __obj_shellLineHandler_input,
-        .getchar = __platform_getchar,
+        .fn_getchar = __platform_getchar,
     };
     if (tuple_getSize(info) > 0) {
         __platform_printf("%s", tuple_getStr(info, 0));

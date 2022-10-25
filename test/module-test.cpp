@@ -407,8 +407,11 @@ extern "C" {
 volatile FILE* f_getchar_fp = NULL;
 char f_getchar(void) {
     char c = 0;
-    fread(&c, 1, 1, (FILE*)f_getchar_fp);
-    return c;
+    size_t n = fread(&c, 1, 1, (FILE*)f_getchar_fp);
+    if (n > 0) {
+        return c;
+    }
+    return 0;
 }
 void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
 }
