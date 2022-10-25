@@ -136,7 +136,8 @@ void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
         if (is_end) {
             break;
         }
-        __platform_printf("0x%x\t: 0x%d", i * pool->aline, (i + 15) * pool->aline);
+        __platform_printf("0x%x\t: 0x%d", i * pool->aline,
+                          (i + 15) * pool->aline);
         for (uint32_t j = i; j < i + 16; j += 4) {
             if (is_end) {
                 break;
@@ -160,14 +161,11 @@ void* pool_malloc(Pool* pool, uint32_t size) {
     uint32_t block_num_found = 0;
     uint8_t found_first_free = 0;
     uint32_t block_index;
-    // if (__is_quick_malloc()) {
-    //     /* high speed malloc */
-    //     block_index = pool->purl_free_block_start + block_num_need - 1;
-    //     if (block_index < block_index_max) {
-    //         goto found;
-    //     }
-    // }
-
+    /* high speed malloc */
+    block_index = pool->purl_free_block_start + block_num_need - 1;
+    if (block_index < block_index_max) {
+        goto found;
+    }
     /* low speed malloc */
     for (block_index = pool->first_free_block;
          block_index < pool->purl_free_block_start; block_index++) {
