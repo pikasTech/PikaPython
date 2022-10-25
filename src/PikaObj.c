@@ -850,16 +850,15 @@ PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args) {
     return PIKA_RES_OK;
 }
 
-static void __clearBuff(char* buff, int size) {
-    for (int i = 0; i < size; i++) {
-        buff[i] = 0;
-    }
+static void __clearBuff(ShellConfig* cfg) {
+    memset(cfg->lineBuff, 0, PIKA_LINE_BUFF_SIZE);
+    cfg->lineBuff_i = 0;
 }
 
 static void _obj_runChar_beforeRun(PikaObj* self, ShellConfig* cfg) {
     /* create the line buff for the first time */
-    memset(cfg->lineBuff, 0, PIKA_LINE_BUFF_SIZE);
     cfg->inBlock = PIKA_FALSE;
+    __clearBuff(cfg);
     __platform_printf("%s", cfg->prefix);
 }
 
@@ -889,7 +888,15 @@ enum shell_state _do_obj_runChar(PikaObj* self,
         goto exit;
     }
     if ((inputChar != '\r') && (inputChar != '\n')) {
-        strAppendWithSize(rxBuff, &inputChar, 1);
+        if (cfg->lineBuff_i >= PIKA_LINE_BUFF_SIZE) {
+            __platform_printf(
+                "\r\nError: line buff overflow, please use bigger "
+                "'PIKA_LINE_BUFF_SIZE'\r\n");
+            state = SHELL_STATE_EXIT;
+            __clearBuff(cfg);
+            goto exit;
+        }
+        rxBuff[cfg->lineBuff_i++] = inputChar;
         state = SHELL_STATE_CONTINUE;
         goto exit;
     }
@@ -912,13 +919,13 @@ enum shell_state _do_obj_runChar(PikaObj* self,
                 cfg->inBlock = PIKA_FALSE;
                 input_line = obj_getStr(self, cfg->blockBuffName);
                 state = cfg->handler(self, input_line, cfg);
-                __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
+                __clearBuff(cfg);
                 __platform_printf(">>> ");
                 goto exit;
             } else {
                 __platform_printf("... ");
             }
-            __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
+            __clearBuff(cfg);
             state = SHELL_STATE_CONTINUE;
             goto exit;
         }
@@ -929,7 +936,7 @@ enum shell_state _do_obj_runChar(PikaObj* self,
                 char _n = '\n';
                 strAppendWithSize(rxBuff, &_n, 1);
                 obj_setStr(self, cfg->blockBuffName, rxBuff);
-                __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
+                __clearBuff(cfg);
                 __platform_printf("... ");
                 state = SHELL_STATE_CONTINUE;
                 goto exit;
@@ -938,7 +945,7 @@ enum shell_state _do_obj_runChar(PikaObj* self,
         input_line = rxBuff;
         state = cfg->handler(self, input_line, cfg);
         __platform_printf("%s", cfg->prefix);
-        __clearBuff(rxBuff, PIKA_LINE_BUFF_SIZE);
+        __clearBuff(cfg);
         goto exit;
     }
 exit:
@@ -962,7 +969,7 @@ enum shell_state obj_runChar(PikaObj* self, char inputChar) {
     return _do_obj_runChar(self, inputChar, cfg);
 }
 
-void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
+void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
     /* init the shell */
     _obj_runChar_beforeRun(self, cfg);
 
@@ -971,7 +978,7 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
     int bytecode_index = 1;
     while (1) {
         inputChar[1] = inputChar[0];
-        inputChar[0] = __platform_getchar();
+        inputChar[0] = cfg->getchar();
 
         /* run python script */
         if (inputChar[0] == '!' && inputChar[1] == '#') {
@@ -984,12 +991,12 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
             PIKA_BOOL is_first_line = PIKA_TRUE;
             while (1) {
                 input[1] = input[0];
-                input[0] = __platform_getchar();
+                input[0] = cfg->getchar();
                 if (input[0] == '!' && input[1] == '#') {
                     buff[buff_i - 1] = 0;
                     for (int i = 0; i < 4; i++) {
                         /* eat 'pika' */
-                        __platform_getchar();
+                        cfg->getchar();
                     }
                     break;
                 }
@@ -1057,16 +1064,16 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
         if (inputChar[0] == 'p' && inputChar[1] == 0x7f) {
             for (int i = 0; i < 2; i++) {
                 /* eat 'yo' */
-                __platform_getchar();
+                cfg->getchar();
             }
             uint32_t size = 0;
             for (int i = 0; i < 4; i++) {
                 uint8_t* size_byte = (uint8_t*)&size;
-                size_byte[i] = __platform_getchar();
+                size_byte[i] = cfg->getchar();
             }
             uint8_t* buff = pikaMalloc(size);
             for (uint32_t i = 0; i < size; i++) {
-                buff[i] = __platform_getchar();
+                buff[i] = cfg->getchar();
             }
             __platform_printf("\r\n=============== [Code] ===============\r\n");
             __platform_printf("[   Info] Bytecode size: %d\r\n", size);
@@ -1086,13 +1093,13 @@ void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
     }
 }
 
-void _temp_obj_shellLineProcess(PikaObj* self, ShellConfig* cfg) {
+void _temp__do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
     /* init the shell */
     _obj_runChar_beforeRun(self, cfg);
 
     /* getchar and run */
     while (1) {
-        char inputChar = __platform_getchar();
+        char inputChar = cfg->getchar();
         if (SHELL_STATE_EXIT == _do_obj_runChar(self, inputChar, cfg)) {
             break;
         }
@@ -1112,13 +1119,19 @@ static enum shell_state __obj_shellLineHandler_REPL(PikaObj* self,
     return SHELL_STATE_CONTINUE;
 }
 
+static volatile ShellConfig g_repl_cfg = {
+    .handler = __obj_shellLineHandler_REPL,
+    .prefix = ">>> ",
+    .blockBuffName = "@sh0",
+};
+
+void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn) {
+    g_repl_cfg.getchar = getchar_fn;
+    _do_pikaScriptShell(self, (ShellConfig*)&g_repl_cfg);
+}
+
 void pikaScriptShell(PikaObj* self) {
-    ShellConfig cfg = {
-        .handler = __obj_shellLineHandler_REPL,
-        .prefix = ">>> ",
-        .blockBuffName = "@sh0",
-    };
-    obj_shellLineProcess(self, &cfg);
+    pikaScriptShell_withGetchar(self, __platform_getchar);
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {

@@ -376,10 +376,9 @@ TEST(module, mod1_mod2_mod1) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
     __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain, 
-    "import test_module1\n"
-    "test_module1.test_module2.test_module1.mytest()"
-    );
+    obj_run(pikaMain,
+            "import test_module1\n"
+            "test_module1.test_module2.test_module1.mytest()");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "test_module_1_hello\r\n");
@@ -396,8 +395,7 @@ TEST(module, improt_as_cmodule) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
     __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain, 
-    "from PikaStdData import String as string\n");
+    obj_run(pikaMain, "from PikaStdData import String as string\n");
     /* collect */
     /* assert */
     /* deinit */
@@ -405,4 +403,73 @@ TEST(module, improt_as_cmodule) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+extern "C" {
+volatile FILE* f_getchar_fp = NULL;
+char f_getchar(void) {
+    char c = 0;
+    fread(&c, 1, 1, (FILE*)f_getchar_fp);
+    return c;
+}
+void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
+}
+
+TEST(module, REPL_runbytecode) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    f_getchar_fp = fopen("package/pikascript/cjson_test.py.o", "rb");
+    pikaScriptShell_withGetchar(pikaMain, f_getchar);
+    fclose((FILE*)f_getchar_fp);
+    obj_run(pikaMain, "test_start()");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "shopping\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(module, REPL_script) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    f_getchar_fp = fopen("test/python/UnitTest.py", "rb");
+    pikaScriptShell_withGetchar(pikaMain, f_getchar);
+    fclose((FILE*)f_getchar_fp);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[4], "mem used max:\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(module, REPL_big_script) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    f_getchar_fp = fopen("package/pikascript/cjson_test.py", "rb");
+    pikaScriptShell_withGetchar(pikaMain, f_getchar);
+    fclose((FILE*)f_getchar_fp);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0],
+                 "\r\nError: line buff overflow, please use bigger "
+                 "'PIKA_LINE_BUFF_SIZE'\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif

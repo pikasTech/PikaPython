@@ -249,20 +249,23 @@ enum shell_state { SHELL_STATE_CONTINUE, SHELL_STATE_EXIT };
 
 typedef struct ShellConfig ShellConfig;
 typedef enum shell_state (*sh_handler)(PikaObj*, char*, ShellConfig*);
+typedef char (*sh_getchar)(void);
 
 struct ShellConfig {
     char* prefix;
     sh_handler handler;
     void* context;
     char lineBuff[PIKA_LINE_BUFF_SIZE];
+    size_t lineBuff_i;
     char* blockBuffName;
     PIKA_BOOL inBlock;
     char lastChar;
+    sh_getchar getchar;
 };
 
-void obj_shellLineProcess(PikaObj* self, ShellConfig* cfg);
+void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg);
 
-void _temp_obj_shellLineProcess(PikaObj* self, ShellConfig* cfg);
+void _temp__do_pikaScriptShell(PikaObj* self, ShellConfig* cfg);
 
 /*
     need implament :
