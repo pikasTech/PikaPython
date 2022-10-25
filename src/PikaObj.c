@@ -876,15 +876,13 @@ enum shell_state _do_obj_runChar(PikaObj* self,
         goto exit;
     }
     if ((inputChar == '\b') || (inputChar == 127)) {
-        uint32_t size = strGetSize(rxBuff);
-        if (size == 0) {
+        if (cfg->lineBuff_i == 0) {
             __platform_printf(" ");
             state = SHELL_STATE_CONTINUE;
             goto exit;
         }
         __platform_printf(" \b");
-        rxBuff[size - 1] = 0;
-        cfg->lineBuff_i--;
+        rxBuff[--cfg->lineBuff_i] = 0;
         state = SHELL_STATE_CONTINUE;
         goto exit;
     }

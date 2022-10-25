@@ -2736,3 +2736,22 @@ TEST(pikaMain, REPL_backspace) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, REPL_backspace_issue_1) {
+    char* lines =
+        "print('test'\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b'a'\r\n";
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(pikaMain, lines[i]);
+    }
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "'a'\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
