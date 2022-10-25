@@ -884,6 +884,7 @@ enum shell_state _do_obj_runChar(PikaObj* self,
         }
         __platform_printf(" \b");
         rxBuff[size - 1] = 0;
+        cfg->lineBuff_i--;
         state = SHELL_STATE_CONTINUE;
         goto exit;
     }
