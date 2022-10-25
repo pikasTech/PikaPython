@@ -472,4 +472,22 @@ TEST(module, REPL_big_script) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(module, REPL_stdtask) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    f_getchar_fp = fopen("test/python/std/stdtask.py", "rb");
+    pikaScriptShell_withGetchar(pikaMain, f_getchar);
+    fclose((FILE*)f_getchar_fp);
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif
