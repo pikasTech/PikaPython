@@ -1696,7 +1696,7 @@ TEST(vm, exit_fn) {
             "            exit()\n"
             "while True:\n"
             "    test()\n");
-    obj_run(pikaMain,"PikaStdLib.MemChecker.now()\n");
+    obj_run(pikaMain, "PikaStdLib.MemChecker.now()\n");
     /* collect */
     int i = obj_getInt(pikaMain, "i");
     /* assert */
@@ -1713,7 +1713,7 @@ extern volatile int g_hook_cnt;
 extern volatile hook_func g_hook_func;
 extern "C" {
 void hook_func_exit_issue_1(void) {
-    if (g_hook_cnt == 114514) {
+    if (g_hook_cnt == 114) {
         pks_vm_exit();
     }
 }
@@ -1749,6 +1749,7 @@ TEST(vm, exit_fn_issue_1) {
             "fake_runtask()\n"
             "fake_runtask()\n"
             "\n");
+    obj_run(pikaMain, "PikaStdLib.MemChecker.now()\n");
     /* collect */
     /* assert */
     g_hook_func = __gtest_hook_default_;

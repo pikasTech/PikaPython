@@ -2371,7 +2371,8 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     pika_assert(NULL != vm->run_state);
     return_arg = VM_instruct_handler_table[instruct](self, vm, data, &ret_reg);
 
-    if (vm->error_code != PIKA_RES_OK) {
+    if (vm->error_code != PIKA_RES_OK ||
+        VMSignal_getCtrl() == VM_SIGNAL_CTRL_EXIT) {
         /* raise jmp */
         if (vm->run_state->try_state == TRY_STATE_INNER) {
             vm->jmp = VM_JMP_RAISE;
@@ -2476,7 +2477,8 @@ static VMParameters* __pikaVM_runPyLines_or_byteCode(PikaObj* self,
     uint8_t is_use_heap_bytecode = 0;
 
     /*
-     * the first obj_run, cache bytecode to heap, to support 'def' and 'class'
+     * the first obj_run, cache bytecode to heap, to support 'def' and
+     * 'class'
      */
     if (!args_isArgExist(self->list, "@bc0")) {
         is_use_heap_bytecode = 1;
@@ -2891,9 +2893,6 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     }
     PikaVMSignal.vm_cnt++;
     while (vm.pc < size) {
-        if (VMSignal_getCtrl() == VM_SIGNAL_CTRL_EXIT) {
-            vm.pc = VM_PC_EXIT;
-        }
         if (vm.pc == VM_PC_EXIT) {
             break;
         }
