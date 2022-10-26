@@ -1712,8 +1712,9 @@ typedef void (*hook_func)(void);
 extern volatile int g_hook_cnt;
 extern volatile hook_func g_hook_func;
 extern "C" {
+volatile int g_hook_cnt_triggle;
 void hook_func_exit_issue_1(void) {
-    if (g_hook_cnt == 114) {
+    if (g_hook_cnt >= g_hook_cnt_triggle) {
         pks_vm_exit();
     }
 }
@@ -1721,15 +1722,15 @@ void __gtest_hook_default_(void) {
     return;
 }
 }
-TEST(vm, exit_fn_issue_1) {
+
+void _vm_exit_fn_issue_1_item(int hook_cnt) {
+    g_hook_cnt_triggle = hook_cnt;
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
-    g_hook_cnt = 0;
-    g_hook_func = hook_func_exit_issue_1;
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
             "PikaStdLib.MemChecker.now()\n"
@@ -1752,9 +1753,17 @@ TEST(vm, exit_fn_issue_1) {
     obj_run(pikaMain, "PikaStdLib.MemChecker.now()\n");
     /* collect */
     /* assert */
-    g_hook_func = __gtest_hook_default_;
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, exit_fn_issue_1) {
+    g_hook_func = hook_func_exit_issue_1;
+    for (int i = 0; i < 50; i++) {
+        g_hook_cnt = 0;
+        _vm_exit_fn_issue_1_item(i);
+    }
+    g_hook_func = __gtest_hook_default_;
 }
 #endif
 
