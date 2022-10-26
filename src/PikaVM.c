@@ -2898,7 +2898,8 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             break;
         }
         InstructUnit* this_ins_unit = VMState_getInstructNow(&vm);
-        if (instructUnit_getIsNewLine(this_ins_unit)) {
+        uint8_t is_new_line = instructUnit_getIsNewLine(this_ins_unit);
+        if (is_new_line) {
             VMState_solveUnusedStack(&vm);
             stack_reset(&(vm.stack));
             vm.error_code = 0;

@@ -27,3 +27,15 @@ uint8_t __is_quick_malloc(void) {
     // return 1;
     return 0;
 }
+
+void __gtest_hook_default(void) {
+    return;
+}
+typedef void (*hook_func)(void);
+
+volatile int g_hook_cnt = 0;
+volatile hook_func g_hook_func = __gtest_hook_default;
+void __pks_hook_instruct(void) {
+    g_hook_cnt++;
+    g_hook_func();
+}

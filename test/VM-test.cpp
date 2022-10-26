@@ -1706,6 +1706,21 @@ TEST(vm, exit_fn) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#endif
+#if PIKA_INSTRUCT_HOOK_ENABLE
+typedef void (*hook_func)(void);
+extern volatile int g_hook_cnt;
+extern volatile hook_func g_hook_func;
+extern "C" {
+void hook_func_exit_issue_1(void) {
+    if (g_hook_cnt == 114514) {
+        pks_vm_exit();
+    }
+}
+void __gtest_hook_default_(void) {
+    return;
+}
+}
 TEST(vm, exit_fn_issue_1) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1713,29 +1728,30 @@ TEST(vm, exit_fn_issue_1) {
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
+    g_hook_cnt = 0;
+    g_hook_func = hook_func_exit_issue_1;
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
-    "PikaStdLib.MemChecker.now()\n"
-    "def task1():\n"
-    "    print('task1 hello')\n"
-    "\n"
-    "def task2():\n"
-    "    print('task2 hello')\n"
-    "\n"
-    "def fake_runtask():\n"
-    "    i = 0\n"
-    "    while True:\n"
-    "        i += 1\n"
-    "        print(i)\n"
-    "        if i == 10:\n"
-    "            exit()\n"
-    "        task1()\n"
-    "        task2()\n"
-    "\n");
+            "PikaStdLib.MemChecker.now()\n"
+            "def task1():\n"
+            "    print('task1 hello')\n"
+            "\n"
+            "def task2():\n"
+            "    print('task2 hello')\n"
+            "\n"
+            "def fake_runtask():\n"
+            "    i = 0\n"
+            "    while True:\n"
+            "        i += 1\n"
+            "        print(i)\n"
+            "        task1()\n"
+            "        task2()\n"
+            "fake_runtask()\n"
+            "fake_runtask()\n"
+            "\n");
     /* collect */
     /* assert */
-    obj_run(pikaMain,"PikaStdLib.MemChecker.now()\n");
-    /* deinit */
+    g_hook_func = __gtest_hook_default_;
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
