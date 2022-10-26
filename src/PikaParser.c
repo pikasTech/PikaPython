@@ -1745,6 +1745,9 @@ char* Parser_removeAnnotation(char* line) {
 }
 
 char* _defGetDefault(Args* outBuffs, char** dec_out) {
+#if PIKA_NANO_ENABLE
+    return "";
+#endif
     Args buffs = {0};
     char* dec_str = strsCopy(&buffs, *dec_out);
     char* fn_name = strsGetFirstToken(&buffs, dec_str, '(');
@@ -2096,6 +2099,9 @@ exit:
 }
 
 static PIKA_BOOL _check_is_multi_assign(char* arg_list) {
+#if PIKA_NANO_ENABLE
+    return PIKA_FALSE;
+#endif
     PIKA_BOOL res = PIKA_FALSE;
     Cursor_forEachToken(cs, arg_list) {
         Cursor_iterStart(&cs);
@@ -2230,6 +2236,9 @@ exit:
 }
 
 static char* Suger_import(Args* outbuffs, char* line) {
+#if !PIKA_SYNTAX_IMPORT_EX_ENABLE
+    return line;
+#endif
     line = Suger_import_as(outbuffs, line);
     line = Suger_from_import_as(outbuffs, line);
     Arg* line_buff = arg_newStr("");

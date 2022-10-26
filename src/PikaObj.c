@@ -344,6 +344,7 @@ Arg* _obj_getProp(PikaObj* obj, char* name) {
         if (size == 0) {
             goto next;
         }
+#if !PIKA_NANO_ENABLE
         if (size > 16) {
             int left = 0;
             int right = size - 1;
@@ -363,13 +364,14 @@ Arg* _obj_getProp(PikaObj* obj, char* name) {
                     right = mid - 1;
                 }
             }
-        } else {
-            for (int i = 0; i < (int)prop->methodGroupCount; i++) {
-                Arg* prop_this = (Arg*)(prop->methodGroup + i);
-                if (prop_this->name_hash == method_hash) {
-                    method = prop_this;
-                    goto exit;
-                }
+            goto next;
+        }
+#endif
+        for (int i = 0; i < (int)prop->methodGroupCount; i++) {
+            Arg* prop_this = (Arg*)(prop->methodGroup + i);
+            if (prop_this->name_hash == method_hash) {
+                method = prop_this;
+                goto exit;
             }
         }
         goto next;
@@ -976,11 +978,10 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
 
     /* getchar and run */
     char inputChar[2] = {0};
-    int bytecode_index = 1;
     while (1) {
         inputChar[1] = inputChar[0];
         inputChar[0] = cfg->fn_getchar();
-
+#if !PIKA_NANO_ENABLE
         /* run python script */
         if (inputChar[0] == '!' && inputChar[1] == '#') {
             /* #! xxx */
@@ -1080,6 +1081,7 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             __platform_printf("[   Info] Bytecode size: %d\r\n", size);
             __platform_printf("=============== [ RUN] ===============\r\n");
             char bytecode_buff_name[] = "@bc1";
+            int bytecode_index = 1;
             bytecode_buff_name[3] = '0' + bytecode_index;
             bytecode_index++;
             obj_setBytes(self, bytecode_buff_name, buff, size);
@@ -1087,7 +1089,7 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             pikaVM_runByteCode(self, obj_getBytes(self, bytecode_buff_name));
             return;
         }
-
+#endif
         if (SHELL_STATE_EXIT == _do_obj_runChar(self, inputChar[0], cfg)) {
             break;
         }

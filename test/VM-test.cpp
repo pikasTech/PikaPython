@@ -1323,6 +1323,7 @@ TEST(vm, cb_2) {
 
 #endif
 
+#if !PIKA_NANO_ENABLE
 TEST(vm, default_no_input) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -1435,6 +1436,7 @@ TEST(vm, default_4) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(vm, none) {
     /* init */

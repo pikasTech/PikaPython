@@ -4079,6 +4079,7 @@ TEST(parser, except_dict) {
 }
 #endif
 
+#if !PIKA_NANO_ENABLE
 TEST(parser, default_fn_1) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -4114,6 +4115,7 @@ TEST(parser, default_fn_1) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 #if !PIKA_NANO_ENABLE
 TEST(parser, multi_return) {
