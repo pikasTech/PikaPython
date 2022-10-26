@@ -670,10 +670,12 @@ Arg* _obj_runMethodArgWithState(PikaObj* self,
     }
     ByteCodeFrame* method_bytecodeFrame =
         methodArg_getBytecodeFrame(method_arg);
-    PikaObj* method_context = methodArg_getDefContext(method_arg);
-    if (NULL != method_context) {
-        self = method_context;
+
+    /* redirect to def context */
+    if (!argType_isNative(method_type)) {
+        self = methodArg_getDefContext(method_arg);
     }
+
     obj_setErrorCode(self, PIKA_RES_OK);
 
     /* run method */

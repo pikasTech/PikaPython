@@ -84,7 +84,7 @@ typedef struct ConstArg {
     ArgType type;
     uint8_t flag;
     Hash name_hash;
-}ConstArg;
+} ConstArg;
 
 Arg* arg_getNext(Arg* self);
 uint32_t arg_getSize(Arg* self);
@@ -155,15 +155,15 @@ uint8_t argType_isObject(ArgType type);
 #define arg_getNext(self) ((self)->_.next)
 #define arg_getSize(self) ((self)->size)
 #define arg_isSerialized(self) ((self)->flag & ARG_FLAG_SERIALIZED)
-#define arg_setSerialized(self, __serialized)                           \
-    do {                                                                \
+#define arg_setSerialized(self, __serialized)                      \
+    do {                                                           \
         (self)->flag = ((self)->flag & ~ARG_FLAG_SERIALIZED) |     \
                        ((__serialized) ? ARG_FLAG_SERIALIZED : 0); \
     } while (0)
 
 #define arg_getIsKeyword(self) ((self)->flag & ARG_FLAG_KEYWORD)
-#define arg_setIsKeyword(self, __isKeyword)                           \
-    do {                                                              \
+#define arg_setIsKeyword(self, __isKeyword)                    \
+    do {                                                       \
         (self)->flag = ((self)->flag & ~ARG_FLAG_KEYWORD) |    \
                        ((__isKeyword) ? ARG_FLAG_KEYWORD : 0); \
     } while (0)
@@ -186,6 +186,10 @@ uint8_t argType_isObject(ArgType type);
     ((type) == ARG_TYPE_METHOD_CONSTRUCTOR ||                                \
      (type) == ARG_TYPE_METHOD_OBJECT || (type) == ARG_TYPE_METHOD_STATIC || \
      (type) == ARG_TYPE_METHOD_NATIVE ||                                     \
+     (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR)
+
+#define argType_isNative(type)           \
+    ((type) == ARG_TYPE_METHOD_NATIVE || \
      (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR)
 
 #endif

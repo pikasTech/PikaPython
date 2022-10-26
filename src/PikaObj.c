@@ -687,11 +687,11 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
     Arg* arg = New_arg(NULL);
     MethodProp method_store = {
         .ptr = method_info->ptr,
+        .type_list = method_info->typelist,
+        .name = method_info->name,
         .bytecode_frame = method_info->bytecode_frame,
         .def_context = method_info->def_context,
         .declareation = method_info->dec,  // const
-        .type_list = method_info->typelist,
-        .name = method_info->name,
     };
     char* name = method_info->name;
     if (NULL == method_info->name) {

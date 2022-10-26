@@ -118,12 +118,18 @@ struct MethodInfo {
 
 typedef struct MethodProp {
     void* ptr;
+    char* type_list;
+    char* name;
     ByteCodeFrame* bytecode_frame;
     PikaObj* def_context;
     char* declareation;
+} MethodProp;
+
+typedef struct MethodPropNative {
+    void* ptr;
     char* type_list;
     char* name;
-} MethodProp;
+} MethodPropNative;
 
 typedef PikaObj LibObj;
 typedef PikaObj PikaMaker;
@@ -379,11 +385,8 @@ const MethodProp floatMethod = {
 */
 
 #define method_typedef(_method, _name, _typelist) \
-    const MethodProp _method##Prop = {            \
+    const MethodPropNative _method##Prop = {      \
         .ptr = (void*)_method##Method,            \
-        .bytecode_frame = NULL,                   \
-        .def_context = NULL,                      \
-        .declareation = NULL,                     \
         .type_list = _typelist,                   \
         .name = _name,                            \
     };
@@ -396,7 +399,7 @@ const MethodProp floatMethod = {
             {                                       \
                 .buffer = (uint8_t*)&_method##Prop  \
             },                                      \
-        .size = sizeof(MethodProp),                 \
+        .size = sizeof(MethodPropNative),                 \
         .heap_size = 0,                             \
         .type = _type,                              \
         .flag = 0,                                  \
@@ -409,7 +412,7 @@ const MethodProp floatMethod = {
             {                                       \
                 .buffer = (uint8_t*)&_method##Prop  \
             },                                      \
-        .size = sizeof(MethodProp),                 \
+        .size = sizeof(MethodPropNative),                 \
         .type = _type,                              \
         .flag = 0,                                  \
         .name_hash = _hash                          \
