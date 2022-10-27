@@ -33,7 +33,7 @@
 #include "dataStack.h"
 #include "dataStrs.h"
 
-const char magic_code_pyo[] = {0x7f, 'p', 'y', 'o'};
+const char magic_code_pyo[] = {0x0f, 'p', 'y', 'o'};
 
 static uint8_t* arg_getBytecode(Arg* self) {
     uint8_t* bytecode_file = arg_getBytes(self);
