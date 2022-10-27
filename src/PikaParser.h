@@ -86,7 +86,7 @@ struct LexToken {
 
 typedef struct Cursor ParsetState;
 struct Cursor {
-    char* tokens;
+    char* tokenStream;
     uint16_t length;
     uint16_t iter_index;
     int8_t branket_deepth;
@@ -110,16 +110,16 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
     _Cursor_beforeIter(&cursor); \
     for (int __i = 0; __i < cursor.length; __i++)
 
-#define Cursor_forEachTokenExistPs(cursor, tokens) \
-    /* init parserStage */                         \
-    _Cursor_init(&cursor);                         \
-    _Cursor_parse(&cursor, tokens);                \
+#define Cursor_forEachTokenExistPs(cursor, tokenStream) \
+    /* init parserStage */                              \
+    _Cursor_init(&cursor);                              \
+    _Cursor_parse(&cursor, tokenStream);                \
     Cursor_forEach(cursor)
 
-#define Cursor_forEachToken(cursor, tokens) \
-    struct Cursor cursor;                   \
-    Cursor_forEachTokenExistPs(cursor, tokens)
+#define Cursor_forEachToken(cursor, tokenStream) \
+    struct Cursor cursor;                        \
+    Cursor_forEachTokenExistPs(cursor, tokenStream)
 
-uint16_t Tokens_getSize(char* tokens);
+uint16_t TokenStream_getSize(char* tokenStream);
 
 #endif
