@@ -1064,9 +1064,18 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
 
         /* run xx.py.o */
         if (inputChar[0] == 'p' && inputChar[1] == 0x7f) {
+            char yo[2] = {0};
             for (int i = 0; i < 2; i++) {
                 /* eat 'yo' */
-                cfg->fn_getchar();
+                yo[i] = cfg->fn_getchar();
+            }
+            if (!(yo[0] == 'y' && yo[1] == 'o')) {
+                /* not the magic code, abort */
+                _do_obj_runChar(self, 0x7f, cfg);
+                _do_obj_runChar(self, 'p', cfg);
+                _do_obj_runChar(self, yo[0], cfg);
+                _do_obj_runChar(self, yo[1], cfg);
+                continue;
             }
             uint32_t size = 0;
             for (int i = 0; i < 4; i++) {
