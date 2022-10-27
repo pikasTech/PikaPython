@@ -128,7 +128,9 @@ typedef struct MethodProp {
 typedef struct MethodPropNative {
     void* ptr;
     char* type_list;
+#if !PIKA_NANO_ENABLE
     char* name;
+#endif
 } MethodPropNative;
 
 typedef PikaObj LibObj;
@@ -384,12 +386,20 @@ const MethodProp floatMethod = {
 };
 */
 
+#if !PIKA_NANO_ENABLE
 #define method_typedef(_method, _name, _typelist) \
     const MethodPropNative _method##Prop = {      \
         .ptr = (void*)_method##Method,            \
         .type_list = _typelist,                   \
         .name = _name,                            \
     };
+#else
+#define method_typedef(_method, _name, _typelist) \
+    const MethodPropNative _method##Prop = {      \
+        .ptr = (void*)_method##Method,            \
+        .type_list = _typelist,                   \
+    };
+#endif
 
 /* clang-format off */
 #if PIKA_ARG_CACHE_ENABLE
