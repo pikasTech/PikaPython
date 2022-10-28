@@ -36,13 +36,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define _pika_assert(expr)                                              \
+    if (!(expr)) {                                                      \
+        __platform_printf("Assertion failed: %s\nfile: %s:%d\n", #expr, \
+                          __FILE__, __LINE__);                          \
+        abort();                                                        \
+    }
+
 /* clang-format off */
 #if PIKA_ASSERT_ENABLE
-    #define pika_assert(expr) \
-    if(!(expr)) { \
-        __platform_printf("Assertion failed: %s\nfile: %s:%d\n", #expr, __FILE__, __LINE__); \
-        abort(); \
-    }
+    #define pika_assert(expr) _pika_assert(expr)
 #else
     #define pika_assert(...)
 #endif
