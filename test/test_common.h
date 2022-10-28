@@ -1,6 +1,5 @@
 #define __OOC_CPP__
 #define __OOC_DEBUG__
-#define USE_GOOGLE_TEST 1
 
 extern "C" {
 #include <stdio.h>

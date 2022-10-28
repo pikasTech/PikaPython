@@ -5,11 +5,17 @@ extern "C" {
 #include "pika_config_gtest.h"
 }
 
+extern "C" {
+    void test_purec(void);
+}
+
 int main(int argc, char** argv) {
     int res = 0;
 #if USE_GOOGLE_TEST
     ::testing::InitGoogleTest(&argc, argv);
     res = RUN_ALL_TESTS();
+#else
+    test_purec();
 #endif
     mem_pool_deinit();
 #if PIKA_ARG_CACHE_ENABLE

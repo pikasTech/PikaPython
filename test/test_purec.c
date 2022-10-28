@@ -1,0 +1,70 @@
+volatile int test_num = 0;
+#include "test_purec.h"
+
+#if !USE_GOOGLE_TEST
+void test_purec(void) {
+    RUN_TEST(arg_test, cache_);
+    RUN_TEST(arg_test, float_);
+    RUN_TEST(arg_test, str_);
+    RUN_TEST(arg_test, ptr);
+    RUN_TEST(arg_test, name);
+    RUN_TEST(arg_test, type);
+    RUN_TEST(arg_test, null);
+    RUN_TEST(arg_test, append);
+    RUN_TEST(arg_test, hash_1);
+    RUN_TEST(args, test1);
+    RUN_TEST(args, test4);
+    RUN_TEST(args, test2);
+    RUN_TEST(args, test3);
+    RUN_TEST(args, buff);
+    RUN_TEST(args, update);
+    RUN_TEST(args, print_int);
+    RUN_TEST(args, test6);
+    RUN_TEST(args, test8);
+    RUN_TEST(args, test12);
+    RUN_TEST(args, struct_);
+    RUN_TEST(args, mem);
+    RUN_TEST(args, index);
+    RUN_TEST(args, int_float_convert);
+    RUN_TEST(args, heap_struct);
+    RUN_TEST(args, heap_struct_override);
+    RUN_TEST(args, args_move);
+    RUN_TEST(args, args_mem);
+    RUN_TEST(args, dict);
+    RUN_TEST(pikaMain, init);
+    RUN_TEST(pikaMain, new_mem);
+    RUN_TEST(pikaMain, list_new);
+    RUN_TEST(pikaMain, int_float_convert);
+    RUN_TEST(pikaMain, type_);
+    RUN_TEST(pikaMain, a_signed);
+    RUN_TEST(pikaMain, a_mm);
+    RUN_TEST(pikaMain, a_n1);
+    RUN_TEST(pikaMain, a_l4);
+    RUN_TEST(pikaMain, less_equ);
+    RUN_TEST(pikaMain, and_or_not);
+    RUN_TEST(pikaMain, err_scop);
+    RUN_TEST(pikaMain, PikaStdData);
+    RUN_TEST(pikaMain, list_method);
+    RUN_TEST(pikaMain, list_iter);
+    RUN_TEST(pikaMain, list_for_loop);
+    RUN_TEST(pikaMain, range);
+    RUN_TEST(pikaMain, for_in_range);
+    RUN_TEST(pikaMain, for_for_in_range);
+    RUN_TEST(pikaMain, for_if_break);
+    RUN_TEST(pikaMain, for_if_continue);
+    RUN_TEST(pikaMain, print_in_def);
+    RUN_TEST(pikaMain, prime_100);
+    RUN_TEST(pikaMain, for_in_dict);
+    RUN_TEST(pikaMain, str_add);
+    RUN_TEST(pikaMain, str_add_print);
+    RUN_TEST(pikaMain, int_float_to_str);
+    RUN_TEST(pikaMain, str_eq);
+    RUN_TEST(pikaMain, print_with_enter);
+    RUN_TEST(pikaMain, print_with_2enter);
+    RUN_TEST(pikaMain, print_ddd);
+    RUN_TEST(pikaMain, for_in_string);
+    RUN_TEST(pikaMain, string_no_init_arg);
+    RUN_TEST(pikaMain, obj_no_free);
+    printf("[Test Case Run: %d]\r\n", test_num);
+}
+#endif
