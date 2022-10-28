@@ -1307,7 +1307,9 @@ PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name) {
 PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
     obj_newMetaObj(self, "@lib", New_LibObj);
     LibObj* lib = obj_getObj(self, "@lib");
-    LibObj_loadLibrary(lib, library_bytes);
+    if(0 != LibObj_loadLibrary(lib, library_bytes)){
+        __platform_printf("VM Error: load bytecode library failed\r\n");
+    }
     return self;
 }
 

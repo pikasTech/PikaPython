@@ -2856,7 +2856,7 @@ void VMState_solveUnusedStack(VMState* vm) {
         } else if (type == ARG_TYPE_BYTES) {
             arg_printBytes(arg);
         } else if (ARG_TYPE_POINTER == type ||
-                   ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
+                   ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR == type) {
             __platform_printf("%p\r\n", arg_getPtr(arg));
         }
         arg_deinit(arg);
