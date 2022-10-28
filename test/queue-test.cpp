@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(queue, NEW) {
     Queue* q = New_queue();
@@ -152,3 +153,5 @@ TEST(queueObj, currentObj) {
     obj_deinit(q);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

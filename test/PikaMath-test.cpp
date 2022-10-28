@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
 TEST(PikaMath, test1) {
     /* init */
@@ -287,3 +288,4 @@ TEST(PikaMath, quat_fromEuler) {
 }
 
 #endif
+TEST_END

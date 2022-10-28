@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 void testFloat(PikaObj* obj, Args* args) {
     float val1 = args_getFloat(args, "val1");
@@ -258,3 +259,5 @@ TEST(object_test, bytes_0_size) {
     obj_deinit(root);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

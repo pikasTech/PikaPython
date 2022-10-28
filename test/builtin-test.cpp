@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(builtin, bytes) {
@@ -155,3 +156,5 @@ TEST(builtin, utf8) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST_END

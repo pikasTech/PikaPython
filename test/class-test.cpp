@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 #if !PIKA_NANO_ENABLE
 TEST(class, class_par) {
@@ -116,3 +117,5 @@ TEST(class, native_class1) {
     EXPECT_STREQ(log_buff[0], "123.000000\r\n");
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

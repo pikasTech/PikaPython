@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 #include "time.h"
 
 extern "C" {
@@ -151,3 +152,5 @@ TEST(timetest, sleep) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

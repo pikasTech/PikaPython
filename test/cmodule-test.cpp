@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(cmodule, print_) {
     /* init */
@@ -13,3 +14,5 @@ TEST(cmodule, print_) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

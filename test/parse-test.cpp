@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 extern "C" {
 /* head infomation */
@@ -4982,3 +4983,5 @@ TEST(parser, multi_from_import_as) {
 }
 
 #endif
+
+TEST_END

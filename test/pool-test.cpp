@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 extern "C" {
 Pool pool_init(uint32_t size, uint8_t aline);
@@ -84,3 +85,4 @@ TEST(pool, mfm1) {
 
     pool_deinit(&p);
 }
+TEST_END

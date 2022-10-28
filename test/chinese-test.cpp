@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(chinese, test1) {
     /* init */
@@ -14,3 +15,5 @@ TEST(chinese, test1) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

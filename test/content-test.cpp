@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 #if 0
 TEST(content, init) {
@@ -97,3 +98,5 @@ TEST(content, setNext) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST_END

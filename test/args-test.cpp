@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 static int mem;
 TEST(args, test1) {
@@ -277,3 +278,4 @@ TEST(args, dict) {
     dict_deinit(dict);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+TEST_END

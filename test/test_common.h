@@ -1,14 +1,15 @@
 #define __OOC_CPP__
 #define __OOC_DEBUG__
+#define USE_GOOGLE_TEST 1
 
-#include "gtest/gtest.h"
 extern "C" {
+#include <stdio.h>
 #include "BaseObj.h"
 #include "PikaCompiler.h"
 #include "PikaMain.h"
+#include "PikaMath_Operator.h"
 #include "PikaParser.h"
 #include "PikaStdLib_MemChecker.h"
-#include "PikaMath_Operator.h"
 #include "PikaStdLib_SysObj.h"
 #include "PikaVM.h"
 #include "TinyObj.h"
@@ -17,8 +18,15 @@ extern "C" {
 #include "dataStrs.h"
 #include "pikaScript.h"
 #include "pika_config_gtest.h"
-#include <stdio.h>
 extern PikaMemInfo pikaMemInfo;
 /* the log_buff of printf */
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 }
+
+#if USE_GOOGLE_TEST
+#include "gtest/gtest.h"
+#define TEST_START
+#define TEST_END
+#else
+#include "test_purec.h"
+#endif

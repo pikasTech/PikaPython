@@ -1,4 +1,3 @@
-#include "gtest/gtest.h"
 #include "test_common.h"
 
 extern "C" {
@@ -7,8 +6,11 @@ extern "C" {
 }
 
 int main(int argc, char** argv) {
+    int res = 0;
+#if USE_GOOGLE_TEST
     ::testing::InitGoogleTest(&argc, argv);
-    int res = RUN_ALL_TESTS();
+    res = RUN_ALL_TESTS();
+#endif
     mem_pool_deinit();
 #if PIKA_ARG_CACHE_ENABLE
     extern PikaMemInfo pikaMemInfo;

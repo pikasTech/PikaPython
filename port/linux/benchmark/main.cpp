@@ -1,5 +1,4 @@
 #include <benchmark/benchmark.h>
-#include "gtest/gtest.h"
 #include "test_common.h"
 
 extern "C" {
@@ -121,6 +120,5 @@ static void prime_number_100_c(benchmark::State& state) {
     }
 }
 BENCHMARK(prime_number_100_c)->Unit(benchmark::kMillisecond);
-
 
 BENCHMARK_MAIN();

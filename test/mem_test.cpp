@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(bitmap, init) {
     uint8_t* bitmap = bitmap_init(10);
@@ -63,3 +64,4 @@ TEST(bitmap, reset_half_2) {
     }
     bitmap_deinit(bitmap);
 }
+TEST_END

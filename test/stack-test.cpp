@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(stack, NEW) {
     Stack s;
@@ -59,3 +60,5 @@ TEST(stack, str) {
     stack_deinit(&s);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

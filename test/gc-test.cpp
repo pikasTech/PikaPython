@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(gc, root) {
     PikaObj* root = newRootObj("root", New_PikaMain);
@@ -130,3 +131,4 @@ TEST(gc, heap_failed1) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+TEST_END

@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(compiler, file) {
     char* lines =
@@ -686,3 +687,5 @@ TEST(compiler, for_print_1k) {
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(cJSON, parse_print) {
     /* init */
@@ -454,3 +455,5 @@ TEST(cJSON, module) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST_END

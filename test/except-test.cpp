@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 #if PIKA_SYNTAX_EXCEPTION_ENABLE
 TEST(except, try1) {
@@ -141,3 +142,5 @@ TEST(except, len) {
 }
 
 #endif
+
+TEST_END

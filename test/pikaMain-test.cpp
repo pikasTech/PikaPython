@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(pikaMain, init) {
     pikaMemInfo.heapUsedMax = 0;
@@ -2773,3 +2774,5 @@ TEST(pikaMain, REPL_backspace_issue_2) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

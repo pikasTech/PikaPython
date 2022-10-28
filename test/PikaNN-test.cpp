@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 #if (PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL) && (!PIKA_POOL_ENABLE)
 
@@ -25,3 +26,5 @@ TEST(PikaNN, test_) {
 }
 
 #endif
+
+TEST_END

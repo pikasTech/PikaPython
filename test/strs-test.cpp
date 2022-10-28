@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 extern PikaMemInfo pikaMemInfo;
 /* the log_buff of printf */
@@ -118,3 +119,5 @@ TEST(str, transfer) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

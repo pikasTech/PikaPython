@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, cformat) {
@@ -294,3 +295,5 @@ TEST(string, popfirsttoken_void) {
     EXPECT_STREQ(token, "");
     EXPECT_STREQ(p, "");
 }
+
+TEST_END

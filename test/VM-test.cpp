@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 extern "C" {
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
@@ -2115,3 +2116,5 @@ TEST(vm, benchmark) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_END

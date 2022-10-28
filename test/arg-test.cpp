@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(arg_test, cache_) {
     Arg* arg1 = arg_newInt(1);
@@ -87,3 +88,5 @@ TEST(arg_test, append) {
 TEST(arg_test, hash_1) {
     EXPECT_EQ(hash_time33("print"), 271190290);
 }
+
+TEST_END

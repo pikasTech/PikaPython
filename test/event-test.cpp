@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 extern PikaEventListener* g_pika_device_event_listener;
 #if PIKA_EVENT_ENABLE
@@ -45,3 +46,5 @@ TEST(event, remove_regist) {
 }
 
 #endif
+
+TEST_END

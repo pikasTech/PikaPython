@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 TEST(sysObj, print) {
     PikaObj* obj = newRootObj("test", New_PikaStdLib_SysObj);
@@ -116,3 +117,5 @@ TEST(sysobj, print2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST_END

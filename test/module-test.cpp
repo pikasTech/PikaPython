@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(module, cmodule_import) {
@@ -513,3 +514,5 @@ TEST(module, REPL_stdtask) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 #endif
+
+TEST_END

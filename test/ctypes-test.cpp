@@ -1,4 +1,5 @@
 #include "test_common.h"
+TEST_START
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(ctypes, test1) {
@@ -32,3 +33,4 @@ TEST(ctypes, test2) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+TEST_END
