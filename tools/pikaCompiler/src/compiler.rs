@@ -161,10 +161,7 @@ impl Compiler {
         match file {
             /* py import py.o => do nothing */
             Ok(_) => {
-                println!(
-                    "    found {}{}.{}...",
-                    self.source_path, file_name, suffix
-                );
+                println!("    found {}{}.{}...", self.source_path, file_name, suffix);
                 return self;
             }
             /* continue */
@@ -225,6 +222,10 @@ impl Compiler {
         let mut file = match file {
             Ok(file) => file,
             Err(_) => {
+                if suffix == "pyi" {
+                    /* if .pyi no exist, check .py exist */
+                    return self.analyse_py_package_inner(file_name.clone());
+                }
                 /* .py no exist, error */
                 println!(
                     "    [warning]: file: '{}{}.pyi', '{}{}.py' or '{}{}.py.o' no found",

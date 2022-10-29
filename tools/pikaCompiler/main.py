@@ -1,5 +1,4 @@
-import PikaStdLib
-import test, module
+import PikaStdLib, test
 
 import TemplateDevice
 import test_pyo

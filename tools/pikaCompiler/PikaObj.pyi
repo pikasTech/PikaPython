@@ -1,21 +1,24 @@
-#api
 class TinyObj:
-    pass
+    ...
 
 
 class BaseObj(TinyObj):
-    pass
+    ...
 
 
-def print(val: any):
-    pass
+class pointer:
+    ...
 
-
-def set(argPath: str, val: any):
-    pass
 
 class any:
-    pass
+    ...
 
-def PIKA_C_MACRO_IF(fun: any):
-    pass
+
+class int64:
+    ...
+
+
+def printNoEnd(val: any): ...
+def abstractmethod(fn): ...
+def PIKA_C_MACRO_IF(fn): ...
+def PIKA_C_MACRO_IFDEF(fn): ...

@@ -1,3 +1,4 @@
 pikascript-core==latest
 PyInfo==latest
 PikaStdDevice==latest
+modbus==latest
