@@ -18,10 +18,14 @@ TEST(event, gpio) {
                                 EVENT_SIGAL_IO_RISING_EDGE);
     pks_eventLisener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
                                 EVENT_SIGAL_IO_FALLING_EDGE);
-    /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[1], "get rising edge!\r\n");
+
+    obj_run(pikaMain, "io1.eventTest()");
+
+    EXPECT_STREQ(log_buff[2], "get rising edge!\r\n");
+    EXPECT_STREQ(log_buff[1], "get falling edge!\r\n");
     EXPECT_STREQ(log_buff[0], "get falling edge!\r\n");
+
     /* deinit */
     obj_deinit(pikaMain);
 

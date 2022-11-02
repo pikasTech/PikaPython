@@ -881,11 +881,11 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
 const char void_str[] = "";
 
 void LexToken_update(struct LexToken* lex_token) {
-    lex_token->type = Token_getType(lex_token->token);
+    lex_token->type = Token_getType(lex_token->tokenStream);
     if (lex_token->type == TOKEN_strEnd) {
         lex_token->pyload = (char*)void_str;
     } else {
-        lex_token->pyload = Token_getPyload(lex_token->token);
+        lex_token->pyload = Token_getPyload(lex_token->tokenStream);
     }
 }
 
@@ -893,12 +893,12 @@ void Cursor_iterStart(struct Cursor* cs) {
     cs->iter_index++;
     cs->iter_buffs = New_strBuff();
     /* token1 is the last token */
-    cs->token1.token = strsCopy(cs->iter_buffs, arg_getStr(cs->last_token));
+    cs->token1.tokenStream = strsCopy(cs->iter_buffs, arg_getStr(cs->last_token));
     /* token2 is the next token */
-    cs->token2.token = TokenStream_pop(cs->iter_buffs, &cs->tokenStream);
+    cs->token2.tokenStream = TokenStream_pop(cs->iter_buffs, &cs->tokenStream);
     /* store last token */
     arg_deinit(cs->last_token);
-    cs->last_token = arg_newStr(cs->token2.token);
+    cs->last_token = arg_newStr(cs->token2.tokenStream);
 
     LexToken_update(&cs->token1);
     LexToken_update(&cs->token2);
@@ -924,7 +924,7 @@ void Cursor_iterStart(struct Cursor* cs) {
 
 void LexToken_init(struct LexToken* lt) {
     lt->pyload = NULL;
-    lt->token = NULL;
+    lt->tokenStream = NULL;
     lt->type = TOKEN_strEnd;
 }
 

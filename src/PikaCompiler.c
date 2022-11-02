@@ -329,11 +329,9 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
 }
 
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
-#ifndef _WIN32
-    if (0 != ((uintptr_t)library_bytes & 0x03)) {
+    if (0 != ((intptr_t)library_bytes & 0x03)) {
         return PIKA_RES_ERR_UNALIGNED_PTR;
     }
-#endif
 
     char* magic_code = (char*)library_bytes;
 

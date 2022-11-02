@@ -79,7 +79,7 @@ typedef struct GenRule {
 
 typedef struct LexToken LexToken;
 struct LexToken {
-    char* token;
+    char* tokenStream;
     enum TokenType type;
     char* pyload;
 };

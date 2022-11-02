@@ -1307,9 +1307,7 @@ PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name) {
 PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
     obj_newMetaObj(self, "@lib", New_LibObj);
     LibObj* lib = obj_getObj(self, "@lib");
-    if(0 != LibObj_loadLibrary(lib, library_bytes)){
-        __platform_printf("VM Error: load bytecode library failed\r\n");
-    }
+    LibObj_loadLibrary(lib, library_bytes);
     return self;
 }
 
@@ -1428,20 +1426,11 @@ void pks_eventLisener_deinit(PikaEventListener** p_self) {
     }
 }
 
-void pks_eventLisener_sendSignal(PikaEventListener* self,
-                                 uint32_t eventId,
-                                 int eventSignal) {
-    PikaObj* eventHandleObj = pks_eventLisener_getEventHandleObj(self, eventId);
-    if (NULL == eventHandleObj) {
-        __platform_printf(
-            "Error: can not find event handler by id: [0x%02x]\r\n", eventId);
-        return;
-    }
-    obj_setInt(eventHandleObj, "eventSignal", eventSignal);
+void __eventLisener_runEvent(PikaObj* eventHandleObj) {
     /* clang-format off */
     PIKA_PYTHON(
     eventCallBack(eventSignal)
-)
+    )
     /* clang-format on */
     const uint8_t bytes[] = {
         0x08, 0x00, 0x00, 0x00, /* instruct array size */
@@ -1452,6 +1441,31 @@ void pks_eventLisener_sendSignal(PikaEventListener* self,
         0x43, 0x61, 0x6c, 0x6c, 0x42, 0x61, 0x63, 0x6b, 0x00, /* const pool */
     };
     pikaVM_runByteCode(eventHandleObj, (uint8_t*)bytes);
+}
+
+void pks_eventLisener_sendSignal(PikaEventListener* self,
+                                 uint32_t eventId,
+                                 int eventSignal) {
+    PikaObj* eventHandleObj = pks_eventLisener_getEventHandleObj(self, eventId);
+    if (NULL == eventHandleObj) {
+        __platform_printf(
+            "Error: can not find event handler by id: [0x%02x]\r\n", eventId);
+        return;
+    }
+    obj_setInt(eventHandleObj, "eventSignal", eventSignal);
+    if (0 == VMSignal_getVMCnt()) {
+        /* no vm is running, run event handler directly */
+        __eventLisener_runEvent(eventHandleObj);
+        return;
+    }
+    /* push event handler to vm event list */
+    if (PIKA_RES_OK != VMSignal_pushEvent(eventHandleObj)) {
+        __platform_printf(
+            "OverflowError: event list is full, please use bigger "
+            "PIKA_EVENT_LIST_SIZE\r\n");
+        while (1) {
+        }
+    }
 }
 
 /* print major version info */

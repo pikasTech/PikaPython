@@ -108,6 +108,8 @@ typedef struct VMSignal VMSignal;
 struct VMSignal {
     VM_SIGNAL_CTRL signal_ctrl;
     int vm_cnt;
+    PikaObj* event_obj_list[PIKA_EVENT_LIST_SIZE];
+    int event_top;
 };
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
@@ -230,5 +232,8 @@ void __vm_Dict___init__(PikaObj* self);
 VM_SIGNAL_CTRL VMSignal_getCtrl(void);
 void pks_vm_exit(void);
 void pks_vmSignal_setCtrlElear(void);
+int VMSignal_getVMCnt(void);
+PikaObj* VMSignal_popEvent(void);
+PIKA_RES VMSignal_pushEvent(PikaObj* eventHandleObj);
 
 #endif

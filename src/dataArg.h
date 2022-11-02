@@ -113,7 +113,7 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 #define arg_newInt(val) arg_setInt(NULL, "", (val))
 #define arg_newFloat(val) arg_setFloat(NULL, "", (val))
 #define arg_newPtr(type, pointer) arg_setPtr(NULL, "", (type), (pointer))
-#define arg_newStr(string) arg_setStr(NULL, "", (char*)(string))
+#define arg_newStr(string) arg_setStr(NULL, "", (string))
 #define arg_newNull() arg_setNull(NULL)
 #define arg_newBytes(src, size) arg_setBytes(NULL, "", (src), (size))
 

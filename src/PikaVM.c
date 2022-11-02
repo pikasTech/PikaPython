@@ -39,7 +39,27 @@
 static volatile VMSignal PikaVMSignal = {
     .signal_ctrl = VM_SIGNAL_CTRL_NONE,
     .vm_cnt = 0,
+    .event_top = 0,
 };
+
+int VMSignal_getVMCnt(void) {
+    return PikaVMSignal.vm_cnt;
+}
+
+PIKA_RES VMSignal_pushEvent(PikaObj* eventHandleObj) {
+    if (PikaVMSignal.event_top >= PIKA_EVENT_LIST_SIZE) {
+        return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
+    }
+    PikaVMSignal.event_obj_list[PikaVMSignal.event_top++] = eventHandleObj;
+    return PIKA_RES_OK;
+}
+
+PikaObj* VMSignal_popEvent(void) {
+    if (PikaVMSignal.event_top <= 0) {
+        return NULL;
+    }
+    return PikaVMSignal.event_obj_list[--PikaVMSignal.event_top];
+}
 
 VM_SIGNAL_CTRL VMSignal_getCtrl(void) {
     return PikaVMSignal.signal_ctrl;
@@ -2856,7 +2876,7 @@ void VMState_solveUnusedStack(VMState* vm) {
         } else if (type == ARG_TYPE_BYTES) {
             arg_printBytes(arg);
         } else if (ARG_TYPE_POINTER == type ||
-                   ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR == type) {
+                   ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
             __platform_printf("%p\r\n", arg_getPtr(arg));
         }
         arg_deinit(arg);
@@ -2913,6 +2933,10 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             __pks_hook_instruct();
         }
 #endif
+        PikaObj* eventHandleObj = VMSignal_popEvent();
+        if (NULL != eventHandleObj) {
+            __eventLisener_runEvent(eventHandleObj);
+        }
         if (0 != vm.error_code) {
             vm.line_error_code = vm.error_code;
             InstructUnit* head_ins_unit = this_ins_unit;

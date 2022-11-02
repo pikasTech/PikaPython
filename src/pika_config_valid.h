@@ -331,6 +331,11 @@
     #ifndef PIKA_SHELL_SAVE_FILE_NAME
         #define PIKA_SHELL_SAVE_FILE_NAME "pika_shell_save.py"
     #endif
+
+    #ifndef PIKA_EVENT_LIST_SIZE
+        #define PIKA_EVENT_LIST_SIZE 16
+    #endif
+
     /* configuration validation */
 
 #endif

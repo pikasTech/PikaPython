@@ -154,10 +154,7 @@ PikaDict* New_dict(void);
 #define dict_getStr(self, name) (args_getStr((&((self)->super)), (name)))
 #define dict_getPtr(self, name) (args_getPtr((&((self)->super)), (name)))
 #define dict_getArg(self, name) (args_getArg((&((self)->super)), (name)))
-#define dict_getArgByidex(self, index) \
-    (args_getArgByidex((&((self)->super)), (index)))
 #define dict_getBytes(self, name) (args_getBytes((&((self)->super)), (name)))
-#define dict_getSize(self) (args_getSize((&((self)->super))))
 #define dict_getType(self, name) (args_getType((&((self)->super)), (name)))
 #define dict_getBytesSize(self, name) \
     (args_getBytesSize((&((self)->super)), (name)))
@@ -180,7 +177,8 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg);
 #define tuple_getArg(self, index) (list_getArg((&((self)->super)), (index)))
 #define tuple_getSize(self) (list_getSize((&((self)->super))))
 #define tuple_getInt(self, index) (list_getInt((&((self)->super)), (index)))
-#define tuple_getFloat(self, index) (list_getFloat((&((self)->super)), (index)))
+#define tuple_getFloat(self, index) \
+    (list_getFloat((&((self)->super)), (index)))
 #define tuple_getStr(self, index) (list_getStr((&((self)->super)), (index)))
 #define tuple_getPtr(self, index) (list_getPtr((&((self)->super)), (index)))
 #define tuple_getType(self, index) (list_getType((&((self)->super)), (index)))

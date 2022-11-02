@@ -36,16 +36,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define _pika_assert(expr)                                              \
-    if (!(expr)) {                                                      \
-        __platform_printf("Assertion failed: %s\nfile: %s:%d\n", #expr, \
-                          __FILE__, __LINE__);                          \
-        abort();                                                        \
-    }
-
 /* clang-format off */
 #if PIKA_ASSERT_ENABLE
-    #define pika_assert(expr) _pika_assert(expr)
+    #define pika_assert(expr) \
+    if(!(expr)) { \
+        __platform_printf("Assertion failed: %s\nfile: %s:%d\n", #expr, __FILE__, __LINE__); \
+        abort(); \
+    }
 #else
     #define pika_assert(...)
 #endif
@@ -98,6 +95,7 @@ typedef enum {
     PIKA_RES_ERR_SYNTAX_ERROR,
     PIKA_RES_ERR_IO,
     PIKA_RES_ERR_ASSERT,
+    PIKA_RES_ERR_SIGNAL_EVENT_FULL,
 } PIKA_RES;
 
 /* clang-format off */
