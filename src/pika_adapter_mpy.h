@@ -206,4 +206,132 @@ static inline void mp_obj_get_array_fixed_n(mp_obj_t tuple,
     }
 }
 
+typedef const void* mp_const_obj_t;
+typedef mp_const_obj_t mp_rom_obj_t;
+typedef struct _mp_rom_map_elem_t {
+    mp_rom_obj_t key;
+    mp_rom_obj_t value;
+} mp_rom_map_elem_t;
+
+#define MICROPY_OBJ_BASE_ALIGNMENT
+typedef struct _mp_obj_type_t mp_obj_type_t;
+struct _mp_obj_base_t {
+    const mp_obj_type_t* type MICROPY_OBJ_BASE_ALIGNMENT;
+};
+typedef struct _mp_obj_base_t mp_obj_base_t;
+
+struct _mp_obj_type_t {
+    // A type is an object so must start with this entry, which points to
+    // mp_type_type.
+    mp_obj_base_t base;
+
+    // Flags associated with this type.
+    uint16_t flags;
+
+    // The name of this type, a qstr.
+    uint16_t name;
+
+    // Slots: For the rest of the fields, the slot index points to the
+    // relevant function in the variable-length "slots" field. Ideally these
+    // would be only 4 bits, but the extra overhead of accessing them adds
+    // more code, and we also need to be able to take the address of them for
+    // mp_obj_class_lookup.
+
+    // Corresponds to __new__ and __init__ special methods, to make an instance
+    // of the type.
+    uint8_t slot_index_make_new;
+
+    // Corresponds to __repr__ and __str__ special methods.
+    uint8_t slot_index_print;
+
+    // Corresponds to __call__ special method, ie T(...).
+    uint8_t slot_index_call;
+
+    // Implements unary and binary operations.
+    // Can return MP_OBJ_NULL if the operation is not supported.
+    uint8_t slot_index_unary_op;
+    uint8_t slot_index_binary_op;
+
+    // Implements load, store and delete attribute.
+    //
+    // dest[0] = MP_OBJ_NULL means load
+    //  return: for fail, do nothing
+    //          for fail but continue lookup in locals_dict, dest[1] =
+    //          MP_OBJ_SENTINEL for attr, dest[0] = value for method, dest[0] =
+    //          method, dest[1] = self
+    //
+    // dest[0,1] = {MP_OBJ_SENTINEL, MP_OBJ_NULL} means delete
+    // dest[0,1] = {MP_OBJ_SENTINEL, object} means store
+    //  return: for fail, do nothing
+    //          for success set dest[0] = MP_OBJ_NULL
+    uint8_t slot_index_attr;
+
+    // Implements load, store and delete subscripting:
+    //  - value = MP_OBJ_SENTINEL means load
+    //  - value = MP_OBJ_NULL means delete
+    //  - all other values mean store the value
+    // Can return MP_OBJ_NULL if operation not supported.
+    uint8_t slot_index_subscr;
+
+    // This slot's behaviour depends on the MP_TYPE_FLAG_ITER_IS_* flags above.
+    // - If MP_TYPE_FLAG_ITER_IS_GETITER flag is set, then this corresponds to
+    // the __iter__
+    //   special method (of type mp_getiter_fun_t). Can use the given
+    //   mp_obj_iter_buf_t to store the iterator object, otherwise can return a
+    //   pointer to an object on the heap.
+    // - If MP_TYPE_FLAG_ITER_IS_ITERNEXT is set, then this corresponds to
+    // __next__ special method.
+    //   May return MP_OBJ_STOP_ITERATION as an optimisation instead of raising
+    //   StopIteration() with no args. The type will implicitly implement
+    //   getiter as "return self".
+    // - If MP_TYPE_FLAG_ITER_IS_CUSTOM is set, then this slot must point to an
+    //   mp_getiter_iternext_custom_t instance with both the getiter and
+    //   iternext fields set.
+    // - If MP_TYPE_FLAG_ITER_IS_STREAM is set, this this slot should be unset.
+    uint8_t slot_index_iter;
+
+    // Implements the buffer protocol if supported by this type.
+    uint8_t slot_index_buffer;
+
+    // One of disjoint protocols (interfaces), like mp_stream_p_t, etc.
+    uint8_t slot_index_protocol;
+
+    // A pointer to the parents of this type:
+    //  - 0 parents: pointer is NULL (object is implicitly the single parent)
+    //  - 1 parent: a pointer to the type of that parent
+    //  - 2 or more parents: pointer to a tuple object containing the parent
+    //  types
+    uint8_t slot_index_parent;
+
+    // A dict mapping qstrs to objects local methods/constants/etc.
+    uint8_t slot_index_locals_dict;
+
+    const void* slots[];
+};
+
+typedef struct _mp_obj_dict_t {
+    mp_obj_base_t base;
+    mp_map_t map;
+} mp_obj_dict_t;
+
+typedef struct _mp_obj_module_t {
+    mp_obj_base_t base;
+    mp_obj_dict_t* globals;
+} mp_obj_module_t;
+
+typedef struct _vstr_t {
+    size_t alloc;
+    size_t len;
+    char *buf;
+    bool fixed_buf;
+} vstr_t;
+
+typedef struct _mp_obj_list_t {
+    mp_obj_base_t base;
+    size_t alloc;
+    size_t len;
+    mp_obj_t *items;
+} mp_obj_list_t;
+
+
 #endif
