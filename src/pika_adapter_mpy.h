@@ -1,7 +1,11 @@
+#ifndef __PIKA_ADAPTER_MPY_H__
+#define __PIKA_ADAPTER_MPY_H__
 #include <stdint.h>
 #include "PikaObj.h"
 #include "PikaStdData_List.h"
 #define bool int
+#define true 1
+#define false 0
 /* object type */
 #define mp_obj_t Arg*
 /* type define*/
@@ -131,17 +135,16 @@ static inline char* mp_obj_str_get_data(Arg* self, size_t* len) {
 static inline size_t pks_load_mp_args(PikaTuple* tuple,
                                       mp_obj_t mp_self,
                                       mp_obj_t* args) {
+    size_t len = tuple_getSize(tuple);
     size_t i = 0;
     if (NULL != mp_self) {
-        args[i++] = mp_self;
+        args[0] = mp_self;
+        i = 1;
     }
-    if (NULL != tuple) {
-        size_t len = tuple_getSize(tuple);
-        for (size_t j = 0; j < len; j++) {
-            args[i++] = tuple_getArg(tuple, j);
-        }
+    for (i = 0; i < len; i++) {
+        args[i] = tuple_getArg(tuple, i);
     }
-    return i;
+    return len;
 }
 
 static inline void pks_load_mp_map(PikaDict* kw, mp_map_t* map) {
@@ -166,3 +169,41 @@ static inline void mp_get_buffer_raise(mp_obj_t item,
     }
     memcpy(buf->buf, arg_getBytes(item), buf->len);
 }
+
+static const ArgType mp_type_tuple = ARG_TYPE_TUPLE;
+static const ArgType mp_type_list = ARG_TYPE_TUPLE;
+static const ArgType mp_type_str = ARG_TYPE_STRING;
+static const ArgType mp_type_bytes = ARG_TYPE_BYTES;
+static const ArgType mp_type_int = ARG_TYPE_INT;
+static const ArgType mp_type_float = ARG_TYPE_FLOAT;
+static const ArgType mp_type_bool = ARG_TYPE_INT;
+static const ArgType mp_type_none = ARG_TYPE_NONE;
+
+static inline bool mp_obj_is_type(mp_obj_t self, ArgType* arg_type_ptr) {
+    if (arg_getType(self) == *arg_type_ptr) {
+        return true;
+    }
+    return false;
+}
+
+#define mp_obj_is_integer(self) mp_obj_is_type(self, &mp_type_int)
+
+#define mp_uint_t size_t
+#define mp_int_t int
+
+typedef void (*mp_print_strn_t)(void* data, const char* str, size_t len);
+
+typedef struct _mp_print_t {
+    void* data;
+    mp_print_strn_t print_strn;
+} mp_print_t;
+
+static inline void mp_obj_get_array_fixed_n(mp_obj_t tuple,
+                                            size_t n,
+                                            mp_obj_t* arrray) {
+    for (int i = 0; i < n; i++) {
+        arrray[i] = tuple_getArg((PikaTuple*)arg_getPtr(tuple), i);
+    }
+}
+
+#endif
