@@ -784,7 +784,8 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     ArgType method_type = ARG_TYPE_UNDEF;
     uint8_t arg_num_input = 0;
     PikaTuple* tuple = NULL;
-    PikaDict* dict = NULL;
+    PikaDict* kw_dict = NULL;
+    PikaDict* kw_keys = NULL;
     char* variable_tuple_name = NULL;
     char* keyword_dict_name = NULL;
     char* type_list_buff = NULL;
@@ -865,7 +866,8 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             if (arg_def[0] == '*' && arg_def[1] == '*') {
                 /* get keyword dict name */
                 keyword_dict_name = arg_def + 2;
-                dict = New_dict();
+                kw_dict = New_dict();
+                kw_keys = New_dict();
                 /* remove the format arg */
                 strPopLastToken(type_list, ',');
                 continue;
@@ -878,11 +880,18 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         Arg* call_arg = stack_popArg_alloc(&(vm->stack));
         /* load the keyword arg */
         if (call_arg != NULL && arg_getIsKeyword(call_arg)) {
-            if (NULL == dict) {
-                dict = New_dict();
+            if (NULL == kw_dict) {
+                kw_dict = New_dict();
+            }
+            if (NULL == kw_keys) {
+                kw_keys = New_dict();
             }
             arg_setIsKeyword(call_arg, PIKA_FALSE);
-            dict_setArg(dict, call_arg);
+            dict_setArg(kw_dict, call_arg);
+            char kw_keys_index_buff[11] = {0};
+            char* kw_keys_index = fast_itoa(kw_keys_index_buff, i);
+            dict_setArg(kw_keys, arg_setInt(NULL, kw_keys_index,
+                                            arg_getNameHash(call_arg)));
             continue;
         }
 
@@ -898,7 +907,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
         char* arg_name = strPopLastToken(type_list, ',');
 
-        arg_name = _loadDefaultArgs(type_list, arg_name, dict, locals);
+        arg_name = _loadDefaultArgs(type_list, arg_name, kw_dict, locals);
 
         /* skip type hint */
         strPopLastToken(arg_name, ':');
@@ -908,7 +917,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     if (strIsContain(type_list, '=')) {
         char* arg_name = strPopLastToken(type_list, ',');
-        _loadDefaultArgs(type_list, arg_name, dict, locals);
+        _loadDefaultArgs(type_list, arg_name, kw_dict, locals);
     }
 
     if (tuple != NULL) {
@@ -921,14 +930,15 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                             tuple_obj);
     }
 
-    if (dict != NULL) {
+    if (kw_dict != NULL) {
         if (NULL == keyword_dict_name) {
             keyword_dict_name = "__kwargs";
         }
         /* load keyword dict */
         PikaObj* New_PikaStdData_Dict(Args * args);
         PikaObj* dict_obj = newNormalObj(New_PikaStdData_Dict);
-        obj_setPtr(dict_obj, "dict", dict);
+        obj_setPtr(dict_obj, "dict", kw_dict);
+        obj_setPtr(dict_obj, "_keys", kw_keys);
         args_setPtrWithType(locals, keyword_dict_name, ARG_TYPE_OBJECT,
                             dict_obj);
     }

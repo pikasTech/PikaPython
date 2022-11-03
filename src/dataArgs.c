@@ -404,6 +404,7 @@ Arg* args_getArg(Args* self, char* name) {
 }
 
 Arg* args_getArgByidex(Args* self, int index) {
+    pika_assert(NULL != self);
     LinkNode* nodeNow = self->firstNode;
     if (NULL == nodeNow) {
         return NULL;
@@ -795,6 +796,6 @@ PikaDict* args_getDict(Args* self, char* name) {
 }
 
 char* args_cacheStr(Args* self, char* str) {
-    args_setStr(self, "__str_cache", str);
-    return args_getStr(self, "__str_cache");
+    args_setStr(self, "@sc", str);
+    return args_getStr(self, "@sc");
 }

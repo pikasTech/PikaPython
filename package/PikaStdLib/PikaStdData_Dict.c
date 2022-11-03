@@ -136,6 +136,8 @@ char* PikaStdData_Dict___str__(PikaObj* self) {
 
     PikaDict* keys = obj_getPtr(self, "_keys");
     PikaDict* dict = obj_getPtr(self, "dict");
+    pika_assert(NULL != dict);
+    pika_assert(NULL != keys);
 
     int i = 0;
     while (PIKA_TRUE) {

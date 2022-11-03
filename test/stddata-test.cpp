@@ -456,6 +456,42 @@ TEST(std, eval) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stddata, kw_fun) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def test(**kw):\n"
+            "    print(kw)\n"
+            "test(a=1, b=2)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "{'177670': 1, '177671': 2}\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, kw_fun_err_input) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def test(**kw):\n"
+            "    print(kw)\n"
+            "test({'a':1, 'b':2})\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "{}\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
