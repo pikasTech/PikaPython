@@ -69,6 +69,8 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 
 # Related Projects
 
+- ▶️ [PikaScript Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
+
 - ⭐ [PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
 
 - ⭐ [PikaScript Bluepill Demo In GCC 🐍](https://github.com/Chandler-Kluser/pikascript_gcc_bluepill)

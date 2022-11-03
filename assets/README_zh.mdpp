@@ -121,8 +121,12 @@ http://pikascript.com
 
 
 ## 相关开源项目 
-### PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌
-https://github.com/maxgerhardt/pikascript-pio-bluepill
+
+- ▶️ [PikaScript Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
+
+- ⭐ [PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
+
+- ⭐ [PikaScript Bluepill Demo In GCC 🐍](https://github.com/Chandler-Kluser/pikascript_gcc_bluepill)
 
 # 3.特性
 ### (1)运行环境
