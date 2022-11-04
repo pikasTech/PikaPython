@@ -67,7 +67,7 @@ int PikaStdData_FILEIO_write(PikaObj* self, Arg* s) {
     char* mode = obj_getStr(self, "_mode");
     if (strIsContain(mode, 'b')) {
         /* binary */
-        res = __platform_fwrite(arg_getBytes(s), 1, arg_getSize(s), f);
+        res = __platform_fwrite(arg_getBytes(s), 1, arg_getBytesSize(s), f);
     } else {
         /* text */
         char* str = arg_getStr(s);
