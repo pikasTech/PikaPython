@@ -5,8 +5,8 @@
 PikaObj* pika_cjson_Parse(PikaObj* self, char* value) {
     cJSON* item = cJSON_Parse(value);
     if (NULL == item) {
-        obj_setErrorCode(self, 3);
-        __platform_printf("Error: cJSON parse faild.\r\n");
+        // obj_setErrorCode(self, 3);
+        __platform_printf("Error: cJSON parse failed.\r\n");
         return NULL;
     }
     PikaObj* cjson_obj = newNormalObj(New_pika_cjson_cJSON);

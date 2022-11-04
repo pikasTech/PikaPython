@@ -1196,6 +1196,7 @@ void method_returnPtr(Args* args, void* val) {
 
 void method_returnObj(Args* args, void* val) {
     if (NULL == val) {
+        args_pushArg_name(args, "@rt", arg_newNull());
         return;
     }
     ArgType type;
