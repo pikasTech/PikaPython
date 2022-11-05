@@ -96,6 +96,7 @@ typedef enum {
     PIKA_RES_ERR_IO,
     PIKA_RES_ERR_ASSERT,
     PIKA_RES_ERR_SIGNAL_EVENT_FULL,
+    PIKA_RES_ERR_SIGNAL_EVENT_EMPTY,
 } PIKA_RES;
 
 /* clang-format off */

@@ -36,29 +36,51 @@
 #include <math.h>
 #endif
 
-static volatile VMSignal PikaVMSignal = {
-    .signal_ctrl = VM_SIGNAL_CTRL_NONE,
-    .vm_cnt = 0,
-    .event_top = 0,
-};
+static volatile VMSignal PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
+                                         .vm_cnt = 0,
+                                         .cq = {
+                                             .head = 0,
+                                             .tail = 0,
+                                         }};
 
 int VMSignal_getVMCnt(void) {
     return PikaVMSignal.vm_cnt;
 }
 
-PIKA_RES VMSignal_pushEvent(PikaObj* eventHandleObj) {
-    if (PikaVMSignal.event_top >= PIKA_EVENT_LIST_SIZE) {
+static PIKA_BOOL _cq_isEmpty(volatile VMSignal* signal) {
+    return signal->cq.head == signal->cq.tail;
+}
+
+static PIKA_BOOL _cq_isFull(volatile VMSignal* signal) {
+    return (signal->cq.tail + 1) % PIKA_EVENT_LIST_SIZE == signal->cq.head;
+}
+
+PIKA_RES VMSignal_pushEvent(PikaEventListener* lisener,
+                            uint32_t eventId,
+                            int eventSignal) {
+    /* push to event_cq_buff */
+    if (_cq_isFull(&PikaVMSignal)) {
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
     }
-    PikaVMSignal.event_obj_list[PikaVMSignal.event_top++] = eventHandleObj;
+    PikaVMSignal.cq.id[PikaVMSignal.cq.tail] = eventId;
+    PikaVMSignal.cq.signal[PikaVMSignal.cq.tail] = eventSignal;
+    PikaVMSignal.cq.lisener[PikaVMSignal.cq.tail] = lisener;
+    PikaVMSignal.cq.tail = (PikaVMSignal.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
 }
 
-PikaObj* VMSignal_popEvent(void) {
-    if (PikaVMSignal.event_top <= 0) {
-        return NULL;
+PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
+                           uint32_t* id,
+                           int* signal) {
+    /* pop from event_cq_buff */
+    if (_cq_isEmpty(&PikaVMSignal)) {
+        return PIKA_RES_ERR_SIGNAL_EVENT_EMPTY;
     }
-    return PikaVMSignal.event_obj_list[--PikaVMSignal.event_top];
+    *id = PikaVMSignal.cq.id[PikaVMSignal.cq.head];
+    *signal = PikaVMSignal.cq.signal[PikaVMSignal.cq.head];
+    *lisener_p = PikaVMSignal.cq.lisener[PikaVMSignal.cq.head];
+    PikaVMSignal.cq.head = (PikaVMSignal.cq.head + 1) % PIKA_EVENT_LIST_SIZE;
+    return PIKA_RES_OK;
 }
 
 VM_SIGNAL_CTRL VMSignal_getCtrl(void) {
@@ -2824,6 +2846,8 @@ void instructArray_printAsArray(InstructArray* self) {
     uint8_t* ins_size_p = (uint8_t*)&self->size;
     __platform_printf("0x%02x, ", *(ins_size_p));
     __platform_printf("0x%02x, ", *(ins_size_p + (uintptr_t)1));
+    __platform_printf("0x%02x, ", *(ins_size_p + (uintptr_t)2));
+    __platform_printf("0x%02x, ", *(ins_size_p + (uintptr_t)3));
     __platform_printf("/* instruct array size */\n");
     while (1) {
         InstructUnit* ins_unit = instructArray_getNow(self);
@@ -2943,9 +2967,16 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             __pks_hook_instruct();
         }
 #endif
-        PikaObj* eventHandleObj = VMSignal_popEvent();
-        if (NULL != eventHandleObj) {
-            __eventLisener_runEvent(eventHandleObj);
+        PikaObj* event_lisener;
+        uint32_t event_id;
+        int event_signal;
+        if (PIKA_RES_OK ==
+            VMSignal_popEvent(&event_lisener, &event_id, &event_signal)) {
+            Arg* res =
+                __eventLisener_runEvent(event_lisener, event_id, event_signal);
+            if (NULL != res) {
+                arg_deinit(res);
+            }
         }
         if (0 != vm.error_code) {
             vm.line_error_code = vm.error_code;
@@ -2999,6 +3030,8 @@ void constPool_printAsArray(ConstPool* self) {
     uint8_t* const_size_str = (uint8_t*)&(self->size);
     __platform_printf("0x%02x, ", *(const_size_str));
     __platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)1));
+    __platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)2));
+    __platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)3));
     __platform_printf("/* const pool size */\n");
     uint16_t ptr_befor = self->content_offset_now;
     uint8_t line_num = 12;

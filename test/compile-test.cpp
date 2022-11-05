@@ -573,7 +573,7 @@ TEST(compiler, event_cb) {
 }
 
 TEST(compiler, event_cb_lvgl) {
-    char* lines = "eventCallBack(eventSignal)";
+    char* lines = "_res = eventCallBack(eventSignal)";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }

@@ -22,9 +22,14 @@ TEST(event, gpio) {
 
     obj_run(pikaMain, "io1.eventTest()");
 
-    EXPECT_STREQ(log_buff[2], "get rising edge!\r\n");
-    EXPECT_STREQ(log_buff[1], "get falling edge!\r\n");
+    EXPECT_STREQ(log_buff[3], "get rising edge!\r\n");
+    EXPECT_STREQ(log_buff[2], "get falling edge!\r\n");
+    EXPECT_STREQ(log_buff[1], "get rising edge!\r\n");
     EXPECT_STREQ(log_buff[0], "get falling edge!\r\n");
+
+    for (int i = 0; i < 255; i++) {
+        obj_run(pikaMain, "io1.eventTest()");
+    }
 
     /* deinit */
     obj_deinit(pikaMain);

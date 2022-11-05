@@ -470,6 +470,8 @@ void _obj_updateProxyFlag(PikaObj* self);
     _obj_updateProxyFlag((_self))
 
 Arg* _obj_getProp(PikaObj* obj, char* name);
-void __eventLisener_runEvent(PikaObj* eventHandleObj);
+Arg* __eventLisener_runEvent(PikaEventListener* lisener,
+                             uint32_t eventId,
+                             int eventSignal);
 
 #endif

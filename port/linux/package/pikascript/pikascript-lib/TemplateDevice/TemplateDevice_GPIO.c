@@ -15,13 +15,14 @@ void TemplateDevice_GPIO_platformGetEventId(PikaObj* self) {
     }
 }
 
-
 extern PikaEventListener* g_pika_device_event_listener;
-#define EVENT_SIGAL_IO_RISING_EDGE 0x01
-#define EVENT_SIGAL_IO_FALLING_EDGE 0x02
+#define EVENT_SIGNAL_IO_RISING_EDGE 0x01
+#define EVENT_SIGNAL_IO_FALLING_EDGE 0x02
 #define GPIO_PA8_EVENT_ID 0x08
 
-void TemplateDevice_GPIO_eventTest(PikaObj *self){
-pks_eventLisener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
-                            EVENT_SIGAL_IO_FALLING_EDGE);
+void TemplateDevice_GPIO_eventTest(PikaObj* self) {
+    pks_eventLisener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
+                                EVENT_SIGNAL_IO_FALLING_EDGE);
+    pks_eventLisener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
+                                EVENT_SIGNAL_IO_RISING_EDGE);
 }

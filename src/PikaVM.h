@@ -104,12 +104,19 @@ typedef enum VM_SIGNAL_CTRL {
     VM_SIGNAL_CTRL_EXIT,
 } VM_SIGNAL_CTRL;
 
+typedef struct EventCQ {
+    uint32_t id[PIKA_EVENT_LIST_SIZE];
+    int signal[PIKA_EVENT_LIST_SIZE];
+    PikaEventListener* lisener[PIKA_EVENT_LIST_SIZE];
+    int head;
+    int tail;
+} EventCQ;
+
 typedef struct VMSignal VMSignal;
 struct VMSignal {
     VM_SIGNAL_CTRL signal_ctrl;
     int vm_cnt;
-    PikaObj* event_obj_list[PIKA_EVENT_LIST_SIZE];
-    int event_top;
+    EventCQ cq;
 };
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
@@ -233,7 +240,11 @@ VM_SIGNAL_CTRL VMSignal_getCtrl(void);
 void pks_vm_exit(void);
 void pks_vmSignal_setCtrlElear(void);
 int VMSignal_getVMCnt(void);
-PikaObj* VMSignal_popEvent(void);
-PIKA_RES VMSignal_pushEvent(PikaObj* eventHandleObj);
+PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
+                           uint32_t* id,
+                           int* signal);
+PIKA_RES VMSignal_pushEvent(PikaEventListener* lisener,
+                            uint32_t eventId,
+                            int eventSignal);
 
 #endif

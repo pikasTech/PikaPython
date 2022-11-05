@@ -1427,40 +1427,50 @@ void pks_eventLisener_deinit(PikaEventListener** p_self) {
     }
 }
 
-void __eventLisener_runEvent(PikaObj* eventHandleObj) {
+Arg* __eventLisener_runEvent(PikaEventListener* lisener,
+                             uint32_t eventId,
+                             int eventSignal) {
+    PikaObj* handler = pks_eventLisener_getEventHandleObj(lisener, eventId);
+    if (NULL == handler) {
+        __platform_printf(
+            "Error: can not find event handler by id: [0x%02x]\r\n", eventId);
+        return NULL;
+    }
+    obj_setInt(handler, "eventSignal", eventSignal);
     /* clang-format off */
     PIKA_PYTHON(
-    eventCallBack(eventSignal)
+    _res = eventCallBack(eventSignal)
     )
     /* clang-format on */
     const uint8_t bytes[] = {
-        0x08, 0x00, 0x00, 0x00, /* instruct array size */
-        0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0d, 0x00, /* instruct array */
-        0x1b, 0x00, 0x00, 0x00,                         /* const pool size */
-        0x00, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x69, 0x67,
-        0x6e, 0x61, 0x6c, 0x00, 0x65, 0x76, 0x65, 0x6e, 0x74,
-        0x43, 0x61, 0x6c, 0x6c, 0x42, 0x61, 0x63, 0x6b, 0x00, /* const pool */
+        0x0c, 0x00, 0x00, 0x00, /* instruct array size */
+        0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0d, 0x00, 0x00, 0x04, 0x1b, 0x00,
+        /* instruct array */
+        0x20, 0x00, 0x00, 0x00, /* const pool size */
+        0x00, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x6c,
+        0x00, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x43, 0x61, 0x6c, 0x6c, 0x42, 0x61,
+        0x63, 0x6b, 0x00, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
     };
-    pikaVM_runByteCode(eventHandleObj, (uint8_t*)bytes);
+    pikaVM_runByteCode(handler, (uint8_t*)bytes);
+    Arg* res = obj_getArg(handler, "_res");
+    res = arg_copy(res);
+    obj_removeArg(handler, "_res");
+    return res;
 }
 
 void pks_eventLisener_sendSignal(PikaEventListener* self,
                                  uint32_t eventId,
                                  int eventSignal) {
-    PikaObj* eventHandleObj = pks_eventLisener_getEventHandleObj(self, eventId);
-    if (NULL == eventHandleObj) {
-        __platform_printf(
-            "Error: can not find event handler by id: [0x%02x]\r\n", eventId);
-        return;
-    }
-    obj_setInt(eventHandleObj, "eventSignal", eventSignal);
     if (0 == VMSignal_getVMCnt()) {
         /* no vm is running, run event handler directly */
-        __eventLisener_runEvent(eventHandleObj);
+        Arg* res = __eventLisener_runEvent(self, eventId, eventSignal);
+        if (NULL != res) {
+            arg_deinit(res);
+        }
         return;
     }
     /* push event handler to vm event list */
-    if (PIKA_RES_OK != VMSignal_pushEvent(eventHandleObj)) {
+    if (PIKA_RES_OK != VMSignal_pushEvent(self, eventId, eventSignal)) {
         __platform_printf(
             "OverflowError: event list is full, please use bigger "
             "PIKA_EVENT_LIST_SIZE\r\n");
