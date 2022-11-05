@@ -63,12 +63,18 @@ static PIKA_BOOL _cq_isFull(volatile EventCQ* cq) {
 #endif
 
 void VMSignal_deinit(void) {
+#if !PIKA_EVENT_ENABLE
+    __platform_printf("PIKA_EVENT_ENABLE is not enable");
+    while (1) {
+    };
+#else
     for (int i = 0; i < PIKA_EVENT_LIST_SIZE; i++) {
         if (NULL != PikaVMSignal.cq.res[i]) {
             arg_deinit(PikaVMSignal.cq.res[i]);
             PikaVMSignal.cq.res[i] = NULL;
         }
     }
+#endif
 }
 
 PIKA_RES VMSignal_pushEvent(PikaEventListener* lisener,

@@ -128,7 +128,9 @@ int32_t obj_deinit(PikaObj* self) {
         void _mem_cache_deinit(void);
         void VMSignal_deinit(void);
         _mem_cache_deinit();
+#if PIKA_EVENT_ENABLE
         VMSignal_deinit();
+#endif
     }
     return obj_deinit_no_del(self);
 }
