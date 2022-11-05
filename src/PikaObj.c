@@ -124,9 +124,11 @@ int32_t obj_deinit(PikaObj* self) {
         arg_deinit(del);
     }
     extern volatile PikaObj* __pikaMain;
-    void _mem_cache_deinit(void);
     if (self == (PikaObj*)__pikaMain) {
+        void _mem_cache_deinit(void);
+        void VMSignal_deinit(void);
         _mem_cache_deinit();
+        VMSignal_deinit();
     }
     return obj_deinit_no_del(self);
 }
@@ -1461,14 +1463,11 @@ Arg* __eventLisener_runEvent(PikaEventListener* lisener,
 void pks_eventLisener_sendSignal(PikaEventListener* self,
                                  uint32_t eventId,
                                  int eventSignal) {
-    if (0 == VMSignal_getVMCnt()) {
-        /* no vm is running, run event handler directly */
-        Arg* res = __eventLisener_runEvent(self, eventId, eventSignal);
-        if (NULL != res) {
-            arg_deinit(res);
-        }
-        return;
-    }
+#if !PIKA_EVENT_ENABLE
+    __platform_printf("PIKA_EVENT_ENABLE is not enable");
+    while (1) {
+    };
+#else
     /* push event handler to vm event list */
     if (PIKA_RES_OK != VMSignal_pushEvent(self, eventId, eventSignal)) {
         __platform_printf(
@@ -1477,6 +1476,35 @@ void pks_eventLisener_sendSignal(PikaEventListener* self,
         while (1) {
         }
     }
+    if (0 == VMSignal_getVMCnt()) {
+        /* no vm running, pick up event imediately */
+        VMSignale_pickupEvent();
+    }
+#endif
+}
+
+Arg* pks_eventLisener_sendSignalAwaitResult(PikaEventListener* self,
+                                            uint32_t eventId,
+                                            int eventSignal) {
+    /*
+     * Await result from evnet.
+     * need implement `__platform_thread_delay()` to support thread switch */
+#if !PIKA_EVENT_ENABLE
+    __platform_printf("PIKA_EVENT_ENABLE is not enable");
+    while (1) {
+    };
+#else
+    extern volatile VMSignal PikaVMSignal;
+    int tail = PikaVMSignal.cq.tail;
+    pks_eventLisener_sendSignal(self, eventId, eventSignal);
+    while (1) {
+        Arg* res = PikaVMSignal.cq.res[tail];
+        __platform_thread_delay();
+        if (NULL != res) {
+            return res;
+        }
+    }
+#endif
 }
 
 /* print major version info */

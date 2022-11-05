@@ -31,6 +31,15 @@ TEST(event, gpio) {
         obj_run(pikaMain, "io1.eventTest()");
     }
 
+    /* simulate run in the call back */
+    Arg* res_123 = pks_eventLisener_sendSignalAwaitResult(
+        g_pika_device_event_listener, GPIO_PA8_EVENT_ID, 123);
+    Arg* res_456 = pks_eventLisener_sendSignalAwaitResult(
+        g_pika_device_event_listener, GPIO_PA8_EVENT_ID, 456);
+    
+    EXPECT_EQ(arg_getInt(res_123), 123);
+    EXPECT_EQ(arg_getInt(res_456), 456);
+
     /* deinit */
     obj_deinit(pikaMain);
 

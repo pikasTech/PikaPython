@@ -213,3 +213,7 @@ PIKA_WEAK void __pks_hook_instruct(void) {
 PIKA_WEAK PIKA_BOOL __pks_hook_arg_cache_filter(void* self) {
     return PIKA_TRUE;
 }
+
+PIKA_WEAK void __platform_thread_delay(void) {
+    return;
+}

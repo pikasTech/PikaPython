@@ -108,6 +108,7 @@ typedef struct EventCQ {
     uint32_t id[PIKA_EVENT_LIST_SIZE];
     int signal[PIKA_EVENT_LIST_SIZE];
     PikaEventListener* lisener[PIKA_EVENT_LIST_SIZE];
+    Arg* res[PIKA_EVENT_LIST_SIZE];
     int head;
     int tail;
 } EventCQ;
@@ -116,7 +117,9 @@ typedef struct VMSignal VMSignal;
 struct VMSignal {
     VM_SIGNAL_CTRL signal_ctrl;
     int vm_cnt;
+#if PIKA_EVENT_ENABLE
     EventCQ cq;
+#endif
 };
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
@@ -242,9 +245,10 @@ void pks_vmSignal_setCtrlElear(void);
 int VMSignal_getVMCnt(void);
 PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
                            uint32_t* id,
-                           int* signal);
+                           int* signal,
+                           int* head);
 PIKA_RES VMSignal_pushEvent(PikaEventListener* lisener,
                             uint32_t eventId,
                             int eventSignal);
-
+void VMSignale_pickupEvent(void);
 #endif

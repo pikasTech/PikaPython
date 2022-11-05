@@ -36,51 +36,104 @@
 #include <math.h>
 #endif
 
-static volatile VMSignal PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
-                                         .vm_cnt = 0,
-                                         .cq = {
-                                             .head = 0,
-                                             .tail = 0,
-                                         }};
+volatile VMSignal PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
+                                  .vm_cnt = 0,
+#if PIKA_EVENT_ENABLE
+                                  .cq =
+                                      {
+                                          .head = 0,
+                                          .tail = 0,
+                                          .res = {0},
+                                      }
+#endif
+};
 
 int VMSignal_getVMCnt(void) {
     return PikaVMSignal.vm_cnt;
 }
 
-static PIKA_BOOL _cq_isEmpty(volatile VMSignal* signal) {
-    return signal->cq.head == signal->cq.tail;
+#if PIKA_EVENT_ENABLE
+static PIKA_BOOL _cq_isEmpty(volatile EventCQ* cq) {
+    return cq->head == cq->tail;
 }
 
-static PIKA_BOOL _cq_isFull(volatile VMSignal* signal) {
-    return (signal->cq.tail + 1) % PIKA_EVENT_LIST_SIZE == signal->cq.head;
+static PIKA_BOOL _cq_isFull(volatile EventCQ* cq) {
+    return (cq->tail + 1) % PIKA_EVENT_LIST_SIZE == cq->head;
+}
+#endif
+
+void VMSignal_deinit(void) {
+    for (int i = 0; i < PIKA_EVENT_LIST_SIZE; i++) {
+        if (NULL != PikaVMSignal.cq.res[i]) {
+            arg_deinit(PikaVMSignal.cq.res[i]);
+            PikaVMSignal.cq.res[i] = NULL;
+        }
+    }
 }
 
 PIKA_RES VMSignal_pushEvent(PikaEventListener* lisener,
                             uint32_t eventId,
                             int eventSignal) {
+#if !PIKA_EVENT_ENABLE
+    __platform_printf("PIKA_EVENT_ENABLE is not enable");
+    while (1) {
+    };
+#else
     /* push to event_cq_buff */
-    if (_cq_isFull(&PikaVMSignal)) {
+    if (_cq_isFull(&PikaVMSignal.cq)) {
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
+    }
+    if (PikaVMSignal.cq.res[PikaVMSignal.cq.tail] != NULL) {
+        arg_deinit(PikaVMSignal.cq.res[PikaVMSignal.cq.tail]);
+        PikaVMSignal.cq.res[PikaVMSignal.cq.tail] = NULL;
     }
     PikaVMSignal.cq.id[PikaVMSignal.cq.tail] = eventId;
     PikaVMSignal.cq.signal[PikaVMSignal.cq.tail] = eventSignal;
     PikaVMSignal.cq.lisener[PikaVMSignal.cq.tail] = lisener;
     PikaVMSignal.cq.tail = (PikaVMSignal.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
+#endif
 }
 
 PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
                            uint32_t* id,
-                           int* signal) {
+                           int* signal,
+                           int* head) {
+#if !PIKA_EVENT_ENABLE
+    __platform_printf("PIKA_EVENT_ENABLE is not enable");
+    while (1) {
+    };
+#else
     /* pop from event_cq_buff */
-    if (_cq_isEmpty(&PikaVMSignal)) {
+    if (_cq_isEmpty(&PikaVMSignal.cq)) {
         return PIKA_RES_ERR_SIGNAL_EVENT_EMPTY;
     }
     *id = PikaVMSignal.cq.id[PikaVMSignal.cq.head];
     *signal = PikaVMSignal.cq.signal[PikaVMSignal.cq.head];
     *lisener_p = PikaVMSignal.cq.lisener[PikaVMSignal.cq.head];
+    *head = PikaVMSignal.cq.head;
     PikaVMSignal.cq.head = (PikaVMSignal.cq.head + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
+#endif
+}
+
+void VMSignale_pickupEvent(void) {
+#if !PIKA_EVENT_ENABLE
+    __platform_printf("PIKA_EVENT_ENABLE is not enable");
+    while (1) {
+    };
+#else
+    PikaObj* event_lisener;
+    uint32_t event_id;
+    int event_signal;
+    int head;
+    if (PIKA_RES_OK ==
+        VMSignal_popEvent(&event_lisener, &event_id, &event_signal, &head)) {
+        Arg* res =
+            __eventLisener_runEvent(event_lisener, event_id, event_signal);
+        PikaVMSignal.cq.res[head] = res;
+    }
+#endif
 }
 
 VM_SIGNAL_CTRL VMSignal_getCtrl(void) {
@@ -2967,17 +3020,9 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             __pks_hook_instruct();
         }
 #endif
-        PikaObj* event_lisener;
-        uint32_t event_id;
-        int event_signal;
-        if (PIKA_RES_OK ==
-            VMSignal_popEvent(&event_lisener, &event_id, &event_signal)) {
-            Arg* res =
-                __eventLisener_runEvent(event_lisener, event_id, event_signal);
-            if (NULL != res) {
-                arg_deinit(res);
-            }
-        }
+#if PIKA_EVENT_ENABLE
+        VMSignale_pickupEvent();
+#endif
         if (0 != vm.error_code) {
             vm.line_error_code = vm.error_code;
             InstructUnit* head_ins_unit = this_ins_unit;

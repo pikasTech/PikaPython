@@ -473,5 +473,8 @@ Arg* _obj_getProp(PikaObj* obj, char* name);
 Arg* __eventLisener_runEvent(PikaEventListener* lisener,
                              uint32_t eventId,
                              int eventSignal);
+Arg* pks_eventLisener_sendSignalAwaitResult(PikaEventListener* self,
+                                            uint32_t eventId,
+                                            int eventSignal);
 
 #endif
