@@ -201,7 +201,7 @@ static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
 
     /* find loop deepth */
     while (1) {
-        offset -= instructUnit_getSize(ins_unit_now);
+        offset -= instructUnit_getSize();
         InstructUnit* ins_unit_now =
             VMState_getInstructUnitWithOffset(vm, offset);
         uint16_t invoke_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
@@ -215,7 +215,7 @@ static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
 
     offset = 0;
     while (1) {
-        offset += instructUnit_getSize(ins_unit_now);
+        offset += instructUnit_getSize();
         InstructUnit* ins_unit_now =
             VMState_getInstructUnitWithOffset(vm, offset);
         enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
@@ -287,7 +287,7 @@ static int32_t VMState_getAddrOffsetOfRaise(VMState* vm) {
     int offset = 0;
     InstructUnit* ins_unit_now = VMState_getInstructNow(vm);
     while (1) {
-        offset += instructUnit_getSize(ins_unit_now);
+        offset += instructUnit_getSize();
         if (vm->pc + offset >= (int)VMState_getInstructArraySize(vm)) {
             return 0;
         }
@@ -1514,7 +1514,7 @@ static PIKA_BOOL _proxy_setattr(PikaObj* self, char* name, Arg* arg) {
 #if PIKA_NANO_ENABLE
     return PIKA_FALSE;
 #endif
-    if obj_getFlag (self, OBJ_FLAG_PROXY_SETATTR) {
+    if (obj_getFlag(self, OBJ_FLAG_PROXY_SETATTR)) {
         obj_setStr(self, "@name", name);
         obj_setArg(self, "@value", arg);
         /* clang-format off */
@@ -1747,7 +1747,7 @@ static uint8_t VMState_getInputArgNum(VMState* vm) {
     uint8_t num = 0;
     while (1) {
         ins_unit_now--;
-        pc_this -= instructUnit_getSize(ins_unit_now);
+        pc_this -= instructUnit_getSize();
         uint8_t invode_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
         if (pc_this < 0) {
             break;
@@ -2913,7 +2913,7 @@ void instructArray_printAsArray(InstructArray* self) {
         if (NULL == ins_unit) {
             goto exit;
         }
-        for (int i = 0; i < (int)instructUnit_getSize(ins_unit); i++) {
+        for (int i = 0; i < (int)instructUnit_getSize(); i++) {
             g_i++;
             __platform_printf("0x%02x, ", *((uint8_t*)ins_unit + (uintptr_t)i));
             if (g_i % line_num == 0) {

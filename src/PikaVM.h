@@ -127,37 +127,45 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame);
 
-#define instructUnit_getBlockDeepth(self) (((self)->deepth) & 0x0F)
-#define instructUnit_getInvokeDeepth(self) (((self)->deepth) >> 4)
-#define instructUnit_getInstruct(self) \
-    ((enum Instruct)((self)->isNewLine_instruct & 0x7F))
-#define instructUnit_getConstPoolIndex(self) ((self)->const_pool_index)
-#define instructUnit_getIsNewLine(self) ((self)->isNewLine_instruct >> 7)
+static inline int instructUnit_getBlockDeepth(InstructUnit* self) {
+    return self->deepth & 0x0F;
+}
 
-#define instructUnit_setBlockDeepth(self, val) \
-    do {                                       \
-        ((self)->deepth) |= (0x0F & (val));    \
-    } while (0)
+static inline int instructUnit_getInvokeDeepth(InstructUnit* self) {
+    return self->deepth >> 4;
+}
 
-#define instructUnit_setConstPoolIndex(self, val) \
-    do {                                          \
-        ((self)->const_pool_index = (val));       \
-    } while (0)
+static inline enum Instruct instructUnit_getInstruct(InstructUnit* self) {
+    return (enum Instruct)(self->isNewLine_instruct & 0x7F);
+}
 
-#define instructUnit_setInvokeDeepth(self, val)    \
-    do {                                           \
-        ((self)->deepth) |= ((0x0F & (val)) << 4); \
-    } while (0)
+static inline int instructUnit_getConstPoolIndex(InstructUnit* self) {
+    return self->const_pool_index;
+}
 
-#define instructUnit_setInstruct(self, val)             \
-    do {                                                \
-        ((self)->isNewLine_instruct) |= (0x7F & (val)); \
-    } while (0)
+static inline int instructUnit_getIsNewLine(InstructUnit* self) {
+    return self->isNewLine_instruct >> 7;
+}
 
-#define instructUnit_setIsNewLine(self, val)                   \
-    do {                                                       \
-        ((self)->isNewLine_instruct) |= ((0x01 & (val)) << 7); \
-    } while (0)
+static inline void instructUnit_setBlockDeepth(InstructUnit* self, int val) {
+    self->deepth |= (0x0F & val);
+}
+
+static inline void instructUnit_setConstPoolIndex(InstructUnit* self, int val) {
+    self->const_pool_index = val;
+}
+
+static inline void instructUnit_setInvokeDeepth(InstructUnit* self, int val) {
+    self->deepth |= ((0x0F & val) << 4);
+}
+
+static inline void instructUnit_setInstruct(InstructUnit* self, int val) {
+    self->isNewLine_instruct |= (0x7F & val);
+}
+
+static inline void instructUnit_setIsNewLine(InstructUnit* self, int val) {
+    self->isNewLine_instruct |= ((0x01 & val) << 7);
+}
 
 InstructUnit* New_instructUnit(uint8_t data_size);
 void instructUnit_deinit(InstructUnit* self);
@@ -168,14 +176,23 @@ void constPool_init(ConstPool* self);
 void constPool_deinit(ConstPool* self);
 void constPool_append(ConstPool* self, char* content);
 
-#define constPool_getStart(self) ((self)->content_start)
-#define constPool_getLastOffset(self) ((self)->size)
-#define constPool_getByOffset(self, offset) \
-    (char*)((uintptr_t)constPool_getStart((self)) + (uintptr_t)(offset))
+static inline void* constPool_getStart(ConstPool* self) {
+    return self->content_start;
+}
 
-#define VMState_getConstWithInstructUnit(__vm, __ins_unit)        \
-    (constPool_getByOffset(&((__vm)->bytecode_frame->const_pool), \
-                           instructUnit_getConstPoolIndex(__ins_unit)))
+static inline int constPool_getLastOffset(ConstPool* self) {
+    return self->size;
+}
+
+static inline char* constPool_getByOffset(ConstPool* self, int offset) {
+    return (char*)((uintptr_t)constPool_getStart(self) + (uintptr_t)offset);
+}
+
+static inline char* VMState_getConstWithInstructUnit(VMState* vm,
+                                                     InstructUnit* ins_unit) {
+    return constPool_getByOffset(&(vm->bytecode_frame->const_pool),
+                                 instructUnit_getConstPoolIndex(ins_unit));
+}
 
 char* constPool_getNow(ConstPool* self);
 char* constPool_getNext(ConstPool* self);
@@ -193,30 +210,40 @@ void instructUnit_init(InstructUnit* ins_unit);
 void instructUnit_print(InstructUnit* self);
 void instructArray_print(InstructArray* self);
 
-#define instructArray_getStart(InsturctArry_p_self) \
-    ((InsturctArry_p_self)->content_start)
+static inline InstructUnit* instructArray_getStart(InstructArray* self) {
+    return (InstructUnit*)self->content_start;
+}
 
-#define instructArray_getSize(InsturctArry_p_self) \
-    ((size_t)(InsturctArry_p_self)->size)
+static inline size_t instructArray_getSize(InstructArray* self) {
+    return (size_t)self->size;
+}
 
-#define VMState_getInstructArraySize(vm) \
-    (instructArray_getSize(&((vm)->bytecode_frame->instruct_array)))
+static inline int VMState_getInstructArraySize(VMState* vm) {
+    return instructArray_getSize(&(vm->bytecode_frame->instruct_array));
+}
 
-#define instructArray_getByOffset(__self, __offset)                \
-    ((InstructUnit*)((uintptr_t)instructArray_getStart((__self)) + \
-                     (uintptr_t)(__offset)))
+static inline InstructUnit* instructArray_getByOffset(InstructArray* self,
+                                                      int offset) {
+    return (InstructUnit*)((uintptr_t)instructArray_getStart(self) +
+                           (uintptr_t)offset);
+}
 
-#define VMState_getInstructUnitWithOffset(vm, offset)                   \
-    (instructArray_getByOffset(&((vm)->bytecode_frame->instruct_array), \
-                               (vm)->pc + (offset)))
+static inline InstructUnit* VMState_getInstructUnitWithOffset(VMState* vm,
+                                                              int offset) {
+    return instructArray_getByOffset(&(vm->bytecode_frame->instruct_array),
+                                     vm->pc + offset);
+}
 
-#define VMState_getInstructNow(vm)                                      \
-    (instructArray_getByOffset(&((vm)->bytecode_frame->instruct_array), \
-                               (vm)->pc))
+static inline InstructUnit* VMState_getInstructNow(VMState* vm) {
+    return instructArray_getByOffset(&(vm->bytecode_frame->instruct_array),
+                                     vm->pc);
+}
 
 void byteCodeFrame_print(ByteCodeFrame* self);
 
-#define instructUnit_getSize(InstructUnit_p_self) ((size_t)sizeof(InstructUnit))
+static inline size_t instructUnit_getSize(void) {
+    return (size_t)sizeof(InstructUnit);
+}
 
 uint16_t constPool_getOffsetByData(ConstPool* self, char* data);
 void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool);

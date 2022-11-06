@@ -86,20 +86,26 @@ typedef struct ConstArg {
     Hash name_hash;
 } ConstArg;
 
-Arg* arg_getNext(Arg* self);
-uint32_t arg_getSize(Arg* self);
-uint8_t* arg_getContent(Arg* self);
 uint32_t arg_totleSize(Arg* self);
-void arg_setNext(Arg* self, Arg* next);
 uint32_t arg_getTotleSize(Arg* self);
 void arg_freeContent(Arg* self);
 
 Arg* arg_setName(Arg* self, char* name);
 Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size);
 Arg* arg_newContent(uint32_t size);
-#define arg_setType(__self, __type) ((__self)->type = (__type))
-#define arg_getNameHash(__self) ((__self)->name_hash)
-#define arg_getType(__self) ((ArgType)(__self)->type)
+
+static inline void arg_setType(Arg* self, ArgType type) {
+    self->type = type;
+}
+
+static inline Hash arg_getNameHash(Arg* self) {
+    return self->name_hash;
+}
+
+static inline ArgType arg_getType(Arg* self) {
+    return (ArgType)self->type;
+}
+
 uint32_t arg_getContentSize(Arg* self);
 Hash hash_time33(char* str);
 
@@ -110,12 +116,29 @@ Arg* arg_setStr(Arg* self, char* name, char* string);
 Arg* arg_setNull(Arg* self);
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 
-#define arg_newInt(val) arg_setInt(NULL, "", (val))
-#define arg_newFloat(val) arg_setFloat(NULL, "", (val))
-#define arg_newPtr(type, pointer) arg_setPtr(NULL, "", (type), (pointer))
-#define arg_newStr(string) arg_setStr(NULL, "", (string))
-#define arg_newNull() arg_setNull(NULL)
-#define arg_newBytes(src, size) arg_setBytes(NULL, "", (src), (size))
+static inline Arg* arg_newInt(int64_t val) {
+    return arg_setInt(NULL, "", (val));
+}
+
+static inline Arg* arg_newFloat(pika_float val) {
+    return arg_setFloat(NULL, "", (val));
+}
+
+static inline Arg* arg_newPtr(ArgType type, void* pointer) {
+    return arg_setPtr(NULL, "", (type), (pointer));
+}
+
+static inline Arg* arg_newStr(char* string) {
+    return arg_setStr(NULL, "", (string));
+}
+
+static inline Arg* arg_newNull() {
+    return arg_setNull(NULL);
+}
+
+static inline Arg* arg_newBytes(uint8_t* src, size_t size) {
+    return arg_setBytes(NULL, "", (src), (size));
+}
 
 int64_t arg_getInt(Arg* self);
 pika_float arg_getFloat(Arg* self);
@@ -126,7 +149,6 @@ size_t arg_getBytesSize(Arg* self);
 Arg* arg_copy(Arg* argToBeCopy);
 Arg* arg_copy_noalloc(Arg* argToBeCopy, Arg* argToBeCopyTo);
 
-uint8_t* arg_getContent(Arg* self);
 void arg_deinit(Arg* self);
 
 Arg* New_arg(void* voidPointer);
@@ -144,55 +166,71 @@ void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
 void arg_printBytes(Arg* self);
 Arg* arg_loadFile(Arg* self, char* filename);
-uint8_t argType_isObject(ArgType type);
 
 #define ARG_FLAG_SERIALIZED 0x01
 #define ARG_FLAG_KEYWORD 0x02
 #define ARG_FLAG_WEAK_REF 0x04
-
 #define ARG_FLAG_MAX 0x08
 
-#define arg_getNext(self) ((self)->_.next)
-#define arg_getSize(self) ((self)->size)
-#define arg_isSerialized(self) ((self)->flag & ARG_FLAG_SERIALIZED)
-#define arg_setSerialized(self, __serialized)                      \
-    do {                                                           \
-        (self)->flag = ((self)->flag & ~ARG_FLAG_SERIALIZED) |     \
-                       ((__serialized) ? ARG_FLAG_SERIALIZED : 0); \
-    } while (0)
+static inline Arg* arg_getNext(Arg* self) {
+    return self->_.next;
+}
 
-#define arg_getIsKeyword(self) ((self)->flag & ARG_FLAG_KEYWORD)
-#define arg_setIsKeyword(self, __isKeyword)                    \
-    do {                                                       \
-        (self)->flag = ((self)->flag & ~ARG_FLAG_KEYWORD) |    \
-                       ((__isKeyword) ? ARG_FLAG_KEYWORD : 0); \
-    } while (0)
-#define arg_getIsWeakRef(self) ((self)->flag & ARG_FLAG_WEAK_REF)
-#define arg_setIsWeakRef(self, __isWeakRef)                     \
-    do {                                                        \
-        (self)->flag = ((self)->flag & ~ARG_FLAG_WEAK_REF) |    \
-                       ((__isWeakRef) ? ARG_FLAG_WEAK_REF : 0); \
-    } while (0)
+static inline void arg_setNext(Arg* self, Arg* next) {
+    self->_.next = next;
+}
 
-#define arg_getContent(self) \
-    ((arg_isSerialized(self)) ? (self)->content : ((self)->_.buffer))
-#define arg_getNext(self) ((self)->_.next)
-#define arg_setNext(self, __next) ((self)->_.next = (__next))
+static inline uint32_t arg_getSize(Arg* self) {
+    return self->size;
+}
 
-#define argType_isObject(type) \
-    ((type) == ARG_TYPE_OBJECT || (type) == ARG_TYPE_OBJECT_NEW)
+static inline uint8_t arg_isSerialized(Arg* self) {
+    return self->flag & ARG_FLAG_SERIALIZED;
+}
 
-#define argType_isCallable(type)                                             \
-    ((type) == ARG_TYPE_METHOD_CONSTRUCTOR ||                                \
-     (type) == ARG_TYPE_METHOD_OBJECT || (type) == ARG_TYPE_METHOD_STATIC || \
-     (type) == ARG_TYPE_METHOD_NATIVE ||                                     \
-     (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR)
+static inline void arg_setSerialized(Arg* self, uint8_t serialized) {
+    self->flag = (self->flag & ~ARG_FLAG_SERIALIZED) |
+                 (serialized ? ARG_FLAG_SERIALIZED : 0);
+}
 
-#define argType_isNative(type)           \
-    ((type) == ARG_TYPE_METHOD_NATIVE || \
-     (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR)
+static inline uint8_t arg_getIsKeyword(Arg* self) {
+    return self->flag & ARG_FLAG_KEYWORD;
+}
 
-#endif
+static inline void arg_setIsKeyword(Arg* self, uint8_t isKeyword) {
+    self->flag =
+        (self->flag & ~ARG_FLAG_KEYWORD) | (isKeyword ? ARG_FLAG_KEYWORD : 0);
+}
+
+static inline uint8_t arg_getIsWeakRef(Arg* self) {
+    return self->flag & ARG_FLAG_WEAK_REF;
+}
+
+static inline void arg_setIsWeakRef(Arg* self, uint8_t isWeakRef) {
+    self->flag =
+        (self->flag & ~ARG_FLAG_WEAK_REF) | (isWeakRef ? ARG_FLAG_WEAK_REF : 0);
+}
+
+static inline uint8_t* arg_getContent(Arg* self) {
+    return (arg_isSerialized(self)) ? (self)->content : ((self)->_.buffer);
+}
+
+static inline uint8_t argType_isObject(ArgType type) {
+    return ((type) == ARG_TYPE_OBJECT || (type) == ARG_TYPE_OBJECT_NEW);
+}
+
+static inline uint8_t argType_isCallable(ArgType type) {
+    return ((type) == ARG_TYPE_METHOD_CONSTRUCTOR ||
+            (type) == ARG_TYPE_METHOD_OBJECT ||
+            (type) == ARG_TYPE_METHOD_STATIC ||
+            (type) == ARG_TYPE_METHOD_NATIVE ||
+            (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR);
+}
+
+static inline uint8_t argType_isNative(ArgType type) {
+    return ((type) == ARG_TYPE_METHOD_NATIVE ||
+            (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR);
+}
 
 #define arg_newReg(__name, __size)           \
     Arg __name = {0};                        \
@@ -201,3 +239,5 @@ uint8_t argType_isObject(ArgType type);
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size);
 PIKA_BOOL arg_isEqual(Arg* self, Arg* other);
+
+#endif

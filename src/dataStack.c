@@ -122,7 +122,7 @@ static int32_t _stack_pushArg(Stack* stack, Arg* arg, PIKA_BOOL is_alloc) {
         obj_refcntInc((PikaObj*)arg_getPtr(arg));
     }
 
-    if arg_isSerialized (arg) {
+    if (arg_isSerialized(arg)) {
         is_big_arg = PIKA_TRUE;
     }
 

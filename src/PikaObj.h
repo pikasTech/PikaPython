@@ -96,9 +96,17 @@ struct RangeData {
 #define OBJ_FLAG_RUN_AS 0x16
 #define OBJ_FLAG_GLOBALS 0x32
 
-#define obj_getFlag(__self, __flag) (((__self)->flag & (__flag)) == (__flag))
-#define obj_setFlag(__self, __flag) ((__self)->flag |= (__flag))
-#define obj_clearFlag(__self, __flag) ((__self)->flag &= ~(__flag))
+static inline uint8_t obj_getFlag(PikaObj* self, uint8_t flag) {
+    return (self->flag & flag) == flag;
+}
+
+static inline void obj_setFlag(PikaObj* self, uint8_t flag) {
+    self->flag |= flag;
+}
+
+static inline void obj_clearFlag(PikaObj* self, uint8_t flag) {
+    self->flag &= ~flag;
+}
 
 typedef PikaObj* (*NewFun)(Args* args);
 typedef PikaObj* (*InitFun)(PikaObj* self, Args* args);
@@ -289,8 +297,13 @@ PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setObj(Arg* self, char* name, PikaObj* obj);
 
-#define arg_newObj(obj) arg_setObj(NULL, "", (obj))
-#define arg_newRef(obj) arg_setRef(NULL, "", (obj))
+static inline Arg* arg_newObj(PikaObj* obj) {
+    return arg_setObj(NULL, "", (obj));
+}
+
+static inline Arg* arg_newRef(PikaObj* obj) {
+    return arg_setRef(NULL, "", (obj));
+}
 
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
                                            char* name,
@@ -344,9 +357,17 @@ void pks_printVersion(void);
 void pks_getVersion(char* buff);
 void* obj_getStruct(PikaObj* self, char* name);
 
-#define obj_refcntDec(self) (((self)->refcnt--))
-#define obj_refcntInc(self) (((self)->refcnt)++)
-#define obj_refcntNow(self) ((self)->refcnt)
+static inline void obj_refcntDec(PikaObj* self) {
+    self->refcnt--;
+}
+
+static inline void obj_refcntInc(PikaObj* self) {
+    self->refcnt++;
+}
+
+static inline uint8_t obj_refcntNow(PikaObj* self) {
+    return self->refcnt;
+}
 
 #define obj_setStruct(PikaObj_p_self, char_p_name, struct_) \
     args_setStruct(((PikaObj_p_self)->list), char_p_name, struct_)
@@ -375,7 +396,7 @@ char* __printBytes(PikaObj* self, Arg* arg);
 #define PIKASCRIPT_VERSION_REQUIRE_MINIMUN(majer, minor, micro) \
     (PIKASCRIPT_VERSION_NUM >= PIKASCRIPT_VERSION_TO_NUM(majer, minor, micro))
 
-/*
+/* [example]
 const MethodProp floatMethod = {
     .ptr = (void*)PikaStdLib_SysObj_floatMethod,
     .bytecode_frame = NULL,
