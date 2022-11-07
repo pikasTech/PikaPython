@@ -91,6 +91,7 @@ uint32_t arg_getTotleSize(Arg* self);
 void arg_freeContent(Arg* self);
 
 Arg* arg_setName(Arg* self, char* name);
+Arg* arg_setNameHash(Arg* self, Hash nameHash);
 Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size);
 Arg* arg_newContent(uint32_t size);
 
@@ -239,5 +240,6 @@ static inline uint8_t argType_isNative(ArgType type) {
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size);
 PIKA_BOOL arg_isEqual(Arg* self, Arg* other);
+Hash hash_time33EndWith(char* str, char end);
 
 #endif

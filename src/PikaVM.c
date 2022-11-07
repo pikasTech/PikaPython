@@ -293,7 +293,7 @@ static int32_t VMState_getAddrOffsetOfRaise(VMState* vm) {
         }
         ins_unit_now = VMState_getInstructUnitWithOffset(vm, offset);
         enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
-        if ((NTR == ins)) {
+        if (NTR == ins) {
             return offset;
         }
         /* if not found except, return */
@@ -833,20 +833,28 @@ Arg* obj_runMethodArg(PikaObj* self,
 
 char* _loadDefaultArgs(char* type_list,
                        char* arg_name,
-                       PikaDict* dict,
-                       Args* locals) {
+                       PikaDict* kws,
+                       int* argc,
+                       Arg* argv[]) {
     while (strIsContain(arg_name, '=')) {
         strPopLastToken(arg_name, '=');
-        /* load default arg from dict */
-        if (dict != NULL) {
-            Arg* default_arg = dict_getArg(dict, arg_name);
+        /* load default arg from kws */
+        if (kws != NULL) {
+            Arg* default_arg = dict_getArg(kws, arg_name);
             if (default_arg != NULL) {
-                args_setArg(locals, arg_copy(default_arg));
+                argv[(*argc)++] = arg_copy(default_arg);
             }
         }
         arg_name = strPopLastToken(type_list, ',');
     }
     return arg_name;
+}
+
+static void _loadLocalsFromArgv(Args* locals, int argc, Arg* argv[]) {
+    for (int i = 0; i < argc; i++) {
+        Arg* arg = argv[i];
+        args_setArg(locals, arg);
+    }
 }
 
 static int VMState_loadArgsFromMethodArg(VMState* vm,
@@ -855,6 +863,8 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                                          Arg* method_arg,
                                          char* method_name,
                                          int arg_num_used) {
+    Arg* argv[PIKA_ARG_NUM_MAX] = {0};
+    int argc = 0;
     char _buffs1[PIKA_LINE_BUFF_SIZE] = {0};
     char* buffs1 = (char*)_buffs1;
     char _buffs2[PIKA_LINE_BUFF_SIZE / 2] = {0};
@@ -988,17 +998,16 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
         char* arg_name = strPopLastToken(type_list, ',');
 
-        arg_name = _loadDefaultArgs(type_list, arg_name, kw_dict, locals);
+        arg_name = _loadDefaultArgs(type_list, arg_name, kw_dict, &argc, argv);
 
-        /* skip type hint */
-        strPopLastToken(arg_name, ':');
         /* load normal arg */
-        args_pushArg_name(locals, arg_name, call_arg);
+        arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
+        argv[argc++] = call_arg;
     }
 
     if (strIsContain(type_list, '=')) {
         char* arg_name = strPopLastToken(type_list, ',');
-        _loadDefaultArgs(type_list, arg_name, kw_dict, locals);
+        _loadDefaultArgs(type_list, arg_name, kw_dict, &argc, argv);
     }
 
     if (tuple != NULL) {
@@ -1007,8 +1016,9 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         PikaObj* New_PikaStdData_Tuple(Args * args);
         PikaObj* tuple_obj = newNormalObj(New_PikaStdData_Tuple);
         obj_setPtr(tuple_obj, "list", tuple);
-        args_setPtrWithType(locals, variable_tuple_name, ARG_TYPE_OBJECT,
-                            tuple_obj);
+        Arg* argi =
+            arg_setPtr(NULL, variable_tuple_name, ARG_TYPE_OBJECT, tuple_obj);
+        argv[argc++] = argi;
     }
 
     if (kw_dict != NULL) {
@@ -1020,15 +1030,17 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         PikaObj* dict_obj = newNormalObj(New_PikaStdData_Dict);
         obj_setPtr(dict_obj, "dict", kw_dict);
         obj_setPtr(dict_obj, "_keys", kw_keys);
-        args_setPtrWithType(locals, keyword_dict_name, ARG_TYPE_OBJECT,
-                            dict_obj);
+        Arg* argi =
+            arg_setPtr(NULL, keyword_dict_name, ARG_TYPE_OBJECT, dict_obj);
+        argv[argc++] = argi;
     }
 
     /* load 'self' as the first arg when call object method */
     if (method_type == ARG_TYPE_METHOD_OBJECT) {
         Arg* call_arg = arg_setRef(NULL, "self", method_host_obj);
-        args_setArg(locals, call_arg);
+        argv[argc++] = call_arg;
     }
+    _loadLocalsFromArgv(locals, argc, argv);
 exit:
     return arg_num;
 }

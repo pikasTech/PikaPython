@@ -79,6 +79,19 @@ uint32_t arg_getTotleSize(Arg* self) {
 /**
  * time33 hash
  */
+
+Hash hash_time33EndWith(char* str, char end) {
+    pika_assert(str != NULL);
+    if (*str == 0) {
+        return 5381;
+    }
+    Hash hash = 5381;
+    while (*str && *str != end) {
+        hash += (hash << 5) + (*str++);
+    }
+    return (hash & 0x7FFFFFFF);
+}
+
 Hash hash_time33(char* str) {
     pika_assert(str != NULL);
     if (*str == 0) {
