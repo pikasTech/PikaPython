@@ -1,7 +1,7 @@
 #include "Arm2D_common.h"
 
 void Arm2D_BackGround___init__(PikaObj* self) {
-    obj_setStr(self, "color", "white");
+    obj_setInt(self, "color", 0x00);
 }
 
 int Arm2D_BackGround_getColor(PikaObj* self) {
@@ -18,4 +18,6 @@ void Arm2D_BackGround_update(PikaObj* self) {
 
 void Arm2D_BackGround_setColor(PikaObj* self, int color) {
     obj_setInt(self, "color", color);
+    int color_ = obj_getInt(self, "color");
+    color_ = obj_getInt(self, "color");
 }
