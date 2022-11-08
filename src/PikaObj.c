@@ -910,17 +910,16 @@ static void _obj_runChar_beforeRun(PikaObj* self, ShellConfig* shell) {
     __platform_printf("%s", shell->prefix);
 }
 
-static void _putc_cmd(char KEY_POS,int pos){
+static void _putc_cmd(char KEY_POS, int pos) {
     const char cmd[] = {0x1b, 0x5b, KEY_POS, 0x00};
-    for (int i = 0; i < pos; i++){
-        __platform_printf((char *)cmd);
+    for (int i = 0; i < pos; i++) {
+        __platform_printf((char*)cmd);
     }
 }
 
 enum shellCTRL _do_obj_runChar(PikaObj* self,
                                char inputChar,
                                ShellConfig* shell) {
-    char* rxBuff = shell->lineBuff;
     char* input_line = NULL;
     enum shellCTRL ctrl = SHELL_CTRL_CONTINUE;
 #if !(defined(__linux) || defined(_WIN32))
@@ -948,7 +947,7 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
             if (shell->line_curpos) {
                 // __platform_printf("\b");
                 shell->line_curpos--;
-            }else{
+            } else {
                 __platform_printf(" ");
             }
             ctrl = SHELL_CTRL_CONTINUE;
@@ -958,7 +957,7 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
             if (shell->line_curpos < shell->line_position) {
                 // __platform_printf("%c", shell->lineBuff[shell->line_curpos]);
                 shell->line_curpos++;
-            }else{
+            } else {
                 __platform_printf("\b");
             }
             ctrl = SHELL_CTRL_CONTINUE;
@@ -983,21 +982,21 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
         __platform_printf(" \b");
         shell->line_position--;
         shell->line_curpos--;
-        __platform_memmove(rxBuff + shell->line_curpos,
-                           rxBuff + shell->line_curpos + 1,
+        __platform_memmove(shell->lineBuff + shell->line_curpos,
+                           shell->lineBuff + shell->line_curpos + 1,
                            shell->line_position - shell->line_curpos);
         shell->lineBuff[shell->line_position] = 0;
-        if(shell->line_curpos != shell->line_position){
+        if (shell->line_curpos != shell->line_position) {
             /* update screen */
             __platform_printf(shell->lineBuff + shell->line_curpos);
             __platform_printf(" ");
-            _putc_cmd(KEY_LEFT ,shell->line_position - shell->line_curpos + 1);
+            _putc_cmd(KEY_LEFT, shell->line_position - shell->line_curpos + 1);
         }
         ctrl = SHELL_CTRL_CONTINUE;
         goto exit;
     }
     if ((inputChar != '\r') && (inputChar != '\n')) {
-        if (shell->line_position >= PIKA_LINE_BUFF_SIZE) {
+        if (shell->line_position + 1 >= PIKA_LINE_BUFF_SIZE) {
             __platform_printf(
                 "\r\nError: line buff overflow, please use bigger "
                 "'PIKA_LINE_BUFF_SIZE'\r\n");
@@ -1006,15 +1005,15 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
             goto exit;
         }
         if ('\0' != inputChar) {
-            __platform_memmove(rxBuff + shell->line_curpos + 1,
-                               rxBuff + shell->line_curpos,
+            __platform_memmove(shell->lineBuff + shell->line_curpos + 1,
+                               shell->lineBuff + shell->line_curpos,
                                shell->line_position - shell->line_curpos);
             shell->lineBuff[shell->line_position + 1] = 0;
-            if (shell->line_curpos != shell->line_position){
+            if (shell->line_curpos != shell->line_position) {
                 __platform_printf(shell->lineBuff + shell->line_curpos + 1);
                 _putc_cmd(KEY_LEFT, shell->line_position - shell->line_curpos);
             }
-            rxBuff[shell->line_curpos] = inputChar;
+            shell->lineBuff[shell->line_curpos] = inputChar;
             shell->line_position++;
             shell->line_curpos++;
         }
@@ -1030,13 +1029,14 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
             /* load new line into buff */
             Args buffs = {0};
             char _n = '\n';
-            strAppendWithSize(rxBuff, &_n, 1);
-            char* shell_buff_new = strsAppend(
-                &buffs, obj_getStr(self, shell->blockBuffName), rxBuff);
+            strAppendWithSize(shell->lineBuff, &_n, 1);
+            char* shell_buff_new =
+                strsAppend(&buffs, obj_getStr(self, shell->blockBuffName),
+                           shell->lineBuff);
             obj_setStr(self, shell->blockBuffName, shell_buff_new);
             strsDeinit(&buffs);
             /* go out from block */
-            if ((rxBuff[0] != ' ') && (rxBuff[0] != '\t')) {
+            if ((shell->lineBuff[0] != ' ') && (shell->lineBuff[0] != '\t')) {
                 shell->inBlock = PIKA_FALSE;
                 input_line = obj_getStr(self, shell->blockBuffName);
                 ctrl = shell->handler(self, input_line, shell);
@@ -1051,20 +1051,20 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
             goto exit;
         }
         /* go in block */
-        if (shell->blockBuffName != NULL && 0 != strGetSize(rxBuff)) {
-            if (rxBuff[strGetSize(rxBuff) - 1] == ':') {
+        if (shell->blockBuffName != NULL && 0 != strGetSize(shell->lineBuff)) {
+            if (shell->lineBuff[strGetSize(shell->lineBuff) - 1] == ':') {
                 shell->inBlock = PIKA_TRUE;
                 char _n = '\n';
-                strAppendWithSize(rxBuff, &_n, 1);
-                obj_setStr(self, shell->blockBuffName, rxBuff);
+                strAppendWithSize(shell->lineBuff, &_n, 1);
+                obj_setStr(self, shell->blockBuffName, shell->lineBuff);
                 __clearBuff(shell);
                 __platform_printf("... ");
                 ctrl = SHELL_CTRL_CONTINUE;
                 goto exit;
             }
         }
-        rxBuff[shell->line_position] = '\0';
-        ctrl = shell->handler(self, rxBuff, shell);
+        shell->lineBuff[shell->line_position] = '\0';
+        ctrl = shell->handler(self, shell->lineBuff, shell);
         __platform_printf("%s", shell->prefix);
         __clearBuff(shell);
         goto exit;

@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=vm.vars_keyward"
+                "--gtest_filter=module.REPL_big_script"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
