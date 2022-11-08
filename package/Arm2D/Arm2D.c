@@ -3,6 +3,9 @@
 #include "Arm2D_Region.h"
 #include "Arm2D_common.h"
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 11, 6)
+#error "PikaScript kernal version require v1.11.6"
+#endif
 int Arm2D_is_point_inside_region(PikaObj* self,
                                  PikaObj* region,
                                  PikaObj* location) {
