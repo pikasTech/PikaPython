@@ -483,7 +483,7 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     mem_pool_init();
 #endif
 #if __linux
-    set_disp_mode(STDIN_FILENO, 0);
+    // set_disp_mode(STDIN_FILENO, 0);
 #endif
     PikaObj* newObj = newNormalObj(newObjFun);
     __pikaMain = newObj;
