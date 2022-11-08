@@ -96,6 +96,11 @@ struct RangeData {
 #define OBJ_FLAG_RUN_AS 0x16
 #define OBJ_FLAG_GLOBALS 0x32
 
+#define KEY_UP 0x41
+#define KEY_DOWN 0x42
+#define KEY_RIGHT 0x43
+#define KEY_LEFT 0x44
+
 static inline uint8_t obj_getFlag(PikaObj* self, uint8_t flag) {
     return (self->flag & flag) == flag;
 }

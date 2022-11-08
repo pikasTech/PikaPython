@@ -910,11 +910,6 @@ static void _obj_runChar_beforeRun(PikaObj* self, ShellConfig* shell) {
     __platform_printf("%s", shell->prefix);
 }
 
-const char KEY_UP = 0x41;
-const char KEY_DOWN = 0x42;
-const char KEY_RIGHT = 0x43;
-const char KEY_LEFT = 0x44;
-
 enum shellCTRL _do_obj_runChar(PikaObj* self,
                                char inputChar,
                                ShellConfig* shell) {
@@ -950,6 +945,14 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
             ctrl = SHELL_CTRL_CONTINUE;
             goto exit;
         }
+        if (inputChar == KEY_LEFT) {
+            if (shell->line_curpos) {
+                __platform_printf("\b");
+                shell->line_curpos--;
+            }
+            ctrl = SHELL_CTRL_CONTINUE;
+            goto exit;
+        }
     }
     if ((inputChar == '\b') || (inputChar == 127)) {
         if (shell->line_position == 0) {
@@ -960,9 +963,10 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
         __platform_printf(" \b");
         shell->line_position--;
         shell->line_curpos--;
-        __platform_memmove(rxBuff + shell->line_position,
-                           rxBuff + shell->line_position + 1,
-                           shell->line_curpos - shell->line_position);
+        __platform_memmove(rxBuff + shell->line_curpos,
+                           rxBuff + shell->line_curpos + 1,
+                           shell->line_position - shell->line_curpos);
+        shell->lineBuff[shell->line_position] = 0;
         ctrl = SHELL_CTRL_CONTINUE;
         goto exit;
     }
@@ -976,9 +980,9 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
             goto exit;
         }
         if ('\0' != inputChar) {
-            __platform_memmove(rxBuff + shell->line_position + 1,
-                               rxBuff + shell->line_position,
-                               shell->line_curpos - shell->line_position);
+            __platform_memmove(rxBuff + shell->line_curpos + 1,
+                               rxBuff + shell->line_curpos,
+                               shell->line_position - shell->line_curpos);
             rxBuff[shell->line_curpos] = inputChar;
             shell->line_position++;
             shell->line_curpos++;
