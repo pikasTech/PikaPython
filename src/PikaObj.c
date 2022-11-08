@@ -945,7 +945,6 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
     if (shell->stat == PIKA_SHELL_STATE_WAIT_FUNC_KEY) {
         if (inputChar == KEY_LEFT) {
             if (shell->line_curpos) {
-                // __platform_printf("\b");
                 shell->line_curpos--;
             } else {
                 __platform_printf(" ");
