@@ -35,9 +35,9 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
-static enum shell_state __obj_shellLineHandler_REPL(PikaObj* self,
-                                                    char* input_line,
-                                                    ShellConfig* cfg);
+static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
+                                                  char* input_line,
+                                                  ShellConfig* shell);
 
 static const uint64_t __talbe_fast_atoi[][10] = {
     {0, 1e0, 2e0, 3e0, 4e0, 5e0, 6e0, 7e0, 8e0, 9e0},
@@ -448,10 +448,42 @@ PikaObj* newNormalObj(NewFun newObjFun) {
     return removeMethodInfo(thisClass);
 }
 
+#ifdef __linux
+
+#include <errno.h>
+#include <stdio.h>
+#include <termios.h>
+#include <unistd.h>
+#define ECHOFLAGS (ECHO | ECHOE | ECHOK | ECHONL)
+//函数set_disp_mode用于控制是否开启输入回显功能
+//如果option为0，则关闭回显，为1则打开回显
+static int set_disp_mode(int fd, int option) {
+    int err;
+    struct termios term;
+    if (tcgetattr(fd, &term) == -1) {
+        perror("Cannot get the attribution of the terminal");
+        return 1;
+    }
+    if (option)
+        term.c_lflag |= ECHOFLAGS;
+    else
+        term.c_lflag &= ~ECHOFLAGS;
+    err = tcsetattr(fd, TCSAFLUSH, &term);
+    if (err == -1 && err == EINTR) {
+        perror("Cannot set the attribution of the terminal");
+        return 1;
+    }
+    return 0;
+}
+#endif
+
 extern volatile PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
 #if PIKA_POOL_ENABLE
     mem_pool_init();
+#endif
+#if __linux
+    set_disp_mode(STDIN_FILENO, 0);
 #endif
     PikaObj* newObj = newNormalObj(newObjFun);
     __pikaMain = newObj;
@@ -856,55 +888,102 @@ PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args) {
     return PIKA_RES_OK;
 }
 
-static void __clearBuff(ShellConfig* cfg) {
-    memset(cfg->lineBuff, 0, PIKA_LINE_BUFF_SIZE);
-    cfg->lineBuff_i = 0;
+static void __clearBuff(ShellConfig* shell) {
+    memset(shell->lineBuff, 0, PIKA_LINE_BUFF_SIZE);
+    shell->line_curpos = 0;
+    shell->line_position = 0;
 }
 
-static void _obj_runChar_beforeRun(PikaObj* self, ShellConfig* cfg) {
+enum PIKA_SHELL_STATE {
+    PIKA_SHELL_STATE_NORMAL,
+    PIKA_SHELL_STATE_WAIT_SPEC_KEY,
+    PIKA_SHELL_STATE_WAIT_FUNC_KEY,
+};
+
+static void _obj_runChar_beforeRun(PikaObj* self, ShellConfig* shell) {
     /* create the line buff for the first time */
-    cfg->inBlock = PIKA_FALSE;
-    __clearBuff(cfg);
-    __platform_printf("%s", cfg->prefix);
+    shell->inBlock = PIKA_FALSE;
+    shell->stat = PIKA_SHELL_STATE_NORMAL;
+    shell->line_position = 0;
+    shell->line_curpos = 0;
+    __clearBuff(shell);
+    __platform_printf("%s", shell->prefix);
 }
 
-enum shell_state _do_obj_runChar(PikaObj* self,
-                                 char inputChar,
-                                 ShellConfig* cfg) {
-    char* rxBuff = cfg->lineBuff;
+const char KEY_UP = 0x41;
+const char KEY_DOWN = 0x42;
+const char KEY_RIGHT = 0x43;
+const char KEY_LEFT = 0x44;
+
+enum shellCTRL _do_obj_runChar(PikaObj* self,
+                               char inputChar,
+                               ShellConfig* shell) {
+    char* rxBuff = shell->lineBuff;
     char* input_line = NULL;
-    enum shell_state state = SHELL_STATE_CONTINUE;
+    enum shellCTRL ctrl = SHELL_CTRL_CONTINUE;
 #if !(defined(__linux) || defined(_WIN32))
     __platform_printf("%c", inputChar);
 #endif
-    if (inputChar == '\n' && cfg->lastChar == '\r') {
-        state = SHELL_STATE_CONTINUE;
+    if (inputChar == '\n' && shell->lastChar == '\r') {
+        ctrl = SHELL_CTRL_CONTINUE;
         goto exit;
     }
+    if (inputChar == 0x1b) {
+        shell->stat = PIKA_SHELL_STATE_WAIT_SPEC_KEY;
+        ctrl = SHELL_CTRL_CONTINUE;
+        goto exit;
+    }
+    if (shell->stat == PIKA_SHELL_STATE_WAIT_SPEC_KEY) {
+        if (inputChar == 0x5b) {
+            shell->stat = PIKA_SHELL_STATE_WAIT_FUNC_KEY;
+            ctrl = SHELL_CTRL_CONTINUE;
+            goto exit;
+        }
+        shell->stat = PIKA_SHELL_STATE_NORMAL;
+    }
+    if (shell->stat == PIKA_SHELL_STATE_WAIT_FUNC_KEY) {
+        if (inputChar == KEY_LEFT) {
+            if (shell->line_curpos) {
+                __platform_printf("\b");
+                shell->line_curpos--;
+            }
+            ctrl = SHELL_CTRL_CONTINUE;
+            goto exit;
+        }
+    }
     if ((inputChar == '\b') || (inputChar == 127)) {
-        if (cfg->lineBuff_i == 0) {
+        if (shell->line_position == 0) {
             __platform_printf(" ");
-            state = SHELL_STATE_CONTINUE;
+            ctrl = SHELL_CTRL_CONTINUE;
             goto exit;
         }
         __platform_printf(" \b");
-        rxBuff[--cfg->lineBuff_i] = 0;
-        state = SHELL_STATE_CONTINUE;
+        shell->line_position--;
+        shell->line_curpos--;
+        __platform_memmove(rxBuff + shell->line_position,
+                           rxBuff + shell->line_position + 1,
+                           shell->line_curpos - shell->line_position);
+        ctrl = SHELL_CTRL_CONTINUE;
         goto exit;
     }
     if ((inputChar != '\r') && (inputChar != '\n')) {
-        if (cfg->lineBuff_i >= PIKA_LINE_BUFF_SIZE) {
+        if (shell->line_position >= PIKA_LINE_BUFF_SIZE) {
             __platform_printf(
                 "\r\nError: line buff overflow, please use bigger "
                 "'PIKA_LINE_BUFF_SIZE'\r\n");
-            state = SHELL_STATE_EXIT;
-            __clearBuff(cfg);
+            ctrl = SHELL_CTRL_EXIT;
+            __clearBuff(shell);
             goto exit;
         }
         if ('\0' != inputChar) {
-            rxBuff[cfg->lineBuff_i++] = inputChar;
+            __platform_memmove(rxBuff + shell->line_position + 1,
+                               rxBuff + shell->line_position,
+                               shell->line_curpos - shell->line_position);
+            rxBuff[shell->line_curpos] = inputChar;
+            shell->line_position++;
+            shell->line_curpos++;
         }
-        state = SHELL_STATE_CONTINUE;
+        ctrl = SHELL_CTRL_CONTINUE;
         goto exit;
     }
     if ((inputChar == '\r') || (inputChar == '\n')) {
@@ -912,68 +991,68 @@ enum shell_state _do_obj_runChar(PikaObj* self,
         __platform_printf("\r\n");
 #endif
         /* still in block */
-        if (cfg->blockBuffName != NULL && cfg->inBlock) {
+        if (shell->blockBuffName != NULL && shell->inBlock) {
             /* load new line into buff */
             Args buffs = {0};
             char _n = '\n';
             strAppendWithSize(rxBuff, &_n, 1);
             char* shell_buff_new = strsAppend(
-                &buffs, obj_getStr(self, cfg->blockBuffName), rxBuff);
-            obj_setStr(self, cfg->blockBuffName, shell_buff_new);
+                &buffs, obj_getStr(self, shell->blockBuffName), rxBuff);
+            obj_setStr(self, shell->blockBuffName, shell_buff_new);
             strsDeinit(&buffs);
             /* go out from block */
             if ((rxBuff[0] != ' ') && (rxBuff[0] != '\t')) {
-                cfg->inBlock = PIKA_FALSE;
-                input_line = obj_getStr(self, cfg->blockBuffName);
-                state = cfg->handler(self, input_line, cfg);
-                __clearBuff(cfg);
+                shell->inBlock = PIKA_FALSE;
+                input_line = obj_getStr(self, shell->blockBuffName);
+                ctrl = shell->handler(self, input_line, shell);
+                __clearBuff(shell);
                 __platform_printf(">>> ");
                 goto exit;
             } else {
                 __platform_printf("... ");
             }
-            __clearBuff(cfg);
-            state = SHELL_STATE_CONTINUE;
+            __clearBuff(shell);
+            ctrl = SHELL_CTRL_CONTINUE;
             goto exit;
         }
         /* go in block */
-        if (cfg->blockBuffName != NULL && 0 != strGetSize(rxBuff)) {
+        if (shell->blockBuffName != NULL && 0 != strGetSize(rxBuff)) {
             if (rxBuff[strGetSize(rxBuff) - 1] == ':') {
-                cfg->inBlock = PIKA_TRUE;
+                shell->inBlock = PIKA_TRUE;
                 char _n = '\n';
                 strAppendWithSize(rxBuff, &_n, 1);
-                obj_setStr(self, cfg->blockBuffName, rxBuff);
-                __clearBuff(cfg);
+                obj_setStr(self, shell->blockBuffName, rxBuff);
+                __clearBuff(shell);
                 __platform_printf("... ");
-                state = SHELL_STATE_CONTINUE;
+                ctrl = SHELL_CTRL_CONTINUE;
                 goto exit;
             }
         }
-        input_line = rxBuff;
-        state = cfg->handler(self, input_line, cfg);
-        __platform_printf("%s", cfg->prefix);
-        __clearBuff(cfg);
+        rxBuff[shell->line_position] = '\0';
+        ctrl = shell->handler(self, rxBuff, shell);
+        __platform_printf("%s", shell->prefix);
+        __clearBuff(shell);
         goto exit;
     }
 exit:
-    cfg->lastChar = inputChar;
-    return state;
+    shell->lastChar = inputChar;
+    return ctrl;
 }
 
-enum shell_state obj_runChar(PikaObj* self, char inputChar) {
-    ShellConfig* cfg = args_getStruct(self->list, "@shcfg");
-    if (NULL == cfg) {
+enum shellCTRL obj_runChar(PikaObj* self, char inputChar) {
+    ShellConfig* shell = args_getStruct(self->list, "@shcfg");
+    if (NULL == shell) {
         /* init the shell */
-        ShellConfig newcfg = {
+        ShellConfig newShell = {
             .prefix = ">>> ",
             .blockBuffName = "@sh1",
             .handler = __obj_shellLineHandler_REPL,
         };
-        args_setStruct(self->list, "@shcfg", newcfg);
-        cfg = args_getStruct(self->list, "@shcfg");
-        _obj_runChar_beforeRun(self, cfg);
+        args_setStruct(self->list, "@shcfg", newShell);
+        shell = args_getStruct(self->list, "@shcfg");
+        _obj_runChar_beforeRun(self, shell);
     }
-    return _do_obj_runChar(self, inputChar, cfg);
+    return _do_obj_runChar(self, inputChar, shell);
 }
 
 void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
@@ -1094,47 +1173,47 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             return;
         }
 #endif
-        if (SHELL_STATE_EXIT == _do_obj_runChar(self, inputChar[0], cfg)) {
+        if (SHELL_CTRL_EXIT == _do_obj_runChar(self, inputChar[0], cfg)) {
             break;
         }
     }
 }
 
-void _temp__do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
+void _temp__do_pikaScriptShell(PikaObj* self, ShellConfig* shell) {
     /* init the shell */
-    _obj_runChar_beforeRun(self, cfg);
+    _obj_runChar_beforeRun(self, shell);
 
     /* getchar and run */
     while (1) {
-        char inputChar = cfg->fn_getchar();
-        if (SHELL_STATE_EXIT == _do_obj_runChar(self, inputChar, cfg)) {
+        char inputChar = shell->fn_getchar();
+        if (SHELL_CTRL_EXIT == _do_obj_runChar(self, inputChar, shell)) {
             break;
         }
     }
 }
 
-static enum shell_state __obj_shellLineHandler_REPL(PikaObj* self,
-                                                    char* input_line,
-                                                    ShellConfig* cfg) {
+static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
+                                                  char* input_line,
+                                                  ShellConfig* shell) {
     /* exit */
     if (strEqu("exit()", input_line)) {
         /* exit pika shell */
-        return SHELL_STATE_EXIT;
+        return SHELL_CTRL_EXIT;
     }
     /* run single line */
     obj_run(self, input_line);
-    return SHELL_STATE_CONTINUE;
+    return SHELL_CTRL_CONTINUE;
 }
 
-static volatile ShellConfig g_repl_cfg = {
+static volatile ShellConfig g_repl_shell = {
     .handler = __obj_shellLineHandler_REPL,
     .prefix = ">>> ",
     .blockBuffName = "@sh0",
 };
 
 void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn) {
-    g_repl_cfg.fn_getchar = getchar_fn;
-    _do_pikaScriptShell(self, (ShellConfig*)&g_repl_cfg);
+    g_repl_shell.fn_getchar = getchar_fn;
+    _do_pikaScriptShell(self, (ShellConfig*)&g_repl_shell);
 }
 
 void pikaScriptShell(PikaObj* self) {

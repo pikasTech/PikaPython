@@ -261,10 +261,10 @@ char* fast_itoa(char* buf, uint32_t val);
 
 /* shell */
 void pikaScriptShell(PikaObj* self);
-enum shell_state { SHELL_STATE_CONTINUE, SHELL_STATE_EXIT };
+enum shellCTRL { SHELL_CTRL_CONTINUE, SHELL_CTRL_EXIT };
 
 typedef struct ShellConfig ShellConfig;
-typedef enum shell_state (*sh_handler)(PikaObj*, char*, ShellConfig*);
+typedef enum shellCTRL (*sh_handler)(PikaObj*, char*, ShellConfig*);
 typedef char (*sh_getchar)(void);
 
 struct ShellConfig {
@@ -272,11 +272,13 @@ struct ShellConfig {
     sh_handler handler;
     void* context;
     char lineBuff[PIKA_LINE_BUFF_SIZE];
-    size_t lineBuff_i;
+    size_t line_position;
+    size_t line_curpos;
     char* blockBuffName;
     PIKA_BOOL inBlock;
     char lastChar;
     sh_getchar fn_getchar;
+    uint8_t stat;
 };
 
 void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg);
@@ -326,7 +328,7 @@ int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int obj_runModule(PikaObj* self, char* module_name);
 char* obj_toStr(PikaObj* self);
 Arg* arg_newDirectObj(NewFun new_obj_fun);
-enum shell_state obj_runChar(PikaObj* self, char inputChar);
+enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
 
 #define PIKA_PYTHON_BEGIN
 #define PIKA_PYTHON(x)

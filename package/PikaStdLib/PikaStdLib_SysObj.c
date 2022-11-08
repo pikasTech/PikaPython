@@ -623,11 +623,11 @@ Arg* PikaStdLib_SysObj_eval(PikaObj* self, char* code) {
     return res;
 }
 
-static enum shell_state __obj_shellLineHandler_input(PikaObj* self,
+static enum shellCTRL __obj_shellLineHandler_input(PikaObj* self,
                                                      char* input_line,
                                                      struct ShellConfig* cfg) {
     cfg->context = arg_newStr(input_line);
-    return SHELL_STATE_EXIT;
+    return SHELL_CTRL_EXIT;
 }
 
 char* PikaStdLib_SysObj_input(PikaObj* self, PikaTuple* info) {
