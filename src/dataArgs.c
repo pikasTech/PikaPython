@@ -168,7 +168,7 @@ size_t args_getBytesSize(Args* self, char* name) {
 
 PIKA_RES args_setInt(Args* self, char* name, int64_t val) {
     Arg* arg = args_getArg(self, name);
-    if (NULL == arg) {
+    if (NULL == arg || arg_getType(arg) != ARG_TYPE_INT) {
         args_pushArg_name(self, name, arg_newInt(val));
         return PIKA_RES_OK;
     }

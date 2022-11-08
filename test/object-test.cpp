@@ -260,4 +260,14 @@ TEST(object_test, bytes_0_size) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(object, str_set_int) {
+    PikaObj* root = newRootObj("root", New_BaseObj);
+    obj_setStr(root, "test", "teststr");
+    EXPECT_STREQ(obj_getStr(root, "test"), "teststr");
+    obj_setInt(root, "test", 123);
+    EXPECT_EQ(obj_getInt(root, "test"), 123);
+    obj_deinit(root);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END
