@@ -116,6 +116,19 @@ TEST(sysobj, print2) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
 #endif
+
+TEST(sysobj, float_str) {
+    char* line = "float('1.1')\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1.100000\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST_END
