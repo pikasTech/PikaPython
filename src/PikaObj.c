@@ -910,6 +910,13 @@ static void _obj_runChar_beforeRun(PikaObj* self, ShellConfig* shell) {
     __platform_printf("%s", shell->prefix);
 }
 
+static void _putc_cmd(char KEY_POS,int pos){
+    const char cmd[] = {0x1b, 0x5b, KEY_POS, 0x00};
+    for (int i = 0; i < pos; i++){
+        __platform_printf((char *)cmd);
+    }
+}
+
 enum shellCTRL _do_obj_runChar(PikaObj* self,
                                char inputChar,
                                ShellConfig* shell) {
@@ -939,17 +946,30 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
     if (shell->stat == PIKA_SHELL_STATE_WAIT_FUNC_KEY) {
         if (inputChar == KEY_LEFT) {
             if (shell->line_curpos) {
-                __platform_printf("\b");
+                // __platform_printf("\b");
                 shell->line_curpos--;
+            }else{
+                __platform_printf(" ");
             }
             ctrl = SHELL_CTRL_CONTINUE;
             goto exit;
         }
-        if (inputChar == KEY_LEFT) {
-            if (shell->line_curpos) {
+        if (inputChar == KEY_RIGHT) {
+            if (shell->line_curpos < shell->line_position) {
+                // __platform_printf("%c", shell->lineBuff[shell->line_curpos]);
+                shell->line_curpos++;
+            }else{
                 __platform_printf("\b");
-                shell->line_curpos--;
             }
+            ctrl = SHELL_CTRL_CONTINUE;
+            goto exit;
+        }
+        if (inputChar == KEY_UP) {
+            _putc_cmd(KEY_DOWN, 1);
+            ctrl = SHELL_CTRL_CONTINUE;
+            goto exit;
+        }
+        if (inputChar == KEY_DOWN) {
             ctrl = SHELL_CTRL_CONTINUE;
             goto exit;
         }
@@ -967,6 +987,12 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
                            rxBuff + shell->line_curpos + 1,
                            shell->line_position - shell->line_curpos);
         shell->lineBuff[shell->line_position] = 0;
+        if(shell->line_curpos != shell->line_position){
+            /* update screen */
+            __platform_printf(shell->lineBuff + shell->line_curpos);
+            __platform_printf(" ");
+            _putc_cmd(KEY_LEFT ,shell->line_position - shell->line_curpos + 1);
+        }
         ctrl = SHELL_CTRL_CONTINUE;
         goto exit;
     }
@@ -983,6 +1009,11 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
             __platform_memmove(rxBuff + shell->line_curpos + 1,
                                rxBuff + shell->line_curpos,
                                shell->line_position - shell->line_curpos);
+            shell->lineBuff[shell->line_position + 1] = 0;
+            if (shell->line_curpos != shell->line_position){
+                __platform_printf(shell->lineBuff + shell->line_curpos + 1);
+                _putc_cmd(KEY_LEFT, shell->line_position - shell->line_curpos);
+            }
             rxBuff[shell->line_curpos] = inputChar;
             shell->line_position++;
             shell->line_curpos++;
