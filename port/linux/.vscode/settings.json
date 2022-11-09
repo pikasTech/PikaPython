@@ -69,7 +69,8 @@
         "gtesttask_proxytest.h": "c",
         "datastack.h": "c",
         "syscall.h": "c",
-        "fcntl.h": "c"
+        "fcntl.h": "c",
+        "pikastddata_bytearray.h": "c"
     },
     "python.formatting.provider": "autopep8",
     "C_Cpp.errorSquiggles": "Disabled"

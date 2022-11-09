@@ -1861,6 +1861,17 @@ static void _OPT_ADD(OperatorInfo* op) {
         strsDeinit(&str_opt_buffs);
         return;
     }
+    if ((op->t1 == ARG_TYPE_BYTES) && (op->t2 == ARG_TYPE_BYTES)) {
+        uint8_t* bytes1 = arg_getBytes(op->a1);
+        uint8_t* bytes2 = arg_getBytes(op->a2);
+        size_t size1 = arg_getBytesSize(op->a1);
+        size_t size2 = arg_getBytesSize(op->a2);
+        op->res = arg_setBytes(op->res, "", NULL, size1 + size2);
+        uint8_t* bytes_out = arg_getBytes(op->res);
+        __platform_memcpy(bytes_out, bytes1, size1);
+        __platform_memcpy(bytes_out + size1, bytes2, size2);
+        return;
+    }
     /* match float */
     if ((op->t1 == ARG_TYPE_FLOAT) || op->t2 == ARG_TYPE_FLOAT) {
         op->res = arg_setFloat(op->res, "", op->f1 + op->f2);

@@ -492,6 +492,21 @@ TEST(stddata, kw_fun_err_input) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stddata, bytes_add) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "b'a' + b'b'\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "b'\\x61\\x62'\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
