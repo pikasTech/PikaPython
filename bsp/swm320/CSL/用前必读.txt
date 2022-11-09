@@ -1,0 +1,19 @@
+1、初始化时必须对初始化结构体的所有成员正确赋值，例如：
+
+GPIO_initStruct.func = 0;					//引脚功能为GPIO
+GPIO_initStruct.dir = 1;					//输出
+GPIO_initStruct.pull_up = 0;
+GPIO_initStruct.pull_down = 0;
+GPIO_initStruct.open_drain = 0;
+GPIO_Init(GPIOA,PIN_2,&GPIO_initStruct);	//GPIOA.2初始化为输出引脚，无上拉、无下拉、非开漏
+
+上面的代码初始化GPIOA.2为输出引脚，用户实际并不想设置关于“上拉、下拉、开漏”等相关信息，但是在调用GPIO_Init设定引脚模式前必须对
+GPIO_initStruct变量的pull_up、pull_down、open_drain三个成员变量正确赋值，否则在GPIO_initStruct为局部变量的情况下这无法保证这三
+个成员的取值情况，万一此时open_drain取值为‘1’，那么此输出引脚就无法输出高电平了。。。
+
+
+对于其他外设如SPI、UART、TIMR等的初始化也是同样的要求，必须对所有的初始化结构体成员变量正确赋值。。
+
+
+如果不清楚应该如何正确逐个对初始化结构体成员赋予正确的取值，可以参考本库中自带的例程代码。。
+
