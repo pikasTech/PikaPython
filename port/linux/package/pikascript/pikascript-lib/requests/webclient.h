@@ -20,7 +20,7 @@
 #include <stddef.h>
 #include "pika_adapter_rtt.h"
 /* depend on the socket module */
-#include "../socket/platform_socket.h"
+#include "../socket/pika_socket.h"
 
 #define RT_USING_SAL 1
 
