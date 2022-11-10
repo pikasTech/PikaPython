@@ -71,7 +71,8 @@
         "syscall.h": "c",
         "fcntl.h": "c",
         "pikastddata_bytearray.h": "c",
-        "webclient.h": "c"
+        "webclient.h": "c",
+        "platform_socket.h": "c"
     },
     "python.formatting.provider": "autopep8",
     "C_Cpp.errorSquiggles": "Disabled"
