@@ -15,6 +15,7 @@
 #define rt_memset __platform_memset
 #define rt_memcpy __platform_memcpy
 #define rt_memcmp __platform_memcmp
+#define rt_kprintf __platform_printf
 #define rt_snprintf __platform_snprintf
 #define rt_vsnprintf __platform_vsnprintf
 #define rt_strdup __platform_strdup
