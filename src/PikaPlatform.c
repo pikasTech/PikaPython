@@ -41,6 +41,14 @@ PIKA_WEAK void* __platform_malloc(size_t size) {
     return malloc(size);
 }
 
+PIKA_WEAK void* __platform_realloc(void* ptr, size_t size) {
+    return realloc(ptr, size);
+}
+
+PIKA_WEAK void* __platform_calloc(size_t num, size_t size) {
+    return calloc(num, size);
+}
+
 PIKA_WEAK void __platform_free(void* ptr) {
     free(ptr);
 }
@@ -76,6 +84,25 @@ PIKA_WEAK void __platform_printf(char* fmt, ...) {
 
 PIKA_WEAK int __platform_vsprintf(char* buff, char* fmt, va_list args) {
     return vsprintf(buff, fmt, args);
+}
+
+PIKA_WEAK int __platform_snprintf(char* buff,
+                                  size_t size,
+                                  const char* fmt,
+                                  ...) {
+    va_list args;
+    va_start(args, fmt);
+    int ret = __platform_vsnprintf(buff, size, fmt, args);
+    va_end(args);
+    return ret;
+}
+
+PIKA_WEAK char* __platform_strdup(const char* src){
+    return strdup(src);
+}
+
+PIKA_WEAK size_t __platform_tick_from_millisecond(size_t ms) {
+    return ms;
 }
 
 PIKA_WEAK int __platform_vsnprintf(char* buff,

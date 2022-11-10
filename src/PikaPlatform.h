@@ -133,9 +133,14 @@ int __platform_vsnprintf(char* buff,
                          size_t size,
                          const char* fmt,
                          va_list args);
+int __platform_snprintf(char* buff, size_t size, const char* fmt, ...);
+char* __platform_strdup(const char* src);
+size_t __platform_tick_from_millisecond(size_t ms);
 
 /* libc config */
 void* __platform_malloc(size_t size);
+void* __platform_realloc(void* ptr, size_t size);
+void* __platform_calloc(size_t num, size_t size);
 void __platform_free(void* ptr);
 void* __platform_memset(void* mem, int ch, size_t size);
 void* __platform_memcpy(void* dir, const void* src, size_t size);

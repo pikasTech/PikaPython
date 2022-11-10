@@ -1,16 +1,5 @@
-#include "_socket.h"
 #include "_socket_socket.h"
-#ifdef __linux__
-#include <arpa/inet.h>
-#include <unistd.h>
-#else
-/*
-    You need to create the __platform_socket.h for your platform.
-    For example:
-    You can #include "lwip/socket.h" in the __platform_socket.h
-*/
-#include "__platform_socket.h"
-#endif
+#include "platform_socket.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 10, 4)
 #error "This library requires PikaScript version 1.10.4 or higher"
