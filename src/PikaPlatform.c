@@ -97,8 +97,12 @@ PIKA_WEAK int __platform_snprintf(char* buff,
     return ret;
 }
 
-PIKA_WEAK char* __platform_strdup(const char* src){
-    return strdup(src);
+PIKA_WEAK char* __platform_strdup(const char* src) {
+    char* dst = (char*)__platform_malloc(strlen(src) + 1);
+    if (dst) {
+        strcpy(dst, src);
+    }
+    return dst;
 }
 
 PIKA_WEAK size_t __platform_tick_from_millisecond(size_t ms) {
