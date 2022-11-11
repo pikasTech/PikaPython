@@ -5,7 +5,7 @@ file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.c)
 set(SOURCES ${SOURCES})
 
 # support <math.h>
-link_libraries(m lua5.3)
+link_libraries(m lua5.3 pthread)
 
 add_library(${BINARY}-core
             STATIC 
