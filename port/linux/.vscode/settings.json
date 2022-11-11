@@ -72,7 +72,9 @@
         "fcntl.h": "c",
         "pikastddata_bytearray.h": "c",
         "webclient.h": "c",
-        "platform_socket.h": "c"
+        "platform_socket.h": "c",
+        "nettype_tcp.h": "c",
+        "platform_memory.h": "c"
     },
     "python.formatting.provider": "autopep8",
     "C_Cpp.errorSquiggles": "Disabled"
