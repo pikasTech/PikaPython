@@ -172,6 +172,11 @@ void __pks_hook_instruct(void);
 PIKA_BOOL __pks_hook_arg_cache_filter(void* self);
 PIKA_WEAK void __platform_thread_delay(void);
 
+#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                            \
+    __platform_printf("Error: weak function `%s()` need override.\r\n", \
+                      __FUNCTION__);                                    \
+    while (1)
+
 #if PIKA_FLOAT_TYPE_DOUBLE
 #define pika_float double
 #else

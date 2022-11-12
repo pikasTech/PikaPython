@@ -384,11 +384,6 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
     __platform_printf("Error: abstract method `%s()` need override.\r\n", \
                       __FUNCTION__)
 
-#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                            \
-    __platform_printf("Error: weak function `%s()` need override.\r\n", \
-                      __FUNCTION__);                                    \
-    while (1)
-
 char* obj_cacheStr(PikaObj* self, char* str);
 PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp);
 char* __printBytes(PikaObj* self, Arg* arg);
