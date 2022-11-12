@@ -28,8 +28,6 @@
 #include "PikaPlatform.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
 
 PIKA_WEAK void __platform_disable_irq_handle(void) {
     /* disable irq to support thread */
