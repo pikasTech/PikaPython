@@ -405,3 +405,16 @@ releases = [
   "v0.0.1 280700b8a8eee1849d16ac68871d014392edf269",
   "v0.1.0 8ab8cd90be83f1cb86e2b2bcbb3b68d99d034815"
 ]
+
+[[packages]]
+name = "mqtt"
+releases = [
+  "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee",
+]
+
+[[packages]]
+name = "requests"
+releases = [
+  "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee",
+]
+
