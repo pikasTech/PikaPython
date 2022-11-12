@@ -23,7 +23,6 @@
 #include "webclient.h"
 
 #include <sys/errno.h>
-#include <sys/time.h>
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME "web"
@@ -266,7 +265,7 @@ static int webclient_resolve_address(struct webclient_session* session,
         int ret;
 
         web_memset(&hint, 0, sizeof(hint));
-        ret = getaddrinfo(session->host, port_str, &hint, res);
+        ret = __platform_getaddrinfo(session->host, port_str, &hint, res);
         if (ret != 0) {
             LOG_E("getaddrinfo err: %d '%s'.", ret, session->host);
             rc = -WEBCLIENT_ERROR;
@@ -282,7 +281,7 @@ __exit:
         }
 
         if (*res) {
-            freeaddrinfo(*res);
+            __platform_freeaddrinfo(*res);
             *res = RT_NULL;
         }
     }
@@ -412,10 +411,10 @@ static int webclient_connect(struct webclient_session* session,
         socket_handle = session->tls_session->server_fd.fd;
 
         /* set recv timeout option */
-        setsockopt(socket_handle, SOL_SOCKET, SO_RCVTIMEO, (void*)&timeout,
-                   sizeof(timeout));
-        setsockopt(socket_handle, SOL_SOCKET, SO_SNDTIMEO, (void*)&timeout,
-                   sizeof(timeout));
+        __platform_setsockopt(socket_handle, SOL_SOCKET, SO_RCVTIMEO,
+                              (void*)&timeout, sizeof(timeout));
+        __platform_setsockopt(socket_handle, SOL_SOCKET, SO_SNDTIMEO,
+                              (void*)&timeout, sizeof(timeout));
 
         session->socket = socket_handle;
 
@@ -445,10 +444,10 @@ static int webclient_connect(struct webclient_session* session,
         }
 
         /* set receive and send timeout option */
-        setsockopt(socket_handle, SOL_SOCKET, SO_RCVTIMEO, (void*)&timeout,
-                   sizeof(timeout));
-        setsockopt(socket_handle, SOL_SOCKET, SO_SNDTIMEO, (void*)&timeout,
-                   sizeof(timeout));
+        __platform_setsockopt(socket_handle, SOL_SOCKET, SO_RCVTIMEO,
+                              (void*)&timeout, sizeof(timeout));
+        __platform_setsockopt(socket_handle, SOL_SOCKET, SO_SNDTIMEO,
+                              (void*)&timeout, sizeof(timeout));
 
         if (__platform_connect(socket_handle, res->ai_addr, res->ai_addrlen) !=
             0) {
@@ -465,7 +464,7 @@ static int webclient_connect(struct webclient_session* session,
 
 __exit:
     if (res) {
-        freeaddrinfo(res);
+        __platform_freeaddrinfo(res);
     }
 
     return rc;
@@ -1184,10 +1183,10 @@ int webclient_set_timeout(struct webclient_session* session, int millisecond) {
     timeout.tv_usec = 0;
 
     /* set recv timeout option */
-    setsockopt(session->socket, SOL_SOCKET, SO_RCVTIMEO, (void*)&timeout,
-               sizeof(timeout));
-    setsockopt(session->socket, SOL_SOCKET, SO_SNDTIMEO, (void*)&timeout,
-               sizeof(timeout));
+    __platform_setsockopt(session->socket, SOL_SOCKET, SO_RCVTIMEO,
+                          (void*)&timeout, sizeof(timeout));
+    __platform_setsockopt(session->socket, SOL_SOCKET, SO_SNDTIMEO,
+                          (void*)&timeout, sizeof(timeout));
 
     return 0;
 }

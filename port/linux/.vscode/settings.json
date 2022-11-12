@@ -74,7 +74,12 @@
         "webclient.h": "c",
         "platform_socket.h": "c",
         "nettype_tcp.h": "c",
-        "platform_memory.h": "c"
+        "platform_memory.h": "c",
+        "initializer_list": "c",
+        "platform_mutex.h": "c",
+        "platform_net_socket.h": "c",
+        "PikaPlatform_socket.h": "c",
+        "time.h": "c"
     },
     "python.formatting.provider": "autopep8",
     "C_Cpp.errorSquiggles": "Disabled"

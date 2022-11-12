@@ -157,7 +157,7 @@ uint8_t __is_locked_pikaMemory(void);
 /* support shell */
 char __platform_getchar(void);
 
-/* file API */
+/* libc file API */
 FILE* __platform_fopen(const char* filename, const char* modes);
 int __platform_fclose(FILE* stream);
 size_t __platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream);

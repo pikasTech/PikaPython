@@ -1,9 +1,10 @@
 #include "PikaObj.h"
 #ifdef __linux__
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <sys/socket.h>
+#include <fcntl.h>
 #include <netdb.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #else
 /*
     You need to create the __platform_socket.h for your platform.
@@ -24,5 +25,21 @@ int __platform_connect(int __fd,
                        socklen_t __addr_len);
 int __platform_send(int __fd, const void* __buf, size_t __n, int __flags);
 int __platform_recv(int __fd, void* __buf, size_t __n, int __flags);
-int __platform_close(int __fd);
 int __platform_gethostname(char* __name, size_t __len);
+int __platform_getaddrinfo(const char* __name,
+                           const char* __service,
+                           const struct addrinfo* __req,
+                           struct addrinfo** __pai);
+void __platform_freeaddrinfo(struct addrinfo* __ai);
+int __platform_setsockopt(int __fd,
+                          int __level,
+                          int __optname,
+                          const void* __optval,
+                          socklen_t __optlen);
+
+/* os file API */
+int __platform_open(const char* __file, int __oflag, ...);
+int __platform_close(int fd);
+int __platform_read(int fd, void* buf, size_t count);
+int __platform_write(int fd, const void* buf, size_t count);
+int __platform_fcntl(int fd, int cmd, long arg);

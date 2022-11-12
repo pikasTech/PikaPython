@@ -28,6 +28,8 @@
 #include "PikaPlatform.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 PIKA_WEAK void __platform_disable_irq_handle(void) {
     /* disable irq to support thread */
@@ -159,9 +161,7 @@ PIKA_WEAK char __platform_getchar(void) {
 #if defined(__linux) || defined(_WIN32)
     return getchar();
 #else
-    __platform_printf("Error: __platform_getchar need implementation!\r\n");
-    while (1) {
-    }
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
 }
 
@@ -170,9 +170,7 @@ PIKA_WEAK FILE* __platform_fopen(const char* filename, const char* modes) {
 #if defined(__linux) || defined(_WIN32)
     return fopen(filename, modes);
 #else
-    __platform_printf("Error: __platform_fopen need implementation!\r\n");
-    while (1) {
-    }
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
 }
 
@@ -181,9 +179,7 @@ PIKA_WEAK int __platform_fclose(FILE* stream) {
 #if defined(__linux) || defined(_WIN32)
     return fclose(stream);
 #else
-    __platform_printf("Error: __platform_fclose need implementation!\r\n");
-    while (1) {
-    }
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
 }
 
@@ -195,9 +191,7 @@ PIKA_WEAK size_t __platform_fwrite(const void* ptr,
 #if defined(__linux) || defined(_WIN32)
     return fwrite(ptr, size, n, stream);
 #else
-    __platform_printf("Error: __platform_fwrite need implementation!\r\n");
-    while (1) {
-    }
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
 }
 
@@ -209,9 +203,7 @@ PIKA_WEAK size_t __platform_fread(void* ptr,
 #if defined(__linux) || defined(_WIN32)
     return fread(ptr, size, n, stream);
 #else
-    __platform_printf("Error: __platform_fread need implementation!\r\n");
-    while (1) {
-    }
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
 }
 
@@ -220,9 +212,7 @@ PIKA_WEAK int __platform_fseek(FILE* stream, long offset, int whence) {
 #if defined(__linux) || defined(_WIN32)
     return fseek(stream, offset, whence);
 #else
-    __platform_printf("Error: __platform_fseek need implementation!\r\n");
-    while (1) {
-    }
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
 }
 
@@ -231,9 +221,7 @@ PIKA_WEAK long __platform_ftell(FILE* stream) {
 #if defined(__linux) || defined(_WIN32)
     return ftell(stream);
 #else
-    __platform_printf("Error: __platform_ftell need implementation!\r\n");
-    while (1) {
-    }
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
 }
 

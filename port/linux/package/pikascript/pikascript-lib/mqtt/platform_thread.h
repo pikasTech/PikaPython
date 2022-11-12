@@ -3,11 +3,13 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-15 18:31:44
  * @LastEditTime: 2020-10-17 14:15:21
- * @Description: the code belongs to jiejie, please keep the author information and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author information
+ * and source code according to the license.
  */
 #ifndef _PLATFORM_THREAD_H_
 #define _PLATFORM_THREAD_H_
 
+#include "PikaObj.h"
 #include <pthread.h>
 
 #ifdef __cplusplus
@@ -20,9 +22,9 @@ typedef struct platform_thread {
     pthread_cond_t cond;
 } platform_thread_t;
 
-platform_thread_t *platform_thread_init( const char *name,
-                                        void (*entry)(void *),
-                                        void * const param,
+platform_thread_t* platform_thread_init(const char* name,
+                                        void (*entry)(void*),
+                                        void* const param,
                                         unsigned int stack_size,
                                         unsigned int priority,
                                         unsigned int tick);

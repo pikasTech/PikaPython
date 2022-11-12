@@ -3,11 +3,15 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-15 18:31:33
  * @LastEditTime: 2020-10-17 14:17:31
- * @Description: the code belongs to jiejie, please keep the author information and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author information
+ * and source code according to the license.
  */
 #ifndef _PLATFORM_MUTEX_H_
 #define _PLATFORM_MUTEX_H_
+#include "PikaPlatform.h"
+#ifdef __linux
 #include <pthread.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,96 +1,9 @@
 #include "_socket_socket.h"
-#include "pika_socket.h"
+#include "PikaPlatform_socket.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 10, 4)
 #error "This library requires PikaScript version 1.10.4 or higher"
 #endif
-
-/*
-    The functinos start with PIKA_WEAK are weak functions,
-    you need to override them in your platform.
-*/
-
-PIKA_WEAK int __platform_socket(int __domain, int __type, int __protocol) {
-#ifdef __linux__
-    return socket(__domain, __type, __protocol);
-#else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-#endif
-}
-
-PIKA_WEAK int __platform_bind(int __fd,
-                              const struct sockaddr* __addr,
-                              socklen_t __addr_len) {
-#ifdef __linux__
-    return bind(__fd, __addr, __addr_len);
-#else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-#endif
-}
-
-PIKA_WEAK int __platform_listen(int __fd, int __n) {
-#ifdef __linux__
-    return listen(__fd, __n);
-#else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-#endif
-}
-
-PIKA_WEAK int __platform_accept(int __fd,
-                                struct sockaddr* __addr,
-                                socklen_t* __addr_len) {
-#ifdef __linux__
-    return accept(__fd, __addr, __addr_len);
-#else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-#endif
-}
-
-PIKA_WEAK int __platform_connect(int __fd,
-                                 const struct sockaddr* __addr,
-                                 socklen_t __addr_len) {
-#ifdef __linux__
-    return connect(__fd, __addr, __addr_len);
-#else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-#endif
-}
-
-PIKA_WEAK int __platform_send(int __fd,
-                              const void* __buf,
-                              size_t __n,
-                              int __flags) {
-#ifdef __linux__
-    return send(__fd, __buf, __n, __flags);
-#else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-#endif
-}
-
-PIKA_WEAK int __platform_recv(int __fd, void* __buf, size_t __n, int __flags) {
-#ifdef __linux__
-    return recv(__fd, __buf, __n, __flags);
-#else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-#endif
-}
-
-PIKA_WEAK int __platform_close(int __fd) {
-#ifdef __linux__
-    return close(__fd);
-#else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-#endif
-}
-
-/* gethostname */
-PIKA_WEAK int __platform_gethostname(char* __name, size_t __len) {
-#ifdef __linux__
-    return gethostname(__name, __len);
-#else
-    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-#endif
-}
 
 void _socket_socket__init(PikaObj* self) {
     int family = obj_getInt(self, "family");
@@ -200,4 +113,42 @@ char* _socket__gethostname(PikaObj* self) {
     char* hostname = (char*)hostname_buff;
     __platform_gethostname(hostname_buff, 128);
     return obj_cacheStr(self, hostname);
+}
+
+/* os file API */
+
+PIKA_WEAK int __platform_close(int __fd) {
+#ifdef __linux__
+    return close(__fd);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK int __platform_open(const char* __file, int __oflag, ...) {
+#ifdef __linux__
+    va_list args;
+    va_start(args, __oflag);
+    int __mode = va_arg(args, int);
+    va_end(args);
+    return open(__file, __oflag, __mode);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK int __platform_read(int __fd, void* __buf, size_t __nbyte) {
+#ifdef __linux__
+    return read(__fd, __buf, __nbyte);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK int __platform_write(int __fd, const void* __buf, size_t __nbyte) {
+#ifdef __linux__
+    return write(__fd, __buf, __nbyte);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
 }
