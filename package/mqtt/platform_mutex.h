@@ -15,8 +15,8 @@
         pthread_mutex_t mutex;
     } platform_mutex_t;
 #elif PIKA_FREERTOS_ENABLE
-    #include "freertos/FreeRTOS.h"
-    #include "freertos/semphr.h"
+    #include "FreeRTOS.h"
+    #include "semphr.h"
     typedef struct platform_mutex {
         SemaphoreHandle_t mutex;
     } platform_mutex_t;

@@ -10,16 +10,14 @@
 #define _PLATFORM_TIMER_H_
 
 #include <stdio.h>
-#include "PikaObj.h"
-
 #ifdef __linux
     #include <sys/time.h>
     typedef struct platform_timer {
         struct timeval time;
     } platform_timer_t;
 #elif PIKA_FREERTOS_ENABLE
-    #include "freertos/FreeRTOS.h"
-    #include "freertos/task.h"
+    #include "FreeRTOS.h"
+    #include "task.h"
     typedef struct platform_timer {
         uint32_t time;
     } platform_timer_t;
@@ -31,6 +29,7 @@
 #endif
 #include <time.h>
 #include <unistd.h>
+#include "PikaObj.h"
 
 #ifdef __cplusplus
 extern "C" {

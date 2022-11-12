@@ -15,14 +15,11 @@
  * 2021-06-09     xiangxistu   add shard download function
  */
 
+#include "webclient.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "webclient.h"
-
-#include <sys/errno.h>
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME "web"
