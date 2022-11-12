@@ -108,20 +108,34 @@ int platform_net_socket_close(int fd) {
     return __platform_close(fd);
 }
 
-int platform_net_socket_set_block(int fd) {
+PIKA_WEAK int platform_net_socket_set_block(int fd) {
+#ifdef __linux
     return __platform_fcntl(
         fd, F_SETFL, __platform_fcntl(fd, F_GETFL, F_GETFL) & ~O_NONBLOCK);
+#elif PIKA_LWIP_ENABLE
+    unsigned long mode = 0;
+    return ioctlsocket(fd, FIONBIO, &mode);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
 }
 
-int platform_net_socket_set_nonblock(int fd) {
+PIKA_WEAK int platform_net_socket_set_nonblock(int fd) {
+#ifdef __linux
     return __platform_fcntl(
         fd, F_SETFL, __platform_fcntl(fd, F_GETFL, F_GETFL) | O_NONBLOCK);
+#elif PIKA_LWIP_ENABLE
+    unsigned long mode = 1;
+    return ioctlsocket(fd, FIONBIO, &mode);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
 }
 
-int platform_net_socket_setsockopt(int fd,
-                                   int level,
-                                   int optname,
-                                   const void* optval,
-                                   socklen_t optlen) {
+PIKA_WEAK int platform_net_socket_setsockopt(int fd,
+                                             int level,
+                                             int optname,
+                                             const void* optval,
+                                             socklen_t optlen) {
     return __platform_setsockopt(fd, level, optname, optval, optlen);
 }

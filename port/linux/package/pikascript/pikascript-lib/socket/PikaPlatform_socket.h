@@ -44,8 +44,6 @@ int __platform_setsockopt(int __fd,
                           socklen_t __optlen);
 
 /* os file API */
-int __platform_open(const char* __file, int __oflag, ...);
 int __platform_close(int fd);
-int __platform_read(int fd, void* buf, size_t count);
 int __platform_write(int fd, const void* buf, size_t count);
 int __platform_fcntl(int fd, int cmd, long arg);
