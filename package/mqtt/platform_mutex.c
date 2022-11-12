@@ -11,6 +11,9 @@
 PIKA_WEAK int platform_mutex_init(platform_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_init(&(m->mutex), NULL);
+#elif PIKA_FREERTOS_ENABLE
+    m->mutex = xSemaphoreCreateMutex();
+    return 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -19,6 +22,8 @@ PIKA_WEAK int platform_mutex_init(platform_mutex_t* m) {
 PIKA_WEAK int platform_mutex_lock(platform_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_lock(&(m->mutex));
+#elif PIKA_FREERTOS_ENABLE
+    return xSemaphoreTake(m->mutex, portMAX_DELAY);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -27,6 +32,8 @@ PIKA_WEAK int platform_mutex_lock(platform_mutex_t* m) {
 PIKA_WEAK int platform_mutex_trylock(platform_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_trylock(&(m->mutex));
+#elif PIKA_FREERTOS_ENABLE
+    return xSemaphoreTake(m->mutex, 0);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -35,6 +42,8 @@ PIKA_WEAK int platform_mutex_trylock(platform_mutex_t* m) {
 int platform_mutex_unlock(platform_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_unlock(&(m->mutex));
+#elif PIKA_FREERTOS_ENABLE
+    return xSemaphoreGive(m->mutex);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -43,6 +52,9 @@ int platform_mutex_unlock(platform_mutex_t* m) {
 int platform_mutex_destroy(platform_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_destroy(&(m->mutex));
+#elif PIKA_FREERTOS_ENABLE
+    vSemaphoreDelete(m->mutex);
+    return 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif

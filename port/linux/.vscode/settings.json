@@ -81,7 +81,8 @@
         "PikaPlatform_socket.h": "c",
         "time.h": "c",
         "platform_thread.h": "c",
-        "platform_timer.h": "c"
+        "platform_timer.h": "c",
+        "stddef.h": "c"
     },
     "python.formatting.provider": "autopep8",
     "C_Cpp.errorSquiggles": "Disabled"

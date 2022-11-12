@@ -5,6 +5,12 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#elif PIKA_LWIP_ENABLE
+#include <lwip/sockets.h>
+#include "lwip/api.h"
+#include "lwip/netdb.h"
+#include "lwip/opt.h"
+#include "lwip/sys.h"
 #else
 /*
     You need to create the __platform_socket.h for your platform.

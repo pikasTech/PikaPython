@@ -12,20 +12,28 @@
 #include "PikaObj.h"
 #ifdef __linux
 #include <pthread.h>
+    typedef struct platform_thread {
+        pthread_t thread;
+        pthread_mutex_t mutex;
+        pthread_cond_t cond;
+    } platform_thread_t;
+#elif PIKA_FREERTOS_ENABLE
+    #include "FreeRTOS.h"
+    #include "task.h"
+    typedef struct platform_thread {
+        TaskHandle_t thread;
+    } platform_thread_t;
 #else
+/*
+    You need to create the __platform_thread.h for your platform.
+    For example:
+    You can #include <rtthread.h> in the __platform_thread.h
+*/
 #include "__platform_thread.h"
 #endif
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifdef __linux
-typedef struct platform_thread {
-    pthread_t thread;
-    pthread_mutex_t mutex;
-    pthread_cond_t cond;
-} platform_thread_t;
 #endif
 
 platform_thread_t* platform_thread_init(const char* name,

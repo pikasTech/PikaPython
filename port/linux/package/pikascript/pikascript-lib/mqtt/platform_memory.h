@@ -8,7 +8,6 @@
  */
 #ifndef _PLATFORM_MEMORY_H_
 #define _PLATFORM_MEMORY_H_
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "PikaObj.h"

@@ -9,12 +9,13 @@
 #include "platform_thread.h"
 #include "platform_memory.h"
 
-platform_thread_t* platform_thread_init(const char* name,
-                                        void (*entry)(void*),
-                                        void* const param,
-                                        unsigned int stack_size,
-                                        unsigned int priority,
-                                        unsigned int tick) {
+PIKA_WEAK platform_thread_t* platform_thread_init(const char* name,
+                                                  void (*entry)(void*),
+                                                  void* const param,
+                                                  unsigned int stack_size,
+                                                  unsigned int priority,
+                                                  unsigned int tick) {
+#ifdef __linux
     int res;
     platform_thread_t* thread;
     void* (*thread_entry)(void*);
@@ -31,25 +32,64 @@ platform_thread_t* platform_thread_init(const char* name,
     thread->cond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
 
     return thread;
+#elif PIKA_FREERTOS_ENABLE
+    BaseType_t err;
+    platform_thread_t* thread;
+
+    thread = platform_memory_alloc(sizeof(platform_thread_t));
+
+    (void)tick;
+
+    err = xTaskCreate(entry, name, stack_size, param, priority, thread->thread);
+
+    if (pdPASS != err) {
+        platform_memory_free(thread);
+        return NULL;
+    }
+
+    return thread;
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
 }
 
-void platform_thread_startup(platform_thread_t* thread) {
+PIKA_WEAK void platform_thread_startup(platform_thread_t* thread) {
     (void)thread;
 }
 
-void platform_thread_stop(platform_thread_t* thread) {
+PIKA_WEAK void platform_thread_stop(platform_thread_t* thread) {
+#ifdef __linux
     pthread_mutex_lock(&(thread->mutex));
     pthread_cond_wait(&(thread->cond), &(thread->mutex));
     pthread_mutex_unlock(&(thread->mutex));
+#elif PIKA_FREERTOS_ENABLE
+    vTaskSuspend(thread->thread);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
 }
 
-void platform_thread_start(platform_thread_t* thread) {
+PIKA_WEAK void platform_thread_start(platform_thread_t* thread) {
+#ifdef __linux
     pthread_mutex_lock(&(thread->mutex));
     pthread_cond_signal(&(thread->cond));
     pthread_mutex_unlock(&(thread->mutex));
+#elif PIKA_FREERTOS_ENABLE
+    vTaskResume(thread->thread);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
 }
 
-void platform_thread_destroy(platform_thread_t* thread) {
+PIKA_WEAK void platform_thread_destroy(platform_thread_t* thread) {
+#ifdef __linux
     if (NULL != thread)
         pthread_detach(thread->thread);
+#elif PIKA_FREERTOS_ENABLE
+    if (NULL != thread)
+        vTaskDelete(thread->thread);
+    platform_memory_free(thread);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
 }

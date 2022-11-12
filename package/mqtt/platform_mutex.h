@@ -8,22 +8,31 @@
  */
 #ifndef _PLATFORM_MUTEX_H_
 #define _PLATFORM_MUTEX_H_
-#include "PikaPlatform.h"
+#include "PikaObj.h"
 #ifdef __linux
-#include <pthread.h>
+    #include <pthread.h>
+    typedef struct platform_mutex {
+        pthread_mutex_t mutex;
+    } platform_mutex_t;
+#elif PIKA_FREERTOS_ENABLE
+    #include "FreeRTOS.h"
+    #include "semphr.h"
+    typedef struct platform_mutex {
+        SemaphoreHandle_t mutex;
+    } platform_mutex_t;
 #else
-#include "__platform_thread.h"
+    /*
+        You need to create the __platform_thread.h for your platform.
+        For example:
+        You can #include <rtthread.h> in the __platform_thread.h
+    */
+    #include "__platform_thread.h"
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef __linux
-typedef struct platform_mutex {
-    pthread_mutex_t mutex;
-} platform_mutex_t;
-#endif
 
 int platform_mutex_init(platform_mutex_t* m);
 int platform_mutex_lock(platform_mutex_t* m);

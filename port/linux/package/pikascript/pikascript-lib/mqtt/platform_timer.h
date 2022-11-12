@@ -11,9 +11,21 @@
 
 #include <stdio.h>
 #ifdef __linux
-#include <sys/time.h>
+    #include <sys/time.h>
+    typedef struct platform_timer {
+        struct timeval time;
+    } platform_timer_t;
+#elif PIKA_FREERTOS_ENABLE
+    #include "FreeRTOS.h"
+    #include "task.h"
+    typedef struct platform_timer {
+        uint32_t time;
+    } platform_timer_t;
 #else
-#include "__platform_time.h"
+    /*
+        You need to create the __platform_timer.h for your platform.
+    */
+    #include "__platform_time.h"
 #endif
 #include <time.h>
 #include <unistd.h>
@@ -21,12 +33,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifdef __linux
-typedef struct platform_timer {
-    struct timeval time;
-} platform_timer_t;
 #endif
 
 void platform_timer_init(platform_timer_t* timer);
