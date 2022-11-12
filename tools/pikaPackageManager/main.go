@@ -165,7 +165,7 @@ func checkout_requestments(path string, repo *git.Repository, requerments []Requ
 			CheckIfError(os.Rename(pyFileSource, pyFileName))
 		}
 
-		pyiFileList, _ := FilterDirsGlob(dirPath, "*.py.o")
+		pyiFileList, _ = FilterDirsGlob(dirPath, "*.py.o")
 		for i := range pyiFileList {
 			pyFileSource := strings.ReplaceAll(pyiFileList[i], "\\", "/")
 			pyFilePath := strings.Split(pyFileSource, "/")
