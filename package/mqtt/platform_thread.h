@@ -18,8 +18,8 @@
         pthread_cond_t cond;
     } platform_thread_t;
 #elif PIKA_FREERTOS_ENABLE
-    #include "FreeRTOS.h"
-    #include "task.h"
+    #include "freertos/FreeRTOS.h"
+    #include "freertos/task.h"
     typedef struct platform_thread {
         TaskHandle_t thread;
     } platform_thread_t;

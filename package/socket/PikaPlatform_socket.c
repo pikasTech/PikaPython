@@ -71,7 +71,7 @@ PIKA_WEAK int __platform_recv(int __fd, void* __buf, size_t __n, int __flags) {
 
 /* gethostname */
 PIKA_WEAK int __platform_gethostname(char* __name, size_t __len) {
-#if defined(__linux__) || PIKA_LWIP_ENABLE
+#if defined(__linux__)
     return gethostname(__name, __len);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
