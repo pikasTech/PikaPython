@@ -82,7 +82,9 @@
         "time.h": "c",
         "platform_thread.h": "c",
         "platform_timer.h": "c",
-        "stddef.h": "c"
+        "stddef.h": "c",
+        "errno.h": "c",
+        "ctype.h": "c"
     },
     "python.formatting.provider": "autopep8",
     "C_Cpp.errorSquiggles": "Disabled"
