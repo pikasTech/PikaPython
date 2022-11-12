@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668234340559,
+  "lastUpdate": 1668238814219,
   "repoUrl": "https://github.com/pikasTech/pikascript",
   "entries": {
     "Benchmark": [
@@ -88251,6 +88251,66 @@ window.BENCHMARK_DATA = {
             "value": 0.005000183953459746,
             "unit": "ms/iter",
             "extra": "iterations: 234683\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "a67a71f944a8ceda786548464113f43725d01628",
+          "message": "support linux/freertos/weak for mqtt platform",
+          "timestamp": "2022-11-12T15:20:51+08:00",
+          "tree_id": "6184af07f384ec02ce345ba6a5e007db531a53c1",
+          "url": "https://github.com/pikasTech/pikascript/commit/a67a71f944a8ceda786548464113f43725d01628"
+        },
+        "date": 1668238805598,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 25142.64361212189,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 25142.64361212189 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 16.857604472655805,
+            "unit": "ms/iter",
+            "extra": "iterations: 60\ncpu: 16.85228812353081 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 8.569462640864135,
+            "unit": "ms/iter",
+            "extra": "iterations: 119\ncpu: 8.567725449880202 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 8.948161271731543,
+            "unit": "ms/iter",
+            "extra": "iterations: 114\ncpu: 8.942063254569682 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 1.9889375606977897,
+            "unit": "ms/iter",
+            "extra": "iterations: 513\ncpu: 1.9886532526712413 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000584612484233,
+            "unit": "ms/iter",
+            "extra": "iterations: 202085\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
