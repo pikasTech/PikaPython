@@ -10,17 +10,23 @@
 #define _PLATFORM_THREAD_H_
 
 #include "PikaObj.h"
+#ifdef __linux
 #include <pthread.h>
+#else
+#include "__platform_thread.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifdef __linux
 typedef struct platform_thread {
     pthread_t thread;
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 } platform_thread_t;
+#endif
 
 platform_thread_t* platform_thread_init(const char* name,
                                         void (*entry)(void*),

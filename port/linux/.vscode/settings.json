@@ -79,7 +79,9 @@
         "platform_mutex.h": "c",
         "platform_net_socket.h": "c",
         "PikaPlatform_socket.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "platform_thread.h": "c",
+        "platform_timer.h": "c"
     },
     "python.formatting.provider": "autopep8",
     "C_Cpp.errorSquiggles": "Disabled"

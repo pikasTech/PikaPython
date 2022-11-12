@@ -10,7 +10,11 @@
 #define _PLATFORM_TIMER_H_
 
 #include <stdio.h>
+#ifdef __linux
 #include <sys/time.h>
+#else
+#include "__platform_time.h"
+#endif
 #include <time.h>
 #include <unistd.h>
 #include "PikaObj.h"
@@ -19,9 +23,11 @@
 extern "C" {
 #endif
 
+#ifdef __linux
 typedef struct platform_timer {
     struct timeval time;
 } platform_timer_t;
+#endif
 
 void platform_timer_init(platform_timer_t* timer);
 void platform_timer_cutdown(platform_timer_t* timer, unsigned int timeout);

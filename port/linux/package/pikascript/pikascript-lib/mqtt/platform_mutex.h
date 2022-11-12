@@ -11,15 +11,19 @@
 #include "PikaPlatform.h"
 #ifdef __linux
 #include <pthread.h>
+#else
+#include "__platform_thread.h"
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifdef __linux
 typedef struct platform_mutex {
     pthread_mutex_t mutex;
 } platform_mutex_t;
+#endif
 
 int platform_mutex_init(platform_mutex_t* m);
 int platform_mutex_lock(platform_mutex_t* m);
