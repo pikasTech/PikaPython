@@ -9,5 +9,8 @@ void _mqtt__MQTT___init__(PikaObj* self,
                           char* version,
                           char* ca,
                           int keepalive) {
-
-                          }
+    __platform_printf(
+        "ip: %s, port: %d, clinetID: %s, username: %s, password: %s, version: "
+        "%s, ca: %s, keepalive: %d\r\n",
+        ip, port, clinetID, username, password, version, ca, keepalive);
+}

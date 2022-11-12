@@ -11,9 +11,6 @@ class MQTT(_mqtt._MQTT):
                  version='3.1.1',
                  ca='',
                  keepalive=60):
-        print('MQTT init')
-        print(port)
-        print('ip:', ip)
         super().__init__(ip, port, clinetID,
                          username, password, version,
                          ca, keepalive)
