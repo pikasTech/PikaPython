@@ -1265,6 +1265,48 @@ TEST(vm, keyword_4) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(vm, class_keyword) {
+    char* line =
+        "class Test:\n"
+        "    def __init__(self, a, b = 1, c =2):\n"
+        "        print(a, b, c)\n"
+        "t = Test(0, b = 3)\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "0 3 2\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, class_keyword_mqtt) {
+    char* line =
+        "class MQTT:\n"
+        "    def __init__(self,\n"
+        "                 ip: str,\n"
+        "                 port=1883,\n"
+        "                 clinetID='mac',\n"
+        "                 username='',\n"
+        "                 password='',\n"
+        "                 version='3.1.1',\n"
+        "                 ca='',\n"
+        "                 keepalive=60):\n"
+        "        print('ip:', ip)\n"
+        "        print('port:', port)\n"
+        "c = MQTT('test')\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "ip: test\r\n");
+    EXPECT_STREQ(log_buff[0], "port: 1883\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(vm, vars_keyward) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

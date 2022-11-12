@@ -867,7 +867,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     int argc = 0;
     char _buffs1[PIKA_LINE_BUFF_SIZE] = {0};
     char* buffs1 = (char*)_buffs1;
-    char _buffs2[PIKA_LINE_BUFF_SIZE / 2] = {0};
+    char _buffs2[PIKA_LINE_BUFF_SIZE] = {0};
     char* buffs2 = (char*)_buffs2;
     uint8_t arg_num_dec = 0;
     PIKA_BOOL vars_or_keys_or_default = PIKA_FALSE;
@@ -936,6 +936,12 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
 
     if (vars_or_keys_or_default) {
+        if (strGetSize(type_list) > sizeof(_buffs2)) {
+            __platform_printf(
+                "OverFlowError: please use bigger PIKA_LINE_BUFF_SIZE\r\n");
+            while (1) {
+            }
+        }
         type_list_buff = strCopy(buffs2, type_list);
         int default_num = strCountSign(type_list_buff, '=');
         variable_arg_start = 0;

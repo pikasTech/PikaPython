@@ -4032,6 +4032,50 @@ TEST(parser, keyword1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, keyword_class) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "t = Test(0, b = 3)\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 NUM 0\n"
+                 "1 NUM 3\n"
+                 "1 OUT b\n"
+                 "0 RUN Test\n"
+                 "0 OUT t\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, keyword_class_mqtt) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "class MQTT:\n"
+        "    def __init__(self,\n"
+        "                 ip: str,\n"
+        "                 port=1883,\n"
+        "                 clinetID='mac',\n"
+        "                 username='',\n"
+        "                 password='',\n"
+        "                 version='3.1.1',\n"
+        "                 ca='',\n"
+        "                 keepalive=60):\n"
+        "        print('MQTT init')\n"
+        "        print(port)\n"
+        "        print('ip:', ip)\n"
+        "c = MQTT('test')\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #if !PIKA_NANO_ENABLE
 TEST(parser, except_dict) {
     pikaMemInfo.heapUsedMax = 0;

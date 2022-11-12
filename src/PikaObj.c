@@ -653,6 +653,12 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
     }
     char* method_dec = methodArg_getDec(method_arg);
     pika_assert(strGetSize(method_dec) <= size);
+    if (strGetSize(method_dec) > size) {
+        __platform_printf(
+            "OverFlowError: please use bigger PIKA_LINE_BUFF_SIZE\r\n");
+        while (1) {
+        }
+    }
     char* res = strCut(buffs, method_dec, '(', ')');
     pika_assert(NULL != res);
     return res;

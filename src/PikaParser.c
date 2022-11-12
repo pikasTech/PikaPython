@@ -1556,7 +1556,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         uint8_t is_meet_equ = 0;
         Cursor_forEachToken(cs, stmt) {
             Cursor_iterStart(&cs);
-            if (strEqu(cs.token1.pyload, "=") &&
+            if (!is_meet_equ && strEqu(cs.token1.pyload, "=") &&
                 cs.token1.type == TOKEN_operator) {
                 is_meet_equ = 1;
                 Cursor_iterEnd(&cs);
