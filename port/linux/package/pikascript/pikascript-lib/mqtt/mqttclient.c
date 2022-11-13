@@ -1498,3 +1498,9 @@ int mqtt_set_will_options(mqtt_client_t* c, char *topic, mqtt_qos_t qos, uint8_t
 
     RETURN_ERROR(MQTT_SUCCESS_ERROR);
 }
+
+int mqtt_free(mqtt_client_t* c){
+    mqtt_clean_session(c);
+    mqtt_release(c);
+    platform_memory_free(c);
+}

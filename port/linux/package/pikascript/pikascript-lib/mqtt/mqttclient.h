@@ -163,6 +163,7 @@ MQTT_CLIENT_SET_STATEMENT(interceptor_handler, interceptor_handler_t)
 
 void mqtt_sleep_ms(int ms);
 mqtt_client_t *mqtt_lease(void);
+int mqtt_free(mqtt_client_t* c);
 int mqtt_release(mqtt_client_t* c);
 int mqtt_connect(mqtt_client_t* c);
 int mqtt_disconnect(mqtt_client_t* c);

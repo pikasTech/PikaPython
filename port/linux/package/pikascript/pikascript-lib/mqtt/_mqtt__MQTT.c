@@ -1,4 +1,5 @@
 #include "_mqtt__MQTT.h"
+#include "mqttclient.h"
 
 void _mqtt__MQTT___init__(PikaObj* self,
                           char* ip,
