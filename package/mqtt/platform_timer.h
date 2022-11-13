@@ -18,7 +18,7 @@
     } platform_timer_t;
 #elif PIKA_FREERTOS_ENABLE
     #include "freertos/FreeRTOS.h"
-    #include "freertos/semphr.h"
+    #include "freertos/task.h"
     typedef struct platform_timer {
         uint32_t time;
     } platform_timer_t;
