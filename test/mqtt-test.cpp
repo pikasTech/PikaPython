@@ -80,6 +80,7 @@ void* mqtt_publish_thread(void* arg) {
 }
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(mqtt, lease_free) {
     mqtt_client_t* client = mqtt_lease();
     mqtt_release_free(client);
@@ -93,3 +94,4 @@ TEST(mqtt, init) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
