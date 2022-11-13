@@ -1,6 +1,7 @@
 #include "PikaObj.h"
 #ifdef __linux__
 #include <arpa/inet.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <netdb.h>
 #include <sys/socket.h>

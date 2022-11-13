@@ -9,6 +9,20 @@
 
 #include "platform_timer.h"
 
+#if PIKA_FREERTOS_ENABLE
+static uint32_t platform_uptime_ms(void)
+{
+#if (configTICK_RATE_HZ == 1000)
+    return (uint32_t)xTaskGetTickCount();
+#else
+    TickType_t tick = 0u;
+
+    tick = xTaskGetTickCount() * 1000;
+    return (uint32_t)((tick + configTICK_RATE_HZ - 1) / configTICK_RATE_HZ);
+#endif
+}
+#endif
+
 PIKA_WEAK void platform_timer_init(platform_timer_t* timer) {
 #ifdef __linux
     timer->time = (struct timeval){0, 0};
@@ -79,7 +93,7 @@ PIKA_WEAK void platform_timer_usleep(unsigned long usec) {
 #ifdef __linux
     usleep(usec);
 #elif PIKA_FREERTOS_ENABLE
-    TickType_t tick;
+    TickType_t tick = 1;
     if (usec != 0) {
         tick = usec / portTICK_PERIOD_MS;
 
