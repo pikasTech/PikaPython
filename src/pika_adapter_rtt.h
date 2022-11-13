@@ -45,9 +45,9 @@
 #define RT_EINTR 9    /**< Interrupted system call */
 #define RT_EINVAL 10  /**< Invalid argument */
 
-#define LOG_E(fmt, ...) __platform_printf(fmt, ##__VA_ARGS__)
-#define LOG_W(...) LOG_E(__VA_ARGS__)
-#define LOG_D(...) LOG_E(__VA_ARGS__)
+#define LOG_E(fmt, ...) __platform_printf(fmt "\r\n", ##__VA_ARGS__)
+#define LOG_W(...) 
+#define LOG_D(...)
 
 #define RT_ASSERT(...) pika_assert(__VA_ARGS__)
 
