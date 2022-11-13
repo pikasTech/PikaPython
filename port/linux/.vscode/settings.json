@@ -84,7 +84,9 @@
         "platform_timer.h": "c",
         "stddef.h": "c",
         "errno.h": "c",
-        "ctype.h": "c"
+        "ctype.h": "c",
+        "mqttclient.h": "c",
+        "_mqtt__mqtt.h": "c"
     },
     "python.formatting.provider": "autopep8",
     "C_Cpp.errorSquiggles": "Disabled"

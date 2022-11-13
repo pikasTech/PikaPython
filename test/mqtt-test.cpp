@@ -84,3 +84,12 @@ TEST(mqtt, lease_free) {
     mqtt_client_t* client = mqtt_lease();
     mqtt_release_free(client);
 }
+
+TEST(mqtt, init) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    pikaVM_runSingleFile(pikaMain, "test/python/mqtt/mqtt_init.py");
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
