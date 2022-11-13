@@ -82,5 +82,5 @@ void* mqtt_publish_thread(void* arg) {
 
 TEST(mqtt, lease_free) {
     mqtt_client_t* client = mqtt_lease();
-    mqtt_free(client);
+    mqtt_release_free(client);
 }
