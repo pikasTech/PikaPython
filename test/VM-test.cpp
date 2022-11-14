@@ -2159,4 +2159,16 @@ TEST(vm, benchmark) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(VM, print_None) {
+    char* line = "print(None)\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "None\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

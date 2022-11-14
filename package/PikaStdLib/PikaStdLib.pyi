@@ -45,10 +45,6 @@ class SysObj:
     def type(arg: any) -> any: ...
 
     @staticmethod
-    @PIKA_C_MACRO_IF("PIKA_BUILTIN_STRUCT_ENABLE")
-    def __slice__(obj: any, start: any, end: any, step: int) -> any: ...
-
-    @staticmethod
     def len(arg: any) -> int: ...
 
     @staticmethod

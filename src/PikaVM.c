@@ -357,7 +357,7 @@ static Arg* VM_instruction_handler_NON(PikaObj* self,
     return NULL;
 }
 
-Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
+Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj) {
     ArgType type = arg_getType(obj);
     Arg* obj_new = NULL;
     int index = 0;
@@ -412,7 +412,12 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
             0x65, 0x73, 0x00,
             /* const pool */
         };
-        pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
+        if (NULL != vm) {
+            _do_pikaVM_runByteCode(arg_obj, arg_obj, arg_obj, (uint8_t*)bytes,
+                                   vm->run_state);
+        } else {
+            pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
+        }
         Arg* __res = args_getArg(arg_obj->list, "__res");
         Arg* res = NULL;
         if (NULL != __res) {
@@ -422,6 +427,9 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
             arg_deinit(obj_new);
         }
         if (NULL == res) {
+            if (NULL != vm) {
+                VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
+            }
             return arg_newNull();
         }
         return res;
@@ -429,12 +437,17 @@ Arg* __vm_get(PikaObj* self, Arg* key, Arg* obj) {
     return arg_newNull();
 }
 
-Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
+Arg* _vm_slice(VMState* vm,
+               PikaObj* self,
+               Arg* end,
+               Arg* obj,
+               Arg* start,
+               int step) {
 #if PIKA_SYNTAX_SLICE_ENABLE
     /* No interger index only support __getitem__ */
     if (!(arg_getType(start) == ARG_TYPE_INT &&
           arg_getType(end) == ARG_TYPE_INT)) {
-        return __vm_get(self, start, obj);
+        return __vm_get(vm, self, start, obj);
     }
 
     int start_i = arg_getInt(start);
@@ -442,7 +455,7 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
 
     /* __slice__ is equal to __getitem__ */
     if (end_i - start_i == 1) {
-        return __vm_get(self, start, obj);
+        return __vm_get(vm, self, start, obj);
     }
 
     if (ARG_TYPE_STRING == arg_getType(obj)) {
@@ -471,7 +484,7 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
         Arg* sliced_arg = arg_newBytes(NULL, 0);
         for (int i = start_i; i < end_i; i++) {
             Arg* i_arg = arg_newInt(i);
-            Arg* item_arg = __vm_get(self, i_arg, obj);
+            Arg* item_arg = __vm_get(vm, self, i_arg, obj);
             uint8_t* bytes_origin = arg_getBytes(sliced_arg);
             size_t size_origin = arg_getBytesSize(sliced_arg);
             Arg* sliced_arg_new = arg_newBytes(NULL, size_origin + 1);
@@ -497,7 +510,7 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
             __vm_List___init__(sliced_obj);
             for (int i = start_i; i < end_i; i++) {
                 Arg* i_arg = arg_newInt(i);
-                Arg* item_arg = __vm_get(self, i_arg, obj);
+                Arg* item_arg = __vm_get(vm, self, i_arg, obj);
                 __vm_List_append(sliced_obj, item_arg);
                 arg_deinit(item_arg);
                 arg_deinit(i_arg);
@@ -507,7 +520,7 @@ Arg* __vm_slice(PikaObj* self, Arg* end, Arg* obj, Arg* start, int step) {
     }
     return arg_newNull();
 #else
-    return __vm_get(self, start, obj);
+    return __vm_get(vm, self, start, obj);
 #endif
 }
 
@@ -523,7 +536,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
     if (arg_num_input == 2) {
         Arg* key = stack_popArg_alloc(&vm->stack);
         Arg* obj = stack_popArg_alloc(&vm->stack);
-        Arg* res = __vm_get(self, key, obj);
+        Arg* res = __vm_get(vm, self, key, obj);
         arg_deinit(key);
         arg_deinit(obj);
         return res;
@@ -532,7 +545,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
         Arg* end = stack_popArg_alloc(&vm->stack);
         Arg* start = stack_popArg_alloc(&vm->stack);
         Arg* obj = stack_popArg_alloc(&vm->stack);
-        Arg* res = __vm_slice(self, end, obj, start, 1);
+        Arg* res = _vm_slice(vm, self, end, obj, start, 1);
         arg_deinit(end);
         arg_deinit(obj);
         arg_deinit(start);
@@ -542,7 +555,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
 #else
     Arg* key = stack_popArg_alloc(&vm->stack);
     Arg* obj = stack_popArg_alloc(&vm->stack);
-    Arg* res = __vm_get(self, key, obj);
+    Arg* res = __vm_get(vm, self, key, obj);
     arg_deinit(key);
     arg_deinit(obj);
     return res;
@@ -2601,18 +2614,41 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     return res;
 }
 
-static VMParameters* __pikaVM_runPyLines_or_byteCode(PikaObj* self,
-                                                     char* py_lines,
-                                                     uint8_t* bytecode) {
-    uint8_t is_run_py;
-    if (NULL != py_lines) {
-        is_run_py = 1;
-    } else if (NULL != bytecode) {
-        is_run_py = 0;
-    } else {
-        return NULL;
+static ByteCodeFrame* _cache_bcf0(PikaObj* self) {
+    ByteCodeFrame bytecode_frame_stack = {0};
+    if (!args_isArgExist(self->list, "@bc0")) {
+        /* load bytecode to heap */
+        args_setHeapStruct(self->list, "@bc0", bytecode_frame_stack,
+                           byteCodeFrame_deinit);
+        /* get bytecode_ptr from heap */
+        return args_getHeapStruct(self->list, "@bc0");
     }
+    return NULL;
+}
+
+static ByteCodeFrame* _cache_bcf_fn(PikaObj* self, char* py_lines) {
     Args buffs = {0};
+    ByteCodeFrame bytecode_frame_stack = {0};
+    ByteCodeFrame* res = NULL;
+    /* get bytecode_ptr from stack */
+    /* not the first obj_run */
+    /* save 'def' and 'class' to heap */
+    if ((strIsStartWith(py_lines, "def ")) ||
+        (strIsStartWith(py_lines, "class "))) {
+        char* declare_name = strsGetFirstToken(&buffs, py_lines, ':');
+        /* load bytecode to heap */
+        args_setHeapStruct(self->list, declare_name, bytecode_frame_stack,
+                           byteCodeFrame_deinit);
+        /* get bytecode_ptr from heap */
+        res = args_getHeapStruct(self->list, declare_name);
+        goto __exit;
+    }
+__exit:
+    strsDeinit(&buffs);
+    return res;
+}
+
+static VMParameters* __pikaVM_runPyLines(PikaObj* self, char* py_lines) {
     VMParameters* globals = NULL;
     ByteCodeFrame bytecode_frame_stack = {0};
     ByteCodeFrame* bytecode_frame_p = NULL;
@@ -2622,44 +2658,24 @@ static VMParameters* __pikaVM_runPyLines_or_byteCode(PikaObj* self,
      * the first obj_run, cache bytecode to heap, to support 'def' and
      * 'class'
      */
-    if (!args_isArgExist(self->list, "@bc0")) {
-        is_use_heap_bytecode = 1;
-        /* load bytecode to heap */
-        args_setHeapStruct(self->list, "@bc0", bytecode_frame_stack,
-                           byteCodeFrame_deinit);
-        /* get bytecode_ptr from heap */
-        bytecode_frame_p = args_getHeapStruct(self->list, "@bc0");
-    } else {
-        /* not the first obj_run */
-        /* save 'def' and 'class' to heap */
-        if ((strIsStartWith(py_lines, "def ")) ||
-            (strIsStartWith(py_lines, "class "))) {
-            char* declare_name = strsGetFirstToken(&buffs, py_lines, ':');
-            /* load bytecode to heap */
-            args_setHeapStruct(self->list, declare_name, bytecode_frame_stack,
-                               byteCodeFrame_deinit);
-            /* get bytecode_ptr from heap */
-            bytecode_frame_p = args_getHeapStruct(self->list, declare_name);
-        } else {
-            /* get bytecode_ptr from stack */
-            bytecode_frame_p = &bytecode_frame_stack;
-        }
+    bytecode_frame_p = _cache_bcf0(self);
+    if (NULL == bytecode_frame_p) {
+        bytecode_frame_p = _cache_bcf_fn(self, py_lines);
+    }
+    if (NULL == bytecode_frame_p) {
+        is_use_heap_bytecode = 0;
+        /* get bytecode_ptr from stack */
+        bytecode_frame_p = &bytecode_frame_stack;
     }
 
     /* load or generate byte code frame */
-    if (is_run_py) {
-        /* generate byte code */
-        byteCodeFrame_init(bytecode_frame_p);
-        if (PIKA_RES_OK != Parser_linesToBytes(bytecode_frame_p, py_lines)) {
-            __platform_printf("Error: Syntax error.\r\n");
-            globals = NULL;
-            goto exit;
-        }
-    } else {
-        /* load bytecode */
-        byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode);
+    /* generate byte code */
+    byteCodeFrame_init(bytecode_frame_p);
+    if (PIKA_RES_OK != Parser_linesToBytes(bytecode_frame_p, py_lines)) {
+        __platform_printf("Error: Syntax error.\r\n");
+        globals = NULL;
+        goto exit;
     }
-
     /* run byteCode */
     globals = pikaVM_runByteCodeFrame(self, bytecode_frame_p);
     goto exit;
@@ -2667,7 +2683,42 @@ exit:
     if (!is_use_heap_bytecode) {
         byteCodeFrame_deinit(&bytecode_frame_stack);
     }
-    strsDeinit(&buffs);
+    return globals;
+}
+
+VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
+                                     VMParameters* locals,
+                                     VMParameters* globals,
+                                     uint8_t* bytecode,
+                                     RunState* run_state) {
+    ByteCodeFrame bytecode_frame_stack = {0};
+    ByteCodeFrame* bytecode_frame_p = NULL;
+    uint8_t is_use_heap_bytecode = 1;
+
+    /*
+     * the first obj_run, cache bytecode to heap, to support 'def' and
+     * 'class'
+     */
+    bytecode_frame_p = _cache_bcf0(self);
+    if (NULL == bytecode_frame_p) {
+        is_use_heap_bytecode = 0;
+        /* get bytecode_ptr from stack */
+        bytecode_frame_p = &bytecode_frame_stack;
+    }
+
+    /* load or generate byte code frame */
+    /* load bytecode */
+    byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode);
+
+    /* run byteCode */
+
+    globals = __pikaVM_runByteCodeFrameWithState(
+        self, locals, globals, bytecode_frame_p, 0, run_state);
+    goto exit;
+exit:
+    if (!is_use_heap_bytecode) {
+        byteCodeFrame_deinit(&bytecode_frame_stack);
+    }
     return globals;
 }
 
@@ -2687,11 +2738,13 @@ VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
 }
 
 VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
-    return __pikaVM_runPyLines_or_byteCode(self, py_lines, NULL);
+    return __pikaVM_runPyLines(self, py_lines);
 }
 
 VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode) {
-    return __pikaVM_runPyLines_or_byteCode(self, NULL, bytecode);
+    RunState run_state = {.try_state = TRY_STATE_NONE,
+                          .try_result = TRY_RESULT_NONE};
+    return _do_pikaVM_runByteCode(self, self, self, bytecode, &run_state);
 }
 
 void constPool_update(ConstPool* self) {
@@ -3101,7 +3154,6 @@ VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
                                       ByteCodeFrame* byteCode_frame) {
     RunState run_state = {.try_state = TRY_STATE_NONE,
                           .try_result = TRY_RESULT_NONE};
-    run_state.try_state = TRY_STATE_NONE;
     return __pikaVM_runByteCodeFrameWithState(self, self, self, byteCode_frame,
                                               0, &run_state);
 }

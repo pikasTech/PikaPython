@@ -210,7 +210,7 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, PikaTuple* ax) {
 }
 
 Arg* PikaStdLib_SysObj___getitem__(PikaObj* self, Arg* obj, Arg* key) {
-    return __vm_get(self, key, obj);
+    return __vm_get(NULL, self, key, obj);
 }
 
 Arg* PikaStdLib_SysObj___setitem__(PikaObj* self,
@@ -422,20 +422,15 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
     return arg_newNull();
 }
 
-Arg* PikaStdLib_SysObj___slice__(PikaObj* self,
-                                 Arg* end,
-                                 Arg* obj,
-                                 Arg* start,
-                                 int step) {
-    return __vm_slice(self, end, obj, start, step);
-}
-
 static char* __print_arg(PikaObj* self, Arg* val) {
     obj_setErrorCode(self, 0);
     ArgType arg_type = arg_getType(val);
     if (NULL != val) {
         if (arg_getType(val) == ARG_TYPE_BYTES) {
             return __printBytes(self, val);
+        }
+        if (arg_getType(val) == ARG_TYPE_NONE) {
+            return "None";
         }
     }
     if (argType_isObject(arg_type)) {
