@@ -884,9 +884,9 @@ TEST(VM, load_static_bytes) {
 
     byteCodeFrame_loadByteCode(&bytecode_frame, (uint8_t*)bytes);
     byteCodeFrame_print(&bytecode_frame);
-
     EXPECT_EQ(instructArray_getSize(&(bytecode_frame.instruct_array)), 520);
     EXPECT_EQ(bytecode_frame.const_pool.size, 177);
+    byteCodeFrame_deinit(&bytecode_frame);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -2239,6 +2239,28 @@ TEST(VM, default_num_err) {
                  "TypeError: test() takes from 1 to 2 positional arguments but "
                  "3 were given\r\n");
     /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, bc_fn_file_cb0) {
+    PikaObj* self = newRootObj("root", New_PikaMain);
+    pikaVM_runByteCodeFile(self,
+                           "package/pikascript/pikascript-api/cb_test.py.o");
+    obj_run(self, "test()\n");
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, bc_fn_file_cb2) {
+    PikaObj* self = newRootObj("root", New_PikaMain);
+    obj_run(self, "print('hello world')\n");
+    pikaVM_runByteCodeFile(self,
+                           "package/pikascript/pikascript-api/cb_test.py.o");
+    obj_run(self, "test()\n");
+    EXPECT_STREQ(log_buff[1], "hello world\r\n");
+    EXPECT_STREQ(log_buff[0], "test\r\n");
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }

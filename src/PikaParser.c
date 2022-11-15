@@ -893,7 +893,8 @@ void Cursor_iterStart(struct Cursor* cs) {
     cs->iter_index++;
     cs->iter_buffs = New_strBuff();
     /* token1 is the last token */
-    cs->token1.tokenStream = strsCopy(cs->iter_buffs, arg_getStr(cs->last_token));
+    cs->token1.tokenStream =
+        strsCopy(cs->iter_buffs, arg_getStr(cs->last_token));
     /* token2 is the next token */
     cs->token2.tokenStream = TokenStream_pop(cs->iter_buffs, &cs->tokenStream);
     /* store last token */

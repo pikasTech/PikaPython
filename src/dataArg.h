@@ -178,14 +178,17 @@ static inline Arg* arg_getNext(Arg* self) {
 }
 
 static inline void arg_setNext(Arg* self, Arg* next) {
+    pika_assert(NULL != self);
     self->_.next = next;
 }
 
 static inline uint32_t arg_getSize(Arg* self) {
+    pika_assert(NULL != self);
     return self->size;
 }
 
 static inline uint8_t arg_isSerialized(Arg* self) {
+    pika_assert(NULL != self);
     return self->flag & ARG_FLAG_SERIALIZED;
 }
 
@@ -208,11 +211,13 @@ static inline uint8_t arg_getIsWeakRef(Arg* self) {
 }
 
 static inline void arg_setIsWeakRef(Arg* self, uint8_t isWeakRef) {
+    pika_assert(NULL != self);
     self->flag =
         (self->flag & ~ARG_FLAG_WEAK_REF) | (isWeakRef ? ARG_FLAG_WEAK_REF : 0);
 }
 
 static inline uint8_t* arg_getContent(Arg* self) {
+    pika_assert(NULL != self);
     return (arg_isSerialized(self)) ? (self)->content : ((self)->_.buffer);
 }
 

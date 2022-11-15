@@ -2861,6 +2861,21 @@ VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
     return res;
 }
 
+VMParameters* pikaVM_runByteCodeFile(PikaObj* self, char* filename) {
+    Args buffs = {0};
+    Arg* file_arg = arg_loadFile(NULL, filename);
+    pika_assert(NULL != file_arg);
+    if (NULL == file_arg) {
+        return NULL;
+    }
+    uint8_t* lines = arg_getBytes(file_arg);
+    /* clear the void line */
+    VMParameters* res = pikaVM_runByteCodeInconstant(self, lines);
+    arg_deinit(file_arg);
+    strsDeinit(&buffs);
+    return res;
+}
+
 VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
     return __pikaVM_runPyLines(self, py_lines);
 }
@@ -2884,10 +2899,10 @@ void constPool_update(ConstPool* self) {
 }
 
 void constPool_init(ConstPool* self) {
-    self->arg_buff = arg_newStr("");
-    constPool_update(self);
+    self->arg_buff = NULL;
+    self->content_start = NULL;
     self->content_offset_now = 0;
-    self->size = strGetSize(constPool_getStart(self)) + 1;
+    self->size = 1;
     self->output_redirect_fun = NULL;
     self->output_f = NULL;
 }
@@ -2899,6 +2914,9 @@ void constPool_deinit(ConstPool* self) {
 }
 
 void constPool_append(ConstPool* self, char* content) {
+    if (NULL == self->arg_buff) {
+        self->arg_buff = arg_newStr("");
+    }
     uint16_t size = strGetSize(content) + 1;
     if (NULL == self->output_redirect_fun) {
         self->arg_buff = arg_append(self->arg_buff, content, size);
@@ -2923,16 +2941,19 @@ uint16_t constPool_getOffsetByData(ConstPool* self, char* data) {
     /* set ptr_now to begin */
     self->content_offset_now = 0;
     uint16_t offset_out = 65535;
+    if (self->arg_buff == NULL) {
+        goto __exit;
+    }
     while (1) {
         if (NULL == constPool_getNext(self)) {
-            goto exit;
+            goto __exit;
         }
         if (strEqu(data, constPool_getNow(self))) {
             offset_out = self->content_offset_now;
-            goto exit;
+            goto __exit;
         }
     }
-exit:
+__exit:
     /* retore ptr_now */
     self->content_offset_now = ptr_befor;
     return offset_out;
@@ -3000,12 +3021,15 @@ void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
     self->const_pool.content_start =
         (char*)((uintptr_t)const_size_p + sizeof(*const_size_p));
     if (!is_const) {
-        if (NULL != self->instruct_array.arg_buff) {
-            arg_deinit(self->instruct_array.arg_buff);
-        }
-        if (NULL != self->instruct_array.arg_buff) {
-            arg_deinit(self->const_pool.arg_buff);
-        }
+        pika_assert(NULL == self->instruct_array.arg_buff);
+        pika_assert(NULL == self->instruct_array.arg_buff);
+        self->instruct_array.arg_buff = arg_newBytes(ins_start_p, *ins_size_p);
+        self->const_pool.arg_buff =
+            arg_newBytes(self->const_pool.content_start, *const_size_p);
+        self->instruct_array.content_start =
+            arg_getBytes(self->instruct_array.arg_buff);
+        self->const_pool.content_start =
+            arg_getBytes(self->const_pool.arg_buff);
     }
 }
 
@@ -3024,8 +3048,8 @@ void byteCodeFrame_deinit(ByteCodeFrame* self) {
 }
 
 void instructArray_init(InstructArray* self) {
-    self->arg_buff = arg_newNull();
-    instructArray_update(self);
+    self->arg_buff = NULL;
+    self->content_start = NULL;
     self->size = 0;
     self->content_offset_now = 0;
     self->output_redirect_fun = NULL;
@@ -3039,6 +3063,9 @@ void instructArray_deinit(InstructArray* self) {
 }
 
 void instructArray_append(InstructArray* self, InstructUnit* ins_unit) {
+    if (NULL == self->arg_buff) {
+        self->arg_buff = arg_newNull();
+    }
     if (NULL == self->output_redirect_fun) {
         self->arg_buff =
             arg_append(self->arg_buff, ins_unit, instructUnit_getSize());
