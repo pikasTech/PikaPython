@@ -2694,6 +2694,54 @@ __exit:
     return res;
 }
 
+static char* _get_data_from_bytecode2(uint8_t* bytecode,
+                                      enum Instruct ins1,
+                                      enum Instruct ins2) {
+    ByteCodeFrame bf = {0};
+    char* res = NULL;
+    byteCodeFrame_init(&bf);
+    byteCodeFrame_loadByteCode(&bf, bytecode);
+    while (1) {
+        InstructUnit* ins_unit = instructArray_getNow(&bf.instruct_array);
+        if (NULL == ins_unit) {
+            goto __exit;
+        }
+        enum Instruct ins = instructUnit_getInstruct(ins_unit);
+        if (ins == ins1 || ins == ins2) {
+            res = constPool_getByOffset(&bf.const_pool,
+                                        ins_unit->const_pool_index);
+            goto __exit;
+        }
+        instructArray_getNext(&bf.instruct_array);
+    }
+__exit:
+    byteCodeFrame_deinit(&bf);
+    return res;
+}
+
+static ByteCodeFrame* _cache_bcf_fn_bc(PikaObj* self, uint8_t* bytecode) {
+    ByteCodeFrame bytecode_frame_stack = {0};
+    ByteCodeFrame* res = NULL;
+    /* save 'def' and 'class' to heap */
+    if (NULL == _get_data_from_bytecode2(bytecode, DEF, CLS)) {
+        return NULL;
+    }
+    if (!obj_isArgExist(self, "@bcn")) {
+        /* @bc0 for first bc, @bc1 for REPL bc, start form @bc2*/
+        obj_setInt(self, "@bcn", 2);
+    }
+    int bcn = obj_getInt(self, "@bcn");
+    char bcn_str[] = "@bcx";
+    bcn_str[3] = '0' + bcn;
+    /* load bytecode to heap */
+    args_setHeapStruct(self->list, bcn_str, bytecode_frame_stack,
+                       byteCodeFrame_deinit);
+    /* get bytecode_ptr from heap */
+    res = args_getHeapStruct(self->list, bcn_str);
+    obj_setInt(self, "@bcn", bcn + 1);
+    return res;
+}
+
 static VMParameters* __pikaVM_runPyLines(PikaObj* self, char* py_lines) {
     VMParameters* globals = NULL;
     ByteCodeFrame bytecode_frame_stack = {0};
@@ -2746,6 +2794,9 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
      * 'class'
      */
     bytecode_frame_p = _cache_bcf0(self);
+    if (NULL == bytecode_frame_p) {
+        bytecode_frame_p = _cache_bcf_fn_bc(self, bytecode);
+    }
     if (NULL == bytecode_frame_p) {
         is_use_heap_bytecode = 0;
         /* get bytecode_ptr from stack */

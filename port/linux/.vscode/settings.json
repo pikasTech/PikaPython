@@ -87,7 +87,8 @@
         "ctype.h": "c",
         "mqttclient.h": "c",
         "_mqtt__mqtt.h": "c",
-        "requests_response.h": "c"
+        "requests_response.h": "c",
+        "*.cfg": "c"
     },
     "python.formatting.provider": "autopep8",
     "C_Cpp.errorSquiggles": "Disabled"

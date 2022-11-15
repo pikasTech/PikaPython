@@ -2196,4 +2196,34 @@ TEST(VM, print_None) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(VM, bc_fn) {
+    PikaObj* self = newRootObj("root", New_PikaMain);
+    obj_run(self, "print('hello world')\n");
+    /* clang-format off */
+    PIKA_PYTHON(
+    def test():
+        print('test')
+
+    )
+    /* clang-format on */
+    const uint8_t
+        bytes[] =
+            {
+                0x14, 0x00, 0x00, 0x00, /* instruct array size */
+                0x00, 0x89, 0x01, 0x00, 0x00, 0x06, 0x08,
+                0x00, 0x11, 0x83, 0x0a, 0x00, 0x01, 0x02,
+                0x0f, 0x00, 0x01, 0x8a, 0x00, 0x00, /* instruct array */
+                0x15, 0x00, 0x00, 0x00,             /* const pool size */
+                0x00, 0x74, 0x65, 0x73, 0x74, 0x28, 0x29,
+                0x00, 0x31, 0x00, 0x74, 0x65, 0x73, 0x74,
+                0x00, 0x70, 0x72, 0x69, 0x6e, 0x74, 0x00, /* const pool */
+            };
+    pikaVM_runByteCode(self, (uint8_t*)bytes);
+    obj_run(self, "test()\n");
+    EXPECT_STREQ(log_buff[1], "hello world\r\n");
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

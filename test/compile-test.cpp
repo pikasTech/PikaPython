@@ -688,4 +688,12 @@ TEST(compiler, for_print_1k) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, bc_fn) {
+    char* lines =
+        "def test():\n"
+        "    print('test')\n";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

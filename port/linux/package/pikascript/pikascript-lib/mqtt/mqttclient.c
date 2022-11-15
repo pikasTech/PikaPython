@@ -785,7 +785,7 @@ static int mqtt_suback_packet_handle(mqtt_client_t* c,
 static int mqtt_unsuback_packet_handle(mqtt_client_t* c,
                                        platform_timer_t* timer) {
     int rc = MQTT_FAILED_ERROR;
-    message_handlers_t* msg_handler;
+    message_handlers_t* msg_handler = NULL;
     uint16_t packet_id = 0;
 
     rc = mqtt_is_connected(c);
