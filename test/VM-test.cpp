@@ -1479,6 +1479,31 @@ TEST(vm, default_4) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, default_no_kw) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def test(a, b=3):\n"
+            "    print(a ,b)\n"
+            "test(1, 2)\n"
+            "test(1, b=2)\n"
+            "test(1)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], "1 2\r\n");
+    EXPECT_STREQ(log_buff[1], "1 2\r\n");
+    EXPECT_STREQ(log_buff[0], "1 3\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST(vm, none) {

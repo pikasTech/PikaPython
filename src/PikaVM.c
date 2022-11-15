@@ -844,11 +844,11 @@ Arg* obj_runMethodArg(PikaObj* self,
                                      &run_state);
 }
 
-char* _loadDefaultArgs(char* type_list,
-                       char* arg_name,
-                       PikaDict* kws,
-                       int* argc,
-                       Arg* argv[]) {
+char* _keys_to_defult(char* type_list,
+                      char* arg_name,
+                      PikaDict* kws,
+                      int* argc,
+                      Arg* argv[]) {
     while (strIsContain(arg_name, '=')) {
         strPopLastToken(arg_name, '=');
         /* load default arg from kws */
@@ -870,6 +870,58 @@ static void _loadLocalsFromArgv(Args* locals, int argc, Arg* argv[]) {
     }
 }
 
+static uint8_t _get_argnum_pos(char* type_list,
+                               PIKA_BOOL* is_vars,
+                               PIKA_BOOL* is_keys,
+                               PIKA_BOOL* is_default) {
+    if (type_list[0] == 0) {
+        return 0;
+    }
+    uint8_t res = strCountSign(type_list, ',') + 1;
+    uint8_t x = strCountSign(type_list, '*');
+    uint8_t y = strCountSign(type_list, '=');
+    /* default */
+    if (y > 0) {
+        res -= y;
+        *is_default = PIKA_TRUE;
+    }
+    /* vars */
+    if (x == 1) {
+        *is_vars = PIKA_TRUE;
+        return res - 1;
+    }
+    /* kw */
+    if (x == 2) {
+        *is_keys = 1;
+        return res - 1;
+    }
+    /* vars and kw */
+    if (x == 3) {
+        *is_vars = PIKA_TRUE;
+        *is_keys = PIKA_TRUE;
+        return res - 2;
+    }
+    return res;
+}
+
+static void _kw_push(PikaDict** kw_dict_p,
+                     PikaDict** kw_keys_p,
+                     Arg* call_arg,
+                     int i) {
+    if (NULL == *kw_dict_p) {
+        *kw_dict_p = New_dict();
+    }
+    if (NULL == *kw_keys_p) {
+        *kw_keys_p = New_dict();
+    }
+    arg_setIsKeyword(call_arg, PIKA_FALSE);
+    dict_setArg(*kw_dict_p, call_arg);
+    char kw_keys_index_buff[11] = {0};
+    char* kw_keys_index = fast_itoa(kw_keys_index_buff, i);
+    dict_setArg(*kw_keys_p,
+                arg_setInt(NULL, kw_keys_index, arg_getNameHash(call_arg)));
+}
+
 static int VMState_loadArgsFromMethodArg(VMState* vm,
                                          PikaObj* method_host_obj,
                                          Args* locals,
@@ -882,18 +934,20 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     char* buffs1 = (char*)_buffs1;
     char _buffs2[PIKA_LINE_BUFF_SIZE] = {0};
     char* buffs2 = (char*)_buffs2;
-    uint8_t arg_num_dec = 0;
-    PIKA_BOOL vars_or_keys_or_default = PIKA_FALSE;
+    uint8_t arg_num_pos = 0;
+    PIKA_BOOL is_vars = PIKA_FALSE;
+    PIKA_BOOL is_keys = PIKA_FALSE;
+    PIKA_BOOL is_default = PIKA_FALSE;
+#define vars_or_keys_or_default (is_vars || is_keys || is_default)
     uint8_t arg_num = 0;
     ArgType method_type = ARG_TYPE_UNDEF;
     uint8_t arg_num_input = 0;
     PikaTuple* tuple = NULL;
     PikaDict* kw_dict = NULL;
     PikaDict* kw_keys = NULL;
-    char* variable_tuple_name = NULL;
-    char* keyword_dict_name = NULL;
+    char* var_tuple_name = NULL;
+    char* kw_dict_name = NULL;
     char* type_list_buff = NULL;
-    int variable_arg_start = 0;
     /* get method type list */
     char* type_list =
         methodArg_getTypeList(method_arg, buffs1, sizeof(_buffs1));
@@ -906,22 +960,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
     method_type = arg_getType(method_arg);
 
-    /* get arg_num_dec */
-    if (type_list[0] == 0) {
-        arg_num_dec = 0;
-    } else {
-        arg_num_dec = strCountSign(type_list, ',') + 1;
-    }
+    /* get arg_num_pos */
+    arg_num_pos = _get_argnum_pos(type_list, &is_vars, &is_keys, &is_default);
     if (method_type == ARG_TYPE_METHOD_OBJECT) {
         /* delete the 'self' */
-        arg_num_dec--;
+        arg_num_pos--;
     }
     arg_num_input = VMState_getInputArgNum(vm);
-
-    /* check variable */
-    if (strIsContain(type_list, '*') || strIsContain(type_list, '=')) {
-        vars_or_keys_or_default = PIKA_TRUE;
-    }
 
     /* check arg num */
     if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
@@ -932,22 +977,23 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         /* arg_num_used != 0 means it is a factory method */
     } else {
         /* check arg num declared and input */
-        if (arg_num_dec != arg_num_input - arg_num_used) {
+        if (arg_num_pos != arg_num_input - arg_num_used) {
             VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
             __platform_printf(
                 "TypeError: %s() takes %d positional argument but %d were "
                 "given\r\n",
-                method_name, arg_num_dec, arg_num_input - arg_num_used);
+                method_name, arg_num_pos, arg_num_input - arg_num_used);
             goto exit;
         }
     }
 
-    if (PIKA_TRUE == vars_or_keys_or_default) {
+    if (vars_or_keys_or_default) {
         arg_num = arg_num_input;
     } else {
-        arg_num = arg_num_dec;
+        arg_num = arg_num_pos;
     }
 
+    /* create tuple/dict for vars/keys */
     if (vars_or_keys_or_default) {
         if (strGetSize(type_list) > sizeof(_buffs2)) {
             __platform_printf(
@@ -956,15 +1002,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             }
         }
         type_list_buff = strCopy(buffs2, type_list);
-        int default_num = strCountSign(type_list_buff, '=');
-        variable_arg_start = 0;
-        for (int i = 0; i < arg_num_dec; i++) {
+        uint8_t arg_num_dec_any = strCountSign(type_list_buff, ',') + 1;
+        for (int i = 0; i < arg_num_dec_any; i++) {
             char* arg_def = strPopLastToken(type_list_buff, ',');
             if (arg_def[0] == '*' && arg_def[1] != '*') {
                 /* get variable tuple name */
                 /* skip the '*' */
-                variable_tuple_name = arg_def + 1;
-                variable_arg_start = arg_num_dec - i - 1 - default_num;
+                var_tuple_name = arg_def + 1;
                 /* create tuple */
                 if (NULL == tuple) {
                     tuple = New_tuple();
@@ -975,7 +1019,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             }
             if (arg_def[0] == '*' && arg_def[1] == '*') {
                 /* get keyword dict name */
-                keyword_dict_name = arg_def + 2;
+                kw_dict_name = arg_def + 2;
                 kw_dict = New_dict();
                 kw_keys = New_dict();
                 /* remove the format arg */
@@ -987,46 +1031,49 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     /* load pars */
     for (int i = 0; i < arg_num; i++) {
+        int arg_index = arg_num - i;
         Arg* call_arg = stack_popArg_alloc(&(vm->stack));
         /* load the keyword arg */
         if (call_arg != NULL && arg_getIsKeyword(call_arg)) {
-            if (NULL == kw_dict) {
-                kw_dict = New_dict();
-            }
-            if (NULL == kw_keys) {
-                kw_keys = New_dict();
-            }
-            arg_setIsKeyword(call_arg, PIKA_FALSE);
-            dict_setArg(kw_dict, call_arg);
-            char kw_keys_index_buff[11] = {0};
-            char* kw_keys_index = fast_itoa(kw_keys_index_buff, i);
-            dict_setArg(kw_keys, arg_setInt(NULL, kw_keys_index,
-                                            arg_getNameHash(call_arg)));
+            _kw_push(&kw_dict, &kw_keys, call_arg, i);
             continue;
         }
-
-        /* load the variable arg */
-        if (tuple != NULL && (arg_num - i > variable_arg_start)) {
-            list_append(&tuple->super, call_arg);
-            /* the append would copy the arg */
-            if (NULL != call_arg) {
-                arg_deinit(call_arg);
+        /* load variable arg */
+        if (arg_index > arg_num_pos) {
+            if (is_vars) {
+                list_append(&tuple->super, call_arg);
+                /* the append would copy the arg */
+                if (NULL != call_arg) {
+                    arg_deinit(call_arg);
+                }
+                continue;
             }
-            continue;
         }
-
         char* arg_name = strPopLastToken(type_list, ',');
-
-        arg_name = _loadDefaultArgs(type_list, arg_name, kw_dict, &argc, argv);
-
-        /* load normal arg */
+        /* load default from pos */
+        if (arg_index > arg_num_pos) {
+            if (is_default) {
+                if (arg_name[strlen(arg_name) - 1] == '=') {
+                    /* found default arg*/
+                    arg_name[strlen(arg_name) - 1] = '\0';
+                    arg_setNameHash(call_arg,
+                                    hash_time33EndWith(arg_name, ':'));
+                    argv[argc++] = call_arg;
+                }
+                continue;
+            }
+        }
+        /* load default from kw */
+        arg_name = _keys_to_defult(type_list, arg_name, kw_dict, &argc, argv);
+        /* load position arg */
         arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
         argv[argc++] = call_arg;
     }
 
+    /* only default */
     if (strIsContain(type_list, '=')) {
         char* arg_name = strPopLastToken(type_list, ',');
-        _loadDefaultArgs(type_list, arg_name, kw_dict, &argc, argv);
+        _keys_to_defult(type_list, arg_name, kw_dict, &argc, argv);
     }
 
     if (tuple != NULL) {
@@ -1036,21 +1083,20 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         PikaObj* tuple_obj = newNormalObj(New_PikaStdData_Tuple);
         obj_setPtr(tuple_obj, "list", tuple);
         Arg* argi =
-            arg_setPtr(NULL, variable_tuple_name, ARG_TYPE_OBJECT, tuple_obj);
+            arg_setPtr(NULL, var_tuple_name, ARG_TYPE_OBJECT, tuple_obj);
         argv[argc++] = argi;
     }
 
     if (kw_dict != NULL) {
-        if (NULL == keyword_dict_name) {
-            keyword_dict_name = "__kwargs";
+        if (NULL == kw_dict_name) {
+            kw_dict_name = "__kwargs";
         }
         /* load keyword dict */
         PikaObj* New_PikaStdData_Dict(Args * args);
         PikaObj* dict_obj = newNormalObj(New_PikaStdData_Dict);
         obj_setPtr(dict_obj, "dict", kw_dict);
         obj_setPtr(dict_obj, "_keys", kw_keys);
-        Arg* argi =
-            arg_setPtr(NULL, keyword_dict_name, ARG_TYPE_OBJECT, dict_obj);
+        Arg* argi = arg_setPtr(NULL, kw_dict_name, ARG_TYPE_OBJECT, dict_obj);
         argv[argc++] = argi;
     }
 
