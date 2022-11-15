@@ -414,7 +414,7 @@ Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj) {
         };
         if (NULL != vm) {
             _do_pikaVM_runByteCode(arg_obj, arg_obj, arg_obj, (uint8_t*)bytes,
-                                   vm->run_state);
+                                   vm->run_state, PIKA_TRUE);
         } else {
             pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
         }
@@ -2808,11 +2808,11 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
                                      VMParameters* locals,
                                      VMParameters* globals,
                                      uint8_t* bytecode,
-                                     RunState* run_state) {
+                                     RunState* run_state,
+                                     PIKA_BOOL is_const_bytecode) {
     ByteCodeFrame bytecode_frame_stack = {0};
     ByteCodeFrame* bytecode_frame_p = NULL;
     uint8_t is_use_heap_bytecode = 1;
-
     /*
      * the first obj_run, cache bytecode to heap, to support 'def' and
      * 'class'
@@ -2825,11 +2825,14 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
         is_use_heap_bytecode = 0;
         /* get bytecode_ptr from stack */
         bytecode_frame_p = &bytecode_frame_stack;
+        /* no def/class ins, no need cache bytecode */
+        is_const_bytecode = 1;
     }
 
     /* load or generate byte code frame */
     /* load bytecode */
-    byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode);
+    _do_byteCodeFrame_loadByteCode(bytecode_frame_p, bytecode,
+                                   is_const_bytecode);
 
     /* run byteCode */
 
@@ -2862,10 +2865,18 @@ VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
     return __pikaVM_runPyLines(self, py_lines);
 }
 
-VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode) {
+VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode) {
     RunState run_state = {.try_state = TRY_STATE_NONE,
                           .try_result = TRY_RESULT_NONE};
-    return _do_pikaVM_runByteCode(self, self, self, bytecode, &run_state);
+    return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode,
+                                  &run_state, PIKA_TRUE);
+}
+
+VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode) {
+    RunState run_state = {.try_state = TRY_STATE_NONE,
+                          .try_result = TRY_RESULT_NONE};
+    return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode,
+                                  &run_state, PIKA_FALSE);
 }
 
 void constPool_update(ConstPool* self) {
@@ -2971,7 +2982,9 @@ void byteCodeFrame_init(ByteCodeFrame* self) {
 }
 
 extern const char magic_code_pyo[4];
-void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes) {
+void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
+                                    uint8_t* bytes,
+                                    PIKA_BOOL is_const) {
     if (bytes[0] == magic_code_pyo[0] && bytes[1] == magic_code_pyo[1] &&
         bytes[2] == magic_code_pyo[2] && bytes[3] == magic_code_pyo[3]) {
         /* load from file, found magic code, skip head */
@@ -2986,6 +2999,23 @@ void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes) {
     self->const_pool.size = *const_size_p;
     self->const_pool.content_start =
         (char*)((uintptr_t)const_size_p + sizeof(*const_size_p));
+    if (!is_const) {
+        if (NULL != self->instruct_array.arg_buff) {
+            arg_deinit(self->instruct_array.arg_buff);
+        }
+        if (NULL != self->instruct_array.arg_buff) {
+            arg_deinit(self->const_pool.arg_buff);
+        }
+    }
+}
+
+static void byteCodeFrame_loadByteCodeInconst(ByteCodeFrame* self,
+                                              uint8_t* bytes) {
+    _do_byteCodeFrame_loadByteCode(self, bytes, PIKA_FALSE);
+}
+
+void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes) {
+    _do_byteCodeFrame_loadByteCode(self, bytes, PIKA_TRUE);
 }
 
 void byteCodeFrame_deinit(ByteCodeFrame* self) {
