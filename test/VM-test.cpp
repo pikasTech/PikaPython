@@ -2226,4 +2226,21 @@ TEST(VM, bc_fn) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(VM, default_num_err) {
+    char* line =
+        "def test(a, b=1):\n"
+        "    print(a, b)\n"
+        "test(1, 2, 3)\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[8],
+                 "TypeError: test() takes from 1 to 2 positional arguments but "
+                 "3 were given\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

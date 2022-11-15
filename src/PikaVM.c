@@ -870,38 +870,46 @@ static void _loadLocalsFromArgv(Args* locals, int argc, Arg* argv[]) {
     }
 }
 
-static uint8_t _get_argnum_pos(char* type_list,
-                               PIKA_BOOL* is_vars,
-                               PIKA_BOOL* is_keys,
-                               PIKA_BOOL* is_default) {
+static void _type_list_parse(char* type_list,
+                             PIKA_BOOL* is_vars,
+                             PIKA_BOOL* is_keys,
+                             PIKA_BOOL* is_default,
+                             int8_t* num_pos,
+                             int8_t* num_default) {
     if (type_list[0] == 0) {
-        return 0;
+        *num_pos = 0;
+        return;
     }
-    uint8_t res = strCountSign(type_list, ',') + 1;
-    uint8_t x = strCountSign(type_list, '*');
-    uint8_t y = strCountSign(type_list, '=');
+    int8_t res = strCountSign(type_list, ',') + 1;
+    int8_t x = strCountSign(type_list, '*');
+    int8_t y = strCountSign(type_list, '=');
     /* default */
     if (y > 0) {
         res -= y;
         *is_default = PIKA_TRUE;
+        *num_default = y;
     }
     /* vars */
     if (x == 1) {
         *is_vars = PIKA_TRUE;
-        return res - 1;
+        *num_pos = res - 1;
+        return;
     }
     /* kw */
     if (x == 2) {
         *is_keys = 1;
-        return res - 1;
+        *num_pos = res - 1;
+        return;
     }
     /* vars and kw */
     if (x == 3) {
         *is_vars = PIKA_TRUE;
         *is_keys = PIKA_TRUE;
-        return res - 2;
+        *num_pos = res - 2;
+        return;
     }
-    return res;
+    *num_pos = res;
+    return;
 }
 
 static void _kw_push(PikaDict** kw_dict_p,
@@ -934,14 +942,15 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     char* buffs1 = (char*)_buffs1;
     char _buffs2[PIKA_LINE_BUFF_SIZE] = {0};
     char* buffs2 = (char*)_buffs2;
-    uint8_t arg_num_pos = 0;
+    int8_t arg_num_pos = 0;
+    int8_t arg_num_default = 0;
+    int8_t arg_num = 0;
+    int8_t arg_num_input = 0;
     PIKA_BOOL is_vars = PIKA_FALSE;
     PIKA_BOOL is_keys = PIKA_FALSE;
     PIKA_BOOL is_default = PIKA_FALSE;
 #define vars_or_keys_or_default (is_vars || is_keys || is_default)
-    uint8_t arg_num = 0;
     ArgType method_type = ARG_TYPE_UNDEF;
-    uint8_t arg_num_input = 0;
     PikaTuple* tuple = NULL;
     PikaDict* kw_dict = NULL;
     PikaDict* kw_keys = NULL;
@@ -961,7 +970,8 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     method_type = arg_getType(method_arg);
 
     /* get arg_num_pos */
-    arg_num_pos = _get_argnum_pos(type_list, &is_vars, &is_keys, &is_default);
+    _type_list_parse(type_list, &is_vars, &is_keys, &is_default, &arg_num_pos,
+                     &arg_num_default);
     if (method_type == ARG_TYPE_METHOD_OBJECT) {
         /* delete the 'self' */
         arg_num_pos--;
@@ -970,20 +980,34 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     /* check arg num */
     if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
-        method_type == ARG_TYPE_METHOD_CONSTRUCTOR ||
-        vars_or_keys_or_default == PIKA_TRUE || arg_num_used != 0) {
+        method_type == ARG_TYPE_METHOD_CONSTRUCTOR || is_vars == PIKA_TRUE ||
+        arg_num_used != 0) {
         /* skip for constrctor */
         /* skip for variable args */
         /* arg_num_used != 0 means it is a factory method */
     } else {
-        /* check arg num declared and input */
-        if (arg_num_pos != arg_num_input - arg_num_used) {
-            VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
-            __platform_printf(
-                "TypeError: %s() takes %d positional argument but %d were "
-                "given\r\n",
-                method_name, arg_num_pos, arg_num_input - arg_num_used);
-            goto exit;
+        /* check position arg num */
+        if (!vars_or_keys_or_default) {
+            if (arg_num_pos != arg_num_input) {
+                VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
+                __platform_printf(
+                    "TypeError: %s() takes %d positional argument but %d were "
+                    "given\r\n",
+                    method_name, arg_num_pos, arg_num_input);
+                goto exit;
+            }
+        }
+        if (is_default) {
+            int8_t arg_num_min = arg_num_pos;
+            int8_t arg_num_max = arg_num_pos + arg_num_default;
+            if (arg_num_input < arg_num_min || arg_num_input > arg_num_max) {
+                VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
+                __platform_printf(
+                    "TypeError: %s() takes from %d to %d positional arguments "
+                    "but %d were given\r\n",
+                    method_name, arg_num_min, arg_num_max, arg_num_input);
+                goto exit;
+            }
         }
     }
 
