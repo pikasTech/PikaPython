@@ -849,6 +849,9 @@ char* _keys_to_defult(char* type_list,
                       PikaDict* kws,
                       int* argc,
                       Arg* argv[]) {
+#if PIKA_NANO
+    return arg_name;
+#endif
     while (strIsContain(arg_name, '=')) {
         strPopLastToken(arg_name, '=');
         /* load default arg from kws */
@@ -997,6 +1000,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                 goto exit;
             }
         }
+#if !PIKA_NANO_ENABLE
         if (is_default) {
             int8_t arg_num_min = arg_num_pos;
             int8_t arg_num_max = arg_num_pos + arg_num_default;
@@ -1009,6 +1013,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                 goto exit;
             }
         }
+#endif
     }
 
     if (vars_or_keys_or_default) {
@@ -1094,11 +1099,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         argv[argc++] = call_arg;
     }
 
-    /* only default */
+/* only default */
+#if !PIKA_NANO_ENABLE
     if (strIsContain(type_list, '=')) {
         char* arg_name = strPopLastToken(type_list, ',');
         _keys_to_defult(type_list, arg_name, kw_dict, &argc, argv);
     }
+#endif
 
     if (tuple != NULL) {
         list_reverse(&tuple->super);
@@ -1898,6 +1905,7 @@ void operatorInfo_init(OperatorInfo* info,
 }
 
 static void _OPT_ADD(OperatorInfo* op) {
+#if !PIKA_NANO_ENABLE
     if (argType_isObject(op->t1)) {
         if (!argType_isObject(op->t2)) {
             VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
@@ -1938,6 +1946,7 @@ static void _OPT_ADD(OperatorInfo* op) {
         obj_removeArg(obj1, "__res");
         return;
     }
+#endif
 
     if ((op->t1 == ARG_TYPE_STRING) && (op->t2 == ARG_TYPE_STRING)) {
         char* num1_s = NULL;
@@ -1950,6 +1959,7 @@ static void _OPT_ADD(OperatorInfo* op) {
         strsDeinit(&str_opt_buffs);
         return;
     }
+#if !PIKA_NANO_ENABLE
     if ((op->t1 == ARG_TYPE_BYTES) && (op->t2 == ARG_TYPE_BYTES)) {
         uint8_t* bytes1 = arg_getBytes(op->a1);
         uint8_t* bytes2 = arg_getBytes(op->a2);
@@ -1961,6 +1971,7 @@ static void _OPT_ADD(OperatorInfo* op) {
         __platform_memcpy(bytes_out + size1, bytes2, size2);
         return;
     }
+#endif
     /* match float */
     if ((op->t1 == ARG_TYPE_FLOAT) || op->t2 == ARG_TYPE_FLOAT) {
         op->res = arg_setFloat(op->res, "", op->f1 + op->f2);
@@ -1972,6 +1983,7 @@ static void _OPT_ADD(OperatorInfo* op) {
 }
 
 static void _OPT_SUB(OperatorInfo* op) {
+#if !PIKA_NANO_ENABLE
     if (argType_isObject(op->t1)) {
         if (!argType_isObject(op->t2)) {
             VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
@@ -2012,6 +2024,7 @@ static void _OPT_SUB(OperatorInfo* op) {
         obj_removeArg(obj1, "__res");
         return;
     }
+#endif
     if (op->t2 == ARG_TYPE_NONE) {
         if (op->t1 == ARG_TYPE_INT) {
             op->res = arg_setInt(op->res, "", -op->i1);
@@ -2216,6 +2229,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             }
             goto exit;
         }
+#if !PIKA_NANO_ENABLE
         if (argType_isObject(op.t2)) {
             PikaObj* obj2 = arg_getPtr(op.a2);
             Arg* __contains__ = obj_getMethodArg(obj2, "__contains__");
@@ -2243,6 +2257,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                 goto exit;
             }
         }
+#endif
 
         VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
         args_setSysOut(vm->locals->list,
@@ -2267,6 +2282,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         goto exit;
     }
     if (data[1] == 'i' && data[2] == 's') {
+#if !PIKA_NANO_ENABLE
         if (argType_isObject(op.t1) && argType_isObject(op.t2)) {
             if (arg_getPtr(op.a1) == arg_getPtr(op.a2)) {
                 op.res = arg_setInt(op.res, "", 1);
@@ -2275,6 +2291,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             }
             goto exit;
         }
+#endif
         op.opt = "==";
         _OPT_EQU(&op);
         goto exit;

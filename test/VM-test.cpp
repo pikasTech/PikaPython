@@ -2226,6 +2226,7 @@ TEST(VM, bc_fn) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(VM, default_num_err) {
     char* line =
         "def test(a, b=1):\n"
@@ -2242,6 +2243,7 @@ TEST(VM, default_num_err) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(VM, bc_fn_file_cb0) {
     PikaObj* self = newRootObj("root", New_PikaMain);

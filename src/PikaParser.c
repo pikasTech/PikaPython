@@ -123,27 +123,6 @@ char* strsGetCleanCmd(Args* outBuffs, char* cmd) {
     return strOut;
 }
 
-char* strsDeleteBetween(Args* buffs_p, char* strIn, char begin, char end) {
-    int32_t size = strGetSize(strIn);
-    char* strOut = args_getBuff(buffs_p, size);
-    uint8_t deepth = 0;
-    uint32_t iOut = 0;
-    for (int i = 0; i < size; i++) {
-        if (end == strIn[i]) {
-            deepth--;
-        }
-        if (0 == deepth) {
-            strOut[iOut] = strIn[i];
-            iOut++;
-        }
-        if (begin == strIn[i]) {
-            deepth++;
-        }
-    }
-    strOut[iOut] = 0;
-    return strOut;
-}
-
 static uint8_t Lexer_isError(char* line) {
     Args buffs = {0};
     uint8_t res = 0; /* not error */
@@ -1029,6 +1008,9 @@ static void Slice_getPars(Args* outBuffs,
                           char** pStart,
                           char** pEnd,
                           char** pStep) {
+#if PIKA_NANO_ENABLE
+    return;
+#endif
     Args buffs = {0};
     *pStart = "";
     *pEnd = "";
@@ -2761,7 +2743,9 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
     if (strEqu(AST_getThisBlock(ast), "for")) {
         /* for "for" iter */
         char* arg_in = obj_getStr(ast, "arg_in");
+#if !PIKA_NANO_ENABLE
         char* arg_in_kv = NULL;
+#endif
         Arg* newAsm_arg = arg_newStr("");
         char _l_x[] = "$lx";
         char block_deepth_char = '0';
@@ -2786,10 +2770,12 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
             DEL $n
         */
 
+#if !PIKA_NANO_ENABLE
         if (_check_is_multi_assign(arg_in)) {
             arg_in_kv = arg_in;
             arg_in = "$tmp";
         }
+#endif
 
         pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 0);
         newAsm_arg = arg_strAppend(newAsm_arg, "0 RUN ");
@@ -2806,6 +2792,7 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
         pikaAsm = strsAppend(&buffs, pikaAsm, arg_getStr(newAsm_arg));
         arg_deinit(newAsm_arg);
 
+#if !PIKA_NANO_ENABLE
         if (NULL != arg_in_kv) {
             int out_num = 0;
             while (1) {
@@ -2826,6 +2813,7 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
             pikaAsm = ASM_addBlockDeepth(ast, outBuffs, pikaAsm, 1);
             pikaAsm = strsAppend(&buffs, pikaAsm, "0 DEL $tmp\n");
         }
+#endif
 
         is_block_matched = 1;
         goto exit;
@@ -2841,13 +2829,16 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
         goto exit;
     }
     if (strEqu(AST_getThisBlock(ast), "def")) {
+#if !PIKA_NANO_ENABLE
         char* defaultStmts = AST_getNodeAttr(ast, "default");
+#endif
         pikaAsm = strsAppend(&buffs, pikaAsm, "0 DEF ");
         pikaAsm = strsAppend(&buffs, pikaAsm, AST_getNodeAttr(ast, "declare"));
         pikaAsm = strsAppend(&buffs, pikaAsm,
                              "\n"
                              "0 JMP 1\n");
 
+#if !PIKA_NANO_ENABLE
         if (NULL != defaultStmts) {
             int stmt_num = strGetTokenNum(defaultStmts, ',');
             for (int i = 0; i < stmt_num; i++) {
@@ -2865,6 +2856,7 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
                 AST_deinit(ast_this);
             }
         }
+#endif
 
         is_block_matched = 1;
         goto exit;
