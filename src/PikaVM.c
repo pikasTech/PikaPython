@@ -2688,8 +2688,8 @@ static ByteCodeFrame* _cache_bytecodeframe(PikaObj* self) {
     ByteCodeFrame bytecode_frame_stack = {0};
     ByteCodeFrame* res = NULL;
     if (!obj_isArgExist(self, "@bcn")) {
-        /* @bc1 for REPL bc, start form @bc2*/
-        obj_setInt(self, "@bcn", 2);
+        /* start form @bc0 */
+        obj_setInt(self, "@bcn", 0);
     }
     int bcn = obj_getInt(self, "@bcn");
     char bcn_str[] = "@bcx";

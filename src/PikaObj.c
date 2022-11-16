@@ -1203,13 +1203,8 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             __platform_printf("\r\n=============== [Code] ===============\r\n");
             __platform_printf("[   Info] Bytecode size: %d\r\n", size);
             __platform_printf("=============== [ RUN] ===============\r\n");
-            char bytecode_buff_name[] = "@bc1";
-            int bytecode_index = 1;
-            bytecode_buff_name[3] = '0' + bytecode_index;
-            bytecode_index++;
-            obj_setBytes(self, bytecode_buff_name, buff, size);
+            pikaVM_runByteCodeInconstant(self, buff);
             pikaFree(buff, size);
-            pikaVM_runByteCode(self, obj_getBytes(self, bytecode_buff_name));
             return;
         }
 #endif
