@@ -1932,6 +1932,26 @@ TEST(pikaMain, REPL_push_mode) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, REPL_push_mode_err) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    char lines[] =
+        "def test:\n"
+        "    print('test')\n"
+        "\n";
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(self, lines[i]);
+    }
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "Error: Syntax error.\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #if 0
 TEST(pikaMain, REPL_input) {
     /* init */
@@ -2792,7 +2812,7 @@ TEST(pikaMain, REPL_key_left) {
 }
 
 TEST(pikaMain, REPL_key_left_del) {
-    char lines[] = {'1',  '2',      '+', '3',  '4', 0x1b,
+    char lines[] = {'1',  '2',      '+',  '3',  '4', 0x1b,
                     0x5b, KEY_LEFT, '\b', '\n', 0x00};
     /* init */
     pikaMemInfo.heapUsedMax = 0;

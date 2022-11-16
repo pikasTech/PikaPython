@@ -1768,6 +1768,8 @@ char* _defGetDefault(Args* outBuffs, char** dec_out) {
     Arg* dec_arg = arg_strAppend(arg_newStr(fn_name), "(");
     Arg* default_arg = arg_newStr("");
     char* arg_list = strsCut(&buffs, dec_str, '(', ')');
+    char* default_out = NULL;
+    pika_assert(NULL != arg_list);
     int arg_num = strCountSign(arg_list, ',') + 1;
     for (int i = 0; i < arg_num; i++) {
         char* arg_str = strsPopToken(&buffs, &arg_list, ',');
@@ -1787,7 +1789,7 @@ char* _defGetDefault(Args* outBuffs, char** dec_out) {
     strPopLastToken(arg_getStr(dec_arg), ',');
     dec_arg = arg_strAppend(dec_arg, ")");
     *dec_out = strsCopy(outBuffs, arg_getStr(dec_arg));
-    char* default_out = strsCopy(outBuffs, arg_getStr(default_arg));
+    default_out = strsCopy(outBuffs, arg_getStr(default_arg));
     strPopLastToken(default_out, ',');
     arg_deinit(dec_arg);
     arg_deinit(default_arg);
@@ -2024,6 +2026,11 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
             goto exit;
         }
         declare = strsGetCleanCmd(&buffs, declare);
+        if (!strIsContain(declare, '(') || !strIsContain(declare, ')')) {
+            obj_deinit(ast);
+            ast = NULL;
+            goto exit;
+        }
         char* defaultStmt = _defGetDefault(&buffs, &declare);
         AST_setNodeBlock(ast, "def");
         AST_setNodeAttr(ast, "declare", declare);
