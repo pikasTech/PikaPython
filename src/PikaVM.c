@@ -2684,38 +2684,32 @@ VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm) {
     return res;
 }
 
-static ByteCodeFrame* _cache_bcf0(PikaObj* self) {
+static ByteCodeFrame* _cache_bytecodeframe(PikaObj* self) {
     ByteCodeFrame bytecode_frame_stack = {0};
-    if (!args_isArgExist(self->list, "@bc0")) {
-        /* load bytecode to heap */
-        args_setHeapStruct(self->list, "@bc0", bytecode_frame_stack,
-                           byteCodeFrame_deinit);
-        /* get bytecode_ptr from heap */
-        return args_getHeapStruct(self->list, "@bc0");
+    ByteCodeFrame* res = NULL;
+    if (!obj_isArgExist(self, "@bcn")) {
+        /* @bc1 for REPL bc, start form @bc2*/
+        obj_setInt(self, "@bcn", 2);
     }
-    return NULL;
+    int bcn = obj_getInt(self, "@bcn");
+    char bcn_str[] = "@bcx";
+    bcn_str[3] = '0' + bcn;
+    /* load bytecode to heap */
+    args_setHeapStruct(self->list, bcn_str, bytecode_frame_stack,
+                       byteCodeFrame_deinit);
+    /* get bytecode_ptr from heap */
+    res = args_getHeapStruct(self->list, bcn_str);
+    obj_setInt(self, "@bcn", bcn + 1);
+    return res;
 }
 
 static ByteCodeFrame* _cache_bcf_fn(PikaObj* self, char* py_lines) {
-    Args buffs = {0};
-    ByteCodeFrame bytecode_frame_stack = {0};
-    ByteCodeFrame* res = NULL;
-    /* get bytecode_ptr from stack */
-    /* not the first obj_run */
-    /* save 'def' and 'class' to heap */
-    if ((strIsStartWith(py_lines, "def ")) ||
-        (strIsStartWith(py_lines, "class "))) {
-        char* declare_name = strsGetFirstToken(&buffs, py_lines, ':');
-        /* load bytecode to heap */
-        args_setHeapStruct(self->list, declare_name, bytecode_frame_stack,
-                           byteCodeFrame_deinit);
-        /* get bytecode_ptr from heap */
-        res = args_getHeapStruct(self->list, declare_name);
-        goto __exit;
+    /* cache 'def' and 'class' to heap */
+    if ((NULL == strstr(py_lines, "def ")) &&
+        (NULL == strstr(py_lines, "class "))) {
+        return NULL;
     }
-__exit:
-    strsDeinit(&buffs);
-    return res;
+    return _cache_bytecodeframe(self);
 }
 
 static char* _get_data_from_bytecode2(uint8_t* bytecode,
@@ -2744,26 +2738,11 @@ __exit:
 }
 
 static ByteCodeFrame* _cache_bcf_fn_bc(PikaObj* self, uint8_t* bytecode) {
-    ByteCodeFrame bytecode_frame_stack = {0};
-    ByteCodeFrame* res = NULL;
     /* save 'def' and 'class' to heap */
     if (NULL == _get_data_from_bytecode2(bytecode, DEF, CLS)) {
         return NULL;
     }
-    if (!obj_isArgExist(self, "@bcn")) {
-        /* @bc0 for first bc, @bc1 for REPL bc, start form @bc2*/
-        obj_setInt(self, "@bcn", 2);
-    }
-    int bcn = obj_getInt(self, "@bcn");
-    char bcn_str[] = "@bcx";
-    bcn_str[3] = '0' + bcn;
-    /* load bytecode to heap */
-    args_setHeapStruct(self->list, bcn_str, bytecode_frame_stack,
-                       byteCodeFrame_deinit);
-    /* get bytecode_ptr from heap */
-    res = args_getHeapStruct(self->list, bcn_str);
-    obj_setInt(self, "@bcn", bcn + 1);
-    return res;
+    return _cache_bytecodeframe(self);
 }
 
 static VMParameters* __pikaVM_runPyLines(PikaObj* self, char* py_lines) {
@@ -2776,10 +2755,7 @@ static VMParameters* __pikaVM_runPyLines(PikaObj* self, char* py_lines) {
      * the first obj_run, cache bytecode to heap, to support 'def' and
      * 'class'
      */
-    bytecode_frame_p = _cache_bcf0(self);
-    if (NULL == bytecode_frame_p) {
-        bytecode_frame_p = _cache_bcf_fn(self, py_lines);
-    }
+    bytecode_frame_p = _cache_bcf_fn(self, py_lines);
     if (NULL == bytecode_frame_p) {
         is_use_heap_bytecode = 0;
         /* get bytecode_ptr from stack */
@@ -2817,10 +2793,7 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
      * the first obj_run, cache bytecode to heap, to support 'def' and
      * 'class'
      */
-    bytecode_frame_p = _cache_bcf0(self);
-    if (NULL == bytecode_frame_p) {
-        bytecode_frame_p = _cache_bcf_fn_bc(self, bytecode);
-    }
+    bytecode_frame_p = _cache_bcf_fn_bc(self, bytecode);
     if (NULL == bytecode_frame_p) {
         is_use_heap_bytecode = 0;
         /* get bytecode_ptr from stack */
@@ -2846,21 +2819,6 @@ exit:
     return globals;
 }
 
-VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
-    Args buffs = {0};
-    Arg* file_arg = arg_loadFile(NULL, filename);
-    pika_assert(NULL != file_arg);
-    if (NULL == file_arg) {
-        return NULL;
-    }
-    char* lines = (char*)arg_getBytes(file_arg);
-    /* clear the void line */
-    VMParameters* res = pikaVM_run(self, lines);
-    arg_deinit(file_arg);
-    strsDeinit(&buffs);
-    return res;
-}
-
 VMParameters* pikaVM_runByteCodeFile(PikaObj* self, char* filename) {
     Args buffs = {0};
     Arg* file_arg = arg_loadFile(NULL, filename);
@@ -2871,6 +2829,21 @@ VMParameters* pikaVM_runByteCodeFile(PikaObj* self, char* filename) {
     uint8_t* lines = arg_getBytes(file_arg);
     /* clear the void line */
     VMParameters* res = pikaVM_runByteCodeInconstant(self, lines);
+    arg_deinit(file_arg);
+    strsDeinit(&buffs);
+    return res;
+}
+
+VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
+    Args buffs = {0};
+    Arg* file_arg = arg_loadFile(NULL, filename);
+    pika_assert(NULL != file_arg);
+    if (NULL == file_arg) {
+        return NULL;
+    }
+    char* lines = (char*)arg_getBytes(file_arg);
+    /* clear the void line */
+    VMParameters* res = pikaVM_run(self, lines);
     arg_deinit(file_arg);
     strsDeinit(&buffs);
     return res;
