@@ -75,13 +75,13 @@ TEST(args, update) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(args, print_int) {
-    Args* args = New_args(NULL);
-    args_setInt(args, "testInt", 124);
-    EXPECT_STREQ("124", args_print(args, "testInt"));
-    args_deinit(args);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(args, print_int) {
+//     Args* args = New_args(NULL);
+//     args_setInt(args, "testInt", 124);
+//     EXPECT_STREQ("124", args_print(args, "testInt"));
+//     args_deinit(args);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 // TEST(args, test5) {
 // int32_t testInt = 124;
@@ -94,13 +94,13 @@ TEST(args, print_int) {
 // EXPECT_EQ(pikaMemNow(), 0);
 // }
 
-TEST(args, test6) {
-    Args* args = New_args(NULL);
-    args_setFloat(args, "testfloat", 1.42);
-    EXPECT_STREQ("1.420000", args_print(args, "testfloat"));
-    args_deinit(args);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(args, test6) {
+//     Args* args = New_args(NULL);
+//     args_setFloat(args, "testfloat", 1.42);
+//     EXPECT_STREQ("1.420000", args_print(args, "testfloat"));
+//     args_deinit(args);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 // TEST(args, test7) {
 // Args* args = New_args(NULL);
@@ -111,13 +111,13 @@ TEST(args, test6) {
 // EXPECT_EQ(pikaMemNow(), 0);
 // }
 
-TEST(args, test8) {
-    Args* args = New_args(NULL);
-    args_setStr(args, "testString", "test string print");
-    EXPECT_STREQ("test string print", args_print(args, "testString"));
-    args_deinit(args);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(args, test8) {
+//     Args* args = New_args(NULL);
+//     args_setStr(args, "testString", "test string print");
+//     EXPECT_STREQ("test string print", args_print(args, "testString"));
+//     args_deinit(args);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 // TEST(args, test9) {
 // Args* args = New_args(NULL);
