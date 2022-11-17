@@ -3203,25 +3203,7 @@ void VMState_solveUnusedStack(VMState* vm) {
             arg_deinit(arg);
             continue;
         }
-        if (argType_isObject(type)) {
-            char* res = obj_toStr(arg_getPtr(arg));
-            __platform_printf("%s\r\n", res);
-        } else if (type == ARG_TYPE_INT) {
-#if PIKA_PRINT_LLD_ENABLE
-            __platform_printf("%lld\r\n", (long long int)arg_getInt(arg));
-#else
-            __platform_printf("%d\r\n", (int)arg_getInt(arg));
-#endif
-        } else if (type == ARG_TYPE_FLOAT) {
-            __platform_printf("%f\r\n", arg_getFloat(arg));
-        } else if (type == ARG_TYPE_STRING) {
-            __platform_printf("'%s'\r\n", arg_getStr(arg));
-        } else if (type == ARG_TYPE_BYTES) {
-            arg_printBytes(arg);
-        } else if (ARG_TYPE_POINTER == type ||
-                   ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
-            __platform_printf("%p\r\n", arg_getPtr(arg));
-        }
+        arg_singlePrint(arg, PIKA_TRUE, "\r\n");
         arg_deinit(arg);
     }
 }

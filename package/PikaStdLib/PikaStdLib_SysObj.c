@@ -475,18 +475,22 @@ __exit:
 
 void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
     int arg_size = tuple_getSize(val);
+    char* end = dict_getStr(ops, "end");
+    if (NULL == end) {
+        /* default */
+        end = "\r\n";
+    }
+    if (arg_size == 1) {
+        arg_singlePrint(tuple_getArg(val, 0), PIKA_FALSE, end);
+        return;
+    }
     Arg* print_out_arg = NULL;
-    char* print_content = NULL;
     PIKA_BOOL is_get_print = PIKA_FALSE;
     for (int i = 0; i < arg_size; i++) {
         Arg* arg = tuple_getArg(val, i);
         char* item = __print_arg(self, arg);
         if (NULL != item) {
             is_get_print = PIKA_TRUE;
-            if (1 == arg_size) {
-                print_content = item;
-                break;
-            }
             if (NULL == print_out_arg) {
                 print_out_arg = arg_newStr("");
             }
@@ -496,16 +500,8 @@ void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
             }
         }
     }
-    char* end = dict_getStr(ops, "end");
-    if (NULL == end) {
-        /* default */
-        end = "\r\n";
-    }
     if (PIKA_TRUE == is_get_print) {
-        if (NULL != print_out_arg) {
-            print_content = arg_getStr(print_out_arg);
-        }
-        __platform_printf("%s%s", print_content, end);
+        __platform_printf("%s%s", arg_getStr(print_out_arg), end);
     }
     if (NULL != print_out_arg) {
         arg_deinit(print_out_arg);

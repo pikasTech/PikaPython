@@ -165,7 +165,8 @@ Arg* arg_setHeapStruct(Arg* self,
                        void* struct_deinit_fun);
 void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
-void arg_printBytes(Arg* self);
+void arg_printBytes(Arg* self, char* end);
+void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end);
 Arg* arg_loadFile(Arg* self, char* filename);
 
 #define ARG_FLAG_SERIALIZED 0x01
