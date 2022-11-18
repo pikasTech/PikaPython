@@ -1,6 +1,6 @@
 import mqtt
 
-client = mqtt.MQTT()
+client = mqtt.MQTT('192.168.1.255')
 
 client.set_host('broker.emqx.io')
 client.set_port(1883)

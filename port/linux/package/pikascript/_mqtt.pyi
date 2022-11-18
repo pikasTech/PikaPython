@@ -6,24 +6,23 @@ class _MQTT:
 
     def __del__(self): ...
 
-    def set_port(self, port: int) -> int: ...
+    def set_port(self, port: int) -> int:
         """Set the port of the MQTTClient."""
 
-    def set_host(self, host_url: str) -> int: ...
+    def set_host(self, host_url: str) -> int:
         """Set the host_url of the MQTTClient."""
 
-    def set_client_id(self, id: str) -> int: ...
+    def set_client_id(self, id: str) -> int:
         """Set the client_id of the MQTTClient."""
 
-    def set_user_name(self, name: str) -> int: ...
+    def set_user_name(self, name: str) -> int:
         """Set the name of the MQTTClient."""
 
-    def set_password(self, password: str) -> int: ...
+    def set_password(self, password: str) -> int:
         """Set the password of the MQTTClient."""
 
-    def connect(self) -> int: ...
+    def connect(self) -> int:
         """connect to the mqtt-server."""
 
-    def disconnect(self) -> int: ...
+    def disconnect(self) -> int:
         """disconnect to the mqtt-server."""
-

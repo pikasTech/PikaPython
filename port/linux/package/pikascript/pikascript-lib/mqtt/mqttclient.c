@@ -1329,10 +1329,6 @@ int mqtt_release(mqtt_client_t* c) {
     platform_timer_init(&timer);
     platform_timer_cutdown(&timer, c->mqtt_cmd_timeout);
 
-    if (CLIENT_STATE_INITIALIZED == mqtt_get_client_state(c)) {
-        mqtt_clean_session(c);
-    }
-
     /* wait for the clean session to complete */
     while ((CLIENT_STATE_INVALID != mqtt_get_client_state(c))) {
         // platform_timer_usleep(1000);            // 1ms avoid compiler
@@ -1616,6 +1612,7 @@ int mqtt_set_will_options(mqtt_client_t* c,
 }
 
 int mqtt_release_free(mqtt_client_t* c) {
+    mqtt_clean_session(c);
     mqtt_release(c);
     platform_memory_free(c);
     return 0;
