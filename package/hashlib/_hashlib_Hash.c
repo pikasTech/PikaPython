@@ -59,7 +59,7 @@ void _hashlib_Hash_sha224(PikaObj* self, Arg* data) {
         mbedtls_sha256_update(&context, data_h, size);
     }
     obj_setStruct(self, "context", context);
-    obj_setInt(self, "mode", PIKA_HASHLIB_SHA256);
+    obj_setInt(self, "mode", PIKA_HASHLIB_SHA224);
     return;
 }
 
@@ -89,7 +89,7 @@ void _hashlib_Hash_sha384(PikaObj* self, Arg* data) {
         mbedtls_sha512_update(&context, data_h, size);
     }
     obj_setStruct(self, "context", context);
-    obj_setInt(self, "mode", PIKA_HASHLIB_SHA512);
+    obj_setInt(self, "mode", PIKA_HASHLIB_SHA384);
     return;
 }
 
@@ -109,43 +109,37 @@ void _hashlib_Hash_sha512(PikaObj* self, Arg* data) {
 }
 
 void _hashlib_Hash_new(PikaObj* self, char* mode) {
-    if (strcmp(mode, "md5") || strcmp(mode, "MD5")) {
+    if (strcmp(mode, "md5") == 0 || strcmp(mode, "MD5") == 0) {
         mbedtls_md5_context context;
         mbedtls_md5_init(&context);
         mbedtls_md5_starts(&context);
         obj_setStruct(self, "context", context);
         obj_setInt(self, "mode", PIKA_HASHLIB_MD5);
-    } else if (strcmp(mode, "sha1") || strcmp(mode, "SHA1")) {
+    } else if (strcmp(mode, "sha1") == 0 || strcmp(mode, "SHA1") == 0) {
         mbedtls_sha1_context context;
         mbedtls_sha1_init(&context);
         mbedtls_sha1_starts(&context);
         obj_setStruct(self, "context", context);
         obj_setInt(self, "mode", PIKA_HASHLIB_SHA1);
-    } else if (strcmp(mode, "sha1") || strcmp(mode, "SHA1")) {
-        mbedtls_sha1_context context;
-        mbedtls_sha1_init(&context);
-        mbedtls_sha1_starts(&context);
-        obj_setStruct(self, "context", context);
-        obj_setInt(self, "mode", PIKA_HASHLIB_SHA1);
-    } else if (strcmp(mode, "sha224") || strcmp(mode, "sha224")) {
+    } else if (strcmp(mode, "sha224") == 0 || strcmp(mode, "SHA224") == 0) {
         mbedtls_sha256_context context;
         mbedtls_sha256_init(&context);
         mbedtls_sha256_starts(&context, 1);
         obj_setStruct(self, "context", context);
-        obj_setInt(self, "mode", PIKA_HASHLIB_SHA256);
-    } else if (strcmp(mode, "sha256") || strcmp(mode, "SHA224")) {
+        obj_setInt(self, "mode", PIKA_HASHLIB_SHA224);
+    } else if (strcmp(mode, "sha256") == 0 || strcmp(mode, "SHA256") == 0) {
         mbedtls_sha256_context context;
         mbedtls_sha256_init(&context);
         mbedtls_sha256_starts(&context, 0);
         obj_setStruct(self, "context", context);
         obj_setInt(self, "mode", PIKA_HASHLIB_SHA256);
-    } else if (strcmp(mode, "sha384") || strcmp(mode, "SHA384")) {
+    } else if (strcmp(mode, "sha384") == 0 || strcmp(mode, "SHA384") == 0) {
         mbedtls_sha512_context context;
         mbedtls_sha512_init(&context);
         mbedtls_sha512_starts(&context, 1);
         obj_setStruct(self, "context", context);
         obj_setInt(self, "mode", PIKA_HASHLIB_SHA384);
-    } else if (strcmp(mode, "sha512") || strcmp(mode, "SHA512")) {
+    } else if (strcmp(mode, "sha512") == 0 || strcmp(mode, "SHA512") == 0) {
         mbedtls_sha512_context context;
         mbedtls_sha512_init(&context);
         mbedtls_sha512_starts(&context, 0);
