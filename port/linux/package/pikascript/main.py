@@ -5,6 +5,9 @@ import GTestTask, TempDevTest
 import cb_test
 import configparser
 import test_module1, test_cmodule, test_module4, import_test
+import hashlib
+
+hashlib.sha256(b"123456")
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')
