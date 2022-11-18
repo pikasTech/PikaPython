@@ -25,6 +25,7 @@ jobs:
         sudo apt install liblua5.3-dev
         sudo apt install valgrind
         sudo apt install upx
+        sudo apt install libmbedtls-dev
   
     - name: install_google_benchmark
       run: |
