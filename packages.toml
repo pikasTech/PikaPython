@@ -418,3 +418,8 @@ releases = [
   "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee",
 ]
 
+[[packages]]
+name = "hashlib"
+releases = [
+  "v1.0.0 ce05a5f03c4bfac536db60fe24f83705a1b58b02",
+]
