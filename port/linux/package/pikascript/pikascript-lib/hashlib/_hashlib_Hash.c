@@ -19,6 +19,13 @@ enum {
 void to_hex(uint8_t* s, int l, uint8_t* d);
 
 void _hashlib_Hash_md5(PikaObj* self, Arg* data) {
+    ArgType t = arg_getType(data);
+    if (ARG_TYPE_NONE != t) {
+        if (ARG_TYPE_BYTES != t) {
+            obj_setErrorCode(self, -2);  // io error
+        }
+    }
+
     size_t size = arg_getBytesSize(data);
     uint8_t* data_h = arg_getBytes(data);
 
@@ -30,10 +37,16 @@ void _hashlib_Hash_md5(PikaObj* self, Arg* data) {
     }
     obj_setStruct(self, "context", context);
     obj_setInt(self, "mode", PIKA_HASHLIB_MD5);
-    return;
 }
 
 void _hashlib_Hash_sha1(PikaObj* self, Arg* data) {
+    ArgType t = arg_getType(data);
+    if (ARG_TYPE_NONE != t) {
+        if (ARG_TYPE_BYTES != t) {
+            obj_setErrorCode(self, -2);  // io error
+        }
+    }
+
     size_t size = arg_getBytesSize(data);
     uint8_t* data_h = arg_getBytes(data);
 
@@ -45,10 +58,15 @@ void _hashlib_Hash_sha1(PikaObj* self, Arg* data) {
     }
     obj_setStruct(self, "context", context);
     obj_setInt(self, "mode", PIKA_HASHLIB_SHA1);
-    return;
 }
 
 void _hashlib_Hash_sha224(PikaObj* self, Arg* data) {
+    ArgType t = arg_getType(data);
+    if (ARG_TYPE_NONE != t) {
+        if (ARG_TYPE_BYTES != t) {
+            obj_setErrorCode(self, -2);  // io error
+        }
+    }
     size_t size = arg_getBytesSize(data);
     uint8_t* data_h = arg_getBytes(data);
 
@@ -60,10 +78,16 @@ void _hashlib_Hash_sha224(PikaObj* self, Arg* data) {
     }
     obj_setStruct(self, "context", context);
     obj_setInt(self, "mode", PIKA_HASHLIB_SHA224);
-    return;
 }
 
 void _hashlib_Hash_sha256(PikaObj* self, Arg* data) {
+    ArgType t = arg_getType(data);
+    if (ARG_TYPE_NONE != t) {
+        if (ARG_TYPE_BYTES != t) {
+            obj_setErrorCode(self, -2);  // io error
+        }
+    }
+
     size_t size = arg_getBytesSize(data);
     uint8_t* data_h = arg_getBytes(data);
 
@@ -75,10 +99,16 @@ void _hashlib_Hash_sha256(PikaObj* self, Arg* data) {
     }
     obj_setStruct(self, "context", context);
     obj_setInt(self, "mode", PIKA_HASHLIB_SHA256);
-    return;
 }
 
 void _hashlib_Hash_sha384(PikaObj* self, Arg* data) {
+    ArgType t = arg_getType(data);
+    if (ARG_TYPE_NONE != t) {
+        if (ARG_TYPE_BYTES != t) {
+            obj_setErrorCode(self, -2);  // io error
+        }
+    }
+
     size_t size = arg_getBytesSize(data);
     uint8_t* data_h = arg_getBytes(data);
 
@@ -90,10 +120,16 @@ void _hashlib_Hash_sha384(PikaObj* self, Arg* data) {
     }
     obj_setStruct(self, "context", context);
     obj_setInt(self, "mode", PIKA_HASHLIB_SHA384);
-    return;
 }
 
 void _hashlib_Hash_sha512(PikaObj* self, Arg* data) {
+    ArgType t = arg_getType(data);
+    if (ARG_TYPE_NONE != t) {
+        if (ARG_TYPE_BYTES != t) {
+            obj_setErrorCode(self, -2);  // io error
+        }
+    }
+
     size_t size = arg_getBytesSize(data);
     uint8_t* data_h = arg_getBytes(data);
 
@@ -105,7 +141,6 @@ void _hashlib_Hash_sha512(PikaObj* self, Arg* data) {
     }
     obj_setStruct(self, "context", context);
     obj_setInt(self, "mode", PIKA_HASHLIB_SHA512);
-    return;
 }
 
 void _hashlib_Hash_new(PikaObj* self, char* mode) {
@@ -148,10 +183,13 @@ void _hashlib_Hash_new(PikaObj* self, char* mode) {
     } else {
         obj_setErrorCode(self, -1);  // not support mode
     }
-    return;
 }
 
 void _hashlib_Hash_update(PikaObj* self, Arg* data) {
+    if (ARG_TYPE_BYTES != arg_getType(data)) {
+        obj_setErrorCode(self, -2);  // io error
+    }
+
     size_t size = arg_getBytesSize(data);
     uint8_t* data_h = arg_getBytes(data);
 
