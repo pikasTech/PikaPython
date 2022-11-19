@@ -1612,7 +1612,12 @@ int mqtt_set_will_options(mqtt_client_t* c,
 }
 
 int mqtt_release_free(mqtt_client_t* c) {
-    mqtt_clean_session(c);
+    /* wait for mqtt thread exit */
+    while (c->mqtt_thread != NULL) {
+    }
+    if (CLIENT_STATE_INVALID != mqtt_get_client_state(c)) {
+        mqtt_clean_session(c);
+    }
     mqtt_release(c);
     platform_memory_free(c);
     return 0;
