@@ -135,25 +135,25 @@ static inline char* mp_obj_str_get_data(Arg* self, size_t* len) {
 static inline size_t pks_load_mp_args(PikaTuple* tuple,
                                       mp_obj_t mp_self,
                                       mp_obj_t* args) {
-    size_t len = tuple_getSize(tuple);
+    size_t len = pikaTuple_getSize(tuple);
     size_t i = 0;
     if (NULL != mp_self) {
         args[0] = mp_self;
         i = 1;
     }
     for (i = 0; i < len; i++) {
-        args[i] = tuple_getArg(tuple, i);
+        args[i] = pikaTuple_getArg(tuple, i);
     }
     return len;
 }
 
 static inline void pks_load_mp_map(PikaDict* kw, mp_map_t* map) {
-    size_t len = dict_getSize(kw);
+    size_t len = pikaDict_getSize(kw);
     map->alloc = len;
     map->used = len;
     map->table = (mp_map_elem_t*)malloc(sizeof(mp_map_elem_t) * len);
     for (int i = 0; i < len; i++) {
-        Arg* item = dict_getArgByidex(kw, i);
+        Arg* item = pikaDict_getArgByidex(kw, i);
         map->table[i].key = arg_getNameHash(item);
         map->table[i].value = item;
     }
@@ -202,7 +202,7 @@ static inline void mp_obj_get_array_fixed_n(mp_obj_t tuple,
                                             size_t n,
                                             mp_obj_t* arrray) {
     for (int i = 0; i < n; i++) {
-        arrray[i] = tuple_getArg((PikaTuple*)arg_getPtr(tuple), i);
+        arrray[i] = pikaTuple_getArg((PikaTuple*)arg_getPtr(tuple), i);
     }
 }
 

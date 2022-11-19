@@ -83,8 +83,8 @@ int PikaStdData_FILEIO_seek(PikaObj* self, int offset, PikaTuple* fromwhere) {
         __platform_printf("Error: can't seek in file\n");
         return -1;
     }
-    if (tuple_getSize(fromwhere) == 1) {
-        int whence = tuple_getInt(fromwhere, 0);
+    if (pikaTuple_getSize(fromwhere) == 1) {
+        int whence = pikaTuple_getInt(fromwhere, 0);
         __platform_fseek(f, offset, whence);
         return __platform_ftell(f);
     }
@@ -167,8 +167,8 @@ void PikaStdData_FILEIO_writelines(PikaObj* self, PikaObj* lines) {
         __platform_printf("Error: can't write lines to file\n");
         return;
     }
-    for (size_t i = 0; i < list_getSize(list); i++) {
-        char* line = list_getStr(list, i);
+    for (size_t i = 0; i < pikaList_getSize(list); i++) {
+        char* line = pikaList_getStr(list, i);
         Arg* arg_str = arg_newStr(line);
         PikaStdData_FILEIO_write(self, arg_str);
         arg_deinit(arg_str);

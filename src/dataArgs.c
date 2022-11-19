@@ -468,19 +468,19 @@ Args* New_args(Args* args) {
     return self;
 }
 
-PikaDict* New_dict(void) {
+PikaDict* New_pikaDict(void) {
     PikaDict* self = (PikaDict*)New_args(NULL);
     return self;
 }
 
-PikaList* New_list(void) {
+PikaList* New_pikaList(void) {
     PikaList* self = (PikaList*)New_args(NULL);
     /* set top index for append */
     args_pushArg_name(&self->super, "top", arg_newInt(0));
     return self;
 }
 
-PIKA_RES list_setArg(PikaList* self, int index, Arg* arg) {
+PIKA_RES pikaList_setArg(PikaList* self, int index, Arg* arg) {
     char buff[11];
     char* i_str = fast_itoa(buff, index);
     int top = args_getInt(&self->super, "top");
@@ -493,33 +493,33 @@ PIKA_RES list_setArg(PikaList* self, int index, Arg* arg) {
     return PIKA_RES_OK;
 }
 
-Arg* list_getArg(PikaList* self, int index) {
+Arg* pikaList_getArg(PikaList* self, int index) {
     char buff[11];
     char* i_str = fast_itoa(buff, index);
     return args_getArg(&self->super, i_str);
 }
 
-int list_getInt(PikaList* self, int index) {
-    Arg* arg = list_getArg(self, index);
+int pikaList_getInt(PikaList* self, int index) {
+    Arg* arg = pikaList_getArg(self, index);
     return arg_getInt(arg);
 }
 
-pika_float list_getFloat(PikaList* self, int index) {
-    Arg* arg = list_getArg(self, index);
+pika_float pikaList_getFloat(PikaList* self, int index) {
+    Arg* arg = pikaList_getArg(self, index);
     return arg_getFloat(arg);
 }
 
-char* list_getStr(PikaList* self, int index) {
-    Arg* arg = list_getArg(self, index);
+char* pikaList_getStr(PikaList* self, int index) {
+    Arg* arg = pikaList_getArg(self, index);
     return arg_getStr(arg);
 }
 
-void* list_getPtr(PikaList* self, int index) {
-    Arg* arg = list_getArg(self, index);
+void* pikaList_getPtr(PikaList* self, int index) {
+    Arg* arg = pikaList_getArg(self, index);
     return arg_getPtr(arg);
 }
 
-PIKA_RES list_append(PikaList* self, Arg* arg) {
+PIKA_RES pikaList_append(PikaList* self, Arg* arg) {
     if (NULL == arg) {
         return PIKA_RES_ERR_ARG_NO_FOUND;
     }
@@ -533,26 +533,26 @@ PIKA_RES list_append(PikaList* self, Arg* arg) {
     return args_setInt(&self->super, "top", top + 1);
 }
 
-Arg* list_pop(PikaList* list) {
+Arg* pikaList_pop(PikaList* list) {
     int top = args_getInt(&list->super, "top");
     if (top <= 0) {
         return NULL;
     }
-    Arg* arg = list_getArg(list, top - 1);
+    Arg* arg = pikaList_getArg(list, top - 1);
     Arg* res = arg_copy(arg);
     args_removeArg(&list->super, arg);
     args_setInt(&list->super, "top", top - 1);
     return res;
 }
 
-PIKA_RES list_remove(PikaList* list, Arg* arg) {
+PIKA_RES pikaList_remove(PikaList* list, Arg* arg) {
     int top = args_getInt(&list->super, "top");
     int i_remove = 0;
     if (top <= 0) {
         return PIKA_RES_ERR_OUT_OF_RANGE;
     }
     for (int i = 0; i < top; i++) {
-        Arg* arg_now = list_getArg(list, i);
+        Arg* arg_now = pikaList_getArg(list, i);
         if (arg_isEqual(arg_now, arg)) {
             i_remove = i;
             args_removeArg(&list->super, arg_now);
@@ -563,14 +563,14 @@ PIKA_RES list_remove(PikaList* list, Arg* arg) {
     for (int i = i_remove + 1; i < top; i++) {
         char buff[11];
         char* i_str = fast_itoa(buff, i - 1);
-        Arg* arg_now = list_getArg(list, i);
+        Arg* arg_now = pikaList_getArg(list, i);
         arg_setName(arg_now, i_str);
     }
     args_setInt(&list->super, "top", top - 1);
     return PIKA_RES_OK;
 }
 
-PIKA_RES list_insert(PikaList* self, int index, Arg* arg) {
+PIKA_RES pikaList_insert(PikaList* self, int index, Arg* arg) {
     int top = args_getInt(&self->super, "top");
     if (index > top) {
         return PIKA_RES_ERR_OUT_OF_RANGE;
@@ -579,7 +579,7 @@ PIKA_RES list_insert(PikaList* self, int index, Arg* arg) {
     for (int i = top - 1; i >= index; i--) {
         char buff[11];
         char* i_str = fast_itoa(buff, i + 1);
-        Arg* arg_now = list_getArg(self, i);
+        Arg* arg_now = pikaList_getArg(self, i);
         arg_setName(arg_now, i_str);
     }
     char buff[11];
@@ -591,26 +591,26 @@ PIKA_RES list_insert(PikaList* self, int index, Arg* arg) {
     return PIKA_RES_OK;
 }
 
-size_t list_getSize(PikaList* self) {
+size_t pikaList_getSize(PikaList* self) {
     pika_assert(NULL != self);
     return args_getInt(&self->super, "top");
 }
 
-void list_reverse(PikaList* self) {
+void pikaList_reverse(PikaList* self) {
     pika_assert(NULL != self);
-    int top = list_getSize(self);
+    int top = pikaList_getSize(self);
     for (int i = 0; i < top / 2; i++) {
-        Arg* arg_i = arg_copy(list_getArg(self, i));
-        Arg* arg_top = arg_copy(list_getArg(self, top - i - 1));
-        list_setArg(self, i, arg_top);
-        list_setArg(self, top - i - 1, arg_i);
+        Arg* arg_i = arg_copy(pikaList_getArg(self, i));
+        Arg* arg_top = arg_copy(pikaList_getArg(self, top - i - 1));
+        pikaList_setArg(self, i, arg_top);
+        pikaList_setArg(self, top - i - 1, arg_i);
         arg_deinit(arg_i);
         arg_deinit(arg_top);
     }
 }
 
-PikaTuple* New_tuple(void) {
-    PikaTuple* self = (PikaTuple*)New_list();
+PikaTuple* New_pikaTuple(void) {
+    PikaTuple* self = (PikaTuple*)New_pikaList();
     return self;
 }
 
@@ -674,9 +674,9 @@ char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list) {
     char* fmt_item = strsPopToken(&buffs, &fmt_buff, '%');
     Arg* res_buff = arg_newStr(fmt_item);
 
-    for (size_t i = 0; i < list_getSize(list); i++) {
+    for (size_t i = 0; i < pikaList_getSize(list); i++) {
         Args buffs_item = {0};
-        Arg* arg = list_getArg(list, i);
+        Arg* arg = pikaList_getArg(list, i);
         char* fmt_item = strsPopToken(&buffs_item, &fmt_buff, '%');
         fmt_item = strsAppend(&buffs_item, "%", fmt_item);
         char* str_format = strsFormatArg(&buffs_item, fmt_item, arg);

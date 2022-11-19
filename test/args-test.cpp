@@ -257,25 +257,25 @@ TEST(args, args_mem) {
 }
 
 TEST(args, dict) {
-    PikaDict* dict = New_dict();
+    PikaDict* dict = New_pikaDict();
     int64_t int64Out = 0;
     void* pointer = NULL;
     char* strOut = NULL;
-    dict_setInt(dict, "int64Test", (int64_t)22221);
-    dict_setPtr(dict, "pointerTest", (void*)2222322);
-    dict_setStr(dict, "strTest", "teeeds");
+    pikaDict_setInt(dict, "int64Test", (int64_t)22221);
+    pikaDict_setPtr(dict, "pointerTest", (void*)2222322);
+    pikaDict_setStr(dict, "strTest", "teeeds");
 
-    int64Out = dict_getInt(dict, "int64Test");
-    pointer = dict_getPtr(dict, "pointerTest");
-    strOut = dict_getStr(dict, "strTest");
+    int64Out = pikaDict_getInt(dict, "int64Test");
+    pointer = pikaDict_getPtr(dict, "pointerTest");
+    strOut = pikaDict_getStr(dict, "strTest");
 
     EXPECT_EQ(int64Out, 22221);
     EXPECT_EQ((uint64_t)pointer, 2222322);
     EXPECT_EQ(1, strEqu("teeeds", strOut));
-    EXPECT_EQ(dict_getType(dict, "int64Test"), ARG_TYPE_INT);
-    EXPECT_EQ(dict_getType(dict, "pointerTest"), ARG_TYPE_POINTER);
-    EXPECT_EQ(dict_getType(dict, "strTest"), ARG_TYPE_STRING);
-    dict_deinit(dict);
+    EXPECT_EQ(pikaDict_getType(dict, "int64Test"), ARG_TYPE_INT);
+    EXPECT_EQ(pikaDict_getType(dict, "pointerTest"), ARG_TYPE_POINTER);
+    EXPECT_EQ(pikaDict_getType(dict, "strTest"), ARG_TYPE_STRING);
+    pikaDict_deinit(dict);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 TEST_END

@@ -9,7 +9,7 @@
 
 Arg* PikaStdData_Dict_get(PikaObj* self, char* key) {
     PikaDict* dict = obj_getPtr(self, "dict");
-    Arg* res = dict_getArg(dict, key);
+    Arg* res = pikaDict_getArg(dict, key);
     if (NULL == res) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         __platform_printf("KeyError: %s\n", key);
@@ -28,8 +28,8 @@ void PikaStdData_Dict_set(PikaObj* self, char* key, Arg* arg) {
 void PikaStdData_Dict_remove(PikaObj* self, char* key) {
     PikaDict* dict = obj_getPtr(self, "dict");
     PikaDict* keys = obj_getPtr(self, "_keys");
-    dict_removeArg(dict, dict_getArg(dict, key));
-    dict_removeArg(keys, dict_getArg(keys, key));
+    pikaDict_removeArg(dict, pikaDict_getArg(dict, key));
+    pikaDict_removeArg(keys, pikaDict_getArg(keys, key));
 }
 
 Arg* PikaStdData_Dict___iter__(PikaObj* self) {
@@ -60,9 +60,9 @@ Arg* PikaStdData_Dict___getitem__(PikaObj* self, Arg* __key) {
 void PikaStdData_Dict___del__(PikaObj* self) {
     PikaDict* dict = obj_getPtr(self, "dict");
     PikaDict* keys = obj_getPtr(self, "_keys");
-    dict_deinit(dict);
+    pikaDict_deinit(dict);
     if (NULL != keys) {
-        dict_deinit(keys);
+        pikaDict_deinit(keys);
     }
 }
 
@@ -227,8 +227,8 @@ Arg* PikaStdData_dict_items___next__(PikaObj* self) {
     PikaObj* tuple = newNormalObj(New_PikaStdData_Tuple);
     PikaStdData_Tuple___init__(tuple);
     PikaList* list = obj_getPtr(tuple, "list");
-    list_append(list, key);
-    list_append(list, val);
+    pikaList_append(list, key);
+    pikaList_append(list, val);
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return arg_newObj(tuple);
 }

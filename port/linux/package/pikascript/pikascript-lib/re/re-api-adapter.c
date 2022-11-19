@@ -24,14 +24,14 @@
     }
 
 #define tu_getNew(name, obj_name)                       \
-    PikaTuple *name = New_tuple();                      \
+    PikaTuple *name = New_pikaTuple();                      \
     Any obj_name = newNormalObj(New_PikaStdData_Tuple); \
     obj_setPtr(obj_name, "list", name);
 
 #define tu_append(tup, val, type)         \
     {                                     \
         Arg *_arg = arg_new##type(val);   \
-        list_append(&(tup)->super, _arg); \
+        pikaList_append(&(tup)->super, _arg); \
         arg_deinit(_arg);                 \
     }
 #define li_append(list, val, type)           \
@@ -167,10 +167,10 @@ char *re_sub(PikaObj *self,
 {
     int flags = PCRE_UTF8;
     int count = 0;
-    int argn = tuple_getSize(val);
+    int argn = pikaTuple_getSize(val);
     if (argn >= 1)
     {
-        Arg *arg_i = tuple_getArg(val, 0);
+        Arg *arg_i = pikaTuple_getArg(val, 0);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -180,7 +180,7 @@ char *re_sub(PikaObj *self,
     }
     if (argn >= 2)
     {
-        Arg *arg_i = tuple_getArg(val, 1);
+        Arg *arg_i = pikaTuple_getArg(val, 1);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -228,10 +228,10 @@ PikaObj *re_subn(PikaObj *self,
 {
     int flags = PCRE_UTF8;
     int count = 0;
-    int argn = tuple_getSize(val);
+    int argn = pikaTuple_getSize(val);
     if (argn >= 1)
     {
-        Arg *arg_i = tuple_getArg(val, 0);
+        Arg *arg_i = pikaTuple_getArg(val, 0);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -241,7 +241,7 @@ PikaObj *re_subn(PikaObj *self,
     }
     if (argn >= 2)
     {
-        Arg *arg_i = tuple_getArg(val, 1);
+        Arg *arg_i = pikaTuple_getArg(val, 1);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -285,10 +285,10 @@ PikaObj *re_split(PikaObj *self, char *pattern, char *subject, PikaTuple *val)
 {
     int flags = PCRE_UTF8;
     int max_split = 0;
-    int argn = tuple_getSize(val);
+    int argn = pikaTuple_getSize(val);
     if (argn >= 1)
     {
-        Arg *arg_i = tuple_getArg(val, 0);
+        Arg *arg_i = pikaTuple_getArg(val, 0);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -298,7 +298,7 @@ PikaObj *re_split(PikaObj *self, char *pattern, char *subject, PikaTuple *val)
     }
     if (argn >= 2)
     {
-        Arg *arg_i = tuple_getArg(val, 1);
+        Arg *arg_i = pikaTuple_getArg(val, 1);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -385,10 +385,10 @@ void re_Match___init__args(PikaObj *self, char *sub, int *vec, int ven)
 char *re_Match_group(PikaObj *self, PikaTuple *val)
 {
     int n = 0;
-    int argn = tuple_getSize(val);
+    int argn = pikaTuple_getSize(val);
     if (argn >= 1)
     {
-        Arg *arg_i = tuple_getArg(val, 0);
+        Arg *arg_i = pikaTuple_getArg(val, 0);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -452,7 +452,7 @@ PikaObj *re_Match_groups(PikaObj *self)
         {
             str_arg1 = arg_newStr("");
         }
-        list_append(&(tup)->super, str_arg1);
+        pikaList_append(&(tup)->super, str_arg1);
         arg_deinit(str_arg1);
     }
     return tup_obj;
@@ -460,10 +460,10 @@ PikaObj *re_Match_groups(PikaObj *self)
 PikaObj *re_Match_span(PikaObj *self, PikaTuple *val)
 {
     int group_n = 0;
-    int argn = tuple_getSize(val);
+    int argn = pikaTuple_getSize(val);
     if (argn >= 1)
     {
-        Arg *arg_i = tuple_getArg(val, 0);
+        Arg *arg_i = pikaTuple_getArg(val, 0);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -599,10 +599,10 @@ char *re_Pattern_sub(PikaObj *self, char *repl, char *subjet, PikaTuple *val)
 {
     int flags = 0;
     int count = 0;
-    int argn = tuple_getSize(val);
+    int argn = pikaTuple_getSize(val);
     if (argn >= 1)
     {
-        Arg *arg_i = tuple_getArg(val, 0);
+        Arg *arg_i = pikaTuple_getArg(val, 0);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -612,7 +612,7 @@ char *re_Pattern_sub(PikaObj *self, char *repl, char *subjet, PikaTuple *val)
     }
     if (argn >= 2)
     {
-        Arg *arg_i = tuple_getArg(val, 1);
+        Arg *arg_i = pikaTuple_getArg(val, 1);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -664,10 +664,10 @@ PikaObj *re_Pattern_subn(PikaObj *self, char *repl, char *subjet, PikaTuple *val
         return NULL;
     int flags = 0;
     int count = 0;
-    int argn = tuple_getSize(val);
+    int argn = pikaTuple_getSize(val);
     if (argn >= 1)
     {
-        Arg *arg_i = tuple_getArg(val, 0);
+        Arg *arg_i = pikaTuple_getArg(val, 0);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -677,7 +677,7 @@ PikaObj *re_Pattern_subn(PikaObj *self, char *repl, char *subjet, PikaTuple *val
     }
     if (argn >= 2)
     {
-        Arg *arg_i = tuple_getArg(val, 1);
+        Arg *arg_i = pikaTuple_getArg(val, 1);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -702,10 +702,10 @@ PikaObj *re_Pattern_split(PikaObj *self, char *subject, PikaTuple *val)
     pcre *re = obj_getPtr(self, "_re");
     int flags = PCRE_UTF8;
     int max_split = 0;
-    int argn = tuple_getSize(val);
+    int argn = pikaTuple_getSize(val);
     if (argn >= 1)
     {
-        Arg *arg_i = tuple_getArg(val, 0);
+        Arg *arg_i = pikaTuple_getArg(val, 0);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -715,7 +715,7 @@ PikaObj *re_Pattern_split(PikaObj *self, char *subject, PikaTuple *val)
     }
     if (argn >= 2)
     {
-        Arg *arg_i = tuple_getArg(val, 1);
+        Arg *arg_i = pikaTuple_getArg(val, 1);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             obj_setErrorCode(self, -__LINE__);
@@ -736,10 +736,10 @@ PikaObj *re_Pattern_split(PikaObj *self, char *subject, PikaTuple *val)
 int _get_flags(PikaTuple *val)
 {
     int flags = PCRE_UTF8;
-    int argn = tuple_getSize(val);
+    int argn = pikaTuple_getSize(val);
     if (argn >= 1)
     {
-        Arg *arg_i = tuple_getArg(val, 0);
+        Arg *arg_i = pikaTuple_getArg(val, 0);
         if (arg_getType(arg_i) != ARG_TYPE_INT)
         {
             return -1;
@@ -936,7 +936,7 @@ PikaObj *__findall(void *pattern__or__re,
         b = malloc(length + 1);
         if (!b)
             goto e_er;
-        tu = New_tuple();
+        tu = New_pikaTuple();
 
         for (int j = 1; j < brackets; j++)
         {
@@ -987,7 +987,7 @@ PikaObj *__subn(void *pattern__or__re,
     }
     if (s == subjet)
     {
-        PikaTuple *yup = New_tuple();
+        PikaTuple *yup = New_pikaTuple();
         tu_append(yup, s, Str);
         tu_append(yup, 0, Int);
 
@@ -996,7 +996,7 @@ PikaObj *__subn(void *pattern__or__re,
         return tuple_obj;
     }
 
-    PikaTuple *yup = New_tuple();
+    PikaTuple *yup = New_pikaTuple();
     tu_append(yup, s, Str);
     free(s);
 

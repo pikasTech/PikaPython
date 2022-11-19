@@ -97,7 +97,7 @@ int *re_fullmatch2(pcre *re, const char *s, int len, int *out_vec_number, int op
 
 	if (!vec)
 		goto e_er;
-	opt &= ~PCRE_MULTILINE;
+	// opt &= ~PCRE_MULTILINE;
 match:
 	rc = pcre_exec(re, NULL, s, len, start_offset, 0, vec, group_n);
 	if (rc == PCRE_ERROR_NOMATCH)

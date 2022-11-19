@@ -184,22 +184,22 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, PikaTuple* ax) {
     Arg* obj_arg = arg_newDirectObj(New_PikaStdLib_RangeObj);
     PikaObj* range_obj = arg_getPtr(obj_arg);
     RangeData range_data = {0};
-    if (tuple_getSize(ax) == 1) {
+    if (pikaTuple_getSize(ax) == 1) {
         int start = 0;
-        int end = arg_getInt(tuple_getArg(ax, 0));
+        int end = arg_getInt(pikaTuple_getArg(ax, 0));
         range_data.start = start;
         range_data.end = end;
         range_data.step = 1;
-    } else if (tuple_getSize(ax) == 2) {
-        int start = arg_getInt(tuple_getArg(ax, 0));
-        int end = arg_getInt(tuple_getArg(ax, 1));
+    } else if (pikaTuple_getSize(ax) == 2) {
+        int start = arg_getInt(pikaTuple_getArg(ax, 0));
+        int end = arg_getInt(pikaTuple_getArg(ax, 1));
         range_data.start = start;
         range_data.end = end;
         range_data.step = 1;
-    } else if (tuple_getSize(ax) == 3) {
-        int start = arg_getInt(tuple_getArg(ax, 0));
-        int end = arg_getInt(tuple_getArg(ax, 1));
-        int step = arg_getInt(tuple_getArg(ax, 2));
+    } else if (pikaTuple_getSize(ax) == 3) {
+        int start = arg_getInt(pikaTuple_getArg(ax, 0));
+        int end = arg_getInt(pikaTuple_getArg(ax, 1));
+        int step = arg_getInt(pikaTuple_getArg(ax, 2));
         range_data.start = start;
         range_data.end = end;
         range_data.step = step;
@@ -305,8 +305,8 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
 
 Arg* PikaStdLib_SysObj_list(PikaObj* self, PikaTuple* val) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    if (1 == tuple_getSize(val)) {
-        Arg* in = tuple_getArg(val, 0);
+    if (1 == pikaTuple_getSize(val)) {
+        Arg* in = pikaTuple_getArg(val, 0);
         obj_setArg(self, "__list", in);
         /* clang-format off */
         PIKA_PYTHON(
@@ -408,10 +408,10 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
         if (obj->constructor == New_PikaStdData_List ||
             obj->constructor == New_PikaStdData_Tuple) {
             PikaList* list = obj_getPtr(obj, "list");
-            Arg* bytes = arg_newBytes(NULL, list_getSize(list));
+            Arg* bytes = arg_newBytes(NULL, pikaList_getSize(list));
             uint8_t* bytes_raw = arg_getBytes(bytes);
-            for (size_t i = 0; i < list_getSize(list); i++) {
-                bytes_raw[i] = (uint8_t)list_getInt(list, i);
+            for (size_t i = 0; i < pikaList_getSize(list); i++) {
+                bytes_raw[i] = (uint8_t)pikaList_getInt(list, i);
             }
             return bytes;
         }
@@ -474,20 +474,20 @@ __exit:
 }
 
 void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
-    int arg_size = tuple_getSize(val);
-    char* end = dict_getStr(ops, "end");
+    int arg_size = pikaTuple_getSize(val);
+    char* end = pikaDict_getStr(ops, "end");
     if (NULL == end) {
         /* default */
         end = "\r\n";
     }
     if (arg_size == 1) {
-        arg_singlePrint(tuple_getArg(val, 0), PIKA_FALSE, end);
+        arg_singlePrint(pikaTuple_getArg(val, 0), PIKA_FALSE, end);
         return;
     }
     Arg* print_out_arg = NULL;
     PIKA_BOOL is_get_print = PIKA_FALSE;
     for (int i = 0; i < arg_size; i++) {
-        Arg* arg = tuple_getArg(val, i);
+        Arg* arg = pikaTuple_getArg(val, i);
         char* item = __print_arg(self, arg);
         if (NULL != item) {
             is_get_print = PIKA_TRUE;
@@ -663,8 +663,8 @@ char* PikaStdLib_SysObj_input(PikaObj* self, PikaTuple* info) {
         .handler = __obj_shellLineHandler_input,
         .fn_getchar = __platform_getchar,
     };
-    if (tuple_getSize(info) > 0) {
-        __platform_printf("%s", tuple_getStr(info, 0));
+    if (pikaTuple_getSize(info) > 0) {
+        __platform_printf("%s", pikaTuple_getStr(info, 0));
     }
     _temp__do_pikaScriptShell(self, &cfg);
     char* res = obj_cacheStr(self, arg_getStr(cfg.context));
