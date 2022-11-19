@@ -422,4 +422,12 @@ releases = [
 name = "hashlib"
 releases = [
   "v1.0.0 ce05a5f03c4bfac536db60fe24f83705a1b58b02",
+  "v1.0.1 a91c3698abce8a6624929243cfb7cc79badaa156"
 ]
+
+[[packages]]
+name = "hmac"
+releases = [
+  "v1.0.0 ca8fe36d68be16722317860394fdf78c620e3e2d"
+]
+
