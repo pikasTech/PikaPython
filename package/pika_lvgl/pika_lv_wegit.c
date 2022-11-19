@@ -434,7 +434,7 @@ void pika_lvgl_img_set_size_mode(PikaObj* self, int mode) {
 void pika_lvgl_img_dsc_t___init__(PikaObj* self, PikaObj* dsc_dict) {
     obj_setRef(self, "dsc_dict", dsc_dict);
     PikaDict* dsc_dict_ = obj_getPtr(dsc_dict, "dict");
-    uint8_t* data = dict_getBytes(dsc_dict_, "data");
+    uint8_t* data = pikaDict_getBytes(dsc_dict_, "data");
     unsigned char wtmp[4] = {'0'};
     unsigned char htmp[4] = {'0'};
     memcpy(&wtmp, data + 16, 4);
@@ -443,7 +443,7 @@ void pika_lvgl_img_dsc_t___init__(PikaObj* self, PikaObj* dsc_dict) {
     int h = ((int)(unsigned char)htmp[2]) * 256 + (int)(unsigned char)htmp[3];
     lv_img_dsc_t img_dsc = {
         .data = data,
-        .data_size = dict_getInt(dsc_dict_, "data_size"),
+        .data_size = pikaDict_getInt(dsc_dict_, "data_size"),
         .header =
             {
                 .always_zero = 0,

@@ -244,7 +244,8 @@ releases = [
   "v0.3.2 ce221cf875ac5c533ceff3905313a8ef2906df75",
   "v0.3.3 556b3cd6eb8fa1c100f29bd8556ee48a0a60b055",
   "v0.3.4 fc7871f6ae32e6fd16c9e16587d02f8b93af1b5d",
-  "v0.4.0 e6a839810a5a98dd36a6436259a05ab3e9b8c6c0"
+  "v0.4.0 e6a839810a5a98dd36a6436259a05ab3e9b8c6c0",
+  "v0.4.1 6f5c4bfae50fc5ae347609e58650f2d185171f9f"
 ]
 
 [[packages]]
@@ -410,15 +411,11 @@ releases = [
 
 [[packages]]
 name = "mqtt"
-releases = [
-  "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee",
-]
+releases = [ "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee" ]
 
 [[packages]]
 name = "requests"
-releases = [
-  "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee",
-]
+releases = [ "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee" ]
 
 [[packages]]
 name = "hashlib"
@@ -429,7 +426,4 @@ releases = [
 
 [[packages]]
 name = "hmac"
-releases = [
-  "v1.0.0 ca8fe36d68be16722317860394fdf78c620e3e2d"
-]
-
+releases = [ "v1.0.0 ca8fe36d68be16722317860394fdf78c620e3e2d" ]

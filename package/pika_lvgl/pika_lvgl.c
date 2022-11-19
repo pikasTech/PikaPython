@@ -28,8 +28,8 @@
 PikaObj* pika_lv_event_listener_g;
 Args* pika_lv_id_register_g;
 
-#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 11, 5)
-#error "pikascript version must be greater than 1.11.5"
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 11, 7)
+#error "pikascript version must be greater than 1.11.7"
 #endif
 
 void pika_lvgl_STATE___init__(PikaObj* self) {
@@ -195,7 +195,7 @@ void pika_lvgl_PALETTE___init__(PikaObj* self) {
 }
 
 PikaObj* pika_lvgl_scr_act(PikaObj* self) {
-    PikaObj* new_obj = newNormalObj(New_TinyObj);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_lv_obj);
     lv_obj_t* lv_obj = lv_scr_act();
     obj_setPtr(new_obj, "lv_obj", lv_obj);
     return new_obj;
@@ -215,8 +215,8 @@ void pika_lvgl_obj___init__(PikaObj* self, PikaTuple* parent) {
         class_defineConstructor(self, "FLAG", "", pika_lvgl_flag_tMethod);
         return;
     }
-    if (tuple_getSize(parent) == 1) {
-        parent_obj = tuple_getPtr(parent, 0);
+    if (pikaTuple_getSize(parent) == 1) {
+        parent_obj = pikaTuple_getPtr(parent, 0);
         lv_obj_t* lv_parent = obj_getPtr(parent_obj, "lv_obj");
         lv_obj_t* lv_obj = lv_obj_create(lv_parent);
         obj_setPtr(self, "lv_obj", lv_obj);
