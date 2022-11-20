@@ -9,6 +9,7 @@ void PikaStdDevice_GPIO_init(PikaObj* self) {
     obj_setInt(self, "isOn", 0);
     obj_setStr(self, "pull", "none");
     obj_setInt(self, "id", -999);
+    obj_setPtr(self, "pika_dev", NULL);
 }
 
 int PikaStdDevice_GPIO_getId(PikaObj* self) {
@@ -76,38 +77,70 @@ void PikaStdDevice_GPIO_setPull(PikaObj* self, char* pull) {
     }
 }
 
+static pika_dev* _get_dev(PikaObj* self){
+   pika_dev* dev = obj_getPtr(self, "pika_dev");
+   if(NULL != dev){
+       return dev;
+   }
+   dev = pika_hal_open(PIKA_HAL_GPIO, obj_getStr(self, "pin"));
+   if(NULL == dev){
+       __platform_printf("Error: open GPIO '%s' failed.\r\n", obj_getStr(self, "pin"));
+   }
+   obj_setPtr(self, "pika_dev", dev);
+   return dev;
+}
+
 void PikaStdDevice_GPIO_setPin(PikaObj* self, char* pinName) {
     obj_setStr(self, "pin", pinName);
 }
 
 void PikaStdDevice_GPIO_platformDisable(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+   pika_dev* dev = _get_dev(self);
+   pika_hal_ioctl(dev, PIKA_IOCTL_DISABLE);
 }
 
 void PikaStdDevice_GPIO_platformEnable(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+   pika_dev* dev = _get_dev(self);
+   pika_hal_ioctl(dev, PIKA_IOCTL_ENABLE);
 }
 
 void PikaStdDevice_GPIO_platformLow(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+   pika_dev* dev = _get_dev(self);
+   uint32_t val = 0;
+   pika_hal_write(dev, &val, sizeof(val));
 }
 
 void PikaStdDevice_GPIO_platformHigh(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+   pika_dev* dev = _get_dev(self);
+   uint32_t val = 1;
+   pika_hal_write(dev, &val, sizeof(val));
 }
 
 void PikaStdDevice_GPIO_platformSetMode(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
-}
-
-void PikaStdDevice_GPIO_platformOff(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
-}
-
-void PikaStdDevice_GPIO_platformOn(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    char* mode = obj_getStr(self, "mode");
+    pika_GPIO_config cfg = {0};
+    if(strEqu(mode, "in")){
+        cfg.dir = PIKA_GPIO_DIR_IN;
+    }else{
+        cfg.dir = PIKA_GPIO_DIR_OUT;
+    }
+    pika_dev* dev = _get_dev(self);
+    char* pull = obj_getStr(self, "pull");
+    if (strEqu(pull, "up")){
+        cfg.pull = PIKA_GPIO_PULL_UP;
+    }
+    if (strEqu(pull, "down")){
+        cfg.pull = PIKA_GPIO_PULL_DOWN;
+    }
+    if (strEqu(pull, "none")) {
+        cfg.pull = PIKA_GPIO_PULL_NONE;
+    }
+    pika_hal_ioctl(dev, PIKA_IOCTL_CONFIG, &cfg);
 }
 
 void PikaStdDevice_GPIO_platformRead(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    pika_dev* dev = _get_dev(self);
+    uint32_t val = 0;
+    pika_hal_read(dev, &val, sizeof(val));
+    obj_setInt(self, "readBuff", val);
 }
