@@ -188,7 +188,10 @@ releases = [ "v0.1.0 cd6dfbbb714228e7e0f147515d58450644e7dadf" ]
 
 [[packages]]
 name = "re"
-releases = [ "v0.1.0 87da4d26d1ebf9525f66e9fe7acd5ea62f9b7f74" ]
+releases = [
+  "v0.1.0 87da4d26d1ebf9525f66e9fe7acd5ea62f9b7f74",
+  "v0.1.1 728e9dce9ad2c47d5ac16165a583a794043a2e2b"
+]
 
 [[packages]]
 name = "socket"
