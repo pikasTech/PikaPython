@@ -1,7 +1,7 @@
 #undef pika_hal_table_add
 #if defined(PIKA_HAL_TABLE_FILE_API)
 #define pika_hal_table_add(dev_name)                                   \
-    PIKA_WEAK int pika_##dev_name##_open(pika_dev* dev) {              \
+    PIKA_WEAK int pika_##dev_name##_open(pika_dev* dev, char* name) {              \
         WEAK_FUNCTION_NEED_OVERRIDE_ERROR()                            \
         return -1;                                                     \
     }                                                                  \
@@ -9,12 +9,12 @@
         WEAK_FUNCTION_NEED_OVERRIDE_ERROR()                            \
         return -1;                                                     \
     }                                                                  \
-    PIKA_WEAK int pika_##dev_name##_read(pika_dev* dev, uint8_t* buf,  \
+    PIKA_WEAK int pika_##dev_name##_read(pika_dev* dev, void* buf,  \
                                          size_t len) {                 \
         WEAK_FUNCTION_NEED_OVERRIDE_ERROR()                            \
         return -1;                                                     \
     }                                                                  \
-    PIKA_WEAK int pika_##dev_name##_write(pika_dev* dev, uint8_t* buf, \
+    PIKA_WEAK int pika_##dev_name##_write(pika_dev* dev, void* buf, \
                                           size_t len) {                \
         WEAK_FUNCTION_NEED_OVERRIDE_ERROR()                            \
         return -1;                                                     \
@@ -32,17 +32,17 @@
         WEAK_FUNCTION_NEED_OVERRIDE_ERROR()                            \
         return -1;                                                     \
     }                                                                  \
-    int pika_##dev_name##_ioctl(pika_dev* dev, pika_dev_cmd cmd,       \
+    int pika_##dev_name##_ioctl(pika_dev* dev, pika_ioctl_cmd cmd,       \
                                 uintptr_t arg) {                       \
         if (NULL == dev) {                                             \
             return -1;                                                 \
         }                                                              \
         switch (cmd) {                                                 \
-            case PIKA_DEV_CMD_ENABLE:                                  \
+            case PIKA_IOCTL_ENABLE:                                  \
                 return pika_##dev_name##_ioctl_enable(dev);            \
-            case PIKA_DEV_CMD_DISABLE:                                 \
+            case PIKA_IOCTL_DISABLE:                                 \
                 return pika_##dev_name##_ioctl_disable(dev);           \
-            case PIKA_DEV_CMD_CONFIG:                                  \
+            case PIKA_IOCTL_CONFIG:                                  \
                 return pika_##dev_name##_ioctl_config(                 \
                     dev, (pika_##dev_name##_config*)arg);              \
             default:                                                   \

@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 /*
- * pika_dev_hal is a C HAL lib for PikaScript modules.
- * the api of pika_dev_hal is similar to the api of posix file API.
+ * pika_hal is a C Device HAL lib for PikaScript modules.
+ * the API of pika_hal is similar to the posix file API.
  */
 
 typedef enum pika_dev_type {
@@ -14,12 +14,12 @@ typedef enum pika_dev_type {
     _PIKA_DEV_TYPE_MAX,
 } pika_dev_type;
 
-typedef enum pika_dev_cmd {
-    PIKA_DEV_CMD_ENABLE,
-    PIKA_DEV_CMD_DISABLE,
-    PIKA_DEV_CMD_CONFIG,
-    _PIKA_DEV_CMD_MAX,
-} pika_dev_cmd;
+typedef enum pika_ioctl_cmd {
+    PIKA_IOCTL_ENABLE,
+    PIKA_IOCTL_DISABLE,
+    PIKA_IOCTL_CONFIG,
+    _PIKA_IOCTL_MAX,
+} pika_ioctl_cmd;
 
 typedef enum pika_gpio_dir {
     PIKA_GPIO_DIR_IN,
@@ -60,18 +60,18 @@ typedef struct pika_dev {
 } pika_dev;
 
 typedef struct pika_dev_impl {
-    int (*open)(pika_dev* dev);
+    int (*open)(pika_dev* dev, char* name);
     int (*close)(pika_dev* dev);
-    int (*read)(pika_dev* dev, uint8_t* buf, size_t count);
-    int (*write)(pika_dev* dev, uint8_t* buf, size_t count);
-    int (*ioctl)(pika_dev* dev, pika_dev_cmd cmd, uintptr_t cfg);
+    int (*read)(pika_dev* dev, void* buf, size_t count);
+    int (*write)(pika_dev* dev, void* buf, size_t count);
+    int (*ioctl)(pika_dev* dev, pika_ioctl_cmd cmd, uintptr_t cfg);
 } pika_dev_impl;
 
 /* posix file like API */
 pika_dev* pika_hal_open(pika_dev_type dev_type, char* name);
 int pika_hal_close(pika_dev* dev);
-int pika_hal_read(pika_dev* dev, uint8_t* buf, size_t len);
-int pika_hal_write(pika_dev* dev, uint8_t* buf, size_t len);
-int PIKA_HAL_TABLE_FILE_API(pika_dev* dev, pika_dev_cmd cmd, ...);
+int pika_hal_read(pika_dev* dev, void* buf, size_t len);
+int pika_hal_write(pika_dev* dev, void* buf, size_t len);
+int pika_hal_ioctl(pika_dev* dev, pika_ioctl_cmd cmd, ...);
 
 #endif
