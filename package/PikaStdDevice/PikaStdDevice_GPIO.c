@@ -1,5 +1,6 @@
 #include "PikaStdDevice_GPIO.h"
 #include "BaseObj.h"
+#include "pika_hal.h"
 
 void PikaStdDevice_GPIO_init(PikaObj* self) {
     obj_setInt(self, "isEnable", 0);
