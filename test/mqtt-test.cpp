@@ -94,4 +94,13 @@ TEST(mqtt, init) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(mqtt, connect) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    pikaVM_runSingleFile(pikaMain, "test/python/mqtt/mqtt_connect.py");
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif
