@@ -138,12 +138,14 @@ struct PikaDict {
 /* dict api */
 PikaDict* New_pikaDict(void);
 
-static inline PIKA_RES pikaDict_setInt(PikaDict* self, char* name, int64_t val) {
+static inline PIKA_RES pikaDict_setInt(PikaDict* self,
+                                       char* name,
+                                       int64_t val) {
     return args_setInt((&((self)->super)), (name), (val));
 }
 static inline PIKA_RES pikaDict_setFloat(PikaDict* self,
-                                     char* name,
-                                     pika_float val) {
+                                         char* name,
+                                         pika_float val) {
     return args_setFloat((&((self)->super)), (name), (val));
 }
 static inline PIKA_RES pikaDict_setStr(PikaDict* self, char* name, char* val) {
@@ -162,9 +164,9 @@ static inline PIKA_RES pikaDict_removeArg(PikaDict* self, Arg* val) {
 }
 
 static inline PIKA_RES pikaDict_setBytes(PikaDict* self,
-                                     char* name,
-                                     uint8_t* val,
-                                     size_t size) {
+                                         char* name,
+                                         uint8_t* val,
+                                         size_t size) {
     return args_setBytes((&((self)->super)), (name), (val), (size));
 }
 
@@ -186,6 +188,10 @@ static inline void* pikaDict_getPtr(PikaDict* self, char* name) {
 
 static inline Arg* pikaDict_getArg(PikaDict* self, char* name) {
     return args_getArg((&((self)->super)), (name));
+}
+
+static inline int32_t pikaDict_isArgExist(PikaDict* self, char* name) {
+    return args_isArgExist((&((self)->super)), (name));
 }
 
 static inline uint8_t* pikaDict_getBytes(PikaDict* self, char* name) {
