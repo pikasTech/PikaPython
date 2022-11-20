@@ -95,6 +95,9 @@ TEST(mqtt, init) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if 0
+//! Mqtt connect will break the gichub actions, 
+//! if need to test, please enable it manually.
 TEST(mqtt, connect) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
@@ -103,4 +106,6 @@ TEST(mqtt, connect) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
+
 #endif
