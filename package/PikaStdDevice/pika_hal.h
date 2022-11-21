@@ -26,6 +26,13 @@ typedef enum {
     _PIKA_HAL_IOCTL_MAX,
 } PIKA_HAL_IOCTL_CMD;
 
+/* posix file like API */
+pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name);
+int pika_hal_close(pika_dev* dev);
+int pika_hal_read(pika_dev* dev, void* buf, size_t len);
+int pika_hal_write(pika_dev* dev, void* buf, size_t len);
+int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...);
+
 typedef enum {
     _PIKA_HAL_GPIO_DIR_UNUSED = 0,
     PIKA_HAL_GPIO_DIR_IN,
@@ -236,13 +243,6 @@ typedef struct pika_dev_impl {
     int (*write)(pika_dev* dev, void* buf, size_t count);
     int (*ioctl)(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, uintptr_t cfg);
 } pika_dev_impl;
-
-/* posix file like API */
-pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name);
-int pika_hal_close(pika_dev* dev);
-int pika_hal_read(pika_dev* dev, void* buf, size_t len);
-int pika_hal_write(pika_dev* dev, void* buf, size_t len);
-int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...);
 
 /* platform API */
 #define PIKA_HAL_TABLE_PLATFORM_API
