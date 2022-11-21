@@ -96,12 +96,12 @@ void PikaStdDevice_GPIO_setPin(PikaObj* self, char* pinName) {
 
 void PikaStdDevice_GPIO_platformDisable(PikaObj* self) {
    pika_dev* dev = _get_dev(self);
-   pika_hal_ioctl(dev, PIKA_IOCTL_DISABLE);
+   pika_hal_ioctl(dev, PIKA_HAL_IOCTL_DISABLE);
 }
 
 void PikaStdDevice_GPIO_platformEnable(PikaObj* self) {
    pika_dev* dev = _get_dev(self);
-   pika_hal_ioctl(dev, PIKA_IOCTL_ENABLE);
+   pika_hal_ioctl(dev, PIKA_HAL_IOCTL_ENABLE);
 }
 
 void PikaStdDevice_GPIO_platformLow(PikaObj* self) {
@@ -118,24 +118,24 @@ void PikaStdDevice_GPIO_platformHigh(PikaObj* self) {
 
 void PikaStdDevice_GPIO_platformSetMode(PikaObj* self) {
     char* mode = obj_getStr(self, "mode");
-    pika_GPIO_config cfg = {0};
+    pika_hal_GPIO_config cfg = {0};
     if(strEqu(mode, "in")){
-        cfg.dir = PIKA_GPIO_DIR_IN;
+        cfg.dir = PIKA_HAL_GPIO_DIR_IN;
     }else{
-        cfg.dir = PIKA_GPIO_DIR_OUT;
+        cfg.dir = PIKA_HAL_GPIO_DIR_OUT;
     }
     pika_dev* dev = _get_dev(self);
     char* pull = obj_getStr(self, "pull");
     if (strEqu(pull, "up")){
-        cfg.pull = PIKA_GPIO_PULL_UP;
+        cfg.pull = PIKA_HAL_GPIO_PULL_UP;
     }
     if (strEqu(pull, "down")){
-        cfg.pull = PIKA_GPIO_PULL_DOWN;
+        cfg.pull = PIKA_HAL_GPIO_PULL_DOWN;
     }
     if (strEqu(pull, "none")) {
-        cfg.pull = PIKA_GPIO_PULL_NONE;
+        cfg.pull = PIKA_HAL_GPIO_PULL_NONE;
     }
-    pika_hal_ioctl(dev, PIKA_IOCTL_CONFIG, &cfg);
+    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg);
 }
 
 void PikaStdDevice_GPIO_platformRead(PikaObj* self) {
