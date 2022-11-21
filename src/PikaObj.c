@@ -1603,7 +1603,7 @@ Arg* pks_eventLisener_sendSignalAwaitResult(PikaEventListener* self,
                                             uint32_t eventId,
                                             int eventSignal) {
     /*
-     * Await result from evnet.
+     * Await result from event.
      * need implement `__platform_thread_delay()` to support thread switch */
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
