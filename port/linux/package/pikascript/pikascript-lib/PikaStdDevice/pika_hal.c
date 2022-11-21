@@ -4,24 +4,26 @@
 #define PIKA_HAL_TABLE_FILE_API
 #include "pika_hal_table.h"
 
-static const pika_dev_impl pika_dev_impl_list[_PIKA_DEV_TYPE_MAX] = {
+static const pika_dev_impl pika_dev_impl_list[] = {
 #define PIKA_HAL_TABLE_IMPL
 #include "pika_hal_table.h"
 };
 
-static pika_dev_impl* _pika_dev_get_impl(pika_dev_type type) {
+static pika_dev_impl* _pika_dev_get_impl(PIKA_HAL_DEV_TYPE type) {
     if (type >= _PIKA_DEV_TYPE_MAX) {
         return NULL;
     }
     return (pika_dev_impl*)&pika_dev_impl_list[type];
 }
 
-pika_dev* pika_hal_open(pika_dev_type dev_type, char* name) {
+pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name) {
     if (dev_type >= _PIKA_DEV_TYPE_MAX) {
+        __platform_printf("Error: dev_type invalied.\r\n"); 
         return NULL;
     }
     pika_dev_impl* impl = _pika_dev_get_impl(dev_type);
     if (impl->open == NULL) {
+        __platform_printf("Error: dev_open_impl not implamented.\r\n"); 
         return NULL;
     }
     pika_dev* dev = (pika_dev*)pikaMalloc(sizeof(pika_dev));
@@ -29,8 +31,9 @@ pika_dev* pika_hal_open(pika_dev_type dev_type, char* name) {
         return NULL;
     }
     dev->type = dev_type;
-    if (impl->open(dev) != 0) {
+    if (impl->open(dev, name) != 0) {
         pikaFree(dev, sizeof(pika_dev));
+        __platform_printf("Error: dev_open failed.\r\n"); 
         return NULL;
     }
     return dev;
@@ -49,7 +52,7 @@ int pika_hal_close(pika_dev* dev) {
     return ret;
 }
 
-int pika_hal_read(pika_dev* dev, uint8_t* buf, size_t len) {
+int pika_hal_read(pika_dev* dev, void* buf, size_t len) {
     if (dev == NULL) {
         return -1;
     }
@@ -60,7 +63,7 @@ int pika_hal_read(pika_dev* dev, uint8_t* buf, size_t len) {
     return impl->read(dev, buf, len);
 }
 
-int pika_hal_write(pika_dev* dev, uint8_t* buf, size_t len) {
+int pika_hal_write(pika_dev* dev, void* buf, size_t len) {
     if (dev == NULL) {
         return -1;
     }
@@ -71,20 +74,20 @@ int pika_hal_write(pika_dev* dev, uint8_t* buf, size_t len) {
     return impl->write(dev, buf, len);
 }
 
-static const int _pika_hal_cmd_arg_cnt[_PIKA_DEV_CMD_MAX] = {
-    [PIKA_DEV_CMD_ENABLE] = 0,
-    [PIKA_DEV_CMD_DISABLE] = 0,
-    [PIKA_DEV_CMD_CONFIG] = 1,
+static const int _pika_hal_cmd_arg_cnt[_PIKA_HAL_IOCTL_MAX] = {
+    [PIKA_HAL_IOCTL_ENABLE] = 0,
+    [PIKA_HAL_IOCTL_DISABLE] = 0,
+    [PIKA_HAL_IOCTL_CONFIG] = 1,
 };
 
-static int _pika_hal_get_arg_cnt(pika_dev_cmd cmd) {
-    if (cmd >= _PIKA_DEV_CMD_MAX) {
+static int _pika_hal_get_arg_cnt(PIKA_HAL_IOCTL_CMD cmd) {
+    if (cmd >= _PIKA_HAL_IOCTL_MAX) {
         return -1;
     }
     return _pika_hal_cmd_arg_cnt[cmd];
 }
 
-int pika_hal_ioctl(pika_dev* dev, pika_dev_cmd cmd, ...) {
+int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
     if (dev == NULL) {
         return -1;
     }
