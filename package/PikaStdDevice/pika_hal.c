@@ -9,14 +9,14 @@ static const pika_dev_impl pika_dev_impl_list[] = {
 #include "pika_hal_table.h"
 };
 
-static pika_dev_impl* _pika_dev_get_impl(pika_dev_type type) {
+static pika_dev_impl* _pika_dev_get_impl(PIKA_HAL_DEV_TYPE type) {
     if (type >= _PIKA_DEV_TYPE_MAX) {
         return NULL;
     }
     return (pika_dev_impl*)&pika_dev_impl_list[type];
 }
 
-pika_dev* pika_hal_open(pika_dev_type dev_type, char* name) {
+pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name) {
     if (dev_type >= _PIKA_DEV_TYPE_MAX) {
         __platform_printf("Error: dev_type invalied.\r\n"); 
         return NULL;
@@ -74,20 +74,20 @@ int pika_hal_write(pika_dev* dev, void* buf, size_t len) {
     return impl->write(dev, buf, len);
 }
 
-static const int _pika_hal_cmd_arg_cnt[_PIKA_IOCTL_MAX] = {
-    [PIKA_IOCTL_ENABLE] = 0,
-    [PIKA_IOCTL_DISABLE] = 0,
-    [PIKA_IOCTL_CONFIG] = 1,
+static const int _pika_hal_cmd_arg_cnt[_PIKA_HAL_IOCTL_MAX] = {
+    [PIKA_HAL_IOCTL_ENABLE] = 0,
+    [PIKA_HAL_IOCTL_DISABLE] = 0,
+    [PIKA_HAL_IOCTL_CONFIG] = 1,
 };
 
-static int _pika_hal_get_arg_cnt(pika_ioctl_cmd cmd) {
-    if (cmd >= _PIKA_IOCTL_MAX) {
+static int _pika_hal_get_arg_cnt(PIKA_HAL_IOCTL_CMD cmd) {
+    if (cmd >= _PIKA_HAL_IOCTL_MAX) {
         return -1;
     }
     return _pika_hal_cmd_arg_cnt[cmd];
 }
 
-int pika_hal_ioctl(pika_dev* dev, pika_ioctl_cmd cmd, ...) {
+int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
     if (dev == NULL) {
         return -1;
     }
