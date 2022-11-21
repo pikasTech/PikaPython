@@ -149,7 +149,7 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
     return ret;
 }
 
-#define _ioctl_config_use_default(item, default) \
+#define _IOCTL_CONFIG_USE_DEFAULT(item, default) \
     if (src->item == 0) {                        \
         if (dst->item == 0) {                    \
             /* use default value */              \
@@ -164,52 +164,52 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
 
 int pika_hal_GPIO_ioctl_merge_config(pika_hal_GPIO_config* dst,
                                      pika_hal_GPIO_config* src) {
-    _ioctl_config_use_default(dir, PIKA_HAL_GPIO_DIR_IN);
-    _ioctl_config_use_default(pull, PIKA_HAL_GPIO_PULL_NONE);
-    _ioctl_config_use_default(speed, PIKA_HAL_GPIO_SPEED_10M);
-    _ioctl_config_use_default(event_callback_rising, NULL);
-    _ioctl_config_use_default(event_callback_falling, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(dir, PIKA_HAL_GPIO_DIR_IN);
+    _IOCTL_CONFIG_USE_DEFAULT(pull, PIKA_HAL_GPIO_PULL_NONE);
+    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_GPIO_SPEED_10M);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_rising, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_falling, NULL);
     return 0;
 }
 
 int pika_hal_UART_ioctl_merge_config(pika_hal_UART_config* dst,
                                      pika_hal_UART_config* src) {
-    _ioctl_config_use_default(baudrate, PIKA_HAL_UART_BAUDRATE_115200);
-    _ioctl_config_use_default(data_bits, PIKA_HAL_UART_DATA_BITS_8);
-    _ioctl_config_use_default(stop_bits, PIKA_HAL_UART_STOP_BITS_1);
-    _ioctl_config_use_default(parity, PIKA_HAL_UART_PARITY_NONE);
-    _ioctl_config_use_default(event_callback_rx, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(baudrate, PIKA_HAL_UART_BAUDRATE_115200);
+    _IOCTL_CONFIG_USE_DEFAULT(data_bits, PIKA_HAL_UART_DATA_BITS_8);
+    _IOCTL_CONFIG_USE_DEFAULT(stop_bits, PIKA_HAL_UART_STOP_BITS_1);
+    _IOCTL_CONFIG_USE_DEFAULT(parity, PIKA_HAL_UART_PARITY_NONE);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_rx, NULL);
     return 0;
 }
 
 int pika_hal_SPI_ioctl_merge_config(pika_hal_SPI_config* dst,
                                     pika_hal_SPI_config* src) {
-    _ioctl_config_use_default(lsb_or_msb, PIKA_HAL_SPI_MSB);
-    _ioctl_config_use_default(master_or_slave, PIKA_HAL_SPI_MASTER);
-    _ioctl_config_use_default(mode, PIKA_HAL_SPI_MODE_0);
-    _ioctl_config_use_default(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
-    _ioctl_config_use_default(speed, PIKA_HAL_SPI_SPEED_10M);
+    _IOCTL_CONFIG_USE_DEFAULT(lsb_or_msb, PIKA_HAL_SPI_MSB);
+    _IOCTL_CONFIG_USE_DEFAULT(master_or_slave, PIKA_HAL_SPI_MASTER);
+    _IOCTL_CONFIG_USE_DEFAULT(mode, PIKA_HAL_SPI_MODE_0);
+    _IOCTL_CONFIG_USE_DEFAULT(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
+    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_10M);
     return 0;
 }
 
 int pika_hal_IIC_ioctl_merge_config(pika_hal_IIC_config* dst,
                                     pika_hal_IIC_config* src) {
-    _ioctl_config_use_default(addr, 0);
-    _ioctl_config_use_default(speed, PIKA_HAL_IIC_SPEED_100K);
+    _IOCTL_CONFIG_USE_DEFAULT(addr, 0);
+    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_IIC_SPEED_100K);
     return 0;
 }
 
 int pika_hal_PWM_ioctl_merge_config(pika_hal_PWM_config* dst,
                                     pika_hal_PWM_config* src) {
-    _ioctl_config_use_default(channel, PIKA_HAL_PWM_CHANNEL_0);
-    _ioctl_config_use_default(period, PIKA_HAL_PWM_PERIOD_1MS * 10);
-    _ioctl_config_use_default(duty, PIKA_HAL_PWM_PERIOD_1MS * 5);
+    _IOCTL_CONFIG_USE_DEFAULT(channel, PIKA_HAL_PWM_CHANNEL_0);
+    _IOCTL_CONFIG_USE_DEFAULT(period, PIKA_HAL_PWM_PERIOD_1MS * 10);
+    _IOCTL_CONFIG_USE_DEFAULT(duty, PIKA_HAL_PWM_PERIOD_1MS * 5);
     return 0;
 }
 
 int pika_hal_ADC_ioctl_merge_config(pika_hal_ADC_config* dst,
                                     pika_hal_ADC_config* src) {
-    _ioctl_config_use_default(channel, PIKA_HAL_ADC_CHANNEL_0);
-    _ioctl_config_use_default(resolution, PIKA_HAL_ADC_RESOLUTION_12);
+    _IOCTL_CONFIG_USE_DEFAULT(channel, PIKA_HAL_ADC_CHANNEL_0);
+    _IOCTL_CONFIG_USE_DEFAULT(resolution, PIKA_HAL_ADC_RESOLUTION_12);
     return 0;
 }
