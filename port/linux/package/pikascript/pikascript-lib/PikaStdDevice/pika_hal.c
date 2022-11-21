@@ -9,6 +9,9 @@ static const pika_dev_impl pika_dev_impl_list[] = {
 #include "pika_hal_table.h"
 };
 
+#define _PIKA_DEV_TYPE_MAX \
+    (sizeof pika_dev_impl_list / sizeof pika_dev_impl_list[0])
+
 static pika_dev_impl* _pika_dev_get_impl(PIKA_HAL_DEV_TYPE type) {
     if (type >= _PIKA_DEV_TYPE_MAX) {
         return NULL;
@@ -16,39 +19,61 @@ static pika_dev_impl* _pika_dev_get_impl(PIKA_HAL_DEV_TYPE type) {
     return (pika_dev_impl*)&pika_dev_impl_list[type];
 }
 
+static size_t _pika_hal_dev_config_size(PIKA_HAL_DEV_TYPE dev_type) {
+#define PIKA_HAL_TABLE_DEV_CONFIG_SIZE
+#include "pika_hal_table.h"
+    return 0;
+}
+
 pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name) {
+    int ret = -1;
     if (dev_type >= _PIKA_DEV_TYPE_MAX) {
         __platform_printf("Error: dev_type invalied.\r\n");
-        return NULL;
+        goto __exit;
     }
     pika_dev_impl* impl = _pika_dev_get_impl(dev_type);
-    if (impl->open == NULL) {
-        __platform_printf("Error: dev_open_impl not implamented.\r\n");
-        return NULL;
-    }
     pika_dev* dev = (pika_dev*)pikaMalloc(sizeof(pika_dev));
     if (dev == NULL) {
-        return NULL;
+        goto __exit;
     }
     dev->type = dev_type;
-    if (impl->open(dev, name) != 0) {
-        pikaFree(dev, sizeof(pika_dev));
-        __platform_printf("Error: dev_open failed.\r\n");
-        return NULL;
+    dev->ioctl_config = pikaMalloc(_pika_hal_dev_config_size(dev_type));
+    if (dev->ioctl_config == NULL) {
+        goto __exit;
     }
-    return dev;
+    ret = impl->open(dev, name);
+__exit:
+    if (0 == ret) {
+        return dev;
+    }
+    /* error */
+    __platform_printf("Error: dev_open failed.\r\n");
+    if (dev->ioctl_config) {
+        pikaFree(dev->ioctl_config, _pika_hal_dev_config_size(dev_type));
+    }
+    if (dev) {
+        pikaFree(dev, sizeof(pika_dev));
+    }
+    return NULL;
 }
 
 int pika_hal_close(pika_dev* dev) {
+    int ret = -1;
     if (dev == NULL) {
-        return -1;
+        goto __exit;
     }
     pika_dev_impl* impl = _pika_dev_get_impl(dev->type);
     if (impl->close == NULL) {
-        return -1;
+        goto __exit;
     }
-    int ret = impl->close(dev);
-    pikaFree(dev, sizeof(pika_dev));
+    ret = impl->close(dev);
+__exit:
+    if (NULL != dev) {
+        pikaFree(dev, sizeof(pika_dev));
+    }
+    if (NULL != dev->ioctl_config) {
+        pikaFree(dev->ioctl_config, _pika_hal_dev_config_size(dev->type));
+    }
     return ret;
 }
 
@@ -74,20 +99,30 @@ int pika_hal_write(pika_dev* dev, void* buf, size_t len) {
     return impl->write(dev, buf, len);
 }
 
-static const int _pika_hal_cmd_arg_cnt[_PIKA_HAL_IOCTL_MAX] = {
-    [PIKA_HAL_IOCTL_ENABLE] = 0,
+static const int _pika_hal_cmd_arg_cnt[] = {
     [PIKA_HAL_IOCTL_CONFIG] = 1,
+    [PIKA_HAL_IOCTL_ENABLE] = 0,
     [PIKA_HAL_IOCTL_DISABLE] = 0,
 };
 
+#define _PIKA_HAL_CMD_ARG_CNT_MAX \
+    (sizeof _pika_hal_cmd_arg_cnt / sizeof _pika_hal_cmd_arg_cnt[0])
+
 static int _pika_hal_get_arg_cnt(PIKA_HAL_IOCTL_CMD cmd) {
-    if (cmd >= _PIKA_HAL_IOCTL_MAX) {
+    if (cmd >= _PIKA_HAL_CMD_ARG_CNT_MAX) {
         return -1;
     }
     return _pika_hal_cmd_arg_cnt[cmd];
 }
 
+int _pika_hal_ioctl_merge_config(pika_dev* dev, void* config_in) {
+#define PIKA_HAL_TABLE_IOCTL_MERGE_CONFIG
+#include "pika_hal_table.h"
+    return -1;
+}
+
 int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
+    int ret = -1;
     if (dev == NULL) {
         return -1;
     }
@@ -99,10 +134,82 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
     if (impl->ioctl == NULL) {
         return -1;
     }
-    va_list args;
-    va_start(args, arg_cnt);
-    uintptr_t arg = va_arg(args, uintptr_t);
-    int ret = impl->ioctl(dev, cmd, arg);
-    va_end(args);
+    void* config_in = NULL;
+    if (arg_cnt != 0) {
+        va_list args;
+        va_start(args, arg_cnt);
+        config_in = va_arg(args, void*);
+        ret = _pika_hal_ioctl_merge_config(dev, config_in);
+        va_end(args);
+    }
+    if (0 != ret) {
+        return ret;
+    }
+    ret = impl->ioctl(dev, cmd, dev->ioctl_config);
     return ret;
+}
+
+#define _ioctl_config_set_default(item, default) \
+    if (src->item == 0) {                        \
+        if (dst->item == 0) {                    \
+            /* use default value */              \
+            dst->item = default;                 \
+        } else {                                 \
+            /* keep exist value */               \
+        }                                        \
+    } else {                                     \
+        /* use input value */                    \
+        src->item = dst->item;                   \
+    }
+
+int pika_hal_GPIO_ioctl_merge_config(pika_hal_GPIO_config* dst,
+                                     pika_hal_GPIO_config* src) {
+    _ioctl_config_set_default(dir, PIKA_HAL_GPIO_DIR_IN);
+    _ioctl_config_set_default(pull, PIKA_HAL_GPIO_PULL_NONE);
+    _ioctl_config_set_default(speed, PIKA_HAL_GPIO_SPEED_10M);
+    _ioctl_config_set_default(event_callback_rising, NULL);
+    _ioctl_config_set_default(event_callback_falling, NULL);
+    return 0;
+}
+
+int pika_hal_UART_ioctl_merge_config(pika_hal_UART_config* dst,
+                                     pika_hal_UART_config* src) {
+    _ioctl_config_set_default(baudrate, PIKA_HAL_UART_BAUDRATE_115200);
+    _ioctl_config_set_default(data_bits, PIKA_HAL_UART_DATA_BITS_8);
+    _ioctl_config_set_default(stop_bits, PIKA_HAL_UART_STOP_BITS_1);
+    _ioctl_config_set_default(parity, PIKA_HAL_UART_PARITY_NONE);
+    _ioctl_config_set_default(event_callback_rx, NULL);
+    return 0;
+}
+
+int pika_hal_SPI_ioctl_merge_config(pika_hal_SPI_config* dst,
+                                    pika_hal_SPI_config* src) {
+    _ioctl_config_set_default(lsb_or_msb, PIKA_HAL_SPI_MSB);
+    _ioctl_config_set_default(master_or_slave, PIKA_HAL_SPI_MASTER);
+    _ioctl_config_set_default(mode, PIKA_HAL_SPI_MODE_0);
+    _ioctl_config_set_default(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
+    _ioctl_config_set_default(speed, PIKA_HAL_SPI_SPEED_10M);
+    return 0;
+}
+
+int pika_hal_IIC_ioctl_merge_config(pika_hal_IIC_config* dst,
+                                    pika_hal_IIC_config* src) {
+    _ioctl_config_set_default(addr, 0);
+    _ioctl_config_set_default(speed, PIKA_HAL_IIC_SPEED_100K);
+    return 0;
+}
+
+int pika_hal_PWM_ioctl_merge_config(pika_hal_PWM_config* dst,
+                                    pika_hal_PWM_config* src) {
+    _ioctl_config_set_default(channel, PIKA_HAL_PWM_CHANNEL_0);
+    _ioctl_config_set_default(period, PIKA_HAL_PWM_PERIOD_1MS * 10);
+    _ioctl_config_set_default(duty, PIKA_HAL_PWM_PERIOD_1MS * 5);
+    return 0;
+}
+
+int pika_hal_ADC_ioctl_merge_config(pika_hal_ADC_config* dst,
+                                    pika_hal_ADC_config* src) {
+    _ioctl_config_set_default(channel, PIKA_HAL_ADC_CHANNEL_0);
+    _ioctl_config_set_default(resolution, PIKA_HAL_ADC_RESOLUTION_12);
+    return 0;
 }

@@ -11,11 +11,11 @@
 typedef enum {
 #define PIKA_HAL_TABLE_DEV_TYPE
 #include "pika_hal_table.h"
-    _PIKA_DEV_TYPE_MAX,
 } PIKA_HAL_DEV_TYPE;
 
 typedef struct {
     PIKA_HAL_DEV_TYPE type;
+    void* ioctl_config;
     void* platform_data;
 } pika_dev;
 
@@ -23,7 +23,6 @@ typedef enum {
     PIKA_HAL_IOCTL_CONFIG,
     PIKA_HAL_IOCTL_ENABLE,
     PIKA_HAL_IOCTL_DISABLE,
-    _PIKA_HAL_IOCTL_MAX,
 } PIKA_HAL_IOCTL_CMD;
 
 /* posix file like API */
@@ -37,7 +36,6 @@ typedef enum {
     _PIKA_HAL_GPIO_DIR_UNUSED = 0,
     PIKA_HAL_GPIO_DIR_IN,
     PIKA_HAL_GPIO_DIR_OUT,
-    _PIKA_HAL_GPIO_DIR_MAX,
 } PIKA_HAL_GPIO_DIR;
 
 typedef enum {
@@ -45,22 +43,25 @@ typedef enum {
     PIKA_HAL_GPIO_PULL_NONE,
     PIKA_HAL_GPIO_PULL_UP,
     PIKA_HAL_GPIO_PULL_DOWN,
-    _PIKA_HAL_GPIO_PULL_MAX,
 } PIKA_HAL_GPIO_PULL;
 
 typedef enum {
     _PIKA_HAL_GPIO_SPEED_UNUSED = 0,
-    PIKA_HAL_GPIO_SPEED_LOW,
-    PIKA_HAL_GPIO_SPEED_HIGH,
-    _PIKA_HAL_GPIO_SPEED_MAX,
+    PIKA_HAL_GPIO_SPEED_1M = 1000000,
+    PIKA_HAL_GPIO_SPEED_2M = 2000000,
+    PIKA_HAL_GPIO_SPEED_5M = 5000000,
+    PIKA_HAL_GPIO_SPEED_10M = 10000000,
+    PIKA_HAL_GPIO_SPEED_20M = 20000000,
+    PIKA_HAL_GPIO_SPEED_50M = 50000000,
+    PIKA_HAL_GPIO_SPEED_100M = 100000000,
 } PIKA_HAL_GPIO_SPEED;
 
 typedef struct {
     PIKA_HAL_GPIO_DIR dir;
     PIKA_HAL_GPIO_PULL pull;
     PIKA_HAL_GPIO_SPEED speed;
-    void (*evnet_callback_rising)(pika_dev* dev);
-    void (*evnet_callback_falling)(pika_dev* dev);
+    void (*event_callback_rising)(pika_dev* dev);
+    void (*event_callback_falling)(pika_dev* dev);
 } pika_hal_GPIO_config;
 
 typedef enum {
@@ -93,7 +94,6 @@ typedef enum {
     PIKA_HAL_UART_PARITY_NONE,
     PIKA_HAL_UART_PARITY_ODD,
     PIKA_HAL_UART_PARITY_EVEN,
-    _PIKA_HAL_UART_PARITY_MAX,
 } PIKA_HAL_UART_PARITY;
 
 typedef struct {
@@ -101,16 +101,16 @@ typedef struct {
     PIKA_HAL_UART_DATA_BITS data_bits;
     PIKA_HAL_UART_STOP_BITS stop_bits;
     PIKA_HAL_UART_PARITY parity;
-    void (*evnet_callback_rx)(pika_dev* dev);
+    void (*event_callback_rx)(pika_dev* dev);
 } pika_hal_UART_config;
 
 typedef uint32_t PIKA_HAL_IIC_SLAVE_ADDR;
 
 typedef enum {
     _PIKA_HAL_IIC_SPEED_UNUSED = 0,
-    PIKA_HAL_IIC_SPEED_LOW,
-    PIKA_HAL_IIC_SPEED_HIGH,
-    _PIKA_HAL_IIC_SPEED_MAX,
+    PIKA_HAL_IIC_SPEED_100K = 100000,
+    PIKA_HAL_IIC_SPEED_400K = 400000,
+    PIKA_HAL_IIC_SPEED_1M = 1000000,
 } PIKA_HAL_IIC_SPEED;
 
 typedef struct {
@@ -122,14 +122,12 @@ typedef enum {
     _PIKA_HAL_SPI_LSB_OR_MSB_UNUSED = 0,
     PIKA_HAL_SPI_LSB,
     PIKA_HAL_SPI_MSB,
-    _PIKA_HAL_SPI_LSB_OR_MSB_MAX,
 } PIKA_HAL_SPI_LSB_OR_MSB;
 
 typedef enum {
     _PIKA_HAL_SPI_MASTER_OR_SLAVE_UNUSED = 0,
     PIKA_HAL_SPI_MASTER,
     PIKA_HAL_SPI_SLAVE,
-    _PIKA_HAL_SPI_MASTER_OR_SLAVE_MAX,
 } PIKA_HAL_SPI_MASTER_OR_SLAVE;
 
 typedef enum {
@@ -138,20 +136,23 @@ typedef enum {
     PIKA_HAL_SPI_MODE_1,
     PIKA_HAL_SPI_MODE_2,
     PIKA_HAL_SPI_MODE_3,
-    _PIKA_HAL_SPI_MODE_MAX,
 } PIKA_HAL_SPI_MODE;
 
 typedef enum {
     _PIKA_HAL_SPI_DATA_UNUSED = 0,
-    PIKA_HAL_SPI_DATA_WIDTH_8BIT = 8,
-    PIKA_HAL_SPI_DATA_WIDTH_16BIT = 16,
+    PIKA_HAL_SPI_DATA_WIDTH_8 = 8,
+    PIKA_HAL_SPI_DATA_WIDTH_16 = 16,
 } PIKA_HAL_SPI_DATA_WIDTH;
 
 typedef enum {
     _PIKA_HAL_SPI_SPEED_UNUSED = 0,
-    PIKA_HAL_SPI_SPEED_LOW,
-    PIKA_HAL_SPI_SPEED_HIGH,
-    _PIKA_HAL_SPI_SPEED_MAX,
+    PIKA_HAL_SPI_SPEED_1M = 1000000,
+    PIKA_HAL_SPI_SPEED_2M = 2000000,
+    PIKA_HAL_SPI_SPEED_5M = 5000000,
+    PIKA_HAL_SPI_SPEED_10M = 10000000,
+    PIKA_HAL_SPI_SPEED_20M = 20000000,
+    PIKA_HAL_SPI_SPEED_50M = 50000000,
+    PIKA_HAL_SPI_SPEED_100M = 100000000,
 } PIKA_HAL_SPI_SPEED;
 
 typedef struct {
@@ -174,29 +175,20 @@ typedef enum {
     PIKA_HAL_ADC_CHANNEL_7,
     PIKA_HAL_ADC_CHANNEL_TEMP,
     PIKA_HAL_ADC_CHANNEL_VBAT,
-    _PIKA_HAL_ADC_CHANNEL_MAX,
 } PIKA_HAL_ADC_CHANNEL;
 
 typedef enum {
     _PIKA_HAL_ADC_RESOLUTION_UNUSED = 0,
-    PIKA_HAL_ADC_RESOLUTION_8BIT = 8,
-    PIKA_HAL_ADC_RESOLUTION_10BIT = 10,
-    PIKA_HAL_ADC_RESOLUTION_12BIT = 12,
-    PIKA_HAL_ADC_RESOLUTION_14BIT = 14,
-    PIKA_HAL_ADC_RESOLUTION_16BIT = 16,
+    PIKA_HAL_ADC_RESOLUTION_8 = 8,
+    PIKA_HAL_ADC_RESOLUTION_10 = 10,
+    PIKA_HAL_ADC_RESOLUTION_12 = 12,
+    PIKA_HAL_ADC_RESOLUTION_14 = 14,
+    PIKA_HAL_ADC_RESOLUTION_16 = 16,
 } PIKA_HAL_ADC_RESOLUTION;
-
-typedef enum {
-    _PIKA_HAL_ADC_SPEED_UNUSED = 0,
-    PIKA_HAL_ADC_SPEED_LOW,
-    PIKA_HAL_ADC_SPEED_HIGH,
-    _PIKA_HAL_ADC_SPEED_MAX,
-} PIKA_HAL_ADC_SPEED;
 
 typedef struct {
     PIKA_HAL_ADC_CHANNEL channel;
     PIKA_HAL_ADC_RESOLUTION resolution;
-    PIKA_HAL_ADC_SPEED speed;
 } pika_hal_ADC_config;
 
 typedef enum {
@@ -236,11 +228,15 @@ typedef struct pika_dev_impl {
     int (*close)(pika_dev* dev);
     int (*read)(pika_dev* dev, void* buf, size_t count);
     int (*write)(pika_dev* dev, void* buf, size_t count);
-    int (*ioctl)(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, uintptr_t cfg);
+    int (*ioctl)(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, void* cfg);
 } pika_dev_impl;
 
 /* platform API */
 #define PIKA_HAL_TABLE_PLATFORM_API
+#include "pika_hal_table.h"
+
+/* config merge headers */
+#define PIKA_HAL_TABLE_IOCTL_MERGE_CONFIG_HEADER
 #include "pika_hal_table.h"
 
 #endif

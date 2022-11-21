@@ -35,7 +35,7 @@
         return -1;                                                             \
     }                                                                          \
     int pika_hal_##dev_name##_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd,     \
-                                    uintptr_t arg) {                           \
+                                    void* arg) {                               \
         if (NULL == dev) {                                                     \
             return -1;                                                         \
         }                                                                      \
@@ -83,7 +83,31 @@
         pika_dev* dev, pika_hal_##dev_name##_config* cfg);
 #endif
 
+#if defined(PIKA_HAL_TABLE_DEV_CONFIG_SIZE)
+#define pika_hal_table_add(dev_name)                 \
+    if (dev_type == PIKA_HAL_##dev_name) {           \
+        return sizeof(pika_hal_##dev_name##_config); \
+    }
+#endif
+
+#if defined(PIKA_HAL_TABLE_IOCTL_MERGE_CONFIG)
+#define pika_hal_table_add(dev_name)                                       \
+    if (dev->type == PIKA_HAL_##dev_name) {                                \
+        return pika_hal_##dev_name##_ioctl_merge_config(dev->ioctl_config, \
+                                                        config_in);        \
+    }
+#endif
+
+#if defined(PIKA_HAL_TABLE_IOCTL_MERGE_CONFIG_HEADER)
+#define pika_hal_table_add(dev_name)              \
+    int pika_hal_##dev_name##_ioctl_merge_config( \
+        pika_hal_##dev_name##_config* dst, pika_hal_##dev_name##_config* src);
+#endif
+
 #undef PIKA_HAL_TABLE_FILE_API
 #undef PIKA_HAL_TABLE_DEV_TYPE
 #undef PIKA_HAL_TABLE_IMPL
 #undef PIKA_HAL_TABLE_PLATFORM_API
+#undef PIKA_HAL_TABLE_DEV_CONFIG_SIZE
+#undef PIKA_HAL_TABLE_IOCTL_MERGE_CONFIG
+#undef PIKA_HAL_TABLE_IOCTL_MERGE_CONFIG_HEADER
