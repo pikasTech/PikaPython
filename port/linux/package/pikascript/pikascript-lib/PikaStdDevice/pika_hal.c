@@ -188,7 +188,7 @@ int pika_hal_SPI_ioctl_merge_config(pika_hal_SPI_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(master_or_slave, PIKA_HAL_SPI_MASTER);
     _IOCTL_CONFIG_USE_DEFAULT(mode, PIKA_HAL_SPI_MODE_0);
     _IOCTL_CONFIG_USE_DEFAULT(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
-    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_10M);
+    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_2M);
     return 0;
 }
 
