@@ -187,6 +187,8 @@ int webclient_get_test(int argc, char** argv) {
 }
 }
 
+#if !PIKA_NANO_ENABLE
+
 TEST(requests, webclient_get) {
     char* argv1[] = {"test", "http://www.rt-thread.com/service/rt-thread.txt"};
     EXPECT_EQ(webclient_get_test(2, argv1), 0);
@@ -227,3 +229,4 @@ TEST(requests, append_params_to_url) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif

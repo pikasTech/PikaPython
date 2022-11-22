@@ -478,8 +478,12 @@ Arg* _vm_slice(VMState* vm,
         if (start_i < 0) {
             start_i += len;
         }
+        /* magit code, to the end */
+        if (end_i == -99999) {
+            end_i = len;
+        }
         if (end_i < 0) {
-            end_i += len + 1;
+            end_i += len;
         }
         Arg* sliced_arg = arg_newBytes(NULL, 0);
         for (int i = start_i; i < end_i; i++) {
@@ -930,7 +934,7 @@ static void _kw_push(PikaDict** kw_dict_p,
     char kw_keys_index_buff[11] = {0};
     char* kw_keys_index = fast_itoa(kw_keys_index_buff, i);
     pikaDict_setArg(*kw_keys_p,
-                arg_setInt(NULL, kw_keys_index, arg_getNameHash(call_arg)));
+                    arg_setInt(NULL, kw_keys_index, arg_getNameHash(call_arg)));
 }
 
 static int VMState_loadArgsFromMethodArg(VMState* vm,

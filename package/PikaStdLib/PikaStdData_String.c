@@ -86,8 +86,12 @@ char* string_slice(Args* outBuffs, char* str, int start, int end) {
     if (start < 0) {
         start += string_len(str);
     }
+    /* magic code, to the end */
+    if (end == -99999) {
+        end = string_len(str);
+    }
     if (end < 0) {
-        end += string_len(str) + 1;
+        end += string_len(str);
     }
     for (int i = start; i < end; i++) {
         char char_buff[5] = {0};

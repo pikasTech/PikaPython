@@ -1506,7 +1506,7 @@ static void _AST_parse_slice(AST* ast, Args* buffs, char* stmt) {
         if (index == 0 && strEqu(slice_str, "")) {
             AST_parseSubStmt(ast, "0");
         } else if (index == 1 && strEqu(slice_str, "")) {
-            AST_parseSubStmt(ast, "-1");
+            AST_parseSubStmt(ast, "-99999");
         } else {
             AST_parseSubStmt(ast, slice_str);
         }

@@ -2267,6 +2267,7 @@ TEST(VM, bc_fn_file_cb2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(vm, slice_str_end) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -2281,5 +2282,6 @@ TEST(vm, slice_str_end) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST_END
