@@ -1,70 +1,14 @@
 #include "LCD_Driver.h"
+#include "../PikaStdDevice/pika_hal.h"
 #include "LCD_Config.h"
-#include "pika_bsp.h"
 #include "main.h"
+#include "pika_bsp.h"
 /* config SPI mode, chocie one from three */
 // #define SPI_SOFT
 // #define SPI_HARD
-#define SPI_DMA
 
-SPI_HandleTypeDef hspi1;
-DMA_HandleTypeDef hdma_spi1_tx;
 void SPI_Write_u8(u8 Data);
-
-void DMA1_Channel1_IRQHandler(void) {
-    HAL_DMA_IRQHandler(&hdma_spi1_tx);
-}
-
-static void MX_DMA_Init(void) {
-    /* DMA controller clock enable */
-    __HAL_RCC_DMA1_CLK_ENABLE();
-
-    /* DMA interrupt init */
-    /* DMA1_Channel1_IRQn interrupt configuration */
-    HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
-}
-
-void MX_SPI1_Init(void) {
-    hspi1.Instance = SPI1;
-    hspi1.Init.Mode = SPI_MODE_MASTER;
-    hspi1.Init.Direction = SPI_DIRECTION_1LINE;
-    hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-    hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-    hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-    hspi1.Init.NSS = SPI_NSS_SOFT;
-    hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
-    hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
-    hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
-    hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-    hspi1.Init.CRCPolynomial = 10;
-    hspi1.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
-    hspi1.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
-    HAL_SPI_Init(&hspi1);
-}
-
-void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi) {
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
-    __HAL_RCC_SPI1_CLK_ENABLE();
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    GPIO_InitStruct.Pin = GPIO_PIN_1 | GPIO_PIN_2;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF0_SPI1;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-    hdma_spi1_tx.Instance = DMA1_Channel1;
-    hdma_spi1_tx.Init.Request = DMA_REQUEST_SPI1_TX;
-    hdma_spi1_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_spi1_tx.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_spi1_tx.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_spi1_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    hdma_spi1_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_spi1_tx.Init.Mode = DMA_NORMAL;
-    hdma_spi1_tx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-    HAL_DMA_Init(&hdma_spi1_tx);
-    __HAL_LINKDMA(hspi, hdmatx, hdma_spi1_tx);
-}
+pika_dev* pika_hal_spi;
 
 //液晶IO初始化配置
 void LCD_GPIO_Init(void) {
@@ -79,8 +23,6 @@ void LCD_GPIO_Init(void) {
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-    GPIO_InitStruct.Pin = GPIO_PIN_1;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 #ifdef SPI_SOFT
     GPIO_InitStruct.Pin = GPIO_PIN_1 | GPIO_PIN_2;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -88,21 +30,7 @@ void LCD_GPIO_Init(void) {
 }
 
 void SPI_WriteData_u8(u8* pData, uint32_t size) {
-#ifdef SPI_SOFT
-    for (int i = 0; i < size; i++) {
-        SPI_Write_u8(pData[i]);
-    }
-#else
-#ifdef SPI_DMA
-    /* wait spi ready */
-    while (hspi1.hdmatx->State != HAL_DMA_STATE_READY ||
-           hspi1.State != HAL_SPI_STATE_READY) {
-    };
-    HAL_SPI_Transmit_DMA(&hspi1, pData, size);
-#else
-    HAL_SPI_Transmit(&hspi1, pData, size, HAL_MAX_DELAY);
-#endif
-#endif
+    pika_hal_write(pika_hal_spi, pData, size);
 }
 
 void SPI_WriteData_u16(u16* pData, uint32_t size) {
@@ -132,42 +60,33 @@ void SPI_Write_u8(u8 Data) {
         Data <<= 1;
     }
 #else
-    // SPI_WriteData_u8(&Data, 1);
-    HAL_SPI_Transmit(&hspi1, &Data, 1, HAL_MAX_DELAY);
+    SPI_WriteData_u8(&Data, 1);
 #endif
 }
 
 //向液晶屏写一个8位指令
 void LCD_WriteIndex(u8 Index) {
     // SPI 写命令时序开始
-    LCD_CS_CLR;
     LCD_RS_CLR;
     SPI_Write_u8(Index);
-    LCD_CS_SET;
 }
 
 //向液晶屏写一个8位数据
 void LCD_Write_u8(u8 Data) {
-    LCD_CS_CLR;
     LCD_RS_SET;
     SPI_Write_u8(Data);
-    LCD_CS_SET;
 }
 
 //向液晶屏写一个16位数据
 void LCD_Write_u16(u16 Data) {
-    LCD_CS_CLR;
     LCD_RS_SET;
     SPI_Write_u8(Data >> 8);  //写入高8位数据
     SPI_Write_u8(Data);       //写入低8位数据
-    LCD_CS_SET;
 }
 
 void LCD_WriteData_u16(u16* pData, uint32_t size) {
-    LCD_CS_CLR;
     LCD_RS_SET;
     SPI_WriteData_u16(pData, size);  //写入高8位数据
-    LCD_CS_SET;
 }
 
 void LCD_WriteReg(u8 Index, u8 Data) {
@@ -185,12 +104,10 @@ void LCD_Reset(void) {
 // LCD Init For 1.44Inch LCD Panel with ST7735R.
 void LCD_Init(void) {
     LCD_GPIO_Init();
-#ifndef SPI_SOFT
-    MX_DMA_Init();
-    MX_SPI1_Init();
-#endif
+    /* enable spi hal */
+    pika_hal_spi = pika_hal_open(PIKA_HAL_SPI, "spi1");
+    pika_hal_ioctl(pika_hal_spi, PIKA_HAL_IOCTL_ENABLE);
     LCD_Reset();  // Reset before LCD Init.
-
     // LCD Init For 1.8Inch LCD Panel with ST7735S.
     LCD_WriteIndex(0x11);  // Sleep exit
     delay_ms(120);
@@ -293,7 +210,6 @@ void LCD_SetRegion(u16 x_start, u16 y_start, u16 x_end, u16 y_end) {
     data[1] = (X_OFFSET + x_start) & 0XFF;
     data[2] = (X_OFFSET + x_end) >> 8;
     data[3] = (X_OFFSET + x_end) & 0XFF;
-    LCD_CS_CLR;
     LCD_RS_SET;
     SPI_WriteData_u8(data, sizeof(data));
     LCD_WriteIndex(0x2b);
@@ -301,7 +217,6 @@ void LCD_SetRegion(u16 x_start, u16 y_start, u16 x_end, u16 y_end) {
     data[1] = (Y_OFFSET + y_start) & 0XFF;
     data[2] = (Y_OFFSET + y_end) >> 8;
     data[3] = (Y_OFFSET + y_end) & 0XFF;
-    LCD_CS_CLR;
     LCD_RS_SET;
     SPI_WriteData_u8(data, sizeof(data));
     LCD_WriteIndex(0x2c);
@@ -331,18 +246,9 @@ void LCD_DrawPoint(u16 x, u16 y, u16 Data) {
 void LCD_DrawRegin(u16 x_start, u16 y_start, u16 x_end, u16 y_end, u16* pData) {
     u32 size = (x_end - x_start) * (y_end - y_start) * 2;
     LCD_SetRegion(x_start, y_start, x_end - 1, y_end - 1);
-    LCD_CS_CLR;
     LCD_RS_SET;
     SPI_WriteData_u16(pData, size);
-#ifdef SPI_DMA
-    /* wait spi ready */
-    while (hspi1.hdmatx->State != HAL_DMA_STATE_READY ||
-           hspi1.State != HAL_SPI_STATE_READY) {
-    };
-#endif
-    LCD_CS_SET;
 }
-
 
 #define BUFF_SIZE (X_MAX_PIXEL)
 void LCD_Clear(u16 Color) {
@@ -357,7 +263,7 @@ void LCD_Clear(u16 Color) {
     }
 }
 
-void LCD_Fill(u16 x0,u16 y0,u16 hight,u16 wight,u16 color){
+void LCD_Fill(u16 x0, u16 y0, u16 hight, u16 wight, u16 color) {
     unsigned int i, y;
     u16 data[BUFF_SIZE];
     for (i = 0; i < BUFF_SIZE; i++) {

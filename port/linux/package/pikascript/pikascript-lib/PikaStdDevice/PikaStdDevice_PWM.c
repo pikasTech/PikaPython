@@ -1,5 +1,6 @@
 #include "PikaStdDevice_PWM.h"
 #include "BaseObj.h"
+#include "pika_hal.h"
 
 void PikaStdDevice_PWM_init(PikaObj* self) {
     obj_setStr(self, "pin", "none");
@@ -19,20 +20,20 @@ void PikaStdDevice_PWM_setPin(PikaObj* self, char* pin) {
 
 void PikaStdDevice_PWM_setFrequency(PikaObj* self, int freq) {
     obj_setInt(self, "freq", freq);
-    obj_runNativeMethod(self, "platformSetFrequency",NULL);
+    obj_runNativeMethod(self, "platformSetFrequency", NULL);
 }
 
 void PikaStdDevice_PWM_setDuty(PikaObj* self, pika_float duty) {
     obj_setFloat(self, "duty", duty);
-    obj_runNativeMethod(self, "platformSetDuty",NULL);
+    obj_runNativeMethod(self, "platformSetDuty", NULL);
 }
 
 void PikaStdDevice_PWM_enable(PikaObj* self) {
-    obj_runNativeMethod(self, "platformEnable",NULL);
+    obj_runNativeMethod(self, "platformEnable", NULL);
 }
 
-void PikaStdDevice_PWM_disable(PikaObj *self){
-    obj_runNativeMethod(self, "platformDisable",NULL);
+void PikaStdDevice_PWM_disable(PikaObj* self) {
+    obj_runNativeMethod(self, "platformDisable", NULL);
 }
 
 pika_float PikaStdDevice_PWM_getDuty(PikaObj* self) {
@@ -53,7 +54,7 @@ void PikaStdDevice_PWM_platformSetFrequency(PikaObj* self) {
     ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
-void PikaStdDevice_PWM_platformDisable(PikaObj *self){
+void PikaStdDevice_PWM_platformDisable(PikaObj* self) {
     ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 

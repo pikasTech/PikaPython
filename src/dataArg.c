@@ -274,10 +274,52 @@ char* __printBytes(PikaObj* self, Arg* arg) {
     return str_res;
 }
 
-void arg_printBytes(Arg* self) {
+void arg_printBytes(Arg* self, char* end) {
     PikaObj* obj = New_PikaObj();
-    __platform_printf("%s\r\n", __printBytes(obj, self));
+    __platform_printf("%s%s", __printBytes(obj, self), end);
     obj_deinit(obj);
+}
+
+void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end) {
+    ArgType type = arg_getType(self);
+    if (ARG_TYPE_NONE == type) {
+        __platform_printf("None%s", end);
+        return;
+    }
+    if (argType_isObject(type)) {
+        char* res = obj_toStr(arg_getPtr(self));
+        __platform_printf("%s%s", res, end);
+        return;
+    }
+    if (type == ARG_TYPE_INT) {
+#if PIKA_PRINT_LLD_ENABLE
+        __platform_printf("%lld%s", (long long int)arg_getInt(self), end);
+#else
+        __platform_printf("%d%s", (int)arg_getInt(arg), end);
+#endif
+        return;
+    }
+    if (type == ARG_TYPE_FLOAT) {
+        __platform_printf("%f%s", arg_getFloat(self), end);
+        return;
+    }
+    if (type == ARG_TYPE_STRING) {
+        if (in_REPL) {
+            __platform_printf("'%s'%s", arg_getStr(self), end);
+            return;
+        }
+        __platform_printf("%s%s", arg_getStr(self), end);
+        return;
+    }
+    if (type == ARG_TYPE_BYTES) {
+        arg_printBytes(self, end);
+        return;
+    }
+    if (ARG_TYPE_POINTER == type || ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
+        __platform_printf("%p%s", arg_getPtr(self), end);
+        return;
+    }
+    return;
 }
 
 size_t arg_getBytesSize(Arg* self) {

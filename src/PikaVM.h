@@ -254,10 +254,12 @@ void instructArray_printAsArray(InstructArray* self);
 void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes);
 void byteCodeFrame_printAsArray(ByteCodeFrame* self);
 void byteCodeFrame_init(ByteCodeFrame* self);
-VMParameters* pikaVM_runByteCode(PikaObj* self, uint8_t* bytecode);
+VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode);
+VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode);
 InstructUnit* instructArray_getNow(InstructArray* self);
 InstructUnit* instructArray_getNext(InstructArray* self);
 VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename);
+VMParameters* pikaVM_runByteCodeFile(PikaObj* self, char* filename);
 Arg* obj_runMethodArg(PikaObj* self, PikaObj* method_args_obj, Arg* method_arg);
 PikaObj* pikaVM_runFile(PikaObj* self, char* file_name);
 Arg* _vm_slice(VMState* vm,
@@ -270,7 +272,11 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
                                      VMParameters* locals,
                                      VMParameters* globals,
                                      uint8_t* bytecode,
-                                     RunState* run_state);
+                                     RunState* run_state,
+                                     PIKA_BOOL is_const_bytecode);
+void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
+                                    uint8_t* bytes,
+                                    PIKA_BOOL is_const);
 Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj);
 void __vm_List_append(PikaObj* self, Arg* arg);
 void __vm_List___init__(PikaObj* self);

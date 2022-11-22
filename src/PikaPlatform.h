@@ -40,7 +40,7 @@
 #if PIKA_ASSERT_ENABLE
     #define pika_assert(expr) \
     if(!(expr)) { \
-        __platform_printf("Assertion failed: %s\nfile: %s:%d\n", #expr, __FILE__, __LINE__); \
+        __platform_printf("Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
         abort(); \
     }
 #else

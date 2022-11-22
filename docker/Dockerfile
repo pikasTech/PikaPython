@@ -83,3 +83,4 @@ RUN code-server --install-extension llvm-vs-code-extensions.vscode-clangd
 RUN code-server --install-extension vscodevim.vim
 RUN code-server --install-extension zhuangtongfa.material-theme
 RUN apt-get install clangd -y
+RUN apt-get install libmbedtls-dev -y

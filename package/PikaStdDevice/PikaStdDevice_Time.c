@@ -1,5 +1,6 @@
 #include "PikaStdDevice_Time.h"
 #include "BaseObj.h"
+#include "pika_hal.h"
 #if defined(__linux)
 #include <unistd.h>
 #endif
@@ -17,7 +18,7 @@ void PikaStdDevice_Time_sleep_ms(PikaObj* self, int ms) {
 #endif
 }
 void PikaStdDevice_Time_sleep_s(PikaObj* self, int s) {
-#if defined(__linux) 
+#if defined(__linux)
     sleep(s);
 #elif defined(_WIN32)
     Sleep(s * 1000);
@@ -42,7 +43,7 @@ void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
 
 //结构体时间类型定义(来源c标准库corect_wtime.h)
 //无论是16位整数还是32位整数都满足需求
-typedef struct _tm{
+typedef struct _tm {
     int tm_sec;    // seconds after the minute - [0, 60] including leap second
     int tm_min;    // minutes after the hour - [0, 59]
     int tm_hour;   // hours since midnight - [0, 23]
@@ -137,7 +138,8 @@ pika_float time_time(PikaObj* self) {
         status_deal(res);
     }  //异常处理
     //以浮点数返回时间，float
-    return temp_timespec.tv_sec + (pika_float)temp_timespec.tv_nsec / 1000000000;
+    return temp_timespec.tv_sec +
+           (pika_float)temp_timespec.tv_nsec / 1000000000;
 }
 
 //标准time_ns()方法，返回以整数表示的从 epoch 开始的纳秒数的时间值。
@@ -568,9 +570,9 @@ pika_float PikaStdDevice_Time_time(PikaObj* self) {
         )
     /* clang-format on */
     const uint8_t bytes[] = {
-        0x04, 0x00,             /* instruct array size */
+        0x04, 0x00, 0x00, 0x00, /* instruct array size */
         0x00, 0x82, 0x01, 0x00, /* instruct array */
-        0x11, 0x00,             /* const pool size */
+        0x11, 0x00, 0x00, 0x00, /* const pool size */
         0x00, 0x70, 0x6c, 0x61, 0x74, 0x66, 0x6f, 0x72, 0x6d,
         0x47, 0x65, 0x74, 0x54, 0x69, 0x63, 0x6b, 0x00, /* const pool */
     };

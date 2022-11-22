@@ -4,30 +4,7 @@ import PikaStdDevice
 import PikaStdTask
 
 
-class GPIO(PikaStdDevice.GPIO):
-    # override
-    def platformHigh(self):
-        pass
-
-    # override
-    def platformLow(self):
-        pass
-
-    # override
-    def platformEnable(self):
-        pass
-
-    # override
-    def platformDisable(self):
-        pass
-
-    # override
-    def platformSetMode(self):
-        pass
-
-    # override
-    def platformRead(self):
-        pass
+class GPIO(PikaStdDevice.GPIO): ...
 
 
 class Time(PikaStdDevice.Time):

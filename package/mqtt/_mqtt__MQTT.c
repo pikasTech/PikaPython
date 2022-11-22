@@ -18,62 +18,57 @@ void _mqtt__MQTT___init__(PikaObj* self,
                           char* version,
                           char* ca,
                           int keepalive) {
+    obj_setInt(self, "_connected", 0);
     mqtt_client_t* _client = mqtt_lease();
-    //obj_setPtr(self, "_client", _client);
+    // obj_setPtr(self, "_client", _client);
     /* port to str, and cache to object */
     char port_str[10] = {0};
-    int  tmp = 0;
+    int tmp = 0;
 
-    if(strlen(ip) > 0)
-    {
+    if (strlen(ip) > 0) {
         obj_setStr(self, "host_str", ip);
-        mqtt_set_host(_client, obj_getStr(self,"host_str"));
+        mqtt_set_host(_client, obj_getStr(self, "host_str"));
     }
 
-    memset(port_str,0,sizeof(port_str));
+    memset(port_str, 0, sizeof(port_str));
     __platform_sprintf(port_str, "%d", port);
     obj_setStr(self, "port", port_str);
-    mqtt_set_port(_client, obj_getStr(self,"port"));
+    mqtt_set_port(_client, obj_getStr(self, "port"));
 
-    if(strlen(clinetID) > 0)
-    {
+    if (strlen(clinetID) > 0) {
         obj_setStr(self, "id_str", clinetID);
-        mqtt_set_client_id(_client, obj_getStr(self,"id_str"));
+        mqtt_set_client_id(_client, obj_getStr(self, "id_str"));
     }
 
-    if(strlen(username) > 0)
-    {
+    if (strlen(username) > 0) {
         obj_setStr(self, "username_str", username);
-        mqtt_set_user_name(_client, obj_getStr(self,"username_str"));
+        mqtt_set_user_name(_client, obj_getStr(self, "username_str"));
     }
 
-    if(strlen(password) > 0)
-    {
+    if (strlen(password) > 0) {
         obj_setStr(self, "password_str", password);
-        mqtt_set_password(_client, obj_getStr(self,"password_str"));
+        mqtt_set_password(_client, obj_getStr(self, "password_str"));
     }
-        
+
     tmp = atoi(version);
-    if(tmp > 0)
-    {
+    if (tmp > 0) {
         mqtt_set_version(_client, tmp);
     }
-    
-    if(strlen(ca) > 0)
-    {
+
+    if (strlen(ca) > 0) {
         obj_setStr(self, "ca_str", ca);
-        mqtt_set_ca(_client, obj_getStr(self,"ca_str"));
+        mqtt_set_ca(_client, obj_getStr(self, "ca_str"));
     }
 
-    if(keepalive > 0)
-    {
+    if (keepalive > 0) {
         mqtt_set_keep_alive_interval(_client, keepalive);
     }
 
     mqtt_set_clean_session(_client, 1);
 
-    obj_setPtr(self, "_client", _client);//这里要再保存一次mqtt结构体的内容到python环境
-    __platform_printf("Mqtt_Lib buildtime:%s-%s\r\n",__DATE__,__TIME__);
+    obj_setPtr(self, "_client",
+               _client);  //这里要再保存一次mqtt结构体的内容到python环境
+    __platform_printf("Mqtt_Lib buildtime:%s-%s\r\n", __DATE__, __TIME__);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -84,10 +79,16 @@ void _mqtt__MQTT___init__(PikaObj* self,
 ///////////////////////////////////////////////////////////////////
 void _mqtt__MQTT___del__(PikaObj* self) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
-    if (NULL != _client) {
-        MQTT_LOG_E("%s:%d %s() >_<", __FILE__,__LINE__, __FUNCTION__);
-        mqtt_release_free(_client);
+    if (NULL == _client) {
+        return;
     }
+    /* disconnect autoly if not disconnected */
+    int _connected = obj_getInt(self, "_connected");
+    if (_connected) {
+        _mqtt__MQTT_disconnect(self);
+    }
+    MQTT_LOG_E("%s:%d %s() >_<", __FILE__, __LINE__, __FUNCTION__);
+    mqtt_release_free(_client);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -96,16 +97,16 @@ void _mqtt__MQTT___del__(PikaObj* self) {
 // 输入参数：无
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_connect(PikaObj *self) {
+int _mqtt__MQTT_connect(PikaObj* self) {
     int ret;
-
+    obj_setInt(self, "_connected", 1);
     mqtt_client_t* _client = obj_getPtr(self, "_client");
 
     ret = mqtt_connect(_client);
-    if(ret != 0)
-        __platform_printf("mqtt connect ERROR! :%d\r\n",ret);
+    if (ret != 0)
+        __platform_printf("mqtt connect ERROR! :%d\r\n", ret);
 
-    if(ret == 0)
+    if (ret == 0)
         __platform_printf("mqtt connect OK\r\n");
     return ret;
 }
@@ -116,16 +117,16 @@ int _mqtt__MQTT_connect(PikaObj *self) {
 // 输入参数：无
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_disconnect(PikaObj *self) {
+int _mqtt__MQTT_disconnect(PikaObj* self) {
     int ret;
-
+    obj_setInt(self, "_connected", 0);
     mqtt_client_t* _client = obj_getPtr(self, "_client");
 
     ret = mqtt_disconnect(_client);
-    if(ret != 0)
-        __platform_printf("mqtt disconnect ERROR! :%d\r\n",ret);
+    if (ret != 0)
+        __platform_printf("mqtt disconnect ERROR! :%d\r\n", ret);
 
-    if(ret == 0)
+    if (ret == 0)
         __platform_printf("mqtt disconnect Done\r\n");
     return ret;
 }
@@ -136,8 +137,7 @@ int _mqtt__MQTT_disconnect(PikaObj *self) {
 // 输入参数：无
 // 返 回 值：对象指针
 ///////////////////////////////////////////////////////////////////
-PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj *self) {
-
+PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj* self) {
     return NULL;
 }
 
@@ -147,8 +147,7 @@ PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj *self) {
 // 输入参数：主题名称，有效数据
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_publish(PikaObj *self, char* topic, char* payload) {
-
+int _mqtt__MQTT_publish(PikaObj* self, char* topic, char* payload) {
     return 0;
 }
 
@@ -158,22 +157,22 @@ int _mqtt__MQTT_publish(PikaObj *self, char* topic, char* payload) {
 // 输入参数：ca值
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_setCa(PikaObj *self, char* ca) {
+int _mqtt__MQTT_setCa(PikaObj* self, char* ca) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
-    
-    if(ca == NULL) {
+
+    if (ca == NULL) {
         __platform_printf("input ca error\r\n");
         return -1;
     }
-    if(strlen(ca) <= 0) {
+    if (strlen(ca) <= 0) {
         __platform_printf("input ca data error\r\n");
         return -2;
     }
 
     obj_setStr(self, "ca_str", ca);
-    mqtt_set_ca(_client, obj_getStr(self,"ca_str"));
-    
-    __platform_printf("MQTT_setCa len:%d\r\n",strlen(ca));
+    mqtt_set_ca(_client, obj_getStr(self, "ca_str"));
+
+    __platform_printf("MQTT_setCa len:%d\r\n", strlen(ca));
     return 0;
 }
 
@@ -183,23 +182,22 @@ int _mqtt__MQTT_setCa(PikaObj *self, char* ca) {
 // 输入参数：id 字符串格式
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_setClientID(PikaObj *self, char* id) {
-    
+int _mqtt__MQTT_setClientID(PikaObj* self, char* id) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
-    
-    if(id == NULL) {
+
+    if (id == NULL) {
         __platform_printf("input id error\r\n");
         return -1;
     }
-    if(strlen(id) <= 0) {
+    if (strlen(id) <= 0) {
         __platform_printf("input id data error\r\n");
         return -2;
     }
 
     obj_setStr(self, "id_str", id);
-    mqtt_set_client_id(_client, obj_getStr(self,"id_str"));
+    mqtt_set_client_id(_client, obj_getStr(self, "id_str"));
 
-    __platform_printf("MQTT_setClientID :%s\r\n",id);
+    __platform_printf("MQTT_setClientID :%s\r\n", id);
     return 0;
 }
 
@@ -209,21 +207,25 @@ int _mqtt__MQTT_setClientID(PikaObj *self, char* id) {
 // 输入参数：字符串格式
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_setHost(PikaObj *self, char* host_url) {
+int _mqtt__MQTT_setHost(PikaObj* self, char* host_url) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
-    
-    if(host_url == NULL) {
+
+    if (host_url == NULL) {
         __platform_printf("input host_url error\r\n");
         return -1;
     }
-    if(strlen(host_url) <= 0) {
+    if (strlen(host_url) <= 0) {
         __platform_printf("input host_url data error\r\n");
         return -2;
     }
 
-    obj_setStr(self, "host_str", host_url);//python 环境创建一个全局变量存放 host
-    mqtt_set_host(_client, obj_getStr(self,"host_str"));//从python环境中取出 host的指针 赋值给结构体
-    __platform_printf("MQTT_setHost :%s\r\n",host_url);
+    obj_setStr(self, "host_str",
+               host_url);  // python 环境创建一个全局变量存放 host
+    mqtt_set_host(
+        _client,
+        obj_getStr(self,
+                   "host_str"));  //从python环境中取出 host的指针 赋值给结构体
+    __platform_printf("MQTT_setHost :%s\r\n", host_url);
 
     return 0;
 }
@@ -234,22 +236,19 @@ int _mqtt__MQTT_setHost(PikaObj *self, char* host_url) {
 // 输入参数：字符串格式
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_setKeepAlive(PikaObj *self, char* time) {
+int _mqtt__MQTT_setKeepAlive(PikaObj* self, char* time) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
     int tmp;
 
     tmp = atoi(time);
-    if(tmp > 0)
-    {
+    if (tmp > 0) {
         mqtt_set_keep_alive_interval(_client, tmp);
-    }
-    else
-    {
+    } else {
         __platform_printf("input keepalive data error \r\n");
         return -2;
     }
 
-    __platform_printf("MQTT_setKeepAlive :%d\r\n",tmp);
+    __platform_printf("MQTT_setKeepAlive :%d\r\n", tmp);
     return 0;
 }
 
@@ -259,23 +258,22 @@ int _mqtt__MQTT_setKeepAlive(PikaObj *self, char* time) {
 // 输入参数：字符串格式
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_setPassword(PikaObj *self, char* passwd) {
-    
+int _mqtt__MQTT_setPassword(PikaObj* self, char* passwd) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
-    
-    if(passwd == NULL) {
+
+    if (passwd == NULL) {
         __platform_printf("input passwd error\r\n");
         return -1;
     }
-    if(strlen(passwd) <= 0) {
+    if (strlen(passwd) <= 0) {
         __platform_printf("input passwd data error\r\n");
         return -2;
     }
 
     obj_setStr(self, "password_str", passwd);
-    mqtt_set_password(_client, obj_getStr(self,"password_str"));
-    
-    __platform_printf("MQTT_setPassword :%s\r\n",passwd);
+    mqtt_set_password(_client, obj_getStr(self, "password_str"));
+
+    __platform_printf("MQTT_setPassword :%s\r\n", passwd);
     return 0;
 }
 
@@ -285,21 +283,21 @@ int _mqtt__MQTT_setPassword(PikaObj *self, char* passwd) {
 // 输入参数：字符串格式
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_setPort(PikaObj *self, int port) {
+int _mqtt__MQTT_setPort(PikaObj* self, int port) {
     char port_str[10] = {0};
     mqtt_client_t* _client = obj_getPtr(self, "_client");
 
-    if(port <= 0) {
+    if (port <= 0) {
         __platform_printf("input port error\r\n");
         return -1;
     }
 
     __platform_sprintf(port_str, "%d", port);
     obj_setStr(self, "port", port_str);
-    
-    mqtt_set_port(_client, obj_getStr(self,"port"));
-    __platform_printf("MQTT_setPort :%s\r\n",port_str);
-    
+
+    mqtt_set_port(_client, obj_getStr(self, "port"));
+    __platform_printf("MQTT_setPort :%s\r\n", port_str);
+
     return 0;
 }
 
@@ -309,23 +307,22 @@ int _mqtt__MQTT_setPort(PikaObj *self, int port) {
 // 输入参数：字符串格式
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_setUsername(PikaObj *self, char* name) {
-    
+int _mqtt__MQTT_setUsername(PikaObj* self, char* name) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
-    
-    if(name == NULL) {
+
+    if (name == NULL) {
         __platform_printf("input name error\r\n");
         return -1;
     }
-    if(strlen(name) <= 0) {
+    if (strlen(name) <= 0) {
         __platform_printf("input name data error\r\n");
         return -2;
     }
 
     obj_setStr(self, "username_str", name);
-    mqtt_set_user_name(_client, obj_getStr(self,"username_str"));
-    
-    __platform_printf("MQTT_setUsername :%s\r\n",name);
+    mqtt_set_user_name(_client, obj_getStr(self, "username_str"));
+
+    __platform_printf("MQTT_setUsername :%s\r\n", name);
     return 0;
 }
 
@@ -335,22 +332,19 @@ int _mqtt__MQTT_setUsername(PikaObj *self, char* name) {
 // 输入参数：字符串格式
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_setVersion(PikaObj *self, char* version) {
+int _mqtt__MQTT_setVersion(PikaObj* self, char* version) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
     int tmp;
 
     tmp = atoi(version);
-    if(tmp > 0)
-    {
+    if (tmp > 0) {
         mqtt_set_version(_client, tmp);
-    }
-    else
-    {
+    } else {
         __platform_printf("input version data error \r\n");
         return -2;
     }
 
-    __platform_printf("MQTT_setVersion :%d\r\n",tmp);
+    __platform_printf("MQTT_setVersion :%d\r\n", tmp);
     return 0;
 }
 
@@ -360,8 +354,11 @@ int _mqtt__MQTT_setVersion(PikaObj *self, char* version) {
 // 输入参数：
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_setWill(PikaObj *self, int qos, char* topic, int retain, char* payload) {
-
+int _mqtt__MQTT_setWill(PikaObj* self,
+                        int qos,
+                        char* topic,
+                        int retain,
+                        char* payload) {
     return 0;
 }
 
@@ -371,27 +368,30 @@ int _mqtt__MQTT_setWill(PikaObj *self, int qos, char* topic, int retain, char* p
 // 输入参数：
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_subscribe(PikaObj *self, char* topic, int qos, Arg* cb) {
+int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, int qos, Arg* cb) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
     int ret;
 
-    if(strlen(topic) <= 0) {
+    if (strlen(topic) <= 0) {
         __platform_printf("input topic error\r\n");
         return -1;
     }
 
-    if((qos < 0)||(qos > 2)) {
+    if ((qos < 0) || (qos > 2)) {
         __platform_printf("input qos error\r\n");
         return -1;
     }
 
+<<<<<<< HEAD
     ret = mqtt_subscribe(_client,topic,qos,Subscribe_Handler);
+=======
+    ret = mqtt_subscribe(_client, topic, qos, NULL);
+>>>>>>> 277610b413048cc2f74cf41c20c0678001a3b907
 
-    if(ret == 0) {
-        __platform_printf("MQTT_subscribe Topic :%s success\r\n",topic);
+    if (ret == 0) {
+        __platform_printf("MQTT_subscribe Topic :%s success\r\n", topic);
         sleep(10);
-    }
-    else
+    } else
         __platform_printf("MQTT_subscribe Topic error\r\n");
 
     return 0;
@@ -403,8 +403,7 @@ int _mqtt__MQTT_subscribe(PikaObj *self, char* topic, int qos, Arg* cb) {
 // 输入参数：
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_unsubscribe(PikaObj *self, char* topic) {
-
+int _mqtt__MQTT_unsubscribe(PikaObj* self, char* topic) {
     return 0;
 }
 

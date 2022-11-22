@@ -17,7 +17,7 @@ PikaObj *__pikaMain;
 PikaObj *pikaScriptInit(void){
     __platform_printf("======[pikascript packages installed]======\r\n");
     pks_printVersion();
-    __platform_printf("PikaStdLib==v1.11.6
+    __platform_printf("PikaStdLib==v1.11.7
     __platform_printf("pika_lvgl==latest\r\n");
     __platform_printf("===========================================\r\n");
     __pikaMain = newRootObj("pikaMain", New_PikaMain);
