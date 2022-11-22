@@ -1,15 +1,13 @@
-#include "requests.h"
-#include "requests_Response.h"
+#include "_requests.h"
+#include <ctype.h>
+#include "_requests_Response.h"
 #include "webclient.h"
 
 #define GET_HEADER_BUFSZ 1024
 #define GET_RESP_BUFSZ 1024
 
-PikaObj* requests_request(PikaObj* self,
-                          char* method,
-                          char* url,
-                          PikaDict* kwargs) {
-    PikaObj* response = newNormalObj(New_requests_Response);
+PikaObj* _requests_request(PikaObj* self, char* method, char* url) {
+    PikaObj* response = newNormalObj(New__requests_Response);
     obj_setStr(response, "url", url);
 
     struct webclient_session* session = RT_NULL;
@@ -88,10 +86,31 @@ __exit:
     return response;
 }
 
-PikaObj* requests_get(PikaObj* self, char* url, PikaDict* kwargs) {
-    return requests_request(self, "GET", url, kwargs);
+char to_hex(char code) {
+    static char hex[] = "0123456789abcdef";
+    return hex[code & 15];
 }
 
-void requests___del__(PikaObj* self) {}
+char* _requests_urlencode(PikaObj* self, char* s) {
+    obj_setBytes(self, "encodebuff", NULL, strlen(s) * 3 + 1);
+    char* result = (char*)obj_getBytes(self, "encodebuff");
+    char* p = result;
+    while (*s) {
+        if (isalnum(*s) || *s == '-' || *s == '_' || *s == '.' || *s == '~') {
+            *p++ = *s;
+        } else if (*s == ' ') {
+            *p++ = '+';
+        } else {
+            *p++ = '%';
+            *p++ = to_hex(*s >> 4);
+            *p++ = to_hex(*s & 0xf);
+        }
+        s++;
+    }
+    *p = '\0';
+    return result;
+}
 
-void requests___init__(PikaObj* self) {}
+void _requests___del__(PikaObj* self) {}
+
+void _requests___init__(PikaObj* self) {}

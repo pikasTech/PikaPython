@@ -2117,7 +2117,7 @@ TEST(pikaMain, slice_eei) {
     __platform_printf("BEGIN\r\n");
     obj_run(self, "'test'[1:-1]\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "'est'\r\n");
+    EXPECT_STREQ(log_buff[0], "'es'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);
@@ -2134,7 +2134,7 @@ TEST(pikaMain, slice_a97) {
     __platform_printf("BEGIN\r\n");
     obj_run(self, "'test'[:-2]\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "'tes'\r\n");
+    EXPECT_STREQ(log_buff[0], "'te'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(self);

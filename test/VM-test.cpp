@@ -2267,4 +2267,19 @@ TEST(VM, bc_fn_file_cb2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(vm, slice_str_end) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "'test'[:-1]");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "'tes'\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END
