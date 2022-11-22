@@ -1,6 +1,8 @@
 #include "_mqtt__MQTT.h"
 #include "mqttclient.h"
 
+void Subscribe_Handler(void *client, message_data_t* msg);
+
 ////////////////////////////////////////////////////////////////////
 // 函 数 名：_mqtt__MQTT___init__
 // 功能说明：对象初始化
@@ -383,7 +385,7 @@ int _mqtt__MQTT_subscribe(PikaObj *self, char* topic, int qos, Arg* cb) {
         return -1;
     }
 
-    ret = mqtt_subscribe(_client,topic,qos,NULL);
+    ret = mqtt_subscribe(_client,topic,qos,Subscribe_Handler);
 
     if(ret == 0) {
         __platform_printf("MQTT_subscribe Topic :%s success\r\n",topic);
@@ -404,4 +406,18 @@ int _mqtt__MQTT_subscribe(PikaObj *self, char* topic, int qos, Arg* cb) {
 int _mqtt__MQTT_unsubscribe(PikaObj *self, char* topic) {
 
     return 0;
+}
+
+
+////////////////////////////////////////////////////////////////////
+// 函 数 名：_mqtt__MQTT_unsubscribe
+// 功能说明：取消mqtt 订阅主题
+// 输入参数：
+// 返 回 值：0=成功；非0=错误码
+///////////////////////////////////////////////////////////////////
+void Subscribe_Handler(void *client, message_data_t* msg) {
+    MQTT_LOG_I("\n>>>------------------");
+    MQTT_LOG_I("Topic:%s \nlen:%d,message: %s",msg->topic_name,(int)msg->message->payloadlen,(char *)msg->message->payload);
+    MQTT_LOG_I("------------------<<<");
+
 }

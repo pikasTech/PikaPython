@@ -13,7 +13,7 @@ client.setKeepAlive('10')
 ret = client.connect()
 print("ret:%d" % ret)
 
-ret = client.subscribe('topic1234',1,'111')
+ret = client.subscribe('topic',1,'111')
 
 #ret = client.disconnect()
 #print("ret:%d" % ret)
