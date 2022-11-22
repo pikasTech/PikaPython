@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=except.dict"
+            //    "--gtest_filter=pikaMain.slice_a90"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

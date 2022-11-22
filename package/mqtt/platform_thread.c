@@ -83,8 +83,11 @@ PIKA_WEAK void platform_thread_start(platform_thread_t* thread) {
 
 PIKA_WEAK void platform_thread_destroy(platform_thread_t* thread) {
 #ifdef __linux
-    if (NULL != thread)
+    if (NULL != thread){
         pthread_detach(thread->thread);
+        platform_memory_free(thread);
+        thread = NULL;
+    }
 #elif PIKA_FREERTOS_ENABLE
     if (NULL != thread)
         vTaskDelete(thread->thread);

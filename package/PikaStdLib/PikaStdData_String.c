@@ -86,8 +86,12 @@ char* string_slice(Args* outBuffs, char* str, int start, int end) {
     if (start < 0) {
         start += string_len(str);
     }
+    /* magic code, to the end */
+    if (end == -99999) {
+        end = string_len(str);
+    }
     if (end < 0) {
-        end += string_len(str) + 1;
+        end += string_len(str);
     }
     for (int i = start; i < end; i++) {
         char char_buff[5] = {0};
@@ -286,12 +290,12 @@ int PikaStdData_String___len__(PikaObj* self) {
 char* PikaStdData_String_strip(PikaObj* self, PikaTuple* chrs) {
     Args buffs = {0};
     char to_strip = ' ';
-    if (tuple_getSize(chrs) > 1) {
+    if (pikaTuple_getSize(chrs) > 1) {
         obj_setErrorCode(self, PIKA_RES_ERR_INVALID_PARAM);
         obj_setSysOut(self, "Error. Invalid param");
     }
-    if (tuple_getSize(chrs) == 1) {
-        char* ch_str = tuple_getStr(chrs, 0);
+    if (pikaTuple_getSize(chrs) == 1) {
+        char* ch_str = pikaTuple_getStr(chrs, 0);
         to_strip = ch_str[0];
     }
     char* str = strsCopy(&buffs, obj_getStr(self, "str"));
@@ -332,11 +336,11 @@ Arg* PikaStdData_String_encode(PikaObj* self, PikaTuple* encoding) {
 
 #if PIKA_STRING_UTF8_ENABLE
     char* to_code = NULL;
-    int argn = tuple_getSize(encoding);
+    int argn = pikaTuple_getSize(encoding);
     if (argn < 1) {
         return arg_newBytes((uint8_t*)str, strGetSize(str));
     }
-    Arg* arg_i = tuple_getArg(encoding, 0);
+    Arg* arg_i = pikaTuple_getArg(encoding, 0);
     if (arg_getType(arg_i) != ARG_TYPE_STRING) {
         obj_setErrorCode(self, __LINE__);
         __platform_printf("Error invaliad arguments\r\n");

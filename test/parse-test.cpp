@@ -2962,7 +2962,7 @@ TEST(parser, slice_oifjlk) {
                  "B0\n"
                  "1 REF b\n"
                  "1 NUM 6\n"
-                 "2 NUM 1\n"
+                 "2 NUM 99999\n"
                  "1 OPT -\n"
                  "0 SLC \n"
                  "0 OUT a\n"

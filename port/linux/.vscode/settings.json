@@ -87,7 +87,13 @@
         "ctype.h": "c",
         "mqttclient.h": "c",
         "_mqtt__mqtt.h": "c",
-        "requests_response.h": "c"
+        "requests_response.h": "c",
+        "*.cfg": "c",
+        "pika_hal.h": "c",
+        "__instruction_def.h": "c",
+        "pika_hal_def.h": "c",
+        "pika_hal_table.h": "c",
+        "pika_hal_table_rule.h": "c"
     },
     "python.formatting.provider": "autopep8",
     "C_Cpp.errorSquiggles": "Disabled"

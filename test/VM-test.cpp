@@ -884,9 +884,9 @@ TEST(VM, load_static_bytes) {
 
     byteCodeFrame_loadByteCode(&bytecode_frame, (uint8_t*)bytes);
     byteCodeFrame_print(&bytecode_frame);
-
     EXPECT_EQ(instructArray_getSize(&(bytecode_frame.instruct_array)), 520);
     EXPECT_EQ(bytecode_frame.const_pool.size, 177);
+    byteCodeFrame_deinit(&bytecode_frame);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -1479,6 +1479,31 @@ TEST(vm, default_4) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, default_no_kw) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def test(a, b=3):\n"
+            "    print(a ,b)\n"
+            "test(1, 2)\n"
+            "test(1, b=2)\n"
+            "test(1)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], "1 2\r\n");
+    EXPECT_STREQ(log_buff[1], "1 2\r\n");
+    EXPECT_STREQ(log_buff[0], "1 3\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST(vm, none) {
@@ -2170,5 +2195,93 @@ TEST(VM, print_None) {
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(VM, bc_fn) {
+    PikaObj* self = newRootObj("root", New_PikaMain);
+    obj_run(self, "print('hello world')\n");
+    /* clang-format off */
+    PIKA_PYTHON(
+    def test():
+        print('test')
+
+    )
+    /* clang-format on */
+    const uint8_t
+        bytes[] =
+            {
+                0x14, 0x00, 0x00, 0x00, /* instruct array size */
+                0x00, 0x89, 0x01, 0x00, 0x00, 0x06, 0x08,
+                0x00, 0x11, 0x83, 0x0a, 0x00, 0x01, 0x02,
+                0x0f, 0x00, 0x01, 0x8a, 0x00, 0x00, /* instruct array */
+                0x15, 0x00, 0x00, 0x00,             /* const pool size */
+                0x00, 0x74, 0x65, 0x73, 0x74, 0x28, 0x29,
+                0x00, 0x31, 0x00, 0x74, 0x65, 0x73, 0x74,
+                0x00, 0x70, 0x72, 0x69, 0x6e, 0x74, 0x00, /* const pool */
+            };
+    pikaVM_runByteCode(self, (uint8_t*)bytes);
+    obj_run(self, "test()\n");
+    EXPECT_STREQ(log_buff[1], "hello world\r\n");
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if !PIKA_NANO_ENABLE
+TEST(VM, default_num_err) {
+    char* line =
+        "def test(a, b=1):\n"
+        "    print(a, b)\n"
+        "test(1, 2, 3)\n";
+    PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
+    obj_run(self, line);
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[8],
+                 "TypeError: test() takes from 1 to 2 positional arguments but "
+                 "3 were given\r\n");
+    /* deinit */
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+TEST(VM, bc_fn_file_cb0) {
+    PikaObj* self = newRootObj("root", New_PikaMain);
+    pikaVM_runByteCodeFile(self,
+                           "package/pikascript/pikascript-api/cb_test.py.o");
+    obj_run(self, "test()\n");
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(VM, bc_fn_file_cb2) {
+    PikaObj* self = newRootObj("root", New_PikaMain);
+    obj_run(self, "print('hello world')\n");
+    pikaVM_runByteCodeFile(self,
+                           "package/pikascript/pikascript-api/cb_test.py.o");
+    obj_run(self, "test()\n");
+    EXPECT_STREQ(log_buff[1], "hello world\r\n");
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    obj_deinit(self);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if !PIKA_NANO_ENABLE
+TEST(vm, slice_str_end) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "'test'[:-1]");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "'tes'\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
 
 TEST_END

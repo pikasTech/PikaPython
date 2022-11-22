@@ -2,6 +2,7 @@
 #include "BaseObj.h"
 #include "PikaObj.h"
 #include "dataStrs.h"
+#include "pika_hal.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 10, 4)
 #error "This library requires PikaScript version 1.10.4 or higher"

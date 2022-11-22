@@ -4,12 +4,12 @@
 
 int PikaStdData_Tuple_len(PikaObj* self) {
     PikaList* list = obj_getPtr(self, "list");
-    return list_getSize(list);
+    return pikaList_getSize(list);
 }
 
 Arg* PikaStdData_Tuple_get(PikaObj* self, int i) {
     PikaList* list = obj_getPtr(self, "list");
-    return arg_copy(list_getArg(list, i));
+    return arg_copy(pikaList_getArg(list, i));
 }
 
 void PikaStdData_Tuple___init__(PikaObj* self) {
@@ -47,7 +47,7 @@ char* PikaStdData_Tuple___str__(PikaObj* self) {
 
     int i = 0;
     while (PIKA_TRUE) {
-        Arg* item = list_getArg(list, i);
+        Arg* item = pikaList_getArg(list, i);
         if (NULL == item) {
             break;
         }
@@ -77,8 +77,8 @@ int PikaStdData_Tuple___len__(PikaObj* self) {
 
 int PikaStdData_Tuple___contains__(PikaObj* self, Arg* val) {
     PikaList* list = obj_getPtr(self, "list");
-    for (size_t i = 0; i < list_getSize(list); i++) {
-        Arg* arg = list_getArg(list, i);
+    for (size_t i = 0; i < pikaList_getSize(list); i++) {
+        Arg* arg = pikaList_getArg(list, i);
         if (arg_isEqual(arg, val)) {
             return 1;
         }

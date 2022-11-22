@@ -136,131 +136,137 @@ struct PikaDict {
 };
 
 /* dict api */
-PikaDict* New_dict(void);
+PikaDict* New_pikaDict(void);
 
-static inline PIKA_RES dict_setInt(PikaDict* self, char* name, int64_t val) {
+static inline PIKA_RES pikaDict_setInt(PikaDict* self,
+                                       char* name,
+                                       int64_t val) {
     return args_setInt((&((self)->super)), (name), (val));
 }
-static inline PIKA_RES dict_setFloat(PikaDict* self,
-                                     char* name,
-                                     pika_float val) {
+static inline PIKA_RES pikaDict_setFloat(PikaDict* self,
+                                         char* name,
+                                         pika_float val) {
     return args_setFloat((&((self)->super)), (name), (val));
 }
-static inline PIKA_RES dict_setStr(PikaDict* self, char* name, char* val) {
+static inline PIKA_RES pikaDict_setStr(PikaDict* self, char* name, char* val) {
     return args_setStr((&((self)->super)), (name), (val));
 }
-static inline PIKA_RES dict_setPtr(PikaDict* self, char* name, void* val) {
+static inline PIKA_RES pikaDict_setPtr(PikaDict* self, char* name, void* val) {
     return args_setPtr((&((self)->super)), (name), (val));
 }
 
-static inline PIKA_RES dict_setArg(PikaDict* self, Arg* val) {
+static inline PIKA_RES pikaDict_setArg(PikaDict* self, Arg* val) {
     return args_setArg((&((self)->super)), (val));
 }
 
-static inline PIKA_RES dict_removeArg(PikaDict* self, Arg* val) {
+static inline PIKA_RES pikaDict_removeArg(PikaDict* self, Arg* val) {
     return args_removeArg((&((self)->super)), (val));
 }
 
-static inline PIKA_RES dict_setBytes(PikaDict* self,
-                                     char* name,
-                                     uint8_t* val,
-                                     size_t size) {
+static inline PIKA_RES pikaDict_setBytes(PikaDict* self,
+                                         char* name,
+                                         uint8_t* val,
+                                         size_t size) {
     return args_setBytes((&((self)->super)), (name), (val), (size));
 }
 
-static inline int64_t dict_getInt(PikaDict* self, char* name) {
+static inline int64_t pikaDict_getInt(PikaDict* self, char* name) {
     return args_getInt((&((self)->super)), (name));
 }
 
-static inline pika_float dict_getFloat(PikaDict* self, char* name) {
+static inline pika_float pikaDict_getFloat(PikaDict* self, char* name) {
     return args_getFloat((&((self)->super)), (name));
 }
 
-static inline char* dict_getStr(PikaDict* self, char* name) {
+static inline char* pikaDict_getStr(PikaDict* self, char* name) {
     return args_getStr((&((self)->super)), (name));
 }
 
-static inline void* dict_getPtr(PikaDict* self, char* name) {
+static inline void* pikaDict_getPtr(PikaDict* self, char* name) {
     return args_getPtr((&((self)->super)), (name));
 }
 
-static inline Arg* dict_getArg(PikaDict* self, char* name) {
+static inline Arg* pikaDict_getArg(PikaDict* self, char* name) {
     return args_getArg((&((self)->super)), (name));
 }
 
-static inline uint8_t* dict_getBytes(PikaDict* self, char* name) {
+static inline int32_t pikaDict_isArgExist(PikaDict* self, char* name) {
+    return args_isArgExist((&((self)->super)), (name));
+}
+
+static inline uint8_t* pikaDict_getBytes(PikaDict* self, char* name) {
     return args_getBytes((&((self)->super)), (name));
 }
 
-static inline ArgType dict_getType(PikaDict* self, char* name) {
+static inline ArgType pikaDict_getType(PikaDict* self, char* name) {
     return args_getType((&((self)->super)), (name));
 }
 
-static inline size_t dict_getBytesSize(PikaDict* self, char* name) {
+static inline size_t pikaDict_getBytesSize(PikaDict* self, char* name) {
     return args_getBytesSize((&((self)->super)), (name));
 }
 
-static inline void dict_deinit(PikaDict* self) {
+static inline void pikaDict_deinit(PikaDict* self) {
     args_deinit((&((self)->super)));
 }
 
 /* list api */
-PIKA_RES list_append(PikaList* self, Arg* arg);
-PIKA_RES list_setArg(PikaList* self, int index, Arg* arg);
-int list_getInt(PikaList* self, int index);
-pika_float list_getFloat(PikaList* self, int index);
-char* list_getStr(PikaList* self, int index);
-void* list_getPtr(PikaList* self, int index);
-Arg* list_getArg(PikaList* self, int index);
-size_t list_getSize(PikaList* self);
-void list_reverse(PikaList* self);
-PIKA_RES list_insert(PikaList* self, int index, Arg* arg);
-Arg* list_pop(PikaList* list);
-PIKA_RES list_remove(PikaList* list, Arg* arg);
-static inline void list_deinit(PikaList* self) {
+PIKA_RES pikaList_append(PikaList* self, Arg* arg);
+PIKA_RES pikaList_setArg(PikaList* self, int index, Arg* arg);
+int pikaList_getInt(PikaList* self, int index);
+pika_float pikaList_getFloat(PikaList* self, int index);
+char* pikaList_getStr(PikaList* self, int index);
+void* pikaList_getPtr(PikaList* self, int index);
+Arg* pikaList_getArg(PikaList* self, int index);
+size_t pikaList_getSize(PikaList* self);
+void pikaList_reverse(PikaList* self);
+PIKA_RES pikaList_insert(PikaList* self, int index, Arg* arg);
+Arg* pikaList_pop(PikaList* list);
+PIKA_RES pikaList_remove(PikaList* list, Arg* arg);
+static inline void pikaList_deinit(PikaList* self) {
     args_deinit((&((self)->super)));
 }
 
-static inline ArgType list_getType(PikaList* self, int index) {
-    Arg* arg = list_getArg(self, index);
+static inline ArgType pikaList_getType(PikaList* self, int index) {
+    Arg* arg = pikaList_getArg(self, index);
     return arg_getType(arg);
 }
 
 /* tuple api */
-static inline void tuple_deinit(PikaTuple* self) {
-    list_deinit((&((self)->super)));
+static inline void pikaTuple_deinit(PikaTuple* self) {
+    pikaList_deinit((&((self)->super)));
 }
 
-static inline Arg* tuple_getArg(PikaTuple* self, int index) {
-    return list_getArg((&((self)->super)), (index));
+static inline Arg* pikaTuple_getArg(PikaTuple* self, int index) {
+    return pikaList_getArg((&((self)->super)), (index));
 }
 
-static inline size_t tuple_getSize(PikaTuple* self) {
-    return list_getSize((&((self)->super)));
+static inline size_t pikaTuple_getSize(PikaTuple* self) {
+    return pikaList_getSize((&((self)->super)));
 }
 
-static inline int64_t tuple_getInt(PikaTuple* self, int index) {
-    return list_getInt((&((self)->super)), (index));
+static inline int64_t pikaTuple_getInt(PikaTuple* self, int index) {
+    return pikaList_getInt((&((self)->super)), (index));
 }
 
-static inline pika_float tuple_getFloat(PikaTuple* self, int index) {
-    return list_getFloat((&((self)->super)), (index));
+static inline pika_float pikaTuple_getFloat(PikaTuple* self, int index) {
+    return pikaList_getFloat((&((self)->super)), (index));
 }
 
-static inline char* tuple_getStr(PikaTuple* self, int index) {
-    return list_getStr((&((self)->super)), (index));
+static inline char* pikaTuple_getStr(PikaTuple* self, int index) {
+    return pikaList_getStr((&((self)->super)), (index));
 }
 
-static inline void* tuple_getPtr(PikaTuple* self, int index) {
-    return list_getPtr((&((self)->super)), (index));
+static inline void* pikaTuple_getPtr(PikaTuple* self, int index) {
+    return pikaList_getPtr((&((self)->super)), (index));
 }
 
-static inline ArgType tuple_getType(PikaTuple* self, int index) {
-    return list_getType((&((self)->super)), (index));
+static inline ArgType pikaTuple_getType(PikaTuple* self, int index) {
+    return pikaList_getType((&((self)->super)), (index));
 }
 
-PikaList* New_list(void);
-PikaTuple* New_tuple(void);
+PikaList* New_pikaList(void);
+PikaTuple* New_pikaTuple(void);
 PikaTuple* args_getTuple(Args* self, char* name);
 PikaDict* args_getDict(Args* self, char* name);
 

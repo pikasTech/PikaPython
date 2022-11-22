@@ -91,6 +91,7 @@ char* strAppendWithSize(char* strOut, char* pData, int32_t Size) {
 }
 
 int32_t strCountSign(char* strIn, char sign) {
+    pika_assert(NULL != strIn);
     int count = 0;
     while (*strIn) {
         if (*strIn == sign) {
