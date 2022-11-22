@@ -15,5 +15,5 @@ print("ret:%d" % ret)
 
 ret = client.subscribe('topic1234',1,'111')
 
-#ret = client.disconnect()
+# ret = client.disconnect()
 #print("ret:%d" % ret)
