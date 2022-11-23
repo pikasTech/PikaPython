@@ -123,11 +123,12 @@ int _pika_hal_ioctl_merge_config(pika_dev* dev, void* config_in) {
 
 int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
     int ret = -1;
+    PIKA_HAL_IOCTL_CMD cmd_origin = cmd;
     if (dev == NULL) {
         return -1;
     }
-    int arg_cnt = _pika_hal_get_arg_cnt(cmd);
-    if (arg_cnt < 0) {
+    cmd = _pika_hal_get_arg_cnt(cmd_origin);
+    if (cmd < 0) {
         return -1;
     }
     pika_dev_impl* impl = _pika_dev_get_impl(dev->type);
@@ -135,9 +136,9 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
         return -1;
     }
     void* config_in = NULL;
-    if (arg_cnt != 0) {
+    if (cmd != 0) {
         va_list args;
-        va_start(args, arg_cnt);
+        va_start(args, cmd);
         config_in = va_arg(args, void*);
         ret = _pika_hal_ioctl_merge_config(dev, config_in);
         va_end(args);
@@ -145,7 +146,7 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
     if (0 != ret) {
         return ret;
     }
-    ret = impl->ioctl(dev, cmd, dev->ioctl_config);
+    ret = impl->ioctl(dev, cmd_origin, dev->ioctl_config);
     return ret;
 }
 
