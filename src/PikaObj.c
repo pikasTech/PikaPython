@@ -180,14 +180,12 @@ PIKA_RES obj_setFloat(PikaObj* self, char* argPath, pika_float value) {
 }
 
 PIKA_RES obj_setStr(PikaObj* self, char* argPath, char* str) {
-    pika_assert(NULL != str);
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
         return PIKA_RES_ERR_ARG_NO_FOUND;
     }
     char* name = strPointToLastToken(argPath, '.');
-    args_setStr(obj->list, name, str);
-    return PIKA_RES_OK;
+    return args_setStr(obj->list, name, str);
 }
 
 PIKA_RES obj_setNone(PikaObj* self, char* argPath) {

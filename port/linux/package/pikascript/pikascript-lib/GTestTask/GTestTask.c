@@ -63,3 +63,7 @@ void GTestTask_ProxyTest___setattr__(PikaObj* self,
 void GTestTask_test_raise(PikaObj *self){
     obj_setErrorCode(self, 1);
 }
+
+void GTestTask__test___init__(PikaObj *self){
+    obj_setStr(self, "a", NULL);
+}
