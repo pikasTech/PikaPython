@@ -13,9 +13,14 @@ client.setKeepAlive('10')
 ret = client.connect()
 print("ret:%d" % ret)
 
-client.publish('topic1234','hello pikascript')
+client.publish('topic1234', 'hello pikascript')
 
-ret = client.subscribe('topic',1,'111')
+
+def callback1(signal):
+    print("py cb: %s:%s" % (client.recv_topic, client.recv_msg))
+
+
+ret = client.subscribe('topic', 1, callback1)
 
 client.listSubscribrTopic()
 

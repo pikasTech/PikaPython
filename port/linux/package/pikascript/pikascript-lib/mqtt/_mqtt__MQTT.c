@@ -1,7 +1,9 @@
 #include "_mqtt__MQTT.h"
 #include "mqttclient.h"
 
-void Subscribe_Handler(void *client, message_data_t* msg);
+PikaEventListener* g_mqtt_event_listener = NULL;
+
+void Subscribe_Handler(void* client, message_data_t* msg);
 
 ////////////////////////////////////////////////////////////////////
 // 函 数 名：_mqtt__MQTT___init__
@@ -20,6 +22,7 @@ void _mqtt__MQTT___init__(PikaObj* self,
                           int keepalive) {
     obj_setInt(self, "_connected", 0);
     mqtt_client_t* _client = mqtt_lease();
+    _client->user_data = self;
     // obj_setPtr(self, "_client", _client);
     /* port to str, and cache to object */
     char port_str[10] = {0};
@@ -142,9 +145,9 @@ PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj* self) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
 
     ret = mqtt_list_subscribe_topic(_client);
-    if(ret == 0)
+    if (ret == 0)
         __platform_printf("MQTT_listSubscribrTopic Done\r\n");
-    else 
+    else
         __platform_printf("MQTT_listSubscribrTopic error\r\n");
 
     return NULL;
@@ -161,24 +164,24 @@ int _mqtt__MQTT_publish(PikaObj* self, char* topic, char* payload) {
     mqtt_message_t msg;
 
     mqtt_client_t* _client = obj_getPtr(self, "_client");
-    memset(&msg,0,sizeof(msg));
+    memset(&msg, 0, sizeof(msg));
 
-    if(strlen(topic) <= 0) {
+    if (strlen(topic) <= 0) {
         __platform_printf("input topic error\r\n");
         return -1;
     }
 
-    if(strlen(payload) <= 0) {
+    if (strlen(payload) <= 0) {
         __platform_printf("input payload error\r\n");
         return -2;
     }
 
-    msg.payload = (void *)payload;
+    msg.payload = (void*)payload;
     msg.qos = 1;
-    ret = mqtt_publish(_client,topic,&msg);
-    if(ret == 0)
+    ret = mqtt_publish(_client, topic, &msg);
+    if (ret == 0)
         __platform_printf("MQTT_publish Done\r\n");
-    else 
+    else
         __platform_printf("MQTT_publish error\r\n");
     return ret;
 }
@@ -391,7 +394,6 @@ int _mqtt__MQTT_setWill(PikaObj* self,
                         char* topic,
                         int retain,
                         char* payload) {
-
     mqtt_client_t* _client = obj_getPtr(self, "_client");
     int ret;
 
@@ -410,9 +412,9 @@ int _mqtt__MQTT_setWill(PikaObj* self,
         return -1;
     }
 
-    __platform_printf("input retain :%d\r\n",(uint8_t )retain);
+    __platform_printf("input retain :%d\r\n", (uint8_t)retain);
 
-    ret = mqtt_set_will_options(_client,topic,qos,(uint8_t )retain,payload);
+    ret = mqtt_set_will_options(_client, topic, qos, (uint8_t)retain, payload);
 
     if (ret == 0) {
         __platform_printf("MQTT_setWill success\r\n", topic);
@@ -430,6 +432,14 @@ int _mqtt__MQTT_setWill(PikaObj* self,
 ///////////////////////////////////////////////////////////////////
 int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, int qos, Arg* cb) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
+    obj_setArg(self, "eventCallBack", cb);
+    /* init event_listener for the first time */
+    if (NULL == g_mqtt_event_listener) {
+        pks_eventLisener_init(&g_mqtt_event_listener);
+    }
+    uint32_t eventId = hash_time33(topic);
+    pks_eventLicener_registEvent(g_mqtt_event_listener, eventId, self);
+
     int ret;
 
     if (strlen(topic) <= 0) {
@@ -442,7 +452,7 @@ int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, int qos, Arg* cb) {
         return -1;
     }
 
-    ret = mqtt_subscribe(_client,topic,qos,Subscribe_Handler);
+    ret = mqtt_subscribe(_client, topic, qos, Subscribe_Handler);
 
     if (ret == 0) {
         __platform_printf("MQTT_subscribe Topic :%s success\r\n", topic);
@@ -467,7 +477,7 @@ int _mqtt__MQTT_unsubscribe(PikaObj* self, char* topic) {
         return -1;
     }
 
-    ret = mqtt_unsubscribe(_client,topic);
+    ret = mqtt_unsubscribe(_client, topic);
     if (ret == 0) {
         __platform_printf("MQTT_unsubscribe :%s success\r\n", topic);
     } else
@@ -476,16 +486,22 @@ int _mqtt__MQTT_unsubscribe(PikaObj* self, char* topic) {
     return 0;
 }
 
-
 ////////////////////////////////////////////////////////////////////
 // 函 数 名：_mqtt__MQTT_unsubscribe
 // 功能说明：取消mqtt 订阅主题
 // 输入参数：
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-void Subscribe_Handler(void *client, message_data_t* msg) {
-    MQTT_LOG_I("\n>>>------------------");
-    MQTT_LOG_I("Topic:%s \nlen:%d,message: %s",msg->topic_name,(int)msg->message->payloadlen,(char *)msg->message->payload);
-    MQTT_LOG_I("------------------<<<");
+void Subscribe_Handler(void* client, message_data_t* msg) {
+    PikaObj* self = ((mqtt_client_t*)client)->user_data;
+    Arg* cb = obj_getArg(self, "callback");
+    obj_setStr(self, "recv_topic", msg->topic_name);
+    obj_setStr(self, "recv_msg", msg->message->payload);
+    pks_eventLisener_sendSignal(g_mqtt_event_listener,
+                                hash_time33(msg->topic_name), 1);
 
+    MQTT_LOG_I("\n>>>------------------");
+    MQTT_LOG_I("Topic:%s \nlen:%d,message: %s", msg->topic_name,
+               (int)msg->message->payloadlen, (char*)msg->message->payload);
+    MQTT_LOG_I("------------------<<<");
 }
