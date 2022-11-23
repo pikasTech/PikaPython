@@ -6,31 +6,31 @@ class _MQTT:
 
     def __del__(self): ...
 
-    def setClientID(self, id:str) -> int:
+    def setClientID(self, id: str) -> int:
         pass
         """Set the ClientID of the MQTTClient."""
 
-    def setUsername(self, name:str) -> int:
+    def setUsername(self, name: str) -> int:
         pass
         """Set the Username of the MQTTClient."""
 
-    def setPassword(self, passwd:str) -> int:
+    def setPassword(self, passwd: str) -> int:
         pass
         """Set the Password of the MQTTClient."""
 
-    def setVersion(self, version:str) -> int:
+    def setVersion(self, version: str) -> int:
         pass
         """Set the Version of the MQTTClient."""
 
-    def setCa(self, ca:str) -> int:
+    def setCa(self, ca: str) -> int:
         pass
         """Set the Ca of the MQTTClient."""
 
-    def setKeepAlive(self, time:str) -> int:
+    def setKeepAlive(self, time: str) -> int:
         pass
         """Set the KeepAlive of the MQTTClient."""
 
-    def setWill(self, qos:int, topic:str, retain:int, payload:str) -> int:
+    def setWill(self, qos: int, topic: str, retain: int, payload: str) -> int:
         pass
         """Set the Will of the MQTTClient."""
 
@@ -42,11 +42,11 @@ class _MQTT:
         pass
         """disconnect to the mqtt-server."""
 
-    def subscribe(self, topic:str, qos:int, cb:any) -> int:
+    def subscribe(self, topic: str, qos: int, cb: any) -> int:
         pass
         """subscribe to the mqtt-server."""
 
-    def unsubscribe(self, topic:str) -> int:
+    def unsubscribe(self, topic: str) -> int:
         pass
         """unsubscribe to the mqtt-server."""
 
@@ -54,7 +54,7 @@ class _MQTT:
         pass
         """listSubscribrTopic """
 
-    def publish(self, topic:str , payload:str) -> int:
+    def publish(self, topic: str, payload: str) -> int:
         pass
         """publish to the mqtt-server."""
 
@@ -63,3 +63,7 @@ class _MQTT:
 
     def setHost(self, host_url: str) -> int:
         """Set the host_url of the MQTTClient."""
+
+
+def __del__():
+    pass

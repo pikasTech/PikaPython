@@ -505,3 +505,9 @@ void Subscribe_Handler(void* client, message_data_t* msg) {
                (int)msg->message->payloadlen, (char*)msg->message->payload);
     MQTT_LOG_I("------------------<<<");
 }
+
+void _mqtt___del__(PikaObj* self) {
+    if (NULL != g_mqtt_event_listener) {
+        pks_eventLisener_deinit(&g_mqtt_event_listener);
+    }
+}
