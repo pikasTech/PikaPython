@@ -5,7 +5,7 @@
 
 ADC_HandleTypeDef pika_hadc1 = {0};
 
-uint16_t Get_Adc(ADC_HandleTypeDef* hadc, uint32_t ch) {
+static uint16_t Get_Adc(ADC_HandleTypeDef* hadc, uint32_t ch) {
     ADC_ChannelConfTypeDef ADC_ChanConf;
     ADC_ChanConf.Channel = ch;
     ADC_ChanConf.Rank = 1;
