@@ -13,7 +13,11 @@ client.setKeepAlive('10')
 ret = client.connect()
 print("ret:%d" % ret)
 
+client.publish('topic1234','hello pikascript')
+
 ret = client.subscribe('topic',1,'111')
+
+client.listSubscribrTopic()
 
 #ret = client.disconnect()
 #print("ret:%d" % ret)

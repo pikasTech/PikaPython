@@ -138,6 +138,15 @@ int _mqtt__MQTT_disconnect(PikaObj* self) {
 // 返 回 值：对象指针
 ///////////////////////////////////////////////////////////////////
 PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj* self) {
+    int ret;
+    mqtt_client_t* _client = obj_getPtr(self, "_client");
+
+    ret = mqtt_list_subscribe_topic(_client);
+    if(ret == 0)
+        __platform_printf("MQTT_listSubscribrTopic Done\r\n");
+    else 
+        __platform_printf("MQTT_listSubscribrTopic error\r\n");
+
     return NULL;
 }
 
@@ -148,7 +157,30 @@ PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj* self) {
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
 int _mqtt__MQTT_publish(PikaObj* self, char* topic, char* payload) {
-    return 0;
+    int ret;
+    mqtt_message_t msg;
+
+    mqtt_client_t* _client = obj_getPtr(self, "_client");
+    memset(&msg,0,sizeof(msg));
+
+    if(strlen(topic) <= 0) {
+        __platform_printf("input topic error\r\n");
+        return -1;
+    }
+
+    if(strlen(payload) <= 0) {
+        __platform_printf("input payload error\r\n");
+        return -2;
+    }
+
+    msg.payload = (void *)payload;
+    msg.qos = 1;
+    ret = mqtt_publish(_client,topic,&msg);
+    if(ret == 0)
+        __platform_printf("MQTT_publish Done\r\n");
+    else 
+        __platform_printf("MQTT_publish error\r\n");
+    return ret;
 }
 
 ////////////////////////////////////////////////////////////////////
