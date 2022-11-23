@@ -1,10 +1,6 @@
 import requests
-requests._append_params_to_url('http://www.rt-thread.com', {
-    'a': 1,
-    'b': 2
-})
 
-requests._append_params_to_url('http://www.rt-thread.com', {
-    'a': ' ',
-    'b': '%',
-})
+a = requests.request("GET", 'http://www.rt-thread.com')
+
+print(a.headers)
+print(a.content)

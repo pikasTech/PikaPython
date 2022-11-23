@@ -2,16 +2,16 @@ import _requests
 
 
 class Response(_requests.Response):
-    def __init__():
-        _requests.__init__()
+    def __init__(self):
+        super().__init__()
 
-    def __del__():
-        _requests.__del__()
+    def __del__(self):
+        super().__del__()
 
 
 def _append_params_to_url(rqst: Response, url: str, params: dict) -> int:
     if params is None:
-        ret = rqst.urlencode_write(url)
+        ret = rqst.urlencode_write(url, '\0', '\0', '\0')
         return 1
     if '?' in url:
         first_connect = '&'
@@ -19,7 +19,7 @@ def _append_params_to_url(rqst: Response, url: str, params: dict) -> int:
     else:
         first_connect = '?'
     # 初始化连接url
-    ret = rqst.urlencode_write(url)
+    ret = rqst.urlencode_write(url, '\0', '\0', '\0')
     if ret != 1:
         return ret
     count = 0
@@ -30,6 +30,7 @@ def _append_params_to_url(rqst: Response, url: str, params: dict) -> int:
             ret = rqst.urlencode_write(str(k), str(v), first_connect, connect)
             if ret != 1:
                 return ret
+            count+=1
         else:
             ret = rqst.urlencode_write(str(k), str(v), start, connect)
             if ret != 1:
@@ -63,7 +64,7 @@ def request(method: str, url: str, params=None, headers=None, **kwargs) -> Respo
         del rqst
         return None
     # 写入默认HTTP版本号
-    ret = rqst.proto_write()
+    ret = rqst.proto_write('\0')
     if ret != 1:
         del rqst
         return None

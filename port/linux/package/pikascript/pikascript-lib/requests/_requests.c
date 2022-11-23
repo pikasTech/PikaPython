@@ -20,7 +20,7 @@
 #define likely(x) __builtin_expect(!!(x), 1)
 #endif
 
-int _requests_Response_request(PikaObj *self, char* method, PikaDict* kwargs)
+int _requests_Response_request(PikaObj *self, char *method, PikaDict *kwargs)
 {
     const char *this_url;      /* 真实组装之后的url */
     const char *this_header;   /* 填充之后响应头信息 */
@@ -39,7 +39,6 @@ int _requests_Response_request(PikaObj *self, char* method, PikaDict* kwargs)
     }
 
     timeout = 0;      /* 默认超时时间不限 */
-    data_len = 0;     /* 默认无数据传输 */
     this_data = NULL; /* 默认无数据 */
 
     if (kwargs != NULL)
@@ -107,7 +106,14 @@ int _requests_Response_request(PikaObj *self, char* method, PikaDict* kwargs)
     }
     else if (strEqu(method, "GET"))
     {
-        data_len = strlen(this_data);
+        if (this_data == NULL)
+        {
+            data_len = 0;
+        }
+        else
+        {
+            data_len = strlen(this_data);
+        }
         /* FIXME: 默认二进制数据 */
         if (strstr(session->header->buffer, "Content-Length") == RT_NULL)
         {
@@ -152,7 +158,7 @@ int _requests_Response_request(PikaObj *self, char* method, PikaDict* kwargs)
     return 1;
 }
 
-int _requests_Response_header_write(PikaObj *self, char* header, char* value)
+int _requests_Response_header_write(PikaObj *self, char *header, char *value)
 {
     struct webclient_session *session;
 
@@ -172,7 +178,7 @@ int _requests_Response_header_write(PikaObj *self, char* header, char* value)
     return 1;
 }
 
-int _requests_Response_proto_write(PikaObj *self, PikaObj* proto)
+int _requests_Response_proto_write(PikaObj *self, char *proto)
 {
     struct webclient_session *session;
 
@@ -184,7 +190,7 @@ int _requests_Response_proto_write(PikaObj *self, PikaObj* proto)
     }
 
     /* 写入请求初始内容 */
-    if (proto != NULL)
+    if (proto != NULL && *proto != '\0')
     {
         if (webclient_header_fields_add(session, " %s\r\n", proto) < 0)
         {
@@ -209,7 +215,7 @@ char to_hex(char code)
     return hex[code & 15];
 }
 
-int _requests_Response_urlencode_write(PikaObj *self, char* s1, PikaObj* s2, PikaObj* start, PikaObj* connect)
+int _requests_Response_urlencode_write(PikaObj *self, char* s1, char* s2, char* start, char* connect)
 {
     struct webclient_session *session;
     char *url_address, *p, *s;
@@ -228,9 +234,10 @@ int _requests_Response_urlencode_write(PikaObj *self, char* s1, PikaObj* s2, Pik
     if (start != NULL)
     {
         /* 写入前置符号 */
-        while (*start)
+        s = (char *)start;
+        while (*s)
         {
-            *p++ = *start++;
+            *p++ = *s++;
         }
     }
 
@@ -256,12 +263,13 @@ int _requests_Response_urlencode_write(PikaObj *self, char* s1, PikaObj* s2, Pik
     if (connect != NULL)
     {
         /* 写入连接符号 */
-        while (*connect)
+        s = (char *)connect;
+        while (*s)
         {
-            *p++ = *connect++;
+            *p++ = *s++;
         }
     }
-    s = s2;
+    s = (char *)s2;
     if (s != NULL)
     {
         while (*s)
@@ -297,7 +305,7 @@ int _requests_Response_urlencode_write(PikaObj *self, char* s1, PikaObj* s2, Pik
     return 1;
 }
 
-int _requests_Response_request_init(PikaObj *self, char* method)
+int _requests_Response_request_init(PikaObj *self, char *method)
 {
     /* 创建会话对象，header长度固定 */
     struct webclient_session *session;
@@ -334,13 +342,13 @@ int _requests_Response_request_init(PikaObj *self, char* method)
     return 1;
 }
 
-PikaObj* _requests_Response_request_del(PikaObj *self)
+PikaObj *_requests_Response_request_del(PikaObj *self)
 {
     struct webclient_session *session;
-    session = obj_getInt(self, "session_address");
-    if (session == -999999999)
+    session = (struct webclient_session *)obj_getInt(self, "session_address");
+    if (session == (void *)-999999999)
     {
-        session = 0;
+        session = NULL;
     }
     if (session)
     {

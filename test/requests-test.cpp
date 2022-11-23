@@ -229,4 +229,18 @@ TEST(requests, append_params_to_url) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(requests, std_request) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    pikaVM_runSingleFile(pikaMain, "test/python/requests/requests_encode.py");
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "'http://www.rt-thread.com?b=2&a=1'\r\n");
+    EXPECT_STREQ(log_buff[0], "'http://www.rt-thread.com?b=%25&a=+'\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
