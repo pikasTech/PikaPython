@@ -2830,4 +2830,13 @@ TEST(pikaMain, REPL_key_left_del) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, obj_setNone) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_setNone(pikaMain, "n");
+    obj_run(pikaMain, "print(n)");
+    EXPECT_STREQ(log_buff[0], "None\r\n");
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

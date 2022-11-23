@@ -85,12 +85,21 @@ PIKA_RES args_setRef(Args* self, char* name, void* argPointer) {
 }
 
 PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
+    pika_assert(NULL != strIn);
     PIKA_RES errCode = PIKA_RES_OK;
     Arg* argNew = New_arg(NULL);
     argNew = arg_setStr(argNew, name, strIn);
     if (NULL == argNew) {
         return PIKA_RES_ERR_INVALID_PTR;
     }
+    args_setArg(self, argNew);
+    return errCode;
+}
+
+PIKA_RES args_setNone(Args* self, char* name) {
+    PIKA_RES errCode = PIKA_RES_OK;
+    Arg* argNew = arg_newNull();
+    arg_setName(argNew, name);
     args_setArg(self, argNew);
     return errCode;
 }
