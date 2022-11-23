@@ -57,6 +57,7 @@ int32_t args_isArgExist_hash(Args* self, Hash nameHash);
 int32_t args_isArgExist(Args* self, char* name);
 
 PIKA_RES args_setStr(Args* self, char* name, char* strIn);
+PIKA_RES args_setNone(Args* self, char* name);
 PIKA_RES args_setStrWithDefaultName(Args* self, char* strIn);
 char* args_getStr(Args* self, char* name);
 
