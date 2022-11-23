@@ -359,6 +359,34 @@ int _mqtt__MQTT_setWill(PikaObj* self,
                         char* topic,
                         int retain,
                         char* payload) {
+
+    mqtt_client_t* _client = obj_getPtr(self, "_client");
+    int ret;
+
+    if (strlen(topic) <= 0) {
+        __platform_printf("input topic error\r\n");
+        return -1;
+    }
+
+    if ((qos < 0) || (qos > 2)) {
+        __platform_printf("input qos error\r\n");
+        return -1;
+    }
+
+    if (strlen(payload) <= 0) {
+        __platform_printf("input payload error\r\n");
+        return -1;
+    }
+
+    __platform_printf("input retain :%d\r\n",(uint8_t )retain);
+
+    ret = mqtt_set_will_options(_client,topic,qos,(uint8_t )retain,payload);
+
+    if (ret == 0) {
+        __platform_printf("MQTT_setWill success\r\n", topic);
+    } else
+        __platform_printf("MQTT_setWill error\r\n");
+
     return 0;
 }
 
@@ -382,15 +410,10 @@ int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, int qos, Arg* cb) {
         return -1;
     }
 
-<<<<<<< HEAD
     ret = mqtt_subscribe(_client,topic,qos,Subscribe_Handler);
-=======
-    ret = mqtt_subscribe(_client, topic, qos, NULL);
->>>>>>> 277610b413048cc2f74cf41c20c0678001a3b907
 
     if (ret == 0) {
         __platform_printf("MQTT_subscribe Topic :%s success\r\n", topic);
-        sleep(10);
     } else
         __platform_printf("MQTT_subscribe Topic error\r\n");
 
@@ -404,6 +427,20 @@ int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, int qos, Arg* cb) {
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
 int _mqtt__MQTT_unsubscribe(PikaObj* self, char* topic) {
+    mqtt_client_t* _client = obj_getPtr(self, "_client");
+    int ret;
+
+    if (strlen(topic) <= 0) {
+        __platform_printf("input topic error\r\n");
+        return -1;
+    }
+
+    ret = mqtt_unsubscribe(_client,topic);
+    if (ret == 0) {
+        __platform_printf("MQTT_unsubscribe :%s success\r\n", topic);
+    } else
+        __platform_printf("MQTT_unsubscribe :%s error\r\n", topic);
+
     return 0;
 }
 
