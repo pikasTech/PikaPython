@@ -20,7 +20,7 @@
 #define likely(x) __builtin_expect(!!(x), 1)
 #endif
 
-int _requests_Response_request(PikaObj *self, char *method, PikaDict *kwargs)
+int _requests_Response_request(PikaObj *self, char* method, char* url, pika_float timeout, char* data)
 {
     const char *this_url;      /* 真实组装之后的url */
     const char *this_header;   /* 填充之后响应头信息 */
@@ -28,7 +28,6 @@ int _requests_Response_request(PikaObj *self, char *method, PikaDict *kwargs)
     size_t data_len, resp_len; /* 长度信息 */
     void *resp_data;           /* 返回的负载内容 */
     int32_t ret;               /* 返回值 */
-    double timeout;            /* 超时时间 */
     struct webclient_session *session;
 
     session = (struct webclient_session *)obj_getInt(self, "session_address");
@@ -41,44 +40,26 @@ int _requests_Response_request(PikaObj *self, char *method, PikaDict *kwargs)
     timeout = 0;      /* 默认超时时间不限 */
     this_data = NULL; /* 默认无数据 */
 
-    if (kwargs != NULL)
-    {
-        /**
-         *  现在支持可选的额外参数
-         *      params: 用于填充url参数，即get方法通过url传递数据
-         *      headers: 用于响应头信息填充
-         *      data: 负载内容
-         *      json: 负载内容
-         *      files: 负载内容
-         *      timeout: 超时设置
-         * 实际上支持有限
-         */
-        if (args_isArgExist((Args *)kwargs, "timeout"))
-        {
-            /* 获取超时时间，默认s，最小分辨度ms */
-            timeout = pikaDict_getFloat(kwargs, "timeout");
-        }
-        if (args_isArgExist((Args *)kwargs, "files"))
-        {
-            /* 获取文件 */
-            RQ_cli("Sorry, now don't support transport files.\n");
-            return -1;
-        }
-        if (args_isArgExist((Args *)kwargs, "json"))
-        {
-            /* 获取JSON字符 */
-            RQ_cli("Sorry, now don't support JSON.\n");
-            return -1;
-        }
-        if (args_isArgExist((Args *)kwargs, "data"))
-        {
-            /* 获取原始字符数据 */
-            this_data = pikaDict_getStr(kwargs, "data");
-        }
-    }
+    /**
+     *  现在支持可选的额外参数
+     *      params: 用于填充url参数，即get方法通过url传递数据
+     *      headers: 用于响应头信息填充
+     *      data: 负载内容
+     *      json: 负载内容
+     *      files: 负载内容
+     *      timeout: 超时设置
+     * 实际上支持有限
+     */
+
+    /* 获取超时时间，默认s，最小分辨度ms */
+    timeout = timeout;
+    /* 获取原始字符数据 */
+    this_data = data;
+
     /* 记录request的url */
-    this_url = obj_getStr(self, "url");
+    this_url = url;
     this_header = obj_getStr(self, "headers");
+
     /* FIXME */
     RQ_cli("%s", this_header);
 

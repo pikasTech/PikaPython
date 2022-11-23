@@ -106,7 +106,6 @@ enum WEBCLIENT_METHOD {
 struct webclient_header {
     char* buffer;
     size_t length; /* content header buffer size */
-
     size_t size; /* maximum support header size */
 };
 

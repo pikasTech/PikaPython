@@ -30,24 +30,40 @@ def _append_params_to_url(rqst: Response, url: str, params: dict) -> int:
             ret = rqst.urlencode_write(str(k), str(v), first_connect, connect)
             if ret != 1:
                 return ret
-            count+=1
+            count += 1
         else:
             ret = rqst.urlencode_write(str(k), str(v), start, connect)
             if ret != 1:
                 return ret
     return 1
 
+
 def _append_headers(rqst: Response, headers: dict) -> int:
     if headers is None:
-        return 
+        return 1
     for k, v in headers.items():
         ret = rqst.header_write(str(k), str(v))
         if ret != 1:
             return ret
-    
+
     return 1
 
-def request(method: str, url: str, params=None, headers=None, **kwargs) -> Response:
+
+def request(
+        method: str,
+        url: str,
+        params=None,
+        headers=None,
+        timeout=0.0,
+        files=None,
+        json=None,
+        data=None) -> Response:
+    if files != None:
+        print("files is not supported")
+        return None
+    if json != None:
+        print("json is not supported")
+        return None
     """ 
     初始化请求对象，分配内存和固定请求头 
     """
@@ -55,30 +71,26 @@ def request(method: str, url: str, params=None, headers=None, **kwargs) -> Respo
     # 初始化，分配内存, 写入方法POST/GET
     ret = rqst.request_init(method)
     if ret != 1:
-        del rqst
         return None
     # 写入URL
     ret = _append_params_to_url(rqst, url, params)
-    if  ret != 1:
+    if ret != 1:
         # 出现错误，需要释放对象
-        del rqst
         return None
     # 写入默认HTTP版本号
     ret = rqst.proto_write('\0')
     if ret != 1:
-        del rqst
         return None
     # 写入响应头数据
     ret = _append_headers(rqst, headers)
     if ret != 1:
-        del rqst
         return None
     # 进行实际request过程
-    ret = rqst.request(kwargs)
+    ret = rqst.request(method, url, timeout, data)
     if ret != 1:
-        del rqst
         return None
     return rqst
+
 
 def get(url: str, params=None) -> Response:
     return request('GET', url, params)
