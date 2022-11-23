@@ -247,15 +247,13 @@ TEST(requests, rest_init) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
-    obj_run(pikaMain, 
-    "import requests\n"
-    "r = requests.Response()\n"
-    );
+    obj_run(pikaMain,
+            "import requests\n"
+            "r = requests.Response()\n");
     /* assert */
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
 
 #endif

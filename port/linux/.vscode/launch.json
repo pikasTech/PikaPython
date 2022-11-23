@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                "--gtest_filter=requests.std_request"
+                "--gtest_filter=requests.rest_init"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
