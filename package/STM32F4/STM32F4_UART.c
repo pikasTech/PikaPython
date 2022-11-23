@@ -224,9 +224,11 @@ PB0     ------> USART3_RX
 
 /* Msp handle interrupt */
 #ifdef UART1_EXIST
+#if 0
 void USART1_IRQHandler(void) {
     HAL_UART_IRQHandler(&pika_uart1.huart);
 }
+#endif
 #endif
 #ifdef UART2_EXIST
 void USART2_IRQHandler(void) {
