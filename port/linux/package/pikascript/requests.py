@@ -5,9 +5,6 @@ class Response(_requests.Response):
     def __init__(self):
         super().__init__()
 
-    def __del__(self):
-        super().__del__()
-
 
 def _append_params_to_url(rqst: Response, url: str, params: dict) -> int:
     if params is None:
