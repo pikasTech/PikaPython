@@ -1,6 +1,8 @@
 import requests
 
-a = requests.request("GET", 'http://www.rt-thread.com')
+a = requests.request("GET", "http://pikascript.com/")
 
 print(a.headers)
-print(a.content)
+print(a.content_length)
+print(a.text)
+

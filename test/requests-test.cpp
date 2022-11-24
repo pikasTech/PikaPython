@@ -217,7 +217,20 @@ TEST(requests, get) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(requests, append_params_to_url) {
+// TEST(requests, append_params_to_url) {
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     extern unsigned char pikaModules_py_a[];
+//     obj_linkLibrary(pikaMain, pikaModules_py_a);
+//     pikaVM_runSingleFile(pikaMain, "test/python/requests/requests_encode.py");
+//     /* assert */
+//     EXPECT_STREQ(log_buff[1], "'http://www.rt-thread.com?b=2&a=1'\r\n");
+//     EXPECT_STREQ(log_buff[0], "'http://www.rt-thread.com?b=%25&a=+'\r\n");
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
+
+TEST(requests, std_request) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -230,11 +243,24 @@ TEST(requests, append_params_to_url) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(requests, std_request) {
+// TEST(requests, get_gitee) {
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     extern unsigned char pikaModules_py_a[];
+//     obj_linkLibrary(pikaMain, pikaModules_py_a);
+//     pikaVM_runSingleFile(pikaMain, "test/python/requests/gitee_issue.py");
+//     /* assert */
+//     EXPECT_STREQ(log_buff[1], "'http://www.rt-thread.com?b=2&a=1'\r\n");
+//     EXPECT_STREQ(log_buff[0], "'http://www.rt-thread.com?b=%25&a=+'\r\n");
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
+
+TEST(requests, get_basic) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
-    pikaVM_runSingleFile(pikaMain, "test/python/requests/requests_encode.py");
+    pikaVM_runSingleFile(pikaMain, "test/python/requests/get_basic.py");
     /* assert */
     EXPECT_STREQ(log_buff[1], "'http://www.rt-thread.com?b=2&a=1'\r\n");
     EXPECT_STREQ(log_buff[0], "'http://www.rt-thread.com?b=%25&a=+'\r\n");

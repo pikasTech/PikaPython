@@ -1,11 +1,14 @@
 #include "_requests.h"
+#include "PikaObj.h"
 #include <ctype.h>
 #include "_requests_Response.h"
 #include "webclient.h"
+#include "random.h"
 
 /* 标准输出函数 */
 #define RQ_print(fmt, ...) __platform_printf(fmt, ##__VA_ARGS__)
 #define RQ_cli(fmt, ...) __platform_printf(fmt, ##__VA_ARGS__)
+#define RQ_debug(fmt, ...) __platform_printf("[RQ]:**|"fmt"|**\n", ##__VA_ARGS__)
 #define RQ_error_pointer(...) \
     RQ_print("[%s]: Checking NULL pointer of {" #__VA_ARGS__ "}.\n", __fun__)
 #define RQ_error_value(str, ...)                                            \
@@ -21,56 +24,45 @@
 #define likely(x) __builtin_expect(!!(x), 1)
 #endif
 
+/**
+ *  现在支持可选的额外参数
+ *      params: 用于填充url参数，即get方法通过url传递数据
+ *      headers: 用于响应头信息填充
+ *      data: 负载内容
+ *      json: 负载内容
+ *      files: 负载内容
+ *      timeout: 超时设置
+ * 实际上支持有限
+ */
 int _requests_Response_request(PikaObj* self,
                                char* method,
                                char* url,
                                pika_float timeout,
                                char* data) {
-    const char* this_url;      /* 真实组装之后的url */
-    const char* this_header;   /* 填充之后响应头信息 */
-    const void* this_data;     /* POST传输的数据 */
     size_t data_len, resp_len; /* 长度信息 */
     void* resp_data;           /* 返回的负载内容 */
     int32_t ret;               /* 返回值 */
     struct webclient_session* session;
 
-    session = (struct webclient_session*)obj_getInt(self, "session_address");
-    if (session == (void*)-999999999 || session == NULL) {
+    session = (struct webclient_session*)obj_getPtr(self, "session_address");
+    if (unlikely(session == NULL)) {
         RQ_cli("Sorry, can not operate NULL session object.\n");
         return -1;
     }
+    if (unlikely(url == NULL)) {
+        RQ_cli("Sorry, please give a specified url.\n");
+        return -1;
+    }
 
-    timeout = 0;      /* 默认超时时间不限 */
-    this_data = NULL; /* 默认无数据 */
-
-    /**
-     *  现在支持可选的额外参数
-     *      params: 用于填充url参数，即get方法通过url传递数据
-     *      headers: 用于响应头信息填充
-     *      data: 负载内容
-     *      json: 负载内容
-     *      files: 负载内容
-     *      timeout: 超时设置
-     * 实际上支持有限
-     */
-
-    /* 获取超时时间，默认s，最小分辨度ms */
-    timeout = timeout;
-    /* 获取原始字符数据 */
-    this_data = data;
-
-    /* 记录request的url */
-    this_url = url;
-    this_header = obj_getStr(self, "headers");
-
-    /* FIXME */
-    RQ_cli("%s", this_header);
+    RQ_debug("header length:%d", session->header->length);
+    RQ_debug("header buffer:%.4096s", session->header->buffer);
+    RQ_debug("header url:%.1024s", url);
 
     /* 进行post或者get操作 */
     if (strEqu(method, "GET")) {
         /* Get之后，header->buffer缓冲区内容会被清空 */
         /* FIXME: 保存一下header->buffer内容 */
-        if (webclient_get(session, this_url) != 200) {
+        if (webclient_get2(session, url) != 200) {
             return -1;
         }
         ret = webclient_response(session, &resp_data, &resp_len);
@@ -82,13 +74,11 @@ int _requests_Response_request(PikaObj* self,
         obj_setInt(self, "content_length", resp_len);
         obj_setStr(self, "text", (char*)resp_data);
         obj_setStr(self, "headers", session->header->buffer);
-        /* FIXME:暂时不保存源url */
-        obj_setStr(self, "url", NULL);
-    } else if (strEqu(method, "GET")) {
-        if (this_data == NULL) {
+    } else if (strEqu(method, "POST")) {
+        if (data == NULL) {
             data_len = 0;
         } else {
-            data_len = strlen(this_data);
+            data_len = strlen(data);
         }
         /* FIXME: 默认二进制数据 */
         if (strstr(session->header->buffer, "Content-Length") == RT_NULL) {
@@ -106,7 +96,7 @@ int _requests_Response_request(PikaObj* self,
                 return -1;
             }
         }
-        if (webclient_post(session, this_url, this_data, data_len) != 200) {
+        if (webclient_post(session, url, data, data_len) != 200) {
             return -1;
         }
         ret = webclient_response(session, &resp_data, &resp_len);
@@ -118,8 +108,6 @@ int _requests_Response_request(PikaObj* self,
         obj_setInt(self, "content_length", resp_len);
         obj_setStr(self, "text", (char*)resp_data);
         obj_setStr(self, "headers", session->header->buffer);
-        /* FIXME:暂时不保存源url */
-        obj_setStr(self, "url", NULL);
     } else {
         return -1;
     }
@@ -127,34 +115,86 @@ int _requests_Response_request(PikaObj* self,
     return 1;
 }
 
+
+/**
+ * 提供对 multipart/form-data的支持
+ */
+int _requests_Response_form_data(PikaObj *self, char* data)
+{
+    struct webclient_session* session;
+    int ret, i, j, data_len;
+    char buffer[32];
+
+    session = (struct webclient_session*)obj_getInt(self, "session_address");
+    if (unlikely(session == NULL)) {
+        RQ_cli("Sorry, can not operate NULL session object.\n");
+        return -1;
+    }
+    data_len = strlen(data);
+    if (unlikely(data_len == 0)) {
+        RQ_cli("Sorry, data length is zero.\n");
+        return -1;
+    }
+    RQ_debug("Add multipart/form-data fileds:");
+    /* 首先添加一些固定的头 */
+    if (strstr(session->header->buffer, "Connection:") == RT_NULL) {
+        ret = webclient_header_fields_add(session, "Connection: keep-alive\r\n");
+        if (ret < 0) {
+            return -1;
+        }
+    }
+    /** 
+     * FIXME: 需要寻找一种算法，但这里先展示一下功能，生成一个随机字符串 
+     * 32位重复可能性很小，因此失败可能性小......
+     * 忽略分割字符串可能与数据重复的问题。
+     */
+    /* random_string(buffer, 32); */
+
+
+    if (strstr(session->header->buffer, "Content-Type") == RT_NULL)
+    {
+        /* 二进制数据流 */
+        ret = webclient_header_fields_add(
+            session, "Content-Type: application/octet-stream\r\n");
+        if (ret < 0)
+        {
+            return -1;
+        }
+    }
+
+}
+
+
 int _requests_Response_header_write(PikaObj* self, char* header, char* value) {
     struct webclient_session* session;
 
     session = (struct webclient_session*)obj_getInt(self, "session_address");
-    if (session == (void*)-999999999 || session == NULL) {
+    if (unlikely(session == NULL)) {
         RQ_cli("Sorry, can not operate NULL session object.\n");
         return -1;
     }
-
+    RQ_debug("Add HTTP fileds:");
     /* 写入请求初始内容 */
     if (webclient_header_fields_add(session, "%s:%s\r\n", header, value) < 0) {
         RQ_cli("Sorry, request header too long.\n");
         return -1;
     }
+    RQ_debug("buffer:%p.", session->header->buffer);
     return 1;
 }
 
 int _requests_Response_proto_write(PikaObj* self, char* proto) {
     struct webclient_session* session;
 
-    session = (struct webclient_session*)obj_getInt(self, "session_address");
-    if (session == (void*)-999999999 || session == NULL) {
+    session = (struct webclient_session*)obj_getPtr(self, "session_address");
+    if (unlikely(session == NULL)) {
         RQ_cli("Sorry, can not operate NULL session object.\n");
         return -1;
     }
-
+    /* TODO: 写入协议头之前可以保存 */
+    RQ_debug("Add proto content:");
     /* 写入请求初始内容 */
-    if (proto != NULL && *proto != '\0') {
+    if (proto != NULL && *proto != 0) {
         if (webclient_header_fields_add(session, " %s\r\n", proto) < 0) {
             RQ_cli("Sorry, request header too long.\n");
             return -1;
@@ -165,6 +205,7 @@ int _requests_Response_proto_write(PikaObj* self, char* proto) {
             return -1;
         }
     }
+    RQ_debug("buffer:%p.", session->header->buffer);
     return 1;
 }
 
@@ -182,14 +223,25 @@ int _requests_Response_urlencode_write(PikaObj* self,
     char *url_address, *p, *s;
     int32_t length, header_length;
 
-    session = (struct webclient_session*)obj_getInt(self, "session_address");
-    if (session == (void*)-999999999 || session == NULL) {
+    session = (struct webclient_session*)obj_getPtr(self, "session_address");
+    if (unlikely(session == NULL)) {
         RQ_cli("Sorry, can not operate NULL session object.\n");
         return -1;
     }
     header_length = session->header->length;
     url_address = session->header->buffer + header_length;
     p = url_address;
+    RQ_debug("Add url content:");
+    RQ_debug("buffer:%p,len:%d.", session->header->buffer, header_length);
+    RQ_debug("%s%s%s%s", start, s1, connect, s2);
+    
+    if (*start == 0) {
+        while(*s1)
+        {
+            *p++ = *s1++;
+        }
+        goto end;
+    }
 
     if (start != NULL) {
         /* 写入前置符号 */
@@ -235,8 +287,9 @@ int _requests_Response_urlencode_write(PikaObj* self,
             s++;
         }
     }
-    *p = '\0';
 
+end:
+    *p = '\0';
     length = p - url_address;
     length += header_length;
     if (length > session->header->size) {
@@ -245,6 +298,8 @@ int _requests_Response_urlencode_write(PikaObj* self,
     }
     /* 更新长度信息 */
     session->header->length = length;
+    RQ_debug("context:%.1024s.", session->header->buffer);
+    RQ_debug("url length add:%d.", length);
     return 1;
 }
 
@@ -262,7 +317,7 @@ int _requests_Response_request_init(PikaObj* self, char* method) {
     session = webclient_session_create(WEBCLIENT_HEADER_BUFSZ);
     if (session == RT_NULL) {
         RQ_cli("Sorry, memeory is not enough.\n");
-        obj_setInt(self, "session_address", 0);
+        obj_setPtr(self, "session_address", NULL);
         return -1;
     } else {
         /* 写入请求初始内容 */
@@ -272,32 +327,35 @@ int _requests_Response_request_init(PikaObj* self, char* method) {
             return -1;
         }
         temp = session->header->buffer + session->header->length;
-        obj_setStr(self, "url", temp);
-        obj_setStr(self, "headers", session->header->buffer);
-        obj_setInt(self, "session_address", (int64_t)session);
+        RQ_debug("buffer address:%p.", session->header->buffer);
+        RQ_debug("url address:%p.", temp);
+        RQ_debug("headers start:%.10s.", session->header->buffer);
+        obj_setPtr(self, "url_address", temp);
+        obj_setPtr(self, "session_address", session);
     }
+    RQ_debug("Response deal session memory.");
     return 1;
 }
 
 PikaObj* _requests_Response_request_del(PikaObj* self) {
     struct webclient_session* session;
-    session = (struct webclient_session*)obj_getInt(self, "session_address");
-    if (session == (void*)-999999999) {
-        session = NULL;
-    }
+    session = (struct webclient_session*)obj_getPtr(self, "session_address");
     if (session) {
         webclient_close(session);
+        RQ_debug("Response free session memory.");
     }
     /* 初始化 */
     obj_setNone(self, "url");
     obj_setNone(self, "text");
     obj_setNone(self, "headers");
-    obj_setInt(self, "session_address", 0);
+    obj_setPtr(self, "session_address", NULL);
+    RQ_debug("Response set variables None.");
     return NULL;
 }
 
 void _requests_Response___del__(PikaObj* self) {
     _requests_Response_request_del(self);
+    RQ_debug("Response class deleted.");
 }
 
 void _requests_Response___init__(PikaObj* self) {
@@ -305,5 +363,6 @@ void _requests_Response___init__(PikaObj* self) {
     obj_setNone(self, "url");
     obj_setNone(self, "text");
     obj_setNone(self, "headers");
-    obj_setInt(self, "session_address", 0);
+    obj_setPtr(self, "session_address", NULL);
+    RQ_debug("Response class initialized.");
 }
