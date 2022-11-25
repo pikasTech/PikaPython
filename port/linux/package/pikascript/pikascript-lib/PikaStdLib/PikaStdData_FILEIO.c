@@ -25,7 +25,13 @@ void PikaStdData_FILEIO_close(PikaObj* self) {
     obj_setPtr(self, "_f", NULL);
 }
 
-Arg* PikaStdData_FILEIO_read(PikaObj* self, int size) {
+Arg* PikaStdData_FILEIO_read(PikaObj* self, PikaTuple* size_) {
+    int size = 0;
+    if (pikaTuple_getSize(size_) == 0) {
+        size = -1;
+    }else{
+        size = pikaTuple_getInt(size_, 0);
+    }
     if (size <= 0) {
         /* read all */
         size = PIKA_READ_FILE_BUFF_SIZE;
