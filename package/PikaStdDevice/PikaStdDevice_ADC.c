@@ -27,14 +27,43 @@ void PikaStdDevice_ADC_setPin(PikaObj* self, char* pin) {
     obj_setStr(self, "pin", pin);
 }
 
+static pika_dev* _get_dev(PikaObj* self) {
+    pika_dev* dev = obj_getPtr(self, "pika_dev");
+    if (NULL != dev) {
+        return dev;
+    }
+    dev = pika_hal_open(PIKA_HAL_ADC, obj_getStr(self, "pin"));
+    if (NULL == dev) {
+        __platform_printf("Error: open ADC '%s' failed.\r\n",
+                          obj_getStr(self, "pin"));
+    }
+    obj_setPtr(self, "pika_dev", dev);
+    return dev;
+}
+
 void PikaStdDevice_ADC_platformEnable(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    pika_dev* dev = _get_dev(self);
+    if (NULL == dev) {
+        __platform_printf("Error: open ADC '%s' failed.\r\n",
+                          obj_getStr(self, "pin"));
+        return;
+    }
+    pika_hal_ADC_config cfg = {0};
+    cfg.continue_or_single = PIKA_HAL_ADC_SINGLE;
+    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg);
+    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_ENABLE);
 }
 
 void PikaStdDevice_ADC_platformDisable(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    pika_dev* dev = _get_dev(self);
+    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_DISABLE);
 }
 
 void PikaStdDevice_ADC_platformRead(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    pika_dev* dev = _get_dev(self);
+    pika_hal_ADC_config* cfg = (pika_hal_ADC_config*)dev->ioctl_config;
+    uint32_t val_i = 0;
+    pika_hal_read(dev, &val_i, sizeof(val_i));
+    pika_float val = (pika_float)val_i / (pika_float)cfg->max * cfg->vref;
+    val = val_i * obj_setFloat(self, "val", val);
 }
