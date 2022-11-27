@@ -2,6 +2,7 @@
 #define _PIKA_DEV_HAL_H
 #include <stddef.h>
 #include <stdint.h>
+#include "PikaObj.h"
 
 /*
  * pika_hal is a C Device HAL lib for PikaScript modules.
@@ -15,6 +16,7 @@ typedef enum {
 
 typedef struct {
     PIKA_HAL_DEV_TYPE type;
+    PIKA_BOOL is_enabled;
     void* ioctl_config;
     void* platform_data;
 } pika_dev;
@@ -105,6 +107,21 @@ typedef struct {
 } pika_hal_UART_config;
 
 typedef uint32_t PIKA_HAL_IIC_SLAVE_ADDR;
+typedef uint32_t PIKA_HAL_IIC_MEM_ADDR;
+
+typedef enum PIKA_HAL_IIC_MEM_ADDR_SIZE {
+    _PIKA_HAL_IIC_MEM_ADDR_SIZE_UNUSED = 0,
+    PIKA_HAL_IIC_MEM_ADDR_SIZE_8BIT = 1,
+    PIKA_HAL_IIC_MEM_ADDR_SIZE_16BIT = 2,
+    PIKA_HAL_IIC_MEM_ADDR_SIZE_24BIT = 3,
+    PIKA_HAL_IIC_MEM_ADDR_SIZE_32BIT = 4,
+} PIKA_HAL_IIC_MEM_ADDR_SIZE;
+
+typedef enum PIKA_HAL_IIC_MEM_ADDR_ENA {
+    _PIKA_HAL_IIC_MEM_ADDR_ENA_UNUSED = 0,
+    PIKA_HAL_IIC_MEM_ADDR_ENA_DISABLE,
+    PIKA_HAL_IIC_MEM_ADDR_ENA_ENABLE,
+} PIKA_HAL_IIC_MEM_ADDR_ENA;
 
 typedef enum {
     _PIKA_HAL_IIC_SPEED_UNUSED = 0,
@@ -113,9 +130,41 @@ typedef enum {
     PIKA_HAL_IIC_SPEED_1M = 1000000,
 } PIKA_HAL_IIC_SPEED;
 
+typedef enum PIKA_HAL_IIC_MASTER_OR_SLAVE {
+    _PIKA_HAL_IIC_MASTER_OR_SLAVE_UNUSED = 0,
+    PIKA_HAL_IIC_MASTER,
+    PIKA_HAL_IIC_SLAVE,
+} PIKA_HAL_IIC_MASTER_OR_SLAVE;
+
+typedef enum PIKA_HAL_IIC_ADDRESS_WIDTH {
+    _PIKA_HAL_IIC_ADDRESS_WIDTH_UNUSED = 0,
+    PIKA_HAL_IIC_ADDRESS_WIDTH_7BIT = 7,
+    PIKA_HAL_IIC_ADDRESS_WIDTH_10BIT = 10,
+} PIKA_HAL_IIC_ADDRESS_WIDTH;
+
+typedef enum PIKA_HAL_IIC_TIMEOUT {
+    _PIKA_HAL_IIC_TIMEOUT_UNUSED = 0,
+    PIKA_HAL_IIC_TIMEOUT_1MS = 1,
+    PIKA_HAL_IIC_TIMEOUT_2MS = 2,
+    PIKA_HAL_IIC_TIMEOUT_5MS = 5,
+    PIKA_HAL_IIC_TIMEOUT_10MS = 10,
+    PIKA_HAL_IIC_TIMEOUT_20MS = 20,
+    PIKA_HAL_IIC_TIMEOUT_50MS = 50,
+    PIKA_HAL_IIC_TIMEOUT_100MS = 100,
+    PIKA_HAL_IIC_TIMEOUT_200MS = 200,
+    PIKA_HAL_IIC_TIMEOUT_500MS = 500,
+    PIKA_HAL_IIC_TIMEOUT_1000MS = 1000,
+} PIKA_HAL_IIC_TIMEOUT;
+
 typedef struct {
-    PIKA_HAL_IIC_SLAVE_ADDR addr;
+    PIKA_HAL_IIC_ADDRESS_WIDTH address_width;
+    PIKA_HAL_IIC_MASTER_OR_SLAVE master_or_slave;
+    PIKA_HAL_IIC_SLAVE_ADDR slave_addr;
+    PIKA_HAL_IIC_MEM_ADDR_ENA mem_addr_ena;
+    PIKA_HAL_IIC_MEM_ADDR mem_addr;
+    PIKA_HAL_IIC_MEM_ADDR_SIZE mem_addr_size;
     PIKA_HAL_IIC_SPEED speed;
+    PIKA_HAL_IIC_TIMEOUT timeout;
 } pika_hal_IIC_config;
 
 typedef enum {
@@ -164,20 +213,6 @@ typedef struct {
 } pika_hal_SPI_config;
 
 typedef enum {
-    _PIKA_HAL_ADC_CHANNEL_UNUSED = 0,
-    PIKA_HAL_ADC_CHANNEL_0,
-    PIKA_HAL_ADC_CHANNEL_1,
-    PIKA_HAL_ADC_CHANNEL_2,
-    PIKA_HAL_ADC_CHANNEL_3,
-    PIKA_HAL_ADC_CHANNEL_4,
-    PIKA_HAL_ADC_CHANNEL_5,
-    PIKA_HAL_ADC_CHANNEL_6,
-    PIKA_HAL_ADC_CHANNEL_7,
-    PIKA_HAL_ADC_CHANNEL_TEMP,
-    PIKA_HAL_ADC_CHANNEL_VBAT,
-} PIKA_HAL_ADC_CHANNEL;
-
-typedef enum {
     _PIKA_HAL_ADC_RESOLUTION_UNUSED = 0,
     PIKA_HAL_ADC_RESOLUTION_8 = 8,
     PIKA_HAL_ADC_RESOLUTION_10 = 10,
@@ -186,10 +221,45 @@ typedef enum {
     PIKA_HAL_ADC_RESOLUTION_16 = 16,
 } PIKA_HAL_ADC_RESOLUTION;
 
+typedef enum PIKA_HAL_ADC_SAMPLING_FREQ {
+    _PIKA_HAL_ADC_SAMPLING_FREQ_UNUSED = 0,
+    PIKA_HAL_ADC_SAMPLING_FREQ_100 = 100,
+    PIKA_HAL_ADC_SAMPLING_FREQ_1K = 1000,
+    PIKA_HAL_ADC_SAMPLING_FREQ_10K = 10000,
+    PIKA_HAL_ADC_SAMPLING_FREQ_100K = 100000,
+    PIKA_HAL_ADC_SAMPLING_FREQ_1M = 1000000,
+    PIKA_HAL_ADC_SAMPLING_FREQ_10M = 10000000,
+} PIKA_HAL_ADC_SAMPLING_FREQ;
+
+typedef enum PIKA_HAL_ADC_CONTINUOU_OR_SINGLE {
+    _PIKA_HAL_ADC_CONTINUOU_OR_SINGLE_UNUSED = 0,
+    PIKA_HAL_ADC_SINGLE,
+    PIKA_HAL_ADC_CONTINUOU,
+} PIKA_HAL_ADC_CONTINUOU_OR_SINGLE;
+
+typedef pika_float PIKA_HAL_ADC_VREF;
+typedef uint32_t PIKA_HAL_ADC_MAX;
+
 typedef struct {
-    PIKA_HAL_ADC_CHANNEL channel;
-    PIKA_HAL_ADC_RESOLUTION resolution;
+    PIKA_HAL_ADC_RESOLUTION sampling_resolution;
+    PIKA_HAL_ADC_SAMPLING_FREQ sampling_freq;
+    PIKA_HAL_ADC_CONTINUOU_OR_SINGLE continue_or_single;
+    PIKA_HAL_ADC_MAX max;
+    PIKA_HAL_ADC_VREF vref;
 } pika_hal_ADC_config;
+
+typedef enum {
+    _PIKA_HAL_DAC_RESOLUTION_UNUSED = 0,
+    PIKA_HAL_DAC_RESOLUTION_8 = 8,
+    PIKA_HAL_DAC_RESOLUTION_10 = 10,
+    PIKA_HAL_DAC_RESOLUTION_12 = 12,
+    PIKA_HAL_DAC_RESOLUTION_14 = 14,
+    PIKA_HAL_DAC_RESOLUTION_16 = 16,
+} PIKA_HAL_DAC_RESOLUTION;
+
+typedef struct pika_hal_DAC_config {
+    PIKA_HAL_DAC_RESOLUTION sampling_resolution;
+} pika_hal_DAC_config;
 
 typedef enum {
     _PIKA_HAL_DAC_UNUSED = 0,
@@ -218,7 +288,6 @@ typedef enum {
 } PIKA_HAL_PWM_DUTY;
 
 typedef struct {
-    PIKA_HAL_PWM_CHANNEL channel;
     PIKA_HAL_PWM_PERIOD period;
     PIKA_HAL_PWM_DUTY duty;
 } pika_hal_PWM_config;
