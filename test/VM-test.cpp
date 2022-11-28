@@ -1253,8 +1253,8 @@ TEST(vm, keyword_3) {
 TEST(vm, keyword_4) {
     char* line =
         "def test(a, b, **keys):\n"
-        "    print(keys['a'], keys['b'], a, b)\n"
-        "test(3, 4, a=1, b= 2)";
+        "    print(keys['c'], keys['d'], a, b)\n"
+        "test(3, 4, c=1, d= 2)";
     PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
     obj_run(self, line);
     /* collect */
@@ -2278,6 +2278,26 @@ TEST(vm, slice_str_end) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "'tes'\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if !PIKA_NANO_ENABLE
+TEST(vm, fn_pos_kw) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def test(a, b):\n"
+            "    print(a, b)\n"
+            "test(b=1,a=2)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "2 1\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

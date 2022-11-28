@@ -848,19 +848,19 @@ Arg* obj_runMethodArg(PikaObj* self,
                                      &run_state);
 }
 
-char* _keys_to_defult(char* type_list,
-                      char* arg_name,
-                      PikaDict* kws,
-                      int* argc,
-                      Arg* argv[]) {
+char* _kw_to_default(char* type_list,
+                     char* arg_name,
+                     PikaDict* kw,
+                     int* argc,
+                     Arg* argv[]) {
 #if PIKA_NANO
     return arg_name;
 #endif
     while (strIsContain(arg_name, '=')) {
         strPopLastToken(arg_name, '=');
         /* load default arg from kws */
-        if (kws != NULL) {
-            Arg* default_arg = pikaDict_getArg(kws, arg_name);
+        if (kw != NULL) {
+            Arg* default_arg = pikaDict_getArg(kw, arg_name);
             if (default_arg != NULL) {
                 argv[(*argc)++] = arg_copy(default_arg);
             }
@@ -868,6 +868,23 @@ char* _keys_to_defult(char* type_list,
         arg_name = strPopLastToken(type_list, ',');
     }
     return arg_name;
+}
+
+void _kw_to_pos(char* type_list,
+                PikaDict* kw,
+                int* argc,
+                Arg* argv[],
+                int arg_num_need) {
+    if (0 == arg_num_need) {
+        return;
+    }
+    for (int i = 0; i < arg_num_need; i++) {
+        char* arg_name = strPopLastToken(type_list, ',');
+        pika_assert(kw != NULL);
+        Arg* pos_arg = pikaDict_getArg(kw, arg_name);
+        pika_assert(pos_arg != NULL);
+        argv[(*argc)++] = arg_copy(pos_arg);
+    }
 }
 
 static void _loadLocalsFromArgv(Args* locals, int argc, Arg* argv[]) {
@@ -1063,6 +1080,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
 
     /* load pars */
+    int arg_num_pos_got = 0;
     for (int i = 0; i < arg_num; i++) {
         int arg_index = arg_num - i;
         Arg* call_arg = stack_popArg_alloc(&(vm->stack));
@@ -1097,18 +1115,21 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             }
         }
         /* load default from kw */
-        arg_name = _keys_to_defult(type_list, arg_name, kw_dict, &argc, argv);
+        arg_name = _kw_to_default(type_list, arg_name, kw_dict, &argc, argv);
         /* load position arg */
         arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
         argv[argc++] = call_arg;
+        arg_num_pos_got++;
     }
 
 /* only default */
 #if !PIKA_NANO_ENABLE
     if (strIsContain(type_list, '=')) {
         char* arg_name = strPopLastToken(type_list, ',');
-        _keys_to_defult(type_list, arg_name, kw_dict, &argc, argv);
+        _kw_to_default(type_list, arg_name, kw_dict, &argc, argv);
     }
+    /* load kw to pos */
+    _kw_to_pos(type_list, kw_dict, &argc, argv, arg_num_pos - arg_num_pos_got);
 #endif
 
     if (tuple != NULL) {
