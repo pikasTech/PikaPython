@@ -497,12 +497,12 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     // set_disp_mode(STDIN_FILENO, 0);
 #endif
     PikaObj* newObj = newNormalObj(newObjFun);
-    if(!logo_printed){
+    if (!logo_printed) {
         logo_printed = 1;
-        __platform_printf("------------------\r\n");
-        __platform_printf("|   POWERED BY   |\r\n");
-        __platform_printf("| pikascript.com |\r\n");
-        __platform_printf("------------------\r\n");
+        __platform_printf("\r\n");
+        __platform_printf("=========[ POWERED BY ]==========\r\n");
+        __platform_printf("|        pikascript.com         |\r\n");
+        __platform_printf("=================================\r\n");
     }
     __pikaMain = newObj;
     return newObj;
