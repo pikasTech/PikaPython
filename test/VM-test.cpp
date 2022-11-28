@@ -2302,6 +2302,26 @@ TEST(vm, fn_pos_kw) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, fn_pos_kw2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def test(a, b):\n"
+            "    print(a, b)\n"
+            "test(1, b=2)\n"
+            "test(1, a=2)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "1 2\r\n");
+    EXPECT_STREQ(log_buff[0], "2 1\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif
 
 TEST_END

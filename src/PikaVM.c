@@ -870,11 +870,23 @@ char* _kw_to_default(char* type_list,
     return arg_name;
 }
 
-void _kw_to_pos(char* type_list,
-                PikaDict* kw,
-                int* argc,
-                Arg* argv[],
-                int arg_num_need) {
+int _kw_to_pos_one(char* arg_name, PikaDict* kw, int* argc, Arg* argv[]) {
+    if (kw == NULL) {
+        return 0;
+    }
+    Arg* pos_arg = pikaDict_getArg(kw, arg_name);
+    if (pos_arg == NULL) {
+        return 0;
+    }
+    argv[(*argc)++] = arg_copy(pos_arg);
+    return 1;
+}
+
+void _kw_to_pos_all(char* type_list,
+                    PikaDict* kw,
+                    int* argc,
+                    Arg* argv[],
+                    int arg_num_need) {
     if (0 == arg_num_need) {
         return;
     }
@@ -1117,6 +1129,15 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         /* load default from kw */
         arg_name = _kw_to_default(type_list, arg_name, kw_dict, &argc, argv);
         /* load position arg */
+        if (_kw_to_pos_one(arg_name, kw_dict, &argc, argv)) {
+            /* load pos from kw */
+            arg_num_pos_got++;
+            /* restore the stack */
+            i--;
+            stack_pushArg(&(vm->stack), call_arg);
+            continue;
+        }
+        /*load pos from pos */
         arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
         argv[argc++] = call_arg;
         arg_num_pos_got++;
@@ -1129,7 +1150,8 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         _kw_to_default(type_list, arg_name, kw_dict, &argc, argv);
     }
     /* load kw to pos */
-    _kw_to_pos(type_list, kw_dict, &argc, argv, arg_num_pos - arg_num_pos_got);
+    _kw_to_pos_all(type_list, kw_dict, &argc, argv,
+                   arg_num_pos - arg_num_pos_got);
 #endif
 
     if (tuple != NULL) {
