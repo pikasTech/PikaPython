@@ -1009,9 +1009,34 @@ static void _load_call_arg(VMState* vm,
     (f->n_positional_got)++;
 }
 
-#if 0
+static int _get_n_input_with_unpack(VMState* vm) {
+#if PIKA_NANO_ENABLE
+    return VMState_getInputArgNum(vm);
+#else
+    int n_input = VMState_getInputArgNum(vm);
+    int get_star = 0;
+    int unpack_num = 0;
+    for (int i = 0; i < n_input; i++) {
+        Arg* arg_check = stack_checkArg(&(vm->stack), i);
+        if (NULL == arg_check) {
+            break;
+        }
+        if (arg_getIsDoubleStarred(arg_check) || arg_getIsStarred(arg_check)) {
+            get_star++;
+        }
+    }
+    if (0 == get_star) {
+        return n_input;
+    }
+    Stack stack_tmp = {0};
+    stack_init(&stack_tmp);
+    for (int i = 0; i < n_input; i++) {
         /* unpack starred arg */
-        if (call_arg != NULL && arg_getIsStarred(call_arg)) {
+        Arg* call_arg = stack_popArg_alloc(&(vm->stack));
+        if (call_arg == NULL) {
+            break;
+        }
+        if (arg_getIsStarred(call_arg)) {
             pika_assert(argType_isObject(arg_getType(call_arg)));
             PikaObj* obj = arg_getPtr(call_arg);
             /* clang-format off */
@@ -1048,27 +1073,27 @@ static void _load_call_arg(VMState* vm,
                 };
                 pikaVM_runByteCode(obj, (uint8_t*)bytes);
                 Arg* arg_a = obj_getArg(obj, "@a");
-                _load_call_arg(vm, arg_a, &f, &i_star_arg, &argc, argv);
+                stack_pushArg(&stack_tmp, arg_copy(arg_a));
+                unpack_num++;
             }
-            continue;
+            goto __continue;
         }
-#endif
-
-static int _get_n_input_with_unpack(VMState* vm) {
-#if PIKA_NANO_ENABLE
-    return VMState_getInputArgNum(vm);
-#else
-    int n_input = VMState_getInputArgNum(vm);
-    for (int i = 0; i < n_input; i++) {
-        Arg* arg_check = stack_checkArg(&(vm->stack), i);
-        if (NULL == arg_check) {
-            continue;
+        if (arg_getIsDoubleStarred(call_arg)) {
+            goto __continue;
         }
-        if (arg_getIsDoubleStarred(arg_check) || arg_getIsStarred(arg_check)) {
-            n_input--;
+        stack_pushArg(&stack_tmp, call_arg);
+    __continue:
+        if (NULL != call_arg) {
+            arg_deinit(call_arg);
         }
     }
-    return n_input;
+    int n_input_new = stack_getTop(&stack_tmp);
+    for (int i = 0; i < n_input_new; i++) {
+        Arg* arg = stack_checkArg(&stack_tmp, n_input_new - i - 1);
+        stack_pushArg(&(vm->stack), arg_copy(arg));
+    }
+    stack_deinit(&stack_tmp);
+    return n_input_new;
 #endif
 }
 

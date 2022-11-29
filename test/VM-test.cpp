@@ -2334,6 +2334,7 @@ TEST(vm, fn_star) {
             "print(*a)\n");
     /* collect */
     /* assert */
+    EXPECT_STREQ(log_buff[0], "1 2 3\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
