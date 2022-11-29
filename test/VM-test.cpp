@@ -164,7 +164,7 @@ TEST(VM, WHILE) {
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
     pikaMemInfo.heapUsedMax = 0;
-    PikaObj* self = New_TinyObj(NULL);
+    PikaObj* self = newRootObj("root", New_TinyObj);
     VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
     EXPECT_EQ(args_getInt(globals->list, "a"), 0);
     EXPECT_EQ(args_getInt(globals->list, "b"), 1);
@@ -766,7 +766,7 @@ TEST(VM, WHILE_byte) {
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
     pikaMemInfo.heapUsedMax = 0;
-    PikaObj* self = New_TinyObj(NULL);
+    PikaObj* self = newRootObj("root", New_TinyObj);
     pikaVM_run(self, lines);
     EXPECT_EQ(obj_getInt(self, "a"), 0);
     EXPECT_EQ(obj_getInt(self, "b"), 1);

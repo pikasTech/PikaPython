@@ -107,7 +107,7 @@ PikaObj* New_NativeMethodBase(Args* args) {
 }
 
 TEST(class, native_class1) {
-    PikaObj* native_obj = newNormalObj(New_NativeMethodBase);
+    PikaObj* native_obj = newRootObj("root", New_NativeMethodBase);
     obj_run(native_obj,
             "print('hello', 123)\n"
             "int(123.0000)\n"
