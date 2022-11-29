@@ -2340,6 +2340,40 @@ TEST(vm, fn_star) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(vm, fn_star_pos) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "a = (1,2,3)\n"
+            "print(*a, 4)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1 2 3 4\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, fn_star_pos_2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "a = (1,2,3)\n"
+            "print(0, *a, 4)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "0 1 2 3 4\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(vm, fn_star_star) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

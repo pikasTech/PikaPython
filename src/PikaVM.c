@@ -1054,7 +1054,7 @@ static int _get_n_input_with_unpack(VMState* vm) {
             };
             pikaVM_runByteCode(obj, (uint8_t*)bytes);
             int len = obj_getInt(obj, "@l");
-            for (int i_star_arg = 0; i_star_arg < len; i_star_arg++) {
+            for (int i_star_arg = len - 1; i_star_arg >= 0; i_star_arg--) {
                 obj_setInt(obj, "@d", i_star_arg);
                 /* clang-format off */
                 PIKA_PYTHON(
@@ -1081,7 +1081,7 @@ static int _get_n_input_with_unpack(VMState* vm) {
         if (arg_getIsDoubleStarred(call_arg)) {
             goto __continue;
         }
-        stack_pushArg(&stack_tmp, call_arg);
+        stack_pushArg(&stack_tmp, arg_copy(call_arg));
     __continue:
         if (NULL != call_arg) {
             arg_deinit(call_arg);
@@ -1089,8 +1089,8 @@ static int _get_n_input_with_unpack(VMState* vm) {
     }
     int n_input_new = stack_getTop(&stack_tmp);
     for (int i = 0; i < n_input_new; i++) {
-        Arg* arg = stack_checkArg(&stack_tmp, n_input_new - i - 1);
-        stack_pushArg(&(vm->stack), arg_copy(arg));
+        Arg* arg = stack_popArg_alloc(&stack_tmp);
+        stack_pushArg(&(vm->stack), arg);
     }
     stack_deinit(&stack_tmp);
     return n_input_new;
