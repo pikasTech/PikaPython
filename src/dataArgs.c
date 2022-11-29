@@ -502,6 +502,7 @@ PIKA_RES pikaList_setArg(PikaList* self, int index, Arg* arg) {
 }
 
 Arg* pikaList_getArg(PikaList* self, int index) {
+    pika_assert(NULL != self);
     char buff[11];
     char* i_str = fast_itoa(buff, index);
     return args_getArg(&self->super, i_str);

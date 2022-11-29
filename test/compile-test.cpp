@@ -696,4 +696,16 @@ TEST(compiler, bc_fn) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, starrd) {
+    char* lines = "@l = __len__()";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, starrd_get) {
+    char* lines = "@a = __getitem__(@d)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

@@ -533,11 +533,11 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
 #if PIKA_SYNTAX_SLICE_ENABLE
-    int arg_num_input = VMState_getInputArgNum(vm);
-    if (arg_num_input < 2) {
+    int n_input = VMState_getInputArgNum(vm);
+    if (n_input < 2) {
         return arg_newNull();
     }
-    if (arg_num_input == 2) {
+    if (n_input == 2) {
         Arg* key = stack_popArg_alloc(&vm->stack);
         Arg* obj = stack_popArg_alloc(&vm->stack);
         Arg* res = __vm_get(vm, self, key, obj);
@@ -545,7 +545,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
         arg_deinit(obj);
         return res;
     }
-    if (arg_num_input == 3) {
+    if (n_input == 3) {
         Arg* end = stack_popArg_alloc(&vm->stack);
         Arg* start = stack_popArg_alloc(&vm->stack);
         Arg* obj = stack_popArg_alloc(&vm->stack);
@@ -848,9 +848,8 @@ Arg* obj_runMethodArg(PikaObj* self,
                                      &run_state);
 }
 
-static char* _kw_to_default_all(char* type_list,
+static char* _kw_to_default_all(FunctionArgsInfo* f,
                                 char* arg_name,
-                                PikaDict* kw,
                                 int* argc,
                                 Arg* argv[]) {
 #if PIKA_NANO
@@ -859,25 +858,25 @@ static char* _kw_to_default_all(char* type_list,
     while (strIsContain(arg_name, '=')) {
         strPopLastToken(arg_name, '=');
         /* load default arg from kws */
-        if (kw != NULL) {
-            Arg* default_arg = pikaDict_getArg(kw, arg_name);
+        if (f->kw != NULL) {
+            Arg* default_arg = pikaDict_getArg(f->kw, arg_name);
             if (default_arg != NULL) {
                 argv[(*argc)++] = arg_copy(default_arg);
             }
         }
-        arg_name = strPopLastToken(type_list, ',');
+        arg_name = strPopLastToken(f->type_list, ',');
     }
     return arg_name;
 }
 
-static int _kw_to_pos_one(char* arg_name,
-                          PikaDict* kw,
+static int _kw_to_pos_one(FunctionArgsInfo* f,
+                          char* arg_name,
                           int* argc,
                           Arg* argv[]) {
-    if (kw == NULL) {
+    if (f->kw == NULL) {
         return 0;
     }
-    Arg* pos_arg = pikaDict_getArg(kw, arg_name);
+    Arg* pos_arg = pikaDict_getArg(f->kw, arg_name);
     if (pos_arg == NULL) {
         return 0;
     }
@@ -885,18 +884,15 @@ static int _kw_to_pos_one(char* arg_name,
     return 1;
 }
 
-static void _kw_to_pos_all(char* type_list,
-                           PikaDict* kw,
-                           int* argc,
-                           Arg* argv[],
-                           int arg_num_need) {
+static void _kw_to_pos_all(FunctionArgsInfo* f, int* argc, Arg* argv[]) {
+    int arg_num_need = f->n_positional - f->n_positional_got;
     if (0 == arg_num_need) {
         return;
     }
     for (int i = 0; i < arg_num_need; i++) {
-        char* arg_name = strPopLastToken(type_list, ',');
-        pika_assert(kw != NULL);
-        Arg* pos_arg = pikaDict_getArg(kw, arg_name);
+        char* arg_name = strPopLastToken(f->type_list, ',');
+        pika_assert(f->kw != NULL);
+        Arg* pos_arg = pikaDict_getArg(f->kw, arg_name);
         pika_assert(pos_arg != NULL);
         argv[(*argc)++] = arg_copy(pos_arg);
     }
@@ -909,143 +905,237 @@ static void _loadLocalsFromArgv(Args* locals, int argc, Arg* argv[]) {
     }
 }
 
-static void _type_list_parse(char* type_list,
-                             PIKA_BOOL* is_vars,
-                             PIKA_BOOL* is_keys,
-                             PIKA_BOOL* is_default,
-                             int8_t* num_pos,
-                             int8_t* num_default) {
-    if (type_list[0] == 0) {
-        *num_pos = 0;
+static void _type_list_parse(FunctionArgsInfo* f) {
+    if (f->type_list[0] == 0) {
+        f->n_positional = 0;
         return;
     }
-    int8_t res = strCountSign(type_list, ',') + 1;
-    int8_t x = strCountSign(type_list, '*');
-    int8_t y = strCountSign(type_list, '=');
+    int8_t res = strCountSign(f->type_list, ',') + 1;
+    int8_t x = strCountSign(f->type_list, '*');
+    int8_t y = strCountSign(f->type_list, '=');
     /* default */
     if (y > 0) {
         res -= y;
-        *is_default = PIKA_TRUE;
-        *num_default = y;
+        f->is_default = PIKA_TRUE;
+        f->n_default = y;
     }
     /* vars */
     if (x == 1) {
-        *is_vars = PIKA_TRUE;
-        *num_pos = res - 1;
+        f->is_vars = PIKA_TRUE;
+        f->n_positional = res - 1;
         return;
     }
     /* kw */
     if (x == 2) {
-        *is_keys = 1;
-        *num_pos = res - 1;
+        f->is_keys = 1;
+        f->n_positional = res - 1;
         return;
     }
     /* vars and kw */
     if (x == 3) {
-        *is_vars = PIKA_TRUE;
-        *is_keys = PIKA_TRUE;
-        *num_pos = res - 2;
+        f->is_vars = PIKA_TRUE;
+        f->is_keys = PIKA_TRUE;
+        f->n_positional = res - 2;
         return;
     }
-    *num_pos = res;
+    f->n_positional = res;
     return;
 }
 
-static void _kw_push(PikaDict** kw_dict_p,
-                     PikaDict** kw_keys_p,
-                     Arg* call_arg,
-                     int i) {
-    if (NULL == *kw_dict_p) {
-        *kw_dict_p = New_pikaDict();
+static void _kw_push(FunctionArgsInfo* f, Arg* call_arg, int i) {
+    if (NULL == f->kw) {
+        f->kw = New_pikaDict();
     }
-    if (NULL == *kw_keys_p) {
-        *kw_keys_p = New_pikaDict();
+    if (NULL == f->kw_keys) {
+        f->kw_keys = New_pikaDict();
     }
     arg_setIsKeyword(call_arg, PIKA_FALSE);
-    pikaDict_setArg(*kw_dict_p, call_arg);
+    pikaDict_setArg(f->kw, call_arg);
     char kw_keys_index_buff[11] = {0};
     char* kw_keys_index = fast_itoa(kw_keys_index_buff, i);
-    pikaDict_setArg(*kw_keys_p,
+    pikaDict_setArg(f->kw_keys,
                     arg_setInt(NULL, kw_keys_index, arg_getNameHash(call_arg)));
 }
 
-#define vars_or_keys_or_default (is_vars || is_keys || is_default)
+static void _load_call_arg(VMState* vm,
+                           Arg* call_arg,
+                           FunctionArgsInfo* f,
+                           int* i,
+                           int* argc,
+                           Arg* argv[]) {
+    /* load the kw arg */
+    if (call_arg != NULL && arg_getIsKeyword(call_arg)) {
+        _kw_push(f, call_arg, *i);
+        return;
+    }
+    /* load variable arg */
+    if (f->i_arg > f->n_positional) {
+        if (f->is_vars) {
+            pikaList_append(&(f->tuple)->super, call_arg);
+            /* the append would copy the arg */
+            if (NULL != call_arg) {
+                arg_deinit(call_arg);
+            }
+            return;
+        }
+    }
+    char* arg_name = strPopLastToken(f->type_list, ',');
+    /* load default from pos */
+    if (f->i_arg > f->n_positional) {
+        if (f->is_default) {
+            if (arg_name[strlen(arg_name) - 1] == '=') {
+                /* found default arg*/
+                arg_name[strlen(arg_name) - 1] = '\0';
+                arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
+                argv[(*argc)++] = call_arg;
+            }
+            return;
+        }
+    }
+    /* load default from kw */
+    arg_name = _kw_to_default_all(f, arg_name, argc, argv);
+    /* load position arg */
+    if (_kw_to_pos_one(f, arg_name, argc, argv)) {
+        /* load pos from kw */
+        (f->n_positional_got)++;
+        /* restore the stack */
+        (*i)--;
+        stack_pushArg(&(vm->stack), call_arg);
+        return;
+    }
+    /*load pos from pos */
+    arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
+    argv[(*argc)++] = call_arg;
+    (f->n_positional_got)++;
+}
+
+#if 0
+        /* unpack starred arg */
+        if (call_arg != NULL && arg_getIsStarred(call_arg)) {
+            pika_assert(argType_isObject(arg_getType(call_arg)));
+            PikaObj* obj = arg_getPtr(call_arg);
+            /* clang-format off */
+            PIKA_PYTHON(
+            @l = __len__()
+            )
+            /* clang-format on */
+            const uint8_t bytes[] = {
+                0x08, 0x00, 0x00, 0x00, /* instruct array size */
+                0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct
+                                                                   array */
+                0x0c, 0x00, 0x00, 0x00, /* const pool size */
+                0x00, 0x5f, 0x5f, 0x6c, 0x65, 0x6e, 0x5f, 0x5f, 0x00,
+                0x40, 0x6c, 0x00, /* const pool */
+            };
+            pikaVM_runByteCode(obj, (uint8_t*)bytes);
+            int len = obj_getInt(obj, "@l");
+            for (int i_star_arg = 0; i_star_arg < len; i_star_arg++) {
+                obj_setInt(obj, "@d", i_star_arg);
+                /* clang-format off */
+                PIKA_PYTHON(
+                @a = __getitem__(@d)
+                )
+                /* clang-format on */
+                const uint8_t bytes[] = {
+                    0x0c, 0x00, 0x00, 0x00, /* instruct array size */
+                    0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x04, 0x00, 0x00, 0x04,
+                    0x10, 0x00,
+                    /* instruct array */
+                    0x13, 0x00, 0x00, 0x00, /* const pool size */
+                    0x00, 0x40, 0x64, 0x00, 0x5f, 0x5f, 0x67, 0x65, 0x74, 0x69,
+                    0x74, 0x65, 0x6d, 0x5f, 0x5f, 0x00, 0x40, 0x61,
+                    0x00, /* const pool */
+                };
+                pikaVM_runByteCode(obj, (uint8_t*)bytes);
+                Arg* arg_a = obj_getArg(obj, "@a");
+                _load_call_arg(vm, arg_a, &f, &i_star_arg, &argc, argv);
+            }
+            continue;
+        }
+#endif
+
+static int _get_n_input_with_unpack(VMState* vm) {
+#if PIKA_NANO_ENABLE
+    return VMState_getInputArgNum(vm);
+#else
+    int n_input = VMState_getInputArgNum(vm);
+    for (int i = 0; i < n_input; i++) {
+        Arg* arg_check = stack_checkArg(&(vm->stack), i);
+        if (NULL == arg_check) {
+            continue;
+        }
+        if (arg_getIsDoubleStarred(arg_check) || arg_getIsStarred(arg_check)) {
+            n_input--;
+        }
+    }
+    return n_input;
+#endif
+}
+
+#define vars_or_keys_or_default (f.is_vars || f.is_keys || f.is_default)
 static int VMState_loadArgsFromMethodArg(VMState* vm,
                                          PikaObj* method_host_obj,
                                          Args* locals,
                                          Arg* method_arg,
                                          char* method_name,
-                                         int arg_num_used) {
+                                         int n_used) {
     Arg* argv[PIKA_ARG_NUM_MAX] = {0};
     int argc = 0;
     char _buffs1[PIKA_LINE_BUFF_SIZE] = {0};
     char* buffs1 = (char*)_buffs1;
     char _buffs2[PIKA_LINE_BUFF_SIZE] = {0};
     char* buffs2 = (char*)_buffs2;
-    int8_t num_pos = 0;
-    int8_t arg_num_default = 0;
-    int8_t arg_num = 0;
-    int8_t arg_num_input = 0;
-    PIKA_BOOL is_vars = PIKA_FALSE;
-    PIKA_BOOL is_keys = PIKA_FALSE;
-    PIKA_BOOL is_default = PIKA_FALSE;
-    ArgType method_type = ARG_TYPE_UNDEF;
-    PikaTuple* tuple = NULL;
-    PikaDict* kw = NULL;
-    PikaDict* kw_keys = NULL;
-    char* var_tuple_name = NULL;
-    char* kw_dict_name = NULL;
+    FunctionArgsInfo f = {0};
     char* type_list_buff = NULL;
     /* get method type list */
-    char* type_list =
-        methodArg_getTypeList(method_arg, buffs1, sizeof(_buffs1));
-    if (NULL == type_list) {
+    f.type_list = methodArg_getTypeList(method_arg, buffs1, sizeof(_buffs1));
+    if (NULL == f.type_list) {
         __platform_printf(
             "OverflowError: type list is too long, please use bigger "
             "PIKA_LINE_BUFF_SIZE\r\n");
         while (1)
             ;
     }
-    method_type = arg_getType(method_arg);
+    f.method_type = arg_getType(method_arg);
 
     /* get arg_num_pos */
-    _type_list_parse(type_list, &is_vars, &is_keys, &is_default, &num_pos,
-                     &arg_num_default);
-    if (method_type == ARG_TYPE_METHOD_OBJECT) {
+    _type_list_parse(&f);
+    if (f.method_type == ARG_TYPE_METHOD_OBJECT) {
         /* delete the 'self' */
-        num_pos--;
+        f.n_positional--;
     }
-    arg_num_input = VMState_getInputArgNum(vm);
+
+    f.n_input = _get_n_input_with_unpack(vm);
 
     /* check arg num */
-    if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
-        method_type == ARG_TYPE_METHOD_CONSTRUCTOR || is_vars == PIKA_TRUE ||
-        arg_num_used != 0) {
+    if (f.method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
+        f.method_type == ARG_TYPE_METHOD_CONSTRUCTOR ||
+        f.is_vars == PIKA_TRUE || n_used != 0) {
         /* skip for constrctor */
         /* skip for variable args */
-        /* arg_num_used != 0 means it is a factory method */
+        /* n_used != 0 means it is a factory method */
     } else {
         /* check position arg num */
         if (!vars_or_keys_or_default) {
-            if (num_pos != arg_num_input) {
+            if (f.n_positional != f.n_input) {
                 VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
                 __platform_printf(
                     "TypeError: %s() takes %d positional argument but %d were "
                     "given\r\n",
-                    method_name, num_pos, arg_num_input);
+                    method_name, f.n_positional, f.n_input);
                 goto exit;
             }
         }
 #if !PIKA_NANO_ENABLE
-        if (is_default) {
-            int8_t arg_num_min = num_pos;
-            int8_t arg_num_max = num_pos + arg_num_default;
-            if (arg_num_input < arg_num_min || arg_num_input > arg_num_max) {
+        if (f.is_default) {
+            int8_t n_min = f.n_positional;
+            int8_t n_max = f.n_positional + f.n_default;
+            if (f.n_input < n_min || f.n_input > n_max) {
                 VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
                 __platform_printf(
                     "TypeError: %s() takes from %d to %d positional arguments "
                     "but %d were given\r\n",
-                    method_name, arg_num_min, arg_num_max, arg_num_input);
+                    method_name, n_min, n_max, f.n_input);
                 goto exit;
             }
         }
@@ -1053,141 +1143,96 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
 
     if (vars_or_keys_or_default) {
-        arg_num = arg_num_input;
+        f.n_arg = f.n_input;
     } else {
-        arg_num = num_pos;
+        f.n_arg = f.n_positional;
     }
 
     /* create tuple/dict for vars/keys */
     if (vars_or_keys_or_default) {
-        if (strGetSize(type_list) > sizeof(_buffs2)) {
+        if (strGetSize(f.type_list) > sizeof(_buffs2)) {
             __platform_printf(
                 "OverFlowError: please use bigger PIKA_LINE_BUFF_SIZE\r\n");
             while (1) {
             }
         }
-        type_list_buff = strCopy(buffs2, type_list);
-        uint8_t arg_num_dec_any = strCountSign(type_list_buff, ',') + 1;
-        for (int i = 0; i < arg_num_dec_any; i++) {
+        type_list_buff = strCopy(buffs2, f.type_list);
+        uint8_t n_typelist = strCountSign(type_list_buff, ',') + 1;
+        for (int i = 0; i < n_typelist; i++) {
             char* arg_def = strPopLastToken(type_list_buff, ',');
             if (arg_def[0] == '*' && arg_def[1] != '*') {
                 /* get variable tuple name */
                 /* skip the '*' */
-                var_tuple_name = arg_def + 1;
+                f.var_tuple_name = arg_def + 1;
                 /* create tuple */
-                if (NULL == tuple) {
-                    tuple = New_pikaTuple();
+                if (NULL == f.tuple) {
+                    f.tuple = New_pikaTuple();
                     /* remove the format arg */
-                    strPopLastToken(type_list, ',');
+                    strPopLastToken(f.type_list, ',');
                 }
                 continue;
             }
             if (arg_def[0] == '*' && arg_def[1] == '*') {
-                /* get keyword dict name */
-                kw_dict_name = arg_def + 2;
-                kw = New_pikaDict();
-                kw_keys = New_pikaDict();
+                /* get kw dict name */
+                f.kw_dict_name = arg_def + 2;
+                f.kw = New_pikaDict();
+                f.kw_keys = New_pikaDict();
                 /* remove the format arg */
-                strPopLastToken(type_list, ',');
+                strPopLastToken(f.type_list, ',');
                 continue;
             }
         }
     }
 
-    /* load pars */
-    int num_pos_got = 0;
-    for (int i = 0; i < arg_num; i++) {
-        int arg_index = arg_num - i;
+    /* load args */
+    for (int i = 0; i < f.n_arg; i++) {
+        f.i_arg = f.n_arg - i;
         Arg* call_arg = stack_popArg_alloc(&(vm->stack));
-        /* load the keyword arg */
-        if (call_arg != NULL && arg_getIsKeyword(call_arg)) {
-            _kw_push(&kw, &kw_keys, call_arg, i);
-            continue;
-        }
-        /* load variable arg */
-        if (arg_index > num_pos) {
-            if (is_vars) {
-                pikaList_append(&tuple->super, call_arg);
-                /* the append would copy the arg */
-                if (NULL != call_arg) {
-                    arg_deinit(call_arg);
-                }
-                continue;
-            }
-        }
-        char* arg_name = strPopLastToken(type_list, ',');
-        /* load default from pos */
-        if (arg_index > num_pos) {
-            if (is_default) {
-                if (arg_name[strlen(arg_name) - 1] == '=') {
-                    /* found default arg*/
-                    arg_name[strlen(arg_name) - 1] = '\0';
-                    arg_setNameHash(call_arg,
-                                    hash_time33EndWith(arg_name, ':'));
-                    argv[argc++] = call_arg;
-                }
-                continue;
-            }
-        }
-        /* load default from kw */
-        arg_name = _kw_to_default_all(type_list, arg_name, kw, &argc, argv);
-        /* load position arg */
-        if (_kw_to_pos_one(arg_name, kw, &argc, argv)) {
-            /* load pos from kw */
-            num_pos_got++;
-            /* restore the stack */
-            i--;
-            stack_pushArg(&(vm->stack), call_arg);
-            continue;
-        }
-        /*load pos from pos */
-        arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
-        argv[argc++] = call_arg;
-        num_pos_got++;
+        _load_call_arg(vm, call_arg, &f, &i, &argc, argv);
     }
 
 /* only default */
 #if !PIKA_NANO_ENABLE
-    if (strIsContain(type_list, '=')) {
-        char* arg_name = strPopLastToken(type_list, ',');
-        _kw_to_default_all(type_list, arg_name, kw, &argc, argv);
+    if (strIsContain(f.type_list, '=')) {
+        char* arg_name = strPopLastToken(f.type_list, ',');
+        _kw_to_default_all(&f, arg_name, &argc, argv);
     }
     /* load kw to pos */
-    _kw_to_pos_all(type_list, kw, &argc, argv, num_pos - num_pos_got);
+    _kw_to_pos_all(&f, &argc, argv);
 #endif
 
-    if (tuple != NULL) {
-        pikaList_reverse(&tuple->super);
+    if (f.tuple != NULL) {
+        pikaList_reverse(&(f.tuple)->super);
         /* load variable tuple */
         PikaObj* New_PikaStdData_Tuple(Args * args);
         PikaObj* tuple_obj = newNormalObj(New_PikaStdData_Tuple);
-        obj_setPtr(tuple_obj, "list", tuple);
+        obj_setPtr(tuple_obj, "list", f.tuple);
         Arg* argi =
-            arg_setPtr(NULL, var_tuple_name, ARG_TYPE_OBJECT, tuple_obj);
+            arg_setPtr(NULL, f.var_tuple_name, ARG_TYPE_OBJECT, tuple_obj);
         argv[argc++] = argi;
     }
 
-    if (kw != NULL) {
-        if (NULL == kw_dict_name) {
-            kw_dict_name = "__kwargs";
+    if (f.kw != NULL) {
+        if (NULL == f.kw_dict_name) {
+            f.kw_dict_name = "__kwargs";
         }
-        /* load keyword dict */
+        /* load kw dict */
         PikaObj* New_PikaStdData_Dict(Args * args);
         PikaObj* dict_obj = newNormalObj(New_PikaStdData_Dict);
-        obj_setPtr(dict_obj, "dict", kw);
-        obj_setPtr(dict_obj, "_keys", kw_keys);
-        Arg* argi = arg_setPtr(NULL, kw_dict_name, ARG_TYPE_OBJECT, dict_obj);
+        obj_setPtr(dict_obj, "dict", f.kw);
+        obj_setPtr(dict_obj, "_keys", f.kw_keys);
+        Arg* argi = arg_setPtr(NULL, f.kw_dict_name, ARG_TYPE_OBJECT, dict_obj);
         argv[argc++] = argi;
     }
 
     /* load 'self' as the first arg when call object method */
-    if (method_type == ARG_TYPE_METHOD_OBJECT) {
+    if (f.method_type == ARG_TYPE_METHOD_OBJECT) {
         Arg* call_arg = arg_setRef(NULL, "self", method_host_obj);
         argv[argc++] = call_arg;
     }
     _loadLocalsFromArgv(locals, argc, argv);
 exit:
-    return arg_num;
+    return f.n_arg;
 }
 
 void __vm_List_append(PikaObj* self, Arg* arg) {
@@ -1210,18 +1255,18 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
                                      PIKA_BOOL is_list) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
     NewFun constructor = is_list ? New_PikaStdData_List : New_PikaStdData_Tuple;
-    uint8_t arg_num = VMState_getInputArgNum(vm);
+    uint8_t n_arg = VMState_getInputArgNum(vm);
     PikaObj* list = newNormalObj(constructor);
     __vm_List___init__(list);
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */
-    for (int i = 0; i < arg_num; i++) {
+    for (int i = 0; i < n_arg; i++) {
         Arg* arg = stack_popArg_alloc(&(vm->stack));
         pika_assert(arg != NULL);
         stack_pushArg(&stack, arg);
     }
-    for (int i = 0; i < arg_num; i++) {
+    for (int i = 0; i < n_arg; i++) {
         Arg* arg = stack_popArg_alloc(&stack);
         pika_assert(arg != NULL);
         __vm_List_append(list, arg);
@@ -1267,17 +1312,17 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    uint8_t arg_num = VMState_getInputArgNum(vm);
+    uint8_t n_arg = VMState_getInputArgNum(vm);
     PikaObj* dict = newNormalObj(New_PikaStdData_Dict);
     __vm_Dict___init__(dict);
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */
-    for (int i = 0; i < arg_num; i++) {
+    for (int i = 0; i < n_arg; i++) {
         Arg* arg = stack_popArg_alloc(&(vm->stack));
         stack_pushArg(&stack, arg);
     }
-    for (int i = 0; i < arg_num / 2; i++) {
+    for (int i = 0; i < n_arg / 2; i++) {
         Arg* key_arg = stack_popArg_alloc(&stack);
         Arg* val_arg = stack_popArg_alloc(&stack);
         __vm_Dict_set(dict, val_arg, arg_getStr(key_arg));
@@ -1374,7 +1419,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     PIKA_BOOL is_temp = PIKA_FALSE;
     PIKA_BOOL skip_init = PIKA_FALSE;
     char* sys_out;
-    int arg_num_used = 0;
+    int n_used = 0;
     arg_newReg(arg_reg1, 64);
     RunState sub_run_state = {.try_state = vm->run_state->try_state,
                               .try_result = TRY_RESULT_NONE};
@@ -1432,24 +1477,24 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (NULL == method_host && run_path[0] == '.') {
         /* get method host obj from stack */
         Arg* stack_tmp[PIKA_ARG_NUM_MAX] = {0};
-        int arg_num = VMState_getInputArgNum(vm);
-        if (arg_num > PIKA_ARG_NUM_MAX) {
+        int n_arg = VMState_getInputArgNum(vm);
+        if (n_arg > PIKA_ARG_NUM_MAX) {
             __platform_printf(
                 "[ERROR] Too many args in RUN instruction, please use bigger "
                 "#define PIKA_ARG_NUM_MAX\n");
             while (1) {
             }
         }
-        for (int i = 0; i < arg_num; i++) {
+        for (int i = 0; i < n_arg; i++) {
             stack_tmp[i] = stack_popArg_alloc(&(vm->stack));
         }
-        host_arg = stack_tmp[arg_num - 1];
+        host_arg = stack_tmp[n_arg - 1];
         method_host = _arg_to_obj(host_arg, &is_temp);
         if (NULL != method_host) {
-            arg_num_used++;
+            n_used++;
         }
         /* push back other args to stack */
-        for (int i = arg_num - 2; i >= 0; i--) {
+        for (int i = n_arg - 2; i >= 0; i--) {
             stack_pushArg(&(vm->stack), stack_tmp[i]);
         }
     }
@@ -1522,8 +1567,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     sub_locals = New_PikaObj();
 
     /* load args from vmState to sub_local->list */
-    arg_num_used += VMState_loadArgsFromMethodArg(
-        vm, obj_this, sub_locals->list, method, run_path, arg_num_used);
+    n_used += VMState_loadArgsFromMethodArg(vm, obj_this, sub_locals->list,
+                                            method, run_path, n_used);
 
     /* load args failed */
     if (vm->error_code != 0) {
@@ -1559,7 +1604,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
             goto init_exit;
         }
         VMState_loadArgsFromMethodArg(vm, new_obj, sub_locals->list, method_arg,
-                                      "__init__", arg_num_used);
+                                      "__init__", n_used);
         /* load args failed */
         if (vm->error_code != 0) {
             goto init_exit;
@@ -1711,7 +1756,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     }
     ArgType outArg_type = arg_getType(out_arg);
     if (VMState_getInvokeDeepthNow(vm) > 0) {
-        /* in block, is a keyword arg */
+        /* in block, is a kw arg */
         arg_setIsKeyword(out_arg, PIKA_TRUE);
         arg_setName(out_arg, arg_path);
         Arg* res = arg_copy_noalloc(out_arg, arg_ret_reg);
@@ -2142,6 +2187,11 @@ exit:
 }
 
 static void _OPT_POW(OperatorInfo* op) {
+    if (op->num == 1) {
+        op->res = arg_copy(op->a2);
+        arg_setIsDoubleStarred(op->res, 1);
+        return;
+    }
     if (op->t1 == ARG_TYPE_INT && op->t2 == ARG_TYPE_INT) {
         int res = 1;
         for (int i = 0; i < op->i2; i++) {
@@ -2218,6 +2268,11 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                 op.res = arg_setInt(op.res, "", op.f1 < op.f2);
                 goto exit;
             case '*':
+                if (op.num == 1) {
+                    op.res = arg_copy(op.a2);
+                    arg_setIsStarred(op.res, 1);
+                    goto exit;
+                }
                 if ((op.t1 == ARG_TYPE_FLOAT) || op.t2 == ARG_TYPE_FLOAT) {
                     op.res = arg_setFloat(op.res, "", op.f1 * op.f2);
                     goto exit;
@@ -2494,11 +2549,11 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
     Arg* arg1 = NULL;
     Arg* arg2 = NULL;
     Arg* res = NULL;
-    int arg_num = VMState_getInputArgNum(vm);
-    if (arg_num == 1) {
+    int n_arg = VMState_getInputArgNum(vm);
+    if (n_arg == 1) {
         arg1 = stack_popArg(&vm->stack, &reg1);
     }
-    if (arg_num == 2) {
+    if (n_arg == 2) {
         arg2 = stack_popArg(&vm->stack, &reg2);
         arg1 = stack_popArg(&vm->stack, &reg1);
     }
@@ -2507,10 +2562,10 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
         stack_pushArg(&vm->stack, arg_newInt(PIKA_RES_ERR_ASSERT));
         res = VM_instruction_handler_RIS(self, vm, data, arg_ret_reg);
         if (vm->run_state->try_state == TRY_STATE_NONE) {
-            if (arg_num == 1) {
+            if (n_arg == 1) {
                 __platform_printf("AssertionError\n");
             }
-            if (arg_num == 2) {
+            if (n_arg == 2) {
                 __platform_printf("AssertionError: %s\n", arg_getStr(arg2));
             }
         }

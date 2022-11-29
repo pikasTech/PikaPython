@@ -500,9 +500,9 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     if (!logo_printed) {
         logo_printed = 1;
         __platform_printf("\r\n");
-        __platform_printf("=========[ POWERED BY ]==========\r\n");
-        __platform_printf("|        pikascript.com         |\r\n");
-        __platform_printf("=================================\r\n");
+        __platform_printf("~~~/ POWERED BY \\~~~\r\n");
+        __platform_printf("~  pikascript.com  ~\r\n");
+        __platform_printf("~~~~~~~~~~~~~~~~~~~~\r\n");
     }
     __pikaMain = newObj;
     return newObj;
