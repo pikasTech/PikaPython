@@ -30,6 +30,7 @@ PIKA_RES pikaMaker_compileModuleWithDepends(PikaMaker* self, char* module_name);
 PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path);
 PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name);
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes);
+void LibObj_printModules(LibObj* self);
 
 #define LIB_VERSION_NUMBER 2
 #define LIB_INFO_BLOCK_SIZE 32

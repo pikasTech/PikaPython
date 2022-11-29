@@ -365,6 +365,22 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
     return PIKA_RES_OK;
 }
 
+int32_t __foreach_handler_printModule(Arg* argEach, Args* context) {
+    if (argType_isObject(arg_getType(argEach))) {
+        PikaObj* module_obj = arg_getPtr(argEach);
+        char* module_name = obj_getStr(module_obj, "name");
+        if (NULL != module_name) {
+            __platform_printf(module_name);
+            __platform_printf("\r\n");
+        }
+    }
+    return 0;
+}
+
+void LibObj_printModules(LibObj* self) {
+    args_foreach(self->list, __foreach_handler_printModule, NULL);
+}
+
 int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
     Arg* file_arg = arg_loadFile(NULL, lib_file_name);
     if (NULL == file_arg) {

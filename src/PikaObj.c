@@ -1448,6 +1448,11 @@ PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
     return self;
 }
 
+void obj_printModules(PikaObj* self) {
+    LibObj* lib = obj_getObj(self, "@lib");
+    LibObj_printModules(lib);
+}
+
 PikaObj* obj_linkLibObj(PikaObj* self, LibObj* library) {
     obj_setPtr(self, "@lib", library);
     return self;
