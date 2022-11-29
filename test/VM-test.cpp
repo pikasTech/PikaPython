@@ -2381,10 +2381,13 @@ TEST(vm, fn_star_star) {
     /* run */
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
+            "def test(**kw):\n"
+            "    print(kw['a'], kw['b'], kw['c'])\n"
             "a = {'a':1,'b':2,'c':3}\n"
-            "print(**a)\n");
+            "test(**a)\n");
     /* collect */
     /* assert */
+    EXPECT_STREQ(log_buff[0], "1 2 3\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

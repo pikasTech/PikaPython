@@ -1079,6 +1079,22 @@ static int _get_n_input_with_unpack(VMState* vm) {
             goto __continue;
         }
         if (arg_getIsDoubleStarred(call_arg)) {
+            pika_assert(argType_isObject(arg_getType(call_arg)));
+            PikaObj* New_PikaStdData_Dict(Args * args);
+            PikaObj* obj = arg_getPtr(call_arg);
+            pika_assert(obj->constructor == New_PikaStdData_Dict);
+            PikaDict* dict = obj_getPtr(obj, "dict");
+            int i_item = 0;
+            while (PIKA_TRUE) {
+                Arg* item_val = args_getArgByidex(&dict->super, i_item);
+                if (NULL == item_val) {
+                    break;
+                }
+                /* unpack as keyword arg */
+                arg_setIsKeyword(item_val, 1);
+                stack_pushArg(&stack_tmp, arg_copy(item_val));
+                i_item++;
+            }
             goto __continue;
         }
         stack_pushArg(&stack_tmp, arg_copy(call_arg));
