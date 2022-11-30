@@ -2,10 +2,11 @@
 #include <aos/yloop.h>
 #include <bl_gpio.h>
 #include <cli.h>
+#include <hosal_uart.h>
 #include <stdio.h>
 #include <task.h>
 #include <vfs.h>
-#include "hosal_uart.h"
+#include "../pikascript/pikascript-lib/PikaStdDevice/pika_hal.h"
 #include "pikaScript.h"
 
 volatile PikaObj* root = NULL;
@@ -50,7 +51,7 @@ long __platform_ftell(FILE* stream) {
 }
 
 void main(void) {
-    bl_gpio_enable_input(4, 0, 0);
+    bl_gpio_enable_output(4, 0, 0);
     bl_gpio_output_set(4, false);
     printf("[ Info] In PikaSciprt Demo...\r\n");
     root = pikaScriptInit();

@@ -10,5 +10,9 @@ COMPONENT_OBJS := $(patsubst %.c,%.o, $(COMPONENT_SRCS))
 
 COMPONENT_SRCDIRS := pikascript-core \
 					 pikascript-api \
-					 pikascript-lib/pika_lvgl \
+					 pikascript-lib/BLIOT \
+					 pikascript-lib/PikaStdDevice \
 					 pikascript-lib/PikaStdLib
+
+COMPONENT_ADD_LDFLAGS_HEAD = -Wl,--whole-archive
+COMPONENT_ADD_LDFLAGS_TAIL = -Wl,--no-whole-archive

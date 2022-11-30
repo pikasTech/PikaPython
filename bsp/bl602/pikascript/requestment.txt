@@ -1,2 +1,4 @@
 pikascript-core==v1.11.7
 PikaStdLib==v1.11.7
+PikaStdDevice==v2.1.1
+BLIOT==v0.2.0
