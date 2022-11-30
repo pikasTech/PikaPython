@@ -203,6 +203,7 @@ int pika_hal_SPI_ioctl_merge_config(pika_hal_SPI_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(mode, PIKA_HAL_SPI_MODE_0);
     _IOCTL_CONFIG_USE_DEFAULT(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
     _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_2M);
+    _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_SPI_TIMEOUT_1000MS);
     return 0;
 }
 
@@ -239,6 +240,9 @@ int pika_hal_ADC_ioctl_merge_config(pika_hal_ADC_config* dst,
 
 int pika_hal_DAC_ioctl_merge_config(pika_hal_DAC_config* dst,
                                     pika_hal_DAC_config* src) {
+    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_DAC_SPEED_1K * 8);
     _IOCTL_CONFIG_USE_DEFAULT(sampling_resolution, PIKA_HAL_DAC_RESOLUTION_12);
+    _IOCTL_CONFIG_USE_DEFAULT(vref, (pika_float)3.3);
+    _IOCTL_CONFIG_USE_DEFAULT(max, 3300000);
     return 0;
 }
