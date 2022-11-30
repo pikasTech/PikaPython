@@ -284,12 +284,6 @@ Complete unit testes based on google test.
 
 # 4.Both talk and show the code：
 
-## Telegram
-
-<img alt="tg" src="https://user-images.githubusercontent.com/88232613/158211488-0c27a35b-8ae4-4012-9954-f13cc374fdf7.jpg" width="300">
-
-https://t.me/+JL3TZ9k-Lfg2OWE1
-
 ## E-mail: liang6516@outlook.com
 
 # 5.Demo 
