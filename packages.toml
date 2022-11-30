@@ -441,4 +441,7 @@ releases = [ "v1.0.0 ca8fe36d68be16722317860394fdf78c620e3e2d" ]
 
 [[packages]]
 name = "BLIOT"
-releases = [ "v0.1.0 4599ce8681d293a5cc7682115205ab5e85e9b5e8" ]
+releases = [
+  "v0.1.0 4599ce8681d293a5cc7682115205ab5e85e9b5e8",
+  "v0.2.0 eee8e1848eed77f3ebed777230104ebb4dfc3263"
+]
