@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     /* --add-file xxx --add-file yyy */
     for (int i = 1; i < argc; i++) {
         // __platform_printf("%s\r\n", argv[i]);
-        if (0 == strcmp(argv[i], "--add-file")) {
+        if (0 == strcmp(argv[i], "4e5e045")) {
             // __platform_printf("add file: %s\r\n", argv[i + 1]);
             if (i + 1 < argc) {
                 pikaMaker_linkRaw(maker, argv[i + 1]);

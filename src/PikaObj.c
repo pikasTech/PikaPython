@@ -1469,6 +1469,7 @@ PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
     obj_newMetaObj(self, "@lib", New_LibObj);
     LibObj* lib = obj_getObj(self, "@lib");
     LibObj_loadLibrary(lib, library_bytes);
+    obj_setPtr(self, "@libraw", library_bytes);
     return self;
 }
 

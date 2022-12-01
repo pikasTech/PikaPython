@@ -353,7 +353,7 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     return 0;
 }
 
-int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
+static int _getModuleNum(uint8_t* library_bytes) {
     if (0 != ((intptr_t)library_bytes & 0x03)) {
         return PIKA_RES_ERR_UNALIGNED_PTR;
     }
@@ -377,16 +377,67 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
             LIB_VERSION_NUMBER, version_num);
         return PIKA_RES_ERR_INVALID_VERSION_NUMBER;
     }
+    return module_num;
+}
+
+static PIKA_RES _loadModuleDataWithIndex(uint8_t* library_bytes,
+                                         int module_num,
+                                         int module_index,
+                                         char** name_p,
+                                         uint8_t** addr_p,
+                                         size_t* size) {
     uint8_t* bytecode_addr =
         library_bytes + LIB_INFO_BLOCK_SIZE * (module_num + 1);
-    for (uint32_t i = 0; i < module_num; i++) {
+    for (uint32_t i = 0; i < module_index + 1; i++) {
         char* module_name =
             (char*)(library_bytes + LIB_INFO_BLOCK_SIZE * (i + 1));
         // __platform_printf("loading module: %s\r\n", module_name);
-        LibObj_dynamicLink(self, module_name, bytecode_addr);
+        *name_p = module_name;
+        *addr_p = bytecode_addr;
         uint32_t module_size =
             *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
+        *size = module_size;
         bytecode_addr += module_size;
+    }
+    return 0;
+}
+
+PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
+                                 char* module_name,
+                                 uint8_t** addr_p,
+                                 size_t* size_p) {
+    int module_num = _getModuleNum(library_bytes);
+    if (module_num < 0) {
+        return module_num;
+    }
+    for (int i = 0; i < module_num; i++) {
+        char* name = NULL;
+        uint8_t* addr = NULL;
+        size_t size = 0;
+        _loadModuleDataWithIndex(library_bytes, module_num, i, &name, &addr,
+                                 &size);
+        if (strEqu(module_name, name)) {
+            *addr_p = addr;
+            *size_p = size;
+            return 0;
+        }
+    }
+    return PIKA_RES_ERR_ARG_NO_FOUND;
+}
+
+int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
+    int module_num = _getModuleNum(library_bytes);
+    if (module_num < 0) {
+        /* load error */
+        return module_num;
+    }
+    for (uint32_t i = 0; i < module_num; i++) {
+        char* module_name = NULL;
+        uint8_t* bytecode_addr = NULL;
+        size_t bytecode_size = 0;
+        _loadModuleDataWithIndex(library_bytes, module_num, i, &module_name,
+                                 &bytecode_addr, &bytecode_size);
+        LibObj_dynamicLink(self, module_name, bytecode_addr);
     }
     return PIKA_RES_OK;
 }
