@@ -3506,7 +3506,7 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
     PikaMaker* maker = New_PikaMaker();
     pikaMaker_compileModuleWithDepends(maker, module_name);
     pikaMaker_linkCompiledModules(maker, "pikaModules_cache.py.a");
-    obj_deinit(maker);
+    pikaMaker_deinit(maker);
     __platform_printf("(pikascript) all succeed.\r\n\r\n");
 
     pikaMemMaxReset();

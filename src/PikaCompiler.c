@@ -196,6 +196,10 @@ void LibObj_deinit(LibObj* self) {
 
 /* add bytecode to lib, not copy the bytecode */
 void LibObj_dynamicLink(LibObj* self, char* module_name, uint8_t* bytecode) {
+    if (strIsContain(module_name, '.')) {
+        /* skip file */
+        return;
+    }
     if (!obj_isArgExist(self, module_name)) {
         obj_newObj(self, module_name, "", New_TinyObj);
     }
@@ -224,10 +228,27 @@ int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
     Args buffs = {0};
     /* read file */
     Arg* input_file_arg = arg_loadFile(NULL, input_file_name);
+    if (NULL == input_file_arg) {
+        __platform_printf("error: can't open file %s\r\n", input_file_name);
+        return -1;
+    }
     char* module_name = strsGetLastToken(&buffs, input_file_name, '/');
 
+    size_t module_name_len = strlen(module_name);
+
     /* cut off '.py.o' */
-    module_name[strlen(module_name) - (sizeof(".py.o") - 1)] = 0;
+    if (module_name[module_name_len - 1] == 'o' &&
+        module_name[module_name_len - 2] == '.' &&
+        module_name[module_name_len - 3] == 'y' &&
+        module_name[module_name_len - 4] == 'p' &&
+        module_name[module_name_len - 5] == '.') {
+        module_name[module_name_len - 5] = 0;
+    } else {
+        // __platform_printf("linking raw  %s:%s:%ld\r\n", input_file_name,
+        //                   module_name, arg_getBytecodeSize(input_file_arg));
+        /* replace . to | */
+        module_name = strsReplace(&buffs, module_name, ".", "|");
+    }
 
     /* push bytecode */
     LibObj_staticLink(self, module_name, arg_getBytecode(input_file_arg),
@@ -268,17 +289,21 @@ static int32_t __foreach_handler_libWriteBytecode(Arg* argEach, Args* context) {
 
 static int32_t __foreach_handler_libWriteIndex(Arg* argEach, Args* context) {
     FILE* out_file = args_getPtr(context, "out_file");
+    Args buffs = {0};
     if (argType_isObject(arg_getType(argEach))) {
         PikaObj* module_obj = arg_getPtr(argEach);
         uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
         char buff[LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)] = {0};
         bytecode_size = aline_by(bytecode_size, sizeof(uint32_t));
         char* module_name = obj_getStr(module_obj, "name");
+        module_name = strsReplace(&buffs, module_name, "|", ".");
+        // __platform_printf("   %s:%d\r\n", module_name, bytecode_size);
         __platform_memcpy(buff, module_name, strGetSize(module_name));
         __platform_fwrite(buff, 1, LIB_INFO_BLOCK_SIZE - sizeof(bytecode_size),
                           out_file);
         __platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size), out_file);
     }
+    strsDeinit(&buffs);
     return 0;
 }
 
@@ -357,6 +382,7 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
     for (uint32_t i = 0; i < module_num; i++) {
         char* module_name =
             (char*)(library_bytes + LIB_INFO_BLOCK_SIZE * (i + 1));
+        // __platform_printf("loading module: %s\r\n", module_name);
         LibObj_dynamicLink(self, module_name, bytecode_addr);
         uint32_t module_size =
             *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
@@ -474,7 +500,15 @@ PikaMaker* New_PikaMaker(void) {
     PikaMaker* self = New_TinyObj(NULL);
     obj_setStr(self, "pwd", "");
     obj_setInt(self, "err", 0);
+    LibObj* lib = New_LibObj(NULL);
+    obj_setPtr(self, "lib", lib);
     return self;
+}
+
+void pikaMaker_deinit(PikaMaker* self) {
+    LibObj* lib = obj_getPtr(self, "lib");
+    LibObj_deinit(lib);
+    obj_deinit(self);
 }
 
 void pikaMaker_setPWD(PikaMaker* self, char* pwd) {
@@ -704,9 +738,9 @@ PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
         return compile_err;
     }
     Args context = {0};
-    LibObj* lib = New_LibObj(NULL);
     Args buffs = {0};
     __platform_printf("  linking %s...\n", lib_path);
+    LibObj* lib = obj_getPtr(self, "lib");
     args_setPtr(&context, "@lib", lib);
     args_setPtr(&context, "__maker", self);
     args_foreach(self->list, __foreach_handler_linkCompiledModules, &context);
@@ -719,7 +753,6 @@ PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
     char* lib_file_path = strsAppend(&buffs, pwd, lib_path);
     LibObj_saveLibraryFile(lib, lib_file_path);
     Lib_loadLibraryFileToArray(lib_file_path, folder_path);
-    LibObj_deinit(lib);
     strsDeinit(&buffs);
     return PIKA_RES_OK;
 }
@@ -730,4 +763,10 @@ PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
     PIKA_RES res = pikaMaker_linkCompiledModulesFullPath(self, lib_file_path);
     strsDeinit(&buffs);
     return res;
+}
+
+PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path) {
+    LibObj* lib = obj_getPtr(self, "lib");
+    LibObj_staticLinkFile(lib, file_path);
+    return 0;
 }

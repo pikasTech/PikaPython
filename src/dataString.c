@@ -102,6 +102,16 @@ int32_t strCountSign(char* strIn, char sign) {
     return count;
 }
 
+char* strReplaceChar(char* strIn, char src, char dst) {
+    while (*strIn) {
+        if (*strIn == src) {
+            *strIn = dst;
+        }
+        strIn++;
+    }
+    return strIn;
+}
+
 int32_t strGetTokenNum(char* strIn, char sign) {
     return strCountSign(strIn, sign) + 1;
 }

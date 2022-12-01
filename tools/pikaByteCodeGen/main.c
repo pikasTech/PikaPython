@@ -41,14 +41,32 @@ char* string_slice(Args* outBuffs, char* str, int start, int end) {
 
 int main(int argc, char** argv) {
     int parc = argc - 1;
+    PikaMaker* maker = New_PikaMaker();
+
+    /* --add-file xxx --add-file yyy */
+    for (int i = 1; i < argc; i++) {
+        // __platform_printf("%s\r\n", argv[i]);
+        if (0 == strcmp(argv[i], "--add-file")) {
+            // __platform_printf("add file: %s\r\n", argv[i + 1]);
+            if (i + 1 < argc) {
+                pikaMaker_linkRaw(maker, argv[i + 1]);
+                /* delete argv[i] and argv[i+1] */
+                for (int j = i; j < argc - 2; j++) {
+                    argv[j] = argv[j + 2];
+                }
+                argc -= 2;
+                parc -= 2;
+            }
+        }
+    }
+
     if (0 == parc) {
         /* no input, default to main.py */
         /* run pika_binder to bind C modules */
         pika_binder();
-        PikaMaker* maker = New_PikaMaker();
         pikaMaker_compileModuleWithDepends(maker, "main");
         PIKA_RES res = pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
-        obj_deinit(maker);
+        pikaMaker_deinit(maker);
         return res;
     }
 
@@ -62,7 +80,6 @@ int main(int argc, char** argv) {
 
     /* example: ./rust-msc-latest-linux main.py */
     if (1 == parc) {
-        PikaMaker* maker = New_PikaMaker();
         char* module_entry = argv[1];
         /* remove subfix */
         char* subfix = strrchr(module_entry, '.');
@@ -71,14 +88,13 @@ int main(int argc, char** argv) {
         }
         pikaMaker_compileModuleWithDepends(maker, module_entry);
         PIKA_RES res = pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
-        obj_deinit(maker);
+        pikaMaker_deinit(maker);
         return res;
     }
 
     /* example ./rust-msc-latest-linux main.py -o out.a */
     if (3 == parc) {
         if (0 == strcmp(argv[2], "-o")) {
-            PikaMaker* maker = New_PikaMaker();
             char* module_entry = argv[1];
             /* remove subfix */
             char* subfix = strrchr(module_entry, '.');
@@ -87,7 +103,7 @@ int main(int argc, char** argv) {
             }
             pikaMaker_compileModuleWithDepends(maker, module_entry);
             PIKA_RES res = pikaMaker_linkCompiledModules(maker, argv[3]);
-            obj_deinit(maker);
+            pikaMaker_deinit(maker);
             return res;
         }
     }
@@ -97,7 +113,6 @@ int main(int argc, char** argv) {
         if (0 == strcmp(argv[1], "-c")) {
             Args buffs = {0};
             /* compile only */
-            PikaMaker* maker = New_PikaMaker();
             char* module_entry = argv[2];
             char* module_out = strsCopy(&buffs, module_entry);
             char* subfix = strrchr(module_out, '.');

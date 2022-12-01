@@ -61,5 +61,6 @@ char* strGetLine(char* strOut, char* strIn);
 int32_t strGetLineSize(char* str);
 char* strPopLastToken(char* strIn, char sign);
 char* strGetLastLine(char* strOut, char* strIn);
+char* strReplaceChar(char* strIn, char src, char dst);
 
 #endif
