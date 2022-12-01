@@ -50,13 +50,25 @@ int main(int argc, char** argv) {
             // __platform_printf("add file: %s\r\n", argv[i + 1]);
             if (i + 1 < argc) {
                 pikaMaker_linkRaw(maker, argv[i + 1]);
-                /* delete argv[i] and argv[i+1] */
-                for (int j = i; j < argc - 2; j++) {
-                    argv[j] = argv[j + 2];
-                }
-                argc -= 2;
-                parc -= 2;
             }
+        }
+    }
+
+    /* delete --xxx yyy */
+    for (int i = 1; i < argc; i++) {
+        if (0 == strcmp(argv[i], "--add-file")) {
+            // printf("before delete: %d\r\n", parc);
+            // for (int j = 0; j < parc; j++) {
+            //     printf("%s\r\n", argv[j + 1]);
+            // }
+            parc -= 2;
+            for (int j = i; j < argc - 2; j++) {
+                argv[j] = argv[j + 2];
+            }
+            // printf("after delete: %d\r\n", parc);
+            // for (int j = 0; j < parc; j++) {
+            //     printf("%s\r\n", argv[j + 1]);
+            // }
         }
     }
 

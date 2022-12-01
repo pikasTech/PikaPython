@@ -48,6 +48,7 @@ void PikaStdData_FILEIO_close(PikaObj* self) {
             return;
         }
         pikaFree(f, sizeof(PIKAFS_FILE));
+        obj_setPtr(self, "_f", NULL);
         return;
     }
     FILE* f = obj_getPtr(self, "_f");
