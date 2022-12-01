@@ -39,11 +39,12 @@ char* string_slice(Args* outBuffs, char* str, int start, int end) {
     return NULL;
 }
 
-int main(int argc, char** argv) {
+static int _do_main(int argc, char** argv) {
     int parc = argc - 1;
     PikaMaker* maker = New_PikaMaker();
 
     /* --add-file xxx --add-file yyy */
+    // __platform_printf("parc: %d\r\n", parc);
     for (int i = 1; i < argc; i++) {
         // __platform_printf("%s\r\n", argv[i]);
         if (0 == strcmp(argv[i], "--add-file")) {
@@ -156,4 +157,51 @@ int main(int argc, char** argv) {
     help(argv[0]);
 
     return -1;
+}
+
+int main(int argc, char** argv) {
+    char* buf = NULL;
+    FILE* pika_studio = NULL;
+    if (argc == 1) {
+        pika_studio = __platform_fopen("pika.studio", "r");
+        if (NULL != pika_studio) {
+            buf = __platform_malloc(1024);
+            __platform_fread(buf, 1, 1024, pika_studio);
+            /* find <args> </args> */
+            char* start = strstr(buf, "<args>");
+            char* end = strstr(buf, "</args>");
+            if (start && end) {
+                start += 6;
+                *end = '\0';
+                __platform_printf("args: %s\r\n", start);
+                /* split args */
+                char* args[32] = {0};
+                args[0] = argv[0];
+                char* p = start;
+                while (p < end) {
+                    char* q = strchr(p, ' ');
+                    if (q) {
+                        *q = '\0';
+                        args[argc++] = p;
+                        p = q + 1;
+                    } else {
+                        args[argc++] = p;
+                        break;
+                    }
+                }
+                argv = args;
+                // for (int i = 0; i < argc; i++) {
+                //     __platform_printf("argv[%d]: %s\r\n", i, argv[i]);
+                // }
+            }
+        }
+    }
+    int ret = _do_main(argc, argv);
+    if (NULL != buf) {
+        __platform_free(buf);
+    }
+    if (NULL != pika_studio) {
+        __platform_fclose(pika_studio);
+    }
+    return ret;
 }
