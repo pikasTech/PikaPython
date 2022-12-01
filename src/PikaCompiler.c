@@ -35,16 +35,30 @@
 
 const char magic_code_pyo[] = {0x0f, 'p', 'y', 'o'};
 
+static PIKA_BOOL _check_magic_code_pyo(uint8_t* bytecode) {
+    char* data = (char*)bytecode;
+    if (data[0] == magic_code_pyo[0] && data[1] == magic_code_pyo[1] &&
+        data[2] == magic_code_pyo[2] && data[3] == magic_code_pyo[3]) {
+        return PIKA_TRUE;
+    }
+    return PIKA_FALSE;
+}
+
 static uint8_t* arg_getBytecode(Arg* self) {
     uint8_t* bytecode_file = arg_getBytes(self);
-    uint8_t* bytecode_start =
-        bytecode_file + sizeof(magic_code_pyo) + sizeof(uint32_t);
-    return bytecode_start;
+    if (_check_magic_code_pyo(bytecode_file)) {
+        return bytecode_file + sizeof(magic_code_pyo) + sizeof(uint32_t);
+    }
+    return bytecode_file;
 }
 
 static size_t arg_getBytecodeSize(Arg* self) {
     size_t size_all = arg_getBytesSize(self);
-    return size_all - sizeof(magic_code_pyo) - sizeof(uint32_t);
+    uint8_t* bytecode_file = arg_getBytes(self);
+    if (_check_magic_code_pyo(bytecode_file)) {
+        return size_all - sizeof(magic_code_pyo) - sizeof(uint32_t);
+    }
+    return size_all;
 }
 
 /* const Pool output redirect */

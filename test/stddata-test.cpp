@@ -517,10 +517,11 @@ TEST(stddata, pikafs_open) {
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
             "f = open('pikafs/widget_config.ini','r')\n"
-            "f.read(100)\n"
+            "f.read(8)\n"
             "f.close()\n");
     /* collect */
     /* assert */
+    EXPECT_STREQ(log_buff[0], "'[端口]'\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
