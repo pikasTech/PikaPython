@@ -130,6 +130,12 @@ int PikaStdData_FILEIO_write(PikaObj* self, Arg* s) {
     }
     char* mode = obj_getStr(self, "_mode");
     if (strIsContain(mode, 'b')) {
+        if (arg_getType(s) != ARG_TYPE_BYTES) {
+            __platform_printf(
+                "TypeError: a bytes-like object is required, not 'str'\r\n");
+            obj_setErrorCode(self, PIKA_RES_ERR_INVALID_PARAM);
+            return -1;
+        }
         /* binary */
         res = __platform_fwrite(arg_getBytes(s), 1, arg_getBytesSize(s), f);
     } else {
