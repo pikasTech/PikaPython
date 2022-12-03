@@ -990,7 +990,7 @@ int webclient_get2(struct webclient_session* session, const char* URI) {
 
     RT_ASSERT(session);
     RT_ASSERT(URI);
-    LOG_E("||url:%.1024s||", URI);
+    /* LOG_E("||url:%.1024s||", URI); */
     rc = webclient_connect(session, URI);
     if (rc != WEBCLIENT_OK) {
         /* connect to webclient server failed. */

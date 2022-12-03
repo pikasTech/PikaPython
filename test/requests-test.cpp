@@ -236,8 +236,7 @@ TEST(requests, std_request) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     pikaVM_runSingleFile(pikaMain, "test/python/requests/requests_encode.py");
     /* assert */
-    EXPECT_STREQ(log_buff[1], "'http://www.rt-thread.com?b=2&a=1'\r\n");
-    EXPECT_STREQ(log_buff[0], "'http://www.rt-thread.com?b=%25&a=+'\r\n");
+    EXPECT_STREQ(log_buff[2], "HTTP/1.1 200 OK\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -262,21 +261,7 @@ TEST(requests, get_basic) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     pikaVM_runSingleFile(pikaMain, "test/python/requests/get_basic.py");
     /* assert */
-    EXPECT_STREQ(log_buff[1], "'http://www.rt-thread.com?b=2&a=1'\r\n");
-    EXPECT_STREQ(log_buff[0], "'http://www.rt-thread.com?b=%25&a=+'\r\n");
-    /* deinit */
-    obj_deinit(pikaMain);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-
-TEST(requests, rest_init) {
-    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    extern unsigned char pikaModules_py_a[];
-    obj_linkLibrary(pikaMain, pikaModules_py_a);
-    obj_run(pikaMain,
-            "import requests\n"
-            "r = requests.Response()\n");
-    /* assert */
+    EXPECT_STREQ(log_buff[2], "HTTP/1.1 200 OK\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
