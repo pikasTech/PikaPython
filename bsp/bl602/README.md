@@ -43,9 +43,9 @@ sh make.sh
 log:
 ```
 ======[pikascript packages installed]======
-pikascript-core==v1.11.7 (2022/11/19 19:43:26)
+pikascript-core==v1.11.8 (2022/11/19 19:43:26)
 PikaStdDevice==latest
-PikaStdLib==v1.11.7
+PikaStdLib==v1.11.8
 ===========================================
 hello pikascript
 IIC: Open IIC3 on SCL:P12, SDA:P11
@@ -56,9 +56,9 @@ IIC: Read 1 bytes from 0x12, mem_addr:0x00
 IIC3 read reg=00, res=e7
 >>> [ Info] In PikaSciprt Demo...
 ======[pikascript packages installed]======
-pikascript-core==v1.11.7 (2022/11/19 19:43:26)
+pikascript-core==v1.11.8 (2022/11/19 19:43:26)
 PikaStdDevice==latest
-PikaStdLib==v1.11.7
+PikaStdLib==v1.11.8
 ===========================================
 hello pikascript
 IIC: Open IIC3 on SCL:P12, SDA:P11
