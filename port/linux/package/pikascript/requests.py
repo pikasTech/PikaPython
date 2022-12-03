@@ -39,7 +39,7 @@ def _append_headers(rqst: Response, headers: dict) -> int:
     if headers is None:
         return 1
     for k, v in headers.items():
-        print("\nheaders:", str(k), "=", str(v),"\n")
+        # print("\nheaders:", str(k), "=", str(v),"\n")
         ret = rqst.header_write(str(k), str(v))
         if ret != 1:
             return ret
@@ -65,36 +65,27 @@ def request(
     """ 
     初始化请求对象，分配内存和固定请求头 
     """
-    print("hello1\n")
     rqst = Response()
     rqst.url = url
-    print(rqst.url)
-    print("hello2\n")
     # 初始化，分配内存, 写入方法POST/GET
     ret = rqst.request_init(method)
-    print("hello3\n")
     if ret != 1:
         return None
     # 写入URL
     ret = _append_params_to_url(rqst, url, params)
-    print("hello4\n")
     if  ret != 1:
         # 出现错误，需要释放对象
         return None
     # 写入默认HTTP版本号
     ret = rqst.proto_write('')
-    print("hello5\n")
     if ret != 1:
         return None
     # 写入响应头数据
     ret = _append_headers(rqst, headers)
-    print("hello6\n")
     if ret != 1:
         return None
     ret = rqst.request(method, rqst.url, timeout, data)
-    print("hello7\n")
     if ret != 1:
-        print("hello8\n")
         return rqst
     return rqst
 

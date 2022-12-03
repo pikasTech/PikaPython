@@ -8,7 +8,8 @@
 /* 标准输出函数 */
 #define RQ_print(fmt, ...) __platform_printf(fmt, ##__VA_ARGS__)
 #define RQ_cli(fmt, ...) __platform_printf(fmt, ##__VA_ARGS__)
-#define RQ_debug(fmt, ...) __platform_printf("[RQ]:**|"fmt"|**\n", ##__VA_ARGS__)
+#define RQ_debug(fmt, ...)   {}
+/* #define RQ_debug(fmt, ...) __platform_printf("[RQ]:**|"fmt"|**\n", ##__VA_ARGS__) */
 #define RQ_error_pointer(...) \
     RQ_print("[%s]: Checking NULL pointer of {" #__VA_ARGS__ "}.\n", __fun__)
 #define RQ_error_value(str, ...)                                            \
@@ -122,8 +123,7 @@ int _requests_Response_request(PikaObj* self,
 int _requests_Response_form_data(PikaObj *self, char* data)
 {
     struct webclient_session* session;
-    int ret, i, j, data_len;
-    char buffer[32];
+    int ret, data_len;
 
     session = (struct webclient_session*)obj_getInt(self, "session_address");
     if (unlikely(session == NULL)) {
@@ -161,9 +161,8 @@ int _requests_Response_form_data(PikaObj *self, char* data)
             return -1;
         }
     }
-
+    return 0;
 }
-
 
 int _requests_Response_header_write(PikaObj* self, char* header, char* value) {
     struct webclient_session* session;
