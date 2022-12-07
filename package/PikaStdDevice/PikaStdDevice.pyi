@@ -160,6 +160,24 @@ class ADC(BaseDev):
     def platformDisable(self): ...
 
 
+class DAC(BaseDev):
+    def __init__(self): ...
+
+    def setPin(self, pin: str):
+        """
+        Use the name of the pin to select the DAC pin.
+        example: `"PA0"`, `"PA1"` ...
+        """
+
+    def enable(self):
+        """Enable the DAC."""
+
+    def disable(self):
+        """Disable the DAC."""
+
+    def write(self, val:float):
+        """write the DAC value."""
+
 class UART(BaseDev):
     def __init__(self): ...
 
