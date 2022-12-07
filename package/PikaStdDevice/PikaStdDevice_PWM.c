@@ -44,6 +44,20 @@ int PikaStdDevice_PWM_getFrequency(PikaObj* self) {
     return obj_getInt(self, "freq");
 }
 
+void PikaStdDevice_PWM_platformEnable(PikaObj* self) {
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+}
+void PikaStdDevice_PWM_platformSetDuty(PikaObj* self) {
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+}
+void PikaStdDevice_PWM_platformSetFrequency(PikaObj* self) {
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+}
+
+void PikaStdDevice_PWM_platformDisable(PikaObj* self) {
+    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+}
+
 char* PikaStdDevice_PWM_getName(PikaObj* self) {
     return obj_getStr(self, "name");
 }
@@ -62,47 +76,4 @@ int PikaStdDevice_PWM_getChannel(PikaObj* self) {
 
 void PikaStdDevice_PWM_setFreq(PikaObj* self, int freq) {
     PikaStdDevice_PWM_setFrequency(self, freq);
-}
-
-static pika_dev* _get_dev(PikaObj* self) {
-    pika_dev* dev = obj_getPtr(self, "pika_dev");
-    if (NULL != dev) {
-        return dev;
-    }
-    dev = pika_hal_open(PIKA_HAL_PWM, obj_getStr(self, "pin"));
-    if (NULL == dev) {
-        __platform_printf("Error: open PWM '%s' failed.\r\n",
-                          obj_getStr(self, "pin"));
-    }
-    obj_setPtr(self, "pika_dev", dev);
-    return dev;
-}
-
-void PikaStdDevice_PWM_platformEnable(PikaObj* self) {
-    pika_dev* dev = _get_dev(self);
-    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_ENABLE);
-}
-
-void PikaStdDevice_PWM_platformSetDuty(PikaObj* self) {
-    pika_float duty = obj_getFloat(self, "duty");  // 0.0 ~ 1.0
-    uint32_t freq = obj_getInt(self, "freq");      // Hz
-    pika_hal_PWM_config cfg = {0};
-    /* ns */
-    cfg.duty = (uint32_t)(1000000000.0f / freq * duty);
-    pika_hal_ioctl(_get_dev(self), PIKA_HAL_IOCTL_CONFIG, &cfg);
-}
-
-void PikaStdDevice_PWM_platformSetFrequency(PikaObj* self) {
-    uint32_t freq = obj_getInt(self, "freq");      // Hz
-    pika_float duty = obj_getFloat(self, "duty");  // 0.0 ~ 1.0
-    pika_hal_PWM_config cfg = {0};
-    /* ns */
-    cfg.period = (uint32_t)(1000000000.0f / freq);
-    cfg.duty = (uint32_t)(1000000000.0f / freq * duty);
-    pika_hal_ioctl(_get_dev(self), PIKA_HAL_IOCTL_CONFIG, &cfg);
-}
-
-void PikaStdDevice_PWM_platformDisable(PikaObj* self) {
-    pika_dev* dev = _get_dev(self);
-    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_DISABLE);
 }

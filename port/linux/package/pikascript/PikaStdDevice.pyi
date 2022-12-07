@@ -3,17 +3,8 @@ PikaStdDevice is a standard and abstract device module for PikaScript.
 
 PikaStdDevice supplies the standard device API for users.
 
-Users need to inherit from PikaStdDevice and override the abstract methods, which is with the `@abstractmethod` decorator.
+Document: https://pikadoc.readthedocs.io/en/latest/PikaStdDevice%20%E6%A0%87%E5%87%86%E8%AE%BE%E5%A4%87.html
 
-For example, the STM32F1 device module: https://gitee.com/Lyon1998/pikascript/blob/master/package/STM32F1/STM32F1.pyi
-
-And for convenience, make a machine.pyi to inherit from STM32F1 device module for alias purpose.
-
-For example:
-
-- The machine.pyi for STM32F1:https://gitee.com/Lyon1998/pikascript/blob/master/bsp/stm32f103c8/pikascript/machine.pyi
-
-- The machine.pyi for STM32G0: https://gitee.com/Lyon1998/pikascript/blob/master/bsp/stm32g070cb/pikascript/machine.pyi
 """
 from PikaObj import *
 
