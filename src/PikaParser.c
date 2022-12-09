@@ -2519,10 +2519,16 @@ exit:
 };
 
 PIKA_RES Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines) {
+#if PIKA_BYTECODE_ONLY_ENABLE
+    __platform_printf("Error: In bytecode-only mode, can not parse python script.\r\n");
+    __platform_printf(" Note: Please check PIKA_BYTECODE_ONLY_ENABLE config.\r\n");
+    return PIKA_RES_ERR_SYNTAX_ERROR;
+#else
     if (1 == (uintptr_t)_Parser_linesToBytesOrAsm(NULL, bf, py_lines)) {
         return PIKA_RES_OK;
     }
     return PIKA_RES_ERR_SYNTAX_ERROR;
+#endif
 }
 
 char* Parser_linesToAsm(Args* outBuffs, char* multi_line) {
