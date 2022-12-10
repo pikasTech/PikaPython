@@ -861,7 +861,11 @@ static char* _kw_to_default_all(FunctionArgsInfo* f,
         if (f->kw != NULL) {
             Arg* default_arg = pikaDict_getArg(f->kw, arg_name);
             if (default_arg != NULL) {
-                argv[(*argc)++] = arg_copy(default_arg);
+                Arg* arg_new = arg_copy(default_arg);
+                if (argType_isObject(arg_getType(arg_new))) {
+                    obj_refcntDec(arg_getPtr(arg_new));
+                }
+                argv[(*argc)++] = arg_new;
             }
         }
         arg_name = strPopLastToken(f->type_list, ',');

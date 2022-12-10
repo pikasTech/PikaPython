@@ -2393,6 +2393,19 @@ TEST(vm, fn_star_star) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(vm, issue_keyword_mem_leak) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    pikaVM_runSingleFile(pikaMain,
+                         "test/python/issue/issue_keyword_mem_leak.py");
+    PikaObj* header = (PikaObj*)obj_getPtr(pikaMain, "header");
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
