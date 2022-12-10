@@ -164,7 +164,7 @@ TEST(VM, WHILE) {
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
     pikaMemInfo.heapUsedMax = 0;
-    PikaObj* self = New_TinyObj(NULL);
+    PikaObj* self = newRootObj("root", New_TinyObj);
     VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
     EXPECT_EQ(args_getInt(globals->list, "a"), 0);
     EXPECT_EQ(args_getInt(globals->list, "b"), 1);
@@ -766,7 +766,7 @@ TEST(VM, WHILE_byte) {
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
     pikaMemInfo.heapUsedMax = 0;
-    PikaObj* self = New_TinyObj(NULL);
+    PikaObj* self = newRootObj("root", New_TinyObj);
     pikaVM_run(self, lines);
     EXPECT_EQ(obj_getInt(self, "a"), 0);
     EXPECT_EQ(obj_getInt(self, "b"), 1);
@@ -1253,8 +1253,8 @@ TEST(vm, keyword_3) {
 TEST(vm, keyword_4) {
     char* line =
         "def test(a, b, **keys):\n"
-        "    print(keys['a'], keys['b'], a, b)\n"
-        "test(3, 4, a=1, b= 2)";
+        "    print(keys['c'], keys['d'], a, b)\n"
+        "test(3, 4, c=1, d= 2)";
     PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
     obj_run(self, line);
     /* collect */
@@ -2282,6 +2282,117 @@ TEST(vm, slice_str_end) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
+
+#if !PIKA_NANO_ENABLE
+TEST(vm, fn_pos_kw) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def test(a, b):\n"
+            "    print(a, b)\n"
+            "test(b=1,a=2)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "2 1\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, fn_pos_kw2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def test(a, b):\n"
+            "    print(a, b)\n"
+            "test(1, b=2)\n"
+            "test(1, a=2)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "1 2\r\n");
+    EXPECT_STREQ(log_buff[0], "2 1\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, fn_star) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "a = (1,2,3)\n"
+            "print(*a)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1 2 3\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, fn_star_pos) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "a = (1,2,3)\n"
+            "print(*a, 4)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1 2 3 4\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, fn_star_pos_2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "a = (1,2,3)\n"
+            "print(0, *a, 4)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "0 1 2 3 4\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, fn_star_star) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def test(**kw):\n"
+            "    print(kw['a'], kw['b'], kw['c'])\n"
+            "a = {'a':1,'b':2,'c':3}\n"
+            "test(**a)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "1 2 3\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

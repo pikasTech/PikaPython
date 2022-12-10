@@ -35,6 +35,9 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
+static volatile Arg* _help_modules_cmodule = NULL;
+static volatile PIKA_BOOL in_root_obj = PIKA_FALSE;
+
 static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
                                                   char* input_line,
                                                   ShellConfig* shell);
@@ -131,6 +134,11 @@ int32_t obj_deinit(PikaObj* self) {
 #if PIKA_EVENT_ENABLE
         VMSignal_deinit();
 #endif
+        if (NULL != _help_modules_cmodule) {
+            arg_deinit((Arg*)_help_modules_cmodule);
+            _help_modules_cmodule = NULL;
+        }
+        __pikaMain = NULL;
     }
     return obj_deinit_no_del(self);
 }
@@ -180,14 +188,12 @@ PIKA_RES obj_setFloat(PikaObj* self, char* argPath, pika_float value) {
 }
 
 PIKA_RES obj_setStr(PikaObj* self, char* argPath, char* str) {
-    pika_assert(NULL != str);
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
         return PIKA_RES_ERR_ARG_NO_FOUND;
     }
     char* name = strPointToLastToken(argPath, '.');
-    args_setStr(obj->list, name, str);
-    return PIKA_RES_OK;
+    return args_setStr(obj->list, name, str);
 }
 
 PIKA_RES obj_setNone(PikaObj* self, char* argPath) {
@@ -488,8 +494,11 @@ static int set_disp_mode(int fd, int option) {
 }
 #endif
 
+static volatile uint8_t logo_printed = 0;
+
 extern volatile PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
+    in_root_obj = PIKA_TRUE;
 #if PIKA_POOL_ENABLE
     mem_pool_init();
 #endif
@@ -497,7 +506,15 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     // set_disp_mode(STDIN_FILENO, 0);
 #endif
     PikaObj* newObj = newNormalObj(newObjFun);
+    if (!logo_printed) {
+        logo_printed = 1;
+        __platform_printf("\r\n");
+        __platform_printf("~~~/ POWERED BY \\~~~\r\n");
+        __platform_printf("~  pikascript.com  ~\r\n");
+        __platform_printf("~~~~~~~~~~~~~~~~~~~~\r\n");
+    }
     __pikaMain = newObj;
+    in_root_obj = PIKA_FALSE;
     return newObj;
 }
 
@@ -1390,10 +1407,24 @@ int32_t obj_newMetaObj(PikaObj* self, char* objName, NewFun newFunPtr) {
     return 0;
 }
 
+static void _append_help(char* name) {
+    if (NULL == _help_modules_cmodule) {
+        _help_modules_cmodule = (volatile Arg*)arg_newStr("");
+    }
+    Arg* _help = (Arg*)_help_modules_cmodule;
+    _help = arg_strAppend(_help, name);
+    _help = arg_strAppend(_help, "\r\n");
+    _help_modules_cmodule = (volatile Arg*)_help;
+}
+
 int32_t obj_newObj(PikaObj* self,
                    char* objName,
                    char* className,
                    NewFun newFunPtr) {
+    /* before init root object */
+    if (in_root_obj) {
+        _append_help(objName);
+    }
     return obj_newMetaObj(self, objName, newFunPtr);
 }
 
@@ -1438,7 +1469,14 @@ PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
     obj_newMetaObj(self, "@lib", New_LibObj);
     LibObj* lib = obj_getObj(self, "@lib");
     LibObj_loadLibrary(lib, library_bytes);
+    obj_setPtr(self, "@libraw", library_bytes);
     return self;
+}
+
+void obj_printModules(PikaObj* self) {
+    LibObj* lib = obj_getObj(self, "@lib");
+    __platform_printf(arg_getStr((Arg*)_help_modules_cmodule));
+    LibObj_printModules(lib);
 }
 
 PikaObj* obj_linkLibObj(PikaObj* self, LibObj* library) {

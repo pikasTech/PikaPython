@@ -671,3 +671,10 @@ char* PikaStdLib_SysObj_input(PikaObj* self, PikaTuple* info) {
     arg_deinit(cfg.context);
     return res;
 }
+
+extern volatile PikaObj* __pikaMain;
+void PikaStdLib_SysObj_help(PikaObj* self, char* name) {
+    if (strEqu(name, "modules")) {
+        obj_printModules((PikaObj*)__pikaMain);
+    }
+}

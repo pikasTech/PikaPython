@@ -172,7 +172,9 @@ Arg* arg_loadFile(Arg* self, char* filename);
 #define ARG_FLAG_SERIALIZED 0x01
 #define ARG_FLAG_KEYWORD 0x02
 #define ARG_FLAG_WEAK_REF 0x04
-#define ARG_FLAG_MAX 0x08
+#define ARG_FLAG_STARRED 0x08
+#define ARG_FLAG_DOUBLE_STARRED 0x10
+#define ARG_FLAG_MAX 0x18
 
 static inline Arg* arg_getNext(Arg* self) {
     return self->_.next;
@@ -190,6 +192,7 @@ static inline uint32_t arg_getSize(Arg* self) {
 
 static inline uint8_t arg_isSerialized(Arg* self) {
     pika_assert(NULL != self);
+    pika_assert(self->flag <= ARG_FLAG_MAX);
     return self->flag & ARG_FLAG_SERIALIZED;
 }
 
@@ -199,6 +202,7 @@ static inline void arg_setSerialized(Arg* self, uint8_t serialized) {
 }
 
 static inline uint8_t arg_getIsKeyword(Arg* self) {
+    pika_assert(self->flag <= ARG_FLAG_MAX);
     return self->flag & ARG_FLAG_KEYWORD;
 }
 
@@ -208,6 +212,7 @@ static inline void arg_setIsKeyword(Arg* self, uint8_t isKeyword) {
 }
 
 static inline uint8_t arg_getIsWeakRef(Arg* self) {
+    pika_assert(self->flag <= ARG_FLAG_MAX);
     return self->flag & ARG_FLAG_WEAK_REF;
 }
 
@@ -217,7 +222,28 @@ static inline void arg_setIsWeakRef(Arg* self, uint8_t isWeakRef) {
         (self->flag & ~ARG_FLAG_WEAK_REF) | (isWeakRef ? ARG_FLAG_WEAK_REF : 0);
 }
 
+static inline void arg_setIsStarred(Arg* self, uint8_t isStarred) {
+    self->flag =
+        (self->flag & ~ARG_FLAG_STARRED) | (isStarred ? ARG_FLAG_STARRED : 0);
+}
+
+static inline uint8_t arg_getIsStarred(Arg* self) {
+    pika_assert(self->flag <= ARG_FLAG_MAX);
+    return self->flag & ARG_FLAG_STARRED;
+}
+
+static inline void arg_setIsDoubleStarred(Arg* self, uint8_t isDoubleStarred) {
+    self->flag = (self->flag & ~ARG_FLAG_DOUBLE_STARRED) |
+                 (isDoubleStarred ? ARG_FLAG_DOUBLE_STARRED : 0);
+}
+
+static inline uint8_t arg_getIsDoubleStarred(Arg* self) {
+    pika_assert(self->flag <= ARG_FLAG_MAX);
+    return self->flag & ARG_FLAG_DOUBLE_STARRED;
+}
+
 static inline uint8_t* arg_getContent(Arg* self) {
+    pika_assert(self->flag <= ARG_FLAG_MAX);
     pika_assert(NULL != self);
     return (arg_isSerialized(self)) ? (self)->content : ((self)->_.buffer);
 }

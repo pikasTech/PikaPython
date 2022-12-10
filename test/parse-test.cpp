@@ -5026,6 +5026,23 @@ TEST(parser, multi_from_import_as) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, print_ssa) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "print(**a)\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 REF a\n"
+                 "1 OPT **\n"
+                 "0 RUN print\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

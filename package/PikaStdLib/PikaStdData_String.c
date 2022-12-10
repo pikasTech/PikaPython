@@ -810,3 +810,8 @@ char* _strlwr(char* str) {
 }
 
 #endif
+
+char* PikaStdData_String_format(PikaObj* self, PikaTuple* vars) {
+    /* 'test{}'.format(123) */
+    return NULL;
+}

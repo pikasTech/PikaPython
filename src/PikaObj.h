@@ -506,4 +506,6 @@ Arg* pks_eventLisener_sendSignalAwaitResult(PikaEventListener* self,
                                             uint32_t eventId,
                                             int eventSignal);
 
+void obj_printModules(PikaObj* self);
+
 #endif

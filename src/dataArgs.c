@@ -85,7 +85,6 @@ PIKA_RES args_setRef(Args* self, char* name, void* argPointer) {
 }
 
 PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
-    pika_assert(NULL != strIn);
     PIKA_RES errCode = PIKA_RES_OK;
     Arg* argNew = New_arg(NULL);
     argNew = arg_setStr(argNew, name, strIn);
@@ -503,6 +502,7 @@ PIKA_RES pikaList_setArg(PikaList* self, int index, Arg* arg) {
 }
 
 Arg* pikaList_getArg(PikaList* self, int index) {
+    pika_assert(NULL != self);
     char buff[11];
     char* i_str = fast_itoa(buff, index);
     return args_getArg(&self->super, i_str);
