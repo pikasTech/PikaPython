@@ -1,7 +1,7 @@
-def test(headers=None):
+def test(headers=None, data=None):
     print("in test")
 
 
 header = {"a": "test"}
 
-test(headers=header)
+test(headers=header, data={"b": "test"})

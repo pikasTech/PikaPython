@@ -1223,7 +1223,7 @@ TEST(VM, issue_I5OJQB) {
 TEST(vm, keyword_2) {
     char* line =
         "def test(a, b):\n"
-        "    print(__kwargs['a'], __kwargs['b'])\n"
+        "    print(a, b)\n"
         "test(a=1, b= 2)";
     PikaObj* self = newRootObj("root", New_PikaStdLib_SysObj);
     obj_run(self, line);
@@ -2399,7 +2399,6 @@ TEST(vm, issue_keyword_mem_leak) {
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     pikaVM_runSingleFile(pikaMain,
                          "test/python/issue/issue_keyword_mem_leak.py");
-    PikaObj* header = (PikaObj*)obj_getPtr(pikaMain, "header");
     /* assert */
     /* deinit */
     obj_deinit(pikaMain);

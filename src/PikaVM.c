@@ -861,11 +861,13 @@ static char* _kw_to_default_all(FunctionArgsInfo* f,
         if (f->kw != NULL) {
             Arg* default_arg = pikaDict_getArg(f->kw, arg_name);
             if (default_arg != NULL) {
-                Arg* arg_new = arg_copy(default_arg);
-                if (argType_isObject(arg_getType(arg_new))) {
-                    obj_refcntDec(arg_getPtr(arg_new));
+                PikaObj* obj = NULL;
+                if (argType_isObject(arg_getType(default_arg))) {
+                    obj = arg_getPtr(default_arg);
                 }
+                Arg* arg_new = arg_copy(default_arg);
                 argv[(*argc)++] = arg_new;
+                pikaDict_removeArg(f->kw, default_arg);
             }
         }
         arg_name = strPopLastToken(f->type_list, ',');
@@ -885,6 +887,7 @@ static int _kw_to_pos_one(FunctionArgsInfo* f,
         return 0;
     }
     argv[(*argc)++] = arg_copy(pos_arg);
+    pikaDict_removeArg(f->kw, pos_arg);
     return 1;
 }
 
@@ -899,6 +902,7 @@ static void _kw_to_pos_all(FunctionArgsInfo* f, int* argc, Arg* argv[]) {
         Arg* pos_arg = pikaDict_getArg(f->kw, arg_name);
         pika_assert(pos_arg != NULL);
         argv[(*argc)++] = arg_copy(pos_arg);
+        pikaDict_removeArg(f->kw, pos_arg);
     }
 }
 
@@ -947,6 +951,10 @@ static void _type_list_parse(FunctionArgsInfo* f) {
 }
 
 static void _kw_push(FunctionArgsInfo* f, Arg* call_arg, int i) {
+    PikaObj* obj = NULL;
+    if (argType_isObject(arg_getType(call_arg))) {
+        obj = arg_getPtr(call_arg);
+    }
     if (NULL == f->kw) {
         f->kw = New_pikaDict();
     }
@@ -1095,7 +1103,7 @@ static int _get_n_input_with_unpack(VMState* vm) {
                     break;
                 }
                 /* unpack as keyword arg */
-                arg_setIsKeyword(item_val, 1);
+                arg_setIsKeyword(item_val, PIKA_TRUE);
                 stack_pushArg(&stack_tmp, arg_copy(item_val));
                 i_item++;
             }
@@ -1833,9 +1841,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
         arg_setIsKeyword(out_arg, PIKA_TRUE);
         arg_setName(out_arg, arg_path);
         Arg* res = arg_copy_noalloc(out_arg, arg_ret_reg);
-        if (arg_isSerialized(out_arg)) {
-            arg_deinit(out_arg);
-        }
+        arg_deinit(out_arg);
         return res;
     }
 
