@@ -86,7 +86,7 @@ def request(
         return None
     ret = rqst.request(method, rqst.url, timeout, data)
     if ret != 1:
-        return rqst
+        return None
     return rqst
 
 def get(url: str, params=None) -> Response:

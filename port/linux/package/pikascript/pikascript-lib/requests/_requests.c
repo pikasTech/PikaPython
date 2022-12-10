@@ -67,14 +67,20 @@ int _requests_Response_request(PikaObj* self,
             return -1;
         }
         ret = webclient_response(session, &resp_data, &resp_len);
-        if (ret <= 0) {
+        if (ret < 0) {
             return -1;
         }
         /* 正常得到了数据 */
-        obj_setInt(self, "state_code", session->resp_status);
+        obj_setInt(self, "status_code", session->resp_status);
         obj_setInt(self, "content_length", resp_len);
-        obj_setStr(self, "text", (char*)resp_data);
         obj_setStr(self, "headers", session->header->buffer);
+        /* 释放申请的缓冲区内存 */
+        if (resp_data != NULL) {
+            obj_setStr(self, "text", (char*)resp_data);
+            web_free(resp_data);
+        } else {
+            obj_setStr(self, "text", "");
+        }
     } else if (strEqu(method, "POST")) {
         if (data == NULL) {
             data_len = 0;
@@ -97,18 +103,25 @@ int _requests_Response_request(PikaObj* self,
                 return -1;
             }
         }
+        RQ_debug("header buffer:%.4096s", session->header->buffer);
         if (webclient_post(session, url, data, data_len) != 200) {
             return -1;
         }
         ret = webclient_response(session, &resp_data, &resp_len);
-        if (ret <= 0) {
+        if (ret < 0) {
             return -1;
         }
         /* 正常得到了数据 */
-        obj_setInt(self, "state_code", session->resp_status);
+        obj_setInt(self, "status_code", session->resp_status);
         obj_setInt(self, "content_length", resp_len);
-        obj_setStr(self, "text", (char*)resp_data);
         obj_setStr(self, "headers", session->header->buffer);
+        /* 释放申请的缓冲区内存 */
+        if (resp_data != NULL) {
+            obj_setStr(self, "text", (char*)resp_data);
+            web_free(resp_data);
+        } else {
+            obj_setStr(self, "text", "");
+        }
     } else {
         return -1;
     }
@@ -116,58 +129,10 @@ int _requests_Response_request(PikaObj* self,
     return 1;
 }
 
-
-/**
- * 提供对 multipart/form-data的支持
- */
-int _requests_Response_form_data(PikaObj *self, char* data)
-{
-    struct webclient_session* session;
-    int ret, data_len;
-
-    session = (struct webclient_session*)obj_getInt(self, "session_address");
-    if (unlikely(session == NULL)) {
-        RQ_cli("Sorry, can not operate NULL session object.\n");
-        return -1;
-    }
-    data_len = strlen(data);
-    if (unlikely(data_len == 0)) {
-        RQ_cli("Sorry, data length is zero.\n");
-        return -1;
-    }
-    RQ_debug("Add multipart/form-data fileds:");
-    /* 首先添加一些固定的头 */
-    if (strstr(session->header->buffer, "Connection:") == RT_NULL) {
-        ret = webclient_header_fields_add(session, "Connection: keep-alive\r\n");
-        if (ret < 0) {
-            return -1;
-        }
-    }
-    /** 
-     * FIXME: 需要寻找一种算法，但这里先展示一下功能，生成一个随机字符串 
-     * 32位重复可能性很小，因此失败可能性小......
-     * 忽略分割字符串可能与数据重复的问题。
-     */
-    /* random_string(buffer, 32); */
-
-
-    if (strstr(session->header->buffer, "Content-Type") == RT_NULL)
-    {
-        /* 二进制数据流 */
-        ret = webclient_header_fields_add(
-            session, "Content-Type: application/octet-stream\r\n");
-        if (ret < 0)
-        {
-            return -1;
-        }
-    }
-    return 0;
-}
-
 int _requests_Response_header_write(PikaObj* self, char* header, char* value) {
     struct webclient_session* session;
 
-    session = (struct webclient_session*)obj_getInt(self, "session_address");
+    session = (struct webclient_session*)obj_getPtr(self, "session_address");
     if (unlikely(session == NULL)) {
         RQ_cli("Sorry, can not operate NULL session object.\n");
         return -1;
@@ -343,11 +308,6 @@ PikaObj* _requests_Response_request_del(PikaObj* self) {
         webclient_close(session);
         RQ_debug("Response free session memory.");
     }
-    /* 初始化 */
-    obj_setNone(self, "url");
-    obj_setNone(self, "text");
-    obj_setNone(self, "headers");
-    obj_setPtr(self, "session_address", NULL);
     RQ_debug("Response set variables None.");
     return NULL;
 }
