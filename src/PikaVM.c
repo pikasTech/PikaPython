@@ -861,10 +861,6 @@ static char* _kw_to_default_all(FunctionArgsInfo* f,
         if (f->kw != NULL) {
             Arg* default_arg = pikaDict_getArg(f->kw, arg_name);
             if (default_arg != NULL) {
-                PikaObj* obj = NULL;
-                if (argType_isObject(arg_getType(default_arg))) {
-                    obj = arg_getPtr(default_arg);
-                }
                 Arg* arg_new = arg_copy(default_arg);
                 argv[(*argc)++] = arg_new;
                 pikaDict_removeArg(f->kw, default_arg);
@@ -951,10 +947,6 @@ static void _type_list_parse(FunctionArgsInfo* f) {
 }
 
 static void _kw_push(FunctionArgsInfo* f, Arg* call_arg, int i) {
-    PikaObj* obj = NULL;
-    if (argType_isObject(arg_getType(call_arg))) {
-        obj = arg_getPtr(call_arg);
-    }
     if (NULL == f->kw) {
         f->kw = New_pikaDict();
     }
