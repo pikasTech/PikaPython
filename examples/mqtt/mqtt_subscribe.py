@@ -1,28 +1,37 @@
 import mqtt
+import PikaStdDevice
 
-client = mqtt.MQTT('192.168.1.255')
-
-client.setHost('broker.emqx.io')
-client.setPort(1883)
-client.setClientID('123456dddecetdc')
-client.setUsername('test1')
-client.setPassword('aabbccdd')
-client.setVersion('4')
-client.setKeepAlive('10')
+client = mqtt.MQTT('broker.emqx.io',port=1883,clinetID='clientid',username='name_',password='passwd_')
 
 ret = client.connect()
 print("ret:%d" % ret)
 
-client.publish('topic1234', 'hello pikascript')
-
-
-def callback1(signal):
+def callback0(signal):
     print("py cb: %s:%s" % (client.recv_topic, client.recv_msg))
 
 
-ret = client.subscribe('topic', 1, callback1)
+ret = client.subscribe('topic_pikapy_qos0', 0, callback0)
+print("ret:%d" % ret)
+# ret = client.subscribe('topic_pikapy_qos1', 1,0)
+# print("ret:%d" % ret)
+# ret = client.subscribe('topic_pikapy_qos2', 2,0)
+# print("ret:%d" % ret)
 
+
+#sleep wait for recv data
+T = PikaStdDevice.Time()
+T.sleep_s(5)
+    
 client.listSubscribrTopic()
 
-#ret = client.disconnect()
-#print("ret:%d" % ret)
+# client.unsubscribe('topic_pikapy_qos0');
+# client.unsubscribe('topic_pikapy_qos1');
+# client.unsubscribe('topic_pikapy_qos2');
+
+T.sleep_s(5)
+client.listSubscribrTopic()
+
+T.sleep_s(10)
+
+ret = client.disconnect()
+print("ret:%d" % ret)
