@@ -25,14 +25,15 @@ T.sleep_s(5)
 out = client.listSubscribrTopic()
 print('out',out)
 
-client.unsubscribe('topic_pikapy_qos0');
-client.unsubscribe('topic_pikapy_qos1');
-client.unsubscribe('topic_pikapy_qos2');
+# client.unsubscribe('topic_pikapy_qos0');
+# client.unsubscribe('topic_pikapy_qos1');
+# client.unsubscribe('topic_pikapy_qos2');
+# T.sleep_s(5)
+# client.listSubscribrTopic()
 
-T.sleep_s(5)
-client.listSubscribrTopic()
 
+# ret = client.setWill(1,'topic_will',1,'lost mqtt connect')
 T.sleep_s(10)
-
+# exit()
 ret = client.disconnect()
 print("ret:%d" % ret)
