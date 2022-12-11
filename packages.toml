@@ -433,7 +433,7 @@ releases = [ "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee" ]
 name = "requests"
 releases = [ 
 "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee",
-"v1.0.0 d78aec86ddb8845244e568ed58f4230d26462aa9"
+"v1.0.0 c67a894fc27ab3fe7b7aac825f1880e5073b0020"
 ]
 
 [[packages]]
