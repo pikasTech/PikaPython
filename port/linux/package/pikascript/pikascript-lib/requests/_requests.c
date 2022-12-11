@@ -5,6 +5,10 @@
 #include "webclient.h"
 #include "random.h"
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 11, 9)
+#error "This library requires PikaScript version 1.11.9 or higher"
+#endif
+
 /* 标准输出函数 */
 #define RQ_print(fmt, ...) __platform_printf(fmt, ##__VA_ARGS__)
 #define RQ_cli(fmt, ...) __platform_printf(fmt, ##__VA_ARGS__)
