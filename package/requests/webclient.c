@@ -362,6 +362,7 @@ static int webclient_connect(struct webclient_session* session,
         LOG_E(
             "not support https connect, please enable webclient https "
             "configure!");
+        LOG_E("||url:%.1024s||", URI);
         rc = -WEBCLIENT_ERROR;
         goto __exit;
 #endif
@@ -578,7 +579,7 @@ int webclient_content_length_get(struct webclient_session* session) {
     return session->content_length;
 }
 
-static int webclient_send_header2(struct webclient_session* session,
+static int webclient_send_header(struct webclient_session* session,
                                  int method) {
     int rc = WEBCLIENT_OK;
     char* header = RT_NULL;
@@ -703,7 +704,7 @@ __exit:
 }
 
 /* FIXME: 定制版发送响应头 */
-static int webclient_send_header(struct webclient_session* session,
+static int webclient_send_header2(struct webclient_session* session,
                                  int method) {
     int rc = WEBCLIENT_OK;
     char* header = RT_NULL;
@@ -925,7 +926,6 @@ int webclient_get(struct webclient_session* session, const char* URI) {
 
     RT_ASSERT(session);
     RT_ASSERT(URI);
-
     rc = webclient_connect(session, URI);
     if (rc != WEBCLIENT_OK) {
         /* connect to webclient server failed. */
@@ -933,6 +933,71 @@ int webclient_get(struct webclient_session* session, const char* URI) {
     }
 
     rc = webclient_send_header(session, WEBCLIENT_GET);
+    if (rc != WEBCLIENT_OK) {
+        /* send header to webclient server failed. */
+        return rc;
+    }
+
+    /* handle the response header of webclient server */
+    resp_status = webclient_handle_response(session);
+
+    LOG_D("get position handle response(%d).", resp_status);
+
+    if (resp_status > 0) {
+        const char* location = webclient_header_fields_get(session, "Location");
+
+        /* relocation */
+        if ((resp_status == 302 || resp_status == 301) && location) {
+            char* new_url;
+
+            new_url = web_strdup(location);
+            if (new_url == RT_NULL) {
+                return -WEBCLIENT_NOMEM;
+            }
+
+            /* clean webclient session */
+            webclient_clean(session);
+            /* clean webclient session header */
+            session->header->length = 0;
+            web_memset(session->header->buffer, 0, session->header->size);
+
+            rc = webclient_get(session, new_url);
+
+            web_free(new_url);
+            return rc;
+        }
+    }
+
+    return resp_status;
+}
+
+/**
+ * FIXME: better interface
+ *  send GET request to http server and get response header.
+ *
+ * @param session webclient session
+ * @param URI input server URI address
+ * @param header GET request header
+ *             = NULL: use default header data
+ *            != NULL: use custom header data
+ *
+ * @return <0: send GET request failed
+ *         >0: response http status code
+ */
+int webclient_get2(struct webclient_session* session, const char* URI) {
+    int rc = WEBCLIENT_OK;
+    int resp_status = 0;
+
+    RT_ASSERT(session);
+    RT_ASSERT(URI);
+    /* LOG_E("||url:%.1024s||", URI); */
+    rc = webclient_connect(session, URI);
+    if (rc != WEBCLIENT_OK) {
+        /* connect to webclient server failed. */
+        return rc;
+    }
+
+    rc = webclient_send_header2(session, WEBCLIENT_GET);
     if (rc != WEBCLIENT_OK) {
         /* send header to webclient server failed. */
         return rc;
@@ -1196,6 +1261,59 @@ int webclient_post(struct webclient_session* session,
     }
 
     rc = webclient_send_header(session, WEBCLIENT_POST);
+    if (rc != WEBCLIENT_OK) {
+        /* send header to webclient server failed. */
+        return rc;
+    }
+
+    if (post_data && (data_len > 0)) {
+        webclient_write(session, post_data, data_len);
+
+        /* resolve response data, get http status code */
+        resp_status = webclient_handle_response(session);
+        LOG_D("post handle response(%d).", resp_status);
+    }
+
+    return resp_status;
+}
+
+/**
+ * FIXME: better interface
+ * send POST request to server and get response header data.
+ *
+ * @param session webclient session
+ * @param URI input server URI address
+ * @param post_data data send to the server
+ *                = NULL: just connect server and send header
+ *               != NULL: send header and body data, resolve response data
+ * @param data_len the length of send data
+ *
+ * @return <0: send POST request failed
+ *         =0: send POST header success
+ *         >0: response http status code
+ */
+int webclient_post2(struct webclient_session* session,
+                   const char* URI,
+                   const void* post_data,
+                   size_t data_len) {
+    int rc = WEBCLIENT_OK;
+    int resp_status = 0;
+
+    RT_ASSERT(session);
+    RT_ASSERT(URI);
+
+    if ((post_data != RT_NULL) && (data_len == 0)) {
+        LOG_E("input post data length failed");
+        return -WEBCLIENT_ERROR;
+    }
+
+    rc = webclient_connect(session, URI);
+    if (rc != WEBCLIENT_OK) {
+        /* connect to webclient server failed. */
+        return rc;
+    }
+
+    rc = webclient_send_header2(session, WEBCLIENT_POST);
     if (rc != WEBCLIENT_OK) {
         /* send header to webclient server failed. */
         return rc;

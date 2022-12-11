@@ -4,6 +4,7 @@ class Response:
     state_code: int
     headers: str
     url: str
+    url_address: int
     session_address: int
 
     def json(self) -> dict: ...
