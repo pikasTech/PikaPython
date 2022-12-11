@@ -164,14 +164,17 @@ int _mqtt__MQTT_disconnect(PikaObj* self) {
 PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj* self) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
     int ret;
+    PikaObj* pt_out = NULL;
 
     ret = mqtt_list_subscribe_topic(_client);
     if (ret == 0)
         __platform_printf("MQTT_listSubscribrTopic OK\r\n");
-    else
+    else {
+        pt_out = NULL;
         __platform_printf("MQTT_listSubscribrTopic ERROR\r\n");
+    }
 
-    return NULL;
+    return pt_out;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -478,15 +481,14 @@ int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, int qos, Arg* cb) {
     //必须转换成python环境的变量，否则函数退出后，topic里的是个空指针
     memset(topic_str,0,sizeof(topic_str));
     sprintf(topic_str,"%s",topic);
-    obj_setStr(self, "topic_str", topic);
-    __platform_printf("topic_str:%s \r\n", topic_str);
-    ret = mqtt_subscribe(_client, obj_getStr(self, "topic_str"), qos, Subscribe_Handler);
+    obj_setStr(self, topic_str, topic);
 
+    ret = mqtt_subscribe(_client, obj_getStr(self, topic_str), qos, Subscribe_Handler);
     if (ret == 0) {
         __platform_printf("MQTT_subscribe Topic :%s Qos:%d OK\r\n", topic,qos);
     } else
         __platform_printf("MQTT_subscribe Topic ERROR\r\n");
-
+    
     return ret;
 }
 

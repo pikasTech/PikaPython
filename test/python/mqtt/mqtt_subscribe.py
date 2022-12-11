@@ -12,21 +12,22 @@ def callback0(signal):
 
 ret = client.subscribe('topic_pikapy_qos0', 0, callback0)
 print("ret:%d" % ret)
-# ret = client.subscribe('topic_pikapy_qos1', 1,0)
-# print("ret:%d" % ret)
-# ret = client.subscribe('topic_pikapy_qos2', 2,0)
-# print("ret:%d" % ret)
+ret = client.subscribe('topic_pikapy_qos1', 1,0)
+print("ret:%d" % ret)
+ret = client.subscribe('topic_pikapy_qos2', 2,0)
+print("ret:%d" % ret)
 
 
 #sleep wait for recv data
 T = PikaStdDevice.Time()
 T.sleep_s(5)
     
-client.listSubscribrTopic()
+out = client.listSubscribrTopic()
+print('out',out)
 
-# client.unsubscribe('topic_pikapy_qos0');
-# client.unsubscribe('topic_pikapy_qos1');
-# client.unsubscribe('topic_pikapy_qos2');
+client.unsubscribe('topic_pikapy_qos0');
+client.unsubscribe('topic_pikapy_qos1');
+client.unsubscribe('topic_pikapy_qos2');
 
 T.sleep_s(5)
 client.listSubscribrTopic()

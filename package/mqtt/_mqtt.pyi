@@ -50,7 +50,7 @@ class _MQTT:
         pass
         """unsubscribe to the mqtt-server."""
 
-    def listSubscribrTopic(self) -> dict:
+    def listSubscribrTopic(self) -> list:
         pass
         """listSubscribrTopic """
 
