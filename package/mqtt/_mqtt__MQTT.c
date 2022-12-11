@@ -32,6 +32,9 @@ void _mqtt__MQTT___init__(PikaObj* self,
         obj_setStr(self, "host_str", ip);
         mqtt_set_host(_client, obj_getStr(self, "host_str"));
     }
+    else {
+        __platform_printf("mqtt_init input ip none\r\n");
+    }
 
     memset(port_str, 0, sizeof(port_str));
     __platform_sprintf(port_str, "%d", port);
@@ -42,29 +45,47 @@ void _mqtt__MQTT___init__(PikaObj* self,
         obj_setStr(self, "id_str", clinetID);
         mqtt_set_client_id(_client, obj_getStr(self, "id_str"));
     }
+    else {
+        __platform_printf("mqtt_init input clinetID none\r\n");
+    }
 
     if (strlen(username) > 0) {
         obj_setStr(self, "username_str", username);
         mqtt_set_user_name(_client, obj_getStr(self, "username_str"));
+    }
+    else {
+        __platform_printf("mqtt_init input username none\r\n");
     }
 
     if (strlen(password) > 0) {
         obj_setStr(self, "password_str", password);
         mqtt_set_password(_client, obj_getStr(self, "password_str"));
     }
+    else {
+        __platform_printf("mqtt_init input password none\r\n");
+    }
 
     tmp = atoi(version);
     if (tmp > 0) {
         mqtt_set_version(_client, tmp);
+    }
+    else {
+        __platform_printf("mqtt_init input version none\r\n");
     }
 
     if (strlen(ca) > 0) {
         obj_setStr(self, "ca_str", ca);
         mqtt_set_ca(_client, obj_getStr(self, "ca_str"));
     }
+    else {
+        __platform_printf("mqtt_init input ca none\r\n");
+    }
 
     if (keepalive > 0) {
         mqtt_set_keep_alive_interval(_client, keepalive);
+    }
+    else {
+        __platform_printf("mqtt_init input keepalive none\r\n");
     }
 
     mqtt_set_clean_session(_client, 1);
@@ -130,7 +151,7 @@ int _mqtt__MQTT_disconnect(PikaObj* self) {
         __platform_printf("mqtt disconnect ERROR! :%d\r\n", ret);
 
     if (ret == 0)
-        __platform_printf("mqtt disconnect Done\r\n");
+        __platform_printf("mqtt disconnect OK\r\n");
     return ret;
 }
 
@@ -146,9 +167,9 @@ PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj* self) {
 
     ret = mqtt_list_subscribe_topic(_client);
     if (ret == 0)
-        __platform_printf("MQTT_listSubscribrTopic Done\r\n");
+        __platform_printf("MQTT_listSubscribrTopic OK\r\n");
     else
-        __platform_printf("MQTT_listSubscribrTopic error\r\n");
+        __platform_printf("MQTT_listSubscribrTopic ERROR\r\n");
 
     return NULL;
 }
@@ -159,30 +180,35 @@ PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj* self) {
 // 输入参数：主题名称，有效数据
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_publish(PikaObj* self, char* topic, char* payload) {
+int _mqtt__MQTT_publish(PikaObj *self, int qos, char* topic, char* payload) {
     int ret;
     mqtt_message_t msg;
 
     mqtt_client_t* _client = obj_getPtr(self, "_client");
     memset(&msg, 0, sizeof(msg));
 
+    if((qos < 0) || (qos > 2)) {
+        __platform_printf("input qos error\r\n");
+        return -1;
+    }
     if (strlen(topic) <= 0) {
         __platform_printf("input topic error\r\n");
-        return -1;
+        return -2;
     }
 
     if (strlen(payload) <= 0) {
         __platform_printf("input payload error\r\n");
-        return -2;
+        return -3;
     }
 
     msg.payload = (void*)payload;
-    msg.qos = 1;
+    msg.qos = qos;
+    __platform_printf("msg.qos:%d\r\n",msg.qos);
     ret = mqtt_publish(_client, topic, &msg);
     if (ret == 0)
-        __platform_printf("MQTT_publish Done\r\n");
+        __platform_printf("MQTT_publish OK\r\n");
     else
-        __platform_printf("MQTT_publish error\r\n");
+        __platform_printf("MQTT_publish ERROR\r\n");
     return ret;
 }
 
@@ -203,7 +229,7 @@ int _mqtt__MQTT_setCa(PikaObj* self, char* ca) {
         __platform_printf("input ca data error\r\n");
         return -2;
     }
-
+    //__platform_printf("ca_str:%s\r\n",ca);
     obj_setStr(self, "ca_str", ca);
     mqtt_set_ca(_client, obj_getStr(self, "ca_str"));
 
@@ -254,12 +280,8 @@ int _mqtt__MQTT_setHost(PikaObj* self, char* host_url) {
         return -2;
     }
 
-    obj_setStr(self, "host_str",
-               host_url);  // python 环境创建一个全局变量存放 host
-    mqtt_set_host(
-        _client,
-        obj_getStr(self,
-                   "host_str"));  //从python环境中取出 host的指针 赋值给结构体
+    obj_setStr(self, "host_str",host_url);  // python 环境创建一个全局变量存放 host
+    mqtt_set_host(_client,obj_getStr(self,"host_str"));  //从python环境中取出 host的指针 赋值给结构体
     __platform_printf("MQTT_setHost :%s\r\n", host_url);
 
     return 0;
@@ -385,7 +407,7 @@ int _mqtt__MQTT_setVersion(PikaObj* self, char* version) {
 
 ////////////////////////////////////////////////////////////////////
 // 函 数 名：_mqtt__MQTT_setWill
-// 功能说明：
+// 功能说明：设置遗嘱消息，异常断连时会发送这个消息
 // 输入参数：
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
@@ -417,9 +439,9 @@ int _mqtt__MQTT_setWill(PikaObj* self,
     ret = mqtt_set_will_options(_client, topic, qos, (uint8_t)retain, payload);
 
     if (ret == 0) {
-        __platform_printf("MQTT_setWill success\r\n", topic);
+        __platform_printf("MQTT_setWill OK\r\n", topic);
     } else
-        __platform_printf("MQTT_setWill error\r\n");
+        __platform_printf("MQTT_setWill ERROR\r\n");
 
     return 0;
 }
@@ -432,14 +454,6 @@ int _mqtt__MQTT_setWill(PikaObj* self,
 ///////////////////////////////////////////////////////////////////
 int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, int qos, Arg* cb) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
-    obj_setArg(self, "eventCallBack", cb);
-    /* init event_listener for the first time */
-    if (NULL == g_mqtt_event_listener) {
-        pks_eventLisener_init(&g_mqtt_event_listener);
-    }
-    uint32_t eventId = hash_time33(topic);
-    pks_eventLicener_registEvent(g_mqtt_event_listener, eventId, self);
-
     int ret;
 
     if (strlen(topic) <= 0) {
@@ -451,13 +465,21 @@ int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, int qos, Arg* cb) {
         __platform_printf("input qos error\r\n");
         return -1;
     }
+    
+    obj_setArg(self, "eventCallBack", cb);
+    /* init event_listener for the first time */
+    if (NULL == g_mqtt_event_listener) {
+        pks_eventLisener_init(&g_mqtt_event_listener);
+    }
+    uint32_t eventId = hash_time33(topic);
+    pks_eventLicener_registEvent(g_mqtt_event_listener, eventId, self);
 
     ret = mqtt_subscribe(_client, topic, qos, Subscribe_Handler);
 
     if (ret == 0) {
-        __platform_printf("MQTT_subscribe Topic :%s success\r\n", topic);
+        __platform_printf("MQTT_subscribe Topic :%s OK\r\n", topic);
     } else
-        __platform_printf("MQTT_subscribe Topic error\r\n");
+        __platform_printf("MQTT_subscribe Topic ERROR\r\n");
 
     return 0;
 }
@@ -479,16 +501,16 @@ int _mqtt__MQTT_unsubscribe(PikaObj* self, char* topic) {
 
     ret = mqtt_unsubscribe(_client, topic);
     if (ret == 0) {
-        __platform_printf("MQTT_unsubscribe :%s success\r\n", topic);
+        __platform_printf("MQTT_unsubscribe :%s OK\r\n", topic);
     } else
-        __platform_printf("MQTT_unsubscribe :%s error\r\n", topic);
+        __platform_printf("MQTT_unsubscribe :%s ERROR\r\n", topic);
 
     return 0;
 }
 
 ////////////////////////////////////////////////////////////////////
-// 函 数 名：_mqtt__MQTT_unsubscribe
-// 功能说明：取消mqtt 订阅主题
+// 函 数 名：Subscribe_Handler
+// 功能说明：mqtt 订阅主题 的回调函数
 // 输入参数：
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////

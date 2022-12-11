@@ -54,7 +54,7 @@ class _MQTT:
         pass
         """listSubscribrTopic """
 
-    def publish(self, topic: str, payload: str) -> int:
+    def publish(self, qos:int, topic: str, payload: str) -> int:
         pass
         """publish to the mqtt-server."""
 
