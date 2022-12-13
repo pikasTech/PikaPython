@@ -1,16 +1,16 @@
 ROOT=$PWD
-rm libpikabinder -rf
+rm -rf libpikabinder
 mkdir libpikabinder
 cargo build --release
 cbindgen --config cbindgen.toml --crate rust-msc --output libpikabinder/libpikabinder.h
 cp target/release/libpikabinder.a libpikabinder
 
 cd ../pikaByteCodeGen
-cp ../pikaCompiler/libpikabinder . -r
-rm pikascript/pikascript-core -r
-cp ../../src pikascript/pikascript-core -r
+cp -r ../pikaCompiler/libpikabinder .
+rm -r pikascript/pikascript-core
+cp -r ../../src pikascript/pikascript-core
 touch pikascript/pikascript-core/keep
-rm build -rf
+rm -rf build
 mkdir build
 cd build
 cmake ..
