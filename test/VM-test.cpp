@@ -2405,6 +2405,20 @@ TEST(vm, issue_keyword_mem_leak) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(vm, issue_not_in) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    obj_run(pikaMain,
+            "a = [1,2,3]\n"
+            "print(1 not in a)\n"
+            "print(4 not in a)\n");
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

@@ -5043,6 +5043,24 @@ TEST(parser, print_ssa) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, not_in) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "1 not in a\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 NUM 1\n"
+                 "2 REF a\n"
+                 "1 OPT  in \n"
+                 "0 OPT  not \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
