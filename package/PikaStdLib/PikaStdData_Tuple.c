@@ -32,7 +32,7 @@ Arg* PikaStdData_Tuple___next__(PikaObj* self) {
 }
 
 Arg* PikaStdData_Tuple___getitem__(PikaObj* self, Arg* __key) {
-    return PikaStdData_Tuple_get(self, obj_getInt(self, "__key"));
+    return PikaStdData_Tuple_get(self, arg_getInt(__key));
 }
 
 void PikaStdData_Tuple___del__(PikaObj* self) {

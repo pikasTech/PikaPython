@@ -51,6 +51,14 @@ typedef uint32_t u32;
     #undef UART4_EXIST
 #endif
 
+#ifdef STM32F407xx
+    #undef UART4_EXIST
+#endif
+
+#ifdef STM32F405xx
+    #undef UART4_EXIST
+#endif
+
 #define RX_BUFF_LENGTH 64
 
 #define FLASH_SCRIPT_START_ADDR (FLASH_BASE + ((FLASH_PAGE_NB - 2) * FLASH_PAGE_SIZE))

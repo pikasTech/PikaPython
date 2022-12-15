@@ -2830,4 +2830,35 @@ TEST(pikaMain, REPL_key_left_del) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, obj_setNone) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_setNone(pikaMain, "n");
+    obj_run(pikaMain, "print(n)");
+    EXPECT_STREQ(log_buff[0], "None\r\n");
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, obj_setStr_NULL) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_setStr(pikaMain, "n", NULL);
+    obj_run(pikaMain, "print(n)");
+    EXPECT_STREQ(log_buff[2], "NameError: name 'n' is not defined\r\n");
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, _obj_set_str_null) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    obj_run(pikaMain,
+            "class _test(GTestTask._test):\n"
+            "    def __init__(self):\n"
+            "        super().__init__()\n"
+            "t = _test()\n");
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

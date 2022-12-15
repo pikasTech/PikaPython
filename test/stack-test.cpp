@@ -61,4 +61,18 @@ TEST(stack, str) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stack, get_str) {
+    Stack s;
+    stack_init(&s);
+    stack_pushStr(&s, "abc");
+    stack_pushStr(&s, "123");
+    stack_pushStr(&s, "xyz");
+    EXPECT_STREQ(arg_getStr(stack_checkArg(&s, 0)), "xyz");
+    EXPECT_STREQ(arg_getStr(stack_checkArg(&s, 0)), "xyz");
+    EXPECT_STREQ(arg_getStr(stack_checkArg(&s, 1)), "123");
+    EXPECT_STREQ(arg_getStr(stack_checkArg(&s, 2)), "abc");
+    stack_deinit(&s);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

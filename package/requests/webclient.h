@@ -106,7 +106,6 @@ enum WEBCLIENT_METHOD {
 struct webclient_header {
     char* buffer;
     size_t length; /* content header buffer size */
-
     size_t size; /* maximum support header size */
 };
 
@@ -136,6 +135,8 @@ struct webclient_session* webclient_session_create(size_t header_sz);
 
 /* send HTTP GET request */
 int webclient_get(struct webclient_session* session, const char* URI);
+/* send HTTP GET request */
+int webclient_get2(struct webclient_session* session, const char* URI);
 
 /* send HTTP HEAD request */
 int webclient_shard_head_function(struct webclient_session* session,
@@ -157,6 +158,12 @@ int webclient_post(struct webclient_session* session,
                    const char* URI,
                    const void* post_data,
                    size_t data_len);
+/* send HTTP POST request */
+int webclient_post2(struct webclient_session* session,
+                   const char* URI,
+                   const void* post_data,
+                   size_t data_len);
+
 
 /* close and release wenclient session */
 int webclient_close(struct webclient_session* session);

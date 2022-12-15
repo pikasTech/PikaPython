@@ -162,6 +162,7 @@ PIKA_RES obj_setRef(PikaObj* self, char* argPath, PikaObj* pointer);
 PIKA_RES obj_setPtr(PikaObj* self, char* argPath, void* pointer);
 PIKA_RES obj_setFloat(PikaObj* self, char* argPath, pika_float value);
 PIKA_RES obj_setStr(PikaObj* self, char* argPath, char* str);
+PIKA_RES obj_setNone(PikaObj* self, char* argPath);
 PIKA_RES obj_setArg(PikaObj* self, char* argPath, Arg* arg);
 PIKA_RES obj_setArg_noCopy(PikaObj* self, char* argPath, Arg* arg);
 PIKA_RES obj_setBytes(PikaObj* self, char* argPath, uint8_t* src, size_t size);
@@ -504,5 +505,7 @@ Arg* __eventLisener_runEvent(PikaEventListener* lisener,
 Arg* pks_eventLisener_sendSignalAwaitResult(PikaEventListener* self,
                                             uint32_t eventId,
                                             int eventSignal);
+
+void obj_printModules(PikaObj* self);
 
 #endif

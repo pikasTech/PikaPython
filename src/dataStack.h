@@ -42,6 +42,7 @@ int32_t stack_deinit(Stack* stack);
 
 int32_t stack_pushStr(Stack* stack, char* str);
 char* stack_popStr(Stack* stack, char* outBuff);
+Arg* stack_checkArg(Stack* stack, int index);
 int32_t stack_pushArg(Stack* stack, Arg* arg);
 Arg* stack_popArg_alloc(Stack* stack);
 Arg* stack_popArg(Stack* stack, Arg* arg_dict);

@@ -95,6 +95,14 @@ PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
     return errCode;
 }
 
+PIKA_RES args_setNone(Args* self, char* name) {
+    PIKA_RES errCode = PIKA_RES_OK;
+    Arg* argNew = arg_newNull();
+    arg_setName(argNew, name);
+    args_setArg(self, argNew);
+    return errCode;
+}
+
 PIKA_RES args_pushArg(Args* self, Arg* arg) {
     Arg* new_arg = NULL;
     if (!arg_isSerialized(arg)) {
@@ -494,6 +502,7 @@ PIKA_RES pikaList_setArg(PikaList* self, int index, Arg* arg) {
 }
 
 Arg* pikaList_getArg(PikaList* self, int index) {
+    pika_assert(NULL != self);
     char buff[11];
     char* i_str = fast_itoa(buff, index);
     return args_getArg(&self->super, i_str);

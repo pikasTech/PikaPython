@@ -39,16 +39,47 @@ char* string_slice(Args* outBuffs, char* str, int start, int end) {
     return NULL;
 }
 
-int main(int argc, char** argv) {
+static int _do_main(int argc, char** argv) {
     int parc = argc - 1;
+    PikaMaker* maker = New_PikaMaker();
+
+    /* --add-file xxx --add-file yyy */
+    // __platform_printf("parc: %d\r\n", parc);
+    for (int i = 1; i < argc; i++) {
+        // __platform_printf("%s\r\n", argv[i]);
+        if (0 == strcmp(argv[i], "--add-file")) {
+            // __platform_printf("add file: %s\r\n", argv[i + 1]);
+            if (i + 1 < argc) {
+                pikaMaker_linkRaw(maker, argv[i + 1]);
+            }
+        }
+    }
+
+    /* delete --xxx yyy */
+    for (int i = 1; i < argc; i++) {
+        if (0 == strcmp(argv[i], "--add-file")) {
+            // printf("before delete: %d\r\n", parc);
+            // for (int j = 0; j < parc; j++) {
+            //     printf("%s\r\n", argv[j + 1]);
+            // }
+            parc -= 2;
+            for (int j = i; j < argc - 2; j++) {
+                argv[j] = argv[j + 2];
+            }
+            // printf("after delete: %d\r\n", parc);
+            // for (int j = 0; j < parc; j++) {
+            //     printf("%s\r\n", argv[j + 1]);
+            // }
+        }
+    }
+
     if (0 == parc) {
         /* no input, default to main.py */
         /* run pika_binder to bind C modules */
         pika_binder();
-        PikaMaker* maker = New_PikaMaker();
         pikaMaker_compileModuleWithDepends(maker, "main");
         PIKA_RES res = pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
-        obj_deinit(maker);
+        pikaMaker_deinit(maker);
         return res;
     }
 
@@ -62,7 +93,6 @@ int main(int argc, char** argv) {
 
     /* example: ./rust-msc-latest-linux main.py */
     if (1 == parc) {
-        PikaMaker* maker = New_PikaMaker();
         char* module_entry = argv[1];
         /* remove subfix */
         char* subfix = strrchr(module_entry, '.');
@@ -71,14 +101,13 @@ int main(int argc, char** argv) {
         }
         pikaMaker_compileModuleWithDepends(maker, module_entry);
         PIKA_RES res = pikaMaker_linkCompiledModules(maker, "pikaModules.py.a");
-        obj_deinit(maker);
+        pikaMaker_deinit(maker);
         return res;
     }
 
     /* example ./rust-msc-latest-linux main.py -o out.a */
     if (3 == parc) {
         if (0 == strcmp(argv[2], "-o")) {
-            PikaMaker* maker = New_PikaMaker();
             char* module_entry = argv[1];
             /* remove subfix */
             char* subfix = strrchr(module_entry, '.');
@@ -87,7 +116,7 @@ int main(int argc, char** argv) {
             }
             pikaMaker_compileModuleWithDepends(maker, module_entry);
             PIKA_RES res = pikaMaker_linkCompiledModules(maker, argv[3]);
-            obj_deinit(maker);
+            pikaMaker_deinit(maker);
             return res;
         }
     }
@@ -97,7 +126,6 @@ int main(int argc, char** argv) {
         if (0 == strcmp(argv[1], "-c")) {
             Args buffs = {0};
             /* compile only */
-            PikaMaker* maker = New_PikaMaker();
             char* module_entry = argv[2];
             char* module_out = strsCopy(&buffs, module_entry);
             char* subfix = strrchr(module_out, '.');
@@ -129,4 +157,51 @@ int main(int argc, char** argv) {
     help(argv[0]);
 
     return -1;
+}
+
+int main(int argc, char** argv) {
+    char* buf = NULL;
+    FILE* pika_studio = NULL;
+    if (argc == 1) {
+        pika_studio = __platform_fopen("pika.studio", "r");
+        if (NULL != pika_studio) {
+            buf = __platform_malloc(1024);
+            __platform_fread(buf, 1, 1024, pika_studio);
+            /* find <args> </args> */
+            char* start = strstr(buf, "<args>");
+            char* end = strstr(buf, "</args>");
+            if (start && end) {
+                start += 6;
+                *end = '\0';
+                __platform_printf("args: %s\r\n", start);
+                /* split args */
+                char* args[32] = {0};
+                args[0] = argv[0];
+                char* p = start;
+                while (p < end) {
+                    char* q = strchr(p, ' ');
+                    if (q) {
+                        *q = '\0';
+                        args[argc++] = p;
+                        p = q + 1;
+                    } else {
+                        args[argc++] = p;
+                        break;
+                    }
+                }
+                argv = args;
+                // for (int i = 0; i < argc; i++) {
+                //     __platform_printf("argv[%d]: %s\r\n", i, argv[i]);
+                // }
+            }
+        }
+    }
+    int ret = _do_main(argc, argv);
+    if (NULL != buf) {
+        __platform_free(buf);
+    }
+    if (NULL != pika_studio) {
+        __platform_fclose(pika_studio);
+    }
+    return ret;
 }

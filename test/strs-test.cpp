@@ -120,4 +120,25 @@ TEST(str, transfer) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(str, transfer_issue_jfo4i) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_run(pikaMain, "'\\\\replace'");
+    pikaVM_run(pikaMain, "'\\\\non'");
+    pikaVM_run(pikaMain, "'\\\\title'");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], "'\\replace'\r\n");
+    EXPECT_STREQ(log_buff[1], "'\\non'\r\n");
+    EXPECT_STREQ(log_buff[0], "'\\title'\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

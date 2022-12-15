@@ -1517,6 +1517,58 @@ static void _AST_parse_slice(AST* ast, Args* buffs, char* stmt) {
     }
 }
 
+char* Suger_not_in(Args* out_buffs, char* line) {
+#if PIKA_NANO_ENABLE
+    return line;
+#endif
+    char* ret = line;
+    Args buffs = {0};
+    if (!Cursor_isContain(line, TOKEN_operator, " not ")) {
+        ret = line;
+        goto __exit;
+    }
+    if (!Cursor_isContain(line, TOKEN_operator, " in ")) {
+        ret = line;
+        goto __exit;
+    }
+    char* stmt1 = "";
+    char* stmt2 = "";
+    PIKA_BOOL got_not_in = 0;
+    PIKA_BOOL skip = 0;
+    /* stmt1 not in stmt2 => not stmt1 in stmt2 */
+    Cursor_forEachToken(cs, line) {
+        Cursor_iterStart(&cs);
+        if (!got_not_in) {
+            if (strEqu(cs.token1.pyload, " not ") &&
+                strEqu(cs.token2.pyload, " in ")) {
+                got_not_in = 1;
+                Cursor_iterEnd(&cs);
+                continue;
+            }
+            stmt1 = strsAppend(&buffs, stmt1, cs.token1.pyload);
+        } else {
+            if (!skip) {
+                skip = 1;
+                Cursor_iterEnd(&cs);
+                continue;
+            }
+            stmt2 = strsAppend(&buffs, stmt2, cs.token1.pyload);
+        }
+        Cursor_iterEnd(&cs);
+    }
+    Cursor_deinit(&cs);
+    if (!got_not_in) {
+        ret = line;
+        goto __exit;
+    }
+    ret = strsFormat(out_buffs, strGetSize(line) + 3, " not %s in %s", stmt1,
+                     stmt2);
+    goto __exit;
+__exit:
+    strsDeinit(&buffs);
+    return ret;
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args buffs = {0};
     char* assignment = strsGetFirstToken(&buffs, stmt, '(');
@@ -1576,6 +1628,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     /* solve operator stmt */
     if (STMT_operator == stmtType) {
+        right = Suger_not_in(&buffs, right);
         char* rightWithoutSubStmt = _remove_sub_stmt(&buffs, right);
         char* operator= Lexer_getOperator(&buffs, rightWithoutSubStmt);
         if (NULL == operator) {
@@ -1825,7 +1878,8 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
     if (block_deepth_now == -1) {
         /* get block_deepth error */
         __platform_printf(
-            "IndentationError: unexpected indent, only support 4 spaces\r\n");
+            "IndentationError: unexpected indent, only support 4 "
+            "spaces\r\n");
         obj_deinit(ast);
         ast = NULL;
         goto exit;
@@ -2519,10 +2573,18 @@ exit:
 };
 
 PIKA_RES Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines) {
+#if PIKA_BYTECODE_ONLY_ENABLE
+    __platform_printf(
+        "Error: In bytecode-only mode, can not parse python script.\r\n");
+    __platform_printf(
+        " Note: Please check PIKA_BYTECODE_ONLY_ENABLE config.\r\n");
+    return PIKA_RES_ERR_SYNTAX_ERROR;
+#else
     if (1 == (uintptr_t)_Parser_linesToBytesOrAsm(NULL, bf, py_lines)) {
         return PIKA_RES_OK;
     }
     return PIKA_RES_ERR_SYNTAX_ERROR;
+#endif
 }
 
 char* Parser_linesToAsm(Args* outBuffs, char* multi_line) {

@@ -56,6 +56,26 @@ int32_t stack_popSize(Stack* stack) {
     return *(stack->sp_size);
 }
 
+Arg* stack_checkArg(Stack* stack, int index) {
+    if (stack->top - index <= 0) {
+        return NULL;
+    }
+    int sp_offset = 0;
+    int32_t size = 0;
+    for (int i = 1; i <= index + 1; i++) {
+        size = stack->sp_size[-i];
+        if (size == -1) {
+            sp_offset -= sizeof(Arg*);
+        } else {
+            sp_offset -= size;
+        }
+    }
+    if (size == -1) {
+        return *(Arg**)(stack->sp + sp_offset);
+    }
+    return (Arg*)(stack->sp + sp_offset);
+}
+
 int32_t stack_deinit(Stack* stack) {
     while (stack->top > 0) {
         int32_t size = stack_popSize(stack);

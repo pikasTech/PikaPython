@@ -10,7 +10,7 @@
       <TargetName>Pika_F407</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\AC5</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -459,6 +459,91 @@
               <FileType>1</FileType>
               <FilePath>..\PikaScript\pikascript-lib/PikaStdLib/PikaStdData_FILEIO.c</FilePath>
             </File>
+            <File>
+              <FileName>STM32F4_ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\STM32F4\STM32F4_ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F4_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\STM32F4\STM32F4_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F4_GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\STM32F4\STM32F4_GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F4_IIC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\STM32F4\STM32F4_IIC.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F4_PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\STM32F4\STM32F4_PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F4_Time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\STM32F4\STM32F4_Time.c</FilePath>
+            </File>
+            <File>
+              <FileName>STM32F4_UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\STM32F4\STM32F4_UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>pika_hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\pika_hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_BaseDev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_BaseDev.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_CAN.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_CAN.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_IIC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_IIC.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_Time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_Time.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PikaScript\pikascript-lib\PikaStdDevice\PikaStdDevice_UART.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -673,6 +758,16 @@
               <FileName>stm32f4xx_hal_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc_ex.c</FilePath>
             </File>
           </Files>
         </Group>

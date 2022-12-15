@@ -83,6 +83,25 @@ struct VMState {
     RunState* run_state;
 };
 
+typedef struct {
+    int8_t n_positional;
+    int8_t n_positional_got;
+    int8_t n_default;
+    int8_t n_arg;
+    int8_t i_arg;
+    int8_t n_input;
+    PIKA_BOOL is_vars;
+    PIKA_BOOL is_keys;
+    PIKA_BOOL is_default;
+    ArgType method_type;
+    PikaTuple* tuple;
+    PikaDict* kw;
+    PikaDict* kw_keys;
+    char* var_tuple_name;
+    char* kw_dict_name;
+    char* type_list;
+} FunctionArgsInfo;
+
 typedef struct OperatorInfo OperatorInfo;
 struct OperatorInfo {
     char* opt;
