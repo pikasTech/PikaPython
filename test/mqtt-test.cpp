@@ -95,7 +95,7 @@ TEST(mqtt, init) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if 0
+#if 1
 //! Mqtt connect will break the gichub actions, 
 //! if need to test, please enable it manually.
 TEST(mqtt, connect) {
@@ -103,6 +103,45 @@ TEST(mqtt, connect) {
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     pikaVM_runSingleFile(pikaMain, "test/python/mqtt/mqtt_connect.py");
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if 1
+//! Mqtt set_para will break the gichub actions, 
+//! if need to test, please enable it manually.
+TEST(mqtt, set_para) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    pikaVM_runSingleFile(pikaMain, "test/python/mqtt/mqtt_set_para.py");
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if 1
+//! Mqtt publish will break the gichub actions, 
+//! if need to test, please enable it manually.
+TEST(mqtt, publish) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    pikaVM_runSingleFile(pikaMain, "test/python/mqtt/mqtt_publish.py");
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
+#if 1
+//! Mqtt subscribe will break the gichub actions, 
+//! if need to test, please enable it manually.
+TEST(mqtt, subscribe) {
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    pikaVM_runSingleFile(pikaMain, "test/python/mqtt/mqtt_subscribe.py");
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }

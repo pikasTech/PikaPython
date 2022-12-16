@@ -1,7 +1,6 @@
 import mqtt
 
-client = mqtt.MQTT('192.168.1.255')
-
+client = mqtt.MQTT('broker.emqx.io')
 
 
 

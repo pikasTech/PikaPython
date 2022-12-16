@@ -127,6 +127,7 @@ typedef struct mqtt_client {
     platform_timer_t mqtt_last_received;
     reconnect_handler_t mqtt_reconnect_handler;
     interceptor_handler_t mqtt_interceptor_handler;
+    void* user_data;
 } mqtt_client_t;
 
 #define MQTT_ROBUSTNESS_CHECK(item, err)                                 \

@@ -1,10 +1,9 @@
 import mqtt
 
-client = mqtt.MQTT('192.168.1.255')
+client = mqtt.MQTT('broker.emqx.io',port=1883,clinetID='clientid',username='name_',password='passwd_')
 
-client.setHost('test.mosquitto.org')
-client.setPort(1883)
+ret = client.connect()
+print("ret:%d" % ret)
 
-client.connect()
-
-client.disconnect()
+ret = client.disconnect()
+print("ret:%d" % ret)

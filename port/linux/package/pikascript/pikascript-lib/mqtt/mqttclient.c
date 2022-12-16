@@ -1612,13 +1612,26 @@ int mqtt_set_will_options(mqtt_client_t* c,
 }
 
 int mqtt_release_free(mqtt_client_t* c) {
-    /* wait for mqtt thread exit */
-    while (c->mqtt_thread != NULL) {
+    //wait for mqtt thread exit
+    while(c->mqtt_thread != NULL) {
     }
-    if (CLIENT_STATE_INVALID != mqtt_get_client_state(c)) {
+
+    /*
+    if(c->mqtt_thread != NULL) {
+        MQTT_LOG("%s:%d %s()..., mqtt mqtt_yield_thread release...",
+                   __FILE__, __LINE__, __FUNCTION__);
+        platform_thread_stop(c->mqtt_thread); //stop thread 
+        network_disconnect(c->mqtt_network);
         mqtt_clean_session(c);
     }
+    */
+    if(CLIENT_STATE_INVALID != mqtt_get_client_state(c)) {
+       mqtt_clean_session(c);
+    }
+
+    MQTT_LOG_E("%s:%d %s() 1", __FILE__,__LINE__, __FUNCTION__);
     mqtt_release(c);
+    MQTT_LOG_E("%s:%d %s() 2", __FILE__,__LINE__, __FUNCTION__);
     platform_memory_free(c);
     return 0;
 }

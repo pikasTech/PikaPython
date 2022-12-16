@@ -10,7 +10,7 @@ class MQTT(_mqtt._MQTT):
                  password='',
                  version='3.1.1',
                  ca='',
-                 keepalive=60):
+                 keepalive=10):
         super().__init__(ip, port, clinetID,
                          username, password, version,
                          ca, keepalive)
