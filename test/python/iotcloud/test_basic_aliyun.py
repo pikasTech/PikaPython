@@ -22,10 +22,10 @@ def up_cb():
 e = c.connect()
 print("connect:", e)
 if e == 0:
-    print("subcribe status:", c.subsribe(topic, 0, up_cb))
+    print("subcribe status:", c.subsribe(topic, up_cb))
 
     for i in range(10):
-        print("publish status:", c.publish(topic, 0, '{"id":'+str(i)+'}'))
+        print("publish status:", c.publish(topic, '{"id":'+str(i)+'}'))
         Time.sleep_s(5)
 
 a = c.disconnect()
