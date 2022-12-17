@@ -12,8 +12,11 @@ class IOT:
     def randStr(self, len):
         a = ""
         for i in range(len):
-            a = a+str(random.randint(0, 9))
+            a = a + str(random.randint(0, 9))
         return a
+
+    def getTimeStamp(self, t):
+        return int(Time.time()*1000) + t  # todo 时间戳64位整形实现
 
     def aliyun(self, clientId: str, productKey: str, deviceName: str, deviceSecret: str,
                signMethod="hmac-md5", regionID="cn-shanghai", ssl=False):
@@ -21,7 +24,7 @@ class IOT:
             print("[Error]input param is None")
             return False
         if signMethod not in self._signMethodTable:
-            print("[Error] not support signMethod")
+            print("[Error]not support signMethod")
             return False
         if ssl:
             securemode = "2"
@@ -32,32 +35,32 @@ class IOT:
 
         hmac_payload = "clientId" + clientId + "deviceName" + \
             deviceName + "productKey" + productKey
-        self._mqttPassword = hmac.new(deviceSecret.encode(
-        ), msg=hmac_payload.encode(), digestmod=signMethod).hexdigest()
+        self._mqttPassword = hmac.new(deviceSecret.encode(),
+                                      msg = hmac_payload.encode(),
+                                      digestmod = signMethod).hexdigest()
         self._mqttClientId = clientId + "|securemode=" + securemode + \
             ",signmethod="+signMethod.replace("-", "")+"|"
         self._mqttUsername = deviceName + "&" + productKey
         self._mqttUri = productKey + ".iot-as-mqtt." + regionID + ".aliyuncs.com"
         return True
 
-    def tencent(self, productId, deiceName, deviceSecret, signMethod="hmac-sha1", ssl=False):
-        if productId == None or deiceName == None or deviceSecret == None:
+    def tencentIotHub(self, productId, deviceName, deviceSecret, signMethod="hmac-sha1", expiryTime=3600, ssl=False):
+        if productId == None or deviceName == None or deviceSecret == None:
             print("[Error]input param is None")
             return False
         if signMethod not in self._signMethodTable:
-            print("[Error] not support signMethod")
+            print("[Error]not support signMethod")
             return False
         connid = self.randStr(5)
-        expiry = int(Time.time()) + 60 * 60
+        expiry = self.getTimeStamp(expiryTime)
         self._mqttUri = productId + ".iotcloud.tencentdevices.com"
         self._mqttPort = int(1883)
-        self._mqttClientId = productId + deiceName
-        self._mqttUsername = self._mqttClientId+";" + \
-            deiceName+";12010126;"+connid+";"+expiry
-        secret = base64.b64decode(deviceSecret.encode())
-        token = hmac.new(secret, msg=self._mqttUsername.encode(),
+        self._mqttClientId = productId + deviceName
+        self._mqttUsername = self._mqttClientId + ";12010126;" + connid + ";" + str(expiry)
+        token = hmac.new(base64.b64decode(deviceSecret.encode()),
+                         msg=self._mqttUsername.encode(),
                          digestmod=signMethod).hexdigest()
-        self._mqttPassword = token+";"+signMethod.replace("-", "")
+        self._mqttPassword = token + ";" + signMethod.replace("-", "")
         return True
 
     def onenet(self): ...
