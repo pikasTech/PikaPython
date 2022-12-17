@@ -44,7 +44,7 @@ class IOT:
                                  digestmod=signMethod).hexdigest()
         return True
 
-    def tencentIotHub(self, productId, deviceName, deviceSecret, signMethod="hmac-sha1", expiryTime=3600, ssl=False):
+    def tencent(self, productId, deviceName, deviceSecret, signMethod="hmac-sha1", expiryTime=3600, ssl=False):
         if productId == None or deviceName == None or deviceSecret == None:
             print("[Error]input param is None")
             return False
