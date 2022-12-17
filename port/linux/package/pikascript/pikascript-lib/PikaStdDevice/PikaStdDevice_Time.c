@@ -27,9 +27,11 @@ void PikaStdDevice_Time_sleep_s(PikaObj* self, int s) {
 #endif
 }
 
+#include <sys/time.h>
 void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platformGetTick() need to be override.");
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    obj_setInt(self,"tick", tv.tv_sec);
 }
 
 /*
