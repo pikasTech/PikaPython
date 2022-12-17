@@ -26,11 +26,11 @@ class _MQTT:
         pass
         """Set the Ca of the MQTTClient."""
 
-    def setKeepAlive(self, time: str) -> int:
+    def setKeepAlive(self, time: int) -> int:
         pass
         """Set the KeepAlive of the MQTTClient."""
 
-    def setWill(self, qos: int, topic: str, retain: int, payload: str) -> int:
+    def setWill(self, topic: str, payload: str, qos: int, retain: int) -> int:
         pass
         """Set the Will of the MQTTClient."""
 
@@ -54,7 +54,7 @@ class _MQTT:
         pass
         """listSubscribrTopic """
 
-    def publish(self, qos:int, topic: str, payload: str) -> int:
+    def publish(self,topic: str, qos:int, , payload: str) -> int:
         pass
         """publish to the mqtt-server."""
 
@@ -63,6 +63,18 @@ class _MQTT:
 
     def setHost(self, host_url: str) -> int:
         """Set the host_url of the MQTTClient."""
+
+    def getMsg(self,signal:int) -> str:
+        pass
+        """callback fun get msg"""
+
+    def getTopic(self,signal:int) -> str:
+        pass
+        """callback fun get topic"""
+        
+    def setDisconnectHandler(self,cb: any) -> int:
+        pass
+        """set disconnect callback fun."""
 
 
 def __del__():

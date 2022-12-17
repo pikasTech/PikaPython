@@ -9,7 +9,7 @@
 
 // #define             MQTT_LOG_IS_SALOF
 
-#define             MQTT_LOG_LEVEL                      MQTT_LOG_INFO_LEVEL   //MQTT_LOG_WARN_LEVEL MQTT_LOG_DEBUG_LEVEL
+#define             MQTT_LOG_LEVEL                      MQTT_LOG_WARN_LEVEL   //MQTT_LOG_WARN_LEVEL MQTT_LOG_DEBUG_LEVEL
 
 #ifdef MQTT_LOG_IS_SALOF
     #define         SALOF_USING_LOG                     (1U)

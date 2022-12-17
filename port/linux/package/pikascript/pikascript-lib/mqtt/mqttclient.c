@@ -1022,7 +1022,7 @@ static void mqtt_yield_thread(void* arg) {
     while (1) {
         rc = mqtt_yield(c, c->mqtt_cmd_timeout);
         if (MQTT_CLEAN_SESSION_ERROR == rc) {
-            MQTT_LOG_W("%s:%d %s()..., mqtt clean session....", __FILE__,
+            MQTT_LOG_I("%s:%d %s()..., mqtt clean session....", __FILE__,
                        __LINE__, __FUNCTION__);
             network_disconnect(c->mqtt_network);
             mqtt_clean_session(c);
@@ -1162,12 +1162,13 @@ static uint32_t mqtt_read_buf_malloc(mqtt_client_t* c, uint32_t size) {
         c->mqtt_read_buf_size = MQTT_DEFAULT_BUF_SIZE;
 
     c->mqtt_read_buf = (uint8_t*)platform_memory_alloc(c->mqtt_read_buf_size);
-
+    
     if (NULL == c->mqtt_read_buf) {
         MQTT_LOG_E("%s:%d %s()... malloc read buf failed...", __FILE__,
                    __LINE__, __FUNCTION__);
         RETURN_ERROR(MQTT_MEM_NOT_ENOUGH_ERROR);
     }
+    memset(c->mqtt_read_buf,0,c->mqtt_read_buf_size);//清空申请的内存
     return c->mqtt_read_buf_size;
 }
 
@@ -1569,10 +1570,11 @@ int mqtt_list_subscribe_topic(mqtt_client_t* c) {
     if (NULL == c)
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
 
-    if (mqtt_list_is_empty(&c->mqtt_msg_handler_list))
+    if (mqtt_list_is_empty(&c->mqtt_msg_handler_list)) {
         MQTT_LOG_I("%s:%d %s()... there are no subscribed topics...", __FILE__,
                    __LINE__, __FUNCTION__);
-
+    }
+    
     LIST_FOR_EACH_SAFE(curr, next, &c->mqtt_msg_handler_list) {
         msg_handler = LIST_ENTRY(curr, message_handlers_t, list);
         /* determine whether a node already exists by mqtt topic, but wildcards
@@ -1629,9 +1631,9 @@ int mqtt_release_free(mqtt_client_t* c) {
        mqtt_clean_session(c);
     }
 
-    MQTT_LOG_E("%s:%d %s() 1", __FILE__,__LINE__, __FUNCTION__);
+    MQTT_LOG_I("%s:%d %s() 1", __FILE__,__LINE__, __FUNCTION__);
     mqtt_release(c);
-    MQTT_LOG_E("%s:%d %s() 2", __FILE__,__LINE__, __FUNCTION__);
+    MQTT_LOG_I("%s:%d %s() 2", __FILE__,__LINE__, __FUNCTION__);
     platform_memory_free(c);
     return 0;
 }
