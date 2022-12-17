@@ -88,8 +88,8 @@ class IOT:
         self.password = token + ";" + signMethod.replace("-", "")
         return True
 
-    def onenet(self, productId, deviceId, accessKey, mode=ONENET_DEVICE, signMethod="hmac-md5", expiryTime=3600, ssl=False):
-        if productId == None or deviceId == None or accessKey == None:
+    def onenet(self, productId, deviceName, accessKey, mode=ONENET_DEVICE, signMethod="hmac-md5", expiryTime=3600, ssl=False):
+        if productId == None or deviceName == None or accessKey == None:
             print("[Error]input param is None")
             return False
         if signMethod not in self._signMethodTable:
@@ -101,12 +101,12 @@ class IOT:
         else:
             self.address = "mqtts.heclouds.com"
             self.port = int(1883)
-        self.clientid = deviceId
+        self.clientid = deviceName
         self.username = productId
         method = signMethod.replace("hmac-", "")
         expiry = self.getTimeStamp(expiryTime)
         if mode == ONENET_DEVICE:
-            res = "products/" + productId + "/devices/" + deviceId
+            res = "products/" + productId + "/devices/" + deviceName
         elif mode == ONENET_API:
             res = "products/" + productId
         else:
