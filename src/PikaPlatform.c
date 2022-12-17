@@ -65,6 +65,11 @@ PIKA_WEAK void __platform_error_handle() {
     return;
 }
 
+PIKA_WEAK void __platform_panic_handle() {
+    while (1) {
+    };
+}
+
 PIKA_WEAK uint8_t __is_locked_pikaMemory(void) {
     return 0;
 }

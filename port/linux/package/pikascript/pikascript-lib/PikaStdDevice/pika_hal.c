@@ -53,6 +53,7 @@ __exit:
     __platform_printf("Error: dev_open failed.\r\n");
     if (dev->ioctl_config) {
         pikaFree(dev->ioctl_config, _pika_hal_dev_config_size(dev_type));
+        dev->ioctl_config = NULL;
     }
     if (dev) {
         pikaFree(dev, sizeof(pika_dev));
@@ -71,11 +72,12 @@ int pika_hal_close(pika_dev* dev) {
     }
     ret = impl->close(dev);
 __exit:
-    if (NULL != dev) {
-        pikaFree(dev, sizeof(pika_dev));
-    }
     if (NULL != dev->ioctl_config) {
         pikaFree(dev->ioctl_config, _pika_hal_dev_config_size(dev->type));
+        dev->ioctl_config = NULL;
+    }
+    if (NULL != dev) {
+        pikaFree(dev, sizeof(pika_dev));
     }
     return ret;
 }

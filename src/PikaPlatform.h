@@ -168,6 +168,9 @@ long __platform_ftell(FILE* stream);
 /* error */
 void __platform_error_handle(void);
 
+/* panic */
+void __platform_panic_handle(void);
+
 void __pks_hook_instruct(void);
 PIKA_BOOL __pks_hook_arg_cache_filter(void* self);
 PIKA_WEAK void __platform_thread_delay(void);

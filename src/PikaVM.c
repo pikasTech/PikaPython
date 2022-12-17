@@ -65,8 +65,7 @@ static PIKA_BOOL _cq_isFull(volatile EventCQ* cq) {
 void VMSignal_deinit(void) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    while (1) {
-    };
+    __platform_panic_handle();
 #else
     for (int i = 0; i < PIKA_EVENT_LIST_SIZE; i++) {
         if (NULL != PikaVMSignal.cq.res[i]) {
@@ -82,8 +81,7 @@ PIKA_RES VMSignal_pushEvent(PikaEventListener* lisener,
                             int eventSignal) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    while (1) {
-    };
+    __platform_panic_handle();
 #else
     /* push to event_cq_buff */
     if (_cq_isFull(&PikaVMSignal.cq)) {
@@ -107,8 +105,7 @@ PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
                            int* head) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    while (1) {
-    };
+    __platform_panic_handle();
 #else
     /* pop from event_cq_buff */
     if (_cq_isEmpty(&PikaVMSignal.cq)) {
@@ -126,8 +123,7 @@ PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
 void VMSignale_pickupEvent(void) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    while (1) {
-    };
+    __platform_panic_handle();
 #else
     PikaObj* event_lisener;
     uint32_t event_id;
@@ -1138,8 +1134,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         __platform_printf(
             "OverflowError: type list is too long, please use bigger "
             "PIKA_LINE_BUFF_SIZE\r\n");
-        while (1)
-            ;
+        __platform_panic_handle();
     }
     f.method_type = arg_getType(method_arg);
 
@@ -1527,8 +1522,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
             __platform_printf(
                 "[ERROR] Too many args in RUN instruction, please use bigger "
                 "#define PIKA_ARG_NUM_MAX\n");
-            while (1) {
-            }
+            __platform_panic_handle();
         }
         for (int i = 0; i < n_arg; i++) {
             stack_tmp[i] = stack_popArg_alloc(&(vm->stack));
