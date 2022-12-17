@@ -5061,6 +5061,25 @@ TEST(parser, not_in) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+// TEST(parser, def_not_in) {
+//     pikaMemInfo.heapUsedMax = 0;
+//     Args* buffs = New_strBuff();
+//     char* lines =
+//         "def test(a=\"hmac-md5\"):\n"
+//         "    print(\"input:\",a)\n"
+//         "    print(\"table:\"t )\n"
+//         "    if a not in t:\n"
+//         "        print(\"a not in t\")else:\n"
+//         "        print(\"a in t\")\n"
+//         "test()\n";
+//     printf("%s\r\n", lines);
+//     char* pikaAsm = Parser_linesToAsm(buffs, lines);
+//     printf("%s", pikaAsm);
+//     EXPECT_STREQ(pikaAsm, "");
+//     args_deinit(buffs);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
+
 #endif
 
 TEST_END
