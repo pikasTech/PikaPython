@@ -28,20 +28,20 @@ class IOT:
             return False
         if ssl:
             securemode = "2"
-            self._mqttPort = int(443)
+            self.port = int(443)
         else:
             securemode = "3"
-            self._mqttPort = int(1883)
+            self.port = int(1883)
 
+        self.address = productKey + ".iot-as-mqtt." + regionID + ".aliyuncs.com"
+        self.username = deviceName + "&" + productKey
+        self.clientid = clientId + "|securemode=" + securemode + \
+            ",signmethod="+signMethod.replace("-", "")+"|"
         hmac_payload = "clientId" + clientId + "deviceName" + \
             deviceName + "productKey" + productKey
-        self._mqttPassword = hmac.new(deviceSecret.encode(),
-                                      msg = hmac_payload.encode(),
-                                      digestmod = signMethod).hexdigest()
-        self._mqttClientId = clientId + "|securemode=" + securemode + \
-            ",signmethod="+signMethod.replace("-", "")+"|"
-        self._mqttUsername = deviceName + "&" + productKey
-        self._mqttUri = productKey + ".iot-as-mqtt." + regionID + ".aliyuncs.com"
+        self.password = hmac.new(deviceSecret.encode(),
+                                 msg=hmac_payload.encode(),
+                                 digestmod=signMethod).hexdigest()
         return True
 
     def tencentIotHub(self, productId, deviceName, deviceSecret, signMethod="hmac-sha1", expiryTime=3600, ssl=False):
@@ -53,21 +53,21 @@ class IOT:
             return False
         connid = self.randStr(5)
         expiry = self.getTimeStamp(expiryTime)
-        self._mqttUri = productId + ".iotcloud.tencentdevices.com"
-        self._mqttPort = int(1883)
-        self._mqttClientId = productId + deviceName
-        self._mqttUsername = self._mqttClientId + ";12010126;" + connid + ";" + str(expiry)
+        self.address = productId + ".iotcloud.tencentdevices.com"
+        self.port = int(1883)
+        self.clientid = productId + deviceName
+        self.username = self.clientid + ";12010126;" + connid + ";" + str(expiry)
         token = hmac.new(base64.b64decode(deviceSecret.encode()),
-                         msg=self._mqttUsername.encode(),
+                         msg=self.username.encode(),
                          digestmod=signMethod).hexdigest()
-        self._mqttPassword = token + ";" + signMethod.replace("-", "")
+        self.password = token + ";" + signMethod.replace("-", "")
         return True
 
     def onenet(self): ...
 
     def connect(self, keepalive=600):
-        self._client = mqtt.MQTT(self._mqttUri, port=self._mqttPort, clinetID=self._mqttClientId,
-                                 username=self._mqttUsername, password=self._mqttPassword, keepalive=keepalive)
+        self._client = mqtt.MQTT(self.address, port=self.port, clinetID=self.clientid,
+                                 username=self.username, password=self.password, keepalive=keepalive)
         return self._client.connect()
 
     def disconnect(self):
