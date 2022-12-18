@@ -9,43 +9,45 @@ print("connect ret:%d" % ret)
 def callback0(signal):
     recv_msg = client.getMsg(signal)
     recv_topic = client.getTopic(signal)
-    print("py cb: %s-->>%s" % (recv_topic, recv_msg))
+    recv_qos = client.getQos(signal)
+    print("py0 cb: %s-qos:%d-->>%s" % (recv_topic,recv_qos, recv_msg))
 
 def callback1(signal):
     recv_msg = client.getMsg(signal)
     recv_topic = client.getTopic(signal)
-    print("py cb: %s-->>%s" % (recv_topic, recv_msg))
+    recv_qos = client.getQos(signal)
+    print("py1 cb: %s-qos:%d-->>%s" % (recv_topic,recv_qos, recv_msg))
 
 def callback2(signal):
     recv_msg = client.getMsg(signal)
     recv_topic = client.getTopic(signal)
     recv_qos = client.getQos(signal)
-    print("py cb: %s-qos:%d-->>%s" % (recv_topic,recv_qos, recv_msg))
+    print("py2 cb: %s-qos:%d-->>%s" % (recv_topic,recv_qos, recv_msg))
 
-# ret = client.subscribe('topic_pikapy',0,callback0)
-# print("subscribe ret:%d" % ret)
-# ret = client.subscribe('topic_pikapy', 1,callback1)
-# print("subscribe ret:%d" % ret)
-ret = client.subscribe('topic_pikapy', 2,callback2)
+ret = client.subscribe('topic_pikapy_qos0', 0,callback0)
 print("subscribe ret:%d" % ret)
-
+ret = client.subscribe('topic_pikapy_qos1', 1,callback1)
+print("subscribe ret:%d" % ret)
+ret = client.subscribe('topic_pikapy_qos2', 2,callback2)
+print("subscribe ret:%d" % ret)
 
 #sleep wait for recv data
 T = PikaStdDevice.Time()
-T.sleep_s(1)
+T.sleep_s(5)
     
 out = client.listSubscribeTopic()
-print('out',out)
+print('listSubscribeTopic out',out)
 
 # client.unsubscribe('topic_pikapy_qos0');
 # client.unsubscribe('topic_pikapy_qos1');
 # client.unsubscribe('topic_pikapy_qos2');
 # T.sleep_s(5)
-# client.listSubscribeTopic()
+# out2 = client.listSubscribeTopic()
+# print('listSubscribeTopic out2',out2)
 
 
 # ret = client.setWill(1,'topic_will',1,'lost mqtt connect')
-T.sleep_s(2)
+T.sleep_s(10)
 # exit()
 ret = client.disconnect()
-print("ret:%d" % ret)
+print("disconnect ret:%d" % ret)

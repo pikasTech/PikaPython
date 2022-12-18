@@ -1,6 +1,7 @@
 #include "_mqtt__MQTT.h"
 #include "mqttclient.h"
 #include "PikaStdData_List.h"
+#include "TinyObj.h"
 
 PikaEventListener* g_mqtt_event_listener = NULL;
 
@@ -164,7 +165,7 @@ int _mqtt__MQTT_disconnect(PikaObj* self) {
 ///////////////////////////////////////////////////////////////////
 PikaObj* _mqtt__MQTT_listSubscribeTopic(PikaObj* self) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
-    // int i = 0;
+    int i = 0;
     mqtt_list_t *curr, *next;
     message_handlers_t* msg_handler;
     PikaObj* list = NULL;
@@ -190,9 +191,9 @@ PikaObj* _mqtt__MQTT_listSubscribeTopic(PikaObj* self) {
         /* determine whether a node already exists by mqtt topic, but wildcards
          * are not supported */
         if (NULL != msg_handler->topic_filter) {
-            // MQTT_LOG_I("%s:%d %s()...[%d] subscribe topic: %s", __FILE__,
-            //            __LINE__, __FUNCTION__, ++i, msg_handler->topic_filter);
-            
+            MQTT_LOG_I("%s:%d %s()...[%d] subscribe topic: %s", __FILE__,
+                       __LINE__, __FUNCTION__, ++i, msg_handler->topic_filter);
+            __platform_printf("[%d]subscribe topic: %s\n",++i, msg_handler->topic_filter);
             /* 用 arg_new<type> 的 api 创建 arg */
             Arg* str_arg1 = arg_newStr((char*)msg_handler->topic_filter);
             /* 添加到 list 对象 */
@@ -532,18 +533,19 @@ int _mqtt__MQTT_subscribe(PikaObj *self, char* topic, int qos, Arg* cb) {
         // __platform_printf("MQTT_subscribe Topic :%s Qos:%d OK\r\n", topic,qos);
         //注册mqtt订阅主题的 回调函数
         if(cb != NULL) {
-            memset(topic_str,0,sizeof(topic_str));
-            // sprintf(topic_str,"eventCallBack_%s",topic);
-            sprintf(topic_str,"eventCallBack");
-            // __platform_printf("topic_str:%s \r\n",topic_str);
-            obj_setArg(self, topic_str, cb);
+            char hash_str[32] = {0};
+            memset(hash_str,0,sizeof(hash_str));
+            sprintf(hash_str,"C%d",hash_time33(topic_str));
+            obj_newDirectObj(self,hash_str,New_TinyObj);//新建一个对象来放CB
+            PikaObj* eventHandler = obj_getPtr(self,hash_str);
+            obj_setArg(eventHandler, "eventCallBack", cb);
             /* init event_listener for the first time */
             if (NULL == g_mqtt_event_listener) {
                 pks_eventLisener_init(&g_mqtt_event_listener);
             }
             uint32_t eventId = hash_time33(topic_str);
             // __platform_printf("hash_time33(topic_str):%d \r\n",hash_time33(topic_str));
-            pks_eventLicener_registEvent(g_mqtt_event_listener, eventId, self);
+            pks_eventLicener_registEvent(g_mqtt_event_listener, eventId, eventHandler);
         }
 
     } else
@@ -587,18 +589,13 @@ void Subscribe_Handler(void* client, message_data_t* msg) {
     PikaObj* self = ((mqtt_client_t*)client)->user_data;
     char hash_str[32] = {0};
 
-    //防止数组越界
     memset(topic_str,0,sizeof(topic_str));
     if(strlen(msg->topic_name) <= MQTT_TOPIC_LEN_MAX) 
-        // sprintf(topic_str,"eventCallBack_%s",msg->topic_name);
-        sprintf(topic_str,"eventCallBack");
+        sprintf(topic_str,"%s",msg->topic_name);
     else {
-        sprintf(topic_str,"eventCallBack_");
-        memcpy((topic_str+strlen("eventCallBack_")),msg->topic_name,MQTT_TOPIC_LEN_MAX);
+        __platform_printf("Subscribe Topic recv data topic length ERROR\r\n");
+        return ;
     }
-    
-    pks_eventLisener_sendSignal(g_mqtt_event_listener,
-                                hash_time33(topic_str), hash_time33(msg->topic_name));
     
     memset(hash_str,0,sizeof(hash_str));
     sprintf(hash_str,"M%d",hash_time33(msg->topic_name));
@@ -612,6 +609,10 @@ void Subscribe_Handler(void* client, message_data_t* msg) {
     sprintf(hash_str,"Q%d",hash_time33(msg->topic_name));
     obj_setInt(self, hash_str, msg->message->qos);
 
+    //存好数据后，再发送事件信号，防止信号收到了但是需要传输的数据没准备好
+    pks_eventLisener_sendSignal(g_mqtt_event_listener,
+                                hash_time33(msg->topic_name), hash_time33(msg->topic_name));
+    
     // MQTT_LOG_I("\n>>>------------------");
     // MQTT_LOG_I("Topic:%s \nlen:%d,message: %s", msg->topic_name,
     //            (int)msg->message->payloadlen, (char*)msg->message->payload);
