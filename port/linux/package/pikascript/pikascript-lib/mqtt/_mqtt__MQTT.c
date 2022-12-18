@@ -2,7 +2,7 @@
 #include "PikaStdData_List.h"
 #include "TinyObj.h"
 #include "mqttclient.h"
-
+#include "PikaObj.h"
 PikaEventListener* g_mqtt_event_listener = NULL;
 
 void Subscribe_Handler(void* client, message_data_t* msg);
@@ -548,7 +548,7 @@ int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, int qos, Arg* cb) {
             }
             uint32_t eventId = hash_time33(topic_str);
             // __platform_printf("hash_time33(topic_str):%d \r\n",hash_time33(topic_str));
-            pks_eventLicener_registEvent(g_mqtt_event_listener, eventId, eventHandler);
+            pks_eventListener_registEvent(g_mqtt_event_listener, eventId, eventHandler);
         }
 
     } else
@@ -613,7 +613,7 @@ void Subscribe_Handler(void* client, message_data_t* msg) {
     obj_setInt(self, hash_str, msg->message->qos);
 
     //存好数据后，再发送事件信号，防止信号收到了但是需要传输的数据没准备好
-    pks_eventLisener_sendSignal(g_mqtt_event_listener,
+    pks_eventListener_sendSignal(g_mqtt_event_listener,
                                 hash_time33(msg->topic_name), hash_time33(msg->topic_name));
     
     // MQTT_LOG_I("\n>>>------------------");
