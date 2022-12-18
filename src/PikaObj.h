@@ -342,21 +342,21 @@ enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
 
 typedef PikaObj PikaEventListener;
 
-void pks_eventLisener_sendSignal(PikaEventListener* self,
+void pks_eventListener_sendSignal(PikaEventListener* self,
                                  uint32_t eventId,
                                  int eventSignal);
 
-void pks_eventLicener_registEvent(PikaEventListener* self,
+void pks_eventListener_registEvent(PikaEventListener* self,
                                   uint32_t eventId,
                                   PikaObj* eventHandleObj);
 
-void pks_eventLicener_removeEvent(PikaEventListener* self, uint32_t eventId);
+void pks_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
 
-PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
+PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
                                             uint32_t eventId);
 
-void pks_eventLisener_init(PikaEventListener** p_self);
-void pks_eventLisener_deinit(PikaEventListener** p_self);
+void pks_eventListener_init(PikaEventListener** p_self);
+void pks_eventListener_deinit(PikaEventListener** p_self);
 PikaObj* methodArg_getDefContext(Arg* method_arg);
 PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name);
 NewFun obj_getClass(PikaObj* obj);
@@ -499,10 +499,10 @@ void _obj_updateProxyFlag(PikaObj* self);
     _obj_updateProxyFlag((_self))
 
 Arg* _obj_getProp(PikaObj* obj, char* name);
-Arg* __eventLisener_runEvent(PikaEventListener* lisener,
+Arg* __eventListener_runEvent(PikaEventListener* lisener,
                              uint32_t eventId,
                              int eventSignal);
-Arg* pks_eventLisener_sendSignalAwaitResult(PikaEventListener* self,
+Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
                                             uint32_t eventId,
                                             int eventSignal);
 
