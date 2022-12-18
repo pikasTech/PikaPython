@@ -41,18 +41,18 @@ void _hmac_HMAC_new(PikaObj* self, Arg* key, Arg* msg, char* digestmod) {
     mbedtls_md_context_t ctx;
     mbedtls_md_init(&ctx);
 
-    if (strcmp(digestmod, "hmac-md5") == 0 ||
-        strcmp(digestmod, "HMAC-MD5") == 0) {
+    if (strcmp(digestmod, "md5") == 0 ||
+        strcmp(digestmod, "MD5") == 0) {
         mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_MD5), 1);
         obj_setInt(self, "_mode", PIKA_HMAC_MD5);
         init_buff(self, PIKA_HMAC_MD5);
-    } else if (strcmp(digestmod, "hmac-sha1") == 0 ||
-               strcmp(digestmod, "HMAC-SHA1") == 0) {
+    } else if (strcmp(digestmod, "sha1") == 0 ||
+               strcmp(digestmod, "SHA1") == 0) {
         mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_SHA1), 1);
         obj_setInt(self, "_mode", PIKA_HMAC_SHA1);
         init_buff(self, PIKA_HMAC_SHA1);
-    } else if (strcmp(digestmod, "hmac-sha256") == 0 ||
-               strcmp(digestmod, "HMAC-SHA256") == 0) {
+    } else if (strcmp(digestmod, "sha256") == 0 ||
+               strcmp(digestmod, "SHA256") == 0) {
         mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_SHA256), 1);
         obj_setInt(self, "_mode", PIKA_HMAC_SHA256);
         init_buff(self, PIKA_HMAC_SHA256);
