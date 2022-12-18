@@ -202,7 +202,7 @@ PikaObj* _mqtt__MQTT_listSubscribeTopic(PikaObj* self) {
 // 输入参数：主题名称，有效数据
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_publish(PikaObj* self, char* topic, int qos, char* payload) {
+int _mqtt__MQTT_publish(PikaObj *self, char* topic, char* payload, int qos) {
     int ret;
     mqtt_message_t msg;
 
@@ -503,7 +503,7 @@ int _mqtt__MQTT_setWill(PikaObj* self,
 // 输入参数：
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
-int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, int qos, Arg* cb) {
+int _mqtt__MQTT_subscribe(PikaObj *self, char* topic, Arg* cb, int qos) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
     int ret;
     char topic_str[MQTT_TOPIC_LEN_MAX + 24];

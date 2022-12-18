@@ -14,14 +14,15 @@ class MQTT(_mqtt._MQTT):
         super().__init__(ip, port, clinetID,
                          username, password, version,
                          ca, keepalive)
-    def subscribe(self,topic='',qos=0,cb=''):
-        return super().subscribe(topic,qos,cb)
 
-    def publish(self,topic='',qos=0,payload=''):
-        return super().publish(topic,qos,payload)
+    def subscribe(self, topic, cb, qos=0):
+        return super().subscribe(topic, cb, qos)
 
-    def setWill(self,topic='',payload='',qos=1,retain):
-        return super().setWill(topic,payload,qos,retain)
+    def publish(self, topic, payload, qos=0):
+        return super().publish(topic, payload, qos)
 
-    def unsubscribe(self,topic=''):
+    def setWill(self, topic, payload, qos=0, retain=0):
+        return super().setWill(topic, payload, qos, retain)
+
+    def unsubscribe(self, topic=''):
         return super().unsubscribe(topic)

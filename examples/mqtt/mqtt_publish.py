@@ -13,9 +13,9 @@ client.setKeepAlive(10)
 ret = client.connect()
 print("connect ret:%d" % ret)
 
-client.publish('topic_pikapy',0, 'hello pikascript qos=0')
-client.publish('topic_pikapy',1, 'hello pikascript qos=1')
-client.publish('topic_pikapy',2, 'hello pikascript qos=2')
+client.publish('topic_pikapy', 'hello pikascript qos=0', 0)
+client.publish('topic_pikapy', 'hello pikascript qos=1', 1)
+client.publish('topic_pikapy', 'hello pikascript qos=2', 2)
 
 ret = client.disconnect()
 print("disconnect ret:%d" % ret)

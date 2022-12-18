@@ -42,7 +42,7 @@ class _MQTT:
         pass
         """disconnect to the mqtt-server."""
 
-    def subscribe(self, topic: str, qos: int, cb: any) -> int:
+    def subscribe(self, topic: str, cb: any, qos: int) -> int:
         pass
         """subscribe to the mqtt-server."""
 
@@ -54,7 +54,7 @@ class _MQTT:
         pass
         """listSubscribeTopic """
 
-    def publish(self,topic: str, qos:int, , payload: str) -> int:
+    def publish(self,topic: str, payload: str, qos:int) -> int:
         pass
         """publish to the mqtt-server."""
 
