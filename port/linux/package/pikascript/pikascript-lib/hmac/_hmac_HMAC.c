@@ -10,15 +10,21 @@ enum {
 
 static void hmac_to_hex(uint8_t* s, int l, uint8_t* d);
 
+static void init_buff(PikaObj* self, size_t h) {
+    obj_setBytes(self, "_buff", NULL, h);
+    obj_setBytes(self, "_hexbuff", NULL, (h * 2));
+    memset(obj_getBytes(self, "_buff"), 0, h);
+    memset(obj_getBytes(self, "_hexbuff"), 0, (h * 2));
+}
+
 void _hmac_HMAC_new(PikaObj* self, Arg* key, Arg* msg, char* digestmod) {
     ArgType t;
     t = arg_getType(key);
-    if (ARG_TYPE_NONE != t) {
-        if (ARG_TYPE_BYTES != t) {
-            obj_setErrorCode(self, -2);  // io error
-            obj_setSysOut(self, "hmac.new() key type error");
-        }
+    if (ARG_TYPE_BYTES != t) {
+        obj_setErrorCode(self, -2);  // io error
+        obj_setSysOut(self, "hmac.new() key type error");
     }
+
     t = arg_getType(msg);
     if (ARG_TYPE_NONE != t) {
         if (ARG_TYPE_BYTES != t) {
@@ -31,11 +37,7 @@ void _hmac_HMAC_new(PikaObj* self, Arg* key, Arg* msg, char* digestmod) {
     uint8_t* key_data = arg_getBytes(key);
     size_t msg_len = arg_getBytesSize(msg);
     uint8_t* msg_data = arg_getBytes(msg);
-    obj_setInt(self, "_digest_flags", 0);                 // flag
-    obj_setBytes(self, "_buff", NULL, PIKA_HMAC_SHA256);  // digest buff
-    obj_setBytes(self, "_hexbuff", NULL, PIKA_HMAC_SHA256 * 2);
-    memset(obj_getBytes(self, "_buff"), 0, PIKA_HMAC_SHA256);
-    memset(obj_getBytes(self, "_hexbuff"), 0, PIKA_HMAC_SHA256 * 2);
+    obj_setInt(self, "_digest_flags", 0);  // flag
     mbedtls_md_context_t ctx;
     mbedtls_md_init(&ctx);
 
@@ -43,14 +45,17 @@ void _hmac_HMAC_new(PikaObj* self, Arg* key, Arg* msg, char* digestmod) {
         strcmp(digestmod, "HMAC-MD5") == 0) {
         mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_MD5), 1);
         obj_setInt(self, "_mode", PIKA_HMAC_MD5);
+        init_buff(self, PIKA_HMAC_MD5);
     } else if (strcmp(digestmod, "hmac-sha1") == 0 ||
                strcmp(digestmod, "HMAC-SHA1") == 0) {
         mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_SHA1), 1);
         obj_setInt(self, "_mode", PIKA_HMAC_SHA1);
+        init_buff(self, PIKA_HMAC_SHA1);
     } else if (strcmp(digestmod, "hmac-sha256") == 0 ||
                strcmp(digestmod, "HMAC-SHA256") == 0) {
         mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_SHA256), 1);
         obj_setInt(self, "_mode", PIKA_HMAC_SHA256);
+        init_buff(self, PIKA_HMAC_SHA256);
     } else {
         obj_setErrorCode(self, -2);  // io error
         obj_setSysOut(self, "hmac.new() not support mode");
