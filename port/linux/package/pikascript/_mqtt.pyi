@@ -72,6 +72,10 @@ class _MQTT:
         pass
         """callback fun get topic"""
         
+    def getQos(self,signal:int) -> int:
+        pass
+        """callback fun get qos"""
+        
     def setDisconnectHandler(self,cb: any) -> int:
         pass
         """set disconnect callback fun."""

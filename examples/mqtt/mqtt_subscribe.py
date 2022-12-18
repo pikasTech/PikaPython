@@ -19,7 +19,8 @@ def callback1(signal):
 def callback2(signal):
     recv_msg = client.getMsg(signal)
     recv_topic = client.getTopic(signal)
-    print("py cb: %s-->>%s" % (recv_topic, recv_msg))
+    recv_qos = client.getQos(signal)
+    print("py cb: %s-qos:%d-->>%s" % (recv_topic,recv_qos, recv_msg))
 
 # ret = client.subscribe('topic_pikapy',0,callback0)
 # print("subscribe ret:%d" % ret)

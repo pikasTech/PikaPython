@@ -607,12 +607,22 @@ void Subscribe_Handler(void* client, message_data_t* msg) {
     sprintf(hash_str,"T%d",hash_time33(msg->topic_name));
     obj_setStr(self, hash_str, (char*)msg->topic_name);
 
+    memset(hash_str,0,sizeof(hash_str));
+    sprintf(hash_str,"Q%d",hash_time33(msg->topic_name));
+    obj_setInt(self, hash_str, msg->message->qos);
+
     // MQTT_LOG_I("\n>>>------------------");
     // MQTT_LOG_I("Topic:%s \nlen:%d,message: %s", msg->topic_name,
     //            (int)msg->message->payloadlen, (char*)msg->message->payload);
     // MQTT_LOG_I("------------------<<<");
 }
 
+////////////////////////////////////////////////////////////////////
+// 函 数 名：_mqtt___del__
+// 功能说明：释放事件处理器
+// 输入参数：
+// 返 回 值：
+///////////////////////////////////////////////////////////////////
 void _mqtt___del__(PikaObj* self) {
     if (NULL != g_mqtt_event_listener) {
         pks_eventLisener_deinit(&g_mqtt_event_listener);
@@ -636,7 +646,7 @@ char* _mqtt__MQTT_getMsg(PikaObj *self, int signal) {
 
 ////////////////////////////////////////////////////////////////////
 // 函 数 名：_mqtt__MQTT_getTopic
-// 功能说明：在回调函数中取出返回的数据
+// 功能说明：在回调函数中取出返回的数据,主题
 // 输入参数：
 // 返 回 值：
 ///////////////////////////////////////////////////////////////////
@@ -646,6 +656,20 @@ char* _mqtt__MQTT_getTopic(PikaObj *self, int signal) {
     memset(hash_str,0,sizeof(hash_str));
     sprintf(hash_str,"T%d",signal);
     return (obj_getStr(self, hash_str));
+}
+
+////////////////////////////////////////////////////////////////////
+// 函 数 名：_mqtt__MQTT_getQos
+// 功能说明：在回调函数中取出返回的数据,消息类型
+// 输入参数：
+// 返 回 值：
+///////////////////////////////////////////////////////////////////
+int _mqtt__MQTT_getQos(PikaObj *self, int signal) {
+    char hash_str[32];
+
+    memset(hash_str,0,sizeof(hash_str));
+    sprintf(hash_str,"Q%d",signal);
+    return (obj_getInt(self, hash_str));
 }
 
 ////////////////////////////////////////////////////////////////////
