@@ -32,20 +32,20 @@ print("subscribe ret:%d" % ret)
 
 #sleep wait for recv data
 T = PikaStdDevice.Time()
-T.sleep_s(5)
+T.sleep_s(1)
     
-out = client.listSubscribrTopic()
+out = client.listSubscribeTopic()
 print('out',out)
 
 # client.unsubscribe('topic_pikapy_qos0');
 # client.unsubscribe('topic_pikapy_qos1');
 # client.unsubscribe('topic_pikapy_qos2');
 # T.sleep_s(5)
-# client.listSubscribrTopic()
+# client.listSubscribeTopic()
 
 
 # ret = client.setWill(1,'topic_will',1,'lost mqtt connect')
-T.sleep_s(10)
+T.sleep_s(2)
 # exit()
 ret = client.disconnect()
 print("ret:%d" % ret)

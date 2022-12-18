@@ -50,9 +50,9 @@ class _MQTT:
         pass
         """unsubscribe to the mqtt-server."""
 
-    def listSubscribrTopic(self) -> list:
+    def listSubscribeTopic(self) -> list:
         pass
-        """listSubscribrTopic """
+        """listSubscribeTopic """
 
     def publish(self,topic: str, qos:int, , payload: str) -> int:
         pass

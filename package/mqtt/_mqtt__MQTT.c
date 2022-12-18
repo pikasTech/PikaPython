@@ -157,12 +157,12 @@ int _mqtt__MQTT_disconnect(PikaObj* self) {
 }
 
 ////////////////////////////////////////////////////////////////////
-// 函 数 名：_mqtt__MQTT_listSubscribrTopic
+// 函 数 名：_mqtt__MQTT_listSubscribeTopic
 // 功能说明：罗列出当前订阅的主题
 // 输入参数：无
 // 返 回 值：对象指针
 ///////////////////////////////////////////////////////////////////
-PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj* self) {
+PikaObj* _mqtt__MQTT_listSubscribeTopic(PikaObj* self) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
     // int i = 0;
     mqtt_list_t *curr, *next;
@@ -197,6 +197,7 @@ PikaObj* _mqtt__MQTT_listSubscribrTopic(PikaObj* self) {
             Arg* str_arg1 = arg_newStr((char*)msg_handler->topic_filter);
             /* 添加到 list 对象 */
             PikaStdData_List_append(list, str_arg1);
+            arg_deinit(str_arg1);
         }
     }
     return list;
