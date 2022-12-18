@@ -21,8 +21,8 @@ extern PikaEventListener* g_pika_device_event_listener;
 #define GPIO_PA8_EVENT_ID 0x08
 
 void TemplateDevice_GPIO_eventTest(PikaObj* self) {
-    pks_eventLisener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
+    pks_eventListener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
                                 EVENT_SIGNAL_IO_FALLING_EDGE);
-    pks_eventLisener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
+    pks_eventListener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
                                 EVENT_SIGNAL_IO_RISING_EDGE);
 }

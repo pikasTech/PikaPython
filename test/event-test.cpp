@@ -14,9 +14,9 @@ TEST(event, gpio) {
 #define GPIO_PA8_EVENT_ID 0x08
 
     /* simulate run in the call back */
-    pks_eventLisener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
+    pks_eventListener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
                                 EVENT_SIGAL_IO_RISING_EDGE);
-    pks_eventLisener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
+    pks_eventListener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
                                 EVENT_SIGAL_IO_FALLING_EDGE);
     /* assert */
 
@@ -32,9 +32,9 @@ TEST(event, gpio) {
     }
 
     /* simulate run in the call back */
-    Arg* res_123 = pks_eventLisener_sendSignalAwaitResult(
+    Arg* res_123 = pks_eventListener_sendSignalAwaitResult(
         g_pika_device_event_listener, GPIO_PA8_EVENT_ID, 123);
-    Arg* res_456 = pks_eventLisener_sendSignalAwaitResult(
+    Arg* res_456 = pks_eventListener_sendSignalAwaitResult(
         g_pika_device_event_listener, GPIO_PA8_EVENT_ID, 456);
     
     EXPECT_EQ(arg_getInt(res_123), 123);
@@ -50,16 +50,16 @@ TEST(event, remove_regist) {
     /* init */
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    pks_eventLisener_init(&g_pika_device_event_listener);
+    pks_eventListener_init(&g_pika_device_event_listener);
     PikaObj* testobj = newNormalObj(New_TinyObj);
-    pks_eventLicener_registEvent(g_pika_device_event_listener, 0, testobj);
+    pks_eventListener_registEvent(g_pika_device_event_listener, 0, testobj);
     EXPECT_EQ(testobj->refcnt, 2);
-    pks_eventLicener_removeEvent(g_pika_device_event_listener, 0);
+    pks_eventListener_removeEvent(g_pika_device_event_listener, 0);
     EXPECT_EQ(testobj->refcnt, 1);
     /* deinit */
     obj_deinit(pikaMain);
     obj_deinit(testobj);
-    pks_eventLisener_deinit(&g_pika_device_event_listener);
+    pks_eventListener_deinit(&g_pika_device_event_listener);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
