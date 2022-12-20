@@ -847,7 +847,8 @@ Arg* obj_runMethodArg(PikaObj* self,
 static char* _kw_to_default_all(FunctionArgsInfo* f,
                                 char* arg_name,
                                 int* argc,
-                                Arg* argv[]) {
+                                Arg* argv[],
+                                Arg* call_arg) {
 #if PIKA_NANO
     return arg_name;
 #endif
@@ -860,6 +861,17 @@ static char* _kw_to_default_all(FunctionArgsInfo* f,
                 Arg* arg_new = arg_copy(default_arg);
                 argv[(*argc)++] = arg_new;
                 pikaDict_removeArg(f->kw, default_arg);
+            }
+        } else {
+            /* can not load defalut from kw */
+            if (NULL != call_arg && f->is_default) {
+                /* load default from pos */
+                if (f->i_arg > f->n_positional) {
+                    arg_setNameHash(call_arg,
+                                    hash_time33EndWith(arg_name, ':'));
+                    argv[(*argc)++] = call_arg;
+                    return (char*)1;
+                }
             }
         }
         arg_name = strPopLastToken(f->type_list, ',');
@@ -980,20 +992,12 @@ static void _load_call_arg(VMState* vm,
         }
     }
     char* arg_name = strPopLastToken(f->type_list, ',');
-    /* load default from pos */
-    if (f->i_arg > f->n_positional) {
-        if (f->is_default) {
-            if (arg_name[strlen(arg_name) - 1] == '=') {
-                /* found default arg*/
-                arg_name[strlen(arg_name) - 1] = '\0';
-                arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
-                argv[(*argc)++] = call_arg;
-            }
-            return;
-        }
-    }
     /* load default from kw */
-    arg_name = _kw_to_default_all(f, arg_name, argc, argv);
+    arg_name = _kw_to_default_all(f, arg_name, argc, argv, call_arg);
+    if (((char*)1) == arg_name) {
+        /* load default from pos */
+        return;
+    }
     /* load position arg */
     if (_kw_to_pos_one(f, arg_name, argc, argv)) {
         /* load pos from kw */
@@ -1235,7 +1239,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 #if !PIKA_NANO_ENABLE
     if (strIsContain(f.type_list, '=')) {
         char* arg_name = strPopLastToken(f.type_list, ',');
-        _kw_to_default_all(&f, arg_name, &argc, argv);
+        _kw_to_default_all(&f, arg_name, &argc, argv, NULL);
     }
     /* load kw to pos */
     _kw_to_pos_all(&f, &argc, argv);

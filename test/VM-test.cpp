@@ -2452,10 +2452,12 @@ TEST(vm, fn_pos_kw_issue1) {
             "new(3, b = 2)\n");
     /* collect */
     /* assert */
+    EXPECT_STREQ(log_buff[0], "3 2\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
 
 #endif
 
