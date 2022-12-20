@@ -253,3 +253,21 @@ PIKA_WEAK PIKA_BOOL __pks_hook_arg_cache_filter(void* self) {
 PIKA_WEAK void __platform_thread_delay(void) {
     return;
 }
+
+PIKA_WEAK uint64_t __platform_get_tick_ms(void){
+    __platform_printf("Error: __platform_get_tick_ms need implementation!\r\n"); 
+    while (1) {
+    }
+}
+
+PIKA_WEAK void __platform_sleep_ms(uint32_t ms){
+    __platform_printf("Error: __platform_sleep_ms need implementation!\r\n");
+    while (1) {
+    }
+}
+
+PIKA_WEAK void __platform_sleep_s(uint32_t s){
+    __platform_printf("Error: __platform_sleep_s need implementation!\r\n");
+    while (1) {
+    }
+}

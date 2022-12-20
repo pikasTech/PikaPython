@@ -80,7 +80,7 @@ void PikaStdDevice_UART_platformEnable(PikaObj* self) {
 void PikaStdDevice_UART_platformRead(PikaObj* self) {
     int len = obj_getInt(self, "length");
     obj_setBytes(self, "_readData", NULL, len + 1);
-    char* buff = obj_getBytes(self, "_readData");
+    char* buff = (char*)obj_getBytes(self, "_readData");
     pika_dev* dev = _get_dev(self);
     pika_hal_read(dev, buff, len);
     obj_setStr(self, "readData", buff);
@@ -113,7 +113,7 @@ void PikaStdDevice_UART_platformReadBytes(PikaObj* self) {
 
 void PikaStdDevice_UART_platformWriteBytes(PikaObj* self) {
     uint8_t* data = obj_getBytes(self, "writeData");
-    int len = obj_getBytesLen(self, "writeData");
+    int len = obj_getBytesSize(self, "writeData");
     pika_dev* dev = _get_dev(self);
     pika_hal_write(dev, data, len);
 }

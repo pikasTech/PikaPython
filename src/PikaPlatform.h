@@ -173,7 +173,10 @@ void __platform_panic_handle(void);
 
 void __pks_hook_instruct(void);
 PIKA_BOOL __pks_hook_arg_cache_filter(void* self);
-PIKA_WEAK void __platform_thread_delay(void);
+void __platform_thread_delay(void);
+uint64_t __platform_get_tick_ms(void);
+void __platform_sleep_ms(uint32_t ms);
+void __platform_sleep_s(uint32_t s);
 
 #if PIKA_FLOAT_TYPE_DOUBLE
 #define pika_float double
