@@ -445,7 +445,10 @@ releases = [
 
 [[packages]]
 name = "hmac"
-releases = [ "v1.0.0 ca8fe36d68be16722317860394fdf78c620e3e2d" ]
+releases = [
+  "v1.0.0 ca8fe36d68be16722317860394fdf78c620e3e2d",
+  "v1.0.1 d75ce00c377e48c6058bbe1f824474802383e5e7"
+]
 
 [[packages]]
 name = "BLIOT"
