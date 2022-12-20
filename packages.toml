@@ -463,4 +463,7 @@ releases = [ "v0.0.1 5c45cba0c39d447fbe7a4a082ee3170188c3bcb7" ]
 
 [[packages]]
 name = "base64"
-releases = [ "v0.0.1 1ae3ac23759fb2b5e0f77866af40986ac94e356d" ]
+releases = [
+  "v0.0.1 1ae3ac23759fb2b5e0f77866af40986ac94e356d",
+  "v1.0.0 d75ce00c377e48c6058bbe1f824474802383e5e7"
+]
