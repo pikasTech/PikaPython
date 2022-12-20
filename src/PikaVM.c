@@ -1086,7 +1086,7 @@ static int _get_n_input_with_unpack(VMState* vm) {
             PikaDict* dict = obj_getPtr(obj, "dict");
             int i_item = 0;
             while (PIKA_TRUE) {
-                Arg* item_val = args_getArgByidex(&dict->super, i_item);
+                Arg* item_val = args_getArgByIndex(&dict->super, i_item);
                 if (NULL == item_val) {
                     break;
                 }
