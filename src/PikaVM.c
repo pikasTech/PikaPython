@@ -854,15 +854,17 @@ static char* _kw_to_default_all(FunctionArgsInfo* f,
 #endif
     while (strIsContain(arg_name, '=')) {
         strPopLastToken(arg_name, '=');
+        Arg* default_arg = NULL;
         /* load default arg from kws */
         if (f->kw != NULL) {
-            Arg* default_arg = pikaDict_getArg(f->kw, arg_name);
+            default_arg = pikaDict_getArg(f->kw, arg_name);
             if (default_arg != NULL) {
                 Arg* arg_new = arg_copy(default_arg);
                 argv[(*argc)++] = arg_new;
                 pikaDict_removeArg(f->kw, default_arg);
             }
-        } else {
+        }
+        if (f->kw == NULL || default_arg == NULL) {
             /* can not load defalut from kw */
             if (NULL != call_arg && f->is_default) {
                 /* load default from pos */
