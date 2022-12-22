@@ -1,8 +1,8 @@
-#include "base64.h"
+#include "_base64.h"
 
 #include "mbedtls/base64.h"
 
-Arg* base64_b64decode(PikaObj* self, Arg* s) {
+Arg* _base64_b64decode(PikaObj* self, Arg* s) {
     ArgType t = arg_getType(s);
     if (ARG_TYPE_BYTES != t) {
         obj_setErrorCode(self, -2);  // io error
@@ -21,7 +21,7 @@ Arg* base64_b64decode(PikaObj* self, Arg* s) {
     return r;
 }
 
-Arg* base64_b64encode(PikaObj* self, Arg* s) {
+Arg* _base64_b64encode(PikaObj* self, Arg* s) {
     ArgType t = arg_getType(s);
     if (ARG_TYPE_BYTES != t) {
         obj_setErrorCode(self, -2);  // io error
