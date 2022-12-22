@@ -58,12 +58,19 @@ typedef enum {
     PIKA_HAL_GPIO_SPEED_100M = 100000000,
 } PIKA_HAL_GPIO_SPEED;
 
+typedef enum {
+    _PIKA_HAL_EVENT_CALLBACK_ENA_UNUSED = 0,
+    PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE,
+    PIKA_HAL_EVENT_CALLBACK_ENA_DISABLE,
+} PIKA_HAL_EVENT_CALLBACK_ENA;
+
 typedef struct {
     PIKA_HAL_GPIO_DIR dir;
     PIKA_HAL_GPIO_PULL pull;
     PIKA_HAL_GPIO_SPEED speed;
     void (*event_callback_rising)(pika_dev* dev);
     void (*event_callback_falling)(pika_dev* dev);
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_enable;
 } pika_hal_GPIO_config;
 
 typedef enum {
@@ -104,6 +111,7 @@ typedef struct {
     PIKA_HAL_UART_STOP_BITS stop_bits;
     PIKA_HAL_UART_PARITY parity;
     void (*event_callback_rx)(pika_dev* dev);
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_enable;
 } pika_hal_UART_config;
 
 typedef uint32_t PIKA_HAL_IIC_SLAVE_ADDR;
