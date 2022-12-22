@@ -112,7 +112,6 @@ PIKA_RES args_foreach(Args* self,
 char* args_getBuff(Args* self, int32_t size);
 PIKA_RES args_pushArg(Args* self, Arg* arg);
 PIKA_RES args_pushArg_name(Args* self, char* name, Arg* arg);
-Arg* args_getArgByIndex(Args* self, int index);
 void* args_getHeapStruct(Args* self, char* name);
 PIKA_RES args_removeArg_notDeinitArg(Args* self, Arg* argNow);
 uint8_t* args_getBytes(Args* self, char* name);
