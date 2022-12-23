@@ -1,6 +1,5 @@
 #include "PikaStdDevice_Time.h"
-#include "BaseObj.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 #if defined(__linux)
 #include <unistd.h>
 #endif
