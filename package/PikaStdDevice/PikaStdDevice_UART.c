@@ -1,6 +1,5 @@
 #include "PikaStdDevice_UART.h"
-#include "BaseObj.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 void PikaStdDevice_UART_enable(PikaObj* self) {
     obj_runNativeMethod(self, "platformEnable", NULL);
@@ -11,14 +10,19 @@ void PikaStdDevice_UART_disable(PikaObj* self) {
 }
 
 void PikaStdDevice_UART_init(PikaObj* self) {
-    obj_setInt(self, "baudRate", 115200);
-    obj_setInt(self, "id", 1);
-    obj_setStr(self, "readBuff", "");
+    /* const */
     obj_setInt(self, "FLOW_CONTROL_NONE", PIKA_HAL_UART_FLOW_CONTROL_NONE);
     obj_setInt(self, "FLOW_CONTROL_RTS", PIKA_HAL_UART_FLOW_CONTROL_RTS);
     obj_setInt(self, "FLOW_CONTROL_CTS", PIKA_HAL_UART_FLOW_CONTROL_CTS);
     obj_setInt(self, "FLOW_CONTROL_RTS_CTS",
                PIKA_HAL_UART_FLOW_CONTROL_RTS_CTS);
+
+    obj_setInt(self, "SIGNAL_RX", PIKA_HAL_UART_EVENT_SIGNAL_RX);
+    obj_setInt(self, "SIGNAL_TX", PIKA_HAL_UART_EVENT_SIGNAL_TX);
+
+    obj_setInt(self, "baudRate", 115200);
+    obj_setInt(self, "id", 1);
+    obj_setStr(self, "readBuff", "");
     obj_setInt(self, "flowControl", PIKA_HAL_UART_FLOW_CONTROL_NONE);
 }
 
@@ -42,7 +46,7 @@ void PikaStdDevice_UART_setBaudRate(PikaObj* self, int baudRate) {
     obj_setInt(self, "baudRate", baudRate);
 }
 
-void PikaStdDevice_UART_setFlowControl(PikaObj *self, int flowControl){
+void PikaStdDevice_UART_setFlowControl(PikaObj* self, int flowControl) {
     obj_setInt(self, "flowControl", flowControl);
 }
 
@@ -95,7 +99,8 @@ void PikaStdDevice_UART_platformRead(PikaObj* self) {
     obj_setBytes(self, "_readData", NULL, len + 1);
     char* buff = (char*)obj_getBytes(self, "_readData");
     pika_dev* dev = _get_dev(self);
-    pika_hal_read(dev, buff, len);
+    int len_get = pika_hal_read(dev, buff, len);
+    buff[len_get] = 0;
     obj_setStr(self, "readData", buff);
 }
 
@@ -133,4 +138,18 @@ void PikaStdDevice_UART_platformWriteBytes(PikaObj* self) {
 
 void PikaStdDevice_UART_setCallBack(PikaObj* self,
                                     Arg* eventCallBack,
-                                    int filter) {}
+                                    int filter) {
+    pika_dev* dev = _get_dev(self);
+#if PIKA_EVENT_ENABLE
+    _PikaStdDevice_setCallBack(self, eventCallBack, (uintptr_t)dev);
+    /* regist event to pika_hal */
+    pika_hal_UART_config cfg_cb = {0};
+    cfg_cb.event_callback = (void*)_PikaStdDevice_event_handler;
+    cfg_cb.event_callback_filter = filter;
+    cfg_cb.event_callback_ena = PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE;
+    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg_cb);
+#else
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] PIKA_EVENT_ENABLE is disabled.");
+#endif
+}
