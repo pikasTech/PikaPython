@@ -15,10 +15,11 @@ else:
     print("tencent iot hub init fail")
 
 
-def up_cb():
-    print("sub topic:", c.recv_topic)
-    print("sub msg:", c.recv_msg)
-
+def up_cb(signal):
+    recv_msg = c.client.getMsg(signal)
+    recv_topic = c.client.getTopic(signal)
+    recv_qos = c.client.getQos(signal)
+    print("cb: %s-qos:%d-->>%s" % (recv_topic, recv_qos, recv_msg))
 
 e = c.connect()
 print("connect:", e)
@@ -27,7 +28,7 @@ if e == 0:
 
     for i in range(10):
         print("publish status:", c.publish(topic, '{"id":'+str(i)+'}'))
-        Time.sleep_s(5)
+        Time.sleep_s(3)
 
 a = c.disconnect()
 print("disconnect status:", a)

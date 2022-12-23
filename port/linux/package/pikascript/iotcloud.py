@@ -10,7 +10,7 @@ ONENET_DEVICE = 1
 
 class IOT:
     def __init__(self):
-        self._signMethodTable = ["hmac-md5", "hmac-sha1", "hmac-sha256"]
+        self._signMethodTable = ["hmacmd5", "hmacsha1", "hmacsha256"]
 
     def randStr(self, len):
         a = ""
@@ -44,7 +44,7 @@ class IOT:
         return rs
 
     def aliyun(self, clientId: str, productKey: str, deviceName: str, deviceSecret: str,
-               signMethod="hmac-md5", regionID="cn-shanghai", ssl=False):
+               signMethod="hmacmd5", regionID="cn-shanghai", ssl=False):
         if clientId == None or productKey == None or deviceName == None or deviceSecret == None:
             print("[Error]input param is None")
             return False
@@ -60,16 +60,14 @@ class IOT:
 
         self.address = productKey + ".iot-as-mqtt." + regionID + ".aliyuncs.com"
         self.username = deviceName + "&" + productKey
-        self.clientid = clientId + "|securemode=" + securemode + \
-            ",signmethod="+signMethod.replace("-", "")+"|"
-        hmac_payload = "clientId" + clientId + "deviceName" + \
-            deviceName + "productKey" + productKey
+        self.clientid = clientId + "|securemode=" + securemode + ",signmethod=" + signMethod + "|"
+        hmac_payload = "clientId" + clientId + "deviceName" + deviceName + "productKey" + productKey
         self.password = hmac.new(deviceSecret.encode(),
                                  msg=hmac_payload.encode(),
-                                 digestmod=signMethod).hexdigest()
+                                 digestmod=signMethod.replace("hmac", "")).hexdigest()
         return True
 
-    def tencent(self, productId, deviceName, deviceSecret, signMethod="hmac-sha1", expiryTime=3600, ssl=False):
+    def tencent(self, productId, deviceName, deviceSecret, signMethod="hmacsha1", expiryTime=3600, ssl=False):
         if productId == None or deviceName == None or deviceSecret == None:
             print("[Error]input param is None")
             return False
@@ -84,11 +82,11 @@ class IOT:
         self.username = self.clientid + ";12010126;" + connid + ";" + expiry
         token = hmac.new(base64.b64decode(deviceSecret.encode()),
                          msg=self.username.encode(),
-                         digestmod=signMethod).hexdigest()
-        self.password = token + ";" + signMethod.replace("-", "")
+                         digestmod=signMethod.replace("hmac", "")).hexdigest()
+        self.password = token + ";" + signMethod
         return True
 
-    def onenet(self, productId, deviceName, accessKey, mode=ONENET_DEVICE, signMethod="hmac-md5", expiryTime=3600, ssl=False):
+    def onenet(self, productId, deviceName, accessKey, mode=ONENET_DEVICE, signMethod="hmacmd5", expiryTime=3600, ssl=False):
         if productId == None or deviceName == None or accessKey == None:
             print("[Error]input param is None")
             return False
@@ -103,7 +101,7 @@ class IOT:
             self.port = int(1883)
         self.clientid = deviceName
         self.username = productId
-        method = signMethod.replace("hmac-", "")
+        method = signMethod.replace("hmac", "")
         expiry = self.getTimeStamp(expiryTime)
         if mode == ONENET_DEVICE:
             res = "products/" + productId + "/devices/" + deviceName
@@ -114,7 +112,7 @@ class IOT:
             return False
         org = expiry + '\n' + method + '\n' + res + '\n' + "2018-10-31"
         k = base64.b64decode(accessKey.encode())
-        h = hmac.new(k, msg=org.encode(), digestmod=signMethod)
+        h = hmac.new(k, msg=org.encode(), digestmod=method)
         sign = base64.b64encode(h.digest()).decode()
         res = self.urlEncode(res)
         sign = self.urlEncode(sign)
@@ -132,18 +130,18 @@ class IOT:
         self.password = apiKey
 
     def connect(self, keepalive=600):
-        self._client = mqtt.MQTT(self.address, port=self.port, clinetID=self.clientid,
+        self.client = mqtt.MQTT(self.address, port=self.port, clinetID=self.clientid,
                                  username=self.username, password=self.password, keepalive=keepalive)
-        return self._client.connect()
+        return self.client.connect()
 
     def disconnect(self):
-        return self._client.disconnect()
+        return self.client.disconnect()
 
     def subsribe(self, topic, cb, qos=0):
-        return self._client.subscribe(topic, qos, cb)
+        return self.client.subscribe(topic, cb, qos)
 
     def publish(self, topic, payload, qos=0):
-        return self._client.publish(qos, topic, payload)
+        return self.client.publish(topic, payload, qos)
 
 
 def new():
