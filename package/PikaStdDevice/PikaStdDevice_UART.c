@@ -55,7 +55,7 @@ static pika_dev* _get_dev(PikaObj* self) {
     }
     int id = obj_getInt(self, "id");
     char id_str[32] = {0};
-    sprintf(id_str, "%d", id);
+    sprintf(id_str, "UART%d", id);
     dev = pika_hal_open(PIKA_HAL_UART, id_str);
     if (NULL == dev) {
         __platform_printf("Error: open UART '%s' failed.\r\n", id_str);
@@ -116,4 +116,8 @@ void PikaStdDevice_UART_platformWriteBytes(PikaObj* self) {
     int len = obj_getBytesSize(self, "writeData");
     pika_dev* dev = _get_dev(self);
     pika_hal_write(dev, data, len);
+}
+
+void PikaStdDevice_UART_addEventCallBack(PikaObj *self, Arg* eventCallBack, int filter){
+
 }
