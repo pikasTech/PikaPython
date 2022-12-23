@@ -28,7 +28,7 @@ void PikaStdDevice_Time_sleep_s(PikaObj* self, int s) {
 }
 
 void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
-    obj_setInt(self, "tick", __platform_get_tick_ms());
+    obj_setInt(self, "tick", __platform_getTick());
 }
 
 /*
