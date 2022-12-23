@@ -184,7 +184,9 @@ int pika_hal_GPIO_ioctl_merge_config(pika_hal_GPIO_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(pull, PIKA_HAL_GPIO_PULL_NONE);
     _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_GPIO_SPEED_10M);
     _IOCTL_CONFIG_USE_DEFAULT(event_callback, NULL);
-    _IOCTL_CONFIG_USE_DEFAULT(event_callback_enable,
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_filter,
+                              PIKA_HAL_GPIO_EVENT_SIGNAL_RISING);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
                               PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
     return 0;
 }
@@ -196,7 +198,9 @@ int pika_hal_UART_ioctl_merge_config(pika_hal_UART_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(stop_bits, PIKA_HAL_UART_STOP_BITS_1);
     _IOCTL_CONFIG_USE_DEFAULT(parity, PIKA_HAL_UART_PARITY_NONE);
     _IOCTL_CONFIG_USE_DEFAULT(event_callback, NULL);
-    _IOCTL_CONFIG_USE_DEFAULT(event_callback_enable,
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_filter,
+                              PIKA_HAL_UART_EVENT_SIGNAL_RX);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
                               PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
     return 0;
 }
