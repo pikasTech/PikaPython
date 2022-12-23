@@ -174,7 +174,8 @@ void __platform_panic_handle(void);
 void __pks_hook_instruct(void);
 PIKA_BOOL __pks_hook_arg_cache_filter(void* self);
 void __platform_thread_delay(void);
-uint64_t __platform_get_tick_ms(void);
+int64_t __platform_getTick(void);
+
 void __platform_sleep_ms(uint32_t ms);
 void __platform_sleep_s(uint32_t s);
 
