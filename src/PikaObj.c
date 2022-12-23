@@ -1552,7 +1552,7 @@ char* obj_toStr(PikaObj* self) {
     return obj_getStr(self, "__res");
 }
 
-void pks_eventLicener_registEvent(PikaEventListener* self,
+void pks_eventListener_registEvent(PikaEventListener* self,
                                   uint32_t eventId,
                                   PikaObj* eventHandleObj) {
     Args buffs = {0};
@@ -1564,7 +1564,7 @@ void pks_eventLicener_registEvent(PikaEventListener* self,
     strsDeinit(&buffs);
 }
 
-void pks_eventLicener_removeEvent(PikaEventListener* self, uint32_t eventId) {
+void pks_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId) {
     Args buffs = {0};
     char* event_name =
         strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
@@ -1572,7 +1572,7 @@ void pks_eventLicener_removeEvent(PikaEventListener* self, uint32_t eventId) {
     strsDeinit(&buffs);
 }
 
-PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
+PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
                                             uint32_t eventId) {
     Args buffs = {0};
     char* event_name =
@@ -1583,21 +1583,21 @@ PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
     return eventHandleObj;
 }
 
-void pks_eventLisener_init(PikaEventListener** p_self) {
+void pks_eventListener_init(PikaEventListener** p_self) {
     *p_self = newNormalObj(New_TinyObj);
 }
 
-void pks_eventLisener_deinit(PikaEventListener** p_self) {
+void pks_eventListener_deinit(PikaEventListener** p_self) {
     if (NULL != *p_self) {
         obj_deinit(*p_self);
         *p_self = NULL;
     }
 }
 
-Arg* __eventLisener_runEvent(PikaEventListener* lisener,
+Arg* __eventListener_runEvent(PikaEventListener* lisener,
                              uint32_t eventId,
                              int eventSignal) {
-    PikaObj* handler = pks_eventLisener_getEventHandleObj(lisener, eventId);
+    PikaObj* handler = pks_eventListener_getEventHandleObj(lisener, eventId);
     if (NULL == handler) {
         __platform_printf(
             "Error: can not find event handler by id: [0x%02x]\r\n", eventId);
@@ -1625,7 +1625,7 @@ Arg* __eventLisener_runEvent(PikaEventListener* lisener,
     return res;
 }
 
-void pks_eventLisener_sendSignal(PikaEventListener* self,
+void pks_eventListener_sendSignal(PikaEventListener* self,
                                  uint32_t eventId,
                                  int eventSignal) {
 #if !PIKA_EVENT_ENABLE
@@ -1648,7 +1648,7 @@ void pks_eventLisener_sendSignal(PikaEventListener* self,
 #endif
 }
 
-Arg* pks_eventLisener_sendSignalAwaitResult(PikaEventListener* self,
+Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
                                             uint32_t eventId,
                                             int eventSignal) {
     /*
@@ -1661,7 +1661,7 @@ Arg* pks_eventLisener_sendSignalAwaitResult(PikaEventListener* self,
 #else
     extern volatile VMSignal PikaVMSignal;
     int tail = PikaVMSignal.cq.tail;
-    pks_eventLisener_sendSignal(self, eventId, eventSignal);
+    pks_eventListener_sendSignal(self, eventId, eventSignal);
     while (1) {
         Arg* res = PikaVMSignal.cq.res[tail];
         __platform_thread_delay();

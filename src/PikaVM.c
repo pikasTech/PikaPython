@@ -136,7 +136,7 @@ void VMSignale_pickupEvent(void) {
     if (PIKA_RES_OK ==
         VMSignal_popEvent(&event_lisener, &event_id, &event_signal, &head)) {
         Arg* res =
-            __eventLisener_runEvent(event_lisener, event_id, event_signal);
+            __eventListener_runEvent(event_lisener, event_id, event_signal);
         PikaVMSignal.cq.res[head] = res;
     }
 #endif
