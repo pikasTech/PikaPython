@@ -267,6 +267,8 @@ TEST(requests, get_basic) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+//! Enable it manually if needed
+#if 0
 TEST(requests, post_data) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
@@ -278,5 +280,6 @@ TEST(requests, post_data) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 #endif
