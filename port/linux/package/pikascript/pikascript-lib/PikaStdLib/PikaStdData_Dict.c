@@ -40,7 +40,7 @@ Arg* PikaStdData_Dict___iter__(PikaObj* self) {
 Arg* PikaStdData_Dict___next__(PikaObj* self) {
     int __iter_i = args_getInt(self->list, "__iter_i");
     PikaDict* keys = obj_getPtr(self, "_keys");
-    Arg* res = arg_copy(args_getArgByidex(&keys->super, __iter_i));
+    Arg* res = arg_copy(args_getArgByIndex(&keys->super, __iter_i));
     if (NULL == res) {
         return arg_newNull();
     }
@@ -91,7 +91,7 @@ Arg* PikaStdData_dict_keys___next__(PikaObj* self) {
     int __iter_i = args_getInt(self->list, "__iter_i");
     PikaObj* dictptr = obj_getPtr(self, "dictptr");
     PikaDict* keys = obj_getPtr(dictptr, "_keys");
-    Arg* res = arg_copy(args_getArgByidex(&keys->super, __iter_i));
+    Arg* res = arg_copy(args_getArgByIndex(&keys->super, __iter_i));
     if (NULL == res) {
         return arg_newNull();
     }
@@ -107,7 +107,7 @@ char* PikaStdData_dict_keys___str__(PikaObj* self) {
 
     int i = 0;
     while (PIKA_TRUE) {
-        Arg* item = args_getArgByidex(&keys->super, i);
+        Arg* item = args_getArgByIndex(&keys->super, i);
         if (NULL == item) {
             break;
         }
@@ -141,8 +141,8 @@ char* PikaStdData_Dict___str__(PikaObj* self) {
 
     int i = 0;
     while (PIKA_TRUE) {
-        Arg* item_key = args_getArgByidex(&keys->super, i);
-        Arg* item_val = args_getArgByidex(&dict->super, i);
+        Arg* item_key = args_getArgByIndex(&keys->super, i);
+        Arg* item_val = args_getArgByIndex(&dict->super, i);
         if (NULL == item_key) {
             break;
         }
@@ -186,7 +186,7 @@ int PikaStdData_dict_keys___len__(PikaObj* self) {
 int dict_contains(PikaDict* dict, Arg* key) {
     int i = 0;
     while (PIKA_TRUE) {
-        Arg* item = args_getArgByidex(&dict->super, i);
+        Arg* item = args_getArgByIndex(&dict->super, i);
         if (NULL == item) {
             break;
         }
@@ -219,8 +219,8 @@ Arg* PikaStdData_dict_items___next__(PikaObj* self) {
     PikaObj* dictptr = obj_getPtr(self, "dictptr");
     PikaDict* keys = obj_getPtr(dictptr, "_keys");
     PikaDict* dict = obj_getPtr(dictptr, "dict");
-    Arg* key = args_getArgByidex(&keys->super, __iter_i);
-    Arg* val = args_getArgByidex(&dict->super, __iter_i);
+    Arg* key = args_getArgByIndex(&keys->super, __iter_i);
+    Arg* val = args_getArgByIndex(&dict->super, __iter_i);
     if (NULL == key) {
         return arg_newNull();
     }

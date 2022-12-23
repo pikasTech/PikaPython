@@ -48,24 +48,72 @@ void PikaStdDevice_UART_writeBytes(PikaObj* self, uint8_t* data, int length) {
     obj_runNativeMethod(self, "platformWriteBytes", NULL);
 }
 
+static pika_dev* _get_dev(PikaObj* self) {
+    pika_dev* dev = obj_getPtr(self, "pika_dev");
+    if (NULL != dev) {
+        return dev;
+    }
+    int id = obj_getInt(self, "id");
+    char id_str[32] = {0};
+    sprintf(id_str, "%d", id);
+    dev = pika_hal_open(PIKA_HAL_UART, id_str);
+    if (NULL == dev) {
+        __platform_printf("Error: open UART '%s' failed.\r\n", id_str);
+    }
+    obj_setPtr(self, "pika_dev", dev);
+    return dev;
+}
+
 void PikaStdDevice_UART_platformEnable(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    pika_dev* dev = _get_dev(self);
+    if (NULL == dev) {
+        __platform_printf("Error: open UART '%d' failed.\r\n",
+                          obj_getInt(self, "id"));
+        return;
+    }
+    pika_hal_UART_config cfg = {0};
+    cfg.baudrate = obj_getInt(self, "baudRate");
+    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg);
+    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_ENABLE);
 }
+
 void PikaStdDevice_UART_platformRead(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    int len = obj_getInt(self, "length");
+    obj_setBytes(self, "_readData", NULL, len + 1);
+    char* buff = (char*)obj_getBytes(self, "_readData");
+    pika_dev* dev = _get_dev(self);
+    pika_hal_read(dev, buff, len);
+    obj_setStr(self, "readData", buff);
 }
+
 void PikaStdDevice_UART_platformWrite(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    char* data = obj_getStr(self, "writeData");
+    pika_dev* dev = _get_dev(self);
+    pika_hal_write(dev, data, strlen(data));
 }
 
 void PikaStdDevice_UART_platformDisable(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    pika_dev* dev = _get_dev(self);
+    if (NULL == dev) {
+        __platform_printf("Error: open UART '%d' failed.\r\n",
+                          obj_getInt(self, "id"));
+        return;
+    }
+    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_DISABLE);
 }
 
 void PikaStdDevice_UART_platformReadBytes(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    int len = obj_getInt(self, "length");
+    obj_setBytes(self, "_readData", NULL, len + 1);
+    uint8_t* buff = obj_getBytes(self, "_readData");
+    pika_dev* dev = _get_dev(self);
+    pika_hal_read(dev, buff, len);
+    obj_setBytes(self, "readData", buff, len);
 }
 
 void PikaStdDevice_UART_platformWriteBytes(PikaObj* self) {
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    uint8_t* data = obj_getBytes(self, "writeData");
+    int len = obj_getBytesSize(self, "writeData");
+    pika_dev* dev = _get_dev(self);
+    pika_hal_write(dev, data, len);
 }

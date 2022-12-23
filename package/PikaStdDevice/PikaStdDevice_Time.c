@@ -14,7 +14,7 @@ void PikaStdDevice_Time_sleep_ms(PikaObj* self, int ms) {
 #elif defined(_WIN32)
     Sleep(ms);
 #else
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    __platform_sleep_ms(ms);
 #endif
 }
 void PikaStdDevice_Time_sleep_s(PikaObj* self, int s) {
@@ -23,13 +23,12 @@ void PikaStdDevice_Time_sleep_s(PikaObj* self, int s) {
 #elif defined(_WIN32)
     Sleep(s * 1000);
 #else
-    ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
+    __platform_sleep_s(s);
 #endif
 }
 
 void PikaStdDevice_Time_platformGetTick(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    obj_setSysOut(self, "[error] platformGetTick() need to be override.");
+    obj_setInt(self, "tick", __platform_get_tick_ms());
 }
 
 /*

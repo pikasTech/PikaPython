@@ -2440,6 +2440,42 @@ TEST(vm, def_not_in) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(vm, fn_pos_kw_issue1) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def new(a=1, b=2):\n"
+            "    print(a, b)\n"
+            "new(3, b = 2)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "3 2\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, fn_pos_kw_issue2) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "def new(key:any, msg=None, digestmod=\"md5\"):\n"
+            "    print(key, msg, digestmod)\n"
+            "new('123','456',digestmod=\"md5\")\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "123 456 md5\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
