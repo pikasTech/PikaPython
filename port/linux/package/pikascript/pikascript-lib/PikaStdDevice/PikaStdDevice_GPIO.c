@@ -1,6 +1,5 @@
 #include "PikaStdDevice_GPIO.h"
-#include "BaseObj.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 void PikaStdDevice_GPIO_init(PikaObj* self) {
     obj_setInt(self, "isEnable", 0);
@@ -149,32 +148,15 @@ void PikaStdDevice_GPIO_platformRead(PikaObj* self) {
     obj_setInt(self, "readBuff", val);
 }
 
-extern PikaEventListener* g_pika_device_event_listener;
-
-void _pika_hal_GPIO_event_callback(pika_dev* dev,
-                                   PIKA_HAL_GPIO_EVENT_SIGNAL signal) {
-    pks_eventLisener_sendSignal(g_pika_device_event_listener, (uintptr_t)dev,
-                                signal);
-}
-
 void PikaStdDevice_GPIO_setCallBack(PikaObj* self,
-                                    Arg* eventCallBack,
+                                    Arg* eventCallback,
                                     int filter) {
     pika_dev* dev = _get_dev(self);
 #if PIKA_EVENT_ENABLE
-    obj_setArg(self, "eventCallBack", eventCallBack);
-    /* init event_listener for the first time */
-    if (NULL == g_pika_device_event_listener) {
-        pks_eventLisener_init(&g_pika_device_event_listener);
-    }
-    /* use the pointer of dev as the event id */
-    uint32_t eventId = (uintptr_t)dev;
-    /* regist event to event listener */
-    pks_eventLicener_registEvent(g_pika_device_event_listener, eventId, self);
-
+    _PikaStdDevice_setCallBack(self, eventCallback, (uintptr_t)dev);
     /* regist event to pika_hal */
     pika_hal_GPIO_config cfg_cb = {0};
-    cfg_cb.event_callback = _pika_hal_GPIO_event_callback;
+    cfg_cb.event_callback = (void*)_PikaStdDevice_event_handler;
     cfg_cb.event_callback_filter = filter;
     cfg_cb.event_callback_ena = PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE;
     pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg_cb);
