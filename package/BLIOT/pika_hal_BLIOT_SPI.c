@@ -101,7 +101,10 @@ int pika_hal_platform_SPI_ioctl_enable(pika_dev* dev) {
             platform_spi->port, platform_spi->config.freq,
             platform_spi->config.mode, platform_spi->config.polar_phase);
 #endif
-        hosal_spi_init(platform_spi);
+        if (0 != hosal_spi_init(platform_spi)) {
+            __platform_printf("SPI: Open SPI%d failed\r\n", platform_spi->port);
+            return -1;
+        }
         return 0;
     }
     return -1;
@@ -119,11 +122,25 @@ int pika_hal_platform_SPI_ioctl_disable(pika_dev* dev) {
 int pika_hal_platform_SPI_write(pika_dev* dev, void* buf, size_t count) {
     hosal_spi_dev_t* platform_spi = (hosal_spi_dev_t*)dev->platform_data;
     pika_hal_SPI_config* cfg = (pika_hal_SPI_config*)dev->ioctl_config;
-    return hosal_spi_send(platform_spi, buf, count, cfg->timeout);
+#if PIKA_DEBUG_ENABLE
+    __platform_printf("SPI: Write %d bytes\r\n", count);
+#endif
+    int ret = hosal_spi_send(platform_spi, buf, count, cfg->timeout);
+    if (0 != ret) {
+        __platform_printf("SPI: Write %d bytes failed\r\n", count);
+    }
+    return ret;
 }
 
 int pika_hal_platform_SPI_read(pika_dev* dev, void* buf, size_t count) {
     hosal_spi_dev_t* platform_spi = (hosal_spi_dev_t*)dev->platform_data;
     pika_hal_SPI_config* cfg = (pika_hal_SPI_config*)dev->ioctl_config;
-    return hosal_spi_recv(platform_spi, buf, count, cfg->timeout);
+#if PIKA_DEBUG_ENABLE
+    __platform_printf("SPI: Read %d bytes\r\n", count);
+#endif
+    int ret = hosal_spi_recv(platform_spi, buf, count, cfg->timeout);
+    if (0 != ret) {
+        __platform_printf("SPI: Read %d bytes failed\r\n", count);
+    }
+    return ret;
 }
