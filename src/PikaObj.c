@@ -1635,11 +1635,11 @@ void pks_eventLisener_sendSignal(PikaEventListener* self,
 #else
     /* push event handler to vm event list */
     if (PIKA_RES_OK != VMSignal_pushEvent(self, eventId, eventSignal)) {
-        __platform_printf(
-            "OverflowError: event list is full, please use bigger "
-            "PIKA_EVENT_LIST_SIZE\r\n");
-        while (1) {
-        }
+        // __platform_printf(
+        //     "OverflowError: event list is full, please use bigger "
+        //     "PIKA_EVENT_LIST_SIZE\r\n");
+        // while (1) {
+        // }
     }
     if (0 == VMSignal_getVMCnt()) {
         /* no vm running, pick up event imediately */

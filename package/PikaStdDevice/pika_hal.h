@@ -120,11 +120,20 @@ typedef enum {
     PIKA_HAL_UART_EVENT_SIGNAL_ANY,
 } PIKA_HAL_UART_EVENT_SIGNAL;
 
+typedef enum {
+    _PIKA_HAL_UART_FLOW_CONTROL_UNUSED = 0,
+    PIKA_HAL_UART_FLOW_CONTROL_NONE,
+    PIKA_HAL_UART_FLOW_CONTROL_RTS,
+    PIKA_HAL_UART_FLOW_CONTROL_CTS,
+    PIKA_HAL_UART_FLOW_CONTROL_RTS_CTS,
+} PIKA_HAL_UART_FLOW_CONTROL;
+
 typedef struct {
     PIKA_HAL_UART_BAUDRATE baudrate;
     PIKA_HAL_UART_DATA_BITS data_bits;
     PIKA_HAL_UART_STOP_BITS stop_bits;
     PIKA_HAL_UART_PARITY parity;
+    PIKA_HAL_UART_FLOW_CONTROL flow_control;
     void (*event_callback)(pika_dev* dev, PIKA_HAL_UART_EVENT_SIGNAL signal);
     PIKA_HAL_UART_EVENT_SIGNAL event_callback_filter;
     PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;

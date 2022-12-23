@@ -14,6 +14,12 @@ void PikaStdDevice_UART_init(PikaObj* self) {
     obj_setInt(self, "baudRate", 115200);
     obj_setInt(self, "id", 1);
     obj_setStr(self, "readBuff", "");
+    obj_setInt(self, "FLOW_CONTROL_NONE", PIKA_HAL_UART_FLOW_CONTROL_NONE);
+    obj_setInt(self, "FLOW_CONTROL_RTS", PIKA_HAL_UART_FLOW_CONTROL_RTS);
+    obj_setInt(self, "FLOW_CONTROL_CTS", PIKA_HAL_UART_FLOW_CONTROL_CTS);
+    obj_setInt(self, "FLOW_CONTROL_RTS_CTS",
+               PIKA_HAL_UART_FLOW_CONTROL_RTS_CTS);
+    obj_setInt(self, "flowControl", PIKA_HAL_UART_FLOW_CONTROL_NONE);
 }
 
 void PikaStdDevice_UART___init__(PikaObj* self) {
@@ -35,9 +41,15 @@ Arg* PikaStdDevice_UART_readBytes(PikaObj* self, int length) {
 void PikaStdDevice_UART_setBaudRate(PikaObj* self, int baudRate) {
     obj_setInt(self, "baudRate", baudRate);
 }
+
+void PikaStdDevice_UART_setFlowControl(PikaObj *self, int flowControl){
+    obj_setInt(self, "flowControl", flowControl);
+}
+
 void PikaStdDevice_UART_setId(PikaObj* self, int id) {
     obj_setInt(self, "id", id);
 }
+
 void PikaStdDevice_UART_write(PikaObj* self, char* data) {
     obj_setStr(self, "writeData", data);
     obj_runNativeMethod(self, "platformWrite", NULL);
@@ -73,6 +85,7 @@ void PikaStdDevice_UART_platformEnable(PikaObj* self) {
     }
     pika_hal_UART_config cfg = {0};
     cfg.baudrate = obj_getInt(self, "baudRate");
+    cfg.flow_control = obj_getInt(self, "flowControl");
     pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg);
     pika_hal_ioctl(dev, PIKA_HAL_IOCTL_ENABLE);
 }
@@ -118,6 +131,6 @@ void PikaStdDevice_UART_platformWriteBytes(PikaObj* self) {
     pika_hal_write(dev, data, len);
 }
 
-void PikaStdDevice_UART_addEventCallBack(PikaObj *self, Arg* eventCallBack, int filter){
-
-}
+void PikaStdDevice_UART_setCallBack(PikaObj* self,
+                                    Arg* eventCallBack,
+                                    int filter) {}

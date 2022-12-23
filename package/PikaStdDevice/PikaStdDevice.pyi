@@ -9,7 +9,7 @@ Document: https://pikadoc.readthedocs.io/en/latest/PikaStdDevice%20%E6%A0%87%E5%
 from PikaObj import *
 
 
-class GPIO:
+class GPIO(BaseDev):
     def __init__(self): ...
 
     def setPin(self, pinName: str):
@@ -72,14 +72,14 @@ class GPIO:
     SIGNAL_FALLING: int
     SIGNAL_ANY: int
 
-    def addEventCallBack(self, eventCallBack: any, filter: int):
+    def setCallBack(self, eventCallBack: any, filter: int):
         """
         Add a callback function to the pin.
         Example: 
         ``` python
         def cb1(signal):
             print("cb1", signal)
-        io.addEventCallBack(cb1, io.SIGNAL_RISING)
+        io.setCallBack(cb1, io.SIGNAL_RISING)
         ```
         """
 
@@ -202,6 +202,14 @@ class UART:
 
     def setId(self, id: int):
         """Set the id of the UART."""
+    
+    FLOW_CONTROL_NONE: int
+    FLOW_CONTROL_RTS: int
+    FLOW_CONTROL_CTS: int
+    FLOW_CONTROL_RTS_CTS: int
+    
+    def setFlowControl(self, flowControl: int):
+        """Set the flow control of the UART."""
 
     def enable(self):
         """Enable the UART."""
@@ -225,14 +233,14 @@ class UART:
     SIGNAL_RX: int
     SIGNAL_TX: int
 
-    def addEventCallBack(self, eventCallBack: any, filter: int):
+    def setCallBack(self, eventCallBack: any, filter: int):
         """
         Add a callback function to the pin.
         Example: 
         ``` python
         def cb1(signal):
             print(uart.read(-1))
-        io.addEventCallBack(cb1, uart.SIGNAL_RX)
+        io.setCallBack(cb1, uart.SIGNAL_RX)
         ```
         """
 

@@ -153,13 +153,13 @@ extern PikaEventListener* g_pika_device_event_listener;
 
 void _pika_hal_GPIO_event_callback(pika_dev* dev,
                                    PIKA_HAL_GPIO_EVENT_SIGNAL signal) {
-    pks_eventLisener_sendSignal(g_pika_device_event_listener, (uint32_t)dev,
+    pks_eventLisener_sendSignal(g_pika_device_event_listener, (uintptr_t)dev,
                                 signal);
 }
 
-void PikaStdDevice_GPIO_addEventCallBack(PikaObj* self,
-                                         Arg* eventCallBack,
-                                         int filter) {
+void PikaStdDevice_GPIO_setCallBack(PikaObj* self,
+                                    Arg* eventCallBack,
+                                    int filter) {
     pika_dev* dev = _get_dev(self);
 #if PIKA_EVENT_ENABLE
     obj_setArg(self, "eventCallBack", eventCallBack);
@@ -168,7 +168,7 @@ void PikaStdDevice_GPIO_addEventCallBack(PikaObj* self,
         pks_eventLisener_init(&g_pika_device_event_listener);
     }
     /* use the pointer of dev as the event id */
-    uint32_t eventId = (uint32_t)dev;
+    uint32_t eventId = (uintptr_t)dev;
     /* regist event to event listener */
     pks_eventLicener_registEvent(g_pika_device_event_listener, eventId, self);
 

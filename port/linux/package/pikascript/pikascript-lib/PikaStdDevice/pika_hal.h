@@ -65,8 +65,10 @@ typedef enum {
 } PIKA_HAL_EVENT_CALLBACK_ENA;
 
 typedef enum {
+    _PIKA_HAL_GPIO_EVENT_SIGNAL_UNUSED = 0,
     PIKA_HAL_GPIO_EVENT_SIGNAL_RISING,
     PIKA_HAL_GPIO_EVENT_SIGNAL_FALLING,
+    PIKA_HAL_GPIO_EVENT_SIGNAL_ANY,
 } PIKA_HAL_GPIO_EVENT_SIGNAL;
 
 typedef struct {
@@ -74,7 +76,8 @@ typedef struct {
     PIKA_HAL_GPIO_PULL pull;
     PIKA_HAL_GPIO_SPEED speed;
     void (*event_callback)(pika_dev* dev, PIKA_HAL_GPIO_EVENT_SIGNAL signal);
-    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_enable;
+    PIKA_HAL_GPIO_EVENT_SIGNAL event_callback_filter;
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
 } pika_hal_GPIO_config;
 
 typedef enum {
@@ -100,6 +103,7 @@ typedef enum {
     _PIKA_HAL_UART_STOP_BITS_UNUSED = 0,
     PIKA_HAL_UART_STOP_BITS_1 = 1,
     PIKA_HAL_UART_STOP_BITS_2 = 2,
+    PIKA_HAL_UART_STOP_BITS_1_5 = 3,
 } PIKA_HAL_UART_STOP_BITS;
 
 typedef enum {
@@ -110,16 +114,29 @@ typedef enum {
 } PIKA_HAL_UART_PARITY;
 
 typedef enum {
+    _PIKA_HAL_UART_EVENT_SIGNAL_UNUSED = 0,
     PIKA_HAL_UART_EVENT_SIGNAL_RX,
+    PIKA_HAL_UART_EVENT_SIGNAL_TX,
+    PIKA_HAL_UART_EVENT_SIGNAL_ANY,
 } PIKA_HAL_UART_EVENT_SIGNAL;
+
+typedef enum {
+    _PIKA_HAL_UART_FLOW_CONTROL_UNUSED = 0,
+    PIKA_HAL_UART_FLOW_CONTROL_NONE,
+    PIKA_HAL_UART_FLOW_CONTROL_RTS,
+    PIKA_HAL_UART_FLOW_CONTROL_CTS,
+    PIKA_HAL_UART_FLOW_CONTROL_RTS_CTS,
+} PIKA_HAL_UART_FLOW_CONTROL;
 
 typedef struct {
     PIKA_HAL_UART_BAUDRATE baudrate;
     PIKA_HAL_UART_DATA_BITS data_bits;
     PIKA_HAL_UART_STOP_BITS stop_bits;
     PIKA_HAL_UART_PARITY parity;
+    PIKA_HAL_UART_FLOW_CONTROL flow_control;
     void (*event_callback)(pika_dev* dev, PIKA_HAL_UART_EVENT_SIGNAL signal);
-    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_enable;
+    PIKA_HAL_UART_EVENT_SIGNAL event_callback_filter;
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
 } pika_hal_UART_config;
 
 typedef uint32_t PIKA_HAL_IIC_SLAVE_ADDR;
