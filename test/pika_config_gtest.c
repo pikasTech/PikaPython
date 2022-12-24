@@ -10,15 +10,16 @@ uint32_t log_index = 0;
 /* save printf content to log_buff */
 void __platform_printf(char* fmt, ...) {
     va_list args;
-    va_start(args, fmt);
-    vprintf(fmt, args);
-    va_end(args);
     for (int i = LOG_BUFF_MAX - 2; i >= 0; i--) {
         memcpy(log_buff[i + 1], log_buff[i], LOG_SIZE);
     }
     va_start(args, fmt);
-    vsnprintf(log_buff[0], LOG_SIZE - 1, fmt, args);
+    __platform_vsnprintf(log_buff[0], LOG_SIZE - 1, fmt, args);
     va_end(args);
+    /* putchar */
+    for (int i = 0; i < strlen(log_buff[0]); i++) {
+        __platform_putchar(log_buff[0][i]);
+    }
 }
 #endif
 
