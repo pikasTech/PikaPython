@@ -470,3 +470,7 @@ releases = [
   "v0.0.1 1ae3ac23759fb2b5e0f77866af40986ac94e356d",
   "v1.0.0 29ad2b44817c5a72ace9f6d09cea7df6beb516f9"
 ]
+
+[[packages]]
+name = "pika_libc"
+releases = [ "v1.0.0 42a3cebb085a4a995d80031685dbf630e053aa55" ]
