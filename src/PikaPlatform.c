@@ -78,17 +78,9 @@ PIKA_WEAK int64_t __platform_getTick(void) {
     return -1;
 }
 
-#ifndef __platform_printf
-PIKA_WEAK void __platform_printf(char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    vprintf(fmt, args);
-    va_end(args);
-}
-#endif
-
 PIKA_WEAK int __platform_vsprintf(char* buff, char* fmt, va_list args) {
-    return vsprintf(buff, fmt, args);
+    /* vsnprintf */
+    return __platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
 }
 
 PIKA_WEAK int __platform_snprintf(char* buff,
@@ -101,6 +93,30 @@ PIKA_WEAK int __platform_snprintf(char* buff,
     va_end(args);
     return ret;
 }
+
+PIKA_WEAK int __platform_putchar(char ch) {
+    return putchar(ch);
+}
+
+PIKA_WEAK int __platform_vprintf(char* fmt, va_list args) {
+    /* vsprintf to vprintf */
+    char buff[PIKA_SPRINTF_BUFF_SIZE];
+    __platform_vsprintf(buff, fmt, args);
+    /* putchar */
+    for (int i = 0; i < strlen(buff); i++) {
+        __platform_putchar(buff[i]);
+    }
+    return 0;
+}
+
+#ifndef __platform_printf
+PIKA_WEAK void __platform_printf(char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    __platform_vprintf(fmt, args);
+    va_end(args);
+}
+#endif
 
 PIKA_WEAK char* __platform_strdup(const char* src) {
     char* dst = (char*)__platform_malloc(strlen(src) + 1);
@@ -124,7 +140,7 @@ PIKA_WEAK int __platform_vsnprintf(char* buff,
 PIKA_WEAK int __platform_sprintf(char* buff, char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    int res = vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+    int res = __platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
     va_end(args);
     if (res >= PIKA_SPRINTF_BUFF_SIZE) {
         __platform_printf(
@@ -254,13 +270,13 @@ PIKA_WEAK void __platform_thread_delay(void) {
     return;
 }
 
-PIKA_WEAK void __platform_sleep_ms(uint32_t ms){
+PIKA_WEAK void __platform_sleep_ms(uint32_t ms) {
     __platform_printf("Error: __platform_sleep_ms need implementation!\r\n");
     while (1) {
     }
 }
 
-PIKA_WEAK void __platform_sleep_s(uint32_t s){
+PIKA_WEAK void __platform_sleep_s(uint32_t s) {
     __platform_printf("Error: __platform_sleep_s need implementation!\r\n");
     while (1) {
     }
