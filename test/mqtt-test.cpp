@@ -134,7 +134,7 @@ TEST(mqtt, publish) {
 }
 #endif
 
-#if 1
+#if 0
 //! Mqtt subscribe will break the gichub actions, 
 //! if need to test, please enable it manually.
 TEST(mqtt, subscribe) {
