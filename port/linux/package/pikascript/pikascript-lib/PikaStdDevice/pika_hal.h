@@ -260,6 +260,19 @@ typedef struct {
     PIKA_HAL_SPI_TIMEOUT timeout;
 } pika_hal_SPI_config;
 
+typedef struct {
+    PIKA_HAL_SPI_LSB_OR_MSB lsb_or_msb;
+    PIKA_HAL_SPI_MASTER_OR_SLAVE master_or_slave;
+    PIKA_HAL_SPI_MODE mode;
+    PIKA_HAL_SPI_DATA_WIDTH data_width;
+    PIKA_HAL_SPI_SPEED speed;
+    PIKA_HAL_SPI_TIMEOUT timeout;
+    pika_dev* CS;
+    pika_dev* SCK;
+    pika_dev* MOSI;
+    pika_dev* MISO;
+} pika_hal_SOFT_SPI_config;
+
 typedef enum {
     _PIKA_HAL_ADC_RESOLUTION_UNUSED = 0,
     PIKA_HAL_ADC_RESOLUTION_8 = 8,

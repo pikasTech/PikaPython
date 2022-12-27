@@ -217,6 +217,21 @@ int pika_hal_SPI_ioctl_merge_config(pika_hal_SPI_config* dst,
     return 0;
 }
 
+int pika_hal_SOFT_SPI_ioctl_merge_config(pika_hal_SOFT_SPI_config* dst,
+                                    pika_hal_SOFT_SPI_config* src) {
+    _IOCTL_CONFIG_USE_DEFAULT(lsb_or_msb, PIKA_HAL_SPI_MSB);
+    _IOCTL_CONFIG_USE_DEFAULT(master_or_slave, PIKA_HAL_SPI_MASTER);
+    _IOCTL_CONFIG_USE_DEFAULT(mode, PIKA_HAL_SPI_MODE_0);
+    _IOCTL_CONFIG_USE_DEFAULT(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
+    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_2M);
+    _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_SPI_TIMEOUT_1000MS);
+    _IOCTL_CONFIG_USE_DEFAULT(CS, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(SCK, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(MOSI, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(MISO, NULL);
+    return 0;
+}
+
 int pika_hal_IIC_ioctl_merge_config(pika_hal_IIC_config* dst,
                                     pika_hal_IIC_config* src) {
     _IOCTL_CONFIG_USE_DEFAULT(address_width, PIKA_HAL_IIC_ADDRESS_WIDTH_7BIT);
