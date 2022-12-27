@@ -160,7 +160,7 @@ int _mqtt__MQTT_disconnect(PikaObj* self) {
 ///////////////////////////////////////////////////////////////////
 PikaObj* _mqtt__MQTT_listSubscribeTopic(PikaObj* self) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
-    int i = 0;
+    // int i = 0;
     mqtt_list_t *curr, *next;
     message_handlers_t* msg_handler;
     PikaObj* list = NULL;
@@ -187,7 +187,7 @@ PikaObj* _mqtt__MQTT_listSubscribeTopic(PikaObj* self) {
         if (NULL != msg_handler->topic_filter) {
             MQTT_LOG_I("%s:%d %s()...[%d] subscribe topic: %s", __FILE__,
                        __LINE__, __FUNCTION__, ++i, msg_handler->topic_filter);
-            __platform_printf("[%d]subscribe topic: %s\n",++i, msg_handler->topic_filter);
+            // __platform_printf("[%d]subscribe topic: %s\n",++i, msg_handler->topic_filter);
             /* 用 arg_new<type> 的 api 创建 arg */
             Arg* str_arg1 = arg_newStr((char*)msg_handler->topic_filter);
             /* 添加到 list 对象 */
@@ -482,13 +482,17 @@ int _mqtt__MQTT_setWill(PikaObj* self,
         return -1;
     }
 
-    // __platform_printf("input retain :%d\r\n", (uint8_t)retain);
 
     // 必须转换成python环境的变量，否则函数退出后，topic里的是个空指针
     memset(topic_str, 0, sizeof(topic_str));
     sprintf(topic_str, "%s", topic);
     obj_setStr(self, topic_str, topic);
     obj_setStr(self, "Will_payload", payload);
+
+    // __platform_printf("obj_getStr(self, topic_str) :%s\r\n", obj_getStr(self, topic_str));
+    // __platform_printf("iqos :%d\r\n", qos);
+    // __platform_printf("retain :%d\r\n", retain);
+    // __platform_printf("obj_getStr(self, \"Will_payload\") :%s\r\n", obj_getStr(self, "Will_payload"));
 
     ret = mqtt_set_will_options(_client, obj_getStr(self, topic_str), qos,
                                 (uint8_t)retain,
@@ -689,12 +693,13 @@ int _mqtt__MQTT_getQos(PikaObj* self, int signal) {
 // 返 回 值：0=成功；非0=错误码
 ///////////////////////////////////////////////////////////////////
 void Reconnect_Handler(void *client, void *reconnect_date) {
-    PikaObj* self = ((mqtt_client_t*)client)->user_data;
-    __platform_printf("Reconnect_Handler\r\n");
+    // PikaObj* self = ((mqtt_client_t*)client)->user_data;
+    // __platform_printf("Reconnect_Handler\r\n");
 
-    //发送事件信号
-    pks_eventListener_sendSignal(g_mqtt_event_listener,MQTT_RECONNECTION_EVENT_ID, 
-                112233);
+    if(((mqtt_client_t*)client)->mqtt_client_state != CLIENT_STATE_CONNECTED) {
+        //发送事件信号
+        pks_eventListener_sendSignal(g_mqtt_event_listener,MQTT_RECONNECTION_EVENT_ID,1);
+    }
     
 }
 
@@ -707,7 +712,7 @@ void Reconnect_Handler(void *client, void *reconnect_date) {
 int _mqtt__MQTT_setDisconnectHandler(PikaObj* self, Arg* cb) {
     mqtt_client_t* _client = obj_getPtr(self, "_client");
    
-    __platform_printf("_mqtt__MQTT_setDisconnectHandler\r\n");
+    // __platform_printf("_mqtt__MQTT_setDisconnectHandler\r\n");
 
     //注册到c库中
     mqtt_set_reconnect_handler(_client,Reconnect_Handler);

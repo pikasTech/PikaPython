@@ -630,9 +630,10 @@ static int mqtt_try_resubscribe(mqtt_client_t* c) {
         /* resubscribe topic */
         if ((rc = mqtt_subscribe(c, msg_handler->topic_filter, msg_handler->qos,
                                  msg_handler->handler)) ==
-            MQTT_ACK_HANDLER_NUM_TOO_MUCH_ERROR)
-            MQTT_LOG_W("%s:%d %s()... mqtt ack handler num too much ...",
-                       __FILE__, __LINE__, __FUNCTION__);
+            MQTT_ACK_HANDLER_NUM_TOO_MUCH_ERROR) {
+                MQTT_LOG_W("%s:%d %s()... mqtt ack handler num too much ...",
+                        __FILE__, __LINE__, __FUNCTION__);
+            }
     }
 
     RETURN_ERROR(rc);
@@ -995,7 +996,7 @@ static int mqtt_yield(mqtt_client_t* c, int timeout_ms) {
             mqtt_ack_list_scan(c, 1);
 
         } else if (MQTT_NOT_CONNECT_ERROR == rc) {
-            MQTT_LOG_E("%s:%d %s()... mqtt not connect", __FILE__, __LINE__,
+            MQTT_LOG_W("%s:%d %s()... mqtt not connect", __FILE__, __LINE__,
                        __FUNCTION__);
         } else {
             break;
@@ -1563,7 +1564,7 @@ exit:
 }
 
 int mqtt_list_subscribe_topic(mqtt_client_t* c) {
-    int i = 0;
+    // int i = 0;
     mqtt_list_t *curr, *next;
     message_handlers_t* msg_handler;
 
