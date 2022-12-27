@@ -629,6 +629,18 @@ void Subscribe_Handler(void* client, message_data_t* msg) {
     // MQTT_LOG_I("------------------<<<");
 }
 
+void _mqtt__MQTT__fakeMsg(PikaObj* self, char* topic, int qos, char* msg) {
+    message_data_t msg_data;
+    mqtt_message_t mqtt_msg;
+    mqtt_msg.payload = msg;
+    mqtt_msg.payloadlen = strlen(msg);
+    mqtt_msg.qos = qos;
+    mqtt_msg.retained = 0;
+    msg_data.message = &mqtt_msg;
+    strcpy(msg_data.topic_name, topic);
+    Subscribe_Handler(NULL, &msg_data);
+}
+
 ////////////////////////////////////////////////////////////////////
 // 函 数 名：_mqtt___del__
 // 功能说明：释放事件处理器

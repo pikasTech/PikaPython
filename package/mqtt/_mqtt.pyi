@@ -68,6 +68,10 @@ class _MQTT:
         pass
         """set disconnect callback fun."""
 
+    def _fakeMsg(self, topic: str, qos: int, msg: str):
+        pass
+        """fake msg for subscribe test"""
+
 
 def __del__():
     pass

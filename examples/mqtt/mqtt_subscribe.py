@@ -33,9 +33,13 @@ print("subscribe ret:%d" % ret)
 ret = client.subscribe('topic_pikapy_qos2', callback2, 2)
 print("subscribe ret:%d" % ret)
 
+client._fakeMsg("topic_pikapy_qos0", 0, "hello qos0")
+client._fakeMsg("topic_pikapy_qos1", 1, "hello qos1")
+client._fakeMsg("topic_pikapy_qos2", 2, "hello qos2")
+
 # sleep wait for recv data
 T = PikaStdDevice.Time()
-T.sleep_s(5)
+# T.sleep_s(5)
 
 out = client.listSubscribeTopic()
 print('listSubscribeTopic out', out)
@@ -56,7 +60,7 @@ print("setDisconnectHandler:%d" % ret)
 # T.sleep_s(5)
 # print("sleep_s:5s")
 
-T.sleep_s(30)
+# T.sleep_s(30)
 # exit()
 ret = client.disconnect()
 print("disconnect ret:%d" % ret)
