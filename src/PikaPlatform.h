@@ -156,6 +156,7 @@ uint8_t __is_locked_pikaMemory(void);
 
 /* support shell */
 char __platform_getchar(void);
+int __platform_putchar(char ch);
 
 /* file API */
 FILE* __platform_fopen(const char* filename, const char* modes);
@@ -168,9 +169,16 @@ long __platform_ftell(FILE* stream);
 /* error */
 void __platform_error_handle(void);
 
+/* panic */
+void __platform_panic_handle(void);
+
 void __pks_hook_instruct(void);
 PIKA_BOOL __pks_hook_arg_cache_filter(void* self);
-PIKA_WEAK void __platform_thread_delay(void);
+void __platform_thread_delay(void);
+int64_t __platform_getTick(void);
+
+void __platform_sleep_ms(uint32_t ms);
+void __platform_sleep_s(uint32_t s);
 
 #if PIKA_FLOAT_TYPE_DOUBLE
 #define pika_float double

@@ -1,8 +1,5 @@
 #include "PikaStdDevice_BaseDev.h"
-#include "BaseObj.h"
-#include "PikaObj.h"
-#include "dataStrs.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 10, 4)
 #error "This library requires PikaScript version 1.10.4 or higher"

@@ -1,6 +1,5 @@
 #include "PikaStdDevice_GPIO.h"
-#include "BaseObj.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 void PikaStdDevice_GPIO_init(PikaObj* self) {
     obj_setInt(self, "isEnable", 0);
@@ -22,6 +21,9 @@ void PikaStdDevice_GPIO_setId(PikaObj* self, int id) {
 
 void PikaStdDevice_GPIO___init__(PikaObj* self) {
     PikaStdDevice_GPIO_init(self);
+    obj_setInt(self, "SIGNAL_RISING", PIKA_HAL_GPIO_EVENT_SIGNAL_RISING);
+    obj_setInt(self, "SIGNAL_FALLING", PIKA_HAL_GPIO_EVENT_SIGNAL_FALLING);
+    obj_setInt(self, "SIGNAL_ANY", PIKA_HAL_GPIO_EVENT_SIGNAL_ANY);
 }
 
 void PikaStdDevice_GPIO_disable(PikaObj* self) {
@@ -144,4 +146,22 @@ void PikaStdDevice_GPIO_platformRead(PikaObj* self) {
     uint32_t val = 0;
     pika_hal_read(dev, &val, sizeof(val));
     obj_setInt(self, "readBuff", val);
+}
+
+void PikaStdDevice_GPIO_setCallBack(PikaObj* self,
+                                    Arg* eventCallback,
+                                    int filter) {
+    pika_dev* dev = _get_dev(self);
+#if PIKA_EVENT_ENABLE
+    _PikaStdDevice_setCallBack(self, eventCallback, (uintptr_t)dev);
+    /* regist event to pika_hal */
+    pika_hal_GPIO_config cfg_cb = {0};
+    cfg_cb.event_callback = (void*)_PikaStdDevice_event_handler;
+    cfg_cb.event_callback_filter = filter;
+    cfg_cb.event_callback_ena = PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE;
+    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg_cb);
+#else
+    obj_setErrorCode(self, 1);
+    obj_setSysOut(self, "[error] PIKA_EVENT_ENABLE is disabled.");
+#endif
 }

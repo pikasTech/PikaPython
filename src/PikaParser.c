@@ -2046,9 +2046,15 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
         AST_setNodeAttr(ast, "global", global_list);
         goto block_matched;
     }
-    if (strIsStartWith(line_start, "del ")) {
+    if (strIsStartWith(line_start, "del ") ||
+        strIsStartWith(line_start, "del(")) {
         stmt = "";
-        char* del_dir = line_start + sizeof("del ") - 1;
+        char* del_dir = NULL;
+        if (line_start[3] == '(') {
+            del_dir = strsCut(&buffs, line_start, '(', ')');
+        } else {
+            del_dir = line_start + sizeof("del ") - 1;
+        }
         del_dir = strsGetCleanCmd(&buffs, del_dir);
         AST_setNodeAttr(ast, "del", del_dir);
         goto block_matched;

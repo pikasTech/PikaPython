@@ -443,7 +443,11 @@ static char* __print_arg(PikaObj* self, Arg* val) {
     }
     if (arg_type == ARG_TYPE_INT) {
         int64_t value = arg_getInt(val);
+#if PIKA_PRINT_LLD_ENABLE
         res = strsFormat(&buffs, 32, "%lld", value);
+#else
+        res = strsFormat(&buffs, 32, "%d", value);
+#endif
         goto __exit;
     }
     if (arg_type == ARG_TYPE_FLOAT) {

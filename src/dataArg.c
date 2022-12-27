@@ -295,7 +295,7 @@ void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end) {
 #if PIKA_PRINT_LLD_ENABLE
         __platform_printf("%lld%s", (long long int)arg_getInt(self), end);
 #else
-        __platform_printf("%d%s", (int)arg_getInt(arg), end);
+        __platform_printf("%d%s", (int)arg_getInt(self), end);
 #endif
         return;
     }

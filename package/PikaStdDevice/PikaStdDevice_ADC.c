@@ -1,6 +1,5 @@
 #include "PikaStdDevice_ADC.h"
-#include "BaseObj.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 void PikaStdDevice_ADC_enable(PikaObj* self) {
     obj_runNativeMethod(self, "platformEnable", NULL);

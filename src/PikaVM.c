@@ -65,8 +65,7 @@ static PIKA_BOOL _cq_isFull(volatile EventCQ* cq) {
 void VMSignal_deinit(void) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    while (1) {
-    };
+    __platform_panic_handle();
 #else
     for (int i = 0; i < PIKA_EVENT_LIST_SIZE; i++) {
         if (NULL != PikaVMSignal.cq.res[i]) {
@@ -82,8 +81,7 @@ PIKA_RES VMSignal_pushEvent(PikaEventListener* lisener,
                             int eventSignal) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    while (1) {
-    };
+    __platform_panic_handle();
 #else
     /* push to event_cq_buff */
     if (_cq_isFull(&PikaVMSignal.cq)) {
@@ -107,8 +105,7 @@ PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
                            int* head) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    while (1) {
-    };
+    __platform_panic_handle();
 #else
     /* pop from event_cq_buff */
     if (_cq_isEmpty(&PikaVMSignal.cq)) {
@@ -126,8 +123,7 @@ PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
 void VMSignale_pickupEvent(void) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    while (1) {
-    };
+    __platform_panic_handle();
 #else
     PikaObj* event_lisener;
     uint32_t event_id;
@@ -851,19 +847,33 @@ Arg* obj_runMethodArg(PikaObj* self,
 static char* _kw_to_default_all(FunctionArgsInfo* f,
                                 char* arg_name,
                                 int* argc,
-                                Arg* argv[]) {
+                                Arg* argv[],
+                                Arg* call_arg) {
 #if PIKA_NANO
     return arg_name;
 #endif
     while (strIsContain(arg_name, '=')) {
         strPopLastToken(arg_name, '=');
+        Arg* default_arg = NULL;
         /* load default arg from kws */
         if (f->kw != NULL) {
-            Arg* default_arg = pikaDict_getArg(f->kw, arg_name);
+            default_arg = pikaDict_getArg(f->kw, arg_name);
             if (default_arg != NULL) {
                 Arg* arg_new = arg_copy(default_arg);
                 argv[(*argc)++] = arg_new;
                 pikaDict_removeArg(f->kw, default_arg);
+            }
+        }
+        if (f->kw == NULL || default_arg == NULL) {
+            /* can not load defalut from kw */
+            if (NULL != call_arg && f->is_default) {
+                /* load default from pos */
+                if (f->i_arg > f->n_positional) {
+                    arg_setNameHash(call_arg,
+                                    hash_time33EndWith(arg_name, ':'));
+                    argv[(*argc)++] = call_arg;
+                    return (char*)1;
+                }
             }
         }
         arg_name = strPopLastToken(f->type_list, ',');
@@ -984,20 +994,12 @@ static void _load_call_arg(VMState* vm,
         }
     }
     char* arg_name = strPopLastToken(f->type_list, ',');
-    /* load default from pos */
-    if (f->i_arg > f->n_positional) {
-        if (f->is_default) {
-            if (arg_name[strlen(arg_name) - 1] == '=') {
-                /* found default arg*/
-                arg_name[strlen(arg_name) - 1] = '\0';
-                arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
-                argv[(*argc)++] = call_arg;
-            }
-            return;
-        }
-    }
     /* load default from kw */
-    arg_name = _kw_to_default_all(f, arg_name, argc, argv);
+    arg_name = _kw_to_default_all(f, arg_name, argc, argv, call_arg);
+    if (((char*)1) == arg_name) {
+        /* load default from pos */
+        return;
+    }
     /* load position arg */
     if (_kw_to_pos_one(f, arg_name, argc, argv)) {
         /* load pos from kw */
@@ -1090,7 +1092,7 @@ static int _get_n_input_with_unpack(VMState* vm) {
             PikaDict* dict = obj_getPtr(obj, "dict");
             int i_item = 0;
             while (PIKA_TRUE) {
-                Arg* item_val = args_getArgByidex(&dict->super, i_item);
+                Arg* item_val = args_getArgByIndex(&dict->super, i_item);
                 if (NULL == item_val) {
                     break;
                 }
@@ -1138,8 +1140,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         __platform_printf(
             "OverflowError: type list is too long, please use bigger "
             "PIKA_LINE_BUFF_SIZE\r\n");
-        while (1)
-            ;
+        __platform_panic_handle();
     }
     f.method_type = arg_getType(method_arg);
 
@@ -1240,7 +1241,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 #if !PIKA_NANO_ENABLE
     if (strIsContain(f.type_list, '=')) {
         char* arg_name = strPopLastToken(f.type_list, ',');
-        _kw_to_default_all(&f, arg_name, &argc, argv);
+        _kw_to_default_all(&f, arg_name, &argc, argv, NULL);
     }
     /* load kw to pos */
     _kw_to_pos_all(&f, &argc, argv);
@@ -1527,8 +1528,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
             __platform_printf(
                 "[ERROR] Too many args in RUN instruction, please use bigger "
                 "#define PIKA_ARG_NUM_MAX\n");
-            while (1) {
-            }
+            __platform_panic_handle();
         }
         for (int i = 0; i < n_arg; i++) {
             stack_tmp[i] = stack_popArg_alloc(&(vm->stack));
