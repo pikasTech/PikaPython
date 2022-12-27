@@ -56,7 +56,12 @@ print('listSubscribeTopic out', out)
 ret = client.setDisconnectHandler(reconnect_mq);
 print("setDisconnectHandler:%d" % ret)
 
-# ret = client.setWill(1,'topic_will',1,'lost mqtt connect')
+# ret = client.setWill('topic_will','lost mqtt connect')
+# print("setWill:%d" % ret)
+# client.publish('topic_will', 'hello pikascript', 1)
+# T.sleep_s(5)
+# print("sleep_s:5s")
+
 T.sleep_s(30)
 # exit()
 ret = client.disconnect()
