@@ -1604,6 +1604,7 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
         return NULL;
     }
     obj_setArg(handler, "eventData", eventData);
+    PikaObj* event_data_obj = NULL;
     /* clang-format off */
     PIKA_PYTHON(
     _res = eventCallBack(eventData)

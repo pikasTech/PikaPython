@@ -91,6 +91,9 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
     if (_cq_isFull(&PikaVMSignal.cq)) {
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
     }
+    if (arg_getType(eventData) == ARG_TYPE_OBJECT_NEW) {
+        arg_setType(eventData, ARG_TYPE_OBJECT);
+    }
     if (PikaVMSignal.cq.res[PikaVMSignal.cq.tail] != NULL) {
         arg_deinit(PikaVMSignal.cq.res[PikaVMSignal.cq.tail]);
         PikaVMSignal.cq.res[PikaVMSignal.cq.tail] = NULL;
