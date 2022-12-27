@@ -1,22 +1,23 @@
+#include <hosal_dma.h>
 #include <hosal_spi.h>
 #include "../PikaStdDevice/pika_hal.h"
 
-static int _num2pin(int num, uint8_t* mosi, uint8_t* miso, uint8_t* scli) {
+static int _num2pin(int num, uint8_t* mosi, uint8_t* miso, uint8_t* clk) {
     /***********************   BL602  **************************
-     *    SPI0  ----->     MOSI:P20, MISO:P0, SCLK:P22
+     *    SPI0  ----->     MOSI:P20, MISO:P21, SCLK:P3
      */
     switch (num) {
         case 0:
             *mosi = 20;
-            *miso = 0;
-            *scli = 22;
+            *miso = 21;
+            *clk = 3;
             break;
         default:
             return -1;
     }
 #if PIKA_DEBUG_ENABLE
     __platform_printf("SPI%d: mosi:%d, miso:%d, scli:%d\r\n", num, *mosi, *miso,
-                      *scli);
+                      *clk);
 #endif
     return 0;
 }
@@ -32,6 +33,12 @@ int pika_hal_platform_SPI_open(pika_dev* dev, char* name) {
         if (0 == _num2pin(spi_num, &platform_spi->config.pin_mosi,
                           &platform_spi->config.pin_miso,
                           &platform_spi->config.pin_clk)) {
+#if PIKA_DEBUG_ENABLE
+            __platform_printf("SPI: mosi:%d, miso:%d, scli:%d\r\n",
+                              platform_spi->config.pin_mosi,
+                              platform_spi->config.pin_miso,
+                              platform_spi->config.pin_clk);
+#endif
             return 0;
         } else {
             __platform_printf("SPI: Open SPI%d failed\r\n", spi_num);
@@ -54,7 +61,8 @@ int pika_hal_platform_SPI_ioctl_config(pika_dev* dev,
     hosal_spi_dev_t* platform_spi = (hosal_spi_dev_t*)dev->platform_data;
     if (!dev->is_enabled) {
         platform_spi->port = 0;
-        platform_spi->config.dma_enable = 0;
+        platform_spi->config.dma_enable = 1;
+        hosal_dma_init();
         platform_spi->config.freq = cfg->speed;
         platform_spi->p_arg = NULL;
         switch (cfg->master_or_slave) {

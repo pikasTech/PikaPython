@@ -23,6 +23,10 @@ int pika_hal_platform_GPIO_read(pika_dev* dev, void* buf, size_t count) {
     hosal_gpio_input_get(platform_gpio, &value);
     uint32_t value_in = value;
     memcpy(buf, &value_in, sizeof(value_in));
+#if PIKA_DEBUG_ENABLE
+    __platform_printf("GPIO read port %d to %d\r\n", platform_gpio->port,
+                      value_in);
+#endif
     return 0;
 }
 
