@@ -8,18 +8,12 @@ ret = client.connect()
 print("connect ret:%d" % ret)
 
 
-def callback0(signal):
-    recv_msg = client.getMsg(signal)
-    recv_topic = client.getTopic(signal)
-    recv_qos = client.getQos(signal)
-    print("py0 cb: %s-qos:%d-->>%s" % (recv_topic, recv_qos, recv_msg))
+def callback0(evt):
+    print("py0 cb: %s-qos:%d-->>%s" % (evt.topic, evt.qos, evt.msg))
 
 
-def callback1(signal):
-    recv_msg = client.getMsg(signal)
-    recv_topic = client.getTopic(signal)
-    recv_qos = client.getQos(signal)
-    print("py1 cb: %s-qos:%d-->>%s" % (recv_topic, recv_qos, recv_msg))
+def callback1(evt):
+    print("py1 cb: %s-qos:%d-->>%s" % (evt.topic, evt.qos, evt.msg))
 
 
 def callback2(evt):
