@@ -7,6 +7,8 @@ PikaEventListener* g_mqtt_event_listener = NULL;
 
 void Subscribe_Handler(void* client, message_data_t* msg);
 
+const uint32_t MQTT_RECONNECTION_EVENT_ID = 0xFFAA0088;
+
 ////////////////////////////////////////////////////////////////////
 // 函 数 名：_mqtt__MQTT___init__
 // 功能说明：对象初始化
@@ -426,7 +428,10 @@ int _mqtt__MQTT_setVersion(PikaObj* self, char* version) {
         return -1;
     }
     if ((strcmp(version, "3.1") == 0) || (strcmp(version, "3.1.1") == 0)) {
-        mqtt_set_version(_client, 3);
+        if(strcmp(version, "3.1.1") == 0)
+            mqtt_set_version(_client, 4);
+        else
+            mqtt_set_version(_client, 3);
     } else {
         __platform_printf("input version data error\n");
         return -2;
@@ -678,14 +683,50 @@ int _mqtt__MQTT_getQos(PikaObj* self, int signal) {
 }
 
 ////////////////////////////////////////////////////////////////////
+// 函 数 名：Reconnect_Handler
+// 功能说明：mqtt 断开连接后 的回调函数，这里使用mqttclient库函数的，断线重连接口，提示发生了mqtt断连的事件
+// 输入参数：
+// 返 回 值：0=成功；非0=错误码
+///////////////////////////////////////////////////////////////////
+void Reconnect_Handler(void *client, void *reconnect_date) {
+    PikaObj* self = ((mqtt_client_t*)client)->user_data;
+    __platform_printf("Reconnect_Handler\r\n");
+
+    //发送事件信号
+    pks_eventListener_sendSignal(g_mqtt_event_listener,MQTT_RECONNECTION_EVENT_ID, 
+                112233);
+    
+}
+
+////////////////////////////////////////////////////////////////////
 // 函 数 名：_mqtt__MQTT_setDisconnectHandler
 // 功能说明：设置断开连接的回调函数
 // 输入参数：
 // 返 回 值：
 ///////////////////////////////////////////////////////////////////
 int _mqtt__MQTT_setDisconnectHandler(PikaObj* self, Arg* cb) {
-    // mqtt_client_t* _client = obj_getPtr(self, "_client");
-
+    mqtt_client_t* _client = obj_getPtr(self, "_client");
+   
     __platform_printf("_mqtt__MQTT_setDisconnectHandler\r\n");
+
+    //注册到c库中
+    mqtt_set_reconnect_handler(_client,Reconnect_Handler);
+
+    // char hash_str[32] = {0};
+    // memset(hash_str,0,sizeof(hash_str));
+    // sprintf(hash_str,"C%d",hash_time33(topic_str));
+    // obj_newDirectObj(self,hash_str,New_TinyObj);//新建一个对象来放CB
+    // PikaObj* eventHandler = obj_getPtr(self,hash_str);
+    // obj_setArg(eventHandler, "eventCallBack", cb);
+
+    obj_setArg(self, "eventCallBack", cb);//重连回调是唯一的，就直接用self对象
+    /* init event_listener for the first time */
+    if (NULL == g_mqtt_event_listener) {
+        pks_eventListener_init(&g_mqtt_event_listener);
+    }
+    // uint32_t eventId = hash_time33(topic_str);
+    // __platform_printf("hash_time33(topic_str):%d \r\n",hash_time33(topic_str));
+    pks_eventListener_registEvent(g_mqtt_event_listener, MQTT_RECONNECTION_EVENT_ID, self);
+
     return 0;
 }

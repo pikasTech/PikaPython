@@ -27,7 +27,11 @@ def callback2(signal):
     recv_qos = client.getQos(signal)
     print("py2 cb: %s-qos:%d-->>%s" % (recv_topic, recv_qos, recv_msg))
 
+def reconnect_mq(signal):
+    print('lost mqtt connect and try to reconnect')
+    print('signal:',signal)
 
+client.setKeepAlive(5)
 ret = client.subscribe('topic_pikapy_qos0', callback0, 0)
 print("subscribe ret:%d" % ret)
 ret = client.subscribe('topic_pikapy_qos1', callback1, 1)
@@ -49,9 +53,11 @@ print('listSubscribeTopic out', out)
 # out2 = client.listSubscribeTopic()
 # print('listSubscribeTopic out2',out2)
 
+ret = client.setDisconnectHandler(reconnect_mq);
+print("setDisconnectHandler:%d" % ret)
 
 # ret = client.setWill(1,'topic_will',1,'lost mqtt connect')
-T.sleep_s(10)
+T.sleep_s(30)
 # exit()
 ret = client.disconnect()
 print("disconnect ret:%d" % ret)
