@@ -14,10 +14,11 @@ TEST(event, gpio) {
 #define GPIO_PA8_EVENT_ID 0x08
 
     /* simulate run in the call back */
-    pks_eventListener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
-                                EVENT_SIGAL_IO_RISING_EDGE);
-    pks_eventListener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
-                                EVENT_SIGAL_IO_FALLING_EDGE);
+    pks_eventListener_sendSignal(g_pika_device_event_listener,
+                                 GPIO_PA8_EVENT_ID, EVENT_SIGAL_IO_RISING_EDGE);
+    pks_eventListener_sendSignal(g_pika_device_event_listener,
+                                 GPIO_PA8_EVENT_ID,
+                                 EVENT_SIGAL_IO_FALLING_EDGE);
     /* assert */
 
     obj_run(pikaMain, "io1.eventTest()");
@@ -36,9 +37,11 @@ TEST(event, gpio) {
         g_pika_device_event_listener, GPIO_PA8_EVENT_ID, 123);
     Arg* res_456 = pks_eventListener_sendSignalAwaitResult(
         g_pika_device_event_listener, GPIO_PA8_EVENT_ID, 456);
-    
+
     EXPECT_EQ(arg_getInt(res_123), 123);
     EXPECT_EQ(arg_getInt(res_456), 456);
+
+    obj_run(pikaMain, "io1.close()");
 
     /* deinit */
     obj_deinit(pikaMain);

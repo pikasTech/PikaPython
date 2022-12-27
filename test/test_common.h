@@ -3,6 +3,7 @@
 
 extern "C" {
 #include <stdio.h>
+#include "../package/pikascript/pikascript-lib/PikaStdDevice/pika_hal.h"
 #include "BaseObj.h"
 #include "PikaCompiler.h"
 #include "PikaMain.h"

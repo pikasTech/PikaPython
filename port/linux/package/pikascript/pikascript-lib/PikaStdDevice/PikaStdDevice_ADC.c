@@ -66,3 +66,8 @@ void PikaStdDevice_ADC_platformRead(PikaObj* self) {
     pika_float val = (pika_float)val_i / (pika_float)cfg->max * cfg->vref;
     val = val_i * obj_setFloat(self, "val", val);
 }
+
+void PikaStdDevice_ADC_close(PikaObj* self) {
+    pika_dev* dev = _get_dev(self);
+    pika_hal_close(dev);
+}

@@ -45,3 +45,8 @@ void PikaStdDevice_DAC_write(PikaObj* self, pika_float val) {
     uint32_t val_i = (val / cfg->vref) * cfg->max;
     pika_hal_write(dev, &val_i, sizeof val_i);
 }
+
+void PikaStdDevice_DAC_close(PikaObj* self) {
+    pika_dev* dev = _get_dev(self);
+    pika_hal_close(dev);
+}

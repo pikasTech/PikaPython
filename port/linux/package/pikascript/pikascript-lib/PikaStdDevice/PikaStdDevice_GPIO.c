@@ -165,3 +165,8 @@ void PikaStdDevice_GPIO_setCallBack(PikaObj* self,
     obj_setSysOut(self, "[error] PIKA_EVENT_ENABLE is disabled.");
 #endif
 }
+
+void PikaStdDevice_GPIO_close(PikaObj *self){
+    pika_dev* dev = _get_dev(self);
+    pika_hal_close(dev);
+}

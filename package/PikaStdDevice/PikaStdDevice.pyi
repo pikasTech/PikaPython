@@ -83,22 +83,18 @@ class GPIO(BaseDev):
         ```
         """
 
-    @abstractmethod
+    def close(self): ...
+
     def platformHigh(self): ...
 
-    @abstractmethod
     def platformLow(self): ...
 
-    @abstractmethod
     def platformEnable(self): ...
 
-    @abstractmethod
     def platformDisable(self): ...
 
-    @abstractmethod
     def platformSetMode(self): ...
 
-    @abstractmethod
     def platformRead(self): ...
 
 
@@ -165,6 +161,8 @@ class ADC(BaseDev):
     def read(self) -> float:
         """Read the ADC value."""
 
+    def close(self): ...
+
     @abstractmethod
     def platformEnable(self): ...
 
@@ -193,6 +191,8 @@ class DAC(BaseDev):
     def write(self, val: float):
         """write the DAC value."""
 
+    def close(self): ...
+
 
 class UART:
     def __init__(self): ...
@@ -202,12 +202,12 @@ class UART:
 
     def setId(self, id: int):
         """Set the id of the UART."""
-    
+
     FLOW_CONTROL_NONE: int
     FLOW_CONTROL_RTS: int
     FLOW_CONTROL_CTS: int
     FLOW_CONTROL_RTS_CTS: int
-    
+
     def setFlowControl(self, flowControl: int):
         """Set the flow control of the UART."""
 
@@ -229,6 +229,7 @@ class UART:
     def readBytes(self, length: int) -> bytes:
         """Read bytes from the UART."""
 
+    def close(self): ...
 
     SIGNAL_RX: int
     SIGNAL_TX: int
@@ -354,6 +355,8 @@ class PWM(BaseDev):
 
     def getDuty(self) -> float:
         """Get the duty."""
+
+    def close(self): ...
 
     @abstractmethod
     def platformEnable(self): ...
