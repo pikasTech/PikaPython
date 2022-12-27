@@ -48,7 +48,7 @@ volatile VMSignal PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
 #endif
 };
 
-int VMSignal_getVMCnt(void) {
+int _VMEvent_getVMCnt(void) {
     return PikaVMSignal.vm_cnt;
 }
 
@@ -62,7 +62,7 @@ static PIKA_BOOL _cq_isFull(volatile EventCQ* cq) {
 }
 #endif
 
-void VMSignal_deinit(void) {
+void _VMEvent_deinit(void) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
     __platform_panic_handle();
@@ -72,13 +72,17 @@ void VMSignal_deinit(void) {
             arg_deinit(PikaVMSignal.cq.res[i]);
             PikaVMSignal.cq.res[i] = NULL;
         }
+        if (NULL != PikaVMSignal.cq.data[i]) {
+            arg_deinit(PikaVMSignal.cq.data[i]);
+            PikaVMSignal.cq.data[i] = NULL;
+        }
     }
 #endif
 }
 
-PIKA_RES VMSignal_pushEvent(PikaEventListener* lisener,
-                            uint32_t eventId,
-                            int eventSignal) {
+PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
+                                   uint32_t eventId,
+                                   Arg* eventData) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
     __platform_panic_handle();
@@ -91,18 +95,22 @@ PIKA_RES VMSignal_pushEvent(PikaEventListener* lisener,
         arg_deinit(PikaVMSignal.cq.res[PikaVMSignal.cq.tail]);
         PikaVMSignal.cq.res[PikaVMSignal.cq.tail] = NULL;
     }
+    if (PikaVMSignal.cq.data[PikaVMSignal.cq.tail] != NULL) {
+        arg_deinit(PikaVMSignal.cq.data[PikaVMSignal.cq.tail]);
+        PikaVMSignal.cq.data[PikaVMSignal.cq.tail] = NULL;
+    }
     PikaVMSignal.cq.id[PikaVMSignal.cq.tail] = eventId;
-    PikaVMSignal.cq.signal[PikaVMSignal.cq.tail] = eventSignal;
+    PikaVMSignal.cq.data[PikaVMSignal.cq.tail] = eventData;
     PikaVMSignal.cq.lisener[PikaVMSignal.cq.tail] = lisener;
     PikaVMSignal.cq.tail = (PikaVMSignal.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
 #endif
 }
 
-PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
-                           uint32_t* id,
-                           int* signal,
-                           int* head) {
+PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
+                                  uint32_t* id,
+                                  Arg** data,
+                                  int* head) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
     __platform_panic_handle();
@@ -112,7 +120,7 @@ PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
         return PIKA_RES_ERR_SIGNAL_EVENT_EMPTY;
     }
     *id = PikaVMSignal.cq.id[PikaVMSignal.cq.head];
-    *signal = PikaVMSignal.cq.signal[PikaVMSignal.cq.head];
+    *data = PikaVMSignal.cq.data[PikaVMSignal.cq.head];
     *lisener_p = PikaVMSignal.cq.lisener[PikaVMSignal.cq.head];
     *head = PikaVMSignal.cq.head;
     PikaVMSignal.cq.head = (PikaVMSignal.cq.head + 1) % PIKA_EVENT_LIST_SIZE;
@@ -120,19 +128,19 @@ PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
 #endif
 }
 
-void VMSignale_pickupEvent(void) {
+void _VMEvent_pickupEvent(void) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
     __platform_panic_handle();
 #else
     PikaObj* event_lisener;
     uint32_t event_id;
-    int event_signal;
+    Arg* event_data;
     int head;
-    if (PIKA_RES_OK ==
-        VMSignal_popEvent(&event_lisener, &event_id, &event_signal, &head)) {
+    if (PIKA_RES_OK == __eventListener_popEvent(&event_lisener, &event_id,
+                                                &event_data, &head)) {
         Arg* res =
-            __eventListener_runEvent(event_lisener, event_id, event_signal);
+            __eventListener_runEvent(event_lisener, event_id, event_data);
         PikaVMSignal.cq.res[head] = res;
     }
 #endif
@@ -3434,7 +3442,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
         }
 #endif
 #if PIKA_EVENT_ENABLE
-        VMSignale_pickupEvent();
+        _VMEvent_pickupEvent();
 #endif
         if (0 != vm.error_code) {
             vm.line_error_code = vm.error_code;

@@ -343,17 +343,17 @@ enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
 typedef PikaObj PikaEventListener;
 
 void pks_eventListener_sendSignal(PikaEventListener* self,
-                                 uint32_t eventId,
-                                 int eventSignal);
+                                  uint32_t eventId,
+                                  int eventSignal);
 
 void pks_eventListener_registEvent(PikaEventListener* self,
-                                  uint32_t eventId,
-                                  PikaObj* eventHandleObj);
+                                   uint32_t eventId,
+                                   PikaObj* eventHandleObj);
 
 void pks_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
 
 PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
-                                            uint32_t eventId);
+                                             uint32_t eventId);
 
 void pks_eventListener_init(PikaEventListener** p_self);
 void pks_eventListener_deinit(PikaEventListener** p_self);
@@ -499,12 +499,17 @@ void _obj_updateProxyFlag(PikaObj* self);
     _obj_updateProxyFlag((_self))
 
 Arg* _obj_getProp(PikaObj* obj, char* name);
+Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
+                                      uint32_t eventId,
+                                      int eventSignal);
+
 Arg* __eventListener_runEvent(PikaEventListener* lisener,
-                             uint32_t eventId,
-                             int eventSignal);
+                              uint32_t eventId,
+                              Arg* eventData);
+
 Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
-                                            uint32_t eventId,
-                                            int eventSignal);
+                                             uint32_t eventId,
+                                             int eventSignal);
 
 void obj_printModules(PikaObj* self);
 
