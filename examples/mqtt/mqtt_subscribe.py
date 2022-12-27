@@ -1,7 +1,8 @@
 import mqtt
 import PikaStdDevice
 
-client = mqtt.MQTT('broker.emqx.io', port=1883, clinetID='clientid', username='name_', password='passwd_')
+client = mqtt.MQTT('broker.emqx.io', port=1883,
+                   clinetID='clientid', username='name_', password='passwd_')
 
 ret = client.connect()
 print("connect ret:%d" % ret)
@@ -21,15 +22,14 @@ def callback1(signal):
     print("py1 cb: %s-qos:%d-->>%s" % (recv_topic, recv_qos, recv_msg))
 
 
-def callback2(signal):
-    recv_msg = client.getMsg(signal)
-    recv_topic = client.getTopic(signal)
-    recv_qos = client.getQos(signal)
-    print("py2 cb: %s-qos:%d-->>%s" % (recv_topic, recv_qos, recv_msg))
+def callback2(evt):
+    print("py2 cb: %s-qos:%d-->>%s" % (evt.topic, evt.qos, evt.msg))
+
 
 def reconnect_mq(signal):
     print('lost mqtt connect and try to reconnect')
-    print('signal:',signal)
+    print('signal:', signal)
+
 
 client.setKeepAlive(5)
 ret = client.subscribe('topic_pikapy_qos0', callback0, 0)
@@ -53,7 +53,7 @@ print('listSubscribeTopic out', out)
 # out2 = client.listSubscribeTopic()
 # print('listSubscribeTopic out2',out2)
 
-ret = client.setDisconnectHandler(reconnect_mq);
+ret = client.setDisconnectHandler(reconnect_mq)
 print("setDisconnectHandler:%d" % ret)
 
 # ret = client.setWill('topic_will','lost mqtt connect')
