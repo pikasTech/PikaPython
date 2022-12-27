@@ -342,15 +342,19 @@ enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
 
 typedef PikaObj PikaEventListener;
 
-void pks_eventListener_sendSignal(PikaEventListener* self,
-                                  uint32_t eventId,
-                                  int eventSignal);
-
 void pks_eventListener_registEvent(PikaEventListener* self,
                                    uint32_t eventId,
                                    PikaObj* eventHandleObj);
 
 void pks_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
+
+void pks_eventListener_sendSignal(PikaEventListener* self,
+                                  uint32_t eventId,
+                                  int eventSignal);
+
+void pks_eventListener_send(PikaEventListener* self,
+                            uint32_t eventId,
+                            Arg* eventData);
 
 PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
                                              uint32_t eventId);
