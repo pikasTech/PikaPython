@@ -1,6 +1,5 @@
 #include "PikaStdDevice_DAC.h"
-#include "BaseObj.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 static pika_dev* _get_dev(PikaObj* self) {
     pika_dev* dev = obj_getPtr(self, "pika_dev");

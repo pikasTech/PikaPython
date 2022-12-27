@@ -125,7 +125,7 @@ void pika_lvgl_bar___init__(PikaObj* self, PikaObj* parent) {
 
 void pika_lvgl_bar_set_value(PikaObj* self, int value, int anim) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
-    lv_bar_set_value(lv_obj, value, value);
+    lv_bar_set_value(lv_obj, value, anim);
 }
 
 int pika_lvgl_bar_get_max_value(PikaObj* self) {

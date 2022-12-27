@@ -68,6 +68,21 @@ class GPIO(BaseDev):
     def read(self) -> int:
         """Read the pin value."""
 
+    SIGNAL_RISING: int
+    SIGNAL_FALLING: int
+    SIGNAL_ANY: int
+
+    def setCallBack(self, eventCallBack: any, filter: int):
+        """
+        Add a callback function to the pin.
+        Example: 
+        ``` python
+        def cb1(signal):
+            print("cb1", signal)
+        io.setCallBack(cb1, io.SIGNAL_RISING)
+        ```
+        """
+
     @abstractmethod
     def platformHigh(self): ...
 
@@ -175,10 +190,11 @@ class DAC(BaseDev):
     def disable(self):
         """Disable the DAC."""
 
-    def write(self, val:float):
+    def write(self, val: float):
         """write the DAC value."""
 
-class UART(BaseDev):
+
+class UART:
     def __init__(self): ...
 
     def setBaudRate(self, baudRate: int):
@@ -186,6 +202,14 @@ class UART(BaseDev):
 
     def setId(self, id: int):
         """Set the id of the UART."""
+    
+    FLOW_CONTROL_NONE: int
+    FLOW_CONTROL_RTS: int
+    FLOW_CONTROL_CTS: int
+    FLOW_CONTROL_RTS_CTS: int
+    
+    def setFlowControl(self, flowControl: int):
+        """Set the flow control of the UART."""
 
     def enable(self):
         """Enable the UART."""
@@ -204,6 +228,21 @@ class UART(BaseDev):
 
     def readBytes(self, length: int) -> bytes:
         """Read bytes from the UART."""
+
+
+    SIGNAL_RX: int
+    SIGNAL_TX: int
+
+    def setCallBack(self, eventCallBack: any, filter: int):
+        """
+        Add a callback function to the pin.
+        Example: 
+        ``` python
+        def cb1(signal):
+            print(uart.read(-1))
+        io.setCallBack(cb1, uart.SIGNAL_RX)
+        ```
+        """
 
     @abstractmethod
     def platformEnable(self): ...
@@ -436,7 +475,7 @@ class CAN(BaseDev):
     def readBytes(self, length: int) -> bytes:
         """Read bytes from the CAN."""
 
-    def addFilter(self, id: int, ide: int, rtr: int, mode: int, mask: int, hdr: int): 
+    def addFilter(self, id: int, ide: int, rtr: int, mode: int, mask: int, hdr: int):
         """Add a filter."""
 
     @abstractmethod
@@ -460,7 +499,7 @@ class CAN(BaseDev):
 
 class BaseDev:
     @PIKA_C_MACRO_IF("PIKA_EVENT_ENABLE")
-    def addEventCallBack(self, eventCallback: any): 
+    def addEventCallBack(self, eventCallback: any):
         """ Add an event callback. """
 
     @abstractmethod

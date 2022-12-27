@@ -88,8 +88,8 @@ void pika_lvgl_TEXT_DECOR___init__(PikaObj* self) {
 }
 
 void pika_lvgl_ANIM___init__(PikaObj* self) {
-    obj_setInt(self, "ON", LV_ANIM_OFF);
-    obj_setInt(self, "OFF", LV_ANIM_ON);
+    obj_setInt(self, "ON", LV_ANIM_ON);
+    obj_setInt(self, "OFF", LV_ANIM_OFF);
 }
 
 void pika_lvgl_ALIGN___init__(PikaObj* self) {

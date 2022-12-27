@@ -1,6 +1,5 @@
 #include "PikaStdDevice_PWM.h"
-#include "BaseObj.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 void PikaStdDevice_PWM_init(PikaObj* self) {
     obj_setStr(self, "pin", "none");

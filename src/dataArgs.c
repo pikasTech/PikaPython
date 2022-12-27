@@ -411,7 +411,7 @@ Arg* args_getArg(Args* self, char* name) {
     return (Arg*)node;
 }
 
-Arg* args_getArgByidex(Args* self, int index) {
+Arg* args_getArgByIndex(Args* self, int index) {
     pika_assert(NULL != self);
     LinkNode* nodeNow = self->firstNode;
     if (NULL == nodeNow) {

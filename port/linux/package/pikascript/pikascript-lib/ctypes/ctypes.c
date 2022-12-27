@@ -98,7 +98,6 @@ void ctypes_c_buffer___init__(PikaObj *self, Arg* value, int size){
                           strGetSize((char*)value_buffer) + 1);
     } else {
         __platform_printf("value type is not support!");
-        while (1)
-            ;
+        __platform_panic_handle();
     }
 }

@@ -1,8 +1,5 @@
 #include "PikaStdDevice_BaseDev.h"
-#include "BaseObj.h"
-#include "PikaObj.h"
-#include "dataStrs.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 10, 4)
 #error "This library requires PikaScript version 1.10.4 or higher"
@@ -15,7 +12,7 @@ void PikaStdDevice_BaseDev_addEventCallBack(PikaObj* self, Arg* eventCallBack) {
     obj_setArg(self, "eventCallBack", eventCallBack);
     /* init event_listener for the first time */
     if (NULL == g_pika_device_event_listener) {
-        pks_eventLisener_init(&g_pika_device_event_listener);
+        pks_eventListener_init(&g_pika_device_event_listener);
     }
     if (PIKA_RES_OK != obj_runNativeMethod(self, "platformGetEventId", NULL)) {
         obj_setErrorCode(self, 1);
@@ -23,7 +20,7 @@ void PikaStdDevice_BaseDev_addEventCallBack(PikaObj* self, Arg* eventCallBack) {
                           "platformGetEventId");
     }
     uint32_t eventId = obj_getInt(self, "eventId");
-    pks_eventLicener_registEvent(g_pika_device_event_listener, eventId, self);
+    pks_eventListener_registEvent(g_pika_device_event_listener, eventId, self);
 #else
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] PIKA_EVENT_ENABLE is disabled.");

@@ -110,7 +110,7 @@ PIKA_WEAK int __platform_setsockopt(int __fd,
 }
 
 PIKA_WEAK int __platform_fcntl(int fd, int cmd, long arg) {
-#ifdef __linux__
+#if defined(__linux__) || PIKA_LWIP_ENABLE
     return fcntl(fd, cmd, arg);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
@@ -119,7 +119,7 @@ PIKA_WEAK int __platform_fcntl(int fd, int cmd, long arg) {
 
 /* os file API */
 PIKA_WEAK int __platform_close(int __fd) {
-#ifdef __linux__
+#if defined(__linux__) || PIKA_LWIP_ENABLE
     return close(__fd);
 #elif PIKA_FREERTOS_ENABLE
     return closesocket(__fd);
