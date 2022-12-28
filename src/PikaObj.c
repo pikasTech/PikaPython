@@ -1604,7 +1604,6 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
         return NULL;
     }
     obj_setArg(handler, "eventData", eventData);
-    PikaObj* event_data_obj = NULL;
     /* clang-format off */
     PIKA_PYTHON(
     _res = eventCallBack(eventData)
@@ -1632,9 +1631,10 @@ Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
     return __eventListener_runEvent(lisener, eventId, arg_newInt(eventSignal));
 }
 
-void pks_eventListener_send(PikaEventListener* self,
-                            uint32_t eventId,
-                            Arg* eventData) {
+void _do_pks_eventListener_send(PikaEventListener* self,
+                                uint32_t eventId,
+                                Arg* eventData,
+                                PIKA_BOOL pickupWhenNoVM) {
 #if !PIKA_EVENT_ENABLE
     __platform_printf("PIKA_EVENT_ENABLE is not enable");
     while (1) {
@@ -1643,11 +1643,19 @@ void pks_eventListener_send(PikaEventListener* self,
     /* push event handler to vm event list */
     if (PIKA_RES_OK != __eventListener_pushEvent(self, eventId, eventData)) {
     }
-    if (0 == _VMEvent_getVMCnt()) {
-        /* no vm running, pick up event imediately */
-        _VMEvent_pickupEvent();
+    if (pickupWhenNoVM) {
+        if (0 == _VMEvent_getVMCnt()) {
+            /* no vm running, pick up event imediately */
+            _VMEvent_pickupEvent();
+        }
     }
 #endif
+}
+
+void pks_eventListener_send(PikaEventListener* self,
+                            uint32_t eventId,
+                            Arg* eventData) {
+    return _do_pks_eventListener_send(self, eventId, eventData, PIKA_TRUE);
 }
 
 void pks_eventListener_sendSignal(PikaEventListener* self,

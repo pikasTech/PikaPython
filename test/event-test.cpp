@@ -41,6 +41,13 @@ TEST(event, gpio) {
     EXPECT_EQ(arg_getInt(res_123), 123);
     EXPECT_EQ(arg_getInt(res_456), 456);
 
+    /* simulate task queue overflow */
+    for (int i = 0; i < PIKA_EVENT_LIST_SIZE * 2; i++) {
+        _do_pks_eventListener_send(
+            g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
+            arg_newInt(EVENT_SIGAL_IO_FALLING_EDGE), PIKA_FALSE);
+    }
+
     obj_run(pikaMain, "io1.close()");
 
     /* deinit */

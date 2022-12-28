@@ -89,6 +89,7 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
 #else
     /* push to event_cq_buff */
     if (_cq_isFull(&PikaVMSignal.cq)) {
+        arg_deinit(eventData);
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
     }
     if (arg_getType(eventData) == ARG_TYPE_OBJECT_NEW) {
