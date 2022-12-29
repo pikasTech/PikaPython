@@ -4,7 +4,11 @@
     you need to override them in your platform.
 */
 
-PIKA_WEAK int __platform_socket(int __domain, int __type, int __protocol) {
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 0)
+#error "Error: PikaScript version must be greater than 1.12.0"
+#endif
+
+PIKA_WEAK int pika_platform_socket(int __domain, int __type, int __protocol) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return socket(__domain, __type, __protocol);
 #else
@@ -12,9 +16,9 @@ PIKA_WEAK int __platform_socket(int __domain, int __type, int __protocol) {
 #endif
 }
 
-PIKA_WEAK int __platform_bind(int __fd,
-                              const struct sockaddr* __addr,
-                              socklen_t __addr_len) {
+PIKA_WEAK int pika_platform_bind(int __fd,
+                                 const struct sockaddr* __addr,
+                                 socklen_t __addr_len) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return bind(__fd, __addr, __addr_len);
 #else
@@ -22,7 +26,7 @@ PIKA_WEAK int __platform_bind(int __fd,
 #endif
 }
 
-PIKA_WEAK int __platform_listen(int __fd, int __n) {
+PIKA_WEAK int pika_platform_listen(int __fd, int __n) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return listen(__fd, __n);
 #else
@@ -30,9 +34,9 @@ PIKA_WEAK int __platform_listen(int __fd, int __n) {
 #endif
 }
 
-PIKA_WEAK int __platform_accept(int __fd,
-                                struct sockaddr* __addr,
-                                socklen_t* __addr_len) {
+PIKA_WEAK int pika_platform_accept(int __fd,
+                                   struct sockaddr* __addr,
+                                   socklen_t* __addr_len) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return accept(__fd, __addr, __addr_len);
 #else
@@ -40,9 +44,9 @@ PIKA_WEAK int __platform_accept(int __fd,
 #endif
 }
 
-PIKA_WEAK int __platform_connect(int __fd,
-                                 const struct sockaddr* __addr,
-                                 socklen_t __addr_len) {
+PIKA_WEAK int pika_platform_connect(int __fd,
+                                    const struct sockaddr* __addr,
+                                    socklen_t __addr_len) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return connect(__fd, __addr, __addr_len);
 #else
@@ -50,10 +54,10 @@ PIKA_WEAK int __platform_connect(int __fd,
 #endif
 }
 
-PIKA_WEAK int __platform_send(int __fd,
-                              const void* __buf,
-                              size_t __n,
-                              int __flags) {
+PIKA_WEAK int pika_platform_send(int __fd,
+                                 const void* __buf,
+                                 size_t __n,
+                                 int __flags) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return send(__fd, __buf, __n, __flags);
 #else
@@ -61,7 +65,10 @@ PIKA_WEAK int __platform_send(int __fd,
 #endif
 }
 
-PIKA_WEAK int __platform_recv(int __fd, void* __buf, size_t __n, int __flags) {
+PIKA_WEAK int pika_platform_recv(int __fd,
+                                 void* __buf,
+                                 size_t __n,
+                                 int __flags) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return recv(__fd, __buf, __n, __flags);
 #else
@@ -70,7 +77,7 @@ PIKA_WEAK int __platform_recv(int __fd, void* __buf, size_t __n, int __flags) {
 }
 
 /* gethostname */
-PIKA_WEAK int __platform_gethostname(char* __name, size_t __len) {
+PIKA_WEAK int pika_platform_gethostname(char* __name, size_t __len) {
 #if defined(__linux__)
     return gethostname(__name, __len);
 #else
@@ -78,10 +85,10 @@ PIKA_WEAK int __platform_gethostname(char* __name, size_t __len) {
 #endif
 }
 
-PIKA_WEAK int __platform_getaddrinfo(const char* __name,
-                                     const char* __service,
-                                     const struct addrinfo* __req,
-                                     struct addrinfo** __pai) {
+PIKA_WEAK int pika_platform_getaddrinfo(const char* __name,
+                                        const char* __service,
+                                        const struct addrinfo* __req,
+                                        struct addrinfo** __pai) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return getaddrinfo(__name, __service, __req, __pai);
 #else
@@ -89,7 +96,7 @@ PIKA_WEAK int __platform_getaddrinfo(const char* __name,
 #endif
 }
 
-PIKA_WEAK void __platform_freeaddrinfo(struct addrinfo* __ai) {
+PIKA_WEAK void pika_platform_freeaddrinfo(struct addrinfo* __ai) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     freeaddrinfo(__ai);
 #else
@@ -97,11 +104,11 @@ PIKA_WEAK void __platform_freeaddrinfo(struct addrinfo* __ai) {
 #endif
 }
 
-PIKA_WEAK int __platform_setsockopt(int __fd,
-                                    int __level,
-                                    int __optname,
-                                    const void* __optval,
-                                    socklen_t __optlen) {
+PIKA_WEAK int pika_platform_setsockopt(int __fd,
+                                       int __level,
+                                       int __optname,
+                                       const void* __optval,
+                                       socklen_t __optlen) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return setsockopt(__fd, __level, __optname, __optval, __optlen);
 #else
@@ -109,7 +116,7 @@ PIKA_WEAK int __platform_setsockopt(int __fd,
 #endif
 }
 
-PIKA_WEAK int __platform_fcntl(int fd, int cmd, long arg) {
+PIKA_WEAK int pika_platform_fcntl(int fd, int cmd, long arg) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return fcntl(fd, cmd, arg);
 #else
@@ -118,7 +125,7 @@ PIKA_WEAK int __platform_fcntl(int fd, int cmd, long arg) {
 }
 
 /* os file API */
-PIKA_WEAK int __platform_close(int __fd) {
+PIKA_WEAK int pika_platform_close(int __fd) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return close(__fd);
 #elif PIKA_FREERTOS_ENABLE
@@ -128,7 +135,7 @@ PIKA_WEAK int __platform_close(int __fd) {
 #endif
 }
 
-PIKA_WEAK int __platform_write(int __fd, const void* __buf, size_t __nbyte) {
+PIKA_WEAK int pika_platform_write(int __fd, const void* __buf, size_t __nbyte) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return write(__fd, __buf, __nbyte);
 #else

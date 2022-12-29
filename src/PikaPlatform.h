@@ -150,7 +150,6 @@ void* pika_platform_memcpy(void* dir, const void* src, size_t size);
 int pika_platform_memcmp(const void* s1, const void* s2, size_t n);
 void* pika_platform_memmove(void* s1, void* s2, size_t n);
 
-
 /* pika memory pool config */
 void pika_platform_wait(void);
 
