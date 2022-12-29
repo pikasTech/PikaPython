@@ -213,12 +213,9 @@ typedef struct pika_platform_thread {
     TaskHandle_t thread;
 } pika_platform_thread_t;
 #else
-/*
-    You need to create the pika_platform_thread.h for your platform.
-    For example:
-    You can #include <rtthread.h> in the pika_platform_thread.h
-*/
-#include "pika_platform_thread.h"
+typedef struct pika_platform_thread {
+    void* platform_data;
+} pika_platform_thread_t;
 #endif
 
 pika_platform_thread_t* pika_platform_thread_init(const char* name,
@@ -244,12 +241,9 @@ typedef struct pika_platform_thread_mutex {
     SemaphoreHandle_t mutex;
 } pika_platform_thread_mutex_t;
 #else
-/*
-    You need to create the pika_platform_thread.h for your platform.
-    For example:
-    You can #include <rtthread.h> in the pika_platform_thread.h
-*/
-#include "pika_platform_thread.h"
+typedef struct pika_platform_thread_mutex {
+    void* platform_data;
+} pika_platform_thread_mutex_t;
 #endif
 
 int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m);
@@ -270,10 +264,9 @@ typedef struct pika_platform_timer {
     uint32_t time;
 } pika_platform_timer_t;
 #else
-/*
-    You need to create the pika_platform_timer.h for your platform.
-*/
-#include "pika_platform_time.h"
+typedef struct pika_platform_timer {
+    void* platform_data;
+} pika_platform_timer_t;
 #endif
 
 void pika_platform_timer_init(pika_platform_timer_t* timer);
