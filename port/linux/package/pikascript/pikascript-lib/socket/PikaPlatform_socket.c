@@ -4,10 +4,6 @@
     you need to override them in your platform.
 */
 
-#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 0)
-#error "Error: PikaScript version must be greater than 1.12.0"
-#endif
-
 PIKA_WEAK int pika_platform_socket(int __domain, int __type, int __protocol) {
 #if defined(__linux__) || PIKA_LWIP_ENABLE
     return socket(__domain, __type, __protocol);

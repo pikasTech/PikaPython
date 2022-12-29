@@ -20,7 +20,6 @@
 #include "mqtt_log.h"
 #include "network.h"
 #include "platform_memory.h"
-#include "platform_mutex.h"
 #include "platform_timer.h"
 #include "random.h"
 
@@ -116,8 +115,8 @@ typedef struct mqtt_client {
     size_t mqtt_password_len;
     mqtt_will_options_t* mqtt_will_options;
     client_state_t mqtt_client_state;
-    platform_mutex_t mqtt_write_lock;
-    platform_mutex_t mqtt_global_lock;
+    pika_platform_mutex_t mqtt_write_lock;
+    pika_platform_mutex_t mqtt_global_lock;
     mqtt_list_t mqtt_msg_handler_list;
     mqtt_list_t mqtt_ack_handler_list;
     network_t* mqtt_network;

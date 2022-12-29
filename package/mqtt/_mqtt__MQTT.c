@@ -3,6 +3,11 @@
 #include "PikaStdData_List.h"
 #include "TinyObj.h"
 #include "mqttclient.h"
+
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 0)
+#error "This library requires PikaScript version 1.12.0 or higher"
+#endif
+
 PikaEventListener* g_mqtt_event_listener = NULL;
 
 void Subscribe_Handler(void* client, message_data_t* msg);
