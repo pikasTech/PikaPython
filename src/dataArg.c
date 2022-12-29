@@ -36,7 +36,7 @@ static PIKA_BOOL _arg_cache_push(Arg* self, uint32_t size) {
 #if !PIKA_ARG_CACHE_ENABLE
     return PIKA_FALSE;
 #else
-    if (PIKA_FALSE == __pks_hook_arg_cache_filter(self)) {
+    if (PIKA_FALSE == pika_hook_arg_cache_filter(self)) {
         return PIKA_FALSE;
     }
     extern PikaMemInfo pikaMemInfo;
@@ -139,9 +139,9 @@ static Arg* _arg_set_hash(Arg* self,
     self->name_hash = nameHash;
     self->type = type;
     if (NULL != content) {
-        __platform_memcpy(arg_getContent(self), content, size);
+        pika_platform_memcpy(arg_getContent(self), content, size);
     } else {
-        __platform_memset(arg_getContent(self), 0,
+        pika_platform_memset(arg_getContent(self), 0,
                           aline_by(size, sizeof(uint32_t)));
     }
     pika_assert(self->flag < ARG_FLAG_MAX);
@@ -200,7 +200,7 @@ Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size) {
 
     /* only copy */
     if (arg_getSize(self) >= size) {
-        __platform_memcpy(arg_getContent((Arg*)self), content, size);
+        pika_platform_memcpy(arg_getContent((Arg*)self), content, size);
         return self;
     }
 
@@ -237,13 +237,13 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
     arg_setType(self, ARG_TYPE_BYTES);
     void* dir = arg_getContent(self);
     /* set content all to 0 */
-    __platform_memset(dir, 0, size + sizeof(size_t) + 1);
+    pika_platform_memset(dir, 0, size + sizeof(size_t) + 1);
     /* setsize */
-    __platform_memcpy(dir, &size, sizeof(size_t));
+    pika_platform_memcpy(dir, &size, sizeof(size_t));
 
     /* set init value */
     if (NULL != src) {
-        __platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
+        pika_platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
     }
     pika_assert(self->flag < ARG_FLAG_MAX);
     return self;
@@ -276,39 +276,39 @@ char* __printBytes(PikaObj* self, Arg* arg) {
 
 void arg_printBytes(Arg* self, char* end) {
     PikaObj* obj = New_PikaObj();
-    __platform_printf("%s%s", __printBytes(obj, self), end);
+    pika_platform_printf("%s%s", __printBytes(obj, self), end);
     obj_deinit(obj);
 }
 
 void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end) {
     ArgType type = arg_getType(self);
     if (ARG_TYPE_NONE == type) {
-        __platform_printf("None%s", end);
+        pika_platform_printf("None%s", end);
         return;
     }
     if (argType_isObject(type)) {
         char* res = obj_toStr(arg_getPtr(self));
-        __platform_printf("%s%s", res, end);
+        pika_platform_printf("%s%s", res, end);
         return;
     }
     if (type == ARG_TYPE_INT) {
 #if PIKA_PRINT_LLD_ENABLE
-        __platform_printf("%lld%s", (long long int)arg_getInt(self), end);
+        pika_platform_printf("%lld%s", (long long int)arg_getInt(self), end);
 #else
-        __platform_printf("%d%s", (int)arg_getInt(self), end);
+        pika_platform_printf("%d%s", (int)arg_getInt(self), end);
 #endif
         return;
     }
     if (type == ARG_TYPE_FLOAT) {
-        __platform_printf("%f%s", arg_getFloat(self), end);
+        pika_platform_printf("%f%s", arg_getFloat(self), end);
         return;
     }
     if (type == ARG_TYPE_STRING) {
         if (in_REPL) {
-            __platform_printf("'%s'%s", arg_getStr(self), end);
+            pika_platform_printf("'%s'%s", arg_getStr(self), end);
             return;
         }
-        __platform_printf("%s%s", arg_getStr(self), end);
+        pika_platform_printf("%s%s", arg_getStr(self), end);
         return;
     }
     if (type == ARG_TYPE_BYTES) {
@@ -316,7 +316,7 @@ void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end) {
         return;
     }
     if (ARG_TYPE_POINTER == type || ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
-        __platform_printf("%p%s", arg_getPtr(self), end);
+        pika_platform_printf("%p%s", arg_getPtr(self), end);
         return;
     }
     return;
@@ -328,7 +328,7 @@ size_t arg_getBytesSize(Arg* self) {
     if (NULL == content) {
         return 0;
     }
-    __platform_memcpy(&mem_size, content, sizeof(size_t));
+    pika_platform_memcpy(&mem_size, content, sizeof(size_t));
     return mem_size;
 }
 
@@ -362,7 +362,7 @@ Arg* arg_setHeapStruct(Arg* self,
 
 void* arg_getHeapStructDeinitFun(Arg* self) {
     void* deinit_fun = NULL;
-    __platform_memcpy(&deinit_fun, arg_getContent(self), sizeof(void*));
+    pika_platform_memcpy(&deinit_fun, arg_getContent(self), sizeof(void*));
     return deinit_fun;
 }
 
@@ -493,10 +493,10 @@ Arg* arg_append(Arg* self, void* new_content, size_t new_size) {
     arg_setNameHash(new_arg, arg_getNameHash(self));
     if (self != new_arg) {
         /* copy old content */
-        __platform_memcpy(arg_getContent(new_arg), old_content, old_size);
+        pika_platform_memcpy(arg_getContent(new_arg), old_content, old_size);
     }
     /* copy new content */
-    __platform_memcpy(arg_getContent(new_arg) + old_size, new_content,
+    pika_platform_memcpy(arg_getContent(new_arg) + old_size, new_content,
                       new_size);
     if (self != new_arg) {
         arg_deinit(self);
@@ -536,29 +536,29 @@ void arg_deinitHeap(Arg* self) {
 /* load file as byte array */
 Arg* arg_loadFile(Arg* self, char* filename) {
     size_t file_size = 0;
-    char* file_buff = __platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
+    char* file_buff = pika_platform_malloc(PIKA_READ_FILE_BUFF_SIZE);
     Arg* res = New_arg(NULL);
-    __platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
-    FILE* input_file = __platform_fopen(filename, "rb");
+    pika_platform_memset(file_buff, 0, PIKA_READ_FILE_BUFF_SIZE);
+    FILE* input_file = pika_platform_fopen(filename, "rb");
     if (NULL == input_file) {
-        __platform_printf("Error: Couldn't open file '%s'\n", filename);
+        pika_platform_printf("Error: Couldn't open file '%s'\n", filename);
         res = NULL;
         goto exit;
     }
     file_size =
-        __platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_file);
+        pika_platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_file);
 
     if (file_size >= PIKA_READ_FILE_BUFF_SIZE) {
-        __platform_printf("Error: Not enough buff for input file.\r\n");
+        pika_platform_printf("Error: Not enough buff for input file.\r\n");
         return NULL;
     }
     /* add '\0' to the end of the string */
     res = arg_setBytes(res, "", (uint8_t*)file_buff, file_size + 1);
 
 exit:
-    __platform_free(file_buff);
+    pika_platform_free(file_buff);
     if (NULL != input_file) {
-        __platform_fclose(input_file);
+        pika_platform_fclose(input_file);
     }
     return res;
 }
@@ -591,7 +591,7 @@ PIKA_BOOL arg_isEqual(Arg* self, Arg* other) {
             return PIKA_TRUE;
         }
     }
-    if (0 != __platform_memcmp(arg_getContent(self), arg_getContent(other),
+    if (0 != pika_platform_memcmp(arg_getContent(self), arg_getContent(other),
                                arg_getContentSize(self))) {
         return PIKA_FALSE;
     }

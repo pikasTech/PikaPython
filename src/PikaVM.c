@@ -64,8 +64,8 @@ static PIKA_BOOL _cq_isFull(volatile EventCQ* cq) {
 
 void _VMEvent_deinit(void) {
 #if !PIKA_EVENT_ENABLE
-    __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    __platform_panic_handle();
+    pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
+    pika_platform_panic_handle();
 #else
     for (int i = 0; i < PIKA_EVENT_LIST_SIZE; i++) {
         if (NULL != PikaVMSignal.cq.res[i]) {
@@ -84,8 +84,8 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
                                    uint32_t eventId,
                                    Arg* eventData) {
 #if !PIKA_EVENT_ENABLE
-    __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    __platform_panic_handle();
+    pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
+    pika_platform_panic_handle();
 #else
     /* push to event_cq_buff */
     if (_cq_isFull(&PikaVMSignal.cq)) {
@@ -116,8 +116,8 @@ PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
                                   Arg** data,
                                   int* head) {
 #if !PIKA_EVENT_ENABLE
-    __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    __platform_panic_handle();
+    pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
+    pika_platform_panic_handle();
 #else
     /* pop from event_cq_buff */
     if (_cq_isEmpty(&PikaVMSignal.cq)) {
@@ -134,8 +134,8 @@ PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
 
 void _VMEvent_pickupEvent(void) {
 #if !PIKA_EVENT_ENABLE
-    __platform_printf("PIKA_EVENT_ENABLE is not enable");
-    __platform_panic_handle();
+    pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
+    pika_platform_panic_handle();
 #else
     PikaObj* event_lisener;
     uint32_t event_id;
@@ -500,9 +500,9 @@ Arg* _vm_slice(VMState* vm,
             uint8_t* bytes_origin = arg_getBytes(sliced_arg);
             size_t size_origin = arg_getBytesSize(sliced_arg);
             Arg* sliced_arg_new = arg_newBytes(NULL, size_origin + 1);
-            __platform_memcpy(arg_getBytes(sliced_arg_new), bytes_origin,
+            pika_platform_memcpy(arg_getBytes(sliced_arg_new), bytes_origin,
                               size_origin);
-            __platform_memcpy(arg_getBytes(sliced_arg_new) + size_origin,
+            pika_platform_memcpy(arg_getBytes(sliced_arg_new) + size_origin,
                               arg_getBytes(item_arg), 1);
             arg_deinit(sliced_arg);
             sliced_arg = sliced_arg_new;
@@ -754,7 +754,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
 exit:
     if (NULL == res) {
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        __platform_printf("NameError: name '%s' is not defined\r\n", arg_path);
+        pika_platform_printf("NameError: name '%s' is not defined\r\n", arg_path);
     } else {
         res = arg_copy_noalloc(res, arg_ret_reg);
     }
@@ -1149,10 +1149,10 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     /* get method type list */
     f.type_list = methodArg_getTypeList(method_arg, buffs1, sizeof(_buffs1));
     if (NULL == f.type_list) {
-        __platform_printf(
+        pika_platform_printf(
             "OverflowError: type list is too long, please use bigger "
             "PIKA_LINE_BUFF_SIZE\r\n");
-        __platform_panic_handle();
+        pika_platform_panic_handle();
     }
     f.method_type = arg_getType(method_arg);
 
@@ -1177,7 +1177,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         if (!vars_or_keys_or_default) {
             if (f.n_positional != f.n_input) {
                 VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
-                __platform_printf(
+                pika_platform_printf(
                     "TypeError: %s() takes %d positional argument but %d were "
                     "given\r\n",
                     method_name, f.n_positional, f.n_input);
@@ -1190,7 +1190,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             int8_t n_max = f.n_positional + f.n_default;
             if (f.n_input < n_min || f.n_input > n_max) {
                 VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
-                __platform_printf(
+                pika_platform_printf(
                     "TypeError: %s() takes from %d to %d positional arguments "
                     "but %d were given\r\n",
                     method_name, n_min, n_max, f.n_input);
@@ -1209,7 +1209,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     /* create tuple/dict for vars/keys */
     if (vars_or_keys_or_default) {
         if (strGetSize(f.type_list) > sizeof(_buffs2)) {
-            __platform_printf(
+            pika_platform_printf(
                 "OverFlowError: please use bigger PIKA_LINE_BUFF_SIZE\r\n");
             while (1) {
             }
@@ -1537,10 +1537,10 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         Arg* stack_tmp[PIKA_ARG_NUM_MAX] = {0};
         int n_arg = VMState_getInputArgNum(vm);
         if (n_arg > PIKA_ARG_NUM_MAX) {
-            __platform_printf(
+            pika_platform_printf(
                 "[ERROR] Too many args in RUN instruction, please use bigger "
                 "#define PIKA_ARG_NUM_MAX\n");
-            __platform_panic_handle();
+            pika_platform_panic_handle();
         }
         for (int i = 0; i < n_arg; i++) {
             stack_tmp[i] = stack_popArg_alloc(&(vm->stack));
@@ -1571,7 +1571,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (NULL == method_host) {
         /* error, not found object */
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        __platform_printf("Error: method '%s' no found.\r\n", run_path);
+        pika_platform_printf("Error: method '%s' no found.\r\n", run_path);
         goto exit;
     }
 
@@ -1607,7 +1607,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (NULL == method || ARG_TYPE_NONE == arg_getType(method)) {
         /* error, method no found */
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        __platform_printf("NameError: name '%s' is not defined\r\n", run_path);
+        pika_platform_printf("NameError: name '%s' is not defined\r\n", run_path);
         goto exit;
     }
 
@@ -1615,7 +1615,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (!argType_isCallable(arg_getType(method))) {
         /* error, method no found */
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        __platform_printf("TypeError: '%s' object is not callable\r\n",
+        pika_platform_printf("TypeError: '%s' object is not callable\r\n",
                           run_path);
         goto exit;
     }
@@ -1943,12 +1943,12 @@ static Arg* VM_instruction_handler_NUM(PikaObj* self,
     if (data[1] == 'o' || data[1] == 'O') {
         char strtoll_buff[10] = {0};
         strtoll_buff[0] = '0';
-        __platform_memcpy(strtoll_buff + 1, data + 2, strGetSize(data) - 2);
+        pika_platform_memcpy(strtoll_buff + 1, data + 2, strGetSize(data) - 2);
         return arg_setInt(arg_ret_reg, "", strtoll(strtoll_buff, NULL, 0));
     }
     if (data[1] == 'b' || data[1] == 'B') {
         char strtoll_buff[10] = {0};
-        __platform_memcpy(strtoll_buff, data + 2, strGetSize(data) - 2);
+        pika_platform_memcpy(strtoll_buff, data + 2, strGetSize(data) - 2);
         return arg_setInt(arg_ret_reg, "", strtoll(strtoll_buff, NULL, 2));
     }
     /* float */
@@ -2086,7 +2086,7 @@ static void _OPT_ADD(OperatorInfo* op) {
     if (argType_isObject(op->t1)) {
         if (!argType_isObject(op->t2)) {
             VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-            __platform_printf("TypeError: unsupported operand +\n");
+            pika_platform_printf("TypeError: unsupported operand +\n");
             op->res = NULL;
             return;
         }
@@ -2094,7 +2094,7 @@ static void _OPT_ADD(OperatorInfo* op) {
         Arg* method_add = obj_getMethodArg(obj1, "__add__");
         if (NULL == method_add) {
             VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-            __platform_printf("TypeError: unsupported operand +\n");
+            pika_platform_printf("TypeError: unsupported operand +\n");
             op->res = NULL;
             return;
         }
@@ -2144,8 +2144,8 @@ static void _OPT_ADD(OperatorInfo* op) {
         size_t size2 = arg_getBytesSize(op->a2);
         op->res = arg_setBytes(op->res, "", NULL, size1 + size2);
         uint8_t* bytes_out = arg_getBytes(op->res);
-        __platform_memcpy(bytes_out, bytes1, size1);
-        __platform_memcpy(bytes_out + size1, bytes2, size2);
+        pika_platform_memcpy(bytes_out, bytes1, size1);
+        pika_platform_memcpy(bytes_out + size1, bytes2, size2);
         return;
     }
 #endif
@@ -2164,7 +2164,7 @@ static void _OPT_SUB(OperatorInfo* op) {
     if (argType_isObject(op->t1)) {
         if (!argType_isObject(op->t2)) {
             VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-            __platform_printf("TypeError: unsupported operand +\n");
+            pika_platform_printf("TypeError: unsupported operand +\n");
             op->res = NULL;
             return;
         }
@@ -2172,7 +2172,7 @@ static void _OPT_SUB(OperatorInfo* op) {
         Arg* method_sub = obj_getMethodArg(obj1, "__sub__");
         if (NULL == method_sub) {
             VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-            __platform_printf("TypeError: unsupported operand +\n");
+            pika_platform_printf("TypeError: unsupported operand +\n");
             op->res = NULL;
             return;
         }
@@ -2297,7 +2297,7 @@ static void _OPT_POW(OperatorInfo* op) {
         return;
 #else
         VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf(
+        pika_platform_printf(
             "Operation float ** float is not enabled, please set "
             "PIKA_MATH_ENABLE\n");
 #endif
@@ -2333,7 +2333,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                 goto exit;
             }
             VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-            __platform_printf(
+            pika_platform_printf(
                 "TypeError: unsupported operand type(s) for %%: 'float'\n");
             op.res = NULL;
             goto exit;
@@ -2368,7 +2368,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto exit;
                 }
                 VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                __platform_printf(
+                pika_platform_printf(
                     "TypeError: unsupported operand type(s) for &: 'float'\n");
                 op.res = NULL;
                 goto exit;
@@ -2378,7 +2378,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto exit;
                 }
                 VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                __platform_printf(
+                pika_platform_printf(
                     "TypeError: unsupported operand type(s) for |: 'float'\n");
                 op.res = NULL;
                 goto exit;
@@ -2388,7 +2388,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     goto exit;
                 }
                 VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-                __platform_printf(
+                pika_platform_printf(
                     "TypeError: unsupported operand type(s) for ~: 'float'\n");
                 op.res = NULL;
                 goto exit;
@@ -2463,7 +2463,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             goto exit;
         }
         VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf(
+        pika_platform_printf(
             "TypeError: unsupported operand type(s) for //: 'float'\n");
         op.res = NULL;
         goto exit;
@@ -2503,7 +2503,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             goto exit;
         }
         VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf(
+        pika_platform_printf(
             "TypeError: unsupported operand type(s) for >>: 'float'\n");
         op.res = NULL;
         goto exit;
@@ -2514,7 +2514,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             goto exit;
         }
         VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-        __platform_printf(
+        pika_platform_printf(
             "TypeError: unsupported operand type(s) for <<: 'float'\n");
         op.res = NULL;
         goto exit;
@@ -2646,10 +2646,10 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
         res = VM_instruction_handler_RIS(self, vm, data, arg_ret_reg);
         if (vm->run_state->try_state == TRY_STATE_NONE) {
             if (n_arg == 1) {
-                __platform_printf("AssertionError\n");
+                pika_platform_printf("AssertionError\n");
             }
             if (n_arg == 2) {
-                __platform_printf("AssertionError: %s\n", arg_getStr(arg2));
+                pika_platform_printf("AssertionError: %s\n", arg_getStr(arg2));
             }
         }
         goto exit;
@@ -2692,7 +2692,7 @@ static Arg* VM_instruction_handler_DEL(PikaObj* self,
         return NULL;
     }
     VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
-    __platform_printf("NameError: name '%s' is not defined\n", data);
+    pika_platform_printf("NameError: name '%s' is not defined\n", data);
     return NULL;
 }
 
@@ -2772,7 +2772,7 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
         return NULL;
     }
     VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-    __platform_printf("ModuleNotFoundError: No module named '%s'\r\n", data);
+    pika_platform_printf("ModuleNotFoundError: No module named '%s'\r\n", data);
     return NULL;
 }
 
@@ -2970,7 +2970,7 @@ static VMParameters* __pikaVM_runPyLines(PikaObj* self, char* py_lines) {
     /* generate byte code */
     byteCodeFrame_init(bytecode_frame_p);
     if (PIKA_RES_OK != Parser_linesToBytes(bytecode_frame_p, py_lines)) {
-        __platform_printf("Error: Syntax error.\r\n");
+        pika_platform_printf("Error: Syntax error.\r\n");
         globals = NULL;
         goto exit;
     }
@@ -3163,7 +3163,7 @@ void constPool_print(ConstPool* self) {
             goto exit;
         }
         uint16_t offset = self->content_offset_now;
-        __platform_printf("%d: %s\r\n", offset, constPool_getNow(self));
+        pika_platform_printf("%d: %s\r\n", offset, constPool_getNow(self));
     }
 exit:
     /* retore ptr_now */
@@ -3285,9 +3285,9 @@ static char* instructUnit_getInstructStr(InstructUnit* self) {
 
 void instructUnit_print(InstructUnit* self) {
     if (instructUnit_getIsNewLine(self)) {
-        __platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
+        pika_platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
     }
-    __platform_printf("%d %s #%d\r\n", instructUnit_getInvokeDeepth(self),
+    pika_platform_printf("%d %s #%d\r\n", instructUnit_getInvokeDeepth(self),
                       instructUnit_getInstructStr(self),
                       self->const_pool_index);
 }
@@ -3295,9 +3295,9 @@ void instructUnit_print(InstructUnit* self) {
 static void instructUnit_printWithConst(InstructUnit* self,
                                         ConstPool* const_pool) {
     // if (instructUnit_getIsNewLine(self)) {
-    //     __platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
+    //     pika_platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
     // }
-    __platform_printf("%s %s \t\t(#%d)\r\n", instructUnit_getInstructStr(self),
+    pika_platform_printf("%s %s \t\t(#%d)\r\n", instructUnit_getInstructStr(self),
                       constPool_getByOffset(const_pool, self->const_pool_index),
                       self->const_pool_index);
 }
@@ -3340,11 +3340,11 @@ void instructArray_printAsArray(InstructArray* self) {
     uint8_t line_num = 12;
     uint16_t g_i = 0;
     uint8_t* ins_size_p = (uint8_t*)&self->size;
-    __platform_printf("0x%02x, ", *(ins_size_p));
-    __platform_printf("0x%02x, ", *(ins_size_p + (uintptr_t)1));
-    __platform_printf("0x%02x, ", *(ins_size_p + (uintptr_t)2));
-    __platform_printf("0x%02x, ", *(ins_size_p + (uintptr_t)3));
-    __platform_printf("/* instruct array size */\n");
+    pika_platform_printf("0x%02x, ", *(ins_size_p));
+    pika_platform_printf("0x%02x, ", *(ins_size_p + (uintptr_t)1));
+    pika_platform_printf("0x%02x, ", *(ins_size_p + (uintptr_t)2));
+    pika_platform_printf("0x%02x, ", *(ins_size_p + (uintptr_t)3));
+    pika_platform_printf("/* instruct array size */\n");
     while (1) {
         InstructUnit* ins_unit = instructArray_getNow(self);
         if (NULL == ins_unit) {
@@ -3352,15 +3352,15 @@ void instructArray_printAsArray(InstructArray* self) {
         }
         for (int i = 0; i < (int)instructUnit_getSize(); i++) {
             g_i++;
-            __platform_printf("0x%02x, ", *((uint8_t*)ins_unit + (uintptr_t)i));
+            pika_platform_printf("0x%02x, ", *((uint8_t*)ins_unit + (uintptr_t)i));
             if (g_i % line_num == 0) {
-                __platform_printf("\n");
+                pika_platform_printf("\n");
             }
         }
         instructArray_getNext(self);
     }
 exit:
-    __platform_printf("/* instruct array */\n");
+    pika_platform_printf("/* instruct array */\n");
     self->content_offset_now = offset_befor;
     return;
 }
@@ -3372,8 +3372,8 @@ size_t byteCodeFrame_getSize(ByteCodeFrame* bf) {
 void byteCodeFrame_print(ByteCodeFrame* self) {
     constPool_print(&(self->const_pool));
     instructArray_printWithConst(&(self->instruct_array), &(self->const_pool));
-    __platform_printf("---------------\r\n");
-    __platform_printf("byte code size: %d\r\n",
+    pika_platform_printf("---------------\r\n");
+    pika_platform_printf("byte code size: %d\r\n",
                       self->const_pool.size + self->instruct_array.size);
 }
 
@@ -3442,7 +3442,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
         vm.ins_cnt++;
 #if PIKA_INSTRUCT_HOOK_ENABLE
         if (vm.ins_cnt % PIKA_INSTRUCT_HOOK_PERIOD == 0) {
-            __pks_hook_instruct();
+            pika_hook_instruct();
         }
 #endif
 #if PIKA_EVENT_ENABLE
@@ -3465,9 +3465,9 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             if (!vm.run_state->try_state) {
                 while (1) {
                     if (head_ins_unit != this_ins_unit) {
-                        __platform_printf("   ");
+                        pika_platform_printf("   ");
                     } else {
-                        __platform_printf(" -> ");
+                        pika_platform_printf(" -> ");
                     }
                     instructUnit_printWithConst(head_ins_unit,
                                                 &(bytecode_frame->const_pool));
@@ -3477,7 +3477,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
                     }
                 }
             }
-            __platform_error_handle();
+            pika_platform_error_handle();
             vm.error_code = 0;
         }
     }
@@ -3497,17 +3497,17 @@ VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
 
 void constPool_printAsArray(ConstPool* self) {
     uint8_t* const_size_str = (uint8_t*)&(self->size);
-    __platform_printf("0x%02x, ", *(const_size_str));
-    __platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)1));
-    __platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)2));
-    __platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)3));
-    __platform_printf("/* const pool size */\n");
+    pika_platform_printf("0x%02x, ", *(const_size_str));
+    pika_platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)1));
+    pika_platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)2));
+    pika_platform_printf("0x%02x, ", *(const_size_str + (uintptr_t)3));
+    pika_platform_printf("/* const pool size */\n");
     uint16_t ptr_befor = self->content_offset_now;
     uint8_t line_num = 12;
     uint16_t g_i = 0;
     /* set ptr_now to begin */
     self->content_offset_now = 0;
-    __platform_printf("0x00, ");
+    pika_platform_printf("0x00, ");
     while (1) {
         if (NULL == constPool_getNext(self)) {
             goto exit;
@@ -3516,27 +3516,27 @@ void constPool_printAsArray(ConstPool* self) {
         /* todo start */
         size_t len = strlen(data_each);
         for (uint32_t i = 0; i < len + 1; i++) {
-            __platform_printf("0x%02x, ", *(data_each + (uintptr_t)i));
+            pika_platform_printf("0x%02x, ", *(data_each + (uintptr_t)i));
             g_i++;
             if (g_i % line_num == 0) {
-                __platform_printf("\n");
+                pika_platform_printf("\n");
             }
         }
         /* todo end */
     }
 exit:
     /* retore ptr_now */
-    __platform_printf("/* const pool */\n");
+    pika_platform_printf("/* const pool */\n");
     self->content_offset_now = ptr_befor;
     return;
 }
 
 void byteCodeFrame_printAsArray(ByteCodeFrame* self) {
-    __platform_printf("const uint8_t bytes[] = {\n");
+    pika_platform_printf("const uint8_t bytes[] = {\n");
     instructArray_printAsArray(&(self->instruct_array));
     constPool_printAsArray(&(self->const_pool));
-    __platform_printf("};\n");
-    __platform_printf("pikaVM_runByteCode(self, (uint8_t*)bytes);\n");
+    pika_platform_printf("};\n");
+    pika_platform_printf("pikaVM_runByteCode(self, (uint8_t*)bytes);\n");
 }
 
 PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
@@ -3544,15 +3544,15 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
     char* module_name = strsCopy(&buffs, file_name);
     strPopLastToken(module_name, '.');
 
-    __platform_printf("(pikascript) pika compiler:\r\n");
+    pika_platform_printf("(pikascript) pika compiler:\r\n");
     PikaMaker* maker = New_PikaMaker();
     pikaMaker_compileModuleWithDepends(maker, module_name);
     pikaMaker_linkCompiledModules(maker, "pikaModules_cache.py.a");
     pikaMaker_deinit(maker);
-    __platform_printf("(pikascript) all succeed.\r\n\r\n");
+    pika_platform_printf("(pikascript) all succeed.\r\n\r\n");
 
     pikaMemMaxReset();
-    Obj_linkLibraryFile(self, "pikascript-api/pikaModules_cache.py.a");
+    obj_linkLibraryFile(self, "pikascript-api/pikaModules_cache.py.a");
     self = pikaVM_runSingleFile(self, file_name);
     strsDeinit(&buffs);
     return self;

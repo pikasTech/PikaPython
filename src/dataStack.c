@@ -97,22 +97,22 @@ void stack_pushPyload(Stack* stack,
     size_t stack_size_after_push =
         size + (stack->sp - arg_getContent(stack->stack_pyload));
     if (stack_size_after_push > stack->stack_totle_size) {
-        __platform_printf(
+        pika_platform_printf(
             "OverflowError: pika VM stack overflow, please use bigger "
             "PIKA_STACK_BUFF_SIZE\r\n");
-        __platform_printf("Info: stack size request: %d\r\n",
+        pika_platform_printf("Info: stack size request: %d\r\n",
                           (int)stack_size_after_push);
-        __platform_printf("Info: stack size now: %d\r\n",
+        pika_platform_printf("Info: stack size now: %d\r\n",
                           (int)stack->stack_totle_size);
         while (1) {
         }
     }
     Arg* top = (Arg*)stack->sp;
     if (is_sample_copy) {
-        __platform_memcpy(top, in, size);
+        pika_platform_memcpy(top, in, size);
     } else {
-        __platform_memcpy(top, in, sizeof(Arg));
-        __platform_memcpy(top->content, ((Arg*)in)->_.buffer,
+        pika_platform_memcpy(top, in, sizeof(Arg));
+        pika_platform_memcpy(top->content, ((Arg*)in)->_.buffer,
                           size - sizeof(Arg));
         /* transfer to serialized form */
         arg_setSerialized(top, PIKA_TRUE);

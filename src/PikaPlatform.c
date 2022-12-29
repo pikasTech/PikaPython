@@ -29,125 +29,125 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-PIKA_WEAK void __platform_disable_irq_handle(void) {
+PIKA_WEAK void pika_platform_disable_irq_handle(void) {
     /* disable irq to support thread */
 }
 
-PIKA_WEAK void __platform_enable_irq_handle(void) {
+PIKA_WEAK void pika_platform_enable_irq_handle(void) {
     /* disable irq to support thread */
 }
 
-PIKA_WEAK void* __platform_malloc(size_t size) {
+PIKA_WEAK void* pika_platform_malloc(size_t size) {
     return malloc(size);
 }
 
-PIKA_WEAK void* __platform_realloc(void* ptr, size_t size) {
+PIKA_WEAK void* pika_platform_realloc(void* ptr, size_t size) {
     return realloc(ptr, size);
 }
 
-PIKA_WEAK void* __platform_calloc(size_t num, size_t size) {
+PIKA_WEAK void* pika_platform_calloc(size_t num, size_t size) {
     return calloc(num, size);
 }
 
-PIKA_WEAK void __platform_free(void* ptr) {
+PIKA_WEAK void pika_platform_free(void* ptr) {
     free(ptr);
 }
 
-PIKA_WEAK void* __user_malloc(size_t size) {
-    return __platform_malloc(size);
+PIKA_WEAK void* pika_user_malloc(size_t size) {
+    return pika_platform_malloc(size);
 }
 
-PIKA_WEAK void __user_free(void* ptr, size_t size) {
-    __platform_free(ptr);
+PIKA_WEAK void pika_user_free(void* ptr, size_t size) {
+    pika_platform_free(ptr);
 }
 
-PIKA_WEAK void __platform_error_handle() {
+PIKA_WEAK void pika_platform_error_handle() {
     return;
 }
 
-PIKA_WEAK void __platform_panic_handle() {
+PIKA_WEAK void pika_platform_panic_handle() {
     while (1) {
     };
 }
 
-PIKA_WEAK uint8_t __is_locked_pikaMemory(void) {
+PIKA_WEAK uint8_t pika_is_locked_pikaMemory(void) {
     return 0;
 }
 
-PIKA_WEAK int64_t __platform_getTick(void) {
+PIKA_WEAK int64_t pika_platform_getTick(void) {
     return -1;
 }
 
-PIKA_WEAK int __platform_vsprintf(char* buff, char* fmt, va_list args) {
+PIKA_WEAK int pika_platform_vsprintf(char* buff, char* fmt, va_list args) {
     /* vsnprintf */
-    return __platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+    return pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
 }
 
-PIKA_WEAK int __platform_snprintf(char* buff,
+PIKA_WEAK int pika_platform_snprintf(char* buff,
                                   size_t size,
                                   const char* fmt,
                                   ...) {
     va_list args;
     va_start(args, fmt);
-    int ret = __platform_vsnprintf(buff, size, fmt, args);
+    int ret = pika_platform_vsnprintf(buff, size, fmt, args);
     va_end(args);
     return ret;
 }
 
-PIKA_WEAK int __platform_putchar(char ch) {
+PIKA_WEAK int pika_platform_putchar(char ch) {
     return putchar(ch);
 }
 
-PIKA_WEAK int __platform_vprintf(char* fmt, va_list args) {
+PIKA_WEAK int pika_platform_vprintf(char* fmt, va_list args) {
     /* vsprintf to vprintf */
     char buff[PIKA_SPRINTF_BUFF_SIZE];
-    __platform_vsprintf(buff, fmt, args);
+    pika_platform_vsprintf(buff, fmt, args);
     /* putchar */
     for (int i = 0; i < strlen(buff); i++) {
-        __platform_putchar(buff[i]);
+        pika_platform_putchar(buff[i]);
     }
     return 0;
 }
 
-#ifndef __platform_printf
-PIKA_WEAK void __platform_printf(char* fmt, ...) {
+#ifndef pika_platform_printf
+PIKA_WEAK void pika_platform_printf(char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    __platform_vprintf(fmt, args);
+    pika_platform_vprintf(fmt, args);
     va_end(args);
 }
 #endif
 
-PIKA_WEAK char* __platform_strdup(const char* src) {
-    char* dst = (char*)__platform_malloc(strlen(src) + 1);
+PIKA_WEAK char* pika_platform_strdup(const char* src) {
+    char* dst = (char*)pika_platform_malloc(strlen(src) + 1);
     if (dst) {
         strcpy(dst, src);
     }
     return dst;
 }
 
-PIKA_WEAK size_t __platform_tick_from_millisecond(size_t ms) {
+PIKA_WEAK size_t pika_platform_tick_from_millisecond(size_t ms) {
     return ms;
 }
 
-PIKA_WEAK int __platform_vsnprintf(char* buff,
+PIKA_WEAK int pika_platform_vsnprintf(char* buff,
                                    size_t size,
                                    const char* fmt,
                                    va_list args) {
     return vsnprintf(buff, size, fmt, args);
 }
 
-PIKA_WEAK int __platform_sprintf(char* buff, char* fmt, ...) {
+PIKA_WEAK int pika_platform_sprintf(char* buff, char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    int res = __platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+    int res = pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
     va_end(args);
     if (res >= PIKA_SPRINTF_BUFF_SIZE) {
-        __platform_printf(
+        pika_platform_printf(
             "OverflowError: sprintf buff size overflow, please use bigger "
             "PIKA_SPRINTF_BUFF_SIZE\r\n");
-        __platform_printf("Info: buff size request: %d\r\n", res);
-        __platform_printf("Info: buff size now: %d\r\n",
+        pika_platform_printf("Info: buff size request: %d\r\n", res);
+        pika_platform_printf("Info: buff size now: %d\r\n",
                           PIKA_SPRINTF_BUFF_SIZE);
         while (1)
             ;
@@ -155,129 +155,129 @@ PIKA_WEAK int __platform_sprintf(char* buff, char* fmt, ...) {
     return res;
 }
 
-PIKA_WEAK void __platform_wait(void) {
+PIKA_WEAK void pika_platform_wait(void) {
     while (1) {
     };
 }
 
-PIKA_WEAK void* __platform_memset(void* mem, int ch, size_t size) {
+PIKA_WEAK void* pika_platform_memset(void* mem, int ch, size_t size) {
     return memset(mem, ch, size);
 }
 
-PIKA_WEAK void* __platform_memcpy(void* dir, const void* src, size_t size) {
+PIKA_WEAK void* pika_platform_memcpy(void* dir, const void* src, size_t size) {
     return memcpy(dir, src, size);
 }
 
-PIKA_WEAK int __platform_memcmp(const void* s1, const void* s2, size_t n) {
+PIKA_WEAK int pika_platform_memcmp(const void* s1, const void* s2, size_t n) {
     return memcmp(s1, s2, n);
 }
 
-PIKA_WEAK void* __platform_memmove(void* s1, void* s2, size_t n) {
+PIKA_WEAK void* pika_platform_memmove(void* s1, void* s2, size_t n) {
     return memmove(s1, s2, n);
 }
 
-PIKA_WEAK char __platform_getchar(void) {
+PIKA_WEAK char pika_platform_getchar(void) {
 #if defined(__linux) || defined(_WIN32)
     return getchar();
 #else
-    __platform_printf("Error: __platform_getchar need implementation!\r\n");
+    pika_platform_printf("Error: pika_platform_getchar need implementation!\r\n");
     while (1) {
     }
 #endif
 }
 
 /* fopen */
-PIKA_WEAK FILE* __platform_fopen(const char* filename, const char* modes) {
+PIKA_WEAK FILE* pika_platform_fopen(const char* filename, const char* modes) {
 #if defined(__linux) || defined(_WIN32)
     return fopen(filename, modes);
 #else
-    __platform_printf("Error: __platform_fopen need implementation!\r\n");
+    pika_platform_printf("Error: pika_platform_fopen need implementation!\r\n");
     while (1) {
     }
 #endif
 }
 
 /* fclose */
-PIKA_WEAK int __platform_fclose(FILE* stream) {
+PIKA_WEAK int pika_platform_fclose(FILE* stream) {
 #if defined(__linux) || defined(_WIN32)
     return fclose(stream);
 #else
-    __platform_printf("Error: __platform_fclose need implementation!\r\n");
+    pika_platform_printf("Error: pika_platform_fclose need implementation!\r\n");
     while (1) {
     }
 #endif
 }
 
 /* fwrite */
-PIKA_WEAK size_t __platform_fwrite(const void* ptr,
+PIKA_WEAK size_t pika_platform_fwrite(const void* ptr,
                                    size_t size,
                                    size_t n,
                                    FILE* stream) {
 #if defined(__linux) || defined(_WIN32)
     return fwrite(ptr, size, n, stream);
 #else
-    __platform_printf("Error: __platform_fwrite need implementation!\r\n");
+    pika_platform_printf("Error: pika_platform_fwrite need implementation!\r\n");
     while (1) {
     }
 #endif
 }
 
 /* fread */
-PIKA_WEAK size_t __platform_fread(void* ptr,
+PIKA_WEAK size_t pika_platform_fread(void* ptr,
                                   size_t size,
                                   size_t n,
                                   FILE* stream) {
 #if defined(__linux) || defined(_WIN32)
     return fread(ptr, size, n, stream);
 #else
-    __platform_printf("Error: __platform_fread need implementation!\r\n");
+    pika_platform_printf("Error: pika_platform_fread need implementation!\r\n");
     while (1) {
     }
 #endif
 }
 
 /* fseek */
-PIKA_WEAK int __platform_fseek(FILE* stream, long offset, int whence) {
+PIKA_WEAK int pika_platform_fseek(FILE* stream, long offset, int whence) {
 #if defined(__linux) || defined(_WIN32)
     return fseek(stream, offset, whence);
 #else
-    __platform_printf("Error: __platform_fseek need implementation!\r\n");
+    pika_platform_printf("Error: pika_platform_fseek need implementation!\r\n");
     while (1) {
     }
 #endif
 }
 
 /* ftell */
-PIKA_WEAK long __platform_ftell(FILE* stream) {
+PIKA_WEAK long pika_platform_ftell(FILE* stream) {
 #if defined(__linux) || defined(_WIN32)
     return ftell(stream);
 #else
-    __platform_printf("Error: __platform_ftell need implementation!\r\n");
+    pika_platform_printf("Error: pika_platform_ftell need implementation!\r\n");
     while (1) {
     }
 #endif
 }
 
-PIKA_WEAK void __pks_hook_instruct(void) {
+PIKA_WEAK void pika_hook_instruct(void) {
     return;
 }
 
-PIKA_WEAK PIKA_BOOL __pks_hook_arg_cache_filter(void* self) {
+PIKA_WEAK PIKA_BOOL pika_hook_arg_cache_filter(void* self) {
     return PIKA_TRUE;
 }
 
-PIKA_WEAK void __platform_thread_delay(void) {
+PIKA_WEAK void pika_platform_thread_delay(void) {
     return;
 }
 
-PIKA_WEAK void __platform_sleep_ms(uint32_t ms) {
-    __platform_printf("Error: __platform_sleep_ms need implementation!\r\n");
+PIKA_WEAK void pika_platform_sleep_ms(uint32_t ms) {
+    pika_platform_printf("Error: pika_platform_sleep_ms need implementation!\r\n");
     while (1) {
     }
 }
 
-PIKA_WEAK void __platform_sleep_s(uint32_t s) {
-    __platform_printf("Error: __platform_sleep_s need implementation!\r\n");
+PIKA_WEAK void pika_platform_sleep_s(uint32_t s) {
+    pika_platform_printf("Error: pika_platform_sleep_s need implementation!\r\n");
     while (1) {
     }
 }
@@ -296,11 +296,11 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
     void* (*thread_entry)(void*);
 
     thread_entry = (void* (*)(void*))entry;
-    thread = __platform_malloc(sizeof(pika_platform_thread_t));
+    thread = pika_platform_malloc(sizeof(pika_platform_thread_t));
 
     res = pthread_create(&thread->thread, NULL, thread_entry, param);
     if (res != 0) {
-        __platform_free(thread);
+        pika_platform_free(thread);
     }
 
     thread->mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
@@ -311,14 +311,14 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
     BaseType_t err;
     pika_platform_thread_t* thread;
 
-    thread = __platform_malloc(sizeof(pika_platform_thread_t));
+    thread = pika_platform_malloc(sizeof(pika_platform_thread_t));
 
     (void)tick;
 
     err = xTaskCreate(entry, name, stack_size, param, priority, thread->thread);
 
     if (pdPASS != err) {
-        __platform_free(thread);
+        pika_platform_free(thread);
         return NULL;
     }
 
@@ -360,13 +360,13 @@ PIKA_WEAK void pika_platform_thread_destroy(pika_platform_thread_t* thread) {
 #ifdef __linux
     if (NULL != thread) {
         pthread_detach(thread->thread);
-        __platform_free(thread);
+        pika_platform_free(thread);
         thread = NULL;
     }
 #elif PIKA_FREERTOS_ENABLE
     if (NULL != thread)
         vTaskDelete(thread->thread);
-    __platform_memory_free(thread);
+    pika_platform_memory_free(thread);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif

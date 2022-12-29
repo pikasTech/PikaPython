@@ -51,7 +51,12 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "PikaObj.h"
 #include "pika_adapter_rtt.h"
+
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 0)
+#error "pika_vsnprintf.c requires at least PikaScript 1.12.0"
+#endif
 
 // 'ntoa' conversion buffer size, this must be big enough to hold one converted
 // numeric number including padded zeros (dynamically created on stack)
@@ -1256,13 +1261,10 @@ static int __vsnprintf(out_fct_type out,
  *
  * @return The number of characters actually written to buffer.
  */
-int pika_vsnprintf(char* buf, rt_size_t size, const char* fmt, va_list args) {
-    return __vsnprintf(out_buffer, buf, size, fmt, args);
-}
 
-int __platform_vsnprintf(char* buff,
-                         size_t size,
-                         const char* fmt,
-                         va_list args) {
-    return pika_vsnprintf(buff, size, fmt, args);
+int pika_platform_vsnprintf(char* buff,
+                            size_t size,
+                            const char* fmt,
+                            va_list args) {
+    return __vsnprintf(out_buffer, buff, size, fmt, args);
 }

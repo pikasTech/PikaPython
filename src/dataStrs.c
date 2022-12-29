@@ -122,7 +122,7 @@ char* strsFormat(Args* buffs_p, uint16_t buffSize, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     char* res = args_getBuff(buffs_p, buffSize);
-    __platform_vsnprintf(res, buffSize, fmt, args);
+    pika_platform_vsnprintf(res, buffSize, fmt, args);
     va_end(args);
     return res;
 }

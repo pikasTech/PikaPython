@@ -6,9 +6,8 @@
 char log_buff[LOG_BUFF_MAX][LOG_SIZE] = {0};
 uint32_t log_index = 0;
 
-#ifndef __platform_printf
 /* save printf content to log_buff */
-void __platform_printf(char* fmt, ...) {
+void pika_platform_printf(char* fmt, ...) {
     va_list args;
     for (int i = LOG_BUFF_MAX - 2; i >= 0; i--) {
         memcpy(log_buff[i + 1], log_buff[i], LOG_SIZE);
@@ -21,7 +20,6 @@ void __platform_printf(char* fmt, ...) {
         __platform_putchar(log_buff[0][i]);
     }
 }
-#endif
 
 /* quick_malloc is always open */
 uint8_t __is_quick_malloc(void) {

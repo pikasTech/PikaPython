@@ -8,18 +8,18 @@
 #define RT_TRUE 1  /**< boolean true  */
 #define RT_FALSE 0 /**< boolean fails */
 
-#define rt_malloc __platform_malloc
-#define rt_calloc __platform_calloc
-#define rt_realloc __platform_realloc
-#define rt_free __platform_free
-#define rt_memset __platform_memset
-#define rt_memcpy __platform_memcpy
-#define rt_memcmp __platform_memcmp
-#define rt_kprintf __platform_printf
-#define rt_snprintf __platform_snprintf
-#define rt_vsnprintf __platform_vsnprintf
-#define rt_strdup __platform_strdup
-#define rt_tick_from_millisecond __platform_tick_from_millisecond
+#define rt_malloc pika_platform_malloc
+#define rt_calloc pika_platform_calloc
+#define rt_realloc pika_platform_realloc
+#define rt_free pika_platform_free
+#define rt_memset pika_platform_memset
+#define rt_memcpy pika_platform_memcpy
+#define rt_memcmp pika_platform_memcmp
+#define rt_kprintf pika_platform_printf
+#define rt_snprintf pika_platform_snprintf
+#define rt_vsnprintf pika_platform_vsnprintf
+#define rt_strdup pika_platform_strdup
+#define rt_tick_from_millisecond pika_platform_tick_from_millisecond
 
 #define rt_int32_t int32_t
 #define rt_uint32_t uint32_t
@@ -45,7 +45,7 @@
 #define RT_EINTR 9    /**< Interrupted system call */
 #define RT_EINVAL 10  /**< Invalid argument */
 
-#define LOG_E(fmt, ...) __platform_printf(fmt "\r\n", ##__VA_ARGS__)
+#define LOG_E(fmt, ...) pika_platform_printf(fmt "\r\n", ##__VA_ARGS__)
 #define LOG_W(...) 
 #define LOG_D(...)
 

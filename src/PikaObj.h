@@ -293,9 +293,9 @@ void _temp__do_pikaScriptShell(PikaObj* self, ShellConfig* cfg);
 
 /*
     need implament :
-        __platform_fopen()
-        __platform_fwrite()
-        __platform_fclose()
+        pika_platform_fopen()
+        pika_platform_fwrite()
+        pika_platform_fclose()
 */
 Method obj_getNativeMethod(PikaObj* self, char* method_name);
 PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
@@ -367,7 +367,7 @@ PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
 void pks_eventListener_init(PikaEventListener** p_self);
 void pks_eventListener_deinit(PikaEventListener** p_self);
 PikaObj* methodArg_getDefContext(Arg* method_arg);
-PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name);
+PikaObj* obj_linkLibraryFile(PikaObj* self, char* input_file_name);
 NewFun obj_getClass(PikaObj* obj);
 
 void pks_printVersion(void);
@@ -391,13 +391,13 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
 
 #define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                            \
     obj_setErrorCode(self, 1);                                            \
-    __platform_printf("Error: abstract method `%s()` need override.\r\n", \
+    pika_platform_printf("Error: abstract method `%s()` need override.\r\n", \
                       __FUNCTION__)
 
 #define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                            \
-    __platform_printf("Error: weak function `%s()` need override.\r\n", \
+    pika_platform_printf("Error: weak function `%s()` need override.\r\n", \
                       __FUNCTION__);                                    \
-    __platform_panic_handle();
+    pika_platform_panic_handle();
 
 char* obj_cacheStr(PikaObj* self, char* str);
 PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp);

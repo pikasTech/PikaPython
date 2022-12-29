@@ -97,10 +97,10 @@ char* fast_itoa(char* buf, uint32_t val) {
         uint32_t const old = val;
         p -= 2;
         val /= 100;
-        __platform_memcpy(p, &str100p[old - (val * 100)], sizeof(uint16_t));
+        pika_platform_memcpy(p, &str100p[old - (val * 100)], sizeof(uint16_t));
     }
     p -= 2;
-    __platform_memcpy(p, &str100p[val], sizeof(uint16_t));
+    pika_platform_memcpy(p, &str100p[val], sizeof(uint16_t));
     return &p[val < 10];
 }
 
@@ -270,7 +270,7 @@ size_t obj_loadBytes(PikaObj* self, char* argPath, uint8_t* out_buff) {
     if (NULL == src) {
         return 0;
     }
-    __platform_memcpy(out_buff, src, size_mem);
+    pika_platform_memcpy(out_buff, src, size_mem);
     return size_mem;
 }
 
@@ -508,10 +508,10 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     PikaObj* newObj = newNormalObj(newObjFun);
     if (!logo_printed) {
         logo_printed = 1;
-        __platform_printf("\r\n");
-        __platform_printf("~~~/ POWERED BY \\~~~\r\n");
-        __platform_printf("~  pikascript.com  ~\r\n");
-        __platform_printf("~~~~~~~~~~~~~~~~~~~~\r\n");
+        pika_platform_printf("\r\n");
+        pika_platform_printf("~~~/ POWERED BY \\~~~\r\n");
+        pika_platform_printf("~  pikascript.com  ~\r\n");
+        pika_platform_printf("~~~~~~~~~~~~~~~~~~~~\r\n");
     }
     __pikaMain = newObj;
     in_root_obj = PIKA_FALSE;
@@ -682,7 +682,7 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
     char* method_dec = methodArg_getDec(method_arg);
     pika_assert(strGetSize(method_dec) <= size);
     if (strGetSize(method_dec) > size) {
-        __platform_printf(
+        pika_platform_printf(
             "OverFlowError: please use bigger PIKA_LINE_BUFF_SIZE\r\n");
         while (1) {
         }
@@ -941,13 +941,13 @@ static void _obj_runChar_beforeRun(PikaObj* self, ShellConfig* shell) {
     shell->line_position = 0;
     shell->line_curpos = 0;
     __clearBuff(shell);
-    __platform_printf("%s", shell->prefix);
+    pika_platform_printf("%s", shell->prefix);
 }
 
 static void _putc_cmd(char KEY_POS, int pos) {
     const char cmd[] = {0x1b, 0x5b, KEY_POS, 0x00};
     for (int i = 0; i < pos; i++) {
-        __platform_printf((char*)cmd);
+        pika_platform_printf((char*)cmd);
     }
 }
 
@@ -957,7 +957,7 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
     char* input_line = NULL;
     enum shellCTRL ctrl = SHELL_CTRL_CONTINUE;
 #if !(defined(__linux) || defined(_WIN32))
-    __platform_printf("%c", inputChar);
+    pika_platform_printf("%c", inputChar);
 #endif
     if (inputChar == '\n' && shell->lastChar == '\r') {
         ctrl = SHELL_CTRL_CONTINUE;
@@ -981,17 +981,17 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
             if (shell->line_curpos) {
                 shell->line_curpos--;
             } else {
-                __platform_printf(" ");
+                pika_platform_printf(" ");
             }
             ctrl = SHELL_CTRL_CONTINUE;
             goto exit;
         }
         if (inputChar == KEY_RIGHT) {
             if (shell->line_curpos < shell->line_position) {
-                // __platform_printf("%c", shell->lineBuff[shell->line_curpos]);
+                // pika_platform_printf("%c", shell->lineBuff[shell->line_curpos]);
                 shell->line_curpos++;
             } else {
-                __platform_printf("\b");
+                pika_platform_printf("\b");
             }
             ctrl = SHELL_CTRL_CONTINUE;
             goto exit;
@@ -1008,21 +1008,21 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
     }
     if ((inputChar == '\b') || (inputChar == 127)) {
         if (shell->line_position == 0) {
-            __platform_printf(" ");
+            pika_platform_printf(" ");
             ctrl = SHELL_CTRL_CONTINUE;
             goto exit;
         }
-        __platform_printf(" \b");
+        pika_platform_printf(" \b");
         shell->line_position--;
         shell->line_curpos--;
-        __platform_memmove(shell->lineBuff + shell->line_curpos,
+        pika_platform_memmove(shell->lineBuff + shell->line_curpos,
                            shell->lineBuff + shell->line_curpos + 1,
                            shell->line_position - shell->line_curpos);
         shell->lineBuff[shell->line_position] = 0;
         if (shell->line_curpos != shell->line_position) {
             /* update screen */
-            __platform_printf(shell->lineBuff + shell->line_curpos);
-            __platform_printf(" ");
+            pika_platform_printf(shell->lineBuff + shell->line_curpos);
+            pika_platform_printf(" ");
             _putc_cmd(KEY_LEFT, shell->line_position - shell->line_curpos + 1);
         }
         ctrl = SHELL_CTRL_CONTINUE;
@@ -1030,7 +1030,7 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
     }
     if ((inputChar != '\r') && (inputChar != '\n')) {
         if (shell->line_position + 1 >= PIKA_LINE_BUFF_SIZE) {
-            __platform_printf(
+            pika_platform_printf(
                 "\r\nError: line buff overflow, please use bigger "
                 "'PIKA_LINE_BUFF_SIZE'\r\n");
             ctrl = SHELL_CTRL_EXIT;
@@ -1038,12 +1038,12 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
             goto exit;
         }
         if ('\0' != inputChar) {
-            __platform_memmove(shell->lineBuff + shell->line_curpos + 1,
+            pika_platform_memmove(shell->lineBuff + shell->line_curpos + 1,
                                shell->lineBuff + shell->line_curpos,
                                shell->line_position - shell->line_curpos);
             shell->lineBuff[shell->line_position + 1] = 0;
             if (shell->line_curpos != shell->line_position) {
-                __platform_printf(shell->lineBuff + shell->line_curpos + 1);
+                pika_platform_printf(shell->lineBuff + shell->line_curpos + 1);
                 _putc_cmd(KEY_LEFT, shell->line_position - shell->line_curpos);
             }
             shell->lineBuff[shell->line_curpos] = inputChar;
@@ -1055,7 +1055,7 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
     }
     if ((inputChar == '\r') || (inputChar == '\n')) {
 #if !(defined(__linux) || defined(_WIN32))
-        __platform_printf("\r\n");
+        pika_platform_printf("\r\n");
 #endif
         /* still in block */
         if (shell->blockBuffName != NULL && shell->inBlock) {
@@ -1074,10 +1074,10 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
                 input_line = obj_getStr(self, shell->blockBuffName);
                 ctrl = shell->handler(self, input_line, shell);
                 __clearBuff(shell);
-                __platform_printf(">>> ");
+                pika_platform_printf(">>> ");
                 goto exit;
             } else {
-                __platform_printf("... ");
+                pika_platform_printf("... ");
             }
             __clearBuff(shell);
             ctrl = SHELL_CTRL_CONTINUE;
@@ -1091,14 +1091,14 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
                 strAppendWithSize(shell->lineBuff, &_n, 1);
                 obj_setStr(self, shell->blockBuffName, shell->lineBuff);
                 __clearBuff(shell);
-                __platform_printf("... ");
+                pika_platform_printf("... ");
                 ctrl = SHELL_CTRL_CONTINUE;
                 goto exit;
             }
         }
         shell->lineBuff[shell->line_position] = '\0';
         ctrl = shell->handler(self, shell->lineBuff, shell);
-        __platform_printf("%s", shell->prefix);
+        pika_platform_printf("%s", shell->prefix);
         __clearBuff(shell);
         goto exit;
     }
@@ -1165,42 +1165,42 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
                 buff[buff_i++] = input[0];
             }
             /* end */
-            __platform_printf("\r\n=============== [Code] ===============\r\n");
+            pika_platform_printf("\r\n=============== [Code] ===============\r\n");
             size_t len = strGetSize(buff);
             for (size_t i = 0; i < len; i++) {
                 if (buff[i] == '\r') {
                     continue;
                 }
                 if (buff[i] == '\n') {
-                    __platform_printf("\r\n");
+                    pika_platform_printf("\r\n");
                     continue;
                 }
-                __platform_printf("%c", buff[i]);
+                pika_platform_printf("%c", buff[i]);
             }
-            __platform_printf("\r\n");
-            __platform_printf("=============== [File] ===============\r\n");
-            __platform_printf("[   Info] File buff used: %d/%d (%0.2f%%)\r\n",
+            pika_platform_printf("\r\n");
+            pika_platform_printf("=============== [File] ===============\r\n");
+            pika_platform_printf("[   Info] File buff used: %d/%d (%0.2f%%)\r\n",
                               (int)len, (int)PIKA_READ_FILE_BUFF_SIZE,
                               ((float)len / (float)PIKA_READ_FILE_BUFF_SIZE));
 #if PIKA_SHELL_SAVE_FILE_ENABLE
             char* file_name = PIKA_SHELL_SAVE_FILE_NAME;
-            __platform_printf("[   Info] Saving file to '%s'...\r\n",
+            pika_platform_printf("[   Info] Saving file to '%s'...\r\n",
                               file_name);
-            FILE* fp = __platform_fopen(file_name, "w+");
+            FILE* fp = pika_platform_fopen(file_name, "w+");
             if (NULL == fp) {
-                __platform_printf("[  Error] Open file '%s' error!\r\n",
+                pika_platform_printf("[  Error] Open file '%s' error!\r\n",
                                   file_name);
-                __platform_fclose(fp);
+                pika_platform_fclose(fp);
             } else {
-                __platform_fwrite(buff, 1, len, fp);
-                __platform_printf("[   Info] Writing %d bytes to '%s'...\r\n",
+                pika_platform_fwrite(buff, 1, len, fp);
+                pika_platform_printf("[   Info] Writing %d bytes to '%s'...\r\n",
                                   (int)(len), file_name);
-                __platform_fclose(fp);
-                __platform_printf("[    OK ] Writing to '%s' succeed!\r\n",
+                pika_platform_fclose(fp);
+                pika_platform_printf("[    OK ] Writing to '%s' succeed!\r\n",
                                   file_name);
             }
 #endif
-            __platform_printf("=============== [ Run] ===============\r\n");
+            pika_platform_printf("=============== [ Run] ===============\r\n");
             obj_run(self, (char*)buff);
             if (NULL != strstr(buff, "exit()")) {
                 is_exit = PIKA_TRUE;
@@ -1209,7 +1209,7 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             if (is_exit) {
                 return;
             }
-            __platform_printf("%s", cfg->prefix);
+            pika_platform_printf("%s", cfg->prefix);
             continue;
         }
 
@@ -1228,9 +1228,9 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             for (uint32_t i = 0; i < size; i++) {
                 buff[i] = cfg->fn_getchar();
             }
-            __platform_printf("\r\n=============== [Code] ===============\r\n");
-            __platform_printf("[   Info] Bytecode size: %d\r\n", size);
-            __platform_printf("=============== [ RUN] ===============\r\n");
+            pika_platform_printf("\r\n=============== [Code] ===============\r\n");
+            pika_platform_printf("[   Info] Bytecode size: %d\r\n", size);
+            pika_platform_printf("=============== [ RUN] ===============\r\n");
             pikaVM_runByteCodeInconstant(self, buff);
             pikaFree(buff, size);
             return;
@@ -1280,7 +1280,7 @@ void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn) {
 }
 
 void pikaScriptShell(PikaObj* self) {
-    pikaScriptShell_withGetchar(self, __platform_getchar);
+    pikaScriptShell_withGetchar(self, pika_platform_getchar);
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {
@@ -1317,7 +1317,7 @@ void args_setSysOut(Args* args, char* str) {
     if (strEqu("", str)) {
         return;
     }
-    __platform_printf("%s\r\n", str);
+    pika_platform_printf("%s\r\n", str);
 }
 
 void method_returnBytes(Args* args, uint8_t* val) {
@@ -1458,7 +1458,7 @@ PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
     return self;
 }
 
-PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name) {
+PikaObj* obj_linkLibraryFile(PikaObj* self, char* input_file_name) {
     obj_newMetaObj(self, "@lib", New_LibObj);
     LibObj* lib = obj_getObj(self, "@lib");
     LibObj_loadLibraryFile(lib, input_file_name);
@@ -1475,7 +1475,7 @@ PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
 
 void obj_printModules(PikaObj* self) {
     LibObj* lib = obj_getObj(self, "@lib");
-    __platform_printf(arg_getStr((Arg*)_help_modules_cmodule));
+    pika_platform_printf(arg_getStr((Arg*)_help_modules_cmodule));
     LibObj_printModules(lib);
 }
 
@@ -1599,7 +1599,7 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
                               Arg* eventData) {
     PikaObj* handler = pks_eventListener_getEventHandleObj(lisener, eventId);
     if (NULL == handler) {
-        __platform_printf(
+        pika_platform_printf(
             "Error: can not find event handler by id: [0x%02x]\r\n", eventId);
         return NULL;
     }
@@ -1636,7 +1636,7 @@ void _do_pks_eventListener_send(PikaEventListener* self,
                                 Arg* eventData,
                                 PIKA_BOOL pickupWhenNoVM) {
 #if !PIKA_EVENT_ENABLE
-    __platform_printf("PIKA_EVENT_ENABLE is not enable");
+    pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
     while (1) {
     };
 #else
@@ -1669,9 +1669,9 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
                                              int eventSignal) {
     /*
      * Await result from event.
-     * need implement `__platform_thread_delay()` to support thread switch */
+     * need implement `pika_platform_thread_delay()` to support thread switch */
 #if !PIKA_EVENT_ENABLE
-    __platform_printf("PIKA_EVENT_ENABLE is not enable");
+    pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
     while (1) {
     };
 #else
@@ -1680,7 +1680,7 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
     pks_eventListener_sendSignal(self, eventId, eventSignal);
     while (1) {
         Arg* res = PikaVMSignal.cq.res[tail];
-        __platform_thread_delay();
+        pika_platform_thread_delay();
         if (NULL != res) {
             return res;
         }
@@ -1690,12 +1690,12 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
 
 /* print major version info */
 void pks_printVersion(void) {
-    __platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n", PIKA_VERSION_MAJOR,
+    pika_platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n", PIKA_VERSION_MAJOR,
                       PIKA_VERSION_MINOR, PIKA_VERSION_MICRO, PIKA_EDIT_TIME);
 }
 
 void pks_getVersion(char* buff) {
-    __platform_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR,
+    pika_platform_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR,
                        PIKA_VERSION_MICRO);
 }
 

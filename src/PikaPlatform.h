@@ -25,6 +25,9 @@
  * SOFTWARE.
  */
 
+/* adapter for old api */
+#include "./pika_adapter_old_api.h"
+
 /* micro pika configuration */
 #include "./pika_config_valid.h"
 
@@ -40,7 +43,7 @@
 #if PIKA_ASSERT_ENABLE
     #define pika_assert(expr) \
     if(!(expr)) { \
-        __platform_printf("Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
+        pika_platform_printf("Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
         abort(); \
     }
 #else
@@ -74,7 +77,7 @@
 /* OS */
 #ifdef __RTTHREAD__
 #include <rtthread.h>
-#define __platform_printf(...) rt_kprintf(__VA_ARGS__)
+#define pika_platform_printf(...) rt_kprintf(__VA_ARGS__)
 #endif
 
 typedef enum {
@@ -120,65 +123,69 @@ typedef enum {
 */
 
 /* interrupt config */
-void __platform_enable_irq_handle(void);
-void __platform_disable_irq_handle(void);
+void pika_platform_enable_irq_handle(void);
+void pika_platform_disable_irq_handle(void);
 
 /* printf family config */
-#ifndef __platform_printf
-void __platform_printf(char* fmt, ...);
+#ifndef pika_platform_printf
+void pika_platform_printf(char* fmt, ...);
 #endif
-int __platform_sprintf(char* buff, char* fmt, ...);
-int __platform_vsprintf(char* buff, char* fmt, va_list args);
-int __platform_vsnprintf(char* buff,
-                         size_t size,
-                         const char* fmt,
-                         va_list args);
-int __platform_snprintf(char* buff, size_t size, const char* fmt, ...);
-char* __platform_strdup(const char* src);
-size_t __platform_tick_from_millisecond(size_t ms);
+int pika_platform_sprintf(char* buff, char* fmt, ...);
+int pika_platform_vsprintf(char* buff, char* fmt, va_list args);
+int pika_platform_vsnprintf(char* buff,
+                            size_t size,
+                            const char* fmt,
+                            va_list args);
+int pika_platform_snprintf(char* buff, size_t size, const char* fmt, ...);
+char* pika_platform_strdup(const char* src);
+size_t pika_platform_tick_from_millisecond(size_t ms);
 
 /* libc config */
-void* __platform_malloc(size_t size);
-void* __platform_realloc(void* ptr, size_t size);
-void* __platform_calloc(size_t num, size_t size);
-void __platform_free(void* ptr);
-void* __platform_memset(void* mem, int ch, size_t size);
-void* __platform_memcpy(void* dir, const void* src, size_t size);
-int __platform_memcmp(const void* s1, const void* s2, size_t n);
-void* __platform_memmove(void* s1, void* s2, size_t n);
+void* pika_platform_malloc(size_t size);
+void* pika_platform_realloc(void* ptr, size_t size);
+void* pika_platform_calloc(size_t num, size_t size);
+void pika_platform_free(void* ptr);
+void* pika_platform_memset(void* mem, int ch, size_t size);
+void* pika_platform_memcpy(void* dir, const void* src, size_t size);
+int pika_platform_memcmp(const void* s1, const void* s2, size_t n);
+void* pika_platform_memmove(void* s1, void* s2, size_t n);
 
-void* __user_malloc(size_t size);
-void __user_free(void* ptr, size_t size);
 
 /* pika memory pool config */
-void __platform_wait(void);
-uint8_t __is_locked_pikaMemory(void);
+void pika_platform_wait(void);
 
 /* support shell */
-char __platform_getchar(void);
-int __platform_putchar(char ch);
+char pika_platform_getchar(void);
+int pika_platform_putchar(char ch);
 
 /* file API */
-FILE* __platform_fopen(const char* filename, const char* modes);
-int __platform_fclose(FILE* stream);
-size_t __platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream);
-size_t __platform_fread(void* ptr, size_t size, size_t n, FILE* stream);
-int __platform_fseek(FILE* stream, long offset, int whence);
-long __platform_ftell(FILE* stream);
+FILE* pika_platform_fopen(const char* filename, const char* modes);
+int pika_platform_fclose(FILE* stream);
+size_t pika_platform_fwrite(const void* ptr,
+                            size_t size,
+                            size_t n,
+                            FILE* stream);
+size_t pika_platform_fread(void* ptr, size_t size, size_t n, FILE* stream);
+int pika_platform_fseek(FILE* stream, long offset, int whence);
+long pika_platform_ftell(FILE* stream);
 
 /* error */
-void __platform_error_handle(void);
+void pika_platform_error_handle(void);
 
 /* panic */
-void __platform_panic_handle(void);
+void pika_platform_panic_handle(void);
 
-void __pks_hook_instruct(void);
-PIKA_BOOL __pks_hook_arg_cache_filter(void* self);
-void __platform_thread_delay(void);
-int64_t __platform_getTick(void);
+void pika_platform_thread_delay(void);
+int64_t pika_platform_getTick(void);
 
-void __platform_sleep_ms(uint32_t ms);
-void __platform_sleep_s(uint32_t s);
+void pika_platform_sleep_ms(uint32_t ms);
+void pika_platform_sleep_s(uint32_t s);
+
+void pika_hook_instruct(void);
+PIKA_BOOL pika_hook_arg_cache_filter(void* self);
+void* pika_user_malloc(size_t size);
+void pika_user_free(void* ptr, size_t size);
+uint8_t pika_is_locked_pikaMemory(void);
 
 #if PIKA_FLOAT_TYPE_DOUBLE
 #define pika_float double
@@ -206,11 +213,11 @@ typedef struct pika_platform_thread {
 } pika_platform_thread_t;
 #else
 /*
-    You need to create the __platform_thread.h for your platform.
+    You need to create the pika_platform_thread.h for your platform.
     For example:
-    You can #include <rtthread.h> in the __platform_thread.h
+    You can #include <rtthread.h> in the pika_platform_thread.h
 */
-#include "__platform_thread.h"
+#include "pika_platform_thread.h"
 #endif
 
 pika_platform_thread_t* pika_platform_thread_init(const char* name,

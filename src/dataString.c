@@ -242,7 +242,7 @@ int32_t strIsContain(char* str, char ch) {
 }
 
 char* strCopy(char* strBuff, char* strIn) {
-    __platform_memcpy(strBuff, strIn, strGetSize(strIn) + 1);
+    pika_platform_memcpy(strBuff, strIn, strGetSize(strIn) + 1);
     return strBuff;
 }
 
@@ -258,7 +258,7 @@ int32_t strGetLineSize(char* str) {
 
 char* strGetLine(char* strOut, char* strIn) {
     int32_t lineSize = strGetLineSize(strIn);
-    __platform_memcpy(strOut, strIn, lineSize);
+    pika_platform_memcpy(strOut, strIn, lineSize);
     strOut[lineSize] = 0;
     return strOut;
 }
@@ -276,7 +276,7 @@ char* strGetLastLine(char* strOut, char* strIn) {
         }
     }
 
-    __platform_memcpy(strOut, strIn + beginIndex, size - beginIndex);
+    pika_platform_memcpy(strOut, strIn + beginIndex, size - beginIndex);
     strOut[size - beginIndex + 1] = 0;
     return strOut;
 }

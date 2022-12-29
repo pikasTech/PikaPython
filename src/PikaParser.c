@@ -97,7 +97,7 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
     Cursor_deinit(&cs);
     char* keeped = arg_getStr(keeped_arg);
     char* poped = strsCopy(outBuffs, arg_getStr(poped_arg));
-    __platform_memcpy(stmts, keeped, strGetSize(keeped) + 1);
+    pika_platform_memcpy(stmts, keeped, strGetSize(keeped) + 1);
     arg_deinit(poped_arg);
     arg_deinit(keeped_arg);
     return poped;
@@ -413,7 +413,7 @@ Arg* Lexer_setSymbel(Arg* tokenStream_arg,
         goto exit;
     }
     symbol_buff = args_getBuff(&buffs, i - *symbol_start_index);
-    __platform_memcpy(symbol_buff, stmt + *symbol_start_index,
+    pika_platform_memcpy(symbol_buff, stmt + *symbol_start_index,
                       i - *symbol_start_index);
     /* literal */
     if ((symbol_buff[0] == '\'') || (symbol_buff[0] == '"')) {
@@ -1877,7 +1877,7 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
     /* set block deepth */
     if (block_deepth_now == -1) {
         /* get block_deepth error */
-        __platform_printf(
+        pika_platform_printf(
             "IndentationError: unexpected indent, only support 4 "
             "spaces\r\n");
         obj_deinit(ast);
@@ -2580,9 +2580,9 @@ exit:
 
 PIKA_RES Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines) {
 #if PIKA_BYTECODE_ONLY_ENABLE
-    __platform_printf(
+    pika_platform_printf(
         "Error: In bytecode-only mode, can not parse python script.\r\n");
-    __platform_printf(
+    pika_platform_printf(
         " Note: Please check PIKA_BYTECODE_ONLY_ENABLE config.\r\n");
     return PIKA_RES_ERR_SYNTAX_ERROR;
 #else
@@ -2653,7 +2653,7 @@ char* AST_genAsm_sub(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
         char* astNodeVal = obj_getStr(subAst, rule.ast);
         if (NULL != astNodeVal) {
             /* e.g. "0 RUN print \n" */
-            __platform_sprintf(buff, "%d %s ", deepth, rule.ins);
+            pika_platform_sprintf(buff, "%d %s ", deepth, rule.ins);
             Arg* abuff = arg_newStr(buff);
             if (rule.type == VAL_DYNAMIC) {
                 abuff = arg_strAppend(abuff, astNodeVal);
@@ -2694,7 +2694,7 @@ char* GenRule_toAsm(GenRule rule,
     /* parse stmt ast */
     pikaAsm = AST_genAsm_sub(ast, ast, buffs, pikaAsm);
     /* e.g. "0 CTN \n" */
-    __platform_sprintf(buff, "%d %s ", deepth, rule.ins);
+    pika_platform_sprintf(buff, "%d %s ", deepth, rule.ins);
     Arg* abuff = arg_newStr(buff);
     if (rule.type == VAL_DYNAMIC) {
         abuff = arg_strAppend(abuff, obj_getStr(ast, rule.ast));
@@ -3112,14 +3112,14 @@ char* Parser_linesToArray(char* lines) {
     /* do something */
     byteCodeFrame_print(&bytecode_frame);
 
-    __platform_printf("\n\n/* clang-format off */\n");
-    __platform_printf("PIKA_PYTHON(\n");
-    __platform_printf("%s\n", lines);
-    __platform_printf(")\n");
-    __platform_printf("/* clang-format on */\n");
+    pika_platform_printf("\n\n/* clang-format off */\n");
+    pika_platform_printf("PIKA_PYTHON(\n");
+    pika_platform_printf("%s\n", lines);
+    pika_platform_printf(")\n");
+    pika_platform_printf("/* clang-format on */\n");
     byteCodeFrame_printAsArray(&bytecode_frame);
     /* deinit */
     byteCodeFrame_deinit(&bytecode_frame);
-    __platform_printf("\n\n");
+    pika_platform_printf("\n\n");
     return NULL;
 }
