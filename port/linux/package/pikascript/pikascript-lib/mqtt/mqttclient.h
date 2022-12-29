@@ -20,7 +20,6 @@
 #include "mqtt_log.h"
 #include "network.h"
 #include "platform_memory.h"
-#include "platform_timer.h"
 #include "random.h"
 
 #ifdef __cplusplus
@@ -74,7 +73,7 @@ typedef struct message_handlers {
 
 typedef struct ack_handlers {
     mqtt_list_t list;
-    platform_timer_t timer;
+    pika_platform_timer_t timer;
     uint32_t type;
     uint16_t packet_id;
     message_handlers_t* handler;
@@ -121,8 +120,8 @@ typedef struct mqtt_client {
     mqtt_list_t mqtt_ack_handler_list;
     network_t* mqtt_network;
     pika_platform_thread_t* mqtt_thread;
-    platform_timer_t mqtt_last_sent;
-    platform_timer_t mqtt_last_received;
+    pika_platform_timer_t mqtt_last_sent;
+    pika_platform_timer_t mqtt_last_received;
     reconnect_handler_t mqtt_reconnect_handler;
     interceptor_handler_t mqtt_interceptor_handler;
     void* user_data;

@@ -340,6 +340,10 @@
         #define PIKA_BYTECODE_ONLY_ENABLE 0
     #endif
 
+    #ifndef PIKA_OLD_API_ENABLE
+        #define PIKA_OLD_API_ENABLE 1
+    #endif
+
     /* configuration validation */
 
 #endif

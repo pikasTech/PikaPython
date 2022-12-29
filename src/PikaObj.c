@@ -988,7 +988,8 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
         }
         if (inputChar == KEY_RIGHT) {
             if (shell->line_curpos < shell->line_position) {
-                // pika_platform_printf("%c", shell->lineBuff[shell->line_curpos]);
+                // pika_platform_printf("%c",
+                // shell->lineBuff[shell->line_curpos]);
                 shell->line_curpos++;
             } else {
                 pika_platform_printf("\b");
@@ -1016,8 +1017,8 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
         shell->line_position--;
         shell->line_curpos--;
         pika_platform_memmove(shell->lineBuff + shell->line_curpos,
-                           shell->lineBuff + shell->line_curpos + 1,
-                           shell->line_position - shell->line_curpos);
+                              shell->lineBuff + shell->line_curpos + 1,
+                              shell->line_position - shell->line_curpos);
         shell->lineBuff[shell->line_position] = 0;
         if (shell->line_curpos != shell->line_position) {
             /* update screen */
@@ -1039,8 +1040,8 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
         }
         if ('\0' != inputChar) {
             pika_platform_memmove(shell->lineBuff + shell->line_curpos + 1,
-                               shell->lineBuff + shell->line_curpos,
-                               shell->line_position - shell->line_curpos);
+                                  shell->lineBuff + shell->line_curpos,
+                                  shell->line_position - shell->line_curpos);
             shell->lineBuff[shell->line_position + 1] = 0;
             if (shell->line_curpos != shell->line_position) {
                 pika_platform_printf(shell->lineBuff + shell->line_curpos + 1);
@@ -1165,7 +1166,8 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
                 buff[buff_i++] = input[0];
             }
             /* end */
-            pika_platform_printf("\r\n=============== [Code] ===============\r\n");
+            pika_platform_printf(
+                "\r\n=============== [Code] ===============\r\n");
             size_t len = strGetSize(buff);
             for (size_t i = 0; i < len; i++) {
                 if (buff[i] == '\r') {
@@ -1179,25 +1181,27 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             }
             pika_platform_printf("\r\n");
             pika_platform_printf("=============== [File] ===============\r\n");
-            pika_platform_printf("[   Info] File buff used: %d/%d (%0.2f%%)\r\n",
-                              (int)len, (int)PIKA_READ_FILE_BUFF_SIZE,
-                              ((float)len / (float)PIKA_READ_FILE_BUFF_SIZE));
+            pika_platform_printf(
+                "[   Info] File buff used: %d/%d (%0.2f%%)\r\n", (int)len,
+                (int)PIKA_READ_FILE_BUFF_SIZE,
+                ((float)len / (float)PIKA_READ_FILE_BUFF_SIZE));
 #if PIKA_SHELL_SAVE_FILE_ENABLE
             char* file_name = PIKA_SHELL_SAVE_FILE_NAME;
             pika_platform_printf("[   Info] Saving file to '%s'...\r\n",
-                              file_name);
+                                 file_name);
             FILE* fp = pika_platform_fopen(file_name, "w+");
             if (NULL == fp) {
                 pika_platform_printf("[  Error] Open file '%s' error!\r\n",
-                                  file_name);
+                                     file_name);
                 pika_platform_fclose(fp);
             } else {
                 pika_platform_fwrite(buff, 1, len, fp);
-                pika_platform_printf("[   Info] Writing %d bytes to '%s'...\r\n",
-                                  (int)(len), file_name);
+                pika_platform_printf(
+                    "[   Info] Writing %d bytes to '%s'...\r\n", (int)(len),
+                    file_name);
                 pika_platform_fclose(fp);
                 pika_platform_printf("[    OK ] Writing to '%s' succeed!\r\n",
-                                  file_name);
+                                     file_name);
             }
 #endif
             pika_platform_printf("=============== [ Run] ===============\r\n");
@@ -1228,7 +1232,8 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             for (uint32_t i = 0; i < size; i++) {
                 buff[i] = cfg->fn_getchar();
             }
-            pika_platform_printf("\r\n=============== [Code] ===============\r\n");
+            pika_platform_printf(
+                "\r\n=============== [Code] ===============\r\n");
             pika_platform_printf("[   Info] Bytecode size: %d\r\n", size);
             pika_platform_printf("=============== [ RUN] ===============\r\n");
             pikaVM_runByteCodeInconstant(self, buff);
@@ -1690,13 +1695,14 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
 
 /* print major version info */
 void pks_printVersion(void) {
-    pika_platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n", PIKA_VERSION_MAJOR,
-                      PIKA_VERSION_MINOR, PIKA_VERSION_MICRO, PIKA_EDIT_TIME);
+    pika_platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n",
+                         PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR,
+                         PIKA_VERSION_MICRO, PIKA_EDIT_TIME);
 }
 
 void pks_getVersion(char* buff) {
-    pika_platform_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR,
-                       PIKA_VERSION_MICRO);
+    pika_platform_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR,
+                          PIKA_VERSION_MINOR, PIKA_VERSION_MICRO);
 }
 
 void* obj_getStruct(PikaObj* self, char* name) {

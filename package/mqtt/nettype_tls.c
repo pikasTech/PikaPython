@@ -8,7 +8,6 @@
 #include "nettype_tls.h"
 #include "platform_net_socket.h"
 #include "platform_memory.h"
-#include "platform_timer.h"
 #include "random.h"
 
 #ifndef MQTT_NETWORK_TYPE_NO_TLS
@@ -200,14 +199,14 @@ int nettype_tls_write(network_t *n, unsigned char *buf, int len, int timeout)
 {
     int rc = 0;
     int write_len = 0;
-    platform_timer_t timer;
+    pika_platform_timer_t timer;
 
     if (NULL == n)
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
     
     nettype_tls_params_t *nettype_tls_params = (nettype_tls_params_t *) n->nettype_tls_params;
 
-    platform_timer_cutdown(&timer, timeout);
+    pika_platform_timer_cutdown(&timer, timeout);
 
     do {
         rc = mbedtls_ssl_write(&(nettype_tls_params->ssl), (unsigned char *)(buf + write_len), len - write_len);
@@ -218,7 +217,7 @@ int nettype_tls_write(network_t *n, unsigned char *buf, int len, int timeout)
             MQTT_LOG_E("%s:%d %s()... mbedtls_ssl_write failed: 0x%04x", __FILE__, __LINE__, __FUNCTION__, (rc < 0 )? -rc : rc);
             break;
         } 
-    } while((!platform_timer_is_expired(&timer)) && (write_len < len));
+    } while((!pika_platform_timer_is_expired(&timer)) && (write_len < len));
 
     return write_len;
 }
@@ -227,14 +226,14 @@ int nettype_tls_read(network_t *n, unsigned char *buf, int len, int timeout)
 {
     int rc = 0;
     int read_len = 0;
-    platform_timer_t timer;
+    pika_platform_timer_t timer;
 
     if (NULL == n)
         RETURN_ERROR(MQTT_NULL_VALUE_ERROR);
     
     nettype_tls_params_t *nettype_tls_params = (nettype_tls_params_t *) n->nettype_tls_params;
 
-    platform_timer_cutdown(&timer, timeout);
+    pika_platform_timer_cutdown(&timer, timeout);
     
     do {
         rc = mbedtls_ssl_read(&(nettype_tls_params->ssl), (unsigned char *)(buf + read_len), len - read_len);
@@ -245,7 +244,7 @@ int nettype_tls_read(network_t *n, unsigned char *buf, int len, int timeout)
             // MQTT_LOG_E("%s:%d %s()... mbedtls_ssl_read failed: 0x%04x", __FILE__, __LINE__, __FUNCTION__, (rc < 0 )? -rc : rc);
             break;
         } 
-    } while((!platform_timer_is_expired(&timer)) && (read_len < len));
+    } while((!pika_platform_timer_is_expired(&timer)) && (read_len < len));
 
     return read_len;
 }

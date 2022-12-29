@@ -38,6 +38,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+#include <unistd.h>
 
 /* clang-format off */
 #if PIKA_ASSERT_ENABLE
@@ -247,7 +249,7 @@ typedef struct pika_platform_mutex {
     For example:
     You can #include <rtthread.h> in the __platform_thread.h
 */
-#include "__platform_thread.h"
+#include "pika_platform_thread.h"
 #endif
 
 int pika_platform_mutex_init(pika_platform_mutex_t* m);
@@ -255,5 +257,31 @@ int pika_platform_mutex_lock(pika_platform_mutex_t* m);
 int pika_platform_mutex_trylock(pika_platform_mutex_t* m);
 int pika_platform_mutex_unlock(pika_platform_mutex_t* m);
 int pika_platform_mutex_destroy(pika_platform_mutex_t* m);
+
+#ifdef __linux
+#include <sys/time.h>
+typedef struct pika_platform_timer {
+    struct timeval time;
+} pika_platform_timer_t;
+#elif PIKA_FREERTOS_ENABLE
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+typedef struct pika_platform_timer {
+    uint32_t time;
+} pika_platform_timer_t;
+#else
+/*
+    You need to create the __pika_platform_timer.h for your platform.
+*/
+#include "pika_platform_time.h"
+#endif
+
+void pika_platform_timer_init(pika_platform_timer_t* timer);
+void pika_platform_timer_cutdown(pika_platform_timer_t* timer,
+                                 unsigned int timeout);
+char pika_platform_timer_is_expired(pika_platform_timer_t* timer);
+int pika_platform_timer_remain(pika_platform_timer_t* timer);
+unsigned long pika_platform_timer_now(void);
+void pika_platform_timer_usleep(unsigned long usec);
 
 #endif

@@ -1,11 +1,13 @@
 #ifndef __PIKA_ADAPTER_OLD_API_H__
 #define __PIKA_ADAPTER_OLD_API_H__
 
+#include "pika_config_valid.h"
+
 /*
  * This file is used to support old api, it's not recommended to use it.
  * In new project, please use new api instead.
  */
-
+#if PIKA_OLD_API_ENABLE
 #define __platform_enable_irq_handle pika_platform_enable_irq_handle
 #define __platform_disable_irq_handle pika_platform_disable_irq_handle
 #define __platform_printf pika_platform_printf
@@ -60,5 +62,6 @@
 #define __platform_close pika_platform_close
 #define __platform_write pika_platform_write
 #define __platform_fcntl pika_platform_fcntl
+#endif
 
 #endif
