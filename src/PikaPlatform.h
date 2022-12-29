@@ -245,9 +245,9 @@ typedef struct pika_platform_mutex {
 } pika_platform_mutex_t;
 #else
 /*
-    You need to create the __platform_thread.h for your platform.
+    You need to create the pika_platform_thread.h for your platform.
     For example:
-    You can #include <rtthread.h> in the __platform_thread.h
+    You can #include <rtthread.h> in the pika_platform_thread.h
 */
 #include "pika_platform_thread.h"
 #endif
@@ -271,7 +271,7 @@ typedef struct pika_platform_timer {
 } pika_platform_timer_t;
 #else
 /*
-    You need to create the __pika_platform_timer.h for your platform.
+    You need to create the pika_platform_timer.h for your platform.
 */
 #include "pika_platform_time.h"
 #endif
