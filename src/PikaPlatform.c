@@ -330,6 +330,7 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
     return thread;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return NULL;
 #endif
 }
 
@@ -385,6 +386,7 @@ PIKA_WEAK int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m) {
     return 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 
@@ -395,6 +397,7 @@ PIKA_WEAK int pika_platform_thread_mutex_lock(pika_platform_thread_mutex_t* m) {
     return xSemaphoreTake(m->mutex, portMAX_DELAY);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 
@@ -406,6 +409,7 @@ PIKA_WEAK int pika_platform_thread_mutex_trylock(
     return xSemaphoreTake(m->mutex, 0);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 
@@ -417,6 +421,7 @@ PIKA_WEAK int pika_platform_thread_mutex_unlock(
     return xSemaphoreGive(m->mutex);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 
@@ -429,6 +434,7 @@ PIKA_WEAK int pika_platform_thread_mutex_destroy(
     return 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 
@@ -480,6 +486,7 @@ PIKA_WEAK char pika_platform_timer_is_expired(pika_platform_timer_t* timer) {
     return platform_uptime_ms() > timer->time ? 1 : 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 
@@ -498,6 +505,7 @@ PIKA_WEAK int pika_platform_timer_remain(pika_platform_timer_t* timer) {
     return timer->time - now;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 
@@ -508,11 +516,13 @@ PIKA_WEAK unsigned long pika_platform_timer_now(void) {
     return (unsigned long)platform_uptime_ms();
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 
 PIKA_WEAK void pika_platform_timer_usleep(unsigned long usec) {
 #ifdef __linux
+    #include <unistd.h>
     usleep(usec);
 #elif PIKA_FREERTOS_ENABLE
     TickType_t tick = 1;
