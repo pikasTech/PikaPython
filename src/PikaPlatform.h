@@ -190,4 +190,38 @@ void __platform_sleep_s(uint32_t s);
 #pragma warning(disable : 4996)
 #endif
 
+/* Thread Platform */
+#ifdef __linux
+#include <pthread.h>
+typedef struct pika_platform_thread {
+    pthread_t thread;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+} pika_platform_thread_t;
+#elif PIKA_FREERTOS_ENABLE
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+typedef struct pika_platform_thread {
+    TaskHandle_t thread;
+} pika_platform_thread_t;
+#else
+/*
+    You need to create the __platform_thread.h for your platform.
+    For example:
+    You can #include <rtthread.h> in the __platform_thread.h
+*/
+#include "__platform_thread.h"
+#endif
+
+pika_platform_thread_t* pika_platform_thread_init(const char* name,
+                                                  void (*entry)(void*),
+                                                  void* const param,
+                                                  unsigned int stack_size,
+                                                  unsigned int priority,
+                                                  unsigned int tick);
+void pika_platform_thread_startup(pika_platform_thread_t* thread);
+void pika_platform_thread_stop(pika_platform_thread_t* thread);
+void pika_platform_thread_start(pika_platform_thread_t* thread);
+void pika_platform_thread_destroy(pika_platform_thread_t* thread);
+
 #endif

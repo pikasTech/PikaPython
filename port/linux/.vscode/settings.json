@@ -102,7 +102,8 @@
         "pikastddevice_iic.h": "c",
         "pikastddevice_pwm.h": "c",
         "pikastddevice_spi.h": "c",
-        "pikastddevice_uart.h": "c"
+        "pikastddevice_uart.h": "c",
+        "datamemory.h": "c"
     },
     "python.formatting.provider": "autopep8",
 }

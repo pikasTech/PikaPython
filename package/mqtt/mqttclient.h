@@ -21,7 +21,6 @@
 #include "network.h"
 #include "platform_memory.h"
 #include "platform_mutex.h"
-#include "platform_thread.h"
 #include "platform_timer.h"
 #include "random.h"
 
@@ -122,7 +121,7 @@ typedef struct mqtt_client {
     mqtt_list_t mqtt_msg_handler_list;
     mqtt_list_t mqtt_ack_handler_list;
     network_t* mqtt_network;
-    platform_thread_t* mqtt_thread;
+    pika_platform_thread_t* mqtt_thread;
     platform_timer_t mqtt_last_sent;
     platform_timer_t mqtt_last_received;
     reconnect_handler_t mqtt_reconnect_handler;

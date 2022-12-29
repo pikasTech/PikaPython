@@ -631,9 +631,9 @@ static int mqtt_try_resubscribe(mqtt_client_t* c) {
         if ((rc = mqtt_subscribe(c, msg_handler->topic_filter, msg_handler->qos,
                                  msg_handler->handler)) ==
             MQTT_ACK_HANDLER_NUM_TOO_MUCH_ERROR) {
-                MQTT_LOG_W("%s:%d %s()... mqtt ack handler num too much ...",
-                        __FILE__, __LINE__, __FUNCTION__);
-            }
+            MQTT_LOG_W("%s:%d %s()... mqtt ack handler num too much ...",
+                       __FILE__, __LINE__, __FUNCTION__);
+        }
     }
 
     RETURN_ERROR(rc);
@@ -1010,13 +1010,13 @@ static void mqtt_yield_thread(void* arg) {
     int rc;
     client_state_t state;
     mqtt_client_t* c = (mqtt_client_t*)arg;
-    platform_thread_t* thread_to_be_destoried = NULL;
+    pika_platform_thread_t* thread_to_be_destoried = NULL;
 
     state = mqtt_get_client_state(c);
     if (CLIENT_STATE_CONNECTED != state) {
         MQTT_LOG_W("%s:%d %s()..., mqtt is not connected to the server...",
                    __FILE__, __LINE__, __FUNCTION__);
-        platform_thread_stop(c->mqtt_thread); /* mqtt is not connected to the
+        pika_platform_thread_stop(c->mqtt_thread); /* mqtt is not connected to the
                                                  server, stop thread */
     }
 
@@ -1036,8 +1036,8 @@ static void mqtt_yield_thread(void* arg) {
 
 exit:
     thread_to_be_destoried = c->mqtt_thread;
-    c->mqtt_thread = (platform_thread_t*)0;
-    platform_thread_destroy(thread_to_be_destoried);
+    c->mqtt_thread = (pika_platform_thread_t*)0;
+    pika_platform_thread_destroy(thread_to_be_destoried);
 }
 
 static int mqtt_connect_with_results(mqtt_client_t* c) {
@@ -1115,14 +1115,14 @@ exit:
     if (rc == MQTT_SUCCESS_ERROR) {
         if (NULL == c->mqtt_thread) {
             /* connect success, and need init mqtt thread */
-            c->mqtt_thread = platform_thread_init(
+            c->mqtt_thread = pika_platform_thread_init(
                 "mqtt_yield_thread", mqtt_yield_thread, c,
                 MQTT_THREAD_STACK_SIZE, MQTT_THREAD_PRIO, MQTT_THREAD_TICK);
 
             if (NULL != c->mqtt_thread) {
                 mqtt_set_client_state(c, CLIENT_STATE_CONNECTED);
-                platform_thread_startup(c->mqtt_thread);
-                platform_thread_start(
+                pika_platform_thread_startup(c->mqtt_thread);
+                pika_platform_thread_start(
                     c->mqtt_thread); /* start run mqtt thread */
             } else {
                 /*creat the thread fail and disconnect the mqtt socket connect*/
@@ -1163,13 +1163,13 @@ static uint32_t mqtt_read_buf_malloc(mqtt_client_t* c, uint32_t size) {
         c->mqtt_read_buf_size = MQTT_DEFAULT_BUF_SIZE;
 
     c->mqtt_read_buf = (uint8_t*)platform_memory_alloc(c->mqtt_read_buf_size);
-    
+
     if (NULL == c->mqtt_read_buf) {
         MQTT_LOG_E("%s:%d %s()... malloc read buf failed...", __FILE__,
                    __LINE__, __FUNCTION__);
         RETURN_ERROR(MQTT_MEM_NOT_ENOUGH_ERROR);
     }
-    memset(c->mqtt_read_buf,0,c->mqtt_read_buf_size);//清空申请的内存
+    memset(c->mqtt_read_buf, 0, c->mqtt_read_buf_size);  // 清空申请的内存
     return c->mqtt_read_buf_size;
 }
 
@@ -1575,7 +1575,7 @@ int mqtt_list_subscribe_topic(mqtt_client_t* c) {
         MQTT_LOG_I("%s:%d %s()... there are no subscribed topics...", __FILE__,
                    __LINE__, __FUNCTION__);
     }
-    
+
     LIST_FOR_EACH_SAFE(curr, next, &c->mqtt_msg_handler_list) {
         msg_handler = LIST_ENTRY(curr, message_handlers_t, list);
         /* determine whether a node already exists by mqtt topic, but wildcards
@@ -1615,26 +1615,26 @@ int mqtt_set_will_options(mqtt_client_t* c,
 }
 
 int mqtt_release_free(mqtt_client_t* c) {
-    //wait for mqtt thread exit
-    while(c->mqtt_thread != NULL) {
+    // wait for mqtt thread exit
+    while (c->mqtt_thread != NULL) {
     }
 
     /*
     if(c->mqtt_thread != NULL) {
         MQTT_LOG("%s:%d %s()..., mqtt mqtt_yield_thread release...",
                    __FILE__, __LINE__, __FUNCTION__);
-        platform_thread_stop(c->mqtt_thread); //stop thread 
+        pika_platform_thread_stop(c->mqtt_thread); //stop thread
         network_disconnect(c->mqtt_network);
         mqtt_clean_session(c);
     }
     */
-    if(CLIENT_STATE_INVALID != mqtt_get_client_state(c)) {
-       mqtt_clean_session(c);
+    if (CLIENT_STATE_INVALID != mqtt_get_client_state(c)) {
+        mqtt_clean_session(c);
     }
 
-    MQTT_LOG_I("%s:%d %s() 1", __FILE__,__LINE__, __FUNCTION__);
+    MQTT_LOG_I("%s:%d %s() 1", __FILE__, __LINE__, __FUNCTION__);
     mqtt_release(c);
-    MQTT_LOG_I("%s:%d %s() 2", __FILE__,__LINE__, __FUNCTION__);
+    MQTT_LOG_I("%s:%d %s() 2", __FILE__, __LINE__, __FUNCTION__);
     platform_memory_free(c);
     return 0;
 }
