@@ -95,7 +95,7 @@ TEST(mqtt, init) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if 1
+#if 0
 //! Mqtt connect will break the gichub actions, 
 //! if need to test, please enable it manually.
 TEST(mqtt, connect) {
