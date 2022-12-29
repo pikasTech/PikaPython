@@ -39,7 +39,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-// #include <unistd.h>
+#ifdef __linux
+#include <unistd.h>
+#endif
 
 /* clang-format off */
 #if PIKA_ASSERT_ENABLE
@@ -277,11 +279,9 @@ int pika_platform_timer_remain(pika_platform_timer_t* timer);
 unsigned long pika_platform_timer_now(void);
 void pika_platform_timer_usleep(unsigned long usec);
 
-
-#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                            \
+#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                               \
     pika_platform_printf("Error: weak function `%s()` need override.\r\n", \
-                      __FUNCTION__);                                    \
+                         __FUNCTION__);                                    \
     pika_platform_panic_handle();
-
 
 #endif

@@ -522,7 +522,6 @@ PIKA_WEAK unsigned long pika_platform_timer_now(void) {
 
 PIKA_WEAK void pika_platform_timer_usleep(unsigned long usec) {
 #ifdef __linux
-    #include <unistd.h>
     usleep(usec);
 #elif PIKA_FREERTOS_ENABLE
     TickType_t tick = 1;
