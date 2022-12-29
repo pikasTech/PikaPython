@@ -234,15 +234,15 @@ void pika_platform_thread_destroy(pika_platform_thread_t* thread);
 
 #ifdef __linux
 #include <pthread.h>
-typedef struct pika_platform_mutex {
+typedef struct pika_platform_thread_mutex {
     pthread_mutex_t mutex;
-} pika_platform_mutex_t;
+} pika_platform_thread_mutex_t;
 #elif PIKA_FREERTOS_ENABLE
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
-typedef struct pika_platform_mutex {
+typedef struct pika_platform_thread_mutex {
     SemaphoreHandle_t mutex;
-} pika_platform_mutex_t;
+} pika_platform_thread_mutex_t;
 #else
 /*
     You need to create the pika_platform_thread.h for your platform.
@@ -252,11 +252,11 @@ typedef struct pika_platform_mutex {
 #include "pika_platform_thread.h"
 #endif
 
-int pika_platform_mutex_init(pika_platform_mutex_t* m);
-int pika_platform_mutex_lock(pika_platform_mutex_t* m);
-int pika_platform_mutex_trylock(pika_platform_mutex_t* m);
-int pika_platform_mutex_unlock(pika_platform_mutex_t* m);
-int pika_platform_mutex_destroy(pika_platform_mutex_t* m);
+int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m);
+int pika_platform_thread_mutex_lock(pika_platform_thread_mutex_t* m);
+int pika_platform_thread_mutex_trylock(pika_platform_thread_mutex_t* m);
+int pika_platform_thread_mutex_unlock(pika_platform_thread_mutex_t* m);
+int pika_platform_thread_mutex_destroy(pika_platform_thread_mutex_t* m);
 
 #ifdef __linux
 #include <sys/time.h>

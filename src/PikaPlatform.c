@@ -377,7 +377,7 @@ PIKA_WEAK void pika_platform_thread_destroy(pika_platform_thread_t* thread) {
 #endif
 }
 
-PIKA_WEAK int pika_platform_mutex_init(pika_platform_mutex_t* m) {
+PIKA_WEAK int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_init(&(m->mutex), NULL);
 #elif PIKA_FREERTOS_ENABLE
@@ -388,7 +388,7 @@ PIKA_WEAK int pika_platform_mutex_init(pika_platform_mutex_t* m) {
 #endif
 }
 
-PIKA_WEAK int pika_platform_mutex_lock(pika_platform_mutex_t* m) {
+PIKA_WEAK int pika_platform_thread_mutex_lock(pika_platform_thread_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_lock(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
@@ -398,7 +398,8 @@ PIKA_WEAK int pika_platform_mutex_lock(pika_platform_mutex_t* m) {
 #endif
 }
 
-PIKA_WEAK int pika_platform_mutex_trylock(pika_platform_mutex_t* m) {
+PIKA_WEAK int pika_platform_thread_mutex_trylock(
+    pika_platform_thread_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_trylock(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
@@ -408,7 +409,8 @@ PIKA_WEAK int pika_platform_mutex_trylock(pika_platform_mutex_t* m) {
 #endif
 }
 
-PIKA_WEAK int pika_platform_mutex_unlock(pika_platform_mutex_t* m) {
+PIKA_WEAK int pika_platform_thread_mutex_unlock(
+    pika_platform_thread_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_unlock(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
@@ -418,7 +420,8 @@ PIKA_WEAK int pika_platform_mutex_unlock(pika_platform_mutex_t* m) {
 #endif
 }
 
-PIKA_WEAK int pika_platform_mutex_destroy(pika_platform_mutex_t* m) {
+PIKA_WEAK int pika_platform_thread_mutex_destroy(
+    pika_platform_thread_mutex_t* m) {
 #ifdef __linux
     return pthread_mutex_destroy(&(m->mutex));
 #elif PIKA_FREERTOS_ENABLE
