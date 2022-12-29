@@ -25,11 +25,11 @@
  * SOFTWARE.
  */
 
-/* adapter for old api */
-#include "./pika_adapter_old_api.h"
-
 /* micro pika configuration */
 #include "./pika_config_valid.h"
+
+/* adapter for old api */
+#include "./pika_adapter_old_api.h"
 
 #ifndef __PIKA_PALTFORM__H
 #define __PIKA_PALTFORM__H
