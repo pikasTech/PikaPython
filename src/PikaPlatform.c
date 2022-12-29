@@ -486,7 +486,7 @@ PIKA_WEAK char pika_platform_timer_is_expired(pika_platform_timer_t* timer) {
     return platform_uptime_ms() > timer->time ? 1 : 0;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-    return -1;
+    return 1;
 #endif
 }
 
@@ -516,7 +516,7 @@ PIKA_WEAK unsigned long pika_platform_timer_now(void) {
     return (unsigned long)platform_uptime_ms();
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
-    return -1;
+    return 1;
 #endif
 }
 

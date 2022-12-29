@@ -54,11 +54,11 @@ int _VMEvent_getVMCnt(void) {
 
 #if PIKA_EVENT_ENABLE
 static PIKA_BOOL _cq_isEmpty(volatile EventCQ* cq) {
-    return cq->head == cq->tail;
+    return (PIKA_BOOL)(cq->head == cq->tail);
 }
 
 static PIKA_BOOL _cq_isFull(volatile EventCQ* cq) {
-    return (cq->tail + 1) % PIKA_EVENT_LIST_SIZE == cq->head;
+    return (PIKA_BOOL)((cq->tail + 1) % PIKA_EVENT_LIST_SIZE == cq->head);
 }
 #endif
 
@@ -174,7 +174,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
 
 /* head declare end */
 
-static void VMState_setErrorCode(VMState* vm, uint8_t error_code) {
+static void VMState_setErrorCode(VMState* vm, int8_t error_code) {
     vm->error_code = error_code;
 }
 
@@ -953,7 +953,7 @@ static void _type_list_parse(FunctionArgsInfo* f) {
     }
     /* kw */
     if (x == 2) {
-        f->is_keys = 1;
+        f->is_keys = PIKA_TRUE;
         f->n_positional = res - 1;
         return;
     }
@@ -3003,7 +3003,7 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
         /* get bytecode_ptr from stack */
         bytecode_frame_p = &bytecode_frame_stack;
         /* no def/class ins, no need cache bytecode */
-        is_const_bytecode = 1;
+        is_const_bytecode = PIKA_TRUE;
     }
 
     /* load or generate byte code frame */
@@ -3208,11 +3208,6 @@ void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
         self->const_pool.content_start =
             arg_getBytes(self->const_pool.arg_buff);
     }
-}
-
-static void byteCodeFrame_loadByteCodeInconst(ByteCodeFrame* self,
-                                              uint8_t* bytes) {
-    _do_byteCodeFrame_loadByteCode(self, bytes, PIKA_FALSE);
 }
 
 void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes) {

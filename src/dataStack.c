@@ -149,10 +149,10 @@ static int32_t _stack_pushArg(Stack* stack, Arg* arg, PIKA_BOOL is_alloc) {
     if (is_big_arg) {
         /* push a pointer to this arg */
         stack_pushSize(stack, -1);
-        stack_pushPyload(stack, (uint8_t*)&arg, sizeof(Arg*), 1);
+        stack_pushPyload(stack, (uint8_t*)&arg, sizeof(Arg*), PIKA_TRUE);
     } else {
         stack_pushSize(stack, size);
-        stack_pushPyload(stack, (uint8_t*)arg, size, arg_isSerialized(arg));
+        stack_pushPyload(stack, (uint8_t*)arg, size, (PIKA_BOOL)arg_isSerialized(arg));
     }
 
     if (is_big_arg) {

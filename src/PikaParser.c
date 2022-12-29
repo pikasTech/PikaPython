@@ -1522,6 +1522,10 @@ char* Suger_not_in(Args* out_buffs, char* line) {
     return line;
 #endif
     char* ret = line;
+    char* stmt1 = "";
+    char* stmt2 = "";
+    PIKA_BOOL got_not_in = PIKA_FALSE;
+    PIKA_BOOL skip = PIKA_FALSE;
     Args buffs = {0};
     if (!Cursor_isContain(line, TOKEN_operator, " not ")) {
         ret = line;
@@ -1531,24 +1535,21 @@ char* Suger_not_in(Args* out_buffs, char* line) {
         ret = line;
         goto __exit;
     }
-    char* stmt1 = "";
-    char* stmt2 = "";
-    PIKA_BOOL got_not_in = 0;
-    PIKA_BOOL skip = 0;
+
     /* stmt1 not in stmt2 => not stmt1 in stmt2 */
     Cursor_forEachToken(cs, line) {
         Cursor_iterStart(&cs);
         if (!got_not_in) {
             if (strEqu(cs.token1.pyload, " not ") &&
                 strEqu(cs.token2.pyload, " in ")) {
-                got_not_in = 1;
+                got_not_in = PIKA_TRUE;
                 Cursor_iterEnd(&cs);
                 continue;
             }
             stmt1 = strsAppend(&buffs, stmt1, cs.token1.pyload);
         } else {
             if (!skip) {
-                skip = 1;
+                skip = PIKA_TRUE;
                 Cursor_iterEnd(&cs);
                 continue;
             }
@@ -2254,6 +2255,8 @@ static char* Suger_from_import_as(Args* buffs_p, char* line) {
     char* module = NULL;
     char* alias = NULL;
     char* stmt = line + 5;
+    char* class_after = "";
+
     if (!strIsStartWith(line, "from ")) {
         line_out = line;
         goto exit;
@@ -2277,7 +2280,6 @@ static char* Suger_from_import_as(Args* buffs_p, char* line) {
         goto exit;
     }
 
-    char* class_after = "";
     while (1) {
         char* class_item = Cursor_popToken(&buffs, &class, ",");
         if (class_item[0] == '\0') {
@@ -2339,6 +2341,7 @@ static char* Suger_import(Args* outbuffs, char* line) {
 static char* Parser_linePreProcess(Args* outbuffs, char* line) {
     line = Parser_removeAnnotation(line);
     Arg* line_buff = NULL;
+    int line_num = 0;
     /* check syntex error */
     if (Lexer_isError(line)) {
         line = NULL;
@@ -2350,7 +2353,7 @@ static char* Parser_linePreProcess(Args* outbuffs, char* line) {
     line = Suger_import(outbuffs, line);
 
     /* process multi assign */
-    int line_num = strCountSign(line, '\n') + 1;
+    line_num = strCountSign(line, '\n') + 1;
     line_buff = arg_newStr("");
     for (int i = 0; i < line_num; i++) {
         if (i > 0) {

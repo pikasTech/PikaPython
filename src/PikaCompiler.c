@@ -92,7 +92,10 @@ static void __handler_instructArray_output_file(InstructArray* self,
 PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     PIKA_RES res = PIKA_RES_OK;
     ByteCodeFrame bytecode_frame = {0};
-
+    uint32_t const_pool_size = 0;
+    uint32_t instruct_array_size = 0;
+    uint32_t bytecode_size = 0;
+    char void_ = 0;
     FILE* bytecode_f = pika_platform_fopen(output_file_name, "wb+");
     if (NULL == bytecode_f) {
         pika_platform_printf("Error: open file %s failed.\r\n", output_file_name);
@@ -112,9 +115,9 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
         pika_platform_printf("    Error: Syntax error.\r\n");
         goto exit;
     }
-    uint32_t const_pool_size = bytecode_frame.const_pool.size;
-    uint32_t instruct_array_size = bytecode_frame.instruct_array.size;
-    uint32_t bytecode_size = const_pool_size + instruct_array_size +
+    const_pool_size = bytecode_frame.const_pool.size;
+    instruct_array_size = bytecode_frame.instruct_array.size;
+    bytecode_size = const_pool_size + instruct_array_size +
                              sizeof(const_pool_size) +
                              sizeof(instruct_array_size);
     byteCodeFrame_deinit(&bytecode_frame);
@@ -138,7 +141,7 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
 
     /* step 3, write const pool to file */
     pika_platform_fwrite(&const_pool_size, 1, sizeof(const_pool_size), bytecode_f);
-    char void_ = 0;
+    void_ = 0;
     /* add \0 at the start */
     pika_platform_fwrite(&void_, 1, 1, bytecode_f);
     byteCodeFrame_init(&bytecode_frame);
@@ -408,12 +411,12 @@ static PIKA_RES _loadModuleDataWithIndex(uint8_t* library_bytes,
         // pika_platform_printf("loading module: %s\r\n", module_name);
         *name_p = module_name;
         *addr_p = bytecode_addr;
-        uint32_t module_size =
+        size_t module_size =
             *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
         *size = module_size;
         bytecode_addr += module_size;
     }
-    return 0;
+    return PIKA_RES_OK;
 }
 
 PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
@@ -422,7 +425,7 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
                                  size_t* size_p) {
     int module_num = _getModuleNum(library_bytes);
     if (module_num < 0) {
-        return module_num;
+        return (PIKA_RES)module_num;
     }
     for (int i = 0; i < module_num; i++) {
         char* name = NULL;
@@ -433,7 +436,7 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
         if (strEqu(module_name, name)) {
             *addr_p = addr;
             *size_p = size;
-            return 0;
+            return PIKA_RES_OK;
         }
     }
     return PIKA_RES_ERR_ARG_NO_FOUND;
@@ -797,7 +800,7 @@ int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
 
 PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
                                                char* lib_path) {
-    PIKA_RES compile_err = obj_getInt(self, "err");
+    PIKA_RES compile_err = (PIKA_RES)obj_getInt(self, "err");
     if (PIKA_RES_OK != compile_err) {
         pika_platform_printf("  Error: compile failed, link aborted.\r\n");
         return compile_err;
@@ -833,5 +836,5 @@ PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
 PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path) {
     LibObj* lib = obj_getPtr(self, "lib");
     LibObj_staticLinkFile(lib, file_path);
-    return 0;
+    return PIKA_RES_OK;
 }

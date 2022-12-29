@@ -671,7 +671,7 @@ PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
 
 Method methodArg_getPtr(Arg* method_arg) {
     MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
-    return method_store->ptr;
+    return (Method)method_store->ptr;
 }
 
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
@@ -1660,13 +1660,13 @@ void _do_pks_eventListener_send(PikaEventListener* self,
 void pks_eventListener_send(PikaEventListener* self,
                             uint32_t eventId,
                             Arg* eventData) {
-    return _do_pks_eventListener_send(self, eventId, eventData, PIKA_TRUE);
+    _do_pks_eventListener_send(self, eventId, eventData, PIKA_TRUE);
 }
 
 void pks_eventListener_sendSignal(PikaEventListener* self,
                                   uint32_t eventId,
                                   int eventSignal) {
-    return pks_eventListener_send(self, eventId, arg_newInt(eventSignal));
+    pks_eventListener_send(self, eventId, arg_newInt(eventSignal));
 }
 
 Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
