@@ -82,9 +82,11 @@ int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
             case PIKA_HAL_UART_STOP_BITS_2:
                 platform_uart->config.stop_bits = HOSAL_STOP_BITS_2;
                 break;
+#if !defined(BL808)
             case PIKA_HAL_UART_STOP_BITS_1_5:
                 platform_uart->config.stop_bits = HOSAL_STOP_BITS_1_5;
                 break;
+#endif
             default:
                 platform_uart->config.stop_bits = HOSAL_STOP_BITS_1;
                 break;
