@@ -501,9 +501,9 @@ Arg* _vm_slice(VMState* vm,
             size_t size_origin = arg_getBytesSize(sliced_arg);
             Arg* sliced_arg_new = arg_newBytes(NULL, size_origin + 1);
             pika_platform_memcpy(arg_getBytes(sliced_arg_new), bytes_origin,
-                              size_origin);
+                                 size_origin);
             pika_platform_memcpy(arg_getBytes(sliced_arg_new) + size_origin,
-                              arg_getBytes(item_arg), 1);
+                                 arg_getBytes(item_arg), 1);
             arg_deinit(sliced_arg);
             sliced_arg = sliced_arg_new;
             arg_deinit(item_arg);
@@ -677,18 +677,22 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
             if (strEqu(arg_path, (char*)"True")) {
                 return arg_setInt(arg_ret_reg, "", 1);
             }
+            break;
         case 'F':
             if (strEqu(arg_path, (char*)"False")) {
                 return arg_setInt(arg_ret_reg, "", 0);
             }
+            break;
         case 'N':
             if (strEqu(arg_path, (char*)"None")) {
                 return arg_setNull(arg_ret_reg);
             }
+            break;
         case 'R':
             if (strEqu(arg_path, (char*)"RuntimeError")) {
                 return arg_setInt(arg_ret_reg, "", PIKA_RES_ERR_RUNTIME_ERROR);
             }
+            break;
     }
 
     Arg* res = NULL;
@@ -754,7 +758,8 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
 exit:
     if (NULL == res) {
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        pika_platform_printf("NameError: name '%s' is not defined\r\n", arg_path);
+        pika_platform_printf("NameError: name '%s' is not defined\r\n",
+                             arg_path);
     } else {
         res = arg_copy_noalloc(res, arg_ret_reg);
     }
@@ -1607,7 +1612,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (NULL == method || ARG_TYPE_NONE == arg_getType(method)) {
         /* error, method no found */
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        pika_platform_printf("NameError: name '%s' is not defined\r\n", run_path);
+        pika_platform_printf("NameError: name '%s' is not defined\r\n",
+                             run_path);
         goto exit;
     }
 
@@ -1616,7 +1622,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         /* error, method no found */
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         pika_platform_printf("TypeError: '%s' object is not callable\r\n",
-                          run_path);
+                             run_path);
         goto exit;
     }
 
@@ -3283,8 +3289,8 @@ void instructUnit_print(InstructUnit* self) {
         pika_platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
     }
     pika_platform_printf("%d %s #%d\r\n", instructUnit_getInvokeDeepth(self),
-                      instructUnit_getInstructStr(self),
-                      self->const_pool_index);
+                         instructUnit_getInstructStr(self),
+                         self->const_pool_index);
 }
 
 static void instructUnit_printWithConst(InstructUnit* self,
@@ -3292,9 +3298,10 @@ static void instructUnit_printWithConst(InstructUnit* self,
     // if (instructUnit_getIsNewLine(self)) {
     //     pika_platform_printf("B%d\r\n", instructUnit_getBlockDeepth(self));
     // }
-    pika_platform_printf("%s %s \t\t(#%d)\r\n", instructUnit_getInstructStr(self),
-                      constPool_getByOffset(const_pool, self->const_pool_index),
-                      self->const_pool_index);
+    pika_platform_printf(
+        "%s %s \t\t(#%d)\r\n", instructUnit_getInstructStr(self),
+        constPool_getByOffset(const_pool, self->const_pool_index),
+        self->const_pool_index);
 }
 
 void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool) {
@@ -3347,7 +3354,8 @@ void instructArray_printAsArray(InstructArray* self) {
         }
         for (int i = 0; i < (int)instructUnit_getSize(); i++) {
             g_i++;
-            pika_platform_printf("0x%02x, ", *((uint8_t*)ins_unit + (uintptr_t)i));
+            pika_platform_printf("0x%02x, ",
+                                 *((uint8_t*)ins_unit + (uintptr_t)i));
             if (g_i % line_num == 0) {
                 pika_platform_printf("\n");
             }
@@ -3369,7 +3377,7 @@ void byteCodeFrame_print(ByteCodeFrame* self) {
     instructArray_printWithConst(&(self->instruct_array), &(self->const_pool));
     pika_platform_printf("---------------\r\n");
     pika_platform_printf("byte code size: %d\r\n",
-                      self->const_pool.size + self->instruct_array.size);
+                         self->const_pool.size + self->instruct_array.size);
 }
 
 void VMState_solveUnusedStack(VMState* vm) {
