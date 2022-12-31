@@ -25,9 +25,6 @@
  * SOFTWARE.
  */
 
-/* micro pika configuration */
-#include "./pika_config_valid.h"
-
 /* adapter for old api */
 #include "./pika_adapter_old_api.h"
 

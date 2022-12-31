@@ -1,6 +1,9 @@
 #ifndef __PIKA_ADAPTER_OLD_API_H__
 #define __PIKA_ADAPTER_OLD_API_H__
 
+/* micro pika configuration */
+#include "./pika_config_valid.h"
+
 /*
  * This file is used to support old api, it's not recommended to use it.
  * In new project, please use new api instead.
@@ -61,6 +64,14 @@
 #define __platform_close pika_platform_close
 #define __platform_write pika_platform_write
 #define __platform_fcntl pika_platform_fcntl
+
+#define pks_eventLicener_registEvent pks_eventListener_registEvent
+#define pks_eventLisener_init pks_eventListener_init
+#define pks_eventLisener_getEventHandleObj pks_eventListener_getEventHandleObj
+#define pks_eventLisener_sendSignal pks_eventListener_sendSignal
+#define pks_eventLisener_deinit pks_eventListener_deinit
+#define pks_eventLicener_removeEvent pks_eventListener_removeEvent
+
 #endif
 
 #endif
