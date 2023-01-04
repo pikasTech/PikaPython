@@ -6,7 +6,6 @@
  * @Description: the code belongs to jiejie, please keep the author information and source code according to the license.
  */
 #include <string.h>
-#include "platform_timer.h"
 #include "platform_memory.h"
 #include "nettype_tcp.h"
 

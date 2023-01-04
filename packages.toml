@@ -74,7 +74,9 @@ releases = [
   "v1.11.5 83afef1906204a7e3f9b773aa8b4bdd46cea4ab9",
   "v1.11.6 338d385be718d8d11f02aa022103a4b4e9404527",
   "v1.11.7 97b8268a31f195092a9ec1d848fbe49168c42c19",
-  "v1.11.8 1a66a70893702174294214d227aee3ec8e4498af"
+  "v1.11.8 1a66a70893702174294214d227aee3ec8e4498af",
+  "v1.11.9 b2f397a990f0aa88129104d460174339531ee808",
+  "v1.12.0 480134b68e56580a2d6268eca10eea6c30b6f4cd"
 ]
 
 [[packages]]
@@ -141,7 +143,9 @@ releases = [
   "v1.11.5 83afef1906204a7e3f9b773aa8b4bdd46cea4ab9",
   "v1.11.6 338d385be718d8d11f02aa022103a4b4e9404527",
   "v1.11.7 97b8268a31f195092a9ec1d848fbe49168c42c19",
-  "v1.11.8 1a66a70893702174294214d227aee3ec8e4498af"
+  "v1.11.8 1a66a70893702174294214d227aee3ec8e4498af",
+  "v1.11.9 b2f397a990f0aa88129104d460174339531ee808",
+  "v1.12.0 480134b68e56580a2d6268eca10eea6c30b6f4cd"
 ]
 
 [[packages]]
@@ -171,7 +175,10 @@ releases = [
   "v1.11.8 58ff9fe16688be2e77ed220604aa8b1271b72d80",
   "v2.0.0 e89c585f46ee98811611ea56d5abfc618a41ee3b",
   "v2.1.0 852daad3c9a95dbce54dbf1d2cdb5b2321826b4f",
-  "v2.1.1 5eadba95fa573e3409f65c6392804d3c60d627ac"
+  "v2.1.1 5eadba95fa573e3409f65c6392804d3c60d627ac",
+  "v2.1.2 36ef746f5791a57212cc1d02fe885814e613e60c",
+  "v2.2.0 747fc1be13d57f920b436a2dbbfce253d8c3546f",
+  "v2.2.1 e28d9ee48feaf2125c018e5a18db60f648f038f8"
 ]
 
 [[packages]]
@@ -413,10 +420,6 @@ name = "modbus"
 releases = [ "v0.0.1 729ce8a497d73b53888180b9f6d0dfdac145df26" ]
 
 [[packages]]
-name = "BL808"
-releases = [ "v0.0.1 b3b2f1c0e30b703666342ae4628e544299cdbd11" ]
-
-[[packages]]
 name = "pika_fatfs"
 releases = [
   "v0.0.1 280700b8a8eee1849d16ac68871d014392edf269",
@@ -429,7 +432,10 @@ releases = [ "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee" ]
 
 [[packages]]
 name = "requests"
-releases = [ "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee" ]
+releases = [
+  "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee",
+  "v1.0.0 c67a894fc27ab3fe7b7aac825f1880e5073b0020"
+]
 
 [[packages]]
 name = "hashlib"
@@ -440,15 +446,32 @@ releases = [
 
 [[packages]]
 name = "hmac"
-releases = [ "v1.0.0 ca8fe36d68be16722317860394fdf78c620e3e2d" ]
+releases = [
+  "v1.0.0 ca8fe36d68be16722317860394fdf78c620e3e2d",
+  "v1.0.1 d75ce00c377e48c6058bbe1f824474802383e5e7"
+]
 
 [[packages]]
 name = "BLIOT"
 releases = [
   "v0.1.0 4599ce8681d293a5cc7682115205ab5e85e9b5e8",
-  "v0.2.0 eee8e1848eed77f3ebed777230104ebb4dfc3263"
+  "v0.2.0 eee8e1848eed77f3ebed777230104ebb4dfc3263",
+  "v0.3.0 fc69ce4145c053d0a5f9191e8706014c5bee4ca8",
+  "v0.4.0 bcb2f3aac147cfb7b0f655b877d964e3fc0699c8",
+  "v0.4.1 e28d9ee48feaf2125c018e5a18db60f648f038f8"
 ]
 
 [[packages]]
 name = "aes"
 releases = [ "v0.0.1 5c45cba0c39d447fbe7a4a082ee3170188c3bcb7" ]
+
+[[packages]]
+name = "base64"
+releases = [
+  "v0.0.1 1ae3ac23759fb2b5e0f77866af40986ac94e356d",
+  "v1.0.0 29ad2b44817c5a72ace9f6d09cea7df6beb516f9"
+]
+
+[[packages]]
+name = "pika_libc"
+releases = [ "v1.0.0 42a3cebb085a4a995d80031685dbf630e053aa55" ]

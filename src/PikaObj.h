@@ -293,9 +293,9 @@ void _temp__do_pikaScriptShell(PikaObj* self, ShellConfig* cfg);
 
 /*
     need implament :
-        __platform_fopen()
-        __platform_fwrite()
-        __platform_fclose()
+        pika_platform_fopen()
+        pika_platform_fwrite()
+        pika_platform_fclose()
 */
 Method obj_getNativeMethod(PikaObj* self, char* method_name);
 PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
@@ -342,23 +342,32 @@ enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
 
 typedef PikaObj PikaEventListener;
 
-void pks_eventLisener_sendSignal(PikaEventListener* self,
-                                 uint32_t eventId,
-                                 int eventSignal);
+void pks_eventListener_registEvent(PikaEventListener* self,
+                                   uint32_t eventId,
+                                   PikaObj* eventHandleObj);
 
-void pks_eventLicener_registEvent(PikaEventListener* self,
+void pks_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
+
+void _do_pks_eventListener_send(PikaEventListener* self,
+                                uint32_t eventId,
+                                Arg* eventData,
+                                PIKA_BOOL pickupWhenNoVM);
+
+void pks_eventListener_sendSignal(PikaEventListener* self,
                                   uint32_t eventId,
-                                  PikaObj* eventHandleObj);
+                                  int eventSignal);
 
-void pks_eventLicener_removeEvent(PikaEventListener* self, uint32_t eventId);
+void pks_eventListener_send(PikaEventListener* self,
+                            uint32_t eventId,
+                            Arg* eventData);
 
-PikaObj* pks_eventLisener_getEventHandleObj(PikaEventListener* self,
-                                            uint32_t eventId);
+PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
+                                             uint32_t eventId);
 
-void pks_eventLisener_init(PikaEventListener** p_self);
-void pks_eventLisener_deinit(PikaEventListener** p_self);
+void pks_eventListener_init(PikaEventListener** p_self);
+void pks_eventListener_deinit(PikaEventListener** p_self);
 PikaObj* methodArg_getDefContext(Arg* method_arg);
-PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name);
+PikaObj* obj_linkLibraryFile(PikaObj* self, char* input_file_name);
 NewFun obj_getClass(PikaObj* obj);
 
 void pks_printVersion(void);
@@ -382,13 +391,8 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
 
 #define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                            \
     obj_setErrorCode(self, 1);                                            \
-    __platform_printf("Error: abstract method `%s()` need override.\r\n", \
+    pika_platform_printf("Error: abstract method `%s()` need override.\r\n", \
                       __FUNCTION__)
-
-#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                            \
-    __platform_printf("Error: weak function `%s()` need override.\r\n", \
-                      __FUNCTION__);                                    \
-    while (1)
 
 char* obj_cacheStr(PikaObj* self, char* str);
 PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp);
@@ -499,12 +503,17 @@ void _obj_updateProxyFlag(PikaObj* self);
     _obj_updateProxyFlag((_self))
 
 Arg* _obj_getProp(PikaObj* obj, char* name);
-Arg* __eventLisener_runEvent(PikaEventListener* lisener,
-                             uint32_t eventId,
-                             int eventSignal);
-Arg* pks_eventLisener_sendSignalAwaitResult(PikaEventListener* self,
-                                            uint32_t eventId,
-                                            int eventSignal);
+Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
+                                      uint32_t eventId,
+                                      int eventSignal);
+
+Arg* __eventListener_runEvent(PikaEventListener* lisener,
+                              uint32_t eventId,
+                              Arg* eventData);
+
+Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
+                                             uint32_t eventId,
+                                             int eventSignal);
 
 void obj_printModules(PikaObj* self);
 

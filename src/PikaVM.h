@@ -72,7 +72,7 @@ struct VMState {
     int32_t pc;
     ByteCodeFrame* bytecode_frame;
     uint8_t loop_deepth;
-    uint8_t error_code;
+    int8_t error_code;
     uint8_t line_error_code;
     uint8_t try_error_code;
     uint32_t ins_cnt;
@@ -125,7 +125,7 @@ typedef enum VM_SIGNAL_CTRL {
 
 typedef struct EventCQ {
     uint32_t id[PIKA_EVENT_LIST_SIZE];
-    int signal[PIKA_EVENT_LIST_SIZE];
+    Arg* data[PIKA_EVENT_LIST_SIZE];
     PikaEventListener* lisener[PIKA_EVENT_LIST_SIZE];
     Arg* res[PIKA_EVENT_LIST_SIZE];
     int head;
@@ -304,13 +304,13 @@ void __vm_Dict___init__(PikaObj* self);
 VM_SIGNAL_CTRL VMSignal_getCtrl(void);
 void pks_vm_exit(void);
 void pks_vmSignal_setCtrlElear(void);
-int VMSignal_getVMCnt(void);
-PIKA_RES VMSignal_popEvent(PikaEventListener** lisener_p,
-                           uint32_t* id,
-                           int* signal,
-                           int* head);
-PIKA_RES VMSignal_pushEvent(PikaEventListener* lisener,
-                            uint32_t eventId,
-                            int eventSignal);
-void VMSignale_pickupEvent(void);
+PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
+                                  uint32_t* id,
+                                  Arg** signal,
+                                  int* head);
+PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
+                                   uint32_t eventId,
+                                   Arg* eventData);
+int _VMEvent_getVMCnt(void);
+void _VMEvent_pickupEvent(void);
 #endif

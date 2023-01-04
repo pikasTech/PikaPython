@@ -14,3 +14,32 @@ bsp/pico/MDK/mdk/RTE
 bsp/pico-dev/MDK/mdk/RTE
 
 .vscode/
+coredump/
+
+#remove unnecessary file
+test/out/
+test/python/*.py.a
+test/python/*.py.o
+test/python/__asset_lib_to_file_py_a.c
+tools/pikaByteCodeGen/build/
+tools/pikaByteCodeGen/pikascript/
+tools/pikaByteCodeGen/libpikabinder/
+tools/pikaCompiler/libpikabinder/
+tools/pikaCompiler/rust-msc-latest-linux
+
+port/linux/test
+port/linux/Release/
+port/linux/benchmark_result.json
+port/linux/gmon.out
+port/linux/package/pikascript/pikascript-api/
+port/linux/package/pikascript/pikascript-core/
+port/linux/package/pikascript/*.o
+port/linux/package/pikascript/pika
+port/linux/package/pikascript/rust-msc-latest-linux
+
+port/linux/report.txt
+port/linux/snake.bin
+port/linux/task.bin
+port/linux/pika_bytecode.bin
+port/linux/config/pika_config.h
+

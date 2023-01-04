@@ -93,8 +93,18 @@
         "__instruction_def.h": "c",
         "pika_hal_def.h": "c",
         "pika_hal_table.h": "c",
-        "pika_hal_table_rule.h": "c"
+        "pika_hal_table_rule.h": "c",
+        "pikaobj.h": "c",
+        "pikastddevice_gpio.h": "c",
+        "pikastddevice_adc.h": "c",
+        "pikastddevice_can.h": "c",
+        "pikastddevice_dac.h": "c",
+        "pikastddevice_iic.h": "c",
+        "pikastddevice_pwm.h": "c",
+        "pikastddevice_spi.h": "c",
+        "pikastddevice_uart.h": "c",
+        "datamemory.h": "c",
+        "pika_adapter_old_api.h": "c"
     },
     "python.formatting.provider": "autopep8",
-    "C_Cpp.errorSquiggles": "Disabled"
 }

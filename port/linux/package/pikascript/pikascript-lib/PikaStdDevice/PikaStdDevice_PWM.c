@@ -1,6 +1,5 @@
 #include "PikaStdDevice_PWM.h"
-#include "BaseObj.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 void PikaStdDevice_PWM_init(PikaObj* self) {
     obj_setStr(self, "pin", "none");
@@ -105,4 +104,9 @@ void PikaStdDevice_PWM_platformSetFrequency(PikaObj* self) {
 void PikaStdDevice_PWM_platformDisable(PikaObj* self) {
     pika_dev* dev = _get_dev(self);
     pika_hal_ioctl(dev, PIKA_HAL_IOCTL_DISABLE);
+}
+
+void PikaStdDevice_PWM_close(PikaObj* self) {
+    pika_dev* dev = _get_dev(self);
+    pika_hal_close(dev);
 }

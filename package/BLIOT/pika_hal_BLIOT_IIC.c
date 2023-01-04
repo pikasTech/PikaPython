@@ -136,34 +136,34 @@ int pika_hal_platform_IIC_ioctl_disable(pika_dev* dev) {
 int pika_hal_platform_IIC_write(pika_dev* dev, void* buf, size_t count) {
     hosal_i2c_dev_t* platform_i2c = (hosal_i2c_dev_t*)dev->platform_data;
     pika_hal_IIC_config* cfg = (pika_hal_IIC_config*)dev->ioctl_config;
-    if (!cfg->mem_addr_ena) {
-        return hosal_i2c_master_send(platform_i2c, cfg->slave_addr, buf, count,
-                                     cfg->timeout);
-#ifdef PIKA_DEBUG_ENABLE
+    if (cfg->mem_addr_ena == PIKA_HAL_IIC_MEM_ADDR_ENA_DISABLE) {
+#if PIKA_DEBUG_ENABLE
         __platform_printf("IIC: Write %d bytes to 0x%02x\r\n", count,
                           cfg->slave_addr);
 #endif
+        return hosal_i2c_master_send(platform_i2c, cfg->slave_addr, buf, count,
+                                     cfg->timeout);
     } else {
-        return hosal_i2c_mem_write(platform_i2c, cfg->slave_addr, cfg->mem_addr,
-                                   cfg->mem_addr_size, buf, count,
-                                   cfg->timeout);
-#ifdef PIKA_DEBUG_ENABLE
+#if PIKA_DEBUG_ENABLE
         __platform_printf("IIC: Write %d bytes to 0x%02x, mem_addr:0x%02x\r\n",
                           count, cfg->slave_addr, cfg->mem_addr);
 #endif
+        return hosal_i2c_mem_write(platform_i2c, cfg->slave_addr, cfg->mem_addr,
+                                   cfg->mem_addr_size, buf, count,
+                                   cfg->timeout);
     }
 }
 
 int pika_hal_platform_IIC_read(pika_dev* dev, void* buf, size_t count) {
     hosal_i2c_dev_t* platform_i2c = (hosal_i2c_dev_t*)dev->platform_data;
     pika_hal_IIC_config* cfg = (pika_hal_IIC_config*)dev->ioctl_config;
-    if (!cfg->mem_addr_ena) {
-        return hosal_i2c_master_recv(platform_i2c, cfg->slave_addr, buf, count,
-                                     cfg->timeout);
-#ifdef PIKA_DEBUG_ENABLE
+    if (cfg->mem_addr_ena == PIKA_HAL_IIC_MEM_ADDR_ENA_DISABLE) {
+#if PIKA_DEBUG_ENABLE
         __platform_printf("IIC: Read %d bytes from 0x%02x\r\n", count,
                           cfg->slave_addr);
 #endif
+        return hosal_i2c_master_recv(platform_i2c, cfg->slave_addr, buf, count,
+                                     cfg->timeout);
     } else {
 #if PIKA_DEBUG_ENABLE
         __platform_printf("IIC: Read %d bytes from 0x%02x, mem_addr:0x%02x\r\n",

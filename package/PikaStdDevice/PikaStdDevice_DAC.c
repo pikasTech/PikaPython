@@ -1,6 +1,5 @@
 #include "PikaStdDevice_DAC.h"
-#include "BaseObj.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 static pika_dev* _get_dev(PikaObj* self) {
     pika_dev* dev = obj_getPtr(self, "pika_dev");
@@ -45,4 +44,9 @@ void PikaStdDevice_DAC_write(PikaObj* self, pika_float val) {
     pika_hal_DAC_config* cfg = (pika_hal_DAC_config*)dev->ioctl_config;
     uint32_t val_i = (val / cfg->vref) * cfg->max;
     pika_hal_write(dev, &val_i, sizeof val_i);
+}
+
+void PikaStdDevice_DAC_close(PikaObj* self) {
+    pika_dev* dev = _get_dev(self);
+    pika_hal_close(dev);
 }

@@ -3644,6 +3644,21 @@ TEST(parser, _del) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, _del_issue1) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "del(a)\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 DEL a\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, issue_fa13f4) {
     pikaMemInfo.heapUsedMax = 0;
@@ -5042,6 +5057,43 @@ TEST(parser, print_ssa) {
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, not_in) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "1 not in a\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 NUM 1\n"
+                 "2 REF a\n"
+                 "1 OPT  in \n"
+                 "0 OPT  not \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+// TEST(parser, def_not_in) {
+//     pikaMemInfo.heapUsedMax = 0;
+//     Args* buffs = New_strBuff();
+//     char* lines =
+//         "def test(a=\"hmac-md5\"):\n"
+//         "    print(\"input:\",a)\n"
+//         "    print(\"table:\"t )\n"
+//         "    if a not in t:\n"
+//         "        print(\"a not in t\")else:\n"
+//         "        print(\"a in t\")\n"
+//         "test()\n";
+//     printf("%s\r\n", lines);
+//     char* pikaAsm = Parser_linesToAsm(buffs, lines);
+//     printf("%s", pikaAsm);
+//     EXPECT_STREQ(pikaAsm, "");
+//     args_deinit(buffs);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 #endif
 

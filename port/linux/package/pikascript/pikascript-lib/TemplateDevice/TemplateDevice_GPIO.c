@@ -1,11 +1,5 @@
 #include "TemplateDevice_GPIO.h"
-
-void TemplateDevice_GPIO_platformDisable(PikaObj* self) {}
-void TemplateDevice_GPIO_platformEnable(PikaObj* self) {}
-void TemplateDevice_GPIO_platformHigh(PikaObj* self) {}
-void TemplateDevice_GPIO_platformLow(PikaObj* self) {}
-void TemplateDevice_GPIO_platformRead(PikaObj* self) {}
-void TemplateDevice_GPIO_platformSetMode(PikaObj* self) {}
+#include "../PikaStdDevice/pika_hal.h"
 
 const uint32_t GPIO_PA8_EVENT_ID = 0x08;
 void TemplateDevice_GPIO_platformGetEventId(PikaObj* self) {
@@ -21,8 +15,31 @@ extern PikaEventListener* g_pika_device_event_listener;
 #define GPIO_PA8_EVENT_ID 0x08
 
 void TemplateDevice_GPIO_eventTest(PikaObj* self) {
-    pks_eventLisener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
-                                EVENT_SIGNAL_IO_FALLING_EDGE);
-    pks_eventLisener_sendSignal(g_pika_device_event_listener, GPIO_PA8_EVENT_ID,
-                                EVENT_SIGNAL_IO_RISING_EDGE);
+    pks_eventListener_sendSignal(g_pika_device_event_listener,
+                                 GPIO_PA8_EVENT_ID,
+                                 EVENT_SIGNAL_IO_FALLING_EDGE);
+    pks_eventListener_sendSignal(g_pika_device_event_listener,
+                                 GPIO_PA8_EVENT_ID,
+                                 EVENT_SIGNAL_IO_RISING_EDGE);
+}
+
+int pika_hal_platform_GPIO_open(pika_dev* dev, char* name) {
+    return 0;
+}
+
+int pika_hal_platform_GPIO_close(pika_dev* dev) {
+    return 0;
+}
+
+int pika_hal_platform_GPIO_ioctl_config(pika_dev* dev,
+                                        pika_hal_GPIO_config* cfg) {
+    return 0;
+}
+
+int pika_hal_platform_GPIO_ioctl_enable(pika_dev* dev) {
+    return 0;
+}
+
+int pika_hal_platform_GPIO_ioctl_disable(pika_dev* dev) {
+    return 0;
 }

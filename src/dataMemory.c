@@ -33,8 +33,8 @@ volatile PikaMemInfo pikaMemInfo = {0};
 
 void* pikaMalloc(uint32_t size) {
     /* pika memory lock */
-    if (0 != __is_locked_pikaMemory()) {
-        __platform_wait();
+    if (0 != pika_is_locked_pikaMemory()) {
+        pika_platform_wait();
     }
 
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
@@ -47,11 +47,11 @@ void* pikaMalloc(uint32_t size) {
     if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
         pikaMemInfo.heapUsedMax = pikaMemInfo.heapUsed;
     }
-    __platform_disable_irq_handle();
-    void* mem = __user_malloc(size);
-    __platform_enable_irq_handle();
+    pika_platform_disable_irq_handle();
+    void* mem = pika_user_malloc(size);
+    pika_platform_enable_irq_handle();
     if (NULL == mem) {
-        __platform_printf("Error: No heap space! Please reset the device.\r\n");
+        pika_platform_printf("Error: No heap space! Please reset the device.\r\n");
         while (1) {
         }
     }
@@ -59,8 +59,8 @@ void* pikaMalloc(uint32_t size) {
 }
 
 void pikaFree(void* mem, uint32_t size) {
-    if (0 != __is_locked_pikaMemory()) {
-        __platform_wait();
+    if (0 != pika_is_locked_pikaMemory()) {
+        pika_platform_wait();
     }
 
 //! if you unsure about the __impl_pikaMalloc, uncomment this to force alignment
@@ -69,9 +69,9 @@ void pikaFree(void* mem, uint32_t size) {
     size = mem_align(size);
 #endif
 
-    __platform_disable_irq_handle();
-    __user_free(mem, size);
-    __platform_enable_irq_handle();
+    pika_platform_disable_irq_handle();
+    pika_user_free(mem, size);
+    pika_platform_enable_irq_handle();
     pikaMemInfo.heapUsed -= size;
 }
 
@@ -105,7 +105,7 @@ Pool pool_init(uint32_t size, uint8_t aline) {
     uint32_t block_size = pool_getBlockIndex_byMemSize(&pool, size);
     pool.size = pool_aline(&pool, size);
     pool.bitmap = bitmap_init(block_size);
-    pool.mem = __platform_malloc(pool_aline(&pool, pool.size));
+    pool.mem = pika_platform_malloc(pool_aline(&pool, pool.size));
     pool.first_free_block = 0;
     pool.purl_free_block_start = 0;
     pool.inited = PIKA_TRUE;
@@ -113,7 +113,7 @@ Pool pool_init(uint32_t size, uint8_t aline) {
 }
 
 void pool_deinit(Pool* pool) {
-    __platform_free(pool->mem);
+    pika_platform_free(pool->mem);
     pool->mem = NULL;
     bitmap_deinit(pool->bitmap);
 }
@@ -130,13 +130,13 @@ uint32_t pool_getBlockIndex_byMem(Pool* pool, void* mem) {
 void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
     uint32_t block_index_min = pool_getBlockIndex_byMemSize(pool, size_min);
     uint32_t block_index_max = pool_getBlockIndex_byMemSize(pool, size_max);
-    __platform_printf("[bitmap]\r\n");
+    pika_platform_printf("[bitmap]\r\n");
     uint8_t is_end = 0;
     for (uint32_t i = block_index_min; i < block_index_max; i += 16) {
         if (is_end) {
             break;
         }
-        __platform_printf("0x%x\t: 0x%d", i * pool->aline,
+        pika_platform_printf("0x%x\t: 0x%d", i * pool->aline,
                           (i + 15) * pool->aline);
         for (uint32_t j = i; j < i + 16; j += 4) {
             if (is_end) {
@@ -147,11 +147,11 @@ void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
                     is_end = 1;
                     break;
                 }
-                __platform_printf("%d", bitmap_get(pool->bitmap, k));
+                pika_platform_printf("%d", bitmap_get(pool->bitmap, k));
             }
-            __platform_printf(" ");
+            pika_platform_printf(" ");
         }
-        __platform_printf("\r\n");
+        pika_platform_printf("\r\n");
     }
 }
 
@@ -244,12 +244,12 @@ void pool_free(Pool* pool, void* mem, uint32_t size) {
 
 BitMap bitmap_init(uint32_t size) {
     BitMap mem_bit_map =
-        (BitMap)__platform_malloc(((size - 1) / 8 + 1) * sizeof(char));
+        (BitMap)pika_platform_malloc(((size - 1) / 8 + 1) * sizeof(char));
     if (mem_bit_map == NULL) {
         return NULL;
     }
     uint32_t size_mem_bit_map = (size - 1) / 8 + 1;
-    __platform_memset(mem_bit_map, 0x0, size_mem_bit_map);
+    pika_platform_memset(mem_bit_map, 0x0, size_mem_bit_map);
     return mem_bit_map;
 }
 
@@ -284,15 +284,15 @@ uint8_t bitmap_get(BitMap bitmap, uint32_t index) {
 }
 
 void bitmap_deinit(BitMap bitmap) {
-    __platform_free(bitmap);
+    pika_platform_free(bitmap);
 }
 
 #if PIKA_POOL_ENABLE
 Pool pikaPool = {0};
-void* __user_malloc(size_t size) {
+void* pika_user_malloc(size_t size) {
     return pool_malloc(&pikaPool, size);
 }
-void __user_free(void* ptrm, size_t size) {
+void pika_user_free(void* ptrm, size_t size) {
     pool_free(&pikaPool, ptrm, size);
 }
 #endif
@@ -308,7 +308,7 @@ void mem_pool_init(void) {
 void _mem_cache_deinit(void) {
 #if PIKA_ARG_CACHE_ENABLE
     while (pikaMemInfo.cache_pool_top) {
-        __user_free(pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top - 1], 0);
+        pika_user_free(pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top - 1], 0);
         pikaMemInfo.cache_pool_top--;
     }
 #endif

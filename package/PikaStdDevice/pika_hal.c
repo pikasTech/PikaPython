@@ -53,6 +53,7 @@ __exit:
     __platform_printf("Error: dev_open failed.\r\n");
     if (dev->ioctl_config) {
         pikaFree(dev->ioctl_config, _pika_hal_dev_config_size(dev_type));
+        dev->ioctl_config = NULL;
     }
     if (dev) {
         pikaFree(dev, sizeof(pika_dev));
@@ -71,11 +72,12 @@ int pika_hal_close(pika_dev* dev) {
     }
     ret = impl->close(dev);
 __exit:
-    if (NULL != dev) {
-        pikaFree(dev, sizeof(pika_dev));
-    }
     if (NULL != dev->ioctl_config) {
         pikaFree(dev->ioctl_config, _pika_hal_dev_config_size(dev->type));
+        dev->ioctl_config = NULL;
+    }
+    if (NULL != dev) {
+        pikaFree(dev, sizeof(pika_dev));
     }
     return ret;
 }
@@ -181,8 +183,11 @@ int pika_hal_GPIO_ioctl_merge_config(pika_hal_GPIO_config* dst,
     // printf("after merge: dst->dir=%d, src->dir=%d\r\n", dst->dir, src->dir);
     _IOCTL_CONFIG_USE_DEFAULT(pull, PIKA_HAL_GPIO_PULL_NONE);
     _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_GPIO_SPEED_10M);
-    _IOCTL_CONFIG_USE_DEFAULT(event_callback_rising, NULL);
-    _IOCTL_CONFIG_USE_DEFAULT(event_callback_falling, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_filter,
+                              PIKA_HAL_GPIO_EVENT_SIGNAL_RISING);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
+                              PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
     return 0;
 }
 
@@ -192,7 +197,12 @@ int pika_hal_UART_ioctl_merge_config(pika_hal_UART_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(data_bits, PIKA_HAL_UART_DATA_BITS_8);
     _IOCTL_CONFIG_USE_DEFAULT(stop_bits, PIKA_HAL_UART_STOP_BITS_1);
     _IOCTL_CONFIG_USE_DEFAULT(parity, PIKA_HAL_UART_PARITY_NONE);
-    _IOCTL_CONFIG_USE_DEFAULT(event_callback_rx, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(flow_control, PIKA_HAL_UART_FLOW_CONTROL_NONE);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_filter,
+                              PIKA_HAL_UART_EVENT_SIGNAL_RX);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
+                              PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
     return 0;
 }
 
@@ -204,6 +214,21 @@ int pika_hal_SPI_ioctl_merge_config(pika_hal_SPI_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
     _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_2M);
     _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_SPI_TIMEOUT_1000MS);
+    return 0;
+}
+
+int pika_hal_SOFT_SPI_ioctl_merge_config(pika_hal_SOFT_SPI_config* dst,
+                                    pika_hal_SOFT_SPI_config* src) {
+    _IOCTL_CONFIG_USE_DEFAULT(lsb_or_msb, PIKA_HAL_SPI_MSB);
+    _IOCTL_CONFIG_USE_DEFAULT(master_or_slave, PIKA_HAL_SPI_MASTER);
+    _IOCTL_CONFIG_USE_DEFAULT(mode, PIKA_HAL_SPI_MODE_0);
+    _IOCTL_CONFIG_USE_DEFAULT(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
+    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_2M);
+    _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_SPI_TIMEOUT_1000MS);
+    _IOCTL_CONFIG_USE_DEFAULT(CS, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(SCK, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(MOSI, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(MISO, NULL);
     return 0;
 }
 

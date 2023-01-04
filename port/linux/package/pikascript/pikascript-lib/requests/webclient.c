@@ -362,6 +362,7 @@ static int webclient_connect(struct webclient_session* session,
         LOG_E(
             "not support https connect, please enable webclient https "
             "configure!");
+        LOG_E("||url:%.1024s||", URI);
         rc = -WEBCLIENT_ERROR;
         goto __exit;
 #endif
@@ -468,6 +469,7 @@ __exit:
 }
 
 /**
+ * FIXME: userful func
  * add fields data to request header data.
  *
  * @param session webclient session
@@ -701,6 +703,54 @@ __exit:
     return rc;
 }
 
+/* FIXME: 定制版发送响应头 */
+static int webclient_send_header2(struct webclient_session* session,
+                                 int method) {
+    int rc = WEBCLIENT_OK;
+    char* header = RT_NULL;
+
+    RT_ASSERT(session);
+
+    header = session->header->buffer;
+
+    if (strstr(header, "Host:") == RT_NULL) {
+        if (webclient_header_fields_add(session, "Host: %s\r\n",
+                                        session->host) < 0)
+            return -WEBCLIENT_NOMEM;
+    }
+
+    if (strstr(header, "User-Agent:") == RT_NULL) {
+        if (webclient_header_fields_add(
+                session, "User-Agent: PikaScript HTTP Agent\r\n") < 0)
+            return -WEBCLIENT_NOMEM;
+    }
+
+    if (strstr(header, "Accept:") == RT_NULL) {
+        if (webclient_header_fields_add(session, "Accept: */*\r\n") < 0)
+            return -WEBCLIENT_NOMEM;
+    }
+
+    /* header data end */
+    web_snprintf(session->header->buffer + session->header->length,
+                    session->header->size - session->header->length,
+                    "\r\n");
+    session->header->length += 2;
+
+    /* check header size */
+    if (session->header->length > session->header->size) {
+        LOG_E("send header failed, not enough header buffer size(%d)!",
+                session->header->size);
+        rc = -WEBCLIENT_NOBUFFER;
+        goto __exit;
+    }
+
+    webclient_write(session, (unsigned char*)session->header->buffer,
+                    session->header->length);
+
+__exit:
+    return rc;
+}
+
 /**
  * resolve server response data.
  *
@@ -811,6 +861,7 @@ int webclient_handle_response(struct webclient_session* session) {
 }
 
 /**
+ * FIXME: userful func
  * create webclient session, set maximum header and response size
  *
  * @param header_sz maximum send header size
@@ -875,7 +926,6 @@ int webclient_get(struct webclient_session* session, const char* URI) {
 
     RT_ASSERT(session);
     RT_ASSERT(URI);
-
     rc = webclient_connect(session, URI);
     if (rc != WEBCLIENT_OK) {
         /* connect to webclient server failed. */
@@ -883,6 +933,71 @@ int webclient_get(struct webclient_session* session, const char* URI) {
     }
 
     rc = webclient_send_header(session, WEBCLIENT_GET);
+    if (rc != WEBCLIENT_OK) {
+        /* send header to webclient server failed. */
+        return rc;
+    }
+
+    /* handle the response header of webclient server */
+    resp_status = webclient_handle_response(session);
+
+    LOG_D("get position handle response(%d).", resp_status);
+
+    if (resp_status > 0) {
+        const char* location = webclient_header_fields_get(session, "Location");
+
+        /* relocation */
+        if ((resp_status == 302 || resp_status == 301) && location) {
+            char* new_url;
+
+            new_url = web_strdup(location);
+            if (new_url == RT_NULL) {
+                return -WEBCLIENT_NOMEM;
+            }
+
+            /* clean webclient session */
+            webclient_clean(session);
+            /* clean webclient session header */
+            session->header->length = 0;
+            web_memset(session->header->buffer, 0, session->header->size);
+
+            rc = webclient_get(session, new_url);
+
+            web_free(new_url);
+            return rc;
+        }
+    }
+
+    return resp_status;
+}
+
+/**
+ * FIXME: better interface
+ *  send GET request to http server and get response header.
+ *
+ * @param session webclient session
+ * @param URI input server URI address
+ * @param header GET request header
+ *             = NULL: use default header data
+ *            != NULL: use custom header data
+ *
+ * @return <0: send GET request failed
+ *         >0: response http status code
+ */
+int webclient_get2(struct webclient_session* session, const char* URI) {
+    int rc = WEBCLIENT_OK;
+    int resp_status = 0;
+
+    RT_ASSERT(session);
+    RT_ASSERT(URI);
+    /* LOG_E("||url:%.1024s||", URI); */
+    rc = webclient_connect(session, URI);
+    if (rc != WEBCLIENT_OK) {
+        /* connect to webclient server failed. */
+        return rc;
+    }
+
+    rc = webclient_send_header2(session, WEBCLIENT_GET);
     if (rc != WEBCLIENT_OK) {
         /* send header to webclient server failed. */
         return rc;
@@ -1146,6 +1261,59 @@ int webclient_post(struct webclient_session* session,
     }
 
     rc = webclient_send_header(session, WEBCLIENT_POST);
+    if (rc != WEBCLIENT_OK) {
+        /* send header to webclient server failed. */
+        return rc;
+    }
+
+    if (post_data && (data_len > 0)) {
+        webclient_write(session, post_data, data_len);
+
+        /* resolve response data, get http status code */
+        resp_status = webclient_handle_response(session);
+        LOG_D("post handle response(%d).", resp_status);
+    }
+
+    return resp_status;
+}
+
+/**
+ * FIXME: better interface
+ * send POST request to server and get response header data.
+ *
+ * @param session webclient session
+ * @param URI input server URI address
+ * @param post_data data send to the server
+ *                = NULL: just connect server and send header
+ *               != NULL: send header and body data, resolve response data
+ * @param data_len the length of send data
+ *
+ * @return <0: send POST request failed
+ *         =0: send POST header success
+ *         >0: response http status code
+ */
+int webclient_post2(struct webclient_session* session,
+                   const char* URI,
+                   const void* post_data,
+                   size_t data_len) {
+    int rc = WEBCLIENT_OK;
+    int resp_status = 0;
+
+    RT_ASSERT(session);
+    RT_ASSERT(URI);
+
+    if ((post_data != RT_NULL) && (data_len == 0)) {
+        LOG_E("input post data length failed");
+        return -WEBCLIENT_ERROR;
+    }
+
+    rc = webclient_connect(session, URI);
+    if (rc != WEBCLIENT_OK) {
+        /* connect to webclient server failed. */
+        return rc;
+    }
+
+    rc = webclient_send_header2(session, WEBCLIENT_POST);
     if (rc != WEBCLIENT_OK) {
         /* send header to webclient server failed. */
         return rc;
@@ -1623,6 +1791,139 @@ int webclient_request(const char* URI,
     int totle_length = 0;
 
     RT_ASSERT(URI);
+
+    if (post_data == RT_NULL && response == RT_NULL) {
+        LOG_E("request get failed, get response data cannot be empty.");
+        return -WEBCLIENT_ERROR;
+    }
+
+    if ((post_data != RT_NULL) && (data_len == 0)) {
+        LOG_E("input post data length failed");
+        return -WEBCLIENT_ERROR;
+    }
+
+    if ((response != RT_NULL && resp_len == RT_NULL) ||
+        (response == RT_NULL && resp_len != RT_NULL)) {
+        LOG_E("input response data or length failed");
+        return -WEBCLIENT_ERROR;
+    }
+
+    if (post_data == RT_NULL) {
+        /* send get request */
+        session = webclient_session_create(WEBCLIENT_HEADER_BUFSZ);
+        if (session == RT_NULL) {
+            rc = -WEBCLIENT_NOMEM;
+            goto __exit;
+        }
+
+        if (header != RT_NULL) {
+            char *header_str, *header_ptr;
+            int header_line_length;
+
+            for (header_str = (char*)header;
+                 (header_ptr = strstr(header_str, "\r\n")) != RT_NULL;) {
+                header_line_length = header_ptr + strlen("\r\n") - header_str;
+                webclient_header_fields_add(session, "%.*s", header_line_length,
+                                            header_str);
+                header_str += header_line_length;
+            }
+        }
+
+        if (webclient_get(session, URI) != 200) {
+            rc = -WEBCLIENT_ERROR;
+            goto __exit;
+        }
+
+        totle_length = webclient_response(session, response, resp_len);
+        if (totle_length <= 0) {
+            rc = -WEBCLIENT_ERROR;
+            goto __exit;
+        }
+    } else {
+        /* send post request */
+        session = webclient_session_create(WEBCLIENT_HEADER_BUFSZ);
+        if (session == RT_NULL) {
+            rc = -WEBCLIENT_NOMEM;
+            goto __exit;
+        }
+
+        if (header != RT_NULL) {
+            char *header_str, *header_ptr;
+            int header_line_length;
+
+            for (header_str = (char*)header;
+                 (header_ptr = strstr(header_str, "\r\n")) != RT_NULL;) {
+                header_line_length = header_ptr + strlen("\r\n") - header_str;
+                webclient_header_fields_add(session, "%.*s", header_line_length,
+                                            header_str);
+                header_str += header_line_length;
+            }
+        }
+
+        if (strstr(session->header->buffer, "Content-Length") == RT_NULL) {
+            webclient_header_fields_add(session, "Content-Length: %d\r\n",
+                                        strlen(post_data));
+        }
+
+        if (strstr(session->header->buffer, "Content-Type") == RT_NULL) {
+            webclient_header_fields_add(
+                session, "Content-Type: application/octet-stream\r\n");
+        }
+
+        if (webclient_post(session, URI, post_data, data_len) != 200) {
+            rc = -WEBCLIENT_ERROR;
+            goto __exit;
+        }
+
+        totle_length = webclient_response(session, response, resp_len);
+        if (totle_length <= 0) {
+            rc = -WEBCLIENT_ERROR;
+            goto __exit;
+        }
+    }
+
+__exit:
+    if (session) {
+        webclient_close(session);
+        session = RT_NULL;
+    }
+
+    if (rc < 0) {
+        return rc;
+    }
+
+    return totle_length;
+}
+
+/**
+ *  Better interface.
+ *  send request(GET/POST) to server and get response data.
+ *
+ * @param URI input server address
+ * @param header send header data
+ *             = NULL: use default header data, must be GET request
+ *            != NULL: user custom header data, GET or POST request
+ * @param post_data data sent to the server
+ *             = NULL: it is GET request
+ *            != NULL: it is POST request
+ * @param data_len send data length
+ * @param response response buffer address
+ * @param resp_len response buffer length
+ *
+ * @return <0: request failed
+ *        >=0: response buffer size
+ */
+int webclient_request2(
+                      struct webclient_session* session,
+                      const char* URI,
+                      const char* header,
+                      const void* post_data,
+                      size_t data_len,
+                      double timeout,
+                      void** response,
+                      size_t* resp_len) {
+    int rc = WEBCLIENT_OK;
+    int totle_length = 0;
 
     if (post_data == RT_NULL && response == RT_NULL) {
         LOG_E("request get failed, get response data cannot be empty.");

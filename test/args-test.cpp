@@ -169,8 +169,8 @@ TEST(args, index) {
     args_pushArg(args, arg_newInt(1));
     args_pushArg(args, arg_newFloat(2.4));
 
-    int a = arg_getInt(args_getArgByidex(args, 1));
-    float b = arg_getFloat(args_getArgByidex(args, 0));
+    int a = arg_getInt(args_getArgByIndex(args, 1));
+    float b = arg_getFloat(args_getArgByIndex(args, 0));
     /* assert */
     EXPECT_EQ(a, 1);
     EXPECT_FLOAT_EQ(b, 2.4);

@@ -1,4 +1,4 @@
-pikascript-core==v1.11.8
-PikaStdLib==v1.11.8
+pikascript-core==v1.11.9
+PikaStdLib==v1.11.9
 PikaStdDevice==v1.11.0
 STM32F4==v0.1.1

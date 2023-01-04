@@ -97,7 +97,7 @@ char* strsPopTokenWithSkip_byStr(Args* outBuffs,
     Cursor_deinit(&cs);
     char* keeped = arg_getStr(keeped_arg);
     char* poped = strsCopy(outBuffs, arg_getStr(poped_arg));
-    __platform_memcpy(stmts, keeped, strGetSize(keeped) + 1);
+    pika_platform_memcpy(stmts, keeped, strGetSize(keeped) + 1);
     arg_deinit(poped_arg);
     arg_deinit(keeped_arg);
     return poped;
@@ -413,7 +413,7 @@ Arg* Lexer_setSymbel(Arg* tokenStream_arg,
         goto exit;
     }
     symbol_buff = args_getBuff(&buffs, i - *symbol_start_index);
-    __platform_memcpy(symbol_buff, stmt + *symbol_start_index,
+    pika_platform_memcpy(symbol_buff, stmt + *symbol_start_index,
                       i - *symbol_start_index);
     /* literal */
     if ((symbol_buff[0] == '\'') || (symbol_buff[0] == '"')) {
@@ -1517,6 +1517,59 @@ static void _AST_parse_slice(AST* ast, Args* buffs, char* stmt) {
     }
 }
 
+char* Suger_not_in(Args* out_buffs, char* line) {
+#if PIKA_NANO_ENABLE
+    return line;
+#endif
+    char* ret = line;
+    char* stmt1 = "";
+    char* stmt2 = "";
+    PIKA_BOOL got_not_in = PIKA_FALSE;
+    PIKA_BOOL skip = PIKA_FALSE;
+    Args buffs = {0};
+    if (!Cursor_isContain(line, TOKEN_operator, " not ")) {
+        ret = line;
+        goto __exit;
+    }
+    if (!Cursor_isContain(line, TOKEN_operator, " in ")) {
+        ret = line;
+        goto __exit;
+    }
+
+    /* stmt1 not in stmt2 => not stmt1 in stmt2 */
+    Cursor_forEachToken(cs, line) {
+        Cursor_iterStart(&cs);
+        if (!got_not_in) {
+            if (strEqu(cs.token1.pyload, " not ") &&
+                strEqu(cs.token2.pyload, " in ")) {
+                got_not_in = PIKA_TRUE;
+                Cursor_iterEnd(&cs);
+                continue;
+            }
+            stmt1 = strsAppend(&buffs, stmt1, cs.token1.pyload);
+        } else {
+            if (!skip) {
+                skip = PIKA_TRUE;
+                Cursor_iterEnd(&cs);
+                continue;
+            }
+            stmt2 = strsAppend(&buffs, stmt2, cs.token1.pyload);
+        }
+        Cursor_iterEnd(&cs);
+    }
+    Cursor_deinit(&cs);
+    if (!got_not_in) {
+        ret = line;
+        goto __exit;
+    }
+    ret = strsFormat(out_buffs, strGetSize(line) + 3, " not %s in %s", stmt1,
+                     stmt2);
+    goto __exit;
+__exit:
+    strsDeinit(&buffs);
+    return ret;
+}
+
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args buffs = {0};
     char* assignment = strsGetFirstToken(&buffs, stmt, '(');
@@ -1576,6 +1629,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     }
     /* solve operator stmt */
     if (STMT_operator == stmtType) {
+        right = Suger_not_in(&buffs, right);
         char* rightWithoutSubStmt = _remove_sub_stmt(&buffs, right);
         char* operator= Lexer_getOperator(&buffs, rightWithoutSubStmt);
         if (NULL == operator) {
@@ -1824,8 +1878,9 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
     /* set block deepth */
     if (block_deepth_now == -1) {
         /* get block_deepth error */
-        __platform_printf(
-            "IndentationError: unexpected indent, only support 4 spaces\r\n");
+        pika_platform_printf(
+            "IndentationError: unexpected indent, only support 4 "
+            "spaces\r\n");
         obj_deinit(ast);
         ast = NULL;
         goto exit;
@@ -1992,9 +2047,15 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
         AST_setNodeAttr(ast, "global", global_list);
         goto block_matched;
     }
-    if (strIsStartWith(line_start, "del ")) {
+    if (strIsStartWith(line_start, "del ") ||
+        strIsStartWith(line_start, "del(")) {
         stmt = "";
-        char* del_dir = line_start + sizeof("del ") - 1;
+        char* del_dir = NULL;
+        if (line_start[3] == '(') {
+            del_dir = strsCut(&buffs, line_start, '(', ')');
+        } else {
+            del_dir = line_start + sizeof("del ") - 1;
+        }
         del_dir = strsGetCleanCmd(&buffs, del_dir);
         AST_setNodeAttr(ast, "del", del_dir);
         goto block_matched;
@@ -2194,6 +2255,8 @@ static char* Suger_from_import_as(Args* buffs_p, char* line) {
     char* module = NULL;
     char* alias = NULL;
     char* stmt = line + 5;
+    char* class_after = "";
+
     if (!strIsStartWith(line, "from ")) {
         line_out = line;
         goto exit;
@@ -2217,7 +2280,6 @@ static char* Suger_from_import_as(Args* buffs_p, char* line) {
         goto exit;
     }
 
-    char* class_after = "";
     while (1) {
         char* class_item = Cursor_popToken(&buffs, &class, ",");
         if (class_item[0] == '\0') {
@@ -2279,6 +2341,7 @@ static char* Suger_import(Args* outbuffs, char* line) {
 static char* Parser_linePreProcess(Args* outbuffs, char* line) {
     line = Parser_removeAnnotation(line);
     Arg* line_buff = NULL;
+    int line_num = 0;
     /* check syntex error */
     if (Lexer_isError(line)) {
         line = NULL;
@@ -2290,7 +2353,7 @@ static char* Parser_linePreProcess(Args* outbuffs, char* line) {
     line = Suger_import(outbuffs, line);
 
     /* process multi assign */
-    int line_num = strCountSign(line, '\n') + 1;
+    line_num = strCountSign(line, '\n') + 1;
     line_buff = arg_newStr("");
     for (int i = 0; i < line_num; i++) {
         if (i > 0) {
@@ -2520,8 +2583,10 @@ exit:
 
 PIKA_RES Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines) {
 #if PIKA_BYTECODE_ONLY_ENABLE
-    __platform_printf("Error: In bytecode-only mode, can not parse python script.\r\n");
-    __platform_printf(" Note: Please check PIKA_BYTECODE_ONLY_ENABLE config.\r\n");
+    pika_platform_printf(
+        "Error: In bytecode-only mode, can not parse python script.\r\n");
+    pika_platform_printf(
+        " Note: Please check PIKA_BYTECODE_ONLY_ENABLE config.\r\n");
     return PIKA_RES_ERR_SYNTAX_ERROR;
 #else
     if (1 == (uintptr_t)_Parser_linesToBytesOrAsm(NULL, bf, py_lines)) {
@@ -2591,7 +2656,7 @@ char* AST_genAsm_sub(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
         char* astNodeVal = obj_getStr(subAst, rule.ast);
         if (NULL != astNodeVal) {
             /* e.g. "0 RUN print \n" */
-            __platform_sprintf(buff, "%d %s ", deepth, rule.ins);
+            pika_platform_sprintf(buff, "%d %s ", deepth, rule.ins);
             Arg* abuff = arg_newStr(buff);
             if (rule.type == VAL_DYNAMIC) {
                 abuff = arg_strAppend(abuff, astNodeVal);
@@ -2632,7 +2697,7 @@ char* GenRule_toAsm(GenRule rule,
     /* parse stmt ast */
     pikaAsm = AST_genAsm_sub(ast, ast, buffs, pikaAsm);
     /* e.g. "0 CTN \n" */
-    __platform_sprintf(buff, "%d %s ", deepth, rule.ins);
+    pika_platform_sprintf(buff, "%d %s ", deepth, rule.ins);
     Arg* abuff = arg_newStr(buff);
     if (rule.type == VAL_DYNAMIC) {
         abuff = arg_strAppend(abuff, obj_getStr(ast, rule.ast));
@@ -3050,14 +3115,14 @@ char* Parser_linesToArray(char* lines) {
     /* do something */
     byteCodeFrame_print(&bytecode_frame);
 
-    __platform_printf("\n\n/* clang-format off */\n");
-    __platform_printf("PIKA_PYTHON(\n");
-    __platform_printf("%s\n", lines);
-    __platform_printf(")\n");
-    __platform_printf("/* clang-format on */\n");
+    pika_platform_printf("\n\n/* clang-format off */\n");
+    pika_platform_printf("PIKA_PYTHON(\n");
+    pika_platform_printf("%s\n", lines);
+    pika_platform_printf(")\n");
+    pika_platform_printf("/* clang-format on */\n");
     byteCodeFrame_printAsArray(&bytecode_frame);
     /* deinit */
     byteCodeFrame_deinit(&bytecode_frame);
-    __platform_printf("\n\n");
+    pika_platform_printf("\n\n");
     return NULL;
 }
