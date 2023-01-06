@@ -414,7 +414,7 @@ Arg* Lexer_setSymbel(Arg* tokenStream_arg,
     }
     symbol_buff = args_getBuff(&buffs, i - *symbol_start_index);
     pika_platform_memcpy(symbol_buff, stmt + *symbol_start_index,
-                      i - *symbol_start_index);
+                         i - *symbol_start_index);
     /* literal */
     if ((symbol_buff[0] == '\'') || (symbol_buff[0] == '"')) {
         /* "" or '' */
@@ -791,6 +791,28 @@ exit:
     return res;
 }
 
+static char* _solveEqualLevelOperator(Args* buffs,
+                                      char*
+                                      operator,
+                                      char * op1,
+                                      char* op2,
+                                      char* stmt) {
+    if ((strEqu(operator, op1)) || (strEqu(operator, op2))) {
+        Cursor_forEachToken(cs, stmt) {
+            Cursor_iterStart(&cs);
+            if (strEqu(cs.token1.pyload, op1)) {
+                operator= strsCopy(buffs, op1);
+            }
+            if (strEqu(cs.token1.pyload, op2)) {
+                operator= strsCopy(buffs, op2);
+            }
+            Cursor_iterEnd(&cs);
+        }
+        Cursor_deinit(&cs);
+    }
+    return operator;
+}
+
 static const char operators[][9] = {
     "**", "~",  "*",  "/",    "%",     "//",    "+",    "-",
     ">>", "<<", "&",  "^",    "|",     "<",     "<=",   ">",
@@ -835,19 +857,8 @@ char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     }
 
     /* match the last operator in equal level */
-    if ((strEqu(operator, "+")) || (strEqu(operator, "-"))) {
-        Cursor_forEachToken(cs, stmt) {
-            Cursor_iterStart(&cs);
-            if (strEqu(cs.token1.pyload, "+")) {
-                operator= strsCopy(&buffs, "+");
-            }
-            if (strEqu(cs.token1.pyload, "-")) {
-                operator= strsCopy(&buffs, "-");
-            }
-            Cursor_iterEnd(&cs);
-        }
-        Cursor_deinit(&cs);
-    }
+    operator= _solveEqualLevelOperator(&buffs, operator, "+", "-", stmt);
+    operator= _solveEqualLevelOperator(&buffs, operator, "*", "/", stmt);
     /* out put */
     if (NULL == operator) {
         return NULL;

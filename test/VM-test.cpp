@@ -2476,6 +2476,21 @@ TEST(vm, fn_pos_kw_issue2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(vm, num_issue_lakj) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "a = 1/2*3\n");
+    /* collect */
+    /* assert */
+    EXPECT_DOUBLE_EQ(obj_getFloat(pikaMain, "a"), 1.5);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

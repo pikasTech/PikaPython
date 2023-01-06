@@ -315,7 +315,7 @@ void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end) {
         arg_printBytes(self, end);
         return;
     }
-    if (ARG_TYPE_POINTER == type || ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR== type) {
+    if (ARG_TYPE_POINTER == type || ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
         pika_platform_printf("%p%s", arg_getPtr(self), end);
         return;
     }
