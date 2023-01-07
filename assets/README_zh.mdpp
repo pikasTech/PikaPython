@@ -1,7 +1,7 @@
 <p align="center">
 	<img alt="logo" src="document/image/144221063-a85b2cb0-0416-493f-9afb-56cff31e977d.jpg" width="300">
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">pikapython</h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">PikaPython</h1>
 <h4 align="center">跨平台的超轻量级嵌入式 Python 引擎</h4>
 <p align="center">
 	<a href="https://gitee.com/lyon1998/pikapython/stargazers"><img src="https://gitee.com/lyon1998/pikapython/badge/star.svg?theme=gvp"></a>
