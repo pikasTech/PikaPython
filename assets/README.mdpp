@@ -1,7 +1,7 @@
 <p align="center">
 	<img alt="logo" src="document/image/144221063-a85b2cb0-0416-493f-9afb-56cff31e977d.jpg" width="300">
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">pikapython</h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">PikaPython</h1>
 <h4 align="center">Cross platform ultra lightweight embedded Python engine</h4>
 <p align="center">
 	<a href="https://gitee.com/lyon1998/pikapython/stargazers"><img src="https://gitee.com/lyon1998/pikapython/badge/star.svg?theme=gvp"></a>
@@ -482,7 +482,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 # ✨ Contributors
 
 <a href="https://github.com/pikastech/pikapython/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=pikastech/pikapython" />
+  <img src="https://contrib.rocks/image?repo=pikastech/pikascript" />
 </a>
 
 ## [How to contribute](https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html)
@@ -499,4 +499,4 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=pikastech/pikapython&type=Date)](https://star-history.com/#pikastech/pikapython&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=pikastech/pikascript&type=Date)](https://star-history.com/#pikastech/pikascript&Date)
