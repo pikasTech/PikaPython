@@ -5,7 +5,7 @@ import GTestTask, TempDevTest
 import cb_test
 import configparser
 import test_module1, test_cmodule, test_module4, import_test
-import hashlib, hmac, aes, base64
+import hashlib, hmac, aes, base64, time
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')

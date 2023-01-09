@@ -20,10 +20,12 @@ TEST(unix_time, time) {
     pikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(self, pikaModules_py_a);
     obj_run(self,
-            "mytime = TemplateDevice.Time()\n"
-            "t1= mytime.time()\n"
-            "t2= mytime.time()\n");
+            "import time\n"
+            "t1= time.time()\n"
+            "t2= time.time()\n");
     /* 获取数据比对 */
     float t1 = obj_getFloat(self, "t1");
     float t2 = obj_getFloat(self, "t2");
@@ -42,19 +44,21 @@ TEST(unix_time, unix_time) {
     pikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(self, pikaModules_py_a);
     obj_run(self,
-            "mytime = PikaStdDevice.Time()\n"
-            "mytime.localtime(0.0)\n");
+            "import time\n"
+            "time.localtime(0.0)\n");
     /* 获取数据比对 */
-    int tm_sec = obj_getInt(self, "mytime.tm_sec");
-    int tm_min = obj_getInt(self, "mytime.tm_min");
-    int tm_hour = obj_getInt(self, "mytime.tm_hour");
-    int tm_mday = obj_getInt(self, "mytime.tm_mday");
-    int tm_mon = obj_getInt(self, "mytime.tm_mon");
-    int tm_year = obj_getInt(self, "mytime.tm_year");
-    int tm_wday = obj_getInt(self, "mytime.tm_wday");
-    int tm_yday = obj_getInt(self, "mytime.tm_yday");
-    int tm_isdst = obj_getInt(self, "mytime.tm_isdst");
+    int tm_sec = obj_getInt(self, "time._time.tm_sec");
+    int tm_min = obj_getInt(self, "time._time.tm_min");
+    int tm_hour = obj_getInt(self, "time._time.tm_hour");
+    int tm_mday = obj_getInt(self, "time._time.tm_mday");
+    int tm_mon = obj_getInt(self, "time._time.tm_mon");
+    int tm_year = obj_getInt(self, "time._time.tm_year");
+    int tm_wday = obj_getInt(self, "time._time.tm_wday");
+    int tm_yday = obj_getInt(self, "time._time.tm_yday");
+    int tm_isdst = obj_getInt(self, "time._time.tm_isdst");
     /* assert */
     EXPECT_EQ(tm_sec, 0);
     EXPECT_EQ(tm_min, 0);
@@ -62,7 +66,7 @@ TEST(unix_time, unix_time) {
     EXPECT_EQ(tm_mday, 1);
     EXPECT_EQ(tm_mon, 0);  // 1月
     EXPECT_EQ(tm_year, 1970);
-    EXPECT_EQ(tm_wday, 4);  //周四
+    EXPECT_EQ(tm_wday, 4);  // 周四
     EXPECT_EQ(tm_yday, 1);
     EXPECT_EQ(tm_isdst, -1);
     /* deinit */
@@ -72,7 +76,7 @@ TEST(unix_time, unix_time) {
 #endif
 
 int compare(const _tm* t1, const _tm* t2) {
-    int size = 8;  //只比对前面8个数据
+    int size = 8;  // 只比对前面8个数据
     int* it1 = (int*)t1;
     int* it2 = (int*)t2;
     for (int i = 0; i < size; i++) {
@@ -113,7 +117,7 @@ TEST(unix_time, iteration_form_1970_to_2070) {
         temp2->tm_year += 1900;
         if (compare(&temp1, temp2)) {
             printf("error!\n");
-            //格式化字符
+            // 格式化字符
             time_struct_format(&temp1, str);
             printf("%s\n", str);
             time_struct_format(temp2, str);
