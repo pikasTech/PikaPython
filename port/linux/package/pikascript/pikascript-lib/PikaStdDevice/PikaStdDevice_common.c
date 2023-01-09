@@ -3,7 +3,7 @@
 extern PikaEventListener* g_pika_device_event_listener;
 void _PikaStdDevice_event_handler(pika_dev* dev, int signal) {
     pks_eventListener_sendSignal(g_pika_device_event_listener, (uintptr_t)dev,
-                                signal);
+                                 signal);
 }
 
 void _PikaStdDevice_setCallBack(PikaObj* self,
@@ -16,4 +16,9 @@ void _PikaStdDevice_setCallBack(PikaObj* self,
     }
     /* regist event to event listener */
     pks_eventListener_registEvent(g_pika_device_event_listener, eventId, self);
+}
+
+extern volatile PikaObj* __pikaMain;
+PikaObj* PikaStdDevice_Time(PikaObj* self) {
+    return obj_getPtr((PikaObj*)__pikaMain, "time");
 }

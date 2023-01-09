@@ -8,3 +8,5 @@ class Debuger(TinyObj):
     def set_trace():
         pass
     
+def test():
+    pass
