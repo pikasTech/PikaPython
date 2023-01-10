@@ -1,12 +1,11 @@
 import STM32G0
 import PikaPiZero
+import time
 
+def Time():
+    return time
 
 class GPIO(STM32G0.GPIO):
-    pass
-
-
-class Time(STM32G0.Time):
     pass
 
 

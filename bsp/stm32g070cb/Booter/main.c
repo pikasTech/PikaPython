@@ -88,6 +88,21 @@ char __platform_getchar(){
     return res;
 }
 
+
+int64_t pika_platform_getTick(void){
+    return HAL_GetTick();
+}
+
+void pika_platform_sleep_ms(uint32_t ms){
+    HAL_Delay(ms);
+}
+
+void pika_platform_sleep_s(uint32_t s){
+    for (int i = 0; i < s; i++) {
+        HAL_Delay(1000);
+    }
+}
+
 extern PikaObj *__pikaMain;
 
 int main(void){
@@ -115,7 +130,8 @@ int main(void){
     if (code[0] != 0xFF) {
         /* boot from flash */
         pikaMain = newRootObj("pikaMain", New_PikaMain);
-        __pikaMain = pikaMain;
+        extern unsigned char pikaModules_py_a[];
+        obj_linkLibrary(pikaMain, pikaModules_py_a);
         if (code[0] == 'i') {
             printf("[info]: boot from Script.\r\n");
             obj_run(pikaMain, code);

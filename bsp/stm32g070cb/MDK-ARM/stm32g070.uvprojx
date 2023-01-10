@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_FULL_LL_DRIVER, USE_HAL_DRIVER,STM32G070xx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Booter;../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\Drivers\CMSIS\DSP\Include;..\pikascript\pikascript-lib/PikaStdDevice;..\pikascript\pikascript-lib/STM32G0;..\pikascript\pikascript-lib/PikaPiZero;..\pikascript\pikascript-lib/PikaStdLib;..\pikascript\pikascript-lib/Arm2D;..\pikascript\pikascript-api;..\pikascript\pikascript-core</IncludePath>
+              <IncludePath>..\Booter;../Drivers/STM32G0xx_HAL_Driver/Inc;../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32G0xx/Include;../Drivers/CMSIS/Include;..\Drivers\CMSIS\DSP\Include;..\pikascript\pikascript-lib/PikaStdDevice;..\pikascript\pikascript-lib/STM32G0;..\pikascript\pikascript-lib/PikaPiZero;..\pikascript\pikascript-lib/PikaStdLib;..\pikascript\pikascript-api;..\pikascript\pikascript-core</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -665,6 +665,16 @@
               <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_ADC.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdDevice_BaseDev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_BaseDev.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_common.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdDevice_GPIO.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_GPIO.c</FilePath>
@@ -673,11 +683,6 @@
               <FileName>PikaStdDevice_CAN.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_CAN.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdDevice_Time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_Time.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdDevice_UART.c</FileName>
@@ -690,49 +695,29 @@
               <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_PWM.c</FilePath>
             </File>
             <File>
+              <FileName>pika_hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/pika_hal.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdDevice_SPI.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_SPI.c</FilePath>
             </File>
             <File>
+              <FileName>pika_hal_SOFT_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/pika_hal_SOFT_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdDevice_DAC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdDevice/PikaStdDevice_DAC.c</FilePath>
+            </File>
+            <File>
               <FileName>STM32G0_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/STM32G0/STM32G0_common.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32G0_UART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/STM32G0/STM32G0_UART.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32G0_Task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/STM32G0/STM32G0_Task.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32G0_ADC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/STM32G0/STM32G0_ADC.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32G0_IIC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/STM32G0/STM32G0_IIC.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32G0_Time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/STM32G0/STM32G0_Time.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32G0_GPIO.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/STM32G0/STM32G0_GPIO.c</FilePath>
-            </File>
-            <File>
-              <FileName>STM32G0_PWM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/STM32G0/STM32G0_PWM.c</FilePath>
             </File>
             <File>
               <FileName>PikaPiZero_RGB.c</FileName>
@@ -780,6 +765,11 @@
               <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_StringObj.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdData_Tuple.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_Tuple.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdLib_MemChecker.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_MemChecker.c</FilePath>
@@ -790,9 +780,19 @@
               <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaDebuger_Debuger.c</FilePath>
             </File>
             <File>
+              <FileName>PikaStdData_ByteArray.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_ByteArray.c</FilePath>
+            </File>
+            <File>
               <FileName>PikaStdData_String.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_String.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_Utils.c</FilePath>
             </File>
             <File>
               <FileName>PikaStdData_List.c</FileName>
@@ -805,99 +805,9 @@
               <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdLib_SysObj.c</FilePath>
             </File>
             <File>
-              <FileName>arm_2d_async.c</FileName>
+              <FileName>PikaStdData_FILEIO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/arm_2d_async.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/arm_2d.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_helium.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/arm_2d_helium.c</FilePath>
-            </File>
-            <File>
-              <FileName>__arm_2d_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/__arm_2d_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_conversion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/arm_2d_conversion.c</FilePath>
-            </File>
-            <File>
-              <FileName>Arm2D_Box.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/Arm2D_Box.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_helper_pfb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/arm_2d_helper_pfb.c</FilePath>
-            </File>
-            <File>
-              <FileName>asset_dot.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/asset_dot.c</FilePath>
-            </File>
-            <File>
-              <FileName>lcd_fonts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/lcd_fonts.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_draw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/arm_2d_draw.c</FilePath>
-            </File>
-            <File>
-              <FileName>asset_corner_box.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/asset_corner_box.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_rotation.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/arm_2d_rotation.c</FilePath>
-            </File>
-            <File>
-              <FileName>__arm_2d_tile.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/__arm_2d_tile.c</FilePath>
-            </File>
-            <File>
-              <FileName>Arm2D_Window.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/Arm2D_Window.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_2d_alpha_blending.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/arm_2d_alpha_blending.c</FilePath>
-            </File>
-            <File>
-              <FileName>Arm2D_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/Arm2D_common.c</FilePath>
-            </File>
-            <File>
-              <FileName>Arm2D_Element.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/Arm2D_Element.c</FilePath>
-            </File>
-            <File>
-              <FileName>Arm2D_ElementList.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/Arm2D_ElementList.c</FilePath>
-            </File>
-            <File>
-              <FileName>Arm2D_Background.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib/Arm2D/Arm2D_Background.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib/PikaStdLib/PikaStdData_FILEIO.c</FilePath>
             </File>
             <File>
               <FileName>RGB_ASM.lib</FileName>
@@ -905,29 +815,34 @@
               <FilePath>..\pikascript\pikascript-lib/PikaPiZero/RGB_ASM.lib</FilePath>
             </File>
             <File>
-              <FileName>PikaStdData_ByteArray.c</FileName>
+              <FileName>_time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_ByteArray.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\time\_time.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdData_FILEIO.c</FileName>
+              <FileName>pika_hal_STM32G0_ADC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_FILEIO.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\pika_hal_STM32G0_ADC.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdData_Tuple.c</FileName>
+              <FileName>pika_hal_STM32G0_GPIO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_Tuple.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\pika_hal_STM32G0_GPIO.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdData_Utils.c</FileName>
+              <FileName>pika_hal_STM32G0_SPI.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdLib\PikaStdData_Utils.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\pika_hal_STM32G0_SPI.c</FilePath>
             </File>
             <File>
-              <FileName>PikaStdDevice_BaseDev.c</FileName>
+              <FileName>pika_hal_STM32G0_PWM.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-lib\PikaStdDevice\PikaStdDevice_BaseDev.c</FilePath>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\pika_hal_STM32G0_PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>pika_hal_STM32G0_UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\pikascript\pikascript-lib\STM32G0\pika_hal_STM32G0_UART.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -960,9 +875,14 @@
               <FilePath>..\pikascript\STM32G0.pyi</FilePath>
             </File>
             <File>
-              <FileName>machine.pyi</FileName>
+              <FileName>PikaStdDevice.pyi</FileName>
               <FileType>5</FileType>
-              <FilePath>..\pikascript\machine.pyi</FilePath>
+              <FilePath>..\pikascript\PikaStdDevice.pyi</FilePath>
+            </File>
+            <File>
+              <FileName>machine.py</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\pikascript\machine.py</FilePath>
             </File>
           </Files>
         </Group>
@@ -980,19 +900,19 @@
           <GroupName>pikascript-api</GroupName>
           <Files>
             <File>
-              <FileName>__asset_pikaModules_py_a.c</FileName>
+              <FileName>pikaScript.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api/pikaScript.c</FilePath>
             </File>
             <File>
               <FileName>__pikaBinding.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\__pikaBinding.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api/__pikaBinding.c</FilePath>
             </File>
             <File>
-              <FileName>pikaScript.c</FileName>
+              <FileName>__asset_pikaModules_py_a.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\pikascript\pikascript-api\pikaScript.c</FilePath>
+              <FilePath>..\pikascript\pikascript-api/__asset_pikaModules_py_a.c</FilePath>
             </File>
           </Files>
         </Group>
