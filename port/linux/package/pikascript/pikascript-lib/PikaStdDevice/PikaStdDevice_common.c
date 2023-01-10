@@ -20,5 +20,11 @@ void _PikaStdDevice_setCallBack(PikaObj* self,
 
 extern volatile PikaObj* __pikaMain;
 PikaObj* PikaStdDevice_Time(PikaObj* self) {
-    return obj_getPtr((PikaObj*)__pikaMain, "time");
+    PikaObj* time = obj_getPtr((PikaObj*)__pikaMain, "time");
+    if(NULL == time){
+        obj_setErrorCode(self, -1);
+        obj_setSysOut(self, "Error: please install and import 'time' module");
+        return NULL;
+    }
+    return time;
 }

@@ -397,11 +397,11 @@ impl Compiler {
 
         /* analyse function define */
         if line.starts_with("def ") {
-            let package_now_name = match compiler.package_name_now.clone() {
+            let package_now_name = file_name.clone();
+            let package_now = match compiler.class_list.get_mut(&package_now_name) {
                 Some(s) => s,
                 None => return compiler,
             };
-            let package_now = compiler.class_list.get_mut(&package_now_name).unwrap();
             package_now.push_method(line, compiler.decorator_list_now.clone());
             compiler.decorator_list_now.clear();
             return compiler;

@@ -98,8 +98,8 @@ class GPIO(BaseDev):
     def platformRead(self): ...
 
 
-# class Time(BaseDev):
-    # use time module instead
+def Time() -> time:
+    """ # use time module instead """
 
 
 class ADC(BaseDev):
