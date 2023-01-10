@@ -1,6 +1,6 @@
-#include "STM32G0_UART.h"
 #include <stdint.h>
 #include "BaseObj.h"
+#include "STM32G0_UART.h"
 #include "STM32G0_common.h"
 #include "dataStrs.h"
 
@@ -134,51 +134,81 @@ void USART2_IRQHandler() {
     __callback_UART_recive(USART2, rx_char);
 }
 
-void STM32G0_UART_platformEnable(PikaObj* self) {
-    int id = obj_getInt(self, "id");
-    int baudRate = obj_getInt(self, "baudRate");
-    USART_TypeDef* USARTx = UART_get_instance(id);
-    int errCode = UART_hardware_init(baudRate, id);
-    if (0 != errCode) {
-        obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "[error] USART init faild.");
-        return;
+typedef struct platform_UART {
+    USART_TypeDef* instence;
+    int id;
+} platform_UART;
+
+int pika_hal_platform_UART_open(pika_dev* dev, char* name) {
+    if (name[0] == 'U' && name[1] == 'A' && name[2] == 'R' && name[3] == 'T') {
+        platform_UART* uart = pikaMalloc(sizeof(platform_UART));
+        memset(uart, 0, sizeof(platform_UART));
+        dev->platform_data = uart;
+        int id = fast_atoi(name + 4);
+        uart->instence = UART_get_instance(id);
+        uart->id = id;
+        if (NULL == uart->instence) {
+            pika_platform_printf("Error: UART%d not found\r\n", id);
+            return -1;
+        }
+        return 0;
     }
+    return -1;
 }
 
-void STM32G0_UART_platformRead(PikaObj* self) {
-    int id = obj_getInt(self, "id");
-    USART_TypeDef* USARTx = UART_get_instance(id);
-    int length = obj_getInt(self, "length");
-    Args* buffs = New_strBuff();
+int pika_hal_platform_UART_close(pika_dev* dev) {
+    platform_UART* uart = (platform_UART*)dev->platform_data;
+    pikaFree(uart, sizeof(platform_UART));
+    return 0;
+}
+
+int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
+                                        pika_hal_UART_config* cfg) {
+    return 0;
+}
+
+int pika_hal_platform_UART_ioctl_enable(pika_dev* dev) {
+    platform_UART* uart = (platform_UART*)dev->platform_data;
+    pika_hal_UART_config* cfg = (pika_hal_UART_config*)dev->ioctl_config;
+    int err = UART_hardware_init(cfg->baudrate, uart->id);
+    if (0 != err) {
+        pika_platform_printf("Error: UART%d config failed\r\n", uart->id);
+        return -1;
+    }
+    return 0;
+}
+
+int pika_hal_platform_UART_ioctl_disable(pika_dev* dev) {
+    return -1;
+}
+
+int pika_hal_platform_UART_read(pika_dev* dev, void* buf, size_t count) {
+    platform_UART* uart = (platform_UART*)dev->platform_data;
+    USART_TypeDef* USARTx = uart->instence;
     uint8_t* rx_offset = UART_get_rx_offset(USARTx);
     char* rx_buff = UART_get_rx_buff(USARTx);
-    if (length >= *rx_offset) {
+    if (count >= *rx_offset) {
         /* not enough str */
-        length = *rx_offset;
+        count = *rx_offset;
     }
-    char* readBuff = args_getBuff(buffs, length);
-    memcpy(readBuff, rx_buff, length);
-    obj_setStr(self, "readBuff", readBuff);
-    readBuff = obj_getStr(self, "readBuff");
-
+    memcpy(buf, rx_buff, count);
     /* update rxBuff */
-    memcpy(rx_buff, rx_buff + length, *rx_offset - length);
-    *rx_offset -= length;
+    memcpy(rx_buff, rx_buff + count, *rx_offset - count);
+    *rx_offset -= count;
     rx_buff[*rx_offset] = 0;
-    args_deinit(buffs);
-    obj_setStr(self, "readData", readBuff);
+    return count;
 }
 
-void STM32G0_UART_platformWrite(PikaObj* self) {
-    char* data = obj_getStr(self, "writeData");
-    int id = obj_getInt(self, "id");
-    USART_TypeDef* USARTx = UART_get_instance(id);
-    for (int i = 0; i < strGetSize(data); i++) {
+int pika_hal_platform_UART_write(pika_dev* dev, void* buf, size_t count) {
+    platform_UART* uart = (platform_UART*)dev->platform_data;
+    USART_TypeDef* USARTx = uart->instence;
+    char* data = (char*)buf;
+    for (int i = 0; i < count; i++) {
         LL_USART_TransmitData8(USARTx, data[i]);
         while (LL_USART_IsActiveFlag_TC(USARTx) != 1)
             ;
     }
+    return count;
 }
 
 char pikaShell[RX_BUFF_LENGTH] = {0};
