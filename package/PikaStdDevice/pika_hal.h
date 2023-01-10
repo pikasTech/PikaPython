@@ -25,6 +25,7 @@ typedef enum {
     PIKA_HAL_IOCTL_CONFIG,
     PIKA_HAL_IOCTL_ENABLE,
     PIKA_HAL_IOCTL_DISABLE,
+    _ = 0xFFFFFFFF,  // make sure it is 4 byte width
 } PIKA_HAL_IOCTL_CMD;
 
 /* posix file like API */
