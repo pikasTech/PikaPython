@@ -29,7 +29,7 @@
 
 # 1.简介
 
-PikaPython 是一个完全重写的超轻量级 python 引擎，零依赖，零配置，可以在  **Flash ≤ 32KB，RAM≤ 4KB**  的平台下运行(如 stm32g030c8 和 stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
+PikaPython 是一个完全重写的超轻量级 python 引擎，零依赖，零配置，可以在  **Flash ≤ 64KB，RAM≤ 4KB**  的平台下运行(如 stm32g030c8 和 stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
 
 PikaPython 也称 PikaScript、PikaPy。
 
@@ -181,7 +181,7 @@ http://pikascript.com
 # 3.特性
 ### (1)运行环境
 
-支持裸机运行，可运行于 **RAM ≥ 4kB** ，**FLASH ≥ 32kB** 的mcu中，如stm32g030, stm32f103c8t6，esp8266。
+支持裸机运行，可运行于 **RAM ≥ 4kB** ，**FLASH ≥ 64kB** 的mcu中，如stm32g030, stm32f103c8t6，esp8266。
 
 ### (2)开发环境
 支持串口下载 Python 脚本。

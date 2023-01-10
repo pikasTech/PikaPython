@@ -30,7 +30,7 @@
 
 # 1. Abstract
 
-PikaPython is an ultra-lightweight Python engine with zero dependencies and zero-configuration, that can run with 4KB of RAM and 32KB of flash (such as STM32G030C8 and STM32F103C8).
+PikaPython is an ultra-lightweight Python engine with zero dependencies and zero-configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8).
 
 PikaPython also known as PikaScript and PikaPy.
 
@@ -121,7 +121,7 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 # 3.Characteristic
 ### (1)Run environment
 
-Support run in mcu without OS or file system. Can run in everywhere with **RAM ≥ 4kB** and **FLASH ≥ 32kB**，such as stm32g030, stm32f103c8t6，esp8266.
+Support run in mcu without OS or file system. Can run in everywhere with **RAM ≥ 4kB** and **FLASH ≥ 64kB**，such as stm32g030, stm32f103c8t6，esp8266.
 
 ### (2)Develop enviroment
 
