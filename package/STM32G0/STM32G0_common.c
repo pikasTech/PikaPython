@@ -140,3 +140,19 @@ uint8_t GPIO_enable_clock(char* pin) {
     }
     return 1;
 }
+
+int _enable_gpio_clk(GPIO_TypeDef* gpio_group) {
+    if (gpio_group == GPIOA) {
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        return 0;
+    }
+    if (gpio_group == GPIOB) {
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        return 0;
+    }
+    if (gpio_group == GPIOC) {
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+        return 0;
+    }
+    return -1;
+}

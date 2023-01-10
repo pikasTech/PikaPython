@@ -1,6 +1,6 @@
-#include "STM32G0_PWM.h"
 #include <stdint.h>
 #include "BaseObj.h"
+#include "STM32G0_PWM.h"
 #include "STM32G0_common.h"
 #include "dataStrs.h"
 
@@ -128,18 +128,78 @@ uint32_t PWM_get_LL_TIM_channel(char* pin) {
     return 99999;
 }
 
-void STM32G0_PWM_platformEnable(PikaObj* self) {
-    float duty = obj_getFloat(self, "duty");
-    int freq = obj_getInt(self, "freq");
-    char* pin = obj_getStr(self, "pin");
-    TIM_TypeDef* TIMx = PWM_get_TIM_instance(pin);
+void PWM_set_duty(TIM_TypeDef* TIMx, uint32_t LL_TIM_channel, float duty) {
+    if (LL_TIM_CHANNEL_CH1 == LL_TIM_channel) {
+        LL_TIM_OC_SetCompareCH1(TIMx, LL_TIM_GetAutoReload(TIMx) * duty);
+        return;
+    }
+    if (LL_TIM_CHANNEL_CH2 == LL_TIM_channel) {
+        LL_TIM_OC_SetCompareCH2(TIMx, LL_TIM_GetAutoReload(TIMx) * duty);
+        return;
+    }
+    if (LL_TIM_CHANNEL_CH3 == LL_TIM_channel) {
+        LL_TIM_OC_SetCompareCH3(TIMx, LL_TIM_GetAutoReload(TIMx) * duty);
+        return;
+    }
+    if (LL_TIM_CHANNEL_CH4 == LL_TIM_channel) {
+        LL_TIM_OC_SetCompareCH4(TIMx, LL_TIM_GetAutoReload(TIMx) * duty);
+        return;
+    }
+}
 
+typedef struct platform_PWM {
+    TIM_TypeDef* instence;
+    GPIO_TypeDef* gpioPort;
+    uint16_t gpioPin;
+    uint32_t alternate;
+    uint32_t channel;
+} platform_PWM;
+
+int pika_hal_platform_PWM_open(pika_dev* dev, char* name) {
+    platform_PWM* pwm = pikaMalloc(sizeof(platform_PWM));
+    memset(pwm, 0, sizeof(platform_PWM));
+    dev->platform_data = pwm;
+    pwm->instence = PWM_get_TIM_instance(name);
+    if (NULL == pwm->instence) {
+        pika_platform_printf("[error]: can not found PWM hardware.");
+        return -1;
+    }
+    pwm->gpioPin = GPIO_get_pin(name);
+    pwm->gpioPort = GPIO_get_Group(name);
+    pwm->alternate = TIM_get_GPIO_alternate(pwm->instence);
+    pwm->channel = PWM_get_LL_TIM_channel(name);
+    return 0;
+}
+
+int pika_hal_platform_PWM_close(pika_dev* dev) {
+    platform_PWM* pwm = (platform_PWM*)dev->platform_data;
+    pikaFree(pwm, sizeof(platform_PWM));
+    return 0;
+}
+
+int pika_hal_platform_PWM_read(pika_dev* dev, void* buf, size_t count) {
+    return -1;
+}
+
+int pika_hal_platform_PWM_write(pika_dev* dev, void* buf, size_t count) {
+    return -1;
+}
+
+#define PERIOD_TO_FREQ(period) \
+    ((uint32_t)(pika_float)1000 * 1000 * 1000 / (pika_float)period)
+
+int pika_hal_platform_PWM_ioctl_enable(pika_dev* dev) {
+    platform_PWM* pwm = (platform_PWM*)dev->platform_data;
+    pika_hal_PWM_config* cfg = (pika_hal_PWM_config*)dev->ioctl_config;
     LL_TIM_InitTypeDef TIM_InitStruct = {0};
     LL_TIM_OC_InitTypeDef TIM_OC_InitStruct = {0};
     LL_TIM_BDTR_InitTypeDef TIM_BDTRInitStruct = {0};
-    uint32_t LL_TIM_channel = PWM_get_LL_TIM_channel(pin);
+    uint32_t LL_TIM_channel = pwm->channel;
+    uint32_t freq = PERIOD_TO_FREQ(cfg->period);
+    TIM_TypeDef* TIMx = pwm->instence;
+    float duty = (float)cfg->duty / (float)cfg->period;
     /* Peripheral clock enable */
-    TIM_clock_enable(TIMx);
+    TIM_clock_enable(pwm->instence);
 
     TIM_InitStruct.Prescaler = 64 - 1;
     TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
@@ -147,9 +207,9 @@ void STM32G0_PWM_platformEnable(PikaObj* self) {
         (uint32_t)((float)(1000 * 1000) / (float)freq) - 1;
     TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
     TIM_InitStruct.RepetitionCounter = 0;
-    LL_TIM_Init(TIMx, &TIM_InitStruct);
-    LL_TIM_DisableARRPreload(TIMx);
-    LL_TIM_OC_EnablePreload(TIMx, LL_TIM_channel);
+    LL_TIM_Init(pwm->instence, &TIM_InitStruct);
+    LL_TIM_DisableARRPreload(pwm->instence);
+    LL_TIM_OC_EnablePreload(pwm->instence, LL_TIM_channel);
     TIM_OC_InitStruct.OCMode = LL_TIM_OCMODE_PWM1;
     TIM_OC_InitStruct.OCState = LL_TIM_OCSTATE_DISABLE;
     TIM_OC_InitStruct.OCNState = LL_TIM_OCSTATE_DISABLE;
@@ -179,62 +239,34 @@ void STM32G0_PWM_platformEnable(PikaObj* self) {
     TIM_BDTRInitStruct.AutomaticOutput = LL_TIM_AUTOMATICOUTPUT_DISABLE;
     LL_TIM_BDTR_Init(TIMx, &TIM_BDTRInitStruct);
     /* init gpio */
-    if (0 != PWM_GPIO_init(pin)) {
-        obj_setSysOut(self, "[error]: init PWM port faild.");
-        obj_setErrorCode(self, 1);
-        return;
-    }
+    _enable_gpio_clk(pwm->gpioPort);
+    LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+    GPIO_InitStruct.Pin = pwm->gpioPin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = TIM_get_GPIO_alternate(TIMx);
+    LL_GPIO_Init(pwm->gpioPort, &GPIO_InitStruct);
     /* start */
     LL_TIM_CC_EnableChannel(TIMx, LL_TIM_channel);
     LL_TIM_EnableCounter(TIMx);
     LL_TIM_EnableAllOutputs(TIMx);
+    return 0;
 }
 
-void PWM_set_duty(TIM_TypeDef* TIMx, uint32_t LL_TIM_channel, float duty) {
-    if (LL_TIM_CHANNEL_CH1 == LL_TIM_channel) {
-        LL_TIM_OC_SetCompareCH1(TIMx, LL_TIM_GetAutoReload(TIMx) * duty);
-        return;
-    }
-    if (LL_TIM_CHANNEL_CH2 == LL_TIM_channel) {
-        LL_TIM_OC_SetCompareCH2(TIMx, LL_TIM_GetAutoReload(TIMx) * duty);
-        return;
-    }
-    if (LL_TIM_CHANNEL_CH3 == LL_TIM_channel) {
-        LL_TIM_OC_SetCompareCH3(TIMx, LL_TIM_GetAutoReload(TIMx) * duty);
-        return;
-    }
-    if (LL_TIM_CHANNEL_CH4 == LL_TIM_channel) {
-        LL_TIM_OC_SetCompareCH4(TIMx, LL_TIM_GetAutoReload(TIMx) * duty);
-        return;
-    }
+int pika_hal_platform_PWM_ioctl_disable(pika_dev* dev) {
+    return -1;
 }
 
-void STM32G0_PWM_platformSetDuty(PikaObj* self) {
-    float duty = obj_getFloat(self, "duty");
-    char* pin = obj_getStr(self, "pin");
-    uint32_t LL_TIM_channel = PWM_get_LL_TIM_channel(pin);
-    TIM_TypeDef* TIMx = PWM_get_TIM_instance(pin);
-    if (NULL == TIMx) {
-        obj_setSysOut(self, "[error]: can not found PWM hardware.");
-        obj_setErrorCode(self, 1);
-        return;
+int pika_hal_platform_PWM_ioctl_config(pika_dev* dev,
+                                       pika_hal_PWM_config* cfg) {
+    platform_PWM* pwm = (platform_PWM*)dev->platform_data;
+    if (dev->is_enabled) {
+        float duty = (float)cfg->duty / (float)cfg->period;
+        uint32_t freq = PERIOD_TO_FREQ(cfg->period);
+        LL_TIM_SetAutoReload(
+            pwm->instence, (uint32_t)((float)(1000 * 1000) / (float)freq) - 1);
+        PWM_set_duty(pwm->instence, pwm->channel, duty);
     }
-    PWM_set_duty(TIMx, LL_TIM_channel, duty);
-}
-
-void STM32G0_PWM_platformSetFrequency(PikaObj* self) {
-    int freq = obj_getInt(self, "freq");
-    char* pin = obj_getStr(self, "pin");
-    TIM_TypeDef* TIMx = PWM_get_TIM_instance(pin);
-    if (NULL == TIMx) {
-        obj_setSysOut(self, "[error]: can not found PWM hardware.");
-        obj_setErrorCode(self, 1);
-        return;
-    }
-    /* update frequency in run time */
-    LL_TIM_SetAutoReload(TIMx,
-                         (uint32_t)((float)(1000 * 1000) / (float)freq) - 1);
-    float duty = obj_getFloat(self, "duty");
-    uint32_t LL_TIM_channel = PWM_get_LL_TIM_channel(pin);
-    PWM_set_duty(TIMx, LL_TIM_channel, duty);
+    return 0;
 }
