@@ -344,6 +344,14 @@
         #define PIKA_OLD_API_ENABLE 1
     #endif
 
+    #ifndef PIKA_FREERTOS_ENABLE
+        #define PIKA_FREERTOS_ENABLE 0
+    #endif
+
+    #ifndef PIKA_LWIP_ENABLE
+        #define PIKA_LWIP_ENABLE 0
+    #endif
+
     /* configuration validation */
 
 #endif
