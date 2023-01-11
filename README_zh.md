@@ -43,6 +43,11 @@ PikaPython 具有框架式 C 模块开发工具，只要用 Python 写好调用 
 
 PikaPython 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松地调试 C 模块。
 
+# 最新资讯
+- [2022 年 PikaPython 年终总结](https://mp.weixin.qq.com/s/cWtujWF8EuJnuXuVUeWNKw)
+
+- [【快讯】PikaScript 合并进入 LVGL 主线文档，创始人Gabor 这样说...](https://mp.weixin.qq.com/s/2vcZfRfAAmAqPfyOm7CqUg)
+
 # 获取 PikaPython:
 
 ## 使用在线图形化工程生成器
