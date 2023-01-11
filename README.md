@@ -616,6 +616,9 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+| hmac hashlib base64 aes modules | [梦程MI](https://gitee.com/dreamcmi) |
+| request module | [onceday](https://gitee.com/onceday) |
+| mqtt module | [FlintJ](https://gitee.com/flintj) |
 | Donate：500¥ | [hardsofttech](https://gitee.com/hardsofttech) |
 | Donate：500¥ | [edmund_wz](https://gitee.com/edmund_wz) |
 | Donate：500¥ | [Meco Jianting Man](https://github.com/mysterywolf) |
