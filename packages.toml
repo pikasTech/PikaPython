@@ -476,7 +476,10 @@ releases = [
 
 [[packages]]
 name = "pika_libc"
-releases = [ "v1.0.0 42a3cebb085a4a995d80031685dbf630e053aa55" ]
+releases = [
+  "v1.0.0 42a3cebb085a4a995d80031685dbf630e053aa55",
+  "v1.0.1 b77d20d7b2f5fd29ac3d55daeec65e77d15a9b72"
+]
 
 [[packages]]
 name = "time"
