@@ -21,11 +21,11 @@ void pika_platform_printf(char* fmt, ...) {
     }
 }
 
-static volatile uint64_t tick_ms = 0;
-int64_t pika_platform_getTick(void) {
-    tick_ms += 50;
-    return tick_ms;
-}
+// static volatile uint64_t tick_ms = 0;
+// int64_t pika_platform_getTick(void) {
+//     tick_ms += 50;
+//     return tick_ms;
+// }
 
 /* quick_malloc is always open */
 uint8_t __is_quick_malloc(void) {

@@ -74,8 +74,27 @@ PIKA_WEAK uint8_t pika_is_locked_pikaMemory(void) {
     return 0;
 }
 
+#if PIKA_FREERTOS_ENABLE
+static uint32_t platform_uptime_ms(void) {
+#if (configTICK_RATE_HZ == 1000)
+    return (uint32_t)xTaskGetTickCount();
+#else
+    TickType_t tick = 0u;
+
+    tick = xTaskGetTickCount() * 1000;
+    return (uint32_t)((tick + configTICK_RATE_HZ - 1) / configTICK_RATE_HZ);
+#endif
+}
+#endif
+
 PIKA_WEAK int64_t pika_platform_getTick(void) {
+#if PIKA_FREERTOS_ENABLE
+    return platform_uptime_ms();
+#elif defined(__linux)
+    return time(NULL);
+#else
     return -1;
+#endif
 }
 
 PIKA_WEAK int pika_platform_vsprintf(char* buff, char* fmt, va_list args) {
@@ -372,7 +391,7 @@ PIKA_WEAK void pika_platform_thread_destroy(pika_platform_thread_t* thread) {
 #elif PIKA_FREERTOS_ENABLE
     if (NULL != thread)
         vTaskDelete(thread->thread);
-    pika_platform_memory_free(thread);
+    pika_platform_free(thread);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -437,19 +456,6 @@ PIKA_WEAK int pika_platform_thread_mutex_destroy(
     return -1;
 #endif
 }
-
-#if PIKA_FREERTOS_ENABLE
-static uint32_t platform_uptime_ms(void) {
-#if (configTICK_RATE_HZ == 1000)
-    return (uint32_t)xTaskGetTickCount();
-#else
-    TickType_t tick = 0u;
-
-    tick = xTaskGetTickCount() * 1000;
-    return (uint32_t)((tick + configTICK_RATE_HZ - 1) / configTICK_RATE_HZ);
-#endif
-}
-#endif
 
 PIKA_WEAK void pika_platform_timer_init(pika_platform_timer_t* timer) {
 #ifdef __linux
