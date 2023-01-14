@@ -206,8 +206,8 @@ typedef struct pika_platform_thread {
     pthread_cond_t cond;
 } pika_platform_thread_t;
 #elif PIKA_FREERTOS_ENABLE
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 typedef struct pika_platform_thread {
     TaskHandle_t thread;
 } pika_platform_thread_t;
@@ -234,8 +234,8 @@ typedef struct pika_platform_thread_mutex {
     pthread_mutex_t mutex;
 } pika_platform_thread_mutex_t;
 #elif PIKA_FREERTOS_ENABLE
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 typedef struct pika_platform_thread_mutex {
     SemaphoreHandle_t mutex;
 } pika_platform_thread_mutex_t;
@@ -257,8 +257,8 @@ typedef struct pika_platform_timer {
     struct timeval time;
 } pika_platform_timer_t;
 #elif PIKA_FREERTOS_ENABLE
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+#include "FreeRTOS.h"
+#include "task.h"
 typedef struct pika_platform_timer {
     uint32_t time;
 } pika_platform_timer_t;
