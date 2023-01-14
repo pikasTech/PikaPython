@@ -1,8 +1,8 @@
 #include "_socket_socket.h"
 #include "PikaPlatform_socket.h"
 
-#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 10, 4)
-#error "This library requires PikaScript version 1.10.4 or higher"
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 0)
+#error "This library requires PikaScript version 1.12.0 or higher"
 #endif
 
 void _socket_socket__init(PikaObj* self) {
