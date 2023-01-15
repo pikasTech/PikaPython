@@ -5,7 +5,7 @@ import git
 
 REPO_PATH = "../.."
 PACKAGE_PATH = REPO_PATH + "/package"
-PACKAGE_RELEASE_INFO = REPO_PATH + "/packages.toml"
+PACKAGE_RELEASE_PATH = REPO_PATH + "/packages.toml"
 WORK_DIR = os.getcwd()
 
 
@@ -133,7 +133,7 @@ repo = git.Repo(REPO_PATH)
 
 commit_head = repo.head.commit.hexsha
 
-pkgReleases = PackageReleaseList(PACKAGE_RELEASE_INFO)
+pkgReleases = PackageReleaseList(PACKAGE_RELEASE_PATH)
 
 # for each folder in package, run the following command
 for folder in os.listdir(PACKAGE_PATH):
@@ -146,5 +146,5 @@ for folder in os.listdir(PACKAGE_PATH):
                 folder, VersoinType.PATCH, commit_head)
             print(f"Changes detected: {folder} --> {newVersion}")
 
-pkgReleases.dump('test.toml')
+pkgReleases.dump(PACKAGE_RELEASE_PATH)
 exit()
