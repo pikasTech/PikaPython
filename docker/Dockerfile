@@ -84,3 +84,4 @@ RUN code-server --install-extension vscodevim.vim
 RUN code-server --install-extension zhuangtongfa.material-theme
 RUN apt-get install clangd -y
 RUN apt-get install libmbedtls-dev -y
+RUN pip install -r /root/pikascript/docker/requirements.txt
