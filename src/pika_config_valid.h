@@ -352,6 +352,10 @@
         #define PIKA_LWIP_ENABLE 0
     #endif
 
+    #ifndef PIKA_SHELL_NO_NEWLINE
+        #define PIKA_SHELL_NO_NEWLINE 0
+    #endif
+
     /* configuration validation */
 
 #endif
