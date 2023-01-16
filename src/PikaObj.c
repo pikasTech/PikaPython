@@ -1055,7 +1055,7 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
         goto exit;
     }
     if ((inputChar == '\r') || (inputChar == '\n')) {
-#if !(defined(__linux) || defined(_WIN32))
+#if !(defined(__linux) || defined(_WIN32) || PIKA_SHELL_NO_NEWLINE)
         pika_platform_printf("\r\n");
 #endif
         /* still in block */
