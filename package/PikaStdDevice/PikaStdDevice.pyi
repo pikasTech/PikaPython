@@ -67,6 +67,7 @@ class GPIO(BaseDev):
 
     def read(self) -> int:
         """Read the pin value."""
+    
 
     SIGNAL_RISING: int
     SIGNAL_FALLING: int
@@ -188,6 +189,26 @@ class UART:
     def readBytes(self, length: int) -> bytes:
         """Read bytes from the UART."""
 
+    def setPinTX(self, pin: str):
+        """
+        Remap the TX pin.
+        """
+    
+    def setPinRX(self, pin: str):
+        """
+        Remap the RX pin.
+        """
+    
+    def setPinCTS(self, pin: str):
+        """
+        Remap the CTS pin.
+        """
+    
+    def setPinRTS(self, pin: str):
+        """
+        Remap the RTS pin.
+        """
+
     def close(self): ...
 
     SIGNAL_RX: int
@@ -203,7 +224,7 @@ class UART:
         io.setCallBack(cb1, uart.SIGNAL_RX)
         ```
         """
-
+    
     @abstractmethod
     def platformEnable(self): ...
 

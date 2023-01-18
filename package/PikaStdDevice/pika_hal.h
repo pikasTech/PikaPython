@@ -138,6 +138,10 @@ typedef struct {
     void (*event_callback)(pika_dev* dev, PIKA_HAL_UART_EVENT_SIGNAL signal);
     PIKA_HAL_UART_EVENT_SIGNAL event_callback_filter;
     PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
+    pika_dev* TX;
+    pika_dev* RX;
+    pika_dev* RTS;
+    pika_dev* CTS;
 } pika_hal_UART_config;
 
 typedef uint32_t PIKA_HAL_IIC_SLAVE_ADDR;
