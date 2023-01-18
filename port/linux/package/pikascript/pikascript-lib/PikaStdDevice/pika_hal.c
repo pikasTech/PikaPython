@@ -26,6 +26,10 @@ static size_t _pika_hal_dev_config_size(PIKA_HAL_DEV_TYPE dev_type) {
 }
 
 pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name) {
+    if (NULL == name) {
+        __platform_printf("Error: dev_open name is NULL.\r\n");
+        return NULL;
+    }
     int ret = -1;
     pika_dev* dev = NULL;
     if (dev_type >= _PIKA_DEV_TYPE_MAX) {
@@ -203,6 +207,10 @@ int pika_hal_UART_ioctl_merge_config(pika_hal_UART_config* dst,
                               PIKA_HAL_UART_EVENT_SIGNAL_RX);
     _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
                               PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
+    _IOCTL_CONFIG_USE_DEFAULT(TX, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(RX, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(RTS, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(CTS, NULL);
     return 0;
 }
 
@@ -218,7 +226,7 @@ int pika_hal_SPI_ioctl_merge_config(pika_hal_SPI_config* dst,
 }
 
 int pika_hal_SOFT_SPI_ioctl_merge_config(pika_hal_SOFT_SPI_config* dst,
-                                    pika_hal_SOFT_SPI_config* src) {
+                                         pika_hal_SOFT_SPI_config* src) {
     _IOCTL_CONFIG_USE_DEFAULT(lsb_or_msb, PIKA_HAL_SPI_MSB);
     _IOCTL_CONFIG_USE_DEFAULT(master_or_slave, PIKA_HAL_SPI_MASTER);
     _IOCTL_CONFIG_USE_DEFAULT(mode, PIKA_HAL_SPI_MODE_0);

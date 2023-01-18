@@ -389,10 +389,10 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
 #define obj_setStruct(PikaObj_p_self, char_p_name, struct_) \
     args_setStruct(((PikaObj_p_self)->list), char_p_name, struct_)
 
-#define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                            \
-    obj_setErrorCode(self, 1);                                            \
+#define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                               \
+    obj_setErrorCode(self, 1);                                               \
     pika_platform_printf("Error: abstract method `%s()` need override.\r\n", \
-                      __FUNCTION__)
+                         __FUNCTION__)
 
 char* obj_cacheStr(PikaObj* self, char* str);
 PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp);
@@ -516,5 +516,13 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
                                              int eventSignal);
 
 void obj_printModules(PikaObj* self);
+#if PIKA_DEBUG_ENABLE
+#define pika_debug(fmt, ...) \
+    pika_platform_printf("[PIKA DBG] " fmt, ##__VA_ARGS__)
+#else
+#define pika_debug(...) \
+    do {                \
+    } while (0)
+#endif
 
 #endif
