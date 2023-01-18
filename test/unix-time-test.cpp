@@ -145,6 +145,8 @@ TEST(timetest, sleep) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
     __platform_printf("BEGIN\r\n");
 
