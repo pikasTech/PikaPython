@@ -1,5 +1,5 @@
 import PikaStdLib
-import ESP32
+import machine 
 print('hello PikaPython')
 mem = PikaStdLib.MemChecker()
 print('mem used max:')
