@@ -1124,6 +1124,22 @@ enum shellCTRL obj_runChar(PikaObj* self, char inputChar) {
     return _do_obj_runChar(self, inputChar, shell);
 }
 
+static void _save_file(char* file_name, uint8_t* buff, size_t size) {
+    pika_platform_printf("[   Info] Saving file to '%s'...\r\n", file_name);
+    FILE* fp = pika_platform_fopen(file_name, "wb+");
+    if (NULL == fp) {
+        pika_platform_printf("[  Error] Open file '%s' error!\r\n", file_name);
+        pika_platform_fclose(fp);
+    } else {
+        pika_platform_fwrite(buff, 1, size, fp);
+        pika_platform_printf("[   Info] Writing %d bytes to '%s'...\r\n",
+                             (int)(size), file_name);
+        pika_platform_fclose(fp);
+        pika_platform_printf("[    OK ] Writing to '%s' succeed!\r\n",
+                             file_name);
+    }
+}
+
 void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
     /* init the shell */
     _obj_runChar_beforeRun(self, cfg);
@@ -1186,23 +1202,7 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
                 (int)PIKA_READ_FILE_BUFF_SIZE,
                 ((float)len / (float)PIKA_READ_FILE_BUFF_SIZE));
 #if PIKA_SHELL_SAVE_FILE_ENABLE
-            char* file_name = PIKA_SHELL_SAVE_FILE_NAME;
-            pika_platform_printf("[   Info] Saving file to '%s'...\r\n",
-                                 file_name);
-            FILE* fp = pika_platform_fopen(file_name, "w+");
-            if (NULL == fp) {
-                pika_platform_printf("[  Error] Open file '%s' error!\r\n",
-                                     file_name);
-                pika_platform_fclose(fp);
-            } else {
-                pika_platform_fwrite(buff, 1, len, fp);
-                pika_platform_printf(
-                    "[   Info] Writing %d bytes to '%s'...\r\n", (int)(len),
-                    file_name);
-                pika_platform_fclose(fp);
-                pika_platform_printf("[    OK ] Writing to '%s' succeed!\r\n",
-                                     file_name);
-            }
+            _save_file(PIKA_SHELL_SAVE_FILE_PATH, (uint8_t*)buff, len);
 #endif
             pika_platform_printf("=============== [ Run] ===============\r\n");
             obj_run(self, (char*)buff);
@@ -1235,6 +1235,9 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             pika_platform_printf(
                 "\r\n=============== [Code] ===============\r\n");
             pika_platform_printf("[   Info] Bytecode size: %d\r\n", size);
+#if PIKA_SHELL_SAVE_BYTECODE_ENABLE
+            _save_file(PIKA_SHELL_SAVE_BYTECODE_PATH, (uint8_t*)buff, size);
+#endif
             pika_platform_printf("=============== [ RUN] ===============\r\n");
             pikaVM_runByteCodeInconstant(self, buff);
             pikaFree(buff, size);

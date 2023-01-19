@@ -119,6 +119,10 @@ class SysObj:
     @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def help(name: str): ...
 
+    @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    def reboot(): ...
+
 
 @PIKA_C_MACRO_IF("0")
 class RangeObj:

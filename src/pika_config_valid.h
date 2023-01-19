@@ -328,8 +328,16 @@
         #define PIKA_SHELL_SAVE_FILE_ENABLE 0
     #endif
 
-    #ifndef PIKA_SHELL_SAVE_FILE_NAME
-        #define PIKA_SHELL_SAVE_FILE_NAME "pika_shell_save.py"
+    #ifndef PIKA_SHELL_SAVE_FILE_PATH
+        #define PIKA_SHELL_SAVE_FILE_PATH "app.py"
+    #endif
+
+    #ifndef PIKA_SHELL_SAVE_BYTECODE_ENABLE
+        #define PIKA_SHELL_SAVE_BYTECODE_ENABLE 0
+    #endif
+
+    #ifndef PIKA_SHELL_SAVE_BYTECODE_PATH
+        #define PIKA_SHELL_SAVE_BYTECODE_PATH "app.py.o"
     #endif
 
     #ifndef PIKA_EVENT_LIST_SIZE
