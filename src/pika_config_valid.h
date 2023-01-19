@@ -340,6 +340,14 @@
         #define PIKA_SHELL_SAVE_BYTECODE_PATH "app.py.o"
     #endif
 
+    #ifndef PIKA_SHELL_SAVE_APP_ENABLE
+        #define PIKA_SHELL_SAVE_APP_ENABLE 0
+    #endif
+
+    #ifndef PIKA_SHELL_SAVE_APP_PATH
+        #define PIKA_SHELL_SAVE_APP_PATH "app.pika"
+    #endif
+
     #ifndef PIKA_EVENT_LIST_SIZE
         #define PIKA_EVENT_LIST_SIZE 16
     #endif

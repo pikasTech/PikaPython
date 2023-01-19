@@ -1240,15 +1240,24 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             }
 
             pika_platform_printf(
-                "\r\n=============== [Code] ===============\r\n");
-            pika_platform_printf("[   Info] Bytecode size: %d\r\n", size);
+                "\r\n=============== [File] ===============\r\n");
+            pika_platform_printf("[   Info] Recived size: %d\r\n", size);
+            if (magic_code[3] == 'o') {
 #if PIKA_SHELL_SAVE_BYTECODE_ENABLE
-            _save_file(PIKA_SHELL_SAVE_BYTECODE_PATH, (uint8_t*)buff, size);
+                _save_file(PIKA_SHELL_SAVE_BYTECODE_PATH, (uint8_t*)buff, size);
 #endif
-            pika_platform_printf("=============== [ RUN] ===============\r\n");
-            pikaVM_runByteCodeInconstant(self, buff);
-            pikaFree(buff, size);
-            return;
+                pika_platform_printf(
+                    "=============== [ RUN] ===============\r\n");
+                pikaVM_runByteCodeInconstant(self, buff);
+                pikaFree(buff, size);
+                return;
+            }
+            if (magic_code[3] == 'a') {
+                _save_file(PIKA_SHELL_SAVE_APP_PATH, (uint8_t*)buff, size);
+                pika_platform_printf(
+                    "=============== [REBOOT] ===============\r\n");
+                pika_platform_reboot();
+            }
         }
 #endif
         if (SHELL_CTRL_EXIT == _do_obj_runChar(self, inputChar[0], cfg)) {
