@@ -365,7 +365,8 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     uint32_t version_num = LIB_VERSION_NUMBER;
     uint32_t module_num = args_getInt(&context, "module_num");
     uint32_t modules_size = args_getInt(&context, "sum_size") +
-                            (module_num + 1) * LIB_INFO_BLOCK_SIZE;
+                            (module_num + 1) * LIB_INFO_BLOCK_SIZE -
+                            sizeof(uint32_t) * 2;
 
     /* write meta info */
     const uint32_t magic_code_offset =
