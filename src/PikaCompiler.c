@@ -368,10 +368,13 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
                             (module_num + 1) * LIB_INFO_BLOCK_SIZE;
 
     /* write meta info */
-    const uint32_t magic_code_offset = sizeof(uint32_t) * 0;
-    const uint32_t version_offset = sizeof(uint32_t) * 1;
-    const uint32_t module_num_offset = sizeof(uint32_t) * 2;
-    const uint32_t modules_size_offset = sizeof(uint32_t) * 3;
+    const uint32_t magic_code_offset =
+        sizeof(uint32_t) * PIKA_APP_MAGIC_CODE_OFFSET;
+    const uint32_t modules_size_offset =
+        sizeof(uint32_t) * PIKA_APP_MODULE_SIZE_OFFSET;
+    const uint32_t version_offset = sizeof(uint32_t) * PIKA_APP_VERSION_OFFSET;
+    const uint32_t module_num_offset =
+        sizeof(uint32_t) * PIKA_APP_MODULE_NUM_OFFSET;
 
     pika_platform_memcpy(buff + magic_code_offset, &magic_code,
                          sizeof(uint32_t));
@@ -403,8 +406,8 @@ static int _getModuleNum(uint8_t* library_bytes) {
     char* magic_code = (char*)library_bytes;
 
     uint32_t* library_info = (uint32_t*)library_bytes;
-    uint32_t version_num = library_info[1];
-    uint32_t module_num = library_info[2];
+    uint32_t version_num = library_info[PIKA_APP_VERSION_OFFSET];
+    uint32_t module_num = library_info[PIKA_APP_MODULE_NUM_OFFSET];
 
     /* check magic_code */
     if (!((magic_code[0] == 0x0f) && (magic_code[1] == 'p') &&

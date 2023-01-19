@@ -1219,19 +1219,26 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
 
         /* run xx.py.o */
         if (inputChar[0] == 'p' && inputChar[1] == 0x0f) {
+            uint8_t magic_code[4] = {0x0f, 'p', 0x00, 0x00};
             for (int i = 0; i < 2; i++) {
                 /* eat 'yo' */
-                cfg->fn_getchar();
+                magic_code[2 + i] = cfg->fn_getchar();
             }
             uint32_t size = 0;
             for (int i = 0; i < 4; i++) {
                 uint8_t* size_byte = (uint8_t*)&size;
                 size_byte[i] = cfg->fn_getchar();
             }
+            size += sizeof(uint32_t) * 2;
             uint8_t* buff = pikaMalloc(size);
-            for (uint32_t i = 0; i < size; i++) {
+            /* save magic code and size */
+            memcpy(buff, magic_code, sizeof(magic_code));
+            memcpy(buff + sizeof(magic_code), &size, sizeof(size));
+
+            for (uint32_t i = sizeof(uint32_t) * 2; i < size; i++) {
                 buff[i] = cfg->fn_getchar();
             }
+
             pika_platform_printf(
                 "\r\n=============== [Code] ===============\r\n");
             pika_platform_printf("[   Info] Bytecode size: %d\r\n", size);
