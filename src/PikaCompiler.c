@@ -98,7 +98,8 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     char void_ = 0;
     FILE* bytecode_f = pika_platform_fopen(output_file_name, "wb+");
     if (NULL == bytecode_f) {
-        pika_platform_printf("Error: open file %s failed.\r\n", output_file_name);
+        pika_platform_printf("Error: open file %s failed.\r\n",
+                             output_file_name);
         res = PIKA_RES_ERR_IO_ERROR;
         goto exit;
     }
@@ -118,8 +119,7 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     const_pool_size = bytecode_frame.const_pool.size;
     instruct_array_size = bytecode_frame.instruct_array.size;
     bytecode_size = const_pool_size + instruct_array_size +
-                             sizeof(const_pool_size) +
-                             sizeof(instruct_array_size);
+                    sizeof(const_pool_size) + sizeof(instruct_array_size);
     byteCodeFrame_deinit(&bytecode_frame);
 
     /* step 2, write instruct array to file */
@@ -129,7 +129,7 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     pika_platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size), bytecode_f);
     /* write ins array size */
     pika_platform_fwrite(&instruct_array_size, 1, sizeof(instruct_array_size),
-                      bytecode_f);
+                         bytecode_f);
     byteCodeFrame_init(&bytecode_frame);
     bytecode_frame.const_pool.output_f = bytecode_f;
     bytecode_frame.instruct_array.output_f = bytecode_f;
@@ -140,7 +140,8 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     byteCodeFrame_deinit(&bytecode_frame);
 
     /* step 3, write const pool to file */
-    pika_platform_fwrite(&const_pool_size, 1, sizeof(const_pool_size), bytecode_f);
+    pika_platform_fwrite(&const_pool_size, 1, sizeof(const_pool_size),
+                         bytecode_f);
     void_ = 0;
     /* add \0 at the start */
     pika_platform_fwrite(&void_, 1, 1, bytecode_f);
@@ -316,11 +317,23 @@ static int32_t __foreach_handler_libWriteIndex(Arg* argEach, Args* context) {
         module_name = strsReplace(&buffs, module_name, "|", ".");
         // pika_platform_printf("   %s:%d\r\n", module_name, bytecode_size);
         pika_platform_memcpy(buff, module_name, strGetSize(module_name));
-        pika_platform_fwrite(buff, 1, LIB_INFO_BLOCK_SIZE - sizeof(bytecode_size),
-                          out_file);
-        pika_platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size), out_file);
+        pika_platform_fwrite(
+            buff, 1, LIB_INFO_BLOCK_SIZE - sizeof(bytecode_size), out_file);
+        pika_platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size),
+                             out_file);
     }
     strsDeinit(&buffs);
+    return 0;
+}
+
+static int32_t __foreach_handler_libSumSize(Arg* argEach, Args* context) {
+    if (argType_isObject(arg_getType(argEach))) {
+        PikaObj* module_obj = arg_getPtr(argEach);
+        uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
+        bytecode_size = aline_by(bytecode_size, sizeof(uint32_t));
+        args_setInt(context, "sum_size",
+                    args_getInt(context, "sum_size") + bytecode_size);
+    }
     return 0;
 }
 
@@ -338,25 +351,37 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     Args context = {0};
     args_setPtr(&context, "out_file", out_file);
     args_setInt(&context, "module_num", 0);
+    args_setInt(&context, "sum_size", 0);
 
     /* write meta information */
     char buff[LIB_INFO_BLOCK_SIZE] = {0};
     args_foreach(self->list, __foreach_handler_getModuleNum, &context);
 
+    /* get sum size of pya */
+    args_foreach(self->list, __foreach_handler_libSumSize, &context);
+
     /* meta info */
-    char magic_code[] = {0x7f, 'p', 'y', 'a'};
+    char magic_code[] = {0x0f, 'p', 'y', 'a'};
     uint32_t version_num = LIB_VERSION_NUMBER;
     uint32_t module_num = args_getInt(&context, "module_num");
+    uint32_t modules_size = args_getInt(&context, "sum_size") +
+                            (module_num + 1) * LIB_INFO_BLOCK_SIZE;
 
     /* write meta info */
     const uint32_t magic_code_offset = sizeof(uint32_t) * 0;
     const uint32_t version_offset = sizeof(uint32_t) * 1;
     const uint32_t module_num_offset = sizeof(uint32_t) * 2;
+    const uint32_t modules_size_offset = sizeof(uint32_t) * 3;
 
-    pika_platform_memcpy(buff + magic_code_offset, &magic_code, sizeof(uint32_t));
+    pika_platform_memcpy(buff + magic_code_offset, &magic_code,
+                         sizeof(uint32_t));
     pika_platform_memcpy(buff + version_offset, &version_num, sizeof(uint32_t));
     /* write module_num to the file */
-    pika_platform_memcpy(buff + module_num_offset, &module_num, sizeof(uint32_t));
+    pika_platform_memcpy(buff + module_num_offset, &module_num,
+                         sizeof(uint32_t));
+    /* write modules_size to the file */
+    pika_platform_memcpy(buff + modules_size_offset, &modules_size,
+                         sizeof(uint32_t));
     /* aline to 32 bytes */
     pika_platform_fwrite(buff, 1, LIB_INFO_BLOCK_SIZE, out_file);
     /* write module index to file */
@@ -382,7 +407,7 @@ static int _getModuleNum(uint8_t* library_bytes) {
     uint32_t module_num = library_info[2];
 
     /* check magic_code */
-    if (!((magic_code[0] == 0x7f) && (magic_code[1] == 'p') &&
+    if (!((magic_code[0] == 0x0f) && (magic_code[1] == 'p') &&
           (magic_code[2] == 'y') && (magic_code[3] == 'a'))) {
         pika_platform_printf("Error: invalid magic code.\r\n");
         return PIKA_RES_ERR_ILLEGAL_MAGIC_CODE;
@@ -479,14 +504,14 @@ int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
     Arg* file_arg = arg_loadFile(NULL, lib_file_name);
     if (NULL == file_arg) {
         pika_platform_printf("Error: Could not load library file '%s'\n",
-                          lib_file_name);
+                             lib_file_name);
         return PIKA_RES_ERR_IO_ERROR;
     }
     /* save file_arg as @lib_buf to libObj */
     obj_setArg_noCopy(self, "@lib_buf", file_arg);
     if (0 != LibObj_loadLibrary(self, arg_getBytes(file_arg))) {
         pika_platform_printf("Error: Could not load library from '%s'\n",
-                          lib_file_name);
+                             lib_file_name);
         return PIKA_RES_ERR_OPERATION_FAILED;
     }
     return PIKA_RES_OK;
@@ -503,7 +528,7 @@ int Lib_loadLibraryFileToArray(char* origin_file_name, char* out_folder) {
     int res = 0;
     if (NULL == file_arg) {
         pika_platform_printf("Error: Could not load file '%s'\n",
-                          origin_file_name);
+                             origin_file_name);
         return 1;
     }
     char* output_file_name = NULL;
@@ -648,7 +673,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                     strsAppend(&buffs, imp_module_path, ".py.o"), "rb");
                 if (NULL != imp_file_pyo) {
                     pika_platform_printf("  loading %s.py.o...\r\n",
-                                      imp_module_path);
+                                         imp_module_path);
                     /* found *.py.o, push to compiled list */
                     pikaMaker_setState(self, imp_module_name, "compiled");
                     char* imp_api_path = strsAppend(
@@ -665,7 +690,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                             pika_platform_fread(buff, 1, 128, imp_file_pyo);
                         if (read_size > 0) {
                             pika_platform_fwrite(buff, 1, read_size,
-                                              imp_file_pyo_api);
+                                                 imp_file_pyo_api);
                         } else {
                             break;
                         }
@@ -712,7 +737,7 @@ int32_t __foreach_handler_printStates(Arg* argEach, Args* context) {
     if (argType_isObject(arg_getType(argEach))) {
         PikaObj* module_obj = arg_getPtr(argEach);
         pika_platform_printf("%s: %s\r\n", obj_getStr(module_obj, "name"),
-                          obj_getStr(module_obj, "state"));
+                             obj_getStr(module_obj, "state"));
     }
     return 0;
 }
