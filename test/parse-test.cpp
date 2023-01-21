@@ -11,12 +11,8 @@ char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack);
 int32_t AST_deinit(AST* ast);
 char* Lexer_getTokenStream(Args* outBuffs, char* stmt);
 char* Lexer_printTokenStream(Args* outBuffs, char* tokens);
-char* strsPopTokenWithSkip_byStr(Args* buffs,
-                                 char* stmts,
-                                 char* str,
-                                 char skipStart,
-                                 char skipEnd);
-char* strsGetCleanCmd(Args* outBuffs, char* cmd);
+char* Cursor_getCleanStmt(Args* outBuffs, char* cmd);
+char* Cursor_popLastToken(Args* outBuffs, char** pStmt, char* str);
 }
 
 TEST(parser, NEW) {
@@ -1094,8 +1090,8 @@ TEST(lexser, jjcc) {
 TEST(parser, pop_by_str) {
     Args* buffs = New_strBuff();
     char* tokens = strsCopy(buffs, "3(>=)2>=29");
-    char* token1 = strsPopTokenWithSkip_byStr(buffs, tokens, ">=", '(', ')');
-    char* token2 = tokens;
+    char* token2 = Cursor_popLastToken(buffs, &tokens, ">=");
+    char* token1 = tokens;
     /* assert */
     EXPECT_STREQ("3(>=)2", token1);
     EXPECT_STREQ("29", token2);
@@ -2020,7 +2016,7 @@ TEST(parser, mpy_demo_1) {
 TEST(parser, clean_compled_str) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* res = strsGetCleanCmd(buffs, "chars = ' .,-:;i+hHM$*#@ '\n");
+    char* res = Cursor_getCleanStmt(buffs, "chars = ' .,-:;i+hHM$*#@ '\n");
     EXPECT_STREQ(res, "chars=' .,-:;i+hHM$*#@ '\n");
     printf("%s", res);
     args_deinit(buffs);
@@ -2733,7 +2729,7 @@ TEST(parser, parse_issue3) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "recv_buf[1] = dat ";
-    char* clean_cmd = strsGetCleanCmd(buffs, lines);
+    char* clean_cmd = Cursor_getCleanStmt(buffs, lines);
     EXPECT_STREQ(clean_cmd, "recv_buf[1]=dat");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);

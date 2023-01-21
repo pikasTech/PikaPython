@@ -110,15 +110,15 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
     _Cursor_beforeIter(&cursor); \
     for (int __i = 0; __i < cursor.length; __i++)
 
-#define Cursor_forEachTokenExistPs(cursor, stmt) \
+#define Cursor_forEachExistPs(cursor, stmt) \
     /* init parserStage */                              \
     _Cursor_init(&cursor);                              \
     _Cursor_parse(&cursor, stmt);                \
     _Cursor_forEach(cursor)
 
-#define Cursor_forEachToken(cursor, stmt) \
+#define Cursor_forEach(cursor, stmt) \
     struct Cursor cursor;                        \
-    Cursor_forEachTokenExistPs(cursor, stmt)
+    Cursor_forEachExistPs(cursor, stmt)
 
 uint16_t TokenStream_getSize(char* tokenStream);
 
