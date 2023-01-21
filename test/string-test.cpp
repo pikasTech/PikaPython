@@ -130,6 +130,26 @@ TEST(string, split) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(string, split_str) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    obj_run(pikaMain,
+            "s = PikaStdData.String('aabbcc')\n"
+            "tokens = s.split('bb')\n"
+            "for item in tokens:\n"
+            "    print(item)\n"
+            "\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "cc\r\n");
+    EXPECT_STREQ(log_buff[1], "aa\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(string, strip) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;

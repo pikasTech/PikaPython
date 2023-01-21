@@ -251,19 +251,26 @@ PikaObj* PikaStdData_String_split(PikaObj* self, char* s) {
     Args buffs = {0};
     char* str = strsCopy(&buffs, obj_getStr(self, "str"));
 
-    char sign = s[0];
-    int token_num = strCountSign(str, sign) + 1;
+    /* split str with s by strstr() */
 
-    for (int i = 0; i < token_num; i++) {
-        char* token = strsPopToken(&buffs, &str, sign);
-        /* 用 arg_set<type> 的 api 创建 arg */
-        Arg* token_arg = arg_newStr(token);
-        /* 添加到 list 对象 */
-        PikaStdData_List_append(list, token_arg);
-        /* 销毁 arg */
-        arg_deinit(token_arg);
+    size_t spliter_len = strGetSize(s);
+    char* p = str;
+    while (1) {
+        char* q = strstr(p, s);
+        if (q == NULL) {
+            break;
+        }
+        *q = '\0';
+        Arg* arg_item = arg_newStr(p);
+        PikaStdData_List_append(list, arg_item);
+        arg_deinit(arg_item);
+        p = q + spliter_len;
     }
-
+    if (*p != '\0') {
+        Arg* arg_item = arg_newStr(p);
+        PikaStdData_List_append(list, arg_item);
+        arg_deinit(arg_item);
+    }
     strsDeinit(&buffs);
     return list;
 }
