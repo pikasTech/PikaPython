@@ -866,7 +866,7 @@ static char* _kw_to_default_all(FunctionArgsInfo* f,
                                 int* argc,
                                 Arg* argv[],
                                 Arg* call_arg) {
-#if PIKA_NANO
+#if PIKA_NANO_ENABLE
     return arg_name;
 #endif
     while (strIsContain(arg_name, '=')) {
