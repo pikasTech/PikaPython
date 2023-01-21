@@ -1689,7 +1689,10 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         method = strsGetFirstToken(&buffs, right, '(');
         AST_setNodeAttr(ast, (char*)"method", method);
         char* subStmts = strsCut(&buffs, right, '(', ')');
-        pika_assert(NULL != subStmts);
+        if (NULL == subStmts) {
+            result = PIKA_RES_ERR_SYNTAX_ERROR;
+            goto exit;
+        }
         /* add ',' at the end */
         subStmts = strsAppend(&buffs, subStmts, ",");
         while (1) {

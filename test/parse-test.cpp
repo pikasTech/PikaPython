@@ -5095,6 +5095,35 @@ TEST(parser, not_in) {
 //     EXPECT_EQ(pikaMemNow(), 0);
 // }
 
+TEST(parser, syntex_issue_lwekj) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "json.loads('{a:1}'}";
+    EXPECT_EQ((uintptr_t)Parser_linesToAsm(buffs, lines), 0);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if 0  // NEED FIX
+TEST(parser, syntex_issue_lekj) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a[b()] = 1";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    // EXPECT_STREQ(pikaAsm,
+    //              "B0\n"
+    //              "2 NUM 1\n"
+    //              "2 REF a\n"
+    //              "1 OPT  in \n"
+    //              "0 OPT  not \n"
+    //              "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
 #endif
 
 TEST_END
