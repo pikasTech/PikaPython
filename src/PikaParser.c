@@ -55,8 +55,9 @@ void Cursor_iterEnd(struct Cursor* cs);
 void Cursor_deinit(struct Cursor* cs);
 
 /* Cursor high level api */
-char* Cursor_popToken(Args* buffs, char** stmt, char* devide);
+char* Cursor_popToken(Args* buffs, char** pStmt, char* devide);
 PIKA_BOOL Cursor_isContain(char* stmt, TokenType type, char* pyload);
+char* Cursor_splitCollect(Args* buffs, char* stmt, char* devide, int index);
 
 char* Parser_linesToAsm(Args* outBuffs, char* multiLine);
 uint16_t TokenStream_getSize(char* tokenStream) {
@@ -980,11 +981,11 @@ PIKA_BOOL Cursor_isContain(char* stmt, TokenType type, char* pyload) {
     return res;
 }
 
-char* Cursor_popToken(Args* buffs, char** tokenStream, char* devide) {
+char* Cursor_popToken(Args* buffs, char** pStmt, char* devide) {
     Arg* out_item = arg_newStr("");
     Arg* tokenStream_after = arg_newStr("");
     PIKA_BOOL is_find_devide = PIKA_FALSE;
-    Cursor_forEachToken(cs, *tokenStream) {
+    Cursor_forEachToken(cs, *pStmt) {
         Cursor_iterStart(&cs);
         if (!is_find_devide) {
             if ((cs.branket_deepth == 0 && strEqu(cs.token1.pyload, devide)) ||
@@ -1010,8 +1011,34 @@ char* Cursor_popToken(Args* buffs, char** tokenStream, char* devide) {
     char* token_after_str = strsCopy(buffs, arg_getStr(tokenStream_after));
     arg_deinit(tokenStream_after);
     /* update tokenStream */
-    *tokenStream = token_after_str;
+    *pStmt = token_after_str;
     return out_item_str;
+}
+
+char* Cursor_splitCollect(Args* buffs, char* stmt, char* devide, int index) {
+    Arg* out_arg = arg_newStr("");
+    int expect_branket = 0;
+    if (devide[0] == '(' || devide[0] == '[' || devide[0] == '{') {
+        expect_branket = 1;
+    }
+    int i = 0;
+    Cursor_forEachToken(cs, stmt) {
+        Cursor_iterStart(&cs);
+        if (cs.branket_deepth == expect_branket &&
+            strEqu(cs.token1.pyload, devide)) {
+            i++;
+            if (i == index) {
+                Cursor_iterEnd(&cs);
+                break;
+            }
+        }
+        if (i == index) {
+            out_arg = arg_strAppend(out_arg, cs.token1.pyload);
+        }
+        Cursor_iterEnd(&cs);
+    }
+    Cursor_deinit(&cs);
+    return strsCacheArg(buffs, out_arg);
 }
 
 static void Slice_getPars(Args* outBuffs,
@@ -1583,7 +1610,7 @@ __exit:
 
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args buffs = {0};
-    char* assignment = strsGetFirstToken(&buffs, stmt, '(');
+    char* assignment = Cursor_splitCollect(&buffs, stmt, "(", 0);
     char* method = NULL;
     char* ref = NULL;
     char* str = NULL;

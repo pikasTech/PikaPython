@@ -5104,7 +5104,6 @@ TEST(parser, syntex_issue_lwekj) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if 0  // NEED FIX
 TEST(parser, syntex_issue_lekj) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -5112,17 +5111,36 @@ TEST(parser, syntex_issue_lekj) {
     printf("%s\r\n", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    // EXPECT_STREQ(pikaAsm,
-    //              "B0\n"
-    //              "2 NUM 1\n"
-    //              "2 REF a\n"
-    //              "1 OPT  in \n"
-    //              "0 OPT  not \n"
-    //              "B0\n");
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF a\n"
+                 "1 RUN b\n"
+                 "1 NUM 1\n"
+                 "0 RUN __setitem__\n"
+                 "0 OUT a\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-#endif
+
+TEST(parser, syntex_issue_l1l2) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "test(a=1, b= 2)";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 NUM 1\n"
+                 "1 OUT a\n"
+                 "1 NUM 2\n"
+                 "1 OUT b\n"
+                 "0 RUN test\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 #endif
 
