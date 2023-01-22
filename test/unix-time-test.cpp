@@ -140,8 +140,9 @@ TEST(unix_time, iteration_form_1970_to_2070) {
 
 TEST(timetest, sleep) {
     char* lines =
-        "time = PikaStdDevice.Time()\n"
-        "time.sleep(0.1)\n";
+        "import time\n"
+        "t = PikaStdDevice.Time()\n"
+        "t.sleep(0.1)\n";
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);

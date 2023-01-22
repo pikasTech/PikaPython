@@ -559,7 +559,7 @@ PikaObj* PikaStdLib_SysObj_open(PikaObj* self, char* path, char* mode) {
 int32_t __dir_each(Arg* argEach, Args* context) {
     PikaObj* list = args_getPtr(context, "list");
     if (argType_isCallable(arg_getType(argEach))) {
-        char name_buff[PIKA_LINE_BUFF_SIZE / 2] = {0};
+        char name_buff[PIKA_LINE_BUFF_SIZE] = {0};
         char* method_name =
             methodArg_getName(argEach, name_buff, sizeof(name_buff));
         Arg* arg_str = arg_newStr(method_name);
@@ -572,7 +572,7 @@ int32_t __dir_each(Arg* argEach, Args* context) {
 PikaObj* PikaStdLib_SysObj_dir(PikaObj* self, Arg* arg) {
     if (!argType_isObject(arg_getType(arg))) {
         obj_setErrorCode(self, 1);
-        __platform_printf("[Error] dir: arg is not object.\r\n");
+        __platform_printf("[Error] dir: not support type.\r\n");
         return NULL;
     }
     PikaObj* obj = arg_getPtr(arg);

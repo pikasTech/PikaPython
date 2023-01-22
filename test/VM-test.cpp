@@ -2497,11 +2497,28 @@ TEST(vm, dir_issue) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    obj_run(pikaMain, 
-    "class test:\n"
-    "    pass\n"
-    "dir(test)\n"
-    );
+    obj_run(pikaMain,
+            "class test:\n"
+            "    pass\n"
+            "dir(test)\n");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, dir_issue1lk) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "import requests\n"
+            "dir(requests)\n");
     /* collect */
     /* assert */
     /* deinit */
