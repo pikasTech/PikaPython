@@ -569,7 +569,13 @@ int32_t __dir_each(Arg* argEach, Args* context) {
     return 0;
 }
 
-PikaObj* PikaStdLib_SysObj_dir(PikaObj* self, PikaObj* obj) {
+PikaObj* PikaStdLib_SysObj_dir(PikaObj* self, Arg* arg) {
+    if (!argType_isObject(arg_getType(arg))) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("[Error] dir: arg is not object.\r\n");
+        return NULL;
+    }
+    PikaObj* obj = arg_getPtr(arg);
     PikaObj* New_PikaStdData_List(Args * args);
     PikaObj* list = newNormalObj(New_PikaStdData_List);
     __vm_List___init__(list);
@@ -683,6 +689,6 @@ void PikaStdLib_SysObj_help(PikaObj* self, char* name) {
     }
 }
 
-void PikaStdLib_SysObj_reboot(PikaObj *self){
+void PikaStdLib_SysObj_reboot(PikaObj* self) {
     pika_platform_reboot();
 }

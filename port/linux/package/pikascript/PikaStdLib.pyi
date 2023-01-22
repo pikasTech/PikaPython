@@ -85,7 +85,7 @@ class SysObj:
 
     @staticmethod
     @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
-    def dir(obj: object) -> list: ...
+    def dir(obj: any) -> list: ...
 
     @staticmethod
     @PIKA_C_MACRO_IF("PIKA_EXEC_ENABLE")
