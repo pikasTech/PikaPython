@@ -330,15 +330,8 @@ name = "pikaRTDevice"
 releases = [
     "v0.0.1 fe900b79d8d1075bb7e4e3dd9d4e1e187e0c9195",
     "v1.0.0 ac4247e5fd3e221eb110a1b41276849c623049ec",
-    "v1.0.1 61e6a7352b656adbce0f2ad82ea1fc992dcbb603",
+    "v1.0.1 61e6a7352b65adbce0f2ad82ea1fc992dcbb603",
     "v1.1.0 9f3a52558338503571b37c034a12219566f27aa2",
-]
-
-[[packages]]
-name = "TemplateDevice"
-releases = [
-    "v0.0.1 281600804a5393c6721eab8ec6160a376ba010b4",
-    "v0.0.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
 ]
 
 [[packages]]
