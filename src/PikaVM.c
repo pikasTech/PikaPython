@@ -1892,7 +1892,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
         arg_setType(out_arg, ARG_TYPE_OBJECT);
     }
 
-    /* ouput arg to context */
+    /* output arg to context */
     if (arg_path == arg_name) {
         obj_setArg_noCopy(context, arg_path, out_arg);
         return NULL;
