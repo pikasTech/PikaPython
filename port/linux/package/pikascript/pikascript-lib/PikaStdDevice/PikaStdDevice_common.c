@@ -26,5 +26,6 @@ PikaObj* PikaStdDevice_Time(PikaObj* self) {
         obj_setSysOut(self, "Error: please install and import 'time' module");
         return NULL;
     }
+    obj_refcntInc(time);
     return time;
 }

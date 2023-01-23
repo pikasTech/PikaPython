@@ -118,40 +118,18 @@ int PikaStdLib_SysObj_bool(PikaObj* self, Arg* arg) {
 }
 
 char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
-    obj_removeArg(self, "__buf");
-    ArgType type = arg_getType(arg);
-    Args buffs = {0};
-    char* res = "";
-    if (ARG_TYPE_INT == type) {
-        int val = arg_getInt(arg);
-        res = strsFormat(&buffs, 11, "%d", val);
-        goto exit;
+    if (arg_getType(arg) == ARG_TYPE_BYTES) {
+        return obj_cacheStr(self, (char*)arg_getBytes(arg));
     }
-    if (ARG_TYPE_FLOAT == type) {
-        pika_float val = arg_getFloat(arg);
-        res = strsFormat(&buffs, 11, "%f", val);
-        goto exit;
+    Arg* arg_str = arg_toStrArg(arg);
+    if (NULL == arg_str) {
+        obj_setSysOut(self, "Error: convert to str type failed.");
+        obj_setErrorCode(self, 1);
+        return NULL;
     }
-    if (ARG_TYPE_BYTES == type) {
-        res = (char*)arg_getBytes(arg);
-        goto exit;
-    }
-    if (ARG_TYPE_STRING == type) {
-        res = arg_getStr(arg);
-    }
-    if (ARG_TYPE_NONE == type) {
-        res = "None";
-    }
-    if (argType_isObject(type)) {
-        res = obj_toStr(arg_getPtr(arg));
-        if (NULL != res) {
-            goto exit;
-        }
-    }
-exit:
-    obj_setStr(self, "__buf", res);
-    strsDeinit(&buffs);
-    return obj_getStr(self, "__buf");
+    char* str = obj_cacheStr(self, arg_getStr(arg_str));
+    arg_deinit(arg_str);
+    return str;
 }
 
 Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
@@ -426,66 +404,6 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
     return arg_newNull();
 }
 
-static char* _print_arg(PikaObj* self, Arg* val) {
-    Args buffs = {0};
-    char* res = NULL;
-    Arg* arg_res = NULL;
-    if (NULL == val) {
-        goto __exit;
-    }
-    ArgType arg_type = arg_getType(val);
-    if (arg_type == ARG_TYPE_BYTES) {
-        arg_res = arg_toString(val);
-        goto __exit;
-    }
-    if (arg_type == ARG_TYPE_STRING) {
-        res = arg_getStr(val);
-        goto __exit;
-    }
-    if (arg_type == ARG_TYPE_NONE) {
-        res = "None";
-        goto __exit;
-    }
-    if (arg_type == ARG_TYPE_INT) {
-        int64_t value = arg_getInt(val);
-#if PIKA_PRINT_LLD_ENABLE
-        res = strsFormat(&buffs, 32, "%lld", value);
-#else
-        res = strsFormat(&buffs, 32, "%d", value);
-#endif
-        goto __exit;
-    }
-    if (arg_type == ARG_TYPE_FLOAT) {
-        pika_float value = arg_getFloat(val);
-        res = strsFormat(&buffs, 32, "%f", value);
-        goto __exit;
-    }
-    if (arg_type == ARG_TYPE_POINTER ||
-        arg_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
-        void* value = arg_getPtr(val);
-        res = strsFormat(&buffs, 32, "%p", value);
-        goto __exit;
-    }
-    if (argType_isObject(arg_type)) {
-        res = obj_toStr(arg_getPtr(val));
-        goto __exit;
-    }
-__exit:
-    if (NULL == res && NULL == arg_res) {
-        obj_setSysOut(self, "Error: can not print val");
-        obj_setErrorCode(self, 1);
-    }
-    if (NULL != res) {
-        res = obj_cacheStr(self, res);
-    }
-    if (NULL != arg_res) {
-        res = obj_cacheStr(self, arg_getStr(arg_res));
-        arg_deinit(arg_res);
-    }
-    strsDeinit(&buffs);
-    return res;
-}
-
 void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
     int arg_size = pikaTuple_getSize(val);
     char* end = pikaDict_getStr(ops, "end");
@@ -494,23 +412,25 @@ void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
         end = "\r\n";
     }
     if (arg_size == 1) {
-        arg_singlePrint(pikaTuple_getArg(val, 0), PIKA_FALSE, end);
+        arg_print(pikaTuple_getArg(val, 0), PIKA_FALSE, end);
         return;
     }
     Arg* print_out_arg = NULL;
     PIKA_BOOL is_get_print = PIKA_FALSE;
     for (int i = 0; i < arg_size; i++) {
         Arg* arg = pikaTuple_getArg(val, i);
-        char* item = _print_arg(self, arg);
-        if (NULL != item) {
+        Arg* item_arg_str = arg_toStrArg(arg);
+        if (NULL != item_arg_str) {
             is_get_print = PIKA_TRUE;
             if (NULL == print_out_arg) {
                 print_out_arg = arg_newStr("");
             }
-            print_out_arg = arg_strAppend(print_out_arg, item);
+            print_out_arg =
+                arg_strAppend(print_out_arg, arg_getStr(item_arg_str));
             if (i < arg_size - 1) {
                 print_out_arg = arg_strAppend(print_out_arg, " ");
             }
+            arg_deinit(item_arg_str);
         }
     }
     if (PIKA_TRUE == is_get_print) {

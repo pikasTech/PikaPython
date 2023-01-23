@@ -259,62 +259,83 @@ uint8_t* arg_getBytes(Arg* self) {
     return arg_getContent(self) + sizeof(size_t);
 }
 
-Arg* arg_toString(Arg* arg) {
-    char buffs[16] = {0};
-    size_t bytes_size = arg_getBytesSize(arg);
-    uint8_t* bytes = arg_getBytes(arg);
-    Arg* str_arg = arg_newStr("b\'");
-    for (size_t i = 0; i < bytes_size; i++) {
-        pika_platform_snprintf(buffs, 16, "\\x%02x", bytes[i]);
-        char* str_item = (char*)buffs;
-        str_arg = arg_strAppend(str_arg, str_item);
-    }
-    str_arg = arg_strAppend(str_arg, "\'");
-    return str_arg;
-}
-
-void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end) {
-    ArgType type = arg_getType(self);
-    if (ARG_TYPE_NONE == type) {
-        pika_platform_printf("None%s", end);
-        return;
-    }
-    if (argType_isObject(type)) {
-        char* res = obj_toStr(arg_getPtr(self));
-        pika_platform_printf("%s%s", res, end);
-        return;
+Arg* arg_toStrArg(Arg* arg) {
+    ArgType type = arg_getType(arg);
+    char buff[PIKA_SPRINTF_BUFF_SIZE] = {0};
+    if (type == ARG_TYPE_BYTES) {
+        char buff_item[16] = {0};
+        size_t bytes_size = arg_getBytesSize(arg);
+        uint8_t* bytes = arg_getBytes(arg);
+        Arg* str_arg = arg_newStr("b\'");
+        for (size_t i = 0; i < bytes_size; i++) {
+            pika_platform_snprintf(buff_item, 16, "\\x%02x", bytes[i]);
+            char* str_item = (char*)buff_item;
+            str_arg = arg_strAppend(str_arg, str_item);
+        }
+        str_arg = arg_strAppend(str_arg, "\'");
+        return str_arg;
     }
     if (type == ARG_TYPE_INT) {
 #if PIKA_PRINT_LLD_ENABLE
-        pika_platform_printf("%lld%s", (long long int)arg_getInt(self), end);
+        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%lld",
+                               (long long int)arg_getInt(arg));
 #else
-        pika_platform_printf("%d%s", (int)arg_getInt(self), end);
+        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%d",
+                               (int)arg_getInt(arg));
 #endif
-        return;
+        return arg_newStr(buff);
     }
     if (type == ARG_TYPE_FLOAT) {
-        pika_platform_printf("%f%s", arg_getFloat(self), end);
-        return;
+        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%f",
+                               arg_getFloat(arg));
+        return arg_newStr(buff);
     }
     if (type == ARG_TYPE_STRING) {
-        if (in_REPL) {
-            pika_platform_printf("'%s'%s", arg_getStr(self), end);
-            return;
+        return arg_newStr(arg_getStr(arg));
+    }
+    if (type == ARG_TYPE_POINTER) {
+        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%p",
+                               arg_getPtr(arg));
+        return arg_newStr(buff);
+    }
+    if (argType_isCallable(type)) {
+        /* support basic type */
+        if (type == ARG_TYPE_METHOD_NATIVE) {
+            MethodProp* method_store = (MethodProp*)arg_getContent(arg);
+            pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "<class '%s'>",
+                                   method_store->name);
+            return arg_newStr(buff);
         }
-        pika_platform_printf("%s%s", arg_getStr(self), end);
+        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
+                               "<class 'function'>");
+        return arg_newStr(buff);
+    }
+    if (type == ARG_TYPE_NONE) {
+        return arg_newStr("None");
+    }
+    if (argType_isObject(type)) {
+        return arg_newStr(obj_toStr(arg_getPtr(arg)));
+    }
+    if (type == ARG_TYPE_OBJECT_META) {
+        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
+                               "<mate object at %p>", arg_getPtr(arg));
+        return arg_newStr(buff);
+    }
+    return NULL;
+}
+
+void arg_print(Arg* self, PIKA_BOOL in_REPL, char* end) {
+    /* use arg_toStrArg() */
+    Arg* str_arg = arg_toStrArg(self);
+    if (NULL == str_arg) {
         return;
     }
-    if (type == ARG_TYPE_BYTES) {
-        Arg* str_arg = arg_toString(self);
+    if (in_REPL && arg_getType(self) == ARG_TYPE_STRING) {
+        pika_platform_printf("'%s'%s", arg_getStr(str_arg), end);
+    } else {
         pika_platform_printf("%s%s", arg_getStr(str_arg), end);
-        arg_deinit(str_arg);
-        return;
     }
-    if (ARG_TYPE_POINTER == type ||
-        ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR == type) {
-        pika_platform_printf("%p%s", arg_getPtr(self), end);
-        return;
-    }
+    arg_deinit(str_arg);
     return;
 }
 

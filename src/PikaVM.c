@@ -3397,7 +3397,7 @@ void VMState_solveUnusedStack(VMState* vm) {
             arg_deinit(arg);
             continue;
         }
-        arg_singlePrint(arg, PIKA_TRUE, "\r\n");
+        arg_print(arg, PIKA_TRUE, "\r\n");
         arg_deinit(arg);
     }
 }

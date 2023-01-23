@@ -396,7 +396,7 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
 
 char* obj_cacheStr(PikaObj* self, char* str);
 PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp);
-Arg* arg_toString(Arg* arg);
+Arg* arg_toStrArg(Arg* arg);
 
 #define PIKASCRIPT_VERSION_TO_NUM(majer, minor, micro) \
     majer * 100 * 100 + minor * 100 + micro

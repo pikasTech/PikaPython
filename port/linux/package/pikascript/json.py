@@ -43,16 +43,16 @@ def loads(json: str) -> dict:
 def _cjson_decode(d: dict):
     if d == None:
         return cjson.Null()
-    elif type(d) == int:
+    elif str(type(d)) == "<class 'int'>":
         return cjson.Number(d)
-    elif type(d) == float:
+    elif str(type(d)) == "<class 'float'>":
         return cjson.Number(d)
-    elif type(d) == bool:
+    elif str(type(d)) == "<class 'bool'>":
         if d:
             return cjson.True_()
         else:
             return cjson.False_()
-    elif type(d) == str:
+    elif str(type(d)) == "<class 'str'>":
         return cjson.String(d)
     elif str(type(d)) == "<class 'list'>":
         res = cjson.Array()
