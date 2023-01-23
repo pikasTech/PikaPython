@@ -429,12 +429,13 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
 static char* _print_arg(PikaObj* self, Arg* val) {
     Args buffs = {0};
     char* res = NULL;
+    Arg* arg_res = NULL;
     if (NULL == val) {
         goto __exit;
     }
     ArgType arg_type = arg_getType(val);
     if (arg_type == ARG_TYPE_BYTES) {
-        res = _printBytes(self, val);
+        arg_res = arg_toString(val);
         goto __exit;
     }
     if (arg_type == ARG_TYPE_STRING) {
@@ -470,12 +471,16 @@ static char* _print_arg(PikaObj* self, Arg* val) {
         goto __exit;
     }
 __exit:
-    if (NULL == res) {
+    if (NULL == res && NULL == arg_res) {
         obj_setSysOut(self, "Error: can not print val");
         obj_setErrorCode(self, 1);
     }
     if (NULL != res) {
         res = obj_cacheStr(self, res);
+    }
+    if (NULL != arg_res) {
+        res = obj_cacheStr(self, arg_getStr(arg_res));
+        arg_deinit(arg_res);
     }
     strsDeinit(&buffs);
     return res;

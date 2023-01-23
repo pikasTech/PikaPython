@@ -259,26 +259,18 @@ uint8_t* arg_getBytes(Arg* self) {
     return arg_getContent(self) + sizeof(size_t);
 }
 
-char* _printBytes(PikaObj* self, Arg* arg) {
-    Args buffs = {0};
+Arg* arg_toString(Arg* arg) {
+    char buffs[16] = {0};
     size_t bytes_size = arg_getBytesSize(arg);
     uint8_t* bytes = arg_getBytes(arg);
     Arg* str_arg = arg_newStr("b\'");
     for (size_t i = 0; i < bytes_size; i++) {
-        char* str_item = strsFormat(&buffs, 16, "\\x%02x", bytes[i]);
+        pika_platform_snprintf(buffs, 16, "\\x%02x", bytes[i]);
+        char* str_item = (char*)buffs;
         str_arg = arg_strAppend(str_arg, str_item);
     }
     str_arg = arg_strAppend(str_arg, "\'");
-    char* str_res = obj_cacheStr(self, arg_getStr(str_arg));
-    strsDeinit(&buffs);
-    arg_deinit(str_arg);
-    return str_res;
-}
-
-void arg_printBytes(Arg* self, char* end) {
-    PikaObj* obj = New_PikaObj();
-    pika_platform_printf("%s%s", _printBytes(obj, self), end);
-    obj_deinit(obj);
+    return str_arg;
 }
 
 void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end) {
@@ -313,7 +305,9 @@ void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end) {
         return;
     }
     if (type == ARG_TYPE_BYTES) {
-        arg_printBytes(self, end);
+        Arg* str_arg = arg_toString(self);
+        pika_platform_printf("%s%s", arg_getStr(str_arg), end);
+        arg_deinit(str_arg);
         return;
     }
     if (ARG_TYPE_POINTER == type ||
