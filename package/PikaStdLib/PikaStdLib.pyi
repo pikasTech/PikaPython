@@ -20,6 +20,9 @@ class SysObj:
     def int(arg: any) -> int: ...
 
     @staticmethod
+    def bool(arg: any) -> int: ...
+
+    @staticmethod
     def float(arg: any) -> float: ...
 
     @staticmethod

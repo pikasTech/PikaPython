@@ -1,5 +1,7 @@
 import json
 
+s0 = json.dumps(1)
+
 s1 = json.dumps({"a": 1, "b": 2, "c": 3})
 print(s1)
 

@@ -28,13 +28,13 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     }
     ArgType type = arg_getType(arg);
     if (ARG_TYPE_INT == type) {
-        return arg_newStr("<class 'int'>");
+        return arg_copy(obj_getMethodArg(self, "int"));
     }
     if (ARG_TYPE_FLOAT == type) {
-        return arg_newStr("<class 'float'>");
+        return arg_copy(obj_getMethodArg(self, "float"));
     }
     if (ARG_TYPE_STRING == type) {
-        return arg_newStr("<class 'str'>");
+        return arg_copy(obj_getMethodArg(self, "str"));
     }
     if (argType_isObject(type)) {
         PikaObj* obj = arg_getPtr(arg);
@@ -111,6 +111,10 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
     obj_setSysOut(self, "[error] convert to int type failed.");
     obj_setErrorCode(self, 1);
     return -999999999;
+}
+
+int PikaStdLib_SysObj_bool(PikaObj *self, Arg* arg){
+    return PikaStdLib_SysObj_int(self, arg);
 }
 
 char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {

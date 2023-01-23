@@ -708,13 +708,6 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
         goto exit;
     }
 
-    /* host_object is self */
-    if (NULL == host_object) {
-        if (!strIsContain(arg_path, '.')) {
-            host_object = vm->locals;
-        }
-    }
-
     /* find in local list first */
     if (NULL == host_object) {
         host_object = obj_getHostObjWithIsTemp(vm->locals, arg_path, &is_temp);
@@ -750,11 +743,15 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
         res = args_getArg(vm->globals->list, arg_name);
     }
 
+    /* find res in globals prop */
+    if (NULL == res) {
+        res = _obj_getProp(vm->globals, arg_name);
+    }
+
     /* proxy */
     if (NULL == res) {
         res = _proxy_getattr(host_object, arg_name);
     }
-
 exit:
     if (NULL == res) {
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
@@ -1567,7 +1564,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         method_host = obj_getHostObjWithIsTemp(vm->locals, run_path, &is_temp);
     }
 
-    /* get method host obj from local scope */
+    /* get method host obj from global scope */
     if (NULL == method_host) {
         method_host = obj_getHostObjWithIsTemp(vm->globals, run_path, &is_temp);
     }
@@ -1606,6 +1603,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     /* get method in global */
     if (NULL == method) {
         method = obj_getMethodArg_noalloc(vm->globals, run_path, &arg_reg1);
+        if (method != NULL) {
+            obj_this = vm->globals;
+        }
     }
 
     /* assert method exist */
@@ -2261,6 +2261,10 @@ static void _OPT_EQU(OperatorInfo* op) {
                 goto exit;
             }
         }
+        goto exit;
+    }
+    if (argType_isCallable(op->t1) && argType_isCallable(op->t2)) {
+        is_equ = (arg_getPtr(op->a1) == arg_getPtr(op->a2));
         goto exit;
     }
     /* default: int and float */
