@@ -59,6 +59,10 @@ class SysObj:
     def dict(*val) -> any: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("PIKA_BUILTIN_STRUCT_ENABLE")
+    def tuple(arg: any) -> any: ...
+
+    @staticmethod
     @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def hex(val: int) -> str: ...
 

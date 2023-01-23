@@ -40,6 +40,7 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         PikaObj* obj = arg_getPtr(arg);
         NewFun clsptr = obj_getClass(obj);
         PikaObj* New_PikaStdData_List(Args * args);
+        /* list */
         if (clsptr == New_PikaStdData_List) {
             return arg_copy(obj_getMethodArg(self, "list"));
         }
@@ -47,6 +48,11 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         PikaObj* New_PikaStdData_Dict(Args * args);
         if (clsptr == New_PikaStdData_Dict) {
             return arg_copy(obj_getMethodArg(self, "dict"));
+        }
+        /* tuple */
+        PikaObj* New_PikaStdData_Tuple(Args * args);
+        if (clsptr == New_PikaStdData_Tuple) {
+            return arg_copy(obj_getMethodArg(self, "tuple"));
         }
         return arg_newStr("<class 'object'>");
     }
@@ -336,6 +342,18 @@ Arg* PikaStdLib_SysObj_dict(PikaObj* self, PikaTuple* val) {
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in dist is not enabled.\r\n");
+    return arg_newNull();
+#endif
+}
+
+Arg* PikaStdLib_SysObj_tuple(PikaObj* self, Arg* val) {
+#if PIKA_BUILTIN_STRUCT_ENABLE
+    obj_setErrorCode(self, 1);
+    __platform_printf("Error: tuple() is not supported.\r\n");
+    return arg_newNull();
+#else
+    obj_setErrorCode(self, 1);
+    __platform_printf("[Error] built-in tuple is not enabled.\r\n");
     return arg_newNull();
 #endif
 }

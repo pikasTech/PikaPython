@@ -302,8 +302,16 @@ Arg* arg_toStrArg(Arg* arg) {
         /* support basic type */
         if (type == ARG_TYPE_METHOD_NATIVE) {
             MethodProp* method_store = (MethodProp*)arg_getContent(arg);
-            pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "<class '%s'>",
-                                   method_store->name);
+            if (strEqu(method_store->name, "int") ||
+                strEqu(method_store->name, "float") ||
+                strEqu(method_store->name, "str") ||
+                strEqu(method_store->name, "bytes") ||
+                strEqu(method_store->name, "list") ||
+                strEqu(method_store->name, "dict") ||
+                strEqu(method_store->name, "tuple")) {
+                pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
+                                       "<class '%s'>", method_store->name);
+            }
             return arg_newStr(buff);
         }
         pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
