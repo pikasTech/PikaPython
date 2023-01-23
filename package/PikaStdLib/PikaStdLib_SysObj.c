@@ -41,12 +41,12 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         NewFun clsptr = obj_getClass(obj);
         PikaObj* New_PikaStdData_List(Args * args);
         if (clsptr == New_PikaStdData_List) {
-            return arg_newStr("<class 'list'>");
+            return arg_copy(obj_getMethodArg(self, "list"));
         }
         /* dict */
         PikaObj* New_PikaStdData_Dict(Args * args);
         if (clsptr == New_PikaStdData_Dict) {
-            return arg_newStr("<class 'dict'>");
+            return arg_copy(obj_getMethodArg(self, "dict"));
         }
         return arg_newStr("<class 'object'>");
     }
