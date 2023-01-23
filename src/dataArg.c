@@ -142,7 +142,7 @@ static Arg* _arg_set_hash(Arg* self,
         pika_platform_memcpy(arg_getContent(self), content, size);
     } else {
         pika_platform_memset(arg_getContent(self), 0,
-                          aline_by(size, sizeof(uint32_t)));
+                             aline_by(size, sizeof(uint32_t)));
     }
     pika_assert(self->flag < ARG_FLAG_MAX);
     return self;
@@ -243,7 +243,8 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
 
     /* set init value */
     if (NULL != src) {
-        pika_platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src, size);
+        pika_platform_memcpy((void*)((uintptr_t)dir + sizeof(size_t)), src,
+                             size);
     }
     pika_assert(self->flag < ARG_FLAG_MAX);
     return self;
@@ -258,7 +259,7 @@ uint8_t* arg_getBytes(Arg* self) {
     return arg_getContent(self) + sizeof(size_t);
 }
 
-char* __printBytes(PikaObj* self, Arg* arg) {
+char* _printBytes(PikaObj* self, Arg* arg) {
     Args buffs = {0};
     size_t bytes_size = arg_getBytesSize(arg);
     uint8_t* bytes = arg_getBytes(arg);
@@ -276,7 +277,7 @@ char* __printBytes(PikaObj* self, Arg* arg) {
 
 void arg_printBytes(Arg* self, char* end) {
     PikaObj* obj = New_PikaObj();
-    pika_platform_printf("%s%s", __printBytes(obj, self), end);
+    pika_platform_printf("%s%s", _printBytes(obj, self), end);
     obj_deinit(obj);
 }
 
@@ -315,7 +316,8 @@ void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end) {
         arg_printBytes(self, end);
         return;
     }
-    if (ARG_TYPE_POINTER == type || ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
+    if (ARG_TYPE_POINTER == type ||
+        ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR == type) {
         pika_platform_printf("%p%s", arg_getPtr(self), end);
         return;
     }
@@ -497,7 +499,7 @@ Arg* arg_append(Arg* self, void* new_content, size_t new_size) {
     }
     /* copy new content */
     pika_platform_memcpy(arg_getContent(new_arg) + old_size, new_content,
-                      new_size);
+                         new_size);
     if (self != new_arg) {
         arg_deinit(self);
     }
@@ -592,7 +594,7 @@ PIKA_BOOL arg_isEqual(Arg* self, Arg* other) {
         }
     }
     if (0 != pika_platform_memcmp(arg_getContent(self), arg_getContent(other),
-                               arg_getContentSize(self))) {
+                                  arg_getContentSize(self))) {
         return PIKA_FALSE;
     }
     return PIKA_TRUE;

@@ -113,7 +113,7 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
     return -999999999;
 }
 
-int PikaStdLib_SysObj_bool(PikaObj *self, Arg* arg){
+int PikaStdLib_SysObj_bool(PikaObj* self, Arg* arg) {
     return PikaStdLib_SysObj_int(self, arg);
 }
 
@@ -426,7 +426,7 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
     return arg_newNull();
 }
 
-static char* __print_arg(PikaObj* self, Arg* val) {
+static char* _print_arg(PikaObj* self, Arg* val) {
     Args buffs = {0};
     char* res = NULL;
     if (NULL == val) {
@@ -434,7 +434,7 @@ static char* __print_arg(PikaObj* self, Arg* val) {
     }
     ArgType arg_type = arg_getType(val);
     if (arg_type == ARG_TYPE_BYTES) {
-        res = __printBytes(self, val);
+        res = _printBytes(self, val);
         goto __exit;
     }
     if (arg_type == ARG_TYPE_STRING) {
@@ -496,7 +496,7 @@ void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
     PIKA_BOOL is_get_print = PIKA_FALSE;
     for (int i = 0; i < arg_size; i++) {
         Arg* arg = pikaTuple_getArg(val, i);
-        char* item = __print_arg(self, arg);
+        char* item = _print_arg(self, arg);
         if (NULL != item) {
             is_get_print = PIKA_TRUE;
             if (NULL == print_out_arg) {
