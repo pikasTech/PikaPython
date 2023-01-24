@@ -105,7 +105,8 @@
         "pikastddevice_uart.h": "c",
         "datamemory.h": "c",
         "pika_adapter_old_api.h": "c",
-        "pikastddevice_common.h": "c"
+        "pikastddevice_common.h": "c",
+        "_network_wlan.h": "c"
     },
     "python.formatting.provider": "autopep8",
 }

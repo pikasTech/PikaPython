@@ -377,6 +377,23 @@ typedef struct {
     PIKA_HAL_PWM_DUTY duty;
 } pika_hal_PWM_config;
 
+typedef enum {
+    _PIKA_HAL_WIFI_MODE_UNUSED = 0,
+    PIKA_HAL_WIFI_MODE_STA,
+    PIKA_HAL_WIFI_MODE_AP,
+} PIKA_HAL_WIFI_MODE;
+
+#define PIKA_HAL_WIFI_PARAM_MAX_LEN 32
+typedef struct pika_hal_WIFI_config {
+    PIKA_HAL_WIFI_MODE mode;
+    char ssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char password[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char ip[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char netmask[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char gateway[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char dns[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+} pika_hal_WIFI_config;
+
 typedef struct pika_dev_impl {
     int (*open)(pika_dev* dev, char* name);
     int (*close)(pika_dev* dev);
