@@ -1,14 +1,14 @@
 import _network
 
-STA_IF = 0
-AP_IF = 1
+STA_IF = _network.STA_IF
+AP_IF = _network.AP_IF
 
-STAT_IDLE = 0
-STAT_CONNECTING = 1
-STAT_WRONG_PASSWORD = 2
-STAT_NO_AP_FOUND = 3
-STAT_CONNECT_FAIL = 4
-STAT_GOT_IP = 5
+STAT_IDLE = _network.STAT_IDLE
+STAT_CONNECTING = _network.STAT_CONNECTING
+STAT_WRONG_PASSWORD = _network.STAT_WRONG_PASSWORD
+STAT_NO_AP_FOUND = _network.STAT_NO_AP_FOUND
+STAT_CONNECT_FAIL = _network.STAT_CONNECT_FAIL
+STAT_GOT_IP = _network.STAT_GOT_IP
 
 class WLAN(_network.WLAN):
     def __init__(self, interface_id:int):
