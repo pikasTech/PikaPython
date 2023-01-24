@@ -209,3 +209,11 @@ PikaObj* _network_WLAN_scan(PikaObj* self) {
     pika_platform_free(result);
     return scan_list;
 }
+
+void _network_WLAN_close(PikaObj* self) {
+    pika_dev* hal_wifi = obj_getPtr(self, "hal_wifi");
+    if (hal_wifi == NULL) {
+        return;
+    }
+    pika_hal_close(hal_wifi);
+}

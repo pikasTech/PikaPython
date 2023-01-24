@@ -118,10 +118,7 @@ static const int _pika_hal_cmd_arg_cnt[] = {
     (sizeof _pika_hal_cmd_arg_cnt / sizeof _pika_hal_cmd_arg_cnt[0])
 
 static int _pika_hal_get_arg_cnt(PIKA_HAL_IOCTL_CMD cmd) {
-    if (cmd >= _PIKA_HAL_CMD_ARG_CNT_MAX) {
-        return -1;
-    }
-    return _pika_hal_cmd_arg_cnt[cmd];
+    return _pika_hal_cmd_arg_cnt[PIKA_HAL_IOCTL_CONFIG];
 }
 
 int _pika_hal_ioctl_merge_config(pika_dev* dev, void* config_in) {
@@ -144,18 +141,26 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
     if (impl->ioctl == NULL) {
         return -1;
     }
-    void* config_in = NULL;
+    void* arg_in = NULL;
     if (cmd != 0) {
         va_list args;
         va_start(args, cmd);
-        config_in = va_arg(args, void*);
-        ret = _pika_hal_ioctl_merge_config(dev, config_in);
+        arg_in = va_arg(args, void*);
+        if (cmd_origin == PIKA_HAL_IOCTL_CONFIG) {
+            ret = _pika_hal_ioctl_merge_config(dev, arg_in);
+        } else {
+            ret = 0;
+        }
         va_end(args);
         if (0 != ret) {
             return ret;
         }
     }
-    ret = impl->ioctl(dev, cmd_origin, dev->ioctl_config);
+    if (cmd_origin == PIKA_HAL_IOCTL_CONFIG) {
+        ret = impl->ioctl(dev, cmd_origin, dev->ioctl_config);
+    } else {
+        ret = impl->ioctl(dev, cmd_origin, arg_in);
+    }
     if (ret == 0) {
         if (cmd_origin == PIKA_HAL_IOCTL_ENABLE) {
             dev->is_enabled = 1;
