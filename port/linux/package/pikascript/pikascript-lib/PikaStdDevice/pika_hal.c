@@ -180,6 +180,19 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
         dst->item = src->item;                   \
     }
 
+#define _IOCTL_CONFIG_USE_DEFAULT_STR(item, default) \
+    if (src->item[0] == '\0') {                      \
+        if (dst->item[0] == '\0') {                  \
+            /* use default value */                  \
+            strcpy(dst->item, default);              \
+        } else {                                     \
+            /* keep exist value */                   \
+        }                                            \
+    } else {                                         \
+        /* use input value */                        \
+        strcpy(dst->item, src->item);                \
+    }
+
 int pika_hal_GPIO_ioctl_merge_config(pika_hal_GPIO_config* dst,
                                      pika_hal_GPIO_config* src) {
     // printf("before merge: dst->dir=%d, src->dir=%d\r\n", dst->dir, src->dir);
@@ -283,26 +296,13 @@ int pika_hal_DAC_ioctl_merge_config(pika_hal_DAC_config* dst,
 int pika_hal_WIFI_ioctl_merge_config(pika_hal_WIFI_config* dst,
                                      pika_hal_WIFI_config* src) {
     _IOCTL_CONFIG_USE_DEFAULT(mode, PIKA_HAL_WIFI_MODE_STA);
-    if (src->ssid[0] != '\0') {
-        pika_platform_memcpy(dst->ssid, src->ssid, PIKA_HAL_WIFI_PARAM_MAX_LEN);
-    }
-    if (src->password[0] != '\0') {
-        pika_platform_memcpy(dst->password, src->password,
-                             PIKA_HAL_WIFI_PARAM_MAX_LEN);
-    }
-    if (src->ip[0] != '\0') {
-        pika_platform_memcpy(dst->ip, src->ip, PIKA_HAL_WIFI_PARAM_MAX_LEN);
-    }
-    if (src->netmask[0] != '\0') {
-        pika_platform_memcpy(dst->netmask, src->netmask,
-                             PIKA_HAL_WIFI_PARAM_MAX_LEN);
-    }
-    if (src->gateway[0] != '\0') {
-        pika_platform_memcpy(dst->gateway, src->gateway,
-                             PIKA_HAL_WIFI_PARAM_MAX_LEN);
-    }
-    if (src->dns[0] != '\0') {
-        pika_platform_memcpy(dst->dns, src->dns, PIKA_HAL_WIFI_PARAM_MAX_LEN);
-    }
+    _IOCTL_CONFIG_USE_DEFAULT(channel, PIKA_HAL_WIFI_CHANNEL_0);
+    _IOCTL_CONFIG_USE_DEFAULT_STR(ssid, "");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(bssid, "");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(password, "");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(ip, "");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(netmask, "");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(gateway, "");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(dns, "");
     return 0;
 }
