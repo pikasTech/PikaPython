@@ -19,6 +19,10 @@ int pika_hal_platform_WIFI_ioctl_config(pika_dev* dev,
 }
 
 int pika_hal_platform_WIFI_ioctl_enable(pika_dev* dev) {
+    pika_hal_WIFI_config* cfg = (pika_hal_WIFI_config*)dev->ioctl_config;
+    strcpy(cfg->ip, "192.168.1.123");
+    strcpy(cfg->gateway, "192.168.1.1");
+    strcpy(cfg->dns, "8.8.8.8");
     return 0;
 }
 
@@ -34,9 +38,10 @@ int pika_hal_platform_WIFI_ioctl_others(pika_dev* dev,
             "pika_hal_platform_WIFI_ioctl_others: "
             "PIKA_HAL_IOCTL_WIFI_SCAN\r\n");
         int count = 3;
-        size_t size = sizeof(pika_hal_WIFI_scan_result) + count * sizeof(pika_hal_WIFI_record);
-        pika_hal_WIFI_scan_result* result = (pika_hal_WIFI_scan_result*)
-                                            pika_platform_malloc(size);
+        size_t size = sizeof(pika_hal_WIFI_scan_result) +
+                      count * sizeof(pika_hal_WIFI_record);
+        pika_hal_WIFI_scan_result* result =
+            (pika_hal_WIFI_scan_result*)pika_platform_malloc(size);
         memset(result, 0, size);
         result->count = count;
         strcpy(result->records[0].ssid, "ssid1");
@@ -57,10 +62,23 @@ int pika_hal_platform_WIFI_ioctl_others(pika_dev* dev,
         *(pika_hal_WIFI_scan_result**)arg = result;
         return 0;
     }
+    if (cmd == PIKA_HAL_IOCTL_WIFI_SET_ACTIVE) {
+        pika_platform_printf(
+            "pika_hal_platform_WIFI_ioctl_others: "
+            "PIKA_HAL_IOCTL_WIFI_SET_ACTIVE:%d\r\n",
+            *(int*)arg);
+        return 0;
+    }
+    if (cmd == PIKA_HAL_IOCTL_WIFI_GET_STATUS) {
+        pika_platform_printf(
+            "pika_hal_platform_WIFI_ioctl_others: "
+            "PIKA_HAL_IOCTL_WIFI_GET_STATUS\r\n");
+        *(PIKA_HAL_WIFI_STATUS*)arg = PIKA_HAL_WIFI_STATUS_GOT_IP;
+        return 0;
+    }
     return -1;
 }
 }
-
 
 TEST(network, scan) {
     pikaMemInfo.heapUsedMax = 0;
@@ -71,7 +89,48 @@ TEST(network, scan) {
     __platform_printf("BEGIN\r\n");
     pikaVM_runSingleFile(pikaMain, "test/python/network/network_scan.py");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "[('ssid1', 'bssid1', 1, -10, 0, 0), ('ssid2', 'bssid2', 2, -20, 1, 0), ('ssid3', 'bssid3', 3, -30, 2, 0)]\r\n");
+    EXPECT_STREQ(log_buff[0],
+                 "[('ssid1', 'bssid1', 1, -10, 0, 0), ('ssid2', 'bssid2', 2, "
+                 "-20, 1, 0), ('ssid3', 'bssid3', 3, -30, 2, 0)]\r\n");
+    EXPECT_STREQ(log_buff[1],
+                 "pika_hal_platform_WIFI_ioctl_others: "
+                 "PIKA_HAL_IOCTL_WIFI_SCAN\r\n");
+    EXPECT_STREQ(log_buff[2],
+                 "pika_hal_platform_WIFI_ioctl_others: "
+                 "PIKA_HAL_IOCTL_WIFI_SET_ACTIVE:1\r\n");
+    EXPECT_STREQ(log_buff[3], "pika_hal_platform_WIFI_open: WLAN0\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(network, connect) {
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/network/network_connect.py");
+    /* assert */
+#if 0
+    pika_hal_platform_WIFI_open: WLAN0
+    pika_hal_platform_WIFI_ioctl_others: PIKA_HAL_IOCTL_WIFI_SET_ACTIVE:1
+    pika_hal_platform_WIFI_ioctl_others: PIKA_HAL_IOCTL_WIFI_GET_STATUS
+    1
+    ('192.168.1.123', '255.255.255.0', '192.168.1.1', '8.8.8.8')
+#endif
+    EXPECT_STREQ(log_buff[4], "pika_hal_platform_WIFI_open: WLAN0\r\n");
+    EXPECT_STREQ(log_buff[3],
+                 "pika_hal_platform_WIFI_ioctl_others: "
+                 "PIKA_HAL_IOCTL_WIFI_SET_ACTIVE:1\r\n");
+    EXPECT_STREQ(log_buff[2],
+                 "pika_hal_platform_WIFI_ioctl_others: "
+                 "PIKA_HAL_IOCTL_WIFI_GET_STATUS\r\n");
+    EXPECT_STREQ(log_buff[1], "1\r\n");
+    EXPECT_STREQ(
+        log_buff[0],
+        "('192.168.1.123', '255.255.255.0', '192.168.1.1', '8.8.8.8')\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

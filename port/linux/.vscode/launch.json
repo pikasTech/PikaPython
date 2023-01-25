@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=json.dumps"
+                // "--gtest_filter=vm.kw_no_empty"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

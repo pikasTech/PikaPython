@@ -306,7 +306,7 @@ int pika_hal_WIFI_ioctl_merge_config(pika_hal_WIFI_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT_STR(bssid, "");
     _IOCTL_CONFIG_USE_DEFAULT_STR(password, "");
     _IOCTL_CONFIG_USE_DEFAULT_STR(ip, "");
-    _IOCTL_CONFIG_USE_DEFAULT_STR(netmask, "");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(netmask, "255.255.255.0");
     _IOCTL_CONFIG_USE_DEFAULT_STR(gateway, "");
     _IOCTL_CONFIG_USE_DEFAULT_STR(dns, "");
     return 0;

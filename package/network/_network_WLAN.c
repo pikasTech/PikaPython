@@ -3,6 +3,12 @@
 #include "PikaStdData_List.h"
 #include "PikaStdData_Tuple.h"
 
+#define assert_result(res)                                                  \
+    if (res != 0) {                                                         \
+        pika_platform_printf("assert_result failed: %d, at %s:%d:%s()\r\n", \
+                             res, __FILE__, __LINE__, __FUNCTION__);        \
+    }
+
 void _network_WLAN___init__(PikaObj* self, int interface_id) {
     pika_dev* hal_wifi = pika_hal_open(PIKA_HAL_WIFI, "WLAN0");
     if (hal_wifi == NULL) {
@@ -10,7 +16,7 @@ void _network_WLAN___init__(PikaObj* self, int interface_id) {
     }
     pika_hal_WIFI_config cfg = {0};
     cfg.mode = interface_id;
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg);
+    assert_result(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg));
     obj_setPtr(self, "hal_wifi", hal_wifi);
 }
 
@@ -19,7 +25,8 @@ void _network_WLAN_active(PikaObj* self, int is_active) {
     if (hal_wifi == NULL) {
         return;
     }
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_SET_ACTIVE, &is_active);
+    assert_result(
+        pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_SET_ACTIVE, &is_active));
     return;
 }
 
@@ -29,7 +36,8 @@ int _network_WLAN_checkActive(PikaObj* self) {
         return -1;
     }
     int is_active = 0;
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_GET_ACTIVE, &is_active);
+    assert_result(
+        pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_GET_ACTIVE, &is_active));
     return is_active;
 }
 
@@ -48,7 +56,7 @@ void _network_WLAN_config(PikaObj* self, PikaDict* kwargs) {
     if (pikaDict_isArgExist(kwargs, "channel")) {
         cfg.channel = pikaDict_getInt(kwargs, "channel") + 1;
     }
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg);
+    assert_result(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg));
 }
 
 Arg* _network_WLAN_checkConfig(PikaObj* self, char* param) {
@@ -76,8 +84,8 @@ void _network_WLAN_connect(PikaObj* self, char* ssid, char* key) {
     pika_hal_WIFI_config cfg = {0};
     strcpy(cfg.ssid, ssid);
     strcpy(cfg.password, key);
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg);
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_ENABLE);
+    assert_result(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg));
+    assert_result(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_ENABLE));
     return;
 }
 
@@ -93,8 +101,8 @@ void _network_WLAN_connectWIthBssid(PikaObj* self,
     strcpy(cfg.ssid, ssid);
     strcpy(cfg.password, key);
     strcpy(cfg.bssid, bssid);
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg);
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_ENABLE);
+    assert_result(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg));
+    assert_result(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_ENABLE));
 }
 
 void _network_WLAN_disconnect(PikaObj* self) {
@@ -102,7 +110,7 @@ void _network_WLAN_disconnect(PikaObj* self) {
     if (hal_wifi == NULL) {
         return;
     }
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_DISABLE);
+    assert_result(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_DISABLE));
 }
 
 int _network_WLAN_status(PikaObj* self) {
@@ -111,7 +119,8 @@ int _network_WLAN_status(PikaObj* self) {
         return -1;
     }
     PIKA_HAL_WIFI_STATUS status = 0;
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_GET_STATUS, &status);
+    assert_result(
+        pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_GET_STATUS, &status));
     return status;
 }
 
@@ -164,7 +173,7 @@ void _network_WLAN_ifconfig(PikaObj* self,
     strcpy(cfg.netmask, mask);
     strcpy(cfg.gateway, gateway);
     strcpy(cfg.dns, dns);
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg);
+    assert_result(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg));
     return;
 }
 
@@ -174,7 +183,7 @@ PikaObj* _network_WLAN_scan(PikaObj* self) {
         return NULL;
     }
     pika_hal_WIFI_scan_result* result = NULL;
-    pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_SCAN, &result);
+    assert_result(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_SCAN, &result));
     if (NULL == result) {
         return NULL;
     }
@@ -215,5 +224,5 @@ void _network_WLAN_close(PikaObj* self) {
     if (hal_wifi == NULL) {
         return;
     }
-    pika_hal_close(hal_wifi);
+    assert_result(pika_hal_close(hal_wifi));
 }

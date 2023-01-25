@@ -858,29 +858,40 @@ Arg* obj_runMethodArg(PikaObj* self,
                                      &run_state);
 }
 
-static char* _kw_to_default_all(FunctionArgsInfo* f,
-                                char* arg_name,
-                                int* argc,
-                                Arg* argv[],
-                                Arg* call_arg) {
+static char* _kw_pos_to_default_all(FunctionArgsInfo* f,
+                                    char* arg_name,
+                                    int* argc,
+                                    Arg* argv[],
+                                    Arg* call_arg) {
 #if PIKA_NANO_ENABLE
     return arg_name;
 #endif
+    int n_default_skip = 0;
+    int n_default_skiped = 0;
+    if (f->i_arg == f->n_arg) {
+        n_default_skip = f->n_default - f->n_arg;
+    }
     while (strIsContain(arg_name, '=')) {
         strPopLastToken(arg_name, '=');
-        Arg* default_arg = NULL;
+        Arg* kw_arg = NULL;
         /* load default arg from kws */
         if (f->kw != NULL) {
-            default_arg = pikaDict_getArg(f->kw, arg_name);
-            if (default_arg != NULL) {
-                Arg* arg_new = arg_copy(default_arg);
+            kw_arg = pikaDict_getArg(f->kw, arg_name);
+            if (kw_arg != NULL) {
+                Arg* arg_new = arg_copy(kw_arg);
                 argv[(*argc)++] = arg_new;
-                pikaDict_removeArg(f->kw, default_arg);
+                pikaDict_removeArg(f->kw, kw_arg);
             }
         }
-        if (f->kw == NULL || default_arg == NULL) {
+        if (f->kw == NULL || kw_arg == NULL) {
             /* can not load defalut from kw */
             if (NULL != call_arg && f->is_default) {
+                /* load pos to default with right order */
+                if (n_default_skiped < n_default_skip) {
+                    n_default_skiped++;
+                    arg_name = strPopLastToken(f->type_list, ',');
+                    continue;
+                }
                 /* load default from pos */
                 if (f->i_arg > f->n_positional) {
                     arg_setNameHash(call_arg,
@@ -1009,7 +1020,7 @@ static void _load_call_arg(VMState* vm,
     }
     char* arg_name = strPopLastToken(f->type_list, ',');
     /* load default from kw */
-    arg_name = _kw_to_default_all(f, arg_name, argc, argv, call_arg);
+    arg_name = _kw_pos_to_default_all(f, arg_name, argc, argv, call_arg);
     if (((char*)1) == arg_name) {
         /* load default from pos */
         return;
@@ -1255,7 +1266,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 #if !PIKA_NANO_ENABLE
     if (strIsContain(f.type_list, '=')) {
         char* arg_name = strPopLastToken(f.type_list, ',');
-        _kw_to_default_all(&f, arg_name, &argc, argv, NULL);
+        _kw_pos_to_default_all(&f, arg_name, &argc, argv, NULL);
     }
     /* load kw to pos */
     _kw_to_pos_all(&f, &argc, argv);
