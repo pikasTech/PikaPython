@@ -526,3 +526,9 @@ releases = [
     "v0.1.0 02d6151cac594f2278c04e616f03cf37bae3069b",
     "v0.1.1 94624f9a4af756c597291ed0646c446ecf25ac16",
 ]
+
+[[packages]]
+name = "network"
+releases = [
+    "v0.1.0 94624f9a4af756c597291ed0646c446ecf25ac16",
+]
