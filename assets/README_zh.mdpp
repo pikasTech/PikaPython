@@ -43,6 +43,12 @@ PikaPython 具有框架式 C 模块开发工具，只要用 Python 写好调用 
 
 PikaPython 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松地调试 C 模块。
 
+# 定制服务
+
+我们提供硬件、软件、云平台和量产的一站式定制服务，帮助客户快捷、经济、可靠地完成产品。
+
+商务洽谈: 16643685017 (微信同号)
+
 # 最新资讯
 - [2022 年 PikaPython 年终总结](https://mp.weixin.qq.com/s/cWtujWF8EuJnuXuVUeWNKw)
 

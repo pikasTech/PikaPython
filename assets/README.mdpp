@@ -42,6 +42,12 @@ The Pre-compiler is fully open-source, and the source code is in the [tools](htt
 
 ![image-20220520233540245](document/image/image-20220520233540245.png)
 
+# Customized service
+
+We provide one-stop customized services for hardware, software, cloud platform and mass production to help customers complete products quickly, economically and reliably.
+
+Email us: liang6516@outlook.com
+
 # Get pikapython:
 
 ## Use Online Project Generator
