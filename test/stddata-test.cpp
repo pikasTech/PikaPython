@@ -36,7 +36,7 @@ TEST(stddata, test2) {
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
             "import binascii\n"
-            "res = str(binascii.b2a_hex(b'德卡科技'))\n");
+            "res = binascii.b2a_hex(b'德卡科技').decode()\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
     /* assert */
@@ -55,7 +55,7 @@ TEST(stddata, a2b_hex) {
     obj_run(pikaMain,
             "import binascii\n"
             "text = binascii.a2b_hex('e4b8ade69687e6b58be8af95e794a8e4be8b')\n"
-            "res = str(text)\n");
+            "res = text.decode()\n");
     /* collect */
     char* res = obj_getStr(pikaMain, "res");
     /* assert */

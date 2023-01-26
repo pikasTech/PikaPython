@@ -24,7 +24,7 @@ TEST(ctypes, test2) {
     /* run */
     obj_run(pikaMain,
             "len(b'test\\x0')\n"
-            "len(str(b'test\\x0'))\n");
+            "len(b'test\\x0'.decode())\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "4\r\n");

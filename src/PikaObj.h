@@ -518,7 +518,7 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
 void obj_printModules(PikaObj* self);
 #if PIKA_DEBUG_ENABLE
 #define pika_debug(fmt, ...) \
-    pika_platform_printf("[PIKA DBG] " fmt, ##__VA_ARGS__)
+    pika_platform_printf("PikaDBG: " fmt "\r\n", ##__VA_ARGS__)
 #else
 #define pika_debug(...) \
     do {                \

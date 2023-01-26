@@ -45,17 +45,14 @@ int pika_hal_platform_WIFI_ioctl_others(pika_dev* dev,
         memset(result, 0, size);
         result->count = count;
         strcpy(result->records[0].ssid, "ssid1");
-        strcpy(result->records[0].bssid, "bssid1");
         result->records[0].channel = 1;
         result->records[0].rssi = -10;
         result->records[0].authmode = 0;
         strcpy(result->records[1].ssid, "ssid2");
-        strcpy(result->records[1].bssid, "bssid2");
         result->records[1].channel = 2;
         result->records[1].rssi = -20;
         result->records[1].authmode = 1;
         strcpy(result->records[2].ssid, "ssid3");
-        strcpy(result->records[2].bssid, "bssid3");
         result->records[2].channel = 3;
         result->records[2].rssi = -30;
         result->records[2].authmode = 2;
@@ -90,8 +87,8 @@ TEST(network, scan) {
     pikaVM_runSingleFile(pikaMain, "test/python/network/network_scan.py");
     /* assert */
     EXPECT_STREQ(log_buff[0],
-                 "[('ssid1', 'bssid1', 1, -10, 0, 0), ('ssid2', 'bssid2', 2, "
-                 "-20, 1, 0), ('ssid3', 'bssid3', 3, -30, 2, 0)]\r\n");
+                 "[('ssid1', b'', 1, -10, 0, 0), ('ssid2', b'', 2, "
+                 "-20, 1, 0), ('ssid3', b'', 3, -30, 2, 0)]\r\n");
     EXPECT_STREQ(log_buff[1],
                  "pika_hal_platform_WIFI_ioctl_others: "
                  "PIKA_HAL_IOCTL_WIFI_SCAN\r\n");

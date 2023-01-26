@@ -124,9 +124,9 @@ int PikaStdLib_SysObj_bool(PikaObj* self, Arg* arg) {
 }
 
 char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
-    if (arg_getType(arg) == ARG_TYPE_BYTES) {
-        return obj_cacheStr(self, (char*)arg_getBytes(arg));
-    }
+    // if (arg_getType(arg) == ARG_TYPE_BYTES) {
+    //     return obj_cacheStr(self, (char*)arg_getBytes(arg));
+    // }
     Arg* arg_str = arg_toStrArg(arg);
     if (NULL == arg_str) {
         obj_setSysOut(self, "Error: convert to str type failed.");
