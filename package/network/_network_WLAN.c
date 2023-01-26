@@ -98,11 +98,8 @@ void _network_WLAN_connectWithBssid(PikaObj* self,
         return;
     }
     pika_hal_WIFI_config cfg = {0};
-    strcpy(cfg.ssid, ssid);
-    strcpy(cfg.password, key);
     strcpy(cfg.bssid, bssid);
-    check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg));
-    check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_ENABLE));
+    _network_WLAN_connect(self, ssid, key);
 }
 
 void _network_WLAN_disconnect(PikaObj* self) {
@@ -196,7 +193,8 @@ PikaObj* _network_WLAN_scan(PikaObj* self) {
         Arg* arg = arg_newStr(result->records[i].ssid);
         PikaStdData_List_append(record, arg);
         arg_deinit(arg);
-        arg = arg_newStr(result->records[i].bssid);
+        arg = arg_newBytes(result->records[i].bssid,
+                           result->records[i].bssid_len);
         PikaStdData_List_append(record, arg);
         arg_deinit(arg);
         arg = arg_newInt(result->records[i].channel);

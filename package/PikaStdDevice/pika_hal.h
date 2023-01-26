@@ -428,7 +428,8 @@ typedef struct pika_hal_WIFI_config {
 
 typedef struct pika_hal_WIFI_record {
     char ssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
-    char bssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    uint8_t bssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    size_t bssid_len;
     int channel;
     int rssi;
     int authmode;
