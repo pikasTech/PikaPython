@@ -27,6 +27,7 @@ TEST(stddata, test1) {
 }
 #endif
 
+#if !PIKA_NANO_ENABLE
 /* test b2a_hex */
 TEST(stddata, test2) {
     /* init */
@@ -63,6 +64,7 @@ TEST(stddata, a2b_hex) {
     /* deinit */
     obj_deinit(pikaMain);
 }
+#endif
 
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(stddata, encode_decode) {

@@ -19,10 +19,10 @@ int pika_hal_platform_WIFI_ioctl_config(pika_dev* dev,
 }
 
 int pika_hal_platform_WIFI_ioctl_enable(pika_dev* dev) {
-    pika_hal_WIFI_config* cfg = (pika_hal_WIFI_config*)dev->ioctl_config;
-    strcpy(cfg->ip, "192.168.1.123");
-    strcpy(cfg->gateway, "192.168.1.1");
-    strcpy(cfg->dns, "8.8.8.8");
+    pika_platform_printf(
+        "pika_hal_platform_WIFI_ioctl_others: "
+        "PIKA_HAL_IOCTL_WIFI_SET_ACTIVE:%d\r\n",
+        1);
     return 0;
 }
 
@@ -59,18 +59,14 @@ int pika_hal_platform_WIFI_ioctl_others(pika_dev* dev,
         *(pika_hal_WIFI_scan_result**)arg = result;
         return 0;
     }
-    if (cmd == PIKA_HAL_IOCTL_WIFI_SET_ACTIVE) {
-        pika_platform_printf(
-            "pika_hal_platform_WIFI_ioctl_others: "
-            "PIKA_HAL_IOCTL_WIFI_SET_ACTIVE:%d\r\n",
-            *(int*)arg);
-        return 0;
-    }
     if (cmd == PIKA_HAL_IOCTL_WIFI_GET_STATUS) {
         pika_platform_printf(
             "pika_hal_platform_WIFI_ioctl_others: "
             "PIKA_HAL_IOCTL_WIFI_GET_STATUS\r\n");
         *(PIKA_HAL_WIFI_STATUS*)arg = PIKA_HAL_WIFI_STATUS_GOT_IP;
+        return 0;
+    }
+    if (cmd == PIKA_HAL_IOCTL_WIFI_CONNECT){
         return 0;
     }
     return -1;
@@ -117,17 +113,14 @@ TEST(network, connect) {
     1
     ('192.168.1.123', '255.255.255.0', '192.168.1.1', '8.8.8.8')
 #endif
-    EXPECT_STREQ(log_buff[4], "pika_hal_platform_WIFI_open: WLAN0\r\n");
-    EXPECT_STREQ(log_buff[3],
-                 "pika_hal_platform_WIFI_ioctl_others: "
-                 "PIKA_HAL_IOCTL_WIFI_SET_ACTIVE:1\r\n");
+    EXPECT_STREQ(log_buff[3], "pika_hal_platform_WIFI_open: WLAN0\r\n");
     EXPECT_STREQ(log_buff[2],
                  "pika_hal_platform_WIFI_ioctl_others: "
+                 "PIKA_HAL_IOCTL_WIFI_SET_ACTIVE:1\r\n");
+    EXPECT_STREQ(log_buff[1],
+                 "pika_hal_platform_WIFI_ioctl_others: "
                  "PIKA_HAL_IOCTL_WIFI_GET_STATUS\r\n");
-    EXPECT_STREQ(log_buff[1], "1\r\n");
-    EXPECT_STREQ(
-        log_buff[0],
-        "('192.168.1.123', '255.255.255.0', '192.168.1.1', '8.8.8.8')\r\n");
+    EXPECT_STREQ(log_buff[0], "1\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

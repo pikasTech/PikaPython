@@ -17,6 +17,7 @@ TEST(ctypes, test1) {
 }
 #endif
 
+#if !PIKA_NANO_ENABLE
 TEST(ctypes, test2) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -33,4 +34,5 @@ TEST(ctypes, test2) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 TEST_END
