@@ -25,8 +25,7 @@ void _network_WLAN_active(PikaObj* self, int is_active) {
     if (hal_wifi == NULL) {
         return;
     }
-    check_res(
-        pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_SET_ACTIVE, &is_active));
+    check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_ENABLE));
     return;
 }
 
@@ -48,10 +47,10 @@ void _network_WLAN_config(PikaObj* self, PikaDict* kwargs) {
     }
     pika_hal_WIFI_config cfg = {0};
     if (pikaDict_isArgExist(kwargs, "ssid")) {
-        strcpy(cfg.ssid, pikaDict_getStr(kwargs, "ssid"));
+        strcpy(cfg.ap_ssid, pikaDict_getStr(kwargs, "ssid"));
     }
-    if (pikaDict_isArgExist(kwargs, "key")) {
-        strcpy(cfg.password, pikaDict_getStr(kwargs, "key"));
+    if (pikaDict_isArgExist(kwargs, "password")) {
+        strcpy(cfg.ap_password, pikaDict_getStr(kwargs, "password"));
     }
     if (pikaDict_isArgExist(kwargs, "channel")) {
         cfg.channel = pikaDict_getInt(kwargs, "channel") + 1;
@@ -66,9 +65,9 @@ Arg* _network_WLAN_checkConfig(PikaObj* self, char* param) {
     }
     pika_hal_WIFI_config* cfg = hal_wifi->ioctl_config;
     if (strcmp(param, "ssid") == 0) {
-        return arg_newStr(cfg->ssid);
-    } else if (strcmp(param, "key") == 0) {
-        return arg_newStr(cfg->password);
+        return arg_newStr(cfg->ap_ssid);
+    } else if (strcmp(param, "password") == 0) {
+        return arg_newStr(cfg->ap_password);
     } else if (strcmp(param, "channel") == 0) {
         return arg_newInt(cfg->channel - 1);
     } else {
@@ -81,11 +80,10 @@ void _network_WLAN_connect(PikaObj* self, char* ssid, char* key) {
     if (hal_wifi == NULL) {
         return;
     }
-    pika_hal_WIFI_config cfg = {0};
-    strcpy(cfg.ssid, ssid);
-    strcpy(cfg.password, key);
-    check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg));
-    check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_ENABLE));
+    pika_hal_WIFI_connect_config conncfg = {0};
+    strcpy(conncfg.ssid, ssid);
+    strcpy(conncfg.password, key);
+    check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_CONNECT, &conncfg));
     return;
 }
 
@@ -97,9 +95,11 @@ void _network_WLAN_connectWithBssid(PikaObj* self,
     if (hal_wifi == NULL) {
         return;
     }
-    pika_hal_WIFI_config cfg = {0};
-    strcpy(cfg.bssid, bssid);
-    _network_WLAN_connect(self, ssid, key);
+    pika_hal_WIFI_connect_config conncfg = {0};
+    strcpy(conncfg.ssid, ssid);
+    strcpy(conncfg.password, key);
+    strcpy(conncfg.bssid, bssid);
+    check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_CONNECT, &conncfg));
 }
 
 void _network_WLAN_disconnect(PikaObj* self) {
@@ -107,7 +107,7 @@ void _network_WLAN_disconnect(PikaObj* self) {
     if (hal_wifi == NULL) {
         return;
     }
-    check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_DISABLE));
+    check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_DISCONNECT));
 }
 
 int _network_WLAN_status(PikaObj* self) {
@@ -138,19 +138,21 @@ PikaObj* _network_WLAN_checkIfconfig(PikaObj* self) {
     if (hal_wifi == NULL) {
         return NULL;
     }
-    pika_hal_WIFI_config* cfg = hal_wifi->ioctl_config;
+    pika_hal_WIFI_ifconfig ifconfig = {0};
+    check_res(
+        pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_GET_IFCONFIG, &ifconfig));
     PikaObj* ifconfig_list = newNormalObj(New_PikaStdData_List);
     PikaStdData_List___init__(ifconfig_list);
-    Arg* arg = arg_newStr(cfg->ip);
+    Arg* arg = arg_newStr(ifconfig.ip);
     PikaStdData_List_append(ifconfig_list, arg);
     arg_deinit(arg);
-    arg = arg_newStr(cfg->netmask);
+    arg = arg_newStr(ifconfig.netmask);
     PikaStdData_List_append(ifconfig_list, arg);
     arg_deinit(arg);
-    arg = arg_newStr(cfg->gateway);
+    arg = arg_newStr(ifconfig.gateway);
     PikaStdData_List_append(ifconfig_list, arg);
     arg_deinit(arg);
-    arg = arg_newStr(cfg->dns);
+    arg = arg_newStr(ifconfig.dns);
     PikaStdData_List_append(ifconfig_list, arg);
     arg_deinit(arg);
     return ifconfig_list;
@@ -165,12 +167,13 @@ void _network_WLAN_ifconfig(PikaObj* self,
     if (hal_wifi == NULL) {
         return;
     }
-    pika_hal_WIFI_config cfg = {0};
-    strcpy(cfg.ip, ip);
-    strcpy(cfg.netmask, mask);
-    strcpy(cfg.gateway, gateway);
-    strcpy(cfg.dns, dns);
-    check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_CONFIG, &cfg));
+    pika_hal_WIFI_ifconfig ifconfig = {0};
+    strcpy(ifconfig.ip, ip);
+    strcpy(ifconfig.netmask, mask);
+    strcpy(ifconfig.gateway, gateway);
+    strcpy(ifconfig.dns, dns);
+    check_res(
+        pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_WIFI_SET_IFCONFIG, &ifconfig));
     return;
 }
 

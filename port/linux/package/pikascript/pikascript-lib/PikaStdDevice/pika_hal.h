@@ -25,10 +25,13 @@ typedef enum {
     PIKA_HAL_IOCTL_CONFIG,
     PIKA_HAL_IOCTL_ENABLE,
     PIKA_HAL_IOCTL_DISABLE,
-    PIKA_HAL_IOCTL_WIFI_SET_ACTIVE,
     PIKA_HAL_IOCTL_WIFI_GET_ACTIVE,
     PIKA_HAL_IOCTL_WIFI_GET_STATUS,
     PIKA_HAL_IOCTL_WIFI_SCAN,
+    PIKA_HAL_IOCTL_WIFI_CONNECT,
+    PIKA_HAL_IOCTL_WIFI_DISCONNECT,
+    PIKA_HAL_IOCTL_WIFI_SET_IFCONFIG,
+    PIKA_HAL_IOCTL_WIFI_GET_IFCONFIG,
     _ = 0xFFFFFFFF,  // make sure it is 4 byte width
 } PIKA_HAL_IOCTL_CMD;
 
@@ -413,18 +416,42 @@ typedef enum {
     PIKA_HAL_WIFI_CHANNEL_11,
 } PIKA_HAL_WIFI_CHANNEL;
 
+typedef enum {
+    _PIKA_HAL_WIFI_MAX_CONNECTION = 0,
+    PIKA_HAL_WIFI_MAX_CONNECTION_1,
+    PIKA_HAL_WIFI_MAX_CONNECTION_2,
+    PIKA_HAL_WIFI_MAX_CONNECTION_3,
+    PIKA_HAL_WIFI_MAX_CONNECTION_4,
+    PIKA_HAL_WIFI_MAX_CONNECTION_5,
+    PIKA_HAL_WIFI_MAX_CONNECTION_6,
+    PIKA_HAL_WIFI_MAX_CONNECTION_7,
+    PIKA_HAL_WIFI_MAX_CONNECTION_8,
+    PIKA_HAL_WIFI_MAX_CONNECTION_9,
+    PIKA_HAL_WIFI_MAX_CONNECTION_10
+} PIKA_HAL_WIFI_MAX_CONNECTION;
+
 #define PIKA_HAL_WIFI_PARAM_MAX_LEN 32
 typedef struct pika_hal_WIFI_config {
     PIKA_HAL_WIFI_MODE mode;
     PIKA_HAL_WIFI_CHANNEL channel;
+    PIKA_HAL_WIFI_MAX_CONNECTION max_connection;
+    char ap_ssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char ap_bssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char ap_password[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+} pika_hal_WIFI_config;
+
+typedef struct pika_hal_WIFI_connect_config {
     char ssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
     char bssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
     char password[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+} pika_hal_WIFI_connect_config;
+
+typedef struct pika_hal_WIFI_ifconfig {
     char ip[PIKA_HAL_WIFI_PARAM_MAX_LEN];
     char netmask[PIKA_HAL_WIFI_PARAM_MAX_LEN];
     char gateway[PIKA_HAL_WIFI_PARAM_MAX_LEN];
     char dns[PIKA_HAL_WIFI_PARAM_MAX_LEN];
-} pika_hal_WIFI_config;
+} pika_hal_WIFI_ifconfig;
 
 typedef struct pika_hal_WIFI_record {
     char ssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];

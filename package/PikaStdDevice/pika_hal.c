@@ -302,12 +302,9 @@ int pika_hal_WIFI_ioctl_merge_config(pika_hal_WIFI_config* dst,
                                      pika_hal_WIFI_config* src) {
     _IOCTL_CONFIG_USE_DEFAULT(mode, PIKA_HAL_WIFI_MODE_STA);
     _IOCTL_CONFIG_USE_DEFAULT(channel, PIKA_HAL_WIFI_CHANNEL_0);
-    _IOCTL_CONFIG_USE_DEFAULT_STR(ssid, "");
-    _IOCTL_CONFIG_USE_DEFAULT_STR(bssid, "");
-    _IOCTL_CONFIG_USE_DEFAULT_STR(password, "");
-    _IOCTL_CONFIG_USE_DEFAULT_STR(ip, "");
-    _IOCTL_CONFIG_USE_DEFAULT_STR(netmask, "255.255.255.0");
-    _IOCTL_CONFIG_USE_DEFAULT_STR(gateway, "");
-    _IOCTL_CONFIG_USE_DEFAULT_STR(dns, "");
+    _IOCTL_CONFIG_USE_DEFAULT(max_connection, PIKA_HAL_WIFI_MAX_CONNECTION_4);
+    _IOCTL_CONFIG_USE_DEFAULT_STR(ap_ssid, "pikapython.com");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(ap_bssid, "");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(ap_password, "pikapython.com");
     return 0;
 }

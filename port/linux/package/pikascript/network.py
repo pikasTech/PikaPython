@@ -30,9 +30,6 @@ class WLAN(_network.WLAN):
     def disconnect(self):
         return super().disconnect()
 
-    def disconnect(self):
-        return super().disconnect()
-
     def status(self, param=None):
         if param is None:
             return super().status()
@@ -54,7 +51,7 @@ class WLAN(_network.WLAN):
             return (t[0], t[1], t[2], t[3])
         else:
             return super().ifconfig(
-                config[0], config[1], config[2], config[3], config[4])
+                config[0], config[1], config[2], config[3])
 
     def scan(self):
         return super().scan()
