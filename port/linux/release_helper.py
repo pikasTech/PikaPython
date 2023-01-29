@@ -47,6 +47,20 @@ class PackageRelease:
                         self.versions.append(VersionInfo(version_dicription))
                     except:
                         continue
+    
+    def latestVersion(self):
+        # find the latest version
+        latest_version = self.versions[0]
+        for version in self.versions:
+            if version.vmajor > latest_version.vmajor:
+                latest_version = version
+            elif version.vmajor == latest_version.vmajor:
+                if version.vminor > latest_version.vminor:
+                    latest_version = version
+                elif version.vminor == latest_version.vminor:
+                    if version.vpatch > latest_version.vpatch:
+                        latest_version = version
+        return latest_version
 
 
 class PackageReleaseList:
@@ -62,7 +76,7 @@ class PackageReleaseList:
         for package in self.pkg_dict['packages']:
             self.packages.append(PackageRelease(
                 self.pkg_dict['packages'], package['name']))
-
+    
     def latestCommit(self, package_name: str):
         # find the package
         for package in self.packages:
