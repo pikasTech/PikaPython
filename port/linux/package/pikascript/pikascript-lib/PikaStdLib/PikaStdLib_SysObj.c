@@ -140,7 +140,7 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
 
 Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     /* object */
-    PIKA_BOOL is_temp = 0;
+    PIKA_BOOL is_temp = PIKA_FALSE;
     PikaObj* arg_obj = _arg_to_obj(arg, &is_temp);
     NewFun _clsptr = (NewFun)arg_obj->constructor;
     if (_clsptr == New_PikaStdLib_RangeObj) {
@@ -331,8 +331,8 @@ Arg* PikaStdLib_SysObj_list(PikaObj* self, PikaTuple* val) {
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in list is not enabled.\r\n");
-#endif
     return arg_newNull();
+#endif
 }
 
 Arg* PikaStdLib_SysObj_dict(PikaObj* self, PikaTuple* val) {
