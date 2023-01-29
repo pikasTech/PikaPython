@@ -140,3 +140,9 @@ class PackageReleaseList:
         with open(file_path, "w") as f:
             # dump with formating
             toml.dump(self.pkg_dict, f)
+
+    def findPackage(self, pkg_name:str):
+        for package in self.packages:
+            if package.name == pkg_name:
+                return package
+        return None
