@@ -1777,19 +1777,23 @@ exit:
     return ast;
 }
 
-static int32_t Parser_getPyLineBlockDeepth(char* line) {
+static int32_t _getSpaceNum(char* line) {
     uint32_t size = strGetSize(line);
     for (uint32_t i = 0; i < size; i++) {
         if (line[i] != ' ') {
-            uint32_t spaceNum = i;
-            if (0 == spaceNum % 4) {
-                return spaceNum / 4;
-            }
-            /* space Num is not 4N, error*/
-            return -1;
+            return i;
         }
     }
     return 0;
+}
+
+static int32_t Parser_getPyLineBlockDeepth(char* line) {
+    int32_t spaceNum = _getSpaceNum(line);
+    if (0 == spaceNum % 4) {
+        return spaceNum / 4;
+    }
+    /* space Num is not 4N, error*/
+    return -1;
 }
 
 char* Parser_removeAnnotation(char* line) {
@@ -2221,6 +2225,7 @@ static char* Suger_multiAssign(Args* out_buffs, char* line) {
 #endif
     Args buffs = {0};
     char* line_out = line;
+    int space_num = _getSpaceNum(line);
     PIKA_BOOL is_assign = PIKA_FALSE;
     Arg* stmt = arg_newStr("");
     Arg* out_list = arg_newStr("");
@@ -2257,6 +2262,11 @@ static char* Suger_multiAssign(Args* out_buffs, char* line) {
 
     line_item =
         strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "$tmp= %s\n", arg_getStr(stmt));
+
+    /* add space */
+    for (int i = 0; i < space_num; i++) {
+        line_out_arg = arg_strAppend(line_out_arg, " ");
+    }
     line_out_arg = arg_strAppend(line_out_arg, line_item);
 
     out_list_str = arg_getStr(out_list);
@@ -2267,8 +2277,16 @@ static char* Suger_multiAssign(Args* out_buffs, char* line) {
         }
         char* line_item = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
                                      "%s = $tmp[%d]\n", item, out_num);
+        /* add space */
+        for (int i = 0; i < space_num; i++) {
+            line_out_arg = arg_strAppend(line_out_arg, " ");
+        }
         line_out_arg = arg_strAppend(line_out_arg, line_item);
         out_num++;
+    }
+    /* add space */
+    for (int i = 0; i < space_num; i++) {
+        line_out_arg = arg_strAppend(line_out_arg, " ");
     }
     line_out_arg = arg_strAppend(line_out_arg, "del $tmp");
 

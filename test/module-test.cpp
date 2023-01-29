@@ -180,6 +180,27 @@ TEST(module, unittest_test2) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(module, unittest_test3) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/unittest/test3.py");
+    /* collect */
+    int testsRun = obj_getInt(pikaMain, "res.testsRun");
+    int errorsNum = obj_getInt(pikaMain, "res.errorsNum");
+    /* assert */
+    EXPECT_EQ(testsRun, 1);
+    EXPECT_EQ(errorsNum, 0);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST(socket, gethostname) {

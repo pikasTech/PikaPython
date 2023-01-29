@@ -5138,6 +5138,55 @@ TEST(parser, syntex_issue_l1l2) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, syntex_issue_12ojd) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "class Test:\n"
+        "    def test(self):\n"
+        "        a, b = c\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 CLS Test()\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 RUN TinyObj\n"
+                 "0 OUT self\n"
+                 "B1\n"
+                 "0 RAS self\n"
+                 "B1\n"
+                 "0 DEF test(self)\n"
+                 "0 JMP 1\n"
+                 "B2\n"
+                 "0 REF c\n"
+                 "0 OUT $tmp\n"
+                 "B2\n"
+                 "1 REF $tmp\n"
+                 "1 NUM 0\n"
+                 "0 SLC \n"
+                 "0 OUT a\n"
+                 "B2\n"
+                 "1 REF $tmp\n"
+                 "1 NUM 1\n"
+                 "0 SLC \n"
+                 "0 OUT b\n"
+                 "B2\n"
+                 "0 DEL $tmp\n"
+                 "B2\n"
+                 "0 RET \n"
+                 "B1\n"
+                 "0 RAS $origin\n"
+                 "B1\n"
+                 "0 NEW self\n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
