@@ -91,7 +91,9 @@ PIKA_WEAK int64_t pika_platform_getTick(void) {
 #if PIKA_FREERTOS_ENABLE
     return platform_uptime_ms();
 #elif defined(__linux)
-    return time(NULL);
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
 #else
     return -1;
 #endif
@@ -293,17 +295,16 @@ PIKA_WEAK void pika_platform_thread_delay(void) {
 }
 
 PIKA_WEAK void pika_platform_sleep_ms(uint32_t ms) {
+#if defined(__linux)
+    usleep(ms * 1000);
+#elif defined(_WIN32)
+    Sleep(ms);
+#else
     pika_platform_printf(
         "Error: pika_platform_sleep_ms need implementation!\r\n");
     while (1) {
     }
-}
-
-PIKA_WEAK void pika_platform_sleep_s(uint32_t s) {
-    /* sleep_ms */
-    pika_platform_sleep_ms(s * 1000);
-    while (1) {
-    }
+#endif
 }
 
 /* Thread Support */
@@ -468,7 +469,7 @@ PIKA_WEAK void pika_platform_thread_timer_init(pika_platform_timer_t* timer) {
 }
 
 PIKA_WEAK void pika_platform_thread_timer_cutdown(pika_platform_timer_t* timer,
-                                           unsigned int timeout) {
+                                                  unsigned int timeout) {
 #ifdef __linux
     struct timeval now;
     gettimeofday(&now, NULL);
@@ -482,7 +483,8 @@ PIKA_WEAK void pika_platform_thread_timer_cutdown(pika_platform_timer_t* timer,
 #endif
 }
 
-PIKA_WEAK char pika_platform_thread_timer_is_expired(pika_platform_timer_t* timer) {
+PIKA_WEAK char pika_platform_thread_timer_is_expired(
+    pika_platform_timer_t* timer) {
 #ifdef __linux
     struct timeval now, res;
     gettimeofday(&now, NULL);

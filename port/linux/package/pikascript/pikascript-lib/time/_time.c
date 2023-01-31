@@ -7,23 +7,23 @@
 #include <windows.h>
 #endif
 
-void _time_sleep_ms(PikaObj* self, int ms) {
-#if defined(__linux)
-    usleep(ms * 1000);
-#elif defined(_WIN32)
-    Sleep(ms);
-#else
-    __platform_sleep_ms(ms);
-#endif
+void (*global_do_sleep_ms)(uint32_t);
+
+static void _do_sleep_ms_tick(uint32_t ms) {
+    uint32_t tick = pika_platform_getTick();
+    while (pika_platform_getTick() - tick < ms) {
+        _pikaVM_yiled();
+    }
 }
+
+void _time_sleep_ms(PikaObj* self, int ms) {
+    global_do_sleep_ms(ms);
+}
+
 void _time_sleep_s(PikaObj* self, int s) {
-#if defined(__linux)
-    sleep(s);
-#elif defined(_WIN32)
-    Sleep(s * 1000);
-#else
-    __platform_sleep_s(s);
-#endif
+    for (int i = 0; i < s; i++) {
+        _time_sleep_ms(self, 1000);
+    }
 }
 
 void _time_platformGetTick(PikaObj* self) {
@@ -701,12 +701,10 @@ void _time___init__(PikaObj* self) {
     obj_setInt(self, "locale", 8);
     time_localtime(0.0, &this_tm, 8);
     time_set_tm_value(self, &this_tm);
+    if (-1 == pika_platform_getTick()) {
+        global_do_sleep_ms = pika_platform_sleep_ms;
+    } else {
+        global_do_sleep_ms = _do_sleep_ms_tick;
+    }
 #endif
-}
-
-void _time_sleep(PikaObj* self, pika_float s) {
-    Args* args = New_args(NULL);
-    args_setInt(args, "ms", s * 1000);
-    obj_runNativeMethod(self, "sleep_ms", args);
-    args_deinit(args);
 }

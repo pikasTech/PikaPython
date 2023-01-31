@@ -3575,3 +3575,7 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
     strsDeinit(&buffs);
     return self;
 }
+
+void _pikaVM_yiled(void){
+    // pika_platform_printf("yiled\r\n");
+}

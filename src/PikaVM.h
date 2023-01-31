@@ -313,4 +313,5 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
                                    Arg* eventData);
 int _VMEvent_getVMCnt(void);
 void _VMEvent_pickupEvent(void);
+void _pikaVM_yiled(void);
 #endif

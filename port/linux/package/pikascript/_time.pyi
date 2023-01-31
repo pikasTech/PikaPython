@@ -4,10 +4,6 @@ from PikaObj import *
 def __init__(self): ...
 
 
-def sleep(self, s: float):
-    """Sleep for s seconds."""
-
-
 @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
 def time(self) -> float:
     """Get the current time."""

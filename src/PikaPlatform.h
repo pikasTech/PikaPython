@@ -179,7 +179,6 @@ void pika_platform_thread_delay(void);
 int64_t pika_platform_getTick(void);
 
 void pika_platform_sleep_ms(uint32_t ms);
-void pika_platform_sleep_s(uint32_t s);
 
 void pika_hook_instruct(void);
 PIKA_BOOL pika_hook_arg_cache_filter(void* self);
