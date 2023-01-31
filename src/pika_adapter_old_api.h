@@ -72,6 +72,13 @@
 #define pks_eventLisener_deinit pks_eventListener_deinit
 #define pks_eventLicener_removeEvent pks_eventListener_removeEvent
 
+#define pika_platform_timer_init pika_platform_thread_timer_init
+#define pika_platform_timer_cutdown pika_platform_thread_timer_cutdown
+#define pika_platform_timer_is_expired pika_platform_thread_timer_is_expired
+#define pika_platform_timer_remain pika_platform_thread_timer_remain
+#define pika_platform_timer_now pika_platform_thread_timer_now
+#define pika_platform_timer_usleep pika_platform_thread_timer_usleep
+
 #endif
 
 #endif
