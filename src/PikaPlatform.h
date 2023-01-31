@@ -268,13 +268,13 @@ typedef struct pika_platform_timer {
 } pika_platform_timer_t;
 #endif
 
-void pika_platform_timer_init(pika_platform_timer_t* timer);
-void pika_platform_timer_cutdown(pika_platform_timer_t* timer,
+void pika_platform_thread_timer_init(pika_platform_timer_t* timer);
+void pika_platform_thread_timer_cutdown(pika_platform_timer_t* timer,
                                  unsigned int timeout);
-char pika_platform_timer_is_expired(pika_platform_timer_t* timer);
-int pika_platform_timer_remain(pika_platform_timer_t* timer);
-unsigned long pika_platform_timer_now(void);
-void pika_platform_timer_usleep(unsigned long usec);
+char pika_platform_thread_timer_is_expired(pika_platform_timer_t* timer);
+int pika_platform_thread_timer_remain(pika_platform_timer_t* timer);
+unsigned long pika_platform_thread_timer_now(void);
+void pika_platform_thread_timer_usleep(unsigned long usec);
 void pika_platform_reboot(void);
 
 #define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                               \
