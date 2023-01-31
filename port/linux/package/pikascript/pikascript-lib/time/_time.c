@@ -10,9 +10,9 @@
 void (*global_do_sleep_ms)(uint32_t);
 
 static void _do_sleep_ms_tick(uint32_t ms) {
-    uint32_t tick = pika_platform_getTick();
-    while (pika_platform_getTick() - tick < ms) {
-        _pikaVM_yiled();
+    uint32_t tick = pika_platform_get_tick();
+    while (pika_platform_get_tick() - tick < ms) {
+        _pikaVM_yield();
     }
 }
 
@@ -701,7 +701,7 @@ void _time___init__(PikaObj* self) {
     obj_setInt(self, "locale", 8);
     time_localtime(0.0, &this_tm, 8);
     time_set_tm_value(self, &this_tm);
-    if (-1 == pika_platform_getTick()) {
+    if (-1 == pika_platform_get_tick()) {
         global_do_sleep_ms = pika_platform_sleep_ms;
     } else {
         global_do_sleep_ms = _do_sleep_ms_tick;

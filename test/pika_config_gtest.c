@@ -22,7 +22,7 @@ void pika_platform_printf(char* fmt, ...) {
 }
 
 // static volatile uint64_t tick_ms = 0;
-// int64_t pika_platform_getTick(void) {
+// int64_t pika_platform_get_tick(void) {
 //     tick_ms += 50;
 //     return tick_ms;
 // }

@@ -176,7 +176,7 @@ void pika_platform_error_handle(void);
 void pika_platform_panic_handle(void);
 
 void pika_platform_thread_delay(void);
-int64_t pika_platform_getTick(void);
+int64_t pika_platform_get_tick(void);
 
 void pika_platform_sleep_ms(uint32_t ms);
 

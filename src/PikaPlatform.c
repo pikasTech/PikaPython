@@ -87,7 +87,7 @@ static uint32_t platform_uptime_ms(void) {
 }
 #endif
 
-PIKA_WEAK int64_t pika_platform_getTick(void) {
+PIKA_WEAK int64_t pika_platform_get_tick(void) {
 #if PIKA_FREERTOS_ENABLE
     return platform_uptime_ms();
 #elif defined(__linux)
