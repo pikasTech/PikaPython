@@ -47,7 +47,7 @@ PikaPython 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 
 我们提供硬件、软件、云平台和量产的一站式定制服务，帮助客户快捷、经济、可靠地完成产品。
 
-商务洽谈: 16643685017 (微信同号)
+商务洽谈: 李工 深圳皮卡派科技有限公司 16643685017 (微信同号)
 
 # 最新资讯
 - [2022 年 PikaPython 年终总结](https://mp.weixin.qq.com/s/cWtujWF8EuJnuXuVUeWNKw)
