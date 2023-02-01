@@ -31,6 +31,9 @@
 #include "dataQueue.h"
 #include "dataQueueObj.h"
 #include "dataStack.h"
+#if PIKA_SETJMP_ENABLE
+#include <setjmp.h>
+#endif
 
 enum Instruct {
 #define __INS_ENUM
@@ -131,6 +134,14 @@ typedef struct EventCQ {
     int head;
     int tail;
 } EventCQ;
+
+#if PIKA_SETJMP_ENABLE
+typedef struct JmpBufCQ {
+    jmp_buf* buf[PIKA_JMP_BUF_LIST_SIZE];
+    int head;
+    int tail;
+} JmpBufCQ;
+#endif
 
 typedef struct VMSignal VMSignal;
 struct VMSignal {

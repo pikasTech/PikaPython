@@ -175,7 +175,6 @@ void pika_platform_error_handle(void);
 /* panic */
 void pika_platform_panic_handle(void);
 
-void pika_platform_thread_delay(void);
 int64_t pika_platform_get_tick(void);
 
 void pika_platform_sleep_ms(uint32_t ms);
@@ -222,6 +221,8 @@ pika_platform_thread_t* pika_platform_thread_init(const char* name,
                                                   unsigned int stack_size,
                                                   unsigned int priority,
                                                   unsigned int tick);
+uint64_t pika_platform_thread_self(void);
+void pika_platform_thread_delay(void);
 void pika_platform_thread_startup(pika_platform_thread_t* thread);
 void pika_platform_thread_stop(pika_platform_thread_t* thread);
 void pika_platform_thread_start(pika_platform_thread_t* thread);
@@ -231,16 +232,19 @@ void pika_platform_thread_destroy(pika_platform_thread_t* thread);
 #include <pthread.h>
 typedef struct pika_platform_thread_mutex {
     pthread_mutex_t mutex;
+    volatile int is_init;
 } pika_platform_thread_mutex_t;
 #elif PIKA_FREERTOS_ENABLE
 #include "FreeRTOS.h"
 #include "semphr.h"
 typedef struct pika_platform_thread_mutex {
     SemaphoreHandle_t mutex;
+    volatile int is_init;
 } pika_platform_thread_mutex_t;
 #else
 typedef struct pika_platform_thread_mutex {
     void* platform_data;
+    volatile int is_init;
 } pika_platform_thread_mutex_t;
 #endif
 

@@ -372,6 +372,14 @@
         #define PIKA_SHELL_NO_NEWLINE 0
     #endif
 
+    #ifndef PIKA_SETJMP_ENABLE
+        #define PIKA_SETJMP_ENABLE 0
+    #endif
+
+    #ifndef PIKA_JMP_BUF_LIST_SIZE
+        #define PIKA_JMP_BUF_LIST_SIZE 16
+    #endif
+
     /* configuration validation */
 
 #endif

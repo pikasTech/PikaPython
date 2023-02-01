@@ -48,17 +48,100 @@ volatile VMSignal PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
 #endif
 };
 
+static pika_platform_thread_mutex_t pikavm_global_lock = {0};
+
+int _VM_lock(void) {
+    if (!pikavm_global_lock.is_init) {
+        return 0;
+    }
+    int ret = pika_platform_thread_mutex_lock(&pikavm_global_lock);
+    return ret;
+}
+
+int _VM_unlock(void) {
+    if (!pikavm_global_lock.is_init) {
+        return 0;
+    }
+    return pika_platform_thread_mutex_unlock(&pikavm_global_lock);
+}
+
+int _VM_lock_init(void) {
+    if (pikavm_global_lock.is_init) {
+        return 0;
+    }
+    int ret = pika_platform_thread_mutex_init(&pikavm_global_lock);
+    if (0 == ret) {
+        pikavm_global_lock.is_init = 1;
+    }
+    return ret;
+}
+
 int _VMEvent_getVMCnt(void) {
     return PikaVMSignal.vm_cnt;
 }
 
 #if PIKA_EVENT_ENABLE
-static PIKA_BOOL _cq_isEmpty(volatile EventCQ* cq) {
+static PIKA_BOOL _ecq_isEmpty(volatile EventCQ* cq) {
     return (PIKA_BOOL)(cq->head == cq->tail);
 }
 
-static PIKA_BOOL _cq_isFull(volatile EventCQ* cq) {
+static PIKA_BOOL _ecq_isFull(volatile EventCQ* cq) {
     return (PIKA_BOOL)((cq->tail + 1) % PIKA_EVENT_LIST_SIZE == cq->head);
+}
+#endif
+
+#if PIKA_SETJMP_ENABLE
+
+static PIKA_BOOL _jcq_isEmpty(volatile JmpBufCQ* cq) {
+    return (PIKA_BOOL)(cq->head == cq->tail);
+}
+
+static PIKA_BOOL _jcq_isFull(volatile JmpBufCQ* cq) {
+    return (PIKA_BOOL)((cq->tail + 1) % PIKA_JMP_BUF_LIST_SIZE == cq->head);
+}
+
+static jmp_buf* _jcq_pop(volatile JmpBufCQ* cq) {
+    if (_jcq_isEmpty(cq)) {
+        return NULL;
+    }
+    jmp_buf* buf = cq->buf[cq->head];
+    cq->head = (cq->head + 1) % PIKA_JMP_BUF_LIST_SIZE;
+    return buf;
+}
+
+static jmp_buf* _jcq_check_pop(volatile JmpBufCQ* cq) {
+    if (_jcq_isEmpty(cq)) {
+        return NULL;
+    }
+    return cq->buf[cq->head];
+}
+
+static PIKA_RES _jcq_push(volatile JmpBufCQ* cq, jmp_buf* pos) {
+    if (_jcq_isFull(cq)) {
+        return -1;
+    }
+    cq->buf[cq->tail] = pos;
+    cq->tail = (cq->tail + 1) % PIKA_JMP_BUF_LIST_SIZE;
+    return PIKA_RES_OK;
+}
+
+static PIKA_RES _jcq_remove(volatile JmpBufCQ* cq, jmp_buf* pos) {
+    if (_jcq_isEmpty(cq)) {
+        return -1;
+    }
+    for (int i = cq->head; i != cq->tail;
+         i = (i + 1) % PIKA_JMP_BUF_LIST_SIZE) {
+        if (cq->buf[i] == pos) {
+            /* move */
+            for (int j = i; j != cq->tail;
+                 j = (j + 1) % PIKA_JMP_BUF_LIST_SIZE) {
+                cq->buf[j] = cq->buf[(j + 1) % PIKA_JMP_BUF_LIST_SIZE];
+            }
+            cq->tail = (cq->tail - 1) % PIKA_JMP_BUF_LIST_SIZE;
+            return PIKA_RES_OK;
+        }
+    }
+    return -1;
 }
 #endif
 
@@ -88,7 +171,7 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
     pika_platform_panic_handle();
 #else
     /* push to event_cq_buff */
-    if (_cq_isFull(&PikaVMSignal.cq)) {
+    if (_ecq_isFull(&PikaVMSignal.cq)) {
         arg_deinit(eventData);
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
     }
@@ -120,7 +203,7 @@ PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
     pika_platform_panic_handle();
 #else
     /* pop from event_cq_buff */
-    if (_cq_isEmpty(&PikaVMSignal.cq)) {
+    if (_ecq_isEmpty(&PikaVMSignal.cq)) {
         return PIKA_RES_ERR_SIGNAL_EVENT_EMPTY;
     }
     *id = PikaVMSignal.cq.id[PikaVMSignal.cq.head];
@@ -3463,9 +3546,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             pika_hook_instruct();
         }
 #endif
-#if PIKA_EVENT_ENABLE
-        _VMEvent_pickupEvent();
-#endif
+        _pikaVM_yield();
         if (0 != vm.error_code) {
             vm.line_error_code = vm.error_code;
             InstructUnit* head_ins_unit = this_ins_unit;
@@ -3577,5 +3658,8 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
 }
 
 void _pikaVM_yield(void) {
-    pika_platform_printf("yiled\r\n");
+    _VMEvent_pickupEvent();
+    _VM_unlock();
+    // pika_platform_thread_delay();
+    _VM_lock();
 }

@@ -291,7 +291,11 @@ PIKA_WEAK PIKA_BOOL pika_hook_arg_cache_filter(void* self) {
 }
 
 PIKA_WEAK void pika_platform_thread_delay(void) {
+#if defined(__linux) || defined(_WIN32)
+    pika_platform_sleep_ms(1);
+#else
     return;
+#endif
 }
 
 PIKA_WEAK void pika_platform_sleep_ms(uint32_t ms) {
@@ -351,6 +355,17 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
     return NULL;
+#endif
+}
+
+uint64_t pika_platform_thread_self(void) {
+#ifdef __linux
+    return (uint64_t)pthread_self();
+#elif PIKA_FREERTOS_ENABLE
+    return (uint64_t)xTaskGetCurrentTaskHandle();
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return 0;
 #endif
 }
 
