@@ -298,6 +298,8 @@ int32_t args_isArgExist(Args* self, char* name) {
 }
 
 PIKA_RES __updateArg(Args* self, Arg* argNew) {
+    pika_assert(NULL != self);
+    pika_assert(NULL != argNew);
     LinkNode* nodeToUpdate = NULL;
     LinkNode* nodeNow = self->firstNode;
     LinkNode* priorNode = NULL;
@@ -345,6 +347,8 @@ exit:
 }
 
 PIKA_RES args_setArg(Args* self, Arg* arg) {
+    pika_assert(NULL != self);
+    pika_assert(NULL != arg);
     if (PIKA_RES_OK == __updateArg(self, arg)) {
         return PIKA_RES_OK;
     }

@@ -5187,6 +5187,22 @@ TEST(parser, syntex_issue_12ojd) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, tuple_void) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "()\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 RUN \n"
+                 "B0\n"
+                 );
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

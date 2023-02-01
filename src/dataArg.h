@@ -100,10 +100,12 @@ static inline void arg_setType(Arg* self, ArgType type) {
 }
 
 static inline Hash arg_getNameHash(Arg* self) {
+    pika_assert(self != 0);
     return self->name_hash;
 }
 
 static inline ArgType arg_getType(Arg* self) {
+    pika_assert(self != 0);
     return (ArgType)self->type;
 }
 

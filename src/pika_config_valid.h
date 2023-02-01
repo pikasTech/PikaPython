@@ -380,6 +380,18 @@
         #define PIKA_JMP_BUF_LIST_SIZE 16
     #endif
 
+    #ifndef PIKA_THREAD_STACK_SIZE
+        #define PIKA_THREAD_STACK_SIZE 2048
+    #endif
+
+    #ifndef PIKA_THREAD_PRIO
+        #define PIKA_THREAD_PRIO 5
+    #endif
+
+    #ifndef PIKA_THREAD_TICK
+        #define PIKA_THREAD_TICK 50
+    #endif
+
     /* configuration validation */
 
 #endif

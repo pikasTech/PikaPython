@@ -325,4 +325,8 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
 int _VMEvent_getVMCnt(void);
 void _VMEvent_pickupEvent(void);
 void _pikaVM_yield(void);
+int _VM_lock_init(void);
+int _VM_unlock(void);
+int _VM_lock(void);
+int _VM_is_first_lock(void);
 #endif

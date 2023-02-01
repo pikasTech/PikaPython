@@ -55,6 +55,9 @@ int _VM_lock(void) {
         return 0;
     }
     int ret = pika_platform_thread_mutex_lock(&pikavm_global_lock);
+    if (!pikavm_global_lock.is_first_lock) {
+        pikavm_global_lock.is_first_lock = 1;
+    }
     return ret;
 }
 
@@ -74,6 +77,10 @@ int _VM_lock_init(void) {
         pikavm_global_lock.is_init = 1;
     }
     return ret;
+}
+
+int _VM_is_first_lock(void) {
+    return pikavm_global_lock.is_first_lock;
 }
 
 int _VMEvent_getVMCnt(void) {
@@ -1023,6 +1030,7 @@ static void _kw_to_pos_all(FunctionArgsInfo* f, int* argc, Arg* argv[]) {
 static void _loadLocalsFromArgv(Args* locals, int argc, Arg* argv[]) {
     for (int i = 0; i < argc; i++) {
         Arg* arg = argv[i];
+        pika_assert(arg != NULL);
         args_setArg(locals, arg);
     }
 }
@@ -1119,6 +1127,7 @@ static void _load_call_arg(VMState* vm,
     }
     /*load pos from pos */
     arg_setNameHash(call_arg, hash_time33EndWith(arg_name, ':'));
+    pika_assert(call_arg != NULL);
     argv[(*argc)++] = call_arg;
     (f->n_positional_got)++;
 }
@@ -1382,6 +1391,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     /* load 'self' as the first arg when call object method */
     if (f.method_type == ARG_TYPE_METHOD_OBJECT) {
         Arg* call_arg = arg_setRef(NULL, "self", method_host_obj);
+        pika_assert(call_arg != NULL);
         argv[argc++] = call_arg;
     }
     _loadLocalsFromArgv(locals, argc, argv);
@@ -1588,8 +1598,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     }
 
     /* tuple or single arg */
-    if (run_path[0] == 0) {
-        if (VMState_getInputArgNum(vm) < 2) {
+    if (NULL == run_path || run_path[0] == 0) {
+        if (VMState_getInputArgNum(vm) == 1) {
             /* return arg directly */
             return_arg = stack_popArg(&(vm->stack), arg_ret_reg);
             goto exit;
@@ -3312,6 +3322,7 @@ void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
         self->const_pool.content_start =
             arg_getBytes(self->const_pool.arg_buff);
     }
+    pika_assert(NULL != self->const_pool.content_start);
 }
 
 void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes) {
@@ -3660,6 +3671,6 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
 void _pikaVM_yield(void) {
     _VMEvent_pickupEvent();
     _VM_unlock();
-    // pika_platform_thread_delay();
+    pika_platform_thread_delay();
     _VM_lock();
 }

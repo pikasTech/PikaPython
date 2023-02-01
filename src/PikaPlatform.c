@@ -292,7 +292,7 @@ PIKA_WEAK PIKA_BOOL pika_hook_arg_cache_filter(void* self) {
 
 PIKA_WEAK void pika_platform_thread_delay(void) {
 #if defined(__linux) || defined(_WIN32)
-    pika_platform_sleep_ms(1);
+    return;
 #else
     return;
 #endif

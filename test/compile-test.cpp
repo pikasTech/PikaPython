@@ -708,4 +708,10 @@ TEST(compiler, starrd_get) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, thread_arg) {
+    char* lines = "thread(*args)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

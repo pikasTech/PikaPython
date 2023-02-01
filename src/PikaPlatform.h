@@ -233,6 +233,7 @@ void pika_platform_thread_destroy(pika_platform_thread_t* thread);
 typedef struct pika_platform_thread_mutex {
     pthread_mutex_t mutex;
     volatile int is_init;
+    volatile int is_first_lock;
 } pika_platform_thread_mutex_t;
 #elif PIKA_FREERTOS_ENABLE
 #include "FreeRTOS.h"
