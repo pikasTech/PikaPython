@@ -107,7 +107,9 @@
         "pika_adapter_old_api.h": "c",
         "pikastddevice_common.h": "c",
         "_network_wlan.h": "c",
-        "pikastddata_tuple.h": "c"
+        "pikastddata_tuple.h": "c",
+        "setjmp.h": "c",
+        "pthread.h": "c"
     },
     "python.formatting.provider": "autopep8",
 }
