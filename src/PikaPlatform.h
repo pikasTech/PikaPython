@@ -241,11 +241,13 @@ typedef struct pika_platform_thread_mutex {
 typedef struct pika_platform_thread_mutex {
     SemaphoreHandle_t mutex;
     volatile int is_init;
+    volatile int is_first_lock;
 } pika_platform_thread_mutex_t;
 #else
 typedef struct pika_platform_thread_mutex {
     void* platform_data;
     volatile int is_init;
+    volatile int is_first_lock;
 } pika_platform_thread_mutex_t;
 #endif
 

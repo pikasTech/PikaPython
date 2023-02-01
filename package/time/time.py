@@ -2,7 +2,9 @@ import _time
 
 
 def sleep(s: float):
-    return _time.sleep(s)
+    for i in range(int(s)):
+        _time.sleep_s(1)
+    _time.sleep_ms(int((s - int(s)) * 1000))
 
 
 def sleep_s(s: int):
