@@ -695,16 +695,16 @@ void _time_ctime(PikaObj* self, pika_float unix_time) {
 }
 
 void _time___init__(PikaObj* self) {
+    if (-1 == pika_platform_get_tick()) {
+        global_do_sleep_ms = pika_platform_sleep_ms;
+    } else {
+        global_do_sleep_ms = _do_sleep_ms_tick;
+    }
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
 #else
     _tm this_tm;
     obj_setInt(self, "locale", 8);
     time_localtime(0.0, &this_tm, 8);
     time_set_tm_value(self, &this_tm);
-    if (-1 == pika_platform_get_tick()) {
-        global_do_sleep_ms = pika_platform_sleep_ms;
-    } else {
-        global_do_sleep_ms = _do_sleep_ms_tick;
-    }
 #endif
 }

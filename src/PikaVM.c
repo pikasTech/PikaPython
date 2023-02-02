@@ -224,7 +224,7 @@ PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
 
 void _VMEvent_pickupEvent(void) {
 #if !PIKA_EVENT_ENABLE
-    pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
+    pika_platform_printf("PIKA_EVENT_ENABLE is not enable\r\n");
     pika_platform_panic_handle();
 #else
     PikaObj* event_lisener;
@@ -3669,7 +3669,9 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
 }
 
 void _pikaVM_yield(void) {
+#if PIKA_EVENT_ENABLE
     _VMEvent_pickupEvent();
+#endif
     _VM_unlock();
     pika_platform_thread_delay();
     _VM_lock();
