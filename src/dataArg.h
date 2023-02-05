@@ -120,19 +120,19 @@ Arg* arg_setNull(Arg* self);
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 
 static inline Arg* arg_newInt(int64_t val) {
-    return arg_setInt(NULL, "", (val));
+    return arg_setInt(NULL, (char*)"", (val));
 }
 
 static inline Arg* arg_newFloat(pika_float val) {
-    return arg_setFloat(NULL, "", (val));
+    return arg_setFloat(NULL, (char*)"", (val));
 }
 
 static inline Arg* arg_newPtr(ArgType type, void* pointer) {
-    return arg_setPtr(NULL, "", (type), (pointer));
+    return arg_setPtr(NULL, (char*)"", (type), (pointer));
 }
 
 static inline Arg* arg_newStr(char* string) {
-    return arg_setStr(NULL, "", (string));
+    return arg_setStr(NULL, (char*)"", (string));
 }
 
 static inline Arg* arg_newNull() {
@@ -140,7 +140,7 @@ static inline Arg* arg_newNull() {
 }
 
 static inline Arg* arg_newBytes(uint8_t* src, size_t size) {
-    return arg_setBytes(NULL, "", (src), (size));
+    return arg_setBytes(NULL, (char*)"", (src), (size));
 }
 
 int64_t arg_getInt(Arg* self);
