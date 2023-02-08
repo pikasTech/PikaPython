@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the PikaScript project.
  * http://github.com/pikastech/pikascript
  *
@@ -661,7 +661,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
             char* imp_module_name =
                 constPool_getByOffset(const_pool, ins_unit->const_pool_index);
             char* imp_module_path =
-                strsAppend(&buffs, obj_getStr(self, "pwd"), imp_module_name);
+                strsPathJoin(&buffs, obj_getStr(self, "pwd"), imp_module_name);
             /* check if compiled the module */
             if (obj_isArgExist(self, imp_module_name)) {
                 /* module info is exist, do nothing */
