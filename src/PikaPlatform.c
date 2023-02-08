@@ -28,6 +28,9 @@
 #include "PikaPlatform.h"
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef WIN32
+#include <Windows.h>
+#endif
 
 PIKA_WEAK void pika_platform_disable_irq_handle(void) {
     /* disable irq to support thread */
