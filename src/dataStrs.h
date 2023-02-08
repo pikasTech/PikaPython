@@ -45,4 +45,10 @@ char* strsGetLine(Args* buffs, char* code);
 void strsDeinit(Args* buffs);
 char* strsCacheArg(Args* buffs_p, Arg* arg);
 char* strsReturnOut(Args* buffs, Args* outbuffs, char* str);
+
+char* strsPathGetFileName(Args* buffs_p, char* input);
+char* strsPathGetFolder(Args* buffs_p, char* input);
+char* strsPathJoin(Args* buffs_p, char* input1, char* input2);
+char* strsPathFormat(Args* buffs_p, char* input);
+
 #endif

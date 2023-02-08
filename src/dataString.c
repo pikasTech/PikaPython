@@ -27,6 +27,7 @@
 
 #include "dataString.h"
 #include "PikaPlatform.h"
+#include "dataMemory.h"
 
 char* strCut(char* strOut, char* strIn, char startSign, char endSign) {
     int32_t Size = strGetSize(strIn);
@@ -279,4 +280,98 @@ char* strGetLastLine(char* strOut, char* strIn) {
     pika_platform_memcpy(strOut, strIn + beginIndex, size - beginIndex);
     strOut[size - beginIndex + 1] = 0;
     return strOut;
+}
+
+int strPathFormat(char* input, char* output) {
+    int len = strlen(input);
+    int i = 0;
+    int j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '\\') {
+            output[j++] = '/';
+        } else {
+            output[j++] = input[i];
+        }
+    }
+    output[j] = '\0';
+    return j;
+}
+
+int strPathJoin(char* input1, char* input2, char* output) {
+    /* format */
+    size_t input1_len = strlen(input1);
+    size_t input2_len = strlen(input2);
+    /* if input1 is all space */
+    if (input1_len == 0) {
+        strPathFormat(input2, output);
+        return 0;
+    }
+    char* input1_format = (char*)pikaMalloc(input1_len + 1);
+    char* input2_format = (char*)pikaMalloc(input2_len + 1);
+    strPathFormat(input1, input1_format);
+    strPathFormat(input2, input2_format);
+    /* join */
+    int len1 = strlen(input1_format);
+    int len2 = strlen(input2_format);
+    int i = 0;
+    int j = 0;
+    for (i = 0; i < len1; i++) {
+        output[j++] = input1_format[i];
+    }
+    if (input1_format[len1 - 1] != '/') {
+        output[j++] = '/';
+    }
+    if (input2_format[0] == '/') {
+        i = 1;
+    } else {
+        i = 0;
+    }
+    for (; i < len2; i++) {
+        output[j++] = input2_format[i];
+    }
+    output[j] = '\0';
+    /* free */
+    pikaFree(input1_format, input1_len + 1);
+    pikaFree(input2_format, input2_len + 1);
+    return j;
+}
+
+int strPathGetFolder(char* input, char* output) {
+    size_t input_len = strlen(input);
+    char* input_format = (char*)pikaMalloc(input_len + 1);
+    strPathFormat(input, input_format);
+    int len = strlen(input_format);
+    int i = 0;
+    int j = 0;
+    for (i = 0; i < len; i++) {
+        if (input_format[i] == '/') {
+            j = i;
+        }
+    }
+    for (i = 0; i < j; i++) {
+        output[i] = input_format[i];
+    }
+    output[i] = '\0';
+    pikaFree(input_format, input_len + 1);
+    return i;
+}
+
+int strPathGetFileName(char* input, char* output) {
+    size_t input_len = strlen(input);
+    char* input_format = (char*)pikaMalloc(input_len + 1);
+    strPathFormat(input, input_format);
+    int len = strlen(input_format);
+    int i = 0;
+    int j = 0;
+    for (i = 0; i < len; i++) {
+        if (input_format[i] == '/') {
+            j = i;
+        }
+    }
+    for (i = j + 1; i < len; i++) {
+        output[i - j - 1] = input_format[i];
+    }
+    output[i - j - 1] = '\0';
+    pikaFree(input_format, input_len + 1);
+    return i - j - 1;
 }

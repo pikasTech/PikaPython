@@ -3651,11 +3651,11 @@ void byteCodeFrame_printAsArray(ByteCodeFrame* self) {
 
 PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
     Args buffs = {0};
-    char* module_name = strsCopy(&buffs, file_name);
-    strPopLastToken(module_name, '.');
-
+    char* module_name = strsPathGetFileName(&buffs, file_name);
+    char* pwd = strsPathGetFolder(&buffs, file_name);
     pika_platform_printf("(pikascript) pika compiler:\r\n");
     PikaMaker* maker = New_PikaMaker();
+    pikaMaker_setPWD(maker, pwd);
     pikaMaker_compileModuleWithDepends(maker, module_name);
     pikaMaker_linkCompiledModules(maker, "pikaModules_cache.py.a");
     pikaMaker_deinit(maker);

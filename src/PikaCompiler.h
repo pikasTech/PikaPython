@@ -45,9 +45,4 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
 #define PIKA_APP_VERSION_OFFSET 2
 #define PIKA_APP_MODULE_NUM_OFFSET 3
 
-int pikaPath_format(char* input, char* output);
-int pikaPath_join(char* input1, char* input2, char* output);
-int pikaPath_getFolder(char* input, char* output);
-int pikaPath_getFileName(char* input, char* output);
-
 #endif

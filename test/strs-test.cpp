@@ -141,4 +141,15 @@ TEST(str, transfer_issue_jfo4i) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(strs, path_join) {
+    Args* buffs = New_strBuff();
+    EXPECT_STREQ(strsPathJoin(buffs, "", "test.py"), "test.py");
+    EXPECT_STREQ(strsPathJoin(buffs, "test", "test.py"), "test/test.py");
+    EXPECT_STREQ(strsPathJoin(buffs, "test/", "test.py"), "test/test.py");
+    EXPECT_STREQ(strsPathJoin(buffs, "test/", "/test.py"), "test/test.py");
+    EXPECT_STREQ(strsPathJoin(buffs, "path1", "path2/"), "path1/path2/");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END
