@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the PikaScript project.
  * http://github.com/pikastech/pikascript
  *
@@ -44,7 +44,7 @@
 #if PIKA_ASSERT_ENABLE
     #define pika_assert(expr) \
     if(!(expr)) { \
-        pika_platform_printf("Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
+        pika_platform_printf((char*)"Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
         abort(); \
     }
 #else

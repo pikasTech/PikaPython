@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the PikaScript project.
  * http://github.com/pikastech/pikascript
  *
@@ -3652,6 +3652,7 @@ void byteCodeFrame_printAsArray(ByteCodeFrame* self) {
 PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
     Args buffs = {0};
     char* module_name = strsPathGetFileName(&buffs, file_name);
+    strPopLastToken(module_name, '.');
     char* pwd = strsPathGetFolder(&buffs, file_name);
     pika_platform_printf("(pikascript) pika compiler:\r\n");
     PikaMaker* maker = New_PikaMaker();

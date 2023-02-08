@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the PikaScript project.
  * http://github.com/pikastech/pikascript
  *
@@ -637,8 +637,8 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     ConstPool* const_pool = NULL;
     InstructArray* ins_array = NULL;
     char* module_path =
-        strsAppend(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
-    module_path = strsAppend(&buffs, module_path, module_name);
+        strsPathJoin(&buffs, obj_getStr(self, "pwd"), "pikascript-api/");
+    module_path = strsPathJoin(&buffs, module_path, module_name);
     char* file_path = strsAppend(&buffs, module_path, ".py.o");
     Arg* file_arg = arg_loadFile(NULL, file_path);
     uint8_t offset_befor = 0;
@@ -815,10 +815,10 @@ int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
         char* state = obj_getStr(module_obj, "state");
         if (strEqu(state, "compiled")) {
             char* pwd = obj_getStr(maker, "pwd");
-            char* folder_path = strsAppend(&buffs, pwd, "pikascript-api/");
+            char* folder_path = strsPathJoin(&buffs, pwd, "pikascript-api/");
             char* module_file_name = strsAppend(&buffs, module_name, ".py.o");
             char* module_file_path =
-                strsAppend(&buffs, folder_path, module_file_name);
+                strsPathJoin(&buffs, folder_path, module_file_name);
             LibObj_staticLinkFile(lib, module_file_path);
         }
     }
@@ -842,11 +842,9 @@ PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
     args_foreach(self->list, __foreach_handler_linkCompiledModules, &context);
     args_deinit_stack(&context);
     char* pwd = obj_getStr(self, "pwd");
-    char* lib_path_folder = strsCopy(&buffs, lib_path);
-    strPopLastToken(lib_path_folder, '/');
-    char* folder_path = strsAppend(&buffs, pwd, lib_path_folder);
-    folder_path = strsAppend(&buffs, folder_path, "/");
-    char* lib_file_path = strsAppend(&buffs, pwd, lib_path);
+    char* lib_path_folder = strsPathGetFolder(&buffs, lib_path);
+    char* folder_path = strsPathJoin(&buffs, pwd, lib_path_folder);
+    char* lib_file_path = strsPathJoin(&buffs, pwd, lib_path);
     LibObj_saveLibraryFile(lib, lib_file_path);
     Lib_loadLibraryFileToArray(lib_file_path, folder_path);
     strsDeinit(&buffs);
@@ -855,7 +853,7 @@ PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
 
 PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
     Args buffs = {0};
-    char* lib_file_path = strsAppend(&buffs, "pikascript-api/", lib_name);
+    char* lib_file_path = strsPathJoin(&buffs, "pikascript-api/", lib_name);
     PIKA_RES res = pikaMaker_linkCompiledModulesFullPath(self, lib_file_path);
     strsDeinit(&buffs);
     return res;

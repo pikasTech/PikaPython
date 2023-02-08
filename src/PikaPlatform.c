@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the PikaScript project.
  * http://github.com/pikastech/pikascript
  *
