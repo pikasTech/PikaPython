@@ -306,11 +306,11 @@ Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setObj(Arg* self, char* name, PikaObj* obj);
 
 static inline Arg* arg_newObj(PikaObj* obj) {
-    return arg_setObj(NULL, (char*)"", (obj));
+    return arg_setObj(NULL, "", (obj));
 }
 
 static inline Arg* arg_newRef(PikaObj* obj) {
-    return arg_setRef(NULL, (char*)"", (obj));
+    return arg_setRef(NULL, "", (obj));
 }
 
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
