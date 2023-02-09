@@ -5197,8 +5197,76 @@ TEST(parser, tuple_void) {
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
                  "0 RUN \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, page_add) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "PikaUI.Page().add(\n"
+        "    ui.Widget(\n"
+        "        pos=(0, 50),\n"
+        "        width=300,\n"
+        "        height=180,\n"
+        "    ).add(\n"
+        "        ui.Button(\n"
+        "            width=120,\n"
+        "            height=30,\n"
+        "            align=ui.ALIGN.CENTER,\n"
+        "            pos=(0, 40),\n"
+        "            text='Hello PikaUI !'\n"
+        "        ),\n"
+        "        ui.Text(\n"
+        "            text=\"Welcome to PikaUI !\",\n"
+        "            width=200,\n"
+        "            pos=(25, 20)\n"
+        "        )\n"
+        "    ),\n"
+        ").update()\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
                  "B0\n"
-                 );
+                 "2 RUN PikaUI.Page\n"
+                 "5 NUM 0\n"
+                 "5 NUM 50\n"
+                 "4 RUN \n"
+                 "4 OUT pos\n"
+                 "4 NUM 300\n"
+                 "4 OUT width\n"
+                 "4 NUM 180\n"
+                 "4 OUT height\n"
+                 "3 RUN ui.Widget\n"
+                 "4 NUM 120\n"
+                 "4 OUT width\n"
+                 "4 NUM 30\n"
+                 "4 OUT height\n"
+                 "4 REF ui.ALIGN.CENTER\n"
+                 "4 OUT align\n"
+                 "5 NUM 0\n"
+                 "5 NUM 40\n"
+                 "4 RUN \n"
+                 "4 OUT pos\n"
+                 "4 STR Hello PikaUI !\n"
+                 "4 OUT text\n"
+                 "3 RUN ui.Button\n"
+                 "4 STR Welcome to PikaUI !\n"
+                 "4 OUT text\n"
+                 "4 NUM 200\n"
+                 "4 OUT width\n"
+                 "5 NUM 25\n"
+                 "5 NUM 20\n"
+                 "4 RUN \n"
+                 "4 OUT pos\n"
+                 "3 RUN ui.Text\n"
+                 "2 RUN .add\n"
+                 "1 RUN .add\n"
+                 "0 RUN .update\n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
