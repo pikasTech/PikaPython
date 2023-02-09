@@ -2623,6 +2623,14 @@ TEST(vm, tuple_void) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+
+TEST(vm, run_file){
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    pikaVM_runFile(pikaMain, "package/pikascript/main.py");
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

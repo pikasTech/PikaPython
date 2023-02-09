@@ -679,12 +679,13 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
                                          imp_module_path);
                     /* found *.py.o, push to compiled list */
                     pikaMaker_setState(self, imp_module_name, "compiled");
-                    char* imp_api_path = strsAppend(
+                    char* imp_api_path = strsPathJoin(
                         &buffs, obj_getStr(self, "pwd"), "pikascript-api/");
                     imp_api_path =
-                        strsAppend(&buffs, imp_api_path, imp_module_name);
+                        strsPathJoin(&buffs, imp_api_path, imp_module_name);
                     FILE* imp_file_pyo_api = pika_platform_fopen(
                         strsAppend(&buffs, imp_api_path, ".py.o"), "wb+");
+                    pika_assert(imp_file_pyo_api != NULL);
                     /* copy imp_file_pyo to imp_api_path */
                     uint8_t* buff = (uint8_t*)pika_platform_malloc(128);
                     size_t read_size = 0;

@@ -239,6 +239,7 @@ PIKA_WEAK size_t pika_platform_fwrite(const void* ptr,
                                       size_t size,
                                       size_t n,
                                       FILE* stream) {
+    pika_assert(NULL != stream);
 #if defined(__linux) || defined(_WIN32)
     return fwrite(ptr, size, n, stream);
 #else
