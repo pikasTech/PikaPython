@@ -1132,11 +1132,11 @@ static void _load_call_arg(VMState* vm,
     (f->n_positional_got)++;
 }
 
-static int _get_n_input_with_unpack(VMState* vm) {
+static int _get_n_input_with_unpack(VMState* vm, int n_used) {
 #if PIKA_NANO_ENABLE
     return VMState_getInputArgNum(vm);
 #else
-    int n_input = VMState_getInputArgNum(vm);
+    int n_input = VMState_getInputArgNum(vm) - n_used;
     int get_star = 0;
     int unpack_num = 0;
     for (int i = 0; i < n_input; i++) {
@@ -1268,7 +1268,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         f.n_positional--;
     }
 
-    f.n_input = _get_n_input_with_unpack(vm);
+    f.n_input = _get_n_input_with_unpack(vm, n_used);
 
     /* check arg num */
     if (f.method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
@@ -1306,7 +1306,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
 
     if (vars_or_keys_or_default) {
-        f.n_arg = f.n_input - n_used;
+        f.n_arg = f.n_input;
     } else {
         f.n_arg = f.n_positional;
     }
