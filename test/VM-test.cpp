@@ -2623,13 +2623,35 @@ TEST(vm, tuple_void) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
-TEST(vm, run_file){
+TEST(vm, run_file) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     pikaVM_runFile(pikaMain, "package/pikascript/main.py");
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+// TEST(vm, ui_page) {
+//     /* init */
+//     pikaMemInfo.heapUsedMax = 0;
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     extern unsigned char pikaModules_py_a[];
+//     obj_linkLibrary(pikaMain, pikaModules_py_a);
+//     /* run */
+//     __platform_printf("BEGIN\r\n");
+//     obj_run(pikaMain,
+//             "import PikaUI as ui\n"
+//             "ui.Page().add(\n"
+//             "    ui.Widget(\n"
+//             "    ).add(\n"
+//             "        ui.Text()\n"
+//             "    ),\n"
+//             ")\n");
+//     /* collect */
+//     /* assert */
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 #endif
 

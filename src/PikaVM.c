@@ -1306,7 +1306,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
 
     if (vars_or_keys_or_default) {
-        f.n_arg = f.n_input;
+        f.n_arg = f.n_input - n_used;
     } else {
         f.n_arg = f.n_positional;
     }
@@ -3517,21 +3517,19 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     pika_assert(NULL != run_state);
     int size = bytecode_frame->instruct_array.size;
     /* locals is the local scope */
-    VMState vm = {
-        .bytecode_frame = bytecode_frame,
-        .locals = locals,
-        .globals = globals,
-        .jmp = 0,
-        .pc = pc,
-        .loop_deepth = 0,
-        .error_code = PIKA_RES_OK,
-        .line_error_code = PIKA_RES_OK,
-        .try_error_code = PIKA_RES_OK,
-        .run_state = run_state,
-        .ins_cnt = 0,
-        .in_super = PIKA_FALSE,
-        .super_invoke_deepth = 0,
-    };
+    VMState vm = {.bytecode_frame = bytecode_frame,
+                  .locals = locals,
+                  .globals = globals,
+                  .jmp = 0,
+                  .pc = pc,
+                  .loop_deepth = 0,
+                  .error_code = PIKA_RES_OK,
+                  .line_error_code = PIKA_RES_OK,
+                  .try_error_code = PIKA_RES_OK,
+                  .run_state = run_state,
+                  .ins_cnt = 0,
+                  .in_super = PIKA_FALSE,
+                  .super_invoke_deepth = 0};
     stack_init(&(vm.stack));
     VMState_initReg(&vm);
     if (PikaVMSignal.vm_cnt == 0) {
