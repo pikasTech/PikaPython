@@ -48,6 +48,9 @@ Arg* _modbus__ModBus_deserializeReadRegisters(PikaObj* self, int msgLength) {
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
     int len = agile_modbus_deserialize_read_registers(ctx, msgLength,
                                                       (uint16_t*)buff);
+    if (len < 0) {
+        return NULL;
+    }
     return arg_newBytes((uint8_t*)buff, len * 2);
 }
 
@@ -55,6 +58,9 @@ Arg* _modbus__ModBus_deserializeReadBits(PikaObj* self, int msgLength) {
     uint8_t buff[128] = {0};
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
     int len = agile_modbus_deserialize_read_bits(ctx, msgLength, buff);
+    if (len < 0) {
+        return NULL;
+    }
     return arg_newBytes(buff, len);
 }
 
@@ -62,6 +68,9 @@ Arg* _modbus__ModBus_deserializeReadInputBits(PikaObj* self, int msgLength) {
     uint8_t buff[128] = {0};
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
     int len = agile_modbus_deserialize_read_input_bits(ctx, msgLength, buff);
+    if (len < 0) {
+        return NULL;
+    }
     return arg_newBytes(buff, len);
 }
 
@@ -71,6 +80,9 @@ Arg* _modbus__ModBus_deserializeReadInputRegisters(PikaObj* self,
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
     int len = agile_modbus_deserialize_read_input_registers(ctx, msgLength,
                                                             (uint16_t*)buff);
+    if (len < 0) {
+        return NULL;
+    }
     return arg_newBytes((uint8_t*)buff, len * 2);
 }
 
@@ -81,6 +93,9 @@ Arg* _modbus__ModBus_deserializeReportSlaveId(PikaObj* self,
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
     int len = agile_modbus_deserialize_report_slave_id(ctx, msgLength, maxDest,
                                                        (uint8_t*)buff);
+    if (len < 0) {
+        return NULL;
+    }
     return arg_newBytes(buff, len);
 }
 
@@ -90,6 +105,9 @@ Arg* _modbus__ModBus_deserializeWriteAndReadRegisters(PikaObj* self,
     agile_modbus_t* ctx = obj_getPtr(self, "ctx");
     int len = agile_modbus_deserialize_write_and_read_registers(
         ctx, msgLength, (uint16_t*)buff);
+    if (len < 0) {
+        return NULL;
+    }
     return arg_newBytes((uint8_t*)buff, len * 2);
 }
 

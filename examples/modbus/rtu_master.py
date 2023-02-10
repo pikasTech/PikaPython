@@ -12,5 +12,10 @@ host_regists = mb_tcp.deserializeReadRegisters(
 print(host_regists)
 
 
+mb_tcp.serializeReadInputRegisters(0, 2)
+
+mb_tcp.deserializeReadInputRegisters(b'\x01\x04\x04\x00\x00\x08\xE6\x7D\xCE')
+
+
 send_buff = mb_tcp.serializeWriteRegister(0, 0x1234)
 print(send_buff)
