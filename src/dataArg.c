@@ -452,15 +452,24 @@ Arg* New_arg(void* voidPointer) {
     return NULL;
 }
 
+static void _arg_refcnt_fix(Arg* self) {
+    ArgType arg_type = arg_getType(self);
+    if (ARG_TYPE_OBJECT == arg_type) {
+        obj_refcntInc((PikaObj*)arg_getPtr(self));
+    }
+    // if (ARG_TYPE_METHOD_OBJECT == arg_type) {
+    //     if (NULL != methodArg_getHostObj(self)) {
+    //         obj_refcntInc((PikaObj*)arg_getPtr(self));
+    //     }
+    // }
+}
+
 Arg* arg_copy(Arg* arg_src) {
     if (NULL == arg_src) {
         return NULL;
     }
     pika_assert(arg_src->flag < ARG_FLAG_MAX);
-    ArgType arg_type = arg_getType(arg_src);
-    if (ARG_TYPE_OBJECT == arg_type) {
-        obj_refcntInc((PikaObj*)arg_getPtr(arg_src));
-    }
+    _arg_refcnt_fix(arg_src);
     Arg* arg_dict = New_arg(NULL);
     arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
                               arg_getContentSize(arg_src));
@@ -482,10 +491,7 @@ Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
     if (arg_getSize(arg_src) > arg_getSize(arg_dict)) {
         return arg_copy(arg_src);
     }
-    ArgType arg_type = arg_getType(arg_src);
-    if (ARG_TYPE_OBJECT == arg_type) {
-        obj_refcntInc((PikaObj*)arg_getPtr(arg_src));
-    }
+    _arg_refcnt_fix(arg_src);
     arg_setSerialized(arg_dict, PIKA_FALSE);
     arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
                               arg_getContentSize(arg_src));
@@ -533,6 +539,7 @@ void* arg_getHeapStruct(Arg* self) {
     return arg_getContent(self) + sizeof(void*);
 }
 
+
 void arg_deinitHeap(Arg* self) {
     if (arg_getIsWeakRef(self)) {
         return;
@@ -549,13 +556,15 @@ void arg_deinitHeap(Arg* self) {
     /* deinit sub object */
     if (ARG_TYPE_OBJECT == type) {
         PikaObj* subObj = arg_getPtr(self);
-        obj_refcntDec(subObj);
-        int ref_cnt = obj_refcntNow(subObj);
-        if (ref_cnt <= 0) {
-            obj_deinit(subObj);
-        }
+        obj_GC(subObj);
         return;
     }
+    // if (ARG_TYPE_METHOD_OBJECT == type) {
+    //     PikaObj* hostObj = methodArg_getHostObj(self);
+    //     if (NULL != hostObj) {
+    //         obj_GC(hostObj);
+    //     }
+    // }
 }
 
 /* load file as byte array */

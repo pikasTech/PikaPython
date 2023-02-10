@@ -1,7 +1,7 @@
 import PikaUI_core as core
-# import pika_lvgl
+import textgui
 
-# core.set_backend(pika_lvgl)
+core.set_backend(textgui)
 
 class Widget(core.Widget):
     pass

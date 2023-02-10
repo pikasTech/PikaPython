@@ -135,6 +135,7 @@ typedef struct MethodProp {
     char* name;
     ByteCodeFrame* bytecode_frame;
     PikaObj* def_context;
+    PikaObj* host_obj;
     char* declareation;
 } MethodProp;
 
@@ -151,6 +152,7 @@ typedef PikaObj PikaMaker;
 
 /* operation */
 int32_t obj_deinit(PikaObj* self);
+int obj_GC(PikaObj* self);
 int32_t obj_init(PikaObj* self, Args* args);
 int32_t obj_update(PikaObj* self);
 int32_t obj_enable(PikaObj* self);
@@ -255,6 +257,8 @@ void method_returnArg(Args* args, Arg* arg);
 char* methodArg_getDec(Arg* method_arg);
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size);
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size);
+int methodArg_setHostObj(Arg* method_arg, PikaObj* host_obj);
+PikaObj* methodArg_getHostObj(Arg* method_arg);
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg);
 Method methodArg_getPtr(Arg* method_arg);
 

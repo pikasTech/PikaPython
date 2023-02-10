@@ -757,7 +757,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    PikaObj* host_object = NULL;
+    PikaObj* host_obj = NULL;
     char* arg_path = data;
     char* arg_name = strPointToLastToken(arg_path, '.');
     PIKA_BOOL is_temp = PIKA_FALSE;
@@ -788,44 +788,44 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     Arg* res = NULL;
     if (arg_path[0] == '.') {
         /* find host from stack */
-        Arg* host_obj = stack_popArg_alloc(&(vm->stack));
-        if (argType_isObject(arg_getType(host_obj))) {
-            host_object = arg_getPtr(host_obj);
-            res = arg_copy_noalloc(obj_getArg(host_object, arg_path + 1),
+        Arg* host_arg = stack_popArg_alloc(&(vm->stack));
+        if (argType_isObject(arg_getType(host_arg))) {
+            host_obj = arg_getPtr(host_arg);
+            res = arg_copy_noalloc(obj_getArg(host_obj, arg_path + 1),
                                    arg_ret_reg);
         }
-        arg_deinit(host_obj);
+        arg_deinit(host_arg);
         goto exit;
     }
 
     /* find in local list first */
-    if (NULL == host_object) {
-        host_object = obj_getHostObjWithIsTemp(vm->locals, arg_path, &is_temp);
+    if (NULL == host_obj) {
+        host_obj = obj_getHostObjWithIsTemp(vm->locals, arg_path, &is_temp);
     }
 
     /* find in global list */
-    if (NULL == host_object) {
-        host_object = obj_getHostObjWithIsTemp(vm->globals, arg_path, &is_temp);
+    if (NULL == host_obj) {
+        host_obj = obj_getHostObjWithIsTemp(vm->globals, arg_path, &is_temp);
     }
 
     /* error cannot found host_object */
-    if (NULL == host_object) {
+    if (NULL == host_obj) {
         goto exit;
     }
 
     /* proxy */
     if (NULL == res) {
-        res = _proxy_getattribute(host_object, arg_name);
+        res = _proxy_getattribute(host_obj, arg_name);
     }
 
     /* find res in host */
     if (NULL == res) {
-        res = args_getArg(host_object->list, arg_name);
+        res = args_getArg(host_obj->list, arg_name);
     }
 
     /* find res in host prop */
     if (NULL == res) {
-        res = _obj_getProp(host_object, arg_name);
+        res = _obj_getProp(host_obj, arg_name);
     }
 
     /* find res in globlas */
@@ -840,7 +840,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
 
     /* proxy */
     if (NULL == res) {
-        res = _proxy_getattr(host_object, arg_name);
+        res = _proxy_getattr(host_obj, arg_name);
     }
 exit:
     if (NULL == res) {
@@ -848,10 +848,13 @@ exit:
         pika_platform_printf("NameError: name '%s' is not defined\r\n",
                              arg_path);
     } else {
+        if (arg_getType(res) == ARG_TYPE_METHOD_OBJECT) {
+            methodArg_setHostObj(res, host_obj);
+        }
         res = arg_copy_noalloc(res, arg_ret_reg);
     }
     if (is_temp) {
-        obj_deinit(host_object);
+        obj_GC(host_obj);
     }
     return res;
 }
@@ -1390,7 +1393,11 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     /* load 'self' as the first arg when call object method */
     if (f.method_type == ARG_TYPE_METHOD_OBJECT) {
-        Arg* call_arg = arg_setRef(NULL, "self", method_host_obj);
+        PikaObj* method_self = methodArg_getHostObj(method_arg);
+        if (NULL == method_self) {
+            method_self = method_host_obj;
+        }
+        Arg* call_arg = arg_setRef(NULL, "self", method_self);
         pika_assert(call_arg != NULL);
         argv[argc++] = call_arg;
     }
@@ -1813,7 +1820,7 @@ exit:
     }
     if (NULL != method_host && is_temp) {
         /* class method */
-        obj_deinit(method_host);
+        obj_GC(method_host);
     }
 
     return return_arg;

@@ -1355,10 +1355,28 @@ TEST(vm, cb_2) {
     pikaVM_runSingleFile(pikaMain, "../../examples/Callback/test2.py");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[4], "__init__\r\n");
-    EXPECT_STREQ(log_buff[2], "a\r\n");
-    EXPECT_STREQ(log_buff[1], "b\r\n");
+    EXPECT_STREQ(log_buff[6], "__init__\r\n");
+    EXPECT_STREQ(log_buff[5], "a\r\n");
+    EXPECT_STREQ(log_buff[4], "a\r\n");
+    EXPECT_STREQ(log_buff[3], "b\r\n");
+    EXPECT_STREQ(log_buff[2], "b\r\n");
+    EXPECT_STREQ(log_buff[1], "ppp\r\n");
     EXPECT_STREQ(log_buff[0], "ppp\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, cb_3) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/callback/test3.py");
+    /* collect */
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2629,29 +2647,6 @@ TEST(vm, run_file) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
-// TEST(vm, ui_page) {
-//     /* init */
-//     pikaMemInfo.heapUsedMax = 0;
-//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-//     extern unsigned char pikaModules_py_a[];
-//     obj_linkLibrary(pikaMain, pikaModules_py_a);
-//     /* run */
-//     __platform_printf("BEGIN\r\n");
-//     obj_run(pikaMain,
-//             "import PikaUI as ui\n"
-//             "ui.Page().add(\n"
-//             "    ui.Widget(\n"
-//             "    ).add(\n"
-//             "        ui.Text()\n"
-//             "    ),\n"
-//             ")\n");
-//     /* collect */
-//     /* assert */
-//     /* deinit */
-//     obj_deinit(pikaMain);
-//     EXPECT_EQ(pikaMemNow(), 0);
-// }
 
 #endif
 

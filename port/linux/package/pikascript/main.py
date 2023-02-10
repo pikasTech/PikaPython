@@ -6,8 +6,7 @@ import cb_test
 import configparser, network
 import test_module1, test_cmodule, test_module4, import_test
 import hashlib, hmac, aes, base64, time
-import _thread
-import PikaUI as ui
+import _thread, weakref
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')

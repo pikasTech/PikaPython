@@ -113,6 +113,15 @@ static int32_t obj_deinit_no_del(PikaObj* self) {
     return 0;
 }
 
+int obj_GC(PikaObj* self) {
+    obj_refcntDec(self);
+    int ref_cnt = obj_refcntNow(self);
+    if (ref_cnt <= 0) {
+        obj_deinit(self);
+    }
+    return 0;
+}
+
 int32_t obj_deinit(PikaObj* self) {
     Arg* del = obj_getMethodArg(self, "__del__");
     if (NULL != del) {
@@ -675,9 +684,9 @@ Method methodArg_getPtr(Arg* method_arg) {
 }
 
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
-    MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
-    if (NULL != method_store->type_list) {
-        return strcpy(buffs, method_store->type_list);
+    MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
+    if (NULL != prop->type_list) {
+        return strcpy(buffs, prop->type_list);
     }
     char* method_dec = methodArg_getDec(method_arg);
     pika_assert(strGetSize(method_dec) <= size);
@@ -690,6 +699,21 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
     char* res = strCut(buffs, method_dec, '(', ')');
     pika_assert(NULL != res);
     return res;
+}
+
+PikaObj* methodArg_getHostObj(Arg* method_arg) {
+    MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
+    return prop->host_obj;
+}
+
+int methodArg_setHostObj(Arg* method_arg, PikaObj* host_obj) {
+    MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
+    if (prop->host_obj == NULL) {
+        prop->host_obj = host_obj;
+        // obj_refcntInc(host_obj);
+        return 0;
+    }
+    return 0;
 }
 
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
@@ -764,6 +788,7 @@ static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
         .bytecode_frame = method_info->bytecode_frame,
         .def_context = method_info->def_context,
         .declareation = method_info->dec,  // const
+        .host_obj = NULL,
     };
     char* name = method_info->name;
     if (NULL == method_info->name) {
