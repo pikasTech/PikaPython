@@ -1355,7 +1355,7 @@ TEST(vm, cb_2) {
     pikaVM_runSingleFile(pikaMain, "../../examples/Callback/test2.py");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[6], "__init__\r\n");
+    EXPECT_STREQ(log_buff[7], "__init__\r\n");
     EXPECT_STREQ(log_buff[5], "a\r\n");
     EXPECT_STREQ(log_buff[4], "a\r\n");
     EXPECT_STREQ(log_buff[3], "b\r\n");
