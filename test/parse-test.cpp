@@ -3225,11 +3225,57 @@ TEST(parser, try1) {
                  "B1\n"
                  "1 STR in except\n"
                  "0 RUN print\n"
-                 "0 SER 0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+
+TEST(parser, except_issue) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "try:\n"
+        "    a = 1\n"
+        "    raise 0x25 + 256\n"
+        "    raise\n"
+        "except Excepthon:\n"
+        "    print('in except')\n"
+        "    break\n"
+        "\n";
+    printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 TRY \n"
+                 "B1\n"
+                 "0 NUM 1\n"
+                 "0 OUT a\n"
+                 "B1\n"
+                 "1 NUM 0x25\n"
+                 "1 NUM 256\n"
+                 "0 OPT +\n"
+                 "0 RIS \n"
+                 "B1\n"
+                 "0 REF RuntimeError\n"
+                 "0 RIS \n"
+                 "B0\n"
+                 "0 NTR \n"
+                 "0 GER \n"
+                 "0 JEZ 2\n"
+                 "B0\n"
+                 "0 EXP \n"
+                 "B1\n"
+                 "1 STR in except\n"
+                 "0 RUN print\n"
+                 "B1\n"
+                 "0 BRK \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST(parser, optissue1) {
@@ -3798,7 +3844,6 @@ TEST(parser, except_for) {
                  "0 EXP \n"
                  "B2\n"
                  "0 REF b\n"
-                 "0 SER 0\n"
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
@@ -4139,7 +4184,6 @@ TEST(parser, except_dict) {
                  "B1\n"
                  "1 STR in except\n"
                  "0 RUN print\n"
-                 "0 SER 0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);

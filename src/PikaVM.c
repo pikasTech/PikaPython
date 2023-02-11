@@ -306,8 +306,14 @@ static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
         enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
         char* data = VMState_getConstWithInstructUnit(vm, ins_unit_now);
         if ((0 == invoke_deepth) && (JEZ == ins) && data[0] == '2') {
-            loop_deepth = instructUnit_getBlockDeepth(ins_unit_now);
-            break;
+            InstructUnit* ins_unit_last = VMState_getInstructUnitWithOffset(
+                vm, offset - instructUnit_getSize());
+            enum Instruct ins_last = instructUnit_getInstruct(ins_unit_last);
+            /* skip try stmt */
+            if (GER != ins_last) {
+                loop_deepth = instructUnit_getBlockDeepth(ins_unit_now);
+                break;
+            }
         }
     }
 
@@ -494,6 +500,7 @@ Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj) {
             arg_obj = arg_getPtr(obj);
         }
         obj_setArg(arg_obj, "__key", key);
+        obj_removeArg(arg_obj, "__res");
         /* clang-format off */
         PIKA_PYTHON(
         __res = __getitem__(__key)
@@ -677,6 +684,7 @@ static Arg* VM_instruction_handler_EXP(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
+    vm->try_error_code = 0;
     return NULL;
 }
 

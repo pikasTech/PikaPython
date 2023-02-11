@@ -2818,10 +2818,6 @@ char* AST_genAsm(AST* ast, Args* outBuffs) {
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 GER \n");
                 pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 JEZ 2\n");
             }
-
-            if (strEqu(block_type, "except")) {
-                pikaAsm = strsAppend(outBuffs, pikaAsm, (char*)"0 SER 0\n");
-            }
 #endif
             /* goto the while start when exit while block */
             if (strEqu(block_type, "for")) {

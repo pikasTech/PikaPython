@@ -101,6 +101,7 @@ typedef enum {
     PIKA_RES_ERR_ASSERT = -16,
     PIKA_RES_ERR_SIGNAL_EVENT_FULL = -17,
     PIKA_RES_ERR_SIGNAL_EVENT_EMPTY = -18,
+    PIKA_RES_ERR_INDEX = -19,
 } PIKA_RES;
 
 /* clang-format off */

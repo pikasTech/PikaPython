@@ -161,6 +161,32 @@ TEST(except, trycmodule1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(except, except_break) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    /* run */
+    obj_run(pikaMain,
+            "l = [1,2,3]\n"
+            "sum = 0\n"
+            "for i in range(10):\n"
+            "    try:\n"
+            "        sum += l[i]\n"
+            "    except Exception:\n"
+            "        print('in excepton')\n"
+            "        break\n"
+            "print(sum)\n"
+            "\n"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_EQ(obj_getInt(pikaMain, "sum"), 6);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
