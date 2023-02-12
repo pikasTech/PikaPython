@@ -5,6 +5,7 @@
  * MIT License
  *
  * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2023 Gorgon Meducer embedded_zhuroan@hotmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +35,7 @@
 #include "dataMemory.h"
 #include "dataString.h"
 #include "dataStrs.h"
+#include "dataQueue.h"
 
 static volatile Arg* _help_modules_cmodule = NULL;
 static volatile PIKA_BOOL in_root_obj = PIKA_FALSE;
@@ -982,11 +984,221 @@ enum shellCTRL _inner_do_obj_runChar(   PikaObj* self,
                                        char inputChar,
                                        ShellConfig* shell);
 
+typedef enum {
+    __FILTER_NO_RESULT, 
+    __FILTER_FAIL_DROP_ONE,
+    __FILTER_SUCCESS_GET_ALL_PEEKED,
+    __FILTER_SUCCESS_DROP_ALL_PEEKED
+} FilterReturn;
+
+ 
+PIKA_BOOL _filter_msg_hi_pika_handler(  FilterItem *msg, 
+                                        PikaObj* self, 
+                                        ShellConfig* shell)
+{
+#if !(defined(__linux) || defined(_WIN32))
+    pika_platform_printf("Yes, I am here\r\n");
+#endif
+    return PIKA_TRUE;
+}
+
+ 
+PIKA_BOOL _filter_msg_bye_pika_handler(  FilterItem *msg, 
+                                        PikaObj* self, 
+                                        ShellConfig* shell)
+{
+#if !(defined(__linux) || defined(_WIN32))
+    pika_platform_printf("OK, see you\r\n");
+#endif
+    return PIKA_TRUE;
+}
+
+
+#define __MSG_DECLARE
+#include "__default_filter_msg_table.cfg"
+
+static const FilterItem c_default_filter_messages[] = {
+#define __MSG_TABLE
+#include "__default_filter_msg_table.cfg"
+};
+
+
+static FilterReturn _do_message_filter( PikaObj* self, 
+                                        ShellConfig* shell, 
+                                        FilterItem *msg, 
+                                        uint_fast16_t count)
+{
+    pika_assert(NULL != messages);
+    pika_assert(count > 0);
+    ByteQueue *queue = &shell->filter_fifo.queue;
+    FilterReturn result = __FILTER_FAIL_DROP_ONE;
+
+    do {
+        do {
+            if (msg->ignore_mask & shell->filter_fifo.ignore_mask) {
+                /* this message should be ignored */
+                break;
+            }
+        
+            if (NULL == msg->message){
+                break;
+            }
+            
+            uint_fast16_t message_size = msg->size;
+            if (!message_size) {
+                break;
+            }
+            
+            byte_queue_reset_peek(queue);
+            
+            /* do message comparison */
+            uint8_t *src = (uint8_t *)msg->message;
+            
+            if (msg->is_case_insensitive) {
+                do {
+                    uint8_t byte;
+                    if (!byte_queue_peek_one(queue, &byte)) {
+                        result = __FILTER_NO_RESULT;
+                        break;
+                    }
+                    char letter = *src++;
+
+                    if (letter >= 'A' && letter <= 'Z') {
+                        letter += 'a' - 'A';
+                    }
+                    
+                    if (byte >= 'A' && byte <= 'Z') {
+                        byte += 'a' - 'A';
+                    }
+                    
+                    if (letter != byte) {
+                        break;
+                    }
+                } while(--message_size);
+            } else {
+                do {
+                    uint8_t byte;
+                    if (!byte_queue_peek_one(queue, &byte)) {
+                        result = __FILTER_NO_RESULT;
+                        break;
+                    }
+                    if (*src++ != byte) {
+                        break;
+                    }
+                } while(--message_size);
+            }
+            
+            if (0 == message_size) {
+                /* message match */
+                if (NULL != msg->handler) {
+                    if (msg->handler(msg, self, shell)) {
+                        /* message is handled */
+                        if (msg->is_visible) {
+                            return __FILTER_SUCCESS_GET_ALL_PEEKED;
+                        } 
+
+                        return __FILTER_SUCCESS_DROP_ALL_PEEKED;
+                    }
+                }
+            }
+        } while(0);
+        
+        msg++;
+    } while(--count);
+
+    return result;
+}
+
+#ifndef dimof
+    #define dimof(__array)      (sizeof(__array) / sizeof(__array[0]))
+#endif
+
+int16_t _do_stream_filter(PikaObj* self, ShellConfig* shell){
+
+    ByteQueue *queue = &shell->filter_fifo.queue;
+    
+    FilterReturn result = _do_message_filter(self,
+                                shell,
+                                (FilterItem *)c_default_filter_messages,
+                                dimof(c_default_filter_messages));
+    int16_t drop_count = 0;
+    
+    switch (result) {
+        case __FILTER_NO_RESULT:
+            break;
+        case __FILTER_FAIL_DROP_ONE:
+            drop_count = 1;
+            break;
+        case __FILTER_SUCCESS_DROP_ALL_PEEKED:
+            byte_queue_drop_all_peeked(queue);
+            return 0;
+        case __FILTER_SUCCESS_GET_ALL_PEEKED:
+            drop_count = byte_queue_get_peeked_number(queue);
+            return drop_count;
+    }
+
+    /* user registered message filter */
+    if (NULL != shell->messages && shell->message_count) {
+        result = _do_message_filter(self,
+                                    shell,
+                                    shell->messages,
+                                    shell->message_count);
+        switch (result) {
+            case __FILTER_NO_RESULT:
+                break;
+            case __FILTER_FAIL_DROP_ONE:
+                drop_count = 1;
+                break;
+            case __FILTER_SUCCESS_DROP_ALL_PEEKED:
+                byte_queue_drop_all_peeked(&shell->filter_fifo.queue);
+                return 0;
+            case __FILTER_SUCCESS_GET_ALL_PEEKED:
+                drop_count = byte_queue_get_peeked_number(&shell->filter_fifo.queue);
+                return drop_count;
+        }
+    }
+
+    return drop_count;
+}
+
+
 PIKA_WEAK
 enum shellCTRL _do_obj_runChar(PikaObj* self,
                                char inputChar,
                                ShellConfig* shell) {
-    return _inner_do_obj_runChar(self, inputChar, shell);
+    ByteQueue *queue = &(shell->filter_fifo.queue);
+    
+    /* validation */
+    if (NULL == queue->buffer) {
+        /* need initialize first */
+        byte_queue_init(queue, 
+                        &shell->filter_fifo.buffer,
+                        sizeof(shell->filter_fifo.buffer),
+                        PIKA_FALSE);
+    }
+
+    PIKA_BOOL result = byte_queue_write_one(queue, inputChar); 
+    pika_assert(result != PIKA_FALSE);
+
+    int16_t byte_count;
+    do {
+        if (0 == byte_queue_peek_available_count(queue)) {
+            break;
+        }
+        byte_count = _do_stream_filter(self, shell);
+        int16_t n = byte_count;
+        
+        while(n--) {
+            PIKA_BOOL result = byte_queue_read_one(queue, (uint8_t *)&inputChar);
+            pika_assert(result != PIKA_FALSE);
+            
+            if (SHELL_CTRL_EXIT == _inner_do_obj_runChar(self, inputChar, shell)) {
+                return SHELL_CTRL_EXIT;
+            }
+        }
+    } while(byte_count);
+
+    return SHELL_CTRL_CONTINUE;
 }
 
 static

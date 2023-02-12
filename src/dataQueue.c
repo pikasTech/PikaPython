@@ -5,6 +5,7 @@
  * MIT License
  *
  * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2023 Gorgon Meducer embedded_zhuroan@hotmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -109,6 +110,10 @@ ByteQueue *byte_queue_init( ByteQueue *queue,
 
     queue->buffer = buffer;
     queue->buffer_size = size;
+    if (is_queue_full) {
+        queue->count = size;
+        queue->peek_count = size;
+    }
 
     return queue;
 }
@@ -182,6 +187,16 @@ void byte_queue_reset_peek(ByteQueue *queue)
     queue->peek_count = queue->count;
     queue->peek = queue->head;
     /* ------------------atomicity sensitive end  ---------------- */
+}
+
+uint_fast16_t byte_queue_get_peeked_number(ByteQueue *queue)
+{
+    return queue->count - queue->peek_count;
+}
+
+uint_fast16_t byte_queue_peek_available_count(ByteQueue *queue)
+{
+    return queue->peek_count;
 }
 
 

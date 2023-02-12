@@ -5,6 +5,7 @@
  * MIT License
  *
  * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2023 Gorgon Meducer embedded_zhuroan@hotmail.comByte
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -78,6 +79,8 @@ PIKA_BOOL byte_queue_read_one(ByteQueue *queue, uint8_t *byte_ptr);
 PIKA_BOOL byte_queue_peek_one(ByteQueue *queue, uint8_t *byte_ptr);
 void byte_queue_reset_peek(ByteQueue *queue);
 void byte_queue_drop_all_peeked(ByteQueue *queue);
+uint_fast16_t byte_queue_get_peeked_number(ByteQueue *queue);
+uint_fast16_t byte_queue_peek_available_count(ByteQueue *queue);
 PIKA_BOOL byte_queue_write_one(ByteQueue *queue, uint8_t byte);
 
 #endif
