@@ -976,9 +976,29 @@ static void _putc_cmd(char KEY_POS, int pos) {
     }
 }
 
+#if PIKA_SHELL_FILTER_ENABLE
+static
+enum shellCTRL _inner_do_obj_runChar(   PikaObj* self,
+                                       char inputChar,
+                                       ShellConfig* shell);
+
+PIKA_WEAK
 enum shellCTRL _do_obj_runChar(PikaObj* self,
                                char inputChar,
                                ShellConfig* shell) {
+    return _inner_do_obj_runChar(self, inputChar, shell);
+}
+
+static
+enum shellCTRL _inner_do_obj_runChar(   PikaObj* self,
+                                       char inputChar,
+                                       ShellConfig* shell) {
+#else
+
+enum shellCTRL _do_obj_runChar(PikaObj* self,
+                               char inputChar,
+                               ShellConfig* shell) {
+#endif
     char* input_line = NULL;
     enum shellCTRL ctrl = SHELL_CTRL_CONTINUE;
 #if !(defined(__linux) || defined(_WIN32))
