@@ -88,11 +88,9 @@ Arg* _socket_socket__recv(PikaObj* self, int num) {
             res_buff = arg_getBytes(res_r);
             pika_platform_memcpy(res_buff, data_recv, ret);
             arg_deinit(res);
-            __platform_printf("recv return res_r\n");
             return res_r;
         }
     }
-    __platform_printf("recv return res\n");
     return res;
 }
 
