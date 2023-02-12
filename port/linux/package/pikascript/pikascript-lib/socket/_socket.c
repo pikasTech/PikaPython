@@ -76,8 +76,23 @@ Arg* _socket_socket__recv(PikaObj* self, int num) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
             __platform_printf("recv error\n");
             return NULL;
+        }else{
+            Arg* res_r = arg_newBytes(NULL, 0);
+            arg_deinit(res);
+            return res_r;
+        }
+    } else {
+        if (ret < num) {
+            uint8_t* res_buff = NULL;
+            Arg* res_r = arg_newBytes(NULL, ret);
+            res_buff = arg_getBytes(res_r);
+            pika_platform_memcpy(res_buff, data_recv, ret);
+            arg_deinit(res);
+            __platform_printf("recv return res_r\n");
+            return res_r;
         }
     }
+    __platform_printf("recv return res\n");
     return res;
 }
 
