@@ -50,5 +50,8 @@ class socket(_socket.socket):
     def recv(self, num):
         return self._recv(num)
 
+    def setblocking(self, sta): 
+        return self._setblocking(sta)
+
 def gethostname():
     return _socket._gethostname()
