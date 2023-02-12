@@ -1091,15 +1091,15 @@ static FilterReturn _do_message_filter( PikaObj* self,
             if (0 == message_size) {
                 /* message match */
                 if (NULL != msg->handler) {
-                    if (msg->handler(msg, self, shell)) {
-                        /* message is handled */
-                        if (msg->is_visible) {
-                            return __FILTER_SUCCESS_GET_ALL_PEEKED;
-                        } 
-
-                        return __FILTER_SUCCESS_DROP_ALL_PEEKED;
+                    if (!msg->handler(msg, self, shell)) {
+                        break;
                     }
                 }
+                /* message is handled */
+                if (msg->is_visible) {
+                    return __FILTER_SUCCESS_GET_ALL_PEEKED;
+                }
+                return __FILTER_SUCCESS_DROP_ALL_PEEKED;
             }
         } while(0);
         
