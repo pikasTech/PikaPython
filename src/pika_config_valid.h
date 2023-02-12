@@ -348,6 +348,10 @@
         #define PIKA_SHELL_SAVE_APP_PATH "app.pika"
     #endif
 
+    #ifndef PIKA_SHELL_FILTER_ENABLE
+        #define PIKA_SHELL_FILTER_ENABLE 0
+    #endif
+
     #ifndef PIKA_EVENT_LIST_SIZE
         #define PIKA_EVENT_LIST_SIZE 16
     #endif
