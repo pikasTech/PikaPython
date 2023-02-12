@@ -714,4 +714,22 @@ TEST(compiler, thread_arg) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, prime_100) {
+    char* lines =
+        "num = 0\n"
+        "i = 2\n"
+        "for i in range(2,100):\n"
+        "    j=2\n"
+        "    is_prime = 1\n"
+        "    for j in range(2,i):\n"
+        "        if i%j==0 :\n"
+        "            is_prime = 0\n"
+        "            break\n"
+        "    if is_prime:\n"
+        "        num = num + i\n"
+        "\n";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END
