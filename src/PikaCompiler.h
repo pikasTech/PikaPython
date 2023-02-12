@@ -45,4 +45,16 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
 #define PIKA_APP_VERSION_OFFSET 2
 #define PIKA_APP_MODULE_NUM_OFFSET 3
 
+typedef struct {
+    uint8_t* addr;
+    size_t size;
+    size_t pos;
+} pikafs_FILE;
+
+pikafs_FILE* pikafs_fopen(char* file_name, char* mode);
+int pikafs_fread(void* buf, size_t size, size_t count, pikafs_FILE* file);
+int pikafs_fwrite(void* buf, size_t size, size_t count, pikafs_FILE* file);
+int pikafs_fclose(pikafs_FILE* file);
+
+
 #endif

@@ -865,3 +865,39 @@ PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path) {
     LibObj_staticLinkFile(lib, file_path);
     return PIKA_RES_OK;
 }
+
+pikafs_FILE* pikafs_fopen(char* file_name, char* mode) {
+    pikafs_FILE* f = (pikafs_FILE*)pikaMalloc(sizeof(pikafs_FILE));
+    memset(f, 0, sizeof(pikafs_FILE));
+    extern volatile PikaObj* __pikaMain;
+    uint8_t* library_bytes = obj_getPtr((PikaObj*)__pikaMain, "@libraw");
+    if (NULL == library_bytes) {
+        return NULL;
+    }
+    if (PIKA_RES_OK !=
+        _loadModuleDataWithName(library_bytes, file_name, &f->addr, &f->size)) {
+        return NULL;
+    }
+    return f;
+}
+
+int pikafs_fread(void* buf, size_t size, size_t count, pikafs_FILE* f) {
+    if (f->pos >= f->size) {
+        return 0;
+    }
+    if (f->pos + size * count > f->size) {
+        count = (f->size - f->pos) / size;
+    }
+    __platform_memcpy(buf, f->addr + f->pos, size * count);
+    f->pos += size * count;
+    return count;
+}
+
+int pikafs_fwrite(void* buf, size_t size, size_t count, pikafs_FILE* file) {
+    return -1;
+}
+
+int pikafs_fclose(pikafs_FILE* file) {
+    pikaFree(file,sizeof(pikafs_FILE));
+    return 0;
+}
