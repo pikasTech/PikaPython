@@ -2907,12 +2907,12 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
 
 const VM_instruct_handler VM_instruct_handler_table[__INSTRCUTION_CNT] = {
 #define __INS_TABLE
-#include "__instruction_table.cfg"
+#include "__instruction_table.h"
 };
 
 enum Instruct pikaVM_getInstructFromAsm(char* ins_str) {
 #define __INS_COMPIRE
-#include "__instruction_table.cfg"
+#include "__instruction_table.h"
     return NON;
 }
 
@@ -3404,7 +3404,7 @@ InstructUnit* instructArray_getNext(InstructArray* self) {
 
 static char* instructUnit_getInstructStr(InstructUnit* self) {
 #define __INS_GET_INS_STR
-#include "__instruction_table.cfg"
+#include "__instruction_table.h"
     return "NON";
 }
 

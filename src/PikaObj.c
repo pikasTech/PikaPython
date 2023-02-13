@@ -1001,11 +1001,11 @@ PIKA_BOOL _filter_msg_bye_pika_handler(FilterItem* msg,
 }
 
 #define __MSG_DECLARE
-#include "__default_filter_msg_table.cfg"
+#include "__default_filter_msg_table.h"
 
 static const FilterItem g_default_filter_messages[] = {
 #define __MSG_TABLE
-#include "__default_filter_msg_table.cfg"
+#include "__default_filter_msg_table.h"
 };
 
 static FilterReturn _do_message_filter(PikaObj* self,

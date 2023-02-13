@@ -37,7 +37,7 @@
 
 enum Instruct {
 #define __INS_ENUM
-#include "__instruction_table.cfg"
+#include "__instruction_table.h"
     __INSTRCUTION_CNT,
 };
 
