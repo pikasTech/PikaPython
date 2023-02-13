@@ -2832,6 +2832,8 @@ TEST(pikaMain, REPL_key_left_del) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_SHELL_FILTER_ENABLE
+
 TEST(pikaMain, SHELL_filter_hi_pika) {
     char lines[] = {"###Hi Pika"};
     /* init */
@@ -2885,6 +2887,7 @@ TEST(pikaMain, SHELL_filter_bye_pika_sence) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST(pikaMain, obj_setNone) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
