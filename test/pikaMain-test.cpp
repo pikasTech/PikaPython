@@ -2832,6 +2832,42 @@ TEST(pikaMain, REPL_key_left_del) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, SHELL_filter_hi_pika) {
+    char lines[] = {"###Hi Pika"};
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(pikaMain, lines[i]);
+    }
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "Yes, I am here\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, SHELL_filter_bye_pika) {
+    char lines[] = {"###bye pika"};
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(pikaMain, lines[i]);
+    }
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "OK, see you\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(pikaMain, obj_setNone) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     obj_setNone(pikaMain, "n");

@@ -25,7 +25,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#define  __DATA_QUEUE_CLASS_IMPLEMENT__
+#define __DATA_QUEUE_CLASS_IMPLEMENT__
 #include "dataQueue.h"
 #include "PikaPlatform.h"
 #include "dataArgs.h"
@@ -96,12 +96,10 @@ char* queue_popStr(Queue* queue) {
     return arg_getStr(__queue_popArg_noRmoveArg(queue));
 }
 
-
-ByteQueue *byte_queue_init( ByteQueue *queue, 
-                            void *buffer, 
-                            uint_fast16_t size, 
-                            PIKA_BOOL is_queue_full)
-{
+ByteQueue* byteQueue_init(ByteQueue* queue,
+                          void* buffer,
+                          uint_fast16_t size,
+                          PIKA_BOOL is_queue_full) {
     pika_assert(NULL != queue);
     pika_assert(NULL != buffer);
     pika_assert(size > 0);
@@ -118,8 +116,7 @@ ByteQueue *byte_queue_init( ByteQueue *queue,
     return queue;
 }
 
-PIKA_BOOL byte_queue_read_one(ByteQueue *queue, uint8_t *byte_ptr)
-{
+PIKA_BOOL byteQueue_readOne(ByteQueue* queue, uint8_t* byte_ptr) {
     pika_assert(NULL != queue);
     uint8_t byte;
     PIKA_BOOL result = PIKA_FALSE;
@@ -145,14 +142,13 @@ PIKA_BOOL byte_queue_read_one(ByteQueue *queue, uint8_t *byte_ptr)
             *byte_ptr = byte;
         }
         result = PIKA_TRUE;
-    } while(0);
+    } while (0);
     /* ------------------atomicity sensitive end  ---------------- */
 
     return result;
 }
 
-PIKA_BOOL byte_queue_peek_one(ByteQueue *queue, uint8_t *byte_ptr)
-{
+PIKA_BOOL byteQueue_peekOne(ByteQueue* queue, uint8_t* byte_ptr) {
     pika_assert(NULL != queue);
     uint8_t byte;
     PIKA_BOOL result = PIKA_FALSE;
@@ -174,14 +170,13 @@ PIKA_BOOL byte_queue_peek_one(ByteQueue *queue, uint8_t *byte_ptr)
             *byte_ptr = byte;
         }
         result = PIKA_TRUE;
-    } while(0);
+    } while (0);
     /* ------------------atomicity sensitive end  ---------------- */
 
     return result;
 }
 
-void byte_queue_reset_peek(ByteQueue *queue)
-{
+void byteQueue_resetPeek(ByteQueue* queue) {
     pika_assert(NULL != queue);
     /* ------------------atomicity sensitive start---------------- */
     queue->peek_count = queue->count;
@@ -189,19 +184,15 @@ void byte_queue_reset_peek(ByteQueue *queue)
     /* ------------------atomicity sensitive end  ---------------- */
 }
 
-uint_fast16_t byte_queue_get_peeked_number(ByteQueue *queue)
-{
+uint_fast16_t byteQueue_getPeekedNumber(ByteQueue* queue) {
     return queue->count - queue->peek_count;
 }
 
-uint_fast16_t byte_queue_peek_available_count(ByteQueue *queue)
-{
+uint_fast16_t byteQueue_peekAvailableCount(ByteQueue* queue) {
     return queue->peek_count;
 }
 
-
-void byte_queue_drop_all_peeked(ByteQueue *queue)
-{
+void byteQueue_dropAllPeeked(ByteQueue* queue) {
     pika_assert(NULL != queue);
     /* ------------------atomicity sensitive start---------------- */
     queue->count = queue->peek_count;
@@ -209,9 +200,7 @@ void byte_queue_drop_all_peeked(ByteQueue *queue)
     /* ------------------atomicity sensitive end  ---------------- */
 }
 
-
-PIKA_BOOL byte_queue_write_one(ByteQueue *queue, uint8_t byte)
-{
+PIKA_BOOL byteQueue_writeOne(ByteQueue* queue, uint8_t byte) {
     pika_assert(NULL != queue);
     PIKA_BOOL result = PIKA_FALSE;
 
@@ -230,7 +219,7 @@ PIKA_BOOL byte_queue_write_one(ByteQueue *queue, uint8_t byte)
         }
 
         result = PIKA_TRUE;
-    } while(0);
+    } while (0);
     /* ------------------atomicity sensitive end  ---------------- */
 
     return result;

@@ -65,9 +65,12 @@
             #define PIKA_SYNTAX_LEVEL PIKA_SYNTAX_LEVEL_MINIMAL
         #endif
 
-
         #ifndef PIKA_STRING_UTF8_ENABLE
             #define PIKA_STRING_UTF8_ENABLE 0
+        #endif
+
+        #ifndef PIKA_SHELL_FILTER_ENABLE
+            #define PIKA_SHELL_FILTER_ENABLE 0
         #endif
 
     #endif
@@ -349,7 +352,7 @@
     #endif
 
     #ifndef PIKA_SHELL_FILTER_ENABLE
-        #define PIKA_SHELL_FILTER_ENABLE 0
+        #define PIKA_SHELL_FILTER_ENABLE 1
     #endif
 
     #ifndef PIKA_SHELL_FILTER_FIFO_SIZE

@@ -71,16 +71,16 @@ Arg* queue_popArg_notDeinitArg(Queue* queue);
 int32_t queue_deinit_stack(Queue* queue);
 void queue_init(Queue* queue);
 
-ByteQueue *byte_queue_init( ByteQueue *queue, 
+ByteQueue *byteQueue_init( ByteQueue *queue, 
                             void *buffer, 
                             uint_fast16_t size, 
                             PIKA_BOOL is_queue_full);
-PIKA_BOOL byte_queue_read_one(ByteQueue *queue, uint8_t *byte_ptr);
-PIKA_BOOL byte_queue_peek_one(ByteQueue *queue, uint8_t *byte_ptr);
-void byte_queue_reset_peek(ByteQueue *queue);
-void byte_queue_drop_all_peeked(ByteQueue *queue);
-uint_fast16_t byte_queue_get_peeked_number(ByteQueue *queue);
-uint_fast16_t byte_queue_peek_available_count(ByteQueue *queue);
-PIKA_BOOL byte_queue_write_one(ByteQueue *queue, uint8_t byte);
+PIKA_BOOL byteQueue_readOne(ByteQueue *queue, uint8_t *byte_ptr);
+PIKA_BOOL byteQueue_peekOne(ByteQueue *queue, uint8_t *byte_ptr);
+void byteQueue_resetPeek(ByteQueue *queue);
+void byteQueue_dropAllPeeked(ByteQueue *queue);
+uint_fast16_t byteQueue_getPeekedNumber(ByteQueue *queue);
+uint_fast16_t byteQueue_peekAvailableCount(ByteQueue *queue);
+PIKA_BOOL byteQueue_writeOne(ByteQueue *queue, uint8_t byte);
 
 #endif
