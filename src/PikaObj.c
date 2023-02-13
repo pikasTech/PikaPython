@@ -1028,7 +1028,7 @@ static FilterReturn _do_message_filter( PikaObj* self,
                                         FilterItem *msg, 
                                         uint_fast16_t count)
 {
-    pika_assert(NULL != messages);
+    pika_assert(NULL != msg);
     pika_assert(count > 0);
     ByteQueue *queue = &shell->filter_fifo.queue;
     FilterReturn result = __FILTER_FAIL_DROP_ONE;
