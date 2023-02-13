@@ -12,12 +12,14 @@ void (*global_do_sleep_ms)(uint32_t);
 static void _do_sleep_ms_tick(uint32_t ms) {
     uint32_t tick = pika_platform_get_tick();
     while (pika_platform_get_tick() - tick < ms) {
-        _pikaVM_yield();
+        _VMEvent_pickupEvent();
     }
 }
 
 void _time_sleep_ms(PikaObj* self, int ms) {
+    pika_GIL_EXIT();
     global_do_sleep_ms(ms);
+    pika_GIL_ENTER();
 }
 
 void _time_sleep_s(PikaObj* self, int s) {
