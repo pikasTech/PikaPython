@@ -55,6 +55,7 @@ int pika_GIL_ENTER(void) {
         return 0;
     }
     int ret = pika_platform_thread_mutex_lock(&pikavm_global_lock);
+    pika_debug("pika_GIL_ENTER");
     if (!pikavm_global_lock.is_first_lock) {
         pikavm_global_lock.is_first_lock = 1;
     }
@@ -65,6 +66,7 @@ int pika_GIL_EXIT(void) {
     if (!pikavm_global_lock.is_init) {
         return 0;
     }
+    pika_debug("pika_GIL_EXIT");
     return pika_platform_thread_mutex_unlock(&pikavm_global_lock);
 }
 

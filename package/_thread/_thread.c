@@ -8,9 +8,11 @@ typedef struct pika_thread_info {
 } pika_thread_info;
 
 static void _thread_func(void* arg) {
+    pika_debug("waiting for first lock");
     while (!_VM_is_first_lock()) {
         pika_platform_thread_delay();
     }
+    pika_debug("thread start");
     pika_GIL_ENTER();
     PikaObj* ctx = New_PikaObj();
     pika_thread_info* info = (pika_thread_info*)arg;
@@ -33,9 +35,10 @@ static void _thread_func(void* arg) {
     obj_deinit(ctx);
     arg_deinit(info->function);
     arg_deinit(info->args);
+    pika_debug("thread exiting");
+    pika_GIL_EXIT();
     pika_platform_thread_destroy(info->thread);
     pikaFree(info, sizeof(pika_thread_info));
-    pika_GIL_EXIT();
 }
 
 void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {

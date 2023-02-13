@@ -297,6 +297,8 @@ PIKA_WEAK PIKA_BOOL pika_hook_arg_cache_filter(void* self) {
 PIKA_WEAK void pika_platform_thread_delay(void) {
 #if defined(__linux) || defined(_WIN32)
     return;
+#elif PIKA_FREERTOS_ENABLE
+    vTaskDelay(1);
 #else
     return;
 #endif
@@ -409,9 +411,11 @@ PIKA_WEAK void pika_platform_thread_destroy(pika_platform_thread_t* thread) {
         thread = NULL;
     }
 #elif PIKA_FREERTOS_ENABLE
-    if (NULL != thread)
-        vTaskDelete(thread->thread);
-    pika_platform_free(thread);
+    if (NULL != thread) {
+        vTaskDelete(NULL);  // test on esp32c3
+        // vTaskDelete(thread->thread);
+        pika_platform_free(thread);
+    }
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
