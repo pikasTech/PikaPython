@@ -2887,6 +2887,25 @@ TEST(pikaMain, SHELL_filter_bye_pika_sence) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, SHELL_filter_bye_pika_nomache) {
+    char lines[] = {"print('###Hi Pika')\nprint('###Hi_Pika')\n"};
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(pikaMain, lines[i]);
+    }
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "###Hi_Pika\r\n");
+    EXPECT_STREQ(log_buff[4], "Yes, I am here\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif
 
 TEST(pikaMain, obj_setNone) {
