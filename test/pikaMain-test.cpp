@@ -2850,8 +2850,26 @@ TEST(pikaMain, SHELL_filter_hi_pika) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(pikaMain, SHELL_filter_bye_pika) {
-    char lines[] = {"###bye pika"};
+TEST(pikaMain, SHELL_filter_hi_pika_sence) {
+    char lines[] = {"###hi pika"};
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(pikaMain, lines[i]);
+    }
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], ">>> ");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, SHELL_filter_bye_pika_sence) {
+    char lines[] = {"###Bye piKa"};
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
