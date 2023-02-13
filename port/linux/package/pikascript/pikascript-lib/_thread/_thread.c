@@ -11,7 +11,7 @@ static void _thread_func(void* arg) {
     while (!_VM_is_first_lock()) {
         pika_platform_thread_delay();
     }
-    pika_GIL_lock();
+    pika_GIL_ENTER();
     PikaObj* ctx = New_PikaObj();
     pika_thread_info* info = (pika_thread_info*)arg;
     obj_setArg(ctx, "args", info->args);
@@ -35,7 +35,7 @@ static void _thread_func(void* arg) {
     arg_deinit(info->args);
     pika_platform_thread_destroy(info->thread);
     pikaFree(info, sizeof(pika_thread_info));
-    pika_GIL_release();
+    pika_GIL_EXIT();
 }
 
 void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {

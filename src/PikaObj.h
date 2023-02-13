@@ -564,4 +564,7 @@ void obj_printModules(PikaObj* self);
     } while (0)
 #endif
 
+int pika_GIL_EXIT(void);
+int pika_GIL_ENTER(void);
+
 #endif

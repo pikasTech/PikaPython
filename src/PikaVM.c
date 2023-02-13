@@ -50,7 +50,7 @@ volatile VMSignal PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
 
 static pika_platform_thread_mutex_t pikavm_global_lock = {0};
 
-int pika_GIL_lock(void) {
+int pika_GIL_ENTER(void) {
     if (!pikavm_global_lock.is_init) {
         return 0;
     }
@@ -61,7 +61,7 @@ int pika_GIL_lock(void) {
     return ret;
 }
 
-int pika_GIL_release(void) {
+int pika_GIL_EXIT(void) {
     if (!pikavm_global_lock.is_init) {
         return 0;
     }
@@ -3688,7 +3688,6 @@ void _pikaVM_yield(void) {
 #if PIKA_EVENT_ENABLE
     _VMEvent_pickupEvent();
 #endif
-    pika_GIL_release();
-    pika_platform_thread_delay();
-    pika_GIL_lock();
+    pika_GIL_EXIT();
+    pika_GIL_ENTER();
 }
