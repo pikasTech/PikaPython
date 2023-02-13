@@ -5,6 +5,7 @@
  * MIT License
  *
  * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2023 Gorgon Meducer embedded_zhuroan@hotmail.comByte
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +30,29 @@
 #define __DATA_QUEUE__H
 #include "dataArgs.h"
 
+/*! \NOTE: Make sure #include "__pika_ooc.h" is close to the class definition
+ */
+#if defined(__DATA_QUEUE_CLASS_IMPLEMENT__)
+    #define __PLOOC_CLASS_IMPLEMENT__
+    #undef __DATA_QUEUE_CLASS_IMPLEMENT__
+#endif
+#include "__pika_ooc.h"
+
+typedef struct ByteQueue ByteQueue;
+struct ByteQueue {
+private_member(
+    uint8_t *buffer;
+    uint16_t buffer_size;
+
+    uint16_t head;
+    uint16_t tail;
+    uint16_t peek;
+
+    uint16_t count;
+    uint16_t peek_count;
+)
+};
+
 typedef Args Queue;
 Queue* New_queue(void);
 
@@ -46,4 +70,17 @@ Arg* queue_popArg(Queue* queue);
 Arg* queue_popArg_notDeinitArg(Queue* queue);
 int32_t queue_deinit_stack(Queue* queue);
 void queue_init(Queue* queue);
+
+ByteQueue *byte_queue_init( ByteQueue *queue, 
+                            void *buffer, 
+                            uint_fast16_t size, 
+                            PIKA_BOOL is_queue_full);
+PIKA_BOOL byte_queue_read_one(ByteQueue *queue, uint8_t *byte_ptr);
+PIKA_BOOL byte_queue_peek_one(ByteQueue *queue, uint8_t *byte_ptr);
+void byte_queue_reset_peek(ByteQueue *queue);
+void byte_queue_drop_all_peeked(ByteQueue *queue);
+uint_fast16_t byte_queue_get_peeked_number(ByteQueue *queue);
+uint_fast16_t byte_queue_peek_available_count(ByteQueue *queue);
+PIKA_BOOL byte_queue_write_one(ByteQueue *queue, uint8_t byte);
+
 #endif

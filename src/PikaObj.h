@@ -1,10 +1,11 @@
-﻿/*
+/*
  * This file is part of the PikaScript project.
  * http://github.com/pikastech/pikascript
  *
  * MIT License
  *
  * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2023 Gorgon Meducer embedded_zhuroan@hotmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +33,7 @@
 #include "dataLink.h"
 #include "dataMemory.h"
 #include "dataStrs.h"
+#include "dataQueue.h"
 
 typedef struct InstructUnit InstructUnit;
 struct InstructUnit {
@@ -277,7 +279,40 @@ typedef struct ShellConfig ShellConfig;
 typedef enum shellCTRL (*sh_handler)(PikaObj*, char*, ShellConfig*);
 typedef char (*sh_getchar)(void);
 
+
+#if PIKA_SHELL_FILTER_ENABLE
+typedef struct FilterFIFO {
+    ByteQueue queue;
+    uint8_t ignore_mask;
+    uint8_t buffer[PIKA_SHELL_FILTER_FIFO_SIZE];
+} FilterFIFO;
+
+typedef struct FilterItem FilterItem;
+
+typedef PIKA_BOOL FilterMessageHandler(  FilterItem *msg, 
+                                    PikaObj* self, 
+                                    ShellConfig* shell);
+
+struct FilterItem {
+    FilterMessageHandler   *handler;
+    const uint8_t          *message;
+    uint16_t                size;
+    uint8_t                 is_visible          : 1;
+    uint8_t                 is_case_insensitive : 1;
+    uint8_t                                     : 6;
+    uint8_t                 ignore_mask;
+    uintptr_t               target;
+};
+
+#endif
+
 struct ShellConfig {
+#if PIKA_SHELL_FILTER_ENABLE
+    FilterFIFO filter_fifo;
+    FilterItem *messages;
+    uint16_t message_count;
+    uint16_t                : 16;   /* padding to suppress warning*/
+#endif
     char* prefix;
     sh_handler handler;
     void* context;

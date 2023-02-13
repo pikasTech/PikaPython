@@ -26,11 +26,16 @@
  * SOFTWARE.
  */
 
+
 #ifndef __PIKA_OOC_H__
 #define __PIKA_OOC_H__
-    #if PIKA_PLOOC_ENABLE
-        #include "../pikascript-lib/PLOOC/plooc_class.h"
-    #else
+    /* non-reentrant part */
+    #if !defined(PIKA_PLOOC_ENABLE) || !PIKA_PLOOC_ENABLE
         #define private_member(...) __VA_ARGS__
     #endif
+#endif
+
+/* plooc_class.h should support reentrant */
+#if PIKA_PLOOC_ENABLE
+    #include "../pikascript-lib/PLOOC/plooc_class.h"
 #endif

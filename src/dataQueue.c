@@ -5,6 +5,7 @@
  * MIT License
  *
  * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2023 Gorgon Meducer embedded_zhuroan@hotmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +25,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#define  __DATA_QUEUE_CLASS_IMPLEMENT__
 #include "dataQueue.h"
 #include "PikaPlatform.h"
 #include "dataArgs.h"
@@ -93,4 +94,144 @@ int32_t queue_pushStr(Queue* queue, char* str) {
 
 char* queue_popStr(Queue* queue) {
     return arg_getStr(__queue_popArg_noRmoveArg(queue));
+}
+
+
+ByteQueue *byte_queue_init( ByteQueue *queue, 
+                            void *buffer, 
+                            uint_fast16_t size, 
+                            PIKA_BOOL is_queue_full)
+{
+    pika_assert(NULL != queue);
+    pika_assert(NULL != buffer);
+    pika_assert(size > 0);
+
+    pika_platform_memset(queue, 0, sizeof(ByteQueue));
+
+    queue->buffer = buffer;
+    queue->buffer_size = size;
+    if (is_queue_full) {
+        queue->count = size;
+        queue->peek_count = size;
+    }
+
+    return queue;
+}
+
+PIKA_BOOL byte_queue_read_one(ByteQueue *queue, uint8_t *byte_ptr)
+{
+    pika_assert(NULL != queue);
+    uint8_t byte;
+    PIKA_BOOL result = PIKA_FALSE;
+
+    /* ------------------atomicity sensitive start---------------- */
+    do {
+        if ((queue->head == queue->tail) && (0 == queue->count)) {
+            /* empty */
+            break;
+        }
+
+        byte = queue->buffer[queue->head++];
+        queue->count--;
+        if (queue->head >= queue->buffer_size) {
+            queue->head = 0;
+        }
+
+        /* reset peek */
+        queue->peek_count = queue->count;
+        queue->peek = queue->head;
+
+        if (NULL != byte_ptr) {
+            *byte_ptr = byte;
+        }
+        result = PIKA_TRUE;
+    } while(0);
+    /* ------------------atomicity sensitive end  ---------------- */
+
+    return result;
+}
+
+PIKA_BOOL byte_queue_peek_one(ByteQueue *queue, uint8_t *byte_ptr)
+{
+    pika_assert(NULL != queue);
+    uint8_t byte;
+    PIKA_BOOL result = PIKA_FALSE;
+
+    /* ------------------atomicity sensitive start---------------- */
+    do {
+        if ((queue->peek == queue->tail) && (0 == queue->peek_count)) {
+            /* empty */
+            break;
+        }
+
+        byte = queue->buffer[queue->peek++];
+        queue->peek_count--;
+        if (queue->peek >= queue->buffer_size) {
+            queue->peek = 0;
+        }
+
+        if (NULL != byte_ptr) {
+            *byte_ptr = byte;
+        }
+        result = PIKA_TRUE;
+    } while(0);
+    /* ------------------atomicity sensitive end  ---------------- */
+
+    return result;
+}
+
+void byte_queue_reset_peek(ByteQueue *queue)
+{
+    pika_assert(NULL != queue);
+    /* ------------------atomicity sensitive start---------------- */
+    queue->peek_count = queue->count;
+    queue->peek = queue->head;
+    /* ------------------atomicity sensitive end  ---------------- */
+}
+
+uint_fast16_t byte_queue_get_peeked_number(ByteQueue *queue)
+{
+    return queue->count - queue->peek_count;
+}
+
+uint_fast16_t byte_queue_peek_available_count(ByteQueue *queue)
+{
+    return queue->peek_count;
+}
+
+
+void byte_queue_drop_all_peeked(ByteQueue *queue)
+{
+    pika_assert(NULL != queue);
+    /* ------------------atomicity sensitive start---------------- */
+    queue->count = queue->peek_count;
+    queue->head = queue->peek;
+    /* ------------------atomicity sensitive end  ---------------- */
+}
+
+
+PIKA_BOOL byte_queue_write_one(ByteQueue *queue, uint8_t byte)
+{
+    pika_assert(NULL != queue);
+    PIKA_BOOL result = PIKA_FALSE;
+
+    /* ------------------atomicity sensitive start---------------- */
+    do {
+        if ((queue->head == queue->tail) && (0 != queue->count)) {
+            /* full */
+            break;
+        }
+
+        queue->buffer[queue->tail++] = byte;
+        queue->count++;
+        queue->peek_count++;
+        if (queue->tail >= queue->buffer_size) {
+            queue->tail = 0;
+        }
+
+        result = PIKA_TRUE;
+    } while(0);
+    /* ------------------atomicity sensitive end  ---------------- */
+
+    return result;
 }

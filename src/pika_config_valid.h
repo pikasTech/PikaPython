@@ -352,6 +352,10 @@
         #define PIKA_SHELL_FILTER_ENABLE 0
     #endif
 
+    #ifndef PIKA_SHELL_FILTER_FIFO_SIZE
+        #define PIKA_SHELL_FILTER_FIFO_SIZE    32
+    #endif
+
     #ifndef PIKA_EVENT_LIST_SIZE
         #define PIKA_EVENT_LIST_SIZE 16
     #endif
