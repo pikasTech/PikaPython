@@ -164,7 +164,7 @@ releases = [ "v1.0.0 42a3cebb085a4a995d80031685dbf630e053aa55", "v1.0.1 b77d20d7
 
 [[packages]]
 name = "time"
-releases = [ "v0.1.0 79df1cf1cc97436a4925c3065aef4a8f32d077d8", "v0.1.1 cd0029b6d1b4340b252532fcee1320667231038c",]
+releases = [ "v0.1.0 79df1cf1cc97436a4925c3065aef4a8f32d077d8", "v0.1.1 cd0029b6d1b4340b252532fcee1320667231038c", "v0.1.2 0d27c99cdc1fb86370d0e7519ae6db3a3b28f743",]
 
 [[packages]]
 name = "at_client"
