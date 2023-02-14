@@ -3230,7 +3230,6 @@ TEST(parser, try1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(parser, except_issue) {
     pikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
@@ -4196,6 +4195,42 @@ TEST(parser, default_fn_1) {
     Args* buffs = New_strBuff();
     char* lines =
         "def test(a=1, b='test'):\n"
+        "    print(a)";
+
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 DEF test(a=,b=)\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 EST a\n"
+                 "0 JNZ 2\n"
+                 "B1\n"
+                 "0 NUM 1\n"
+                 "0 OUT a\n"
+                 "B1\n"
+                 "0 EST b\n"
+                 "0 JNZ 2\n"
+                 "B1\n"
+                 "0 STR test\n"
+                 "0 OUT b\n"
+                 "B1\n"
+                 "1 REF a\n"
+                 "0 RUN print\n"
+                 "B1\n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, default_fn_1_hint) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "def test(a:int =1, b:str ='test'):\n"
         "    print(a)";
 
     __platform_printf("%s\n", lines);
@@ -5277,6 +5312,27 @@ TEST(parser, page_add) {
                  "2 RUN ui.Text\n"
                  "1 RUN .add\n"
                  "0 RUN page.add\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, hint_assign) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "a:int = 1\n"
+        "d:{str:int} = {}\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 NUM 1\n"
+                 "0 OUT a\n"
+                 "B0\n"
+                 "0 DCT \n"
+                 "0 OUT d\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);

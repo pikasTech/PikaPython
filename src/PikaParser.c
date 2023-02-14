@@ -1013,7 +1013,7 @@ char* Cursor_popToken(Args* buffs, char** pStmt, char* devide) {
 }
 
 char* Cursor_splitCollect(Args* buffs, char* stmt, char* devide, int index) {
-    Arg* out_arg = arg_newStr("");
+    Arg* aOut = arg_newStr("");
     int expect_branket = 0;
     if (devide[0] == '(' || devide[0] == '[' || devide[0] == '{') {
         expect_branket = 1;
@@ -1024,18 +1024,21 @@ char* Cursor_splitCollect(Args* buffs, char* stmt, char* devide, int index) {
         if (cs.branket_deepth == expect_branket &&
             strEqu(cs.token1.pyload, devide)) {
             i++;
-            if (i == index) {
-                Cursor_iterEnd(&cs);
-                break;
-            }
+            Cursor_iterEnd(&cs);
+            continue;
         }
         if (i == index) {
-            out_arg = arg_strAppend(out_arg, cs.token1.pyload);
+            aOut = arg_strAppend(aOut, cs.token1.pyload);
         }
         Cursor_iterEnd(&cs);
     }
     Cursor_deinit(&cs);
-    return strsCacheArg(buffs, out_arg);
+    /* if not found, return origin string */
+    if (i == 0) {
+        arg_deinit(aOut);
+        aOut = arg_newStr(stmt);
+    }
+    return strsCacheArg(buffs, aOut);
 }
 
 static void Slice_getPars(Args* outBuffs,
@@ -1654,7 +1657,8 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
 
     /* set left */
     if (isLeftExist) {
-        AST_setNodeAttr(ast, (char*)"left", left);
+        char* left_without_hint = Cursor_splitCollect(&buffs, left, ":", 0);
+        AST_setNodeAttr(ast, (char*)"left", left_without_hint);
     }
     /* match statment type */
     enum StmtType stmtType = Lexer_matchStmtType(right);
@@ -1835,43 +1839,52 @@ char* Parser_removeAnnotation(char* line) {
     return line;
 }
 
-char* _defGetDefault(Args* outBuffs, char** dec_out) {
+char* _defGetDefault(Args* outBuffs, char** psDeclearOut) {
 #if PIKA_NANO_ENABLE
     return "";
 #endif
     Args buffs = {0};
-    char* dec_str = strsCopy(&buffs, *dec_out);
-    char* fn_name = strsGetFirstToken(&buffs, dec_str, '(');
-    Arg* dec_arg = arg_strAppend(arg_newStr(fn_name), "(");
-    Arg* default_arg = arg_newStr("");
-    char* arg_list = strsCut(&buffs, dec_str, '(', ')');
-    char* default_out = NULL;
-    pika_assert(NULL != arg_list);
-    int arg_num = strCountSign(arg_list, ',') + 1;
-    for (int i = 0; i < arg_num; i++) {
-        char* arg_str = strsPopToken(&buffs, &arg_list, ',');
+    char* sDeclear = strsCopy(&buffs, *psDeclearOut);
+    char* sFnName = strsGetFirstToken(&buffs, sDeclear, '(');
+    Arg* aDeclear = arg_strAppend(arg_newStr(sFnName), "(");
+    Arg* aDefault = arg_newStr("");
+    char* sArgList = strsCut(&buffs, sDeclear, '(', ')');
+    char* sDefaultOut = NULL;
+    pika_assert(NULL != sArgList);
+    int argNum = strCountSign(sArgList, ',') + 1;
+    for (int i = 0; i < argNum; i++) {
+        char* sItem = strsPopToken(&buffs, &sArgList, ',');
+        char* sDefaultVal = NULL;
+        char* sDefaultKey = NULL;
         int is_default = 0;
-        if (strIsContain(arg_str, '=')) {
-            default_arg = arg_strAppend(default_arg, arg_str);
-            default_arg = arg_strAppend(default_arg, ",");
-            arg_str = strsPopToken(&buffs, &arg_str, '=');
+        if (strIsContain(sItem, '=')) {
+            /* has default value */
+            sDefaultVal = Cursor_splitCollect(&buffs, sItem, "=", 1);
+            sDefaultKey = Cursor_splitCollect(&buffs, sItem, "=", 0);
+            sDefaultKey = Cursor_splitCollect(&buffs, sDefaultKey, ":", 0);
+            aDefault = arg_strAppend(aDefault, sDefaultKey);
+            aDefault = arg_strAppend(aDefault, "=");
+            aDefault = arg_strAppend(aDefault, sDefaultVal);
+            aDefault = arg_strAppend(aDefault, ",");
             is_default = 1;
+        } else {
+            sDefaultKey = sItem;
         }
-        dec_arg = arg_strAppend(dec_arg, arg_str);
+        aDeclear = arg_strAppend(aDeclear, sDefaultKey);
         if (is_default) {
-            dec_arg = arg_strAppend(dec_arg, "=");
+            aDeclear = arg_strAppend(aDeclear, "=");
         }
-        dec_arg = arg_strAppend(dec_arg, ",");
+        aDeclear = arg_strAppend(aDeclear, ",");
     }
-    strPopLastToken(arg_getStr(dec_arg), ',');
-    dec_arg = arg_strAppend(dec_arg, ")");
-    *dec_out = strsCopy(outBuffs, arg_getStr(dec_arg));
-    default_out = strsCopy(outBuffs, arg_getStr(default_arg));
-    strPopLastToken(default_out, ',');
-    arg_deinit(dec_arg);
-    arg_deinit(default_arg);
+    strPopLastToken(arg_getStr(aDeclear), ',');
+    aDeclear = arg_strAppend(aDeclear, ")");
+    *psDeclearOut = strsCopy(outBuffs, arg_getStr(aDeclear));
+    sDefaultOut = strsCopy(outBuffs, arg_getStr(aDefault));
+    strPopLastToken(sDefaultOut, ',');
+    arg_deinit(aDeclear);
+    arg_deinit(aDefault);
     strsDeinit(&buffs);
-    return default_out;
+    return sDefaultOut;
 }
 
 static char* Suger_multiReturn(Args* out_buffs, char* line) {
