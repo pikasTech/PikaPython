@@ -6,6 +6,7 @@ import time
 test_finished = False
 server_started = False
 
+
 def socket_server_task(host, port):
     """
     socket 服务器任务
@@ -47,6 +48,7 @@ def socket_client_task(host, port):
     recv = client.recv(1024).decode()
     print("client recv:", recv)
     client.close()
+
 
 def socket_server_test(host='0.0.0.0', port=36500):
     _thread.start_new_thread(socket_client_task, (host, port))
