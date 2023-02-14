@@ -28,7 +28,7 @@
 #include "PikaPlatform.h"
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef WIN32
+#if defined(_WIN32) && !defined(CROSS_BUILD)
 #include <Windows.h>
 #endif
 
@@ -307,7 +307,7 @@ PIKA_WEAK void pika_platform_thread_delay(void) {
 PIKA_WEAK void pika_platform_sleep_ms(uint32_t ms) {
 #if defined(__linux)
     usleep(ms * 1000);
-#elif defined(_WIN32)
+#elif defined(_WIN32) && !defined(CROSS_BUILD)
     Sleep(ms);
 #else
     pika_platform_printf(
