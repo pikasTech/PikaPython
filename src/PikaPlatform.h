@@ -228,6 +228,7 @@ void pika_platform_thread_startup(pika_platform_thread_t* thread);
 void pika_platform_thread_stop(pika_platform_thread_t* thread);
 void pika_platform_thread_start(pika_platform_thread_t* thread);
 void pika_platform_thread_destroy(pika_platform_thread_t* thread);
+void pika_platform_thread_exit(pika_platform_thread_t* thread);
 
 #ifdef __linux
 #include <pthread.h>

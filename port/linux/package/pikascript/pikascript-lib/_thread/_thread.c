@@ -36,9 +36,15 @@ static void _thread_func(void* arg) {
     arg_deinit(info->function);
     arg_deinit(info->args);
     pika_debug("thread exiting");
-    pika_GIL_EXIT();
-    pika_platform_thread_destroy(info->thread);
+    pika_platform_thread_t* thread = info->thread;
     pikaFree(info, sizeof(pika_thread_info));
+    pika_GIL_EXIT();
+#if PIKA_FREERTOS_ENABLE
+    pikaFree(thread, sizeof(pika_platform_thread_t));
+    pika_platform_thread_exit(NULL);
+#else
+    pika_platform_thread_exit(thread);
+#endif
 }
 
 void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {

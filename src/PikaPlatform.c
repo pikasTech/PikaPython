@@ -32,6 +32,9 @@
 #include <Windows.h>
 #endif
 
+void pikaFree(void* mem, uint32_t size);
+void* pikaMalloc(uint32_t size);
+
 PIKA_WEAK void pika_platform_disable_irq_handle(void) {
     /* disable irq to support thread */
 }
@@ -331,11 +334,11 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
     void* (*thread_entry)(void*);
 
     thread_entry = (void* (*)(void*))entry;
-    thread = pika_platform_malloc(sizeof(pika_platform_thread_t));
+    thread = pikaMalloc(sizeof(pika_platform_thread_t));
 
     res = pthread_create(&thread->thread, NULL, thread_entry, param);
     if (res != 0) {
-        pika_platform_free(thread);
+        pikaFree(thread, sizeof(pika_platform_thread_t));
     }
 
     thread->mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
@@ -346,14 +349,14 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
     BaseType_t err;
     pika_platform_thread_t* thread;
 
-    thread = pika_platform_malloc(sizeof(pika_platform_thread_t));
+    thread = pikaMalloc(sizeof(pika_platform_thread_t));
 
     (void)tick;
 
     err = xTaskCreate(entry, name, stack_size, param, priority, thread->thread);
 
     if (pdPASS != err) {
-        pika_platform_free(thread);
+        pikaFree(thread, sizeof(pika_platform_thread_t));
         return NULL;
     }
 
@@ -407,15 +410,28 @@ PIKA_WEAK void pika_platform_thread_destroy(pika_platform_thread_t* thread) {
 #ifdef __linux
     if (NULL != thread) {
         pthread_detach(thread->thread);
-        pika_platform_free(thread);
+        pikaFree(thread, sizeof(pika_platform_thread_t));
         thread = NULL;
+        return;
     }
 #elif PIKA_FREERTOS_ENABLE
     if (NULL != thread) {
-        vTaskDelete(NULL);  // test on esp32c3
-        // vTaskDelete(thread->thread);
-        pika_platform_free(thread);
+        vTaskDelete(thread->thread);
+        pikaFree(thread, sizeof(pika_platform_thread_t));
+        return;
     }
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+PIKA_WEAK void pika_platform_thread_exit(pika_platform_thread_t* thread) {
+#ifdef __linux
+    return pika_platform_thread_destroy(thread);
+#elif PIKA_FREERTOS_ENABLE
+    vTaskDelete(NULL);  // test on esp32c3
+    // vTaskDelete(thread->thread);
+    return;
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif

@@ -75,10 +75,11 @@ Arg* _socket_socket__recv(PikaObj* self, int num) {
     pika_GIL_EXIT();
     ret = __platform_recv(sockfd, data_recv, num, 0);
     pika_GIL_ENTER();
-    if (ret < 0) {
+    if (ret <= 0) {
         if (obj_getInt(self, "blocking")) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-            __platform_printf("recv error\n");
+            // __platform_printf("recv error\n");
+            arg_deinit(res);
             return NULL;
         } else {
             Arg* res_r = arg_newBytes(NULL, 0);
@@ -110,14 +111,18 @@ void _socket_socket__connect(PikaObj* self, char* host, int port) {
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = inet_addr(host);
     pika_GIL_EXIT();
-    __platform_connect(sockfd, (struct sockaddr*)&server_addr,
-                       sizeof(server_addr));
+    int err = pika_platform_connect(sockfd, (struct sockaddr*)&server_addr,
+                                    sizeof(server_addr));
     pika_GIL_ENTER();
+    if (0 != err) {
+        obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
+        return;
+    }
     if (obj_getInt(self, "blocking") == 0) {
         int flags = fcntl(sockfd, F_GETFL);
         if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-            __platform_printf("Unable to set socket non blocking\n");
+            pika_platform_printf("Unable to set socket non blocking\n");
             return;
         }
     }

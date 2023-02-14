@@ -827,8 +827,9 @@ int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
     return 0;
 }
 
-PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
-                                               char* lib_path) {
+PIKA_RES _do_pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
+                                                   char* lib_path,
+                                                   PIKA_BOOL gen_c_array) {
     PIKA_RES compile_err = (PIKA_RES)obj_getInt(self, "err");
     if (PIKA_RES_OK != compile_err) {
         pika_platform_printf("  Error: compile failed, link aborted.\r\n");
@@ -847,17 +848,31 @@ PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
     char* folder_path = strsPathJoin(&buffs, pwd, lib_path_folder);
     char* lib_file_path = strsPathJoin(&buffs, pwd, lib_path);
     LibObj_saveLibraryFile(lib, lib_file_path);
-    Lib_loadLibraryFileToArray(lib_file_path, folder_path);
+    if (gen_c_array) {
+        Lib_loadLibraryFileToArray(lib_file_path, folder_path);
+    }
     strsDeinit(&buffs);
     return PIKA_RES_OK;
 }
 
-PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
+PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
+                                               char* lib_path) {
+    return _do_pikaMaker_linkCompiledModulesFullPath(self, lib_path, PIKA_TRUE);
+}
+
+PIKA_RES _do_pikaMaker_linkCompiledModules(PikaMaker* self,
+                                           char* lib_name,
+                                           PIKA_BOOL gen_c_array) {
     Args buffs = {0};
     char* lib_file_path = strsPathJoin(&buffs, "pikascript-api/", lib_name);
-    PIKA_RES res = pikaMaker_linkCompiledModulesFullPath(self, lib_file_path);
+    PIKA_RES res = _do_pikaMaker_linkCompiledModulesFullPath(
+        self, lib_file_path, gen_c_array);
     strsDeinit(&buffs);
     return res;
+}
+
+PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
+    return _do_pikaMaker_linkCompiledModules(self, lib_name, PIKA_TRUE);
 }
 
 PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path) {
@@ -898,6 +913,6 @@ int pikafs_fwrite(void* buf, size_t size, size_t count, pikafs_FILE* file) {
 }
 
 int pikafs_fclose(pikafs_FILE* file) {
-    pikaFree(file,sizeof(pikafs_FILE));
+    pikaFree(file, sizeof(pikafs_FILE));
     return 0;
 }

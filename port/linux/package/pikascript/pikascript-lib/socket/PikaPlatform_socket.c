@@ -69,6 +69,7 @@ PIKA_WEAK int pika_platform_recv(int __fd,
     return recv(__fd, __buf, __n, __flags);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 
@@ -78,6 +79,7 @@ PIKA_WEAK int pika_platform_gethostname(char* __name, size_t __len) {
     return gethostname(__name, __len);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+    return -1;
 #endif
 }
 

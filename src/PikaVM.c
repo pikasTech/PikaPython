@@ -3673,7 +3673,8 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
     PikaMaker* maker = New_PikaMaker();
     pikaMaker_setPWD(maker, pwd);
     pikaMaker_compileModuleWithDepends(maker, module_name);
-    pikaMaker_linkCompiledModules(maker, "pikaModules_cache.py.a");
+    _do_pikaMaker_linkCompiledModules(maker, "pikaModules_cache.py.a",
+                                      PIKA_FALSE);
     pikaMaker_deinit(maker);
     pika_platform_printf("(pikascript) all succeed.\r\n\r\n");
 
