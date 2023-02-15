@@ -196,6 +196,9 @@ TEST(except, while_try_while) {
     pikaVM_runSingleFile(pikaMain, "test/python/except/while_try_while.py");
     /* collect */
     /* assert */
+    EXPECT_STREQ(log_buff[2], "before try\r\n");
+    EXPECT_STREQ(log_buff[1], "after try\r\n");
+    EXPECT_STREQ(log_buff[0], "after while\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
