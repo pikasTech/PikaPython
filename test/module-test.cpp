@@ -260,6 +260,34 @@ TEST(socket, thread) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(socket, json_issue) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/socket/socket_json.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2],
+                 "client recv: "
+                 "{\n\t\"code\":\t0,\n\t\"result\":\t{\n\t\t\"a_a\":\t{"
+                 "\n\t\t\t\"desc\":\t\"A "
+                 "\347\233\270\347\224\265\346\265\201\",\n\t\t\t\"value\":\t0."
+                 "29\n\t\t}\n\t}\n}\r\n");
+    EXPECT_STREQ(log_buff[4],
+                 "client recv: "
+                 "{\n\t\"code\":\t0,\n\t\"result\":\t{\n\t\t\"a_a\":\t{"
+                 "\n\t\t\t\"desc\":\t\"A "
+                 "\347\233\270\347\224\265\346\265\201\",\n\t\t\t\"value\":\t0."
+                 "29\n\t\t}\n\t}\n}\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif
 
 #if !PIKA_NANO_ENABLE
