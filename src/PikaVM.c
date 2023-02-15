@@ -297,37 +297,44 @@ static int VMState_getInvokeDeepthNow(VMState* vm) {
 
 static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
     int offset = 0;
-    int loop_deepth = -1;
+    int blockDeepthGot = -1;
+    int blockDeepthNow = VMState_getBlockDeepthNow(vm);
 
     /* find loop deepth */
     while (1) {
         offset -= instructUnit_getSize();
-        InstructUnit* ins_unit_now =
+        InstructUnit* insUnitThis =
             VMState_getInstructUnitWithOffset(vm, offset);
-        uint16_t invoke_deepth = instructUnit_getInvokeDeepth(ins_unit_now);
-        enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
-        char* data = VMState_getConstWithInstructUnit(vm, ins_unit_now);
-        if ((0 == invoke_deepth) && (JEZ == ins) && data[0] == '2') {
-            InstructUnit* ins_unit_last = VMState_getInstructUnitWithOffset(
+        uint16_t invokeDeepth = instructUnit_getInvokeDeepth(insUnitThis);
+        enum Instruct ins = instructUnit_getInstruct(insUnitThis);
+        char* data = VMState_getConstWithInstructUnit(vm, insUnitThis);
+        if ((0 == invokeDeepth) && (JEZ == ins) && data[0] == '2') {
+            InstructUnit* insUnitLast = VMState_getInstructUnitWithOffset(
                 vm, offset - instructUnit_getSize());
-            enum Instruct ins_last = instructUnit_getInstruct(ins_unit_last);
+            enum Instruct insLast = instructUnit_getInstruct(insUnitLast);
             /* skip try stmt */
-            if (GER != ins_last) {
-                loop_deepth = instructUnit_getBlockDeepth(ins_unit_now);
-                break;
+            if (GER == insLast) {
+                continue;
             }
+            /* skip inner break */
+            int blockDeepthThis = instructUnit_getBlockDeepth(insUnitThis);
+            if (blockDeepthThis >= blockDeepthNow) {
+                continue;
+            }
+            blockDeepthGot = instructUnit_getBlockDeepth(insUnitThis);
+            break;
         }
     }
 
     offset = 0;
     while (1) {
         offset += instructUnit_getSize();
-        InstructUnit* ins_unit_now =
+        InstructUnit* insUnitThis =
             VMState_getInstructUnitWithOffset(vm, offset);
-        enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
-        char* data = VMState_getConstWithInstructUnit(vm, ins_unit_now);
-        int block_deepth_now = instructUnit_getBlockDeepth(ins_unit_now);
-        if ((block_deepth_now == loop_deepth) && (JMP == ins) &&
+        enum Instruct ins = instructUnit_getInstruct(insUnitThis);
+        char* data = VMState_getConstWithInstructUnit(vm, insUnitThis);
+        int blockDeepthThis = instructUnit_getBlockDeepth(insUnitThis);
+        if ((blockDeepthThis == blockDeepthGot) && (JMP == ins) &&
             data[0] == '-' && data[1] == '1') {
             return offset;
         }

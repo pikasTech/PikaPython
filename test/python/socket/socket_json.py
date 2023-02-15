@@ -24,17 +24,18 @@ def socket_server_task(host, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, port))
     s.listen(5)
-    print("socket server waiting accept")
     global server_started
     server_started = True
-    accept, addr = s.accept()
-    print("socket server accepted at", addr)
     while True:
         try:
-            data = accept.recv(1024)
-            print('socket server recv:', data.decode())
-            # accept.send(data)
-            accept.send(json.dumps(test_data))
+            print("socket server waiting accept")
+            accept, addr = s.accept()
+            print("socket server accepted at", addr)
+            while True:
+                data = accept.recv(1024)
+                print('socket server recv:', data.decode())
+                # accept.send(data)
+                accept.send(json.dumps(test_data))
         except Exception:
             print('socket server closing accept')
             accept.close()

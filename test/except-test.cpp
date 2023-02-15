@@ -187,6 +187,20 @@ TEST(except, except_break) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(except, while_try_while) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    /* run */
+    pikaVM_runSingleFile(pikaMain, "test/python/except/while_try_while.py");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
