@@ -35,6 +35,11 @@
 
 const char magic_code_pyo[] = {0x0f, 'p', 'y', 'o'};
 
+/*
+ * @brief check magic code of pyo file
+ * @param bytecode
+ * @return PIKA_TRUE or PIKA_FALSE
+ */
 static PIKA_BOOL _check_magic_code_pyo(uint8_t* bytecode) {
     char* data = (char*)bytecode;
     if (data[0] == magic_code_pyo[0] && data[1] == magic_code_pyo[1] &&
@@ -44,6 +49,11 @@ static PIKA_BOOL _check_magic_code_pyo(uint8_t* bytecode) {
     return PIKA_FALSE;
 }
 
+/*
+ * @brief get bytecode from bytes arg
+ * @param self bytes arg
+ * @return bytecode
+ */
 static uint8_t* arg_getBytecode(Arg* self) {
     uint8_t* bytecode_file = arg_getBytes(self);
     if (_check_magic_code_pyo(bytecode_file)) {
@@ -52,6 +62,11 @@ static uint8_t* arg_getBytecode(Arg* self) {
     return bytecode_file;
 }
 
+/*
+ * @brief get bytecode size from bytes arg
+ * @param self bytes arg
+ * @return bytecode size
+ */
 static size_t arg_getBytecodeSize(Arg* self) {
     size_t size_all = arg_getBytesSize(self);
     uint8_t* bytecode_file = arg_getBytes(self);
@@ -226,7 +241,14 @@ void LibObj_dynamicLink(LibObj* self, char* module_name, uint8_t* bytecode) {
     obj_setPtr(module_obj, "bytecode", bytecode);
 }
 
-/* add bytecode to lib, and copy the bytecode to the buff in the lib */
+/*
+ * @brief add bytecode to lib, and copy the bytecode to the buff in the lib
+ * @param self the lib obj
+ * @param module_name the module name
+ * @param bytecode the bytecode
+ * @param size the size of the bytecode
+ * @return error code
+ */
 int LibObj_staticLink(LibObj* self,
                       char* module_name,
                       uint8_t* bytecode,
@@ -601,16 +623,34 @@ PikaMaker* New_PikaMaker(void) {
     return self;
 }
 
+/*
+ * @brief: deinit PikaMaker
+ * @param: self PikaMaker
+ * @return: void
+ */
 void pikaMaker_deinit(PikaMaker* self) {
     LibObj* lib = obj_getPtr(self, "lib");
     LibObj_deinit(lib);
     obj_deinit(self);
 }
 
+/*
+ * @brief: set pwd
+ * @param: self PikaMaker
+ * @param: pwd
+ * @return: void
+ */
 void pikaMaker_setPWD(PikaMaker* self, char* pwd) {
     obj_setStr(self, "pwd", pwd);
 }
 
+/*
+ * @brief: set state
+ * @param: self PikaMaker
+ * @param: module_name
+ * @param: state
+ * @return: void
+ */
 void pikaMaker_setState(PikaMaker* self, char* module_name, char* state) {
     obj_newMetaObj(self, module_name, New_TinyObj);
     PikaObj* module_obj = obj_getObj(self, module_name);
@@ -618,6 +658,12 @@ void pikaMaker_setState(PikaMaker* self, char* module_name, char* state) {
     obj_setStr(module_obj, "state", state);
 }
 
+/*
+ * @brief: compile module
+ * @param: self PikaMaker
+ * @param: module_name
+ * @return: PIKA_RES
+ */
 PIKA_RES pikaMaker_compileModule(PikaMaker* self, char* module_name) {
     PIKA_RES res = __Maker_compileModuleWithInfo(self, module_name);
     /* update compile info */
@@ -781,6 +827,12 @@ char* pikaMaker_getFirstNocompiled(PikaMaker* self) {
     return obj_getStr(self, "res");
 }
 
+/*
+ * @brief compile module with depends
+ * @param self PikaMaker
+ * @param module_name
+ * @return PIKA_RES
+ */
 PIKA_RES pikaMaker_compileModuleWithDepends(PikaMaker* self,
                                             char* module_name) {
     PIKA_RES res = PIKA_RES_OK;
@@ -875,12 +927,24 @@ PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
     return _do_pikaMaker_linkCompiledModules(self, lib_name, PIKA_TRUE);
 }
 
+/*
+ * @brief link raw file to library
+ * @param self PikaMaker
+ * @param file_path
+ * @return PIKA_RES
+ */
 PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path) {
     LibObj* lib = obj_getPtr(self, "lib");
     LibObj_staticLinkFile(lib, file_path);
     return PIKA_RES_OK;
 }
 
+/*
+ * @brief open file from library
+ * @param file_name
+ * @param mode "r" or "rb"
+ * @return pikafs_FILE* or NULL if failed
+ */
 pikafs_FILE* pikafs_fopen(char* file_name, char* mode) {
     pikafs_FILE* f = (pikafs_FILE*)pikaMalloc(sizeof(pikafs_FILE));
     memset(f, 0, sizeof(pikafs_FILE));
@@ -896,6 +960,14 @@ pikafs_FILE* pikafs_fopen(char* file_name, char* mode) {
     return f;
 }
 
+/*
+ * @brief read file
+ * @param buf the buffer to read
+ * @param size size of each item
+ * @param count count of items
+ * @param f file
+ * @return read count
+ */
 int pikafs_fread(void* buf, size_t size, size_t count, pikafs_FILE* f) {
     if (f->pos >= f->size) {
         return 0;
@@ -908,10 +980,23 @@ int pikafs_fread(void* buf, size_t size, size_t count, pikafs_FILE* f) {
     return count;
 }
 
+/*
+ * @brief write file
+ * @param buf the buffer to write
+ * @param size size of each item
+ * @param count count of items
+ * @param f file
+ * @return write count or -1 if failed
+ */
 int pikafs_fwrite(void* buf, size_t size, size_t count, pikafs_FILE* file) {
     return -1;
 }
 
+/*
+ * @brief close file
+ * @param f file
+ * @return 0 if success
+ */
 int pikafs_fclose(pikafs_FILE* file) {
     pikaFree(file, sizeof(pikafs_FILE));
     return 0;
