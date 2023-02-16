@@ -13,7 +13,9 @@ static void _do_sleep_ms_tick(uint32_t ms) {
     uint32_t tick = pika_platform_get_tick();
     while (pika_platform_get_tick() - tick < ms) {
 #if PIKA_EVENT_ENABLE
-        _VMEvent_pickupEvent();
+        // _VMEvent_pickupEvent();
+        //! can not pickup event in this function, because it will cause the GIL
+        //! lock error.
 #endif
         pika_platform_thread_delay();
     }
