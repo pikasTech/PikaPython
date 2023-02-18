@@ -285,6 +285,12 @@ Arg* arg_toStrArg(Arg* arg) {
 #endif
         return arg_newStr(buff);
     }
+    if (type == ARG_TYPE_BOOL) {
+        if (arg_getBool(arg)) {
+            return arg_newStr("True");
+        }
+        return arg_newStr("False");
+    }
     if (type == ARG_TYPE_FLOAT) {
         pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%f",
                                arg_getFloat(arg));
@@ -395,6 +401,10 @@ Arg* arg_setInt(Arg* self, char* name, int64_t val) {
     return arg_set(self, name, ARG_TYPE_INT, (uint8_t*)&val, sizeof(val));
 }
 
+Arg* arg_setBool(Arg* self, char* name, PIKA_BOOL val) {
+    return arg_set(self, name, ARG_TYPE_BOOL, (uint8_t*)&val, sizeof(val));
+}
+
 Arg* arg_setNull(Arg* self) {
     return arg_set(self, "", ARG_TYPE_NONE, NULL, 0);
 }
@@ -426,9 +436,17 @@ Arg* arg_setStr(Arg* self, char* name, char* string) {
 int64_t arg_getInt(Arg* self) {
     pika_assert(NULL != self);
     if (NULL == arg_getContent(self)) {
-        return -999999;
+        return _PIKA_INT_ERR;
     }
     return *(int64_t*)arg_getContent(self);
+}
+
+PIKA_BOOL arg_getBool(Arg* self) {
+    pika_assert(NULL != self);
+    if (NULL == arg_getContent(self)) {
+        return _PIKA_BOOL_ERR;
+    }
+    return *(PIKA_BOOL*)arg_getContent(self);
 }
 
 void* arg_getPtr(Arg* self) {
@@ -538,7 +556,6 @@ Arg* arg_append(Arg* self, void* new_content, size_t new_size) {
 void* arg_getHeapStruct(Arg* self) {
     return arg_getContent(self) + sizeof(void*);
 }
-
 
 void arg_deinitHeap(Arg* self) {
     if (arg_getIsWeakRef(self)) {

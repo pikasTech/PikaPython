@@ -175,6 +175,7 @@ void* obj_getPtr(PikaObj* self, char* argPath);
 pika_float obj_getFloat(PikaObj* self, char* argPath);
 char* obj_getStr(PikaObj* self, char* argPath);
 int64_t obj_getInt(PikaObj* self, char* argPath);
+PIKA_BOOL obj_getBool(PikaObj* self, char* argPath);
 Arg* obj_getArg(PikaObj* self, char* argPath);
 uint8_t* obj_getBytes(PikaObj* self, char* argPath);
 size_t obj_getBytesSize(PikaObj* self, char* argPath);
@@ -249,6 +250,7 @@ uint8_t obj_getAnyArg(PikaObj* self,
 
 void method_returnStr(Args* args, char* val);
 void method_returnInt(Args* args, int64_t val);
+void method_returnBool(Args* args, PIKA_BOOL val);
 void method_returnFloat(Args* args, pika_float val);
 void method_returnPtr(Args* args, void* val);
 void method_returnObj(Args* args, void* val);

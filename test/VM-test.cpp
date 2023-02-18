@@ -353,7 +353,7 @@ TEST(VM, RUN_local_b) {
     int c = obj_getInt(globals, "c");
     EXPECT_EQ(a, 1);
     /* b is local, should not be exist in globals */
-    EXPECT_EQ(b, -999999999);
+    EXPECT_EQ(b, _PIKA_INT_ERR);
     EXPECT_EQ(c, 2);
     obj_deinit(self);
     // obj_deinit(globals);
@@ -381,9 +381,9 @@ TEST(VM, RUN_DEF_add) {
     int b = obj_getInt(globals, "b");
     int c = obj_getInt(globals, "c");
     /* a is local, should not be exist in globals */
-    EXPECT_EQ(a, -999999999);
+    EXPECT_EQ(a, _PIKA_INT_ERR);
     /* b is local, should not be exist in globals */
-    EXPECT_EQ(b, -999999999);
+    EXPECT_EQ(b, _PIKA_INT_ERR);
     EXPECT_EQ(c, 3);
     obj_deinit(self);
     // obj_deinit(globals);
@@ -507,7 +507,7 @@ TEST(VM, EST) {
     int a = obj_getInt(self, "a");
     int b = obj_getInt(self, "b");
     /* a is local, should not be exist in globals */
-    EXPECT_EQ(a, -999999999);
+    EXPECT_EQ(a, _PIKA_INT_ERR);
     /* b is local, should not be exist in globals */
     EXPECT_EQ(b, 0);
     obj_deinit(self);
@@ -2645,6 +2645,14 @@ TEST(vm, run_file) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     pikaVM_runFile(pikaMain, "package/pikascript/main.py");
     obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, bool_){
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_run(pikaMain, "print(True)\n");
+    obj_deinit(pikaMain);
+    EXPECT_STREQ(log_buff[0], "True\r\n");
     EXPECT_EQ(pikaMemNow(), 0);
 }
 

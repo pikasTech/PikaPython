@@ -36,6 +36,7 @@ typedef enum {
     ARG_TYPE_UNDEF = 0,
     ARG_TYPE_NONE,
     ARG_TYPE_INT,
+    ARG_TYPE_BOOL,
     ARG_TYPE_FLOAT,
     ARG_TYPE_STRING,
     ARG_TYPE_BYTES,
@@ -113,6 +114,7 @@ uint32_t arg_getContentSize(Arg* self);
 Hash hash_time33(char* str);
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val);
+Arg* arg_setBool(Arg* self, char* name, PIKA_BOOL val);
 Arg* arg_setFloat(Arg* self, char* name, pika_float val);
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer);
 Arg* arg_setStr(Arg* self, char* name, char* string);
@@ -121,6 +123,10 @@ Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 
 static inline Arg* arg_newInt(int64_t val) {
     return arg_setInt(NULL, (char*)"", (val));
+}
+
+static inline Arg* arg_newBool(PIKA_BOOL val) {
+    return arg_setBool(NULL, (char*)"", (val));
 }
 
 static inline Arg* arg_newFloat(pika_float val) {
@@ -144,6 +150,7 @@ static inline Arg* arg_newBytes(uint8_t* src, size_t size) {
 }
 
 int64_t arg_getInt(Arg* self);
+PIKA_BOOL arg_getBool(Arg* self);
 pika_float arg_getFloat(Arg* self);
 void* arg_getPtr(Arg* self);
 char* arg_getStr(Arg* self);

@@ -36,6 +36,9 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_STRING == type) {
         return arg_copy(obj_getMethodArg(self, "str"));
     }
+    if (ARG_TYPE_BOOL == type) {
+        return arg_copy(obj_getMethodArg(self, "bool"));
+    }
     if (argType_isObject(type)) {
         PikaObj* obj = arg_getPtr(arg);
         NewFun clsptr = obj_getClass(obj);
@@ -88,39 +91,62 @@ pika_float PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_STRING == type) {
         return strtod(arg_getStr(arg), NULL);
     }
+    if (ARG_TYPE_BOOL == type) {
+        return (float)arg_getBool(arg);
+    }
     obj_setSysOut(self, "[error] convert to pika_float type failed.");
     obj_setErrorCode(self, 1);
-    return -99999.99999;
+    return _PIKA_FLOAT_ERR;
 }
 
-int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
+PIKA_RES _transeInt(Arg* arg, int* res) {
     ArgType type = arg_getType(arg);
     if (ARG_TYPE_INT == type) {
-        return (int)arg_getInt(arg);
+        *res = (int)arg_getInt(arg);
+        return PIKA_RES_OK;
+    }
+    if (ARG_TYPE_BOOL == type) {
+        *res = (int)arg_getBool(arg);
+        return PIKA_RES_OK;
     }
     if (ARG_TYPE_FLOAT == type) {
-        return (int)arg_getFloat(arg);
+        *res = (int)arg_getFloat(arg);
+        return PIKA_RES_OK;
     }
     if (ARG_TYPE_STRING == type) {
-        return (int)fast_atoi(arg_getStr(arg));
+        *res = (int)fast_atoi(arg_getStr(arg));
+        return PIKA_RES_OK;
     }
     if (ARG_TYPE_BYTES == type) {
         size_t size = arg_getBytesSize(arg);
         if (size != 1) {
-            obj_setSysOut(self, "ValueError: invalid literal for int()");
-            obj_setErrorCode(self, 1);
-            return -999999999;
+            return PIKA_RES_ERR_INVALID_PARAM;
         }
         uint8_t val = *arg_getBytes(arg);
-        return val;
+        *res = val;
+        return PIKA_RES_OK;
     }
-    obj_setSysOut(self, "[error] convert to int type failed.");
-    obj_setErrorCode(self, 1);
-    return -999999999;
+    return PIKA_RES_ERR_INVALID_PARAM;
 }
 
-int PikaStdLib_SysObj_bool(PikaObj* self, Arg* arg) {
-    return PikaStdLib_SysObj_int(self, arg);
+int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
+    int res = 0;
+    if (_transeInt(arg, &res) == PIKA_RES_OK) {
+        return res;
+    }
+    obj_setSysOut(self, "ValueError: invalid literal for int()");
+    obj_setErrorCode(self, 1);
+    return _PIKA_INT_ERR;
+}
+
+PIKA_BOOL PikaStdLib_SysObj_bool(PikaObj* self, Arg* arg) {
+    int res = 0;
+    if (_transeInt(arg, &res) == PIKA_RES_OK) {
+        return res ? PIKA_TRUE : PIKA_FALSE;
+    }
+    obj_setSysOut(self, "ValueError: invalid literal for bool()");
+    obj_setErrorCode(self, 1);
+    return _PIKA_BOOL_ERR;
 }
 
 char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {

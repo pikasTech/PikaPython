@@ -110,7 +110,11 @@ typedef enum {
 typedef enum {
     PIKA_TRUE   = 1,
     PIKA_FALSE  = 0,
+    _PIKA_BOOL_ERR = -1,
 } PIKA_BOOL;
+
+#define _PIKA_INT_ERR (-999999999)
+#define _PIKA_FLOAT_ERR (-999999999.0)
 
 /* clang-format on */
 
@@ -278,7 +282,7 @@ typedef struct pika_platform_timer {
 
 void pika_platform_thread_timer_init(pika_platform_timer_t* timer);
 void pika_platform_thread_timer_cutdown(pika_platform_timer_t* timer,
-                                 unsigned int timeout);
+                                        unsigned int timeout);
 char pika_platform_thread_timer_is_expired(pika_platform_timer_t* timer);
 int pika_platform_thread_timer_remain(pika_platform_timer_t* timer);
 unsigned long pika_platform_thread_timer_now(void);

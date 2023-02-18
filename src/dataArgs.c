@@ -188,7 +188,7 @@ PIKA_RES args_setInt(Args* self, char* name, int64_t val) {
 int64_t args_getInt(Args* self, char* name) {
     Arg* arg = args_getArg(self, name);
     if (NULL == arg) {
-        return -999999999;
+        return _PIKA_INT_ERR;
     }
     ArgType arg_type = arg_getType(arg);
     if (arg_type == ARG_TYPE_INT) {
@@ -196,7 +196,19 @@ int64_t args_getInt(Args* self, char* name) {
     } else if (arg_type == ARG_TYPE_FLOAT) {
         return (int)arg_getFloat(arg);
     }
-    return -999999999;
+    return _PIKA_INT_ERR;
+}
+
+PIKA_BOOL args_getBool(Args* self, char* name) {
+    Arg* arg = args_getArg(self, name);
+    if (NULL == arg) {
+        return _PIKA_BOOL_ERR;
+    }
+    ArgType arg_type = arg_getType(arg);
+    if (arg_type == ARG_TYPE_BOOL) {
+        return arg_getBool(arg);
+    }
+    return _PIKA_BOOL_ERR;
 }
 
 int32_t args_getSize(Args* self) {
@@ -215,7 +227,7 @@ ArgType args_getType(Args* self, char* name) {
 pika_float args_getFloat(Args* self, char* name) {
     Arg* arg = args_getArg(self, name);
     if (NULL == arg) {
-        return -999999999.0;
+        return _PIKA_FLOAT_ERR;
     }
     ArgType arg_type = arg_getType(arg);
     if (arg_type == ARG_TYPE_FLOAT) {
@@ -223,7 +235,7 @@ pika_float args_getFloat(Args* self, char* name) {
     } else if (arg_type == ARG_TYPE_INT) {
         return (pika_float)arg_getInt(arg);
     }
-    return -999999999.0;
+    return _PIKA_FLOAT_ERR;
 }
 
 PIKA_RES args_copyArg(Args* self, Arg* argToBeCopy) {

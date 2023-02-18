@@ -592,8 +592,8 @@ Arg* _vm_slice(VMState* vm,
         if (start_i < 0) {
             start_i += len;
         }
-        /* magit code, to the end */
-        if (end_i == -99999) {
+        /* megic code, to the end */
+        if (end_i == VM_PC_EXIT) {
             end_i = len;
         }
         if (end_i < 0) {
@@ -782,12 +782,12 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     switch (data[0]) {
         case 'T':
             if (strEqu(arg_path, (char*)"True")) {
-                return arg_setInt(arg_ret_reg, "", 1);
+                return arg_setBool(arg_ret_reg, "", PIKA_TRUE);
             }
             break;
         case 'F':
             if (strEqu(arg_path, (char*)"False")) {
-                return arg_setInt(arg_ret_reg, "", 0);
+                return arg_setBool(arg_ret_reg, "", PIKA_FALSE);
             }
             break;
         case 'N':
@@ -2202,6 +2202,9 @@ void operatorInfo_init(OperatorInfo* info,
         } else if (info->t1 == ARG_TYPE_FLOAT) {
             info->f1 = arg_getFloat(info->a1);
             info->i1 = (int64_t)info->f1;
+        } else if (info->t1 == ARG_TYPE_BOOL) {
+            info->i1 = arg_getBool(info->a1);
+            info->f1 = (pika_float)info->i1;
         }
     }
     info->t2 = arg_getType(info->a2);
@@ -2212,6 +2215,9 @@ void operatorInfo_init(OperatorInfo* info,
     } else if (info->t2 == ARG_TYPE_FLOAT) {
         info->f2 = arg_getFloat(info->a2);
         info->i2 = (int64_t)info->f2;
+    } else if (info->t2 == ARG_TYPE_BOOL) {
+        info->i2 = arg_getBool(info->a2);
+        info->f2 = (pika_float)info->i2;
     }
 }
 
@@ -2395,7 +2401,7 @@ static void _OPT_EQU(OperatorInfo* op) {
         is_equ = (arg_getPtr(op->a1) == arg_getPtr(op->a2));
         goto exit;
     }
-    /* default: int and float */
+    /* default: int bool, and float */
     is_equ = ((op->f1 - op->f2) * (op->f1 - op->f2) < (pika_float)0.000001);
     goto exit;
 exit:
@@ -2779,7 +2785,9 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
         arg1 = stack_popArg(&vm->stack, &reg1);
     }
     /* assert failed */
-    if (arg_getType(arg1) == ARG_TYPE_INT && arg_getInt(arg1) == 0) {
+    if ((arg_getType(arg1) == ARG_TYPE_INT && arg_getInt(arg1) == 0) ||
+        (arg_getType(arg1) == ARG_TYPE_BOOL &&
+         arg_getBool(arg1) == PIKA_FALSE)) {
         stack_pushArg(&vm->stack, arg_newInt(PIKA_RES_ERR_ASSERT));
         res = VM_instruction_handler_RIS(self, vm, data, arg_ret_reg);
         if (vm->run_state->try_state == TRY_STATE_NONE) {

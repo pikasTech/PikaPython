@@ -2,6 +2,7 @@
 #include "PikaStdData_List.h"
 #include "PikaStdData_String_Util.h"
 #include "dataStrs.h"
+#include "PikaVM.h"
 
 char* _strlwr(char* str);
 static int string_len(char* str);
@@ -87,7 +88,7 @@ char* string_slice(Args* outBuffs, char* str, int start, int end) {
         start += string_len(str);
     }
     /* magic code, to the end */
-    if (end == -99999) {
+    if (end == VM_PC_EXIT) {
         end = string_len(str);
     }
     if (end < 0) {

@@ -29,6 +29,9 @@ impl PyType {
         if self.type_name == "any" {
             return "Arg*".to_string();
         }
+        if self.type_name == "bool"{
+            return "PIKA_BOOL".to_string();
+        }
         if self.type_name == "@tupleVarPar" {
             return "PikaTuple*".to_string();
         }
@@ -44,6 +47,9 @@ impl PyType {
         }
         if self.type_name == "int64" {
             return "int64_t".to_string();
+        }
+        if self.type_name == "bool" {
+            return "PIKA_BOOL".to_string();
         }
         if self.type_name == "float" {
             return "pika_float".to_string();
@@ -80,6 +86,9 @@ impl PyType {
         }
         if self.type_name == "int64" {
             return "    method_returnInt(args, res);\n".to_string();
+        }
+        if self.type_name == "bool" {
+            return "    method_returnBool(args, res);\n".to_string();
         }
         if self.type_name == "float" {
             return "    method_returnFloat(args, res);\n".to_string();
@@ -122,6 +131,9 @@ impl PyType {
         }
         if self.type_name == "int64" {
             return "args_getInt".to_string();
+        }
+        if self.type_name == "bool"{
+            return "args_getBool".to_string();
         }
         if self.type_name == "float" {
             return "args_getFloat".to_string();

@@ -230,10 +230,20 @@ PIKA_RES obj_setBytes(PikaObj* self, char* argPath, uint8_t* src, size_t size) {
 int64_t obj_getInt(PikaObj* self, char* argPath) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
-        return -999999999;
+        return _PIKA_INT_ERR;
     }
     char* argName = strPointToLastToken(argPath, '.');
     int64_t res = args_getInt(obj->list, argName);
+    return res;
+}
+
+PIKA_BOOL obj_getBool(PikaObj* self, char* argPath) {
+    PikaObj* obj = obj_getHostObj(self, argPath);
+    if (NULL == obj) {
+        return PIKA_FALSE;
+    }
+    char* argName = strPointToLastToken(argPath, '.');
+    PIKA_BOOL res = args_getBool(obj->list, argName);
     return res;
 }
 
@@ -1588,6 +1598,13 @@ void method_returnStr(Args* args, char* val) {
 
 void method_returnInt(Args* args, int64_t val) {
     args_pushArg_name(args, "@rt", arg_newInt(val));
+}
+
+void method_returnBool(Args* args, PIKA_BOOL val) {
+    if (val == _PIKA_BOOL_ERR) {
+        return;
+    }
+    args_pushArg_name(args, "@rt", arg_newBool(val));
 }
 
 void method_returnFloat(Args* args, pika_float val) {

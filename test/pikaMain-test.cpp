@@ -274,7 +274,7 @@ TEST(pikaMain, PikaStdData) {
     int b = obj_getInt(pikaMain, "b");
     /* assert */
     EXPECT_EQ(a, 1);
-    EXPECT_EQ(b, -999999999);
+    EXPECT_EQ(b, _PIKA_INT_ERR);
 
     /* deinit */
     obj_deinit(pikaMain);
@@ -1004,7 +1004,7 @@ TEST(pikaMain, task_run_period_until) {
             "task.run_until_ms(1000)\n"
             "\n");
     /* collect */
-    int mem_lack = obj_getInt(pikaMain, "mem_lack");
+    PIKA_BOOL mem_lack = obj_getBool(pikaMain, "mem_lack");
     /* assert */
     EXPECT_STREQ(log_buff[0], "task 1 running...\r\n");
     EXPECT_STREQ(log_buff[1], "task 1 running...\r\n");
@@ -1014,7 +1014,7 @@ TEST(pikaMain, task_run_period_until) {
     EXPECT_STREQ(log_buff[5], "task 2 running...\r\n");
     EXPECT_STREQ(log_buff[6], "task 1 running...\r\n");
     EXPECT_STREQ(log_buff[7], "BEGIN\r\n");
-    EXPECT_EQ(mem_lack, 0);
+    EXPECT_EQ(mem_lack, PIKA_FALSE);
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

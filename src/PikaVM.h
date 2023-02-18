@@ -48,7 +48,7 @@ typedef enum {
     VM_JMP_RAISE = -996,
 } VM_JMP;
 
-typedef enum { VM_PC_EXIT = -99999 } VM_PC;
+#define VM_PC_EXIT (-99999)
 
 typedef enum {
     TRY_STATE_NONE = 0,

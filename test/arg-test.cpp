@@ -20,6 +20,15 @@ TEST(arg_test, int_) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(arg_test, bool_) {
+    Arg* arg = New_arg(NULL);
+    arg = arg_setBool(arg, "test", PIKA_TRUE);
+    PIKA_BOOL a = arg_getBool(arg);
+    EXPECT_EQ(a, PIKA_TRUE);
+    arg_deinit(arg);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(arg_test, float_) {
     Arg* arg = New_arg(NULL);
     arg = arg_setFloat(arg, "test", 1.01);
