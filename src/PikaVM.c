@@ -2406,9 +2406,9 @@ static void _OPT_EQU(OperatorInfo* op) {
     goto exit;
 exit:
     if (op->opt[0] == '=') {
-        op->res = arg_setInt(op->res, "", is_equ);
+        op->res = arg_setBool(op->res, "", is_equ);
     } else {
-        op->res = arg_setInt(op->res, "", !is_equ);
+        op->res = arg_setBool(op->res, "", !is_equ);
     }
     return;
 }
@@ -2492,7 +2492,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     if (data[1] == 0) {
         switch (data[0]) {
             case '<':
-                op.res = arg_setInt(op.res, "", op.f1 < op.f2);
+                op.res = arg_setBool(op.res, "", op.f1 < op.f2);
                 goto exit;
             case '*':
                 if (op.num == 1) {
@@ -2554,9 +2554,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     if (data[1] == 'i' && data[2] == 'n') {
         if (op.t1 == ARG_TYPE_STRING && op.t2 == ARG_TYPE_STRING) {
             if (strstr(arg_getStr(op.a2), arg_getStr(op.a1))) {
-                op.res = arg_setInt(op.res, "", 1);
+                op.res = arg_setBool(op.res, "", PIKA_TRUE);
             } else {
-                op.res = arg_setInt(op.res, "", 0);
+                op.res = arg_setBool(op.res, "", PIKA_FALSE);
             }
             goto exit;
         }
@@ -2584,7 +2584,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                     0x00, /* const pool */
                 };
                 pikaVM_runByteCode(obj2, (uint8_t*)bytes);
-                op.res = arg_setInt(op.res, "", obj_getInt(obj2, "__res"));
+                op.res = arg_setBool(op.res, "", obj_getInt(obj2, "__res"));
                 goto exit;
             }
         }
@@ -2628,14 +2628,14 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         goto exit;
     }
     if (data[0] == '>' && data[1] == '=') {
-        op.res = arg_setInt(
+        op.res = arg_setBool(
             op.res, "",
             (op.f1 > op.f2) ||
                 ((op.f1 - op.f2) * (op.f1 - op.f2) < (pika_float)0.000001));
         goto exit;
     }
     if (data[0] == '<' && data[1] == '=') {
-        op.res = arg_setInt(
+        op.res = arg_setBool(
             op.res, "",
             (op.f1 < op.f2) ||
                 ((op.f1 - op.f2) * (op.f1 - op.f2) < (pika_float)0.000001));
@@ -2665,17 +2665,17 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     }
     if (data[0] == ' ' && data[1] == 'a' && data[2] == 'n' && data[3] == 'd' &&
         data[4] == ' ') {
-        op.res = arg_setInt(op.res, "", op.i1 && op.i2);
+        op.res = arg_setBool(op.res, "", op.i1 && op.i2);
         goto exit;
     }
     if (data[0] == ' ' && data[1] == 'o' && data[2] == 'r' && data[3] == ' ' &&
         data[4] == 0) {
-        op.res = arg_setInt(op.res, "", op.i1 || op.i2);
+        op.res = arg_setBool(op.res, "", op.i1 || op.i2);
         goto exit;
     }
     if (data[0] == ' ' && data[1] == 'n' && data[2] == 'o' && data[3] == 't' &&
         data[4] == ' ' && data[5] == 0) {
-        op.res = arg_setInt(op.res, "", !op.i2);
+        op.res = arg_setBool(op.res, "", !op.i2);
         goto exit;
     }
 exit:

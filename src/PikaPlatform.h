@@ -107,11 +107,10 @@ typedef enum {
 /* clang-format off */
 
 /* pikascript bool type */
-typedef enum {
-    PIKA_TRUE   = 1,
-    PIKA_FALSE  = 0,
-    _PIKA_BOOL_ERR = -1,
-} PIKA_BOOL;
+#define PIKA_BOOL int64_t
+#define PIKA_TRUE 1
+#define PIKA_FALSE 0
+#define _PIKA_BOOL_ERR -1
 
 #define _PIKA_INT_ERR (-999999999)
 #define _PIKA_FLOAT_ERR (-999999999.0)

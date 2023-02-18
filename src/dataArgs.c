@@ -195,6 +195,8 @@ int64_t args_getInt(Args* self, char* name) {
         return arg_getInt(arg);
     } else if (arg_type == ARG_TYPE_FLOAT) {
         return (int)arg_getFloat(arg);
+    } else if (arg_type == ARG_TYPE_BOOL) {
+        return arg_getBool(arg);
     }
     return _PIKA_INT_ERR;
 }

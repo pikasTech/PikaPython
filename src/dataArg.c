@@ -309,6 +309,7 @@ Arg* arg_toStrArg(Arg* arg) {
         if (type == ARG_TYPE_METHOD_NATIVE) {
             MethodProp* method_store = (MethodProp*)arg_getContent(arg);
             if (strEqu(method_store->name, "int") ||
+                strEqu(method_store->name, "bool") ||
                 strEqu(method_store->name, "float") ||
                 strEqu(method_store->name, "str") ||
                 strEqu(method_store->name, "bytes") ||

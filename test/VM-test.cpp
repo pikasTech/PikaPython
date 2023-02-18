@@ -1082,10 +1082,10 @@ TEST(VM, is) {
     obj_run(self, line);
     /* collect */
     /* assert */
-    EXPECT_EQ(obj_getInt(self, "res1"), 1);
-    EXPECT_EQ(obj_getInt(self, "res2"), 1);
-    EXPECT_EQ(obj_getInt(self, "res3"), 1);
-    EXPECT_EQ(obj_getInt(self, "res4"), 0);
+    EXPECT_EQ(obj_getBool(self, "res1"), PIKA_TRUE);
+    EXPECT_EQ(obj_getBool(self, "res2"), PIKA_TRUE);
+    EXPECT_EQ(obj_getBool(self, "res3"), PIKA_TRUE);
+    EXPECT_EQ(obj_getBool(self, "res4"), PIKA_FALSE);
     /* deinit */
     obj_deinit(self);
     EXPECT_EQ(pikaMemNow(), 0);
