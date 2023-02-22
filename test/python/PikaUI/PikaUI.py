@@ -28,6 +28,7 @@ class Widget:
     align = None
     text = None
     isroot = False
+    needbuild = True
     _label = None
     _child = []
 
@@ -50,6 +51,12 @@ class Widget:
         self.parent = weakref.ref(parent)
 
     def update(self):
+        if self.needbuild:
+            built = self.build()
+            if not built is None:
+                self = self.add(built)
+            self.needbuild = False
+
         if self.parent is None:
             print('self.parent is None')
             return
@@ -96,13 +103,23 @@ class Widget:
             self._child.append(c)
         return self
 
+    def clean(self):
+        if self.backend is None:
+            return
+        if self.needbuild:
+            return
+        self.backend.clean()
+        self.needbuild = True
+        #! Memory Error
+        # self._child = []
+
 
 class Page(Widget):
     def __init__(self):
         super().__init__()
         self._setPerent(self)
         self.isroot = True
-        self.backend = _backend.Screen()
+        self.backend = _backend.screen()
 
 
 class Button(Widget):
@@ -119,22 +136,21 @@ class Text(Widget):
 
 
 class PageManager:
-    pageThis = None
+    pageThis: Page = None
     pageList = []
 
     def enter(self, page: Page):
         self.clean()
         self.pageThis = page
         self.pageList.append(page)
-        page = page.add(page.build())
         self.update()
 
     def back(self):
         if len(self.pageList) <= 1:
             return
+        self.clean()
         _ = self.pageList.pop()
         self.pageThis = self.pageList[-1]
-        self.clean()
         self.update()
 
     def update(self):
@@ -143,7 +159,9 @@ class PageManager:
         self.pageThis.update()
 
     def clean(self):
-        _backend.clean()
+        if self.pageThis is None:
+            return
+        self.pageThis.clean()
 
 
 class _App:

@@ -20,8 +20,11 @@ class widget:
     
     def set_text(self, text):
         print('%s.set_text("%s")' % (self.name, text))
+    
+    def clean(self):
+        print("%s.clean()" % (self.name))
 
-class Screen:
+class Screen(widget):
     name = "screen"
 
 _screen = Screen(None)
@@ -31,6 +34,3 @@ class label(widget):
 
 def screen():
     return _screen
-
-def clean():
-    print('screen.clean()')
