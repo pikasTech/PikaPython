@@ -529,6 +529,23 @@ TEST(stddata, pikafs_open) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stddata, list_slice_issue) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "l = [1,2,3]\n"
+            "l[-1]\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "3\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

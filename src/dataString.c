@@ -122,6 +122,7 @@ size_t strGetSize(char* pData) {
     return strlen(pData);
 }
 
+
 char* strPointToLastToken(char* strIn, char sign) {
     if (!strIsContain(strIn, sign)) {
         return strIn;

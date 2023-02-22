@@ -19,7 +19,7 @@ class widget:
         print('%s.set_height(%d)' % (self.name, height))
     
     def set_text(self, text):
-        print('%s.set_text(%s)' % (self.name, text))
+        print('%s.set_text("%s")' % (self.name, text))
 
 class Screen:
     name = "screen"

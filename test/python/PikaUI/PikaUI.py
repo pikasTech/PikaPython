@@ -6,8 +6,11 @@ core.set_backend(textgui)
 class Widget(core.Widget):
     pass
 
-def Page():
-    return core.Page()
+def App():
+    return core.App()
+
+class Page(core.Page):
+    pass
 
 class Button(core.Button):
     pass

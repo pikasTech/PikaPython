@@ -15,13 +15,10 @@ _backend = None
 def set_backend(backend):
     global _backend
     global ALIGN
-    global page
+    global app
     _backend = backend
     ALIGN = _backend.ALIGN
-    page = _Page()
-    page._setPerent(page)
-    page.isroot = True
-    page.backend = _backend.screen()
+    app = _App()
 
 
 class Widget:
@@ -37,16 +34,19 @@ class Widget:
     _child = []
 
     def __init__(self,
+                 text=None,
                  width=100,
                  height=100,
                  pos=None,
-                 text=None,
                  align=ALIGN.TOP_MID):
         self.width = width
         self.height = height
         self.pos = pos
         self.align = align
         self.text = text
+
+    def build(self):
+        pass
 
     def _setPerent(self, parent):
         self.parent = weakref.ref(parent)
@@ -99,9 +99,12 @@ class Widget:
         return self
 
 
-class _Page(Widget):
-    def _createBackend(self, parent: Widget):
-        return _backend.screen()
+class Page(Widget):
+    def __init__(self):
+        super().__init__()
+        self._setPerent(self)
+        self.isroot = True
+        self.backend = _backend.Screen()
 
 
 class Button(Widget):
@@ -117,8 +120,38 @@ class Text(Widget):
         self.backend.set_text(text)
 
 
-page = _Page()
+class PageManager:
+    pageThis = None
+    pageList = []
+
+    def open(self, page: Page):
+        self.pageThis = page
+        self.pageList.append(page)
+        page.build()
+        self.update()
+
+    def pop(self):
+        if len(self.pageList) <= 1:
+            return
+        _ = self.pageList.pop()
+        self.pageThis = self.pageList[-1]
+        self.update()
+
+    def update(self):
+        if self.pageThis is None:
+            return
+        self.pageThis.update()
 
 
-def Page():
-    return page
+class _App:
+    pageManager = PageManager()
+
+    def update(self):
+        self.pageManager.update()
+
+
+app = _App()
+
+
+def App():
+    return app

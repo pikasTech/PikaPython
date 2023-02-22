@@ -434,6 +434,37 @@ static void VMState_delLReg(VMState* vm, uint8_t index) {
     }
 }
 
+static int _obj_getLen(PikaObj* self) {
+    PIKA_PYTHON(@l = __len__())
+    /* clang-format on */
+    const uint8_t bytes[] = {
+        0x08, 0x00, 0x00, 0x00, /* instruct array size */
+        0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct
+                                                           array */
+        0x0c, 0x00, 0x00, 0x00,                         /* const pool size */
+        0x00, 0x5f, 0x5f, 0x6c, 0x65, 0x6e, 0x5f, 0x5f, 0x00,
+        0x40, 0x6c, 0x00, /* const pool */
+    };
+    pikaVM_runByteCode(self, bytes);
+    int len = obj_getInt(self, "@l");
+    obj_removeArg(self, "@l");
+    return len;
+}
+
+static int arg_getLen(Arg* self) {
+    if (argType_isObject(arg_getType(self))) {
+        return _obj_getLen(arg_getPtr(self));
+    }
+    if (arg_getType(self) == ARG_TYPE_STRING) {
+        int strGetSizeUtf8(char* str);
+        return strGetSizeUtf8(arg_getStr(self));
+    }
+    if (arg_getType(self) == ARG_TYPE_BYTES) {
+        return arg_getBytesSize(self);
+    }
+    return -1;
+}
+
 static void VMState_initReg(VMState* vm) {
     for (uint8_t i = 0; i < PIKA_REGIST_SIZE; i++) {
         vm->lreg[i] = NULL;
@@ -477,6 +508,12 @@ Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj) {
     if (ARG_TYPE_INT == arg_getType(key)) {
         index = arg_getInt(key);
     }
+
+    if (index < 0) {
+        index += arg_getLen(obj);
+        arg_setInt(key, "", index);
+    }
+
     if (ARG_TYPE_STRING == type) {
 #if PIKA_STRING_UTF8_ENABLE
         PIKA_BOOL is_temp = PIKA_FALSE;
@@ -495,9 +532,6 @@ Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj) {
     if (ARG_TYPE_BYTES == type) {
         uint8_t* bytes_pyload = arg_getBytes(obj);
         uint8_t byte_buff[] = " ";
-        if (index < 0) {
-            index = arg_getBytesSize(obj) + index;
-        }
         byte_buff[0] = bytes_pyload[index];
         return arg_newBytes(byte_buff, 1);
     }
@@ -566,6 +600,17 @@ Arg* _vm_slice(VMState* vm,
 
     int start_i = arg_getInt(start);
     int end_i = arg_getInt(end);
+
+    if (start_i < 0) {
+        start_i += arg_getLen(obj);
+    }
+    /* magic code, to the end */
+    if (end_i == VM_PC_EXIT) {
+        end_i = arg_getLen(obj);
+    }
+    if (end_i < 0) {
+        end_i += arg_getLen(obj);
+    }
 
     /* __slice__ is equal to __getitem__ */
     if (end_i - start_i == 1) {
@@ -1182,21 +1227,7 @@ static int _get_n_input_with_unpack(VMState* vm, int n_used) {
         if (arg_getIsStarred(call_arg)) {
             pika_assert(argType_isObject(arg_getType(call_arg)));
             PikaObj* obj = arg_getPtr(call_arg);
-            /* clang-format off */
-            PIKA_PYTHON(
-            @l = __len__()
-            )
-            /* clang-format on */
-            const uint8_t bytes[] = {
-                0x08, 0x00, 0x00, 0x00, /* instruct array size */
-                0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct
-                                                                   array */
-                0x0c, 0x00, 0x00, 0x00, /* const pool size */
-                0x00, 0x5f, 0x5f, 0x6c, 0x65, 0x6e, 0x5f, 0x5f, 0x00,
-                0x40, 0x6c, 0x00, /* const pool */
-            };
-            pikaVM_runByteCode(obj, (uint8_t*)bytes);
-            int len = obj_getInt(obj, "@l");
+            int len = _obj_getLen(obj);
             for (int i_star_arg = len - 1; i_star_arg >= 0; i_star_arg--) {
                 obj_setInt(obj, "@d", i_star_arg);
                 /* clang-format off */
