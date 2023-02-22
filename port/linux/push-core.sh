@@ -6,6 +6,7 @@ FLAG_NOTE="\033[35m[Note]\033[0m"
 cp package/pikascript/pikascript-core/* ../../src -r
 cp package/pikascript/PikaObj.pyi ../../src
 git add $(find ../../test/python -name '*.py')
+git add $(find ../../test -name '*.cpp')
 sh std_push.sh PikaStdLib
 sh std_push.sh PikaStdData
 sh std_push.sh PikaDebug
