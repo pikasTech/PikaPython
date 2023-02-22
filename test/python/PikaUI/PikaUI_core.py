@@ -125,6 +125,7 @@ class PageManager:
     pageList = []
 
     def enter(self, page: Page):
+        self.clean()
         self.pageThis = page
         self.pageList.append(page)
         page.build()
