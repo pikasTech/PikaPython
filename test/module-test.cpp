@@ -261,6 +261,7 @@ TEST(socket, thread) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if PIKA_FLOAT_TYPE_DOUBLE
 TEST(socket, json_issue) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
@@ -288,6 +289,8 @@ TEST(socket, json_issue) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
+
 #endif
 
 #if !PIKA_NANO_ENABLE
