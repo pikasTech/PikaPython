@@ -2949,7 +2949,10 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
         return NULL;
     }
     VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-    pika_platform_printf("ModuleNotFoundError: No module named '%s'\r\n", data);
+    if (vm->run_state->try_state == TRY_STATE_NONE) {
+        pika_platform_printf("ModuleNotFoundError: No module named '%s'\r\n",
+                             data);
+    }
     return NULL;
 }
 

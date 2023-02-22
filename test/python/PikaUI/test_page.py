@@ -1,4 +1,5 @@
 import PikaUI as ui
+from PikaStdLib import MemChecker as mem
 
 page1 = ui.Page().add(
     ui.Text('Hello Page1')
@@ -7,9 +8,7 @@ page1 = ui.Page().add(
 
 class Page2(ui.Page):
     def build(self):
-        _ = self.add(
-            ui.Text('Hello Page2')
-        )
+        return ui.Text('Hello Page2')
 
 
 app = ui.App()
