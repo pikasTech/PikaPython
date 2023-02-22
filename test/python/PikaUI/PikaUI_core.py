@@ -124,23 +124,27 @@ class PageManager:
     pageThis = None
     pageList = []
 
-    def open(self, page: Page):
+    def enter(self, page: Page):
         self.pageThis = page
         self.pageList.append(page)
         page.build()
         self.update()
 
-    def pop(self):
+    def back(self):
         if len(self.pageList) <= 1:
             return
         _ = self.pageList.pop()
         self.pageThis = self.pageList[-1]
+        self.clean()
         self.update()
 
     def update(self):
         if self.pageThis is None:
             return
         self.pageThis.update()
+    
+    def clean(self):
+        _backend.clean()
 
 
 class _App:

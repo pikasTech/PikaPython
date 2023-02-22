@@ -31,3 +31,6 @@ class label(widget):
 
 def screen():
     return _screen
+
+def clean():
+    print('screen.clean()')
