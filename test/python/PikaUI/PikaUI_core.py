@@ -21,7 +21,7 @@ def set_backend(backend):
     page = _Page()
     page._setPerent(page)
     page.isroot = True
-    page.backend = _backend.scr_act()
+    page.backend = _backend.screen()
 
 
 class Widget:
@@ -72,7 +72,7 @@ class Widget:
             c.update()
 
     def _createBackend(self, parent: "Widget"):
-        return _backend.lv_obj(parent.backend)
+        return _backend.widget(parent.backend)
 
     def _updateAttr(self,
                     width,
@@ -101,7 +101,7 @@ class Widget:
 
 class _Page(Widget):
     def _createBackend(self, parent: Widget):
-        return _backend.scr_act()
+        return _backend.screen()
 
 
 class Button(Widget):

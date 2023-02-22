@@ -1,5 +1,5 @@
 
-class lv_obj:
+class widget:
     name = "widget"
 
     def __init__(self, parent):
@@ -26,8 +26,8 @@ class Screen:
 
 _screen = Screen(None)
 
-class label(lv_obj):
+class label(widget):
     name = "label"
 
-def scr_act():
+def screen():
     return _screen
