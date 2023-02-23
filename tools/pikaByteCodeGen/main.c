@@ -35,6 +35,7 @@ void New_PikaStdData_Dict(void) {}
 void New_PikaStdData_Tuple(void) {}
 void New_PikaStdData_String(void) {}
 void New_PikaStdData_ByteArray(void) {}
+int strGetSizeUtf8(char* str){return 0;}
 char* string_slice(Args* outBuffs, char* str, int start, int end) {
     return NULL;
 }
