@@ -4,7 +4,7 @@ import _modbus
 class ModBus(_modbus._ModBus):
 
     def serializeWriteBits(self, addr: int, src: list) -> bytes:
-        lenth = super().serializeWriteBits(addr, len(list), bytes(src))
+        lenth = super().serializeWriteBits(addr, len(src), bytes(src))
         return self.sendBuff[0:lenth]
 
     def serializeWriteRegisters(self, addr: int, src: list) -> bytes:
