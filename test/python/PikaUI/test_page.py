@@ -12,5 +12,9 @@ class Page2(ui.Page):
 
 app = ui.App()
 app.pageManager.enter(Page1())
+app.timer.cb(0)
 app.pageManager.enter(Page2())
+app.timer.cb(0)
 app.pageManager.back()
+app.timer.cb(0)
+

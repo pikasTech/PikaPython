@@ -35,17 +35,19 @@ class Widget:
                  width=100,
                  height=100,
                  pos=None,
-                 align=ALIGN.TOP_MID):
+                 align=ALIGN.TOP_MID,
+                 onclick=None):
         self.width = width
         self.height = height
         self.pos = pos
         self.align = align
         self.text = text
+        self.onclick = onclick
 
     def build(self):
         pass
 
-    def _setPerent(self, parent):
+    def _set_perent(self, parent):
         # use weakref to avoid circular reference
         self.parent = weakref.ref(parent)
 
@@ -65,40 +67,45 @@ class Widget:
             return
 
         if self.backend is None:
-            self.backend = self._createBackend(self.parent)
+            self.backend = self._create_backend(self.parent)
 
         if not self.isroot:
-            self._updateAlign(self.align)
-            self._updateAttr(self.width, self.height, self.pos)
-            self._updateText(self.text)
+            self._update_align(self.align)
+            self._update_attr(self.width, self.height, self.pos)
+            self._update_text(self.text)
+            self._update_event()
 
         for c in self._child:
             c.update()
 
-    def _createBackend(self, parent: "Widget"):
+    def _create_backend(self, parent: "Widget"):
         return _backend.widget(parent.backend)
 
-    def _updateAttr(self,
-                    width,
-                    height,
-                    pos):
+    def _update_attr(self,
+                     width,
+                     height,
+                     pos):
         self.backend.set_width(width)
         self.backend.set_height(height)
         if not pos is None:
             self.backend.set_pos(pos[0], pos[1])
 
-    def _updateAlign(self, align):
+    def _update_align(self, align):
         self.backend.align(align, 0, 0)
 
-    def _updateText(self, text):
+    def _update_text(self, text):
         if not None is text:
             self._label = _backend.label(self.backend)
             self._label.set_text(self.text)
             self._label.align(_backend.ALIGN.CENTER, 0, 0)
 
+    def _update_event(self):
+        if not None is self.onclick:
+            self.backend.add_event_cb(self.onclick, _backend.EVENT.CLICKED, 0)
+
     def add(self, *child):
         for c in child:
-            c._setPerent(self)
+            c._set_perent(self)
             self._child.append(c)
         return self
 
@@ -107,7 +114,7 @@ class Widget:
             return
         if self.needbuild:
             return
-        self.backend.clean()
+        # self.backend.clean()
         self.needbuild = True
         self._child = []
 
@@ -115,41 +122,57 @@ class Widget:
 class Page(Widget):
     def __init__(self):
         super().__init__()
-        self._setPerent(self)
+        self._set_perent(self)
         self.isroot = True
         self.backend = _backend.screen()
 
 
 class Button(Widget):
-    def _createBackend(self, parent: Widget):
+    def _create_backend(self, parent: Widget):
         return _backend.btn(parent.backend)
 
 
 class Text(Widget):
-    def _createBackend(self, parent: Widget):
+    def _create_backend(self, parent: Widget):
         return _backend.label(parent.backend)
 
-    def _updateText(self, text):
+    def _update_text(self, text):
         self.backend.set_text(text)
 
 
 class PageManager:
     pageThis: Page = None
     pageList = []
+    pageNeedEnter = None
+    pageNeedBack = False
 
     def enter(self, page: Page):
-        self.clean()
-        self.pageThis = page
-        self.pageList.append(page)
-        self.update()
+        if not self.pageNeedEnter is None:
+            return
+        self.pageNeedEnter = page
 
     def back(self):
-        if len(self.pageList) <= 1:
+        if self.pageNeedBack:
             return
-        self.clean()
-        _ = self.pageList.pop()
-        self.pageThis = self.pageList[-1]
-        self.update()
+        self.pageNeedBack = True
+    
+    def handle_timer(self):
+        if not self.pageNeedEnter is None:
+            page = self.pageNeedEnter
+            self.clean()
+            self.pageThis = page
+            self.pageList.append(page)
+            self.update()
+            self.pageNeedEnter = None
+        
+        if self.pageNeedBack:
+            if len(self.pageList) <= 1:
+                return
+            self.clean()
+            _ = self.pageList.pop()
+            self.pageThis = self.pageList[-1]
+            self.update()
+            self.pageNeedBack = False
 
     def update(self):
         if self.pageThis is None:
@@ -162,18 +185,23 @@ class PageManager:
         self.pageThis.clean()
 
 
+
 class _App:
     pageManager = PageManager()
+    timer = None
+    def cb_timer(self, src):
+        self.pageManager.handle_timer()
+
+    def __init__(self):
+        self.timer = _backend.timer()
+        self.timer.set_period(50)
+        self.timer.set_cb(self.cb_timer)
 
     def update(self):
         self.pageManager.update()
-
-
-app = _App()
-
-
-def App():
-    return app
+    
+    def show(self, page: Page):
+        self.pageManager.enter(page)
 
 
 try:
@@ -190,3 +218,8 @@ try:
 except:
     pass
 
+app = _App()
+
+
+def App():
+    return app

@@ -32,5 +32,15 @@ _screen = Screen(None)
 class label(widget):
     name = "label"
 
+class timer:
+    cb = None
+    def set_period(self, period):
+        print('timer.set_period(%d)' % period)
+    
+    def set_cb(self, cb):
+        self.cb = cb
+        print('timer.set_cb(%s)' % str(cb))
+
 def screen():
     return _screen
+
