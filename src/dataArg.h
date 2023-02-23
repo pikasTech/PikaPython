@@ -95,6 +95,8 @@ Arg* arg_setName(Arg* self, char* name);
 Arg* arg_setNameHash(Arg* self, Hash nameHash);
 Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size);
 Arg* arg_newContent(uint32_t size);
+void arg_refcntInc(Arg* self);
+void arg_refcntDec(Arg* self);
 
 static inline void arg_setType(Arg* self, ArgType type) {
     self->type = type;
@@ -158,6 +160,7 @@ uint8_t* arg_getBytes(Arg* self);
 size_t arg_getBytesSize(Arg* self);
 Arg* arg_copy(Arg* argToBeCopy);
 Arg* arg_copy_noalloc(Arg* argToBeCopy, Arg* argToBeCopyTo);
+Arg* arg_copy_content(Arg* arg_dict, Arg* arg_src);
 
 void arg_deinit(Arg* self);
 

@@ -1708,18 +1708,20 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
                                       uint8_t* byteCode) {
     PikaObj* New_PikaStdLib_SysObj(Args * args);
     if (!obj_isArgExist((PikaObj*)__pikaMain, name)) {
+        /* import to main module context */
         obj_newDirectObj((PikaObj*)__pikaMain, name, New_PikaStdLib_SysObj);
         pikaVM_runByteCode(obj_getObj((PikaObj*)__pikaMain, name),
                            (uint8_t*)byteCode);
     }
     if (self != (PikaObj*)__pikaMain) {
-        Arg* module_arg = obj_getArg((PikaObj*)__pikaMain, name);
-        PikaObj* module_obj = arg_getPtr(module_arg);
-        obj_setArg(self, name, module_arg);
+        /* import to other module context */
+        Arg* aModule = obj_getArg((PikaObj*)__pikaMain, name);
+        PikaObj* oModule = arg_getPtr(aModule);
+        obj_setArg(self, name, aModule);
         arg_setIsWeakRef(obj_getArg(self, name), PIKA_TRUE);
-        pika_assert(argType_isObject(arg_getType(module_arg)));
+        pika_assert(argType_isObject(arg_getType(aModule)));
         /* decrase refcnt to avoid circle reference */
-        obj_refcntDec(module_obj);
+        obj_refcntDec(oModule);
     }
     return self;
 }

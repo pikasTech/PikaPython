@@ -471,16 +471,37 @@ Arg* New_arg(void* voidPointer) {
     return NULL;
 }
 
-static void _arg_refcnt_fix(Arg* self) {
+void arg_refcntInc(Arg* self) {
     ArgType arg_type = arg_getType(self);
-    if (ARG_TYPE_OBJECT == arg_type) {
-        obj_refcntInc((PikaObj*)arg_getPtr(self));
+    if (ARG_TYPE_OBJECT != arg_type) {
+        return;
     }
-    // if (ARG_TYPE_METHOD_OBJECT == arg_type) {
-    //     if (NULL != methodArg_getHostObj(self)) {
-    //         obj_refcntInc((PikaObj*)arg_getPtr(self));
-    //     }
-    // }
+    if (arg_getIsWeakRef(self)) {
+        return;
+    }
+    obj_refcntInc((PikaObj*)arg_getPtr(self));
+}
+
+void arg_refcntDec(Arg* self) {
+    ArgType arg_type = arg_getType(self);
+    if (ARG_TYPE_OBJECT != arg_type) {
+        return;
+    }
+    if (arg_getIsWeakRef(self)) {
+        return;
+    }
+    obj_refcntDec((PikaObj*)arg_getPtr(self));
+}
+
+Arg* arg_copy_content(Arg* arg_dict, Arg* arg_src) {
+    arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
+                              arg_getContentSize(arg_src));
+    arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
+    pika_assert(NULL != arg_dict);
+    arg_setType(arg_dict, arg_getType(arg_src));
+    arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
+    arg_setIsWeakRef(arg_dict, arg_getIsWeakRef(arg_src));
+    return arg_dict;
 }
 
 Arg* arg_copy(Arg* arg_src) {
@@ -488,14 +509,9 @@ Arg* arg_copy(Arg* arg_src) {
         return NULL;
     }
     pika_assert(arg_src->flag < ARG_FLAG_MAX);
-    _arg_refcnt_fix(arg_src);
+    arg_refcntInc(arg_src);
     Arg* arg_dict = New_arg(NULL);
-    arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
-                              arg_getContentSize(arg_src));
-    arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
-    pika_assert(NULL != arg_dict);
-    arg_setType(arg_dict, arg_getType(arg_src));
-    arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
+    arg_dict = arg_copy_content(arg_dict, arg_src);
     return arg_dict;
 }
 
@@ -510,14 +526,9 @@ Arg* arg_copy_noalloc(Arg* arg_src, Arg* arg_dict) {
     if (arg_getSize(arg_src) > arg_getSize(arg_dict)) {
         return arg_copy(arg_src);
     }
-    _arg_refcnt_fix(arg_src);
+    arg_refcntInc(arg_src);
     arg_setSerialized(arg_dict, PIKA_FALSE);
-    arg_dict = arg_setContent(arg_dict, arg_getContent(arg_src),
-                              arg_getContentSize(arg_src));
-    arg_dict = arg_setNameHash(arg_dict, arg_getNameHash(arg_src));
-    pika_assert(NULL != arg_dict);
-    arg_setType(arg_dict, arg_getType(arg_src));
-    arg_setIsKeyword(arg_dict, arg_getIsKeyword(arg_src));
+    arg_dict = arg_copy_content(arg_dict, arg_src);
     return arg_dict;
 }
 

@@ -336,12 +336,10 @@ PIKA_RES __updateArg(Args* self, Arg* argNew) {
     }
 
     arg_deinitHeap((Arg*)nodeToUpdate);
-
-    nodeToUpdate = (LinkNode*)arg_setContent(
-        (Arg*)nodeToUpdate, arg_getContent(argNew), arg_getSize(argNew));
-
     pika_assert(NULL != nodeToUpdate);
-    arg_setType((Arg*)nodeToUpdate, arg_getType(argNew));
+
+    nodeToUpdate = (LinkNode*)arg_copy_content((Arg*)nodeToUpdate, argNew);
+
     // update privior link, because arg_getContent would free origin pointer
     if (NULL == priorNode) {
         self->firstNode = nodeToUpdate;

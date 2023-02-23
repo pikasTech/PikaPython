@@ -13,10 +13,8 @@ _backend = None
 def set_backend(backend):
     global _backend
     global ALIGN
-    global app
     _backend = backend
     ALIGN = _backend.ALIGN
-    app = _App()
 
 
 class Widget:
@@ -48,6 +46,7 @@ class Widget:
         pass
 
     def _setPerent(self, parent):
+        # use weakref to avoid circular reference
         self.parent = weakref.ref(parent)
 
     def update(self):
@@ -110,8 +109,7 @@ class Widget:
             return
         self.backend.clean()
         self.needbuild = True
-        #! Memory Error
-        # self._child = []
+        self._child = []
 
 
 class Page(Widget):
@@ -191,3 +189,4 @@ try:
     print('PikaUI: Using text backend')
 except:
     pass
+
