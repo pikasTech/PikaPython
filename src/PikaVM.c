@@ -44,7 +44,8 @@ volatile VMSignal PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
                                           .head = 0,
                                           .tail = 0,
                                           .res = {0},
-                                      }
+                                      },
+                                  .event_pickup_cnt = 0
 #endif
 };
 
@@ -87,6 +88,10 @@ int _VM_is_first_lock(void) {
 
 int _VMEvent_getVMCnt(void) {
     return PikaVMSignal.vm_cnt;
+}
+
+int _VMEvent_getEventPickupCnt(void) {
+    return PikaVMSignal.event_pickup_cnt;
 }
 
 #if PIKA_EVENT_ENABLE
@@ -229,15 +234,21 @@ void _VMEvent_pickupEvent(void) {
     pika_platform_printf("PIKA_EVENT_ENABLE is not enable\r\n");
     pika_platform_panic_handle();
 #else
+    int evt_pickup_cnt = _VMEvent_getEventPickupCnt();
+    if (evt_pickup_cnt >= PIKA_EVENT_PICKUP_MAX) {
+        return;
+    }
     PikaObj* event_lisener;
     uint32_t event_id;
     Arg* event_data;
     int head;
     if (PIKA_RES_OK == __eventListener_popEvent(&event_lisener, &event_id,
                                                 &event_data, &head)) {
+        PikaVMSignal.event_pickup_cnt++;
         Arg* res =
             __eventListener_runEvent(event_lisener, event_id, event_data);
         PikaVMSignal.cq.res[head] = res;
+        PikaVMSignal.event_pickup_cnt--;
     }
 #endif
 }

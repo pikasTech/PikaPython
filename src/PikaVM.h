@@ -149,6 +149,7 @@ struct VMSignal {
     int vm_cnt;
 #if PIKA_EVENT_ENABLE
     EventCQ cq;
+    int event_pickup_cnt;
 #endif
 };
 
