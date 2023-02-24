@@ -298,6 +298,10 @@
         #define PIKA_INSTRUCT_HOOK_PERIOD 50
     #endif
 
+    #ifndef PIKA_INSTRUCT_YIELD_PERIOD
+        #define PIKA_INSTRUCT_YIELD_PERIOD 1
+    #endif
+
     #ifndef PIKA_EXEC_ENABLE
         #define PIKA_EXEC_ENABLE 1
     #endif

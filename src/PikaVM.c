@@ -3621,7 +3621,9 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
             pika_hook_instruct();
         }
 #endif
-        _pikaVM_yield();
+        if (vm.ins_cnt % PIKA_INSTRUCT_YIELD_PERIOD == 0) {
+            _pikaVM_yield();
+        }
         if (0 != vm.error_code) {
             vm.line_error_code = vm.error_code;
             InstructUnit* head_ins_unit = this_ins_unit;
