@@ -1,12 +1,8 @@
 import weakref
 
 
-class _ALIGN:
-    CENTER = 0
-    TOP_MID = 1
 
-
-ALIGN = _ALIGN
+ALIGN = None 
 _backend = None
 
 
@@ -116,7 +112,8 @@ class Widget:
             return
         for c in self._child:
             c.clean()
-        self.backend.clean()
+        if not self.isroot:
+            self.backend.del_()
         self.needbuild = True
         self._child = []
 
@@ -225,3 +222,6 @@ app = _App()
 
 def App():
     return app
+
+def cleanup():
+    app.timer._del()

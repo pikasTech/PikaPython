@@ -23,6 +23,15 @@ class widget:
     
     def clean(self):
         print("%s.clean()" % (self.name))
+    
+    def del_(self):
+        print("%s.del()" % (self.name))
+    
+    def set_pos(self, x, y):
+        print("%s.set_pos(%d, %d)" % (self.name, x, y))
+    
+    def add_event_cb(self, fn, event, data):
+        print("%s.add_event_cb(%s, %d, %d)" % (self.name, str(fn), event, data))
 
 class Screen(widget):
     name = "screen"
@@ -31,6 +40,9 @@ _screen = Screen(None)
 
 class label(widget):
     name = "label"
+
+class btn(widget):
+    name = "btn"
 
 class timer:
     cb = None
@@ -44,3 +56,12 @@ class timer:
 def screen():
     return _screen
 
+
+
+class ALIGN:
+    CENTER = 0
+    TOP_MID = 1
+
+
+class EVENT:
+    CLICKED = 0
