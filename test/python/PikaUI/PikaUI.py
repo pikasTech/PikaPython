@@ -5,10 +5,10 @@ ALIGN = None
 GPU = None
 
 
-def set_GPU(backend):
+def set_GPU(gpu):
     global GPU
     global ALIGN
-    GPU = backend
+    GPU = gpu
     ALIGN = GPU.ALIGN
 
 
