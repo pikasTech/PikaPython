@@ -1,33 +1,38 @@
 import PikaUI as ui
 from PikaStdLib import MemChecker as mem
 
-class Page1(ui.Page):
+
+class MainContainer(ui.Container):
     def onclick_next(self, event):
         print('Page1: onclick_next')
         app.pageManager.enter(Page2())
         mem.now()
 
     def build(self):
-        main = ui.Container(
+        text = ui.Text(
+            text='Hello Page1',
+            align=ui.ALIGN.CENTER
+        )
+        btn = ui.Button(
+            text='Next',
+            align=ui.ALIGN.CENTER,
+            pos=(0, 50),
+            height=30,
+            width=80,
+            onclick=self.onclick_next
+        )
+        return [text, btn]
+
+
+class Page1(ui.Page):
+    def build(self):
+        mainCtn = MainContainer(
             width=300,
             height=200,
             pos=(0, 50)
-        ).add(
-            ui.Text(
-                text='Hello Page1',
-                align=ui.ALIGN.CENTER
-            ),
-            ui.Button(
-                text='Next',
-                align=ui.ALIGN.CENTER,
-                pos=(0, 50),
-                height=30,
-                width=80,
-                onclick=self.onclick_next
-            )
         )
         title = ui.Text("Title")
-        return [main, title]
+        return [mainCtn, title]
 
 
 class Page2(ui.Page):
@@ -37,8 +42,8 @@ class Page2(ui.Page):
 
     def build(self):
         return ui.Container(
-            width= 400,
-            height= 200,
+            width=400,
+            height=200,
             pos=(0, 50)
         ).add(
             ui.Text(
@@ -54,6 +59,7 @@ class Page2(ui.Page):
                 onclick=self.on_click_back
             )
         )
+
 
 app = ui.App()
 app.pageManager.enter(Page1())
@@ -74,4 +80,3 @@ mem.now()
 #     app.pageManager.back()
 #     app.timer.cb(0)
 #     mem.now()
-

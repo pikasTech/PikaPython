@@ -408,7 +408,7 @@ PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
 void pks_eventListener_init(PikaEventListener** p_self);
 void pks_eventListener_deinit(PikaEventListener** p_self);
 PikaObj* methodArg_getDefContext(Arg* method_arg);
-PikaObj* obj_linkLibraryFile(PikaObj* self, char* input_file_name);
+int obj_linkLibraryFile(PikaObj* self, char* input_file_name);
 NewFun obj_getClass(PikaObj* obj);
 
 void pks_printVersion(void);

@@ -2607,6 +2607,7 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
     parse_after:
         if (NULL == single_ASM) {
             out_ASM = NULL;
+            pika_platform_printf("    -> %s\r\n", line);
             strsDeinit(&buffs);
             goto exit;
         }

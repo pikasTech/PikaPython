@@ -3743,8 +3743,9 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
     pikaMemMaxReset();
     char* libfile_path =
         strsPathJoin(&buffs, pwd, "pikascript-api/pikaModules_cache.py.a");
-    obj_linkLibraryFile(self, libfile_path);
-    self = pikaVM_runSingleFile(self, file_name);
+    if (PIKA_RES_OK == obj_linkLibraryFile(self, libfile_path)) {
+        self = pikaVM_runSingleFile(self, file_name);
+    }
     strsDeinit(&buffs);
     return self;
 }
