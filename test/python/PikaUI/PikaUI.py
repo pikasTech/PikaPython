@@ -218,14 +218,14 @@ class _App:
 try:
     import PikaUI_GPU_lvgl
     set_GPU(PikaUI_GPU_lvgl)
-    print('PikaUI: Using lvgl backend')
+    print('PikaUI: Using lvgl GPU')
 except:
     pass
 
 try:
     import PikaUI_GPU_text
     set_GPU(PikaUI_GPU_text)
-    print('PikaUI: Using text backend')
+    print('PikaUI: Using text GPU')
 except:
     pass
 
