@@ -962,8 +962,6 @@ Arg* _obj_runMethodArgWithState(PikaObj* self,
     if (ARG_TYPE_NONE == method_type) {
         return NULL;
     }
-    ByteCodeFrame* method_bytecodeFrame =
-        methodArg_getBytecodeFrame(method_arg);
 
     /* redirect to def context */
     if (!argType_isNative(method_type)) {
@@ -986,6 +984,8 @@ Arg* _obj_runMethodArgWithState(PikaObj* self,
     } else {
         /* static method and object method */
         /* byteCode */
+        ByteCodeFrame* method_bytecodeFrame =
+            methodArg_getBytecodeFrame(method_arg);
         uintptr_t insturctArray_start = (uintptr_t)instructArray_getByOffset(
             &(method_bytecodeFrame->instruct_array), 0);
         uint16_t pc = (uintptr_t)method_ptr - insturctArray_start;

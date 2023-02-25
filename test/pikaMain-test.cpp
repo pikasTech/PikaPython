@@ -2906,6 +2906,23 @@ TEST(pikaMain, SHELL_filter_bye_pika_nomache) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(pikaMain, mem_now) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    /* run */
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "from PikaStdLib import MemChecker as mem\n"
+            "mem.now()\n");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST(pikaMain, obj_setNone) {

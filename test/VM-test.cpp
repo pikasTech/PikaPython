@@ -2656,6 +2656,27 @@ TEST(vm, bool_){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(vm, method_cb){
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    obj_run(pikaMain, 
+    "class Test:\n"
+    "    _cb = None\n"
+    "    def callback(self):\n"
+    "        print('test')\n"
+    "    def addcb(self, cb):\n"
+    "        self._cb = cb\n"
+    "    def runcb(self):\n"
+    "        self._cb()\n"
+    "    def __init__(self):\n"
+    "        self.addcb(self.callback)\n"
+    "t = Test()\n"
+    "t.runcb()"
+    );
+    obj_deinit(pikaMain);
+    EXPECT_STREQ(log_buff[0], "test\r\n");
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
