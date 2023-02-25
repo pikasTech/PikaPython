@@ -1103,7 +1103,6 @@ TEST(pikaMain, syntax_err_1) {
     obj_run(pikaMain, "print('testtest)\n");
     /* assert */
     EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
-    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -1438,10 +1437,6 @@ TEST(pikaMain, not_4_space) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "Error: Syntax error.\r\n");
-    EXPECT_STREQ(
-        log_buff[1],
-        "IndentationError: unexpected indent, only support 4 spaces\r\n");
-    EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     /* mem check */

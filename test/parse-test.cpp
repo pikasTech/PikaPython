@@ -5388,6 +5388,27 @@ TEST(parser, while_try_while) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, return_list) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "return [\n"
+        "    ui.Text(\n"
+        "        align=ui.ALIGN.CENTER\n"
+        "    ),\n"
+        "    ui.Button(\n"
+        "        onclick=self.onclick_next\n"
+        "    )\n"
+        "]\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    // EXPECT_STREQ(pikaAsm,
+    //              "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

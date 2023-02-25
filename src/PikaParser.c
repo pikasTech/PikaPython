@@ -370,7 +370,8 @@ uint8_t Parser_checkIsDirect(char* str) {
     Args buffs = {0};
     uint8_t res = 0;
     pika_assert(NULL != str);
-    if (Cursor_isContain(str, TOKEN_operator, "=")) {
+    char* left = Cursor_splitCollect(&buffs, str, "=", 1);
+    if (!strEqu(left, str)) {
         res = 1;
         goto exit;
     }
@@ -2607,7 +2608,7 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
     parse_after:
         if (NULL == single_ASM) {
             out_ASM = NULL;
-            pika_platform_printf("    -> %s\r\n", line);
+            pika_platform_printf("------\r\n%s\r\n------\r\n", line);
             strsDeinit(&buffs);
             goto exit;
         }

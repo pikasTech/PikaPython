@@ -9,30 +9,32 @@ class MainContainer(ui.Container):
         mem.now()
 
     def build(self):
-        text = ui.Text(
-            text='Hello Page1',
-            align=ui.ALIGN.CENTER
-        )
-        btn = ui.Button(
-            text='Next',
-            align=ui.ALIGN.CENTER,
-            pos=(0, 50),
-            height=30,
-            width=80,
-            onclick=self.onclick_next
-        )
-        return [text, btn]
+        return [
+            ui.Text(
+                text='Hello Page1',
+                align=ui.ALIGN.CENTER
+            ),
+            ui.Button(
+                text='Next',
+                align=ui.ALIGN.CENTER,
+                pos=(0, 50),
+                height=30,
+                width=80,
+                onclick=self.onclick_next
+            )
+        ]
 
 
 class Page1(ui.Page):
     def build(self):
-        mainCtn = MainContainer(
-            width=300,
-            height=200,
-            pos=(0, 50)
-        )
-        title = ui.Text("Title")
-        return [mainCtn, title]
+        return [
+            MainContainer(
+                width=300,
+                height=200,
+                pos=(0, 50)
+            ),
+            ui.Text("Title")
+        ]
 
 
 class Page2(ui.Page):
