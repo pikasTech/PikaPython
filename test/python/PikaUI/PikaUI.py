@@ -1,16 +1,15 @@
 import weakref
 
 
+ALIGN = None
+GPU = None
 
-ALIGN = None 
-_backend = None
 
-
-def set_backend(backend):
-    global _backend
+def set_GPU(backend):
+    global GPU
     global ALIGN
-    _backend = backend
-    ALIGN = _backend.ALIGN
+    GPU = backend
+    ALIGN = GPU.ALIGN
 
 
 class Widget:
@@ -66,16 +65,22 @@ class Widget:
             self.backend = self._create_backend(self.parent)
 
         if not self.isroot:
-            self._update_align(self.align)
-            self._update_attr(self.width, self.height, self.pos)
-            self._update_text(self.text)
-            self._update_event()
+            self._update_backend()
 
         for c in self._child:
             c.update()
 
     def _create_backend(self, parent: "Widget"):
-        return _backend.widget(parent.backend)
+        return GPU.widget(parent.backend)
+
+    def _update_backend(self):
+        self._update_align(self.align)
+        self._update_attr(self.width, self.height, self.pos)
+        self._update_text(self.text)
+        self._update_event()
+
+    def _update_align(self, align):
+        self.backend.align(align, 0, 0)
 
     def _update_attr(self,
                      width,
@@ -86,23 +91,25 @@ class Widget:
         if not pos is None:
             self.backend.set_pos(pos[0], pos[1])
 
-    def _update_align(self, align):
-        self.backend.align(align, 0, 0)
-
     def _update_text(self, text):
         if not None is text:
-            self._label = _backend.label(self.backend)
+            self._label = GPU.label(self.backend)
             self._label.set_text(self.text)
-            self._label.align(_backend.ALIGN.CENTER, 0, 0)
+            self._label.align(GPU.ALIGN.CENTER, 0, 0)
 
     def _update_event(self):
         if not None is self.onclick:
-            self.backend.add_event_cb(self.onclick, _backend.EVENT.CLICKED, 0)
+            self.backend.add_event_cb(self.onclick, GPU.EVENT.CLICKED, 0)
 
     def add(self, *child):
         for c in child:
-            c._set_perent(self)
-            self._child.append(c)
+            if type(c) == list:
+                for cc in c:
+                    cc._set_perent(self)
+                    self._child.append(cc)
+            else:
+                c._set_perent(self)
+                self._child.append(c)
         return self
 
     def clean(self):
@@ -118,25 +125,30 @@ class Widget:
         self._child = []
 
 
+class Container(Widget):
+    def _create_backend(self, parent: Widget):
+        return GPU.container(parent.backend)
+
+
+class Button(Widget):
+    def _create_backend(self, parent: Widget):
+        return GPU.btn(parent.backend)
+
+
+class Text(Widget):
+    def _create_backend(self, parent: Widget):
+        return GPU.label(parent.backend)
+
+    def _update_text(self, text):
+        self.backend.set_text(text)
+
+
 class Page(Widget):
     def __init__(self):
         super().__init__()
         self._set_perent(self)
         self.isroot = True
-        self.backend = _backend.screen()
-
-
-class Button(Widget):
-    def _create_backend(self, parent: Widget):
-        return _backend.btn(parent.backend)
-
-
-class Text(Widget):
-    def _create_backend(self, parent: Widget):
-        return _backend.label(parent.backend)
-
-    def _update_text(self, text):
-        self.backend.set_text(text)
+        self.backend = GPU.screen()
 
 
 class PageManager:
@@ -192,7 +204,7 @@ class _App:
         self.pageManager.handle_timer()
 
     def __init__(self):
-        self.timer = _backend.timer()
+        self.timer = GPU.timer()
         self.timer.set_period(50)
         self.timer.set_cb(self.cb_timer)
 
@@ -204,15 +216,15 @@ class _App:
 
 
 try:
-    import PikaUI_backend_lvgl
-    set_backend(PikaUI_backend_lvgl)
+    import PikaUI_GPU_lvgl
+    set_GPU(PikaUI_GPU_lvgl)
     print('PikaUI: Using lvgl backend')
 except:
     pass
 
 try:
-    import PikaUI_backend_text
-    set_backend(PikaUI_backend_text)
+    import PikaUI_GPU_text
+    set_GPU(PikaUI_GPU_text)
     print('PikaUI: Using text backend')
 except:
     pass
@@ -222,6 +234,7 @@ app = _App()
 
 def App():
     return app
+
 
 def cleanup():
     app.timer._del()

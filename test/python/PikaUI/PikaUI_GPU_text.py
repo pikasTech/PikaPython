@@ -44,6 +44,9 @@ class label(widget):
 class btn(widget):
     name = "btn"
 
+class container(widget):
+    name = "container"
+
 class timer:
     cb = None
     def set_period(self, period):

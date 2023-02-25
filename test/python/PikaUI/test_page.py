@@ -8,7 +8,7 @@ class Page1(ui.Page):
         mem.now()
 
     def build(self):
-        return ui.Widget(
+        main = ui.Container(
             width=300,
             height=200,
             pos=(0, 50)
@@ -26,6 +26,8 @@ class Page1(ui.Page):
                 onclick=self.onclick_next
             )
         )
+        title = ui.Text("Title")
+        return [main, title]
 
 
 class Page2(ui.Page):
@@ -34,7 +36,7 @@ class Page2(ui.Page):
         mem.now()
 
     def build(self):
-        return ui.Widget(
+        return ui.Container(
             width= 400,
             height= 200,
             pos=(0, 50)
@@ -55,6 +57,12 @@ class Page2(ui.Page):
 
 app = ui.App()
 app.pageManager.enter(Page1())
+app.timer.cb(0)
+mem.now()
+app.pageManager.enter(Page2())
+app.timer.cb(0)
+mem.now()
+app.pageManager.back()
 app.timer.cb(0)
 mem.now()
 
