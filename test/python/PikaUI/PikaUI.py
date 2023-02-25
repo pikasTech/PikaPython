@@ -114,7 +114,9 @@ class Widget:
             return
         if self.needbuild:
             return
-        # self.backend.clean()
+        for c in self._child:
+            c.clean()
+        self.backend.clean()
         self.needbuild = True
         self._child = []
 
@@ -155,7 +157,7 @@ class PageManager:
         if self.pageNeedBack:
             return
         self.pageNeedBack = True
-    
+
     def handle_timer(self):
         if not self.pageNeedEnter is None:
             page = self.pageNeedEnter
@@ -164,7 +166,7 @@ class PageManager:
             self.pageList.append(page)
             self.update()
             self.pageNeedEnter = None
-        
+
         if self.pageNeedBack:
             if len(self.pageList) <= 1:
                 return
@@ -185,10 +187,10 @@ class PageManager:
         self.pageThis.clean()
 
 
-
 class _App:
     pageManager = PageManager()
     timer = None
+
     def cb_timer(self, src):
         self.pageManager.handle_timer()
 
@@ -199,7 +201,7 @@ class _App:
 
     def update(self):
         self.pageManager.update()
-    
+
     def show(self, page: Page):
         self.pageManager.enter(page)
 
