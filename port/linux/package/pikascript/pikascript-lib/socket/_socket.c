@@ -119,7 +119,7 @@ void _socket_socket__connect(PikaObj* self, char* host, int port) {
         return;
     }
     if (obj_getInt(self, "blocking") == 0) {
-        int flags = fcntl(sockfd, F_GETFL);
+        int flags = fcntl(sockfd, F_GETFL, 0);
         if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
             pika_platform_printf("Unable to set socket non blocking\n");
