@@ -665,3 +665,7 @@ void PikaStdLib_SysObj_help(PikaObj* self, char* name) {
 void PikaStdLib_SysObj_reboot(PikaObj* self) {
     pika_platform_reboot();
 }
+
+void PikaStdLib_SysObj_clear(PikaObj* self) {
+    pika_platform_clear();
+}

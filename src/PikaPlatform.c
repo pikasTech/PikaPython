@@ -587,3 +587,7 @@ PIKA_WEAK void pika_platform_thread_timer_usleep(unsigned long usec) {
 PIKA_WEAK void pika_platform_reboot(void) {
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 }
+
+PIKA_WEAK void pika_platform_clear(void) {
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+}

@@ -1918,7 +1918,9 @@ Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
 static void _thread_event(void* arg) {
     while (1) {
         _VMEvent_pickupEvent();
+        pika_GIL_EXIT();
         pika_platform_thread_delay();
+        pika_GIL_ENTER();
     }
 }
 

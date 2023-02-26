@@ -287,6 +287,7 @@ int pika_platform_thread_timer_remain(pika_platform_timer_t* timer);
 unsigned long pika_platform_thread_timer_now(void);
 void pika_platform_thread_timer_usleep(unsigned long usec);
 void pika_platform_reboot(void);
+void pika_platform_clear(void);
 
 #define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                               \
     pika_platform_printf("Error: weak function `%s()` need override.\r\n", \
