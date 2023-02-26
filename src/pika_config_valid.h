@@ -368,7 +368,7 @@
     #endif
 
     #ifndef PIKA_EVENT_PICKUP_MAX
-        #define PIKA_EVENT_PICKUP_MAX 4
+        #define PIKA_EVENT_PICKUP_MAX 2
     #endif
         
     #ifndef PIKA_BYTECODE_ONLY_ENABLE

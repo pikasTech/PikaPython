@@ -45,7 +45,9 @@ volatile VMSignal PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
                                           .tail = 0,
                                           .res = {0},
                                       },
-                                  .event_pickup_cnt = 0
+                                  .event_pickup_cnt = 0,
+                                  .event_thread_inited = 0
+
 #endif
 };
 
@@ -56,7 +58,7 @@ int pika_GIL_ENTER(void) {
         return 0;
     }
     int ret = pika_platform_thread_mutex_lock(&pikavm_global_lock);
-    pika_debug("pika_GIL_ENTER");
+    // pika_debug("pika_GIL_ENTER");
     if (!pikavm_global_lock.is_first_lock) {
         pikavm_global_lock.is_first_lock = 1;
     }
@@ -67,7 +69,7 @@ int pika_GIL_EXIT(void) {
     if (!pikavm_global_lock.is_init) {
         return 0;
     }
-    pika_debug("pika_GIL_EXIT");
+    // pika_debug("pika_GIL_EXIT");
     return pika_platform_thread_mutex_unlock(&pikavm_global_lock);
 }
 
@@ -245,6 +247,7 @@ void _VMEvent_pickupEvent(void) {
     if (PIKA_RES_OK == __eventListener_popEvent(&event_lisener, &event_id,
                                                 &event_data, &head)) {
         PikaVMSignal.event_pickup_cnt++;
+        pika_debug("pickup_cnt: %d", PikaVMSignal.event_pickup_cnt);
         Arg* res =
             __eventListener_runEvent(event_lisener, event_id, event_data);
         PikaVMSignal.cq.res[head] = res;

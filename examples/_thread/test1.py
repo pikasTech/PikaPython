@@ -27,6 +27,6 @@ _thread.start_new_thread(task1, ())
 _thread.start_new_thread(task2, (0.05, 10))
 
 while not task1_finished or not task2_finished:
-    time.sleep(0.1)
+    pass
 
 time.sleep(0.5)  # wait for threads to exit

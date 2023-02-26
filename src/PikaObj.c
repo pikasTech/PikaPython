@@ -37,6 +37,7 @@
 #include "dataString.h"
 #include "dataStrs.h"
 
+extern volatile VMSignal PikaVMSignal;
 static volatile Arg* _help_modules_cmodule = NULL;
 static volatile PIKA_BOOL in_root_obj = PIKA_FALSE;
 
@@ -1384,6 +1385,13 @@ static void _save_file(char* file_name, uint8_t* buff, size_t size) {
     }
 }
 
+char _await_getchar(sh_getchar fn_getchar) {
+    pika_GIL_EXIT();
+    char ret = fn_getchar();
+    pika_GIL_ENTER();
+    return ret;
+}
+
 void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
     /* init the shell */
     _obj_runChar_beforeRun(self, cfg);
@@ -1392,7 +1400,7 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
     char inputChar[2] = {0};
     while (1) {
         inputChar[1] = inputChar[0];
-        inputChar[0] = cfg->fn_getchar();
+        inputChar[0] = _await_getchar(cfg->fn_getchar);
 #if !PIKA_NANO_ENABLE
         /* run python script */
         if (inputChar[0] == '!' && inputChar[1] == '#') {
@@ -1907,6 +1915,13 @@ Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
     return __eventListener_runEvent(lisener, eventId, arg_newInt(eventSignal));
 }
 
+static void _thread_event(void* arg) {
+    while (1) {
+        _VMEvent_pickupEvent();
+        pika_platform_thread_delay();
+    }
+}
+
 void _do_pks_eventListener_send(PikaEventListener* self,
                                 uint32_t eventId,
                                 Arg* eventData,
@@ -1920,10 +1935,23 @@ void _do_pks_eventListener_send(PikaEventListener* self,
     if (PIKA_RES_OK != __eventListener_pushEvent(self, eventId, eventData)) {
     }
     if (pickupWhenNoVM) {
-        if (0 == _VMEvent_getVMCnt()) {
+        int vmCnt = _VMEvent_getVMCnt();
+        pika_debug("vmCnt: %d", vmCnt);
+        if (0 == vmCnt) {
             /* no vm running, pick up event imediately */
             _VMEvent_pickupEvent();
         }
+    }
+    if (PikaVMSignal.event_thread_inited) {
+        return;
+    }
+    /* using multi thread */
+    if (_VM_is_first_lock()) {
+        pika_platform_thread_init("pika_event", _thread_event, NULL,
+                                  PIKA_THREAD_STACK_SIZE, PIKA_THREAD_PRIO,
+                                  PIKA_THREAD_TICK);
+        pika_debug("event thread init");
+        PikaVMSignal.event_thread_inited = 1;
     }
 #endif
 }

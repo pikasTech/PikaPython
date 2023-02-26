@@ -9,7 +9,14 @@ typedef struct pika_thread_info {
 
 static void _thread_func(void* arg) {
     pika_debug("waiting for first lock");
-    while (!_VM_is_first_lock()) {
+    while (1) {
+        if (_VM_is_first_lock()) {
+            break;
+        }
+        if (_VMEvent_getVMCnt() <= 0) {
+            break;
+        }
+        pika_debug("VM num %d", _VMEvent_getVMCnt());
         pika_platform_thread_delay();
     }
     pika_debug("thread start");
