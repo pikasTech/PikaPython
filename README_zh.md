@@ -14,7 +14,7 @@
 
 <p align="center">
 	<a href="https://whycan.com/f_55.html" >论坛</a> |
-	<a href="https://pikadoc.readthedocs.io/zh/latest/index.html" >文档中心</a> |
+	<a href="http://pikascript.com/doc" >文档中心</a> |
 	<a href="https://space.bilibili.com/5365336/channel/seriesdetail?sid=1034902">视频</a> |
         <a href="https://item.taobao.com/item.htm?spm=a21dvs.23580594.0.0.52de3d0dt7rqAx&ft=t&id=654947372034">开发板</a> |
         <a href="https://pikadoc.readthedocs.io/zh/latest/%E4%BD%BF%E7%94%A8%20BSP%20%E5%B7%A5%E7%A8%8B.html">BSP</a> |
@@ -82,7 +82,7 @@ http://pikascript.com
 
 # 开发手册
 
-### [点此进入文档中心](https://pikadoc.readthedocs.io/zh/latest/index.html)
+### [点此进入文档中心](http://pikascript.com/doc)
 
 ![image](document/image/144693400-99f9c038-76fd-4d95-b3d2-137bd972d580.png)
 
