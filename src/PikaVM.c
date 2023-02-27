@@ -93,7 +93,11 @@ int _VMEvent_getVMCnt(void) {
 }
 
 int _VMEvent_getEventPickupCnt(void) {
+#if !PIKA_EVENT_ENABLE
+    return -1;
+#else
     return PikaVMSignal.event_pickup_cnt;
+#endif
 }
 
 #if PIKA_EVENT_ENABLE
@@ -185,6 +189,7 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
 #if !PIKA_EVENT_ENABLE
     pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
     pika_platform_panic_handle();
+    return PIKA_RES_ERR_OPERATION_FAILED;
 #else
     /* push to event_cq_buff */
     if (_ecq_isFull(&PikaVMSignal.cq)) {
@@ -217,6 +222,7 @@ PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
 #if !PIKA_EVENT_ENABLE
     pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
     pika_platform_panic_handle();
+    return PIKA_RES_ERR_OPERATION_FAILED;
 #else
     /* pop from event_cq_buff */
     if (_ecq_isEmpty(&PikaVMSignal.cq)) {

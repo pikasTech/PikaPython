@@ -182,8 +182,8 @@ void PikaStdDevice_UART_platformWriteBytes(PikaObj* self) {
 void PikaStdDevice_UART_setCallBack(PikaObj* self,
                                     Arg* eventCallBack,
                                     int filter) {
-    pika_dev* dev = _get_dev(self);
 #if PIKA_EVENT_ENABLE
+    pika_dev* dev = _get_dev(self);
     _PikaStdDevice_setCallBack(self, eventCallBack, (uintptr_t)dev);
     /* regist event to pika_hal */
     pika_hal_UART_config cfg_cb = {0};

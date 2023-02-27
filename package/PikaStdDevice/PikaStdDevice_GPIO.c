@@ -151,8 +151,8 @@ void PikaStdDevice_GPIO_platformRead(PikaObj* self) {
 void PikaStdDevice_GPIO_setCallBack(PikaObj* self,
                                     Arg* eventCallback,
                                     int filter) {
-    pika_dev* dev = _get_dev(self);
 #if PIKA_EVENT_ENABLE
+    pika_dev* dev = _get_dev(self);
     _PikaStdDevice_setCallBack(self, eventCallback, (uintptr_t)dev);
     /* regist event to pika_hal */
     pika_hal_GPIO_config cfg_cb = {0};
