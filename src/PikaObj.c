@@ -429,19 +429,16 @@ exit:
 }
 
 Arg* _obj_getMethodArg(PikaObj* obj, char* methodPath, Arg* arg_reg) {
-    Arg* method = NULL;
+    Arg* aMethod = NULL;
     char* methodName = strPointToLastToken(methodPath, '.');
-    method = obj_getArg(obj, methodName);
-    if (NULL != method) {
-        method = arg_copy_noalloc(method, arg_reg);
+    aMethod = obj_getArg(obj, methodName);
+    if (NULL != aMethod) {
+        aMethod = arg_copy_noalloc(aMethod, arg_reg);
         goto exit;
     }
-    method = _obj_getProp(obj, methodName);
-    if (NULL != method) {
-        goto exit;
-    }
+    aMethod = _obj_getProp(obj, methodName);
 exit:
-    return method;
+    return aMethod;
 }
 
 Arg* obj_getMethodArg(PikaObj* obj, char* methodPath) {
@@ -720,6 +717,9 @@ PikaObj* methodArg_getHostObj(Arg* method_arg) {
 }
 
 int methodArg_setHostObj(Arg* method_arg, PikaObj* host_obj) {
+    if (arg_getType(method_arg) != ARG_TYPE_METHOD_OBJECT) {
+        return -1;
+    }
     MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
     if (prop->host_obj == NULL) {
         prop->host_obj = host_obj;

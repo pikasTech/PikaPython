@@ -732,4 +732,10 @@ TEST(compiler, prime_100) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, getattr_fn) {
+    char* lines = "@res = @obj.@name\n";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

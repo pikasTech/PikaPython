@@ -578,13 +578,12 @@ Arg* PikaStdLib_SysObj_getattr(PikaObj* self, PikaObj* obj, char* name) {
     Arg* arg = obj_getArg(obj, name);
     if (NULL == arg) {
         arg = obj_getMethodArg(obj, name);
-        return arg_copy(arg);
     }
     if (NULL != arg) {
         res = arg_copy(arg);
-        return res;
+        methodArg_setHostObj(res, obj);
     }
-    return NULL;
+    return res;
 }
 
 void PikaStdLib_SysObj_setattr(PikaObj* self,

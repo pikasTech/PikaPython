@@ -838,8 +838,8 @@ static Arg* _proxy_getattr(PikaObj* host, char* name) {
 static Arg* VM_instruction_handler_REF(PikaObj* self,
                                        VMState* vm,
                                        char* data,
-                                       Arg* arg_ret_reg) {
-    PikaObj* host_obj = NULL;
+                                       Arg* aRetReg) {
+    PikaObj* oHost = NULL;
     char* arg_path = data;
     char* arg_name = strPointToLastToken(arg_path, '.');
     PIKA_BOOL is_temp = PIKA_FALSE;
@@ -847,98 +847,95 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     switch (data[0]) {
         case 'T':
             if (strEqu(arg_path, (char*)"True")) {
-                return arg_setBool(arg_ret_reg, "", PIKA_TRUE);
+                return arg_setBool(aRetReg, "", PIKA_TRUE);
             }
             break;
         case 'F':
             if (strEqu(arg_path, (char*)"False")) {
-                return arg_setBool(arg_ret_reg, "", PIKA_FALSE);
+                return arg_setBool(aRetReg, "", PIKA_FALSE);
             }
             break;
         case 'N':
             if (strEqu(arg_path, (char*)"None")) {
-                return arg_setNull(arg_ret_reg);
+                return arg_setNull(aRetReg);
             }
             break;
         case 'R':
             if (strEqu(arg_path, (char*)"RuntimeError")) {
-                return arg_setInt(arg_ret_reg, "", PIKA_RES_ERR_RUNTIME_ERROR);
+                return arg_setInt(aRetReg, "", PIKA_RES_ERR_RUNTIME_ERROR);
             }
             break;
     }
 
-    Arg* res = NULL;
+    Arg* aRes = NULL;
     if (arg_path[0] == '.') {
         /* find host from stack */
         Arg* host_arg = stack_popArg_alloc(&(vm->stack));
         if (argType_isObject(arg_getType(host_arg))) {
-            host_obj = arg_getPtr(host_arg);
-            res = arg_copy_noalloc(obj_getArg(host_obj, arg_path + 1),
-                                   arg_ret_reg);
+            oHost = arg_getPtr(host_arg);
+            aRes = arg_copy_noalloc(obj_getArg(oHost, arg_path + 1), aRetReg);
         }
         arg_deinit(host_arg);
         goto exit;
     }
 
     /* find in local list first */
-    if (NULL == host_obj) {
-        host_obj = obj_getHostObjWithIsTemp(vm->locals, arg_path, &is_temp);
+    if (NULL == oHost) {
+        oHost = obj_getHostObjWithIsTemp(vm->locals, arg_path, &is_temp);
     }
 
     /* find in global list */
-    if (NULL == host_obj) {
-        host_obj = obj_getHostObjWithIsTemp(vm->globals, arg_path, &is_temp);
+    if (NULL == oHost) {
+        oHost = obj_getHostObjWithIsTemp(vm->globals, arg_path, &is_temp);
     }
 
     /* error cannot found host_object */
-    if (NULL == host_obj) {
+    if (NULL == oHost) {
         goto exit;
     }
 
     /* proxy */
-    if (NULL == res) {
-        res = _proxy_getattribute(host_obj, arg_name);
+    if (NULL == aRes) {
+        aRes = _proxy_getattribute(oHost, arg_name);
     }
 
     /* find res in host */
-    if (NULL == res) {
-        res = args_getArg(host_obj->list, arg_name);
+    if (NULL == aRes) {
+        aRes = args_getArg(oHost->list, arg_name);
     }
 
     /* find res in host prop */
-    if (NULL == res) {
-        res = _obj_getProp(host_obj, arg_name);
+    if (NULL == aRes) {
+        aRes = _obj_getProp(oHost, arg_name);
     }
 
     /* find res in globlas */
-    if (NULL == res) {
-        res = args_getArg(vm->globals->list, arg_name);
+    if (NULL == aRes) {
+        aRes = args_getArg(vm->globals->list, arg_name);
     }
 
     /* find res in globals prop */
-    if (NULL == res) {
-        res = _obj_getProp(vm->globals, arg_name);
+    if (NULL == aRes) {
+        aRes = _obj_getProp(vm->globals, arg_name);
     }
 
     /* proxy */
-    if (NULL == res) {
-        res = _proxy_getattr(host_obj, arg_name);
+    if (NULL == aRes) {
+        aRes = _proxy_getattr(oHost, arg_name);
     }
 exit:
-    if (NULL == res) {
+    if (NULL == aRes) {
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         pika_platform_printf("NameError: name '%s' is not defined\r\n",
                              arg_path);
     } else {
-        if (arg_getType(res) == ARG_TYPE_METHOD_OBJECT) {
-            methodArg_setHostObj(res, host_obj);
-        }
-        res = arg_copy_noalloc(res, arg_ret_reg);
+        methodArg_setHostObj(aRes, oHost);
+        aRes = arg_copy_noalloc(aRes, aRetReg);
     }
     if (is_temp) {
-        obj_GC(host_obj);
+        obj_GC(oHost);
     }
-    return res;
+    return aRes;
 }
 
 static Arg* VM_instruction_handler_GER(PikaObj* self,
