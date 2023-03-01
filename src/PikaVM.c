@@ -472,7 +472,7 @@ static int _obj_getLen(PikaObj* self) {
 }
 
 static int arg_getLen(Arg* self) {
-    if (argType_isObject(arg_getType(self))) {
+    if (arg_isObject(self)) {
         return _obj_getLen(arg_getPtr(self));
     }
     if (arg_getType(self) == ARG_TYPE_STRING) {
@@ -683,7 +683,7 @@ Arg* _vm_slice(VMState* vm,
         return sliced_arg;
     }
 
-    if (argType_isObject(arg_getType(obj))) {
+    if (arg_isObject(obj)) {
         PikaObj* arg_obj = arg_getPtr(obj);
         PikaObj* New_PikaStdData_List(Args * args);
         PikaObj* New_PikaStdData_Tuple(Args * args);
@@ -871,7 +871,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     if (arg_path[0] == '.') {
         /* find host from stack */
         Arg* host_arg = stack_popArg_alloc(&(vm->stack));
-        if (argType_isObject(arg_getType(host_arg))) {
+        if (arg_isObject(host_arg)) {
             oHost = arg_getPtr(host_arg);
             aRes = arg_copy_noalloc(obj_getArg(oHost, arg_path + 1), aRetReg);
         }
@@ -955,53 +955,56 @@ Arg* _get_return_arg(PikaObj* locals) {
 
 Arg* _obj_runMethodArgWithState(PikaObj* self,
                                 PikaObj* locals,
-                                Arg* method_arg,
+                                Arg* aMethod,
                                 RunState* run_state,
-                                Arg* ret_arg_reg) {
+                                Arg* aReturnCache) {
     pika_assert(NULL != run_state);
-    Arg* return_arg = NULL;
+    Arg* aReturn = NULL;
     /* get method Ptr */
-    Method method_ptr = methodArg_getPtr(method_arg);
+    Method fMethod = methodArg_getPtr(aMethod);
     /* get method type list */
-    ArgType method_type = arg_getType(method_arg);
+    ArgType methodType = arg_getType(aMethod);
     /* error */
-    if (ARG_TYPE_NONE == method_type) {
+    if (ARG_TYPE_NONE == methodType) {
         return NULL;
     }
 
     /* redirect to def context */
-    if (!argType_isNative(method_type)) {
-        self = methodArg_getDefContext(method_arg);
+    if (!argType_isNative(methodType)) {
+        self = methodArg_getDefContext(aMethod);
     }
 
     obj_setErrorCode(self, PIKA_RES_OK);
 
     /* run method */
-    if (method_type == ARG_TYPE_METHOD_NATIVE) {
+    if (methodType == ARG_TYPE_METHOD_NATIVE) {
         /* native method */
-        method_ptr(self, locals->list);
+        fMethod(self, locals->list);
         /* get method return */
-        return_arg = _get_return_arg(locals);
-    } else if (method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
+        aReturn = _get_return_arg(locals);
+    } else if (methodType == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
         /* native method */
-        method_ptr(self, locals->list);
+        fMethod(self, locals->list);
         /* get method return */
-        return_arg = _get_return_arg(locals);
+        aReturn = _get_return_arg(locals);
     } else {
         /* static method and object method */
         /* byteCode */
         ByteCodeFrame* method_bytecodeFrame =
-            methodArg_getBytecodeFrame(method_arg);
+            methodArg_getBytecodeFrame(aMethod);
         uintptr_t insturctArray_start = (uintptr_t)instructArray_getByOffset(
             &(method_bytecodeFrame->instruct_array), 0);
-        uint16_t pc = (uintptr_t)method_ptr - insturctArray_start;
+        uint16_t pc = (uintptr_t)fMethod - insturctArray_start;
         locals = __pikaVM_runByteCodeFrameWithState(
             self, locals, self, method_bytecodeFrame, pc, run_state);
 
         /* get method return */
-        return_arg = _get_return_arg(locals);
+        aReturn = _get_return_arg(locals);
     }
-    return return_arg;
+    if (argType_isConstructor(methodType)) {
+        // aReturn = arg_copy_noalloc(aReturn, aReturnCache);
+    }
+    return aReturn;
 }
 
 Arg* obj_runMethodArgWithState(PikaObj* self,
@@ -1242,7 +1245,7 @@ static int _get_n_input_with_unpack(VMState* vm, int n_used) {
             break;
         }
         if (arg_getIsStarred(call_arg)) {
-            pika_assert(argType_isObject(arg_getType(call_arg)));
+            pika_assert(arg_isObject(call_arg));
             PikaObj* obj = arg_getPtr(call_arg);
             int len = _obj_getLen(obj);
             for (int i_star_arg = len - 1; i_star_arg >= 0; i_star_arg--) {
@@ -1270,7 +1273,7 @@ static int _get_n_input_with_unpack(VMState* vm, int n_used) {
             goto __continue;
         }
         if (arg_getIsDoubleStarred(call_arg)) {
-            pika_assert(argType_isObject(arg_getType(call_arg)));
+            pika_assert(arg_isObject(call_arg));
             PikaObj* New_PikaStdData_Dict(Args * args);
             PikaObj* obj = arg_getPtr(call_arg);
             pika_assert(obj->constructor == New_PikaStdData_Dict);

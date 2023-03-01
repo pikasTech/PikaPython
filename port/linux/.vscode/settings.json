@@ -109,7 +109,10 @@
         "_network_wlan.h": "c",
         "pikastddata_tuple.h": "c",
         "setjmp.h": "c",
-        "pthread.h": "c"
+        "pthread.h": "c",
+        "deque": "c",
+        "list": "c",
+        "vector": "c"
     },
     "python.formatting.provider": "autopep8",
 }

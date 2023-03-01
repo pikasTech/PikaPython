@@ -288,7 +288,7 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
         return arg_getBytesSize(arg);
     }
 
-    if (argType_isObject(arg_getType(arg))) {
+    if (arg_isObject(arg)) {
         PikaObj* arg_obj = arg_getPtr(arg);
         Arg* method_arg = obj_getMethodArg(arg_obj, "__len__");
         if (NULL != method_arg) {
@@ -503,7 +503,7 @@ char* PikaStdLib_SysObj_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
 
 int PikaStdLib_SysObj_id(PikaObj* self, Arg* obj) {
     uintptr_t ptr = 0;
-    if (argType_isObject(arg_getType(obj))) {
+    if (arg_isObject(obj)) {
         ptr = (uintptr_t)arg_getPtr(obj);
     } else {
         ptr = (uintptr_t)obj;
@@ -543,7 +543,7 @@ int32_t __dir_each(Arg* argEach, Args* context) {
 }
 
 PikaObj* PikaStdLib_SysObj_dir(PikaObj* self, Arg* arg) {
-    if (!argType_isObject(arg_getType(arg))) {
+    if (!arg_isObject(arg)) {
         obj_setErrorCode(self, 1);
         __platform_printf("[Error] dir: not support type.\r\n");
         return NULL;

@@ -301,7 +301,7 @@ int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
 }
 
 static int32_t __foreach_handler_listModules(Arg* argEach, Args* context) {
-    if (argType_isObject(arg_getType(argEach))) {
+    if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
         pika_platform_printf("%s\r\n", obj_getStr(module_obj, "name"));
     }
@@ -314,7 +314,7 @@ void LibObj_listModules(LibObj* self) {
 
 static int32_t __foreach_handler_libWriteBytecode(Arg* argEach, Args* context) {
     FILE* out_file = args_getPtr(context, "out_file");
-    if (argType_isObject(arg_getType(argEach))) {
+    if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
         char* bytecode = obj_getPtr(module_obj, "bytecode");
         size_t bytecode_size = obj_getBytesSize(module_obj, "buff");
@@ -330,7 +330,7 @@ static int32_t __foreach_handler_libWriteBytecode(Arg* argEach, Args* context) {
 static int32_t __foreach_handler_libWriteIndex(Arg* argEach, Args* context) {
     FILE* out_file = args_getPtr(context, "out_file");
     Args buffs = {0};
-    if (argType_isObject(arg_getType(argEach))) {
+    if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
         uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
         char buff[LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)] = {0};
@@ -349,7 +349,7 @@ static int32_t __foreach_handler_libWriteIndex(Arg* argEach, Args* context) {
 }
 
 static int32_t __foreach_handler_libSumSize(Arg* argEach, Args* context) {
-    if (argType_isObject(arg_getType(argEach))) {
+    if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
         uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
         bytecode_size = aline_by(bytecode_size, sizeof(uint32_t));
@@ -360,7 +360,7 @@ static int32_t __foreach_handler_libSumSize(Arg* argEach, Args* context) {
 }
 
 static int32_t __foreach_handler_getModuleNum(Arg* argEach, Args* context) {
-    if (argType_isObject(arg_getType(argEach))) {
+    if (arg_isObject(argEach)) {
         args_setInt(context, "module_num",
                     args_getInt(context, "module_num") + 1);
     }
@@ -511,7 +511,7 @@ int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
 }
 
 int32_t __foreach_handler_printModule(Arg* argEach, Args* context) {
-    if (argType_isObject(arg_getType(argEach))) {
+    if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
         char* module_name = obj_getStr(module_obj, "name");
         if (NULL != module_name) {
@@ -784,7 +784,7 @@ exit:
 }
 
 int32_t __foreach_handler_printStates(Arg* argEach, Args* context) {
-    if (argType_isObject(arg_getType(argEach))) {
+    if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
         pika_platform_printf("%s: %s\r\n", obj_getStr(module_obj, "name"),
                              obj_getStr(module_obj, "state"));
@@ -797,7 +797,7 @@ void pikaMaker_printStates(PikaMaker* self) {
 }
 
 int32_t __foreach_handler_getFirstNocompiled(Arg* argEach, Args* context) {
-    if (argType_isObject(arg_getType(argEach))) {
+    if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
         char* state = obj_getStr(module_obj, "state");
         if (args_isArgExist(context, "res")) {
@@ -860,7 +860,7 @@ PIKA_RES pikaMaker_compileModuleWithDepends(PikaMaker* self,
 
 int32_t __foreach_handler_linkCompiledModules(Arg* argEach, Args* context) {
     Args buffs = {0};
-    if (argType_isObject(arg_getType(argEach))) {
+    if (arg_isObject(argEach)) {
         LibObj* lib = args_getPtr(context, "@lib");
         PikaMaker* maker = args_getPtr(context, "__maker");
         PikaObj* module_obj = arg_getPtr(argEach);

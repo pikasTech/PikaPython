@@ -581,7 +581,7 @@ PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
     if (NULL == self) {
         return NULL;
     }
-    if (argType_isObject(arg_getType(self))) {
+    if (arg_isObject(self)) {
         return arg_getPtr(self);
     }
 #if !PIKA_NANO_ENABLE
@@ -792,28 +792,28 @@ void _update_proxy(PikaObj* self, char* name) {
     }
 }
 
-static void obj_saveMethodInfo(PikaObj* self, MethodInfo* method_info) {
-    Arg* arg = New_arg(NULL);
-    MethodProp method_store = {
-        .ptr = method_info->ptr,
-        .type_list = method_info->typelist,
-        .name = method_info->name,
-        .bytecode_frame = method_info->bytecode_frame,
-        .def_context = method_info->def_context,
-        .declareation = method_info->dec,  // const
+static void obj_saveMethodInfo(PikaObj* self, MethodInfo* tInfo) {
+    Arg* aMethod = New_arg(NULL);
+    MethodProp tProp = {
+        .ptr = tInfo->ptr,
+        .type_list = tInfo->typelist,
+        .name = tInfo->name,
+        .bytecode_frame = tInfo->bytecode_frame,
+        .def_context = tInfo->def_context,
+        .declareation = tInfo->dec,  // const
         .host_obj = NULL,
     };
-    char* name = method_info->name;
-    if (NULL == method_info->name) {
+    char* name = tInfo->name;
+    if (NULL == tInfo->name) {
         char name_buff[PIKA_LINE_BUFF_SIZE / 2] = {0};
-        name = strGetFirstToken(name_buff, method_info->dec, '(');
+        name = strGetFirstToken(name_buff, tInfo->dec, '(');
     }
     /* the first arg_value */
-    arg = arg_setStruct(arg, name, &method_store, sizeof(method_store));
-    pika_assert(NULL != arg);
-    arg_setType(arg, method_info->type);
+    aMethod = arg_setStruct(aMethod, name, &tProp, sizeof(tProp));
+    pika_assert(NULL != aMethod);
+    arg_setType(aMethod, tInfo->type);
     _update_proxy(self, name);
-    args_setArg(self->list, arg);
+    args_setArg(self->list, aMethod);
 }
 
 static int32_t __class_defineMethodWithType(PikaObj* self,
@@ -1727,7 +1727,7 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
         PikaObj* oModule = arg_getPtr(aModule);
         obj_setArg(self, name, aModule);
         arg_setIsWeakRef(obj_getArg(self, name), PIKA_TRUE);
-        pika_assert(argType_isObject(arg_getType(aModule)));
+        pika_assert(arg_isObject(aModule));
         /* decrase refcnt to avoid circle reference */
         obj_refcntDec(oModule);
     }
