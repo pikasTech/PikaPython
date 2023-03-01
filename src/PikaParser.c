@@ -2507,14 +2507,14 @@ static uint8_t Parser_checkIsMultiComment(char* line) {
         if (!((line[i + 1] == line[i]) && (line[i + 2] == line[i]))) {
             continue;
         }
-        /* check char befor the ''' or """ */
-        if (!((0 == i) || (line[i - 1] == ' '))) {
-            continue;
-        }
-        /* check char after the ''' or """ */
-        if (!((line[i + 3] == ' ') || (line[i + 3] == 0))) {
-            continue;
-        }
+        // /* check char befor the ''' or """ */
+        // if (!((0 == i) || (line[i - 1] == ' '))) {
+        //     continue;
+        // }
+        // /* check char after the ''' or """ */
+        // if (!((line[i + 3] == ' ') || (line[i + 3] == 0))) {
+        //     continue;
+        // }
         /* mached */
         return 1;
     }
@@ -2619,7 +2619,10 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
     parse_after:
         if (NULL == single_ASM) {
             out_ASM = NULL;
-            pika_platform_printf("------\r\n%s\r\n------\r\n", line);
+            pika_platform_printf(
+                "----------[%d]----------\r\n%s\r\n-------------------------"
+                "\r\n",
+                lines_index, line);
             strsDeinit(&buffs);
             goto exit;
         }
