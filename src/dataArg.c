@@ -318,7 +318,11 @@ Arg* arg_toStrArg(Arg* arg) {
                 strEqu(method_store->name, "tuple")) {
                 pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
                                        "<class '%s'>", method_store->name);
+                return arg_newStr(buff);
             }
+            pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
+                                   "<built-in function %s>",
+                                   method_store->name);
             return arg_newStr(buff);
         }
         if (argType_isConstructor(type)) {
@@ -338,7 +342,7 @@ Arg* arg_toStrArg(Arg* arg) {
     }
     if (type == ARG_TYPE_OBJECT_META) {
         pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
-                               "<mate object at %p>", arg_getPtr(arg));
+                               "<meta object at %p>", arg_getPtr(arg));
         return arg_newStr(buff);
     }
     return NULL;
