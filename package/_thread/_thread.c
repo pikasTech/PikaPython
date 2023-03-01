@@ -13,9 +13,10 @@ static void _thread_func(void* arg) {
         if (_VM_is_first_lock()) {
             break;
         }
-        if (_VMEvent_getVMCnt() <= 0) {
-            break;
-        }
+        //! This May break the thread
+        // if (_VMEvent_getVMCnt() <= 0) {
+        //     break;
+        // }
         pika_debug("VM num %d", _VMEvent_getVMCnt());
         pika_platform_thread_delay();
     }

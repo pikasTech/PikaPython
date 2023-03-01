@@ -5403,8 +5403,45 @@ TEST(parser, return_list) {
     printf("%s\r\n", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    // EXPECT_STREQ(pikaAsm,
-    //              "B0\n");
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 REF ui.ALIGN.CENTER\n"
+                 "2 OUT align\n"
+                 "1 RUN ui.Text\n"
+                 "2 REF self.onclick_next\n"
+                 "2 OUT onclick\n"
+                 "1 RUN ui.Button\n"
+                 "0 LST \n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, not_in_or) {
+    pikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a not in x or b not in x or c not in x\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "4 REF a\n"
+                 "4 REF x\n"
+                 "3 OPT  in \n"
+                 "2 OPT  not \n"
+                 "4 REF b\n"
+                 "4 REF x\n"
+                 "3 OPT  in \n"
+                 "2 OPT  not \n"
+                 "1 OPT  or \n"
+                 "3 REF c\n"
+                 "3 REF x\n"
+                 "2 OPT  in \n"
+                 "1 OPT  not \n"
+                 "0 OPT  or \n"
+                 "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }

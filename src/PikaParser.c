@@ -769,9 +769,9 @@ char* Token_getPyload(char* token) {
     return (char*)((uintptr_t)token + 1);
 }
 
-uint8_t TokenStream_isContain(char* tokenStream,
-                              enum TokenType token_type,
-                              char* pyload) {
+uint8_t TokenStream_count(char* tokenStream,
+                          enum TokenType token_type,
+                          char* pyload) {
     Args buffs = {0};
     char* tokenStream_buff = strsCopy(&buffs, tokenStream);
     uint8_t res = 0;
@@ -780,14 +780,21 @@ uint8_t TokenStream_isContain(char* tokenStream,
         char* token = TokenStream_pop(&buffs, &tokenStream_buff);
         if (token_type == Token_getType(token)) {
             if (strEqu(Token_getPyload(token), pyload)) {
-                res = 1;
-                goto exit;
+                res++;
             }
         }
     }
-exit:
     strsDeinit(&buffs);
     return res;
+}
+
+uint8_t TokenStream_isContain(char* tokenStream,
+                              enum TokenType token_type,
+                              char* pyload) {
+    if (TokenStream_count(tokenStream, token_type, pyload) > 0) {
+        return 1;
+    }
+    return 0;
 }
 
 static char* _solveEqualLevelOperator(Args* buffs,
@@ -964,19 +971,23 @@ void _Cursor_beforeIter(struct Cursor* cs) {
     cs->last_token = arg_newStr(TokenStream_pop(cs->buffs_p, &cs->tokenStream));
 }
 
-PIKA_BOOL Cursor_isContain(char* stmt, TokenType type, char* pyload) {
+uint8_t Cursor_count(char* stmt, TokenType type, char* pyload) {
     /* fast return */
     if (!strstr(stmt, pyload)) {
         return PIKA_FALSE;
     }
     Args buffs = {0};
-    PIKA_BOOL res = PIKA_FALSE;
     char* tokenStream = Lexer_getTokenStream(&buffs, stmt);
-    if (TokenStream_isContain(tokenStream, type, pyload)) {
-        res = PIKA_TRUE;
-    }
+    uint8_t res = TokenStream_count(tokenStream, type, pyload);
     strsDeinit(&buffs);
     return res;
+}
+
+PIKA_BOOL Cursor_isContain(char* stmt, TokenType type, char* pyload) {
+    if (Cursor_count(stmt, type, pyload) > 0) {
+        return PIKA_TRUE;
+    }
+    return PIKA_FALSE;
 }
 
 char* Cursor_popToken(Args* buffs, char** pStmt, char* devide) {
@@ -1566,11 +1577,11 @@ char* Suger_not_in(Args* out_buffs, char* line) {
     PIKA_BOOL got_not_in = PIKA_FALSE;
     PIKA_BOOL skip = PIKA_FALSE;
     Args buffs = {0};
-    if (!Cursor_isContain(line, TOKEN_operator, " not ")) {
+    if (1 != Cursor_count(line, TOKEN_operator, " not ")) {
         ret = line;
         goto __exit;
     }
-    if (!Cursor_isContain(line, TOKEN_operator, " in ")) {
+    if (1 != Cursor_count(line, TOKEN_operator, " in ")) {
         ret = line;
         goto __exit;
     }
