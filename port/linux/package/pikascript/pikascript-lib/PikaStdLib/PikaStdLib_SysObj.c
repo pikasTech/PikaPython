@@ -57,6 +57,12 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         if (clsptr == New_PikaStdData_Tuple) {
             return arg_copy(obj_getMethodArg(self, "tuple"));
         }
+#if PIKA_TYPE_FULL_FEATURE_ENABLE
+        Arg* aMethod = obj_getArg(obj, "__class__");
+        if (NULL != aMethod) {
+            return arg_copy(aMethod);
+        }
+#endif
         return arg_newStr("<class 'object'>");
     }
     if (ARG_TYPE_OBJECT_META == type) {
@@ -64,9 +70,6 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     }
     if (ARG_TYPE_BYTES == type) {
         return arg_newStr("<class 'bytes'>");
-    }
-    if (ARG_TYPE_METHOD_NATIVE == type) {
-        return arg_newStr("<class 'buitin_function_or_method'>");
     }
     if (ARG_TYPE_METHOD_OBJECT == type) {
         return arg_newStr("<class 'method'>");
@@ -77,7 +80,7 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_NONE == type) {
         return arg_newStr("<class 'NoneType'>");
     }
-    return arg_newNull();
+    return arg_newStr("<class 'buitin_function_or_method'>");
 }
 
 pika_float PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {

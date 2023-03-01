@@ -282,10 +282,14 @@ static inline uint8_t argType_isNative(ArgType type) {
             (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR);
 }
 
-#define arg_isObject(__self) argType_isObject(arg_getType(__self))
-#define arg_isCallable(__self) argType_isCallable(arg_getType(__self))
-#define arg_isConstructor(__self) argType_isConstructor(arg_getType(__self))
-#define arg_isNative(__self) argType_isNative(arg_getType(__self))
+#define arg_isObject(__self) \
+    ((__self != NULL) && (argType_isObject(arg_getType(__self))))
+#define arg_isCallable(__self) \
+    ((__self != NULL) && (argType_isCallable(arg_getType(__self))))
+#define arg_isConstructor(__self) \
+    ((__self != NULL) && (argType_isConstructor(arg_getType(__self))))
+#define arg_isNative(__self) \
+    ((__self != NULL) && (argType_isNative(arg_getType(__self))))
 
 #define arg_newReg(__name, __size)           \
     Arg __name = {0};                        \

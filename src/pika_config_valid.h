@@ -73,6 +73,9 @@
             #define PIKA_SHELL_FILTER_ENABLE 0
         #endif
 
+        #ifdef PIKA_TYPE_FULL_FEATURE_ENABLE
+            #define PIKA_TYPE_FULL_FEATURE_ENABLE 0
+        #endif
     #endif
 
     /* default optimize */
@@ -409,6 +412,10 @@
 
     #ifndef PIKA_THREAD_TICK
         #define PIKA_THREAD_TICK 50
+    #endif
+
+    #ifndef PIKA_TYPE_FULL_FEATURE_ENABLE
+        #define PIKA_TYPE_FULL_FEATURE_ENABLE 1
     #endif
 
     /* configuration validation */

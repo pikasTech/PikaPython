@@ -321,6 +321,11 @@ Arg* arg_toStrArg(Arg* arg) {
             }
             return arg_newStr(buff);
         }
+        if (argType_isConstructor(type)) {
+            pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
+                                   "<class 'object'>");
+            return arg_newStr(buff);
+        }
         pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
                                "<class 'function'>");
         return arg_newStr(buff);

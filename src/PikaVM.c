@@ -1001,9 +1001,15 @@ Arg* _obj_runMethodArgWithState(PikaObj* self,
         /* get method return */
         aReturn = _get_return_arg(locals);
     }
-    if (argType_isConstructor(methodType)) {
-        // aReturn = arg_copy_noalloc(aReturn, aReturnCache);
+#if PIKA_TYPE_FULL_FEATURE_ENABLE
+    PikaObj* oReturn = NULL;
+    if (arg_isConstructor(aMethod)) {
+        if (arg_isObject(aReturn)) {
+            oReturn = arg_getPtr(aReturn);
+            obj_setArg(oReturn, "__class__", aMethod);
+        }
     }
+#endif
     return aReturn;
 }
 
