@@ -114,8 +114,6 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 
 
 ## MCU support
-<details>
-<summary>View Details</summary>
 |MCU               |bsp|gpio|time|uart|pwm|adc|i2c|dac|
 |---               |---|--- |--- |--- |---|---|---|---|
 |stm32g030c8       |√  |√   |√   |√   |√  |√  |√  |   |
@@ -147,7 +145,6 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 |EC600N            |√  |    |    |    |   |   |   |   |
 |mm32f5277e9p      |√  |√   |    |    |   |   |   |   |
 |xr806(openharmony)|√  |    |    |    |   |   |   |   |
-</details>
 
 
 ## Board support
@@ -305,7 +302,7 @@ The scripts in demos are in the [examples](examples) folder.
 ## Demo 01 GPIO
 
 <details>
-<summary>View Details</summary>
+<summary>View Code</summary>
 ``` python
 import PikaStdLib
 import STM32G0
@@ -339,7 +336,7 @@ while True:
 ## Demo 02 USART
 
 <details>
-<summary>View Details</summary>
+<summary>View Code</summary>
 ``` python
 import PikaStdLib
 import STM32G0
@@ -364,7 +361,7 @@ while True:
 ## Demo 03 ADC
 
 <details>
-<summary>View Details</summary>
+<summary>View Code</summary>
 ``` python
 import PikaStdLib
 import STM32G0
@@ -390,7 +387,7 @@ while True:
 ## Demo 04 PWM output
 
 <details>
-<summary>View Details</summary>
+<summary>View Code</summary>
 ``` python
 import PikaStdLib
 import STM32G0
@@ -439,7 +436,7 @@ while True:
 ## Demo 06 Snake(Need LCD)
 
 <details>
-<summary>View Details</summary>
+<summary>View Code</summary>
 ``` python
 from PikaObj import *
 import PikaStdLib
