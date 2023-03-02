@@ -76,6 +76,11 @@
         #ifdef PIKA_TYPE_FULL_FEATURE_ENABLE
             #define PIKA_TYPE_FULL_FEATURE_ENABLE 0
         #endif
+
+        #ifndef PIKA_EVENT_THREAD_ENABLE
+            #define PIKA_EVENT_THREAD_ENABLE 0
+        #endif
+
     #endif
 
     /* default optimize */
@@ -416,6 +421,10 @@
 
     #ifndef PIKA_TYPE_FULL_FEATURE_ENABLE
         #define PIKA_TYPE_FULL_FEATURE_ENABLE 1
+    #endif
+
+    #ifndef PIKA_EVENT_THREAD_ENABLE
+        #define PIKA_EVENT_THREAD_ENABLE 1
     #endif
 
     /* configuration validation */

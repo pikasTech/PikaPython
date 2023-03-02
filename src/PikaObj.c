@@ -1944,6 +1944,7 @@ void _do_pks_eventListener_send(PikaEventListener* self,
             _VMEvent_pickupEvent();
         }
     }
+#if PIKA_EVENT_THREAD_ENABLE
     if (PikaVMSignal.event_thread_inited) {
         return;
     }
@@ -1955,6 +1956,7 @@ void _do_pks_eventListener_send(PikaEventListener* self,
         pika_debug("event thread init");
         PikaVMSignal.event_thread_inited = 1;
     }
+#endif
 #endif
 }
 
