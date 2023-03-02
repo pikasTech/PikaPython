@@ -662,7 +662,7 @@ while True:
 | --- | --- |
 |implement shell filter | [GorgonMeducer](https://github.com/GorgonMeducer) |
 |修复socket模块在lwip中fcntl的参数数量错误|[梦程MI](https://gitee.com/dreamcmi) |
-|Fix Typo on PikaVM.c|Ikko Eltociear Ashimine(https://gitee.com/eltociear)|
+|Fix Typo on PikaVM.c|[Ikko Eltociear Ashimine](https://gitee.com/eltociear)|
 |Fix type assert on dataArgs.c|[itschina](https://gitee.com/itschina)|
 |add examples/Device/KEY_POLL.PY|[codercmd](https://gitee.com/codercmd)|
 | hmac hashlib base64 aes modules | [梦程MI](https://gitee.com/dreamcmi) |
