@@ -395,9 +395,8 @@ while True:
 
 ## Demo 04 PWM output
 
-<details>
+<details><summary>View Code</summary>
 
-<summary>View Code</summary>
 ``` python
 import PikaStdLib
 import STM32G0
@@ -451,6 +450,7 @@ while True:
 <details>
 
 <summary>View Code</summary>
+
 ``` python
 from PikaObj import *
 import PikaStdLib
@@ -590,6 +590,7 @@ while True:
         d = 3
         isUpdate = 1
 	
+    
 ```
 
 </details>
