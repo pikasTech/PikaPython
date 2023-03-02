@@ -205,6 +205,8 @@ Support subaggregate of python 3 standard syntax.
 
 Support class and method define, encapsulation-inheritance-polymorphism and moudles in `.pyi ` of C module.
 
+<details><summary>More Details About Syntax Support</summary>
+
 |Syntax|Compile-Time|Run-Time|Shell|
 |---|---|---|---|
 |Module Define          |√|-|-|
@@ -284,6 +286,7 @@ Support class and method define, encapsulation-inheritance-polymorphism and moud
 | yield | is | comprehensions |
 | --- | --- | --- |
 | - | √ | - |
+</details>
 
 ### (4)Develop standard.
 
@@ -301,9 +304,7 @@ The scripts in demos are in the [examples](examples) folder.
 
 ## Demo 01 GPIO
 
-<details>
-
-<summary>View Code</summary>
+<details><summary>View Code</summary>
 
 ``` python
 import PikaStdLib
@@ -338,9 +339,7 @@ while True:
 
 ## Demo 02 USART
 
-<details>
-
-<summary>View Code</summary>
+<details><summary>View Code</summary>
 
 ``` python
 import PikaStdLib
@@ -420,7 +419,7 @@ while True:
 
 ## Demo 05 RGB
 
-<details>
+<details><summary>View Code</summary>
 
 ``` python
 import STM32G0
@@ -590,7 +589,7 @@ while True:
         d = 3
         isUpdate = 1
 	
-    
+
 ```
 
 </details>
