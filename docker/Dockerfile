@@ -74,14 +74,7 @@ RUN apt-get install -y liblua5.3-dev
 RUN apt-get install -y lcov
 
 RUN apt-get install -y wget
-RUN wget https://gitee.com/Lyon1998/pikascript/attach_files/1213873/download -O code-server.deb
-RUN dpkg -i code-server.deb
-ADD code-server-config.yaml /root/.config/code-server/config.yaml
 RUN cd root/pikascript && git remote add github https://github.com/pikastech/pikascript
-# RUN code-server --install-extension ms-python.python
-RUN code-server --install-extension llvm-vs-code-extensions.vscode-clangd
-RUN code-server --install-extension vscodevim.vim
-RUN code-server --install-extension zhuangtongfa.material-theme
 RUN apt-get install clangd -y
 RUN apt-get install libmbedtls-dev -y
 RUN pip install -r /root/pikascript/docker/requirements.txt
