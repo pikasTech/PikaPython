@@ -647,6 +647,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 | --- | --- |
 |implement shell filter | [GorgonMeducer](https://github.com/GorgonMeducer) |
 |修复socket模块在lwip中fcntl的参数数量错误|[梦程MI](https://gitee.com/dreamcmi) |
+|support GPIO pika_hal for BLMCU|[codercmd](https://gitee.com/codercmd)|
 |Fix Typo on PikaVM.c|[Ikko Eltociear Ashimine](https://gitee.com/eltociear)|
 |Fix type assert on dataArgs.c|[itschina](https://gitee.com/itschina)|
 |add examples/Device/KEY_POLL.PY|[codercmd](https://gitee.com/codercmd)|
