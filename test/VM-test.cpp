@@ -2694,7 +2694,7 @@ TEST(vm, class_getattr) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(vm, type_fullfealure){
+TEST(vm, type_fullfealure) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -2712,8 +2712,7 @@ TEST(vm, type_fullfealure){
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
-TEST(vm, dir_print_arg){
+TEST(vm, dir_print_arg) {
     /* init */
     pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -2725,6 +2724,25 @@ TEST(vm, dir_print_arg){
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "<built-in function dir>\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, fn_pos_vars) {
+    /* init */
+    pikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/builtin/fn_pos_vars.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(
+        log_buff[4],
+        "TypeError: log() takes 2 positional argument but 1 were given\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

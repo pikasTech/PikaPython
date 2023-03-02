@@ -1347,40 +1347,60 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     f.n_input = _get_n_input_with_unpack(vm, n_used);
 
-    /* check arg num */
-    if (f.method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
-        f.method_type == ARG_TYPE_METHOD_CONSTRUCTOR ||
-        f.is_vars == PIKA_TRUE || n_used != 0) {
-        /* skip for constrctor */
-        /* skip for variable args */
-        /* n_used != 0 means it is a factory method */
-    } else {
+    do {
+        /* check arg num */
+        if (f.method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
+            f.method_type == ARG_TYPE_METHOD_CONSTRUCTOR || n_used != 0) {
+            /* skip for constrctor */
+            /* skip for variable args */
+            /* n_used != 0 means it is a factory method */
+            break;
+        }
         /* check position arg num */
         if (!vars_or_keys_or_default) {
             if (f.n_positional != f.n_input) {
                 VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
                 pika_platform_printf(
-                    "TypeError: %s() takes %d positional argument but %d were "
+                    "TypeError: %s() takes %d positional argument but %d "
+                    "were "
                     "given\r\n",
                     method_name, f.n_positional, f.n_input);
                 goto exit;
             }
+            break;
         }
 #if !PIKA_NANO_ENABLE
+        if (f.is_keys) {
+            break;
+        }
+        if (f.is_vars) {
+            if (f.n_input < f.n_positional) {
+                VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
+                pika_platform_printf(
+                    "TypeError: %s() takes %d positional argument but "
+                    "%d "
+                    "were "
+                    "given\r\n",
+                    method_name, f.n_positional, f.n_input);
+                goto exit;
+            }
+            break;
+        }
         if (f.is_default) {
             int8_t n_min = f.n_positional;
             int8_t n_max = f.n_positional + f.n_default;
             if (f.n_input < n_min || f.n_input > n_max) {
                 VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
                 pika_platform_printf(
-                    "TypeError: %s() takes from %d to %d positional arguments "
+                    "TypeError: %s() takes from %d to %d positional "
+                    "arguments "
                     "but %d were given\r\n",
                     method_name, n_min, n_max, f.n_input);
                 goto exit;
             }
         }
 #endif
-    }
+    } while (0);
 
     if (vars_or_keys_or_default) {
         f.n_arg = f.n_input;
