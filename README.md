@@ -645,7 +645,13 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+|implement shell filter | [GorgonMeducer](https://github.com/GorgonMeducer) |
+|修复socket模块在lwip中fcntl的参数数量错误|[梦程MI](https://gitee.com/dreamcmi) |
+|Fix Typo on PikaVM.c|Ikko Eltociear Ashimine(https://gitee.com/eltociear)|
+|Fix type assert on dataArgs.c|[itschina](https://gitee.com/itschina)|
+|add examples/Device/KEY_POLL.PY|[codercmd](https://gitee.com/codercmd)|
 | hmac hashlib base64 aes modules | [梦程MI](https://gitee.com/dreamcmi) |
+|fix pikaCompiler build error on macos|[梦程MI](https://gitee.com/dreamcmi) |
 <details><summary> Contribute Log On 2022 </summary>
 
 | Contribute log | Contributer |
@@ -656,6 +662,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 | Donate：500¥ | [edmund_wz](https://gitee.com/edmund_wz) |
 | Donate：500¥ | [Meco Jianting Man](https://github.com/mysterywolf) |
 | Donate：500¥ | [hardsofttech](https://gitee.com/hardsofttech) |
+|PikaNN module| [Renzhihan](https://github.com/Renzhihan) |
 | re module | [eglwang](https://gitee.com/eglwang) |
 | PikaMath.Quaternion() | [purewind7](https://gitee.com/purewind7) |
 | contrubute to PikaCV | [purewind7](https://gitee.com/purewind7) |
