@@ -598,17 +598,6 @@ while True:
 
 The maximum RAM usage of these demos is only 3.56K, which is 4.56K if the 1K stack is included, and the maximum Flash usage is 30.4K. Refer to the 20K RAM and 64K Flash of STM32F103C8T6, less than 25% RAM and less than 50% Flash are used.
 
-A quick comparison can be made between the microPython's MCU STM32F405RG and the pikapython's MCU STM32G070CB.
-
-## RAM resource comparison
-![image](document/image/132944731-a55ece1d-061f-4b91-ba87-bd6547be96a7.png)
-
-## Flash Resource Comparison
-![image](document/image/132944745-e9cf598d-e75f-40bb-873e-911819d535b7.png)
-
-## Reference price comparison (take the selling price of 10 pieces in Lichuang Mall on September 11, 2021 as reference)
-![image](document/image/132944757-2b5cfda8-f93f-4456-8d7f-4e4767954056.png)
-
 ## About the custom extern module ？
 
 In addition to device drivers, developing custom Python modules for MCU is very easy. The following two demos are extensions of the custom module, which developed python interfaces for the ARM-2D image driver library.
@@ -652,9 +641,15 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 <div class="log"></div>
 
+### Contribute Log On 2023
+
 | Contribute log | Contributer |
 | --- | --- |
 | hmac hashlib base64 aes modules | [梦程MI](https://gitee.com/dreamcmi) |
+<details><summary> Contribute Log On 2022 </summary>
+
+| Contribute log | Contributer |
+| --- | --- |
 | request module | [onceday](https://gitee.com/onceday) |
 | mqtt module | [FlintJ](https://gitee.com/flintj) |
 | Donate：500¥ | [hardsofttech](https://gitee.com/hardsofttech) |
@@ -674,7 +669,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 | add support for Unix Time | [onceday](https://gitee.com/onceday) |
 | contrubute to PikaStdLib.String() | [purewind7](https://gitee.com/purewind7) |
 | Add [PLOOC](https://github.com/GorgonMeducer/PLOOC) support for pikapython Core | [GorgonMeducer](https://github.com/GorgonMeducer) |
-| Donate：500¥ (ctypes 相关） | 蒋太平 |
+| Donate：500¥ (ctypes 相关) | 蒋太平 |
 | fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
 | ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
 | ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
@@ -691,6 +686,13 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 | Donate：LS1C101 mcu 10pic, LS1c101 develop board，debuger|龙芯俱乐部 石南|
 | PikaVSF OS package | [versaloon](https://github.com/versaloon) |
 | ESP32C3 BSP |沧御|
+
+</details>
+
+<details><summary> Contribute Log On 2021 </summary>
+
+| Contribute log | Contributer |
+| --- | --- |
 | Donate：ESP32 board、ink lcd*4 | name(微信名) |
 | Donate：smartloong board | 龙芯俱乐部 石南 |
 | package/STM32F1 | [sjy](https://gitee.com/shanjiayang) |
@@ -711,6 +713,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
 
+</details>
 
 ## Star History
 

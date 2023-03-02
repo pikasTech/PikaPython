@@ -487,17 +487,6 @@ while True:
 
 The maximum RAM usage of these demos is only 3.56K, which is 4.56K if the 1K stack is included, and the maximum Flash usage is 30.4K. Refer to the 20K RAM and 64K Flash of STM32F103C8T6, less than 25% RAM and less than 50% Flash are used.
 
-A quick comparison can be made between the microPython's MCU STM32F405RG and the pikapython's MCU STM32G070CB.
-
-## RAM resource comparison
-![image](document/image/132944731-a55ece1d-061f-4b91-ba87-bd6547be96a7.png)
-
-## Flash Resource Comparison
-![image](document/image/132944745-e9cf598d-e75f-40bb-873e-911819d535b7.png)
-
-## Reference price comparison (take the selling price of 10 pieces in Lichuang Mall on September 11, 2021 as reference)
-![image](document/image/132944757-2b5cfda8-f93f-4456-8d7f-4e4767954056.png)
-
 ## About the custom extern module ？
 
 In addition to device drivers, developing custom Python modules for MCU is very easy. The following two demos are extensions of the custom module, which developed python interfaces for the ARM-2D image driver library.
@@ -526,10 +515,27 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 <div class="log"></div>
 
+### Contribute Log On 2023
+
 | Contribute log | Contributer |
 | --- | --- |
-!INCLUDE "contributor.mdpp"
+!INCLUDE "contributor2023.mdpp"
 
+<details><summary> Contribute Log On 2022 </summary>
+
+| Contribute log | Contributer |
+| --- | --- |
+!INCLUDE "contributor2022.mdpp"
+
+</details>
+
+<details><summary> Contribute Log On 2021 </summary>
+
+| Contribute log | Contributer |
+| --- | --- |
+!INCLUDE "contributor2021.mdpp"
+
+</details>
 
 ## Star History
 

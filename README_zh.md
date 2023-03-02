@@ -217,6 +217,8 @@ http://pikascript.com
 
 在运行时支持 python 方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于 [Pika 运行时内核](../../tree/master/src)。
 
+<details><summary>更多语法特性细节</summary>
+
 |语法|编译时|运行时|Shell|
 |---|---|---|---|
 |模块定义   |√|-|-|
@@ -296,6 +298,7 @@ http://pikascript.com
 | yield | is | comprehensions |
 | --- | --- | --- |
 | - | √ | - |
+</details>
 
 ### (4)源码规范
 
@@ -314,6 +317,8 @@ http://pikascript.com
 # 5.Demo展示
 
 ## Demo 01 GPIO
+
+<details><summary>查看代码</summary>
 
 ``` python
 import PikaStdLib
@@ -342,9 +347,13 @@ while True:
 
 ```
 
+</details>
+
 ![Hnet-image (2)](document/image/132943428-f2b365ca-140e-42f4-936c-db6a7d9f8dee.gif)
 
 ## Demo 02 USART
+
+<details><summary>查看代码</summary>
 
 ``` python
 import PikaStdLib
@@ -363,10 +372,15 @@ while True:
     print(readBuff)
 
 ```
+
+</details>
+
 ![Hnet-image (3)](document/image/132943365-0f7059b3-4f9d-4989-a5ec-2cce72b0cc96.gif)
 
 
 ## Demo 03 ADC
+
+<details><summary>查看代码</summary>
 
 ``` python
 import PikaStdLib
@@ -388,8 +402,11 @@ while True:
 
 ![mmexport1631351523907](document/image/132944185-0a01b1ba-8cf7-4f9f-9d73-fe9cbcd52f0b.png)
 
+</details>
 
 ## Demo 04 PWM output
+
+<details><summary>查看代码</summary>
 
 ``` python
 import PikaStdLib
@@ -410,7 +427,11 @@ while True:
     
 ```
 
+</details>
+
 ## Demo 05 RGB
+
+<details><summary>查看代码</summary>
 
 ``` python
 import STM32G0
@@ -433,7 +454,11 @@ while True:
 
 ```
 
+</details>
+
 ## Demo 06 Snake(Need LCD)
+
+<details><summary>查看代码</summary>
 
 ``` python
 from PikaObj import *
@@ -576,6 +601,8 @@ while True:
 
 ```
 
+</details>
+
 ![输入图片说明](document/image/imagefwef.png)
 
 这几个 Demo 占用的 RAM 最大值只有3.56K，把1K的堆栈也算上就是4.56K，Flash 最大占用是30.4K，以 STM32F103C8T6 的 20K RAM 和 64K Flash 为标准，RAM 才用掉不到25%，Flash 才用掉不到50%。
@@ -588,7 +615,7 @@ while True:
 ## Flash资源对比
 ![image](document/image/132944745-e9cf598d-e75f-40bb-873e-911819d535b7.png)
 
-## 参考价对比(以2021年9月11日立创商城10片售价为参考）
+## 参考价对比(以2021年9月11日立创商城10片售价为参考)
 ![image](document/image/132944757-2b5cfda8-f93f-4456-8d7f-4e4767954056.png)
 
 ## 拓展能力如何呢？
@@ -629,9 +656,16 @@ while True:
 
 <div class="log"></div>
 
+### 贡献记录 (2023 年)
+
 | 贡献记录 | 贡献者 |
 | --- | --- |
 | hmac hashlib base64 aes modules | [梦程MI](https://gitee.com/dreamcmi) |
+
+<details><summary>贡献记录 (2022 年)</summary>
+
+| 贡献记录 | 贡献者 |
+| --- | --- |
 | request module | [onceday](https://gitee.com/onceday) |
 | mqtt module | [FlintJ](https://gitee.com/flintj) |
 | Donate：500¥ | [hardsofttech](https://gitee.com/hardsofttech) |
@@ -651,7 +685,7 @@ while True:
 | add support for Unix Time | [onceday](https://gitee.com/onceday) |
 | contrubute to PikaStdLib.String() | [purewind7](https://gitee.com/purewind7) |
 | Add [PLOOC](https://github.com/GorgonMeducer/PLOOC) support for pikapython Core | [GorgonMeducer](https://github.com/GorgonMeducer) |
-| Donate：500¥ (ctypes 相关） | 蒋太平 |
+| Donate：500¥ (ctypes 相关) | 蒋太平 |
 | fix linux install script | [Maximilian Gerhardt](https://github.com/maxgerhardt) |
 | ch582 package | [梦程MI](https://gitee.com/dreamcmi) |
 | ch582 BSP | [梦程MI](https://gitee.com/dreamcmi) |
@@ -668,6 +702,13 @@ while True:
 | Donate：LS1C101 mcu 10pic, LS1c101 develop board，debuger|龙芯俱乐部 石南|
 | PikaVSF OS package | [versaloon](https://github.com/versaloon) |
 | ESP32C3 BSP |沧御|
+
+</details>
+
+<details><summary>贡献记录 (2021 年)</summary>
+
+| 贡献记录 | 贡献者 |
+| --- | --- |
 | Donate：ESP32 board、ink lcd*4 | name(微信名) |
 | Donate：smartloong board | 龙芯俱乐部 石南 |
 | package/STM32F1 | [sjy](https://gitee.com/shanjiayang) |
@@ -688,3 +729,4 @@ while True:
 | demo/stm32f103zet6/demo02-led-stm32f103zet6_tworoot | [甜航](https://github.com/easyzoom) |
 | demo/stm32f407zgt/demo01-led-stm32f407vgt | [甜航](https://github.com/easyzoom) |
 
+</details>
