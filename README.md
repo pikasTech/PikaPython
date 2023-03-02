@@ -114,6 +114,8 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 
 
 ## MCU support
+<details>
+<summary>View Details</summary>
 |MCU               |bsp|gpio|time|uart|pwm|adc|i2c|dac|
 |---               |---|--- |--- |--- |---|---|---|---|
 |stm32g030c8       |√  |√   |√   |√   |√  |√  |√  |   |
@@ -145,6 +147,7 @@ https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7
 |EC600N            |√  |    |    |    |   |   |   |   |
 |mm32f5277e9p      |√  |√   |    |    |   |   |   |   |
 |xr806(openharmony)|√  |    |    |    |   |   |   |   |
+</details>
 
 
 ## Board support
@@ -301,6 +304,8 @@ The scripts in demos are in the [examples](examples) folder.
 
 ## Demo 01 GPIO
 
+<details>
+<summary>View Details</summary>
 ``` python
 import PikaStdLib
 import STM32G0
@@ -327,11 +332,14 @@ while True:
     time.sleep_ms(500)
 
 ```
+</details>
 
 ![Hnet-image (2)](document/image/132943428-f2b365ca-140e-42f4-936c-db6a7d9f8dee.gif)
 
 ## Demo 02 USART
 
+<details>
+<summary>View Details</summary>
 ``` python
 import PikaStdLib
 import STM32G0
@@ -350,10 +358,13 @@ while True:
 
 ```
 ![Hnet-image (3)](document/image/132943365-0f7059b3-4f9d-4989-a5ec-2cce72b0cc96.gif)
+</details>
 
 
 ## Demo 03 ADC
 
+<details>
+<summary>View Details</summary>
 ``` python
 import PikaStdLib
 import STM32G0
@@ -371,12 +382,15 @@ while True:
     time.sleep_ms(500)
 
 ```
+</details>
 
 ![mmexport1631351523907](document/image/132944185-0a01b1ba-8cf7-4f9f-9d73-fe9cbcd52f0b.png)
 
 
 ## Demo 04 PWM output
 
+<details>
+<summary>View Details</summary>
 ``` python
 import PikaStdLib
 import STM32G0
@@ -395,9 +409,11 @@ while True:
     pwm.setDuty(0.001)
     
 ```
+</details>
 
 ## Demo 05 RGB
 
+<details>
 ``` python
 import STM32G0
 import PikaPiZero
@@ -418,9 +434,12 @@ while True:
     rgb.flow()
 
 ```
+</details>
 
 ## Demo 06 Snake(Need LCD)
 
+<details>
+<summary>View Details</summary>
 ``` python
 from PikaObj import *
 import PikaStdLib
@@ -561,6 +580,7 @@ while True:
         isUpdate = 1
 	
 ```
+</details>
 
 ![image](https://user-images.githubusercontent.com/88232613/150269059-1fe3d62d-0c1b-40f4-9298-0d787f476a20.png)
 
