@@ -3,7 +3,7 @@ TEST_START
 
 TEST(cmodule, print_) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain, "print('test', 'test2')\n");

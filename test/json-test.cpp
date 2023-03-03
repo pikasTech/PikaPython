@@ -3,7 +3,7 @@ TEST_START
 
 #if !PIKA_NANO_ENABLE
 TEST(json, loads) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -63,7 +63,7 @@ TEST(json, loads) {
 
 #if PIKA_FLOAT_TYPE_DOUBLE
 TEST(json, dumps) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);

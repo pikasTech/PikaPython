@@ -1,7 +1,7 @@
 #include "test_common.h"
 TEST_START
 
-extern PikaMemInfo pikaMemInfo;
+extern pikaMemInfo g_pikaMemInfo;
 /* the log_buff of printf */
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
@@ -104,7 +104,7 @@ TEST(str, strPointToLastToken) {
 
 TEST(str, transfer) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -122,7 +122,7 @@ TEST(str, transfer) {
 
 TEST(str, transfer_issue_jfo4i) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);

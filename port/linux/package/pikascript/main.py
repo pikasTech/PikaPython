@@ -5,7 +5,7 @@ import GTestTask, TempDevTest
 import cb_test
 import configparser, network
 import test_module1, test_cmodule, test_module4, import_test
-import hashlib, hmac, aes, base64, time
+import hashlib, hmac, aes, base64, time, gc
 import _thread, weakref
 
 mem = PikaStdLib.MemChecker()

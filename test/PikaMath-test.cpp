@@ -3,7 +3,7 @@ TEST_START
 #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
 TEST(PikaMath, test1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -18,7 +18,7 @@ TEST(PikaMath, test1) {
 
 TEST(PikaMath, quat_add) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -49,7 +49,7 @@ TEST(PikaMath, quat_add) {
 
 TEST(PikaMath, quat_sub) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -80,7 +80,7 @@ TEST(PikaMath, quat_sub) {
 
 TEST(PikaMath, quat_mul) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -111,7 +111,7 @@ TEST(PikaMath, quat_mul) {
 
 TEST(PikaMath, quat_set) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -141,7 +141,7 @@ TEST(PikaMath, quat_set) {
 
 TEST(PikaMath, quat_dot) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -166,7 +166,7 @@ TEST(PikaMath, quat_dot) {
 
 TEST(PikaMath, quat_inv) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -196,7 +196,7 @@ TEST(PikaMath, quat_inv) {
 
 TEST(PikaMath, quat_cross) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -230,7 +230,7 @@ TEST(PikaMath, quat_cross) {
 
 TEST(PikaMath, quat_toEuler) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -259,7 +259,7 @@ TEST(PikaMath, quat_toEuler) {
 
 TEST(PikaMath, quat_fromEuler) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,

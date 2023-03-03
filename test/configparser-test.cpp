@@ -17,7 +17,7 @@ TEST(configparser, test1) {
         "ForwardX11 = no\n";
 
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -39,7 +39,7 @@ TEST(configparser, test1) {
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(configparser, test2) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);

@@ -1,6 +1,6 @@
 ﻿/*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -36,67 +36,67 @@
 #include <math.h>
 #endif
 
-volatile VMSignal PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
-                                  .vm_cnt = 0,
+static pika_platform_thread_mutex_t g_pikaGIL = {0};
+volatile VMSignal g_PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
+
+                                    .vm_cnt = 0,
 #if PIKA_EVENT_ENABLE
-                                  .cq =
-                                      {
-                                          .head = 0,
-                                          .tail = 0,
-                                          .res = {0},
-                                      },
-                                  .event_pickup_cnt = 0,
-                                  .event_thread_inited = 0
+                                    .cq =
+                                        {
+                                            .head = 0,
+                                            .tail = 0,
+                                            .res = {0},
+                                        },
+                                    .event_pickup_cnt = 0,
+                                    .event_thread_inited = 0
 
 #endif
 };
 
-static pika_platform_thread_mutex_t pikavm_global_lock = {0};
-
 int pika_GIL_ENTER(void) {
-    if (!pikavm_global_lock.is_init) {
+    if (!g_pikaGIL.is_init) {
         return 0;
     }
-    int ret = pika_platform_thread_mutex_lock(&pikavm_global_lock);
+    int ret = pika_platform_thread_mutex_lock(&g_pikaGIL);
     // pika_debug("pika_GIL_ENTER");
-    if (!pikavm_global_lock.is_first_lock) {
-        pikavm_global_lock.is_first_lock = 1;
+    if (!g_pikaGIL.is_first_lock) {
+        g_pikaGIL.is_first_lock = 1;
     }
     return ret;
 }
 
 int pika_GIL_EXIT(void) {
-    if (!pikavm_global_lock.is_init) {
+    if (!g_pikaGIL.is_init) {
         return 0;
     }
     // pika_debug("pika_GIL_EXIT");
-    return pika_platform_thread_mutex_unlock(&pikavm_global_lock);
+    return pika_platform_thread_mutex_unlock(&g_pikaGIL);
 }
 
 int _VM_lock_init(void) {
-    if (pikavm_global_lock.is_init) {
+    if (g_pikaGIL.is_init) {
         return 0;
     }
-    int ret = pika_platform_thread_mutex_init(&pikavm_global_lock);
+    int ret = pika_platform_thread_mutex_init(&g_pikaGIL);
     if (0 == ret) {
-        pikavm_global_lock.is_init = 1;
+        g_pikaGIL.is_init = 1;
     }
     return ret;
 }
 
 int _VM_is_first_lock(void) {
-    return pikavm_global_lock.is_first_lock;
+    return g_pikaGIL.is_first_lock;
 }
 
 int _VMEvent_getVMCnt(void) {
-    return PikaVMSignal.vm_cnt;
+    return g_PikaVMSignal.vm_cnt;
 }
 
 int _VMEvent_getEventPickupCnt(void) {
 #if !PIKA_EVENT_ENABLE
     return -1;
 #else
-    return PikaVMSignal.event_pickup_cnt;
+    return g_PikaVMSignal.event_pickup_cnt;
 #endif
 }
 
@@ -171,13 +171,13 @@ void _VMEvent_deinit(void) {
     pika_platform_panic_handle();
 #else
     for (int i = 0; i < PIKA_EVENT_LIST_SIZE; i++) {
-        if (NULL != PikaVMSignal.cq.res[i]) {
-            arg_deinit(PikaVMSignal.cq.res[i]);
-            PikaVMSignal.cq.res[i] = NULL;
+        if (NULL != g_PikaVMSignal.cq.res[i]) {
+            arg_deinit(g_PikaVMSignal.cq.res[i]);
+            g_PikaVMSignal.cq.res[i] = NULL;
         }
-        if (NULL != PikaVMSignal.cq.data[i]) {
-            arg_deinit(PikaVMSignal.cq.data[i]);
-            PikaVMSignal.cq.data[i] = NULL;
+        if (NULL != g_PikaVMSignal.cq.data[i]) {
+            arg_deinit(g_PikaVMSignal.cq.data[i]);
+            g_PikaVMSignal.cq.data[i] = NULL;
         }
     }
 #endif
@@ -192,25 +192,26 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
     return PIKA_RES_ERR_OPERATION_FAILED;
 #else
     /* push to event_cq_buff */
-    if (_ecq_isFull(&PikaVMSignal.cq)) {
+    if (_ecq_isFull(&g_PikaVMSignal.cq)) {
         arg_deinit(eventData);
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
     }
     if (arg_getType(eventData) == ARG_TYPE_OBJECT_NEW) {
         arg_setType(eventData, ARG_TYPE_OBJECT);
     }
-    if (PikaVMSignal.cq.res[PikaVMSignal.cq.tail] != NULL) {
-        arg_deinit(PikaVMSignal.cq.res[PikaVMSignal.cq.tail]);
-        PikaVMSignal.cq.res[PikaVMSignal.cq.tail] = NULL;
+    if (g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail] != NULL) {
+        arg_deinit(g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail]);
+        g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail] = NULL;
     }
-    if (PikaVMSignal.cq.data[PikaVMSignal.cq.tail] != NULL) {
-        arg_deinit(PikaVMSignal.cq.data[PikaVMSignal.cq.tail]);
-        PikaVMSignal.cq.data[PikaVMSignal.cq.tail] = NULL;
+    if (g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail] != NULL) {
+        arg_deinit(g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail]);
+        g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail] = NULL;
     }
-    PikaVMSignal.cq.id[PikaVMSignal.cq.tail] = eventId;
-    PikaVMSignal.cq.data[PikaVMSignal.cq.tail] = eventData;
-    PikaVMSignal.cq.lisener[PikaVMSignal.cq.tail] = lisener;
-    PikaVMSignal.cq.tail = (PikaVMSignal.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
+    g_PikaVMSignal.cq.id[g_PikaVMSignal.cq.tail] = eventId;
+    g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail] = eventData;
+    g_PikaVMSignal.cq.lisener[g_PikaVMSignal.cq.tail] = lisener;
+    g_PikaVMSignal.cq.tail =
+        (g_PikaVMSignal.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
 #endif
 }
@@ -225,14 +226,15 @@ PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
     return PIKA_RES_ERR_OPERATION_FAILED;
 #else
     /* pop from event_cq_buff */
-    if (_ecq_isEmpty(&PikaVMSignal.cq)) {
+    if (_ecq_isEmpty(&g_PikaVMSignal.cq)) {
         return PIKA_RES_ERR_SIGNAL_EVENT_EMPTY;
     }
-    *id = PikaVMSignal.cq.id[PikaVMSignal.cq.head];
-    *data = PikaVMSignal.cq.data[PikaVMSignal.cq.head];
-    *lisener_p = PikaVMSignal.cq.lisener[PikaVMSignal.cq.head];
-    *head = PikaVMSignal.cq.head;
-    PikaVMSignal.cq.head = (PikaVMSignal.cq.head + 1) % PIKA_EVENT_LIST_SIZE;
+    *id = g_PikaVMSignal.cq.id[g_PikaVMSignal.cq.head];
+    *data = g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.head];
+    *lisener_p = g_PikaVMSignal.cq.lisener[g_PikaVMSignal.cq.head];
+    *head = g_PikaVMSignal.cq.head;
+    g_PikaVMSignal.cq.head =
+        (g_PikaVMSignal.cq.head + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
 #endif
 }
@@ -252,26 +254,26 @@ void _VMEvent_pickupEvent(void) {
     int head;
     if (PIKA_RES_OK == __eventListener_popEvent(&event_lisener, &event_id,
                                                 &event_data, &head)) {
-        PikaVMSignal.event_pickup_cnt++;
-        pika_debug("pickup_cnt: %d", PikaVMSignal.event_pickup_cnt);
+        g_PikaVMSignal.event_pickup_cnt++;
+        pika_debug("pickup_cnt: %d", g_PikaVMSignal.event_pickup_cnt);
         Arg* res =
             __eventListener_runEvent(event_lisener, event_id, event_data);
-        PikaVMSignal.cq.res[head] = res;
-        PikaVMSignal.event_pickup_cnt--;
+        g_PikaVMSignal.cq.res[head] = res;
+        g_PikaVMSignal.event_pickup_cnt--;
     }
 #endif
 }
 
 VM_SIGNAL_CTRL VMSignal_getCtrl(void) {
-    return PikaVMSignal.signal_ctrl;
+    return g_PikaVMSignal.signal_ctrl;
 }
 
 void pks_vm_exit(void) {
-    PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_EXIT;
+    g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_EXIT;
 }
 
 void pks_vmSignal_setCtrlElear(void) {
-    PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_NONE;
+    g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_NONE;
 }
 
 /* head declare start */
@@ -1676,6 +1678,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
                                        Arg* arg_ret_reg) {
     Arg* return_arg = NULL;
     VMParameters* sub_locals = NULL;
+    VMParameters* sub_locals_init = NULL;
     char* run_path = data;
     PikaObj* method_host = NULL;
     PikaObj* obj_this = NULL;
@@ -1866,24 +1869,24 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         PikaObj* new_obj = arg_getPtr(return_arg);
         Arg* method_arg =
             obj_getMethodArg_noalloc(new_obj, "__init__", &arg_reg1);
-        PikaObj* sub_locals = New_PikaObj();
+        sub_locals_init = New_PikaObj();
         Arg* return_arg_init = NULL;
         if (NULL == method_arg) {
             goto init_exit;
         }
-        VMState_loadArgsFromMethodArg(vm, new_obj, sub_locals->list, method_arg,
-                                      "__init__", n_used);
+        VMState_loadArgsFromMethodArg(vm, new_obj, sub_locals_init->list,
+                                      method_arg, "__init__", n_used);
         /* load args failed */
         if (vm->error_code != 0) {
             goto init_exit;
         }
-        return_arg_init = obj_runMethodArgWithState(new_obj, sub_locals,
+        return_arg_init = obj_runMethodArgWithState(new_obj, sub_locals_init,
                                                     method_arg, &sub_run_state);
     init_exit:
         if (NULL != return_arg_init) {
             arg_deinit(return_arg_init);
         }
-        obj_deinit(sub_locals);
+        obj_deinit(sub_locals_init);
         if (NULL != method_arg) {
             arg_deinit(method_arg);
         }
@@ -3644,10 +3647,10 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
                   .super_invoke_deepth = 0};
     stack_init(&(vm.stack));
     VMState_initReg(&vm);
-    if (PikaVMSignal.vm_cnt == 0) {
+    if (g_PikaVMSignal.vm_cnt == 0) {
         pks_vmSignal_setCtrlElear();
     }
-    PikaVMSignal.vm_cnt++;
+    g_PikaVMSignal.vm_cnt++;
     while (vm.pc < size) {
         if (vm.pc == VM_PC_EXIT) {
             break;
@@ -3705,7 +3708,7 @@ static VMParameters* __pikaVM_runByteCodeFrameWithState(
     }
     VMState_solveUnusedStack(&vm);
     stack_deinit(&(vm.stack));
-    PikaVMSignal.vm_cnt--;
+    g_PikaVMSignal.vm_cnt--;
     return locals;
 }
 

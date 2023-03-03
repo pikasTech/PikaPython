@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -32,8 +32,8 @@
 #include "dataArgs.h"
 #include "dataLink.h"
 #include "dataMemory.h"
-#include "dataStrs.h"
 #include "dataQueue.h"
+#include "dataStrs.h"
 
 typedef struct InstructUnit InstructUnit;
 struct InstructUnit {
@@ -78,8 +78,9 @@ struct NativeProperty {
 typedef struct PikaObj PikaObj;
 struct PikaObj {
     Args* list;
-    uint8_t refcnt;
     void* constructor;
+    PikaObj* gcNext;
+    uint8_t refcnt;
     uint8_t flag;
 };
 
@@ -91,12 +92,20 @@ struct RangeData {
     int64_t i;
 };
 
+typedef struct PikaObjState PikaObjState;
+struct PikaObjState {
+    Arg* helpModulesCmodule;
+    PIKA_BOOL inRootObj;
+    PikaObj* gcChain;
+};
+
 #define OBJ_FLAG_PROXY_GETATTRIBUTE 0x01
 #define OBJ_FLAG_PROXY_GETATTR 0x02
 #define OBJ_FLAG_PROXY_SETATTR 0x04
 #define OBJ_FLAG_ALREADY_INIT 0x08
 #define OBJ_FLAG_RUN_AS 0x16
 #define OBJ_FLAG_GLOBALS 0x32
+#define OBJ_FLAG_GC_MARKED 0x64
 
 #define KEY_UP 0x41
 #define KEY_DOWN 0x42
@@ -228,7 +237,9 @@ int32_t class_defineRunTimeConstructor(PikaObj* self,
 
 int32_t obj_removeArg(PikaObj* self, char* argPath);
 int32_t obj_isArgExist(PikaObj* self, char* argPath);
-PikaObj* obj_getClassObjByNewFun(PikaObj* self, char* name, NewFun newClassFun);
+PikaObj* obj_newObjFromConstructor(PikaObj* self,
+                                   char* name,
+                                   NewFun newClassFun);
 PikaObj* newRootObj(char* name, NewFun newObjFun);
 PikaObj* obj_getClassObj(PikaObj* obj);
 Arg* obj_getMethodArg(PikaObj* obj, char* methodPath);
@@ -281,7 +292,6 @@ typedef struct ShellConfig ShellConfig;
 typedef enum shellCTRL (*sh_handler)(PikaObj*, char*, ShellConfig*);
 typedef char (*sh_getchar)(void);
 
-
 #if PIKA_SHELL_FILTER_ENABLE
 typedef struct FilterFIFO {
     ByteQueue queue;
@@ -291,19 +301,19 @@ typedef struct FilterFIFO {
 
 typedef struct FilterItem FilterItem;
 
-typedef PIKA_BOOL FilterMessageHandler(  FilterItem *msg, 
-                                    PikaObj* self, 
-                                    ShellConfig* shell);
+typedef PIKA_BOOL FilterMessageHandler(FilterItem* msg,
+                                       PikaObj* self,
+                                       ShellConfig* shell);
 
 struct FilterItem {
-    FilterMessageHandler   *handler;
-    const uint8_t          *message;
-    uint16_t                size;
-    uint8_t                 is_visible          : 1;
-    uint8_t                 is_case_insensitive : 1;
-    uint8_t                                     : 6;
-    uint8_t                 ignore_mask;
-    uintptr_t               target;
+    FilterMessageHandler* handler;
+    const uint8_t* message;
+    uint16_t size;
+    uint8_t is_visible : 1;
+    uint8_t is_case_insensitive : 1;
+    uint8_t : 6;
+    uint8_t ignore_mask;
+    uintptr_t target;
 };
 
 #endif
@@ -311,9 +321,9 @@ struct FilterItem {
 struct ShellConfig {
 #if PIKA_SHELL_FILTER_ENABLE
     FilterFIFO filter_fifo;
-    FilterItem *messages;
+    FilterItem* messages;
     uint16_t message_count;
-    uint16_t                : 16;   /* padding to suppress warning*/
+    uint16_t : 16; /* padding to suppress warning*/
 #endif
     char* prefix;
     sh_handler handler;
@@ -565,6 +575,16 @@ void obj_printModules(PikaObj* self);
     do {                \
     } while (0)
 #endif
+
+void pikaGC_append(PikaObj* self);
+uint32_t pikaGC_count(void);
+void pikaGC_remove(PikaObj* self);
+void pikaGC_mark(PikaObj* self);
+void pikaGC_markRoot(void);
+uint32_t pikaGC_countMarked(void);
+uint32_t pikaGC_printCanFree(void);
+uint32_t pikaGC_markSweep(void);
+PIKA_BOOL pikaGC_checkAlive(PikaObj* self);
 
 int pika_GIL_EXIT(void);
 int pika_GIL_ENTER(void);

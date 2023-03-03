@@ -29,11 +29,11 @@ int main(void) {
     /* deinit */
     obj_deinit(pikaMain);
 #if PIKA_ARG_CACHE_ENABLE
-    extern PikaMemInfo pikaMemInfo;
+    extern pikaMemInfo g_pikaMemInfo;
     printf("[ Info]: alloc times: %d, cached times: %d (%0.2f%%)\r\n",
-           pikaMemInfo.alloc_times, pikaMemInfo.alloc_times_cache,
-           ((float)pikaMemInfo.alloc_times_cache /
-            (float)pikaMemInfo.alloc_times) *
+           g_pikaMemInfo.alloc_times, g_pikaMemInfo.alloc_times_cache,
+           ((float)g_pikaMemInfo.alloc_times_cache /
+            (float)g_pikaMemInfo.alloc_times) *
                100.0);
 #endif
     printf("[ Info]: time elapsed: %lfs\r\n",

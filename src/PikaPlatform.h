@@ -1,6 +1,6 @@
 ﻿/*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -48,7 +48,7 @@
         abort(); \
     }
 #else
-    #define pika_assert(...)
+    #define pika_assert(...) (void)0;
 #endif
 /* clang-format on */
 

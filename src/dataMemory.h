@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -47,7 +47,7 @@ typedef struct {
 #endif
     uint32_t alloc_times;
     uint32_t alloc_times_cache;
-} PikaMemInfo;
+} pikaMemInfo;
 
 typedef uint8_t* BitMap;
 

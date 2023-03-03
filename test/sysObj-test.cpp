@@ -39,7 +39,7 @@ TEST(sysObj, getattr) {
         "test = Test()\n"
         "aa = getattr(test, 'a')\n";
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -63,7 +63,7 @@ TEST(sysObj, setattr) {
         "setattr(test, 'a', 2)\n"
         "aa = test.a\n";
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");

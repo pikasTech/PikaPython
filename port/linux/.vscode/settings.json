@@ -112,7 +112,10 @@
         "pthread.h": "c",
         "deque": "c",
         "list": "c",
-        "vector": "c"
+        "vector": "c",
+        "datastrs.h": "c",
+        "__instruction_table.h": "c",
+        "assert.h": "c"
     },
     "python.formatting.provider": "autopep8",
 }

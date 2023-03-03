@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -425,6 +425,10 @@
 
     #ifndef PIKA_EVENT_THREAD_ENABLE
         #define PIKA_EVENT_THREAD_ENABLE 1
+    #endif
+
+    #ifndef PIKA_GC_MARK_SWEEP_ENABLE
+        #define PIKA_GC_MARK_SWEEP_ENABLE 0
     #endif
 
     /* configuration validation */

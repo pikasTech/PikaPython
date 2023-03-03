@@ -18,7 +18,7 @@ extern "C" {
 #include "dataStrs.h"
 #include "pikaScript.h"
 #include "pika_config_gtest.h"
-extern PikaMemInfo pikaMemInfo;
+extern pikaMemInfo g_pikaMemInfo;
 /* the log_buff of printf */
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 }

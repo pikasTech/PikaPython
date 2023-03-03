@@ -28,7 +28,7 @@ void checker_memInfo(void)
 {
     printf("---------------------------\r\n");
     printf("Memory pool info:\r\n");
-    checker_printMem("  mem state size = ", sizeof(PikaMemInfo));
+    checker_printMem("  mem state size = ", sizeof(pikaMemInfo));
     printf("---------------------------\r\n");
 }
 void checker_assertMemFree()
