@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1677753855983,
+  "lastUpdate": 1677995652284,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -94011,6 +94011,66 @@ window.BENCHMARK_DATA = {
             "value": 0.00500044240530364,
             "unit": "ms/iter",
             "extra": "iterations: 280607\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "38388625ca09c0e42ff6c92187fa255c620f49f6",
+          "message": "support mark-sweep gc\n\nchange project name and url on kernal sources\n\nrename global Value\n\nformat name\n\nuse g_PikaObjState\n\nadd gc chain\n\nadd gc_mark()\n\nadd printCanFree\n\nadd sub locals init\n\ntry use mark-sweep to solve circle-ref\n\nuse mark sweep to collect circle ref succeed\n\nimport mark-sweep GC\n\nconfig_default\n\nupdate",
+          "timestamp": "2023-03-05T12:57:27+08:00",
+          "tree_id": "16ba0fe7c0514e3a80973acace4a2ce086cdb22d",
+          "url": "https://github.com/pikasTech/PikaPython/commit/38388625ca09c0e42ff6c92187fa255c620f49f6"
+        },
+        "date": 1677995643676,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 22398.025412198884,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 22398.025412198884 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 22.026281620685193,
+            "unit": "ms/iter",
+            "extra": "iterations: 64\ncpu: 21.99544588119454 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 10.901719283854533,
+            "unit": "ms/iter",
+            "extra": "iterations: 128\ncpu: 10.899805635632909 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 9.71350577128935,
+            "unit": "ms/iter",
+            "extra": "iterations: 144\ncpu: 9.713228541842772 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 2.5782974651690673,
+            "unit": "ms/iter",
+            "extra": "iterations: 545\ncpu: 2.5781290509899013 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.0050000714644396075,
+            "unit": "ms/iter",
+            "extra": "iterations: 280639\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
