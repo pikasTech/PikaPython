@@ -81,6 +81,10 @@
             #define PIKA_EVENT_THREAD_ENABLE 0
         #endif
 
+        #ifndef PIKA_GC_MARK_SWEEP_ENABLE
+            #define PIKA_GC_MARK_SWEEP_ENABLE 0
+        #endif
+
     #endif
 
     /* default optimize */

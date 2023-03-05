@@ -32,6 +32,7 @@ const NativeProperty TinyObjNativeProp = {.super = NULL,
                                           .methodGroupCount = 0};
 
 PikaObj* New_TinyObj(Args* args) {
-    PikaObj* self = New_PikaObj();
+    PikaObj* self = New_PikaObj(NULL);
+    self->constructor = New_TinyObj;
     return self;
 }

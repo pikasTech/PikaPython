@@ -29,7 +29,7 @@
 #include "BaseObj.h"
 #include "dataQueue.h"
 QueueObj* New_queueObj(void) {
-    PikaObj* self = New_PikaObj();
+    PikaObj* self = New_PikaObj(NULL);
     queueObj_init(self);
     return self;
 }

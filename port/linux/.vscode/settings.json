@@ -1,5 +1,8 @@
 {
     "C_Cpp.clang_format_style": "{ BasedOnStyle: Chromium, IndentWidth: 4}",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "editor.defaultFormatter": "xaver.clang-format",
+    "C_Cpp.intelliSenseEngine": "disabled",
     "files.associations": {
         "*.rs": "rust",
         "pikastdlib_sysobj.h": "c",
@@ -118,4 +121,7 @@
         "assert.h": "c"
     },
     "python.formatting.provider": "autopep8",
+    "clangd.arguments": [
+        "-compile-commands-dir=build"
+    ]
 }

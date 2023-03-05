@@ -78,9 +78,12 @@ PIKA_RES args_setPtr(Args* self, char* name, void* argPointer) {
 
 PIKA_RES args_setRef(Args* self, char* name, void* argPointer) {
     PIKA_RES errCode = PIKA_RES_OK;
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setRef(argNew, name, argPointer);
-    args_setArg(self, argNew);
+    Arg* aNewRef = New_arg(NULL);
+    aNewRef = arg_setRef(aNewRef, name, argPointer);
+#if PIKA_GC_MARK_SWEEP_ENABLE
+    obj_clearFlag(arg_getPtr(aNewRef), OBJ_FLAG_GC_ROOT);
+#endif
+    args_setArg(self, aNewRef);
     return errCode;
 }
 
@@ -311,7 +314,7 @@ int32_t args_isArgExist(Args* self, char* name) {
     return 0;
 }
 
-PIKA_RES __updateArg(Args* self, Arg* argNew) {
+PIKA_RES _updateArg(Args* self, Arg* argNew) {
     pika_assert(NULL != self);
     pika_assert(NULL != argNew);
     LinkNode* nodeToUpdate = NULL;
@@ -361,7 +364,7 @@ exit:
 PIKA_RES args_setArg(Args* self, Arg* arg) {
     pika_assert(NULL != self);
     pika_assert(NULL != arg);
-    if (PIKA_RES_OK == __updateArg(self, arg)) {
+    if (PIKA_RES_OK == _updateArg(self, arg)) {
         return PIKA_RES_OK;
     }
     args_pushArg(self, arg);

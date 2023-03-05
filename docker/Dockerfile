@@ -78,3 +78,4 @@ RUN cd root/pikascript && git remote add github https://github.com/pikastech/pik
 RUN apt-get install clangd -y
 RUN apt-get install libmbedtls-dev -y
 RUN pip install -r /root/pikascript/docker/requirements.txt
+RUN apt-get install clang-format -y

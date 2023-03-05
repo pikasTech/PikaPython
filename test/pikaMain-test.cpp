@@ -4,8 +4,6 @@ TEST_START
 TEST(pikaMain, init) {
     g_pikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = pikaScriptInit();
-    pikaGC_markRoot();
-    pikaGC_printCanFree();
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }

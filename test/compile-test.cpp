@@ -391,7 +391,6 @@ TEST(lib, compile_link_import) {
     /* asset */
     EXPECT_STREQ(log_buff[0], "test_module_1_hello\r\n");
     /* deinit */
-    LibObj_deinit(lib);
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -459,7 +458,6 @@ TEST(lib, load_file) {
     EXPECT_STREQ(log_buff[1], "test_module_2_hello\r\n");
     EXPECT_STREQ(log_buff[0], "test_module_3_hello\r\n");
     /* deinit */
-    LibObj_deinit(lib);
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }

@@ -79,7 +79,9 @@ typedef struct PikaObj PikaObj;
 struct PikaObj {
     Args* list;
     void* constructor;
+#if PIKA_GC_MARK_SWEEP_ENABLE
     PikaObj* gcNext;
+#endif
     uint8_t refcnt;
     uint8_t flag;
 };
@@ -96,16 +98,19 @@ typedef struct PikaObjState PikaObjState;
 struct PikaObjState {
     Arg* helpModulesCmodule;
     PIKA_BOOL inRootObj;
-    PikaObj* gcChain;
+#if PIKA_GC_MARK_SWEEP_ENABLE
+    PikaObj* gcRoot;
+#endif
 };
 
-#define OBJ_FLAG_PROXY_GETATTRIBUTE 0x01
-#define OBJ_FLAG_PROXY_GETATTR 0x02
-#define OBJ_FLAG_PROXY_SETATTR 0x04
-#define OBJ_FLAG_ALREADY_INIT 0x08
-#define OBJ_FLAG_RUN_AS 0x16
-#define OBJ_FLAG_GLOBALS 0x32
-#define OBJ_FLAG_GC_MARKED 0x64
+#define OBJ_FLAG_PROXY_GETATTRIBUTE 1
+#define OBJ_FLAG_PROXY_GETATTR 2
+#define OBJ_FLAG_PROXY_SETATTR 4
+#define OBJ_FLAG_ALREADY_INIT 8
+#define OBJ_FLAG_RUN_AS 16
+#define OBJ_FLAG_GLOBALS 32
+#define OBJ_FLAG_GC_MARKED 64
+#define OBJ_FLAG_GC_ROOT 128
 
 #define KEY_UP 0x41
 #define KEY_DOWN 0x42
@@ -113,10 +118,12 @@ struct PikaObjState {
 #define KEY_LEFT 0x44
 
 static inline uint8_t obj_getFlag(PikaObj* self, uint8_t flag) {
+    pika_assert(self);
     return (self->flag & flag) == flag;
 }
 
 static inline void obj_setFlag(PikaObj* self, uint8_t flag) {
+    pika_assert(self);
     self->flag |= flag;
 }
 
@@ -278,7 +285,8 @@ ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg);
 Method methodArg_getPtr(Arg* method_arg);
 
 VMParameters* obj_run(PikaObj* self, char* cmd);
-PikaObj* New_PikaObj(void);
+PikaObj* New_PikaObj(Args* args);
+PikaObj* New_PikaObj_noGC(void);
 
 /* tools */
 int64_t fast_atoi(char* src);
