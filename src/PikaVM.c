@@ -1676,74 +1676,74 @@ static char* _find_self_name(VMState* vm) {
 static Arg* VM_instruction_handler_RUN(PikaObj* self,
                                        VMState* vm,
                                        char* data,
-                                       Arg* arg_ret_reg) {
-    Arg* return_arg = NULL;
-    VMParameters* subLocals = NULL;
-    VMParameters* subLocalsInit = NULL;
-    char* run_path = data;
-    PikaObj* method_host = NULL;
-    PikaObj* obj_this = NULL;
-    Arg* method = NULL;
-    Arg* host_arg = NULL;
-    PIKA_BOOL is_temp = PIKA_FALSE;
-    PIKA_BOOL skip_init = PIKA_FALSE;
-    char* sys_out;
-    int n_used = 0;
+                                       Arg* aReturnRegistor) {
+    Arg* aReturn = NULL;
+    VMParameters* oSublocals = NULL;
+    VMParameters* oSublocalsInit = NULL;
+    char* sRunPath = data;
+    PikaObj* oMethodHost = NULL;
+    PikaObj* oThis = NULL;
+    Arg* aMethod = NULL;
+    Arg* aHost = NULL;
+    PIKA_BOOL bIsTemp = PIKA_FALSE;
+    PIKA_BOOL bSkipInit = PIKA_FALSE;
+    char* sSysOut;
+    int iNumUsed = 0;
     arg_newReg(arg_reg1, 64);
-    RunState sub_run_state = {.try_state = vm->run_state->try_state,
-                              .try_result = TRY_RESULT_NONE};
+    RunState tSubRunState = {.try_state = vm->run_state->try_state,
+                             .try_result = TRY_RESULT_NONE};
     pika_assert(NULL != vm->run_state);
 
     /* inhert */
     if (vm->pc - 2 * (int)instructUnit_getSize() >= 0) {
         if (CLS == VMstate_getInstructWithOffset(
                        vm, -2 * (int)instructUnit_getSize())) {
-            skip_init = PIKA_TRUE;
+            bSkipInit = PIKA_TRUE;
         }
     }
 
     /* tuple or single arg */
-    if (NULL == run_path || run_path[0] == 0) {
+    if (NULL == sRunPath || sRunPath[0] == 0) {
         if (VMState_getInputArgNum(vm) == 1) {
             /* return arg directly */
-            return_arg = stack_popArg(&(vm->stack), arg_ret_reg);
+            aReturn = stack_popArg(&(vm->stack), aReturnRegistor);
             goto exit;
         }
         /* create a tuple */
-        return_arg = _vm_create_list_or_tuple(self, vm, PIKA_FALSE);
+        aReturn = _vm_create_list_or_tuple(self, vm, PIKA_FALSE);
         goto exit;
     }
 
 #if !PIKA_NANO_ENABLE
     /* support for super() */
-    if (strEqu(run_path, "super")) {
-        run_path = _find_super_class_name(vm);
+    if (strEqu(sRunPath, "super")) {
+        sRunPath = _find_super_class_name(vm);
         vm->in_super = PIKA_TRUE;
         vm->super_invoke_deepth = VMState_getInvokeDeepthNow(vm);
-        skip_init = PIKA_TRUE;
+        bSkipInit = PIKA_TRUE;
     }
 #endif
 
     /* return tiny obj */
-    if (strEqu(run_path, "TinyObj")) {
-        return_arg = arg_newMetaObj(New_TinyObj);
+    if (strEqu(sRunPath, "TinyObj")) {
+        aReturn = arg_newMetaObj(New_TinyObj);
         goto exit;
     }
 
-    if (strEqu(run_path, "object")) {
-        return_arg = arg_newMetaObj(New_TinyObj);
+    if (strEqu(sRunPath, "object")) {
+        aReturn = arg_newMetaObj(New_TinyObj);
         goto exit;
     }
 
     /* get method host obj from reg */
-    if (NULL == method_host && _checkLReg(run_path)) {
-        uint8_t reg_index = _getLRegIndex(run_path);
-        method_host = vm->lreg[reg_index];
+    if (NULL == oMethodHost && _checkLReg(sRunPath)) {
+        uint8_t reg_index = _getLRegIndex(sRunPath);
+        oMethodHost = vm->lreg[reg_index];
     }
 
 #if !PIKA_NANO_ENABLE
     /* get method host obj from stack */
-    if (NULL == method_host && run_path[0] == '.') {
+    if (NULL == oMethodHost && sRunPath[0] == '.') {
         /* get method host obj from stack */
         Arg* stack_tmp[PIKA_ARG_NUM_MAX] = {0};
         int n_arg = VMState_getInputArgNum(vm);
@@ -1756,10 +1756,10 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         for (int i = 0; i < n_arg; i++) {
             stack_tmp[i] = stack_popArg_alloc(&(vm->stack));
         }
-        host_arg = stack_tmp[n_arg - 1];
-        method_host = _arg_to_obj(host_arg, &is_temp);
-        if (NULL != method_host) {
-            n_used++;
+        aHost = stack_tmp[n_arg - 1];
+        oMethodHost = _arg_to_obj(aHost, &bIsTemp);
+        if (NULL != oMethodHost) {
+            iNumUsed++;
         }
         /* push back other args to stack */
         for (int i = n_arg - 2; i >= 0; i--) {
@@ -1769,78 +1769,78 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 #endif
 
     /* get method host obj from local scope */
-    if (NULL == method_host) {
-        method_host = obj_getHostObjWithIsTemp(vm->locals, run_path, &is_temp);
+    if (NULL == oMethodHost) {
+        oMethodHost = obj_getHostObjWithIsTemp(vm->locals, sRunPath, &bIsTemp);
     }
 
     /* get method host obj from global scope */
-    if (NULL == method_host) {
-        method_host = obj_getHostObjWithIsTemp(vm->globals, run_path, &is_temp);
+    if (NULL == oMethodHost) {
+        oMethodHost = obj_getHostObjWithIsTemp(vm->globals, sRunPath, &bIsTemp);
     }
 
     /* method host obj is not found */
-    if (NULL == method_host) {
+    if (NULL == oMethodHost) {
         /* error, not found object */
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
-        pika_platform_printf("Error: method '%s' no found.\r\n", run_path);
+        pika_platform_printf("Error: method '%s' no found.\r\n", sRunPath);
         goto exit;
     }
 
 #if !PIKA_NANO_ENABLE
-    if (!skip_init && vm->in_super &&
+    if (!bSkipInit && vm->in_super &&
         VMState_getInvokeDeepthNow(vm) == vm->super_invoke_deepth - 1) {
         vm->in_super = PIKA_FALSE;
-        obj_this = obj_getPtr(vm->locals, _find_self_name(vm));
+        oThis = obj_getPtr(vm->locals, _find_self_name(vm));
     }
 #endif
 
     /* get object this */
-    if (NULL == obj_this) {
-        obj_this = method_host;
+    if (NULL == oThis) {
+        oThis = oMethodHost;
     }
 
     /* get method in object */
-    if (NULL == method) {
-        method = obj_getMethodArg_noalloc(method_host, run_path, &arg_reg1);
+    if (NULL == aMethod) {
+        aMethod = obj_getMethodArg_noalloc(oMethodHost, sRunPath, &arg_reg1);
     }
 
     /* get method in locals */
-    if (NULL == method) {
-        method = obj_getMethodArg_noalloc(vm->locals, run_path, &arg_reg1);
+    if (NULL == aMethod) {
+        aMethod = obj_getMethodArg_noalloc(vm->locals, sRunPath, &arg_reg1);
     }
 
     /* get method in global */
-    if (NULL == method) {
-        method = obj_getMethodArg_noalloc(vm->globals, run_path, &arg_reg1);
-        if (method != NULL) {
-            obj_this = vm->globals;
+    if (NULL == aMethod) {
+        aMethod = obj_getMethodArg_noalloc(vm->globals, sRunPath, &arg_reg1);
+        if (aMethod != NULL) {
+            oThis = vm->globals;
         }
     }
 
     /* assert method exist */
-    if (NULL == method || ARG_TYPE_NONE == arg_getType(method)) {
+    if (NULL == aMethod || ARG_TYPE_NONE == arg_getType(aMethod)) {
         /* error, method no found */
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         pika_platform_printf("NameError: name '%s' is not defined\r\n",
-                             run_path);
+                             sRunPath);
         goto exit;
     }
 
     /* assert methodd type */
-    if (!argType_isCallable(arg_getType(method))) {
+    if (!argType_isCallable(arg_getType(aMethod))) {
         /* error, method no found */
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         pika_platform_printf("TypeError: '%s' object is not callable\r\n",
-                             run_path);
+                             sRunPath);
         goto exit;
     }
 
     /* create sub local scope */
-    subLocals = New_TinyObj(NULL);
+    oSublocals = New_TinyObj(NULL);
 
     /* load args from vmState to sub_local->list */
-    n_used += VMState_loadArgsFromMethodArg(vm, obj_this, subLocals->list,
-                                            method, run_path, n_used);
+    iNumUsed += VMState_loadArgsFromMethodArg(vm, oThis, oSublocals->list,
+                                              aMethod, sRunPath, iNumUsed);
 
     /* load args failed */
     if (vm->error_code != 0) {
@@ -1848,80 +1848,79 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     }
 
     /* run method arg */
-    return_arg = obj_runMethodArgWithState_noalloc(obj_this, subLocals, method,
-                                                   &sub_run_state, arg_ret_reg);
-    if (skip_init) {
-        if (arg_getType(return_arg) == ARG_TYPE_OBJECT_NEW) {
-            pika_assert(NULL != return_arg);
-            arg_setType(return_arg, ARG_TYPE_OBJECT);
+    aReturn = obj_runMethodArgWithState_noalloc(oThis, oSublocals, aMethod,
+                                                &tSubRunState, aReturnRegistor);
+    if (bSkipInit) {
+        if (arg_getType(aReturn) == ARG_TYPE_OBJECT_NEW) {
+            pika_assert(NULL != aReturn);
+            arg_setType(aReturn, ARG_TYPE_OBJECT);
         }
     }
 
-    if (sub_run_state.try_result != TRY_RESULT_NONE) {
+    if (tSubRunState.try_result != TRY_RESULT_NONE) {
         /* try result */
-        vm->error_code = sub_run_state.try_result;
+        vm->error_code = tSubRunState.try_result;
     }
 
     /* __init__() */
-    if (NULL != return_arg && ARG_TYPE_OBJECT_NEW == arg_getType(return_arg)) {
-        pika_assert(NULL != return_arg);
-        arg_setType(return_arg, ARG_TYPE_OBJECT);
+    if (NULL != aReturn && ARG_TYPE_OBJECT_NEW == arg_getType(aReturn)) {
+        pika_assert(NULL != aReturn);
+        arg_setType(aReturn, ARG_TYPE_OBJECT);
         /* init object */
-        PikaObj* new_obj = arg_getPtr(return_arg);
-        Arg* method_arg =
-            obj_getMethodArg_noalloc(new_obj, "__init__", &arg_reg1);
-        subLocalsInit = New_TinyObj(NULL);
-        Arg* return_arg_init = NULL;
-        if (NULL == method_arg) {
+        PikaObj* oNew = arg_getPtr(aReturn);
+        Arg* aMethod = obj_getMethodArg_noalloc(oNew, "__init__", &arg_reg1);
+        oSublocalsInit = New_TinyObj(NULL);
+        Arg* aReturnInit = NULL;
+        if (NULL == aMethod) {
             goto init_exit;
         }
-        VMState_loadArgsFromMethodArg(vm, new_obj, subLocalsInit->list,
-                                      method_arg, "__init__", n_used);
+        VMState_loadArgsFromMethodArg(vm, oNew, oSublocalsInit->list, aMethod,
+                                      "__init__", iNumUsed);
         /* load args failed */
         if (vm->error_code != 0) {
             goto init_exit;
         }
-        return_arg_init = obj_runMethodArgWithState(new_obj, subLocalsInit,
-                                                    method_arg, &sub_run_state);
+        aReturnInit = obj_runMethodArgWithState(oNew, oSublocalsInit, aMethod,
+                                                &tSubRunState);
     init_exit:
-        if (NULL != return_arg_init) {
-            arg_deinit(return_arg_init);
+        if (NULL != aReturnInit) {
+            arg_deinit(aReturnInit);
         }
-        obj_deinit(subLocalsInit);
-        if (NULL != method_arg) {
-            arg_deinit(method_arg);
+        obj_deinit(oSublocalsInit);
+        if (NULL != aMethod) {
+            arg_deinit(aMethod);
         }
     }
 
     /* transfer sysOut */
-    sys_out = obj_getSysOut(obj_this);
-    if (NULL != sys_out) {
-        args_setSysOut(vm->locals->list, sys_out);
+    sSysOut = obj_getSysOut(oThis);
+    if (NULL != sSysOut) {
+        args_setSysOut(vm->locals->list, sSysOut);
     }
 
     /* transfer errCode */
-    if (0 != obj_getErrorCode(obj_this)) {
+    if (0 != obj_getErrorCode(oThis)) {
         /* method error */
         VMState_setErrorCode(vm, PIKA_RES_ERR_RUNTIME_ERROR);
     }
 
     goto exit;
 exit:
-    if (NULL != method) {
-        arg_deinit(method);
+    if (NULL != aMethod) {
+        arg_deinit(aMethod);
     }
-    if (NULL != subLocals) {
-        obj_deinit(subLocals);
+    if (NULL != oSublocals) {
+        obj_deinit(oSublocals);
     }
-    if (NULL != host_arg) {
-        arg_deinit(host_arg);
+    if (NULL != aHost) {
+        arg_deinit(aHost);
     }
-    if (NULL != method_host && is_temp) {
+    if (NULL != oMethodHost && bIsTemp) {
         /* class method */
-        obj_GC(method_host);
+        obj_GC(oMethodHost);
     }
 
-    return return_arg;
+    return aReturn;
 }
 
 static char* __get_transferd_str(Args* buffs, char* str, size_t* iout_p) {
