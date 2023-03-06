@@ -29,7 +29,7 @@
 #include "dataMemory.h"
 #include "PikaPlatform.h"
 
-volatile pikaMemInfo g_pikaMemInfo = {0};
+volatile PikaMemInfo g_PikaMemInfo = {0};
 
 void* pikaMalloc(uint32_t size) {
     /* pika memory lock */
@@ -43,9 +43,9 @@ void* pikaMalloc(uint32_t size) {
     size = mem_align(size);
 #endif
 
-    g_pikaMemInfo.heapUsed += size;
-    if (g_pikaMemInfo.heapUsedMax < g_pikaMemInfo.heapUsed) {
-        g_pikaMemInfo.heapUsedMax = g_pikaMemInfo.heapUsed;
+    g_PikaMemInfo.heapUsed += size;
+    if (g_PikaMemInfo.heapUsedMax < g_PikaMemInfo.heapUsed) {
+        g_PikaMemInfo.heapUsedMax = g_PikaMemInfo.heapUsed;
     }
     pika_platform_disable_irq_handle();
     void* mem = pika_user_malloc(size);
@@ -73,20 +73,20 @@ void pikaFree(void* mem, uint32_t size) {
     pika_platform_disable_irq_handle();
     pika_user_free(mem, size);
     pika_platform_enable_irq_handle();
-    g_pikaMemInfo.heapUsed -= size;
+    g_PikaMemInfo.heapUsed -= size;
 }
 
 uint32_t pikaMemNow(void) {
-    return g_pikaMemInfo.heapUsed;
+    return g_PikaMemInfo.heapUsed;
     // return 0;
 }
 
 uint32_t pikaMemMax(void) {
-    return g_pikaMemInfo.heapUsedMax;
+    return g_PikaMemInfo.heapUsedMax;
 }
 
 void pikaMemMaxReset(void) {
-    g_pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
 }
 
 uint32_t pool_getBlockIndex_byMemSize(Pool* pool, uint32_t size) {
@@ -308,10 +308,10 @@ void mem_pool_init(void) {
 
 void _mem_cache_deinit(void) {
 #if PIKA_ARG_CACHE_ENABLE
-    while (g_pikaMemInfo.cache_pool_top) {
+    while (g_PikaMemInfo.cache_pool_top) {
         pika_user_free(
-            g_pikaMemInfo.cache_pool[g_pikaMemInfo.cache_pool_top - 1], 0);
-        g_pikaMemInfo.cache_pool_top--;
+            g_PikaMemInfo.cache_pool[g_PikaMemInfo.cache_pool_top - 1], 0);
+        g_PikaMemInfo.cache_pool_top--;
     }
 #endif
 }

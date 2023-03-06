@@ -122,6 +122,7 @@
     },
     "python.formatting.provider": "autopep8",
     "clangd.arguments": [
-        "-compile-commands-dir=build"
+        "-compile-commands-dir=build",
+        "-header-insertion=never"
     ]
 }

@@ -151,7 +151,6 @@ TEST(gc, circle) {
     pikaVM_runSingleFile(pikaMain, "test/python/gc/gc_circle.py");
     /* assert */
     /* deinit */
-    pikaGC_markSweep();
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }

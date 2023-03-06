@@ -36,3 +36,9 @@ PikaObj* New_TinyObj(Args* args) {
     self->constructor = New_TinyObj;
     return self;
 }
+
+PikaObj* New_Locals(Args* args) {
+    PikaObj* self = New_PikaObj(NULL);
+    self->constructor = New_Locals;
+    return self;
+}

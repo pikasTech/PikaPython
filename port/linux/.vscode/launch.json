@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                "--gtest_filter=event.remove_regist"
+                "--gtest_filter=pikaui.*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

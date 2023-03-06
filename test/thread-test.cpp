@@ -3,7 +3,7 @@ TEST_START
 #if !PIKA_NANO_ENABLE && 1
 
 TEST(thread, test1) {
-    g_pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -18,7 +18,7 @@ TEST(thread, test1) {
 }
 
 TEST(thread, self) {
-    g_pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);

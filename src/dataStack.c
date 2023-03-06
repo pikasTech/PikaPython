@@ -167,6 +167,9 @@ static int32_t _stack_pushArg(Stack* stack, Arg* arg, PIKA_BOOL is_alloc) {
 
 int32_t stack_pushArg(Stack* stack, Arg* arg) {
     pika_assert(arg != NULL);
+    if (arg_isObject(arg)) {
+        pika_assert(pikaGC_checkAlive(arg_getPtr(arg)));
+    }
     if (arg_isSerialized(arg)) {
         return _stack_pushArg(stack, arg, PIKA_TRUE);
     }

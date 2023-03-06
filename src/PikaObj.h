@@ -75,16 +75,29 @@ struct NativeProperty {
     uint32_t methodGroupCount;
 };
 
+/* clang-format off */
 typedef struct PikaObj PikaObj;
 struct PikaObj {
     Args* list;
     void* constructor;
-#if PIKA_GC_MARK_SWEEP_ENABLE
-    PikaObj* gcNext;
-#endif
+    #if PIKA_GC_MARK_SWEEP_ENABLE
+        PikaObj* gcNext;
+        #if PIKA_KERNAL_DEBUG_ENABLE
+            PikaObj* gcRoot;
+        #endif
+    #endif
+    #if PIKA_KERNAL_DEBUG_ENABLE
+        char* name;
+        Arg* aName;
+        PikaObj* parent;
+        PIKA_BOOL isAlive;
+        PIKA_BOOL isGCRoot;
+    #endif
     uint8_t refcnt;
     uint8_t flag;
 };
+
+/* clang-format on */
 
 typedef struct RangeData RangeData;
 struct RangeData {
@@ -99,18 +112,22 @@ struct PikaObjState {
     Arg* helpModulesCmodule;
     PIKA_BOOL inRootObj;
 #if PIKA_GC_MARK_SWEEP_ENABLE
-    PikaObj* gcRoot;
+    PikaObj* gcChain;
+    uint32_t objCnt;
+    uint32_t objCntMax;
+    uint32_t objCntLastGC;
+    uint32_t markSweepBusy;
 #endif
 };
 
-#define OBJ_FLAG_PROXY_GETATTRIBUTE 1
-#define OBJ_FLAG_PROXY_GETATTR 2
-#define OBJ_FLAG_PROXY_SETATTR 4
-#define OBJ_FLAG_ALREADY_INIT 8
-#define OBJ_FLAG_RUN_AS 16
-#define OBJ_FLAG_GLOBALS 32
-#define OBJ_FLAG_GC_MARKED 64
-#define OBJ_FLAG_GC_ROOT 128
+#define OBJ_FLAG_PROXY_GETATTRIBUTE 1 << 0
+#define OBJ_FLAG_PROXY_GETATTR 1 << 1
+#define OBJ_FLAG_PROXY_SETATTR 1 << 2
+#define OBJ_FLAG_ALREADY_INIT 1 << 3
+#define OBJ_FLAG_RUN_AS 1 << 4
+#define OBJ_FLAG_GLOBALS 1 << 5
+#define OBJ_FLAG_GC_MARKED 1 << 6
+#define OBJ_FLAG_GC_ROOT 1 << 7
 
 #define KEY_UP 0x41
 #define KEY_DOWN 0x42
@@ -125,10 +142,20 @@ static inline uint8_t obj_getFlag(PikaObj* self, uint8_t flag) {
 static inline void obj_setFlag(PikaObj* self, uint8_t flag) {
     pika_assert(self);
     self->flag |= flag;
+#if PIKA_KERNAL_DEBUG_ENABLE
+    if (flag == OBJ_FLAG_GC_ROOT) {
+        self->isGCRoot = PIKA_TRUE;
+    }
+#endif
 }
 
 static inline void obj_clearFlag(PikaObj* self, uint8_t flag) {
     self->flag &= ~flag;
+#if PIKA_KERNAL_DEBUG_ENABLE
+    if (flag == OBJ_FLAG_GC_ROOT) {
+        self->isGCRoot = PIKA_FALSE;
+    }
+#endif
 }
 
 typedef PikaObj* (*NewFun)(Args* args);
@@ -584,15 +611,34 @@ void obj_printModules(PikaObj* self);
     } while (0)
 #endif
 
+#define pika_assert_arg_alive(__arg)                                 \
+    do {                                                             \
+        if (NULL != (__arg)) {                                       \
+            if (arg_isObject((__arg))) {                             \
+                pika_assert(pikaGC_checkAlive(arg_getPtr((__arg)))); \
+            }                                                        \
+        }                                                            \
+    } while (0)
+
+#define pika_assert_obj_alive(__obj)             \
+    do {                                         \
+        pika_assert(pikaGC_checkAlive((__obj))); \
+    } while (0)
+
 void pikaGC_append(PikaObj* self);
 uint32_t pikaGC_count(void);
 void pikaGC_remove(PikaObj* self);
 void pikaGC_mark(PikaObj* self);
 void pikaGC_markRoot(void);
 uint32_t pikaGC_countMarked(void);
-uint32_t pikaGC_printCanFree(void);
+uint32_t pikaGC_printFreeList(void);
 uint32_t pikaGC_markSweep(void);
 PIKA_BOOL pikaGC_checkAlive(PikaObj* self);
+void pikaGC_enable(PikaObj* self);
+void pikaGC_try(void);
+void pikaGC_lock(void);
+void pikaGC_unlock(void);
+PIKA_BOOL pikaGC_islock(void);
 
 int pika_GIL_EXIT(void);
 int pika_GIL_ENTER(void);

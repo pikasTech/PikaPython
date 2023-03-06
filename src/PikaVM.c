@@ -53,6 +53,7 @@ volatile VMSignal g_PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
 
 #endif
 };
+extern volatile PikaObjState g_PikaObjState;
 
 int pika_GIL_ENTER(void) {
     if (!g_pikaGIL.is_init) {
@@ -561,10 +562,10 @@ Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj) {
             arg_obj = arg_getPtr(obj);
         }
         obj_setArg(arg_obj, "__key", key);
-        obj_removeArg(arg_obj, "__res");
+        obj_removeArg(arg_obj, "@res_item");
         /* clang-format off */
         PIKA_PYTHON(
-        __res = __getitem__(__key)
+        @res_item = __getitem__(__key)
         )
         /* clang-format on */
         const uint8_t bytes[] = {
@@ -572,11 +573,10 @@ Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj) {
             0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x07, 0x00, 0x00, 0x04, 0x13,
             0x00,
             /* instruct array */
-            0x19, 0x00, 0x00, 0x00, /* const pool size */
+            0x1d, 0x00, 0x00, 0x00, /* const pool size */
             0x00, 0x5f, 0x5f, 0x6b, 0x65, 0x79, 0x00, 0x5f, 0x5f, 0x67, 0x65,
-            0x74, 0x69, 0x74, 0x65, 0x6d, 0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x72,
-            0x65, 0x73, 0x00,
-            /* const pool */
+            0x74, 0x69, 0x74, 0x65, 0x6d, 0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65,
+            0x73, 0x5f, 0x69, 0x74, 0x65, 0x6d, 0x00, /* const pool */
         };
         if (NULL != vm) {
             _do_pikaVM_runByteCode(arg_obj, arg_obj, arg_obj, (uint8_t*)bytes,
@@ -584,7 +584,7 @@ Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj) {
         } else {
             pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
         }
-        Arg* __res = args_getArg(arg_obj->list, "__res");
+        Arg* __res = args_getArg(arg_obj->list, "@res_item");
         Arg* res = NULL;
         if (NULL != __res) {
             res = arg_copy(__res);
@@ -929,6 +929,7 @@ exit:
     } else {
         methodArg_setHostObj(aRes, oHost);
         aRes = arg_copy_noalloc(aRes, aRetReg);
+        pika_assert_arg_alive(aRes);
     }
     if (is_temp) {
         obj_GC(oHost);
@@ -1008,6 +1009,7 @@ Arg* _obj_runMethodArgWithState(PikaObj* self,
         }
     }
 #endif
+    pika_assert_arg_alive(aReturn);
     return aReturn;
 }
 
@@ -1781,6 +1783,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         goto exit;
     }
 
+    pika_assert(pikaGC_checkAlive(oMethodHost));
+
 #if !PIKA_NANO_ENABLE
     if (!bSkipInit && vm->in_super &&
         VMState_getInvokeDeepthNow(vm) == vm->super_invoke_deepth - 1) {
@@ -1831,7 +1835,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     }
 
     /* create sub local scope */
-    oSublocals = New_TinyObj(NULL);
+    oSublocals = New_Locals(NULL);
 
     /* load args from vmState to sub_local->list */
     iNumUsed += VMState_loadArgsFromMethodArg(vm, oThis, oSublocals->list,
@@ -1864,7 +1868,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         /* init object */
         PikaObj* oNew = arg_getPtr(aReturn);
         Arg* aMethod = obj_getMethodArg_noalloc(oNew, "__init__", &arg_reg1);
-        oSublocalsInit = New_TinyObj(NULL);
+        oSublocalsInit = New_Locals(NULL);
         Arg* aReturnInit = NULL;
         if (NULL == aMethod) {
             goto init_exit;
@@ -1881,6 +1885,9 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         if (NULL != aReturnInit) {
             arg_deinit(aReturnInit);
         }
+#if PIKA_GC_MARK_SWEEP_ENABLE
+        pika_assert(obj_getFlag(oSublocals, OBJ_FLAG_GC_ROOT));
+#endif
         obj_deinit(oSublocalsInit);
         if (NULL != aMethod) {
             arg_deinit(aMethod);
@@ -1905,6 +1912,9 @@ exit:
         arg_deinit(aMethod);
     }
     if (NULL != oSublocals) {
+#if PIKA_GC_MARK_SWEEP_ENABLE
+        pika_assert(obj_getFlag(oSublocals, OBJ_FLAG_GC_ROOT));
+#endif
         obj_deinit(oSublocals);
     }
     if (NULL != aHost) {
@@ -1914,7 +1924,7 @@ exit:
         /* class method */
         obj_GC(oMethodHost);
     }
-
+    pika_assert_arg_alive(aReturn);
     return aReturn;
 }
 
@@ -2317,7 +2327,7 @@ static void _OPT_ADD(OperatorInfo* op) {
         obj_setPtr(obj1, "__others", obj2);
         /* clang-format off */
         PIKA_PYTHON(
-        __res = __add__(__others)
+        @res_add = __add__(__others)
         )
         /* clang-format on */
         const uint8_t bytes[] = {
@@ -2325,16 +2335,16 @@ static void _OPT_ADD(OperatorInfo* op) {
             0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04, 0x12,
             0x00,
             /* instruct array */
-            0x18, 0x00, 0x00, 0x00, /* const pool size */
+            0x1b, 0x00, 0x00, 0x00, /* const pool size */
             0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00, 0x5f,
-            0x5f, 0x61, 0x64, 0x64, 0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65,
-            0x73, 0x00, /* const pool */
+            0x5f, 0x61, 0x64, 0x64, 0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65, 0x73,
+            0x5f, 0x61, 0x64, 0x64, 0x00, /* const pool */
         };
         pikaVM_runByteCode(obj1, (uint8_t*)bytes);
-        Arg* __res = arg_copy(obj_getArg(obj1, "__res"));
-        op->res = __res;
+        Arg* __res = arg_copy(obj_getArg(obj1, "@res_add"));
         obj_removeArg(obj1, "__others");
-        obj_removeArg(obj1, "__res");
+        obj_removeArg(obj1, "@res_add");
+        op->res = __res;
         return;
     }
 #endif
@@ -2395,7 +2405,7 @@ static void _OPT_SUB(OperatorInfo* op) {
         obj_setPtr(obj1, "__others", obj2);
         /* clang-format off */
         PIKA_PYTHON(
-        __res = __sub__(__others)
+        @res_sub = __sub__(__others)
         )
         /* clang-format on */
         const uint8_t bytes[] = {
@@ -2403,16 +2413,16 @@ static void _OPT_SUB(OperatorInfo* op) {
             0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04, 0x12,
             0x00,
             /* instruct array */
-            0x18, 0x00, 0x00, 0x00, /* const pool size */
+            0x1b, 0x00, 0x00, 0x00, /* const pool size */
             0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00, 0x5f,
-            0x5f, 0x73, 0x75, 0x62, 0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65,
-            0x73, 0x00, /* const pool */
+            0x5f, 0x73, 0x75, 0x62, 0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65, 0x73,
+            0x5f, 0x73, 0x75, 0x62, 0x00, /* const pool */
         };
         pikaVM_runByteCode(obj1, (uint8_t*)bytes);
-        Arg* __res = arg_copy(obj_getArg(obj1, "__res"));
-        op->res = __res;
+        Arg* __res = arg_copy(obj_getArg(obj1, "@res_sub"));
+        obj_removeArg(obj1, "@res_sub");
         obj_removeArg(obj1, "__others");
-        obj_removeArg(obj1, "__res");
+        op->res = __res;
         return;
     }
 #endif
@@ -2640,25 +2650,27 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             Arg* __contains__ = obj_getMethodArg(obj2, "__contains__");
             if (NULL != __contains__) {
                 arg_deinit(__contains__);
+                obj_setArg(obj2, "__others", op.a1);
                 /* clang-format off */
                 PIKA_PYTHON(
-                __res = __contains__(__others)
+                @res_contains = __contains__(__others)
                 )
-                obj_setArg(obj2, "__others", op.a1);
                 /* clang-format on */
                 const uint8_t bytes[] = {
                     0x0c, 0x00, 0x00, 0x00, /* instruct array size */
                     0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04,
                     0x17, 0x00,
                     /* instruct array */
-                    0x1d, 0x00, 0x00, 0x00, /* const pool size */
+                    0x25, 0x00, 0x00, 0x00, /* const pool size */
                     0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00,
                     0x5f, 0x5f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x73,
-                    0x5f, 0x5f, 0x00, 0x5f, 0x5f, 0x72, 0x65, 0x73,
-                    0x00, /* const pool */
+                    0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65, 0x73, 0x5f, 0x63, 0x6f,
+                    0x6e, 0x74, 0x61, 0x69, 0x6e, 0x73, 0x00,
+                    /* const pool */
                 };
                 pikaVM_runByteCode(obj2, (uint8_t*)bytes);
-                op.res = arg_setBool(op.res, "", obj_getInt(obj2, "__res"));
+                op.res =
+                    arg_setBool(op.res, "", obj_getInt(obj2, "@res_contains"));
                 goto exit;
             }
         }
@@ -3342,7 +3354,7 @@ static ByteCodeFrame* _cache_bcf_fn_bc(PikaObj* self, uint8_t* bytecode) {
     return _cache_bytecodeframe(self);
 }
 
-static VMParameters* __pikaVM_runPyLines(PikaObj* self, char* py_lines) {
+static VMParameters* _pikaVM_runPyLines(PikaObj* self, char* py_lines) {
     VMParameters* globals = NULL;
     ByteCodeFrame bytecode_frame_stack = {0};
     ByteCodeFrame* bytecode_frame_p = NULL;
@@ -3447,7 +3459,7 @@ VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
 }
 
 VMParameters* pikaVM_run(PikaObj* self, char* py_lines) {
-    return __pikaVM_runPyLines(self, py_lines);
+    return _pikaVM_runPyLines(self, py_lines);
 }
 
 VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode) {

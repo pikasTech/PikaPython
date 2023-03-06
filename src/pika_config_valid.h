@@ -443,6 +443,14 @@
         #define PIKA_GC_MARK_SWEEP_ENABLE 0
     #endif
 
+    #ifndef PIKA_GC_MARK_SWEEP_THRESHOLD
+        #define PIKA_GC_MARK_SWEEP_THRESHOLD 20
+    #endif
+
+    #ifndef PIKA_KERNAL_DEBUG_ENABLE
+        #define PIKA_KERNAL_DEBUG_ENABLE 0
+    #endif
+
     /* configuration validation */
 
 #endif

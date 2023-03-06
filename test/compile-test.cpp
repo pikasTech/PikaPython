@@ -547,13 +547,13 @@ TEST(make, compile_depend_all) {
 // }
 
 TEST(compiler, __str__) {
-    char* lines = "__res = __str__()";
+    char* lines = "@res_str = __str__()";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __len__) {
-    char* lines = "__res = __len__()";
+    char* lines = "@res_len = __len__()";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -583,25 +583,31 @@ TEST(compiler, __setitem__) {
 }
 
 TEST(compiler, __getitem__) {
-    char* lines = "__res = __getitem__(__key)";
+    char* lines = "@res_item = __getitem__(__key)";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __add__) {
-    char* lines = "__res = __add__(__others)";
+    char* lines = "@res_add = __add__(__others)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __iter__) {
+    char* lines = "@res_iter = __iter__()";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __sub__) {
-    char* lines = "__res = __sub__(__others)";
+    char* lines = "@res_sub = __sub__(__others)";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __contains__) {
-    char* lines = "__res = __contains__(__others)";
+    char* lines = "@res_contains = __contains__(__others)";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -614,9 +620,9 @@ TEST(compiler, __callback) {
 
 TEST(compiler, __list) {
     char* lines =
-        "__res = []\n"
+        "@res_list = []\n"
         "for __item in __list:\n"
-        "    __res.append(__item)\n"
+        "    @res_list.append(__item)\n"
         "del __item\n"
         "del __list\n";
     Parser_linesToArray(lines);

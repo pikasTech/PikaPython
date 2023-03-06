@@ -9,3 +9,5 @@ def test():
     b.parent = a
 
 test()
+c = Tree()
+print('end')

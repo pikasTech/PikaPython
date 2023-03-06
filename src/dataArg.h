@@ -103,7 +103,7 @@ static inline void arg_setType(Arg* self, ArgType type) {
 }
 
 static inline Hash arg_getNameHash(Arg* self) {
-    pika_assert(self != 0);
+    pika_assert(self != NULL);
     return self->name_hash;
 }
 

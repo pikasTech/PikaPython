@@ -74,7 +74,7 @@ int pika_hal_platform_WIFI_ioctl_others(pika_dev* dev,
 }
 
 TEST(network, scan) {
-    g_pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -98,7 +98,7 @@ TEST(network, scan) {
 }
 
 TEST(network, connect) {
-    g_pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -127,7 +127,7 @@ TEST(network, connect) {
 }
 
 TEST(network, config) {
-    g_pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);

@@ -47,7 +47,7 @@ typedef struct {
 #endif
     uint32_t alloc_times;
     uint32_t alloc_times_cache;
-} pikaMemInfo;
+} PikaMemInfo;
 
 typedef uint8_t* BitMap;
 

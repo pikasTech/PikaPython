@@ -80,9 +80,7 @@ PIKA_RES args_setRef(Args* self, char* name, void* argPointer) {
     PIKA_RES errCode = PIKA_RES_OK;
     Arg* aNewRef = New_arg(NULL);
     aNewRef = arg_setRef(aNewRef, name, argPointer);
-#if PIKA_GC_MARK_SWEEP_ENABLE
-    obj_clearFlag(arg_getPtr(aNewRef), OBJ_FLAG_GC_ROOT);
-#endif
+    // pikaGC_enable(arg_getPtr(aNewRef));
     args_setArg(self, aNewRef);
     return errCode;
 }

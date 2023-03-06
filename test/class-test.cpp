@@ -4,7 +4,7 @@ TEST_START
 #if !PIKA_NANO_ENABLE
 TEST(class, class_par) {
     /* init */
-    g_pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
@@ -23,7 +23,7 @@ TEST(class, class_par) {
 
 TEST(class, classpar1) {
     /* init */
-    g_pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
@@ -41,7 +41,7 @@ TEST(class, classpar1) {
 
 TEST(class, static_method) {
     /* init */
-    g_pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
@@ -60,7 +60,7 @@ TEST(class, static_method) {
 
 TEST(class, dir_) {
     /* init */
-    g_pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
