@@ -1,5 +1,6 @@
 #include "_thread.h"
 #include "PikaVM.h"
+#include "TinyObj.h"
 
 typedef struct pika_thread_info {
     Arg* function;
@@ -22,7 +23,7 @@ static void _thread_func(void* arg) {
     }
     pika_debug("thread start");
     pika_GIL_ENTER();
-    PikaObj* ctx = New_PikaObj();
+    PikaObj* ctx = New_TinyObj(NULL);
     pika_thread_info* info = (pika_thread_info*)arg;
     obj_setArg(ctx, "args", info->args);
     obj_setArg(ctx, "thread", info->function);

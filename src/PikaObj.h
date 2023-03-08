@@ -312,7 +312,7 @@ ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg);
 Method methodArg_getPtr(Arg* method_arg);
 
 VMParameters* obj_run(PikaObj* self, char* cmd);
-PikaObj* New_PikaObj(Args* args);
+PikaObj* New_PikaObj(void);
 PikaObj* New_PikaObj_noGC(void);
 
 /* tools */

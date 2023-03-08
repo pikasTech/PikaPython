@@ -1980,7 +1980,7 @@ PIKA_BOOL pikaGC_islock(void) {
 #endif
 }
 
-PikaObj* New_PikaObj(Args* args) {
+PikaObj* New_PikaObj(void) {
     PikaObj* self = pikaMalloc(sizeof(PikaObj));
     /* List */
     self->list = New_args(NULL);
