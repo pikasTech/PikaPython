@@ -556,14 +556,14 @@ Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj) {
         return arg_newBytes(byte_buff, 1);
     }
     if (argType_isObject(type)) {
-        PikaObj* arg_obj = NULL;
+        PikaObj* oArg = NULL;
+        Arg* res = NULL;
         if (obj_new != NULL) {
-            arg_obj = arg_getPtr(obj_new);
+            oArg = arg_getPtr(obj_new);
         } else {
-            arg_obj = arg_getPtr(obj);
+            oArg = arg_getPtr(obj);
         }
-        obj_setArg(arg_obj, "__key", key);
-        obj_removeArg(arg_obj, "@res_item");
+        obj_setArg(oArg, "__key", key);
         /* clang-format off */
         PIKA_PYTHON(
         @res_item = __getitem__(__key)
@@ -580,15 +580,11 @@ Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj) {
             0x73, 0x5f, 0x69, 0x74, 0x65, 0x6d, 0x00, /* const pool */
         };
         if (NULL != vm) {
-            _do_pikaVM_runByteCode(arg_obj, arg_obj, arg_obj, (uint8_t*)bytes,
-                                   vm->run_state, PIKA_TRUE);
+            res = _do_pikaVM_runByteCodeReturn(oArg, oArg, oArg,
+                                               (uint8_t*)bytes, vm->run_state,
+                                               PIKA_TRUE, "@res_item");
         } else {
-            pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
-        }
-        Arg* __res = args_getArg(arg_obj->list, "@res_item");
-        Arg* res = NULL;
-        if (NULL != __res) {
-            res = arg_copy(__res);
+            res = pikaVM_runByteCodeReturn(oArg, (uint8_t*)bytes, "@res_item");
         }
         if (NULL != obj_new) {
             arg_deinit(obj_new);
@@ -2341,11 +2337,10 @@ static void _OPT_ADD(OperatorInfo* op) {
             0x5f, 0x61, 0x64, 0x64, 0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65, 0x73,
             0x5f, 0x61, 0x64, 0x64, 0x00, /* const pool */
         };
-        pikaVM_runByteCode(obj1, (uint8_t*)bytes);
-        Arg* __res = arg_copy(obj_getArg(obj1, "@res_add"));
+        Arg* res_add =
+            pikaVM_runByteCodeReturn(obj1, (uint8_t*)bytes, "@res_add");
         obj_removeArg(obj1, "__others");
-        obj_removeArg(obj1, "@res_add");
-        op->res = __res;
+        op->res = res_add;
         return;
     }
 #endif
@@ -2419,11 +2414,10 @@ static void _OPT_SUB(OperatorInfo* op) {
             0x5f, 0x73, 0x75, 0x62, 0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65, 0x73,
             0x5f, 0x73, 0x75, 0x62, 0x00, /* const pool */
         };
-        pikaVM_runByteCode(obj1, (uint8_t*)bytes);
-        Arg* __res = arg_copy(obj_getArg(obj1, "@res_sub"));
-        obj_removeArg(obj1, "@res_sub");
+        Arg* res_sub =
+            pikaVM_runByteCodeReturn(obj1, (uint8_t*)bytes, "@res_sub");
         obj_removeArg(obj1, "__others");
-        op->res = __res;
+        op->res = res_sub;
         return;
     }
 #endif
@@ -3463,6 +3457,41 @@ VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode) {
                           .try_result = TRY_RESULT_NONE};
     return _do_pikaVM_runByteCode(self, self, self, (uint8_t*)bytecode,
                                   &run_state, PIKA_TRUE);
+}
+
+Arg* pikaVM_runByteCodeReturn(PikaObj* self,
+                              const uint8_t* bytecode,
+                              char* returnName) {
+    pikaVM_runByteCode(self, bytecode);
+    Arg* ret = args_getArg(self->list, returnName);
+    if (NULL == ret) {
+        return NULL;
+    }
+    ret = arg_copy(ret);
+    /* set gc root to avoid be free */
+    arg_setObjFlag(ret, OBJ_FLAG_GC_ROOT);
+    obj_removeArg(self, returnName);
+    return ret;
+}
+
+Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
+                                  VMParameters* locals,
+                                  VMParameters* globals,
+                                  uint8_t* bytecode,
+                                  RunState* run_state,
+                                  PIKA_BOOL is_const_bytecode,
+                                  char* return_name) {
+    _do_pikaVM_runByteCode(self, locals, globals, bytecode, run_state,
+                           is_const_bytecode);
+    Arg* ret = args_getArg(self->list, return_name);
+    if (NULL == ret) {
+        return NULL;
+    }
+    ret = arg_copy(ret);
+    /* set gc root to avoid be free */
+    arg_setObjFlag(ret, OBJ_FLAG_GC_ROOT);
+    obj_removeArg(self, return_name);
+    return ret;
 }
 
 VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode) {

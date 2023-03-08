@@ -391,6 +391,20 @@ PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setObj(Arg* self, char* name, PikaObj* obj);
 
+static inline void arg_setObjFlag(Arg* self, uint8_t flag) {
+    if (!arg_isObject(self)) {
+        return;
+    }
+    obj_setFlag((PikaObj*)arg_getPtr(self), flag);
+}
+
+static inline void arg_clearObjFlag(Arg* self, uint8_t flag) {
+    if (!arg_isObject(self)) {
+        return;
+    }
+    obj_clearFlag((PikaObj*)arg_getPtr(self), flag);
+}
+
 static inline Arg* arg_newObj(PikaObj* obj) {
     return arg_setObj(NULL, (char*)"", (obj));
 }

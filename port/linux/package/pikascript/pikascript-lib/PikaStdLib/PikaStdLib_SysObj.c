@@ -188,10 +188,7 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
         0x00, 0x5f, 0x5f, 0x69, 0x74, 0x65, 0x72, 0x5f, 0x5f, 0x00, 0x40,
         0x72, 0x65, 0x73, 0x5f, 0x69, 0x74, 0x65, 0x72, 0x00, /* const pool */
     };
-    pikaVM_runByteCode(oArg, (uint8_t*)bytes);
-    Arg* res = arg_copy(args_getArg(oArg->list, "@res_iter"));
-    obj_setFlag(arg_getPtr(res), OBJ_FLAG_GC_ROOT);
-    obj_removeArg(oArg, "@res_iter");
+    Arg* res = pikaVM_runByteCodeReturn(oArg, (uint8_t*)bytes, "@res_iter");
     if (bIsTemp) {
         obj_refcntDec(oArg);
     }
@@ -327,7 +324,6 @@ Arg* PikaStdLib_SysObj_list(PikaObj* self, PikaTuple* val) {
     if (1 == pikaTuple_getSize(val)) {
         Arg* in = pikaTuple_getArg(val, 0);
         obj_setArg(self, "__list", in);
-        obj_removeArg(self, "@res_list");
         /* clang-format off */
         PIKA_PYTHON(
         @res_list = []
@@ -356,8 +352,7 @@ Arg* PikaStdLib_SysObj_list(PikaObj* self, PikaTuple* val) {
             0x69, 0x73, 0x74, 0x2e, 0x61, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x00,
             0x2d, 0x31, 0x00, /* const pool */
         };
-        pikaVM_runByteCode(self, (uint8_t*)bytes);
-        return arg_copy(obj_getArg(self, "@res_list"));
+        return pikaVM_runByteCodeReturn(self, (uint8_t*)bytes, "@res_list");
     }
     PikaObj* New_PikaStdData_List(Args * args);
     return arg_newDirectObj(New_PikaStdData_List);

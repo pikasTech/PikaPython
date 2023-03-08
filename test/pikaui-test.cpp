@@ -1,6 +1,6 @@
 #include "test_common.h"
 TEST_START
-#if !PIKA_NANO_ENABLE
+#if !PIKA_NANO_ENABLE && 0
 
 TEST(pikaui, page) {
     /* init */

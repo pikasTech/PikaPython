@@ -232,7 +232,7 @@ except:
 app = _App()
 
 
-def App():
+def App()-> _App:
     return app
 
 

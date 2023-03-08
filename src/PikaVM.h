@@ -315,6 +315,16 @@ void byteCodeFrame_init(ByteCodeFrame* self);
 PIKA_BOOL pikaVM_registerInstructionSet(VMInstructionSet* ins_set);
 VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode);
 VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode);
+Arg* pikaVM_runByteCodeReturn(PikaObj* self,
+                              const uint8_t* bytecode,
+                              char* returnName);
+Arg* _do_pikaVM_runByteCodeReturn(PikaObj* self,
+                                  VMParameters* locals,
+                                  VMParameters* globals,
+                                  uint8_t* bytecode,
+                                  RunState* run_state,
+                                  PIKA_BOOL is_const_bytecode,
+                                  char* return_name);
 InstructUnit* instructArray_getNow(InstructArray* self);
 InstructUnit* instructArray_getNext(InstructArray* self);
 VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename);

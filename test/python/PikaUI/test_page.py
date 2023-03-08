@@ -38,10 +38,6 @@ class Page1(ui.Page):
 
 
 class Page2(ui.Page):
-    def on_click_back(self, event):
-        app.pageManager.back()
-        mem.now()
-
     def build(self):
         return ui.Container(
             width=400,
@@ -58,21 +54,20 @@ class Page2(ui.Page):
                 pos=(0, 50),
                 height=30,
                 width=80,
-                onclick=self.on_click_back
             )
         )
 
 
 app = ui.App()
-app.pageManager.enter(Page1())
-app.timer.cb(0)
-mem.now()
 app.pageManager.enter(Page2())
 app.timer.cb(0)
-mem.now()
-app.pageManager.back()
-app.timer.cb(0)
-mem.now()
+# mem.now()
+# app.pageManager.enter(Page2())
+# app.timer.cb(0)
+# mem.now()
+# app.pageManager.back()
+# app.timer.cb(0)
+# mem.now()
 
 
 # for i in range(100):

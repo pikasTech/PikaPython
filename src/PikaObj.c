@@ -2351,6 +2351,7 @@ void pks_getVersion(char* buff) {
 }
 
 void* obj_getStruct(PikaObj* self, char* name) {
+    pika_assert(self != NULL);
     return args_getStruct(self->list, name);
 }
 
