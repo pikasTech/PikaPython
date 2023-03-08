@@ -295,7 +295,7 @@ static void VMState_setErrorCode(VMState* vm, int8_t error_code) {
 }
 
 static enum InstructIndex VMstate_getInstructWithOffset(VMState* vm,
-                                                   int32_t offset) {
+                                                        int32_t offset) {
     return instructUnit_getInstructIndex(
         VMState_getInstructUnitWithOffset(vm, offset));
 }
@@ -335,7 +335,8 @@ static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
         if ((0 == invokeDeepth) && (JEZ == ins) && data[0] == '2') {
             InstructUnit* insUnitLast = VMState_getInstructUnitWithOffset(
                 vm, offset - instructUnit_getSize());
-            enum InstructIndex insLast = instructUnit_getInstructIndex(insUnitLast);
+            enum InstructIndex insLast =
+                instructUnit_getInstructIndex(insUnitLast);
             /* skip try stmt */
             if (GER == insLast) {
                 continue;
@@ -3011,60 +3012,54 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
     return NULL;
 }
 
-
-
-
-
 #if PIKA_INSTRUCT_EXTENSION_ENABLE
 const VMInstructionSet VM_default_instruction_set = {
-    #define __INS_OPCODE
-    .instructions = (const VMInstruction []) {
-        #include "__instruction_table.h"
-    },
+#define __INS_OPCODE
+    .instructions =
+        (const VMInstruction[]){
+#include "__instruction_table.h"
+        },
     .count = __INSTRUCTION_CNT,
     .op_idx_start = NON,
     .op_idx_end = NON + __INSTRUCTION_CNT - 1,
 };
 
-
 #ifndef PIKA_INSTRUCT_SIGNATURE_DICT
-#   define PIKA_INSTRUCT_SIGNATURE_DICT 0
+#define PIKA_INSTRUCT_SIGNATURE_DICT 0
 #endif
 
 typedef struct VMInstructionSetItem VMInstructionSetItem;
 struct VMInstructionSetItem {
-    VMInstructionSetItem *next;
-    const VMInstructionSet *ins_set;
+    VMInstructionSetItem* next;
+    const VMInstructionSet* ins_set;
 };
 
 static struct {
-    const VMInstructionSetItem  default_ins_set;
-    VMInstructionSetItem  *list;
-    VMInstructionSetItem  *recent;
+    const VMInstructionSetItem default_ins_set;
+    VMInstructionSetItem* list;
+    VMInstructionSetItem* recent;
 #if PIKA_INSTRUCT_SIGNATURE_DICT_COUNT > 0
     const uint16_t signature_dict[PIKA_INSTRUCT_SIGNATURE_DICT_COUNT];
 #endif
 } VM = {
-    .default_ins_set = {
-        .ins_set = &VM_default_instruction_set,
-        .next = NULL,
-    },
-    .list = (VMInstructionSetItem  *)&VM.default_ins_set,
-    .recent = (VMInstructionSetItem  *)&VM.default_ins_set,
+    .default_ins_set =
+        {
+            .ins_set = &VM_default_instruction_set,
+            .next = NULL,
+        },
+    .list = (VMInstructionSetItem*)&VM.default_ins_set,
+    .recent = (VMInstructionSetItem*)&VM.default_ins_set,
 #if PIKA_INSTRUCT_SIGNATURE_DICT_COUNT > 0
-    .signature_dict = {
-        PIKA_INSTRUCT_SIGNATURE_DICT
-    },
+    .signature_dict = {PIKA_INSTRUCT_SIGNATURE_DICT},
 #endif
 };
 
-PIKA_BOOL pikaVM_registerInstructionSet(VMInstructionSet *ins_set)
-{
+PIKA_BOOL pikaVM_registerInstructionSet(VMInstructionSet* ins_set) {
     pika_assert(NULL != ins_set);
 
 #if PIKA_INSTRUCT_SIGNATURE_DICT_COUNT > 0
     uint16_t signature = ins_set->signature;
-    
+
     PIKA_BOOL ins_set_valid = PIKA_FALSE;
     for (int n = 0; n < sizeof(VM.signature_dict) / sizeof(uint16_t); n++) {
         if (VM.signature_dict[n] == signature) {
@@ -3078,74 +3073,76 @@ PIKA_BOOL pikaVM_registerInstructionSet(VMInstructionSet *ins_set)
 #endif
 
     /* check whether the target instruction set exists or not */
-    VMInstructionSetItem *list_item = VM.list;
+    VMInstructionSetItem* list_item = VM.list;
     do {
         if (list_item->ins_set->signature == signature) {
-            return PIKA_TRUE;   /* already exist */
+            return PIKA_TRUE; /* already exist */
         }
 
         list_item = list_item->next;
-    } while(NULL != list_item->next);
+    } while (NULL != list_item->next);
 
-    
-    VMInstructionSetItem *item = pika_platform_malloc(sizeof(VMInstructionSetItem));
+    VMInstructionSetItem* item =
+        pika_platform_malloc(sizeof(VMInstructionSetItem));
     if (NULL == item) {
         return PIKA_FALSE;
     }
     item->ins_set = ins_set;
     item->next = NULL;
-    
+
     /* add item to the tail of VM.list */
     list_item->next = item;
 
     return PIKA_TRUE;
 }
 
-static
-const VMInstruction *instructUnit_getInstruct(enum InstructIndex ins_idx) {
-    VMInstructionSetItem *item = VM.recent;
+static const VMInstruction* instructUnit_getInstruct(
+    enum InstructIndex ins_idx) {
+    VMInstructionSetItem* item = VM.recent;
 
-    if (    (ins_idx >= item->ins_set->op_idx_start)
-       &&   (ins_idx <= item->ins_set->op_idx_end)) {
-        return &(item->ins_set->instructions[ins_idx - item->ins_set->op_idx_start]);
+    if ((ins_idx >= item->ins_set->op_idx_start) &&
+        (ins_idx <= item->ins_set->op_idx_end)) {
+        return &(
+            item->ins_set->instructions[ins_idx - item->ins_set->op_idx_start]);
     }
-    
+
     /* search list */
     item = VM.list;
     do {
-        if (    (ins_idx >= item->ins_set->op_idx_start)
-           &&   (ins_idx <= item->ins_set->op_idx_end)) {
+        if ((ins_idx >= item->ins_set->op_idx_start) &&
+            (ins_idx <= item->ins_set->op_idx_end)) {
             VM.recent = item;
-            return &(item->ins_set->instructions[ins_idx - item->ins_set->op_idx_start]);
+            return &(item->ins_set
+                         ->instructions[ins_idx - item->ins_set->op_idx_start]);
         }
         item = item->next;
-    } while(NULL != item->next);
+    } while (NULL != item->next);
 
     return NULL;
 }
 
-
-static enum InstructIndex __find_ins_idx_in_ins_set(char* ins_str, const VMInstructionSet *set)
-{
-    const VMInstruction *ins = set->instructions;
+static enum InstructIndex __find_ins_idx_in_ins_set(
+    char* ins_str,
+    const VMInstructionSet* set) {
+    const VMInstruction* ins = set->instructions;
     uint_fast16_t count = set->count;
-    
+
     do {
         if (0 == strncmp(ins_str, ins->op_str, ins->op_str_len)) {
             return ins->op_idx;
         }
         ins++;
-    } while(--count);
+    } while (--count);
     return __INSTRUCTION_UNKNOWN;
 }
 
 enum InstructIndex pikaVM_getInstructFromAsm(char* ins_str) {
-    
-    enum InstructIndex ins_idx = __find_ins_idx_in_ins_set(ins_str, VM.recent->ins_set);
-    
+    enum InstructIndex ins_idx =
+        __find_ins_idx_in_ins_set(ins_str, VM.recent->ins_set);
+
     if (__INSTRUCTION_UNKNOWN == ins_idx) {
-        VMInstructionSetItem *item = VM.list;
-        
+        VMInstructionSetItem* item = VM.list;
+
         do {
             ins_idx = __find_ins_idx_in_ins_set(ins_str, item->ins_set);
             if (__INSTRUCTION_UNKNOWN != ins_idx) {
@@ -3153,17 +3150,17 @@ enum InstructIndex pikaVM_getInstructFromAsm(char* ins_str) {
                 return ins_idx;
             }
             item = item->next;
-        } while(NULL != item->next);
-        
+        } while (NULL != item->next);
+
         return NON;
     }
-    
+
     return ins_idx;
 }
 
 #else
 
-PIKA_BOOL pikaVM_registerInstructionSet(VMInstructionSet *ins_set) {
+PIKA_BOOL pikaVM_registerInstructionSet(VMInstructionSet* ins_set) {
     return PIKA_FALSE;
 }
 
@@ -3192,18 +3189,17 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     pika_assert(NULL != vm->run_state);
 
 #if PIKA_INSTRUCT_EXTENSION_ENABLE
-    const VMInstruction * ins = instructUnit_getInstruct(instruct);
+    const VMInstruction* ins = instructUnit_getInstruct(instruct);
     if (NULL == ins) {
         /* todo: unsupported instruction */
         pika_assert(NULL != ins);
     }
     pika_assert(NULL != ins->handler);
-    
+
     return_arg = ins->handler(self, vm, data, &ret_reg);
 #else
     return_arg = VM_instruct_handler_table[instruct](self, vm, data, &ret_reg);
 #endif
-    
 
     if (vm->error_code != PIKA_RES_OK ||
         VMSignal_getCtrl() == VM_SIGNAL_CTRL_EXIT) {
@@ -3680,42 +3676,36 @@ InstructUnit* instructArray_getNext(InstructArray* self) {
 
 #if PIKA_INSTRUCT_EXTENSION_ENABLE
 
-static const char * __find_ins_str_in_ins_set(enum InstructIndex op_idx, const VMInstructionSet *set)
-{
-    const VMInstruction *ins = set->instructions;
+static const char* __find_ins_str_in_ins_set(enum InstructIndex op_idx,
+                                             const VMInstructionSet* set) {
+    const VMInstruction* ins = set->instructions;
     uint_fast16_t count = set->count;
-    
+
     do {
         if (ins->op_idx == op_idx) {
             return ins->op_str;
         }
         ins++;
-    } while(--count);
+    } while (--count);
     return NULL;
 }
 
-
 static char* instructUnit_getInstructStr(InstructUnit* self) {
-    
     enum InstructIndex op_idx = instructUnit_getInstructIndex(self);
-    
-    const char *ins_str = __find_ins_str_in_ins_set(op_idx, VM.recent->ins_set);
-    
-    if (NULL == ins_str) {
-        VMInstructionSetItem *item = VM.list;
-        
-        do {
-            ins_str = __find_ins_str_in_ins_set(op_idx, item->ins_set);
-            if (NULL != ins_str) {
-                VM.recent = item;
-                return (char *)ins_str;
-            }
-            item = item->next;
-        } while(NULL != item->next);
-        
-        return "NON";
+
+    const char* ins_str = __find_ins_str_in_ins_set(op_idx, VM.recent->ins_set);
+    if (NULL != ins_str) {
+        return (char*)ins_str;
     }
-    
+    VMInstructionSetItem* item = VM.list;
+    do {
+        ins_str = __find_ins_str_in_ins_set(op_idx, item->ins_set);
+        if (NULL != ins_str) {
+            VM.recent = item;
+            return (char*)ins_str;
+        }
+        item = item->next;
+    } while (NULL != item->next);
     return "NON";
 }
 #else

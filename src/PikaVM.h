@@ -40,7 +40,7 @@ enum InstructIndex {
 #include "__instruction_table.h"
     __INSTRUCTION_CNT,
     __INSTRUCTION_INDEX_MAX = 0xFFFF,
-    __INSTRUCTION_UNKNOWN   = 0xFFFF,
+    __INSTRUCTION_UNKNOWN = 0xFFFF,
 };
 
 typedef enum {
@@ -164,24 +164,20 @@ typedef Arg* (*VM_instruct_handler)(PikaObj* self,
 typedef struct VMInstruction VMInstruction;
 struct VMInstruction {
     VM_instruct_handler handler;
-    const char         *op_str;
-    uint16_t            op_idx;
-    uint16_t            op_str_len  : 4;
-    uint16_t                        : 12;
+    const char* op_str;
+    uint16_t op_idx;
+    uint16_t op_str_len : 4;
+    uint16_t : 12;
 };
-
 
 typedef struct VMInstructionSet VMInstructionSet;
 struct VMInstructionSet {
-    const VMInstruction    *instructions;
-    uint16_t                count;
-    uint16_t                signature;
-    uint16_t                op_idx_start;
-    uint16_t                op_idx_end;
+    const VMInstruction* instructions;
+    uint16_t count;
+    uint16_t signature;
+    uint16_t op_idx_start;
+    uint16_t op_idx_end;
 };
-
-
-
 
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
@@ -196,7 +192,8 @@ static inline int instructUnit_getInvokeDeepth(InstructUnit* self) {
     return self->deepth >> 4;
 }
 
-static inline enum InstructIndex instructUnit_getInstructIndex(InstructUnit* self) {
+static inline enum InstructIndex instructUnit_getInstructIndex(
+    InstructUnit* self) {
     return (enum InstructIndex)(self->isNewLine_instruct & 0x7F);
 }
 
@@ -315,7 +312,7 @@ void instructArray_printAsArray(InstructArray* self);
 void byteCodeFrame_loadByteCode(ByteCodeFrame* self, uint8_t* bytes);
 void byteCodeFrame_printAsArray(ByteCodeFrame* self);
 void byteCodeFrame_init(ByteCodeFrame* self);
-PIKA_BOOL pikaVM_registerInstructionSet(VMInstructionSet *ins_set);
+PIKA_BOOL pikaVM_registerInstructionSet(VMInstructionSet* ins_set);
 VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode);
 VMParameters* pikaVM_runByteCodeInconstant(PikaObj* self, uint8_t* bytecode);
 InstructUnit* instructArray_getNow(InstructArray* self);

@@ -657,13 +657,13 @@ TEST(InstructUnit, base) {
     instructUnit_setBlockDeepth(&ins_unit, 2);
     instructUnit_setIsNewLine(&ins_unit, 1);
     instructUnit_setInvokeDeepth(&ins_unit, 3);
-    instructUnit_setInstruct(&ins_unit, (Instruct)4);
+    instructUnit_setInstruct(&ins_unit, (InstructIndex)4);
     instructUnit_setConstPoolIndex(&ins_unit, 12);
 
     EXPECT_EQ(instructUnit_getBlockDeepth(&ins_unit), 2);
     EXPECT_EQ(instructUnit_getIsNewLine(&ins_unit), 1);
     EXPECT_EQ(instructUnit_getInvokeDeepth(&ins_unit), 3);
-    EXPECT_EQ(instructUnit_getInstruct(&ins_unit), 4);
+    EXPECT_EQ(instructUnit_getInstructIndex(&ins_unit), 4);
     EXPECT_EQ(instructUnit_getConstPoolIndex(&ins_unit), 12);
 
     instructUnit_print(&ins_unit);
@@ -714,7 +714,7 @@ TEST(InstructArray, set) {
     instructUnit_setBlockDeepth(&ins_unit, 2);
     instructUnit_setIsNewLine(&ins_unit, 1);
     instructUnit_setInvokeDeepth(&ins_unit, 3);
-    instructUnit_setInstruct(&ins_unit, (Instruct)4);
+    instructUnit_setInstruct(&ins_unit, (InstructIndex)4);
     instructUnit_setConstPoolIndex(&ins_unit, 12);
 
     InstructArray ins_array;

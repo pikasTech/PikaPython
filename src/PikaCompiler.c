@@ -703,7 +703,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
         if (NULL == ins_unit) {
             goto exit;
         }
-        if (instructUnit_getInstruct(ins_unit) == IMP) {
+        if (instructUnit_getInstructIndex(ins_unit) == IMP) {
             char* imp_module_name =
                 constPool_getByOffset(const_pool, ins_unit->const_pool_index);
             char* imp_module_path =
