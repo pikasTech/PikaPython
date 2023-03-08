@@ -493,6 +493,39 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
     return PIKA_RES_ERR_ARG_NO_FOUND;
 }
 
+/**
+ * @brief 打开 .pack 文件，并返回这个pack 文件的library_bytes
+ *
+ * @param pikafs_FILE** fp pikafs_FILE 二级文件指针，提供了文件加载内存中的地址以及大小等信息
+ * @param Arg** f_arg
+ * @param char* pack_name pack 文件的名字
+ * @return  PIKA_RES_OK when success, otherwise failed;
+ * @note  if failed *fp if freed
+ * 
+ */
+PIKA_RES _getPack_libraryBytes(pikafs_FILE** fp, Arg** f_arg, char* pack_name) {
+
+    if (NULL == pack_name) {
+        return PIKA_RES_ERR_INVALID_PTR;
+    }
+
+    *fp = (pikafs_FILE*)pikaMalloc(sizeof(pikafs_FILE));
+    if (NULL == *fp) {
+        pika_platform_printf("Error: malloc failed \r\n");
+        return PIKA_RES_ERR_OUT_OF_RANGE;
+    }
+    memset(*fp, 0, sizeof(pikafs_FILE));
+
+    *f_arg = arg_loadFile(NULL, pack_name);
+    if (NULL == *f_arg) {
+        pika_platform_printf("Error: Could not load file \'%s\'\r\n", pack_name);
+        pikaFree(*fp, sizeof(pikafs_FILE));
+        // fp == NULL;
+        return PIKA_RES_ERR_IO_ERROR;
+    }
+    return PIKA_RES_OK;
+}
+
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
     int module_num = _getModuleNum(library_bytes);
     if (module_num < 0) {
@@ -540,6 +573,62 @@ int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
                              lib_file_name);
         return PIKA_RES_ERR_OPERATION_FAILED;
     }
+    return PIKA_RES_OK;
+}
+
+/**
+ * @brief unpack *.pack file to Specified path
+ * 
+ * @param pack_name  the name of *.pack file
+ * @param out_path   output path
+ * @return           
+ */
+PIKA_RES LibObj_unpackFileToPath(char* pack_name, char* out_path) {
+
+    PIKA_RES stat = PIKA_RES_OK;
+    Arg* file_arg = NULL;
+    uint8_t* library_bytes = NULL;
+    pikafs_FILE* fptr = NULL;
+
+    stat = _getPack_libraryBytes(&fptr, &file_arg, pack_name);
+    if (PIKA_RES_OK == stat) {
+        library_bytes = arg_getBytes(file_arg);
+    }
+    else {
+        return stat;
+    }
+
+    int module_num = _getModuleNum(library_bytes);
+    if (module_num < 0) {
+        return (PIKA_RES)module_num;
+    }
+
+    Args buffs = { 0 };
+    char* output_file_path = NULL;
+    FILE* new_fp = NULL;
+
+    for (int i = 0; i < module_num; ++i) {
+        char* name = NULL;
+        uint8_t* addr = NULL;
+        size_t size = 0;
+        _loadModuleDataWithIndex(library_bytes, module_num, i, &name, &addr,
+            &size);
+        output_file_path = strsPathJoin(&buffs, out_path, name);
+        new_fp = pika_platform_fopen(output_file_path, "wb+");
+        if (NULL != new_fp) {
+            pika_platform_fwrite(addr, size, 1, new_fp);
+            pika_platform_fclose(new_fp);
+            pika_platform_printf("extract %s to %s\r\n", name, output_file_path);
+        }
+        else {
+            pika_platform_printf("can't open %s\r\n", output_file_path);
+            break;
+        }
+    }
+
+    arg_deinit(file_arg);
+    strsDeinit(&buffs);
+    pikaFree(fptr, sizeof(pikafs_FILE));
     return PIKA_RES_OK;
 }
 
@@ -957,6 +1046,28 @@ pikafs_FILE* pikafs_fopen(char* file_name, char* mode) {
         _loadModuleDataWithName(library_bytes, file_name, &f->addr, &f->size)) {
         return NULL;
     }
+    return f;
+}
+
+pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
+    pikafs_FILE* f = NULL;
+    Arg* file_arg = NULL;
+    PIKA_RES stat = PIKA_RES_OK;
+    uint8_t* library_bytes = NULL;
+    stat = _getPack_libraryBytes(&f, &file_arg, pack_name);
+    if (PIKA_RES_OK == stat) {
+        library_bytes = arg_getBytes(file_arg);
+    }
+    else {
+        return NULL;
+    }
+
+    if (PIKA_RES_OK !=
+        _loadModuleDataWithName(library_bytes, file_name, &f->addr, &f->size)) {
+        return NULL;
+    }
+
+    arg_deinit(file_arg);
     return f;
 }
 
