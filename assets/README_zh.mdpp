@@ -24,7 +24,7 @@
 	<a href="https://pikadoc.readthedocs.io/zh/latest/%E5%95%86%E4%B8%9A%E5%90%88%E4%BD%9C%E6%96%B9%E5%BC%8F.html">商业合作</a> 
 </p>
 
-[![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/pikapython/dev/bench/)
+[![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/PikaPython/dev/bench/)
 
 
 # 1.简介
