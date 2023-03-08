@@ -2015,7 +2015,7 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
         char* arg_in = strsPopToken(list_buffs, &line_buff, ' ');
         AST_setNodeAttr(ast, "arg_in", arg_in);
         strsPopToken(list_buffs, &line_buff, ' ');
-        char* list_in = strsPopToken(list_buffs, &line_buff, ':');
+        char* list_in = Cursor_splitCollect(list_buffs, line_buff, ":", 0);
         list_in = strsAppend(list_buffs, "iter(", list_in);
         list_in = strsAppend(list_buffs, list_in, ")");
         list_in = strsCopy(&buffs, list_in);

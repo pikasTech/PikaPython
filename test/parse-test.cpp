@@ -5408,6 +5408,54 @@ TEST(parser, not_in_or) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, for_in_split) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "for rows in data[1:]:\n"
+        "    print(rows)"
+        "while data[1:]:\n"
+        "    print(data[1:])\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 REF data\n"
+                 "2 NUM 1\n"
+                 "3 NUM 99999\n"
+                 "2 OPT -\n"
+                 "1 SLC \n"
+                 "0 RUN iter\n"
+                 "0 OUT $l0\n"
+                 "B0\n"
+                 "0 RUN $l0.__next__\n"
+                 "0 OUT rows\n"
+                 "0 EST rows\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "2 REF rows\n"
+                 "1 RUN print\n"
+                 "1 NUM 1\n"
+                 "2 NUM 99999\n"
+                 "1 OPT -\n"
+                 "0 SLC \n"
+                 "B1\n"
+                 "2 REF data\n"
+                 "2 NUM 1\n"
+                 "3 NUM 99999\n"
+                 "2 OPT -\n"
+                 "1 SLC \n"
+                 "0 RUN print\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n"
+                 "0 DEL $l0\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

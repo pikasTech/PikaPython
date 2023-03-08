@@ -12,7 +12,7 @@
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=pikaui.*"
-                "--gtest_filter=InstructUnit.base"
+                "--gtest_filter=parser.for_in_split"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

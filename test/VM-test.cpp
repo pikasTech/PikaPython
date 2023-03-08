@@ -2300,6 +2300,53 @@ TEST(vm, slice_str_end) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(vm, slice_list) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain, "[1,2,3][1:]");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "[2, 3]\r\n");
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(vm, slice_list_list) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "l = "
+            "[[\"ID\",\"TCP_URL\",\"VERSION\",\"SENSOR_SCAN_s\",\"DATA_UPLOAD_"
+            "s\",\"ACT_LOGIC_SCAN_s\",\"NETWORK\",\"AUTO_ACT\",\"START_TIME\"],"
+            "[\"ABC123\",\"iot.365sn.cn/operate/h/"
+            "1234\",\"V1.1\",60,1800,0.5,\"4G\",\"TRUE\",1669017826]]\n"
+            "ll = l[1:]\n"
+            "print(len(l), l)\n"
+            "print(len(ll),ll)\n");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0],
+                 "9 ['ABC123', 'iot.365sn.cn/operate/h/1234', 'V1.1', 60, "
+                 "1800, 0.500000, '4G', 'TRUE', 1669017826]\r\n");
+    EXPECT_STREQ(log_buff[1],
+                 "2 [['ID', 'TCP_URL', 'VERSION', 'SENSOR_SCAN_s', "
+                 "'DATA_UPLOAD_s', 'ACT_LOGIC_SCAN_s', 'NETWORK', 'AUTO_ACT', "
+                 "'START_TIME'], ['ABC123', 'iot.365sn.cn/operate/h/1234', "
+                 "'V1.1', 60, 1800, 0.500000, '4G', 'TRUE', 1669017826]]\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 #if !PIKA_NANO_ENABLE
