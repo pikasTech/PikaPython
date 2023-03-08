@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of the PikaPython project.
  * http://github.com/pikastech/pikapython
  *
@@ -293,9 +293,9 @@ static void VMState_setErrorCode(VMState* vm, int8_t error_code) {
     vm->error_code = error_code;
 }
 
-static enum Instruct VMstate_getInstructWithOffset(VMState* vm,
+static enum InstructIndex VMstate_getInstructWithOffset(VMState* vm,
                                                    int32_t offset) {
-    return instructUnit_getInstruct(
+    return instructUnit_getInstructIndex(
         VMState_getInstructUnitWithOffset(vm, offset));
 }
 
@@ -329,12 +329,12 @@ static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
         InstructUnit* insUnitThis =
             VMState_getInstructUnitWithOffset(vm, offset);
         uint16_t invokeDeepth = instructUnit_getInvokeDeepth(insUnitThis);
-        enum Instruct ins = instructUnit_getInstruct(insUnitThis);
+        enum InstructIndex ins = instructUnit_getInstructIndex(insUnitThis);
         char* data = VMState_getConstWithInstructUnit(vm, insUnitThis);
         if ((0 == invokeDeepth) && (JEZ == ins) && data[0] == '2') {
             InstructUnit* insUnitLast = VMState_getInstructUnitWithOffset(
                 vm, offset - instructUnit_getSize());
-            enum Instruct insLast = instructUnit_getInstruct(insUnitLast);
+            enum InstructIndex insLast = instructUnit_getInstructIndex(insUnitLast);
             /* skip try stmt */
             if (GER == insLast) {
                 continue;
@@ -354,7 +354,7 @@ static int32_t VMState_getAddrOffsetOfJmpBack(VMState* vm) {
         offset += instructUnit_getSize();
         InstructUnit* insUnitThis =
             VMState_getInstructUnitWithOffset(vm, offset);
-        enum Instruct ins = instructUnit_getInstruct(insUnitThis);
+        enum InstructIndex ins = instructUnit_getInstructIndex(insUnitThis);
         char* data = VMState_getConstWithInstructUnit(vm, insUnitThis);
         int blockDeepthThis = instructUnit_getBlockDeepth(insUnitThis);
         if ((blockDeepthThis == blockDeepthGot) && (JMP == ins) &&
@@ -428,7 +428,7 @@ static int32_t VMState_getAddrOffsetOfRaise(VMState* vm) {
             return 0;
         }
         ins_unit_now = VMState_getInstructUnitWithOffset(vm, offset);
-        enum Instruct ins = instructUnit_getInstruct(ins_unit_now);
+        enum InstructIndex ins = instructUnit_getInstructIndex(ins_unit_now);
         if (NTR == ins) {
             return offset;
         }
@@ -511,11 +511,6 @@ static void VMState_setLReg(VMState* vm, uint8_t index, PikaObj* obj) {
     obj_refcntInc(obj);
     vm->lreg[index] = obj;
 }
-
-typedef Arg* (*VM_instruct_handler)(PikaObj* self,
-                                    VMState* vm,
-                                    char* data,
-                                    Arg* arg_ret_reg);
 
 static Arg* VM_instruction_handler_NON(PikaObj* self,
                                        VMState* vm,
@@ -1635,7 +1630,7 @@ static char* _find_super_class_name(VMState* vm) {
         if (vm->pc + offset >= (int)VMState_getInstructArraySize(vm)) {
             return 0;
         }
-        if ((RUN == instructUnit_getInstruct(
+        if ((RUN == instructUnit_getInstructIndex(
                         VMState_getInstructUnitWithOffset(vm, offset)))) {
             super_class_name = VMState_getConstWithOffset(vm, offset);
             return super_class_name;
@@ -1664,7 +1659,7 @@ static char* _find_self_name(VMState* vm) {
         if (vm->pc + offset >= (int)VMState_getInstructArraySize(vm)) {
             return 0;
         }
-        if ((OUT == instructUnit_getInstruct(
+        if ((OUT == instructUnit_getInstructIndex(
                         VMState_getInstructUnitWithOffset(vm, offset)))) {
             self_name = VMState_getConstWithOffset(vm, offset);
             return self_name;
@@ -2251,7 +2246,7 @@ static uint8_t VMState_getInputArgNum(VMState* vm) {
             break;
         }
         if (invode_deepth == invoke_deepth_this + 1) {
-            if (instructUnit_getInstruct(ins_unit_now) == OUT) {
+            if (instructUnit_getInstructIndex(ins_unit_now) == OUT) {
                 continue;
             }
             num++;
@@ -3004,21 +2999,178 @@ static Arg* VM_instruction_handler_IMP(PikaObj* self,
     return NULL;
 }
 
-const VM_instruct_handler VM_instruct_handler_table[__INSTRCUTION_CNT] = {
-#define __INS_TABLE
-#include "__instruction_table.h"
+
+
+
+
+#if PIKA_INSTRUCT_EXTENSION_ENABLE
+const VMInstructionSet VM_default_instruction_set = {
+    #define __INS_OPCODE
+    .instructions = (const VMInstruction []) {
+        #include "__instruction_table.h"
+    },
+    .count = __INSTRUCTION_CNT,
+    .op_idx_start = NON,
+    .op_idx_end = NON + __INSTRUCTION_CNT - 1,
 };
 
-enum Instruct pikaVM_getInstructFromAsm(char* ins_str) {
-#define __INS_COMPIRE
+
+#ifndef PIKA_INSTRUCT_SIGNATURE_DICT
+#   define PIKA_INSTRUCT_SIGNATURE_DICT 0
+#endif
+
+typedef struct VMInstructionSetItem VMInstructionSetItem;
+struct VMInstructionSetItem {
+    VMInstructionSetItem *next;
+    const VMInstructionSet *ins_set;
+};
+
+static struct {
+    const VMInstructionSetItem  default_ins_set;
+    VMInstructionSetItem  *list;
+    VMInstructionSetItem  *recent;
+#if PIKA_INSTRUCT_SIGNATURE_DICT_COUNT > 0
+    const uint16_t signature_dict[PIKA_INSTRUCT_SIGNATURE_DICT_COUNT];
+#endif
+} VM = {
+    .default_ins_set = {
+        .ins_set = &VM_default_instruction_set,
+        .next = NULL,
+    },
+    .list = (VMInstructionSetItem  *)&VM.default_ins_set,
+    .recent = (VMInstructionSetItem  *)&VM.default_ins_set,
+#if PIKA_INSTRUCT_SIGNATURE_DICT_COUNT > 0
+    .signature_dict = {
+        PIKA_INSTRUCT_SIGNATURE_DICT
+    },
+#endif
+};
+
+PIKA_BOOL pikaVM_registerInstructionSet(VMInstructionSet *ins_set)
+{
+    pika_assert(NULL != ins_set);
+
+#if PIKA_INSTRUCT_SIGNATURE_DICT_COUNT > 0
+    uint16_t signature = ins_set->signature;
+    
+    PIKA_BOOL ins_set_valid = PIKA_FALSE;
+    for (int n = 0; n < sizeof(VM.signature_dict) / sizeof(uint16_t); n++) {
+        if (VM.signature_dict[n] == signature) {
+            ins_set_valid = PIKA_TRUE;
+            break;
+        }
+    }
+    if (!ins_set_valid) {
+        return PIKA_FALSE;
+    }
+#endif
+
+    /* check whether the target instruction set exists or not */
+    VMInstructionSetItem *list_item = VM.list;
+    do {
+        if (list_item->ins_set->signature == signature) {
+            return PIKA_TRUE;   /* already exist */
+        }
+
+        list_item = list_item->next;
+    } while(NULL != list_item->next);
+
+    
+    VMInstructionSetItem *item = pika_platform_malloc(sizeof(VMInstructionSetItem));
+    if (NULL == item) {
+        return PIKA_FALSE;
+    }
+    item->ins_set = ins_set;
+    item->next = NULL;
+    
+    /* add item to the tail of VM.list */
+    list_item->next = item;
+
+    return PIKA_TRUE;
+}
+
+static
+const VMInstruction *instructUnit_getInstruct(enum InstructIndex ins_idx) {
+    VMInstructionSetItem *item = VM.recent;
+
+    if (    (ins_idx >= item->ins_set->op_idx_start)
+       &&   (ins_idx <= item->ins_set->op_idx_end)) {
+        return &(item->ins_set->instructions[ins_idx - item->ins_set->op_idx_start]);
+    }
+    
+    /* search list */
+    item = VM.list;
+    do {
+        if (    (ins_idx >= item->ins_set->op_idx_start)
+           &&   (ins_idx <= item->ins_set->op_idx_end)) {
+            VM.recent = item;
+            return &(item->ins_set->instructions[ins_idx - item->ins_set->op_idx_start]);
+        }
+        item = item->next;
+    } while(NULL != item->next);
+
+    return NULL;
+}
+
+
+static enum InstructIndex __find_ins_idx_in_ins_set(char* ins_str, const VMInstructionSet *set)
+{
+    const VMInstruction *ins = set->instructions;
+    uint_fast16_t count = set->count;
+    
+    do {
+        if (0 == strncmp(ins_str, ins->op_str, ins->op_str_len)) {
+            return ins->op_idx;
+        }
+        ins++;
+    } while(--count);
+    return __INSTRUCTION_UNKNOWN;
+}
+
+enum InstructIndex pikaVM_getInstructFromAsm(char* ins_str) {
+    
+    enum InstructIndex ins_idx = __find_ins_idx_in_ins_set(ins_str, VM.recent->ins_set);
+    
+    if (__INSTRUCTION_UNKNOWN == ins_idx) {
+        VMInstructionSetItem *item = VM.list;
+        
+        do {
+            ins_idx = __find_ins_idx_in_ins_set(ins_str, item->ins_set);
+            if (__INSTRUCTION_UNKNOWN != ins_idx) {
+                VM.recent = item;
+                return ins_idx;
+            }
+            item = item->next;
+        } while(NULL != item->next);
+        
+        return NON;
+    }
+    
+    return ins_idx;
+}
+
+#else
+
+PIKA_BOOL pikaVM_registerInstructionSet(VMInstructionSet *ins_set) {
+    return PIKA_FALSE;
+}
+
+enum InstructIndex pikaVM_getInstructFromAsm(char* ins_str) {
+#define __INS_COMPARE
 #include "__instruction_table.h"
     return NON;
 }
 
+const VM_instruct_handler VM_instruct_handler_table[__INSTRUCTION_CNT] = {
+#define __INS_TABLE
+#include "__instruction_table.h"
+};
+#endif
+
 static int pikaVM_runInstructUnit(PikaObj* self,
                                   VMState* vm,
                                   InstructUnit* ins_unit) {
-    enum Instruct instruct = instructUnit_getInstruct(ins_unit);
+    enum InstructIndex instruct = instructUnit_getInstructIndex(ins_unit);
     arg_newReg(ret_reg, PIKA_ARG_BUFF_SIZE);
     Arg* return_arg = &ret_reg;
     // char invode_deepth1_str[2] = {0};
@@ -3026,7 +3178,20 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     char* data = VMState_getConstWithInstructUnit(vm, ins_unit);
     /* run instruct */
     pika_assert(NULL != vm->run_state);
+
+#if PIKA_INSTRUCT_EXTENSION_ENABLE
+    const VMInstruction * ins = instructUnit_getInstruct(instruct);
+    if (NULL == ins) {
+        /* todo: unsupported instruction */
+        pika_assert(NULL != ins);
+    }
+    pika_assert(NULL != ins->handler);
+    
+    return_arg = ins->handler(self, vm, data, &ret_reg);
+#else
     return_arg = VM_instruct_handler_table[instruct](self, vm, data, &ret_reg);
+#endif
+    
 
     if (vm->error_code != PIKA_RES_OK ||
         VMSignal_getCtrl() == VM_SIGNAL_CTRL_EXIT) {
@@ -3145,8 +3310,8 @@ static ByteCodeFrame* _cache_bcf_fn(PikaObj* self, char* py_lines) {
 }
 
 static char* _get_data_from_bytecode2(uint8_t* bytecode,
-                                      enum Instruct ins1,
-                                      enum Instruct ins2) {
+                                      enum InstructIndex ins1,
+                                      enum InstructIndex ins2) {
     ByteCodeFrame bf = {0};
     char* res = NULL;
     byteCodeFrame_init(&bf);
@@ -3156,7 +3321,7 @@ static char* _get_data_from_bytecode2(uint8_t* bytecode,
         if (NULL == ins_unit) {
             goto __exit;
         }
-        enum Instruct ins = instructUnit_getInstruct(ins_unit);
+        enum InstructIndex ins = instructUnit_getInstructIndex(ins_unit);
         if (ins == ins1 || ins == ins2) {
             res = constPool_getByOffset(&bf.const_pool,
                                         ins_unit->const_pool_index);
@@ -3501,11 +3666,53 @@ InstructUnit* instructArray_getNext(InstructArray* self) {
     return instructArray_getNow(self);
 }
 
+#if PIKA_INSTRUCT_EXTENSION_ENABLE
+
+static const char * __find_ins_str_in_ins_set(enum InstructIndex op_idx, const VMInstructionSet *set)
+{
+    const VMInstruction *ins = set->instructions;
+    uint_fast16_t count = set->count;
+    
+    do {
+        if (ins->op_idx == op_idx) {
+            return ins->op_str;
+        }
+        ins++;
+    } while(--count);
+    return NULL;
+}
+
+
+static char* instructUnit_getInstructStr(InstructUnit* self) {
+    
+    enum InstructIndex op_idx = instructUnit_getInstructIndex(self);
+    
+    const char *ins_str = __find_ins_str_in_ins_set(op_idx, VM.recent->ins_set);
+    
+    if (NULL == ins_str) {
+        VMInstructionSetItem *item = VM.list;
+        
+        do {
+            ins_str = __find_ins_str_in_ins_set(op_idx, item->ins_set);
+            if (NULL != ins_str) {
+                VM.recent = item;
+                return (char *)ins_str;
+            }
+            item = item->next;
+        } while(NULL != item->next);
+        
+        return "NON";
+    }
+    
+    return "NON";
+}
+#else
 static char* instructUnit_getInstructStr(InstructUnit* self) {
 #define __INS_GET_INS_STR
 #include "__instruction_table.h"
     return "NON";
 }
+#endif
 
 void instructUnit_print(InstructUnit* self) {
     if (instructUnit_getIsNewLine(self)) {

@@ -313,6 +313,14 @@
     #ifndef PIKA_INSTRUCT_YIELD_PERIOD
         #define PIKA_INSTRUCT_YIELD_PERIOD 1
     #endif
+    
+    #ifndef PIKA_INSTRUCT_EXTENSION_ENABLE
+        #define PIKA_INSTRUCT_EXTENSION_ENABLE 1
+    #endif
+    
+    #ifndef PIKA_INSTRUCT_SIGNATURE_DICT_COUNT
+        #define PIKA_INSTRUCT_SIGNATURE_DICT_COUNT 1
+    #endif
 
     #ifndef PIKA_EXEC_ENABLE
         #define PIKA_EXEC_ENABLE 1
