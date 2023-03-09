@@ -21,7 +21,9 @@
 #include "main.h"
 #include "usart.h"
 #include "gpio.h"
+#ifdef USING_PERF_COUNTER
 #include "perf_counter.h"
+#endif
 #include "PikaVM.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -129,10 +131,12 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   /* user input buff */
-
+    PikaObj* pikaMain = NULL;
 
     /* run unit test */
-    obj_deinit(pikaScriptInit());
+    pikaMain = pikaScriptInit();
+    
+    #ifdef USING_PERF_COUNTER
 
     /* benchmark */
     uint64_t nCycleUsed_c,nCycleUsed_pika = 0;
@@ -146,7 +150,7 @@ int main(void)
     }
         
     /* create pikaMain root obj */
-    PikaObj *pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
+    pikaMain = newRootObj((char*)"pikaMain", New_PikaMain);
         /* clang-format off */
     PIKA_PYTHON(
     num = 0
@@ -209,6 +213,7 @@ int main(void)
     
     printf("\r\n[------benchmark finished ---------]\r\n");
     printf("benchmakr result :%lld\r\n", benchmark_result);
+    #endif
 
     pikaScriptShell(pikaMain);
   while (1)
