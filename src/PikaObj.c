@@ -1807,8 +1807,8 @@ void obj_dump(PikaObj* self) {
 #if !PIKA_KERNAL_DEBUG_ENABLE
     return;
 #else
-    pika_platform_printf("[%s]", self->name);
-    pika_platform_printf("\t\t@%p", self);
+    pika_platform_printf("[\033[32m%s\033[0m]", self->name);
+    pika_platform_printf(" \033[36m@%p\033[0m", self);
     pika_platform_printf("\r\n");
 #endif
 }
@@ -1826,8 +1826,8 @@ uint32_t pikaGC_markSweepOnce(PikaGC* gc) {
         obj = obj->gcNext;
     }
     if (count > 0) {
-        pikaGC_markDump();
-        pikaGC_printFreeList();
+        // pikaGC_markDump();
+        // pikaGC_printFreeList();
         for (uint32_t i = 0; i < count; i++) {
             obj_GC(freeList[i]);
         }
@@ -1901,20 +1901,13 @@ void pikaGC_mark(void) {
 
 int _pikaGC_markDumpHandler(PikaGC* gc) {
     for (uint32_t i = 0; i < gc->markDeepth - 1; i++) {
-        pika_platform_printf("  ");
+        pika_platform_printf("  |");
     }
     if (gc->markDeepth != 1) {
         pika_platform_printf("- ");
     }
     obj_dump(gc->oThis);
     return 0;
-}
-
-void pikaGC_markDump(void) {
-    PikaGC gc = {0};
-    pika_platform_printf("========= PIKA GC DUMP =========\r\n");
-    gc.onMarkObj = _pikaGC_markDumpHandler;
-    _pikaGC_mark(&gc);
 }
 
 #endif
@@ -1959,10 +1952,27 @@ uint32_t pikaGC_markSweep(void) {
     while (pikaGC_markSweepOnce(&gc) != 0) {
         count++;
     };
+    if (count > 0) {
+        // pikaGC_markDump();
+    }
     /* update gc state */
     g_PikaObjState.objCntLastGC = g_PikaObjState.objCnt;
     pikaGC_unlock();
     return count;
+#endif
+}
+
+void pikaGC_markDump(void) {
+#if !PIKA_GC_MARK_SWEEP_ENABLE
+    return;
+#else
+    PikaGC gc = {0};
+    pika_platform_printf(
+        "\033[31m"
+        "========= PIKA GC DUMP =========\r\n"
+        "\033[0m");
+    gc.onMarkObj = _pikaGC_markDumpHandler;
+    _pikaGC_mark(&gc);
 #endif
 }
 

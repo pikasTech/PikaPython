@@ -451,11 +451,9 @@ static int32_t VMState_getAddrOffsetOfContinue(VMState* vm) {
 static void VMState_delLReg(VMState* vm, uint8_t index) {
     PikaObj* obj = vm->lreg[index];
     if (NULL != obj) {
-        obj_refcntDec(obj);
+        obj_enableGC(obj);
         vm->lreg[index] = NULL;
-        if (0 == obj_refcntNow(obj)) {
-            obj_deinit(obj);
-        }
+        obj_GC(obj);
     }
 }
 
@@ -1604,8 +1602,10 @@ static Arg* VM_instruction_handler_RET(PikaObj* self,
                                        Arg* arg_ret_reg) {
     /* exit jmp signal */
     vm->jmp = VM_JMP_EXIT;
-    Arg* return_arg = stack_popArg_alloc(&(vm->stack));
-    method_returnArg(vm->locals->list, return_arg);
+    Arg* aReturn = stack_popArg_alloc(&(vm->stack));
+    /* set gc root to avoid gc */
+    arg_setObjFlag(aReturn, OBJ_FLAG_GC_ROOT);
+    method_returnArg(vm->locals->list, aReturn);
     return NULL;
 }
 
@@ -2909,18 +2909,19 @@ static Arg* VM_instruction_handler_DEL(PikaObj* self,
     if (_checkLReg(data)) {
         uint8_t reg_index = _getLRegIndex(data);
         VMState_delLReg(vm, reg_index);
-        return NULL;
+        goto __exit;
     }
     if (obj_isArgExist(vm->locals, data)) {
         obj_removeArg(vm->locals, data);
-        return NULL;
+        goto __exit;
     }
     if (obj_isArgExist(vm->globals, data)) {
         obj_removeArg(vm->globals, data);
-        return NULL;
+        goto __exit;
     }
     VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
     pika_platform_printf("NameError: name '%s' is not defined\n", data);
+__exit:
     return NULL;
 }
 
