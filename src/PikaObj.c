@@ -1405,8 +1405,8 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
         int16_t n = byte_count;
 
         while (n--) {
-            pika_assert(PIKA_FALSE !=
-                        byteQueue_readOne(queue, (uint8_t*)&inputChar));
+            result = byteQueue_readOne(queue, (uint8_t*)&inputChar);
+            pika_assert(PIKA_FALSE != result);
 
             if (SHELL_CTRL_EXIT ==
                 _inner_do_obj_runChar(self, inputChar, shell)) {
