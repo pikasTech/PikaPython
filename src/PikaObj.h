@@ -75,29 +75,34 @@ struct NativeProperty {
     uint32_t methodGroupCount;
 };
 
-/* clang-format off */
 typedef struct PikaObj PikaObj;
 struct PikaObj {
     Args* list;
     void* constructor;
-    #if PIKA_GC_MARK_SWEEP_ENABLE
-        PikaObj* gcNext;
-        #if PIKA_KERNAL_DEBUG_ENABLE
-            PikaObj* gcRoot;
-        #endif
-    #endif
-    #if PIKA_KERNAL_DEBUG_ENABLE
-        char* name;
-        Arg* aName;
-        PikaObj* parent;
-        PIKA_BOOL isAlive;
-        PIKA_BOOL isGCRoot;
-    #endif
+#if PIKA_GC_MARK_SWEEP_ENABLE
+    PikaObj* gcNext;
+#endif
+#if PIKA_KERNAL_DEBUG_ENABLE
+    char* name;
+    Arg* aName;
+    PikaObj* parent;
+    PIKA_BOOL isAlive;
+    PIKA_BOOL isGCRoot;
+#endif
+#if PIKA_GC_MARK_SWEEP_ENABLE && PIKA_KERNAL_DEBUG_ENABLE
+    PikaObj* gcRoot;
+#endif
     uint8_t refcnt;
     uint8_t flag;
 };
 
-/* clang-format on */
+typedef struct PikaGC PikaGC;
+typedef int (*pikaGC_hook)(PikaGC* gc);
+struct PikaGC {
+    uint32_t markDeepth;
+    pikaGC_hook onMarkObj;
+    PikaObj* oThis;
+};
 
 typedef struct RangeData RangeData;
 struct RangeData {
@@ -625,34 +630,35 @@ void obj_printModules(PikaObj* self);
     } while (0)
 #endif
 
-#define pika_assert_arg_alive(__arg)                                 \
-    do {                                                             \
-        if (NULL != (__arg)) {                                       \
-            if (arg_isObject((__arg))) {                             \
-                pika_assert(pikaGC_checkAlive(arg_getPtr((__arg)))); \
-            }                                                        \
-        }                                                            \
+#define pika_assert_arg_alive(__arg)                              \
+    do {                                                          \
+        if (NULL != (__arg)) {                                    \
+            if (arg_isObject((__arg))) {                          \
+                pika_assert(obj_checkAlive(arg_getPtr((__arg)))); \
+            }                                                     \
+        }                                                         \
     } while (0)
 
-#define pika_assert_obj_alive(__obj)             \
-    do {                                         \
-        pika_assert(pikaGC_checkAlive((__obj))); \
+#define pika_assert_obj_alive(__obj)          \
+    do {                                      \
+        pika_assert(obj_checkAlive((__obj))); \
     } while (0)
 
-void pikaGC_append(PikaObj* self);
-uint32_t pikaGC_count(void);
-void pikaGC_remove(PikaObj* self);
-void pikaGC_mark(PikaObj* self);
-void pikaGC_markRoot(void);
-uint32_t pikaGC_countMarked(void);
-uint32_t pikaGC_printFreeList(void);
-uint32_t pikaGC_markSweep(void);
-PIKA_BOOL pikaGC_checkAlive(PikaObj* self);
-void pikaGC_enable(PikaObj* self);
-void pikaGC_try(void);
+void obj_appendGcChain(PikaObj* self);
+void obj_removeGcChain(PikaObj* self);
+void obj_enableGC(PikaObj* self);
+PIKA_BOOL obj_checkAlive(PikaObj* self);
+void obj_setName(PikaObj* self, char* name);
+
+void pikaGC_mark(void);
+void pikaGC_markDump(void);
 void pikaGC_lock(void);
 void pikaGC_unlock(void);
 PIKA_BOOL pikaGC_islock(void);
+uint32_t pikaGC_count(void);
+uint32_t pikaGC_countMarked(void);
+uint32_t pikaGC_markSweep(void);
+uint32_t pikaGC_printFreeList(void);
 
 int pika_GIL_EXIT(void);
 int pika_GIL_ENTER(void);

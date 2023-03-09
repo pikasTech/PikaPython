@@ -1780,7 +1780,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         goto exit;
     }
 
-    pika_assert(pikaGC_checkAlive(oMethodHost));
+    pika_assert(obj_checkAlive(oMethodHost));
 
 #if !PIKA_NANO_ENABLE
     if (!bSkipInit && vm->in_super &&
@@ -1864,6 +1864,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         arg_setType(aReturn, ARG_TYPE_OBJECT);
         /* init object */
         PikaObj* oNew = arg_getPtr(aReturn);
+        obj_setName(oNew, sRunPath);
         Arg* aMethod = obj_getMethodArg_noalloc(oNew, "__init__", &arg_reg1);
         oSublocalsInit = New_Locals(NULL);
         Arg* aReturnInit = NULL;

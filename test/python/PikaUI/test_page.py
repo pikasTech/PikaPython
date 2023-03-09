@@ -59,6 +59,8 @@ class Page2(ui.Page):
 
 
 app = ui.App()
+page1 = Page1()
+page1.add(page1.build())
 app.pageManager.enter(Page2())
 app.timer.cb(0)
 # mem.now()

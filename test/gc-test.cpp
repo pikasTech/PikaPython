@@ -130,7 +130,7 @@ TEST(gc, heap_failed1) {
 #if PIKA_GC_MARK_SWEEP_ENABLE
     int cnt = pikaGC_count();
     EXPECT_EQ(cnt != 0, 1);
-    pikaGC_markRoot();
+    pikaGC_markDump();
     int cnt_marked = pikaGC_countMarked();
     EXPECT_EQ(cnt, cnt_marked);
     /* deinit */
@@ -160,6 +160,17 @@ TEST(gc, circle2) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     pikaVM_runSingleFile(pikaMain, "test/python/gc/gc_circle2.py");
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(gc, tree1) {
+    /* init */
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    pikaVM_runSingleFile(pikaMain, "test/python/gc/gc_tree1.py");
     /* assert */
     /* deinit */
     obj_deinit(pikaMain);

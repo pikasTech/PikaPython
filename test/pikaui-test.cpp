@@ -1,6 +1,6 @@
 #include "test_common.h"
 TEST_START
-#if !PIKA_NANO_ENABLE && 0
+#if !PIKA_NANO_ENABLE && 1
 
 TEST(pikaui, page) {
     /* init */
@@ -15,7 +15,6 @@ TEST(pikaui, page) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
 
 #endif
 TEST_END

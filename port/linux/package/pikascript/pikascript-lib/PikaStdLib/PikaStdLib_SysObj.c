@@ -531,8 +531,8 @@ PikaObj* PikaStdLib_SysObj_open(PikaObj* self, char* path, char* mode) {
 }
 
 /* __dir_each */
-int32_t __dir_each(Arg* argEach, Args* context) {
-    PikaObj* list = args_getPtr(context, "list");
+int32_t __dir_each(Arg* argEach, void* context) {
+    PikaObj* list = args_getPtr((Args*)context, "list");
     if (argType_isCallable(arg_getType(argEach))) {
         char name_buff[PIKA_LINE_BUFF_SIZE] = {0};
         char* method_name =
@@ -669,4 +669,8 @@ void PikaStdLib_SysObj_reboot(PikaObj* self) {
 
 void PikaStdLib_SysObj_clear(PikaObj* self) {
     pika_platform_clear();
+}
+
+void PikaStdLib_SysObj_gcdump(PikaObj *self){
+    pikaGC_markDump();
 }

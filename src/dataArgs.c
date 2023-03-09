@@ -441,8 +441,8 @@ Arg* args_getArgByIndex(Args* self, int index) {
 }
 
 PIKA_RES args_foreach(Args* self,
-                      int32_t (*eachHandle)(Arg* argEach, Args* context),
-                      Args* context) {
+                      int32_t (*eachHandle)(Arg* argEach, void* context),
+                      void* context) {
     if (NULL == self->firstNode) {
         return PIKA_RES_OK;
     }
