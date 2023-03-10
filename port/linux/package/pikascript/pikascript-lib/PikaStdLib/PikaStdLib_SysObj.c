@@ -197,32 +197,32 @@ Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
 
 Arg* PikaStdLib_SysObj_range(PikaObj* self, PikaTuple* ax) {
     /* set template arg to create rangeObj */
-    Arg* obj_arg = arg_newDirectObj(New_PikaStdLib_RangeObj);
-    PikaObj* range_obj = arg_getPtr(obj_arg);
-    RangeData range_data = {0};
+    Arg* aRangeObj = arg_newDirectObj(New_PikaStdLib_RangeObj);
+    PikaObj* oRangeObj = arg_getPtr(aRangeObj);
+    RangeData tRangeData = {0};
     if (pikaTuple_getSize(ax) == 1) {
         int start = 0;
         int end = arg_getInt(pikaTuple_getArg(ax, 0));
-        range_data.start = start;
-        range_data.end = end;
-        range_data.step = 1;
+        tRangeData.start = start;
+        tRangeData.end = end;
+        tRangeData.step = 1;
     } else if (pikaTuple_getSize(ax) == 2) {
         int start = arg_getInt(pikaTuple_getArg(ax, 0));
         int end = arg_getInt(pikaTuple_getArg(ax, 1));
-        range_data.start = start;
-        range_data.end = end;
-        range_data.step = 1;
+        tRangeData.start = start;
+        tRangeData.end = end;
+        tRangeData.step = 1;
     } else if (pikaTuple_getSize(ax) == 3) {
         int start = arg_getInt(pikaTuple_getArg(ax, 0));
         int end = arg_getInt(pikaTuple_getArg(ax, 1));
         int step = arg_getInt(pikaTuple_getArg(ax, 2));
-        range_data.start = start;
-        range_data.end = end;
-        range_data.step = step;
+        tRangeData.start = start;
+        tRangeData.end = end;
+        tRangeData.step = step;
     }
-    range_data.i = range_data.start;
-    obj_setStruct(range_obj, "_", range_data);
-    return obj_arg;
+    tRangeData.i = tRangeData.start;
+    obj_setStruct(oRangeObj, "_", tRangeData);
+    return aRangeObj;
 }
 
 Arg* PikaStdLib_SysObj___getitem__(PikaObj* self, Arg* obj, Arg* key) {
@@ -671,6 +671,6 @@ void PikaStdLib_SysObj_clear(PikaObj* self) {
     pika_platform_clear();
 }
 
-void PikaStdLib_SysObj_gcdump(PikaObj *self){
+void PikaStdLib_SysObj_gcdump(PikaObj* self) {
     pikaGC_markDump();
 }
