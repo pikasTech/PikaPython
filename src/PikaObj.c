@@ -1806,10 +1806,9 @@ uint32_t pikaGC_printFreeList(void) {
 void obj_dump(PikaObj* self) {
 #if PIKA_KERNAL_DEBUG_ENABLE
     pika_platform_printf("[\033[32m%s\033[0m]", self->name);
-#else
+#endif
     pika_platform_printf(" \033[36m@%p\033[0m", self);
     pika_platform_printf("\r\n");
-#endif
 }
 
 uint32_t pikaGC_markSweepOnce(PikaGC* gc) {
