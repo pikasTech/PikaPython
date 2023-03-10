@@ -5456,6 +5456,58 @@ TEST(parser, for_in_split) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, common_issue_1b23f4c1bf) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* pikaAsm =
+        Parser_fileToAsm(buffs, "test/python/issue/common_issue_1b23f4c1bf.py");
+    __platform_printf("%s", pikaAsm);
+
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 CLS Test1()\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 RUN TinyObj\n"
+                 "0 OUT self\n"
+                 "B1\n"
+                 "0 RAS self\n"
+                 "B1\n"
+                 "0 RAS $origin\n"
+                 "B1\n"
+                 "0 NEW self\n"
+                 "0 RET \n"
+                 "B0\n"
+                 "0 CLS Test2()\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 RUN Test1\n"
+                 "0 OUT self\n"
+                 "B1\n"
+                 "0 RAS self\n"
+                 "B1\n"
+                 "0 DEF print(self)\n"
+                 "0 JMP 1\n"
+                 "B2\n"
+                 "1 STR Test2\n"
+                 "0 RUN print\n"
+                 "B2\n"
+                 "0 RET \n"
+                 "B1\n"
+                 "0 RAS $origin\n"
+                 "B1\n"
+                 "0 NEW self\n"
+                 "0 RET \n"
+                 "B0\n"
+                 "0 RUN Test2\n"
+                 "0 OUT a\n"
+                 "B0\n"
+                 "0 RUN a.print\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
