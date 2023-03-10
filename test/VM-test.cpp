@@ -2795,6 +2795,22 @@ TEST(vm, fn_pos_vars) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(vm, for_return) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/builtin/for_return.py");
+    /* collect */
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

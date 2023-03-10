@@ -55,6 +55,11 @@ volatile VMSignal g_PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
 };
 extern volatile PikaObjState g_PikaObjState;
 
+/* private */
+static PIKA_BOOL _checkLReg(char* data);
+static uint8_t _getLRegIndex(char* data);
+static PikaObj* New_Locals(Args* args);
+
 int pika_GIL_ENTER(void) {
     if (!g_pikaGIL.is_init) {
         return 0;
@@ -448,13 +453,55 @@ static int32_t VMState_getAddrOffsetOfContinue(VMState* vm) {
     return offset;
 }
 
-static void VMState_delLReg(VMState* vm, uint8_t index) {
-    PikaObj* obj = vm->lreg[index];
+static void VMLocals_delLReg(VMLocals* self, uint8_t index) {
+    PikaObj* obj = self->lreg[index];
     if (NULL != obj) {
         obj_enableGC(obj);
-        vm->lreg[index] = NULL;
+        self->lreg[index] = NULL;
         obj_GC(obj);
     }
+}
+
+static void Locals_delLReg(PikaObj* self, char* name) {
+    if (!_checkLReg(name)) {
+        return;
+    }
+    uint8_t reg_index = _getLRegIndex(name);
+    VMLocals* locals = obj_getStruct(self, "@l");
+    VMLocals_delLReg(locals, reg_index);
+}
+
+static void VMLocals_clearReg(VMLocals* self) {
+    for (int i = 0; i < PIKA_REGIST_SIZE; i++) {
+        VMLocals_delLReg(self, i);
+    }
+}
+
+static PikaObj* Locals_getLReg(PikaObj* self, char* name) {
+    /* get method host obj from reg */
+    if (!_checkLReg(name)) {
+        return NULL;
+    }
+    uint8_t reg_index = _getLRegIndex(name);
+    VMLocals* locals = obj_getStruct(self, "@l");
+    return locals->lreg[reg_index];
+}
+
+static PikaObj* New_Locals(Args* args) {
+    PikaObj* self = New_PikaObj();
+    self->constructor = New_Locals;
+#if PIKA_KERNAL_DEBUG_ENABLE
+    self->name = "Locals";
+#endif
+    return self;
+}
+
+void Locals_deinit(PikaObj* self) {
+    VMLocals* tLocals = obj_getStruct(self, "@l");
+    if (NULL == tLocals) {
+        return;
+    }
+    VMLocals_clearReg(tLocals);
 }
 
 static int _obj_getLen(PikaObj* self) {
@@ -488,10 +535,9 @@ static int arg_getLen(Arg* self) {
     return -1;
 }
 
-static void VMState_initReg(VMState* vm) {
+static void VMState_initReg(VMState* self) {
     for (uint8_t i = 0; i < PIKA_REGIST_SIZE; i++) {
-        vm->lreg[i] = NULL;
-        vm->ireg[i] = PIKA_FALSE;
+        self->ireg[i] = PIKA_FALSE;
     }
 }
 
@@ -507,9 +553,26 @@ static uint8_t _getLRegIndex(char* data) {
     return data[2] - '0';
 }
 
-static void VMState_setLReg(VMState* vm, uint8_t index, PikaObj* obj) {
+static void VMLocals_setLReg(VMLocals* self, uint8_t index, PikaObj* obj) {
     obj_refcntInc(obj);
-    vm->lreg[index] = obj;
+    self->lreg[index] = obj;
+}
+
+static void Locals_setLReg(PikaObj* self, char* name, PikaObj* obj) {
+    if (!_checkLReg(name)) {
+        return;
+    }
+    uint8_t reg_index = _getLRegIndex(name);
+    VMLocals* tlocals = obj_getStruct(self, "@l");
+    if (NULL == tlocals) {
+        /* init locals */
+        VMLocals locals = {0};
+        obj_setStruct(self, "@l", locals);
+        tlocals = obj_getStruct(self, "@l");
+    }
+    pika_assert(tlocals != NULL);
+    obj_setName(obj, name);
+    VMLocals_setLReg(tlocals, reg_index, obj);
 }
 
 static Arg* VM_instruction_handler_NON(PikaObj* self,
@@ -1730,9 +1793,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     }
 
     /* get method host obj from reg */
-    if (NULL == oMethodHost && _checkLReg(sRunPath)) {
-        uint8_t reg_index = _getLRegIndex(sRunPath);
-        oMethodHost = vm->lreg[reg_index];
+    if (NULL == oMethodHost) {
+        oMethodHost = Locals_getLReg(vm->locals, sRunPath);
     }
 
 #if !PIKA_NANO_ENABLE
@@ -2066,10 +2128,9 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
     }
 
     if (_checkLReg(sArgPath)) {
-        uint8_t index = _getLRegIndex(sArgPath);
         if (argType_isObject(eOutArgType)) {
             PikaObj* obj = arg_getPtr(aOut);
-            VMState_setLReg(vm, index, obj);
+            Locals_setLReg(vm->locals, sArgPath, obj);
             arg_deinit(aOut);
         }
         return NULL;
@@ -2907,8 +2968,7 @@ static Arg* VM_instruction_handler_DEL(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
     if (_checkLReg(data)) {
-        uint8_t reg_index = _getLRegIndex(data);
-        VMState_delLReg(vm, reg_index);
+        Locals_delLReg(vm->locals, data);
         goto __exit;
     }
     if (obj_isArgExist(vm->locals, data)) {

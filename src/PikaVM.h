@@ -83,9 +83,8 @@ struct VMState {
     uint32_t ins_cnt;
     PIKA_BOOL in_super;
     uint8_t super_invoke_deepth;
-    PikaObj* lreg[PIKA_REGIST_SIZE];
-    PIKA_BOOL ireg[PIKA_REGIST_SIZE];
     RunState* run_state;
+    PIKA_BOOL ireg[PIKA_REGIST_SIZE];
 };
 
 typedef struct {
@@ -366,4 +365,9 @@ void _VMEvent_pickupEvent(void);
 void _pikaVM_yield(void);
 int _VM_lock_init(void);
 int _VM_is_first_lock(void);
+
+typedef struct {
+    PikaObj* lreg[PIKA_REGIST_SIZE];
+} VMLocals;
+
 #endif

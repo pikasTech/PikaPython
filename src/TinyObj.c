@@ -26,6 +26,7 @@
  */
 
 #include "PikaObj.h"
+#include "PikaVM.h"
 
 const NativeProperty TinyObjNativeProp = {.super = NULL,
                                           .methodGroup = NULL,
@@ -36,15 +37,6 @@ PikaObj* New_TinyObj(Args* args) {
     self->constructor = New_TinyObj;
 #if PIKA_KERNAL_DEBUG_ENABLE
     self->name = "TinyObj";
-#endif
-    return self;
-}
-
-PikaObj* New_Locals(Args* args) {
-    PikaObj* self = New_PikaObj();
-    self->constructor = New_Locals;
-#if PIKA_KERNAL_DEBUG_ENABLE
-    self->name = "Locals";
 #endif
     return self;
 }

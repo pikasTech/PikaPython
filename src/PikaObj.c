@@ -60,6 +60,7 @@ void _VMEvent_deinit(void);
 void pikaGC_markObj(PikaGC* gc, PikaObj* self);
 void _pikaGC_mark(PikaGC* gc);
 void obj_dump(PikaObj* self);
+void Locals_deinit(PikaObj* self);
 
 static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
                                                   char* input_line,
@@ -129,6 +130,7 @@ char* fast_itoa(char* buf, uint32_t val) {
 
 static int32_t obj_deinit_no_del(PikaObj* self) {
     /* free the list */
+    Locals_deinit(self);
     args_deinit(self->list);
 #if PIKA_KERNAL_DEBUG_ENABLE
     if (NULL != self->aName) {
@@ -1818,7 +1820,7 @@ uint32_t pikaGC_markSweepOnce(PikaGC* gc) {
     PikaObj* obj = g_PikaObjState.gcChain;
     while (NULL != obj) {
         if (!obj_getFlag(obj, OBJ_FLAG_GC_MARKED)) {
-            if (count > dimof(freeList) - 1){
+            if (count > dimof(freeList) - 1) {
                 break;
             }
             freeList[count] = obj;
@@ -1832,6 +1834,8 @@ uint32_t pikaGC_markSweepOnce(PikaGC* gc) {
         for (uint32_t i = 0; i < count; i++) {
             pika_platform_printf("GC Free:");
             obj_dump(freeList[i]);
+        }
+        for (uint32_t i = 0; i < count; i++) {
             obj_GC(freeList[i]);
         }
     }
