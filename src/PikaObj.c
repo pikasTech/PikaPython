@@ -1820,6 +1820,9 @@ uint32_t pikaGC_markSweepOnce(PikaGC* gc) {
     PikaObj* obj = g_PikaObjState.gcChain;
     while (NULL != obj) {
         if (!obj_getFlag(obj, OBJ_FLAG_GC_MARKED)) {
+            if (count > dimof(freeList) - 1){
+                break;
+            }
             freeList[count] = obj;
             count++;
         }
@@ -1829,6 +1832,8 @@ uint32_t pikaGC_markSweepOnce(PikaGC* gc) {
         // pikaGC_markDump();
         // pikaGC_printFreeList();
         for (uint32_t i = 0; i < count; i++) {
+            pika_platform_printf("GC Free:");
+            obj_dump(freeList[i]);
             obj_GC(freeList[i]);
         }
     }
