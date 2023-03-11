@@ -345,7 +345,7 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
 void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
                                     uint8_t* bytes,
                                     PIKA_BOOL is_const);
-Arg* __vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj);
+Arg* _vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj);
 void __vm_List_append(PikaObj* self, Arg* arg);
 void __vm_List___init__(PikaObj* self);
 void __vm_Dict_set(PikaObj* self, Arg* arg, char* key);

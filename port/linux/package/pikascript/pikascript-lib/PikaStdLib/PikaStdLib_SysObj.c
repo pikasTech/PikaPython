@@ -226,7 +226,7 @@ Arg* PikaStdLib_SysObj_range(PikaObj* self, PikaTuple* ax) {
 }
 
 Arg* PikaStdLib_SysObj___getitem__(PikaObj* self, Arg* obj, Arg* key) {
-    return __vm_get(NULL, self, key, obj);
+    return _vm_get(NULL, self, key, obj);
 }
 
 Arg* PikaStdLib_SysObj___setitem__(PikaObj* self,
