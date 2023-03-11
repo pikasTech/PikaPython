@@ -5508,6 +5508,17 @@ TEST(parser, common_issue_1b23f4c1bf) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, str_join) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* pikaAsm =
+        Parser_fileToAsm(buffs, "test/python/builtin/str_join.py");
+    __platform_printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+
 #endif
 
 TEST_END

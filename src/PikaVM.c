@@ -609,13 +609,13 @@ Arg* _vm_get(VMState* vm, PikaObj* self, Arg* aKey, Arg* aObj) {
         aObjNew = arg_newObj(_arg_to_obj(aObj, &bIsTemp));
         eType = arg_getType(aObjNew);
 #else
-        char* str_pyload = arg_getStr(obj);
-        char char_buff[] = " ";
-        if (index < 0) {
-            index = strGetSize(str_pyload) + index;
+        char* sPyload = arg_getStr(aObj);
+        char sCharBuff[] = " ";
+        if (iIndex < 0) {
+            iIndex = strGetSize(sPyload) + iIndex;
         }
-        char_buff[0] = str_pyload[index];
-        return arg_newStr(char_buff);
+        sCharBuff[0] = sPyload[iIndex];
+        return arg_newStr(sCharBuff);
 #endif
     }
     if (ARG_TYPE_BYTES == eType) {
@@ -766,7 +766,7 @@ Arg* _vm_slice(VMState* vm,
     }
     return arg_newNull();
 #else
-    return _vm_get(vm, self, start, obj);
+    return _vm_get(vm, self, aStart, aObj);
 #endif
 }
 

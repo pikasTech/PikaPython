@@ -742,4 +742,16 @@ TEST(compiler, getattr_fn) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, str_join) {
+    char* lines =
+        "@res_join = \"\"\n"
+        "@num = len(@val)\n"
+        "for i in range(@num):\n"
+        "    @res_join += @val[i]\n"
+        "    if i != @num - 1:\n"
+        "        @res_join += @str\n";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END
