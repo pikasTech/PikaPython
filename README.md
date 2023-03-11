@@ -358,10 +358,10 @@ while True:
     print(readBuff)
 
 ```
-![Hnet-image (3)](document/image/132943365-0f7059b3-4f9d-4989-a5ec-2cce72b0cc96.gif)
 
 </details>
 
+![Hnet-image (3)](document/image/132943365-0f7059b3-4f9d-4989-a5ec-2cce72b0cc96.gif)
 
 ## Demo 03 ADC
 

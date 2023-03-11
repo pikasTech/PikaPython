@@ -12,7 +12,7 @@
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=pikaui.*"
-                "--gtest_filter=*.common_issue_1b23f4*"
+                // "--gtest_filter=*.csv*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

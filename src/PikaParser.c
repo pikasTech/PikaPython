@@ -2554,6 +2554,7 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
         sLineOrigin = strsGetFirstToken(&buffs, sPyLines + uLinesOffset, '\n');
 
         sLine = strsCopy(&buffs, sLineOrigin);
+
         /* line connection */
         if (bIsLineConnection) {
             bIsLineConnection = 0;
@@ -2572,30 +2573,6 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
             aLineConnection = arg_strAppend(aLineConnection, sLine);
             goto next_line;
         }
-        Cursor_forEach(c, sLine) {
-            Cursor_iterStart(&c);
-            Cursor_iterEnd(&c);
-        }
-        Cursor_deinit(&c);
-        /* auto connection */
-        if (uLinesIndex < uLinesNum) {
-            if (c.branket_deepth > 0) {
-                aLineConnection = arg_strAppend(aLineConnection, sLine);
-                bIsLineConnection = 1;
-                goto next_line;
-            }
-        }
-
-        /* branket match failed */
-        if (c.branket_deepth != 0) {
-            sSingleASM = NULL;
-            goto parse_after;
-        }
-
-        /* support Tab */
-        sLine = strsReplace(&buffs, sLine, "\t", "    ");
-        /* remove \r */
-        sLine = strsReplace(&buffs, sLine, "\r", "");
 
         /* filter for not end \n */
         if (Parser_isVoidLine(sLine)) {
@@ -2617,6 +2594,33 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
         if (bIsInMultiComment) {
             goto next_line;
         }
+
+        /* support Tab */
+        sLine = strsReplace(&buffs, sLine, "\t", "    ");
+        /* remove \r */
+        sLine = strsReplace(&buffs, sLine, "\r", "");
+
+        /* check auto connection */
+        Cursor_forEach(c, sLine) {
+            Cursor_iterStart(&c);
+            Cursor_iterEnd(&c);
+        }
+        Cursor_deinit(&c);
+        /* auto connection */
+        if (uLinesIndex < uLinesNum) {
+            if (c.branket_deepth > 0) {
+                aLineConnection = arg_strAppend(aLineConnection, sLine);
+                bIsLineConnection = 1;
+                goto next_line;
+            }
+        }
+
+        /* branket match failed */
+        if (c.branket_deepth != 0) {
+            sSingleASM = NULL;
+            goto parse_after;
+        }
+
 
     parse_line:
         /* parse single Line to Asm */
@@ -2704,8 +2708,12 @@ char* Parser_fileToAsm(Args* outBuffs, char* filename) {
     /* add '\n' at the end */
     lines = strsAppend(&buffs, lines, "\n\n");
     char* res = Parser_linesToAsm(&buffs, lines);
-    arg_deinit(file_arg);
+    if (NULL == res) {
+        goto __exit;
+    }
     res = strsCopy(outBuffs, res);
+__exit:
+    arg_deinit(file_arg);
     strsDeinit(&buffs);
     return res;
 }
