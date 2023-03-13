@@ -26,7 +26,7 @@
 	<a href="https://pikadoc.readthedocs.io/en/latest/%E5%95%86%E4%B8%9A%E5%90%88%E4%BD%9C%E6%96%B9%E5%BC%8F.html">Business</a> 
 </p>
 
-[![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/pikapython/dev/bench/)
+[![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/PikaPython/dev/bench/)
 
 # 1. Abstract
 
@@ -358,10 +358,10 @@ while True:
     print(readBuff)
 
 ```
-![Hnet-image (3)](document/image/132943365-0f7059b3-4f9d-4989-a5ec-2cce72b0cc96.gif)
 
 </details>
 
+![Hnet-image (3)](document/image/132943365-0f7059b3-4f9d-4989-a5ec-2cce72b0cc96.gif)
 
 ## Demo 03 ADC
 
@@ -645,7 +645,14 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+|implement shell filter | [GorgonMeducer](https://github.com/GorgonMeducer) |
+|修复socket模块在lwip中fcntl的参数数量错误|[梦程MI](https://gitee.com/dreamcmi) |
+|support GPIO pika_hal for BLMCU|[codercmd](https://gitee.com/codercmd)|
+|Fix Typo on PikaVM.c|[Ikko Eltociear Ashimine](https://gitee.com/eltociear)|
+|Fix type assert on dataArgs.c|[itschina](https://gitee.com/itschina)|
+|add examples/Device/KEY_POLL.PY|[codercmd](https://gitee.com/codercmd)|
 | hmac hashlib base64 aes modules | [梦程MI](https://gitee.com/dreamcmi) |
+|fix pikaCompiler build error on macos|[梦程MI](https://gitee.com/dreamcmi) |
 <details><summary> Contribute Log On 2022 </summary>
 
 | Contribute log | Contributer |
@@ -656,6 +663,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 | Donate：500¥ | [edmund_wz](https://gitee.com/edmund_wz) |
 | Donate：500¥ | [Meco Jianting Man](https://github.com/mysterywolf) |
 | Donate：500¥ | [hardsofttech](https://gitee.com/hardsofttech) |
+|PikaNN module| [Renzhihan](https://github.com/Renzhihan) |
 | re module | [eglwang](https://gitee.com/eglwang) |
 | PikaMath.Quaternion() | [purewind7](https://gitee.com/purewind7) |
 | contrubute to PikaCV | [purewind7](https://gitee.com/purewind7) |

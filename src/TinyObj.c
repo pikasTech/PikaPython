@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -26,6 +26,7 @@
  */
 
 #include "PikaObj.h"
+#include "PikaVM.h"
 
 const NativeProperty TinyObjNativeProp = {.super = NULL,
                                           .methodGroup = NULL,
@@ -33,5 +34,9 @@ const NativeProperty TinyObjNativeProp = {.super = NULL,
 
 PikaObj* New_TinyObj(Args* args) {
     PikaObj* self = New_PikaObj();
+    self->constructor = New_TinyObj;
+#if PIKA_KERNAL_DEBUG_ENABLE
+    self->name = "TinyObj";
+#endif
     return self;
 }

@@ -10,14 +10,14 @@ extern void time_asctime(const _tm* this_tm);
 void time_struct_format(const _tm* this_tm, char* str);
 }
 
-extern PikaMemInfo pikaMemInfo;
+extern PikaMemInfo g_PikaMemInfo;
 /* the log_buff of printf */
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
 #if 0
 TEST(unix_time, time) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
@@ -40,7 +40,7 @@ TEST(unix_time, time) {
 #if PIKA_STD_DEVICE_UNIX_TIME_ENABLE
 TEST(unix_time, unix_time) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     /* run */
     PikaObj* self = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
@@ -144,7 +144,7 @@ TEST(timetest, sleep) {
         "t = PikaStdDevice.Time()\n"
         "t.sleep(0.1)\n";
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);

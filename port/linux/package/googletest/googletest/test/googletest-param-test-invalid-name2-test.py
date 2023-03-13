@@ -337,9 +337,9 @@ stack_init(&bs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-extern PikaMemInfo pikaMemInfo;
+extern PikaMemInfo g_PikaMemInfo;
 TEST(parser, while_true_if_false_both_exit) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* bf = New_strBuff();
     Stack bs;
 stack_init(&bs);
@@ -377,7 +377,7 @@ stack_init(&bs);
 }
 
 TEST(parser, multiLine) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =(char *)
         "while true:\n"
@@ -414,7 +414,7 @@ TEST(parser, multiLine) {
 }
 
 TEST(parser, pikaPi) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     const char lines[] =
@@ -533,7 +533,7 @@ TEST(parser, pikaPi) {
 }
 
 TEST(parser, add) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = 1 + 1\n";
     printf("%s", lines);
@@ -550,7 +550,7 @@ TEST(parser, add) {
 }
 
 TEST(parser, add_3) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = 1 + 2 + 3\n";
     printf("%s", lines);
@@ -569,7 +569,7 @@ TEST(parser, add_3) {
 }
 
 TEST(parser, add_a_pp) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = a + 1\n";
     printf("%s", lines);
@@ -586,7 +586,7 @@ TEST(parser, add_a_pp) {
 }
 
 TEST(parser, while_a_pp) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
     "while a < 10:\n"
@@ -618,7 +618,7 @@ TEST(parser, while_a_pp) {
 }
 
 TEST(parser, add_m2p3) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = 1 * 2 + 3\n";
     printf("%s", lines);
@@ -637,7 +637,7 @@ TEST(parser, add_m2p3) {
 }
 
 TEST(parser, add_m2p3_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = 1 * (2 + 3)\n";
     printf("%s", lines);
@@ -657,7 +657,7 @@ TEST(parser, add_m2p3_) {
 }
 
 TEST(parser, add_m12p3_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = (1 + 2) * 3\n";
     printf("%s", lines);
@@ -677,7 +677,7 @@ TEST(parser, add_m12p3_) {
 }
 
 TEST(parser, method_equ) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"if right.read() == 1:\n";
     printf("%s", lines);
@@ -694,7 +694,7 @@ TEST(parser, method_equ) {
 }
 
 TEST(parser, equ_method) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"if 1 == right.read() :\n";
     printf("%s", lines);
@@ -711,7 +711,7 @@ TEST(parser, equ_method) {
 }
 
 TEST(parser, def_add) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
     "def add(a, b):\n"
@@ -737,7 +737,7 @@ TEST(parser, def_add) {
 }
 
 TEST(parser, def_add_return) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
     "def add(a, b):\n"
@@ -764,7 +764,7 @@ TEST(parser, def_add_return) {
 }
 
 TEST(parser, def_while_return) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
     "def add(a, b):\n"
@@ -797,7 +797,7 @@ TEST(parser, def_while_return) {
 }
 
 TEST(parser, def_while_return_void) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
     "def add(a, b):\n"
@@ -827,7 +827,7 @@ TEST(parser, def_while_return_void) {
 }
 
 TEST(parser, signed_num) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = -1\n";
     printf("%s", lines);
@@ -843,7 +843,7 @@ TEST(parser, signed_num) {
 }
 
 TEST(parser, comp_signed_num) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"if a > -1:\n";
     printf("%s", lines);
@@ -862,7 +862,7 @@ TEST(parser, comp_signed_num) {
 
 TEST(lexser, symbol_add) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -881,7 +881,7 @@ TEST(lexser, symbol_add) {
 
 TEST(lexser, symbol_1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -899,7 +899,7 @@ TEST(lexser, symbol_1) {
 
 TEST(lexser, operator_not) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -917,7 +917,7 @@ TEST(lexser, operator_not) {
 
 TEST(lexser, symbol_Nag) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -935,7 +935,7 @@ TEST(lexser, symbol_Nag) {
 
 TEST(lexser, operator_all) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -967,7 +967,7 @@ TEST(lexser, operator_all) {
 
 TEST(lexser, symbol_2) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -987,7 +987,7 @@ TEST(lexser, symbol_2) {
 
 TEST(lexser, symbol_and) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -1007,7 +1007,7 @@ TEST(lexser, symbol_and) {
 
 TEST(lexser, sting) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -1025,7 +1025,7 @@ TEST(lexser, sting) {
 
 TEST(lexser, num_1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -1043,7 +1043,7 @@ TEST(lexser, num_1) {
 
 TEST(lexser, jjcc) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -1074,7 +1074,7 @@ TEST(parser, pop_by_str) {
 }
 
 TEST(parser, mm) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = a ** -1\n";
     printf("%s", lines);
@@ -1092,7 +1092,7 @@ TEST(parser, mm) {
 }
 
 TEST(parser, self_inc) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)
     "a += -1\n"
@@ -1156,7 +1156,7 @@ TEST(parser, self_inc) {
 }
 
 TEST(parser, n_n1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"a = ~-1\n";
     printf("%s", lines);
@@ -1173,7 +1173,7 @@ TEST(parser, n_n1) {
 }
 
 TEST(parser, or_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"( a>1) or (b<= 3)\n";
     printf("%s", lines);

@@ -68,7 +68,7 @@ TEST(event, remove_regist) {
     EXPECT_EQ(testobj->refcnt, 1);
     /* deinit */
     obj_deinit(pikaMain);
-    obj_deinit(testobj);
+    obj_GC(testobj);
     pks_eventListener_deinit(&g_pika_device_event_listener);
     EXPECT_EQ(pikaMemNow(), 0);
 }

@@ -6,7 +6,7 @@ extern "C" {
 }
 
 extern "C" {
-    void test_purec(void);
+void test_purec(void);
 }
 
 int main(int argc, char** argv) {
@@ -19,11 +19,16 @@ int main(int argc, char** argv) {
 #endif
     mem_pool_deinit();
 #if PIKA_ARG_CACHE_ENABLE
-    extern PikaMemInfo pikaMemInfo;
+    extern PikaMemInfo g_PikaMemInfo;
+#if PIKA_GC_MARK_SWEEP_ENABLE
+    extern PikaObjState g_PikaObjState;
+    printf("[   GC]: object num max: %d, last GC: %d\r\n",
+           g_PikaObjState.objCntMax, g_PikaObjState.objCntLastGC);
+#endif
     printf("[ Info]: alloc times: %d, cached times: %d (%0.2f%%)\r\n",
-           pikaMemInfo.alloc_times, pikaMemInfo.alloc_times_cache,
-           ((float)pikaMemInfo.alloc_times_cache /
-            (float)pikaMemInfo.alloc_times) *
+           g_PikaMemInfo.alloc_times, g_PikaMemInfo.alloc_times_cache,
+           ((float)g_PikaMemInfo.alloc_times_cache /
+            (float)g_PikaMemInfo.alloc_times) *
                100.0);
 #endif
     return res;

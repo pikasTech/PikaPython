@@ -44,7 +44,8 @@ class Widget:
 
     def _set_perent(self, parent):
         # use weakref to avoid circular reference
-        self.parent = weakref.ref(parent)
+        # self.parent = weakref.ref(parent)
+        self.parent = parent
 
     def update(self):
         if self.needbuild:
@@ -232,7 +233,7 @@ except:
 app = _App()
 
 
-def App():
+def App()-> _App:
     return app
 
 

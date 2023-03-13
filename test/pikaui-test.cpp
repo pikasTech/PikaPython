@@ -1,10 +1,11 @@
 #include "test_common.h"
 TEST_START
-#if !PIKA_NANO_ENABLE
+
+#if PIKA_GC_MARK_SWEEP_ENABLE
 
 TEST(pikaui, page) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -15,7 +16,6 @@ TEST(pikaui, page) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-
 
 #endif
 TEST_END

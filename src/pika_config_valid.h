@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -76,6 +76,15 @@
         #ifdef PIKA_TYPE_FULL_FEATURE_ENABLE
             #define PIKA_TYPE_FULL_FEATURE_ENABLE 0
         #endif
+
+        #ifndef PIKA_EVENT_THREAD_ENABLE
+            #define PIKA_EVENT_THREAD_ENABLE 0
+        #endif
+
+        #ifndef PIKA_GC_MARK_SWEEP_ENABLE
+            #define PIKA_GC_MARK_SWEEP_ENABLE 0
+        #endif
+
     #endif
 
     /* default optimize */
@@ -304,6 +313,14 @@
     #ifndef PIKA_INSTRUCT_YIELD_PERIOD
         #define PIKA_INSTRUCT_YIELD_PERIOD 1
     #endif
+    
+    #ifndef PIKA_INSTRUCT_EXTENSION_ENABLE
+        #define PIKA_INSTRUCT_EXTENSION_ENABLE 1
+    #endif
+    
+    #ifndef PIKA_INSTRUCT_SIGNATURE_DICT_COUNT
+        #define PIKA_INSTRUCT_SIGNATURE_DICT_COUNT 1
+    #endif
 
     #ifndef PIKA_EXEC_ENABLE
         #define PIKA_EXEC_ENABLE 1
@@ -416,6 +433,22 @@
 
     #ifndef PIKA_TYPE_FULL_FEATURE_ENABLE
         #define PIKA_TYPE_FULL_FEATURE_ENABLE 1
+    #endif
+
+    #ifndef PIKA_EVENT_THREAD_ENABLE
+        #define PIKA_EVENT_THREAD_ENABLE 1
+    #endif
+
+    #ifndef PIKA_GC_MARK_SWEEP_ENABLE
+        #define PIKA_GC_MARK_SWEEP_ENABLE 0
+    #endif
+
+    #ifndef PIKA_GC_MARK_SWEEP_THRESHOLD
+        #define PIKA_GC_MARK_SWEEP_THRESHOLD 20
+    #endif
+
+    #ifndef PIKA_KERNAL_DEBUG_ENABLE
+        #define PIKA_KERNAL_DEBUG_ENABLE 0
     #endif
 
     /* configuration validation */

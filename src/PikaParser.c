@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -1812,7 +1812,7 @@ static int32_t Parser_getPyLineBlockDeepth(char* line) {
     return -1;
 }
 
-char* Parser_removeAnnotation(char* line) {
+char* Parser_removeComment(char* line) {
     uint8_t is_annotation_exit = 0;
     uint8_t is_in_single_quotes = 0;
     uint8_t is_in_pika_float_quotes_deepth = 0;
@@ -2015,7 +2015,7 @@ AST* AST_parseLine_withBlockStack_withBlockDeepth(char* line,
         char* arg_in = strsPopToken(list_buffs, &line_buff, ' ');
         AST_setNodeAttr(ast, "arg_in", arg_in);
         strsPopToken(list_buffs, &line_buff, ' ');
-        char* list_in = strsPopToken(list_buffs, &line_buff, ':');
+        char* list_in = Cursor_splitCollect(list_buffs, line_buff, ":", 0);
         list_in = strsAppend(list_buffs, "iter(", list_in);
         list_in = strsAppend(list_buffs, list_in, ")");
         list_in = strsCopy(&buffs, list_in);
@@ -2419,7 +2419,7 @@ static char* Suger_import(Args* outbuffs, char* line) {
 }
 
 static char* Parser_linePreProcess(Args* outbuffs, char* line) {
-    line = Parser_removeAnnotation(line);
+    line = Parser_removeComment(line);
     Arg* line_buff = NULL;
     int line_num = 0;
     /* check syntex error */
@@ -2497,172 +2497,181 @@ static int Parser_isVoidLine(char* line) {
     return 1;
 }
 
-static uint8_t Parser_checkIsMultiComment(char* line) {
-    for (uint32_t i = 0; i < strGetSize(line); i++) {
+static uint8_t Parser_checkIsMultiComment(char* line, uint8_t* pbIsOneLine) {
+    uint8_t bIsMultiComment = 0;
+    uint32_t i = 0;
+    uint32_t uLineSize = strGetSize(line);
+    while (i + 2 < uLineSize) {
         /* not match ' or " */
         if ((line[i] != '\'') && (line[i] != '"')) {
+            i++;
             continue;
         }
         /* not match ''' or """ */
         if (!((line[i + 1] == line[i]) && (line[i + 2] == line[i]))) {
+            i++;
             continue;
         }
-        // /* check char befor the ''' or """ */
-        // if (!((0 == i) || (line[i - 1] == ' '))) {
-        //     continue;
-        // }
-        // /* check char after the ''' or """ */
-        // if (!((line[i + 3] == ' ') || (line[i + 3] == 0))) {
-        //     continue;
-        // }
-        /* mached */
-        return 1;
+        if (bIsMultiComment) {
+            *pbIsOneLine = 1;
+        }
+        bIsMultiComment = 1;
+        i += 3;
     }
-    /* not mached */
-    return 0;
+    return bIsMultiComment;
 }
 
 static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
                                        ByteCodeFrame* bytecode_frame,
-                                       char* py_lines) {
-    Stack block_stack;
-    stack_init(&block_stack);
-    Arg* asm_buff = arg_newStr("");
-    uint32_t lines_offset = 0;
-    uint16_t lines_num = strCountSign(py_lines, '\n') + 1;
-    uint16_t lines_index = 0;
-    uint8_t is_in_multi_comment = 0;
-    Arg* line_connection_arg = arg_newStr("");
-    uint8_t is_line_connection = 0;
-    char* out_ASM = NULL;
-    char* single_ASM = NULL;
-    uint32_t line_size = 0;
+                                       char* sPyLines) {
+    Stack tBlockStack;
+    stack_init(&tBlockStack);
+    Arg* aAsm = arg_newStr("");
+    uint32_t uLinesOffset = 0;
+    uint16_t uLinesNum = strCountSign(sPyLines, '\n') + 1;
+    uint16_t uLinesIndex = 0;
+    uint8_t bIsInMultiComment = 0;
+    uint8_t bIsOneLineMultiComment = 0;
+    Arg* aLineConnection = arg_newStr("");
+    uint8_t bIsLineConnection = 0;
+    char* sOutASM = NULL;
+    char* sSingleASM = NULL;
+    uint32_t uLineSize = 0;
     /* parse each line */
     while (1) {
-        lines_index++;
+        uLinesIndex++;
         Args buffs = {0};
-        char* line_origin = NULL;
-        char* line = NULL;
+        char* sLineOrigin = NULL;
+        char* sLine = NULL;
 
         /* add void line to the end */
-        if (lines_index >= lines_num + 1) {
-            line = "";
+        if (uLinesIndex >= uLinesNum + 1) {
+            sLine = "";
             goto parse_line;
         }
 
         /* get single line by pop multiline */
-        line_origin = strsGetFirstToken(&buffs, py_lines + lines_offset, '\n');
+        sLineOrigin = strsGetFirstToken(&buffs, sPyLines + uLinesOffset, '\n');
 
-        line = strsCopy(&buffs, line_origin);
+        sLine = strsCopy(&buffs, sLineOrigin);
+
         /* line connection */
-        if (is_line_connection) {
-            is_line_connection = 0;
-            line_connection_arg = arg_strAppend(line_connection_arg, line);
-            line = strsCopy(&buffs, arg_getStr(line_connection_arg));
+        if (bIsLineConnection) {
+            bIsLineConnection = 0;
+            aLineConnection = arg_strAppend(aLineConnection, sLine);
+            sLine = strsCopy(&buffs, arg_getStr(aLineConnection));
             /* reflash the line_connection_arg */
-            arg_deinit(line_connection_arg);
-            line_connection_arg = arg_newStr("");
+            arg_deinit(aLineConnection);
+            aLineConnection = arg_newStr("");
         }
 
         /* check connection */
-        if ('\\' == line[strGetSize(line) - 1]) {
+        if ('\\' == sLine[strGetSize(sLine) - 1]) {
             /* remove the '\\' */
-            line[strGetSize(line) - 1] = '\0';
-            is_line_connection = 1;
-            line_connection_arg = arg_strAppend(line_connection_arg, line);
+            sLine[strGetSize(sLine) - 1] = '\0';
+            bIsLineConnection = 1;
+            aLineConnection = arg_strAppend(aLineConnection, sLine);
             goto next_line;
         }
-        Cursor_forEach(c, line) {
+
+        /* filter for not end \n */
+        if (Parser_isVoidLine(sLine)) {
+            goto next_line;
+        }
+
+        /* filter for multiline comment ''' or """ */
+        if (Parser_checkIsMultiComment(sLine, &bIsOneLineMultiComment)) {
+            bIsInMultiComment = ~bIsInMultiComment;
+            /* skip one line multiline comment */
+            if (bIsOneLineMultiComment) {
+                bIsInMultiComment = 0;
+                bIsOneLineMultiComment = 0;
+            }
+            goto next_line;
+        }
+
+        /* skip multiline comment */
+        if (bIsInMultiComment) {
+            goto next_line;
+        }
+
+        /* support Tab */
+        sLine = strsReplace(&buffs, sLine, "\t", "    ");
+        /* remove \r */
+        sLine = strsReplace(&buffs, sLine, "\r", "");
+
+        /* check auto connection */
+        Cursor_forEach(c, sLine) {
             Cursor_iterStart(&c);
             Cursor_iterEnd(&c);
         }
         Cursor_deinit(&c);
         /* auto connection */
-        if (lines_index < lines_num) {
+        if (uLinesIndex < uLinesNum) {
             if (c.branket_deepth > 0) {
-                line_connection_arg = arg_strAppend(line_connection_arg, line);
-                is_line_connection = 1;
+                aLineConnection = arg_strAppend(aLineConnection, sLine);
+                bIsLineConnection = 1;
                 goto next_line;
             }
         }
 
         /* branket match failed */
         if (c.branket_deepth != 0) {
-            single_ASM = NULL;
+            sSingleASM = NULL;
             goto parse_after;
         }
 
-        /* support Tab */
-        line = strsReplace(&buffs, line, "\t", "    ");
-        /* remove \r */
-        line = strsReplace(&buffs, line, "\r", "");
-
-        /* filter for not end \n */
-        if (Parser_isVoidLine(line)) {
-            goto next_line;
-        }
-
-        /* filter for multiline comment ''' or """ */
-        if (Parser_checkIsMultiComment(line)) {
-            is_in_multi_comment = ~is_in_multi_comment;
-            goto next_line;
-        }
-
-        /* skipe multiline comment */
-        if (is_in_multi_comment) {
-            goto next_line;
-        }
 
     parse_line:
         /* parse single Line to Asm */
-        single_ASM = Parser_LineToAsm(&buffs, line, &block_stack);
+        sSingleASM = Parser_LineToAsm(&buffs, sLine, &tBlockStack);
     parse_after:
-        if (NULL == single_ASM) {
-            out_ASM = NULL;
+        if (NULL == sSingleASM) {
+            sOutASM = NULL;
             pika_platform_printf(
                 "----------[%d]----------\r\n%s\r\n-------------------------"
                 "\r\n",
-                lines_index, line);
+                uLinesIndex, sLine);
             strsDeinit(&buffs);
             goto exit;
         }
 
         if (NULL == bytecode_frame) {
             /* store ASM */
-            asm_buff = arg_strAppend(asm_buff, single_ASM);
+            aAsm = arg_strAppend(aAsm, sSingleASM);
         } else if (NULL == outBuffs) {
             /* store ByteCode */
-            byteCodeFrame_appendFromAsm(bytecode_frame, single_ASM);
+            byteCodeFrame_appendFromAsm(bytecode_frame, sSingleASM);
         }
 
     next_line:
-        if (lines_index < lines_num) {
-            line_size = strGetSize(line_origin);
-            lines_offset = lines_offset + line_size + 1;
+        if (uLinesIndex < uLinesNum) {
+            uLineSize = strGetSize(sLineOrigin);
+            uLinesOffset = uLinesOffset + uLineSize + 1;
         }
         strsDeinit(&buffs);
 
         /* exit when finished */
-        if (lines_index >= lines_num + 1) {
+        if (uLinesIndex >= uLinesNum + 1) {
             break;
         }
     }
     if (NULL != outBuffs) {
         /* load stored ASM */
-        out_ASM = strsCopy(outBuffs, arg_getStr(asm_buff));
+        sOutASM = strsCopy(outBuffs, arg_getStr(aAsm));
     } else {
-        out_ASM = (char*)1;
+        sOutASM = (char*)1;
     }
     goto exit;
 exit:
-    if (NULL != asm_buff) {
-        arg_deinit(asm_buff);
+    if (NULL != aAsm) {
+        arg_deinit(aAsm);
     }
-    if (NULL != line_connection_arg) {
-        arg_deinit(line_connection_arg);
+    if (NULL != aLineConnection) {
+        arg_deinit(aLineConnection);
     }
-    stack_deinit(&block_stack);
-    return out_ASM;
+    stack_deinit(&tBlockStack);
+    return sOutASM;
 };
 
 PIKA_RES Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines) {
@@ -2699,8 +2708,12 @@ char* Parser_fileToAsm(Args* outBuffs, char* filename) {
     /* add '\n' at the end */
     lines = strsAppend(&buffs, lines, "\n\n");
     char* res = Parser_linesToAsm(&buffs, lines);
-    arg_deinit(file_arg);
+    if (NULL == res) {
+        goto __exit;
+    }
     res = strsCopy(outBuffs, res);
+__exit:
+    arg_deinit(file_arg);
     strsDeinit(&buffs);
     return res;
 }

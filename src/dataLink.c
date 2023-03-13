@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -30,7 +30,7 @@
 #include "dataLinkNode.h"
 #include "dataMemory.h"
 
-void __link_deinit_pyload(Link* self) {
+void _link_deinit_pyload(Link* self) {
     LinkNode* nowNode = self->firstNode;
     while (NULL != nowNode) {
         LinkNode* nodeNext = (LinkNode*)arg_getNext((Arg*)nowNode);
@@ -42,12 +42,12 @@ void __link_deinit_pyload(Link* self) {
 
 void link_deinit(Link* self) {
     pika_assert(self != NULL);
-    __link_deinit_pyload(self);
+    _link_deinit_pyload(self);
     pikaFree(self, sizeof(Link));
 }
 
 void link_deinit_stack(Link* self) {
-    __link_deinit_pyload(self);
+    _link_deinit_pyload(self);
 }
 
 void link_addNode(Link* self, void* content) {
@@ -59,7 +59,7 @@ void link_addNode(Link* self, void* content) {
     arg_setNext((Arg*)content, (Arg*)secondNode);
 }
 
-static void __link_removeNode(Link* self,
+static void _link_removeNode(Link* self,
                               void* content,
                               uint8_t is_deinit_node) {
     LinkNode* nodeToDelete = NULL;
@@ -99,11 +99,11 @@ exit:
 }
 
 void link_removeNode(Link* self, void* content) {
-    __link_removeNode(self, content, 1);
+    _link_removeNode(self, content, 1);
 }
 
 void link_removeNode_notDeinitNode(Link* self, void* content) {
-    __link_removeNode(self, content, 0);
+    _link_removeNode(self, content, 0);
 }
 
 int32_t link_getSize(Link* self) {

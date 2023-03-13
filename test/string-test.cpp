@@ -4,7 +4,7 @@ TEST_START
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, cformat) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain, "s = cformat('test:%d:%f', 33, 1.5)\n");
@@ -21,7 +21,7 @@ TEST(string, cformat) {
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, cformat1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain, "s = 'res:%d' % 23\n");
@@ -38,7 +38,7 @@ TEST(string, cformat1) {
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, format1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain, "print('tes:%d,%f'%(123,1.5))\n");
@@ -54,7 +54,7 @@ TEST(string, format1) {
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, format2) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain, "print('tes:%d,%f'%(123,1.5), 23)\n");
@@ -70,7 +70,7 @@ TEST(string, format2) {
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, print_file) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -90,7 +90,7 @@ TEST(string, print_file) {
 
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, format_parse1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "print('tes:%0.2f'% mem.getMax())";
     printf("%s\n", lines);
@@ -110,7 +110,7 @@ TEST(string, format_parse1) {
 
 TEST(string, split) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -132,7 +132,7 @@ TEST(string, split) {
 
 TEST(string, split_str) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -152,7 +152,7 @@ TEST(string, split_str) {
 
 TEST(string, strip) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -170,7 +170,7 @@ TEST(string, strip) {
 
 TEST(string, replace) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -189,7 +189,7 @@ TEST(string, replace) {
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(string, replace_chain) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
@@ -212,7 +212,7 @@ TEST(string, replace_chain) {
 #if !PIKA_NANO_ENABLE
 TEST(string, split_chain) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -231,7 +231,7 @@ TEST(string, split_chain) {
 
 TEST(string, str_chain) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -250,7 +250,7 @@ TEST(string, str_chain) {
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, str_issue1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -269,7 +269,7 @@ TEST(string, str_issue1) {
 #if PIKA_STRING_UTF8_ENABLE
 TEST(string, utf8_1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");

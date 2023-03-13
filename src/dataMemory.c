@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -29,7 +29,7 @@
 #include "dataMemory.h"
 #include "PikaPlatform.h"
 
-volatile PikaMemInfo pikaMemInfo = {0};
+volatile PikaMemInfo g_PikaMemInfo = {0};
 
 void* pikaMalloc(uint32_t size) {
     /* pika memory lock */
@@ -43,15 +43,16 @@ void* pikaMalloc(uint32_t size) {
     size = mem_align(size);
 #endif
 
-    pikaMemInfo.heapUsed += size;
-    if (pikaMemInfo.heapUsedMax < pikaMemInfo.heapUsed) {
-        pikaMemInfo.heapUsedMax = pikaMemInfo.heapUsed;
+    g_PikaMemInfo.heapUsed += size;
+    if (g_PikaMemInfo.heapUsedMax < g_PikaMemInfo.heapUsed) {
+        g_PikaMemInfo.heapUsedMax = g_PikaMemInfo.heapUsed;
     }
     pika_platform_disable_irq_handle();
     void* mem = pika_user_malloc(size);
     pika_platform_enable_irq_handle();
     if (NULL == mem) {
-        pika_platform_printf("Error: No heap space! Please reset the device.\r\n");
+        pika_platform_printf(
+            "Error: No heap space! Please reset the device.\r\n");
         while (1) {
         }
     }
@@ -72,20 +73,20 @@ void pikaFree(void* mem, uint32_t size) {
     pika_platform_disable_irq_handle();
     pika_user_free(mem, size);
     pika_platform_enable_irq_handle();
-    pikaMemInfo.heapUsed -= size;
+    g_PikaMemInfo.heapUsed -= size;
 }
 
 uint32_t pikaMemNow(void) {
-    return pikaMemInfo.heapUsed;
+    return g_PikaMemInfo.heapUsed;
     // return 0;
 }
 
 uint32_t pikaMemMax(void) {
-    return pikaMemInfo.heapUsedMax;
+    return g_PikaMemInfo.heapUsedMax;
 }
 
 void pikaMemMaxReset(void) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
 }
 
 uint32_t pool_getBlockIndex_byMemSize(Pool* pool, uint32_t size) {
@@ -137,7 +138,7 @@ void pool_printBlocks(Pool* pool, uint32_t size_min, uint32_t size_max) {
             break;
         }
         pika_platform_printf("0x%x\t: 0x%d", i * pool->aline,
-                          (i + 15) * pool->aline);
+                             (i + 15) * pool->aline);
         for (uint32_t j = i; j < i + 16; j += 4) {
             if (is_end) {
                 break;
@@ -307,9 +308,10 @@ void mem_pool_init(void) {
 
 void _mem_cache_deinit(void) {
 #if PIKA_ARG_CACHE_ENABLE
-    while (pikaMemInfo.cache_pool_top) {
-        pika_user_free(pikaMemInfo.cache_pool[pikaMemInfo.cache_pool_top - 1], 0);
-        pikaMemInfo.cache_pool_top--;
+    while (g_PikaMemInfo.cache_pool_top) {
+        pika_user_free(
+            g_PikaMemInfo.cache_pool[g_PikaMemInfo.cache_pool_top - 1], 0);
+        g_PikaMemInfo.cache_pool_top--;
     }
 #endif
 }

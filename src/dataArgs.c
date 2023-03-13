@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -78,9 +78,10 @@ PIKA_RES args_setPtr(Args* self, char* name, void* argPointer) {
 
 PIKA_RES args_setRef(Args* self, char* name, void* argPointer) {
     PIKA_RES errCode = PIKA_RES_OK;
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setRef(argNew, name, argPointer);
-    args_setArg(self, argNew);
+    Arg* aNewRef = New_arg(NULL);
+    aNewRef = arg_setRef(aNewRef, name, argPointer);
+    // pikaGC_enable(arg_getPtr(aNewRef));
+    args_setArg(self, aNewRef);
     return errCode;
 }
 
@@ -311,7 +312,7 @@ int32_t args_isArgExist(Args* self, char* name) {
     return 0;
 }
 
-PIKA_RES __updateArg(Args* self, Arg* argNew) {
+PIKA_RES _updateArg(Args* self, Arg* argNew) {
     pika_assert(NULL != self);
     pika_assert(NULL != argNew);
     LinkNode* nodeToUpdate = NULL;
@@ -361,7 +362,7 @@ exit:
 PIKA_RES args_setArg(Args* self, Arg* arg) {
     pika_assert(NULL != self);
     pika_assert(NULL != arg);
-    if (PIKA_RES_OK == __updateArg(self, arg)) {
+    if (PIKA_RES_OK == _updateArg(self, arg)) {
         return PIKA_RES_OK;
     }
     args_pushArg(self, arg);
@@ -440,8 +441,8 @@ Arg* args_getArgByIndex(Args* self, int index) {
 }
 
 PIKA_RES args_foreach(Args* self,
-                      int32_t (*eachHandle)(Arg* argEach, Args* context),
-                      Args* context) {
+                      int32_t (*eachHandle)(Arg* argEach, void* context),
+                      void* context) {
     if (NULL == self->firstNode) {
         return PIKA_RES_OK;
     }

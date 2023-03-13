@@ -24,7 +24,7 @@
 	<a href="https://pikadoc.readthedocs.io/zh/latest/%E5%95%86%E4%B8%9A%E5%90%88%E4%BD%9C%E6%96%B9%E5%BC%8F.html">商业合作</a> 
 </p>
 
-[![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/pikapython/dev/bench/)
+[![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/PikaPython/dev/bench/)
 
 
 # 1.简介
@@ -400,9 +400,9 @@ while True:
 
 ```
 
-![mmexport1631351523907](document/image/132944185-0a01b1ba-8cf7-4f9f-9d73-fe9cbcd52f0b.png)
-
 </details>
+
+![mmexport1631351523907](document/image/132944185-0a01b1ba-8cf7-4f9f-9d73-fe9cbcd52f0b.png)
 
 ## Demo 04 PWM output
 
@@ -660,7 +660,14 @@ while True:
 
 | 贡献记录 | 贡献者 |
 | --- | --- |
+|implement shell filter | [GorgonMeducer](https://github.com/GorgonMeducer) |
+|修复socket模块在lwip中fcntl的参数数量错误|[梦程MI](https://gitee.com/dreamcmi) |
+|support GPIO pika_hal for BLMCU|[codercmd](https://gitee.com/codercmd)|
+|Fix Typo on PikaVM.c|[Ikko Eltociear Ashimine](https://gitee.com/eltociear)|
+|Fix type assert on dataArgs.c|[itschina](https://gitee.com/itschina)|
+|add examples/Device/KEY_POLL.PY|[codercmd](https://gitee.com/codercmd)|
 | hmac hashlib base64 aes modules | [梦程MI](https://gitee.com/dreamcmi) |
+|fix pikaCompiler build error on macos|[梦程MI](https://gitee.com/dreamcmi) |
 
 <details><summary>贡献记录 (2022 年)</summary>
 
@@ -672,6 +679,7 @@ while True:
 | Donate：500¥ | [edmund_wz](https://gitee.com/edmund_wz) |
 | Donate：500¥ | [Meco Jianting Man](https://github.com/mysterywolf) |
 | Donate：500¥ | [hardsofttech](https://gitee.com/hardsofttech) |
+|PikaNN module| [Renzhihan](https://github.com/Renzhihan) |
 | re module | [eglwang](https://gitee.com/eglwang) |
 | PikaMath.Quaternion() | [purewind7](https://gitee.com/purewind7) |
 | contrubute to PikaCV | [purewind7](https://gitee.com/purewind7) |

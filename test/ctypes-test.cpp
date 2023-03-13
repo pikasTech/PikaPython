@@ -4,7 +4,7 @@ TEST_START
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(ctypes, test1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/ctypes.py");
@@ -20,7 +20,7 @@ TEST(ctypes, test1) {
 #if !PIKA_NANO_ENABLE
 TEST(ctypes, test2) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,

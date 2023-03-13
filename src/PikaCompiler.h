@@ -19,6 +19,7 @@ int LibObj_staticLinkFile(LibObj* self, char* input_file_name);
 void LibObj_listModules(LibObj* self);
 int LibObj_saveLibraryFile(LibObj* self, char* output_file_name);
 int LibObj_loadLibraryFile(LibObj* self, char* input_file_name);
+PIKA_RES LibObj_unpackFileToPath(char* pack_name, char* out_path);
 int Lib_loadLibraryFileToArray(char* origin_file_name, char* pikascript_root);
 PikaMaker* New_PikaMaker(void);
 void pikaMaker_setPWD(PikaMaker* self, char* pwd);
@@ -55,6 +56,7 @@ typedef struct {
 } pikafs_FILE;
 
 pikafs_FILE* pikafs_fopen(char* file_name, char* mode);
+pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name);
 int pikafs_fread(void* buf, size_t size, size_t count, pikafs_FILE* file);
 int pikafs_fwrite(void* buf, size_t size, size_t count, pikafs_FILE* file);
 int pikafs_fclose(pikafs_FILE* file);

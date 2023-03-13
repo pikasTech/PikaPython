@@ -141,6 +141,8 @@ func checkout_requestments(path string, repo *git.Repository, requerments []Requ
 			dirPath = "pikascript-core"
 		}
 		// fmt.Printf("    copy" + " " + packagePath + " " + dirPath + "\n")
+		// remove old dir path
+		CheckIfError(os.RemoveAll(dirPath))
 		CheckIfError(cp.Copy(packagePath, dirPath))
 
 		if requerment.Name == "pikascript-core" {
