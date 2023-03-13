@@ -143,7 +143,7 @@ PikaObj* os_listdir_platform(char* path) {
     }
 
     return list;
-#elif defined(__linux)
+#elif defined(__linux) || PIKA_LINUX_COMPATIBLE
     struct dirent* dp;
     DIR* dir = opendir(path);
 
@@ -170,10 +170,7 @@ int os_mkdir_platform(int mode, char* path) {
     char dirpath[256] = {0};
     int ret = 0;
     memcpy(dirpath + strlen(dirpath), path, strlen(path));
-
     ret = mkdir(dirpath, mode);
-    if (ret != 0)
-        printf("create file error\n");
     return ret;
 }
 

@@ -9,7 +9,8 @@
 #ifdef _WIN32
 #include <io.h>
 #include <windows.h>
-#elif defined(__linux) || defined(ESP32)
+#elif defined(__linux) || PIKA_LINUX_COMPATIBLE
+#include "unistd.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
