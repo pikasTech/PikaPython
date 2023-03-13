@@ -5526,6 +5526,45 @@ TEST(parser, csv) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, default_issue) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "def __init__(self, csvfile, delimiter=\",\", quotechar='\"') -> "
+        "None:\n"
+        "    pass";
+
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 DEF __init__(self,csvfile,delimiter=,quotechar=)\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 EST delimiter\n"
+                 "0 JNZ 2\n"
+                 "B1\n"
+                 "0 STR ,\n"
+                 "0 OUT delimiter\n"
+                 "B1\n"
+                 "0 EST quotechar\n"
+                 "0 JNZ 2\n"
+                 "B1\n"
+                 "0 STR \"\n"
+                 "0 OUT quotechar\n"
+                 "B1\n"
+                 "0 EST \n"
+                 "0 JNZ 2\n"
+                 "B1\n"
+                 "B1\n"
+                 "B1\n"
+                 "0 RET \n"
+                 "B0\n");
+    printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
