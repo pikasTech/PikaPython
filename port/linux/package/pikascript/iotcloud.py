@@ -2,7 +2,7 @@ import hmac
 import base64
 import random
 import mqtt
-from PikaStdDevice import Time
+import time
 
 ONENET_API = 0
 ONENET_DEVICE = 1
@@ -19,7 +19,7 @@ class IOT:
         return a
 
     def getTimeStamp(self, t):
-        return str(int(Time.time()*1000) + t)  # todo 时间戳64位整形实现
+        return str(int(time.time()) + t)
 
     def urlEncode(self, s):
         rs = ""
