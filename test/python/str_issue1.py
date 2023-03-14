@@ -1,5 +1,5 @@
 def is_include(included_data, data):     #判断一个字符串是否存在于另外一个字符串中
-    if str(type(data)) == "<class 'str'>" and str(type(included_data)) == "<class 'str'>":
+    if type(data) == str and type(included_data) == str:
         print('type assert passed')
         data_length = len(data)
         included_data_length = len(included_data)

@@ -6,7 +6,9 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/package/pikascript/pikascript-api/**",
                 "${workspaceFolder}/package/pikascript/pikascript-core/**",
+                "${workspaceFolder}/package/pikascript/pikascript-lib/PikaStdDevice",
                 "${workspaceFolder}/config/**",
+                "${workspaceFolder}/test/**",
                 "/usr/include/lua5.3"
             ],
             "defines": [],

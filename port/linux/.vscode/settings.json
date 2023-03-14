@@ -1,5 +1,8 @@
 {
     "C_Cpp.clang_format_style": "{ BasedOnStyle: Chromium, IndentWidth: 4}",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "editor.defaultFormatter": "xaver.clang-format",
+    "C_Cpp.intelliSenseEngine": "disabled",
     "files.associations": {
         "*.rs": "rust",
         "pikastdlib_sysobj.h": "c",
@@ -94,8 +97,32 @@
         "pika_hal_def.h": "c",
         "pika_hal_table.h": "c",
         "pika_hal_table_rule.h": "c",
-        "pikaobj.h": "c"
+        "pikaobj.h": "c",
+        "pikastddevice_gpio.h": "c",
+        "pikastddevice_adc.h": "c",
+        "pikastddevice_can.h": "c",
+        "pikastddevice_dac.h": "c",
+        "pikastddevice_iic.h": "c",
+        "pikastddevice_pwm.h": "c",
+        "pikastddevice_spi.h": "c",
+        "pikastddevice_uart.h": "c",
+        "datamemory.h": "c",
+        "pika_adapter_old_api.h": "c",
+        "pikastddevice_common.h": "c",
+        "_network_wlan.h": "c",
+        "pikastddata_tuple.h": "c",
+        "setjmp.h": "c",
+        "pthread.h": "c",
+        "deque": "c",
+        "list": "c",
+        "vector": "c",
+        "datastrs.h": "c",
+        "__instruction_table.h": "c",
+        "assert.h": "c"
     },
     "python.formatting.provider": "autopep8",
-    "C_Cpp.errorSquiggles": "Disabled"
+    "clangd.arguments": [
+        "-compile-commands-dir=build",
+        "-header-insertion=never"
+    ]
 }

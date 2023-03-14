@@ -3,30 +3,13 @@
 #include "PikaCompiler.h"
 #include "PikaStdData_List.h"
 
-typedef struct {
-    uint8_t* addr;
-    size_t size;
-    size_t pos;
-} PIKAFS_FILE;
-
 int PikaStdData_FILEIO_init(PikaObj* self, char* path, char* mode) {
     if (obj_isArgExist(self, "_f")) {
         /* already initialized */
         return 0;
     }
     if (strIsStartWith(path, "pikafs/")) {
-        PIKAFS_FILE* f = (PIKAFS_FILE*)pikaMalloc(sizeof(PIKAFS_FILE));
-        memset(f, 0, sizeof(PIKAFS_FILE));
-        extern volatile PikaObj* __pikaMain;
-        uint8_t* library_bytes = obj_getPtr((PikaObj*)__pikaMain, "@libraw");
-        if (NULL == library_bytes) {
-            return 1;
-        }
-        char* file_name = path + 7;
-        if (PIKA_RES_OK != _loadModuleDataWithName(library_bytes, file_name,
-                                                   &f->addr, &f->size)) {
-            return 1;
-        }
+        pikafs_FILE* f = pikafs_fopen(path + 7, "rb");
         obj_setInt(self, "pikafs", PIKA_TRUE);
         obj_setPtr(self, "_f", f);
         obj_setStr(self, "_mode", mode);
@@ -43,11 +26,11 @@ int PikaStdData_FILEIO_init(PikaObj* self, char* path, char* mode) {
 
 void PikaStdData_FILEIO_close(PikaObj* self) {
     if (PIKA_TRUE == obj_getInt(self, "pikafs")) {
-        PIKAFS_FILE* f = obj_getPtr(self, "_f");
+        pikafs_FILE* f = obj_getPtr(self, "_f");
         if (NULL == f) {
             return;
         }
-        pikaFree(f, sizeof(PIKAFS_FILE));
+        pikafs_fclose(f);
         obj_setPtr(self, "_f", NULL);
         return;
     }
@@ -57,18 +40,6 @@ void PikaStdData_FILEIO_close(PikaObj* self) {
     }
     __platform_fclose(f);
     obj_setPtr(self, "_f", NULL);
-}
-
-size_t _pikafs_fread(void* buf, size_t size, size_t count, PIKAFS_FILE* f) {
-    if (f->pos >= f->size) {
-        return 0;
-    }
-    if (f->pos + size * count > f->size) {
-        count = (f->size - f->pos) / size;
-    }
-    __platform_memcpy(buf, f->addr + f->pos, size * count);
-    f->pos += size * count;
-    return count;
 }
 
 Arg* PikaStdData_FILEIO_read(PikaObj* self, PikaTuple* size_) {
@@ -87,11 +58,11 @@ Arg* PikaStdData_FILEIO_read(PikaObj* self, PikaTuple* size_) {
     int n = 0;
     /* read */
     if (PIKA_TRUE == obj_getInt(self, "pikafs")) {
-        PIKAFS_FILE* f = obj_getPtr(self, "_f");
+        pikafs_FILE* f = obj_getPtr(self, "_f");
         if (NULL == f) {
             return NULL;
         }
-        n = _pikafs_fread(buf, 1, size, f);
+        n = pikafs_fread(buf, 1, size, f);
     } else {
         FILE* f = obj_getPtr(self, "_f");
         if (f == NULL) {

@@ -127,8 +127,55 @@ TEST(gc, heap_failed1) {
             "iteri");
     /* assert */
     EXPECT_STREQ("128\r\n", log_buff[0]);
+#if PIKA_GC_MARK_SWEEP_ENABLE
+    int cnt = pikaGC_count();
+    EXPECT_EQ(cnt != 0, 1);
+    pikaGC_markDump();
+    int cnt_marked = pikaGC_countMarked();
+    EXPECT_EQ(cnt, cnt_marked);
+    /* deinit */
+#endif
+    obj_deinit(pikaMain);
+#if PIKA_GC_MARK_SWEEP_ENABLE
+    cnt = pikaGC_count();
+    EXPECT_EQ(cnt, 0);
+#endif
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if PIKA_GC_MARK_SWEEP_ENABLE
+TEST(gc, circle) {
+    /* init */
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    pikaVM_runSingleFile(pikaMain, "test/python/gc/gc_circle.py");
+    /* assert */
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(gc, circle2) {
+    /* init */
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    pikaVM_runSingleFile(pikaMain, "test/python/gc/gc_circle2.py");
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(gc, tree1) {
+    /* init */
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    pikaVM_runSingleFile(pikaMain, "test/python/gc/gc_tree1.py");
+    /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
 TEST_END

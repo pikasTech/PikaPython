@@ -1,6 +1,7 @@
 #ifndef __STM32G0__COMMON__H
 #define __STM32G0__COMMON__H
 #include "PikaObj.h"
+#include "../PikaStdDevice/pika_hal.h"
 #include "main.h"
 #include <stdint.h>
 
@@ -87,6 +88,7 @@ GPIO_TypeDef* GPIO_get_Group(char* pin);
 uint16_t GPIO_get_pin(char* pin);
 uint32_t getPinMode(char* mode);
 uint8_t GPIO_enable_clock(char* pin);
+int _enable_gpio_clk(GPIO_TypeDef* gpio_group);
 void delay_us(uint32_t delay);
 void delay_unit(uint32_t delay);
 

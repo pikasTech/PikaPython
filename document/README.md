@@ -6,7 +6,7 @@ English:
 
 Chinese:
 
-[https://pikadoc.readthedocs.io/zh/latest/index.html](https://pikadoc.readthedocs.io/zh/latest/index.html)
+[http://pikascript.com/doc](http://pikascript.com/doc)
 
 
 

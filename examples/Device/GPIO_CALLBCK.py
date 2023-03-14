@@ -9,7 +9,7 @@ io.enable()
 def cb1(signal):
     print('cb1', signal)
 
-io.addEventCallBack(cb1, io.SIGNAL_FALLING)
+io.setCallBack(cb1, io.SIGNAL_FALLING)
 
 while True:
     pass

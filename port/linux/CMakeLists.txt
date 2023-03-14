@@ -5,6 +5,7 @@ IF(PIKA_CONFIG_ENABLE)
     ADD_DEFINITIONS(-DPIKA_CONFIG_ENABLE)
 ENDIF(PIKA_CONFIG_ENABLE)
 ADD_DEFINITIONS(-DUSE_GOOGLE_TEST=1)
+set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 # support lto
@@ -21,6 +22,7 @@ SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-arcs
 include_directories(package/pikascript/pikascript-core)
 include_directories(package/pikascript/pikascript-api)
 include_directories(package/pikascript/pikascript-lib/PikaNN/TinyMaix/include)
+include_directories(package/pikascript/pikascript-lib/PikaStdDevice)
 
 include_directories(test)
 INCLUDE_DIRECTORIES(/usr/include/lua5.3)

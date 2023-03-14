@@ -1,6 +1,6 @@
-/*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+﻿/*
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -25,8 +25,8 @@
  * SOFTWARE.
  */
 
-/* micro pika configuration */
-#include "./pika_config_valid.h"
+/* adapter for old api */
+#include "./pika_adapter_old_api.h"
 
 #ifndef __PIKA_PALTFORM__H
 #define __PIKA_PALTFORM__H
@@ -35,16 +35,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+#ifdef __linux
+#include <unistd.h>
+#endif
 
 /* clang-format off */
 #if PIKA_ASSERT_ENABLE
     #define pika_assert(expr) \
     if(!(expr)) { \
-        __platform_printf("Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
+        pika_platform_printf((char*)"Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
         abort(); \
     }
 #else
-    #define pika_assert(...)
+    #define pika_assert(...) (void)0;
 #endif
 /* clang-format on */
 
@@ -74,7 +78,7 @@
 /* OS */
 #ifdef __RTTHREAD__
 #include <rtthread.h>
-#define __platform_printf(...) rt_kprintf(__VA_ARGS__)
+#define pika_platform_printf(...) rt_kprintf(__VA_ARGS__)
 #endif
 
 typedef enum {
@@ -97,15 +101,19 @@ typedef enum {
     PIKA_RES_ERR_ASSERT = -16,
     PIKA_RES_ERR_SIGNAL_EVENT_FULL = -17,
     PIKA_RES_ERR_SIGNAL_EVENT_EMPTY = -18,
+    PIKA_RES_ERR_INDEX = -19,
 } PIKA_RES;
 
 /* clang-format off */
 
 /* pikascript bool type */
-typedef enum {
-    PIKA_TRUE   = 1,
-    PIKA_FALSE  = 0,
-} PIKA_BOOL;
+#define PIKA_BOOL int64_t
+#define PIKA_TRUE 1
+#define PIKA_FALSE 0
+#define _PIKA_BOOL_ERR -1
+
+#define _PIKA_INT_ERR (-999999999)
+#define _PIKA_FLOAT_ERR (-999999999.0)
 
 /* clang-format on */
 
@@ -120,63 +128,66 @@ typedef enum {
 */
 
 /* interrupt config */
-void __platform_enable_irq_handle(void);
-void __platform_disable_irq_handle(void);
+void pika_platform_enable_irq_handle(void);
+void pika_platform_disable_irq_handle(void);
 
 /* printf family config */
-#ifndef __platform_printf
-void __platform_printf(char* fmt, ...);
+#ifndef pika_platform_printf
+void pika_platform_printf(char* fmt, ...);
 #endif
-int __platform_sprintf(char* buff, char* fmt, ...);
-int __platform_vsprintf(char* buff, char* fmt, va_list args);
-int __platform_vsnprintf(char* buff,
-                         size_t size,
-                         const char* fmt,
-                         va_list args);
-int __platform_snprintf(char* buff, size_t size, const char* fmt, ...);
-char* __platform_strdup(const char* src);
-size_t __platform_tick_from_millisecond(size_t ms);
+int pika_platform_sprintf(char* buff, char* fmt, ...);
+int pika_platform_vsprintf(char* buff, char* fmt, va_list args);
+int pika_platform_vsnprintf(char* buff,
+                            size_t size,
+                            const char* fmt,
+                            va_list args);
+int pika_platform_snprintf(char* buff, size_t size, const char* fmt, ...);
+char* pika_platform_strdup(const char* src);
+size_t pika_platform_tick_from_millisecond(size_t ms);
 
 /* libc config */
-void* __platform_malloc(size_t size);
-void* __platform_realloc(void* ptr, size_t size);
-void* __platform_calloc(size_t num, size_t size);
-void __platform_free(void* ptr);
-void* __platform_memset(void* mem, int ch, size_t size);
-void* __platform_memcpy(void* dir, const void* src, size_t size);
-int __platform_memcmp(const void* s1, const void* s2, size_t n);
-void* __platform_memmove(void* s1, void* s2, size_t n);
-
-void* __user_malloc(size_t size);
-void __user_free(void* ptr, size_t size);
+void* pika_platform_malloc(size_t size);
+void* pika_platform_realloc(void* ptr, size_t size);
+void* pika_platform_calloc(size_t num, size_t size);
+void pika_platform_free(void* ptr);
+void* pika_platform_memset(void* mem, int ch, size_t size);
+void* pika_platform_memcpy(void* dir, const void* src, size_t size);
+int pika_platform_memcmp(const void* s1, const void* s2, size_t n);
+void* pika_platform_memmove(void* s1, void* s2, size_t n);
 
 /* pika memory pool config */
-void __platform_wait(void);
-uint8_t __is_locked_pikaMemory(void);
+void pika_platform_wait(void);
 
 /* support shell */
-char __platform_getchar(void);
+char pika_platform_getchar(void);
+int pika_platform_putchar(char ch);
 
 /* file API */
-FILE* __platform_fopen(const char* filename, const char* modes);
-int __platform_fclose(FILE* stream);
-size_t __platform_fwrite(const void* ptr, size_t size, size_t n, FILE* stream);
-size_t __platform_fread(void* ptr, size_t size, size_t n, FILE* stream);
-int __platform_fseek(FILE* stream, long offset, int whence);
-long __platform_ftell(FILE* stream);
+FILE* pika_platform_fopen(const char* filename, const char* modes);
+int pika_platform_fclose(FILE* stream);
+size_t pika_platform_fwrite(const void* ptr,
+                            size_t size,
+                            size_t n,
+                            FILE* stream);
+size_t pika_platform_fread(void* ptr, size_t size, size_t n, FILE* stream);
+int pika_platform_fseek(FILE* stream, long offset, int whence);
+long pika_platform_ftell(FILE* stream);
 
 /* error */
-void __platform_error_handle(void);
+void pika_platform_error_handle(void);
 
 /* panic */
-void __platform_panic_handle(void);
+void pika_platform_panic_handle(void);
 
-void __pks_hook_instruct(void);
-PIKA_BOOL __pks_hook_arg_cache_filter(void* self);
-void __platform_thread_delay(void);
-uint64_t __platform_get_tick_ms(void);
-void __platform_sleep_ms(uint32_t ms);
-void __platform_sleep_s(uint32_t s);
+int64_t pika_platform_get_tick(void);
+
+void pika_platform_sleep_ms(uint32_t ms);
+
+void pika_hook_instruct(void);
+PIKA_BOOL pika_hook_arg_cache_filter(void* self);
+void* pika_user_malloc(size_t size);
+void pika_user_free(void* ptr, size_t size);
+uint8_t pika_is_locked_pikaMemory(void);
 
 #if PIKA_FLOAT_TYPE_DOUBLE
 #define pika_float double
@@ -187,5 +198,100 @@ void __platform_sleep_s(uint32_t s);
 #ifdef _WIN32
 #pragma warning(disable : 4996)
 #endif
+
+/* Thread Platform */
+#ifdef __linux
+#include <pthread.h>
+typedef struct pika_platform_thread {
+    pthread_t thread;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+} pika_platform_thread_t;
+#elif PIKA_FREERTOS_ENABLE
+#include "FreeRTOS.h"
+#include "task.h"
+typedef struct pika_platform_thread {
+    TaskHandle_t thread;
+} pika_platform_thread_t;
+#else
+typedef struct pika_platform_thread {
+    void* platform_data;
+} pika_platform_thread_t;
+#endif
+
+pika_platform_thread_t* pika_platform_thread_init(const char* name,
+                                                  void (*entry)(void*),
+                                                  void* const param,
+                                                  unsigned int stack_size,
+                                                  unsigned int priority,
+                                                  unsigned int tick);
+uint64_t pika_platform_thread_self(void);
+void pika_platform_thread_delay(void);
+void pika_platform_thread_startup(pika_platform_thread_t* thread);
+void pika_platform_thread_stop(pika_platform_thread_t* thread);
+void pika_platform_thread_start(pika_platform_thread_t* thread);
+void pika_platform_thread_destroy(pika_platform_thread_t* thread);
+void pika_platform_thread_exit(pika_platform_thread_t* thread);
+
+#ifdef __linux
+#include <pthread.h>
+typedef struct pika_platform_thread_mutex {
+    pthread_mutex_t mutex;
+    volatile int is_init;
+    volatile int is_first_lock;
+} pika_platform_thread_mutex_t;
+#elif PIKA_FREERTOS_ENABLE
+#include "FreeRTOS.h"
+#include "semphr.h"
+typedef struct pika_platform_thread_mutex {
+    SemaphoreHandle_t mutex;
+    volatile int is_init;
+    volatile int is_first_lock;
+} pika_platform_thread_mutex_t;
+#else
+typedef struct pika_platform_thread_mutex {
+    void* platform_data;
+    volatile int is_init;
+    volatile int is_first_lock;
+} pika_platform_thread_mutex_t;
+#endif
+
+int pika_platform_thread_mutex_init(pika_platform_thread_mutex_t* m);
+int pika_platform_thread_mutex_lock(pika_platform_thread_mutex_t* m);
+int pika_platform_thread_mutex_trylock(pika_platform_thread_mutex_t* m);
+int pika_platform_thread_mutex_unlock(pika_platform_thread_mutex_t* m);
+int pika_platform_thread_mutex_destroy(pika_platform_thread_mutex_t* m);
+
+#ifdef __linux
+#include <sys/time.h>
+typedef struct pika_platform_timer {
+    struct timeval time;
+} pika_platform_timer_t;
+#elif PIKA_FREERTOS_ENABLE
+#include "FreeRTOS.h"
+#include "task.h"
+typedef struct pika_platform_timer {
+    uint32_t time;
+} pika_platform_timer_t;
+#else
+typedef struct pika_platform_timer {
+    void* platform_data;
+} pika_platform_timer_t;
+#endif
+
+void pika_platform_thread_timer_init(pika_platform_timer_t* timer);
+void pika_platform_thread_timer_cutdown(pika_platform_timer_t* timer,
+                                        unsigned int timeout);
+char pika_platform_thread_timer_is_expired(pika_platform_timer_t* timer);
+int pika_platform_thread_timer_remain(pika_platform_timer_t* timer);
+unsigned long pika_platform_thread_timer_now(void);
+void pika_platform_thread_timer_usleep(unsigned long usec);
+void pika_platform_reboot(void);
+void pika_platform_clear(void);
+
+#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                               \
+    pika_platform_printf("Error: weak function `%s()` need override.\r\n", \
+                         __FUNCTION__);                                    \
+    pika_platform_panic_handle();
 
 #endif

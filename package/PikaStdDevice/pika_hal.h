@@ -25,6 +25,14 @@ typedef enum {
     PIKA_HAL_IOCTL_CONFIG,
     PIKA_HAL_IOCTL_ENABLE,
     PIKA_HAL_IOCTL_DISABLE,
+    PIKA_HAL_IOCTL_WIFI_GET_ACTIVE,
+    PIKA_HAL_IOCTL_WIFI_GET_STATUS,
+    PIKA_HAL_IOCTL_WIFI_SCAN,
+    PIKA_HAL_IOCTL_WIFI_CONNECT,
+    PIKA_HAL_IOCTL_WIFI_DISCONNECT,
+    PIKA_HAL_IOCTL_WIFI_SET_IFCONFIG,
+    PIKA_HAL_IOCTL_WIFI_GET_IFCONFIG,
+    _ = 0xFFFFFFFF,  // make sure it is 4 byte width
 } PIKA_HAL_IOCTL_CMD;
 
 /* posix file like API */
@@ -65,8 +73,10 @@ typedef enum {
 } PIKA_HAL_EVENT_CALLBACK_ENA;
 
 typedef enum {
+    _PIKA_HAL_GPIO_EVENT_SIGNAL_UNUSED = 0,
     PIKA_HAL_GPIO_EVENT_SIGNAL_RISING,
     PIKA_HAL_GPIO_EVENT_SIGNAL_FALLING,
+    PIKA_HAL_GPIO_EVENT_SIGNAL_ANY,
 } PIKA_HAL_GPIO_EVENT_SIGNAL;
 
 typedef struct {
@@ -74,7 +84,8 @@ typedef struct {
     PIKA_HAL_GPIO_PULL pull;
     PIKA_HAL_GPIO_SPEED speed;
     void (*event_callback)(pika_dev* dev, PIKA_HAL_GPIO_EVENT_SIGNAL signal);
-    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_enable;
+    PIKA_HAL_GPIO_EVENT_SIGNAL event_callback_filter;
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
 } pika_hal_GPIO_config;
 
 typedef enum {
@@ -100,6 +111,7 @@ typedef enum {
     _PIKA_HAL_UART_STOP_BITS_UNUSED = 0,
     PIKA_HAL_UART_STOP_BITS_1 = 1,
     PIKA_HAL_UART_STOP_BITS_2 = 2,
+    PIKA_HAL_UART_STOP_BITS_1_5 = 3,
 } PIKA_HAL_UART_STOP_BITS;
 
 typedef enum {
@@ -110,16 +122,33 @@ typedef enum {
 } PIKA_HAL_UART_PARITY;
 
 typedef enum {
+    _PIKA_HAL_UART_EVENT_SIGNAL_UNUSED = 0,
     PIKA_HAL_UART_EVENT_SIGNAL_RX,
+    PIKA_HAL_UART_EVENT_SIGNAL_TX,
+    PIKA_HAL_UART_EVENT_SIGNAL_ANY,
 } PIKA_HAL_UART_EVENT_SIGNAL;
+
+typedef enum {
+    _PIKA_HAL_UART_FLOW_CONTROL_UNUSED = 0,
+    PIKA_HAL_UART_FLOW_CONTROL_NONE,
+    PIKA_HAL_UART_FLOW_CONTROL_RTS,
+    PIKA_HAL_UART_FLOW_CONTROL_CTS,
+    PIKA_HAL_UART_FLOW_CONTROL_RTS_CTS,
+} PIKA_HAL_UART_FLOW_CONTROL;
 
 typedef struct {
     PIKA_HAL_UART_BAUDRATE baudrate;
     PIKA_HAL_UART_DATA_BITS data_bits;
     PIKA_HAL_UART_STOP_BITS stop_bits;
     PIKA_HAL_UART_PARITY parity;
+    PIKA_HAL_UART_FLOW_CONTROL flow_control;
     void (*event_callback)(pika_dev* dev, PIKA_HAL_UART_EVENT_SIGNAL signal);
-    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_enable;
+    PIKA_HAL_UART_EVENT_SIGNAL event_callback_filter;
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
+    pika_dev* TX;
+    pika_dev* RX;
+    pika_dev* RTS;
+    pika_dev* CTS;
 } pika_hal_UART_config;
 
 typedef uint32_t PIKA_HAL_IIC_SLAVE_ADDR;
@@ -243,6 +272,19 @@ typedef struct {
     PIKA_HAL_SPI_TIMEOUT timeout;
 } pika_hal_SPI_config;
 
+typedef struct {
+    PIKA_HAL_SPI_LSB_OR_MSB lsb_or_msb;
+    PIKA_HAL_SPI_MASTER_OR_SLAVE master_or_slave;
+    PIKA_HAL_SPI_MODE mode;
+    PIKA_HAL_SPI_DATA_WIDTH data_width;
+    PIKA_HAL_SPI_SPEED speed;
+    PIKA_HAL_SPI_TIMEOUT timeout;
+    pika_dev* CS;
+    pika_dev* SCK;
+    pika_dev* MOSI;
+    pika_dev* MISO;
+} pika_hal_SOFT_SPI_config;
+
 typedef enum {
     _PIKA_HAL_ADC_RESOLUTION_UNUSED = 0,
     PIKA_HAL_ADC_RESOLUTION_8 = 8,
@@ -341,6 +383,89 @@ typedef struct {
     PIKA_HAL_PWM_PERIOD period;
     PIKA_HAL_PWM_DUTY duty;
 } pika_hal_PWM_config;
+
+typedef enum {
+    _PIKA_HAL_WIFI_MODE_UNUSED = 0,
+    PIKA_HAL_WIFI_MODE_STA,
+    PIKA_HAL_WIFI_MODE_AP,
+} PIKA_HAL_WIFI_MODE;
+
+typedef enum {
+    _PIKA_HAL_WIFI_STATUS_UNUSED = 0,
+    PIKA_HAL_WIFI_STATUS_IDLE,
+    PIKA_HAL_WIFI_STATUS_CONNECTING,
+    PIKA_HAL_WIFI_STATUS_WRONG_PASSWORD,
+    PIKA_HAL_WIFI_STATUS_NO_AP_FOUND,
+    PIKA_HAL_WIFI_STATUS_CONNECT_FAIL,
+    PIKA_HAL_WIFI_STATUS_GOT_IP,
+} PIKA_HAL_WIFI_STATUS;
+
+typedef enum {
+    _PIKA_HAL_WIFI_CHANNEL_UNUSED = 0,
+    PIKA_HAL_WIFI_CHANNEL_0,
+    PIKA_HAL_WIFI_CHANNEL_1,
+    PIKA_HAL_WIFI_CHANNEL_2,
+    PIKA_HAL_WIFI_CHANNEL_3,
+    PIKA_HAL_WIFI_CHANNEL_4,
+    PIKA_HAL_WIFI_CHANNEL_5,
+    PIKA_HAL_WIFI_CHANNEL_6,
+    PIKA_HAL_WIFI_CHANNEL_7,
+    PIKA_HAL_WIFI_CHANNEL_8,
+    PIKA_HAL_WIFI_CHANNEL_9,
+    PIKA_HAL_WIFI_CHANNEL_10,
+    PIKA_HAL_WIFI_CHANNEL_11,
+} PIKA_HAL_WIFI_CHANNEL;
+
+typedef enum {
+    _PIKA_HAL_WIFI_MAX_CONNECTION = 0,
+    PIKA_HAL_WIFI_MAX_CONNECTION_1,
+    PIKA_HAL_WIFI_MAX_CONNECTION_2,
+    PIKA_HAL_WIFI_MAX_CONNECTION_3,
+    PIKA_HAL_WIFI_MAX_CONNECTION_4,
+    PIKA_HAL_WIFI_MAX_CONNECTION_5,
+    PIKA_HAL_WIFI_MAX_CONNECTION_6,
+    PIKA_HAL_WIFI_MAX_CONNECTION_7,
+    PIKA_HAL_WIFI_MAX_CONNECTION_8,
+    PIKA_HAL_WIFI_MAX_CONNECTION_9,
+    PIKA_HAL_WIFI_MAX_CONNECTION_10
+} PIKA_HAL_WIFI_MAX_CONNECTION;
+
+#define PIKA_HAL_WIFI_PARAM_MAX_LEN 32
+typedef struct pika_hal_WIFI_config {
+    PIKA_HAL_WIFI_MODE mode;
+    PIKA_HAL_WIFI_CHANNEL channel;
+    PIKA_HAL_WIFI_MAX_CONNECTION max_connection;
+    char ap_ssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char ap_bssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char ap_password[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+} pika_hal_WIFI_config;
+
+typedef struct pika_hal_WIFI_connect_config {
+    char ssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char bssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char password[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+} pika_hal_WIFI_connect_config;
+
+typedef struct pika_hal_WIFI_ifconfig {
+    char ip[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char netmask[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char gateway[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    char dns[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+} pika_hal_WIFI_ifconfig;
+
+typedef struct pika_hal_WIFI_record {
+    char ssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    uint8_t bssid[PIKA_HAL_WIFI_PARAM_MAX_LEN];
+    size_t bssid_len;
+    int channel;
+    int rssi;
+    int authmode;
+} pika_hal_WIFI_record;
+
+typedef struct pika_hal_WIFI_scan_result {
+    int count;
+    pika_hal_WIFI_record records[];
+} pika_hal_WIFI_scan_result;
 
 typedef struct pika_dev_impl {
     int (*open)(pika_dev* dev, char* name);

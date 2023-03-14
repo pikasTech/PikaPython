@@ -30,6 +30,7 @@ class Test():
         for func in funcs:
             demo.func = func 
             demo.func()
+            func()
 
 test = Test()
 test.funcs_test()

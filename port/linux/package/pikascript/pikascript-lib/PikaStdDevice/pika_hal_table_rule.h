@@ -34,6 +34,11 @@
         WEAK_FUNCTION_NEED_OVERRIDE_ERROR()                                    \
         return -1;                                                             \
     }                                                                          \
+    PIKA_WEAK int pika_hal_platform_##dev_name##_ioctl_others(                 \
+        pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, void* arg) {                    \
+        WEAK_FUNCTION_NEED_OVERRIDE_ERROR()                                    \
+        return -1;                                                             \
+    }                                                                          \
     int pika_hal_##dev_name##_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd,     \
                                     void* arg) {                               \
         if (NULL == dev) {                                                     \
@@ -48,7 +53,8 @@
                 return pika_hal_platform_##dev_name##_ioctl_config(            \
                     dev, (pika_hal_##dev_name##_config*)arg);                  \
             default:                                                           \
-                return -1;                                                     \
+                return pika_hal_platform_##dev_name##_ioctl_others(dev, cmd,   \
+                                                                   arg);       \
         }                                                                      \
     }
 
@@ -80,7 +86,9 @@
     int pika_hal_platform_##dev_name##_ioctl_enable(pika_dev* dev);     \
     int pika_hal_platform_##dev_name##_ioctl_disable(pika_dev* dev);    \
     int pika_hal_platform_##dev_name##_ioctl_config(                    \
-        pika_dev* dev, pika_hal_##dev_name##_config* cfg);
+        pika_dev* dev, pika_hal_##dev_name##_config* cfg);              \
+    int pika_hal_platform_##dev_name##_ioctl_others(                    \
+        pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, void* arg);
 #endif
 
 #if defined(PIKA_HAL_TABLE_DEV_CONFIG_SIZE)

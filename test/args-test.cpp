@@ -137,7 +137,7 @@ TEST(args, test12) {
     EXPECT_EQ(13, (int)args_getInt(args, "test"));
     args_removeArg(args, args_getArg(args, "test"));
     EXPECT_EQ(1, args_getSize(args));
-    EXPECT_EQ(-999999999, (int)args_getInt(args, "test"));
+    EXPECT_EQ(_PIKA_INT_ERR, (int)args_getInt(args, "test"));
     args_deinit(args);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -234,7 +234,7 @@ TEST(args, args_move) {
     args_setInt(args, "a", 100);
     args_moveArg(args, args2, args_getArg(args, "a"));
     /* assert */
-    EXPECT_EQ(-999999999, args_getInt(args, "a"));
+    EXPECT_EQ(_PIKA_INT_ERR, args_getInt(args, "a"));
     EXPECT_EQ(100, args_getInt(args2, "a"));
     /* deinit */
     args_deinit(args);

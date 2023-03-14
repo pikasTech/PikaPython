@@ -1,3 +1,6 @@
+import PikaStdLib
+mem = PikaStdLib.MemChecker()
+
 class TestResult:
     def __init__(self):
         self.errorsNum = 0
@@ -70,10 +73,16 @@ class TestCase:
                 self.test_fn = getattr(self, name)
                 print("[ RUN      ] %s.%s" % (suite_name, name))
                 try:
+                    mem_before = 0.0
+                    mem_after = 0.0
+                    mem_before = mem.getNow()
                     self.test_fn()
-                    print("[       OK ] %s.%s" % (suite_name, name))
+                    mem_after = mem.getNow()
+                    print("\x1b[1m\x1b[32m[       OK ] %s.%s\x1b[0m" % (suite_name, name))
+                    if mem_after != mem_before:
+                        print("\x1b[33m[ MEM LACK ]", mem_after - mem_before,"\x1b[0m")
                 except:
-                    print("[  FAILED  ] %s.%s" % (suite_name, name))
+                    print("\x1b[1m\x1b[31m[  FAILED  ]\x1b[0m %s.%s" % (suite_name, name))
                     result.errorsNum += 1
 
 
@@ -100,13 +109,12 @@ class TextTestRunner:
         print('')
         print('[==========]')
         if res.failuresNum > 0 or res.errorsNum > 0:
-            print("[  FAILED  ] (%d errors, %d failures)" % (
-                res.errorsNum, res.failuresNum))
+            print("\x1b[1m\x1b[31m[  FAILED  ](%d errors, %d failures)\x1b[0m" % (res.errorsNum, res.failuresNum))
         else:
             msg = ""
             if res.skippedNum > 0:
                 msg += " (skipped=%d)" % res.skippedNum
             print(msg)
-            print("[  PASSED  ] %d tests" % res.testsRun)
+            print("\x1b[1m\x1b[32m[  PASSED  ] %d tests\x1b[0m" % res.testsRun)
 
         return res

@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -78,9 +78,10 @@ PIKA_RES args_setPtr(Args* self, char* name, void* argPointer) {
 
 PIKA_RES args_setRef(Args* self, char* name, void* argPointer) {
     PIKA_RES errCode = PIKA_RES_OK;
-    Arg* argNew = New_arg(NULL);
-    argNew = arg_setRef(argNew, name, argPointer);
-    args_setArg(self, argNew);
+    Arg* aNewRef = New_arg(NULL);
+    aNewRef = arg_setRef(aNewRef, name, argPointer);
+    // pikaGC_enable(arg_getPtr(aNewRef));
+    args_setArg(self, aNewRef);
     return errCode;
 }
 
@@ -188,15 +189,29 @@ PIKA_RES args_setInt(Args* self, char* name, int64_t val) {
 int64_t args_getInt(Args* self, char* name) {
     Arg* arg = args_getArg(self, name);
     if (NULL == arg) {
-        return -999999999;
+        return _PIKA_INT_ERR;
     }
     ArgType arg_type = arg_getType(arg);
     if (arg_type == ARG_TYPE_INT) {
         return arg_getInt(arg);
     } else if (arg_type == ARG_TYPE_FLOAT) {
         return (int)arg_getFloat(arg);
+    } else if (arg_type == ARG_TYPE_BOOL) {
+        return arg_getBool(arg);
     }
-    return -999999999;
+    return _PIKA_INT_ERR;
+}
+
+PIKA_BOOL args_getBool(Args* self, char* name) {
+    Arg* arg = args_getArg(self, name);
+    if (NULL == arg) {
+        return _PIKA_BOOL_ERR;
+    }
+    ArgType arg_type = arg_getType(arg);
+    if (arg_type == ARG_TYPE_BOOL) {
+        return arg_getBool(arg);
+    }
+    return _PIKA_BOOL_ERR;
 }
 
 int32_t args_getSize(Args* self) {
@@ -215,7 +230,7 @@ ArgType args_getType(Args* self, char* name) {
 pika_float args_getFloat(Args* self, char* name) {
     Arg* arg = args_getArg(self, name);
     if (NULL == arg) {
-        return -999999999.0;
+        return _PIKA_FLOAT_ERR;
     }
     ArgType arg_type = arg_getType(arg);
     if (arg_type == ARG_TYPE_FLOAT) {
@@ -223,7 +238,7 @@ pika_float args_getFloat(Args* self, char* name) {
     } else if (arg_type == ARG_TYPE_INT) {
         return (pika_float)arg_getInt(arg);
     }
-    return -999999999.0;
+    return _PIKA_FLOAT_ERR;
 }
 
 PIKA_RES args_copyArg(Args* self, Arg* argToBeCopy) {
@@ -297,7 +312,9 @@ int32_t args_isArgExist(Args* self, char* name) {
     return 0;
 }
 
-PIKA_RES __updateArg(Args* self, Arg* argNew) {
+PIKA_RES _updateArg(Args* self, Arg* argNew) {
+    pika_assert(NULL != self);
+    pika_assert(NULL != argNew);
     LinkNode* nodeToUpdate = NULL;
     LinkNode* nodeNow = self->firstNode;
     LinkNode* priorNode = NULL;
@@ -320,12 +337,10 @@ PIKA_RES __updateArg(Args* self, Arg* argNew) {
     }
 
     arg_deinitHeap((Arg*)nodeToUpdate);
-
-    nodeToUpdate = (LinkNode*)arg_setContent(
-        (Arg*)nodeToUpdate, arg_getContent(argNew), arg_getSize(argNew));
-
     pika_assert(NULL != nodeToUpdate);
-    arg_setType((Arg*)nodeToUpdate, arg_getType(argNew));
+
+    nodeToUpdate = (LinkNode*)arg_copy_content((Arg*)nodeToUpdate, argNew);
+
     // update privior link, because arg_getContent would free origin pointer
     if (NULL == priorNode) {
         self->firstNode = nodeToUpdate;
@@ -345,7 +360,9 @@ exit:
 }
 
 PIKA_RES args_setArg(Args* self, Arg* arg) {
-    if (PIKA_RES_OK == __updateArg(self, arg)) {
+    pika_assert(NULL != self);
+    pika_assert(NULL != arg);
+    if (PIKA_RES_OK == _updateArg(self, arg)) {
         return PIKA_RES_OK;
     }
     args_pushArg(self, arg);
@@ -424,8 +441,8 @@ Arg* args_getArgByIndex(Args* self, int index) {
 }
 
 PIKA_RES args_foreach(Args* self,
-                      int32_t (*eachHandle)(Arg* argEach, Args* context),
-                      Args* context) {
+                      int32_t (*eachHandle)(Arg* argEach, void* context),
+                      void* context) {
     if (NULL == self->firstNode) {
         return PIKA_RES_OK;
     }

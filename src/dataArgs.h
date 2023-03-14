@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -71,6 +71,7 @@ void* args_getPtr(Args* self, char* name);
 
 PIKA_RES args_setInt(Args* self, char* name, int64_t int64In);
 int64_t args_getInt(Args* self, char* name);
+PIKA_BOOL args_getBool(Args* self, char* name);
 
 char* args_print(Args* self, char* name);
 
@@ -106,8 +107,8 @@ PIKA_RES args_setPtrWithType(Args* self,
                              ArgType type,
                              void* objPtr);
 PIKA_RES args_foreach(Args* self,
-                      int32_t (*eachHandle)(Arg* argEach, Args* context),
-                      Args* context);
+                      int32_t (*eachHandle)(Arg* argEach, void* context),
+                      void* context);
 
 char* args_getBuff(Args* self, int32_t size);
 PIKA_RES args_pushArg(Args* self, Arg* arg);

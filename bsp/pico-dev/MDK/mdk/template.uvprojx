@@ -961,70 +961,30 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Utils.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdData_ByteArray.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_ByteArray.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_FILEIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_FILEIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Tuple.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Tuple.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>pikascript-api</GroupName>
           <Files>
             <File>
-              <FileName>PikaMain-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaMain-api.c</FilePath>
-            </File>
-            <File>
               <FileName>pikaScript.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\pikaScript.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_MemChecker-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_MemChecker-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_RangeObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_RangeObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_SysObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Dict-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_Dict-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_List-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_List-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_StringObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_String-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_String-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_PikaObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
             </File>
             <File>
               <FileName>__asset_pikaModules_py_a.c</FileName>
@@ -1032,39 +992,9 @@
               <FilePath>..\..\pikascript\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
             </File>
             <File>
-              <FileName>PikaDebug_Debuger-api.c</FileName>
+              <FileName>__pikaBinding.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaDebug_Debuger-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaDebug-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaDebug-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_ByteArray-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_ByteArray-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdTask_Task-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask_Task-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdTask-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_dict_keys-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_dict_keys-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Utils-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_Utils-api.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-api\__pikaBinding.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2044,70 +1974,30 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Utils.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdData_ByteArray.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_ByteArray.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_FILEIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_FILEIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Tuple.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Tuple.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>pikascript-api</GroupName>
           <Files>
             <File>
-              <FileName>PikaMain-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaMain-api.c</FilePath>
-            </File>
-            <File>
               <FileName>pikaScript.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\pikaScript.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_MemChecker-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_MemChecker-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_RangeObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_RangeObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_SysObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Dict-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_Dict-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_List-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_List-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_StringObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_String-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_String-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_PikaObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
             </File>
             <File>
               <FileName>__asset_pikaModules_py_a.c</FileName>
@@ -2115,39 +2005,9 @@
               <FilePath>..\..\pikascript\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
             </File>
             <File>
-              <FileName>PikaDebug_Debuger-api.c</FileName>
+              <FileName>__pikaBinding.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaDebug_Debuger-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaDebug-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaDebug-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_ByteArray-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_ByteArray-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdTask_Task-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask_Task-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdTask-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_dict_keys-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_dict_keys-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Utils-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_Utils-api.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-api\__pikaBinding.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3126,70 +2986,30 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Utils.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdData_ByteArray.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_ByteArray.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_FILEIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_FILEIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Tuple.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Tuple.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>pikascript-api</GroupName>
           <Files>
             <File>
-              <FileName>PikaMain-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaMain-api.c</FilePath>
-            </File>
-            <File>
               <FileName>pikaScript.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\pikaScript.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_MemChecker-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_MemChecker-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_RangeObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_RangeObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_SysObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Dict-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_Dict-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_List-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_List-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_StringObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_String-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_String-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_PikaObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
             </File>
             <File>
               <FileName>__asset_pikaModules_py_a.c</FileName>
@@ -3197,39 +3017,9 @@
               <FilePath>..\..\pikascript\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
             </File>
             <File>
-              <FileName>PikaDebug_Debuger-api.c</FileName>
+              <FileName>__pikaBinding.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaDebug_Debuger-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaDebug-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaDebug-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_ByteArray-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_ByteArray-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdTask_Task-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask_Task-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdTask-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_dict_keys-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_dict_keys-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Utils-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_Utils-api.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-api\__pikaBinding.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -4208,70 +3998,30 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Utils.c</FilePath>
             </File>
+            <File>
+              <FileName>PikaStdData_ByteArray.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_ByteArray.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_FILEIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_FILEIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>PikaStdData_Tuple.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\package\PikaStdLib\PikaStdData_Tuple.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>pikascript-api</GroupName>
           <Files>
             <File>
-              <FileName>PikaMain-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaMain-api.c</FilePath>
-            </File>
-            <File>
               <FileName>pikaScript.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\pikascript\pikascript-api\pikaScript.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_MemChecker-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_MemChecker-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_RangeObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_RangeObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_SysObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_SysObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Dict-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_Dict-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_List-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_List-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_StringObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_StringObj-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_String-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_String-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdLib_PikaObj-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdLib_PikaObj-api.c</FilePath>
             </File>
             <File>
               <FileName>__asset_pikaModules_py_a.c</FileName>
@@ -4279,39 +4029,9 @@
               <FilePath>..\..\pikascript\pikascript-api\__asset_pikaModules_py_a.c</FilePath>
             </File>
             <File>
-              <FileName>PikaDebug_Debuger-api.c</FileName>
+              <FileName>__pikaBinding.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaDebug_Debuger-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaDebug-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaDebug-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_ByteArray-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_ByteArray-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdTask_Task-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask_Task-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdTask-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdTask-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_dict_keys-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_dict_keys-api.c</FilePath>
-            </File>
-            <File>
-              <FileName>PikaStdData_Utils-api.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\pikascript\pikascript-api\PikaStdData_Utils-api.c</FilePath>
+              <FilePath>..\..\pikascript\pikascript-api\__pikaBinding.c</FilePath>
             </File>
           </Files>
         </Group>

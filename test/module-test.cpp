@@ -4,7 +4,7 @@ TEST_START
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(module, cmodule_import) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     /* run */
@@ -23,7 +23,7 @@ TEST(module, cmodule_import) {
 
 TEST(module, while_loop) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -42,7 +42,7 @@ TEST(module, while_loop) {
 
 TEST(module, for_loop) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -61,7 +61,7 @@ TEST(module, for_loop) {
 
 TEST(module, script) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -78,7 +78,7 @@ TEST(module, script) {
 
 TEST(module, __init__) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -97,7 +97,7 @@ TEST(module, __init__) {
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(module, __init__2) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -117,7 +117,7 @@ TEST(module, __init__2) {
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(module, import_as_issue1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -141,7 +141,7 @@ TEST(module, import_as_issue1) {
 #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
 TEST(module, unittest_test1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -163,7 +163,7 @@ TEST(module, unittest_test1) {
 #if PIKA_SYNTAX_LEVEL == PIKA_SYNTAX_LEVEL_MAXIMAL
 TEST(module, unittest_test2) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -180,11 +180,32 @@ TEST(module, unittest_test2) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(module, unittest_test3) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/unittest/test3.py");
+    /* collect */
+    int testsRun = obj_getInt(pikaMain, "res.testsRun");
+    int errorsNum = obj_getInt(pikaMain, "res.errorsNum");
+    /* assert */
+    EXPECT_EQ(testsRun, 1);
+    EXPECT_EQ(errorsNum, 0);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST(socket, gethostname) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -202,7 +223,7 @@ TEST(socket, gethostname) {
 #if !PIKA_NANO_ENABLE
 TEST(socket, server_client) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -218,12 +239,64 @@ TEST(socket, server_client) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(socket, thread) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/socket/socket_thread.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[4], "socket server accepted at 127.0.0.1\r\n");
+    EXPECT_STREQ(log_buff[3], "socket server recv: hello\r\n");
+    EXPECT_STREQ(log_buff[2], "client recv: hello\r\n");
+    EXPECT_STREQ(log_buff[1], "socket server closing accept\r\n");
+    EXPECT_STREQ(log_buff[0], "socket server closing\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+#if PIKA_FLOAT_TYPE_DOUBLE
+TEST(socket, json_issue) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/socket/socket_json.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2],
+                 "client recv: "
+                 "{\n\t\"code\":\t0,\n\t\"result\":\t{\n\t\t\"a_a\":\t{"
+                 "\n\t\t\t\"desc\":\t\"A "
+                 "\347\233\270\347\224\265\346\265\201\",\n\t\t\t\"value\":\t0."
+                 "29\n\t\t}\n\t}\n}\r\n");
+    EXPECT_STREQ(log_buff[4],
+                 "client recv: "
+                 "{\n\t\"code\":\t0,\n\t\"result\":\t{\n\t\t\"a_a\":\t{"
+                 "\n\t\t\t\"desc\":\t\"A "
+                 "\347\233\270\347\224\265\346\265\201\",\n\t\t\t\"value\":\t0."
+                 "29\n\t\t}\n\t}\n}\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+#endif
+
 #endif
 
 #if !PIKA_NANO_ENABLE
 TEST(re, match) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -246,7 +319,7 @@ TEST(re, match) {
 #if !PIKA_NANO_ENABLE
 TEST(re, search) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -267,7 +340,7 @@ TEST(re, search) {
 #if !PIKA_NANO_ENABLE
 TEST(re, sub) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -288,7 +361,7 @@ TEST(re, sub) {
 #if !PIKA_NANO_ENABLE
 TEST(re, findall) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -314,7 +387,7 @@ TEST(re, findall) {
 
 TEST(modbus, rtu_master) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -323,12 +396,17 @@ TEST(modbus, rtu_master) {
     pikaVM_runSingleFile(pikaMain, "test/python/modbus/rtu_master.py");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[3], "BEGIN\r\n");
-    EXPECT_STREQ(log_buff[2],
+    EXPECT_STREQ(log_buff[6], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[5],
                  "b'\\x01\\x03\\x00\\x00\\x00\\x0a\\xc5\\xcd'\r\n");
-    EXPECT_STREQ(log_buff[1], "[0, 0, 1234, 0, 0, 123, 0, 0, 0, 0]\r\n");
-    EXPECT_STREQ(log_buff[0],
+    EXPECT_STREQ(log_buff[4], "[0, 0, 1234, 0, 0, 123, 0, 0, 0, 0]\r\n");
+    EXPECT_STREQ(log_buff[3],
+                 "b'\\x01\\x04\\x00\\x00\\x00\\x02\\x71\\xcb'\r\n");
+    EXPECT_STREQ(log_buff[2], "[0, 2278]\r\n");
+    EXPECT_STREQ(log_buff[1],
                  "b'\\x01\\x06\\x00\\x00\\x12\\x34\\x84\\xbd'\r\n");
+    EXPECT_STREQ(log_buff[0],
+                 "b'\\x01\\x0f\\x00\\x00\\x00\\x08\\x01\\x57\\xbf\\x6b'\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -336,7 +414,7 @@ TEST(modbus, rtu_master) {
 
 TEST(proxy, test1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -354,7 +432,7 @@ TEST(proxy, test1) {
 
 TEST(issue, global) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -371,7 +449,7 @@ TEST(issue, global) {
 
 TEST(module, mod1_mod2_mod1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -390,7 +468,7 @@ TEST(module, mod1_mod2_mod1) {
 
 TEST(module, improt_as_cmodule) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -419,7 +497,7 @@ void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
 
 TEST(module, REPL_runbytecode) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -439,7 +517,7 @@ TEST(module, REPL_runbytecode) {
 
 TEST(module, REPL_script) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -458,7 +536,7 @@ TEST(module, REPL_script) {
 
 TEST(module, REPL_script_2) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -477,7 +555,7 @@ TEST(module, REPL_script_2) {
 
 TEST(module, REPL_big_script) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
@@ -498,7 +576,7 @@ TEST(module, REPL_big_script) {
 
 TEST(module, REPL_stdtask) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);

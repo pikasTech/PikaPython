@@ -1,6 +1,6 @@
-/*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+﻿/*
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -36,6 +36,7 @@ typedef enum {
     ARG_TYPE_UNDEF = 0,
     ARG_TYPE_NONE,
     ARG_TYPE_INT,
+    ARG_TYPE_BOOL,
     ARG_TYPE_FLOAT,
     ARG_TYPE_STRING,
     ARG_TYPE_BYTES,
@@ -94,16 +95,20 @@ Arg* arg_setName(Arg* self, char* name);
 Arg* arg_setNameHash(Arg* self, Hash nameHash);
 Arg* arg_setContent(Arg* self, uint8_t* content, uint32_t size);
 Arg* arg_newContent(uint32_t size);
+void arg_refcntInc(Arg* self);
+void arg_refcntDec(Arg* self);
 
 static inline void arg_setType(Arg* self, ArgType type) {
     self->type = type;
 }
 
 static inline Hash arg_getNameHash(Arg* self) {
+    pika_assert(self != NULL);
     return self->name_hash;
 }
 
 static inline ArgType arg_getType(Arg* self) {
+    pika_assert(self != 0);
     return (ArgType)self->type;
 }
 
@@ -111,6 +116,7 @@ uint32_t arg_getContentSize(Arg* self);
 Hash hash_time33(char* str);
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val);
+Arg* arg_setBool(Arg* self, char* name, PIKA_BOOL val);
 Arg* arg_setFloat(Arg* self, char* name, pika_float val);
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer);
 Arg* arg_setStr(Arg* self, char* name, char* string);
@@ -118,19 +124,23 @@ Arg* arg_setNull(Arg* self);
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 
 static inline Arg* arg_newInt(int64_t val) {
-    return arg_setInt(NULL, "", (val));
+    return arg_setInt(NULL, (char*)"", (val));
+}
+
+static inline Arg* arg_newBool(PIKA_BOOL val) {
+    return arg_setBool(NULL, (char*)"", (val));
 }
 
 static inline Arg* arg_newFloat(pika_float val) {
-    return arg_setFloat(NULL, "", (val));
+    return arg_setFloat(NULL, (char*)"", (val));
 }
 
 static inline Arg* arg_newPtr(ArgType type, void* pointer) {
-    return arg_setPtr(NULL, "", (type), (pointer));
+    return arg_setPtr(NULL, (char*)"", (type), (pointer));
 }
 
 static inline Arg* arg_newStr(char* string) {
-    return arg_setStr(NULL, "", (string));
+    return arg_setStr(NULL, (char*)"", (string));
 }
 
 static inline Arg* arg_newNull() {
@@ -138,10 +148,11 @@ static inline Arg* arg_newNull() {
 }
 
 static inline Arg* arg_newBytes(uint8_t* src, size_t size) {
-    return arg_setBytes(NULL, "", (src), (size));
+    return arg_setBytes(NULL, (char*)"", (src), (size));
 }
 
 int64_t arg_getInt(Arg* self);
+PIKA_BOOL arg_getBool(Arg* self);
 pika_float arg_getFloat(Arg* self);
 void* arg_getPtr(Arg* self);
 char* arg_getStr(Arg* self);
@@ -149,6 +160,7 @@ uint8_t* arg_getBytes(Arg* self);
 size_t arg_getBytesSize(Arg* self);
 Arg* arg_copy(Arg* argToBeCopy);
 Arg* arg_copy_noalloc(Arg* argToBeCopy, Arg* argToBeCopyTo);
+Arg* arg_copy_content(Arg* arg_dict, Arg* arg_src);
 
 void arg_deinit(Arg* self);
 
@@ -165,8 +177,8 @@ Arg* arg_setHeapStruct(Arg* self,
                        void* struct_deinit_fun);
 void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
-void arg_printBytes(Arg* self, char* end);
-void arg_singlePrint(Arg* self, PIKA_BOOL in_REPL, char* end);
+Arg* arg_toStrArg(Arg* arg);
+void arg_print(Arg* self, PIKA_BOOL in_REPL, char* end);
 Arg* arg_loadFile(Arg* self, char* filename);
 
 #define ARG_FLAG_SERIALIZED 0x01
@@ -260,10 +272,24 @@ static inline uint8_t argType_isCallable(ArgType type) {
             (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR);
 }
 
+static inline uint8_t argType_isConstructor(ArgType type) {
+    return ((type) == ARG_TYPE_METHOD_CONSTRUCTOR ||
+            (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR);
+}
+
 static inline uint8_t argType_isNative(ArgType type) {
     return ((type) == ARG_TYPE_METHOD_NATIVE ||
             (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR);
 }
+
+#define arg_isObject(__self) \
+    ((__self != NULL) && (argType_isObject(arg_getType(__self))))
+#define arg_isCallable(__self) \
+    ((__self != NULL) && (argType_isCallable(arg_getType(__self))))
+#define arg_isConstructor(__self) \
+    ((__self != NULL) && (argType_isConstructor(arg_getType(__self))))
+#define arg_isNative(__self) \
+    ((__self != NULL) && (argType_isNative(arg_getType(__self))))
 
 #define arg_newReg(__name, __size)           \
     Arg __name = {0};                        \

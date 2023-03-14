@@ -47,7 +47,7 @@
 #define MP_ENOMEM "out of memory"
 #define MP_BUFFER_READ "read"
 #define MP_ERROR_TEXT(_s) _s
-#define mp_raise_msg_varg(_, ...) __platform_printf(__VA_ARGS__)
+#define mp_raise_msg_varg(_, ...) pika_platform_printf(__VA_ARGS__)
 #define mp_raise_msg(_, _s) mp_raise_msg_varg(_, _s)
 #define mp_raise_TpyeXXX(_s) mp_raise_msg(NULL, _s)
 #define mp_raise_ValueError mp_raise_TpyeXXX

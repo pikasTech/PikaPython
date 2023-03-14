@@ -1,6 +1,5 @@
 #include "PikaStdDevice_ADC.h"
-#include "BaseObj.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 void PikaStdDevice_ADC_enable(PikaObj* self) {
     obj_runNativeMethod(self, "platformEnable", NULL);
@@ -66,4 +65,9 @@ void PikaStdDevice_ADC_platformRead(PikaObj* self) {
     pika_hal_read(dev, &val_i, sizeof(val_i));
     pika_float val = (pika_float)val_i / (pika_float)cfg->max * cfg->vref;
     val = val_i * obj_setFloat(self, "val", val);
+}
+
+void PikaStdDevice_ADC_close(PikaObj* self) {
+    pika_dev* dev = _get_dev(self);
+    pika_hal_close(dev);
 }

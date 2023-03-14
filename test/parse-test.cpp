@@ -11,12 +11,8 @@ char* Parser_LineToAsm(Args* buffs, char* line, Stack* blockStack);
 int32_t AST_deinit(AST* ast);
 char* Lexer_getTokenStream(Args* outBuffs, char* stmt);
 char* Lexer_printTokenStream(Args* outBuffs, char* tokens);
-char* strsPopTokenWithSkip_byStr(Args* buffs,
-                                 char* stmts,
-                                 char* str,
-                                 char skipStart,
-                                 char skipEnd);
-char* strsGetCleanCmd(Args* outBuffs, char* cmd);
+char* Cursor_getCleanStmt(Args* outBuffs, char* cmd);
+char* Cursor_popLastToken(Args* outBuffs, char** pStmt, char* str);
 }
 
 TEST(parser, NEW) {
@@ -105,11 +101,9 @@ TEST(parser, method_void) {
     Args* buffs = New_strBuff();
     char* pikaAsm = Parser_LineToAsm(buffs, line, NULL);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "1 RUN c\n"
-        "0 RUN a\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "1 RUN c\n"
+                                "0 RUN a\n");
 
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -363,9 +357,9 @@ TEST(parser, if_) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-extern PikaMemInfo pikaMemInfo;
+extern PikaMemInfo g_PikaMemInfo;
 TEST(parser, while_true_if_false_both_exit) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* bf = New_strBuff();
     Stack bs;
     stack_init(&bs);
@@ -403,15 +397,14 @@ TEST(parser, while_true_if_false_both_exit) {
 }
 
 TEST(parser, multiLine) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines =(char *)
-        "while true:\n"
-        "    rgb.flow()\n"
-        "    if false:\n"
-        "        a=3\n"
-        "        test.on(add(2,3))\n"
-        "\n";
+    char *lines = (char *)"while true:\n"
+                        "    rgb.flow()\n"
+                        "    if false:\n"
+                        "        a=3\n"
+                        "        test.on(add(2,3))\n"
+                        "\n";
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
@@ -440,7 +433,7 @@ TEST(parser, multiLine) {
 }
 
 TEST(parser, pikaPi) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     const char lines[] =
@@ -550,7 +543,7 @@ TEST(parser, pikaPi) {
 }
 
 TEST(parser, add) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = 1 + 1\n";
     printf("%s", lines);
@@ -568,7 +561,7 @@ TEST(parser, add) {
 }
 
 TEST(parser, add_3) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = 1 + 2 + 3";
     printf("%s", lines);
@@ -588,7 +581,7 @@ TEST(parser, add_3) {
 }
 
 TEST(parser, add_a_pp) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = a + 1\n";
     printf("%s", lines);
@@ -606,7 +599,7 @@ TEST(parser, add_a_pp) {
 }
 
 TEST(parser, while_a_pp) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "while a < 10:\n"
@@ -638,7 +631,7 @@ TEST(parser, while_a_pp) {
 }
 
 TEST(parser, add_m2p3) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = 1 * 2 + 3\n";
     printf("%s", lines);
@@ -658,7 +651,7 @@ TEST(parser, add_m2p3) {
 }
 
 TEST(parser, add_m2p3_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = 1 * (2 + 3)\n";
     printf("%s", lines);
@@ -679,7 +672,7 @@ TEST(parser, add_m2p3_) {
 }
 
 TEST(parser, add_m12p3_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = (1 + 2) * 3\n";
     printf("%s", lines);
@@ -700,7 +693,7 @@ TEST(parser, add_m12p3_) {
 }
 
 TEST(parser, method_equ) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "if right.read() == 1:\n";
     printf("%s", lines);
@@ -718,7 +711,7 @@ TEST(parser, method_equ) {
 }
 
 TEST(parser, equ_method) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "if 1 == right.read() :\n";
     printf("%s", lines);
@@ -736,7 +729,7 @@ TEST(parser, equ_method) {
 }
 
 TEST(parser, def_add) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "def add(a, b):\n"
@@ -744,24 +737,22 @@ TEST(parser, def_add) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-    "B0\n"
-    "0 DEF add(a,b)\n"
-    "0 JMP 1\n"
-    "B1\n"
-    "1 REF a\n"
-    "1 REF b\n"
-    "0 OPT +\n"
-    "B1\n"
-    "0 RET \n"
-    "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 DEF add(a,b)\n"
+                                "0 JMP 1\n"
+                                "B1\n"
+                                "1 REF a\n"
+                                "1 REF b\n"
+                                "0 OPT +\n"
+                                "B1\n"
+                                "0 RET \n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, def_add_return) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "def add(a, b):\n"
@@ -770,25 +761,23 @@ TEST(parser, def_add_return) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-    "B0\n"
-    "0 DEF add(a,b)\n"
-    "0 JMP 1\n"
-    "B1\n"
-    "1 REF a\n"
-    "1 REF b\n"
-    "0 OPT +\n"
-    "0 RET \n"
-    "B1\n"
-    "0 RET \n"
-    "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 DEF add(a,b)\n"
+                                "0 JMP 1\n"
+                                "B1\n"
+                                "1 REF a\n"
+                                "1 REF b\n"
+                                "0 OPT +\n"
+                                "0 RET \n"
+                                "B1\n"
+                                "0 RET \n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, def_while_return) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "def add(a, b):\n"
@@ -798,30 +787,28 @@ TEST(parser, def_while_return) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-    "B0\n"
-    "0 DEF add(a,b)\n"
-    "0 JMP 1\n"
-    "B1\n"
-    "0 REF True\n"
-    "0 JEZ 2\n"
-    "B2\n"
-    "1 REF a\n"
-    "1 REF b\n"
-    "0 OPT +\n"
-    "0 RET \n"
-    "B1\n"
-    "0 JMP -1\n"
-    "B1\n"
-    "0 RET \n"
-    "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 DEF add(a,b)\n"
+                                "0 JMP 1\n"
+                                "B1\n"
+                                "0 REF True\n"
+                                "0 JEZ 2\n"
+                                "B2\n"
+                                "1 REF a\n"
+                                "1 REF b\n"
+                                "0 OPT +\n"
+                                "0 RET \n"
+                                "B1\n"
+                                "0 JMP -1\n"
+                                "B1\n"
+                                "0 RET \n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, def_while_return_void) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "def add(a, b):\n"
@@ -831,27 +818,25 @@ TEST(parser, def_while_return_void) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-    "B0\n"
-    "0 DEF add(a,b)\n"
-    "0 JMP 1\n"
-    "B1\n"
-    "0 REF True\n"
-    "0 JEZ 2\n"
-    "B2\n"
-    "0 RET \n"
-    "B1\n"
-    "0 JMP -1\n"
-    "B1\n"
-    "0 RET \n"
-    "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 DEF add(a,b)\n"
+                                "0 JMP 1\n"
+                                "B1\n"
+                                "0 REF True\n"
+                                "0 JEZ 2\n"
+                                "B2\n"
+                                "0 RET \n"
+                                "B1\n"
+                                "0 JMP -1\n"
+                                "B1\n"
+                                "0 RET \n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, signed_num) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = -1\n";
     printf("%s", lines);
@@ -861,40 +846,36 @@ TEST(parser, signed_num) {
     printf("%s", tokens_print);
     EXPECT_STREQ(tokens_print, "{sym}a{opt}={opt}-{lit}1\n");
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "1 NUM 1\n"
-        "0 OPT -\n"
-        "0 OUT a\n"
-        "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "1 NUM 1\n"
+                                "0 OPT -\n"
+                                "0 OUT a\n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, comp_signed_num) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "if a > -1:\n";
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "1 REF a\n"
-        "2 NUM 1\n"
-        "1 OPT -\n"
-        "0 OPT >\n"
-        "0 JEZ 1\n"
-        "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "1 REF a\n"
+                                "2 NUM 1\n"
+                                "1 OPT -\n"
+                                "0 OPT >\n"
+                                "0 JEZ 1\n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(lexser, symbol_add) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -913,7 +894,7 @@ TEST(lexser, symbol_add) {
 
 TEST(lexser, symbol_1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -930,7 +911,7 @@ TEST(lexser, symbol_1) {
 
 TEST(lexser, operator_not) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -948,7 +929,7 @@ TEST(lexser, operator_not) {
 
 TEST(lexser, symbol_Nag) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -966,7 +947,7 @@ TEST(lexser, symbol_Nag) {
 
 TEST(lexser, operator_all) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -997,7 +978,7 @@ TEST(lexser, operator_all) {
 
 TEST(lexser, symbol_2) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -1017,7 +998,7 @@ TEST(lexser, symbol_2) {
 
 TEST(lexser, symbol_and) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -1037,7 +1018,7 @@ TEST(lexser, symbol_and) {
 
 TEST(lexser, sting) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -1055,7 +1036,7 @@ TEST(lexser, sting) {
 
 TEST(lexser, num_1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -1073,7 +1054,7 @@ TEST(lexser, num_1) {
 
 TEST(lexser, jjcc) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -1094,8 +1075,8 @@ TEST(lexser, jjcc) {
 TEST(parser, pop_by_str) {
     Args* buffs = New_strBuff();
     char* tokens = strsCopy(buffs, "3(>=)2>=29");
-    char* token1 = strsPopTokenWithSkip_byStr(buffs, tokens, ">=", '(', ')');
-    char* token2 = tokens;
+    char* token2 = Cursor_popLastToken(buffs, &tokens, ">=");
+    char* token1 = tokens;
     /* assert */
     EXPECT_STREQ("3(>=)2", token1);
     EXPECT_STREQ("29", token2);
@@ -1103,7 +1084,7 @@ TEST(parser, pop_by_str) {
 }
 
 TEST(parser, mm) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = a ** -1\n";
     printf("%s", lines);
@@ -1122,7 +1103,7 @@ TEST(parser, mm) {
 }
 
 TEST(parser, self_inc) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "a += -1\n"
@@ -1138,72 +1119,71 @@ TEST(parser, self_inc) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "1 REF a\n"
-        "3 NUM 1\n"
-        "2 OPT -\n"
-        "1 RUN \n"
-        "0 OPT +\n"
-        "0 OUT a\n"
-        "B0\n"
-        "1 REF a\n"
-        "3 NUM 1\n"
-        "2 OPT -\n"
-        "1 RUN \n"
-        "0 OPT -\n"
-        "0 OUT a\n"
-        "B0\n"
-        "1 REF a\n"
-        "3 NUM 1\n"
-        "2 OPT -\n"
-        "1 RUN \n"
-        "0 OPT *\n"
-        "0 OUT a\n"
-        "B0\n"
-        "1 REF a\n"
-        "3 NUM 1\n"
-        "2 OPT -\n"
-        "1 RUN \n"
-        "0 OPT /\n"
-        "0 OUT a\n"
-        "B0\n"
-        "1 REF a\n"
-        "2 NUM 1\n"
-        "1 OPT -\n"
-        "0 OPT **=\n"
-        "B0\n"
-        "1 REF a\n"
-        "2 NUM 1\n"
-        "1 OPT -\n"
-        "0 OPT //=\n"
-        "B0\n"
-        "1 REF a\n"
-        "2 NUM 1\n"
-        "1 OPT -\n"
-        "0 OPT >=\n"
-        "B0\n"
-        "1 REF a\n"
-        "2 NUM 1\n"
-        "1 OPT -\n"
-        "0 OPT <=\n"
-        "B0\n"
-        "1 REF a\n"
-        "2 NUM 1\n"
-        "1 OPT -\n"
-        "0 OPT !=\n"
-        "B0\n"
-        "1 REF a\n"
-        "2 NUM 1\n"
-        "1 OPT -\n"
-        "0 OPT %=\n"
-        "B0\n");
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "1 REF a\n"
+                                "3 NUM 1\n"
+                                "2 OPT -\n"
+                                "1 RUN \n"
+                                "0 OPT +\n"
+                                "0 OUT a\n"
+                                "B0\n"
+                                "1 REF a\n"
+                                "3 NUM 1\n"
+                                "2 OPT -\n"
+                                "1 RUN \n"
+                                "0 OPT -\n"
+                                "0 OUT a\n"
+                                "B0\n"
+                                "1 REF a\n"
+                                "3 NUM 1\n"
+                                "2 OPT -\n"
+                                "1 RUN \n"
+                                "0 OPT *\n"
+                                "0 OUT a\n"
+                                "B0\n"
+                                "1 REF a\n"
+                                "3 NUM 1\n"
+                                "2 OPT -\n"
+                                "1 RUN \n"
+                                "0 OPT /\n"
+                                "0 OUT a\n"
+                                "B0\n"
+                                "1 REF a\n"
+                                "2 NUM 1\n"
+                                "1 OPT -\n"
+                                "0 OPT **=\n"
+                                "B0\n"
+                                "1 REF a\n"
+                                "2 NUM 1\n"
+                                "1 OPT -\n"
+                                "0 OPT //=\n"
+                                "B0\n"
+                                "1 REF a\n"
+                                "2 NUM 1\n"
+                                "1 OPT -\n"
+                                "0 OPT >=\n"
+                                "B0\n"
+                                "1 REF a\n"
+                                "2 NUM 1\n"
+                                "1 OPT -\n"
+                                "0 OPT <=\n"
+                                "B0\n"
+                                "1 REF a\n"
+                                "2 NUM 1\n"
+                                "1 OPT -\n"
+                                "0 OPT !=\n"
+                                "B0\n"
+                                "1 REF a\n"
+                                "2 NUM 1\n"
+                                "1 OPT -\n"
+                                "0 OPT %=\n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, n_n1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = ~-1\n";
     printf("%s", lines);
@@ -1221,30 +1201,29 @@ TEST(parser, n_n1) {
 }
 
 TEST(parser, or_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "( a>1) or (b<= 3)\n";
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "3 REF a\n"
-        "3 NUM 1\n"
-        "2 OPT >\n"
-        "1 RUN \n"
-        "3 REF b\n"
-        "3 NUM 3\n"
-        "2 OPT <=\n"
-        "1 RUN \n"
-        "0 OPT  or \n"
-        "B0\n");
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "3 REF a\n"
+                                "3 NUM 1\n"
+                                "2 OPT >\n"
+                                "1 RUN \n"
+                                "3 REF b\n"
+                                "3 NUM 3\n"
+                                "2 OPT <=\n"
+                                "1 RUN \n"
+                                "0 OPT  or \n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, _or_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "if (1>2) and (2>1):\n"
@@ -1253,45 +1232,42 @@ TEST(parser, _or_) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "3 NUM 1\n"
-        "3 NUM 2\n"
-        "2 OPT >\n"
-        "1 RUN \n"
-        "3 NUM 2\n"
-        "3 NUM 1\n"
-        "2 OPT >\n"
-        "1 RUN \n"
-        "0 OPT  and \n"
-        "0 JEZ 1\n"
-        "B1\n"
-        "0 NUM 1\n"
-        "0 OUT b\n"
-        "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "3 NUM 1\n"
+                                "3 NUM 2\n"
+                                "2 OPT >\n"
+                                "1 RUN \n"
+                                "3 NUM 2\n"
+                                "3 NUM 1\n"
+                                "2 OPT >\n"
+                                "1 RUN \n"
+                                "0 OPT  and \n"
+                                "0 JEZ 1\n"
+                                "B1\n"
+                                "0 NUM 1\n"
+                                "0 OUT b\n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, annotation) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = t#test\n";
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "0 REF t\n"
-        "0 OUT a\n"
-        "B0\n");
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 REF t\n"
+                                "0 OUT a\n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, annotation_block) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "while True:\n"
@@ -1299,17 +1275,15 @@ TEST(parser, annotation_block) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "0 REF True\n"
-        "0 JEZ 2\n"
-        "B1\n"
-        "0 NUM 1\n"
-        "0 OUT a\n"
-        "B0\n"
-        "0 JMP -1\n"
-        "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 REF True\n"
+                                "0 JEZ 2\n"
+                                "B1\n"
+                                "0 NUM 1\n"
+                                "0 OUT a\n"
+                                "B0\n"
+                                "0 JMP -1\n"
+                                "B0\n");
     lines =
         "while True:\n"
         "    a = 1\n"
@@ -1317,17 +1291,15 @@ TEST(parser, annotation_block) {
     printf("%s", lines);
     pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "0 REF True\n"
-        "0 JEZ 2\n"
-        "B1\n"
-        "0 NUM 1\n"
-        "0 OUT a\n"
-        "B0\n"
-        "0 JMP -1\n"
-        "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 REF True\n"
+                                "0 JEZ 2\n"
+                                "B1\n"
+                                "0 NUM 1\n"
+                                "0 OUT a\n"
+                                "B0\n"
+                                "0 JMP -1\n"
+                                "B0\n");
     lines =
         "while True:\n"
         "    a = 1\n"
@@ -1336,26 +1308,24 @@ TEST(parser, annotation_block) {
     printf("%s", lines);
     pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "0 REF True\n"
-        "0 JEZ 2\n"
-        "B1\n"
-        "0 NUM 1\n"
-        "0 OUT a\n"
-        "B1\n"
-        "0 NUM 2\n"
-        "0 OUT b\n"
-        "B0\n"
-        "0 JMP -1\n"
-        "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 REF True\n"
+                                "0 JEZ 2\n"
+                                "B1\n"
+                                "0 NUM 1\n"
+                                "0 OUT a\n"
+                                "B1\n"
+                                "0 NUM 2\n"
+                                "0 OUT b\n"
+                                "B0\n"
+                                "0 JMP -1\n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, if_elif_else) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "if a > 1:\n"
@@ -1374,59 +1344,57 @@ TEST(parser, if_elif_else) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "1 REF a\n"
-        "1 NUM 1\n"
-        "0 OPT >\n"
-        "0 JEZ 1\n"
-        "B1\n"
-        "0 NUM 1\n"
-        "0 OUT b\n"
-        "B0\n"
-        "0 NEL 1\n"
-        "1 REF a\n"
-        "1 NUM 2\n"
-        "0 OPT >\n"
-        "0 JEZ 1\n"
-        "B1\n"
-        "0 NUM 2\n"
-        "0 OUT b\n"
-        "B1\n"
-        "1 REF a\n"
-        "1 NUM 1\n"
-        "0 OPT >\n"
-        "0 JEZ 1\n"
-        "B2\n"
-        "0 NUM 1\n"
-        "0 OUT b\n"
-        "B1\n"
-        "0 NEL 1\n"
-        "1 REF a\n"
-        "1 NUM 2\n"
-        "0 OPT >\n"
-        "0 JEZ 1\n"
-        "B2\n"
-        "0 NUM 2\n"
-        "0 OUT b\n"
-        "B1\n"
-        "0 NEL 1\n"
-        "B2\n"
-        "0 NUM 3\n"
-        "0 OUT b\n"
-        "B0\n"
-        "0 NEL 1\n"
-        "B1\n"
-        "0 NUM 3\n"
-        "0 OUT b\n"
-        "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "1 REF a\n"
+                                "1 NUM 1\n"
+                                "0 OPT >\n"
+                                "0 JEZ 1\n"
+                                "B1\n"
+                                "0 NUM 1\n"
+                                "0 OUT b\n"
+                                "B0\n"
+                                "0 NEL 1\n"
+                                "1 REF a\n"
+                                "1 NUM 2\n"
+                                "0 OPT >\n"
+                                "0 JEZ 1\n"
+                                "B1\n"
+                                "0 NUM 2\n"
+                                "0 OUT b\n"
+                                "B1\n"
+                                "1 REF a\n"
+                                "1 NUM 1\n"
+                                "0 OPT >\n"
+                                "0 JEZ 1\n"
+                                "B2\n"
+                                "0 NUM 1\n"
+                                "0 OUT b\n"
+                                "B1\n"
+                                "0 NEL 1\n"
+                                "1 REF a\n"
+                                "1 NUM 2\n"
+                                "0 OPT >\n"
+                                "0 JEZ 1\n"
+                                "B2\n"
+                                "0 NUM 2\n"
+                                "0 OUT b\n"
+                                "B1\n"
+                                "0 NEL 1\n"
+                                "B2\n"
+                                "0 NUM 3\n"
+                                "0 OUT b\n"
+                                "B0\n"
+                                "0 NEL 1\n"
+                                "B1\n"
+                                "0 NUM 3\n"
+                                "0 OUT b\n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, for_range) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "for i in range(0,10):\n"
@@ -1459,7 +1427,7 @@ TEST(parser, for_range) {
 }
 
 TEST(parser, for_range_rtt) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "for i in range(0, 3):\n"
@@ -1531,7 +1499,7 @@ TEST(parser, for_list) {
 }
 
 TEST(parser, for_for_range) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "a = 0\n"
@@ -1543,50 +1511,48 @@ TEST(parser, for_for_range) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-    "B0\n"
-    "0 NUM 0\n"
-    "0 OUT a\n"
-    "B0\n"
-    "2 NUM 0\n"
-    "2 NUM 10\n"
-    "1 RUN range\n"
-    "0 RUN iter\n"
-    "0 OUT $l0\n"
-    "B0\n"
-    "0 RUN $l0.__next__\n"
-    "0 OUT i\n"
-    "0 EST i\n"
-    "0 JEZ 2\n"
-    "B1\n"
-    "2 NUM 0\n"
-    "2 NUM 3\n"
-    "1 RUN range\n"
-    "0 RUN iter\n"
-    "0 OUT $l1\n"
-    "B1\n"
-    "0 RUN $l1.__next__\n"
-    "0 OUT k\n"
-    "0 EST k\n"
-    "0 JEZ 2\n"
-    "B2\n"
-    "1 REF k\n"
-    "0 RUN print\n"
-    "B2\n"
-    "1 REF a\n"
-    "1 REF k\n"
-    "0 OPT +\n"
-    "0 OUT a\n"
-    "B1\n"
-    "0 JMP -1\n"
-    "B1\n"
-    "0 DEL $l1\n"
-    "B0\n"
-    "0 JMP -1\n"
-    "B0\n"
-    "0 DEL $l0\n"
-    "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 NUM 0\n"
+                                "0 OUT a\n"
+                                "B0\n"
+                                "2 NUM 0\n"
+                                "2 NUM 10\n"
+                                "1 RUN range\n"
+                                "0 RUN iter\n"
+                                "0 OUT $l0\n"
+                                "B0\n"
+                                "0 RUN $l0.__next__\n"
+                                "0 OUT i\n"
+                                "0 EST i\n"
+                                "0 JEZ 2\n"
+                                "B1\n"
+                                "2 NUM 0\n"
+                                "2 NUM 3\n"
+                                "1 RUN range\n"
+                                "0 RUN iter\n"
+                                "0 OUT $l1\n"
+                                "B1\n"
+                                "0 RUN $l1.__next__\n"
+                                "0 OUT k\n"
+                                "0 EST k\n"
+                                "0 JEZ 2\n"
+                                "B2\n"
+                                "1 REF k\n"
+                                "0 RUN print\n"
+                                "B2\n"
+                                "1 REF a\n"
+                                "1 REF k\n"
+                                "0 OPT +\n"
+                                "0 OUT a\n"
+                                "B1\n"
+                                "0 JMP -1\n"
+                                "B1\n"
+                                "0 DEL $l1\n"
+                                "B0\n"
+                                "0 JMP -1\n"
+                                "B0\n"
+                                "0 DEL $l0\n"
+                                "B0\n");
 
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
@@ -1599,7 +1565,7 @@ TEST(parser, for_for_range) {
 }
 
 TEST(parser, break_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "for i in range(0, 3):\n"
@@ -1646,7 +1612,7 @@ TEST(parser, break_) {
 }
 
 TEST(parser, prime_100) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "num = 0\n"
@@ -1733,7 +1699,7 @@ TEST(parser, prime_100) {
 }
 
 TEST(parser, __iter__) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "__res = __iter__()\n";
     printf("%s", lines);
@@ -1751,7 +1717,7 @@ TEST(parser, __iter__) {
 /* not solve yet */
 
 // TEST(parser, strEqu) {
-//     pikaMemInfo.heapUsedMax = 0;
+//     g_PikaMemInfo.heapUsedMax = 0;
 //     Args* buffs = New_strBuff();
 //     char* lines =
 //                  "a = '1ee' == '1ee'\n"
@@ -1769,7 +1735,7 @@ TEST(parser, __iter__) {
 // }
 
 TEST(parser, for_in_string) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "for b in 'test':\n"
@@ -1801,7 +1767,7 @@ TEST(parser, for_in_string) {
 }
 
 TEST(parser, print_ddd) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "print(\"[Info]: in Python config...\")\n";
     printf("%s", lines);
@@ -1818,7 +1784,7 @@ TEST(parser, print_ddd) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, __getitem__3) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[c+d] + e[f*j]\n";
     printf("%s", lines);
@@ -1846,7 +1812,7 @@ TEST(parser, __getitem__3) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, __getitem__) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[c]\n";
     printf("%s", lines);
@@ -1866,7 +1832,7 @@ TEST(parser, __getitem__) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, __getitem__2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[c+d]\n";
     printf("%s", lines);
@@ -1888,7 +1854,7 @@ TEST(parser, __getitem__2) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, __setitem__) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a[b] = c\n";
     printf("%s", lines);
@@ -1908,7 +1874,7 @@ TEST(parser, __setitem__) {
 #endif
 
 TEST(parser, str_p_str) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = str(1) + str(1)\n";
     printf("%s", lines);
@@ -1928,7 +1894,7 @@ TEST(parser, str_p_str) {
 }
 
 TEST(parser, test__) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "len = __calls.len()\n"
@@ -1975,7 +1941,7 @@ TEST(parser, test__) {
 }
 
 TEST(parser, global) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "def test_global():\n"
@@ -1985,24 +1951,22 @@ TEST(parser, global) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm, (char *)
-        "B0\n"
-        "0 DEF test_global()\n"
-        "0 JMP 1\n"
-        "B1\n"
-        "0 GLB x\n"
-        "B1\n"
-        "0 GLB y,z\n"
-        "B1\n"
-        "0 RET \n"
-        "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 DEF test_global()\n"
+                                "0 JMP 1\n"
+                                "B1\n"
+                                "0 GLB x\n"
+                                "B1\n"
+                                "0 GLB y,z\n"
+                                "B1\n"
+                                "0 RET \n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, mpy_demo_1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "chars = ' .,-:;i+hHM$*#@ '\n";
     printf("%s", lines);
@@ -2018,9 +1982,9 @@ TEST(parser, mpy_demo_1) {
 }
 
 TEST(parser, clean_compled_str) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* res = strsGetCleanCmd(buffs, "chars = ' .,-:;i+hHM$*#@ '\n");
+    char* res = Cursor_getCleanStmt(buffs, "chars = ' .,-:;i+hHM$*#@ '\n");
     EXPECT_STREQ(res, "chars=' .,-:;i+hHM$*#@ '\n");
     printf("%s", res);
     args_deinit(buffs);
@@ -2028,7 +1992,7 @@ TEST(parser, clean_compled_str) {
 }
 
 TEST(parser, class_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "class Test(TinyObj):\n"
@@ -2037,31 +2001,29 @@ TEST(parser, class_) {
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm, (char* )
-        "B0\n"
-        "0 CLS Test()\n"
-        "0 JMP 1\n"
-        "B1\n"
-        "0 RUN TinyObj\n"
-        "0 OUT self\n"
-        "B1\n"
-        "0 RAS self\n"
-        "B1\n"
-        "0 NUM 1\n"
-        "0 OUT x\n"
-        "B1\n"
-        "0 RAS $origin\n"
-        "B1\n"
-        "0 NEW self\n"
-        "0 RET \n"
-        "B0\n"
-    );
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "0 CLS Test()\n"
+                                "0 JMP 1\n"
+                                "B1\n"
+                                "0 RUN TinyObj\n"
+                                "0 OUT self\n"
+                                "B1\n"
+                                "0 RAS self\n"
+                                "B1\n"
+                                "0 NUM 1\n"
+                                "0 OUT x\n"
+                                "B1\n"
+                                "0 RAS $origin\n"
+                                "B1\n"
+                                "0 NEW self\n"
+                                "0 RET \n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, class_def) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "class Test():\n"
@@ -2111,7 +2073,7 @@ TEST(parser, class_def) {
 }
 
 TEST(parser, nag_a) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "print(-a)\n";
     printf("%s", lines);
@@ -2200,7 +2162,7 @@ TEST(asmer, asm_to_bytecode_0x0d) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, list_1_2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "print(list[0] + list[1])\n";
     printf("%s", lines);
@@ -2223,7 +2185,7 @@ TEST(parser, list_1_2) {
 #endif
 
 TEST(parser, class_def_void_line) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "class Test():\n"
@@ -2277,18 +2239,17 @@ TEST(parser, class_def_void_line) {
 
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(parser, multiLine_import) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines =(char *)
-        "import TEE\n"
-        "from EE import C\n"
-        "from PikaStdLib import MemChecker as MC\n"
-        "while true:\n"
-        "    rgb.flow()\n"
-        "    if false:\n"
-        "        a=3\n"
-        "        test.on(add(2,3))\n"
-        "\n";
+    char *lines = (char *)"import TEE\n"
+                        "from EE import C\n"
+                        "from PikaStdLib import MemChecker as MC\n"
+                        "while true:\n"
+                        "    rgb.flow()\n"
+                        "    if false:\n"
+                        "        a=3\n"
+                        "        test.on(add(2,3))\n"
+                        "\n";
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
@@ -2330,25 +2291,24 @@ TEST(parser, multiLine_import) {
 #endif
 
 TEST(parser, multiLine_comment) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* lines =(char *)
-        "'''\n"
-        "a = 1\n"
-        "'''\n"
-        "while true:\n"
-        "    rgb.flow()\n"
-        "    ''' \n"
-        "    a = 1\n"
-        "    ''' \n"
-        "    if false:\n"
-        "    \"\"\" \n"
-        "    a = 1\n"
-        "    a = 1\n"
-        "    \"\"\"\n"
-        "        a=3\n"
-        "        test.on(add(2,3))\n"
-        "\n";
+    char *lines = (char *)"'''\n"
+                        "a = 1\n"
+                        "'''\n"
+                        "while true:\n"
+                        "    rgb.flow()\n"
+                        "    ''' \n"
+                        "    a = 1\n"
+                        "    ''' \n"
+                        "    if false:\n"
+                        "    \"\"\" \n"
+                        "    a = 1\n"
+                        "    a = 1\n"
+                        "    \"\"\"\n"
+                        "        a=3\n"
+                        "        test.on(add(2,3))\n"
+                        "\n";
     printf("%s", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
     printf("%s", pikaAsm);
@@ -2377,7 +2337,7 @@ TEST(parser, multiLine_comment) {
 }
 
 TEST(parser, plus_equ) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a += 1+1\n";
     printf("%s", lines);
@@ -2399,7 +2359,7 @@ TEST(parser, plus_equ) {
 
 TEST(lexser, a_j) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -2416,7 +2376,7 @@ TEST(lexser, a_j) {
 }
 
 TEST(parser, plus_equ_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a -= (1+1-3)\n";
     printf("%s", lines);
@@ -2440,7 +2400,7 @@ TEST(parser, plus_equ_) {
 }
 
 TEST(parser, class_demo_3) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "class people:\n"
@@ -2463,7 +2423,7 @@ TEST(parser, class_demo_3) {
 }
 
 TEST(parser, a_a) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "a = 1\n"
@@ -2477,7 +2437,7 @@ TEST(parser, a_a) {
 }
 
 TEST(parser, a_cuohao_j) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = (3 - 4) - 4\n";
     printf("%s\n",
@@ -2500,7 +2460,7 @@ TEST(parser, a_cuohao_j) {
 }
 
 TEST(parser, _3_3) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "-3+3\n";
     printf("%s\n",
@@ -2521,7 +2481,7 @@ TEST(parser, _3_3) {
 
 #if PIKA_BUILTIN_STRUCT_ENABLE
 TEST(parser, list_init) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = [1, 2, 3]\n";
     printf("%s\n",
@@ -2542,7 +2502,7 @@ TEST(parser, list_init) {
 }
 
 TEST(parser, list_init_fun) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "test([1, 2, 3])\n";
     printf("%s\n",
@@ -2564,7 +2524,7 @@ TEST(parser, list_init_fun) {
 #endif
 
 TEST(parser, bytes_iteral) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b'\\x00\\x01'\n";
     char* tokens_str =
@@ -2584,7 +2544,7 @@ TEST(parser, bytes_iteral) {
 
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(parser, import_as) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "import PikaStdLib as std\n";
     char* tokens_str =
@@ -2606,7 +2566,7 @@ TEST(parser, import_as) {
 #endif
 
 TEST(parser, str_equ) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = 'num ='\n";
     char* tokens_str =
@@ -2626,7 +2586,7 @@ TEST(parser, str_equ) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, bytes_index) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "res2 = b'eqrt'[2]\n";
     char* tokens_str =
@@ -2648,7 +2608,7 @@ TEST(parser, bytes_index) {
 #endif
 
 TEST(parser, hex_iteral) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = 0b10\n";
     char* tokens_str =
@@ -2667,7 +2627,7 @@ TEST(parser, hex_iteral) {
 }
 
 TEST(parser, tab) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "for i in range(0, 100):\n"
@@ -2705,7 +2665,7 @@ TEST(parser, tab) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, parse_issue2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "    recv_buf[1] = dat \n";
     char* tokens = Lexer_getTokenStream(buffs, lines);
@@ -2730,10 +2690,10 @@ TEST(parser, parse_issue2) {
 #endif
 
 TEST(parser, parse_issue3) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "recv_buf[1] = dat ";
-    char* clean_cmd = strsGetCleanCmd(buffs, lines);
+    char* clean_cmd = Cursor_getCleanStmt(buffs, lines);
     EXPECT_STREQ(clean_cmd, "recv_buf[1]=dat");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -2741,7 +2701,7 @@ TEST(parser, parse_issue3) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, slice1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = recv_buf[1:4]\n";
     printf("%s", lines);
@@ -2762,7 +2722,7 @@ TEST(parser, slice1) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, slice2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = recv_buf[1:4:2]\n";
     printf("%s", lines);
@@ -2783,7 +2743,7 @@ TEST(parser, slice2) {
 #endif
 
 TEST(parser, str_add1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "msg = \"device_names[\" + str(i) + \"]:\"";
     printf("%s\r\n", lines);
@@ -2795,22 +2755,21 @@ TEST(parser, str_add1) {
                  "{sym}msg{opt}={lit}\"device_names[\"{opt}+{sym}str{dvd}({sym}"
                  "i{dvd}){opt}+{lit}\"]:\"");
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "2 STR device_names[\n"
-        "3 REF i\n"
-        "2 RUN str\n"
-        "1 OPT +\n"
-        "1 STR ]:\n"
-        "0 OPT +\n"
-        "0 OUT msg\n"
-        "B0\n");
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "2 STR device_names[\n"
+                                "3 REF i\n"
+                                "2 RUN str\n"
+                                "1 OPT +\n"
+                                "1 STR ]:\n"
+                                "0 OPT +\n"
+                                "0 OUT msg\n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, str_add2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "msg = \"device_names[\" + str(i)";
     printf("%s\r\n", lines);
@@ -2822,20 +2781,19 @@ TEST(parser, str_add2) {
                  "{sym}msg{opt}={lit}\"device_names[\"{opt}+{sym}str{dvd}({sym}"
                  "i{dvd})");
     printf("%s", pikaAsm);
-    EXPECT_STREQ(pikaAsm,(char *)
-        "B0\n"
-        "1 STR device_names[\n"
-        "2 REF i\n"
-        "1 RUN str\n"
-        "0 OPT +\n"
-        "0 OUT msg\n"
-        "B0\n");
+    EXPECT_STREQ(pikaAsm, (char *)"B0\n"
+                                "1 STR device_names[\n"
+                                "2 REF i\n"
+                                "1 RUN str\n"
+                                "0 OPT +\n"
+                                "0 OUT msg\n"
+                                "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(parser, mpy1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "# Pong!\n"
@@ -2933,7 +2891,7 @@ TEST(parser, mpy1) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, slice_12lkj) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[:6]\n";
     printf("%s", lines);
@@ -2952,7 +2910,7 @@ TEST(parser, slice_12lkj) {
 }
 
 TEST(parser, slice_oifjlk) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[6:]\n";
     printf("%s", lines);
@@ -2973,7 +2931,7 @@ TEST(parser, slice_oifjlk) {
 #endif
 
 TEST(parser, str_string) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = str(String('test'))\n";
     printf("%s", lines);
@@ -2991,7 +2949,7 @@ TEST(parser, str_string) {
 }
 
 TEST(parser, json_literal) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "a = '"
@@ -3033,7 +2991,7 @@ TEST(parser, json_literal) {
 }
 
 TEST(parser, issuekd) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "recv_buf = PikaStdData.List()\n"
@@ -3087,7 +3045,7 @@ TEST(parser, issuekd) {
 }
 
 TEST(parser, cjson_test4) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     Arg* lines_buff = arg_loadFile(NULL, "../../examples/cJSON/test4.py");
     char* lines = (char*)arg_getBytes(lines_buff);
@@ -3111,7 +3069,7 @@ TEST(parser, cjson_test4) {
 }
 
 TEST(parser, connection) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "print('\\\n"
@@ -3129,7 +3087,7 @@ TEST(parser, connection) {
 }
 
 TEST(parser, connection2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "a = \\\n"
@@ -3153,7 +3111,7 @@ TEST(parser, connection2) {
 
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(parser, format1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "s = 'res:%d' % 23";
     printf("%s", lines);
@@ -3173,7 +3131,7 @@ TEST(parser, format1) {
 
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(parser, format2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "'res:%d:%d' % (23, 25)";
     printf("%s\n", lines);
@@ -3193,7 +3151,7 @@ TEST(parser, format2) {
 
 #if PIKA_SYNTAX_EXCEPTION_ENABLE
 TEST(parser, try1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "try:\n"
@@ -3229,15 +3187,60 @@ TEST(parser, try1) {
                  "B1\n"
                  "1 STR in except\n"
                  "0 RUN print\n"
-                 "0 SER 0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(parser, except_issue) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "try:\n"
+        "    a = 1\n"
+        "    raise 0x25 + 256\n"
+        "    raise\n"
+        "except Excepthon:\n"
+        "    print('in except')\n"
+        "    break\n"
+        "\n";
+    printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 TRY \n"
+                 "B1\n"
+                 "0 NUM 1\n"
+                 "0 OUT a\n"
+                 "B1\n"
+                 "1 NUM 0x25\n"
+                 "1 NUM 256\n"
+                 "0 OPT +\n"
+                 "0 RIS \n"
+                 "B1\n"
+                 "0 REF RuntimeError\n"
+                 "0 RIS \n"
+                 "B0\n"
+                 "0 NTR \n"
+                 "0 GER \n"
+                 "0 JEZ 2\n"
+                 "B0\n"
+                 "0 EXP \n"
+                 "B1\n"
+                 "1 STR in except\n"
+                 "0 RUN print\n"
+                 "B1\n"
+                 "0 BRK \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST(parser, optissue1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "~-1";
     printf("%s\n", lines);
@@ -3254,7 +3257,7 @@ TEST(parser, optissue1) {
 }
 
 TEST(parser, optissue2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "test(not get())";
     printf("%s\n", lines);
@@ -3272,7 +3275,7 @@ TEST(parser, optissue2) {
 
 TEST(lexser, import_issue1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -3290,7 +3293,7 @@ TEST(lexser, import_issue1) {
 
 TEST(lexser, dict_literal1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -3313,7 +3316,7 @@ TEST(lexser, dict_literal1) {
 
 #if PIKA_BUILTIN_STRUCT_ENABLE
 TEST(parser, dict_literal1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "tinydict = {'name': 'runoob', 'likes': 123, 'url': "
@@ -3338,7 +3341,7 @@ TEST(parser, dict_literal1) {
 #endif
 
 TEST(parser, common_issue1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "class ConfigParser():\n"
@@ -3378,7 +3381,7 @@ TEST(parser, common_issue1) {
 }
 
 TEST(parser, def_issue1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "def options(self):\n"
@@ -3414,7 +3417,7 @@ TEST(parser, unittest) {
 
 TEST(lexser, function_chain) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -3433,7 +3436,7 @@ TEST(lexser, function_chain) {
 }
 
 TEST(parser, function_chain) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = String('a,b,c').split(',')\n";
     __platform_printf("%s\n", lines);
@@ -3456,7 +3459,7 @@ TEST(parser, str_issue1) {
         "if str(type(data)) == \"<class 'str'>\" and str(type(included_data)) "
         "== \"<class 'str'>\":\n"
         "\n";
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     __platform_printf("%s\n", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
@@ -3483,7 +3486,7 @@ TEST(parser, str_issue1) {
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(parser, str_issue2) {
     char* lines = "print('ret = %s' % str(ret))\n";
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     __platform_printf("%s\n", lines);
     char* pikaAsm = Parser_linesToAsm(buffs, lines);
@@ -3502,7 +3505,7 @@ TEST(parser, str_issue2) {
 #endif
 
 TEST(parser, num_issue) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "(((1 + (2 * 3)/(4 + 5))*(6 - 7) + (8 + 9) * 10)/11) - 12\n";
     __platform_printf("%s\n", lines);
@@ -3547,7 +3550,7 @@ TEST(parser, num_issue) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, branket_issue2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "temp = hex(int('12'))[0:2]\n";
     __platform_printf("%s\n", lines);
@@ -3570,7 +3573,7 @@ TEST(parser, branket_issue2) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, branket_issue3) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[x][y]\n";
     __platform_printf("%s\n", lines);
@@ -3592,7 +3595,7 @@ TEST(parser, branket_issue3) {
 
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, branket_issue4) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[c[y]]\n";
     __platform_printf("%s\n", lines);
@@ -3613,7 +3616,7 @@ TEST(parser, branket_issue4) {
 #endif
 
 TEST(parser, tuple1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "(a,b)\n";
     __platform_printf("%s\n", lines);
@@ -3630,7 +3633,7 @@ TEST(parser, tuple1) {
 }
 
 TEST(parser, _del) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "del a\n";
     __platform_printf("%s\n", lines);
@@ -3644,9 +3647,24 @@ TEST(parser, _del) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, _del_issue1) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "del(a)\n";
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 DEL a\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(parser, issue_fa13f4) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "d['language'].append('Java')\n";
     __platform_printf("%s\n", lines);
@@ -3666,7 +3684,7 @@ TEST(parser, issue_fa13f4) {
 #endif
 
 TEST(parser, _is) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a is b\n";
     __platform_printf("%s\n", lines);
@@ -3683,7 +3701,7 @@ TEST(parser, _is) {
 }
 
 TEST(parser, _in) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a in b\n";
     __platform_printf("%s\n", lines);
@@ -3700,7 +3718,7 @@ TEST(parser, _in) {
 }
 
 TEST(parser, _in2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "res1 = 'a' in 'aaa'\n"
@@ -3726,7 +3744,7 @@ TEST(parser, _in2) {
 
 #if PIKA_SYNTAX_EXCEPTION_ENABLE
 TEST(parser, assert_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "assert True\n"
@@ -3752,7 +3770,7 @@ TEST(parser, assert_) {
 
 #if PIKA_SYNTAX_EXCEPTION_ENABLE
 TEST(parser, except_for) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "for i in range(0, 10):\n"
@@ -3787,7 +3805,6 @@ TEST(parser, except_for) {
                  "0 EXP \n"
                  "B2\n"
                  "0 REF b\n"
-                 "0 SER 0\n"
                  "B0\n"
                  "0 JMP -1\n"
                  "B0\n"
@@ -3799,7 +3816,7 @@ TEST(parser, except_for) {
 #endif
 
 TEST(parser, line_void_issue$l1k2i) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "mem = PikaStdLib.MemChecker()";
     __platform_printf("%s\n", lines);
@@ -3815,7 +3832,7 @@ TEST(parser, line_void_issue$l1k2i) {
 }
 
 TEST(parser, while_void_novoid) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "while True:\n";
     __platform_printf("%s\n", lines);
@@ -3847,7 +3864,7 @@ TEST(parser, while_void_novoid) {
 }
 
 TEST(parser, connect_auto) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "method(a,\n"
@@ -3867,7 +3884,7 @@ TEST(parser, connect_auto) {
 
 TEST(lexser, connet_part1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -3884,7 +3901,7 @@ TEST(lexser, connet_part1) {
 }
 
 TEST(parser, vars_runtime) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "def testvars(a, *b):\n"
@@ -3935,7 +3952,7 @@ TEST(parser, vars_runtime) {
 
 #if PIKA_BUILTIN_STRUCT_ENABLE
 TEST(parser, issues_I5MIFO) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "[1, 2, 3] + [4, 5, 6]";
     __platform_printf("%s\n", lines);
@@ -3960,7 +3977,7 @@ TEST(parser, issues_I5MIFO) {
 
 TEST(lexser, science_num) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -3981,7 +3998,7 @@ TEST(lexser, science_num) {
 
 TEST(lexser, issues_I5OJQB) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
 
     /* run */
@@ -3998,7 +4015,7 @@ TEST(lexser, issues_I5OJQB) {
 }
 
 TEST(parser, issues_I5OJQB) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "s = '\\\\'";
     __platform_printf("%s\n", lines);
@@ -4014,7 +4031,7 @@ TEST(parser, issues_I5OJQB) {
 }
 
 TEST(parser, keyword1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "test(a=1, b ='test')";
     __platform_printf("%s\n", lines);
@@ -4033,7 +4050,7 @@ TEST(parser, keyword1) {
 }
 
 TEST(parser, keyword_class) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "t = Test(0, b = 3)\n";
     __platform_printf("%s\n", lines);
@@ -4052,7 +4069,7 @@ TEST(parser, keyword_class) {
 }
 
 TEST(parser, keyword_class_mqtt) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "class MQTT:\n"
@@ -4078,7 +4095,7 @@ TEST(parser, keyword_class_mqtt) {
 
 #if !PIKA_NANO_ENABLE
 TEST(parser, except_dict) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "dict = {'a':1, 'b':2, 'c':3}\n"
@@ -4128,7 +4145,6 @@ TEST(parser, except_dict) {
                  "B1\n"
                  "1 STR in except\n"
                  "0 RUN print\n"
-                 "0 SER 0\n"
                  "B0\n");
     args_deinit(buffs);
     EXPECT_EQ(pikaMemNow(), 0);
@@ -4137,10 +4153,46 @@ TEST(parser, except_dict) {
 
 #if !PIKA_NANO_ENABLE
 TEST(parser, default_fn_1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "def test(a=1, b='test'):\n"
+        "    print(a)";
+
+    __platform_printf("%s\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    __platform_printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 DEF test(a=,b=)\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 EST a\n"
+                 "0 JNZ 2\n"
+                 "B1\n"
+                 "0 NUM 1\n"
+                 "0 OUT a\n"
+                 "B1\n"
+                 "0 EST b\n"
+                 "0 JNZ 2\n"
+                 "B1\n"
+                 "0 STR test\n"
+                 "0 OUT b\n"
+                 "B1\n"
+                 "1 REF a\n"
+                 "0 RUN print\n"
+                 "B1\n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, default_fn_1_hint) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "def test(a:int =1, b:str ='test'):\n"
         "    print(a)";
 
     __platform_printf("%s\n", lines);
@@ -4175,7 +4227,7 @@ TEST(parser, default_fn_1) {
 
 #if !PIKA_NANO_ENABLE
 TEST(parser, multi_return) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a , b = c";
     __platform_printf("%s\n", lines);
@@ -4203,7 +4255,7 @@ TEST(parser, multi_return) {
 }
 
 TEST(parser, multi_return_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "test['a , b'] = c";
     __platform_printf("%s\n", lines);
@@ -4222,7 +4274,7 @@ TEST(parser, multi_return_) {
 }
 
 TEST(parser, multi_return_2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "'test,q'[0] = c";
     __platform_printf("%s\n", lines);
@@ -4243,7 +4295,7 @@ TEST(parser, multi_return_2) {
 
 #if !PIKA_NANO_ENABLE
 TEST(parser, multi_return_3) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "return a,b";
     __platform_printf("%s\n", lines);
@@ -4261,7 +4313,7 @@ TEST(parser, multi_return_3) {
 }
 
 TEST(parser, multi_return_4) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "for a,b in c:\n"
@@ -4274,7 +4326,7 @@ TEST(parser, multi_return_4) {
 }
 
 TEST(parser, for_multi) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "d = {'a':1, 'b':2}\n"
@@ -4329,7 +4381,7 @@ TEST(parser, for_multi) {
 }
 
 TEST(parser, pass_) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "pass\n"
@@ -4370,7 +4422,7 @@ TEST(parser, pass_) {
 }
 
 TEST(parser, modbus_1) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "dest[i + 1] * 256\n";
     __platform_printf("%s\n", lines);
@@ -4392,7 +4444,7 @@ TEST(parser, modbus_1) {
 }
 
 TEST(parser, issue_big_dict) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* pikaAsm =
         Parser_fileToAsm(buffs, "test/python/issue/issue_big_dict.py");
@@ -4797,7 +4849,7 @@ TEST(parser, issue_big_dict) {
 }
 
 TEST(parser, issue_dict_update) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* pikaAsm =
         Parser_fileToAsm(buffs, "test/python/issue/issue_dict_update.py");
@@ -4807,7 +4859,7 @@ TEST(parser, issue_dict_update) {
 }
 
 TEST(parser, object_test2) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = (char*)"hello(name = 'world', isShow = isShow)";
     printf("%s", lines);
@@ -4826,7 +4878,7 @@ TEST(parser, object_test2) {
 }
 
 TEST(parser, i_pp) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "i = 0\n"
@@ -4859,7 +4911,7 @@ TEST(parser, i_pp) {
 }
 
 TEST(parser, multi_num) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a,b ,c = 1, 2, 3\n";
     printf("%s\r\n", lines);
@@ -4895,7 +4947,7 @@ TEST(parser, multi_num) {
 }
 
 TEST(parser, multi_import) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines =
         "import  a,b ,c\n"
@@ -4971,7 +5023,7 @@ TEST(parser, multi_import) {
 }
 
 TEST(parser, from_import_as) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "from PikaStdData import String as string";
     printf("%s\r\n", lines);
@@ -4989,7 +5041,7 @@ TEST(parser, from_import_as) {
 }
 
 TEST(parser, multi_from_import_as) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "from a import b, c, d as e, f, g\n";
     printf("%s\r\n", lines);
@@ -5027,7 +5079,7 @@ TEST(parser, multi_from_import_as) {
 }
 
 TEST(parser, print_ssa) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "print(**a)\n";
     printf("%s\r\n", lines);
@@ -5044,7 +5096,7 @@ TEST(parser, print_ssa) {
 }
 
 TEST(parser, not_in) {
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "1 not in a\n";
     printf("%s\r\n", lines);
@@ -5062,7 +5114,7 @@ TEST(parser, not_in) {
 }
 
 // TEST(parser, def_not_in) {
-//     pikaMemInfo.heapUsedMax = 0;
+//     g_PikaMemInfo.heapUsedMax = 0;
 //     Args* buffs = New_strBuff();
 //     char* lines =
 //         "def test(a=\"hmac-md5\"):\n"
@@ -5079,6 +5131,439 @@ TEST(parser, not_in) {
 //     args_deinit(buffs);
 //     EXPECT_EQ(pikaMemNow(), 0);
 // }
+
+TEST(parser, syntex_issue_lwekj) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "json.loads('{a:1}'}";
+    EXPECT_EQ((uintptr_t)Parser_linesToAsm(buffs, lines), 0);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, syntex_issue_lekj) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a[b()] = 1";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 REF a\n"
+                 "1 RUN b\n"
+                 "1 NUM 1\n"
+                 "0 RUN __setitem__\n"
+                 "0 OUT a\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, syntex_issue_l1l2) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "test(a=1, b= 2)";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 NUM 1\n"
+                 "1 OUT a\n"
+                 "1 NUM 2\n"
+                 "1 OUT b\n"
+                 "0 RUN test\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, syntex_issue_12ojd) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "class Test:\n"
+        "    def test(self):\n"
+        "        a, b = c\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 CLS Test()\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 RUN TinyObj\n"
+                 "0 OUT self\n"
+                 "B1\n"
+                 "0 RAS self\n"
+                 "B1\n"
+                 "0 DEF test(self)\n"
+                 "0 JMP 1\n"
+                 "B2\n"
+                 "0 REF c\n"
+                 "0 OUT $tmp\n"
+                 "B2\n"
+                 "1 REF $tmp\n"
+                 "1 NUM 0\n"
+                 "0 SLC \n"
+                 "0 OUT a\n"
+                 "B2\n"
+                 "1 REF $tmp\n"
+                 "1 NUM 1\n"
+                 "0 SLC \n"
+                 "0 OUT b\n"
+                 "B2\n"
+                 "0 DEL $tmp\n"
+                 "B2\n"
+                 "0 RET \n"
+                 "B1\n"
+                 "0 RAS $origin\n"
+                 "B1\n"
+                 "0 NEW self\n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, tuple_void) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "()\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 RUN \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, page_add) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "PikaUI.Page().add(\n"
+        "    ui.Widget(\n"
+        "    ).add(\n"
+        "        ui.Text()\n"
+        "    ),\n"
+        ")\n"
+        "page.add(\n"
+        "    ui.Widget(\n"
+        "    ).add(\n"
+        "        ui.Text()\n"
+        "    ),\n"
+        ")\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "1 RUN PikaUI.Page\n"
+                 "2 RUN ui.Widget\n"
+                 "2 RUN ui.Text\n"
+                 "1 RUN .add\n"
+                 "0 RUN .add\n"
+                 "B0\n"
+                 "2 RUN ui.Widget\n"
+                 "2 RUN ui.Text\n"
+                 "1 RUN .add\n"
+                 "0 RUN page.add\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, hint_assign) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "a:int = 1\n"
+        "d:{str:int} = {}\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 NUM 1\n"
+                 "0 OUT a\n"
+                 "B0\n"
+                 "0 DCT \n"
+                 "0 OUT d\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, while_try_while) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "while True:\n"
+        "    print(\"before try\")\n"
+        "    try:\n"
+        "        print(\"after try\")\n"
+        "        while True:\n"
+        "            raise\n"
+        "    except:\n"
+        "        break\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 REF True\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "1 STR before try\n"
+                 "0 RUN print\n"
+                 "B1\n"
+                 "0 TRY \n"
+                 "B2\n"
+                 "1 STR after try\n"
+                 "0 RUN print\n"
+                 "B2\n"
+                 "0 REF True\n"
+                 "0 JEZ 2\n"
+                 "B3\n"
+                 "0 REF RuntimeError\n"
+                 "0 RIS \n"
+                 "B2\n"
+                 "0 JMP -1\n"
+                 "B1\n"
+                 "0 NTR \n"
+                 "0 GER \n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "0 EXP \n"
+                 "B2\n"
+                 "0 BRK \n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, return_list) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "return [\n"
+        "    ui.Text(\n"
+        "        align=ui.ALIGN.CENTER\n"
+        "    ),\n"
+        "    ui.Button(\n"
+        "        onclick=self.onclick_next\n"
+        "    )\n"
+        "]\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 REF ui.ALIGN.CENTER\n"
+                 "2 OUT align\n"
+                 "1 RUN ui.Text\n"
+                 "2 REF self.onclick_next\n"
+                 "2 OUT onclick\n"
+                 "1 RUN ui.Button\n"
+                 "0 LST \n"
+                 "0 RET \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, not_in_or) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines = "a not in x or b not in x or c not in x\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "4 REF a\n"
+                 "4 REF x\n"
+                 "3 OPT  in \n"
+                 "2 OPT  not \n"
+                 "4 REF b\n"
+                 "4 REF x\n"
+                 "3 OPT  in \n"
+                 "2 OPT  not \n"
+                 "1 OPT  or \n"
+                 "3 REF c\n"
+                 "3 REF x\n"
+                 "2 OPT  in \n"
+                 "1 OPT  not \n"
+                 "0 OPT  or \n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, for_in_split) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "for rows in data[1:]:\n"
+        "    print(rows)"
+        "while data[1:]:\n"
+        "    print(data[1:])\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    printf("%s", pikaAsm);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "2 REF data\n"
+                 "2 NUM 1\n"
+                 "3 NUM 99999\n"
+                 "2 OPT -\n"
+                 "1 SLC \n"
+                 "0 RUN iter\n"
+                 "0 OUT $l0\n"
+                 "B0\n"
+                 "0 RUN $l0.__next__\n"
+                 "0 OUT rows\n"
+                 "0 EST rows\n"
+                 "0 JEZ 2\n"
+                 "B1\n"
+                 "2 REF rows\n"
+                 "1 RUN print\n"
+                 "1 NUM 1\n"
+                 "2 NUM 99999\n"
+                 "1 OPT -\n"
+                 "0 SLC \n"
+                 "B1\n"
+                 "2 REF data\n"
+                 "2 NUM 1\n"
+                 "3 NUM 99999\n"
+                 "2 OPT -\n"
+                 "1 SLC \n"
+                 "0 RUN print\n"
+                 "B0\n"
+                 "0 JMP -1\n"
+                 "B0\n"
+                 "0 DEL $l0\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, common_issue_1b23f4c1bf) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* pikaAsm =
+        Parser_fileToAsm(buffs, "test/python/issue/common_issue_1b23f4c1bf.py");
+    __platform_printf("%s", pikaAsm);
+
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 CLS Test1()\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 RUN TinyObj\n"
+                 "0 OUT self\n"
+                 "B1\n"
+                 "0 RAS self\n"
+                 "B1\n"
+                 "0 RAS $origin\n"
+                 "B1\n"
+                 "0 NEW self\n"
+                 "0 RET \n"
+                 "B0\n"
+                 "0 CLS Test2()\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 RUN Test1\n"
+                 "0 OUT self\n"
+                 "B1\n"
+                 "0 RAS self\n"
+                 "B1\n"
+                 "0 DEF print(self)\n"
+                 "0 JMP 1\n"
+                 "B2\n"
+                 "1 STR Test2\n"
+                 "0 RUN print\n"
+                 "B2\n"
+                 "0 RET \n"
+                 "B1\n"
+                 "0 RAS $origin\n"
+                 "B1\n"
+                 "0 NEW self\n"
+                 "0 RET \n"
+                 "B0\n"
+                 "0 RUN Test2\n"
+                 "0 OUT a\n"
+                 "B0\n"
+                 "0 RUN a.print\n"
+                 "B0\n");
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, str_join) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_fileToAsm(buffs, "test/python/builtin/str_join.py");
+    __platform_printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, csv) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* pikaAsm = Parser_fileToAsm(buffs, "package/pikascript/csv.py");
+    printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(parser, default_issue) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "def __init__(self, csvfile, delimiter=\",\", quotechar='\"') -> "
+        "None:\n"
+        "    pass";
+
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 DEF __init__(self,csvfile,delimiter=,quotechar=)\n"
+                 "0 JMP 1\n"
+                 "B1\n"
+                 "0 EST delimiter\n"
+                 "0 JNZ 2\n"
+                 "B1\n"
+                 "0 STR ,\n"
+                 "0 OUT delimiter\n"
+                 "B1\n"
+                 "0 EST quotechar\n"
+                 "0 JNZ 2\n"
+                 "B1\n"
+                 "0 STR \"\n"
+                 "0 OUT quotechar\n"
+                 "B1\n"
+                 "0 EST \n"
+                 "0 JNZ 2\n"
+                 "B1\n"
+                 "B1\n"
+                 "B1\n"
+                 "0 RET \n"
+                 "B0\n");
+    printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 #endif
 

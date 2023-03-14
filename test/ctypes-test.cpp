@@ -4,7 +4,7 @@ TEST_START
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(ctypes, test1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/ctypes.py");
@@ -17,14 +17,15 @@ TEST(ctypes, test1) {
 }
 #endif
 
+#if !PIKA_NANO_ENABLE
 TEST(ctypes, test2) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     obj_run(pikaMain,
             "len(b'test\\x0')\n"
-            "len(str(b'test\\x0'))\n");
+            "len(b'test\\x0'.decode())\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "4\r\n");
@@ -33,4 +34,5 @@ TEST(ctypes, test2) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 TEST_END

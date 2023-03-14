@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -26,11 +26,16 @@
  * SOFTWARE.
  */
 
+
 #ifndef __PIKA_OOC_H__
 #define __PIKA_OOC_H__
-    #if PIKA_PLOOC_ENABLE
-        #include "../pikascript-lib/PLOOC/plooc_class.h"
-    #else
-    #define private_member(X) X
+    /* non-reentrant part */
+    #if !defined(PIKA_PLOOC_ENABLE) || !PIKA_PLOOC_ENABLE
+        #define private_member(...) __VA_ARGS__
     #endif
+#endif
+
+/* plooc_class.h should support reentrant */
+#if PIKA_PLOOC_ENABLE
+    #include "../pikascript-lib/PLOOC/plooc_class.h"
 #endif

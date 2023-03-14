@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -122,7 +122,7 @@ char* strsFormat(Args* buffs_p, uint16_t buffSize, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     char* res = args_getBuff(buffs_p, buffSize);
-    __platform_vsnprintf(res, buffSize, fmt, args);
+    pika_platform_vsnprintf(res, buffSize, fmt, args);
     va_end(args);
     return res;
 }
@@ -199,4 +199,32 @@ char* strsGetLine(Args* buffs_p, char* code) {
 
 void strsDeinit(Args* buffs_p) {
     link_deinit_stack(buffs_p);
+}
+
+char* strsPathFormat(Args* buffs_p, char* input) {
+    int32_t size = strGetSize(input);
+    char* buff = args_getBuff(buffs_p, size);
+    strPathFormat(input, buff);
+    return buff;
+}
+
+char* strsPathJoin(Args* buffs_p, char* input1, char* input2) {
+    int32_t size = strGetSize(input1) + strGetSize(input2) + 1;
+    char* buff = args_getBuff(buffs_p, size);
+    strPathJoin(input1, input2, buff);
+    return buff;
+}
+
+char* strsPathGetFolder(Args* buffs_p, char* input) {
+    int32_t size = strGetSize(input);
+    char* buff = args_getBuff(buffs_p, size);
+    strPathGetFolder(input, buff);
+    return buff;
+}
+
+char* strsPathGetFileName(Args* buffs_p, char* input) {
+    int32_t size = strGetSize(input);
+    char* buff = args_getBuff(buffs_p, size);
+    strPathGetFileName(input, buff);
+    return buff;
 }

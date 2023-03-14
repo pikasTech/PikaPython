@@ -3,7 +3,7 @@ TEST_START
 
 TEST(cJSON, parse_print) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     char testjson[] =
         "{\n"
@@ -32,7 +32,7 @@ TEST(cJSON, parse_print) {
 
 TEST(cJSON, getItem) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     char testjson[] =
         "{\n"
@@ -65,7 +65,7 @@ TEST(cJSON, getItem) {
 
 TEST(cJSON, next) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     char testjson[] =
         "{\n"
@@ -103,7 +103,7 @@ TEST(cJSON, next) {
 
 TEST(cJSON, next_get_value) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     char testjson[] =
         "{\n"
@@ -144,7 +144,7 @@ TEST(cJSON, next_get_value) {
 
 TEST(cJSON, item) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -189,7 +189,7 @@ TEST(cJSON, item) {
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(cJSON, construct) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -228,7 +228,7 @@ TEST(cJSON, construct) {
 
 TEST(cJSON, test1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -248,7 +248,7 @@ TEST(cJSON, test1) {
 
 TEST(cJSON, test2) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -269,7 +269,7 @@ TEST(cJSON, test2) {
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(cJSON, test3) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -292,7 +292,7 @@ TEST(cJSON, test3) {
 
 TEST(cJSON, test4) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -318,7 +318,7 @@ TEST(cJSON, test4) {
 
 TEST(cJSON, test5) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -348,7 +348,7 @@ TEST(cJSON, test5) {
 
 TEST(cJSON, test6) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -380,7 +380,7 @@ TEST(cJSON, test6) {
 
 TEST(cJSON, parse_failed) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     char testjson[] =
         "{{\n"
@@ -419,7 +419,7 @@ TEST(cJSON, parse_failed) {
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(cJSON, test7) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
@@ -437,7 +437,7 @@ TEST(cJSON, test7) {
 #if PIKA_SYNTAX_IMPORT_EX_ENABLE
 TEST(cJSON, module) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);

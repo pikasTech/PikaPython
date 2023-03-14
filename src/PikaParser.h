@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -106,19 +106,19 @@ char* Parser_linesToArray(char* lines);
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
 
-#define Cursor_forEach(cursor)   \
+#define _Cursor_forEach(cursor)   \
     _Cursor_beforeIter(&cursor); \
     for (int __i = 0; __i < cursor.length; __i++)
 
-#define Cursor_forEachTokenExistPs(cursor, tokenStream) \
+#define Cursor_forEachExistPs(cursor, stmt) \
     /* init parserStage */                              \
     _Cursor_init(&cursor);                              \
-    _Cursor_parse(&cursor, tokenStream);                \
-    Cursor_forEach(cursor)
+    _Cursor_parse(&cursor, stmt);                \
+    _Cursor_forEach(cursor)
 
-#define Cursor_forEachToken(cursor, tokenStream) \
+#define Cursor_forEach(cursor, stmt) \
     struct Cursor cursor;                        \
-    Cursor_forEachTokenExistPs(cursor, tokenStream)
+    Cursor_forEachExistPs(cursor, stmt)
 
 uint16_t TokenStream_getSize(char* tokenStream);
 

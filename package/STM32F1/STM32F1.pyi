@@ -25,17 +25,6 @@ class GPIO(PikaStdDevice.GPIO):
     def platformRead():
         pass
 
-
-class Time(PikaStdDevice.Time):
-    # override
-    def sleep_s(s: int):
-        pass
-
-    # override
-    def sleep_ms(ms: int):
-        pass
-
-
 class ADC(PikaStdDevice.ADC):
     # override
     def platformEnable():

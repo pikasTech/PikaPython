@@ -3,10 +3,11 @@
 
 extern "C" {
 #include <stdio.h>
-#include "BaseObj.h"
 #include "PikaCompiler.h"
 #include "PikaMain.h"
 #include "PikaMath_Operator.h"
+#include "BaseObj.h"
+#include "pika_hal.h"
 #include "PikaParser.h"
 #include "PikaStdLib_MemChecker.h"
 #include "PikaStdLib_SysObj.h"
@@ -17,7 +18,7 @@ extern "C" {
 #include "dataStrs.h"
 #include "pikaScript.h"
 #include "pika_config_gtest.h"
-extern PikaMemInfo pikaMemInfo;
+extern PikaMemInfo g_PikaMemInfo;
 /* the log_buff of printf */
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 }

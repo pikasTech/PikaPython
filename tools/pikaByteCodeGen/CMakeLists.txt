@@ -3,7 +3,10 @@ project(pikaByteCodeGen VERSION 0.1.0)
 
 include(CTest)
 enable_testing()
-ADD_DEFINITIONS(-DPIKA_CONFIG_ENABLE)
+ADD_DEFINITIONS(
+        -DPIKA_CONFIG_ENABLE
+        -DCROSS_BUILD
+)
 aux_source_directory(pikascript/pikascript-core pikascript-core)
 aux_source_directory(pikascript/pikascript-lib/PikaStdLib PikaStdLib)
 aux_source_directory(pikascript/pikascript-api pikascript-api)

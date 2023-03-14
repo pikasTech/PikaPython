@@ -1,3 +1,6 @@
+import PikaStdLib
+mem = PikaStdLib.MemChecker()
+
 class TestResult:
     def __init__(self):
         self.errorsNum = 0
@@ -70,8 +73,14 @@ class TestCase:
                 self.test_fn = getattr(self, name)
                 print("[ RUN      ] %s.%s" % (suite_name, name))
                 try:
+                    mem_before = 0.0
+                    mem_after = 0.0
+                    mem_before = mem.getNow()
                     self.test_fn()
+                    mem_after = mem.getNow()
                     print("[       OK ] %s.%s" % (suite_name, name))
+                    if mem_after != mem_before:
+                        print("[ MEM LACK ]", mem_after - mem_before)
                 except:
                     print("[  FAILED  ] %s.%s" % (suite_name, name))
                     result.errorsNum += 1

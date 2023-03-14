@@ -1,20 +1,20 @@
 <p align="center">
 	<img alt="logo" src="document/image/144221063-a85b2cb0-0416-493f-9afb-56cff31e977d.jpg" width="300">
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">PikaScript</h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">PikaPython</h1>
 <h4 align="center">跨平台的超轻量级嵌入式 Python 引擎</h4>
 <p align="center">
-	<a href="https://gitee.com/lyon1998/pikascript/stargazers"><img src="https://gitee.com/lyon1998/pikascript/badge/star.svg?theme=gvp"></a>
-	<a href="https://gitee.com/lyon1998/pikascript/members"><img src="https://gitee.com/lyon1998/pikascript/badge/fork.svg?theme=gvp"></a>
-	<a href="https://github.com/pikastech/pikascript/stargazers"><img src="https://img.shields.io/github/stars/pikastech/pikascript?style=flat-square&logo=GitHub"></a>
-	<a href="https://github.com/pikastech/pikascript/network/members"><img src="https://img.shields.io/github/forks/pikastech/pikascript?style=flat-square&logo=GitHub"></a>
-	<a href="https://github.com/pikastech/pikascript/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pikastech/pikascript.svg?style=flat-square"></a>
-        <a href="https://github.com/pikasTech/pikascript/actions/workflows/CI.yml"><img src="https://github.com/pikasTech/pikascript/actions/workflows/CI.yml/badge.svg"> </a>
+	<a href="https://gitee.com/lyon1998/pikapython/stargazers"><img src="https://gitee.com/lyon1998/pikapython/badge/star.svg?theme=gvp"></a>
+	<a href="https://gitee.com/lyon1998/pikapython/members"><img src="https://gitee.com/lyon1998/pikapython/badge/fork.svg?theme=gvp"></a>
+	<a href="https://github.com/pikastech/pikapython/stargazers"><img src="https://img.shields.io/github/stars/pikastech/pikapython?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/pikastech/pikapython/network/members"><img src="https://img.shields.io/github/forks/pikastech/pikapython?style=flat-square&logo=GitHub"></a>
+	<a href="https://github.com/pikastech/pikapython/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pikastech/pikapython.svg?style=flat-square"></a>
+        <a href="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml"><img src="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml/badge.svg"> </a>
 </p>
 
 <p align="center">
 	<a href="https://whycan.com/f_55.html" >论坛</a> |
-	<a href="https://pikadoc.readthedocs.io/zh/latest/index.html" >文档中心</a> |
+	<a href="http://pikascript.com/doc" >文档中心</a> |
 	<a href="https://space.bilibili.com/5365336/channel/seriesdetail?sid=1034902">视频</a> |
         <a href="https://item.taobao.com/item.htm?spm=a21dvs.23580594.0.0.52de3d0dt7rqAx&ft=t&id=654947372034">开发板</a> |
         <a href="https://pikadoc.readthedocs.io/zh/latest/%E4%BD%BF%E7%94%A8%20BSP%20%E5%B7%A5%E7%A8%8B.html">BSP</a> |
@@ -24,26 +24,37 @@
 	<a href="https://pikadoc.readthedocs.io/zh/latest/%E5%95%86%E4%B8%9A%E5%90%88%E4%BD%9C%E6%96%B9%E5%BC%8F.html">商业合作</a> 
 </p>
 
-[![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/pikascript/dev/bench/)
+[![image](document/image/147997370-ff37b6e7-25b2-4174-aa64-c1fb92cede04.png)](https://pikastech.github.io/PikaPython/dev/bench/)
 
 
 # 1.简介
 
-PikaScript 是一个完全重写的超轻量级 python 引擎，零依赖，零配置，可以在  **Flash ≤ 32KB，RAM≤ 4KB**  的平台下运行(如 stm32g030c8 和 stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
+PikaPython 是一个完全重写的超轻量级 python 引擎，零依赖，零配置，可以在  **Flash ≤ 64KB，RAM≤ 4KB**  的平台下运行(如 stm32g030c8 和 stm32f103c8)，极易部署和扩展，具有大量的中文文档和视频资料。
 
-![output_Kgj52R](document/image/132940452-d07d766c-5aa7-4187-96f2-66b02984e82c.gif)
+PikaPython 也称 PikaScript、PikaPy。
 
 <img src="document/image/147799764-5db2cb30-ee74-4cde-a2bd-b91c358ae3d9.png" width="500"/>
 
-PikaScript 具有框架式 C 模块开发工具，只要用 Python 写好调用 API ，就能够自动连接到 C 模块，非常方便快捷。不用手动处理任何全局表、宏定义、等等。
+PikaPython 具有框架式 C 模块开发工具，只要用 Python 写好调用 API ，就能够自动连接到 C 模块，非常方便快捷。不用手动处理任何全局表、宏定义、等等。
 
 所有的工具也是全部开源的，在 tools 目录下。
 
 ![image-20220520233540245](document/image/image-20220520233540245.png)
 
-PikaScript 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松地调试 C 模块。
+PikaPython 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松地调试 C 模块。
 
-# 获取 PikaScript:
+# 定制服务
+
+我们提供硬件、软件、云平台和量产的一站式定制服务，帮助客户快捷、经济、可靠地完成产品。
+
+商务洽谈: 李工 深圳皮卡派科技有限公司 16643685017 (微信同号)
+
+# 最新资讯
+- [2022 年 PikaPython 年终总结](https://mp.weixin.qq.com/s/cWtujWF8EuJnuXuVUeWNKw)
+
+- [【快讯】PikaScript 合并进入 LVGL 主线文档，创始人Gabor 这样说...](https://mp.weixin.qq.com/s/2vcZfRfAAmAqPfyOm7CqUg)
+
+# 获取 PikaPython:
 
 ## 使用在线图形化工程生成器
 生成器地址:
@@ -53,9 +64,9 @@ http://pikascript.com
 
 ## 使用 Pika 包管理器[PikaPackage.exe](https://pikadoc.readthedocs.io/zh/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
 
-1. 直接运行[PikaPackage.exe](https://gitee.com/Lyon1998/pikascript/attach_files/907478/download), 自动下载并更新pikaScript主仓库(文件在当前磁盘的/tmp/pikaScript文件夹)
+1. 直接运行[PikaPackage.exe](https://pikadoc.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html), 自动下载并更新pikapython主仓库(文件在当前磁盘的/tmp/pikapython文件夹)
 
-2. 将[requestment.txt](/bsp/stm32g070cb/pikascript/requestment.txt)放在[PikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe)同一文件夹下, 运行[pikaPackage.exe](../../raw/master/tools/pikaPackageManager/pikaPackage.exe), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/tools/pikaCompiler)与[模块](../../tree/master/package)。
+2. 将[requestment.txt](/bsp/stm32g070cb/pikapython/requestment.txt)放在[PikaPackage.exe](https://pikadoc.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)同一文件夹下, 运行[pikaPackage.exe](https://pikadoc.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/tools/pikaCompiler)与[模块](../../tree/master/package)。
 
 3. 已发布的模块列表：[packages.toml](/packages.toml)
 
@@ -71,7 +82,7 @@ http://pikascript.com
 
 # 开发手册
 
-### [点此进入文档中心](https://pikadoc.readthedocs.io/zh/latest/index.html)
+### [点此进入文档中心](http://pikascript.com/doc)
 
 ![image](document/image/144693400-99f9c038-76fd-4d95-b3d2-137bd972d580.png)
 
@@ -122,16 +133,16 @@ http://pikascript.com
 
 ## 相关开源项目 
 
-- ▶️ [PikaScript Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
+- ▶️ [pikapython Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
 
-- ⭐ [PikaScript Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
+- ⭐ [pikapython Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
 
-- ⭐ [PikaScript Bluepill Demo In GCC 🐍](https://github.com/Chandler-Kluser/pikascript_gcc_bluepill)
+- ⭐ [pikapython Bluepill Demo In GCC 🐍](https://github.com/Chandler-Kluser/pikascript_gcc_bluepill)
 
 # 3.特性
 ### (1)运行环境
 
-支持裸机运行，可运行于 **RAM ≥ 4kB** ，**FLASH ≥ 32kB** 的mcu中，如stm32g030, stm32f103c8t6，esp8266。
+支持裸机运行，可运行于 **RAM ≥ 4kB** ，**FLASH ≥ 64kB** 的mcu中，如stm32g030, stm32f103c8t6，esp8266。
 
 ### (2)开发环境
 支持串口下载 Python 脚本。
@@ -156,6 +167,8 @@ http://pikascript.com
 
 在运行时支持 python 方法调用、变量定义、对象构造、对象释放、控制流(if\while) - 基于 [Pika 运行时内核](../../tree/master/src)。
 
+<details><summary>更多语法特性细节</summary>
+
 |语法|编译时|运行时|Shell|
 |---|---|---|---|
 |模块定义   |√|-|-|
@@ -174,6 +187,7 @@ http://pikascript.com
 
 !INCLUDE "syntax.mdpp"
 
+</details>
 
 ### (4)源码规范
 
@@ -193,6 +207,8 @@ http://pikascript.com
 
 ## Demo 01 GPIO
 
+<details><summary>查看代码</summary>
+
 ``` python
 import PikaStdLib
 import STM32G0
@@ -206,7 +222,7 @@ io1.setMode('out')
 io1.enable()
 io1.low()
 
-print('hello pikascript')
+print('hello pikapython')
 print('mem.max :')
 mem.max()
 print('mem.now :')
@@ -220,9 +236,13 @@ while True:
 
 ```
 
+</details>
+
 ![Hnet-image (2)](document/image/132943428-f2b365ca-140e-42f4-936c-db6a7d9f8dee.gif)
 
 ## Demo 02 USART
+
+<details><summary>查看代码</summary>
 
 ``` python
 import PikaStdLib
@@ -241,10 +261,15 @@ while True:
     print(readBuff)
 
 ```
+
+</details>
+
 ![Hnet-image (3)](document/image/132943365-0f7059b3-4f9d-4989-a5ec-2cce72b0cc96.gif)
 
 
 ## Demo 03 ADC
+
+<details><summary>查看代码</summary>
 
 ``` python
 import PikaStdLib
@@ -264,10 +289,13 @@ while True:
 
 ```
 
+</details>
+
 ![mmexport1631351523907](document/image/132944185-0a01b1ba-8cf7-4f9f-9d73-fe9cbcd52f0b.png)
 
-
 ## Demo 04 PWM output
+
+<details><summary>查看代码</summary>
 
 ``` python
 import PikaStdLib
@@ -288,7 +316,11 @@ while True:
     
 ```
 
+</details>
+
 ## Demo 05 RGB
+
+<details><summary>查看代码</summary>
 
 ``` python
 import STM32G0
@@ -311,7 +343,11 @@ while True:
 
 ```
 
+</details>
+
 ## Demo 06 Snake(Need LCD)
+
+<details><summary>查看代码</summary>
 
 ``` python
 from PikaObj import *
@@ -454,11 +490,13 @@ while True:
 
 ```
 
+</details>
+
 ![输入图片说明](document/image/imagefwef.png)
 
 这几个 Demo 占用的 RAM 最大值只有3.56K，把1K的堆栈也算上就是4.56K，Flash 最大占用是30.4K，以 STM32F103C8T6 的 20K RAM 和 64K Flash 为标准，RAM 才用掉不到25%，Flash 才用掉不到50%。
 
-我们可以简单对比一下 micropython 的常用芯片 STM32F405RG 和这次跑 PikaScript 的芯片STM32G070CB
+我们可以简单对比一下 micropython 的常用芯片 STM32F405RG 和这次跑 pikapython 的芯片STM32G070CB
 
 ## RAM资源对比
 ![image](document/image/132944731-a55ece1d-061f-4b91-ba87-bd6547be96a7.png)
@@ -466,12 +504,12 @@ while True:
 ## Flash资源对比
 ![image](document/image/132944745-e9cf598d-e75f-40bb-873e-911819d535b7.png)
 
-## 参考价对比(以2021年9月11日立创商城10片售价为参考）
+## 参考价对比(以2021年9月11日立创商城10片售价为参考)
 ![image](document/image/132944757-2b5cfda8-f93f-4456-8d7f-4e4767954056.png)
 
 ## 拓展能力如何呢？
 
-除了设备驱动之外，为 mcu 开发自定义的 python 脚本绑定在 pikascript 的开发框架下非常轻松，下面两个 Demo 就是自定义的C模块拓展，这个 Demo 基于 ARM-2D 图像驱动库开发了一些 python 脚本接口。
+除了设备驱动之外，为 mcu 开发自定义的 python 脚本绑定在 pikapython 的开发框架下非常轻松，下面两个 Demo 就是自定义的C模块拓展，这个 Demo 基于 ARM-2D 图像驱动库开发了一些 python 脚本接口。
 
 ## 几个小方块~
 ![Hnet-image (7)](document/image/132945282-bfd310df-8063-456d-b90c-6b798a2c8ed5.gif)
@@ -492,7 +530,25 @@ while True:
 
 <div class="log"></div>
 
+### 贡献记录 (2023 年)
+
 | 贡献记录 | 贡献者 |
 | --- | --- |
-!INCLUDE "contributor.mdpp"
+!INCLUDE "contributor2023.mdpp"
 
+
+<details><summary>贡献记录 (2022 年)</summary>
+
+| 贡献记录 | 贡献者 |
+| --- | --- |
+!INCLUDE "contributor2022.mdpp"
+
+</details>
+
+<details><summary>贡献记录 (2021 年)</summary>
+
+| 贡献记录 | 贡献者 |
+| --- | --- |
+!INCLUDE "contributor2021.mdpp"
+
+</details>

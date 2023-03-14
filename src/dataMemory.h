@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -31,7 +31,7 @@
 #include "PikaPlatform.h"
 #include "PikaVersion.h"
 
-/*! \NOTE: Make sure #include "plooc_class.h" is close to the class definition
+/*! \NOTE: Make sure #include "__pika_ooc.h" is close to the class definition
  */
 #if defined(__DATA_MEMORY_CLASS_IMPLEMENT__)
 #define __PLOOC_CLASS_IMPLEMENT__

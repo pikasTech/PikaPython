@@ -1,10 +1,11 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
  * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2023 Gorgon Meducer embedded_zhuroan@hotmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +32,7 @@
 #include "dataArgs.h"
 #include "dataLink.h"
 #include "dataMemory.h"
+#include "dataQueue.h"
 #include "dataStrs.h"
 
 typedef struct InstructUnit InstructUnit;
@@ -76,9 +78,30 @@ struct NativeProperty {
 typedef struct PikaObj PikaObj;
 struct PikaObj {
     Args* list;
-    uint8_t refcnt;
     void* constructor;
+#if PIKA_GC_MARK_SWEEP_ENABLE
+    PikaObj* gcNext;
+#endif
+#if PIKA_KERNAL_DEBUG_ENABLE
+    char* name;
+    Arg* aName;
+    PikaObj* parent;
+    PIKA_BOOL isAlive;
+    PIKA_BOOL isGCRoot;
+#endif
+#if PIKA_GC_MARK_SWEEP_ENABLE && PIKA_KERNAL_DEBUG_ENABLE
+    PikaObj* gcRoot;
+#endif
+    uint8_t refcnt;
     uint8_t flag;
+};
+
+typedef struct PikaGC PikaGC;
+typedef int (*pikaGC_hook)(PikaGC* gc);
+struct PikaGC {
+    uint32_t markDeepth;
+    pikaGC_hook onMarkObj;
+    PikaObj* oThis;
 };
 
 typedef struct RangeData RangeData;
@@ -89,12 +112,27 @@ struct RangeData {
     int64_t i;
 };
 
-#define OBJ_FLAG_PROXY_GETATTRIBUTE 0x01
-#define OBJ_FLAG_PROXY_GETATTR 0x02
-#define OBJ_FLAG_PROXY_SETATTR 0x04
-#define OBJ_FLAG_ALREADY_INIT 0x08
-#define OBJ_FLAG_RUN_AS 0x16
-#define OBJ_FLAG_GLOBALS 0x32
+typedef struct PikaObjState PikaObjState;
+struct PikaObjState {
+    Arg* helpModulesCmodule;
+    PIKA_BOOL inRootObj;
+#if PIKA_GC_MARK_SWEEP_ENABLE
+    PikaObj* gcChain;
+    uint32_t objCnt;
+    uint32_t objCntMax;
+    uint32_t objCntLastGC;
+    uint32_t markSweepBusy;
+#endif
+};
+
+#define OBJ_FLAG_PROXY_GETATTRIBUTE 1 << 0
+#define OBJ_FLAG_PROXY_GETATTR 1 << 1
+#define OBJ_FLAG_PROXY_SETATTR 1 << 2
+#define OBJ_FLAG_ALREADY_INIT 1 << 3
+#define OBJ_FLAG_RUN_AS 1 << 4
+#define OBJ_FLAG_GLOBALS 1 << 5
+#define OBJ_FLAG_GC_MARKED 1 << 6
+#define OBJ_FLAG_GC_ROOT 1 << 7
 
 #define KEY_UP 0x41
 #define KEY_DOWN 0x42
@@ -102,15 +140,27 @@ struct RangeData {
 #define KEY_LEFT 0x44
 
 static inline uint8_t obj_getFlag(PikaObj* self, uint8_t flag) {
+    pika_assert(self);
     return (self->flag & flag) == flag;
 }
 
 static inline void obj_setFlag(PikaObj* self, uint8_t flag) {
+    pika_assert(self);
     self->flag |= flag;
+#if PIKA_KERNAL_DEBUG_ENABLE
+    if (flag == OBJ_FLAG_GC_ROOT) {
+        self->isGCRoot = PIKA_TRUE;
+    }
+#endif
 }
 
 static inline void obj_clearFlag(PikaObj* self, uint8_t flag) {
     self->flag &= ~flag;
+#if PIKA_KERNAL_DEBUG_ENABLE
+    if (flag == OBJ_FLAG_GC_ROOT) {
+        self->isGCRoot = PIKA_FALSE;
+    }
+#endif
 }
 
 typedef PikaObj* (*NewFun)(Args* args);
@@ -135,6 +185,7 @@ typedef struct MethodProp {
     char* name;
     ByteCodeFrame* bytecode_frame;
     PikaObj* def_context;
+    PikaObj* host_obj;
     char* declareation;
 } MethodProp;
 
@@ -151,6 +202,7 @@ typedef PikaObj PikaMaker;
 
 /* operation */
 int32_t obj_deinit(PikaObj* self);
+int obj_GC(PikaObj* self);
 int32_t obj_init(PikaObj* self, Args* args);
 int32_t obj_update(PikaObj* self);
 int32_t obj_enable(PikaObj* self);
@@ -171,6 +223,7 @@ void* obj_getPtr(PikaObj* self, char* argPath);
 pika_float obj_getFloat(PikaObj* self, char* argPath);
 char* obj_getStr(PikaObj* self, char* argPath);
 int64_t obj_getInt(PikaObj* self, char* argPath);
+PIKA_BOOL obj_getBool(PikaObj* self, char* argPath);
 Arg* obj_getArg(PikaObj* self, char* argPath);
 uint8_t* obj_getBytes(PikaObj* self, char* argPath);
 size_t obj_getBytesSize(PikaObj* self, char* argPath);
@@ -223,7 +276,9 @@ int32_t class_defineRunTimeConstructor(PikaObj* self,
 
 int32_t obj_removeArg(PikaObj* self, char* argPath);
 int32_t obj_isArgExist(PikaObj* self, char* argPath);
-PikaObj* obj_getClassObjByNewFun(PikaObj* self, char* name, NewFun newClassFun);
+PikaObj* obj_newObjFromConstructor(PikaObj* self,
+                                   char* name,
+                                   NewFun newClassFun);
 PikaObj* newRootObj(char* name, NewFun newObjFun);
 PikaObj* obj_getClassObj(PikaObj* obj);
 Arg* obj_getMethodArg(PikaObj* obj, char* methodPath);
@@ -245,6 +300,7 @@ uint8_t obj_getAnyArg(PikaObj* self,
 
 void method_returnStr(Args* args, char* val);
 void method_returnInt(Args* args, int64_t val);
+void method_returnBool(Args* args, PIKA_BOOL val);
 void method_returnFloat(Args* args, pika_float val);
 void method_returnPtr(Args* args, void* val);
 void method_returnObj(Args* args, void* val);
@@ -255,11 +311,14 @@ void method_returnArg(Args* args, Arg* arg);
 char* methodArg_getDec(Arg* method_arg);
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size);
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size);
+int methodArg_setHostObj(Arg* method_arg, PikaObj* host_obj);
+PikaObj* methodArg_getHostObj(Arg* method_arg);
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg);
 Method methodArg_getPtr(Arg* method_arg);
 
 VMParameters* obj_run(PikaObj* self, char* cmd);
 PikaObj* New_PikaObj(void);
+PikaObj* New_PikaObj_noGC(void);
 
 /* tools */
 int64_t fast_atoi(char* src);
@@ -273,7 +332,39 @@ typedef struct ShellConfig ShellConfig;
 typedef enum shellCTRL (*sh_handler)(PikaObj*, char*, ShellConfig*);
 typedef char (*sh_getchar)(void);
 
+#if PIKA_SHELL_FILTER_ENABLE
+typedef struct FilterFIFO {
+    ByteQueue queue;
+    uint8_t ignore_mask;
+    uint8_t buffer[PIKA_SHELL_FILTER_FIFO_SIZE];
+} FilterFIFO;
+
+typedef struct FilterItem FilterItem;
+
+typedef PIKA_BOOL FilterMessageHandler(FilterItem* msg,
+                                       PikaObj* self,
+                                       ShellConfig* shell);
+
+struct FilterItem {
+    FilterMessageHandler* handler;
+    const uint8_t* message;
+    uint16_t size;
+    uint8_t is_visible : 1;
+    uint8_t is_case_insensitive : 1;
+    uint8_t : 6;
+    uint8_t ignore_mask;
+    uintptr_t target;
+};
+
+#endif
+
 struct ShellConfig {
+#if PIKA_SHELL_FILTER_ENABLE
+    FilterFIFO filter_fifo;
+    FilterItem* messages;
+    uint16_t message_count;
+    uint16_t : 16; /* padding to suppress warning*/
+#endif
     char* prefix;
     sh_handler handler;
     void* context;
@@ -293,9 +384,9 @@ void _temp__do_pikaScriptShell(PikaObj* self, ShellConfig* cfg);
 
 /*
     need implament :
-        __platform_fopen()
-        __platform_fwrite()
-        __platform_fclose()
+        pika_platform_fopen()
+        pika_platform_fwrite()
+        pika_platform_fclose()
 */
 Method obj_getNativeMethod(PikaObj* self, char* method_name);
 PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
@@ -305,12 +396,26 @@ PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setObj(Arg* self, char* name, PikaObj* obj);
 
+static inline void arg_setObjFlag(Arg* self, uint8_t flag) {
+    if (!arg_isObject(self)) {
+        return;
+    }
+    obj_setFlag((PikaObj*)arg_getPtr(self), flag);
+}
+
+static inline void arg_clearObjFlag(Arg* self, uint8_t flag) {
+    if (!arg_isObject(self)) {
+        return;
+    }
+    obj_clearFlag((PikaObj*)arg_getPtr(self), flag);
+}
+
 static inline Arg* arg_newObj(PikaObj* obj) {
-    return arg_setObj(NULL, "", (obj));
+    return arg_setObj(NULL, (char*)"", (obj));
 }
 
 static inline Arg* arg_newRef(PikaObj* obj) {
-    return arg_setRef(NULL, "", (obj));
+    return arg_setRef(NULL, (char*)"", (obj));
 }
 
 PikaObj* obj_importModuleWithByteCodeFrame(PikaObj* self,
@@ -342,23 +447,32 @@ enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
 
 typedef PikaObj PikaEventListener;
 
-void pks_eventListener_sendSignal(PikaEventListener* self,
-                                 uint32_t eventId,
-                                 int eventSignal);
-
 void pks_eventListener_registEvent(PikaEventListener* self,
-                                  uint32_t eventId,
-                                  PikaObj* eventHandleObj);
+                                   uint32_t eventId,
+                                   PikaObj* eventHandleObj);
 
 void pks_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
 
+void _do_pks_eventListener_send(PikaEventListener* self,
+                                uint32_t eventId,
+                                Arg* eventData,
+                                PIKA_BOOL pickupWhenNoVM);
+
+void pks_eventListener_sendSignal(PikaEventListener* self,
+                                  uint32_t eventId,
+                                  int eventSignal);
+
+void pks_eventListener_send(PikaEventListener* self,
+                            uint32_t eventId,
+                            Arg* eventData);
+
 PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
-                                            uint32_t eventId);
+                                             uint32_t eventId);
 
 void pks_eventListener_init(PikaEventListener** p_self);
 void pks_eventListener_deinit(PikaEventListener** p_self);
 PikaObj* methodArg_getDefContext(Arg* method_arg);
-PikaObj* Obj_linkLibraryFile(PikaObj* self, char* input_file_name);
+int obj_linkLibraryFile(PikaObj* self, char* input_file_name);
 NewFun obj_getClass(PikaObj* obj);
 
 void pks_printVersion(void);
@@ -380,19 +494,14 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
 #define obj_setStruct(PikaObj_p_self, char_p_name, struct_) \
     args_setStruct(((PikaObj_p_self)->list), char_p_name, struct_)
 
-#define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                            \
-    obj_setErrorCode(self, 1);                                            \
-    __platform_printf("Error: abstract method `%s()` need override.\r\n", \
-                      __FUNCTION__)
-
-#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                            \
-    __platform_printf("Error: weak function `%s()` need override.\r\n", \
-                      __FUNCTION__);                                    \
-    __platform_panic_handle();
+#define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                               \
+    obj_setErrorCode(self, 1);                                               \
+    pika_platform_printf("Error: abstract method `%s()` need override.\r\n", \
+                         __FUNCTION__)
 
 char* obj_cacheStr(PikaObj* self, char* str);
 PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp);
-char* __printBytes(PikaObj* self, Arg* arg);
+Arg* arg_toStrArg(Arg* arg);
 
 #define PIKASCRIPT_VERSION_TO_NUM(majer, minor, micro) \
     majer * 100 * 100 + minor * 100 + micro
@@ -499,13 +608,59 @@ void _obj_updateProxyFlag(PikaObj* self);
     _obj_updateProxyFlag((_self))
 
 Arg* _obj_getProp(PikaObj* obj, char* name);
+Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
+                                      uint32_t eventId,
+                                      int eventSignal);
+
 Arg* __eventListener_runEvent(PikaEventListener* lisener,
-                             uint32_t eventId,
-                             int eventSignal);
+                              uint32_t eventId,
+                              Arg* eventData);
+
 Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
-                                            uint32_t eventId,
-                                            int eventSignal);
+                                             uint32_t eventId,
+                                             int eventSignal);
 
 void obj_printModules(PikaObj* self);
+#if PIKA_DEBUG_ENABLE
+#define pika_debug(fmt, ...) \
+    pika_platform_printf("PikaDBG: " fmt "\r\n", ##__VA_ARGS__)
+#else
+#define pika_debug(...) \
+    do {                \
+    } while (0)
+#endif
+
+#define pika_assert_arg_alive(__arg)                              \
+    do {                                                          \
+        if (NULL != (__arg)) {                                    \
+            if (arg_isObject((__arg))) {                          \
+                pika_assert(obj_checkAlive(arg_getPtr((__arg)))); \
+            }                                                     \
+        }                                                         \
+    } while (0)
+
+#define pika_assert_obj_alive(__obj)          \
+    do {                                      \
+        pika_assert(obj_checkAlive((__obj))); \
+    } while (0)
+
+void obj_appendGcChain(PikaObj* self);
+void obj_removeGcChain(PikaObj* self);
+void obj_enableGC(PikaObj* self);
+PIKA_BOOL obj_checkAlive(PikaObj* self);
+void obj_setName(PikaObj* self, char* name);
+
+void pikaGC_mark(void);
+void pikaGC_markDump(void);
+void pikaGC_lock(void);
+void pikaGC_unlock(void);
+PIKA_BOOL pikaGC_islock(void);
+uint32_t pikaGC_count(void);
+uint32_t pikaGC_countMarked(void);
+uint32_t pikaGC_markSweep(void);
+uint32_t pikaGC_printFreeList(void);
+
+int pika_GIL_EXIT(void);
+int pika_GIL_ENTER(void);
 
 #endif

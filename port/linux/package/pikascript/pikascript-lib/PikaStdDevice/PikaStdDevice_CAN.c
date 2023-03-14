@@ -1,5 +1,5 @@
 #include "PikaStdDevice_CAN.h"
-#include "pika_hal.h"
+#include "PikaStdDevice_common.h"
 
 void PikaStdDevice_CAN___init__(PikaObj* self) {}
 

@@ -3,7 +3,7 @@ TEST_START
 
 TEST(chinese, test1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     pikaVM_runSingleFile(pikaMain, "../../examples/Chinese/test_operator.py");
     obj_run(pikaMain, "test()");

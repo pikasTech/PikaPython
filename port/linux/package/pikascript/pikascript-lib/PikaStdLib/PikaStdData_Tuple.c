@@ -32,7 +32,14 @@ Arg* PikaStdData_Tuple___next__(PikaObj* self) {
 }
 
 Arg* PikaStdData_Tuple___getitem__(PikaObj* self, Arg* __key) {
-    return PikaStdData_Tuple_get(self, arg_getInt(__key));
+    int i = arg_getInt(__key);
+    PikaList* list = obj_getPtr(self, "list");
+    if (i < 0 || i >= pikaList_getSize(list)) {
+        obj_setErrorCode(self, PIKA_RES_ERR_INDEX);
+        obj_setSysOut(self, "IndexError: index out of range");
+        return NULL;
+    }
+    return PikaStdData_Tuple_get(self, i);
 }
 
 void PikaStdData_Tuple___del__(PikaObj* self) {

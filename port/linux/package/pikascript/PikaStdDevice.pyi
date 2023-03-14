@@ -67,69 +67,40 @@ class GPIO(BaseDev):
 
     def read(self) -> int:
         """Read the pin value."""
+    
 
-    @abstractmethod
+    SIGNAL_RISING: int
+    SIGNAL_FALLING: int
+    SIGNAL_ANY: int
+
+    def setCallBack(self, eventCallBack: any, filter: int):
+        """
+        Add a callback function to the pin.
+        Example: 
+        ``` python
+        def cb1(signal):
+            print("cb1", signal)
+        io.setCallBack(cb1, io.SIGNAL_RISING)
+        ```
+        """
+
+    def close(self): ...
+
     def platformHigh(self): ...
 
-    @abstractmethod
     def platformLow(self): ...
 
-    @abstractmethod
     def platformEnable(self): ...
 
-    @abstractmethod
     def platformDisable(self): ...
 
-    @abstractmethod
     def platformSetMode(self): ...
 
-    @abstractmethod
     def platformRead(self): ...
 
 
-class Time(BaseDev):
-    def __init__(self): ...
-
-    def sleep(self, s: float):
-        """Sleep for s seconds."""
-
-    @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
-    def time(self) -> float:
-        """Get the current time."""
-
-    @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
-    def time_ns(self) -> int:
-        """Get the current time in nanoseconds."""
-
-    @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
-    def gmtime(self, unix_time: float):
-        """Convert unix time to struct_time."""
-
-    @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
-    def localtime(self, unix_time: float):
-        """Convert unix time to struct_time."""
-
-    @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
-    def mktime(self) -> int:
-        """Convert struct_time to unix time."""
-
-    @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
-    def asctime(self):
-        """Convert struct_time to string."""
-
-    @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
-    def ctime(self, unix_time: float):
-        """Convert unix time to string."""
-
-    @abstractmethod
-    def sleep_s(self, s: int): ...
-
-    @abstractmethod
-    def sleep_ms(self, ms: int): ...
-
-    @abstractmethod
-    @PIKA_C_MACRO_IF("PIKA_STD_DEVICE_UNIX_TIME_ENABLE")
-    def platformGetTick(): ...
+def Time() -> time:
+    """ # use time module instead """
 
 
 class ADC(BaseDev):
@@ -149,6 +120,8 @@ class ADC(BaseDev):
 
     def read(self) -> float:
         """Read the ADC value."""
+
+    def close(self): ...
 
     @abstractmethod
     def platformEnable(self): ...
@@ -175,10 +148,13 @@ class DAC(BaseDev):
     def disable(self):
         """Disable the DAC."""
 
-    def write(self, val:float):
+    def write(self, val: float):
         """write the DAC value."""
 
-class UART(BaseDev):
+    def close(self): ...
+
+
+class UART:
     def __init__(self): ...
 
     def setBaudRate(self, baudRate: int):
@@ -186,6 +162,14 @@ class UART(BaseDev):
 
     def setId(self, id: int):
         """Set the id of the UART."""
+
+    FLOW_CONTROL_NONE: int
+    FLOW_CONTROL_RTS: int
+    FLOW_CONTROL_CTS: int
+    FLOW_CONTROL_RTS_CTS: int
+
+    def setFlowControl(self, flowControl: int):
+        """Set the flow control of the UART."""
 
     def enable(self):
         """Enable the UART."""
@@ -205,6 +189,42 @@ class UART(BaseDev):
     def readBytes(self, length: int) -> bytes:
         """Read bytes from the UART."""
 
+    def setPinTX(self, pin: str):
+        """
+        Remap the TX pin.
+        """
+    
+    def setPinRX(self, pin: str):
+        """
+        Remap the RX pin.
+        """
+    
+    def setPinCTS(self, pin: str):
+        """
+        Remap the CTS pin.
+        """
+    
+    def setPinRTS(self, pin: str):
+        """
+        Remap the RTS pin.
+        """
+
+    def close(self): ...
+
+    SIGNAL_RX: int
+    SIGNAL_TX: int
+
+    def setCallBack(self, eventCallBack: any, filter: int):
+        """
+        Add a callback function to the pin.
+        Example: 
+        ``` python
+        def cb1(signal):
+            print(uart.read(-1))
+        io.setCallBack(cb1, uart.SIGNAL_RX)
+        ```
+        """
+    
     @abstractmethod
     def platformEnable(self): ...
 
@@ -315,6 +335,8 @@ class PWM(BaseDev):
 
     def getDuty(self) -> float:
         """Get the duty."""
+
+    def close(self): ...
 
     @abstractmethod
     def platformEnable(self): ...
@@ -436,7 +458,7 @@ class CAN(BaseDev):
     def readBytes(self, length: int) -> bytes:
         """Read bytes from the CAN."""
 
-    def addFilter(self, id: int, ide: int, rtr: int, mode: int, mask: int, hdr: int): 
+    def addFilter(self, id: int, ide: int, rtr: int, mode: int, mask: int, hdr: int):
         """Add a filter."""
 
     @abstractmethod
@@ -460,7 +482,7 @@ class CAN(BaseDev):
 
 class BaseDev:
     @PIKA_C_MACRO_IF("PIKA_EVENT_ENABLE")
-    def addEventCallBack(self, eventCallback: any): 
+    def addEventCallBack(self, eventCallback: any):
         """ Add an event callback. """
 
     @abstractmethod

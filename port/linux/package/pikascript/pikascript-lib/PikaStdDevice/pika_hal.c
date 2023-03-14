@@ -26,6 +26,10 @@ static size_t _pika_hal_dev_config_size(PIKA_HAL_DEV_TYPE dev_type) {
 }
 
 pika_dev* pika_hal_open(PIKA_HAL_DEV_TYPE dev_type, char* name) {
+    if (NULL == name) {
+        __platform_printf("Error: dev_open name is NULL.\r\n");
+        return NULL;
+    }
     int ret = -1;
     pika_dev* dev = NULL;
     if (dev_type >= _PIKA_DEV_TYPE_MAX) {
@@ -114,10 +118,7 @@ static const int _pika_hal_cmd_arg_cnt[] = {
     (sizeof _pika_hal_cmd_arg_cnt / sizeof _pika_hal_cmd_arg_cnt[0])
 
 static int _pika_hal_get_arg_cnt(PIKA_HAL_IOCTL_CMD cmd) {
-    if (cmd >= _PIKA_HAL_CMD_ARG_CNT_MAX) {
-        return -1;
-    }
-    return _pika_hal_cmd_arg_cnt[cmd];
+    return _pika_hal_cmd_arg_cnt[PIKA_HAL_IOCTL_CONFIG];
 }
 
 int _pika_hal_ioctl_merge_config(pika_dev* dev, void* config_in) {
@@ -140,18 +141,26 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
     if (impl->ioctl == NULL) {
         return -1;
     }
-    void* config_in = NULL;
+    void* arg_in = NULL;
     if (cmd != 0) {
         va_list args;
         va_start(args, cmd);
-        config_in = va_arg(args, void*);
-        ret = _pika_hal_ioctl_merge_config(dev, config_in);
+        arg_in = va_arg(args, void*);
+        if (cmd_origin == PIKA_HAL_IOCTL_CONFIG) {
+            ret = _pika_hal_ioctl_merge_config(dev, arg_in);
+        } else {
+            ret = 0;
+        }
         va_end(args);
         if (0 != ret) {
             return ret;
         }
     }
-    ret = impl->ioctl(dev, cmd_origin, dev->ioctl_config);
+    if (cmd_origin == PIKA_HAL_IOCTL_CONFIG) {
+        ret = impl->ioctl(dev, cmd_origin, dev->ioctl_config);
+    } else {
+        ret = impl->ioctl(dev, cmd_origin, arg_in);
+    }
     if (ret == 0) {
         if (cmd_origin == PIKA_HAL_IOCTL_ENABLE) {
             dev->is_enabled = 1;
@@ -176,6 +185,19 @@ int pika_hal_ioctl(pika_dev* dev, PIKA_HAL_IOCTL_CMD cmd, ...) {
         dst->item = src->item;                   \
     }
 
+#define _IOCTL_CONFIG_USE_DEFAULT_STR(item, default) \
+    if (src->item[0] == '\0') {                      \
+        if (dst->item[0] == '\0') {                  \
+            /* use default value */                  \
+            strcpy(dst->item, default);              \
+        } else {                                     \
+            /* keep exist value */                   \
+        }                                            \
+    } else {                                         \
+        /* use input value */                        \
+        strcpy(dst->item, src->item);                \
+    }
+
 int pika_hal_GPIO_ioctl_merge_config(pika_hal_GPIO_config* dst,
                                      pika_hal_GPIO_config* src) {
     // printf("before merge: dst->dir=%d, src->dir=%d\r\n", dst->dir, src->dir);
@@ -184,7 +206,9 @@ int pika_hal_GPIO_ioctl_merge_config(pika_hal_GPIO_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(pull, PIKA_HAL_GPIO_PULL_NONE);
     _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_GPIO_SPEED_10M);
     _IOCTL_CONFIG_USE_DEFAULT(event_callback, NULL);
-    _IOCTL_CONFIG_USE_DEFAULT(event_callback_enable,
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_filter,
+                              PIKA_HAL_GPIO_EVENT_SIGNAL_RISING);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
                               PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
     return 0;
 }
@@ -195,9 +219,16 @@ int pika_hal_UART_ioctl_merge_config(pika_hal_UART_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(data_bits, PIKA_HAL_UART_DATA_BITS_8);
     _IOCTL_CONFIG_USE_DEFAULT(stop_bits, PIKA_HAL_UART_STOP_BITS_1);
     _IOCTL_CONFIG_USE_DEFAULT(parity, PIKA_HAL_UART_PARITY_NONE);
+    _IOCTL_CONFIG_USE_DEFAULT(flow_control, PIKA_HAL_UART_FLOW_CONTROL_NONE);
     _IOCTL_CONFIG_USE_DEFAULT(event_callback, NULL);
-    _IOCTL_CONFIG_USE_DEFAULT(event_callback_enable,
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_filter,
+                              PIKA_HAL_UART_EVENT_SIGNAL_RX);
+    _IOCTL_CONFIG_USE_DEFAULT(event_callback_ena,
                               PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE);
+    _IOCTL_CONFIG_USE_DEFAULT(TX, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(RX, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(RTS, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(CTS, NULL);
     return 0;
 }
 
@@ -209,6 +240,21 @@ int pika_hal_SPI_ioctl_merge_config(pika_hal_SPI_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
     _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_2M);
     _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_SPI_TIMEOUT_1000MS);
+    return 0;
+}
+
+int pika_hal_SOFT_SPI_ioctl_merge_config(pika_hal_SOFT_SPI_config* dst,
+                                         pika_hal_SOFT_SPI_config* src) {
+    _IOCTL_CONFIG_USE_DEFAULT(lsb_or_msb, PIKA_HAL_SPI_MSB);
+    _IOCTL_CONFIG_USE_DEFAULT(master_or_slave, PIKA_HAL_SPI_MASTER);
+    _IOCTL_CONFIG_USE_DEFAULT(mode, PIKA_HAL_SPI_MODE_0);
+    _IOCTL_CONFIG_USE_DEFAULT(data_width, PIKA_HAL_SPI_DATA_WIDTH_8);
+    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_SPI_SPEED_2M);
+    _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_SPI_TIMEOUT_1000MS);
+    _IOCTL_CONFIG_USE_DEFAULT(CS, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(SCK, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(MOSI, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(MISO, NULL);
     return 0;
 }
 
@@ -249,5 +295,16 @@ int pika_hal_DAC_ioctl_merge_config(pika_hal_DAC_config* dst,
     _IOCTL_CONFIG_USE_DEFAULT(sampling_resolution, PIKA_HAL_DAC_RESOLUTION_12);
     _IOCTL_CONFIG_USE_DEFAULT(vref, (pika_float)3.3);
     _IOCTL_CONFIG_USE_DEFAULT(max, 3300000);
+    return 0;
+}
+
+int pika_hal_WIFI_ioctl_merge_config(pika_hal_WIFI_config* dst,
+                                     pika_hal_WIFI_config* src) {
+    _IOCTL_CONFIG_USE_DEFAULT(mode, PIKA_HAL_WIFI_MODE_STA);
+    _IOCTL_CONFIG_USE_DEFAULT(channel, PIKA_HAL_WIFI_CHANNEL_0);
+    _IOCTL_CONFIG_USE_DEFAULT(max_connection, PIKA_HAL_WIFI_MAX_CONNECTION_4);
+    _IOCTL_CONFIG_USE_DEFAULT_STR(ap_ssid, "pikapython.com");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(ap_bssid, "");
+    _IOCTL_CONFIG_USE_DEFAULT_STR(ap_password, "pikapython.com");
     return 0;
 }

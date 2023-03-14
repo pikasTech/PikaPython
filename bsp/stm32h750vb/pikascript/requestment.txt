@@ -1,2 +1,2 @@
-pikascript-core==v1.11.9
-PikaStdLib==v1.11.9
+pikascript-core==v1.12.0
+PikaStdLib==v1.12.0

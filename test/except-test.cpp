@@ -4,7 +4,7 @@ TEST_START
 #if PIKA_SYNTAX_EXCEPTION_ENABLE
 TEST(except, try1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     /* run */
@@ -28,7 +28,7 @@ TEST(except, try1) {
 
 TEST(except, def_none) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     /* run */
@@ -48,7 +48,7 @@ TEST(except, def_none) {
 
 TEST(except, trydef1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     /* run */
@@ -65,7 +65,7 @@ TEST(except, trydef1) {
 
 TEST(except, try1file) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     /* run */
@@ -82,7 +82,7 @@ TEST(except, try1file) {
 
 TEST(except, for_loop) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     /* run */
@@ -108,7 +108,7 @@ TEST(except, for_loop) {
 
 TEST(except, dict) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     /* run */
@@ -124,7 +124,7 @@ TEST(except, dict) {
 
 TEST(except, len) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     /* run */
@@ -140,7 +140,7 @@ TEST(except, len) {
 
 TEST(except, trycmodule1) {
     /* init */
-    pikaMemInfo.heapUsedMax = 0;
+    g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __platform_printf("BEGIN\r\n");
     /* run */
@@ -156,6 +156,49 @@ TEST(except, trycmodule1) {
     EXPECT_STREQ("BEGIN\r\n", log_buff[1]);
     EXPECT_STREQ("parse failed\r\n", log_buff[0]);
     /* assert */
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(except, except_break) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    /* run */
+    obj_run(pikaMain,
+            "l = [1,2,3]\n"
+            "sum = 0\n"
+            "for i in range(10):\n"
+            "    try:\n"
+            "        sum += l[i]\n"
+            "    except Exception:\n"
+            "        print('in excepton')\n"
+            "        break\n"
+            "print(sum)\n"
+            "\n"
+            );
+    /* collect */
+    /* assert */
+    EXPECT_EQ(obj_getInt(pikaMain, "sum"), 6);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(except, while_try_while) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    __platform_printf("BEGIN\r\n");
+    /* run */
+    pikaVM_runSingleFile(pikaMain, "test/python/except/while_try_while.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[2], "before try\r\n");
+    EXPECT_STREQ(log_buff[1], "after try\r\n");
+    EXPECT_STREQ(log_buff[0], "after while\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

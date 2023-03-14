@@ -11,11 +11,11 @@
 #include <stdlib.h>
 #include "random.h"
 
-extern int platform_timer_now();
+extern int pika_platform_thread_timer_now();
 static unsigned int last_seed = 1;
 
 
-int __attribute__((weak)) platform_timer_now()
+int __attribute__((weak)) pika_platform_thread_timer_now()
 {
     return 1;
 }
@@ -28,7 +28,7 @@ static int do_random(unsigned int seed)
 
 int random_number(void)
 {
-    unsigned int seed = (unsigned int) platform_timer_now();
+    unsigned int seed = (unsigned int) pika_platform_thread_timer_now();
     last_seed += (seed >> ((seed ^ last_seed) % 3));
     return do_random(last_seed ^ seed);
 }

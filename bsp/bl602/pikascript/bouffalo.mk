@@ -1,5 +1,7 @@
 COMPONENT_ADD_INCLUDEDIRS += pikascript-core \
-							 pikascript-api
+							 pikascript-api \
+							 pikascript-lib/PikaStdDevice \
+							 pikascript-lib/BLIOT \
 
 COMPONENT_SRCS := 
 

@@ -1,4 +1,4 @@
-#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+﻿#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
 #include "lvgl.h"
 #else
 #include "../../lvgl.h"
@@ -88,8 +88,8 @@ void pika_lvgl_TEXT_DECOR___init__(PikaObj* self) {
 }
 
 void pika_lvgl_ANIM___init__(PikaObj* self) {
-    obj_setInt(self, "ON", LV_ANIM_OFF);
-    obj_setInt(self, "OFF", LV_ANIM_ON);
+    obj_setInt(self, "ON", LV_ANIM_ON);
+    obj_setInt(self, "OFF", LV_ANIM_OFF);
 }
 
 void pika_lvgl_ALIGN___init__(PikaObj* self) {
@@ -201,11 +201,19 @@ PikaObj* pika_lvgl_scr_act(PikaObj* self) {
     return new_obj;
 }
 
+volatile g_lvgl_inited = 0;
 void pika_lvgl___init__(PikaObj* self) {
     obj_newDirectObj(self, "lv_event_listener", New_TinyObj);
     pika_lv_event_listener_g = obj_getObj(self, "lv_event_listener");
     pika_lv_id_register_g = New_args(NULL);
-    lv_png_init();
+    if (!g_lvgl_inited) {
+        lv_png_init();
+        g_lvgl_inited = 1;
+    }
+}
+
+void pika_lvgl___del__(PikaObj* self) {
+    args_deinit(pika_lv_id_register_g);
 }
 
 void pika_lvgl_obj___init__(PikaObj* self, PikaTuple* parent) {

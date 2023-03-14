@@ -1,5 +1,3 @@
-#api
-from PikaObj import *
 import PikaStdData
 import PikaStdLib
 

@@ -54,7 +54,7 @@ class _MQTT:
         pass
         """listSubscribeTopic """
 
-    def publish(self,topic: str, payload: str, qos:int) -> int:
+    def publish(self, topic: str, payload: str, qos: int) -> int:
         pass
         """publish to the mqtt-server."""
 
@@ -64,21 +64,13 @@ class _MQTT:
     def setHost(self, host_url: str) -> int:
         """Set the host_url of the MQTTClient."""
 
-    def getMsg(self,signal:int) -> str:
-        pass
-        """callback fun get msg"""
-
-    def getTopic(self,signal:int) -> str:
-        pass
-        """callback fun get topic"""
-        
-    def getQos(self,signal:int) -> int:
-        pass
-        """callback fun get qos"""
-        
-    def setDisconnectHandler(self,cb: any) -> int:
+    def setDisconnectHandler(self, cb: any) -> int:
         pass
         """set disconnect callback fun."""
+
+    def _fakeMsg(self, topic: str, qos: int, msg: str):
+        pass
+        """fake msg for subscribe test"""
 
 
 def __del__():

@@ -1,6 +1,6 @@
 /*
- * This file is part of the PikaScript project.
- * http://github.com/pikastech/pikascript
+ * This file is part of the PikaPython project.
+ * http://github.com/pikastech/pikapython
  *
  * MIT License
  *
@@ -62,5 +62,10 @@ int32_t strGetLineSize(char* str);
 char* strPopLastToken(char* strIn, char sign);
 char* strGetLastLine(char* strOut, char* strIn);
 char* strReplaceChar(char* strIn, char src, char dst);
+
+int strPathFormat(char* input, char* output);
+int strPathJoin(char* input1, char* input2, char* output);
+int strPathGetFolder(char* input, char* output);
+int strPathGetFileName(char* input, char* output);
 
 #endif

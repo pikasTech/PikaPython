@@ -391,7 +391,6 @@ TEST(lib, compile_link_import) {
     /* asset */
     EXPECT_STREQ(log_buff[0], "test_module_1_hello\r\n");
     /* deinit */
-    LibObj_deinit(lib);
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -459,7 +458,6 @@ TEST(lib, load_file) {
     EXPECT_STREQ(log_buff[1], "test_module_2_hello\r\n");
     EXPECT_STREQ(log_buff[0], "test_module_3_hello\r\n");
     /* deinit */
-    LibObj_deinit(lib);
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -549,13 +547,13 @@ TEST(make, compile_depend_all) {
 // }
 
 TEST(compiler, __str__) {
-    char* lines = "__res = __str__()";
+    char* lines = "@res_str = __str__()";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __len__) {
-    char* lines = "__res = __len__()";
+    char* lines = "@res_len = __len__()";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -573,7 +571,7 @@ TEST(compiler, event_cb) {
 }
 
 TEST(compiler, event_cb_lvgl) {
-    char* lines = "_res = eventCallBack(eventSignal)";
+    char* lines = "_res = eventCallBack(eventData)";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -585,25 +583,31 @@ TEST(compiler, __setitem__) {
 }
 
 TEST(compiler, __getitem__) {
-    char* lines = "__res = __getitem__(__key)";
+    char* lines = "@res_item = __getitem__(__key)";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __add__) {
-    char* lines = "__res = __add__(__others)";
+    char* lines = "@res_add = __add__(__others)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, __iter__) {
+    char* lines = "@res_iter = __iter__()";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __sub__) {
-    char* lines = "__res = __sub__(__others)";
+    char* lines = "@res_sub = __sub__(__others)";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
 TEST(compiler, __contains__) {
-    char* lines = "__res = __contains__(__others)";
+    char* lines = "@res_contains = __contains__(__others)";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
@@ -616,9 +620,9 @@ TEST(compiler, __callback) {
 
 TEST(compiler, __list) {
     char* lines =
-        "__res = []\n"
+        "@res_list = []\n"
         "for __item in __list:\n"
-        "    __res.append(__item)\n"
+        "    @res_list.append(__item)\n"
         "del __item\n"
         "del __list\n";
     Parser_linesToArray(lines);
@@ -704,6 +708,48 @@ TEST(compiler, starrd) {
 
 TEST(compiler, starrd_get) {
     char* lines = "@a = __getitem__(@d)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, thread_arg) {
+    char* lines = "thread(*args)";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, prime_100) {
+    char* lines =
+        "num = 0\n"
+        "i = 2\n"
+        "for i in range(2,100):\n"
+        "    j=2\n"
+        "    is_prime = 1\n"
+        "    for j in range(2,i):\n"
+        "        if i%j==0 :\n"
+        "            is_prime = 0\n"
+        "            break\n"
+        "    if is_prime:\n"
+        "        num = num + i\n"
+        "\n";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, getattr_fn) {
+    char* lines = "@res = @obj.@name\n";
+    Parser_linesToArray(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, str_join) {
+    char* lines =
+        "@res_join = \"\"\n"
+        "@num = len(@val)\n"
+        "for i in range(@num):\n"
+        "    @res_join += @val[i]\n"
+        "    if i != @num - 1:\n"
+        "        @res_join += @str\n";
     Parser_linesToArray(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
