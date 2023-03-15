@@ -2940,14 +2940,14 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
          arg_getBool(arg1) == PIKA_FALSE)) {
         stack_pushArg(&vm->stack, arg_newInt(PIKA_RES_ERR_ASSERT));
         res = VM_instruction_handler_RIS(self, vm, data, arg_ret_reg);
-        if (vm->run_state->try_state == TRY_STATE_NONE) {
-            if (n_arg == 1) {
-                pika_platform_printf("AssertionError\n");
-            }
-            if (n_arg == 2) {
-                pika_platform_printf("AssertionError: %s\n", arg_getStr(arg2));
-            }
+        // if (vm->run_state->try_state == TRY_STATE_NONE) {
+        if (n_arg == 1) {
+            pika_platform_printf("AssertionError\n");
         }
+        if (n_arg == 2) {
+            pika_platform_printf("AssertionError: %s\n", arg_getStr(arg2));
+        }
+        // }
         goto exit;
     }
 exit:
