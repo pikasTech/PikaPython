@@ -1663,14 +1663,18 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         isLeftExist = Suger_selfOperator(&buffs, stmt, &right, &left);
     }
 
+    /* remove hint */
+    if (isLeftExist) {
+        left = Cursor_splitCollect(&buffs, left, ":", 0);
+    }
+
     /* solve the [] stmt */
     right = Suger_leftSlice(&buffs, right, &left);
     right = Suger_format(&buffs, right);
 
     /* set left */
     if (isLeftExist) {
-        char* left_without_hint = Cursor_splitCollect(&buffs, left, ":", 0);
-        AST_setNodeAttr(ast, (char*)"left", left_without_hint);
+        AST_setNodeAttr(ast, (char*)"left", left);
     }
     /* match statment type */
     enum StmtType stmtType = Lexer_matchStmtType(right);

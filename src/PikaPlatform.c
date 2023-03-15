@@ -98,7 +98,7 @@ PIKA_WEAK int64_t pika_platform_get_tick(void) {
     return platform_uptime_ms();
 #elif defined(__linux)
     struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
+    clock_gettime(CLOCK_MONOTONIC, &ts);
     return (ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
 #else
     return -1;

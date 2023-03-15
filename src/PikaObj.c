@@ -1975,7 +1975,7 @@ void pikaGC_markDump(void) {
 #else
     PikaGC gc = {0};
     pika_platform_printf(
-        "\033[32m"
+        "\033[31m"
         "========= PIKA GC DUMP =========\r\n"
         "\033[0m");
     gc.onMarkObj = _pikaGC_markDumpHandler;

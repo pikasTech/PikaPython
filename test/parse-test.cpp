@@ -5565,6 +5565,27 @@ TEST(parser, default_issue) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(parser, complex_annotation) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    Args* buffs = New_strBuff();
+    char* lines =
+        "data1: list[DataItem] = []\n"
+        "data2: dict[str, DataItem] = {}\n";
+    printf("%s\r\n", lines);
+    char* pikaAsm = Parser_linesToAsm(buffs, lines);
+    EXPECT_STREQ(pikaAsm,
+                 "B0\n"
+                 "0 LST \n"
+                 "0 OUT data1\n"
+                 "B0\n"
+                 "0 DCT \n"
+                 "0 OUT data2\n"
+                 "B0\n");
+    printf("%s", pikaAsm);
+    args_deinit(buffs);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
