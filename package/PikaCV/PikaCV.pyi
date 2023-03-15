@@ -122,7 +122,11 @@ class Transforms:
     @staticmethod
     def rotateDown(image: Image):
         """Rotate the image """
-    def threshold(image: Image, thre: int, maxval: int, thresholdType: int):
+    def threshold(
+            image: Image,
+            thre: int,
+            maxval: int,
+            thresholdType: int):
         """
         0:THRESH_BINARY 
         1:THRESH_BINARY_INV
@@ -144,7 +148,11 @@ class Transforms:
         TODO:
         1:BILINEAR
         """
-    def adaptiveThreshold(image: Image, maxval: int, subsize: int, c: int, method: int):
+    def adaptiveThreshold(image: Image,
+                          maxval: int,
+                          subsize: int,
+                          c: int,
+                          method: int):
         """
         AdaptiveThreshold
         method

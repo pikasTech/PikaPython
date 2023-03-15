@@ -1,15 +1,25 @@
 import os
 import git
+import subprocess
 from release_helper import *
 
 repo = git.Repo(REPO_PATH)
 commit_head = repo.head.commit.hexsha
 pkgReleases = PackageReleaseList(PACKAGE_RELEASE_PATH)
 
+for folder in os.listdir(LINUX_PACKAGE_PATH):
+    # skip PikaStdLib
+    if folder == "PikaStdLib" or folder == "GTestTask" or folder == "TemplateDevice":
+        continue
+    # call `bash pkg-push $folder`
+    cmd = f"./pkg-push.sh {folder}"
+    output = subprocess.check_output(["bash", "-c", cmd])
+    print(output)
+
 # for each folder in package, run the following command
 for folder in os.listdir(PACKAGE_PATH):
     # skip PikaStdLib
-    if folder == "PikaStdLib":
+    if folder == "PikaStdLib" or folder == "GTestTask" or folder == "TemplateDevice":
         continue
     if os.path.isdir(PACKAGE_PATH + "/" + folder):
         # check git diff

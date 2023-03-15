@@ -51,7 +51,12 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "PikaObj.h"
 #include "pika_adapter_rtt.h"
+
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 0)
+#error "pika_vsnprintf.c requires at least PikaScript 1.12.0"
+#endif
 
 // 'ntoa' conversion buffer size, this must be big enough to hold one converted
 // numeric number including padded zeros (dynamically created on stack)
@@ -486,20 +491,18 @@ struct scaling_factor {
                     // to divide by it
 };
 
-static double apply_scaling(double num, struct scaling_factor normalization) {
+double apply_scaling(double num, struct scaling_factor normalization) {
     return normalization.multiply ? num * normalization.raw_factor
                                   : num / normalization.raw_factor;
 }
 
-static double unapply_scaling(double normalized,
-                              struct scaling_factor normalization) {
+double unapply_scaling(double normalized, struct scaling_factor normalization) {
     return normalization.multiply ? normalized / normalization.raw_factor
                                   : normalized * normalization.raw_factor;
 }
 
-static struct scaling_factor update_normalization(
-    struct scaling_factor sf,
-    double extra_multiplicative_factor) {
+struct scaling_factor update_normalization(struct scaling_factor sf,
+                                           double extra_multiplicative_factor) {
     struct scaling_factor result;
     if (sf.multiply) {
         result.multiply = true;
@@ -1258,16 +1261,10 @@ static int __vsnprintf(out_fct_type out,
  *
  * @return The number of characters actually written to buffer.
  */
-static int pika_vsnprintf(char* buf,
-                          rt_size_t size,
-                          const char* fmt,
-                          va_list args) {
-    return __vsnprintf(out_buffer, buf, size, fmt, args);
-}
 
-int __platform_vsnprintf(char* buff,
-                         size_t size,
-                         const char* fmt,
-                         va_list args) {
-    return pika_vsnprintf(buff, size, fmt, args);
+int pika_platform_vsnprintf(char* buff,
+                            size_t size,
+                            const char* fmt,
+                            va_list args) {
+    return __vsnprintf(out_buffer, buff, size, fmt, args);
 }

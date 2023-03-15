@@ -4,6 +4,7 @@ import toml
 
 REPO_PATH = "../.."
 PACKAGE_PATH = REPO_PATH + "/package"
+LINUX_PACKAGE_PATH = REPO_PATH + "/port/linux/package/pikascript/pikascript-lib"
 PACKAGE_RELEASE_PATH = REPO_PATH + "/packages.toml"
 WORK_DIR = os.getcwd()
 

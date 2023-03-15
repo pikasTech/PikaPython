@@ -3,7 +3,7 @@
 #include <time.h>
 
 void random___init__(PikaObj *self){
-    srand(pika_platform_getTick());
+    srand(pika_platform_get_tick());
 }
 
 int random_randint(PikaObj *self, int a, int b){

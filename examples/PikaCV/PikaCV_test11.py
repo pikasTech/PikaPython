@@ -5,7 +5,7 @@ img.read("test/assets/test2.jpg")
 
 cv.Converter.toGray(img)
 data = img.data()
-print(str(binascii.b2a_hex(img.data())))
+print(binascii.b2a_hex(img.data()).decode())
 cv.Converter.toBMP(img)
 img.write("test/out/test.bmp")
 

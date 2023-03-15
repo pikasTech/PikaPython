@@ -56,7 +56,7 @@ void ctypes_create_string_buffer___init__(PikaObj* self, int size) {
     uint8_t* buffer;
     obj_setBytes(self, "raw", NULL, size);
     buffer = obj_getBytes(self, "raw");
-    __platform_printf("0x%x", &buffer);
+    __platform_printf("0x%lx", (uintptr_t)&buffer);
 }
 
 int ctypes_create_string_buffer___getitem__(PikaObj* self, int __key) {
@@ -98,7 +98,6 @@ void ctypes_c_buffer___init__(PikaObj *self, Arg* value, int size){
                           strGetSize((char*)value_buffer) + 1);
     } else {
         __platform_printf("value type is not support!");
-        while (1)
-            ;
+        __platform_panic_handle();
     }
 }

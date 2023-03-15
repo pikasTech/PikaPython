@@ -124,5 +124,8 @@
     "clangd.arguments": [
         "-compile-commands-dir=build",
         "-header-insertion=never"
-    ]
+    ],
+    "[toml]": {
+        "editor.defaultFormatter": "tamasfe.even-better-toml"
+    }
 }
