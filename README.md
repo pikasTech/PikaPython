@@ -21,7 +21,6 @@
 	<a href="https://space.bilibili.com/5365336/channel/detail?cid=202329">Videos</a> |
         <a href="../../tree/master/bsp#platform-support">BSP</a> |
 	<a href="https://pikadoc.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html">Package Manager</a> |
-	<a href="https://pikadoc.readthedocs.io/en/latest/%E4%BB%8E%20RT-Thread%20%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%BC%80%E5%A7%8B.html" >RT-Thread package</a> |
 	<a href="https://pikadoc.readthedocs.io/en/latest/%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E7%A4%BE%E5%8C%BA%E8%B4%A1%E7%8C%AE.html" >Contribute</a> |
 	<a href="https://pikadoc.readthedocs.io/en/latest/%E5%95%86%E4%B8%9A%E5%90%88%E4%BD%9C%E6%96%B9%E5%BC%8F.html">Business</a> 
 </p>
@@ -30,7 +29,7 @@
 
 # 1. Abstract
 
-PikaPython is an ultra-lightweight Python engine with zero dependencies and zero-configuration, that can run with 4KB of RAM (such as STM32G030C8 and STM32F103C8).
+PikaPython is an ultra-lightweight Python interpreter that runs with only 4KB of RAM, zero dependencies. It is ready to use out of the box without any configuration required and easy to extend with C.
 
 PikaPython also known as PikaScript and PikaPy.
 
