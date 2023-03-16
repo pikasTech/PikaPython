@@ -644,6 +644,9 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+|CH307开发板、BL618开发板 | [VeriMake]([GorgonMeducer](https://github.com/GorgonMeducer)) |
+|VM instruction extension framework | [GorgonMeducer](https://github.com/GorgonMeducer) |
+|iotcloud module|[梦程MI](https://gitee.com/dreamcmi) |
 |implement shell filter | [GorgonMeducer](https://github.com/GorgonMeducer) |
 |修复socket模块在lwip中fcntl的参数数量错误|[梦程MI](https://gitee.com/dreamcmi) |
 |support GPIO pika_hal for BLMCU|[codercmd](https://gitee.com/codercmd)|
