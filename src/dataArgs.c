@@ -618,7 +618,9 @@ PIKA_RES pikaList_insert(PikaList* self, int index, Arg* arg) {
 }
 
 size_t pikaList_getSize(PikaList* self) {
-    pika_assert(NULL != self);
+    if (NULL == self) {
+        return 0;
+    }
     return args_getInt(&self->super, "top");
 }
 

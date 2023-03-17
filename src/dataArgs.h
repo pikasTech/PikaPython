@@ -243,6 +243,9 @@ static inline Arg* pikaTuple_getArg(PikaTuple* self, int index) {
 }
 
 static inline size_t pikaTuple_getSize(PikaTuple* self) {
+    if (self == NULL) {
+        return 0;
+    }
     return pikaList_getSize((&((self)->super)));
 }
 

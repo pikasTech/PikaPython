@@ -171,6 +171,22 @@ TEST(builtin, str_join) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST(builtin, int_extern) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/builtin/int_extern.py");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
+    EXPECT_STREQ(log_buff[0], "PASS\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 #endif
 
 

@@ -102,10 +102,10 @@ pika_float PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {
     return _PIKA_FLOAT_ERR;
 }
 
-PIKA_RES _transeInt(Arg* arg, int* res) {
+PIKA_RES _transeInt(Arg* arg, int base, int64_t* res) {
     ArgType type = arg_getType(arg);
     if (ARG_TYPE_INT == type) {
-        *res = (int)arg_getInt(arg);
+        *res = arg_getInt(arg);
         return PIKA_RES_OK;
     }
     if (ARG_TYPE_BOOL == type) {
@@ -117,7 +117,7 @@ PIKA_RES _transeInt(Arg* arg, int* res) {
         return PIKA_RES_OK;
     }
     if (ARG_TYPE_STRING == type) {
-        *res = (int)fast_atoi(arg_getStr(arg));
+        *res = strtoll(arg_getStr(arg), NULL, base);
         return PIKA_RES_OK;
     }
     if (ARG_TYPE_BYTES == type) {
@@ -132,9 +132,21 @@ PIKA_RES _transeInt(Arg* arg, int* res) {
     return PIKA_RES_ERR_INVALID_PARAM;
 }
 
-int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
-    int res = 0;
-    if (_transeInt(arg, &res) == PIKA_RES_OK) {
+int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg, PikaTuple* base) {
+    int64_t res = 0;
+    int iBase = 10;
+    if (pikaTuple_getSize(base) > 0) {
+        if (arg_getType(arg) != ARG_TYPE_STRING &&
+            arg_getType(arg) != ARG_TYPE_BYTES) {
+            obj_setSysOut(self,
+                          "TypeError: int() can't convert non-string with "
+                          "explicit base");
+            obj_setErrorCode(self, 1);
+            return _PIKA_INT_ERR;
+        }
+        iBase = (int)pikaTuple_getInt(base, 0);
+    }
+    if (_transeInt(arg, iBase, &res) == PIKA_RES_OK) {
         return res;
     }
     obj_setSysOut(self, "ValueError: invalid literal for int()");
@@ -143,8 +155,8 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg) {
 }
 
 PIKA_BOOL PikaStdLib_SysObj_bool(PikaObj* self, Arg* arg) {
-    int res = 0;
-    if (_transeInt(arg, &res) == PIKA_RES_OK) {
+    int64_t res = 0;
+    if (_transeInt(arg, 10, &res) == PIKA_RES_OK) {
         return res ? PIKA_TRUE : PIKA_FALSE;
     }
     obj_setSysOut(self, "ValueError: invalid literal for bool()");
