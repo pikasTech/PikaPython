@@ -31,6 +31,13 @@
 #include "dataQueueObj.h"
 #include "dataStack.h"
 
+typedef QueueObj AST;
+
+typedef struct Parser {
+    Args buffs;
+    Stack tBlockStack;
+} Parser;
+
 typedef enum TokenType {
     TOKEN_strEnd = 0,
     TOKEN_symbol,
@@ -77,6 +84,11 @@ typedef struct GenRule {
     char* val;
 } GenRule;
 
+typedef struct AstBlockInfo {
+    Stack* stack;
+    int deepth;
+} AstBlockInfo;
+
 typedef struct LexToken LexToken;
 struct LexToken {
     char* tokenStream;
@@ -98,26 +110,41 @@ struct Cursor {
     PIKA_RES result;
 };
 
-char* Parser_fileToAsm(Args* outBuffs, char* filename);
-char* Parser_linesToAsm(Args* outBuffs, char* multiLine);
-PIKA_RES Parser_linesToBytes(ByteCodeFrame* bf, char* py_lines);
-char* Parser_linesToArray(char* lines);
+char* Lexer_getTokenStream(Args* outBuffs, char* stmt);
+char* Lexer_printTokenStream(Args* outBuffs, char* tokenStream);
+
+char* pika_fileToAsm(Args* outBuffs, char* filename);
+char* pika_linesToAsm(Args* outBuffs, char* multiLine);
+char* pika_linesToArray(char* lines);
+char* pika_lineToAsm(Args* buffs_p, char* line, Stack* blockStack);
+PIKA_RES pika_linesToBytes(ByteCodeFrame* bf, char* py_lines);
+
+Parser* New_parser(void);
+int parser_deinit(Parser* parser);
+char* parser_lineToAsm(Parser* self, char* line);
+
+char* Cursor_popLastToken(Args* outBuffs, char** pStmt, char* str);
+char* Cursor_getCleanStmt(Args* outBuffs, char* cmd);
+
+AST* AST_parseLine(char* line);
+char* AST_genAsm(AST* oAST, Args* outBuffs);
+int32_t AST_deinit(AST* ast);
 
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);
 ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
 
-#define _Cursor_forEach(cursor)   \
+#define _Cursor_forEach(cursor)  \
     _Cursor_beforeIter(&cursor); \
     for (int __i = 0; __i < cursor.length; __i++)
 
 #define Cursor_forEachExistPs(cursor, stmt) \
-    /* init parserStage */                              \
-    _Cursor_init(&cursor);                              \
-    _Cursor_parse(&cursor, stmt);                \
+    /* init parserStage */                  \
+    _Cursor_init(&cursor);                  \
+    _Cursor_parse(&cursor, stmt);           \
     _Cursor_forEach(cursor)
 
 #define Cursor_forEach(cursor, stmt) \
-    struct Cursor cursor;                        \
+    struct Cursor cursor;            \
     Cursor_forEachExistPs(cursor, stmt)
 
 uint16_t TokenStream_getSize(char* tokenStream);

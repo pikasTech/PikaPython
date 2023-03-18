@@ -10,7 +10,7 @@
 void (*global_do_sleep_ms)(uint32_t);
 
 static void _do_sleep_ms_tick(uint32_t ms) {
-    uint32_t tick = pika_platform_get_tick();
+    int64_t tick = pika_platform_get_tick();
     while (pika_platform_get_tick() - tick < ms) {
 #if PIKA_EVENT_ENABLE
         _VMEvent_pickupEvent();

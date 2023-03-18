@@ -37,7 +37,7 @@ void _link_deinit_pyload(Link* self) {
         linkNode_deinit(nowNode);
         nowNode = nodeNext;
     }
-    self = NULL;
+    pika_platform_memset(self, 0, sizeof(Link));
 }
 
 void link_deinit(Link* self) {

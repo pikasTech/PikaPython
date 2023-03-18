@@ -126,7 +126,7 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     bytecode_frame.instruct_array.output_f = bytecode_f;
     bytecode_frame.instruct_array.output_redirect_fun =
         __handler_instructArray_output_none;
-    res = Parser_linesToBytes(&bytecode_frame, py_lines);
+    res = pika_linesToBytes(&bytecode_frame, py_lines);
     if (PIKA_RES_OK != res) {
         pika_platform_printf("    Error: Syntax error.\r\n");
         goto exit;
@@ -151,7 +151,7 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     /* instruct array to file */
     bytecode_frame.instruct_array.output_redirect_fun =
         __handler_instructArray_output_file;
-    Parser_linesToBytes(&bytecode_frame, py_lines);
+    pika_linesToBytes(&bytecode_frame, py_lines);
     byteCodeFrame_deinit(&bytecode_frame);
 
     /* step 3, write const pool to file */
@@ -169,7 +169,7 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     /* instruct array to none */
     bytecode_frame.instruct_array.output_redirect_fun =
         __handler_instructArray_output_none;
-    Parser_linesToBytes(&bytecode_frame, py_lines);
+    pika_linesToBytes(&bytecode_frame, py_lines);
 
     /* deinit */
 exit:
