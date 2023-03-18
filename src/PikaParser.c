@@ -57,7 +57,7 @@ char* Cursor_popToken(Args* buffs, char** pStmt, char* devide);
 PIKA_BOOL Cursor_isContain(char* stmt, TokenType type, char* pyload);
 char* Cursor_splitCollect(Args* buffs, char* stmt, char* devide, int index);
 
-char* pika_linesToAsm(Args* outBuffs, char* multiLine);
+char* pika_lines2Asm(Args* outBuffs, char* multiLine);
 uint16_t TokenStream_getSize(char* tokenStream) {
     if (strEqu("", tokenStream)) {
         return 0;
@@ -1408,7 +1408,6 @@ char* AST_getThisBlock(AST* ast) {
     return obj_getStr(ast, "block");
 }
 
-AST* AST_parseStmt(AST* ast, char* stmt);
 PIKA_RES AST_parseSubStmt(AST* ast, char* node_content) {
     queueObj_pushObj(ast, (char*)"stmt");
     AST_parseStmt(queueObj_getCurrentObj(ast), node_content);
@@ -1924,13 +1923,11 @@ const char control_keywords[][9] = {"break", "continue"};
 /* normal keyward */
 const char normal_keywords[][7] = {"while", "if", "elif"};
 
-AST* _AST_parseLine(char* line, AstBlockInfo* block) {
+AST* _line2Ast(char* line, BlockState* blockState) {
     Stack s;
-    Stack* tBlockStack = block->stack;
-    int iBlockDeepth = block->deepth;
     stack_init(&s);
-    if (tBlockStack == NULL) {
-        tBlockStack = &s;
+    if (blockState->stack == NULL) {
+        blockState->stack = &s;
     }
     /* line is not exist */
     if (line == NULL) {
@@ -1953,11 +1950,11 @@ AST* _AST_parseLine(char* line, AstBlockInfo* block) {
         ast = NULL;
         goto exit;
     }
-    block_deepth_now += iBlockDeepth;
+    block_deepth_now += blockState->deepth;
     obj_setInt(ast, "blockDeepth", block_deepth_now);
 
     /* check if exit block */
-    block_deepth_last = stack_getTop(tBlockStack) + iBlockDeepth;
+    block_deepth_last = stack_getTop(blockState->stack) + blockState->deepth;
     /* exit each block */
     for (int i = 0; i < block_deepth_last - block_deepth_now; i++) {
         QueueObj* exit_block_queue = obj_getObj(ast, "exitBlock");
@@ -1968,12 +1965,12 @@ AST* _AST_parseLine(char* line, AstBlockInfo* block) {
             queueObj_init(exit_block_queue);
         }
         char buff[10] = {0};
-        char* block_type = stack_popStr(tBlockStack, buff);
+        char* block_type = stack_popStr(blockState->stack, buff);
         /* push exit block type to exit_block queue */
         queueObj_pushStr(exit_block_queue, block_type);
     }
 
-    line_start = line + (block_deepth_now - iBlockDeepth) * 4;
+    line_start = line + (block_deepth_now - blockState->deepth) * 4;
     stmt = line_start;
 
     // "while" "if" "elif"
@@ -1984,7 +1981,7 @@ AST* _AST_parseLine(char* line, AstBlockInfo* block) {
             (line_start[keyword_len] == ' ')) {
             stmt = strsCut(&buffs, line_start, ' ', ':');
             AST_setNodeBlock(ast, keyword);
-            stack_pushStr(tBlockStack, keyword);
+            stack_pushStr(blockState->stack, keyword);
             goto block_matched;
         }
     }
@@ -2024,7 +2021,7 @@ AST* _AST_parseLine(char* line, AstBlockInfo* block) {
         args_deinit(list_buffs);
         AST_setNodeBlock(ast, "for");
         AST_setNodeAttr(ast, "list_in", list_in);
-        stack_pushStr(tBlockStack, "for");
+        stack_pushStr(blockState->stack, "for");
         stmt = list_in;
         goto block_matched;
     }
@@ -2034,7 +2031,7 @@ AST* _AST_parseLine(char* line, AstBlockInfo* block) {
         if ((line_start[4] == ' ') || (line_start[4] == ':')) {
             stmt = "";
             AST_setNodeBlock(ast, "else");
-            stack_pushStr(tBlockStack, "else");
+            stack_pushStr(blockState->stack, "else");
         }
         goto block_matched;
     }
@@ -2045,7 +2042,7 @@ AST* _AST_parseLine(char* line, AstBlockInfo* block) {
         if ((line_start[3] == ' ') || (line_start[3] == ':')) {
             stmt = "";
             AST_setNodeBlock(ast, "try");
-            stack_pushStr(tBlockStack, "try");
+            stack_pushStr(blockState->stack, "try");
         }
         goto block_matched;
     }
@@ -2055,7 +2052,7 @@ AST* _AST_parseLine(char* line, AstBlockInfo* block) {
         if ((line_start[6] == ' ') || (line_start[6] == ':')) {
             stmt = "";
             AST_setNodeBlock(ast, "except");
-            stack_pushStr(tBlockStack, "except");
+            stack_pushStr(blockState->stack, "except");
         }
         goto block_matched;
     }
@@ -2148,7 +2145,7 @@ AST* _AST_parseLine(char* line, AstBlockInfo* block) {
         if (sDefaultStmt[0] != '\0') {
             AST_setNodeAttr(ast, "default", sDefaultStmt);
         }
-        stack_pushStr(tBlockStack, "def");
+        stack_pushStr(blockState->stack, "def");
         goto block_matched;
     }
     if (strIsStartWith(line_start, (char*)"class ")) {
@@ -2162,7 +2159,7 @@ AST* _AST_parseLine(char* line, AstBlockInfo* block) {
         declare = Cursor_getCleanStmt(&buffs, declare);
         AST_setNodeBlock(ast, "class");
         AST_setNodeAttr(ast, "declare", declare);
-        stack_pushStr(tBlockStack, "class");
+        stack_pushStr(blockState->stack, "class");
         goto block_matched;
     }
 
@@ -2181,24 +2178,24 @@ exit:
     return ast;
 }
 
-static AST* AST_parseLine_withBlockDeepth(char* line, int block_deepth) {
-    AstBlockInfo block = {
+static AST* line2Ast_withBlockDeepth(char* line, int block_deepth) {
+    BlockState block = {
         .deepth = block_deepth,
         .stack = NULL,
     };
-    return _AST_parseLine(line, &block);
+    return _line2Ast(line, &block);
 }
 
 int AST_getBlockDeepthNow(AST* ast) {
     return obj_getInt(ast, "blockDeepth");
 }
 
-AST* AST_parseLine(char* line) {
-    AstBlockInfo block = {
+AST* line2Ast(char* line) {
+    BlockState block = {
         .deepth = 0,
         .stack = NULL,
     };
-    return _AST_parseLine(line, &block);
+    return _line2Ast(line, &block);
 }
 
 static char* Suger_import_as(Args* out_buffs, char* line) {
@@ -2456,12 +2453,12 @@ exit:
     return line;
 }
 
-char* pika_lineToAsm(Args* buffs_p, char* line, Stack* blockStack) {
+char* parser_line2Asm(Parser* self, char* line) {
     char* ASM = NULL;
     AST* ast = NULL;
     uint8_t line_num = 0;
     /* pre process */
-    line = Parser_linePreProcess(buffs_p, line);
+    line = Parser_linePreProcess(&self->buffs, line);
     if (NULL == line) {
         /* preprocess error */
         goto exit;
@@ -2476,18 +2473,14 @@ char* pika_lineToAsm(Args* buffs_p, char* line, Stack* blockStack) {
     */
     line_num = strCountSign(line, '\n') + 1;
     for (int i = 0; i < line_num; i++) {
-        char* single_line = strsPopToken(buffs_p, &line, '\n');
+        char* single_line = strsPopToken(&self->buffs, &line, '\n');
         /* parse line to AST */
-        AstBlockInfo block = {
-            .deepth = 0,
-            .stack = blockStack,
-        };
-        ast = _AST_parseLine(single_line, &block);
+        ast = _line2Ast(single_line, &self->blockState);
         /* gen ASM from AST */
         if (ASM == NULL) {
-            ASM = AST_genAsm(ast, buffs_p);
+            ASM = AST_genAsm(ast, &self->buffs);
         } else {
-            ASM = strsAppend(buffs_p, ASM, AST_genAsm(ast, buffs_p));
+            ASM = strsAppend(&self->buffs, ASM, AST_genAsm(ast, &self->buffs));
         }
         if (NULL != ast) {
             AST_deinit(ast);
@@ -2495,10 +2488,6 @@ char* pika_lineToAsm(Args* buffs_p, char* line, Stack* blockStack) {
     }
 exit:
     return ASM;
-}
-
-char* parser_lineToAsm(Parser* self, char* line) {
-    return pika_lineToAsm(&self->buffs, line, &self->tBlockStack);
 }
 
 static int Parser_isVoidLine(char* line) {
@@ -2635,7 +2624,7 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
 
     parse_line:
         /* parse single Line to Asm */
-        sSingleASM = parser_lineToAsm(parser, sLine);
+        sSingleASM = parser_line2Asm(parser, sLine);
     parse_after:
         if (NULL == sSingleASM) {
             sOutASM = NULL;
@@ -2685,7 +2674,7 @@ exit:
     return sOutASM;
 };
 
-PIKA_RES pika_linesToBytes(ByteCodeFrame* bf, char* py_lines) {
+PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines) {
 #if PIKA_BYTECODE_ONLY_ENABLE
     pika_platform_printf(
         "Error: In bytecode-only mode, can not parse python script.\r\n");
@@ -2700,11 +2689,11 @@ PIKA_RES pika_linesToBytes(ByteCodeFrame* bf, char* py_lines) {
 #endif
 }
 
-char* pika_linesToAsm(Args* outBuffs, char* multi_line) {
+char* pika_lines2Asm(Args* outBuffs, char* multi_line) {
     return _Parser_linesToBytesOrAsm(outBuffs, NULL, multi_line);
 }
 
-char* pika_fileToAsm(Args* outBuffs, char* filename) {
+char* pika_file2Asm(Args* outBuffs, char* filename) {
     Args buffs = {0};
     Arg* file_arg = arg_loadFile(NULL, filename);
     pika_assert(NULL != file_arg);
@@ -2718,7 +2707,7 @@ char* pika_fileToAsm(Args* outBuffs, char* filename) {
     lines = strsReplace(&buffs, lines, "\n\n", "\n");
     /* add '\n' at the end */
     lines = strsAppend(&buffs, lines, "\n\n");
-    char* res = pika_linesToAsm(&buffs, lines);
+    char* res = pika_lines2Asm(&buffs, lines);
     if (NULL == res) {
         goto __exit;
     }
@@ -2979,7 +2968,7 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
                 char* stmt = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
                                         "%s = $tmp[%d]\n", item, out_num);
 
-                AST* ast_this = AST_parseLine_withBlockDeepth(
+                AST* ast_this = line2Ast_withBlockDeepth(
                     stmt, AST_getBlockDeepthNow(oAST) + 1);
                 sPikaAsm =
                     strsAppend(&buffs, sPikaAsm, AST_genAsm(ast_this, &buffs));
@@ -3026,7 +3015,7 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
                 sPikaAsm = strsAppend(&buffs, sPikaAsm, sArgName);
                 sPikaAsm = strsAppend(&buffs, sPikaAsm, "\n");
                 sPikaAsm = strsAppend(&buffs, sPikaAsm, "0 JNZ 2\n");
-                AST* ast_this = AST_parseLine_withBlockDeepth(
+                AST* ast_this = line2Ast_withBlockDeepth(
                     sStmt, AST_getBlockDeepthNow(oAST) + 1);
                 sPikaAsm =
                     strsAppend(&buffs, sPikaAsm, AST_genAsm(ast_this, &buffs));
@@ -3214,10 +3203,10 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* self, char* pikaAsm) {
     return self;
 }
 
-char* pika_linesToArray(char* lines) {
+char* pika_lines2Array(char* lines) {
     ByteCodeFrame bytecode_frame;
     byteCodeFrame_init(&bytecode_frame);
-    pika_linesToBytes(&bytecode_frame, lines);
+    pika_lines2Bytes(&bytecode_frame, lines);
     /* do something */
     byteCodeFrame_print(&bytecode_frame);
 
@@ -3236,12 +3225,15 @@ char* pika_linesToArray(char* lines) {
 Parser* New_parser(void) {
     Parser* self = (Parser*)pikaMalloc(sizeof(Parser));
     pika_platform_memset(self, 0, sizeof(Parser));
-    stack_init(&self->tBlockStack);
+    self->blockState.stack = pikaMalloc(sizeof(Stack));
+    pika_platform_memset(self->blockState.stack, 0, sizeof(Stack));
+    stack_init(self->blockState.stack);
     return self;
 }
 
-int parser_deinit(Parser* parser) {
-    stack_deinit(&parser->tBlockStack);
-    pikaFree(parser, sizeof(Parser));
+int parser_deinit(Parser* self) {
+    stack_deinit(self->blockState.stack);
+    pikaFree(self->blockState.stack, sizeof(Stack));
+    pikaFree(self, sizeof(Parser));
     return 0;
 }

@@ -33,11 +33,6 @@
 
 typedef QueueObj AST;
 
-typedef struct Parser {
-    Args buffs;
-    Stack tBlockStack;
-} Parser;
-
 typedef enum TokenType {
     TOKEN_strEnd = 0,
     TOKEN_symbol,
@@ -87,7 +82,12 @@ typedef struct GenRule {
 typedef struct AstBlockInfo {
     Stack* stack;
     int deepth;
-} AstBlockInfo;
+} BlockState;
+
+typedef struct Parser {
+    Args buffs;
+    BlockState blockState;
+} Parser;
 
 typedef struct LexToken LexToken;
 struct LexToken {
@@ -113,20 +113,22 @@ struct Cursor {
 char* Lexer_getTokenStream(Args* outBuffs, char* stmt);
 char* Lexer_printTokenStream(Args* outBuffs, char* tokenStream);
 
-char* pika_fileToAsm(Args* outBuffs, char* filename);
-char* pika_linesToAsm(Args* outBuffs, char* multiLine);
-char* pika_linesToArray(char* lines);
-char* pika_lineToAsm(Args* buffs_p, char* line, Stack* blockStack);
-PIKA_RES pika_linesToBytes(ByteCodeFrame* bf, char* py_lines);
+char* pika_file2Asm(Args* outBuffs, char* filename);
+char* pika_lines2Asm(Args* outBuffs, char* multiLine);
+char* pika_lines2Array(char* lines);
+char* pika_line2Asm(Args* buffs_p, char* line, Stack* blockStack);
+
+PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines);
+char* parser_line2Asm(Parser* self, char* line);
+AST* line2Ast(char* line);
 
 Parser* New_parser(void);
 int parser_deinit(Parser* parser);
-char* parser_lineToAsm(Parser* self, char* line);
 
 char* Cursor_popLastToken(Args* outBuffs, char** pStmt, char* str);
 char* Cursor_getCleanStmt(Args* outBuffs, char* cmd);
 
-AST* AST_parseLine(char* line);
+AST* AST_parseStmt(AST* ast, char* stmt);
 char* AST_genAsm(AST* oAST, Args* outBuffs);
 int32_t AST_deinit(AST* ast);
 

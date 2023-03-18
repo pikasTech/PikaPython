@@ -8,7 +8,7 @@ extern "C" {
 }
 
 TEST(parser, NEW) {
-    AST* ast = AST_parseLine((char*)"add(a,b)", NULL);
+    AST* ast = parser_line2Ast((char*)"add(a,b)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -18,7 +18,7 @@ TEST(parser, NEW) {
 }
 
 TEST(parser, add_a_b) {
-    AST* ast = AST_parseLine((char*)"add( a , b)", NULL);
+    AST* ast = parser_line2Ast((char*)"add( a , b)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -33,7 +33,7 @@ TEST(parser, add_a_b) {
 }
 
 TEST(parser, add_a_b_c) {
-    AST* ast = AST_parseLine((char*)"d = add(add(a,b)  , c)", NULL);
+    AST* ast = parser_line2Ast((char*)"d = add(add(a,b)  , c)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -52,7 +52,7 @@ TEST(parser, add_a_b_c) {
 
 TEST(parser, method1) {
     AST* ast =
-        AST_parseLine((char*)"d.p = a.add(b.add(a,se.b)  , pmw.c)", NULL);
+        parser_line2Ast((char*)"d.p = a.add(b.add(a,se.b)  , pmw.c)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -73,7 +73,7 @@ TEST(parser, method1) {
 TEST(parser, method2) {
     char* line = (char*)"d.p = a.add(b.add(a,se.b,diek(pp))  , pmw.c())";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pika_lineToAsm(buffs, line, NULL);
+    char* pikaAsm = pika_line2Asm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -92,7 +92,7 @@ TEST(parser, method2) {
 TEST(parser, str1) {
     char* line = (char*)"literal('2.322')";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pika_lineToAsm(buffs, line, NULL);
+    char* pikaAsm = pika_line2Asm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -105,7 +105,7 @@ TEST(parser, str1) {
 TEST(parser, str2) {
     char* line = (char*)"b=add(a,literal('1'))";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pika_lineToAsm(buffs, line, NULL);
+    char* pikaAsm = pika_line2Asm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -121,7 +121,7 @@ TEST(parser, str2) {
 TEST(parser, num1) {
     char* line = (char*)"b=add(a,1)";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pika_lineToAsm(buffs, line, NULL);
+    char* pikaAsm = pika_line2Asm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -136,7 +136,7 @@ TEST(parser, num1) {
 TEST(parser, add_str) {
     char* line = (char*)"b=add(a,'1')";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pika_lineToAsm(buffs, line, NULL);
+    char* pikaAsm = pika_line2Asm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -151,7 +151,7 @@ TEST(parser, add_str) {
 TEST(parser, deep4) {
     char* line = (char*)"b = add(add(add(add(1, 2), 3), 4), 5)";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pika_lineToAsm(buffs, line, NULL);
+    char* pikaAsm = pika_line2Asm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -172,7 +172,7 @@ TEST(parser, deep4) {
 TEST(parser, a_1) {
     char* line = (char*)"a = 1";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pika_lineToAsm(buffs, line, NULL);
+    char* pikaAsm = pika_line2Asm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -185,7 +185,7 @@ TEST(parser, a_1) {
 TEST(parser, while_true) {
     char* line = (char*)"while true:";
     Args* buffs = New_strBuff();
-    char* pikaAsm = pika_lineToAsm(buffs, line, NULL);
+    char* pikaAsm = pika_line2Asm(buffs, line, NULL);
     printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -202,7 +202,7 @@ static char* parse(const char* line,
     printf("%s\n", line);
     Args* runBuffs = New_strBuff();
     pikaAsm = strsAppend(runBuffs, pikaAsm,
-                         pika_lineToAsm(runBuffs, (char*)line, blockStack));
+                         pika_line2Asm(runBuffs, (char*)line, blockStack));
     pikaAsm = strsCopy(outBuffs, pikaAsm);
     args_deinit(runBuffs);
     return pikaAsm;

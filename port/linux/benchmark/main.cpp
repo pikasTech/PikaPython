@@ -43,7 +43,7 @@ BENCHMARK(while_loop_10000)->Unit(benchmark::kMillisecond);
 void __platform_printf(char* fmt, ...) {}
 static void for_print_1000(benchmark::State& state) {
     Args* buffs = New_strBuff();
-    char* pikaAsm = pika_linesToAsm(buffs, (char*)
+    char* pikaAsm = pika_lines2Asm(buffs, (char*)
             "for i in range(1000):\n"
             "    print(i)\n"
             "\n");
@@ -64,7 +64,7 @@ BENCHMARK(for_print_1000)->Unit(benchmark::kMillisecond);
 static void prime_number_100(benchmark::State& state) {
     int num = 0;
     Args* buffs = New_strBuff();
-    char* pikaAsm = pika_linesToAsm(buffs, (char*)
+    char* pikaAsm = pika_lines2Asm(buffs, (char*)
             "num = 0\n"
 	        "i = 2\n"
             "while i < 100:\n"

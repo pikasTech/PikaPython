@@ -3433,7 +3433,7 @@ static VMParameters* _pikaVM_runPyLines(PikaObj* self, char* py_lines) {
     /* load or generate byte code frame */
     /* generate byte code */
     byteCodeFrame_init(bytecode_frame_p);
-    if (PIKA_RES_OK != pika_linesToBytes(bytecode_frame_p, py_lines)) {
+    if (PIKA_RES_OK != pika_lines2Bytes(bytecode_frame_p, py_lines)) {
         pika_platform_printf("Error: Syntax error.\r\n");
         globals = NULL;
         goto exit;
