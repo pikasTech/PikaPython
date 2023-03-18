@@ -8,7 +8,7 @@ extern "C" {
 }
 
 TEST(parser, NEW) {
-    AST* ast = parser_line2Ast((char*)"add(a,b)", NULL);
+    AST* ast = parser_line2AST((char*)"add(a,b)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -18,7 +18,7 @@ TEST(parser, NEW) {
 }
 
 TEST(parser, add_a_b) {
-    AST* ast = parser_line2Ast((char*)"add( a , b)", NULL);
+    AST* ast = parser_line2AST((char*)"add( a , b)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -33,7 +33,7 @@ TEST(parser, add_a_b) {
 }
 
 TEST(parser, add_a_b_c) {
-    AST* ast = parser_line2Ast((char*)"d = add(add(a,b)  , c)", NULL);
+    AST* ast = parser_line2AST((char*)"d = add(add(a,b)  , c)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);
@@ -52,7 +52,7 @@ TEST(parser, add_a_b_c) {
 
 TEST(parser, method1) {
     AST* ast =
-        parser_line2Ast((char*)"d.p = a.add(b.add(a,se.b)  , pmw.c)", NULL);
+        parser_line2AST((char*)"d.p = a.add(b.add(a,se.b)  , pmw.c)", NULL);
     Args* buffs = New_strBuff();
     char* pikaAsm = AST_toPikaAsm(ast, buffs);
     printf("%s", pikaAsm);

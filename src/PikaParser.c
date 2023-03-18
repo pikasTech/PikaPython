@@ -1923,12 +1923,8 @@ const char control_keywords[][9] = {"break", "continue"};
 /* normal keyward */
 const char normal_keywords[][7] = {"while", "if", "elif"};
 
-AST* _line2Ast(char* line, BlockState* blockState) {
-    Stack s;
-    stack_init(&s);
-    if (blockState->stack == NULL) {
-        blockState->stack = &s;
-    }
+AST* parser_line2AST(Parser* self, char* line) {
+    BlockState* blockState = &self->blockState;
     /* line is not exist */
     if (line == NULL) {
         return NULL;
@@ -2173,17 +2169,16 @@ block_matched:
     ast = AST_parseStmt(ast, stmt);
     goto exit;
 exit:
-    stack_deinit(&s);
     strsDeinit(&buffs);
     return ast;
 }
 
 static AST* line2Ast_withBlockDeepth(char* line, int block_deepth) {
-    BlockState block = {
-        .deepth = block_deepth,
-        .stack = NULL,
-    };
-    return _line2Ast(line, &block);
+    Parser* parser = New_parser();
+    parser->blockState.deepth = block_deepth;
+    AST* ast = parser_line2AST(parser, line);
+    parser_deinit(parser);
+    return ast;
 }
 
 int AST_getBlockDeepthNow(AST* ast) {
@@ -2191,11 +2186,7 @@ int AST_getBlockDeepthNow(AST* ast) {
 }
 
 AST* line2Ast(char* line) {
-    BlockState block = {
-        .deepth = 0,
-        .stack = NULL,
-    };
-    return _line2Ast(line, &block);
+    return line2Ast_withBlockDeepth(line, 0);
 }
 
 static char* Suger_import_as(Args* out_buffs, char* line) {
@@ -2453,18 +2444,18 @@ exit:
     return line;
 }
 
-char* parser_line2Asm(Parser* self, char* line) {
-    char* ASM = NULL;
+char* parser_line2BackendCode(Parser* self, char* line) {
+    char* sOut = NULL;
     AST* ast = NULL;
     uint8_t line_num = 0;
     /* pre process */
-    line = Parser_linePreProcess(&self->buffs, line);
+    line = Parser_linePreProcess(&self->lineBuffs, line);
     if (NULL == line) {
         /* preprocess error */
         goto exit;
     }
     if (strEqu("@annontation", line)) {
-        ASM = "";
+        sOut = "";
         goto exit;
     }
     /*
@@ -2473,21 +2464,22 @@ char* parser_line2Asm(Parser* self, char* line) {
     */
     line_num = strCountSign(line, '\n') + 1;
     for (int i = 0; i < line_num; i++) {
-        char* single_line = strsPopToken(&self->buffs, &line, '\n');
+        char* single_line = strsPopToken(&self->lineBuffs, &line, '\n');
         /* parse line to AST */
-        ast = _line2Ast(single_line, &self->blockState);
+        ast = parser_line2AST(self, single_line);
         /* gen ASM from AST */
-        if (ASM == NULL) {
-            ASM = AST_genAsm(ast, &self->buffs);
+        char* sNew = self->astBeckend(self, ast);
+        if (sOut == NULL) {
+            sOut = sNew;
         } else {
-            ASM = strsAppend(&self->buffs, ASM, AST_genAsm(ast, &self->buffs));
+            sOut = strsAppend(&self->lineBuffs, sOut, sNew);
         }
         if (NULL != ast) {
             AST_deinit(ast);
         }
     }
 exit:
-    return ASM;
+    return sOut;
 }
 
 static int Parser_isVoidLine(char* line) {
@@ -2523,11 +2515,8 @@ static uint8_t Parser_checkIsMultiComment(char* line, uint8_t* pbIsOneLine) {
     return bIsMultiComment;
 }
 
-static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
-                                       ByteCodeFrame* bytecode_frame,
-                                       char* sPyLines) {
-    Parser* parser = New_parser();
-    Arg* aAsm = arg_newStr("");
+static char* parser_lines2BackendCode(Parser* self, char* sPyLines) {
+    Arg* aBackendCode = arg_newStr("");
     uint32_t uLinesOffset = 0;
     uint16_t uLinesNum = strCountSign(sPyLines, '\n') + 1;
     uint16_t uLinesIndex = 0;
@@ -2535,8 +2524,8 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
     uint8_t bIsOneLineMultiComment = 0;
     Arg* aLineConnection = arg_newStr("");
     uint8_t bIsLineConnection = 0;
-    char* sOutASM = NULL;
-    char* sSingleASM = NULL;
+    char* sOut = NULL;
+    char* sBackendCode = NULL;
     uint32_t uLineSize = 0;
     /* parse each line */
     while (1) {
@@ -2552,15 +2541,15 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
 
         /* get single line by pop multiline */
         sLineOrigin =
-            strsGetFirstToken(&parser->buffs, sPyLines + uLinesOffset, '\n');
+            strsGetFirstToken(&self->lineBuffs, sPyLines + uLinesOffset, '\n');
 
-        sLine = strsCopy(&parser->buffs, sLineOrigin);
+        sLine = strsCopy(&self->lineBuffs, sLineOrigin);
 
         /* line connection */
         if (bIsLineConnection) {
             bIsLineConnection = 0;
             aLineConnection = arg_strAppend(aLineConnection, sLine);
-            sLine = strsCopy(&parser->buffs, arg_getStr(aLineConnection));
+            sLine = strsCopy(&self->lineBuffs, arg_getStr(aLineConnection));
             /* reflash the line_connection_arg */
             arg_deinit(aLineConnection);
             aLineConnection = arg_newStr("");
@@ -2597,9 +2586,9 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
         }
 
         /* support Tab */
-        sLine = strsReplace(&parser->buffs, sLine, "\t", "    ");
+        sLine = strsReplace(&self->lineBuffs, sLine, "\t", "    ");
         /* remove \r */
-        sLine = strsReplace(&parser->buffs, sLine, "\r", "");
+        sLine = strsReplace(&self->lineBuffs, sLine, "\r", "");
 
         /* check auto connection */
         Cursor_forEach(c, sLine) {
@@ -2618,30 +2607,30 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
 
         /* branket match failed */
         if (c.branket_deepth != 0) {
-            sSingleASM = NULL;
+            sBackendCode = NULL;
             goto parse_after;
         }
 
     parse_line:
         /* parse single Line to Asm */
-        sSingleASM = parser_line2Asm(parser, sLine);
+        sBackendCode = parser_line2BackendCode(self, sLine);
     parse_after:
-        if (NULL == sSingleASM) {
-            sOutASM = NULL;
+        if (NULL == sBackendCode) {
+            sOut = NULL;
             pika_platform_printf(
                 "----------[%d]----------\r\n%s\r\n-------------------------"
                 "\r\n",
                 uLinesIndex, sLine);
-            strsDeinit(&parser->buffs);
+            strsDeinit(&self->lineBuffs);
             goto exit;
         }
 
-        if (NULL == bytecode_frame) {
-            /* store ASM */
-            aAsm = arg_strAppend(aAsm, sSingleASM);
-        } else if (NULL == outBuffs) {
+        if (self->isGenBytecode) {
             /* store ByteCode */
-            byteCodeFrame_appendFromAsm(bytecode_frame, sSingleASM);
+            byteCodeFrame_appendFromAsm(self->bytecode_frame, sBackendCode);
+        } else {
+            /* store ASM */
+            aBackendCode = arg_strAppend(aBackendCode, sBackendCode);
         }
 
     next_line:
@@ -2649,29 +2638,29 @@ static char* _Parser_linesToBytesOrAsm(Args* outBuffs,
             uLineSize = strGetSize(sLineOrigin);
             uLinesOffset = uLinesOffset + uLineSize + 1;
         }
-        strsDeinit(&parser->buffs);
+        strsDeinit(&self->lineBuffs);
 
         /* exit when finished */
         if (uLinesIndex >= uLinesNum + 1) {
             break;
         }
     }
-    if (NULL != outBuffs) {
-        /* load stored ASM */
-        sOutASM = strsCopy(outBuffs, arg_getStr(aAsm));
+    if (self->isGenBytecode) {
+        /* generate bytecode success */
+        sOut = (char*)1;
     } else {
-        sOutASM = (char*)1;
+        /* load stored ASM */
+        sOut = strsCopy(&self->genBuffs, arg_getStr(aBackendCode));
     }
     goto exit;
 exit:
-    if (NULL != aAsm) {
-        arg_deinit(aAsm);
+    if (NULL != aBackendCode) {
+        arg_deinit(aBackendCode);
     }
     if (NULL != aLineConnection) {
         arg_deinit(aLineConnection);
     }
-    parser_deinit(parser);
-    return sOutASM;
+    return sOut;
 };
 
 PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines) {
@@ -2682,15 +2671,29 @@ PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines) {
         " Note: Please check PIKA_BYTECODE_ONLY_ENABLE config.\r\n");
     return PIKA_RES_ERR_SYNTAX_ERROR;
 #else
-    if (1 == (uintptr_t)_Parser_linesToBytesOrAsm(NULL, bf, py_lines)) {
+    Parser* parser = New_parser();
+    parser->isGenBytecode = PIKA_TRUE;
+    parser->bytecode_frame = bf;
+    if (1 == (uintptr_t)parser_lines2BackendCode(parser, py_lines)) {
+        parser_deinit(parser);
         return PIKA_RES_OK;
     }
+    parser_deinit(parser);
     return PIKA_RES_ERR_SYNTAX_ERROR;
 #endif
 }
 
 char* pika_lines2Asm(Args* outBuffs, char* multi_line) {
-    return _Parser_linesToBytesOrAsm(outBuffs, NULL, multi_line);
+    Parser* parser = New_parser();
+    parser->isGenBytecode = PIKA_FALSE;
+    char* sAsm = parser_lines2BackendCode(parser, multi_line);
+    if (NULL == sAsm) {
+        parser_deinit(parser);
+        return NULL;
+    }
+    sAsm = strsCopy(outBuffs, sAsm);
+    parser_deinit(parser);
+    return sAsm;
 }
 
 char* pika_file2Asm(Args* outBuffs, char* filename) {
@@ -3101,6 +3104,10 @@ exit:
     return sPikaAsm;
 }
 
+char* parser_Ast2Asm(Parser* self, AST* ast) {
+    return AST_genAsm(ast, &self->lineBuffs);
+}
+
 int32_t AST_deinit(AST* ast) {
     return obj_deinit(ast);
 }
@@ -3226,6 +3233,8 @@ Parser* New_parser(void) {
     Parser* self = (Parser*)pikaMalloc(sizeof(Parser));
     pika_platform_memset(self, 0, sizeof(Parser));
     self->blockState.stack = pikaMalloc(sizeof(Stack));
+    /* generate asm as default */
+    self->astBeckend = parser_Ast2Asm;
     pika_platform_memset(self->blockState.stack, 0, sizeof(Stack));
     stack_init(self->blockState.stack);
     return self;
@@ -3233,6 +3242,7 @@ Parser* New_parser(void) {
 
 int parser_deinit(Parser* self) {
     stack_deinit(self->blockState.stack);
+    strsDeinit(&self->genBuffs);
     pikaFree(self->blockState.stack, sizeof(Stack));
     pikaFree(self, sizeof(Parser));
     return 0;

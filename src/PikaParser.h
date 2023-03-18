@@ -79,15 +79,21 @@ typedef struct GenRule {
     char* val;
 } GenRule;
 
-typedef struct AstBlockInfo {
+typedef struct BlockState {
     Stack* stack;
     int deepth;
 } BlockState;
 
-typedef struct Parser {
-    Args buffs;
+typedef struct Parser Parser;
+typedef char* (*parser_AstBeckend)(Parser* self, AST* ast);
+struct Parser {
+    Args lineBuffs;
+    Args genBuffs;
     BlockState blockState;
-} Parser;
+    parser_AstBeckend astBeckend;
+    PIKA_BOOL isGenBytecode;
+    ByteCodeFrame* bytecode_frame;
+};
 
 typedef struct LexToken LexToken;
 struct LexToken {
@@ -117,10 +123,12 @@ char* pika_file2Asm(Args* outBuffs, char* filename);
 char* pika_lines2Asm(Args* outBuffs, char* multiLine);
 char* pika_lines2Array(char* lines);
 char* pika_line2Asm(Args* buffs_p, char* line, Stack* blockStack);
+AST* parser_line2AST(Parser* self, char* line);
+char* parser_Ast2Asm(Parser* self, AST* ast);
+AST* line2Ast(char* line);
 
 PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines);
-char* parser_line2Asm(Parser* self, char* line);
-AST* line2Ast(char* line);
+char* parser_line2BackendCode(Parser* self, char* line);
 
 Parser* New_parser(void);
 int parser_deinit(Parser* parser);
