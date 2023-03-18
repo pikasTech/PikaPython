@@ -2468,11 +2468,11 @@ char* parser_line2BackendCode(Parser* self, char* line) {
         /* parse line to AST */
         ast = parser_line2AST(self, single_line);
         /* gen ASM from AST */
-        char* sNew = self->astBeckend(self, ast);
+        char* sBackendCode = self->fn_ast2BeckendCode(self, ast);
         if (sOut == NULL) {
-            sOut = sNew;
+            sOut = sBackendCode;
         } else {
-            sOut = strsAppend(&self->lineBuffs, sOut, sNew);
+            sOut = strsAppend(&self->lineBuffs, sOut, sBackendCode);
         }
         if (NULL != ast) {
             AST_deinit(ast);
@@ -3234,7 +3234,7 @@ Parser* New_parser(void) {
     pika_platform_memset(self, 0, sizeof(Parser));
     self->blockState.stack = pikaMalloc(sizeof(Stack));
     /* generate asm as default */
-    self->astBeckend = parser_Ast2Asm;
+    self->fn_ast2BeckendCode = parser_Ast2Asm;
     pika_platform_memset(self->blockState.stack, 0, sizeof(Stack));
     stack_init(self->blockState.stack);
     return self;

@@ -85,12 +85,12 @@ typedef struct BlockState {
 } BlockState;
 
 typedef struct Parser Parser;
-typedef char* (*parser_AstBeckend)(Parser* self, AST* ast);
+typedef char* (*parser_Ast2BeckendCode)(Parser* self, AST* ast);
 struct Parser {
     Args lineBuffs;
     Args genBuffs;
     BlockState blockState;
-    parser_AstBeckend astBeckend;
+    parser_Ast2BeckendCode fn_ast2BeckendCode;
     PIKA_BOOL isGenBytecode;
     ByteCodeFrame* bytecode_frame;
 };
