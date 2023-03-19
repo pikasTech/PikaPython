@@ -1,5 +1,7 @@
 import os
 import subprocess
+import glob
+
 
 folder_name = os.getcwd().split("/")[-1] # 获取当前目录的名称
 
@@ -39,3 +41,52 @@ for item in python_files:
     # 调用 rust-msc-latest-linux --docgen <path-to-file.[py/pyi]> -o <file.md>
     generate_documentation(item)
 
+
+def add_title_to_md_files(directory):
+    # 获取目录下所有的md文件路径
+    md_files = [f for f in os.listdir(directory) if f.endswith('.md')]
+    
+    for md_file in md_files:
+        file_path = os.path.join(directory, md_file)
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+        
+        file_name = os.path.splitext(md_file)[0]
+        title = file_name.replace('API_', '')
+        # 在文件开头添加一级标题
+        lines.insert(0, f'# {title} 模块 API 文档\n\n')
+        
+        with open(file_path, 'w') as f:
+            f.writelines(lines)
+    
+    print(f'{len(md_files)}个.md文件已添加标题')
+
+# 指定目录路径
+directory = 'doc'
+add_title_to_md_files(directory)
+
+# 获取目录下所有的md文件路径
+md_files = glob.glob(os.path.join(directory, '*.md'))
+
+# 生成toctree指令内容
+toctree_content = ''
+for md_file in md_files:
+    # 获取文件名（不包含扩展名）
+    file_name = os.path.splitext(os.path.basename(md_file))[0]
+    # 生成toctree指令项
+    toctree_item = f'   {file_name}\n'
+    toctree_content += toctree_item
+
+# 生成API文档文件内容
+doc_content = f'''模块 API 文档
+============================
+
+.. toctree::
+   :maxdepth: 1
+
+{toctree_content}
+'''
+
+# 写入API文档文件
+with open('doc/index_api.rst', 'w') as f:
+    f.write(doc_content)
