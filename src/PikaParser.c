@@ -41,6 +41,7 @@ uint8_t TokenStream_isContain(char* tokenStream,
                               enum TokenType token_type,
                               char* pyload);
 char* TokenStream_pop(Args* buffs_p, char** tokenStream);
+char* parser_lines2BackendCode(Parser* self, char* sPyLines);
 
 /* Cursor preivilage */
 void _Cursor_init(struct Cursor* cs);
@@ -1923,60 +1924,69 @@ const char control_keywords[][9] = {"break", "continue"};
 /* normal keyward */
 const char normal_keywords[][7] = {"while", "if", "elif"};
 
-AST* parser_line2AST(Parser* self, char* line) {
+AST* parser_line2Ast(Parser* self, char* sLine) {
     BlockState* blockState = &self->blockState;
     /* line is not exist */
-    if (line == NULL) {
+    if (sLine == NULL) {
         return NULL;
     }
+
     /* init data */
-    AST* ast = New_queueObj();
+    AST* oAst = New_queueObj();
     Args buffs = {0};
-    int8_t block_deepth_now, block_deepth_last = -1;
-    char *line_start, *stmt;
+    int8_t iBlockDeepthNow, iBlockDeepthLast = -1;
+    char *sLineStart, *stmt;
+
+    /* docsting */
+    if (strIsStartWith(sLine, "@docstring")) {
+        AST_setNodeAttr(oAst, "docstring", sLine + sizeof("@docstring"));
+        stmt = "";
+        goto block_matched;
+    }
+
     /* get block deepth */
-    block_deepth_now = Parser_getPyLineBlockDeepth(line);
+    iBlockDeepthNow = Parser_getPyLineBlockDeepth(sLine);
     /* set block deepth */
-    if (block_deepth_now == -1) {
+    if (iBlockDeepthNow == -1) {
         /* get block_deepth error */
         pika_platform_printf(
             "IndentationError: unexpected indent, only support 4 "
             "spaces\r\n");
-        obj_deinit(ast);
-        ast = NULL;
+        obj_deinit(oAst);
+        oAst = NULL;
         goto exit;
     }
-    block_deepth_now += blockState->deepth;
-    obj_setInt(ast, "blockDeepth", block_deepth_now);
+    iBlockDeepthNow += blockState->deepth;
+    obj_setInt(oAst, "blockDeepth", iBlockDeepthNow);
 
     /* check if exit block */
-    block_deepth_last = stack_getTop(blockState->stack) + blockState->deepth;
+    iBlockDeepthLast = stack_getTop(blockState->stack) + blockState->deepth;
     /* exit each block */
-    for (int i = 0; i < block_deepth_last - block_deepth_now; i++) {
-        QueueObj* exit_block_queue = obj_getObj(ast, "exitBlock");
+    for (int i = 0; i < iBlockDeepthLast - iBlockDeepthNow; i++) {
+        QueueObj* exit_block_queue = obj_getObj(oAst, "exitBlock");
         /* create an exit_block queue */
         if (NULL == exit_block_queue) {
-            obj_newObj(ast, "exitBlock", "", New_TinyObj);
-            exit_block_queue = obj_getObj(ast, "exitBlock");
+            obj_newObj(oAst, "exitBlock", "", New_TinyObj);
+            exit_block_queue = obj_getObj(oAst, "exitBlock");
             queueObj_init(exit_block_queue);
         }
         char buff[10] = {0};
-        char* block_type = stack_popStr(blockState->stack, buff);
+        char* sBlockType = stack_popStr(blockState->stack, buff);
         /* push exit block type to exit_block queue */
-        queueObj_pushStr(exit_block_queue, block_type);
+        queueObj_pushStr(exit_block_queue, sBlockType);
     }
 
-    line_start = line + (block_deepth_now - blockState->deepth) * 4;
-    stmt = line_start;
+    sLineStart = sLine + (iBlockDeepthNow - blockState->deepth) * 4;
+    stmt = sLineStart;
 
     // "while" "if" "elif"
     for (uint32_t i = 0; i < sizeof(normal_keywords) / 7; i++) {
         char* keyword = (char*)normal_keywords[i];
         uint8_t keyword_len = strGetSize(keyword);
-        if (strIsStartWith(line_start, keyword) &&
-            (line_start[keyword_len] == ' ')) {
-            stmt = strsCut(&buffs, line_start, ' ', ':');
-            AST_setNodeBlock(ast, keyword);
+        if (strIsStartWith(sLineStart, keyword) &&
+            (sLineStart[keyword_len] == ' ')) {
+            stmt = strsCut(&buffs, sLineStart, ' ', ':');
+            AST_setNodeBlock(oAst, keyword);
             stack_pushStr(blockState->stack, keyword);
             goto block_matched;
         }
@@ -1987,46 +1997,46 @@ AST* parser_line2AST(Parser* self, char* line) {
     for (uint32_t i = 0; i < sizeof(control_keywords) / 8; i++) {
         char* keyward = (char*)control_keywords[i];
         uint8_t keyward_size = strGetSize(keyward);
-        if ((strIsStartWith(line_start, keyward)) &&
-            ((line_start[keyward_size] == ' ') ||
-             (line_start[keyward_size] == 0))) {
-            AST_setNodeAttr(ast, keyward, "");
+        if ((strIsStartWith(sLineStart, keyward)) &&
+            ((sLineStart[keyward_size] == ' ') ||
+             (sLineStart[keyward_size] == 0))) {
+            AST_setNodeAttr(oAst, keyward, "");
             stmt = "";
             goto block_matched;
         }
     }
 
     /* for */
-    if (strIsStartWith(line_start, "for ")) {
+    if (strIsStartWith(sLineStart, "for ")) {
         Args* list_buffs = New_strBuff();
-        char* line_buff = strsCopy(list_buffs, line_start + 4);
+        char* line_buff = strsCopy(list_buffs, sLineStart + 4);
         line_buff = Cursor_getCleanStmt(list_buffs, line_buff);
         if (strCountSign(line_buff, ':') < 1) {
             args_deinit(list_buffs);
-            obj_deinit(ast);
-            ast = NULL;
+            obj_deinit(oAst);
+            oAst = NULL;
             goto exit;
         }
         char* arg_in = strsPopToken(list_buffs, &line_buff, ' ');
-        AST_setNodeAttr(ast, "arg_in", arg_in);
+        AST_setNodeAttr(oAst, "arg_in", arg_in);
         strsPopToken(list_buffs, &line_buff, ' ');
         char* list_in = Cursor_splitCollect(list_buffs, line_buff, ":", 0);
         list_in = strsAppend(list_buffs, "iter(", list_in);
         list_in = strsAppend(list_buffs, list_in, ")");
         list_in = strsCopy(&buffs, list_in);
         args_deinit(list_buffs);
-        AST_setNodeBlock(ast, "for");
-        AST_setNodeAttr(ast, "list_in", list_in);
+        AST_setNodeBlock(oAst, "for");
+        AST_setNodeAttr(oAst, "list_in", list_in);
         stack_pushStr(blockState->stack, "for");
         stmt = list_in;
         goto block_matched;
     }
 
     /* else */
-    if (strIsStartWith(line_start, "else")) {
-        if ((line_start[4] == ' ') || (line_start[4] == ':')) {
+    if (strIsStartWith(sLineStart, "else")) {
+        if ((sLineStart[4] == ' ') || (sLineStart[4] == ':')) {
             stmt = "";
-            AST_setNodeBlock(ast, "else");
+            AST_setNodeBlock(oAst, "else");
             stack_pushStr(blockState->stack, "else");
         }
         goto block_matched;
@@ -2034,49 +2044,49 @@ AST* parser_line2AST(Parser* self, char* line) {
 
 #if PIKA_SYNTAX_EXCEPTION_ENABLE
     /* try */
-    if (strIsStartWith(line_start, "try")) {
-        if ((line_start[3] == ' ') || (line_start[3] == ':')) {
+    if (strIsStartWith(sLineStart, "try")) {
+        if ((sLineStart[3] == ' ') || (sLineStart[3] == ':')) {
             stmt = "";
-            AST_setNodeBlock(ast, "try");
+            AST_setNodeBlock(oAst, "try");
             stack_pushStr(blockState->stack, "try");
         }
         goto block_matched;
     }
 
     /* except */
-    if (strIsStartWith(line_start, "except")) {
-        if ((line_start[6] == ' ') || (line_start[6] == ':')) {
+    if (strIsStartWith(sLineStart, "except")) {
+        if ((sLineStart[6] == ' ') || (sLineStart[6] == ':')) {
             stmt = "";
-            AST_setNodeBlock(ast, "except");
+            AST_setNodeBlock(oAst, "except");
             stack_pushStr(blockState->stack, "except");
         }
         goto block_matched;
     }
 #endif
 
-    if (strEqu(line_start, "return")) {
-        AST_setNodeAttr(ast, "return", "");
+    if (strEqu(sLineStart, "return")) {
+        AST_setNodeAttr(oAst, "return", "");
         stmt = "";
         goto block_matched;
     }
-    if (strIsStartWith(line_start, "return ")) {
-        char* lineBuff = strsCopy(&buffs, line_start);
+    if (strIsStartWith(sLineStart, "return ")) {
+        char* lineBuff = strsCopy(&buffs, sLineStart);
         strsPopToken(&buffs, &lineBuff, ' ');
         stmt = lineBuff;
         stmt = Suger_multiReturn(&buffs, stmt);
-        AST_setNodeAttr(ast, "return", "");
+        AST_setNodeAttr(oAst, "return", "");
         goto block_matched;
     }
 
 #if PIKA_SYNTAX_EXCEPTION_ENABLE
-    if (strEqu(line_start, "raise")) {
-        AST_setNodeAttr(ast, "raise", "");
+    if (strEqu(sLineStart, "raise")) {
+        AST_setNodeAttr(oAst, "raise", "");
         stmt = "RuntimeError";
         goto block_matched;
     }
-    if (strIsStartWith(line_start, "raise ")) {
-        AST_setNodeAttr(ast, "raise", "");
-        char* lineBuff = strsCopy(&buffs, line_start);
+    if (strIsStartWith(sLineStart, "raise ")) {
+        AST_setNodeAttr(oAst, "raise", "");
+        char* lineBuff = strsCopy(&buffs, sLineStart);
         strsPopToken(&buffs, &lineBuff, ' ');
         stmt = lineBuff;
         if (strEqu("", stmt)) {
@@ -2085,14 +2095,14 @@ AST* parser_line2AST(Parser* self, char* line) {
         goto block_matched;
     }
     /* assert */
-    if (strIsStartWith(line_start, "assert ")) {
+    if (strIsStartWith(sLineStart, "assert ")) {
         stmt = "";
-        AST_setNodeAttr(ast, "assert", "");
-        char* lineBuff = strsCopy(&buffs, line_start + 7);
+        AST_setNodeAttr(oAst, "assert", "");
+        char* lineBuff = strsCopy(&buffs, sLineStart + 7);
         /* assert expr [, msg] */
         while (1) {
             char* subStmt = Parser_popSubStmt(&buffs, &lineBuff, ",");
-            AST_parseSubStmt(ast, subStmt);
+            AST_parseSubStmt(oAst, subStmt);
             if (strEqu(lineBuff, "")) {
                 break;
             }
@@ -2101,82 +2111,83 @@ AST* parser_line2AST(Parser* self, char* line) {
     }
 #endif
 
-    if (strIsStartWith(line_start, "global ")) {
+    if (strIsStartWith(sLineStart, "global ")) {
         stmt = "";
-        char* global_list = line_start + 7;
+        char* global_list = sLineStart + 7;
         global_list = Cursor_getCleanStmt(&buffs, global_list);
-        AST_setNodeAttr(ast, "global", global_list);
+        AST_setNodeAttr(oAst, "global", global_list);
         goto block_matched;
     }
-    if (strIsStartWith(line_start, "del ") ||
-        strIsStartWith(line_start, "del(")) {
+    if (strIsStartWith(sLineStart, "del ") ||
+        strIsStartWith(sLineStart, "del(")) {
         stmt = "";
         char* del_dir = NULL;
-        if (line_start[3] == '(') {
-            del_dir = strsCut(&buffs, line_start, '(', ')');
+        if (sLineStart[3] == '(') {
+            del_dir = strsCut(&buffs, sLineStart, '(', ')');
         } else {
-            del_dir = line_start + sizeof("del ") - 1;
+            del_dir = sLineStart + sizeof("del ") - 1;
         }
         del_dir = Cursor_getCleanStmt(&buffs, del_dir);
-        AST_setNodeAttr(ast, "del", del_dir);
+        AST_setNodeAttr(oAst, "del", del_dir);
         goto block_matched;
     }
-    if (strIsStartWith(line_start, (char*)"def ")) {
+    if (strIsStartWith(sLineStart, (char*)"def ")) {
         stmt = "";
-        char* sDeclare = strsCut(&buffs, line_start, ' ', ':');
+        char* sDeclare = strsCut(&buffs, sLineStart, ' ', ':');
         if (NULL == sDeclare) {
-            obj_deinit(ast);
-            ast = NULL;
+            obj_deinit(oAst);
+            oAst = NULL;
             goto exit;
         }
         sDeclare = Cursor_getCleanStmt(&buffs, sDeclare);
+        AST_setNodeAttr(oAst, "raw", sDeclare);
         if (!strIsContain(sDeclare, '(') || !strIsContain(sDeclare, ')')) {
-            obj_deinit(ast);
-            ast = NULL;
+            obj_deinit(oAst);
+            oAst = NULL;
             goto exit;
         }
         char* sDefaultStmt = _defGetDefault(&buffs, &sDeclare);
-        AST_setNodeBlock(ast, "def");
-        AST_setNodeAttr(ast, "declare", sDeclare);
+        AST_setNodeBlock(oAst, "def");
+        AST_setNodeAttr(oAst, "declare", sDeclare);
         if (sDefaultStmt[0] != '\0') {
-            AST_setNodeAttr(ast, "default", sDefaultStmt);
+            AST_setNodeAttr(oAst, "default", sDefaultStmt);
         }
         stack_pushStr(blockState->stack, "def");
         goto block_matched;
     }
-    if (strIsStartWith(line_start, (char*)"class ")) {
+    if (strIsStartWith(sLineStart, (char*)"class ")) {
         stmt = "";
-        char* declare = strsCut(&buffs, line_start, ' ', ':');
+        char* declare = strsCut(&buffs, sLineStart, ' ', ':');
         if (NULL == declare) {
-            obj_deinit(ast);
-            ast = NULL;
+            obj_deinit(oAst);
+            oAst = NULL;
             goto exit;
         }
         declare = Cursor_getCleanStmt(&buffs, declare);
-        AST_setNodeBlock(ast, "class");
-        AST_setNodeAttr(ast, "declare", declare);
+        AST_setNodeBlock(oAst, "class");
+        AST_setNodeAttr(oAst, "declare", declare);
         stack_pushStr(blockState->stack, "class");
         goto block_matched;
     }
 
 block_matched:
     if (NULL == stmt) {
-        AST_deinit(ast);
-        ast = NULL;
+        AST_deinit(oAst);
+        oAst = NULL;
         goto exit;
     }
     stmt = Cursor_getCleanStmt(&buffs, stmt);
-    ast = AST_parseStmt(ast, stmt);
+    oAst = AST_parseStmt(oAst, stmt);
     goto exit;
 exit:
     strsDeinit(&buffs);
-    return ast;
+    return oAst;
 }
 
 static AST* line2Ast_withBlockDeepth(char* line, int block_deepth) {
     Parser* parser = New_parser();
     parser->blockState.deepth = block_deepth;
-    AST* ast = parser_line2AST(parser, line);
+    AST* ast = parser_line2Ast(parser, line);
     parser_deinit(parser);
     return ast;
 }
@@ -2411,43 +2422,55 @@ static char* Suger_import(Args* outbuffs, char* line) {
     return line_after;
 }
 
-static char* Parser_linePreProcess(Args* outbuffs, char* line) {
-    line = Parser_removeComment(line);
-    Arg* line_buff = NULL;
-    int line_num = 0;
+static char* Parser_linePreProcess(Args* outbuffs, char* sLine) {
+    sLine = Parser_removeComment(sLine);
+    Arg* aLine = NULL;
+    int iLineNum = 0;
     /* check syntex error */
-    if (Lexer_isError(line)) {
-        line = NULL;
+    if (Lexer_isError(sLine)) {
+        sLine = NULL;
         goto exit;
     }
     /* process EOL */
-    line = strsDeleteChar(outbuffs, line, '\r');
+    sLine = strsDeleteChar(outbuffs, sLine, '\r');
     /* process import */
-    line = Suger_import(outbuffs, line);
+    sLine = Suger_import(outbuffs, sLine);
 
     /* process multi assign */
-    line_num = strCountSign(line, '\n') + 1;
-    line_buff = arg_newStr("");
-    for (int i = 0; i < line_num; i++) {
+    iLineNum = strCountSign(sLine, '\n') + 1;
+    aLine = arg_newStr("");
+    for (int i = 0; i < iLineNum; i++) {
         if (i > 0) {
-            line_buff = arg_strAppend(line_buff, "\n");
+            aLine = arg_strAppend(aLine, "\n");
         }
-        char* single_line = strsPopToken(outbuffs, &line, '\n');
+        char* single_line = strsPopToken(outbuffs, &sLine, '\n');
         single_line = Suger_multiAssign(outbuffs, single_line);
-        line_buff = arg_strAppend(line_buff, single_line);
+        aLine = arg_strAppend(aLine, single_line);
     }
-    line = strsCopy(outbuffs, arg_getStr(line_buff));
+    sLine = strsCopy(outbuffs, arg_getStr(aLine));
 exit:
-    if (NULL != line_buff) {
-        arg_deinit(line_buff);
+    if (NULL != aLine) {
+        arg_deinit(aLine);
     }
-    return line;
+    return sLine;
 }
 
 char* parser_line2BackendCode(Parser* self, char* line) {
     char* sOut = NULL;
-    AST* ast = NULL;
-    uint8_t line_num = 0;
+    AST* oAst = NULL;
+    uint8_t uLineNum = 0;
+    /* docsting */
+    if (strIsStartWith(line, "@docstring")) {
+        oAst = parser_line2Ast(self, line);
+        char* sBackendCode = self->fn_ast2BeckendCode(self, oAst);
+        if (NULL == oAst) {
+            sOut = "";
+            goto exit;
+        }
+        AST_deinit(oAst);
+        sOut = sBackendCode;
+        goto exit;
+    }
     /* pre process */
     line = Parser_linePreProcess(&self->lineBuffs, line);
     if (NULL == line) {
@@ -2462,20 +2485,24 @@ char* parser_line2BackendCode(Parser* self, char* line) {
         solve more lines
         preprocess may generate more lines
     */
-    line_num = strCountSign(line, '\n') + 1;
-    for (int i = 0; i < line_num; i++) {
-        char* single_line = strsPopToken(&self->lineBuffs, &line, '\n');
+    uLineNum = strCountSign(line, '\n') + 1;
+    for (int i = 0; i < uLineNum; i++) {
+        char* sSingleLine = strsPopToken(&self->lineBuffs, &line, '\n');
         /* parse line to AST */
-        ast = parser_line2AST(self, single_line);
+        oAst = parser_line2Ast(self, sSingleLine);
+        if (NULL == oAst) {
+            /* parse error */
+            goto exit;
+        }
         /* gen ASM from AST */
-        char* sBackendCode = self->fn_ast2BeckendCode(self, ast);
+        char* sBackendCode = self->fn_ast2BeckendCode(self, oAst);
         if (sOut == NULL) {
             sOut = sBackendCode;
         } else {
             sOut = strsAppend(&self->lineBuffs, sOut, sBackendCode);
         }
-        if (NULL != ast) {
-            AST_deinit(ast);
+        if (NULL != oAst) {
+            AST_deinit(oAst);
         }
     }
 exit:
@@ -2491,10 +2518,17 @@ static int Parser_isVoidLine(char* line) {
     return 1;
 }
 
-static uint8_t Parser_checkIsMultiComment(char* line, uint8_t* pbIsOneLine) {
-    uint8_t bIsMultiComment = 0;
+static uint8_t Parser_checkIsDocstring(char* line,
+                                       Args* outbuffs,
+                                       uint8_t bIsInDocstring,
+                                       uint8_t* pbIsSingleDocstring,
+                                       char** psDocstring) {
+    uint8_t bIsDocstring = 0;
     uint32_t i = 0;
+    int32_t iDocstringStart = 0;
+    int32_t iDocstringEnd = -1;
     uint32_t uLineSize = strGetSize(line);
+    char* sDocstring = NULL;
     while (i + 2 < uLineSize) {
         /* not match ' or " */
         if ((line[i] != '\'') && (line[i] != '"')) {
@@ -2506,23 +2540,38 @@ static uint8_t Parser_checkIsMultiComment(char* line, uint8_t* pbIsOneLine) {
             i++;
             continue;
         }
-        if (bIsMultiComment) {
-            *pbIsOneLine = 1;
+        if (bIsDocstring) {
+            *pbIsSingleDocstring = 1;
+            iDocstringEnd = i;
+            break;
         }
-        bIsMultiComment = 1;
-        i += 3;
+        bIsDocstring = 1;
+        if (bIsInDocstring) {
+            iDocstringEnd = i;
+        } else {
+            iDocstringStart = i + 3;
+        }
+        i++;
     }
-    return bIsMultiComment;
+    if (bIsDocstring) {
+        sDocstring = strsCopy(outbuffs, line + iDocstringStart);
+        if (iDocstringEnd != -1) {
+            sDocstring[iDocstringEnd - iDocstringStart] = '\0';
+        }
+        *psDocstring = sDocstring;
+    }
+    return bIsDocstring;
 }
 
-static char* parser_lines2BackendCode(Parser* self, char* sPyLines) {
+char* parser_lines2BackendCode(Parser* self, char* sPyLines) {
     Arg* aBackendCode = arg_newStr("");
+    Arg* aLineConnection = arg_newStr("");
+    Arg* aDocstring = arg_newStr("");
     uint32_t uLinesOffset = 0;
     uint16_t uLinesNum = strCountSign(sPyLines, '\n') + 1;
     uint16_t uLinesIndex = 0;
-    uint8_t bIsInMultiComment = 0;
-    uint8_t bIsOneLineMultiComment = 0;
-    Arg* aLineConnection = arg_newStr("");
+    uint8_t bIsInDocstring = 0;
+    uint8_t bIsSingleDocstring = 0;
     uint8_t bIsLineConnection = 0;
     char* sOut = NULL;
     char* sBackendCode = NULL;
@@ -2569,19 +2618,36 @@ static char* parser_lines2BackendCode(Parser* self, char* sPyLines) {
             goto next_line;
         }
 
-        /* filter for multiline comment ''' or """ */
-        if (Parser_checkIsMultiComment(sLine, &bIsOneLineMultiComment)) {
-            bIsInMultiComment = ~bIsInMultiComment;
-            /* skip one line multiline comment */
-            if (bIsOneLineMultiComment) {
-                bIsInMultiComment = 0;
-                bIsOneLineMultiComment = 0;
+        /* filter for docstring ''' or """ */
+        char* sDocstring = NULL;
+        if (Parser_checkIsDocstring(sLine, &self->lineBuffs, bIsInDocstring,
+                                    &bIsSingleDocstring, &sDocstring)) {
+            bIsInDocstring = ~bIsInDocstring;
+            if (sDocstring[0] != '\0') {
+                aDocstring = arg_strAppend(aDocstring, sDocstring);
+                aDocstring = arg_strAppend(aDocstring, "\n");
+            }
+            /* one line docstring */
+            if (bIsSingleDocstring) {
+                bIsInDocstring = 0;
+                bIsSingleDocstring = 0;
+            }
+            if (!bIsInDocstring) {
+                /* multi line docstring */
+                sLine = strsAppend(&self->lineBuffs, "@docstring\n",
+                                   arg_getStr(aDocstring));
+                /* reflash the docstring_arg */
+                arg_deinit(aDocstring);
+                aDocstring = arg_newStr("");
+                goto parse_line;
             }
             goto next_line;
         }
 
-        /* skip multiline comment */
-        if (bIsInMultiComment) {
+        /* skip docstring */
+        if (bIsInDocstring) {
+            aDocstring = arg_strAppend(aDocstring, sLine);
+            aDocstring = arg_strAppend(aDocstring, "\n");
             goto next_line;
         }
 
@@ -2660,8 +2726,16 @@ exit:
     if (NULL != aLineConnection) {
         arg_deinit(aLineConnection);
     }
+    if (NULL != aDocstring) {
+        arg_deinit(aDocstring);
+    }
     return sOut;
 };
+
+char* parser_lines2Asm(Parser* self, char* sPyLines) {
+    self->fn_ast2BeckendCode = parser_ast2Asm;
+    return parser_lines2BackendCode(self, sPyLines);
+}
 
 PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines) {
 #if PIKA_BYTECODE_ONLY_ENABLE
@@ -2696,7 +2770,9 @@ char* pika_lines2Asm(Args* outBuffs, char* multi_line) {
     return sAsm;
 }
 
-char* pika_file2Asm(Args* outBuffs, char* filename) {
+char* pika_file2BackendCode(Args* outBuffs,
+                            char* filename,
+                            fn_parser_lines2BackendCode fn) {
     Args buffs = {0};
     Arg* file_arg = arg_loadFile(NULL, filename);
     pika_assert(NULL != file_arg);
@@ -2710,15 +2786,38 @@ char* pika_file2Asm(Args* outBuffs, char* filename) {
     lines = strsReplace(&buffs, lines, "\n\n", "\n");
     /* add '\n' at the end */
     lines = strsAppend(&buffs, lines, "\n\n");
-    char* res = pika_lines2Asm(&buffs, lines);
+    Parser* parser = New_parser();
+    char* res = fn(parser, lines);
     if (NULL == res) {
         goto __exit;
     }
     res = strsCopy(outBuffs, res);
 __exit:
+    parser_deinit(parser);
     arg_deinit(file_arg);
     strsDeinit(&buffs);
     return res;
+}
+
+int parser_file2BackendCodeFile(Parser* self,
+                                char* sPyFile,
+                                char* sDocFile,
+                                fn_parser_lines2BackendCode fn) {
+    char* sBackendCode = pika_file2BackendCode(&self->genBuffs, sPyFile, fn);
+    FILE* fp = pika_platform_fopen(sDocFile, "wb");
+    if (NULL == fp) {
+        return -1;
+    }
+    pika_platform_fwrite(sBackendCode, 1, strGetSize(sBackendCode), fp);
+    return 0;
+}
+
+char* pika_file2Asm(Args* outBuffs, char* filename) {
+    return pika_file2BackendCode(outBuffs, filename, parser_lines2Asm);
+}
+
+char* parser_file2Doc(Parser* self, char* sPyFile) {
+    return pika_file2BackendCode(&self->genBuffs, sPyFile, parser_lines2Doc);
 }
 
 char* AST_genAsm_sub(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
@@ -2753,7 +2852,7 @@ char* AST_genAsm_sub(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     /* append the syntax item */
     for (size_t i = 0; i < sizeof(rules_subAst) / sizeof(GenRule); i++) {
         GenRule rule = rules_subAst[i];
-        char* astNodeVal = obj_getStr(subAst, rule.ast);
+        char* astNodeVal = AST_getNodeAttr(subAst, rule.ast);
         if (NULL != astNodeVal) {
             /* e.g. "0 RUN print \n" */
             pika_platform_sprintf(buff, "%d %s ", deepth, rule.ins);
@@ -2829,15 +2928,21 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
         {.ins = "JEZ", .type = VAL_STATIC_, .ast = "if", .val = "1"},
         {.ins = "JEZ", .type = VAL_STATIC_, .ast = "while", .val = "2"},
     };
-
     Args buffs = {0};
     char* sPikaAsm = strsCopy(&buffs, "");
     QueueObj* oExitBlock;
     uint8_t is_block_matched;
+
     if (NULL == oAST) {
         sPikaAsm = NULL;
         goto exit;
     }
+
+    /* skip for docsting */
+    if (NULL != AST_getNodeAttr(oAST, "docstring")) {
+        goto exit;
+    }
+
     oExitBlock = obj_getObj(oAST, "exitBlock");
     /* exiting from block */
     if (oExitBlock != NULL) {
@@ -3104,7 +3209,73 @@ exit:
     return sPikaAsm;
 }
 
-char* parser_Ast2Asm(Parser* self, AST* ast) {
+static char* _parser_fixDocStringIndent(Parser* self,
+                                        char* sDocString,
+                                        int indent) {
+    char* sBuff = strsCopy(&self->lineBuffs, sDocString);
+    Arg* aOut = arg_newStr("");
+    char* sOut = NULL;
+    uint32_t iLineNum = strCountSign(sBuff, '\n');
+    int indentThis = 0;
+    for (int i = 0; i < iLineNum; i++) {
+        char* sLine = strsPopToken(&self->lineBuffs, &sBuff, '\n');
+        if (i == 0) {
+            indentThis = strGetInedent(sLine);
+        }
+        if (strGetInedent(sLine) >= indentThis) {
+            sLine = sLine + indentThis;
+        }
+        for (int k = 0; k < indent; k++) {
+            aOut = arg_strAppend(aOut, " ");
+        }
+        aOut = arg_strAppend(aOut, sLine);
+        aOut = arg_strAppend(aOut, "\n");
+    }
+    sOut = strsCopy(&self->lineBuffs, arg_getStr(aOut));
+    arg_deinit(aOut);
+    return sOut;
+}
+
+char* parser_ast2Doc(Parser* self, AST* oAST) {
+    if (strEqu(AST_getThisBlock(oAST), "def")) {
+        char* sDeclare = AST_getNodeAttr(oAST, "raw");
+        int blockDeepth = AST_getBlockDeepthNow(oAST);
+        self->thisBlockDeepth = blockDeepth;
+        char* sOut =
+            strsFormat(&self->lineBuffs, 2048, "def %s:...\r\n", sDeclare);
+        for (int i = 0; i < blockDeepth; i++) {
+            sOut = strsAppend(&self->lineBuffs, "", sOut);
+        }
+        sOut =
+            strsFormat(&self->lineBuffs, 2048, "``` python\n%s```\n\n", sOut);
+        return sOut;
+    };
+    if (strEqu(AST_getThisBlock(oAST), "class")) {
+        char* sDeclare = obj_getStr(oAST, "declare");
+        int blockDeepth = AST_getBlockDeepthNow(oAST);
+        self->thisBlockDeepth = blockDeepth;
+        return strsFormat(&self->lineBuffs, 2048, "### class %s:\r\n",
+                          sDeclare);
+    };
+    char* sDocString = AST_getNodeAttr(oAST, "docstring");
+    if (NULL != sDocString) {
+        sDocString = _parser_fixDocStringIndent(self, sDocString, 3);
+        return strsAppend(&self->lineBuffs, sDocString, "\n");
+    }
+    return "";
+}
+
+int parser_file2DocFile(Parser* self, char* sPyFile, char* sDocFile) {
+    return parser_file2BackendCodeFile(self, sPyFile, sDocFile,
+                                       parser_lines2Doc);
+}
+
+char* parser_lines2Doc(Parser* self, char* sPyLines) {
+    self->fn_ast2BeckendCode = parser_ast2Doc;
+    return parser_lines2BackendCode(self, sPyLines);
+}
+
+char* parser_ast2Asm(Parser* self, AST* ast) {
     return AST_genAsm(ast, &self->lineBuffs);
 }
 
@@ -3234,7 +3405,7 @@ Parser* New_parser(void) {
     pika_platform_memset(self, 0, sizeof(Parser));
     self->blockState.stack = pikaMalloc(sizeof(Stack));
     /* generate asm as default */
-    self->fn_ast2BeckendCode = parser_Ast2Asm;
+    self->fn_ast2BeckendCode = parser_ast2Asm;
     pika_platform_memset(self->blockState.stack, 0, sizeof(Stack));
     stack_init(self->blockState.stack);
     return self;

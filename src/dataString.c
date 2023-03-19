@@ -122,7 +122,6 @@ size_t strGetSize(char* pData) {
     return strlen(pData);
 }
 
-
 char* strPointToLastToken(char* strIn, char sign) {
     if (!strIsContain(strIn, sign)) {
         return strIn;
@@ -358,6 +357,10 @@ int strPathGetFolder(char* input, char* output) {
 }
 
 int strPathGetFileName(char* input, char* output) {
+    if (!strIsContain(input, '/') && !strIsContain(input, '\\')) {
+        strCopy(output, input);
+        return 0;
+    };
     size_t input_len = strlen(input);
     char* input_format = (char*)pikaMalloc(input_len + 1);
     strPathFormat(input, input_format);
@@ -375,4 +378,17 @@ int strPathGetFileName(char* input, char* output) {
     output[i - j - 1] = '\0';
     pikaFree(input_format, input_len + 1);
     return i - j - 1;
+}
+
+int strGetInedent(char* string) {
+    int indent = 0;
+    int len = strGetSize(string);
+    for (int j = 0; j < len; j++) {
+        if (string[j] == ' ') {
+            indent++;
+        } else {
+            return indent;
+        }
+    }
+    return indent;
 }

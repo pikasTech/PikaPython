@@ -7,6 +7,7 @@
 #include "PikaParser.h"
 #include "dataStrs.h"
 #include "libpikabinder.h"
+#include "pikascript/pikascript-core/dataStrs.h"
 
 void help(char* argv0) {
     Args buffs = {0};
@@ -47,7 +48,7 @@ static int _do_main(int argc, char** argv) {
     /* --add-file xxx --add-file yyy */
     // __platform_printf("parc: %d\r\n", parc);
     for (int i = 1; i < argc; i++) {
-        // __platform_printf("%s\r\n", argv[i]);
+    // __platform_printf("%s\r\n", argv[i]);
         if (0 == strcmp(argv[i], "--add-file")) {
             // __platform_printf("add file: %s\r\n", argv[i + 1]);
             if (i + 1 < argc) {
@@ -119,6 +120,43 @@ static int _do_main(int argc, char** argv) {
             PIKA_RES res = pikaMaker_linkCompiledModules(maker, argv[3]);
             pikaMaker_deinit(maker);
             return res;
+        }
+    }
+
+    /* example ./rust-msc-latest --docgen main.py */
+    if (2 == parc) {
+        if (0 == strcmp(argv[1], "--docgen")) {
+            Args buffs = {0};
+            char* file_path = argv[2];
+            char* file_name = strsPathGetFileName(&buffs, file_path);
+            printf("file_name: %s\r\n", file_name);
+            char* file_folder = strsPathGetFolder(&buffs, file_path);
+            char* file_name_no_ext = strsGetFirstToken(&buffs, file_name, '.');
+            printf("file_name_no_ext: %s\r\n", file_name_no_ext);
+            char* file_out_name = strsAppend(&buffs, file_name_no_ext, ".md");
+            printf("file_out_name: %s\r\n", file_out_name);
+            char* file_out_path = strsPathJoin(&buffs, file_folder, file_out_name);
+            Parser* parser = New_parser();
+            printf("generating doc %s: %s\r\n", file_path,file_out_path);
+            parser_file2DocFile(parser, file_path, file_out_path);
+            strsDeinit(&buffs);
+            parser_deinit(parser);
+            return 0;
+        }
+    }
+
+    /* example: ./rust-msc-latest-linux -docgen main.py -o main.md */
+    if (4 == parc) {
+        if (0 == strcmp(argv[1], "--docgen") && 0 == strcmp(argv[3], "-o")) {
+            Args buffs = {0};
+            char* file_path = argv[2];
+            char* file_out_path =  argv[4];
+            Parser* parser = New_parser();
+            printf("generating doc %s: %s\r\n", file_path,file_out_path);
+            parser_file2DocFile(parser, file_path, file_out_path);
+            strsDeinit(&buffs);
+            parser_deinit(parser);
+            return 0;
         }
     }
 

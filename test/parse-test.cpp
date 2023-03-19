@@ -1,6 +1,30 @@
 #include "test_common.h"
 TEST_START
 
+#define TEST_LINES2ASM(_test_name_, _lines_, _asm_)   \
+    TEST(parser, _test_name_) {                       \
+        g_PikaMemInfo.heapUsedMax = 0;                \
+        Args* buffs = New_strBuff();                  \
+        char* lines = (_lines_);                      \
+        printf("%s\r\n", lines);                      \
+        char* pikaAsm = pika_lines2Asm(buffs, lines); \
+        EXPECT_STREQ(pikaAsm, (_asm_));               \
+        printf("%s", pikaAsm);                        \
+        args_deinit(buffs);                           \
+        EXPECT_EQ(pikaMemNow(), 0);                   \
+    }
+
+#define TEST_FILE2ASM(_test_name_, _file_name_, _asm_)       \
+    TEST(parser, _test_name_) {                              \
+        g_PikaMemInfo.heapUsedMax = 0;                       \
+        Args* buffs = New_strBuff();                         \
+        char* pikaAsm = pika_file2Asm(buffs, (_file_name_)); \
+        __platform_printf("%s", pikaAsm);                    \
+        EXPECT_STREQ(pikaAsm, (_asm_));                      \
+        args_deinit(buffs);                                  \
+        EXPECT_EQ(pikaMemNow(), 0);                          \
+    }
+
 TEST(parser, NEW) {
     AST* ast = line2Ast("add(a,b)");
     Args* buffs = New_strBuff();
@@ -4433,8 +4457,7 @@ TEST(parser, modbus_1) {
 TEST(parser, issue_big_dict) {
     g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
-    char* pikaAsm =
-        pika_file2Asm(buffs, "test/python/issue/issue_big_dict.py");
+    char* pikaAsm = pika_file2Asm(buffs, "test/python/issue/issue_big_dict.py");
     __platform_printf("%s", pikaAsm);
     EXPECT_STREQ(pikaAsm,
                  "B0\n"
@@ -5443,57 +5466,48 @@ TEST(parser, for_in_split) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(parser, common_issue_1b23f4c1bf) {
-    g_PikaMemInfo.heapUsedMax = 0;
-    Args* buffs = New_strBuff();
-    char* pikaAsm =
-        pika_file2Asm(buffs, "test/python/issue/common_issue_1b23f4c1bf.py");
-    __platform_printf("%s", pikaAsm);
-
-    EXPECT_STREQ(pikaAsm,
-                 "B0\n"
-                 "0 CLS Test1()\n"
-                 "0 JMP 1\n"
-                 "B1\n"
-                 "0 RUN TinyObj\n"
-                 "0 OUT self\n"
-                 "B1\n"
-                 "0 RAS self\n"
-                 "B1\n"
-                 "0 RAS $origin\n"
-                 "B1\n"
-                 "0 NEW self\n"
-                 "0 RET \n"
-                 "B0\n"
-                 "0 CLS Test2()\n"
-                 "0 JMP 1\n"
-                 "B1\n"
-                 "0 RUN Test1\n"
-                 "0 OUT self\n"
-                 "B1\n"
-                 "0 RAS self\n"
-                 "B1\n"
-                 "0 DEF print(self)\n"
-                 "0 JMP 1\n"
-                 "B2\n"
-                 "1 STR Test2\n"
-                 "0 RUN print\n"
-                 "B2\n"
-                 "0 RET \n"
-                 "B1\n"
-                 "0 RAS $origin\n"
-                 "B1\n"
-                 "0 NEW self\n"
-                 "0 RET \n"
-                 "B0\n"
-                 "0 RUN Test2\n"
-                 "0 OUT a\n"
-                 "B0\n"
-                 "0 RUN a.print\n"
-                 "B0\n");
-    args_deinit(buffs);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+TEST_FILE2ASM(common_issue_1b23f4c1bf,
+              "test/python/issue/common_issue_1b23f4c1bf.py",
+              "B0\n"
+              "0 CLS Test1()\n"
+              "0 JMP 1\n"
+              "B1\n"
+              "0 RUN TinyObj\n"
+              "0 OUT self\n"
+              "B1\n"
+              "0 RAS self\n"
+              "B1\n"
+              "0 RAS $origin\n"
+              "B1\n"
+              "0 NEW self\n"
+              "0 RET \n"
+              "B0\n"
+              "0 CLS Test2()\n"
+              "0 JMP 1\n"
+              "B1\n"
+              "0 RUN Test1\n"
+              "0 OUT self\n"
+              "B1\n"
+              "0 RAS self\n"
+              "B1\n"
+              "0 DEF print(self)\n"
+              "0 JMP 1\n"
+              "B2\n"
+              "1 STR Test2\n"
+              "0 RUN print\n"
+              "B2\n"
+              "0 RET \n"
+              "B1\n"
+              "0 RAS $origin\n"
+              "B1\n"
+              "0 NEW self\n"
+              "0 RET \n"
+              "B0\n"
+              "0 RUN Test2\n"
+              "0 OUT a\n"
+              "B0\n"
+              "0 RUN a.print\n"
+              "B0\n")
 
 TEST(parser, str_join) {
     g_PikaMemInfo.heapUsedMax = 0;
@@ -5513,65 +5527,51 @@ TEST(parser, csv) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(parser, default_issue) {
-    g_PikaMemInfo.heapUsedMax = 0;
-    Args* buffs = New_strBuff();
-    char* lines =
-        "def __init__(self, csvfile, delimiter=\",\", quotechar='\"') -> "
-        "None:\n"
-        "    pass";
+TEST_LINES2ASM(
+    default_issue,
+    "def __init__(self, csvfile, delimiter=\",\", quotechar='\"') -> "
+    "None:\n"
+    "    pass",
+    "B0\n"
+    "0 DEF __init__(self,csvfile,delimiter=,quotechar=)\n"
+    "0 JMP 1\n"
+    "B1\n"
+    "0 EST delimiter\n"
+    "0 JNZ 2\n"
+    "B1\n"
+    "0 STR ,\n"
+    "0 OUT delimiter\n"
+    "B1\n"
+    "0 EST quotechar\n"
+    "0 JNZ 2\n"
+    "B1\n"
+    "0 STR \"\n"
+    "0 OUT quotechar\n"
+    "B1\n"
+    "0 EST \n"
+    "0 JNZ 2\n"
+    "B1\n"
+    "B1\n"
+    "B1\n"
+    "0 RET \n"
+    "B0\n")
 
-    printf("%s\r\n", lines);
-    char* pikaAsm = pika_lines2Asm(buffs, lines);
-    EXPECT_STREQ(pikaAsm,
-                 "B0\n"
-                 "0 DEF __init__(self,csvfile,delimiter=,quotechar=)\n"
-                 "0 JMP 1\n"
-                 "B1\n"
-                 "0 EST delimiter\n"
-                 "0 JNZ 2\n"
-                 "B1\n"
-                 "0 STR ,\n"
-                 "0 OUT delimiter\n"
-                 "B1\n"
-                 "0 EST quotechar\n"
-                 "0 JNZ 2\n"
-                 "B1\n"
-                 "0 STR \"\n"
-                 "0 OUT quotechar\n"
-                 "B1\n"
-                 "0 EST \n"
-                 "0 JNZ 2\n"
-                 "B1\n"
-                 "B1\n"
-                 "B1\n"
-                 "0 RET \n"
-                 "B0\n");
-    printf("%s", pikaAsm);
-    args_deinit(buffs);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+TEST_LINES2ASM(complex_annotation,
+               "data1: list[DataItem] = []\n"
+               "data2: dict[str, DataItem] = {}\n",
+               "B0\n"
+               "0 LST \n"
+               "0 OUT data1\n"
+               "B0\n"
+               "0 DCT \n"
+               "0 OUT data2\n"
+               "B0\n")
 
-TEST(parser, complex_annotation) {
-    g_PikaMemInfo.heapUsedMax = 0;
-    Args* buffs = New_strBuff();
-    char* lines =
-        "data1: list[DataItem] = []\n"
-        "data2: dict[str, DataItem] = {}\n";
-    printf("%s\r\n", lines);
-    char* pikaAsm = pika_lines2Asm(buffs, lines);
-    EXPECT_STREQ(pikaAsm,
-                 "B0\n"
-                 "0 LST \n"
-                 "0 OUT data1\n"
-                 "B0\n"
-                 "0 DCT \n"
-                 "0 OUT data2\n"
-                 "B0\n");
-    printf("%s", pikaAsm);
-    args_deinit(buffs);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+TEST_LINES2ASM(docstring,
+               "\"\"\"\n"
+               "test doc string\n"
+               "\"\"\"\n",
+               "B0\n")
 
 #endif
 

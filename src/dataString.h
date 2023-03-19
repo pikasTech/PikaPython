@@ -67,5 +67,6 @@ int strPathFormat(char* input, char* output);
 int strPathJoin(char* input1, char* input2, char* output);
 int strPathGetFolder(char* input, char* output);
 int strPathGetFileName(char* input, char* output);
+int strGetInedent(char* string);
 
 #endif

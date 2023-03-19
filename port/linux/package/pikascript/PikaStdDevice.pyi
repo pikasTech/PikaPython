@@ -1,4 +1,6 @@
 """
+## PikaStdDevice
+
 PikaStdDevice is a standard and abstract device module for PikaScript.
 
 PikaStdDevice supplies the standard device API for users.
@@ -100,7 +102,7 @@ class GPIO(BaseDev):
 
 
 def Time() -> time:
-    """ # use time module instead """
+    """ use time module instead """
 
 
 class ADC(BaseDev):

@@ -85,14 +85,16 @@ typedef struct BlockState {
 } BlockState;
 
 typedef struct Parser Parser;
-typedef char* (*parser_Ast2BeckendCode)(Parser* self, AST* ast);
+typedef char* (*fn_parser_Ast2BeckendCode)(Parser* self, AST* ast);
+typedef char* (*fn_parser_lines2BackendCode)(Parser* self, char* sPyLines);
 struct Parser {
     Args lineBuffs;
     Args genBuffs;
     BlockState blockState;
-    parser_Ast2BeckendCode fn_ast2BeckendCode;
+    fn_parser_Ast2BeckendCode fn_ast2BeckendCode;
     PIKA_BOOL isGenBytecode;
     ByteCodeFrame* bytecode_frame;
+    uint8_t thisBlockDeepth;
 };
 
 typedef struct LexToken LexToken;
@@ -123,8 +125,12 @@ char* pika_file2Asm(Args* outBuffs, char* filename);
 char* pika_lines2Asm(Args* outBuffs, char* multiLine);
 char* pika_lines2Array(char* lines);
 char* pika_line2Asm(Args* buffs_p, char* line, Stack* blockStack);
-AST* parser_line2AST(Parser* self, char* line);
-char* parser_Ast2Asm(Parser* self, AST* ast);
+AST* parser_line2Ast(Parser* self, char* line);
+char* parser_file2Doc(Parser* self, char* sPyFile);
+int parser_file2DocFile(Parser* self, char* sPyFile, char* sDocFile);
+char* parser_ast2Asm(Parser* self, AST* ast);
+char* parser_lines2Doc(Parser* self, char* sPyLines);
+char* parser_file2Doc(Parser* self, char* filename);
 AST* line2Ast(char* line);
 
 PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines);
