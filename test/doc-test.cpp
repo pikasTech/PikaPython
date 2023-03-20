@@ -57,6 +57,7 @@ TEST_FILE2DOCFILE(configparser,
                   "test/out/configparser.md")
 
 TEST_FILE2DOCFILE(mqtt_file, "package/pikascript/mqtt.py", "test/out/mqtt.md")
+TEST_FILE2DOCFILE(requests_file, "package/pikascript/requests.py", "test/out/requests.md")
 
 #endif
 

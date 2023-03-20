@@ -11,6 +11,7 @@ git config --add core.filemode false
 chmod +x *.sh 
 sh update-compiler.sh
 chmod +x package/pikascript/rust-msc-latest-linux
+cp package/pikascript/rust-msc-latest-linux /bin 
 cd package/pikascript/pikascript-core
 # git checkout master
 cd $ROOT

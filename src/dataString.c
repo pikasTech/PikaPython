@@ -380,7 +380,7 @@ int strPathGetFileName(char* input, char* output) {
     return i - j - 1;
 }
 
-int strGetInedent(char* string) {
+int strGetIndent(char* string) {
     int indent = 0;
     int len = strGetSize(string);
     for (int j = 0; j < len; j++) {
@@ -391,4 +391,15 @@ int strGetInedent(char* string) {
         }
     }
     return indent;
+}
+
+int strIsBlank(char* string) {
+    int len = strGetSize(string);
+    for (int j = 0; j < len; j++) {
+        if (string[j] != ' ' && string[j] != '\t' && string[j] != '\r' &&
+            string[j] != '\n') {
+            return 0;
+        }
+    }
+    return 1;
 }

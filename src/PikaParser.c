@@ -3215,21 +3215,28 @@ static char* _parser_fixDocStringIndent(Parser* self,
     char* sBuff = strsCopy(&self->lineBuffs, sDocString);
     Arg* aOut = arg_newStr("");
     char* sOut = NULL;
+    int bGetIndent = 0;
     uint32_t iLineNum = strCountSign(sBuff, '\n');
     int indentThis = 0;
     for (int i = 0; i < iLineNum; i++) {
         char* sLine = strsPopToken(&self->lineBuffs, &sBuff, '\n');
-        if (i == 0) {
-            indentThis = strGetInedent(sLine);
+        if (strIsBlank(sLine)) {
+            continue;
         }
-        if (strGetInedent(sLine) >= indentThis) {
-            sLine = sLine + indentThis;
+        if (!bGetIndent) {
+            bGetIndent = 1;
+            indentThis = strGetIndent(sLine);
         }
-        for (int k = 0; k < indent; k++) {
-            aOut = arg_strAppend(aOut, " ");
+        if (bGetIndent) {
+            if (strGetIndent(sLine) >= indentThis) {
+                sLine = sLine + indentThis;
+            }
+            for (int k = 0; k < indent; k++) {
+                aOut = arg_strAppend(aOut, " ");
+            }
+            aOut = arg_strAppend(aOut, sLine);
+            aOut = arg_strAppend(aOut, "\n");
         }
-        aOut = arg_strAppend(aOut, sLine);
-        aOut = arg_strAppend(aOut, "\n");
     }
     sOut = strsCopy(&self->lineBuffs, arg_getStr(aOut));
     arg_deinit(aOut);
