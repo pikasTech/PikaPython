@@ -59,6 +59,7 @@ def add_title_to_md_files(directory):
         title = file_name.replace('API_', '')
         # 在文件开头添加一级标题
         lines.insert(0, f'# {title} 模块 API 文档\n\n')
+        lines.insert(0, f'## API\n\n')
 
         with open(file_path, 'w') as f:
             f.writelines(lines)
