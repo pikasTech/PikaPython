@@ -3215,7 +3215,6 @@ static char* _parser_fixDocStringIndent(Parser* self,
     char* sBuff = strsCopy(&self->lineBuffs, sDocString);
     Arg* aOut = arg_newStr("");
     char* sOut = NULL;
-    int bGetIndent = 0;
     uint32_t iLineNum = strCountSign(sBuff, '\n');
     int indentThis = 0;
     for (int i = 0; i < iLineNum; i++) {
@@ -3223,20 +3222,15 @@ static char* _parser_fixDocStringIndent(Parser* self,
         if (strIsBlank(sLine)) {
             continue;
         }
-        if (!bGetIndent) {
-            bGetIndent = 1;
-            indentThis = strGetIndent(sLine);
+        indentThis = strGetIndent(sLine);
+        if (strGetIndent(sLine) >= indentThis) {
+            sLine = sLine + indentThis;
         }
-        if (bGetIndent) {
-            if (strGetIndent(sLine) >= indentThis) {
-                sLine = sLine + indentThis;
-            }
-            for (int k = 0; k < indent; k++) {
-                aOut = arg_strAppend(aOut, " ");
-            }
-            aOut = arg_strAppend(aOut, sLine);
-            aOut = arg_strAppend(aOut, "\n");
+        for (int k = 0; k < indent; k++) {
+            aOut = arg_strAppend(aOut, " ");
         }
+        aOut = arg_strAppend(aOut, sLine);
+        aOut = arg_strAppend(aOut, "\n\n");
     }
     sOut = strsCopy(&self->lineBuffs, arg_getStr(aOut));
     arg_deinit(aOut);
@@ -3266,7 +3260,7 @@ char* parser_ast2Doc(Parser* self, AST* oAST) {
     };
     char* sDocString = AST_getNodeAttr(oAST, "docstring");
     if (NULL != sDocString) {
-        sDocString = _parser_fixDocStringIndent(self, sDocString, 3);
+        sDocString = _parser_fixDocStringIndent(self, sDocString, 0);
         return strsAppend(&self->lineBuffs, sDocString, "\n");
     }
     return "";
