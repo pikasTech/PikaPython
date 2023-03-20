@@ -68,9 +68,16 @@ add_title_to_md_files(directory)
 # 获取目录下所有的md文件路径
 md_files = glob.glob(os.path.join(directory, '*.md'))
 
+def remove_prefix(filename): # 如果文件名以“API_”开头，则去掉该前缀 
+    if os.path.basename(filename).startswith("API_"): 
+        return filename[4:] # 否则返回原文件名 else: return filename
+
+md_files_sort = sorted(md_files,key=lambda x: (remove_prefix(x).casefold()))
+print(md_files_sort)
+
 # 生成toctree指令内容
 toctree_content = ''
-for md_file in md_files:
+for md_file in md_files_sort:
     # 获取文件名（不包含扩展名）
     file_name = os.path.splitext(os.path.basename(md_file))[0]
     # 生成toctree指令项
