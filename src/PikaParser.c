@@ -2931,7 +2931,7 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
     Args buffs = {0};
     char* sPikaAsm = strsCopy(&buffs, "");
     QueueObj* oExitBlock;
-    uint8_t is_block_matched;
+    uint8_t is_block_matched = 0;
 
     if (NULL == oAST) {
         sPikaAsm = NULL;
