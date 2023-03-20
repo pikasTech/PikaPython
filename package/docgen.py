@@ -118,6 +118,8 @@ for module in module_list:
         module_example = 'Device'
     elif module == 'pika_lvgl':
         module_example = 'lvgl'
+    elif module == 'pika_cjson':
+        module_example = 'cJSON'
     else:
         module_example = module
     example_list = glob.glob(f'../examples/{module_example}/*.py')
