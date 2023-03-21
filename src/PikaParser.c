@@ -3209,30 +3209,71 @@ exit:
     return sPikaAsm;
 }
 
+#define IS_SPACE_OR_TAB(ch) ((ch) == ' ' || (ch) == '\t')
+static PIKA_BOOL _strCheckCodeBlockFlag(char* sLine) {
+    PIKA_BOOL bStart = PIKA_FALSE, bEnd = PIKA_FALSE;
+    char *pStart = sLine, *pEnd = sLine + strlen(sLine) - 1;
+    while (pStart <= pEnd && IS_SPACE_OR_TAB(*pStart)) {
+        pStart++;
+    }
+    while (pEnd >= pStart && IS_SPACE_OR_TAB(*pEnd)) {
+        pEnd--;
+    }
+    if (pEnd - pStart >= 5 && strncmp(pStart, "```", 3) == 0) {
+        bStart = PIKA_TRUE;
+    }
+    if (pEnd - pStart >= 5 && strncmp(pEnd - 2, "```", 3) == 0) {
+        bEnd = PIKA_TRUE;
+    }
+    if (bStart && bEnd) {
+        return PIKA_FALSE;
+    }
+    if (bStart || bEnd) {
+        return PIKA_TRUE;
+    }
+    return PIKA_FALSE;
+}
+
 static char* _parser_fixDocStringIndent(Parser* self,
                                         char* sDocString,
                                         int indent) {
-    char* sBuff = strsCopy(&self->lineBuffs, sDocString);
+    Args buffs = {0};
+    char* sBuff = strsCopy(&buffs, sDocString);
     Arg* aOut = arg_newStr("");
     char* sOut = NULL;
     uint32_t iLineNum = strCountSign(sBuff, '\n');
-    int indentThis = 0;
+    PIKA_BOOL bInCodeBlock = PIKA_FALSE;
+    int iIndentCodeBlock = 0;
     for (int i = 0; i < iLineNum; i++) {
-        char* sLine = strsPopToken(&self->lineBuffs, &sBuff, '\n');
+        char* sLine = strsPopToken(&buffs, &sBuff, '\n');
         if (strIsBlank(sLine)) {
             continue;
         }
-        indentThis = strGetIndent(sLine);
-        if (strGetIndent(sLine) >= indentThis) {
-            sLine = sLine + indentThis;
+        int iIndentThis = strGetIndent(sLine);
+        int iIndentStrip = iIndentThis;
+        PIKA_BOOL bCodeBlockFlag = _strCheckCodeBlockFlag(sLine);
+        if (bCodeBlockFlag) {
+            bInCodeBlock = !bInCodeBlock;
+            iIndentCodeBlock = iIndentStrip;
+        }
+        if (bInCodeBlock) {
+            iIndentStrip = iIndentCodeBlock;
+        }
+        if (strGetIndent(sLine) >= iIndentStrip) {
+            sLine = sLine + iIndentStrip;
         }
         for (int k = 0; k < indent; k++) {
             aOut = arg_strAppend(aOut, " ");
         }
         aOut = arg_strAppend(aOut, sLine);
-        aOut = arg_strAppend(aOut, "\n\n");
+        aOut = arg_strAppend(aOut, "\n");
+        if (!bInCodeBlock) {
+            iIndentCodeBlock = 0;
+            aOut = arg_strAppend(aOut, "\n");
+        }
     }
     sOut = strsCopy(&self->lineBuffs, arg_getStr(aOut));
+    strsDeinit(&buffs);
     arg_deinit(aOut);
     return sOut;
 }
