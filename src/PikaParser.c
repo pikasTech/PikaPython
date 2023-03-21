@@ -3219,7 +3219,10 @@ static PIKA_BOOL _strCheckCodeBlockFlag(char* sLine) {
     while (pEnd >= pStart && IS_SPACE_OR_TAB(*pEnd)) {
         pEnd--;
     }
-    if (pEnd - pStart >= 5 && strncmp(pStart, "```", 3) == 0) {
+    if (pEnd - pStart < 2) {
+        return PIKA_FALSE;
+    }
+    if (strncmp(pStart, "```", 3) == 0) {
         bStart = PIKA_TRUE;
     }
     if (pEnd - pStart >= 5 && strncmp(pEnd - 2, "```", 3) == 0) {
