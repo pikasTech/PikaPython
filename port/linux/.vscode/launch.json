@@ -12,7 +12,8 @@
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=pikaui.*"
-                "--gtest_filter=doc.*"
+                // "--gtest_filter=doc.*"
+                "--gtest_filter=packtool.*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -142,7 +142,7 @@ static Arg* _arg_set_hash(Arg* self,
         pika_platform_memcpy(arg_getContent(self), content, size);
     } else {
         pika_platform_memset(arg_getContent(self), 0,
-                             aline_by(size, sizeof(uint32_t)));
+                             align_by(size, sizeof(uint32_t)));
     }
     pika_assert(self->flag < ARG_FLAG_MAX);
     return self;

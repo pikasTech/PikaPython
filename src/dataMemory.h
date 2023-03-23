@@ -66,7 +66,7 @@ struct Pool{
 };
 /* clang-format on */
 
-#define aline_by(size, aline) \
+#define align_by(size, aline) \
     (((size) == 0) ? 0 : (((size)-1) / (aline) + 1) * (aline))
 
 void pikaFree(void* mem, uint32_t size);

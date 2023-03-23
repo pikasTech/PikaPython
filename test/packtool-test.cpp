@@ -3,15 +3,15 @@ TEST_START
 
 #include "PikaCompiler.h"
 
-#if 0  // TODO add a.pack
-
-TEST(packtool, unpack) {
-
-    PIKA_RES res = LibObj_unpackFileToPath("test/assets/a.pack", "test/out/unpackout");
+TEST(packtool, pack_unpack) {
+    PIKA_RES res =
+        pikafs_pack_files("test/out/a.pack", "test/assets/test.txt", "test/assets/widget_config.ini");
+        pikafs_unpack_files("test/out/a.pack", "test/out/unpack");
 
     EXPECT_EQ(res, PIKA_RES_OK);
 }
 
+#if 0  // TODO add a.pack
 
 TEST(packtool, packread) {
     size_t n = 0;
