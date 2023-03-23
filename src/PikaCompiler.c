@@ -467,6 +467,21 @@ static PIKA_RES _loadModuleDataWithIndex(uint8_t* library_bytes,
         size_t module_size =
             *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
         *size = module_size;
+        /* fix size for string */
+        PIKA_BOOL bIsString = PIKA_TRUE;
+        for (size_t i = 0; i < *size - 1; ++i) {
+            if (bytecode_addr[i] == 0) {
+                bIsString = PIKA_FALSE;
+                break;
+            }
+        }
+        if (bIsString) {
+            /* remove the last '\0' for stirng */
+            if (bytecode_addr[*size - 1] == 0) {
+                *size -= 1;
+            }
+        }
+        /* next module */
         bytecode_addr += align_by(module_size, sizeof(uint32_t));
     }
     return PIKA_RES_OK;
@@ -616,28 +631,11 @@ PIKA_RES pikafs_unpack_files(char* pack_name, char* out_path) {
                                  &size);
         output_file_path = strsPathJoin(&buffs, out_path, name);
         new_fp = pika_platform_fopen(output_file_path, "wb+");
-        PIKA_BOOL bIsString = PIKA_TRUE;
-        for (size_t i = 0; i < size - 1; ++i) {
-            if (addr[i] == 0) {
-                bIsString = PIKA_FALSE;
-                break;
-            }
-        }
-        char* type = NULL;
-        if (bIsString) {
-            type = "string";
-            /* remove the last '\0' for stirng */
-            if (addr[size - 1] == 0) {
-                size -= 1;
-            }
-        } else {
-            type = "binary";
-        }
+
         if (NULL != new_fp) {
             pika_platform_fwrite(addr, size, 1, new_fp);
             pika_platform_fclose(new_fp);
-            pika_platform_printf("unpack %s(%s) to %s\r\n", name, type,
-                                 output_file_path);
+            pika_platform_printf("unpack %s to %s\r\n", name, output_file_path);
         } else {
             pika_platform_printf("can't open %s\r\n", output_file_path);
             break;
