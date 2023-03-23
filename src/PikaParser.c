@@ -2809,6 +2809,7 @@ int parser_file2BackendCodeFile(Parser* self,
         return -1;
     }
     pika_platform_fwrite(sBackendCode, 1, strGetSize(sBackendCode), fp);
+    pika_platform_fclose(fp);
     return 0;
 }
 
