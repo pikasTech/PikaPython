@@ -60,6 +60,6 @@ int pikafs_fread(void* buf, size_t size, size_t count, pikafs_FILE* file);
 int pikafs_fwrite(void* buf, size_t size, size_t count, pikafs_FILE* file);
 int pikafs_fclose(pikafs_FILE* file);
 PIKA_RES pikafs_unpack_files(char* pack_name, char* out_path);
-PIKA_RES pikafs_pack_files(char* pack_name, ...);
+PIKA_RES pikafs_pack_files(char* pack_name, int file_num, ...);
 
 #endif

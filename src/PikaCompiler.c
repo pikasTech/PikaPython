@@ -616,14 +616,27 @@ PIKA_RES pikafs_unpack_files(char* pack_name, char* out_path) {
                                  &size);
         output_file_path = strsPathJoin(&buffs, out_path, name);
         new_fp = pika_platform_fopen(output_file_path, "wb+");
-        /* remove the last '\0' for stirng */
-        if (addr[size - 1] == 0) {
-            size -= 1;
+        PIKA_BOOL bIsString = PIKA_TRUE;
+        for (size_t i = 0; i < size - 1; ++i) {
+            if (addr[i] == 0) {
+                bIsString = PIKA_FALSE;
+                break;
+            }
+        }
+        char* type = NULL;
+        if (bIsString) {
+            type = "string";
+            /* remove the last '\0' for stirng */
+            if (addr[size - 1] == 0) {
+                size -= 1;
+            }
+        } else {
+            type = "binary";
         }
         if (NULL != new_fp) {
             pika_platform_fwrite(addr, size, 1, new_fp);
             pika_platform_fclose(new_fp);
-            pika_platform_printf("extract %s to %s\r\n", name,
+            pika_platform_printf("unpack %s(%s) to %s\r\n", name, type,
                                  output_file_path);
         } else {
             pika_platform_printf("can't open %s\r\n", output_file_path);
@@ -643,18 +656,17 @@ PIKA_RES pikafs_unpack_files(char* pack_name, char* out_path) {
  * @param ...       the name of files to pack
  * @return         PIKA_RES_OK if success
  */
-PIKA_RES pikafs_pack_files(char* pack_name, ...) {
+PIKA_RES pikafs_pack_files(char* pack_name, int file_num, ...) {
     PikaMaker* maker = New_PikaMaker();
     PIKA_RES ret = PIKA_RES_OK;
     va_list args;
-    va_start(args, pack_name);
-    char* file_name = va_arg(args, char*);
-    while (NULL != file_name) {
+    va_start(args, file_num);
+    for (int i = 0; i < file_num; i++) {
+        char* file_name = va_arg(args, char*);
         ret = pikaMaker_linkRaw(maker, file_name);
         if (PIKA_RES_OK != ret) {
             goto __exit;
         }
-        file_name = va_arg(args, char*);
     }
     ret = pikaMaker_linkCompiledModulesFullPath(maker, pack_name);
     if (PIKA_RES_OK != ret) {

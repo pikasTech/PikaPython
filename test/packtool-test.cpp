@@ -4,9 +4,10 @@ TEST_START
 #include "PikaCompiler.h"
 
 TEST(packtool, pack_unpack) {
-    PIKA_RES res =
-        pikafs_pack_files("test/out/a.pack", "test/assets/test.txt", "test/assets/widget_config.ini");
-        pikafs_unpack_files("test/out/a.pack", "test/out/unpack");
+    PIKA_RES res = pikafs_pack_files(
+        "test/out/a.pack", 3, "test/assets/test.txt",
+        "test/assets/widget_config.ini", "test/assets/test.jpg");
+    pikafs_unpack_files("test/out/a.pack", "test/out/unpack");
 
     EXPECT_EQ(res, PIKA_RES_OK);
 }
