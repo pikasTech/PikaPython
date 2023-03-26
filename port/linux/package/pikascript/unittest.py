@@ -65,6 +65,10 @@ class TestCase:
     def assertIn(self, x, y):
         msg = "Expected %r to be in %r" % (x, y)
         assert x in y, msg
+    
+    def assertNotIn(self, x, y):
+        msg = "Expected %r not to be in %r" % (x, y)
+        assert x not in y, msg
 
     def run(self, result: TestResult, suite_name):
         for name in dir(self):
