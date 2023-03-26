@@ -5,11 +5,6 @@ O_APPEND: int
 O_CREAT: int
 
 
-class fileStat:
-    def st_size(self) -> int:
-        pass
-
-
 def __init__(self):
     pass
 
@@ -60,3 +55,44 @@ def fstat(self, fd: FILE) -> fileStat:
 
 def remove(self, filename: str):
     pass
+
+
+def rename(self, old: str, new: str):
+    pass
+
+
+class fileStat:
+    def st_size(self) -> int:
+        pass
+
+
+class path:
+    def join(self, *paths) -> str:
+        pass
+
+    def split(self, path: str) -> tuple:
+        pass
+
+    def splitext(self, path: str) -> tuple:
+        pass
+
+    def basename(self, path: str) -> str:
+        pass
+
+    def dirname(self, path: str) -> str:
+        pass
+
+    def exists(self, path: str) -> bool:
+        pass
+
+    def isdir(self, path: str) -> bool:
+        pass
+
+    def isfile(self, path: str) -> bool:
+        pass
+
+    def isabs(self, path: str) -> bool:
+        pass
+
+    def abspath(self, path: str) -> str:
+        pass

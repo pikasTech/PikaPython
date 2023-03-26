@@ -103,3 +103,10 @@ void os_remove(PikaObj* self, char* filename) {
         pika_platform_printf("remove error\r\n");
     }
 }
+
+void os_rename(PikaObj *self, char* old, char* new){
+    if (os_rename_platform(old, new) < 0) {
+        obj_setErrorCode(self, PIKA_RES_ERR_IO_ERROR);
+        pika_platform_printf("rename error\r\n");
+    }
+}

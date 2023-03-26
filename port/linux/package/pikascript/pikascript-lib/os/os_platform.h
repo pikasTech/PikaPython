@@ -35,5 +35,6 @@ int os_chdir_platform(char* path);
 int os_rmdir_platform(char* path);
 int os_remove_platform(char* filename);
 int os_getFileSize(PikaObj* fd);
+int os_rename_platform(char* old, char* new);
 
 #endif

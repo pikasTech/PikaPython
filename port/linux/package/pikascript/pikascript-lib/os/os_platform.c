@@ -201,3 +201,13 @@ int os_remove_platform(char* filename) {
     ret = remove(dirpath);
     return ret;
 }
+
+int os_rename_platform(char* old, char* new) {
+    if (NULL == old || NULL == new) {
+        return -1;
+    }
+    if (0 != rename(old, new)) {
+        return -1;
+    }
+    return 0;
+}

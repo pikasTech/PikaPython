@@ -13,7 +13,8 @@
             "args": [
                 // "--gtest_filter=pikaui.*"
                 // "--gtest_filter=doc.*"
-                "--gtest_filter=packtool.*"
+                // "--gtest_filter=packtool.*"
+                "--gtest_filter=os.path"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
