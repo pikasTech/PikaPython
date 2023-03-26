@@ -2549,6 +2549,10 @@ static void _OPT_EQU(OperatorInfo* op) {
         is_equ = (arg_getPtr(op->a1) == arg_getPtr(op->a2));
         goto exit;
     }
+    if (argType_isObject(op->t1) && argType_isObject(op->t2)) {
+        is_equ = (arg_getPtr(op->a1) == arg_getPtr(op->a2));
+        goto exit;
+    }
     /* default: int bool, and float */
     is_equ = ((op->f1 - op->f2) * (op->f1 - op->f2) < (pika_float)0.000001);
     goto exit;

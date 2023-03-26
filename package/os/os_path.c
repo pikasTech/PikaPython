@@ -239,7 +239,7 @@ int _os_path_split(char* path, char** folder, char** file) {
             return -1;
         }
         strncpy(*folder, path, idx + 1);
-        (*folder)[idx + 1] = '\0';
+        (*folder)[idx] = '\0';
         /* 获取最后一个路径分隔符之后的文件名 */
         *file = strdup(p + 1);
         if (*file == NULL) {

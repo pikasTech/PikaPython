@@ -18,7 +18,7 @@ TEST(os, test1) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST_SINGLE_FILE(os, path, "test/python/os/os_path.py")
+TEST_SINGLE_FILE_PASS(os, path, "test/python/os/os_path.py")
 
 #endif
 TEST_END

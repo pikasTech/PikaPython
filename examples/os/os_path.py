@@ -4,13 +4,17 @@ assert p.join('dir', 'file.txt') == 'dir/file.txt'
 assert p.join('/home/user', 'dir', 'file.txt') == '/home/user/dir/file.txt'
 
 # Test split method
-assert p.split('dir/file.txt') == ('dir', 'file.txt')
-assert p.split('/home/user/dir/file.txt') == ('/home/user/dir', 'file.txt')
+assert p.split('dir/file.txt')[0] == 'dir'
+assert p.split('dir/file.txt')[1] == 'file.txt'
+assert p.split('/home/user/dir/file.txt')[0] == '/home/user/dir'
+assert p.split('/home/user/dir/file.txt')[1] == 'file.txt'
     
 # Test splitext method
-assert p.splitext('file.txt') == ('file', '.txt')
-assert p.splitext('/home/user/file.tar.gz') == ('/home/user/file.tar', '.gz')
-    
+assert p.splitext('file.txt')[0] == 'file'
+assert p.splitext('file.txt')[1] == '.txt'
+assert p.splitext('/home/user/file.tar.gz')[0] == '/home/user/file.tar'
+assert p.splitext('/home/user/file.tar.gz')[1] == '.gz'
+
 # Test basename method
 assert p.basename('dir/file.txt') == 'file.txt'
 assert p.basename('/home/user/dir/file.txt') == 'file.txt'
