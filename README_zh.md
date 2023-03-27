@@ -50,6 +50,11 @@ PikaPython 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 商务洽谈: 李工 深圳皮卡派科技有限公司 16643685017 (微信同号)
 
 # 最新资讯
+
+- [PikaPython 开源赏金活动：挑战技术，实践成长，共创未来！](https://gitee.com/Lyon1998/pikapython/issues/I67WUQ)
+
+- [轻量级Python解释器PikaPython成功入选开源之夏，探索无限可能！](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484738&idx=1&sn=7af1c9bb61e6decd5c155924cb7a05f8&chksm=fdebd22bca9c5b3d3f2fbd8742941e6c33e86cbcba88c329b0b9550b54b0291b6f50553d5eea&token=709915806&lang=zh_CN#rd)
+
 - [2022 年 PikaPython 年终总结](https://mp.weixin.qq.com/s/cWtujWF8EuJnuXuVUeWNKw)
 
 - [【快讯】PikaScript 合并进入 LVGL 主线文档，创始人Gabor 这样说...](https://mp.weixin.qq.com/s/2vcZfRfAAmAqPfyOm7CqUg)
