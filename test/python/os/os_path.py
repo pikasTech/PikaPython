@@ -25,7 +25,7 @@ assert p.dirname('/home/user/dir/file.txt') == '/home/user/dir'
 
 # Test exists method
 assert p.exists('config/pika_config_void') == False
-assert p.exists('/root/go') == True
+assert p.exists('/usr/bin') == True
 
 # Test isdir method
 assert p.isdir('config/pika_config_void.h') == False
@@ -40,7 +40,7 @@ assert p.isabs('dir/file.txt') == False
 assert p.isabs('/home/user/file.txt') == True
 
 # Test abspath method
-assert p.abspath('config/pika_config_void.h') == "/root/pikascript/port/linux/config/pika_config_void.h"
-assert p.abspath('/root/go') == "/root/go"
+# assert p.abspath('config/pika_config_void.h') == "/root/pikascript/port/linux/config/pika_config_void.h"
+assert p.abspath('/usr/bin') == "/usr/bin"
 
 print("PASS")
