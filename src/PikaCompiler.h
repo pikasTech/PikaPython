@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef __PIKA_COMPILER__H
 #define __PIKA_COMPILER__H
 #include "PikaObj.h"
@@ -62,4 +66,7 @@ int pikafs_fclose(pikafs_FILE* file);
 PIKA_RES pikafs_unpack_files(char* pack_name, char* out_path);
 PIKA_RES pikafs_pack_files(char* pack_name, int file_num, ...);
 
+#endif
+#ifdef __cplusplus
+}
 #endif

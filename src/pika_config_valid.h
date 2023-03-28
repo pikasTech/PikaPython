@@ -24,6 +24,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef __PIKA_CFG_VALID_H__
 #define __PIKA_CFG_VALID_H__
 
@@ -461,4 +465,7 @@
 
     /* configuration validation */
 
+#endif
+#ifdef __cplusplus
+}
 #endif

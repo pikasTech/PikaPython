@@ -24,7 +24,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifndef __STR_ARGS__H
 #define __STR_ARGS__H
 #include "dataArgs.h"
@@ -51,4 +53,7 @@ char* strsPathGetFolder(Args* buffs_p, char* input);
 char* strsPathJoin(Args* buffs_p, char* input1, char* input2);
 char* strsPathFormat(Args* buffs_p, char* input);
 
+#endif
+#ifdef __cplusplus
+}
 #endif

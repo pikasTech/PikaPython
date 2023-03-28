@@ -25,6 +25,10 @@
  * SOFTWARE.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef _PikaObj_baseObj__H
 #define _PikaObj_baseObj__H
 #include "PikaObj.h"
@@ -35,4 +39,8 @@
 PikaObj* New_BaseObj(Args* args);
 void Baseobj_print(PikaObj* self, Args* args);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

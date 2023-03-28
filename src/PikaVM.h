@@ -24,6 +24,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef __PIKA_VM__H
 #define __PIKA_VM__H
@@ -370,4 +373,8 @@ typedef struct {
     PikaObj* lreg[PIKA_REGIST_SIZE];
 } VMLocals;
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

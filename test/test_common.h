@@ -1,23 +1,25 @@
 #define __OOC_CPP__
 #define __OOC_DEBUG__
 
-extern "C" {
 #include "BaseObj.h"
 #include "PikaCompiler.h"
-#include "PikaMain.h"
-#include "PikaMath_Operator.h"
 #include "PikaParser.h"
-#include "PikaStdLib_MemChecker.h"
-#include "PikaStdLib_SysObj.h"
 #include "PikaVM.h"
 #include "TinyObj.h"
 #include "dataArgs.h"
 #include "dataMemory.h"
 #include "dataStrs.h"
+
+extern "C" {
+#include "PikaMain.h"
+#include "PikaMath_Operator.h"
+#include "PikaStdLib_MemChecker.h"
+#include "PikaStdLib_SysObj.h"
 #include "pikaScript.h"
 #include "pika_config_gtest.h"
 #include "pika_hal.h"
 #include <stdio.h>
+
 extern PikaMemInfo g_PikaMemInfo;
 /* the log_buff of printf */
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];

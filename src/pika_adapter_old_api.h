@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef __PIKA_ADAPTER_OLD_API_H__
 #define __PIKA_ADAPTER_OLD_API_H__
 
@@ -82,4 +86,8 @@
 
 #endif
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

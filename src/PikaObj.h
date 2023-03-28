@@ -25,6 +25,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef _Process__H
 #define _Process__H
@@ -663,4 +666,7 @@ uint32_t pikaGC_printFreeList(void);
 int pika_GIL_EXIT(void);
 int pika_GIL_ENTER(void);
 
+#endif
+#ifdef __cplusplus
+}
 #endif

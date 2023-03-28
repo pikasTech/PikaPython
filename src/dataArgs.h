@@ -25,6 +25,10 @@
  * SOFTWARE.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef _dataArgs__H
 #define _dataArgs__H
 #include "dataArg.h"
@@ -278,4 +282,8 @@ char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list);
 char* args_cacheStr(Args* self, char* str);
 char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

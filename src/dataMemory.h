@@ -24,7 +24,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 
@@ -87,4 +89,7 @@ void mem_pool_init(void);
 #define mem_align(_size) ((((_size) + 4 - 1) & ~(4 - 1)))
 
 #undef __DATA_MEMORY_CLASS_IMPLEMENT__
+#endif
+#ifdef __cplusplus
+}
 #endif

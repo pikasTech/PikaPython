@@ -24,7 +24,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifndef __DATA_STACK__H
 #define __DATA_STACK__H
 #include "dataArgs.h"
@@ -51,4 +53,7 @@ int32_t stack_init(Stack* stack);
 int32_t stack_popSize(Stack* stack);
 void stack_pushSize(Stack* stack, int32_t size);
 void stack_reset(Stack* stack);
+#endif
+#ifdef __cplusplus
+}
 #endif

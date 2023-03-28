@@ -25,6 +25,10 @@
  * SOFTWARE.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef _arg__H
 #define _arg__H
 
@@ -300,4 +304,8 @@ void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size);
 PIKA_BOOL arg_isEqual(Arg* self, Arg* other);
 Hash hash_time33EndWith(char* str, char end);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

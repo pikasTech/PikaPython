@@ -24,7 +24,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifndef _linkNode__H
 #define _linkNode__H
 
@@ -39,4 +41,7 @@ void linkNode_deinit(LinkNode* self);
 void linkNode_init(LinkNode* self, void* args);
 
 LinkNode* New_linkNode(void* args);
+#endif
+#ifdef __cplusplus
+}
 #endif

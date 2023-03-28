@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef __PIKA_ADAPTER_MPY_H__
 #define __PIKA_ADAPTER_MPY_H__
 #include <stdint.h>
@@ -334,4 +338,7 @@ typedef struct _mp_obj_list_t {
 } mp_obj_list_t;
 
 
+#endif
+#ifdef __cplusplus
+}
 #endif

@@ -24,6 +24,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef __PIKA_PARSER__H
 #define __PIKA_PARSER__H
@@ -165,4 +168,8 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
 
 uint16_t TokenStream_getSize(char* tokenStream);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

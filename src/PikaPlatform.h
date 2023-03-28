@@ -24,6 +24,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* adapter for old api */
 #include "./pika_adapter_old_api.h"
@@ -294,4 +297,8 @@ void pika_platform_clear(void);
                          __FUNCTION__);                                    \
     pika_platform_panic_handle();
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
