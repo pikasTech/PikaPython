@@ -69,10 +69,23 @@ static uint8_t _IIC_ReadByte(pika_hal_SOFT_IIC_config* cfg, uint8_t ack) {
     return byte;
 }
 
+static void set_SDA_input(pika_hal_SOFT_IIC_config* cfg) {
+    pika_hal_GPIO_config cfg_SDA = {0};
+    cfg_SDA.dir = PIKA_HAL_GPIO_DIR_IN;
+    pika_hal_ioctl(cfg->SDA, PIKA_HAL_IOCTL_CONFIG, &cfg_SDA);
+}
+
+static void set_SDA_output(pika_hal_SOFT_IIC_config* cfg) {
+    pika_hal_GPIO_config cfg_SDA = {0};
+    cfg_SDA.dir = PIKA_HAL_GPIO_DIR_OUT;
+    pika_hal_ioctl(cfg->SDA, PIKA_HAL_IOCTL_CONFIG, &cfg_SDA);
+}
+
 int pika_hal_platform_SOFT_IIC_write(pika_dev* dev, void* buf, size_t count) {
     pika_hal_SOFT_IIC_config* cfg =
         (pika_hal_SOFT_IIC_config*)dev->ioctl_config;
     uint8_t* data = (uint8_t*)buf;
+    set_SDA_output(cfg);
     _IIC_Start(cfg);
     for (int i = 0; i < count; i++) {
         _IIC_SendByte(cfg, data[i]);
@@ -84,6 +97,7 @@ int pika_hal_platform_SOFT_IIC_write(pika_dev* dev, void* buf, size_t count) {
 int pika_hal_platform_SOFT_IIC_read(pika_dev* dev, void* buf, size_t count) {
     pika_hal_SOFT_IIC_config* cfg =
         (pika_hal_SOFT_IIC_config*)dev->ioctl_config;
+    set_SDA_input(cfg);
     uint8_t* data = (uint8_t*)buf;
     _IIC_Start(cfg);
     for (int i = 0; i < count - 1; i++) {
@@ -117,7 +131,7 @@ int pika_hal_platform_SOFT_IIC_ioctl_config(pika_dev* dev,
             "Error: SOFT IIC config error, SDA and SCL must be set\r\n");
         return -1;
     }
-    // 检查硬件IIC配置项是否正确
+    // 检查软件IIC配置项是否正确
     if (cfg->master_or_slave != PIKA_HAL_IIC_MASTER &&
         cfg->master_or_slave != PIKA_HAL_IIC_SLAVE) {
         __platform_printf(
