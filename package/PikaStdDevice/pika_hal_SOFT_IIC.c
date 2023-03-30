@@ -87,6 +87,18 @@ int pika_hal_platform_SOFT_IIC_write(pika_dev* dev, void* buf, size_t count) {
     uint8_t* data = (uint8_t*)buf;
     set_SDA_output(cfg);
     _IIC_Start(cfg);
+
+    // 如果启用了mem_addr_ena，将设备地址和内存地址发送到I2C总线
+    if (cfg->mem_addr_ena == PIKA_HAL_IIC_MEM_ADDR_ENA_ENABLE) {
+        _IIC_SendByte(cfg, cfg->slave_addr);
+        if (cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_8BIT) {
+            _IIC_SendByte(cfg, cfg->mem_addr & 0xFF);
+        } else if (cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_16BIT) {
+            _IIC_SendByte(cfg, (cfg->mem_addr >> 8) & 0xFF);
+            _IIC_SendByte(cfg, cfg->mem_addr & 0xFF);
+        }
+    }
+
     for (int i = 0; i < count; i++) {
         _IIC_SendByte(cfg, data[i]);
     }
@@ -97,8 +109,23 @@ int pika_hal_platform_SOFT_IIC_write(pika_dev* dev, void* buf, size_t count) {
 int pika_hal_platform_SOFT_IIC_read(pika_dev* dev, void* buf, size_t count) {
     pika_hal_SOFT_IIC_config* cfg =
         (pika_hal_SOFT_IIC_config*)dev->ioctl_config;
-    set_SDA_input(cfg);
     uint8_t* data = (uint8_t*)buf;
+
+    // 如果启用了mem_addr_ena，先写设备地址和内存地址
+    if (cfg->mem_addr_ena == PIKA_HAL_IIC_MEM_ADDR_ENA_ENABLE) {
+        set_SDA_output(cfg);
+        _IIC_Start(cfg);
+        _IIC_SendByte(cfg, cfg->slave_addr);
+        if (cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_8BIT) {
+            _IIC_SendByte(cfg, cfg->mem_addr & 0xFF);
+        } else if (cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_16BIT) {
+            _IIC_SendByte(cfg, (cfg->mem_addr >> 8) & 0xFF);
+            _IIC_SendByte(cfg, cfg->mem_addr & 0xFF);
+        }
+        _IIC_Stop(cfg);
+    }
+
+    set_SDA_input(cfg);
     _IIC_Start(cfg);
     for (int i = 0; i < count - 1; i++) {
         data[i] = _IIC_ReadByte(cfg, 1);
