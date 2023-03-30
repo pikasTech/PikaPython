@@ -84,6 +84,8 @@ class GPIO(BaseDev):
             print("cb1", signal)
         io.setCallBack(cb1, io.SIGNAL_RISING)
         ```
+        The `signal` parameter is the signal type.
+        The callback function will be called when the signal is triggered.
         """
 
     def close(self): ...

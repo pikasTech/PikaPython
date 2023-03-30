@@ -212,6 +212,19 @@ typedef struct {
     PIKA_HAL_IIC_TIMEOUT timeout;
 } pika_hal_IIC_config;
 
+typedef struct {
+    pika_dev* SDA;
+    pika_dev* SCL;
+    PIKA_HAL_IIC_ADDRESS_WIDTH address_width;
+    PIKA_HAL_IIC_MASTER_OR_SLAVE master_or_slave;
+    PIKA_HAL_IIC_SLAVE_ADDR slave_addr;
+    PIKA_HAL_IIC_MEM_ADDR_ENA mem_addr_ena;
+    PIKA_HAL_IIC_MEM_ADDR mem_addr;
+    PIKA_HAL_IIC_MEM_ADDR_SIZE mem_addr_size;
+    PIKA_HAL_IIC_SPEED speed;
+    PIKA_HAL_IIC_TIMEOUT timeout;
+} pika_hal_SOFT_IIC_config;
+
 typedef enum PIKA_HAL_SPI_TIMEOUT {
     _PIKA_HAL_SPI_TIMEOUT_UNUSED = 0,
     PIKA_HAL_SPI_TIMEOUT_1MS = 1,

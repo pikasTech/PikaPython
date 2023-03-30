@@ -10,5 +10,6 @@ pika_hal_table_add(ADC)
 pika_hal_table_add(DAC)
 pika_hal_table_add(PWM)
 pika_hal_table_add(SOFT_SPI)
+pika_hal_table_add(SOFT_IIC)
 pika_hal_table_add(WIFI)
 

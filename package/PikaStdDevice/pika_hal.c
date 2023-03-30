@@ -271,6 +271,21 @@ int pika_hal_IIC_ioctl_merge_config(pika_hal_IIC_config* dst,
     return 0;
 }
 
+int pika_hal_SOFT_IIC_ioctl_merge_config(pika_hal_SOFT_IIC_config* dst,
+                                         pika_hal_SOFT_IIC_config* src) {
+    _IOCTL_CONFIG_USE_DEFAULT(SDA, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(SCL, NULL);
+    _IOCTL_CONFIG_USE_DEFAULT(address_width, PIKA_HAL_IIC_ADDRESS_WIDTH_7BIT);
+    _IOCTL_CONFIG_USE_DEFAULT(master_or_slave, PIKA_HAL_IIC_MASTER);
+    _IOCTL_CONFIG_USE_DEFAULT(slave_addr, 0);
+    _IOCTL_CONFIG_USE_DEFAULT(mem_addr_ena, PIKA_HAL_IIC_MEM_ADDR_ENA_DISABLE);
+    _IOCTL_CONFIG_USE_DEFAULT(mem_addr_size, PIKA_HAL_IIC_MEM_ADDR_SIZE_8BIT);
+    dst->mem_addr = src->mem_addr;
+    _IOCTL_CONFIG_USE_DEFAULT(speed, PIKA_HAL_IIC_SPEED_100K);
+    _IOCTL_CONFIG_USE_DEFAULT(timeout, PIKA_HAL_IIC_TIMEOUT_1000MS);
+    return 0;
+}
+
 int pika_hal_PWM_ioctl_merge_config(pika_hal_PWM_config* dst,
                                     pika_hal_PWM_config* src) {
     _IOCTL_CONFIG_USE_DEFAULT(period, PIKA_HAL_PWM_PERIOD_1MS * 10);
