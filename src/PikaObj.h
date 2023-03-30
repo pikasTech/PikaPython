@@ -395,6 +395,24 @@ Method obj_getNativeMethod(PikaObj* self, char* method_name);
 PIKA_RES obj_runNativeMethod(PikaObj* self, char* method_name, Args* args);
 Arg* obj_newObjInPackage(NewFun newObjFun);
 
+/* A helper function to create a new tuple PikaObj and append the given
+ * arguments (of type Arg*) to it. */
+PikaObj* _pika_tuple_new(int num_args, ...);
+
+/* A helper function to create a new list PikaObj and append the given arguments
+ * (of type Arg*) to it. */
+PikaObj* _pika_list_new(int num_args, ...);
+
+/* Macro to create a new tuple PikaObj with the given arguments (of type Arg*).
+ */
+#define obj_newTuple(...) \
+    _pika_tuple_new(sizeof((Arg*[]){__VA_ARGS__}) / sizeof(Arg*), __VA_ARGS__)
+
+/* Macro to create a new list PikaObj with the given arguments (of type Arg*).
+ */
+#define obj_newList(...) \
+    _pika_list_new(sizeof((Arg*[]){__VA_ARGS__}) / sizeof(Arg*), __VA_ARGS__)
+
 PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setObj(Arg* self, char* name, PikaObj* obj);

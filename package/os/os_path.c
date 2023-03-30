@@ -304,35 +304,17 @@ PikaObj* os_path_split(PikaObj* self, char* path) {
     char* folder = NULL;
     char* file = NULL;
     PikaObj* tuple = NULL;
-    Arg* aFolder = NULL;
-    Arg* aFile = NULL;
 
     if (0 != _os_path_split(path, &folder, &file)) {
         goto __exit;  // 发生错误，跳转到 __exit 处做资源回收
     }
 
-    tuple = newNormalObj(New_PikaStdData_Tuple);
-    PikaStdData_Tuple___init__(tuple);
-
-    aFolder = arg_newStr(folder);
-    aFile = arg_newStr(file);
-
-    PikaStdData_List_append(tuple, aFolder);
-    PikaStdData_List_append(tuple, aFile);
-
-    arg_deinit(aFolder);
-    arg_deinit(aFile);
+    tuple = obj_newTuple(arg_newStr(folder), arg_newStr(file));
     free(folder);
     free(file);
 
     return tuple;
 __exit:
-    if (aFolder) {
-        arg_deinit(aFolder);
-    }
-    if (aFile) {
-        arg_deinit(aFile);
-    }
     if (tuple) {
         obj_deinit(tuple);
     }
