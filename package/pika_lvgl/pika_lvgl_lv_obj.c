@@ -31,6 +31,11 @@ void pika_lvgl_lv_obj_set_size(PikaObj* self, int w, int h) {
     lv_obj_set_size(lv_obj, w, h);
 }
 
+void pika_lvgl_lv_obj_set_style_size(PikaObj *self, int value, int selector){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_obj_set_style_size(lv_obj, value, selector);
+}
+
 void pika_lvgl_lv_obj_align(PikaObj* self, int align, int x_ofs, int y_ofs) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_obj_align(lv_obj, align, x_ofs, y_ofs);
