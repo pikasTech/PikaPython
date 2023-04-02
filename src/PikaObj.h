@@ -641,10 +641,18 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
                                              uint32_t eventId,
                                              int eventSignal);
 
+#define COLOR_RED "\x1b[31m"
+#define COLOR_GREEN "\x1b[32m"
+#define COLOR_YELLOW "\x1b[33m"
+#define COLOR_BLUE "\x1b[34m"
+#define COLOR_MAGENTA "\x1b[35m"
+#define COLOR_CYAN "\x1b[36m"
+#define COLOR_RESET "\x1b[0m"
+
 void obj_printModules(PikaObj* self);
 #if PIKA_DEBUG_ENABLE
 #define pika_debug(fmt, ...) \
-    pika_platform_printf("PikaDBG: " fmt "\r\n", ##__VA_ARGS__)
+    pika_platform_printf(COLOR_GREEN "[PikaDBG] " fmt "\r\n" COLOR_RESET, ##__VA_ARGS__)
 #else
 #define pika_debug(...) \
     do {                \
