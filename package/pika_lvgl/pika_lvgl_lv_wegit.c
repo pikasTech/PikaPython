@@ -14,6 +14,7 @@
 #include "pika_lvgl_checkbox.h"
 #include "pika_lvgl_dropdown.h"
 #include "pika_lvgl_img.h"
+#include "pika_lvgl_cf_t.h"
 #include "pika_lvgl_img_dsc_t.h"
 #include "pika_lvgl_label.h"
 #include "pika_lvgl_lv_obj.h"
@@ -22,6 +23,8 @@
 #include "pika_lvgl_switch.h"
 #include "pika_lvgl_table.h"
 #include "pika_lvgl_textarea.h"
+#include "pika_lvgl_chart.h"
+#include "pika_lvgl_chart_series_t.h"
 
 void pika_lvgl_arc___init__(PikaObj* self, PikaObj* parent) {
     lv_obj_t* lv_parent = obj_getPtr(parent, "lv_obj");
@@ -365,6 +368,29 @@ void pika_lvgl_textarea_set_one_line(PikaObj* self, int en) {
     lv_textarea_set_one_line(lv_obj, en);
 }
 
+void pika_lvgl_cf_t___init__(PikaObj *self){
+    obj_setInt(self, "RAW", LV_IMG_CF_RAW);
+    obj_setInt(self, "RAW_ALPHA", LV_IMG_CF_RAW_ALPHA);
+    obj_setInt(self, "RAW_CHROMA_KEYED", LV_IMG_CF_RAW_CHROMA_KEYED);
+    obj_setInt(self, "TRUE_COLOR", LV_IMG_CF_TRUE_COLOR);
+    obj_setInt(self, "TRUE_COLOR_ALPHA", LV_IMG_CF_TRUE_COLOR_ALPHA);
+    obj_setInt(self, "TRUE_COLOR_CHROMA_KEYED", LV_IMG_CF_TRUE_COLOR_CHROMA_KEYED);
+    obj_setInt(self, "INDEXED_1BIT", LV_IMG_CF_INDEXED_1BIT);
+    obj_setInt(self, "INDEXED_2BIT", LV_IMG_CF_INDEXED_2BIT);
+    obj_setInt(self, "INDEXED_4BIT", LV_IMG_CF_INDEXED_4BIT);
+    obj_setInt(self, "INDEXED_8BIT", LV_IMG_CF_INDEXED_8BIT);
+    obj_setInt(self, "ALPHA_1BIT", LV_IMG_CF_ALPHA_1BIT);
+    obj_setInt(self, "ALPHA_2BIT", LV_IMG_CF_ALPHA_2BIT);
+    obj_setInt(self, "ALPHA_4BIT", LV_IMG_CF_ALPHA_4BIT);
+    obj_setInt(self, "ALPHA_8BIT", LV_IMG_CF_ALPHA_8BIT);
+    obj_setInt(self, "RGB888", LV_IMG_CF_RGB888);
+    obj_setInt(self, "RGBA8888", LV_IMG_CF_RGBA8888);
+    obj_setInt(self, "RGBX8888", LV_IMG_CF_RGBX8888);
+    obj_setInt(self, "RGB565", LV_IMG_CF_RGB565);
+    obj_setInt(self, "RGBA5658", LV_IMG_CF_RGBA5658);
+    obj_setInt(self, "RGB565A8", LV_IMG_CF_RGB565A8);
+}
+
 void pika_lvgl_img___init__(PikaObj* self, PikaObj* parent) {
     lv_obj_t* lv_parent = obj_getPtr(parent, "lv_obj");
     lv_obj_t* lv_obj = lv_img_create(lv_parent);
@@ -470,5 +496,64 @@ void pika_lvgl_img_set_zoom(PikaObj* self, int zoom) {
     lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
     lv_img_set_zoom(lv_obj, zoom);
 }
+
+void pika_lvgl_chart___init__(PikaObj *self, PikaObj* parent){
+    lv_obj_t* lv_obj = lv_chart_create(obj_getPtr(parent, "lv_obj"));
+    obj_setPtr(self, "lv_obj", lv_obj); 
+}
+
+PikaObj* pika_lvgl_chart_add_series(PikaObj *self, PikaObj* color, int axis){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_color_t* lv_color = obj_getPtr(color, "lv_color");
+    lv_chart_series_t* ser = lv_chart_add_series(lv_obj, *lv_color, axis);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_chart_series_t);
+    obj_setPtr(new_obj, "series", ser);
+    return new_obj;
+}
+
+PikaObj* pika_lvgl_chart_get_series_next(PikaObj *self, PikaObj* ser){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_chart_series_t* series = obj_getPtr(ser, "lv_chart_series_t");
+    lv_chart_series_t* next = lv_chart_get_series_next(lv_obj, series);
+    PikaObj* new_obj = newNormalObj(New_pika_lvgl_chart_series_t);
+    obj_setPtr(new_obj, "series", next);
+    return new_obj;
+}
+
+void pika_lvgl_chart_set_ext_y_array(PikaObj *self, PikaObj* ser, Arg* array){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_chart_series_t* series = obj_getPtr(ser, "series");
+    if (arg_getType(array) == ARG_TYPE_INT){
+        lv_coord_t* arr = (lv_coord_t*)arg_getInt(array);
+        lv_chart_set_ext_y_array(lv_obj, series, arr);
+        pika_debug("set ext y array, arr: %p", arr);
+    }
+}
+
+void pika_lvgl_chart_refresh(PikaObj *self){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_chart_refresh(lv_obj);
+}
+
+void pika_lvgl_chart_set_point_count(PikaObj *self, int cnt){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_chart_set_point_count(lv_obj, cnt);
+}
+
+void pika_lvgl_chart_set_range(PikaObj *self, int axis, int min, int max){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_chart_set_range(lv_obj, axis, min, max);
+}
+
+void pika_lvgl_chart_set_zoom_x(PikaObj *self, int zoom_x){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_chart_set_zoom_x(lv_obj, zoom_x);
+}
+
+void pika_lvgl_chart_set_zoom_y(PikaObj *self, int zoom_y){
+    lv_obj_t* lv_obj = obj_getPtr(self, "lv_obj");
+    lv_chart_set_zoom_y(lv_obj, zoom_y);
+}
+
 
 #endif

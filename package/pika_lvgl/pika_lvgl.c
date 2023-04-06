@@ -201,8 +201,12 @@ PikaObj* pika_lvgl_scr_act(PikaObj* self) {
     return new_obj;
 }
 
-volatile g_lvgl_inited = 0;
+volatile int g_lvgl_inited = 0;
 void pika_lvgl___init__(PikaObj* self) {
+    if (!lv_is_initialized()){
+        pika_debug("Error: lvgl is not initialized");
+        return;
+    }
     obj_newDirectObj(self, "lv_event_listener", New_TinyObj);
     pika_lv_event_listener_g = obj_getObj(self, "lv_event_listener");
     pika_lv_id_register_g = New_args(NULL);

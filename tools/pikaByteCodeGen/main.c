@@ -37,6 +37,9 @@ void New_PikaStdData_Tuple(void) {}
 void New_PikaStdData_String(void) {}
 void New_PikaStdData_ByteArray(void) {}
 int strGetSizeUtf8(char* str){return 0;}
+void PikaStdData_Tuple___init__(PikaObj *self){}
+void PikaStdData_List___init__(PikaObj *self){}
+void PikaStdData_List_append(PikaObj *self, Arg* arg){}
 char* string_slice(Args* outBuffs, char* str, int start, int end) {
     return NULL;
 }
