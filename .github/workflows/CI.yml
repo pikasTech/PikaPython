@@ -26,6 +26,7 @@ jobs:
         sudo apt install valgrind
         sudo apt install upx
         sudo apt install libmbedtls-dev
+        sudo apt install lcov
   
     - name: install_google_benchmark
       run: |
@@ -45,6 +46,14 @@ jobs:
     - name: TEST
       # Build your program with the given configuration
       run: cd ${{github.workspace}}/port/linux && bash gtest.sh
+
+    - name: Lcov
+      run: cd ${{github.workspace}}/port/linux && bash lcov.sh
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      with: 
+        file: ${{github.workspace}}/port/linux/testHtml.info
 
     - name: VALGRIND
       run: cd ${{github.workspace}}/port/linux && bash valgrind.sh
