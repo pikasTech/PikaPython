@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1680782761300,
+  "lastUpdate": 1680802275847,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -95271,6 +95271,66 @@ window.BENCHMARK_DATA = {
             "value": 0.005000415130454589,
             "unit": "ms/iter",
             "extra": "iterations: 189588\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b19fff7d2680246a8facffd0d56c26a7fdea7470",
+          "message": "Merge pull request #299 from supperthomas/fix_rtthread\n\n[rtthread] fix the Sconscript for build",
+          "timestamp": "2023-04-07T00:40:20+08:00",
+          "tree_id": "8fff85691a81fabb6f718db39ff6a87d808b79f5",
+          "url": "https://github.com/pikasTech/PikaPython/commit/b19fff7d2680246a8facffd0d56c26a7fdea7470"
+        },
+        "date": 1680802267264,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 20178.889675308932,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 20178.889675308932 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 20.396239186023692,
+            "unit": "ms/iter",
+            "extra": "iterations: 57\ncpu: 20.391205725948016 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 11.231205710065211,
+            "unit": "ms/iter",
+            "extra": "iterations: 104\ncpu: 11.22982038886301 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 8.45630852080639,
+            "unit": "ms/iter",
+            "extra": "iterations: 139\ncpu: 8.455795597775722 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 2.4779699631787513,
+            "unit": "ms/iter",
+            "extra": "iterations: 473\ncpu: 2.4778370269391203 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.005000308613038807,
+            "unit": "ms/iter",
+            "extra": "iterations: 234083\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
