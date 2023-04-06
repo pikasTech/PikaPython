@@ -31,6 +31,7 @@ def pikascript_init():
     myremove('package')
     myremove('port')
     myremove('src')
+    myremove('test')
     myremove('tools')
     myremove('.github')
     myremove('.git')
