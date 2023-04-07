@@ -119,8 +119,7 @@ TEST(VM, Run_add_multy) {
 TEST(VM, Run_add_1_2_3) {
     PikaObj* self = newRootObj("root", New_PikaMath_Operator);
     Args* buffs = New_strBuff();
-    char* pikaAsm =
-        pika_lines2Asm(buffs, "a = plusInt(1, plusInt(2,3) )");
+    char* pikaAsm = pika_lines2Asm(buffs, "a = plusInt(1, plusInt(2,3) )");
     __platform_printf("%s", pikaAsm);
     VMParameters* globals = pikaVM_runAsm(self, pikaAsm);
 
@@ -2810,6 +2809,11 @@ TEST(vm, slice_issue) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_RUN_LINES(vm, dot_issue, ".")
+TEST_RUN_LINES(vm, char_issue1, "~")
+TEST_RUN_LINES(vm, char_issue2, "/")
+TEST_RUN_LINES(vm, char_issue3, "%")
 
 #endif
 

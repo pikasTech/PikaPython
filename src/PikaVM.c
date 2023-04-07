@@ -934,6 +934,9 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     if (arg_path[0] == '.') {
         /* find host from stack */
         Arg* host_arg = stack_popArg_alloc(&(vm->stack));
+        if (NULL == host_arg) {
+            goto exit;
+        }
         if (arg_isObject(host_arg)) {
             oHost = arg_getPtr(host_arg);
             aRes = arg_copy_noalloc(obj_getArg(oHost, arg_path + 1), aRetReg);
@@ -2337,11 +2340,14 @@ static uint8_t VMState_getInputArgNum(VMState* vm) {
     return num;
 }
 
-void operatorInfo_init(OperatorInfo* info,
-                       PikaObj* self,
-                       VMState* vm,
-                       char* data,
-                       Arg* arg_ret_reg) {
+int operatorInfo_init(OperatorInfo* info,
+                      PikaObj* self,
+                      VMState* vm,
+                      char* data,
+                      Arg* arg_ret_reg) {
+    if (info->a1 == NULL && info->a2 == NULL) {
+        return -1;
+    }
     info->opt = data;
     info->res = arg_ret_reg;
     if (info->a1 != NULL) {
@@ -2369,6 +2375,7 @@ void operatorInfo_init(OperatorInfo* info,
         info->i2 = arg_getBool(info->a2);
         info->f2 = (pika_float)info->i2;
     }
+    return 0;
 }
 
 static void _OPT_ADD(OperatorInfo* op) {
@@ -2618,7 +2625,12 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
         op.a1 = NULL;
     }
     /* init operator info */
-    operatorInfo_init(&op, self, vm, data, arg_ret_reg);
+    int ret = operatorInfo_init(&op, self, vm, data, arg_ret_reg);
+    if (0 != ret) {
+        pika_platform_printf("SyntaxError: invalid syntax\r\n");
+        obj_setErrorCode(self, PIKA_RES_ERR_SYNTAX_ERROR);
+        return NULL;
+    }
     switch (data[0]) {
         case '+':
             _OPT_ADD(&op);
