@@ -68,7 +68,7 @@ static void pikascript_entry(void *parameter){
 static int rt_pika_init(void){
     rt_thread_t tid;
     tid = rt_thread_create("PikaScript",
-                            pikascript_rt_init, RT_NULL,
+                            pikascript_entry, RT_NULL,
                             PIKASCRIPT_STACK_SIZE,
                             PIKASCRIPT_STACK_PRIO, 10);
 
