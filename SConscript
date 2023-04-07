@@ -25,6 +25,8 @@ def pikascript_init():
         os.popen('del ' + all_path + ' /F /Q /S')
         os.popen('rd ' + all_path + ' /Q /S')
 
+    myremove('assets')
+    myremove('docker')
     myremove('bsp')
     myremove('document')
     myremove('examples')
@@ -56,10 +58,9 @@ inc = []
 # add file and path
 for root, dirs, files in os.walk(cwd):
     for dir in dirs:
-        src = src + Glob(os.path.join(root,dir,'*.c'))
-        inc = inc + [os.path.join(root,dir)]
-
-group = DefineGroup('pikascript', src, depend = ['PKG_USING_PIKASCRIPT'], CPPPATH = inc)
+        print(dir)
+        src = Glob(os.path.join(root,dir,'*.c'))
+        inc = [os.path.join(root,dir)]
+        group = DefineGroup(dir, src, depend = ['PKG_USING_PIKASCRIPT'], CPPPATH = inc)
 
 Return('group')
-
