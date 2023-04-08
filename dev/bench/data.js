@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1680880607714,
+  "lastUpdate": 1680929367064,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -95391,6 +95391,66 @@ window.BENCHMARK_DATA = {
             "value": 0.005000473209462082,
             "unit": "ms/iter",
             "extra": "iterations: 233577\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "52b89e01659767ec46636f5087e9cd2b49c92b96",
+          "message": "Merge pull request #301 from supperthomas/master\n\n[RTT]将工程按照文件夹进行分组",
+          "timestamp": "2023-04-08T12:00:25+08:00",
+          "tree_id": "24191adeb7fdbab3865dc766a84520f71937705a",
+          "url": "https://github.com/pikasTech/PikaPython/commit/52b89e01659767ec46636f5087e9cd2b49c92b96"
+        },
+        "date": 1680929359143,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 20166.7208603418,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 20166.7208603418 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 20.411899045967232,
+            "unit": "ms/iter",
+            "extra": "iterations: 57\ncpu: 20.390931678390203 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 11.225628917406127,
+            "unit": "ms/iter",
+            "extra": "iterations: 104\ncpu: 11.217627670966714 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 8.439177489700816,
+            "unit": "ms/iter",
+            "extra": "iterations: 138\ncpu: 8.430663869839513 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 2.4818388362554695,
+            "unit": "ms/iter",
+            "extra": "iterations: 473\ncpu: 2.479332180291435 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.0050010542681302485,
+            "unit": "ms/iter",
+            "extra": "iterations: 234460\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
