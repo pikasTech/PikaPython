@@ -3,6 +3,8 @@ import time
 import PikaStdDevice as std
 import bflb
 import lvgl as lv
+import network
+import requests
 
 def led():
     """
@@ -235,3 +237,23 @@ def mic():
     # start mic
     mic0.start()
     return mic0
+
+
+def wifi_sta():
+    """
+    wifi sta 例程
+    """
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(1)
+    ssid = input('SSID: ')
+    password = input('Password: ')
+    wlan.connect(ssid, password)
+    for i in range(10):
+        print('Waiting for wifi connection...')
+        if wlan.isconnected():
+            break
+        time.sleep(1)
+    print('Wifi connected:', bool(wlan.isconnected()))
+    print('GET pikapython.com header:')
+    res = requests.request('GET', 'http://www.pikapython.com')
+    print(res.headers)

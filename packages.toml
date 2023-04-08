@@ -593,4 +593,7 @@ releases = [
 
 [[packages]]
 name = "bflb"
-releases = [ "v0.1.0 90470be56f8f33f8869f46ad3432ec03d31755f7" ]
+releases = [
+  "v0.1.0 90470be56f8f33f8869f46ad3432ec03d31755f7",
+  "v0.2.0 7e4e5fbe35d30cf0884a126d24f4f1f5609fa912"
+]
