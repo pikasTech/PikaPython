@@ -2627,8 +2627,8 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     /* init operator info */
     int ret = operatorInfo_init(&op, self, vm, data, arg_ret_reg);
     if (0 != ret) {
-        pika_platform_printf("SyntaxError: invalid syntax\r\n");
-        obj_setErrorCode(self, PIKA_RES_ERR_SYNTAX_ERROR);
+        pika_platform_printf(PIKA_ERR_STRING_SYNTAX_ERROR);
+        VMState_setErrorCode(vm, PIKA_RES_ERR_SYNTAX_ERROR);
         return NULL;
     }
     switch (data[0]) {
@@ -3450,7 +3450,7 @@ static VMParameters* _pikaVM_runPyLines(PikaObj* self, char* py_lines) {
     /* generate byte code */
     byteCodeFrame_init(bytecode_frame_p);
     if (PIKA_RES_OK != pika_lines2Bytes(bytecode_frame_p, py_lines)) {
-        pika_platform_printf("Error: Syntax error.\r\n");
+        pika_platform_printf(PIKA_ERR_STRING_SYNTAX_ERROR);
         globals = NULL;
         goto exit;
     }

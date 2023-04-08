@@ -1110,6 +1110,10 @@ pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
         return NULL;
     }
 
+    f->addr = (uint8_t*)pikaMalloc(f->size);
+    pika_platform_memcpy(f->addr, arg_getBytes(file_arg), f->size);
+    f->need_free = PIKA_TRUE;
+
     arg_deinit(file_arg);
     return f;
 }
@@ -1152,6 +1156,9 @@ int pikafs_fwrite(void* buf, size_t size, size_t count, pikafs_FILE* file) {
  * @return 0 if success
  */
 int pikafs_fclose(pikafs_FILE* file) {
+    if (file->need_free){
+        pikaFree(file->addr, file->size);
+    }
     pikaFree(file, sizeof(pikafs_FILE));
     return 0;
 }

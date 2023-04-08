@@ -515,6 +515,8 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
 #define obj_setStruct(PikaObj_p_self, char_p_name, struct_) \
     args_setStruct(((PikaObj_p_self)->list), char_p_name, struct_)
 
+#define PIKA_ERR_STRING_SYNTAX_ERROR "SyntaxError: invalid syntax\r\n"
+
 #define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                               \
     obj_setErrorCode(self, 1);                                               \
     pika_platform_printf("Error: abstract method `%s()` need override.\r\n", \
