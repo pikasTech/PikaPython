@@ -11,7 +11,8 @@
 	<a href="https://github.com/pikastech/pikapython/watchers"><img src="https://img.shields.io/github/watchers/pikastech/pikapython?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/pikastech/pikapython/issues"><img src="https://img.shields.io/github/issues/pikastech/pikapython.svg?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/pikastech/pikapython/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pikastech/pikapython.svg?style=flat-square"></a>
-  <a href="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml"><img src="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml/badge.svg"> </a>
+    <a href="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml"><img src="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml/badge.svg"> </a>
+    <a href="https://app.codecov.io/gh/pikasTech/PikaPython"><img src="https://codecov.io/gh/pikasTech/PikaPython/branch/master/graph/badge.svg"> </a>
 </p>
 
 <p align="center">

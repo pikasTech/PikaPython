@@ -9,7 +9,8 @@
 	<a href="https://github.com/pikastech/pikapython/stargazers"><img src="https://img.shields.io/github/stars/pikastech/pikapython?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/pikastech/pikapython/network/members"><img src="https://img.shields.io/github/forks/pikastech/pikapython?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/pikastech/pikapython/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pikastech/pikapython.svg?style=flat-square"></a>
-        <a href="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml"><img src="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml/badge.svg"> </a>
+    <a href="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml"><img src="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml/badge.svg"> </a>
+    <a href="https://app.codecov.io/gh/pikasTech/PikaPython"><img src="https://codecov.io/gh/pikasTech/PikaPython/branch/master/graph/badge.svg"> </a>
 </p>
 
 <p align="center">
