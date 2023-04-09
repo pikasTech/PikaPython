@@ -126,9 +126,10 @@ void __callback_UART_recive(USART_TypeDef* USARTx, char rx_char) {
 }
 
 /* Msp handle interrupt */
-void __PIKA_USART1_IRQHandler(char rx_char) {
-    __callback_UART_recive(USART1, rx_char);
+void __PIKA_USART_IRQHandler(USART_TypeDef* USARTx, char rx_char) {
+    __callback_UART_recive(USARTx, rx_char);
 }
+
 void USART2_IRQHandler() {
     uint8_t rx_char = LL_USART_ReceiveData8(USART2);
     __callback_UART_recive(USART2, rx_char);
