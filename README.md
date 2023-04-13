@@ -11,8 +11,8 @@
 	<a href="https://github.com/pikastech/pikapython/watchers"><img src="https://img.shields.io/github/watchers/pikastech/pikapython?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/pikastech/pikapython/issues"><img src="https://img.shields.io/github/issues/pikastech/pikapython.svg?style=flat-square&logo=GitHub"></a>
 	<a href="https://github.com/pikastech/pikapython/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pikastech/pikapython.svg?style=flat-square"></a>
-    <a href="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml"><img src="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml/badge.svg"> </a>
-    <a href="https://app.codecov.io/gh/pikasTech/PikaPython"><img src="https://codecov.io/gh/pikasTech/PikaPython/branch/master/graph/badge.svg"> </a>
+  <a href="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml"><img src="https://github.com/pikasTech/pikapython/actions/workflows/CI.yml/badge.svg"> </a>
+  <a href="https://app.codecov.io/gh/pikasTech/PikaPython"><img src="https://codecov.io/gh/pikasTech/PikaPython/branch/master/graph/badge.svg"> </a>
 </p>
 
 <p align="center">
@@ -645,6 +645,10 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+|codecov CI support| [Renzhihan](https://github.com/Renzhihan) |
+|rt-thread build script fix and improve| [supperthomas](https://github.com/supperthomas) |
+|support pikafs pack and unpack to path|[sjy](https://gitee.com/shanjiayang)|
+|fix pika_platform_get_tick() in linux port|[梦程MI](https://gitee.com/dreamcmi) |
 |CH307开发板、BL618开发板 | [VeriMake](https://space.bilibili.com/356383684) |
 |VM instruction extension framework | [GorgonMeducer](https://github.com/GorgonMeducer) |
 |iotcloud module|[梦程MI](https://gitee.com/dreamcmi) |

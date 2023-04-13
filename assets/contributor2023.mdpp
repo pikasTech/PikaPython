@@ -1,3 +1,7 @@
+|codecov CI support| [Renzhihan](https://github.com/Renzhihan) |
+|rt-thread build script fix and improve| [supperthomas](https://github.com/supperthomas) |
+|support pikafs pack and unpack to path|[sjy](https://gitee.com/shanjiayang)|
+|fix pika_platform_get_tick() in linux port|[梦程MI](https://gitee.com/dreamcmi) |
 |CH307开发板、BL618开发板 | [VeriMake](https://space.bilibili.com/356383684) |
 |VM instruction extension framework | [GorgonMeducer](https://github.com/GorgonMeducer) |
 |iotcloud module|[梦程MI](https://gitee.com/dreamcmi) |
