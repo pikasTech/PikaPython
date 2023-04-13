@@ -56,6 +56,7 @@ typedef struct {
     uint8_t* addr;
     size_t size;
     size_t pos;
+    PIKA_BOOL need_free;
 } pikafs_FILE;
 
 pikafs_FILE* pikafs_fopen(char* file_name, char* mode);

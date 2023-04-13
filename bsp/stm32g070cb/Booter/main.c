@@ -49,44 +49,10 @@ PikaObj *pikaMain;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
-volatile static char rx_char = 0;
-char UART1_RxBuff[RX_BUFF_LENGTH] = {0};
-uint16_t UART1_RXBuff_offset = 0;
-__attribute__((weak)) void __PIKA_USART1_IRQHandler(char rx_char) {}
-void USART1_IRQHandler(void){
-    if (LL_USART_IsActiveFlag_RXNE(USART1)) {
-        rx_char = LL_USART_ReceiveData8(USART1);
-        __PIKA_USART1_IRQHandler(rx_char);
-        /* clear buff when overflow */
-        if (UART1_RXBuff_offset >= RX_BUFF_LENGTH) {
-            UART1_RXBuff_offset = 0;
-            memset(UART1_RxBuff, 0, sizeof(UART1_RxBuff));
-        }
-        /* recive char */
-        UART1_RxBuff[UART1_RXBuff_offset] = rx_char;
-        UART1_RXBuff_offset++;
-        if ('\n' == rx_char) {
-            /* handle python script download */
-            if (STM32_Code_reciveHandler(UART1_RxBuff, UART1_RXBuff_offset)) {
-                goto line_exit;
-            }
-        line_exit:
-            UART1_RXBuff_offset = 0;
-            memset(UART1_RxBuff, 0, sizeof(UART1_RxBuff));
-            return;
-        }
-    }
-}
+volatile static char g_rx_char = 0;
+char CONSOLE_RxBuff[RX_BUFF_LENGTH] = {0};
+uint16_t CONSOLE_RxBuff_offset = 0;
 
-/* support pikaScript Shell */
-char __platform_getchar(){
-    char res = 0;
-    while(rx_char == 0){
-    };
-    res = rx_char;
-    rx_char = 0;
-    return res;
-}
 
 
 int64_t pika_platform_getTick(void){
@@ -104,6 +70,147 @@ void pika_platform_sleep_s(uint32_t s){
 }
 
 extern PikaObj *__pikaMain;
+
+
+// 选择使用的串口
+#define USING_CONSOLE_USART1 1
+// #define USING_CONSOLE_USART3 1
+// #define USING_CONSOLE_USART4 1
+
+// 检查是否有选择的串口，如果没有定义任何一个，则报错
+#if !USING_CONSOLE_USART1 && !USING_CONSOLE_USART3 && !USING_CONSOLE_USART4
+#error "Please define a console USART (1, 3, or 4) to use by setting the USING_CONSOLE_USARTX to 1."
+#endif
+
+#if (USING_CONSOLE_USART1)
+#define USART_CONSOLE USART1
+#define USART_CONSOLE_IRQn USART1_IRQn
+#define USART_CONSOLE_GPIO GPIOA
+#define USART_CONSOLE_PIN_TX LL_GPIO_PIN_9
+#define USART_CONSOLE_PIN_RX LL_GPIO_PIN_10
+#define USART_CONSOLE_AF LL_GPIO_AF_1
+#define USART_CONSOLE_CLK_ENABLE() LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
+#define USART_CONSOLE_GPIO_CLK_ENABLE() LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOA)
+#define USART_CONSOLE_IRQHandler USART1_IRQHandler
+
+#elif (USING_CONSOLE_USART3)
+#define USART_CONSOLE USART3
+#define USART_CONSOLE_IRQn USART3_4_IRQn
+#define USART_CONSOLE_GPIO GPIOD
+#define USART_CONSOLE_PIN_TX LL_GPIO_PIN_8
+#define USART_CONSOLE_PIN_RX LL_GPIO_PIN_9
+#define USART_CONSOLE_AF LL_GPIO_AF_0
+#define USART_CONSOLE_CLK_ENABLE() LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3)
+#define USART_CONSOLE_GPIO_CLK_ENABLE() LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOD)
+#define USART_CONSOLE_IRQHandler USART3_4_IRQHandler
+
+#elif (USING_CONSOLE_USART4)
+#define USART_CONSOLE USART4
+#define USART_CONSOLE_IRQn USART3_4_IRQn
+#define USART_CONSOLE_GPIO GPIOC
+#define USART_CONSOLE_PIN_TX LL_GPIO_PIN_10
+#define USART_CONSOLE_PIN_RX LL_GPIO_PIN_11
+#define USART_CONSOLE_AF LL_GPIO_AF_0
+#define USART_CONSOLE_CLK_ENABLE() LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART4)
+#define USART_CONSOLE_GPIO_CLK_ENABLE() LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOC)
+#define USART_CONSOLE_IRQHandler USART3_4_IRQHandler
+
+#endif
+
+__attribute__((weak)) void __PIKA_USART_IRQHandler(USART_TypeDef* USARTx, char rx_char) {};
+
+void USART_CONSOLE_IRQHandler(void) {
+    if (LL_USART_IsActiveFlag_RXNE(USART_CONSOLE)) {
+        g_rx_char = LL_USART_ReceiveData8(USART_CONSOLE);
+        __PIKA_USART_IRQHandler(USART_CONSOLE, g_rx_char);
+        /* clear buff when overflow */
+        if (CONSOLE_RxBuff_offset >= RX_BUFF_LENGTH) {
+            CONSOLE_RxBuff_offset = 0;
+            memset(CONSOLE_RxBuff, 0, sizeof(CONSOLE_RxBuff));
+        }
+        /* recive char */
+        CONSOLE_RxBuff[CONSOLE_RxBuff_offset] = g_rx_char;
+        CONSOLE_RxBuff_offset++;
+        if ('\n' == g_rx_char || '\r' == g_rx_char) {
+            /* handle python script download */
+            if (STM32_Code_reciveHandler(CONSOLE_RxBuff, CONSOLE_RxBuff_offset)) {
+                goto line_exit;
+            }
+        line_exit:
+            CONSOLE_RxBuff_offset = 0;
+            memset(CONSOLE_RxBuff, 0, sizeof(CONSOLE_RxBuff));
+            return;
+        }
+    }
+}
+
+/* support printf */
+void HARDWARE_PRINTF_Init(void) {
+    LL_USART_InitTypeDef USART_InitStruct = {0};
+    LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    // Enable peripheral and GPIO clocks
+    USART_CONSOLE_CLK_ENABLE();
+    USART_CONSOLE_GPIO_CLK_ENABLE();
+
+    // Configure USART GPIO
+    GPIO_InitStruct.Pin = USART_CONSOLE_PIN_TX;
+    GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+    GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+    GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+    GPIO_InitStruct.Alternate = USART_CONSOLE_AF;
+    LL_GPIO_Init(USART_CONSOLE_GPIO, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = USART_CONSOLE_PIN_RX;
+    LL_GPIO_Init(USART_CONSOLE_GPIO, &GPIO_InitStruct);
+
+    // USART interrupt Init
+    NVIC_SetPriority(USART_CONSOLE_IRQn, 0);
+    NVIC_EnableIRQ(USART_CONSOLE_IRQn);
+
+    USART_InitStruct.PrescalerValue = LL_USART_PRESCALER_DIV1;
+    USART_InitStruct.BaudRate = 115200;
+    USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_8B;
+    USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
+    USART_InitStruct.Parity = LL_USART_PARITY_NONE;
+    USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
+    USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
+    USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
+    LL_USART_Init(USART_CONSOLE, &USART_InitStruct);
+    LL_USART_SetTXFIFOThreshold(USART_CONSOLE, LL_USART_FIFOTHRESHOLD_1_8);
+    LL_USART_SetRXFIFOThreshold(USART_CONSOLE, LL_USART_FIFOTHRESHOLD_1_8);
+    LL_USART_DisableFIFO(USART_CONSOLE);
+    LL_USART_ConfigAsyncMode(USART_CONSOLE);
+    LL_USART_Enable(USART_CONSOLE);
+
+    // Polling USART initialisation
+    while ((!(LL_USART_IsActiveFlag_TEACK(USART_CONSOLE))) ||
+           (!(LL_USART_IsActiveFlag_REACK(USART_CONSOLE)))) {
+    }
+
+    // Enable interrupt
+    LL_USART_EnableIT_RXNE(USART_CONSOLE);
+    LL_USART_EnableIT_PE(USART_CONSOLE);
+}
+
+int fputc(int ch, FILE* f) {
+    LL_USART_TransmitData8(USART_CONSOLE, ch);
+    while (LL_USART_IsActiveFlag_TC(USART_CONSOLE) != 1)
+        ;
+    return ch;
+}
+
+/* support pikaScript Shell */
+char __platform_getchar(){
+    char res = 0;
+    while(g_rx_char == 0){
+    };
+    res = g_rx_char;
+    g_rx_char = 0;
+    return res;
+}
+
 
 int main(void){
     HAL_Init();

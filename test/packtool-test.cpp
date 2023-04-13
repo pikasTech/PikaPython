@@ -30,7 +30,7 @@ TEST(packtool, packread) {
     EXPECT_NE(n, 0);
 
     // arg_deinit(fileArg);
-    pikaFree(pack_file, sizeof(pikafs_FILE));
+    pikafs_fclose(pack_file);
     pika_platform_fclose(file);
     pack_file = NULL;
 }
