@@ -268,7 +268,7 @@ Arg* arg_toStrArg(Arg* arg) {
         uint8_t* bytes = arg_getBytes(arg);
         Arg* str_arg = arg_newStr("b\'");
         for (size_t i = 0; i < bytes_size; i++) {
-            pika_platform_snprintf(buff_item, 16, "\\x%02x", bytes[i]);
+            pika_snprintf(buff_item, 16, "\\x%02x", bytes[i]);
             char* str_item = (char*)buff_item;
             str_arg = arg_strAppend(str_arg, str_item);
         }
@@ -277,7 +277,7 @@ Arg* arg_toStrArg(Arg* arg) {
     }
     if (type == ARG_TYPE_INT) {
 #if PIKA_PRINT_LLD_ENABLE
-        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%lld",
+        pika_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%lld",
                                (long long int)arg_getInt(arg));
 #else
         pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%d",
@@ -292,7 +292,7 @@ Arg* arg_toStrArg(Arg* arg) {
         return arg_newStr("False");
     }
     if (type == ARG_TYPE_FLOAT) {
-        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%f",
+        pika_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%f",
                                arg_getFloat(arg));
         return arg_newStr(buff);
     }
@@ -300,7 +300,7 @@ Arg* arg_toStrArg(Arg* arg) {
         return arg_newStr(arg_getStr(arg));
     }
     if (type == ARG_TYPE_POINTER) {
-        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%p",
+        pika_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE, "%p",
                                arg_getPtr(arg));
         return arg_newStr(buff);
     }
@@ -316,21 +316,21 @@ Arg* arg_toStrArg(Arg* arg) {
                 strEqu(method_store->name, "list") ||
                 strEqu(method_store->name, "dict") ||
                 strEqu(method_store->name, "tuple")) {
-                pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
+                pika_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
                                        "<class '%s'>", method_store->name);
                 return arg_newStr(buff);
             }
-            pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
+            pika_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
                                    "<built-in function %s>",
                                    method_store->name);
             return arg_newStr(buff);
         }
         if (argType_isConstructor(type)) {
-            pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
+            pika_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
                                    "<class 'object'>");
             return arg_newStr(buff);
         }
-        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
+        pika_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
                                "<class 'function'>");
         return arg_newStr(buff);
     }
@@ -341,7 +341,7 @@ Arg* arg_toStrArg(Arg* arg) {
         return arg_newStr(obj_toStr(arg_getPtr(arg)));
     }
     if (type == ARG_TYPE_OBJECT_META) {
-        pika_platform_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
+        pika_snprintf(buff, PIKA_SPRINTF_BUFF_SIZE,
                                "<meta object at %p>", arg_getPtr(arg));
         return arg_newStr(buff);
     }

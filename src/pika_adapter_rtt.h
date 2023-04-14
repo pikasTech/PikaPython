@@ -20,7 +20,7 @@ extern "C" {
 #define rt_memcpy pika_platform_memcpy
 #define rt_memcmp pika_platform_memcmp
 #define rt_kprintf pika_platform_printf
-#define rt_snprintf pika_platform_snprintf
+#define rt_snprintf pika_snprintf
 #define rt_vsnprintf pika_platform_vsnprintf
 #define rt_strdup pika_platform_strdup
 #define rt_tick_from_millisecond pika_platform_tick_from_millisecond

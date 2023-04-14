@@ -17,10 +17,8 @@ extern "C" {
 #define __platform_enable_irq_handle pika_platform_enable_irq_handle
 #define __platform_disable_irq_handle pika_platform_disable_irq_handle
 #define __platform_printf pika_platform_printf
-#define __platform_sprintf pika_platform_sprintf
-#define __platform_vsprintf pika_platform_vsprintf
 #define __platform_vsnprintf pika_platform_vsnprintf
-#define __platform_snprintf pika_platform_snprintf
+#define __platform_sprintf pika_sprintf
 #define __platform_strdup pika_platform_strdup
 #define __platform_tick_from_millisecond pika_platform_tick_from_millisecond
 #define __platform_malloc pika_platform_malloc

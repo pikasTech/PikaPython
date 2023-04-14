@@ -714,7 +714,7 @@ int Lib_loadLibraryFileToArray(char* origin_file_name, char* out_folder) {
         if (i % 12 == 0) {
             pika_fputs("\n    ", fp);
         }
-        pika_platform_sprintf(byte_buff, "0x%02x, ", array[i]);
+        pika_sprintf(byte_buff, "0x%02x, ", array[i]);
         pika_fputs(byte_buff, fp);
     }
 

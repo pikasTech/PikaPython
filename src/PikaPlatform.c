@@ -105,15 +105,12 @@ PIKA_WEAK int64_t pika_platform_get_tick(void) {
 #endif
 }
 
-PIKA_WEAK int pika_platform_vsprintf(char* buff, char* fmt, va_list args) {
+int pika_vsprintf(char* buff, char* fmt, va_list args) {
     /* vsnprintf */
     return pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
 }
 
-PIKA_WEAK int pika_platform_snprintf(char* buff,
-                                     size_t size,
-                                     const char* fmt,
-                                     ...) {
+int pika_snprintf(char* buff, size_t size, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     int ret = pika_platform_vsnprintf(buff, size, fmt, args);
@@ -125,14 +122,76 @@ PIKA_WEAK int pika_platform_putchar(char ch) {
     return putchar(ch);
 }
 
-PIKA_WEAK int pika_platform_vprintf(char* fmt, va_list args) {
-    /* vsprintf to vprintf */
-    char buff[PIKA_SPRINTF_BUFF_SIZE];
-    pika_platform_vsprintf(buff, fmt, args);
-    /* putchar */
+int pika_pvsprintf(char** buff, const char* fmt, va_list args) {
+    int required_size;
+    int current_size = PIKA_SPRINTF_BUFF_SIZE;
+    *buff = (char*)pika_platform_malloc(current_size * sizeof(char));
+
+    if (*buff == NULL) {
+        return -1;  // Memory allocation failed
+    }
+
+    va_list args_copy;
+    va_copy(args_copy, args);
+
+    required_size =
+        pika_platform_vsnprintf(*buff, current_size, fmt, args_copy);
+    va_end(args_copy);
+
+    while (required_size >= current_size) {
+        current_size *= 2;
+        char* new_buff =
+            (char*)pika_platform_realloc(*buff, current_size * sizeof(char));
+
+        if (new_buff == NULL) {
+            pika_platform_free(*buff);
+            return -1;  // Memory allocation failed
+        } else {
+            *buff = new_buff;
+        }
+
+        va_copy(args_copy, args);
+        required_size =
+            pika_platform_vsnprintf(*buff, current_size, fmt, args_copy);
+        va_end(args_copy);
+    }
+
+    return required_size;
+}
+
+PIKA_BOOL contains_format_specifier(const char* str) {
+    for (size_t i = 0; i < strlen(str); i++) {
+        if (str[i] == '%') {
+            if (i + 1 < strlen(str) && str[i + 1] != '%') {
+                return PIKA_TRUE;
+            }
+        }
+    }
+    return PIKA_FALSE;
+}
+
+int pika_vprintf(char* fmt, va_list args) {
+    if (!contains_format_specifier(fmt)) {
+        // No format specifier in the fmt string, print it directly
+        for (int i = 0; i < strlen(fmt); i++) {
+            pika_platform_putchar(fmt[i]);
+        }
+        return 0;
+    }
+
+    char* buff = NULL;
+    int required_size = pika_pvsprintf(&buff, fmt, args);
+
+    if (required_size < 0) {
+        return -1;  // Memory allocation or other error occurred
+    }
+
+    // putchar
     for (int i = 0; i < strlen(buff); i++) {
         pika_platform_putchar(buff[i]);
     }
+
+    pika_platform_free(buff);
     return 0;
 }
 
@@ -140,7 +199,7 @@ PIKA_WEAK int pika_platform_vprintf(char* fmt, va_list args) {
 PIKA_WEAK void pika_platform_printf(char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    pika_platform_vprintf(fmt, args);
+    pika_vprintf(fmt, args);
     va_end(args);
 }
 #endif
@@ -164,7 +223,7 @@ PIKA_WEAK int pika_platform_vsnprintf(char* buff,
     return vsnprintf(buff, size, fmt, args);
 }
 
-PIKA_WEAK int pika_platform_sprintf(char* buff, char* fmt, ...) {
+int pika_sprintf(char* buff, char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     int res = pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);

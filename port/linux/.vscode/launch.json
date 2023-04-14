@@ -15,7 +15,7 @@
                 // "--gtest_filter=doc.*"
                 // "--gtest_filter=packtool.*"
                 // "--gtest_filter=os.path"
-                "--gtest_filter=packtool.packread"
+                // "--gtest_filter=packtool.packread"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

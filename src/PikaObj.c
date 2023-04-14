@@ -2468,7 +2468,7 @@ void pks_printVersion(void) {
 }
 
 void pks_getVersion(char* buff) {
-    pika_platform_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR,
+    pika_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR,
                           PIKA_VERSION_MINOR, PIKA_VERSION_MICRO);
 }
 

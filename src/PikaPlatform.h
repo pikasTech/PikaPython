@@ -138,13 +138,14 @@ void pika_platform_disable_irq_handle(void);
 #ifndef pika_platform_printf
 void pika_platform_printf(char* fmt, ...);
 #endif
-int pika_platform_sprintf(char* buff, char* fmt, ...);
-int pika_platform_vsprintf(char* buff, char* fmt, va_list args);
+int pika_vprintf(char* fmt, va_list args);
+int pika_sprintf(char* buff, char* fmt, ...);
+int pika_vsprintf(char* buff, char* fmt, va_list args);
 int pika_platform_vsnprintf(char* buff,
                             size_t size,
                             const char* fmt,
                             va_list args);
-int pika_platform_snprintf(char* buff, size_t size, const char* fmt, ...);
+int pika_snprintf(char* buff, size_t size, const char* fmt, ...);
 char* pika_platform_strdup(const char* src);
 size_t pika_platform_tick_from_millisecond(size_t ms);
 
