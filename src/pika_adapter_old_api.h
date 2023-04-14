@@ -19,6 +19,7 @@ extern "C" {
 #define __platform_printf pika_platform_printf
 #define __platform_vsnprintf pika_platform_vsnprintf
 #define __platform_sprintf pika_sprintf
+#define pika_platform_sprintf pika_sprintf
 #define __platform_strdup pika_platform_strdup
 #define __platform_tick_from_millisecond pika_platform_tick_from_millisecond
 #define __platform_malloc pika_platform_malloc
