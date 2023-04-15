@@ -33,5 +33,7 @@ TEST(thread, self) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST_SINGLE_FILE(thread, test2, "test/python/_thread/test2.py")
+
 #endif
 TEST_END
