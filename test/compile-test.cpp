@@ -754,7 +754,7 @@ TEST(compiler, str_join) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(thread, void_arg) {
+TEST(compiler, thread_void_arg) {
     char* lines =
         "thread()";
     pika_lines2Array(lines);
