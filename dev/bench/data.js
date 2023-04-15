@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1681376056102,
+  "lastUpdate": 1681533764551,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -95691,6 +95691,66 @@ window.BENCHMARK_DATA = {
             "value": 0.005000363356178202,
             "unit": "ms/iter",
             "extra": "iterations: 280622\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "committer": {
+            "email": "liang6516@outlook.com",
+            "name": "pikastech",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "eed2e11a2079ee56934343b5c9654ec524892437",
+          "message": "fix typo",
+          "timestamp": "2023-04-15T11:32:19+08:00",
+          "tree_id": "5d66e817d501e8781c01c4563cc1d1b2b38fce1a",
+          "url": "https://github.com/pikasTech/PikaPython/commit/eed2e11a2079ee56934343b5c9654ec524892437"
+        },
+        "date": 1681533756256,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 20641.590830956182,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 20641.590830956182 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 20.083147668406763,
+            "unit": "ms/iter",
+            "extra": "iterations: 58\ncpu: 20.07757202533229 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 10.941961784456838,
+            "unit": "ms/iter",
+            "extra": "iterations: 107\ncpu: 10.940145261504156 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 8.592563950227095,
+            "unit": "ms/iter",
+            "extra": "iterations: 136\ncpu: 8.590815690786311 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 2.422424367825664,
+            "unit": "ms/iter",
+            "extra": "iterations: 484\ncpu: 2.4222939215041035 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.0050004496403244425,
+            "unit": "ms/iter",
+            "extra": "iterations: 234346\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
