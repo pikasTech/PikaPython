@@ -198,6 +198,7 @@ void PikaStdTask_Task_run_forever(PikaObj* self) {
     while (1) {
         __Task_update_tick(self);
         PikaStdTask_Task_run_once(self);
+        pika_platform_thread_delay();
     }
 }
 
@@ -212,6 +213,5 @@ void PikaStdTask_Task_run_until_ms(PikaObj* self, int until_ms) {
 }
 
 void PikaStdTask_Task_platformGetTick(PikaObj* self) {
-    obj_setErrorCode(self, 1);
-    __platform_printf("Error: abstract method %s need implament", __FUNCTION__);
+    obj_setInt(self, "tick", pika_platform_get_tick());
 }
