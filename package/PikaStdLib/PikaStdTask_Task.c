@@ -209,6 +209,7 @@ void PikaStdTask_Task_run_until_ms(PikaObj* self, int until_ms) {
         if (obj_getInt(self, "tick") > until_ms) {
             return;
         }
+        pika_platform_thread_delay();
     }
 }
 
