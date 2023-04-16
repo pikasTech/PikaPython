@@ -94,4 +94,9 @@ void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
     info->thread = pika_platform_thread_init(
         "pika_thread", _thread_func, info, PIKA_THREAD_STACK_SIZE,
         PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
+    if (NULL == info->thread) {
+        pikaFree(info, sizeof(pika_thread_info));
+        obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
+        obj_setSysOut(self, "thread create failed");
+    }
 }
