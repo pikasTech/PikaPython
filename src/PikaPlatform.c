@@ -159,23 +159,47 @@ int pika_pvsprintf(char** buff, const char* fmt, va_list args) {
     return required_size;
 }
 
-PIKA_BOOL contains_format_specifier(const char* str) {
-    for (size_t i = 0; i < strlen(str); i++) {
-        if (str[i] == '%') {
-            if (i + 1 < strlen(str) && str[i + 1] != '%') {
-                return PIKA_TRUE;
+static PIKA_BOOL _check_no_buff_format(char* format) {
+    while (*format) {
+        if (*format == '%') {
+            ++format;
+            if (*format != 's' && *format != '%') {
+                return PIKA_FALSE;
             }
         }
+        ++format;
     }
-    return PIKA_FALSE;
+    return PIKA_TRUE;
+}
+
+static int _no_buff_vprintf(char* fmt, va_list args) {
+    int written = 0;
+    while (*fmt) {
+        if (*fmt == '%') {
+            ++fmt;
+            if (*fmt == 's') {
+                const char* str = va_arg(args, const char*);
+                int len = strlen(str);
+                written += len;
+                for (int i = 0; i < len; i++) {
+                    pika_platform_putchar(str[i]);
+                }
+            } else if (*fmt == '%') {
+                pika_platform_putchar('%');
+                ++written;
+            }
+        } else {
+            pika_platform_putchar(*fmt);
+            ++written;
+        }
+        ++fmt;
+    }
+    return written;
 }
 
 int pika_vprintf(char* fmt, va_list args) {
-    if (!contains_format_specifier(fmt)) {
-        // No format specifier in the fmt string, print it directly
-        for (int i = 0; i < strlen(fmt); i++) {
-            pika_platform_putchar(fmt[i]);
-        }
+    if (_check_no_buff_format(fmt)) {
+        _no_buff_vprintf(fmt, args);
         return 0;
     }
 
