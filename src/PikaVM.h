@@ -364,10 +364,12 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
                                    uint32_t eventId,
                                    Arg* eventData);
 int _VMEvent_getVMCnt(void);
-void _VMEvent_pickupEvent(void);
+void __VMEvent_pickupEvent(char* info);
 void _pikaVM_yield(void);
 int _VM_lock_init(void);
 int _VM_is_first_lock(void);
+
+#define _VMEvent_pickupEvent() __VMEvent_pickupEvent(__FILE__)
 
 typedef struct {
     PikaObj* lreg[PIKA_REGIST_SIZE];

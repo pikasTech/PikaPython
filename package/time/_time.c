@@ -8,12 +8,15 @@
 #endif
 
 void (*global_do_sleep_ms)(uint32_t);
+extern volatile VMSignal g_PikaVMSignal;
 
 static void _do_sleep_ms_tick(uint32_t ms) {
     int64_t tick = pika_platform_get_tick();
     while (pika_platform_get_tick() - tick < ms) {
 #if PIKA_EVENT_ENABLE
-        _VMEvent_pickupEvent();
+        if (!g_PikaVMSignal.event_thread_inited) {
+            _VMEvent_pickupEvent();
+        }
 #endif
         pika_platform_thread_delay();
     }

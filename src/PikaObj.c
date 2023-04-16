@@ -2346,6 +2346,7 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
                               uint32_t eventId,
                               Arg* eventData) {
     PikaObj* handler = pks_eventListener_getEventHandleObj(lisener, eventId);
+    pika_debug("event handler: %p", handler);
     if (NULL == handler) {
         pika_platform_printf(
             "Error: can not find event handler by id: [0x%02x]\r\n", eventId);
@@ -2366,6 +2367,7 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
         0x76, 0x65, 0x6e, 0x74, 0x43, 0x61, 0x6c, 0x6c, 0x42, 0x61, 0x63, 0x6b,
         0x00, 0x5f, 0x72, 0x65, 0x73, 0x00, /* const pool */
     };
+    pika_debug("run event handler: %p", handler);
     pikaVM_runByteCode(handler, (uint8_t*)bytes);
     Arg* res = obj_getArg(handler, "_res");
     res = arg_copy(res);
@@ -2380,11 +2382,12 @@ Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
 }
 
 static void _thread_event(void* arg) {
+    pika_assert(_VM_is_first_lock());
     while (1) {
+        pika_GIL_ENTER();
         _VMEvent_pickupEvent();
         pika_GIL_EXIT();
         pika_platform_thread_delay();
-        pika_GIL_ENTER();
     }
 }
 
