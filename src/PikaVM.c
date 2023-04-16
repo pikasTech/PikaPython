@@ -1830,7 +1830,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     /* get method host obj from stack */
     if (NULL == oMethodHost && sRunPath[0] == '.') {
         /* get method host obj from stack */
-        Arg* stack_tmp[PIKA_ARG_NUM_MAX] = {0};
+        Arg** stack_tmp = (Arg**)pikaMalloc(sizeof(Arg*) * PIKA_ARG_NUM_MAX);
         int n_arg = VMState_getInputArgNum(vm);
         if (n_arg > PIKA_ARG_NUM_MAX) {
             pika_platform_printf(
@@ -1850,6 +1850,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         for (int i = n_arg - 2; i >= 0; i--) {
             stack_pushArg(&(vm->stack), stack_tmp[i]);
         }
+        pikaFree(stack_tmp, sizeof(Arg*) * PIKA_ARG_NUM_MAX);
     }
 #endif
 
@@ -3973,49 +3974,51 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
     pika_assert(NULL != run_state);
     int size = bytecode_frame->instruct_array.size;
     /* locals is the local scope */
-    VMState vm = {.bytecode_frame = bytecode_frame,
-                  .locals = locals,
-                  .globals = globals,
-                  .jmp = 0,
-                  .pc = pc,
-                  .loop_deepth = 0,
-                  .error_code = PIKA_RES_OK,
-                  .line_error_code = PIKA_RES_OK,
-                  .try_error_code = PIKA_RES_OK,
-                  .run_state = run_state,
-                  .ins_cnt = 0,
-                  .in_super = PIKA_FALSE,
-                  .super_invoke_deepth = 0};
-    stack_init(&(vm.stack));
-    VMState_initReg(&vm);
+
+    VMState* vm_ptr = (VMState*)pikaMalloc(sizeof(VMState));
+    vm_ptr->bytecode_frame = bytecode_frame;
+    vm_ptr->locals = locals;
+    vm_ptr->globals = globals;
+    vm_ptr->jmp = 0;
+    vm_ptr->pc = pc;
+    vm_ptr->loop_deepth = 0;
+    vm_ptr->error_code = PIKA_RES_OK;
+    vm_ptr->line_error_code = PIKA_RES_OK;
+    vm_ptr->try_error_code = PIKA_RES_OK;
+    vm_ptr->run_state = run_state;
+    vm_ptr->ins_cnt = 0;
+    vm_ptr->in_super = PIKA_FALSE;
+    vm_ptr->super_invoke_deepth = 0;
+    stack_init(&(vm_ptr->stack));
+    VMState_initReg(vm_ptr);
     if (g_PikaVMSignal.vm_cnt == 0) {
         pks_vmSignal_setCtrlElear();
     }
     g_PikaVMSignal.vm_cnt++;
-    while (vm.pc < size) {
-        if (vm.pc == VM_PC_EXIT) {
+    while (vm_ptr->pc < size) {
+        if (vm_ptr->pc == VM_PC_EXIT) {
             break;
         }
-        InstructUnit* this_ins_unit = VMState_getInstructNow(&vm);
+        InstructUnit* this_ins_unit = VMState_getInstructNow(vm_ptr);
         uint8_t is_new_line = instructUnit_getIsNewLine(this_ins_unit);
         if (is_new_line) {
-            VMState_solveUnusedStack(&vm);
-            stack_reset(&(vm.stack));
-            vm.error_code = 0;
-            vm.line_error_code = 0;
+            VMState_solveUnusedStack(vm_ptr);
+            stack_reset(&(vm_ptr->stack));
+            vm_ptr->error_code = 0;
+            vm_ptr->line_error_code = 0;
         }
-        vm.pc = pikaVM_runInstructUnit(self, &vm, this_ins_unit);
-        vm.ins_cnt++;
+        vm_ptr->pc = pikaVM_runInstructUnit(self, vm_ptr, this_ins_unit);
+        vm_ptr->ins_cnt++;
 #if PIKA_INSTRUCT_HOOK_ENABLE
-        if (vm.ins_cnt % PIKA_INSTRUCT_HOOK_PERIOD == 0) {
+        if (vm_ptr->ins_cnt % PIKA_INSTRUCT_HOOK_PERIOD == 0) {
             pika_hook_instruct();
         }
 #endif
-        if (vm.ins_cnt % PIKA_INSTRUCT_YIELD_PERIOD == 0) {
+        if (vm_ptr->ins_cnt % PIKA_INSTRUCT_YIELD_PERIOD == 0) {
             _pikaVM_yield();
         }
-        if (0 != vm.error_code) {
-            vm.line_error_code = vm.error_code;
+        if (0 != vm_ptr->error_code) {
+            vm_ptr->line_error_code = vm_ptr->error_code;
             InstructUnit* head_ins_unit = this_ins_unit;
             /* get first ins of a line */
             while (1) {
@@ -4024,11 +4027,11 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
                 }
                 head_ins_unit--;
             }
-            if (vm.run_state->try_state) {
-                vm.try_error_code = vm.error_code;
+            if (vm_ptr->run_state->try_state) {
+                vm_ptr->try_error_code = vm_ptr->error_code;
             }
             /* print inses of a line */
-            if (!vm.run_state->try_state) {
+            if (!vm_ptr->run_state->try_state) {
                 while (1) {
                     if (head_ins_unit != this_ins_unit) {
                         pika_platform_printf("   ");
@@ -4044,13 +4047,16 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
                 }
             }
             pika_platform_error_handle();
-            vm.error_code = 0;
+            vm_ptr->error_code = 0;
         }
     }
-    VMState_solveUnusedStack(&vm);
-    stack_deinit(&(vm.stack));
+    VMState_solveUnusedStack(vm_ptr);
+    stack_deinit(&(vm_ptr->stack));
     g_PikaVMSignal.vm_cnt--;
-    return locals;
+
+    VMParameters* result = locals;
+    pikaFree(vm_ptr, sizeof(VMState));
+    return result;
 }
 
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
