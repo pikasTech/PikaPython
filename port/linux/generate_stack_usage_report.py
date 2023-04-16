@@ -47,3 +47,5 @@ def generate_report(stack_usage_data):
 if __name__ == "__main__":
     stack_usage_data = collect_stack_usage_info()
     report = generate_report(stack_usage_data)
+    with open("stack_usage_report.txt", "w") as f:
+        f.write(report)

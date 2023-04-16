@@ -1398,22 +1398,22 @@ static int _get_n_input_with_unpack(VMState* vm, int n_used) {
 }
 
 #define vars_or_keys_or_default (f.is_vars || f.is_keys || f.is_default)
+#define METHOD_TYPE_LIST_MAX_LEN PIKA_LINE_BUFF_SIZE
 static int VMState_loadArgsFromMethodArg(VMState* vm,
                                          PikaObj* method_host_obj,
                                          Args* locals,
                                          Arg* method_arg,
                                          char* method_name,
                                          int n_used) {
-    Arg* argv[PIKA_ARG_NUM_MAX] = {0};
     int argc = 0;
-    char _buffs1[PIKA_LINE_BUFF_SIZE] = {0};
-    char* buffs1 = (char*)_buffs1;
-    char _buffs2[PIKA_LINE_BUFF_SIZE] = {0};
-    char* buffs2 = (char*)_buffs2;
+    Arg** argv = (Arg**)pikaMalloc(sizeof(Arg*) * PIKA_ARG_NUM_MAX);
+    char* buffs1 = (char*)pikaMalloc(METHOD_TYPE_LIST_MAX_LEN);
+    char* buffs2 = (char*)pikaMalloc(METHOD_TYPE_LIST_MAX_LEN);
     FunctionArgsInfo f = {0};
     char* type_list_buff = NULL;
     /* get method type list */
-    f.type_list = methodArg_getTypeList(method_arg, buffs1, sizeof(_buffs1));
+    f.type_list =
+        methodArg_getTypeList(method_arg, buffs1, METHOD_TYPE_LIST_MAX_LEN);
     if (NULL == f.type_list) {
         pika_platform_printf(
             "OverflowError: type list is too long, please use bigger "
@@ -1494,7 +1494,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     /* create tuple/dict for vars/keys */
     if (vars_or_keys_or_default) {
-        if (strGetSize(f.type_list) > sizeof(_buffs2)) {
+        if (strGetSize(f.type_list) > METHOD_TYPE_LIST_MAX_LEN) {
             pika_platform_printf(
                 "OverFlowError: please use bigger PIKA_LINE_BUFF_SIZE\r\n");
             while (1) {
@@ -1581,6 +1581,9 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     }
     _loadLocalsFromArgv(locals, argc, argv);
 exit:
+    pikaFree(buffs1, METHOD_TYPE_LIST_MAX_LEN);
+    pikaFree(buffs2, METHOD_TYPE_LIST_MAX_LEN);
+    pikaFree(argv, sizeof(Arg*) * PIKA_ARG_NUM_MAX);
     return f.n_arg;
 }
 
@@ -4128,7 +4131,7 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
 
 void _pikaVM_yield(void) {
 #if PIKA_EVENT_ENABLE
-    if(!g_PikaVMSignal.event_thread_inited) {
+    if (!g_PikaVMSignal.event_thread_inited) {
         _VMEvent_pickupEvent();
     }
 #endif
