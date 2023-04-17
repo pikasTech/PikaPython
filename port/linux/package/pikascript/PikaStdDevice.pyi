@@ -69,7 +69,6 @@ class GPIO(BaseDev):
 
     def read(self) -> int:
         """Read the pin value."""
-    
 
     SIGNAL_RISING: int
     SIGNAL_FALLING: int
@@ -167,6 +166,20 @@ class UART:
     def setId(self, id: int):
         """Set the id of the UART."""
 
+    STOP_BITS_1: int
+    STOP_BITS_2: int
+    STOP_BITS_1_5: int
+
+    def setStopBits(self, stopBits: int):
+        """Set the stop bits of the UART."""
+
+    PARITY_NONE: int
+    PARITY_EVEN: int
+    PARITY_ODD: int
+
+    def setParity(self, parity: int):
+        """Set the parity of the UART."""
+
     FLOW_CONTROL_NONE: int
     FLOW_CONTROL_RTS: int
     FLOW_CONTROL_CTS: int
@@ -174,6 +187,9 @@ class UART:
 
     def setFlowControl(self, flowControl: int):
         """Set the flow control of the UART."""
+
+    def setDataBits(self, dataBits: int):
+        """Set the data bits of the UART."""
 
     def enable(self):
         """Enable the UART."""
@@ -197,17 +213,17 @@ class UART:
         """
         Remap the TX pin.
         """
-    
+
     def setPinRX(self, pin: str):
         """
         Remap the RX pin.
         """
-    
+
     def setPinCTS(self, pin: str):
         """
         Remap the CTS pin.
         """
-    
+
     def setPinRTS(self, pin: str):
         """
         Remap the RTS pin.
@@ -228,7 +244,7 @@ class UART:
         io.setCallBack(cb1, uart.SIGNAL_RX)
         ```
         """
-    
+
     @abstractmethod
     def platformEnable(self): ...
 

@@ -20,6 +20,14 @@ void PikaStdDevice_UART_init(PikaObj* self) {
     obj_setInt(self, "SIGNAL_RX", PIKA_HAL_UART_EVENT_SIGNAL_RX);
     obj_setInt(self, "SIGNAL_TX", PIKA_HAL_UART_EVENT_SIGNAL_TX);
 
+    obj_setInt(self, "STOP_BITS_1", PIKA_HAL_UART_STOP_BITS_1);
+    obj_setInt(self, "STOP_BITS_2", PIKA_HAL_UART_STOP_BITS_2);
+    obj_setInt(self, "STOP_BITS_1_5", PIKA_HAL_UART_STOP_BITS_1_5);
+    obj_setInt(self, "PARITY_NONE", PIKA_HAL_UART_PARITY_NONE);
+    obj_setInt(self, "PARITY_ODD", PIKA_HAL_UART_PARITY_ODD);
+    obj_setInt(self, "PARITY_EVEN", PIKA_HAL_UART_PARITY_EVEN);
+
+    /* default */
     obj_setInt(self, "baudRate", 115200);
     obj_setInt(self, "id", 1);
     obj_setStr(self, "readBuff", "");
@@ -28,6 +36,9 @@ void PikaStdDevice_UART_init(PikaObj* self) {
     obj_setStr(self, "RXpin", "none");
     obj_setStr(self, "RTSpin", "none");
     obj_setStr(self, "CTSpin", "none");
+    obj_setInt(self, "dataBits", 8);
+    obj_setInt(self, "parity", PIKA_HAL_UART_PARITY_NONE);
+    obj_setInt(self, "stopBits", PIKA_HAL_UART_STOP_BITS_1);
 }
 
 void PikaStdDevice_UART___init__(PikaObj* self) {
@@ -52,6 +63,18 @@ void PikaStdDevice_UART_setBaudRate(PikaObj* self, int baudRate) {
 
 void PikaStdDevice_UART_setFlowControl(PikaObj* self, int flowControl) {
     obj_setInt(self, "flowControl", flowControl);
+}
+
+void PikaStdDevice_UART_setDataBits(PikaObj* self, int dataBits) {
+    obj_setInt(self, "dataBits", dataBits);
+}
+
+void PikaStdDevice_UART_setParity(PikaObj* self, int parity) {
+    obj_setInt(self, "parity", parity);
+}
+
+void PikaStdDevice_UART_setStopBits(PikaObj* self, int stopBits) {
+    obj_setInt(self, "stopBits", stopBits);
 }
 
 void PikaStdDevice_UART_setId(PikaObj* self, int id) {
@@ -94,6 +117,9 @@ void PikaStdDevice_UART_platformEnable(PikaObj* self) {
     pika_hal_UART_config cfg = {0};
     cfg.baudrate = obj_getInt(self, "baudRate");
     cfg.flow_control = obj_getInt(self, "flowControl");
+    cfg.stop_bits = obj_getInt(self, "stopBits");
+    cfg.parity = obj_getInt(self, "parity");
+    cfg.data_bits = obj_getInt(self, "dataBits");
     if (!strEqu(obj_getStr(self, "TXpin"), "none")) {
         cfg.TX = pika_hal_open(PIKA_HAL_GPIO, obj_getStr(self, "TXpin"));
         if (NULL == cfg.TX) {
