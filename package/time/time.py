@@ -23,21 +23,25 @@ def time_ns() -> int:
     return _time.time_ns()
 
 
-def gmtime(unix_time: float):
+def gmtime(unix_time: float = None):
+    if unix_time is None:
+        return _time.gmtime(time())
     return _time.gmtime(unix_time)
 
 
-def localtime(unix_time: float):
+def localtime(unix_time: float = None):
+    if unix_time is None:
+        return _time.localtime(time())
     return _time.localtime(unix_time)
 
 
 def mktime() -> int:
     return _time.mktime()
 
+def ctime(unix_time: float = None) -> str:
+    if unix_time is None:
+        return _time.ctime(time())
+    return _time.ctime(unix_time)
 
 def asctime() -> str:
     return _time.asctime()
-
-
-def ctime(unix_time: float) -> str:
-    return _time.ctime(unix_time)

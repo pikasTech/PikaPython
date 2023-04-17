@@ -9,6 +9,7 @@
 
 void (*global_do_sleep_ms)(uint32_t);
 extern volatile VMSignal g_PikaVMSignal;
+volatile int g_pika_local_timezone = 8;
 
 static void _do_sleep_ms_tick(uint32_t ms) {
     int64_t tick = pika_platform_get_tick();
@@ -638,7 +639,7 @@ void _time_localtime(PikaObj* self, pika_float unix_time) {
 #else
     _tm this_tm;
     char str[200];
-    int locale = obj_getInt(self, "locale");
+    int locale = g_pika_local_timezone;
     time_localtime(unix_time, &this_tm, locale);
     time_set_tm_value(self, &this_tm);
     // 格式化字符
@@ -674,7 +675,7 @@ int _time_mktime(PikaObj* self) {
     return 0;
 #else
     _tm this_tm;
-    int locale = obj_getInt(self, "locale");
+    int locale = g_pika_local_timezone;
     time_get_tm_value(self, &this_tm);
     return time_mktime(&this_tm, locale);
 #endif
@@ -686,11 +687,10 @@ void _time_asctime(PikaObj* self) {
     obj_setSysOut(
         self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
 #else
-    _tm this_tm;
-    time_get_tm_value(self, &this_tm);
-    time_asctime(&this_tm);
+    _time_ctime(self, _time_time(self));
 #endif
 }
+
 void _time_ctime(PikaObj* self, pika_float unix_time) {
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
     obj_setErrorCode(self, 1);
@@ -698,7 +698,7 @@ void _time_ctime(PikaObj* self, pika_float unix_time) {
         self, "[error] PIKA_STD_DEVICE_UNIX_TIME_ENABLE need to be enable.");
 #else
     _tm this_tm;
-    int locale = obj_getInt(self, "locale");
+    int locale = g_pika_local_timezone;
     time_localtime(unix_time, &this_tm, locale);
     time_asctime(&this_tm);
 #endif
@@ -713,7 +713,7 @@ void _time___init__(PikaObj* self) {
 #if !PIKA_STD_DEVICE_UNIX_TIME_ENABLE
 #else
     _tm this_tm;
-    obj_setInt(self, "locale", 8);
+    g_pika_local_timezone = 8;
     time_localtime(0.0, &this_tm, 8);
     time_set_tm_value(self, &this_tm);
 #endif
