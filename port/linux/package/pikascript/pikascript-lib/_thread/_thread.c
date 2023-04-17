@@ -2,10 +2,13 @@
 #include "PikaVM.h"
 #include "TinyObj.h"
 
+static volatile int g_thread_stack_size = PIKA_THREAD_STACK_SIZE;
+extern volatile PikaMemInfo g_PikaMemInfo;
 typedef struct pika_thread_info {
     Arg* function;
     Arg* args;
     pika_platform_thread_t* thread;
+    int stack_size;
 } pika_thread_info;
 
 static void _thread_func(void* arg) {
@@ -65,6 +68,7 @@ static void _thread_func(void* arg) {
     if (NULL != info->args) {
         arg_deinit(info->args);
     }
+    g_PikaMemInfo.heapUsed -= info->stack_size;
     pika_debug("thread exiting");
     pika_platform_thread_t* thread = info->thread;
     pikaFree(info, sizeof(pika_thread_info));
@@ -91,12 +95,26 @@ void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
         info->args = arg_copy(args_);
     }
     _VM_lock_init();
-    info->thread = pika_platform_thread_init(
-        "pika_thread", _thread_func, info, PIKA_THREAD_STACK_SIZE,
-        PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
+    info->stack_size = g_thread_stack_size;
+    info->thread = pika_platform_thread_init("pika_thread", _thread_func, info,
+                                             info->stack_size, PIKA_THREAD_PRIO,
+                                             PIKA_THREAD_TICK);
     if (NULL == info->thread) {
         pikaFree(info, sizeof(pika_thread_info));
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         obj_setSysOut(self, "thread create failed");
+        return;
     }
+    g_PikaMemInfo.heapUsed += info->stack_size;
+}
+
+int _thread_stack_size(PikaObj* self, PikaTuple* size) {
+    if (pikaTuple_getSize(size) == 1) {
+        int stack_size = pikaTuple_getInt(size, 0);
+        if (stack_size == 0) {
+            stack_size = PIKA_THREAD_STACK_SIZE;
+        }
+        g_thread_stack_size = stack_size;
+    }
+    return g_thread_stack_size;
 }

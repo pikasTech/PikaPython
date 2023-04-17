@@ -1775,7 +1775,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     PIKA_BOOL bSkipInit = PIKA_FALSE;
     char* sSysOut;
     int iNumUsed = 0;
-    arg_newReg(arg_reg1, 64);
+    arg_newReg(arg_reg1, 32);
     RunState tSubRunState = {.try_state = vm->run_state->try_state,
                              .try_result = TRY_RESULT_NONE};
     pika_assert(NULL != vm->run_state);
