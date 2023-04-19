@@ -2112,7 +2112,7 @@ static PIKA_BOOL _proxy_setattr(PikaObj* self, char* name, Arg* arg) {
 #endif
     if (obj_getFlag(self, OBJ_FLAG_PROXY_SETATTR)) {
         obj_setStr(self, "@name", name);
-        obj_setArg(self, "@value", arg);
+        obj_setArg_noCopy(self, "@value", arg);
         /* clang-format off */
         PIKA_PYTHON(
         __setattr__(@name, @value)

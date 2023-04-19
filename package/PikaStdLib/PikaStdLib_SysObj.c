@@ -86,16 +86,16 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
 pika_float PikaStdLib_SysObj_float(PikaObj* self, Arg* arg) {
     ArgType type = arg_getType(arg);
     if (ARG_TYPE_INT == type) {
-        return (float)arg_getInt(arg);
+        return (pika_float)arg_getInt(arg);
     }
     if (ARG_TYPE_FLOAT == type) {
-        return (float)arg_getFloat(arg);
+        return (pika_float)arg_getFloat(arg);
     }
     if (ARG_TYPE_STRING == type) {
         return strtod(arg_getStr(arg), NULL);
     }
     if (ARG_TYPE_BOOL == type) {
-        return (float)arg_getBool(arg);
+        return (pika_float)arg_getBool(arg);
     }
     obj_setSysOut(self, "[error] convert to pika_float type failed.");
     obj_setErrorCode(self, 1);
