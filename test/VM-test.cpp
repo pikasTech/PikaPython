@@ -2818,6 +2818,8 @@ TEST_RUN_LINES(vm, char_issue4, "=")
 
 TEST_SINGLE_FILE(vm, issue_star_dict, "test/python/issue/issue_star_dict.py")
 
+TEST_SINGLE_FILE_PASS(vm, proxy2, "test/python/proxy/proxy2.py")
+
 #endif
 
 TEST_END
