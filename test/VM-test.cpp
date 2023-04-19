@@ -2814,6 +2814,7 @@ TEST_RUN_LINES(vm, dot_issue, ".")
 TEST_RUN_LINES(vm, char_issue1, "~")
 TEST_RUN_LINES(vm, char_issue2, "/")
 TEST_RUN_LINES(vm, char_issue3, "%")
+TEST_RUN_LINES(vm, char_issue4, "=")
 
 TEST_SINGLE_FILE(vm, issue_star_dict, "test/python/issue/issue_star_dict.py")
 

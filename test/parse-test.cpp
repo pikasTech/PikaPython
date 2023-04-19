@@ -1,6 +1,18 @@
 #include "test_common.h"
 TEST_START
 
+#define TEST_LINES2ASM_NOCHECK(_test_name_, _lines_) \
+    TEST(parser, _test_name_) {                      \
+        g_PikaMemInfo.heapUsedMax = 0;               \
+        Args* buffs = New_strBuff();                 \
+        char* lines = (_lines_);                     \
+        printf("%s\r\n", lines);                     \
+        char* pikaAsm = pika_lines2Asm(buffs, lines);\
+        printf("%s", pikaAsm);                       \
+        args_deinit(buffs);                          \
+        EXPECT_EQ(pikaMemNow(), 0);                  \
+    }
+
 #define TEST_LINES2ASM(_test_name_, _lines_, _asm_)   \
     TEST(parser, _test_name_) {                       \
         g_PikaMemInfo.heapUsedMax = 0;                \
@@ -5572,6 +5584,8 @@ TEST_LINES2ASM(docstring,
                "test doc string\n"
                "\"\"\"\n",
                "B0\n")
+
+TEST_LINES2ASM_NOCHECK(char_issue1, "=")
 
 #endif
 

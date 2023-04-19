@@ -1672,6 +1672,10 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
 
     /* set left */
     if (isLeftExist) {
+        if (strEqu(left, "")) {
+            result = PIKA_RES_ERR_SYNTAX_ERROR;
+            goto exit;
+        }
         AST_setNodeAttr(ast, (char*)"left", left);
     }
     /* match statment type */

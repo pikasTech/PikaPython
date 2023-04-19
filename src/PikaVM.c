@@ -2139,6 +2139,7 @@ static Arg* VM_instruction_handler_OUT(PikaObj* self,
                                        char* data,
                                        Arg* aRetReg) {
     char* sArgPath = data;
+    pika_assert(sArgPath != NULL);
     char* sArgName = strPointToLastToken(sArgPath, '.');
     PikaObj* oHost = NULL;
     PIKA_BOOL bIsTemp = PIKA_FALSE;

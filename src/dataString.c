@@ -123,6 +123,7 @@ size_t strGetSize(char* pData) {
 }
 
 char* strPointToLastToken(char* strIn, char sign) {
+    pika_assert(NULL != strIn);
     if (!strIsContain(strIn, sign)) {
         return strIn;
     }
@@ -233,6 +234,7 @@ char* strRemovePrefix(char* inputStr, char* prefix, char* outputStr) {
 }
 
 int32_t strIsContain(char* str, char ch) {
+    pika_assert(NULL != str);
     while (*str) {
         if (*str == ch) {
             return 1;
