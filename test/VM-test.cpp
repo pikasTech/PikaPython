@@ -2820,6 +2820,15 @@ TEST_SINGLE_FILE(vm, issue_star_dict, "test/python/issue/issue_star_dict.py")
 
 TEST_SINGLE_FILE_PASS(vm, proxy2, "test/python/proxy/proxy2.py")
 
+#if 0  //! need fix
+TEST_RUN_LINES_PASS(vm,
+                    none_none,
+                    "assert (None is not None) == False\n"
+                    "print('PASS')\n")
+#endif
+
+TEST_RUN_LINES(vm, minus_none, "10 - None")
+
 #endif
 
 TEST_END

@@ -127,5 +127,8 @@
     ],
     "[toml]": {
         "editor.defaultFormatter": "tamasfe.even-better-toml"
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.python"
     }
 }

@@ -38,6 +38,7 @@ TEST_SINGLE_FILE(thread, test2, "test/python/_thread/test2.py")
 TEST_SINGLE_FILE(eventloop, test1, "test/python/eventloop/test1.py")
 TEST_SINGLE_FILE(eventloop, test2, "test/python/eventloop/test2.py")
 TEST_SINGLE_FILE(eventloop, test3, "test/python/eventloop/test3.py")
+TEST_SINGLE_FILE(eventloop, delay1, "test/python/eventloop/delay1.py")
 
 #endif
 TEST_END
