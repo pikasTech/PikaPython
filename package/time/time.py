@@ -45,3 +45,7 @@ def ctime(unix_time: float = None) -> str:
 
 def asctime() -> str:
     return _time.asctime()
+
+def tick_ms() -> int:
+    _time.platformGetTick()
+    return _time.tick

@@ -35,5 +35,8 @@ TEST(thread, self) {
 
 TEST_SINGLE_FILE(thread, test2, "test/python/_thread/test2.py")
 
+TEST_SINGLE_FILE(eventloop, test1, "test/python/eventloop/test1.py")
+TEST_SINGLE_FILE(eventloop, test2, "test/python/eventloop/test2.py")
+
 #endif
 TEST_END

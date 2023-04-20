@@ -2661,6 +2661,12 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                 op.res = arg_setInt(op.res, "", op.i1 % op.i2);
                 goto exit;
             }
+            #if PIKA_MATH_ENABLE
+            if (op.t1 == ARG_TYPE_FLOAT || op.t2 == ARG_TYPE_FLOAT) {
+                op.res = arg_setFloat(op.res, "", fmod(op.f1, op.f2));
+                goto exit;
+            }
+            #endif
             VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
             pika_platform_printf(
                 "TypeError: unsupported operand type(s) for %%: 'float'\n");

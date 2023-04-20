@@ -109,11 +109,11 @@ PIKA_RES _transeInt(Arg* arg, int base, int64_t* res) {
         return PIKA_RES_OK;
     }
     if (ARG_TYPE_BOOL == type) {
-        *res = (int)arg_getBool(arg);
+        *res = (int64_t)arg_getBool(arg);
         return PIKA_RES_OK;
     }
     if (ARG_TYPE_FLOAT == type) {
-        *res = (int)arg_getFloat(arg);
+        *res = (int64_t)arg_getFloat(arg);
         return PIKA_RES_OK;
     }
     if (ARG_TYPE_STRING == type) {
@@ -134,7 +134,7 @@ PIKA_RES _transeInt(Arg* arg, int base, int64_t* res) {
 
 int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg, PikaTuple* base) {
     int64_t res = 0;
-    int iBase = 10;
+    int64_t iBase = 10;
     if (pikaTuple_getSize(base) > 0) {
         if (arg_getType(arg) != ARG_TYPE_STRING &&
             arg_getType(arg) != ARG_TYPE_BYTES) {
@@ -144,7 +144,7 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg, PikaTuple* base) {
             obj_setErrorCode(self, 1);
             return _PIKA_INT_ERR;
         }
-        iBase = (int)pikaTuple_getInt(base, 0);
+        iBase = (int64_t)pikaTuple_getInt(base, 0);
     }
     if (_transeInt(arg, iBase, &res) == PIKA_RES_OK) {
         return res;
