@@ -17,7 +17,7 @@
                 // "--gtest_filter=os.path"
                 // "--gtest_filter=packtool.packread"
                 // "--gtest_filter=parser.char_issue1"
-                "--gtest_filter=eventloop.test2"
+                "--gtest_filter=eventloop.test1"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

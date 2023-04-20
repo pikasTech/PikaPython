@@ -1,6 +1,8 @@
 import _thread
 import time
 
+_is_debug = False
+
 
 class EventTask:
     """
@@ -25,7 +27,6 @@ class EventTask:
         self._args = args
         self._period_ms = period_ms
         if period_ms != None:
-            # print('period_ms', period_ms)
             self._is_periodic = True
 
 
@@ -38,6 +39,7 @@ class EventLoop:
     _thread_stack = 0
     _need_stop = False
     _started = False
+    _uuid = 0
 
     def __init__(self, period_ms=100, thread_stack=0):
         """
@@ -47,11 +49,33 @@ class EventLoop:
         self._period_ms = period_ms
         self._thread_stack = thread_stack
 
-    def _add_task(self, task_name, func, callback=None, args=None, period_ms=None):
+    def _add_task(self, task_name, func, callback, args, period_ms):
+        if task_name == None:
+            self._uuid += 1
+            task_name = str(self._uuid)
+        _debug('add_task', task_name)
+        _debug('func', func)
+        _debug('callback', callback)
+        _debug('args', args)
+        _debug('period_ms', period_ms)
         new_task = EventTask(func, callback, args, period_ms)
         self._tasks[task_name] = new_task
 
-    def add_task_once(self, task_name, func, callback=None, args=None):
+    def start_new_task(self, func, args, is_periodic=True, period_ms=1000, callback=None, task_name=None):
+        """
+        Add a task to EventLoop
+        :param task_name: name of task
+        :param func: function to be called
+        :param period_ms: period of task
+        :param callback: callback function
+        :param args: arguments of func
+        """
+        if is_periodic:
+            self._add_task(task_name, func, callback, args, period_ms)
+        else:
+            self._add_task(task_name, func, callback, args, None)
+
+    def start_new_task_once(self, func, args, callback=None, task_name=None):
         """
         Add a task to EventLoop, run once
         :param task_name: name of task
@@ -59,9 +83,9 @@ class EventLoop:
         :param callback: callback function
         :param args: arguments of func
         """
-        self._add_task(task_name, func, callback, args, None)
+        self.start_new_task(func, args, False, None, callback, task_name)
 
-    def add_task_periodic(self, task_name, func, period_ms=1000, callback=None, args=None):
+    def start_new_task_periodic(self, func, args, period_ms=1000, callback=None, task_name=None):
         """
         Add a task to EventLoop, run periodically
         :param task_name: name of task
@@ -70,7 +94,7 @@ class EventLoop:
         :param callback: callback function
         :param args: arguments of func
         """
-        self._add_task(task_name, func, callback, args, period_ms)
+        self.start_new_task(func, args, True, period_ms, callback, task_name)
 
     def remove_task(self, task_name):
         """
@@ -79,22 +103,21 @@ class EventLoop:
         """
         self._tasks.remove(task_name)
 
+    def _run_task(self, task: EventTask):
+        _res = task._func(*task._args)
+        if task._callback != None:
+            task._callback(_res)
 
     def _run_thread(self):
         while not self._need_stop:
             tick = time.tick_ms()
             for task_name, task in self._tasks.items():
                 if task._is_periodic:
-                    # print('periodic', task_name, tick, task._last_call_time, task._period_ms)
                     if tick - task._last_call_time > task._period_ms:
-                        _res = task._func(*task._args)
-                        if task._callback != None:
-                            task._callback(_res)
+                        self._run_task(task)
                         task._last_call_time = tick
                 else:
-                    _res = task._func(*task._args)
-                    if task._callback != None:
-                        task._callback(_res)
+                    self._run_task(task)
                     self.remove_task(task_name)
             if self._need_stop:
                 break
@@ -126,3 +149,95 @@ class EventLoop:
             time.sleep(0.1)
         time.sleep(1)
 
+
+def set_debug(enable: bool):
+    global _is_debug
+    _is_debug = enable
+
+
+def _debug(*args):
+    if _is_debug:
+        print('\x1b[33m[eventloop]', *args, "\x1b[0m")
+
+
+g_default_event_loop: EventLoop = None
+
+
+def _get_default_event_loop():
+    global g_default_event_loop
+    if g_default_event_loop == None:
+        g_default_event_loop = EventLoop()
+        g_default_event_loop.start()
+    return g_default_event_loop
+
+
+def start_new_task(func, args, is_periodic=True, period_ms=1000, callback=None, task_name=None):
+    """
+    Add a task to EventLoop
+    :param task_name: name of task
+    :param func: function to be called
+    :param period_ms: period of task
+    :param callback: callback function
+    :param args: arguments of func
+    """
+    eventloop = _get_default_event_loop()
+    eventloop.start_new_task(func, args, is_periodic,
+                             period_ms, callback, task_name)
+
+
+def start_new_task_once(func, args, callback=None, task_name=None):
+    """
+    Add a task to EventLoop, run once
+    :param task_name: name of task
+    :param func: function to be called
+    :param callback: callback function
+    :param args: arguments of func
+    """
+    eventloop = _get_default_event_loop()
+    eventloop.start_new_task_once(func, args, callback, task_name)
+
+
+def start_new_task_periodic(func, args, period_ms=1000, callback=None, task_name=None):
+    """
+    Add a task to EventLoop, run periodically
+    :param task_name: name of task
+    :param func: function to be called
+    :param period_ms: period of task
+    :param callback: callback function
+    :param args: arguments of func
+    """
+    eventloop = _get_default_event_loop()
+    eventloop.start_new_task_periodic(
+        func, args, period_ms, callback, task_name)
+
+
+def remove_task(task_name):
+    """
+    Remove a task from EventLoop
+    :param task_name: name of task
+    """
+    eventloop = _get_default_event_loop()
+    eventloop.remove_task(task_name)
+
+
+def stop():
+    """
+    Stop EventLoop
+    """
+    if g_default_event_loop == None:
+        return
+    _debug('stop default eventloop')
+    eventloop = _get_default_event_loop()
+    eventloop.stop()
+
+
+def start():
+    """
+    Start EventLoop
+    """
+    eventloop = _get_default_event_loop()
+    eventloop.start()
+
+
+def __del__():
+    stop()

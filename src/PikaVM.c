@@ -1335,7 +1335,10 @@ static int _get_n_input_with_unpack(VMState* vm, int n_used) {
             break;
         }
         if (arg_getIsStarred(call_arg)) {
-            pika_assert(arg_isObject(call_arg));
+            if (!arg_isObject(call_arg)) {
+                stack_pushArg(&stack_tmp, arg_copy(call_arg));
+                goto __continue;
+            }
             PikaObj* obj = arg_getPtr(call_arg);
             int len = _obj_getLen(obj);
             for (int i_star_arg = len - 1; i_star_arg >= 0; i_star_arg--) {
@@ -2661,12 +2664,12 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                 op.res = arg_setInt(op.res, "", op.i1 % op.i2);
                 goto exit;
             }
-            #if PIKA_MATH_ENABLE
+#if PIKA_MATH_ENABLE
             if (op.t1 == ARG_TYPE_FLOAT || op.t2 == ARG_TYPE_FLOAT) {
                 op.res = arg_setFloat(op.res, "", fmod(op.f1, op.f2));
                 goto exit;
             }
-            #endif
+#endif
             VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
             pika_platform_printf(
                 "TypeError: unsupported operand type(s) for %%: 'float'\n");

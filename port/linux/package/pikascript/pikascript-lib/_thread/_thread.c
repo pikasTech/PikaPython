@@ -89,11 +89,16 @@ void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
     pika_platform_memset(info, 0, sizeof(pika_thread_info));
     info->function = arg_copy(function);
 
-    PikaObj* tuple = arg_getPtr(args_);
-    size_t tuple_size = PikaStdData_Tuple_len(tuple);
-    if (tuple_size > 0) {
+    if (arg_isObject(args_)) {
+        PikaObj* tuple = arg_getPtr(args_);
+        size_t tuple_size = PikaStdData_Tuple_len(tuple);
+        if (tuple_size > 0) {
+            info->args = arg_copy(args_);
+        }
+    } else {
         info->args = arg_copy(args_);
     }
+
     _VM_lock_init();
     info->stack_size = g_thread_stack_size;
     info->thread = pika_platform_thread_init("pika_thread", _thread_func, info,
