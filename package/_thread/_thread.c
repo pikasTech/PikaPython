@@ -12,18 +12,6 @@ typedef struct pika_thread_info {
 } pika_thread_info;
 
 static void _thread_func(void* arg) {
-    pika_debug("waiting for first lock");
-    while (1) {
-        if (_VM_is_first_lock()) {
-            break;
-        }
-        //! This May break the thread
-        // if (_VMEvent_getVMCnt() <= 0) {
-        //     break;
-        // }
-        pika_debug("VM num %d", _VMEvent_getVMCnt());
-        pika_platform_thread_delay();
-    }
     pika_debug("thread start");
     pika_GIL_ENTER();
     PikaObj* ctx = New_TinyObj(NULL);
@@ -100,6 +88,13 @@ void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
     }
 
     _VM_lock_init();
+
+    if (!_VM_is_first_lock()) {
+        pika_debug("first lock for main thread");
+        pika_GIL_ENTER();
+        pika_debug("VM num %d", _VMEvent_getVMCnt());
+    }
+
     info->stack_size = g_thread_stack_size;
     info->thread = pika_platform_thread_init("pika_thread", _thread_func, info,
                                              info->stack_size, PIKA_THREAD_PRIO,

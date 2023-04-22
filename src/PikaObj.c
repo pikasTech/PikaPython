@@ -55,9 +55,9 @@ PikaObj* New_PikaStdData_Dict(Args* args);
 PikaObj* New_PikaStdData_dict_keys(Args* args);
 PikaObj* New_PikaStdData_List(Args* args);
 PikaObj* New_PikaStdData_Tuple(Args* args);
-void PikaStdData_Tuple___init__(PikaObj* self);
-void PikaStdData_List___init__(PikaObj* self);
-void PikaStdData_List_append(PikaObj* self, Arg* arg);
+void PikaStdData_Tuple___init__(PikaObj *self);
+void PikaStdData_List___init__(PikaObj *self);
+void PikaStdData_List_append(PikaObj *self, Arg* arg);
 void _mem_cache_deinit(void);
 void _VMEvent_deinit(void);
 void pikaGC_markObj(PikaGC* gc, PikaObj* self);
@@ -2471,8 +2471,8 @@ void pks_printVersion(void) {
 }
 
 void pks_getVersion(char* buff) {
-    pika_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR,
-                 PIKA_VERSION_MICRO);
+    pika_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR,
+                          PIKA_VERSION_MINOR, PIKA_VERSION_MICRO);
 }
 
 void* obj_getStruct(PikaObj* self, char* name) {

@@ -4151,6 +4151,10 @@ void _pikaVM_yield(void) {
         _VMEvent_pickupEvent();
     }
 #endif
-    pika_GIL_EXIT();
-    pika_GIL_ENTER();
+    /*
+     * [Warning!] Can not use pika_GIL_ENTER() and pika_GIL_EXIT() here, because
+     * yield() is called not atomically, and it will cause data race.
+     */
+    // pika_GIL_EXIT();
+    // pika_GIL_ENTER();
 }

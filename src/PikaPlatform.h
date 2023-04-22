@@ -48,6 +48,7 @@ extern "C" {
     #define pika_assert(expr) \
     if(!(expr)) { \
         pika_platform_printf((char*)"Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
+        pika_platform_abort_handler(); \
         abort(); \
     }
 #else
@@ -133,6 +134,7 @@ typedef enum {
 /* interrupt config */
 void pika_platform_enable_irq_handle(void);
 void pika_platform_disable_irq_handle(void);
+void pika_platform_abort_handler(void);
 
 /* printf family config */
 #ifndef pika_platform_printf
