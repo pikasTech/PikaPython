@@ -686,3 +686,24 @@ void PikaStdLib_SysObj_clear(PikaObj* self) {
 void PikaStdLib_SysObj_gcdump(PikaObj* self) {
     pikaGC_markDump();
 }
+
+Arg* PikaStdLib_SysObj_abs(PikaObj* self, Arg* val) {
+    ArgType type = arg_getType(val);
+    if (type == ARG_TYPE_INT) {
+        int64_t v = arg_getInt(val);
+        if (v < 0) {
+            v = -v;
+        }
+        return arg_newInt(v);
+    }
+    if (type == ARG_TYPE_FLOAT) {
+        pika_float v = arg_getFloat(val);
+        if (v < 0) {
+            v = -v;
+        }
+        return arg_newFloat(v);
+    }
+    obj_setSysOut(self, "TypeError: bad operand type for abs()");
+    obj_setErrorCode(self, PIKA_RES_ERR_INVALID_PARAM);
+    return NULL;
+}

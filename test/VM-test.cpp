@@ -2828,6 +2828,16 @@ TEST_RUN_LINES_PASS(vm,
 #endif
 
 TEST_RUN_LINES(vm, minus_none, "10 - None")
+TEST_RUN_LINES_PASS(vm,
+                    abs,
+                    "assert abs(-1) == 1\n"
+                    "assert abs(1) == 1\n"
+                    "assert abs(-1.0) == 1.0\n"
+                    "assert abs(0.1) == 0.1\n"
+                    "print('PASS')\n")
+
+TEST_RUN_LINES(vm, abs_none, "abs(None)")
+TEST_RUN_LINES(vm, abs_str, "abs('test')")
 
 #endif
 
