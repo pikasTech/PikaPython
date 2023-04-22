@@ -123,7 +123,7 @@ class SysObj:
     def input(*info) -> str: ...
 
     @staticmethod
-    @PIKA_C_MACRO_IF("PIKA_GC_MARK_SWEEP_ENABLE")
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def abs(val: any) -> any: ...
 
     @staticmethod
