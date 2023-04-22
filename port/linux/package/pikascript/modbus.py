@@ -151,6 +151,8 @@ class ModBus(_modbus._ModBus):
         """
         self.readBuff = msg
         dest = super().deserializeReadRegisters(len(msg))
+        if dest is None:
+            return None
         ret = []
         for i in range(0, len(dest), 2):
             ret.append(int(dest[i]) + int(dest[i + 1]) * 256)
@@ -168,6 +170,8 @@ class ModBus(_modbus._ModBus):
         self.readBuff = msg
         length = len(msg)
         dest = super().deserializeReadBits(length)
+        if dest is None:
+            return None
         return list(dest)
 
     def deserializeReadInputBits(self, msg: bytes) -> list:
@@ -182,6 +186,8 @@ class ModBus(_modbus._ModBus):
         self.readBuff = msg
         length = len(msg)
         dest = super().deserializeReadInputBits(length)
+        if dest is None:
+            return None
         return list(dest)
 
     def deserializeReadInputRegisters(self, msg: bytes) -> list:
@@ -196,6 +202,8 @@ class ModBus(_modbus._ModBus):
         self.readBuff = msg
         length = len(msg)
         dest = super().deserializeReadInputRegisters(length)
+        if dest is None:
+            return None
         ret = []
         for i in range(0, len(dest), 2):
             ret.append(int(dest[i]) + int(dest[i + 1]) * 256)
@@ -213,6 +221,8 @@ class ModBus(_modbus._ModBus):
         self.readBuff = msg
         length = len(msg)
         dest = super().deserializeWriteAndReadRegisters(length)
+        if dest is None:
+            return None
         ret = []
         for i in range(0, len(dest), 2):
             ret.append(int(dest[i]) + int(dest[i + 1]) * 256)

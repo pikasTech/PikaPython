@@ -591,6 +591,9 @@ TEST(module, REPL_stdtask) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_SINGLE_FILE(modbus, rtu_master_err, "test/python/modbus/rtu_master_err.py")
+
 #endif
 
 TEST_END
