@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _PICO_PLATFORM_H_
-#define _PICO_PLATFORM_H_
+#ifndef _PICO_PLATFORM_H
+#define _PICO_PLATFORM_H
 
 #include "hardware/platform_defs.h"
+#include <stdint.h>
 #include <stddef.h>
 
 #ifdef __unix__
@@ -22,7 +23,7 @@ extern "C" {
 
 #define __not_in_flash(group)
 #define __not_in_flash_func(func) func
-#define __no_inline_not_in_flash_func(func)
+#define __no_inline_not_in_flash_func(func) func
 #define __in_flash(group)
 #define __scratch_x(group)
 #define __scratch_y(group)
@@ -138,6 +139,12 @@ static inline int32_t __mul_instruction(int32_t a,int32_t b)
 }
 
 static inline void __compiler_memory_barrier(void) {
+}
+
+uint get_core_num();
+
+static inline uint __get_current_exception(void) {
+    return 0;
 }
 #ifdef __cplusplus
 }

@@ -17,24 +17,45 @@
 /*============================ INCLUDES ======================================*/
 #include "pico/stdlib.h"
 #include "perf_counter.h"
-#include "pikaScript.h"
-#include "PikaParser.h"
-#include "PikaVM.h"
-#include "dataStrs.h"
+
+#if defined(__PICO_USE_LCD_1IN3__) && __PICO_USE_LCD_1IN3__
+#include "DEV_Config.h"
+#include "LCD_1In3.h"
+#include "GLCD_Config.h"
+#endif
+
 #include <stdio.h>
 
 #include "RTE_Components.h"
-#if defined(RTE_Compiler_EventRecorder) && defined(USE_EVR_FOR_STDOUR)
+#if defined(RTE_Compiler_EventRecorder) && defined(RTE_Compiler_IO_STDOUT_EVR)
 #   include <EventRecorder.h>
 #endif
 
+#if defined(RTE_Script_PikaScript) || defined(USING_PIKAPYTHON)
+#   include "pikaScript.h"
+#endif
+
+#if defined(__RTE_ACCELERATION_ARM_2D__) || defined(RTE_Acceleration_Arm_2D)
+#   include "arm_2d.h"
+#   include "arm_2d_helper.h"
+#   include "arm_2d_disp_adapters.h"
+#   include "arm_2d_scenes.h"
+#endif
+
+#if     defined(__RTE_ACCELERATION_ARM_2D_EXTRA_BENCHMARK_WATCH_PANEL__)            \
+    ||  defined(__RTE_ACCELERATION_ARM_2D_EXTRA_BENCHMARK_GENERIC__)
+#   include "arm_2d_benchmark.h"
+#endif
 /*============================ MACROS ========================================*/
 #define TOP         (0x1FFF)
 
 /*============================ MACROFIED FUNCTIONS ===========================*/
-#define ABS(__N)    ((__N) < 0 ? -(__N) : (__N))
-#define _BV(__N)    ((uint32_t)1<<(__N))
-
+#ifndef ABS
+#   define ABS(__N)    ((__N) < 0 ? -(__N) : (__N))
+#endif
+#ifndef _BV
+#   define _BV(__N)    ((uint32_t)1<<(__N))
+#endif
 
 
 /*============================ TYPES =========================================*/
@@ -94,46 +115,77 @@ static void system_init(void)
      */
     init_cycle_counter(false);
 
-#if defined(RTE_Compiler_EventRecorder) && defined(USE_EVR_FOR_STDOUR)
+#if defined(RTE_Compiler_EventRecorder) && defined(RTE_Compiler_IO_STDOUT_EVR)
     EventRecorderInitialize(0, 1);
 #endif
-
+    stdio_init_all();
+    
     gpio_init(PICO_DEFAULT_LED_PIN);
     gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+
+#if defined(__PICO_USE_LCD_1IN3__) && __PICO_USE_LCD_1IN3__
+    DEV_Delay_ms(100);
+
+    if(DEV_Module_Init()!=0){
+        //assert(0);
+    }
+   
+    DEV_SET_PWM(50);
+    /* LCD Init */
+    
+    LCD_1IN3_Init(HORIZONTAL);
+    LCD_1IN3_Clear(GLCD_COLOR_BLUE);
+    
+    for (int n = 0; n < KEY_NUM; n++) {
+        dev_key_init(n);
+    }
+#endif
+
     
 }
 
-static void prime_number_100_c(void) {
-    volatile int num = 0;
-    /* run */
-    for (volatile int i = 2; i < 100; i++) {
-        volatile int is_prime = 1;
-        for (volatile int j = 2; j < i; j++) {
-            if (i % j == 0) {
-                is_prime = 0;
-                break;
-            }
-        }
-        if (is_prime) {
-            num = num + i;
-        }
-    }
-    if ( num != 1060){
-        printf("[error] in benchmark prime_number_100_c \r\n");
-    }
+
+int stdin_getchar(void);
+char pika_platform_getchar(void) {
+		return stdin_getchar();
 }
+
 
 int main(void) 
 {
     system_init();
 
-    printf("Hello Pico-Template\r\n");
-    uint32_t n = 0;
-    /* run unit test */
-    obj_deinit(pikaScriptInit());
+    __cycleof__("printf") {
+        printf("Hello Pico-Template\r\n");
+    }
+    
+#if defined(RTE_Script_PikaScript) || defined(USING_PIKAPYTHON)
+    pikaScriptInit();
+#endif
+
+#if defined( __PERF_COUNTER_COREMARK__ ) && __PERF_COUNTER_COREMARK__
+    printf("\r\nRun Coremark 1.0...\r\n");
+    coremark_main();
+#endif
+
+#if     defined(__RTE_ACCELERATION_ARM_2D_EXTRA_BENCHMARK_WATCH_PANEL__)            \
+    ||  defined(__RTE_ACCELERATION_ARM_2D_EXTRA_BENCHMARK_GENERIC__)
+    arm_2d_run_benchmark();
+#endif
+
+#if defined(__RTE_ACCELERATION_ARM_2D__) || defined(RTE_Acceleration_Arm_2D)
+    arm_2d_init();
+    disp_adapter0_init();
+    
+    //arm_2d_scene_player_switch_to_next_scene(&DISP0_ADAPTER);
+#endif
 
     while (true) {
         breath_led();
+
+#if defined(__RTE_ACCELERATION_ARM_2D__) || defined(RTE_Acceleration_Arm_2D)
+        disp_adapter0_task();
+#endif
         //gpio_put(PICO_DEFAULT_LED_PIN, 1);
         //sleep_ms(500);
         //gpio_put(PICO_DEFAULT_LED_PIN, 0);

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _PLATFORM_SEM_H
-#define _PLATFORM_SEM_H
+#ifndef _PICO_SEM_H
+#define _PICO_SEM_H
 
 #include "pico/lock_core.h"
 
@@ -121,6 +121,17 @@ bool sem_acquire_timeout_us(semaphore_t *sem, uint32_t timeout_us);
  * acquiring.
  */
 bool sem_acquire_block_until(semaphore_t *sem, absolute_time_t until);
+
+/*! \brief Attempt to acquire a permit from a semaphore without blocking
+ *  \ingroup sem
+ *
+ * This function will return false without blocking if no permits are
+ * available, otherwise it will acquire a permit and return true.
+ *
+ * \param sem Pointer to semaphore structure
+ * \return true if permit was acquired.
+ */
+bool sem_try_acquire(semaphore_t *sem);
 
 #ifdef __cplusplus
 }

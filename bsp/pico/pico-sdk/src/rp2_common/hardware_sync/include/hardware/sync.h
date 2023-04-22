@@ -70,6 +70,11 @@ typedef volatile uint32_t spin_lock_t;
 #define PICO_SPINLOCK_ID_HARDWARE_CLAIM 11
 #endif
 
+// PICO_CONFIG: PICO_SPINLOCK_ID_RAND, Spinlock ID for Random Number Generator, min=0, max=31, default=12, group=hardware_sync
+#ifndef PICO_SPINLOCK_ID_RAND
+#define PICO_SPINLOCK_ID_RAND 12
+#endif
+
 // PICO_CONFIG: PICO_SPINLOCK_ID_OS1, First Spinlock ID reserved for use by low level OS style software, min=0, max=31, default=14, group=hardware_sync
 #ifndef PICO_SPINLOCK_ID_OS1
 #define PICO_SPINLOCK_ID_OS1 14
@@ -302,15 +307,6 @@ inline static bool is_spin_locked(spin_lock_t *lock) {
 __force_inline static void spin_unlock(spin_lock_t *lock, uint32_t saved_irq) {
     spin_unlock_unsafe(lock);
     restore_interrupts(saved_irq);
-}
-
-/*! \brief Get the current core number
- *  \ingroup hardware_sync
- *
- * \return The core number the call was made from
- */
-__force_inline static uint get_core_num(void) {
-    return (*(uint32_t *) (SIO_BASE + SIO_CPUID_OFFSET));
 }
 
 /*! \brief Initialise a spin lock

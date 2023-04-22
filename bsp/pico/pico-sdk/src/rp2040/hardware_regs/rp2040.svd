@@ -22367,7 +22367,7 @@
             GENERAL CONSTRAINTS:\n
             Reference clock frequency min=5MHz, max=800MHz\n
             Feedback divider min=16, max=320\n
-            VCO frequency min=400MHz, max=1600MHz</description>
+            VCO frequency min=750MHz, max=1600MHz</description>
           <fields>
             <field>
               <access>read-only</access>
@@ -29676,7 +29676,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -29684,7 +29684,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -29754,8 +29754,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (0).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -29961,7 +29960,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -29969,7 +29968,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -30039,8 +30038,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (1).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -30113,7 +30111,7 @@
             </field>
           </fields>
           <name>CH1_CTRL_TRIG</name>
-          <resetValue>0x00000800</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -30246,7 +30244,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -30254,7 +30252,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -30324,8 +30322,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (2).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -30398,7 +30395,7 @@
             </field>
           </fields>
           <name>CH2_CTRL_TRIG</name>
-          <resetValue>0x00001000</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -30531,7 +30528,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -30539,7 +30536,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -30609,8 +30606,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (3).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -30683,7 +30679,7 @@
             </field>
           </fields>
           <name>CH3_CTRL_TRIG</name>
-          <resetValue>0x00001800</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -30816,7 +30812,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -30824,7 +30820,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -30894,8 +30890,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (4).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -30968,7 +30963,7 @@
             </field>
           </fields>
           <name>CH4_CTRL_TRIG</name>
-          <resetValue>0x00002000</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -31101,7 +31096,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -31109,7 +31104,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -31179,8 +31174,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (5).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -31253,7 +31247,7 @@
             </field>
           </fields>
           <name>CH5_CTRL_TRIG</name>
-          <resetValue>0x00002800</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -31386,7 +31380,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -31394,7 +31388,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -31464,8 +31458,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (6).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -31538,7 +31531,7 @@
             </field>
           </fields>
           <name>CH6_CTRL_TRIG</name>
-          <resetValue>0x00003000</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -31671,7 +31664,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -31679,7 +31672,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -31749,8 +31742,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (7).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -31823,7 +31815,7 @@
             </field>
           </fields>
           <name>CH7_CTRL_TRIG</name>
-          <resetValue>0x00003800</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -31956,7 +31948,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -31964,7 +31956,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -32034,8 +32026,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (8).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -32108,7 +32099,7 @@
             </field>
           </fields>
           <name>CH8_CTRL_TRIG</name>
-          <resetValue>0x00004000</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -32241,7 +32232,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -32249,7 +32240,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -32319,8 +32310,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (9).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -32393,7 +32383,7 @@
             </field>
           </fields>
           <name>CH9_CTRL_TRIG</name>
-          <resetValue>0x00004800</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -32526,7 +32516,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -32534,7 +32524,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -32604,8 +32594,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (10).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -32678,7 +32667,7 @@
             </field>
           </fields>
           <name>CH10_CTRL_TRIG</name>
-          <resetValue>0x00005000</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -32811,7 +32800,7 @@
               <access>read-write</access>
               <bitRange>[30:30]</bitRange>
               <description>If 1, the channel received a read bus error. Write one to clear.\n
-                READ_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 3 transfers later)</description>
+                READ_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 3 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>READ_ERROR</name>
             </field>
@@ -32819,7 +32808,7 @@
               <access>read-write</access>
               <bitRange>[29:29]</bitRange>
               <description>If 1, the channel received a write bus error. Write one to clear.\n
-                WRITE_ADDR shows the approximate address where the bus error was encountered (will not to be earlier, or more than 5 transfers later)</description>
+                WRITE_ADDR shows the approximate address where the bus error was encountered (will not be earlier, or more than 5 transfers later)</description>
               <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>WRITE_ERROR</name>
             </field>
@@ -32889,8 +32878,7 @@
             <field>
               <access>read-write</access>
               <bitRange>[14:11]</bitRange>
-              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.\n
-                Reset value is equal to channel number (11).</description>
+              <description>When this channel completes, it will trigger the channel indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this channel)_.</description>
               <name>CHAIN_TO</name>
             </field>
             <field>
@@ -32963,7 +32951,7 @@
             </field>
           </fields>
           <name>CH11_CTRL_TRIG</name>
-          <resetValue>0x00005800</resetValue>
+          <resetValue>0x00000000</resetValue>
         </register>
         <register>
           <access>read-write</access>
@@ -33060,12 +33048,13 @@
           <description>Interrupt Status (raw)</description>
           <fields>
             <field>
-              <access>read-only</access>
+              <access>read-write</access>
               <bitRange>[15:0]</bitRange>
               <description>Raw interrupt status for DMA Channels 0..15. Bit n corresponds to channel n. Ignores any masking or forcing. Channel interrupts can be cleared by writing a bit mask to INTR, INTS0 or INTS1.\n\n
                 Channel interrupts can be routed to either of two system-level IRQs based on INTE0 and INTE1.\n\n
                 This can be used vector different channel interrupts to different ISRs: this might be done to allow NVIC IRQ preemption for more time-critical channels, or to spread IRQ load across different cores.\n\n
                 It is also valid to ignore this behaviour and just use INTE0/INTS0/IRQ 0.</description>
+              <modifiedWriteValues>oneToClear</modifiedWriteValues>
               <name>INTR</name>
             </field>
           </fields>
@@ -41969,7 +41958,8 @@
               <access>read-write</access>
               <bitRange>[7:4]</bitRange>
               <description>Write 1 to instantly clear internal SM state which may be otherwise difficult to access and will affect future execution.\n\n
-                Specifically, the following are cleared: input and output shift counters; the contents of the input shift register; the delay counter; the waiting-on-IRQ state; any stalled instruction written to SMx_INSTR or run by OUT/MOV EXEC; any pin write left asserted due to OUT_STICKY.</description>
+                Specifically, the following are cleared: input and output shift counters; the contents of the input shift register; the delay counter; the waiting-on-IRQ state; any stalled instruction written to SMx_INSTR or run by OUT/MOV EXEC; any pin write left asserted due to OUT_STICKY.\n\n
+                The program counter, the contents of the output shift register and the X/Y scratch registers are not affected.</description>
               <modifiedWriteValues>clear</modifiedWriteValues>
               <name>SM_RESTART</name>
             </field>
@@ -44521,7 +44511,7 @@
           <description>Divider unsigned divisor\n
             Write to the DIVISOR operand of the divider, i.e. the q in `p / q`.\n
             Any operand write starts a new calculation. The results appear in QUOTIENT, REMAINDER.\n
-            UDIVIDEND/SDIVIDEND are aliases of the same internal register. The U alias starts an\n
+            UDIVISOR/SDIVISOR are aliases of the same internal register. The U alias starts an\n
             unsigned calculation, and the S alias starts a signed calculation.</description>
           <name>DIV_UDIVISOR</name>
           <resetValue>0x00000000</resetValue>

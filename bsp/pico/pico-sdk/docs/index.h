@@ -41,7 +41,10 @@
  * This group of libraries provide higher level functionality that isn't hardware related or provides a richer
  * set of functionality above the basic hardware interfaces
  * @{
+ * \defgroup pico_async_context pico_async_context
  * \defgroup pico_multicore pico_multicore
+ * \defgroup pico_i2c_slave pico_i2c_slave
+ * \defgroup pico_rand pico_rand
  * \defgroup pico_stdlib pico_stdlib
  * \defgroup pico_sync pico_sync
  * \defgroup pico_time pico_time
@@ -54,6 +57,15 @@
  * @{
  * \defgroup tinyusb_device tinyusb_device
  * \defgroup tinyusb_host tinyusb_host
+ * @}
+ *
+ * \defgroup networking Networking Libraries
+ * Functions for implementing networking
+ * @{
+ * \defgroup pico_btstack pico_btstack
+ * \defgroup pico_lwip pico_lwip
+ * \defgroup pico_cyw43_driver pico_cyw43_driver
+ * \defgroup pico_cyw43_arch pico_cyw43_arch
  * @}
  *
  * \defgroup runtime Runtime Infrastructure

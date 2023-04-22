@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Raspberry Pi (Trading) Ltd.
+ * Copyright (c) 2022 Raspberry Pi (Trading) Ltd.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -84,7 +84,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH0_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH0_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -96,8 +96,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH0_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH0_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH0_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -183,7 +183,6 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (0).
 #define DMA_CH0_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH0_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH0_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
@@ -457,7 +456,7 @@
 // Description : DMA Channel 1 Control and Status
 #define DMA_CH1_CTRL_TRIG_OFFSET _u(0x0000004c)
 #define DMA_CH1_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH1_CTRL_TRIG_RESET  _u(0x00000800)
+#define DMA_CH1_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH1_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -473,7 +472,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH1_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH1_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -485,8 +484,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH1_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH1_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH1_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -572,8 +571,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (1).
-#define DMA_CH1_CTRL_TRIG_CHAIN_TO_RESET  _u(0x1)
+#define DMA_CH1_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH1_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH1_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH1_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -846,7 +844,7 @@
 // Description : DMA Channel 2 Control and Status
 #define DMA_CH2_CTRL_TRIG_OFFSET _u(0x0000008c)
 #define DMA_CH2_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH2_CTRL_TRIG_RESET  _u(0x00001000)
+#define DMA_CH2_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH2_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -862,7 +860,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH2_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH2_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -874,8 +872,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH2_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH2_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH2_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -961,8 +959,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (2).
-#define DMA_CH2_CTRL_TRIG_CHAIN_TO_RESET  _u(0x2)
+#define DMA_CH2_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH2_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH2_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH2_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -1235,7 +1232,7 @@
 // Description : DMA Channel 3 Control and Status
 #define DMA_CH3_CTRL_TRIG_OFFSET _u(0x000000cc)
 #define DMA_CH3_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH3_CTRL_TRIG_RESET  _u(0x00001800)
+#define DMA_CH3_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH3_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -1251,7 +1248,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH3_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH3_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -1263,8 +1260,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH3_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH3_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH3_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -1350,8 +1347,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (3).
-#define DMA_CH3_CTRL_TRIG_CHAIN_TO_RESET  _u(0x3)
+#define DMA_CH3_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH3_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH3_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH3_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -1624,7 +1620,7 @@
 // Description : DMA Channel 4 Control and Status
 #define DMA_CH4_CTRL_TRIG_OFFSET _u(0x0000010c)
 #define DMA_CH4_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH4_CTRL_TRIG_RESET  _u(0x00002000)
+#define DMA_CH4_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH4_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -1640,7 +1636,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH4_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH4_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -1652,8 +1648,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH4_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH4_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH4_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -1739,8 +1735,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (4).
-#define DMA_CH4_CTRL_TRIG_CHAIN_TO_RESET  _u(0x4)
+#define DMA_CH4_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH4_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH4_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH4_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -2013,7 +2008,7 @@
 // Description : DMA Channel 5 Control and Status
 #define DMA_CH5_CTRL_TRIG_OFFSET _u(0x0000014c)
 #define DMA_CH5_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH5_CTRL_TRIG_RESET  _u(0x00002800)
+#define DMA_CH5_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH5_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -2029,7 +2024,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH5_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH5_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -2041,8 +2036,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH5_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH5_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH5_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -2128,8 +2123,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (5).
-#define DMA_CH5_CTRL_TRIG_CHAIN_TO_RESET  _u(0x5)
+#define DMA_CH5_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH5_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH5_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH5_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -2402,7 +2396,7 @@
 // Description : DMA Channel 6 Control and Status
 #define DMA_CH6_CTRL_TRIG_OFFSET _u(0x0000018c)
 #define DMA_CH6_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH6_CTRL_TRIG_RESET  _u(0x00003000)
+#define DMA_CH6_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH6_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -2418,7 +2412,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH6_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH6_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -2430,8 +2424,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH6_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH6_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH6_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -2517,8 +2511,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (6).
-#define DMA_CH6_CTRL_TRIG_CHAIN_TO_RESET  _u(0x6)
+#define DMA_CH6_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH6_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH6_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH6_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -2791,7 +2784,7 @@
 // Description : DMA Channel 7 Control and Status
 #define DMA_CH7_CTRL_TRIG_OFFSET _u(0x000001cc)
 #define DMA_CH7_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH7_CTRL_TRIG_RESET  _u(0x00003800)
+#define DMA_CH7_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH7_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -2807,7 +2800,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH7_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH7_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -2819,8 +2812,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH7_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH7_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH7_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -2906,8 +2899,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (7).
-#define DMA_CH7_CTRL_TRIG_CHAIN_TO_RESET  _u(0x7)
+#define DMA_CH7_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH7_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH7_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH7_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -3180,7 +3172,7 @@
 // Description : DMA Channel 8 Control and Status
 #define DMA_CH8_CTRL_TRIG_OFFSET _u(0x0000020c)
 #define DMA_CH8_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH8_CTRL_TRIG_RESET  _u(0x00004000)
+#define DMA_CH8_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH8_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -3196,7 +3188,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH8_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH8_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -3208,8 +3200,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH8_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH8_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH8_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -3295,8 +3287,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (8).
-#define DMA_CH8_CTRL_TRIG_CHAIN_TO_RESET  _u(0x8)
+#define DMA_CH8_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH8_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH8_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH8_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -3569,7 +3560,7 @@
 // Description : DMA Channel 9 Control and Status
 #define DMA_CH9_CTRL_TRIG_OFFSET _u(0x0000024c)
 #define DMA_CH9_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH9_CTRL_TRIG_RESET  _u(0x00004800)
+#define DMA_CH9_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH9_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -3585,7 +3576,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH9_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH9_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -3597,8 +3588,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH9_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH9_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH9_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -3684,8 +3675,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (9).
-#define DMA_CH9_CTRL_TRIG_CHAIN_TO_RESET  _u(0x9)
+#define DMA_CH9_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH9_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH9_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH9_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -3958,7 +3948,7 @@
 // Description : DMA Channel 10 Control and Status
 #define DMA_CH10_CTRL_TRIG_OFFSET _u(0x0000028c)
 #define DMA_CH10_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH10_CTRL_TRIG_RESET  _u(0x00005000)
+#define DMA_CH10_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH10_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -3974,7 +3964,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH10_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH10_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -3986,8 +3976,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH10_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH10_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH10_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -4073,8 +4063,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (10).
-#define DMA_CH10_CTRL_TRIG_CHAIN_TO_RESET  _u(0xa)
+#define DMA_CH10_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH10_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH10_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH10_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -4347,7 +4336,7 @@
 // Description : DMA Channel 11 Control and Status
 #define DMA_CH11_CTRL_TRIG_OFFSET _u(0x000002cc)
 #define DMA_CH11_CTRL_TRIG_BITS   _u(0xe1ffffff)
-#define DMA_CH11_CTRL_TRIG_RESET  _u(0x00005800)
+#define DMA_CH11_CTRL_TRIG_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : DMA_CH11_CTRL_TRIG_AHB_ERROR
 // Description : Logical OR of the READ_ERROR and WRITE_ERROR flags. The channel
@@ -4363,7 +4352,7 @@
 // Description : If 1, the channel received a read bus error. Write one to
 //               clear.
 //               READ_ADDR shows the approximate address where the bus error was
-//               encountered (will not to be earlier, or more than 3 transfers
+//               encountered (will not be earlier, or more than 3 transfers
 //               later)
 #define DMA_CH11_CTRL_TRIG_READ_ERROR_RESET  _u(0x0)
 #define DMA_CH11_CTRL_TRIG_READ_ERROR_BITS   _u(0x40000000)
@@ -4375,8 +4364,8 @@
 // Description : If 1, the channel received a write bus error. Write one to
 //               clear.
 //               WRITE_ADDR shows the approximate address where the bus error
-//               was encountered (will not to be earlier, or more than 5
-//               transfers later)
+//               was encountered (will not be earlier, or more than 5 transfers
+//               later)
 #define DMA_CH11_CTRL_TRIG_WRITE_ERROR_RESET  _u(0x0)
 #define DMA_CH11_CTRL_TRIG_WRITE_ERROR_BITS   _u(0x20000000)
 #define DMA_CH11_CTRL_TRIG_WRITE_ERROR_MSB    _u(29)
@@ -4462,8 +4451,7 @@
 // Description : When this channel completes, it will trigger the channel
 //               indicated by CHAIN_TO. Disable by setting CHAIN_TO = _(this
 //               channel)_.
-//               Reset value is equal to channel number (11).
-#define DMA_CH11_CTRL_TRIG_CHAIN_TO_RESET  _u(0xb)
+#define DMA_CH11_CTRL_TRIG_CHAIN_TO_RESET  _u(0x0)
 #define DMA_CH11_CTRL_TRIG_CHAIN_TO_BITS   _u(0x00007800)
 #define DMA_CH11_CTRL_TRIG_CHAIN_TO_MSB    _u(14)
 #define DMA_CH11_CTRL_TRIG_CHAIN_TO_LSB    _u(11)
@@ -4702,7 +4690,7 @@
 #define DMA_INTR_RESET  _u(0x00000000)
 #define DMA_INTR_MSB    _u(15)
 #define DMA_INTR_LSB    _u(0)
-#define DMA_INTR_ACCESS "RO"
+#define DMA_INTR_ACCESS "WC"
 // =============================================================================
 // Register    : DMA_INTE0
 // Description : Interrupt Enables for IRQ 0

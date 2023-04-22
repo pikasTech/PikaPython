@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _PLATFORM_CRITICAL_SECTION_H
-#define _PLATFORM_CRITICAL_SECTION_H
+#ifndef _PICO_CRITICAL_SECTION_H
+#define _PICO_CRITICAL_SECTION_H
 
 #include "pico/lock_core.h"
 
@@ -81,6 +81,16 @@ static inline void critical_section_exit(critical_section_t *crit_sec) {
  * \param crit_sec Pointer to critical_section structure
  */
 void critical_section_deinit(critical_section_t *crit_sec);
+
+/*! \brief Test whether a critical_section has been initialized
+ *  \ingroup mutex
+ *
+ * \param crit_sec Pointer to critical_section structure
+ * \return true if the critical section is initialized, false otherwise
+ */
+static inline bool critical_section_is_initialized(critical_section_t *crit_sec) {
+    return crit_sec->spin_lock != 0;
+}
 
 #ifdef __cplusplus
 }

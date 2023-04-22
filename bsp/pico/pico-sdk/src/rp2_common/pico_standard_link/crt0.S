@@ -8,6 +8,7 @@
 #include "hardware/regs/m0plus.h"
 #include "hardware/regs/addressmap.h"
 #include "hardware/regs/sio.h"
+#include "pico/asm_helper.S"
 #include "pico/binary_info/defs.h"
 
 #ifdef NDEBUG
@@ -147,7 +148,7 @@ decl_isr isr_irq31
 .global __unhandled_user_irq
 .thumb_func
 __unhandled_user_irq:
-    bl __get_current_exception
+    mrs  r0, ipsr
     subs r0, #16
 .global unhandled_user_irq_num_in_r0
 unhandled_user_irq_num_in_r0:
@@ -225,6 +226,9 @@ _reset_handler:
     cmp r0, #0
     bne hold_non_core0_in_bootrom
 
+    // In a NO_FLASH binary, don't perform .data copy, since it's loaded
+    // in-place by the SRAM load. Still need to clear .bss
+#if !PICO_NO_FLASH
     adr r4, data_cpy_table
 
     // assume there is at least one entry
@@ -235,6 +239,7 @@ _reset_handler:
     bl data_cpy
     b 1b
 2:
+#endif
 
     // Zero out the BSS
     ldr r1, =__bss_start__
@@ -258,14 +263,11 @@ platform_entry: // symbol for stack traces
     blx r1
     // exit should not return.  If it does, hang the core.
     // (fall thru into our hang _exit impl
-.weak _exit
-.type _exit,%function
-.thumb_func
-_exit:
 1: // separate label because _exit can be moved out of branch range
     bkpt #0
     b 1b
 
+#if !PICO_NO_FLASH
 data_cpy_loop:
     ldm r1!, {r0}
     stm r2!, {r0}
@@ -273,6 +275,10 @@ data_cpy:
     cmp r2, r3
     blo data_cpy_loop
     bx lr
+#endif
+
+// Note the data copy table is still included for NO_FLASH builds, even though
+// we skip the copy, because it is listed in binary info
 
 .align 2
 data_cpy_table:
@@ -315,13 +321,6 @@ hold_non_core0_in_bootrom:
     ldr r0, = 'W' | ('V' << 8)
     bl rom_func_lookup
     bx r0
-
-.global __get_current_exception
-.thumb_func
-__get_current_exception:
-    mrs  r0, ipsr
-    uxtb r0, r0
-    bx   lr
 
 // ----------------------------------------------------------------------------
 // Stack/heap dummies to set size

@@ -13,6 +13,9 @@
 void pll_init(PLL pll, uint refdiv, uint vco_freq, uint post_div1, uint post_div2) {
     uint32_t ref_mhz = XOSC_MHZ / refdiv;
 
+    // Check vco freq is in an acceptable range
+    assert(vco_freq >= (PICO_PLL_VCO_MIN_FREQ_MHZ * MHZ) && vco_freq <= (PICO_PLL_VCO_MAX_FREQ_MHZ * MHZ));
+
     // What are we multiplying the reference clock by to get the vco freq
     // (The regs are called div, because you divide the vco output and compare it to the refclk)
     uint32_t fbdiv = vco_freq / (ref_mhz * MHZ);
@@ -26,9 +29,7 @@ void pll_init(PLL pll, uint refdiv, uint vco_freq, uint post_div1, uint post_div
 
     // post_div1 should be >= post_div2
     // from appnote page 11
-    // postdiv1 is designed to operate with a higher input frequency
-    // than postdiv2
-    assert(post_div2 <= post_div1);
+    // postdiv1 is designed to operate with a higher input frequency than postdiv2
 
     // Check that reference frequency is no greater than vco / 16
     assert(ref_mhz <= (vco_freq / 16));
@@ -41,7 +42,7 @@ void pll_init(PLL pll, uint refdiv, uint vco_freq, uint post_div1, uint post_div
     if ((pll->cs & PLL_CS_LOCK_BITS) &&
         (refdiv == (pll->cs & PLL_CS_REFDIV_BITS)) &&
         (fbdiv  == (pll->fbdiv_int & PLL_FBDIV_INT_BITS)) &&
-        (pdiv   == (pll->prim & (PLL_PRIM_POSTDIV1_BITS & PLL_PRIM_POSTDIV2_BITS)))) {
+        (pdiv   == (pll->prim & (PLL_PRIM_POSTDIV1_BITS | PLL_PRIM_POSTDIV2_BITS)))) {
         // do not disrupt PLL that is already correctly configured and operating
         return;
     }

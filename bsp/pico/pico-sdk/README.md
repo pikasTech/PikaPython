@@ -22,6 +22,9 @@ See [Getting Started with the Raspberry Pi Pico](https://rptl.io/pico-get-starte
 hardware, IDE/environment and for how to build and debug software for the Raspberry Pi Pico
 and other RP2040-based devices.
 
+See [Connecting to the Internet with Raspberry Pi Pico W](https://rptl.io/picow-connect) to learn more about writing
+applications for your Raspberry Pi Pico W that connect to the internet.
+
 See [Raspberry Pi Pico C/C++ SDK](https://rptl.io/pico-c-sdk) to learn more about programming using the
 SDK, to explore more advanced features, and for complete PDF-based API documentation.
 
@@ -30,6 +33,12 @@ See [Online Raspberry Pi Pico SDK API docs](https://rptl.io/pico-doxygen) for HT
 # Example code
 
 See [pico-examples](https://github.com/raspberrypi/pico-examples) for example code you can build.
+
+# Getting the latest SDK code
+
+The [master](https://github.com/raspberrypi/pico-sdk/tree/master/) branch of `pico-sdk` on GitHub contains the 
+_latest stable release_ of the SDK. If you need or want to test upcoming features, you can try the
+[develop](https://github.com/raspberrypi/pico-sdk/tree/develop/) branch instead.
 
 # Quick-start your own project
 
@@ -110,6 +119,24 @@ instructions for other platforms, and just in general, we recommend you see [Ras
 
           ```
 
+   * Or by cloning the SDK locally, but without copying `pico_sdk_import.cmake`:
+       1. `git clone` this Raspberry Pi Pico SDK repository
+       2. Setup a `CMakeLists.txt` like:
+
+           ```cmake
+           cmake_minimum_required(VERSION 3.13)
+ 
+           # initialize the SDK directly
+           include(/path/to/pico-sdk/pico_sdk_init.cmake)
+ 
+           project(my_project)
+ 
+           # initialize the Raspberry Pi Pico SDK
+           pico_sdk_init()
+ 
+           # rest of your project
+ 
+           ```
 1. Write your code (see [pico-examples](https://github.com/raspberrypi/pico-examples) or the [Raspberry Pi Pico C/C++ SDK](https://rptl.io/pico-c-sdk) documentation for more information)
 
    About the simplest you can do is a single source file (e.g. hello_world.c)
@@ -141,14 +168,23 @@ instructions for other platforms, and just in general, we recommend you see [Ras
    Note this example uses the default UART for _stdout_;
    if you want to use the default USB see the [hello-usb](https://github.com/raspberrypi/pico-examples/tree/master/hello_world/usb) example.
 
-
 1. Setup a CMake build directory.
       For example, if not using an IDE:
       ```
       $ mkdir build
       $ cd build
       $ cmake ..
-      ```
+      ```   
+   
+   When building for a board other than the Raspberry Pi Pico, you should pass `-DPICO_BOARD=board_name` to the `cmake` command above, e.g. `cmake -DPICO_BOARD=pico_w ..`
+   to configure the SDK and build options accordingly for that particular board.
+
+   Doing so sets up various compiler defines (e.g. default pin numbers for UART and other hardware) and in certain 
+   cases also enables the use of additional libraries (e.g. wireless support when building for `PICO_BOARD=pico_w`) which cannot
+   be built without a board which provides the requisite functionality.
+
+   For a list of boards defined in the SDK itself, look in [this directory](src/boards/include/boards) which has a 
+   header for each named board.
 
 1. Make your target from the build directory you created.
       ```sh

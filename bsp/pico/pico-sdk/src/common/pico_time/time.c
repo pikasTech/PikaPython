@@ -31,6 +31,7 @@ typedef struct alarm_pool {
     uint8_t *entry_ids_high;
     alarm_id_t alarm_in_progress; // this is set during a callback from the IRQ handler... it can be cleared by alarm_cancel to prevent repeats
     uint8_t hardware_alarm_num;
+    uint8_t core_num;
 } alarm_pool_t;
 
 #if !PICO_TIME_DEFAULT_ALARM_POOL_DISABLED
@@ -80,6 +81,7 @@ void alarm_pool_init_default() {
     if (!default_alarm_pool_initialized()) {
         ph_post_alloc_init(default_alarm_pool.heap, PICO_TIME_DEFAULT_ALARM_POOL_MAX_TIMERS,
                            timer_pool_entry_comparator, &default_alarm_pool);
+        hardware_alarm_claim(PICO_TIME_DEFAULT_ALARM_POOL_HARDWARE_ALARM_NUM);
         alarm_pool_post_alloc_init(&default_alarm_pool,
                                    PICO_TIME_DEFAULT_ALARM_POOL_HARDWARE_ALARM_NUM);
     }
@@ -180,16 +182,26 @@ alarm_pool_t *alarm_pool_create(uint hardware_alarm_num, uint max_timers) {
     pool->heap = ph_create(max_timers, timer_pool_entry_comparator, pool);
     pool->entries = (alarm_pool_entry_t *)calloc(max_timers, sizeof(alarm_pool_entry_t));
     pool->entry_ids_high = (uint8_t *)calloc(max_timers, sizeof(uint8_t));
+    hardware_alarm_claim(hardware_alarm_num);
     alarm_pool_post_alloc_init(pool, hardware_alarm_num);
     return pool;
 }
 
+alarm_pool_t *alarm_pool_create_with_unused_hardware_alarm(uint max_timers) {
+    alarm_pool_t *pool = (alarm_pool_t *) malloc(sizeof(alarm_pool_t));
+    pool->heap = ph_create(max_timers, timer_pool_entry_comparator, pool);
+    pool->entries = (alarm_pool_entry_t *)calloc(max_timers, sizeof(alarm_pool_entry_t));
+    pool->entry_ids_high = (uint8_t *)calloc(max_timers, sizeof(uint8_t));
+    alarm_pool_post_alloc_init(pool, (uint)hardware_alarm_claim_unused(true));
+    return pool;
+}
+
 void alarm_pool_post_alloc_init(alarm_pool_t *pool, uint hardware_alarm_num) {
-    hardware_alarm_claim(hardware_alarm_num);
     hardware_alarm_cancel(hardware_alarm_num);
     hardware_alarm_set_callback(hardware_alarm_num, alarm_pool_alarm_callback);
     pool->lock = spin_lock_instance(next_striped_spin_lock_num());
     pool->hardware_alarm_num = (uint8_t) hardware_alarm_num;
+    pool->core_num = (uint8_t) get_core_num();
     pools[hardware_alarm_num] = pool;
 }
 
@@ -258,6 +270,26 @@ alarm_id_t alarm_pool_add_alarm_at(alarm_pool_t *pool, absolute_time_t time, ala
     return public_id;
 }
 
+alarm_id_t alarm_pool_add_alarm_at_force_in_context(alarm_pool_t *pool, absolute_time_t time, alarm_callback_t callback,
+                                                    void *user_data) {
+    bool missed = false;
+
+    uint8_t id_high = 0;
+    uint32_t save = spin_lock_blocking(pool->lock);
+
+    pheap_node_id_t id = add_alarm_under_lock(pool, time, callback, user_data, 0, true, &missed);
+    if (id) id_high = *get_entry_id_high(pool, id);
+    spin_unlock(pool->lock, save);
+    if (!id) return -1;
+    if (missed) {
+        // we want to fire the timer forcibly because it is in the past. Note that we do
+        // not care about racing with other timers, as it is harmless to have the IRQ
+        // wake up one time too many, we just need to make sure it does wake up
+        hardware_alarm_force_irq(pool->hardware_alarm_num);
+    }
+    return make_public_id(id_high, id);
+}
+
 bool alarm_pool_cancel_alarm(alarm_pool_t *pool, alarm_id_t alarm_id) {
     bool rc = false;
     uint32_t save = spin_lock_blocking(pool->lock);
@@ -284,6 +316,10 @@ bool alarm_pool_cancel_alarm(alarm_pool_t *pool, alarm_id_t alarm_id) {
 
 uint alarm_pool_hardware_alarm_num(alarm_pool_t *pool) {
     return pool->hardware_alarm_num;
+}
+
+uint alarm_pool_core_num(alarm_pool_t *pool) {
+    return pool->core_num;
 }
 
 static void alarm_pool_dump_key(pheap_node_id_t id, void *user_data) {
@@ -395,16 +431,21 @@ void sleep_ms(uint32_t ms) {
 
 bool best_effort_wfe_or_timeout(absolute_time_t timeout_timestamp) {
 #if !PICO_TIME_DEFAULT_ALARM_POOL_DISABLED
-    alarm_id_t id;
-    id = add_alarm_at(timeout_timestamp, sleep_until_callback, NULL, false);
-    if (id <= 0) {
+    if (__get_current_exception()) {
         tight_loop_contents();
         return time_reached(timeout_timestamp);
     } else {
-        __wfe();
-        // we need to clean up if it wasn't us that caused the wfe; if it was this will be a noop.
-        cancel_alarm(id);
-        return time_reached(timeout_timestamp);
+        alarm_id_t id;
+        id = add_alarm_at(timeout_timestamp, sleep_until_callback, NULL, false);
+        if (id <= 0) {
+            tight_loop_contents();
+            return time_reached(timeout_timestamp);
+        } else {
+            __wfe();
+            // we need to clean up if it wasn't us that caused the wfe; if it was this will be a noop.
+            cancel_alarm(id);
+            return time_reached(timeout_timestamp);
+        }
     }
 #else
     tight_loop_contents();

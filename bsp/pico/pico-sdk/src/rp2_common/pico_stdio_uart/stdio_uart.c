@@ -11,6 +11,11 @@
 
 static uart_inst_t *uart_instance;
 
+#if PICO_STDIO_UART_SUPPORT_CHARS_AVAILABLE_CALLBACK
+static void (*chars_available_callback)(void*);
+static void *chars_available_param;
+#endif
+
 #if PICO_NO_BI_STDIO_UART
 #define stdio_bi_decl_if_func_used(x)
 #else
@@ -70,9 +75,9 @@ void stdin_uart_init() {
 
 void stdio_uart_init_full(struct uart_inst *uart, uint baud_rate, int tx_pin, int rx_pin) {
     uart_instance = uart;
-    uart_init(uart_instance, baud_rate);
     if (tx_pin >= 0) gpio_set_function((uint)tx_pin, GPIO_FUNC_UART);
     if (rx_pin >= 0) gpio_set_function((uint)rx_pin, GPIO_FUNC_UART);
+    uart_init(uart_instance, baud_rate);
     stdio_set_driver_enabled(&stdio_uart, true);
 }
 
@@ -87,12 +92,47 @@ int stdio_uart_in_chars(char *buf, int length) {
     while (i<length && uart_is_readable(uart_instance)) {
         buf[i++] = uart_getc(uart_instance);
     }
+#if PICO_STDIO_UART_SUPPORT_CHARS_AVAILABLE_CALLBACK
+    if (chars_available_callback) {
+        // Re-enable interrupts after reading a character
+        uart_set_irq_enables(uart_instance, true, false);
+    }
+#endif
     return i ? i : PICO_ERROR_NO_DATA;
 }
+
+#if PICO_STDIO_UART_SUPPORT_CHARS_AVAILABLE_CALLBACK
+static void on_uart_rx(void) {
+    if (chars_available_callback) {
+        // Interrupts will go off until the uart is read, so disable them
+        uart_set_irq_enables(uart_instance, false, false);
+        chars_available_callback(chars_available_param);
+    }
+}
+
+static void stdio_uart_set_chars_available_callback(void (*fn)(void*), void *param) {
+    static_assert(UART1_IRQ == UART0_IRQ + 1, "");
+    const uint UART_IRQ = UART0_IRQ + uart_get_index(uart_instance);
+    if (fn && !chars_available_callback) {
+        irq_set_exclusive_handler(UART_IRQ, on_uart_rx);
+        irq_set_enabled(UART_IRQ, true);
+        uart_set_irq_enables(uart_instance, true, false);
+    } else if (!fn && chars_available_callback) {
+        uart_set_irq_enables(uart_instance, false, false);
+        irq_set_enabled(UART_IRQ, false);
+        irq_remove_handler(UART_IRQ, on_uart_rx);
+    }
+    chars_available_callback = fn;
+    chars_available_param = param;
+}
+#endif
 
 stdio_driver_t stdio_uart = {
     .out_chars = stdio_uart_out_chars,
     .in_chars = stdio_uart_in_chars,
+#if PICO_STDIO_UART_SUPPORT_CHARS_AVAILABLE_CALLBACK
+    .set_chars_available_callback = stdio_uart_set_chars_available_callback,
+#endif
 #if PICO_STDIO_ENABLE_CRLF_SUPPORT
     .crlf_enabled = PICO_STDIO_UART_DEFAULT_CRLF
 #endif

@@ -32,8 +32,21 @@
 #include "pico/stdio_usb/reset_interface.h"
 #include "pico/unique_id.h"
 
+#ifndef USBD_VID
 #define USBD_VID (0x2E8A) // Raspberry Pi
+#endif
+
+#ifndef USBD_PID
 #define USBD_PID (0x000a) // Raspberry Pi Pico SDK CDC
+#endif
+
+#ifndef USBD_MANUFACTURER
+#define USBD_MANUFACTURER "Raspberry Pi"
+#endif
+
+#ifndef USBD_PRODUCT
+#define USBD_PRODUCT "Pico"
+#endif
 
 #define TUD_RPI_RESET_DESC_LEN  9
 #if !PICO_STDIO_USB_ENABLE_RESET_VIA_VENDOR_INTERFACE
@@ -41,7 +54,13 @@
 #else
 #define USBD_DESC_LEN (TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN + TUD_RPI_RESET_DESC_LEN)
 #endif
+#if !PICO_STDIO_USB_DEVICE_SELF_POWERED
+#define USBD_CONFIGURATION_DESCRIPTOR_ATTRIBUTE (0)
 #define USBD_MAX_POWER_MA (250)
+#else
+#define USBD_CONFIGURATION_DESCRIPTOR_ATTRIBUTE TUSB_DESC_CONFIG_ATT_SELF_POWERED
+#define USBD_MAX_POWER_MA (1)
+#endif
 
 #define USBD_ITF_CDC       (0) // needs 2 interfaces
 #if !PICO_STDIO_USB_ENABLE_RESET_VIA_VENDOR_INTERFACE
@@ -89,7 +108,7 @@ static const tusb_desc_device_t usbd_desc_device = {
 
 static const uint8_t usbd_desc_cfg[USBD_DESC_LEN] = {
     TUD_CONFIG_DESCRIPTOR(1, USBD_ITF_MAX, USBD_STR_0, USBD_DESC_LEN,
-        0, USBD_MAX_POWER_MA),
+        USBD_CONFIGURATION_DESCRIPTOR_ATTRIBUTE, USBD_MAX_POWER_MA),
 
     TUD_CDC_DESCRIPTOR(USBD_ITF_CDC, USBD_STR_CDC, USBD_CDC_EP_CMD,
         USBD_CDC_CMD_MAX_SIZE, USBD_CDC_EP_OUT, USBD_CDC_EP_IN, USBD_CDC_IN_OUT_MAX_SIZE),
@@ -102,8 +121,8 @@ static const uint8_t usbd_desc_cfg[USBD_DESC_LEN] = {
 static char usbd_serial_str[PICO_UNIQUE_BOARD_ID_SIZE_BYTES * 2 + 1];
 
 static const char *const usbd_desc_str[] = {
-    [USBD_STR_MANUF] = "Raspberry Pi",
-    [USBD_STR_PRODUCT] = "Pico",
+    [USBD_STR_MANUF] = USBD_MANUFACTURER,
+    [USBD_STR_PRODUCT] = USBD_PRODUCT,
     [USBD_STR_SERIAL] = usbd_serial_str,
     [USBD_STR_CDC] = "Board CDC",
 #if PICO_STDIO_USB_ENABLE_RESET_VIA_VENDOR_INTERFACE

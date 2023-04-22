@@ -89,7 +89,7 @@ extern i2c_inst_t i2c1_inst;
  * master.
  *
  * The I2C bus frequency is set as close as possible to requested, and
- * the return actual rate set is returned
+ * the actual rate set is returned
  *
  * \param i2c Either \ref i2c0 or \ref i2c1
  * \param baudrate Baudrate in Hz (e.g. 100kHz is 100000)
@@ -151,6 +151,12 @@ static inline uint i2c_hw_index(i2c_inst_t *i2c) {
 static inline i2c_hw_t *i2c_get_hw(i2c_inst_t *i2c) {
     i2c_hw_index(i2c); // check it is a hw i2c
     return i2c->hw;
+}
+
+static inline i2c_inst_t *i2c_get_instance(uint instance) {
+    static_assert(NUM_I2CS == 2, "");
+    invalid_params_if(I2C, instance >= NUM_I2CS);
+    return instance ? i2c1 : i2c0;
 }
 
 /*! \brief Attempt to write specified number of bytes to address, blocking until the specified absolute time is reached.
@@ -311,6 +317,37 @@ static inline void i2c_read_raw_blocking(i2c_inst_t *i2c, uint8_t *dst, size_t l
         *dst++ = (uint8_t)i2c_get_hw(i2c)->data_cmd;
     }
 }
+
+/**
+ * \brief Pop a byte from I2C Rx FIFO.
+ * \ingroup hardware_i2c
+ *
+ * This function is non-blocking and assumes the Rx FIFO isn't empty.
+ *
+ * \param i2c I2C instance.
+ * \return uint8_t Byte value.
+ */
+static inline uint8_t i2c_read_byte_raw(i2c_inst_t *i2c) {
+    i2c_hw_t *hw = i2c_get_hw(i2c);
+    assert(hw->status & I2C_IC_STATUS_RFNE_BITS); // Rx FIFO must not be empty
+    return (uint8_t)hw->data_cmd;
+}
+
+/**
+ * \brief Push a byte into I2C Tx FIFO.
+ * \ingroup hardware_i2c
+ *
+ * This function is non-blocking and assumes the Tx FIFO isn't full.
+ *
+ * \param i2c I2C instance.
+ * \param value Byte value.
+ */
+static inline void i2c_write_byte_raw(i2c_inst_t *i2c, uint8_t value) {
+    i2c_hw_t *hw = i2c_get_hw(i2c);
+    assert(hw->status & I2C_IC_STATUS_TFNF_BITS); // Tx FIFO must not be full
+    hw->data_cmd = value;
+}
+
 
 /*! \brief Return the DREQ to use for pacing transfers to/from a particular I2C instance
  *  \ingroup hardware_i2c

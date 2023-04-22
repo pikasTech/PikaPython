@@ -21,6 +21,7 @@
 #define NUM_DMA_CHANNELS _u(12)
 #define NUM_DMA_TIMERS _u(4)
 #define NUM_IRQS _u(32)
+#define NUM_USER_IRQS _u(6)
 #define NUM_PIOS _u(2)
 #define NUM_PIO_STATE_MACHINES _u(4)
 #define NUM_PWM_SLICES _u(8)
@@ -40,6 +41,9 @@
 #ifndef XOSC_MHZ
 #define XOSC_MHZ _u(12)
 #endif
+
+#define FIRST_USER_IRQ (NUM_IRQS - NUM_USER_IRQS)
+#define VTABLE_FIRST_IRQ 16
 
 #endif
 

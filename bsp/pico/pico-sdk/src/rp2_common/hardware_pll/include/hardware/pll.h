@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _HARDWARE_PLL_H_
-#define _HARDWARE_PLL_H_
+#ifndef _HARDWARE_PLL_H
+#define _HARDWARE_PLL_H
 
 #include "pico.h"
 #include "hardware/structs/pll.h"
@@ -30,6 +30,14 @@ typedef pll_hw_t *PLL;
 
 #define pll_sys pll_sys_hw
 #define pll_usb pll_usb_hw
+
+#ifndef PICO_PLL_VCO_MIN_FREQ_MHZ
+#define PICO_PLL_VCO_MIN_FREQ_MHZ 750
+#endif
+
+#ifndef PICO_PLL_VCO_MAX_FREQ_MHZ
+#define PICO_PLL_VCO_MAX_FREQ_MHZ 1600
+#endif
 
 /*! \brief Initialise specified PLL.
  *  \ingroup hardware_pll
