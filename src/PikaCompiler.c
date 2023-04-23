@@ -257,8 +257,14 @@ int LibObj_staticLink(LibObj* self,
         obj_newObj(self, module_name, "", New_TinyObj);
     }
     PikaObj* module_obj = obj_getObj(self, module_name);
+    uint16_t name_len = strGetSize(module_name);
+    //pika_platform_printf("%s - len: %d\r\n", module_name, name_len);
+
     /* copy bytecode to buff */
     obj_setBytes(module_obj, "buff", bytecode, size);
+    obj_setInt(module_obj, "namelen", name_len);
+    obj_setInt(module_obj, "bytesize", size);
+
     /* link to buff */
     LibObj_dynamicLink(self, module_name, obj_getBytes(module_obj, "buff"));
     return 0;
@@ -272,7 +278,7 @@ int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
         pika_platform_printf("error: can't open file %s\r\n", input_file_name);
         return -1;
     }
-    char* module_name = strsGetLastToken(&buffs, input_file_name, '/');
+    char* module_name = strsGetLastToken(&buffs, input_file_name, '/'); /*Find the address next to the last '/'  location*/
 
     size_t module_name_len = strlen(module_name);
 
@@ -291,8 +297,48 @@ int LibObj_staticLinkFile(LibObj* self, char* input_file_name) {
     }
 
     /* push bytecode */
-    LibObj_staticLink(self, module_name, arg_getBytecode(input_file_arg),
-                      arg_getBytecodeSize(input_file_arg));
+    uint8_t* byte_code = arg_getBytecode(input_file_arg);
+    size_t code_size = arg_getBytecodeSize(input_file_arg);
+    LibObj_staticLink(self, module_name, byte_code, code_size);
+
+    /* deinit */
+    strsDeinit(&buffs);
+    arg_deinit(input_file_arg);
+    return 0;
+}
+
+int LibObj_staticLinkFile_New(LibObj* self, char* input_file_name, char* path) {
+    Args buffs = { 0 };
+    /* read file */
+    Arg* input_file_arg = arg_loadFile(NULL, input_file_name);
+    if (NULL == input_file_arg) {
+        pika_platform_printf("error: can't open file %s\r\n", input_file_name);
+        return -1;
+    }
+    char* module_name = strsGetLastToken(&buffs, input_file_name, '/');  /*找到最后一个 / 出现的位置的下一个地址*/
+
+    size_t module_name_len = strlen(module_name);
+
+    /* cut off '.py.o' */
+    if (module_name[module_name_len - 1] == 'o' &&
+        module_name[module_name_len - 2] == '.' &&
+        module_name[module_name_len - 3] == 'y' &&
+        module_name[module_name_len - 4] == 'p' &&
+        module_name[module_name_len - 5] == '.') {
+        module_name[module_name_len - 5] = 0;
+    }
+    else {
+        // pika_platform_printf("linking raw  %s:%s:%ld\r\n", input_file_name,
+        //                   module_name, arg_getBytecodeSize(input_file_arg));
+        /* replace . to | */
+        module_name = strsReplace(&buffs, module_name, ".", "|");
+    }
+    char* module_name_new  = strsPathJoin(&buffs, path,module_name);
+
+    /* push bytecode */
+    uint8_t* byte_code = arg_getBytecode(input_file_arg);
+    size_t code_size = arg_getBytecodeSize(input_file_arg);
+    LibObj_staticLink(self, module_name_new, byte_code, code_size);
 
     /* deinit */
     strsDeinit(&buffs);
@@ -318,43 +364,59 @@ static int32_t __foreach_handler_libWriteBytecode(Arg* argEach, Args* context) {
         PikaObj* module_obj = arg_getPtr(argEach);
         char* bytecode = obj_getPtr(module_obj, "bytecode");
         size_t bytecode_size = obj_getBytesSize(module_obj, "buff");
-        size_t aline_size =
-            aline_by(bytecode_size, sizeof(uint32_t)) - bytecode_size;
-        char aline_buff[sizeof(uint32_t)] = {0};
+        // size_t aline_size =
+        //     aline_by(bytecode_size, sizeof(uint32_t)) - bytecode_size;
+        // char aline_buff[sizeof(uint32_t)] = {0};
         pika_platform_fwrite(bytecode, 1, bytecode_size, out_file);
-        pika_platform_fwrite(aline_buff, 1, aline_size, out_file);
+        // pika_platform_fwrite(aline_buff, 1, aline_size, out_file);
     }
     return 0;
 }
 
+//#define NAME_BUFF_SIZE LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)
 static int32_t __foreach_handler_libWriteIndex(Arg* argEach, Args* context) {
     FILE* out_file = args_getPtr(context, "out_file");
     Args buffs = {0};
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
-        uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
-        char buff[LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)] = {0};
-        bytecode_size = aline_by(bytecode_size, sizeof(uint32_t));
+        // uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
+        uint32_t bytecode_size = obj_getInt(module_obj, "bytesize");
+        // char buff[LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)] = {0};
+        // bytecode_size = aline_by(bytecode_size, sizeof(uint32_t));
         char* module_name = obj_getStr(module_obj, "name");
         module_name = strsReplace(&buffs, module_name, "|", ".");
+        uint32_t buff_len = strGetSize(module_name);
+        char* name_buff = (char* )__platform_malloc(5 + buff_len); /* 4 + 1 + buff_len*/
+        __platform_memset(name_buff, 0x00, buff_len + 1);
+        module_name = strsReplace(&buffs, module_name, "|", ".");
         // pika_platform_printf("   %s:%d\r\n", module_name, bytecode_size);
-        pika_platform_memcpy(buff, module_name, strGetSize(module_name));
-        pika_platform_fwrite(
-            buff, 1, LIB_INFO_BLOCK_SIZE - sizeof(bytecode_size), out_file);
-        pika_platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size),
-                             out_file);
+        pika_platform_memcpy(name_buff, &buff_len, 4);
+        pika_platform_memcpy(name_buff + 4, module_name, buff_len + 1); /* add '\0' after name */
+        pika_platform_fwrite(name_buff, 1, buff_len + 5, out_file);
+        pika_platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size),out_file);
+        // pika_platform_fwrite(
+        //     name_buff, 1, LIB_INFO_BLOCK_SIZE - sizeof(bytecode_size), out_file);
+        // pika_platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size),
+        //                      out_file);
     }
     strsDeinit(&buffs);
     return 0;
 }
 
+/* 这里包括文件内容大小，文件信息所占的大小（文件名和文件大小）
+ * 一个unit 的组成包括： Namelen（4 bytes）+ Name (strlen("namelen") + 1) \
+ * + fileSize (4 bytes) 
+ */
 static int32_t __foreach_handler_libSumSize(Arg* argEach, Args* context) {
+    Args* args = context;
+    uint32_t block_size = 0; /* block_size is the size of file info */
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
-        uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
-        bytecode_size = aline_by(bytecode_size, sizeof(uint32_t));
-        args_setInt(context, "sum_size",
-                    args_getInt(context, "sum_size") + bytecode_size);
+        block_size = obj_getInt(module_obj, "namelen") + 9; 
+        uint32_t bytecode_size = obj_getInt(module_obj, "bytesize"); /* size of every module obj  */
+        args_setInt(args, "sum_size", args_getInt(args, "sum_size") + bytecode_size + block_size);
+        block_size += args_getInt(args, "block_size");
+        args_setInt(args, "block_size", block_size);
     }
     return 0;
 }
@@ -374,9 +436,10 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     args_setPtr(&context, "out_file", out_file);
     args_setInt(&context, "module_num", 0);
     args_setInt(&context, "sum_size", 0);
+    args_setInt(&context, "block_size", 0);
 
     /* write meta information */
-    char buff[LIB_INFO_BLOCK_SIZE] = {0};
+    char buff[20] = {0};
     args_foreach(self->list, __foreach_handler_getModuleNum, &context);
 
     /* get sum size of pya */
@@ -386,9 +449,9 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     char magic_code[] = {0x0f, 'p', 'y', 'a'};
     uint32_t version_num = LIB_VERSION_NUMBER;
     uint32_t module_num = args_getInt(&context, "module_num");
-    uint32_t modules_size = args_getInt(&context, "sum_size") +
-                            (module_num + 1) * LIB_INFO_BLOCK_SIZE -
-                            sizeof(uint32_t) * 2;
+    /* MAGIC_CODE + PACK_SIZE + VERSION_NUM + FILE_NUM + INFO_BLOCK_SIZE = 4 * 5 = 20 */
+    uint32_t modules_size = args_getInt(&context, "sum_size") + 20;  
+    uint32_t block_size = args_getInt(&context, "block_size");
 
     /* write meta info */
     const uint32_t magic_code_offset =
@@ -398,6 +461,8 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     const uint32_t version_offset = sizeof(uint32_t) * PIKA_APP_VERSION_OFFSET;
     const uint32_t module_num_offset =
         sizeof(uint32_t) * PIKA_APP_MODULE_NUM_OFFSET;
+    const uint32_t info_block_size_offset =
+        sizeof(uint32_t) * PIKA_APP_INFO_BLOCK_SIZE_OFFSET;
 
     pika_platform_memcpy(buff + magic_code_offset, &magic_code,
                          sizeof(uint32_t));
@@ -408,8 +473,10 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     /* write modules_size to the file */
     pika_platform_memcpy(buff + modules_size_offset, &modules_size,
                          sizeof(uint32_t));
-    /* aline to 32 bytes */
-    pika_platform_fwrite(buff, 1, LIB_INFO_BLOCK_SIZE, out_file);
+    /* write block_size to the file */
+    pika_platform_memcpy(buff + info_block_size_offset, &block_size, sizeof(uint32_t));
+    pika_platform_fwrite(buff, 1, 20, out_file);
+
     /* write module index to file */
     args_foreach(self->list, __foreach_handler_libWriteIndex, &context);
     /* write module bytecode to file */
@@ -448,24 +515,54 @@ static int _getModuleNum(uint8_t* library_bytes) {
     return module_num;
 }
 
+#define MOD_NAMELEN_OFFSET  0
+#define MOD_NAME_OFFSET     4
+#define MOD_SIZE_OFFSET     (name_len + 5)  /* 5 = 4 + 1*/
+
 static PIKA_RES _loadModuleDataWithIndex(uint8_t* library_bytes,
                                          int module_num,
                                          int module_index,
                                          char** name_p,
                                          uint8_t** addr_p,
-                                         size_t* size) {
-    uint8_t* bytecode_addr =
-        library_bytes + LIB_INFO_BLOCK_SIZE * (module_num + 1);
+                                         size_t* size) 
+{
+    /*两个指针，一个指向文件信息部分，一个指向文件内容部分  */
+    uint32_t info_block_size = *(uint32_t*) (library_bytes + 4 * 4); /* 每个文件信息大小的总和 */
+    uint8_t* module_info_ptr = library_bytes + 4 * 5 ;
+    uint8_t* bytecode_ptr = module_info_ptr + info_block_size;/* 文件内容起始的地址，只有内容  */
+    
+    /* 每一个模块的信息 */
+    uint32_t name_len = 0;
+    uint32_t module_size = 0;
+    char* module_name = NULL;
     for (uint32_t i = 0; i < module_index + 1; i++) {
-        char* module_name =
-            (char*)(library_bytes + LIB_INFO_BLOCK_SIZE * (i + 1));
         // pika_platform_printf("loading module: %s\r\n", module_name);
+        name_len = *(module_info_ptr + MOD_NAMELEN_OFFSET);
+        module_name = (char *)(module_info_ptr + MOD_NAME_OFFSET);
+        module_size = *(uint32_t*)(module_info_ptr + MOD_SIZE_OFFSET);
+        /* printf("[%s][%d]: module_name:%s - name_len:%d - module_size:%d\r\n", __func__, __LINE__, module_name, name_len, module_size);*/
+
         *name_p = module_name;
-        *addr_p = bytecode_addr;
-        size_t module_size =
-            *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
+        *addr_p = bytecode_ptr;
         *size = module_size;
-        bytecode_addr += module_size;
+        /* fix size for string */
+        PIKA_BOOL bIsString = PIKA_TRUE;
+        for (size_t i = 0; i < *size - 1; ++i) {
+            if (bytecode_ptr[i] == 0) {
+                bIsString = PIKA_FALSE;
+                break;
+            }
+        }
+        if (bIsString) {
+            /* remove the last '\0' for stirng */
+            if (bytecode_ptr[*size - 1] == 0) {
+                *size -= 1;
+            }
+        }
+        /* next module */
+        module_info_ptr += MOD_SIZE_OFFSET + 4;
+        bytecode_ptr += module_size;
+
     }
     return PIKA_RES_OK;
 }
@@ -578,23 +675,24 @@ int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
 
 /**
  * @brief unpack *.pack file to Specified path
- * 
+ *
  * @param pack_name  the name of *.pack file
  * @param out_path   output path
- * @return           
+ * @return
  */
-PIKA_RES LibObj_unpackFileToPath(char* pack_name, char* out_path) {
-
+PIKA_RES pikafs_unpack_files(char* pack_name, char* out_path) {
     PIKA_RES stat = PIKA_RES_OK;
     Arg* file_arg = NULL;
     uint8_t* library_bytes = NULL;
     pikafs_FILE* fptr = NULL;
+    if (NULL == out_path) {
+        out_path = "./packout/";
+    }
 
     stat = _getPack_libraryBytes(&fptr, &file_arg, pack_name);
     if (PIKA_RES_OK == stat) {
         library_bytes = arg_getBytes(file_arg);
-    }
-    else {
+    } else {
         return stat;
     }
 
@@ -603,25 +701,29 @@ PIKA_RES LibObj_unpackFileToPath(char* pack_name, char* out_path) {
         return (PIKA_RES)module_num;
     }
 
-    Args buffs = { 0 };
+    Args buffs = {0};
     char* output_file_path = NULL;
     FILE* new_fp = NULL;
+    char* name = NULL;
+    uint8_t* addr = NULL;
+    size_t size = 0;
 
     for (int i = 0; i < module_num; ++i) {
-        char* name = NULL;
-        uint8_t* addr = NULL;
-        size_t size = 0;
-        _loadModuleDataWithIndex(library_bytes, module_num, i, &name, &addr,
-            &size);
+        size = 0;
+        stat = _loadModuleDataWithIndex(library_bytes, module_num, i, &name, &addr,
+                                 &size);
+        name = strsGetLastToken(&buffs, name, '/');  /*找到最后一个 / 出现的位置的下一个地址*/
         output_file_path = strsPathJoin(&buffs, out_path, name);
+        pika_platform_printf("output_file_path: %s\r\n", output_file_path);
         new_fp = pika_platform_fopen(output_file_path, "wb+");
+
         if (NULL != new_fp) {
             pika_platform_fwrite(addr, size, 1, new_fp);
             pika_platform_fclose(new_fp);
-            pika_platform_printf("extract %s to %s\r\n", name, output_file_path);
-        }
-        else {
+            pika_platform_printf("unpack %s to %s\r\n", name, output_file_path);
+        } else {
             pika_platform_printf("can't open %s\r\n", output_file_path);
+            stat = PIKA_RES_ERR_IO_ERROR;
             break;
         }
     }
@@ -629,7 +731,7 @@ PIKA_RES LibObj_unpackFileToPath(char* pack_name, char* out_path) {
     arg_deinit(file_arg);
     strsDeinit(&buffs);
     pikaFree(fptr, sizeof(pikafs_FILE));
-    return PIKA_RES_OK;
+    return stat;
 }
 
 size_t pika_fputs(char* str, FILE* fp) {
@@ -1029,6 +1131,19 @@ PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path) {
 }
 
 /*
+ * @brief link raw file to library
+ * @param self PikaMaker
+ * @param path of the file to be packed
+ * @param path of the file in pikafs
+ * @return PIKA_RES
+ */
+PIKA_RES pikaMaker_linkRaw_New(PikaMaker* self, char* file_path, char* pack_path) {
+    LibObj* lib = obj_getPtr(self, "lib"); /* self 下面的lib 对象 */
+    PIKA_RES ret = LibObj_staticLinkFile_New(lib, file_path, pack_path);
+    return ret;
+}
+
+/*
  * @brief open file from library
  * @param file_name
  * @param mode "r" or "rb"
@@ -1057,8 +1172,7 @@ pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
     stat = _getPack_libraryBytes(&f, &file_arg, pack_name);
     if (PIKA_RES_OK == stat) {
         library_bytes = arg_getBytes(file_arg);
-    }
-    else {
+    } else {
         return NULL;
     }
 
