@@ -39,7 +39,7 @@ class List(Tuple):
     def reverse(self):
         """reverse the list"""
 
-    def pop(self) -> any:
+    def pop(self, *index) -> any:
         """pop the last element"""
 
     def remove(self, val: any):

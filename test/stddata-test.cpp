@@ -336,6 +336,28 @@ TEST(stddata, list_pop_) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stddata, list_pop_index) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "l = [1,2,3,4]\n"
+            "l.pop(2)\n"
+            "l.pop(0)\n"
+            "l");
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[0], "[2, 4]\r\n");
+    EXPECT_STREQ(log_buff[1], "1\r\n");
+    EXPECT_STREQ(log_buff[2], "3\r\n");
+    EXPECT_STREQ(log_buff[3], "BEGIN\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(stddata, list_remove_) {
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;

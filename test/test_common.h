@@ -25,7 +25,7 @@ extern PikaMemInfo g_PikaMemInfo;
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 }
 
-#define TEST_SINGLE_FILE(_test_suite_, _test_name_, _file_name_)               \
+#define TEST_RUN_SINGLE_FILE(_test_suite_, _test_name_, _file_name_)               \
   TEST(_test_suite_, _test_name_) {                                            \
     g_PikaMemInfo.heapUsedMax = 0;                                             \
     PikaObj *pikaMain = newRootObj("pikaMain", New_PikaMain);                  \
@@ -40,7 +40,7 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
     EXPECT_EQ(pikaMemNow(), 0);                                                \
   }
 
-#define TEST_SINGLE_FILE_PASS(_test_suite_, _test_name_, _file_name_)          \
+#define TEST_RUN_SINGLE_FILE_PASS(_test_suite_, _test_name_, _file_name_)          \
   TEST(_test_suite_, _test_name_) {                                            \
     g_PikaMemInfo.heapUsedMax = 0;                                             \
     PikaObj *pikaMain = newRootObj("pikaMain", New_PikaMain);                  \

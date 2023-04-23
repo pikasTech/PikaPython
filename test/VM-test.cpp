@@ -2816,9 +2816,11 @@ TEST_RUN_LINES(vm, char_issue2, "/")
 TEST_RUN_LINES(vm, char_issue3, "%")
 TEST_RUN_LINES(vm, char_issue4, "=")
 
-TEST_SINGLE_FILE(vm, issue_star_dict, "test/python/issue/issue_star_dict.py")
+TEST_RUN_SINGLE_FILE(vm,
+                     issue_star_dict,
+                     "test/python/issue/issue_star_dict.py")
 
-TEST_SINGLE_FILE_PASS(vm, proxy2, "test/python/proxy/proxy2.py")
+TEST_RUN_SINGLE_FILE_PASS(vm, proxy2, "test/python/proxy/proxy2.py")
 
 #if 0  //! need fix
 TEST_RUN_LINES_PASS(vm,
@@ -2838,6 +2840,10 @@ TEST_RUN_LINES_PASS(vm,
 
 TEST_RUN_LINES(vm, abs_none, "abs(None)")
 TEST_RUN_LINES(vm, abs_str, "abs('test')")
+
+TEST_RUN_SINGLE_FILE_PASS(datastruct,
+                          circlequeue,
+                          "test/python/datastruct/circlequeue.py")
 
 #endif
 

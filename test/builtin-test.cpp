@@ -188,7 +188,7 @@ TEST(builtin, int_extern) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST_SINGLE_FILE_PASS(builtin, list_tuple_equ, "test/python/builtin/list_tuple_equ.py")
+TEST_RUN_SINGLE_FILE_PASS(builtin, list_tuple_equ, "test/python/builtin/list_tuple_equ.py")
 
 #endif
 

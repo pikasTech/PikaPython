@@ -559,16 +559,26 @@ PIKA_RES pikaList_append(PikaList* self, Arg* arg) {
     return args_setInt(&self->super, "top", top + 1);
 }
 
+Arg* pikaList_pop_withIndex(PikaList* list, int index) {
+    int top = args_getInt(&list->super, "top");
+    if (top <= 0) {
+        return NULL;
+    }
+    if (index < 0){
+        index = top + index;
+    }
+    Arg* arg = pikaList_getArg(list, index);
+    Arg* res = arg_copy(arg);
+    pikaList_remove(list, arg);
+    return res;
+}
+
 Arg* pikaList_pop(PikaList* list) {
     int top = args_getInt(&list->super, "top");
     if (top <= 0) {
         return NULL;
     }
-    Arg* arg = pikaList_getArg(list, top - 1);
-    Arg* res = arg_copy(arg);
-    args_removeArg(&list->super, arg);
-    args_setInt(&list->super, "top", top - 1);
-    return res;
+    return pikaList_pop_withIndex(list, top - 1);
 }
 
 PIKA_RES pikaList_remove(PikaList* list, Arg* arg) {

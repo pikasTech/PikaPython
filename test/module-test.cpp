@@ -592,7 +592,7 @@ TEST(module, REPL_stdtask) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST_SINGLE_FILE(modbus, rtu_master_err, "test/python/modbus/rtu_master_err.py")
+TEST_RUN_SINGLE_FILE(modbus, rtu_master_err, "test/python/modbus/rtu_master_err.py")
 
 #endif
 

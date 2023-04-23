@@ -227,6 +227,7 @@ size_t pikaList_getSize(PikaList* self);
 void pikaList_reverse(PikaList* self);
 PIKA_RES pikaList_insert(PikaList* self, int index, Arg* arg);
 Arg* pikaList_pop(PikaList* list);
+Arg* pikaList_pop_withIndex(PikaList* list, int index);
 PIKA_RES pikaList_remove(PikaList* list, Arg* arg);
 static inline void pikaList_deinit(PikaList* self) {
     args_deinit((&((self)->super)));
