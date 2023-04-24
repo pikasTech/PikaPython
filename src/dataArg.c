@@ -614,6 +614,7 @@ Arg* arg_loadFile(Arg* self, char* filename) {
     FILE* input_file = pika_platform_fopen(filename, "rb");
     if (NULL == input_file) {
         pika_platform_printf("Error: Couldn't open file '%s'\n", filename);
+        arg_deinit(res);
         res = NULL;
         goto exit;
     }
@@ -622,7 +623,9 @@ Arg* arg_loadFile(Arg* self, char* filename) {
 
     if (file_size >= PIKA_READ_FILE_BUFF_SIZE) {
         pika_platform_printf("Error: Not enough buff for input file.\r\n");
-        return NULL;
+        arg_deinit(res);
+        res = NULL;
+        goto exit;
     }
     /* add '\0' to the end of the string */
     res = arg_setBytes(res, "", (uint8_t*)file_buff, file_size + 1);

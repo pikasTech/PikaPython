@@ -388,7 +388,7 @@ static int32_t __foreach_handler_libWriteIndex(Arg* argEach, Args* context) {
         uint32_t buff_len = strGetSize(module_name);
         char* name_buff = (char* )__platform_malloc(5 + buff_len); /* 4 + 1 + buff_len*/
         __platform_memset(name_buff, 0x00, buff_len + 1);
-        module_name = strsReplace(&buffs, module_name, "|", ".");
+        // module_name = strsReplace(&buffs, module_name, "|", ".");
         // pika_platform_printf("   %s:%d\r\n", module_name, bytecode_size);
         pika_platform_memcpy(name_buff, &buff_len, 4);
         pika_platform_memcpy(name_buff + 4, module_name, buff_len + 1); /* add '\0' after name */
@@ -398,6 +398,8 @@ static int32_t __foreach_handler_libWriteIndex(Arg* argEach, Args* context) {
         //     name_buff, 1, LIB_INFO_BLOCK_SIZE - sizeof(bytecode_size), out_file);
         // pika_platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size),
         //                      out_file);
+        __platform_free(name_buff);
+
     }
     strsDeinit(&buffs);
     return 0;
@@ -567,6 +569,7 @@ static PIKA_RES _loadModuleDataWithIndex(uint8_t* library_bytes,
     return PIKA_RES_OK;
 }
 
+   
 PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
                                  char* module_name,
                                  uint8_t** addr_p,
@@ -575,18 +578,25 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
     if (module_num < 0) {
         return (PIKA_RES)module_num;
     }
+
+    Args buffs = {0};
+
     for (int i = 0; i < module_num; i++) {
         char* name = NULL;
         uint8_t* addr = NULL;
         size_t size = 0;
         _loadModuleDataWithIndex(library_bytes, module_num, i, &name, &addr,
                                  &size);
+        name = strsGetLastToken(&buffs, name, '/');  /*找到最后一个 / 出现的位置的下一个地址*/
+
         if (strEqu(module_name, name)) {
             *addr_p = addr;
             *size_p = size;
+            strsDeinit(&buffs);
             return PIKA_RES_OK;
         }
     }
+    strsDeinit(&buffs);
     return PIKA_RES_ERR_ARG_NO_FOUND;
 }
 
@@ -617,6 +627,7 @@ PIKA_RES _getPack_libraryBytes(pikafs_FILE** fp, Arg** f_arg, char* pack_name) {
     if (NULL == *f_arg) {
         pika_platform_printf("Error: Could not load file \'%s\'\r\n", pack_name);
         pikaFree(*fp, sizeof(pikafs_FILE));
+        arg_deinit(*f_arg);
         // fp == NULL;
         return PIKA_RES_ERR_IO_ERROR;
     }
@@ -1164,7 +1175,9 @@ pikafs_FILE* pikafs_fopen(char* file_name, char* mode) {
     return f;
 }
 
+
 pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
+
     pikafs_FILE* f = NULL;
     Arg* file_arg = NULL;
     PIKA_RES stat = PIKA_RES_OK;
@@ -1178,7 +1191,7 @@ pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
 
     if (PIKA_RES_OK !=
         _loadModuleDataWithName(library_bytes, file_name, &f->addr, &f->size)) {
-        return NULL;
+        f = NULL;
     }
 
     arg_deinit(file_arg);
