@@ -71,6 +71,7 @@ int strPathGetFolder(char* input, char* output);
 int strPathGetFileName(char* input, char* output);
 int strGetIndent(char* string);
 int strIsBlank(char* string);
+int strOnly(char* string, char ch);
 
 #endif
 #ifdef __cplusplus

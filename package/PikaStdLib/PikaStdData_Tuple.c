@@ -56,6 +56,10 @@ char* PikaStdData_Tuple___str__(PikaObj* self) {
     while (PIKA_TRUE) {
         Arg* item = pikaList_getArg(list, i);
         if (NULL == item) {
+            if (i == 1) {
+                // single tuple
+                str_arg = arg_strAppend(str_arg, ",");
+            }
             break;
         }
         if (i != 0) {

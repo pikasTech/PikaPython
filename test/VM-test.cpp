@@ -2845,6 +2845,9 @@ TEST_RUN_SINGLE_FILE_PASS(datastruct,
                           circlequeue,
                           "test/python/datastruct/circlequeue.py")
 
+TEST_RUN_LINES_EXCEPT_OUTPUT(vm, single_tuple, "(1,)", "(1,)\r\n")
+TEST_RUN_LINES_EXCEPT_OUTPUT(vm, single_tuple_str, "('test',)", "('test',)\r\n")
+
 #endif
 
 TEST_END

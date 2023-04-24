@@ -84,6 +84,16 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
     EXPECT_EQ(pikaMemNow(), 0);                                                \
   }
 
+#define TEST_RUN_LINES_EXCEPT_OUTPUT(_test_suite_, _test_name_, _lines_,       \
+                                     _except_output_)                          \
+  TEST(_test_suite_, _test_name_) {                                            \
+    PikaObj *self = newRootObj("root", New_PikaStdLib_SysObj);                 \
+    obj_run(self, (_lines_)); /* collect */ /* assert */                       \
+    EXPECT_STREQ(log_buff[0], (_except_output_));                              \
+    obj_deinit(self);                                                          \
+    EXPECT_EQ(pikaMemNow(), 0);                                                \
+  }
+
 #if USE_GOOGLE_TEST
 #include "gtest/gtest.h"
 #define TEST_START

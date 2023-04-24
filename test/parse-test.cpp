@@ -1,16 +1,16 @@
 #include "test_common.h"
 TEST_START
 
-#define TEST_LINES2ASM_NOCHECK(_test_name_, _lines_) \
-    TEST(parser, _test_name_) {                      \
-        g_PikaMemInfo.heapUsedMax = 0;               \
-        Args* buffs = New_strBuff();                 \
-        char* lines = (_lines_);                     \
-        printf("%s\r\n", lines);                     \
-        char* pikaAsm = pika_lines2Asm(buffs, lines);\
-        printf("%s", pikaAsm);                       \
-        args_deinit(buffs);                          \
-        EXPECT_EQ(pikaMemNow(), 0);                  \
+#define TEST_LINES2ASM_NOCHECK(_test_name_, _lines_)  \
+    TEST(parser, _test_name_) {                       \
+        g_PikaMemInfo.heapUsedMax = 0;                \
+        Args* buffs = New_strBuff();                  \
+        char* lines = (_lines_);                      \
+        printf("%s\r\n", lines);                      \
+        char* pikaAsm = pika_lines2Asm(buffs, lines); \
+        printf("%s", pikaAsm);                        \
+        args_deinit(buffs);                           \
+        EXPECT_EQ(pikaMemNow(), 0);                   \
     }
 
 #define TEST_LINES2ASM(_test_name_, _lines_, _asm_)   \
@@ -5586,6 +5586,15 @@ TEST_LINES2ASM(docstring,
                "B0\n")
 
 TEST_LINES2ASM_NOCHECK(char_issue1, "=")
+
+TEST_LINES2ASM(tuple_single,
+              "(1, )",
+               "B0\n"
+               "1 NUM 1\n"
+               "0 TPL \n"
+               "B0\n")
+
+TEST_LINES2ASM_NOCHECK(tuple_err, "(1,,)")
 
 #endif
 

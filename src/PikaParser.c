@@ -1415,44 +1415,65 @@ PIKA_RES AST_parseSubStmt(AST* ast, char* node_content) {
     return PIKA_RES_OK;
 }
 
-char* Parser_popSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
-    Arg* substmt_arg = arg_newStr("");
-    Arg* newstmt_arg = arg_newStr("");
-    char* stmt = *stmt_p;
-    PIKA_BOOL is_get_substmt = PIKA_FALSE;
+char* Parser_popSubStmt(Args* outbuffs, char** psStmt, char* delimiter) {
+    Arg* aSubstmt = arg_newStr("");
+    Arg* aNewStmt = arg_newStr("");
+    char* sStmt = *psStmt;
+    PIKA_BOOL bIsGetSubstmt = PIKA_FALSE;
     Args buffs = {0};
-    Cursor_forEach(cs, stmt) {
+    Cursor_forEach(cs, sStmt) {
         Cursor_iterStart(&cs);
-        if (is_get_substmt) {
+        if (bIsGetSubstmt) {
             /* get new stmt */
-            newstmt_arg = arg_strAppend(newstmt_arg, cs.token1.pyload);
+            aNewStmt = arg_strAppend(aNewStmt, cs.token1.pyload);
             Cursor_iterEnd(&cs);
             continue;
         }
         if (cs.branket_deepth > 0) {
             /* ignore */
-            substmt_arg = arg_strAppend(substmt_arg, cs.token1.pyload);
+            aSubstmt = arg_strAppend(aSubstmt, cs.token1.pyload);
             Cursor_iterEnd(&cs);
             continue;
         }
         if (strEqu(cs.token1.pyload, delimiter)) {
             /* found delimiter */
-            is_get_substmt = PIKA_TRUE;
+            bIsGetSubstmt = PIKA_TRUE;
             Cursor_iterEnd(&cs);
             continue;
         }
         /* collect substmt */
-        substmt_arg = arg_strAppend(substmt_arg, cs.token1.pyload);
+        aSubstmt = arg_strAppend(aSubstmt, cs.token1.pyload);
         Cursor_iterEnd(&cs);
     }
     Cursor_deinit(&cs);
 
     strsDeinit(&buffs);
 
-    char* substmt = strsCacheArg(outbuffs, substmt_arg);
-    char* newstmt = strsCacheArg(outbuffs, newstmt_arg);
-    *stmt_p = newstmt;
-    return substmt;
+    char* sSubstmt = strsCacheArg(outbuffs, aSubstmt);
+    char* sNewstmt = strsCacheArg(outbuffs, aNewStmt);
+    *psStmt = sNewstmt;
+    return sSubstmt;
+}
+
+int Parser_getSubStmtNum(Args* outbuffs, char* subStmts, char* delimiter) {
+    int num = 0;
+    if (strEqu(subStmts, ",")) {
+        return 0;
+    }
+    Cursor_forEach(cs, subStmts) {
+        Cursor_iterStart(&cs);
+        if (cs.branket_deepth > 0) {
+            /* ignore */
+            Cursor_iterEnd(&cs);
+            continue;
+        }
+        if (strEqu(cs.token1.pyload, delimiter)) {
+            num++;
+        }
+        Cursor_iterEnd(&cs);
+    }
+    Cursor_deinit(&cs);
+    return num;
 }
 
 char* Parser_popLastSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
@@ -1621,7 +1642,7 @@ __exit:
 AST* AST_parseStmt(AST* ast, char* stmt) {
     Args buffs = {0};
     char* assignment = Cursor_splitCollect(&buffs, stmt, "(", 0);
-    char* method = NULL;
+    char* sMethod = NULL;
     char* ref = NULL;
     char* str = NULL;
     char* num = NULL;
@@ -1731,22 +1752,38 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
 
     /* solve method stmt */
     if (STMT_method == stmtType) {
-        method = strsGetFirstToken(&buffs, right, '(');
-        AST_setNodeAttr(ast, (char*)"method", method);
-        char* subStmts = strsCut(&buffs, right, '(', ')');
-        if (NULL == subStmts) {
+        char* sRealType = "method";
+        sMethod = strsGetFirstToken(&buffs, right, '(');
+        char* sSubStmts = strsCut(&buffs, right, '(', ')');
+        if (NULL == sSubStmts) {
             result = PIKA_RES_ERR_SYNTAX_ERROR;
             goto exit;
         }
         /* add ',' at the end */
-        subStmts = strsAppend(&buffs, subStmts, ",");
-        while (1) {
-            char* substmt = Parser_popSubStmt(&buffs, &subStmts, ",");
+        sSubStmts = strsAppend(&buffs, sSubStmts, ",");
+        int iSubStmtsNum = Parser_getSubStmtNum(&buffs, sSubStmts, ",");
+        for (int i = 0; i < iSubStmtsNum; i++) {
+            char* substmt = Parser_popSubStmt(&buffs, &sSubStmts, ",");
             AST_parseSubStmt(ast, substmt);
-            if (strEqu("", subStmts)) {
+            if (strOnly(sSubStmts, ',')) {
+                if (i < iSubStmtsNum - 2) {
+                    result = PIKA_RES_ERR_SYNTAX_ERROR;
+                    goto exit;
+                }
+                if (i == iSubStmtsNum - 2 && strEqu(sMethod, "")) {
+                    sRealType = "tuple";
+                }
+                break;
+            }
+            if (strEqu("", sSubStmts)) {
+                if (i != iSubStmtsNum - 1) {
+                    result = PIKA_RES_ERR_SYNTAX_ERROR;
+                    goto exit;
+                }
                 break;
             }
         }
+        AST_setNodeAttr(ast, (char*)sRealType, sMethod);
         goto exit;
     }
     /* solve reference stmt */
@@ -2850,6 +2887,7 @@ char* AST_genAsm_sub(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
         {.ins = "SLC", .type = VAL_NONEVAL, .ast = "slice"},
         {.ins = "DCT", .type = VAL_NONEVAL, .ast = "dict"},
         {.ins = "LST", .type = VAL_NONEVAL, .ast = "list"},
+        {.ins = "TPL", .type = VAL_NONEVAL, .ast = "tuple"},
         {.ins = "OUT", .type = VAL_DYNAMIC, .ast = "left"}};
 
     char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);

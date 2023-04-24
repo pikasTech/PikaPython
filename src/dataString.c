@@ -405,3 +405,16 @@ int strIsBlank(char* string) {
     }
     return 1;
 }
+
+int strOnly(char* string, char ch) {
+    int len = strGetSize(string);
+    if (len == 0) {
+        return 0;
+    }
+    for (int j = 0; j < len; j++) {
+        if (string[j] != ch) {
+            return 0;
+        }
+    }
+    return 1;
+}

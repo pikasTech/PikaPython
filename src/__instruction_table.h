@@ -97,3 +97,5 @@ def_ins(ASS)
 def_ins(EXP)
 /* jump no zero */
 def_ins(JNZ)
+/* tuple */
+def_ins(TPL)

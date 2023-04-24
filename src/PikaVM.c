@@ -1641,6 +1641,13 @@ static Arg* VM_instruction_handler_LST(PikaObj* self,
     return _vm_create_list_or_tuple(self, vm, PIKA_TRUE);
 }
 
+static Arg* VM_instruction_handler_TPL(PikaObj* self,
+                                       VMState* vm,
+                                       char* data,
+                                       Arg* arg_ret_reg) {
+    return _vm_create_list_or_tuple(self, vm, PIKA_FALSE);
+}
+
 void __vm_Dict___init__(PikaObj* self) {
     PikaDict* dict = New_pikaDict();
     PikaDict* keys = New_pikaDict();

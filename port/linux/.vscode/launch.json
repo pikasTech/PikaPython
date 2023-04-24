@@ -18,7 +18,9 @@
                 // "--gtest_filter=packtool.packread"
                 // "--gtest_filter=thread.test1"
                 // "--gtest_filter=eventloop.test1"
-                "--gtest_filter=stddata.*"
+                "--gtest_filter=parser.tuple_single"
+                // "--gtest_filter=parser.*"
+                // "--gtest_filter=parser.page_add"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
