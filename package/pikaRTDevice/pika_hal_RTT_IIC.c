@@ -1,4 +1,3 @@
-#include <hosal_i2c.h>
 #include "../PikaStdDevice/pika_hal.h"
 
 int pika_hal_platform_IIC_open(pika_dev* dev, char* name) {
