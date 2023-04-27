@@ -858,3 +858,12 @@ char* PikaStdData_String_join(PikaObj* self, Arg* val) {
     obj_deinit(context);
     return sRes;
 }
+
+int PikaStdData_String_find(PikaObj *self, char* sub){
+    char* str = obj_getStr(self, "str");
+    char* res = strstr(str, sub);
+    if (res == NULL) {
+        return -1;
+    }
+    return res - str;
+}
