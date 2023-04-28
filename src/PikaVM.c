@@ -1124,51 +1124,52 @@ Arg* obj_runMethodArg(PikaObj* self,
 }
 
 static char* _kw_pos_to_default_all(FunctionArgsInfo* f,
-                                    char* arg_name,
+                                    char* sArgName,
                                     int* argc,
                                     Arg* argv[],
-                                    Arg* call_arg) {
+                                    Arg* aCall) {
 #if PIKA_NANO_ENABLE
     return arg_name;
 #endif
-    int n_default_skip = 0;
-    int n_default_skiped = 0;
+    int iDefaultSkip = 0;
+    int iDefaultSkiped = 0;
     if (f->i_arg == f->n_arg) {
-        n_default_skip = f->n_default - f->n_arg;
+        iDefaultSkip = f->n_default - f->n_arg + f->n_positional;
     }
-    while (strIsContain(arg_name, '=')) {
-        strPopLastToken(arg_name, '=');
-        Arg* kw_arg = NULL;
+    while (strIsContain(sArgName, '=')) {
+        strPopLastToken(sArgName, '=');
+        Arg* aKeyword = NULL;
         /* load default arg from kws */
         if (f->kw != NULL) {
-            kw_arg = pikaDict_getArg(f->kw, arg_name);
-            if (kw_arg != NULL) {
-                Arg* arg_new = arg_copy(kw_arg);
-                argv[(*argc)++] = arg_new;
-                pikaDict_removeArg(f->kw, kw_arg);
+            aKeyword = pikaDict_getArg(f->kw, sArgName);
+            if (aKeyword != NULL) {
+                Arg* aNew = arg_copy(aKeyword);
+                argv[(*argc)++] = aNew;
+                pikaDict_removeArg(f->kw, aKeyword);
+                goto __next;
             }
         }
-        if (f->kw == NULL || kw_arg == NULL) {
-            /* can not load defalut from kw */
-            if (NULL != call_arg && f->is_default) {
-                /* load pos to default with right order */
-                if (n_default_skiped < n_default_skip) {
-                    n_default_skiped++;
-                    arg_name = strPopLastToken(f->type_list, ',');
-                    continue;
-                }
-                /* load default from pos */
-                if (f->i_arg > f->n_positional) {
-                    arg_setNameHash(call_arg,
-                                    hash_time33EndWith(arg_name, ':'));
-                    argv[(*argc)++] = call_arg;
-                    return (char*)1;
-                }
+
+        /* load default arg from pos */
+        if (NULL != aCall && f->is_default) {
+            /* load pos to default with right order */
+            if (iDefaultSkiped < iDefaultSkip) {
+                iDefaultSkiped++;
+                sArgName = strPopLastToken(f->type_list, ',');
+                continue;
+            }
+            /* load default from pos */
+            if (f->i_arg > f->n_positional) {
+                arg_setNameHash(aCall, hash_time33EndWith(sArgName, ':'));
+                argv[(*argc)++] = aCall;
+                return (char*)1;
             }
         }
-        arg_name = strPopLastToken(f->type_list, ',');
+
+    __next:
+        sArgName = strPopLastToken(f->type_list, ',');
     }
-    return arg_name;
+    return sArgName;
 }
 
 static int _kw_to_pos_one(FunctionArgsInfo* f,
