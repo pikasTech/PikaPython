@@ -5560,10 +5560,6 @@ TEST_LINES2ASM(
     "0 STR \"\n"
     "0 OUT quotechar\n"
     "B1\n"
-    "0 EST \n"
-    "0 JNZ 2\n"
-    "B1\n"
-    "B1\n"
     "B1\n"
     "0 RET \n"
     "B0\n")
@@ -5588,13 +5584,35 @@ TEST_LINES2ASM(docstring,
 TEST_LINES2ASM_NOCHECK(char_issue1, "=")
 
 TEST_LINES2ASM(tuple_single,
-              "(1, )",
+               "(1, )",
                "B0\n"
                "1 NUM 1\n"
                "0 TPL \n"
                "B0\n")
 
 TEST_LINES2ASM_NOCHECK(tuple_err, "(1,,)")
+
+TEST_LINES2ASM(default_tuple,
+               "def test(a, b=(1, 2)):\n"
+               "    print(a,b)",
+               "B0\n"
+               "0 DEF test(a,b=)\n"
+               "0 JMP 1\n"
+               "B1\n"
+               "0 EST b\n"
+               "0 JNZ 2\n"
+               "B1\n"
+               "1 NUM 1\n"
+               "1 NUM 2\n"
+               "0 RUN \n"
+               "0 OUT b\n"
+               "B1\n"
+               "1 REF a\n"
+               "1 REF b\n"
+               "0 RUN print\n"
+               "B1\n"
+               "0 RET \n"
+               "B0\n")
 
 #endif
 

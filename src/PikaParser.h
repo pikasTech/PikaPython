@@ -144,6 +144,11 @@ int parser_deinit(Parser* parser);
 
 char* Cursor_popLastToken(Args* outBuffs, char** pStmt, char* str);
 char* Cursor_getCleanStmt(Args* outBuffs, char* cmd);
+uint8_t Cursor_count(char* stmt, TokenType type, char* pyload);
+uint8_t _Cursor_count(char* stmt,
+                      TokenType type,
+                      char* pyload,
+                      PIKA_BOOL bSkipBranket);
 
 AST* AST_parseStmt(AST* ast, char* stmt);
 char* AST_genAsm(AST* oAST, Args* outBuffs);

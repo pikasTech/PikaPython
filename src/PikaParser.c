@@ -970,16 +970,35 @@ void _Cursor_beforeIter(struct Cursor* cs) {
     cs->last_token = arg_newStr(TokenStream_pop(cs->buffs_p, &cs->tokenStream));
 }
 
-uint8_t Cursor_count(char* stmt, TokenType type, char* pyload) {
+uint8_t _Cursor_count(char* stmt,
+                      TokenType type,
+                      char* pyload,
+                      PIKA_BOOL bSkipBranket) {
     /* fast return */
     if (!strstr(stmt, pyload)) {
         return PIKA_FALSE;
     }
     Args buffs = {0};
-    char* tokenStream = Lexer_getTokenStream(&buffs, stmt);
-    uint8_t res = TokenStream_count(tokenStream, type, pyload);
+    uint8_t res = 0;
+    Cursor_forEach(cs, stmt) {
+        Cursor_iterStart(&cs);
+        if (cs.token1.type == type && (strEqu(cs.token1.pyload, pyload))) {
+            if (bSkipBranket && cs.branket_deepth > 0) {
+                /* skip branket */
+                Cursor_iterEnd(&cs);
+                continue;
+            }
+            res++;
+        }
+        Cursor_iterEnd(&cs);
+    };
+    Cursor_deinit(&cs);
     strsDeinit(&buffs);
     return res;
+}
+
+uint8_t Cursor_count(char* stmt, TokenType type, char* pyload) {
+    return _Cursor_count(stmt, type, pyload, PIKA_FALSE);
 }
 
 PIKA_BOOL Cursor_isContain(char* stmt, TokenType type, char* pyload) {
@@ -1455,25 +1474,11 @@ char* Parser_popSubStmt(Args* outbuffs, char** psStmt, char* delimiter) {
     return sSubstmt;
 }
 
-int Parser_getSubStmtNum(Args* outbuffs, char* subStmts, char* delimiter) {
-    int num = 0;
+int Parser_getSubStmtNum(char* subStmts, char* delimiter) {
     if (strEqu(subStmts, ",")) {
         return 0;
     }
-    Cursor_forEach(cs, subStmts) {
-        Cursor_iterStart(&cs);
-        if (cs.branket_deepth > 0) {
-            /* ignore */
-            Cursor_iterEnd(&cs);
-            continue;
-        }
-        if (strEqu(cs.token1.pyload, delimiter)) {
-            num++;
-        }
-        Cursor_iterEnd(&cs);
-    }
-    Cursor_deinit(&cs);
-    return num;
+    return _Cursor_count(subStmts, TOKEN_devider, delimiter, PIKA_TRUE);
 }
 
 char* Parser_popLastSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
@@ -1761,7 +1766,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         }
         /* add ',' at the end */
         sSubStmts = strsAppend(&buffs, sSubStmts, ",");
-        int iSubStmtsNum = Parser_getSubStmtNum(&buffs, sSubStmts, ",");
+        int iSubStmtsNum = Parser_getSubStmtNum(sSubStmts, ",");
         for (int i = 0; i < iSubStmtsNum; i++) {
             char* substmt = Parser_popSubStmt(&buffs, &sSubStmts, ",");
             AST_parseSubStmt(ast, substmt);
@@ -1906,8 +1911,8 @@ char* _defGetDefault(Args* outBuffs, char** psDeclearOut) {
     char* sArgList = strsCut(&buffs, sDeclear, '(', ')');
     char* sDefaultOut = NULL;
     pika_assert(NULL != sArgList);
-    int argNum = Cursor_count(sArgList, TOKEN_devider, ",") + 1;
-    for (int i = 0; i < argNum; i++) {
+    int iArgNum = _Cursor_count(sArgList, TOKEN_devider, ",", PIKA_TRUE) + 1;
+    for (int i = 0; i < iArgNum; i++) {
         char* sItem = Cursor_popToken(&buffs, &sArgList, ",");
         char* sDefaultVal = NULL;
         char* sDefaultKey = NULL;
@@ -3157,7 +3162,8 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
 
 #if !PIKA_NANO_ENABLE
         if (NULL != sDefaultStmts) {
-            int iStmtNum = strGetTokenNum(sDefaultStmts, ',');
+            int iStmtNum =
+                _Cursor_count(sDefaultStmts, TOKEN_devider, ",", PIKA_TRUE) + 1;
             for (int i = 0; i < iStmtNum; i++) {
                 char* sStmt = Cursor_popToken(&buffs, &sDefaultStmts, ",");
                 char* sArgName = strsGetFirstToken(&buffs, sStmt, '=');
