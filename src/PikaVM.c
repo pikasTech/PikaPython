@@ -1129,7 +1129,7 @@ static char* _kw_pos_to_default_all(FunctionArgsInfo* f,
                                     Arg* argv[],
                                     Arg* aCall) {
 #if PIKA_NANO_ENABLE
-    return arg_name;
+    return sArgName;
 #endif
     int iDefaultSkip = 0;
     int iDefaultSkiped = 0;
