@@ -267,7 +267,7 @@ impl Compiler {
             /* print info */
             match suffix {
                 "py" => {
-                    println!("  scaning {}{}.{}...", self.source_path, file_name, suffix);
+                    println!("  scanning {}{}.{}...", self.source_path, file_name, suffix);
                 }
                 "pyi" => {
                     println!(
