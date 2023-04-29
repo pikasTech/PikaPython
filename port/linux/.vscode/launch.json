@@ -21,7 +21,7 @@
                 // "--gtest_filter=parser.tuple_single"
                 // "--gtest_filter=parser.*"
                 // "--gtest_filter=parser.page_add"
-                "--gtest_filter=builtin.fn_default1"
+                "--gtest_filter=builtin.fn_default_tuple"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

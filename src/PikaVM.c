@@ -1216,35 +1216,35 @@ static void _type_list_parse(FunctionArgsInfo* f) {
         f->n_positional = 0;
         return;
     }
-    int8_t res = strCountSign(f->type_list, ',') + 1;
-    int8_t x = strCountSign(f->type_list, '*');
-    int8_t y = strCountSign(f->type_list, '=');
+    int8_t iArgc = strCountSign(f->type_list, ',') + 1;
+    int8_t iStar = strCountSign(f->type_list, '*');
+    int8_t iAssign = strCountSign(f->type_list, '=');
     /* default */
-    if (y > 0) {
-        res -= y;
+    if (iAssign > 0) {
+        iArgc -= iAssign;
         f->is_default = PIKA_TRUE;
-        f->n_default = y;
+        f->n_default = iAssign;
     }
     /* vars */
-    if (x == 1) {
+    if (iStar == 1) {
         f->is_vars = PIKA_TRUE;
-        f->n_positional = res - 1;
+        f->n_positional = iArgc - 1;
         return;
     }
     /* kw */
-    if (x == 2) {
+    if (iStar == 2) {
         f->is_keys = PIKA_TRUE;
-        f->n_positional = res - 1;
+        f->n_positional = iArgc - 1;
         return;
     }
     /* vars and kw */
-    if (x == 3) {
+    if (iStar == 3) {
         f->is_vars = PIKA_TRUE;
         f->is_keys = PIKA_TRUE;
-        f->n_positional = res - 2;
+        f->n_positional = iArgc - 2;
         return;
     }
-    f->n_positional = res;
+    f->n_positional = iArgc;
     return;
 }
 

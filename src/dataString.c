@@ -90,17 +90,45 @@ char* strAppendWithSize(char* strOut, char* pData, int32_t Size) {
 
     return strOut;
 }
+const char bracketStart[] = {'(', '[', '{', '\'', '\"'};
+const char bracketEnd[] = {')', ']', '}', '\'', '\"'};
+#define BRACKET_TYPE_NUM (sizeof(bracketStart) / sizeof(char))
+
+int32_t _strCountSign(char* strIn, char sign, PIKA_BOOL bracketDepth0) {
+    int32_t iCount = 0;
+    int32_t iTotalDepth = 0;
+    PIKA_BOOL bEscaped = PIKA_FALSE;
+    for (size_t i = 0; strIn[i] != '\0'; i++) {
+        if (!bracketDepth0) {
+            if (strIn[i] == sign) {
+                iCount++;
+            }
+            continue;
+        }
+        char cCurrentChar = strIn[i];
+        if (cCurrentChar == '\\') {
+            bEscaped = !bEscaped;
+            continue;
+        }
+        if (!bEscaped) {
+            for (int j = 0; j < BRACKET_TYPE_NUM; j++) {
+                if (cCurrentChar == bracketStart[j]) {
+                    iTotalDepth++;
+                } else if (cCurrentChar == bracketEnd[j]) {
+                    iTotalDepth--;
+                }
+            }
+        }
+        if (cCurrentChar == sign && iTotalDepth == 0) {
+            iCount++;
+        }
+        bEscaped = PIKA_FALSE;
+    }
+    return iCount;
+}
 
 int32_t strCountSign(char* strIn, char sign) {
-    pika_assert(NULL != strIn);
-    int count = 0;
-    while (*strIn) {
-        if (*strIn == sign) {
-            count++;
-        }
-        strIn++;
-    }
-    return count;
+    return _strCountSign(strIn, sign, 0);
 }
 
 char* strReplaceChar(char* strIn, char src, char dst) {

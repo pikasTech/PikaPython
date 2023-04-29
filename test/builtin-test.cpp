@@ -196,6 +196,10 @@ TEST_RUN_SINGLE_FILE_PASS(builtin,
                           fn_default1,
                           "test/python/builtin/fn_default1.py")
 
+TEST_RUN_SINGLE_FILE(builtin,
+                     fn_default_tuple,
+                     "test/python/builtin/fn_default_tuple.py")
+
 #endif
 
 TEST_END
