@@ -20,7 +20,7 @@
                 // "--gtest_filter=eventloop.test1"
                 // "--gtest_filter=parser.tuple_single"
                 // "--gtest_filter=parser.*"
-                "--gtest_filter=parser.default_tuple"
+                "--gtest_filter=VM.is"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

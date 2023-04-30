@@ -5614,6 +5614,15 @@ TEST_LINES2ASM(default_tuple,
                "0 RET \n"
                "B0\n")
 
+TEST_LINES2ASM(is_not,
+               "A is not None",
+               "B0\n"
+               "2 REF A\n"
+               "2 REF None\n"
+               "1 OPT  is \n"
+               "0 OPT  not \n"
+               "B0\n")
+
 #endif
 
 TEST_END

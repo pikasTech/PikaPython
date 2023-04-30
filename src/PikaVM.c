@@ -2826,6 +2826,11 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             }
             goto exit;
         }
+        if ((op.t1 != op.t2) && (op.t1 != ARG_TYPE_NONE) &&
+            (op.t2 != ARG_TYPE_NONE)) {
+            op.res = arg_setInt(op.res, "", 0);
+            goto exit;
+        }
 #endif
         op.opt = "==";
         _OPT_EQU(&op);

@@ -2848,6 +2848,8 @@ TEST_RUN_SINGLE_FILE_PASS(datastruct,
 TEST_RUN_LINES_EXCEPT_OUTPUT(vm, single_tuple, "(1,)", "(1,)\r\n")
 TEST_RUN_LINES_EXCEPT_OUTPUT(vm, single_tuple_str, "('test',)", "('test',)\r\n")
 
+TEST_RUN_SINGLE_FILE_PASS(vm, is_not, "test/python/builtin/is_not.py")
+
 #endif
 
 TEST_END

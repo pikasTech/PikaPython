@@ -1591,32 +1591,36 @@ static void _AST_parse_slice(AST* ast, Args* buffs, char* stmt) {
     }
 }
 
-char* Suger_not_in(Args* out_buffs, char* line) {
-#if PIKA_NANO_ENABLE
-    return line;
-#endif
+#include <string.h>
+#include "pikaScript.h"
+
+char* _Suger_process(Args* out_buffs,
+                     char* line,
+                     char* token1,
+                     char* token2,
+                     char* format) {
     char* ret = line;
     char* stmt1 = "";
     char* stmt2 = "";
-    PIKA_BOOL got_not_in = PIKA_FALSE;
+    PIKA_BOOL got_tokens = PIKA_FALSE;
     PIKA_BOOL skip = PIKA_FALSE;
     Args buffs = {0};
-    if (1 != Cursor_count(line, TOKEN_operator, " not ")) {
+
+    if (1 != Cursor_count(line, TOKEN_operator, token1)) {
         ret = line;
         goto __exit;
     }
-    if (1 != Cursor_count(line, TOKEN_operator, " in ")) {
+    if (1 != Cursor_count(line, TOKEN_operator, token2)) {
         ret = line;
         goto __exit;
     }
 
-    /* stmt1 not in stmt2 => not stmt1 in stmt2 */
     Cursor_forEach(cs, line) {
         Cursor_iterStart(&cs);
-        if (!got_not_in) {
-            if (strEqu(cs.token1.pyload, " not ") &&
-                strEqu(cs.token2.pyload, " in ")) {
-                got_not_in = PIKA_TRUE;
+        if (!got_tokens) {
+            if (strEqu(cs.token1.pyload, token1) &&
+                strEqu(cs.token2.pyload, token2)) {
+                got_tokens = PIKA_TRUE;
                 Cursor_iterEnd(&cs);
                 continue;
             }
@@ -1632,16 +1636,27 @@ char* Suger_not_in(Args* out_buffs, char* line) {
         Cursor_iterEnd(&cs);
     }
     Cursor_deinit(&cs);
-    if (!got_not_in) {
+
+    if (!got_tokens) {
         ret = line;
         goto __exit;
     }
-    ret = strsFormat(out_buffs, strGetSize(line) + 3, " not %s in %s", stmt1,
-                     stmt2);
-    goto __exit;
+
+    ret = strsFormat(out_buffs,
+                     strGetSize(line) + strlen(token1) + strlen(token2), format,
+                     stmt1, stmt2);
+
 __exit:
     strsDeinit(&buffs);
     return ret;
+}
+
+char* Suger_not_in(Args* out_buffs, char* line) {
+    return _Suger_process(out_buffs, line, " not ", " in ", " not %s in %s");
+}
+
+char* Suger_is_not(Args* out_buffs, char* line) {
+    return _Suger_process(out_buffs, line, " is ", " not ", " not %s is %s");
 }
 
 AST* AST_parseStmt(AST* ast, char* stmt) {
@@ -1713,6 +1728,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     /* solve operator stmt */
     if (STMT_operator == stmtType) {
         right = Suger_not_in(&buffs, right);
+        right = Suger_is_not(&buffs, right);
         char* rightWithoutSubStmt = _remove_sub_stmt(&buffs, right);
         char* operator= Lexer_getOperator(&buffs, rightWithoutSubStmt);
         if (NULL == operator) {
