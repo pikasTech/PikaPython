@@ -20,7 +20,7 @@
                 // "--gtest_filter=eventloop.test1"
                 // "--gtest_filter=parser.tuple_single"
                 // "--gtest_filter=parser.*"
-                "--gtest_filter=VM.is"
+                "--gtest_filter=pikaMain.REPL_key_up"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

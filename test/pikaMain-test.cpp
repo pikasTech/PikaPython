@@ -1116,11 +1116,11 @@ TEST(pikaMain, class_arg) {
     __platform_printf("BEGIN\r\n");
     Args* buffs = New_strBuff();
     char* pikaAsm = pika_lines2Asm(buffs,
-                                      "class Test(TinyObj):\n"
-                                      "    x = 1\n"
-                                      "\n"
-                                      "test = Test()\n"
-                                      "print(test.x)\n");
+                                   "class Test(TinyObj):\n"
+                                   "    x = 1\n"
+                                   "\n"
+                                   "test = Test()\n"
+                                   "print(test.x)\n");
     printf("%s", pikaAsm);
     pikaVM_runAsm(pikaMain, pikaAsm);
     /* assert */
@@ -2790,8 +2790,8 @@ TEST(pikaMain, REPL_backspace_issue_2) {
 }
 
 TEST(pikaMain, REPL_key_left) {
-    char lines[] = {'1',  '2',      '+', '3',  '4', 0x1b,
-                    0x5b, KEY_LEFT, '5', '\n', 0x00};
+    char lines[] = {'1',  '2',           '+', '3',  '4', 0x1b,
+                    0x5b, PIKA_KEY_LEFT, '5', '\n', 0x00};
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -2809,8 +2809,8 @@ TEST(pikaMain, REPL_key_left) {
 }
 
 TEST(pikaMain, REPL_key_left_del) {
-    char lines[] = {'1',  '2',      '+',  '3',  '4', 0x1b,
-                    0x5b, KEY_LEFT, '\b', '\n', 0x00};
+    char lines[] = {'1',  '2',           '+',  '3',  '4', 0x1b,
+                    0x5b, PIKA_KEY_LEFT, '\b', '\n', 0x00};
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -2822,6 +2822,25 @@ TEST(pikaMain, REPL_key_left_del) {
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[1], "16\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(pikaMain, REPL_key_up) {
+    char lines[] = {'1',  '2',  '+',         '3', '4',  '5', '\n',
+                    0x1b, 0x5b, PIKA_KEY_UP, '2', '\n', 0x00};
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(pikaMain, lines[i]);
+    }
+    /* collect */
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "3464\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

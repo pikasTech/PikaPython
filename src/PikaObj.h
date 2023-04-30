@@ -137,10 +137,10 @@ struct PikaObjState {
 #define OBJ_FLAG_GC_MARKED 1 << 6
 #define OBJ_FLAG_GC_ROOT 1 << 7
 
-#define KEY_UP 0x41
-#define KEY_DOWN 0x42
-#define KEY_RIGHT 0x43
-#define KEY_LEFT 0x44
+#define PIKA_KEY_UP 0x41
+#define PIKA_KEY_DOWN 0x42
+#define PIKA_KEY_RIGHT 0x43
+#define PIKA_KEY_LEFT 0x44
 
 static inline uint8_t obj_getFlag(PikaObj* self, uint8_t flag) {
     pika_assert(self);
@@ -335,6 +335,8 @@ typedef struct ShellConfig ShellConfig;
 typedef enum shellCTRL (*sh_handler)(PikaObj*, char*, ShellConfig*);
 typedef char (*sh_getchar)(void);
 
+int shConfig_deinit(ShellConfig* self);
+
 #if PIKA_SHELL_FILTER_ENABLE
 typedef struct FilterFIFO {
     ByteQueue queue;
@@ -361,6 +363,15 @@ struct FilterItem {
 
 #endif
 
+typedef struct {
+    int max_size;
+    int current_size;
+    int head;
+    int tail;
+    int current_index;
+    char** history_list;
+} ShellHistory;
+
 struct ShellConfig {
 #if PIKA_SHELL_FILTER_ENABLE
     FilterFIFO filter_fifo;
@@ -379,7 +390,20 @@ struct ShellConfig {
     char lastChar;
     sh_getchar fn_getchar;
     uint8_t stat;
+#if PIKA_SHELL_HISTORY_ENABLE
+    ShellHistory* history;
+#endif
 };
+
+#if PIKA_SHELL_HISTORY_ENABLE
+ShellHistory* shHistory_create(int max_size);
+void shHistory_destroy(ShellHistory* self);
+void shHistory_add(ShellHistory* self, char* command);
+void shHistory_setMaxSize(ShellHistory* self, int max_size);
+char* shHistory_get(ShellHistory* self, int index);
+char* shHistory_getPrev(ShellHistory* self);
+char* shHistory_getNext(ShellHistory* self);
+#endif
 
 void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg);
 
@@ -653,8 +677,9 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
 
 void obj_printModules(PikaObj* self);
 #if PIKA_DEBUG_ENABLE
-#define pika_debug(fmt, ...) \
-    pika_platform_printf(COLOR_GREEN "[PikaDBG] " fmt "\r\n" COLOR_RESET, ##__VA_ARGS__)
+#define pika_debug(fmt, ...)                                              \
+    pika_platform_printf(COLOR_GREEN "[PikaDBG] " fmt "\r\n" COLOR_RESET, \
+                         ##__VA_ARGS__)
 #else
 #define pika_debug(...) \
     do {                \

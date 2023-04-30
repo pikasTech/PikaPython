@@ -89,6 +89,10 @@ extern "C" {
             #define PIKA_GC_MARK_SWEEP_ENABLE 0
         #endif
 
+        #ifndef PIKA_SHELL_HISTORY_ENABLE
+            #define PIKA_SHELL_HISTORY_ENABLE 0
+        #endif
+
     #endif
 
     /* default optimize */
@@ -461,6 +465,14 @@ extern "C" {
 
     #ifndef PIKA_KERNAL_DEBUG_ENABLE
         #define PIKA_KERNAL_DEBUG_ENABLE 0
+    #endif
+
+    #ifndef PIKA_SHELL_HISTORY_ENABLE
+        #define PIKA_SHELL_HISTORY_ENABLE 1
+    #endif
+
+    #ifndef PIKA_SHELL_HISTORY_NUM
+        #define PIKA_SHELL_HISTORY_NUM 5
     #endif
 
     /* configuration validation */

@@ -274,6 +274,9 @@ void* args_getStruct(Args* self, char* name) {
 
 void* args_getHeapStruct(Args* self, char* name) {
     Arg* struct_arg = args_getArg(self, name);
+    if (NULL == struct_arg) {
+        return NULL;
+    }
     return arg_getHeapStruct(struct_arg);
 }
 
@@ -564,7 +567,7 @@ Arg* pikaList_pop_withIndex(PikaList* list, int index) {
     if (top <= 0) {
         return NULL;
     }
-    if (index < 0){
+    if (index < 0) {
         index = top + index;
     }
     Arg* arg = pikaList_getArg(list, index);
