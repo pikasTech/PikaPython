@@ -1425,7 +1425,7 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
             if (NULL == shell->history) {
                 shell->history = shHistory_create(PIKA_SHELL_HISTORY_NUM);
             }
-            if (shell->history->current_index == 0) {
+            if (NULL == shHistory_getNext(shell->history)) {
                 /* save the current line */
                 shHistory_add(shell->history, shell->lineBuff);
             }

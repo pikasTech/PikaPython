@@ -1591,9 +1591,6 @@ static void _AST_parse_slice(AST* ast, Args* buffs, char* stmt) {
     }
 }
 
-#include <string.h>
-#include "pikaScript.h"
-
 char* _Suger_process(Args* out_buffs,
                      char* line,
                      char* token1,
