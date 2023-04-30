@@ -5623,6 +5623,9 @@ TEST_LINES2ASM(is_not,
                "0 OPT  not \n"
                "B0\n")
 
+TEST_LINES2ASM_NOCHECK(split_collect,
+                       "'test'.replace('te', 'qq').split('s')[0]")
+
 #endif
 
 TEST_END
