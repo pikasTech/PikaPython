@@ -1410,6 +1410,47 @@ char* shHistory_getNext(ShellHistory* self) {
 #define PIKA_BACKSPACE() pika_platform_printf(" \b")
 #endif
 
+#if __linux
+#define PIKA_BACKSPACE_FORCE() printf("\b \b")
+#else
+#define PIKA_BACKSPACE_FORCE() pika_platform_printf("\b \b")
+#endif
+
+static void handle_history_navigation(char inputChar,
+                                      ShellConfig* shell,
+                                      PIKA_BOOL bIsUp) {
+#if PIKA_SHELL_HISTORY_ENABLE
+    if (NULL == shell->history) {
+        shell->history = shHistory_create(PIKA_SHELL_HISTORY_NUM);
+    }
+    if (0 == shell->history->cached_current) {
+        /* save the current line */
+        shHistory_add(shell->history, shell->lineBuff);
+        shell->history->cached_current = 1;
+    }
+    char* history_line = bIsUp ? shHistory_getPrev(shell->history)
+                               : shHistory_getNext(shell->history);
+    if (NULL == history_line) {
+        return;
+    }
+    /* move to the last position */
+    for (int i = 0; i < shell->line_position - shell->line_curpos; i++) {
+        _putc_cmd(PIKA_KEY_RIGHT, 1);
+    }
+    /* clear the current line */
+    for (int i = 0; i < shell->line_position; i++) {
+        PIKA_BACKSPACE_FORCE();
+    }
+    pika_platform_memcpy(shell->lineBuff, history_line,
+                         strGetSize(history_line) + 1);
+    /* show the previous line */
+    pika_platform_printf("%s", shell->lineBuff);
+    shell->line_position = strGetSize(history_line);
+    shell->line_curpos = shell->line_position;
+#endif
+    return;
+}
+
 enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
                                      char inputChar,
                                      ShellConfig* shell) {
@@ -1461,53 +1502,12 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
         if (inputChar == PIKA_KEY_UP) {
             _putc_cmd(PIKA_KEY_DOWN, 1);
             ctrl = SHELL_CTRL_CONTINUE;
-#if PIKA_SHELL_HISTORY_ENABLE
-            if (NULL == shell->history) {
-                shell->history = shHistory_create(PIKA_SHELL_HISTORY_NUM);
-            }
-            if (0 == shell->history->cached_current) {
-                /* save the current line */
-                shHistory_add(shell->history, shell->lineBuff);
-                shell->history->cached_current = 1;
-            }
-            char* prev = shHistory_getPrev(shell->history);
-            if (NULL == prev) {
-                goto __exit;
-            }
-            /* move to the last position */
-            for (int i = 0; i < shell->line_position - shell->line_curpos;
-                 i++) {
-                _putc_cmd(PIKA_KEY_RIGHT, 1);
-            }
-            /* clear the current line */
-            for (int i = 0; i < shell->line_position; i++) {
-                PIKA_BACKSPACE();
-            }
-            pika_platform_memcpy(shell->lineBuff, prev, strGetSize(prev) + 1);
-            /* show the previous line */
-            pika_platform_printf("%s", shell->lineBuff);
-            shell->line_position = strGetSize(prev);
-            shell->line_curpos = shell->line_position;
-#endif
+            handle_history_navigation(inputChar, shell, PIKA_TRUE);
             goto __exit;
         }
         if (inputChar == PIKA_KEY_DOWN) {
             ctrl = SHELL_CTRL_CONTINUE;
-#if PIKA_SHELL_HISTORY_ENABLE
-            char* next = shHistory_getNext(shell->history);
-            if (NULL == next) {
-                goto __exit;
-            }
-            /* clear the current line */
-            for (int i = 0; i < shell->line_position; i++) {
-                PIKA_BACKSPACE();
-            }
-            pika_platform_memcpy(shell->lineBuff, next, strGetSize(next) + 1);
-            /* show the previous line */
-            pika_platform_printf("%s", shell->lineBuff);
-            shell->line_position = strGetSize(next);
-            shell->line_curpos = shell->line_position;
-#endif
+            handle_history_navigation(inputChar, shell, PIKA_FALSE);
             goto __exit;
         }
     }
