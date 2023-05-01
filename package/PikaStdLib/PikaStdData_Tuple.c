@@ -43,6 +43,9 @@ Arg* PikaStdData_Tuple___getitem__(PikaObj* self, Arg* __key) {
 }
 
 void PikaStdData_Tuple___del__(PikaObj* self) {
+    if (0 == obj_getInt(self, "needfree")) {
+        return;
+    }
     Args* list = obj_getPtr(self, "list");
     args_deinit(list);
 }

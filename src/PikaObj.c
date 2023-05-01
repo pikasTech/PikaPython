@@ -1344,6 +1344,7 @@ ShellHistory* shHistory_create(int max_size) {
     self->current = -1;
     self->count = 0;
     self->last_offset = 0;
+    self->cached_current = 0;
     self->history = (char**)pikaMalloc(max_size * sizeof(char*));
     return self;
 }

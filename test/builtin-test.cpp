@@ -200,6 +200,8 @@ TEST_RUN_SINGLE_FILE_PASS(builtin,
                           fn_default_tuple,
                           "test/python/builtin/fn_default_tuple.py")
 
+TEST_RUN_SINGLE_FILE_PASS(builtin, max_min, "test/python/builtin/max_min.py")
+
 #endif
 
 TEST_END
