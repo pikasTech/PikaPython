@@ -1474,6 +1474,11 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
             if (NULL == prev) {
                 goto __exit;
             }
+            /* move to the last position */
+            for (int i = 0; i < shell->line_position - shell->line_curpos;
+                 i++) {
+                _putc_cmd(PIKA_KEY_RIGHT, 1);
+            }
             /* clear the current line */
             for (int i = 0; i < shell->line_position; i++) {
                 PIKA_BACKSPACE();
