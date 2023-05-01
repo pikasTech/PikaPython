@@ -94,7 +94,7 @@ const char bracketStart[] = {'(', '[', '{', '\'', '\"'};
 const char bracketEnd[] = {')', ']', '}', '\'', '\"'};
 #define BRACKET_TYPE_NUM (sizeof(bracketStart) / sizeof(char))
 
-int32_t _strCountSign(char* strIn, char sign, PIKA_BOOL bracketDepth0) {
+int _strCountSign(char* strIn, char sign, PIKA_BOOL bracketDepth0) {
     int32_t iCount = 0;
     int32_t iTotalDepth = 0;
     PIKA_BOOL bEscaped = PIKA_FALSE;
