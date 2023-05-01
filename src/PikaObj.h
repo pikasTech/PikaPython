@@ -365,11 +365,11 @@ struct FilterItem {
 
 typedef struct {
     int max_size;
-    int current_size;
-    int head;
-    int tail;
-    int current_index;
-    char** history_list;
+    int current;
+    int count;
+    int last_offset;
+    char** history;
+    int cached_current;
 } ShellHistory;
 
 struct ShellConfig {
