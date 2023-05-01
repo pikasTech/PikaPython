@@ -6,7 +6,9 @@
 
 int main(int argc, char* argv[]) {
     if (1 == argc) {
-        pikaScriptShell(pikaScriptInit());
+        PikaObj* pikaMain = pikaScriptInit();
+        pikaScriptShell(pikaMain);
+        obj_deinit(pikaMain);
         return 0;
     }
     if (2 == argc) {
