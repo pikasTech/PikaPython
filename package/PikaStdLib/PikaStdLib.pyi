@@ -128,6 +128,14 @@ class SysObj:
 
     @staticmethod
     @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    def max(*val) -> any: ...
+
+    @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    def min(*val) -> any: ...
+
+    @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
     def help(name: str): ...
 
     @staticmethod

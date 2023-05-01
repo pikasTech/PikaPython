@@ -755,11 +755,29 @@ TEST(compiler, str_join) {
 }
 
 TEST(compiler, thread_void_arg) {
-    char* lines =
-        "thread()";
+    char* lines = "thread()";
     pika_lines2Array(lines);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, max) {
+    char* lines =
+        "@res_max = @list[0]\n"
+        "for @item in @list:\n"
+        "    if @item > @res_max:\n"
+        "        @res_max = @item\n";
+    pika_lines2Array(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(compiler, min) {
+    char* lines =
+        "@res_max = @list[0]\n"
+        "for @item in @list:\n"
+        "    if @item < @res_max:\n"
+        "        @res_max = @item\n";
+    pika_lines2Array(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
 
 TEST_END
