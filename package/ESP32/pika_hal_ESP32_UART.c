@@ -3,7 +3,10 @@
 #include "dataStrs.h"
 #include "driver/uart.h"
 #include "pika_hal_ESP32_common.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
+extern volatile PikaMemInfo g_PikaMemInfo;
 typedef struct platform_data_UART {
     uart_port_t uartPort;
     uart_config_t uart_conf;
@@ -12,7 +15,10 @@ typedef struct platform_data_UART {
     gpio_num_t rx_port;
     gpio_num_t rts_port;
     gpio_num_t cts_port;
+    PIKA_BOOL event_thread_started;
 } platform_data_UART;
+
+static SemaphoreHandle_t g_event_lock = NULL;
 
 int pika_hal_platform_UART_open(pika_dev* dev, char* name) {
     /* UARTX */
@@ -79,7 +85,10 @@ static void uart_event_task(void* pvParameters) {
                 data events than other types of events. If we take too much time
                 on data event, the queue might be full.*/
                 case UART_DATA:
+                    pika_assert(g_event_lock != NULL);
+                    xSemaphoreTake(g_event_lock, portMAX_DELAY);
                     cfg->event_callback(dev, event.type);
+                    xSemaphoreGive(g_event_lock);
                     break;
                 // Others
                 default:
@@ -87,6 +96,7 @@ static void uart_event_task(void* pvParameters) {
             }
         }
     }
+    g_PikaMemInfo.heapUsed -= PIKA_THREAD_STACK_SIZE;
     vTaskDelete(NULL);
 }
 
@@ -220,6 +230,11 @@ int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
         uart->cts_port = UART_PIN_NO_CHANGE;
     }
 
+    if (dev->is_enabled){
+        pika_debug("UART%d: uart is enabled, reconfig\r\n", uart->uartPort);
+        uart_param_config(uart->uartPort, &uart->uart_conf);
+    }
+
     /* support event callback */
     if (dev->is_enabled == PIKA_TRUE && NULL != cfg->event_callback &&
         PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE == cfg->event_callback_ena) {
@@ -241,8 +256,16 @@ int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
                     cfg->event_callback_filter);
                 return -1;
         }
-        /* start irq task thread */
-        xTaskCreate(uart_event_task, "uart_event_task", 8192, dev, 12, NULL);
+        if (uart->event_thread_started == PIKA_FALSE){
+            /* start irq task thread */
+            pika_debug("Starting uart event task:%p\r\n", dev);
+            if (NULL == g_event_lock){
+                g_event_lock = xSemaphoreCreateMutex();
+            }
+            g_PikaMemInfo.heapUsed += PIKA_THREAD_STACK_SIZE;
+            xTaskCreate(uart_event_task, "uart_event_task", PIKA_THREAD_STACK_SIZE, dev, 12, NULL);
+            uart->event_thread_started = PIKA_TRUE;
+        }
     }
     return 0;
 }
