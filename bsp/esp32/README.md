@@ -6,5 +6,6 @@ esp-idf 5.0
 
 - on windows
     ```
+    idf.py set-target <esp32c3/esp32s3>
     make.bat
     ```
