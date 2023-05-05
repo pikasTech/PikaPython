@@ -143,6 +143,7 @@ http://pikascript.com
 |apm32e103vb       |√  |    |    |    |   |   |   |   |
 |bl-602            |√  |√   |    |    |√  |√  |   |√  |
 |bl-706            |√  |    |    |    |   |   |   |   |
+|[bl-618](https://verimake.com/d/285-bl618-pikapython-led)|√  | √ | √   |  √  |  √ |  √ |  √ |  √ |
 |Raspberry Pico    |√  |    |    |    |   |   |   |   |
 |ESP32C3           |√  |√   |√   |    |   |   |   |   |
 |TC264D            |√  |    |    |    |   |   |   |   |
