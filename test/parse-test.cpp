@@ -5623,8 +5623,28 @@ TEST_LINES2ASM(is_not,
                "0 OPT  not \n"
                "B0\n")
 
-TEST_LINES2ASM_NOCHECK(split_collect,
-                       "'test'.replace('te', 'qq').split('s')[0]")
+TEST_LINES2ASM(split_collect,
+               "'test'.replace('te', 'qq').split('s')[0]",
+               "B0\n"
+               "3 STR test\n"
+               "3 STR te\n"
+               "3 STR qq\n"
+               "2 RUN .replace\n"
+               "2 STR s\n"
+               "1 RUN .split\n"
+               "1 NUM 0\n"
+               "0 SLC \n"
+               "B0\n");
+
+TEST_LINES2ASM(split_slice,
+               "'test'.split('s')[0]",
+               "B0\n"
+               "2 STR test\n"
+               "2 STR s\n"
+               "1 RUN .split\n"
+               "1 NUM 0\n"
+               "0 SLC \n"
+               "B0\n")
 
 #endif
 

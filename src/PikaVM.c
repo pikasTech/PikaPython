@@ -806,6 +806,14 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
     if (n_input == 3) {
         Arg* end = stack_popArg_alloc(&vm->stack);
         Arg* start = stack_popArg_alloc(&vm->stack);
+        if (arg_getType(start) != ARG_TYPE_INT ||
+            arg_getType(end) != ARG_TYPE_INT) {
+            VMState_setErrorCode(vm, PIKA_RES_ERR_INVALID_PARAM);
+            pika_platform_printf("TypeError: slice indices must be integers\n");
+            arg_deinit(end);
+            arg_deinit(start);
+            return arg_newNull();
+        }
         Arg* obj = stack_popArg_alloc(&vm->stack);
         Arg* res = _vm_slice(vm, self, end, obj, start, 1);
         arg_deinit(end);

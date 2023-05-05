@@ -19,8 +19,7 @@
                 // "--gtest_filter=thread.test1"
                 // "--gtest_filter=eventloop.test1"
                 // "--gtest_filter=parser.tuple_single"
-                // "--gtest_filter=parser.*"
-                "--gtest_filter=builtin.max_min"
+                "--gtest_filter=parser.split_slice"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

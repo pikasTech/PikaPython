@@ -234,7 +234,13 @@ int PikaStdData_String_isspace(PikaObj* self) {
     return 1;
 }
 
-PikaObj* PikaStdData_String_split(PikaObj* self, char* s) {
+PikaObj* PikaStdData_String_split(PikaObj* self, PikaTuple* s_) {
+    char* s = NULL;
+    if (pikaTuple_getSize(s_) == 0) {
+        s = " ";
+    } else {
+        s = pikaTuple_getStr(s_, 0);
+    }
     /* 创建 list 对象 */
     PikaObj* list = newNormalObj(New_PikaStdData_List);
     /* 初始化 list */
@@ -859,7 +865,7 @@ char* PikaStdData_String_join(PikaObj* self, Arg* val) {
     return sRes;
 }
 
-int PikaStdData_String_find(PikaObj *self, char* sub){
+int PikaStdData_String_find(PikaObj* self, char* sub) {
     char* str = obj_getStr(self, "str");
     char* res = strstr(str, sub);
     if (res == NULL) {

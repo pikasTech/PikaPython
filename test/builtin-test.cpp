@@ -202,6 +202,23 @@ TEST_RUN_SINGLE_FILE_PASS(builtin,
 
 TEST_RUN_SINGLE_FILE_PASS(builtin, max_min, "test/python/builtin/max_min.py")
 
+TEST_RUN_SINGLE_FILE_PASS(builtin, split, "test/python/builtin/split.py")
+
+TEST_RUN_LINES_EXCEPT_OUTPUT(builtin,
+                             split_slice,
+                             "'test'.split('e')[0]",
+                             "'t'\r\n")
+
+TEST_RUN_LINES_EXCEPT_OUTPUT(builtin,
+                             split_slice_1,
+                             "'test'.split('e')[1]",
+                             "'st'\r\n")
+
+TEST_RUN_LINES_EXCEPT_OUTPUT(builtin,
+                             replace_split_0,
+                             "'a b c d'.replace(' ', ',').split(',')[0]",
+                             "'a'\r\n")
+
 #endif
 
 TEST_END
