@@ -999,14 +999,16 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
         aRes = _obj_getProp(oHost, arg_name);
     }
 
-    /* find res in globlas */
-    if (NULL == aRes) {
-        aRes = args_getArg(vm->globals->list, arg_name);
-    }
+    /* find res in globals */
+    if (arg_path == arg_name) {
+        if (NULL == aRes) {
+            aRes = args_getArg(vm->globals->list, arg_name);
+        }
 
-    /* find res in globals prop */
-    if (NULL == aRes) {
-        aRes = _obj_getProp(vm->globals, arg_name);
+        /* find res in globals prop */
+        if (NULL == aRes) {
+            aRes = _obj_getProp(vm->globals, arg_name);
+        }
     }
 
     /* proxy */
@@ -1786,6 +1788,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     VMParameters* oSublocals = NULL;
     VMParameters* oSublocalsInit = NULL;
     char* sRunPath = data;
+    char* sArgName = NULL;
     PikaObj* oMethodHost = NULL;
     PikaObj* oThis = NULL;
     Arg* aMethod = NULL;
@@ -1798,6 +1801,10 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     RunState tSubRunState = {.try_state = vm->run_state->try_state,
                              .try_result = TRY_RESULT_NONE};
     pika_assert(NULL != vm->run_state);
+
+    if (NULL != sRunPath) {
+        sArgName = strPointToLastToken(sRunPath, '.');
+    }
 
     /* inhert */
     if (vm->pc - 2 * (int)instructUnit_getSize() >= 0) {
@@ -1823,6 +1830,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     /* support for super() */
     if (strEqu(sRunPath, "super")) {
         sRunPath = _find_super_class_name(vm);
+        sArgName = sRunPath;
         vm->in_super = PIKA_TRUE;
         vm->super_invoke_deepth = VMState_getInvokeDeepthNow(vm);
         bSkipInit = PIKA_TRUE;
@@ -1911,16 +1919,18 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         aMethod = obj_getMethodArg_noalloc(oMethodHost, sRunPath, &arg_reg1);
     }
 
-    /* get method in locals */
-    if (NULL == aMethod) {
-        aMethod = obj_getMethodArg_noalloc(vm->locals, sRunPath, &arg_reg1);
-    }
-
-    /* get method in global */
-    if (NULL == aMethod) {
-        aMethod = obj_getMethodArg_noalloc(vm->globals, sRunPath, &arg_reg1);
-        if (aMethod != NULL) {
-            oThis = vm->globals;
+    if (sArgName == sRunPath) {
+        /* get method in locals */
+        if (NULL == aMethod) {
+            aMethod = obj_getMethodArg_noalloc(vm->locals, sRunPath, &arg_reg1);
+        }
+        /* get method in global */
+        if (NULL == aMethod) {
+            aMethod =
+                obj_getMethodArg_noalloc(vm->globals, sRunPath, &arg_reg1);
+            if (aMethod != NULL) {
+                oThis = vm->globals;
+            }
         }
     }
 

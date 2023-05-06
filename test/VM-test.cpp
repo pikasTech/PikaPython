@@ -2850,6 +2850,18 @@ TEST_RUN_LINES_EXCEPT_OUTPUT(vm, single_tuple_str, "('test',)", "('test',)\r\n")
 
 TEST_RUN_SINGLE_FILE_PASS(vm, is_not, "test/python/builtin/is_not.py")
 
+TEST_RUN_LINES(vm,
+               var_global,
+               "import PikaStdLib\n"
+               "mem = PikaStdLib.MemChecker()\n"
+               "mem.clear\n")
+
+TEST_RUN_LINES(vm,
+               var_global_run,
+               "import PikaStdLib\n"
+               "mem = PikaStdLib.MemChecker()\n"
+               "mem.clear()\n")
+
 #endif
 
 TEST_END

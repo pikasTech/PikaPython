@@ -59,7 +59,7 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
 #define TEST_RUN_LINES(_test_suite_, _test_name_, _lines_)                     \
   TEST(_test_suite_, _test_name_) {                                            \
-    PikaObj *self = newRootObj("root", New_PikaStdLib_SysObj);                 \
+    PikaObj *self = newRootObj("root", New_PikaMain);                          \
     obj_run(self, (_lines_)); /* collect */ /* assert */                       \
     obj_deinit(self);                                                          \
     EXPECT_EQ(pikaMemNow(), 0);                                                \
