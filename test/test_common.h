@@ -60,6 +60,8 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 #define TEST_RUN_LINES(_test_suite_, _test_name_, _lines_)                     \
   TEST(_test_suite_, _test_name_) {                                            \
     PikaObj *self = newRootObj("root", New_PikaMain);                          \
+    extern unsigned char pikaModules_py_a[];                                   \
+    obj_linkLibrary(self, pikaModules_py_a);                                   \
     obj_run(self, (_lines_)); /* collect */ /* assert */                       \
     obj_deinit(self);                                                          \
     EXPECT_EQ(pikaMemNow(), 0);                                                \
@@ -67,7 +69,9 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
 #define TEST_RUN_LINES_NO_OUTPUT(_test_suite_, _test_name_, _lines_)           \
   TEST(_test_suite_, _test_name_) {                                            \
-    PikaObj *self = newRootObj("root", New_PikaStdLib_SysObj);                 \
+    PikaObj *self = newRootObj("root", New_PikaMain);                          \
+    extern unsigned char pikaModules_py_a[];                                   \
+    obj_linkLibrary(self, pikaModules_py_a);                                   \
     pika_platform_printf("BEGIN\r\n");                                         \
     obj_run(self, (_lines_)); /* collect */ /* assert */                       \
     EXPECT_STREQ(log_buff[0], "BEGIN\r\n");                                    \
@@ -77,7 +81,9 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 
 #define TEST_RUN_LINES_PASS(_test_suite_, _test_name_, _lines_)                \
   TEST(_test_suite_, _test_name_) {                                            \
-    PikaObj *self = newRootObj("root", New_PikaStdLib_SysObj);                 \
+    PikaObj *self = newRootObj("root", New_PikaMain);                          \
+    extern unsigned char pikaModules_py_a[];                                   \
+    obj_linkLibrary(self, pikaModules_py_a);                                   \
     obj_run(self, (_lines_)); /* collect */ /* assert */                       \
     EXPECT_STREQ(log_buff[0], "PASS\r\n");                                     \
     obj_deinit(self);                                                          \
@@ -87,7 +93,9 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 #define TEST_RUN_LINES_EXCEPT_OUTPUT(_test_suite_, _test_name_, _lines_,       \
                                      _except_output_)                          \
   TEST(_test_suite_, _test_name_) {                                            \
-    PikaObj *self = newRootObj("root", New_PikaStdLib_SysObj);                 \
+    PikaObj *self = newRootObj("root", New_PikaMain);                          \
+    extern unsigned char pikaModules_py_a[];                                   \
+    obj_linkLibrary(self, pikaModules_py_a);                                   \
     obj_run(self, (_lines_)); /* collect */ /* assert */                       \
     EXPECT_STREQ(log_buff[0], (_except_output_));                              \
     obj_deinit(self);                                                          \

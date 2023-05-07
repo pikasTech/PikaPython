@@ -20,7 +20,8 @@
                 // "--gtest_filter=eventloop.test1"
                 // "--gtest_filter=parser.tuple_single"
                 // "--gtest_filter=parser.split_slice"
-                "--gtest_filter=vm.var_global_run"
+                // "--gtest_filter=vm.var_global_run"
+                "--gtest_filter=vm.var_global_module"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

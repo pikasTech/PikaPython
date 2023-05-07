@@ -2862,6 +2862,11 @@ TEST_RUN_LINES(vm,
                "mem = PikaStdLib.MemChecker()\n"
                "mem.clear()\n")
 
+TEST_RUN_LINES(vm,
+               var_global_module,
+               "import configparser\n"
+               "configparser.clear\n")
+
 #endif
 
 TEST_END

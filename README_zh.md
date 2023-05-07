@@ -46,6 +46,14 @@ PikaPython 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 
 # 最新资讯
 
+- [📢 发布公告：PikaPython v1.12.2 发布 🚀](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484789&idx=1&sn=bedfc580932a4bd286264110a065de2a&chksm=fdebd21cca9c5b0a4654a394f48fb3cb0e743b4ad72fef4d96e4cf28fa4357349b4862f0be7e&token=2116766907&lang=zh_CN#rd)
+
+- [万元结项奖金！学生报名开启！PikaPython 开源之夏 2023](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484785&idx=1&sn=1cf983057765198f53c4f6c8aa04e516&chksm=fdebd218ca9c5b0e3444112a5a033dc295c63482bcb8934422a199784e900c2cd95f633da5b4&token=2116766907&lang=zh_CN#rd)
+
+- [【喜报】PikaPython突破 1000+ Github Star，物联网与边缘AI领域的轻量级Python解释器再创新高！](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484773&idx=1&sn=e0273c1c55614ea11387d6f785c4bfb9&chksm=fdebd20cca9c5b1a14fef9c2cd90f01551ce0c04eac4de0759fdc8ba27ae4158a68ce1eb5a5f&token=2116766907&lang=zh_CN#rd)
+
+- [PikaPython项目入选中国开源创新大赛决赛，携手共建国内开源生态](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484762&idx=1&sn=2b3e570bbc7e98874b6773fe8e2678c7&chksm=fdebd233ca9c5b255296db6e9874035577a02b6b26354c4c2a2298696a02ec467149ca91a078&token=2116766907&lang=zh_CN#rd)
+
 - [PikaPython 开源赏金活动：挑战技术，实践成长，共创未来！](https://gitee.com/Lyon1998/pikapython/issues/I67WUQ)
 
 - [轻量级Python解释器PikaPython成功入选开源之夏，探索无限可能！](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484738&idx=1&sn=7af1c9bb61e6decd5c155924cb7a05f8&chksm=fdebd22bca9c5b3d3f2fbd8742941e6c33e86cbcba88c329b0b9550b54b0291b6f50553d5eea&token=709915806&lang=zh_CN#rd)
