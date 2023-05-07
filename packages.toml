@@ -78,7 +78,7 @@ releases = [
   "v1.11.9 b2f397a990f0aa88129104d460174339531ee808",
   "v1.12.0 eb519fb78ed769c8862577713fd80be882d09457",
   "v1.12.1 ee9d1e696a41c68c3e359b824a33795af1d56e86",
-  "v1.12.2 32c2c1eed5492ab4d7aaa78b74e050fb5d62b3fa",
+  "v1.12.2 32c2c1eed5492ab4d7aaa78b74e050fb5d62b3fa"
 ]
 
 [[packages]]
@@ -149,7 +149,7 @@ releases = [
   "v1.11.9 b2f397a990f0aa88129104d460174339531ee808",
   "v1.12.0 eb519fb78ed769c8862577713fd80be882d09457",
   "v1.12.1 ee9d1e696a41c68c3e359b824a33795af1d56e86",
-  "v1.12.2 32c2c1eed5492ab4d7aaa78b74e050fb5d62b3fa",
+  "v1.12.2 32c2c1eed5492ab4d7aaa78b74e050fb5d62b3fa"
 ]
 
 [[packages]]
@@ -190,7 +190,7 @@ releases = [
   "v2.3.4 69cea1d7188b35b84d819ed8cb8f41b3a64d39d1",
   "v2.3.5 cd0029b6d1b4340b252532fcee1320667231038c",
   "v2.3.6 b9a0109c6125d16270cf02b2a07421a4baf9973c",
-  "v2.3.7 226cba58e474448a9d8773c5a1a1bd83f148baee",
+  "v2.3.7 226cba58e474448a9d8773c5a1a1bd83f148baee"
 ]
 
 [[packages]]
@@ -199,7 +199,7 @@ releases = [
   "v0.0.1 31146e2395e80b5785a4b2e526913a4590160e66",
   "v0.1.0 793634882044af25f30bb59c6511c615e56f85c5",
   "v0.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
-  "v0.2.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
+  "v0.2.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81"
 ]
 
 [[packages]]
@@ -208,7 +208,7 @@ releases = [
   "v0.0.1 b463e812bf0334b55835a3b31cda0c2f6c526e06",
   "v0.1.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
   "v0.1.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
-  "v0.1.2 d582a42e0f886820584ae273ce188a42057424e6",
+  "v0.1.2 d582a42e0f886820584ae273ce188a42057424e6"
 ]
 
 [[packages]]
@@ -218,7 +218,7 @@ releases = [
   "v0.1.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
   "v0.1.2 2aafbbdc84eed84edcf5dcd7462a842a14f26a92",
   "v0.1.3 d582a42e0f886820584ae273ce188a42057424e6",
-  "v0.1.4 c262db0e26f276dd2186a42b37f28ff15faf9a03",
+  "v0.1.4 c262db0e26f276dd2186a42b37f28ff15faf9a03"
 ]
 
 [[packages]]
@@ -226,7 +226,7 @@ name = "re"
 releases = [
   "v0.1.0 87da4d26d1ebf9525f66e9fe7acd5ea62f9b7f74",
   "v0.1.1 728e9dce9ad2c47d5ac16165a583a794043a2e2b",
-  "v0.1.2 d582a42e0f886820584ae273ce188a42057424e6",
+  "v0.1.2 d582a42e0f886820584ae273ce188a42057424e6"
 ]
 
 [[packages]]
@@ -236,7 +236,7 @@ releases = [
   "v0.1.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
   "v0.1.2 6898f52a71e3a43b3126a73487770370a4a7f02c",
   "v0.1.3 2aafbbdc84eed84edcf5dcd7462a842a14f26a92",
-  "v0.1.4 b9a0109c6125d16270cf02b2a07421a4baf9973c",
+  "v0.1.4 b9a0109c6125d16270cf02b2a07421a4baf9973c"
 ]
 
 [[packages]]
@@ -244,7 +244,7 @@ name = "random"
 releases = [
   "v0.1.0 7244267b6839b8af2238b6cdd9a73e4a3aebb347",
   "v0.1.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
-  "v0.1.2 d582a42e0f886820584ae273ce188a42057424e6",
+  "v0.1.2 d582a42e0f886820584ae273ce188a42057424e6"
 ]
 
 [[packages]]
@@ -252,7 +252,7 @@ name = "configparser"
 releases = [
   "v0.1.0 d3a9f6e226bb9cfccbfc588cc465672cefea9e82",
   "v0.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
-  "v0.2.1 5fa138c9c19a315d66d8e02fa5901479e30ca892",
+  "v0.2.1 5fa138c9c19a315d66d8e02fa5901479e30ca892"
 ]
 
 [[packages]]
@@ -264,14 +264,14 @@ releases = [
   "v1.0.1 5148412411e2de0d23e9c5857b0b4843f479a5be",
   "v1.1.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
   "v1.1.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
-  "v1.1.2 d582a42e0f886820584ae273ce188a42057424e6",
+  "v1.1.2 d582a42e0f886820584ae273ce188a42057424e6"
 ]
 
 [[packages]]
 name = "binascii"
 releases = [
   "v0.0.1 88896715867c2a89df3e3b733cba38cc84f5347c",
-  "v0.0.2 d582a42e0f886820584ae273ce188a42057424e6",
+  "v0.0.2 d582a42e0f886820584ae273ce188a42057424e6"
 ]
 
 [[packages]]
@@ -283,7 +283,7 @@ releases = [
   "v1.1.1 68b28c780861190639452ed0642e2f4064fa44c3",
   "v1.2.0 211569c5a0169dbb700885d21fbbe0c678126e9e",
   "v1.2.1 4ed606173318d9d5e405b1fef03f217d1b7c8ccc",
-  "v1.2.2 0b5be3c57c4e0355bd6fc77c1b22f833eec27060",
+  "v1.2.2 0b5be3c57c4e0355bd6fc77c1b22f833eec27060"
 ]
 
 [[packages]]
@@ -304,14 +304,14 @@ releases = [
   "v0.4.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
   "v0.4.3 312e708525fdb887ea39cc28652bbdae04675fc8",
   "v0.4.4 fe6d343b613badcf62854c560bb689ca36007328",
-  "v0.5.0 ae8afa2d51c8517551d3ee549893b4dcf575a2c7",
+  "v0.5.0 ae8afa2d51c8517551d3ee549893b4dcf575a2c7"
 ]
 
 [[packages]]
 name = "pika_lua"
 releases = [
   "v0.0.1 b5da16e285a378a74fa7b7734cdd89be703d6f07",
-  "v0.0.2 d582a42e0f886820584ae273ce188a42057424e6",
+  "v0.0.2 d582a42e0f886820584ae273ce188a42057424e6"
 ]
 
 [[packages]]
@@ -323,14 +323,14 @@ releases = [
   "v1.2.0 e2e94bb3a349985641fa686341757cfbd18207e2",
   "v1.3.0 9f3a52558338503571b37c034a12219566f27aa2",
   "v1.3.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
-  "v1.3.2 c262db0e26f276dd2186a42b37f28ff15faf9a03",
+  "v1.3.2 c262db0e26f276dd2186a42b37f28ff15faf9a03"
 ]
 
 [[packages]]
 name = "PikaVSF"
 releases = [
   "v0.0.1 f755ec10042f4deefef1c5491f5e91a651f71a1b",
-  "v0.0.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
+  "v0.0.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81"
 ]
 
 [[packages]]
@@ -348,12 +348,12 @@ releases = [
   "v0.4.1 0892f1d426e3d69daaff1251d8e45d2ef60d1ad4",
   "v0.5.0 c25d624cda5cc10bbdf803e1c343fc553e32477f",
   "v0.6.0 cbf1fdbea742957d59d3ec1486a1b39896105f19",
-  "v0.6.1 2fa7916db1bb8f9afa957513a1ef5339d6581861",
+  "v0.6.1 2fa7916db1bb8f9afa957513a1ef5339d6581861"
 ]
 
 [[packages]]
 name = "PLOOC"
-releases = ["v1.0.0 e2a630358c0d490b198f7e8682fb61569eb7ec56"]
+releases = [ "v1.0.0 e2a630358c0d490b198f7e8682fb61569eb7ec56" ]
 
 [[packages]]
 name = "pikaRTDevice"
@@ -365,6 +365,7 @@ releases = [
   "v1.1.1 6f3a7dc59e89d9f48f2bb3a55966d34551047894",
   "v1.1.2 ea40ab79a595a5404ef06573b74c27cb7a8a74c1",
   "v1.1.3 c262db0e26f276dd2186a42b37f28ff15faf9a03",
+  "v1.1.4 7ec1a65475cb5d2741c40b512c23755c36e2c7dd"
 ]
 
 [[packages]]
@@ -381,7 +382,7 @@ releases = [
   "v1.4.0 4611a62ecf25c614b516ccef059f0933d822c26c",
   "v1.5.0 24c8f7644e81d37855472ae5bbe984e32bcf0190",
   "v2.0.0 4ec5e905587f474250c682b665f8105a2c4a4d30",
-  "v2.1.0 602f7604a855aef37d6305a1f59bcd3fa885b6ff",
+  "v2.1.0 602f7604a855aef37d6305a1f59bcd3fa885b6ff"
 ]
 
 [[packages]]
@@ -395,7 +396,7 @@ releases = [
   "v1.1.1 567d0b19ce998a290fa538845d107c744ccd0258",
   "v1.1.2 55164edbf2ab7e2e9e754663579e3c93040da8fa",
   "v1.1.3 7a68bf910047fb055e5dbc0bdfdfec1366ca2469",
-  "v1.1.4 b9a0109c6125d16270cf02b2a07421a4baf9973c",
+  "v1.1.4 b9a0109c6125d16270cf02b2a07421a4baf9973c"
 ]
 
 [[packages]]
@@ -405,7 +406,7 @@ releases = [
   "v0.2.0 93591e92863f5e192dc89aed6666fd9dab4f7a82",
   "v0.3.0 8202a1ab52f15f70cd93abb0d409aa03da8170b0",
   "v0.3.1 918464a8567f84c87ddda68de99f3d032ee812e0",
-  "v0.4.0 0c47b42a014e66458bd0848bb19de069e6933f1b",
+  "v0.4.0 0c47b42a014e66458bd0848bb19de069e6933f1b"
 ]
 
 [[packages]]
@@ -415,7 +416,7 @@ releases = [
   "v0.0.2 8bcb5ad868ec8961f2a3f08329a46ab0b780596b",
   "v0.1.0 ac05e34d026344d0590f562a55c142b6e0879933",
   "v0.1.1 55164edbf2ab7e2e9e754663579e3c93040da8fa",
-  "v0.1.2 27150fba49fd783536c2c6d0702f813604d3f0d8",
+  "v0.1.2 27150fba49fd783536c2c6d0702f813604d3f0d8"
 ]
 
 [[packages]]
@@ -433,21 +434,21 @@ releases = [
   "v1.1.3 f755ec10042f4deefef1c5491f5e91a651f71a1b",
   "v1.2.0 9f3a52558338503571b37c034a12219566f27aa2",
   "v1.3.0 9d7b155af3260c0fc00be05598c807b71d7cc198",
-  "v1.4.0 a567e7705f5049ec5bb44b4bcc7497666cb125b3",
+  "v1.4.0 a567e7705f5049ec5bb44b4bcc7497666cb125b3"
 ]
 
 [[packages]]
 name = "CH32V103"
 releases = [
   "v1.0.0 4ce839297f208b0ac4fc1e7f16fef16ab605e70d",
-  "v1.0.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
+  "v1.0.1 ae13ede96f87b2dc9767b5e89c77dabf95c76e81"
 ]
 
 [[packages]]
 name = "SmartLoong"
 releases = [
   "v0.0.1 a5437de66e8cff600be247eae63ac9114b6b153f",
-  "v0.0.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
+  "v0.0.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81"
 ]
 
 [[packages]]
@@ -456,7 +457,7 @@ releases = [
   "v0.0.1 88f4e507f1665ca7ceda149aabf029f4e21e22c7",
   "v1.0.0 7ae9cd062fa48ecfe4b843c9f13b0daef0efd79d",
   "v1.1.0 c53bf1483d015555b4823f129864444198227403",
-  "v1.1.1 55164edbf2ab7e2e9e754663579e3c93040da8fa",
+  "v1.1.1 55164edbf2ab7e2e9e754663579e3c93040da8fa"
 ]
 
 [[packages]]
@@ -465,18 +466,18 @@ releases = [
   "v1.0.0 7cdb0cf9ed161c3fc6802028a9e34c9f94b56244",
   "v1.1.0 bfc01e09fd71c26a7140d23864c1d3052f23d087",
   "v1.1.1 268c8433a1add8c902d694808682890a2df8c1fc",
-  "v1.1.2 55164edbf2ab7e2e9e754663579e3c93040da8fa",
+  "v1.1.2 55164edbf2ab7e2e9e754663579e3c93040da8fa"
 ]
 
 [[packages]]
 name = "MM32F5277E9P"
-releases = ["v0.0.1 176232225939eccfaedfea412699a2e53c38ace1"]
+releases = [ "v0.0.1 176232225939eccfaedfea412699a2e53c38ace1" ]
 
 [[packages]]
 name = "AIR32F1"
 releases = [
   "v0.0.1 9f9579c54ebddb12c66afc8da64a987767ff512f",
-  "v0.1.0 faa9c6230149d09188114af7af822e5d34af6b55",
+  "v0.1.0 faa9c6230149d09188114af7af822e5d34af6b55"
 ]
 
 [[packages]]
@@ -486,14 +487,14 @@ releases = [
   "v0.0.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
   "v0.0.3 cd0029b6d1b4340b252532fcee1320667231038c",
   "v0.0.4 b9a0109c6125d16270cf02b2a07421a4baf9973c",
-  "v0.0.5 c262db0e26f276dd2186a42b37f28ff15faf9a03",
+  "v0.0.5 c262db0e26f276dd2186a42b37f28ff15faf9a03"
 ]
 
 [[packages]]
 name = "pika_fatfs"
 releases = [
   "v0.0.1 280700b8a8eee1849d16ac68871d014392edf269",
-  "v0.1.0 8ab8cd90be83f1cb86e2b2bcbb3b68d99d034815",
+  "v0.1.0 8ab8cd90be83f1cb86e2b2bcbb3b68d99d034815"
 ]
 
 [[packages]]
@@ -501,28 +502,28 @@ name = "mqtt"
 releases = [
   "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee",
   "v0.0.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81",
-  "v0.0.3 73e056141b23dba24087a9c0b1ce07c4eef1b909",
+  "v0.0.3 73e056141b23dba24087a9c0b1ce07c4eef1b909"
 ]
 
 [[packages]]
 name = "requests"
 releases = [
   "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee",
-  "v1.0.0 c67a894fc27ab3fe7b7aac825f1880e5073b0020",
+  "v1.0.0 c67a894fc27ab3fe7b7aac825f1880e5073b0020"
 ]
 
 [[packages]]
 name = "hashlib"
 releases = [
   "v1.0.0 ce05a5f03c4bfac536db60fe24f83705a1b58b02",
-  "v1.0.1 a91c3698abce8a6624929243cfb7cc79badaa156",
+  "v1.0.1 a91c3698abce8a6624929243cfb7cc79badaa156"
 ]
 
 [[packages]]
 name = "hmac"
 releases = [
   "v1.0.0 ca8fe36d68be16722317860394fdf78c620e3e2d",
-  "v1.0.1 d75ce00c377e48c6058bbe1f824474802383e5e7",
+  "v1.0.1 d75ce00c377e48c6058bbe1f824474802383e5e7"
 ]
 
 [[packages]]
@@ -532,22 +533,22 @@ releases = [
   "v0.2.0 eee8e1848eed77f3ebed777230104ebb4dfc3263",
   "v0.3.0 fc69ce4145c053d0a5f9191e8706014c5bee4ca8",
   "v0.4.0 bcb2f3aac147cfb7b0f655b877d964e3fc0699c8",
-  "v0.4.1 e28d9ee48feaf2125c018e5a18db60f648f038f8",
+  "v0.4.1 e28d9ee48feaf2125c018e5a18db60f648f038f8"
 ]
 
 [[packages]]
 name = "BLMCU"
-releases = ["v0.1.0 2551ac3fbeaa0d744a909c6cf48ba301c3af1cca"]
+releases = [ "v0.1.0 2551ac3fbeaa0d744a909c6cf48ba301c3af1cca" ]
 
 [[packages]]
 name = "aes"
-releases = ["v0.0.1 5c45cba0c39d447fbe7a4a082ee3170188c3bcb7"]
+releases = [ "v0.0.1 5c45cba0c39d447fbe7a4a082ee3170188c3bcb7" ]
 
 [[packages]]
 name = "base64"
 releases = [
   "v0.0.1 1ae3ac23759fb2b5e0f77866af40986ac94e356d",
-  "v1.0.0 29ad2b44817c5a72ace9f6d09cea7df6beb516f9",
+  "v1.0.0 29ad2b44817c5a72ace9f6d09cea7df6beb516f9"
 ]
 
 [[packages]]
@@ -555,7 +556,7 @@ name = "pika_libc"
 releases = [
   "v1.0.0 42a3cebb085a4a995d80031685dbf630e053aa55",
   "v1.0.1 b77d20d7b2f5fd29ac3d55daeec65e77d15a9b72",
-  "v1.0.2 d582a42e0f886820584ae273ce188a42057424e6",
+  "v1.0.2 d582a42e0f886820584ae273ce188a42057424e6"
 ]
 
 [[packages]]
@@ -566,18 +567,18 @@ releases = [
   "v0.1.2 0d27c99cdc1fb86370d0e7519ae6db3a3b28f743",
   "v0.1.3 2aafbbdc84eed84edcf5dcd7462a842a14f26a92",
   "v0.1.4 d582a42e0f886820584ae273ce188a42057424e6",
-  "v0.1.5 c262db0e26f276dd2186a42b37f28ff15faf9a03",
+  "v0.1.5 c262db0e26f276dd2186a42b37f28ff15faf9a03"
 ]
 
 [[packages]]
 name = "at_client"
-releases = ["v0.0.1 353e5e5ac2d725a1cc14cd6e690b451c3ac61e3f"]
+releases = [ "v0.0.1 353e5e5ac2d725a1cc14cd6e690b451c3ac61e3f" ]
 
 [[packages]]
 name = "json"
 releases = [
   "v0.1.0 02d6151cac594f2278c04e616f03cf37bae3069b",
-  "v0.1.1 94624f9a4af756c597291ed0646c446ecf25ac16",
+  "v0.1.1 94624f9a4af756c597291ed0646c446ecf25ac16"
 ]
 
 [[packages]]
@@ -585,7 +586,7 @@ name = "network"
 releases = [
   "v0.1.0 94624f9a4af756c597291ed0646c446ecf25ac16",
   "v0.1.1 5282cff66fe8f003c75fd82c54c0144aa7da8277",
-  "v0.1.2 69cea1d7188b35b84d819ed8cb8f41b3a64d39d1",
+  "v0.1.2 69cea1d7188b35b84d819ed8cb8f41b3a64d39d1"
 ]
 
 [[packages]]
@@ -594,19 +595,19 @@ releases = [
   "v0.0.1 73e056141b23dba24087a9c0b1ce07c4eef1b909",
   "v0.0.2 2aafbbdc84eed84edcf5dcd7462a842a14f26a92",
   "v0.0.3 b9a0109c6125d16270cf02b2a07421a4baf9973c",
-  "v0.0.4 c262db0e26f276dd2186a42b37f28ff15faf9a03",
+  "v0.0.4 c262db0e26f276dd2186a42b37f28ff15faf9a03"
 ]
 
 [[packages]]
 name = "weakref"
 releases = [
   "v0.0.1 93f22cb39e02e1f51735753dc253f8a7768ba16f",
-  "v0.0.2 b9a0109c6125d16270cf02b2a07421a4baf9973c",
+  "v0.0.2 b9a0109c6125d16270cf02b2a07421a4baf9973c"
 ]
 
 [[packages]]
 name = "bflb"
 releases = [
   "v0.1.0 90470be56f8f33f8869f46ad3432ec03d31755f7",
-  "v0.2.0 7e4e5fbe35d30cf0884a126d24f4f1f5609fa912",
+  "v0.2.0 7e4e5fbe35d30cf0884a126d24f4f1f5609fa912"
 ]
