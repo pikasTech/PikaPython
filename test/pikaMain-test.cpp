@@ -3054,4 +3054,20 @@ TEST(pikaMain, _obj_set_str_null) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(pikaMain, shell_nolib_print_help) {
+    char lines[] = {"help(\"modules\")\n"};
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    /* run */
+    for (size_t i = 0; i < strGetSize(lines); i++) {
+        obj_runChar(pikaMain, lines[i]);
+    }
+    /* assert */
+    EXPECT_STREQ(log_buff[1], "Error: Not found LibObj, please execute obj_linkLibrary()\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST_END

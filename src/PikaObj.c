@@ -2427,6 +2427,10 @@ PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
 
 void obj_printModules(PikaObj* self) {
     LibObj* lib = obj_getObj(self, "@lib");
+    if (lib == NULL) {
+        pika_platform_printf("Error: Not found LibObj, please execute obj_linkLibrary()\r\n");
+        return;
+    }
     pika_platform_printf(arg_getStr((Arg*)g_PikaObjState.helpModulesCmodule));
     LibObj_printModules(lib);
 }
