@@ -432,7 +432,7 @@ Arg* arg_setBool(Arg* self, char* name, PIKA_BOOL val) {
     return arg_set(self, name, ARG_TYPE_BOOL, (uint8_t*)&val, sizeof(val));
 }
 
-Arg* arg_setNull(Arg* self) {
+Arg* arg_setNone(Arg* self) {
     return arg_set(self, "", ARG_TYPE_NONE, NULL, 0);
 }
 

@@ -19,6 +19,8 @@ extern "C" {
 #include "pika_config_gtest.h"
 #include "pika_hal.h"
 #include <stdio.h>
+char* PikaStdData_Dict___str__(PikaObj* self);
+char* PikaStdData_List___str__(PikaObj* self);
 
 extern PikaMemInfo g_PikaMemInfo;
 /* the log_buff of printf */

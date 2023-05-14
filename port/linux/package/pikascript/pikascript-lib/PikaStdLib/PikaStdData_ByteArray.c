@@ -19,7 +19,7 @@ Arg* PikaStdData_ByteArray___next__(PikaObj* self) {
         char_buff[0] = data[__iter_i];
         res = arg_newInt(char_buff[0]);
     } else {
-        return arg_newNull();
+        return arg_newNone();
     }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return res;

@@ -24,7 +24,7 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     if (NULL == arg) {
         obj_setSysOut(self, "[error] type: arg no found.");
         obj_setErrorCode(self, 1);
-        return arg_newNull();
+        return arg_newNone();
     }
     ArgType type = arg_getType(arg);
     if (ARG_TYPE_INT == type) {
@@ -390,7 +390,7 @@ Arg* PikaStdLib_SysObj_tuple(PikaObj* self, Arg* val) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
     obj_setErrorCode(self, 1);
     __platform_printf("Error: tuple() is not supported.\r\n");
-    return arg_newNull();
+    return arg_newNone();
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in tuple is not enabled.\r\n");
@@ -459,7 +459,7 @@ Arg* PikaStdLib_SysObj_bytes(PikaObj* self, Arg* val) {
 #endif
     obj_setErrorCode(self, 1);
     __platform_printf("Error: input arg type not supported.\r\n");
-    return arg_newNull();
+    return arg_newNone();
 }
 
 void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {

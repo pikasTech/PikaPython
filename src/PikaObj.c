@@ -65,6 +65,8 @@ PikaObj* New_PikaStdData_Tuple(Args* args);
 void PikaStdData_Tuple___init__(PikaObj* self);
 void PikaStdData_List___init__(PikaObj* self);
 void PikaStdData_List_append(PikaObj* self, Arg* arg);
+void PikaStdData_Dict_set(PikaObj* self, char* key, Arg* value);
+void PikaStdData_Dict___init__(PikaObj* self);
 void _mem_cache_deinit(void);
 void _VMEvent_deinit(void);
 void pikaGC_markObj(PikaGC* gc, PikaObj* self);
@@ -470,10 +472,30 @@ static PikaObj* _pika_new_obj_with_args(PikaObj* (*constructor)(),
     PikaObj* obj = newNormalObj(constructor);
     init_func(obj);
 
-    for (int i = 0; i < num_args; i++) {
-        Arg* arg = va_arg(args, Arg*);
-        PikaStdData_List_append(obj, arg);
-        arg_deinit(arg);
+    if (constructor == New_PikaStdData_Tuple ||
+        constructor == New_PikaStdData_List) {
+        for (int i = 0; i < num_args; i++) {
+            Arg* arg = va_arg(args, Arg*);
+            if (num_args == 1 && NULL == arg) {
+                /* empty tuple */
+                return obj;
+            }
+            PikaStdData_List_append(obj, arg);
+            arg_deinit(arg);
+        }
+    } else if (constructor == New_PikaStdData_Dict) {
+        if (num_args == 1) {
+            /* empty dict */
+            return obj;
+        }
+        for (int i = 0; i + 1 < num_args; i += 2) {
+            Arg* aKey = va_arg(args, Arg*);
+            char* sKey = arg_getStr(aKey);
+            Arg* value = va_arg(args, Arg*);
+            PikaStdData_Dict_set(obj, sKey, value);
+            arg_deinit(aKey);
+            arg_deinit(value);
+        }
     }
 
     return obj;
@@ -499,6 +521,15 @@ PikaObj* _pika_list_new(int num_args, ...) {
 
     va_end(args);
     return list;
+}
+
+PikaObj* _pika_dict_new(int num_args, ...) {
+    va_list args;
+    va_start(args, num_args);
+    PikaObj* dict = _pika_new_obj_with_args(
+        New_PikaStdData_Dict, PikaStdData_Dict___init__, num_args, args);
+    va_end(args);
+    return dict;
 }
 
 Arg* _obj_getProp(PikaObj* obj, char* name) {
@@ -1981,7 +2012,7 @@ void method_returnPtr(Args* args, void* val) {
 
 void method_returnObj(Args* args, void* val) {
     if (NULL == val) {
-        args_pushArg_name(args, "@rt", arg_newNull());
+        args_pushArg_name(args, "@rt", arg_newNone());
         return;
     }
     ArgType type;

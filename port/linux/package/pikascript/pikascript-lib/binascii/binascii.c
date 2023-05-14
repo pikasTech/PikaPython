@@ -26,7 +26,7 @@ Arg* binascii_b2a_hex(PikaObj* self, Arg* val) {
     if (arg_getType(val) != ARG_TYPE_BYTES) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         __platform_printf("TypeError: cannot convert value to bytes\r\n");
-        return arg_newNull();
+        return arg_newNone();
     }
 
     /* b2a_hex */

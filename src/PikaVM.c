@@ -616,7 +616,7 @@ Arg* _vm_get(VMState* vm, PikaObj* self, Arg* aKey, Arg* aObj) {
     if (iIndex >= iLen) {
         VMState_setErrorCode(vm, PIKA_RES_ERR_OUT_OF_RANGE);
         pika_platform_printf("IndexError: index out of range\r\n");
-        return arg_newNull();
+        return arg_newNone();
     }
 
     if (ARG_TYPE_STRING == eType) {
@@ -678,11 +678,11 @@ Arg* _vm_get(VMState* vm, PikaObj* self, Arg* aKey, Arg* aObj) {
             if (NULL != vm) {
                 VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
             }
-            return arg_newNull();
+            return arg_newNone();
         }
         return aRes;
     }
-    return arg_newNull();
+    return arg_newNone();
 }
 
 Arg* _vm_slice(VMState* vm,
@@ -736,7 +736,7 @@ Arg* _vm_slice(VMState* vm,
         if (NULL != sSliced) {
             aSliced = arg_newStr(sSliced);
         } else {
-            aSliced = arg_newNull();
+            aSliced = arg_newNone();
         }
         strsDeinit(&buffs);
         return aSliced;
@@ -780,7 +780,7 @@ Arg* _vm_slice(VMState* vm,
             return arg_newObj(oSliced);
         }
     }
-    return arg_newNull();
+    return arg_newNone();
 #else
     return _vm_get(vm, self, aStart, aObj);
 #endif
@@ -793,7 +793,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
 #if PIKA_SYNTAX_SLICE_ENABLE
     int n_input = VMState_getInputArgNum(vm);
     if (n_input < 2) {
-        return arg_newNull();
+        return arg_newNone();
     }
     if (n_input == 2) {
         Arg* key = stack_popArg_alloc(&vm->stack);
@@ -812,7 +812,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
             pika_platform_printf("TypeError: slice indices must be integers\n");
             arg_deinit(end);
             arg_deinit(start);
-            return arg_newNull();
+            return arg_newNone();
         }
         Arg* obj = stack_popArg_alloc(&vm->stack);
         Arg* res = _vm_slice(vm, self, end, obj, start, 1);
@@ -821,7 +821,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
         arg_deinit(start);
         return res;
     }
-    return arg_newNull();
+    return arg_newNone();
 #else
     Arg* key = stack_popArg_alloc(&vm->stack);
     Arg* obj = stack_popArg_alloc(&vm->stack);
@@ -944,7 +944,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
             break;
         case 'N':
             if (strEqu(arg_path, (char*)"None")) {
-                return arg_setNull(aRetReg);
+                return arg_setNone(aRetReg);
             }
             break;
         case 'R':
@@ -3840,7 +3840,7 @@ void instructArray_deinit(InstructArray* self) {
 
 void instructArray_append(InstructArray* self, InstructUnit* ins_unit) {
     if (NULL == self->arg_buff) {
-        self->arg_buff = arg_newNull();
+        self->arg_buff = arg_newNone();
     }
     if (NULL == self->output_redirect_fun) {
         self->arg_buff =

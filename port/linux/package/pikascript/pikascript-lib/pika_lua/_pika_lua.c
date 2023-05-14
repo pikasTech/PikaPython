@@ -20,43 +20,73 @@ void _pika_lua___init__(PikaObj* self) {
     }
 }
 
+void PikaStdData_List_append(PikaObj* self, Arg* arg);
+void PikaStdData_Dict_set(PikaObj* self, char* key, Arg* arg);
+
+Arg* _lua_val_to_arg(lua_State* L) {
+    if (!lua_gettop(L)) {
+        return NULL;
+    }
+    if (lua_isinteger(L, -1)) {
+        return arg_newInt(lua_tointeger(L, -1));
+    }
+    if (lua_isnumber(L, -1)) {
+        return arg_newFloat(lua_tonumber(L, -1));
+    }
+    if (lua_isstring(L, -1)) {
+        return arg_newStr((char*)lua_tostring(L, -1));
+    }
+    if (lua_isboolean(L, -1)) {
+        return arg_newBool(lua_toboolean(L, -1));
+    }
+    if (lua_isnil(L, -1) || lua_isnoneornil(L, -1)) {
+        return arg_newNone();
+    }
+    if (lua_istable(L, -1)) {
+        PikaObj* ret = NULL;
+        PIKA_BOOL get_list = PIKA_FALSE;
+        PIKA_BOOL get_dict = PIKA_FALSE;
+        lua_pushnil(L);  // push the first key
+        // PikaObj* dict = obj_newDict0();
+        while (lua_next(L, -2) != 0) {
+            // 'key' is at index -2 and 'value' at index -1
+            if (!get_list && !get_dict) {
+                if (lua_isinteger(L, -2)) {
+                    ret = obj_newList(NULL);
+                    get_list = PIKA_TRUE;
+                } else {
+                    ret = obj_newDict(NULL);
+                    get_dict = PIKA_TRUE;
+                }
+            }
+            Arg* val = _lua_val_to_arg(L);
+            if (get_list) {
+                PikaStdData_List_append(ret, val);
+            } else if (get_dict) {
+                char* key = (char*)lua_tostring(L, -2);
+                PikaStdData_Dict_set(ret, key, val);
+            }
+            arg_deinit(val);
+            lua_pop(L, 1);  // Remove value, keep key for next iteration
+        }
+        return arg_newObj(ret);  // You might want to return something else here
+    }
+    return NULL;
+}
+
 Arg* _pika_lua_eval(PikaObj* self, char* cmd) {
     Args buffs = {0};
     int res = luaL_dostring(g_pika_L, cmd);
-    Arg* ret = NULL;
     if (LUA_OK != res) {
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
         pika_platform_printf("Error: Lua dostring failed: \r\n> %s\r\n",
                              lua_tostring(g_pika_L, -1));
-        ret = NULL;
-        goto __exit;
+        lua_pop(g_pika_L, 1);
+        strsDeinit(&buffs);
+        return NULL;
     }
-    if (!lua_gettop(g_pika_L)) {
-        ret = NULL;
-        goto __exit;
-    }
-    if (lua_isinteger(g_pika_L, -1)) {
-        ret = arg_newInt(lua_tointeger(g_pika_L, -1));
-        goto __exit;
-    }
-    if (lua_isnumber(g_pika_L, -1)) {
-        ret = arg_newFloat(lua_tonumber(g_pika_L, -1));
-        goto __exit;
-    }
-    if (lua_isstring(g_pika_L, -1)) {
-        ret = arg_newStr((char*)lua_tostring(g_pika_L, -1));
-        goto __exit;
-    }
-    if (lua_isboolean(g_pika_L, -1)) {
-        ret = arg_newBool(lua_toboolean(g_pika_L, -1));
-        goto __exit;
-    }
-    if (lua_isnil(g_pika_L, -1) || lua_isnoneornil(g_pika_L, -1)) {
-        ret = arg_newNull();
-        goto __exit;
-    }
-__exit:
-    if (NULL != ret) {
+    Arg* ret = _lua_val_to_arg(g_pika_L);
+    if (ret != NULL) {
         lua_pop(g_pika_L, 1);
     }
     strsDeinit(&buffs);
@@ -80,7 +110,7 @@ __exit:
     return ret;
 }
 
-void _pika_lua___del__(PikaObj* self){
+void _pika_lua___del__(PikaObj* self) {
     pika_debug("lua close!\r\n");
     lua_close(g_pika_L);  // 关闭 Lua 状态机，释放所有关联的资源
     g_pika_L = NULL;

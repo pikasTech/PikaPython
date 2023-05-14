@@ -431,6 +431,7 @@ PikaObj* _pika_tuple_new(int num_args, ...);
 /* A helper function to create a new list PikaObj and append the given arguments
  * (of type Arg*) to it. */
 PikaObj* _pika_list_new(int num_args, ...);
+PikaObj* _pika_dict_new(int num_args, ...);
 
 /* Macro to create a new tuple PikaObj with the given arguments (of type Arg*).
  */
@@ -441,6 +442,13 @@ PikaObj* _pika_list_new(int num_args, ...);
  */
 #define obj_newList(...) \
     _pika_list_new(sizeof((Arg*[]){__VA_ARGS__}) / sizeof(Arg*), __VA_ARGS__)
+
+/* Macro to create a new dict PikaObj with the given arguments (of type Arg*).
+ */
+
+#define obj_newDict(...)                                                   \
+    _pika_dict_new(sizeof((Arg*[]){__VA_ARGS__, NULL}) / sizeof(Arg*) - 1, \
+                   __VA_ARGS__)
 
 PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);

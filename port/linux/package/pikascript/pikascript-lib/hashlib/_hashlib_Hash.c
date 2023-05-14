@@ -169,7 +169,7 @@ Arg* _hashlib_Hash_digest(PikaObj* self) {
                 break;
             default:
                 obj_setErrorCode(self, -1);  // not support mode
-                return arg_newNull();  // will not actually return to the python
+                return arg_newNone();  // will not actually return to the python
                 break;
         }
         obj_setInt(self, "_digest_flags", flag | 0x01);

@@ -98,7 +98,7 @@ PIKA_RES args_setStr(Args* self, char* name, char* strIn) {
 
 PIKA_RES args_setNone(Args* self, char* name) {
     PIKA_RES errCode = PIKA_RES_OK;
-    Arg* argNew = arg_newNull();
+    Arg* argNew = arg_newNone();
     arg_setName(argNew, name);
     args_setArg(self, argNew);
     return errCode;

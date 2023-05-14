@@ -568,6 +568,27 @@ TEST(stddata, list_slice_issue) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stddata, obj_newDict){
+    PikaObj* new_dict = obj_newDict(arg_newStr("a"), arg_newInt(1), arg_newStr("b"), arg_newInt(2), arg_newStr("c"), arg_newInt(3));
+    pika_platform_printf("%s\r\n", PikaStdData_Dict___str__(new_dict));
+    obj_deinit(new_dict);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, obj_newDict0){
+    PikaObj* new_dict = obj_newDict(NULL);
+    pika_platform_printf("%s\r\n", PikaStdData_Dict___str__(new_dict));
+    obj_deinit(new_dict);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, obj_newList0){
+    PikaObj* new_list = obj_newList(NULL);
+    pika_platform_printf("%s\r\n", PikaStdData_List___str__(new_list));
+    obj_deinit(new_list);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END

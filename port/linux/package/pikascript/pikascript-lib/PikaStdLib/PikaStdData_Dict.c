@@ -44,7 +44,7 @@ Arg* PikaStdData_Dict___next__(PikaObj* self) {
     PikaDict* keys = obj_getPtr(self, "_keys");
     Arg* res = arg_copy(args_getArgByIndex(&keys->super, __iter_i));
     if (NULL == res) {
-        return arg_newNull();
+        return arg_newNone();
     }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return res;
@@ -95,7 +95,7 @@ Arg* PikaStdData_dict_keys___next__(PikaObj* self) {
     PikaDict* keys = obj_getPtr(dictptr, "_keys");
     Arg* res = arg_copy(args_getArgByIndex(&keys->super, __iter_i));
     if (NULL == res) {
-        return arg_newNull();
+        return arg_newNone();
     }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return res;
@@ -224,7 +224,7 @@ Arg* PikaStdData_dict_items___next__(PikaObj* self) {
     Arg* key = args_getArgByIndex(&keys->super, __iter_i);
     Arg* val = args_getArgByIndex(&dict->super, __iter_i);
     if (NULL == key) {
-        return arg_newNull();
+        return arg_newNone();
     }
     PikaObj* tuple = newNormalObj(New_PikaStdData_Tuple);
     PikaStdData_Tuple___init__(tuple);

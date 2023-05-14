@@ -49,7 +49,7 @@ Arg* PikaStdData_String___next__(PikaObj* self) {
     char char_buff[5];
     int r = _utf8_get(str, len, __iter_i, char_buff);
     if (r < 0) {
-        return arg_newNull();
+        return arg_newNone();
     }
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return arg_newStr((char*)char_buff);
@@ -102,7 +102,7 @@ Arg* PikaStdData_String___getitem__(PikaObj* self, Arg* __key) {
     char char_buff[5] = {0};
     int r = _str_get(str, key_i, char_buff);
     if (r < 0) {
-        return arg_newNull();
+        return arg_newNone();
     }
     return arg_newStr((char*)char_buff);
 }

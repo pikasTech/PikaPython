@@ -6,7 +6,7 @@ Arg* PikaStdLib_RangeObj___next__(PikaObj* self) {
     int step = _->step;
     /* exit */
     if (_->i >= end) {
-        return arg_newNull();
+        return arg_newNone();
     }
     Arg* res = arg_newInt(_->i);
     _->i += step;

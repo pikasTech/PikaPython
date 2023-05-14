@@ -82,6 +82,8 @@ extern "C" {
 #define pika_platform_timer_remain pika_platform_thread_timer_remain
 #define pika_platform_timer_now pika_platform_thread_timer_now
 #define pika_platform_timer_usleep pika_platform_thread_timer_usleep
+#define arg_newNull arg_newNone
+#define arg_setNull arg_setNone
 
 #endif
 
