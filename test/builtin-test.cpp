@@ -215,6 +215,9 @@ TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(builtin, class_script,
                                    "test/python/builtin/class_script.py",
                                    "Obj1.test\r\n")
 
+TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(builtin, class_hint,
+                                   "test/python/builtin/class_hint.py", "1\r\n")
+
 #endif
 
 TEST_END

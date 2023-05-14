@@ -1716,7 +1716,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     if (isLeftExist) {
         if (strEqu(left, "")) {
             result = PIKA_RES_ERR_SYNTAX_ERROR;
-            goto exit;
+            goto __exit;
         }
         AST_setNodeAttr(ast, (char*)"left", left);
     }
@@ -1734,7 +1734,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         char* operator= Lexer_getOperator(&buffs, rightWithoutSubStmt);
         if (NULL == operator) {
             result = PIKA_RES_ERR_SYNTAX_ERROR;
-            goto exit;
+            goto __exit;
         }
         AST_setNodeAttr(ast, (char*)"operator", operator);
         char* rightBuff = strsCopy(&buffs, right);
@@ -1742,19 +1742,19 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         char* subStmt1 = rightBuff;
         AST_parseSubStmt(ast, subStmt1);
         AST_parseSubStmt(ast, subStmt2);
-        goto exit;
+        goto __exit;
     }
 
     /* solve list stmt */
     if (STMT_list == stmtType) {
         _AST_parse_list(ast, &buffs, right);
-        goto exit;
+        goto __exit;
     }
 
     /* solve dict stmt */
     if (STMT_dict == stmtType) {
         _AST_parse_dict(ast, &buffs, right);
-        goto exit;
+        goto __exit;
     }
 
     /* solve method chain */
@@ -1763,13 +1763,13 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         char* sMethodStmt = Parser_popLastSubStmt(&buffs, &sHost, ".");
         AST_parseSubStmt(ast, sHost);
         AST_parseStmt(ast, sMethodStmt);
-        goto exit;
+        goto __exit;
     }
 
     if (STMT_slice == stmtType) {
         /* solve slice stmt */
         _AST_parse_slice(ast, &buffs, right);
-        goto exit;
+        goto __exit;
     }
 
     /* solve method stmt */
@@ -1779,7 +1779,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         char* sSubStmts = strsCut(&buffs, right, '(', ')');
         if (NULL == sSubStmts) {
             result = PIKA_RES_ERR_SYNTAX_ERROR;
-            goto exit;
+            goto __exit;
         }
         /* add ',' at the end */
         sSubStmts = strsAppend(&buffs, sSubStmts, ",");
@@ -1790,7 +1790,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
             if (strOnly(sSubStmts, ',')) {
                 if (i < iSubStmtsNum - 2) {
                     result = PIKA_RES_ERR_SYNTAX_ERROR;
-                    goto exit;
+                    goto __exit;
                 }
                 if (i == iSubStmtsNum - 2 && strEqu(sMethod, "")) {
                     sRealType = "tuple";
@@ -1800,25 +1800,30 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
             if (strEqu("", sSubStmts)) {
                 if (i != iSubStmtsNum - 1) {
                     result = PIKA_RES_ERR_SYNTAX_ERROR;
-                    goto exit;
+                    goto __exit;
                 }
                 break;
             }
         }
         AST_setNodeAttr(ast, (char*)sRealType, sMethod);
-        goto exit;
+        goto __exit;
     }
     /* solve reference stmt */
     if (STMT_reference == stmtType) {
         ref = right;
+        /* filter for type hint */
+        ref = Cursor_splitCollect(&buffs, ref, ":", 0);
+        if (!strEqu(ref, right)) {
+            goto __exit;
+        }
         AST_setNodeAttr(ast, (char*)"ref", ref);
-        goto exit;
+        goto __exit;
     }
     /* solve import stmt */
     if (STMT_import == stmtType) {
         import = strsGetLastToken(&buffs, right, ' ');
         AST_setNodeAttr(ast, (char*)"import", import);
-        goto exit;
+        goto __exit;
     }
     /* solve str stmt */
     if (STMT_string == stmtType) {
@@ -1833,7 +1838,7 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
             str = strsReplace(&buffs, str, "\\'", "'");
         }
         AST_setNodeAttr(ast, (char*)"string", str);
-        goto exit;
+        goto __exit;
     }
     /* solve bytes stmt */
     if (STMT_bytes == stmtType) {
@@ -1841,15 +1846,15 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         str = strsDeleteChar(&buffs, str, '\'');
         str = strsDeleteChar(&buffs, str, '\"');
         AST_setNodeAttr(ast, (char*)"bytes", str);
-        goto exit;
+        goto __exit;
     }
     /* solve number stmt */
     if (STMT_number == stmtType) {
         num = right;
         AST_setNodeAttr(ast, (char*)"num", num);
-        goto exit;
+        goto __exit;
     }
-exit:
+__exit:
     strsDeinit(&buffs);
     if (result != PIKA_RES_OK) {
         AST_deinit(ast);

@@ -5646,6 +5646,8 @@ TEST_LINES2ASM(split_slice,
                "0 SLC \n"
                "B0\n")
 
+TEST_LINES2ASM(val_hint, "a:int", "B0\nB0\n")
+
 #endif
 
 TEST_END

@@ -23,7 +23,7 @@
                 // "--gtest_filter=vm.var_global_run"
                 // "--gtest_filter=lua.eval"
                 // "--gtest_filter=proxy.proxy3"
-                "--gtest_filter=builtin.class_script"
+                "--gtest_filter=parser.val_hint"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
