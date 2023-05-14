@@ -203,7 +203,9 @@ static enum StmtType Lexer_matchStmtType(char* right) {
                 TOKEN_literal == cs.token1.type ||
                 strEqu(cs.token1.pyload, "]") ||
                 strEqu(cs.token1.pyload, ")")) {
+                /* keep the last one of the chain or slice */
                 is_get_slice = PIKA_TRUE;
+                is_get_chain = PIKA_FALSE;
                 goto iter_continue;
             }
             /* ( <,> | <=> ) + <[> */
@@ -224,7 +226,9 @@ static enum StmtType Lexer_matchStmtType(char* right) {
 
         if (strIsStartWith(cs.token1.pyload, ".")) {
             if (cs.iter_index != 1) {
+                /* keep the last one of the chain or slice */
                 is_get_chain = PIKA_TRUE;
+                is_get_slice = PIKA_FALSE;
                 goto iter_continue;
             }
         }
@@ -270,12 +274,12 @@ static enum StmtType Lexer_matchStmtType(char* right) {
         stmtType = STMT_operator;
         goto exit;
     }
-    if (is_get_chain) {
-        stmtType = STMT_chain;
-        goto exit;
-    }
     if (is_get_slice) {
         stmtType = STMT_slice;
+        goto exit;
+    }
+    if (is_get_chain) {
+        stmtType = STMT_chain;
         goto exit;
     }
     if (is_get_list) {
@@ -1755,10 +1759,10 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
 
     /* solve method chain */
     if (STMT_chain == stmtType) {
-        char* stmt = strsCopy(&buffs, right);
-        char* lastStmt = Parser_popLastSubStmt(&buffs, &stmt, ".");
-        AST_parseSubStmt(ast, stmt);
-        AST_parseStmt(ast, lastStmt);
+        char* sHost = strsCopy(&buffs, right);
+        char* sMethodStmt = Parser_popLastSubStmt(&buffs, &sHost, ".");
+        AST_parseSubStmt(ast, sHost);
+        AST_parseStmt(ast, sMethodStmt);
         goto exit;
     }
 

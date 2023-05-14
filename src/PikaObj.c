@@ -695,6 +695,10 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     signal(SIGHUP, signal_handler);   // 捕获 SIGHUP 信号
     signal(SIGSEGV, signal_handler);  // 捕获 SIGHUP 信号
     signal(SIGABRT, signal_handler);
+    signal(SIGQUIT, signal_handler);
+    signal(SIGKILL, signal_handler);
+    signal(SIGTRAP, signal_handler);
+    signal(SIGHUP, signal_handler);
     enable_raw_mode();
 #endif
     PikaObj* newObj = newNormalObj(newObjFun);
@@ -2423,6 +2427,10 @@ PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
 
 void obj_printModules(PikaObj* self) {
     LibObj* lib = obj_getObj(self, "@lib");
+    if (lib == NULL) {
+        pika_platform_printf("Error: Not found LibObj, please execute obj_linkLibrary()\r\n");
+        return;
+    }
     pika_platform_printf(arg_getStr((Arg*)g_PikaObjState.helpModulesCmodule));
     LibObj_printModules(lib);
 }

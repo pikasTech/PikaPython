@@ -34,5 +34,32 @@ def eval(cmd: str):
 def evalLine(line: str):
     return _pika_lua.evalLine(line)
 
-def require(module: str):
-    return _pika_lua.require(module)
+def getVar(name: str):
+    print("getVar: %s" % name)
+    return eval("return %s" % name)
+
+def setVar(name: str, value):
+    print("setVar: %s = %s" % (name, value))
+    eval("%s = %s" % (name, value))
+
+class LuaModuleProxy:
+    _name:str = ''
+    def __init__(self, name: str):
+        self._name = name
+    
+    def __getattr__(self, name: str):
+        return getVar("%s.%s" % (self._name, name))
+    
+    def __setattr__(self, name: str, value) -> None:
+        if (name == "_name"):
+            setattr(self, name, value)
+        else:
+            setVar("%s.%s" % (self._name, name), value)
+    
+def require(module: str) -> LuaModuleProxy:
+    try:
+        eval("require('%s')" % module)
+        return LuaModuleProxy(module)
+    except:
+        print("require module '%s' failed" % module)
+        return None

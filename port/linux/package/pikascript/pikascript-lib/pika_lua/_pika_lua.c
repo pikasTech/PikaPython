@@ -76,8 +76,6 @@ __exit:
     return ret;
 }
 
-PikaObj* _pika_lua_require(PikaObj* self, char* module) {}
-
 void _pika_lua___del__(PikaObj* self){
     pika_debug("lua close!\r\n");
     lua_close(g_pika_L);  // 关闭 Lua 状态机，释放所有关联的资源
