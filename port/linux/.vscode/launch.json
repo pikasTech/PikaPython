@@ -21,9 +21,9 @@
                 // "--gtest_filter=parser.tuple_single"
                 // "--gtest_filter=parser.split_slice"
                 // "--gtest_filter=vm.var_global_run"
-                "--gtest_filter=lua.eval"
+                // "--gtest_filter=lua.eval"
                 // "--gtest_filter=proxy.proxy3"
-                // "--gtest_filter=stddata.obj_newDict0"
+                "--gtest_filter=builtin.class_script"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

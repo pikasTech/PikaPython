@@ -19,15 +19,15 @@ extern "C" {
 #include "pika_config_gtest.h"
 #include "pika_hal.h"
 #include <stdio.h>
-char* PikaStdData_Dict___str__(PikaObj* self);
-char* PikaStdData_List___str__(PikaObj* self);
+char *PikaStdData_Dict___str__(PikaObj *self);
+char *PikaStdData_List___str__(PikaObj *self);
 
 extern PikaMemInfo g_PikaMemInfo;
 /* the log_buff of printf */
 extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
 }
 
-#define TEST_RUN_SINGLE_FILE(_test_suite_, _test_name_, _file_name_)               \
+#define TEST_RUN_SINGLE_FILE(_test_suite_, _test_name_, _file_name_)           \
   TEST(_test_suite_, _test_name_) {                                            \
     g_PikaMemInfo.heapUsedMax = 0;                                             \
     PikaObj *pikaMain = newRootObj("pikaMain", New_PikaMain);                  \
@@ -42,7 +42,7 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
     EXPECT_EQ(pikaMemNow(), 0);                                                \
   }
 
-#define TEST_RUN_SINGLE_FILE_PASS(_test_suite_, _test_name_, _file_name_)          \
+#define TEST_RUN_SINGLE_FILE_PASS(_test_suite_, _test_name_, _file_name_)      \
   TEST(_test_suite_, _test_name_) {                                            \
     g_PikaMemInfo.heapUsedMax = 0;                                             \
     PikaObj *pikaMain = newRootObj("pikaMain", New_PikaMain);                  \
@@ -53,6 +53,24 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
     pikaVM_runSingleFile(pikaMain, _file_name_);                               \
     /* assert */                                                               \
     EXPECT_STREQ(log_buff[0], "PASS\r\n");                                     \
+    EXPECT_STREQ(log_buff[1], "BEGIN\r\n");                                    \
+    /* deinit */                                                               \
+    obj_deinit(pikaMain);                                                      \
+    EXPECT_EQ(pikaMemNow(), 0);                                                \
+  }
+
+#define TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(_test_suite_, _test_name_,          \
+                                           _file_name_, _except_output_)       \
+  TEST(_test_suite_, _test_name_) {                                            \
+    g_PikaMemInfo.heapUsedMax = 0;                                             \
+    PikaObj *pikaMain = newRootObj("pikaMain", New_PikaMain);                  \
+    extern unsigned char pikaModules_py_a[];                                   \
+    obj_linkLibrary(pikaMain, pikaModules_py_a);                               \
+    /* run */                                                                  \
+    __platform_printf("BEGIN\r\n");                                            \
+    pikaVM_runSingleFile(pikaMain, _file_name_);                               \
+    /* assert */                                                               \
+    EXPECT_STREQ(log_buff[0], (_except_output_));                              \
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");                                    \
     /* deinit */                                                               \
     obj_deinit(pikaMain);                                                      \

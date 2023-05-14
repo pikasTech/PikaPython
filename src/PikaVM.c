@@ -1892,6 +1892,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         pikaFree(stack_tmp, sizeof(Arg*) * PIKA_ARG_NUM_MAX);
     }
 #endif
+    /* use RunAs object */
+    if (obj_getFlag(vm->locals, OBJ_FLAG_RUN_AS)) {
+        PikaObj* oContext = args_getPtr(vm->locals->list, "@r");
+        oMethodHost = obj_getHostObjWithIsTemp(oContext, sRunPath, &bIsTemp);
+    }
 
     /* get method host obj from local scope */
     if (NULL == oMethodHost) {
