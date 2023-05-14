@@ -35,11 +35,11 @@ def evalLine(line: str):
     return _pika_lua.evalLine(line)
 
 def getVar(name: str):
-    print("getVar: %s" % name)
+    # print("getVar: %s" % name)
     return eval("return %s" % name)
 
 def setVar(name: str, value):
-    print("setVar: %s = %s" % (name, value))
+    # print("setVar: %s = %s" % (name, value))
     eval("%s = %s" % (name, value))
 
 class LuaModuleProxy:
