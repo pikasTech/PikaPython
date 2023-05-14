@@ -1414,11 +1414,12 @@ static int _get_n_input_with_unpack(VMState* vm, int n_used) {
 #define vars_or_keys_or_default (f.is_vars || f.is_keys || f.is_default)
 #define METHOD_TYPE_LIST_MAX_LEN PIKA_LINE_BUFF_SIZE
 static int VMState_loadArgsFromMethodArg(VMState* vm,
-                                         PikaObj* method_host_obj,
-                                         Args* locals,
-                                         Arg* method_arg,
-                                         char* method_name,
-                                         int n_used) {
+                                         PikaObj* oMethodHost,
+                                         Args* aLoclas,
+                                         Arg* aMethod,
+                                         char* sMethodName,
+                                         char* sProxyName,
+                                         int iNumUsed) {
     int argc = 0;
     Arg** argv = (Arg**)pikaMalloc(sizeof(Arg*) * PIKA_ARG_NUM_MAX);
     char* buffs1 = (char*)pikaMalloc(METHOD_TYPE_LIST_MAX_LEN);
@@ -1427,14 +1428,14 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     char* type_list_buff = NULL;
     /* get method type list */
     f.type_list =
-        methodArg_getTypeList(method_arg, buffs1, METHOD_TYPE_LIST_MAX_LEN);
+        methodArg_getTypeList(aMethod, buffs1, METHOD_TYPE_LIST_MAX_LEN);
     if (NULL == f.type_list) {
         pika_platform_printf(
             "OverflowError: type list is too long, please use bigger "
             "PIKA_LINE_BUFF_SIZE\r\n");
         pika_platform_panic_handle();
     }
-    f.method_type = arg_getType(method_arg);
+    f.method_type = arg_getType(aMethod);
 
     /* get arg_num_pos */
     _type_list_parse(&f);
@@ -1443,12 +1444,17 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         f.n_positional--;
     }
 
-    f.n_input = _get_n_input_with_unpack(vm, n_used);
+    f.n_input = _get_n_input_with_unpack(vm, iNumUsed);
+
+    if (NULL != sProxyName) {
+        /* method proxy takes the first arg as method name */
+        f.n_input++;
+    }
 
     do {
         /* check arg num */
         if (f.method_type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
-            f.method_type == ARG_TYPE_METHOD_CONSTRUCTOR || n_used != 0) {
+            f.method_type == ARG_TYPE_METHOD_CONSTRUCTOR || iNumUsed != 0) {
             /* skip for constrctor */
             /* skip for variable args */
             /* n_used != 0 means it is a factory method */
@@ -1462,7 +1468,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                     "TypeError: %s() takes %d positional argument but %d "
                     "were "
                     "given\r\n",
-                    method_name, f.n_positional, f.n_input);
+                    sMethodName, f.n_positional, f.n_input);
                 goto exit;
             }
             break;
@@ -1479,7 +1485,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                     "%d "
                     "were "
                     "given\r\n",
-                    method_name, f.n_positional, f.n_input);
+                    sMethodName, f.n_positional, f.n_input);
                 goto exit;
             }
             break;
@@ -1493,7 +1499,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                     "TypeError: %s() takes from %d to %d positional "
                     "arguments "
                     "but %d were given\r\n",
-                    method_name, n_min, n_max, f.n_input);
+                    sMethodName, n_min, n_max, f.n_input);
                 goto exit;
             }
         }
@@ -1544,8 +1550,13 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     /* load args */
     for (int i = 0; i < f.n_arg; i++) {
+        Arg* call_arg = NULL;
         f.i_arg = f.n_arg - i;
-        Arg* call_arg = stack_popArg_alloc(&(vm->stack));
+        if (NULL != sProxyName && i == f.n_arg - 1) {
+            call_arg = arg_newStr(sProxyName);
+        } else {
+            call_arg = stack_popArg_alloc(&(vm->stack));
+        }
         _load_call_arg(vm, call_arg, &f, &i, &argc, argv);
     }
 
@@ -1585,15 +1596,15 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 
     /* load 'self' as the first arg when call object method */
     if (f.method_type == ARG_TYPE_METHOD_OBJECT) {
-        PikaObj* method_self = methodArg_getHostObj(method_arg);
+        PikaObj* method_self = methodArg_getHostObj(aMethod);
         if (NULL == method_self) {
-            method_self = method_host_obj;
+            method_self = oMethodHost;
         }
         Arg* call_arg = arg_setRef(NULL, "self", method_self);
         pika_assert(call_arg != NULL);
         argv[argc++] = call_arg;
     }
-    _loadLocalsFromArgv(locals, argc, argv);
+    _loadLocalsFromArgv(aLoclas, argc, argv);
 exit:
     pikaFree(buffs1, METHOD_TYPE_LIST_MAX_LEN);
     pikaFree(buffs2, METHOD_TYPE_LIST_MAX_LEN);
@@ -1789,6 +1800,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     VMParameters* oSublocalsInit = NULL;
     char* sRunPath = data;
     char* sArgName = NULL;
+    char* sProxyName = NULL;
     PikaObj* oMethodHost = NULL;
     PikaObj* oThis = NULL;
     Arg* aMethod = NULL;
@@ -1830,7 +1842,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     /* support for super() */
     if (strEqu(sRunPath, "super")) {
         sRunPath = _find_super_class_name(vm);
-        sArgName = sRunPath;
+        sArgName = strPointToLastToken(sRunPath, '.');
         vm->in_super = PIKA_TRUE;
         vm->super_invoke_deepth = VMState_getInvokeDeepthNow(vm);
         bSkipInit = PIKA_TRUE;
@@ -1916,20 +1928,33 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 
     /* get method in object */
     if (NULL == aMethod) {
-        aMethod = obj_getMethodArg_noalloc(oMethodHost, sRunPath, &arg_reg1);
+        aMethod = obj_getMethodArg_noalloc(oMethodHost, sArgName, &arg_reg1);
     }
 
     if (sArgName == sRunPath) {
         /* get method in locals */
         if (NULL == aMethod) {
-            aMethod = obj_getMethodArg_noalloc(vm->locals, sRunPath, &arg_reg1);
+            aMethod = obj_getMethodArg_noalloc(vm->locals, sArgName, &arg_reg1);
         }
         /* get method in global */
         if (NULL == aMethod) {
             aMethod =
-                obj_getMethodArg_noalloc(vm->globals, sRunPath, &arg_reg1);
+                obj_getMethodArg_noalloc(vm->globals, sArgName, &arg_reg1);
             if (aMethod != NULL) {
                 oThis = vm->globals;
+            }
+        }
+    }
+
+    if (NULL == aMethod) {
+        /* get proxy method */
+        if (obj_getFlag(oMethodHost, OBJ_FLAG_PROXY_METHOD)) {
+            if (strCountSign(sArgName, '.') == 0) {
+                /* __proxy__ takes the first arg as the method name */
+                sProxyName = sArgName;
+                sArgName = "__proxy__";
+                aMethod =
+                    obj_getMethodArg_noalloc(oMethodHost, sArgName, &arg_reg1);
             }
         }
     }
@@ -1956,8 +1981,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     oSublocals = New_Locals(NULL);
 
     /* load args from vmState to sub_local->list */
-    iNumUsed += VMState_loadArgsFromMethodArg(vm, oThis, oSublocals->list,
-                                              aMethod, sRunPath, iNumUsed);
+    iNumUsed += VMState_loadArgsFromMethodArg(
+        vm, oThis, oSublocals->list, aMethod, sRunPath, sProxyName, iNumUsed);
 
     /* load args failed */
     if (vm->error_code != 0) {
@@ -1986,14 +2011,15 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         /* init object */
         PikaObj* oNew = arg_getPtr(aReturn);
         obj_setName(oNew, sRunPath);
-        Arg* aMethod = obj_getMethodArg_noalloc(oNew, "__init__", &arg_reg1);
+        Arg* aMethod =
+            obj_getMethodArgWithFullPath_noalloc(oNew, "__init__", &arg_reg1);
         oSublocalsInit = New_Locals(NULL);
         Arg* aReturnInit = NULL;
         if (NULL == aMethod) {
             goto init_exit;
         }
         VMState_loadArgsFromMethodArg(vm, oNew, oSublocalsInit->list, aMethod,
-                                      "__init__", iNumUsed);
+                                      "__init__", NULL, iNumUsed);
         /* load args failed */
         if (vm->error_code != 0) {
             goto init_exit;
@@ -2438,7 +2464,7 @@ static void _OPT_ADD(OperatorInfo* op) {
             return;
         }
         PikaObj* obj1 = arg_getPtr(op->a1);
-        Arg* method_add = obj_getMethodArg(obj1, "__add__");
+        Arg* method_add = obj_getMethodArgWithFullPath(obj1, "__add__");
         if (NULL == method_add) {
             VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
             pika_platform_printf("TypeError: unsupported operand +\n");
@@ -2515,7 +2541,7 @@ static void _OPT_SUB(OperatorInfo* op) {
             return;
         }
         PikaObj* obj1 = arg_getPtr(op->a1);
-        Arg* method_sub = obj_getMethodArg(obj1, "__sub__");
+        Arg* method_sub = obj_getMethodArgWithFullPath(obj1, "__sub__");
         if (NULL == method_sub) {
             VMState_setErrorCode(op->vm, PIKA_RES_ERR_OPERATION_FAILED);
             pika_platform_printf("TypeError: unsupported operand +\n");
@@ -2783,7 +2809,8 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
 #if !PIKA_NANO_ENABLE
         if (argType_isObject(op.t2)) {
             PikaObj* obj2 = arg_getPtr(op.a2);
-            Arg* __contains__ = obj_getMethodArg(obj2, "__contains__");
+            Arg* __contains__ =
+                obj_getMethodArgWithFullPath(obj2, "__contains__");
             if (NULL != __contains__) {
                 arg_deinit(__contains__);
                 obj_setArg(obj2, "__others", op.a1);

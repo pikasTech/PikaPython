@@ -28,16 +28,16 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
     }
     ArgType type = arg_getType(arg);
     if (ARG_TYPE_INT == type) {
-        return arg_copy(obj_getMethodArg(self, "int"));
+        return arg_copy(obj_getMethodArgWithFullPath(self, "int"));
     }
     if (ARG_TYPE_FLOAT == type) {
-        return arg_copy(obj_getMethodArg(self, "float"));
+        return arg_copy(obj_getMethodArgWithFullPath(self, "float"));
     }
     if (ARG_TYPE_STRING == type) {
-        return arg_copy(obj_getMethodArg(self, "str"));
+        return arg_copy(obj_getMethodArgWithFullPath(self, "str"));
     }
     if (ARG_TYPE_BOOL == type) {
-        return arg_copy(obj_getMethodArg(self, "bool"));
+        return arg_copy(obj_getMethodArgWithFullPath(self, "bool"));
     }
     if (argType_isObject(type)) {
         PikaObj* obj = arg_getPtr(arg);
@@ -45,17 +45,17 @@ Arg* PikaStdLib_SysObj_type(PikaObj* self, Arg* arg) {
         PikaObj* New_PikaStdData_List(Args * args);
         /* list */
         if (clsptr == New_PikaStdData_List) {
-            return arg_copy(obj_getMethodArg(self, "list"));
+            return arg_copy(obj_getMethodArgWithFullPath(self, "list"));
         }
         /* dict */
         PikaObj* New_PikaStdData_Dict(Args * args);
         if (clsptr == New_PikaStdData_Dict) {
-            return arg_copy(obj_getMethodArg(self, "dict"));
+            return arg_copy(obj_getMethodArgWithFullPath(self, "dict"));
         }
         /* tuple */
         PikaObj* New_PikaStdData_Tuple(Args * args);
         if (clsptr == New_PikaStdData_Tuple) {
-            return arg_copy(obj_getMethodArg(self, "tuple"));
+            return arg_copy(obj_getMethodArgWithFullPath(self, "tuple"));
         }
 #if PIKA_TYPE_FULL_FEATURE_ENABLE
         Arg* aMethod = obj_getArg(obj, "__class__");
@@ -304,7 +304,7 @@ int PikaStdLib_SysObj_len(PikaObj* self, Arg* arg) {
 
     if (arg_isObject(arg)) {
         PikaObj* arg_obj = arg_getPtr(arg);
-        Arg* method_arg = obj_getMethodArg(arg_obj, "__len__");
+        Arg* method_arg = obj_getMethodArgWithFullPath(arg_obj, "__len__");
         if (NULL != method_arg) {
             arg_deinit(method_arg);
             obj_removeArg(arg_obj, "@res_len");
@@ -591,7 +591,7 @@ Arg* PikaStdLib_SysObj_getattr(PikaObj* self, PikaObj* obj, char* name) {
     }
     Arg* arg = obj_getArg(obj, name);
     if (NULL == arg) {
-        arg = obj_getMethodArg(obj, name);
+        arg = obj_getMethodArgWithFullPath(obj, name);
     }
     if (NULL != arg) {
         res = arg_copy(arg);
@@ -627,7 +627,7 @@ int PikaStdLib_SysObj_hasattr(PikaObj* self, PikaObj* obj, char* name) {
     if (obj_isArgExist(obj, name)) {
         return 1;
     }
-    Arg* method = obj_getMethodArg(obj, name);
+    Arg* method = obj_getMethodArgWithFullPath(obj, name);
     if (NULL != method) {
         arg_deinit(method);
         return 1;

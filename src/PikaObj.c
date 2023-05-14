@@ -177,7 +177,7 @@ int32_t obj_deinit(PikaObj* self) {
 #if PIKA_KERNAL_DEBUG_ENABLE
     self->isAlive = PIKA_FALSE;
 #endif
-    Arg* del = obj_getMethodArg(self, "__del__");
+    Arg* del = obj_getMethodArgWithFullPath(self, "__del__");
     if (NULL != del) {
         const uint8_t bytes[] = {
             0x04, 0x00, 0x00, 0x00, /* instruct array size */
@@ -562,9 +562,8 @@ exit:
     return method;
 }
 
-Arg* _obj_getMethodArg(PikaObj* obj, char* methodPath, Arg* arg_reg) {
+Arg* _obj_getMethodArg(PikaObj* obj, char* methodName, Arg* arg_reg) {
     Arg* aMethod = NULL;
-    char* methodName = strPointToLastToken(methodPath, '.');
     aMethod = obj_getArg(obj, methodName);
     if (NULL != aMethod) {
         aMethod = arg_copy_noalloc(aMethod, arg_reg);
@@ -575,12 +574,29 @@ exit:
     return aMethod;
 }
 
-Arg* obj_getMethodArg(PikaObj* obj, char* methodPath) {
-    return _obj_getMethodArg(obj, methodPath, NULL);
+Arg* _obj_getMethodArgWithFullPath(PikaObj* obj,
+                                   char* methodPath,
+                                   Arg* arg_reg) {
+    char* methodName = strPointToLastToken(methodPath, '.');
+    return _obj_getMethodArg(obj, methodName, arg_reg);
 }
 
-Arg* obj_getMethodArg_noalloc(PikaObj* obj, char* methodPath, Arg* arg_reg) {
-    return _obj_getMethodArg(obj, methodPath, arg_reg);
+Arg* obj_getMethodArgWithFullPath(PikaObj* obj, char* methodPath) {
+    return _obj_getMethodArgWithFullPath(obj, methodPath, NULL);
+}
+
+Arg* obj_getMethodArgWithFullPath_noalloc(PikaObj* obj,
+                                          char* methodPath,
+                                          Arg* arg_reg) {
+    return _obj_getMethodArgWithFullPath(obj, methodPath, arg_reg);
+}
+
+Arg* obj_getMethodArg(PikaObj* obj, char* methodName) {
+    return _obj_getMethodArg(obj, methodName, NULL);
+}
+
+Arg* obj_getMethodArg_noalloc(PikaObj* obj, char* methodName, Arg* arg_reg) {
+    return _obj_getMethodArg(obj, methodName, arg_reg);
 }
 
 NewFun obj_getClass(PikaObj* obj) {
@@ -928,7 +944,7 @@ char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
 }
 
 Method obj_getNativeMethod(PikaObj* self, char* method_name) {
-    Arg* method_arg = obj_getMethodArg(self, method_name);
+    Arg* method_arg = obj_getMethodArgWithFullPath(self, method_name);
     if (NULL == method_arg) {
         return NULL;
     }
@@ -974,6 +990,12 @@ void _update_proxy(PikaObj* self, char* name) {
     if (!obj_getFlag(self, OBJ_FLAG_PROXY_SETATTR)) {
         if (strEqu(name, "__setattr__")) {
             obj_setFlag(self, OBJ_FLAG_PROXY_SETATTR);
+            return;
+        }
+    }
+    if (!obj_getFlag(self, OBJ_FLAG_PROXY_METHOD)) {
+        if (strEqu(name, "__proxy__")) {
+            obj_setFlag(self, OBJ_FLAG_PROXY_METHOD);
             return;
         }
     }
@@ -2428,7 +2450,8 @@ PikaObj* obj_linkLibrary(PikaObj* self, uint8_t* library_bytes) {
 void obj_printModules(PikaObj* self) {
     LibObj* lib = obj_getObj(self, "@lib");
     if (lib == NULL) {
-        pika_platform_printf("Error: Not found LibObj, please execute obj_linkLibrary()\r\n");
+        pika_platform_printf(
+            "Error: Not found LibObj, please execute obj_linkLibrary()\r\n");
         return;
     }
     pika_platform_printf(arg_getStr((Arg*)g_PikaObjState.helpModulesCmodule));
@@ -2477,7 +2500,7 @@ int obj_importModule(PikaObj* self, char* module_name) {
 
 char* obj_toStr(PikaObj* self) {
     /* check method arg */
-    Arg* aMethod = obj_getMethodArg(self, "__str__");
+    Arg* aMethod = obj_getMethodArgWithFullPath(self, "__str__");
     if (NULL != aMethod) {
         arg_deinit(aMethod);
         /* clang-format off */

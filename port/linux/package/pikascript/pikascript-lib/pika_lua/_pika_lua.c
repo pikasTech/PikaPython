@@ -3,6 +3,10 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 3)
+#error "PikaScript version require minimum 1.12.3"
+#endif
+
 /* if there is already a lua_State, extern pika_L to it */
 lua_State* g_pika_L = NULL;
 

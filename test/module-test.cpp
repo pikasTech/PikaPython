@@ -594,6 +594,8 @@ TEST(module, REPL_stdtask) {
 
 TEST_RUN_SINGLE_FILE(modbus, rtu_master_err, "test/python/modbus/rtu_master_err.py")
 
+TEST_RUN_SINGLE_FILE_PASS(proxy, proxy3, "test/python/proxy/proxy3.py")
+
 #endif
 
 TEST_END

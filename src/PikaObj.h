@@ -96,7 +96,7 @@ struct PikaObj {
     PikaObj* gcRoot;
 #endif
     uint8_t refcnt;
-    uint8_t flag;
+    uint16_t flag;
 };
 
 typedef struct PikaGC PikaGC;
@@ -136,18 +136,19 @@ struct PikaObjState {
 #define OBJ_FLAG_GLOBALS 1 << 5
 #define OBJ_FLAG_GC_MARKED 1 << 6
 #define OBJ_FLAG_GC_ROOT 1 << 7
+#define OBJ_FLAG_PROXY_METHOD 1 << 8
 
 #define PIKA_KEY_UP 0x41
 #define PIKA_KEY_DOWN 0x42
 #define PIKA_KEY_RIGHT 0x43
 #define PIKA_KEY_LEFT 0x44
 
-static inline uint8_t obj_getFlag(PikaObj* self, uint8_t flag) {
+static inline uint8_t obj_getFlag(PikaObj* self, uint16_t flag) {
     pika_assert(self);
     return (self->flag & flag) == flag;
 }
 
-static inline void obj_setFlag(PikaObj* self, uint8_t flag) {
+static inline void obj_setFlag(PikaObj* self, uint16_t flag) {
     pika_assert(self);
     self->flag |= flag;
 #if PIKA_KERNAL_DEBUG_ENABLE
@@ -157,7 +158,7 @@ static inline void obj_setFlag(PikaObj* self, uint8_t flag) {
 #endif
 }
 
-static inline void obj_clearFlag(PikaObj* self, uint8_t flag) {
+static inline void obj_clearFlag(PikaObj* self, uint16_t flag) {
     self->flag &= ~flag;
 #if PIKA_KERNAL_DEBUG_ENABLE
     if (flag == OBJ_FLAG_GC_ROOT) {
@@ -284,8 +285,12 @@ PikaObj* obj_newObjFromConstructor(PikaObj* self,
                                    NewFun newClassFun);
 PikaObj* newRootObj(char* name, NewFun newObjFun);
 PikaObj* obj_getClassObj(PikaObj* obj);
-Arg* obj_getMethodArg(PikaObj* obj, char* methodPath);
-Arg* obj_getMethodArg_noalloc(PikaObj* obj, char* methodPath, Arg* arg_reg);
+Arg* obj_getMethodArg(PikaObj* obj, char* methodName);
+Arg* obj_getMethodArg_noalloc(PikaObj* obj, char* methodName, Arg* arg_reg);
+Arg* obj_getMethodArgWithFullPath(PikaObj* obj, char* methodPath);
+Arg* obj_getMethodArgWithFullPath_noalloc(PikaObj* obj,
+                                          char* methodPath,
+                                          Arg* arg_reg);
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode);
 int32_t obj_getErrorCode(PikaObj* self);
