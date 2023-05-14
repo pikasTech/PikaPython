@@ -1,9 +1,10 @@
 import _pika_lua
 
 """
-## PikaPython lua auto binging module
+PikaPython lua auto binging module
 
-### Import lua module as a python module
+- Import lua module as a python module
+
 ``` python
 import pika_lua
 
@@ -17,13 +18,14 @@ print(lua_math.pi)
 print(lua_math.sin(1))
 ```
 
-### Eval lua code
+- Eval lua code
 
 ``` python
 import pika_lua
 
 # eval lua code
 print(pika_lua.eval("print(1 + 1)"))
+```
 """
 
 def eval(cmd: str):
