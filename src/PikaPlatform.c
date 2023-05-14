@@ -178,10 +178,7 @@ static int _no_buff_vprintf(char* fmt, va_list args) {
         if (*fmt == '%') {
             ++fmt;
             if (*fmt == 's') {
-                char* str = va_arg(args, char*);
-                if (str == NULL) {
-                    str = "(null)";
-                }
+                const char* str = va_arg(args, const char*);
                 int len = strlen(str);
                 written += len;
                 for (int i = 0; i < len; i++) {

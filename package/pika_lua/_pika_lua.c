@@ -6,7 +6,7 @@
 /* if there is already a lua_State, extern pika_L to it */
 lua_State* pika_L = NULL;
 
-void pika_lua___init__(PikaObj* self) {
+void _pika_lua___init__(PikaObj* self) {
     /* not found exist lua_State, create One */
     if (NULL == pika_L) {
         pika_L = luaL_newstate(); /* create state */
@@ -16,7 +16,7 @@ void pika_lua___init__(PikaObj* self) {
     }
 }
 
-void pika_lua_eval(PikaObj* self, char* cmd) {
+void _pika_lua_eval(PikaObj* self, char* cmd) {
     int res = luaL_dostring(pika_L, cmd);
     if (LUA_OK != res) {
         obj_setErrorCode(self, PIKA_RES_ERR_OPERATION_FAILED);
@@ -24,14 +24,14 @@ void pika_lua_eval(PikaObj* self, char* cmd) {
     }
 }
 
-void pika_lua___exit__(PikaObj* self) {
+void _pika_lua___exit__(PikaObj* self) {
     /* close the lua_State created */
     if (PIKA_TRUE == obj_getInt(self, "needfree")) {
         lua_close(pika_L);
     }
 }
 
-void pika_lua_evalLine(PikaObj* self, char* line) {
+void _pika_lua_evalLine(PikaObj* self, char* line) {
     Args buffs = {0};
     char* line_with_end = strsAppend(&buffs, line, "\n");
     pika_lua_eval(self, line_with_end);
