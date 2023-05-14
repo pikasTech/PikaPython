@@ -83,4 +83,5 @@ __exit:
 void _pika_lua___del__(PikaObj* self){
     pika_debug("lua close!\r\n");
     lua_close(g_pika_L);  // 关闭 Lua 状态机，释放所有关联的资源
+    g_pika_L = NULL;
 }
