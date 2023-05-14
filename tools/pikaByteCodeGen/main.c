@@ -40,6 +40,8 @@ int strGetSizeUtf8(char* str){return 0;}
 void PikaStdData_Tuple___init__(PikaObj *self){}
 void PikaStdData_List___init__(PikaObj *self){}
 void PikaStdData_List_append(PikaObj *self, Arg* arg){}
+void PikaStdData_Dict___init__(PikaObj* self){}
+void PikaStdData_Dict_set(PikaObj* self, char* key, Arg* val){}
 char* string_slice(Args* outBuffs, char* str, int start, int end) {
     return NULL;
 }

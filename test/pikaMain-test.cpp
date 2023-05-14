@@ -3054,6 +3054,7 @@ TEST(pikaMain, _obj_set_str_null) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+#if !PIKA_NANO_ENABLE
 TEST(pikaMain, shell_nolib_print_help) {
     char lines[] = {"help(\"modules\")\n"};
     /* init */
@@ -3069,5 +3070,6 @@ TEST(pikaMain, shell_nolib_print_help) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+#endif
 
 TEST_END
