@@ -2867,6 +2867,8 @@ TEST_RUN_LINES(vm,
                "import configparser\n"
                "configparser.clear\n")
 
+TEST_RUN_LINES(vm, import_void, "import \n")
+
 #endif
 
 TEST_END

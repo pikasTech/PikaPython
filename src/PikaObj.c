@@ -888,6 +888,7 @@ static PikaObj* _obj_getObjWithKeepDeepth(PikaObj* self,
                                           int32_t keepDeepth) {
     char objPath_buff[PIKA_PATH_BUFF_SIZE];
     char* objPath_ptr = objPath_buff;
+    pika_assert(NULL != objPath);
     strcpy(objPath_buff, objPath);
     int32_t token_num = strGetTokenNum(objPath, '.');
     PikaObj* obj = self;
@@ -907,11 +908,13 @@ exit:
 }
 
 PikaObj* obj_getObj(PikaObj* self, char* objPath) {
+    pika_assert(NULL != objPath);
     PIKA_BOOL is_temp = PIKA_FALSE;
     return _obj_getObjWithKeepDeepth(self, objPath, &is_temp, 0);
 }
 
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath) {
+    pika_assert(NULL != objPath);
     PIKA_BOOL is_temp = PIKA_FALSE;
     return _obj_getObjWithKeepDeepth(self, objPath, &is_temp, 1);
 }
@@ -1163,6 +1166,9 @@ exit:
 }
 
 int32_t obj_isArgExist(PikaObj* self, char* argPath) {
+    if (NULL == argPath) {
+        return 0;
+    }
     PikaObj* obj_host = obj_getHostObj(self, argPath);
     int32_t res = 0;
     char* argName;
@@ -2495,6 +2501,7 @@ PikaObj* obj_linkLibObj(PikaObj* self, LibObj* library) {
 }
 
 uint8_t* obj_getByteCodeFromModule(PikaObj* self, char* module_name) {
+    pika_assert(NULL != module_name);
     /* exit when no found '@lib' */
     if (!obj_isArgExist(self, "@lib")) {
         return NULL;
@@ -2519,11 +2526,14 @@ int obj_runModule(PikaObj* self, char* module_name) {
 }
 
 int obj_importModule(PikaObj* self, char* module_name) {
+    if (NULL == module_name) {
+        return -1;
+    }
     /* import bytecode of the module */
     uint8_t* bytecode =
         obj_getByteCodeFromModule((PikaObj*)__pikaMain, module_name);
     if (NULL == bytecode) {
-        return 1;
+        return -1;
     }
     obj_importModuleWithByteCode(self, module_name, bytecode);
     return 0;
