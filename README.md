@@ -640,6 +640,9 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+|Fixed a bug where help("modules") crashed when no lib was loaded|[梦程MI](https://gitee.com/dreamcmi) |
+|support GPIO driver for rt-thread| [supperthomas](https://github.com/supperthomas) |
+|Fixed a typo|[J. Neuschäfer](https://github.com/neuschaefer)|
 |codecov CI support| [Renzhihan](https://github.com/Renzhihan) |
 |rt-thread build script fix and improve| [supperthomas](https://github.com/supperthomas) |
 |support pikafs pack and unpack to path|[sjy](https://gitee.com/shanjiayang)|
