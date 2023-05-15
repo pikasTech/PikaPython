@@ -61,6 +61,6 @@ for root, dirs, files in os.walk(cwd):
         print(dir)
         src = Glob(os.path.join(root,dir,'*.c'))
         inc = [os.path.join(root,dir)]
-        group = DefineGroup(dir, src, depend = ['PKG_USING_PIKASCRIPT'], CPPPATH = inc)
+        group += DefineGroup(dir, src, depend = ['PKG_USING_PIKASCRIPT'], CPPPATH = inc)
 
 Return('group')
