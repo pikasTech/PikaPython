@@ -22,7 +22,7 @@
                 // "--gtest_filter=parser.split_slice"
                 // "--gtest_filter=vm.var_global_run"
                 // "--gtest_filter=lua.eval"
-                "--gtest_filter=vm.import_void"
+                "--gtest_filter=eventloop.once1"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

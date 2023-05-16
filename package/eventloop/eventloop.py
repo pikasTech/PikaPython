@@ -123,6 +123,7 @@ class EventLoop:
         Remove a task from EventLoop
         :param task_name: name of task
         """
+        _debug('remove_task', task_name)
         self._tasks.remove(task_name)
 
     def _run_task(self, task: EventTask):
@@ -140,8 +141,12 @@ class EventLoop:
                     _debug('last_call_time', task._last_call_time)
                     self._run_task(task)
                     task._last_call_time = tick
+                    _debug('is_periodic', task._is_periodic)
                     if not task._is_periodic:
                         self.remove_task(task_name)
+                    # only run one task per loop
+                    # if the task are removed, the for loop will be broken
+                    break 
             if self._need_stop:
                 break
             time.sleep_ms(self._period_ms)
