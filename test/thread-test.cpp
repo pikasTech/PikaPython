@@ -39,6 +39,7 @@ TEST_RUN_SINGLE_FILE(eventloop, test1, "test/python/eventloop/test1.py")
 TEST_RUN_SINGLE_FILE(eventloop, test2, "test/python/eventloop/test2.py")
 TEST_RUN_SINGLE_FILE(eventloop, test3, "test/python/eventloop/test3.py")
 TEST_RUN_SINGLE_FILE(eventloop, delay1, "test/python/eventloop/delay1.py")
+TEST_RUN_SINGLE_FILE(eventloop, once1, "test/python/eventloop/once1.py")
 
 #endif
 TEST_END
