@@ -55,7 +55,7 @@ class EventLoop:
     _started = False
     _uuid = 0
 
-    def __init__(self, period_ms=100, thread_stack=0):
+    def __init__(self, period_ms=10, thread_stack=0):
         """
         :param period_ms: period of loop
         :param thread_stack: stack size of thread
