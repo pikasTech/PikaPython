@@ -23,6 +23,9 @@ class EventTask:
         :param args: arguments of func
         :param period_ms: period of periodic task
         """
+        if period_ms != None:
+            self._is_periodic = True
+
         self._func = func
         self._callback = callback
         self._args = args
@@ -33,8 +36,12 @@ class EventTask:
                 period_ms = 0
             self._last_call_time = time.tick_ms() - period_ms + delay_ms
             _debug('last_call_time for delay:', self._last_call_time)
-        if period_ms != None:
-            self._is_periodic = True
+        _debug('func:', self._func)
+        _debug('callback:', self._callback)
+        _debug('args:', self._args)
+        _debug('period_ms:', self._period_ms)
+        _debug('delay_ms:', self._delay_ms)
+        _debug('is_periodic:', self._is_periodic)
 
 
 class EventLoop:
@@ -48,7 +55,7 @@ class EventLoop:
     _started = False
     _uuid = 0
 
-    def __init__(self, period_ms=100, thread_stack=0):
+    def __init__(self, period_ms=10, thread_stack=0):
         """
         :param period_ms: period of loop
         :param thread_stack: stack size of thread
@@ -60,12 +67,7 @@ class EventLoop:
         if task_name == None:
             self._uuid += 1
             task_name = str(self._uuid)
-        _debug('add_task', task_name)
-        _debug('func', func)
-        _debug('callback', callback)
-        _debug('args', args)
-        _debug('period_ms', period_ms)
-        _debug('delay_ms', delay_ms)
+        _debug('create task:', task_name)
         new_task = EventTask(func, callback, args, period_ms, delay_ms)
         self._tasks[task_name] = new_task
 
