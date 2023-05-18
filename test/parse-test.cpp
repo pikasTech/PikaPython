@@ -5648,7 +5648,12 @@ TEST_LINES2ASM(split_slice,
 
 TEST_LINES2ASM(val_hint, "a:int", "B0\nB0\n")
 
-TEST_LINES2ASM_NOCHECK(fn_fn, "test()()")
+TEST_LINES2ASM(fn_fn,
+               "test()()",
+               "B0\n"
+               "1 RUN test\n"
+               "0 RUN \n"
+               "B0\n")
 
 TEST_LINES2ASM_NOCHECK(slice_slice, "test[1][2][3]")
 
