@@ -73,7 +73,7 @@ char* Cursor_popLastToken(Args* outBuffs, char** pStmt, char* str) {
     Arg* poped_arg = arg_newStr("");
     Cursor_forEach(cs, stmts) {
         Cursor_iterStart(&cs);
-        if (cs.branket_deepth == 0) {
+        if (cs.bracket_deepth == 0) {
             if (strEqu(str, cs.token1.pyload)) {
                 divider_index = cs.iter_index;
             }
@@ -903,22 +903,22 @@ void Cursor_iterStart(struct Cursor* cs) {
     LexToken_update(&cs->token1);
     LexToken_update(&cs->token2);
     if (strEqu(cs->token1.pyload, "(")) {
-        cs->branket_deepth++;
+        cs->bracket_deepth++;
     }
     if (strEqu(cs->token1.pyload, ")")) {
-        cs->branket_deepth--;
+        cs->bracket_deepth--;
     }
     if (strEqu(cs->token1.pyload, "[")) {
-        cs->branket_deepth++;
+        cs->bracket_deepth++;
     }
     if (strEqu(cs->token1.pyload, "]")) {
-        cs->branket_deepth--;
+        cs->bracket_deepth--;
     }
     if (strEqu(cs->token1.pyload, "{")) {
-        cs->branket_deepth++;
+        cs->bracket_deepth++;
     }
     if (strEqu(cs->token1.pyload, "}")) {
-        cs->branket_deepth--;
+        cs->bracket_deepth--;
     }
 }
 
@@ -932,7 +932,7 @@ void _Cursor_init(struct Cursor* cs) {
     cs->tokenStream = NULL;
     cs->length = 0;
     cs->iter_index = 0;
-    cs->branket_deepth = 0;
+    cs->bracket_deepth = 0;
     cs->last_token = NULL;
     cs->iter_buffs = NULL;
     cs->buffs_p = New_strBuff();
@@ -974,10 +974,36 @@ void _Cursor_beforeIter(struct Cursor* cs) {
     cs->last_token = arg_newStr(TokenStream_pop(cs->buffs_p, &cs->tokenStream));
 }
 
+uint8_t Token_isBranketStart(LexToken* token) {
+    if (token->type != TOKEN_devider) {
+        return PIKA_FALSE;
+    }
+    if (strEqu(token->pyload, "(") || strEqu(token->pyload, "[") ||
+        strEqu(token->pyload, "{")) {
+        return PIKA_TRUE;
+    }
+    return PIKA_FALSE;
+}
+
+uint8_t Token_isBranketEnd(LexToken* token) {
+    if (token->type != TOKEN_devider) {
+        return PIKA_FALSE;
+    }
+    if (strEqu(token->pyload, ")") || strEqu(token->pyload, "]") ||
+        strEqu(token->pyload, "}")) {
+        return PIKA_TRUE;
+    }
+    return PIKA_FALSE;
+}
+
+uint8_t Token_isBranket(LexToken* token) {
+    return Token_isBranketStart(token) || Token_isBranketEnd(token);
+}
+
 uint8_t _Cursor_count(char* stmt,
                       TokenType type,
                       char* pyload,
-                      PIKA_BOOL bSkipBranket) {
+                      PIKA_BOOL bSkipbracket) {
     /* fast return */
     if (!strstr(stmt, pyload)) {
         return PIKA_FALSE;
@@ -987,10 +1013,16 @@ uint8_t _Cursor_count(char* stmt,
     Cursor_forEach(cs, stmt) {
         Cursor_iterStart(&cs);
         if (cs.token1.type == type && (strEqu(cs.token1.pyload, pyload))) {
-            if (bSkipBranket && cs.branket_deepth > 0) {
-                /* skip branket */
-                Cursor_iterEnd(&cs);
-                continue;
+            if (bSkipbracket) {
+                uint8_t branket_deepth_check = 0;
+                if (Token_isBranketStart(&cs.token1)) {
+                    branket_deepth_check = 1;
+                }
+                if (cs.bracket_deepth > branket_deepth_check) {
+                    /* skip bracket */
+                    Cursor_iterEnd(&cs);
+                    continue;
+                }
             }
             res++;
         }
@@ -1019,7 +1051,7 @@ char* Cursor_popToken(Args* buffs, char** pStmt, char* devide) {
     Cursor_forEach(cs, *pStmt) {
         Cursor_iterStart(&cs);
         if (!is_find_devide) {
-            if ((cs.branket_deepth == 0 && strEqu(cs.token1.pyload, devide)) ||
+            if ((cs.bracket_deepth == 0 && strEqu(cs.token1.pyload, devide)) ||
                 cs.iter_index == cs.length) {
                 is_find_devide = PIKA_TRUE;
                 Cursor_iterEnd(&cs);
@@ -1048,14 +1080,14 @@ char* Cursor_popToken(Args* buffs, char** pStmt, char* devide) {
 
 char* Cursor_splitCollect(Args* buffs, char* stmt, char* devide, int index) {
     Arg* aOut = arg_newStr("");
-    int expect_branket = 0;
+    int expect_bracket = 0;
     if (devide[0] == '(' || devide[0] == '[' || devide[0] == '{') {
-        expect_branket = 1;
+        expect_bracket = 1;
     }
     int i = 0;
     Cursor_forEach(cs, stmt) {
         Cursor_iterStart(&cs);
-        if (cs.branket_deepth == expect_branket &&
+        if (cs.bracket_deepth == expect_bracket &&
             strEqu(cs.token1.pyload, devide)) {
             i++;
             Cursor_iterEnd(&cs);
@@ -1092,7 +1124,7 @@ static void Slice_getPars(Args* outBuffs,
     uint8_t colon_i = 0;
     Cursor_forEach(cs, inner) {
         Cursor_iterStart(&cs);
-        if (strEqu(cs.token1.pyload, ":") && cs.branket_deepth == 0) {
+        if (strEqu(cs.token1.pyload, ":") && cs.bracket_deepth == 0) {
             colon_i++;
             goto iter_continue1;
         }
@@ -1251,7 +1283,7 @@ char* Suger_format(Args* outBuffs, char* right) {
     PIKA_BOOL is_format = PIKA_FALSE;
     Cursor_forEach(ps1, right) {
         Cursor_iterStart(&ps1);
-        if (ps1.branket_deepth == 0 && strEqu(ps1.token1.pyload, "%")) {
+        if (ps1.bracket_deepth == 0 && strEqu(ps1.token1.pyload, "%")) {
             is_format = PIKA_TRUE;
         }
         Cursor_iterEnd(&ps1);
@@ -1452,7 +1484,7 @@ char* Parser_popSubStmt(Args* outbuffs, char** psStmt, char* delimiter) {
             Cursor_iterEnd(&cs);
             continue;
         }
-        if (cs.branket_deepth > 0) {
+        if (cs.bracket_deepth > 0) {
             /* ignore */
             aSubstmt = arg_strAppend(aSubstmt, cs.token1.pyload);
             Cursor_iterEnd(&cs);
@@ -1485,21 +1517,25 @@ int Parser_getSubStmtNum(char* subStmts, char* delimiter) {
     return _Cursor_count(subStmts, TOKEN_devider, delimiter, PIKA_TRUE);
 }
 
-char* Parser_popLastSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
+char* _Parser_popLastSubStmt(Args* outbuffs,
+                             char** stmt_p,
+                             char* delimiter,
+                             PIKA_BOOL bSkipBracket) {
     uint8_t last_stmt_i = 0;
     char* stmt = *stmt_p;
     Cursor_forEach(cs, stmt) {
         Cursor_iterStart(&cs);
         if (strIsStartWith(cs.token1.pyload, delimiter)) {
             /* found delimiter */
-            if (!strEqu(delimiter, "[") && cs.branket_deepth > 0) {
-                /* ignore */
+
+            if (bSkipBracket && cs.bracket_deepth > 0) {
+                /* skip bracket */
                 Cursor_iterEnd(&cs);
                 continue;
             }
 
             /* for "[" */
-            if (cs.branket_deepth > 1) {
+            if (cs.bracket_deepth > 1) {
                 /* ignore */
                 Cursor_iterEnd(&cs);
                 continue;
@@ -1529,6 +1565,10 @@ char* Parser_popLastSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
 
     *stmt_p = strsCacheArg(outbuffs, mainStmt);
     return strsCacheArg(outbuffs, lastStmt);
+}
+
+char* Parser_popLastSubStmt(Args* outbuffs, char** stmt_p, char* delimiter) {
+    return _Parser_popLastSubStmt(outbuffs, stmt_p, delimiter, PIKA_TRUE);
 }
 
 static void _AST_parse_list(AST* ast, Args* buffs, char* stmt) {
@@ -1573,7 +1613,7 @@ static void _AST_parse_slice(AST* ast, Args* buffs, char* stmt) {
 #endif
     AST_setNodeAttr(ast, (char*)"slice", "slice");
     stmt = strsCopy(buffs, stmt);
-    char* laststmt = Parser_popLastSubStmt(buffs, &stmt, "[");
+    char* laststmt = _Parser_popLastSubStmt(buffs, &stmt, "[", PIKA_FALSE);
     AST_parseSubStmt(ast, stmt);
     char* slice_list = strsCut(buffs, laststmt, '[', ']');
     pika_assert(slice_list != NULL);
@@ -1775,8 +1815,16 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     /* solve method stmt */
     if (STMT_method == stmtType) {
         char* sRealType = "method";
-        sMethod = strsGetFirstToken(&buffs, right, '(');
-        char* sSubStmts = strsCut(&buffs, right, '(', ')');
+        char* methodstmt = strsCopy(&buffs, right);
+        char* laststmt = methodstmt;
+        /* for method()() */
+        if (_Cursor_count(methodstmt, TOKEN_devider, "(", PIKA_TRUE) > 1) {
+            laststmt =
+                _Parser_popLastSubStmt(&buffs, &methodstmt, "(", PIKA_FALSE);
+            AST_parseSubStmt(ast, methodstmt);
+        }
+        sMethod = strsGetFirstToken(&buffs, laststmt, '(');
+        char* sSubStmts = strsCut(&buffs, laststmt, '(', ')');
         if (NULL == sSubStmts) {
             result = PIKA_RES_ERR_SYNTAX_ERROR;
             goto __exit;
@@ -1975,7 +2023,7 @@ static char* Suger_multiReturn(Args* out_buffs, char* line) {
 #endif
     Cursor_forEach(cs, line) {
         Cursor_iterStart(&cs);
-        if (cs.branket_deepth == 0 && strEqu(cs.token1.pyload, ",")) {
+        if (cs.bracket_deepth == 0 && strEqu(cs.token1.pyload, ",")) {
             line = strsFormat(out_buffs, strGetSize(line) + 3, "(%s)", line);
             Cursor_iterEnd(&cs);
             break;
@@ -2307,7 +2355,7 @@ static PIKA_BOOL _check_is_multi_assign(char* arg_list) {
     PIKA_BOOL res = PIKA_FALSE;
     Cursor_forEach(cs, arg_list) {
         Cursor_iterStart(&cs);
-        if ((cs.branket_deepth == 0 && strEqu(cs.token1.pyload, ","))) {
+        if ((cs.bracket_deepth == 0 && strEqu(cs.token1.pyload, ","))) {
             res = PIKA_TRUE;
         }
         Cursor_iterEnd(&cs);
@@ -2333,7 +2381,7 @@ static char* Suger_multiAssign(Args* out_buffs, char* line) {
     int out_num = 0;
     Cursor_forEach(cs, line) {
         Cursor_iterStart(&cs);
-        if (cs.branket_deepth == 0 && strEqu(cs.token1.pyload, "=")) {
+        if (cs.bracket_deepth == 0 && strEqu(cs.token1.pyload, "=")) {
             is_assign = PIKA_TRUE;
             Cursor_iterEnd(&cs);
             continue;
@@ -2732,15 +2780,15 @@ char* parser_lines2BackendCode(Parser* self, char* sPyLines) {
         Cursor_deinit(&c);
         /* auto connection */
         if (uLinesIndex < uLinesNum) {
-            if (c.branket_deepth > 0) {
+            if (c.bracket_deepth > 0) {
                 aLineConnection = arg_strAppend(aLineConnection, sLine);
                 bIsLineConnection = 1;
                 goto next_line;
             }
         }
 
-        /* branket match failed */
-        if (c.branket_deepth != 0) {
+        /* bracket match failed */
+        if (c.bracket_deepth != 0) {
             sBackendCode = NULL;
             goto parse_after;
         }

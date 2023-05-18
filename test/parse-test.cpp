@@ -3572,7 +3572,7 @@ TEST(parser, num_issue) {
 }
 
 #if PIKA_SYNTAX_SLICE_ENABLE
-TEST(parser, branket_issue2) {
+TEST(parser, bracket_issue2) {
     g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "temp = hex(int('12'))[0:2]\n";
@@ -3595,7 +3595,7 @@ TEST(parser, branket_issue2) {
 #endif
 
 #if PIKA_SYNTAX_SLICE_ENABLE
-TEST(parser, branket_issue3) {
+TEST(parser, bracket_issue3) {
     g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[x][y]\n";
@@ -3617,7 +3617,7 @@ TEST(parser, branket_issue3) {
 #endif
 
 #if PIKA_SYNTAX_SLICE_ENABLE
-TEST(parser, branket_issue4) {
+TEST(parser, bracket_issue4) {
     g_PikaMemInfo.heapUsedMax = 0;
     Args* buffs = New_strBuff();
     char* lines = "a = b[c[y]]\n";
@@ -5647,6 +5647,10 @@ TEST_LINES2ASM(split_slice,
                "B0\n")
 
 TEST_LINES2ASM(val_hint, "a:int", "B0\nB0\n")
+
+TEST_LINES2ASM_NOCHECK(fn_fn, "test()()")
+
+TEST_LINES2ASM_NOCHECK(slice_slice, "test[1][2][3]")
 
 #endif
 

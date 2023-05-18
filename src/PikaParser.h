@@ -112,7 +112,7 @@ struct Cursor {
     char* tokenStream;
     uint16_t length;
     uint16_t iter_index;
-    int8_t branket_deepth;
+    int8_t bracket_deepth;
     struct LexToken token1;
     struct LexToken token2;
     Arg* last_token;
@@ -148,7 +148,7 @@ uint8_t Cursor_count(char* stmt, TokenType type, char* pyload);
 uint8_t _Cursor_count(char* stmt,
                       TokenType type,
                       char* pyload,
-                      PIKA_BOOL bSkipBranket);
+                      PIKA_BOOL bSkipbracket);
 
 AST* AST_parseStmt(AST* ast, char* stmt);
 char* AST_genAsm(AST* oAST, Args* outBuffs);
