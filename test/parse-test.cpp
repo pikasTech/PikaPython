@@ -5652,10 +5652,29 @@ TEST_LINES2ASM(fn_fn,
                "test()()",
                "B0\n"
                "1 RUN test\n"
-               "0 RUN \n"
+               "0 RUN .\n"
                "B0\n")
 
-TEST_LINES2ASM_NOCHECK(slice_slice, "test[1][2][3]")
+TEST_LINES2ASM(slice_slice,
+               "test[1][2][3]",
+               "B0\n"
+               "3 REF test\n"
+               "3 NUM 1\n"
+               "2 SLC \n"
+               "2 NUM 2\n"
+               "1 SLC \n"
+               "1 NUM 3\n"
+               "0 SLC \n"
+               "B0\n")
+
+TEST_LINES2ASM(slice_fn,
+               "l[0]()",
+               "B0\n"
+               "2 REF l\n"
+               "2 NUM 0\n"
+               "1 SLC \n"
+               "0 RUN .\n"
+               "B0\n")
 
 #endif
 

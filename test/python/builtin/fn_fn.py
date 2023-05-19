@@ -1,12 +1,13 @@
 
 
 def test1():
-    print("test1")
+    return "test1"
 
 def test():
     return test1
 
 l = [test1]
 
-l[0]()
-test()()
+assert l[0]() == "test1"
+assert test()() == "test1"
+print("PASS")

@@ -214,6 +214,7 @@ static enum StmtType Lexer_matchStmtType(char* right) {
         if (strEqu(cs.token1.pyload, "[") && cs.iter_index == 1) {
             /* VOID + <[> */
             is_get_list = PIKA_TRUE;
+            is_get_method = PIKA_FALSE;
             goto iter_continue;
         }
         if (strEqu(cs.token1.pyload, "...")) {
@@ -243,6 +244,7 @@ static enum StmtType Lexer_matchStmtType(char* right) {
         /* <(> */
         if (strEqu(cs.token1.pyload, "(")) {
             is_get_method = PIKA_TRUE;
+            is_get_slice = PIKA_FALSE;
             goto iter_continue;
         }
         if (cs.token1.type == TOKEN_literal) {
@@ -1818,9 +1820,19 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         char* methodstmt = strsCopy(&buffs, right);
         char* laststmt = methodstmt;
         /* for method()() */
-        if (_Cursor_count(methodstmt, TOKEN_devider, "(", PIKA_TRUE) > 1) {
+        int iBracketNum =
+            _Cursor_count(methodstmt, TOKEN_devider, "(", PIKA_TRUE) +
+            _Cursor_count(methodstmt, TOKEN_devider, "[", PIKA_TRUE);
+        if (iBracketNum > 1) {
             laststmt =
                 _Parser_popLastSubStmt(&buffs, &methodstmt, "(", PIKA_FALSE);
+            /* for (...) */
+            if (_Cursor_count(laststmt, TOKEN_devider, "(", PIKA_FALSE) == 1) {
+                char* sMethodCheck = strsGetFirstToken(&buffs, laststmt, '(');
+                if (strEqu(sMethodCheck, "")) {
+                    laststmt = strsAppend(&buffs, ".", laststmt);
+                }
+            }
             AST_parseSubStmt(ast, methodstmt);
         }
         sMethod = strsGetFirstToken(&buffs, laststmt, '(');

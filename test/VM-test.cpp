@@ -2869,7 +2869,7 @@ TEST_RUN_LINES(vm,
 
 TEST_RUN_LINES(vm, import_void, "import \n")
 
-TEST_RUN_SINGLE_FILE(vm, fn_fn, "test/python/builtin/fn_fn.py")
+TEST_RUN_SINGLE_FILE_PASS(vm, fn_fn, "test/python/builtin/fn_fn.py")
 
 #endif
 

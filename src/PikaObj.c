@@ -889,6 +889,9 @@ static PikaObj* _obj_getObjWithKeepDeepth(PikaObj* self,
     char objPath_buff[PIKA_PATH_BUFF_SIZE];
     char* objPath_ptr = objPath_buff;
     pika_assert(NULL != objPath);
+    if ('.' == objPath[0] && '\0' == objPath[1]) {
+        return self;
+    }
     strcpy(objPath_buff, objPath);
     int32_t token_num = strGetTokenNum(objPath, '.');
     PikaObj* obj = self;

@@ -1804,7 +1804,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     PikaObj* oMethodHost = NULL;
     PikaObj* oThis = NULL;
     Arg* aMethod = NULL;
-    Arg* aHost = NULL;
+    Arg* aStack = NULL;
     PIKA_BOOL bIsTemp = PIKA_FALSE;
     PIKA_BOOL bSkipInit = PIKA_FALSE;
     char* sSysOut;
@@ -1880,9 +1880,17 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         for (int i = 0; i < n_arg; i++) {
             stack_tmp[i] = stack_popArg_alloc(&(vm->stack));
         }
-        aHost = stack_tmp[n_arg - 1];
-        oMethodHost = _arg_to_obj(aHost, &bIsTemp);
-        if (NULL != oMethodHost) {
+        aStack = stack_tmp[n_arg - 1];
+        if (sRunPath[1] == '\0') {
+            /* for .(...) */
+            aMethod = aStack;
+            pika_assert(arg_isCallable(aMethod));
+        } else {
+            /* for .xxx(...) */
+            oMethodHost = _arg_to_obj(aStack, &bIsTemp);
+            pika_assert(NULL != oMethodHost);
+        }
+        if (NULL != aStack) {
             iNumUsed++;
         }
         /* push back other args to stack */
@@ -2067,8 +2075,8 @@ exit:
 #endif
         obj_deinit(oSublocals);
     }
-    if (NULL != aHost) {
-        arg_deinit(aHost);
+    if (NULL != aStack && aMethod != aStack) {
+        arg_deinit(aStack);
     }
     if (NULL != oMethodHost && bIsTemp) {
         /* class method */
