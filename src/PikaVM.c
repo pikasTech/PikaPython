@@ -1733,36 +1733,20 @@ static Arg* VM_instruction_handler_RET(PikaObj* self,
     return NULL;
 }
 
-static InstructUnit* _find_ins_unit_up(ByteCodeFrame* bcframe,
-                                       int32_t pc_start,
-                                       enum InstructIndex index,
-                                       int32_t* p_offset) {
-    /* find super class */
-    int instructArray_size = instructArray_getSize(&(bcframe->instruct_array));
-    while (1) {
-        *p_offset -= instructUnit_getSize();
-        if (pc_start + *p_offset >= instructArray_size) {
-            return 0;
-        }
-        InstructUnit* unit = instructArray_getByOffset(
-            &(bcframe->instruct_array), pc_start + *p_offset);
-        if (CLS == instructUnit_getInstructIndex(unit)) {
-            return unit;
-        }
-    }
-    return NULL;
-}
-
-static InstructUnit* _find_ins_unit_down(ByteCodeFrame* bcframe,
+static InstructUnit* _find_instruct_unit(ByteCodeFrame* bcframe,
                                          int32_t pc_start,
                                          enum InstructIndex index,
-                                         int32_t* p_offset) {
-    /* find super class */
+                                         int32_t* p_offset,
+                                         PIKA_BOOL search_upwards) {
+    /* find instruct unit */
     int instructArray_size = instructArray_getSize(&(bcframe->instruct_array));
     while (1) {
-        *p_offset += instructUnit_getSize();
+        *p_offset += (search_upwards ? -1 : 1) * instructUnit_getSize();
         if (pc_start + *p_offset >= instructArray_size) {
-            return 0;
+            return NULL;
+        }
+        if (pc_start + *p_offset < 0) {
+            return NULL;
         }
         InstructUnit* unit = instructArray_getByOffset(
             &(bcframe->instruct_array), pc_start + *p_offset);
@@ -1770,7 +1754,20 @@ static InstructUnit* _find_ins_unit_down(ByteCodeFrame* bcframe,
             return unit;
         }
     }
-    return NULL;
+}
+
+static InstructUnit* _find_ins_unit_up(ByteCodeFrame* bcframe,
+                                       int32_t pc_start,
+                                       enum InstructIndex index,
+                                       int32_t* p_offset) {
+    return _find_instruct_unit(bcframe, pc_start, index, p_offset, PIKA_TRUE);
+}
+
+static InstructUnit* _find_ins_unit_down(ByteCodeFrame* bcframe,
+                                         int32_t pc_start,
+                                         enum InstructIndex index,
+                                         int32_t* p_offset) {
+    return _find_instruct_unit(bcframe, pc_start, index, p_offset, PIKA_FALSE);
 }
 
 #if !PIKA_NANO_ENABLE
