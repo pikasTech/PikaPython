@@ -48,11 +48,11 @@
 
 #if defined(__MSG_DECLARE)
     #define __add_filter_msg(__name, __msg, ...)                                \
-            PIKA_BOOL _filter_msg_##__name##_handler(   FilterItem *msg,        \
+            pika_bool _filter_msg_##__name##_handler(   FilterItem *msg,        \
                                                         PikaObj* self,          \
                                                         ShellConfig* shell);
     #define __add_filter_item(__name, ...)                                      \
-            PIKA_BOOL _filter_msg_##__name##_handler(   FilterItem *msg,        \
+            pika_bool _filter_msg_##__name##_handler(   FilterItem *msg,        \
                                                         PikaObj* self,          \
                                                         ShellConfig* shell);
 #endif

@@ -154,10 +154,10 @@ int PikaStdLib_SysObj_int(PikaObj* self, Arg* arg, PikaTuple* base) {
     return _PIKA_INT_ERR;
 }
 
-PIKA_BOOL PikaStdLib_SysObj_bool(PikaObj* self, Arg* arg) {
+pika_bool PikaStdLib_SysObj_bool(PikaObj* self, Arg* arg) {
     int64_t res = 0;
     if (_transeInt(arg, 10, &res) == PIKA_RES_OK) {
-        return res ? PIKA_TRUE : PIKA_FALSE;
+        return res ? PIKA_TRUE : pika_false;
     }
     obj_setSysOut(self, "ValueError: invalid literal for bool()");
     obj_setErrorCode(self, 1);
@@ -181,7 +181,7 @@ char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg) {
 
 Arg* PikaStdLib_SysObj_iter(PikaObj* self, Arg* arg) {
     /* object */
-    PIKA_BOOL bIsTemp = PIKA_FALSE;
+    pika_bool bIsTemp = pika_false;
     PikaObj* oArg = _arg_to_obj(arg, &bIsTemp);
     NewFun _clsptr = (NewFun)oArg->constructor;
     if (_clsptr == New_PikaStdLib_RangeObj) {
@@ -470,11 +470,11 @@ void PikaStdLib_SysObj_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
         end = "\r\n";
     }
     if (arg_size == 1) {
-        arg_print(pikaTuple_getArg(val, 0), PIKA_FALSE, end);
+        arg_print(pikaTuple_getArg(val, 0), pika_false, end);
         return;
     }
     Arg* print_out_arg = NULL;
-    PIKA_BOOL is_get_print = PIKA_FALSE;
+    pika_bool is_get_print = pika_false;
     for (int i = 0; i < arg_size; i++) {
         Arg* arg = pikaTuple_getArg(val, i);
         Arg* item_arg_str = arg_toStrArg(arg);
@@ -794,4 +794,28 @@ Arg* PikaStdLib_SysObj_max(PikaObj* self, PikaTuple* val) {
 
 Arg* PikaStdLib_SysObj_min(PikaObj* self, PikaTuple* val) {
     return _max_min(self, val, (uint8_t*)bc_min);
+}
+
+pika_bool PikaStdLib_SysObj_isinstance(PikaObj* self,
+                                       Arg* object,
+                                       Arg* classinfo) {
+    pika_bool res = pika_false;
+    Arg* aObjType = NULL;
+    if (!argType_isConstructor(arg_getType(classinfo)) &&
+        !argType_isCallable(arg_getType(classinfo))) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("TypeError: isinstance() arg 2 must be a type\r\n");
+        res = pika_false;
+        goto __exit;
+    }
+    aObjType = PikaStdLib_SysObj_type(self, object);
+    if (arg_getPtr(aObjType) == arg_getPtr(classinfo)) {
+        res = pika_true;
+        goto __exit;
+    }
+__exit:
+    if (NULL != aObjType) {
+        arg_deinit(aObjType);
+    }
+    return res;
 }

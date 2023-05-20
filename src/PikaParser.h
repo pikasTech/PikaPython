@@ -95,7 +95,7 @@ struct Parser {
     Args genBuffs;
     BlockState blockState;
     fn_parser_Ast2BeckendCode fn_ast2BeckendCode;
-    PIKA_BOOL isGenBytecode;
+    pika_bool isGenBytecode;
     ByteCodeFrame* bytecode_frame;
     uint8_t thisBlockDeepth;
 };
@@ -148,7 +148,7 @@ uint8_t Cursor_count(char* stmt, TokenType type, char* pyload);
 uint8_t _Cursor_count(char* stmt,
                       TokenType type,
                       char* pyload,
-                      PIKA_BOOL bSkipbracket);
+                      pika_bool bSkipbracket);
 
 AST* AST_parseStmt(AST* ast, char* stmt);
 char* AST_genAsm(AST* oAST, Args* outBuffs);

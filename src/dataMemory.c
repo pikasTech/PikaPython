@@ -109,7 +109,7 @@ Pool pool_init(uint32_t size, uint8_t aline) {
     pool.mem = pika_platform_malloc(pool_aline(&pool, pool.size));
     pool.first_free_block = 0;
     pool.purl_free_block_start = 0;
-    pool.inited = PIKA_TRUE;
+    pool.inited = pika_true;
     return pool;
 }
 

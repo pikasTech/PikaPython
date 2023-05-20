@@ -46,7 +46,7 @@
 extern volatile VMSignal g_PikaVMSignal;
 volatile PikaObjState g_PikaObjState = {
     .helpModulesCmodule = NULL,
-    .inRootObj = PIKA_FALSE,
+    .inRootObj = pika_false,
 #if PIKA_GC_MARK_SWEEP_ENABLE
     .objCnt = 0,
     .objCntMax = 0,
@@ -175,9 +175,9 @@ int obj_GC(PikaObj* self) {
 
 int32_t obj_deinit(PikaObj* self) {
     pikaGC_lock();
-    PIKA_BOOL bisRoot = PIKA_FALSE;
+    pika_bool bisRoot = pika_false;
 #if PIKA_KERNAL_DEBUG_ENABLE
-    self->isAlive = PIKA_FALSE;
+    self->isAlive = pika_false;
 #endif
     Arg* del = obj_getMethodArgWithFullPath(self, "__del__");
     if (NULL != del) {
@@ -193,7 +193,7 @@ int32_t obj_deinit(PikaObj* self) {
     }
     extern volatile PikaObj* __pikaMain;
     if (self == (PikaObj*)__pikaMain) {
-        bisRoot = PIKA_TRUE;
+        bisRoot = pika_true;
         _mem_cache_deinit();
 #if PIKA_EVENT_ENABLE
         _VMEvent_deinit();
@@ -298,19 +298,19 @@ int64_t obj_getInt(PikaObj* self, char* argPath) {
     return res;
 }
 
-PIKA_BOOL obj_getBool(PikaObj* self, char* argPath) {
+pika_bool obj_getBool(PikaObj* self, char* argPath) {
     PikaObj* obj = obj_getHostObj(self, argPath);
     if (NULL == obj) {
-        return PIKA_FALSE;
+        return pika_false;
     }
     char* argName = strPointToLastToken(argPath, '.');
-    PIKA_BOOL res = args_getBool(obj->list, argName);
+    pika_bool res = args_getBool(obj->list, argName);
     return res;
 }
 
 Arg* obj_getArg(PikaObj* self, char* argPath) {
     pika_assert(obj_checkAlive(self));
-    PIKA_BOOL is_temp = PIKA_FALSE;
+    pika_bool is_temp = pika_false;
     PikaObj* obj = obj_getHostObjWithIsTemp(self, argPath, &is_temp);
     if (NULL == obj) {
         return NULL;
@@ -384,7 +384,7 @@ static PIKA_RES _obj_setArg(PikaObj* self,
     /* setArg would copy arg */
     PikaObj* host = obj_getHostObj(self, argPath);
     PikaObj* oNew = NULL;
-    PIKA_BOOL bNew = PIKA_FALSE;
+    pika_bool bNew = pika_false;
     if (NULL == host) {
         /* object no found */
         return PIKA_RES_ERR_ARG_NO_FOUND;
@@ -399,7 +399,7 @@ static PIKA_RES _obj_setArg(PikaObj* self,
     aNew = arg_setName(aNew, sArgName);
     if (arg_isObject(aNew)) {
         oNew = arg_getPtr(aNew);
-        bNew = PIKA_TRUE;
+        bNew = pika_true;
         pika_assert(obj_checkAlive(oNew));
 #if PIKA_KERNAL_DEBUG_ENABLE
         if (host != oNew) {
@@ -732,7 +732,7 @@ static void signal_handler(int sig) {
 
 extern volatile PikaObj* __pikaMain;
 PikaObj* newRootObj(char* name, NewFun newObjFun) {
-    g_PikaObjState.inRootObj = PIKA_TRUE;
+    g_PikaObjState.inRootObj = pika_true;
 #if PIKA_POOL_ENABLE
     mem_pool_init();
 #endif
@@ -763,7 +763,7 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     }
     __pikaMain = newObj;
     obj_setName(newObj, name);
-    g_PikaObjState.inRootObj = PIKA_FALSE;
+    g_PikaObjState.inRootObj = pika_false;
     return newObj;
 }
 
@@ -808,7 +808,7 @@ exit:
     return res;
 }
 
-PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
+PikaObj* _arg_to_obj(Arg* self, pika_bool* pIsTemp) {
     if (NULL == self) {
         return NULL;
     }
@@ -821,7 +821,7 @@ PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
         PikaObj* obj = newNormalObj(New_PikaStdData_String);
         obj_setStr(obj, "str", arg_getStr(self));
         if (NULL != pIsTemp) {
-            *pIsTemp = PIKA_TRUE;
+            *pIsTemp = pika_true;
         }
         return obj;
     }
@@ -830,7 +830,7 @@ PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
         PikaObj* obj = newNormalObj(New_PikaStdData_ByteArray);
         obj_setArg(obj, "raw", self);
         if (NULL != pIsTemp) {
-            *pIsTemp = PIKA_TRUE;
+            *pIsTemp = pika_true;
         }
         return obj;
     }
@@ -840,8 +840,8 @@ PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp) {
 
 static PikaObj* _obj_getObjDirect(PikaObj* self,
                                   char* name,
-                                  PIKA_BOOL* pIsTemp) {
-    *pIsTemp = PIKA_FALSE;
+                                  pika_bool* pIsTemp) {
+    *pIsTemp = pika_false;
     if (NULL == self) {
         return NULL;
     }
@@ -867,7 +867,7 @@ static PikaObj* _obj_getObjDirect(PikaObj* self,
     /* found class */
     if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
         type == ARG_TYPE_METHOD_CONSTRUCTOR) {
-        *pIsTemp = PIKA_TRUE;
+        *pIsTemp = pika_true;
         PikaObj* method_args_obj = New_TinyObj(NULL);
         Arg* cls_obj_arg = obj_runMethodArg(self, method_args_obj, arg_obj);
         obj_deinit(method_args_obj);
@@ -884,7 +884,7 @@ static PikaObj* _obj_getObjDirect(PikaObj* self,
 
 static PikaObj* _obj_getObjWithKeepDeepth(PikaObj* self,
                                           char* objPath,
-                                          PIKA_BOOL* pIsTemp,
+                                          pika_bool* pIsTemp,
                                           int32_t keepDeepth) {
     char objPath_buff[PIKA_PATH_BUFF_SIZE];
     char* objPath_ptr = objPath_buff;
@@ -912,19 +912,19 @@ exit:
 
 PikaObj* obj_getObj(PikaObj* self, char* objPath) {
     pika_assert(NULL != objPath);
-    PIKA_BOOL is_temp = PIKA_FALSE;
+    pika_bool is_temp = pika_false;
     return _obj_getObjWithKeepDeepth(self, objPath, &is_temp, 0);
 }
 
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath) {
     pika_assert(NULL != objPath);
-    PIKA_BOOL is_temp = PIKA_FALSE;
+    pika_bool is_temp = pika_false;
     return _obj_getObjWithKeepDeepth(self, objPath, &is_temp, 1);
 }
 
 PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
                                   char* objPath,
-                                  PIKA_BOOL* pIsTemp) {
+                                  pika_bool* pIsTemp) {
     return _obj_getObjWithKeepDeepth(self, objPath, pIsTemp, 1);
 }
 
@@ -1223,7 +1223,7 @@ enum PIKA_SHELL_STATE {
 
 static void _obj_runChar_beforeRun(PikaObj* self, ShellConfig* shell) {
     /* create the line buff for the first time */
-    shell->inBlock = PIKA_FALSE;
+    shell->inBlock = pika_false;
     shell->stat = PIKA_SHELL_STATE_NORMAL;
     shell->line_position = 0;
     shell->line_curpos = 0;
@@ -1246,18 +1246,18 @@ typedef enum {
     __FILTER_SUCCESS_DROP_ALL_PEEKED
 } FilterReturn;
 
-PIKA_BOOL _filter_msg_hi_pika_handler(FilterItem* msg,
+pika_bool _filter_msg_hi_pika_handler(FilterItem* msg,
                                       PikaObj* self,
                                       ShellConfig* shell) {
     pika_platform_printf("Yes, I am here\r\n");
-    return PIKA_TRUE;
+    return pika_true;
 }
 
-PIKA_BOOL _filter_msg_bye_pika_handler(FilterItem* msg,
+pika_bool _filter_msg_bye_pika_handler(FilterItem* msg,
                                        PikaObj* self,
                                        ShellConfig* shell) {
     pika_platform_printf("OK, see you\r\n");
-    return PIKA_TRUE;
+    return pika_true;
 }
 
 #define __MSG_DECLARE
@@ -1485,7 +1485,7 @@ char* shHistory_getNext(ShellHistory* self) {
 
 static void handle_history_navigation(char inputChar,
                                       ShellConfig* shell,
-                                      PIKA_BOOL bIsUp) {
+                                      pika_bool bIsUp) {
 #if PIKA_SHELL_HISTORY_ENABLE
     if (NULL == shell->history) {
         shell->history = shHistory_create(PIKA_SHELL_HISTORY_NUM);
@@ -1569,12 +1569,12 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
         if (inputChar == PIKA_KEY_UP) {
             _putc_cmd(PIKA_KEY_DOWN, 1);
             ctrl = SHELL_CTRL_CONTINUE;
-            handle_history_navigation(inputChar, shell, PIKA_TRUE);
+            handle_history_navigation(inputChar, shell, pika_true);
             goto __exit;
         }
         if (inputChar == PIKA_KEY_DOWN) {
             ctrl = SHELL_CTRL_CONTINUE;
-            handle_history_navigation(inputChar, shell, PIKA_FALSE);
+            handle_history_navigation(inputChar, shell, pika_false);
             goto __exit;
         }
     }
@@ -1658,7 +1658,7 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
             strsDeinit(&buffs);
             /* go out from block */
             if ((shell->lineBuff[0] != ' ') && (shell->lineBuff[0] != '\t')) {
-                shell->inBlock = PIKA_FALSE;
+                shell->inBlock = pika_false;
                 input_line = obj_getStr(self, shell->blockBuffName);
                 ctrl = shell->handler(self, input_line, shell);
                 __clearBuff(shell);
@@ -1674,7 +1674,7 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
         /* go in block */
         if (shell->blockBuffName != NULL && 0 != strGetSize(shell->lineBuff)) {
             if (shell->lineBuff[strGetSize(shell->lineBuff) - 1] == ':') {
-                shell->inBlock = PIKA_TRUE;
+                shell->inBlock = pika_true;
                 char _n = '\n';
                 strAppendWithSize(shell->lineBuff, &_n, 1);
                 obj_setStr(self, shell->blockBuffName, shell->lineBuff);
@@ -1706,11 +1706,11 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
     if (NULL == queue->buffer) {
         /* need initialize first */
         byteQueue_init(queue, &shell->filter_fifo.buffer,
-                       sizeof(shell->filter_fifo.buffer), PIKA_FALSE);
+                       sizeof(shell->filter_fifo.buffer), pika_false);
     }
 
-    PIKA_BOOL result = byteQueue_writeOne(queue, inputChar);
-    pika_assert(result != PIKA_FALSE);
+    pika_bool result = byteQueue_writeOne(queue, inputChar);
+    pika_assert(result != pika_false);
 
     int16_t byte_count;
     do {
@@ -1722,7 +1722,7 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
 
         while (n--) {
             result = byteQueue_readOne(queue, (uint8_t*)&inputChar);
-            pika_assert(PIKA_FALSE != result);
+            pika_assert(pika_false != result);
 
             if (SHELL_CTRL_EXIT ==
                 _inner_do_obj_runChar(self, inputChar, shell)) {
@@ -1792,8 +1792,8 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             char* buff = pikaMalloc(PIKA_READ_FILE_BUFF_SIZE);
             char input[2] = {0};
             int buff_i = 0;
-            PIKA_BOOL is_exit = PIKA_FALSE;
-            PIKA_BOOL is_first_line = PIKA_TRUE;
+            pika_bool is_exit = pika_false;
+            pika_bool is_first_line = pika_true;
             while (1) {
                 input[1] = input[0];
                 input[0] = cfg->fn_getchar();
@@ -1810,7 +1810,7 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
                 }
                 if (is_first_line) {
                     if ('\n' == input[0]) {
-                        is_first_line = PIKA_FALSE;
+                        is_first_line = pika_false;
                     }
                     continue;
                 }
@@ -1842,7 +1842,7 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
             pika_platform_printf("=============== [ Run] ===============\r\n");
             obj_run(self, (char*)buff);
             if (NULL != strstr(buff, "exit()")) {
-                is_exit = PIKA_TRUE;
+                is_exit = pika_true;
             }
             pikaFree(buff, PIKA_READ_FILE_BUFF_SIZE);
             if (is_exit) {
@@ -2004,7 +2004,7 @@ void method_returnInt(Args* args, int64_t val) {
     args_pushArg_name(args, "@rt", arg_newInt(val));
 }
 
-void method_returnBool(Args* args, PIKA_BOOL val) {
+void method_returnBool(Args* args, pika_bool val) {
     if (val == _PIKA_BOOL_ERR) {
         return;
     }
@@ -2225,26 +2225,26 @@ int _pikaGC_markDumpHandler(PikaGC* gc) {
 
 #endif
 
-PIKA_BOOL obj_checkAlive(PikaObj* self) {
+pika_bool obj_checkAlive(PikaObj* self) {
 #if !PIKA_GC_MARK_SWEEP_ENABLE
-    return PIKA_TRUE;
+    return pika_true;
 #else
-    PIKA_BOOL ret = PIKA_FALSE;
+    pika_bool ret = pika_false;
     if (NULL == g_PikaObjState.gcChain) {
-        ret = PIKA_FALSE;
+        ret = pika_false;
         goto __exit;
     }
     PikaObj* obj = g_PikaObjState.gcChain;
     while (NULL != obj) {
         if (obj == self) {
-            ret = PIKA_TRUE;
+            ret = pika_true;
             goto __exit;
         }
         obj = obj->gcNext;
     }
 __exit:
 #if PIKA_KERNAL_DEBUG_ENABLE
-    if (ret == PIKA_TRUE) {
+    if (ret == pika_true) {
         self->isAlive = ret;
     }
 #endif
@@ -2358,9 +2358,9 @@ void pikaGC_unlock(void) {
 #endif
 }
 
-PIKA_BOOL pikaGC_islock(void) {
+pika_bool pikaGC_islock(void) {
 #if !PIKA_GC_MARK_SWEEP_ENABLE
-    return PIKA_FALSE;
+    return pika_false;
 #else
     return g_PikaObjState.markSweepBusy > 0;
 #endif
@@ -2381,7 +2381,7 @@ PikaObj* New_PikaObj(void) {
     self->aName = NULL;
     self->name = "PikaObj";
     self->parent = NULL;
-    self->isAlive = PIKA_TRUE;
+    self->isAlive = pika_true;
 #endif
 #if PIKA_GC_MARK_SWEEP_ENABLE && PIKA_KERNAL_DEBUG_ENABLE
     self->gcRoot = NULL;
@@ -2456,7 +2456,7 @@ PikaObj* obj_importModuleWithByteCode(PikaObj* self,
         Arg* aModule = obj_getArg((PikaObj*)__pikaMain, name);
         PikaObj* oModule = arg_getPtr(aModule);
         obj_setArg(self, name, aModule);
-        arg_setIsWeakRef(obj_getArg(self, name), PIKA_TRUE);
+        arg_setIsWeakRef(obj_getArg(self, name), pika_true);
         pika_assert(arg_isObject(aModule));
         /* decrase refcnt to avoid circle reference */
         obj_refcntDec(oModule);
@@ -2668,7 +2668,7 @@ static void _thread_event(void* arg) {
 void _do_pks_eventListener_send(PikaEventListener* self,
                                 uint32_t eventId,
                                 Arg* eventData,
-                                PIKA_BOOL pickupWhenNoVM) {
+                                pika_bool pickupWhenNoVM) {
 #if !PIKA_EVENT_ENABLE
     pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
     while (1) {
@@ -2704,7 +2704,7 @@ void _do_pks_eventListener_send(PikaEventListener* self,
 void pks_eventListener_send(PikaEventListener* self,
                             uint32_t eventId,
                             Arg* eventData) {
-    _do_pks_eventListener_send(self, eventId, eventData, PIKA_TRUE);
+    _do_pks_eventListener_send(self, eventId, eventData, pika_true);
 }
 
 void pks_eventListener_sendSignal(PikaEventListener* self,

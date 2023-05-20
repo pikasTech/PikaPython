@@ -48,6 +48,10 @@ class SysObj:
     def type(arg: any) -> any: ...
 
     @staticmethod
+    @PIKA_C_MACRO_IF("!PIKA_NANO_ENABLE")
+    def isinstance(object: any, classinfo: any) -> bool: ...
+
+    @staticmethod
     def len(arg: any) -> int: ...
 
     @staticmethod

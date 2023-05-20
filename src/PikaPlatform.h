@@ -111,9 +111,10 @@ typedef enum {
 /* clang-format off */
 
 /* pikascript bool type */
-#define PIKA_BOOL int64_t
-#define PIKA_TRUE 1
-#define PIKA_FALSE 0
+#define pika_bool int64_t
+#define pika_true 1
+#define pika_false 0
+
 #define _PIKA_BOOL_ERR -1
 
 #define _PIKA_INT_ERR (-999999999)
@@ -190,7 +191,7 @@ int64_t pika_platform_get_tick(void);
 void pika_platform_sleep_ms(uint32_t ms);
 
 void pika_hook_instruct(void);
-PIKA_BOOL pika_hook_arg_cache_filter(void* self);
+pika_bool pika_hook_arg_cache_filter(void* self);
 void* pika_user_malloc(size_t size);
 void pika_user_free(void* ptr, size_t size);
 uint8_t pika_is_locked_pikaMemory(void);

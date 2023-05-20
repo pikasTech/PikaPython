@@ -35,7 +35,7 @@ PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self, char* lib_path);
 PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name);
 PIKA_RES _do_pikaMaker_linkCompiledModules(PikaMaker* self,
                                            char* lib_name,
-                                           PIKA_BOOL gen_c_array);
+                                           pika_bool gen_c_array);
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes);
 void LibObj_printModules(LibObj* self);
 void pikaMaker_deinit(PikaMaker* self);
@@ -56,7 +56,7 @@ typedef struct {
     uint8_t* addr;
     size_t size;
     size_t pos;
-    PIKA_BOOL need_free;
+    pika_bool need_free;
 } pikafs_FILE;
 
 pikafs_FILE* pikafs_fopen(char* file_name, char* mode);

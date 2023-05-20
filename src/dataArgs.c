@@ -202,7 +202,7 @@ int64_t args_getInt(Args* self, char* name) {
     return _PIKA_INT_ERR;
 }
 
-PIKA_BOOL args_getBool(Args* self, char* name) {
+pika_bool args_getBool(Args* self, char* name) {
     Arg* arg = args_getArg(self, name);
     if (NULL == arg) {
         return _PIKA_BOOL_ERR;

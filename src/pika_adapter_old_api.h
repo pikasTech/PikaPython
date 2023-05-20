@@ -85,6 +85,10 @@ extern "C" {
 #define arg_newNull arg_newNone
 #define arg_setNull arg_setNone
 
+#define PIKA_BOOL pika_bool
+#define PIKA_TRUE pika_true
+#define PIKA_FALSE pika_false
+
 #endif
 
 #endif

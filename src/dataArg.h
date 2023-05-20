@@ -120,7 +120,7 @@ uint32_t arg_getContentSize(Arg* self);
 Hash hash_time33(char* str);
 
 Arg* arg_setInt(Arg* self, char* name, int64_t val);
-Arg* arg_setBool(Arg* self, char* name, PIKA_BOOL val);
+Arg* arg_setBool(Arg* self, char* name, pika_bool val);
 Arg* arg_setFloat(Arg* self, char* name, pika_float val);
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer);
 Arg* arg_setStr(Arg* self, char* name, char* string);
@@ -131,7 +131,7 @@ static inline Arg* arg_newInt(int64_t val) {
     return arg_setInt(NULL, (char*)"", (val));
 }
 
-static inline Arg* arg_newBool(PIKA_BOOL val) {
+static inline Arg* arg_newBool(pika_bool val) {
     return arg_setBool(NULL, (char*)"", (val));
 }
 
@@ -156,7 +156,7 @@ static inline Arg* arg_newBytes(uint8_t* src, size_t size) {
 }
 
 int64_t arg_getInt(Arg* self);
-PIKA_BOOL arg_getBool(Arg* self);
+pika_bool arg_getBool(Arg* self);
 pika_float arg_getFloat(Arg* self);
 void* arg_getPtr(Arg* self);
 char* arg_getStr(Arg* self);
@@ -182,7 +182,7 @@ Arg* arg_setHeapStruct(Arg* self,
 void* arg_getHeapStruct(Arg* self);
 void arg_deinitHeap(Arg* self);
 Arg* arg_toStrArg(Arg* arg);
-void arg_print(Arg* self, PIKA_BOOL in_REPL, char* end);
+void arg_print(Arg* self, pika_bool in_REPL, char* end);
 Arg* arg_loadFile(Arg* self, char* filename);
 
 #define ARG_FLAG_SERIALIZED 0x01
@@ -301,7 +301,7 @@ static inline uint8_t argType_isNative(ArgType type) {
     arg_init_stack(&__name, __##__name##_buff, __size)
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size);
-PIKA_BOOL arg_isEqual(Arg* self, Arg* other);
+pika_bool arg_isEqual(Arg* self, Arg* other);
 Hash hash_time33EndWith(char* str, char end);
 
 #endif

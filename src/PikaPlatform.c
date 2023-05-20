@@ -159,17 +159,17 @@ int pika_pvsprintf(char** buff, const char* fmt, va_list args) {
     return required_size;
 }
 
-static PIKA_BOOL _check_no_buff_format(char* format) {
+static pika_bool _check_no_buff_format(char* format) {
     while (*format) {
         if (*format == '%') {
             ++format;
             if (*format != 's' && *format != '%') {
-                return PIKA_FALSE;
+                return pika_false;
             }
         }
         ++format;
     }
-    return PIKA_TRUE;
+    return pika_true;
 }
 
 static int _no_buff_vprintf(char* fmt, va_list args) {
@@ -379,8 +379,8 @@ PIKA_WEAK void pika_hook_instruct(void) {
     return;
 }
 
-PIKA_WEAK PIKA_BOOL pika_hook_arg_cache_filter(void* self) {
-    return PIKA_TRUE;
+PIKA_WEAK pika_bool pika_hook_arg_cache_filter(void* self) {
+    return pika_true;
 }
 
 PIKA_WEAK void pika_platform_thread_delay(void) {

@@ -99,7 +99,7 @@ char* queue_popStr(Queue* queue) {
 ByteQueue* byteQueue_init(ByteQueue* queue,
                           void* buffer,
                           uint_fast16_t size,
-                          PIKA_BOOL is_queue_full) {
+                          pika_bool is_queue_full) {
     pika_assert(NULL != queue);
     pika_assert(NULL != buffer);
     pika_assert(size > 0);
@@ -116,10 +116,10 @@ ByteQueue* byteQueue_init(ByteQueue* queue,
     return queue;
 }
 
-PIKA_BOOL byteQueue_readOne(ByteQueue* queue, uint8_t* byte_ptr) {
+pika_bool byteQueue_readOne(ByteQueue* queue, uint8_t* byte_ptr) {
     pika_assert(NULL != queue);
     uint8_t byte;
-    PIKA_BOOL result = PIKA_FALSE;
+    pika_bool result = pika_false;
 
     /* ------------------atomicity sensitive start---------------- */
     do {
@@ -141,17 +141,17 @@ PIKA_BOOL byteQueue_readOne(ByteQueue* queue, uint8_t* byte_ptr) {
         if (NULL != byte_ptr) {
             *byte_ptr = byte;
         }
-        result = PIKA_TRUE;
+        result = pika_true;
     } while (0);
     /* ------------------atomicity sensitive end  ---------------- */
 
     return result;
 }
 
-PIKA_BOOL byteQueue_peekOne(ByteQueue* queue, uint8_t* byte_ptr) {
+pika_bool byteQueue_peekOne(ByteQueue* queue, uint8_t* byte_ptr) {
     pika_assert(NULL != queue);
     uint8_t byte;
-    PIKA_BOOL result = PIKA_FALSE;
+    pika_bool result = pika_false;
 
     /* ------------------atomicity sensitive start---------------- */
     do {
@@ -169,7 +169,7 @@ PIKA_BOOL byteQueue_peekOne(ByteQueue* queue, uint8_t* byte_ptr) {
         if (NULL != byte_ptr) {
             *byte_ptr = byte;
         }
-        result = PIKA_TRUE;
+        result = pika_true;
     } while (0);
     /* ------------------atomicity sensitive end  ---------------- */
 
@@ -200,9 +200,9 @@ void byteQueue_dropAllPeeked(ByteQueue* queue) {
     /* ------------------atomicity sensitive end  ---------------- */
 }
 
-PIKA_BOOL byteQueue_writeOne(ByteQueue* queue, uint8_t byte) {
+pika_bool byteQueue_writeOne(ByteQueue* queue, uint8_t byte) {
     pika_assert(NULL != queue);
-    PIKA_BOOL result = PIKA_FALSE;
+    pika_bool result = pika_false;
 
     /* ------------------atomicity sensitive start---------------- */
     do {
@@ -218,7 +218,7 @@ PIKA_BOOL byteQueue_writeOne(ByteQueue* queue, uint8_t byte) {
             queue->tail = 0;
         }
 
-        result = PIKA_TRUE;
+        result = pika_true;
     } while (0);
     /* ------------------atomicity sensitive end  ---------------- */
 

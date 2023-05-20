@@ -89,8 +89,8 @@ struct PikaObj {
     char* name;
     Arg* aName;
     PikaObj* parent;
-    PIKA_BOOL isAlive;
-    PIKA_BOOL isGCRoot;
+    pika_bool isAlive;
+    pika_bool isGCRoot;
 #endif
 #if PIKA_GC_MARK_SWEEP_ENABLE && PIKA_KERNAL_DEBUG_ENABLE
     PikaObj* gcRoot;
@@ -118,7 +118,7 @@ struct RangeData {
 typedef struct PikaObjState PikaObjState;
 struct PikaObjState {
     Arg* helpModulesCmodule;
-    PIKA_BOOL inRootObj;
+    pika_bool inRootObj;
 #if PIKA_GC_MARK_SWEEP_ENABLE
     PikaObj* gcChain;
     uint32_t objCnt;
@@ -153,7 +153,7 @@ static inline void obj_setFlag(PikaObj* self, uint16_t flag) {
     self->flag |= flag;
 #if PIKA_KERNAL_DEBUG_ENABLE
     if (flag == OBJ_FLAG_GC_ROOT) {
-        self->isGCRoot = PIKA_TRUE;
+        self->isGCRoot = pika_true;
     }
 #endif
 }
@@ -162,7 +162,7 @@ static inline void obj_clearFlag(PikaObj* self, uint16_t flag) {
     self->flag &= ~flag;
 #if PIKA_KERNAL_DEBUG_ENABLE
     if (flag == OBJ_FLAG_GC_ROOT) {
-        self->isGCRoot = PIKA_FALSE;
+        self->isGCRoot = pika_false;
     }
 #endif
 }
@@ -227,7 +227,7 @@ void* obj_getPtr(PikaObj* self, char* argPath);
 pika_float obj_getFloat(PikaObj* self, char* argPath);
 char* obj_getStr(PikaObj* self, char* argPath);
 int64_t obj_getInt(PikaObj* self, char* argPath);
-PIKA_BOOL obj_getBool(PikaObj* self, char* argPath);
+pika_bool obj_getBool(PikaObj* self, char* argPath);
 Arg* obj_getArg(PikaObj* self, char* argPath);
 uint8_t* obj_getBytes(PikaObj* self, char* argPath);
 size_t obj_getBytesSize(PikaObj* self, char* argPath);
@@ -244,7 +244,7 @@ PikaObj* obj_getObj(PikaObj* self, char* objPath);
 PikaObj* obj_getHostObj(PikaObj* self, char* objPath);
 PikaObj* obj_getHostObjWithIsTemp(PikaObj* self,
                                   char* objPath,
-                                  PIKA_BOOL* pIsClass);
+                                  pika_bool* pIsClass);
 
 // subProcess
 int32_t obj_freeObj(PikaObj* self, char* subObjectName);
@@ -308,7 +308,7 @@ uint8_t obj_getAnyArg(PikaObj* self,
 
 void method_returnStr(Args* args, char* val);
 void method_returnInt(Args* args, int64_t val);
-void method_returnBool(Args* args, PIKA_BOOL val);
+void method_returnBool(Args* args, pika_bool val);
 void method_returnFloat(Args* args, pika_float val);
 void method_returnPtr(Args* args, void* val);
 void method_returnObj(Args* args, void* val);
@@ -351,7 +351,7 @@ typedef struct FilterFIFO {
 
 typedef struct FilterItem FilterItem;
 
-typedef PIKA_BOOL FilterMessageHandler(FilterItem* msg,
+typedef pika_bool FilterMessageHandler(FilterItem* msg,
                                        PikaObj* self,
                                        ShellConfig* shell);
 
@@ -391,7 +391,7 @@ struct ShellConfig {
     size_t line_position;
     size_t line_curpos;
     char* blockBuffName;
-    PIKA_BOOL inBlock;
+    pika_bool inBlock;
     char lastChar;
     sh_getchar fn_getchar;
     uint8_t stat;
@@ -514,7 +514,7 @@ void pks_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
 void _do_pks_eventListener_send(PikaEventListener* self,
                                 uint32_t eventId,
                                 Arg* eventData,
-                                PIKA_BOOL pickupWhenNoVM);
+                                pika_bool pickupWhenNoVM);
 
 void pks_eventListener_sendSignal(PikaEventListener* self,
                                   uint32_t eventId,
@@ -560,7 +560,7 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
                          __FUNCTION__)
 
 char* obj_cacheStr(PikaObj* self, char* str);
-PikaObj* _arg_to_obj(Arg* self, PIKA_BOOL* pIsTemp);
+PikaObj* _arg_to_obj(Arg* self, pika_bool* pIsTemp);
 Arg* arg_toStrArg(Arg* arg);
 
 #define PIKASCRIPT_VERSION_TO_NUM(majer, minor, micro) \
@@ -716,14 +716,14 @@ void obj_printModules(PikaObj* self);
 void obj_appendGcChain(PikaObj* self);
 void obj_removeGcChain(PikaObj* self);
 void obj_enableGC(PikaObj* self);
-PIKA_BOOL obj_checkAlive(PikaObj* self);
+pika_bool obj_checkAlive(PikaObj* self);
 void obj_setName(PikaObj* self, char* name);
 
 void pikaGC_mark(void);
 void pikaGC_markDump(void);
 void pikaGC_lock(void);
 void pikaGC_unlock(void);
-PIKA_BOOL pikaGC_islock(void);
+pika_bool pikaGC_islock(void);
 uint32_t pikaGC_count(void);
 uint32_t pikaGC_countMarked(void);
 uint32_t pikaGC_markSweep(void);

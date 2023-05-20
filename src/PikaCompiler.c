@@ -38,15 +38,15 @@ const char magic_code_pyo[] = {0x0f, 'p', 'y', 'o'};
 /*
  * @brief check magic code of pyo file
  * @param bytecode
- * @return PIKA_TRUE or PIKA_FALSE
+ * @return pika_true or pika_false
  */
-static PIKA_BOOL _check_magic_code_pyo(uint8_t* bytecode) {
+static pika_bool _check_magic_code_pyo(uint8_t* bytecode) {
     char* data = (char*)bytecode;
     if (data[0] == magic_code_pyo[0] && data[1] == magic_code_pyo[1] &&
         data[2] == magic_code_pyo[2] && data[3] == magic_code_pyo[3]) {
-        return PIKA_TRUE;
+        return pika_true;
     }
-    return PIKA_FALSE;
+    return pika_false;
 }
 
 /*
@@ -468,10 +468,10 @@ static PIKA_RES _loadModuleDataWithIndex(uint8_t* library_bytes,
             *(uint32_t*)(module_name + LIB_INFO_BLOCK_SIZE - sizeof(uint32_t));
         *size = module_size;
         /* fix size for string */
-        PIKA_BOOL bIsString = PIKA_TRUE;
+        pika_bool bIsString = pika_true;
         for (size_t i = 0; i < *size - 1; ++i) {
             if (bytecode_addr[i] == 0) {
-                bIsString = PIKA_FALSE;
+                bIsString = pika_false;
                 break;
             }
         }
@@ -1014,7 +1014,7 @@ int32_t __foreach_handler_linkCompiledModules(Arg* argEach, void* context) {
 
 PIKA_RES _do_pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
                                                    char* lib_path,
-                                                   PIKA_BOOL gen_c_array) {
+                                                   pika_bool gen_c_array) {
     PIKA_RES compile_err = (PIKA_RES)obj_getInt(self, "err");
     if (PIKA_RES_OK != compile_err) {
         pika_platform_printf("  Error: compile failed, link aborted.\r\n");
@@ -1042,12 +1042,12 @@ PIKA_RES _do_pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
 
 PIKA_RES pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
                                                char* lib_path) {
-    return _do_pikaMaker_linkCompiledModulesFullPath(self, lib_path, PIKA_TRUE);
+    return _do_pikaMaker_linkCompiledModulesFullPath(self, lib_path, pika_true);
 }
 
 PIKA_RES _do_pikaMaker_linkCompiledModules(PikaMaker* self,
                                            char* lib_name,
-                                           PIKA_BOOL gen_c_array) {
+                                           pika_bool gen_c_array) {
     Args buffs = {0};
     char* lib_file_path = strsPathJoin(&buffs, "pikascript-api/", lib_name);
     PIKA_RES res = _do_pikaMaker_linkCompiledModulesFullPath(
@@ -1057,7 +1057,7 @@ PIKA_RES _do_pikaMaker_linkCompiledModules(PikaMaker* self,
 }
 
 PIKA_RES pikaMaker_linkCompiledModules(PikaMaker* self, char* lib_name) {
-    return _do_pikaMaker_linkCompiledModules(self, lib_name, PIKA_TRUE);
+    return _do_pikaMaker_linkCompiledModules(self, lib_name, pika_true);
 }
 
 /*
@@ -1112,7 +1112,7 @@ pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
 
     f->addr = (uint8_t*)pikaMalloc(f->size);
     pika_platform_memcpy(f->addr, arg_getBytes(file_arg), f->size);
-    f->need_free = PIKA_TRUE;
+    f->need_free = pika_true;
 
     arg_deinit(file_arg);
     return f;

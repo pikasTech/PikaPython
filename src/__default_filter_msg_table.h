@@ -37,15 +37,15 @@
  *      add_filter_msg(
  *          <name>,
  *          <string>,
- *          [.is_visible = PIKA_TRUE,]
- *          [.is_case_insensitive = PIKA_TRUE,] 
+ *          [.is_visible = pika_true,]
+ *          [.is_case_insensitive = pika_true,] 
  *          [.ignore_mask = mask value,]
  *          [.target = your own object address/value,]
  *      )
  */
 
 add_filter_msg(hi_pika,     "###Hi Pika")
-add_filter_msg(bye_pika,    "###bye pika", .is_case_insensitive = PIKA_TRUE)
+add_filter_msg(bye_pika,    "###bye pika", .is_case_insensitive = pika_true)
 
 /* add your own message item here with syntax:
  *
@@ -53,8 +53,8 @@ add_filter_msg(bye_pika,    "###bye pika", .is_case_insensitive = PIKA_TRUE)
  *          <name>,
  *          .message = (const uint8_t []){< num0, num1, ... >},
  *          .size = <array size>,
- *          [.is_visible = PIKA_TRUE,]
- *          [.is_case_insensitive = PIKA_TRUE,] 
+ *          [.is_visible = pika_true,]
+ *          [.is_case_insensitive = pika_true,] 
  *          [.ignore_mask = mask value,]
  *          [.target = your own object address/value,]
  *      )

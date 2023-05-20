@@ -30,7 +30,7 @@ impl PyType {
             return "Arg*".to_string();
         }
         if self.type_name == "bool"{
-            return "PIKA_BOOL".to_string();
+            return "pika_bool".to_string();
         }
         if self.type_name == "@tupleVarPar" {
             return "PikaTuple*".to_string();
@@ -49,7 +49,7 @@ impl PyType {
             return "int64_t".to_string();
         }
         if self.type_name == "bool" {
-            return "PIKA_BOOL".to_string();
+            return "pika_bool".to_string();
         }
         if self.type_name == "float" {
             return "pika_float".to_string();

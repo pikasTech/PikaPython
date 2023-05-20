@@ -63,7 +63,7 @@ struct Pool{
         uint32_t size;
         uint32_t first_free_block;
         uint32_t purl_free_block_start;
-        PIKA_BOOL inited;
+        pika_bool inited;
     )
 };
 /* clang-format on */

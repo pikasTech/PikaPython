@@ -197,7 +197,7 @@ int dict_contains(PikaDict* dict, Arg* key) {
         }
         i++;
     }
-    return PIKA_FALSE;
+    return pika_false;
 }
 
 int PikaStdData_Dict___contains__(PikaObj* self, Arg* val) {
