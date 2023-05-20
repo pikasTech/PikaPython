@@ -177,8 +177,7 @@ TEST(except, except_break) {
             "        print('in excepton')\n"
             "        break\n"
             "print(sum)\n"
-            "\n"
-            );
+            "\n");
     /* collect */
     /* assert */
     EXPECT_EQ(obj_getInt(pikaMain, "sum"), 6);
@@ -203,6 +202,10 @@ TEST(except, while_try_while) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_RUN_SINGLE_FILE(except,
+                     try_while_return,
+                     "test/python/except/try_while_return.py");
 
 #endif
 

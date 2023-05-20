@@ -1733,32 +1733,57 @@ static Arg* VM_instruction_handler_RET(PikaObj* self,
     return NULL;
 }
 
+static InstructUnit* _find_ins_unit_up(ByteCodeFrame* bcframe,
+                                       int32_t pc_start,
+                                       enum InstructIndex index,
+                                       int32_t* p_offset) {
+    /* find super class */
+    int instructArray_size = instructArray_getSize(&(bcframe->instruct_array));
+    while (1) {
+        *p_offset -= instructUnit_getSize();
+        if (pc_start + *p_offset >= instructArray_size) {
+            return 0;
+        }
+        InstructUnit* unit = instructArray_getByOffset(
+            &(bcframe->instruct_array), pc_start + *p_offset);
+        if (CLS == instructUnit_getInstructIndex(unit)) {
+            return unit;
+        }
+    }
+    return NULL;
+}
+
+static InstructUnit* _find_ins_unit_down(ByteCodeFrame* bcframe,
+                                         int32_t pc_start,
+                                         enum InstructIndex index,
+                                         int32_t* p_offset) {
+    /* find super class */
+    int instructArray_size = instructArray_getSize(&(bcframe->instruct_array));
+    while (1) {
+        *p_offset += instructUnit_getSize();
+        if (pc_start + *p_offset >= instructArray_size) {
+            return 0;
+        }
+        InstructUnit* unit = instructArray_getByOffset(
+            &(bcframe->instruct_array), pc_start + *p_offset);
+        if (index == instructUnit_getInstructIndex(unit)) {
+            return unit;
+        }
+    }
+    return NULL;
+}
+
 #if !PIKA_NANO_ENABLE
-static char* _find_super_class_name(VMState* vm) {
+static char* _find_super_class_name(ByteCodeFrame* bcframe, int32_t pc_start) {
     /* find super class */
     int offset = 0;
     char* super_class_name = NULL;
-    while (1) {
-        offset -= instructUnit_getSize();
-        if (vm->pc + offset >= (int)VMState_getInstructArraySize(vm)) {
-            return 0;
-        }
-        if ((CLS == VMstate_getInstructWithOffset(vm, offset))) {
-            break;
-        }
-    }
-
-    while (1) {
-        offset += instructUnit_getSize();
-        if (vm->pc + offset >= (int)VMState_getInstructArraySize(vm)) {
-            return 0;
-        }
-        if ((RUN == instructUnit_getInstructIndex(
-                        VMState_getInstructUnitWithOffset(vm, offset)))) {
-            super_class_name = VMState_getConstWithOffset(vm, offset);
-            return super_class_name;
-        }
-    }
+    _find_ins_unit_up(bcframe, pc_start, CLS, &offset);
+    InstructUnit* unit_run =
+        _find_ins_unit_down(bcframe, pc_start, RUN, &offset);
+    super_class_name = constPool_getByOffset(
+        &(bcframe->const_pool), instructUnit_getConstPoolIndex(unit_run));
+    return super_class_name;
 }
 #endif
 
@@ -1841,7 +1866,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 #if !PIKA_NANO_ENABLE
     /* support for super() */
     if (strEqu(sRunPath, "super")) {
-        sRunPath = _find_super_class_name(vm);
+        sRunPath = _find_super_class_name(vm->bytecode_frame, vm->pc);
         sArgName = strPointToLastToken(sRunPath, '.');
         vm->in_super = PIKA_TRUE;
         vm->super_invoke_deepth = VMState_getInvokeDeepthNow(vm);
