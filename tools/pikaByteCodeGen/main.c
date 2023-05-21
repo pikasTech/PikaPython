@@ -42,9 +42,10 @@ void PikaStdData_List___init__(PikaObj *self){}
 void PikaStdData_List_append(PikaObj *self, Arg* arg){}
 void PikaStdData_Dict___init__(PikaObj* self){}
 void PikaStdData_Dict_set(PikaObj* self, char* key, Arg* val){}
-char* string_slice(Args* outBuffs, char* str, int start, int end) {
-    return NULL;
-}
+PikaObj* New_PikaStdLib_RangeObj(Args* args){return NULL;}
+PikaObj* New_PikaStdData_FILEIO(Args* args){return NULL;}
+char* string_slice(Args* outBuffs, char* str, int start, int end) {return NULL;}
+int PikaStdData_FILEIO_init(PikaObj* self, char* path, char* mode){return 0;}
 
 static int _do_main(int argc, char** argv) {
     int parc = argc - 1;

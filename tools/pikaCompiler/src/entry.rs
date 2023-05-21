@@ -46,6 +46,7 @@ pub fn pika_compiler_entry() {
     compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaStdTask"));
     compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaStdData"));
     compiler = Compiler::analyse_c_package_top(compiler, String::from("PikaDebug"));
+    compiler = Compiler::analyse_c_package_top(compiler, String::from("builtins"));
 
     /* clean pikascript-api/ */
     compiler.clean_path();
