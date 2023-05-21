@@ -1734,11 +1734,11 @@ static Arg* VM_instruction_handler_RET(PikaObj* self,
     return NULL;
 }
 
-static InstructUnit* _find_instruct_unit(ByteCodeFrame* bcframe,
-                                         int32_t iPcStart,
-                                         enum InstructIndex index,
-                                         int32_t* iOffset_p,
-                                         pika_bool bIsForward) {
+InstructUnit* byteCodeFrame_findInstructUnit(ByteCodeFrame* bcframe,
+                                             int32_t iPcStart,
+                                             enum InstructIndex index,
+                                             int32_t* iOffset_p,
+                                             pika_bool bIsForward) {
     /* find instruct unit */
     int instructArray_size = instructArray_getSize(&(bcframe->instruct_array));
     while (1) {
@@ -1757,33 +1757,33 @@ static InstructUnit* _find_instruct_unit(ByteCodeFrame* bcframe,
     }
 }
 
-static InstructUnit* _find_ins_unit_forward(ByteCodeFrame* bcframe,
-                                            int32_t pc_start,
-                                            enum InstructIndex index,
-                                            int32_t* p_offset) {
-    return _find_instruct_unit(bcframe, pc_start, index, p_offset, pika_true);
+InstructUnit* byteCodeFrame_findInsForward(ByteCodeFrame* bcframe,
+                                           int32_t pc_start,
+                                           enum InstructIndex index,
+                                           int32_t* p_offset) {
+    return byteCodeFrame_findInstructUnit(bcframe, pc_start, index, p_offset,
+                                          pika_true);
 }
 
-static InstructUnit* _find_ins_unit_backward(ByteCodeFrame* bcframe,
-                                             int32_t pc_start,
-                                             enum InstructIndex index,
-                                             int32_t* p_offset) {
-    return _find_instruct_unit(bcframe, pc_start, index, p_offset, pika_false);
+InstructUnit* byteCodeFrame_findInsUnitBackward(ByteCodeFrame* bcframe,
+                                                int32_t pc_start,
+                                                enum InstructIndex index,
+                                                int32_t* p_offset) {
+    return byteCodeFrame_findInstructUnit(bcframe, pc_start, index, p_offset,
+                                          pika_false);
 }
 
-#if !PIKA_NANO_ENABLE
-static char* _find_super_class_name(ByteCodeFrame* bcframe, int32_t pc_start) {
+char* _find_super_class_name(ByteCodeFrame* bcframe, int32_t pc_start) {
     /* find super class */
     int offset = 0;
     char* super_class_name = NULL;
-    _find_ins_unit_forward(bcframe, pc_start, CLS, &offset);
+    byteCodeFrame_findInsForward(bcframe, pc_start, CLS, &offset);
     InstructUnit* unit_run =
-        _find_ins_unit_backward(bcframe, pc_start, RUN, &offset);
+        byteCodeFrame_findInsUnitBackward(bcframe, pc_start, RUN, &offset);
     super_class_name = constPool_getByOffset(
         &(bcframe->const_pool), instructUnit_getConstPoolIndex(unit_run));
     return super_class_name;
 }
-#endif
 
 #if !PIKA_NANO_ENABLE
 static char* _find_self_name(VMState* vm) {
@@ -1813,6 +1813,19 @@ static char* _find_self_name(VMState* vm) {
     }
 }
 #endif
+
+Arg* _builtin_class(char* sRunPath) {
+    /* return tiny obj */
+    if (strEqu(sRunPath, "TinyObj")) {
+        return arg_newMetaObj(New_TinyObj);
+    }
+
+    if (strEqu(sRunPath, "object")) {
+        return arg_newMetaObj(New_TinyObj);
+    }
+
+    return NULL;
+}
 
 static Arg* VM_instruction_handler_RUN(PikaObj* self,
                                        VMState* vm,
@@ -1872,14 +1885,10 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     }
 #endif
 
-    /* return tiny obj */
-    if (strEqu(sRunPath, "TinyObj")) {
-        aReturn = arg_newMetaObj(New_TinyObj);
-        goto exit;
-    }
+    /* for builtin obj */
+    aReturn = _builtin_class(sRunPath);
 
-    if (strEqu(sRunPath, "object")) {
-        aReturn = arg_newMetaObj(New_TinyObj);
+    if (NULL != aReturn) {
         goto exit;
     }
 
@@ -4258,4 +4267,96 @@ void _pikaVM_yield(void) {
      */
     // pika_GIL_EXIT();
     // pika_GIL_ENTER();
+}
+
+Arg* _type(PikaObj* self, Arg* arg) {
+    if (NULL == arg) {
+        obj_setSysOut(self, "[error] type: arg no found.");
+        obj_setErrorCode(self, 1);
+        return arg_newNone();
+    }
+    ArgType type = arg_getType(arg);
+    if (ARG_TYPE_INT == type) {
+        return arg_copy(obj_getMethodArgWithFullPath(self, "int"));
+    }
+    if (ARG_TYPE_FLOAT == type) {
+        return arg_copy(obj_getMethodArgWithFullPath(self, "float"));
+    }
+    if (ARG_TYPE_STRING == type) {
+        return arg_copy(obj_getMethodArgWithFullPath(self, "str"));
+    }
+    if (ARG_TYPE_BOOL == type) {
+        return arg_copy(obj_getMethodArgWithFullPath(self, "bool"));
+    }
+    if (argType_isObject(type)) {
+        PikaObj* obj = arg_getPtr(arg);
+        NewFun clsptr = obj_getClass(obj);
+        PikaObj* New_PikaStdData_List(Args * args);
+        /* list */
+        if (clsptr == New_PikaStdData_List) {
+            return arg_copy(obj_getMethodArgWithFullPath(self, "list"));
+        }
+        /* dict */
+        PikaObj* New_PikaStdData_Dict(Args * args);
+        if (clsptr == New_PikaStdData_Dict) {
+            return arg_copy(obj_getMethodArgWithFullPath(self, "dict"));
+        }
+        /* tuple */
+        PikaObj* New_PikaStdData_Tuple(Args * args);
+        if (clsptr == New_PikaStdData_Tuple) {
+            return arg_copy(obj_getMethodArgWithFullPath(self, "tuple"));
+        }
+#if PIKA_TYPE_FULL_FEATURE_ENABLE
+        Arg* aMethod = obj_getArg(obj, "__class__");
+        if (NULL != aMethod) {
+            return arg_copy(aMethod);
+        }
+#endif
+        return arg_newStr("<class 'object'>");
+    }
+    if (ARG_TYPE_OBJECT_META == type) {
+        return arg_newStr("<class 'meta object'>");
+    }
+    if (ARG_TYPE_BYTES == type) {
+        return arg_newStr("<class 'bytes'>");
+    }
+    if (ARG_TYPE_METHOD_OBJECT == type) {
+        return arg_newStr("<class 'method'>");
+    }
+    if (ARG_TYPE_METHOD_STATIC == type) {
+        return arg_newStr("<class 'function'>");
+    }
+    if (ARG_TYPE_NONE == type) {
+        return arg_newStr("<class 'NoneType'>");
+    }
+    return arg_newStr("<class 'buitin_function_or_method'>");
+}
+
+pika_bool _isinstance(PikaObj* self, Arg* object, Arg* classinfo) {
+    pika_bool res = pika_false;
+    Arg* aObjType = NULL;
+    if (!argType_isConstructor(arg_getType(classinfo)) &&
+        !argType_isCallable(arg_getType(classinfo))) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("TypeError: isinstance() arg 2 must be a type\r\n");
+        res = pika_false;
+        goto __exit;
+    }
+    aObjType = _type(self, object);
+    while (1) {
+        if (arg_getPtr(aObjType) == arg_getPtr(classinfo)) {
+            res = pika_true;
+            goto __exit;
+        }
+        aObjType = methodArg_super(aObjType);
+        if (NULL == aObjType) {
+            res = pika_false;
+            goto __exit;
+        }
+    }
+__exit:
+    if (NULL != aObjType) {
+        arg_deinit(aObjType);
+    }
+    return res;
 }

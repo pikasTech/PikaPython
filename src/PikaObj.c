@@ -980,6 +980,31 @@ char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
     return res;
 }
 
+char* _find_super_class_name(ByteCodeFrame* bcframe, int32_t pc_start);
+Arg* _builtin_class(char* sRunPath);
+Arg* methodArg_super(Arg* method_arg) {
+    Arg* aSuper = NULL;
+    if (!arg_isConstructor(method_arg)) {
+        return NULL;
+    }
+    MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
+    ByteCodeFrame* bcframe = method_store->bytecode_frame;
+    int32_t pc = method_store->ptr - bcframe->instruct_array.content_start;
+    char* sSuper = _find_super_class_name(bcframe, pc);
+    aSuper = _builtin_class(sSuper);
+    if (NULL != aSuper) {
+        arg_deinit(method_arg);
+        arg_deinit(aSuper);
+        return NULL;
+    }
+    PikaObj* context = method_store->def_context;
+    aSuper = obj_getMethodArgWithFullPath(context, sSuper);
+    if (NULL != aSuper) {
+        arg_deinit(method_arg);
+    }
+    return aSuper;
+}
+
 Method obj_getNativeMethod(PikaObj* self, char* method_name) {
     Arg* method_arg = obj_getMethodArgWithFullPath(self, method_name);
     if (NULL == method_arg) {

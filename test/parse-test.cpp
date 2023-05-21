@@ -5676,6 +5676,25 @@ TEST_LINES2ASM(slice_fn,
                "0 RUN .\n"
                "B0\n")
 
+TEST_LINES2ASM(derived_class,
+               "class DerivedClass(BaseClass):\n"
+               "    pass\n",
+               "B0\n"
+               "0 CLS DerivedClass()\n"
+               "0 JMP 1\n"
+               "B1\n"
+               "0 RUN BaseClass\n"
+               "0 OUT self\n"
+               "B1\n"
+               "0 RAS self\n"
+               "B1\n"
+               "B1\n"
+               "0 RAS $origin\n"
+               "B1\n"
+               "0 NEW self\n"
+               "0 RET \n"
+               "B0\n")
+
 #endif
 
 TEST_END

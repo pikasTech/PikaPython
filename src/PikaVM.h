@@ -264,7 +264,19 @@ void constPool_print(ConstPool* self);
 void byteCodeFrame_init(ByteCodeFrame* bf);
 void byteCodeFrame_deinit(ByteCodeFrame* bf);
 size_t byteCodeFrame_getSize(ByteCodeFrame* bf);
-
+InstructUnit* byteCodeFrame_findInstructUnit(ByteCodeFrame* bcframe,
+                                             int32_t iPcStart,
+                                             enum InstructIndex index,
+                                             int32_t* iOffset_p,
+                                             pika_bool bIsForward);
+InstructUnit* byteCodeFrame_findInsUnitBackward(ByteCodeFrame* bcframe,
+                                                int32_t pc_start,
+                                                enum InstructIndex index,
+                                                int32_t* p_offset);
+InstructUnit* byteCodeFrame_findInsForward(ByteCodeFrame* bcframe,
+                                           int32_t pc_start,
+                                           enum InstructIndex index,
+                                           int32_t* p_offset);
 void instructArray_init(InstructArray* ins_array);
 void instructArray_deinit(InstructArray* ins_array);
 void instructArray_append(InstructArray* ins_array, InstructUnit* ins_unit);

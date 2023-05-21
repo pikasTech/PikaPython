@@ -247,6 +247,10 @@ int32_t strEqu(char* str1, char* str2) {
     if (NULL == str1 || NULL == str2) {
         return 0;
     }
+    if (str1[0] != str2[0]) {
+        /* fast return */
+        return 0;
+    }
     return !strcmp(str1, str2);
 }
 

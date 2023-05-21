@@ -320,6 +320,7 @@ char* methodArg_getDec(Arg* method_arg);
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size);
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size);
 int methodArg_setHostObj(Arg* method_arg, PikaObj* host_obj);
+Arg* methodArg_super(Arg* method_arg);
 PikaObj* methodArg_getHostObj(Arg* method_arg);
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg);
 Method methodArg_getPtr(Arg* method_arg);
