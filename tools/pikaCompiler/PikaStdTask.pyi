@@ -36,3 +36,6 @@ class Task(TinyObj):
     # need be overried to supply the system tick
     def platformGetTick():
         pass
+
+    def newtest():
+        pass

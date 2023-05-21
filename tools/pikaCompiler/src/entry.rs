@@ -166,4 +166,6 @@ pub fn pika_compiler_entry() {
         .unwrap();
     f.write("\n".as_bytes()).unwrap();
     f.write("#endif\n".as_bytes()).unwrap();
+
+    compiler.reuse_old_file();
 }
