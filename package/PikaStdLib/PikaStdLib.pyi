@@ -1,5 +1,4 @@
 from PikaObj import *
-import builtins
 
 class MemChecker:
     def max(self): ...

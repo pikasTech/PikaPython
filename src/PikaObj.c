@@ -743,7 +743,6 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     signal(SIGSEGV, signal_handler);  // 捕获 SIGHUP 信号
     signal(SIGABRT, signal_handler);
     signal(SIGQUIT, signal_handler);
-    signal(SIGKILL, signal_handler);
     signal(SIGTRAP, signal_handler);
     signal(SIGHUP, signal_handler);
     enable_raw_mode();
