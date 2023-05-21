@@ -11,6 +11,7 @@ sh std_push.sh PikaStdLib
 sh std_push.sh PikaStdData
 sh std_push.sh PikaDebug
 sh std_push.sh PikaStdTask
+sh std_push.sh builtins
 echo "$FLAG_OK Push \033[32mpikascript-core\033[0m to ../../src successfully!"
 echo "$FLAG_OK Push \033[32mPikaSdLib\033[0m to ../../package/PikaStdLib successfully!"
 echo "$FLAG_NOTE Now, you can run 'git commit -a' to commit changes."
