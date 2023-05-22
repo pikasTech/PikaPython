@@ -532,17 +532,25 @@ PikaObj* _pika_dict_new(int num_args, ...) {
     return dict;
 }
 
-Arg* _obj_getProp(PikaObj* obj, char* name) {
-    NativeProperty* prop = obj_getPtr(obj, "@p");
+NativeProperty* obj_getProp(PikaObj* self) {
+    NativeProperty* prop = obj_getPtr(self, "@p");
     PikaObj* class_obj = NULL;
-    Arg* method = NULL;
     if (NULL == prop) {
-        if (NULL != obj->constructor) {
-            class_obj = obj_getClassObj(obj);
+        if (NULL != self->constructor) {
+            class_obj = obj_getClassObj(self);
             prop = obj_getPtr(class_obj, "@p");
         }
     }
+    if (NULL != class_obj) {
+        obj_deinit_no_del(class_obj);
+    }
+    return prop;
+}
+
+Arg* _obj_getPropArg(PikaObj* obj, char* name) {
+    NativeProperty* prop = obj_getProp(obj);
     Hash method_hash = hash_time33(name);
+    Arg* aMethod = NULL;
     while (1) {
         if (prop == NULL) {
             break;
@@ -564,7 +572,7 @@ Arg* _obj_getProp(PikaObj* obj, char* name) {
                 mid = (right + left) >> 1;
                 Arg* prop_this = (Arg*)(prop->methodGroup + mid);
                 if (prop_this->name_hash == method_hash) {
-                    method = prop_this;
+                    aMethod = prop_this;
                     goto exit;
                 } else if (prop_this->name_hash < method_hash) {
                     left = mid + 1;
@@ -578,7 +586,7 @@ Arg* _obj_getProp(PikaObj* obj, char* name) {
         for (int i = 0; i < (int)prop->methodGroupCount; i++) {
             Arg* prop_this = (Arg*)(prop->methodGroup + i);
             if (prop_this->name_hash == method_hash) {
-                method = prop_this;
+                aMethod = prop_this;
                 goto exit;
             }
         }
@@ -587,10 +595,7 @@ Arg* _obj_getProp(PikaObj* obj, char* name) {
         prop = (NativeProperty*)prop->super;
     }
 exit:
-    if (NULL != class_obj) {
-        obj_deinit_no_del(class_obj);
-    }
-    return method;
+    return aMethod;
 }
 
 Arg* _obj_getMethodArg(PikaObj* obj, char* methodName, Arg* arg_reg) {
@@ -600,7 +605,7 @@ Arg* _obj_getMethodArg(PikaObj* obj, char* methodName, Arg* arg_reg) {
         aMethod = arg_copy_noalloc(aMethod, arg_reg);
         goto exit;
     }
-    aMethod = _obj_getProp(obj, methodName);
+    aMethod = _obj_getPropArg(obj, methodName);
 exit:
     return aMethod;
 }
@@ -848,7 +853,7 @@ static PikaObj* _obj_getObjDirect(PikaObj* self,
     Arg* arg_obj = args_getArg(self->list, name);
     ArgType type = ARG_TYPE_NONE;
     if (NULL == arg_obj) {
-        arg_obj = _obj_getProp(self, name);
+        arg_obj = _obj_getPropArg(self, name);
     }
     if (NULL == arg_obj) {
         return NULL;
@@ -932,6 +937,23 @@ Method methodArg_getPtr(Arg* method_arg) {
     return (Method)method_store->ptr;
 }
 
+Arg* _get_return_arg(PikaObj* locals);
+NativeProperty* methodArg_toProp(Arg* method_arg) {
+    PikaObj* locals = New_TinyObj(NULL);
+    MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
+    Method fMethod = (Method)method_store->ptr;
+    fMethod(NULL, locals->list);
+    Arg* aReturn = _get_return_arg(locals);
+    if (arg_getType(aReturn) == ARG_TYPE_OBJECT_NEW) {
+        arg_setType(aReturn, ARG_TYPE_OBJECT);
+    }
+    PikaObj* obj = arg_getPtr(aReturn);
+    NativeProperty* prop = obj_getProp(obj);
+    arg_deinit(aReturn);
+    obj_deinit(locals);
+    return prop;
+}
+
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
     MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
     if (NULL != prop->type_list) {
@@ -981,10 +1003,11 @@ char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
 
 char* _find_super_class_name(ByteCodeFrame* bcframe, int32_t pc_start);
 Arg* _builtin_class(char* sRunPath);
-Arg* methodArg_super(Arg* aThis) {
+Arg* methodArg_super(Arg* aThis, NativeProperty** p_prop) {
     Arg* aSuper = NULL;
     PikaObj* builtins = NULL;
     ArgType type = arg_getType(aThis);
+    *p_prop = NULL;
     if (!argType_isConstructor(type)) {
         aSuper = NULL;
         goto __exit;
@@ -1006,7 +1029,10 @@ Arg* methodArg_super(Arg* aThis) {
         }
         goto __exit;
     }
-    if (type == ARG_TYPE_METHOD_CONSTRUCTOR) {
+    if (type == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
+        NativeProperty* prop = methodArg_toProp(aThis);
+        *p_prop = prop;
+        arg_deinit(aThis);
         aSuper = NULL;
         goto __exit;
     }
@@ -2800,17 +2826,17 @@ char* obj_cacheStr(PikaObj* self, char* str) {
 
 void _obj_updateProxyFlag(PikaObj* self) {
     if (!obj_getFlag(self, OBJ_FLAG_PROXY_GETATTRIBUTE)) {
-        if (NULL != _obj_getProp(self, "__getattribute__")) {
+        if (NULL != _obj_getPropArg(self, "__getattribute__")) {
             obj_setFlag(self, OBJ_FLAG_PROXY_GETATTRIBUTE);
         }
     }
     if (!obj_getFlag(self, OBJ_FLAG_PROXY_GETATTR)) {
-        if (NULL != _obj_getProp(self, "__getattr__")) {
+        if (NULL != _obj_getPropArg(self, "__getattr__")) {
             obj_setFlag(self, OBJ_FLAG_PROXY_GETATTR);
         }
     }
     if (!obj_getFlag(self, OBJ_FLAG_PROXY_SETATTR)) {
-        if (NULL != _obj_getProp(self, "__setattr__")) {
+        if (NULL != _obj_getPropArg(self, "__setattr__")) {
             obj_setFlag(self, OBJ_FLAG_PROXY_SETATTR);
         }
     }
@@ -3504,16 +3530,37 @@ __exit:
     return result;
 }
 
-pika_bool _isinstance(Arg* object, Arg* classinfo) {
+pika_bool _isinstance(Arg* aObj, Arg* classinfo) {
     pika_bool res = pika_false;
     Arg* aObjType = NULL;
-    aObjType = _type(object);
+    aObjType = _type(aObj);
+    NativeProperty* objProp = NULL;
     while (1) {
         if (arg_getPtr(aObjType) == arg_getPtr(classinfo)) {
             res = pika_true;
             goto __exit;
         }
-        aObjType = methodArg_super(aObjType);
+        aObjType = methodArg_super(aObjType, &objProp);
+        if (NULL != objProp) {
+            if (!(arg_getType(classinfo) ==
+                  ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR)) {
+                res = pika_false;
+                goto __exit;
+            }
+            NativeProperty* classProp = NULL;
+            methodArg_super(arg_copy(classinfo), &classProp);
+            while (1) {
+                if (objProp == classProp) {
+                    res = pika_true;
+                    goto __exit;
+                }
+                if (objProp->super == NULL) {
+                    res = pika_false;
+                    goto __exit;
+                }
+                objProp = (NativeProperty*)objProp->super;
+            }
+        }
         if (NULL == aObjType) {
             res = pika_false;
             goto __exit;

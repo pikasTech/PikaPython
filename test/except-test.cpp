@@ -207,6 +207,10 @@ TEST_RUN_SINGLE_FILE(except,
                      try_while_return,
                      "test/python/except/try_while_return.py");
 
+TEST_RUN_SINGLE_FILE(except,
+                     isinstance,
+                     "test/python/except/except_isinstance.py");
+
 #endif
 
 TEST_END

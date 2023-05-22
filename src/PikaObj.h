@@ -321,7 +321,7 @@ char* methodArg_getDec(Arg* method_arg);
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size);
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size);
 int methodArg_setHostObj(Arg* method_arg, PikaObj* host_obj);
-Arg* methodArg_super(Arg* method_arg);
+Arg* methodArg_super(Arg* aThis, NativeProperty** p_prop);
 PikaObj* methodArg_getHostObj(Arg* method_arg);
 ByteCodeFrame* methodArg_getBytecodeFrame(Arg* method_arg);
 Method methodArg_getPtr(Arg* method_arg);
@@ -669,7 +669,7 @@ void _obj_updateProxyFlag(PikaObj* self);
     obj_setPtr((_self), "@p", (void*)&pika_class(_method)); \
     _obj_updateProxyFlag((_self))
 
-Arg* _obj_getProp(PikaObj* obj, char* name);
+Arg* _obj_getPropArg(PikaObj* obj, char* name);
 Arg* __eventListener_runEvent_dataInt(PikaEventListener* lisener,
                                       uint32_t eventId,
                                       int eventSignal);
@@ -735,7 +735,7 @@ int pika_GIL_EXIT(void);
 int pika_GIL_ENTER(void);
 
 /* builtins */
-PikaObj *New_builtins(Args *args);
+PikaObj* New_builtins(Args* args);
 
 #endif
 #ifdef __cplusplus

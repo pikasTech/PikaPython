@@ -998,7 +998,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
 
     /* find res in host prop */
     if (NULL == aRes) {
-        aRes = _obj_getProp(oHost, arg_name);
+        aRes = _obj_getPropArg(oHost, arg_name);
     }
 
     /* find res in globals */
@@ -1009,7 +1009,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
 
         /* find res in globals prop */
         if (NULL == aRes) {
-            aRes = _obj_getProp(vm->globals, arg_name);
+            aRes = _obj_getPropArg(vm->globals, arg_name);
         }
 
         /* find res in builtins */
@@ -1019,7 +1019,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
         }
 
         if (NULL == aRes) {
-            aRes = _obj_getProp(oBuiltins, arg_name);
+            aRes = _obj_getPropArg(oBuiltins, arg_name);
         }
     }
 
