@@ -981,25 +981,41 @@ char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
 
 char* _find_super_class_name(ByteCodeFrame* bcframe, int32_t pc_start);
 Arg* _builtin_class(char* sRunPath);
-Arg* methodArg_super(Arg* method_arg) {
+Arg* methodArg_super(Arg* aThis) {
     Arg* aSuper = NULL;
-    if (!arg_isConstructor(method_arg)) {
-        return NULL;
+    PikaObj* builtins = NULL;
+    ArgType type = arg_getType(aThis);
+    if (!argType_isConstructor(type)) {
+        aSuper = NULL;
+        goto __exit;
     }
-    MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
-    ByteCodeFrame* bcframe = method_store->bytecode_frame;
-    int32_t pc = method_store->ptr - bcframe->instruct_array.content_start;
-    char* sSuper = _find_super_class_name(bcframe, pc);
-    aSuper = _builtin_class(sSuper);
-    if (NULL != aSuper) {
-        arg_deinit(method_arg);
-        arg_deinit(aSuper);
-        return NULL;
+    if (type == ARG_TYPE_METHOD_CONSTRUCTOR) {
+        builtins = obj_getBuiltins();
+        MethodProp* method_store = (MethodProp*)arg_getContent(aThis);
+        ByteCodeFrame* bcframe = method_store->bytecode_frame;
+        int32_t pc = method_store->ptr - bcframe->instruct_array.content_start;
+        char* sSuper = _find_super_class_name(bcframe, pc);
+        /* map TinyObj to object */
+        if (strEqu(sSuper, "TinyObj")) {
+            sSuper = "object";
+        }
+        PikaObj* context = method_store->def_context;
+        aSuper = obj_getMethodArgWithFullPath(context, sSuper);
+        if (NULL == aSuper) {
+            aSuper = obj_getMethodArgWithFullPath(builtins, sSuper);
+        }
+        goto __exit;
     }
-    PikaObj* context = method_store->def_context;
-    aSuper = obj_getMethodArgWithFullPath(context, sSuper);
+    if (type == ARG_TYPE_METHOD_CONSTRUCTOR) {
+        aSuper = NULL;
+        goto __exit;
+    }
+__exit:
+    if (NULL != builtins) {
+        obj_deinit(builtins);
+    }
     if (NULL != aSuper) {
-        arg_deinit(method_arg);
+        arg_deinit(aThis);
     }
     return aSuper;
 }

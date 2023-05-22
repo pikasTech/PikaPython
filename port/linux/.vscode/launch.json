@@ -24,7 +24,7 @@
                 // "--gtest_filter=lua.eval"
                 // "--gtest_filter=eventloop.once1"
                 // "--gtest_filter=parser.fn_fn"
-                // "--gtest_filter=builtin.isinstance"
+                "--gtest_filter=builtin.isinstance"
                 // "--gtest_filter=VM.run_def_add"
                 // "--gtest_filter=parser.slice_fn"
             ],

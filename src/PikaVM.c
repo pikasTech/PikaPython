@@ -1828,14 +1828,11 @@ static char* _find_self_name(VMState* vm) {
 }
 #endif
 
+PikaObj* New_builtins_object(Args* args);
 Arg* _builtin_class(char* sRunPath) {
     /* return tiny obj */
     if (strEqu(sRunPath, "TinyObj")) {
-        return arg_newMetaObj(New_TinyObj);
-    }
-
-    if (strEqu(sRunPath, "object")) {
-        return arg_newMetaObj(New_TinyObj);
+        return arg_newMetaObj(New_builtins_object);
     }
 
     return NULL;
@@ -2936,9 +2933,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
 #if !PIKA_NANO_ENABLE
         if (argType_isObject(op.t1) && argType_isObject(op.t2)) {
             if (arg_getPtr(op.a1) == arg_getPtr(op.a2)) {
-                op.res = arg_setInt(op.res, "", 1);
+                op.res = arg_setBool(op.res, "", pika_true);
             } else {
-                op.res = arg_setInt(op.res, "", 0);
+                op.res = arg_setBool(op.res, "", pika_false);
             }
             goto exit;
         }
