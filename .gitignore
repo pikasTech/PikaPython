@@ -65,4 +65,10 @@ test/sysObj-test.cpp
 test/thread-test.cpp
 tools/pikaCompiler/cross-build.sh
 tools/pikaByteCodeGen/cross-win.sh
-tools/pikaByteCodeGen/CrossCompile.cmake#</lab>
+tools/pikaByteCodeGen/CrossCompile.cmake
+tools/pikaPackageManager/clean.sh
+tools/pikaPackageManager/go.mod
+tools/pikaPackageManager/go.sum
+tools/pikaPackageManager/main.go
+tools/pikaPackageManager/make.sh
+tools/pikaPackageManager/requestment.txt#</lab>
