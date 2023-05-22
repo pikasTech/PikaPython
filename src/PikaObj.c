@@ -939,6 +939,7 @@ Method methodArg_getPtr(Arg* method_arg) {
 
 Arg* _get_return_arg(PikaObj* locals);
 NativeProperty* methodArg_toProp(Arg* method_arg) {
+    pika_assert(arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR);
     PikaObj* locals = New_TinyObj(NULL);
     MethodProp* method_store = (MethodProp*)arg_getContent(method_arg);
     Method fMethod = (Method)method_store->ptr;
@@ -3547,8 +3548,7 @@ pika_bool _isinstance(Arg* aObj, Arg* classinfo) {
                 res = pika_false;
                 goto __exit;
             }
-            NativeProperty* classProp = NULL;
-            methodArg_super(arg_copy(classinfo), &classProp);
+            NativeProperty* classProp = methodArg_toProp(classinfo);
             while (1) {
                 if (objProp == classProp) {
                     res = pika_true;

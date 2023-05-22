@@ -190,7 +190,7 @@ class object:
     pass
 
 
-class BaseException(object):
+class BaseException:
     pass
 
 
