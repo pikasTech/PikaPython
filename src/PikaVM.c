@@ -931,6 +931,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
     char* arg_path = data;
     char* arg_name = strPointToLastToken(arg_path, '.');
     pika_bool is_temp = pika_false;
+    PikaObj* oBuiltins = NULL;
 
     switch (data[0]) {
         case 'T':
@@ -960,14 +961,14 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
         /* find host from stack */
         Arg* host_arg = stack_popArg_alloc(&(vm->stack));
         if (NULL == host_arg) {
-            goto exit;
+            goto __exit;
         }
         if (arg_isObject(host_arg)) {
             oHost = arg_getPtr(host_arg);
             aRes = arg_copy_noalloc(obj_getArg(oHost, arg_path + 1), aRetReg);
         }
         arg_deinit(host_arg);
-        goto exit;
+        goto __exit;
     }
 
     /* find in local list first */
@@ -982,7 +983,7 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
 
     /* error cannot found host_object */
     if (NULL == oHost) {
-        goto exit;
+        goto __exit;
     }
 
     /* proxy */
@@ -1010,13 +1011,26 @@ static Arg* VM_instruction_handler_REF(PikaObj* self,
         if (NULL == aRes) {
             aRes = _obj_getProp(vm->globals, arg_name);
         }
+
+        /* find res in builtins */
+        if (NULL == aRes) {
+            oBuiltins = obj_getBuiltins();
+            aRes = args_getArg(oBuiltins->list, arg_name);
+        }
+
+        if (NULL == aRes) {
+            aRes = _obj_getProp(oBuiltins, arg_name);
+        }
     }
 
     /* proxy */
     if (NULL == aRes) {
         aRes = _proxy_getattr(oHost, arg_name);
     }
-exit:
+__exit:
+    if (NULL != oBuiltins) {
+        obj_deinit(oBuiltins);
+    }
     if (NULL == aRes) {
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         pika_platform_printf("NameError: name '%s' is not defined\r\n",
@@ -1845,6 +1859,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     pika_bool bSkipInit = pika_false;
     char* sSysOut;
     int iNumUsed = 0;
+    PikaObj* oBuiltin = NULL;
     arg_newReg(arg_reg1, 32);
     RunState tSubRunState = {.try_state = vm->run_state->try_state,
                              .try_result = TRY_RESULT_NONE};
@@ -1867,11 +1882,11 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         if (VMState_getInputArgNum(vm) == 1) {
             /* return arg directly */
             aReturn = stack_popArg(&(vm->stack), aReturnRegistor);
-            goto exit;
+            goto __exit;
         }
         /* create a tuple */
         aReturn = _vm_create_list_or_tuple(self, vm, pika_false);
-        goto exit;
+        goto __exit;
     }
 
 #if !PIKA_NANO_ENABLE
@@ -1889,7 +1904,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     aReturn = _builtin_class(sRunPath);
 
     if (NULL != aReturn) {
-        goto exit;
+        goto __exit;
     }
 
     /* get method host obj from reg */
@@ -1953,7 +1968,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         /* error, not found object */
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         pika_platform_printf("Error: method '%s' no found.\r\n", sRunPath);
-        goto exit;
+        goto __exit;
     }
 
     pika_assert(obj_checkAlive(oMethodHost));
@@ -1977,16 +1992,24 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     }
 
     if (sArgName == sRunPath) {
-        /* get method in locals */
+        /* find method in locals */
         if (NULL == aMethod) {
             aMethod = obj_getMethodArg_noalloc(vm->locals, sArgName, &arg_reg1);
         }
-        /* get method in global */
+        /* find method in global */
         if (NULL == aMethod) {
             aMethod =
                 obj_getMethodArg_noalloc(vm->globals, sArgName, &arg_reg1);
             if (aMethod != NULL) {
                 oThis = vm->globals;
+            }
+        }
+        /* find method in builtin */
+        if (NULL == aMethod) {
+            oBuiltin = obj_getBuiltins();
+            aMethod = obj_getMethodArg_noalloc(oBuiltin, sArgName, &arg_reg1);
+            if (aMethod != NULL) {
+                oThis = oBuiltin;
             }
         }
     }
@@ -2010,7 +2033,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         pika_platform_printf("NameError: name '%s' is not defined\r\n",
                              sRunPath);
-        goto exit;
+        goto __exit;
     }
 
     /* assert methodd type */
@@ -2019,7 +2042,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         VMState_setErrorCode(vm, PIKA_RES_ERR_ARG_NO_FOUND);
         pika_platform_printf("TypeError: '%s' object is not callable\r\n",
                              sRunPath);
-        goto exit;
+        goto __exit;
     }
 
     /* create sub local scope */
@@ -2031,7 +2054,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
 
     /* load args failed */
     if (vm->error_code != 0) {
-        goto exit;
+        goto __exit;
     }
 
     /* run method arg */
@@ -2096,8 +2119,8 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         VMState_setErrorCode(vm, PIKA_RES_ERR_RUNTIME_ERROR);
     }
 
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     if (NULL != aMethod) {
         arg_deinit(aMethod);
     }
@@ -2106,6 +2129,9 @@ exit:
         pika_assert(obj_getFlag(oSublocals, OBJ_FLAG_GC_ROOT));
 #endif
         obj_deinit(oSublocals);
+    }
+    if (NULL != oBuiltin) {
+        obj_deinit(oBuiltin);
     }
     if (NULL != aStack && aMethod != aStack) {
         arg_deinit(aStack);

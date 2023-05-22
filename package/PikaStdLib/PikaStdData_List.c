@@ -25,7 +25,7 @@ void PikaStdData_List___init__(PikaObj* self) {
     __vm_List___init__(self);
 }
 
-char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg);
+char* builtins_str(PikaObj* self, Arg* arg);
 char* PikaStdData_List___str__(PikaObj* self) {
     Arg* str_arg = arg_newStr("[");
     PikaList* list = obj_getPtr(self, "list");
@@ -39,7 +39,7 @@ char* PikaStdData_List___str__(PikaObj* self) {
         if (i != 0) {
             str_arg = arg_strAppend(str_arg, ", ");
         }
-        char* item_str = PikaStdLib_SysObj_str(self, item);
+        char* item_str = builtins_str(self, item);
         if (arg_getType(item) == ARG_TYPE_STRING) {
             str_arg = arg_strAppend(str_arg, "'");
         }

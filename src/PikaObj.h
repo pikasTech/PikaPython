@@ -224,6 +224,7 @@ PIKA_RES obj_setArg_noCopy(PikaObj* self, char* argPath, Arg* arg);
 PIKA_RES obj_setBytes(PikaObj* self, char* argPath, uint8_t* src, size_t size);
 
 void* obj_getPtr(PikaObj* self, char* argPath);
+PikaObj* obj_getBuiltins(void);
 pika_float obj_getFloat(PikaObj* self, char* argPath);
 char* obj_getStr(PikaObj* self, char* argPath);
 int64_t obj_getInt(PikaObj* self, char* argPath);
@@ -576,7 +577,7 @@ Arg* arg_toStrArg(Arg* arg);
 
 /* [example]
 const MethodProp floatMethod = {
-    .ptr = (void*)PikaStdLib_SysObj_floatMethod,
+    .ptr = (void*)builtins_floatMethod,
     .bytecode_frame = NULL,
     .def_context = NULL,
     .declareation = "float(arg)",

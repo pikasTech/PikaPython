@@ -101,7 +101,7 @@ Arg* PikaStdData_dict_keys___next__(PikaObj* self) {
     return res;
 }
 
-char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg);
+char* builtins_str(PikaObj* self, Arg* arg);
 char* PikaStdData_dict_keys___str__(PikaObj* self) {
     Arg* str_arg = arg_newStr("dict_keys([");
     PikaObj* dictptr = obj_getPtr(self, "dictptr");
@@ -116,7 +116,7 @@ char* PikaStdData_dict_keys___str__(PikaObj* self) {
         if (i != 0) {
             str_arg = arg_strAppend(str_arg, ", ");
         }
-        char* item_str = PikaStdLib_SysObj_str(self, item);
+        char* item_str = builtins_str(self, item);
         if (arg_getType(item) == ARG_TYPE_STRING) {
             str_arg = arg_strAppend(str_arg, "'");
         }
@@ -151,13 +151,13 @@ char* PikaStdData_Dict___str__(PikaObj* self) {
         if (i != 0) {
             str_arg = arg_strAppend(str_arg, ", ");
         }
-        char* key_str = PikaStdLib_SysObj_str(self, item_key);
+        char* key_str = builtins_str(self, item_key);
         str_arg = arg_strAppend(str_arg, "'");
         str_arg = arg_strAppend(str_arg, key_str);
         str_arg = arg_strAppend(str_arg, "'");
         str_arg = arg_strAppend(str_arg, ": ");
 
-        char* val_str = PikaStdLib_SysObj_str(self, item_val);
+        char* val_str = builtins_str(self, item_val);
         if (arg_getType(item_val) == ARG_TYPE_STRING) {
             str_arg = arg_strAppend(str_arg, "'");
         }
@@ -248,7 +248,7 @@ char* PikaStdData_dict_items___str__(PikaObj* self) {
         if (i != 0) {
             str_arg = arg_strAppend(str_arg, ", ");
         }
-        char* item_str = PikaStdLib_SysObj_str(self, item);
+        char* item_str = builtins_str(self, item);
         str_arg = arg_strAppend(str_arg, item_str);
         i++;
         arg_deinit(item);

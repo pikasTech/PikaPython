@@ -50,7 +50,7 @@ void PikaStdData_Tuple___del__(PikaObj* self) {
     args_deinit(list);
 }
 
-char* PikaStdLib_SysObj_str(PikaObj* self, Arg* arg);
+char* builtins_str(PikaObj* self, Arg* arg);
 char* PikaStdData_Tuple___str__(PikaObj* self) {
     Arg* str_arg = arg_newStr("(");
     PikaList* list = obj_getPtr(self, "list");
@@ -68,7 +68,7 @@ char* PikaStdData_Tuple___str__(PikaObj* self) {
         if (i != 0) {
             str_arg = arg_strAppend(str_arg, ", ");
         }
-        char* item_str = PikaStdLib_SysObj_str(self, item);
+        char* item_str = builtins_str(self, item);
         if (arg_getType(item) == ARG_TYPE_STRING) {
             str_arg = arg_strAppend(str_arg, "'");
         }

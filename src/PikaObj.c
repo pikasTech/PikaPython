@@ -2815,10 +2815,14 @@ void builtins_remove(PikaObj* self, char* argPath) {
     }
 }
 
-Arg* _type(PikaObj* self, Arg* arg);
-
+Arg* _type(Arg* arg);
 Arg* builtins_type(PikaObj* self, Arg* arg) {
-    return _type(self, arg);
+    if (NULL == arg) {
+        obj_setSysOut(self, "[error] type: arg no found.");
+        obj_setErrorCode(self, 1);
+        return NULL;
+    }
+    return _type(arg);
 }
 
 pika_float builtins_float(PikaObj* self, Arg* arg) {
@@ -2917,13 +2921,13 @@ char* builtins_str(PikaObj* self, Arg* arg) {
     return str;
 }
 
-PikaObj* New_PikaStdLib_RangeObj(Args* args);
+PikaObj* New_builtins_RangeObj(Args* args);
 Arg* builtins_iter(PikaObj* self, Arg* arg) {
     /* object */
     pika_bool bIsTemp = pika_false;
     PikaObj* oArg = _arg_to_obj(arg, &bIsTemp);
     NewFun _clsptr = (NewFun)oArg->constructor;
-    if (_clsptr == New_PikaStdLib_RangeObj) {
+    if (_clsptr == New_builtins_RangeObj) {
         /* found RangeObj, return directly */
         return arg_copy(arg);
     }
@@ -2948,7 +2952,7 @@ Arg* builtins_iter(PikaObj* self, Arg* arg) {
 
 Arg* builtins_range(PikaObj* self, PikaTuple* ax) {
     /* set template arg to create rangeObj */
-    Arg* aRangeObj = arg_newDirectObj(New_PikaStdLib_RangeObj);
+    Arg* aRangeObj = arg_newDirectObj(New_builtins_RangeObj);
     PikaObj* oRangeObj = arg_getPtr(aRangeObj);
     RangeData tRangeData = {0};
     if (pikaTuple_getSize(ax) == 1) {
@@ -3387,80 +3391,107 @@ static enum shellCTRL __obj_shellLineHandler_input(PikaObj* self,
     return SHELL_CTRL_EXIT;
 }
 
-Arg* _type(PikaObj* self, Arg* arg) {
-    if (NULL == arg) {
-        obj_setSysOut(self, "[error] type: arg no found.");
-        obj_setErrorCode(self, 1);
-        return arg_newNone();
-    }
+Arg* _type(Arg* arg) {
+    Arg* result;
+    PikaObj* oBuiltins = NULL;
+
     ArgType type = arg_getType(arg);
+    oBuiltins = obj_getBuiltins();
+
     if (ARG_TYPE_INT == type) {
-        return arg_copy(obj_getMethodArgWithFullPath(self, "int"));
+        result = arg_copy(obj_getMethodArgWithFullPath(oBuiltins, "int"));
+        goto __exit;
     }
+
     if (ARG_TYPE_FLOAT == type) {
-        return arg_copy(obj_getMethodArgWithFullPath(self, "float"));
+        result = arg_copy(obj_getMethodArgWithFullPath(oBuiltins, "float"));
+        goto __exit;
     }
+
     if (ARG_TYPE_STRING == type) {
-        return arg_copy(obj_getMethodArgWithFullPath(self, "str"));
+        result = arg_copy(obj_getMethodArgWithFullPath(oBuiltins, "str"));
+        goto __exit;
     }
+
     if (ARG_TYPE_BOOL == type) {
-        return arg_copy(obj_getMethodArgWithFullPath(self, "bool"));
+        result = arg_copy(obj_getMethodArgWithFullPath(oBuiltins, "bool"));
+        goto __exit;
     }
+
+    if (ARG_TYPE_BYTES == type) {
+        result = arg_copy(obj_getMethodArgWithFullPath(oBuiltins, "bytes"));
+        goto __exit;
+    }
+
     if (argType_isObject(type)) {
         PikaObj* obj = arg_getPtr(arg);
         NewFun clsptr = obj_getClass(obj);
         PikaObj* New_PikaStdData_List(Args * args);
-        /* list */
+
         if (clsptr == New_PikaStdData_List) {
-            return arg_copy(obj_getMethodArgWithFullPath(self, "list"));
+            result = arg_copy(obj_getMethodArgWithFullPath(oBuiltins, "list"));
+            goto __exit;
         }
-        /* dict */
+
         PikaObj* New_PikaStdData_Dict(Args * args);
+
         if (clsptr == New_PikaStdData_Dict) {
-            return arg_copy(obj_getMethodArgWithFullPath(self, "dict"));
+            result = arg_copy(obj_getMethodArgWithFullPath(oBuiltins, "dict"));
+            goto __exit;
         }
-        /* tuple */
+
         PikaObj* New_PikaStdData_Tuple(Args * args);
+
         if (clsptr == New_PikaStdData_Tuple) {
-            return arg_copy(obj_getMethodArgWithFullPath(self, "tuple"));
+            result = arg_copy(obj_getMethodArgWithFullPath(oBuiltins, "tuple"));
+            goto __exit;
         }
+
 #if PIKA_TYPE_FULL_FEATURE_ENABLE
         Arg* aMethod = obj_getArg(obj, "__class__");
+
         if (NULL != aMethod) {
-            return arg_copy(aMethod);
+            result = arg_copy(aMethod);
+            goto __exit;
         }
 #endif
-        return arg_newStr("<class 'object'>");
-    }
-    if (ARG_TYPE_OBJECT_META == type) {
-        return arg_newStr("<class 'meta object'>");
-    }
-    if (ARG_TYPE_BYTES == type) {
-        return arg_newStr("<class 'bytes'>");
-    }
-    if (ARG_TYPE_METHOD_OBJECT == type) {
-        return arg_newStr("<class 'method'>");
-    }
-    if (ARG_TYPE_METHOD_STATIC == type) {
-        return arg_newStr("<class 'function'>");
-    }
-    if (ARG_TYPE_NONE == type) {
-        return arg_newStr("<class 'NoneType'>");
-    }
-    return arg_newStr("<class 'buitin_function_or_method'>");
-}
-
-pika_bool _isinstance(PikaObj* self, Arg* object, Arg* classinfo) {
-    pika_bool res = pika_false;
-    Arg* aObjType = NULL;
-    if (!argType_isConstructor(arg_getType(classinfo)) &&
-        !argType_isCallable(arg_getType(classinfo))) {
-        obj_setErrorCode(self, 1);
-        __platform_printf("TypeError: isinstance() arg 2 must be a type\r\n");
-        res = pika_false;
+        result = arg_newStr("<class 'object'>");
         goto __exit;
     }
-    aObjType = _type(self, object);
+
+    if (ARG_TYPE_OBJECT_META == type) {
+        result = arg_newStr("<class 'meta object'>");
+        goto __exit;
+    }
+
+    if (ARG_TYPE_METHOD_OBJECT == type) {
+        result = arg_newStr("<class 'method'>");
+        goto __exit;
+    }
+
+    if (ARG_TYPE_METHOD_STATIC == type) {
+        result = arg_newStr("<class 'function'>");
+        goto __exit;
+    }
+
+    if (ARG_TYPE_NONE == type) {
+        result = arg_newStr("<class 'NoneType'>");
+        goto __exit;
+    }
+
+    result = arg_newStr("<class 'buitin_function_or_method'>");
+
+__exit:
+    if (NULL != oBuiltins) {
+        obj_deinit(oBuiltins);
+    }
+    return result;
+}
+
+pika_bool _isinstance(Arg* object, Arg* classinfo) {
+    pika_bool res = pika_false;
+    Arg* aObjType = NULL;
+    aObjType = _type(object);
     while (1) {
         if (arg_getPtr(aObjType) == arg_getPtr(classinfo)) {
             res = pika_true;
@@ -3624,5 +3655,33 @@ Arg* builtins_min(PikaObj* self, PikaTuple* val) {
 }
 
 pika_bool builtins_isinstance(PikaObj* self, Arg* object, Arg* classinfo) {
-    return _isinstance(self, object, classinfo);
+    if (!argType_isConstructor(arg_getType(classinfo)) &&
+        !argType_isCallable(arg_getType(classinfo))) {
+        obj_setErrorCode(self, 1);
+        __platform_printf("TypeError: isinstance() arg 2 must be a type\r\n");
+        return pika_false;
+    }
+    return _isinstance(object, classinfo);
+}
+
+Arg* builtins_StringObj___next__(PikaObj* self) {
+    return arg_newNone();
+}
+
+Arg* builtins_RangeObj___next__(PikaObj* self) {
+    RangeData* _ = (RangeData*)args_getStruct(self->list, "_");
+    int end = _->end;
+    int step = _->step;
+    /* exit */
+    if (_->i >= end) {
+        return arg_newNone();
+    }
+    Arg* res = arg_newInt(_->i);
+    _->i += step;
+    return res;
+}
+
+PikaObj* New_builtins(Args* args);
+PikaObj* obj_getBuiltins(void) {
+    return newNormalObj(New_builtins);
 }
