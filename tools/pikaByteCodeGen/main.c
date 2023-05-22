@@ -30,7 +30,6 @@ void help(char* argv0) {
 
 /* fake implement */
 PikaObj* __pikaMain;
-void New_PikaStdLib_SysObj(void) {}
 void New_PikaStdData_List(void) {}
 void New_PikaStdData_Dict(void) {}
 void New_PikaStdData_Tuple(void) {}
@@ -42,7 +41,9 @@ void PikaStdData_List___init__(PikaObj *self){}
 void PikaStdData_List_append(PikaObj *self, Arg* arg){}
 void PikaStdData_Dict___init__(PikaObj* self){}
 void PikaStdData_Dict_set(PikaObj* self, char* key, Arg* val){}
-PikaObj* New_PikaStdLib_RangeObj(Args* args){return NULL;}
+PikaObj* New_PikaStdLib_SysObj(Args* args) {return NULL;};
+PikaObj* New_builtins(Args* args) {return NULL;};
+PikaObj* New_builtins_RangeObj(Args* args){return NULL;}
 PikaObj* New_PikaStdData_FILEIO(Args* args){return NULL;}
 char* string_slice(Args* outBuffs, char* str, int start, int end) {return NULL;}
 int PikaStdData_FILEIO_init(PikaObj* self, char* path, char* mode){return 0;}
