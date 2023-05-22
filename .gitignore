@@ -63,4 +63,6 @@ test/stack-test.cpp
 test/strs-test.cpp
 test/sysObj-test.cpp
 test/thread-test.cpp
-tools/pikaCompiler/cross-build.sh#</lab>
+tools/pikaCompiler/cross-build.sh
+tools/pikaByteCodeGen/cross-win.sh
+tools/pikaByteCodeGen/CrossCompile.cmake#</lab>
