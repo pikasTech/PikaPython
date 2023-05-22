@@ -43,3 +43,24 @@ port/linux/task.bin
 port/linux/pika_bytecode.bin
 port/linux/config/pika_config.h
 
+#<lab>
+test/VM-test.cpp
+test/arg-test.cpp
+test/args-test.cpp
+test/builtin-test.cpp
+test/class-test.cpp
+test/closure-test.cpp
+test/cmodule-test.cpp
+test/compile-test.cpp
+test/doc-test.cpp
+test/event-test.cpp
+test/except-test.cpp
+test/gc-test.cpp
+test/lua-test.cpp
+test/parse-test.cpp
+test/pool-test.cpp
+test/stack-test.cpp
+test/strs-test.cpp
+test/sysObj-test.cpp
+test/thread-test.cpp
+#</lab>
