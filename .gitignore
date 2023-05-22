@@ -63,4 +63,4 @@ test/stack-test.cpp
 test/strs-test.cpp
 test/sysObj-test.cpp
 test/thread-test.cpp
-#</lab>
+tools/pikaCompiler/cross-build.sh#</lab>
