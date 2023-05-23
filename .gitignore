@@ -81,7 +81,7 @@ tools/pikaCompiler/src/decorator.rs
 tools/pikaCompiler/src/class_info.rs
 tools/pikaCompiler/src/py_type.rs
 tools/pikaCompiler/src/method_info.rs
-tools/pikaCompiler/build.sh
+tools/pikaCompiler/do_build.sh
 tools/pikaCompiler/Cargo.lock
 tools/pikaCompiler/Cargo.toml
 tools/pikaCompiler/cbindgen.toml
