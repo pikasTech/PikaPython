@@ -533,6 +533,9 @@ static int _obj_getLen(PikaObj* self) {
         0x00, 0x5f, 0x5f, 0x6c, 0x65, 0x6e, 0x5f, 0x5f, 0x00,
         0x40, 0x6c, 0x00, /* const pool */
     };
+    if (!obj_isMethodExist(self, "__len__")) {
+        return -1;
+    }
     pikaVM_runByteCode(self, bytes);
     int len = obj_getInt(self, "@l");
     obj_removeArg(self, "@l");
@@ -609,15 +612,17 @@ Arg* _vm_get(VMState* vm, PikaObj* self, Arg* aKey, Arg* aObj) {
         iIndex = arg_getInt(aKey);
     }
 
-    if (iIndex < 0) {
-        iIndex += iLen;
-        arg_setInt(aKey, "", iIndex);
-    }
+    if (iLen != -1) {
+        if (iIndex < 0) {
+            iIndex += iLen;
+            arg_setInt(aKey, "", iIndex);
+        }
 
-    if (iIndex >= iLen) {
-        VMState_setErrorCode(vm, PIKA_RES_ERR_OUT_OF_RANGE);
-        pika_platform_printf("IndexError: index out of range\r\n");
-        return arg_newNone();
+        if (iIndex >= iLen) {
+            VMState_setErrorCode(vm, PIKA_RES_ERR_OUT_OF_RANGE);
+            pika_platform_printf("IndexError: index out of range\r\n");
+            return arg_newNone();
+        }
     }
 
     if (ARG_TYPE_STRING == eType) {

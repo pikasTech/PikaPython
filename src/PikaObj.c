@@ -1235,7 +1235,7 @@ exit:
     return err;
 }
 
-int32_t obj_isArgExist(PikaObj* self, char* argPath) {
+pika_bool obj_isArgExist(PikaObj* self, char* argPath) {
     if (NULL == argPath) {
         return 0;
     }
@@ -1257,6 +1257,15 @@ int32_t obj_isArgExist(PikaObj* self, char* argPath) {
 
 exit:
     return res;
+}
+
+pika_bool obj_isMethodExist(PikaObj* self, char* method) {
+    Arg* arg = obj_getMethodArg(self, method);
+    if (NULL == arg) {
+        return pika_false;
+    }
+    arg_deinit(arg);
+    return pika_true;
 }
 
 VMParameters* obj_run(PikaObj* self, char* cmd) {
