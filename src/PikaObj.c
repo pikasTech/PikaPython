@@ -1243,11 +1243,7 @@ int32_t obj_isArgExist(PikaObj* self, char* argPath) {
     int32_t res = 0;
     char* argName;
     Arg* arg;
-    if (NULL == obj_host) {
-        /* [error] object no found */
-        res = 1;
-        goto exit;
-    }
+    pika_assert(NULL != obj_host);
     argName = strPointToLastToken(argPath, '.');
     arg = args_getArg(obj_host->list, argName);
     if (NULL == arg) {
