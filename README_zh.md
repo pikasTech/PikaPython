@@ -38,10 +38,6 @@ PikaPython 也称 PikaScript、PikaPy。
 
 PikaPython 具有框架式 C 模块开发工具，只要用 Python 写好调用 API ，就能够自动连接到 C 模块，非常方便快捷。不用手动处理任何全局表、宏定义、等等。
 
-所有的工具也是全部开源的，在 tools 目录下。
-
-![image-20220520233540245](document/image/image-20220520233540245.png)
-
 PikaPython 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松地调试 C 模块。
 
 # 最新资讯
