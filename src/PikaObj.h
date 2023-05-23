@@ -280,7 +280,8 @@ int32_t class_defineRunTimeConstructor(PikaObj* self,
                                        ByteCodeFrame* bytecode_frame);
 
 int32_t obj_removeArg(PikaObj* self, char* argPath);
-int32_t obj_isArgExist(PikaObj* self, char* argPath);
+pika_bool obj_isArgExist(PikaObj* self, char* argPath);
+pika_bool obj_isMethodExist(PikaObj* self, char* method);
 PikaObj* obj_newObjFromConstructor(PikaObj* self,
                                    char* name,
                                    NewFun newClassFun);
