@@ -1614,10 +1614,12 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
             shell->stat = PIKA_SHELL_STATE_WAIT_FUNC_KEY;
             ctrl = SHELL_CTRL_CONTINUE;
             goto __exit;
+        } else {
+            shell->stat = PIKA_SHELL_STATE_NORMAL;
         }
-        shell->stat = PIKA_SHELL_STATE_NORMAL;
     }
     if (shell->stat == PIKA_SHELL_STATE_WAIT_FUNC_KEY) {
+        shell->stat = PIKA_SHELL_STATE_NORMAL;
         if (inputChar == PIKA_KEY_LEFT) {
             if (shell->line_curpos) {
                 shell->line_curpos--;
