@@ -83,3 +83,4 @@ assert while_try_except_return_simple() == "Caught an error"
 # assert try_except_return() == "Caught an error: An error occurred"
 # assert try_finally_while_return() == 3
 # assert while_try_finally_return() == 3
+print('PASS')

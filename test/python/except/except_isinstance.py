@@ -47,3 +47,4 @@ assert isinstance(AnotherException(), Exception) == True
 
 assert isinstance(CustomException(), SpecificException) == False
 assert isinstance(CustomException(), AnotherException) == False
+print('PASS')
