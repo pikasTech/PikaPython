@@ -41,7 +41,6 @@ static pika_platform_thread_mutex_t g_pikaGIL = {0};
 volatile VMSignal g_PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
 
                                     .vm_cnt = 0,
-                                    .vm_now = NULL,
 #if PIKA_EVENT_ENABLE
                                     .cq =
                                         {
@@ -3706,10 +3705,6 @@ VMParameters* pikaVM_runByteCode(PikaObj* self, const uint8_t* bytecode) {
                                   &run_state, pika_true);
 }
 
-VMState* pikaVM_getCurrent(void) {
-    return g_PikaVMSignal.vm_now;
-}
-
 Arg* pikaVM_runByteCodeReturn(PikaObj* self,
                               const uint8_t* bytecode,
                               char* returnName) {
@@ -4111,6 +4106,30 @@ void VMState_solveUnusedStack(VMState* vm) {
     }
 }
 
+VMState* VMState_create(VMParameters* locals,
+                        VMParameters* globals,
+                        ByteCodeFrame* bytecode_frame,
+                        int32_t pc,
+                        RunState* run_state) {
+    VMState* vm = (VMState*)pikaMalloc(sizeof(VMState));
+    vm->bytecode_frame = bytecode_frame;
+    vm->locals = locals;
+    vm->globals = globals;
+    vm->pc = pc;
+    vm->run_state = run_state;
+    vm->jmp = 0;
+    vm->loop_deepth = 0;
+    vm->error_code = PIKA_RES_OK;
+    vm->line_error_code = PIKA_RES_OK;
+    vm->try_error_code = PIKA_RES_OK;
+    vm->ins_cnt = 0;
+    vm->in_super = pika_false;
+    vm->super_invoke_deepth = 0;
+    stack_init(&(vm->stack));
+    VMState_initReg(vm);
+    return vm;
+}
+
 static VMParameters* _pikaVM_runByteCodeFrameWithState(
     PikaObj* self,
     VMParameters* locals,
@@ -4122,27 +4141,12 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
     int size = bytecode_frame->instruct_array.size;
     /* locals is the local scope */
 
-    VMState* vm = (VMState*)pikaMalloc(sizeof(VMState));
-    vm->bytecode_frame = bytecode_frame;
-    vm->locals = locals;
-    vm->globals = globals;
-    vm->jmp = 0;
-    vm->pc = pc;
-    vm->loop_deepth = 0;
-    vm->error_code = PIKA_RES_OK;
-    vm->line_error_code = PIKA_RES_OK;
-    vm->try_error_code = PIKA_RES_OK;
-    vm->run_state = run_state;
-    vm->ins_cnt = 0;
-    vm->in_super = pika_false;
-    vm->super_invoke_deepth = 0;
-    stack_init(&(vm->stack));
-    VMState_initReg(vm);
     if (g_PikaVMSignal.vm_cnt == 0) {
         pks_vmSignal_setCtrlClear();
     }
+    VMState* vm =
+        VMState_create(locals, globals, bytecode_frame, pc, run_state);
     g_PikaVMSignal.vm_cnt++;
-    g_PikaVMSignal.vm_now = vm;
     while (vm->pc < size) {
         if (vm->pc == VM_PC_EXIT) {
             break;
@@ -4201,7 +4205,6 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
     VMState_solveUnusedStack(vm);
     stack_deinit(&(vm->stack));
     g_PikaVMSignal.vm_cnt--;
-
     VMParameters* result = locals;
     pikaFree(vm, sizeof(VMState));
     return result;

@@ -151,7 +151,6 @@ typedef struct VMSignal VMSignal;
 struct VMSignal {
     VM_SIGNAL_CTRL signal_ctrl;
     int vm_cnt;
-    VMState* vm_now;
 #if PIKA_EVENT_ENABLE
     EventCQ cq;
     int event_pickup_cnt;
@@ -182,7 +181,6 @@ struct VMInstructionSet {
     uint16_t op_idx_end;
 };
 
-VMState* pikaVM_getCurrent(void);
 VMParameters* pikaVM_run(PikaObj* self, char* pyLine);
 VMParameters* pikaVM_runAsm(PikaObj* self, char* pikaAsm);
 VMParameters* pikaVM_runByteCodeFrame(PikaObj* self,
