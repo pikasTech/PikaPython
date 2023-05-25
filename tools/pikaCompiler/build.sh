@@ -3,6 +3,6 @@ if [ -d "../../../pikalab" ]; then
 fi
 
 if [ ! -d "../../../pikalab" ]; then
-    rm rust-msc-latest-linux
+    rm rust-msc-latest-linux -f
     wget http://pikapython.com/download/rust-msc-latest-linux
 fi
