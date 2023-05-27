@@ -215,13 +215,13 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
     pika_platform_panic_handle();
     return PIKA_RES_ERR_OPERATION_FAILED;
 #else
+    if (arg_getType(eventData) == ARG_TYPE_OBJECT_NEW) {
+        arg_setType(eventData, ARG_TYPE_OBJECT);
+    }
     /* push to event_cq_buff */
     if (_ecq_isFull(&g_PikaVMSignal.cq)) {
         arg_deinit(eventData);
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
-    }
-    if (arg_getType(eventData) == ARG_TYPE_OBJECT_NEW) {
-        arg_setType(eventData, ARG_TYPE_OBJECT);
     }
     if (g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail] != NULL) {
         arg_deinit(g_PikaVMSignal.cq.res[g_PikaVMSignal.cq.tail]);
