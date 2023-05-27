@@ -22,7 +22,8 @@ RUN apt-get install -y \
     curl \
     python3 \
     pip \
-    cloc
+    cloc \
+    wget
 
 RUN git clone --branch v1.6.1 https://gitee.com/mirrors/google-benchmark benchmark && \
         cd benchmark && \
@@ -73,7 +74,6 @@ ADD bashrc /root/.bashrc
 RUN apt-get install -y liblua5.3-dev
 RUN apt-get install -y lcov
 
-RUN apt-get install -y wget
 RUN cd root/pikascript && git remote add github https://github.com/pikastech/pikascript
 RUN apt-get install clangd -y
 RUN apt-get install libmbedtls-dev -y
