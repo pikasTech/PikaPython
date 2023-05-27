@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684869950116,
+  "lastUpdate": 1685157645860,
   "repoUrl": "https://github.com/pikasTech/PikaPython",
   "entries": {
     "Benchmark": [
@@ -97971,6 +97971,66 @@ window.BENCHMARK_DATA = {
             "value": 0.005000552934988225,
             "unit": "ms/iter",
             "extra": "iterations: 220597\ncpu: 0.005 ms\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "randy.scott@lairdconnect.com",
+            "name": "Randy Scott",
+            "username": "randyscott"
+          },
+          "committer": {
+            "email": "88232613+pikasTech@users.noreply.github.com",
+            "name": "Lyon",
+            "username": "pikasTech"
+          },
+          "distinct": true,
+          "id": "e747f7ac1d3a2a6553e59eeaad545d37a2e1a30a",
+          "message": "Fix memory leak in event queue\n\nIf the event queue becomes full and an event needs to be discarded, the VM could leak memory because the arg type was still set to ARG_TYPE_OBJECT_NEW instead of ARG_TYPE_OBJECT.\n\nThis change moves the arg_deinit() until after the arg type is changed.",
+          "timestamp": "2023-05-27T11:00:27+08:00",
+          "tree_id": "83ae276ba551e259de46ae1d7b0234e8a9ad8cf5",
+          "url": "https://github.com/pikasTech/PikaPython/commit/e747f7ac1d3a2a6553e59eeaad545d37a2e1a30a"
+        },
+        "date": 1685157637731,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "Performance Points",
+            "value": 21071.49112728599,
+            "unit": "Point/iter",
+            "extra": "iterations: 1\ncpu: 21071.49112728599 Point\nthreads: 1"
+          },
+          {
+            "name": "for_loop_10000",
+            "value": 20.8659956299781,
+            "unit": "ms/iter",
+            "extra": "iterations: 56\ncpu: 20.852020583649384 ms\nthreads: 1"
+          },
+          {
+            "name": "while_loop_10000",
+            "value": 10.854447880520048,
+            "unit": "ms/iter",
+            "extra": "iterations: 108\ncpu: 10.853428797760941 ms\nthreads: 1"
+          },
+          {
+            "name": "for_print_1000",
+            "value": 10.134994756283184,
+            "unit": "ms/iter",
+            "extra": "iterations: 115\ncpu: 10.133971220427911 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100",
+            "value": 2.37301837983528,
+            "unit": "ms/iter",
+            "extra": "iterations: 495\ncpu: 2.3728743114555275 ms\nthreads: 1"
+          },
+          {
+            "name": "prime_number_100_c",
+            "value": 0.0050016074324064925,
+            "unit": "ms/iter",
+            "extra": "iterations: 234614\ncpu: 0.005 ms\nthreads: 1"
           }
         ]
       }
