@@ -50,8 +50,6 @@ PikaPython 也支持 MDK、iar、RT-studio 等常见 ide 开发，能够轻松�
 
 - [PikaPython项目入选中国开源创新大赛决赛，携手共建国内开源生态](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484762&idx=1&sn=2b3e570bbc7e98874b6773fe8e2678c7&chksm=fdebd233ca9c5b255296db6e9874035577a02b6b26354c4c2a2298696a02ec467149ca91a078&token=2116766907&lang=zh_CN#rd)
 
-- [PikaPython 开源赏金活动：挑战技术，实践成长，共创未来！](https://gitee.com/Lyon1998/pikapython/issues/I67WUQ)
-
 - [轻量级Python解释器PikaPython成功入选开源之夏，探索无限可能！](https://mp.weixin.qq.com/s?__biz=MzU4NzUzMDc1OA==&mid=2247484738&idx=1&sn=7af1c9bb61e6decd5c155924cb7a05f8&chksm=fdebd22bca9c5b3d3f2fbd8742941e6c33e86cbcba88c329b0b9550b54b0291b6f50553d5eea&token=709915806&lang=zh_CN#rd)
 
 - [2022 年 PikaPython 年终总结](https://mp.weixin.qq.com/s/cWtujWF8EuJnuXuVUeWNKw)
