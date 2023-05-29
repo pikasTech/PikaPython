@@ -1,6 +1,4 @@
 #include "PikaStdLib_SysObj.h"
 #include "PikaStdData_FILEIO.h"
-#include "PikaStdLib_RangeObj.h"
-#include "PikaStdLib_StringObj.h"
 #include "PikaVM.h"
 #include "dataStrs.h"

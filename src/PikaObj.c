@@ -556,6 +556,7 @@ Arg* _obj_getPropArg(PikaObj* obj, char* name) {
             break;
         }
         int size = prop->methodGroupCount;
+        pika_assert(size >= 0);
         /* binary search */
         if (size == 0) {
             goto next;
@@ -2867,12 +2868,17 @@ void builtins_remove(PikaObj* self, char* argPath) {
 
 Arg* _type(Arg* arg);
 Arg* builtins_type(PikaObj* self, Arg* arg) {
+#if PIKA_NANO_ENABLE
+    pika_platform_printf("PIKA_NANO_ENABLE is not enable");
+    return NULL;
+#else
     if (NULL == arg) {
         obj_setSysOut(self, "[error] type: arg no found.");
         obj_setErrorCode(self, 1);
         return NULL;
     }
     return _type(arg);
+#endif
 }
 
 pika_float builtins_float(PikaObj* self, Arg* arg) {
@@ -3756,9 +3762,8 @@ PikaObj* obj_getBuiltins(void) {
     return newNormalObj(New_builtins);
 }
 
-
 void builtins_bytearray___init__(PikaObj* self, Arg* bytes) {
-    obj_setArg(self, "raw", bytes);
+    obj_setArg_noCopy(self, "raw", builtins_bytes(self, bytes));
 }
 
 Arg* builtins_bytearray___iter__(PikaObj* self) {

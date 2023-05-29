@@ -1,6 +1,7 @@
 from PikaObj import *
 import builtins
 
+
 class Tuple:
     def __init__(self): ...
 
@@ -140,6 +141,7 @@ class String:
 
 class ByteArray(builtins.bytearray):
     pass
+
 
 class FILEIO:
     def init(self, path: str, mode: str) -> int: ...

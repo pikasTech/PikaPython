@@ -17,13 +17,3 @@ class MemChecker:
 
 class SysObj:
     pass
-
-
-@PIKA_C_MACRO_IF("0")
-class RangeObj:
-    def __next__(self) -> any: ...
-
-
-@PIKA_C_MACRO_IF("0")
-class StringObj:
-    def __next__(self) -> any: ...

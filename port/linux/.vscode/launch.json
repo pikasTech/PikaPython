@@ -24,9 +24,9 @@
                 // "--gtest_filter=lua.eval"
                 // "--gtest_filter=eventloop.once1"
                 // "--gtest_filter=parser.fn_fn"
-                "--gtest_filter=builtin.getitem"
+                // "--gtest_filter=builtin.getitem"
                 // "--gtest_filter=except.isinstance"
-                // "--gtest_filter=VM.run_def_add"
+                // "--gtest_filter=vm.range_1"
                 // "--gtest_filter=parser.slice_fn"
             ],
             "stopAtEntry": false,
