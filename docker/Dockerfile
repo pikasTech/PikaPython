@@ -86,11 +86,4 @@ RUN cd /root && wget https://gitee.com/Lyon1998/pikapython/attach_files/1420660/
     mv frp_0.48.0_linux_amd64/frpc /usr/local/bin/frpc
 
 COPY frpc.ini /etc/frpc.ini
-ARG FRPC_SERVER_ADDR
-ARG FRPC_SERVER_PORT
-ARG FRPC_REMOTE_PORT
-ARG FRPC_TOKEN
-RUN sed -i "s|%FRPC_SERVER_ADDR%|${FRPC_SERVER_ADDR}|" /etc/frpc.ini && \
-    sed -i "s|%FRPC_SERVER_PORT%|${FRPC_SERVER_PORT}|" /etc/frpc.ini && \
-    sed -i "s|%FRPC_REMOTE_PORT%|${FRPC_REMOTE_PORT}|" /etc/frpc.ini && \
-    sed -i "s|%FRPC_TOKEN%|${FRPC_TOKEN}|" /etc/frpc.ini
+COPY frpc.sh /etc/frpc.sh
