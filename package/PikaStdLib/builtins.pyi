@@ -448,3 +448,21 @@ class BytesWarning(Warning):
 
 class ResourceWarning(Warning):
     pass
+
+
+class bytearray:
+    def __init__(self, bytes: any):
+        """ convert a bytes to ByteArray """
+
+    def __iter__(self) -> any:
+        """ support for loop """
+
+    def __next__(self) -> any:
+        """ support for loop """
+
+    def __getitem__(self, __key: int) -> int:
+        """ support [] index """
+
+    def __setitem__(self, __key: int, __val: int): ...
+    def __str__(self) -> str: ...
+    def decode(self) -> str: ...
