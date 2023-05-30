@@ -21,7 +21,7 @@ if [ -n "$frpc_server_port" ]; then
     # 启动frpc
     echo "Starting frpc..."
     docker rm $DOCKER_NAME -f
-    docker run -it --name $DOCKER_NAME \
+    docker run -d --name $DOCKER_NAME \
     --restart always \
     -w /root/pikascript \
     -e FRPC_REMOTE_PORT=$frpc_remote_port \
