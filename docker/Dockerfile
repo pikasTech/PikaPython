@@ -25,6 +25,8 @@ RUN apt-get install -y \
     cloc \
     wget
 
+RUN apt install -y openssh-server
+
 RUN git clone --branch v1.6.1 https://gitee.com/mirrors/google-benchmark benchmark && \
         cd benchmark && \
         git clone --branch release-1.11.0 https://gitee.com/mirrors/googletest && \
@@ -85,5 +87,8 @@ RUN cd /root && wget https://gitee.com/Lyon1998/pikapython/attach_files/1420660/
     tar -xzvf frp.tar.gz && \
     mv frp_0.48.0_linux_amd64/frpc /usr/local/bin/frpc
 
+RUN echo 'root:pikadev' | chpasswd
+
+ADD sshd_config /etc/ssh/sshd_config
 COPY frpc.ini /etc/frpc.ini
 COPY frpc.sh /etc/frpc.sh

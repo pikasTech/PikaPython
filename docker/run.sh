@@ -30,7 +30,6 @@ if [ -n "$frpc_server_port" ]; then
     -e FRPC_TOKEN=$frpc_token \
     pikadev \
     bash /etc/frpc.sh
-    echo "frpc started."
 else
     # 不启动frpc
     echo "frpc_server_port is not set. Skipping frpc startup."

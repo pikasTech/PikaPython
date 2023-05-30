@@ -1,3 +1,4 @@
+service ssh start
 sed -i "s|%FRPC_SERVER_ADDR%|${FRPC_SERVER_ADDR}|" /etc/frpc.ini && \
 sed -i "s|%FRPC_SERVER_PORT%|${FRPC_SERVER_PORT}|" /etc/frpc.ini && \
 sed -i "s|%FRPC_REMOTE_PORT%|${FRPC_REMOTE_PORT}|" /etc/frpc.ini && \
