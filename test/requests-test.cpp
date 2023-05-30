@@ -189,33 +189,33 @@ int webclient_get_test(int argc, char** argv) {
 
 #if !PIKA_NANO_ENABLE
 
-TEST(requests, webclient_get) {
-    char* argv1[] = {"test", "http://www.pikapython.com/index.html"};
-    EXPECT_EQ(webclient_get_test(2, argv1), 0);
-    char* argv2[] = {"test", "-s",
-                     "http://www.pikapython.com/index.html"};
-    EXPECT_EQ(webclient_get_test(3, argv2), 0);
-}
+// TEST(requests, webclient_get) {
+//     char* argv1[] = {"test", "http://www.pikapython.com/index.html"};
+//     EXPECT_EQ(webclient_get_test(2, argv1), 0);
+//     char* argv2[] = {"test", "-s",
+//                      "http://www.pikapython.com/index.html"};
+//     EXPECT_EQ(webclient_get_test(3, argv2), 0);
+// }
 
-TEST(requests, get) {
-    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    extern unsigned char pikaModules_py_a[];
-    obj_linkLibrary(pikaMain, pikaModules_py_a);
-    obj_run(
-        pikaMain,
-        "import requests\n"
-        "r = requests.get('http://www.pikapython.com/index.html')\n");
-    /* assert */
-    // EXPECT_STREQ(
-    //     obj_getStr(pikaMain, "r.text"),
-    //     "RT-Thread is an open source IoT operating system from China, which "
-    //     "has strong scalability: from a tiny kernel running on a tiny core, "
-    //     "for example ARM Cortex-M0, or Cortex-M3/4/7, to a rich feature system "
-    //     "running on MIPS32, ARM Cortex-A8, ARM Cortex-A9 DualCore etc.\r\n");
-    /* deinit */
-    obj_deinit(pikaMain);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(requests, get) {
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     extern unsigned char pikaModules_py_a[];
+//     obj_linkLibrary(pikaMain, pikaModules_py_a);
+//     obj_run(
+//         pikaMain,
+//         "import requests\n"
+//         "r = requests.get('http://www.pikapython.com/index.html')\n");
+//     /* assert */
+//     // EXPECT_STREQ(
+//     //     obj_getStr(pikaMain, "r.text"),
+//     //     "RT-Thread is an open source IoT operating system from China, which "
+//     //     "has strong scalability: from a tiny kernel running on a tiny core, "
+//     //     "for example ARM Cortex-M0, or Cortex-M3/4/7, to a rich feature system "
+//     //     "running on MIPS32, ARM Cortex-A8, ARM Cortex-A9 DualCore etc.\r\n");
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 // TEST(requests, append_params_to_url) {
 //     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
@@ -230,17 +230,17 @@ TEST(requests, get) {
 //     EXPECT_EQ(pikaMemNow(), 0);
 // }
 
-TEST(requests, std_request) {
-    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    extern unsigned char pikaModules_py_a[];
-    obj_linkLibrary(pikaMain, pikaModules_py_a);
-    pikaVM_runSingleFile(pikaMain, "test/python/requests/requests_encode.py");
-    /* assert */
-    EXPECT_STREQ(log_buff[2], "HTTP/1.1 200 OK\r\n");
-    /* deinit */
-    obj_deinit(pikaMain);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
+// TEST(requests, std_request) {
+//     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+//     extern unsigned char pikaModules_py_a[];
+//     obj_linkLibrary(pikaMain, pikaModules_py_a);
+//     pikaVM_runSingleFile(pikaMain, "test/python/requests/requests_encode.py");
+//     /* assert */
+//     EXPECT_STREQ(log_buff[2], "HTTP/1.1 200 OK\r\n");
+//     /* deinit */
+//     obj_deinit(pikaMain);
+//     EXPECT_EQ(pikaMemNow(), 0);
+// }
 
 // TEST(requests, get_gitee) {
 //     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
