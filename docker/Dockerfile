@@ -87,8 +87,6 @@ RUN cd /root && wget https://gitee.com/Lyon1998/pikapython/attach_files/1420660/
     tar -xzvf frp.tar.gz && \
     mv frp_0.48.0_linux_amd64/frpc /usr/local/bin/frpc
 
-RUN echo 'root:pikadev' | chpasswd
-
 ADD sshd_config /etc/ssh/sshd_config
 COPY frpc.ini /etc/frpc.ini
 COPY frpc.sh /etc/frpc.sh

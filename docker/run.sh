@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # 解析命令行参数
-while getopts ":p:s:t:r:" opt; do
+while getopts ":p:s:t:r:k:" opt; do
   case $opt in
     p) frpc_server_port=$OPTARG;;
     s) frpc_server_addr=$OPTARG;;
     t) frpc_token=$OPTARG;;
     r) frpc_remote_port=$OPTARG;;
+    k) ssh_passward=$OPTARG;;
     \?) echo "Invalid option -$OPTARG" >&2;;
   esac
 done
@@ -28,6 +29,7 @@ if [ -n "$frpc_server_port" ]; then
     -e FRPC_SERVER_ADDR=$frpc_server_addr \
     -e FRPC_SERVER_PORT=$frpc_server_port \
     -e FRPC_TOKEN=$frpc_token \
+    -e SSH_PASSWARD=$ssh_passward\
     pikadev \
     bash /etc/frpc.sh
 else
