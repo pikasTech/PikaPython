@@ -28,13 +28,13 @@ def test_callback(res):
 eventloop.start_new_task_once(
     test_func, ("Hello", " World"),
     callback=test_callback,
-    delay_ms=2000
+    delay_ms=200
 )
 
 eventloop.start_new_task(
     test_func2, ("Hello", " World"),
     is_periodic=True,
-    period_ms=200,
+    period_ms=20,
     callback=test_callback
 )
 
