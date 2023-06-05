@@ -154,10 +154,8 @@ TEST(PikaMath, quat_dot) {
     /* collect */
     float res1 = obj_getFloat(pikaMain, "res1");
 
-
     /* assert */
     EXPECT_FLOAT_EQ(res1, 70.0);
-
 
     /* deinit */
     obj_deinit(pikaMain);
@@ -227,7 +225,6 @@ TEST(PikaMath, quat_cross) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-
 TEST(PikaMath, quat_toEuler) {
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;
@@ -253,7 +250,7 @@ TEST(PikaMath, quat_toEuler) {
 
     /* deinit */
     obj_deinit(pikaMain);
- 
+
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
@@ -286,6 +283,10 @@ TEST(PikaMath, quat_fromEuler) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_RUN_SINGLE_FILE_PASS(PikaMath,
+                          modbus,
+                          "test/python/PikaMath/modbus_convert.py")
 
 #endif
 TEST_END
