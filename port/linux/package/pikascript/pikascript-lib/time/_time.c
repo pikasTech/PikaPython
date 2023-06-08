@@ -14,7 +14,7 @@ volatile int g_pika_local_timezone = 8;
 static void _do_sleep_ms_tick(uint32_t ms) {
     int64_t tick = pika_platform_get_tick();
     while (1) {
-        pika_platform_thread_delay();
+        pika_platform_thread_yield();
 #if PIKA_EVENT_ENABLE
         if (!g_PikaVMSignal.event_thread_inited) {
             _VMEvent_pickupEvent();

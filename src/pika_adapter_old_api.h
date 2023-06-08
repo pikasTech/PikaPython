@@ -42,6 +42,7 @@ extern "C" {
 #define __platform_error_handle pika_platform_error_handle
 #define __platform_panic_handle pika_platform_panic_handle
 #define __platform_thread_delay pika_platform_thread_delay
+#define pika_platform_thread_delay pika_platform_thread_yield
 #define __platform_getTick pika_platform_get_tick
 #define pika_platform_getTick pika_platform_get_tick
 #define __platform_sleep_ms pika_platform_sleep_ms

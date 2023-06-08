@@ -134,13 +134,20 @@ class EventLoop:
             task._callback(_res)
 
     def _run_thread(self):
+        task_last = None
         while not self._need_stop:
             tick = time.tick_ms()
             for task_name, task in self._tasks.items():
+                if task_last == task:
+                    # already run this task last time, run other task first
+                    task_last = None
+                    continue
+
                 if tick - task._last_call_time > task._period_ms:
                     _debug('run_task', task_name)
                     _debug('tick', tick)
                     _debug('last_call_time', task._last_call_time)
+                    task_last = task
                     self._run_task(task)
                     task._last_call_time = tick
                     _debug('is_periodic', task._is_periodic)

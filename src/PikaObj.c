@@ -2736,7 +2736,7 @@ static void _thread_event(void* arg) {
         pika_GIL_ENTER();
         _VMEvent_pickupEvent();
         pika_GIL_EXIT();
-        pika_platform_thread_delay();
+        pika_platform_thread_yield();
     }
 }
 
@@ -2804,7 +2804,7 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
     pks_eventListener_sendSignal(self, eventId, eventSignal);
     while (1) {
         Arg* res = g_PikaVMSignal.cq.res[tail];
-        pika_platform_thread_delay();
+        pika_platform_thread_yield();
         if (NULL != res) {
             return res;
         }

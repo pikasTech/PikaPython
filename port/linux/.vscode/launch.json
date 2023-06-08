@@ -27,7 +27,7 @@
                 // "--gtest_filter=builtin.getitem"
                 // "--gtest_filter=except.isinstance"
                 // "--gtest_filter=vm.range_1"
-                // "--gtest_filter=parser.slice_fn"
+                "--gtest_filter=eventloop.*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

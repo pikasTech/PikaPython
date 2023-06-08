@@ -233,7 +233,7 @@ pika_platform_thread_t* pika_platform_thread_init(const char* name,
                                                   unsigned int priority,
                                                   unsigned int tick);
 uint64_t pika_platform_thread_self(void);
-void pika_platform_thread_delay(void);
+void pika_platform_thread_yield(void);
 void pika_platform_thread_startup(pika_platform_thread_t* thread);
 void pika_platform_thread_stop(pika_platform_thread_t* thread);
 void pika_platform_thread_start(pika_platform_thread_t* thread);

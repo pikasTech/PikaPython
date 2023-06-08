@@ -198,7 +198,7 @@ void PikaStdTask_Task_run_forever(PikaObj* self) {
     while (1) {
         __Task_update_tick(self);
         PikaStdTask_Task_run_once(self);
-        pika_platform_thread_delay();
+        pika_platform_thread_yield();
     }
 }
 
@@ -209,7 +209,7 @@ void PikaStdTask_Task_run_until_ms(PikaObj* self, int until_ms) {
         if (obj_getInt(self, "tick") > until_ms) {
             return;
         }
-        pika_platform_thread_delay();
+        pika_platform_thread_yield();
     }
 }
 

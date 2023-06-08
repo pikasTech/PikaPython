@@ -383,8 +383,10 @@ PIKA_WEAK pika_bool pika_hook_arg_cache_filter(void* self) {
     return pika_true;
 }
 
-PIKA_WEAK void pika_platform_thread_delay(void) {
-#if defined(__linux) || defined(_WIN32)
+PIKA_WEAK void pika_platform_thread_yield(void) {
+#if defined(__linux) 
+    sched_yield();
+#elif defined(_WIN32)
     return;
 #elif PIKA_FREERTOS_ENABLE
     vTaskDelay(1);
