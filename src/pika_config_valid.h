@@ -439,6 +439,14 @@ extern "C" {
         #define PIKA_THREAD_STACK_SIZE 2048
     #endif
 
+    #ifndef PIKA_EVENT_THREAD_STACK_SIZE
+        #define PIKA_EVENT_THREAD_STACK_SIZE PIKA_THREAD_STACK_SIZE
+    #endif
+
+    #ifndef PIKA_THREAD_MALLOC_STACK_ENABLE
+        #define PIKA_THREAD_MALLOC_STACK_ENABLE 0
+    #endif
+
     #ifndef PIKA_THREAD_PRIO
         #define PIKA_THREAD_PRIO 5
     #endif

@@ -133,7 +133,7 @@ typedef enum VM_SIGNAL_CTRL {
 typedef struct EventCQ {
     uint32_t id[PIKA_EVENT_LIST_SIZE];
     Arg* data[PIKA_EVENT_LIST_SIZE];
-    PikaEventListener* lisener[PIKA_EVENT_LIST_SIZE];
+    PikaEventListener* listener[PIKA_EVENT_LIST_SIZE];
     Arg* res[PIKA_EVENT_LIST_SIZE];
     int head;
     int tail;

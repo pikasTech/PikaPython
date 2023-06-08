@@ -232,7 +232,7 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
     }
     g_PikaVMSignal.cq.id[g_PikaVMSignal.cq.tail] = eventId;
     g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.tail] = eventData;
-    g_PikaVMSignal.cq.lisener[g_PikaVMSignal.cq.tail] = lisener;
+    g_PikaVMSignal.cq.listener[g_PikaVMSignal.cq.tail] = lisener;
     g_PikaVMSignal.cq.tail =
         (g_PikaVMSignal.cq.tail + 1) % PIKA_EVENT_LIST_SIZE;
     return PIKA_RES_OK;
@@ -254,7 +254,7 @@ PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
     }
     *id = g_PikaVMSignal.cq.id[g_PikaVMSignal.cq.head];
     *data = g_PikaVMSignal.cq.data[g_PikaVMSignal.cq.head];
-    *lisener_p = g_PikaVMSignal.cq.lisener[g_PikaVMSignal.cq.head];
+    *lisener_p = g_PikaVMSignal.cq.listener[g_PikaVMSignal.cq.head];
     *head = g_PikaVMSignal.cq.head;
     g_PikaVMSignal.cq.head =
         (g_PikaVMSignal.cq.head + 1) % PIKA_EVENT_LIST_SIZE;

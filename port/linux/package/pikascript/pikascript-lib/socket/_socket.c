@@ -78,7 +78,11 @@ Arg* _socket_socket__recv(PikaObj* self, int num) {
     if (ret <= 0) {
         if (obj_getInt(self, "blocking")) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-            // __platform_printf("recv error\n");
+            if (ret == 0){
+                // __platform_printf("connect closed\n");
+            }else{
+                __platform_printf("recv error: %d\n", ret);
+            }
             arg_deinit(res);
             return NULL;
         } else {
@@ -116,6 +120,7 @@ void _socket_socket__connect(PikaObj* self, char* host, int port) {
     pika_GIL_ENTER();
     if (0 != err) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
+        pika_platform_printf("connect error, err = %d\n", err);
         return;
     }
     if (obj_getInt(self, "blocking") == 0) {

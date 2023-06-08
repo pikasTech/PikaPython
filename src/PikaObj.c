@@ -957,6 +957,7 @@ NativeProperty* methodArg_toProp(Arg* method_arg) {
 }
 
 char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
+    pika_assert(arg_isCallable(method_arg));
     MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
     if (NULL != prop->type_list) {
         return strcpy(buffs, prop->type_list);
@@ -970,7 +971,7 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
         }
     }
     char* res = strCut(buffs, method_dec, '(', ')');
-    pika_assert(NULL != res);
+    pika_assert_msg(NULL != res, "method_dec: %s", method_dec);
     return res;
 }
 
@@ -2743,12 +2744,27 @@ static void _thread_event(void* arg) {
 void _do_pks_eventListener_send(PikaEventListener* self,
                                 uint32_t eventId,
                                 Arg* eventData,
-                                pika_bool pickupWhenNoVM) {
+                                PIKA_BOOL pickupWhenNoVM) {
 #if !PIKA_EVENT_ENABLE
     pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
     while (1) {
     };
 #else
+    pika_GIL_ENTER();
+#if PIKA_EVENT_THREAD_ENABLE
+    if (!g_PikaVMSignal.event_thread_inited) {
+        /* using multi thread */
+        if (_VM_is_first_lock()) {
+            // avoid _VMEvent_pickupEvent() in _time.c as soon as possible
+            g_PikaVMSignal.event_thread_inited = 1;
+            pika_platform_thread_init("pika_event", _thread_event, NULL,
+                                      PIKA_EVENT_THREAD_STACK_SIZE,
+                                      PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
+            pika_debug("event thread init");
+        }
+    }
+#endif
+
     /* push event handler to vm event list */
     if (PIKA_RES_OK != __eventListener_pushEvent(self, eventId, eventData)) {
     }
@@ -2760,19 +2776,7 @@ void _do_pks_eventListener_send(PikaEventListener* self,
             _VMEvent_pickupEvent();
         }
     }
-#if PIKA_EVENT_THREAD_ENABLE
-    if (g_PikaVMSignal.event_thread_inited) {
-        return;
-    }
-    /* using multi thread */
-    if (_VM_is_first_lock()) {
-        pika_platform_thread_init("pika_event", _thread_event, NULL,
-                                  PIKA_THREAD_STACK_SIZE, PIKA_THREAD_PRIO,
-                                  PIKA_THREAD_TICK);
-        pika_debug("event thread init");
-        g_PikaVMSignal.event_thread_inited = 1;
-    }
-#endif
+    pika_GIL_EXIT();
 #endif
 }
 
@@ -2785,7 +2789,10 @@ void pks_eventListener_send(PikaEventListener* self,
 void pks_eventListener_sendSignal(PikaEventListener* self,
                                   uint32_t eventId,
                                   int eventSignal) {
-    pks_eventListener_send(self, eventId, arg_newInt(eventSignal));
+    pika_GIL_ENTER();
+    Arg* eventData = arg_newInt(eventSignal);
+    pika_GIL_EXIT();
+    pks_eventListener_send(self, eventId, eventData);
 }
 
 Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
