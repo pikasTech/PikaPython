@@ -292,11 +292,11 @@ VM_SIGNAL_CTRL VMSignal_getCtrl(void) {
     return g_PikaVMSignal.signal_ctrl;
 }
 
-void pks_vm_exit(void) {
+void pika_vm_exit(void) {
     g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_EXIT;
 }
 
-void pks_vmSignal_setCtrlClear(void) {
+void pika_vmSignal_setCtrlClear(void) {
     g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_NONE;
 }
 
@@ -4142,7 +4142,7 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
     /* locals is the local scope */
 
     if (g_PikaVMSignal.vm_cnt == 0) {
-        pks_vmSignal_setCtrlClear();
+        pika_vmSignal_setCtrlClear();
     }
     VMState* vm =
         VMState_create(locals, globals, bytecode_frame, pc, run_state);

@@ -508,36 +508,36 @@ enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
 
 typedef PikaObj PikaEventListener;
 
-void pks_eventListener_registEvent(PikaEventListener* self,
+void pika_eventListener_registEvent(PikaEventListener* self,
                                    uint32_t eventId,
                                    PikaObj* eventHandleObj);
 
-void pks_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
+void pika_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
 
-void _do_pks_eventListener_send(PikaEventListener* self,
+void _do_pika_eventListener_send(PikaEventListener* self,
                                 uint32_t eventId,
                                 Arg* eventData,
                                 pika_bool pickupWhenNoVM);
 
-void pks_eventListener_sendSignal(PikaEventListener* self,
+void pika_eventListener_sendSignal(PikaEventListener* self,
                                   uint32_t eventId,
                                   int eventSignal);
 
-void pks_eventListener_send(PikaEventListener* self,
+void pika_eventListener_send(PikaEventListener* self,
                             uint32_t eventId,
                             Arg* eventData);
 
-PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
+PikaObj* pika_eventListener_getEventHandleObj(PikaEventListener* self,
                                              uint32_t eventId);
 
-void pks_eventListener_init(PikaEventListener** p_self);
-void pks_eventListener_deinit(PikaEventListener** p_self);
+void pika_eventListener_init(PikaEventListener** p_self);
+void pika_eventListener_deinit(PikaEventListener** p_self);
 PikaObj* methodArg_getDefContext(Arg* method_arg);
 int obj_linkLibraryFile(PikaObj* self, char* input_file_name);
 NewFun obj_getClass(PikaObj* obj);
 
-void pks_printVersion(void);
-void pks_getVersion(char* buff);
+void pika_printVersion(void);
+void pika_getVersion(char* buff);
 void* obj_getStruct(PikaObj* self, char* name);
 
 static inline void obj_refcntDec(PikaObj* self) {
@@ -679,7 +679,7 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
                               uint32_t eventId,
                               Arg* eventData);
 
-Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
+Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
                                              uint32_t eventId,
                                              int eventSignal);
 

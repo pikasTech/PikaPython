@@ -366,8 +366,8 @@ void __vm_List___init__(PikaObj* self);
 void __vm_Dict_set(PikaObj* self, Arg* arg, char* key);
 void __vm_Dict___init__(PikaObj* self);
 VM_SIGNAL_CTRL VMSignal_getCtrl(void);
-void pks_vm_exit(void);
-void pks_vmSignal_setCtrlClear(void);
+void pika_vm_exit(void);
+void pika_vmSignal_setCtrlClear(void);
 PIKA_RES __eventListener_popEvent(PikaEventListener** lisener_p,
                                   uint32_t* id,
                                   Arg** signal,
