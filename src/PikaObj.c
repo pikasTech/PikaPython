@@ -2738,9 +2738,11 @@ static void _thread_event(void* arg) {
         _VMEvent_pickupEvent();
         pika_GIL_EXIT();
         pika_platform_thread_yield();
+#if PIKA_EVENT_ENABLE
         if (g_PikaVMSignal.event_thread_exit) {
             break;
         }
+#endif
     }
 }
 
@@ -2769,6 +2771,7 @@ void _do_pika_eventListener_send(PikaEventListener* self,
 
     /* push event handler to vm event list */
     if (PIKA_RES_OK != __eventListener_pushEvent(self, eventId, eventData)) {
+        goto __exit;
     }
     if (pickupWhenNoVM) {
         int vmCnt = _VMEvent_getVMCnt();
@@ -2778,6 +2781,7 @@ void _do_pika_eventListener_send(PikaEventListener* self,
             _VMEvent_pickupEvent();
         }
     }
+__exit:
     pika_GIL_EXIT();
 #endif
 }
