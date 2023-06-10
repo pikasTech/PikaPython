@@ -102,6 +102,8 @@ extern "C" {
 #define PIKA_BOOL pika_bool
 #define PIKA_TRUE pika_true
 #define PIKA_FALSE pika_false
+#define pikaScriptInit pikaPythonInit
+#define pikaScriptShell pikaPythonShell
 
 #endif
 

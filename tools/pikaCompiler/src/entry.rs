@@ -18,12 +18,12 @@ pub fn pika_compiler_entry() {
 ";
 
     /* new a version_info object */
-    println!("(pikascript) packages installed:");
+    println!("(pikapython) packages installed:");
     let mut version_info = VersionInfo::new();
     version_info = VersionInfo::analyse_file(version_info, String::from("requestment.txt"));
     println!();
 
-    println!("(pikascript) pika compiler:");
+    println!("(pikapython) pika compiler:");
     /* new a compiler, sellect to path */
     let mut compiler = Compiler::new(String::from(""), String::from("pikascript-api/"));
 
@@ -166,7 +166,7 @@ pub fn pika_compiler_entry() {
     f.write("#include \"PikaObj.h\"\n".as_bytes()).unwrap();
     f.write("#include \"PikaMain.h\"\n".as_bytes()).unwrap();
     f.write("\n".as_bytes()).unwrap();
-    f.write("PikaObj * pikaScriptInit(void);\n".as_bytes())
+    f.write("PikaObj * pikaPythonInit(void);\n".as_bytes())
         .unwrap();
     f.write("\n".as_bytes()).unwrap();
     f.write("#endif\n".as_bytes()).unwrap();
