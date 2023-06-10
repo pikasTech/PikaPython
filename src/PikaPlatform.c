@@ -383,7 +383,7 @@ PIKA_WEAK PIKA_BOOL pika_hook_arg_cache_filter(void* self) {
     return PIKA_TRUE;
 }
 
-PIKA_WEAK void pika_thread_idle_hook(void){
+PIKA_WEAK void pika_thread_idle_hook(void) {
     return;
 }
 
@@ -448,9 +448,12 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
     (void)tick;
 
 #if PIKA_THREAD_MALLOC_STACK_ENABLE
-    thread->thread = xTaskCreateStatic(entry, name, stack_size, param, priority, thread->thread_stack, &thread->task_buffer);
+    thread->thread =
+        xTaskCreateStatic(entry, name, stack_size, param, priority,
+                          thread->thread_stack, &thread->task_buffer);
 #else
-    int err = xTaskCreate(entry, name, stack_size, param, priority, thread->thread);
+    int err =
+        xTaskCreate(entry, name, stack_size, param, priority, thread->thread);
 #endif
 
 #if PIKA_THREAD_MALLOC_STACK_ENABLE
@@ -516,6 +519,7 @@ PIKA_WEAK void pika_platform_thread_destroy(pika_platform_thread_t* thread) {
 #ifdef __linux
     if (NULL != thread) {
         pthread_detach(thread->thread);
+        // pthread_join(thread->thread, NULL);
         pikaFree(thread, sizeof(pika_platform_thread_t));
         thread = NULL;
         return;
@@ -536,7 +540,7 @@ PIKA_WEAK void pika_platform_thread_exit(pika_platform_thread_t* thread) {
     return pika_platform_thread_destroy(thread);
 #elif PIKA_FREERTOS_ENABLE
     // vTaskDelete(NULL);  // test on esp32c3
-    if(NULL == thread){
+    if (NULL == thread) {
         vTaskDelete(NULL);
         return;
     }

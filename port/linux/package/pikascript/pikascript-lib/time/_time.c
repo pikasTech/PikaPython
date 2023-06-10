@@ -16,11 +16,11 @@ static void _do_sleep_ms_tick(uint32_t ms) {
     while (1) {
         pika_platform_thread_yield();
 #if PIKA_EVENT_ENABLE
-        if (!g_PikaVMSignal.event_thread_inited) {
+        if (!g_PikaVMSignal.event_thread) {
             _VMEvent_pickupEvent();
         }
 #endif
-        if(pika_platform_get_tick() - tick >= ms){
+        if (pika_platform_get_tick() - tick >= ms) {
             break;
         }
     }

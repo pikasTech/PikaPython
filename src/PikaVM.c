@@ -49,7 +49,8 @@ volatile VMSignal g_PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
                                             .res = {0},
                                         },
                                     .event_pickup_cnt = 0,
-                                    .event_thread_inited = 0
+                                    .event_thread = NULL,
+                                    .event_thread_exit = pika_false
 
 #endif
 };
@@ -203,6 +204,11 @@ void _VMEvent_deinit(void) {
             g_PikaVMSignal.cq.data[i] = NULL;
         }
     }
+    if (NULL != g_PikaVMSignal.event_thread) {
+        g_PikaVMSignal.event_thread_exit = 1;
+        pika_platform_thread_destroy(g_PikaVMSignal.event_thread);
+        g_PikaVMSignal.event_thread = NULL;
+    }
 #endif
 }
 
@@ -219,6 +225,7 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
     }
     /* push to event_cq_buff */
     if (_ecq_isFull(&g_PikaVMSignal.cq)) {
+        // pika_debug("event_cq_buff is full");
         arg_deinit(eventData);
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
     }
@@ -4288,7 +4295,7 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
 
 void _pikaVM_yield(void) {
 #if PIKA_EVENT_ENABLE
-    if (!g_PikaVMSignal.event_thread_inited) {
+    if (!g_PikaVMSignal.event_thread) {
         _VMEvent_pickupEvent();
     }
 #endif

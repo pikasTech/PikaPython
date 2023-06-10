@@ -2738,6 +2738,9 @@ static void _thread_event(void* arg) {
         _VMEvent_pickupEvent();
         pika_GIL_EXIT();
         pika_platform_thread_yield();
+        if (g_PikaVMSignal.event_thread_exit) {
+            break;
+        }
     }
 }
 
@@ -2752,14 +2755,13 @@ void _do_pika_eventListener_send(PikaEventListener* self,
 #else
     pika_GIL_ENTER();
 #if PIKA_EVENT_THREAD_ENABLE
-    if (!g_PikaVMSignal.event_thread_inited) {
+    if (!g_PikaVMSignal.event_thread) {
         /* using multi thread */
         if (_VM_is_first_lock()) {
             // avoid _VMEvent_pickupEvent() in _time.c as soon as possible
-            g_PikaVMSignal.event_thread_inited = 1;
-            pika_platform_thread_init("pika_event", _thread_event, NULL,
-                                      PIKA_EVENT_THREAD_STACK_SIZE,
-                                      PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
+            g_PikaVMSignal.event_thread = pika_platform_thread_init(
+                "pika_event", _thread_event, NULL, PIKA_EVENT_THREAD_STACK_SIZE,
+                PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
             pika_debug("event thread init");
         }
     }
@@ -2770,9 +2772,9 @@ void _do_pika_eventListener_send(PikaEventListener* self,
     }
     if (pickupWhenNoVM) {
         int vmCnt = _VMEvent_getVMCnt();
-        pika_debug("vmCnt: %d", vmCnt);
         if (0 == vmCnt) {
             /* no vm running, pick up event imediately */
+            pika_debug("vmCnt: %d, pick up imediately", vmCnt);
             _VMEvent_pickupEvent();
         }
     }

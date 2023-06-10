@@ -154,7 +154,8 @@ struct VMSignal {
 #if PIKA_EVENT_ENABLE
     EventCQ cq;
     int event_pickup_cnt;
-    int event_thread_inited;
+    pika_platform_thread_t* event_thread;
+    pika_bool event_thread_exit;
 #endif
 };
 
