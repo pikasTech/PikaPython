@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-#include "__default_filter_msg_def.h"
+#include "__default_filter_msg_template.h"
 #if defined(__clang__)
 #   pragma clang diagnostic push
 #   pragma clang diagnostic ignored "-Wunknown-warning-option"
