@@ -758,7 +758,7 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
         logo_printed = 1;
         pika_platform_printf("\r\n");
         pika_platform_printf("~~~/ POWERED BY \\~~~\r\n");
-        pika_platform_printf("~  pikascript.com  ~\r\n");
+        pika_platform_printf("~  pikapython.com  ~\r\n");
         pika_platform_printf("~~~~~~~~~~~~~~~~~~~~\r\n");
     }
     if (NULL != __pikaMain) {
@@ -2650,9 +2650,9 @@ char* obj_toStr(PikaObj* self) {
     return obj_getStr(self, "@res_str");
 }
 
-void pks_eventListener_registEvent(PikaEventListener* self,
-                                   uint32_t eventId,
-                                   PikaObj* eventHandleObj) {
+void pika_eventListener_registEvent(PikaEventListener* self,
+                                    uint32_t eventId,
+                                    PikaObj* eventHandleObj) {
     Args buffs = {0};
     char* event_name =
         strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
@@ -2663,15 +2663,15 @@ void pks_eventListener_registEvent(PikaEventListener* self,
 }
 
 Args buffs = {0};
-void pks_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId) {
+void pika_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId) {
     char* event_name =
         strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
     obj_removeArg(self, event_name);
     strsDeinit(&buffs);
 }
 
-PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
-                                             uint32_t eventId) {
+PikaObj* pika_eventListener_getEventHandleObj(PikaEventListener* self,
+                                              uint32_t eventId) {
     Args buffs = {0};
     char* event_name =
         strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
@@ -2681,11 +2681,11 @@ PikaObj* pks_eventListener_getEventHandleObj(PikaEventListener* self,
     return eventHandleObj;
 }
 
-void pks_eventListener_init(PikaEventListener** p_self) {
+void pika_eventListener_init(PikaEventListener** p_self) {
     *p_self = newNormalObj(New_TinyObj);
 }
 
-void pks_eventListener_deinit(PikaEventListener** p_self) {
+void pika_eventListener_deinit(PikaEventListener** p_self) {
     if (NULL != *p_self) {
         obj_deinit(*p_self);
         *p_self = NULL;
@@ -2695,7 +2695,7 @@ void pks_eventListener_deinit(PikaEventListener** p_self) {
 Arg* __eventListener_runEvent(PikaEventListener* lisener,
                               uint32_t eventId,
                               Arg* eventData) {
-    PikaObj* handler = pks_eventListener_getEventHandleObj(lisener, eventId);
+    PikaObj* handler = pika_eventListener_getEventHandleObj(lisener, eventId);
     pika_debug("event handler: %p", handler);
     if (NULL == handler) {
         pika_platform_printf(
@@ -2738,13 +2738,18 @@ static void _thread_event(void* arg) {
         _VMEvent_pickupEvent();
         pika_GIL_EXIT();
         pika_platform_thread_yield();
+#if PIKA_EVENT_ENABLE
+        if (g_PikaVMSignal.event_thread_exit) {
+            break;
+        }
+#endif
     }
 }
 
-void _do_pks_eventListener_send(PikaEventListener* self,
-                                uint32_t eventId,
-                                Arg* eventData,
-                                PIKA_BOOL pickupWhenNoVM) {
+void _do_pika_eventListener_send(PikaEventListener* self,
+                                 uint32_t eventId,
+                                 Arg* eventData,
+                                 PIKA_BOOL pickupWhenNoVM) {
 #if !PIKA_EVENT_ENABLE
     pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
     while (1) {
@@ -2752,14 +2757,13 @@ void _do_pks_eventListener_send(PikaEventListener* self,
 #else
     pika_GIL_ENTER();
 #if PIKA_EVENT_THREAD_ENABLE
-    if (!g_PikaVMSignal.event_thread_inited) {
+    if (!g_PikaVMSignal.event_thread) {
         /* using multi thread */
         if (_VM_is_first_lock()) {
             // avoid _VMEvent_pickupEvent() in _time.c as soon as possible
-            g_PikaVMSignal.event_thread_inited = 1;
-            pika_platform_thread_init("pika_event", _thread_event, NULL,
-                                      PIKA_EVENT_THREAD_STACK_SIZE,
-                                      PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
+            g_PikaVMSignal.event_thread = pika_platform_thread_init(
+                "pika_event", _thread_event, NULL, PIKA_EVENT_THREAD_STACK_SIZE,
+                PIKA_THREAD_PRIO, PIKA_THREAD_TICK);
             pika_debug("event thread init");
         }
     }
@@ -2767,37 +2771,40 @@ void _do_pks_eventListener_send(PikaEventListener* self,
 
     /* push event handler to vm event list */
     if (PIKA_RES_OK != __eventListener_pushEvent(self, eventId, eventData)) {
+        goto __exit;
     }
     if (pickupWhenNoVM) {
         int vmCnt = _VMEvent_getVMCnt();
-        pika_debug("vmCnt: %d", vmCnt);
         if (0 == vmCnt) {
             /* no vm running, pick up event imediately */
+            pika_debug("vmCnt: %d, pick up imediately", vmCnt);
             _VMEvent_pickupEvent();
         }
     }
+__exit:
     pika_GIL_EXIT();
+    return;
 #endif
 }
 
-void pks_eventListener_send(PikaEventListener* self,
-                            uint32_t eventId,
-                            Arg* eventData) {
-    _do_pks_eventListener_send(self, eventId, eventData, pika_true);
+void pika_eventListener_send(PikaEventListener* self,
+                             uint32_t eventId,
+                             Arg* eventData) {
+    _do_pika_eventListener_send(self, eventId, eventData, pika_true);
 }
 
-void pks_eventListener_sendSignal(PikaEventListener* self,
-                                  uint32_t eventId,
-                                  int eventSignal) {
+void pika_eventListener_sendSignal(PikaEventListener* self,
+                                   uint32_t eventId,
+                                   int eventSignal) {
     pika_GIL_ENTER();
     Arg* eventData = arg_newInt(eventSignal);
     pika_GIL_EXIT();
-    pks_eventListener_send(self, eventId, eventData);
+    pika_eventListener_send(self, eventId, eventData);
 }
 
-Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
-                                             uint32_t eventId,
-                                             int eventSignal) {
+Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
+                                              uint32_t eventId,
+                                              int eventSignal) {
     /*
      * Await result from event.
      * need implement `pika_platform_thread_delay()` to support thread switch */
@@ -2808,7 +2815,7 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
 #else
     extern volatile VMSignal g_PikaVMSignal;
     int tail = g_PikaVMSignal.cq.tail;
-    pks_eventListener_sendSignal(self, eventId, eventSignal);
+    pika_eventListener_sendSignal(self, eventId, eventSignal);
     while (1) {
         Arg* res = g_PikaVMSignal.cq.res[tail];
         pika_platform_thread_yield();
@@ -2820,13 +2827,13 @@ Arg* pks_eventListener_sendSignalAwaitResult(PikaEventListener* self,
 }
 
 /* print major version info */
-void pks_printVersion(void) {
+void pika_printVersion(void) {
     pika_platform_printf("pikascript-core==v%d.%d.%d (%s)\r\n",
                          PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR,
                          PIKA_VERSION_MICRO, PIKA_EDIT_TIME);
 }
 
-void pks_getVersion(char* buff) {
+void pika_getVersion(char* buff) {
     pika_sprintf(buff, "%d.%d.%d", PIKA_VERSION_MAJOR, PIKA_VERSION_MINOR,
                  PIKA_VERSION_MICRO);
 }
@@ -3417,7 +3424,7 @@ exit:
 }
 
 void builtins_exit(PikaObj* self) {
-    pks_vm_exit();
+    pika_vm_exit();
 }
 
 int builtins_hasattr(PikaObj* self, PikaObj* obj, char* name) {

@@ -49,7 +49,8 @@ volatile VMSignal g_PikaVMSignal = {.signal_ctrl = VM_SIGNAL_CTRL_NONE,
                                             .res = {0},
                                         },
                                     .event_pickup_cnt = 0,
-                                    .event_thread_inited = 0
+                                    .event_thread = NULL,
+                                    .event_thread_exit = pika_false
 
 #endif
 };
@@ -203,6 +204,11 @@ void _VMEvent_deinit(void) {
             g_PikaVMSignal.cq.data[i] = NULL;
         }
     }
+    if (NULL != g_PikaVMSignal.event_thread) {
+        g_PikaVMSignal.event_thread_exit = 1;
+        pika_platform_thread_destroy(g_PikaVMSignal.event_thread);
+        g_PikaVMSignal.event_thread = NULL;
+    }
 #endif
 }
 
@@ -219,6 +225,7 @@ PIKA_RES __eventListener_pushEvent(PikaEventListener* lisener,
     }
     /* push to event_cq_buff */
     if (_ecq_isFull(&g_PikaVMSignal.cq)) {
+        // pika_debug("event_cq_buff is full");
         arg_deinit(eventData);
         return PIKA_RES_ERR_SIGNAL_EVENT_FULL;
     }
@@ -292,11 +299,11 @@ VM_SIGNAL_CTRL VMSignal_getCtrl(void) {
     return g_PikaVMSignal.signal_ctrl;
 }
 
-void pks_vm_exit(void) {
+void pika_vm_exit(void) {
     g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_EXIT;
 }
 
-void pks_vmSignal_setCtrlClear(void) {
+void pika_vmSignal_setCtrlClear(void) {
     g_PikaVMSignal.signal_ctrl = VM_SIGNAL_CTRL_NONE;
 }
 
@@ -2727,11 +2734,20 @@ static void _OPT_POW(OperatorInfo* op) {
         return;
     }
     if (op->t1 == ARG_TYPE_INT && op->t2 == ARG_TYPE_INT) {
-        int res = 1;
-        for (int i = 0; i < op->i2; i++) {
-            res = res * op->i1;
+        int lhs = op->i1;
+        int rhs = op->i2;
+        if(rhs < 0) rhs = -rhs;
+        int64_t ret = 1;
+        while(rhs){
+            if(rhs & 1) ret *= lhs;
+            lhs *= lhs;
+            rhs >>= 1;
         }
-        op->res = arg_setInt(op->res, "", res);
+        if(op->i2 < 0){
+            op->res = arg_setFloat(op->res, "", 1.0/ret);
+        }else{
+            op->res = arg_setInt(op->res, "", ret);
+        }
         return;
     } else if (op->t1 == ARG_TYPE_FLOAT && op->t2 == ARG_TYPE_INT) {
         float res = 1;
@@ -4142,7 +4158,7 @@ static VMParameters* _pikaVM_runByteCodeFrameWithState(
     /* locals is the local scope */
 
     if (g_PikaVMSignal.vm_cnt == 0) {
-        pks_vmSignal_setCtrlClear();
+        pika_vmSignal_setCtrlClear();
     }
     VMState* vm =
         VMState_create(locals, globals, bytecode_frame, pc, run_state);
@@ -4288,7 +4304,7 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
 
 void _pikaVM_yield(void) {
 #if PIKA_EVENT_ENABLE
-    if (!g_PikaVMSignal.event_thread_inited) {
+    if (!g_PikaVMSignal.event_thread) {
         _VMEvent_pickupEvent();
     }
 #endif

@@ -20,7 +20,7 @@ def test_callback(res):
 
 
 # Test case 1: Add and run a one-time task
-event_loop = EventLoop(period_ms=100)
+event_loop = EventLoop(period_ms=10)
 
 event_loop.start_new_task_once(
     test_func, ("Hello", " World"), callback=test_callback)
