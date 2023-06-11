@@ -17,7 +17,7 @@ def test_func(arg1, arg2):
 MemChecker().now()
 for i in range(expect_finished):
     eventloop.start_new_task_once(
-        test_func, ("Hello", " World"), delay_ms=100)
+        test_func, ("Hello", " World"), delay_ms=10)
 MemChecker().now()
 
 while finished < expect_finished:

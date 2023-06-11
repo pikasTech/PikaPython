@@ -24,18 +24,18 @@ def test_callback(res):
 
 
 # Test case 2: Add and run a periodic task
-event_loop = EventLoop(period_ms=100)
+event_loop = EventLoop(period_ms=10)
 
 event_loop.start_new_task_periodic(
     test_func, ("Hello", " World"),
-    period_ms=1000,
+    period_ms=100,
     callback=test_callback
 )
 
 event_loop.start_new_task(
     test_func2, ("Hello", " World"),
     is_periodic=True,
-    period_ms=200,
+    period_ms=20,
     callback=test_callback
 )
 

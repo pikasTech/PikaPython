@@ -30,7 +30,7 @@ eventloop.start_new_task(test_func, ("Hello", " World"))
 
 eventloop.start_new_task_periodic(
     test_func2, (),
-    period_ms=200
+    period_ms=20
 )
 
 eventloop.start_new_task_once(test_func3, ("Hello"))
