@@ -2734,11 +2734,20 @@ static void _OPT_POW(OperatorInfo* op) {
         return;
     }
     if (op->t1 == ARG_TYPE_INT && op->t2 == ARG_TYPE_INT) {
-        int res = 1;
-        for (int i = 0; i < op->i2; i++) {
-            res = res * op->i1;
+        int lhs = op->i1;
+        int rhs = op->i2;
+        if(rhs < 0) rhs = -rhs;
+        int64_t ret = 1;
+        while(rhs){
+            if(rhs & 1) ret *= lhs;
+            lhs *= lhs;
+            rhs >>= 1;
         }
-        op->res = arg_setInt(op->res, "", res);
+        if(op->i2 < 0){
+            op->res = arg_setFloat(op->res, "", 1.0/ret);
+        }else{
+            op->res = arg_setInt(op->res, "", ret);
+        }
         return;
     } else if (op->t1 == ARG_TYPE_FLOAT && op->t2 == ARG_TYPE_INT) {
         float res = 1;
