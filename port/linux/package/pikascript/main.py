@@ -7,6 +7,7 @@ import configparser, network
 import test_module1, test_cmodule, test_module4, import_test
 import hashlib, hmac, aes, base64, time, os
 import _thread, weakref, eventloop
+import this
 
 mem = PikaStdLib.MemChecker()
 print('hello pikascript!')
