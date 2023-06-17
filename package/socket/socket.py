@@ -45,6 +45,12 @@ class socket(_socket.socket):
     def connect(self, host_port):
         host = host_port[0]
         port = host_port[1]
+        if type(host) != str:
+            print('Error: host must be a string')
+            raise
+        if type(port) != int:
+            print('Error: port must be an integer')
+            raise
         return self._connect(host, port)
 
     def recv(self, num):

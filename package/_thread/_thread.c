@@ -1,9 +1,38 @@
 #include "_thread.h"
 #include "PikaVM.h"
 #include "TinyObj.h"
+#include "dataMemory.h"
 
 static volatile int g_thread_stack_size = PIKA_THREAD_STACK_SIZE;
+#if !PIKA_THREAD_MALLOC_STACK_ENABLE
 extern volatile PikaMemInfo g_PikaMemInfo;
+#endif
+
+#if PIKA_FREERTOS_ENABLE
+static pika_platform_thread_t* g_thread_to_free = NULL;
+static pika_platform_thread_mutex_t g_thread_idle_hook_mutex = {0};
+static int g_thread_idle_hook_mutex_inited = 0;
+
+#if PIKA_THREAD_MALLOC_STACK_ENABLE
+void pika_thread_idle_hook(void) {
+    if (0 == g_thread_idle_hook_mutex_inited) {
+        pika_platform_thread_mutex_init(&g_thread_idle_hook_mutex);
+        g_thread_idle_hook_mutex_inited = 1;
+    }
+    pika_platform_thread_mutex_lock(&g_thread_idle_hook_mutex);
+    if (NULL != g_thread_to_free) {
+        pika_platform_thread_exit(g_thread_to_free);
+        pikaFree(g_thread_to_free->thread_stack,
+                 g_thread_to_free->thread_stack_size);
+        pikaFree(g_thread_to_free, sizeof(pika_platform_thread_t));
+        g_thread_to_free = NULL;
+    }
+    pika_platform_thread_mutex_unlock(&g_thread_idle_hook_mutex);
+    return;
+}
+#endif
+
+#endif
 typedef struct pika_thread_info {
     Arg* function;
     Arg* args;
@@ -56,14 +85,34 @@ static void _thread_func(void* arg) {
     if (NULL != info->args) {
         arg_deinit(info->args);
     }
+#if !PIKA_THREAD_MALLOC_STACK_ENABLE
     g_PikaMemInfo.heapUsed -= info->stack_size;
+#endif
     pika_debug("thread exiting");
     pika_platform_thread_t* thread = info->thread;
     pikaFree(info, sizeof(pika_thread_info));
     pika_GIL_EXIT();
 #if PIKA_FREERTOS_ENABLE
+#if PIKA_THREAD_MALLOC_STACK_ENABLE
+    if (0 == g_thread_idle_hook_mutex_inited) {
+        pika_platform_thread_mutex_init(&g_thread_idle_hook_mutex);
+        g_thread_idle_hook_mutex_inited = 1;
+    }
+    pika_platform_thread_mutex_lock(&g_thread_idle_hook_mutex);
+    while (NULL != g_thread_to_free) {
+        pika_platform_thread_mutex_unlock(&g_thread_idle_hook_mutex);
+        vTaskDelay(10);
+        pika_platform_thread_mutex_lock(&g_thread_idle_hook_mutex);
+    }
+    g_thread_to_free = thread;
+    pika_platform_thread_mutex_unlock(&g_thread_idle_hook_mutex);
+    while (1) {
+        vTaskDelay(1);
+    }
+#else
     pikaFree(thread, sizeof(pika_platform_thread_t));
     pika_platform_thread_exit(NULL);
+#endif
 #else
     pika_platform_thread_exit(thread);
 #endif
@@ -80,6 +129,7 @@ void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
     if (arg_isObject(args_)) {
         PikaObj* tuple = arg_getPtr(args_);
         size_t tuple_size = PikaStdData_Tuple_len(tuple);
+        pika_debug("new_thread: args tuple size %d", tuple_size);
         if (tuple_size > 0) {
             info->args = arg_copy(args_);
         }
@@ -105,7 +155,9 @@ void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
         obj_setSysOut(self, "thread create failed");
         return;
     }
+#if !PIKA_THREAD_MALLOC_STACK_ENABLE
     g_PikaMemInfo.heapUsed += info->stack_size;
+#endif
 }
 
 int _thread_stack_size(PikaObj* self, PikaTuple* size) {
