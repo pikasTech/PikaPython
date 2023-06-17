@@ -3,17 +3,15 @@
 #include "dataStrs.h"
 
 int PikaStdData_Tuple_len(PikaObj* self) {
-    PikaList* list = obj_getPtr(self, "list");
-    return pikaList_getSize(list);
+    return objList_getSize(self);
 }
 
 Arg* PikaStdData_Tuple_get(PikaObj* self, int i) {
-    PikaList* list = obj_getPtr(self, "list");
-    return arg_copy(pikaList_getArg(list, i));
+    return objList_get(self, i);
 }
 
 void PikaStdData_Tuple___init__(PikaObj* self) {
-    __vm_List___init__(self);
+    objList_init(self);
 }
 
 Arg* PikaStdData_Tuple___iter__(PikaObj* self) {
@@ -51,37 +49,48 @@ void PikaStdData_Tuple___del__(PikaObj* self) {
 }
 
 char* builtins_str(PikaObj* self, Arg* arg);
-char* PikaStdData_Tuple___str__(PikaObj* self) {
-    Arg* str_arg = arg_newStr("(");
-    PikaList* list = obj_getPtr(self, "list");
+typedef struct {
+    Arg* buf;
+    int count;
+} TupleToStrContext;
 
-    int i = 0;
-    while (PIKA_TRUE) {
-        Arg* item = pikaList_getArg(list, i);
-        if (NULL == item) {
-            if (i == 1) {
-                // single tuple
-                str_arg = arg_strAppend(str_arg, ",");
-            }
-            break;
-        }
-        if (i != 0) {
-            str_arg = arg_strAppend(str_arg, ", ");
-        }
-        char* item_str = builtins_str(self, item);
-        if (arg_getType(item) == ARG_TYPE_STRING) {
-            str_arg = arg_strAppend(str_arg, "'");
-        }
-        str_arg = arg_strAppend(str_arg, item_str);
-        if (arg_getType(item) == ARG_TYPE_STRING) {
-            str_arg = arg_strAppend(str_arg, "'");
-        }
-        i++;
+int32_t tupleToStrEachHandle(PikaObj* self,
+                             int itemIndex,
+                             Arg* itemEach,
+                             void* context) {
+    TupleToStrContext* ctx = (TupleToStrContext*)context;
+
+    char* item_str = builtins_str(self, itemEach);
+    if (ctx->count != 0) {
+        ctx->buf = arg_strAppend(ctx->buf, ", ");
+    }
+    if (arg_getType(itemEach) == ARG_TYPE_STRING) {
+        ctx->buf = arg_strAppend(ctx->buf, "'");
+    }
+    ctx->buf = arg_strAppend(ctx->buf, item_str);
+    if (arg_getType(itemEach) == ARG_TYPE_STRING) {
+        ctx->buf = arg_strAppend(ctx->buf, "'");
     }
 
-    str_arg = arg_strAppend(str_arg, ")");
-    obj_setStr(self, "_buf", arg_getStr(str_arg));
-    arg_deinit(str_arg);
+    ctx->count++;
+
+    return 0;
+}
+
+char* PikaStdData_Tuple___str__(PikaObj* self) {
+    TupleToStrContext context;
+    context.buf = arg_newStr("(");
+    context.count = 0;
+
+    objTuple_forEach(self, tupleToStrEachHandle, &context);
+
+    if (context.count == 1) {
+        context.buf = arg_strAppend(context.buf, ",");
+    }
+
+    context.buf = arg_strAppend(context.buf, ")");
+    obj_setStr(self, "_buf", arg_getStr(context.buf));
+    arg_deinit(context.buf);
     return obj_getStr(self, "_buf");
 }
 

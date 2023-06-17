@@ -1,9 +1,12 @@
 #include "_json.h"
+#include "../pikascript-lib/pika_cjson/cJSON.h"
 #include "jsmn.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 13, 0)
 #error "pikapython version must be greater than 1.13.0"
 #endif
+
+cJSON* _cjson_decode(Arg* d);
 
 int parse_json(const char* json_string,
                jsmn_parser* parser,
@@ -38,15 +41,18 @@ int parse_json(const char* json_string,
     return result;
 }
 
-void PikaStdData_List_append(PikaObj* self, Arg* arg);
-void PikaStdData_Dict_set(PikaObj* self, char* key, Arg* arg);
-
-Arg* json_to_arg_recursive(jsmntok_t* t, int* index, char* json_str) {
+Arg* json_to_arg_recursive(jsmntok_t* t,
+                           int* index,
+                           char* json_str,
+                           int token_count) {
     Arg* val;
+    pika_assert(*index >= 0);
+    pika_assert(*index < token_count);
     jsmntype_t type = t[*index].type;
     switch (type) {
         case JSMN_PRIMITIVE: {
             char buff[PIKA_NAME_BUFF_SIZE] = {0};
+            pika_assert(t[*index].end - t[*index].start < PIKA_NAME_BUFF_SIZE);
             pika_platform_memcpy(buff, json_str + t[*index].start,
                                  t[*index].end - t[*index].start);
             if (strEqu(buff, "true")) {
@@ -76,12 +82,17 @@ Arg* json_to_arg_recursive(jsmntok_t* t, int* index, char* json_str) {
             int num_keys = t[*index].size;
             (*index)++;
             for (int i = 0; i < num_keys; i++) {
+                jsmntok_t* key_tok = &t[*index];
+                char* value = json_str + key_tok->start;
+                int size = key_tok->end - key_tok->start;
+                pika_assert(key_tok->type == JSMN_STRING);
                 char key[PIKA_NAME_BUFF_SIZE] = {0};
-                pika_platform_memcpy(key, json_str + t[*index].start,
-                                     t[*index].end - t[*index].start);
+                pika_assert(size < PIKA_NAME_BUFF_SIZE);
+                pika_platform_memcpy(key, value, size);
                 (*index)++;
-                Arg* val_nested = json_to_arg_recursive(t, index, json_str);
-                PikaStdData_Dict_set(ret, key, val_nested);
+                Arg* val_nested =
+                    json_to_arg_recursive(t, index, json_str, token_count);
+                objDict_set(ret, key, val_nested);
                 arg_deinit(val_nested);
                 if (i < num_keys - 1) {
                     (*index)++;
@@ -92,11 +103,15 @@ Arg* json_to_arg_recursive(jsmntok_t* t, int* index, char* json_str) {
         }
         case JSMN_ARRAY: {
             PikaObj* ret = obj_newList(NULL);
-            int num_elements = t[*index].size;
-            (*index)++;
+            jsmntok_t* key_tok = &t[*index];
+            int num_elements = key_tok->size;
+            if (num_elements > 0) {
+                (*index)++;
+            }
             for (int i = 0; i < num_elements; i++) {
-                Arg* val_nested = json_to_arg_recursive(t, index, json_str);
-                PikaStdData_List_append(ret, val_nested);
+                Arg* val_nested =
+                    json_to_arg_recursive(t, index, json_str, token_count);
+                objList_append(ret, val_nested);
                 arg_deinit(val_nested);
                 if (i < num_elements - 1) {
                     (*index)++;
@@ -120,12 +135,77 @@ Arg* _json_loads(PikaObj* self, char* json_str) {
         ret = NULL;
         goto __exit;
     }
-    jsmntok_t tokens_[50];
-    pika_platform_memcpy(tokens_, tokens, sizeof(jsmntok_t) * token_count);
-    ret = json_to_arg_recursive(tokens, &(int){0}, json_str);
+    ret = json_to_arg_recursive(tokens, &(int){0}, json_str, token_count);
 __exit:
     if (NULL != tokens) {
         free(tokens);
     }
     return ret;
+}
+
+typedef struct {
+    cJSON* jsonArray;
+} JsonListContext;
+
+int32_t jsonListEachHandle(PikaObj* self,
+                           int itemIndex,
+                           Arg* itemEach,
+                           void* context) {
+    JsonListContext* ctx = (JsonListContext*)context;
+    cJSON_AddItemToArray(ctx->jsonArray, _cjson_decode(itemEach));
+    return 0;
+}
+
+typedef struct {
+    cJSON* jsonObject;
+} JsonDictContext;
+
+int32_t jsonDictEachHandle(PikaObj* self,
+                           Arg* keyEach,
+                           Arg* valEach,
+                           void* context) {
+    JsonDictContext* ctx = (JsonDictContext*)context;
+    cJSON_AddItemToObject(ctx->jsonObject, arg_getStr(keyEach),
+                          _cjson_decode(valEach));
+    return 0;
+}
+
+cJSON* _cjson_decode(Arg* d) {
+    ArgType type = arg_getType(d);
+    if (type == ARG_TYPE_NONE) {
+        return cJSON_CreateNull();
+    } else if (type == ARG_TYPE_INT) {
+        return cJSON_CreateNumber(arg_getInt(d));
+    } else if (type == ARG_TYPE_FLOAT) {
+        return cJSON_CreateNumber(arg_getFloat(d));
+    } else if (type == ARG_TYPE_BOOL) {
+        if (arg_getBool(d)) {
+            return cJSON_CreateTrue();
+        } else {
+            return cJSON_CreateFalse();
+        }
+    } else if (type == ARG_TYPE_STRING) {
+        return cJSON_CreateString(arg_getStr(d));
+    } else if (arg_isList(d)) {
+        JsonListContext context;
+        context.jsonArray = cJSON_CreateArray();
+        objList_forEach(arg_getObj(d), jsonListEachHandle, &context);
+        return context.jsonArray;
+    } else if (arg_isDict(d)) {
+        JsonDictContext context;
+        context.jsonObject = cJSON_CreateObject();
+        objDict_forEach(arg_getObj(d), jsonDictEachHandle, &context);
+        return context.jsonObject;
+    } else {
+        return cJSON_CreateNull();
+    }
+}
+
+char* _json_dumps(PikaObj* self, Arg* d) {
+    cJSON* json = _cjson_decode(d);
+    char* ret = cJSON_Print(json);
+    char* cached = obj_cacheStr(self, ret);
+    cJSON_Delete(json);
+    pika_platform_free(ret);
+    return cached;
 }

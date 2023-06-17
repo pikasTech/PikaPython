@@ -457,6 +457,11 @@ PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setObj(Arg* self, char* name, PikaObj* obj);
 
+PikaObj* arg_getObj(Arg* self);
+pika_bool arg_isList(Arg* arg);
+pika_bool arg_isDict(Arg* arg);
+pika_bool arg_isTuple(Arg* arg);
+
 static inline void arg_setObjFlag(Arg* self, uint8_t flag) {
     if (!arg_isObject(self)) {
         return;
@@ -509,26 +514,26 @@ enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
 typedef PikaObj PikaEventListener;
 
 void pika_eventListener_registEvent(PikaEventListener* self,
-                                   uint32_t eventId,
-                                   PikaObj* eventHandleObj);
+                                    uint32_t eventId,
+                                    PikaObj* eventHandleObj);
 
 void pika_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
 
 void _do_pika_eventListener_send(PikaEventListener* self,
-                                uint32_t eventId,
-                                Arg* eventData,
-                                pika_bool pickupWhenNoVM);
+                                 uint32_t eventId,
+                                 Arg* eventData,
+                                 pika_bool pickupWhenNoVM);
 
 void pika_eventListener_sendSignal(PikaEventListener* self,
-                                  uint32_t eventId,
-                                  int eventSignal);
+                                   uint32_t eventId,
+                                   int eventSignal);
 
 void pika_eventListener_send(PikaEventListener* self,
-                            uint32_t eventId,
-                            Arg* eventData);
+                             uint32_t eventId,
+                             Arg* eventData);
 
 PikaObj* pika_eventListener_getEventHandleObj(PikaEventListener* self,
-                                             uint32_t eventId);
+                                              uint32_t eventId);
 
 void pika_eventListener_init(PikaEventListener** p_self);
 void pika_eventListener_deinit(PikaEventListener** p_self);
@@ -680,8 +685,8 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
                               Arg* eventData);
 
 Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
-                                             uint32_t eventId,
-                                             int eventSignal);
+                                              uint32_t eventId,
+                                              int eventSignal);
 
 #define COLOR_RED "\x1b[31m"
 #define COLOR_GREEN "\x1b[32m"
@@ -737,6 +742,34 @@ int pika_GIL_ENTER(void);
 
 /* builtins */
 PikaObj* New_builtins(Args* args);
+
+int objList_getSize(PikaObj* self);
+void objList_set(PikaObj* self, int i, Arg* arg);
+Arg* objList_get(PikaObj* self, int i);
+void objList_append(PikaObj* self, Arg* arg);
+void objList_init(PikaObj* self);
+void objDict_init(PikaObj* self);
+int32_t objList_forEach(PikaObj* self,
+                        int32_t (*eachHandle)(PikaObj* self,
+                                              int itemIndex,
+                                              Arg* itemEach,
+                                              void* context),
+                        void* context);
+
+#define objTuple_getSize objList_getSize
+#define objTuple_get objList_get
+#define objTuple_set objList_set
+#define objTuple_forEach objList_forEach
+#define objTuple_init objList_init
+
+Arg* objDict_get(PikaObj* self, char* key);
+void objDict_set(PikaObj* self, char* key, Arg* arg);
+int32_t objDict_forEach(PikaObj* self,
+                        int32_t (*eachHandle)(PikaObj* self,
+                                              Arg* keyEach,
+                                              Arg* valEach,
+                                              void* context),
+                        void* context);
 
 #endif
 #ifdef __cplusplus

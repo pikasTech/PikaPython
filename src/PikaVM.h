@@ -362,10 +362,6 @@ void _do_byteCodeFrame_loadByteCode(ByteCodeFrame* self,
                                     uint8_t* bytes,
                                     pika_bool is_const);
 Arg* _vm_get(VMState* vm, PikaObj* self, Arg* key, Arg* obj);
-void __vm_List_append(PikaObj* self, Arg* arg);
-void __vm_List___init__(PikaObj* self);
-void __vm_Dict_set(PikaObj* self, Arg* arg, char* key);
-void __vm_Dict___init__(PikaObj* self);
 VM_SIGNAL_CTRL VMSignal_getCtrl(void);
 void pika_vm_exit(void);
 void pika_vmSignal_setCtrlClear(void);

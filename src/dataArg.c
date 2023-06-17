@@ -165,11 +165,11 @@ static Arg* arg_create(char* name,
     return arg_create_hash(nameHash, type, content, size, next);
 }
 
-static Arg* arg_set(Arg* self,
-                    char* name,
-                    ArgType type,
-                    uint8_t* content,
-                    uint32_t size) {
+Arg* arg_set(Arg* self,
+             char* name,
+             ArgType type,
+             uint8_t* content,
+             uint32_t size) {
     Hash nameHash = hash_time33(name);
     return _arg_set_hash(self, nameHash, type, content, size, NULL);
 }
@@ -489,6 +489,7 @@ void* arg_getPtr(Arg* self) {
     }
     return *(void**)arg_getContent(self);
 }
+
 char* arg_getStr(Arg* self) {
     return (char*)arg_getContent(self);
 }

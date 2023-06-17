@@ -126,16 +126,16 @@ Arg* pika_cjson_cJSON_getValue(PikaObj* self) {
     cJSON* item = obj_getPtr(self, "item");
     int type = item->type;
     if (type == cJSON_Invalid) {
-        return arg_newNull();
+        return arg_newNone();
     }
     if (type == cJSON_False) {
-        return arg_newInt(0);
+        return arg_newBool(0);
     }
     if (type == cJSON_True) {
-        return arg_newInt(1);
+        return arg_newBool(1);
     }
     if (type == cJSON_NULL) {
-        return arg_newNull();
+        return arg_newNone();
     }
     if (type == cJSON_Number) {
         return arg_newFloat(item->valuedouble);
@@ -143,7 +143,7 @@ Arg* pika_cjson_cJSON_getValue(PikaObj* self) {
     if (type == cJSON_String) {
         return arg_newStr(item->valuestring);
     }
-    return arg_newNull();
+    return arg_newNone();
 }
 
 PikaObj* pika_cjson_cJSON_getArrayItem(PikaObj* self, int index) {

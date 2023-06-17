@@ -781,11 +781,11 @@ Arg* _vm_slice(VMState* vm,
         if (oArg->constructor == New_PikaStdData_List ||
             oArg->constructor == New_PikaStdData_Tuple) {
             PikaObj* oSliced = newNormalObj((NewFun)oArg->constructor);
-            __vm_List___init__(oSliced);
+            objList_init(oSliced);
             for (int i = iStart; i < iEnd; i++) {
                 Arg* aIndex = arg_newInt(i);
                 Arg* aItem = _vm_get(vm, self, aIndex, aObj);
-                __vm_List_append(oSliced, aItem);
+                objList_append(oSliced, aItem);
                 arg_deinit(aItem);
                 arg_deinit(aIndex);
             }
@@ -1638,16 +1638,6 @@ exit:
     return f.n_arg;
 }
 
-void __vm_List_append(PikaObj* self, Arg* arg) {
-    PikaList* list = obj_getPtr(self, "list");
-    pikaList_append(list, arg);
-}
-
-void __vm_List___init__(PikaObj* self) {
-    PikaList* list = New_pikaList();
-    obj_setPtr(self, "list", list);
-}
-
 #if PIKA_BUILTIN_STRUCT_ENABLE
 PikaObj* New_PikaStdData_List(Args* args);
 PikaObj* New_PikaStdData_Tuple(Args* args);
@@ -1660,7 +1650,7 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
     NewFun constructor = is_list ? New_PikaStdData_List : New_PikaStdData_Tuple;
     uint8_t n_arg = VMState_getInputArgNum(vm);
     PikaObj* list = newNormalObj(constructor);
-    __vm_List___init__(list);
+    objList_init(list);
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */
@@ -1672,7 +1662,7 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
     for (int i = 0; i < n_arg; i++) {
         Arg* arg = stack_popArg_alloc(&stack);
         pika_assert(arg != NULL);
-        __vm_List_append(list, arg);
+        objList_append(list, arg);
         arg_deinit(arg);
     }
     stack_deinit(&stack);
@@ -1696,21 +1686,11 @@ static Arg* VM_instruction_handler_TPL(PikaObj* self,
     return _vm_create_list_or_tuple(self, vm, pika_false);
 }
 
-void __vm_Dict___init__(PikaObj* self) {
+void objDict_init(PikaObj* self) {
     PikaDict* dict = New_pikaDict();
     PikaDict* keys = New_pikaDict();
     obj_setPtr(self, "dict", dict);
     obj_setPtr(self, "_keys", keys);
-}
-
-void __vm_Dict_set(PikaObj* self, Arg* arg, char* key) {
-    PikaDict* dict = obj_getPtr(self, "dict");
-    PikaDict* keys = obj_getPtr(self, "_keys");
-    Arg* arg_key = arg_setStr(NULL, key, key);
-    Arg* arg_new = arg_copy(arg);
-    arg_setName(arg_new, key);
-    pikaDict_setArg(dict, arg_new);
-    pikaDict_setArg(keys, arg_key);
 }
 
 #if PIKA_BUILTIN_STRUCT_ENABLE
@@ -1724,7 +1704,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
 #if PIKA_BUILTIN_STRUCT_ENABLE
     uint8_t n_arg = VMState_getInputArgNum(vm);
     PikaObj* dict = newNormalObj(New_PikaStdData_Dict);
-    __vm_Dict___init__(dict);
+    objDict_init(dict);
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */
@@ -1735,7 +1715,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
     for (int i = 0; i < n_arg / 2; i++) {
         Arg* key_arg = stack_popArg_alloc(&stack);
         Arg* val_arg = stack_popArg_alloc(&stack);
-        __vm_Dict_set(dict, val_arg, arg_getStr(key_arg));
+        objDict_set(dict, arg_getStr(key_arg), val_arg);
         arg_deinit(key_arg);
         arg_deinit(val_arg);
     }
@@ -2736,16 +2716,18 @@ static void _OPT_POW(OperatorInfo* op) {
     if (op->t1 == ARG_TYPE_INT && op->t2 == ARG_TYPE_INT) {
         int lhs = op->i1;
         int rhs = op->i2;
-        if(rhs < 0) rhs = -rhs;
+        if (rhs < 0)
+            rhs = -rhs;
         int64_t ret = 1;
-        while(rhs){
-            if(rhs & 1) ret *= lhs;
+        while (rhs) {
+            if (rhs & 1)
+                ret *= lhs;
             lhs *= lhs;
             rhs >>= 1;
         }
-        if(op->i2 < 0){
-            op->res = arg_setFloat(op->res, "", 1.0/ret);
-        }else{
+        if (op->i2 < 0) {
+            op->res = arg_setFloat(op->res, "", 1.0 / ret);
+        } else {
             op->res = arg_setInt(op->res, "", ret);
         }
         return;

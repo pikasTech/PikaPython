@@ -637,6 +637,16 @@ size_t pikaList_getSize(PikaList* self) {
     return args_getInt(&self->super, "top");
 }
 
+void objList_append(PikaObj* self, Arg* arg) {
+    PikaList* list = obj_getPtr(self, "list");
+    pikaList_append(list, arg);
+}
+
+void objList_init(PikaObj* self) {
+    PikaList* list = New_pikaList();
+    obj_setPtr(self, "list", list);
+}
+
 void pikaList_reverse(PikaList* self) {
     pika_assert(NULL != self);
     int top = pikaList_getSize(self);

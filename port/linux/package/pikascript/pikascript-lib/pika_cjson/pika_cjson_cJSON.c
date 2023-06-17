@@ -129,10 +129,10 @@ Arg* pika_cjson_cJSON_getValue(PikaObj* self) {
         return arg_newNone();
     }
     if (type == cJSON_False) {
-        return arg_newInt(0);
+        return arg_newBool(0);
     }
     if (type == cJSON_True) {
-        return arg_newInt(1);
+        return arg_newBool(1);
     }
     if (type == cJSON_NULL) {
         return arg_newNone();

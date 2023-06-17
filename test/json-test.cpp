@@ -39,6 +39,23 @@ TEST_RUN_SINGLE_FILE_PASS(_json, loads, "test/python/json/_json_loads.py")
 
 TEST_RUN_SINGLE_FILE(json, speed, "test/python/json/json_speed.py")
 
+TEST(json, speed_diff) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/json/json_speed.py");
+    /* assert */
+    char* str_res_cjson = obj_getStr(pikaMain, "str_res_cjson");
+    char* str_res_jsmn = obj_getStr(pikaMain, "str_res_jsmn");
+    ASSERT_STREQ(str_res_cjson, str_res_jsmn);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 #endif
 
