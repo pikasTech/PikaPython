@@ -453,7 +453,7 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
                           thread->thread_stack, &thread->task_buffer);
 #else
     int err =
-        xTaskCreate(entry, name, stack_size, param, priority, thread->thread);
+        xTaskCreate(entry, name, stack_size, param, priority, &thread->thread);
 #endif
 
 #if PIKA_THREAD_MALLOC_STACK_ENABLE

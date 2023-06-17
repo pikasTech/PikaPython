@@ -118,8 +118,6 @@ static void _thread_func(void* arg) {
 #endif
 }
 
-int PikaStdData_Tuple_len(PikaObj* self);
-
 void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
     pika_thread_info* info =
         (pika_thread_info*)pikaMalloc(sizeof(pika_thread_info));
@@ -128,7 +126,8 @@ void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
 
     if (arg_isObject(args_)) {
         PikaObj* tuple = arg_getPtr(args_);
-        size_t tuple_size = PikaStdData_Tuple_len(tuple);
+        size_t tuple_size = objTuple_getSize(tuple);
+        pika_debug("type of args is %d", arg_getType(args_));
         pika_debug("new_thread: args tuple size %d", tuple_size);
         if (tuple_size > 0) {
             info->args = arg_copy(args_);
@@ -146,6 +145,7 @@ void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
     }
 
     info->stack_size = g_thread_stack_size;
+    pika_debug("thread stack size %d", info->stack_size);
     info->thread = pika_platform_thread_init("pika_thread", _thread_func, info,
                                              info->stack_size, PIKA_THREAD_PRIO,
                                              PIKA_THREAD_TICK);

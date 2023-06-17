@@ -1455,6 +1455,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     /* get method type list */
     f.type_list =
         methodArg_getTypeList(aMethod, buffs1, METHOD_TYPE_LIST_MAX_LEN);
+    pika_assert_msg(NULL != f.type_list, "method: %s", sMethodName);
     if (NULL == f.type_list) {
         pika_platform_printf(
             "OverflowError: type list is too long, please use bigger "

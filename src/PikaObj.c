@@ -897,6 +897,7 @@ static PikaObj* _obj_getObjWithKeepDeepth(PikaObj* self,
     if ('.' == objPath[0] && '\0' == objPath[1]) {
         return self;
     }
+    pika_assert(strGetSize(objPath) < PIKA_PATH_BUFF_SIZE);
     strcpy(objPath_buff, objPath);
     int32_t token_num = strGetTokenNum(objPath, '.');
     PikaObj* obj = self;
@@ -960,6 +961,7 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
     pika_assert(arg_isCallable(method_arg));
     MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
     if (NULL != prop->type_list) {
+        pika_assert(strGetSize(prop->type_list) < size);
         return strcpy(buffs, prop->type_list);
     }
     char* method_dec = methodArg_getDec(method_arg);
@@ -971,7 +973,6 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
         }
     }
     char* res = strCut(buffs, method_dec, '(', ')');
-    pika_assert_msg(NULL != res, "method_dec: %s", method_dec);
     return res;
 }
 
