@@ -124,6 +124,7 @@ Arg* arg_setBool(Arg* self, char* name, pika_bool val);
 Arg* arg_setFloat(Arg* self, char* name, pika_float val);
 Arg* arg_setPtr(Arg* self, char* name, ArgType type, void* pointer);
 Arg* arg_setStr(Arg* self, char* name, char* string);
+Arg* arg_setStrN(Arg* self, char* name, char* string, size_t len);
 Arg* arg_setNone(Arg* self);
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size);
 
@@ -145,6 +146,10 @@ static inline Arg* arg_newPtr(ArgType type, void* pointer) {
 
 static inline Arg* arg_newStr(char* string) {
     return arg_setStr(NULL, (char*)"", (string));
+}
+
+static inline Arg* arg_newStrN(char* string, size_t size) {
+    return arg_setStrN(NULL, (char*)"", (string), size);
 }
 
 static inline Arg* arg_newNone() {
