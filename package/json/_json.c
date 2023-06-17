@@ -80,8 +80,8 @@ Arg* json_to_arg_recursive(jsmntok_t* t,
         case JSMN_OBJECT: {
             PikaObj* ret = obj_newDict(NULL);
             int num_keys = t[*index].size;
-            (*index)++;
             for (int i = 0; i < num_keys; i++) {
+                (*index)++;
                 jsmntok_t* key_tok = &t[*index];
                 char* value = json_str + key_tok->start;
                 int size = key_tok->end - key_tok->start;
@@ -94,9 +94,6 @@ Arg* json_to_arg_recursive(jsmntok_t* t,
                     json_to_arg_recursive(t, index, json_str, token_count);
                 objDict_set(ret, key, val_nested);
                 arg_deinit(val_nested);
-                if (i < num_keys - 1) {
-                    (*index)++;
-                }
             }
             val = arg_newObj(ret);
             break;
@@ -105,17 +102,12 @@ Arg* json_to_arg_recursive(jsmntok_t* t,
             PikaObj* ret = obj_newList(NULL);
             jsmntok_t* key_tok = &t[*index];
             int num_elements = key_tok->size;
-            if (num_elements > 0) {
-                (*index)++;
-            }
             for (int i = 0; i < num_elements; i++) {
+                (*index)++;
                 Arg* val_nested =
                     json_to_arg_recursive(t, index, json_str, token_count);
                 objList_append(ret, val_nested);
                 arg_deinit(val_nested);
-                if (i < num_elements - 1) {
-                    (*index)++;
-                }
             }
             val = arg_newObj(ret);
             break;
