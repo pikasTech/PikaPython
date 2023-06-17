@@ -28,7 +28,8 @@
                 // "--gtest_filter=except.isinstance"
                 // "--gtest_filter=vm.range_1"
                 // "--gtest_filter=eventloop.*"
-                "--gtest_filter=event.event_thread"
+                // "--gtest_filter=event.event_thread"
+                "--gtest_filter=_json.loads"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

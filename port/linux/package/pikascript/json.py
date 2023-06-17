@@ -1,5 +1,7 @@
 import pika_cjson as cjson
+import _json
 
+CONFIG_USING_JSMN = False
 
 def _cjson_encode(cjson: cjson.cJSON):
     if cjson == None:
@@ -36,8 +38,11 @@ def _cjson_encode(cjson: cjson.cJSON):
 
 
 def loads(json: str) -> dict:
-    cj = cjson.Parse(json)
-    return _cjson_encode(cj)
+    if CONFIG_USING_JSMN:
+        return _json.loads(json)
+    else:
+        cj = cjson.Parse(json)
+        return _cjson_encode(cj)
 
 
 def _cjson_decode(d: dict):
