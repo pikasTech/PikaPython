@@ -89,6 +89,7 @@ void pikaMemMaxReset(void) {
     g_PikaMemInfo.heapUsedMax = 0;
 }
 
+#if PIKA_POOL_ENABLE
 uint32_t pool_getBlockIndex_byMemSize(Pool* pool, uint32_t size) {
     if (0 == size) {
         return 0;
@@ -288,7 +289,6 @@ void bitmap_deinit(BitMap bitmap) {
     pika_platform_free(bitmap);
 }
 
-#if PIKA_POOL_ENABLE
 Pool pikaPool = {0};
 void* pika_user_malloc(size_t size) {
     return pool_malloc(&pikaPool, size);
