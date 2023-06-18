@@ -48,12 +48,12 @@ jobs:
       run: cd ${{github.workspace}}/port/linux && bash gtest.sh
 
     - name: Lcov
-      run: cd ${{github.workspace}}/port/linux && bash lcov.sh
+      run: cd ${{github.workspace}} && bash lcov.sh
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
       with: 
-        file: ${{github.workspace}}/port/linux/testHtml.info
+        file: ${{github.workspace}}/testHtml.info
 
     - name: VALGRIND
       run: cd ${{github.workspace}}/port/linux && bash valgrind.sh
