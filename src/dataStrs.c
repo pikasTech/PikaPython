@@ -228,3 +228,58 @@ char* strsPathGetFileName(Args* buffs_p, char* input) {
     strPathGetFileName(input, buff);
     return buff;
 }
+
+char* strsTransfer(Args* buffs, char* str, size_t* iout_p) {
+    char* transfered_str = args_getBuff(buffs, strGetSize(str));
+    size_t i_out = 0;
+    size_t len = strGetSize(str);
+    for (size_t i = 0; i < len; i++) {
+        /* eg. replace '\x33' to '3' */
+        if ((str[i] == '\\') && (str[i + 1] == 'x')) {
+            char hex_str[] = "0x00";
+            hex_str[2] = str[i + 2];
+            hex_str[3] = str[i + 3];
+            char hex = (char)strtoll(hex_str, NULL, 0);
+            transfered_str[i_out++] = hex;
+            i += 3;
+            continue;
+        }
+        if (str[i] == '\\') {
+            switch (str[i + 1]) {
+                case 'r':
+                    transfered_str[i_out++] = '\r';
+                    break;
+                case 'n':
+                    transfered_str[i_out++] = '\n';
+                    break;
+                case 't':
+                    transfered_str[i_out++] = '\t';
+                    break;
+                case 'b':
+                    transfered_str[i_out++] = '\b';
+                    break;
+                case '\\':
+                    transfered_str[i_out++] = '\\';
+                    break;
+                case '\'':
+                    transfered_str[i_out++] = '\'';
+                    break;
+                case '\"':
+                    transfered_str[i_out++] = '\"';
+                    break;
+                case '?':
+                    transfered_str[i_out++] = '\?';
+                    break;
+                default:
+                    transfered_str[i_out++] = str[i];
+                    break;
+            }
+            i += 1;
+            continue;
+        }
+        /* normal char */
+        transfered_str[i_out++] = str[i];
+    }
+    *iout_p = i_out;
+    return transfered_str;
+}

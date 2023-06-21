@@ -1889,13 +1889,20 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
     if (STMT_string == stmtType) {
         str = strsCopy(&buffs, right);
         /* remove the first char */
+        char firstChar = str[0];
         str = str + 1;
         /* remove the last char */
         str[strGetSize(str) - 1] = '\0';
         /* replace */
         if (strIsContain(str, '\\')) {
-            str = strsReplace(&buffs, str, "\\\"", "\"");
-            str = strsReplace(&buffs, str, "\\'", "'");
+            switch (firstChar) {
+                case '\'':
+                    str = strsReplace(&buffs, str, "\\\'", "\'");
+                    break;
+                case '\"':
+                    str = strsReplace(&buffs, str, "\\\"", "\"");
+                    break;
+            }
         }
         AST_setNodeAttr(ast, (char*)"string", str);
         goto __exit;

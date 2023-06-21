@@ -56,6 +56,22 @@ TEST(json, speed_diff) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(json, json_issue1) {
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    pikaVM_runSingleFile(pikaMain, "test/python/json/json_issue1.py");
+    /* assert */
+    int act_time_s = obj_getInt(pikaMain, "act_time_s");
+    ASSERT_EQ(act_time_s, 300);
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 #endif
 

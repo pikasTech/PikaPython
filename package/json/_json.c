@@ -73,10 +73,21 @@ Arg* json_to_arg_recursive(jsmntok_t* t,
             }
             break;
         }
-        case JSMN_STRING:
+        case JSMN_STRING: {
             val = arg_newStrN(json_str + t[*index].start,
                               t[*index].end - t[*index].start);
+            char* raw = arg_getStr(val);
+            if (strIsContain(arg_getStr(val), '\\')) {
+                Args buffs = {0};
+                size_t i = 0;
+                char* transfered_str = strsTransfer(&buffs, raw, &i);
+                Arg* val_transfered = arg_newStr(transfered_str);
+                arg_deinit(val);
+                val = val_transfered;
+                strsDeinit(&buffs);
+            }
             break;
+        }
         case JSMN_OBJECT: {
             PikaObj* ret = obj_newDict(NULL);
             int num_keys = t[*index].size;
@@ -164,32 +175,37 @@ int32_t jsonDictEachHandle(PikaObj* self,
 
 cJSON* _cjson_decode(Arg* d) {
     ArgType type = arg_getType(d);
-    if (type == ARG_TYPE_NONE) {
-        return cJSON_CreateNull();
-    } else if (type == ARG_TYPE_INT) {
-        return cJSON_CreateNumber(arg_getInt(d));
-    } else if (type == ARG_TYPE_FLOAT) {
-        return cJSON_CreateNumber(arg_getFloat(d));
-    } else if (type == ARG_TYPE_BOOL) {
-        if (arg_getBool(d)) {
-            return cJSON_CreateTrue();
-        } else {
-            return cJSON_CreateFalse();
-        }
-    } else if (type == ARG_TYPE_STRING) {
-        return cJSON_CreateString(arg_getStr(d));
-    } else if (arg_isList(d)) {
-        JsonListContext context;
-        context.jsonArray = cJSON_CreateArray();
-        objList_forEach(arg_getObj(d), jsonListEachHandle, &context);
-        return context.jsonArray;
-    } else if (arg_isDict(d)) {
-        JsonDictContext context;
-        context.jsonObject = cJSON_CreateObject();
-        objDict_forEach(arg_getObj(d), jsonDictEachHandle, &context);
-        return context.jsonObject;
-    } else {
-        return cJSON_CreateNull();
+    switch (type) {
+        case ARG_TYPE_NONE:
+            return cJSON_CreateNull();
+
+        case ARG_TYPE_INT:
+            return cJSON_CreateNumber(arg_getInt(d));
+
+        case ARG_TYPE_FLOAT:
+            return cJSON_CreateNumber(arg_getFloat(d));
+
+        case ARG_TYPE_BOOL:
+            return arg_getBool(d) ? cJSON_CreateTrue() : cJSON_CreateFalse();
+
+        case ARG_TYPE_STRING:
+            return cJSON_CreateString(arg_getStr(d));
+
+        default:
+            if (arg_isList(d)) {
+                JsonListContext context;
+                context.jsonArray = cJSON_CreateArray();
+                objList_forEach(arg_getObj(d), jsonListEachHandle, &context);
+                return context.jsonArray;
+            }
+
+            if (arg_isDict(d)) {
+                JsonDictContext context;
+                context.jsonObject = cJSON_CreateObject();
+                objDict_forEach(arg_getObj(d), jsonDictEachHandle, &context);
+                return context.jsonObject;
+            }
+            return cJSON_CreateNull();
     }
 }
 

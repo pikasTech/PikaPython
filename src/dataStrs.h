@@ -52,6 +52,7 @@ char* strsPathGetFileName(Args* buffs_p, char* input);
 char* strsPathGetFolder(Args* buffs_p, char* input);
 char* strsPathJoin(Args* buffs_p, char* input1, char* input2);
 char* strsPathFormat(Args* buffs_p, char* input);
+char* strsTransfer(Args* buffs, char* str, size_t* iout_p);
 
 #endif
 #ifdef __cplusplus

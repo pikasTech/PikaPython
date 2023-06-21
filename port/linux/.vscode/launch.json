@@ -30,7 +30,8 @@
                 // "--gtest_filter=eventloop.*"
                 // "--gtest_filter=event.event_thread"
                 // "--gtest_filter=_json.loads"
-                "--gtest_filter=json.speed"
+                // "--gtest_filter=json.speed"
+                "--gtest_filter=json.json_issue1"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -2133,61 +2133,6 @@ __exit:
     return aReturn;
 }
 
-static char* __get_transferd_str(Args* buffs, char* str, size_t* iout_p) {
-    char* transfered_str = args_getBuff(buffs, strGetSize(str));
-    size_t i_out = 0;
-    size_t len = strGetSize(str);
-    for (size_t i = 0; i < len; i++) {
-        /* eg. replace '\x33' to '3' */
-        if ((str[i] == '\\') && (str[i + 1] == 'x')) {
-            char hex_str[] = "0x00";
-            hex_str[2] = str[i + 2];
-            hex_str[3] = str[i + 3];
-            char hex = (char)strtoll(hex_str, NULL, 0);
-            transfered_str[i_out++] = hex;
-            i += 3;
-            continue;
-        }
-        if (str[i] == '\\') {
-            switch (str[i + 1]) {
-                case 'r':
-                    transfered_str[i_out++] = '\r';
-                    break;
-                case 'n':
-                    transfered_str[i_out++] = '\n';
-                    break;
-                case 't':
-                    transfered_str[i_out++] = '\t';
-                    break;
-                case 'b':
-                    transfered_str[i_out++] = '\b';
-                    break;
-                case '\\':
-                    transfered_str[i_out++] = '\\';
-                    break;
-                case '\'':
-                    transfered_str[i_out++] = '\'';
-                    break;
-                case '\"':
-                    transfered_str[i_out++] = '\"';
-                    break;
-                case '?':
-                    transfered_str[i_out++] = '\?';
-                    break;
-                default:
-                    transfered_str[i_out++] = str[i];
-                    break;
-            }
-            i += 1;
-            continue;
-        }
-        /* normal char */
-        transfered_str[i_out++] = str[i];
-    }
-    *iout_p = i_out;
-    return transfered_str;
-}
-
 static Arg* VM_instruction_handler_STR(PikaObj* self,
                                        VMState* vm,
                                        char* data,
@@ -2195,7 +2140,7 @@ static Arg* VM_instruction_handler_STR(PikaObj* self,
     if (strIsContain(data, '\\')) {
         Args buffs = {0};
         size_t i_out = 0;
-        char* transfered_str = __get_transferd_str(&buffs, data, &i_out);
+        char* transfered_str = strsTransfer(&buffs, data, &i_out);
         Arg* return_arg = arg_ret_reg;
         return_arg = arg_setStr(return_arg, "", transfered_str);
         strsDeinit(&buffs);
@@ -2211,7 +2156,7 @@ static Arg* VM_instruction_handler_BYT(PikaObj* self,
     if (strIsContain(data, '\\')) {
         Args buffs = {0};
         size_t i_out = 0;
-        char* transfered_str = __get_transferd_str(&buffs, data, &i_out);
+        char* transfered_str = strsTransfer(&buffs, data, &i_out);
         Arg* return_arg = New_arg(NULL);
         return_arg =
             arg_setBytes(return_arg, "", (uint8_t*)transfered_str, i_out);
