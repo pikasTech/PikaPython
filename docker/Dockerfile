@@ -42,7 +42,7 @@ ADD rust_config /root/.cargo/config
 ENV RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
 ENV RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
 ENV PATH="/root/.cargo/bin:${PATH}"
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y && \
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y --default-toolchain='1.52.0' && \
     rustup target add i686-pc-windows-gnu
 
 
