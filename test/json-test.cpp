@@ -56,7 +56,7 @@ TEST(json, speed_diff) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(json, json_issue1) {
+TEST(json, issue1) {
     g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     extern unsigned char pikaModules_py_a[];
@@ -71,6 +71,8 @@ TEST(json, json_issue1) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
+
+TEST_RUN_SINGLE_FILE(json, err, "test/python/json/json_err.py")
 
 #endif
 #endif

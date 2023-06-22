@@ -1,16 +1,18 @@
 #include "_json.h"
-#include "../pikascript-lib/pika_cjson/cJSON.h"
+#include "_pika_cJSON.h"
 #include "jsmn.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 13, 0)
 #error "pikapython version must be greater than 1.13.0"
 #endif
 
-cJSON* _cjson_decode(Arg* d);
+cJSON* _pika_cJSON_decode(Arg* d);
 
-int parse_json(const char* json_string,
-               jsmn_parser* parser,
-               jsmntok_t** tokens) {
+#define USING_JSMN 0
+
+int parse_json_jsmn(const char* json_string,
+                    jsmn_parser* parser,
+                    jsmntok_t** tokens) {
     jsmn_init(parser);
 
     int token_count =
@@ -41,10 +43,10 @@ int parse_json(const char* json_string,
     return result;
 }
 
-Arg* json_to_arg_recursive(jsmntok_t* t,
-                           int* index,
-                           char* json_str,
-                           int token_count) {
+Arg* json_encode_jsmn(jsmntok_t* t,
+                      int* index,
+                      char* json_str,
+                      int token_count) {
     Arg* val;
     pika_assert(*index >= 0);
     pika_assert(*index < token_count);
@@ -102,7 +104,7 @@ Arg* json_to_arg_recursive(jsmntok_t* t,
                 pika_platform_memcpy(key, value, size);
                 (*index)++;
                 Arg* val_nested =
-                    json_to_arg_recursive(t, index, json_str, token_count);
+                    json_encode_jsmn(t, index, json_str, token_count);
                 objDict_set(ret, key, val_nested);
                 arg_deinit(val_nested);
             }
@@ -116,7 +118,7 @@ Arg* json_to_arg_recursive(jsmntok_t* t,
             for (int i = 0; i < num_elements; i++) {
                 (*index)++;
                 Arg* val_nested =
-                    json_to_arg_recursive(t, index, json_str, token_count);
+                    json_encode_jsmn(t, index, json_str, token_count);
                 objList_append(ret, val_nested);
                 arg_deinit(val_nested);
             }
@@ -129,21 +131,92 @@ Arg* json_to_arg_recursive(jsmntok_t* t,
     return val;
 }
 
+Arg* json_encode_cjson(cJSON* cjson) {
+    if (cjson == NULL) {
+        return NULL;
+    }
+
+    switch (cjson->type) {
+        case pika_cJSON_Invalid: {
+            return NULL;
+        }
+        case pika_cJSON_False: {
+            return arg_newBool(pika_false);
+        }
+        case pika_cJSON_True: {
+            return arg_newBool(pika_true);
+        }
+        case pika_cJSON_NULL: {
+            return arg_newNull();
+        }
+        case pika_cJSON_Number: {
+            pika_float num_f = cjson->valuedouble;
+            int num_i = cjson->valueint;
+            if (num_f == num_i) {
+                return arg_newInt(num_i);
+            } else {
+                return arg_newFloat(num_f);
+            }
+        }
+        case pika_cJSON_String: {
+            return arg_newStr(cjson->valuestring);
+        }
+        case pika_cJSON_Array: {
+            PikaObj* ret = obj_newList(NULL);
+            for (int i = 0; i < pika_cJSON_GetArraySize(cjson); i++) {
+                cJSON* item = pika_cJSON_GetArrayItem(cjson, i);
+                Arg* nested_arg = json_encode_cjson(item);
+                objList_append(ret, nested_arg);
+                arg_deinit(nested_arg);
+            }
+            return arg_newObj(ret);
+        }
+        case pika_cJSON_Object: {
+            PikaObj* ret = obj_newDict(NULL);
+            cJSON* child = cjson->child;
+            for (int i = 0; i < pika_cJSON_GetArraySize(cjson); i++) {
+                char* key = child->string;
+                Arg* nested_arg = json_encode_cjson(child);
+                objDict_set(ret, key, nested_arg);
+                arg_deinit(nested_arg);
+                child = child->next;
+            }
+            return arg_newObj(ret);
+        }
+        case pika_cJSON_Raw: {
+            return arg_newStr(cjson->valuestring);
+        }
+        default: {
+            return NULL;
+        }
+    }
+}
+
 Arg* _json_loads(PikaObj* self, char* json_str) {
+#if USING_JSMN
     jsmn_parser parser;
-    jsmntok_t* tokens = NULL;
     Arg* ret = NULL;
-    int token_count = parse_json(json_str, &parser, &tokens);
+    jsmntok_t* tokens = NULL;
+    int token_count = parse_json_jsmn(json_str, &parser, &tokens);
     if (token_count < 0) {
         ret = NULL;
         goto __exit;
     }
-    ret = json_to_arg_recursive(tokens, &(int){0}, json_str, token_count);
+    ret = json_encode_jsmn(tokens, &(int){0}, json_str, token_count);
 __exit:
     if (NULL != tokens) {
         free(tokens);
     }
     return ret;
+#else
+    cJSON* cjson = pika_cJSON_Parse(json_str);
+    if (cjson == NULL) {
+        return NULL;
+    }
+    Arg* ret = json_encode_cjson(cjson);
+    pika_cJSON_Delete(cjson);
+    return ret;
+#endif
 }
 
 typedef struct {
@@ -155,7 +228,7 @@ int32_t jsonListEachHandle(PikaObj* self,
                            Arg* itemEach,
                            void* context) {
     JsonListContext* ctx = (JsonListContext*)context;
-    cJSON_AddItemToArray(ctx->jsonArray, _cjson_decode(itemEach));
+    pika_cJSON_AddItemToArray(ctx->jsonArray, _pika_cJSON_decode(itemEach));
     return 0;
 }
 
@@ -168,52 +241,53 @@ int32_t jsonDictEachHandle(PikaObj* self,
                            Arg* valEach,
                            void* context) {
     JsonDictContext* ctx = (JsonDictContext*)context;
-    cJSON_AddItemToObject(ctx->jsonObject, arg_getStr(keyEach),
-                          _cjson_decode(valEach));
+    pika_cJSON_AddItemToObject(ctx->jsonObject, arg_getStr(keyEach),
+                               _pika_cJSON_decode(valEach));
     return 0;
 }
 
-cJSON* _cjson_decode(Arg* d) {
+cJSON* _pika_cJSON_decode(Arg* d) {
     ArgType type = arg_getType(d);
     switch (type) {
         case ARG_TYPE_NONE:
-            return cJSON_CreateNull();
+            return pika_cJSON_CreateNull();
 
         case ARG_TYPE_INT:
-            return cJSON_CreateNumber(arg_getInt(d));
+            return pika_cJSON_CreateNumber(arg_getInt(d));
 
         case ARG_TYPE_FLOAT:
-            return cJSON_CreateNumber(arg_getFloat(d));
+            return pika_cJSON_CreateNumber(arg_getFloat(d));
 
         case ARG_TYPE_BOOL:
-            return arg_getBool(d) ? cJSON_CreateTrue() : cJSON_CreateFalse();
+            return arg_getBool(d) ? pika_cJSON_CreateTrue()
+                                  : pika_cJSON_CreateFalse();
 
         case ARG_TYPE_STRING:
-            return cJSON_CreateString(arg_getStr(d));
+            return pika_cJSON_CreateString(arg_getStr(d));
 
         default:
             if (arg_isList(d)) {
                 JsonListContext context;
-                context.jsonArray = cJSON_CreateArray();
+                context.jsonArray = pika_cJSON_CreateArray();
                 objList_forEach(arg_getObj(d), jsonListEachHandle, &context);
                 return context.jsonArray;
             }
 
             if (arg_isDict(d)) {
                 JsonDictContext context;
-                context.jsonObject = cJSON_CreateObject();
+                context.jsonObject = pika_cJSON_CreateObject();
                 objDict_forEach(arg_getObj(d), jsonDictEachHandle, &context);
                 return context.jsonObject;
             }
-            return cJSON_CreateNull();
+            return pika_cJSON_CreateNull();
     }
 }
 
 char* _json_dumps(PikaObj* self, Arg* d) {
-    cJSON* json = _cjson_decode(d);
-    char* ret = cJSON_Print(json);
+    cJSON* json = _pika_cJSON_decode(d);
+    char* ret = pika_cJSON_Print(json);
     char* cached = obj_cacheStr(self, ret);
-    cJSON_Delete(json);
+    pika_cJSON_Delete(json);
     pika_platform_free(ret);
     return cached;
 }
