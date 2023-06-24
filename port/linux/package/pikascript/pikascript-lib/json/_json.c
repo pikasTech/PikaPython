@@ -211,6 +211,9 @@ __exit:
 #else
     cJSON* cjson = pika_cJSON_Parse(json_str);
     if (cjson == NULL) {
+        pika_platform_printf("JSONDecodeError: at \'%s\'\r\n",
+                             pika_cJSON_GetErrorPtr());
+        obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         return NULL;
     }
     Arg* ret = json_encode_cjson(cjson);

@@ -74,7 +74,7 @@ Arg* _lua_val_to_arg(lua_State* L) {
     return NULL;
 }
 
-Arg* _pika_lua_eval(PikaObj* self, char* cmd) {
+Arg* _pika_lua_evals(PikaObj* self, char* cmd) {
     Args buffs = {0};
     int res = luaL_dostring(g_pika_L, cmd);
     if (LUA_OK != res) {
@@ -103,7 +103,7 @@ void _pika_lua___exit__(PikaObj* self) {
 Arg* _pika_lua_evalLine(PikaObj* self, char* line) {
     Args buffs = {0};
     char* line_with_end = strsAppend(&buffs, line, "\n");
-    Arg* ret = _pika_lua_eval(self, line_with_end);
+    Arg* ret = _pika_lua_evals(self, line_with_end);
     goto __exit;
 __exit:
     strsDeinit(&buffs);

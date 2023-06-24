@@ -1006,7 +1006,6 @@ char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
 }
 
 char* _find_super_class_name(ByteCodeFrame* bcframe, int32_t pc_start);
-Arg* _builtin_class(char* sRunPath);
 Arg* methodArg_super(Arg* aThis, NativeProperty** p_prop) {
     Arg* aSuper = NULL;
     PikaObj* builtins = NULL;

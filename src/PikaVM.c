@@ -1821,13 +1821,49 @@ static char* _find_self_name(VMState* vm) {
 #endif
 
 PikaObj* New_builtins_object(Args* args);
-Arg* _builtin_class(char* sRunPath) {
-    /* return tiny obj */
-    if (strEqu(sRunPath, "TinyObj")) {
-        return arg_newMetaObj(New_builtins_object);
-    }
 
-    return NULL;
+static Arg* _VM_instruction_eval(PikaObj* self,
+                                 VMState* vm,
+                                 char* sRunPath,
+                                 pika_bool* bIsEval) {
+    Arg* aReturn = NULL;
+    Args buffs = {0};
+    *bIsEval = pika_false;
+    if (sRunPath[0] != 'e') {
+        return NULL;
+    }
+    if (!strEqu(sRunPath, "eval") && !strEqu(sRunPath, "exec")) {
+        return NULL;
+    }
+    /* eval || exec */
+    *bIsEval = pika_true;
+    ByteCodeFrame bcFrame = {0};
+    /* generate byte code */
+    byteCodeFrame_init(&bcFrame);
+    Arg* aCode = stack_popArg_alloc(&(vm->stack));
+    char* sCode = arg_getStr(aCode);
+    char* sCmd = strsAppend(&buffs, "@res = ", sCode);
+    if (PIKA_RES_OK != pika_lines2Bytes(&bcFrame, sCmd)) {
+        pika_platform_printf(PIKA_ERR_STRING_SYNTAX_ERROR);
+        aReturn = NULL;
+        goto __exit;
+    }
+    _pikaVM_runByteCodeFrameWithState(self, vm->locals, vm->globals, &bcFrame,
+                                      0, vm->run_state);
+
+    aReturn = obj_getArg(vm->locals, "@res");
+    if (NULL == aReturn) {
+        aReturn = obj_getArg(vm->globals, "@res");
+    }
+    if (strEqu(sRunPath, "eval")) {
+        aReturn = arg_copy(aReturn);
+    }
+    goto __exit;
+__exit:
+    byteCodeFrame_deinit(&bcFrame);
+    arg_deinit(aCode);
+    strsDeinit(&buffs);
+    return aReturn;
 }
 
 static Arg* VM_instruction_handler_RUN(PikaObj* self,
@@ -1846,6 +1882,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     Arg* aStack = NULL;
     pika_bool bIsTemp = pika_false;
     pika_bool bSkipInit = pika_false;
+    pika_bool bIsEval = pika_false;
     char* sSysOut;
     int iNumUsed = 0;
     PikaObj* oBuiltin = NULL;
@@ -1889,10 +1926,17 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     }
 #endif
 
-    /* for builtin obj */
-    aReturn = _builtin_class(sRunPath);
+    /* return tiny obj */
+    if (strEqu(sRunPath, "TinyObj")) {
+        aReturn = arg_newMetaObj(New_builtins_object);
+        if (NULL != aReturn) {
+            goto __exit;
+        }
+    }
 
-    if (NULL != aReturn) {
+    /* eval and exec */
+    aReturn = _VM_instruction_eval(self, vm, sRunPath, &bIsEval);
+    if (bIsEval) {
         goto __exit;
     }
 

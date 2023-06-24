@@ -32,7 +32,8 @@
                 // "--gtest_filter=_json.loads"
                 // "--gtest_filter=json.speed"
                 // "--gtest_filter=json.json_issue1"
-                "--gtest_filter=json.err"
+                // "--gtest_filter=json.err"
+                "--gtest_filter=builtin.eval"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
