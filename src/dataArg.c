@@ -614,7 +614,9 @@ Arg* arg_loadFile(Arg* self, char* filename) {
     FILE* input_file = pika_platform_fopen(filename, "rb");
     if (NULL == input_file) {
         pika_platform_printf("Error: Couldn't open file '%s'\n", filename);
-        arg_deinit(res);
+        if(NULL != res){
+            arg_deinit(res);
+        }
         res = NULL;
         goto exit;
     }
