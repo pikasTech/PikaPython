@@ -3813,6 +3813,10 @@ Arg* builtins_bytearray___iter__(PikaObj* self) {
     return arg_newRef(self);
 }
 
+int builtins_bytearray___len__(PikaObj* self){
+    return obj_getBytesSize(self, "raw");
+}
+
 Arg* builtins_bytearray___next__(PikaObj* self) {
     int __iter_i = args_getInt(self->list, "__iter_i");
     uint8_t* data = obj_getBytes(self, "raw");
