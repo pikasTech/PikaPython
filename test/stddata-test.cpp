@@ -540,12 +540,32 @@ TEST(stddata, pikafs_open) {
     /* run */
     __platform_printf("BEGIN\r\n");
     obj_run(pikaMain,
-            "f = open('pikafs/widget_config.ini','r')\n"
+            "f = open('/pikafs/widget_config.ini','r')\n"
             "f.read(8)\n"
             "f.close()\n");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "'[端口]'\r\n");
+    /* deinit */
+    obj_deinit(pikaMain);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, pikafs_open_err) {
+    /* init */
+    g_PikaMemInfo.heapUsedMax = 0;
+    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
+    extern unsigned char pikaModules_py_a[];
+    obj_linkLibrary(pikaMain, pikaModules_py_a);
+    /* run */
+    __platform_printf("BEGIN\r\n");
+    obj_run(pikaMain,
+            "f = open('/pikafs/_no_file_widget_config.ini','r')\n"
+            "f.read(8)\n"
+            "f.close()\n");
+    /* collect */
+    /* assert */
+    // EXPECT_STREQ(log_buff[0], "'[端口]'\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

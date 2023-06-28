@@ -8,8 +8,11 @@ int PikaStdData_FILEIO_init(PikaObj* self, char* path, char* mode) {
         /* already initialized */
         return 0;
     }
-    if (strIsStartWith(path, "pikafs/")) {
-        pikafs_FILE* f = pikafs_fopen(path + 7, "rb");
+    if (strIsStartWith(path, "/pikafs/")) {
+        pikafs_FILE* f = pikafs_fopen(path + 8, "rb");
+        if (f == NULL) {
+            return 1;
+        }
         obj_setInt(self, "pikafs", PIKA_TRUE);
         obj_setPtr(self, "_f", f);
         obj_setStr(self, "_mode", mode);

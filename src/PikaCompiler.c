@@ -1080,17 +1080,24 @@ PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path) {
  */
 pikafs_FILE* pikafs_fopen(char* file_name, char* mode) {
     pikafs_FILE* f = (pikafs_FILE*)pikaMalloc(sizeof(pikafs_FILE));
+    if (NULL == f) {
+        return NULL;  // 避免空指针
+    }
     memset(f, 0, sizeof(pikafs_FILE));
     extern volatile PikaObj* __pikaMain;
     uint8_t* library_bytes = obj_getPtr((PikaObj*)__pikaMain, "@libraw");
     if (NULL == library_bytes) {
-        return NULL;
+        goto __error;  // 如果library_bytes为NULL，则跳转到__error
     }
     if (PIKA_RES_OK !=
         _loadModuleDataWithName(library_bytes, file_name, &f->addr, &f->size)) {
-        return NULL;
+        goto __error;  // 如果_loadModuleDataWithName的结果不是PIKA_RES_OK，则跳转到__error
     }
     return f;
+
+__error:
+    pikaFree(f, sizeof(pikafs_FILE));  // 释放内存
+    return NULL;
 }
 
 pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
@@ -1156,7 +1163,7 @@ int pikafs_fwrite(void* buf, size_t size, size_t count, pikafs_FILE* file) {
  * @return 0 if success
  */
 int pikafs_fclose(pikafs_FILE* file) {
-    if (file->need_free){
+    if (file->need_free) {
         pikaFree(file->addr, file->size);
     }
     pikaFree(file, sizeof(pikafs_FILE));
