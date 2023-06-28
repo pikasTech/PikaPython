@@ -34,7 +34,7 @@
                 // "--gtest_filter=json.json_issue1"
                 // "--gtest_filter=json.err"
                 // "--gtest_filter=builtin.eval"
-                "--gtest_filter=stddata.pikafs_open_err"
+                // "--gtest_filter=stddata.pikafs_open_err"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

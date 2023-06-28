@@ -2770,91 +2770,101 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     switch (data[0]) {
         case '+':
             _OPT_ADD(&op);
-            goto exit;
+            goto __exit;
         case '%':
             if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
                 op.res = arg_setInt(op.res, "", op.i1 % op.i2);
-                goto exit;
+                goto __exit;
             }
 #if PIKA_MATH_ENABLE
             if (op.t1 == ARG_TYPE_FLOAT || op.t2 == ARG_TYPE_FLOAT) {
                 op.res = arg_setFloat(op.res, "", fmod(op.f1, op.f2));
-                goto exit;
+                goto __exit;
             }
 #endif
             VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
             pika_platform_printf(
                 "TypeError: unsupported operand type(s) for %%: 'float'\n");
             op.res = NULL;
-            goto exit;
+            goto __exit;
         case '-':
             _OPT_SUB(&op);
-            goto exit;
+            goto __exit;
     }
     if (data[1] == '=' && (data[0] == '!' || data[0] == '=')) {
         _OPT_EQU(&op);
-        goto exit;
+        goto __exit;
     }
     if (data[1] == 0) {
         switch (data[0]) {
             case '<':
                 op.res = arg_setBool(op.res, "", op.f1 < op.f2);
-                goto exit;
+                goto __exit;
             case '*':
                 if (op.num == 1) {
                     op.res = arg_copy(op.a2);
                     arg_setIsStarred(op.res, 1);
-                    goto exit;
+                    goto __exit;
                 }
                 if ((op.t1 == ARG_TYPE_FLOAT) || op.t2 == ARG_TYPE_FLOAT) {
                     op.res = arg_setFloat(op.res, "", op.f1 * op.f2);
-                    goto exit;
+                    goto __exit;
                 }
                 op.res = arg_setInt(op.res, "", op.i1 * op.i2);
-                goto exit;
+                goto __exit;
             case '&':
                 if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
                     op.res = arg_setInt(op.res, "", op.i1 & op.i2);
-                    goto exit;
+                    goto __exit;
                 }
                 VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
                 pika_platform_printf(
                     "TypeError: unsupported operand type(s) for &: 'float'\n");
                 op.res = NULL;
-                goto exit;
+                goto __exit;
             case '|':
                 if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
                     op.res = arg_setInt(op.res, "", op.i1 | op.i2);
-                    goto exit;
+                    goto __exit;
                 }
                 VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
                 pika_platform_printf(
                     "TypeError: unsupported operand type(s) for |: 'float'\n");
                 op.res = NULL;
-                goto exit;
+                goto __exit;
             case '~':
                 if (op.t2 == ARG_TYPE_INT) {
                     op.res = arg_setInt(op.res, "", ~op.i2);
-                    goto exit;
+                    goto __exit;
                 }
                 VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
                 pika_platform_printf(
                     "TypeError: unsupported operand type(s) for ~: 'float'\n");
                 op.res = NULL;
-                goto exit;
+                goto __exit;
             case '/':
                 if (0 == op.f2) {
                     VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
                     args_setSysOut(vm->locals->list,
                                    "ZeroDivisionError: division by zero");
                     op.res = NULL;
-                    goto exit;
+                    goto __exit;
                 }
                 op.res = arg_setFloat(op.res, "", op.f1 / op.f2);
-                goto exit;
+                goto __exit;
             case '>':
                 op.res = arg_setInt(op.res, "", op.f1 > op.f2);
-                goto exit;
+                goto __exit;
+            case '^':
+                if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
+                    op.res = arg_setInt(op.res, "", op.i1 ^ op.i2);
+                    goto __exit;
+                }
+                VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
+                pika_platform_printf(
+                    "TypeError: unsupported operand type(s) for ^: 'float'\n");
+                op.res = NULL;
+                goto __exit;
         }
     }
     if (data[1] == 'i' && data[2] == 'n') {
@@ -2864,7 +2874,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             } else {
                 op.res = arg_setBool(op.res, "", pika_false);
             }
-            goto exit;
+            goto __exit;
         }
 #if !PIKA_NANO_ENABLE
         if (argType_isObject(op.t2)) {
@@ -2894,7 +2904,7 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                 pikaVM_runByteCode(obj2, (uint8_t*)bytes);
                 op.res =
                     arg_setBool(op.res, "", obj_getInt(obj2, "@res_contains"));
-                goto exit;
+                goto __exit;
             }
         }
 #endif
@@ -2904,22 +2914,29 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
                        "Operation 'in' is not supported for this "
                        "type\n");
         op.res = NULL;
-        goto exit;
+        goto __exit;
     }
     if (data[0] == '*' && data[1] == '*') {
         _OPT_POW(&op);
-        goto exit;
+        goto __exit;
     }
     if (data[0] == '/' && data[1] == '/') {
         if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
             op.res = arg_setInt(op.res, "", op.i1 / op.i2);
-            goto exit;
+            goto __exit;
         }
+#if PIKA_MATH_ENABLE
+        if ((op.t1 == ARG_TYPE_FLOAT) || (op.t2 == ARG_TYPE_FLOAT)) {
+            op.res = arg_setFloat(op.res, "", floor(op.f1 / op.f2));
+            goto __exit;
+        }
+#endif
         VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
         pika_platform_printf(
-            "TypeError: unsupported operand type(s) for //: 'float'\n");
+            "Operation float \\\\ float is not enabled, please set "
+            "PIKA_MATH_ENABLE\n");
         op.res = NULL;
-        goto exit;
+        goto __exit;
     }
     if (data[1] == 'i' && data[2] == 's') {
 #if !PIKA_NANO_ENABLE
@@ -2929,70 +2946,72 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
             } else {
                 op.res = arg_setBool(op.res, "", pika_false);
             }
-            goto exit;
+            goto __exit;
         }
         if ((op.t1 != op.t2) && (op.t1 != ARG_TYPE_NONE) &&
             (op.t2 != ARG_TYPE_NONE)) {
             op.res = arg_setInt(op.res, "", 0);
-            goto exit;
+            goto __exit;
         }
 #endif
         op.opt = "==";
         _OPT_EQU(&op);
-        goto exit;
+        goto __exit;
     }
     if (data[0] == '>' && data[1] == '=') {
         op.res = arg_setBool(
             op.res, "",
             (op.f1 > op.f2) ||
                 ((op.f1 - op.f2) * (op.f1 - op.f2) < (pika_float)0.000001));
-        goto exit;
+        goto __exit;
     }
     if (data[0] == '<' && data[1] == '=') {
         op.res = arg_setBool(
             op.res, "",
             (op.f1 < op.f2) ||
                 ((op.f1 - op.f2) * (op.f1 - op.f2) < (pika_float)0.000001));
-        goto exit;
+        goto __exit;
     }
     if (data[0] == '>' && data[1] == '>') {
         if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
             op.res = arg_setInt(op.res, "", op.i1 >> op.i2);
-            goto exit;
+            goto __exit;
         }
         VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
         pika_platform_printf(
             "TypeError: unsupported operand type(s) for >>: 'float'\n");
         op.res = NULL;
-        goto exit;
+        goto __exit;
     }
     if (data[0] == '<' && data[1] == '<') {
         if ((op.t1 == ARG_TYPE_INT) && (op.t2 == ARG_TYPE_INT)) {
             op.res = arg_setInt(op.res, "", op.i1 << op.i2);
-            goto exit;
+            goto __exit;
         }
         VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
         pika_platform_printf(
             "TypeError: unsupported operand type(s) for <<: 'float'\n");
         op.res = NULL;
-        goto exit;
+        goto __exit;
     }
     if (data[0] == ' ' && data[1] == 'a' && data[2] == 'n' && data[3] == 'd' &&
         data[4] == ' ') {
         op.res = arg_setBool(op.res, "", op.i1 && op.i2);
-        goto exit;
+        goto __exit;
     }
     if (data[0] == ' ' && data[1] == 'o' && data[2] == 'r' && data[3] == ' ' &&
         data[4] == 0) {
         op.res = arg_setBool(op.res, "", op.i1 || op.i2);
-        goto exit;
+        goto __exit;
     }
     if (data[0] == ' ' && data[1] == 'n' && data[2] == 'o' && data[3] == 't' &&
         data[4] == ' ' && data[5] == 0) {
         op.res = arg_setBool(op.res, "", !op.i2);
-        goto exit;
+        goto __exit;
     }
-exit:
+    pika_platform_printf("Error: unknown operator '%s'\n", data);
+    VMState_setErrorCode(vm, PIKA_RES_ERR_OPERATION_FAILED);
+__exit:
     if (NULL != op.a1) {
         arg_deinit(op.a1);
     }

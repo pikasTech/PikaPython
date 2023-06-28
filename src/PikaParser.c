@@ -623,7 +623,7 @@ char* Lexer_getTokenStream(Args* outBuffs, char* stmt) {
             */
             if (('>' == c0) || ('<' == c0) || ('*' == c0) || ('/' == c0) ||
                 ('+' == c0) || ('-' == c0) || ('!' == c0) || ('=' == c0) ||
-                ('%' == c0)) {
+                ('%' == c0) || ('^' == c0)) {
                 if ('=' == c1) {
                     char content[3] = {0};
                     content[0] = c0;
@@ -825,10 +825,10 @@ static char* _solveEqualLevelOperator(Args* buffs,
 }
 
 static const char operators[][9] = {
-    "**", "~",  "*",  "/",    "%",     "//",    "+",    "-",
-    ">>", "<<", "&",  "^",    "|",     "<",     "<=",   ">",
-    ">=", "!=", "==", " is ", " in ",  "%=",    "/=",   "//=",
-    "-=", "+=", "*=", "**=",  " not ", " and ", " or ", " import "};
+    "**",  "~",    "*",     "/",     "%",    "//",      "+",  "-",  ">>",
+    "<<",  "&",    "^",     "|",     "<",    "<=",      ">",  ">=", "!=",
+    "==",  " is ", " in ",  "%=",    "/=",   "//=",     "-=", "+=", "*=",
+    "**=", "^=",   " not ", " and ", " or ", " import "};
 
 char* Lexer_getOperator(Args* outBuffs, char* stmt) {
     Args buffs = {0};
@@ -1373,6 +1373,10 @@ char* Suger_format(Args* outBuffs, char* right) {
     return res;
 }
 
+#define SELF_OPERATORES_LEN 4
+static const char selfOperators[][SELF_OPERATORES_LEN] = {
+    "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=", "**=", "//="};
+
 uint8_t Suger_selfOperator(Args* outbuffs,
                            char* stmt,
                            char** right_p,
@@ -1385,20 +1389,15 @@ uint8_t Suger_selfOperator(Args* outbuffs,
     uint8_t is_left_exist = 0;
 
     Args buffs = {0};
-    char _operator[2] = {0};
+    char _operator[3] = {0};
     char* operator=(char*) _operator;
     uint8_t is_right = 0;
-    if (Cursor_isContain(stmt, TOKEN_operator, "+=")) {
-        operator[0] = '+';
-    }
-    if (Cursor_isContain(stmt, TOKEN_operator, "-=")) {
-        operator[0] = '-';
-    }
-    if (Cursor_isContain(stmt, TOKEN_operator, "*=")) {
-        operator[0] = '*';
-    }
-    if (Cursor_isContain(stmt, TOKEN_operator, "/=")) {
-        operator[0] = '/';
+    for (uint8_t i = 0; i < sizeof(selfOperators) / SELF_OPERATORES_LEN; i++) {
+        if (Cursor_isContain(stmt, TOKEN_operator, (char*)selfOperators[i])) {
+            pika_platform_memcpy(operator, selfOperators[i],
+                                 strGetSize((char*)selfOperators[i]) - 1);
+            break;
+        }
     }
     /* not found self operator */
     if (operator[0] == 0) {
@@ -1408,12 +1407,12 @@ uint8_t Suger_selfOperator(Args* outbuffs,
     is_left_exist = 1;
     Cursor_forEach(cs, stmt) {
         Cursor_iterStart(&cs);
-        if ((strEqu(cs.token1.pyload, "*=")) ||
-            (strEqu(cs.token1.pyload, "/=")) ||
-            (strEqu(cs.token1.pyload, "+=")) ||
-            (strEqu(cs.token1.pyload, "-="))) {
-            is_right = 1;
-            goto iter_continue;
+        for (uint8_t i = 0; i < sizeof(selfOperators) / SELF_OPERATORES_LEN;
+             i++) {
+            if (strEqu(cs.token1.pyload, (char*)selfOperators[i])) {
+                is_right = 1;
+                goto iter_continue;
+            }
         }
         if (!is_right) {
             left_arg = arg_strAppend(left_arg, cs.token1.pyload);

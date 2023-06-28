@@ -3172,8 +3172,13 @@ int builtins_len(PikaObj* self, Arg* arg) {
 Arg* builtins_list(PikaObj* self, PikaTuple* val) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
     if (1 == pikaTuple_getSize(val)) {
-        Arg* in = pikaTuple_getArg(val, 0);
-        obj_setArg(self, "__list", in);
+        Arg* aInput = pikaTuple_getArg(val, 0);
+        if (!arg_isIterable(aInput)) {
+            obj_setErrorCode(self, 1);
+            obj_setSysOut(self, "Error: input arg must be iterable");
+            return NULL;
+        }
+        obj_setArg(self, "__list", aInput);
         /* clang-format off */
         PIKA_PYTHON(
         @res_list = []
@@ -3204,8 +3209,7 @@ Arg* builtins_list(PikaObj* self, PikaTuple* val) {
         };
         return pikaVM_runByteCodeReturn(self, (uint8_t*)bytes, "@res_list");
     }
-    PikaObj* New_PikaStdData_List(Args * args);
-    return arg_newDirectObj(New_PikaStdData_List);
+    return arg_newObj(objList_new(NULL));
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in list is not enabled.\r\n");
@@ -3224,11 +3228,15 @@ Arg* builtins_dict(PikaObj* self, PikaTuple* val) {
 #endif
 }
 
-Arg* builtins_tuple(PikaObj* self, Arg* val) {
+Arg* builtins_tuple(PikaObj* self, PikaTuple* val) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    obj_setErrorCode(self, 1);
-    __platform_printf("Error: tuple() is not supported.\r\n");
-    return arg_newNone();
+    Arg* tuple = builtins_list(self, val);
+    if (NULL == tuple) {
+        return NULL;
+    }
+    PikaObj* oTuple = arg_getObj(tuple);
+    oTuple->constructor = New_PikaStdData_Tuple;
+    return tuple;
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in tuple is not enabled.\r\n");
@@ -3745,8 +3753,7 @@ Arg* _max_min(PikaObj* self, PikaTuple* val, uint8_t* bc) {
     }
     if (size == 1) {
         ArgType type = arg_getType(pikaTuple_getArg(val, 0));
-        if ((!argType_isObject(type) && (type != ARG_TYPE_STRING) &&
-             (type != ARG_TYPE_BYTES))) {
+        if (!argType_isIterable(type)) {
             obj_setSysOut(self, "TypeError: object is not iterable");
             obj_setErrorCode(self, PIKA_RES_ERR_INVALID_PARAM);
             return NULL;
@@ -3813,7 +3820,7 @@ Arg* builtins_bytearray___iter__(PikaObj* self) {
     return arg_newRef(self);
 }
 
-int builtins_bytearray___len__(PikaObj* self){
+int builtins_bytearray___len__(PikaObj* self) {
     return obj_getBytesSize(self, "raw");
 }
 

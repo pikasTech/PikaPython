@@ -91,7 +91,7 @@ Arg* json_encode_jsmn(jsmntok_t* t,
             break;
         }
         case JSMN_OBJECT: {
-            PikaObj* ret = obj_newDict(NULL);
+            PikaObj* ret = objDict_new(NULL);
             int num_keys = t[*index].size;
             for (int i = 0; i < num_keys; i++) {
                 (*index)++;
@@ -112,7 +112,7 @@ Arg* json_encode_jsmn(jsmntok_t* t,
             break;
         }
         case JSMN_ARRAY: {
-            PikaObj* ret = obj_newList(NULL);
+            PikaObj* ret = objList_new(NULL);
             jsmntok_t* key_tok = &t[*index];
             int num_elements = key_tok->size;
             for (int i = 0; i < num_elements; i++) {
@@ -162,7 +162,7 @@ Arg* json_encode_cjson(cJSON* cjson) {
             return arg_newStr(cjson->valuestring);
         }
         case pika_cJSON_Array: {
-            PikaObj* ret = obj_newList(NULL);
+            PikaObj* ret = objList_new(NULL);
             for (int i = 0; i < pika_cJSON_GetArraySize(cjson); i++) {
                 cJSON* item = pika_cJSON_GetArrayItem(cjson, i);
                 Arg* nested_arg = json_encode_cjson(item);
@@ -172,7 +172,7 @@ Arg* json_encode_cjson(cJSON* cjson) {
             return arg_newObj(ret);
         }
         case pika_cJSON_Object: {
-            PikaObj* ret = obj_newDict(NULL);
+            PikaObj* ret = objDict_new(NULL);
             cJSON* child = cjson->child;
             for (int i = 0; i < pika_cJSON_GetArraySize(cjson); i++) {
                 char* key = child->string;
