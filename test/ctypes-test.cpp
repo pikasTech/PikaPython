@@ -7,7 +7,7 @@ TEST(ctypes, test1) {
     g_PikaMemInfo.heapUsedMax = 0;
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
-    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/ctypes.py");
+    pikaVM_runSingleFile(pikaMain, "test/python/builtins/ctypes.py");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[18], "16\r\n");

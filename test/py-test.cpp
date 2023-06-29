@@ -13,15 +13,15 @@ TEST_RUN_SINGLE_FILE(fsm, test1, "test/python/fsm/test1.py")
 
 TEST_RUN_SINGLE_FILE_PASS(builtin,
                           list_tuple_equ,
-                          "test/python/builtin/list_tuple_equ.py")
+                          "test/python/builtins/list_tuple_equ.py")
 TEST_RUN_SINGLE_FILE_PASS(builtin,
                           fn_default1,
-                          "test/python/builtin/fn_default1.py")
+                          "test/python/builtins/fn_default1.py")
 TEST_RUN_SINGLE_FILE_PASS(builtin,
                           fn_default_tuple,
-                          "test/python/builtin/fn_default_tuple.py")
-TEST_RUN_SINGLE_FILE_PASS(builtin, max_min, "test/python/builtin/max_min.py")
-TEST_RUN_SINGLE_FILE_PASS(builtin, split, "test/python/builtin/split.py")
+                          "test/python/builtins/fn_default_tuple.py")
+TEST_RUN_SINGLE_FILE_PASS(builtin, max_min, "test/python/builtins/max_min.py")
+TEST_RUN_SINGLE_FILE_PASS(builtin, split, "test/python/builtins/split.py")
 TEST_RUN_LINES_EXCEPT_OUTPUT(builtin,
                              split_slice,
                              "'test'.split('e')[0]",
@@ -36,16 +36,16 @@ TEST_RUN_LINES_EXCEPT_OUTPUT(builtin,
                              "'a'\r\n")
 TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(builtin,
                                    class_script,
-                                   "test/python/builtin/class_script.py",
+                                   "test/python/builtins/class_script.py",
                                    "Obj1.test\r\n")
 TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(builtin,
                                    class_hint,
-                                   "test/python/builtin/class_hint.py",
+                                   "test/python/builtins/class_hint.py",
                                    "1\r\n")
 TEST_RUN_SINGLE_FILE_PASS(builtin,
                           isinstance,
-                          "test/python/builtin/isinstance.py")
-TEST_RUN_SINGLE_FILE_PASS(builtin, getitem, "test/python/builtin/getitem.py")
+                          "test/python/builtins/isinstance.py")
+TEST_RUN_SINGLE_FILE_PASS(builtin, getitem, "test/python/builtins/getitem.py")
 TEST_RUN_SINGLE_FILE_PASS(lua, eval, "test/python/pika_lua/eval.py")
 TEST_RUN_SINGLE_FILE_PASS(lua, require, "test/python/pika_lua/require.py")
 
@@ -66,7 +66,7 @@ TEST_RUN_SINGLE_FILE_PASS(datastruct,
 
 TEST_RUN_LINES_EXCEPT_OUTPUT(vm, single_tuple, "(1,)", "(1,)\r\n")
 TEST_RUN_LINES_EXCEPT_OUTPUT(vm, single_tuple_str, "('test',)", "('test',)\r\n")
-TEST_RUN_SINGLE_FILE_PASS(vm, is_not, "test/python/builtin/is_not.py")
+TEST_RUN_SINGLE_FILE_PASS(vm, is_not, "test/python/builtins/is_not.py")
 TEST_RUN_LINES(vm,
                var_global,
                "import PikaStdLib\n"
@@ -82,7 +82,7 @@ TEST_RUN_LINES(vm,
                "import configparser\n"
                "configparser.clear\n")
 TEST_RUN_LINES(vm, import_void, "import \n")
-TEST_RUN_SINGLE_FILE_PASS(vm, fn_fn, "test/python/builtin/fn_fn.py")
+TEST_RUN_SINGLE_FILE_PASS(vm, fn_fn, "test/python/builtins/fn_fn.py")
 TEST_RUN_LINES_EXCEPT_OUTPUT(vm, isinstance, "isinstance(1, int)\n", "True\r\n")
 TEST_RUN_SINGLE_FILE_PASS(except,
                           try_while_return,

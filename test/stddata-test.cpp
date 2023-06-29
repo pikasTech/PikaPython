@@ -8,7 +8,7 @@ TEST(stddata, test1) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/dict.py");
+    pikaVM_runSingleFile(pikaMain, "test/python/builtins/dict.py");
     /* collect */
     /* assert */
     EXPECT_STREQ(log_buff[0], "{'len': 3, 'list': [1, 2, 3]}\r\n");
@@ -73,7 +73,7 @@ TEST(stddata, encode_decode) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/encode_decode.py");
+    pikaVM_runSingleFile(pikaMain, "test/python/builtins/encode_decode.py");
     /* collect */
     char* b_s = obj_getStr(pikaMain, "b_s");
     uint8_t* s_b = obj_getBytes(pikaMain, "s_b");
@@ -95,7 +95,7 @@ TEST(stddata, fileio) {
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     /* run */
     __platform_printf("BEGIN\r\n");
-    pikaVM_runSingleFile(pikaMain, "../../examples/BuiltIn/file.py");
+    pikaVM_runSingleFile(pikaMain, "test/python/builtins/file.py");
     Arg* s = obj_getArg(pikaMain, "s");
     Arg* b = obj_getArg(pikaMain, "b");
     /* assert */

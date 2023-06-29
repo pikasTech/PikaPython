@@ -2707,6 +2707,7 @@ char* parser_lines2BackendCode(Parser* self, char* sPyLines) {
     uint8_t bIsInDocstring = 0;
     uint8_t bIsSingleDocstring = 0;
     uint8_t bIsLineConnection = 0;
+    uint8_t bIsLineConnectionForBracket = 0;
     char* sOut = NULL;
     char* sBackendCode = NULL;
     uint32_t uLineSize = 0;
@@ -2730,12 +2731,19 @@ char* parser_lines2BackendCode(Parser* self, char* sPyLines) {
 
         /* line connection */
         if (bIsLineConnection) {
-            bIsLineConnection = 0;
+            if (bIsLineConnectionForBracket) {
+                sLine = Parser_removeComment(sLine);
+                if (strEqu(sLine, "@annontation")) {
+                    sLine = "";
+                }
+            }
             aLineConnection = arg_strAppend(aLineConnection, sLine);
             sLine = strsCopy(&self->lineBuffs, arg_getStr(aLineConnection));
             /* reflash the line_connection_arg */
             arg_deinit(aLineConnection);
             aLineConnection = arg_newStr("");
+            bIsLineConnection = 0;
+            bIsLineConnectionForBracket = 0;
         }
 
         /* check connection */
@@ -2801,6 +2809,7 @@ char* parser_lines2BackendCode(Parser* self, char* sPyLines) {
             if (c.bracket_deepth > 0) {
                 aLineConnection = arg_strAppend(aLineConnection, sLine);
                 bIsLineConnection = 1;
+                bIsLineConnectionForBracket = 1;
                 goto next_line;
             }
         }
