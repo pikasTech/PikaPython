@@ -43,18 +43,18 @@ extern "C" {
 #include <unistd.h>
 #endif
 
-#define PIKA_ASSERT_2(expr, msg, ...) \
-    if(!(expr)) { \
+#define PIKA_ASSERT_2(expr, msg, ...)                                                                                                                            \
+    if (!(expr)) {                                                                                                                                               \
         pika_platform_printf((char*)"Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n" msg, #expr, __FUNCTION__, __FILE__, __LINE__, __VA_ARGS__); \
-        pika_platform_abort_handler(); \
-        abort(); \
+        pika_platform_abort_handler();                                                                                                                           \
+        abort();                                                                                                                                                 \
     }
 
-#define PIKA_ASSERT_1(expr) \
-    if(!(expr)) { \
+#define PIKA_ASSERT_1(expr)                                                                                                                     \
+    if (!(expr)) {                                                                                                                              \
         pika_platform_printf((char*)"Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n", #expr, __FUNCTION__, __FILE__, __LINE__); \
-        pika_platform_abort_handler(); \
-        abort(); \
+        pika_platform_abort_handler();                                                                                                          \
+        abort();                                                                                                                                \
     }
 
 #define GET_MACRO(_1, _2, NAME, ...) NAME
@@ -156,6 +156,7 @@ void pika_platform_printf(char* fmt, ...);
 int pika_vprintf(char* fmt, va_list args);
 int pika_sprintf(char* buff, char* fmt, ...);
 int pika_vsprintf(char* buff, char* fmt, va_list args);
+int pika_putchar(char ch);
 int pika_platform_vsnprintf(char* buff,
                             size_t size,
                             const char* fmt,
@@ -180,6 +181,7 @@ void pika_platform_wait(void);
 /* support shell */
 char pika_platform_getchar(void);
 int pika_platform_putchar(char ch);
+int pika_platform_fflush(void* stream);
 
 /* file API */
 FILE* pika_platform_fopen(const char* filename, const char* modes);

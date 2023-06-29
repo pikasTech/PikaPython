@@ -483,6 +483,10 @@ extern "C" {
         #define PIKA_SHELL_HISTORY_NUM 5
     #endif
 
+    #ifndef PIKA_UNBUFFERED_ENABLE
+        #define PIKA_UNBUFFERED_ENABLE 0
+    #endif
+
     /* configuration validation */
 
 #endif

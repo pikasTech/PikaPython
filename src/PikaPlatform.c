@@ -118,8 +118,24 @@ int pika_snprintf(char* buff, size_t size, const char* fmt, ...) {
     return ret;
 }
 
+PIKA_WEAK int pika_platform_fflush(void* stream) {
+#if PIKA_UNBUFFERED_ENABLE
+    return fflush(stream);
+#else
+    return 0;
+#endif
+}
+
 PIKA_WEAK int pika_platform_putchar(char ch) {
     return putchar(ch);
+}
+
+int pika_putchar(char ch) {
+    int ret = pika_platform_putchar(ch);
+#if PIKA_UNBUFFERED_ENABLE
+    pika_platform_fflush(stdout);
+#endif
+    return ret;
 }
 
 int pika_pvsprintf(char** buff, const char* fmt, va_list args) {
@@ -185,14 +201,14 @@ static int _no_buff_vprintf(char* fmt, va_list args) {
                 int len = strlen(str);
                 written += len;
                 for (int i = 0; i < len; i++) {
-                    pika_platform_putchar(str[i]);
+                    pika_putchar(str[i]);
                 }
             } else if (*fmt == '%') {
-                pika_platform_putchar('%');
+                pika_putchar('%');
                 ++written;
             }
         } else {
-            pika_platform_putchar(*fmt);
+            pika_putchar(*fmt);
             ++written;
         }
         ++fmt;
@@ -215,7 +231,7 @@ int pika_vprintf(char* fmt, va_list args) {
 
     // putchar
     for (int i = 0; i < strlen(buff); i++) {
-        pika_platform_putchar(buff[i]);
+        pika_putchar(buff[i]);
     }
 
     pika_platform_free(buff);
