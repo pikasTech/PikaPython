@@ -1019,7 +1019,8 @@ Arg* methodArg_super(Arg* aThis, NativeProperty** p_prop) {
         builtins = obj_getBuiltins();
         MethodProp* method_store = (MethodProp*)arg_getContent(aThis);
         ByteCodeFrame* bcframe = method_store->bytecode_frame;
-        int32_t pc = method_store->ptr - bcframe->instruct_array.content_start;
+        int32_t pc = (uintptr_t)method_store->ptr -
+                     (uintptr_t)bcframe->instruct_array.content_start;
         char* sSuper = _find_super_class_name(bcframe, pc);
         /* map TinyObj to object */
         if (strEqu(sSuper, "TinyObj")) {
