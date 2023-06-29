@@ -642,7 +642,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 |add `this` module|[blueloveTH](https://github.com/blueloveTH)|
 |Fix memory leak in event queue|[randyscott](https://github.com/randyscott)|
 |Fix a bug of _OP_POW|[blueloveTH](https://github.com/blueloveTH)|
-|fix bsp/esp32/README.md|[erzongxie]https://gitee.com/erzongxie|
+|fix bsp/esp32/README.md|[erzongxie](https://gitee.com/erzongxie)|
 |Fixed a bug where help("modules") crashed when no lib was loaded|[梦程MI](https://gitee.com/dreamcmi) |
 |support GPIO driver for rt-thread| [supperthomas](https://github.com/supperthomas) |
 |Fixed a typo|[J. Neuschäfer](https://github.com/neuschaefer)|
