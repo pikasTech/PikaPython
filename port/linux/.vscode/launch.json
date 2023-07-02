@@ -15,7 +15,8 @@
                 // "--gtest_filter=vm.dir_print_arg"
                 // "--gtest_filter=packtool.unpack"
                 // "--gtest_filter=packtool.packread"
-                "--gtest_filter=lib.load_no_file"
+                // "--gtest_filter=lib.load_no_file"
+                "--gtest_filter=packtool.packfiles"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

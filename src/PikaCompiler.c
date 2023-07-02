@@ -512,6 +512,7 @@ static int _getModuleNum(uint8_t* library_bytes) {
         pika_platform_printf(
             "Error: invalid version number. Expected %d, got %d\r\n",
             LIB_VERSION_NUMBER, version_num);
+        pika_platform_printf("Please run the 'rus-msc-latest-win10.exe' again to update the version of compiled library.\r\n");
         return PIKA_RES_ERR_INVALID_VERSION_NUMBER;
     }
     return module_num;
