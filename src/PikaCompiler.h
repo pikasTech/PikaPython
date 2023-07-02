@@ -3,6 +3,7 @@
 #include "PikaObj.h"
 #include "stdint.h"
 
+
 PIKA_RES pikaCompileFile(char* input_file_name);
 PIKA_RES pikaCompileFileWithOutputName(char* output_file_name,
                                        char* input_file_name);
@@ -51,6 +52,7 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
 #define PIKA_APP_INFO_BLOCK_SIZE_OFFSET 4
 
 typedef struct {
+    Arg* farg;
     uint8_t* addr;
     size_t size;
     size_t pos;

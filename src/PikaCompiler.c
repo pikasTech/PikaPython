@@ -601,37 +601,37 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
 }
 
 /**
- * @brief 打开 .pack 文件，并返回这个pack 文件的library_bytes
+ * @brief 打开 .pack 文件，并返回Arg 对象，里面包含这个pack 文件的library_bytes
  *
- * @param pikafs_FILE** fp pikafs_FILE 二级文件指针，提供了文件加载内存中的地址以及大小等信息
- * @param Arg** f_arg
+ * @param 
  * @param char* pack_name pack 文件的名字
- * @return  PIKA_RES_OK when success, otherwise failed;
- * @note  if failed *fp if freed
+ * @return  Arg* arg, a pointer to an Arg object, which point to the library_bytes of the pack file.
+ * @note 
  * 
  */
-PIKA_RES _getPack_libraryBytes(pikafs_FILE** fp, Arg** f_arg, char* pack_name) {
+Arg* _getPack_libraryBytes(char* pack_name) {
 
     if (NULL == pack_name) {
-        return PIKA_RES_ERR_INVALID_PTR;
+        pika_platform_printf("[%s - %d]What I freakin' need is a damn pack file name! Why the hell did you give me a goddamn NULL?!\r\n",__FILE__, __LINE__);
+        return NULL;
     }
 
-    *fp = (pikafs_FILE*)pikaMalloc(sizeof(pikafs_FILE));
-    if (NULL == *fp) {
-        pika_platform_printf("Error: malloc failed \r\n");
-        return PIKA_RES_ERR_OUT_OF_RANGE;
-    }
-    memset(*fp, 0, sizeof(pikafs_FILE));
+    Arg* f_arg = NULL;
+    // *fp = (pikafs_FILE*)pikaMalloc(sizeof(pikafs_FILE));
+    // if (NULL == *fp) {
+    //     pika_platform_printf("Error: malloc failed \r\n");
+    //     return PIKA_RES_ERR_OUT_OF_RANGE;
+    // }
+    // memset(*fp, 0, sizeof(pikafs_FILE));
 
-    *f_arg = arg_loadFile(NULL, pack_name);
-    if (NULL == *f_arg) {
+    f_arg = arg_loadFile(NULL, pack_name);
+    if (NULL == f_arg) {
         pika_platform_printf("Error: Could not load file \'%s\'\r\n", pack_name);
-        pikaFree(*fp, sizeof(pikafs_FILE));
-        arg_deinit(*f_arg);
-        // fp == NULL;
-        return PIKA_RES_ERR_IO_ERROR;
+        //pikaFree(*fp, sizeof(pikafs_FILE));
+        //arg_deinit(f_arg);
+        return NULL;
     }
-    return PIKA_RES_OK;
+    return f_arg;
 }
 
 int LibObj_loadLibrary(LibObj* self, uint8_t* library_bytes) {
@@ -693,18 +693,18 @@ int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
  */
 PIKA_RES pikafs_unpack_files(char* pack_name, char* out_path) {
     PIKA_RES stat = PIKA_RES_OK;
-    Arg* file_arg = NULL;
+    Arg* file_arg = NULL; /* file_arg 存在的意义就是获取文件的 library_bytes*/
     uint8_t* library_bytes = NULL;
     pikafs_FILE* fptr = NULL;
     if (NULL == out_path) {
         out_path = "./packout/";
     }
 
-    stat = _getPack_libraryBytes(&fptr, &file_arg, pack_name);
-    if (PIKA_RES_OK == stat) {
-        library_bytes = arg_getBytes(file_arg);
+    file_arg = _getPack_libraryBytes(pack_name);
+    if (NULL != file_arg) {
+        library_bytes = arg_getBytes(file_arg); 
     } else {
-        return stat;
+        return PIKA_RES_ERR_IO_ERROR;
     }
 
     int module_num = _getModuleNum(library_bytes);
@@ -743,6 +743,7 @@ PIKA_RES pikafs_unpack_files(char* pack_name, char* out_path) {
     strsDeinit(&buffs);
     pikaFree(fptr, sizeof(pikafs_FILE));
     return stat;
+    
 }
 
 size_t pika_fputs(char* str, FILE* fp) {
@@ -1180,22 +1181,39 @@ pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
 
     pikafs_FILE* f = NULL;
     Arg* file_arg = NULL;
-    PIKA_RES stat = PIKA_RES_OK;
     uint8_t* library_bytes = NULL;
-    stat = _getPack_libraryBytes(&f, &file_arg, pack_name);
-    if (PIKA_RES_OK == stat) {
-        library_bytes = arg_getBytes(file_arg);
-    } else {
+
+    f = (pikafs_FILE*)pikaMalloc(sizeof(pikafs_FILE));
+    if (NULL == f) {
+        pika_platform_printf("Error: malloc failed \r\n");
+        goto malloc_err;
         return NULL;
+        // return PIKA_RES_ERR_OUT_OF_RANGE;
+    }
+    memset(f, 0, sizeof(pikafs_FILE));
+
+    file_arg = _getPack_libraryBytes(pack_name);
+    if (NULL != file_arg) {
+        library_bytes = arg_getBytes(file_arg); 
+    } else {
+        goto getpack_err;
     }
 
     if (PIKA_RES_OK !=
         _loadModuleDataWithName(library_bytes, file_name, &f->addr, &f->size)) {
-        f = NULL;
+        goto exit;
     }
 
-    arg_deinit(file_arg);
+    f->farg = file_arg;
+    //arg_deinit(file_arg); /* file_arg 被释放以后，library_bytes 就是个野指针了 */
     return f;
+
+exit:
+    arg_deinit(f->farg);
+getpack_err:
+    pikaFree(f,sizeof(pikafs_FILE));
+malloc_err:
+    return NULL;
 }
 
 /*
