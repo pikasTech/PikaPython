@@ -340,7 +340,8 @@ PIKA_WEAK int pika_platform_fclose(FILE* stream) {
 }
 
 /* fwrite */
-PIKA_WEAK size_t pika_platform_fwrite(const void* ptr,
+PIKA_WEAK size_t 
+pika_platform_fwrite(const void* ptr,
                                       size_t size,
                                       size_t n,
                                       FILE* stream) {
