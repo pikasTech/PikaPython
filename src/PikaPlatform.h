@@ -114,7 +114,6 @@ typedef enum {
 
 #define _PIKA_INT_ERR (-999999999)
 #define _PIKA_FLOAT_ERR (-999999999.0)
-
 /* clang-format on */
 
 /*

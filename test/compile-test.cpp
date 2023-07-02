@@ -467,7 +467,7 @@ TEST(lib, load_file) {
 TEST(lib, load_no_file) {
     /* compile */
     LibObj* lib = New_LibObj(NULL);
-    int res = LibObj_loadLibraryFile(lib, "test/python/mian.py.o");
+    int res = LibObj_loadLibraryFile(lib, "test/python/xxxmain.py.o");
     EXPECT_EQ(res, PIKA_RES_ERR_IO_ERROR);
     /* deinit */
     LibObj_deinit(lib);
