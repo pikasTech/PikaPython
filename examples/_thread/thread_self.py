@@ -16,4 +16,5 @@ class Test:
 test = Test()
 while test._val != 3:
     time.sleep(0.1)
-time.sleep(0.1)
+
+time.sleep(0.5)
