@@ -82,6 +82,10 @@ http://pikascript.com
 
 开发板基于 STM32G030C8T6 小资源 MCU，仅 64kB Flash，8kB RAM 即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、UART、ADC、PWM、RGB、KEY、LCD）。板载 CH340 USB 转串口芯片，Type-C 接口，支持串口下载 python 脚本，板载4颗 RGB 灯，可选配[LCD屏幕](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102)。
 
+# 开源硬件
+
+- [PikaPython-OpenHardware](https://gitee.com/Lyon1998/pikapython_openhardware)
+
 # 开发手册
 
 ### [点此进入文档中心](http://pikascript.com/doc)
