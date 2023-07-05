@@ -91,6 +91,9 @@ TEST_RUN_SINGLE_FILE_PASS(except,
                           isinstance,
                           "test/python/except/except_isinstance.py");
 
+TEST_RUN_SINGLE_FILE_PASS(zlib, zlib1, "test/python/zlib/zlib1.py")
+TEST_RUN_SINGLE_FILE(zlib, zlib_err, "test/python/zlib/zlib_err.py")
+
 #endif
 
 TEST_END

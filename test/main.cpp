@@ -11,6 +11,8 @@ void test_purec(void);
 
 int main(int argc, char** argv) {
     int res = 0;
+    mkdir("./test/out/packout", 0777);
+    mkdir("./test/out/unpackout", 0777);
 #if USE_GOOGLE_TEST
     ::testing::InitGoogleTest(&argc, argv);
     res = RUN_ALL_TESTS();

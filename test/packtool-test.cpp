@@ -18,7 +18,6 @@ TEST(packtool, packfiles) {
     pikaMaker_linkRaw_New(maker, "test/out/G.bmp", "/bmp-file");
 
     // create "./test/out/packout" path if not exist
-    mkdir("./test/out/packout", 0777);
     ret = pikaMaker_linkCompiledModulesFullPath(maker, "./test/out/packout/a0424.pack");
 
     pikaMaker_deinit(maker);
@@ -33,7 +32,6 @@ TEST(packtool, packread) {
         pika_platform_printf("open file: %s error\r\n", "test/out/packout/a0424.pack");
     }
 
-    mkdir("./test/out/unpackout", 0777);
     FILE* file = pika_platform_fopen("test/out/unpackout/file3_test.txt", "wb+");
     if (NULL == file) {
         pika_platform_printf("open file: %s error\r\n", "test/out/unpackout/file3_test.txt");
