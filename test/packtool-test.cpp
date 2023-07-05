@@ -14,8 +14,8 @@ TEST(packtool, packfiles) {
     PikaMaker* maker = New_PikaMaker();
     PIKA_RES ret = PIKA_RES_OK;
 
-    pikaMaker_linkRaw_New(maker, "test/out/file3.txt", "/txt-file");
-    pikaMaker_linkRaw_New(maker, "test/out/G.bmp", "/bmp-file");
+    pikaMaker_linkRaw_New(maker, "test/assets/test.txt", "/txt-file");
+    pikaMaker_linkRaw_New(maker, "test/assets/test.jpg", "/bmp-file");
 
     // create "./test/out/packout" path if not exist
     ret = pikaMaker_linkCompiledModulesFullPath(maker, "./test/out/packout/a0424.pack");
@@ -27,7 +27,7 @@ TEST(packtool, packfiles) {
 TEST(packtool, packread) {
     size_t n = 0;
     //Arg* fileArg = NULL;
-    pikafs_FILE* pack_file = pikafs_fopen_pack("test/out/packout/a0424.pack", "file3.txt");
+    pikafs_FILE* pack_file = pikafs_fopen_pack("test/out/packout/a0424.pack", "test.txt");
     if (NULL == pack_file) {
         pika_platform_printf("open file: %s error\r\n", "test/out/packout/a0424.pack");
     }
