@@ -29,8 +29,8 @@ print(pika_lua.eval("print(1 + 1)"))
 """
 
 
-def eval(cmd: str):
-    return _pika_lua.eval(cmd)
+def evals(cmd: str):
+    return _pika_lua.evals(cmd)
 
 
 def evalLine(line: str):
@@ -39,12 +39,12 @@ def evalLine(line: str):
 
 def getVar(name: str):
     # print("getVar: %s" % name)
-    return eval("return %s" % name)
+    return evals("return %s" % name)
 
 
 def setVar(name: str, value):
     # print("setVar: %s = %s" % (name, value))
-    eval("%s = %s" % (name, value))
+    evals("%s = %s" % (name, value))
 
 
 class LuaModuleProxy:
@@ -67,12 +67,12 @@ class LuaModuleProxy:
         for arg in args:
             strArgs.append(str(arg))
 
-        return eval("return %s.%s(%s)" % (self._name, methodName, ",".join(strArgs)))
+        return evals("return %s.%s(%s)" % (self._name, methodName, ",".join(strArgs)))
 
 
 def require(module: str) -> LuaModuleProxy:
     try:
-        eval("require('%s')" % module)
+        evals("require('%s')" % module)
         return LuaModuleProxy(module)
     except:
         print("require module '%s' failed" % module)

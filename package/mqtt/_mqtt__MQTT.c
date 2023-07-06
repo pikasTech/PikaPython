@@ -562,12 +562,12 @@ int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, Arg* cb, int qos) {
             obj_setArg(eventHandler, "eventCallBack", cb);
             /* init event_listener for the first time */
             if (NULL == g_mqtt_event_listener) {
-                pks_eventListener_init(&g_mqtt_event_listener);
+                pika_eventListener_init(&g_mqtt_event_listener);
             }
             uint32_t eventId = hash_time33(topic_str);
             // __platform_printf("hash_time33(topic_str):%d
             // \r\n",hash_time33(topic_str));
-            pks_eventListener_registEvent(g_mqtt_event_listener, eventId,
+            pika_eventListener_registEvent(g_mqtt_event_listener, eventId,
                                           eventHandler);
         }
 
@@ -625,7 +625,7 @@ void Subscribe_Handler(void* client, message_data_t* msg) {
     obj_setInt(evt_obj, "qos", msg->message->qos);
 
     // 存好数据后，再发送事件信号，防止信号收到了但是需要传输的数据没准备好
-    pks_eventListener_send(g_mqtt_event_listener, hash_time33(msg->topic_name),
+    pika_eventListener_send(g_mqtt_event_listener, hash_time33(msg->topic_name),
                            evt_obj_arg);
 
     // MQTT_LOG_I("\n>>>------------------");
@@ -654,7 +654,7 @@ void _mqtt__MQTT__fakeMsg(PikaObj* self, char* topic, int qos, char* msg) {
 ///////////////////////////////////////////////////////////////////
 void _mqtt___del__(PikaObj* self) {
     if (NULL != g_mqtt_event_listener) {
-        pks_eventListener_deinit(&g_mqtt_event_listener);
+        pika_eventListener_deinit(&g_mqtt_event_listener);
     }
 }
 
@@ -671,7 +671,7 @@ void Reconnect_Handler(void* client, void* reconnect_date) {
 
     if (((mqtt_client_t*)client)->mqtt_client_state != CLIENT_STATE_CONNECTED) {
         // 发送事件信号
-        pks_eventListener_sendSignal(g_mqtt_event_listener,
+        pika_eventListener_sendSignal(g_mqtt_event_listener,
                                      MQTT_RECONNECTION_EVENT_ID, 1);
     }
 }
@@ -701,12 +701,12 @@ int _mqtt__MQTT_setDisconnectHandler(PikaObj* self, Arg* cb) {
                cb);  // 重连回调是唯一的，就直接用self对象
     /* init event_listener for the first time */
     if (NULL == g_mqtt_event_listener) {
-        pks_eventListener_init(&g_mqtt_event_listener);
+        pika_eventListener_init(&g_mqtt_event_listener);
     }
     // uint32_t eventId = hash_time33(topic_str);
     // __platform_printf("hash_time33(topic_str):%d
     // \r\n",hash_time33(topic_str));
-    pks_eventListener_registEvent(g_mqtt_event_listener,
+    pika_eventListener_registEvent(g_mqtt_event_listener,
                                   MQTT_RECONNECTION_EVENT_ID, self);
 
     return 0;

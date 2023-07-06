@@ -47,15 +47,15 @@ Arg* _lua_val_to_arg(lua_State* L) {
         PIKA_BOOL get_list = PIKA_FALSE;
         PIKA_BOOL get_dict = PIKA_FALSE;
         lua_pushnil(L);  // push the first key
-        // PikaObj* dict = obj_newDict0();
+        // PikaObj* dict = objDict_new0();
         while (lua_next(L, -2) != 0) {
             // 'key' is at index -2 and 'value' at index -1
             if (!get_list && !get_dict) {
                 if (lua_isinteger(L, -2)) {
-                    ret = obj_newList(NULL);
+                    ret = objList_new(NULL);
                     get_list = PIKA_TRUE;
                 } else {
-                    ret = obj_newDict(NULL);
+                    ret = objDict_new(NULL);
                     get_dict = PIKA_TRUE;
                 }
             }
@@ -74,7 +74,7 @@ Arg* _lua_val_to_arg(lua_State* L) {
     return NULL;
 }
 
-Arg* _pika_lua_eval(PikaObj* self, char* cmd) {
+Arg* _pika_lua_evals(PikaObj* self, char* cmd) {
     Args buffs = {0};
     int res = luaL_dostring(g_pika_L, cmd);
     if (LUA_OK != res) {
@@ -103,7 +103,7 @@ void _pika_lua___exit__(PikaObj* self) {
 Arg* _pika_lua_evalLine(PikaObj* self, char* line) {
     Args buffs = {0};
     char* line_with_end = strsAppend(&buffs, line, "\n");
-    Arg* ret = _pika_lua_eval(self, line_with_end);
+    Arg* ret = _pika_lua_evals(self, line_with_end);
     goto __exit;
 __exit:
     strsDeinit(&buffs);
