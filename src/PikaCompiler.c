@@ -360,64 +360,81 @@ void LibObj_listModules(LibObj* self) {
     args_foreach(self->list, __foreach_handler_listModules, NULL);
 }
 
-typedef struct context_saveLibraryFile {
+typedef struct {
     FILE* out_file;
     uint32_t module_num;
     uint32_t sum_size;
     uint32_t block_size;
-} Context_saveLibraryFile;
+    size_t written_size;
+} PikaLinker;
 
-static int32_t __foreach_handler_libWriteBytecode(
-    Arg* argEach,
-    Context_saveLibraryFile* context) {
-    FILE* out_file = context->out_file;
+static void linker_fwrite(PikaLinker* context, uint8_t* bytes, size_t size) {
+    size_t write_size = pika_platform_fwrite(bytes, 1, size, context->out_file);
+    context->written_size += write_size;
+}
+
+static int32_t __foreach_handler_libWriteBytecode(Arg* argEach,
+                                                  PikaLinker* context) {
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
-        char* bytecode = obj_getPtr(module_obj, "bytecode");
+        uint8_t* bytecode = obj_getPtr(module_obj, "bytecode");
         size_t bytecode_size = obj_getBytesSize(module_obj, "buff");
-        // size_t aline_size =
-        //     aline_by(bytecode_size, sizeof(uint32_t)) - bytecode_size;
-        // char aline_buff[sizeof(uint32_t)] = {0};
-        pika_platform_fwrite(bytecode, 1, bytecode_size, out_file);
-        // pika_platform_fwrite(aline_buff, 1, aline_size, out_file);
+        /* align by 4 bytes */
+        size_t align_size =
+            align_by(bytecode_size, sizeof(uint32_t)) - bytecode_size;
+        uint8_t aline_buff[sizeof(uint32_t)] = {0};
+        linker_fwrite(context, bytecode, bytecode_size);
+        linker_fwrite(context, aline_buff, align_size);
     }
     return 0;
 }
 
 //#define NAME_BUFF_SIZE LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)
-static int32_t __foreach_handler_libWriteIndex(
-    Arg* argEach,
-    Context_saveLibraryFile* context) {
-    FILE* out_file = context->out_file;
+static int32_t __foreach_handler_libWriteIndex(Arg* argEach,
+                                               PikaLinker* linker) {
     Args buffs = {0};
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
-        // uint32_t bytecode_size = obj_getBytesSize(module_obj, "buff");
-        uint32_t bytecode_size = obj_getInt(module_obj, "bytesize");
-        // char buff[LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)] = {0};
-        // bytecode_size = aline_by(bytecode_size, sizeof(uint32_t));
+        uint32_t bytecode_size =
+            align_by(obj_getInt(module_obj, "bytesize"), 4);
         char* module_name = obj_getStr(module_obj, "name");
         module_name = strsReplace(&buffs, module_name, "|", ".");
-        uint32_t buff_len = strGetSize(module_name);
-        char* name_buff =
-            (char*)__platform_malloc(5 + buff_len); /* 4 + 1 + buff_len*/
-        __platform_memset(name_buff, 0x00, buff_len + 1);
-        // module_name = strsReplace(&buffs, module_name, "|", ".");
-        // pika_platform_printf("   %s:%d\r\n", module_name, bytecode_size);
-        pika_platform_memcpy(name_buff, &buff_len, 4);
-        pika_platform_memcpy(name_buff + 4, module_name,
-                             buff_len + 1); /* add '\0' after name */
-        pika_platform_fwrite(name_buff, 1, buff_len + 5, out_file);
-        pika_platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size),
-                             out_file);
-        // pika_platform_fwrite(
-        //     name_buff, 1, LIB_INFO_BLOCK_SIZE - sizeof(bytecode_size),
-        //     out_file);
-        // pika_platform_fwrite(&bytecode_size, 1, sizeof(bytecode_size),
-        //                      out_file);
-        __platform_free(name_buff);
+        uint32_t name_size = strGetSize(module_name);
+        char* block_buff = (char*)pikaMalloc(linker->block_size);
+        pika_platform_memset(block_buff, 0x00, linker->block_size);
+
+        /*
+         *create the block as [name][bytecode_size]
+         * the space of name is LIB_INFO_BLOCK_SIZE - sizeof(bytecode_size)
+         */
+
+        pika_platform_memcpy(block_buff, module_name,
+                             name_size + 1); /* add '\0' after name */
+        pika_platform_memcpy(
+            block_buff + linker->block_size - sizeof(bytecode_size),
+            &bytecode_size, sizeof(bytecode_size));
+
+        /* write the block to file */
+        linker_fwrite(linker, (uint8_t*)block_buff, linker->block_size);
+        pikaFree(block_buff, linker->block_size);
     }
     strsDeinit(&buffs);
+    return 0;
+}
+
+static int32_t __foreach_handler_selectBlockSize(Arg* argEach,
+                                                 PikaLinker* linker) {
+    uint32_t block_size = 0; /* block_size is the size of file info */
+    if (arg_isObject(argEach)) {
+        PikaObj* module_obj = arg_getPtr(argEach);
+        /* namelen(aligned by 4bytes) and bytecode_size(uint32_t) */
+        block_size =
+            align_by(obj_getInt(module_obj, "namelen"), 4) + sizeof(uint32_t);
+        if (block_size > linker->block_size) {
+            // block_size should support the langest module name
+            linker->block_size = block_size;
+        }
+    }
     return 0;
 }
 
@@ -425,55 +442,55 @@ static int32_t __foreach_handler_libWriteIndex(
  * 一个unit 的组成包括： Namelen（4 bytes）+ Name (strlen("namelen") + 1) \
  * + fileSize (4 bytes)
  */
-static int32_t __foreach_handler_libSumSize(Arg* argEach,
-                                            Context_saveLibraryFile* context) {
-    uint32_t block_size = 0; /* block_size is the size of file info */
+static int32_t __foreach_handler_libSumSize(Arg* argEach, PikaLinker* linker) {
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
-        block_size = obj_getInt(module_obj, "namelen") + 9;
+        /* namelen(aligned by 4bytes) and bytecode_size(uint32_t) */
         uint32_t bytecode_size =
             obj_getInt(module_obj, "bytesize"); /* size of every module obj  */
-        context->sum_size += bytecode_size + block_size;
-        context->block_size += block_size;
+        /* align the bytecode_size by 4 bytes */
+        linker->sum_size += align_by(bytecode_size, 4);
     }
     return 0;
 }
 
-static int32_t __foreach_handler_getModuleNum(
-    Arg* argEach,
-    Context_saveLibraryFile* context) {
+static int32_t __foreach_handler_getModuleNum(Arg* argEach,
+                                              PikaLinker* linker) {
     if (arg_isObject(argEach)) {
-        context->module_num++;
+        linker->module_num++;
     }
     return 0;
 }
 
-int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
+int LibObj_linkFile(LibObj* self, char* output_file_name) {
     FILE* out_file = pika_platform_fopen(output_file_name, "wb+");
 
-    Context_saveLibraryFile context = {0};
-    context.out_file = out_file;
+    PikaLinker linker = {0};
+    linker.block_size = 64; /* 64 is the default block size */
+    linker.out_file = out_file;
 
     /* write meta information */
-    char buff[20] = {0};
-    args_foreach(self->list, (void*)__foreach_handler_getModuleNum, &context);
+    args_foreach(self->list, (void*)__foreach_handler_getModuleNum, &linker);
+
+    /* select block size of pya */
+    args_foreach(self->list, (void*)__foreach_handler_selectBlockSize, &linker);
 
     /* get sum size of pya */
-    args_foreach(self->list, (void*)__foreach_handler_libSumSize, &context);
+    args_foreach(self->list, (void*)__foreach_handler_libSumSize, &linker);
 
     /* meta info */
     char magic_code[] = {0x0f, 'p', 'y', 'a'};
     uint32_t version_num = LIB_VERSION_NUMBER;
-    uint32_t module_num = context.module_num;
-    /* MAGIC_CODE + PACK_SIZE + VERSION_NUM + FILE_NUM + INFO_BLOCK_SIZE = 4 * 5
-     * = 20 */
-    uint32_t modules_size = context.sum_size + 20;
-    uint32_t block_size = context.block_size;
+    uint32_t module_num = linker.module_num;
+    uint32_t modules_size = linker.sum_size;
+    uint32_t block_size = linker.block_size;
+    uint32_t totle_size = block_size * (module_num + 1) + modules_size;
+    uint8_t* meta_block_buff = pikaMalloc(block_size);
 
     /* write meta info */
     const uint32_t magic_code_offset =
         sizeof(uint32_t) * PIKA_APP_MAGIC_CODE_OFFSET;
-    const uint32_t modules_size_offset =
+    const uint32_t totle_size_offset =
         sizeof(uint32_t) * PIKA_APP_MODULE_SIZE_OFFSET;
     const uint32_t version_offset = sizeof(uint32_t) * PIKA_APP_VERSION_OFFSET;
     const uint32_t module_num_offset =
@@ -481,28 +498,31 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     const uint32_t info_block_size_offset =
         sizeof(uint32_t) * PIKA_APP_INFO_BLOCK_SIZE_OFFSET;
 
-    pika_platform_memcpy(buff + magic_code_offset, &magic_code,
+    // the meta info is the first block
+    pika_platform_memcpy(meta_block_buff + magic_code_offset, &magic_code,
                          sizeof(uint32_t));
-    pika_platform_memcpy(buff + version_offset, &version_num, sizeof(uint32_t));
+    pika_platform_memcpy(meta_block_buff + version_offset, &version_num,
+                         sizeof(uint32_t));
     /* write module_num to the file */
-    pika_platform_memcpy(buff + module_num_offset, &module_num,
+    pika_platform_memcpy(meta_block_buff + module_num_offset, &module_num,
                          sizeof(uint32_t));
     /* write modules_size to the file */
-    pika_platform_memcpy(buff + modules_size_offset, &modules_size,
+    pika_platform_memcpy(meta_block_buff + totle_size_offset, &totle_size,
                          sizeof(uint32_t));
     /* write block_size to the file */
-    pika_platform_memcpy(buff + info_block_size_offset, &block_size,
+    pika_platform_memcpy(meta_block_buff + info_block_size_offset, &block_size,
                          sizeof(uint32_t));
-    pika_platform_fwrite(buff, 1, 20, out_file);
+    linker_fwrite(&linker, meta_block_buff, block_size);
 
     /* write module index to file */
-    args_foreach(self->list, (void*)__foreach_handler_libWriteIndex, &context);
+    args_foreach(self->list, (void*)__foreach_handler_libWriteIndex, &linker);
     /* write module bytecode to file */
     args_foreach(self->list, (void*)__foreach_handler_libWriteBytecode,
-                 &context);
+                 &linker);
     /* main process */
     /* deinit */
     pika_platform_fclose(out_file);
+    pika_assert(totle_size == linker.written_size);
     return 0;
 }
 
@@ -640,13 +660,6 @@ Arg* _getPack_libraryBytes(char* pack_name) {
     }
 
     Arg* f_arg = NULL;
-    // *fp = (pikafs_FILE*)pikaMalloc(sizeof(pikafs_FILE));
-    // if (NULL == *fp) {
-    //     pika_platform_printf("Error: malloc failed \r\n");
-    //     return PIKA_RES_ERR_OUT_OF_RANGE;
-    // }
-    // memset(*fp, 0, sizeof(pikafs_FILE));
-
     f_arg = arg_loadFile(NULL, pack_name);
     if (NULL == f_arg) {
         pika_platform_printf("Error: Could not load file \'%s\'\r\n",
@@ -1126,7 +1139,7 @@ PIKA_RES _do_pikaMaker_linkCompiledModulesFullPath(PikaMaker* self,
     char* lib_path_folder = strsPathGetFolder(&buffs, lib_path);
     char* folder_path = strsPathJoin(&buffs, pwd, lib_path_folder);
     char* lib_file_path = strsPathJoin(&buffs, pwd, lib_path);
-    LibObj_saveLibraryFile(lib, lib_file_path);
+    LibObj_linkFile(lib, lib_file_path);
     if (gen_c_array) {
         Lib_loadLibraryFileToArray(lib_file_path, folder_path);
     }
