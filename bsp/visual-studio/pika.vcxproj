@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>pikascript\pikascript-core;pikascript\pikascript-api;$(IncludePath)</IncludePath>
+    <IncludePath>pikapython\pikascript-core;pikapython\pikascript-api;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>pikascript\pikascript-core;pikascript\pikascript-api;$(IncludePath)</IncludePath>
+    <IncludePath>pikapython\pikascript-core;pikapython\pikascript-api;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>pikascript\pikascript-core;pikascript\pikascript-api;$(IncludePath)</IncludePath>
+    <IncludePath>pikapython\pikascript-core;pikapython\pikascript-api;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>pikascript\pikascript-core;pikascript\pikascript-api;$(IncludePath)</IncludePath>
+    <IncludePath>pikapython\pikascript-core;pikapython\pikascript-api;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -96,7 +96,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>cd pikascript &amp;&amp; rust-msc-latest-win10.exe</Command>
+      <Command>cd pikapython &amp;&amp; rust-msc-latest-win10.exe</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -117,7 +117,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>pikascript/rust-msc-latest-win10.exe</Command>
+      <Command>pikapython/rust-msc-latest-win10.exe</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -134,8 +134,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>cd pikascript &amp;&amp; rust-msc-latest-win10.exe</Command>
+      <Command>cd pikapython &amp;&amp; rust-msc-latest-win10.exe</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy /Y x64\Debug\pika.exe pikapython\</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -157,39 +160,39 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
-    <ClCompile Include="pikascript\pikascript-api\pikaScript.c" />
-    <ClCompile Include="pikascript\pikascript-api\__asset_pikaModules_py_a.c" />
-    <ClCompile Include="pikascript\pikascript-api\__pikaBinding.c" />
-    <ClCompile Include="pikascript\pikascript-core\BaseObj.c" />
-    <ClCompile Include="pikascript\pikascript-core\dataArg.c" />
-    <ClCompile Include="pikascript\pikascript-core\dataArgs.c" />
-    <ClCompile Include="pikascript\pikascript-core\dataLink.c" />
-    <ClCompile Include="pikascript\pikascript-core\dataLinkNode.c" />
-    <ClCompile Include="pikascript\pikascript-core\dataMemory.c" />
-    <ClCompile Include="pikascript\pikascript-core\dataQueue.c" />
-    <ClCompile Include="pikascript\pikascript-core\dataQueueObj.c" />
-    <ClCompile Include="pikascript\pikascript-core\dataStack.c" />
-    <ClCompile Include="pikascript\pikascript-core\dataString.c" />
-    <ClCompile Include="pikascript\pikascript-core\dataStrs.c" />
-    <ClCompile Include="pikascript\pikascript-core\PikaCompiler.c" />
-    <ClCompile Include="pikascript\pikascript-core\PikaObj.c" />
-    <ClCompile Include="pikascript\pikascript-core\PikaParser.c" />
-    <ClCompile Include="pikascript\pikascript-core\PikaPlatform.c" />
-    <ClCompile Include="pikascript\pikascript-core\PikaVM.c" />
-    <ClCompile Include="pikascript\pikascript-core\TinyObj.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaDebuger_Debuger.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_ByteArray.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_Dict.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_FILEIO.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_List.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_String.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_Tuple.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdData_Utils.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c" />
-    <ClCompile Include="pikascript\pikascript-lib\PikaStdLib\PikaStdTask_Task.c" />
+    <ClCompile Include="pikapython\pikascript-api\pikaScript.c" />
+    <ClCompile Include="pikapython\pikascript-api\__asset_pikaModules_py_a.c" />
+    <ClCompile Include="pikapython\pikascript-api\__pikaBinding.c" />
+    <ClCompile Include="pikapython\pikascript-core\BaseObj.c" />
+    <ClCompile Include="pikapython\pikascript-core\dataArg.c" />
+    <ClCompile Include="pikapython\pikascript-core\dataArgs.c" />
+    <ClCompile Include="pikapython\pikascript-core\dataLink.c" />
+    <ClCompile Include="pikapython\pikascript-core\dataLinkNode.c" />
+    <ClCompile Include="pikapython\pikascript-core\dataMemory.c" />
+    <ClCompile Include="pikapython\pikascript-core\dataQueue.c" />
+    <ClCompile Include="pikapython\pikascript-core\dataQueueObj.c" />
+    <ClCompile Include="pikapython\pikascript-core\dataStack.c" />
+    <ClCompile Include="pikapython\pikascript-core\dataString.c" />
+    <ClCompile Include="pikapython\pikascript-core\dataStrs.c" />
+    <ClCompile Include="pikapython\pikascript-core\PikaCompiler.c" />
+    <ClCompile Include="pikapython\pikascript-core\PikaObj.c" />
+    <ClCompile Include="pikapython\pikascript-core\PikaParser.c" />
+    <ClCompile Include="pikapython\pikascript-core\PikaPlatform.c" />
+    <ClCompile Include="pikapython\pikascript-core\PikaVM.c" />
+    <ClCompile Include="pikapython\pikascript-core\TinyObj.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaDebuger_Debuger.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_ByteArray.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_Dict.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_FILEIO.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_List.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_String.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_Tuple.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdData_Utils.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdLib_MemChecker.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdLib_RangeObj.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdLib_StringObj.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdLib_SysObj.c" />
+    <ClCompile Include="pikapython\pikascript-lib\PikaStdLib\PikaStdTask_Task.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
