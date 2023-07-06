@@ -29,13 +29,15 @@
                 // "--gtest_filter=vm.range_1"
                 // "--gtest_filter=eventloop.*"
                 // "--gtest_filter=event.event1"
+                "--gtest_filter=event.event_thread"
                 // "--gtest_filter=_json.loads"
                 // "--gtest_filter=json.speed"
                 // "--gtest_filter=json.json_issue1"
                 // "--gtest_filter=json.err"
                 // "--gtest_filter=builtin.eval"
                 // "--gtest_filter=zlib.*"
-                "--gtest_filter=vm.run_file"
+                // "--gtest_filter=vm.run_file"
+                // "--gtest_filter=lib.lib_to_file"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
