@@ -309,7 +309,7 @@ PikaObj* os_path_split(PikaObj* self, char* path) {
         goto __exit;  // 发生错误，跳转到 __exit 处做资源回收
     }
 
-    tuple = obj_newTuple(arg_newStr(folder), arg_newStr(file));
+    tuple = objTuple_new(arg_newStr(folder), arg_newStr(file));
     free(folder);
     free(file);
 
