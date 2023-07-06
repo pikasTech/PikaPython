@@ -1,1 +1,1 @@
-<args>--add-file test/assets/widget_config.ini --add-file test/assets/test.txt</args>
+<args>--add-file ../../test/assets/widget_config.ini --add-file ../../test/assets/test.txt</args>
