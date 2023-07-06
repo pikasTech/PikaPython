@@ -513,6 +513,7 @@ int LibObj_linkFile(LibObj* self, char* output_file_name) {
     pika_platform_memcpy(meta_block_buff + info_block_size_offset, &block_size,
                          sizeof(uint32_t));
     linker_fwrite(&linker, meta_block_buff, block_size);
+    pikaFree(meta_block_buff, block_size);
 
     /* write module index to file */
     args_foreach(self->list, (void*)__foreach_handler_libWriteIndex, &linker);
@@ -567,44 +568,40 @@ static PIKA_RES _loadModuleDataWithIndex(uint8_t* library_bytes,
                                          uint8_t** addr_p,
                                          size_t* size) {
     /*两个指针，一个指向文件信息部分，一个指向文件内容部分  */
-    uint32_t info_block_size =
-        *(uint32_t*)(library_bytes + 4 * 4); /* 每个文件信息大小的总和 */
-    uint8_t* module_info_ptr = library_bytes + 4 * 5;
-    uint8_t* bytecode_ptr =
-        module_info_ptr + info_block_size; /* 文件内容起始的地址，只有内容  */
-
+    uint32_t block_size =
+        *(uint32_t*)(library_bytes +
+                     4 * sizeof(uint32_t)); /* 每个文件信息大小的总和 */
+    uint8_t* file_info_block_start = library_bytes + block_size;
+    uint8_t* bytecode_ptr = file_info_block_start + block_size * module_num;
     /* 每一个模块的信息 */
-    uint32_t name_len = 0;
     uint32_t module_size = 0;
     char* module_name = NULL;
+    uintptr_t offset = 0;
     for (uint32_t i = 0; i < module_index + 1; i++) {
-        // pika_platform_printf("loading module: %s\r\n", module_name);
-        name_len = *(module_info_ptr + MOD_NAMELEN_OFFSET);
-        module_name = (char*)(module_info_ptr + MOD_NAME_OFFSET);
-        module_size = *(uint32_t*)(module_info_ptr + MOD_SIZE_OFFSET);
-        /* printf("[%s][%d]: module_name:%s - name_len:%d - module_size:%d\r\n",
-         * __func__, __LINE__, module_name, name_len, module_size);*/
-
-        *name_p = module_name;
-        *addr_p = bytecode_ptr;
-        *size = module_size;
-        /* fix size for string */
-        PIKA_BOOL bIsString = PIKA_TRUE;
-        for (size_t i = 0; i < *size - 1; ++i) {
-            if (bytecode_ptr[i] == 0) {
-                bIsString = PIKA_FALSE;
-                break;
-            }
-        }
-        if (bIsString) {
-            /* remove the last '\0' for stirng */
-            if (bytecode_ptr[*size - 1] == 0) {
-                *size -= 1;
-            }
-        }
-        /* next module */
-        module_info_ptr += MOD_SIZE_OFFSET + 4;
+        uint8_t* file_info_block = file_info_block_start + offset;
+        module_name = (char*)(file_info_block);
+        module_size =
+            *(uint32_t*)(file_info_block + block_size - sizeof(uint32_t));
+        offset += block_size;
+        /* next module ptr */
         bytecode_ptr += module_size;
+    }
+    *name_p = module_name;
+    *addr_p = bytecode_ptr;
+    *size = module_size;
+    /* fix size for string */
+    PIKA_BOOL bIsString = PIKA_TRUE;
+    for (size_t i = 0; i < module_size - 1; ++i) {
+        if (bytecode_ptr[i] == 0) {
+            bIsString = PIKA_FALSE;
+            break;
+        }
+    }
+    if (bIsString) {
+        /* remove the last '\0' for stirng */
+        if (bytecode_ptr[module_size - 1] == 0) {
+            *size -= 1;
+        }
     }
     return PIKA_RES_OK;
 }
@@ -705,15 +702,15 @@ void LibObj_printModules(LibObj* self) {
 }
 
 int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
-    Arg* file_arg = arg_loadFile(NULL, lib_file_name);
-    if (NULL == file_arg) {
+    Arg* aFile = arg_loadFile(NULL, lib_file_name);
+    if (NULL == aFile) {
         pika_platform_printf("Error: Could not load library file '%s'\n",
                              lib_file_name);
         return PIKA_RES_ERR_IO_ERROR;
     }
     /* save file_arg as @lib_buf to libObj */
-    obj_setArg_noCopy(self, "@lib_buf", file_arg);
-    if (0 != LibObj_loadLibrary(self, arg_getBytes(file_arg))) {
+    obj_setArg_noCopy(self, "@lib_buf", aFile);
+    if (0 != LibObj_loadLibrary(self, arg_getBytes(aFile))) {
         pika_platform_printf("Error: Could not load library from '%s'\n",
                              lib_file_name);
         return PIKA_RES_ERR_OPERATION_FAILED;
