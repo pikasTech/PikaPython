@@ -44,7 +44,7 @@ releases = [ "v0.0.1 7362ba0d4b55abc304d3169989370f0dd8cddde0", "v0.0.2 3fae2b5e
 
 [[packages]]
 name = "binascii"
-releases = [ "v0.0.1 88896715867c2a89df3e3b733cba38cc84f5347c", "v0.0.2 d582a42e0f886820584ae273ce188a42057424e6",]
+releases = [ "v0.0.1 88896715867c2a89df3e3b733cba38cc84f5347c", "v0.0.2 d582a42e0f886820584ae273ce188a42057424e6", "v0.0.3 9b22bcbd0cdd83ef6712dca2e04a1f0a0be548ce",]
 
 [[packages]]
 name = "pika_cjson"
@@ -56,7 +56,7 @@ releases = [ "v0.0.1 71364445e0894e660720f9a0c9e1db021663d6a1", "v0.1.0 027f0671
 
 [[packages]]
 name = "pika_lua"
-releases = [ "v0.0.1 b5da16e285a378a74fa7b7734cdd89be703d6f07", "v0.0.2 d582a42e0f886820584ae273ce188a42057424e6", "v0.0.3 e74c15979a84615a921447b98c79e35de83a8427",]
+releases = [ "v0.0.1 b5da16e285a378a74fa7b7734cdd89be703d6f07", "v0.0.2 d582a42e0f886820584ae273ce188a42057424e6", "v0.0.3 e74c15979a84615a921447b98c79e35de83a8427", "v0.0.4 9b22bcbd0cdd83ef6712dca2e04a1f0a0be548ce",]
 
 [[packages]]
 name = "pikaRTThread"
@@ -132,7 +132,7 @@ releases = [ "v0.0.1 280700b8a8eee1849d16ac68871d014392edf269", "v0.1.0 8ab8cd90
 
 [[packages]]
 name = "mqtt"
-releases = [ "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee", "v0.0.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81", "v0.0.3 73e056141b23dba24087a9c0b1ce07c4eef1b909",]
+releases = [ "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee", "v0.0.2 ae13ede96f87b2dc9767b5e89c77dabf95c76e81", "v0.0.3 73e056141b23dba24087a9c0b1ce07c4eef1b909", "v0.0.4 9b22bcbd0cdd83ef6712dca2e04a1f0a0be548ce",]
 
 [[packages]]
 name = "requests"
@@ -140,7 +140,7 @@ releases = [ "v0.0.1 04a174a7d3e02d8861124214f5a3551eaab2bfee", "v1.0.0 c67a894f
 
 [[packages]]
 name = "hashlib"
-releases = [ "v1.0.0 ce05a5f03c4bfac536db60fe24f83705a1b58b02", "v1.0.1 a91c3698abce8a6624929243cfb7cc79badaa156",]
+releases = [ "v1.0.0 ce05a5f03c4bfac536db60fe24f83705a1b58b02", "v1.0.1 a91c3698abce8a6624929243cfb7cc79badaa156", "v1.0.2 9b22bcbd0cdd83ef6712dca2e04a1f0a0be548ce",]
 
 [[packages]]
 name = "hmac"
@@ -176,7 +176,7 @@ releases = [ "v0.0.1 353e5e5ac2d725a1cc14cd6e690b451c3ac61e3f",]
 
 [[packages]]
 name = "json"
-releases = [ "v0.1.0 02d6151cac594f2278c04e616f03cf37bae3069b", "v0.1.1 94624f9a4af756c597291ed0646c446ecf25ac16", "v0.1.2 e74c15979a84615a921447b98c79e35de83a8427",]
+releases = [ "v0.1.0 02d6151cac594f2278c04e616f03cf37bae3069b", "v0.1.1 94624f9a4af756c597291ed0646c446ecf25ac16", "v0.1.2 e74c15979a84615a921447b98c79e35de83a8427", "v0.1.3 9b22bcbd0cdd83ef6712dca2e04a1f0a0be548ce",]
 
 [[packages]]
 name = "network"
