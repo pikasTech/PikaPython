@@ -62,6 +62,10 @@ static uint8_t _getLRegIndex(char* data);
 static PikaObj* New_Locals(Args* args);
 char* string_slice(Args* outBuffs, char* str, int start, int end);
 
+pika_bool pika_GIL_isInit(void) {
+    return g_pikaGIL.is_init;
+}
+
 int pika_GIL_ENTER(void) {
     if (!g_pikaGIL.is_init) {
         return 0;
@@ -208,6 +212,11 @@ void _VMEvent_deinit(void) {
         g_PikaVMSignal.event_thread_exit = 1;
         pika_platform_thread_destroy(g_PikaVMSignal.event_thread);
         g_PikaVMSignal.event_thread = NULL;
+        pika_GIL_EXIT();
+        while (!g_PikaVMSignal.event_thread_exit_done) {
+            pika_platform_thread_yield();
+        }
+        pika_GIL_ENTER();
     }
 #endif
 }
@@ -4295,7 +4304,7 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
 
 void _pikaVM_yield(void) {
 #if PIKA_EVENT_ENABLE
-    if (!g_PikaVMSignal.event_thread) {
+    if (!pika_GIL_isInit()) {
         _VMEvent_pickupEvent();
     }
 #endif

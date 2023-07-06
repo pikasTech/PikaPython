@@ -1941,7 +1941,9 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
                 uint8_t* size_byte = (uint8_t*)&size;
                 size_byte[i] = cfg->fn_getchar();
             }
-            size += sizeof(uint32_t) * 2;
+            if (magic_code[3] == 'o') {
+                size += sizeof(uint32_t) * 2;
+            }
             uint8_t* buff = pikaMalloc(size);
             /* save magic code and size */
             memcpy(buff, magic_code, sizeof(magic_code));
@@ -1969,6 +1971,8 @@ void _do_pikaScriptShell(PikaObj* self, ShellConfig* cfg) {
                 pika_platform_printf(
                     "=============== [REBOOT] ===============\r\n");
                 pika_platform_reboot();
+                pikaFree(buff, size);
+                return;
             }
         }
 #endif
@@ -2740,15 +2744,17 @@ static void _thread_event(void* arg) {
     pika_assert(_VM_is_first_lock());
     while (1) {
         pika_GIL_ENTER();
-        _VMEvent_pickupEvent();
-        pika_GIL_EXIT();
-        pika_platform_thread_yield();
 #if PIKA_EVENT_ENABLE
         if (g_PikaVMSignal.event_thread_exit) {
+            g_PikaVMSignal.event_thread_exit_done = 1;
             break;
         }
 #endif
+        _VMEvent_pickupEvent();
+        pika_GIL_EXIT();
+        pika_platform_thread_yield();
     }
+    pika_GIL_EXIT();
 }
 
 void _do_pika_eventListener_send(PikaEventListener* self,

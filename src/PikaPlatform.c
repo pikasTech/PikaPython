@@ -340,8 +340,7 @@ PIKA_WEAK int pika_platform_fclose(FILE* stream) {
 }
 
 /* fwrite */
-PIKA_WEAK size_t 
-pika_platform_fwrite(const void* ptr,
+PIKA_WEAK size_t pika_platform_fwrite(const void* ptr,
                                       size_t size,
                                       size_t n,
                                       FILE* stream) {
@@ -716,7 +715,11 @@ PIKA_WEAK void pika_platform_thread_timer_usleep(unsigned long usec) {
 }
 
 PIKA_WEAK void pika_platform_reboot(void) {
+#if __linux
+    pika_platform_printf("reboot\n");
+#else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
 }
 
 PIKA_WEAK void pika_platform_clear(void) {

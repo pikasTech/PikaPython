@@ -739,6 +739,7 @@ uint32_t pikaGC_printFreeList(void);
 
 int pika_GIL_EXIT(void);
 int pika_GIL_ENTER(void);
+pika_bool pika_GIL_isInit(void);
 
 /* builtins */
 PikaObj* New_builtins(Args* args);

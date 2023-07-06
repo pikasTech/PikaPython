@@ -156,6 +156,7 @@ struct VMSignal {
     int event_pickup_cnt;
     pika_platform_thread_t* event_thread;
     pika_bool event_thread_exit;
+    pika_bool event_thread_exit_done;
 #endif
 };
 

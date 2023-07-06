@@ -517,8 +517,6 @@ TEST(module, REPL_runbytecode) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-#if 0
-//! TODO: fix this test
 TEST(module, REPL_pya) {
     /* init */
     g_PikaMemInfo.heapUsedMax = 0;
@@ -539,7 +537,6 @@ TEST(module, REPL_pya) {
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);
 }
-#endif
 
 TEST(module, REPL_script) {
     /* init */
