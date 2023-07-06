@@ -360,8 +360,17 @@ void LibObj_listModules(LibObj* self) {
     args_foreach(self->list, __foreach_handler_listModules, NULL);
 }
 
-static int32_t __foreach_handler_libWriteBytecode(Arg* argEach, void* context) {
-    FILE* out_file = args_getPtr((Args*)context, "out_file");
+typedef struct context_saveLibraryFile {
+    FILE* out_file;
+    uint32_t module_num;
+    uint32_t sum_size;
+    uint32_t block_size;
+} Context_saveLibraryFile;
+
+static int32_t __foreach_handler_libWriteBytecode(
+    Arg* argEach,
+    Context_saveLibraryFile* context) {
+    FILE* out_file = context->out_file;
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
         char* bytecode = obj_getPtr(module_obj, "bytecode");
@@ -376,8 +385,10 @@ static int32_t __foreach_handler_libWriteBytecode(Arg* argEach, void* context) {
 }
 
 //#define NAME_BUFF_SIZE LIB_INFO_BLOCK_SIZE - sizeof(uint32_t)
-static int32_t __foreach_handler_libWriteIndex(Arg* argEach, void* context) {
-    FILE* out_file = args_getPtr(context, "out_file");
+static int32_t __foreach_handler_libWriteIndex(
+    Arg* argEach,
+    Context_saveLibraryFile* context) {
+    FILE* out_file = context->out_file;
     Args buffs = {0};
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
@@ -414,26 +425,25 @@ static int32_t __foreach_handler_libWriteIndex(Arg* argEach, void* context) {
  * 一个unit 的组成包括： Namelen（4 bytes）+ Name (strlen("namelen") + 1) \
  * + fileSize (4 bytes)
  */
-static int32_t __foreach_handler_libSumSize(Arg* argEach, void* context) {
-    Args* args = context;
+static int32_t __foreach_handler_libSumSize(Arg* argEach,
+                                            Context_saveLibraryFile* context) {
     uint32_t block_size = 0; /* block_size is the size of file info */
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
         block_size = obj_getInt(module_obj, "namelen") + 9;
         uint32_t bytecode_size =
             obj_getInt(module_obj, "bytesize"); /* size of every module obj  */
-        args_setInt(args, "sum_size",
-                    args_getInt(args, "sum_size") + bytecode_size + block_size);
-        block_size += args_getInt(args, "block_size");
-        args_setInt(args, "block_size", block_size);
+        context->sum_size += bytecode_size + block_size;
+        context->block_size += block_size;
     }
     return 0;
 }
 
-static int32_t __foreach_handler_getModuleNum(Arg* argEach, void* context) {
-    Args* args = (Args*)context;
+static int32_t __foreach_handler_getModuleNum(
+    Arg* argEach,
+    Context_saveLibraryFile* context) {
     if (arg_isObject(argEach)) {
-        args_setInt(args, "module_num", args_getInt(args, "module_num") + 1);
+        context->module_num++;
     }
     return 0;
 }
@@ -441,27 +451,24 @@ static int32_t __foreach_handler_getModuleNum(Arg* argEach, void* context) {
 int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     FILE* out_file = pika_platform_fopen(output_file_name, "wb+");
 
-    Args context = {0};
-    args_setPtr(&context, "out_file", out_file);
-    args_setInt(&context, "module_num", 0);
-    args_setInt(&context, "sum_size", 0);
-    args_setInt(&context, "block_size", 0);
+    Context_saveLibraryFile context = {0};
+    context.out_file = out_file;
 
     /* write meta information */
     char buff[20] = {0};
-    args_foreach(self->list, __foreach_handler_getModuleNum, &context);
+    args_foreach(self->list, (void*)__foreach_handler_getModuleNum, &context);
 
     /* get sum size of pya */
-    args_foreach(self->list, __foreach_handler_libSumSize, &context);
+    args_foreach(self->list, (void*)__foreach_handler_libSumSize, &context);
 
     /* meta info */
     char magic_code[] = {0x0f, 'p', 'y', 'a'};
     uint32_t version_num = LIB_VERSION_NUMBER;
-    uint32_t module_num = args_getInt(&context, "module_num");
+    uint32_t module_num = context.module_num;
     /* MAGIC_CODE + PACK_SIZE + VERSION_NUM + FILE_NUM + INFO_BLOCK_SIZE = 4 * 5
      * = 20 */
-    uint32_t modules_size = args_getInt(&context, "sum_size") + 20;
-    uint32_t block_size = args_getInt(&context, "block_size");
+    uint32_t modules_size = context.sum_size + 20;
+    uint32_t block_size = context.block_size;
 
     /* write meta info */
     const uint32_t magic_code_offset =
@@ -489,10 +496,10 @@ int LibObj_saveLibraryFile(LibObj* self, char* output_file_name) {
     pika_platform_fwrite(buff, 1, 20, out_file);
 
     /* write module index to file */
-    args_foreach(self->list, __foreach_handler_libWriteIndex, &context);
+    args_foreach(self->list, (void*)__foreach_handler_libWriteIndex, &context);
     /* write module bytecode to file */
-    args_foreach(self->list, __foreach_handler_libWriteBytecode, &context);
-    args_deinit_stack(&context);
+    args_foreach(self->list, (void*)__foreach_handler_libWriteBytecode,
+                 &context);
     /* main process */
     /* deinit */
     pika_platform_fclose(out_file);

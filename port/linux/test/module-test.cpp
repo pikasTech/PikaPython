@@ -490,7 +490,9 @@ char f_getchar(void) {
     if (n > 0) {
         return c;
     }
-    return 0;
+    pika_platform_printf("f_getchar error\r\n");
+    pika_assert(0);
+    return -1;
 }
 void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
 }
@@ -592,7 +594,9 @@ TEST(module, REPL_stdtask) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST_RUN_SINGLE_FILE(modbus, rtu_master_err, "test/python/modbus/rtu_master_err.py")
+TEST_RUN_SINGLE_FILE(modbus,
+                     rtu_master_err,
+                     "test/python/modbus/rtu_master_err.py")
 
 TEST_RUN_SINGLE_FILE_PASS(proxy, proxy3, "test/python/proxy/proxy3.py")
 
