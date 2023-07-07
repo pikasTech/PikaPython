@@ -2,7 +2,7 @@
 #include "_pika_cJSON.h"
 #include "jsmn.h"
 
-#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 13, 0)
+#if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 4)
 #error "pikapython version must be greater than 1.13.0"
 #endif
 
