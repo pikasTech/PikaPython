@@ -27,7 +27,7 @@ extern "C" {
 /** @defgroup TCP_Exported_Constants TCP Exported Constants
  * @{
  */
-#define AGILE_MODBUS_TCP_HEADER_LENGTH     7
+#define AGILE_MODBUS_TCP_HEADER_LENGTH 7
 #define AGILE_MODBUS_TCP_PRESET_REQ_LENGTH 12
 #define AGILE_MODBUS_TCP_PRESET_RSP_LENGTH 8
 
@@ -54,10 +54,10 @@ extern "C" {
  */
 typedef struct agile_modbus_tcp {
     agile_modbus_t _ctx; /**< modbus 句柄 */
-    uint16_t t_id;       /**< Extract from MODBUS Messaging on TCP/IP Implementation Guide V1.0b
-                         (page 23/46):
-                         The transaction identifier is used to associate the future response
-                         with the request. This identifier is unique on each TCP connection. */
+    uint16_t t_id; /**< Extract from MODBUS Messaging on TCP/IP Implementation
+                   Guide V1.0b (page 23/46): The transaction identifier is used
+                   to associate the future response with the request. This
+                   identifier is unique on each TCP connection. */
 } agile_modbus_tcp_t;
 
 /**
@@ -67,7 +67,11 @@ typedef struct agile_modbus_tcp {
 /** @addtogroup TCP_Exported_Functions
  * @{
  */
-int agile_modbus_tcp_init(agile_modbus_tcp_t *ctx, uint8_t *send_buf, int send_bufsz, uint8_t *read_buf, int read_bufsz);
+int agile_modbus_tcp_init(agile_modbus_tcp_t* ctx,
+                          uint8_t* send_buf,
+                          int send_bufsz,
+                          uint8_t* read_buf,
+                          int read_bufsz);
 /**
  * @}
  */
