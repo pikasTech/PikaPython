@@ -80,7 +80,7 @@ releases = [
     "v1.12.1 ee9d1e696a41c68c3e359b824a33795af1d56e86",
     "v1.12.2 32c2c1eed5492ab4d7aaa78b74e050fb5d62b3fa",
     "v1.12.3 3a9e5d68c8b6a1ced831d2ecd672ea31e20ae553",
-    "v1.12.4 fa6feb8d2b546cf068aa895c953f07b1eb2b6ea0",
+    "v1.12.4 d8946a2ef4ce473e645b3ae8bd8ba9d1c49b01ee",
 ]
 
 [[packages]]
@@ -153,7 +153,7 @@ releases = [
     "v1.12.1 ee9d1e696a41c68c3e359b824a33795af1d56e86",
     "v1.12.2 32c2c1eed5492ab4d7aaa78b74e050fb5d62b3fa",
     "v1.12.3 3a9e5d68c8b6a1ced831d2ecd672ea31e20ae553",
-    "v1.12.4 fa6feb8d2b546cf068aa895c953f07b1eb2b6ea0",
+    "v1.12.4 d8946a2ef4ce473e645b3ae8bd8ba9d1c49b01ee",
 ]
 
 [[packages]]
