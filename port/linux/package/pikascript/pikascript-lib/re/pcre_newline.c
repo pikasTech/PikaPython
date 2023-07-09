@@ -1,5 +1,5 @@
-#include "pcre_internal.h"
 #include "re_config.h"
+#include "pcre_internal.h"
 
 /*************************************************
  *      Check for newline at given position       *

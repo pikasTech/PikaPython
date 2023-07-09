@@ -1,5 +1,5 @@
-#include "pcre_internal.h"
 #include "re_config.h"
+#include "pcre_internal.h"
 
 /*************************************************
  *       Convert character value to UTF-8         *

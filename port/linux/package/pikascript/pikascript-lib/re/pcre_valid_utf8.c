@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "pcre_internal.h"
 #include "re_config.h"
+#include "pcre_internal.h"
 
 /*************************************************
  *         Validate a UTF-8 string                *

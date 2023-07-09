@@ -1,6 +1,5 @@
-
-#include "pcre_internal.h"
 #include "re_config.h"
+#include "pcre_internal.h"
 
 /*************************************************
  *       Match character against an XCLASS        *

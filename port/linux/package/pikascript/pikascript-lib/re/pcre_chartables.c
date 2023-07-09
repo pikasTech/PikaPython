@@ -1,5 +1,5 @@
-#include "pcre_internal.h"
 #include "re_config.h"
+#include "pcre_internal.h"
 
 const unsigned char _pcre_default_tables[] = {
 

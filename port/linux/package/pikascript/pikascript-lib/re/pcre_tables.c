@@ -1,6 +1,6 @@
 
-#include "pcre_internal.h"
 #include "re_config.h"
+#include "pcre_internal.h"
 
 /* Table of sizes for the fixed-length opcodes. It's defined in a macro so that
 the definition is next to the definition of the opcodes in pcre_internal.h. */

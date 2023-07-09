@@ -11,8 +11,8 @@
  *
  */
 
-#include "agile_modbus_rtu.h"
 #include "agile_modbus.h"
+#include "agile_modbus_rtu.h"
 
 /** @defgroup RTU RTU
  * @{

@@ -2,8 +2,8 @@
 /* This module contains the external function pcre_fullinfo(), which returns
 information about a compiled pattern. */
 
-#include "pcre_internal.h"
 #include "re_config.h"
+#include "pcre_internal.h"
 
 /*************************************************
  *        Return info about compiled pattern      *

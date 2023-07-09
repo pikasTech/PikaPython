@@ -11,8 +11,8 @@
  *
  */
 
-#include "agile_modbus_tcp.h"
 #include "agile_modbus.h"
+#include "agile_modbus_tcp.h"
 
 /** @defgroup TCP TCP
  * @{
