@@ -235,10 +235,11 @@ TEST(cJSON, test1) {
     pikaVM_runSingleFile(pikaMain, "../../examples/cJSON/test1.py");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0],
-                 "'{\n\t\"data\":\t{\n\t\t\"validTime\":\t28800,\n\t\t\"token\":"
-                 "\t\"3E6EA1D907B9CFEB6AB1DECB5667E4A7\"\n\t},\n\t\"success\":"
-                 "\ttrue,\n\t\"resultCode\":\t\"0000\"\n}'\r\n");
+    EXPECT_STREQ(
+        log_buff[0],
+        "'{\n\t\"data\":\t{\n\t\t\"validTime\":\t28800,\n\t\t\"token\":"
+        "\t\"3E6EA1D907B9CFEB6AB1DECB5667E4A7\"\n\t},\n\t\"success\":"
+        "\ttrue,\n\t\"resultCode\":\t\"0000\"\n}'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -255,10 +256,11 @@ TEST(cJSON, test2) {
     pikaVM_runSingleFile(pikaMain, "../../examples/cJSON/test2.py");
     /* collect */
     /* assert */
-    EXPECT_STREQ(log_buff[0],
-                 "'{\n\t\"data\":\t{\n\t\t\"validTime\":\t28800,\n\t\t\"token\":"
-                 "\t\"3E6EA1D907B9CFEB6AB1DECB5667E4A7\"\n\t},\n\t\"success\":"
-                 "\ttrue,\n\t\"resultCode\":\t\"0000\"\n}'\r\n");
+    EXPECT_STREQ(
+        log_buff[0],
+        "'{\n\t\"data\":\t{\n\t\t\"validTime\":\t28800,\n\t\t\"token\":"
+        "\t\"3E6EA1D907B9CFEB6AB1DECB5667E4A7\"\n\t},\n\t\"success\":"
+        "\ttrue,\n\t\"resultCode\":\t\"0000\"\n}'\r\n");
     EXPECT_STREQ(log_buff[1], "BEGIN\r\n");
     /* deinit */
     obj_deinit(pikaMain);
@@ -301,7 +303,8 @@ TEST(cJSON, test4) {
     /* assert */
     EXPECT_STREQ(
         log_buff[0],
-        "'{\n\t\"data\":\t{\n\t\t\"requestSocialInsuranceFromYangCheng\":\t\"\","
+        "'{\n\t\"data\":\t{\n\t\t\"requestSocialInsuranceFromYangCheng\":"
+        "\t\"\","
         "\n\t\t\"authenticationComparison\":\t\"no\",\n\t\t\"startupLogo\":"
         "\t\"4\",\n\t\t\"cardType\":\t\"00,01,02,03,04\",\n\t\t\"synfromhis\":"
         "\t\"no\",\n\t\t\"alarmThresholdValue\":\t\"37.2\","
@@ -328,7 +331,8 @@ TEST(cJSON, test5) {
 
     EXPECT_STREQ(
         log_buff[0],
-        "'{\n\t\"data\":\t{\n\t\t\"requestSocialInsuranceFromYangCheng\":\t\"\","
+        "'{\n\t\"data\":\t{\n\t\t\"requestSocialInsuranceFromYangCheng\":"
+        "\t\"\","
         "\n\t\t\"authenticationComparison\":\t\"no\",\n\t\t\"startupLogo\":"
         "\t\"4\",\n\t\t\"cardType\":\t\"00,01,02,03,04\",\n\t\t\"synfromhis\":"
         "\t\"no\",\n\t\t\"alarmThresholdValue\":\t\"37.2\","

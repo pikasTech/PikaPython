@@ -35,24 +35,21 @@ extern "C" {
 /*! \NOTE: Make sure #include "__pika_ooc.h" is close to the class definition
  */
 #if defined(__DATA_QUEUE_CLASS_IMPLEMENT__)
-    #define __PLOOC_CLASS_IMPLEMENT__
-    #undef __DATA_QUEUE_CLASS_IMPLEMENT__
+#define __PLOOC_CLASS_IMPLEMENT__
+#undef __DATA_QUEUE_CLASS_IMPLEMENT__
 #endif
 #include "__pika_ooc.h"
 
 typedef struct ByteQueue ByteQueue;
 struct ByteQueue {
-private_member(
-    uint8_t *buffer;
-    uint16_t buffer_size;
+    private_member(uint8_t* buffer; uint16_t buffer_size;
 
-    uint16_t head;
-    uint16_t tail;
-    uint16_t peek;
+                   uint16_t head;
+                   uint16_t tail;
+                   uint16_t peek;
 
-    uint16_t count;
-    uint16_t peek_count;
-)
+                   uint16_t count;
+                   uint16_t peek_count;)
 };
 
 typedef Args Queue;
@@ -73,17 +70,17 @@ Arg* queue_popArg_notDeinitArg(Queue* queue);
 int32_t queue_deinit_stack(Queue* queue);
 void queue_init(Queue* queue);
 
-ByteQueue *byteQueue_init( ByteQueue *queue, 
-                            void *buffer, 
-                            uint_fast16_t size, 
-                            pika_bool is_queue_full);
-pika_bool byteQueue_readOne(ByteQueue *queue, uint8_t *byte_ptr);
-pika_bool byteQueue_peekOne(ByteQueue *queue, uint8_t *byte_ptr);
-void byteQueue_resetPeek(ByteQueue *queue);
-void byteQueue_dropAllPeeked(ByteQueue *queue);
-uint_fast16_t byteQueue_getPeekedNumber(ByteQueue *queue);
-uint_fast16_t byteQueue_peekAvailableCount(ByteQueue *queue);
-pika_bool byteQueue_writeOne(ByteQueue *queue, uint8_t byte);
+ByteQueue* byteQueue_init(ByteQueue* queue,
+                          void* buffer,
+                          uint_fast16_t size,
+                          pika_bool is_queue_full);
+pika_bool byteQueue_readOne(ByteQueue* queue, uint8_t* byte_ptr);
+pika_bool byteQueue_peekOne(ByteQueue* queue, uint8_t* byte_ptr);
+void byteQueue_resetPeek(ByteQueue* queue);
+void byteQueue_dropAllPeeked(ByteQueue* queue);
+uint_fast16_t byteQueue_getPeekedNumber(ByteQueue* queue);
+uint_fast16_t byteQueue_peekAvailableCount(ByteQueue* queue);
+pika_bool byteQueue_writeOne(ByteQueue* queue, uint8_t byte);
 
 #endif
 #ifdef __cplusplus

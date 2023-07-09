@@ -1,11 +1,10 @@
 
-#include "re_config.h"
 #include "pcre_internal.h"
-
+#include "re_config.h"
 
 /*************************************************
-*         Flip bytes in an integer               *
-*************************************************/
+ *         Flip bytes in an integer               *
+ *************************************************/
 
 /* This function is called when the magic number in a regex doesn't match, in
 order to flip its bytes to see if we are dealing with a pattern that was
@@ -19,21 +18,16 @@ Arguments:
 Returns:       the flipped value
 */
 
-static unsigned long int
-byteflip(unsigned long int value, int n)
-{
-if (n == 2) return ((value & 0x00ff) << 8) | ((value & 0xff00) >> 8);
-return ((value & 0x000000ff) << 24) |
-       ((value & 0x0000ff00) <<  8) |
-       ((value & 0x00ff0000) >>  8) |
-       ((value & 0xff000000) >> 24);
+static unsigned long int byteflip(unsigned long int value, int n) {
+    if (n == 2)
+        return ((value & 0x00ff) << 8) | ((value & 0xff00) >> 8);
+    return ((value & 0x000000ff) << 24) | ((value & 0x0000ff00) << 8) |
+           ((value & 0x00ff0000) >> 8) | ((value & 0xff000000) >> 24);
 }
 
-
-
 /*************************************************
-*       Test for a byte-flipped compiled regex   *
-*************************************************/
+ *       Test for a byte-flipped compiled regex   *
+ *************************************************/
 
 /* This function is called from pcre_exec(), pcre_dfa_exec(), and also from
 pcre_fullinfo(). Its job is to test whether the regex is byte-flipped - that
@@ -51,40 +45,40 @@ Returns:           the new block if is is indeed a byte-flipped regex
                    NULL if it is not
 */
 
-real_pcre *
-_pcre_try_flipped(const real_pcre *re, real_pcre *internal_re,
-  const pcre_study_data *study, pcre_study_data *internal_study)
-{
-if (byteflip(re->magic_number, sizeof(re->magic_number)) != MAGIC_NUMBER)
-  return NULL;
+real_pcre* _pcre_try_flipped(const real_pcre* re,
+                             real_pcre* internal_re,
+                             const pcre_study_data* study,
+                             pcre_study_data* internal_study) {
+    if (byteflip(re->magic_number, sizeof(re->magic_number)) != MAGIC_NUMBER)
+        return NULL;
 
-*internal_re = *re;           /* To copy other fields */
-internal_re->size = byteflip(re->size, sizeof(re->size));
-internal_re->options = byteflip(re->options, sizeof(re->options));
-internal_re->flags = (pcre_uint16)byteflip(re->flags, sizeof(re->flags));
-internal_re->top_bracket =
-  (pcre_uint16)byteflip(re->top_bracket, sizeof(re->top_bracket));
-internal_re->top_backref =
-  (pcre_uint16)byteflip(re->top_backref, sizeof(re->top_backref));
-internal_re->first_byte =
-  (pcre_uint16)byteflip(re->first_byte, sizeof(re->first_byte));
-internal_re->req_byte =
-  (pcre_uint16)byteflip(re->req_byte, sizeof(re->req_byte));
-internal_re->name_table_offset =
-  (pcre_uint16)byteflip(re->name_table_offset, sizeof(re->name_table_offset));
-internal_re->name_entry_size =
-  (pcre_uint16)byteflip(re->name_entry_size, sizeof(re->name_entry_size));
-internal_re->name_count =
-  (pcre_uint16)byteflip(re->name_count, sizeof(re->name_count));
+    *internal_re = *re; /* To copy other fields */
+    internal_re->size = byteflip(re->size, sizeof(re->size));
+    internal_re->options = byteflip(re->options, sizeof(re->options));
+    internal_re->flags = (pcre_uint16)byteflip(re->flags, sizeof(re->flags));
+    internal_re->top_bracket =
+        (pcre_uint16)byteflip(re->top_bracket, sizeof(re->top_bracket));
+    internal_re->top_backref =
+        (pcre_uint16)byteflip(re->top_backref, sizeof(re->top_backref));
+    internal_re->first_byte =
+        (pcre_uint16)byteflip(re->first_byte, sizeof(re->first_byte));
+    internal_re->req_byte =
+        (pcre_uint16)byteflip(re->req_byte, sizeof(re->req_byte));
+    internal_re->name_table_offset = (pcre_uint16)byteflip(
+        re->name_table_offset, sizeof(re->name_table_offset));
+    internal_re->name_entry_size =
+        (pcre_uint16)byteflip(re->name_entry_size, sizeof(re->name_entry_size));
+    internal_re->name_count =
+        (pcre_uint16)byteflip(re->name_count, sizeof(re->name_count));
 
-if (study != NULL)
-  {
-  *internal_study = *study;   /* To copy other fields */
-  internal_study->size = byteflip(study->size, sizeof(study->size));
-  internal_study->options = byteflip(study->options, sizeof(study->options));
-  }
+    if (study != NULL) {
+        *internal_study = *study; /* To copy other fields */
+        internal_study->size = byteflip(study->size, sizeof(study->size));
+        internal_study->options =
+            byteflip(study->options, sizeof(study->options));
+    }
 
-return internal_re;
+    return internal_re;
 }
 
 /* End of pcre_tryflipped.c */

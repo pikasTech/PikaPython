@@ -705,7 +705,7 @@ __exit:
 
 /* FIXME: 定制版发送响应头 */
 static int webclient_send_header2(struct webclient_session* session,
-                                 int method) {
+                                  int method) {
     int rc = WEBCLIENT_OK;
     char* header = RT_NULL;
 
@@ -732,14 +732,13 @@ static int webclient_send_header2(struct webclient_session* session,
 
     /* header data end */
     web_snprintf(session->header->buffer + session->header->length,
-                    session->header->size - session->header->length,
-                    "\r\n");
+                 session->header->size - session->header->length, "\r\n");
     session->header->length += 2;
 
     /* check header size */
     if (session->header->length > session->header->size) {
         LOG_E("send header failed, not enough header buffer size(%d)!",
-                session->header->size);
+              session->header->size);
         rc = -WEBCLIENT_NOBUFFER;
         goto __exit;
     }
@@ -1293,9 +1292,9 @@ int webclient_post(struct webclient_session* session,
  *         >0: response http status code
  */
 int webclient_post2(struct webclient_session* session,
-                   const char* URI,
-                   const void* post_data,
-                   size_t data_len) {
+                    const char* URI,
+                    const void* post_data,
+                    size_t data_len) {
     int rc = WEBCLIENT_OK;
     int resp_status = 0;
 
@@ -1749,6 +1748,7 @@ int webclient_request_header_add(char** request_header, const char* fmt, ...) {
     if (length < 0) {
         LOG_E("add request header data failed, return length(%d) error.",
               length);
+        va_end(args);
         return -WEBCLIENT_ERROR;
     }
     va_end(args);
@@ -1913,15 +1913,14 @@ __exit:
  * @return <0: request failed
  *        >=0: response buffer size
  */
-int webclient_request2(
-                      struct webclient_session* session,
-                      const char* URI,
-                      const char* header,
-                      const void* post_data,
-                      size_t data_len,
-                      double timeout,
-                      void** response,
-                      size_t* resp_len) {
+int webclient_request2(struct webclient_session* session,
+                       const char* URI,
+                       const char* header,
+                       const void* post_data,
+                       size_t data_len,
+                       double timeout,
+                       void** response,
+                       size_t* resp_len) {
     int rc = WEBCLIENT_OK;
     int totle_length = 0;
 

@@ -933,7 +933,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     uint8_t offset_befor = 0;
     if (NULL == file_arg) {
         res = 1;
-        goto exit;
+        goto __exit;
     }
     byteCodeFrame_loadByteCode(&bf, arg_getBytes(file_arg));
     const_pool = &bf.const_pool;
@@ -944,7 +944,7 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
     while (1) {
         InstructUnit* ins_unit = instructArray_getNow(ins_array);
         if (NULL == ins_unit) {
-            goto exit;
+            goto __exit;
         }
         if (instructUnit_getInstructIndex(ins_unit) == IMP) {
             char* imp_module_name =
@@ -1016,8 +1016,10 @@ int pikaMaker_getDependencies(PikaMaker* self, char* module_name) {
         instructArray_getNext(ins_array);
     }
 
-exit:
-    ins_array->content_offset_now = offset_befor;
+__exit:
+    if (NULL != ins_array) {
+        ins_array->content_offset_now = offset_befor;
+    }
     if (NULL != file_arg) {
         arg_deinit(file_arg);
     }

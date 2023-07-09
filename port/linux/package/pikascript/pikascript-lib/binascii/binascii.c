@@ -16,7 +16,16 @@ Arg* binascii_a2b_hex(PikaObj* self, char* val) {
     Arg* ret = arg_newBytes(NULL, len / 2);
     uint8_t* res_hex = arg_getBytes(ret);
     for (int i = 0; i < len; i += 2) {
-        res_hex[i / 2] = (hex2int(val[i]) << 4) | hex2int(val[i + 1]);
+        int hex_val = hex2int(val[i]);
+        if (hex_val == -1) {
+            obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
+            pika_platform_printf(
+                "TypeError: non-hexadecimal number found in "
+                "fromhex() arg at position %d\r\n",
+                i + 1);
+        } else {
+            res_hex[i / 2] = (hex_val << 4) | hex2int(val[i + 1]);
+        }
     }
     return ret;
 }

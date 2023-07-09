@@ -40,7 +40,7 @@ enum LINK_IS_DEINIT_SELF {
 };
 
 typedef struct Link Link;
-struct Link{
+struct Link {
     LinkNode* firstNode;
 };
 

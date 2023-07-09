@@ -27,9 +27,9 @@
 
 #include "__default_filter_msg_template.h"
 #if defined(__clang__)
-#   pragma clang diagnostic push
-#   pragma clang diagnostic ignored "-Wunknown-warning-option"
-#   pragma clang diagnostic ignored "-Winitializer-overrides"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-warning-option"
+#pragma clang diagnostic ignored "-Winitializer-overrides"
 #endif
 
 /* add your own message filter here with syntax:
@@ -38,14 +38,14 @@
  *          <name>,
  *          <string>,
  *          [.is_visible = pika_true,]
- *          [.is_case_insensitive = pika_true,] 
+ *          [.is_case_insensitive = pika_true,]
  *          [.ignore_mask = mask value,]
  *          [.target = your own object address/value,]
  *      )
  */
 
-add_filter_msg(hi_pika,     "###Hi Pika")
-add_filter_msg(bye_pika,    "###bye pika", .is_case_insensitive = pika_true)
+add_filter_msg(hi_pika, "###Hi Pika")
+    add_filter_msg(bye_pika, "###bye pika", .is_case_insensitive = pika_true)
 
 /* add your own message item here with syntax:
  *
@@ -54,13 +54,13 @@ add_filter_msg(bye_pika,    "###bye pika", .is_case_insensitive = pika_true)
  *          .message = (const uint8_t []){< num0, num1, ... >},
  *          .size = <array size>,
  *          [.is_visible = pika_true,]
- *          [.is_case_insensitive = pika_true,] 
+ *          [.is_case_insensitive = pika_true,]
  *          [.ignore_mask = mask value,]
  *          [.target = your own object address/value,]
  *      )
- * 
+ *
  * for example:
- * 
+ *
  *      add_filter_item(
  *              example_array,
  *              .message = (const uint8_t []){'a','b','c'},
@@ -70,6 +70,5 @@ add_filter_msg(bye_pika,    "###bye pika", .is_case_insensitive = pika_true)
  */
 
 #if defined(__clang__)
-#   pragma clang diagnostic pop
+#pragma clang diagnostic pop
 #endif
-

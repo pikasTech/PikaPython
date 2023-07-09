@@ -168,8 +168,8 @@ TEST(object_test, printa) {
     PikaObj* root = newRootObj("root", New_PikaStdLib_SysObj);
     obj_run(root,
 
-                  "a = 2\n"
-                  "print(a)\n");
+            "a = 2\n"
+            "print(a)\n");
     // char* sysOut = obj_getSysOut(globals);
     EXPECT_STREQ(log_buff[0], "2\r\n");
     // ASSERT_STREQ(sysOut, "2");

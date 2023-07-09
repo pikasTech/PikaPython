@@ -161,6 +161,7 @@ int pika_pvsprintf(char** buff, const char* fmt, va_list args) {
 
         if (new_buff == NULL) {
             pika_platform_free(*buff);
+            *buff = NULL;
             return -1;  // Memory allocation failed
         } else {
             *buff = new_buff;
@@ -217,6 +218,7 @@ static int _no_buff_vprintf(char* fmt, va_list args) {
 }
 
 int pika_vprintf(char* fmt, va_list args) {
+    int ret = 0;
     if (_check_no_buff_format(fmt)) {
         _no_buff_vprintf(fmt, args);
         return 0;
@@ -226,7 +228,8 @@ int pika_vprintf(char* fmt, va_list args) {
     int required_size = pika_pvsprintf(&buff, fmt, args);
 
     if (required_size < 0) {
-        return -1;  // Memory allocation or other error occurred
+        ret = -1;  // Memory allocation or other error occurred
+        goto __exit;
     }
 
     // putchar
@@ -234,8 +237,11 @@ int pika_vprintf(char* fmt, va_list args) {
         pika_putchar(buff[i]);
     }
 
-    pika_platform_free(buff);
-    return 0;
+__exit:
+    if (NULL != buff) {
+        pika_platform_free(buff);
+    }
+    return ret;
 }
 
 #ifndef pika_platform_printf

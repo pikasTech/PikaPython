@@ -1,6 +1,6 @@
 #include "test_common.h"
 TEST_START
-#if PIKA_SYNTAX_SLICE_ENABLE 
+#if PIKA_SYNTAX_SLICE_ENABLE
 TEST(configparser, test1) {
     char* s =
         "[DEFAULT]\n"
@@ -35,7 +35,6 @@ TEST(configparser, test1) {
 }
 #endif
 
-
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(configparser, test2) {
     /* init */
@@ -44,7 +43,7 @@ TEST(configparser, test2) {
     extern unsigned char pikaModules_py_a[];
     obj_linkLibrary(pikaMain, pikaModules_py_a);
     /* run */
-    pikaVM_runSingleFile(pikaMain,"test/python/configparser/test2.py");
+    pikaVM_runSingleFile(pikaMain, "test/python/configparser/test2.py");
     /* collect */
     char* font_color = obj_getStr(pikaMain, "font_color");
     /* assert */

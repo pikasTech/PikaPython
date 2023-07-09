@@ -41,8 +41,7 @@ void _hmac_HMAC_new(PikaObj* self, Arg* key, Arg* msg, char* digestmod) {
     mbedtls_md_context_t ctx;
     mbedtls_md_init(&ctx);
 
-    if (strcmp(digestmod, "md5") == 0 ||
-        strcmp(digestmod, "MD5") == 0) {
+    if (strcmp(digestmod, "md5") == 0 || strcmp(digestmod, "MD5") == 0) {
         mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_MD5), 1);
         obj_setInt(self, "_mode", PIKA_HMAC_MD5);
         init_buff(self, PIKA_HMAC_MD5);

@@ -60,8 +60,8 @@ void link_addNode(Link* self, void* content) {
 }
 
 static void _link_removeNode(Link* self,
-                              void* content,
-                              uint8_t is_deinit_node) {
+                             void* content,
+                             uint8_t is_deinit_node) {
     LinkNode* nodeToDelete = NULL;
     LinkNode* nodeNow = self->firstNode;
     LinkNode* priorNode = NULL;

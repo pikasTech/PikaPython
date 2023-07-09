@@ -3065,7 +3065,9 @@ TEST(pikaMain, shell_nolib_print_help) {
         obj_runChar(pikaMain, lines[i]);
     }
     /* assert */
-    EXPECT_STREQ(log_buff[1], "Error: Not found LibObj, please execute obj_linkLibrary()\r\n");
+    EXPECT_STREQ(
+        log_buff[1],
+        "Error: Not found LibObj, please execute obj_linkLibrary()\r\n");
     /* deinit */
     obj_deinit(pikaMain);
     EXPECT_EQ(pikaMemNow(), 0);

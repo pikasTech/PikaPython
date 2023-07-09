@@ -166,7 +166,7 @@ void PikaStdDevice_GPIO_setCallBack(PikaObj* self,
 #endif
 }
 
-void PikaStdDevice_GPIO_close(PikaObj *self){
+void PikaStdDevice_GPIO_close(PikaObj* self) {
     pika_dev* dev = _get_dev(self);
     pika_hal_close(dev);
 }

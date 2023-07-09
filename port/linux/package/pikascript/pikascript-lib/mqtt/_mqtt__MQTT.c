@@ -568,7 +568,7 @@ int _mqtt__MQTT_subscribe(PikaObj* self, char* topic, Arg* cb, int qos) {
             // __platform_printf("hash_time33(topic_str):%d
             // \r\n",hash_time33(topic_str));
             pika_eventListener_registEvent(g_mqtt_event_listener, eventId,
-                                          eventHandler);
+                                           eventHandler);
         }
 
     } else
@@ -626,7 +626,7 @@ void Subscribe_Handler(void* client, message_data_t* msg) {
 
     // 存好数据后，再发送事件信号，防止信号收到了但是需要传输的数据没准备好
     pika_eventListener_send(g_mqtt_event_listener, hash_time33(msg->topic_name),
-                           evt_obj_arg);
+                            evt_obj_arg);
 
     // MQTT_LOG_I("\n>>>------------------");
     // MQTT_LOG_I("Topic:%s \nlen:%d,message: %s", msg->topic_name,
@@ -672,7 +672,7 @@ void Reconnect_Handler(void* client, void* reconnect_date) {
     if (((mqtt_client_t*)client)->mqtt_client_state != CLIENT_STATE_CONNECTED) {
         // 发送事件信号
         pika_eventListener_sendSignal(g_mqtt_event_listener,
-                                     MQTT_RECONNECTION_EVENT_ID, 1);
+                                      MQTT_RECONNECTION_EVENT_ID, 1);
     }
 }
 
@@ -707,7 +707,7 @@ int _mqtt__MQTT_setDisconnectHandler(PikaObj* self, Arg* cb) {
     // __platform_printf("hash_time33(topic_str):%d
     // \r\n",hash_time33(topic_str));
     pika_eventListener_registEvent(g_mqtt_event_listener,
-                                  MQTT_RECONNECTION_EVENT_ID, self);
+                                   MQTT_RECONNECTION_EVENT_ID, self);
 
     return 0;
 }

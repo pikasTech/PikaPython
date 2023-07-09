@@ -208,10 +208,14 @@ int webclient_get_test(int argc, char** argv) {
 //     /* assert */
 //     // EXPECT_STREQ(
 //     //     obj_getStr(pikaMain, "r.text"),
-//     //     "RT-Thread is an open source IoT operating system from China, which "
-//     //     "has strong scalability: from a tiny kernel running on a tiny core, "
-//     //     "for example ARM Cortex-M0, or Cortex-M3/4/7, to a rich feature system "
-//     //     "running on MIPS32, ARM Cortex-A8, ARM Cortex-A9 DualCore etc.\r\n");
+//     //     "RT-Thread is an open source IoT operating system from China,
+//     which "
+//     //     "has strong scalability: from a tiny kernel running on a tiny
+//     core, "
+//     //     "for example ARM Cortex-M0, or Cortex-M3/4/7, to a rich feature
+//     system "
+//     //     "running on MIPS32, ARM Cortex-A8, ARM Cortex-A9 DualCore
+//     etc.\r\n");
 //     /* deinit */
 //     obj_deinit(pikaMain);
 //     EXPECT_EQ(pikaMemNow(), 0);
@@ -221,7 +225,8 @@ int webclient_get_test(int argc, char** argv) {
 //     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 //     extern unsigned char pikaModules_py_a[];
 //     obj_linkLibrary(pikaMain, pikaModules_py_a);
-//     pikaVM_runSingleFile(pikaMain, "test/python/requests/requests_encode.py");
+//     pikaVM_runSingleFile(pikaMain,
+//     "test/python/requests/requests_encode.py");
 //     /* assert */
 //     EXPECT_STREQ(log_buff[1], "'http://www.rt-thread.com?b=2&a=1'\r\n");
 //     EXPECT_STREQ(log_buff[0], "'http://www.rt-thread.com?b=%25&a=+'\r\n");
@@ -234,7 +239,8 @@ int webclient_get_test(int argc, char** argv) {
 //     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
 //     extern unsigned char pikaModules_py_a[];
 //     obj_linkLibrary(pikaMain, pikaModules_py_a);
-//     pikaVM_runSingleFile(pikaMain, "test/python/requests/requests_encode.py");
+//     pikaVM_runSingleFile(pikaMain,
+//     "test/python/requests/requests_encode.py");
 //     /* assert */
 //     EXPECT_STREQ(log_buff[2], "HTTP/1.1 200 OK\r\n");
 //     /* deinit */

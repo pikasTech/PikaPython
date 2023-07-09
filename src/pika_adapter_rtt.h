@@ -50,7 +50,7 @@ extern "C" {
 #define RT_EINVAL 10  /**< Invalid argument */
 
 #define LOG_E(fmt, ...) pika_platform_printf(fmt "\r\n", ##__VA_ARGS__)
-#define LOG_W(...) 
+#define LOG_W(...)
 #define LOG_D(...)
 
 #define RT_ASSERT(...) pika_assert(__VA_ARGS__)

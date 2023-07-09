@@ -36,26 +36,26 @@
 #endif
 
 #if defined(__INS_COMPARE)
-#define def_ins(__INS_NAME)                                                     \
-    if (0 == strncmp(ins_str, "" #__INS_NAME "", 3)) {                          \
-        return __INS_NAME;                                                      \
+#define def_ins(__INS_NAME)                            \
+    if (0 == strncmp(ins_str, "" #__INS_NAME "", 3)) { \
+        return __INS_NAME;                             \
     }
 #endif
 
 #if defined(__INS_GET_INS_STR)
-#define def_ins(__INS_NAME)                                                     \
-    if (__INS_NAME ==  instructUnit_getInstructIndex(self)){                    \
-        return ""#__INS_NAME""; \
+#define def_ins(__INS_NAME)                                  \
+    if (__INS_NAME == instructUnit_getInstructIndex(self)) { \
+        return "" #__INS_NAME "";                            \
     }
 #endif
 
 #if defined(__INS_OPCODE)
-#define def_ins(__INS_NAME)                                                     \
-    [__INS_NAME] = {                                                            \
-        .handler    = &VM_instruction_handler_##__INS_NAME,                     \
-        .op_str     = (const char []){#__INS_NAME},                             \
-        .op_str_len = sizeof(#__INS_NAME) - 1,                                  \
-        .op_idx     = __INS_NAME,                                               \
+#define def_ins(__INS_NAME)                              \
+    [__INS_NAME] = {                                     \
+        .handler = &VM_instruction_handler_##__INS_NAME, \
+        .op_str = (const char[]){#__INS_NAME},           \
+        .op_str_len = sizeof(#__INS_NAME) - 1,           \
+        .op_idx = __INS_NAME,                            \
     },
 #endif
 

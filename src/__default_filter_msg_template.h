@@ -30,39 +30,29 @@
 #undef __add_filter_item
 #undef __NO_FILTER_HANLDER__
 
-
 #if defined(__MSG_TABLE)
-    #define __add_filter_msg(__name, __msg, ...)                                \
-        {                                                                       \
-            .message = (const uint8_t []){__msg},                               \
-            .size = sizeof((const uint8_t []){__msg}) - 1,                      \
-            .handler = _filter_msg_##__name##_handler,                          \
-            __VA_ARGS__                                                         \
-        },
-    #define __add_filter_item(__name, ...)                                      \
-        {                                                                       \
-            .handler = _filter_msg_##__name##_handler,                          \
-            __VA_ARGS__                                                         \
-        },
+#define __add_filter_msg(__name, __msg, ...)       \
+    {.message = (const uint8_t[]){__msg},          \
+     .size = sizeof((const uint8_t[]){__msg}) - 1, \
+     .handler = _filter_msg_##__name##_handler,    \
+     __VA_ARGS__},
+#define __add_filter_item(__name, ...) \
+    {.handler = _filter_msg_##__name##_handler, __VA_ARGS__},
 #endif
 
 #if defined(__MSG_DECLARE)
-    #define __add_filter_msg(__name, __msg, ...)                                \
-            pika_bool _filter_msg_##__name##_handler(   FilterItem *msg,        \
-                                                        PikaObj* self,          \
-                                                        ShellConfig* shell);
-    #define __add_filter_item(__name, ...)                                      \
-            pika_bool _filter_msg_##__name##_handler(   FilterItem *msg,        \
-                                                        PikaObj* self,          \
-                                                        ShellConfig* shell);
+#define __add_filter_msg(__name, __msg, ...)                                 \
+    pika_bool _filter_msg_##__name##_handler(FilterItem* msg, PikaObj* self, \
+                                             ShellConfig* shell);
+#define __add_filter_item(__name, ...)                                       \
+    pika_bool _filter_msg_##__name##_handler(FilterItem* msg, PikaObj* self, \
+                                             ShellConfig* shell);
 #endif
 
 #undef __MSG_TABLE
 #undef __MSG_DECLARE
 
-
-#define add_filter_msg(__name, __msg, ...)                                      \
-            __add_filter_msg(__name, __msg, ##__VA_ARGS__)
-#define add_filter_item(__name, ...)                                            \
-            __add_filter_item(__name, ##__VA_ARGS__)
-#define __NO_FILTER_HANLDER__   .handler = NULL
+#define add_filter_msg(__name, __msg, ...) \
+    __add_filter_msg(__name, __msg, ##__VA_ARGS__)
+#define add_filter_item(__name, ...) __add_filter_item(__name, ##__VA_ARGS__)
+#define __NO_FILTER_HANLDER__ .handler = NULL

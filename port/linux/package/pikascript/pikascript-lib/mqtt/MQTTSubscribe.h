@@ -3,7 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-09 20:15:32
  * @LastEditTime: 2019-12-20 20:37:31
- * @Description: the code belongs to jiejie, please keep the author information and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author information
+ * and source code according to the license.
  */
 /*******************************************************************************
  * Copyright (c) 2014 IBM Corp.
@@ -26,21 +27,40 @@
 #define MQTTSUBSCRIBE_H_
 
 #if !defined(DLLImport)
-  #define DLLImport 
+#define DLLImport
 #endif
 #if !defined(DLLExport)
-  #define DLLExport
+#define DLLExport
 #endif
 
-DLLExport int MQTTSerialize_subscribe(unsigned char* buf, int buflen, unsigned char dup, unsigned short packetid,
-		int count, MQTTString topicFilters[], int requestedQoSs[]);
+DLLExport int MQTTSerialize_subscribe(unsigned char* buf,
+                                      int buflen,
+                                      unsigned char dup,
+                                      unsigned short packetid,
+                                      int count,
+                                      MQTTString topicFilters[],
+                                      int requestedQoSs[]);
 
-DLLExport int MQTTDeserialize_subscribe(unsigned char* dup, unsigned short* packetid,
-		int maxcount, int* count, MQTTString topicFilters[], int requestedQoSs[], unsigned char* buf, int len);
+DLLExport int MQTTDeserialize_subscribe(unsigned char* dup,
+                                        unsigned short* packetid,
+                                        int maxcount,
+                                        int* count,
+                                        MQTTString topicFilters[],
+                                        int requestedQoSs[],
+                                        unsigned char* buf,
+                                        int len);
 
-DLLExport int MQTTSerialize_suback(unsigned char* buf, int buflen, unsigned short packetid, int count, int* grantedQoSs);
+DLLExport int MQTTSerialize_suback(unsigned char* buf,
+                                   int buflen,
+                                   unsigned short packetid,
+                                   int count,
+                                   int* grantedQoSs);
 
-DLLExport int MQTTDeserialize_suback(unsigned short* packetid, int maxcount, int* count, int grantedQoSs[], unsigned char* buf, int len);
-
+DLLExport int MQTTDeserialize_suback(unsigned short* packetid,
+                                     int maxcount,
+                                     int* count,
+                                     int grantedQoSs[],
+                                     unsigned char* buf,
+                                     int len);
 
 #endif /* MQTTSUBSCRIBE_H_ */

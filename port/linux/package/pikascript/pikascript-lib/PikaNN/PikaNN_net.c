@@ -1,7 +1,7 @@
 #include "PikaNN_net.h"
-#include "PikaNN_common.h"
 #include <sys/time.h>
 #include <time.h>
+#include "PikaNN_common.h"
 
 #if TM_MDL_TYPE == TM_MDL_INT8
 #include "./TinyMaix/tools/tmdl/mnist_valid_q.h"

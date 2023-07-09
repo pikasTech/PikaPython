@@ -10,10 +10,10 @@
 #include <io.h>
 #include <windows.h>
 #elif defined(__linux) || PIKA_LINUX_COMPATIBLE
-#include "unistd.h"
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include "unistd.h"
 #endif
 enum {
     FILE_RDONLY = 0x00,

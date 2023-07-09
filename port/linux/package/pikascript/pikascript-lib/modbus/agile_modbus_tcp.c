@@ -11,8 +11,8 @@
  *
  */
 
-#include "agile_modbus.h"
 #include "agile_modbus_tcp.h"
+#include "agile_modbus.h"
 
 /** @defgroup TCP TCP
  * @{
@@ -28,8 +28,7 @@
  * @param   slave 从机地址
  * @return  0:成功
  */
-static int agile_modbus_tcp_set_slave(agile_modbus_t *ctx, int slave)
-{
+static int agile_modbus_tcp_set_slave(agile_modbus_t* ctx, int slave) {
     ctx->slave = slave;
     return 0;
 }
@@ -43,11 +42,12 @@ static int agile_modbus_tcp_set_slave(agile_modbus_t *ctx, int slave)
  * @param   req 数据存放指针
  * @return  数据长度
  */
-static int agile_modbus_tcp_build_request_basis(agile_modbus_t *ctx, int function,
-                                                int addr, int nb,
-                                                uint8_t *req)
-{
-    agile_modbus_tcp_t *ctx_tcp = ctx->backend_data;
+static int agile_modbus_tcp_build_request_basis(agile_modbus_t* ctx,
+                                                int function,
+                                                int addr,
+                                                int nb,
+                                                uint8_t* req) {
+    agile_modbus_tcp_t* ctx_tcp = ctx->backend_data;
 
     /* Increase transaction ID */
     if (ctx_tcp->t_id < UINT16_MAX)
@@ -80,8 +80,8 @@ static int agile_modbus_tcp_build_request_basis(agile_modbus_t *ctx, int functio
  * @param   rsp 数据存放指针
  * @return  数据长度
  */
-static int agile_modbus_tcp_build_response_basis(agile_modbus_sft_t *sft, uint8_t *rsp)
-{
+static int agile_modbus_tcp_build_response_basis(agile_modbus_sft_t* sft,
+                                                 uint8_t* rsp) {
     /* Extract from MODBUS Messaging on TCP/IP Implementation
        Guide V1.0b (page 23/46):
        The transaction identifier is used to associate the future
@@ -108,8 +108,8 @@ static int agile_modbus_tcp_build_response_basis(agile_modbus_sft_t *sft, uint8_
  * @param   req_length 请求数据长度
  * @return  事务标识符
  */
-static int agile_modbus_tcp_prepare_response_tid(const uint8_t *req, int *req_length)
-{
+static int agile_modbus_tcp_prepare_response_tid(const uint8_t* req,
+                                                 int* req_length) {
     return (req[0] << 8) + req[1];
 }
 
@@ -119,8 +119,7 @@ static int agile_modbus_tcp_prepare_response_tid(const uint8_t *req, int *req_le
  * @param   req_length 已有数据长度
  * @return  数据长度
  */
-static int agile_modbus_tcp_send_msg_pre(uint8_t *req, int req_length)
-{
+static int agile_modbus_tcp_send_msg_pre(uint8_t* req, int req_length) {
     /* Substract the header length to the message length */
     int mbap_length = req_length - 6;
 
@@ -137,8 +136,9 @@ static int agile_modbus_tcp_send_msg_pre(uint8_t *req, int req_length)
  * @param   msg_length 有效数据长度
  * @return  有效数据长度
  */
-static int agile_modbus_tcp_check_integrity(agile_modbus_t *ctx, uint8_t *msg, const int msg_length)
-{
+static int agile_modbus_tcp_check_integrity(agile_modbus_t* ctx,
+                                            uint8_t* msg,
+                                            const int msg_length) {
     return msg_length;
 }
 
@@ -150,9 +150,10 @@ static int agile_modbus_tcp_check_integrity(agile_modbus_t *ctx, uint8_t *msg, c
  * @param   rsp_length 响应数据长度
  * @return  0:成功; 其他:异常
  */
-static int agile_modbus_tcp_pre_check_confirmation(agile_modbus_t *ctx, const uint8_t *req,
-                                                   const uint8_t *rsp, int rsp_length)
-{
+static int agile_modbus_tcp_pre_check_confirmation(agile_modbus_t* ctx,
+                                                   const uint8_t* req,
+                                                   const uint8_t* rsp,
+                                                   int rsp_length) {
     /* Check transaction ID */
     if (req[0] != rsp[0] || req[1] != rsp[1])
         return -1;
@@ -175,19 +176,18 @@ static int agile_modbus_tcp_pre_check_confirmation(agile_modbus_t *ctx, const ui
 /**
  * @brief   TCP 后端接口
  */
-static const agile_modbus_backend_t agile_modbus_tcp_backend =
-    {
-        AGILE_MODBUS_BACKEND_TYPE_TCP,
-        AGILE_MODBUS_TCP_HEADER_LENGTH,
-        AGILE_MODBUS_TCP_CHECKSUM_LENGTH,
-        AGILE_MODBUS_TCP_MAX_ADU_LENGTH,
-        agile_modbus_tcp_set_slave,
-        agile_modbus_tcp_build_request_basis,
-        agile_modbus_tcp_build_response_basis,
-        agile_modbus_tcp_prepare_response_tid,
-        agile_modbus_tcp_send_msg_pre,
-        agile_modbus_tcp_check_integrity,
-        agile_modbus_tcp_pre_check_confirmation};
+static const agile_modbus_backend_t agile_modbus_tcp_backend = {
+    AGILE_MODBUS_BACKEND_TYPE_TCP,
+    AGILE_MODBUS_TCP_HEADER_LENGTH,
+    AGILE_MODBUS_TCP_CHECKSUM_LENGTH,
+    AGILE_MODBUS_TCP_MAX_ADU_LENGTH,
+    agile_modbus_tcp_set_slave,
+    agile_modbus_tcp_build_request_basis,
+    agile_modbus_tcp_build_response_basis,
+    agile_modbus_tcp_prepare_response_tid,
+    agile_modbus_tcp_send_msg_pre,
+    agile_modbus_tcp_check_integrity,
+    agile_modbus_tcp_pre_check_confirmation};
 
 /**
  * @}
@@ -206,9 +206,13 @@ static const agile_modbus_backend_t agile_modbus_tcp_backend =
  * @param   read_bufsz 接收缓冲区大小
  * @return  0:成功
  */
-int agile_modbus_tcp_init(agile_modbus_tcp_t *ctx, uint8_t *send_buf, int send_bufsz, uint8_t *read_buf, int read_bufsz)
-{
-    agile_modbus_common_init(&(ctx->_ctx), send_buf, send_bufsz, read_buf, read_bufsz);
+int agile_modbus_tcp_init(agile_modbus_tcp_t* ctx,
+                          uint8_t* send_buf,
+                          int send_bufsz,
+                          uint8_t* read_buf,
+                          int read_bufsz) {
+    agile_modbus_common_init(&(ctx->_ctx), send_buf, send_bufsz, read_buf,
+                             read_bufsz);
     ctx->_ctx.backend = &agile_modbus_tcp_backend;
     ctx->_ctx.backend_data = ctx;
 

@@ -6,7 +6,14 @@ IF(PIKA_CONFIG_ENABLE)
 ENDIF(PIKA_CONFIG_ENABLE)
 ADD_DEFINITIONS(-DUSE_GOOGLE_TEST=1)
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED True)
 
+# Enable Clang-Tidy
+set(CMAKE_C_CLANG_TIDY
+   clang-tidy;
+   -checks=-clang-analyzer-security.insecureAPI*,-clang-analyzer-deadcode*;
+)
 
 # support lto
 # IF(POLICY CMP0069)

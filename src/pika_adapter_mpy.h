@@ -326,7 +326,7 @@ typedef struct _mp_obj_module_t {
 typedef struct _vstr_t {
     size_t alloc;
     size_t len;
-    char *buf;
+    char* buf;
     bool fixed_buf;
 } vstr_t;
 
@@ -334,9 +334,8 @@ typedef struct _mp_obj_list_t {
     mp_obj_base_t base;
     size_t alloc;
     size_t len;
-    mp_obj_t *items;
+    mp_obj_t* items;
 } mp_obj_list_t;
-
 
 #endif
 #ifdef __cplusplus

@@ -66,7 +66,7 @@ int pika_hal_platform_WIFI_ioctl_others(pika_dev* dev,
         *(PIKA_HAL_WIFI_STATUS*)arg = PIKA_HAL_WIFI_STATUS_GOT_IP;
         return 0;
     }
-    if (cmd == PIKA_HAL_IOCTL_WIFI_CONNECT){
+    if (cmd == PIKA_HAL_IOCTL_WIFI_CONNECT) {
         return 0;
     }
     return -1;
