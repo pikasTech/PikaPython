@@ -6,7 +6,7 @@
 //初始化，填入π和e的值
 void PikaMath_Math___init__(PikaObj* self) {
     obj_setFloat(self, "pi", PI);
-    obj_setFloat(self, "e", PI);
+    obj_setFloat(self, "e", E);
 }
 
 pika_float PikaMath_Math_acos(PikaObj* self, pika_float x) {
