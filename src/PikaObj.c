@@ -2620,6 +2620,14 @@ int obj_runModule(PikaObj* self, char* module_name) {
     return 0;
 }
 
+PikaObj* obj_runFile(PikaObj* self, char* file_name) {
+    return pikaVM_runFile(self, file_name);
+}
+
+PikaObj* obj_runSingleFile(PikaObj* self, char* file_name) {
+    return pikaVM_runSingleFile(self, file_name);
+}
+
 int obj_importModule(PikaObj* self, char* module_name) {
     if (NULL == module_name) {
         return -1;

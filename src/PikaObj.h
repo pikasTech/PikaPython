@@ -505,6 +505,8 @@ int obj_importModule(PikaObj* self, char* module_name);
 int32_t obj_newMetaObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr);
 int obj_runModule(PikaObj* self, char* module_name);
+PikaObj* obj_runFile(PikaObj* self, char* file_name);
+PikaObj* obj_runSingleFile(PikaObj* self, char* file_name);
 char* obj_toStr(PikaObj* self);
 Arg* arg_newDirectObj(NewFun new_obj_fun);
 enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
