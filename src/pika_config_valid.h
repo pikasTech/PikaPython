@@ -487,6 +487,10 @@ extern "C" {
         #define PIKA_UNBUFFERED_ENABLE 0
     #endif
 
+    #ifndef PIKA_SHELL_NO_ECHO
+        #define PIKA_SHELL_NO_ECHO 0
+    #endif
+
     /* configuration validation */
 
 #endif

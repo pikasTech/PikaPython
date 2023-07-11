@@ -56,7 +56,7 @@ volatile PikaObjState g_PikaObjState = {
 #endif
 };
 
-static volatile ShellConfig g_repl_shell;
+static volatile ShellConfig g_REPL;
 
 PikaObj* New_PikaStdData_Dict(Args* args);
 PikaObj* New_PikaStdData_dict_keys(Args* args);
@@ -207,7 +207,7 @@ int32_t obj_deinit(PikaObj* self) {
     pikaGC_unlock();
     if (bisRoot) {
         pikaGC_markSweep();
-        shConfig_deinit((ShellConfig*)&g_repl_shell);
+        shConfig_deinit((ShellConfig*)&g_REPL);
 #if __linux
         disable_raw_mode();
 #endif
@@ -1598,11 +1598,13 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
                                      ShellConfig* shell) {
     char* input_line = NULL;
     enum shellCTRL ctrl = SHELL_CTRL_CONTINUE;
+    if (g_REPL.no_echo == pika_false) {
 #if __linux
-    printf("%c", inputChar);
+        printf("%c", inputChar);
 #elif !(defined(_WIN32))
-    pika_platform_printf("%c", inputChar);
+        pika_platform_printf("%c", inputChar);
 #endif
+    }
     if (inputChar == '\n' && shell->lastChar == '\r') {
         ctrl = SHELL_CTRL_CONTINUE;
         goto __exit;
@@ -2008,18 +2010,19 @@ static enum shellCTRL __obj_shellLineHandler_REPL(PikaObj* self,
     return SHELL_CTRL_CONTINUE;
 }
 
-static volatile ShellConfig g_repl_shell = {
+static volatile ShellConfig g_REPL = {
     .handler = __obj_shellLineHandler_REPL,
     .prefix = ">>> ",
     .blockBuffName = "@sh0",
 #if PIKA_SHELL_HISTORY_ENABLE
     .history = NULL,
 #endif
+    .no_echo = PIKA_SHELL_NO_ECHO,
 };
 
 void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn) {
-    g_repl_shell.fn_getchar = getchar_fn;
-    _do_pikaScriptShell(self, (ShellConfig*)&g_repl_shell);
+    g_REPL.fn_getchar = getchar_fn;
+    _do_pikaScriptShell(self, (ShellConfig*)&g_REPL);
 }
 
 int shConfig_deinit(ShellConfig* self) {
@@ -2032,8 +2035,16 @@ int shConfig_deinit(ShellConfig* self) {
     return 0;
 }
 
-void pikaScriptShell(PikaObj* self) {
+void pikaPythonShell(PikaObj* self) {
     pikaScriptShell_withGetchar(self, pika_platform_getchar);
+}
+
+void pikaShellSetEcho(pika_bool enable_echo) {
+    if (enable_echo) {
+        g_REPL.no_echo = pika_false;
+    } else {
+        g_REPL.no_echo = pika_true;
+    }
 }
 
 void obj_setErrorCode(PikaObj* self, int32_t errCode) {

@@ -104,7 +104,6 @@ extern "C" {
 #define PIKA_FALSE pika_false
 #define pikaScriptInit pikaPythonInit
 #define pikaScriptShell pikaPythonShell
-
 #endif
 
 #endif

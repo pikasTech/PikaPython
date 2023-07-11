@@ -207,11 +207,7 @@ pika_bool args_getBool(Args* self, char* name) {
     if (NULL == arg) {
         return _PIKA_BOOL_ERR;
     }
-    ArgType arg_type = arg_getType(arg);
-    if (arg_type == ARG_TYPE_BOOL) {
-        return arg_getBool(arg);
-    }
-    return _PIKA_BOOL_ERR;
+    return arg_getBool(arg);
 }
 
 int32_t args_getSize(Args* self) {

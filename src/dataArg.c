@@ -477,7 +477,17 @@ pika_bool arg_getBool(Arg* self) {
     if (NULL == arg_getContent(self)) {
         return _PIKA_BOOL_ERR;
     }
-    return *(pika_bool*)arg_getContent(self);
+    ArgType type = arg_getType(self);
+    if (type == ARG_TYPE_BOOL) {
+        return *(pika_bool*)arg_getContent(self);
+    }
+    if (type == ARG_TYPE_INT) {
+        return (pika_bool)arg_getInt(self);
+    }
+    if (type == ARG_TYPE_FLOAT) {
+        return (pika_bool)arg_getFloat(self);
+    }
+    return _PIKA_BOOL_ERR;
 }
 
 void* arg_getPtr(Arg* self) {

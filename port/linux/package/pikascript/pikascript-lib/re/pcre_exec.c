@@ -4523,19 +4523,19 @@ HEAP_RETURN:
         LBL(6)
         LBL(7)
         LBL(8)
-        LBL(9) LBL(10) LBL(11) LBL(12) LBL(13) LBL(14) LBL(15) LBL(17) LBL(19)
-            LBL(24) LBL(25) LBL(26) LBL(27) LBL(29) LBL(31) LBL(33) LBL(35)
-                LBL(43) LBL(47) LBL(48) LBL(49) LBL(50) LBL(51) LBL(52) LBL(53)
-                    LBL(54)
+        LBL(9)
+        LBL(10) LBL(11) LBL(12) LBL(13) LBL(14) LBL(15) LBL(17) LBL(19) LBL(24)
+            LBL(25) LBL(26) LBL(27) LBL(29) LBL(31) LBL(33) LBL(35) LBL(43)
+                LBL(47) LBL(48) LBL(49) LBL(50) LBL(51) LBL(52) LBL(53) LBL(54)
 #ifdef SUPPORT_UTF8
-                        LBL(16) LBL(18) LBL(20) LBL(21) LBL(22) LBL(23) LBL(28)
-                            LBL(30) LBL(32) LBL(34) LBL(42) LBL(46)
+                    LBL(16) LBL(18) LBL(20) LBL(21) LBL(22) LBL(23) LBL(28)
+                        LBL(30) LBL(32) LBL(34) LBL(42) LBL(46)
 #ifdef SUPPORT_UCP
-                                LBL(36) LBL(37) LBL(38) LBL(39) LBL(40) LBL(41)
-                                    LBL(44) LBL(45)
+                            LBL(36) LBL(37) LBL(38) LBL(39) LBL(40) LBL(41)
+                                LBL(44) LBL(45)
 #endif /* SUPPORT_UCP */
 #endif /* SUPPORT_UTF8 */
-                                        default
+                                    default
             : DPRINTF(("jump error in pcre match: label %d non-existent\n",
                        frame->Xwhere));
         return PCRE_ERROR_INTERNAL;

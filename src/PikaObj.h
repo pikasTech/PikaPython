@@ -336,7 +336,8 @@ int64_t fast_atoi(char* src);
 char* fast_itoa(char* buf, uint32_t val);
 
 /* shell */
-void pikaScriptShell(PikaObj* self);
+void pikaPythonShell(PikaObj* self);
+void pikaShellSetEcho(pika_bool enable_echo);
 enum shellCTRL { SHELL_CTRL_CONTINUE, SHELL_CTRL_EXIT };
 
 typedef struct ShellConfig ShellConfig;
@@ -401,6 +402,7 @@ struct ShellConfig {
 #if PIKA_SHELL_HISTORY_ENABLE
     ShellHistory* history;
 #endif
+    pika_bool no_echo;
 };
 
 #if PIKA_SHELL_HISTORY_ENABLE

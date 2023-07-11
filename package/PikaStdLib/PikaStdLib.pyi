@@ -15,5 +15,9 @@ class MemChecker:
     def resetMax(self): ...
 
 
+class REPL:
+    def setEcho(self, echo: bool): ...
+
+
 class SysObj:
     pass
