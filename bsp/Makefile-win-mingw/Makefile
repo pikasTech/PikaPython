@@ -58,6 +58,7 @@ PikaPython/pikascript-api/__asset_pikaModules_py_a.c : $(PY_SRC)
 
 #----------------------------------------------------------------------------------------------------------------------#
 $(OUT): $(CC_OBJ)
+	@echo Linking $(OUT) ...
 	@$(CC) $(LDObject) $(LDSuffix) -o $(OUT)
 	@echo
 
