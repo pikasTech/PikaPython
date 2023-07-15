@@ -1,4 +1,17 @@
-#include "../PikaStdDevice/pika_hal.h"
+#include "pika_hal.h"
+#include <stdint.h>
+
+static void _IIC_SDA_input(pika_hal_SOFT_IIC_config* iic_cfg) {
+    pika_hal_GPIO_config cfg_SDA = {0};
+    cfg_SDA.dir = PIKA_HAL_GPIO_DIR_IN;
+    pika_hal_ioctl(iic_cfg->SDA, PIKA_HAL_IOCTL_CONFIG, &cfg_SDA);
+}
+
+static void _IIC_SDA_output(pika_hal_SOFT_IIC_config* iic_cfg) {
+    pika_hal_GPIO_config cfg_SDA = {0};
+    cfg_SDA.dir = PIKA_HAL_GPIO_DIR_OUT;
+    pika_hal_ioctl(iic_cfg->SDA, PIKA_HAL_IOCTL_CONFIG, &cfg_SDA);
+}
 
 static int _GPIO_write(pika_dev* dev, uint32_t val) {
     return pika_hal_write(dev, &val, sizeof(val));
@@ -11,11 +24,12 @@ static uint32_t _GPIO_read(pika_dev* dev) {
 }
 
 static void _IIC_Delay(void) {
-    // Delay implementation, can be modified based on hardware platform.
-    // You may need to adjust the delay time to match your hardware.
+    pika_sleep_ms(3);
 }
 
 static void _IIC_Start(pika_hal_SOFT_IIC_config* cfg) {
+    pika_debug("iic start");
+    _IIC_SDA_output(cfg);
     _GPIO_write(cfg->SDA, 1);
     _GPIO_write(cfg->SCL, 1);
     _IIC_Delay();
@@ -25,6 +39,8 @@ static void _IIC_Start(pika_hal_SOFT_IIC_config* cfg) {
 }
 
 static void _IIC_Stop(pika_hal_SOFT_IIC_config* cfg) {
+    pika_debug("iic stop");
+    _IIC_SDA_output(cfg);
     _GPIO_write(cfg->SDA, 0);
     _GPIO_write(cfg->SCL, 1);
     _IIC_Delay();
@@ -32,7 +48,9 @@ static void _IIC_Stop(pika_hal_SOFT_IIC_config* cfg) {
     _IIC_Delay();
 }
 
-static void _IIC_SendByte(pika_hal_SOFT_IIC_config* cfg, uint8_t byte) {
+static pika_bool _IIC_SendByte(pika_hal_SOFT_IIC_config* cfg, uint8_t byte) {
+    pika_debug(" - iic write: 0x%02X", byte);
+    _IIC_SDA_output(cfg);
     for (int i = 0; i < 8; i++) {
         _GPIO_write(cfg->SCL, 0);
         _IIC_Delay();
@@ -46,11 +64,52 @@ static void _IIC_SendByte(pika_hal_SOFT_IIC_config* cfg, uint8_t byte) {
         _IIC_Delay();
         byte <<= 1;
     }
+
+    // 在发送完字节后检查ACK信号
     _GPIO_write(cfg->SCL, 0);
+    _IIC_Delay();
+    _IIC_SDA_input(cfg);       // 设置SDA为输入
+    _GPIO_write(cfg->SCL, 1);  // 将SCL线设置为高，让从设备发送ACK信号
+
+    int timeout = 1000;
+    uint32_t ack = 0;
+    do {
+        _IIC_Delay();
+        ack = !_GPIO_read(cfg->SDA);  // 如果从设备发送了ACK信号，SDA线会被拉低
+    } while (ack == 0 && timeout-- > 0);
+
+    // pika_debug("ack timeout:%d", timeout);
+    if (timeout <= 0) {
+        pika_platform_printf("Error: IIC write byte timeout\r\n");
+    }
+
+    _GPIO_write(cfg->SCL, 0);  // 将SCL线设置为低，完成一个I2C周期
+    return ack;
+}
+
+static void _IIC_Ack(pika_hal_SOFT_IIC_config* cfg) {
+    _GPIO_write(cfg->SCL, 0);  // 拉低时钟线
+    _IIC_SDA_output(cfg);      // 设置SDA为输出
+    _GPIO_write(cfg->SDA, 0);  // 拉低数据线
+    _IIC_Delay();
+    _GPIO_write(cfg->SCL, 1);  // 产生时钟
+    _IIC_Delay();
+    _GPIO_write(cfg->SCL, 0);  // 拉低时钟线
+}
+
+static void _IIC_NAck(pika_hal_SOFT_IIC_config* cfg) {
+    _GPIO_write(cfg->SCL, 0);  // 拉低时钟线
+    _IIC_SDA_output(cfg);      // 设置SDA为输出
+    _GPIO_write(cfg->SDA, 1);  // 数据线拉高
+    _IIC_Delay();
+    _GPIO_write(cfg->SCL, 1);  // 产生时钟
+    _IIC_Delay();
+    _GPIO_write(cfg->SCL, 0);  // 拉低时钟线
 }
 
 static uint8_t _IIC_ReadByte(pika_hal_SOFT_IIC_config* cfg, uint8_t ack) {
     uint8_t byte = 0;
+    _IIC_SDA_input(cfg);
     for (int i = 0; i < 8; i++) {
         _GPIO_write(cfg->SCL, 1);
         _IIC_Delay();
@@ -61,77 +120,75 @@ static uint8_t _IIC_ReadByte(pika_hal_SOFT_IIC_config* cfg, uint8_t ack) {
         _GPIO_write(cfg->SCL, 0);
         _IIC_Delay();
     }
+    // 在读取完一个字节后发送ACK信号
     if (ack) {
-        _IIC_SendByte(cfg, 0xFF);
+        _IIC_Ack(cfg);  // 如果ack为真，发送ACK信号
     } else {
-        _IIC_SendByte(cfg, 0x00);
+        _IIC_NAck(cfg);  // 如果ack为假，发送NACK信号
     }
+    pika_debug(" - iic read: 0x%02X", byte);
     return byte;
 }
 
-static void set_SDA_input(pika_hal_SOFT_IIC_config* cfg) {
-    pika_hal_GPIO_config cfg_SDA = {0};
-    cfg_SDA.dir = PIKA_HAL_GPIO_DIR_IN;
-    pika_hal_ioctl(cfg->SDA, PIKA_HAL_IOCTL_CONFIG, &cfg_SDA);
-}
-
-static void set_SDA_output(pika_hal_SOFT_IIC_config* cfg) {
-    pika_hal_GPIO_config cfg_SDA = {0};
-    cfg_SDA.dir = PIKA_HAL_GPIO_DIR_OUT;
-    pika_hal_ioctl(cfg->SDA, PIKA_HAL_IOCTL_CONFIG, &cfg_SDA);
-}
-
 int pika_hal_platform_SOFT_IIC_write(pika_dev* dev, void* buf, size_t count) {
-    pika_hal_SOFT_IIC_config* cfg =
+    pika_hal_SOFT_IIC_config* iic_cfg =
         (pika_hal_SOFT_IIC_config*)dev->ioctl_config;
     uint8_t* data = (uint8_t*)buf;
-    set_SDA_output(cfg);
-    _IIC_Start(cfg);
+
+    _IIC_Start(iic_cfg);
+    uint8_t addr_write = (iic_cfg->slave_addr << 1) | 0x00;  // 方向位为0代表写
+    // pika_debug("iic addr_write: 0x%02X", addr_write);
+    _IIC_SendByte(iic_cfg, addr_write);  // 方向位为0代表写
 
     // 如果启用了mem_addr_ena，将设备地址和内存地址发送到I2C总线
-    if (cfg->mem_addr_ena == PIKA_HAL_IIC_MEM_ADDR_ENA_ENABLE) {
-        _IIC_SendByte(cfg, cfg->slave_addr);
-        if (cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_8BIT) {
-            _IIC_SendByte(cfg, cfg->mem_addr & 0xFF);
-        } else if (cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_16BIT) {
-            _IIC_SendByte(cfg, (cfg->mem_addr >> 8) & 0xFF);
-            _IIC_SendByte(cfg, cfg->mem_addr & 0xFF);
+    if (iic_cfg->mem_addr_ena == PIKA_HAL_IIC_MEM_ADDR_ENA_ENABLE) {
+        if (iic_cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_8BIT) {
+            _IIC_SendByte(iic_cfg, iic_cfg->mem_addr & 0xFF);
+        } else if (iic_cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_16BIT) {
+            _IIC_SendByte(iic_cfg, (iic_cfg->mem_addr >> 8) & 0xFF);
+            _IIC_SendByte(iic_cfg, iic_cfg->mem_addr & 0xFF);
         }
     }
 
     for (int i = 0; i < count; i++) {
-        _IIC_SendByte(cfg, data[i]);
+        _IIC_SendByte(iic_cfg, data[i]);
     }
-    _IIC_Stop(cfg);
+    _IIC_Stop(iic_cfg);
     return count;
 }
 
 int pika_hal_platform_SOFT_IIC_read(pika_dev* dev, void* buf, size_t count) {
-    pika_hal_SOFT_IIC_config* cfg =
+    pika_hal_SOFT_IIC_config* iic_cfg =
         (pika_hal_SOFT_IIC_config*)dev->ioctl_config;
     uint8_t* data = (uint8_t*)buf;
 
+    _IIC_Start(iic_cfg);
+
     // 如果启用了mem_addr_ena，先写设备地址和内存地址
-    if (cfg->mem_addr_ena == PIKA_HAL_IIC_MEM_ADDR_ENA_ENABLE) {
-        set_SDA_output(cfg);
-        _IIC_Start(cfg);
-        _IIC_SendByte(cfg, cfg->slave_addr);
-        if (cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_8BIT) {
-            _IIC_SendByte(cfg, cfg->mem_addr & 0xFF);
-        } else if (cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_16BIT) {
-            _IIC_SendByte(cfg, (cfg->mem_addr >> 8) & 0xFF);
-            _IIC_SendByte(cfg, cfg->mem_addr & 0xFF);
+    if (iic_cfg->mem_addr_ena == PIKA_HAL_IIC_MEM_ADDR_ENA_ENABLE) {
+        uint8_t addr_write =
+            (iic_cfg->slave_addr << 1) | 0x00;  // 方向位为0代表写
+        // pika_debug("iic addr_write: 0x%02X", addr_write);
+        _IIC_SendByte(iic_cfg, addr_write);  // 方向位为0代表写
+        if (iic_cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_8BIT) {
+            _IIC_SendByte(iic_cfg, iic_cfg->mem_addr & 0xFF);
+        } else if (iic_cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_16BIT) {
+            _IIC_SendByte(iic_cfg, (iic_cfg->mem_addr >> 8) & 0xFF);
+            _IIC_SendByte(iic_cfg, iic_cfg->mem_addr & 0xFF);
         }
-        _IIC_Stop(cfg);
+        _IIC_Start(iic_cfg);
     }
 
-    set_SDA_input(cfg);
-    _IIC_Start(cfg);
+    uint8_t addr_read = (iic_cfg->slave_addr << 1) | 0x01;  // 方向位为1代表读
+    // pika_debug("iic addr_read: 0x%02X", addr_read);
+    _IIC_SendByte(iic_cfg, addr_read);  // 方向位为1代表读
+
     for (int i = 0; i < count - 1; i++) {
-        data[i] = _IIC_ReadByte(cfg, 1);
+        // data[i] = _IIC_ReadByte(iic_cfg, 1);
+        data[i] = _IIC_ReadByte(iic_cfg, 1);
     }
-    data[count - 1] = _IIC_ReadByte(cfg, 0);
-    _IIC_Stop(cfg);
+    data[count - 1] = _IIC_ReadByte(iic_cfg, 0);
+    _IIC_Stop(iic_cfg);
     return count;
 }
 

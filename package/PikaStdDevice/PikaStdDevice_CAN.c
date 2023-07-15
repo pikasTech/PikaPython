@@ -43,7 +43,7 @@ char* PikaStdDevice_CAN_read(PikaObj* self, int length) {
     return obj_getStr(self, "readData");
 }
 
-Arg* PikaStdDevice_CAN_readBytes(PikaObj *self, int length){
+Arg* PikaStdDevice_CAN_readBytes(PikaObj* self, int length) {
     obj_setInt(self, "length", length);
     obj_runNativeMethod(self, "platformReadBytes", NULL);
     return arg_copy(obj_getArg(self, "readData"));
@@ -54,7 +54,7 @@ void PikaStdDevice_CAN_write(PikaObj* self, char* data) {
     obj_runNativeMethod(self, "platformWrite", NULL);
 }
 
-void PikaStdDevice_CAN_writeBytes(PikaObj *self, uint8_t* data, int length){
+void PikaStdDevice_CAN_writeBytes(PikaObj* self, uint8_t* data, int length) {
     obj_setBytes(self, "writeData", data, length);
     obj_runNativeMethod(self, "platformWriteBytes", NULL);
 }
@@ -75,10 +75,10 @@ void PikaStdDevice_CAN_platformWrite(PikaObj* self) {
     ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
-void PikaStdDevice_CAN_platformReadBytes(PikaObj *self){
+void PikaStdDevice_CAN_platformReadBytes(PikaObj* self) {
     ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }
 
-void PikaStdDevice_CAN_platformWriteBytes(PikaObj *self){
+void PikaStdDevice_CAN_platformWriteBytes(PikaObj* self) {
     ABSTRACT_METHOD_NEED_OVERRIDE_ERROR();
 }

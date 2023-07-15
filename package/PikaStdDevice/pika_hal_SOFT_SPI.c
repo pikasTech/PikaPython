@@ -1,4 +1,4 @@
-#include "../PikaStdDevice/pika_hal.h"
+#include "pika_hal.h"
 
 static int _GPIO_write(pika_dev* dev, uint32_t val) {
     return pika_hal_write(dev, &val, sizeof(val));

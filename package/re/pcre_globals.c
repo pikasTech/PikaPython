@@ -11,11 +11,11 @@ differently, and global variables are not used (see pcre.in). */
 #include "pcre_internal.h"
 
 #ifndef VPCOMPAT
-void *(*pcre_malloc)(size_t) = malloc;
-void  (*pcre_free)(void *) = free;
-void *(*pcre_stack_malloc)(size_t) = malloc;
-void  (*pcre_stack_free)(void *) = free;
-int   (*pcre_callout)(pcre_callout_block *) = NULL;
+void* (*pcre_malloc)(size_t) = malloc;
+void (*pcre_free)(void*) = free;
+void* (*pcre_stack_malloc)(size_t) = malloc;
+void (*pcre_stack_free)(void*) = free;
+int (*pcre_callout)(pcre_callout_block*) = NULL;
 #endif
 
 /* End of pcre_globals.c */
