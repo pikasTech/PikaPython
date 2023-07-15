@@ -51,6 +51,12 @@ for root, apply_dirs, files in os.walk('.'):
         else:
             print(f"No base file, skipped: {target_file}")
 
+# if there is no patch, exit
+if not os.path.exists("/tmp/base/changes.patch"):
+    # green print
+    print("\033[92mNothing need to be patched\033[0m")
+    exit()
+
 # read the patch
 with open("/tmp/base/changes.patch") as patch_file:
     patch_data = patch_file.read()
