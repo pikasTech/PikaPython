@@ -2,10 +2,12 @@ import os
 import shutil
 import subprocess
 
+default_repo_url = "https://gitee.com/lyon1998/pikapython"
+
 # clone pikapython repo
 repo_path = "/tmp/pikapython"
 if not os.path.exists(repo_path):
-    subprocess.run(["git", "clone", "https://gitee.com/lyon1998/pikapython", repo_path])
+    subprocess.run(["git", "clone", default_repo_url, repo_path])
 else:
     # if the repo exists, clean all uncommitted changes
     subprocess.run(["git", "reset", "--hard"], cwd=repo_path)
@@ -98,11 +100,11 @@ for patch in patches:
 
     print(f"Searching for file: {from_file}")
 
-    # 搜索文件
+    # serch file
     is_found = False
     for dir in search_dirs:
         file_name = os.path.basename(from_file)
-        # 在目录树中查找文件
+        # find file
         if is_found:
             break
 
@@ -149,7 +151,18 @@ if fail_count > 0:
     for file in fail_list:
         print(file)
 
-# git commit -m "Apply patches"
-subprocess.run(["git", "commit", "-a" ,"-m", "auto apply patches"], cwd=main_repo_path)
-# git push
-subprocess.run(["git", "push"], cwd=main_repo_path)
+# setup remote url
+repo_url = input("Please enter your remote repository URL (default: '{}'): ".format(default_repo_url)) or default_repo_url
+subprocess.run(["git", "remote", "set-url", "origin", repo_url], cwd = main_repo_path)
+
+# setup commit message
+commit_msg = input("Please enter your commit message (default: 'Apply patches'): ") or "Apply patches"
+subprocess.run(["git", "commit", "-a" ,"-m", commit_msg], cwd=main_repo_path)
+
+# confirm push
+confirm = input("Are you sure you want to push to the repository ([Y]/N)? ")
+if confirm.lower() != 'n':
+    # git push
+    subprocess.run(["git", "push"], cwd=main_repo_path)
+else:
+    print("Push cancelled.")
