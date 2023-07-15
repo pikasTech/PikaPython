@@ -6,9 +6,9 @@
 #else
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
 #include "PikaStdData_List.h"
 #include "PikaStdData_Tuple.h"
-#endif
 
 #ifdef _WIN32
 #define PATH_SEPARATOR '\\'
