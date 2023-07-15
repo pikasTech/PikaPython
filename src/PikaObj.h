@@ -25,6 +25,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include <stdint.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -775,6 +776,7 @@ int32_t objDict_forEach(PikaObj* self,
                                               Arg* valEach,
                                               void* context),
                         void* context);
+void pika_sleep_ms(uint32_t ms);
 
 #endif
 #ifdef __cplusplus

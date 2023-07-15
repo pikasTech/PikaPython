@@ -4001,3 +4001,18 @@ int32_t objList_forEach(PikaObj* self,
     }
     return 0;
 }
+
+void pika_sleep_ms(uint32_t ms) {
+    int64_t tick = pika_platform_get_tick();
+    while (1) {
+        pika_platform_thread_yield();
+#if PIKA_EVENT_ENABLE
+        if (!pika_GIL_isInit()) {
+            _VMEvent_pickupEvent();
+        }
+#endif
+        if (pika_platform_get_tick() - tick >= ms) {
+            break;
+        }
+    }
+}
