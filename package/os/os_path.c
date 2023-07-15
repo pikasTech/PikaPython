@@ -6,9 +6,9 @@
 #else
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
 #include "PikaStdData_List.h"
 #include "PikaStdData_Tuple.h"
-#endif
 
 #ifdef _WIN32
 #define PATH_SEPARATOR '\\'
@@ -220,7 +220,7 @@ char* os_path_dirname(PikaObj* self, char* path) {
         memcpy(dirname, path, dirname_len);
         dirname[dirname_len] = '\0';
         char* res = obj_cacheStr(self, dirname);
-        free (dirname);
+        free(dirname);
         return res;
     }
 }
@@ -234,7 +234,7 @@ int _os_path_split(char* path, char** folder, char** file) {
         /* 字符串最后一个路径分隔符的位置 */
         size_t idx = p - path;
         /* 获取最后一个路径分隔符之前的路径 */
-        *folder = malloc(idx + 2);
+        *folder = pika_platform_malloc(idx + 2);
         if (*folder == NULL) {
             return -1;
         }
@@ -243,7 +243,8 @@ int _os_path_split(char* path, char** folder, char** file) {
         /* 获取最后一个路径分隔符之后的文件名 */
         *file = strdup(p + 1);
         if (*file == NULL) {
-            free(*folder);
+            pika_platform_free(*folder);
+            *folder = NULL;
             return -1;
         }
         return 0;
@@ -255,7 +256,8 @@ int _os_path_split(char* path, char** folder, char** file) {
         }
         *file = strdup("");
         if (*file == NULL) {
-            free(*folder);
+            pika_platform_free(*folder);
+            *folder = NULL;
             return -1;
         }
         return 0;
@@ -279,7 +281,8 @@ int _os_path_splitext(char* path, char** file, char** ext) {
         *ext = strdup(p);
         if (!(*ext)) {
             /* 内存分配失败 */
-            free(*file);
+            pika_platform_free(*file);
+            *file = NULL;
             return -1;
         }
         return 0;
@@ -294,6 +297,7 @@ int _os_path_splitext(char* path, char** file, char** ext) {
         if (!(*ext)) {
             /* 内存分配失败 */
             free(*file);
+            *file = NULL;
             return -1;
         }
         return 0;
@@ -310,8 +314,8 @@ PikaObj* os_path_split(PikaObj* self, char* path) {
     }
 
     tuple = objTuple_new(arg_newStr(folder), arg_newStr(file));
-    free(folder);
-    free(file);
+    pika_platform_free(folder);
+    pika_platform_free(file);
 
     return tuple;
 __exit:
@@ -319,10 +323,10 @@ __exit:
         obj_deinit(tuple);
     }
     if (folder) {
-        free(folder);
+        pika_platform_free(folder);
     }
     if (file) {
-        free(file);
+        pika_platform_free(file);
     }
     return NULL;
 }
@@ -363,10 +367,10 @@ __exit:
         obj_deinit(tuple);
     }
     if (file) {
-        free(file);
+        pika_platform_free(file);
     }
     if (ext) {
-        free(ext);
+        pika_platform_free(ext);
     }
     return NULL;
 }
