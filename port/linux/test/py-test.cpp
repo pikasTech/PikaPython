@@ -95,6 +95,8 @@ TEST_RUN_SINGLE_FILE_PASS(zlib, zlib1, "test/python/zlib/zlib1.py")
 TEST_RUN_SINGLE_FILE(zlib, zlib_err, "test/python/zlib/zlib_err.py")
 TEST_RUN_SINGLE_FILE(modbus, rtu_request, "test/python/modbus/rtu_request.py")
 
+TEST_RUN_SINGLE_FILE(PikaStdDevice, inhert, "test/python/PikaStdDevice/inhert.py")
+
 #endif
 
 TEST_END
