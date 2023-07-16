@@ -316,7 +316,7 @@ impl Compiler {
         let mut file_str = String::new();
         file.read_to_string(&mut file_str).unwrap();
 
-        if is_top_c_pkg {
+        if suffix == "pyi" {
             /*
                 Push top C package to PikaMain.
                 Solve the package as a class
@@ -324,15 +324,30 @@ impl Compiler {
                         class PikaStdDevice(TinyObj):
             */
             let pkg_define = format!("class {}(TinyObj):", &file_name);
-            let package_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
+            let mut package_now = match ClassInfo::new(&String::from(""), &pkg_define, true) {
                 Some(s) => s,
                 None => return self,
             };
-            let package_name = package_now.this_class_name.clone();
-            self.class_list
-                .entry(package_name.clone())
-                .or_insert(package_now);
-            self.package_name_now = Some(package_name.clone());
+            let package_name = file_name.clone();
+            // println!("package_name: {}", package_name);
+            if is_top_c_pkg {
+                self.package_name_now = Some(package_name.clone());
+                package_now.is_top = true;
+                println!("set top package: {}", package_name);
+            }
+            match self.class_list.entry(package_name.clone()) {
+                std::collections::btree_map::Entry::Occupied(mut entry) => {
+                    // 如果 `package_now.is_top == true`，将 `class_list` 中对应项的 `is_top` 设为 `true`
+                    if package_now.is_top {
+                        let class_info = entry.get_mut();
+                        // 需要确保 `ClassInfo` 结构体中存在 `is_top` 字段
+                        class_info.is_top = true;
+                    }
+                }
+                std::collections::btree_map::Entry::Vacant(entry) => {
+                    entry.insert(package_now);
+                }
+            }
         }
 
         /* return when compiled */
