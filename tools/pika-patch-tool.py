@@ -14,8 +14,11 @@ else:
     subprocess.run(["git", "clean", "-fd"], cwd=repo_path)
     # switch to master branch
     subprocess.run(["git", "checkout", "master"], cwd=repo_path)
-    # pull the latest changes
-    subprocess.run(["git", "pull"], cwd=repo_path)
+    # fetch updates from remote repository
+    subprocess.run(["git", "fetch"], cwd=repo_path)
+    # force update local master branch to match remote master branch
+    subprocess.run(["git", "reset", "--hard", "origin/master"], cwd=repo_path)
+
 
 # create the base of the patch
 base_path = "/tmp/base"
