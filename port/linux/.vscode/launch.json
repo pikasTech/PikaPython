@@ -39,7 +39,8 @@
                 // "--gtest_filter=vm.run_file"
                 // "--gtest_filter=modbus.rtu_request"
                 // "--gtest_filter=builtin.write_fn"
-                "--gtest_filter=builtin.base_type"
+                // "--gtest_filter=builtin.base_type"
+                "--gtest_filter=parser.comprehension"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

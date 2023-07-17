@@ -333,7 +333,7 @@ impl Compiler {
             if is_top_c_pkg {
                 self.package_name_now = Some(package_name.clone());
                 package_now.is_top = true;
-                println!("set top package: {}", package_name);
+                // println!("set top package: {}", package_name);
             }
             match self.class_list.entry(package_name.clone()) {
                 std::collections::btree_map::Entry::Occupied(mut entry) => {

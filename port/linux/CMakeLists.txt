@@ -10,10 +10,10 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
 # Enable Clang-Tidy
-set(CMAKE_C_CLANG_TIDY
-   clang-tidy;
-   -checks=-clang-analyzer-security.insecureAPI*,-clang-analyzer-deadcode*;
-)
+# set(CMAKE_C_CLANG_TIDY
+#    clang-tidy;
+#    -checks=-clang-analyzer-security.insecureAPI*,-clang-analyzer-deadcode*;
+# )
 
 # support lto
 # IF(POLICY CMP0069)

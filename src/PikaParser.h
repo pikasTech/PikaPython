@@ -137,7 +137,7 @@ char* parser_file2Doc(Parser* self, char* filename);
 AST* line2Ast(char* line);
 
 PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines);
-char* parser_line2BackendCode(Parser* self, char* line);
+char* parser_line2Backend(Parser* self, char* line);
 
 Parser* New_parser(void);
 int parser_deinit(Parser* parser);
