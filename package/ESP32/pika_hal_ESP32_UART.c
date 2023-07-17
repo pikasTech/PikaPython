@@ -2,6 +2,7 @@
 #include "BaseObj.h"
 #include "dataStrs.h"
 #include "driver/uart.h"
+#include "pika_hal.h"
 #include "pika_hal_ESP32_common.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -17,6 +18,8 @@ typedef struct platform_data_UART {
     gpio_num_t cts_port;
     PIKA_BOOL event_thread_started;
 } platform_data_UART;
+
+#define EVENT_TRHEAD_STACK_SIZE 32 * 1024
 
 static SemaphoreHandle_t g_event_lock = NULL;
 
@@ -64,6 +67,7 @@ int pika_hal_platform_UART_write(pika_dev* dev, void* buf, size_t count) {
 }
 
 static void uart_event_task(void* pvParameters) {
+    pika_debug("uart_event_task start: pvParameters: %p", pvParameters);
     pika_dev* dev = (pika_dev*)pvParameters;
     platform_data_UART* uart = (platform_data_UART*)dev->platform_data;
     pika_hal_UART_config* cfg = (pika_hal_UART_config*)dev->ioctl_config;
@@ -77,7 +81,7 @@ static void uart_event_task(void* pvParameters) {
         // Waiting for UART event.
         if (xQueueReceive(uart->uart_queue, (void*)&event,
                           (TickType_t)portMAX_DELAY)) {
-            pika_debug("UART%d: event.type: %d\r\n", uart->uartPort,
+            pika_debug("UART%d: event.type: %d", uart->uartPort,
                        event.type);
             switch (event.type) {
                 // Event of UART receving data
@@ -92,28 +96,29 @@ static void uart_event_task(void* pvParameters) {
                     break;
                 // Others
                 default:
+                    pika_platform_printf("[INFO] uart event type: %d\r\n", event.type);
                     break;
             }
         }
     }
-    g_PikaMemInfo.heapUsed -= PIKA_THREAD_STACK_SIZE;
+    g_PikaMemInfo.heapUsed -= EVENT_TRHEAD_STACK_SIZE;
     vTaskDelete(NULL);
 }
 
 int pika_hal_platform_UART_ioctl_enable(pika_dev* dev) {
     platform_data_UART* uart = (platform_data_UART*)dev->platform_data;
-    pika_debug("UART%d_enable: platform_data: %p\r\n", uart->uartPort, uart);
+    pika_debug("UART%d_enable: platform_data: %p", uart->uartPort, uart);
     pika_hal_UART_config* cfg = (pika_hal_UART_config*)dev->ioctl_config;
     if (NULL == uart || NULL == cfg) {
         return -1;
     }
     uart_driver_install(uart->uartPort, 1024, 1024, 20, &uart->uart_queue, 0);
     pika_debug(
-        "UART%d: baudrate:%d, data_bits:%d, parity:%d, stop_bits: %d\r\n",
+        "UART%d: baudrate:%d, data_bits:%d, parity:%d, stop_bits: %d",
         uart->uartPort, uart->uart_conf.baud_rate, uart->uart_conf.data_bits,
         uart->uart_conf.parity, uart->uart_conf.stop_bits);
     uart_param_config(uart->uartPort, &uart->uart_conf);
-    pika_debug("UART%d: tx:%d, rx:%d, rts:%d, cts:%d\r\n", uart->uartPort,
+    pika_debug("UART%d: tx:%d, rx:%d, rts:%d, cts:%d", uart->uartPort,
                uart->tx_port, uart->rx_port, uart->rts_port, uart->cts_port);
     uart_set_pin(uart->uartPort, uart->tx_port, uart->rx_port, uart->rts_port,
                  uart->cts_port);
@@ -132,14 +137,14 @@ int pika_hal_platform_UART_ioctl_disable(pika_dev* dev) {
 int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
                                         pika_hal_UART_config* cfg) {
     platform_data_UART* uart = (platform_data_UART*)dev->platform_data;
-    pika_debug("UART%d_config: platform_data: %p\r\n", uart->uartPort, uart);
+    pika_debug("UART%d_config: platform_data: %p", uart->uartPort, uart);
     if (NULL == uart || NULL == cfg) {
         pika_platform_printf("Error: uart config error, uart:%p, cfg:%p\r\n",
                              uart, cfg);
         return -1;
     }
     uart->uart_conf.baud_rate = cfg->baudrate;
-    pika_debug("UART%d: set baudrate to %d\r\n", uart->uartPort,
+    pika_debug("UART%d: set baudrate to %d", uart->uartPort,
                uart->uart_conf.baud_rate);
     switch (cfg->data_bits) {
         case PIKA_HAL_UART_DATA_BITS_5:
@@ -158,7 +163,7 @@ int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
             uart->uart_conf.data_bits = UART_DATA_8_BITS;
             break;
     }
-    pika_debug("UART%d: set data_bites to %d\r\n", uart->uartPort,
+    pika_debug("UART%d: set data_bites to %d", uart->uartPort,
                uart->uart_conf.data_bits);
     switch (cfg->parity) {
         case PIKA_HAL_UART_PARITY_NONE:
@@ -174,7 +179,7 @@ int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
             uart->uart_conf.parity = UART_PARITY_DISABLE;
             break;
     }
-    pika_debug("UART%d: set parity to %d\r\n", uart->uartPort,
+    pika_debug("UART%d: set parity to %d", uart->uartPort,
                uart->uart_conf.parity);
     switch (cfg->stop_bits) {
         case PIKA_HAL_UART_STOP_BITS_1:
@@ -190,7 +195,7 @@ int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
             uart->uart_conf.stop_bits = UART_STOP_BITS_1;
             break;
     }
-    pika_debug("UART%d: set stop_bits to %d\r\n", uart->uartPort,
+    pika_debug("UART%d: set stop_bits to %d", uart->uartPort,
                uart->uart_conf.stop_bits);
     switch (cfg->flow_control) {
         case PIKA_HAL_UART_FLOW_CONTROL_NONE:
@@ -210,7 +215,7 @@ int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
             break;
     }
     uart->uart_conf.source_clk = UART_SCLK_DEFAULT;
-    pika_debug("UART%d: set flow_control to %d\r\n", uart->uartPort,
+    pika_debug("UART%d: set flow_control to %d", uart->uartPort,
                uart->uart_conf.flow_ctrl);
 
     if (NULL == cfg->TX || NULL == cfg->RX) {
@@ -231,7 +236,7 @@ int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
     }
 
     if (dev->is_enabled){
-        pika_debug("UART%d: uart is enabled, reconfig\r\n", uart->uartPort);
+        pika_debug("UART%d: uart is enabled, reconfig", uart->uartPort);
         uart_param_config(uart->uartPort, &uart->uart_conf);
     }
 
@@ -243,11 +248,11 @@ int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
         switch (cfg->event_callback_filter) {
             /* Configure UART to interrupt mode */
             case PIKA_HAL_UART_EVENT_SIGNAL_RX:
-                pika_debug("Setting UART_RX callback\r\n");
+                pika_debug("Setting UART_RX callback");
                 uart_enable_rx_intr(uart->uartPort);
                 break;
             case PIKA_HAL_UART_EVENT_SIGNAL_TX:
-                pika_debug("Setting UART_TX callback\r\n");
+                pika_debug("Setting UART_TX callback");
                 uart_enable_tx_intr(uart->uartPort, 1, 0);
                 break;
             default:
@@ -258,12 +263,12 @@ int pika_hal_platform_UART_ioctl_config(pika_dev* dev,
         }
         if (uart->event_thread_started == PIKA_FALSE){
             /* start irq task thread */
-            pika_debug("Starting uart event task:%p\r\n", dev);
+            pika_debug("Starting uart event task:%p", dev);
             if (NULL == g_event_lock){
                 g_event_lock = xSemaphoreCreateMutex();
             }
-            g_PikaMemInfo.heapUsed += PIKA_THREAD_STACK_SIZE;
-            xTaskCreate(uart_event_task, "uart_event_task", PIKA_THREAD_STACK_SIZE, dev, 12, NULL);
+            g_PikaMemInfo.heapUsed += EVENT_TRHEAD_STACK_SIZE;
+            xTaskCreate(uart_event_task, "uart_event_task", EVENT_TRHEAD_STACK_SIZE, dev, 12, NULL);
             uart->event_thread_started = PIKA_TRUE;
         }
     }
