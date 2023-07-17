@@ -50,6 +50,7 @@ typedef enum {
     ARG_TYPE_OBJECT_META,
     ARG_TYPE_OBJECT_NEW,
     ARG_TYPE_METHOD_NATIVE,
+    ARG_TYPE_METHOD_NATIVE_ACTIVE,
     ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR,
     ARG_TYPE_METHOD_CONSTRUCTOR,
     ARG_TYPE_METHOD_OBJECT,
@@ -278,7 +279,18 @@ static inline uint8_t argType_isCallable(ArgType type) {
             (type) == ARG_TYPE_METHOD_OBJECT ||
             (type) == ARG_TYPE_METHOD_STATIC ||
             (type) == ARG_TYPE_METHOD_NATIVE ||
-            (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR);
+            (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
+            (type) == ARG_TYPE_METHOD_NATIVE_ACTIVE);
+}
+
+static inline uint8_t argType_isObjectMethod(ArgType type) {
+    return ((type) == ARG_TYPE_METHOD_OBJECT ||
+            (type) == ARG_TYPE_METHOD_NATIVE);
+}
+
+static inline uint8_t argType_isObjectMethodActive(ArgType type) {
+    return ((type) == ARG_TYPE_METHOD_OBJECT ||
+            (type) == ARG_TYPE_METHOD_NATIVE_ACTIVE);
 }
 
 static inline uint8_t argType_isConstructor(ArgType type) {
@@ -288,7 +300,25 @@ static inline uint8_t argType_isConstructor(ArgType type) {
 
 static inline uint8_t argType_isNative(ArgType type) {
     return ((type) == ARG_TYPE_METHOD_NATIVE ||
-            (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR);
+            (type) == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR ||
+            (type) == ARG_TYPE_METHOD_NATIVE_ACTIVE);
+}
+
+static inline uint8_t _argType_or(ArgType type, ArgType type1, ArgType type2) {
+    return ((type) == (type1) || (type) == (type2));
+}
+
+static inline uint8_t argType_isEqual(ArgType type1, ArgType type2) {
+    if (type1 == type2) {
+        return 1;
+    }
+    if (_argType_or(type1, ARG_TYPE_METHOD_NATIVE,
+                    ARG_TYPE_METHOD_NATIVE_ACTIVE) &&
+        _argType_or(type2, ARG_TYPE_METHOD_NATIVE,
+                    ARG_TYPE_METHOD_NATIVE_ACTIVE)) {
+        return 1;
+    }
+    return 0;
 }
 
 static inline uint8_t argType_isIterable(ArgType type) {

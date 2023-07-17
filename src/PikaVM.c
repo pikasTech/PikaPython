@@ -1056,8 +1056,10 @@ __exit:
         pika_platform_printf("NameError: name '%s' is not defined\r\n",
                              arg_path);
     } else {
-        methodArg_setHostObj(aRes, oHost);
-        aRes = arg_copy_noalloc(aRes, aRetReg);
+        aRes = methodArg_setHostObj(aRes, oHost);
+        if (arg_getType(aRes) != ARG_TYPE_METHOD_NATIVE_ACTIVE) {
+            aRes = arg_copy_noalloc(aRes, aRetReg);
+        }
         pika_assert_arg_alive(aRes);
     }
     if (is_temp) {
@@ -1105,14 +1107,13 @@ Arg* _obj_runMethodArgWithState(PikaObj* self,
     obj_setErrorCode(self, PIKA_RES_OK);
 
     /* run method */
-    if (methodType == ARG_TYPE_METHOD_NATIVE) {
+    if (argType_isNative(methodType)) {
         /* native method */
-        fMethod(self, locals->list);
-        /* get method return */
-        aReturn = _get_return_arg(locals);
-    } else if (methodType == ARG_TYPE_METHOD_NATIVE_CONSTRUCTOR) {
-        /* native method */
-        fMethod(self, locals->list);
+        PikaObj* oHost = self;
+        if (methodType == ARG_TYPE_METHOD_NATIVE_ACTIVE) {
+            oHost = methodArg_getHostObj(aMethod);
+        }
+        fMethod(oHost, locals->list);
         /* get method return */
         aReturn = _get_return_arg(locals);
     } else {
@@ -2656,7 +2657,7 @@ static void _OPT_EQU(OperatorInfo* op) {
         goto exit;
     }
     /* type not equl, and type is not int or float */
-    if (op->t1 != op->t2) {
+    if (!argType_isEqual(op->t1, op->t2)) {
         if ((op->t1 != ARG_TYPE_FLOAT) && (op->t1 != ARG_TYPE_INT)) {
             is_equ = 0;
             goto exit;

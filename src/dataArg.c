@@ -312,7 +312,8 @@ Arg* arg_toStrArg(Arg* arg) {
     }
     if (argType_isCallable(type)) {
         /* support basic type */
-        if (type == ARG_TYPE_METHOD_NATIVE) {
+        if (_argType_or(type, ARG_TYPE_METHOD_NATIVE,
+                        ARG_TYPE_METHOD_NATIVE_ACTIVE)) {
             MethodProp* method_store = (MethodProp*)arg_getContent(arg);
             if (strEqu(method_store->name, "int") ||
                 strEqu(method_store->name, "bool") ||

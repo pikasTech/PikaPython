@@ -38,7 +38,8 @@
                 // "--gtest_filter=zlib.*"
                 // "--gtest_filter=vm.run_file"
                 // "--gtest_filter=modbus.rtu_request"
-                "--gtest_filter=PikaStdDevice.inhert"
+                // "--gtest_filter=builtin.write_fn"
+                "--gtest_filter=builtin.base_type"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

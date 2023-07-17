@@ -977,21 +977,37 @@ char* methodArg_getTypeList(Arg* method_arg, char* buffs, size_t size) {
 }
 
 PikaObj* methodArg_getHostObj(Arg* method_arg) {
+    pika_assert(argType_isObjectMethodActive(arg_getType(method_arg)));
     MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
     return prop->host_obj;
 }
 
-int methodArg_setHostObj(Arg* method_arg, PikaObj* host_obj) {
-    if (arg_getType(method_arg) != ARG_TYPE_METHOD_OBJECT) {
-        return -1;
+Arg* methodArg_active(Arg* method_arg) {
+    pika_assert(arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE);
+    Arg* aActive = New_arg(NULL);
+    MethodPropNative* propNative =
+        (MethodPropNative*)arg_getContent(method_arg);
+    MethodProp prop = {0};
+    /* active the method */
+    pika_platform_memcpy(&prop, propNative, sizeof(MethodPropNative));
+    aActive = arg_setStruct(aActive, "", (uint8_t*)&prop, sizeof(MethodProp));
+    arg_setType(aActive, ARG_TYPE_METHOD_NATIVE_ACTIVE);
+    return aActive;
+}
+
+Arg* methodArg_setHostObj(Arg* method_arg, PikaObj* host_obj) {
+    if (!argType_isObjectMethod(arg_getType(method_arg))) {
+        return method_arg;
+    }
+    if (arg_getType(method_arg) == ARG_TYPE_METHOD_NATIVE) {
+        method_arg = methodArg_active(method_arg);
     }
     MethodProp* prop = (MethodProp*)arg_getContent(method_arg);
     if (prop->host_obj == NULL) {
         prop->host_obj = host_obj;
-        // obj_refcntInc(host_obj);
-        return 0;
+        return method_arg;
     }
-    return 0;
+    return method_arg;
 }
 
 char* methodArg_getName(Arg* method_arg, char* buffs, size_t size) {
@@ -3457,21 +3473,22 @@ void builtins_exec(PikaObj* self, char* code) {
 }
 
 Arg* builtins_getattr(PikaObj* self, PikaObj* obj, char* name) {
-    Arg* res = NULL;
     if (NULL == obj) {
         obj_setErrorCode(self, 1);
         __platform_printf("[Error] getattr: can not get attr of NULL.\r\n");
         return NULL;
     }
-    Arg* arg = obj_getArg(obj, name);
-    if (NULL == arg) {
-        arg = obj_getMethodArgWithFullPath(obj, name);
+    Arg* aRes = obj_getArg(obj, name);
+    if (NULL == aRes) {
+        aRes = obj_getMethodArgWithFullPath(obj, name);
     }
-    if (NULL != arg) {
-        res = arg_copy(arg);
-        methodArg_setHostObj(res, obj);
+    if (NULL != aRes) {
+        aRes = methodArg_setHostObj(aRes, obj);
+        if (arg_getType(aRes) != ARG_TYPE_METHOD_NATIVE_ACTIVE) {
+            aRes = arg_copy(aRes);
+        }
     }
-    return res;
+    return aRes;
 }
 
 void builtins_setattr(PikaObj* self, PikaObj* obj, char* name, Arg* val) {
