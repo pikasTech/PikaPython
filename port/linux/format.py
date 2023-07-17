@@ -4,9 +4,13 @@ import subprocess
 from pathlib import Path
 
 
-def format_files_in_dir(dir_path):
+def format_files_in_dir(dir_path, dir_skip):
     # 遍历目录及其子目录中的所有文件
     for filepath in dir_path.rglob('*'):
+        # Skip if the current file's directory or any of its parents are in dir_skip
+        if any(str(filepath).startswith(dir) for dir in dir_skip):
+            continue
+
         # 只处理.c, .h, .cpp文件
         if filepath.suffix in ['.c', '.h', '.cpp']:
             try:
@@ -35,12 +39,13 @@ if len(dirs) == 0:
     dirs = ['package/pikascript/pikascript-lib',
             'package/pikascript/pikascript-core', 'test']
 
+dir_skip = ['package/pikascript/pikascript-lib/re']
 
 # 对每个目录进行处理
 for dir_path_str in dirs:
     dir_path = Path(dir_path_str)
     if dir_path.is_dir():
-        format_files_in_dir(dir_path)
+        format_files_in_dir(dir_path, dir_skip)
         print(f'Finished processing directory: {dir_path_str}')
     else:
         print(f"'{dir_path_str}' is not a directory. Skipping...")
