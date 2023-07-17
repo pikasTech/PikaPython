@@ -145,7 +145,6 @@ for patch in patches:
                     success_count += 1
                     success_list.append(apply_file)
                     print("\033[92mSuccessfully applied patch\033[0m", apply_file)
-                break  
 
 
 print("\n\n===========================================\n\n")
