@@ -1905,12 +1905,22 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
         AST_setNodeAttr(ast, (char*)"import", import);
         goto __exit;
     }
-    /* solve str stmt */
-    if (STMT_string == stmtType) {
+    /* solve str/bytes stmt */
+    if (STMT_string == stmtType || STMT_bytes == stmtType) {
         str = strsCopy(&buffs, right);
         /* remove the first char */
         char firstChar = str[0];
-        str = str + 1;
+        switch (stmtType) {
+            case STMT_string:
+                str = str + 1;
+                break;
+            case STMT_bytes:
+                str = str + 2;
+                break;
+            default:
+                // never reach
+                pika_assert(0);
+        }
         /* remove the last char */
         str[strGetSize(str) - 1] = '\0';
         /* replace */
@@ -1924,15 +1934,11 @@ AST* AST_parseStmt(AST* ast, char* stmt) {
                     break;
             }
         }
-        AST_setNodeAttr(ast, (char*)"string", str);
-        goto __exit;
-    }
-    /* solve bytes stmt */
-    if (STMT_bytes == stmtType) {
-        str = right + 1;
-        str = strsDeleteChar(&buffs, str, '\'');
-        str = strsDeleteChar(&buffs, str, '\"');
-        AST_setNodeAttr(ast, (char*)"bytes", str);
+        if (STMT_string == stmtType) {
+            AST_setNodeAttr(ast, (char*)"string", str);
+        } else if (STMT_bytes == stmtType) {
+            AST_setNodeAttr(ast, (char*)"bytes", str);
+        }
         goto __exit;
     }
     /* solve number stmt */

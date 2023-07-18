@@ -659,7 +659,7 @@ Arg* _vm_get(VMState* vm, PikaObj* self, Arg* aKey, Arg* aObj) {
         uint8_t* sBytesPyload = arg_getBytes(aObj);
         uint8_t sByteBuff[] = " ";
         sByteBuff[0] = sBytesPyload[iIndex];
-        return arg_newBytes(sByteBuff, 1);
+        return arg_newInt(sByteBuff[0]);
     }
     if (argType_isObject(eType)) {
         PikaObj* oArg = NULL;
@@ -746,7 +746,7 @@ Arg* _vm_slice(VMState* vm,
     }
 
     /* __slice__ is equal to __getitem__ */
-    if (iEnd - iStart == 1) {
+    if (iEnd - iStart == 1 && arg_getType(aObj) != ARG_TYPE_BYTES) {
         return _vm_get(vm, self, aStart, aObj);
     }
 
@@ -764,22 +764,8 @@ Arg* _vm_slice(VMState* vm,
     }
 
     if (ARG_TYPE_BYTES == arg_getType(aObj)) {
-        Arg* aSliced = arg_newBytes(NULL, 0);
-        for (int i = iStart; i < iEnd; i++) {
-            Arg* aIndex = arg_newInt(i);
-            Arg* aItem = _vm_get(vm, self, aIndex, aObj);
-            uint8_t* sBytesOrigin = arg_getBytes(aSliced);
-            size_t uSizeOrigin = arg_getBytesSize(aSliced);
-            Arg* aSlicedNew = arg_newBytes(NULL, uSizeOrigin + 1);
-            pika_platform_memcpy(arg_getBytes(aSlicedNew), sBytesOrigin,
-                                 uSizeOrigin);
-            pika_platform_memcpy(arg_getBytes(aSlicedNew) + uSizeOrigin,
-                                 arg_getBytes(aItem), 1);
-            arg_deinit(aSliced);
-            aSliced = aSlicedNew;
-            arg_deinit(aItem);
-            arg_deinit(aIndex);
-        }
+        uint8_t* sBytesOrigin = arg_getBytes(aObj);
+        Arg* aSliced = arg_newBytes(sBytesOrigin + iStart, iEnd - iStart);
         return aSliced;
     }
 

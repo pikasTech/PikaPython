@@ -854,12 +854,12 @@ TEST(pikaMain, bytes__index__) {
             "s[2] = b'q'\n"
             "\n");
     /* collect */
-    uint8_t* res = obj_getBytes(pikaMain, "res");
-    uint8_t* res2 = obj_getBytes(pikaMain, "res2");
+    int res = obj_getInt(pikaMain, "res");
+    int res2 = obj_getInt(pikaMain, "res2");
     uint8_t* s = obj_getBytes(pikaMain, "s");
     /* assert */
-    EXPECT_STREQ((char*)res, "s");
-    EXPECT_STREQ((char*)res2, "r");
+    EXPECT_EQ(res, 115);
+    EXPECT_EQ(res2, 114);
     EXPECT_EQ(s[2], 'q');
     // EXPECT_STREQ(s, "teqt");
     /* deinit */
@@ -2031,7 +2031,7 @@ TEST(pikaMain, neg_index) {
             "'test'[-2]\n"
             "b'test'[-2]\n");
     /* assert */
-    EXPECT_STREQ(log_buff[0], "b'\\x73'\r\n");
+    EXPECT_STREQ(log_buff[0], "115\r\n");
     EXPECT_STREQ(log_buff[1], "'s'\r\n");
     EXPECT_STREQ(log_buff[2], "BEGIN\r\n");
     /* deinit */
