@@ -69,6 +69,13 @@ typedef union {
     uint8_t* buffer;
 } _arg_union;
 
+typedef union {
+    int64_t int_;
+    pika_bool bool_;
+    pika_float float_;
+    void* ptr;
+} _arg_value;
+
 struct Arg {
     _arg_union _;
     uint32_t size;
@@ -78,6 +85,11 @@ struct Arg {
     ArgType type;
     uint8_t flag;
     Hash name_hash;
+#if PIKA_KERNAL_DEBUG_ENABLE
+    _arg_value* value;
+    char* str;
+    uint8_t* bytes;
+#endif
     uint8_t content[];
 };
 
@@ -90,6 +102,11 @@ typedef struct ConstArg {
     ArgType type;
     uint8_t flag;
     Hash name_hash;
+#if PIKA_KERNAL_DEBUG_ENABLE
+    _arg_value* value;
+    char* str;
+    uint8_t* bytes;
+#endif
 } ConstArg;
 
 uint32_t arg_totleSize(Arg* self);

@@ -612,33 +612,35 @@ const MethodProp floatMethod = {
     };
 #endif
 
-/* clang-format off */
 #if PIKA_ARG_CACHE_ENABLE
-#define _method_def(_method, _hash, _type)           \
-    {                                               \
-        ._ =                                        \
-            {                                       \
-                .buffer = (uint8_t*)&_method##Prop  \
-            },                                      \
-        .size = sizeof(MethodPropNative),                 \
-        .heap_size = 0,                             \
-        .type = _type,                              \
-        .flag = 0,                                  \
-        .name_hash = _hash                          \
-    }
+#define _ARG_HEAP_SIZE_DEF .heap_size = 0,
 #else
+#define _ARG_HEAP_SIZE_DEF
+#endif
+
+#if PIKA_KERNAL_DEBUG_ENABLE
+#define _ARG_VALUE_DEF(_method)                                         \
+    .value = (_arg_value*)&_method##Prop, .str = (char*)&_method##Prop, \
+    .bytes = (uint8_t*)&_method##Prop,
+#else
+#define _ARG_VALUE_DEF(_method)
+#endif
+
+/* clang-format off */
 #define _method_def(_method, _hash, _type)          \
     {                                               \
         ._ =                                        \
             {                                       \
                 .buffer = (uint8_t*)&_method##Prop  \
             },                                      \
-        .size = sizeof(MethodPropNative),                 \
+        .size = sizeof(MethodPropNative),           \
+        _ARG_HEAP_SIZE_DEF                          \
         .type = _type,                              \
         .flag = 0,                                  \
-        .name_hash = _hash                          \
+        .name_hash = _hash,                         \
+        _ARG_VALUE_DEF(_method)                     \
     }
-#endif
+
 
 #if defined(_WIN32) || \
     (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000))

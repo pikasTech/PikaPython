@@ -132,6 +132,11 @@ static Arg* _arg_set_hash(Arg* self,
         }
         self->size = size;
         self->flag = 0;
+#if PIKA_KERNAL_DEBUG_ENABLE
+        self->value = (_arg_value*)&self->content;
+        self->str = (char*)&self->content;
+        self->bytes = (uint8_t*)&self->content;
+#endif
         arg_setSerialized(self, pika_true);
         // arg_setIsKeyword(self, pika_false);
         arg_setNext(self, next);
@@ -177,6 +182,11 @@ Arg* arg_set(Arg* self,
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
     self->_.buffer = buffer;
     self->size = size;
+#if PIKA_KERNAL_DEBUG_ENABLE
+    self->value = (_arg_value*)&self->_.buffer;
+    self->str = (char*)&self->content;
+    self->bytes = (uint8_t*)&self->content;
+#endif
 }
 
 uint32_t arg_totleSize(Arg* self) {
