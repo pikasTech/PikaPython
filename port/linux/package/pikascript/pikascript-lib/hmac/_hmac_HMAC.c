@@ -85,14 +85,14 @@ Arg* _hmac_HMAC_digest(PikaObj* self) {
 
     if (flag & 0x01)  // already digest
     {
-        goto exit;
+        goto __exit;
     } else {
         mbedtls_md_context_t* ctx = obj_getStruct(self, "_context");
         mbedtls_md_hmac_finish(ctx, buff);
         obj_setInt(self, "_digest_flags", flag | 0x01);
-        goto exit;
+        goto __exit;
     }
-exit:
+__exit:
     return arg_newBytes(buff, obj_getInt(self, "_mode"));
 }
 
@@ -103,7 +103,7 @@ char* _hmac_HMAC_hexdigest(PikaObj* self) {
 
     if (flag & 0x01) {                                   // already digest
         obj_setInt(self, "_digest_flags", flag | 0x02);  // set hexdigest flag
-        goto exit;
+        goto __exit;
     } else if (flag & 0x02) {  // already hexdigest
         return (char*)hexbuff;
     } else {
@@ -111,9 +111,9 @@ char* _hmac_HMAC_hexdigest(PikaObj* self) {
         mbedtls_md_hmac_finish(ctx, buff);
         // set digest and hexdigest flags
         obj_setInt(self, "_digest_flags", flag | 0x03);
-        goto exit;
+        goto __exit;
     }
-exit:
+__exit:
     hmac_to_hex(buff, obj_getInt(self, "_mode"), hexbuff);
     return (char*)hexbuff;
 }

@@ -116,7 +116,7 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
         pika_platform_printf("Error: open file %s failed.\r\n",
                              output_file_name);
         res = PIKA_RES_ERR_IO_ERROR;
-        goto exit;
+        goto __exit;
     }
     /* main process */
 
@@ -129,7 +129,7 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     res = pika_lines2Bytes(&bytecode_frame, py_lines);
     if (PIKA_RES_OK != res) {
         pika_platform_printf("    Error: Syntax error.\r\n");
-        goto exit;
+        goto __exit;
     }
     const_pool_size = bytecode_frame.const_pool.size;
     instruct_array_size = bytecode_frame.instruct_array.size;
@@ -172,7 +172,7 @@ PIKA_RES pikaCompile(char* output_file_name, char* py_lines) {
     pika_lines2Bytes(&bytecode_frame, py_lines);
 
     /* deinit */
-exit:
+__exit:
     byteCodeFrame_deinit(&bytecode_frame);
     if (NULL != bytecode_f) {
         pika_platform_fclose(bytecode_f);
@@ -830,9 +830,9 @@ int Lib_loadLibraryFileToArray(char* origin_file_name, char* out_folder) {
 
     pika_fputs("\n};\n", fp);
     res = 0;
-    goto exit;
+    goto __exit;
 
-exit:
+__exit:
     pika_platform_fclose(fp);
     strsDeinit(&buffs);
     arg_deinit(file_arg);
@@ -1235,7 +1235,7 @@ pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
     f = (pikafs_FILE*)pikaMalloc(sizeof(pikafs_FILE));
     if (NULL == f) {
         pika_platform_printf("Error: malloc failed \r\n");
-        goto malloc_err;
+        goto __malloc_err;
         return NULL;
         // return PIKA_RES_ERR_OUT_OF_RANGE;
     }
@@ -1245,12 +1245,12 @@ pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
     if (NULL != file_arg) {
         library_bytes = arg_getBytes(file_arg);
     } else {
-        goto getpack_err;
+        goto __getpack_err;
     }
 
     if (PIKA_RES_OK !=
         _loadModuleDataWithName(library_bytes, file_name, &f->addr, &f->size)) {
-        goto exit;
+        goto __exit;
     }
 
     f->farg = file_arg;
@@ -1258,11 +1258,11 @@ pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
     // 就是个野指针了 */
     return f;
 
-exit:
+__exit:
     arg_deinit(f->farg);
-getpack_err:
+__getpack_err:
     pikaFree(f, sizeof(pikafs_FILE));
-malloc_err:
+__malloc_err:
     return NULL;
 }
 

@@ -126,10 +126,10 @@ static uint8_t Lexer_isError(char* line) {
     char* sTokenStream = Lexer_getTokenStream(&buffs, line);
     if (NULL == sTokenStream) {
         uRes = 1; /* lex error */
-        goto exit;
+        goto __exit;
     }
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     strsDeinit(&buffs);
     return uRes;
 }
@@ -378,9 +378,9 @@ uint8_t Parser_checkIsDirect(char* sStr) {
     char* sLeft = Cursor_splitCollect(&buffs, sStr, "=", 1);
     if (!strEqu(sLeft, sStr)) {
         uRes = 1;
-        goto exit;
+        goto __exit;
     }
-exit:
+__exit:
     strsDeinit(&buffs);
     return uRes;
 }
@@ -1144,7 +1144,7 @@ static void Slice_getPars(Args* outBuffs,
         Cursor_iterStart(&cs);
         if (strEqu(cs.token1.pyload, ":") && cs.bracket_deepth == 0) {
             uColonIndex++;
-            goto iter_continue1;
+            goto __iter_continue1;
         }
         if (uColonIndex == 0) {
             *sStart_p = strsAppend(&buffs, *sStart_p, cs.token1.pyload);
@@ -1155,7 +1155,7 @@ static void Slice_getPars(Args* outBuffs,
         if (uColonIndex == 2) {
             *sStep_p = strsAppend(&buffs, *sStep_p, cs.token1.pyload);
         }
-    iter_continue1:
+    __iter_continue1:
         Cursor_iterEnd(&cs);
     }
     Cursor_deinit(&cs);
@@ -1199,7 +1199,7 @@ char* Suger_leftSlice(Args* outBuffs, char* sRight, char** sLeft_p) {
     if (NULL == sLeft) {
         arg_deinit(aRight);
         aRight = arg_newStr(sRight);
-        goto exit;
+        goto __exit;
     }
     /* exit when not match
          (symble|iteral)'['
@@ -1221,7 +1221,7 @@ char* Suger_leftSlice(Args* outBuffs, char* sRight, char** sLeft_p) {
         /* not contain '[', return origin */
         arg_deinit(aRight);
         aRight = arg_newStr(sRight);
-        goto exit;
+        goto __exit;
     }
 
     /* matched [] */
@@ -1281,7 +1281,7 @@ char* Suger_leftSlice(Args* outBuffs, char* sRight, char** sLeft_p) {
             break;
         }
     }
-exit:
+__exit:
     /* clean and return */
     sRightRes = strsCopy(outBuffs, arg_getStr(aRight));
     arg_deinit(aRight);
@@ -1417,7 +1417,7 @@ uint8_t Suger_selfOperator(Args* outbuffs,
     }
     /* not found self operator */
     if (sOperator[0] == 0) {
-        goto exit;
+        goto __exit;
     }
     /* found self operator */
     bLeftExist = 1;
@@ -1450,7 +1450,7 @@ uint8_t Suger_selfOperator(Args* outbuffs,
     sLeftNew = arg_getStr(aLeft);
     sRightNew = arg_getStr(aRightNew);
 
-exit:
+__exit:
     strsDeinit(&buffs);
     if (NULL != sRightNew) {
         *(sRight_p) = strsCopy(outbuffs, sRightNew);
@@ -2368,12 +2368,12 @@ static char* Suger_import_as(Args* out_buffs, char* sLine) {
     /* not import, exit */
     if (!strIsStartWith(sLine, "import ")) {
         sLineOut = sLine;
-        goto exit;
+        goto __exit;
     }
 
     if (!Cursor_isContain(sStmt, TOKEN_operator, " as ")) {
         sLineOut = sLine;
-        goto exit;
+        goto __exit;
     }
 
     /* {origin} as {alias} */
@@ -2383,7 +2383,7 @@ static char* Suger_import_as(Args* out_buffs, char* sLine) {
     /* 'import' and 'as' */
     sLineOut = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "import %s\n%s = %s",
                           sOrigin, sAlias, sOrigin);
-exit:
+__exit:
     return strsReturnOut(&buffs, out_buffs, sLineOut);
 }
 
@@ -2499,7 +2499,7 @@ static char* Suger_from_import_as(Args* buffs_p, char* sLine) {
 
     if (!strIsStartWith(sLine, "from ")) {
         sLineOut = sLine;
-        goto exit;
+        goto __exit;
     }
 
     sModule = Cursor_popToken(&buffs, &sStmt, " import ");
@@ -2517,7 +2517,7 @@ static char* Suger_from_import_as(Args* buffs_p, char* sLine) {
     /* skip PikaObj */
     if (strEqu(sModule, "PikaObj")) {
         sLineOut = strsCopy(buffs_p, "");
-        goto exit;
+        goto __exit;
     }
 
     while (1) {
@@ -2535,7 +2535,7 @@ static char* Suger_from_import_as(Args* buffs_p, char* sLine) {
     sLineOut = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "import %s\n%s = %s",
                           sModule, sAlias, sClass);
     sLineOut = strsCopy(buffs_p, sLineOut);
-exit:
+__exit:
     strsDeinit(&buffs);
     return sLineOut;
 }
@@ -2585,7 +2585,7 @@ static char* Parser_linePreProcess(Args* outbuffs, char* sLine) {
     /* check syntex error */
     if (Lexer_isError(sLine)) {
         sLine = NULL;
-        goto exit;
+        goto __exit;
     }
     /* process EOL */
     sLine = strsDeleteChar(outbuffs, sLine, '\r');
@@ -2604,7 +2604,7 @@ static char* Parser_linePreProcess(Args* outbuffs, char* sLine) {
         aLine = arg_strAppend(aLine, sSingleLine);
     }
     sLine = strsCopy(outbuffs, arg_getStr(aLine));
-exit:
+__exit:
     if (NULL != aLine) {
         arg_deinit(aLine);
     }
@@ -2774,12 +2774,12 @@ char* parser_lines2Backend(Parser* self, char* sPyLines) {
             sLine[strGetSize(sLine) - 1] = '\0';
             bIsLineConnection = 1;
             aLineConnection = arg_strAppend(aLineConnection, sLine);
-            goto next_line;
+            goto __next_line;
         }
 
         /* filter for not end \n */
         if (Parser_isVoidLine(sLine)) {
-            goto next_line;
+            goto __next_line;
         }
 
         /* filter for docstring ''' or """ */
@@ -2805,14 +2805,14 @@ char* parser_lines2Backend(Parser* self, char* sPyLines) {
                 aDocstring = arg_newStr("");
                 goto __parse_line;
             }
-            goto next_line;
+            goto __next_line;
         }
 
         /* skip docstring */
         if (bIsInDocstring) {
             aDocstring = arg_strAppend(aDocstring, sLine);
             aDocstring = arg_strAppend(aDocstring, "\n");
-            goto next_line;
+            goto __next_line;
         }
 
         /* support Tab */
@@ -2832,7 +2832,7 @@ char* parser_lines2Backend(Parser* self, char* sPyLines) {
                 aLineConnection = arg_strAppend(aLineConnection, sLine);
                 bIsLineConnection = 1;
                 bIsLineConnectionForBracket = 1;
-                goto next_line;
+                goto __next_line;
             }
         }
 
@@ -2853,7 +2853,7 @@ char* parser_lines2Backend(Parser* self, char* sPyLines) {
                 "\r\n",
                 uLinesIndex, sLine);
             strsDeinit(&self->lineBuffs);
-            goto exit;
+            goto __exit;
         }
 
         if (self->isGenBytecode) {
@@ -2864,7 +2864,7 @@ char* parser_lines2Backend(Parser* self, char* sPyLines) {
             aBackendCode = arg_strAppend(aBackendCode, sBackendCode);
         }
 
-    next_line:
+    __next_line:
         if (uLinesIndex < uLinesNum) {
             uLineSize = strGetSize(sLineOrigin);
             uLinesOffset = uLinesOffset + uLineSize + 1;
@@ -2883,8 +2883,8 @@ char* parser_lines2Backend(Parser* self, char* sPyLines) {
         /* load stored ASM */
         sOut = strsCopy(&self->genBuffs, arg_getStr(aBackendCode));
     }
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     if (NULL != aBackendCode) {
         arg_deinit(aBackendCode);
     }
@@ -3034,8 +3034,8 @@ char* AST_genAsm_sub(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
     }
 
     obj_setInt(ast, "deepth", deepth - 1);
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     pikaAsm = strsCopy(outBuffs, pikaAsm);
     strsDeinit(&buffs);
     return pikaAsm;

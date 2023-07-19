@@ -344,13 +344,13 @@ PIKA_RES _updateArg(Args* self, Arg* argNew) {
     if (NULL == priorNode) {
         self->firstNode = nodeToUpdate;
         res = PIKA_RES_OK;
-        goto exit;
+        goto __exit;
     }
 
     arg_setNext((Arg*)priorNode, (Arg*)nodeToUpdate);
     res = PIKA_RES_OK;
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     if (!arg_isSerialized(argNew)) {
         return res;
     }
@@ -690,23 +690,23 @@ char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg) {
     if (ARG_TYPE_INT == type) {
         int val = arg_getInt(arg);
         res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);
-        goto exit;
+        goto __exit;
     }
     if (ARG_TYPE_FLOAT == type) {
         pika_float val = arg_getFloat(arg);
         res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);
-        goto exit;
+        goto __exit;
     }
     if (ARG_TYPE_STRING == type) {
         char* val = arg_getStr(arg);
         res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, val);
-        goto exit;
+        goto __exit;
     }
     if (ARG_TYPE_NONE == type) {
         res = strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, fmt, "None");
-        goto exit;
+        goto __exit;
     }
-exit:
+__exit:
     if (NULL != res) {
         res = strsCopy(out_buffs, res);
     }
@@ -729,14 +729,14 @@ char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list) {
         char* str_format = strsFormatArg(&buffs_item, fmt_item, arg);
         if (NULL == str_format) {
             strsDeinit(&buffs_item);
-            goto exit;
+            goto __exit;
         }
         res_buff = arg_strAppend(res_buff, str_format);
         strsDeinit(&buffs_item);
     }
-    goto exit;
+    goto __exit;
 
-exit:
+__exit:
     res = strsCopy(out_buffs, arg_getStr(res_buff));
     strsDeinit(&buffs);
     arg_deinit(res_buff);

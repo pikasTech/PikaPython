@@ -651,7 +651,7 @@ Arg* arg_loadFile(Arg* self, char* filename) {
             arg_deinit(res);
         }
         res = NULL;
-        goto exit;
+        goto __exit;
     }
     file_size =
         pika_platform_fread(file_buff, 1, PIKA_READ_FILE_BUFF_SIZE, input_file);
@@ -660,13 +660,13 @@ Arg* arg_loadFile(Arg* self, char* filename) {
         pika_platform_printf("Error: Not enough buff for input file.\r\n");
         arg_deinit(res);
         res = NULL;
-        goto exit;
+        goto __exit;
     }
     /* add '\0' to the end of the string，will copy content from file_buff to
      * res  */
     res = arg_setBytes(res, "", (uint8_t*)file_buff, file_size + 1);
     // return res;
-exit:
+__exit:
     pika_platform_free(file_buff);
     if (NULL != input_file) {
         pika_platform_fclose(input_file);

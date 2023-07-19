@@ -1492,7 +1492,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                     "were "
                     "given\r\n",
                     sMethodName, f.n_positional, f.n_input);
-                goto exit;
+                goto __exit;
             }
             break;
         }
@@ -1509,7 +1509,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                     "were "
                     "given\r\n",
                     sMethodName, f.n_positional, f.n_input);
-                goto exit;
+                goto __exit;
             }
             break;
         }
@@ -1523,7 +1523,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                     "arguments "
                     "but %d were given\r\n",
                     sMethodName, n_min, n_max, f.n_input);
-                goto exit;
+                goto __exit;
             }
         }
 #endif
@@ -1628,7 +1628,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         argv[argc++] = call_arg;
     }
     _loadLocalsFromArgv(aLoclas, argc, argv);
-exit:
+__exit:
     pikaFree(buffs1, METHOD_TYPE_LIST_MAX_LEN);
     pikaFree(buffs2, METHOD_TYPE_LIST_MAX_LEN);
     pikaFree(argv, sizeof(Arg*) * PIKA_ARG_NUM_MAX);
@@ -2113,17 +2113,17 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
         oSublocalsInit = New_Locals(NULL);
         Arg* aReturnInit = NULL;
         if (NULL == aMethod) {
-            goto init_exit;
+            goto __init_exit;
         }
         VMState_loadArgsFromMethodArg(vm, oNew, oSublocalsInit->list, aMethod,
                                       "__init__", NULL, iNumUsed);
         /* load args failed */
         if (vm->error_code != 0) {
-            goto init_exit;
+            goto __init_exit;
         }
         aReturnInit = obj_runMethodArgWithState(oNew, oSublocalsInit, aMethod,
                                                 &tSubRunState);
-    init_exit:
+    __init_exit:
         if (NULL != aReturnInit) {
             arg_deinit(aReturnInit);
         }
@@ -2640,51 +2640,51 @@ static void _OPT_EQU(OperatorInfo* op) {
     int8_t is_equ = -1;
     if (op->t1 == ARG_TYPE_NONE && op->t2 == ARG_TYPE_NONE) {
         is_equ = 1;
-        goto exit;
+        goto __exit;
     }
     /* type not equl, and type is not int or float */
     if (!argType_isEqual(op->t1, op->t2)) {
         if ((op->t1 != ARG_TYPE_FLOAT) && (op->t1 != ARG_TYPE_INT)) {
             is_equ = 0;
-            goto exit;
+            goto __exit;
         }
         if ((op->t2 != ARG_TYPE_FLOAT) && (op->t2 != ARG_TYPE_INT)) {
             is_equ = 0;
-            goto exit;
+            goto __exit;
         }
     }
     /* string compire */
     if (op->t1 == ARG_TYPE_STRING) {
         is_equ = strEqu(arg_getStr(op->a1), arg_getStr(op->a2));
-        goto exit;
+        goto __exit;
     }
     /* bytes compire */
     if (op->t1 == ARG_TYPE_BYTES) {
         if (arg_getBytesSize(op->a1) != arg_getBytesSize(op->a2)) {
             is_equ = 0;
-            goto exit;
+            goto __exit;
         }
         is_equ = 1;
         for (size_t i = 0; i < arg_getBytesSize(op->a1); i++) {
             if (arg_getBytes(op->a1)[i] != arg_getBytes(op->a2)[i]) {
                 is_equ = 0;
-                goto exit;
+                goto __exit;
             }
         }
-        goto exit;
+        goto __exit;
     }
     if (argType_isCallable(op->t1) && argType_isCallable(op->t2)) {
         is_equ = (arg_getPtr(op->a1) == arg_getPtr(op->a2));
-        goto exit;
+        goto __exit;
     }
     if (argType_isObject(op->t1) && argType_isObject(op->t2)) {
         is_equ = (arg_getPtr(op->a1) == arg_getPtr(op->a2));
-        goto exit;
+        goto __exit;
     }
     /* default: int bool, and float */
     is_equ = ((op->f1 - op->f2) * (op->f1 - op->f2) < (pika_float)0.000001);
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     if (op->opt[0] == '=') {
         op->res = arg_setBool(op->res, "", is_equ);
     } else {
@@ -3127,9 +3127,9 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
             pika_platform_printf("AssertionError: %s\n", arg_getStr(arg2));
         }
         // }
-        goto exit;
+        goto __exit;
     }
-exit:
+__exit:
     arg_deinit(arg1);
     if (NULL != arg2) {
         arg_deinit(arg2);
@@ -3213,15 +3213,15 @@ static Arg* VM_instruction_handler_GLB(PikaObj* self,
     if (NULL == global_list) {
         args_setStr(vm->locals->list, "@g", data);
         obj_setFlag(vm->locals, OBJ_FLAG_GLOBALS);
-        goto exit;
+        goto __exit;
     }
     /* append to exist global_list */
     global_list_buff = arg_newStr(global_list);
     global_list_buff = arg_strAppend(global_list_buff, ",");
     global_list_buff = arg_strAppend(global_list_buff, data);
     args_setStr(vm->locals->list, "@g", arg_getStr(global_list_buff));
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     if (NULL != global_list_buff) {
         arg_deinit(global_list_buff);
     }
@@ -3458,22 +3458,22 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     if (NULL != return_arg) {
         stack_pushArg(&(vm->stack), return_arg);
     }
-    goto nextLine;
-nextLine:
+    goto __next_line;
+__next_line:
     /* exit */
     if (VM_JMP_EXIT == vm->jmp) {
         pc_next = VM_PC_EXIT;
-        goto exit;
+        goto __exit;
     }
     /* break */
     if (VM_JMP_BREAK == vm->jmp) {
         pc_next = vm->pc + VMState_getAddrOffsetOfBreak(vm);
-        goto exit;
+        goto __exit;
     }
     /* continue */
     if (VM_JMP_CONTINUE == vm->jmp) {
         pc_next = vm->pc + VMState_getAddrOffsetOfContinue(vm);
-        goto exit;
+        goto __exit;
     }
 /* raise */
 #if !PIKA_NANO_ENABLE
@@ -3483,16 +3483,16 @@ nextLine:
             /* can not found end of try, return */
             pc_next = VM_PC_EXIT;
             vm->run_state->try_result = TRY_RESULT_RAISE;
-            goto exit;
+            goto __exit;
         }
         pc_next = vm->pc + offset;
-        goto exit;
+        goto __exit;
     }
 #endif
     /* static jmp */
     if (vm->jmp != 0) {
         pc_next = vm->pc + VMState_getAddrOffsetFromJmp(vm);
-        goto exit;
+        goto __exit;
     }
     /* not jmp */
     pc_next = vm->pc + instructUnit_getSize();
@@ -3502,19 +3502,19 @@ nextLine:
         while (1) {
             if (pc_next >= (int)VMState_getInstructArraySize(vm)) {
                 pc_next = VM_PC_EXIT;
-                goto exit;
+                goto __exit;
             }
             InstructUnit* ins_next = instructArray_getByOffset(
                 &vm->bytecode_frame->instruct_array, pc_next);
             if (instructUnit_getIsNewLine(ins_next)) {
-                goto exit;
+                goto __exit;
             }
             pc_next = pc_next + instructUnit_getSize();
         }
     }
 
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     vm->jmp = 0;
     /* reach the end */
     if (pc_next >= (int)VMState_getInstructArraySize(vm)) {
@@ -3616,12 +3616,12 @@ static VMParameters* _pikaVM_runPyLines(PikaObj* self, char* py_lines) {
     if (PIKA_RES_OK != pika_lines2Bytes(bytecode_frame_p, py_lines)) {
         pika_platform_printf(PIKA_ERR_STRING_SYNTAX_ERROR);
         globals = NULL;
-        goto exit;
+        goto __exit;
     }
     /* run byteCode */
     globals = pikaVM_runByteCodeFrame(self, bytecode_frame_p);
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     if (!is_use_heap_bytecode) {
         byteCodeFrame_deinit(&bytecode_frame_stack);
     }
@@ -3659,8 +3659,8 @@ VMParameters* _do_pikaVM_runByteCode(PikaObj* self,
 
     globals = _pikaVM_runByteCodeFrameWithState(self, locals, globals,
                                                 bytecode_frame_p, 0, run_state);
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     if (!is_use_heap_bytecode) {
         byteCodeFrame_deinit(&bytecode_frame_stack);
     }
@@ -3839,12 +3839,12 @@ void constPool_print(ConstPool* self) {
     self->content_offset_now = 0;
     while (1) {
         if (NULL == constPool_getNext(self)) {
-            goto exit;
+            goto __exit;
         }
         uint16_t offset = self->content_offset_now;
         pika_platform_printf("%d: %s\r\n", offset, constPool_getNow(self));
     }
-exit:
+__exit:
     /* retore ptr_now */
     self->content_offset_now = ptr_befor;
     return;
@@ -4021,12 +4021,12 @@ void instructArray_printWithConst(InstructArray* self, ConstPool* const_pool) {
     while (1) {
         InstructUnit* ins_unit = instructArray_getNow(self);
         if (NULL == ins_unit) {
-            goto exit;
+            goto __exit;
         }
         instructUnit_printWithConst(ins_unit, const_pool);
         instructArray_getNext(self);
     }
-exit:
+__exit:
     self->content_offset_now = offset_befor;
     return;
 }
@@ -4037,12 +4037,12 @@ void instructArray_print(InstructArray* self) {
     while (1) {
         InstructUnit* ins_unit = instructArray_getNow(self);
         if (NULL == ins_unit) {
-            goto exit;
+            goto __exit;
         }
         instructUnit_print(ins_unit);
         instructArray_getNext(self);
     }
-exit:
+__exit:
     self->content_offset_now = offset_befor;
     return;
 }
@@ -4061,7 +4061,7 @@ void instructArray_printAsArray(InstructArray* self) {
     while (1) {
         InstructUnit* ins_unit = instructArray_getNow(self);
         if (NULL == ins_unit) {
-            goto exit;
+            goto __exit;
         }
         for (int i = 0; i < (int)instructUnit_getSize(); i++) {
             g_i++;
@@ -4073,7 +4073,7 @@ void instructArray_printAsArray(InstructArray* self) {
         }
         instructArray_getNext(self);
     }
-exit:
+__exit:
     pika_platform_printf("/* instruct array */\n");
     self->content_offset_now = offset_befor;
     return;
@@ -4236,7 +4236,7 @@ void constPool_printAsArray(ConstPool* self) {
     pika_platform_printf("0x00, ");
     while (1) {
         if (NULL == constPool_getNext(self)) {
-            goto exit;
+            goto __exit;
         }
         char* data_each = constPool_getNow(self);
         /* todo start */
@@ -4250,7 +4250,7 @@ void constPool_printAsArray(ConstPool* self) {
         }
         /* todo end */
     }
-exit:
+__exit:
     /* retore ptr_now */
     pika_platform_printf("/* const pool */\n");
     self->content_offset_now = ptr_befor;

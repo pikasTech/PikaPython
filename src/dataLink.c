@@ -73,7 +73,7 @@ static void _link_removeNode(Link* self,
         }
         if (nodeNow == NULL) {
             // error, node no found
-            goto exit;
+            goto __exit;
         }
         priorNode = nodeNow;
         nodeNow = (LinkNode*)arg_getNext((Arg*)nodeNow);
@@ -85,13 +85,13 @@ static void _link_removeNode(Link* self,
     }
     if (NULL == priorNode) {
         self->firstNode = nextNode;
-        goto exit;
+        goto __exit;
     }
     arg_setNext((Arg*)priorNode, (Arg*)nextNode);
-    goto exit;
+    goto __exit;
 
 // deinit the node
-exit:
+__exit:
     if (is_deinit_node) {
         linkNode_deinit(nodeToDelete);
     }

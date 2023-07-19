@@ -559,7 +559,7 @@ Arg* _obj_getPropArg(PikaObj* obj, char* name) {
         pika_assert(size >= 0);
         /* binary search */
         if (size == 0) {
-            goto next;
+            goto __next;
         }
 #if !PIKA_NANO_ENABLE
         if (size > 16) {
@@ -574,28 +574,28 @@ Arg* _obj_getPropArg(PikaObj* obj, char* name) {
                 Arg* prop_this = (Arg*)(prop->methodGroup + mid);
                 if (prop_this->name_hash == method_hash) {
                     aMethod = prop_this;
-                    goto exit;
+                    goto __exit;
                 } else if (prop_this->name_hash < method_hash) {
                     left = mid + 1;
                 } else {
                     right = mid - 1;
                 }
             }
-            goto next;
+            goto __next;
         }
 #endif
         for (int i = 0; i < (int)prop->methodGroupCount; i++) {
             Arg* prop_this = (Arg*)(prop->methodGroup + i);
             if (prop_this->name_hash == method_hash) {
                 aMethod = prop_this;
-                goto exit;
+                goto __exit;
             }
         }
-        goto next;
-    next:
+        goto __next;
+    __next:
         prop = (NativeProperty*)prop->super;
     }
-exit:
+__exit:
     return aMethod;
 }
 
@@ -604,10 +604,10 @@ Arg* _obj_getMethodArg(PikaObj* obj, char* methodName, Arg* arg_reg) {
     aMethod = obj_getArg(obj, methodName);
     if (NULL != aMethod) {
         aMethod = arg_copy_noalloc(aMethod, arg_reg);
-        goto exit;
+        goto __exit;
     }
     aMethod = _obj_getPropArg(obj, methodName);
-exit:
+__exit:
     return aMethod;
 }
 
@@ -798,7 +798,7 @@ static PikaObj* _obj_initMetaObj(PikaObj* obj, char* name) {
     if (NULL == constructor) {
         /* no such object */
         res = NULL;
-        goto exit;
+        goto __exit;
     }
     thisClass = obj_newObjFromConstructor(obj, name, constructor);
     oNew = removeMethodInfo(thisClass);
@@ -807,8 +807,8 @@ static PikaObj* _obj_initMetaObj(PikaObj* obj, char* name) {
     args_setPtrWithType(obj->list, name, ARG_TYPE_OBJECT, oNew);
     res = obj_getPtr(obj, name);
     // pikaGC_enable(res);
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     strsDeinit(&buffs);
     return res;
 }
@@ -905,11 +905,11 @@ static PikaObj* _obj_getObjWithKeepDeepth(PikaObj* self,
         char* token = strPopFirstToken(&objPath_ptr, '.');
         obj = _obj_getObjDirect(obj, token, pIsTemp);
         if (obj == NULL) {
-            goto exit;
+            goto __exit;
         }
     }
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     if (NULL != obj) {
         pika_assert(obj_checkAlive(obj));
     }
@@ -1163,7 +1163,7 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
     if (NULL == method_host) {
         /* no found method object */
         res = 1;
-        goto exit;
+        goto __exit;
     }
     method_info.dec = declareation;
     method_info.name = name;
@@ -1174,8 +1174,8 @@ static int32_t __class_defineMethodWithType(PikaObj* self,
     method_info.typelist = typelist;
     obj_saveMethodInfo(method_host, &method_info);
     res = 0;
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     strsDeinit(&buffs);
     return res;
 }
@@ -1240,17 +1240,17 @@ int32_t obj_removeArg(PikaObj* self, char* argPath) {
     if (NULL == objHost) {
         /* [error] object no found */
         err = 1;
-        goto exit;
+        goto __exit;
     }
     argName = strPointToLastToken(argPath, '.');
     res = args_removeArg(objHost->list, args_getArg(objHost->list, argName));
     if (1 == res) {
         /*[error] not found arg*/
         err = 2;
-        goto exit;
+        goto __exit;
     }
-    goto exit;
-exit:
+    goto __exit;
+__exit:
     return err;
 }
 
@@ -1268,13 +1268,13 @@ pika_bool obj_isArgExist(PikaObj* self, char* argPath) {
     if (NULL == arg) {
         /* no found arg */
         res = 0;
-        goto exit;
+        goto __exit;
     }
     /* found arg */
     res = 1;
-    goto exit;
+    goto __exit;
 
-exit:
+__exit:
     return res;
 }
 
@@ -3495,10 +3495,10 @@ void builtins_setattr(PikaObj* self, PikaObj* obj, char* name, Arg* val) {
     if (NULL == obj) {
         obj_setErrorCode(self, 1);
         __platform_printf("[Error] setattr: obj is null.\r\n");
-        goto exit;
+        goto __exit;
     }
     obj_setArg(obj, name, val);
-exit:
+__exit:
     return;
 }
 
