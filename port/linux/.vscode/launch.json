@@ -14,8 +14,8 @@
                 // "--gtest_filter=builtin.write_fn"
                 // "--gtest_filter=builtin.base_type"
                 // "--gtest_filter=parser.comprehension"
-                // "--gtest_filter=parser.*"
-                "--gtest_filter=pikaMain.slice2"
+                "--gtest_filter=parser.*"
+                // "--gtest_filter=pikaMain.slice2"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
