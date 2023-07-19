@@ -38,7 +38,7 @@ extern "C" {
  * If you want to change the config, create "pika_config.h",
  * then #define PIKA_CONFIG_ENABLE in the Compiler Options.
  * To see more:
- * https://pikadoc.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html
+ * https://pikadoc-en.readthedocs.io/en/latest/%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E3%80%81%E9%85%8D%E7%BD%AE%20libc.html
  */
 
     /* optimize options */
