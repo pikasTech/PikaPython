@@ -1,3 +1,31 @@
+/*
+ * This file is part of the PikaPython project, http://pikapython.com
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2017 Paul Sokolovsky
+ * Copyright (c) 2014-2019 Damien P. George
+ * Copyright (c) 2023 Lyon
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -5,6 +33,7 @@ extern "C" {
 #ifndef __PIKA_ADAPTER_MPY_H__
 #define __PIKA_ADAPTER_MPY_H__
 #include <stdint.h>
+#include <stddef.h>
 #include "PikaObj.h"
 #include "PikaStdData_List.h"
 #define bool int
@@ -15,12 +44,18 @@ extern "C" {
 /* type define*/
 #define STATIC static
 #define NORETURN
+typedef unsigned char byte;
+typedef unsigned int uint;
+typedef uint32_t unichar;
+#define UTF8_IS_NONASCII(ch) ((ch)&0x80)
+#define UTF8_IS_CONT(ch) (((ch)&0xC0) == 0x80)
 
 /* object API */
 #define MP_OBJ_NEW_SMALL_INT(...) arg_newInt(__VA_ARGS__)
 #define mp_obj_new_bool(...) arg_newInt(__VA_ARGS__)
 #define mp_obj_new_bytes(...) arg_newBytes(__VA_ARGS__)
 #define mp_obj_new_float(...) arg_newFloat(__VA_ARGS__)
+#define mp_obj_new_int(...) arg_newInt(__VA_ARGS__)
 #define MP_OBJ_TO_PTR(...) arg_getPtr(__VA_ARGS__)
 #define MP_OBJ_FROM_PTR(_p) arg_newPtr(ARG_TYPE_OBJECT, (_p))
 #define mp_obj_get_int(...) arg_getInt(__VA_ARGS__)
@@ -28,6 +63,13 @@ extern "C" {
 #define mp_const_true arg_newInt(1)
 #define mp_const_false arg_newInt(0)
 #define mp_const_none arg_newNull()
+
+#define mp_obj_new_int_from_ll mp_obj_new_int
+#define mp_obj_new_int_from_ull mp_obj_new_int
+#define mp_obj_new_float_from_f mp_obj_new_float
+#define mp_obj_new_float_from_d mp_obj_new_float
+
+#define MP_OBJ_SMALL_INT_VALUE(...) arg_getInt(__VA_ARGS__)
 
 /* module API */
 #define MP_DEFINE_CONST_DICT(...)
@@ -94,7 +136,9 @@ static inline int mp_obj_str_get_qstr(Arg* arg) {
     return hash_time33(arg_getStr(arg));
 }
 
-#define mp_obj_new_str(str, len) arg_newStr(str)
+static inline Arg* mp_obj_new_str(const char* str, size_t len) {
+    return arg_newStrN((char*)str, len);
+}
 
 typedef struct _mp_buffer_info_t {
     void* buf;     // can be NULL if len == 0
@@ -110,14 +154,14 @@ static inline Arg* mp_obj_new_list(int n, Arg** items) {
     return arg_newObj(list);
 }
 
-static inline mp_obj_tuple_t* mp_obj_new_tuple(int n, Arg** items_in) {
+static inline mp_obj_t mp_obj_new_tuple(int n, Arg** items_in) {
     mp_obj_tuple_t* tuple = (mp_obj_tuple_t*)malloc(sizeof(mp_obj_tuple_t));
     Arg** items = (Arg**)malloc(sizeof(Arg*) * n);
     if (NULL == items_in) {
         tuple->len = n;
         tuple->items = items;
     }
-    return tuple;
+    return arg_newPtr(ARG_TYPE_POINTER, tuple);
 }
 
 static inline void mp_obj_list_append(Arg* list, mp_obj_tuple_t* tuple) {
@@ -158,20 +202,20 @@ static inline void pks_load_mp_map(PikaDict* kw, mp_map_t* map) {
     map->table = (mp_map_elem_t*)malloc(sizeof(mp_map_elem_t) * len);
     for (int i = 0; i < len; i++) {
         Arg* item = pikaDict_getArgByidex(kw, i);
-        map->table[i].key = arg_getNameHash(item);
+        map->table[i].key = arg_newInt(arg_getNameHash(item));
         map->table[i].value = item;
     }
 }
 
-static inline void mp_get_buffer_raise(mp_obj_t item,
+static inline void mp_get_buffer_raise(const mp_obj_t item,
                                        mp_buffer_info_t* buf,
                                        char* msg) {
-    buf->len = arg_getSize(item);
+    buf->len = arg_getSize((Arg*)item);
     buf->buf = malloc(buf->len);
     if (NULL == buf->buf) {
         mp_raise_OSError(msg);
     }
-    memcpy(buf->buf, arg_getBytes(item), buf->len);
+    memcpy(buf->buf, arg_getBytes((Arg*)item), buf->len);
 }
 
 static const ArgType mp_type_tuple = ARG_TYPE_TUPLE;
@@ -218,6 +262,10 @@ typedef struct _mp_rom_map_elem_t {
 } mp_rom_map_elem_t;
 
 #define MICROPY_OBJ_BASE_ALIGNMENT
+#define MP_ALIGN(ptr, alignment) \
+    (void*)(((uintptr_t)(ptr) + ((alignment)-1)) & ~((alignment)-1))
+#define MP_ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
+
 typedef struct _mp_obj_type_t mp_obj_type_t;
 struct _mp_obj_base_t {
     const mp_obj_type_t* type MICROPY_OBJ_BASE_ALIGNMENT;
@@ -336,6 +384,366 @@ typedef struct _mp_obj_list_t {
     size_t len;
     mp_obj_t* items;
 } mp_obj_list_t;
+
+// attribute flags
+#define FL_PRINT (0x01)
+#define FL_SPACE (0x02)
+#define FL_DIGIT (0x04)
+#define FL_ALPHA (0x08)
+#define FL_UPPER (0x10)
+#define FL_LOWER (0x20)
+#define FL_XDIGIT (0x40)
+
+// shorthand character attributes
+#define AT_PR (FL_PRINT)
+#define AT_SP (FL_SPACE | FL_PRINT)
+#define AT_DI (FL_DIGIT | FL_PRINT | FL_XDIGIT)
+#define AT_AL (FL_ALPHA | FL_PRINT)
+#define AT_UP (FL_UPPER | FL_ALPHA | FL_PRINT)
+#define AT_LO (FL_LOWER | FL_ALPHA | FL_PRINT)
+#define AT_UX (FL_UPPER | FL_ALPHA | FL_PRINT | FL_XDIGIT)
+#define AT_LX (FL_LOWER | FL_ALPHA | FL_PRINT | FL_XDIGIT)
+
+// table of attributes for ascii characters
+STATIC const uint8_t attr[] = {
+    0,     0,     0,     0,     0,     0,     0,     0,     0,     AT_SP, AT_SP,
+    AT_SP, AT_SP, AT_SP, 0,     0,     0,     0,     0,     0,     0,     0,
+    0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     AT_SP,
+    AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR,
+    AT_PR, AT_PR, AT_PR, AT_PR, AT_DI, AT_DI, AT_DI, AT_DI, AT_DI, AT_DI, AT_DI,
+    AT_DI, AT_DI, AT_DI, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_UX,
+    AT_UX, AT_UX, AT_UX, AT_UX, AT_UX, AT_UP, AT_UP, AT_UP, AT_UP, AT_UP, AT_UP,
+    AT_UP, AT_UP, AT_UP, AT_UP, AT_UP, AT_UP, AT_UP, AT_UP, AT_UP, AT_UP, AT_UP,
+    AT_UP, AT_UP, AT_UP, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_PR, AT_LX, AT_LX,
+    AT_LX, AT_LX, AT_LX, AT_LX, AT_LO, AT_LO, AT_LO, AT_LO, AT_LO, AT_LO, AT_LO,
+    AT_LO, AT_LO, AT_LO, AT_LO, AT_LO, AT_LO, AT_LO, AT_LO, AT_LO, AT_LO, AT_LO,
+    AT_LO, AT_LO, AT_PR, AT_PR, AT_PR, AT_PR, 0};
+
+static unichar utf8_get_char(const byte* s) {
+    unichar ord = *s++;
+    if (!UTF8_IS_NONASCII(ord)) {
+        return ord;
+    }
+    ord &= 0x7F;
+    for (unichar mask = 0x40; ord & mask; mask >>= 1) {
+        ord &= ~mask;
+    }
+    while (UTF8_IS_CONT(*s)) {
+        ord = (ord << 6) | (*s++ & 0x3F);
+    }
+    return ord;
+}
+
+static const byte* utf8_next_char(const byte* s) {
+    ++s;
+    while (UTF8_IS_CONT(*s)) {
+        ++s;
+    }
+    return s;
+}
+
+static mp_uint_t utf8_ptr_to_index(const byte* s, const byte* ptr) {
+    mp_uint_t i = 0;
+    while (ptr > s) {
+        if (!UTF8_IS_CONT(*--ptr)) {
+            i++;
+        }
+    }
+
+    return i;
+}
+
+static size_t utf8_charlen(const byte* str, size_t len) {
+    size_t charlen = 0;
+    for (const byte* top = str + len; str < top; ++str) {
+        if (!UTF8_IS_CONT(*str)) {
+            ++charlen;
+        }
+    }
+    return charlen;
+}
+
+// Be aware: These unichar_is* functions are actually ASCII-only!
+static bool unichar_isspace(unichar c) {
+    return c < 128 && (attr[c] & FL_SPACE) != 0;
+}
+
+static bool unichar_isalpha(unichar c) {
+    return c < 128 && (attr[c] & FL_ALPHA) != 0;
+}
+
+/* unused
+bool unichar_isprint(unichar c) {
+    return c < 128 && (attr[c] & FL_PRINT) != 0;
+}
+*/
+
+static bool unichar_isdigit(unichar c) {
+    return c < 128 && (attr[c] & FL_DIGIT) != 0;
+}
+
+static bool unichar_isxdigit(unichar c) {
+    return c < 128 && (attr[c] & FL_XDIGIT) != 0;
+}
+
+static bool unichar_isident(unichar c) {
+    return c < 128 && ((attr[c] & (FL_ALPHA | FL_DIGIT)) != 0 || c == '_');
+}
+
+static bool unichar_isalnum(unichar c) {
+    return c < 128 && ((attr[c] & (FL_ALPHA | FL_DIGIT)) != 0);
+}
+
+static bool unichar_isupper(unichar c) {
+    return c < 128 && (attr[c] & FL_UPPER) != 0;
+}
+
+static bool unichar_islower(unichar c) {
+    return c < 128 && (attr[c] & FL_LOWER) != 0;
+}
+
+static unichar unichar_tolower(unichar c) {
+    if (unichar_isupper(c)) {
+        return c + 0x20;
+    }
+    return c;
+}
+
+static unichar unichar_toupper(unichar c) {
+    if (unichar_islower(c)) {
+        return c - 0x20;
+    }
+    return c;
+}
+
+static mp_uint_t unichar_xdigit_value(unichar c) {
+    // c is assumed to be hex digit
+    mp_uint_t n = c - '0';
+    if (n > 9) {
+        n &= ~('a' - 'A');
+        n -= ('A' - ('9' + 1));
+    }
+    return n;
+}
+
+static bool utf8_check(const byte* p, size_t len) {
+    uint8_t need = 0;
+    const byte* end = p + len;
+    for (; p < end; p++) {
+        byte c = *p;
+        if (need) {
+            if (UTF8_IS_CONT(c)) {
+                need--;
+            } else {
+                // mismatch
+                return 0;
+            }
+        } else {
+            if (c >= 0xc0) {
+                if (c >= 0xf8) {
+                    // mismatch
+                    return 0;
+                }
+                need = (0xe5 >> ((c >> 3) & 0x6)) & 3;
+            } else if (c >= 0x80) {
+                // mismatch
+                return 0;
+            }
+        }
+    }
+    return need == 0;  // no pending fragments allowed
+}
+
+#ifndef alignof
+#define alignof(type) \
+    offsetof(         \
+        struct {      \
+            char c;   \
+            type t;   \
+        },            \
+        t)
+#endif
+
+#define BYTEARRAY_TYPECODE 1
+
+static size_t mp_binary_get_size(char struct_type,
+                                 char val_type,
+                                 size_t* palign) {
+    size_t size = 0;
+    int align = 1;
+    switch (struct_type) {
+        case '<':
+        case '>':
+            switch (val_type) {
+                case 'b':
+                case 'B':
+                    size = 1;
+                    break;
+                case 'h':
+                case 'H':
+                    size = 2;
+                    break;
+                case 'i':
+                case 'I':
+                    size = 4;
+                    break;
+                case 'l':
+                case 'L':
+                    size = 4;
+                    break;
+                case 'q':
+                case 'Q':
+                    size = 8;
+                    break;
+                case 'P':
+                case 'O':
+                case 'S':
+                    size = sizeof(void*);
+                    break;
+                case 'f':
+                    size = sizeof(float);
+                    break;
+                case 'd':
+                    size = sizeof(double);
+                    break;
+            }
+            break;
+        case '@': {
+            // TODO:
+            // The simplest heuristic for alignment is to align by value
+            // size, but that doesn't work for "bigger than int" types,
+            // for example, long long may very well have long alignment
+            // So, we introduce separate alignment handling, but having
+            // formal support for that is different from actually supporting
+            // particular (or any) ABI.
+            switch (val_type) {
+                case BYTEARRAY_TYPECODE:
+                case 'b':
+                case 'B':
+                    align = size = 1;
+                    break;
+                case 'h':
+                case 'H':
+                    align = alignof(short);
+                    size = sizeof(short);
+                    break;
+                case 'i':
+                case 'I':
+                    align = alignof(int);
+                    size = sizeof(int);
+                    break;
+                case 'l':
+                case 'L':
+                    align = alignof(long);
+                    size = sizeof(long);
+                    break;
+                case 'q':
+                case 'Q':
+                    align = alignof(long long);
+                    size = sizeof(long long);
+                    break;
+                case 'P':
+                case 'O':
+                case 'S':
+                    align = alignof(void*);
+                    size = sizeof(void*);
+                    break;
+                case 'f':
+                    align = alignof(float);
+                    size = sizeof(float);
+                    break;
+                case 'd':
+                    align = alignof(double);
+                    size = sizeof(double);
+                    break;
+            }
+        }
+    }
+
+    if (size == 0) {
+        mp_raise_ValueError(MP_ERROR_TEXT("bad typecode"));
+    }
+
+    if (palign != NULL) {
+        *palign = align;
+    }
+    return size;
+}
+
+// The long long type is guaranteed to hold at least 64 bits, and size is at
+// most 8 (for q and Q), so we will always be able to parse the given data
+// and fit it into a long long.
+static inline long long mp_binary_get_int(size_t size,
+                                          bool is_signed,
+                                          bool big_endian,
+                                          const byte* src) {
+    int delta;
+    if (!big_endian) {
+        delta = -1;
+        src += size - 1;
+    } else {
+        delta = 1;
+    }
+
+    unsigned long long val = 0;
+    if (is_signed && *src & 0x80) {
+        val = -1;
+    }
+    for (uint i = 0; i < size; i++) {
+        val <<= 8;
+        val |= *src;
+        src += delta;
+    }
+
+    return val;
+}
+
+#define is_signed(typecode) (typecode > 'Z')
+static mp_obj_t mp_binary_get_val(char struct_type,
+                                  char val_type,
+                                  byte* p_base,
+                                  byte** ptr) {
+    byte* p = *ptr;
+    size_t align;
+
+    size_t size = mp_binary_get_size(struct_type, val_type, &align);
+    if (struct_type == '@') {
+        // Align p relative to p_base
+        p = p_base + (uintptr_t)MP_ALIGN(p - p_base, align);
+#if MP_ENDIANNESS_LITTLE
+        struct_type = '<';
+#else
+        struct_type = '>';
+#endif
+    }
+    *ptr = p + size;
+
+    long long val =
+        mp_binary_get_int(size, is_signed(val_type), (struct_type == '>'), p);
+
+    if (val_type == 'O') {
+        return (mp_obj_t)(mp_uint_t)val;
+    } else if (val_type == 'S') {
+        const char* s_val = (const char*)(uintptr_t)(mp_uint_t)val;
+        return mp_obj_new_str(s_val, strlen(s_val));
+    } else if (val_type == 'f') {
+        union {
+            uint32_t i;
+            float f;
+        } fpu = {val};
+        return mp_obj_new_float_from_f(fpu.f);
+    } else if (val_type == 'd') {
+        union {
+            uint64_t i;
+            double f;
+        } fpu = {val};
+        return mp_obj_new_float_from_d(fpu.f);
+    } else if (is_signed(val_type)) {
+        return mp_obj_new_int_from_ll(val);
+    } else {
+        return mp_obj_new_int_from_ull(val);
+    }
+}
 
 #endif
 #ifdef __cplusplus

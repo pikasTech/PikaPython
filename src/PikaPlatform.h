@@ -43,6 +43,14 @@ extern "C" {
 #include <unistd.h>
 #endif
 
+#define ANSI_COLOR_RED "\x1b[31m"
+#define ANSI_COLOR_GREEN "\x1b[32m"
+#define ANSI_COLOR_YELLOW "\x1b[33m"
+#define ANSI_COLOR_BLUE "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN "\x1b[36m"
+#define ANSI_COLOR_RESET "\x1b[0m"
+
 #define PIKA_ASSERT_2(expr, msg, ...)                                                                                                                            \
     if (!(expr)) {                                                                                                                                               \
         pika_platform_printf((char*)"Assertion \"%s\" failed, in function: %s(). \r\n  (at %s:%d)\n" msg, #expr, __FUNCTION__, __FILE__, __LINE__, __VA_ARGS__); \
@@ -309,10 +317,25 @@ void pika_platform_thread_timer_usleep(unsigned long usec);
 void pika_platform_reboot(void);
 void pika_platform_clear(void);
 
-#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_)                               \
-    pika_platform_printf("Error: weak function `%s()` need override.\r\n", \
-                         __FUNCTION__);                                    \
+#define WEAK_FUNCTION_NEED_OVERRIDE_INFO(_)                                    \
+    pika_platform_printf(ANSI_COLOR_RED                                        \
+                         "Error: The function `%s()` has been invoked, but "   \
+                         "it is not implemented.\r\n" ANSI_COLOR_RESET,        \
+                         __FUNCTION__);                                        \
+    pika_platform_printf(                                                      \
+        ANSI_COLOR_CYAN                                                        \
+        "Info: The function `%s()` is defined as a weak function by default. " \
+        "It should be overridden on this platform.\r\n" ANSI_COLOR_RESET,      \
+        __FUNCTION__);
+
+#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR(_) \
+    WEAK_FUNCTION_NEED_OVERRIDE_INFO(_)      \
     pika_platform_panic_handle();
+
+#define WEAK_FUNCTION_NEED_OVERRIDE_ERROR_LOWLEVEL(_) \
+    WEAK_FUNCTION_NEED_OVERRIDE_INFO(_)               \
+    while (1) {                                       \
+    }
 
 #endif
 

@@ -565,12 +565,15 @@ static inline uint8_t obj_refcntNow(PikaObj* self) {
 #define obj_setStruct(PikaObj_p_self, char_p_name, struct_) \
     args_setStruct(((PikaObj_p_self)->list), char_p_name, struct_)
 
-#define PIKA_ERR_STRING_SYNTAX_ERROR "SyntaxError: invalid syntax\r\n"
+#define PIKA_ERR_STRING_SYNTAX_ERROR \
+    ANSI_COLOR_RED "SyntaxError: invalid syntax\r\n" ANSI_COLOR_RESET
 
 #define ABSTRACT_METHOD_NEED_OVERRIDE_ERROR(_)                               \
     obj_setErrorCode(self, 1);                                               \
-    pika_platform_printf("Error: abstract method `%s()` need override.\r\n", \
-                         __FUNCTION__)
+    pika_platform_printf(                                                    \
+        ANSI_COLOR_RED                                                       \
+        "Error: abstract method `%s()` need override.\r\n" ANSI_COLOR_RESET, \
+        __FUNCTION__)
 
 char* obj_cacheStr(PikaObj* self, char* str);
 PikaObj* _arg_to_obj(Arg* self, pika_bool* pIsTemp);
@@ -613,9 +616,9 @@ const MethodProp floatMethod = {
 #endif
 
 #if PIKA_ARG_CACHE_ENABLE
-#define _ARG_HEAP_SIZE_DEF .heap_size = 0,
+#define _ARG_HEAP_SIZE_DEF() .heap_size = 0,
 #else
-#define _ARG_HEAP_SIZE_DEF
+#define _ARG_HEAP_SIZE_DEF()
 #endif
 
 #if PIKA_KERNAL_DEBUG_ENABLE
@@ -634,7 +637,7 @@ const MethodProp floatMethod = {
                 .buffer = (uint8_t*)&_method##Prop  \
             },                                      \
         .size = sizeof(MethodPropNative),           \
-        _ARG_HEAP_SIZE_DEF                          \
+        _ARG_HEAP_SIZE_DEF()                        \
         .type = _type,                              \
         .flag = 0,                                  \
         .name_hash = _hash,                         \
@@ -694,14 +697,6 @@ Arg* __eventListener_runEvent(PikaEventListener* lisener,
 Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
                                               uint32_t eventId,
                                               int eventSignal);
-
-#define COLOR_RED "\x1b[31m"
-#define COLOR_GREEN "\x1b[32m"
-#define COLOR_YELLOW "\x1b[33m"
-#define COLOR_BLUE "\x1b[34m"
-#define COLOR_MAGENTA "\x1b[35m"
-#define COLOR_CYAN "\x1b[36m"
-#define COLOR_RESET "\x1b[0m"
 
 void obj_printModules(PikaObj* self);
 #if PIKA_DEBUG_ENABLE

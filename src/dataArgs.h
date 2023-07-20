@@ -191,6 +191,14 @@ static inline void* pikaDict_getPtr(PikaDict* self, char* name) {
     return args_getPtr((&((self)->super)), (name));
 }
 
+static inline int pikaDict_getSize(PikaDict* self) {
+    return args_getSize((&((self)->super)));
+}
+
+static inline Arg* pikaDict_getArgByidex(PikaDict* self, int index) {
+    return args_getArgByIndex((&((self)->super)), (index));
+}
+
 static inline Arg* pikaDict_getArg(PikaDict* self, char* name) {
     return args_getArg((&((self)->super)), (name));
 }
