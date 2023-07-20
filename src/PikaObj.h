@@ -775,6 +775,7 @@ int32_t objDict_forEach(PikaObj* self,
                                               void* context),
                         void* context);
 void pika_sleep_ms(uint32_t ms);
+PIKA_RES _transeBool(Arg* arg, pika_bool* res);
 
 #endif
 #ifdef __cplusplus

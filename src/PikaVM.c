@@ -2388,18 +2388,18 @@ static Arg* _VM_JEZ(PikaObj* self,
                     VMState* vm,
                     char* data,
                     Arg* arg_ret_reg,
-                    int pika_assert) {
+                    int bAssert) {
     int thisBlockDeepth = VMState_getBlockDeepthNow(vm);
     int jmp_expect = fast_atoi(data);
-    vm->ireg[thisBlockDeepth] = (pika_bool)!pika_assert;
+    vm->ireg[thisBlockDeepth] = (pika_bool)!bAssert;
 
-    if (0 == pika_assert) {
+    if (0 == bAssert) {
         /* jump */
         vm->jmp = jmp_expect;
     }
 
     /* restore loop deepth */
-    if (2 == jmp_expect && 0 == pika_assert) {
+    if (2 == jmp_expect && 0 == bAssert) {
         int block_deepth_now = VMState_getBlockDeepthNow(vm);
         vm->loop_deepth = block_deepth_now;
     }
@@ -2411,26 +2411,32 @@ static Arg* VM_instruction_handler_JEZ(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    Arg* pika_assertArg = stack_popArg(&(vm->stack), arg_ret_reg);
-    int pika_assert = 0;
-    if (NULL != pika_assertArg) {
-        pika_assert = arg_getInt(pika_assertArg);
-        arg_deinit(pika_assertArg);
+    Arg* aAssert = stack_popArg(&(vm->stack), arg_ret_reg);
+    pika_bool bAssert = 0;
+    if (NULL != aAssert) {
+        PIKA_RES res = _transeBool(aAssert, &bAssert);
+        if (PIKA_RES_OK != res) {
+            bAssert = 0;
+        }
+        arg_deinit(aAssert);
     }
-    return _VM_JEZ(self, vm, data, arg_ret_reg, pika_assert);
+    return _VM_JEZ(self, vm, data, arg_ret_reg, bAssert);
 }
 
 static Arg* VM_instruction_handler_JNZ(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    Arg* pika_assertArg = stack_popArg(&(vm->stack), arg_ret_reg);
-    int pika_assert = 0;
-    if (NULL != pika_assertArg) {
-        pika_assert = arg_getInt(pika_assertArg);
-        arg_deinit(pika_assertArg);
+    Arg* aAssert = stack_popArg(&(vm->stack), arg_ret_reg);
+    pika_bool bAssert = 0;
+    if (NULL != aAssert) {
+        PIKA_RES res = _transeBool(aAssert, &bAssert);
+        if (PIKA_RES_OK != res) {
+            bAssert = 0;
+        }
+        arg_deinit(aAssert);
     }
-    return _VM_JEZ(self, vm, data, arg_ret_reg, !pika_assert);
+    return _VM_JEZ(self, vm, data, arg_ret_reg, !bAssert);
 }
 
 static uint8_t VMState_getInputArgNum(VMState* vm) {

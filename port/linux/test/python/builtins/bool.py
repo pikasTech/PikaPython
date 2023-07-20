@@ -38,4 +38,43 @@ if False:
 else:
     assert True
 
+# If statement with string
+
+
+def is_string_empty(s):
+    if s:
+        return False
+    else:
+        return True
+
+
+assert is_string_empty('Hello') == False
+assert is_string_empty('') == True
+
+# If statement with list
+
+
+def is_list_empty(lst):
+    if lst:
+        return False
+    else:
+        return True
+
+
+assert is_list_empty([1, 2, 3]) == False
+assert is_list_empty([]) == True
+
+# If statement with string comparison
+
+
+def compare_strings(s1, s2):
+    if s1 == s2:
+        return True
+    else:
+        return False
+
+
+assert compare_strings('abc', 'abc') == True
+assert compare_strings('abc', 'def') == False
+
 print("PASS")

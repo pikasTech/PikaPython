@@ -3013,7 +3013,8 @@ PIKA_RES _transeBool(Arg* arg, pika_bool* res) {
     if (arg_isObject(arg)) {
         int64_t len = obj_getSize(arg_getObj(arg));
         if (len < 0) {
-            return PIKA_RES_ERR_INVALID_PARAM;
+            *res = pika_true;
+            return PIKA_RES_OK;
         }
         if (len == 0) {
             *res = pika_false;
