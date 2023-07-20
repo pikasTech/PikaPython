@@ -78,9 +78,9 @@ Arg* _socket_socket__recv(PikaObj* self, int num) {
     if (ret <= 0) {
         if (obj_getInt(self, "blocking")) {
             obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-            if (ret == 0){
+            if (ret == 0) {
                 // __platform_printf("connect closed\n");
-            }else{
+            } else {
                 __platform_printf("recv error: %d\n", ret);
             }
             arg_deinit(res);
