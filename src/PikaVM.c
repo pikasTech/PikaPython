@@ -3010,7 +3010,9 @@ static Arg* VM_instruction_handler_OPT(PikaObj* self,
     }
     if (data[0] == ' ' && data[1] == 'n' && data[2] == 'o' && data[3] == 't' &&
         data[4] == ' ' && data[5] == 0) {
-        op.res = arg_setBool(op.res, "", !op.i2);
+        pika_bool bTrue = pika_false;
+        _transeBool(op.a2, &bTrue);
+        op.res = arg_setBool(op.res, "", !bTrue);
         goto __exit;
     }
     pika_platform_printf("Error: unknown operator '%s'\n", data);

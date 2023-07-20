@@ -73,8 +73,14 @@ def compare_strings(s1, s2):
     else:
         return False
 
+def is_string_not_empty(s):
+    if not s:
+        return False
+    else:
+        return True
 
 assert compare_strings('abc', 'abc') == True
 assert compare_strings('abc', 'def') == False
+assert is_string_not_empty('abc') == True
 
 print("PASS")
