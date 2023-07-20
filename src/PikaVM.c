@@ -2642,13 +2642,15 @@ static void _OPT_EQU(OperatorInfo* op) {
         is_equ = 1;
         goto __exit;
     }
-    /* type not equl, and type is not int or float */
+    /* type not equl, and type is not int or float or bool*/
     if (!argType_isEqual(op->t1, op->t2)) {
-        if ((op->t1 != ARG_TYPE_FLOAT) && (op->t1 != ARG_TYPE_INT)) {
+        if ((op->t1 != ARG_TYPE_FLOAT) && (op->t1 != ARG_TYPE_INT) &&
+            (op->t1 != ARG_TYPE_BOOL)) {
             is_equ = 0;
             goto __exit;
         }
-        if ((op->t2 != ARG_TYPE_FLOAT) && (op->t2 != ARG_TYPE_INT)) {
+        if ((op->t2 != ARG_TYPE_FLOAT) && (op->t2 != ARG_TYPE_INT) &&
+            (op->t2 != ARG_TYPE_BOOL)) {
             is_equ = 0;
             goto __exit;
         }

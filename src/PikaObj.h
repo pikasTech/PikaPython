@@ -229,6 +229,7 @@ PikaObj* obj_getBuiltins(void);
 pika_float obj_getFloat(PikaObj* self, char* argPath);
 char* obj_getStr(PikaObj* self, char* argPath);
 int64_t obj_getInt(PikaObj* self, char* argPath);
+int64_t obj_getSize(PikaObj* arg_obj);
 pika_bool obj_getBool(PikaObj* self, char* argPath);
 Arg* obj_getArg(PikaObj* self, char* argPath);
 uint8_t* obj_getBytes(PikaObj* self, char* argPath);

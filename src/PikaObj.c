@@ -2991,6 +2991,44 @@ PIKA_RES _transeInt(Arg* arg, int base, int64_t* res) {
     return PIKA_RES_ERR_INVALID_PARAM;
 }
 
+PIKA_RES _transeBool(Arg* arg, pika_bool* res) {
+    int64_t iRes = 0;
+    if (arg_getType(arg) == ARG_TYPE_BOOL) {
+        *res = arg_getBool(arg);
+        return PIKA_RES_OK;
+    }
+    if (arg_getType(arg) == ARG_TYPE_NONE) {
+        *res = pika_false;
+        return PIKA_RES_OK;
+    }
+    if (arg_getType(arg) == ARG_TYPE_STRING ||
+        arg_getType(arg) == ARG_TYPE_BYTES) {
+        if (arg_getStr(arg)[0] == '\0') {
+            *res = pika_false;
+            return PIKA_RES_OK;
+        }
+        *res = pika_true;
+        return PIKA_RES_OK;
+    }
+    if (arg_isObject(arg)) {
+        int64_t len = obj_getSize(arg_getObj(arg));
+        if (len < 0) {
+            return PIKA_RES_ERR_INVALID_PARAM;
+        }
+        if (len == 0) {
+            *res = pika_false;
+            return PIKA_RES_OK;
+        }
+        *res = pika_true;
+        return PIKA_RES_OK;
+    }
+    if (_transeInt(arg, 10, &iRes) == PIKA_RES_OK) {
+        *res = iRes ? pika_true : pika_false;
+        return PIKA_RES_OK;
+    }
+    return PIKA_RES_ERR_INVALID_PARAM;
+}
+
 int builtins_int(PikaObj* self, Arg* arg, PikaTuple* base) {
     int64_t res = 0;
     int64_t iBase = 10;
@@ -3014,9 +3052,9 @@ int builtins_int(PikaObj* self, Arg* arg, PikaTuple* base) {
 }
 
 pika_bool builtins_bool(PikaObj* self, Arg* arg) {
-    int64_t res = 0;
-    if (_transeInt(arg, 10, &res) == PIKA_RES_OK) {
-        return res ? PIKA_TRUE : pika_false;
+    pika_bool res = 0;
+    if (_transeBool(arg, &res) == PIKA_RES_OK) {
+        return res;
     }
     obj_setSysOut(self, "ValueError: invalid literal for bool()");
     obj_setErrorCode(self, 1);
@@ -3174,6 +3212,30 @@ pika_bool arg_isTuple(Arg* arg) {
     return arg_getObj(arg)->constructor == New_PikaStdData_Tuple;
 }
 
+int64_t obj_getSize(PikaObj* arg_obj) {
+    Arg* method_arg = obj_getMethodArgWithFullPath(arg_obj, "__len__");
+    if (NULL != method_arg) {
+        arg_deinit(method_arg);
+        obj_removeArg(arg_obj, "@res_len");
+        /* clang-format off */
+            PIKA_PYTHON(
+            @res_len = __len__()
+            )
+        /* clang-format on */
+        const uint8_t bytes[] = {
+            0x08, 0x00, 0x00, 0x00, /* instruct array size */
+            0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct
+                                                               array */
+            0x12, 0x00, 0x00, 0x00, /* const pool size */
+            0x00, 0x5f, 0x5f, 0x6c, 0x65, 0x6e, 0x5f, 0x5f, 0x00, 0x40,
+            0x72, 0x65, 0x73, 0x5f, 0x6c, 0x65, 0x6e, 0x00, /* const pool */
+        };
+        pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
+        return obj_getInt(arg_obj, "@res_len");
+    }
+    return -1;
+}
+
 int builtins_len(PikaObj* self, Arg* arg) {
     if (ARG_TYPE_STRING == arg_getType(arg)) {
         return strGetSize(arg_getStr(arg));
@@ -3184,26 +3246,7 @@ int builtins_len(PikaObj* self, Arg* arg) {
 
     if (arg_isObject(arg)) {
         PikaObj* arg_obj = arg_getPtr(arg);
-        Arg* method_arg = obj_getMethodArgWithFullPath(arg_obj, "__len__");
-        if (NULL != method_arg) {
-            arg_deinit(method_arg);
-            obj_removeArg(arg_obj, "@res_len");
-            /* clang-format off */
-            PIKA_PYTHON(
-            @res_len = __len__()
-            )
-            /* clang-format on */
-            const uint8_t bytes[] = {
-                0x08, 0x00, 0x00, 0x00, /* instruct array size */
-                0x00, 0x82, 0x01, 0x00, 0x00, 0x04, 0x09, 0x00, /* instruct
-                                                                   array */
-                0x12, 0x00, 0x00, 0x00, /* const pool size */
-                0x00, 0x5f, 0x5f, 0x6c, 0x65, 0x6e, 0x5f, 0x5f, 0x00, 0x40,
-                0x72, 0x65, 0x73, 0x5f, 0x6c, 0x65, 0x6e, 0x00, /* const pool */
-            };
-            pikaVM_runByteCode(arg_obj, (uint8_t*)bytes);
-            return obj_getInt(arg_obj, "@res_len");
-        }
+        return obj_getSize(arg_obj);
     }
 
     obj_setErrorCode(self, 1);
