@@ -491,6 +491,10 @@ extern "C" {
         #define PIKA_SHELL_NO_ECHO 0
     #endif
 
+    #ifndef PIKA_PLATFORM_NO_WEAK
+        #define PIKA_PLATFORM_NO_WEAK 0
+    #endif
+
     /* configuration validation */
 
 #endif

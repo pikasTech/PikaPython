@@ -35,51 +35,6 @@
 void pikaFree(void* mem, uint32_t size);
 void* pikaMalloc(uint32_t size);
 
-PIKA_WEAK void pika_platform_disable_irq_handle(void) {
-    /* disable irq to support thread */
-}
-
-PIKA_WEAK void pika_platform_enable_irq_handle(void) {
-    /* disable irq to support thread */
-}
-
-PIKA_WEAK void* pika_platform_malloc(size_t size) {
-    return malloc(size);
-}
-
-PIKA_WEAK void* pika_platform_realloc(void* ptr, size_t size) {
-    return realloc(ptr, size);
-}
-
-PIKA_WEAK void* pika_platform_calloc(size_t num, size_t size) {
-    return calloc(num, size);
-}
-
-PIKA_WEAK void pika_platform_free(void* ptr) {
-    free(ptr);
-}
-
-PIKA_WEAK void* pika_user_malloc(size_t size) {
-    return pika_platform_malloc(size);
-}
-
-PIKA_WEAK void pika_user_free(void* ptr, size_t size) {
-    pika_platform_free(ptr);
-}
-
-PIKA_WEAK void pika_platform_error_handle() {
-    return;
-}
-
-PIKA_WEAK void pika_platform_panic_handle() {
-    while (1) {
-    };
-}
-
-PIKA_WEAK uint8_t pika_is_locked_pikaMemory(void) {
-    return 0;
-}
-
 #if PIKA_FREERTOS_ENABLE
 static uint32_t platform_uptime_ms(void) {
 #if (configTICK_RATE_HZ == 1000)
@@ -92,43 +47,6 @@ static uint32_t platform_uptime_ms(void) {
 #endif
 }
 #endif
-
-PIKA_WEAK int64_t pika_platform_get_tick(void) {
-#if PIKA_FREERTOS_ENABLE
-    return platform_uptime_ms();
-#elif defined(__linux)
-    struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    return (ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
-#else
-    return -1;
-#endif
-}
-
-int pika_vsprintf(char* buff, char* fmt, va_list args) {
-    /* vsnprintf */
-    return pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
-}
-
-int pika_snprintf(char* buff, size_t size, const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    int ret = pika_platform_vsnprintf(buff, size, fmt, args);
-    va_end(args);
-    return ret;
-}
-
-PIKA_WEAK int pika_platform_fflush(void* stream) {
-#if PIKA_UNBUFFERED_ENABLE
-    return fflush(stream);
-#else
-    return 0;
-#endif
-}
-
-PIKA_WEAK int pika_platform_putchar(char ch) {
-    return putchar(ch);
-}
 
 int pika_putchar(char ch) {
     int ret = pika_platform_putchar(ch);
@@ -244,6 +162,108 @@ __exit:
     return ret;
 }
 
+int pika_sprintf(char* buff, char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    int res = pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+    va_end(args);
+    if (res >= PIKA_SPRINTF_BUFF_SIZE) {
+        pika_platform_printf(
+            "OverflowError: sprintf buff size overflow, please use bigger "
+            "PIKA_SPRINTF_BUFF_SIZE\r\n");
+        pika_platform_printf("Info: buff size request: %d\r\n", res);
+        pika_platform_printf("Info: buff size now: %d\r\n",
+                             PIKA_SPRINTF_BUFF_SIZE);
+        while (1)
+            ;
+    }
+    return res;
+}
+
+int pika_vsprintf(char* buff, char* fmt, va_list args) {
+    /* vsnprintf */
+    return pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
+}
+
+int pika_snprintf(char* buff, size_t size, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    int ret = pika_platform_vsnprintf(buff, size, fmt, args);
+    va_end(args);
+    return ret;
+}
+
+#if !PIKA_PLATFORM_NO_WEAK
+
+PIKA_WEAK void pika_platform_disable_irq_handle(void) {
+    /* disable irq to support thread */
+}
+
+PIKA_WEAK void pika_platform_enable_irq_handle(void) {
+    /* disable irq to support thread */
+}
+
+PIKA_WEAK void* pika_platform_malloc(size_t size) {
+    return malloc(size);
+}
+
+PIKA_WEAK void* pika_platform_realloc(void* ptr, size_t size) {
+    return realloc(ptr, size);
+}
+
+PIKA_WEAK void* pika_platform_calloc(size_t num, size_t size) {
+    return calloc(num, size);
+}
+
+PIKA_WEAK void pika_platform_free(void* ptr) {
+    free(ptr);
+}
+
+PIKA_WEAK void* pika_user_malloc(size_t size) {
+    return pika_platform_malloc(size);
+}
+
+PIKA_WEAK void pika_user_free(void* ptr, size_t size) {
+    pika_platform_free(ptr);
+}
+
+PIKA_WEAK void pika_platform_error_handle() {
+    return;
+}
+
+PIKA_WEAK void pika_platform_panic_handle() {
+    while (1) {
+    };
+}
+
+PIKA_WEAK uint8_t pika_is_locked_pikaMemory(void) {
+    return 0;
+}
+
+PIKA_WEAK int64_t pika_platform_get_tick(void) {
+#if PIKA_FREERTOS_ENABLE
+    return platform_uptime_ms();
+#elif defined(__linux)
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return (ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
+#else
+    return -1;
+#endif
+}
+
+PIKA_WEAK int pika_platform_fflush(void* stream) {
+#if PIKA_UNBUFFERED_ENABLE
+    return fflush(stream);
+#else
+    return 0;
+#endif
+}
+
+PIKA_WEAK int pika_platform_putchar(char ch) {
+    return putchar(ch);
+}
+
 #ifndef pika_platform_printf
 PIKA_WEAK void pika_platform_printf(char* fmt, ...) {
     va_list args;
@@ -270,24 +290,6 @@ PIKA_WEAK int pika_platform_vsnprintf(char* buff,
                                       const char* fmt,
                                       va_list args) {
     return vsnprintf(buff, size, fmt, args);
-}
-
-int pika_sprintf(char* buff, char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    int res = pika_platform_vsnprintf(buff, PIKA_SPRINTF_BUFF_SIZE, fmt, args);
-    va_end(args);
-    if (res >= PIKA_SPRINTF_BUFF_SIZE) {
-        pika_platform_printf(
-            "OverflowError: sprintf buff size overflow, please use bigger "
-            "PIKA_SPRINTF_BUFF_SIZE\r\n");
-        pika_platform_printf("Info: buff size request: %d\r\n", res);
-        pika_platform_printf("Info: buff size now: %d\r\n",
-                             PIKA_SPRINTF_BUFF_SIZE);
-        while (1)
-            ;
-    }
-    return res;
 }
 
 PIKA_WEAK void pika_platform_wait(void) {
@@ -478,7 +480,7 @@ PIKA_WEAK pika_platform_thread_t* pika_platform_thread_init(
 #endif
 }
 
-uint64_t pika_platform_thread_self(void) {
+PIKA_WEAK uint64_t pika_platform_thread_self(void) {
 #ifdef __linux
     return (uint64_t)pthread_self();
 #elif PIKA_FREERTOS_ENABLE
@@ -715,3 +717,4 @@ PIKA_WEAK void pika_platform_clear(void) {
 PIKA_WEAK void pika_platform_abort_handler(void) {
     return;
 }
+#endif
