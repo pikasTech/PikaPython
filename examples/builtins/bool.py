@@ -83,4 +83,6 @@ assert compare_strings('abc', 'abc') == True
 assert compare_strings('abc', 'def') == False
 assert is_string_not_empty('abc') == True
 
+assert int(0xFFFFFFFF) == 0xFFFFFFFF
+
 print("PASS")

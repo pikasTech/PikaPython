@@ -3030,7 +3030,7 @@ PIKA_RES _transeBool(Arg* arg, pika_bool* res) {
     return PIKA_RES_ERR_INVALID_PARAM;
 }
 
-int builtins_int(PikaObj* self, Arg* arg, PikaTuple* base) {
+Arg* builtins_int(PikaObj* self, Arg* arg, PikaTuple* base) {
     int64_t res = 0;
     int64_t iBase = 10;
     if (pikaTuple_getSize(base) > 0) {
@@ -3040,16 +3040,16 @@ int builtins_int(PikaObj* self, Arg* arg, PikaTuple* base) {
                           "TypeError: int() can't convert non-string with "
                           "explicit base");
             obj_setErrorCode(self, 1);
-            return _PIKA_INT_ERR;
+            return NULL;
         }
         iBase = (int64_t)pikaTuple_getInt(base, 0);
     }
     if (_transeInt(arg, iBase, &res) == PIKA_RES_OK) {
-        return res;
+        return arg_newInt(res);
     }
     obj_setSysOut(self, "ValueError: invalid literal for int()");
     obj_setErrorCode(self, 1);
-    return _PIKA_INT_ERR;
+    return NULL;
 }
 
 pika_bool builtins_bool(PikaObj* self, Arg* arg) {
