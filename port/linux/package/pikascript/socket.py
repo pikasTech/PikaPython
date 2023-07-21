@@ -61,3 +61,6 @@ class socket(_socket.socket):
 
 def gethostname():
     return _socket._gethostname()
+
+def gethostbyname(host):
+    return _socket._gethostbyname(host)

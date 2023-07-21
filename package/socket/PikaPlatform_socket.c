@@ -50,6 +50,32 @@ PIKA_WEAK int pika_platform_connect(int __fd,
 #endif
 }
 
+PIKA_WEAK int pika_platform_htons(int __hostshort) {
+#if defined(__linux__) || PIKA_LWIP_ENABLE
+    return htons(__hostshort);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+/* gethostbyname */
+PIKA_WEAK struct hostent* pika_platform_gethostbyname(const char* __name) {
+#if defined(__linux__) || PIKA_LWIP_ENABLE
+    return gethostbyname(__name);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
+/* inet_ntoa */
+PIKA_WEAK char* pika_platform_inet_ntoa(struct in_addr __in) {
+#if defined(__linux__) || PIKA_LWIP_ENABLE
+    return inet_ntoa(__in);
+#else
+    WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
+#endif
+}
+
 PIKA_WEAK int pika_platform_send(int __fd,
                                  const void* __buf,
                                  size_t __n,

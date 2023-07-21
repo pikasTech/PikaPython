@@ -45,6 +45,9 @@ int pika_platform_setsockopt(int __fd,
                              int __optname,
                              const void* __optval,
                              socklen_t __optlen);
+int pika_platform_htons(int __hostshort);
+char* pika_platform_inet_ntoa(struct in_addr __in);
+struct hostent* pika_platform_gethostbyname(const char* __name);
 
 /* os file API */
 int pika_platform_close(int fd);

@@ -291,6 +291,8 @@ TEST(socket, json_issue) {
 }
 #endif
 
+TEST_RUN_SINGLE_FILE(socket, socket_GET, "test/python/socket/socket_GET.py")
+
 #endif
 
 #if !PIKA_NANO_ENABLE
