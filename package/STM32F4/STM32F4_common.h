@@ -45,6 +45,12 @@ typedef uint32_t u32;
     #undef UART4_EXIST
 #endif
 
+/* configuration for STM32F401xE */
+#ifdef STM32F401xE
+    #undef UART3_EXIST
+    #undef UART4_EXIST
+#endif
+
 /* configuration for STM32F401xC */
 #ifdef STM32F401xC
     #undef UART3_EXIST
