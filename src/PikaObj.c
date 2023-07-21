@@ -3987,7 +3987,7 @@ void objList_set(PikaObj* self, int i, Arg* arg) {
 
 Arg* objList_get(PikaObj* self, int i) {
     PikaList* list = obj_getPtr(self, "list");
-    return arg_copy(pikaList_getArg(list, i));
+    return pikaList_getArg(list, i);
 }
 
 Arg* objDict_get(PikaObj* self, char* key) {

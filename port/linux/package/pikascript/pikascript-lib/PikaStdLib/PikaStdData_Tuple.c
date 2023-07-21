@@ -7,7 +7,7 @@ int PikaStdData_Tuple_len(PikaObj* self) {
 }
 
 Arg* PikaStdData_Tuple_get(PikaObj* self, int i) {
-    return objList_get(self, i);
+    return arg_copy(objList_get(self, i));
 }
 
 void PikaStdData_Tuple___init__(PikaObj* self) {

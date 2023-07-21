@@ -702,7 +702,7 @@ Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
 void obj_printModules(PikaObj* self);
 #if PIKA_DEBUG_ENABLE
 #define pika_debug(fmt, ...)                                              \
-    pika_platform_printf(COLOR_GREEN "[PikaDBG] " fmt "\r\n" COLOR_RESET, \
+    pika_platform_printf(ANSI_COLOR_GREEN "[PikaDBG] " fmt "\r\n" ANSI_COLOR_RESET, \
                          ##__VA_ARGS__)
 #else
 #define pika_debug(...) \
