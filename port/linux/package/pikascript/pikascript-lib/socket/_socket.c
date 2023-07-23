@@ -165,16 +165,17 @@ char* _socket__gethostname(PikaObj* self) {
     return obj_cacheStr(self, hostname);
 }
 
-char* _socket__gethostbyname(PikaObj *self, char* host){
-    struct hostent *host_entry;
-    char *ip = NULL;
+char* _socket__gethostbyname(PikaObj* self, char* host) {
+    struct hostent* host_entry;
+    char* ip = NULL;
     host_entry = pika_platform_gethostbyname(host);
     if (host_entry == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
         __platform_printf("gethostbyname error\n");
         return NULL;
     }
-    ip = pika_platform_inet_ntoa(*((struct in_addr *)host_entry->h_addr_list[0]));
+    ip =
+        pika_platform_inet_ntoa(*((struct in_addr*)host_entry->h_addr_list[0]));
     return obj_cacheStr(self, ip);
 }
 

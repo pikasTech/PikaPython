@@ -291,8 +291,14 @@ TEST(socket, json_issue) {
 }
 #endif
 
-TEST_RUN_SINGLE_FILE_PASS(socket, socket_GET, "test/python/socket/socket_GET.py")
-TEST_RUN_SINGLE_FILE_PASS(socket, socket_DNS, "test/python/socket/socket_DNS.py")
+TEST_RUN_SINGLE_FILE_ASSERT(socket,
+                            socket_GET,
+                            "test/python/socket/socket_GET.py",
+                            obj_getBool(pikaMain, "res") == pika_true)
+
+TEST_RUN_SINGLE_FILE_PASS(socket,
+                          socket_DNS,
+                          "test/python/socket/socket_DNS.py")
 
 #endif
 

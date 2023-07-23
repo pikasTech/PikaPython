@@ -59,6 +59,23 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
         EXPECT_EQ(pikaMemNow(), 0);                                       \
     }
 
+#define TEST_RUN_SINGLE_FILE_ASSERT(_test_suite_, _test_name_, _file_name_, \
+                                    __expt__)                               \
+    TEST(_test_suite_, _test_name_) {                                       \
+        g_PikaMemInfo.heapUsedMax = 0;                                      \
+        PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);           \
+        extern unsigned char pikaModules_py_a[];                            \
+        obj_linkLibrary(pikaMain, pikaModules_py_a);                        \
+        /* run */                                                           \
+        __platform_printf("BEGIN\r\n");                                     \
+        pikaVM_runSingleFile(pikaMain, _file_name_);                        \
+        /* assert */                                                        \
+        EXPECT_TRUE((__expt__));                                            \
+        /* deinit */                                                        \
+        obj_deinit(pikaMain);                                               \
+        EXPECT_EQ(pikaMemNow(), 0);                                         \
+    }
+
 #define TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(_test_suite_, _test_name_,    \
                                            _file_name_, _except_output_) \
     TEST(_test_suite_, _test_name_) {                                    \

@@ -27,5 +27,4 @@ while True:
 
 s.close()
 
-assert 'HTTP/1.1 200 OK' in response
-print('PASS')
+res = 'HTTP/1.1 200 OK' in response
