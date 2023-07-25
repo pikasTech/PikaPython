@@ -1465,6 +1465,10 @@ __exit:
     return bLeftExist;
 }
 
+AST* AST_create(void) {
+    return New_queueObj();
+}
+
 PIKA_RES AST_setNodeAttr(AST* ast, char* sAttrName, char* sAttrVal) {
     return obj_setStr(ast, sAttrName, sAttrVal);
 }
@@ -1603,6 +1607,33 @@ static void _AST_parse_list(AST* ast, Args* buffs, char* sStmt) {
         }
     }
     return;
+}
+
+static void _AST_parse_comprehension(AST* ast, Args* outBuffs, char* sStmt) {
+#if PIKA_NANO_ENABLE
+    return;
+#endif
+    /* [ substmt1 for substmt2 in substmt3 ] */
+    Args buffs = {0};
+    AST_setNodeAttr(ast, (char*)"comprehension", "comprehension");
+    char* sSubStmts = strsCut(&buffs, sStmt, '[', ']');
+    char* sSubStms1 = Cursor_splitCollect(&buffs, sSubStmts, " for ", 0);
+    char* sSubStms23 = Cursor_splitCollect(&buffs, sSubStmts, " for ", 1);
+    char* sSubStms2 = Cursor_splitCollect(&buffs, sSubStms23, " in ", 0);
+    char* sSubStms3 = Cursor_splitCollect(&buffs, sSubStms23, " in ", 1);
+    AST_setNodeAttr(ast, (char*)"substmt1", sSubStms1);
+    AST_setNodeAttr(ast, (char*)"substmt2", sSubStms2);
+    AST_setNodeAttr(ast, (char*)"substmt3", sSubStms3);
+    strsDeinit(&buffs);
+    return;
+}
+
+static void _AST_parse_list_comprehension(AST* ast, Args* buffs, char* sStmt) {
+    if (Cursor_isContain(sStmt, TOKEN_keyword, " for ")) {
+        _AST_parse_comprehension(ast, buffs, sStmt);
+        return;
+    }
+    _AST_parse_list(ast, buffs, sStmt);
 }
 
 static void _AST_parse_dict(AST* ast, Args* buffs, char* sStmt) {
@@ -1804,7 +1835,7 @@ AST* AST_parseStmt(AST* ast, char* sStmt) {
 
     /* solve list stmt */
     if (STMT_list == eStmtType) {
-        _AST_parse_list(ast, &buffs, sRight);
+        _AST_parse_list_comprehension(ast, &buffs, sRight);
         goto __exit;
     }
 
@@ -2077,7 +2108,7 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
     }
 
     /* init data */
-    AST* oAst = New_queueObj();
+    AST* oAst = AST_create();
     Args buffs = {0};
     int8_t iBlockDeepthNow, iBlockDeepthLast = -1;
     char *sLineStart, *sStmt;
@@ -2602,23 +2633,12 @@ static char* Suger_import(Args* outbuffs, char* sLine) {
     return sLineAfter;
 }
 
-static char* Parser_linePreProcess(Args* outbuffs, char* sLine) {
-    sLine = Parser_removeComment(sLine);
-    Arg* aLine = NULL;
-    int iLineNum = 0;
-    /* check syntex error */
-    if (Lexer_isError(sLine)) {
-        sLine = NULL;
-        goto __exit;
-    }
-    /* process EOL */
-    sLine = strsDeleteChar(outbuffs, sLine, '\r');
+static char* Parser_sugerProcess(Args* outbuffs, char* sLine) {
     /* process import */
     sLine = Suger_import(outbuffs, sLine);
-
     /* process multi assign */
-    iLineNum = strCountSign(sLine, '\n') + 1;
-    aLine = arg_newStr("");
+    int iLineNum = strCountSign(sLine, '\n') + 1;
+    Arg* aLine = arg_newStr("");
     for (int i = 0; i < iLineNum; i++) {
         if (i > 0) {
             aLine = arg_strAppend(aLine, "\n");
@@ -2628,10 +2648,25 @@ static char* Parser_linePreProcess(Args* outbuffs, char* sLine) {
         aLine = arg_strAppend(aLine, sSingleLine);
     }
     sLine = strsCopy(outbuffs, arg_getStr(aLine));
-__exit:
     if (NULL != aLine) {
         arg_deinit(aLine);
     }
+    return sLine;
+}
+
+static char* Parser_linePreProcess(Args* outbuffs, char* sLine) {
+    sLine = Parser_removeComment(sLine);
+
+    /* check syntex error */
+    if (Lexer_isError(sLine)) {
+        sLine = NULL;
+        goto __exit;
+    }
+    /* process EOL */
+    sLine = strsDeleteChar(outbuffs, sLine, '\r');
+    /* process syntax sugar */
+    sLine = Parser_sugerProcess(outbuffs, sLine);
+__exit:
     return sLine;
 }
 
