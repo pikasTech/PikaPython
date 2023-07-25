@@ -39,7 +39,8 @@ if len(dirs) == 0:
     dirs = ['package/pikascript/pikascript-lib',
             'package/pikascript/pikascript-core', 'test']
 
-dir_skip = ['package/pikascript/pikascript-lib/re']
+dir_skip = ['package/pikascript/pikascript-lib/re',
+            'package/pikascript/pikascript-lib/PikaNN']
 
 # 对每个目录进行处理
 for dir_path_str in dirs:

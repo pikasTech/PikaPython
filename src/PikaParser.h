@@ -172,6 +172,8 @@ ByteCodeFrame* byteCodeFrame_appendFromAsm(ByteCodeFrame* bf, char* pikaAsm);
     Cursor_forEachExistPs(cursor, stmt)
 
 uint16_t TokenStream_getSize(char* tokenStream);
+Arg* arg_strAddIndent(Arg* aStrIn, int indent);
+Arg* arg_strAddIndentMuti(Arg* aStrIn, int indent);
 
 #endif
 

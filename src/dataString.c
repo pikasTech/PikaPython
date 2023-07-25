@@ -131,6 +131,10 @@ int32_t strCountSign(char* strIn, char sign) {
     return _strCountSign(strIn, sign, 0);
 }
 
+int32_t strGetLineNum(char* strIn) {
+    return strCountSign(strIn, '\n') + 1;
+}
+
 char* strReplaceChar(char* strIn, char src, char dst) {
     while (*strIn) {
         if (*strIn == src) {

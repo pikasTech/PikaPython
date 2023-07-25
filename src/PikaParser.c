@@ -1951,18 +1951,8 @@ __exit:
     return ast;
 }
 
-static int32_t _getSpaceNum(char* sLine) {
-    uint32_t uSize = strGetSize(sLine);
-    for (uint32_t i = 0; i < uSize; i++) {
-        if (sLine[i] != ' ') {
-            return i;
-        }
-    }
-    return 0;
-}
-
 static int32_t Parser_getPyLineBlockDeepth(char* sLine) {
-    int32_t iSpaceNum = _getSpaceNum(sLine);
+    int32_t iSpaceNum = strGetIndent(sLine);
     if (0 == iSpaceNum % 4) {
         return iSpaceNum / 4;
     }
@@ -2403,22 +2393,56 @@ static pika_bool _check_is_multi_assign(char* sArgList) {
     return bRes;
 }
 
-static Arg* arg_strAddSpaces(Arg* aStrIn, int num) {
-    Arg* aRet = aStrIn;
-    /* add space */
-    for (int i = 0; i < num; i++) {
-        aRet = arg_strAppend(aRet, " ");
+Arg* arg_strAddIndent(Arg* aStrIn, int indent) {
+    if (0 == indent) {
+        return aStrIn;
     }
+    /* add space */
+    char* sSpaces = pikaMalloc(indent + 1);
+    pika_platform_memset(sSpaces, ' ', indent);
+    sSpaces[indent] = '\0';
+    Arg* aRet = arg_newStr(sSpaces);
+    aRet = arg_strAppend(aRet, arg_getStr(aStrIn));
+    pikaFree(sSpaces, indent + 1);
+    arg_deinit(aStrIn);
     return aRet;
+}
+
+Arg* arg_strAddIndentMulti(Arg* aStrInMuti, int indent) {
+    if (0 == indent) {
+        return aStrInMuti;
+    }
+    char* sStrInMuti = arg_getStr(aStrInMuti);
+    char* sLine = NULL;
+    int iLineNum = strGetLineNum(sStrInMuti);
+    Arg* aStrOut = arg_newStr("");
+    Args buffs = {};
+    for (int i = 0; i < iLineNum; i++) {
+        sLine = strsPopLine(&buffs, &sStrInMuti);
+        Arg* aLine = arg_newStr(sLine);
+        aLine = arg_strAddIndent(aLine, indent);
+        sLine = arg_getStr(aLine);
+        aStrOut = arg_strAppend(aStrOut, sLine);
+        if (i != iLineNum - 1) {
+            aStrOut = arg_strAppend(aStrOut, "\n");
+        }
+        arg_deinit(aLine);
+    }
+    strsDeinit(&buffs);
+    arg_deinit(aStrInMuti);
+    return aStrOut;
 }
 
 static char* Suger_multiAssign(Args* out_buffs, char* sLine) {
 #if PIKA_NANO_ENABLE
     return sLine;
 #endif
+    if (!strIsContain(sLine, '=') || !strIsContain(sLine, ',')) {
+        return sLine;
+    }
     Args buffs = {0};
     char* sLineOut = sLine;
-    int iSpaceNum = _getSpaceNum(sLine);
+    int iIndent = strGetIndent(sLine);
     pika_bool bAssign = pika_false;
     Arg* aStmt = arg_newStr("");
     Arg* aOutList = arg_newStr("");
@@ -2457,9 +2481,6 @@ static char* Suger_multiAssign(Args* out_buffs, char* sLine) {
                            arg_getStr(aStmt));
 
     /* add space */
-    for (int i = 0; i < iSpaceNum; i++) {
-        aLineOut = arg_strAppend(aLineOut, " ");
-    }
     aLineOut = arg_strAppend(aLineOut, sLineItem);
 
     sOutList = arg_getStr(aOutList);
@@ -2471,16 +2492,12 @@ static char* Suger_multiAssign(Args* out_buffs, char* sLine) {
         char* sLineItem = strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
                                      "%s = $tmp[%d]\n", item, iOutNum);
         /* add space */
-        aLineOut = arg_strAddSpaces(aLineOut, iSpaceNum);
         aLineOut = arg_strAppend(aLineOut, sLineItem);
         iOutNum++;
     }
     /* add space */
-    for (int i = 0; i < iSpaceNum; i++) {
-        aLineOut = arg_strAppend(aLineOut, " ");
-    }
     aLineOut = arg_strAppend(aLineOut, "del $tmp");
-
+    aLineOut = arg_strAddIndentMulti(aLineOut, iIndent);
     sLineOut = strsCopy(out_buffs, arg_getStr(aLineOut));
     goto __exit;
 __exit:

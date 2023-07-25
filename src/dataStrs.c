@@ -104,6 +104,10 @@ char* strsPopToken(Args* buffs_p, char** tokens, char sign) {
     return strsCopy(buffs_p, strPopFirstToken(tokens, sign));
 }
 
+char* strsPopLine(Args* buffs_p, char** tokens) {
+    return strsCopy(buffs_p, strPopFirstToken(tokens, '\n'));
+}
+
 char* strsCopy(Args* buffs_p, char* source) {
     pika_assert(source != NULL);
     int32_t size = strGetSize(source);
