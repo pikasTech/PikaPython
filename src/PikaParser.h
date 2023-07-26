@@ -88,13 +88,17 @@ typedef struct BlockState {
 } BlockState;
 
 typedef struct Parser Parser;
-typedef char* (*fn_parser_Ast2BeckendCode)(Parser* self, AST* ast);
-typedef char* (*fn_parser_lines2BackendCode)(Parser* self, char* sPyLines);
+typedef char* (*fn_parser_Ast2Target)(Parser* self, AST* ast);
+typedef char* (*fn_parser_Lines2Target)(Parser* self, char* sPyLines);
+
+#define _VAL_NEED_INIT -1
+
 struct Parser {
     Args lineBuffs;
     Args genBuffs;
     BlockState blockState;
-    fn_parser_Ast2BeckendCode fn_ast2BeckendCode;
+    int blockDeepthOrigin;
+    fn_parser_Ast2Target fn_ast2Target;
     pika_bool isGenBytecode;
     ByteCodeFrame* bytecode_frame;
     uint8_t thisBlockDeepth;
@@ -137,9 +141,9 @@ char* parser_file2Doc(Parser* self, char* filename);
 AST* line2Ast(char* line);
 
 PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines);
-char* parser_line2Backend(Parser* self, char* line);
+char* parser_line2Target(Parser* self, char* line);
 
-Parser* New_parser(void);
+Parser* parser_create(void);
 int parser_deinit(Parser* parser);
 
 char* Cursor_popLastToken(Args* outBuffs, char** pStmt, char* str);

@@ -14,10 +14,11 @@
                 // "--gtest_filter=builtin.write_fn"
                 // "--gtest_filter=builtin.base_type"
                 // "--gtest_filter=parser.multi_comprehension"
-                "--gtest_filter=parser.comprehension"
+                "--gtest_filter=parser.comprehension_indent"
                 // "--gtest_filter=parser.*"
                 // "--gtest_filter=pikaMain.slice2"
                 // "--gtest_filter=re.match"
+                // "--gtest_filter=parser.for_indent"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -41,7 +41,7 @@ uint8_t TokenStream_isContain(char* tokenStream,
                               enum TokenType token_type,
                               char* pyload);
 char* TokenStream_pop(Args* buffs_p, char** tokenStream);
-char* parser_lines2Backend(Parser* self, char* sPyLines);
+char* parser_lines2Target(Parser* self, char* sPyLines);
 
 /* Cursor preivilage */
 void _Cursor_init(struct Cursor* cs);
@@ -2122,6 +2122,9 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
 
     /* get block deepth */
     iBlockDeepthNow = Parser_getPyLineBlockDeepth(sLine);
+    if (self->blockDeepthOrigin == _VAL_NEED_INIT) {
+        self->blockDeepthOrigin = iBlockDeepthNow;
+    }
     /* set block deepth */
     if (iBlockDeepthNow == -1) {
         /* get block_deepth error */
@@ -2136,20 +2139,23 @@ AST* parser_line2Ast(Parser* self, char* sLine) {
     obj_setInt(oAst, "blockDeepth", iBlockDeepthNow);
 
     /* check if exit block */
-    iBlockDeepthLast = stack_getTop(blockState->stack) + blockState->deepth;
-    /* exit each block */
-    for (int i = 0; i < iBlockDeepthLast - iBlockDeepthNow; i++) {
-        QueueObj* exit_block_queue = obj_getObj(oAst, "exitBlock");
-        /* create an exit_block queue */
-        if (NULL == exit_block_queue) {
-            obj_newObj(oAst, "exitBlock", "", New_TinyObj);
-            exit_block_queue = obj_getObj(oAst, "exitBlock");
-            queueObj_init(exit_block_queue);
+    if (0 != stack_getTop(blockState->stack)) {
+        iBlockDeepthLast = stack_getTop(blockState->stack) +
+                           blockState->deepth + self->blockDeepthOrigin;
+        /* exit each block */
+        for (int i = 0; i < iBlockDeepthLast - iBlockDeepthNow; i++) {
+            QueueObj* exit_block_queue = obj_getObj(oAst, "exitBlock");
+            /* create an exit_block queue */
+            if (NULL == exit_block_queue) {
+                obj_newObj(oAst, "exitBlock", "", New_TinyObj);
+                exit_block_queue = obj_getObj(oAst, "exitBlock");
+                queueObj_init(exit_block_queue);
+            }
+            char buff[10] = {0};
+            char* sBlockType = stack_popStr(blockState->stack, buff);
+            /* push exit block type to exit_block queue */
+            queueObj_pushStr(exit_block_queue, sBlockType);
         }
-        char buff[10] = {0};
-        char* sBlockType = stack_popStr(blockState->stack, buff);
-        /* push exit block type to exit_block queue */
-        queueObj_pushStr(exit_block_queue, sBlockType);
     }
 
     sLineStart = sLine + (iBlockDeepthNow - blockState->deepth) * 4;
@@ -2361,7 +2367,7 @@ __exit:
 }
 
 static AST* line2Ast_withBlockDeepth(char* sLine, int iBlockDeepth) {
-    Parser* parser = New_parser();
+    Parser* parser = parser_create();
     parser->blockState.deepth = iBlockDeepth;
     AST* ast = parser_line2Ast(parser, sLine);
     parser_deinit(parser);
@@ -2670,14 +2676,14 @@ __exit:
     return sLine;
 }
 
-char* parser_line2Backend(Parser* self, char* sLine) {
+char* parser_line2Target(Parser* self, char* sLine) {
     char* sOut = NULL;
     AST* oAst = NULL;
     uint8_t uLineNum = 0;
     /* docsting */
     if (strIsStartWith(sLine, "@docstring")) {
         oAst = parser_line2Ast(self, sLine);
-        char* sBackendCode = self->fn_ast2BeckendCode(self, oAst);
+        char* sBackendCode = self->fn_ast2Target(self, oAst);
         if (NULL == oAst) {
             sOut = "";
             goto __exit;
@@ -2710,7 +2716,7 @@ char* parser_line2Backend(Parser* self, char* sLine) {
             goto __exit;
         }
         /* gen ASM from AST */
-        char* sBackendCode = self->fn_ast2BeckendCode(self, oAst);
+        char* sBackendCode = self->fn_ast2Target(self, oAst);
         if (sOut == NULL) {
             sOut = sBackendCode;
         } else {
@@ -2778,7 +2784,7 @@ static uint8_t Parser_checkIsDocstring(char* line,
     return bIsDocstring;
 }
 
-char* parser_lines2Backend(Parser* self, char* sPyLines) {
+char* parser_lines2Target(Parser* self, char* sPyLines) {
     Arg* aBackendCode = arg_newStr("");
     Arg* aLineConnection = arg_newStr("");
     Arg* aDocstring = arg_newStr("");
@@ -2903,7 +2909,7 @@ char* parser_lines2Backend(Parser* self, char* sPyLines) {
 
     __parse_line:
         /* parse single Line to Asm */
-        sBackendCode = parser_line2Backend(self, sLine);
+        sBackendCode = parser_line2Target(self, sLine);
     __parse_after:
         if (NULL == sBackendCode) {
             sOut = NULL;
@@ -2957,8 +2963,8 @@ __exit:
 };
 
 char* parser_lines2Asm(Parser* self, char* sPyLines) {
-    self->fn_ast2BeckendCode = parser_ast2Asm;
-    return parser_lines2Backend(self, sPyLines);
+    self->fn_ast2Target = parser_ast2Asm;
+    return parser_lines2Target(self, sPyLines);
 }
 
 PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines) {
@@ -2969,10 +2975,10 @@ PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines) {
         " Note: Please check PIKA_BYTECODE_ONLY_ENABLE config.\r\n");
     return PIKA_RES_ERR_SYNTAX_ERROR;
 #else
-    Parser* parser = New_parser();
+    Parser* parser = parser_create();
     parser->isGenBytecode = pika_true;
     parser->bytecode_frame = bf;
-    if (1 == (uintptr_t)parser_lines2Backend(parser, py_lines)) {
+    if (1 == (uintptr_t)parser_lines2Target(parser, py_lines)) {
         parser_deinit(parser);
         return PIKA_RES_OK;
     }
@@ -2982,9 +2988,9 @@ PIKA_RES pika_lines2Bytes(ByteCodeFrame* bf, char* py_lines) {
 }
 
 char* pika_lines2Asm(Args* outBuffs, char* multi_line) {
-    Parser* parser = New_parser();
+    Parser* parser = parser_create();
     parser->isGenBytecode = pika_false;
-    char* sAsm = parser_lines2Backend(parser, multi_line);
+    char* sAsm = parser_lines2Target(parser, multi_line);
     if (NULL == sAsm) {
         parser_deinit(parser);
         return NULL;
@@ -2994,9 +3000,9 @@ char* pika_lines2Asm(Args* outBuffs, char* multi_line) {
     return sAsm;
 }
 
-char* pika_file2BackendCode(Args* outBuffs,
-                            char* filename,
-                            fn_parser_lines2BackendCode fn) {
+char* pika_file2Target(Args* outBuffs,
+                       char* filename,
+                       fn_parser_Lines2Target fn) {
     Args buffs = {0};
     Arg* file_arg = arg_loadFile(NULL, filename);
     pika_assert(NULL != file_arg);
@@ -3010,7 +3016,7 @@ char* pika_file2BackendCode(Args* outBuffs,
     lines = strsReplace(&buffs, lines, "\n\n", "\n");
     /* add '\n' at the end */
     lines = strsAppend(&buffs, lines, "\n\n");
-    Parser* parser = New_parser();
+    Parser* parser = parser_create();
     char* res = fn(parser, lines);
     if (NULL == res) {
         goto __exit;
@@ -3023,11 +3029,11 @@ __exit:
     return res;
 }
 
-int parser_file2BackendCodeFile(Parser* self,
-                                char* sPyFile,
-                                char* sDocFile,
-                                fn_parser_lines2BackendCode fn) {
-    char* sBackendCode = pika_file2BackendCode(&self->genBuffs, sPyFile, fn);
+int parser_file2TargetFile(Parser* self,
+                           char* sPyFile,
+                           char* sDocFile,
+                           fn_parser_Lines2Target fn) {
+    char* sBackendCode = pika_file2Target(&self->genBuffs, sPyFile, fn);
     FILE* fp = pika_platform_fopen(sDocFile, "wb");
     if (NULL == fp) {
         return -1;
@@ -3038,15 +3044,50 @@ int parser_file2BackendCodeFile(Parser* self,
 }
 
 char* pika_file2Asm(Args* outBuffs, char* filename) {
-    return pika_file2BackendCode(outBuffs, filename, parser_lines2Asm);
+    return pika_file2Target(outBuffs, filename, parser_lines2Asm);
 }
 
 char* parser_file2Doc(Parser* self, char* sPyFile) {
-    return pika_file2BackendCode(&self->genBuffs, sPyFile, parser_lines2Doc);
+    return pika_file2Target(&self->genBuffs, sPyFile, parser_lines2Doc);
 }
 
-char* AST_genAsm_sub(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
-    int deepth = obj_getInt(ast, "deepth");
+char* _comprehension2Asm(Args* outBuffs,
+                         int iBlockDeepth,
+                         char* sSubStmt1,
+                         char* sSbuStmt2,
+                         char* sSubStmt3) {
+    Args buffs = {0};
+    /*
+     * generate code for comprehension:
+     * $tmp = []
+     * for <substmt2> in <substmt3>:
+     *   $tmp.append(<substmt1>)
+     */
+    Arg* aLineOut = arg_newStr("$tmp = []\n");
+    aLineOut = arg_strAppend(
+        aLineOut, strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "for %s in %s:\n",
+                             sSbuStmt2, sSubStmt3));
+    aLineOut = arg_strAppend(
+        aLineOut, strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                             "    $tmp.append(%s)\npass\n", sSubStmt1));
+    aLineOut = arg_strAddIndentMulti(aLineOut, 4 * iBlockDeepth);
+    char* sLineOut = arg_getStr(aLineOut);
+    Parser* parser = parser_create();
+    char* sAsmOut = parser_lines2Asm(parser, sLineOut);
+    size_t lenAsmOut = strGetSize(sAsmOut);
+    /* strip B0 */
+    sAsmOut[lenAsmOut - 3] = '\0';
+    sAsmOut = strsAppend(&buffs, sAsmOut, "0 REF $tmp\n");
+    /* skip B0\n */
+    sAsmOut = strsCopy(outBuffs, sAsmOut + 3);
+    parser_deinit(parser);
+    arg_deinit(aLineOut);
+    strsDeinit(&buffs);
+    return sAsmOut;
+}
+
+char* AST_genAsm_sub(AST* oAST, AST* subAst, Args* outBuffs, char* sPikaAsm) {
+    int deepth = obj_getInt(oAST, "deepth");
     Args buffs = {0};
     /* append each queue item */
     while (1) {
@@ -3054,8 +3095,8 @@ char* AST_genAsm_sub(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
         if (NULL == subStmt) {
             break;
         }
-        obj_setInt(ast, "deepth", deepth + 1);
-        pikaAsm = AST_genAsm_sub(ast, subStmt, &buffs, pikaAsm);
+        obj_setInt(oAST, "deepth", deepth + 1);
+        sPikaAsm = AST_genAsm_sub(oAST, subStmt, &buffs, sPikaAsm);
     }
 
     /* Byte code generate rules */
@@ -3075,29 +3116,41 @@ char* AST_genAsm_sub(AST* ast, AST* subAst, Args* outBuffs, char* pikaAsm) {
 
     char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
 
+    /* comprehension */
+    if (NULL != AST_getNodeAttr(oAST, "comprehension")) {
+        int iBlockDeepth = AST_getBlockDeepthNow(oAST);
+        char* sSubStmt1 = AST_getNodeAttr(oAST, "substmt1");
+        char* sSubStmt2 = AST_getNodeAttr(oAST, "substmt2");
+        char* sSubStmt3 = AST_getNodeAttr(oAST, "substmt3");
+        sPikaAsm =
+            strsAppend(&buffs, sPikaAsm,
+                       _comprehension2Asm(&buffs, iBlockDeepth, sSubStmt1,
+                                          sSubStmt2, sSubStmt3));
+    }
+
     /* append the syntax item */
     for (size_t i = 0; i < sizeof(rules_subAst) / sizeof(GenRule); i++) {
         GenRule rule = rules_subAst[i];
-        char* astNodeVal = AST_getNodeAttr(subAst, rule.ast);
-        if (NULL != astNodeVal) {
+        char* sNodeVal = AST_getNodeAttr(subAst, rule.ast);
+        if (NULL != sNodeVal) {
             /* e.g. "0 RUN print \n" */
             pika_sprintf(buff, "%d %s ", deepth, rule.ins);
-            Arg* abuff = arg_newStr(buff);
+            Arg* aBuff = arg_newStr(buff);
             if (rule.type == VAL_DYNAMIC) {
-                abuff = arg_strAppend(abuff, astNodeVal);
+                aBuff = arg_strAppend(aBuff, sNodeVal);
             }
-            abuff = arg_strAppend(abuff, "\n");
-            pikaAsm = strsAppend(&buffs, pikaAsm, arg_getStr(abuff));
-            arg_deinit(abuff);
+            aBuff = arg_strAppend(aBuff, "\n");
+            sPikaAsm = strsAppend(&buffs, sPikaAsm, arg_getStr(aBuff));
+            arg_deinit(aBuff);
         }
     }
 
-    obj_setInt(ast, "deepth", deepth - 1);
+    obj_setInt(oAST, "deepth", deepth - 1);
     goto __exit;
 __exit:
-    pikaAsm = strsCopy(outBuffs, pikaAsm);
+    sPikaAsm = strsCopy(outBuffs, sPikaAsm);
     strsDeinit(&buffs);
-    return pikaAsm;
+    return sPikaAsm;
 }
 
 char* ASM_addBlockDeepth(AST* ast,
@@ -3136,36 +3189,6 @@ char* GenRule_toAsm(GenRule rule,
     return pikaAsm;
 }
 
-char* _comprehension2Asm(Args* outBuffs,
-                         int iBlockDeepth,
-                         char* sSubStmt1,
-                         char* sSbuStmt2,
-                         char* sSubStmt3) {
-    Args buffs = {0};
-    /*
-     * generate code for comprehension:
-     * $tmp = []
-     * for <substmt2> in <substmt3>:
-     *   $tmp.append(<substmt1>)
-     */
-    Arg* aLineOut = arg_newStr("$tmp = []\n");
-    aLineOut = arg_strAppend(
-        aLineOut, strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "for %s in %s:\n",
-                             sSbuStmt2, sSubStmt3));
-    aLineOut =
-        arg_strAppend(aLineOut, strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
-                                           "    $tmp.append(%s)\n", sSubStmt1));
-    aLineOut = arg_strAddIndentMulti(aLineOut, 4 * iBlockDeepth);
-    char* sLineOut = arg_getStr(aLineOut);
-    Parser* parser = New_parser();
-    sLineOut = parser_lines2Asm(parser, sLineOut);
-    sLineOut = strsCopy(outBuffs, sLineOut);
-    parser_deinit(parser);
-    arg_deinit(aLineOut);
-    strsDeinit(&buffs);
-    return sLineOut;
-}
-
 char* AST_genAsm(AST* oAST, Args* outBuffs) {
     const GenRule rules_topAst[] = {
         {.ins = "CTN", .type = VAL_NONEVAL, .ast = "continue"},
@@ -3197,19 +3220,6 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
     /* skip for docsting */
     if (NULL != AST_getNodeAttr(oAST, "docstring")) {
         goto __exit;
-    }
-
-    /* comprehension */
-    if (NULL != AST_getNodeAttr(oAST, "comprehension")) {
-        int iBlockDeepth = AST_getBlockDeepthNow(oAST);
-        char* sSubStmt1 = AST_getNodeAttr(oAST, "substmt1");
-        char* sSubStmt2 = AST_getNodeAttr(oAST, "substmt2");
-        char* sSubStmt3 = AST_getNodeAttr(oAST, "substmt3");
-
-        sPikaAsm =
-            strsAppend(&buffs, sPikaAsm,
-                       _comprehension2Asm(&buffs, iBlockDeepth, sSubStmt1,
-                                          sSubStmt2, sSubStmt3));
     }
 
     oExitBlock = obj_getObj(oAST, "exitBlock");
@@ -3581,13 +3591,12 @@ char* parser_ast2Doc(Parser* self, AST* oAST) {
 }
 
 int parser_file2DocFile(Parser* self, char* sPyFile, char* sDocFile) {
-    return parser_file2BackendCodeFile(self, sPyFile, sDocFile,
-                                       parser_lines2Doc);
+    return parser_file2TargetFile(self, sPyFile, sDocFile, parser_lines2Doc);
 }
 
 char* parser_lines2Doc(Parser* self, char* sPyLines) {
-    self->fn_ast2BeckendCode = parser_ast2Doc;
-    return parser_lines2Backend(self, sPyLines);
+    self->fn_ast2Target = parser_ast2Doc;
+    return parser_lines2Target(self, sPyLines);
 }
 
 char* parser_ast2Asm(Parser* self, AST* ast) {
@@ -3715,14 +3724,16 @@ char* pika_lines2Array(char* sLines) {
     return NULL;
 }
 
-Parser* New_parser(void) {
+Parser* parser_create(void) {
     Parser* self = (Parser*)pikaMalloc(sizeof(Parser));
     pika_platform_memset(self, 0, sizeof(Parser));
     self->blockState.stack = pikaMalloc(sizeof(Stack));
     /* generate asm as default */
-    self->fn_ast2BeckendCode = parser_ast2Asm;
+    self->fn_ast2Target = parser_ast2Asm;
     pika_platform_memset(self->blockState.stack, 0, sizeof(Stack));
     stack_init(self->blockState.stack);
+    /* -1 means not inited */
+    self->blockDeepthOrigin = _VAL_NEED_INIT;
     return self;
 }
 
