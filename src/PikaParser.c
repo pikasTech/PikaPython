@@ -1615,7 +1615,7 @@ static void _AST_parse_comprehension(AST* ast, Args* outBuffs, char* sStmt) {
 #endif
     /* [ substmt1 for substmt2 in substmt3 ] */
     Args buffs = {0};
-    AST_setNodeAttr(ast, (char*)"comprehension", "comprehension");
+    AST_setNodeAttr(ast, (char*)"comprehension", "");
     char* sSubStmts = strsCut(&buffs, sStmt, '[', ']');
     char* sSubStms1 = Cursor_splitCollect(&buffs, sSubStmts, " for ", 0);
     char* sSubStms23 = Cursor_splitCollect(&buffs, sSubStmts, " for ", 1);
@@ -3123,17 +3123,47 @@ char* GenRule_toAsm(GenRule rule,
     pikaAsm = AST_genAsm_sub(ast, ast, buffs, pikaAsm);
     /* e.g. "0 CTN \n" */
     pika_sprintf(buff, "%d %s ", deepth, rule.ins);
-    Arg* abuff = arg_newStr(buff);
+    Arg* aBuff = arg_newStr(buff);
     if (rule.type == VAL_DYNAMIC) {
-        abuff = arg_strAppend(abuff, obj_getStr(ast, rule.ast));
+        aBuff = arg_strAppend(aBuff, obj_getStr(ast, rule.ast));
     }
     if (rule.type == VAL_STATIC_) {
-        abuff = arg_strAppend(abuff, rule.val);
+        aBuff = arg_strAppend(aBuff, rule.val);
     }
-    abuff = arg_strAppend(abuff, "\n");
-    pikaAsm = strsAppend(buffs, pikaAsm, arg_getStr(abuff));
-    arg_deinit(abuff);
+    aBuff = arg_strAppend(aBuff, "\n");
+    pikaAsm = strsAppend(buffs, pikaAsm, arg_getStr(aBuff));
+    arg_deinit(aBuff);
     return pikaAsm;
+}
+
+char* _comprehension2Asm(Args* outBuffs,
+                         int iBlockDeepth,
+                         char* sSubStmt1,
+                         char* sSbuStmt2,
+                         char* sSubStmt3) {
+    Args buffs = {0};
+    /*
+     * generate code for comprehension:
+     * $tmp = []
+     * for <substmt2> in <substmt3>:
+     *   $tmp.append(<substmt1>)
+     */
+    Arg* aLineOut = arg_newStr("$tmp = []\n");
+    aLineOut = arg_strAppend(
+        aLineOut, strsFormat(&buffs, PIKA_LINE_BUFF_SIZE, "for %s in %s:\n",
+                             sSbuStmt2, sSubStmt3));
+    aLineOut =
+        arg_strAppend(aLineOut, strsFormat(&buffs, PIKA_LINE_BUFF_SIZE,
+                                           "    $tmp.append(%s)\n", sSubStmt1));
+    aLineOut = arg_strAddIndentMulti(aLineOut, 4 * iBlockDeepth);
+    char* sLineOut = arg_getStr(aLineOut);
+    Parser* parser = New_parser();
+    sLineOut = parser_lines2Asm(parser, sLineOut);
+    sLineOut = strsCopy(outBuffs, sLineOut);
+    parser_deinit(parser);
+    arg_deinit(aLineOut);
+    strsDeinit(&buffs);
+    return sLineOut;
 }
 
 char* AST_genAsm(AST* oAST, Args* outBuffs) {
@@ -3167,6 +3197,19 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
     /* skip for docsting */
     if (NULL != AST_getNodeAttr(oAST, "docstring")) {
         goto __exit;
+    }
+
+    /* comprehension */
+    if (NULL != AST_getNodeAttr(oAST, "comprehension")) {
+        int iBlockDeepth = AST_getBlockDeepthNow(oAST);
+        char* sSubStmt1 = AST_getNodeAttr(oAST, "substmt1");
+        char* sSubStmt2 = AST_getNodeAttr(oAST, "substmt2");
+        char* sSubStmt3 = AST_getNodeAttr(oAST, "substmt3");
+
+        sPikaAsm =
+            strsAppend(&buffs, sPikaAsm,
+                       _comprehension2Asm(&buffs, iBlockDeepth, sSubStmt1,
+                                          sSubStmt2, sSubStmt3));
     }
 
     oExitBlock = obj_getObj(oAST, "exitBlock");
@@ -3241,7 +3284,7 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
     bblockMatched = 0;
     if (strEqu(AST_getThisBlock(oAST), "for")) {
         /* for "for" iter */
-        char* sArgIn = obj_getStr(oAST, "arg_in");
+        char* sArgIn = AST_getNodeAttr(oAST, "arg_in");
 #if !PIKA_NANO_ENABLE
         char* sArgInKv = NULL;
 #endif
