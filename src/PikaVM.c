@@ -1302,7 +1302,8 @@ static void _load_call_arg(VMState* vm,
                            int* argc,
                            Arg* argv[]) {
     /* load the kw arg */
-    if (call_arg != NULL && arg_getIsKeyword(call_arg)) {
+    pika_assert(NULL != call_arg);
+    if (arg_getIsKeyword(call_arg)) {
         _kw_push(f, call_arg, *i);
         return;
     }
@@ -1311,9 +1312,7 @@ static void _load_call_arg(VMState* vm,
         if (f->is_vars) {
             pikaList_append(&(f->tuple)->super, call_arg);
             /* the append would copy the arg */
-            if (NULL != call_arg) {
-                arg_deinit(call_arg);
-            }
+            arg_deinit(call_arg);
             return;
         }
     }
@@ -1579,6 +1578,9 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             call_arg = arg_newStr(sProxyName);
         } else {
             call_arg = stack_popArg_alloc(&(vm->stack));
+        }
+        if (NULL == call_arg) {
+            call_arg = arg_newNone();
         }
         _load_call_arg(vm, call_arg, &f, &i, &argc, argv);
     }
