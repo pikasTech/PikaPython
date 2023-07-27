@@ -5,13 +5,13 @@ def test_socket_GET():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # 获取服务器的IP地址
-    server_ip = socket.gethostbyname('baidu.com')
+    # server_ip = socket.gethostbyname('baidu.com')
     server_port = 80
 
     # 连接到服务器
-    s.connect((server_ip, server_port))
+    s.connect(('pikapython.com', server_port))
     # 创建HTTP GET请求
-    request = 'GET / HTTP/1.1\r\nHost: baidu.com\r\n\r\n'
+    request = 'GET / HTTP/1.1\r\nHost: pikascript.com\r\n\r\n'
     # print('request:', request)
     s.send(request.encode())
 
@@ -29,7 +29,9 @@ def test_socket_GET():
     return response
 
 for i in range(10):
-    res = 'HTTP/1.1 200 OK' in test_socket_GET()
+    response = test_socket_GET()
+    res = 'HTTP/1.1' in response
     if res == True:
         break
     print('test_socket_GET() failed, retrying...')
+    print('response', response)

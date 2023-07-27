@@ -22,7 +22,7 @@
 */
 
 #include "fastlz.h"
-
+#include "PikaObj.h"
 #include <stdint.h>
 
 #pragma GCC diagnostic push
@@ -232,7 +232,8 @@ int fastlz1_compress(const void* input, int length, void* output) {
     const uint8_t* ip_limit = ip + length - 12 - 1;
     uint8_t* op = (uint8_t*)output;
 
-    uint32_t htab[HASH_SIZE];
+    // uint32_t htab[HASH_SIZE];
+    uint32_t* htab = (uint32_t*)pikaMalloc(sizeof(uint32_t) * HASH_SIZE);
     uint32_t seq, hash;
 
     /* initializes hash table */
@@ -289,6 +290,7 @@ int fastlz1_compress(const void* input, int length, void* output) {
     uint32_t copy = (uint8_t*)input + length - anchor;
     op = flz_literals(copy, anchor, op);
 
+    pikaFree(htab, sizeof(uint32_t) * HASH_SIZE);
     return op - (uint8_t*)output;
 }
 
@@ -377,7 +379,8 @@ int fastlz2_compress(const void* input, int length, void* output) {
     const uint8_t* ip_limit = ip + length - 12 - 1;
     uint8_t* op = (uint8_t*)output;
 
-    uint32_t htab[HASH_SIZE];
+    // uint32_t htab[HASH_SIZE];
+    uint32_t* htab = (uint32_t*)pikaMalloc(sizeof(uint32_t) * HASH_SIZE);
     uint32_t seq, hash;
 
     /* initializes hash table */
@@ -446,6 +449,7 @@ int fastlz2_compress(const void* input, int length, void* output) {
     /* marker for fastlz2 */
     *(uint8_t*)output |= (1 << 5);
 
+    pikaFree(htab, sizeof(uint32_t) * HASH_SIZE);
     return op - (uint8_t*)output;
 }
 

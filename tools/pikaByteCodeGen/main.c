@@ -145,7 +145,7 @@ static int _do_main(int argc, char **argv) {
       char *file_out_name = strsAppend(&buffs, file_name_no_ext, ".md");
       printf("file_out_name: %s\r\n", file_out_name);
       char *file_out_path = strsPathJoin(&buffs, file_folder, file_out_name);
-      Parser *parser = New_parser();
+      Parser *parser = parser_create();
       printf("generating doc %s: %s\r\n", file_path, file_out_path);
       parser_file2DocFile(parser, file_path, file_out_path);
       strsDeinit(&buffs);
@@ -160,7 +160,7 @@ static int _do_main(int argc, char **argv) {
       Args buffs = {0};
       char *file_path = argv[2];
       char *file_out_path = argv[4];
-      Parser *parser = New_parser();
+      Parser *parser = parser_create();
       printf("generating doc %s: %s\r\n", file_path, file_out_path);
       parser_file2DocFile(parser, file_path, file_out_path);
       strsDeinit(&buffs);
