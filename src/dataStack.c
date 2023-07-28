@@ -57,7 +57,7 @@ uint32_t stack_spFree(Stack* stack) {
 }
 
 uint32_t stack_spSizeFree(Stack* stack) {
-    return stack->stack_totle_size -
+    return stack->stack_totle_size / 4 -
            ((uintptr_t)stack->sp_size - (uintptr_t)stack_getSpSizeStart(stack));
 }
 
@@ -79,7 +79,10 @@ int32_t stack_init(Stack* stack) {
 void stack_pushSize(Stack* stack, int32_t size) {
     *(stack->sp_size) = size;
     stack->sp_size++;
-    pika_assert(stack_spSizeFree(stack) >= sizeof(int32_t));
+    if (stack_spSizeFree(stack) < sizeof(int32_t)) {
+        _stack_overflow_handler(stack,
+                                stack->stack_totle_size + sizeof(int32_t) * 4);
+    }
 }
 
 int32_t stack_popSize(Stack* stack) {
