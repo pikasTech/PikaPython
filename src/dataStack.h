@@ -53,6 +53,7 @@ int32_t stack_init(Stack* stack);
 int32_t stack_popSize(Stack* stack);
 void stack_pushSize(Stack* stack, int32_t size);
 void stack_reset(Stack* stack);
+uint8_t* stack_getSpStart(Stack* stack);
 #endif
 #ifdef __cplusplus
 }

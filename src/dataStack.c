@@ -29,11 +29,41 @@
 #include "PikaObj.h"
 #include "dataQueue.h"
 
+void _stack_overflow_handler(Stack* stack, size_t stack_require) {
+    pika_platform_printf(
+        "OverflowError: pika VM stack overflow, please use bigger "
+        "PIKA_STACK_BUFF_SIZE\r\n");
+    pika_platform_printf("Info: stack size request: %d\r\n",
+                         (int)stack_require);
+    pika_platform_printf("Info: stack size now: %d\r\n",
+                         (int)stack->stack_totle_size);
+    while (1) {
+    }
+}
+
 uint8_t* stack_popPyload(Stack* stack, int32_t size);
 
+uint8_t* stack_getSpStart(Stack* stack) {
+    return (uint8_t*)arg_getContent(stack->stack_pyload);
+}
+
+int32_t* stack_getSpSizeStart(Stack* stack) {
+    return (int32_t*)arg_getContent(stack->stack_size_array);
+}
+
+uint32_t stack_spFree(Stack* stack) {
+    return stack->stack_totle_size -
+           ((uintptr_t)stack->sp - (uintptr_t)stack_getSpStart(stack));
+}
+
+uint32_t stack_spSizeFree(Stack* stack) {
+    return stack->stack_totle_size -
+           ((uintptr_t)stack->sp_size - (uintptr_t)stack_getSpSizeStart(stack));
+}
+
 void stack_reset(Stack* stack) {
-    stack->sp = (uint8_t*)arg_getContent(stack->stack_pyload);
-    stack->sp_size = (int32_t*)arg_getContent(stack->stack_size_array);
+    stack->sp = stack_getSpStart(stack);
+    stack->sp_size = stack_getSpSizeStart(stack);
     stack->top = 0;
 }
 
@@ -49,6 +79,7 @@ int32_t stack_init(Stack* stack) {
 void stack_pushSize(Stack* stack, int32_t size) {
     *(stack->sp_size) = size;
     stack->sp_size++;
+    pika_assert(stack_spSizeFree(stack) >= sizeof(int32_t));
 }
 
 int32_t stack_popSize(Stack* stack) {
@@ -94,18 +125,9 @@ void stack_pushPyload(Stack* stack,
                       uint8_t* in,
                       size_t size,
                       pika_bool is_sample_copy) {
-    size_t stack_size_after_push =
-        size + (stack->sp - arg_getContent(stack->stack_pyload));
-    if (stack_size_after_push > stack->stack_totle_size) {
-        pika_platform_printf(
-            "OverflowError: pika VM stack overflow, please use bigger "
-            "PIKA_STACK_BUFF_SIZE\r\n");
-        pika_platform_printf("Info: stack size request: %d\r\n",
-                             (int)stack_size_after_push);
-        pika_platform_printf("Info: stack size now: %d\r\n",
-                             (int)stack->stack_totle_size);
-        while (1) {
-        }
+    size_t stack_require = size + (stack->sp - stack_getSpStart(stack));
+    if (stack_require > stack->stack_totle_size) {
+        _stack_overflow_handler(stack, stack_require);
     }
     Arg* top = (Arg*)stack->sp;
     if (is_sample_copy) {

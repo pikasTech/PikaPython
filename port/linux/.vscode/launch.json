@@ -19,7 +19,8 @@
                 // "--gtest_filter=pikaMain.slice2"
                 // "--gtest_filter=re.match"
                 // "--gtest_filter=parser.for_indent"
-                "--gtest_filter=VM.comprehension"
+                // "--gtest_filter=VM.comprehension"
+                "--gtest_filter=zlib.zlib1"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
