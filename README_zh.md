@@ -64,11 +64,20 @@ http://pikascript.com
 
 [![](assets/1644129110261-049ad5bb-21af-40e2-9533-a1c8c86790f1.jpg)](http://pikascript.com)
 
-## 使用 Pika 包管理器[PikaPackage.exe](http://pikapython.com/doc/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)
+## 相关开源项目 
 
-1. 直接运行[PikaPackage.exe](https://pikadoc-en.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html), 自动下载并更新pikapython主仓库(文件在当前磁盘的/tmp/pikapython文件夹)
+- ▶️ [pikapython Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
 
-2. 将[requestment.txt](/bsp/stm32g070cb/pikapython/requestment.txt)放在[PikaPackage.exe](https://pikadoc-en.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html)同一文件夹下, 运行[pikaPackage.exe](https://pikadoc-en.readthedocs.io/en/latest/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E4%B8%8E%E6%A8%A1%E5%9D%97%E7%AE%A1%E7%90%86.html), 自动在当前目录下安装[内核](../../tree/master/src)、[预编译器](../../tree/master/tools/pikaCompiler)与[模块](../../tree/master/package)。
+- ⭐ [pikapython Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
+
+- ⭐ [pikapython Bluepill Demo In GCC 🐍](https://github.com/Chandler-Kluser/pikascript_gcc_bluepill)
+
+- ⏩ [pika_startup_demo](https://gitee.com/kcfkwok/pika_startup_demo) This program demonstrate the 5 startup methods of pikapython.
+
+- 🎮 [PikaPython-OpenHardware](https://gitee.com/Lyon1998/pikapython_openhardware) PikaPython 开源硬件
+
+- 💻 [pikapython-msvc-qt](https://gitee.com/zuto360_460135301/pikapython-msvc-qt) 移植pikapython到windows平台，基于QT，采用MSVC编译器，移植pthread库，支持多线程。
+
 
 3. 已发布的模块列表：[packages.toml](/packages.toml)
 
@@ -81,10 +90,6 @@ http://pikascript.com
 [![PikaPi-Zero](document/image/147940229-a6b8ebf5-41db-4614-a525-448f47de0a67.png)](https://item.taobao.com/item.htm?spm=a2126o.success.result.1.76224831Y0X1gO&id=654947372034)
 
 开发板基于 STM32G030C8T6 小资源 MCU，仅 64kB Flash，8kB RAM 即可运行完整解释器，和完整的外设驱动（GPIO、TIME、IIC、UART、ADC、PWM、RGB、KEY、LCD）。板载 CH340 USB 转串口芯片，Type-C 接口，支持串口下载 python 脚本，板载4颗 RGB 灯，可选配[LCD屏幕](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102)。
-
-# 开源硬件
-
-- [PikaPython-OpenHardware](https://gitee.com/Lyon1998/pikapython_openhardware)
 
 # 开发手册
 
@@ -187,14 +192,6 @@ http://pikascript.com
 |OS|port|Google Test|Benchmark|
 |---|---|---|---|
 |linux|√|√|√|
-
-## 相关开源项目 
-
-- ▶️ [pikapython Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
-
-- ⭐ [pikapython Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
-
-- ⭐ [pikapython Bluepill Demo In GCC 🐍](https://github.com/Chandler-Kluser/pikascript_gcc_bluepill)
 
 # 3.特性
 ### (1)运行环境
@@ -667,6 +664,14 @@ while True:
 
 | 贡献记录 | 贡献者 |
 | --- | --- |
+|Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
+|bsp support for `Makefile-win-mingw` |[unsigned_0](https://gitee.com/unsigned0)|
+|Fix bug for STM32F4 `delay_unit()`|[MrLeekon](https://gitee.com/MrLeekon)|
+|bsp support for `air780e`|[Kirin](https://gitee.com/ztqkirin)|
+|Component Selection, Schematic Diagram, PCB Design for PIKA-OPEN-HARDWARE| 冰点 (WeChat Name)|
+|Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
+|Product Design, Component Selection for PIKA-OPEN-HARDWARE| 方海钰 |
+|Hardware Verification for PIKA-OPEN-HARDWARE|[HonestQiao](https://github.com/HonestQiao)|
 |support PIKA_UNBUFFERD_ENABLE config item|Seny Lee|
 |add `this` module|[blueloveTH](https://github.com/blueloveTH)|
 |Fix memory leak in event queue|[randyscott](https://github.com/randyscott)|

@@ -31,8 +31,6 @@
 
 #define _SKIP_COMPILE 1
 
-#ifndef _SKIP_COMPILE
-
 /*
     This module implements most of character typecodes from CPython, with
     some extensions:
@@ -177,7 +175,7 @@ STATIC mp_obj_t struct_unpack_from(size_t n_args, const mp_obj_t* args) {
 STATIC void struct_pack_into_internal(mp_obj_t fmt_in,
                                       byte* p,
                                       size_t n_args,
-                                      const mp_obj_t* args) {
+                                      mp_obj_t* args) {
     const char* fmt = mp_obj_str_get_str(fmt_in);
     char fmt_type = get_fmt_type(&fmt);
 
@@ -214,6 +212,8 @@ STATIC void struct_pack_into_internal(mp_obj_t fmt_in,
         fmt++;
     }
 }
+
+#ifndef _SKIP_COMPILE
 
 STATIC mp_obj_t struct_pack(size_t n_args, const mp_obj_t* args) {
     // TODO: "The arguments must match the values required by the format

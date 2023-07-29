@@ -67,10 +67,6 @@ You can use [simulation project](https://pikadoc-en.readthedocs.io/en/latest/Kei
 The board based on STM32G030C8T6 MCU, only 64kB Flash, 8kB RAM can run pikapython with total peripheral device (GPIO、TIME、IIC、RGB、KEY、LCD、RGB). 
 CH340 is deployed to support USB to serial with Type-C USB, support download python script py serial, there are 4 RGB on the board and support the [LCD](https://item.taobao.com/item.htm?spm=a1z10.3-c.w4002-23991764791.12.16f97c58fsLjVk&id=660745643102).
 
-# Open hardware
-
-- [PikaPython-OpenHardware](https://gitee.com/Lyon1998/pikapython_openhardware)
-
 # Related Projects
 
 - ▶️ [pikapython Binding For LVGL](https://github.com/lvgl/lv_binding_pikascript)
@@ -78,6 +74,12 @@ CH340 is deployed to support USB to serial with Type-C USB, support download pyt
 - ⭐ [pikapython Bluepill Demo In PlatformIO — Python-like REPL 🐍🔌](https://github.com/maxgerhardt/pikascript-pio-bluepill)
 
 - ⭐ [pikapython Bluepill Demo In GCC 🐍](https://github.com/Chandler-Kluser/pikascript_gcc_bluepill)
+
+- ⏩ [pika_startup_demo](https://gitee.com/kcfkwok/pika_startup_demo) This program demonstrate the 5 startup methods of pikapython.
+
+- 🎮 [PikaPython-OpenHardware](https://gitee.com/Lyon1998/pikapython_openhardware) PikaPython 开源硬件
+
+- 💻 [pikapython-msvc-qt](https://gitee.com/zuto360_460135301/pikapython-msvc-qt) 移植pikapython到windows平台，基于QT，采用MSVC编译器，移植pthread库，支持多线程。
 
 # Document
 
@@ -642,6 +644,14 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+|Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
+|bsp support for `Makefile-win-mingw` |[unsigned_0](https://gitee.com/unsigned0)|
+|Fix bug for STM32F4 `delay_unit()`|[MrLeekon](https://gitee.com/MrLeekon)|
+|bsp support for `air780e`|[Kirin](https://gitee.com/ztqkirin)|
+|Component Selection, Schematic Diagram, PCB Design for PIKA-OPEN-HARDWARE| 冰点 (WeChat Name)|
+|Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
+|Product Design, Component Selection for PIKA-OPEN-HARDWARE| 方海钰 |
+|Hardware Verification for PIKA-OPEN-HARDWARE|[HonestQiao](https://github.com/HonestQiao)|
 |support PIKA_UNBUFFERD_ENABLE config item|Seny Lee|
 |add `this` module|[blueloveTH](https://github.com/blueloveTH)|
 |Fix memory leak in event queue|[randyscott](https://github.com/randyscott)|
