@@ -1,4 +1,3 @@
-#include "STM32G0_ADC.h"
 #include <stdint.h>
 #include "BaseObj.h"
 #include "STM32G0_common.h"
