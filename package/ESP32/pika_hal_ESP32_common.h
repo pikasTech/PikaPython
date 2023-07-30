@@ -1,5 +1,5 @@
-#ifndef __STM32__COMMON__H
-#define __STM32__COMMON__H
+#ifndef __ESP32__COMMON__H
+#define __ESP32__COMMON__H
 #include <stdint.h>
 #include "PikaObj.h"
 
