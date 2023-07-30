@@ -177,9 +177,9 @@ char* _socket__gethostname(PikaObj* self) {
     return obj_cacheStr(self, hostname);
 }
 
-char* _socket__gethostbyname(PikaObj *self, char* host){
-    struct hostent *host_entry;
-    char *ip = NULL;
+char* _socket__gethostbyname(PikaObj* self, char* host) {
+    struct hostent* host_entry;
+    char* ip = NULL;
 #ifdef _WIN32
     pika_platform_init_winsock();
 #endif
@@ -189,7 +189,8 @@ char* _socket__gethostbyname(PikaObj *self, char* host){
         __platform_printf("gethostbyname error\n");
         return NULL;
     }
-    ip = pika_platform_inet_ntoa(*((struct in_addr *)host_entry->h_addr_list[0]));
+    ip =
+        pika_platform_inet_ntoa(*((struct in_addr*)host_entry->h_addr_list[0]));
 #ifdef _WIN32
     pika_platform_cleanup_winsock();
 #endif

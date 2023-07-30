@@ -3,6 +3,9 @@ FLAG_OK="\033[32m[ OK ]\033[0m"
 FLAG_INFO="\033[32m[Info]\033[0m"
 FLAG_NOTE="\033[35m[Note]\033[0m"
 
+sh version.sh
+python3 format.py
+
 if [ -d "../../../pikalab" ]; then
     sh lab-push.sh
 fi
@@ -16,9 +19,6 @@ sh std_push.sh PikaStdData
 sh std_push.sh PikaDebug
 sh std_push.sh PikaStdTask
 sh std_push.sh builtins
-
-sh version.sh
-python3 format.py
 
 echo "$FLAG_OK Push \033[32mpikascript-core\033[0m to ../../src successfully!"
 echo "$FLAG_OK Push \033[32mPikaSdLib\033[0m to ../../package/PikaStdLib successfully!"

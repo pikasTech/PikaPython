@@ -10,7 +10,7 @@
 static int pika_platform_winsock_initialized = 0;
 
 int pika_platform_init_winsock() {
-    if(0 == pika_platform_winsock_initialized) {
+    if (0 == pika_platform_winsock_initialized) {
         WSADATA wsaData;
         int res = WSAStartup(MAKEWORD(2, 2), &wsaData);
         if (res != 0) {
@@ -18,21 +18,17 @@ int pika_platform_init_winsock() {
             return 1;
         }
         pika_platform_winsock_initialized = 1;
-    }
-    else if(0 < pika_platform_winsock_initialized)
-    {
+    } else if (0 < pika_platform_winsock_initialized) {
         pika_platform_winsock_initialized++;
     }
     return 0;
 }
 
 int pika_platform_cleanup_winsock() {
-    if(1 == pika_platform_winsock_initialized) {
+    if (1 == pika_platform_winsock_initialized) {
         WSACleanup();
         pika_platform_winsock_initialized = 0;
-    }
-    else if(1 < pika_platform_winsock_initialized)
-    {
+    } else if (1 < pika_platform_winsock_initialized) {
         pika_platform_winsock_initialized--;
     }
     return 0;
@@ -180,12 +176,12 @@ PIKA_WEAK int pika_platform_fcntl(int fd, int cmd, long arg) {
     return fcntl(fd, cmd, arg);
 #elif defined(_WIN32)
     if (cmd == F_GETFL) {
-       u_long mode = 0;
-       ioctlsocket(fd, FIONBIO, &mode);
-       return (mode ? O_NONBLOCK : 0);
+        u_long mode = 0;
+        ioctlsocket(fd, FIONBIO, &mode);
+        return (mode ? O_NONBLOCK : 0);
     } else if (cmd == F_SETFL) {
-       u_long mode = (arg & O_NONBLOCK) ? 1 : 0;
-       return ioctlsocket(fd, FIONBIO, &mode);
+        u_long mode = (arg & O_NONBLOCK) ? 1 : 0;
+        return ioctlsocket(fd, FIONBIO, &mode);
     }
     return -1;
 #else

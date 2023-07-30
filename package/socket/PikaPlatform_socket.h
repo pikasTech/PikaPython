@@ -16,10 +16,10 @@
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
 #include <io.h>
-#define O_NONBLOCK      0x0004  /* non blocking I/O, from BSD */
+#define O_NONBLOCK 0x0004 /* non blocking I/O, from BSD */
 
-#define F_GETFL  3
-#define F_SETFL  4
+#define F_GETFL 3
+#define F_SETFL 4
 
 int pika_platform_init_winsock();
 int pika_platform_cleanup_winsock();

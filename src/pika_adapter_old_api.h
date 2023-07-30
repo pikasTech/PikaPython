@@ -46,6 +46,7 @@ extern "C" {
 #define __platform_getTick pika_platform_get_tick
 #define pika_platform_getTick pika_platform_get_tick
 #define __platform_sleep_ms pika_platform_sleep_ms
+#define __platform_sleep_s pika_platform_sleep_s
 
 #define __pks_hook_instruct pika_hook_instruct
 #define __pks_hook_arg_cache_filter pika_hook_arg_cache_filter
