@@ -1,4 +1,4 @@
-#include "PikaPlatform_socket.h"
+﻿#include "PikaPlatform_socket.h"
 #include "_socket_socket.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 0)
@@ -10,6 +10,9 @@ void _socket_socket__init(PikaObj* self) {
     int type = obj_getInt(self, "type");
     int protocol = obj_getInt(self, "protocol");
     int sockfd = 0;
+#ifdef _WIN32
+    pika_platform_init_winsock();
+#endif
     sockfd = __platform_socket(family, type, protocol);
     if (sockfd < 0) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
@@ -23,6 +26,9 @@ void _socket_socket__init(PikaObj* self) {
 void _socket_socket__close(PikaObj* self) {
     int sockfd = obj_getInt(self, "sockfd");
     __platform_close(sockfd);
+#ifdef _WIN32
+    pika_platform_cleanup_winsock();
+#endif
 }
 
 void _socket_socket__send(PikaObj* self, Arg* data) {
@@ -161,13 +167,22 @@ void _socket_socket__bind(PikaObj* self, char* host, int port) {
 char* _socket__gethostname(PikaObj* self) {
     char hostname_buff[128] = {0};
     char* hostname = (char*)hostname_buff;
-    __platform_gethostname(hostname_buff, 128);
+#ifdef _WIN32
+    pika_platform_init_winsock();
+#endif
+    pika_platform_gethostname(hostname_buff, 128);
+#ifdef _WIN32
+    pika_platform_cleanup_winsock();
+#endif
     return obj_cacheStr(self, hostname);
 }
 
 char* _socket__gethostbyname(PikaObj *self, char* host){
     struct hostent *host_entry;
     char *ip = NULL;
+#ifdef _WIN32
+    pika_platform_init_winsock();
+#endif
     host_entry = pika_platform_gethostbyname(host);
     if (host_entry == NULL) {
         obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
@@ -175,6 +190,9 @@ char* _socket__gethostbyname(PikaObj *self, char* host){
         return NULL;
     }
     ip = pika_platform_inet_ntoa(*((struct in_addr *)host_entry->h_addr_list[0]));
+#ifdef _WIN32
+    pika_platform_cleanup_winsock();
+#endif
     return obj_cacheStr(self, ip);
 }
 
