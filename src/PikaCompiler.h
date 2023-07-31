@@ -48,7 +48,7 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
                                  uint8_t** addr_p,
                                  size_t* size_p);
 
-#define LIB_VERSION_NUMBER 5
+#define LIB_VERSION_NUMBER 6
 #define LIB_INFO_BLOCK_SIZE 32
 #define PIKA_APP_MAGIC_CODE_OFFSET 0
 #define PIKA_APP_MODULE_SIZE_OFFSET 1

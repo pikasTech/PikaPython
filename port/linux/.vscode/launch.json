@@ -20,7 +20,13 @@
                 // "--gtest_filter=re.match"
                 // "--gtest_filter=parser.for_indent"
                 // "--gtest_filter=VM.comprehension"
-                "--gtest_filter=zlib.zlib1"
+                // "--gtest_filter=zlib.zlib1"
+                // "--gtest_filter=builtin.big_list"
+                // "--gtest_filter=parser.big_list"
+                // "--gtest_filter=VM.list_base"
+                // "--gtest_filter=vm.issue_dict_update"
+                // "--gtest_filter=builtin.tuple"
+                "--gtest_filter=pikaMain.num_issue1"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

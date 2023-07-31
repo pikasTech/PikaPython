@@ -156,7 +156,7 @@ uint8_t _Cursor_count(char* stmt,
 
 AST* AST_parseStmt(AST* ast, char* stmt);
 AST* AST_create(void);
-char* AST_genAsm(AST* oAST, Args* outBuffs);
+char* AST_genAsm_top(AST* oAST, Args* outBuffs);
 int32_t AST_deinit(AST* ast);
 
 char* instructUnit_fromAsmLine(Args* outBuffs, char* pikaAsm);

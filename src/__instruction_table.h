@@ -98,3 +98,5 @@ def_ins(NON)
     def_ins(JNZ)
     /* tuple */
     def_ins(TPL)
+    /* no list */
+    def_ins(NLS)

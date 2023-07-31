@@ -34,7 +34,7 @@
 #include "dataStrs.h"
 
 /* local head */
-char* AST_genAsm(AST* ast, Args* outBuffs);
+char* AST_genAsm_top(AST* ast, Args* outBuffs);
 int32_t AST_deinit(AST* ast);
 
 uint8_t TokenStream_isContain(char* tokenStream,
@@ -3086,21 +3086,29 @@ char* _comprehension2Asm(Args* outBuffs,
     return sAsmOut;
 }
 
-char* AST_genAsm_sub(AST* oAST, AST* subAst, Args* outBuffs, char* sPikaAsm) {
+char* AST_genAsm(AST* oAST, AST* subAst, Args* outBuffs, char* sPikaAsm) {
     int deepth = obj_getInt(oAST, "deepth");
     Args buffs = {0};
-    /* append each queue item */
+    char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
+
+    /* comprehension */
+    if (NULL != AST_getNodeAttr(subAst, "list")) {
+        pika_sprintf(buff, "%d %s \n", deepth, "LST");
+        sPikaAsm = strsAppend(&buffs, sPikaAsm, buff);
+    }
+
+    /* Solve sub stmt */
     while (1) {
         QueueObj* subStmt = queueObj_popObj(subAst);
         if (NULL == subStmt) {
             break;
         }
         obj_setInt(oAST, "deepth", deepth + 1);
-        sPikaAsm = AST_genAsm_sub(oAST, subStmt, &buffs, sPikaAsm);
+        sPikaAsm = AST_genAsm(oAST, subStmt, &buffs, sPikaAsm);
     }
 
     /* Byte code generate rules */
-    const GenRule rules_subAst[] = {
+    const GenRule rules_after[] = {
         {.ins = "RUN", .type = VAL_DYNAMIC, .ast = "method"},
         {.ins = "OPT", .type = VAL_DYNAMIC, .ast = "operator"},
         {.ins = "BYT", .type = VAL_DYNAMIC, .ast = "bytes"},
@@ -3110,11 +3118,9 @@ char* AST_genAsm_sub(AST* oAST, AST* subAst, Args* outBuffs, char* sPikaAsm) {
         {.ins = "STR", .type = VAL_DYNAMIC, .ast = "string"},
         {.ins = "SLC", .type = VAL_NONEVAL, .ast = "slice"},
         {.ins = "DCT", .type = VAL_NONEVAL, .ast = "dict"},
-        {.ins = "LST", .type = VAL_NONEVAL, .ast = "list"},
         {.ins = "TPL", .type = VAL_NONEVAL, .ast = "tuple"},
+        {.ins = "NLS", .type = VAL_NONEVAL, .ast = "list"},
         {.ins = "OUT", .type = VAL_DYNAMIC, .ast = "left"}};
-
-    char* buff = args_getBuff(&buffs, PIKA_SPRINTF_BUFF_SIZE);
 
     /* comprehension */
     if (NULL != AST_getNodeAttr(oAST, "comprehension")) {
@@ -3129,8 +3135,8 @@ char* AST_genAsm_sub(AST* oAST, AST* subAst, Args* outBuffs, char* sPikaAsm) {
     }
 
     /* append the syntax item */
-    for (size_t i = 0; i < sizeof(rules_subAst) / sizeof(GenRule); i++) {
-        GenRule rule = rules_subAst[i];
+    for (size_t i = 0; i < sizeof(rules_after) / sizeof(GenRule); i++) {
+        GenRule rule = rules_after[i];
         char* sNodeVal = AST_getNodeAttr(subAst, rule.ast);
         if (NULL != sNodeVal) {
             /* e.g. "0 RUN print \n" */
@@ -3173,7 +3179,7 @@ char* GenRule_toAsm(GenRule rule,
                     int deepth) {
     char* buff = args_getBuff(buffs, PIKA_SPRINTF_BUFF_SIZE);
     /* parse stmt ast */
-    pikaAsm = AST_genAsm_sub(ast, ast, buffs, pikaAsm);
+    pikaAsm = AST_genAsm(ast, ast, buffs, pikaAsm);
     /* e.g. "0 CTN \n" */
     pika_sprintf(buff, "%d %s ", deepth, rule.ins);
     Arg* aBuff = arg_newStr(buff);
@@ -3189,7 +3195,7 @@ char* GenRule_toAsm(GenRule rule,
     return pikaAsm;
 }
 
-char* AST_genAsm(AST* oAST, Args* outBuffs) {
+char* AST_genAsm_top(AST* oAST, Args* outBuffs) {
     const GenRule rules_topAst[] = {
         {.ins = "CTN", .type = VAL_NONEVAL, .ast = "continue"},
         {.ins = "BRK", .type = VAL_NONEVAL, .ast = "break"},
@@ -3305,7 +3311,7 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
         _l_x[sizeof(_l_x) - 2] = sBlockDeepthCHar;
         /* init iter */
         /*     get the iter(_l<x>) */
-        sPikaAsm = AST_genAsm_sub(oAST, oAST, &buffs, sPikaAsm);
+        sPikaAsm = AST_genAsm(oAST, oAST, &buffs, sPikaAsm);
         aNewAsm = arg_strAppend(aNewAsm, "0 OUT ");
         aNewAsm = arg_strAppend(aNewAsm, _l_x);
         aNewAsm = arg_strAppend(aNewAsm, "\n");
@@ -3357,8 +3363,8 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
 
                 AST* ast_this = line2Ast_withBlockDeepth(
                     stmt, AST_getBlockDeepthNow(oAST) + 1);
-                sPikaAsm =
-                    strsAppend(&buffs, sPikaAsm, AST_genAsm(ast_this, &buffs));
+                sPikaAsm = strsAppend(&buffs, sPikaAsm,
+                                      AST_genAsm_top(ast_this, &buffs));
                 AST_deinit(ast_this);
                 out_num++;
             }
@@ -3374,7 +3380,7 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
         /* skip if __else is 0 */
         sPikaAsm = strsAppend(&buffs, sPikaAsm, "0 NEL 1\n");
         /* parse stmt ast */
-        sPikaAsm = AST_genAsm_sub(oAST, oAST, &buffs, sPikaAsm);
+        sPikaAsm = AST_genAsm(oAST, oAST, &buffs, sPikaAsm);
         /* skip if stmt is 0 */
         sPikaAsm = strsAppend(&buffs, sPikaAsm, "0 JEZ 1\n");
         bblockMatched = 1;
@@ -3405,8 +3411,8 @@ char* AST_genAsm(AST* oAST, Args* outBuffs) {
                 sPikaAsm = strsAppend(&buffs, sPikaAsm, "0 JNZ 2\n");
                 AST* ast_this = line2Ast_withBlockDeepth(
                     sStmt, AST_getBlockDeepthNow(oAST) + 1);
-                sPikaAsm =
-                    strsAppend(&buffs, sPikaAsm, AST_genAsm(ast_this, &buffs));
+                sPikaAsm = strsAppend(&buffs, sPikaAsm,
+                                      AST_genAsm_top(ast_this, &buffs));
                 AST_deinit(ast_this);
             }
         }
@@ -3480,7 +3486,7 @@ __exit:
     }
     if (!bblockMatched) {
         /* parse stmt ast */
-        sPikaAsm = AST_genAsm_sub(oAST, oAST, &buffs, sPikaAsm);
+        sPikaAsm = AST_genAsm(oAST, oAST, &buffs, sPikaAsm);
     }
 
     /* output pikaAsm */
@@ -3600,7 +3606,7 @@ char* parser_lines2Doc(Parser* self, char* sPyLines) {
 }
 
 char* parser_ast2Asm(Parser* self, AST* ast) {
-    return AST_genAsm(ast, &self->lineBuffs);
+    return AST_genAsm_top(ast, &self->lineBuffs);
 }
 
 int32_t AST_deinit(AST* ast) {

@@ -88,6 +88,7 @@ struct VMState {
     uint8_t super_invoke_deepth;
     RunState* run_state;
     pika_bool ireg[PIKA_REGIST_SIZE];
+    PikaObj* oreg[16];
 };
 
 typedef struct {
@@ -121,7 +122,7 @@ struct OperatorInfo {
     int64_t i1;
     int64_t i2;
     Arg* res;
-    int num;
+    uint32_t num;
     VMState* vm;
 };
 

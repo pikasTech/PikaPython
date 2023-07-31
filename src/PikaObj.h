@@ -79,7 +79,6 @@ struct NativeProperty {
     uint32_t methodGroupCount;
 };
 
-typedef struct PikaObj PikaObj;
 struct PikaObj {
     Args* list;
     void* constructor;

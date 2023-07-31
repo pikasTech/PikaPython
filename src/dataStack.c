@@ -67,13 +67,16 @@ void stack_reset(Stack* stack) {
     stack->top = 0;
 }
 
-int32_t stack_init(Stack* stack) {
-    stack->stack_pyload = arg_setContent(NULL, NULL, PIKA_STACK_BUFF_SIZE);
-    stack->stack_size_array =
-        arg_setContent(NULL, NULL, PIKA_STACK_BUFF_SIZE / 4);
+int32_t _stack_init(Stack* stack, size_t stack_size) {
+    stack->stack_pyload = arg_setContent(NULL, NULL, stack_size);
+    stack->stack_size_array = arg_setContent(NULL, NULL, stack_size / 4);
     stack_reset(stack);
-    stack->stack_totle_size = PIKA_STACK_BUFF_SIZE;
+    stack->stack_totle_size = stack_size;
     return 0;
+}
+
+int32_t stack_init(Stack* stack) {
+    return _stack_init(stack, PIKA_STACK_BUFF_SIZE);
 };
 
 void stack_pushSize(Stack* stack, int32_t size) {

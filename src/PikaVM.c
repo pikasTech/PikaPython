@@ -317,7 +317,7 @@ void pika_vmSignal_setCtrlClear(void) {
 }
 
 /* head declare start */
-static uint8_t VMState_getInputArgNum(VMState* vm);
+static uint32_t VMState_getInputArgNum(VMState* vm);
 static VMParameters* _pikaVM_runByteCodeFrameWithState(
     PikaObj* self,
     VMParameters* locals,
@@ -575,6 +575,7 @@ static void VMState_initReg(VMState* self) {
     for (uint8_t i = 0; i < PIKA_REGIST_SIZE; i++) {
         self->ireg[i] = pika_false;
     }
+    pika_platform_memset(self->oreg, 0, sizeof(self->oreg));
 }
 
 static pika_bool _checkLReg(char* data) {
@@ -798,7 +799,7 @@ static Arg* VM_instruction_handler_SLC(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
 #if PIKA_SYNTAX_SLICE_ENABLE
-    int n_input = VMState_getInputArgNum(vm);
+    uint32_t n_input = VMState_getInputArgNum(vm);
     if (n_input < 2) {
         return arg_newNone();
     }
@@ -1339,11 +1340,11 @@ static void _load_call_arg(VMState* vm,
     (f->n_positional_got)++;
 }
 
-static int _get_n_input_with_unpack(VMState* vm, int n_used) {
+static uint32_t _get_n_input_with_unpack(VMState* vm, int n_used) {
 #if PIKA_NANO_ENABLE
     return VMState_getInputArgNum(vm);
 #else
-    int n_input = VMState_getInputArgNum(vm) - n_used;
+    uint32_t n_input = VMState_getInputArgNum(vm) - n_used;
     int get_star = 0;
     int unpack_num = 0;
     for (int i = 0; i < n_input; i++) {
@@ -1422,7 +1423,7 @@ static int _get_n_input_with_unpack(VMState* vm, int n_used) {
             arg_deinit(call_arg);
         }
     }
-    int n_input_new = stack_getTop(&stack_tmp);
+    uint32_t n_input_new = stack_getTop(&stack_tmp);
     for (int i = 0; i < n_input_new; i++) {
         Arg* arg = stack_popArg_alloc(&stack_tmp);
         stack_pushArg(&(vm->stack), arg);
@@ -1647,7 +1648,7 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
                                      pika_bool is_list) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
     NewFun constructor = is_list ? New_PikaStdData_List : New_PikaStdData_Tuple;
-    uint8_t n_arg = VMState_getInputArgNum(vm);
+    uint32_t n_arg = VMState_getInputArgNum(vm);
     PikaObj* list = newNormalObj(constructor);
     objList_init(list);
     Stack stack = {0};
@@ -1675,7 +1676,25 @@ static Arg* VM_instruction_handler_LST(PikaObj* self,
                                        VMState* vm,
                                        char* data,
                                        Arg* arg_ret_reg) {
-    return _vm_create_list_or_tuple(self, vm, pika_true);
+#if PIKA_BUILTIN_STRUCT_ENABLE
+    PikaObj* list = newNormalObj(New_PikaStdData_List);
+    objList_init(list);
+    vm->oreg[VMState_getInvokeDeepthNow(vm)] = list;
+#endif
+    return NULL;
+}
+
+static Arg* VM_instruction_handler_NLS(PikaObj* self,
+                                       VMState* vm,
+                                       char* data,
+                                       Arg* arg_ret_reg) {
+#if PIKA_BUILTIN_STRUCT_ENABLE
+    PikaObj* list = vm->oreg[VMState_getInvokeDeepthNow(vm)];
+    vm->oreg[VMState_getInvokeDeepthNow(vm)] = NULL;
+    return arg_newObj(list);
+#else
+    return VM_instruction_handler_NON(self, vm, "", NULL);
+#endif
 }
 
 static Arg* VM_instruction_handler_TPL(PikaObj* self,
@@ -1701,7 +1720,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    uint8_t n_arg = VMState_getInputArgNum(vm);
+    uint32_t n_arg = VMState_getInputArgNum(vm);
     PikaObj* dict = newNormalObj(New_PikaStdData_Dict);
     objDict_init(dict);
     Stack stack = {0};
@@ -1948,7 +1967,7 @@ static Arg* VM_instruction_handler_RUN(PikaObj* self,
     if (NULL == oMethodHost && sRunPath[0] == '.') {
         /* get method host obj from stack */
         Arg** stack_tmp = (Arg**)pikaMalloc(sizeof(Arg*) * PIKA_ARG_NUM_MAX);
-        int n_arg = VMState_getInputArgNum(vm);
+        uint32_t n_arg = VMState_getInputArgNum(vm);
         if (n_arg > PIKA_ARG_NUM_MAX) {
             pika_platform_printf(
                 "[ERROR] Too many args in RUN instruction, please use bigger "
@@ -2441,11 +2460,11 @@ static Arg* VM_instruction_handler_JNZ(PikaObj* self,
     return _VM_JEZ(self, vm, data, arg_ret_reg, !bAssert);
 }
 
-static uint8_t VMState_getInputArgNum(VMState* vm) {
+static uint32_t VMState_getInputArgNum(VMState* vm) {
     InstructUnit* ins_unit_now = VMState_getInstructNow(vm);
     uint8_t invoke_deepth_this = instructUnit_getInvokeDeepth(ins_unit_now);
     int32_t pc_this = vm->pc;
-    uint8_t num = 0;
+    uint32_t num = 0;
     while (1) {
         ins_unit_now--;
         pc_this -= instructUnit_getSize();
@@ -2455,6 +2474,9 @@ static uint8_t VMState_getInputArgNum(VMState* vm) {
         }
         if (invode_deepth == invoke_deepth_this + 1) {
             if (instructUnit_getInstructIndex(ins_unit_now) == OUT) {
+                continue;
+            }
+            if (instructUnit_getInstructIndex(ins_unit_now) == NLS) {
                 continue;
             }
             num++;
@@ -3117,7 +3139,7 @@ static Arg* VM_instruction_handler_ASS(PikaObj* self,
     Arg* arg1 = NULL;
     Arg* arg2 = NULL;
     Arg* res = NULL;
-    int n_arg = VMState_getInputArgNum(vm);
+    uint32_t n_arg = VMState_getInputArgNum(vm);
     if (n_arg == 1) {
         arg1 = stack_popArg(&vm->stack, &reg1);
     }
@@ -3466,6 +3488,18 @@ static int pikaVM_runInstructUnit(PikaObj* self,
             vm->jmp = VM_JMP_EXIT;
         }
     }
+
+#if PIKA_BUILTIN_STRUCT_ENABLE
+    int invoke_deepth = VMState_getInvokeDeepthNow(vm);
+    if (invoke_deepth > 0) {
+        PikaObj* oReg = vm->oreg[invoke_deepth - 1];
+        if (NULL != oReg && NULL != return_arg) {
+            objList_append(oReg, return_arg);
+            arg_deinit(return_arg);
+            return_arg = NULL;
+        }
+    }
+#endif
 
     if (NULL != return_arg) {
         stack_pushArg(&(vm->stack), return_arg);

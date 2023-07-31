@@ -50,6 +50,7 @@ Arg* stack_popArg_alloc(Stack* stack);
 Arg* stack_popArg(Stack* stack, Arg* arg_dict);
 int32_t stack_getTop(Stack* stack);
 int32_t stack_init(Stack* stack);
+int32_t _stack_init(Stack* stack, size_t stack_size);
 int32_t stack_popSize(Stack* stack);
 void stack_pushSize(Stack* stack, int32_t size);
 void stack_reset(Stack* stack);

@@ -62,6 +62,7 @@ typedef enum {
 
 typedef void (*StructDeinitFun)(void* struct_);
 
+typedef struct PikaObj PikaObj;
 typedef struct Arg Arg;
 
 typedef union {
@@ -73,6 +74,7 @@ typedef union {
     int64_t int_;
     pika_bool bool_;
     pika_float float_;
+    PikaObj* obj;
     void* ptr;
 } _arg_value;
 
