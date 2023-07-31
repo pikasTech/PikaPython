@@ -1,3 +1,4 @@
+|pika_hal support for ESP32|[geekheart](https://gitee.com/geekheart)|
 |Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
 |bsp support for `Makefile-win-mingw` |[unsigned_0](https://gitee.com/unsigned0)|
 |Fix bug for STM32F4 `delay_unit()`|[MrLeekon](https://gitee.com/MrLeekon)|
@@ -6,7 +7,7 @@
 |Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
 |Product Design, Component Selection for PIKA-OPEN-HARDWARE| 方海钰 |
 |Hardware Verification for PIKA-OPEN-HARDWARE|[HonestQiao](https://github.com/HonestQiao)|
-|support PIKA_UNBUFFERD_ENABLE config item|Seny Lee|
+|support PIKA_UNBUFFERD_ENABLE config item|[Seny Lee](https://gitee.com/SenyLee)|
 |add `this` module|[blueloveTH](https://github.com/blueloveTH)|
 |Fix memory leak in event queue|[randyscott](https://github.com/randyscott)|
 |Fix a bug of _OP_POW|[blueloveTH](https://github.com/blueloveTH)|
