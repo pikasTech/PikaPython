@@ -1285,15 +1285,8 @@ static void _kw_push(FunctionArgsInfo* f, Arg* call_arg, int i) {
     if (NULL == f->kw) {
         f->kw = New_pikaDict();
     }
-    if (NULL == f->kw_keys) {
-        f->kw_keys = New_pikaDict();
-    }
     arg_setIsKeyword(call_arg, pika_false);
     pikaDict_setArg(f->kw, call_arg);
-    char kw_keys_index_buff[11] = {0};
-    char* kw_keys_index = fast_itoa(kw_keys_index_buff, i);
-    pikaDict_setArg(f->kw_keys,
-                    arg_setInt(NULL, kw_keys_index, arg_getNameHash(call_arg)));
 }
 
 static void _load_call_arg(VMState* vm,
@@ -1563,7 +1556,6 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                 /* get kw dict name */
                 f.kw_dict_name = arg_def + 2;
                 f.kw = New_pikaDict();
-                f.kw_keys = New_pikaDict();
                 /* remove the format arg */
                 strPopLastToken(f.type_list, ',');
                 continue;
@@ -1599,11 +1591,8 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
     if (f.tuple != NULL) {
         pikaList_reverse(f.tuple);
         /* load variable tuple */
-        PikaObj* New_PikaStdData_Tuple(Args * args);
-        PikaObj* tuple_obj = newNormalObj(New_PikaStdData_Tuple);
-        obj_setPtr(tuple_obj, "list", f.tuple);
         Arg* argi =
-            arg_setPtr(NULL, f.var_tuple_name, ARG_TYPE_OBJECT, tuple_obj);
+            arg_setPtr(NULL, f.var_tuple_name, ARG_TYPE_OBJECT, f.tuple);
         argv[argc++] = argi;
     }
 
@@ -1613,10 +1602,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         }
         /* load kw dict */
         PikaObj* New_PikaStdData_Dict(Args * args);
-        PikaObj* dict_obj = newNormalObj(New_PikaStdData_Dict);
-        obj_setPtr(dict_obj, "dict", f.kw);
-        obj_setPtr(dict_obj, "_keys", f.kw_keys);
-        Arg* argi = arg_setPtr(NULL, f.kw_dict_name, ARG_TYPE_OBJECT, dict_obj);
+        Arg* argi = arg_setPtr(NULL, f.kw_dict_name, ARG_TYPE_OBJECT, f.kw);
         argv[argc++] = argi;
     }
 
@@ -1705,8 +1691,8 @@ static Arg* VM_instruction_handler_TPL(PikaObj* self,
 }
 
 void objDict_init(PikaObj* self) {
-    PikaDict* dict = New_pikaDict();
-    PikaDict* keys = New_pikaDict();
+    Args* dict = New_args(NULL);
+    Args* keys = New_args(NULL);
     obj_setPtr(self, "dict", dict);
     obj_setPtr(self, "_keys", keys);
 }

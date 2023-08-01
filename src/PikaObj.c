@@ -3377,11 +3377,10 @@ Arg* builtins_bytes(PikaObj* self, Arg* val) {
         PikaObj* New_PikaStdData_Tuple(Args * args);
         if (obj->constructor == New_PikaStdData_List ||
             obj->constructor == New_PikaStdData_Tuple) {
-            PikaList* list = obj_getPtr(obj, "list");
-            Arg* bytes = arg_newBytes(NULL, pikaList_getSize(list));
+            Arg* bytes = arg_newBytes(NULL, pikaList_getSize(obj));
             uint8_t* bytes_raw = arg_getBytes(bytes);
-            for (size_t i = 0; i < pikaList_getSize(list); i++) {
-                bytes_raw[i] = (uint8_t)pikaList_getInt(list, i);
+            for (size_t i = 0; i < pikaList_getSize(obj); i++) {
+                bytes_raw[i] = (uint8_t)pikaList_getInt(obj, i);
             }
             return bytes;
         }
@@ -3394,6 +3393,7 @@ Arg* builtins_bytes(PikaObj* self, Arg* val) {
 
 void builtins_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
     int arg_size = pikaTuple_getSize(val);
+    pika_assert(arg_size >= 0);
     char* end = pikaDict_getStr(ops, "end");
     if (NULL == end) {
         /* default */
@@ -3476,12 +3476,12 @@ PikaObj* builtins_open(PikaObj* self, char* path, char* mode) {
 
 /* __dir_each */
 int32_t __dir_each(Arg* argEach, void* context) {
-    PikaObj* list = args_getPtr((Args*)context, "list");
     if (argType_isCallable(arg_getType(argEach))) {
         char name_buff[PIKA_LINE_BUFF_SIZE] = {0};
         char* method_name =
             methodArg_getName(argEach, name_buff, sizeof(name_buff));
         Arg* arg_str = arg_newStr(method_name);
+        PikaList* list = args_getPtr(context, "_list");
         objList_append(list, arg_str);
         arg_deinit(arg_str);
     }
@@ -3496,10 +3496,9 @@ PikaObj* builtins_dir(PikaObj* self, Arg* arg) {
     }
     PikaObj* obj = arg_getPtr(arg);
     PikaObj* New_PikaStdData_List(Args * args);
-    PikaObj* list = newNormalObj(New_PikaStdData_List);
-    objList_init(list);
+    PikaObj* list = New_pikaList();
     Args* context = New_args(NULL);
-    args_setPtr(context, "list", list);
+    args_setPtr(context, "_list", list);
     args_foreach(obj->list, __dir_each, context);
     args_deinit(context);
     return list;
@@ -3971,43 +3970,26 @@ char* builtins_bytearray_decode(PikaObj* self) {
 }
 
 int objList_getSize(PikaObj* self) {
-    PikaList* list = obj_getPtr(self, "list");
-    return pikaList_getSize(list);
+    return pikaList_getSize(self);
 }
 
 void objList_set(PikaObj* self, int i, Arg* arg) {
-    PikaList* list = obj_getPtr(self, "list");
-    if (PIKA_RES_OK != pikaList_setArg(list, i, (arg))) {
-        obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "Error: index exceeded lengh of list.");
-    }
+    pikaList_setArg(self, i, (arg));
 }
 
 Arg* objList_get(PikaObj* self, int i) {
-    PikaList* list = obj_getPtr(self, "list");
-    return pikaList_getArg(list, i);
+    return pikaList_getArg(self, i);
 }
 
 Arg* objDict_get(PikaObj* self, char* key) {
     pika_assert_obj_alive(self);
-    PikaDict* dict = obj_getPtr(self, "dict");
-    Arg* res = pikaDict_getArg(dict, key);
-    if (NULL == res) {
-        obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-        __platform_printf("KeyError: %s\n", key);
-    }
-    pika_assert_arg_alive(res);
-    return res;
+    return pikaDict_getArg(self, key);
 }
 
 void objDict_set(PikaObj* self, char* key, Arg* arg) {
-    PikaDict* dict = obj_getPtr(self, "dict");
-    PikaDict* keys = obj_getPtr(self, "_keys");
-    Arg* arg_key = arg_setStr(NULL, key, key);
     Arg* arg_new = arg_copy(arg);
     arg_setName(arg_new, key);
-    pikaDict_setArg(dict, arg_new);
-    pikaDict_setArg(keys, arg_key);
+    pikaDict_setArg(self, arg_new);
 }
 
 int32_t objDict_forEach(PikaObj* self,
@@ -4042,10 +4024,9 @@ int32_t objList_forEach(PikaObj* self,
                                               Arg* itemEach,
                                               void* context),
                         void* context) {
-    PikaList* list = obj_getPtr(self, "list");
     int i = 0;
     while (PIKA_TRUE) {
-        Arg* item = pikaList_getArg(list, i);
+        Arg* item = pikaList_getArg(self, i);
         if (NULL == item) {
             break;
         }

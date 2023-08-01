@@ -52,11 +52,10 @@ Arg* PikaStdData_Dict___getitem__(PikaObj* self, Arg* __key) {
 }
 
 void PikaStdData_Dict___del__(PikaObj* self) {
-    PikaDict* dict = obj_getPtr(self, "dict");
-    PikaDict* keys = obj_getPtr(self, "_keys");
-    pikaDict_deinit(dict);
+    Args* keys = obj_getPtr(self, "_keys");
+    pikaDict_deinit(self);
     if (NULL != keys) {
-        pikaDict_deinit(keys);
+        args_deinit(keys);
     }
 }
 

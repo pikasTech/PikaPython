@@ -31,8 +31,7 @@ Arg* PikaStdData_Tuple___next__(PikaObj* self) {
 
 Arg* PikaStdData_Tuple___getitem__(PikaObj* self, Arg* __key) {
     int i = arg_getInt(__key);
-    PikaList* list = obj_getPtr(self, "list");
-    if (i < 0 || i >= pikaList_getSize(list)) {
+    if (i < 0 || i >= pikaList_getSize(self)) {
         obj_setErrorCode(self, PIKA_RES_ERR_INDEX);
         obj_setSysOut(self, "IndexError: index out of range");
         return NULL;
@@ -44,7 +43,7 @@ void PikaStdData_Tuple___del__(PikaObj* self) {
     if (0 == obj_getInt(self, "needfree")) {
         return;
     }
-    Args* list = obj_getPtr(self, "list");
+    Args* list = _OBJ2LIST(self);
     args_deinit(list);
 }
 
@@ -99,9 +98,8 @@ int PikaStdData_Tuple___len__(PikaObj* self) {
 }
 
 int PikaStdData_Tuple___contains__(PikaObj* self, Arg* val) {
-    PikaList* list = obj_getPtr(self, "list");
-    for (size_t i = 0; i < pikaList_getSize(list); i++) {
-        Arg* arg = pikaList_getArg(list, i);
+    for (size_t i = 0; i < pikaList_getSize(self); i++) {
+        Arg* arg = pikaList_getArg(self, i);
         if (arg_isEqual(arg, val)) {
             return 1;
         }
