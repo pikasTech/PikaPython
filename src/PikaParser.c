@@ -2464,7 +2464,7 @@ Arg* arg_strAddIndentMulti(Arg* aStrInMuti, int indent) {
     char* sLine = NULL;
     int iLineNum = strGetLineNum(sStrInMuti);
     Arg* aStrOut = arg_newStr("");
-    Args buffs = {};
+    Args buffs = {0};
     for (int i = 0; i < iLineNum; i++) {
         sLine = strsPopLine(&buffs, &sStrInMuti);
         Arg* aLine = arg_newStr(sLine);
