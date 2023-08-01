@@ -196,12 +196,7 @@ PIKA_RES pikaCompileFileWithOutputName(char* output_file_name,
         return PIKA_RES_ERR_IO_ERROR;
     }
     char* lines = (char*)arg_getBytes(input_file_arg);
-    /* replace the "\r\n" to "\n" */
-    lines = strsReplace(&buffs, lines, "\r\n", "\n");
-    /* clear the void line */
-    lines = strsReplace(&buffs, lines, "\n\n", "\n");
-    /* add '\n' at the end */
-    lines = strsAppend(&buffs, lines, "\n\n");
+    lines = strsFilePreProcess(&buffs, lines);
     PIKA_RES res = pikaCompile(output_file_name, lines);
     arg_deinit(input_file_arg);
     strsDeinit(&buffs);

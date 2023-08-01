@@ -3736,6 +3736,7 @@ VMParameters* pikaVM_runSingleFile(PikaObj* self, char* filename) {
         return NULL;
     }
     char* lines = (char*)arg_getBytes(file_arg);
+    lines = strsFilePreProcess(&buffs, lines);
     /* clear the void line */
     VMParameters* res = pikaVM_run(self, lines);
     arg_deinit(file_arg);
@@ -4329,7 +4330,7 @@ PikaObj* pikaVM_runFile(PikaObj* self, char* file_name) {
     char* libfile_path =
         strsPathJoin(&buffs, pwd, "pikascript-api/pikaModules_cache.py.a");
     if (PIKA_RES_OK == obj_linkLibraryFile(self, libfile_path)) {
-        self = pikaVM_runSingleFile(self, file_name);
+        obj_runModule(self, module_name);
     }
     strsDeinit(&buffs);
     return self;
