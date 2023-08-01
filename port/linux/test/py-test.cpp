@@ -4,406 +4,89 @@ TEST_START
 #if !PIKA_NANO_ENABLE
 TEST_RUN_SINGLE_FILE(thread, test2, "test/python/_thread/test2.py")
 TEST_RUN_SINGLE_FILE(eventloop, test1, "test/python/eventloop/test1.py")
-TEST_RUN_SINGLE_FILE(eventloop,
-                     test2,
-                     "test/python/"
-                     "eventloop/"
-                     "test2.py")
+TEST_RUN_SINGLE_FILE(eventloop, test2, "test/python/eventloop/test2.py")
 TEST_RUN_SINGLE_FILE(eventloop, test3, "test/python/eventloop/test3.py")
 TEST_RUN_SINGLE_FILE(eventloop, delay1, "test/python/eventloop/delay1.py")
-TEST_RUN_SINGLE_FILE(eventloop,
-                     once1,
-                     "test/"
-                     "python/"
-                     "eventloop/"
-                     "once1.py")
-TEST_RUN_SINGLE_FILE(eventloop,
-                     once2,
-                     "test/python/eventloop/"
-                     "once2.py")
-TEST_RUN_SINGLE_FILE(fsm,
-                     test1,
-                     "test/"
-                     "python/"
-                     "fsm/"
-                     "test1."
-                     "py")
+TEST_RUN_SINGLE_FILE(eventloop, once1, "test/python/eventloop/once1.py")
+TEST_RUN_SINGLE_FILE(eventloop, once2, "test/python/eventloop/once2.py")
+TEST_RUN_SINGLE_FILE(fsm, test1, "test/python/fsm/test1.py")
 
 TEST_RUN_SINGLE_FILE_PASS(builtin,
                           list_tuple_equ,
                           "test/python/builtins/list_tuple_equ.py")
 TEST_RUN_SINGLE_FILE_PASS(builtin,
                           fn_default1,
-                          "te"
-                          "st"
-                          "/p"
-                          "yt"
-                          "ho"
-                          "n/"
-                          "bu"
-                          "il"
-                          "ti"
-                          "ns"
-                          "/f"
-                          "n_"
-                          "de"
-                          "fa"
-                          "ul"
-                          "t1"
-                          ".p"
-                          "y")
+                          "test/python/builtins/fn_default1.py")
 TEST_RUN_SINGLE_FILE_PASS(builtin,
                           fn_default_tuple,
                           "test/python/builtins/fn_default_tuple.py")
-TEST_RUN_SINGLE_FILE_PASS(builtin,
-                          max_min,
-                          "test"
-                          "/pyt"
-                          "hon/"
-                          "buil"
-                          "tins"
-                          "/max"
-                          "_min"
-                          ".py")
-TEST_RUN_SINGLE_FILE_PASS(builtin,
-                          split,
-                          "test/"
-                          "python/"
-                          "builtins/"
-                          "split.py")
+TEST_RUN_SINGLE_FILE_PASS(builtin, max_min, "test/python/builtins/max_min.py")
+TEST_RUN_SINGLE_FILE_PASS(builtin, split, "test/python/builtins/split.py")
 TEST_RUN_LINES_EXCEPT_OUTPUT(builtin,
                              split_slice,
                              "'test'.split('e')[0]",
                              "'t'\r\n")
 TEST_RUN_LINES_EXCEPT_OUTPUT(builtin,
                              split_slice_1,
-                             "'test'"
-                             ".split"
-                             "('e')["
-                             "1]",
-                             "'st'"
-                             "\r\n")
+                             "'test'.split('e')[1]",
+                             "'st'\r\n")
 TEST_RUN_LINES_EXCEPT_OUTPUT(builtin,
                              replace_split_0,
-                             "'a b c "
-                             "d'.replace(' ', "
-                             "',').split(',')["
-                             "0]",
+                             "'a b c d'.replace(' ', ',').split(',')[0]",
                              "'a'\r\n")
 TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(builtin,
                                    class_script,
-                                   "test"
-                                   "/pyt"
-                                   "hon/"
-                                   "buil"
-                                   "tins"
-                                   "/cla"
-                                   "ss_"
-                                   "scri"
-                                   "pt."
-                                   "py",
-                                   "Obj1"
-                                   ".tes"
-                                   "t\r"
-                                   "\n")
+                                   "test/python/builtins/class_script.py",
+                                   "Obj1.test\r\n")
 TEST_RUN_SINGLE_FILE_EXCEPT_OUTPUT(builtin,
                                    class_hint,
-                                   "test/"
-                                   "python/"
-                                   "builtins/"
-                                   "class_"
-                                   "hint.py",
+                                   "test/python/builtins/class_hint.py",
                                    "1\r\n")
 TEST_RUN_SINGLE_FILE_PASS(builtin,
                           isinstance,
-                          "tes"
-                          "t/"
-                          "pyt"
-                          "hon"
-                          "/bu"
-                          "ilt"
-                          "ins"
-                          "/is"
-                          "ins"
-                          "tan"
-                          "ce."
-                          "py")
-TEST_RUN_SINGLE_FILE_PASS(builtin,
-                          getitem,
-                          "test/python/"
-                          "builtins/"
-                          "getitem.py")
-TEST_RUN_SINGLE_FILE_PASS(lua,
-                          eval,
-                          "te"
-                          "st"
-                          "/p"
-                          "yt"
-                          "ho"
-                          "n/"
-                          "pi"
-                          "ka"
-                          "_l"
-                          "ua"
-                          "/e"
-                          "va"
-                          "l."
-                          "p"
-                          "y")
-TEST_RUN_SINGLE_FILE_PASS(lua,
-                          require,
-                          "test/python/"
-                          "pika_lua/"
-                          "require.py")
+                          "test/python/builtins/isinstance.py")
+TEST_RUN_SINGLE_FILE_PASS(builtin, getitem, "test/python/builtins/getitem.py")
+TEST_RUN_SINGLE_FILE_PASS(lua, eval, "test/python/pika_lua/eval.py")
+TEST_RUN_SINGLE_FILE_PASS(lua, require, "test/python/pika_lua/require.py")
 
 TEST_RUN_LINES(vm, dot_issue, ".")
 TEST_RUN_LINES(vm, char_issue1, "~")
-TEST_RUN_LINES(vm, char_issue2, "/") TEST_RUN_LINES(vm, char_issue3, "%")
-    TEST_RUN_LINES(vm, char_issue4, "=") TEST_RUN_SINGLE_FILE(
-        vm,
-        issue_star_dict,
-        "test/"
-        "python/"
-        "issue/"
-        "issue_"
-        "star_"
-        "dict.py") TEST_RUN_SINGLE_FILE_PASS(vm,
-                                             proxy2,
-                                             "t"
-                                             "e"
-                                             "s"
-                                             "t"
-                                             "/"
-                                             "p"
-                                             "y"
-                                             "t"
-                                             "h"
-                                             "o"
-                                             "n"
-                                             "/"
-                                             "p"
-                                             "r"
-                                             "o"
-                                             "x"
-                                             "y"
-                                             "/"
-                                             "p"
-                                             "r"
-                                             "o"
-                                             "x"
-                                             "y"
-                                             "2"
-                                             "."
-                                             "p"
-                                             "y") TEST_RUN_LINES(vm,
-                                                                 abs_none,
-                                                                 "ab"
-                                                                 "s("
-                                                                 "No"
-                                                                 "ne"
-                                                                 ")")
-        TEST_RUN_LINES(vm,
-                       abs_str,
-                       "ab"
-                       "s("
-                       "'t"
-                       "es"
-                       "t'"
-                       ")") TEST_RUN_SINGLE_FILE_PASS(datastruct,
-                                                      circlequeue,
-                                                      "test/python/datastruct/"
-                                                      "circlequeue.py")
+TEST_RUN_LINES(vm, char_issue2, "/")
+TEST_RUN_LINES(vm, char_issue3, "%")
+TEST_RUN_LINES(vm, char_issue4, "=")
+TEST_RUN_SINGLE_FILE(vm,
+                     issue_star_dict,
+                     "test/python/issue/issue_star_dict.py")
+TEST_RUN_SINGLE_FILE_PASS(vm, proxy2, "test/python/proxy/proxy2.py")
+TEST_RUN_LINES(vm, abs_none, "abs(None)")
+TEST_RUN_LINES(vm, abs_str, "abs('test')")
+TEST_RUN_SINGLE_FILE_PASS(datastruct,
+                          circlequeue,
+                          "test/python/datastruct/circlequeue.py")
 
-            TEST_RUN_LINES_EXCEPT_OUTPUT(vm, single_tuple, "(1,)", "(1,)\r\n")
-                TEST_RUN_LINES_EXCEPT_OUTPUT(
-                    vm,
-                    single_tuple_str,
-                    "('test',)",
-                    "('test',)"
-                    "\r\n") TEST_RUN_SINGLE_FILE_PASS(vm,
-                                                      is_not,
-                                                      "test"
-                                                      "/pyt"
-                                                      "hon/"
-                                                      "buil"
-                                                      "tins"
-                                                      "/"
-                                                      "is_"
-                                                      "not."
-                                                      "py")
-                    TEST_RUN_LINES(vm,
-                                   var_global,
-                                   "im"
-                                   "po"
-                                   "rt"
-                                   " P"
-                                   "ik"
-                                   "aS"
-                                   "td"
-                                   "Li"
-                                   "b"
-                                   "\n"
-                                   "me"
-                                   "m "
-                                   "= "
-                                   "Pi"
-                                   "ka"
-                                   "St"
-                                   "dL"
-                                   "ib"
-                                   "."
-                                   "Me"
-                                   "mC"
-                                   "he"
-                                   "ck"
-                                   "er"
-                                   "()"
-                                   "\n"
-                                   "me"
-                                   "m."
-                                   "cl"
-                                   "ea"
-                                   "r"
-                                   "\n") TEST_RUN_LINES(vm,
-                                                        var_global_run,
-                                                        "i"
-                                                        "m"
-                                                        "p"
-                                                        "o"
-                                                        "r"
-                                                        "t"
-                                                        " "
-                                                        "P"
-                                                        "i"
-                                                        "k"
-                                                        "a"
-                                                        "S"
-                                                        "t"
-                                                        "d"
-                                                        "L"
-                                                        "i"
-                                                        "b"
-                                                        "\n"
-                                                        "m"
-                                                        "e"
-                                                        "m"
-                                                        " "
-                                                        "="
-                                                        " "
-                                                        "P"
-                                                        "i"
-                                                        "k"
-                                                        "a"
-                                                        "S"
-                                                        "t"
-                                                        "d"
-                                                        "L"
-                                                        "i"
-                                                        "b"
-                                                        "."
-                                                        "M"
-                                                        "e"
-                                                        "m"
-                                                        "C"
-                                                        "h"
-                                                        "e"
-                                                        "c"
-                                                        "k"
-                                                        "e"
-                                                        "r"
-                                                        "("
-                                                        ")"
-                                                        "\n"
-                                                        "m"
-                                                        "e"
-                                                        "m"
-                                                        "."
-                                                        "c"
-                                                        "l"
-                                                        "e"
-                                                        "a"
-                                                        "r"
-                                                        "("
-                                                        ")"
-                                                        "\n")
-                        TEST_RUN_LINES(vm,
-                                       var_global_module,
-                                       "im"
-                                       "po"
-                                       "rt"
-                                       " c"
-                                       "on"
-                                       "fi"
-                                       "gp"
-                                       "ar"
-                                       "se"
-                                       "r"
-                                       "\n"
-                                       "co"
-                                       "nf"
-                                       "ig"
-                                       "pa"
-                                       "rs"
-                                       "er"
-                                       ".c"
-                                       "le"
-                                       "ar"
-                                       "\n") TEST_RUN_LINES(vm,
-                                                            import_void,
-                                                            "i"
-                                                            "m"
-                                                            "p"
-                                                            "o"
-                                                            "r"
-                                                            "t"
-                                                            " "
-                                                            "\n")
-                            TEST_RUN_SINGLE_FILE_PASS(vm,
-                                                      fn_fn,
-                                                      "test/"
-                                                      "python"
-                                                      "/built"
-                                                      "ins/"
-                                                      "fn_fn."
-                                                      "py")
-                                TEST_RUN_LINES_EXCEPT_OUTPUT(vm,
-                                                             isinstance,
-                                                             "is"
-                                                             "in"
-                                                             "st"
-                                                             "an"
-                                                             "ce"
-                                                             "(1"
-                                                             ", "
-                                                             "in"
-                                                             "t)"
-                                                             "\n",
-                                                             "Tr"
-                                                             "ue"
-                                                             "\r"
-                                                             "\n")
-                                    TEST_RUN_SINGLE_FILE_PASS(except,
-                                                              try_while_return,
-                                                              "te"
-                                                              "st"
-                                                              "/p"
-                                                              "yt"
-                                                              "ho"
-                                                              "n/"
-                                                              "ex"
-                                                              "ce"
-                                                              "pt"
-                                                              "/t"
-                                                              "ry"
-                                                              "_w"
-                                                              "hi"
-                                                              "le"
-                                                              "_r"
-                                                              "et"
-                                                              "ur"
-                                                              "n."
-                                                              "p"
-                                                              "y");
+TEST_RUN_LINES_EXCEPT_OUTPUT(vm, single_tuple, "(1,)", "(1,)\r\n")
+TEST_RUN_LINES_EXCEPT_OUTPUT(vm, single_tuple_str, "('test',)", "('test',)\r\n")
+TEST_RUN_SINGLE_FILE_PASS(vm, is_not, "test/python/builtins/is_not.py")
+TEST_RUN_LINES(vm,
+               var_global,
+               "import PikaStdLib\n"
+               "mem = PikaStdLib.MemChecker()\n"
+               "mem.clear\n")
+TEST_RUN_LINES(vm,
+               var_global_run,
+               "import PikaStdLib\n"
+               "mem = PikaStdLib.MemChecker()\n"
+               "mem.clear()\n")
+TEST_RUN_LINES(vm,
+               var_global_module,
+               "import configparser\n"
+               "configparser.clear\n")
+TEST_RUN_LINES(vm, import_void, "import \n")
+TEST_RUN_SINGLE_FILE_PASS(vm, fn_fn, "test/python/builtins/fn_fn.py")
+TEST_RUN_LINES_EXCEPT_OUTPUT(vm, isinstance, "isinstance(1, int)\n", "True\r\n")
+TEST_RUN_SINGLE_FILE_PASS(except,
+                          try_while_return,
+                          "test/python/except/try_while_return.py");
 TEST_RUN_SINGLE_FILE_PASS(except,
                           isinstance,
                           "test/python/except/except_isinstance.py");
