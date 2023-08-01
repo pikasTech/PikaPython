@@ -1,4 +1,4 @@
-﻿#include "PikaPlatform_socket.h"
+#include "PikaPlatform_socket.h"
 /*
     The functinos start with PIKA_WEAK are weak functions,
     you need to override them in your platform.

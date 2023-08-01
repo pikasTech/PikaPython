@@ -281,9 +281,9 @@ void PikaCV_Transforms_adaptiveThreshold(PikaObj* self,
     memcpy(src_copy, src_data, size);
 
     if (method == 0) {
-        PikaCV_Filter_meanFilter(self, image, subsize, subsize);  //均值滤波
+        PikaCV_Filter_meanFilter(self, image, subsize, subsize);
     } else if (method == 1) {
-        PikaCV_Filter_medianFilter(self, image);  //中值滤波
+        PikaCV_Filter_medianFilter(self, image);
     } else {
         free(src_copy);
         return;

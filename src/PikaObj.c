@@ -4,26 +4,26 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2021 lyon liang6516@outlook.com
  * Copyright (c) 2023 Gorgon Meducer embedded_zhuroan@hotmail.com
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
 
 #include "PikaObj.h"
@@ -677,8 +677,6 @@ PikaObj* newNormalObj(NewFun newObjFun) {
 #include <termios.h>
 #include <unistd.h>
 #define ECHOFLAGS (ECHO | ECHOE | ECHOK | ECHONL)
-// 函数set_disp_mode用于控制是否开启输入回显功能
-// 如果option为0，则关闭回显，为1则打开回显
 static int set_disp_mode(int fd, int option) {
     int err;
     struct termios term;
@@ -707,14 +705,14 @@ struct termios original_termios;
 static void enable_raw_mode(void) {
     struct termios raw;
 
-    tcgetattr(STDIN_FILENO, &original_termios);  // 获取当前终端属性
+    tcgetattr(STDIN_FILENO, &original_termios);
     raw = original_termios;
-    raw.c_lflag &= ~(ECHO | ICANON);           // 禁用回显和规范模式
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);  // 设置终端属性
+    raw.c_lflag &= ~(ECHO | ICANON);
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
 static void disable_raw_mode(void) {
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_termios);  // 恢复原始终端属性
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_termios);
     printf("\n");
 }
 
@@ -743,10 +741,9 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     mem_pool_init();
 #endif
 #ifdef __linux
-    signal(SIGINT, signal_handler);   // 捕获 SIGINT 信号（Ctrl+C）
-    signal(SIGTERM, signal_handler);  // 捕获 SIGTERM 信号
-    signal(SIGHUP, signal_handler);   // 捕获 SIGHUP 信号
-    signal(SIGSEGV, signal_handler);  // 捕获 SIGHUP 信号
+    signal(SIGTERM, signal_handler);
+    signal(SIGHUP, signal_handler);
+    signal(SIGSEGV, signal_handler);
     signal(SIGABRT, signal_handler);
     signal(SIGQUIT, signal_handler);
     signal(SIGTRAP, signal_handler);

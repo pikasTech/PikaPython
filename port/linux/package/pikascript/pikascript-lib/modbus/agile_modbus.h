@@ -10,7 +10,6 @@
  * All rights reserved.</center></h2>
  *
  */
-
 #ifndef __PKG_AGILE_MODBUS_H
 #define __PKG_AGILE_MODBUS_H
 

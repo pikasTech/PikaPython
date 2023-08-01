@@ -7,25 +7,24 @@
  * Copyright (c) 2014-2019 Damien P. George
  * Copyright (c) 2023 Lyon
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -134,9 +133,10 @@ typedef struct _mp_map_elem_t {
 
 typedef struct mp_map_t {
     size_t all_keys_are_qstrs : 1;
-    size_t
-        is_fixed : 1;  // if set, table is fixed/read-only and can't be modified
-    size_t is_ordered : 1;  // if set, table is an ordered array, not a hash map
+    size_t is_fixed : 1;    // if set, table is fixed/read-only and can't be
+                            // modified
+    size_t is_ordered : 1;  // if set, table is an ordered array, not a hash
+                            // map
     size_t used : (8 * sizeof(size_t) - 3);
     size_t alloc;
     mp_map_elem_t* table;
@@ -297,11 +297,11 @@ struct _mp_obj_type_t {
     // Slots: For the rest of the fields, the slot index points to the
     // relevant function in the variable-length "slots" field. Ideally these
     // would be only 4 bits, but the extra overhead of accessing them adds
-    // more code, and we also need to be able to take the address of them for
-    // mp_obj_class_lookup.
+    // more code, and we also need to be able to take the address of them
+    // for mp_obj_class_lookup.
 
-    // Corresponds to __new__ and __init__ special methods, to make an instance
-    // of the type.
+    // Corresponds to __new__ and __init__ special methods, to make an
+    // instance of the type.
     uint8_t slot_index_make_new;
 
     // Corresponds to __repr__ and __str__ special methods.
@@ -320,8 +320,8 @@ struct _mp_obj_type_t {
     // dest[0] = MP_OBJ_NULL means load
     //  return: for fail, do nothing
     //          for fail but continue lookup in locals_dict, dest[1] =
-    //          MP_OBJ_SENTINEL for attr, dest[0] = value for method, dest[0] =
-    //          method, dest[1] = self
+    //          MP_OBJ_SENTINEL for attr, dest[0] = value for method,
+    //          dest[0] = method, dest[1] = self
     //
     // dest[0,1] = {MP_OBJ_SENTINEL, MP_OBJ_NULL} means delete
     // dest[0,1] = {MP_OBJ_SENTINEL, object} means store
@@ -336,21 +336,24 @@ struct _mp_obj_type_t {
     // Can return MP_OBJ_NULL if operation not supported.
     uint8_t slot_index_subscr;
 
-    // This slot's behaviour depends on the MP_TYPE_FLAG_ITER_IS_* flags above.
-    // - If MP_TYPE_FLAG_ITER_IS_GETITER flag is set, then this corresponds to
-    // the __iter__
+    // This slot's behaviour depends on the MP_TYPE_FLAG_ITER_IS_* flags
+    // above.
+    // - If MP_TYPE_FLAG_ITER_IS_GETITER flag is set, then this corresponds
+    // to the __iter__
     //   special method (of type mp_getiter_fun_t). Can use the given
-    //   mp_obj_iter_buf_t to store the iterator object, otherwise can return a
-    //   pointer to an object on the heap.
+    //   mp_obj_iter_buf_t to store the iterator object, otherwise can
+    //   return a pointer to an object on the heap.
     // - If MP_TYPE_FLAG_ITER_IS_ITERNEXT is set, then this corresponds to
     // __next__ special method.
-    //   May return MP_OBJ_STOP_ITERATION as an optimisation instead of raising
-    //   StopIteration() with no args. The type will implicitly implement
-    //   getiter as "return self".
-    // - If MP_TYPE_FLAG_ITER_IS_CUSTOM is set, then this slot must point to an
+    //   May return MP_OBJ_STOP_ITERATION as an optimisation instead of
+    //   raising StopIteration() with no args. The type will implicitly
+    //   implement getiter as "return self".
+    // - If MP_TYPE_FLAG_ITER_IS_CUSTOM is set, then this slot must point to
+    // an
     //   mp_getiter_iternext_custom_t instance with both the getiter and
     //   iternext fields set.
-    // - If MP_TYPE_FLAG_ITER_IS_STREAM is set, this this slot should be unset.
+    // - If MP_TYPE_FLAG_ITER_IS_STREAM is set, this this slot should be
+    // unset.
     uint8_t slot_index_iter;
 
     // Implements the buffer protocol if supported by this type.
@@ -360,7 +363,8 @@ struct _mp_obj_type_t {
     uint8_t slot_index_protocol;
 
     // A pointer to the parents of this type:
-    //  - 0 parents: pointer is NULL (object is implicitly the single parent)
+    //  - 0 parents: pointer is NULL (object is implicitly the single
+    //  parent)
     //  - 1 parent: a pointer to the type of that parent
     //  - 2 or more parents: pointer to a tuple object containing the parent
     //  types

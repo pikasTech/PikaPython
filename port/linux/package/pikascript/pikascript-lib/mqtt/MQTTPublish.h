@@ -11,8 +11,8 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *    Ian Craggs - initial API and implementation and/or initial documentation
- *    Xiang Rong - 442039 Add makefile to Embedded C client
+ *    Ian Craggs - initial API and implementation and/or initial
+ *documentation Xiang Rong - 442039 Add makefile to Embedded C client
  *******************************************************************************/
 
 #ifndef MQTTPUBLISH_H_

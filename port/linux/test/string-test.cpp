@@ -1,6 +1,5 @@
 #include "test_common.h"
 TEST_START
-
 #if PIKA_SYNTAX_FORMAT_ENABLE
 TEST(string, cformat) {
     /* init */

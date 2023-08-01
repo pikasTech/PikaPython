@@ -136,14 +136,12 @@ int32_t dictToStrEachHandle(PikaObj* self,
                             void* context) {
     DictToStrContext* ctx = (DictToStrContext*)context;
 
-    // 判断是否需要在字符串前添加逗号
     if (!ctx->isFirst) {
         ctx->buf = arg_strAppend(ctx->buf, ", ");
     } else {
         ctx->isFirst = 0;
     }
 
-    // 将键值对添加到字符串
     ctx->buf = arg_strAppend(ctx->buf, "'");
     ctx->buf = arg_strAppend(ctx->buf, builtins_str(self, keyEach));
     ctx->buf = arg_strAppend(ctx->buf, "'");
@@ -160,15 +158,12 @@ int32_t dictToStrEachHandle(PikaObj* self,
 }
 
 char* PikaStdData_Dict___str__(PikaObj* self) {
-    // 初始化上下文
     DictToStrContext context;
     context.buf = arg_newStr("{");
     context.isFirst = 1;
 
-    // 使用 objDict_forEach 遍历字典
     objDict_forEach(self, dictToStrEachHandle, &context);
 
-    // 将字符串添加到结果中并返回
     context.buf = arg_strAppend(context.buf, "}");
     obj_setStr(self, "_buf", arg_getStr(context.buf));
     arg_deinit(context.buf);

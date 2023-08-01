@@ -241,9 +241,7 @@ PikaObj* PikaStdData_String_split(PikaObj* self, PikaTuple* s_) {
     } else {
         s = pikaTuple_getStr(s_, 0);
     }
-    /* 创建 list 对象 */
     PikaObj* list = newNormalObj(New_PikaStdData_List);
-    /* 初始化 list */
     PikaStdData_List___init__(list);
 
     Args buffs = {0};

@@ -1,6 +1,5 @@
 #include "test_common.h"
 TEST_START
-
 #include "PikaCompiler.h"
 // TEST(packtool, unpack) {
 

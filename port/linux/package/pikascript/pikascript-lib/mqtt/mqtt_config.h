@@ -2,8 +2,8 @@
  * @Author: jiejie
  * @Github: https://github.com/jiejieTop
  * @LastEditTime: 2020-06-17 19:31:41
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #ifndef _MQTT_CONFIG_H_
 #define _MQTT_CONFIG_H_

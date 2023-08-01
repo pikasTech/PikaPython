@@ -19,7 +19,6 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-
 #ifndef pika_cJSON__h
 #define pika_cJSON__h
 
@@ -34,14 +33,14 @@ extern "C" {
 
 #ifdef __WINDOWS__
 
-/* When compiling for windows, we specify a specific calling convention to avoid
-issues where we are being called from a project with a different default calling
-convention.  For windows you have 3 define options:
+/* When compiling for windows, we specify a specific calling convention to
+avoid issues where we are being called from a project with a different
+default calling convention.  For windows you have 3 define options:
 
-pika_cJSON_HIDE_SYMBOLS - Define this in the case where you don't want to ever
-dllexport symbols pika_cJSON_EXPORT_SYMBOLS - Define this on library build when
-you want to dllexport symbols (default) pika_cJSON_IMPORT_SYMBOLS - Define this
-if you want to dllimport symbol
+pika_cJSON_HIDE_SYMBOLS - Define this in the case where you don't want to
+ever dllexport symbols pika_cJSON_EXPORT_SYMBOLS - Define this on library
+build when you want to dllexport symbols (default) pika_cJSON_IMPORT_SYMBOLS
+- Define this if you want to dllimport symbol
 
 For *nix builds that support visibility attribute, you can define similar
 behavior by
@@ -52,8 +51,8 @@ or
 -xldscope=hidden (for sun cc)
 to CFLAGS
 
-then using the pika_cJSON_API_VISIBILITY flag to "export" the same symbols the
-way pika_cJSON_EXPORT_SYMBOLS does
+then using the pika_cJSON_API_VISIBILITY flag to "export" the same symbols
+the way pika_cJSON_EXPORT_SYMBOLS does
 
 */
 
@@ -113,24 +112,26 @@ typedef struct cJSON {
      * GetArraySize/GetArrayItem/GetObjectItem */
     struct cJSON* next;
     struct cJSON* prev;
-    /* An array or object item will have a child pointer pointing to a chain of
-     * the items in the array/object. */
+    /* An array or object item will have a child pointer pointing to a chain
+     * of the items in the array/object. */
     struct cJSON* child;
 
     /* The type of the item, as above. */
     int type;
 
-    /* The item's string, if type==pika_cJSON_String  and type == pika_cJSON_Raw
+    /* The item's string, if type==pika_cJSON_String  and type ==
+     * pika_cJSON_Raw
      */
     char* valuestring;
-    /* writing to valueint is DEPRECATED, use pika_cJSON_SetNumberValue instead
+    /* writing to valueint is DEPRECATED, use pika_cJSON_SetNumberValue
+     * instead
      */
     int valueint;
     /* The item's number, if type==pika_cJSON_Number */
     double valuedouble;
 
-    /* The item's name string, if this item is the child of, or is in the list
-     * of subitems of an object. */
+    /* The item's name string, if this item is the child of, or is in the
+     * list of subitems of an object. */
     char* string;
 } cJSON;
 
@@ -156,13 +157,14 @@ pika_cJSON_PUBLIC(const char*) pika_cJSON_Version(void);
 /* Supply malloc, realloc and free functions to cJSON */
 pika_cJSON_PUBLIC(void) pika_cJSON_InitHooks(pika_cJSON_Hooks* hooks);
 
-/* Memory Management: the caller is always responsible to free the results from
- * all variants of pika_cJSON_Parse (with pika_cJSON_Delete) and
+/* Memory Management: the caller is always responsible to free the results
+ * from all variants of pika_cJSON_Parse (with pika_cJSON_Delete) and
  * pika_cJSON_Print (with stdlib free, pika_cJSON_Hooks.free_fn, or
  * pika_cJSON_free as appropriate). The exception is
- * pika_cJSON_PrintPreallocated, where the caller has full responsibility of the
- * buffer. */
-/* Supply a block of JSON, and this returns a cJSON object you can interrogate.
+ * pika_cJSON_PrintPreallocated, where the caller has full responsibility of
+ * the buffer. */
+/* Supply a block of JSON, and this returns a cJSON object you can
+ * interrogate.
  */
 pika_cJSON_PUBLIC(cJSON*) pika_cJSON_Parse(const char* value);
 pika_cJSON_PUBLIC(cJSON*)
@@ -184,18 +186,19 @@ pika_cJSON_PUBLIC(cJSON*)
 
 /* Render a cJSON entity to text for transfer/storage. */
 pika_cJSON_PUBLIC(char*) pika_cJSON_Print(const cJSON* item);
-/* Render a cJSON entity to text for transfer/storage without any formatting. */
+/* Render a cJSON entity to text for transfer/storage without any
+ * formatting. */
 pika_cJSON_PUBLIC(char*) pika_cJSON_PrintUnformatted(const cJSON* item);
-/* Render a cJSON entity to text using a buffered strategy. prebuffer is a guess
- * at the final size. guessing well reduces reallocation. fmt=0 gives
+/* Render a cJSON entity to text using a buffered strategy. prebuffer is a
+ * guess at the final size. guessing well reduces reallocation. fmt=0 gives
  * unformatted, =1 gives formatted */
 pika_cJSON_PUBLIC(char*) pika_cJSON_PrintBuffered(const cJSON* item,
                                                   int prebuffer,
                                                   pika_cJSON_bool fmt);
-/* Render a cJSON entity to text using a buffer already allocated in memory with
- * given length. Returns 1 on success and 0 on failure. */
-/* NOTE: cJSON is not always 100% accurate in estimating how much memory it will
- * use, so to be safe allocate 5 bytes more than you actually need */
+/* Render a cJSON entity to text using a buffer already allocated in memory
+ * with given length. Returns 1 on success and 0 on failure. */
+/* NOTE: cJSON is not always 100% accurate in estimating how much memory it
+ * will use, so to be safe allocate 5 bytes more than you actually need */
 pika_cJSON_PUBLIC(pika_cJSON_bool)
     pika_cJSON_PrintPreallocated(cJSON* item,
                                  char* buffer,
@@ -219,8 +222,9 @@ pika_cJSON_PUBLIC(cJSON*)
 pika_cJSON_PUBLIC(pika_cJSON_bool)
     pika_cJSON_HasObjectItem(const cJSON* object, const char* string);
 /* For analysing failed parses. This returns a pointer to the parse error.
- * You'll probably need to look a few chars back to make sense of it. Defined
- * when pika_cJSON_Parse() returns 0. 0 when pika_cJSON_Parse() succeeds. */
+ * You'll probably need to look a few chars back to make sense of it.
+ * Defined when pika_cJSON_Parse() returns 0. 0 when pika_cJSON_Parse()
+ * succeeds. */
 pika_cJSON_PUBLIC(const char*) pika_cJSON_GetErrorPtr(void);
 
 /* Check item type and return its value */
@@ -277,17 +281,17 @@ pika_cJSON_PUBLIC(pika_cJSON_bool)
     pika_cJSON_AddItemToArray(cJSON* array, cJSON* item);
 pika_cJSON_PUBLIC(pika_cJSON_bool)
     pika_cJSON_AddItemToObject(cJSON* object, const char* string, cJSON* item);
-/* Use this when string is definitely const (i.e. a literal, or as good as), and
- * will definitely survive the cJSON object. WARNING: When this function was
- * used, make sure to always check that (item->type & pika_cJSON_StringIsConst)
- * is zero before writing to `item->string` */
+/* Use this when string is definitely const (i.e. a literal, or as good as),
+ * and will definitely survive the cJSON object. WARNING: When this function
+ * was used, make sure to always check that (item->type &
+ * pika_cJSON_StringIsConst) is zero before writing to `item->string` */
 pika_cJSON_PUBLIC(pika_cJSON_bool)
     pika_cJSON_AddItemToObjectCS(cJSON* object,
                                  const char* string,
                                  cJSON* item);
 /* Append reference to item to the specified array/object. Use this when you
- * want to add an existing cJSON to a new cJSON, but don't want to corrupt your
- * existing cJSON. */
+ * want to add an existing cJSON to a new cJSON, but don't want to corrupt
+ * your existing cJSON. */
 pika_cJSON_PUBLIC(pika_cJSON_bool)
     pika_cJSON_AddItemReferenceToArray(cJSON* array, cJSON* item);
 pika_cJSON_PUBLIC(pika_cJSON_bool)
@@ -335,26 +339,27 @@ pika_cJSON_PUBLIC(pika_cJSON_bool)
 /* Duplicate a cJSON item */
 pika_cJSON_PUBLIC(cJSON*)
     pika_cJSON_Duplicate(const cJSON* item, pika_cJSON_bool recurse);
-/* Duplicate will create a new, identical cJSON item to the one you pass, in new
- * memory that will need to be released. With recurse!=0, it will duplicate any
- * children connected to the item. The item->next and ->prev pointers are always
- * zero on return from Duplicate. */
-/* Recursively compare two cJSON items for equality. If either a or b is NULL or
- * invalid, they will be considered unequal. case_sensitive determines if object
- * keys are treated case sensitive (1) or case insensitive (0) */
+/* Duplicate will create a new, identical cJSON item to the one you pass, in
+ * new memory that will need to be released. With recurse!=0, it will
+ * duplicate any children connected to the item. The item->next and ->prev
+ * pointers are always zero on return from Duplicate. */
+/* Recursively compare two cJSON items for equality. If either a or b is
+ * NULL or invalid, they will be considered unequal. case_sensitive
+ * determines if object keys are treated case sensitive (1) or case
+ * insensitive (0) */
 pika_cJSON_PUBLIC(pika_cJSON_bool)
     pika_cJSON_Compare(const cJSON* const a,
                        const cJSON* const b,
                        const pika_cJSON_bool case_sensitive);
 
-/* Minify a strings, remove blank characters(such as ' ', '\t', '\r', '\n') from
- * strings. The input pointer json cannot point to a read-only address area,
- * such as a string constant, but should point to a readable and writable
- * address area. */
+/* Minify a strings, remove blank characters(such as ' ', '\t', '\r', '\n')
+ * from strings. The input pointer json cannot point to a read-only address
+ * area, such as a string constant, but should point to a readable and
+ * writable address area. */
 pika_cJSON_PUBLIC(void) pika_cJSON_Minify(char* json);
 
-/* Helper functions for creating and adding items to an object at the same time.
- * They return the added item or NULL on failure. */
+/* Helper functions for creating and adding items to an object at the same
+ * time. They return the added item or NULL on failure. */
 pika_cJSON_PUBLIC(cJSON*)
     pika_cJSON_AddNullToObject(cJSON* const object, const char* const name);
 pika_cJSON_PUBLIC(cJSON*)
@@ -391,8 +396,8 @@ pika_cJSON_PUBLIC(double)
 #define pika_cJSON_SetNumberValue(object, number)                          \
     ((object != NULL) ? pika_cJSON_SetNumberHelper(object, (double)number) \
                       : (number))
-/* Change the valuestring of a pika_cJSON_String object, only takes effect when
- * type of object is pika_cJSON_String */
+/* Change the valuestring of a pika_cJSON_String object, only takes effect
+ * when type of object is pika_cJSON_String */
 pika_cJSON_PUBLIC(char*)
     pika_cJSON_SetValuestring(cJSON* object, const char* valuestring);
 
@@ -401,8 +406,8 @@ pika_cJSON_PUBLIC(char*)
     for (element = (array != NULL) ? (array)->child : NULL; element != NULL; \
          element = element->next)
 
-/* malloc/free objects using the malloc/free functions that have been set with
- * pika_cJSON_InitHooks */
+/* malloc/free objects using the malloc/free functions that have been set
+ * with pika_cJSON_InitHooks */
 pika_cJSON_PUBLIC(void*) pika_cJSON_malloc(size_t size);
 pika_cJSON_PUBLIC(void) pika_cJSON_free(void* object);
 

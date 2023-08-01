@@ -1,6 +1,5 @@
 #include "test_common.h"
 TEST_START
-
 #if !PIKA_NANO_ENABLE
 TEST_RUN_SINGLE_FILE_PASS(json, loads, "test/python/json/json_loads.py")
 

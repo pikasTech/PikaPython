@@ -1,6 +1,5 @@
 #include "test_common.h"
 TEST_START
-
 #if PIKA_SYNTAX_SLICE_ENABLE
 TEST(stddata, test1) {
     /* init */

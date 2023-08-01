@@ -8,7 +8,6 @@
  * Copyright (c) 2022 jiejie, All Rights Reserved. Please keep the author
  * information and source code according to the license.
  */
-
 #ifndef _RANDOM_H_
 #define _RANDOM_H_
 

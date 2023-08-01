@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-15 13:38:52
  * @LastEditTime: 2020-05-25 10:13:41
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #include "nettype_tcp.h"
 #include "mqtt_log.h"

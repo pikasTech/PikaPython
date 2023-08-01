@@ -4,25 +4,25 @@
  *
  * MIT License
  *
- * Copyright (c) 2021 lyon 李昂 liang6516@outlook.com
+ * Copyright (c) 2021 lyon liang6516@outlook.com
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
 #include "PikaCompiler.h"
 #include "BaseObj.h"
@@ -311,8 +311,7 @@ int LibObj_staticLinkFile_New(LibObj* self, char* input_file_name, char* path) {
         pika_platform_printf("error: can't open file %s\r\n", input_file_name);
         return -1;
     }
-    char* module_name = strsGetLastToken(
-        &buffs, input_file_name, '/'); /*找到最后一个 / 出现的位置的下一个地址*/
+    char* module_name = strsGetLastToken(&buffs, input_file_name, '/');
 
     size_t module_name_len = strlen(module_name);
 
@@ -437,10 +436,6 @@ static int32_t __foreach_handler_selectBlockSize(Arg* argEach,
     return 0;
 }
 
-/* 这里包括文件内容大小，文件信息所占的大小（文件名和文件大小）
- * 一个unit 的组成包括： Namelen（4 bytes）+ Name (strlen("namelen") + 1) \
- * + fileSize (4 bytes)
- */
 static int32_t __foreach_handler_libSumSize(Arg* argEach, PikaLinker* linker) {
     if (arg_isObject(argEach)) {
         PikaObj* module_obj = arg_getPtr(argEach);
@@ -566,14 +561,10 @@ static PIKA_RES _loadModuleDataWithIndex(uint8_t* library_bytes,
                                          char** name_p,
                                          uint8_t** addr_p,
                                          size_t* size) {
-    /*两个指针，一个指向文件信息部分，一个指向文件内容部分  */
-    uint32_t block_size =
-        *(uint32_t*)(library_bytes +
-                     4 * sizeof(uint32_t)); /* 每个文件信息大小的总和 */
+    uint32_t block_size = *(uint32_t*)(library_bytes + 4 * sizeof(uint32_t));
     uint8_t* file_info_block_start = library_bytes + block_size;
     uint8_t* bytecode_ptr = file_info_block_start + block_size * module_num;
     uint8_t* bytecode_ptr_next = bytecode_ptr;
-    /* 每一个模块的信息 */
     uint32_t module_size = 0;
     char* module_name = NULL;
     uintptr_t offset = 0;
@@ -624,8 +615,7 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
         size_t size = 0;
         _loadModuleDataWithIndex(library_bytes, module_num, i, &name, &addr,
                                  &size);
-        name = strsGetLastToken(&buffs, name,
-                                '/'); /*找到最后一个 / 出现的位置的下一个地址*/
+        name = strsGetLastToken(&buffs, name, '/');
 
         if (strEqu(module_name, name)) {
             *addr_p = addr;
@@ -638,16 +628,6 @@ PIKA_RES _loadModuleDataWithName(uint8_t* library_bytes,
     return PIKA_RES_ERR_ARG_NO_FOUND;
 }
 
-/**
- * @brief 打开 .pack 文件，并返回Arg 对象，里面包含这个pack 文件的library_bytes
- *
- * @param
- * @param char* pack_name pack 文件的名字
- * @return  Arg* arg, a pointer to an Arg object, which point to the
- * library_bytes of the pack file.
- * @note
- *
- */
 Arg* _getPack_libraryBytes(char* pack_name) {
     if (NULL == pack_name) {
         pika_platform_printf(
@@ -728,7 +708,7 @@ int LibObj_loadLibraryFile(LibObj* self, char* lib_file_name) {
  */
 PIKA_RES pikafs_unpack_files(char* pack_name, char* out_path) {
     PIKA_RES stat = PIKA_RES_OK;
-    Arg* file_arg = NULL; /* file_arg 存在的意义就是获取文件的 library_bytes*/
+    Arg* file_arg = NULL;
     uint8_t* library_bytes = NULL;
     pikafs_FILE* fptr = NULL;
     if (NULL == out_path) {
@@ -758,8 +738,7 @@ PIKA_RES pikafs_unpack_files(char* pack_name, char* out_path) {
         size = 0;
         stat = _loadModuleDataWithIndex(library_bytes, module_num, i, &name,
                                         &addr, &size);
-        name = strsGetLastToken(&buffs, name,
-                                '/'); /*找到最后一个 / 出现的位置的下一个地址*/
+        name = strsGetLastToken(&buffs, name, '/');
         output_file_path = strsPathJoin(&buffs, out_path, name);
         pika_platform_printf("output_file_path: %s\r\n", output_file_path);
         new_fp = pika_platform_fopen(output_file_path, "wb+");
@@ -1189,7 +1168,7 @@ PIKA_RES pikaMaker_linkRaw(PikaMaker* self, char* file_path) {
 PIKA_RES pikaMaker_linkRaw_New(PikaMaker* self,
                                char* file_path,
                                char* pack_path) {
-    LibObj* lib = obj_getPtr(self, "lib"); /* self 下面的lib 对象 */
+    LibObj* lib = obj_getPtr(self, "lib");
     PIKA_RES ret = LibObj_staticLinkFile_New(lib, file_path, pack_path);
     return ret;
 }
@@ -1203,22 +1182,22 @@ PIKA_RES pikaMaker_linkRaw_New(PikaMaker* self,
 pikafs_FILE* pikafs_fopen(char* file_name, char* mode) {
     pikafs_FILE* f = (pikafs_FILE*)pikaMalloc(sizeof(pikafs_FILE));
     if (NULL == f) {
-        return NULL;  // 避免空指针
+        return NULL;
     }
     memset(f, 0, sizeof(pikafs_FILE));
     extern volatile PikaObj* __pikaMain;
     uint8_t* library_bytes = obj_getPtr((PikaObj*)__pikaMain, "@libraw");
     if (NULL == library_bytes) {
-        goto __error;  // 如果library_bytes为NULL，则跳转到__error
+        goto __error;
     }
     if (PIKA_RES_OK !=
         _loadModuleDataWithName(library_bytes, file_name, &f->addr, &f->size)) {
-        goto __error;  // 如果_loadModuleDataWithName的结果不是PIKA_RES_OK，则跳转到__error
+        goto __error;
     }
     return f;
 
 __error:
-    pikaFree(f, sizeof(pikafs_FILE));  // 释放内存
+    pikaFree(f, sizeof(pikafs_FILE));
     return NULL;
 }
 
@@ -1249,8 +1228,7 @@ pikafs_FILE* pikafs_fopen_pack(char* pack_name, char* file_name) {
     }
 
     f->farg = file_arg;
-    // arg_deinit(file_arg); /* file_arg 被释放以后，library_bytes
-    // 就是个野指针了 */
+    // arg_deinit(file_arg); /* file_arg
     return f;
 
 __exit:

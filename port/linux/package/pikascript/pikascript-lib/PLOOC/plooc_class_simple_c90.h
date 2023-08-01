@@ -1,22 +1,21 @@
 /*****************************************************************************
- *   Copyright(C)2009-2019 by GorgonMeducer<embedded_zhuoran@hotmail.com>    *
- *                       and  SimonQian<simonqian@simonqian.com>             *
- *         with support from  HenryLong<henry_long@163.com>                  *
+ *   Copyright(C)2009-2019 by GorgonMeducer<embedded_zhuoran@hotmail.com> *
+ *                       and  SimonQian<simonqian@simonqian.com> * with
+ *support from  HenryLong<henry_long@163.com>                  *
  *                                                                           *
- *  Licensed under the Apache License, Version 2.0 (the "License");          *
- *  you may not use this file except in compliance with the License.         *
- *  You may obtain a copy of the License at                                  *
+ *  Licensed under the Apache License, Version 2.0 (the "License"); * you may
+ *not use this file except in compliance with the License.         * You may
+ *obtain a copy of the License at                                  *
  *                                                                           *
- *     http://www.apache.org/licenses/LICENSE-2.0                            *
+ *     http://www.apache.org/licenses/LICENSE-2.0 *
  *                                                                           *
- *  Unless required by applicable law or agreed to in writing, software      *
- *  distributed under the License is distributed on an "AS IS" BASIS,        *
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- *  See the License for the specific language governing permissions and      *
- *  limitations under the License.                                           *
+ *  Unless required by applicable law or agreed to in writing, software *
+ *  distributed under the License is distributed on an "AS IS" BASIS, *
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and *
+ *  limitations under the License. *
  *                                                                           *
  ****************************************************************************/
-
 /******************************************************************************
  * HOW TO USE                                                                 *
  ******************************************************************************/
@@ -44,7 +43,8 @@ extern "C" {
 #undef protected_member
 #undef public_member
 
-/*============================ MACROFIED FUNCTIONS ===========================*/
+/*============================ MACROFIED FUNCTIONS
+ * ===========================*/
 
 #ifndef __PLOOC_CLASS_SIMPLE_C90_H__
 #define __PLOOC_CLASS_SIMPLE_C90_H__
@@ -152,10 +152,14 @@ extern "C" {
 #undef __PLOOC_CLASS_IMPLEMENT
 #undef __PLOOC_CLASS_INHERIT
 
-/*============================ TYPES =========================================*/
-/*============================ GLOBAL VARIABLES ==============================*/
-/*============================ LOCAL VARIABLES ===============================*/
-/*============================ PROTOTYPES ====================================*/
+/*============================ TYPES
+ * =========================================*/
+/*============================ GLOBAL VARIABLES
+ * ==============================*/
+/*============================ LOCAL VARIABLES
+ * ===============================*/
+/*============================ PROTOTYPES
+ * ====================================*/
 
 #ifdef __cplusplus
 }

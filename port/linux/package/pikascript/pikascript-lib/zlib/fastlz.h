@@ -20,7 +20,6 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-
 #ifndef FASTLZ_H
 #define FASTLZ_H
 
@@ -87,8 +86,8 @@ int fastlz_decompress(const void* input, int length, void* output, int maxout);
   This is similar to fastlz_compress_level above, but with the level
   automatically chosen.
 
-  This function is deprecated and it will be completely removed in some future
-  version.
+  This function is deprecated and it will be completely removed in some
+  future version.
 */
 
 int fastlz_compress(const void* input, int length, void* output);

@@ -1,4 +1,4 @@
-﻿#include "PikaObj.h"
+#include "PikaObj.h"
 #ifdef __linux__
 #include <arpa/inet.h>
 #include <errno.h>

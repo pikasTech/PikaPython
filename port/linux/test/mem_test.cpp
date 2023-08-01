@@ -1,6 +1,5 @@
 #include "test_common.h"
 TEST_START
-
 #if PIKA_POOL_ENABLE
 TEST(bitmap, init) {
     uint8_t* bitmap = bitmap_init(10);

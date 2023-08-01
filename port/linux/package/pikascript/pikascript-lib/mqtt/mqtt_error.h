@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-15 00:42:16
  * @LastEditTime: 2020-10-17 14:16:15
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #ifndef _MQTT_ERROR_H_
 #define _MQTT_ERROR_H_

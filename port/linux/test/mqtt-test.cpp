@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-11 21:53:07
  * @LastEditTime: 2020-06-08 20:38:41
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #include "test_common.h"
 extern "C" {
@@ -46,12 +46,14 @@ static const char* test_baidu_ca_crt = {
 static void topic1_handler(void* client, message_data_t* msg) {
     (void)client;
     MQTT_LOG_I(
-        "----------------------------------------------------------------------"
+        "------------------------------------------------------------------"
+        "----"
         "-------------");
     MQTT_LOG_I("%s:%d %s()...\ntopic: %s\nmessage:%s", __FILE__, __LINE__,
                __FUNCTION__, msg->topic_name, (char*)msg->message->payload);
     MQTT_LOG_I(
-        "----------------------------------------------------------------------"
+        "------------------------------------------------------------------"
+        "----"
         "-------------");
 }
 

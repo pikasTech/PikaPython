@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-11 22:47:55
  * @LastEditTime: 2020-10-17 14:18:02
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #ifndef _MQTT_LIST_H_
 #define _MQTT_LIST_H_

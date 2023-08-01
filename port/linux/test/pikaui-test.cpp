@@ -1,6 +1,5 @@
 #include "test_common.h"
 TEST_START
-
 #if PIKA_GC_MARK_SWEEP_ENABLE
 
 TEST(pikaui, page) {

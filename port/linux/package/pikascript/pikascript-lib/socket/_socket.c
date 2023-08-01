@@ -1,4 +1,4 @@
-﻿#include "PikaPlatform_socket.h"
+#include "PikaPlatform_socket.h"
 #include "_socket_socket.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 12, 0)

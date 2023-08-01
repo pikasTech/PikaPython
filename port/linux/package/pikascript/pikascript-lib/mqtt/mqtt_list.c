@@ -3,10 +3,9 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-11 22:46:33
  * @LastEditTime: 2020-04-27 23:28:12
- * @Description: the following code references TencentOS tiny, please keep the
- * author information and source code according to the license.
+ * @Description: the following code references TencentOS tiny, please keep
+ * the author information and source code according to the license.
  */
-
 #include "mqtt_list.h"
 
 static void _mqtt_list_add(mqtt_list_t* node,

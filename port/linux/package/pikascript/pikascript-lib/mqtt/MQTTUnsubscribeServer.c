@@ -11,9 +11,9 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *    Ian Craggs - initial API and implementation and/or initial documentation
+ *    Ian Craggs - initial API and implementation and/or initial
+ *documentation
  *******************************************************************************/
-
 #include "MQTTPacket.h"
 #include "StackTrace.h"
 
@@ -23,9 +23,10 @@
  * Deserializes the supplied (wire) buffer into unsubscribe data
  * @param dup integer returned - the MQTT dup flag
  * @param packetid integer returned - the MQTT packet identifier
- * @param maxcount - the maximum number of members allowed in the topicFilters
- * and requestedQoSs arrays
- * @param count - number of members in the topicFilters and requestedQoSs arrays
+ * @param maxcount - the maximum number of members allowed in the
+ * topicFilters and requestedQoSs arrays
+ * @param count - number of members in the topicFilters and requestedQoSs
+ * arrays
  * @param topicFilters - array of topic filter names
  * @param buf the raw buffer data, of the correct length determined by the
  * remaining length field

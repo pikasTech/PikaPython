@@ -10,7 +10,6 @@
  */
 
 extern "C" {
-
 #include "../pikascript-lib/requests/webclient.h"
 
 #define GET_HEADER_BUFSZ 1024
@@ -18,8 +17,8 @@ extern "C" {
 
 #define GET_LOCAL_URI "http://www.rt-thread.com/service/rt-thread.txt"
 
-/* send HTTP GET request by common request interface, it used to receive longer
- * data */
+/* send HTTP GET request by common request interface, it used to receive
+ * longer data */
 static int webclient_get_comm(const char* uri) {
     struct webclient_session* session = RT_NULL;
     unsigned char* buffer = RT_NULL;
@@ -175,7 +174,8 @@ int webclient_get_test(int argc, char** argv) {
     } else {
         rt_kprintf("web_get_test [URI]     - webclient GET request test.\n");
         rt_kprintf(
-            "web_get_test -s [URI]  - webclient simplify GET request test.\n");
+            "web_get_test -s [URI]  - webclient simplify GET request "
+            "test.\n");
         return -RT_ERROR;
     }
 
