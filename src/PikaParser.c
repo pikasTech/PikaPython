@@ -1995,12 +1995,24 @@ char* Parser_removeComment(char* sLine) {
     pika_bool bAnnotationExit = 0;
     pika_bool bInSingleQuotes = 0;
     pika_bool bInDoubleQuotesDeepth = 0;
+    pika_bool bPrevCharWasBackslash = 0;
+
     for (uint32_t i = 0; i < strGetSize(sLine); i++) {
-        if ('\'' == sLine[i]) {
+        if (bPrevCharWasBackslash) {
+            bPrevCharWasBackslash = 0;
+            continue;
+        }
+
+        if ('\\' == sLine[i]) {
+            bPrevCharWasBackslash = 1;
+            continue;
+        }
+
+        if ('\'' == sLine[i] && !bInDoubleQuotesDeepth) {
             bInSingleQuotes = !bInSingleQuotes;
             continue;
         }
-        if ('"' == sLine[i]) {
+        if ('"' == sLine[i] && !bInSingleQuotes) {
             bInDoubleQuotesDeepth = !bInDoubleQuotesDeepth;
             continue;
         }
@@ -2008,24 +2020,23 @@ char* Parser_removeComment(char* sLine) {
             continue;
         }
         if ('#' == sLine[i]) {
-            /* end the line */
             sLine[i] = 0;
             bAnnotationExit = 1;
             break;
         }
     }
-    /* no annotation, exit */
+
     if (!bAnnotationExit) {
         return sLine;
     }
-    /* check empty line */
+
     for (uint32_t i = 0; i < strGetSize(sLine); i++) {
         if (' ' != sLine[i]) {
             return sLine;
         }
     }
-    /* is an emply line */
-    sLine = "@annontation";
+
+    sLine = "@annotation";
     return sLine;
 }
 
@@ -2698,7 +2709,7 @@ char* parser_line2Target(Parser* self, char* sLine) {
         /* preprocess error */
         goto __exit;
     }
-    if (strEqu("@annontation", sLine)) {
+    if (strEqu("@annotation", sLine)) {
         sOut = "";
         goto __exit;
     }
@@ -2820,7 +2831,7 @@ char* parser_lines2Target(Parser* self, char* sPyLines) {
         if (bIsLineConnection) {
             if (bIsLineConnectionForBracket) {
                 sLine = Parser_removeComment(sLine);
-                if (strEqu(sLine, "@annontation")) {
+                if (strEqu(sLine, "@annotation")) {
                     sLine = "";
                 }
             }

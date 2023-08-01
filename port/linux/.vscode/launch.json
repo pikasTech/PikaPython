@@ -22,11 +22,11 @@
                 // "--gtest_filter=VM.comprehension"
                 // "--gtest_filter=zlib.zlib1"
                 // "--gtest_filter=builtin.big_list"
-                // "--gtest_filter=parser.big_list"
                 // "--gtest_filter=VM.list_base"
                 // "--gtest_filter=vm.issue_dict_update"
                 // "--gtest_filter=builtin.tuple"
-                "--gtest_filter=pikaMain.num_issue1"
+                // "--gtest_filter=pikaMain.num_issue1"
+                "--gtest_filter=parser.byte_issue"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
