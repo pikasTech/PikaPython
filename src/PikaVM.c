@@ -1311,7 +1311,7 @@ static void _load_call_arg(VMState* vm,
     /* load variable arg */
     if (f->i_arg > f->n_positional) {
         if (f->is_vars) {
-            pikaList_append(&(f->tuple)->super, call_arg);
+            pikaList_append(f->tuple, call_arg);
             /* the append would copy the arg */
             arg_deinit(call_arg);
             return;
@@ -1403,10 +1403,10 @@ static uint32_t _get_n_input_with_unpack(VMState* vm, int n_used) {
             PikaObj* New_PikaStdData_Dict(Args * args);
             PikaObj* obj = arg_getPtr(call_arg);
             pika_assert(obj->constructor == New_PikaStdData_Dict);
-            PikaDict* dict = obj_getPtr(obj, "dict");
+            Args* dict = _OBJ2DICT(obj);
             int i_item = 0;
             while (pika_true) {
-                Arg* item_val = args_getArgByIndex(&dict->super, i_item);
+                Arg* item_val = args_getArgByIndex(dict, i_item);
                 if (NULL == item_val) {
                     break;
                 }
@@ -1597,7 +1597,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 #endif
 
     if (f.tuple != NULL) {
-        pikaList_reverse(&(f.tuple)->super);
+        pikaList_reverse(f.tuple);
         /* load variable tuple */
         PikaObj* New_PikaStdData_Tuple(Args * args);
         PikaObj* tuple_obj = newNormalObj(New_PikaStdData_Tuple);

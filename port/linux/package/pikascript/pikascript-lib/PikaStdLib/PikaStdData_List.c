@@ -9,7 +9,7 @@ void PikaStdData_List_append(PikaObj* self, Arg* arg) {
 }
 
 void PikaStdData_List_set(PikaObj* self, int i, Arg* arg) {
-    objList_set(self, i, arg);
+    objList_set(self, i, arg_copy(arg));
 }
 
 void PikaStdData_List___setitem__(PikaObj* self, Arg* __key, Arg* __val) {

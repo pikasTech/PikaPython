@@ -2280,20 +2280,20 @@ void pikaGC_markObj(PikaGC* gc, PikaObj* self) {
     }
     args_foreach(self->list, _pikaGC_markHandler, gc);
     if (self->constructor == New_PikaStdData_Dict) {
-        PikaDict* dict = obj_getPtr(self, "dict");
+        Args* dict = _OBJ2DICT(self);
         if (NULL == dict) {
             goto __exit;
         }
-        args_foreach(&dict->super, _pikaGC_markHandler, (void*)gc);
+        args_foreach(dict, _pikaGC_markHandler, (void*)gc);
         goto __exit;
     }
     if (self->constructor == New_PikaStdData_List ||
         self->constructor == New_PikaStdData_Tuple) {
-        PikaList* list = obj_getPtr(self, "list");
+        Args* list = _OBJ2LIST(self);
         if (NULL == list) {
             goto __exit;
         }
-        args_foreach(&list->super, _pikaGC_markHandler, (void*)gc);
+        args_foreach(list, _pikaGC_markHandler, (void*)gc);
         goto __exit;
     }
 __exit:
@@ -3433,7 +3433,7 @@ char* builtins_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
 #if PIKA_SYNTAX_FORMAT_ENABLE
     Args buffs = {0};
     pikaMemMaxReset();
-    char* res = strsFormatList(&buffs, fmt, &var->super);
+    char* res = strsFormatList(&buffs, fmt, var);
     obj_setStr(self, "_buf", res);
     res = obj_getStr(self, "_buf");
     strsDeinit(&buffs);
@@ -3977,7 +3977,7 @@ int objList_getSize(PikaObj* self) {
 
 void objList_set(PikaObj* self, int i, Arg* arg) {
     PikaList* list = obj_getPtr(self, "list");
-    if (PIKA_RES_OK != pikaList_setArg(list, i, arg)) {
+    if (PIKA_RES_OK != pikaList_setArg(list, i, (arg))) {
         obj_setErrorCode(self, 1);
         obj_setSysOut(self, "Error: index exceeded lengh of list.");
     }
@@ -4016,14 +4016,14 @@ int32_t objDict_forEach(PikaObj* self,
                                               Arg* valEach,
                                               void* context),
                         void* context) {
-    PikaDict* keys = obj_getPtr(self, "_keys");
-    PikaDict* dict = obj_getPtr(self, "dict");
+    Args* keys = _OBJ2KEYS(self);
+    Args* dict = _OBJ2DICT(self);
     pika_assert(NULL != dict);
     pika_assert(NULL != keys);
     int i = 0;
     while (1) {
-        Arg* item_key = args_getArgByIndex(&keys->super, i);
-        Arg* item_val = args_getArgByIndex(&dict->super, i);
+        Arg* item_key = args_getArgByIndex(keys, i);
+        Arg* item_val = args_getArgByIndex(dict, i);
         if (NULL == item_key) {
             break;
         }
@@ -4074,4 +4074,20 @@ void pika_sleep_ms(uint32_t ms) {
             break;
         }
     }
+}
+
+PikaList* New_pikaList(void) {
+    Args* list = New_args(NULL);
+    /* set top index for append */
+    args_pushArg_name(list, "top", arg_newInt(0));
+    PikaList* self = newNormalObj(New_PikaStdData_List);
+    obj_setPtr(self, "list", list);
+    return self;
+}
+
+PikaDict* New_pikaDict(void) {
+    Args* dict = New_args(NULL);
+    PikaDict* self = newNormalObj(New_PikaStdData_Dict);
+    obj_setPtr(self, "dict", dict);
+    return self;
 }

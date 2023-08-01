@@ -26,11 +26,11 @@
     Any obj_name = newNormalObj(New_PikaStdData_Tuple); \
     obj_setPtr(obj_name, "list", name);
 
-#define tu_append(tup, val, type)             \
-    {                                         \
-        Arg* _arg = arg_new##type(val);       \
-        pikaList_append(&(tup)->super, _arg); \
-        arg_deinit(_arg);                     \
+#define tu_append(tup, val, type)       \
+    {                                   \
+        Arg* _arg = arg_new##type(val); \
+        pikaList_append(tup, _arg);     \
+        arg_deinit(_arg);               \
     }
 #define li_append(list, val, type)           \
     {                                        \
@@ -395,7 +395,7 @@ PikaObj* re_Match_groups(PikaObj* self) {
         } else {
             str_arg1 = arg_newStr("");
         }
-        pikaList_append(&(tup)->super, str_arg1);
+        pikaList_append(tup, str_arg1);
         arg_deinit(str_arg1);
     }
     return tup_obj;
