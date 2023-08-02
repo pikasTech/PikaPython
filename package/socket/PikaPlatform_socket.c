@@ -99,9 +99,9 @@ PIKA_WEAK struct hostent* pika_platform_gethostbyname(const char* __name) {
 }
 
 /* inet_ntoa */
-PIKA_WEAK char* pika_platform_inet_ntoa(struct in_addr in_addr_val) {
+PIKA_WEAK char* pika_platform_inet_ntoa(struct in_addr __addr) {
 #if defined(__linux__) || defined(_WIN32) || PIKA_LWIP_ENABLE
-    return inet_ntoa(in_addr_val);
+    return inet_ntoa(__addr);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
@@ -203,8 +203,10 @@ PIKA_WEAK int pika_platform_close(int __fd) {
 }
 
 PIKA_WEAK int pika_platform_write(int __fd, const void* __buf, size_t __nbyte) {
-#if defined(__linux__) || defined(_WIN32) || PIKA_LWIP_ENABLE
+#if defined(__linux__) || PIKA_LWIP_ENABLE
     return write(__fd, __buf, __nbyte);
+#elif defined(_WIN32)
+    return send(__fd, __buf, __nbyte, 0);
 #else
     WEAK_FUNCTION_NEED_OVERRIDE_ERROR();
 #endif
