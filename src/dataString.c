@@ -453,3 +453,46 @@ int strOnly(char* string, char ch) {
     }
     return 1;
 }
+
+char* strFindIgnoreQuoted(char* haystack, char* needle) {
+    int haystack_len = strlen(haystack);
+    int needle_len = strlen(needle);
+    int in_single_quotes = 0, in_double_quotes = 0, escaped = 0;
+    int i, j;
+
+    if (needle_len == 0)
+        return haystack;
+    if (haystack_len < needle_len)
+        return NULL;
+
+    for (i = 0, j = 0; i < haystack_len; ++i) {
+        char c = haystack[i];
+        if (escaped) {
+            escaped = 0;
+            continue;
+        }
+        if (c == '\\') {
+            escaped = 1;
+            continue;
+        }
+        if (c == '\'' && !in_double_quotes) {
+            in_single_quotes = !in_single_quotes;
+            continue;
+        }
+        if (c == '\"' && !in_single_quotes) {
+            in_double_quotes = !in_double_quotes;
+            continue;
+        }
+        if (!in_single_quotes && !in_double_quotes) {
+            if (c == needle[j]) {
+                if (j == needle_len - 1) {
+                    return haystack + i - needle_len + 1;
+                }
+                ++j;
+            } else {
+                j = 0;
+            }
+        }
+    }
+    return NULL;
+}

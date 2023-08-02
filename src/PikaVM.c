@@ -3599,8 +3599,8 @@ static ByteCodeFrame* _cache_bytecodeframe(PikaObj* self) {
 
 static ByteCodeFrame* _cache_bcf_fn(PikaObj* self, char* py_lines) {
     /* cache 'def' and 'class' to heap */
-    if ((NULL == strstr(py_lines, "def ")) &&
-        (NULL == strstr(py_lines, "class "))) {
+    if ((NULL == strFindIgnoreQuoted(py_lines, "def ")) &&
+        (NULL == strFindIgnoreQuoted(py_lines, "class "))) {
         return NULL;
     }
     return _cache_bytecodeframe(self);
