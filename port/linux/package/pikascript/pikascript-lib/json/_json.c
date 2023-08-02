@@ -178,7 +178,6 @@ Arg* json_encode_cjson(cJSON* cjson) {
                 char* key = child->string;
                 Arg* nested_arg = json_encode_cjson(child);
                 objDict_set(ret, key, nested_arg);
-                arg_deinit(nested_arg);
                 child = child->next;
             }
             return arg_newObj(ret);
