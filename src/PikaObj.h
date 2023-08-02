@@ -790,33 +790,39 @@ PIKA_RES _transeBool(Arg* arg, pika_bool* res);
 static inline PIKA_RES pikaDict_setInt(PikaDict* self,
                                        char* name,
                                        int64_t val) {
-    return args_setInt(_OBJ2LIST(self), (name), (val));
+    return args_setInt(_OBJ2DICT(self), (name), (val));
 }
 static inline PIKA_RES pikaDict_setFloat(PikaDict* self,
                                          char* name,
                                          pika_float val) {
-    return args_setFloat(_OBJ2LIST(self), (name), (val));
+    return args_setFloat(_OBJ2DICT(self), (name), (val));
 }
 static inline PIKA_RES pikaDict_setStr(PikaDict* self, char* name, char* val) {
-    return args_setStr(_OBJ2LIST(self), (name), (val));
+    return args_setStr(_OBJ2DICT(self), (name), (val));
 }
 static inline PIKA_RES pikaDict_setPtr(PikaDict* self, char* name, void* val) {
-    return args_setPtr(_OBJ2LIST(self), (name), (val));
+    return args_setPtr(_OBJ2DICT(self), (name), (val));
 }
 
-static inline PIKA_RES pikaDict_setArg(PikaDict* self, Arg* val) {
-    return args_setArg(_OBJ2LIST(self), (val));
+static inline PIKA_RES _pikaDict_setVal(PikaDict* self, Arg* val) {
+    return args_setArg(_OBJ2DICT(self), (val));
+}
+
+static inline PIKA_RES pikaDict_setArg(PikaDict* self, char* name, Arg* val) {
+    arg_setName(val, name);
+    _pikaDict_setVal(self, val);
+    return args_setStr(_OBJ2KEYS(self), (name), (name));
 }
 
 static inline PIKA_RES pikaDict_removeArg(PikaDict* self, Arg* val) {
-    return args_removeArg(_OBJ2LIST(self), (val));
+    return args_removeArg(_OBJ2DICT(self), (val));
 }
 
 static inline PIKA_RES pikaDict_setBytes(PikaDict* self,
                                          char* name,
                                          uint8_t* val,
                                          size_t size) {
-    return args_setBytes(_OBJ2LIST(self), (name), (val), (size));
+    return args_setBytes(_OBJ2DICT(self), (name), (val), (size));
 }
 
 static inline int64_t pikaDict_getInt(PikaDict* self, char* name) {
@@ -864,7 +870,7 @@ static inline size_t pikaDict_getBytesSize(PikaDict* self, char* name) {
 }
 
 static inline void pikaDict_deinit(PikaDict* self) {
-    args_deinit(_OBJ2DICT(self));
+    obj_deinit(self);
 }
 
 /* list api */

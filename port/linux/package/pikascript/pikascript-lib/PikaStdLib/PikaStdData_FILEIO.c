@@ -217,14 +217,8 @@ void PikaStdData_FILEIO_writelines(PikaObj* self, PikaObj* lines) {
         __platform_printf("Error: can't write lines to file\n");
         return;
     }
-    PikaList* list = obj_getPtr(lines, "list");
-    if (list == NULL) {
-        obj_setErrorCode(self, PIKA_RES_ERR_IO);
-        __platform_printf("Error: can't write lines to file\n");
-        return;
-    }
-    for (size_t i = 0; i < pikaList_getSize(list); i++) {
-        char* line = pikaList_getStr(list, i);
+    for (size_t i = 0; i < pikaList_getSize(lines); i++) {
+        char* line = pikaList_getStr(lines, i);
         Arg* arg_str = arg_newStr(line);
         PikaStdData_FILEIO_write(self, arg_str);
         arg_deinit(arg_str);

@@ -1286,7 +1286,7 @@ static void _kw_push(FunctionArgsInfo* f, Arg* call_arg, int i) {
         f->kw = New_pikaDict();
     }
     arg_setIsKeyword(call_arg, pika_false);
-    pikaDict_setArg(f->kw, call_arg);
+    _pikaDict_setVal(f->kw, call_arg);
 }
 
 static void _load_call_arg(VMState* vm,
@@ -1707,8 +1707,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
                                        Arg* arg_ret_reg) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
     uint32_t n_arg = VMState_getInputArgNum(vm);
-    PikaObj* dict = newNormalObj(New_PikaStdData_Dict);
-    objDict_init(dict);
+    PikaObj* dict = New_pikaDict();
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */
@@ -1721,7 +1720,6 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
         Arg* val_arg = stack_popArg_alloc(&stack);
         objDict_set(dict, arg_getStr(key_arg), val_arg);
         arg_deinit(key_arg);
-        arg_deinit(val_arg);
     }
     stack_deinit(&stack);
     return arg_newObj(dict);

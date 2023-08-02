@@ -3303,8 +3303,7 @@ Arg* builtins_list(PikaObj* self, PikaTuple* val) {
 
 Arg* builtins_dict(PikaObj* self, PikaTuple* val) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    PikaObj* New_PikaStdData_Dict(Args * args);
-    return arg_newDirectObj(New_PikaStdData_Dict);
+    return arg_newObj(New_pikaDict());
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in dist is not enabled.\r\n");
@@ -3845,8 +3844,8 @@ Arg* _max_min(PikaObj* self, PikaTuple* val, uint8_t* bc) {
         obj_setArg(self, "@list", pikaTuple_getArg(val, 0));
         return pikaVM_runByteCodeReturn(self, (uint8_t*)bc, "@res_max");
     }
-    PikaObj* oTuple = newNormalObj(New_PikaStdData_Tuple);
-    obj_setPtr(oTuple, "list", val);
+    PikaTuple* oTuple = newNormalObj(New_PikaStdData_Tuple);
+    obj_setPtr(oTuple, "list", obj_getPtr(val, "list"));
     obj_setInt(oTuple, "needfree", 0);
     Arg* aTuple = arg_newObj(oTuple);
     obj_setArg(self, "@list", aTuple);
@@ -3987,9 +3986,7 @@ Arg* objDict_get(PikaObj* self, char* key) {
 }
 
 void objDict_set(PikaObj* self, char* key, Arg* arg) {
-    Arg* arg_new = arg_copy(arg);
-    arg_setName(arg_new, key);
-    pikaDict_setArg(self, arg_new);
+    pikaDict_setArg(self, key, arg);
 }
 
 int32_t objDict_forEach(PikaObj* self,
@@ -4006,7 +4003,7 @@ int32_t objDict_forEach(PikaObj* self,
     while (1) {
         Arg* item_key = args_getArgByIndex(keys, i);
         Arg* item_val = args_getArgByIndex(dict, i);
-        if (NULL == item_key) {
+        if (NULL == item_val) {
             break;
         }
         // Call the handle function on each key-value pair
@@ -4067,8 +4064,7 @@ PikaList* New_pikaList(void) {
 }
 
 PikaDict* New_pikaDict(void) {
-    Args* dict = New_args(NULL);
     PikaDict* self = newNormalObj(New_PikaStdData_Dict);
-    obj_setPtr(self, "dict", dict);
+    objDict_init(self);
     return self;
 }

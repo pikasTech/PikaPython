@@ -11,25 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=builtin.write_fn"
-                // "--gtest_filter=builtin.base_type"
-                // "--gtest_filter=parser.multi_comprehension"
-                // "--gtest_filter=parser.comprehension_indent"
-                // "--gtest_filter=parser.*"
-                // "--gtest_filter=pikaMain.slice2"
-                // "--gtest_filter=re.match"
-                // "--gtest_filter=parser.for_indent"
-                // "--gtest_filter=VM.comprehension"
-                // "--gtest_filter=zlib.zlib1"
-                // "--gtest_filter=builtin.big_list"
-                // "--gtest_filter=VM.list_base"
-                // "--gtest_filter=vm.issue_dict_update"
-                // "--gtest_filter=builtin.tuple"
-                // "--gtest_filter=pikaMain.num_issue1"
-                // "--gtest_filter=parser.byte_issue"
-                // "--gtest_filter=VM.vars_runtime"
-                // "--gtest_filter=VM.list_add"
-                "--gtest_filter=PikaCV.test2"
+                "--gtest_filter=vm.issue_big_dict_update"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
