@@ -2,7 +2,6 @@
 #include <ctype.h>
 #include "PikaObj.h"
 #include "_requests_Response.h"
-#include "random.h"
 #include "webclient.h"
 
 #if !PIKASCRIPT_VERSION_REQUIRE_MINIMUN(1, 11, 9)
