@@ -15,7 +15,6 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
-#include <io.h>
 #define O_NONBLOCK 0x0004 /* non blocking I/O, from BSD */
 
 #define F_GETFL 3
@@ -63,7 +62,7 @@ int pika_platform_setsockopt(int __fd,
                              const void* __optval,
                              socklen_t __optlen);
 int pika_platform_htons(int __hostshort);
-char* pika_platform_inet_ntoa(struct in_addr in_addr_val);
+char* pika_platform_inet_ntoa(struct in_addr __addr);
 struct hostent* pika_platform_gethostbyname(const char* __name);
 
 /* os file API */

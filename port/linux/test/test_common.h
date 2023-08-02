@@ -42,6 +42,40 @@ extern char log_buff[LOG_BUFF_MAX][LOG_SIZE];
         EXPECT_EQ(pikaMemNow(), 0);                                  \
     }
 
+extern "C" {
+volatile static FILE* _f_getchar_fp = NULL;
+static char _f_getchar(void) {
+    char c = 0;
+    size_t n = fread(&c, 1, 1, (FILE*)_f_getchar_fp);
+    if (n > 0) {
+        return c;
+    }
+    pika_platform_printf("f_getchar error\r\n");
+    pika_assert(0);
+    return -1;
+}
+void pikaScriptShell_withGetchar(PikaObj* self, sh_getchar getchar_fn);
+}
+
+#define TEST_RUN_REPL_FILE(_test_suite_, _test_name_, _file_name_) \
+    TEST(_test_suite_, _test_name_) {                              \
+        /* init */                                                 \
+        g_PikaMemInfo.heapUsedMax = 0;                             \
+        PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);  \
+        extern unsigned char pikaModules_py_a[];                   \
+        obj_linkLibrary(pikaMain, pikaModules_py_a);               \
+        /* run */                                                  \
+        __platform_printf("BEGIN\r\n");                            \
+        _f_getchar_fp = fopen(_file_name_, "rb");                  \
+        pikaScriptShell_withGetchar(pikaMain, _f_getchar);         \
+        fclose((FILE*)_f_getchar_fp);                              \
+        /* collect */                                              \
+        /* assert */                                               \
+        /* deinit */                                               \
+        obj_deinit(pikaMain);                                      \
+        EXPECT_EQ(pikaMemNow(), 0);                                \
+    }
+
 #define TEST_RUN_SINGLE_FILE_PASS(_test_suite_, _test_name_, _file_name_) \
     TEST(_test_suite_, _test_name_) {                                     \
         g_PikaMemInfo.heapUsedMax = 0;                                    \
