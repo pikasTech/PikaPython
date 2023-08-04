@@ -8,6 +8,12 @@
 #include "dataStrs.h"
 
 Arg* PikaStdData_Dict_get(PikaObj* self, char* key) {
+    Arg* aRet = pikaDict_get(self, key);
+    if (NULL == aRet) {
+        obj_setErrorCode(self, PIKA_RES_ERR_ARG_NO_FOUND);
+        pika_platform_printf("KeyError: %s\n", key);
+        return NULL;
+    }
     return arg_copy(objDict_get(self, key));
 }
 
@@ -185,7 +191,7 @@ int PikaStdData_dict_keys___len__(PikaObj* self) {
 int dict_contains(PikaDict* dict, Arg* key) {
     int i = 0;
     while (PIKA_TRUE) {
-        Arg* item = args_getArgByIndex(_OBJ2DICT(dict), i);
+        Arg* item = args_getArgByIndex(_OBJ2KEYS(dict), i);
         if (NULL == item) {
             break;
         }

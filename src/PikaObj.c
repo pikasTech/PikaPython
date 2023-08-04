@@ -3984,6 +3984,7 @@ int32_t objDict_forEach(PikaObj* self,
         if (NULL == item_val) {
             break;
         }
+        pika_assert(NULL != item_key);
         // Call the handle function on each key-value pair
         if (eachHandle(self, item_key, item_val, context) != 0) {
             return -1;

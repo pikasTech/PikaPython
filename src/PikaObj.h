@@ -811,7 +811,7 @@ static inline PIKA_RES _pikaDict_setVal(PikaDict* self, Arg* val) {
 }
 
 static inline PIKA_RES pikaDict_set(PikaDict* self, char* name, Arg* val) {
-    arg_setName(val, name);
+    val = arg_setName(val, name);
     _pikaDict_setVal(self, val);
     return args_setStr(_OBJ2KEYS(self), (name), (name));
 }

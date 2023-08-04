@@ -1175,8 +1175,7 @@ static char* _kw_pos_to_default_all(FunctionArgsInfo* f,
         if (f->kw != NULL) {
             aKeyword = pikaDict_get(f->kw, sArgName);
             if (aKeyword != NULL) {
-                Arg* aNew = arg_copy(aKeyword);
-                argv[(*argc)++] = aNew;
+                argv[(*argc)++] = arg_copy(aKeyword);
                 pikaDict_removeArg(f->kw, aKeyword);
                 goto __next;
             }
@@ -1285,7 +1284,11 @@ static void _kw_push(FunctionArgsInfo* f, Arg* call_arg, int i) {
         f->kw = New_pikaDict();
     }
     arg_setIsKeyword(call_arg, pika_false);
+    Hash kw_hash = call_arg->name_hash;
+    char buff[32] = {0};
     _pikaDict_setVal(f->kw, call_arg);
+    char* sHash = fast_itoa(buff, kw_hash);
+    args_setStr(_OBJ2KEYS(f->kw), sHash, sHash);
 }
 
 static void _load_call_arg(VMState* vm,
