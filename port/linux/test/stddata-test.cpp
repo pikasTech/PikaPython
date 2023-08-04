@@ -587,24 +587,24 @@ TEST(stddata, list_slice_issue) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(stddata, objDict_new) {
+TEST(stddata, New_pikaDictFromVarArgs) {
     PikaObj* new_dict =
-        objDict_new(arg_newStr("a"), arg_newInt(1), arg_newStr("b"),
-                    arg_newInt(2), arg_newStr("c"), arg_newInt(3));
+        New_pikaDictFromVarArgs(arg_newStr("a"), arg_newInt(1), arg_newStr("b"),
+                                arg_newInt(2), arg_newStr("c"), arg_newInt(3));
     pika_platform_printf("%s\r\n", PikaStdData_Dict___str__(new_dict));
     obj_deinit(new_dict);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(stddata, objDict_new0) {
-    PikaObj* new_dict = objDict_new(NULL);
+TEST(stddata, New_pikaDictFromVarArgs0) {
+    PikaObj* new_dict = New_pikaDictFromVarArgs(NULL);
     pika_platform_printf("%s\r\n", PikaStdData_Dict___str__(new_dict));
     obj_deinit(new_dict);
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
-TEST(stddata, objList_new0) {
-    PikaObj* new_list = objList_new(NULL);
+TEST(stddata, New_pikaListFromVarArgs0) {
+    PikaObj* new_list = New_pikaListFromVarArgs(NULL);
     pika_platform_printf("%s\r\n", PikaStdData_List___str__(new_list));
     obj_deinit(new_list);
     EXPECT_EQ(pikaMemNow(), 0);

@@ -1,5 +1,7 @@
 import json
-import time
+
+res = json.loads('{"x": 1}')
+assert res['x'] == 1
 
 res = json.loads('{"a": 1, "b": 2, "c": 3}')
 assert res['a'] == 1

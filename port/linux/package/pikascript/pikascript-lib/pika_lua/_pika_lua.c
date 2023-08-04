@@ -47,15 +47,14 @@ Arg* _lua_val_to_arg(lua_State* L) {
         PIKA_BOOL get_list = PIKA_FALSE;
         PIKA_BOOL get_dict = PIKA_FALSE;
         lua_pushnil(L);  // push the first key
-        // PikaObj* dict = objDict_new0();
         while (lua_next(L, -2) != 0) {
             // 'key' is at index -2 and 'value' at index -1
             if (!get_list && !get_dict) {
                 if (lua_isinteger(L, -2)) {
-                    ret = objList_new(NULL);
+                    ret = New_pikaList();
                     get_list = PIKA_TRUE;
                 } else {
-                    ret = objDict_new(NULL);
+                    ret = New_pikaDict();
                     get_dict = PIKA_TRUE;
                 }
             }

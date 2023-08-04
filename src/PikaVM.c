@@ -782,7 +782,6 @@ Arg* _vm_slice(VMState* vm,
                 Arg* aIndex = arg_newInt(i);
                 Arg* aItem = _vm_get(vm, self, aIndex, aObj);
                 objList_append(oSliced, aItem);
-                arg_deinit(aItem);
                 arg_deinit(aIndex);
             }
             return arg_newObj(oSliced);
@@ -1174,10 +1173,9 @@ static char* _kw_pos_to_default_all(FunctionArgsInfo* f,
         Arg* aKeyword = NULL;
         /* load default arg from kws */
         if (f->kw != NULL) {
-            aKeyword = pikaDict_getArg(f->kw, sArgName);
+            aKeyword = pikaDict_get(f->kw, sArgName);
             if (aKeyword != NULL) {
-                Arg* aNew = arg_copy(aKeyword);
-                argv[(*argc)++] = aNew;
+                argv[(*argc)++] = arg_copy(aKeyword);
                 pikaDict_removeArg(f->kw, aKeyword);
                 goto __next;
             }
@@ -1212,7 +1210,7 @@ static int _kw_to_pos_one(FunctionArgsInfo* f,
     if (f->kw == NULL) {
         return 0;
     }
-    Arg* pos_arg = pikaDict_getArg(f->kw, arg_name);
+    Arg* pos_arg = pikaDict_get(f->kw, arg_name);
     if (pos_arg == NULL) {
         return 0;
     }
@@ -1229,7 +1227,7 @@ static void _kw_to_pos_all(FunctionArgsInfo* f, int* argc, Arg* argv[]) {
     for (int i = 0; i < arg_num_need; i++) {
         char* arg_name = strPopLastToken(f->type_list, ',');
         pika_assert(f->kw != NULL);
-        Arg* pos_arg = pikaDict_getArg(f->kw, arg_name);
+        Arg* pos_arg = pikaDict_get(f->kw, arg_name);
         pika_assert(pos_arg != NULL);
         argv[(*argc)++] = arg_copy(pos_arg);
         pikaDict_removeArg(f->kw, pos_arg);
@@ -1285,15 +1283,12 @@ static void _kw_push(FunctionArgsInfo* f, Arg* call_arg, int i) {
     if (NULL == f->kw) {
         f->kw = New_pikaDict();
     }
-    if (NULL == f->kw_keys) {
-        f->kw_keys = New_pikaDict();
-    }
     arg_setIsKeyword(call_arg, pika_false);
-    pikaDict_setArg(f->kw, call_arg);
-    char kw_keys_index_buff[11] = {0};
-    char* kw_keys_index = fast_itoa(kw_keys_index_buff, i);
-    pikaDict_setArg(f->kw_keys,
-                    arg_setInt(NULL, kw_keys_index, arg_getNameHash(call_arg)));
+    Hash kw_hash = call_arg->name_hash;
+    char buff[32] = {0};
+    _pikaDict_setVal(f->kw, call_arg);
+    char* sHash = fast_itoa(buff, kw_hash);
+    args_setStr(_OBJ2KEYS(f->kw), sHash, sHash);
 }
 
 static void _load_call_arg(VMState* vm,
@@ -1311,9 +1306,7 @@ static void _load_call_arg(VMState* vm,
     /* load variable arg */
     if (f->i_arg > f->n_positional) {
         if (f->is_vars) {
-            pikaList_append(&(f->tuple)->super, call_arg);
-            /* the append would copy the arg */
-            arg_deinit(call_arg);
+            pikaList_append(f->tuple, call_arg);
             return;
         }
     }
@@ -1403,10 +1396,10 @@ static uint32_t _get_n_input_with_unpack(VMState* vm, int n_used) {
             PikaObj* New_PikaStdData_Dict(Args * args);
             PikaObj* obj = arg_getPtr(call_arg);
             pika_assert(obj->constructor == New_PikaStdData_Dict);
-            PikaDict* dict = obj_getPtr(obj, "dict");
+            Args* dict = _OBJ2DICT(obj);
             int i_item = 0;
             while (pika_true) {
-                Arg* item_val = args_getArgByIndex(&dict->super, i_item);
+                Arg* item_val = args_getArgByIndex(dict, i_item);
                 if (NULL == item_val) {
                     break;
                 }
@@ -1563,7 +1556,6 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
                 /* get kw dict name */
                 f.kw_dict_name = arg_def + 2;
                 f.kw = New_pikaDict();
-                f.kw_keys = New_pikaDict();
                 /* remove the format arg */
                 strPopLastToken(f.type_list, ',');
                 continue;
@@ -1597,13 +1589,10 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
 #endif
 
     if (f.tuple != NULL) {
-        pikaList_reverse(&(f.tuple)->super);
+        pikaList_reverse(f.tuple);
         /* load variable tuple */
-        PikaObj* New_PikaStdData_Tuple(Args * args);
-        PikaObj* tuple_obj = newNormalObj(New_PikaStdData_Tuple);
-        obj_setPtr(tuple_obj, "list", f.tuple);
         Arg* argi =
-            arg_setPtr(NULL, f.var_tuple_name, ARG_TYPE_OBJECT, tuple_obj);
+            arg_setPtr(NULL, f.var_tuple_name, ARG_TYPE_OBJECT, f.tuple);
         argv[argc++] = argi;
     }
 
@@ -1613,10 +1602,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
         }
         /* load kw dict */
         PikaObj* New_PikaStdData_Dict(Args * args);
-        PikaObj* dict_obj = newNormalObj(New_PikaStdData_Dict);
-        obj_setPtr(dict_obj, "dict", f.kw);
-        obj_setPtr(dict_obj, "_keys", f.kw_keys);
-        Arg* argi = arg_setPtr(NULL, f.kw_dict_name, ARG_TYPE_OBJECT, dict_obj);
+        Arg* argi = arg_setPtr(NULL, f.kw_dict_name, ARG_TYPE_OBJECT, f.kw);
         argv[argc++] = argi;
     }
 
@@ -1663,7 +1649,6 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
         Arg* arg = stack_popArg_alloc(&stack);
         pika_assert(arg != NULL);
         objList_append(list, arg);
-        arg_deinit(arg);
     }
     stack_deinit(&stack);
     return arg_newObj(list);
@@ -1704,13 +1689,6 @@ static Arg* VM_instruction_handler_TPL(PikaObj* self,
     return _vm_create_list_or_tuple(self, vm, pika_false);
 }
 
-void objDict_init(PikaObj* self) {
-    PikaDict* dict = New_pikaDict();
-    PikaDict* keys = New_pikaDict();
-    obj_setPtr(self, "dict", dict);
-    obj_setPtr(self, "_keys", keys);
-}
-
 #if PIKA_BUILTIN_STRUCT_ENABLE
 PikaObj* New_PikaStdData_Dict(Args* args);
 #endif
@@ -1721,8 +1699,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
                                        Arg* arg_ret_reg) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
     uint32_t n_arg = VMState_getInputArgNum(vm);
-    PikaObj* dict = newNormalObj(New_PikaStdData_Dict);
-    objDict_init(dict);
+    PikaObj* dict = New_pikaDict();
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */
@@ -1735,7 +1712,6 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
         Arg* val_arg = stack_popArg_alloc(&stack);
         objDict_set(dict, arg_getStr(key_arg), val_arg);
         arg_deinit(key_arg);
-        arg_deinit(val_arg);
     }
     stack_deinit(&stack);
     return arg_newObj(dict);
@@ -3495,7 +3471,6 @@ static int pikaVM_runInstructUnit(PikaObj* self,
         PikaObj* oReg = vm->oreg[invoke_deepth - 1];
         if (NULL != oReg && NULL != return_arg) {
             objList_append(oReg, return_arg);
-            arg_deinit(return_arg);
             return_arg = NULL;
         }
     }
@@ -3599,8 +3574,8 @@ static ByteCodeFrame* _cache_bytecodeframe(PikaObj* self) {
 
 static ByteCodeFrame* _cache_bcf_fn(PikaObj* self, char* py_lines) {
     /* cache 'def' and 'class' to heap */
-    if ((NULL == strFindIgnoreQuoted(py_lines, "def ")) &&
-        (NULL == strFindIgnoreQuoted(py_lines, "class "))) {
+    if ((NULL == strstr(py_lines, "def ")) &&
+        (NULL == strstr(py_lines, "class "))) {
         return NULL;
     }
     return _cache_bytecodeframe(self);

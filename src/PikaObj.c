@@ -2280,20 +2280,20 @@ void pikaGC_markObj(PikaGC* gc, PikaObj* self) {
     }
     args_foreach(self->list, _pikaGC_markHandler, gc);
     if (self->constructor == New_PikaStdData_Dict) {
-        PikaDict* dict = obj_getPtr(self, "dict");
+        Args* dict = _OBJ2DICT(self);
         if (NULL == dict) {
             goto __exit;
         }
-        args_foreach(&dict->super, _pikaGC_markHandler, (void*)gc);
+        args_foreach(dict, _pikaGC_markHandler, (void*)gc);
         goto __exit;
     }
     if (self->constructor == New_PikaStdData_List ||
         self->constructor == New_PikaStdData_Tuple) {
-        PikaList* list = obj_getPtr(self, "list");
+        Args* list = _OBJ2LIST(self);
         if (NULL == list) {
             goto __exit;
         }
-        args_foreach(&list->super, _pikaGC_markHandler, (void*)gc);
+        args_foreach(list, _pikaGC_markHandler, (void*)gc);
         goto __exit;
     }
 __exit:
@@ -3293,7 +3293,7 @@ Arg* builtins_list(PikaObj* self, PikaTuple* val) {
         };
         return pikaVM_runByteCodeReturn(self, (uint8_t*)bytes, "@res_list");
     }
-    return arg_newObj(objList_new(NULL));
+    return arg_newObj(New_pikaListFromVarArgs(NULL));
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in list is not enabled.\r\n");
@@ -3303,8 +3303,7 @@ Arg* builtins_list(PikaObj* self, PikaTuple* val) {
 
 Arg* builtins_dict(PikaObj* self, PikaTuple* val) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    PikaObj* New_PikaStdData_Dict(Args * args);
-    return arg_newDirectObj(New_PikaStdData_Dict);
+    return arg_newObj(New_pikaDict());
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in dist is not enabled.\r\n");
@@ -3377,11 +3376,10 @@ Arg* builtins_bytes(PikaObj* self, Arg* val) {
         PikaObj* New_PikaStdData_Tuple(Args * args);
         if (obj->constructor == New_PikaStdData_List ||
             obj->constructor == New_PikaStdData_Tuple) {
-            PikaList* list = obj_getPtr(obj, "list");
-            Arg* bytes = arg_newBytes(NULL, pikaList_getSize(list));
+            Arg* bytes = arg_newBytes(NULL, pikaList_getSize(obj));
             uint8_t* bytes_raw = arg_getBytes(bytes);
-            for (size_t i = 0; i < pikaList_getSize(list); i++) {
-                bytes_raw[i] = (uint8_t)pikaList_getInt(list, i);
+            for (size_t i = 0; i < pikaList_getSize(obj); i++) {
+                bytes_raw[i] = (uint8_t)pikaList_getInt(obj, i);
             }
             return bytes;
         }
@@ -3394,6 +3392,7 @@ Arg* builtins_bytes(PikaObj* self, Arg* val) {
 
 void builtins_print(PikaObj* self, PikaTuple* val, PikaDict* ops) {
     int arg_size = pikaTuple_getSize(val);
+    pika_assert(arg_size >= 0);
     char* end = pikaDict_getStr(ops, "end");
     if (NULL == end) {
         /* default */
@@ -3433,7 +3432,7 @@ char* builtins_cformat(PikaObj* self, char* fmt, PikaTuple* var) {
 #if PIKA_SYNTAX_FORMAT_ENABLE
     Args buffs = {0};
     pikaMemMaxReset();
-    char* res = strsFormatList(&buffs, fmt, &var->super);
+    char* res = strsFormatList(&buffs, fmt, var);
     obj_setStr(self, "_buf", res);
     res = obj_getStr(self, "_buf");
     strsDeinit(&buffs);
@@ -3476,14 +3475,13 @@ PikaObj* builtins_open(PikaObj* self, char* path, char* mode) {
 
 /* __dir_each */
 int32_t __dir_each(Arg* argEach, void* context) {
-    PikaObj* list = args_getPtr((Args*)context, "list");
     if (argType_isCallable(arg_getType(argEach))) {
         char name_buff[PIKA_LINE_BUFF_SIZE] = {0};
         char* method_name =
             methodArg_getName(argEach, name_buff, sizeof(name_buff));
         Arg* arg_str = arg_newStr(method_name);
+        PikaList* list = args_getPtr(context, "_list");
         objList_append(list, arg_str);
-        arg_deinit(arg_str);
     }
     return 0;
 }
@@ -3496,10 +3494,9 @@ PikaObj* builtins_dir(PikaObj* self, Arg* arg) {
     }
     PikaObj* obj = arg_getPtr(arg);
     PikaObj* New_PikaStdData_List(Args * args);
-    PikaObj* list = newNormalObj(New_PikaStdData_List);
-    objList_init(list);
+    PikaObj* list = New_pikaList();
     Args* context = New_args(NULL);
-    args_setPtr(context, "list", list);
+    args_setPtr(context, "_list", list);
     args_foreach(obj->list, __dir_each, context);
     args_deinit(context);
     return list;
@@ -3846,8 +3843,8 @@ Arg* _max_min(PikaObj* self, PikaTuple* val, uint8_t* bc) {
         obj_setArg(self, "@list", pikaTuple_getArg(val, 0));
         return pikaVM_runByteCodeReturn(self, (uint8_t*)bc, "@res_max");
     }
-    PikaObj* oTuple = newNormalObj(New_PikaStdData_Tuple);
-    obj_setPtr(oTuple, "list", val);
+    PikaTuple* oTuple = newNormalObj(New_PikaStdData_Tuple);
+    obj_setPtr(oTuple, "list", obj_getPtr(val, "list"));
     obj_setInt(oTuple, "needfree", 0);
     Arg* aTuple = arg_newObj(oTuple);
     obj_setArg(self, "@list", aTuple);
@@ -3970,63 +3967,24 @@ char* builtins_bytearray_decode(PikaObj* self) {
     return obj_getStr(self, "_buf");
 }
 
-int objList_getSize(PikaObj* self) {
-    PikaList* list = obj_getPtr(self, "list");
-    return pikaList_getSize(list);
-}
-
-void objList_set(PikaObj* self, int i, Arg* arg) {
-    PikaList* list = obj_getPtr(self, "list");
-    if (PIKA_RES_OK != pikaList_setArg(list, i, arg)) {
-        obj_setErrorCode(self, 1);
-        obj_setSysOut(self, "Error: index exceeded lengh of list.");
-    }
-}
-
-Arg* objList_get(PikaObj* self, int i) {
-    PikaList* list = obj_getPtr(self, "list");
-    return pikaList_getArg(list, i);
-}
-
-Arg* objDict_get(PikaObj* self, char* key) {
-    pika_assert_obj_alive(self);
-    PikaDict* dict = obj_getPtr(self, "dict");
-    Arg* res = pikaDict_getArg(dict, key);
-    if (NULL == res) {
-        obj_setErrorCode(self, PIKA_RES_ERR_RUNTIME_ERROR);
-        __platform_printf("KeyError: %s\n", key);
-    }
-    pika_assert_arg_alive(res);
-    return res;
-}
-
-void objDict_set(PikaObj* self, char* key, Arg* arg) {
-    PikaDict* dict = obj_getPtr(self, "dict");
-    PikaDict* keys = obj_getPtr(self, "_keys");
-    Arg* arg_key = arg_setStr(NULL, key, key);
-    Arg* arg_new = arg_copy(arg);
-    arg_setName(arg_new, key);
-    pikaDict_setArg(dict, arg_new);
-    pikaDict_setArg(keys, arg_key);
-}
-
 int32_t objDict_forEach(PikaObj* self,
                         int32_t (*eachHandle)(PikaObj* self,
                                               Arg* keyEach,
                                               Arg* valEach,
                                               void* context),
                         void* context) {
-    PikaDict* keys = obj_getPtr(self, "_keys");
-    PikaDict* dict = obj_getPtr(self, "dict");
+    Args* keys = _OBJ2KEYS(self);
+    Args* dict = _OBJ2DICT(self);
     pika_assert(NULL != dict);
     pika_assert(NULL != keys);
     int i = 0;
     while (1) {
-        Arg* item_key = args_getArgByIndex(&keys->super, i);
-        Arg* item_val = args_getArgByIndex(&dict->super, i);
-        if (NULL == item_key) {
+        Arg* item_key = args_getArgByIndex(keys, i);
+        Arg* item_val = args_getArgByIndex(dict, i);
+        if (NULL == item_val) {
             break;
         }
+        pika_assert(NULL != item_key);
         // Call the handle function on each key-value pair
         if (eachHandle(self, item_key, item_val, context) != 0) {
             return -1;
@@ -4042,10 +4000,9 @@ int32_t objList_forEach(PikaObj* self,
                                               Arg* itemEach,
                                               void* context),
                         void* context) {
-    PikaList* list = obj_getPtr(self, "list");
     int i = 0;
     while (PIKA_TRUE) {
-        Arg* item = pikaList_getArg(list, i);
+        Arg* item = pikaList_get(self, i);
         if (NULL == item) {
             break;
         }
@@ -4074,4 +4031,39 @@ void pika_sleep_ms(uint32_t ms) {
             break;
         }
     }
+}
+
+PikaObj* _New_pikaListOrTuple(int isTuple) {
+    Args* list = New_args(NULL);
+    /* set top index for append */
+    args_pushArg_name(list, "top", arg_newInt(0));
+    PikaObj* self = NULL;
+    if (isTuple) {
+        self = newNormalObj(New_PikaStdData_Tuple);
+    } else {
+        self = newNormalObj(New_PikaStdData_List);
+    }
+    obj_setPtr(self, "list", list);
+    return self;
+}
+
+PikaList* New_pikaList(void) {
+    return _New_pikaListOrTuple(0);
+}
+
+PikaTuple* New_pikaTuple(void) {
+    return _New_pikaListOrTuple(1);
+}
+
+void pikaDict_init(PikaObj* self) {
+    Args* dict = New_args(NULL);
+    Args* keys = New_args(NULL);
+    obj_setPtr(self, "dict", dict);
+    obj_setPtr(self, "_keys", keys);
+}
+
+PikaDict* New_pikaDict(void) {
+    PikaDict* self = newNormalObj(New_PikaStdData_Dict);
+    objDict_init(self);
+    return self;
 }

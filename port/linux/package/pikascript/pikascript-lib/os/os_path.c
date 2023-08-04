@@ -289,7 +289,7 @@ PikaObj* os_path_split(PikaObj* self, char* path) {
         goto __exit;
     }
 
-    tuple = objTuple_new(arg_newStr(folder), arg_newStr(file));
+    tuple = New_pikaTupleFromVarArgs(arg_newStr(folder), arg_newStr(file));
     pika_platform_free(folder);
     pika_platform_free(file);
 
