@@ -1,14 +1,20 @@
 #include "test_common.h"
 TEST_START
 
+// #define _SKIP_EVENTLOOP_TEST
+
 #if !PIKA_NANO_ENABLE
 TEST_RUN_SINGLE_FILE(thread, test2, "test/python/_thread/test2.py")
+
+#ifndef _SKIP_EVENTLOOP_TEST
 TEST_RUN_SINGLE_FILE(eventloop, test1, "test/python/eventloop/test1.py")
 TEST_RUN_SINGLE_FILE(eventloop, test2, "test/python/eventloop/test2.py")
 TEST_RUN_SINGLE_FILE(eventloop, test3, "test/python/eventloop/test3.py")
 TEST_RUN_SINGLE_FILE(eventloop, delay1, "test/python/eventloop/delay1.py")
 TEST_RUN_SINGLE_FILE(eventloop, once1, "test/python/eventloop/once1.py")
 TEST_RUN_SINGLE_FILE(eventloop, once2, "test/python/eventloop/once2.py")
+#endif
+
 TEST_RUN_SINGLE_FILE(fsm, test1, "test/python/fsm/test1.py")
 
 TEST_RUN_SINGLE_FILE_PASS(builtin,
