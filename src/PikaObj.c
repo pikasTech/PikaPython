@@ -3482,7 +3482,6 @@ int32_t __dir_each(Arg* argEach, void* context) {
         Arg* arg_str = arg_newStr(method_name);
         PikaList* list = args_getPtr(context, "_list");
         objList_append(list, arg_str);
-        arg_deinit(arg_str);
     }
     return 0;
 }
@@ -4054,13 +4053,26 @@ void pika_sleep_ms(uint32_t ms) {
     }
 }
 
-PikaList* New_pikaList(void) {
+PikaObj* _New_pikaListOrTuple(int isTuple) {
     Args* list = New_args(NULL);
     /* set top index for append */
     args_pushArg_name(list, "top", arg_newInt(0));
-    PikaList* self = newNormalObj(New_PikaStdData_List);
+    PikaObj* self = NULL;
+    if (isTuple) {
+        self = newNormalObj(New_PikaStdData_Tuple);
+    } else {
+        self = newNormalObj(New_PikaStdData_List);
+    }
     obj_setPtr(self, "list", list);
     return self;
+}
+
+PikaList* New_pikaList(void) {
+    return _New_pikaListOrTuple(0);
+}
+
+PikaTuple* New_pikaTuple(void) {
+    return _New_pikaListOrTuple(1);
 }
 
 PikaDict* New_pikaDict(void) {

@@ -538,7 +538,7 @@ PIKA_RES pikaList_append(PikaList* self, Arg* arg) {
     int top = pikaList_getSize(self);
     char buff[11];
     char* topStr = fast_itoa(buff, top);
-    Arg* arg_to_push = arg_copy(arg);
+    Arg* arg_to_push = arg;
     arg_setName(arg_to_push, topStr);
     args_setArg(_OBJ2LIST(self), arg_to_push);
     /* top++ */
@@ -641,11 +641,6 @@ void pikaList_reverse(PikaList* self) {
         pikaList_setArg(self, i, arg_top);
         pikaList_setArg(self, top - i - 1, arg_i);
     }
-}
-
-PikaTuple* New_pikaTuple(void) {
-    PikaTuple* self = (PikaTuple*)New_pikaList();
-    return self;
 }
 
 char* strsFormatArg(Args* out_buffs, char* fmt, Arg* arg) {

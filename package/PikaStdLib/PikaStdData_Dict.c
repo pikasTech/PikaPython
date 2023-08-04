@@ -225,8 +225,8 @@ Arg* PikaStdData_dict_items___next__(PikaObj* self) {
     PikaObj* tuple = newNormalObj(New_PikaStdData_Tuple);
     PikaStdData_Tuple___init__(tuple);
     PikaList* list = obj_getPtr(tuple, "list");
-    pikaList_append(list, key);
-    pikaList_append(list, val);
+    pikaList_append(list, arg_copy(key));
+    pikaList_append(list, arg_copy(val));
     args_setInt(self->list, "__iter_i", __iter_i + 1);
     return arg_newObj(tuple);
 }

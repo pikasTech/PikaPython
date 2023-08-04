@@ -30,13 +30,11 @@
     {                                   \
         Arg* _arg = arg_new##type(val); \
         pikaList_append(tup, _arg);     \
-        arg_deinit(_arg);               \
     }
 #define li_append(list, val, type)           \
     {                                        \
         Arg* _arg = arg_new##type(val);      \
         PikaStdData_List_append(list, _arg); \
-        arg_deinit(_arg);                    \
     }
 
 typedef PikaObj* Any;
@@ -396,10 +394,10 @@ PikaObj* re_Match_groups(PikaObj* self) {
             str_arg1 = arg_newStr("");
         }
         pikaList_append(tup, str_arg1);
-        arg_deinit(str_arg1);
     }
     return tup_obj;
 }
+
 PikaObj* re_Match_span(PikaObj* self, PikaTuple* val) {
     int group_n = 0;
     int argn = pikaTuple_getSize(val);
@@ -421,10 +419,11 @@ PikaObj* re_Match_span(PikaObj* self, PikaTuple* val) {
         obj_setErrorCode(self, -__LINE__);
         return NULL;
     }
-    tu_getNew(tu, tu_obj);
-    tu_append(tu, vec[group_n * 2], Int);
-    tu_append(tu, vec[group_n * 2 + 1], Int);
-    return tu_obj;
+    // tu_getNew(tu, tu_obj);
+    PikaTuple* tuple = New_pikaTuple();
+    pikaList_append(tuple, arg_newInt(vec[group_n * 2]));
+    pikaList_append(tuple, arg_newInt(vec[group_n * 2 + 1]));
+    return tuple;
 }
 
 void re_Pattern___del__(PikaObj* self) {

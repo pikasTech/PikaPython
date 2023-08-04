@@ -782,7 +782,6 @@ Arg* _vm_slice(VMState* vm,
                 Arg* aIndex = arg_newInt(i);
                 Arg* aItem = _vm_get(vm, self, aIndex, aObj);
                 objList_append(oSliced, aItem);
-                arg_deinit(aItem);
                 arg_deinit(aIndex);
             }
             return arg_newObj(oSliced);
@@ -1305,8 +1304,6 @@ static void _load_call_arg(VMState* vm,
     if (f->i_arg > f->n_positional) {
         if (f->is_vars) {
             pikaList_append(f->tuple, call_arg);
-            /* the append would copy the arg */
-            arg_deinit(call_arg);
             return;
         }
     }
@@ -1649,7 +1646,6 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
         Arg* arg = stack_popArg_alloc(&stack);
         pika_assert(arg != NULL);
         objList_append(list, arg);
-        arg_deinit(arg);
     }
     stack_deinit(&stack);
     return arg_newObj(list);
@@ -3479,7 +3475,6 @@ static int pikaVM_runInstructUnit(PikaObj* self,
         PikaObj* oReg = vm->oreg[invoke_deepth - 1];
         if (NULL != oReg && NULL != return_arg) {
             objList_append(oReg, return_arg);
-            arg_deinit(return_arg);
             return_arg = NULL;
         }
     }

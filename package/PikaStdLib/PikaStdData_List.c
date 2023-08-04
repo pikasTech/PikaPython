@@ -5,7 +5,7 @@
 #include "dataStrs.h"
 
 void PikaStdData_List_append(PikaObj* self, Arg* arg) {
-    objList_append(self, arg);
+    objList_append(self, arg_copy(arg));
 }
 
 void PikaStdData_List_set(PikaObj* self, int i, Arg* arg) {
@@ -71,11 +71,11 @@ PikaObj* PikaStdData_List___add__(PikaObj* self, PikaObj* others) {
     PikaObj* res = New_pikaList();
     for (size_t i = 0; i < pikaList_getSize(self); i++) {
         Arg* arg = pikaList_getArg(self, i);
-        pikaList_append(res, arg);
+        pikaList_append(res, arg_copy(arg));
     }
     for (size_t i = 0; i < pikaList_getSize(others); i++) {
         Arg* arg = pikaList_getArg(others, i);
-        pikaList_append(res, arg);
+        pikaList_append(res, arg_copy(arg));
     }
     return res;
 }

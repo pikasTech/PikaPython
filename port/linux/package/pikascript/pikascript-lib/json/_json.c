@@ -120,7 +120,6 @@ Arg* json_encode_jsmn(jsmntok_t* t,
                 Arg* val_nested =
                     json_encode_jsmn(t, index, json_str, token_count);
                 objList_append(ret, val_nested);
-                arg_deinit(val_nested);
             }
             val = arg_newObj(ret);
             break;
@@ -167,7 +166,6 @@ Arg* json_encode_cjson(cJSON* cjson) {
                 cJSON* item = pika_cJSON_GetArrayItem(cjson, i);
                 Arg* nested_arg = json_encode_cjson(item);
                 objList_append(ret, nested_arg);
-                arg_deinit(nested_arg);
             }
             return arg_newObj(ret);
         }
