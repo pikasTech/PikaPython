@@ -21,22 +21,6 @@
 #define raise_error \
     { obj_setErrorCode(self, -__LINE__); }
 
-#define tu_getNew(name, obj_name)                       \
-    PikaTuple* name = New_pikaTuple();                  \
-    Any obj_name = newNormalObj(New_PikaStdData_Tuple); \
-    obj_setPtr(obj_name, "list", name);
-
-#define tu_append(tup, val, type)       \
-    {                                   \
-        Arg* _arg = arg_new##type(val); \
-        pikaList_append(tup, _arg);     \
-    }
-#define li_append(list, val, type)           \
-    {                                        \
-        Arg* _arg = arg_new##type(val);      \
-        PikaStdData_List_append(list, _arg); \
-    }
-
 typedef PikaObj* Any;
 
 void re_Match___init__args(PikaObj* self, char* sub, int* vec, int ven);
@@ -377,7 +361,7 @@ PikaObj* re_Match_groups(PikaObj* self) {
     int ven = obj_getInt(self, "_ven");
     if (!ven)
         return NULL;
-    tu_getNew(tup, tup_obj);
+    PikaTuple* tup_obj = New_pikaTuple();
 
     for (int i = 1; i < ven; i++) {
         Arg* str_arg1;
@@ -393,7 +377,7 @@ PikaObj* re_Match_groups(PikaObj* self) {
         } else {
             str_arg1 = arg_newStr("");
         }
-        pikaList_append(tup, str_arg1);
+        pikaList_append(tup_obj, str_arg1);
     }
     return tup_obj;
 }
@@ -782,20 +766,14 @@ PikaObj* __findall(void* pattern__or__re,
                            &brackets, flags);
 
     char* b = NULL;
-    Arg* str_arg1;
-    Arg* sub_arg;
     if (!vcs) {
         if (m_n < 0)
             return NULL;
-        Any list = newNormalObj(New_PikaStdData_List);
-        PikaStdData_List___init__(list);
-
+        Any list = New_pikaList();
         return list;
     }
-    Any list = newNormalObj(New_PikaStdData_List);
-    PikaStdData_List___init__(list);
+    Any list = New_pikaList();
     PikaTuple* tu;
-    Any sub_list = NULL;
     if (brackets == 1) {
         for (int i = 0; i < m_n; i++) {
             int* v = vcs[i];
@@ -809,9 +787,7 @@ PikaObj* __findall(void* pattern__or__re,
             } else {
                 b = (char*)"";
             }
-            str_arg1 = arg_newStr(b);
-            PikaStdData_List_append(list, str_arg1);
-            arg_deinit(str_arg1);
+            pikaList_append(list, arg_newStr(b));
             if (length)
                 free(b);
         }
@@ -831,13 +807,9 @@ PikaObj* __findall(void* pattern__or__re,
             length = v[j2 + 1] - v[j2];
             b[length] = 0;
             memcpy(b, subject + v[j2], length);
-            tu_append(tu, b, Str);
+            pikaList_append(tu, arg_newStr(b));
         }
-        sub_list = newNormalObj(New_PikaStdData_Tuple);
-        obj_setPtr(sub_list, "list", tu);
-        sub_arg = arg_newObj(sub_list);
-        PikaStdData_List_append(list, sub_arg);
-        arg_deinit(sub_arg);
+        pikaList_append(list, arg_newObj(tu));
         free(b);
     }
     goto exit;
@@ -873,8 +845,8 @@ PikaObj* __subn(void* pattern__or__re,
     }
     if (s == subjet) {
         PikaTuple* yup = New_pikaTuple();
-        tu_append(yup, s, Str);
-        tu_append(yup, 0, Int);
+        pikaList_append(yup, arg_newStr(s));
+        pikaList_append(yup, arg_newInt(0));
 
         Any tuple_obj = newNormalObj(New_PikaStdData_Tuple);
         obj_setPtr(tuple_obj, "list", yup);
@@ -882,10 +854,10 @@ PikaObj* __subn(void* pattern__or__re,
     }
 
     PikaTuple* yup = New_pikaTuple();
-    tu_append(yup, s, Str);
+    pikaList_append(yup, arg_newStr(s));
     free(s);
 
-    tu_append(yup, matched_times, Int);
+    pikaList_append(yup, arg_newInt(matched_times));
 
     Any tuple_obj = newNormalObj(New_PikaStdData_Tuple);
     obj_setPtr(tuple_obj, "list", yup);

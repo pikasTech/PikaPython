@@ -12,7 +12,7 @@
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=json.loads"
-                "--gtest_filter=re.search"
+                "--gtest_filter=re.findall"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
