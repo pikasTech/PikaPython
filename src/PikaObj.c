@@ -3481,7 +3481,7 @@ int32_t __dir_each(Arg* argEach, void* context) {
             methodArg_getName(argEach, name_buff, sizeof(name_buff));
         Arg* arg_str = arg_newStr(method_name);
         PikaList* list = args_getPtr(context, "_list");
-        objList_append(list, arg_str);
+        pikaList_append(list, arg_str);
     }
     return 0;
 }
@@ -3967,12 +3967,12 @@ char* builtins_bytearray_decode(PikaObj* self) {
     return obj_getStr(self, "_buf");
 }
 
-int32_t objDict_forEach(PikaObj* self,
-                        int32_t (*eachHandle)(PikaObj* self,
-                                              Arg* keyEach,
-                                              Arg* valEach,
-                                              void* context),
-                        void* context) {
+int32_t pikaDict_forEach(PikaObj* self,
+                         int32_t (*eachHandle)(PikaObj* self,
+                                               Arg* keyEach,
+                                               Arg* valEach,
+                                               void* context),
+                         void* context) {
     Args* keys = _OBJ2KEYS(self);
     Args* dict = _OBJ2DICT(self);
     pika_assert(NULL != dict);
@@ -3994,12 +3994,12 @@ int32_t objDict_forEach(PikaObj* self,
     return 0;
 }
 
-int32_t objList_forEach(PikaObj* self,
-                        int32_t (*eachHandle)(PikaObj* self,
-                                              int itemIndex,
-                                              Arg* itemEach,
-                                              void* context),
-                        void* context) {
+int32_t pikaList_forEach(PikaObj* self,
+                         int32_t (*eachHandle)(PikaObj* self,
+                                               int itemIndex,
+                                               Arg* itemEach,
+                                               void* context),
+                         void* context) {
     int i = 0;
     while (PIKA_TRUE) {
         Arg* item = pikaList_get(self, i);
@@ -4064,6 +4064,6 @@ void pikaDict_init(PikaObj* self) {
 
 PikaDict* New_pikaDict(void) {
     PikaDict* self = newNormalObj(New_PikaStdData_Dict);
-    objDict_init(self);
+    pikaDict_init(self);
     return self;
 }

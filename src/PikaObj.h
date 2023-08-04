@@ -753,35 +753,19 @@ pika_bool pika_GIL_isInit(void);
 /* builtins */
 PikaObj* New_builtins(Args* args);
 
-#define objList_getSize pikaList_getSize
-#define objList_get pikaList_get
-#define objList_set pikaList_set
-#define objList_forEach pikaList_forEach
-#define objList_init pikaList_init
-#define objDict_get pikaDict_get
-#define objDict_set pikaDict_set
-#define objList_append pikaList_append
-#define objDict_init pikaDict_init
+int32_t pikaList_forEach(PikaObj* self,
+                         int32_t (*eachHandle)(PikaObj* self,
+                                               int itemIndex,
+                                               Arg* itemEach,
+                                               void* context),
+                         void* context);
 
-int32_t objList_forEach(PikaObj* self,
-                        int32_t (*eachHandle)(PikaObj* self,
-                                              int itemIndex,
-                                              Arg* itemEach,
-                                              void* context),
-                        void* context);
-
-#define objTuple_getSize objList_getSize
-#define objTuple_get objList_get
-#define objTuple_set objList_set
-#define objTuple_forEach objList_forEach
-#define objTuple_init objList_init
-
-int32_t objDict_forEach(PikaObj* self,
-                        int32_t (*eachHandle)(PikaObj* self,
-                                              Arg* keyEach,
-                                              Arg* valEach,
-                                              void* context),
-                        void* context);
+int32_t pikaDict_forEach(PikaObj* self,
+                         int32_t (*eachHandle)(PikaObj* self,
+                                               Arg* keyEach,
+                                               Arg* valEach,
+                                               void* context),
+                         void* context);
 void pika_sleep_ms(uint32_t ms);
 PIKA_RES _transeBool(Arg* arg, pika_bool* res);
 
@@ -900,6 +884,8 @@ static inline ArgType pikaList_getType(PikaList* self, int index) {
     Arg* arg = pikaList_get(self, index);
     return arg_getType(arg);
 }
+
+#define pikaTuple_forEach pikaList_forEach
 
 /* tuple api */
 static inline void pikaTuple_deinit(PikaTuple* self) {

@@ -3,15 +3,15 @@
 #include "dataStrs.h"
 
 int PikaStdData_Tuple_len(PikaObj* self) {
-    return objList_getSize(self);
+    return pikaList_getSize(self);
 }
 
 Arg* PikaStdData_Tuple_get(PikaObj* self, int i) {
-    return arg_copy(objList_get(self, i));
+    return arg_copy(pikaList_get(self, i));
 }
 
 void PikaStdData_Tuple___init__(PikaObj* self) {
-    objList_init(self);
+    pikaList_init(self);
 }
 
 Arg* PikaStdData_Tuple___iter__(PikaObj* self) {
@@ -81,7 +81,7 @@ char* PikaStdData_Tuple___str__(PikaObj* self) {
     context.buf = arg_newStr("(");
     context.count = 0;
 
-    objTuple_forEach(self, tupleToStrEachHandle, &context);
+    pikaTuple_forEach(self, tupleToStrEachHandle, &context);
 
     if (context.count == 1) {
         context.buf = arg_strAppend(context.buf, ",");

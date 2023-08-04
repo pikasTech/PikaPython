@@ -126,7 +126,7 @@ void _thread_start_new_thread(PikaObj* self, Arg* function, Arg* args_) {
 
     if (arg_isObject(args_)) {
         PikaObj* tuple = arg_getPtr(args_);
-        size_t tuple_size = objTuple_getSize(tuple);
+        size_t tuple_size = pikaTuple_getSize(tuple);
         pika_debug("type of args is %d", arg_getType(args_));
         pika_debug("new_thread: args tuple size %d", tuple_size);
         if (tuple_size > 0) {

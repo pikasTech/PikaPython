@@ -5,11 +5,11 @@
 #include "dataStrs.h"
 
 void PikaStdData_List_append(PikaObj* self, Arg* arg) {
-    objList_append(self, arg_copy(arg));
+    pikaList_append(self, arg_copy(arg));
 }
 
 void PikaStdData_List_set(PikaObj* self, int i, Arg* arg) {
-    objList_set(self, i, arg_copy(arg));
+    pikaList_set(self, i, arg_copy(arg));
 }
 
 void PikaStdData_List___setitem__(PikaObj* self, Arg* __key, Arg* __val) {
@@ -18,7 +18,7 @@ void PikaStdData_List___setitem__(PikaObj* self, Arg* __key, Arg* __val) {
 }
 
 void PikaStdData_List___init__(PikaObj* self) {
-    objList_init(self);
+    pikaList_init(self);
 }
 
 char* builtins_str(PikaObj* self, Arg* arg);
@@ -55,7 +55,7 @@ char* PikaStdData_List___str__(PikaObj* self) {
     context.buf = arg_newStr("[");
     context.count = 0;
 
-    objList_forEach(self, listToStrEachHandle, &context);
+    pikaList_forEach(self, listToStrEachHandle, &context);
 
     context.buf = arg_strAppend(context.buf, "]");
     obj_setStr(self, "_buf", arg_getStr(context.buf));

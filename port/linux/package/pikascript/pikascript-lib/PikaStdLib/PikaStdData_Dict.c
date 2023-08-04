@@ -14,15 +14,15 @@ Arg* PikaStdData_Dict_get(PikaObj* self, char* key) {
         pika_platform_printf("KeyError: %s\n", key);
         return NULL;
     }
-    return arg_copy(objDict_get(self, key));
+    return arg_copy(pikaDict_get(self, key));
 }
 
 void PikaStdData_Dict___init__(PikaObj* self) {
-    objDict_init(self);
+    pikaDict_init(self);
 }
 
 void PikaStdData_Dict_set(PikaObj* self, char* key, Arg* arg) {
-    objDict_set(self, key, arg_copy(arg));
+    pikaDict_set(self, key, arg_copy(arg));
 }
 
 void PikaStdData_Dict_remove(PikaObj* self, char* key) {
@@ -169,7 +169,7 @@ char* PikaStdData_Dict___str__(PikaObj* self) {
     context.buf = arg_newStr("{");
     context.isFirst = 1;
 
-    objDict_forEach(self, dictToStrEachHandle, &context);
+    pikaDict_forEach(self, dictToStrEachHandle, &context);
 
     context.buf = arg_strAppend(context.buf, "}");
     obj_setStr(self, "_buf", arg_getStr(context.buf));

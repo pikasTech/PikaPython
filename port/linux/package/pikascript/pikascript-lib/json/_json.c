@@ -105,7 +105,7 @@ Arg* json_encode_jsmn(jsmntok_t* t,
                 (*index)++;
                 Arg* val_nested =
                     json_encode_jsmn(t, index, json_str, token_count);
-                objDict_set(ret, key, val_nested);
+                pikaDict_set(ret, key, val_nested);
                 arg_deinit(val_nested);
             }
             val = arg_newObj(ret);
@@ -119,7 +119,7 @@ Arg* json_encode_jsmn(jsmntok_t* t,
                 (*index)++;
                 Arg* val_nested =
                     json_encode_jsmn(t, index, json_str, token_count);
-                objList_append(ret, val_nested);
+                pikaList_append(ret, val_nested);
             }
             val = arg_newObj(ret);
             break;
@@ -165,7 +165,7 @@ Arg* json_encode_cjson(cJSON* cjson) {
             for (int i = 0; i < pika_cJSON_GetArraySize(cjson); i++) {
                 cJSON* item = pika_cJSON_GetArrayItem(cjson, i);
                 Arg* nested_arg = json_encode_cjson(item);
-                objList_append(ret, nested_arg);
+                pikaList_append(ret, nested_arg);
             }
             return arg_newObj(ret);
         }
@@ -175,7 +175,7 @@ Arg* json_encode_cjson(cJSON* cjson) {
             for (int i = 0; i < pika_cJSON_GetArraySize(cjson); i++) {
                 char* key = child->string;
                 Arg* nested_arg = json_encode_cjson(child);
-                objDict_set(ret, key, nested_arg);
+                pikaDict_set(ret, key, nested_arg);
                 child = child->next;
             }
             return arg_newObj(ret);
@@ -269,14 +269,14 @@ cJSON* _pika_cJSON_decode(Arg* d) {
             if (arg_isList(d)) {
                 JsonListContext context;
                 context.jsonArray = pika_cJSON_CreateArray();
-                objList_forEach(arg_getObj(d), jsonListEachHandle, &context);
+                pikaList_forEach(arg_getObj(d), jsonListEachHandle, &context);
                 return context.jsonArray;
             }
 
             if (arg_isDict(d)) {
                 JsonDictContext context;
                 context.jsonObject = pika_cJSON_CreateObject();
-                objDict_forEach(arg_getObj(d), jsonDictEachHandle, &context);
+                pikaDict_forEach(arg_getObj(d), jsonDictEachHandle, &context);
                 return context.jsonObject;
             }
             return pika_cJSON_CreateNull();

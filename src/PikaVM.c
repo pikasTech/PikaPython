@@ -777,11 +777,11 @@ Arg* _vm_slice(VMState* vm,
         if (oArg->constructor == New_PikaStdData_List ||
             oArg->constructor == New_PikaStdData_Tuple) {
             PikaObj* oSliced = newNormalObj((NewFun)oArg->constructor);
-            objList_init(oSliced);
+            pikaList_init(oSliced);
             for (int i = iStart; i < iEnd; i++) {
                 Arg* aIndex = arg_newInt(i);
                 Arg* aItem = _vm_get(vm, self, aIndex, aObj);
-                objList_append(oSliced, aItem);
+                pikaList_append(oSliced, aItem);
                 arg_deinit(aIndex);
             }
             return arg_newObj(oSliced);
@@ -1636,7 +1636,7 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
     NewFun constructor = is_list ? New_PikaStdData_List : New_PikaStdData_Tuple;
     uint32_t n_arg = VMState_getInputArgNum(vm);
     PikaObj* list = newNormalObj(constructor);
-    objList_init(list);
+    pikaList_init(list);
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */
@@ -1648,7 +1648,7 @@ static Arg* _vm_create_list_or_tuple(PikaObj* self,
     for (int i = 0; i < n_arg; i++) {
         Arg* arg = stack_popArg_alloc(&stack);
         pika_assert(arg != NULL);
-        objList_append(list, arg);
+        pikaList_append(list, arg);
     }
     stack_deinit(&stack);
     return arg_newObj(list);
@@ -1663,7 +1663,7 @@ static Arg* VM_instruction_handler_LST(PikaObj* self,
                                        Arg* arg_ret_reg) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
     PikaObj* list = newNormalObj(New_PikaStdData_List);
-    objList_init(list);
+    pikaList_init(list);
     vm->oreg[VMState_getInvokeDeepthNow(vm)] = list;
 #endif
     return NULL;
@@ -1710,7 +1710,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
     for (int i = 0; i < n_arg / 2; i++) {
         Arg* key_arg = stack_popArg_alloc(&stack);
         Arg* val_arg = stack_popArg_alloc(&stack);
-        objDict_set(dict, arg_getStr(key_arg), val_arg);
+        pikaDict_set(dict, arg_getStr(key_arg), val_arg);
         arg_deinit(key_arg);
     }
     stack_deinit(&stack);
@@ -3470,7 +3470,7 @@ static int pikaVM_runInstructUnit(PikaObj* self,
     if (invoke_deepth > 0) {
         PikaObj* oReg = vm->oreg[invoke_deepth - 1];
         if (NULL != oReg && NULL != return_arg) {
-            objList_append(oReg, return_arg);
+            pikaList_append(oReg, return_arg);
             return_arg = NULL;
         }
     }
