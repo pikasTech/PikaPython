@@ -441,19 +441,19 @@ PikaObj* _pika_dict_new(int num_args, ...);
 
 /* Macro to create a new tuple PikaObj with the given arguments (of type Arg*).
  */
-#define objTuple_new(...) \
+#define New_pikaTupleFromVarArgs(...) \
     _pika_tuple_new(sizeof((Arg*[]){__VA_ARGS__}) / sizeof(Arg*), __VA_ARGS__)
 
 /* Macro to create a new list PikaObj with the given arguments (of type Arg*).
  */
-#define objList_new(...) \
+#define New_pikaListFromVarArgs(...) \
     _pika_list_new(sizeof((Arg*[]){__VA_ARGS__}) / sizeof(Arg*), __VA_ARGS__)
 
 /* Macro to create a new dict PikaObj with the given arguments (of type
  * Arg*).
  */
 
-#define objDict_new(...)                                                   \
+#define New_pikaDictFromVarArgs(...)                                       \
     _pika_dict_new(sizeof((Arg*[]){__VA_ARGS__, NULL}) / sizeof(Arg*) - 1, \
                    __VA_ARGS__)
 
