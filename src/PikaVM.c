@@ -1173,7 +1173,7 @@ static char* _kw_pos_to_default_all(FunctionArgsInfo* f,
         Arg* aKeyword = NULL;
         /* load default arg from kws */
         if (f->kw != NULL) {
-            aKeyword = pikaDict_getArg(f->kw, sArgName);
+            aKeyword = pikaDict_get(f->kw, sArgName);
             if (aKeyword != NULL) {
                 Arg* aNew = arg_copy(aKeyword);
                 argv[(*argc)++] = aNew;
@@ -1211,7 +1211,7 @@ static int _kw_to_pos_one(FunctionArgsInfo* f,
     if (f->kw == NULL) {
         return 0;
     }
-    Arg* pos_arg = pikaDict_getArg(f->kw, arg_name);
+    Arg* pos_arg = pikaDict_get(f->kw, arg_name);
     if (pos_arg == NULL) {
         return 0;
     }
@@ -1228,7 +1228,7 @@ static void _kw_to_pos_all(FunctionArgsInfo* f, int* argc, Arg* argv[]) {
     for (int i = 0; i < arg_num_need; i++) {
         char* arg_name = strPopLastToken(f->type_list, ',');
         pika_assert(f->kw != NULL);
-        Arg* pos_arg = pikaDict_getArg(f->kw, arg_name);
+        Arg* pos_arg = pikaDict_get(f->kw, arg_name);
         pika_assert(pos_arg != NULL);
         argv[(*argc)++] = arg_copy(pos_arg);
         pikaDict_removeArg(f->kw, pos_arg);
@@ -1684,13 +1684,6 @@ static Arg* VM_instruction_handler_TPL(PikaObj* self,
                                        char* data,
                                        Arg* arg_ret_reg) {
     return _vm_create_list_or_tuple(self, vm, pika_false);
-}
-
-void objDict_init(PikaObj* self) {
-    Args* dict = New_args(NULL);
-    Args* keys = New_args(NULL);
-    obj_setPtr(self, "dict", dict);
-    obj_setPtr(self, "_keys", keys);
 }
 
 #if PIKA_BUILTIN_STRUCT_ENABLE

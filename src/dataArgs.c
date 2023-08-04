@@ -492,7 +492,7 @@ Args* New_args(Args* args) {
     return self;
 }
 
-PIKA_RES pikaList_setArg(PikaList* self, int index, Arg* arg) {
+PIKA_RES pikaList_set(PikaList* self, int index, Arg* arg) {
     char buff[11];
     char* i_str = fast_itoa(buff, index);
     int top = pikaList_getSize(self);
@@ -504,7 +504,7 @@ PIKA_RES pikaList_setArg(PikaList* self, int index, Arg* arg) {
     return PIKA_RES_OK;
 }
 
-Arg* pikaList_getArg(PikaList* self, int index) {
+Arg* pikaList_get(PikaList* self, int index) {
     pika_assert(NULL != self);
     char buff[11];
     char* i_str = fast_itoa(buff, index);
@@ -512,22 +512,22 @@ Arg* pikaList_getArg(PikaList* self, int index) {
 }
 
 int pikaList_getInt(PikaList* self, int index) {
-    Arg* arg = pikaList_getArg(self, index);
+    Arg* arg = pikaList_get(self, index);
     return arg_getInt(arg);
 }
 
 pika_float pikaList_getFloat(PikaList* self, int index) {
-    Arg* arg = pikaList_getArg(self, index);
+    Arg* arg = pikaList_get(self, index);
     return arg_getFloat(arg);
 }
 
 char* pikaList_getStr(PikaList* self, int index) {
-    Arg* arg = pikaList_getArg(self, index);
+    Arg* arg = pikaList_get(self, index);
     return arg_getStr(arg);
 }
 
 void* pikaList_getPtr(PikaList* self, int index) {
-    Arg* arg = pikaList_getArg(self, index);
+    Arg* arg = pikaList_get(self, index);
     return arg_getPtr(arg);
 }
 
@@ -553,7 +553,7 @@ Arg* pikaList_pop_withIndex(PikaList* self, int index) {
     if (index < 0) {
         index = top + index;
     }
-    Arg* arg = pikaList_getArg(self, index);
+    Arg* arg = pikaList_get(self, index);
     Arg* res = arg_copy(arg);
     pikaList_remove(self, arg);
     return res;
@@ -574,7 +574,7 @@ PIKA_RES pikaList_remove(PikaList* self, Arg* arg) {
         return PIKA_RES_ERR_OUT_OF_RANGE;
     }
     for (int i = 0; i < top; i++) {
-        Arg* arg_now = pikaList_getArg(self, i);
+        Arg* arg_now = pikaList_get(self, i);
         if (arg_isEqual(arg_now, arg)) {
             i_remove = i;
             args_removeArg(_OBJ2LIST(self), arg_now);
@@ -585,7 +585,7 @@ PIKA_RES pikaList_remove(PikaList* self, Arg* arg) {
     for (int i = i_remove + 1; i < top; i++) {
         char buff[11];
         char* i_str = fast_itoa(buff, i - 1);
-        Arg* arg_now = pikaList_getArg(self, i);
+        Arg* arg_now = pikaList_get(self, i);
         arg_setName(arg_now, i_str);
     }
     args_setInt(_OBJ2LIST(self), "top", top - 1);
@@ -601,7 +601,7 @@ PIKA_RES pikaList_insert(PikaList* self, int index, Arg* arg) {
     for (int i = top - 1; i >= index; i--) {
         char buff[11];
         char* i_str = fast_itoa(buff, i + 1);
-        Arg* arg_now = pikaList_getArg(self, i);
+        Arg* arg_now = pikaList_get(self, i);
         arg_setName(arg_now, i_str);
     }
     char buff[11];
@@ -622,11 +622,7 @@ size_t pikaList_getSize(PikaList* self) {
     return ret;
 }
 
-void objList_append(PikaObj* self, Arg* arg) {
-    pikaList_append(self, arg);
-}
-
-void objList_init(PikaObj* self) {
+void pikaList_init(PikaObj* self) {
     Args* list = New_args(NULL);
     args_pushArg_name(list, "top", arg_newInt(0));
     obj_setPtr(self, "list", list);
@@ -636,10 +632,10 @@ void pikaList_reverse(PikaList* self) {
     pika_assert(NULL != self);
     int top = pikaList_getSize(self);
     for (int i = 0; i < top / 2; i++) {
-        Arg* arg_i = arg_copy(pikaList_getArg(self, i));
-        Arg* arg_top = arg_copy(pikaList_getArg(self, top - i - 1));
-        pikaList_setArg(self, i, arg_top);
-        pikaList_setArg(self, top - i - 1, arg_i);
+        Arg* arg_i = arg_copy(pikaList_get(self, i));
+        Arg* arg_top = arg_copy(pikaList_get(self, top - i - 1));
+        pikaList_set(self, i, arg_top);
+        pikaList_set(self, top - i - 1, arg_i);
     }
 }
 
@@ -705,7 +701,7 @@ char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list) {
 
     for (size_t i = 0; i < pikaList_getSize(list); i++) {
         Args buffs_item = {0};
-        Arg* arg = pikaList_getArg(list, i);
+        Arg* arg = pikaList_get(list, i);
         char* fmt_item = strsPopToken(&buffs_item, &fmt_buff, '%');
         fmt_item = strsAppend(&buffs_item, "%", fmt_item);
         char* str_format = strsFormatArg(&buffs_item, fmt_item, arg);

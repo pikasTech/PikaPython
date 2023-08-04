@@ -753,12 +753,16 @@ pika_bool pika_GIL_isInit(void);
 /* builtins */
 PikaObj* New_builtins(Args* args);
 
-int objList_getSize(PikaObj* self);
-void objList_set(PikaObj* self, int i, Arg* arg);
-Arg* objList_get(PikaObj* self, int i);
-void objList_append(PikaObj* self, Arg* arg);
-void objList_init(PikaObj* self);
-void objDict_init(PikaObj* self);
+#define objList_getSize pikaList_getSize
+#define objList_get pikaList_get
+#define objList_set pikaList_set
+#define objList_forEach pikaList_forEach
+#define objList_init pikaList_init
+#define objDict_get pikaDict_get
+#define objDict_set pikaDict_set
+#define objList_append pikaList_append
+#define objDict_init pikaDict_init
+
 int32_t objList_forEach(PikaObj* self,
                         int32_t (*eachHandle)(PikaObj* self,
                                               int itemIndex,
@@ -772,8 +776,6 @@ int32_t objList_forEach(PikaObj* self,
 #define objTuple_forEach objList_forEach
 #define objTuple_init objList_init
 
-Arg* objDict_get(PikaObj* self, char* key);
-void objDict_set(PikaObj* self, char* key, Arg* arg);
 int32_t objDict_forEach(PikaObj* self,
                         int32_t (*eachHandle)(PikaObj* self,
                                               Arg* keyEach,
@@ -808,7 +810,7 @@ static inline PIKA_RES _pikaDict_setVal(PikaDict* self, Arg* val) {
     return args_setArg(_OBJ2DICT(self), (val));
 }
 
-static inline PIKA_RES pikaDict_setArg(PikaDict* self, char* name, Arg* val) {
+static inline PIKA_RES pikaDict_set(PikaDict* self, char* name, Arg* val) {
     arg_setName(val, name);
     _pikaDict_setVal(self, val);
     return args_setStr(_OBJ2KEYS(self), (name), (name));
@@ -849,7 +851,7 @@ static inline Arg* pikaDict_getArgByidex(PikaDict* self, int index) {
     return args_getArgByIndex(_OBJ2DICT(self), (index));
 }
 
-static inline Arg* pikaDict_getArg(PikaDict* self, char* name) {
+static inline Arg* pikaDict_get(PikaDict* self, char* name) {
     return args_getArg(_OBJ2DICT(self), (name));
 }
 
@@ -869,18 +871,21 @@ static inline size_t pikaDict_getBytesSize(PikaDict* self, char* name) {
     return args_getBytesSize(_OBJ2DICT(self), (name));
 }
 
+void pikaDict_init(PikaObj* self);
+
 static inline void pikaDict_deinit(PikaDict* self) {
     obj_deinit(self);
 }
 
 /* list api */
 PIKA_RES pikaList_append(PikaList* self, Arg* arg);
-PIKA_RES pikaList_setArg(PikaList* self, int index, Arg* arg);
+PIKA_RES pikaList_set(PikaList* self, int index, Arg* arg);
+void pikaList_init(PikaObj* self);
 int pikaList_getInt(PikaList* self, int index);
 pika_float pikaList_getFloat(PikaList* self, int index);
 char* pikaList_getStr(PikaList* self, int index);
 void* pikaList_getPtr(PikaList* self, int index);
-Arg* pikaList_getArg(PikaList* self, int index);
+Arg* pikaList_get(PikaList* self, int index);
 size_t pikaList_getSize(PikaList* self);
 void pikaList_reverse(PikaList* self);
 PIKA_RES pikaList_insert(PikaList* self, int index, Arg* arg);
@@ -892,7 +897,7 @@ static inline void pikaList_deinit(PikaList* self) {
 }
 
 static inline ArgType pikaList_getType(PikaList* self, int index) {
-    Arg* arg = pikaList_getArg(self, index);
+    Arg* arg = pikaList_get(self, index);
     return arg_getType(arg);
 }
 
@@ -902,7 +907,7 @@ static inline void pikaTuple_deinit(PikaTuple* self) {
 }
 
 static inline Arg* pikaTuple_getArg(PikaTuple* self, int index) {
-    return pikaList_getArg(self, (index));
+    return pikaList_get(self, (index));
 }
 
 static inline size_t pikaTuple_getSize(PikaTuple* self) {

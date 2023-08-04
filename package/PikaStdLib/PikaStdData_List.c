@@ -70,11 +70,11 @@ void PikaStdData_List_reverse(PikaObj* self) {
 PikaObj* PikaStdData_List___add__(PikaObj* self, PikaObj* others) {
     PikaObj* res = New_pikaList();
     for (size_t i = 0; i < pikaList_getSize(self); i++) {
-        Arg* arg = pikaList_getArg(self, i);
+        Arg* arg = pikaList_get(self, i);
         pikaList_append(res, arg_copy(arg));
     }
     for (size_t i = 0; i < pikaList_getSize(others); i++) {
-        Arg* arg = pikaList_getArg(others, i);
+        Arg* arg = pikaList_get(others, i);
         pikaList_append(res, arg_copy(arg));
     }
     return res;

@@ -3967,27 +3967,6 @@ char* builtins_bytearray_decode(PikaObj* self) {
     return obj_getStr(self, "_buf");
 }
 
-int objList_getSize(PikaObj* self) {
-    return pikaList_getSize(self);
-}
-
-void objList_set(PikaObj* self, int i, Arg* arg) {
-    pikaList_setArg(self, i, (arg));
-}
-
-Arg* objList_get(PikaObj* self, int i) {
-    return pikaList_getArg(self, i);
-}
-
-Arg* objDict_get(PikaObj* self, char* key) {
-    pika_assert_obj_alive(self);
-    return pikaDict_getArg(self, key);
-}
-
-void objDict_set(PikaObj* self, char* key, Arg* arg) {
-    pikaDict_setArg(self, key, arg);
-}
-
 int32_t objDict_forEach(PikaObj* self,
                         int32_t (*eachHandle)(PikaObj* self,
                                               Arg* keyEach,
@@ -4022,7 +4001,7 @@ int32_t objList_forEach(PikaObj* self,
                         void* context) {
     int i = 0;
     while (PIKA_TRUE) {
-        Arg* item = pikaList_getArg(self, i);
+        Arg* item = pikaList_get(self, i);
         if (NULL == item) {
             break;
         }
@@ -4073,6 +4052,13 @@ PikaList* New_pikaList(void) {
 
 PikaTuple* New_pikaTuple(void) {
     return _New_pikaListOrTuple(1);
+}
+
+void pikaDict_init(PikaObj* self) {
+    Args* dict = New_args(NULL);
+    Args* keys = New_args(NULL);
+    obj_setPtr(self, "dict", dict);
+    obj_setPtr(self, "_keys", keys);
 }
 
 PikaDict* New_pikaDict(void) {
