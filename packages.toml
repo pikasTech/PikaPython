@@ -651,3 +651,8 @@ releases = [
 [[packages]]
 name = "math"
 releases = [ "v0.1.0 f74d759355409063c504482d7cdacbe36b8d263c" ]
+
+
+[[packages]]
+name = "pika_littlefs"
+releases = [ "v0.0.1 301105f2f3976d320c361aff4b2743cbbdeaa693" ]
