@@ -65,17 +65,16 @@ static pika_bool _IIC_SendByte(pika_hal_SOFT_IIC_config* cfg, uint8_t byte) {
         byte <<= 1;
     }
 
-    // 在发送完字节后检查ACK信号
     _GPIO_write(cfg->SCL, 0);
     _IIC_Delay();
-    _IIC_SDA_input(cfg);       // 设置SDA为输入
-    _GPIO_write(cfg->SCL, 1);  // 将SCL线设置为高，让从设备发送ACK信号
+    _IIC_SDA_input(cfg);
+    _GPIO_write(cfg->SCL, 1);
 
     int timeout = 1000;
     uint32_t ack = 0;
     do {
         _IIC_Delay();
-        ack = !_GPIO_read(cfg->SDA);  // 如果从设备发送了ACK信号，SDA线会被拉低
+        ack = !_GPIO_read(cfg->SDA);
     } while (ack == 0 && timeout-- > 0);
 
     // pika_debug("ack timeout:%d", timeout);
@@ -83,28 +82,28 @@ static pika_bool _IIC_SendByte(pika_hal_SOFT_IIC_config* cfg, uint8_t byte) {
         pika_platform_printf("Error: IIC write byte timeout\r\n");
     }
 
-    _GPIO_write(cfg->SCL, 0);  // 将SCL线设置为低，完成一个I2C周期
+    _GPIO_write(cfg->SCL, 0);
     return ack;
 }
 
 static void _IIC_Ack(pika_hal_SOFT_IIC_config* cfg) {
-    _GPIO_write(cfg->SCL, 0);  // 拉低时钟线
-    _IIC_SDA_output(cfg);      // 设置SDA为输出
-    _GPIO_write(cfg->SDA, 0);  // 拉低数据线
+    _GPIO_write(cfg->SCL, 0);
+    _IIC_SDA_output(cfg);
+    _GPIO_write(cfg->SDA, 0);
     _IIC_Delay();
-    _GPIO_write(cfg->SCL, 1);  // 产生时钟
+    _GPIO_write(cfg->SCL, 1);
     _IIC_Delay();
-    _GPIO_write(cfg->SCL, 0);  // 拉低时钟线
+    _GPIO_write(cfg->SCL, 0);
 }
 
 static void _IIC_NAck(pika_hal_SOFT_IIC_config* cfg) {
-    _GPIO_write(cfg->SCL, 0);  // 拉低时钟线
-    _IIC_SDA_output(cfg);      // 设置SDA为输出
-    _GPIO_write(cfg->SDA, 1);  // 数据线拉高
+    _GPIO_write(cfg->SCL, 0);
+    _IIC_SDA_output(cfg);
+    _GPIO_write(cfg->SDA, 1);
     _IIC_Delay();
-    _GPIO_write(cfg->SCL, 1);  // 产生时钟
+    _GPIO_write(cfg->SCL, 1);
     _IIC_Delay();
-    _GPIO_write(cfg->SCL, 0);  // 拉低时钟线
+    _GPIO_write(cfg->SCL, 0);
 }
 
 static uint8_t _IIC_ReadByte(pika_hal_SOFT_IIC_config* cfg, uint8_t ack) {
@@ -120,11 +119,10 @@ static uint8_t _IIC_ReadByte(pika_hal_SOFT_IIC_config* cfg, uint8_t ack) {
         _GPIO_write(cfg->SCL, 0);
         _IIC_Delay();
     }
-    // 在读取完一个字节后发送ACK信号
     if (ack) {
-        _IIC_Ack(cfg);  // 如果ack为真，发送ACK信号
+        _IIC_Ack(cfg);
     } else {
-        _IIC_NAck(cfg);  // 如果ack为假，发送NACK信号
+        _IIC_NAck(cfg);
     }
     pika_debug(" - iic read: 0x%02X", byte);
     return byte;
@@ -136,11 +134,10 @@ int pika_hal_platform_SOFT_IIC_write(pika_dev* dev, void* buf, size_t count) {
     uint8_t* data = (uint8_t*)buf;
 
     _IIC_Start(iic_cfg);
-    uint8_t addr_write = (iic_cfg->slave_addr << 1) | 0x00;  // 方向位为0代表写
+    uint8_t addr_write = (iic_cfg->slave_addr << 1) | 0x00;
     // pika_debug("iic addr_write: 0x%02X", addr_write);
-    _IIC_SendByte(iic_cfg, addr_write);  // 方向位为0代表写
+    _IIC_SendByte(iic_cfg, addr_write);
 
-    // 如果启用了mem_addr_ena，将设备地址和内存地址发送到I2C总线
     if (iic_cfg->mem_addr_ena == PIKA_HAL_IIC_MEM_ADDR_ENA_ENABLE) {
         if (iic_cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_8BIT) {
             _IIC_SendByte(iic_cfg, iic_cfg->mem_addr & 0xFF);
@@ -164,12 +161,10 @@ int pika_hal_platform_SOFT_IIC_read(pika_dev* dev, void* buf, size_t count) {
 
     _IIC_Start(iic_cfg);
 
-    // 如果启用了mem_addr_ena，先写设备地址和内存地址
     if (iic_cfg->mem_addr_ena == PIKA_HAL_IIC_MEM_ADDR_ENA_ENABLE) {
-        uint8_t addr_write =
-            (iic_cfg->slave_addr << 1) | 0x00;  // 方向位为0代表写
+        uint8_t addr_write = (iic_cfg->slave_addr << 1) | 0x00;
         // pika_debug("iic addr_write: 0x%02X", addr_write);
-        _IIC_SendByte(iic_cfg, addr_write);  // 方向位为0代表写
+        _IIC_SendByte(iic_cfg, addr_write);
         if (iic_cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_8BIT) {
             _IIC_SendByte(iic_cfg, iic_cfg->mem_addr & 0xFF);
         } else if (iic_cfg->mem_addr_size == PIKA_HAL_IIC_MEM_ADDR_SIZE_16BIT) {
@@ -179,9 +174,9 @@ int pika_hal_platform_SOFT_IIC_read(pika_dev* dev, void* buf, size_t count) {
         _IIC_Start(iic_cfg);
     }
 
-    uint8_t addr_read = (iic_cfg->slave_addr << 1) | 0x01;  // 方向位为1代表读
+    uint8_t addr_read = (iic_cfg->slave_addr << 1) | 0x01;
     // pika_debug("iic addr_read: 0x%02X", addr_read);
-    _IIC_SendByte(iic_cfg, addr_read);  // 方向位为1代表读
+    _IIC_SendByte(iic_cfg, addr_read);
 
     for (int i = 0; i < count - 1; i++) {
         // data[i] = _IIC_ReadByte(iic_cfg, 1);
@@ -215,7 +210,6 @@ int pika_hal_platform_SOFT_IIC_ioctl_config(pika_dev* dev,
             "Error: SOFT IIC config error, SDA and SCL must be set\r\n");
         return -1;
     }
-    // 检查软件IIC配置项是否正确
     if (cfg->master_or_slave != PIKA_HAL_IIC_MASTER &&
         cfg->master_or_slave != PIKA_HAL_IIC_SLAVE) {
         __platform_printf(
@@ -240,7 +234,6 @@ int pika_hal_platform_SOFT_IIC_ioctl_config(pika_dev* dev,
             "Error: SOFT IIC config error, mem_addr_size must be set\r\n");
         return -1;
     }
-    // 在这里，我们暂时不检查speed和timeout，因为软件模拟的I2C可能无法精确控制速度和超时。
     return 0;
 }
 

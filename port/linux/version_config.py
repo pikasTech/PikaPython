@@ -1,3 +1,3 @@
 MajorVersion  =   "1"
 MinorVersion  =   "12"
-MicroVersion  =   "4"
+MicroVersion  =   "5"

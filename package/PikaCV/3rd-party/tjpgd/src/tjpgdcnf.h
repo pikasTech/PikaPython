@@ -27,5 +27,6 @@ KB of code size. /  0: Disable /  1: Enable
 /* Optimization level
 /  0: Basic optimization. Suitable for 8/16-bit MCUs.
 /  1: + 32-bit barrel shifter. Suitable for 32-bit MCUs.
-/  2: + Table conversion for huffman decoding (wants 6 << HUFF_BIT bytes of RAM)
+/  2: + Table conversion for huffman decoding (wants 6 << HUFF_BIT bytes of
+RAM)
 */

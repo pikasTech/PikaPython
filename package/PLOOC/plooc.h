@@ -1,20 +1,19 @@
 /*****************************************************************************
- *   Copyright(C)2009-2019 by GorgonMeducer<embedded_zhuoran@hotmail.com>    *
+ *   Copyright(C)2009-2019 by GorgonMeducer<embedded_zhuoran@hotmail.com> *
  *                                                                           *
- *  Licensed under the Apache License, Version 2.0 (the "License");          *
- *  you may not use this file except in compliance with the License.         *
- *  You may obtain a copy of the License at                                  *
+ *  Licensed under the Apache License, Version 2.0 (the "License"); * you may
+ *not use this file except in compliance with the License.         * You may
+ *obtain a copy of the License at                                  *
  *                                                                           *
- *     http://www.apache.org/licenses/LICENSE-2.0                            *
+ *     http://www.apache.org/licenses/LICENSE-2.0 *
  *                                                                           *
- *  Unless required by applicable law or agreed to in writing, software      *
- *  distributed under the License is distributed on an "AS IS" BASIS,        *
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- *  See the License for the specific language governing permissions and      *
- *  limitations under the License.                                           *
+ *  Unless required by applicable law or agreed to in writing, software *
+ *  distributed under the License is distributed on an "AS IS" BASIS, *
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and *
+ *  limitations under the License. *
  *                                                                           *
  ****************************************************************************/
-
 #ifndef __PROTECTED_LOW_OVERHEAD_OBJECT_ORIENTED_C_H__
 #define __PROTECTED_LOW_OVERHEAD_OBJECT_ORIENTED_C_H__
 
@@ -75,7 +74,8 @@ extern "C" {
 #endif
 #endif
 
-/*============================ MACROFIED FUNCTIONS ===========================*/
+/*============================ MACROFIED FUNCTIONS
+ * ===========================*/
 
 /*! \note add which macro to support multiple inheriting and implementations
  *!
@@ -274,7 +274,8 @@ extern "C" {
 #define this_interface(__INTERFACE) convert_obj_as(this, __INTERFACE)
 #define base_obj(__type) convert_obj_as(this, __type)
 
-/*============================ TYPES =========================================*/
+/*============================ TYPES
+ * =========================================*/
 
 //! \name interface: u32_property_t
 //! @{
@@ -340,9 +341,12 @@ bool (*Disable)(void);
 end_def_interface(en_property_t)
 //! @}
 
-/*============================ GLOBAL VARIABLES ==============================*/
-/*============================ LOCAL VARIABLES ===============================*/
-/*============================ PROTOTYPES ====================================*/
+/*============================ GLOBAL VARIABLES
+ * ==============================*/
+/*============================ LOCAL VARIABLES
+ * ===============================*/
+/*============================ PROTOTYPES
+ * ====================================*/
 
 #ifdef __cplusplus
 }

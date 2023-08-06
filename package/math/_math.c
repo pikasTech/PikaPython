@@ -3,7 +3,6 @@
 
 #define PI (3.141592653589793115997963468544185161590576171875l)
 #define E (2.718281828459045090795598298427648842334747314453125l)
-//初始化，填入π和e的值
 void _math___init__(PikaObj* self) {
     obj_setFloat(self, "pi", PI);
     obj_setFloat(self, "e", E);

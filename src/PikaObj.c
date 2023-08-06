@@ -210,6 +210,7 @@ int32_t obj_deinit(PikaObj* self) {
         shConfig_deinit((ShellConfig*)&g_REPL);
 #if __linux
         disable_raw_mode();
+        pika_GIL_deinit();
 #endif
     }
     return ret;
@@ -1802,6 +1803,7 @@ enum shellCTRL _do_obj_runChar(PikaObj* self,
     }
 
     pika_bool result = byteQueue_writeOne(queue, inputChar);
+    (void)result;
     pika_assert(result != pika_false);
 
     int16_t byte_count;
@@ -2789,16 +2791,16 @@ static void _thread_event(void* arg) {
     pika_GIL_EXIT();
 }
 
-void _do_pika_eventListener_send(PikaEventListener* self,
-                                 uint32_t eventId,
-                                 Arg* eventData,
-                                 PIKA_BOOL pickupWhenNoVM) {
+PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
+                                     uint32_t eventId,
+                                     Arg* eventData,
+                                     PIKA_BOOL pickupWhenNoVM) {
 #if !PIKA_EVENT_ENABLE
     pika_platform_printf("PIKA_EVENT_ENABLE is not enable");
     while (1) {
     };
 #else
-    pika_GIL_ENTER();
+    _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), -1);
 #if PIKA_EVENT_THREAD_ENABLE
     if (!g_PikaVMSignal.event_thread) {
         /* using multi thread */
@@ -2826,23 +2828,23 @@ void _do_pika_eventListener_send(PikaEventListener* self,
     }
 __exit:
     pika_GIL_EXIT();
-    return;
+    return 0;
 #endif
 }
 
-void pika_eventListener_send(PikaEventListener* self,
-                             uint32_t eventId,
-                             Arg* eventData) {
-    _do_pika_eventListener_send(self, eventId, eventData, pika_true);
+PIKA_RES pika_eventListener_send(PikaEventListener* self,
+                                 uint32_t eventId,
+                                 Arg* eventData) {
+    return _do_pika_eventListener_send(self, eventId, eventData, pika_true);
 }
 
-void pika_eventListener_sendSignal(PikaEventListener* self,
-                                   uint32_t eventId,
-                                   int eventSignal) {
-    pika_GIL_ENTER();
+PIKA_RES pika_eventListener_sendSignal(PikaEventListener* self,
+                                       uint32_t eventId,
+                                       int eventSignal) {
+    _RETURN_WHEN_NOT_ZERO(pika_GIL_ENTER(), -1);
     Arg* eventData = arg_newInt(eventSignal);
     pika_GIL_EXIT();
-    pika_eventListener_send(self, eventId, eventData);
+    return pika_eventListener_send(self, eventId, eventData);
 }
 
 Arg* pika_eventListener_sendSignalAwaitResult(PikaEventListener* self,
@@ -4066,4 +4068,16 @@ PikaDict* New_pikaDict(void) {
     PikaDict* self = newNormalObj(New_PikaStdData_Dict);
     pikaDict_init(self);
     return self;
+}
+
+PIKA_RES obj_setEventCallBack(PikaObj* self,
+                              uint32_t eventId,
+                              Arg* eventCallback,
+                              PikaEventListener** eventListener_p) {
+    if (*eventListener_p == NULL) {
+        pika_eventListener_init(eventListener_p);
+    }
+    obj_setArg(self, "eventCallBack", eventCallback);
+    pika_eventListener_registEvent(*eventListener_p, eventId, self);
+    return PIKA_RES_OK;
 }

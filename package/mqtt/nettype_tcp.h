@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-15 13:39:00
  * @LastEditTime: 2020-10-17 14:17:10
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #ifndef _NETTYPE_TCP_H_
 #define _NETTYPE_TCP_H_

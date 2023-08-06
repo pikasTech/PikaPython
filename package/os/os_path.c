@@ -20,49 +20,41 @@
 
 #define IS_PATH_SEP(ch) ((ch) == '/' || (ch) == '\\')
 
-// 返回指定路径的绝对路径
 char* os_path_abspath(PikaObj* self, char* path) {
     char* abs_path = NULL;
 
 #ifdef _WIN32
     DWORD size = GetFullPathNameA(path, 0, NULL, NULL);
     if (size == 0) {
-        // 获取绝对路径失败
         return NULL;
     }
 
     abs_path = (char*)malloc(size * sizeof(char));
     if (abs_path == NULL) {
-        // 内存分配失败
         return NULL;
     }
 
     DWORD ret_size = GetFullPathNameA(path, size, abs_path, NULL);
     if (ret_size == 0 || ret_size > size) {
-        // 获取绝对路径失败
         free(abs_path);
         return NULL;
     }
 #else
     char* cwd = getcwd(NULL, 0);
     if (cwd == NULL) {
-        // 获取当前工作目录失败
         return NULL;
     }
 
     abs_path = realpath(path, NULL);
     if (abs_path == NULL) {
-        // 获取绝对路径失败
         free(cwd);
         return NULL;
     }
 
-    // 如果路径不是绝对路径，则将其转换为绝对路径
     if (abs_path[0] != '/') {
         char* temp_path =
             (char*)malloc((strlen(cwd) + strlen(abs_path) + 2) * sizeof(char));
         if (temp_path == NULL) {
-            // 内存分配失败
             free(cwd);
             free(abs_path);
             return NULL;
@@ -83,12 +75,10 @@ char* os_path_abspath(PikaObj* self, char* path) {
     return res;
 }
 
-// 判断指定路径是否存在
 PIKA_BOOL os_path_exists(PikaObj* self, char* path) {
 #ifdef _WIN32
     DWORD attr = GetFileAttributesA(path);
     if (attr == INVALID_FILE_ATTRIBUTES) {
-        // 获取文件属性失败
         return PIKA_FALSE;
     }
 
@@ -96,7 +86,6 @@ PIKA_BOOL os_path_exists(PikaObj* self, char* path) {
 #else
     struct stat statbuf;
     if (stat(path, &statbuf) == -1) {
-        // 获取文件状态失败
         return PIKA_FALSE;
     }
 
@@ -104,7 +93,6 @@ PIKA_BOOL os_path_exists(PikaObj* self, char* path) {
 #endif
 }
 
-// 判断指定路径是否为绝对路径
 PIKA_BOOL os_path_isabs(PikaObj* self, char* path) {
 #ifdef _WIN32
     if (path[0] == '\\' || path[0] == '/') {
@@ -231,16 +219,13 @@ int _os_path_split(char* path, char** folder, char** file) {
     }
     char* p = strrchr(path, PATH_SEPARATOR);
     if (p) {
-        /* 字符串最后一个路径分隔符的位置 */
         size_t idx = p - path;
-        /* 获取最后一个路径分隔符之前的路径 */
         *folder = pika_platform_malloc(idx + 2);
         if (*folder == NULL) {
             return -1;
         }
         strncpy(*folder, path, idx + 1);
         (*folder)[idx] = '\0';
-        /* 获取最后一个路径分隔符之后的文件名 */
         *file = strdup(p + 1);
         if (*file == NULL) {
             pika_platform_free(*folder);
@@ -249,7 +234,6 @@ int _os_path_split(char* path, char** folder, char** file) {
         }
         return 0;
     } else {
-        /* 如果路径没有分隔符，则返回路径本身和空字符串 */
         *folder = strdup(path);
         if (*folder == NULL) {
             return -1;
@@ -267,35 +251,27 @@ int _os_path_split(char* path, char** folder, char** file) {
 int _os_path_splitext(char* path, char** file, char** ext) {
     char* p = strrchr(path, '.');
     if (p) {
-        /* 字符串最后一个点的位置 */
         size_t idx = p - path;
-        /* 获取点之前的路径 */
         *file = malloc(idx + 1);
         if (!(*file)) {
-            /* 内存分配失败 */
             return -1;
         }
         strncpy(*file, path, idx);
         (*file)[idx] = '\0';
-        /* 获取点之后的扩展名 */
         *ext = strdup(p);
         if (!(*ext)) {
-            /* 内存分配失败 */
             pika_platform_free(*file);
             *file = NULL;
             return -1;
         }
         return 0;
     } else {
-        /* 如果没有扩展名，则返回路径本身和空字符串 */
         *file = strdup(path);
         if (!(*file)) {
-            /* 内存分配失败 */
             return -1;
         }
         *ext = strdup("");
         if (!(*ext)) {
-            /* 内存分配失败 */
             free(*file);
             *file = NULL;
             return -1;
@@ -310,10 +286,10 @@ PikaObj* os_path_split(PikaObj* self, char* path) {
     PikaObj* tuple = NULL;
 
     if (0 != _os_path_split(path, &folder, &file)) {
-        goto __exit;  // 发生错误，跳转到 __exit 处做资源回收
+        goto __exit;
     }
 
-    tuple = objTuple_new(arg_newStr(folder), arg_newStr(file));
+    tuple = New_pikaTupleFromVarArgs(arg_newStr(folder), arg_newStr(file));
     pika_platform_free(folder);
     pika_platform_free(file);
 
@@ -339,7 +315,7 @@ PikaObj* os_path_splitext(PikaObj* self, char* path) {
     Arg* aExt = NULL;
 
     if (0 != _os_path_splitext(path, &file, &ext)) {
-        goto __exit;  // 发生错误，跳转到 __exit 处做资源回收
+        goto __exit;
     }
 
     tuple = newNormalObj(New_PikaStdData_Tuple);

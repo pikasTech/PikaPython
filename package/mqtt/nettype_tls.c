@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2020-01-11 19:45:35
  * @LastEditTime: 2020-09-20 14:29:06
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #include "nettype_tls.h"
 #include "platform_memory.h"

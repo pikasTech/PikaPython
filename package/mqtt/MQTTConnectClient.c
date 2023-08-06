@@ -11,20 +11,20 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *    Ian Craggs - initial API and implementation and/or initial documentation
+ *    Ian Craggs - initial API and implementation and/or initial
+ *documentation
  *******************************************************************************/
-
 #include "MQTTPacket.h"
 #include "StackTrace.h"
 
 #include <string.h>
 
 /**
- * Determines the length of the MQTT connect packet that would be produced using
- * the supplied connect options.
+ * Determines the length of the MQTT connect packet that would be produced
+ * using the supplied connect options.
  * @param options the options to be used to build the connect packet
- * @return the length of buffer needed to contain the serialized version of the
- * packet
+ * @return the length of buffer needed to contain the serialized version of
+ * the packet
  */
 int MQTTSerialize_connectLength(MQTTPacket_connectData* options) {
     int len = 0;

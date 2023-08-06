@@ -70,11 +70,11 @@ struct JDEC {
     uint32_t wreg;  /* Working shift register */
     uint8_t marker; /* Detected marker (0:None) */
 #if JD_FASTDECODE == 2
-    uint8_t longofs[2][2]; /* Table offset of long code [id][dcac] */
-    uint16_t*
-        hufflut_ac[2]; /* Fast huffman decode tables for AC short code [id] */
-    uint8_t*
-        hufflut_dc[2]; /* Fast huffman decode tables for DC short code [id] */
+    uint8_t longofs[2][2];   /* Table offset of long code [id][dcac] */
+    uint16_t* hufflut_ac[2]; /* Fast huffman decode tables for AC short code
+                                [id] */
+    uint8_t* hufflut_dc[2];  /* Fast huffman decode tables for DC short code
+                                [id] */
 #endif
 #endif
     void* workbuf;    /* Working buffer for IDCT and RGB output */

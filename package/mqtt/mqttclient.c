@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-09 21:31:25
  * @LastEditTime : 2022-06-12 17:39:43
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #include "mqttclient.h"
 
@@ -1172,7 +1172,7 @@ static uint32_t mqtt_read_buf_malloc(mqtt_client_t* c, uint32_t size) {
                    __LINE__, __FUNCTION__);
         RETURN_ERROR(MQTT_MEM_NOT_ENOUGH_ERROR);
     }
-    memset(c->mqtt_read_buf, 0, c->mqtt_read_buf_size);  // 清空申请的内存
+    memset(c->mqtt_read_buf, 0, c->mqtt_read_buf_size);
     return c->mqtt_read_buf_size;
 }
 

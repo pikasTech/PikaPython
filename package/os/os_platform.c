@@ -58,7 +58,6 @@ char* os_read_platform(PikaObj* self, PikaObj* fd, int len) {
         size = fread(buf, 1, len, fp);
 
         if (size > 0) {
-            //转换成
             obj_setStr(self, "os_file_read", buf);
             free(buf);
             return obj_getStr(self, "os_file_read");
@@ -122,7 +121,6 @@ PikaObj* os_listdir_platform(char* path) {
     PikaStdData_List___init__(list);
 
     handle = _findfirst(dirpath, &fb);
-    //找到第一个匹配的文件
     if (handle != -1L) {
         if (memcmp(fb.name, ".", 1) != 0) {
             Arg* arg = arg_setStr(NULL, "", fb.name);

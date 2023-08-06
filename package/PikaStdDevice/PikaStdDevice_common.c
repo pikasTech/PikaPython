@@ -9,13 +9,8 @@ void _PikaStdDevice_event_handler(pika_dev* dev, int signal) {
 void _PikaStdDevice_setCallBack(PikaObj* self,
                                 Arg* eventCallback,
                                 uint32_t eventId) {
-    obj_setArg(self, "eventCallBack", eventCallback);
-    /* init event_listener for the first time */
-    if (NULL == g_pika_device_event_listener) {
-        pika_eventListener_init(&g_pika_device_event_listener);
-    }
-    /* regist event to event listener */
-    pika_eventListener_registEvent(g_pika_device_event_listener, eventId, self);
+    obj_setEventCallBack(self, eventId, eventCallback,
+                         &g_pika_device_event_listener);
 }
 
 extern volatile PikaObj* __pikaMain;

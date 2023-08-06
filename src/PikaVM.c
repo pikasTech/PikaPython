@@ -68,6 +68,10 @@ pika_bool pika_GIL_isInit(void) {
 
 int pika_GIL_ENTER(void) {
     if (!g_pikaGIL.is_init) {
+        if (g_pikaGIL.bare_lock > 0) {
+            return -1;
+        }
+        g_pikaGIL.bare_lock = 1;
         return 0;
     }
     int ret = pika_platform_thread_mutex_lock(&g_pikaGIL);
@@ -87,6 +91,7 @@ int pika_GIL_ENTER(void) {
 
 int pika_GIL_EXIT(void) {
     if (!g_pikaGIL.is_init) {
+        g_pikaGIL.bare_lock = 0;
         return 0;
     }
     if (!g_pikaGIL.is_first_lock) {
@@ -99,6 +104,11 @@ int pika_GIL_EXIT(void) {
         return -1;
     }
     return pika_platform_thread_mutex_unlock(&g_pikaGIL);
+}
+
+int pika_GIL_deinit(void) {
+    pika_platform_memset(&g_pikaGIL, 0, sizeof(g_pikaGIL));
+    return 0;
 }
 
 int _VM_lock_init(void) {

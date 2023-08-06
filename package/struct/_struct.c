@@ -7,31 +7,28 @@
  * Copyright (c) 2014 Paul Sokolovsky
  * Copyright (c) 2023 Lyon
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
-
 #include "_struct.h"
 #include "pika_adapter_mpy.h"
 
 #define _SKIP_COMPILE 1
-
-#ifndef _SKIP_COMPILE
 
 /*
     This module implements most of character typecodes from CPython, with
@@ -177,7 +174,7 @@ STATIC mp_obj_t struct_unpack_from(size_t n_args, const mp_obj_t* args) {
 STATIC void struct_pack_into_internal(mp_obj_t fmt_in,
                                       byte* p,
                                       size_t n_args,
-                                      const mp_obj_t* args) {
+                                      mp_obj_t* args) {
     const char* fmt = mp_obj_str_get_str(fmt_in);
     char fmt_type = get_fmt_type(&fmt);
 
@@ -214,6 +211,8 @@ STATIC void struct_pack_into_internal(mp_obj_t fmt_in,
         fmt++;
     }
 }
+
+#ifndef _SKIP_COMPILE
 
 STATIC mp_obj_t struct_pack(size_t n_args, const mp_obj_t* args) {
     // TODO: "The arguments must match the values required by the format

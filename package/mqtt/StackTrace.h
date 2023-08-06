@@ -11,8 +11,8 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *    Ian Craggs - initial API and implementation and/or initial documentation
- *    Ian Craggs - fix for bug #434081
+ *    Ian Craggs - initial API and implementation and/or initial
+ *documentation Ian Craggs - fix for bug #434081
  *******************************************************************************/
 
 #ifndef STACKTRACE_H_

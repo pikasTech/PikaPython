@@ -11,10 +11,10 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *    Ian Craggs - initial API and implementation and/or initial documentation
- *    Ian Craggs - add connack return code definitions
- *    Xiang Rong - 442039 Add makefile to Embedded C client
- *    Ian Craggs - fix for issue #64, bit order in connack response
+ *    Ian Craggs - initial API and implementation and/or initial
+ *documentation Ian Craggs - add connack return code definitions Xiang Rong -
+ *442039 Add makefile to Embedded C client Ian Craggs - fix for issue #64,
+ *bit order in connack response
  *******************************************************************************/
 
 #ifndef MQTTCONNECT_H_

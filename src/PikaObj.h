@@ -525,18 +525,18 @@ void pika_eventListener_registEvent(PikaEventListener* self,
 
 void pika_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
 
-void _do_pika_eventListener_send(PikaEventListener* self,
+PIKA_RES _do_pika_eventListener_send(PikaEventListener* self,
+                                     uint32_t eventId,
+                                     Arg* eventData,
+                                     pika_bool pickupWhenNoVM);
+
+PIKA_RES pika_eventListener_sendSignal(PikaEventListener* self,
+                                       uint32_t eventId,
+                                       int eventSignal);
+
+PIKA_RES pika_eventListener_send(PikaEventListener* self,
                                  uint32_t eventId,
-                                 Arg* eventData,
-                                 pika_bool pickupWhenNoVM);
-
-void pika_eventListener_sendSignal(PikaEventListener* self,
-                                   uint32_t eventId,
-                                   int eventSignal);
-
-void pika_eventListener_send(PikaEventListener* self,
-                             uint32_t eventId,
-                             Arg* eventData);
+                                 Arg* eventData);
 
 PikaObj* pika_eventListener_getEventHandleObj(PikaEventListener* self,
                                               uint32_t eventId);
@@ -749,6 +749,7 @@ typedef PikaObj PikaTuple;
 typedef PikaObj PikaDict;
 
 pika_bool pika_GIL_isInit(void);
+int pika_GIL_deinit(void);
 
 /* builtins */
 PikaObj* New_builtins(Args* args);
@@ -932,6 +933,22 @@ PikaTuple* args_getTuple(Args* self, char* name);
 PikaDict* args_getDict(Args* self, char* name);
 
 char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list);
+
+PIKA_RES obj_setEventCallBack(PikaObj* self,
+                              uint32_t eventId,
+                              Arg* eventCallback,
+                              PikaEventListener** eventListener_p);
+
+#if 1
+#define _RETURN_WHEN_NOT_ZERO(_stmt_, _ret_) \
+    do {                                     \
+        if (0 != (_stmt_)) {                 \
+            return _ret_;                    \
+        }                                    \
+    } while (0)
+#else
+#define _RETURN_WHEN_NOT_ZERO(_stmt_, _ret_) (_stmt_)
+#endif
 
 #endif
 #ifdef __cplusplus

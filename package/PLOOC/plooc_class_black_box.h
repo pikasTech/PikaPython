@@ -1,20 +1,19 @@
 /****************************************************************************
- *  Copyright 2017 Gorgon Meducer (Email:embedded_zhuoran@hotmail.com)       *
+ *  Copyright 2017 Gorgon Meducer (Email:embedded_zhuoran@hotmail.com) *
  *                                                                           *
- *  Licensed under the Apache License, Version 2.0 (the "License");          *
- *  you may not use this file except in compliance with the License.         *
- *  You may obtain a copy of the License at                                  *
+ *  Licensed under the Apache License, Version 2.0 (the "License"); * you may
+ *not use this file except in compliance with the License.         * You may
+ *obtain a copy of the License at                                  *
  *                                                                           *
- *     http://www.apache.org/licenses/LICENSE-2.0                            *
+ *     http://www.apache.org/licenses/LICENSE-2.0 *
  *                                                                           *
- *  Unless required by applicable law or agreed to in writing, software      *
- *  distributed under the License is distributed on an "AS IS" BASIS,        *
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
- *  See the License for the specific language governing permissions and      *
- *  limitations under the License.                                           *
+ *  Unless required by applicable law or agreed to in writing, software *
+ *  distributed under the License is distributed on an "AS IS" BASIS, *
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and *
+ *  limitations under the License. *
  *                                                                           *
  ****************************************************************************/
-
 /*============================ INCLUDES ======================================*/
 //#include <stdint.h>
 //#include <stdbool.h>
@@ -38,7 +37,8 @@ extern "C" {
 #undef __end_extern_class
 #undef class
 #undef __class
-/*============================ MACROFIED FUNCTIONS ===========================*/
+/*============================ MACROFIED FUNCTIONS
+ * ===========================*/
 
 #if defined(__PLOOC_CLASS_IMPLEMENT__) || defined(__PLOOC_CLASS_IMPLEMENT)
 
@@ -183,7 +183,7 @@ extern "C" {
 #endif
 
 /*----------------------------------------------------------------------------*
- * new standard (lower case)                                                  *
+ * new standard (lower case) *
  *----------------------------------------------------------------------------*/
 
 #undef __class_internal
@@ -211,11 +211,15 @@ extern "C" {
 #undef which
 #define which(...) PLOOC_VISIBLE(__VA_ARGS__)
 
-/*============================ TYPES =========================================*/
+/*============================ TYPES
+ * =========================================*/
 
-/*============================ GLOBAL VARIABLES ==============================*/
-/*============================ LOCAL VARIABLES ===============================*/
-/*============================ PROTOTYPES ====================================*/
+/*============================ GLOBAL VARIABLES
+ * ==============================*/
+/*============================ LOCAL VARIABLES
+ * ===============================*/
+/*============================ PROTOTYPES
+ * ====================================*/
 
 #undef __PLOOC_CLASS_IMPLEMENT__
 #undef __PLOOC_CLASS_INHERIT__

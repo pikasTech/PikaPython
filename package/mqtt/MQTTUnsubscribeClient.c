@@ -11,22 +11,22 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *    Ian Craggs - initial API and implementation and/or initial documentation
+ *    Ian Craggs - initial API and implementation and/or initial
+ *documentation
  *******************************************************************************/
-
 #include "MQTTPacket.h"
 #include "StackTrace.h"
 
 #include <string.h>
 
 /**
- * Determines the length of the MQTT unsubscribe packet that would be produced
- * using the supplied parameters
+ * Determines the length of the MQTT unsubscribe packet that would be
+ * produced using the supplied parameters
  * @param count the number of topic filter strings in topicFilters
  * @param topicFilters the array of topic filter strings to be used in the
  * publish
- * @return the length of buffer needed to contain the serialized version of the
- * packet
+ * @return the length of buffer needed to contain the serialized version of
+ * the packet
  */
 int MQTTSerialize_unsubscribeLength(int count, MQTTString topicFilters[]) {
     int i;

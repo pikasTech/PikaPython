@@ -3,8 +3,8 @@
  * @Github: https://github.com/jiejieTop
  * @Date: 2019-12-14 22:06:35
  * @LastEditTime: 2020-10-17 14:17:24
- * @Description: the code belongs to jiejie, please keep the author information
- * and source code according to the license.
+ * @Description: the code belongs to jiejie, please keep the author
+ * information and source code according to the license.
  */
 #ifndef _PLATFORM_MEMORY_H_
 #define _PLATFORM_MEMORY_H_

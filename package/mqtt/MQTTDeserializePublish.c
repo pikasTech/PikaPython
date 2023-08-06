@@ -11,9 +11,9 @@
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *    Ian Craggs - initial API and implementation and/or initial documentation
+ *    Ian Craggs - initial API and implementation and/or initial
+ *documentation
  *******************************************************************************/
-
 #include <string.h>
 #include "MQTTPacket.h"
 #include "StackTrace.h"

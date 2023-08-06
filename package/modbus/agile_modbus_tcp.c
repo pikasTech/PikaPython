@@ -10,7 +10,6 @@
  * All rights reserved.</center></h2>
  *
  */
-
 #include "agile_modbus.h"
 #include "agile_modbus_tcp.h"
 
