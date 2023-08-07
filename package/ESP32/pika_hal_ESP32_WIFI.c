@@ -16,6 +16,7 @@ static volatile PIKA_HAL_WIFI_STATUS wifi_sta_disconn_reason =
 static EventGroupHandle_t wifi_event_group;
 static esp_netif_t* sta_netif = NULL;
 static esp_netif_t* ap_netif = NULL;
+static volatile pika_bool wifi_inited = PIKA_FALSE;
 
 uint32_t _ip_str2u32(char* ip_str) {
     uint32_t ip = 0;
@@ -73,7 +74,7 @@ static void event_handler(void* event_handler_arg,
     }
 }
 
-int pika_hal_platform_WIFI_open(pika_dev* dev, char* name) {
+int _wifi_init(void){
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
@@ -85,6 +86,15 @@ int pika_hal_platform_WIFI_open(pika_dev* dev, char* name) {
     ESP_ERROR_CHECK(esp_netif_init());
     wifi_event_group = xEventGroupCreate();
     ESP_ERROR_CHECK(esp_event_loop_create_default());
+    return 0;
+}
+
+int pika_hal_platform_WIFI_open(pika_dev* dev, char* name) {
+    // Initialize NVS
+    if (pika_false == wifi_inited){
+        _wifi_init();
+        wifi_inited = pika_true;
+    }
     return 0;
 }
 
@@ -139,8 +149,12 @@ int pika_hal_platform_WIFI_ioctl_enable(pika_dev* dev) {
             IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler, dev));
         pika_debug("set mode: %d", mode);
         esp_wifi_set_mode(mode);
-        sta_netif = esp_netif_create_default_wifi_sta();
-        ap_netif = esp_netif_create_default_wifi_ap();
+        if (NULL == sta_netif){
+            sta_netif = esp_netif_create_default_wifi_sta();
+        }
+        if (NULL == ap_netif){
+            ap_netif = esp_netif_create_default_wifi_ap();
+        }
         pika_debug("start wifi");
         ESP_ERROR_CHECK(esp_wifi_start());
         wifi_started = PIKA_TRUE;
@@ -150,6 +164,7 @@ int pika_hal_platform_WIFI_ioctl_enable(pika_dev* dev) {
 
 int pika_hal_platform_WIFI_ioctl_disable(pika_dev* dev) {
     if (wifi_started) {
+        esp_wifi_disconnect();
         esp_wifi_stop();
         esp_wifi_deinit();
         wifi_started = PIKA_FALSE;

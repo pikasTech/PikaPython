@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "PikaObj.h"
+#include "BaseObj.h"
 #include "dataStrs.h"
 #include "driver/gpio.h"
 #include "pika_hal_ESP32_common.h"
@@ -12,7 +12,6 @@ int pika_hal_platform_GPIO_open(pika_dev* dev, char* name) {
     }
     memset(gpio, 0, sizeof(platform_data_GPIO));
     gpio->gpioPort = getGpioPin(name);
-    pika_debug("gpio open port: %s -> %d", name, gpio->gpioPort);
     if (-1 == gpio->gpioPort) {
         pikaFree(gpio, sizeof(platform_data_GPIO));
         return -1;
@@ -46,7 +45,6 @@ int pika_hal_platform_GPIO_write(pika_dev* dev, void* buf, size_t count) {
         return -1;
     }
     gpio_set_level(gpio->gpioPort, *((uint32_t*)buf));
-    // pika_debug("gpio write %d -> %d", gpio->gpioPort, *((uint32_t*)buf));
     return 0;
 }
 
@@ -55,12 +53,6 @@ int pika_hal_platform_GPIO_ioctl_enable(pika_dev* dev) {
     if (NULL == gpio) {
         return -1;
     }
-    pika_debug("gpio enable: %d", gpio->gpioPort);
-    pika_debug(" - mode: %d", gpio->io_conf.mode);
-    pika_debug(" - pull_up_en: %d", gpio->io_conf.pull_up_en);
-    pika_debug(" - pull_down_en: %d", gpio->io_conf.pull_down_en);
-    pika_debug(" - intr_type: %d", gpio->io_conf.intr_type);
-    pika_debug(" - pin_bit_mask: %lld", gpio->io_conf.pin_bit_mask);
     gpio_config(&gpio->io_conf);
     return 0;
 }
@@ -93,7 +85,7 @@ int pika_hal_platform_GPIO_ioctl_config(pika_dev* dev,
             default:
                 return -1;
         }
-        gpio->io_conf.pin_bit_mask = 1ULL << gpio->gpioPort;
+        gpio->io_conf.pin_bit_mask = 1 << gpio->gpioPort;
         switch (cfg->pull) {
             case PIKA_HAL_GPIO_PULL_UP:
                 gpio->io_conf.pull_up_en = 1;
