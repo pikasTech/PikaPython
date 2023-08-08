@@ -51,10 +51,10 @@ Arg* _lua_val_to_arg(lua_State* L) {
             // 'key' is at index -2 and 'value' at index -1
             if (!get_list && !get_dict) {
                 if (lua_isinteger(L, -2)) {
-                    ret = New_pikaList();
+                    ret = New_PikaList();
                     get_list = PIKA_TRUE;
                 } else {
-                    ret = New_pikaDict();
+                    ret = New_PikaDict();
                     get_dict = PIKA_TRUE;
                 }
             }

@@ -1291,7 +1291,7 @@ static void _type_list_parse(FunctionArgsInfo* f) {
 
 static void _kw_push(FunctionArgsInfo* f, Arg* call_arg, int i) {
     if (NULL == f->kw) {
-        f->kw = New_pikaDict();
+        f->kw = New_PikaDict();
     }
     arg_setIsKeyword(call_arg, pika_false);
     Hash kw_hash = call_arg->name_hash;
@@ -1565,7 +1565,7 @@ static int VMState_loadArgsFromMethodArg(VMState* vm,
             if (arg_def[0] == '*' && arg_def[1] == '*') {
                 /* get kw dict name */
                 f.kw_dict_name = arg_def + 2;
-                f.kw = New_pikaDict();
+                f.kw = New_PikaDict();
                 /* remove the format arg */
                 strPopLastToken(f.type_list, ',');
                 continue;
@@ -1709,7 +1709,7 @@ static Arg* VM_instruction_handler_DCT(PikaObj* self,
                                        Arg* arg_ret_reg) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
     uint32_t n_arg = VMState_getInputArgNum(vm);
-    PikaObj* dict = New_pikaDict();
+    PikaObj* dict = New_PikaDict();
     Stack stack = {0};
     stack_init(&stack);
     /* load to local stack to change sort */

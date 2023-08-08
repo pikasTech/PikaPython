@@ -106,6 +106,19 @@ extern "C" {
 #define PIKA_FALSE pika_false
 #define pikaScriptInit pikaPythonInit
 #define pikaScriptShell pikaPythonShell
+
+#define New_pikaList New_PikaList
+#define New_pikaDict New_PikaDict
+#define New_pikaTuple New_PikaTuple
+
+#define New_pikaTupleFrom New_PikaTupleFrom
+#define New_pikaListFrom New_PikaListFrom
+#define New_pikaDictFrom New_PikaDictFrom
+
+#define New_pikaTupleFromVarArgs New_PikaTupleFromVarArgs
+#define New_pikaListFromVarArgs New_PikaListFromVarArgs
+#define New_pikaDictFromVarArgs New_PikaDictFromVarArgs
+
 #endif
 
 #endif

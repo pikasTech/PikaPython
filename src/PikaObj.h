@@ -441,25 +441,25 @@ PikaObj* _pika_dict_new(int num_args, ...);
 
 /* Macro to create a new tuple PikaObj with the given arguments (of type Arg*).
  */
-#define New_pikaTupleFromVarArgs(...) \
+#define New_PikaTupleFromVarArgs(...) \
     _pika_tuple_new(sizeof((Arg*[]){__VA_ARGS__}) / sizeof(Arg*), __VA_ARGS__)
 
 /* Macro to create a new list PikaObj with the given arguments (of type Arg*).
  */
-#define New_pikaListFromVarArgs(...) \
+#define New_PikaListFromVarArgs(...) \
     _pika_list_new(sizeof((Arg*[]){__VA_ARGS__}) / sizeof(Arg*), __VA_ARGS__)
 
 /* Macro to create a new dict PikaObj with the given arguments (of type
  * Arg*).
  */
 
-#define New_pikaDictFromVarArgs(...)                                       \
+#define New_PikaDictFromVarArgs(...)                                       \
     _pika_dict_new(sizeof((Arg*[]){__VA_ARGS__, NULL}) / sizeof(Arg*) - 1, \
                    __VA_ARGS__)
 
-#define New_pikaDictFrom New_pikaDictFromVarArgs
-#define New_pikaListFrom New_pikaListFromVarArgs
-#define New_pikaTupleFrom New_pikaTupleFromVarArgs
+#define New_PikaDictFrom New_PikaDictFromVarArgs
+#define New_PikaListFrom New_PikaListFromVarArgs
+#define New_PikaTupleFrom New_PikaTupleFromVarArgs
 
 PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
@@ -933,10 +933,9 @@ static inline ArgType pikaTuple_getType(PikaTuple* self, int index) {
 }
 
 /* dict api */
-PikaDict* New_pikaDict(void);
-
-PikaList* New_pikaList(void);
-PikaTuple* New_pikaTuple(void);
+PikaDict* New_PikaDict(void);
+PikaList* New_PikaList(void);
+PikaTuple* New_PikaTuple(void);
 PikaTuple* args_getTuple(Args* self, char* name);
 PikaDict* args_getDict(Args* self, char* name);
 

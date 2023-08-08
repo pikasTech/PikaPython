@@ -91,7 +91,7 @@ Arg* json_encode_jsmn(jsmntok_t* t,
             break;
         }
         case JSMN_OBJECT: {
-            PikaObj* ret = New_pikaDict();
+            PikaObj* ret = New_PikaDict();
             int num_keys = t[*index].size;
             for (int i = 0; i < num_keys; i++) {
                 (*index)++;

@@ -769,10 +769,10 @@ PikaObj* __findall(void* pattern__or__re,
     if (!vcs) {
         if (m_n < 0)
             return NULL;
-        Any list = New_pikaList();
+        Any list = New_PikaList();
         return list;
     }
-    Any list = New_pikaList();
+    Any list = New_PikaList();
     PikaTuple* tu;
     if (brackets == 1) {
         for (int i = 0; i < m_n; i++) {

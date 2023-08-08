@@ -3325,7 +3325,7 @@ Arg* builtins_list(PikaObj* self, PikaTuple* val) {
 
 Arg* builtins_dict(PikaObj* self, PikaTuple* val) {
 #if PIKA_BUILTIN_STRUCT_ENABLE
-    return arg_newObj(New_pikaDict());
+    return arg_newObj(New_PikaDict());
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in dist is not enabled.\r\n");
@@ -3516,7 +3516,7 @@ PikaObj* builtins_dir(PikaObj* self, Arg* arg) {
     }
     PikaObj* obj = arg_getPtr(arg);
     PikaObj* New_PikaStdData_List(Args * args);
-    PikaObj* list = New_pikaList();
+    PikaObj* list = New_PikaList();
     Args* context = New_args(NULL);
     args_setPtr(context, "_list", list);
     args_foreach(obj->list, __dir_each, context);
@@ -4069,7 +4069,7 @@ PikaObj* _New_pikaListOrTuple(int isTuple) {
     return self;
 }
 
-PikaList* New_pikaList(void) {
+PikaList* New_PikaList(void) {
     return _New_pikaListOrTuple(0);
 }
 
@@ -4084,7 +4084,7 @@ void pikaDict_init(PikaObj* self) {
     obj_setPtr(self, "_keys", keys);
 }
 
-PikaDict* New_pikaDict(void) {
+PikaDict* New_PikaDict(void) {
     PikaDict* self = newNormalObj(New_PikaStdData_Dict);
     pikaDict_init(self);
     return self;
