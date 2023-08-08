@@ -148,12 +148,12 @@ void PikaStdDevice_GPIO_platformRead(PikaObj* self) {
     obj_setInt(self, "readBuff", val);
 }
 
-void PikaStdDevice_GPIO_setCallBack(PikaObj* self,
+void PikaStdDevice_GPIO_setCallback(PikaObj* self,
                                     Arg* eventCallback,
                                     int filter) {
 #if PIKA_EVENT_ENABLE
     pika_dev* dev = _get_dev(self);
-    _PikaStdDevice_setCallBack(self, eventCallback, (uintptr_t)dev);
+    _PikaStdDevice_setCallback(self, eventCallback, (uintptr_t)dev);
     /* regist event to pika_hal */
     pika_hal_GPIO_config cfg_cb = {0};
     cfg_cb.event_callback = (void*)_PikaStdDevice_event_handler;
@@ -164,6 +164,15 @@ void PikaStdDevice_GPIO_setCallBack(PikaObj* self,
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] PIKA_EVENT_ENABLE is disabled.");
 #endif
+}
+
+void PikaStdDevice_GPIO_setCallBack(PikaObj* self,
+                                    Arg* eventCallback,
+                                    int filter) {
+    pika_platform_printf(
+        "Warning: setCallBack is deprecated, use "
+        "setCallback instead.\r\n");
+    PikaStdDevice_GPIO_setCallback(self, eventCallback, filter);
 }
 
 void PikaStdDevice_GPIO_close(PikaObj* self) {
