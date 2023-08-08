@@ -25,7 +25,7 @@ void _network_WLAN_active(PikaObj* self, int is_active) {
     if (hal_wifi == NULL) {
         return;
     }
-    if (is_active){
+    if (is_active) {
         check_res(pika_hal_ioctl(hal_wifi, PIKA_HAL_IOCTL_ENABLE));
         return;
     }

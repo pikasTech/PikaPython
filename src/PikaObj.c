@@ -3295,7 +3295,7 @@ Arg* builtins_list(PikaObj* self, PikaTuple* val) {
         };
         return pikaVM_runByteCodeReturn(self, (uint8_t*)bytes, "@res_list");
     }
-    return arg_newObj(New_pikaListFromVarArgs(NULL));
+    return arg_newObj(New_pikaListFrom(NULL));
 #else
     obj_setErrorCode(self, 1);
     __platform_printf("[Error] built-in list is not enabled.\r\n");

@@ -457,6 +457,10 @@ PikaObj* _pika_dict_new(int num_args, ...);
     _pika_dict_new(sizeof((Arg*[]){__VA_ARGS__, NULL}) / sizeof(Arg*) - 1, \
                    __VA_ARGS__)
 
+#define New_pikaDictFrom New_pikaDictFromVarArgs
+#define New_pikaListFrom New_pikaListFromVarArgs
+#define New_pikaTupleFrom New_pikaTupleFromVarArgs
+
 PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setObj(Arg* self, char* name, PikaObj* obj);
