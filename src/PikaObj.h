@@ -523,9 +523,13 @@ enum shellCTRL obj_runChar(PikaObj* self, char inputChar);
 
 typedef PikaObj PikaEventListener;
 
-void pika_eventListener_registEvent(PikaEventListener* self,
-                                    uint32_t eventId,
-                                    PikaObj* eventHandleObj);
+void pika_eventListener_registEventHandler(PikaEventListener* self,
+                                           uint32_t eventId,
+                                           PikaObj* eventHandleObj);
+
+void pika_eventListener_registEventCallback(PikaEventListener* listener_p,
+                                            uint32_t eventId,
+                                            Arg* eventCallback);
 
 void pika_eventListener_removeEvent(PikaEventListener* self, uint32_t eventId);
 
@@ -938,10 +942,10 @@ PikaDict* args_getDict(Args* self, char* name);
 
 char* strsFormatList(Args* out_buffs, char* fmt, PikaList* list);
 
-PIKA_RES obj_setEventCallBack(PikaObj* self,
+PIKA_RES obj_setEventCallback(PikaObj* self,
                               uint32_t eventId,
                               Arg* eventCallback,
-                              PikaEventListener** eventListener_p);
+                              PikaEventListener* eventListener);
 
 #if 1
 #define _RETURN_WHEN_NOT_ZERO(_stmt_, _ret_) \

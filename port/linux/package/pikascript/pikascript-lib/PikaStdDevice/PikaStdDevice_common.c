@@ -6,11 +6,11 @@ void _PikaStdDevice_event_handler(pika_dev* dev, int signal) {
                                   signal);
 }
 
-void _PikaStdDevice_setCallBack(PikaObj* self,
+void _PikaStdDevice_setCallback(PikaObj* self,
                                 Arg* eventCallback,
                                 uint32_t eventId) {
-    obj_setEventCallBack(self, eventId, eventCallback,
-                         &g_pika_device_event_listener);
+    pika_eventListener_registEventCallback(g_pika_device_event_listener,
+                                           eventId, eventCallback);
 }
 
 extern volatile PikaObj* __pikaMain;

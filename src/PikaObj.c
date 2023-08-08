@@ -2693,9 +2693,9 @@ char* obj_toStr(PikaObj* self) {
     return obj_getStr(self, "@res_str");
 }
 
-void pika_eventListener_registEvent(PikaEventListener* self,
-                                    uint32_t eventId,
-                                    PikaObj* eventHandleObj) {
+void pika_eventListener_registEventHandler(PikaEventListener* self,
+                                           uint32_t eventId,
+                                           PikaObj* eventHandleObj) {
     Args buffs = {0};
     char* event_name =
         strsFormat(&buffs, PIKA_SPRINTF_BUFF_SIZE, "%ld", eventId);
@@ -2703,6 +2703,26 @@ void pika_eventListener_registEvent(PikaEventListener* self,
     PikaObj* event_item = obj_getObj(self, event_name);
     obj_setRef(event_item, "eventHandleObj", eventHandleObj);
     strsDeinit(&buffs);
+}
+
+PIKA_RES obj_setEventCallback(PikaObj* self,
+                              uint32_t eventId,
+                              Arg* eventCallback,
+                              PikaEventListener* listener) {
+    obj_setArg(self, "eventCallBack", eventCallback);
+    pika_eventListener_registEventHandler(listener, eventId, self);
+    return PIKA_RES_OK;
+}
+
+void pika_eventListener_registEventCallback(PikaEventListener* listener,
+                                            uint32_t eventId,
+                                            Arg* eventCallback) {
+    pika_assert(NULL != listener);
+    char hash_str[32] = {0};
+    pika_sprintf(hash_str, "C%d", eventId);
+    obj_newDirectObj(listener, hash_str, New_TinyObj);
+    PikaObj* oHandle = obj_getPtr(listener, hash_str);
+    obj_setEventCallback(oHandle, eventId, eventCallback, listener);
 }
 
 Args buffs = {0};
@@ -4068,16 +4088,4 @@ PikaDict* New_pikaDict(void) {
     PikaDict* self = newNormalObj(New_PikaStdData_Dict);
     pikaDict_init(self);
     return self;
-}
-
-PIKA_RES obj_setEventCallBack(PikaObj* self,
-                              uint32_t eventId,
-                              Arg* eventCallback,
-                              PikaEventListener** eventListener_p) {
-    if (*eventListener_p == NULL) {
-        pika_eventListener_init(eventListener_p);
-    }
-    obj_setArg(self, "eventCallBack", eventCallback);
-    pika_eventListener_registEvent(*eventListener_p, eventId, self);
-    return PIKA_RES_OK;
 }

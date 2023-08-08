@@ -136,17 +136,4 @@ TEST(mqtt, publish) {
 }
 #endif
 
-#if 0
-//! Mqtt subscribe will break the gichub actions, 
-//! if need to test, please enable it manually.
-TEST(mqtt, subscribe) {
-    PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
-    extern unsigned char pikaModules_py_a[];
-    obj_linkLibrary(pikaMain, pikaModules_py_a);
-    pikaVM_runSingleFile(pikaMain, "test/python/mqtt/mqtt_subscribe.py");
-    obj_deinit(pikaMain);
-    EXPECT_EQ(pikaMemNow(), 0);
-}
-#endif
-
 #endif

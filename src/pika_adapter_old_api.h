@@ -77,6 +77,7 @@ extern "C" {
 #define pks_eventLisener_deinit pks_eventListener_deinit
 #define pks_eventLicener_removeEvent pks_eventListener_removeEvent
 #define pks_eventListener_registEvent pika_eventListener_registEvent
+#define pika_eventListener_registEvent pika_eventListener_registEventHandler
 #define pks_eventListener_removeEvent pika_eventListener_removeEvent
 #define _do_pks_eventListener_send _do_pika_eventListener_send
 #define pks_eventListener_sendSignal pika_eventListener_sendSignal
@@ -89,6 +90,7 @@ extern "C" {
 #define pks_printVersion pika_printVersion
 #define pks_getVersion pika_getVersion
 #define pks_vm_exit pika_vm_exit
+#define obj_setEventCallBack obj_setEventCallback
 
 #define pika_platform_timer_init pika_platform_thread_timer_init
 #define pika_platform_timer_cutdown pika_platform_thread_timer_cutdown

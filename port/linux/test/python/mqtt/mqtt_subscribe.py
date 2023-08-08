@@ -1,5 +1,5 @@
 import mqtt
-import PikaStdDevice
+import time
 
 client = mqtt.MQTT('broker.emqx.io', port=1883,
                    clinetID='clientid', username='name_', password='passwd_')
@@ -38,7 +38,8 @@ client._fakeMsg("topic_pikapy_qos1", 1, "hello qos1")
 client._fakeMsg("topic_pikapy_qos2", 2, "hello qos2")
 
 # sleep wait for recv data
-T = PikaStdDevice.Time()
+# T = PikaStdDevice.Time()
+T = time
 # T.sleep_s(5)
 
 out = client.listSubscribeTopic()
