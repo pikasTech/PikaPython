@@ -109,4 +109,5 @@ void PikaStdDevice_PWM_platformDisable(PikaObj* self) {
 void PikaStdDevice_PWM_close(PikaObj* self) {
     pika_dev* dev = _get_dev(self);
     pika_hal_close(dev);
+    obj_setPtr(self, "pika_dev", NULL);
 }

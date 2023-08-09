@@ -108,7 +108,50 @@ class GPIO(BaseDev):
 
 
 def Time() -> time:
-    """ use time module instead """
+    """ deprecated use time module instead """
+
+
+class Timer:
+    def __init__(self): ...
+
+    def setPeriod(self, period_ms: int):
+        """Set the period of the timer."""
+
+    def setMode(self, mode: str):
+        """ 
+        Set the mode of the timer. 
+        Example: `"continuous"`, `"oneshot"` ...
+        """
+
+    SIGNAL_TIMEOUT: int
+    SIGNAL_ANY: int
+
+    def setCallback(self, callback: any, filter: int):
+        """
+        Add a callback function to the timer.
+        The callback function will be called when the timer is triggered.
+        """
+
+    def enable(self):
+        """Enable the timer."""
+
+    def disable(self):
+        """Disable the timer."""
+
+    def setName(self, name: str):
+        """Set the name of the timer."""
+
+    def setId(self, id: int):
+        """Set the id of the timer."""
+
+    def getName(self) -> str:
+        """Get the name of the timer."""
+
+    def getId(self) -> int:
+        """Get the id of the timer."""
+
+    def close(self):
+        """Close the timer."""
 
 
 class ADC(BaseDev):

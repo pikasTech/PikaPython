@@ -481,8 +481,7 @@ static PikaObj* _pika_new_obj_with_args(PikaObj* (*constructor)(),
                 /* empty tuple */
                 return obj;
             }
-            PikaStdData_List_append(obj, arg);
-            arg_deinit(arg);
+            pikaList_append(obj, arg);
         }
     } else if (constructor == New_PikaStdData_Dict) {
         if (num_args == 1) {
@@ -493,9 +492,8 @@ static PikaObj* _pika_new_obj_with_args(PikaObj* (*constructor)(),
             Arg* aKey = va_arg(args, Arg*);
             char* sKey = arg_getStr(aKey);
             Arg* value = va_arg(args, Arg*);
-            PikaStdData_Dict_set(obj, sKey, value);
+            pikaDict_set(obj, sKey, value);
             arg_deinit(aKey);
-            arg_deinit(value);
         }
     }
 

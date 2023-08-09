@@ -480,6 +480,33 @@ typedef struct pika_hal_WIFI_scan_result {
     pika_hal_WIFI_record records[];
 } pika_hal_WIFI_scan_result;
 
+typedef enum {
+    PIKA_HAL_TIM_PERIOD_1NS = 1,
+    PIKA_HAL_TIM_PERIOD_1US = 1000,
+    PIKA_HAL_TIM_PERIOD_1MS = 1000000,
+    PIKA_HAL_TIM_PERIOD_1S = 1000000000,
+} PIKA_HAL_TIM_PERIOD;
+
+typedef enum {
+    _PIKA_HAL_TIM_MODE_UNUSED = 0,
+    PIKA_HAL_TIM_MODE_ONESHOT,
+    PIKA_HAL_TIM_MODE_CONTINUOUS,
+} PIKA_HAL_TIM_MODE;
+
+typedef enum {
+    _PIKA_HAL_TIM_EVENT_SIGNAL_UNUSED = 0,
+    PIKA_HAL_TIM_EVENT_SIGNAL_TIMEOUT,
+    PIKA_HAL_TIM_EVENT_SIGNAL_ANY,
+} PIKA_HAL_TIM_EVENT_SIGNAL;
+
+typedef struct pika_hal_TIM_config {
+    PIKA_HAL_TIM_PERIOD period;
+    PIKA_HAL_TIM_MODE mode;
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
+    PIKA_HAL_TIM_EVENT_SIGNAL event_callback_filter;
+    void (*event_callback)(pika_dev* dev, PIKA_HAL_TIM_EVENT_SIGNAL signal);
+} pika_hal_TIM_config;
+
 typedef struct pika_dev_impl {
     int (*open)(pika_dev* dev, char* name);
     int (*close)(pika_dev* dev);

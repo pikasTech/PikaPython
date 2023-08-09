@@ -12,4 +12,5 @@ pika_hal_table_add(PWM)
 pika_hal_table_add(SOFT_SPI)
 pika_hal_table_add(SOFT_IIC)
 pika_hal_table_add(WIFI)
+pika_hal_table_add(TIM)
 
