@@ -6,6 +6,7 @@
 typedef struct platform_data_SOFT_TIM {
     pika_platform_timer_t thread_timer;
     pika_platform_thread_t* thread;
+    pika_bool need_exit;
 } platform_data_SOFT_TIM;
 
 void _SOFT_TIM_thread(void* arg) {
@@ -18,6 +19,11 @@ void _SOFT_TIM_thread(void* arg) {
         pika_platform_thread_timer_cutdown(thread_timer, timeout_ms);
         while (!pika_platform_thread_timer_is_expired(thread_timer)) {
             pika_platform_thread_yield();
+            if (platform_tim->need_exit) {
+                platform_tim->need_exit = pika_false;
+                pika_debug("SOFT_TIM: exit signal got, exit thread");
+                return;
+            }
         }
         if (cfg->event_callback_ena && cfg->event_callback != NULL) {
             cfg->event_callback(dev, PIKA_HAL_TIM_EVENT_SIGNAL_TIMEOUT);
@@ -39,6 +45,7 @@ int pika_hal_platform_SOFT_TIM_open(pika_dev* dev, char* name) {
 }
 
 int pika_hal_platform_SOFT_TIM_close(pika_dev* dev) {
+    pika_hal_platform_SOFT_TIM_ioctl_disable(dev);
     platform_data_SOFT_TIM* platform_tim = dev->platform_data;
     pikaFree(platform_tim, sizeof(platform_data_SOFT_TIM));
     return 0;
@@ -66,6 +73,10 @@ int pika_hal_platform_SOFT_TIM_ioctl_enable(pika_dev* dev) {
 int pika_hal_platform_SOFT_TIM_ioctl_disable(pika_dev* dev) {
     platform_data_SOFT_TIM* platform_tim = dev->platform_data;
     if (NULL != platform_tim->thread) {
+        platform_tim->need_exit = pika_true;
+        while (platform_tim->need_exit) {
+            pika_platform_thread_yield();
+        }
         pika_platform_thread_destroy(platform_tim->thread);
         platform_tim->thread = NULL;
         pika_debug("pika_hal_platform_SOFT_TIM_ioctl_disable: thread deleted");

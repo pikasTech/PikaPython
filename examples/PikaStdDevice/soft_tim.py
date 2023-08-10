@@ -1,4 +1,5 @@
 from PikaStdDevice import Timer
+import time
 
 tim = Timer()
 cb_times = 0
@@ -9,10 +10,11 @@ def cb_test(signal):
 
 tim.setCallback(cb_test, Timer.SIGNAL_ANY)
 tim.setId(-1) # -1 means soft timer
-tim.setPeriod(500) # 500ms
+tim.setPeriod(100) # 100ms
 tim.enable()
 
 while True:
-    if cb_times >= 10:
+    time.sleep(0.1)
+    if cb_times >= 3:
         tim.close()
         break
