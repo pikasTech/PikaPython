@@ -9,6 +9,15 @@ static pika_dev* _get_dev(PikaObj* self) {
     if (NULL != dev) {
         return dev;
     }
+    char* name = obj_getStr(self, "name");
+    if (!strEqu(name, "none")) {
+        dev = pika_hal_open(PIKA_HAL_TIM, name);
+        if (NULL == dev) {
+            __platform_printf("Error: open TIM '%s' failed.\r\n", name);
+        }
+        obj_setPtr(self, "pika_dev", dev);
+        return dev;
+    }
     int id = obj_getInt(self, "id");
     if (id != -1) {
         char id_str[32] = {0};
@@ -19,12 +28,11 @@ static pika_dev* _get_dev(PikaObj* self) {
         }
         obj_setPtr(self, "pika_dev", dev);
         return dev;
-    }
-    char* name = obj_getStr(self, "name");
-    if (!strEqu(name, "none")) {
-        dev = pika_hal_open(PIKA_HAL_TIM, name);
+    } else {
+        /* id == -1 means a SOFT timer */
+        dev = pika_hal_open(PIKA_HAL_SOFT_TIM, "SOFT_TIM");
         if (NULL == dev) {
-            __platform_printf("Error: open TIM '%s' failed.\r\n", name);
+            __platform_printf("Error: open SOFT_TIM failed.\r\n");
         }
         obj_setPtr(self, "pika_dev", dev);
         return dev;
@@ -60,6 +68,10 @@ void PikaStdDevice_Timer_enable(PikaObj* self) {
     }
     pika_hal_TIM_config cfg = {0};
     cfg.period = obj_getInt(self, "period");
+    if (NULL != obj_getArg(self, "callback")) {
+        PikaStdDevice_Timer_setCallback(self, obj_getArg(self, "callback"),
+                                        obj_getInt(self, "callback_filter"));
+    }
     int err = -1;
     err = pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg);
     if (err != 0) {
@@ -77,14 +89,19 @@ void PikaStdDevice_Timer_enable(PikaObj* self) {
 
 void PikaStdDevice_Timer_setCallback(PikaObj* self, Arg* callback, int filter) {
 #if PIKA_EVENT_ENABLE
-    pika_dev* dev = _get_dev(self);
-    _PikaStdDevice_setCallback(self, callback, (uintptr_t)dev);
-    /* regist event to pika_hal */
-    pika_hal_TIM_config cfg_cb = {0};
-    cfg_cb.event_callback = (void*)_PikaStdDevice_event_handler;
-    cfg_cb.event_callback_filter = filter;
-    cfg_cb.event_callback_ena = PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE;
-    pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg_cb);
+    if (NULL != obj_getPtr(self, "pika_dev")) {
+        pika_dev* dev = _get_dev(self);
+        _PikaStdDevice_setCallback(self, callback, (uintptr_t)dev);
+        /* regist event to pika_hal */
+        pika_hal_TIM_config cfg_cb = {0};
+        cfg_cb.event_callback = (void*)_PikaStdDevice_event_handler;
+        cfg_cb.event_callback_filter = filter;
+        cfg_cb.event_callback_ena = PIKA_HAL_EVENT_CALLBACK_ENA_ENABLE;
+        pika_hal_ioctl(dev, PIKA_HAL_IOCTL_CONFIG, &cfg_cb);
+    } else {
+        obj_setArg(self, "callback", callback);
+        obj_setInt(self, "callback_filter", filter);
+    }
 #else
     obj_setErrorCode(self, 1);
     obj_setSysOut(self, "[error] PIKA_EVENT_ENABLE is disabled.");

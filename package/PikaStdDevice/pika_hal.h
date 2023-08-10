@@ -507,6 +507,14 @@ typedef struct pika_hal_TIM_config {
     void (*event_callback)(pika_dev* dev, PIKA_HAL_TIM_EVENT_SIGNAL signal);
 } pika_hal_TIM_config;
 
+typedef struct pika_hal_SOFT_TIM_config {
+    PIKA_HAL_TIM_PERIOD period;
+    PIKA_HAL_TIM_MODE mode;
+    PIKA_HAL_EVENT_CALLBACK_ENA event_callback_ena;
+    PIKA_HAL_TIM_EVENT_SIGNAL event_callback_filter;
+    void (*event_callback)(pika_dev* dev, PIKA_HAL_TIM_EVENT_SIGNAL signal);
+} pika_hal_SOFT_TIM_config;
+
 typedef struct pika_dev_impl {
     int (*open)(pika_dev* dev, char* name);
     int (*close)(pika_dev* dev);
