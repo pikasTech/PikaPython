@@ -1558,7 +1558,7 @@ char* shHistory_getNext(ShellHistory* self) {
 
 #endif
 
-#if __linux
+#if __linux && PIKA_LINUX_BASH_ENABLE
 #define PIKA_BACKSPACE() printf("\b \b")
 #else
 #define PIKA_BACKSPACE() pika_platform_printf(" \b")
