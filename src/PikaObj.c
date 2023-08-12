@@ -1668,7 +1668,7 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
             goto __exit;
         }
     }
-    if ((inputChar == '\b') || (inputChar == 127)) {
+    if (inputChar == '\b') {
         if (shell->line_curpos == 0) {
 #if __linux
             printf("\b ");
