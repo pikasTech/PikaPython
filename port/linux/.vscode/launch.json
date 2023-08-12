@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/test/pikascript_test",
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
-                // "--gtest_filter=VM.dict_base"
+                "--gtest_filter=vm.keyword_2"
                 // "--gtest_filter=event.event1"
             ],
             "stopAtEntry": false,

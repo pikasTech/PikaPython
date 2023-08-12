@@ -92,6 +92,7 @@ static void _link_removeNode(Link* self,
 // deinit the node
 __exit:
     if (is_deinit_node) {
+        pika_assert(NULL != nodeToDelete);
         linkNode_deinit(nodeToDelete);
     }
     return;

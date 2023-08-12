@@ -4304,7 +4304,7 @@ PIKA_RES pikaDict_set(PikaDict* self, char* name, Arg* val) {
 }
 
 PIKA_RES pikaDict_removeArg(PikaDict* self, Arg* val) {
-    args_removeArg(_OBJ2KEYS(self), (val));
+    // args_removeArg(_OBJ2KEYS(self), (val));
     return args_removeArg(_OBJ2DICT(self), (val));
 }
 
