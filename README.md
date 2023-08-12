@@ -626,6 +626,7 @@ In addition to device drivers, developing custom Python modules for MCU is very 
 
 | Contribute log | Contributer |
 | --- | --- |
+|fix REPL echo for '\b' and 0x7F|[versaloon](https://github.com/versaloon)|
 |pika_hal support for ESP32|[geekheart](https://gitee.com/geekheart)|
 |Driver Design for PIKA-OPEN-HARDWARE|[Kirin](https://gitee.com/ztqkirin)|
 |bsp support for `Makefile-win-mingw` |[unsigned_0](https://gitee.com/unsigned0)|
