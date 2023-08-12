@@ -4279,16 +4279,18 @@ ArgType pikaTuple_getType(PikaTuple* self, int index) {
 }
 
 PIKA_RES pikaDict_setInt(PikaDict* self, char* name, int64_t val) {
-    return args_setInt(_OBJ2DICT(self), (name), (val));
+    return pikaDict_set(self, name, arg_newInt(val));
 }
 PIKA_RES pikaDict_setFloat(PikaDict* self, char* name, pika_float val) {
-    return args_setFloat(_OBJ2DICT(self), (name), (val));
+    return pikaDict_set(self, name, arg_newFloat(val));
 }
+
 PIKA_RES pikaDict_setStr(PikaDict* self, char* name, char* val) {
-    return args_setStr(_OBJ2DICT(self), (name), (val));
+    return pikaDict_set(self, name, arg_newStr(val));
 }
+
 PIKA_RES pikaDict_setPtr(PikaDict* self, char* name, void* val) {
-    return args_setPtr(_OBJ2DICT(self), (name), (val));
+    return pikaDict_set(self, name, arg_newPtr(ARG_TYPE_POINTER, val));
 }
 
 PIKA_RES _pikaDict_setVal(PikaDict* self, Arg* val) {
@@ -4302,6 +4304,7 @@ PIKA_RES pikaDict_set(PikaDict* self, char* name, Arg* val) {
 }
 
 PIKA_RES pikaDict_removeArg(PikaDict* self, Arg* val) {
+    args_removeArg(_OBJ2KEYS(self), (val));
     return args_removeArg(_OBJ2DICT(self), (val));
 }
 
@@ -4309,7 +4312,7 @@ PIKA_RES pikaDict_setBytes(PikaDict* self,
                            char* name,
                            uint8_t* val,
                            size_t size) {
-    return args_setBytes(_OBJ2DICT(self), (name), (val), (size));
+    return pikaDict_set(self, name, arg_newBytes(val, size));
 }
 
 int64_t pikaDict_getInt(PikaDict* self, char* name) {

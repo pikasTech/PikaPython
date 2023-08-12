@@ -776,6 +776,7 @@ pika_float pikaList_getFloat(PikaList* self, int index);
 char* pikaList_getStr(PikaList* self, int index);
 void* pikaList_getPtr(PikaList* self, int index);
 Arg* pikaList_get(PikaList* self, int index);
+#define pikaList_getArg pikaList_get
 size_t pikaList_getSize(PikaList* self);
 void pikaList_reverse(PikaList* self);
 PIKA_RES pikaList_insert(PikaList* self, int index, Arg* arg);
@@ -797,6 +798,7 @@ PikaTuple* New_PikaTuple(void);
 #define pikaTuple_forEach pikaList_forEach
 void pikaTuple_deinit(PikaTuple* self);
 Arg* pikaTuple_getArg(PikaTuple* self, int index);
+#define pikaTuple_get pikaTuple_getArg
 size_t pikaTuple_getSize(PikaTuple* self);
 int64_t pikaTuple_getInt(PikaTuple* self, int index);
 pika_float pikaTuple_getFloat(PikaTuple* self, int index);
@@ -813,6 +815,7 @@ PIKA_RES pikaDict_setFloat(PikaDict* self, char* name, pika_float val);
 PIKA_RES pikaDict_setStr(PikaDict* self, char* name, char* val);
 PIKA_RES pikaDict_setPtr(PikaDict* self, char* name, void* val);
 PIKA_RES pikaDict_set(PikaDict* self, char* name, Arg* val);
+#define pikaDict_setArg pikaDict_set
 PIKA_RES pikaDict_removeArg(PikaDict* self, Arg* val);
 PIKA_RES pikaDict_setBytes(PikaDict* self,
                            char* name,
@@ -825,6 +828,7 @@ void* pikaDict_getPtr(PikaDict* self, char* name);
 int pikaDict_getSize(PikaDict* self);
 Arg* pikaDict_getArgByidex(PikaDict* self, int index);
 Arg* pikaDict_get(PikaDict* self, char* name);
+#define pikaDict_getArg pikaDict_get
 int32_t pikaDict_isArgExist(PikaDict* self, char* name);
 uint8_t* pikaDict_getBytes(PikaDict* self, char* name);
 ArgType pikaDict_getType(PikaDict* self, char* name);

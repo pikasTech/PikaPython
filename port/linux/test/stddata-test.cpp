@@ -610,6 +610,60 @@ TEST(stddata, New_pikaListFromVarArgs0) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(stddata, NewPikaDict) {
+    PikaDict* dict = New_PikaDict();
+    ASSERT_NE(dict, nullptr);
+    pikaDict_deinit(dict);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, SetGetInt) {
+    PikaDict* dict = New_PikaDict();
+    EXPECT_EQ(pikaDict_setInt(dict, "testKey", 12345), PIKA_RES_OK);
+    EXPECT_EQ(pikaDict_getInt(dict, "testKey"), 12345);
+    pikaDict_deinit(dict);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, SetGetFloat) {
+    PikaDict* dict = New_PikaDict();
+    EXPECT_EQ(pikaDict_setFloat(dict, "testFloatKey", 12.34f), PIKA_RES_OK);
+    EXPECT_FLOAT_EQ(pikaDict_getFloat(dict, "testFloatKey"), 12.34f);
+    pikaDict_deinit(dict);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, SetGetStr) {
+    PikaDict* dict = New_PikaDict();
+    EXPECT_EQ(pikaDict_setStr(dict, "testStringKey", "Hello"), PIKA_RES_OK);
+    EXPECT_STREQ(pikaDict_getStr(dict, "testStringKey"), "Hello");
+    pikaDict_deinit(dict);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, SetGetPtr) {
+    PikaDict* dict = New_PikaDict();
+    int data = 100;
+    EXPECT_EQ(pikaDict_setPtr(dict, "testPtrKey", &data), PIKA_RES_OK);
+    EXPECT_EQ(*reinterpret_cast<int*>(pikaDict_getPtr(dict, "testPtrKey")),
+              data);
+    pikaDict_deinit(dict);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
+TEST(stddata, SetGetBytes) {
+    PikaDict* dict = New_PikaDict();
+    uint8_t bytes[] = {0x01, 0x02, 0x03};
+    EXPECT_EQ(pikaDict_setBytes(dict, "testByteKey", bytes, sizeof(bytes)),
+              PIKA_RES_OK);
+    EXPECT_EQ(
+        memcmp(pikaDict_getBytes(dict, "testByteKey"), bytes, sizeof(bytes)),
+        0);
+    EXPECT_EQ(pikaDict_getBytesSize(dict, "testByteKey"), sizeof(bytes));
+    pikaDict_deinit(dict);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 #endif
 
 TEST_END
