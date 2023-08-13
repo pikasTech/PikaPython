@@ -167,6 +167,8 @@ int pika_hal_platform_WIFI_ioctl_disable(pika_dev* dev) {
         esp_wifi_disconnect();
         esp_wifi_stop();
         esp_wifi_deinit();
+        wifi_sta_connect_requested = PIKA_FALSE;
+        pika_debug("disable wifi");
         wifi_started = PIKA_FALSE;
         return 0;
     }
