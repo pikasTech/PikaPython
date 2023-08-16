@@ -1671,7 +1671,7 @@ enum shellCTRL _inner_do_obj_runChar(PikaObj* self,
     if (inputChar == '\b') {
         if (shell->line_curpos == 0) {
 #if __linux
-            printf("\b ");
+            printf(" ");
 #else
             pika_platform_printf(" ");
 #endif
