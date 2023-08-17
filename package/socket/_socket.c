@@ -68,6 +68,9 @@ void _socket_socket__accept(PikaObj* self) {
         __platform_printf("accept error\n");
         return;
     }
+#ifdef _WIN32
+    pika_platform_init_winsock();
+#endif
     obj_setInt(self, "client_sockfd", client_sockfd);
     obj_setStr(self, "client_addr", inet_ntoa(client_addr.sin_addr));
 }
