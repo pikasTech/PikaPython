@@ -88,9 +88,11 @@ struct Arg {
     uint8_t flag;
     Hash name_hash;
 #if PIKA_KERNAL_DEBUG_ENABLE
+    char* name;
     _arg_value* value;
     char* str;
     uint8_t* bytes;
+    char _name_buff[PIKA_NAME_BUFF_SIZE];
 #endif
     uint8_t content[];
 };
@@ -105,9 +107,11 @@ typedef struct ConstArg {
     uint8_t flag;
     Hash name_hash;
 #if PIKA_KERNAL_DEBUG_ENABLE
+    char* name;
     _arg_value* value;
     char* str;
     uint8_t* bytes;
+    char _name_buff[PIKA_NAME_BUFF_SIZE];
 #endif
 } ConstArg;
 

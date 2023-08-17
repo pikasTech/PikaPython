@@ -280,6 +280,9 @@ int32_t strIsContain(char* str, char ch) {
 }
 
 char* strCopy(char* strBuff, char* strIn) {
+    if ('\0' == strIn[0]) {
+        return strBuff;
+    }
     pika_platform_memcpy(strBuff, strIn, strGetSize(strIn) + 1);
     return strBuff;
 }

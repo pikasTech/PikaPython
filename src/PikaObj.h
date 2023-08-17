@@ -627,9 +627,10 @@ const MethodProp floatMethod = {
 #endif
 
 #if PIKA_KERNAL_DEBUG_ENABLE
-#define _ARG_VALUE_DEF(_method)                                         \
-    .value = (_arg_value*)&_method##Prop, .str = (char*)&_method##Prop, \
-    .bytes = (uint8_t*)&_method##Prop,
+#define _ARG_VALUE_DEF(_method)                                          \
+    .name = (char*)&_method##Prop, .value = (_arg_value*)&_method##Prop, \
+    .str = (char*)&_method##Prop, .bytes = (uint8_t*)&_method##Prop,     \
+    ._name_buff = ""
 #else
 #define _ARG_VALUE_DEF(_method)
 #endif

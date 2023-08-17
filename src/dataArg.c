@@ -135,6 +135,7 @@ static Arg* _arg_set_hash(Arg* self,
         self->value = (_arg_value*)&self->content;
         self->str = (char*)&self->content;
         self->bytes = (uint8_t*)&self->content;
+        self->name = self->_name_buff;
 #endif
         arg_setSerialized(self, pika_true);
         // arg_setIsKeyword(self, pika_false);
@@ -175,7 +176,11 @@ Arg* arg_set(Arg* self,
              uint8_t* content,
              uint32_t size) {
     Hash nameHash = hash_time33(name);
-    return _arg_set_hash(self, nameHash, type, content, size, NULL);
+    self = _arg_set_hash(self, nameHash, type, content, size, NULL);
+#if PIKA_KERNAL_DEBUG_ENABLE
+    strncpy(self->_name_buff, name, PIKA_NAME_BUFF_SIZE);
+#endif
+    return self;
 }
 
 void arg_init_stack(Arg* self, uint8_t* buffer, uint32_t size) {
@@ -233,7 +238,11 @@ Arg* arg_setNameHash(Arg* self, Hash nameHash) {
 
 Arg* arg_setName(Arg* self, char* name) {
     pika_assert(NULL != name);
-    return arg_setNameHash(self, hash_time33(name));
+    self = arg_setNameHash(self, hash_time33(name));
+#if PIKA_KERNAL_DEBUG_ENABLE
+    strncpy(self->_name_buff, name, PIKA_NAME_BUFF_SIZE);
+#endif
+    return self;
 }
 
 Arg* arg_setBytes(Arg* self, char* name, uint8_t* src, size_t size) {
