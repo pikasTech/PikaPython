@@ -109,175 +109,9 @@ typedef uint32_t unichar;
 #define MIN(_a, _b) ((_a) < (_b) ? (_a) : (_b))
 #define MAX(_a, _b) ((_a) > (_b) ? (_a) : (_b))
 
-/* list */
-typedef struct mp_obj_tuple_t {
-    size_t len;
-    mp_obj_t* items;
-} mp_obj_tuple_t;
-
-#define mp_obj_str_get_str(...) arg_getStr(__VA_ARGS__)
-#define mp_obj_get_float(...) arg_getFloat(__VA_ARGS__)
-
-static inline float mp_obj_get_float_to_f(mp_obj_t o) {
-    return mp_obj_get_float(o);
-}
-
-static inline double mp_obj_get_float_to_d(mp_obj_t o) {
-    return (double)mp_obj_get_float(o);
-}
-
-typedef struct _mp_map_elem_t {
-    mp_obj_t key;
-    mp_obj_t value;
-} mp_map_elem_t;
-
-typedef struct mp_map_t {
-    size_t all_keys_are_qstrs : 1;
-    size_t is_fixed : 1;    // if set, table is fixed/read-only and can't be
-                            // modified
-    size_t is_ordered : 1;  // if set, table is an ordered array, not a hash
-                            // map
-    size_t used : (8 * sizeof(size_t) - 3);
-    size_t alloc;
-    mp_map_elem_t* table;
-} mp_map_t;
-
-static inline bool mp_map_slot_is_filled(const mp_map_t* map, size_t pos) {
-    return (map)->table[pos].key != NULL;
-}
-
-static inline int mp_obj_str_get_qstr(Arg* arg) {
-    return hash_time33(arg_getStr(arg));
-}
-
-static inline Arg* mp_obj_new_str(const char* str, size_t len) {
-    return arg_newStrN((char*)str, len);
-}
-
-typedef struct _mp_buffer_info_t {
-    void* buf;     // can be NULL if len == 0
-    size_t len;    // in bytes
-    int typecode;  // as per binary.h
-} mp_buffer_info_t;
-
-#define MP_QSTR(_str) hash_time33(#_str)
-
-static inline Arg* mp_obj_new_list(int n, Arg** items) {
-    PikaObj* list = newNormalObj(New_PikaStdData_List);
-    PikaStdData_List___init__(list);
-    return arg_newObj(list);
-}
-
-static inline mp_obj_t mp_obj_new_tuple(int n, Arg** items_in) {
-    mp_obj_tuple_t* tuple = (mp_obj_tuple_t*)malloc(sizeof(mp_obj_tuple_t));
-    Arg** items = (Arg**)malloc(sizeof(Arg*) * n);
-    if (NULL == items_in) {
-        tuple->len = n;
-        tuple->items = items;
-    }
-    return arg_newPtr(ARG_TYPE_POINTER, tuple);
-}
-
-static inline void mp_obj_list_append(Arg* list, mp_obj_tuple_t* tuple) {
-    PikaObj* list_obj = (PikaObj*)arg_getPtr(list);
-    for (int i = 0; i < tuple->len; i++) {
-        PikaStdData_List_append(list_obj, tuple->items[i]);
-        arg_deinit(tuple->items[i]);
-    }
-    free(tuple->items);
-    free(tuple);
-}
-
-static inline char* mp_obj_str_get_data(Arg* self, size_t* len) {
-    char* str = arg_getStr(self);
-    *len = strGetSize(str);
-    return str;
-}
-
-static inline size_t pks_load_mp_args(PikaTuple* tuple,
-                                      mp_obj_t mp_self,
-                                      mp_obj_t* args) {
-    size_t len = pikaTuple_getSize(tuple);
-    size_t i = 0;
-    if (NULL != mp_self) {
-        args[0] = mp_self;
-        i = 1;
-    }
-    for (i = 0; i < len; i++) {
-        args[i] = pikaTuple_getArg(tuple, i);
-    }
-    return len;
-}
-
-static inline void pks_load_mp_map(PikaDict* kw, mp_map_t* map) {
-    size_t len = pikaDict_getSize(kw);
-    map->alloc = len;
-    map->used = len;
-    map->table = (mp_map_elem_t*)malloc(sizeof(mp_map_elem_t) * len);
-    for (int i = 0; i < len; i++) {
-        Arg* item = pikaDict_getArgByidex(kw, i);
-        map->table[i].key = arg_newInt(arg_getNameHash(item));
-        map->table[i].value = item;
-    }
-}
-
-static inline void mp_get_buffer_raise(const mp_obj_t item,
-                                       mp_buffer_info_t* buf,
-                                       char* msg) {
-    buf->len = arg_getSize((Arg*)item);
-    buf->buf = malloc(buf->len);
-    if (NULL == buf->buf) {
-        mp_raise_OSError(msg);
-    }
-    memcpy(buf->buf, arg_getBytes((Arg*)item), buf->len);
-}
-
-static const ArgType mp_type_tuple = ARG_TYPE_TUPLE;
-static const ArgType mp_type_list = ARG_TYPE_TUPLE;
-static const ArgType mp_type_str = ARG_TYPE_STRING;
-static const ArgType mp_type_bytes = ARG_TYPE_BYTES;
-static const ArgType mp_type_int = ARG_TYPE_INT;
-static const ArgType mp_type_float = ARG_TYPE_FLOAT;
-static const ArgType mp_type_bool = ARG_TYPE_INT;
-static const ArgType mp_type_none = ARG_TYPE_NONE;
-
-static inline bool mp_obj_is_type(mp_obj_t self, ArgType* arg_type_ptr) {
-    if (arg_getType(self) == *arg_type_ptr) {
-        return true;
-    }
-    return false;
-}
-
-#define mp_obj_is_integer(self) mp_obj_is_type(self, &mp_type_int)
-
-typedef void (*mp_print_strn_t)(void* data, const char* str, size_t len);
-
-typedef struct _mp_print_t {
-    void* data;
-    mp_print_strn_t print_strn;
-} mp_print_t;
-
-static inline void mp_obj_get_array_fixed_n(mp_obj_t tuple,
-                                            size_t n,
-                                            mp_obj_t* arrray) {
-    for (int i = 0; i < n; i++) {
-        arrray[i] = pikaTuple_getArg((PikaTuple*)arg_getPtr(tuple), i);
-    }
-}
-
-typedef const void* mp_const_obj_t;
-typedef mp_const_obj_t mp_rom_obj_t;
-typedef struct _mp_rom_map_elem_t {
-    mp_rom_obj_t key;
-    mp_rom_obj_t value;
-} mp_rom_map_elem_t;
+typedef struct _mp_obj_type_t mp_obj_type_t;
 
 #define MICROPY_OBJ_BASE_ALIGNMENT
-#define MP_ALIGN(ptr, alignment) \
-    (void*)(((uintptr_t)(ptr) + ((alignment)-1)) & ~((alignment)-1))
-#define MP_ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
-
-typedef struct _mp_obj_type_t mp_obj_type_t;
 struct _mp_obj_base_t {
     const mp_obj_type_t* type MICROPY_OBJ_BASE_ALIGNMENT;
 };
@@ -376,10 +210,206 @@ struct _mp_obj_type_t {
     const void* slots[];
 };
 
+typedef struct _mp_map_elem_t {
+    mp_obj_t key;
+    mp_obj_t value;
+} mp_map_elem_t;
+
+typedef struct mp_map_t {
+    size_t all_keys_are_qstrs : 1;
+    size_t is_fixed : 1;    // if set, table is fixed/read-only and can't be
+                            // modified
+    size_t is_ordered : 1;  // if set, table is an ordered array, not a hash
+                            // map
+    size_t used : (8 * sizeof(size_t) - 3);
+    size_t alloc;
+    mp_map_elem_t* table;
+} mp_map_t;
+
+/* tuple */
+typedef struct mp_obj_tuple_t {
+    size_t len;
+    mp_obj_t* items;
+} mp_obj_tuple_t;
+
+/* list */
+typedef struct _mp_obj_list_t {
+    mp_obj_base_t base;
+    size_t alloc;
+    size_t len;
+    mp_obj_t* items;
+} mp_obj_list_t;
+
 typedef struct _mp_obj_dict_t {
     mp_obj_base_t base;
     mp_map_t map;
 } mp_obj_dict_t;
+
+#define mp_obj_str_get_str(...) arg_getStr(__VA_ARGS__)
+#define mp_obj_get_float(...) arg_getFloat(__VA_ARGS__)
+
+static inline float mp_obj_get_float_to_f(mp_obj_t o) {
+    return mp_obj_get_float(o);
+}
+
+static inline double mp_obj_get_float_to_d(mp_obj_t o) {
+    return (double)mp_obj_get_float(o);
+}
+
+static inline bool mp_map_slot_is_filled(const mp_map_t* map, size_t pos) {
+    return (map)->table[pos].key != NULL;
+}
+
+static inline int mp_obj_str_get_qstr(Arg* arg) {
+    return hash_time33(arg_getStr(arg));
+}
+
+static inline Arg* mp_obj_new_str(const char* str, size_t len) {
+    return arg_newStrN((char*)str, len);
+}
+
+typedef struct _mp_buffer_info_t {
+    void* buf;     // can be NULL if len == 0
+    size_t len;    // in bytes
+    int typecode;  // as per binary.h
+} mp_buffer_info_t;
+
+#define MP_QSTR(_str) hash_time33(#_str)
+
+static inline Arg* mp_obj_new_list(int n, Arg** items) {
+    PikaObj* list = newNormalObj(New_PikaStdData_List);
+    PikaStdData_List___init__(list);
+    return arg_newObj(list);
+}
+
+static inline mp_obj_t mp_obj_new_tuple(int n, Arg** items_in) {
+    mp_obj_tuple_t* tuple = (mp_obj_tuple_t*)pikaMalloc(sizeof(mp_obj_tuple_t));
+    Arg** items = (Arg**)pikaMalloc(sizeof(Arg*) * n);
+    if (NULL == items_in) {
+        tuple->len = n;
+        tuple->items = items;
+    }
+    return arg_newPtr(ARG_TYPE_POINTER, tuple);
+}
+
+static inline void mp_obj_tuple_deinit(mp_obj_t tuple) {
+    mp_obj_tuple_t* tuple_obj = (mp_obj_tuple_t*)arg_getPtr(tuple);
+    pikaFree(tuple_obj->items, sizeof(Arg*) * tuple_obj->len);
+    pikaFree(tuple_obj, sizeof(mp_obj_tuple_t));
+    arg_deinit(tuple);
+}
+
+static inline void mp_obj_list_append(Arg* list, mp_obj_tuple_t* tuple) {
+    PikaObj* list_obj = (PikaObj*)arg_getPtr(list);
+    for (int i = 0; i < tuple->len; i++) {
+        PikaStdData_List_append(list_obj, tuple->items[i]);
+        arg_deinit(tuple->items[i]);
+    }
+    free(tuple->items);
+    free(tuple);
+}
+
+static inline char* mp_obj_str_get_data(Arg* self, size_t* len) {
+    char* str = arg_getStr(self);
+    *len = strGetSize(str);
+    return str;
+}
+
+static inline mp_obj_t MP_OBJ_FROM_TUPLE(mp_obj_tuple_t* tuple) {
+    PikaObj* oTuple = New_PikaTuple();
+    for (int i = 0; i < tuple->len; i++) {
+        pikaList_append(oTuple, tuple->items[i]);
+    }
+    return arg_newObj(oTuple);
+}
+
+static inline size_t pks_load_mp_args(PikaTuple* tuple,
+                                      mp_obj_t mp_self,
+                                      mp_obj_t* args) {
+    size_t len = pikaTuple_getSize(tuple);
+    size_t i = 0;
+    if (NULL != mp_self) {
+        args[0] = mp_self;
+        i = 1;
+    }
+    for (i = 0; i < len; i++) {
+        args[i] = pikaTuple_getArg(tuple, i);
+    }
+    return len;
+}
+
+static inline void pks_load_mp_map(PikaDict* kw, mp_map_t* map) {
+    size_t len = pikaDict_getSize(kw);
+    map->alloc = len;
+    map->used = len;
+    map->table = (mp_map_elem_t*)malloc(sizeof(mp_map_elem_t) * len);
+    for (int i = 0; i < len; i++) {
+        Arg* item = pikaDict_getArgByidex(kw, i);
+        map->table[i].key = arg_newInt(arg_getNameHash(item));
+        map->table[i].value = item;
+    }
+}
+
+static inline void mp_get_buffer_raise(const mp_obj_t item,
+                                       mp_buffer_info_t* buf,
+                                       char* msg) {
+    buf->len = arg_getSize((Arg*)item);
+    buf->buf = pikaMalloc(buf->len);
+    pika_platform_memset(buf->buf, 0, buf->len);
+    if (NULL == buf->buf) {
+        mp_raise_OSError(msg);
+    }
+    pika_platform_memcpy(buf->buf, arg_getBytes((Arg*)item),
+                         arg_getBytesSize((Arg*)item));
+}
+
+static inline void mp_buff_info_deinit(mp_buffer_info_t* buf) {
+    pikaFree(buf->buf, buf->len);
+}
+
+static const ArgType mp_type_tuple = ARG_TYPE_TUPLE;
+static const ArgType mp_type_list = ARG_TYPE_TUPLE;
+static const ArgType mp_type_str = ARG_TYPE_STRING;
+static const ArgType mp_type_bytes = ARG_TYPE_BYTES;
+static const ArgType mp_type_int = ARG_TYPE_INT;
+static const ArgType mp_type_float = ARG_TYPE_FLOAT;
+static const ArgType mp_type_bool = ARG_TYPE_INT;
+static const ArgType mp_type_none = ARG_TYPE_NONE;
+
+static inline bool mp_obj_is_type(mp_obj_t self, ArgType* arg_type_ptr) {
+    if (arg_getType(self) == *arg_type_ptr) {
+        return true;
+    }
+    return false;
+}
+
+#define mp_obj_is_integer(self) mp_obj_is_type(self, &mp_type_int)
+
+typedef void (*mp_print_strn_t)(void* data, const char* str, size_t len);
+
+typedef struct _mp_print_t {
+    void* data;
+    mp_print_strn_t print_strn;
+} mp_print_t;
+
+static inline void mp_obj_get_array_fixed_n(mp_obj_t tuple,
+                                            size_t n,
+                                            mp_obj_t* arrray) {
+    for (int i = 0; i < n; i++) {
+        arrray[i] = pikaTuple_getArg((PikaTuple*)arg_getPtr(tuple), i);
+    }
+}
+
+typedef const void* mp_const_obj_t;
+typedef mp_const_obj_t mp_rom_obj_t;
+typedef struct _mp_rom_map_elem_t {
+    mp_rom_obj_t key;
+    mp_rom_obj_t value;
+} mp_rom_map_elem_t;
+
+#define MP_ALIGN(ptr, alignment) \
+    (void*)(((uintptr_t)(ptr) + ((alignment)-1)) & ~((alignment)-1))
+#define MP_ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
 typedef struct _mp_obj_module_t {
     mp_obj_base_t base;
@@ -392,13 +422,6 @@ typedef struct _vstr_t {
     char* buf;
     bool fixed_buf;
 } vstr_t;
-
-typedef struct _mp_obj_list_t {
-    mp_obj_base_t base;
-    size_t alloc;
-    size_t len;
-    mp_obj_t* items;
-} mp_obj_list_t;
 
 // attribute flags
 #define FL_PRINT (0x01)

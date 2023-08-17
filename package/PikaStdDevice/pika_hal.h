@@ -523,8 +523,8 @@ typedef enum {
     PIKA_HAL_CAM_PIXFORMAT_YUV420,
     PIKA_HAL_CAM_PIXFORMAT_GRAYSCALE,
     PIKA_HAL_CAM_PIXFORMAT_JPEG,
-    PIKA_HAL_CAM_PIXFORMAT_RGB888, 
-    PIKA_HAL_CAM_PIXFORMAT_RAW, 
+    PIKA_HAL_CAM_PIXFORMAT_RGB888,
+    PIKA_HAL_CAM_PIXFORMAT_RAW,
     PIKA_HAL_CAM_PIXFORMAT_RGB444,
     PIKA_HAL_CAM_PIXFORMAT_RGB555,
 } PIKA_HAL_CAM_PIXFORMAT;
@@ -559,7 +559,7 @@ typedef struct pika_hal_CAM_config {
     PIKA_HAL_CAM_PIXFORMAT format;
     PIKA_HAL_CAM_FRAMESIZE framesize;
     int buff_len;
-}pika_hal_CAM_config;
+} pika_hal_CAM_config;
 
 typedef struct pika_dev_impl {
     int (*open)(pika_dev* dev, char* name);
