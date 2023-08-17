@@ -71,10 +71,9 @@ STATIC mp_uint_t get_fmt_num(const char** p) {
     while (unichar_isdigit(*++num)) {
         len++;
     }
-    char* buff = pika_platform_malloc(len + 1);
-    pika_platform_memset(buff, 0, len + 1);
+    char buff[11] = {0};
     pika_platform_memcpy(buff, *p, len);
-    mp_uint_t val = (mp_uint_t)fast_atoi((char*)num);
+    mp_uint_t val = (mp_uint_t)fast_atoi((char*)buff);
     *p = num;
     return val;
 }
@@ -198,9 +197,10 @@ STATIC void struct_pack_into_internal(mp_obj_t fmt_in,
             if (bufinfo.len < to_copy) {
                 to_copy = bufinfo.len;
             }
-            memcpy(p, bufinfo.buf, to_copy);
-            memset(p + to_copy, 0, cnt - to_copy);
+            pika_platform_memcpy(p, bufinfo.buf, to_copy);
+            pika_platform_memset(p + to_copy, 0, cnt - to_copy);
             p += cnt;
+            mp_buff_info_deinit(&bufinfo);
         } else {
             // If we run out of args then we just finish; CPython would raise
             // struct.error
@@ -212,19 +212,25 @@ STATIC void struct_pack_into_internal(mp_obj_t fmt_in,
     }
 }
 
-#ifndef _SKIP_COMPILE
-
-STATIC mp_obj_t struct_pack(size_t n_args, const mp_obj_t* args) {
-    // TODO: "The arguments must match the values required by the format
-    // exactly."
-    mp_int_t size = MP_OBJ_SMALL_INT_VALUE(struct_calcsize(args[0]));
-    vstr_t vstr;
-    vstr_init_len(&vstr, size);
-    byte* p = (byte*)vstr.buf;
-    memset(p, 0, size);
-    struct_pack_into_internal(args[0], p, n_args - 1, &args[1]);
-    return mp_obj_new_bytes_from_vstr(&vstr);
+Arg* _struct_pack(PikaObj* self, char* fmt, PikaTuple* vars) {
+    Arg* aFmt = arg_newStr(fmt);
+    size_t varlen = pikaTuple_getSize(vars);
+    Arg* aSize = struct_calcsize(aFmt);
+    Arg** args = pikaMalloc(sizeof(Arg) * varlen);
+    for (size_t i = 0; i < varlen; i++) {
+        args[i] = pikaTuple_get(vars, i);
+    }
+    size_t size = arg_getInt(aSize);
+    Arg* byte = arg_newBytes(NULL, size);
+    uint8_t* p = arg_getBytes(byte);
+    struct_pack_into_internal(aFmt, p, varlen, args);
+    pikaFree(args, sizeof(Arg) * varlen);
+    arg_deinit(aFmt);
+    arg_deinit(aSize);
+    return byte;
 }
+
+#ifndef _SKIP_COMPILE
 
 STATIC mp_obj_t struct_pack_into(size_t n_args, const mp_obj_t* args) {
     mp_buffer_info_t bufinfo;

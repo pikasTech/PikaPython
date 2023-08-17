@@ -629,6 +629,8 @@ TEST_RUN_SINGLE_FILE(modbus,
 
 TEST_RUN_SINGLE_FILE_PASS(proxy, proxy3, "test/python/proxy/proxy3.py")
 
+TEST_RUN_SINGLE_FILE_PASS(struct, pack, "test/python/struct/pack.py")
+
 #endif
 
 TEST_END

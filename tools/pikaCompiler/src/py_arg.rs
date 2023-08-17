@@ -22,7 +22,7 @@ impl PyArg {
     }
     pub fn get_local_arg(&self) -> String {
         return format!(
-            "    {} {} = {}(args, \"{}\");\n",
+            "    {} {} = {}(_args_, \"{}\");\n",
             self.c_type(),
             self.name(),
             self.py_type.get_fn(),
