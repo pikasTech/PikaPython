@@ -629,7 +629,10 @@ TEST_RUN_SINGLE_FILE(modbus,
 
 TEST_RUN_SINGLE_FILE_PASS(proxy, proxy3, "test/python/proxy/proxy3.py")
 
+#if PIKA_FLOAT_TYPE_DOUBLE
 TEST_RUN_SINGLE_FILE_PASS(struct, pack, "test/python/struct/pack.py")
+TEST_RUN_SINGLE_FILE_PASS(struct, unpack, "test/python/struct/unpack.py")
+#endif
 
 #endif
 

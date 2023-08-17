@@ -113,7 +113,7 @@ STATIC mp_obj_t struct_calcsize(mp_obj_t fmt_in) {
     return MP_OBJ_NEW_SMALL_INT(size);
 }
 
-STATIC mp_obj_t struct_unpack_from(size_t n_args, const mp_obj_t* args) {
+STATIC mp_obj_t struct_unpack_from(size_t n_args, mp_obj_t* args) {
     // unpack requires that the buffer be exactly the right size.
     // unpack_from requires that the buffer be "big enough".
     // Since we implement unpack and unpack_from using the same function
@@ -122,7 +122,8 @@ STATIC mp_obj_t struct_unpack_from(size_t n_args, const mp_obj_t* args) {
     size_t total_sz;
     size_t num_items = calc_size_items(fmt, &total_sz);
     char fmt_type = get_fmt_type(&fmt);
-    mp_obj_tuple_t* res = MP_OBJ_TO_PTR(mp_obj_new_tuple(num_items, NULL));
+    mp_obj_t tuple = mp_obj_new_tuple(num_items, NULL);
+    mp_obj_tuple_t* res = MP_OBJ_TO_PTR(tuple);
     mp_buffer_info_t bufinfo;
     mp_get_buffer_raise((Arg*)args[1], &bufinfo, MP_BUFFER_READ);
     byte* p = bufinfo.buf;
@@ -166,7 +167,24 @@ STATIC mp_obj_t struct_unpack_from(size_t n_args, const mp_obj_t* args) {
         }
         fmt++;
     }
-    return MP_OBJ_FROM_PTR(res);
+    mp_obj_t ret = MP_OBJ_FROM_TUPLE(res);
+    mp_buff_info_deinit(&bufinfo);
+    mp_obj_tuple_deinit(tuple);
+    return ret;
+}
+
+Arg* _struct_unpack(PikaObj* self, char* fmt, Arg* data, int offset) {
+    Arg* aFmt = arg_newStr(fmt);
+    Arg* aOffset = arg_newInt(offset);
+    Arg** args = pikaMalloc(sizeof(Arg) * 3);
+    args[0] = aFmt;
+    args[1] = data;
+    args[2] = aOffset;
+    Arg* tuple = struct_unpack_from(3, args);
+    arg_deinit(aFmt);
+    arg_deinit(aOffset);
+    pikaFree(args, sizeof(Arg) * 3);
+    return tuple;
 }
 
 // This function assumes there is enough room in p to store all the values
