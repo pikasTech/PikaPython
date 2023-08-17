@@ -594,6 +594,12 @@ TEST(compiler, __add__) {
     EXPECT_EQ(pikaMemNow(), 0);
 }
 
+TEST(compiler, __eq__) {
+    char* lines = "@res_eq = __eq__(__others)";
+    pika_lines2Array(lines);
+    EXPECT_EQ(pikaMemNow(), 0);
+}
+
 TEST(compiler, __iter__) {
     char* lines = "@res_iter = __iter__()";
     pika_lines2Array(lines);

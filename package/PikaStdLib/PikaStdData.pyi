@@ -27,6 +27,9 @@ class Tuple:
     def __contains__(self, val: any) -> int:
         """ support val in list """
 
+    def __eq__(self, other: any) -> int:
+        """ support list == list """
+
 
 class List(Tuple):
     def __init__(self): ...
@@ -90,6 +93,9 @@ class Dict:
 
     def update(self, other: Dict):
         """ update dict """
+    
+    def __eq__(self, other: any) -> int:
+        """ support dict == dict """
 
 
 class dict_keys:

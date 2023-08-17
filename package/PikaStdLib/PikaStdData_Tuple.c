@@ -106,3 +106,24 @@ int PikaStdData_Tuple___contains__(PikaObj* self, Arg* val) {
     }
     return 0;
 }
+
+int PikaStdData_Tuple___eq__(PikaObj* self, Arg* other) {
+    if (!arg_isObject(other)) {
+        return 0;
+    }
+    PikaObj* oOther = arg_getObj(other);
+    if (self->constructor != oOther->constructor) {
+        return 0;
+    }
+    if (obj_getSize(self) != obj_getSize(oOther)) {
+        return 0;
+    }
+    for (size_t i = 0; i < pikaList_getSize(self); i++) {
+        Arg* arg = pikaList_get(self, i);
+        Arg* otherArg = pikaList_get(oOther, i);
+        if (!arg_isEqual(arg, otherArg)) {
+            return 0;
+        }
+    }
+    return 1;
+}

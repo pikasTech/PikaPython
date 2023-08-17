@@ -2697,6 +2697,34 @@ static void _OPT_EQU(OperatorInfo* op) {
     }
     if (argType_isObject(op->t1) && argType_isObject(op->t2)) {
         is_equ = (arg_getPtr(op->a1) == arg_getPtr(op->a2));
+        if (is_equ) {
+            goto __exit;
+        }
+        Arg* __eq__ =
+            obj_getMethodArgWithFullPath(arg_getPtr(op->a1), "__eq__");
+        if (NULL != __eq__) {
+            arg_deinit(__eq__);
+            PikaObj* oThis = arg_getObj(op->a1);
+            obj_setArg(oThis, "__others", op->a2);
+            /* clang-format off */
+            PIKA_PYTHON(
+            @res_eq = __eq__(__others)
+            )
+            /* clang-format on */
+            const uint8_t bytes[] = {
+                0x0c, 0x00, 0x00, 0x00, /* instruct array size */
+                0x10, 0x81, 0x01, 0x00, 0x00, 0x02, 0x0a, 0x00, 0x00, 0x04,
+                0x11, 0x00,
+                /* instruct array */
+                0x19, 0x00, 0x00, 0x00, /* const pool size */
+                0x00, 0x5f, 0x5f, 0x6f, 0x74, 0x68, 0x65, 0x72, 0x73, 0x00,
+                0x5f, 0x5f, 0x65, 0x71, 0x5f, 0x5f, 0x00, 0x40, 0x72, 0x65,
+                0x73, 0x5f, 0x65, 0x71, 0x00,
+                /* const pool */
+            };
+            pikaVM_runByteCode(oThis, (uint8_t*)bytes);
+            is_equ = obj_getInt(oThis, "@res_eq");
+        }
         goto __exit;
     }
     /* default: int bool, and float */

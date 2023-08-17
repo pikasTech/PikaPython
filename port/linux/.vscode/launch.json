@@ -12,7 +12,7 @@
             // "program": "${workspaceFolder}/build/boot/demo06-pikamain/pikascript_demo06-pikamain",
             "args": [
                 // "--gtest_filter=vm.keyword_2"
-                "--gtest_filter=struct.unpack"
+                "--gtest_filter=builtin.eq"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
