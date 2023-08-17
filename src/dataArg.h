@@ -47,6 +47,7 @@ typedef enum {
     ARG_TYPE_POINTER,
     ARG_TYPE_BIG_ARG_PTR,
     ARG_TYPE_OBJECT,
+    ARG_TYPE_OBJECT_WEAK,
     ARG_TYPE_OBJECT_META,
     ARG_TYPE_OBJECT_NEW,
     ARG_TYPE_METHOD_NATIVE,
@@ -294,7 +295,8 @@ static inline uint8_t* arg_getContent(Arg* self) {
 }
 
 static inline uint8_t argType_isObject(ArgType type) {
-    return ((type) == ARG_TYPE_OBJECT || (type) == ARG_TYPE_OBJECT_NEW);
+    return ((type) == ARG_TYPE_OBJECT || (type) == ARG_TYPE_OBJECT_NEW ||
+            (type) == ARG_TYPE_OBJECT_WEAK);
 }
 
 static inline uint8_t argType_isCallable(ArgType type) {

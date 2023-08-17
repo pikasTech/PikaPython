@@ -137,6 +137,7 @@ struct PikaObjState {
 #define OBJ_FLAG_GC_MARKED 1 << 6
 #define OBJ_FLAG_GC_ROOT 1 << 7
 #define OBJ_FLAG_PROXY_METHOD 1 << 8
+#define OBJ_FLAG_IN_DEL 1 << 9
 
 #define PIKA_KEY_UP 0x41
 #define PIKA_KEY_DOWN 0x42
@@ -460,6 +461,7 @@ PikaObj* _pika_dict_new(int num_args, ...);
 PikaObj* newNormalObj(NewFun newObjFun);
 Arg* arg_setRef(Arg* self, char* name, PikaObj* obj);
 Arg* arg_setObj(Arg* self, char* name, PikaObj* obj);
+Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj);
 
 PikaObj* arg_getObj(Arg* self);
 pika_bool arg_isList(Arg* arg);

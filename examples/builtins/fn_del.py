@@ -4,7 +4,7 @@ del_times = 0
 class Test:
     def __del__(self):
         global del_times
-        print("del")
+        # print("del")
         del_times += 1
 
 def test_del():

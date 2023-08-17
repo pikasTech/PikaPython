@@ -165,6 +165,10 @@ int obj_GC(PikaObj* self) {
     if (!obj_checkAlive(self)) {
         return 0;
     }
+    if (obj_getFlag(self, OBJ_FLAG_IN_DEL)) {
+        /* in __del__, skip gc */
+        return 0;
+    }
     obj_refcntDec(self);
     int ref_cnt = obj_refcntNow(self);
     if (ref_cnt <= 0) {
@@ -188,6 +192,7 @@ int32_t obj_deinit(PikaObj* self) {
             0x00, 0x5f, 0x5f, 0x64, 0x65,
             0x6c, 0x5f, 0x5f, 0x00, /* const pool */
         };
+        obj_setFlag(self, OBJ_FLAG_IN_DEL);
         pikaVM_runByteCode(self, (uint8_t*)bytes);
         arg_deinit(del);
     }
@@ -2504,6 +2509,11 @@ Arg* arg_setRef(Arg* self, char* name, PikaObj* obj) {
     pika_assert(NULL != obj);
     obj_refcntInc(obj);
     return arg_setObj(self, name, obj);
+}
+
+Arg* arg_setWeakRef(Arg* self, char* name, PikaObj* obj) {
+    pika_assert(NULL != obj);
+    return arg_setPtr(self, name, ARG_TYPE_OBJECT_WEAK, obj);
 }
 
 int32_t obj_newDirectObj(PikaObj* self, char* objName, NewFun newFunPtr) {

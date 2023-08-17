@@ -136,6 +136,7 @@ static Arg* _arg_set_hash(Arg* self,
         self->str = (char*)&self->content;
         self->bytes = (uint8_t*)&self->content;
         self->name = self->_name_buff;
+        pika_platform_memset(self->_name_buff, 0, PIKA_NAME_BUFF_SIZE);
 #endif
         arg_setSerialized(self, pika_true);
         // arg_setIsKeyword(self, pika_false);
