@@ -1,7 +1,6 @@
 #include "pika_hal.h"
 #include <stdint.h>
 #include "PikaObj.h"
-#include <pthread.h>
 
 typedef struct platform_data_SOFT_TIM {
     pika_platform_timer_t thread_timer;

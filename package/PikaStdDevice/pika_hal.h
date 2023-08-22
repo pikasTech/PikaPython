@@ -9,6 +9,8 @@
  * the API of pika_hal is similar to the posix file API.
  */
 
+#define PIKA_HAL
+
 typedef enum {
 #define PIKA_HAL_TABLE_DEV_TYPE
 #include "pika_hal_table.h"
