@@ -101,7 +101,7 @@ extern "C" {
 #endif
 
 /* OS */
-#ifdef __RTTHREAD__
+#if defined(__RTTHREAD__) && PIKA_RTTHREAD_ENABLE
 #include <rtthread.h>
 #define pika_platform_printf(...) rt_kprintf(__VA_ARGS__)
 #endif
