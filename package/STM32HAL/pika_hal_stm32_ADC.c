@@ -149,6 +149,8 @@ static rt_err_t stm32_adc_get_channel(rt_int8_t rt_channel, uint32_t *stm32_chan
     return RT_EOK;
 }
 
+#define ADCx_CLK_ENABLE         __HAL_RCC_ADC1_CLK_ENABLE
+
 static void adcx_clock_enable(ADC_HandleTypeDef *adch) {
     #if defined(STM32F0) || defined(STM32F4) || defined(STM32F7) || defined(STM32L1)
     ADCx_CLK_ENABLE();
